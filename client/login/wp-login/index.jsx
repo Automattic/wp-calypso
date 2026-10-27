@@ -13,6 +13,7 @@ import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-ac
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
+import { isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import {
 	isJetpackCloudOAuth2Client,
@@ -121,7 +122,7 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
-			'isFromJetpackConnector',
+			'showsUnifiedContent',
 			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
@@ -431,20 +432,25 @@ export class Login extends Component {
 		);
 
 		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+		// The login form sits beside the social buttons, so it needs the wider, centered layout.
+		// Lost password and two-step screens follow the layout's default: the 432px account
+		// template, or centered with a logo above the title.
+		const isLoginFormView = ! isLostPasswordView && ! this.props.twoFactorAuthType;
 
 		return (
 			<>
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
-						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						showsUnifiedContent={ this.props.showsUnifiedContent }
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						columnWidth={ isLoginFormView ? 6 : undefined }
+						isCentered={ isLoginFormView || undefined }
 						// The footer carries the route to signup on desktop instead.
 						signupLinkMobileOnly={ isEntryClarityTreatment }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
-						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
 						linkLogoToHome
 					>
@@ -473,7 +479,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		isFromJetpackConnector,
+		showsUnifiedContent,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -499,7 +505,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		isFromJetpackConnector,
+		showsUnifiedContent,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -515,7 +521,7 @@ function getInitialHeadingState( props, translate ) {
 		translate,
 		isWooJPC,
 		partnerConfig,
-		isFromJetpackConnector,
+		showsUnifiedContent,
 		connectorPlugins,
 	} );
 
@@ -563,8 +569,8 @@ export default connect(
 
 		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
 		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
-		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
-		const connectorPlugins = isFromJetpackConnector
+		const showsUnifiedContent = isUnifiedFlow( connectorFromParam );
+		const connectorPlugins = showsUnifiedContent
 			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
 					.split( ',' )
 					.map( trimString )
@@ -610,7 +616,7 @@ export default connect(
 				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			isFromJetpackConnector,
+			showsUnifiedContent,
 			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),

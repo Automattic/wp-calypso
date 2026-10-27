@@ -107,7 +107,6 @@ export default myFlow;
 | --------------------- | --------------------- | ---------------------------------- |
 | `SEGMENTATION_SURVEY` | `segmentation-survey` | Survey to segment user by use case |
 | `DESIGN_SETUP`        | `design-setup`        | Select a theme / design            |
-| `SITE_OPTIONS`        | `options`             | Set site title, tagline, icon      |
 | `BUSINESS_INFO`       | `businessInfo`        | Business details (name, category)  |
 | `STORE_ADDRESS`       | `storeAddress`        | WooCommerce store address          |
 | `SITE_SPEC`           | `site-spec`           | AI-assisted site specification     |
@@ -140,7 +139,6 @@ export default myFlow;
 | `STEPS.*` constant         | slug                       | Purpose                             |
 | -------------------------- | -------------------------- | ----------------------------------- |
 | `LAUNCHPAD`                | `launchpad`                | Post-creation checklist / dashboard |
-| `CELEBRATION_STEP`         | `celebration-step`         | Congratulations screen              |
 | `SUBSCRIBERS`              | `subscribers`              | Add newsletter subscribers          |
 | `POST_CHECKOUT_ONBOARDING` | `post-checkout-onboarding` | Onboarding after checkout           |
 
@@ -150,14 +148,12 @@ export default myFlow;
 | ------------------ | ----------------- | ----------------------------- |
 | `NEWSLETTER_SETUP` | `newsletterSetup` | Newsletter name, description  |
 | `NEWSLETTER_GOALS` | `newsletterGoals` | Newsletter monetization goals |
-| `FREE_POST_SETUP`  | `freePostSetup`   | Free newsletter post setup    |
 
 ### Site picker / utility
 
 | `STEPS.*` constant     | slug                   | Purpose                                     |
 | ---------------------- | ---------------------- | ------------------------------------------- |
 | `NEW_OR_EXISTING_SITE` | `new-or-existing-site` | Ask user to create new or use existing site |
-| `SITES_CHECKER`        | `check-sites`          | Check whether user has existing sites       |
 | `PICK_SITE`            | `site-picker`          | Pick from a list of existing sites          |
 | `SITE_PICKER`          | `sitePicker`           | Single site picker variant                  |
 | `TRIAL_ACKNOWLEDGE`    | `trialAcknowledge`     | User acknowledges trial conditions          |
@@ -295,9 +291,9 @@ Call them via `dispatch( ONBOARD_STORE )` inside `initialize()`.
 | Call                                         | Effect                                                           |
 | -------------------------------------------- | ---------------------------------------------------------------- |
 | `setHidePlansFeatureComparison( true )`      | Hides the plan feature comparison table in `STEPS.UNIFIED_PLANS` |
-| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps (site-options, etc.)         |
+| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps                              |
 | `setIntent( Onboard.SiteIntent.Build )`      | Generic "build a site" intent                                    |
-| `setIntent( Onboard.SiteIntent.Sell )`       | Store intent — changes site-options labels                       |
+| `setIntent( Onboard.SiteIntent.Sell )`       | Store intent                                                     |
 | `setIntent( Onboard.SiteIntent.Write )`      | Blog intent                                                      |
 | `clearSignupDestinationCookie()`             | Ensures a fresh signup start (no redirect leftovers)             |
 

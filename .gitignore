@@ -121,10 +121,6 @@ yarn-json-output.json
 storybook-static
 packages/plans-grid-next/static/mockServiceWorker.js
 
-# PHPUnit cache
-.phpunit.result.cache
-.phpunit.cache
-
 # Playwright
 playwright-report/
 .playwright-mcp/

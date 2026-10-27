@@ -5,11 +5,10 @@ import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useMemo } from 'react';
 import LicensingActivation from 'calypso/components/jetpack/licensing-activation';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { addQueryArgs } from 'calypso/lib/url';
 import { isJetpackStandaloneProduct } from 'calypso/my-sites/plans/jetpack-plans/is-jetpack-standalone-product';
 import slugToSelectorProduct from 'calypso/my-sites/plans/jetpack-plans/slug-to-selector-product';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import JetpackActivationInstructions from './jetpack-activation-instructions';
 import { JetpackLicenseKeyProps } from './jetpack-license-key-clipboard';
 import JetpackStandaloneActivationInstructions from './jetpack-standalone-activation-instructions';
@@ -20,7 +19,6 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 	receiptId,
 } ) => {
 	const translate = useTranslate();
-	const dispatch = useDispatch();
 
 	const jetpackStandaloneProduct = useMemo(
 		() =>
@@ -34,11 +32,9 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 	const jetpackPluginImage = getJetpackPluginImage( productSlug );
 
 	const onContinue = useCallback( () => {
-		dispatch(
-			recordTracksEvent( 'calypso_siteless_checkout_manual_activation_instructions_click', {
-				product_slug: productSlug,
-			} )
-		);
+		recordTracksEvent( 'calypso_siteless_checkout_manual_activation_instructions_click', {
+			product_slug: productSlug,
+		} );
 		return page(
 			addQueryArgs(
 				{
@@ -47,7 +43,7 @@ const LicensingActivationInstructions: FC< JetpackLicenseKeyProps > = ( {
 				`/checkout/jetpack/thank-you/licensing-manual-activate-license-key/${ productSlug }`
 			)
 		);
-	}, [ dispatch, productSlug, receiptId ] );
+	}, [ productSlug, receiptId ] );
 
 	return (
 		<>

@@ -36,6 +36,8 @@ export { default as FeedbackInput } from './components/feedback-input';
 
 // Site credits copy, so other chats show the same amounts and low-balance limit
 export { CREDITS_LOW_BALANCE, formatCreditsShort } from './utils/credits';
+// The top-ups balance and agent environment the credits Tracks events send, so other chats send the same values
+export { getAgentEnvironment, getTopUpCreditsLeft } from './utils/credits';
 
 // Site credits meter, for chats outside the dock that show the same balance
 export { default as CreditsMeter } from './components/credits-meter';

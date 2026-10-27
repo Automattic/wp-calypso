@@ -14,16 +14,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/automated-copy-site' ),
 	},
 
-	CELEBRATION: {
-		slug: 'celebration-step',
-		asyncComponent: () => import( './steps-repository/celebration-step' ),
-	},
-
-	CHECK_SITES: {
-		slug: 'check-sites',
-		asyncComponent: () => import( './steps-repository/sites-checker' ),
-	},
-
 	DESIGN_SETUP: {
 		slug: 'design-setup',
 		asyncComponent: () => import( './steps-repository/design-setup' ),
@@ -74,11 +64,6 @@ export const STEPS = {
 	SUBSCRIBERS: {
 		slug: 'subscribers',
 		asyncComponent: () => import( './steps-repository/subscribers' ),
-	},
-
-	FREE_POST_SETUP: {
-		slug: 'freePostSetup',
-		asyncComponent: () => import( './steps-repository/free-post-setup' ),
 	},
 
 	IMPORT: { slug: 'import', asyncComponent: () => import( './steps-repository/import' ) },
@@ -165,11 +150,6 @@ export const STEPS = {
 
 	LAUNCHPAD: { slug: 'launchpad', asyncComponent: () => import( './steps-repository/launchpad' ) },
 
-	OPTIONS: {
-		slug: 'options',
-		asyncComponent: () => import( './steps-repository/site-options' ),
-	},
-
 	PLANS: { slug: 'plans', asyncComponent: () => import( './steps-repository/plans' ) },
 
 	PROCESSING: {
@@ -231,11 +211,6 @@ export const STEPS = {
 	WAIT_FOR_ATOMIC: {
 		slug: 'waitForAtomic',
 		asyncComponent: () => import( './steps-repository/wait-for-atomic' ),
-	},
-
-	WAIT_FOR_COMMERCE_ATOMIC: {
-		slug: 'wait-for-commerce-atomic',
-		asyncComponent: () => import( './steps-repository/wait-for-commerce-atomic' ),
 	},
 
 	WAIT_FOR_PLUGIN_INSTALL: {
@@ -326,14 +301,6 @@ export const STEPS = {
 		asyncComponent: () =>
 			import(
 				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-results'
-			),
-	},
-
-	STATIC_SITE_IMPORT_ADDRESS: {
-		slug: 'static-site-import-address',
-		asyncComponent: () =>
-			import(
-				/* webpackChunkName: 'async-step-static-site-import' */ './steps-repository/static-site-import-address'
 			),
 	},
 

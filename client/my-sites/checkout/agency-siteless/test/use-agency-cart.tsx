@@ -31,10 +31,13 @@ const products = [
 ] as AgencyProduct[];
 
 const replaceProductsInCart = jest.fn();
+const EXIT_URL = 'https://agencies-beta.automattic.com/products';
 
 function renderCart(
 	entries: AgencyCartEntry[],
-	{ agency = { id: AGENCY_ID } as Agency }: { agency?: Agency | null } = {}
+	{
+		agency = { id: AGENCY_ID, approval_status: 'approved' } as Agency,
+	}: { agency?: Agency | null } = {}
 ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
@@ -42,7 +45,7 @@ function renderCart(
 	queryClient.setQueryData( activeAgencyQuery().queryKey, agency );
 	queryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, products );
 
-	return renderHook( () => useAgencyCart( entries, 'yearly' ), {
+	return renderHook( () => useAgencyCart( entries, 'yearly', EXIT_URL ), {
 		wrapper: ( { children }: PropsWithChildren ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		),
@@ -145,6 +148,26 @@ describe( 'useAgencyCart', () => {
 
 		await waitFor( () => expect( result.current.error ).toBe( 'We could not find your agency.' ) );
 		expect( replaceProductsInCart ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends an agency that is not approved back to the dashboard without filling the cart', async () => {
+		const { location } = window;
+		const replace = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { ...location, replace },
+		} );
+
+		try {
+			renderCart( [ { slug: 'jetpack-backup-t1', quantity: 1 } ], {
+				agency: { id: AGENCY_ID, approval_status: 'pending' } as Agency,
+			} );
+
+			await waitFor( () => expect( replace ).toHaveBeenCalledWith( EXIT_URL ) );
+			expect( replaceProductsInCart ).not.toHaveBeenCalled();
+		} finally {
+			Object.defineProperty( window, 'location', { configurable: true, value: location } );
+		}
 	} );
 
 	it( 'reports a cart that could not be filled', async () => {

@@ -18,7 +18,11 @@ import type { BuildAgencyCartLines } from '../agency-checkout/use-filled-agency-
  * products come from the account of the user who is logged in, never from the
  * link.
  */
-export default function useAgencyCart( entries: AgencyCartEntry[], term: AgencyCheckoutTerm ) {
+export default function useAgencyCart(
+	entries: AgencyCartEntry[],
+	term: AgencyCheckoutTerm,
+	notApprovedExitUrl: string
+) {
 	const translate = useTranslate();
 	const buildLines = useCallback< BuildAgencyCartLines >(
 		( agencyId, products ) =>
@@ -44,5 +48,10 @@ export default function useAgencyCart( entries: AgencyCartEntry[], term: AgencyC
 		[ entries, term ]
 	);
 
-	return useFilledAgencyCart( 'no-site', buildLines, translate( 'Your cart is empty.' ) );
+	return useFilledAgencyCart(
+		'no-site',
+		buildLines,
+		translate( 'Your cart is empty.' ),
+		notApprovedExitUrl
+	);
 }

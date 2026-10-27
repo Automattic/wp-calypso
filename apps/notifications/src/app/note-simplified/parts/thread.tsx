@@ -123,9 +123,15 @@ export function ThreadReply( {
 	);
 }
 
-export default function Thread( { children }: { children: ReactNode } ) {
+export default function Thread( {
+	spacing = 4,
+	children,
+}: {
+	spacing?: number;
+	children: ReactNode;
+} ) {
 	return (
-		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 4 }>
+		<VStack as="ol" className="wpnc-simplified__thread" spacing={ spacing }>
 			{ children }
 		</VStack>
 	);

@@ -1,5 +1,5 @@
 import { getDomainPurchaseTypeAndPredicate } from '../utils';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 const purchase = ( overrides: Partial< ReceiptPurchase > ) =>
 	( {

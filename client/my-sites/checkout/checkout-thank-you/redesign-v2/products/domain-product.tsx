@@ -11,7 +11,7 @@ import {
 	domainManagementRoot,
 } from 'calypso/my-sites/domains/paths';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 function getGravatarPopupInfo(): { gravatarOrigin: string; isInGravatarPopup: boolean } {
 	if ( ! window.opener || window.opener.closed ) {

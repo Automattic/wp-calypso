@@ -9,6 +9,7 @@ export interface AgentUIContextValue {
 	isStreaming?: boolean;
 	isReplying?: boolean;
 	error?: string | null;
+	errorNotice?: NoticeConfig;
 
 	// Input state
 	inputValue: string;

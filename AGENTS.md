@@ -27,7 +27,7 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 ## Packages
 
 - **Agents Manager** (`packages/agents-manager`) — shared component library for WordPress.com's unified AI agent experience, running in Calypso, the Dashboard, Simple and Atomic sites, the WooCommerce AI admin and Reader Chat. Also deployed via `apps/agents-manager/` to `widgets.wp.com`. See its `AGENTS.md` for architecture and conventions.
-- **AI UI Renderer** (`packages/ai-ui-renderer`) — reusable A2UI v0.9 catalog and rendering primitives built with WordPress components. Agents Manager consumes it; conversation handling and MCP transport stay in consumers.
+- **AI UI Renderer** (`packages/ai-ui-renderer`) — reusable A2UI v1.0 catalog and rendering primitives built with WordPress components. Agents Manager consumes it; conversation handling and MCP transport stay in consumers.
 - **Agenttic** (`packages/agenttic-client`, `packages/agenttic-ui`) — AI agent chat client library and UI components. Also published to npm for consumers outside this repo. ⚠️ Still on its pre-migration package layout (vite-built, ESM-only, flat `dist/`, no `calypso:src`); normalizing it is a future goal, but the published artifact shape is a contract with external consumers — read the Development and Releasing sections in `packages/agenttic-client/README.md` before restructuring or publishing.
 - **Help Center** (`packages/help-center`) — shared component library for WordPress.com support. Also deployed via `apps/help-center/` to `widgets.wp.com`.
 - **Image Studio** (`packages/image-studio`) — AI-powered image editing and generation. When adding Image Studio entry points, read [packages/image-studio/AGENTS.md](packages/image-studio/AGENTS.md).
@@ -43,6 +43,8 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 
 > **Note**: The Calypso dev server uses the `PORT` environment variable (check repo-root `.env`) and falls back to port `3000`. Do not create or modify `.env` unless explicitly asked.
 
+> **Note**: Keep the `@automattic/` scope whenever a command sends a workspace package name to the npm registry (`npm view`, `npx`, `yarn add`, `yarn npm info`). For a `"private": true` package, read its `package.json` instead of the registry.
+
 ```bash
 # Setup
 yarn install
@@ -55,6 +57,14 @@ yarn start-dashboard
 ```
 
 If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
+
+### Checking a change in a browser
+
+- Use the Node version in `.nvmrc`. The first webpack build takes several minutes after "wp-calypso booted"; until it finishes the page shows only the W logo.
+- Sign in on `wordpress.com/log-in` first, then open `calypso.localhost:3000/read?flags=oauth` once. Signing in on the calypso.localhost form doesn't stick, because the login cookie is refused as a cross-site cookie.
+- With `?flags=oauth`, loading or reloading a signed-in URL directly (for example `/tags`) redirects to `/discover`, because the server can't see the sign-in. Load `/read?flags=oauth`, wait for the Reader, then navigate inside the app.
+- A headless or automated Chrome profile blocks third-party cookies by default; allow them (see `docs/install.md`) or the app never sees the sign-in.
+- Test with an account made for testing, never a personal one, and don't save network requests from the login: they hold the password and session cookies.
 
 ## Testing instructions
 
@@ -97,6 +107,8 @@ Before pushing a branch or running `gh pr create`, run the type-check that CI wi
 yarn               # Install dependencies first if you haven't already
 yarn typecheck-client
 ```
+
+If it runs out of memory, give it a bigger heap: `NODE_OPTIONS=--max-old-space-size=12288 yarn typecheck-client`. If it fails on a workspace package that has no `dist/` yet, build that package first (`cd packages/<name> && yarn build`).
 
 If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
 

@@ -1,8 +1,9 @@
-import { generateMessageId } from '../client/utils/core';
+import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { DEFAULT_API_BASE_URL, loadChatFromServer, type OdieServiceConfig } from './odieService';
 import type { PaginationMeta } from './serverTypes';
 import type {
+	A2uiDataPart,
 	AuthProvider,
 	ContentType,
 	DataPart,
@@ -33,6 +34,8 @@ export interface ConversationLoadResult {
  * Simplified stored message format for efficient serialization
  */
 interface StoredMessage {
+	/** Restored as is, so a message keeps its ID. Older entries have none. */
+	messageId?: string;
 	role: 'user' | 'agent';
 	content: string;
 	contentType?: ContentType;
@@ -61,6 +64,11 @@ interface StoredMessage {
 		flags?: Record< string, unknown >;
 		sources?: unknown;
 	};
+	/** Where the prompt came from (see `SubmitOptions.promptSource`), kept as message metadata. */
+	promptSource?: string;
+	promptSourceId?: string;
+	/** An interactive UI surface, as A2UI's A2A data part. */
+	a2ui?: A2uiDataPart;
 }
 
 /**
@@ -145,6 +153,36 @@ function extractStorableContent( message: Message ): StoredMessage {
 		}
 	}
 
+	// The prompt source: a live message keeps it as metadata, one restored from
+	// the server as a `data` part. Either way it is kept, so a conversation
+	// restored from storage still says which messages came from where.
+	let promptSource: string | undefined;
+	let promptSourceId: string | undefined;
+	const metadataPromptSource = message.metadata?.promptSource;
+	if ( typeof metadataPromptSource === 'string' && metadataPromptSource !== '' ) {
+		promptSource = metadataPromptSource;
+		const metadataPromptSourceId = message.metadata?.promptSourceId;
+		if ( typeof metadataPromptSourceId === 'string' && metadataPromptSourceId !== '' ) {
+			promptSourceId = metadataPromptSourceId;
+		}
+	} else {
+		for ( const part of message.parts ) {
+			if ( part.type !== 'data' || ! part.data || typeof part.data !== 'object' ) {
+				continue;
+			}
+			const data = part.data as Record< string, unknown >;
+			if ( typeof data.promptSource === 'string' && data.promptSource !== '' ) {
+				promptSource = data.promptSource;
+				if ( typeof data.promptSourceId === 'string' && data.promptSourceId !== '' ) {
+					promptSourceId = data.promptSourceId;
+				}
+				break;
+			}
+		}
+	}
+
+	const a2ui = message.parts.find( isA2uiDataPart );
+
 	// Determine the role - if this message contains tool interactions, store as "agent"
 	// regardless of the original message role
 	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
@@ -157,6 +195,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 	const archived = ( message.metadata?.archived as boolean ) ?? undefined;
 
 	return {
+		messageId: message.messageId,
 		role: storageRole,
 		content: textParts || '(No text content)',
 		timestamp,
@@ -166,6 +205,9 @@ function extractStorableContent( message: Message ): StoredMessage {
 		...( toolCalls.length > 0 && { toolCalls } ),
 		...( toolResults.length > 0 && { toolResults } ),
 		...( agentMessageData && { agentMessageData } ),
+		...( promptSource && { promptSource } ),
+		...( promptSourceId && { promptSourceId } ),
+		...( a2ui && { a2ui } ),
 	};
 }
 
@@ -201,6 +243,11 @@ function restoreMessage( stored: StoredMessage ): Message {
 				},
 			} );
 		}
+	}
+
+	// Add the interactive UI surface
+	if ( isA2uiDataPart( stored.a2ui ) ) {
+		parts.push( stored.a2ui );
 	}
 
 	// Add tool call parts
@@ -249,13 +296,16 @@ function restoreMessage( stored: StoredMessage ): Message {
 		role: stored.role,
 		kind: 'message',
 		parts,
-		messageId: generateMessageId(),
+		messageId: stored.messageId ?? generateMessageId(),
 		metadata: {
 			timestamp: stored.timestamp,
 			// only store archived if it was already present.
 			...( stored.archived !== undefined && {
 				archived: stored.archived,
 			} ),
+			// As metadata, the live representation: the UI surfaces it as a `data` part.
+			...( stored.promptSource && { promptSource: stored.promptSource } ),
+			...( stored.promptSourceId && { promptSourceId: stored.promptSourceId } ),
 		},
 	};
 }
