@@ -1189,11 +1189,13 @@ const PlansFeaturesMain = ( {
 	let enableTermSavingsPriceDisplay = true;
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
+	// The redesigned standard feature list is annual-only in signup; intents that curate
+	// their own feature list keep the selector.
 	if (
 		redirectToAddDomainFlow !== undefined ||
 		hidePlanTypeSelector ||
 		isVisualSplitEnabled ||
-		( usePlansGridRedesign && isInSignup )
+		( usePlansGridRedesignFeatures && isInSignup && ! hasTailoredFeatureList( intent ) )
 	) {
 		hidePlanSelector = true;
 	}
