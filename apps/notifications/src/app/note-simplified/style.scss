@@ -34,9 +34,10 @@
 		&::before {
 			content: "";
 			position: absolute;
-			inset-block: 48px -12px;
+			inset-block: 48px -8px;
 			inset-inline-start: 17px;
 			width: 2px;
+			border-radius: 2px;
 			background: var(--wp-components-color-gray-300, #{$gray-300});
 		}
 
@@ -44,6 +45,10 @@
 		.wpnc-simplified__parent-text {
 			font-size: 13px;
 			line-height: 20px;
+		}
+
+		.wpnc-simplified__parent-text {
+			color: var(--wp-components-color-gray-700, #{$gray-700});
 		}
 	}
 }
