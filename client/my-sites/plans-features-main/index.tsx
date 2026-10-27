@@ -1199,15 +1199,18 @@ const PlansFeaturesMain = ( {
 
 	let hidePlanSelector = false;
 	let enableTermSavingsPriceDisplay = true;
+	// The redesigned standard feature list is annual-only in signup. Intents that curate their
+	// own feature list keep the selector, as does Woo hosting solutions: it borrows the standard
+	// list but is a curated grid whose money-back guarantee copy depends on the monthly term.
+	const keepsPlanTypeSelector =
+		hasTailoredFeatureList( intent ) || intent === 'plans-woo-hosting-solutions';
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
-	// The redesigned standard feature list is annual-only in signup; intents that curate
-	// their own feature list keep the selector.
 	if (
 		redirectToAddDomainFlow !== undefined ||
 		hidePlanTypeSelector ||
 		isVisualSplitEnabled ||
-		( usePlansGridRedesignFeatures && isInSignup && ! hasTailoredFeatureList( intent ) )
+		( usePlansGridRedesignFeatures && isInSignup && ! keepsPlanTypeSelector )
 	) {
 		hidePlanSelector = true;
 	}

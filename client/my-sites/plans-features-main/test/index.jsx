@@ -423,6 +423,21 @@ describe( 'PlansFeaturesMain', () => {
 			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
 		} );
 
+		test( 'Should keep the plan type selector visible in signup for the Woo hosting solutions intent', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...myProps }
+					flowName="onboarding"
+					intent="plans-woo-hosting-solutions"
+					isInSignup
+				/>
+			);
+
+			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
+		} );
+
 		test( 'Should keep the plan type selector visible with the redesigned feature list outside signup', () => {
 			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
 
