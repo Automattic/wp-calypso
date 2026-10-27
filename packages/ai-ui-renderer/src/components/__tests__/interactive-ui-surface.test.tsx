@@ -38,6 +38,46 @@ beforeEach( () => {
 
 afterEach( () => runtime.dispose() );
 
+it.each( [ 'agent', 'tool-call' ] as const )(
+	'dispatches edited arguments in %s mode',
+	async ( actionMode ) => {
+		const onToolCall = jest.fn();
+		runtime.dispose();
+		runtime = createInteractiveUiRuntime( {
+			catalogs: [ createInteractiveUiCatalog() ],
+			onError,
+			...( actionMode === 'tool-call' ? { actionMode, onToolCall } : { onAction } ),
+		} );
+		const surface = createSurface( [
+			{ id: 'root', component: 'Column', children: [ 'name', 'save' ] },
+			{ id: 'name', component: 'TextField', label: 'Name', value: { '@path': '/name' } },
+			{
+				id: 'save',
+				component: 'Button',
+				child: 'label',
+				action: { event: { name: 'save_name', context: { name: { '@path': '/name' } } } },
+			},
+			{ id: 'label', component: 'Text', text: 'Save' },
+		] );
+
+		render( <InteractiveUiSurface surface={ surface } /> );
+		fireEvent.change( screen.getByRole( 'textbox', { name: 'Name' } ), {
+			target: { value: 'Ada' },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		const dispatched = actionMode === 'tool-call' ? onToolCall : onAction;
+		const unused = actionMode === 'tool-call' ? onAction : onToolCall;
+		const agentAction = expect.objectContaining( { name: 'save_name', context: { name: 'Ada' } } );
+		const expected =
+			actionMode === 'tool-call' ? { name: 'save_name', arguments: { name: 'Ada' } } : agentAction;
+
+		await waitFor( () => expect( dispatched.mock.calls ).toEqual( [ [ expected ] ] ) );
+		expect( unused ).not.toHaveBeenCalled();
+		expect( onError ).not.toHaveBeenCalled();
+	}
+);
+
 function createSurface(
 	components: ( { id: string; component: string } & Record< string, unknown > )[],
 	catalogId = BASIC_CATALOG_ID
