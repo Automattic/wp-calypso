@@ -101,6 +101,12 @@ export function useNoteNavigation( {
 					stopEvent( event );
 					goToPreviousNote();
 					break;
+				case 'ArrowRight':
+					if ( selectedNoteId !== undefined ) {
+						stopEvent( event );
+						setSelectedNoteId( undefined );
+					}
+					break;
 			}
 		};
 
@@ -108,7 +114,7 @@ export function useNoteNavigation( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ areKeyboardShortcutsEnabled, selectedNote ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ areKeyboardShortcutsEnabled, selectedNote, selectedNoteId ] ); // eslint-disable-line react-hooks/exhaustive-deps
 
 	return { goToPreviousNote, goToNextNote, hasPreviousNote, hasNextNote };
 }

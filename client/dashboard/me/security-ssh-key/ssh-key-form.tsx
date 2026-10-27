@@ -62,7 +62,10 @@ export default function SshKeyForm( {
 
 	const handleUpdateSshKey = () => {
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_update_click' );
-		updateSshKey( formData.key );
+		if ( ! sshKey ) {
+			return;
+		}
+		updateSshKey( { name: sshKey.name, key: formData.key } );
 	};
 
 	const handleCreateSshKey = () => {
