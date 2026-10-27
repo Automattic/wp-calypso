@@ -44,6 +44,7 @@ export type NotePost = {
 export type NoteSite = {
 	name: string;
 	icon: string;
+	url?: string;
 };
 
 export type NoteParentComment = {

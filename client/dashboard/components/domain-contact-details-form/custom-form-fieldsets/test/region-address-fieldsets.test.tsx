@@ -2,18 +2,33 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import { useViewportMatch } from '@wordpress/compose';
 import { RegionAddressFieldsets, RegionAddressFieldsLayout } from '../../region-address-fieldsets';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
 	CHECKOUT_UK_ADDRESS_FORMAT_COUNTRY_CODES,
 } from '../constants';
+import type { CountryListItem } from '../types';
+import type { DomainContactDetails, DomainContactValidationResponse } from '@automattic/api-core';
+import type { DataFormControlProps, Field } from '@wordpress/dataviews';
+import type { ComponentType } from 'react';
 
 jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn( () => false ), // Default to desktop view
 } ) );
 
 jest.mock( '@wordpress/components', () => ( {
-	__experimentalInputControl: ( { label, value, onChange, placeholder } ) => (
+	__experimentalInputControl: ( {
+		label,
+		value,
+		onChange,
+		placeholder,
+	}: {
+		label: string;
+		value: string;
+		onChange: ( value: string ) => void;
+		placeholder?: string;
+	} ) => (
 		<input
 			aria-label={ label }
 			placeholder={ placeholder }
@@ -21,7 +36,17 @@ jest.mock( '@wordpress/components', () => ( {
 			onChange={ ( e ) => onChange( e.target.value ) }
 		/>
 	),
-	SelectControl: ( { label, value, onChange, options } ) => (
+	SelectControl: ( {
+		label,
+		value,
+		onChange,
+		options,
+	}: {
+		label: string;
+		value: string;
+		onChange: ( value: string ) => void;
+		options: { label: string; value: string }[];
+	} ) => (
 		<select aria-label={ label } value={ value } onChange={ ( e ) => onChange( e.target.value ) }>
 			{ options.map( ( option ) => (
 				<option key={ option.value } value={ option.value }>
@@ -33,15 +58,32 @@ jest.mock( '@wordpress/components', () => ( {
 } ) );
 
 // Test component that renders a specific field's Edit component
-const TestFieldEdit = ( { field, data = {}, onChange = () => {} } ) => {
-	if ( ! field.Edit ) {
+const TestFieldEdit = ( {
+	field,
+	data = {},
+	onChange = () => {},
+}: {
+	field: Field< DomainContactDetails >;
+	data?: Partial< DomainContactDetails >;
+	onChange?: () => void;
+} ) => {
+	const Edit = field.Edit as
+		ComponentType< DataFormControlProps< DomainContactDetails > > | undefined;
+	if ( ! Edit ) {
 		return <div data-testid="no-edit-component">No Edit component</div>;
 	}
 
 	return (
-		<field.Edit field={ field } data={ data } onChange={ onChange } hideLabelFromVision={ false } />
+		<Edit
+			field={ field as DataFormControlProps< DomainContactDetails >[ 'field' ] }
+			data={ data as DomainContactDetails }
+			onChange={ onChange }
+			hideLabelFromVision={ false }
+		/>
 	);
 };
+
+const asyncValidator = () => Promise.resolve( {} as DomainContactValidationResponse );
 
 describe( 'Region Address Fieldsets', () => {
 	const mockStatesListUS = [
@@ -54,7 +96,7 @@ describe( 'Region Address Fieldsets', () => {
 		{ code: 'BC', name: 'British Columbia' },
 	];
 
-	const mockCountryListWithPostalCodes = [
+	const mockCountryListWithPostalCodes: CountryListItem[] = [
 		{ code: 'US', name: 'United States', has_postal_codes: true, vat_supported: false },
 		{ code: 'CA', name: 'Canada', has_postal_codes: true, vat_supported: false },
 		{ code: 'GB', name: 'United Kingdom', has_postal_codes: true, vat_supported: false },
@@ -66,7 +108,7 @@ describe( 'Region Address Fieldsets', () => {
 		{ code: 'BE', name: 'Belgium', has_postal_codes: true, vat_supported: false },
 	];
 
-	const mockCountryListWithoutPostalCodes = [
+	const mockCountryListWithoutPostalCodes: CountryListItem[] = [
 		{ code: 'AE', name: 'United Arab Emirates', has_postal_codes: false, vat_supported: false },
 		{ code: 'HK', name: 'Hong Kong', has_postal_codes: false, vat_supported: false },
 		{ code: 'SG', name: 'Singapore', has_postal_codes: false, vat_supported: false },
@@ -74,7 +116,7 @@ describe( 'Region Address Fieldsets', () => {
 
 	describe( 'RegionAddressFieldsets function', () => {
 		test( 'should return standard address fields for US without states', () => {
-			const fields = RegionAddressFieldsets( undefined, 'US' );
+			const fields = RegionAddressFieldsets( undefined, 'US', asyncValidator );
 
 			expect( fields ).toHaveLength( 5 ); // address1, address2, city, state, postalCode
 			expect( fields.find( ( f ) => f.id === 'address1' ) ).toBeDefined();
@@ -85,34 +127,34 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return fields with custom state component when states list is provided', () => {
-			const fields = RegionAddressFieldsets( mockStatesListUS, 'US' );
+			const fields = RegionAddressFieldsets( mockStatesListUS, 'US', asyncValidator );
 			const stateField = fields.find( ( f ) => f.id === 'state' );
 
 			expect( stateField ).toBeDefined();
-			expect( stateField.Edit ).toBeDefined();
+			expect( stateField!.Edit ).toBeDefined();
 		} );
 
 		test( 'should use ZIP code label for US postal code', () => {
-			const fields = RegionAddressFieldsets( undefined, 'US' );
+			const fields = RegionAddressFieldsets( undefined, 'US', asyncValidator );
 			const postalCodeField = fields.find( ( f ) => f.id === 'postalCode' );
 
-			expect( postalCodeField.label ).toBe( 'ZIP code' );
+			expect( postalCodeField!.label ).toBe( 'ZIP code' );
 		} );
 
 		test( 'should use Postal Code label for non-US countries', () => {
-			const fields = RegionAddressFieldsets( undefined, 'CA' );
+			const fields = RegionAddressFieldsets( undefined, 'CA', asyncValidator );
 			const postalCodeField = fields.find( ( f ) => f.id === 'postalCode' );
 
-			expect( postalCodeField.label ).toBe( 'Postal Code' );
+			expect( postalCodeField!.label ).toBe( 'Postal Code' );
 		} );
 
 		test( 'should mark required fields as required', () => {
-			const fields = RegionAddressFieldsets( undefined, 'US' );
+			const fields = RegionAddressFieldsets( undefined, 'US', asyncValidator );
 
-			expect( fields.find( ( f ) => f.id === 'address1' ).isValid.required ).toBe( true );
-			expect( fields.find( ( f ) => f.id === 'city' ).isValid.required ).toBe( true );
-			expect( fields.find( ( f ) => f.id === 'postalCode' ).isValid.required ).toBe( true );
-			expect( fields.find( ( f ) => f.id === 'address2' ).isValid.required ).toBeUndefined();
+			expect( fields.find( ( f ) => f.id === 'address1' )!.isValid?.required ).toBe( true );
+			expect( fields.find( ( f ) => f.id === 'city' )!.isValid?.required ).toBe( true );
+			expect( fields.find( ( f ) => f.id === 'postalCode' )!.isValid?.required ).toBe( true );
+			expect( fields.find( ( f ) => f.id === 'address2' )!.isValid?.required ).toBeUndefined();
 		} );
 	} );
 
@@ -202,8 +244,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (desktop, with postal codes)', () => {
-			const { useViewportMatch } = require( '@wordpress/compose' );
-			useViewportMatch.mockReturnValue( false );
+			jest.mocked( useViewportMatch ).mockReturnValue( false );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
@@ -226,8 +267,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (desktop, without postal codes)', () => {
-			const { useViewportMatch } = require( '@wordpress/compose' );
-			useViewportMatch.mockReturnValue( false );
+			jest.mocked( useViewportMatch ).mockReturnValue( false );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
@@ -250,8 +290,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (mobile, with postal codes)', () => {
-			const { useViewportMatch } = require( '@wordpress/compose' );
-			useViewportMatch.mockReturnValue( true );
+			jest.mocked( useViewportMatch ).mockReturnValue( true );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
@@ -275,8 +314,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (mobile, without postal codes)', () => {
-			const { useViewportMatch } = require( '@wordpress/compose' );
-			useViewportMatch.mockReturnValue( true );
+			jest.mocked( useViewportMatch ).mockReturnValue( true );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
@@ -301,10 +339,10 @@ describe( 'Region Address Fieldsets', () => {
 
 	describe( 'State field behavior', () => {
 		test( 'should render input control when no states list provided', () => {
-			const fields = RegionAddressFieldsets( undefined, 'US' );
+			const fields = RegionAddressFieldsets( undefined, 'US', asyncValidator );
 			const stateField = fields.find( ( f ) => f.id === 'state' );
 
-			render( <TestFieldEdit field={ stateField } data={ { state: '' } } /> );
+			render( <TestFieldEdit field={ stateField! } data={ { state: '' } } /> );
 
 			const stateInput = screen.getByLabelText( 'State' );
 			expect( stateInput ).toBeInTheDocument();
@@ -312,10 +350,10 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should render select control when states list provided', () => {
-			const fields = RegionAddressFieldsets( mockStatesListUS, 'US' );
+			const fields = RegionAddressFieldsets( mockStatesListUS, 'US', asyncValidator );
 			const stateField = fields.find( ( f ) => f.id === 'state' );
 
-			render( <TestFieldEdit field={ stateField } data={ { state: 'CA' } } /> );
+			render( <TestFieldEdit field={ stateField! } data={ { state: 'CA' } } /> );
 
 			const stateSelect = screen.getByLabelText( 'Select State' );
 			expect( stateSelect ).toBeInTheDocument();
@@ -323,30 +361,30 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should use correct state label for Canada', () => {
-			const fields = RegionAddressFieldsets( mockStatesListCA, 'CA' );
+			const fields = RegionAddressFieldsets( mockStatesListCA, 'CA', asyncValidator );
 			const stateField = fields.find( ( f ) => f.id === 'state' );
 
-			render( <TestFieldEdit field={ stateField } data={ { state: 'ON' } } /> );
+			render( <TestFieldEdit field={ stateField! } data={ { state: 'ON' } } /> );
 
 			const stateSelect = screen.getByLabelText( 'Select Province' );
 			expect( stateSelect ).toBeInTheDocument();
 		} );
 
 		test( 'should leave the select unselected until a state is chosen', () => {
-			const fields = RegionAddressFieldsets( mockStatesListCA, 'CA' );
+			const fields = RegionAddressFieldsets( mockStatesListCA, 'CA', asyncValidator );
 			const stateField = fields.find( ( f ) => f.id === 'state' );
 
-			render( <TestFieldEdit field={ stateField } data={ { state: '' } } /> );
+			render( <TestFieldEdit field={ stateField! } data={ { state: '' } } /> );
 
 			expect( screen.getByLabelText( 'Select Province' ) ).toHaveValue( '' );
 			expect( screen.getByRole( 'option', { name: 'Select Province' } ) ).toHaveValue( '' );
 		} );
 
 		test( 'should populate select options from states list', () => {
-			const fields = RegionAddressFieldsets( mockStatesListUS, 'US' );
+			const fields = RegionAddressFieldsets( mockStatesListUS, 'US', asyncValidator );
 			const stateField = fields.find( ( f ) => f.id === 'state' );
 
-			render( <TestFieldEdit field={ stateField } data={ { state: 'CA' } } /> );
+			render( <TestFieldEdit field={ stateField! } data={ { state: 'CA' } } /> );
 
 			expect( screen.getByText( 'California' ) ).toBeInTheDocument();
 			expect( screen.getByText( 'New York' ) ).toBeInTheDocument();
@@ -399,7 +437,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should respect has_postal_codes: false for specific countries', () => {
-			const countryListWithMixedSupport = [
+			const countryListWithMixedSupport: CountryListItem[] = [
 				{ code: 'AE', name: 'UAE', has_postal_codes: false, vat_supported: false },
 				{ code: 'US', name: 'United States', has_postal_codes: true, vat_supported: false },
 			];
@@ -447,7 +485,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should handle VAT-supported countries with tax_country_codes', () => {
-			const countryListWithVAT = [
+			const countryListWithVAT: CountryListItem[] = [
 				{
 					code: 'NL',
 					name: 'Netherlands',
@@ -504,7 +542,7 @@ describe( 'Region Address Fieldsets', () => {
 
 	describe( 'Integration with original test scenarios', () => {
 		test( 'should handle default US behavior (equivalent to old UsAddressFieldset)', () => {
-			const fields = RegionAddressFieldsets( undefined, 'US' );
+			const fields = RegionAddressFieldsets( undefined, 'US', asyncValidator );
 			const layout = RegionAddressFieldsLayout( {
 				statesList: undefined,
 				countryList: mockCountryListWithPostalCodes,

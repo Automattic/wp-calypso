@@ -36,7 +36,6 @@
 	"types": "dist/types",
 	"dependencies": {
 		"@automattic/typography": "workspace:^",
-		"@babel/runtime": "^7.29.10",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
