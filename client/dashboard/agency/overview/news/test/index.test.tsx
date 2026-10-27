@@ -68,6 +68,24 @@ describe( '<NewsCard>', () => {
 		} );
 	} );
 
+	test( 'picking the selected filter again goes back to All', async () => {
+		const user = userEvent.setup();
+		mockAnnouncements( [ event, announcement ] );
+		render( <NewsCard agencyId={ AGENCY_ID } /> );
+
+		const filters = await screen.findByRole( 'group', { name: 'Show' } );
+		const all = within( filters ).getByRole( 'button', { name: /All/ } );
+		const announcements = within( filters ).getByRole( 'button', { name: /Announcements/ } );
+
+		await user.click( announcements );
+		expect( announcements ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( all ).toHaveAttribute( 'aria-pressed', 'false' );
+
+		await user.click( announcements );
+		expect( all ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByText( 'Run an AI visibility audit' ) ).toBeVisible();
+	} );
+
 	test( 'tracks opening an item and clicking its action', async () => {
 		const user = userEvent.setup();
 		const recordTracksEvent = jest.fn();

@@ -184,7 +184,7 @@ const agencyRoute = createRoute( {
 );
 
 // `/overview` – agency overview
-const agencyOverviewRoute = createRoute( {
+export const agencyOverviewRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
