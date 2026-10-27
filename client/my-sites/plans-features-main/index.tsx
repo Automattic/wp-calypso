@@ -220,11 +220,6 @@ export interface PlansFeaturesMainProps {
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
 	onReady?: () => void;
-	/**
-	 * Called with the resolved plans intent (props, site metadata, upsell and the escape hatch
-	 * applied) once it is known, and again whenever it changes.
-	 */
-	onIntentResolved?: ( intent: PlansIntent ) => void;
 
 	/*
 	 * Shows the free plan as a plain text anchor instead of a plan card.
@@ -294,7 +289,6 @@ const PlansFeaturesMain = ( {
 	onPlanIntervalUpdate,
 	selectedThemeType,
 	onReady,
-	onIntentResolved,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
@@ -749,12 +743,6 @@ const PlansFeaturesMain = ( {
 		defaultWpcomPlansIntent,
 	] );
 
-	useEffect( () => {
-		if ( intent ) {
-			onIntentResolved?.( intent );
-		}
-	}, [ intent, onIntentResolved ] );
-
 	const isDisplayingPlansNeededForFeature =
 		!! selectedFeature &&
 		// For plans-upgrade intent, skip isValidFeatureKey check since we want to check against "included" features
@@ -794,7 +782,7 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
-	} = usePlansGridRedesignExperiment( { isInSignup, intent } );
+	} = usePlansGridRedesignExperiment( { flowName, intent, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -1199,18 +1187,13 @@ const PlansFeaturesMain = ( {
 
 	let hidePlanSelector = false;
 	let enableTermSavingsPriceDisplay = true;
-	// The redesigned standard feature list is annual-only in signup. Intents that curate their
-	// own feature list keep the selector, as does Woo hosting solutions: it borrows the standard
-	// list but is a curated grid whose money-back guarantee copy depends on the monthly term.
-	const keepsPlanTypeSelector =
-		hasTailoredFeatureList( intent ) || intent === 'plans-woo-hosting-solutions';
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
 	if (
 		redirectToAddDomainFlow !== undefined ||
 		hidePlanTypeSelector ||
 		isVisualSplitEnabled ||
-		( usePlansGridRedesignFeatures && isInSignup && ! keepsPlanTypeSelector )
+		( usePlansGridRedesign && isInSignup )
 	) {
 		hidePlanSelector = true;
 	}
