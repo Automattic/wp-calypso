@@ -13,10 +13,6 @@ function readSearchParam( name: string ) {
 }
 
 function isPromoRunning() {
-	// Review switch for the state after the promotion ends on April 1, 2027.
-	if ( readSearchParam( 'certpromo' ) === 'ended' ) {
-		return false;
-	}
 	return new Date().toISOString().slice( 0, 10 ) <= PROMO_LAST_DAY;
 }
 
