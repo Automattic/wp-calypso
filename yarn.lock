@@ -1448,7 +1448,7 @@ __metadata:
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/wordpress__block-library": "npm:^2.6.3"
     "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/block-library": "patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch"
+    "@wordpress/block-library": "npm:^9.48.0"
     "@wordpress/blocks": "npm:^15.21.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
@@ -2585,7 +2585,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": "npm:^8.71.2"
     "@typescript-eslint/parser": "npm:^8.71.2"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
-    "@wordpress/block-library": "patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch"
+    "@wordpress/block-library": "npm:^9.48.0"
     "@wordpress/blocks": "npm:^15.21.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/data": "npm:^10.48.0"
@@ -13715,13 +13715,13 @@ __metadata:
   linkType: hard
 
 "@wordpress/interactivity-router@npm:^2.48.0":
-  version: 2.48.0
-  resolution: "@wordpress/interactivity-router@npm:2.48.0"
+  version: 2.57.0
+  resolution: "@wordpress/interactivity-router@npm:2.57.0"
   dependencies:
-    "@wordpress/a11y": "npm:^4.48.0"
-    "@wordpress/interactivity": "npm:^6.48.0"
+    "@wordpress/a11y": "npm:^4.57.0"
+    "@wordpress/interactivity": "npm:^7.0.0"
     es-module-lexer: "npm:^1.5.4"
-  checksum: 22cf5cb3fff173651513ddcec2682c19f79722529b078ba2cd71a471c6941c2f5ff270047c7703a279619d0277f272c77da2d318836683de7d65f9ca492ceab7
+  checksum: 7482ca0f7d5b01f1fa9645bcb65785ac5a602ccbaeb57052ea8e8dc09192d41305f0408289d455b3bd28df530affef86eb2860f6589e12ac60073a528b0441a0
   languageName: node
   linkType: hard
 
@@ -13732,6 +13732,17 @@ __metadata:
     "@preact/signals": "npm:^1.3.0"
     preact: "npm:^10.29.1"
   checksum: e239fdaca85d700ff9a4d63b367c264351bcdfdd2ef3452680c8caf4b41e88bfc7b4428d074c2befdae6767aba92421ed7f74be05eeb1557e57decbefeed6c99
+  languageName: node
+  linkType: hard
+
+"@wordpress/interactivity@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "@wordpress/interactivity@npm:7.0.0"
+  dependencies:
+    "@preact/signals": "npm:^1.3.0"
+    "@preact/signals-core": "npm:^1.7.0"
+    preact: "npm:^10.29.1"
+  checksum: 2d77a785308bbde647a6ea8a7835f61e6b9e2671e363eeff207bbfb76c8f78ab49367c96ebaf827a4a4a5fd158cb5634a96285099472e2d7b26ce7a735da596d
   languageName: node
   linkType: hard
 
