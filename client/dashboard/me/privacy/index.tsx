@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { EmailTrackingCard } from '../notifications-extras/email-tracking-card';
 import DoNotSellCard from './do-not-sell-card';
 import DpaCard from './dpa-card';
 import UsageInformationCard from './usage-information-card';
@@ -22,6 +23,7 @@ export default function Privacy() {
 		>
 			<VStack spacing={ 8 }>
 				<UsageInformationCard />
+				{ config.isEnabled( 'me/email-tracking-consent' ) && <EmailTrackingCard /> }
 				<DpaCard />
 				{ config.isEnabled( 'cookie-banner' ) && <DoNotSellCard /> }
 			</VStack>
