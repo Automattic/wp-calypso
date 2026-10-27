@@ -2,9 +2,12 @@ import { useCallback, useRef, useState } from '@wordpress/element';
 import {
 	getApprovalOutcome,
 	getHeldProposalId,
+	getHeldToolCall,
+	getSentToolResultIds,
 	getToolPartsFromTaskUpdate,
 	isAwaitingApproval,
 	type ActionApproval,
+	type ActionApprovalStatus,
 	type ToolCallPart,
 } from '../utils/action-approvals';
 import type { TaskUpdate } from '@automattic/agenttic-client';
@@ -25,6 +28,9 @@ type ApprovalPatch =
  * chat has no tool messages), so the held calls and how they end are read from
  * task updates: the held call's result, the result its answer streams back,
  * and the "cancelled" result a new message streams for each unanswered card.
+ * A held client tool's Allow streams no result: the server hands the call back
+ * as `input-required` under the same id, and the client runs it, so its card is
+ * in progress until the client sends the result back.
  *
  * At most one card waits at a time: the server ends the turn at a held call, so
  * a newer held call means an earlier one was left behind, and it shows as not
@@ -64,10 +70,42 @@ export function useActionApprovals( streamGeneration: symbol ) {
 		[]
 	);
 
+	const setApprovalStatuses = useCallback(
+		( toolCallIds: string[], from: ActionApprovalStatus, to: ActionApprovalStatus ) => {
+			updateApprovals( ( byToolCallId ) => {
+				let hasChanged = false;
+				for ( const toolCallId of toolCallIds ) {
+					const approval = byToolCallId.get( toolCallId );
+					if ( approval?.status === from ) {
+						byToolCallId.set( toolCallId, { ...approval, status: to, message: undefined } );
+						hasChanged = true;
+					}
+				}
+
+				return hasChanged ? byToolCallId : undefined;
+			} );
+		},
+		[ updateApprovals ]
+	);
+
 	// The caller drops updates from an earlier stream generation.
 	const recordApprovalUpdate = useCallback(
 		( update: TaskUpdate ) => {
 			const { calls, results } = getToolPartsFromTaskUpdate( update );
+			if ( update.status?.state === 'input-required' ) {
+				setApprovalStatuses(
+					calls.map( ( { toolCallId } ) => toolCallId ),
+					'sending',
+					'in-progress'
+				);
+				return;
+			}
+			const sentToolResultIds = getSentToolResultIds( update );
+			if ( sentToolResultIds.length > 0 ) {
+				setApprovalStatuses( sentToolResultIds, 'in-progress', 'done' );
+				return;
+			}
+
 			calls.forEach( ( call ) => toolCallsRef.current.set( call.toolCallId, call ) );
 			if ( results.length === 0 ) {
 				return;
@@ -88,6 +126,7 @@ export function useActionApprovals( streamGeneration: symbol ) {
 					const proposalId = getHeldProposalId( result );
 
 					if ( proposalId !== undefined && ! approval ) {
+						const heldToolCall = getHeldToolCall( result );
 						byToolCallId.forEach( ( earlier, earlierToolCallId ) => {
 							if ( isAwaitingApproval( earlier ) ) {
 								byToolCallId.set( earlierToolCallId, { ...earlier, status: 'cancelled' } );
@@ -95,9 +134,9 @@ export function useActionApprovals( streamGeneration: symbol ) {
 						} );
 						byToolCallId.set( toolCallId, {
 							toolCallId,
-							toolId,
+							toolId: heldToolCall.toolId ?? toolId,
 							proposalId,
-							arguments: callArguments.get( toolCallId ) ?? {},
+							arguments: callArguments.get( toolCallId ) ?? heldToolCall.arguments ?? {},
 							status: 'pending',
 							timestamp: Date.now(),
 						} );
@@ -119,7 +158,7 @@ export function useActionApprovals( streamGeneration: symbol ) {
 				return hasChanged ? byToolCallId : undefined;
 			} );
 		},
-		[ updateApprovals ]
+		[ setApprovalStatuses, updateApprovals ]
 	);
 
 	const updateApproval = useCallback(

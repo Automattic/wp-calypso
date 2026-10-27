@@ -98,6 +98,42 @@ export function getHeldProposalId( result: unknown ): number | undefined {
 		: undefined;
 }
 
+/**
+ * The tool id and arguments a held client tool's result carries. The server
+ * streams no call part for it, since the client would run the call on receipt.
+ */
+export function getHeldToolCall(
+	result: unknown
+): Partial< Pick< ToolCallPart, 'toolId' | 'arguments' > > {
+	if ( ! isRecord( result ) ) {
+		return {};
+	}
+
+	return {
+		...( typeof result.tool_id === 'string' && result.tool_id && { toolId: result.tool_id } ),
+		...( isRecord( result.arguments ) && { arguments: result.arguments } ),
+	};
+}
+
+/**
+ * The calls whose results the client sends back to the agent, after it ran
+ * them for an `input-required` update: its `working` message replays them with
+ * the history.
+ */
+export function getSentToolResultIds( update: TaskUpdate ): string[] {
+	const message = update.status?.message;
+	if ( update.kind === 'delta' || update.status?.state !== 'working' || message?.role !== 'user' ) {
+		return [];
+	}
+
+	return ( message.parts ?? [] ).flatMap( ( part ) => {
+		const data: unknown = part.type === 'data' ? part.data : undefined;
+		return isRecord( data ) && 'result' in data && typeof data.toolCallId === 'string'
+			? [ data.toolCallId ]
+			: [];
+	} );
+}
+
 /** How a held call ended, from the result the server sends once it is answered. */
 export function getApprovalOutcome(
 	result: unknown

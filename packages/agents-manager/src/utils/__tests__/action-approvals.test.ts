@@ -4,6 +4,8 @@ import {
 	getApprovalOutcome,
 	getApprovalStatusMessage,
 	getHeldProposalId,
+	getHeldToolCall,
+	getSentToolResultIds,
 	getToolPartsFromTaskUpdate,
 	insertApprovalCardMessages,
 	type ActionApproval,
@@ -26,11 +28,14 @@ const HELD_RESULT = {
 	message: 'Not performed. The user was asked to approve this action and has not answered yet.',
 };
 
-function taskUpdate( parts: unknown[], { role = 'agent', kind = 'status' } = {} ) {
+function taskUpdate(
+	parts: unknown[],
+	{ role = 'agent', kind = 'status', state = 'working' } = {}
+) {
 	return {
 		id: 'task-1',
 		kind,
-		status: { state: 'working', message: { role, parts } },
+		status: { state, message: { role, parts } },
 	} as unknown as TaskUpdate;
 }
 
@@ -100,6 +105,54 @@ describe( 'getHeldProposalId', () => {
 		[ 'a plain result', 'ok', undefined ],
 	] )( 'reads %s', ( _label, result, expected ) => {
 		expect( getHeldProposalId( result ) ).toBe( expected );
+	} );
+} );
+
+describe( 'getHeldToolCall', () => {
+	it( 'reads the tool id and arguments a held client tool carries', () => {
+		expect(
+			getHeldToolCall( {
+				...HELD_RESULT,
+				tool_id: 'site_editor_navigate',
+				arguments: { path: '/wp-admin/site-editor.php' },
+			} )
+		).toEqual( {
+			toolId: 'site_editor_navigate',
+			arguments: { path: '/wp-admin/site-editor.php' },
+		} );
+	} );
+
+	it.each( [
+		[ 'a held server ability', HELD_RESULT ],
+		[ 'a plain result', 'ok' ],
+		[ 'arguments that aren’t an object', { ...HELD_RESULT, tool_id: '', arguments: 'x' } ],
+	] )( 'reads nothing from %s', ( _label, result ) => {
+		expect( getHeldToolCall( result ) ).toEqual( {} );
+	} );
+} );
+
+describe( 'getSentToolResultIds', () => {
+	const sentResult = {
+		type: 'data',
+		data: { toolCallId: 'toolu_abc', toolId: 'site_editor_navigate', result: { success: true } },
+	};
+	const historyCall = {
+		type: 'data',
+		data: { toolCallId: 'toolu_abc', toolId: 'site_editor_navigate', arguments: {} },
+	};
+
+	it( 'reads the results the client sends back after running a call', () => {
+		expect(
+			getSentToolResultIds( taskUpdate( [ historyCall, sentResult ], { role: 'user' } ) )
+		).toEqual( [ 'toolu_abc' ] );
+	} );
+
+	it.each( [
+		[ 'an agent message', { role: 'agent' } ],
+		[ 'a delta', { role: 'user', kind: 'delta' } ],
+		[ 'a running update', { role: 'user', state: 'running' } ],
+	] )( 'reads nothing from %s', ( _label, options ) => {
+		expect( getSentToolResultIds( taskUpdate( [ sentResult ], options ) ) ).toEqual( [] );
 	} );
 } );
 
