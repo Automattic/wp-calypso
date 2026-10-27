@@ -18,19 +18,13 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 	const { data: referrals } = useQuery( referralsQuery( agency?.id ?? 0 ) );
 	const isMobile = useViewportMatch( 'mobile', '<' );
 	// Kept in the tree in both modes, hidden in buy mode, so the header doesn't shift on toggle.
+	// It sits before the switch so its hidden space doesn't push the switch away from the cart.
 	// Phones have no room for it beside the switch.
 	const showEarnings = ! isMobile && referrals?.length === 0;
 
 	return (
 		<HStack spacing={ 2 } expanded={ false } alignment="center">
 			{ isGateOpen && <ApprovalGate kind="referral" onClose={ closeGate } /> }
-			<ToggleControl
-				__nextHasNoMarginBottom
-				checked={ checked }
-				disabled={ disabled }
-				label={ __( 'Refer to clients' ) }
-				onChange={ onChange }
-			/>
 			{ showEarnings && (
 				<Badge
 					intent="informational"
@@ -50,6 +44,13 @@ export default function ReferralToggle( { kind }: { kind: 'products' | 'hosting'
 							) }
 				</Badge>
 			) }
+			<ToggleControl
+				__nextHasNoMarginBottom
+				checked={ checked }
+				disabled={ disabled }
+				label={ __( 'Refer to clients' ) }
+				onChange={ onChange }
+			/>
 		</HStack>
 	);
 }

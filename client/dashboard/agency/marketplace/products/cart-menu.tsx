@@ -122,6 +122,7 @@ export default function CartMenu( {
 		<>
 			{ isGateOpen && <ApprovalGate kind="purchase" onClose={ () => setIsGateOpen( false ) } /> }
 			<Dropdown
+				className="dashboard-marketplace-products__cart-menu"
 				open={ open }
 				onToggle={ onToggle }
 				popoverProps={ { placement: 'bottom-end' } }
