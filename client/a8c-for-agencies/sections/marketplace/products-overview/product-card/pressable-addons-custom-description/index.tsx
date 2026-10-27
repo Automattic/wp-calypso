@@ -26,13 +26,13 @@ export default function PressableAddonsCustomDescription( {
 	const getCalloutCopy = () => {
 		if ( ! context ) {
 			return translate(
-				'This add-on increases your Signature plan limits while your plan is active.'
+				'This add-on increases your Pressable plan limits while your plan is active.'
 			);
 		}
 
 		if ( addOnType === 'sites' ) {
 			return translate(
-				'Site limit will be increased by %(installs)s, storage by %(storage)s, and visits by %(visits)s on your Signature plan.',
+				'Site limit will be increased by %(installs)s, storage by %(storage)s, and visits by %(visits)s on your Pressable plan.',
 				{
 					args: {
 						installs: context.formattedInstall,
@@ -44,7 +44,7 @@ export default function PressableAddonsCustomDescription( {
 		}
 
 		if ( addOnType === 'storage' ) {
-			return translate( 'Storage limit will be increased by %(storage)s on your Signature plan.', {
+			return translate( 'Storage limit will be increased by %(storage)s on your Pressable plan.', {
 				args: {
 					storage: context.formattedStorage,
 				},
@@ -53,7 +53,7 @@ export default function PressableAddonsCustomDescription( {
 
 		if ( addOnType === 'visits' ) {
 			return translate(
-				'Visits limit will be increased by %(visits)s monthly visits on your Signature plan.',
+				'Visits limit will be increased by %(visits)s monthly visits on your Pressable plan.',
 				{
 					args: {
 						visits: context.formattedVisits,
@@ -87,7 +87,7 @@ export default function PressableAddonsCustomDescription( {
 		}
 
 		return translate(
-			'This add-on increases your Signature plan limits while your plan is active.'
+			'This add-on increases your Pressable plan limits while your plan is active.'
 		);
 	};
 
@@ -98,8 +98,8 @@ export default function PressableAddonsCustomDescription( {
 
 		if ( addOnType === 'sites' ) {
 			return translate(
-				'This add-on increases your Signature plan by %(installs)s site, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
-				'This add-on increases your Signature plan by %(installs)s sites, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
+				'This add-on increases your Pressable plan by %(installs)s site, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
+				'This add-on increases your Pressable plan by %(installs)s sites, %(storage)s of storage, and %(visits)s monthly visits while your plan is active.',
 				{
 					args: {
 						installs: context.formattedInstall,
@@ -113,7 +113,7 @@ export default function PressableAddonsCustomDescription( {
 
 		if ( addOnType === 'storage' ) {
 			return translate(
-				'This add-on increases your Signature plan by %(storage)s of storage while your plan is active.',
+				'This add-on increases your Pressable plan by %(storage)s of storage while your plan is active.',
 				{
 					args: {
 						storage: context.formattedStorage,
@@ -124,7 +124,7 @@ export default function PressableAddonsCustomDescription( {
 
 		if ( addOnType === 'visits' ) {
 			return translate(
-				'This add-on increases your Signature plan by %(visits)s monthly visits while your plan is active.',
+				'This add-on increases your Pressable plan by %(visits)s monthly visits while your plan is active.',
 				{
 					args: {
 						visits: context.formattedVisits,
@@ -136,7 +136,7 @@ export default function PressableAddonsCustomDescription( {
 		if ( addOnType === 'phpMemory' ) {
 			if ( normalizedSiteDomain ) {
 				return translate(
-					'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on %(siteDomain)s while your Signature plan is active.',
+					'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on %(siteDomain)s while your Pressable plan is active.',
 					{
 						args: {
 							phpMemory: context.formattedPhpMemory,
@@ -148,7 +148,7 @@ export default function PressableAddonsCustomDescription( {
 			}
 
 			return translate(
-				'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on one Pressable site/domain while your Signature plan is active.',
+				'This add-on increases PHP memory by %(phpMemory)s for each PHP worker/process on one Pressable site/domain while your Pressable plan is active.',
 				{
 					args: {
 						phpMemory: context.formattedPhpMemory,

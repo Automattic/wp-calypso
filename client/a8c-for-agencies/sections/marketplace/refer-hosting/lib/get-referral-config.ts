@@ -6,19 +6,19 @@ export const getReferralConfig = (
 ) => ( {
 	pageTitle: {
 		enterprise: translate( 'Refer Enterprise Hosting' ),
-		premium: translate( 'Refer Premium Plan' ),
+		premium: translate( 'Refer Performance plan' ),
 	}[ type ],
 	formTitle: {
 		enterprise: translate( 'Refer a client for WordPress VIP hosting' ),
-		premium: translate( 'Refer your client to a Premium plan' ),
+		premium: translate( 'Refer your client to a Performance plan' ),
 	}[ type ],
 	successTitle: {
 		enterprise: translate( 'Thank you for your WordPress VIP referral' ),
-		premium: translate( 'Thank you for your Premium plan referral' ),
+		premium: translate( 'Thank you for your Performance plan referral' ),
 	}[ type ],
 	ctaText: {
 		enterprise: translate( 'Submit VIP referral' ),
-		premium: translate( 'Submit Premium plan referral' ),
+		premium: translate( 'Submit Performance plan referral' ),
 	}[ type ],
 	companyTitle: {
 		enterprise: translate( 'Your client’s company information' ),

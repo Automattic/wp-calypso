@@ -11,15 +11,15 @@ export function getReferralConfig( type: ReferHostingType ) {
 		type,
 		formTitle: {
 			enterprise: __( 'Refer a client for WordPress VIP hosting' ),
-			premium: __( 'Refer your client to a Premium plan' ),
+			premium: __( 'Refer your client to a Performance plan' ),
 		}[ type ],
 		successTitle: {
 			enterprise: __( 'Thank you for your WordPress VIP referral' ),
-			premium: __( 'Thank you for your Premium plan referral' ),
+			premium: __( 'Thank you for your Performance plan referral' ),
 		}[ type ],
 		ctaText: {
 			enterprise: __( 'Submit VIP referral' ),
-			premium: __( 'Submit Premium plan referral' ),
+			premium: __( 'Submit Performance plan referral' ),
 		}[ type ],
 		hasEnterpriseFields: type === 'enterprise',
 		backToSection: { enterprise: 'vip', premium: 'pressable' }[ type ] as HostingSection,
