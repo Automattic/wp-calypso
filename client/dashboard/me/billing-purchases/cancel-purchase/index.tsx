@@ -91,7 +91,7 @@ import {
 import CancellationPreSurveyContent from './cancellation-pre-survey-content';
 import DomainRemovalFlow from './domain-removal-flow';
 import enrichedSurveyData from './enriched-survey-data';
-import { getSolutionsForReason } from './get-solutions-for-reason';
+import { getSolutionsForReason, getSolutionsReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
@@ -659,6 +659,7 @@ function CancelPurchaseInner() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
+			solutionsReason: '',
 			surveyShown: surveyShownInitial,
 			surveyStep: firstStep,
 			upsell: '',
@@ -799,6 +800,7 @@ function CancelPurchaseInner() {
 			...state,
 			questionOneRadio: value,
 			questionOneText: '',
+			solutionsReason: '',
 			upsell: '',
 		} ) );
 	};
@@ -1140,13 +1142,15 @@ function CancelPurchaseInner() {
 			canDowngrade: !! downgradeClick,
 			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
 		} );
+		const solutionsReason = getSolutionsReason( value, detailsValue, state.questionOneRadio );
 		const hasSolutionsCards =
-			showCancelOptionsCards && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+			showCancelOptionsCards && ( getSolutionsForReason( solutionsReason )?.length ?? 0 ) > 0;
 
 		setState( ( state ) => ( {
 			...state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
+			solutionsReason,
 			upsell: upsellType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		} ) );
 	};
@@ -1745,7 +1749,7 @@ function CancelPurchaseInner() {
 	const isSolutionsStep =
 		state.surveyStep === UPSELL_STEP &&
 		showCancelOptionsCards &&
-		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
+		( getSolutionsForReason( state.solutionsReason ?? '' )?.length ?? 0 ) > 0;
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
 	// `surveyShown` gate.
@@ -1803,6 +1807,7 @@ function CancelPurchaseInner() {
 			refundAmount={ purchase.total_refund_amount }
 			siteSlug={ siteSlug }
 			solution={ state.solution }
+			solutionsReason={ state.solutionsReason }
 			surveyStep={ state.surveyStep }
 			allSteps={ allSteps }
 			upsell={ state.upsell }

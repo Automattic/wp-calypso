@@ -27,6 +27,7 @@ export interface CancelPurchaseState {
 	siteId?: number;
 	skipRemovePlanSurvey?: boolean;
 	solution?: string;
+	solutionsReason?: string;
 	surveyShown?: boolean;
 	surveyStep?: string;
 	upsell?: string;
