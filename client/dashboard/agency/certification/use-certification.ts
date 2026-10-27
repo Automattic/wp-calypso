@@ -40,8 +40,10 @@ export function useCertification() {
 		year: 'numeric',
 	} );
 
-	// HubSpot leaves the property empty when it isn't set on the coupon.
+	// HubSpot leaves the property empty when it isn't set on the coupon. An active
+	// coupon with no discount is a data error, so zero falls back to the tier's too.
 	const couponDiscount = Number.parseFloat( coupon?.discount_percent ?? '' );
+	const hasCouponDiscount = Number.isFinite( couponDiscount ) && couponDiscount > 0;
 
 	return {
 		// Nothing to show unless the agency has an active coupon.
@@ -49,7 +51,7 @@ export function useCertification() {
 		isLoading,
 		code: coupon?.code ?? '',
 		tierId,
-		discount: Number.isFinite( couponDiscount ) ? couponDiscount : getDiscount( tierId, isPromo ),
+		discount: hasCouponDiscount ? couponDiscount : getDiscount( tierId, isPromo ),
 		isPromo,
 		promoLastDay,
 	};
