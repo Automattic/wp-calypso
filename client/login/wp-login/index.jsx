@@ -26,8 +26,7 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
-import isOnboardingAccountStepUrl from 'calypso/lib/signup/is-onboarding-account-step-url';
-import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
+import { useEntryClarityLoginTreatment } from 'calypso/lib/signup/use-entry-clarity-experiment';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -539,15 +538,10 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
-	// Only logged-out visitors who reach the main login view from the onboarding account step take
-	// part. The step assigned them already, so the login page follows that assignment and a cold
-	// visit to /log-in never requests one. Gravatar-powered logins have their own layout, which the
-	// treatment does not change.
-	const isEntryClarityTreatment = useEntryClarityExperiment(
-		props.isLoginView &&
-			! props.isUserLoggedIn &&
-			! props.isGravPoweredClient &&
-			isOnboardingAccountStepUrl( props.signupUrl )
+	// Logged-out visitors on the main login view. Gravatar-powered logins have their own layout,
+	// which the treatment does not change.
+	const isEntryClarityTreatment = useEntryClarityLoginTreatment(
+		props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient
 	);
 
 	return (
