@@ -172,10 +172,10 @@ class Document extends Component {
 					shouldPrefetchRestProxy={ ! app?.isFirefox }
 				>
 					{ head.metas.map( ( props, index ) => (
-						<meta { ...props } key={ index } />
+						<meta { ...props } key={ index } data-calypso-document-head />
 					) ) }
 					{ head.links.map( ( props, index ) => (
-						<link { ...props } key={ index } />
+						<link { ...props } key={ index } data-calypso-document-head />
 					) ) }
 					{ chunkCssLinks( entrypoint, shouldUseRtlCss ) }
 					{ chunkCssLinks( chunkFiles, shouldUseRtlCss ) }
