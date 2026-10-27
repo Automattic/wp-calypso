@@ -16,7 +16,10 @@ function mockAgency() {
 }
 
 function mockDiscountCode( coupon: Partial< AgencyApwdDiscountCode > | null ) {
-	return nock( API ).get( '/wpcom/v2/agency/1/apwd-discount-code' ).reply( 200, coupon );
+	// Serialized by hand because nock's body type has no null, which the endpoint returns.
+	return nock( API )
+		.get( '/wpcom/v2/agency/1/apwd-discount-code' )
+		.reply( 200, JSON.stringify( coupon ), { 'Content-Type': 'application/json' } );
 }
 
 describe( '<CertificationTierPageCard>', () => {
