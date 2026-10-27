@@ -157,8 +157,9 @@ function trackCta(
 	announcement: Announcement,
 	ctaId: 'primary' | 'secondary'
 ) {
-	recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
-		event_id: announcement.id,
+	recordTracksEvent?.( 'calypso_a4a_overview_news_cta_click', {
+		announcement_id: announcement.id,
+		announcement_type: announcement.type,
 		cta_id: ctaId,
 	} );
 }

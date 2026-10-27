@@ -265,6 +265,7 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 	const filterValue: NewsFilter =
 		TYPE_ORDER.find( ( type ) => type === typeFilter?.value ) ?? 'all';
 	const changeFilter = ( value: NewsFilter ) => {
+		actionProps.recordTracksEvent?.( 'calypso_a4a_overview_news_filter_click', { filter: value } );
 		setView( {
 			...view,
 			filters: value === 'all' ? [] : [ { field: 'type', operator: 'is', value } ],
@@ -304,9 +305,17 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 							announcement={ announcement }
 							isOpen={ openItemId === announcement.id }
 							canToggle={ announcements.length > 1 }
-							onToggle={ () =>
-								setOpenId( openItemId === announcement.id ? null : announcement.id )
-							}
+							onToggle={ () => {
+								if ( openItemId === announcement.id ) {
+									setOpenId( null );
+									return;
+								}
+								actionProps.recordTracksEvent?.( 'calypso_a4a_overview_news_item_open', {
+									announcement_id: announcement.id,
+									announcement_type: announcement.type,
+								} );
+								setOpenId( announcement.id );
+							} }
 							{ ...actionProps }
 						/>
 					</Fragment>
