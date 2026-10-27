@@ -125,15 +125,24 @@ export class SectionImport extends Component {
 			const { importerState, type: importerId } = importItem;
 			let eventProps = {};
 
+			if (
+				importerState === appStates.UPLOAD_FAILURE ||
+				importerState === appStates.IMPORT_FAILURE
+			) {
+				eventProps = {
+					error_code: importItem.errorData?.code,
+					error_type: importItem.errorData?.type,
+					...( importItem.importerFileType && {
+						importer_file_type: importItem.importerFileType,
+					} ),
+				};
+			}
+
 			// Log more info about upload failures
 			if ( importerState === appStates.UPLOAD_FAILURE ) {
-				eventProps = {
-					error_code: importItem.errorData.code,
-					error_type: importItem.errorData.type,
-					filesize_range: importItem.file?.size
-						? bytesToFilesizeRange( importItem.file.size )
-						: null,
-				};
+				eventProps.filesize_range = importItem.file?.size
+					? bytesToFilesizeRange( importItem.file.size )
+					: null;
 			}
 
 			if ( importerState === appStates.IMPORT_SUCCESS && ! this.state.latestSuccessImport ) {

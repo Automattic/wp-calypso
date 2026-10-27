@@ -104,6 +104,83 @@ describe( 'SectionImport', () => {
 			] );
 		} );
 
+		test( 'records the error code, type and file type on import failures', () => {
+			const { recordTracksEvent, update } = renderSectionImport( [] );
+
+			update( [
+				{
+					type: 'importer-type-wordpress',
+					importerState: appStates.IMPORT_FAILURE,
+					importerFileType: 'playground',
+					errorData: {
+						type: 'importError',
+						code: 'some_code',
+						description: 'A translated message (ID: 123)',
+					},
+				},
+			] );
+
+			expect( recordTracksEvent.mock.calls ).toEqual( [
+				[
+					'calypso_importer_import_fail',
+					{
+						importer_id: 'importer-type-wordpress',
+						error_code: 'some_code',
+						error_type: 'importError',
+						importer_file_type: 'playground',
+					},
+				],
+			] );
+		} );
+
+		test( 'records failures that have no error data', () => {
+			const { recordTracksEvent, update } = renderSectionImport( [] );
+
+			update( [
+				{ type: 'importer-type-wordpress', importerState: appStates.IMPORT_FAILURE },
+				{ type: 'importer-type-medium', importerState: appStates.UPLOAD_FAILURE },
+			] );
+
+			expect( recordTracksEvent.mock.calls ).toEqual( [
+				[
+					'calypso_importer_import_fail',
+					{ importer_id: 'importer-type-wordpress', error_code: undefined, error_type: undefined },
+				],
+				[
+					'calypso_importer_upload_fail',
+					{
+						importer_id: 'importer-type-medium',
+						error_code: undefined,
+						error_type: undefined,
+						filesize_range: null,
+					},
+				],
+			] );
+			expect( Object.keys( recordTracksEvent.mock.calls[ 0 ][ 1 ] ) ).not.toContain(
+				'importer_file_type'
+			);
+		} );
+
+		test( 'records the file type and size range on upload failures', () => {
+			const { recordTracksEvent, update } = renderSectionImport( [] );
+
+			update( [
+				{
+					...uploadFailure( { type: 'uploadError', code: 'no_import_file' } ),
+					importerFileType: 'content',
+					file: { size: 150 * 1024 * 1024 },
+				},
+			] );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_importer_upload_fail', {
+				importer_id: 'importer-type-wordpress',
+				error_code: 'no_import_file',
+				error_type: 'uploadError',
+				importer_file_type: 'content',
+				filesize_range: '100—200MB',
+			} );
+		} );
+
 		test( 'tracks each importer independently', () => {
 			const wordpress = {
 				importerId: 'wordpress-1',
