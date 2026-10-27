@@ -21,7 +21,7 @@ type Rect = Size & {
 	top: number;
 };
 
-type InsightScreenshotWithOverlayProps = {
+type InsightScreenshotProps = {
 	nodeId: string;
 	screenshot: {
 		data: string;
@@ -127,7 +127,7 @@ export const InsightScreenshot = ( {
 	screenshot,
 	elementRectSC,
 	maxRenderSizeDC,
-}: InsightScreenshotWithOverlayProps ) => {
+}: InsightScreenshotProps ) => {
 	const zoomFactor = computeZoomFactor( elementRectSC, maxRenderSizeDC );
 
 	const elementPreviewSizeSC = {
@@ -200,7 +200,7 @@ export const InsightScreenshotWithOverlay = ( {
 	screenshot,
 	elementRectSC,
 	maxRenderSizeDC,
-}: InsightScreenshotWithOverlayProps ) => {
+}: InsightScreenshotProps ) => {
 	const [ isOpen, setIsOpen ] = useState( false );
 
 	const maxLightboxSize = {
