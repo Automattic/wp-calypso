@@ -1,6 +1,7 @@
 import {
 	getAnsweredRequiredFieldCount,
 	getLeadMatchingFormData,
+	REQUIRED_LEAD_MATCHING_FIELDS,
 } from '../partner-directory/lead-matching/form-data';
 import type { AgencyLeadMatchingResponse } from '@automattic/api-core';
 
@@ -19,4 +20,12 @@ export function getAnsweredMatchingProfileCount(
 	}
 
 	return getAnsweredRequiredFieldCount( getLeadMatchingFormData( response.lead_matching_profile ) );
+}
+
+export function hasIncompleteSavedMatchingProfile(
+	agencyId: number,
+	response: AgencyLeadMatchingResponse | undefined
+): boolean {
+	const answered = getAnsweredMatchingProfileCount( agencyId, response );
+	return answered !== undefined && answered < REQUIRED_LEAD_MATCHING_FIELDS.length;
 }

@@ -1,4 +1,5 @@
 import { activeAgencyQuery, agencyLeadMatchingQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -27,7 +28,10 @@ import { useContactSupport } from '../support/use-contact-support';
 import { isProPartnerOrHigher } from '../tiers/get-current-agency-tier';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
-import { getAnsweredMatchingProfileCount } from './matching-profile-visibility';
+import {
+	getAnsweredMatchingProfileCount,
+	hasIncompleteSavedMatchingProfile,
+} from './matching-profile-visibility';
 import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
 import usePressableOfferEligibility from './use-pressable-offer-eligibility';
@@ -61,6 +65,8 @@ export default function AgencyOverview() {
 		? getAnsweredMatchingProfileCount( agencyId, leadMatching )
 		: undefined;
 	const contact = leadMatching?.lead_matching_profile?.contact;
+	const isLeadMatchingEnabled =
+		isEnabled( 'a4a-lead-matching-design-preview' ) && canAccessLeadMatching;
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
@@ -131,6 +137,11 @@ export default function AgencyOverview() {
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+				showMatchingProfilePreview={
+					isLeadMatchingEnabled &&
+					isLeadMatchingSuccess &&
+					hasIncompleteSavedMatchingProfile( agencyId, leadMatching )
+				}
 				showContactOptionsAnnouncement={
 					canAccessLeadMatching &&
 					answeredRequiredFieldCount === REQUIRED_LEAD_MATCHING_FIELDS.length &&
