@@ -17,7 +17,8 @@ import {
 
 /**
  * The legacy `/start/<plan>` signup flows, which exist only to preselect a plan, plus
- * `/start/plans-first`, and the data needed to serve them from Stepper's onboarding flow instead.
+ * `/start/plans-first` and `/start/import`, and the data needed to serve them from Stepper's
+ * onboarding flow instead.
  */
 
 /** Flow name as it appears in the wild, mapped to the plan it preselects. */
@@ -53,12 +54,16 @@ export type RedirectedPlanFlow = keyof typeof REDIRECTED_PLAN_FLOWS;
 // order and takes the coupon to checkout, so this one names no plan.
 const PLANS_FIRST_FLOW = 'plans-first';
 
-type RedirectedFlow = RedirectedPlanFlow | typeof PLANS_FIRST_FLOW;
+// For bringing content from another site: onboarding hands the new site to site migration.
+const IMPORT_FLOW = 'import';
+
+type RedirectedFlow = RedirectedPlanFlow | typeof PLANS_FIRST_FLOW | typeof IMPORT_FLOW;
 
 /** Every flow redirected here, which the server's route matcher is built from. */
 export const REDIRECTED_FLOWS: readonly string[] = [
 	...Object.keys( REDIRECTED_PLAN_FLOWS ),
 	PLANS_FIRST_FLOW,
+	IMPORT_FLOW,
 ];
 export type PreselectablePlan = ( typeof REDIRECTED_PLAN_FLOWS )[ RedirectedPlanFlow ];
 
@@ -119,7 +124,9 @@ export function getLegacyPlanFlowRedirect(
 	}
 
 	// Last, so a caller cannot name its own plan through a flow that already names one.
-	if ( flow !== PLANS_FIRST_FLOW ) {
+	if ( flow === IMPORT_FLOW ) {
+		forwarded.import = '1';
+	} else if ( flow !== PLANS_FIRST_FLOW ) {
 		forwarded.plan = REDIRECTED_PLAN_FLOWS[ flow ];
 	}
 

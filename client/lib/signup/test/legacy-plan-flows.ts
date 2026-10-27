@@ -36,6 +36,15 @@ describe( 'legacy plan flows', () => {
 		expect( url.searchParams.has( 'plan' ) ).toBe( false );
 	} );
 
+	it( 'sends import to onboarding marked to end in site migration', () => {
+		const url = target( 'import', { ref: 'import-lp' } );
+
+		expect( url.pathname ).toBe( '/setup/onboarding' );
+		expect( url.searchParams.get( 'import' ) ).toBe( '1' );
+		expect( url.searchParams.get( 'ref' ) ).toBe( 'import-lp' );
+		expect( url.searchParams.has( 'plan' ) ).toBe( false );
+	} );
+
 	// The server route matcher is built from the map, so a flow outside it must fall through
 	// to the legacy signup section rather than redirect.
 	it( 'redirects only the flows it maps', () => {

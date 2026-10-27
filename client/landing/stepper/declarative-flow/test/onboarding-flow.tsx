@@ -434,6 +434,52 @@ describe( 'Onboarding Flow', () => {
 			} );
 		} );
 
+		describe( 'import destination', () => {
+			const SITE_MIGRATION = '/setup/site-migration?siteSlug=test-site.wordpress.com';
+
+			beforeEach( () => {
+				mockPostPlanSelectionEmailVerification = false;
+			} );
+
+			const finishProcessing = async ( dependencies: Record< string, unknown > ) => {
+				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
+
+				await runUseStepNavigationSubmit( {
+					currentStep: STEPS.PROCESSING.slug,
+					currentURL: '/setup/onboarding/processing?import=1',
+					dependencies: {
+						siteSlug: 'test-site.wordpress.com',
+						siteId: 123,
+						processingResult: ProcessingResult.SUCCESS,
+						...dependencies,
+					},
+				} );
+				await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+
+				return ( window.location.replace as jest.Mock ).mock.calls[ 0 ][ 0 ];
+			};
+
+			// Without this, a free site stops at the setup chooser instead of bringing its content over.
+			it( 'hands a free site to site migration', async () => {
+				expect( await finishProcessing( { postCheckoutBigSky: true } ) ).toBe( SITE_MIGRATION );
+			} );
+
+			// Without this, checkout returns to the setup chooser.
+			it( 'sends a paid site from checkout to site migration', async () => {
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+
+				expect( checkoutUrl.searchParams.get( 'redirect_to' ) ).toBe( SITE_MIGRATION );
+			} );
+
+			// Without this, leaving checkout to pick Free turns the import into plain onboarding.
+			it( 'keeps the import on checkout back URLs', async () => {
+				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
+				const back = new URL( checkoutUrl.searchParams.get( 'checkoutBackUrl' ) ?? '' );
+
+				expect( back.searchParams.get( 'import' ) ).toBe( '1' );
+			} );
+		} );
+
 		describe( 'Survicate side effect', () => {
 			it( 'calls addSurvicate with user data when logged in on step changes', () => {
 				const loggedInState = {

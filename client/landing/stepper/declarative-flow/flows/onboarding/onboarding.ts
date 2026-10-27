@@ -2,7 +2,12 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
-import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import {
+	clearStepPersistedState,
+	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
@@ -413,6 +418,14 @@ const onboarding: FlowV2< typeof initialize > = {
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
+		// From `/start/import`: the run ends in site migration, which brings the content over.
+		const isImport = queryParams.get( 'import' ) === '1';
+		// Every URL that re-enters onboarding must keep these, or the run loses its ending.
+		const endingQueryArgs = {
+			...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+			...( isImport ? { import: '1' } : {} ),
+		};
+		const hasFixedEnding = !! blogPostToReblog || isImport;
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -456,6 +469,12 @@ const onboarding: FlowV2< typeof initialize > = {
 			if ( blogPostToReblog && providedDependencies.siteSlug ) {
 				return addQueryArgs( `/post/${ providedDependencies.siteSlug }`, {
 					url: blogPostToReblog,
+				} );
+			}
+
+			if ( isImport && providedDependencies.siteSlug ) {
+				return addQueryArgs( `/setup/${ SITE_MIGRATION_FLOW }`, {
+					siteSlug: providedDependencies.siteSlug,
 				} );
 			}
 
@@ -801,7 +820,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								siteSlug: siteSlugParam,
 								...( siteIdParam ? { siteId: siteIdParam } : {} ),
 								...( refParameter ? { ref: refParameter } : {} ),
-								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+								...endingQueryArgs,
 							} )
 						);
 						return;
@@ -863,17 +882,17 @@ const onboarding: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId: providedDependencies.siteId,
 										...( refParameter ? { ref: refParameter } : {} ),
-										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+										...endingQueryArgs,
 									}
 								);
 							}
 
-							// Leaving checkout must not turn a reblog into plain onboarding.
+							// Leaving checkout must not turn a reblog or an import into plain onboarding.
 							// The plans grid prices a coupon only from the URL.
 							const checkoutBackQueryArgs = {
-								...( blogPostToReblog
+								...( hasFixedEnding
 									? {
-											blog_post: blogPostToReblog,
+											...endingQueryArgs,
 											...( refParameter ? { ref: refParameter } : {} ),
 										}
 									: {} ),
@@ -888,15 +907,15 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow, the WoW funnel (dest=editor) and a reblog go
-									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser. A reblog meets the
-									// email-verification gate first.
+									// build_dest=wow, the WoW funnel (dest=editor), a reblog and an import
+									// go straight from checkout to their destination — no
+									// post-checkout-onboarding hop, no chooser. A reblog or an import
+									// meets the email-verification gate first.
 									redirect_to:
 										blueprintArchiveSlug ||
 										blueprintSimpleSlug ||
 										isKnownWowFunnel( wowFunnelSlug ) ||
-										( blogPostToReblog && ! returnsThroughVerification )
+										( hasFixedEnding && ! returnsThroughVerification )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -921,10 +940,10 @@ const onboarding: FlowV2< typeof initialize > = {
 							blueprintArchiveSlug ||
 							blueprintSimpleSlug ||
 							isKnownWowFunnel( wowFunnelSlug ) ||
-							blogPostToReblog
+							hasFixedEnding
 						) {
-							// build_dest=wow, build_dest=simple, the WoW funnel and a reblog never
-							// show the setup-your-site-ai chooser; go straight to their destination.
+							// build_dest=wow, build_dest=simple, the WoW funnel, a reblog and an import
+							// never show the setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel

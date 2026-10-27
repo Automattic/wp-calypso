@@ -346,13 +346,15 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const isPlaygroundPublish =
 			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
-		// Playground and blueprint runs import a prebuilt site, so they keep the regular landing. A
-		// reblog's site is launched at creation, so the launchpad's launch task could never complete.
+		// Playground, blueprint and import runs bring in an existing site, so they keep the regular
+		// landing. A reblog's site is launched at creation, so the launchpad's launch task could
+		// never complete.
 		const aiLaunchpadEnabled =
 			isOnboardingFlow( flow ) &&
 			! isPlaygroundPublish &&
 			! urlQueryParams.get( 'playground' ) &&
 			! urlQueryParams.get( 'blog_post' ) &&
+			urlQueryParams.get( 'import' ) !== '1' &&
 			! blueprint;
 
 		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a
