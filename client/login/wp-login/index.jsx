@@ -13,7 +13,6 @@ import SignupExistingAccountNotice from 'calypso/blocks/login/signup-existing-ac
 import DocumentHead from 'calypso/components/data/document-head';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
 import isAkismetRedirect from 'calypso/lib/akismet/is-akismet-redirect';
 import {
 	isJetpackCloudOAuth2Client,
@@ -50,6 +49,7 @@ import isWooJPCFlow, {
 	isWooCommercePaymentsOnboardingFlow,
 } from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import { getConnectionFlowFromRedirectTo } from '../connection-flow';
 import LoginContextProvider, { LoginContext } from '../login-context';
 import OneLoginFooter from './components/one-login-footer';
 import OneLoginLayout from './components/one-login-layout';
@@ -559,23 +559,16 @@ const LoginWithContext = ( props ) => {
 	);
 };
 
-const trimString = ( s ) => s.trim();
-
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
 
-		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
-		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
-		const isUnifiedConnectionFlow = isUnifiedFlow( connectorFromParam );
-		const connectorPlugins = isUnifiedConnectionFlow
-			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
-					.split( ',' )
-					.map( trimString )
-					.filter( Boolean )
-			: [];
+		const { isUnifiedConnectionFlow, connectorPlugins } = getConnectionFlowFromRedirectTo(
+			getRedirectToOriginal( state ),
+			currentQuery
+		);
 
 		return {
 			locale: getCurrentLocaleSlug( state ),

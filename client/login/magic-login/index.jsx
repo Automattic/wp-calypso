@@ -8,7 +8,6 @@ import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-
 import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
-import { isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
 import {
 	isAndroidOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -42,6 +41,7 @@ import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-lo
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import { getConnectionFlowFromRedirectTo } from '../connection-flow';
 import LoginContextProvider from '../login-context';
 import GravPoweredMagicLogin from './gravatar';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
@@ -388,22 +388,6 @@ const MagicLoginWithContext = ( props ) => {
 			<MagicLogin { ...props } translate={ translate } />
 		</LoginContextProvider>
 	);
-};
-
-export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
-	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
-	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
-	const isUnifiedConnectionFlow = isUnifiedFlow( from );
-	const rawPlugins = isUnifiedConnectionFlow
-		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
-		: '';
-	return {
-		isUnifiedConnectionFlow,
-		connectorPlugins: rawPlugins
-			.split( ',' )
-			.map( ( s ) => s.trim() )
-			.filter( Boolean ),
-	};
 };
 
 const mapState = ( state ) => {
