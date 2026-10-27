@@ -94,7 +94,7 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		/**
 	 	↓ Effects
 		 */
-		useAtomicTransferQueryParamUpdate( siteId );
+		useAtomicTransferQueryParamUpdate( site );
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		useEffect( () => onComponentUnmount, [] );
