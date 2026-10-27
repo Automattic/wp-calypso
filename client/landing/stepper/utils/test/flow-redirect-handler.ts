@@ -108,6 +108,15 @@ describe( 'flow redirect handler', () => {
 		expect( window.location.href ).toBe( expected );
 	} );
 
+	it.each( [
+		[ '/setup/onboarding-unified', '?source=pm', '/start/onboarding-pm?source=pm' ],
+		[ '/setup/onboarding-unified/post-checkout-onboarding', '?siteId=123', '/home/123?siteId=123' ],
+	] )( 'sends %s%s to %s', ( pathname, search, expected ) => {
+		redirectPathIfNecessary( pathname, search );
+
+		expect( window.location.href ).toBe( expected );
+	} );
+
 	it( 'sends blog sites’ Launchpad to the build flow without treating write as removed', () => {
 		redirectPathIfNecessary( '/setup/write/launchpad', '?siteSlug=example.wordpress.com' );
 

@@ -14,7 +14,6 @@ import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_ONBOARDING_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
-	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
 	ART_PROMO_FLOW,
@@ -48,11 +47,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ EXAMPLE_FLOW ]: () =>
 		import( /* webpackChunkName: "example-flow" */ './flows/00-example-flow/example' ),
-
-	[ ONBOARDING_UNIFIED_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "onboarding-unified-flow" */ './flows/onboarding-unified/onboarding-unified'
-		),
 
 	[ DOMAIN_FLOW ]: () => import( /* webpackChunkName: "domain-flow" */ './flows/domain/domain' ),
 

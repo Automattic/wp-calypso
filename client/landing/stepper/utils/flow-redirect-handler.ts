@@ -58,6 +58,12 @@ const REMOVED_TAILORED_FLOWS: RedirectRule[] = [
 	{ flow: 'reblogging', to: '/setup/onboarding:lang?' },
 	{ flow: 'readymade-template', to: toSiteHome },
 	{ flow: 'update-options', to: toSiteHome },
+	// A buyer mid-purchase returns from checkout with their new site's ID.
+	{
+		flow: 'onboarding-unified',
+		to: ( searchParams ) =>
+			searchParams.has( 'siteId' ) ? toSiteHome( searchParams ) : '/start/onboarding-pm:lang?',
+	},
 	// Still linked from the store admin, so don't leave a Back button that bounces here.
 	{ flow: 'woo-hosted-plans', to: '/setup/plan-upgrade', replace: true },
 ];

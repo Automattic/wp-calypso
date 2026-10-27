@@ -197,11 +197,6 @@ describe( 'PostCheckoutOnboarding', () => {
 	it.each( [
 		[ 'a Business site', siteWithPlan( 'business-bundle', [ FEATURE_BIG_SKY ] ), 'onboarding' ],
 		[ 'a Commerce site that skips the chooser', siteWithPlan( 'ecommerce-bundle' ), 'onboarding' ],
-		[
-			'a Commerce site in a flow without the chooser',
-			siteWithPlan( 'ecommerce-bundle', [ FEATURE_BIG_SKY ] ),
-			'onboarding-unified',
-		],
 	] )( 'does not wait for WooCommerce on %s', async ( _label, site, flow ) => {
 		const props = renderWithFreshSite( site, flow );
 
