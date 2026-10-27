@@ -156,7 +156,7 @@ const Grid = styled.div< { visiblePlans: number; as?: string } >`
 	` ) }
 `;
 
-const Row = styled( 'div', { target: 'comparison-grid-styled-row' } )< {
+const Row = styled.div< {
 	isHiddenInMobile?: boolean;
 	className?: string;
 	isHighlighted?: boolean;
@@ -261,7 +261,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 		border-right: none;
 	}
 
-	${ Row }:last-of-type & {
+	tr:last-of-type & {
 		padding-bottom: 24px;
 
 		${ plansGridMediumLarge( css`

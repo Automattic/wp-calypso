@@ -58,7 +58,7 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 		` }
 `;
 
-const Option = styled( 'li', { target: 'akismet-quantity-option' } )`
+const Option = styled.li`
 	align-items: center;
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
@@ -86,9 +86,6 @@ const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
 	margin: 16px 0;
-	> ${ Option } {
-		border-radius: 3px;
-	}
 `;
 
 const OptionList = styled.ul`
@@ -98,7 +95,7 @@ const OptionList = styled.ul`
 	margin: 0;
 	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
-	${ Option } {
+	> li {
 		margin-top: -1px;
 
 		&:last-child {

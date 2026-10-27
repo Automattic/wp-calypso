@@ -26,7 +26,7 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 		` }
 `;
 
-export const Option = styled( 'li', { target: 'item-variation-option' } )< OptionProps >`
+export const Option = styled.li< OptionProps >`
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 	color: #646970;
@@ -54,10 +54,6 @@ export const Dropdown = styled.div`
 	position: relative;
 	width: 100%;
 	margin: 16px 0;
-
-	> ${ Option } {
-		border-radius: 3px;
-	}
 `;
 
 export const OptionList = styled.ul`
@@ -67,7 +63,7 @@ export const OptionList = styled.ul`
 	margin: 0;
 	box-shadow: rgba( 0, 0, 0, 0.16 ) 0px 1px 4px;
 
-	${ Option } {
+	> li {
 		margin-top: -1px;
 
 		&:last-child {

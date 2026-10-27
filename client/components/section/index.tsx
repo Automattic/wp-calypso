@@ -21,9 +21,7 @@ interface SectionHeaderProps {
 // TODO - re-add background color and usage of dark prop, to something other than a pseudo element.
 // We will need to adjust exterior containers margin etc. to accomodate this.
 // https://github.com/Automattic/wp-calypso/pull/93425
-export const SectionContainer = styled( 'div', {
-	target: 'section-styled-container',
-} )< SectionContainerProps >`
+export const SectionContainer = styled.div< SectionContainerProps >`
 	padding: 56px 0;
 	z-index: 1;
 
@@ -41,9 +39,7 @@ export const SectionContainer = styled( 'div', {
 	}
 `;
 
-export const SectionHeader = styled( 'div', {
-	target: 'section-styled-header',
-} )< SectionHeaderProps >`
+export const SectionHeader = styled.div< SectionHeaderProps >`
 	color: var( --${ ( props ) => ( props.dark ? 'color-text-inverted' : 'color-text' ) } );
 	font-weight: 400;
 	letter-spacing: -0.4px;
@@ -69,9 +65,7 @@ const SectionSubHeader = styled.div< SectionHeaderProps >`
 	font-size: var( --scss-font-body-small );
 `;
 
-export const SectionHeaderContainer = styled( 'div', {
-	target: 'section-styled-header-container',
-} )< SectionHeaderProps >`
+export const SectionHeaderContainer = styled.div< SectionHeaderProps >`
 	@media ( max-width: 660px ) {
 		padding: 0 16px;
 	}
@@ -85,7 +79,7 @@ const Section = ( props: SectionProps ) => {
 	const { children, header, subheader, dark } = props;
 	/* eslint-disable wpcalypso/jsx-classname-namespace */
 	return (
-		<SectionContainer dark={ dark }>
+		<SectionContainer dark={ dark } className="section-container">
 			<SectionHeaderContainer className="section-header-container">
 				<SectionHeader dark={ dark } className="wp-brand-font section-header-container__header">
 					{ header }
