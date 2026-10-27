@@ -25,6 +25,7 @@ export type ThemeSectionProps = {
 	sectionIndex: number;
 	variant?: 'light' | 'dark';
 	banner?: React.ReactNode;
+	leadingCard?: React.ReactNode;
 	getActionLabel: ( themeId: string ) => string;
 	getOptions: ( themeId: string ) => void;
 	getScreenshotUrl: ( themeId: string ) => string;
@@ -40,6 +41,7 @@ export default function ThemeSection( {
 	sectionIndex,
 	variant = 'light',
 	banner,
+	leadingCard,
 	getActionLabel,
 	getOptions,
 	getScreenshotUrl,
@@ -110,6 +112,7 @@ export default function ThemeSection( {
 				onButtonClick={ handleSeeAll }
 			/>
 			<div className="theme-section-modern__grid">
+				{ leadingCard }
 				{ themes.map( ( theme: Theme, index: number ) => (
 					<ThemeBlock
 						key={ theme.id }
