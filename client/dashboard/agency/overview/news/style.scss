@@ -105,20 +105,8 @@
 	text-align: end;
 }
 
-// The open row's image, description and actions line up with its text, past the logo.
+// The open row's description and actions line up with its text, past the logo.
 .a4a-news-row-panel {
 	margin-block-start: 16px;
 	padding-inline-start: 44px;
-}
-
-.a4a-news-image {
-	display: block;
-	width: 100%;
-	height: auto;
-	border-radius: 4px;
-}
-
-// The blog card's image takes the same corners as an open post's image in the list.
-.a4a-blog .a4a-blog-media {
-	border-radius: 4px;
 }

@@ -46,7 +46,8 @@ export function AnnouncementLogoImage( {
 	logo: Announcement[ 'logo' ];
 	size: number;
 } ) {
-	const { src, alt } = ANNOUNCEMENT_LOGOS[ logo ];
+	// The API can gain a logo option before the dashboard ships its image.
+	const { src, alt } = ANNOUNCEMENT_LOGOS[ logo ] ?? ANNOUNCEMENT_LOGOS.automattic;
 	return (
 		<img
 			className="a4a-news-logo"
@@ -56,20 +57,6 @@ export function AnnouncementLogoImage( {
 			height={ size }
 			style={ { width: size, height: size } }
 		/>
-	);
-}
-
-/**
- * A blog post's own image, shown once the post is open: at row size a banner
- * image crops to nothing, so rows keep the logo.
- */
-export function AnnouncementImage( { announcement }: { announcement: Announcement } ) {
-	if ( ! announcement.image ) {
-		return null;
-	}
-	// WordPress.com resizes uploads on the fly; ask for a 2x image of the panel width.
-	return (
-		<img className="a4a-news-image" src={ `${ announcement.image }?w=880` } alt="" loading="lazy" />
 	);
 }
 
@@ -86,8 +73,8 @@ function calendarDaysFrom( iso: string, now: Date ) {
 }
 
 /**
- * The date column: when an event happens (and how soon), when an offer ends, when a
- * post went up, or a New badge for an announcement in its first two weeks.
+ * The date column: when an event happens (and how soon), when an offer ends, or a
+ * New badge for an announcement in its first two weeks.
  */
 export function AnnouncementDate( { announcement }: { announcement: Announcement } ) {
 	const locale = useIntlLocale();

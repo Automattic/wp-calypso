@@ -1,14 +1,14 @@
-import config from '@automattic/calypso-config';
+import { agencyAnnouncementsQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
-	Button,
 	Icon,
 } from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp, closeSmall } from '@wordpress/icons';
+import { chevronDown, chevronUp } from '@wordpress/icons';
 import clsx from 'clsx';
 import { Fragment, useMemo, useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
@@ -19,13 +19,9 @@ import {
 	AnnouncementDate,
 	AnnouncementDescription,
 	AnnouncementEyebrow,
-	AnnouncementImage,
 	AnnouncementLogo,
-	AnnouncementLogoImage,
 	bindLastWords,
 } from './announcement-parts';
-import { getPlaceholderAnnouncements } from './announcements';
-import BlogCard from './blog-card';
 import type { AnnouncementActionProps } from './announcement-parts';
 import type { Announcement, AnnouncementType } from './announcements';
 import type { Field, View } from '@wordpress/dataviews';
@@ -37,60 +33,13 @@ type NewsFilter = 'all' | AnnouncementType;
 const DIVIDER_STYLE = { borderColor: 'var(--color-gray-100)' };
 // Five rows a page: past about five, choosing among them gets slower.
 const PER_PAGE = 5;
-// In production, dismissing the subscribe row would be a user preference; the prototype keeps it here.
-const SUBSCRIBE_DISMISSED_KEY = 'a4a-news-blog-subscribe-dismissed';
+const NO_ANNOUNCEMENTS: Announcement[] = [];
 
 const TYPE_LABELS: Record< AnnouncementType, string > = {
 	event: __( 'Events' ),
 	announcement: __( 'Announcements' ),
-	blog: __( 'Blog' ),
 };
-const TYPE_ORDER: AnnouncementType[] = [ 'event', 'announcement', 'blog' ];
-
-/**
- * The switches below work in development builds and on calypso.live, which serves each PR's
- * build as a production build, so reviewers can try them on a PR's live link. Production and
- * every other host ignore them.
- */
-function canUseSwitches() {
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
-	const { hostname } = window.location;
-	return (
-		config( 'env' ) === 'development' ||
-		hostname === 'calypso.live' ||
-		hostname.endsWith( '.calypso.live' )
-	);
-}
-
-/**
- * Prototype switches, until the announcements API exists: `?items=1|4|13` how many items the
- * server returned, `?tab=event|announcement|blog` the filter it starts on, `?page=2` the
- * page it starts on, `?first=<id>` the item marketing sent first, `?blog=card` blog posts in
- * their own card below the list, `?subscribed=1` someone already on the blog's email list,
- * `?dismissed=0` the subscribe row back after a dismissal. Where switches are off, the URL
- * is ignored and the defaults apply.
- */
-function readSwitches() {
-	const params = new URLSearchParams( canUseSwitches() ? window.location.search : '' );
-	const count = Math.min( Math.max( Number( params.get( 'items' ) ) || 13, 1 ), 13 );
-	const blogCard = params.get( 'blog' ) === 'card';
-	const filter: NewsFilter =
-		TYPE_ORDER.find(
-			( type ) => type === params.get( 'tab' ) && ! ( blogCard && type === 'blog' )
-		) ?? 'all';
-	const page = Math.max( Number( params.get( 'page' ) ) || 1, 1 );
-	return {
-		count,
-		filter,
-		page,
-		first: params.get( 'first' ),
-		blogCard,
-		subscribed: params.get( 'subscribed' ) === '1',
-		undismiss: params.get( 'dismissed' ) === '0',
-	};
-}
+const TYPE_ORDER: AnnouncementType[] = [ 'event', 'announcement' ];
 
 function NewsHeader( { children }: { children?: React.ReactNode } ) {
 	return (
@@ -195,57 +144,6 @@ function FilterPills( {
 	);
 }
 
-function readDismissed( undismiss: boolean ) {
-	try {
-		if ( undismiss ) {
-			window.localStorage.removeItem( SUBSCRIBE_DISMISSED_KEY );
-			return false;
-		}
-		return window.localStorage.getItem( SUBSCRIBE_DISMISSED_KEY ) === '1';
-	} catch {
-		return false;
-	}
-}
-
-/**
- * Subscribe to the blog: the blog's email list is opt-in, so the list's first row asks once,
- * on one line, and can be dismissed. Subscribing confirms in place.
- */
-function SubscribeRow( {
-	isSubscribed,
-	onSubscribe,
-	onDismiss,
-}: {
-	isSubscribed: boolean;
-	onSubscribe: () => void;
-	onDismiss: () => void;
-} ) {
-	return (
-		<CardBody>
-			<HStack spacing={ 3 } justify="flex-start" alignment="center">
-				<AnnouncementLogoImage logo="a4a" size={ 32 } />
-				<Text size={ 13 } weight={ 500 } lineHeight="20px" className="a4a-news-text">
-					{ isSubscribed
-						? __( 'Subscribed. New blog posts will come to your inbox.' )
-						: __( 'Get new blog posts by email.' ) }
-				</Text>
-				{ ! isSubscribed && (
-					<Button __next40pxDefaultSize size="compact" variant="secondary" onClick={ onSubscribe }>
-						{ __( 'Subscribe' ) }
-					</Button>
-				) }
-				<Button
-					__next40pxDefaultSize
-					size="small"
-					icon={ closeSmall }
-					label={ __( 'Dismiss' ) }
-					onClick={ onDismiss }
-				/>
-			</HStack>
-		</CardBody>
-	);
-}
-
 /** One item: a short row that opens in place to show the rest of its fields. */
 function NewsRow( {
 	announcement,
@@ -299,7 +197,6 @@ function NewsRow( {
 			) }
 			{ isOpen && (
 				<VStack spacing={ 4 } id={ panelId } className="a4a-news-row-panel">
-					<AnnouncementImage announcement={ announcement } />
 					<AnnouncementDescription announcement={ announcement } />
 					<AnnouncementCtas announcement={ announcement } { ...actionProps } />
 				</VStack>
@@ -309,54 +206,28 @@ function NewsRow( {
 }
 
 interface NewsCardProps extends AnnouncementActionProps {
-	links: { aiMcp: string; pressableHosting: string; referrals: string; tiers: string };
+	agencyId: number;
 }
 
 /**
  * News and updates on the agency Overview: the events, promos and announcements
- * marketing publishes, in the order the server returns them. DataViews filters and
- * pages the list; its pagination is the native control.
+ * marketing publishes, in the order the server returns them. DataViews
+ * filters and pages the list; its pagination is the native control.
  */
-export default function NewsCard( { links, ...actionProps }: NewsCardProps ) {
-	const switches = readSwitches();
-	const placeholders = useMemo( () => getPlaceholderAnnouncements( links ), [ links ] );
-	// With their own card, blog posts leave the list.
-	const blogPosts = useMemo(
-		() => ( switches.blogCard ? placeholders.filter( ( { type } ) => type === 'blog' ) : [] ),
-		[ placeholders, switches.blogCard ]
+export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) {
+	const { data: announcements = NO_ANNOUNCEMENTS } = useQuery(
+		agencyAnnouncementsQuery( agencyId )
 	);
-	const announcements = useMemo( () => {
-		const items = switches.blogCard
-			? placeholders.filter( ( { type } ) => type !== 'blog' )
-			: placeholders;
-		// Marketing promotes an item by sending it first; the switch stands in for that order.
-		const promoted = items.find( ( { id } ) => id === switches.first );
-		return (
-			promoted ? [ promoted, ...items.filter( ( item ) => item !== promoted ) ] : items
-		).slice( 0, switches.count );
-	}, [ placeholders, switches.blogCard, switches.first, switches.count ] );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'list',
 		fields: [],
 		search: '',
-		filters:
-			switches.filter === 'all'
-				? []
-				: [ { field: 'type', operator: 'is', value: switches.filter, isLocked: false } ],
-		page: switches.page,
+		filters: [],
+		page: 1,
 		perPage: PER_PAGE,
 	} );
 	const [ openId, setOpenId ] = useState< string | null | undefined >( undefined );
-	// Until the API is wired, subscribing only changes what this page shows.
-	const [ isSubscribed, setIsSubscribed ] = useState( switches.subscribed );
-	const [ isDismissed, setIsDismissed ] = useState( () => readDismissed( switches.undismiss ) );
-	const dismiss = () => {
-		setIsDismissed( true );
-		try {
-			window.localStorage.setItem( SUBSCRIBE_DISMISSED_KEY, '1' );
-		} catch {}
-	};
 	const fields: Field< Announcement >[] = useMemo(
 		() => [
 			{
@@ -385,10 +256,9 @@ export default function NewsCard( { links, ...actionProps }: NewsCardProps ) {
 		[ announcements, view, fields ]
 	);
 
-	const blogSection = blogPosts.length > 0 && <BlogCard posts={ blogPosts } { ...actionProps } />;
-
+	// Hidden while loading and when there's nothing to show.
 	if ( ! announcements.length ) {
-		return blogSection || null;
+		return null;
 	}
 
 	const typeFilter = view.filters?.find( ( { field } ) => field === 'type' );
@@ -402,72 +272,54 @@ export default function NewsCard( { links, ...actionProps }: NewsCardProps ) {
 		} );
 		setOpenId( undefined );
 	};
-	// Under Blog only, above the first item, outside the counts and the pages.
-	const showSubscribe =
-		! isDismissed &&
-		filterValue === 'blog' &&
-		announcements.some( ( { type } ) => type === 'blog' );
 	// The first item on each page or filter opens until someone picks another.
 	const openItemId =
 		openId === undefined || ! data.some( ( { id } ) => id === openId ) ? data[ 0 ]?.id : openId;
 
 	return (
-		<>
-			<Card className="a4a-news">
-				<DataViews< Announcement >
-					data={ data }
-					fields={ fields }
-					view={ view }
-					onChangeView={ ( next ) => {
-						setView( next );
-						setOpenId( undefined );
-					} }
-					paginationInfo={ paginationInfo }
-					defaultLayouts={ { list: {} } }
-					getItemId={ ( item ) => item.id }
-				>
-					<NewsHeader>
-						<FilterPills
-							announcements={ announcements }
-							value={ filterValue }
-							onChange={ changeFilter }
+		<Card className="a4a-news">
+			<DataViews< Announcement >
+				data={ data }
+				fields={ fields }
+				view={ view }
+				onChangeView={ ( next ) => {
+					setView( next );
+					setOpenId( undefined );
+				} }
+				paginationInfo={ paginationInfo }
+				defaultLayouts={ { list: {} } }
+				getItemId={ ( item ) => item.id }
+			>
+				<NewsHeader>
+					<FilterPills
+						announcements={ announcements }
+						value={ filterValue }
+						onChange={ changeFilter }
+					/>
+				</NewsHeader>
+				{ data.map( ( announcement, index ) => (
+					<Fragment key={ announcement.id }>
+						{ index > 0 && <CardDivider style={ DIVIDER_STYLE } /> }
+						<NewsRow
+							announcement={ announcement }
+							isOpen={ openItemId === announcement.id }
+							canToggle={ announcements.length > 1 }
+							onToggle={ () =>
+								setOpenId( openItemId === announcement.id ? null : announcement.id )
+							}
+							{ ...actionProps }
 						/>
-					</NewsHeader>
-					{ showSubscribe && (
-						<>
-							<SubscribeRow
-								isSubscribed={ isSubscribed }
-								onSubscribe={ () => setIsSubscribed( true ) }
-								onDismiss={ dismiss }
-							/>
-							<CardDivider style={ DIVIDER_STYLE } />
-						</>
-					) }
-					{ data.map( ( announcement, index ) => (
-						<Fragment key={ announcement.id }>
-							{ index > 0 && <CardDivider style={ DIVIDER_STYLE } /> }
-							<NewsRow
-								announcement={ announcement }
-								isOpen={ openItemId === announcement.id }
-								canToggle={ announcements.length > 1 }
-								onToggle={ () =>
-									setOpenId( openItemId === announcement.id ? null : announcement.id )
-								}
-								{ ...actionProps }
-							/>
-						</Fragment>
-					) ) }
-					{ paginationInfo.totalPages > 1 && (
-						<>
-							<CardDivider style={ DIVIDER_STYLE } />
-							<CardBody>
-								<DataViews.Pagination />
-							</CardBody>
-						</>
-					) }
-				</DataViews>
-			</Card>
-			{ blogSection }
-		</>
+					</Fragment>
+				) ) }
+				{ paginationInfo.totalPages > 1 && (
+					<>
+						<CardDivider style={ DIVIDER_STYLE } />
+						<CardBody>
+							<DataViews.Pagination />
+						</CardBody>
+					</>
+				) }
+			</DataViews>
+		</Card>
 	);
 }

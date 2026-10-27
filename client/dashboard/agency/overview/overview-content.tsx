@@ -149,12 +149,7 @@ export default function AgencyOverviewContent( {
 			</VStack>
 			<VStack spacing={ spacing } justify="flex-start">
 				<NewsCard
-					links={ {
-						aiMcp: links.aiMcp,
-						pressableHosting: links.pressableHosting,
-						referrals: links.referrals,
-						tiers: links.tiers,
-					} }
+					agencyId={ agencyId }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
