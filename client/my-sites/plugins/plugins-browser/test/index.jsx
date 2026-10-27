@@ -1,6 +1,9 @@
 /** @jest-environment jsdom */
 
 jest.mock( '@automattic/calypso-router' );
+jest.mock( 'calypso/components/infinite-scroll', () => () => (
+	<div data-testid="infinite-scroll" />
+) );
 jest.mock( 'calypso/components/async-load', () => ( { require } ) => (
 	<div data-testid="async-load" data-loader={ require.name } />
 ) );
@@ -30,6 +33,9 @@ jest.mock( 'calypso/data/marketplace/use-wpcom-plugins-query', () => ( {
 } ) );
 
 jest.mock( 'calypso/data/marketplace/use-es-query', () => ( {
+	useESPlugins: jest.fn( () => ( {
+		data: { plugins: mockPlugins, pagination: { page: 1, pages: 1, results: 0 } },
+	} ) ),
 	useSiteSearchPlugins: jest.fn( () => ( {
 		data: { plugins: mockPlugins },
 		fetchNextPage: jest.fn(),
@@ -64,6 +70,7 @@ jest.mock( 'calypso/lib/route/path', () => ( {
 	getMessagePathForJITM: jest.fn( () => '/plugins/' ),
 } ) );
 
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_INSTALL_PLUGINS,
 	PLAN_FREE,
@@ -75,6 +82,7 @@ import {
 } from '@automattic/calypso-products';
 import { merge } from '@automattic/js-utils';
 import { screen } from '@testing-library/react';
+import { useESPlugins, useESPluginsInfinite } from 'calypso/data/marketplace/use-es-query';
 import documentHead from 'calypso/state/document-head/reducer';
 import { reducer as jetpackConnectionHealth } from 'calypso/state/jetpack-connection-health/reducer';
 import plugins from 'calypso/state/plugins/reducer';
@@ -260,5 +268,127 @@ describe( 'PluginsBrowser basic tests', () => {
 		};
 		render( <PluginsBrowser />, { initialState } );
 		expect( screen.getByText( 'Learn how to fix' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'Marketplace pagination', () => {
+	test.each(
+		[
+			[ 'Simple', { jetpack: false, options: { is_automated_transfer: false } } ],
+			[ 'Atomic', { jetpack: true, options: { is_automated_transfer: true } } ],
+			[ 'self-hosted Jetpack', { jetpack: true, options: { is_automated_transfer: false } } ],
+		].flatMap( ( [ hosting, site ] ) =>
+			[ 'category', 'search' ].map( ( view ) => [ hosting, view, site ] )
+		)
+	)( 'retains signed-in scrolling for %s %s results', ( hosting, view, site ) => {
+		const original = useESPluginsInfinite.getMockImplementation();
+		useESPluginsInfinite.mockReturnValue( {
+			data: { plugins: [ { slug: 'jetpack', name: 'Jetpack', railcar: {} } ] },
+			fetchNextPage: jest.fn(),
+		} );
+		render(
+			<PluginsBrowser
+				category={ view === 'category' ? 'seo' : undefined }
+				search={ view === 'search' ? 'jetpack' : undefined }
+				page={ 2 }
+			/>,
+			{
+				initialState: {
+					currentUser: { id: 1 },
+					ui: { selectedSiteId: 1 },
+					sites: { items: { 1: site } },
+				},
+			}
+		);
+		expect( screen.getByTestId( 'infinite-scroll' ) ).toBeVisible();
+		expect( screen.queryByRole( 'navigation', { name: 'Plugin result pages' } ) ).toBeNull();
+		expect( useESPlugins ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { page: undefined } ),
+			{ enabled: false }
+		);
+		expect( useESPluginsInfinite ).toHaveBeenLastCalledWith( expect.anything(), { enabled: true } );
+		useESPluginsInfinite.mockImplementation( original );
+	} );
+
+	test.each( [ 'loading', 'empty', 'error' ] )(
+		'handles logged-out search %s states',
+		( status ) => {
+			const original = useESPlugins.getMockImplementation();
+			const retry = jest.fn();
+			useESPlugins.mockReturnValue( {
+				data:
+					status === 'empty'
+						? { plugins: [], pagination: { page: 2, pages: 1, results: 8 } }
+						: undefined,
+				isLoading: status === 'loading',
+				isError: status === 'error',
+				refetch: retry,
+			} );
+			render( <PluginsBrowser search="form" path="/plugins?s=form&page=2" page={ 2 } />, {
+				initialState: { currentUser: { id: null }, ui: { selectedSiteId: null } },
+			} );
+			expect( screen.queryByText( 'No matches found' ) ).toBeNull();
+			expect( screen.queryByRole( 'navigation', { name: 'Plugin result pages' } ) ).toBeNull();
+			const messages = { loading: 'Search Results', empty: 'Go to the first page', error: 'Retry' };
+			expect( screen.getByText( messages[ status ] ) ).toBeVisible();
+			useESPlugins.mockImplementation( original );
+		}
+	);
+	test.each( [ 'category', 'search' ] )( 'paginates logged-out %s results', ( view ) => {
+		const original = useESPlugins.getMockImplementation();
+		useESPlugins.mockReturnValue( {
+			data: {
+				plugins: [ { slug: 'jetpack', name: 'Jetpack' } ],
+				pagination: { page: 2, pages: 3, results: 45 },
+			},
+		} );
+		render(
+			<PluginsBrowser
+				category={ view === 'category' ? 'seo' : undefined }
+				search={ view === 'search' ? 'form' : undefined }
+				path="/es/plugins/browse/seo?s=form&page=2&source=test"
+				page={ 2 }
+			/>,
+			{
+				initialState: { currentUser: { id: null }, ui: { selectedSiteId: null } },
+			}
+		);
+		expect( screen.getByText( 'Page 2 of 3' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Next' } ) ).toHaveAttribute(
+			'href',
+			'/es/plugins/browse/seo?s=form&page=3&source=test'
+		);
+		expect( screen.queryByTestId( 'infinite-scroll' ) ).toBeNull();
+		expect( useESPlugins ).toHaveBeenLastCalledWith( expect.objectContaining( { page: 2 } ), {
+			enabled: true,
+		} );
+		expect( useESPluginsInfinite ).toHaveBeenLastCalledWith( expect.anything(), {
+			enabled: false,
+		} );
+		useESPlugins.mockImplementation( original );
+	} );
+
+	test( 'retains scrolling for signed-in visitors with the logged-out-looking header', () => {
+		const original = config.isEnabled;
+		const spy = jest
+			.spyOn( config, 'isEnabled' )
+			.mockImplementation(
+				( feature ) => feature === 'plugins/universal-header' || original( feature )
+			);
+		render( <PluginsBrowser category="seo" page={ 2 } />, {
+			initialState: {
+				currentUser: { id: 1 },
+				ui: { selectedSiteId: null },
+				preferences: { localValues: { 'hosting-dashboard-opt-in': { value: 'opt-in' } } },
+			},
+		} );
+		expect( screen.getByTestId( 'infinite-scroll' ) ).toBeVisible();
+		expect( screen.queryByRole( 'navigation', { name: 'Plugin result pages' } ) ).toBeNull();
+		expect( useESPlugins ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { page: undefined } ),
+			{ enabled: false }
+		);
+		expect( useESPluginsInfinite ).toHaveBeenLastCalledWith( expect.anything(), { enabled: true } );
+		spy.mockRestore();
 	} );
 } );
