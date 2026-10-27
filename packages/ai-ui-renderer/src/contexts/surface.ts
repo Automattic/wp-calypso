@@ -8,7 +8,7 @@ import type { RefObject } from 'react';
 export const InteractiveUiSurfaceContext = createContext< {
 	surfaceId?: string;
 	disabled: boolean;
-	/** Whether every field shows its failed check, once an invalid Button was clicked. */
+	/** Whether every field shows its failed check, once an invalid Button was activated. */
 	isShowingErrors: boolean;
 	showErrors?: () => void;
 	/** The host's classes for the surface, which its modal takes too. */
