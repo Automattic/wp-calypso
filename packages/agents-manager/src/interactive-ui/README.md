@@ -46,8 +46,8 @@ Ticket numbers mark parts still to come.
   - `surfaces/` renders a message's surfaces in the chat's colors and mode (its `style.scss` sets
     A2UI's tokens from Agenttic's), disables one while it's stale or the chat is busy, shows a
     notice for one that can't be shown, and stacks the modal above the chat.
-    Surfaces sit in a `data-agenttic-isolated` wrapper, so their controls keep their own typography
-    while replies keep the chat's typography reset.
+    Surfaces sit in a `data-agenttic-isolated` wrapper, so their components keep their own styles
+    while replies keep the chat's reset and typography.
   - `action-note/` shows an action's `userMessage` in the transcript.
   - `messages.ts` and `convert-messages-to-components.ts` find surfaces in the transcript, from
     each message's `a2ui` part, work out which are stale or rejected, and show the actions, whose
@@ -146,13 +146,14 @@ Ticket numbers mark parts still to come.
   `surfaceId`, and its own Tracks events. A checkpoint in Agents Manager's store, as its pickers
   take, is undone by the agent through `restore-checkpoint`: a surface message has no message
   Undo, which a `show-component` result gets from its `calypsoCheckpointId`. The components handle
-  `disabled` as the basic ones do ([catalogs](../../../ai-ui-renderer/README.md#catalogs)), and
-  skip their side effects and Tracks with `isMessageStale`, chat state a surface can't override.
+  `disabled` as the basic ones do
+  ([Adding a component](../../../ai-ui-renderer/README.md#adding-a-component)), and skip their
+  side effects and Tracks with `isMessageStale`, chat state a surface can't override.
   They report their actions through `onResponseAction` and don't record the shared response events
   themselves ([Surfaces are recorded](#what-agents-manager-does)).
-- **Style with A2UI's theme tokens**, or use WordPress components, which the renderer themes, so
-  custom components follow each host's theme
-  ([how](../../../ai-ui-renderer/README.md#theming-a-new-component)).
+- **Style with A2UI's theme tokens**, or use WordPress components, which follow them, so custom
+  components match each host's theme, and check them in the chat's light and dark mode
+  ([how](../../../ai-ui-renderer/README.md#adding-a-component)).
 - **Load only what the surface renders.** Editor-only components load on demand, in the editor.
   Retry a failed import inside the `lazy()` loader, after a short pause, since `lazy()` caches a
   rejected one, and add no error boundary of your own, so a failure still shows the notice and is

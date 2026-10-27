@@ -8,7 +8,7 @@ import type { RefObject } from 'react';
 export const InteractiveUiSurfaceContext = createContext< {
 	surfaceId?: string;
 	disabled: boolean;
-	/** Whether every field shows its failed check, once an invalid Button was clicked. */
+	/** Whether every field shows its failed check, once an invalid Button was activated. */
 	isShowingErrors: boolean;
 	showErrors?: () => void;
 	/** The host's classes for the surface, which its modal takes too. */
@@ -19,7 +19,9 @@ export const InteractiveUiSurfaceContext = createContext< {
 
 export const InteractiveUiHostPropsContext = createContext< Record< string, unknown > >( {} );
 
-export const ModalTriggerContext = createContext< ( () => void ) | undefined >( undefined );
+export const ModalTriggerContext = createContext<
+	( ( trigger?: HTMLElement ) => void ) | undefined
+>( undefined );
 
 export const useInteractiveUiSurface = () => useContext( InteractiveUiSurfaceContext );
 

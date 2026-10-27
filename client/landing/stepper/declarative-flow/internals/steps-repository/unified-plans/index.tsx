@@ -67,6 +67,7 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage?: boolean;
 		isCustomDomainAllowedOnFreePlan?: boolean;
 		deemphasizeFreePlan?: boolean;
+		intent?: PlansIntent;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -97,6 +98,7 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage,
 		isCustomDomainAllowedOnFreePlan,
 		deemphasizeFreePlan,
+		intent: intentOverride,
 	} = props;
 	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
@@ -311,7 +313,7 @@ const PlansStepAdaptor: StepType< {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			intent={ plansIntent ?? undefined }
+			intent={ intentOverride ?? plansIntent ?? undefined }
 			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
