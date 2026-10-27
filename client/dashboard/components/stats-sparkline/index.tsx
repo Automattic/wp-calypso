@@ -1,4 +1,5 @@
 import { formatNumber } from '@automattic/number-formatters';
+
 import './style.scss';
 
 const CHART_HEIGHT = 20;
