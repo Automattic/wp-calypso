@@ -19,11 +19,3 @@ export const BASE_DISCOUNT: Record< AgencyTierId, number > = {
  */
 export const PROMO_MULTIPLIER = 2;
 export const PROMO_LAST_DAY = '2027-03-31';
-
-export const TIER_ORDER: AgencyTierId[] = [
-	'emerging-partner',
-	'agency-partner',
-	'pro-agency-partner',
-	'vip-pro-agency-partner',
-	'premier-partner',
-];

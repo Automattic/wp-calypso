@@ -6,7 +6,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { Text } from '../../components/text';
 import { ALL_TIERS } from '../tiers/constants';
-import { TIER_ORDER } from './constants';
 import { getDiscount } from './use-certification';
 import type { AgencyTierId } from '@automattic/api-core';
 
@@ -24,14 +23,13 @@ export default function TierDiscountList( {
 			spacing={ 3 }
 			style={ { margin: 0, padding: 0, listStyle: 'none' } }
 		>
-			{ TIER_ORDER.map( ( tierId ) => {
-				const tier = ALL_TIERS.find( ( { id } ) => id === tierId );
-				const isCurrent = tierId === currentTierId;
+			{ ALL_TIERS.map( ( tier ) => {
+				const isCurrent = tier.id === currentTierId;
 				return (
-					<HStack as="li" key={ tierId } justify="space-between" alignment="center">
+					<HStack as="li" key={ tier.id } justify="space-between" alignment="center">
 						<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 							<Text size={ 13 } weight={ isCurrent ? 500 : 400 } lineHeight="20px">
-								{ tier?.name }
+								{ tier.name }
 							</Text>
 							{ isCurrent && (
 								<Badge
@@ -50,7 +48,7 @@ export default function TierDiscountList( {
 							{ sprintf(
 								/* translators: %d is a percentage discount */
 								__( '%d%% off' ),
-								getDiscount( tierId, isPromo )
+								getDiscount( tier.id, isPromo )
 							) }
 						</Text>
 					</HStack>

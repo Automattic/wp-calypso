@@ -2,15 +2,10 @@ import { activeAgencyQuery, agencyApwdDiscountCodeQuery } from '@automattic/api-
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { getIntlLocale } from '../../utils/locale';
-import { BASE_DISCOUNT, PROMO_LAST_DAY, PROMO_MULTIPLIER, TIER_ORDER } from './constants';
+import { ALL_TIERS } from '../tiers/constants';
+import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
+import { BASE_DISCOUNT, PROMO_LAST_DAY, PROMO_MULTIPLIER } from './constants';
 import type { AgencyTierId } from '@automattic/api-core';
-
-function readSearchParam( name: string ) {
-	if ( typeof window === 'undefined' ) {
-		return null;
-	}
-	return new URLSearchParams( window.location.search ).get( name );
-}
 
 function isPromoRunning() {
 	return new Date().toISOString().slice( 0, 10 ) <= PROMO_LAST_DAY;
@@ -35,12 +30,8 @@ export function useCertification() {
 		enabled: isApproved,
 	} );
 
-	// Review switch to see another tier's discount on the same agency.
-	const tierOverride = readSearchParam( 'certtier' ) as AgencyTierId | null;
-	const tierId: AgencyTierId =
-		tierOverride && TIER_ORDER.includes( tierOverride )
-			? tierOverride
-			: ( agency?.tier?.id ?? 'emerging-partner' );
+	// A tier id this client doesn't know yet falls back to the first tier.
+	const tierId = ( getCurrentAgencyTier( agency?.tier?.id ) ?? ALL_TIERS[ 0 ] ).id;
 
 	const isPromo = isPromoRunning();
 	const promoLastDay = new Date( `${ PROMO_LAST_DAY }T12:00:00Z` ).toLocaleDateString( locale, {
