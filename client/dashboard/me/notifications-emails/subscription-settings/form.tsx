@@ -254,13 +254,17 @@ export const getSettings = ( data: UserSettings ): SettingsData => {
 	}, {} as SettingsData );
 };
 
-interface FormProps {
+interface SubscriptionSettingsFormProps {
 	data: SettingsData;
 	isAutomattician: boolean;
 	onChange: ( data: SettingsData ) => void;
 }
 
-export const SubscriptionSettingsForm = ( { data, isAutomattician, onChange }: FormProps ) => {
+export const SubscriptionSettingsForm = ( {
+	data,
+	isAutomattician,
+	onChange,
+}: SubscriptionSettingsFormProps ) => {
 	const { offsetHours, isUtcFallback, timezone } = useDeliveryWindowTimezone();
 
 	// The backend stores/sends the delivery window as UTC. Present it to the

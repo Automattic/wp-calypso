@@ -88,7 +88,7 @@ const isNameServersChanged = ( formData: FormData, nameServers: string[] ) => {
 	);
 };
 
-interface Props {
+interface NameServersFormProps {
 	domainName: string;
 	domainSiteSlug: string;
 	showUpsellNudge?: boolean;
@@ -108,7 +108,7 @@ export default function NameServersForm( {
 	isUsingDefaultNameServers = false,
 	isBusy,
 	onSubmit,
-}: Props ) {
+}: NameServersFormProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ formData, setFormData ] = useState< FormData >( () => {
 		// Start with a partial object
