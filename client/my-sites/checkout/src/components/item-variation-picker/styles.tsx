@@ -26,7 +26,7 @@ export const CurrentOption = styled.button< CurrentOptionProps >`
 		` }
 `;
 
-export const Option = styled.li< OptionProps >`
+export const Option = styled( 'li', { target: 'item-variation-option' } )< OptionProps >`
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 	color: #646970;

@@ -156,7 +156,7 @@ const Grid = styled.div< { visiblePlans: number; as?: string } >`
 	` ) }
 `;
 
-const Row = styled.div< {
+const Row = styled( 'div', { target: 'comparison-grid-styled-row' } )< {
 	isHiddenInMobile?: boolean;
 	className?: string;
 	isHighlighted?: boolean;

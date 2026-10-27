@@ -11,18 +11,18 @@ const Title = styled.div`
 	color: var( --studio-gray-100 );
 	font-weight: 500;
 `;
-const Description = styled.div`
+const Description = styled( 'div', { target: 'difm-service-description' } )`
 	color: var( --studio-gray-60 );
 	padding-bottom: 32px;
 	font-size: 0.875rem;
 `;
 
-const StepContainer = styled.div`
+const StepContainer = styled( 'div', { target: 'difm-service-step' } )`
 	display: flex;
 	gap: 16px;
 `;
 
-const ProgressLine = styled.div`
+const ProgressLine = styled( 'div', { target: 'difm-service-progress-line' } )`
 	width: 1px;
 	background: var( --studio-gray-5 );
 	height: 100%;

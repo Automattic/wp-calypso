@@ -25,7 +25,7 @@ module.exports = ( api, opts ) => ( {
 	],
 	// JSX syntax only for files that can contain it: in a .ts file, `<T>value` assertions and generic
 	// arrows (`<T>( x ) =>`) would parse as JSX. Babel 7's TypeScript plugin turned JSX off for .ts
-	// itself; Babel 8's doesn't, and preset-react and the Emotion plugin both turn it on.
+	// itself; Babel 8's doesn't, and preset-react turns it on.
 	overrides: [
 		{
 			exclude: /\.ts$/,
@@ -38,7 +38,6 @@ module.exports = ( api, opts ) => ( {
 					},
 				],
 			],
-			plugins: [ require.resolve( '@emotion/babel-plugin' ) ],
 		},
 	],
 	plugins: [

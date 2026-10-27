@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Breaking: Remove `@emotion/babel-plugin` from the `default` preset; it doesn't run on Babel 8. Emotion's component selectors (a styled component interpolated in another's styles) now need an explicit `target` option on the referenced component, e.g. `styled( 'div', { target: 'my-class' } )`. Without it they throw in development and silently match `.undefined` in production. Class names also lose their development labels.
 - Remove `@babel/plugin-transform-class-properties` from the `default` preset. `@babel/preset-env` already compiles class fields for targets that need it; the explicit plugin compiled them for every target, including browsers that support them natively.
 - Remove the `transform-typeof-symbol` exclusion from the `default` and `dependencies` presets; none of Calypso's targets need that transform. Projects targeting browsers without `Symbol` now get it, which is correct but slower. Also drop the `dependencies` preset's `@babel/plugin-transform-runtime` options that were already its defaults.
 - Breaking: Remove the `build_pot` environment, which extracted strings with `@automattic/babel-plugin-i18n-calypso`, and its `outputPOT` option, along with the dependency on that plugin. Use `@automattic/wp-babel-makepot` to extract strings. Also stop documenting the `isBrowser` option, which had no effect.

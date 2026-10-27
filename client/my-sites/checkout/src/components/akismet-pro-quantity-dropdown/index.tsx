@@ -58,7 +58,7 @@ const CurrentOption = styled.button< CurrentOptionProps >`
 		` }
 `;
 
-const Option = styled.li`
+const Option = styled( 'li', { target: 'akismet-quantity-option' } )`
 	align-items: center;
 	background: white;
 	border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
