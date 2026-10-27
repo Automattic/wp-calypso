@@ -28,6 +28,7 @@ export default function AccountStatusBadge( {
 			<Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>
 			{ accountStatus.statusReason && (
 				<Button
+					__next40pxDefaultSize
 					ref={ setReasonButton }
 					size="small"
 					icon={ info }
