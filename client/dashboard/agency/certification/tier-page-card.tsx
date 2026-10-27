@@ -141,7 +141,12 @@ export default function CertificationTierPageCard( {
 								>
 									<NewTabLabel>{ __( 'Sign up for the exam' ) }</NewTabLabel>
 								</Button>
-								<CertificationShareButton message={ shareMessage } onCopy={ onShareCopy } />
+								<CertificationShareButton
+									message={ shareMessage }
+									source="agency_tier"
+									onCopy={ onShareCopy }
+									recordTracksEvent={ recordTracksEvent }
+								/>
 							</ButtonStack>
 						</VStack>
 					</HStack>

@@ -171,7 +171,9 @@ export default function EventCard( {
 					<CertificationShareButton
 						{ ...buttonProps }
 						message={ certificationShareMessage }
+						source="overview"
 						onCopy={ onCertificationShareCopy }
+						recordTracksEvent={ recordTracksEvent }
 					/>
 				),
 			}

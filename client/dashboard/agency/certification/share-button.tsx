@@ -4,6 +4,7 @@ import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import CertificationShareModal from './share-modal';
+import type { RecordTracksEvent } from '../tiers/types';
 import type { CSSProperties } from 'react';
 
 /**
@@ -12,30 +13,39 @@ import type { CSSProperties } from 'react';
  */
 export default function CertificationShareButton( {
 	message,
+	source,
 	size,
 	variant = 'secondary',
 	style,
 	onClick,
 	onCopy,
+	recordTracksEvent,
 }: {
 	message: string;
+	/** Where the button sits, sent with the Tracks events. */
+	source: 'overview' | 'agency_tier';
 	size?: 'compact' | 'default';
 	variant?: 'primary' | 'secondary' | 'tertiary';
 	style?: CSSProperties;
 	onClick?: () => void;
 	/** Replaces the snackbar, for hosts that don't render `@wordpress/notices`. */
 	onCopy?: () => void;
+	recordTracksEvent?: RecordTracksEvent;
 } ) {
 	const [ isModalOpen, setModalOpen ] = useState( false );
+	const [ hasCopyFailed, setCopyFailed ] = useState( false );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
 	const copy = async () => {
 		try {
 			await navigator.clipboard.writeText( message );
 		} catch {
-			// The modal stays open, so the message can still be selected and copied by hand.
+			// The modal stays open with an error, so the message can still be copied by hand.
+			setCopyFailed( true );
+			recordTracksEvent?.( 'calypso_a4a_certification_share_copy_failed', { source } );
 			return;
 		}
+		recordTracksEvent?.( 'calypso_a4a_certification_share_copy', { source } );
 		setModalOpen( false );
 		if ( onCopy ) {
 			onCopy();
@@ -55,6 +65,8 @@ export default function CertificationShareButton( {
 				style={ style }
 				onClick={ () => {
 					onClick?.();
+					recordTracksEvent?.( 'calypso_a4a_certification_share_open', { source } );
+					setCopyFailed( false );
 					setModalOpen( true );
 				} }
 			>
@@ -63,6 +75,7 @@ export default function CertificationShareButton( {
 			{ isModalOpen && (
 				<CertificationShareModal
 					message={ message }
+					hasCopyFailed={ hasCopyFailed }
 					onCopy={ copy }
 					onClose={ () => setModalOpen( false ) }
 				/>

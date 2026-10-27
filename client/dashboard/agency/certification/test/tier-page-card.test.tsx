@@ -26,11 +26,15 @@ function mockDiscountCode( coupon: Partial< AgencyApwdDiscountCode > | null ) {
 describe( '<CertificationTierPageCard>', () => {
 	const originalClipboard = window.navigator.clipboard;
 
-	beforeEach( () => {
+	function mockClipboard( writeText: jest.Mock ) {
 		Object.defineProperty( window.navigator, 'clipboard', {
-			value: { writeText: jest.fn().mockResolvedValue( undefined ) },
+			value: { writeText },
 			configurable: true,
 		} );
+	}
+
+	beforeEach( () => {
+		mockClipboard( jest.fn().mockResolvedValue( undefined ) );
 	} );
 
 	afterEach( () => {
@@ -56,13 +60,11 @@ describe( '<CertificationTierPageCard>', () => {
 
 	test( 'previews the share message read-only, then copies it', async () => {
 		const writeText = jest.fn().mockResolvedValue( undefined );
-		Object.defineProperty( window.navigator, 'clipboard', {
-			value: { writeText },
-			configurable: true,
-		} );
+		mockClipboard( writeText );
+		const recordTracksEvent = jest.fn();
 		mockAgency();
 		mockDiscountCode( { code: 'HUBSPOT-CODE-123', discount_percent: '30' } );
-		render( <CertificationTierPageCard /> );
+		render( <CertificationTierPageCard recordTracksEvent={ recordTracksEvent } /> );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Share with your team' } ) );
 		const message = screen.getByRole( 'textbox', { name: 'Message' } ) as HTMLTextAreaElement;
@@ -73,6 +75,32 @@ describe( '<CertificationTierPageCard>', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Copy message' } ) );
 		expect( writeText ).toHaveBeenCalledWith( message.value );
 		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_certification_share_open', {
+			source: 'agency_tier',
+		} );
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_certification_share_copy', {
+			source: 'agency_tier',
+		} );
+	} );
+
+	test( 'keeps the message open with an error when the copy fails', async () => {
+		mockClipboard( jest.fn().mockRejectedValue( new Error( 'Not allowed' ) ) );
+		const recordTracksEvent = jest.fn();
+		mockAgency();
+		mockDiscountCode( { code: 'HUBSPOT-CODE-123', discount_percent: '30' } );
+		render( <CertificationTierPageCard recordTracksEvent={ recordTracksEvent } /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Share with your team' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Copy message' } ) );
+
+		expect(
+			await screen.findByText( 'Couldn’t copy the message. Select it below and copy it instead.' )
+		).toBeVisible();
+		expect( screen.getByRole( 'textbox', { name: 'Message' } ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_certification_share_copy_failed',
+			{ source: 'agency_tier' }
+		);
 	} );
 
 	test( 'records a view, code copies and exam clicks', async () => {
