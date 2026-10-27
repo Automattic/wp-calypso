@@ -3,8 +3,17 @@ import { __ } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import OverviewCard from '../../components/overview-card';
+import type { RecordTracksEvent } from '../tiers/types';
 
-export default function MatchingProfilePreview( { href }: { href: string } ) {
+export default function MatchingProfilePreview( {
+	href,
+	agencyId,
+	recordTracksEvent,
+}: {
+	href: string;
+	agencyId?: number;
+	recordTracksEvent?: RecordTracksEvent;
+} ) {
 	// Calypso flags use a literal plus as an enable prefix, rather than a space.
 	const searchParams = new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) );
 	const previewHref = addQueryArgs( href, {
@@ -23,7 +32,17 @@ export default function MatchingProfilePreview( { href }: { href: string } ) {
 			) }
 			bottom={
 				<HStack justify="flex-start">
-					<Button __next40pxDefaultSize variant="primary" href={ previewHref }>
+					<Button
+						__next40pxDefaultSize
+						variant="primary"
+						href={ previewHref }
+						onClick={ () =>
+							recordTracksEvent?.( 'calypso_a4a_overview_lead_matching_click', {
+								agency_id: agencyId,
+								is_design_preview: true,
+							} )
+						}
+					>
 						{ __( 'Complete profile' ) }
 					</Button>
 				</HStack>
