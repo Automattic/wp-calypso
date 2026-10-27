@@ -30,7 +30,7 @@
 		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
 		"domain-transfer-redesign": true,
-		"emails/titan-tiers": false,
+		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/legacy-contact": false,
