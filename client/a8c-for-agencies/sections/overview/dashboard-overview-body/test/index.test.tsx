@@ -29,7 +29,8 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 const matchingKey = getLeadMatchingProfileQueryKey( 123 );
 const matchingPath = '/wpcom/v2/agency/123/lead-matching';
-const profileLink = () => screen.queryByRole( 'link', { name: 'Complete profile' } );
+const profileLink = () =>
+	screen.queryByRole( 'link', { name: /^(Set up|Finish|Review) preferences$/ } );
 
 function makeAgency( id = 123 ) {
 	return {
@@ -87,9 +88,14 @@ test( 'uses the classic endpoint cache for saved answers, saves and agency chang
 		.query( true )
 		.reply( 200, { agency_id: 123, lead_matching_profile: incompleteProfile } );
 	const store = renderOverview( queryClient, true );
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect(
+		await screen.findByRole( 'link', { name: /^(Set up|Finish|Review) preferences$/ } )
+	).toBeVisible();
 	expect( fetched.isDone() ).toBe( true );
 	expect( profileLink() ).toHaveAttribute( 'href', '/partner-directory/lead-matching' );
+	expect(
+		screen.getByRole( 'progressbar', { value: { text: /questions answered/ } } )
+	).toHaveAttribute( 'aria-valuenow', '10' );
 
 	const failedSync = nock( API )
 		.put( matchingPath )
@@ -113,7 +119,9 @@ test( 'uses the classic endpoint cache for saved answers, saves and agency chang
 	await act( async () => {
 		await queryClient.refetchQueries( { queryKey: matchingKey } );
 	} );
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect(
+		await screen.findByRole( 'link', { name: /^(Set up|Finish|Review) preferences$/ } )
+	).toBeVisible();
 	const saved = mockLeadMatchingSave();
 	await userEvent.click( screen.getByRole( 'button', { name: 'Save matching profile' } ) );
 	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
@@ -129,8 +137,14 @@ test( 'uses the classic endpoint cache for saved answers, saves and agency chang
 	act( () => {
 		store.dispatch( { type: 'switch-agency', agency: makeAgency( 456 ) } );
 	} );
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect(
+		await screen.findByRole( 'link', { name: /^(Set up|Finish|Review) preferences$/ } )
+	).toBeVisible();
 	expect( switched.isDone() ).toBe( true );
+	expect( profileLink() ).toHaveAccessibleName( 'Set up preferences' );
+	expect(
+		screen.queryByRole( 'progressbar', { value: { text: /questions answered/ } } )
+	).not.toBeInTheDocument();
 	queryClient.clear();
 } );
 
@@ -165,7 +179,10 @@ test( 'forces the classic card for design review without granting access', async
 	const scope = nock( API ).get( matchingPath ).query( true ).reply( 200, {} );
 	renderOverview( queryClient, false, agency );
 
-	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
+	expect( await screen.findByRole( 'link', { name: 'Set up preferences' } ) ).toBeVisible();
+	expect(
+		screen.queryByRole( 'progressbar', { value: { text: /questions answered/ } } )
+	).not.toBeInTheDocument();
 	expect( scope.isDone() ).toBe( false );
 	queryClient.clear();
 } );

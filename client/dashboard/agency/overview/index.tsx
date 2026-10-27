@@ -27,10 +27,7 @@ import { useContactSupport } from '../support/use-contact-support';
 import { isProPartnerOrHigher } from '../tiers/get-current-agency-tier';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
-import {
-	getAnsweredMatchingProfileCount,
-	hasIncompleteSavedMatchingProfile,
-} from './matching-profile-visibility';
+import { getAnsweredMatchingProfileCount } from './matching-profile-visibility';
 import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
 import usePressableOfferEligibility from './use-pressable-offer-eligibility';
@@ -135,15 +132,15 @@ export default function AgencyOverview() {
 				capabilities={ agency.user?.capabilities }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 				showMatchingProfilePreview={
-					canAccessLeadMatching &&
-					isLeadMatchingSuccess &&
-					hasIncompleteSavedMatchingProfile( agencyId, leadMatching )
+					answeredRequiredFieldCount !== undefined &&
+					answeredRequiredFieldCount < REQUIRED_LEAD_MATCHING_FIELDS.length
 				}
 				showContactOptionsAnnouncement={
 					canAccessLeadMatching &&
 					answeredRequiredFieldCount === REQUIRED_LEAD_MATCHING_FIELDS.length &&
 					( ! contact?.phone?.trim() || ! contact?.booking_link?.trim() )
 				}
+				matchingProfileAnswered={ answeredRequiredFieldCount }
 				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {

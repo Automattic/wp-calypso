@@ -47,6 +47,7 @@ export interface AgencyOverviewContentProps {
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
 	showMatchingProfilePreview?: boolean;
+	matchingProfileAnswered?: number;
 	showContactOptionsAnnouncement?: boolean;
 	/** Shows the Pressable introductory offer in the news column. */
 	isEligibleForPressableIntroOffer?: boolean;
@@ -80,6 +81,7 @@ export default function AgencyOverviewContent( {
 	capabilities,
 	hasPartnerDirectoryListing,
 	showMatchingProfilePreview = false,
+	matchingProfileAnswered = 0,
 	showContactOptionsAnnouncement = false,
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
@@ -136,6 +138,7 @@ export default function AgencyOverviewContent( {
 				{ ( showMatchingProfilePreview || isDesignPreview ) && links.leadMatching && (
 					<MatchingProfilePreview
 						href={ links.leadMatching }
+						answered={ matchingProfileAnswered }
 						agencyId={ agencyId }
 						isDesignPreview={ isDesignPreview }
 						recordTracksEvent={ recordTracksEvent }

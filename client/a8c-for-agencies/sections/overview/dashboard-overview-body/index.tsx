@@ -22,10 +22,7 @@ import {
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 	PROGRAM_INCENTIVES_URL,
 } from 'calypso/dashboard/agency/overview/constants';
-import {
-	getAnsweredMatchingProfileCount,
-	hasIncompleteSavedMatchingProfile,
-} from 'calypso/dashboard/agency/overview/matching-profile-visibility';
+import { getAnsweredMatchingProfileCount } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
 import { REQUIRED_LEAD_MATCHING_FIELDS } from 'calypso/dashboard/agency/partner-directory/lead-matching/form-data';
 import { isProPartnerOrHigher } from 'calypso/dashboard/agency/tiers/get-current-agency-tier';
@@ -91,15 +88,15 @@ function DashboardOverviewBodyContent( {
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 			showMatchingProfilePreview={
-				canAccessLeadMatching &&
-				isLeadMatchingSuccess &&
-				hasIncompleteSavedMatchingProfile( agency.id, leadMatching )
+				answeredRequiredFieldCount !== undefined &&
+				answeredRequiredFieldCount < REQUIRED_LEAD_MATCHING_FIELDS.length
 			}
 			showContactOptionsAnnouncement={
 				canAccessLeadMatching &&
 				answeredRequiredFieldCount === REQUIRED_LEAD_MATCHING_FIELDS.length &&
 				( ! contact?.phone?.trim() || ! contact?.booking_link?.trim() )
 			}
+			matchingProfileAnswered={ answeredRequiredFieldCount }
 			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
 			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {
