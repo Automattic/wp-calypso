@@ -1,4 +1,5 @@
 import { Card, CardBody, Button, __experimentalVStack as VStack } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import {
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
@@ -8,11 +9,13 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
+import CertificationTierPageCard from 'calypso/dashboard/agency/certification/tier-page-card';
 import TierBenefits from 'calypso/dashboard/agency/tiers/tier-benefits';
 import TierCards from 'calypso/dashboard/agency/tiers/tier-cards';
 import Divider from 'calypso/dashboard/components/divider';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 import useScheduleCall from '../../../hooks/use-schedule-call';
 import DownloadBadges from '../download-badges';
 import InfluencedRevenue from './influenced-revenue';
@@ -51,6 +54,10 @@ export default function AgencyTierOverviewContent( {
 		[ dispatch ]
 	);
 
+	const onCodeCopy = useCallback( () => {
+		dispatch( successNotice( __( 'Discount code copied to clipboard.' ) ) );
+	}, [ dispatch ] );
+
 	return (
 		<VStack spacing={ 6 }>
 			<Card>
@@ -67,6 +74,7 @@ export default function AgencyTierOverviewContent( {
 				recordTracksEvent={ recordTracks }
 			/>
 			<Divider style={ { color: 'var(--color-gray-100)', marginBlock: '16px' } } />
+			<CertificationTierPageCard onCodeCopy={ onCodeCopy } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracks }
