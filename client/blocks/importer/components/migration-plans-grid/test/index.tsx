@@ -102,13 +102,13 @@ describe( 'MigrationPlansGrid', () => {
 		expect( mockFeaturesGridProps.className ).toContain( 'is-plans-grid-redesign-experiment' );
 	} );
 
-	it( 'hides the plan type selector with the redesign', () => {
+	it( 'keeps the plan type selector with the redesign, since the grid upgrades an existing site', () => {
 		renderGrid();
 
-		expect( screen.queryByTestId( 'plan-type-selector' ) ).not.toBeInTheDocument();
+		expect( screen.getByTestId( 'plan-type-selector' ) ).toBeVisible();
 	} );
 
-	it( 'keeps the plan type selector without the redesign', () => {
+	it( 'renders without the redesign styling when the redesign is off', () => {
 		mockUsePlansGridRedesignExperiment.mockReturnValue( {
 			...REDESIGN_RESULT,
 			usePlansGridRedesign: false,
@@ -120,5 +120,6 @@ describe( 'MigrationPlansGrid', () => {
 
 		expect( screen.getByTestId( 'plan-type-selector' ) ).toBeVisible();
 		expect( mockFeaturesGridProps.showFeatureCheckmarks ).toBe( false );
+		expect( mockFeaturesGridProps.className ).not.toContain( 'is-plans-grid-redesign-experiment' );
 	} );
 } );

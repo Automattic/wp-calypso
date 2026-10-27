@@ -157,7 +157,7 @@ export default function MigrationPlansGrid( {
 
 	return (
 		<div className="migration-plans-grid">
-			{ ! usePlansGridRedesign && config.isEnabled( 'onboarding/interval-dropdown' ) && (
+			{ config.isEnabled( 'onboarding/interval-dropdown' ) && (
 				<PlanTypeSelector { ...planTypeSelectorProps } />
 			) }
 			<FeaturesGrid
