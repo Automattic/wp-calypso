@@ -32,7 +32,7 @@ describe( 'persistAgentsManagerState', () => {
 	it( 'skips save requests when the host opts out of persisted state', () => {
 		setShouldPersistState( () => false );
 
-		persistAgentsManagerState( { agents_manager_router_history: 'a' } );
+		persistAgentsManagerState( { agents_manager_docked: true } );
 
 		expect( mockCanAccess ).not.toHaveBeenCalled();
 		expect( mockRequest ).not.toHaveBeenCalled();
@@ -56,10 +56,10 @@ describe( 'persistAgentsManagerState', () => {
 		);
 
 		// First save goes out immediately and stays in flight.
-		persistAgentsManagerState( { agents_manager_router_history: 'a' } );
+		persistAgentsManagerState( { agents_manager_docked: true } );
 		// These arrive while it's in flight — they must not race; they merge.
 		persistAgentsManagerState( { agents_manager_minimized: false } );
-		persistAgentsManagerState( { agents_manager_router_history: 'b' } );
+		persistAgentsManagerState( { agents_manager_docked: false } );
 
 		expect( mockRequest ).toHaveBeenCalledTimes( 1 );
 
@@ -70,7 +70,7 @@ describe( 'persistAgentsManagerState', () => {
 		expect( mockRequest ).toHaveBeenCalledTimes( 2 );
 		expect( mockRequest ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
-				body: { state: { agents_manager_minimized: false, agents_manager_router_history: 'b' } },
+				body: { state: { agents_manager_minimized: false, agents_manager_docked: false } },
 			} )
 		);
 	} );

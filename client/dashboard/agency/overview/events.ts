@@ -1,13 +1,16 @@
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
 import EvolveDigitalLogo from 'calypso/assets/images/a8c-for-agencies/events/evolvedigital-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
+import WordPressLogo from 'calypso/assets/images/a8c-for-agencies/events/wporg-logo-green.svg';
+import { CERTIFICATION_EXAM_URL, PROMO_LAST_DAY } from '../certification/constants';
 import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 } from './constants';
+import type { CSSProperties, ReactNode } from 'react';
 
 export interface FeaturedEventCta {
 	/** Used as the `cta_id` tracks property, so keep it stable per CTA. */
@@ -22,6 +25,22 @@ export interface FeaturedEventCta {
 	 * section fires, so funnels keyed on it keep working across the transition.
 	 */
 	legacyTrackEventName?: string;
+}
+
+/** What the card passes an action CTA, so its button matches the link CTAs beside it. */
+export interface FeaturedEventCtaButtonProps {
+	size: 'compact';
+	variant: 'primary' | 'secondary';
+	style?: CSSProperties;
+	/** Records the CTA click. */
+	onClick: () => void;
+}
+
+/** A CTA that acts in place, such as opening a dialog, instead of linking somewhere. */
+export interface FeaturedEventActionCta {
+	/** Used as the `cta_id` tracks property, so keep it stable per CTA. */
+	id: string;
+	render: ( buttonProps: FeaturedEventCtaButtonProps ) => ReactNode;
 }
 
 export interface FeaturedEvent {
@@ -39,7 +58,7 @@ export interface FeaturedEvent {
 	subtitle: string;
 	/** One entry per paragraph. Supports `<strong>` and `<code>` tags. */
 	description: string[];
-	ctas: FeaturedEventCta[];
+	ctas: ( FeaturedEventCta | FeaturedEventActionCta )[];
 	/** ISO date the card stops showing itself, typically the day after the event. */
 	endsAt: string;
 }
@@ -198,4 +217,48 @@ export const getAiMcpAnnouncement = ( aiMcpHref: string ): FeaturedEvent => ( {
 		},
 	],
 	endsAt: '2026-10-08',
+} );
+
+/**
+ * The Q1 2027 doubled developer certification discount, shown only to agencies
+ * with an active code, since "Get your code" leads to the tier page card.
+ * `discount` is the agency's own, already doubled.
+ */
+export const getCertificationPromoEvent = (
+	tiersHref: string,
+	discount: number,
+	shareCta?: FeaturedEventActionCta
+): FeaturedEvent => ( {
+	id: 'a4a-certification-promo-2027-q1',
+	logo: WordPressLogo,
+	logoAlt: __( 'WordPress' ),
+	when: __( 'Limited time offer · Until March 31, 2027' ),
+	title: __( 'Certify your developers at double the discount' ),
+	subtitle: __( 'Automattic for Agencies & WordPress Certifications' ),
+	description: [
+		sprintf(
+			/* translators: %d is the agency's percentage discount, e.g. 30 */
+			__(
+				'Until March 31, 2027, your agency’s code takes %d%% off the Advanced Professional WordPress Developer exam, twice your usual discount.'
+			),
+			discount
+		),
+	],
+	ctas: [
+		{
+			id: 'get-your-code',
+			label: __( 'Get your code' ),
+			url: `${ tiersHref }#certification`,
+			variant: 'primary',
+		},
+		...( shareCta ? [ shareCta ] : [] ),
+		{
+			id: 'about-the-exam',
+			label: __( 'About the exam' ),
+			url: CERTIFICATION_EXAM_URL,
+			isExternal: true,
+		},
+	],
+	// The same moment the "Doubled until" badge goes, which is UTC-based.
+	endsAt: `${ PROMO_LAST_DAY }T23:59:59.999Z`,
 } );
