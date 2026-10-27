@@ -158,6 +158,7 @@ const {
 	isProcessing, // boolean - request in progress
 	isReplying, // boolean | undefined - reply text is streaming in (with `trackReplying`, during a request)
 	error, // string | null - last error
+	errorDetails, // { name, status?, code? } | null - the error's name, HTTP status and server code
 
 	// Core methods
 	onSubmit, // (message: string) => Promise<void>
@@ -388,6 +389,8 @@ try {
 	}
 }
 ```
+
+A request the client's own timer cuts off throws a `TimeoutError` instead, so it isn't mistaken for a cancellation.
 
 ### Message Actions
 

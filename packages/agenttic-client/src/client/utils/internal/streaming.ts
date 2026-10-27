@@ -1,5 +1,6 @@
 import { extractProgressDataFromMessage, extractTextFromMessage, generateMessageId } from '../core';
 import { logger } from '../logger';
+import { AgentRequestError, getJsonRpcErrorCode } from './errors';
 import type {
 	Message,
 	StreamDelta,
@@ -206,7 +207,9 @@ export async function* parseSSEStream(
 			}
 
 			const streamError = event.error
-				? new Error( `Streaming error: ${ event.error.message }` )
+				? new AgentRequestError( `Streaming error: ${ event.error.message }`, {
+						code: getJsonRpcErrorCode( event.error ),
+					} )
 				: null;
 			if ( streamError && ! event.result?.status ) {
 				throw streamError;

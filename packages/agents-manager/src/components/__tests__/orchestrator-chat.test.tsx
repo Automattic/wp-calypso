@@ -572,6 +572,7 @@ const agentChatReturn = ( overrides: Record< string, unknown > = {} ) => ( {
 	suggestions: [],
 	isProcessing: false,
 	error: null,
+	errorDetails: null,
 	loadMessages: jest.fn(),
 	onSubmit: jest.fn(),
 	abortCurrentRequest: jest.fn(),
@@ -2242,6 +2243,12 @@ describe( 'OrchestratorChat', () => {
 					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_error'
 				);
 
+		const errorProps = ( errorType: string, errorClass: string = errorType ) => ( {
+			error_type: errorType,
+			error_class: errorClass,
+			navigating: false,
+		} );
+
 		it( 'records one event per error shown, with its type', () => {
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( { error: 'ai_editorial_review_over_limit' } )
@@ -2251,7 +2258,7 @@ describe( 'OrchestratorChat', () => {
 			rerender( chat() );
 
 			expect( chatErrorCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_error', { error_type: 'usage_limit' } ],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'usage_limit' ) ],
 			] );
 		} );
 
@@ -2266,8 +2273,8 @@ describe( 'OrchestratorChat', () => {
 			rerender( chat() );
 
 			expect( chatErrorCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
-				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other' ) ],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other' ) ],
 			] );
 		} );
 
@@ -2292,8 +2299,46 @@ describe( 'OrchestratorChat', () => {
 
 			expect( mockTakeRefusalCode ).toHaveBeenCalledTimes( 2 );
 			expect( chatErrorCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_error', { error_type: 'credits' } ],
-				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'credits' ), error_code: 'ai_credit_allowance_exhausted' },
+				],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other' ) ],
+			] );
+		} );
+
+		it( 'records the status and code behind an error, but not its text', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( {
+					error: 'HTTP error! status: 503',
+					errorDetails: { name: 'AgentRequestError', status: 503, code: 'upstream_down' },
+				} )
+			);
+
+			render( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', '5xx' ), http_status: 503, error_code: 'upstream_down' },
+				],
+			] );
+		} );
+
+		it( 'flags an error that lands after the page started to unload', () => {
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', 'network' ), navigating: true },
+				],
 			] );
 		} );
 	} );

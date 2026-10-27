@@ -3,6 +3,7 @@ import { formatObject, logger } from '../logger';
 import {
 	createTimeoutHandler,
 	handleRequestError,
+	toTimeoutError,
 	validateHttpResponse,
 	validateJsonRpcResponse,
 	validateStreamingResponse,
@@ -279,7 +280,11 @@ export async function executeRequest(
 			throw error;
 		}
 	} catch ( error ) {
-		handleRequestError( error, timeoutId, 'request' );
+		handleRequestError(
+			toTimeoutError( error, timeoutController.signal, externalSignal ),
+			timeoutId,
+			'request'
+		);
 	}
 }
 
@@ -333,6 +338,10 @@ export async function* executeStreamingRequest(
 			supportDeltas,
 		} );
 	} catch ( error ) {
-		handleRequestError( error, timeoutId, 'streaming request' );
+		handleRequestError(
+			toTimeoutError( error, controller.signal, externalSignal ),
+			timeoutId,
+			'streaming request'
+		);
 	}
 }

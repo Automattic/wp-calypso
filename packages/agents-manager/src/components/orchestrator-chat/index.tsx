@@ -206,6 +206,7 @@ export default function OrchestratorChat( {
 		suggestions,
 		isProcessing,
 		error,
+		errorDetails,
 		loadMessages,
 		onSubmit,
 		abortCurrentRequest,
@@ -323,6 +324,7 @@ export default function OrchestratorChat( {
 
 	const chatError = useChatError( {
 		error: hasFailedResume ? null : error,
+		errorDetails,
 		isReaderChat,
 		takeRefusalCode: credits.takeRefusalCode,
 		refusalNotice: credits.refusalNotice,

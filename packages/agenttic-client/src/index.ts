@@ -83,6 +83,7 @@ export type {
 	SubmitOptions,
 	PromptSource,
 } from './react/useAgentChat';
+export type { AgentErrorDetails } from './client/utils/internal/errors';
 
 // Constants
 export { ErrorCodes } from './client/types/index';

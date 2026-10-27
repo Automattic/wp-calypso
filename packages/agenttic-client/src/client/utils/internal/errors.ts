@@ -1,5 +1,79 @@
 import { logger } from '../logger';
-import type { JsonRpcResponse } from '../../types/index';
+import type { JsonRpcError, JsonRpcResponse } from '../../types/index';
+
+/**
+ * A request failure that keeps what the server said about it, so callers can
+ * tell causes apart without parsing the message. `name` names client-side
+ * causes: `TimeoutError` when the request timer fired, `StreamIncompleteError`
+ * when a stream ended without a final result.
+ */
+export class AgentRequestError extends Error {
+	/** The HTTP status of a failed response. */
+	readonly status?: number;
+	/** The JSON-RPC error's `data.code` when the server names one, else its numeric code. */
+	readonly code?: string | number;
+
+	constructor(
+		message: string,
+		{ name, status, code }: { name?: string; status?: number; code?: string | number } = {}
+	) {
+		super( message );
+		this.name = name ?? 'AgentRequestError';
+		this.status = status;
+		this.code = code;
+	}
+}
+
+/**
+ * The structured fields of a failed request, without its message.
+ */
+export interface AgentErrorDetails {
+	/** The error's `name`, such as `TypeError` for a fetch that never got a response. */
+	name: string;
+	status?: number;
+	code?: string | number;
+}
+
+export function getAgentErrorDetails( error: unknown ): AgentErrorDetails {
+	if ( ! ( error instanceof Error ) ) {
+		return { name: 'Error' };
+	}
+
+	const { status, code } = error as { status?: unknown; code?: unknown };
+	return {
+		name: error.name,
+		...( typeof status === 'number' && { status } ),
+		...( ( typeof code === 'string' || typeof code === 'number' ) && { code } ),
+	};
+}
+
+/**
+ * A JSON-RPC error's `data.code` when the server names one, else its numeric code.
+ * @param error - The JSON-RPC error
+ */
+export function getJsonRpcErrorCode( error: JsonRpcError ): string | number {
+	const data = error.data as { code?: unknown } | undefined;
+	return typeof data?.code === 'string' && data.code !== '' ? data.code : error.code;
+}
+
+/**
+ * Turns the abort the request timer caused into a `TimeoutError`, so it isn't
+ * mistaken for a cancellation. Any other error passes through.
+ * @param error         - The error that occurred
+ * @param timeoutSignal - The signal the request timer aborts
+ * @param externalSignal - The caller's own abort signal
+ */
+export function toTimeoutError(
+	error: unknown,
+	timeoutSignal: AbortSignal,
+	externalSignal?: AbortSignal
+): unknown {
+	if ( ! timeoutSignal.aborted || externalSignal?.aborted ) {
+		return error;
+	}
+
+	return new AgentRequestError( 'Request timed out', { name: 'TimeoutError' } );
+}
 
 /**
  * Handle request errors with consistent logging and timeout cleanup
@@ -29,7 +103,9 @@ export function handleRequestError(
  */
 export function validateHttpResponse( response: Response ): void {
 	if ( ! response.ok ) {
-		throw new Error( `HTTP error! status: ${ response.status }` );
+		throw new AgentRequestError( `HTTP error! status: ${ response.status }`, {
+			status: response.status,
+		} );
 	}
 }
 
@@ -44,7 +120,9 @@ export function validateJsonRpcResponse< T >(
 	operation: string = 'request'
 ): T {
 	if ( data.error ) {
-		throw new Error( `Protocol ${ operation } error: ${ data.error.message }` );
+		throw new AgentRequestError( `Protocol ${ operation } error: ${ data.error.message }`, {
+			code: getJsonRpcErrorCode( data.error ),
+		} );
 	}
 
 	if ( ! data.result ) {

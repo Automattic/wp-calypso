@@ -44,6 +44,7 @@ export {
 export { getToolCallCount, hasToolCalls } from './internal/tools';
 
 export {
+	AgentRequestError,
 	createTimeoutHandler,
 	handleRequestError,
 	validateHttpResponse,

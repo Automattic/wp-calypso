@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { isA2uiDataPart } from '../client/utils/core';
+import { getAgentErrorDetails, type AgentErrorDetails } from '../client/utils/internal/errors';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -421,6 +422,8 @@ export interface UseAgentChatReturn {
 	messages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	// The status and code behind `error`, so a consumer can tell causes apart without its text.
+	errorDetails: AgentErrorDetails | null;
 	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
@@ -456,6 +459,7 @@ export interface AgentChatState {
 	uiMessages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	errorDetails: AgentErrorDetails | null;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
@@ -500,6 +504,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		uiMessages: [],
 		isProcessing: false,
 		error: isValidConfig ? null : 'Invalid agent configuration',
+		errorDetails: null,
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
@@ -675,7 +680,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
-			const restoreMessagesOnError = async ( error: string | null ): Promise< boolean > => {
+			const restoreMessagesOnError = async (
+				error: string | null,
+				errorDetails: AgentErrorDetails | null
+			): Promise< boolean > => {
 				const restoreOnError = internalOptions?.restoreOnError;
 
 				if ( ! restoreOnError ) {
@@ -699,6 +707,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					progressMessage: null,
 					progressPhase: null,
 					error,
+					errorDetails,
 				} ) );
 
 				return true;
@@ -741,6 +750,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					isProcessing: true,
 					isReplying: false,
 					error: null,
+					errorDetails: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
@@ -748,6 +758,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					isProcessing: true,
 					isReplying: false,
 					error: null,
+					errorDetails: null,
 				} ) );
 			}
 
@@ -1008,7 +1019,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Handle AbortError specially - it's not really an error, just user cancellation
 				if ( error instanceof Error && error.name === 'AbortError' ) {
 					logger( 'Request was aborted by user' );
-					const restored = await restoreMessagesOnError( null );
+					const restored = await restoreMessagesOnError( null, null );
 					if ( ! restored ) {
 						setState( ( prev ) => ( {
 							...prev,
@@ -1016,13 +1027,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							progressMessage: null,
 							progressPhase: null,
 							error: null, // Don't show error for user-initiated abort
+							errorDetails: null,
 						} ) );
 					}
 					return; // Don't re-throw AbortError
 				}
 
 				const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
-				const restored = await restoreMessagesOnError( errorMessage );
+				const errorDetails = getAgentErrorDetails( error );
+				const restored = await restoreMessagesOnError( errorMessage, errorDetails );
 				if ( ! restored ) {
 					setState( ( prev ) => ( {
 						...prev,
@@ -1030,6 +1043,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						progressMessage: null,
 						progressPhase: null,
 						error: errorMessage,
+						errorDetails,
 					} ) );
 				}
 				throw error;
@@ -1150,6 +1164,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		messages: state.uiMessages,
 		isProcessing: state.isProcessing,
 		error: state.error,
+		errorDetails: state.errorDetails,
 		onSubmit,
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,
