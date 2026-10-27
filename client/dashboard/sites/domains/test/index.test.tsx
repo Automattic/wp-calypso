@@ -311,6 +311,26 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'closes the primary site address modal from its close button', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain, domain, defaultAddressDomain ],
+			siteResponse: siteWithPrimaryDomainFeature,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await user.click(
+			await screen.findByRole( 'button', { name: 'Change primary site address' } )
+		);
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+		await user.click( within( dialog ).getByRole( 'button', { name: 'Close' } ) );
+
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'sorts domains by whether they are primary', async () => {
 		nock.cleanAll();
 		mockApis( {

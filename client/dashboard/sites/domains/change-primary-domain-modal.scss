@@ -1,0 +1,100 @@
+@import '@wordpress/base-styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+
+.change-primary-domain-modal {
+	// Clip the full-bleed illustration to the modal's rounded corners.
+	overflow: hidden;
+
+	.components-modal__content {
+		padding: 0;
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+}
+
+.change-primary-domain-modal__close {
+	position: absolute;
+	inset-block-start: $grid-unit-15;
+	inset-inline-end: $grid-unit-15;
+}
+
+// The modal content padding is removed so the illustration can bleed to the edges.
+.change-primary-domain-modal__body {
+	padding: $grid-unit-30;
+}
+
+// Positions are percentages so the drawing keeps its layout when the modal is narrower.
+.primary-address-illustration {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 1024 / 352;
+	overflow: hidden;
+	background: color-mix(in oklch, var(--wpds-color-stroke-interactive-brand) 17%, var(--wpds-color-background-surface-neutral-strong));
+}
+
+.primary-address-illustration__window {
+	position: absolute;
+	inset-block: 26% 0;
+	inset-inline: 22% 12%;
+	overflow: hidden;
+	background: var(--wpds-color-background-surface-neutral-strong);
+	border-start-start-radius: 16px;
+	border-start-end-radius: 16px;
+}
+
+.primary-address-illustration__window-dots {
+	display: flex;
+	gap: $grid-unit-20;
+	padding-block-start: $grid-unit-20;
+	padding-inline-start: $grid-unit-20;
+
+	span {
+		width: 12px;
+		height: 12px;
+		border: 2px solid var(--wpds-color-background-track-neutral);
+		border-radius: $radius-round;
+	}
+}
+
+.primary-address-illustration__window-line {
+	width: 30%;
+	height: 4px;
+	margin-block-start: 72px;
+	margin-inline-start: $grid-unit-20;
+	background: var(--wpds-color-background-track-neutral-weak);
+	border-radius: $radius-small;
+}
+
+.primary-address-illustration__window-image {
+	position: absolute;
+	inset-block: 18% 0;
+	inset-inline: 44% 0;
+	background: linear-gradient(155deg, var(--wpds-color-background-track-neutral) 0%, var(--wpds-color-background-surface-warning) 100%);
+}
+
+.primary-address-illustration__address {
+	position: absolute;
+	inset-block-start: 62%;
+	inset-inline-start: 11%;
+	display: flex;
+	align-items: center;
+	gap: $grid-unit-10;
+	padding: $grid-unit-10 $grid-unit-20;
+	color: var(--wpds-color-foreground-content-neutral);
+	font-size: 1.25rem;
+	line-height: 1.2;
+	white-space: nowrap;
+	background: var(--wpds-color-background-surface-neutral-strong);
+	border: 1px solid var(--wpds-color-stroke-interactive-brand);
+	border-radius: $radius-full;
+	transform: translateY(-50%);
+
+	svg {
+		flex-shrink: 0;
+		fill: var(--wpds-color-foreground-interactive-brand);
+	}
+
+	@media (max-width: $break-small) {
+		font-size: 1rem;
+	}
+}
