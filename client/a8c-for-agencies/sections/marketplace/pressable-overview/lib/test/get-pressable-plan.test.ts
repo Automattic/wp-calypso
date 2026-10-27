@@ -1,3 +1,4 @@
+import { PLAN_CATEGORY_STANDARD_TIER, PLAN_CATEGORY_AGENCY_TIER } from '../../constants';
 import getPressablePlan from '../get-pressable-plan';
 
 describe( 'getPressablePlan add-on mappings', () => {
@@ -50,5 +51,23 @@ describe( 'getPressablePlan add-on mappings', () => {
 			visits: 0,
 			unit: 'inbox',
 		} );
+	} );
+} );
+
+describe( 'getPressablePlan Signature plan tabs', () => {
+	it( 'puts Standard 1 to 10 installs on the low tab', () => {
+		for ( let tier = 1; tier <= 4; tier++ ) {
+			expect( getPressablePlan( `pressable-signature-${ tier }` ).category ).toBe(
+				PLAN_CATEGORY_STANDARD_TIER
+			);
+		}
+	} );
+
+	it( 'puts Agency 20 to 500 installs on the high tab', () => {
+		for ( let tier = 5; tier <= 17; tier++ ) {
+			expect( getPressablePlan( `pressable-signature-${ tier }` ).category ).toBe(
+				PLAN_CATEGORY_AGENCY_TIER
+			);
+		}
 	} );
 } );

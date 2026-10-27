@@ -18,18 +18,18 @@ import { getProductPriceInfo } from '../products/lib/product-pricing';
 import { CheckGrid, HostingFeatures, JetpackComplete, Testimonials } from './content-sections';
 import demoIllustration from './demo-callout-illustration.svg';
 import {
-	PLAN_CATEGORY_PREMIUM,
+	PLAN_CATEGORY_PERFORMANCE_TIER,
 	PRESSABLE_PROMOTION_TERMS_URL,
-	areSignaturePlansFor,
+	isCurrentCatalogFor,
 	getDefaultPlanCategoryTab,
 	getMinimumSelectableIndex,
 	getPlanCategories,
 	getPlanCategoryTabs,
 	getPressablePlanInfo,
 	getPressablePlanName,
-	isLowPlanCategory,
-	isLowTabDisabled,
-	isSignatureCatalogPlan,
+	isStandardTabCategory,
+	isStandardTabClosed,
+	isCurrentCatalogPlan,
 	sortPlansForCategory,
 } from './lib/pressable-plans';
 import { getTermPrice } from './lib/term-price';
@@ -59,32 +59,36 @@ interface Props {
 	onAddToCart: ( plan: AgencyProduct, quantity: number ) => void;
 }
 
-/** What the Premium gate names when nothing is picked: Custom, or the agency's own Premium plan on the legacy catalog. */
-function getPremiumGateLabel(
+/** What the Performance gate names when nothing is picked: Performance Custom, or the agency's own Premium plan on the legacy catalog. */
+function getPerformanceGateLabel(
 	selectedProduct: AgencyProduct | undefined,
-	hasPremiumPlans: boolean,
+	hasPerformancePlans: boolean,
 	existingPlan: AgencyProduct | undefined
 ) {
 	if ( selectedProduct ) {
 		return selectedProduct.name;
 	}
-	if ( hasPremiumPlans ) {
-		return __( 'Pressable Custom' );
+	if ( hasPerformancePlans ) {
+		return __( 'Pressable Performance Custom' );
 	}
-	return existingPlan && getPressablePlanInfo( existingPlan )?.category === PLAN_CATEGORY_PREMIUM
+	return existingPlan &&
+		getPressablePlanInfo( existingPlan )?.category === PLAN_CATEGORY_PERFORMANCE_TIER
 		? existingPlan.name
-		: __( 'Pressable Premium' );
+		: __( 'Pressable Performance' );
 }
 
-// The first plan of a category the agency can move up to. Premium is one
+// The first plan of a category the agency can move up to. Performance is one
 // dedicated site sold to a client rather than a step up from a pooled plan, so
-// only a Premium plan sets a floor on it.
+// only a Performance plan sets a floor on it.
 function getPlanFloor(
 	category: string,
 	options: PressablePlan[],
 	existingPlan: PressablePlan | undefined
 ) {
-	if ( category === PLAN_CATEGORY_PREMIUM && existingPlan?.category !== PLAN_CATEGORY_PREMIUM ) {
+	if (
+		category === PLAN_CATEGORY_PERFORMANCE_TIER &&
+		existingPlan?.category !== PLAN_CATEGORY_PERFORMANCE_TIER
+	) {
 		return 0;
 	}
 	return getMinimumSelectableIndex( category, options, existingPlan );
@@ -139,44 +143,47 @@ export default function PressableSection( {
 		() => ( existingPlan ? getPressablePlanInfo( existingPlan ) : undefined ),
 		[ existingPlan ]
 	);
-	const areSignaturePlans = areSignaturePlansFor( existingPlanInfo, isReferralMode );
+	const isCurrentCatalog = isCurrentCatalogFor( existingPlanInfo, isReferralMode );
 	// Referrals start from a clean slate: the agency's own plan sets no floor.
 	const existingPressablePlan = isReferralMode ? undefined : existingPlanInfo;
 
-	// Agencies on a legacy plan keep the legacy catalog, without the Premium plans.
+	// Agencies on a legacy plan keep the legacy catalog, without the Performance plans.
 	const catalog = useMemo(
 		() =>
 			products.filter( ( product ) => {
 				const plan = getPressablePlanInfo( product );
-				return !! plan && isSignatureCatalogPlan( plan ) === areSignaturePlans;
+				return !! plan && isCurrentCatalogPlan( plan ) === isCurrentCatalog;
 			} ),
-		[ products, areSignaturePlans ]
+		[ products, isCurrentCatalog ]
 	);
 	const catalogPlans = useMemo(
 		() => catalog.map( getPressablePlanInfo ).filter( ( plan ): plan is PressablePlan => !! plan ),
 		[ catalog ]
 	);
 
-	const hasPremiumPlans = catalogPlans.some( ( plan ) => plan.category === PLAN_CATEGORY_PREMIUM );
-
-	const { lowCategory, highCategory } = getPlanCategories( areSignaturePlans );
-	const lowOptions = useMemo(
-		() => sortPlansForCategory( catalogPlans, lowCategory ),
-		[ catalogPlans, lowCategory ]
+	const hasPerformancePlans = catalogPlans.some(
+		( plan ) => plan.category === PLAN_CATEGORY_PERFORMANCE_TIER
 	);
-	const disableLowTab = isLowTabDisabled( existingPressablePlan, lowOptions );
 
-	// An agency on the largest low-tier plan can only move up to the high tier.
-	const ownTab = getDefaultPlanCategoryTab( existingPressablePlan, areSignaturePlans );
-	const defaultTab = ownTab === lowCategory && disableLowTab ? highCategory : ownTab;
+	const { standardTabCategory, agencyTabCategory } = getPlanCategories( isCurrentCatalog );
+	const standardTabOptions = useMemo(
+		() => sortPlansForCategory( catalogPlans, standardTabCategory ),
+		[ catalogPlans, standardTabCategory ]
+	);
+	const isStandardTabDisabled = isStandardTabClosed( existingPressablePlan, standardTabOptions );
+
+	// An agency on the largest Standard plan can only move up to the Agency plans.
+	const ownTab = getDefaultPlanCategoryTab( existingPressablePlan, isCurrentCatalog );
+	const defaultTab =
+		ownTab === standardTabCategory && isStandardTabDisabled ? agencyTabCategory : ownTab;
 	const [ storedTab, setSelectedTab ] = useSessionState( 'pressable-tab', defaultTab );
-	const tabs = getPlanCategoryTabs( areSignaturePlans, hasPremiumPlans );
+	const tabs = getPlanCategoryTabs( isCurrentCatalog );
 	// The stored tab is shared with classic and may not exist in this catalog
 	// (e.g. after toggling referral mode), so fall back like classic's TabPanel.
-	// A disabled low tab falls back the same way.
+	// A disabled Standard tab falls back the same way.
 	const isStoredTabOpen =
 		tabs.some( ( tab ) => tab.key === storedTab ) &&
-		! ( storedTab === lowCategory && disableLowTab );
+		! ( storedTab === standardTabCategory && isStandardTabDisabled );
 	const selectedTab = isStoredTabOpen ? storedTab : defaultTab;
 	const { getValue: getPersistedSlug, setValue: persistSlug } =
 		useKeyedSessionState< string >( 'pressable-plan' );
@@ -188,8 +195,8 @@ export default function PressableSection( {
 		[ catalogPlans, selectedTab ]
 	);
 	const minimumIndex = getPlanFloor( selectedTab, tabOptions, existingPressablePlan );
-	const isLowTab = selectedTab === lowCategory;
-	const hasCustomOption = ! isLowTab;
+	const isStandardTab = selectedTab === standardTabCategory;
+	const hasCustomOption = ! isStandardTab;
 
 	// Restore the plan chosen on this tab, else start from the agency's plan, else the tab's default.
 	const hasUsedExistingPlan = useRef( false );
@@ -248,11 +255,11 @@ export default function PressableSection( {
 		? catalog.find( ( product ) => product.slug === selectedSlug )
 		: undefined;
 	const isCustomPlan = selectedSlug === null;
-	const isPremiumTab = selectedTab === PLAN_CATEGORY_PREMIUM;
-	// Agencies on a legacy plan have no Premium plans to pick from.
-	const hasPlanPicker = ! isPremiumTab || hasPremiumPlans;
-	// Premium plans are only sold through referrals for now.
-	const showPremiumGate = isPremiumTab && ! isReferralMode;
+	const isPerformanceTab = selectedTab === PLAN_CATEGORY_PERFORMANCE_TIER;
+	// Agencies on a legacy plan have no Performance plans to pick from.
+	const hasPlanPicker = ! isPerformanceTab || hasPerformancePlans;
+	// Performance plans are only sold through referrals for now.
+	const showPremiumGate = isPerformanceTab && ! isReferralMode;
 
 	const showUsage = !! existingPlan && ! isReferralMode;
 
@@ -265,7 +272,7 @@ export default function PressableSection( {
 
 	const planName = selectedProduct ? getPressablePlanName( selectedProduct.name ) : __( 'Custom' );
 
-	const gateLabel = getPremiumGateLabel( selectedProduct, hasPremiumPlans, existingPlan );
+	const gateLabel = getPerformanceGateLabel( selectedProduct, hasPerformancePlans, existingPlan );
 
 	// Plans below the agency's own can't be bought, so they're left out; its own plan stays, marked.
 	const planRows = tabOptions
@@ -276,25 +283,25 @@ export default function PressableSection( {
 		} ) )
 		.filter( ( row ): row is PlanRow => !! row.product );
 
-	const premiumOptions = sortPlansForCategory( catalogPlans, PLAN_CATEGORY_PREMIUM );
-	// Legacy Premium owners get a catalog without Premium plans, so there's nothing to compare.
-	const isPremiumTabBelowPlan =
-		hasPremiumPlans &&
-		existingPressablePlan?.category === PLAN_CATEGORY_PREMIUM &&
-		getPlanFloor( PLAN_CATEGORY_PREMIUM, premiumOptions, existingPressablePlan ) >=
-			premiumOptions.length;
+	const performanceOptions = sortPlansForCategory( catalogPlans, PLAN_CATEGORY_PERFORMANCE_TIER );
+	// Legacy Premium owners get a catalog without Performance plans, so there's nothing to compare.
+	const isPerformanceTabBelowPlan =
+		hasPerformancePlans &&
+		existingPressablePlan?.category === PLAN_CATEGORY_PERFORMANCE_TIER &&
+		getPlanFloor( PLAN_CATEGORY_PERFORMANCE_TIER, performanceOptions, existingPressablePlan ) >=
+			performanceOptions.length;
 
 	const planTypeOptions = tabs.map( ( tab ) => {
 		const isBelowPlan =
-			( tab.key === lowCategory && disableLowTab ) ||
-			( tab.key === PLAN_CATEGORY_PREMIUM && isPremiumTabBelowPlan );
-		// On the largest plan of the low tier, that tier is the agency's own, not below it.
-		const isOwnLowTier =
-			tab.key === lowCategory && isLowPlanCategory( existingPressablePlan?.category );
+			( tab.key === standardTabCategory && isStandardTabDisabled ) ||
+			( tab.key === PLAN_CATEGORY_PERFORMANCE_TIER && isPerformanceTabBelowPlan );
+		// On the largest Standard plan, that tab is the agency's own, not below it.
+		const isOwnStandardTab =
+			tab.key === standardTabCategory && isStandardTabCategory( existingPressablePlan?.category );
 		let tag;
 		if ( isBelowPlan ) {
-			tag = isOwnLowTier ? __( 'Your plan type' ) : __( 'Below your plan' );
-		} else if ( tab.key === PLAN_CATEGORY_PREMIUM && ! isReferralMode ) {
+			tag = isOwnStandardTab ? __( 'Your plan type' ) : __( 'Below your plan' );
+		} else if ( tab.key === PLAN_CATEGORY_PERFORMANCE_TIER && ! isReferralMode ) {
 			tag = __( 'Referral only' );
 		}
 		return {
@@ -310,7 +317,9 @@ export default function PressableSection( {
 		if ( isCustomPlan || ! selectedProduct || ! priceInfo ) {
 			return (
 				<SelectedPlanCard
-					label={ __( 'Pressable Custom' ) }
+					label={
+						isPerformanceTab ? __( 'Pressable Performance Custom' ) : __( 'Pressable Custom' )
+					}
 					price={
 						<Text size={ 24 } weight={ 600 }>
 							{ __( 'Custom pricing' ) }
@@ -464,7 +473,7 @@ export default function PressableSection( {
 										withCustom={ hasCustomOption }
 										selected={ isCustomPlan ? CUSTOM_PLAN_OPTION : ( selectedSlug ?? '' ) }
 										currentSlug={ existingPressablePlan?.slug }
-										isPremium={ isPremiumTab }
+										isPremium={ isPerformanceTab }
 										onSelect={ selectPlan }
 									/>
 									{ isCustomPlan && (
