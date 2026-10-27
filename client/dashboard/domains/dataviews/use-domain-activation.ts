@@ -1,7 +1,6 @@
 import { DomainSubtype } from '@automattic/api-core';
 import { sslDetailsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { isPendingPrimaryDomain } from '../../utils/domain';
 import type { DomainSummary, SslDetails } from '@automattic/api-core';
 
 const SSL_POLL_INTERVAL_MS = 10_000;
@@ -23,16 +22,12 @@ export function useDomainSslDetails( domain: DomainSummary ) {
 }
 
 /**
- * A domain is activating from the moment it is purchased until it works: the
- * backend is still making it the primary address, or a new registration is
- * still waiting for its first SSL certificate.
+ * A new registration is activating until its first SSL certificate is issued.
+ * `set_primary_domain_pending` is not used here: the backend keeps reporting it
+ * for days after a purchase, even once the domain works.
  */
 export function useIsDomainActivating( domain: DomainSummary ) {
 	const { data: sslDetails } = useDomainSslDetails( domain );
-
-	if ( isPendingPrimaryDomain( domain ) ) {
-		return true;
-	}
 
 	return (
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
