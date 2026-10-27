@@ -16,6 +16,7 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getIsWoo from 'calypso/state/selectors/get-is-woo';
 import PasswordlessSignupForm from './passwordless';
 import SocialSignupForm from './social';
+import { useSignupWebMcp } from './use-signup-webmcp';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 import type { JSX } from 'react';
 import './style.scss';
@@ -142,6 +143,24 @@ const SignupFormSocialFirst = ( {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isGravatar = isGravatarOAuth2Client( oauth2Client );
+	const emailFormVisible =
+		currentStep === 'email' || Boolean( isEmailFirstVariant || isMobileCompactVariant );
+	const signupScreen = currentStep === 'initial' ? 'options' : currentStep;
+	useSignupWebMcp( {
+		screen: onUpdateEmail ? 'email-edit' : signupScreen,
+		emailFormVisible,
+		allowedSocialServices,
+		loginUrl: logInUrl,
+		openEmail: () => {
+			if ( ! emailFormVisible ) {
+				setCurrentStep( 'email' );
+			}
+		},
+		openLogin: () => {
+			onLogInClick?.();
+			window.location.assign( logInUrl );
+		},
+	} );
 	let submitButtonLoadingLabel;
 	if ( onUpdateEmail ) {
 		submitButtonLoadingLabel = __( 'Updating…' );

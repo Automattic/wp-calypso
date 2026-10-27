@@ -6,6 +6,7 @@ import MailIcon from 'calypso/components/social-icons/mail';
 import { useSelector, useDispatch } from 'calypso/state';
 import { resetMagicLoginRequestForm } from 'calypso/state/login/magic-login/actions';
 import { isFormDisabled } from 'calypso/state/login/selectors';
+import { useEmailLoginWebMcp } from './use-email-login-webmcp';
 
 import '@automattic/components/styles/wp-button-override.scss';
 import './style.scss';
@@ -30,6 +31,8 @@ export const MagicLoginButton = ( { loginUrl, isJetpack, onClick }: MagicLoginBu
 		onClick?.();
 		dispatch( resetMagicLoginRequestForm() );
 	};
+
+	useEmailLoginWebMcp( { loginUrl, isDisabled, onOpen: handleClick } );
 
 	return (
 		<Button

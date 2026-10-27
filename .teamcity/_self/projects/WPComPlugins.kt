@@ -115,6 +115,7 @@ object CalypsoApps: BuildType({
 		apps/help-center/dist => help-center.zip
 		apps/agents-manager/dist => agents-manager.zip
 		apps/survicate/dist => survicate.zip
+		apps/webmcp/dist => webmcp.zip
 	""".trimIndent()
 
 	steps {

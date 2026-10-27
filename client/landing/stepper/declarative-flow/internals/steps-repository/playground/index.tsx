@@ -12,6 +12,7 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { PlaygroundLeaveModal } from './components/playground-leave-modal';
 import { PlaygroundSaveModal } from './components/playground-save-modal';
+import { usePlaygroundWebMcp } from './hooks/use-playground-webmcp';
 import { getBlueprintLabelForTracking } from './lib/blueprint';
 import { DEFAULT_PLAN_INTENT, TRACKS_FLUSH_DELAY, WOO_START_HOSTS_URL } from './lib/constants';
 import type { Step as StepType } from '../../types';
@@ -27,7 +28,8 @@ const isLeaveModal = ( modal: ActiveModal | null ): modal is LeaveModalTrigger =
 
 export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 	const { submit } = navigation;
-	const playgroundClientRef = useRef< PlaygroundClient | null >( null );
+	const [ playgroundClient, setPlaygroundClient ] = useState< PlaygroundClient | null >( null );
+	const launchingRef = useRef( false );
 	const { __ } = useI18n();
 	const [ query ] = useSearchParams();
 	const readyForLaunch = query.has( 'playground' );
@@ -40,10 +42,6 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 
 	const isWooCommerceIntent = isPlaygroundWooIntent( flow, stepName, query.get( 'intent' ) );
 	const canLaunch = Boolean( submit ) && readyForLaunch && ! isBusy;
-
-	const setPlaygroundClient = ( client: PlaygroundClient ) => {
-		playgroundClientRef.current = client;
-	};
 
 	const tracksProps = useMemo(
 		() => ( {
@@ -61,6 +59,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		const onPageShow = ( event: PageTransitionEvent ) => {
 			if ( event.persisted ) {
 				clearTimeout( navigationTimeoutRef.current );
+				launchingRef.current = false;
 				setIsBusy( false );
 				setActiveModal( null );
 			}
@@ -77,19 +76,22 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		navigationTimeoutRef.current = setTimeout( navigate, TRACKS_FLUSH_DELAY );
 	};
 
-	const launchSite = () => {
-		if ( ! canLaunch ) {
-			return;
+	const launchSite = async () => {
+		if ( ! canLaunch || launchingRef.current || isIntroShown ) {
+			return false;
 		}
 
+		launchingRef.current = true;
 		setIsBusy( true );
 		const launchTracksProps = { ...tracksProps, intent: DEFAULT_PLAN_INTENT };
 		try {
 			recordTracksEvent( 'calypso_playground_launch_site', launchTracksProps );
 			submit?.();
+			return true;
 		} catch ( error ) {
 			// Only synchronous throws land here, such as from recording events: Stepper doesn't
 			// await the flow's async submit, so its rejections bypass this.
+			launchingRef.current = false;
 			setIsBusy( false );
 			const message = error instanceof Error ? error.message : String( error );
 			void logToLogstash( {
@@ -107,6 +109,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 				...launchTracksProps,
 				error_message: message,
 			} );
+			return false;
 		}
 	};
 
@@ -160,6 +163,12 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		setIsBusy( true );
 		navigateAfterTracksFlush( () => window.location.assign( WOO_START_HOSTS_URL ) );
 	};
+
+	usePlaygroundWebMcp( {
+		client: playgroundClient,
+		slug: query.get( 'playground' ),
+		launch: launchSite,
+	} );
 
 	return (
 		<>
@@ -218,8 +227,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			>
 				<PlaygroundIframe
 					className="playground__onboarding-iframe"
-					hasPlaygroundClient={ Boolean( playgroundClientRef.current ) }
-					setPlaygroundClient={ setPlaygroundClient }
+					hasPlaygroundClient={ Boolean( playgroundClient ) }
+					// The Comlink client is callable, so React must not treat it as a state updater.
+					setPlaygroundClient={ ( client ) => setPlaygroundClient( () => client ) }
 					withIntro={ isWooCommerceIntent }
 					onIntroChange={ setIsIntroShown }
 				/>

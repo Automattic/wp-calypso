@@ -4,11 +4,16 @@ import {
 	type WPCOMDomainSearchProps,
 	useWPCOMDomainSearchProps,
 } from './use-wpcom-domain-search-props';
+import { DomainSearchWebMcp } from './webmcp';
 
 const DomainSearchWithCartAndAnalytics = ( props: WPCOMDomainSearchProps ) => {
 	const wpcomDomainSearchProps = useWPCOMDomainSearchProps( props );
 
-	return <DomainSearch { ...props } { ...wpcomDomainSearchProps } />;
+	return (
+		<DomainSearch { ...props } { ...wpcomDomainSearchProps }>
+			<DomainSearchWebMcp />
+		</DomainSearch>
+	);
 };
 
 export const WPCOMDomainSearch = ( props: WPCOMDomainSearchProps ) => {

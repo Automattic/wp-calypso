@@ -59,6 +59,7 @@ export const DomainSearch = ( props: DomainSearchProps ) => {
 	return (
 		<QueryClientProvider client={ queryClient }>
 			<DomainSearchContext.Provider value={ contextValue }>
+				{ props.children }
 				<div className={ clsx( 'domain-search', props.className ) }>{ getContent() }</div>
 			</DomainSearchContext.Provider>
 		</QueryClientProvider>

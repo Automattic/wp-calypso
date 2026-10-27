@@ -10,6 +10,9 @@ post, page, custom-post-type block editor or site editor screen (detected from t
 classes) in a browser that implements
 `document.modelContext.registerTool` (or the older `navigator.modelContext` location).
 
+Tool registration, browser API detection, reconciliation, and cleanup come from
+`@automattic/webmcp`. Agents Manager keeps ability selection, schemas, and execution in this adapter.
+
 ## Execution and exposure
 
 The adapter wraps the live merged `ToolProvider` from `loadExternalProviders()` in

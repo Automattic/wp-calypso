@@ -1,0 +1,47 @@
+{
+	"name": "@automattic/webmcp",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Shared browser WebMCP tool registration.",
+	"author": "Automattic Inc.",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Automattic/wp-calypso.git",
+		"directory": "packages/webmcp"
+	},
+	"license": "GPL-2.0-or-later",
+	"main": "dist/cjs/index.js",
+	"module": "dist/esm/index.js",
+	"calypso:src": "src/index.ts",
+	"types": "dist/types/index.d.ts",
+	"exports": {
+		".": {
+			"calypso:src": "./src/index.ts",
+			"types": "./dist/types/index.d.ts",
+			"import": "./dist/esm/index.js",
+			"require": "./dist/cjs/index.js"
+		},
+		"./playground": {
+			"calypso:src": "./src/playground.ts",
+			"types": "./dist/types/playground.d.ts",
+			"import": "./dist/esm/playground.js",
+			"require": "./dist/cjs/playground.js"
+		}
+	},
+	"sideEffects": false,
+	"scripts": {
+		"build": "tsc --build ./tsconfig.json ./tsconfig-cjs.json",
+		"watch": "tsc --build ./tsconfig.json --watch"
+	},
+	"devDependencies": {
+		"@automattic/calypso-typescript-config": "workspace:^",
+		"typescript": "^6.0.3"
+	},
+	"dependencies": {
+		"@php-wasm/logger": "3.1.60",
+		"@php-wasm/web": "3.1.60",
+		"@wp-playground/mcp": "patch:@wp-playground/mcp@npm%3A3.1.60#../../.yarn/patches/@wp-playground-mcp-npm-3.1.60-webmcp-lifecycle.patch",
+		"@wp-playground/remote": "3.1.60",
+		"tslib": "^2.8.1"
+	}
+}

@@ -115,6 +115,7 @@ export class RequestLoginEmailForm extends Component {
 	}
 
 	componentDidMount() {
+		void this.registerWebMcp();
 		const blogId = this.props.blogId;
 		if ( blogId ) {
 			wpcom.req
@@ -135,7 +136,112 @@ export class RequestLoginEmailForm extends Component {
 		}
 	}
 
+	componentWillUnmount() {
+		this.webMcpController?.abort();
+		this.webMcpRegistry?.dispose();
+	}
+
+	registerWebMcp = async () => {
+		if ( this.props.onSubmitEmail || this.props.isGravPoweredClient ) {
+			return;
+		}
+
+		const controller = new AbortController();
+		this.webMcpController = controller;
+		try {
+			const { getWebMcpModelContext, createWebMcpToolRegistry } = await import(
+				/* webpackChunkName: "webmcp" */ '@automattic/webmcp'
+			);
+			if ( controller.signal.aborted ) {
+				return;
+			}
+			const modelContext = getWebMcpModelContext();
+			if ( ! modelContext ) {
+				return;
+			}
+			this.webMcpRegistry = createWebMcpToolRegistry( {
+				modelContext,
+				getTools: () => [
+					{
+						name: 'wpcom_request_email_login',
+						title: 'Request email login',
+						description:
+							'Request a WordPress.com login link for an existing account using its email address or username. Sends an email and keeps the onboarding return destination. Check the page for success or an error, then open the received login link in this browser to finish signing in. Does not create an account.',
+						inputSchema: {
+							type: 'object',
+							properties: {
+								emailOrUsername: {
+									type: 'string',
+									minLength: 1,
+									description: 'Email address or username of the account to log in to.',
+								},
+							},
+							required: [ 'emailOrUsername' ],
+							additionalProperties: false,
+						},
+						annotations: { readOnlyHint: false, consequentialHint: true },
+						execute: this.requestEmailLoginFromTool,
+					},
+				],
+			} );
+			await this.webMcpRegistry.sync();
+		} catch ( error ) {
+			// eslint-disable-next-line no-console
+			console.warn( '[WebMCP] Email login integration failed:', error );
+		}
+	};
+
+	requestEmailLoginFromTool = ( { emailOrUsername } ) => {
+		if ( typeof emailOrUsername !== 'string' || ! emailOrUsername.trim() ) {
+			return {
+				isError: true,
+				content: [ { type: 'text', text: 'Provide a non-empty email address or username.' } ],
+			};
+		}
+		if (
+			this.props.isFetching ||
+			this.props.emailRequested ||
+			this.props.showCheckYourEmail ||
+			this.props.isEmailInputDisabled ||
+			this.props.isSubmitButtonDisabled ||
+			this.props.isSubmitButtonBusy ||
+			this.emailLoginRequestPending
+		) {
+			return {
+				isError: true,
+				content: [
+					{
+						type: 'text',
+						text: 'Email login is unavailable or a login email has already been requested.',
+					},
+				],
+			};
+		}
+
+		const usernameOrEmail = emailOrUsername.trim();
+		this.emailLoginRequestPending = true;
+		this.setState( { usernameOrEmail } );
+		this.props.hideMagicLoginRequestNotice();
+		this.sendLoginEmail( usernameOrEmail, false );
+		return {
+			content: [
+				{
+					type: 'text',
+					text: 'Email login requested. Check the page for confirmation or an error before reading the login email.',
+				},
+			],
+		};
+	};
+
 	componentDidUpdate( prevProps, prevState ) {
+		if ( prevProps.redirectTo !== this.props.redirectTo ) {
+			this.webMcpController?.abort();
+			this.webMcpRegistry?.dispose();
+			void this.registerWebMcp();
+		}
+		if ( this.props.requestError || this.props.emailRequested || this.props.showCheckYourEmail ) {
+			this.emailLoginRequestPending = false;
+		}
 		if ( ! prevProps.requestError && this.props.requestError ) {
 			this.usernameOrEmailRef.current?.focus();
 		}
@@ -181,12 +287,16 @@ export class RequestLoginEmailForm extends Component {
 			return;
 		}
 
+		this.sendLoginEmail( usernameOrEmail, this.props.createAccountForNewUser );
+	};
+
+	sendLoginEmail = ( usernameOrEmail, createAccount ) => {
 		this.props.onSendEmailLogin?.( usernameOrEmail );
 
 		this.props.sendEmailLogin( usernameOrEmail, {
 			redirectTo: this.props.redirectTo,
 			requestLoginEmailFormFlow: true,
-			createAccount: this.props.createAccountForNewUser,
+			createAccount,
 			...( this.props.flow ? { flow: this.props.flow } : {} ),
 			...( this.props.blogId ? { blogId: this.props.blogId } : {} ),
 		} );

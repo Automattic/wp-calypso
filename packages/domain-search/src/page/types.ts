@@ -22,7 +22,7 @@ import type {
 	FreeDomainSuggestion,
 	NamePulseSuggestionsQuery,
 } from '@automattic/api-core';
-import type { ComponentType } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 
 export interface SelectedDomain {
 	uuid: string;
@@ -222,6 +222,7 @@ export interface DomainSearchConfig {
 }
 
 export interface DomainSearchProps {
+	children?: ReactNode;
 	slots?: {
 		BeforeResults?: ComponentType;
 		BeforeFullCartItems?: ComponentType;
