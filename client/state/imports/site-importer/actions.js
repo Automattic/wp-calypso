@@ -163,7 +163,15 @@ export const importSite =
 				);
 			} )
 			.catch( ( error ) => {
-				dispatch( recordTracksEvent( 'calypso_site_importer_start_import_fail', trackingParams ) );
+				dispatch(
+					recordTracksEvent( 'calypso_site_importer_start_import_fail', {
+						...trackingParams,
+						error_code: error?.code,
+						// `InternalServerError` and the like for API errors, `TypeError` and the like
+						// for exceptions thrown by the success handler above.
+						error_type: error?.name,
+					} )
+				);
 				dispatch( siteImporterImportFailed( error ) );
 			} );
 	};
@@ -215,6 +223,7 @@ export const validateSiteIsImportable =
 				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
 					blog_id: siteId,
 					site_url: targetSiteUrl,
+					error_code: isSiteImportableResult?.reason?.code,
 				} )
 			);
 
