@@ -29,9 +29,9 @@ export default function CertificationShareButton( {
 	const [ isModalOpen, setModalOpen ] = useState( false );
 	const { createSuccessNotice } = useDispatch( noticesStore );
 
-	const copy = async ( text: string ) => {
+	const copy = async () => {
 		try {
-			await navigator.clipboard.writeText( text );
+			await navigator.clipboard.writeText( message );
 		} catch {
 			// The modal stays open, so the message can still be selected and copied by hand.
 			return;

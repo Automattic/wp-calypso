@@ -54,7 +54,7 @@ describe( '<CertificationTierPageCard>', () => {
 		expect( screen.getByText( '30% off the exam fee' ) ).toBeVisible();
 	} );
 
-	test( 'previews the share message, then copies it', async () => {
+	test( 'previews the share message read-only, then copies it', async () => {
 		const writeText = jest.fn().mockResolvedValue( undefined );
 		Object.defineProperty( window.navigator, 'clipboard', {
 			value: { writeText },
@@ -66,6 +66,7 @@ describe( '<CertificationTierPageCard>', () => {
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Share with your team' } ) );
 		const message = screen.getByRole( 'textbox', { name: 'Message' } ) as HTMLTextAreaElement;
+		expect( message ).toHaveAttribute( 'readonly' );
 		expect( message.value ).toContain( 'We get 30% off the Advanced Professional WordPress' );
 		expect( message.value ).toContain( 'Discount code: HUBSPOT-CODE-123' );
 
