@@ -26,11 +26,12 @@ export default function CertificationShareModal( {
 				<TextareaControl
 					__nextHasNoMarginBottom
 					label={ __( 'Message' ) }
-					help={ __( 'Paste it into Slack or email.' ) }
+					help={ __( 'Paste it into a chat or email.' ) }
 					value={ message }
 					onChange={ () => {} }
 					readOnly
 					rows={ 8 }
+					style={ { resize: 'none' } }
 				/>
 				<ButtonStack justify="flex-end">
 					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>

@@ -7,7 +7,7 @@ import CertificationShareModal from './share-modal';
 import type { CSSProperties } from 'react';
 
 /**
- * Opens the message an owner pastes into Slack or email for their developers.
+ * Opens the message an owner pastes into a chat or email for their developers.
  * Copying it invites no one and sends nothing.
  */
 export default function CertificationShareButton( {
@@ -40,7 +40,7 @@ export default function CertificationShareButton( {
 		if ( onCopy ) {
 			onCopy();
 		} else {
-			createSuccessNotice( __( 'Message copied. Paste it into Slack or email.' ), {
+			createSuccessNotice( __( 'Message copied. Paste it into a chat or email.' ), {
 				type: 'snackbar',
 			} );
 		}

@@ -59,7 +59,7 @@ export default function AgencyTierOverviewContent( {
 	}, [ dispatch ] );
 
 	const onShareCopy = useCallback( () => {
-		dispatch( successNotice( __( 'Message copied. Paste it into Slack or email.' ) ) );
+		dispatch( successNotice( __( 'Message copied. Paste it into a chat or email.' ) ) );
 	}, [ dispatch ] );
 
 	return (

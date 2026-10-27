@@ -2,7 +2,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { CERTIFICATION_EXAM_URL } from './constants';
 
 /**
- * Plain text an owner pastes into Slack or email, so developers who don't use
+ * Plain text an owner pastes into a chat or email, so developers who don't use
  * the dashboard get the code, the discount and the exam link in one place.
  */
 export function getCertificationShareMessage( {
