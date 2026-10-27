@@ -10,15 +10,19 @@ import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_SITES_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useLeadMatchingProfile from 'calypso/a8c-for-agencies/data/partner-directory/use-lead-matching-profile';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
+import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 	PROGRAM_INCENTIVES_URL,
 } from 'calypso/dashboard/agency/overview/constants';
+import { hasIncompleteSavedMatchingProfile } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -37,6 +41,12 @@ function DashboardOverviewBodyContent( {
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
 		);
+	const canAccessLeadMatching =
+		!! agency?.id &&
+		!! agency?.partner_directory?.allowed &&
+		!! agency?.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
+		hasPartnerDirectoryListing;
+	const leadMatchingQuery = useLeadMatchingProfile( canAccessLeadMatching );
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
 
@@ -63,6 +73,11 @@ function DashboardOverviewBodyContent( {
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+			showMatchingProfilePreview={
+				canAccessLeadMatching &&
+				leadMatchingQuery.isSuccess &&
+				hasIncompleteSavedMatchingProfile( agency.id, leadMatchingQuery.data )
+			}
 			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
 			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {
@@ -72,6 +87,7 @@ function DashboardOverviewBodyContent( {
 				woopayments: A4A_WOOPAYMENTS_LINK,
 				marketplace: A4A_MARKETPLACE_PRODUCTS_LINK,
 				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+				leadMatching: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,
 				aiMcp: A4A_AI_MCP_LINK,
 				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,

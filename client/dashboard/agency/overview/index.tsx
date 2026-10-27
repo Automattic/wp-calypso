@@ -1,4 +1,4 @@
-import { activeAgencyQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, agencyLeadMatchingQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -18,10 +18,14 @@ import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
 import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
-import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
+import {
+	PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE,
+	PARTNER_DIRECTORY_ROUTE,
+} from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
+import { hasIncompleteSavedMatchingProfile } from './matching-profile-visibility';
 import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
 import usePressableOfferEligibility from './use-pressable-offer-eligibility';
@@ -41,6 +45,15 @@ export default function AgencyOverview() {
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
 		);
+	const canAccessLeadMatching =
+		!! agencyId &&
+		!! agency?.partner_directory?.allowed &&
+		!! agency?.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
+		hasPartnerDirectoryListing;
+	const leadMatchingQuery = useQuery( {
+		...agencyLeadMatchingQuery( agencyId ),
+		enabled: canAccessLeadMatching,
+	} );
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
@@ -111,6 +124,11 @@ export default function AgencyOverview() {
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+				showMatchingProfilePreview={
+					canAccessLeadMatching &&
+					leadMatchingQuery.isSuccess &&
+					hasIncompleteSavedMatchingProfile( agencyId, leadMatchingQuery.data )
+				}
 				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
@@ -120,6 +138,7 @@ export default function AgencyOverview() {
 					woopayments: '/woopayments',
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
+					leadMatching: PARTNER_DIRECTORY_LEAD_MATCHING_ROUTE,
 					contactSupport: () => openContactForm(),
 					aiMcp: '/agency/ai',
 					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),

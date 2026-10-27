@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -6,6 +7,7 @@ import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
+import MatchingProfilePreview from './matching-profile-preview';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -24,6 +26,7 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
+	leadMatching?: string;
 	/** A URL, or a callback that opens contact support in-app. */
 	contactSupport: string | ( () => void );
 	aiMcp: string;
@@ -41,6 +44,7 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
+	showMatchingProfilePreview?: boolean;
 	/** Shows the Pressable introductory offer in the news column. */
 	isEligibleForPressableIntroOffer?: boolean;
 	/** Shows the Pressable expansion offer in the news column. */
@@ -70,6 +74,7 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
+	showMatchingProfilePreview = false,
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	links,
@@ -90,6 +95,7 @@ export default function AgencyOverviewContent( {
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
+	const isDesignPreview = isEnabled( 'a4a-lead-matching-design-preview' );
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
@@ -116,6 +122,14 @@ export default function AgencyOverviewContent( {
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
 						partnerManager={ partnerManager }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ ( showMatchingProfilePreview || isDesignPreview ) && links.leadMatching && (
+					<MatchingProfilePreview
+						href={ links.leadMatching }
+						agencyId={ agencyId }
+						isDesignPreview={ isDesignPreview }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
