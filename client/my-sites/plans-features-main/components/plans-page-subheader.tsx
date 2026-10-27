@@ -451,11 +451,7 @@ const PlansPageSubheader = ( {
 			);
 		}
 
-		if (
-			! isUsingStepContainerV2 &&
-			! showDifferentiatorHeader &&
-			( isOnboarding || intent === 'plans-upgrade' )
-		) {
+		if ( ! isUsingStepContainerV2 && ( isOnboarding || intent === 'plans-upgrade' ) ) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }
