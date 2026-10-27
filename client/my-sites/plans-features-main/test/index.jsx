@@ -375,32 +375,56 @@ describe( 'PlansFeaturesMain', () => {
 			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
 		} );
 
-		test( 'Should hide the plan type selector for redesign variants in signup', () => {
-			usePlansGridRedesignExperiment.mockImplementation( () => ( {
-				isLoading: false,
-				variant: 'six_plan_new_design',
-				usePlansGridRedesign: true,
-				showDifferentiatorHeader: false,
-				showEnterpriseBottomCard: false,
-				showWooCommerceBottomCard: false,
-				isExperimentEligible: true,
-			} ) );
+		const redesignResult = {
+			isLoading: false,
+			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
+			usePlansGridRedesignFeatures: true,
+			showDifferentiatorHeader: false,
+			showEnterpriseBottomCard: false,
+			showWooCommerceBottomCard: false,
+		};
+
+		test( 'Should hide the plan type selector with the redesigned feature list in signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
 
 			renderWithProvider( <PlansFeaturesMain { ...myProps } flowName="onboarding" isInSignup /> );
 
 			expect( screen.queryByText( 'PlanTypeSelector' ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'Should keep the plan type selector visible for redesign variants outside signup', () => {
-			usePlansGridRedesignExperiment.mockImplementation( () => ( {
-				isLoading: false,
-				variant: 'six_plan_new_design',
-				usePlansGridRedesign: true,
-				showDifferentiatorHeader: false,
-				showEnterpriseBottomCard: false,
-				showWooCommerceBottomCard: false,
-				isExperimentEligible: true,
-			} ) );
+		test( 'Should hide the plan type selector in signup for intents without a tailored feature list', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...myProps }
+					flowName="site-migration"
+					intent="plans-migration"
+					isInSignup
+				/>
+			);
+
+			expect( screen.queryByText( 'PlanTypeSelector' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'Should keep the plan type selector visible in signup for intents with a tailored feature list', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...myProps }
+					flowName="newsletter"
+					intent="plans-newsletter"
+					isInSignup
+				/>
+			);
+
+			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
+		} );
+
+		test( 'Should keep the plan type selector visible with the redesigned feature list outside signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
 
 			renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
 
