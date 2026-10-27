@@ -285,10 +285,6 @@ $redesign-table-cell-max-width: 280px;
 		font-weight: 600;
 	}
 
-	.is-plan-differentiators-experiment & .has-min-height {
-		min-height: 32px;
-	}
-
 	&.is-top-buttons {
 		padding: 0 20px;
 		@include plans-grid-medium-large {
@@ -1076,6 +1072,12 @@ $redesign-table-cell-max-width: 280px;
 			line-height: 16px;
 			padding: 0 16px 20px;
 		}
+	}
+
+	// The enterprise cell spans the price and billing rows; match the billing text padding so
+	// the logos and the billing copy share a bottom edge.
+	.plans-grid-next-header-price__enterprise-logos {
+		padding: 0 16px 20px;
 	}
 
 	thead tr:first-child .plan-features-2023-grid__table-item {

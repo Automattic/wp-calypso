@@ -133,11 +133,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 				const featureSlug = currentFeature.getSlug();
 				const shouldBreakAfterAiWebsiteBuilderTitle =
 					gridPlans.length === 6 && featureSlug === FEATURE_AI_WEBSITE_BUILDER;
-				const featuresWithMinHeight = [
-					'support-from-experts',
-					'priority-24-7-support',
-					'upload-video',
-				];
 
 				// Apply green styling for domain feature in the rolled-out cohort.
 				const isCustomDomainFeatureWithPaidDomain =
@@ -153,7 +148,6 @@ const PlanFeatures2023GridFeatures: React.FC< {
 
 				const divClasses = clsx( '', getPlanClass( planSlug ), {
 					'is-last-feature': featureIndex + 1 === features.length,
-					'has-min-height': featuresWithMinHeight.includes( featureSlug ),
 					'is-experiment-last-feature': currentFeature.isExperimentLastFeature,
 				} );
 				const spanClasses = clsx( 'plan-features-2023-grid__item-info', {

@@ -45,6 +45,9 @@
 			.plan-features-2023-grid__table:is( .has-4-cols, .has-5-cols, .has-6-cols )
 	) {
 		--step-container-v2-content-inline-padding: clamp( 1rem, 2vw, 2rem );
+		// The redesigned table is 280px per column and 1408px at six columns, wider than the
+		// 1344px default content width.
+		--step-container-v2-content-max-width: 1408px;
 	}
 
 	.step-container-v2__content-wrapper.axis-vertical:has(
@@ -92,10 +95,6 @@
 
 		.is-plan-type-selector-visible .plans-features-main__features-grid {
 			margin-top: 16px;
-		}
-
-		.is-last-feature.has-min-height {
-			min-height: 0;
 		}
 	}
 }
