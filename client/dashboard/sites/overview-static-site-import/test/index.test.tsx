@@ -117,29 +117,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( connect ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
 	} );
 
-	it( 'asks whether the site looks right only after it has been previewed', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
-
-		const { recordTracksEvent } = render( <StaticSiteImport /> );
-
-		const preview = await screen.findByRole( 'link', { name: /Preview site/ } );
-		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
-
-		await userEvent.click( preview );
-		expect( screen.getByText( 'Does your site look right?' ) ).toBeVisible();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_feedback',
-			{ site_id: 42, source_platform: 'wix', rating: 'good' }
-		);
-		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
-	} );
-
-	it( 'keeps the feedback answer when the ready notice is closed', async () => {
+	it( 'does not ask for feedback after the site is previewed', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -148,54 +126,10 @@ describe( 'StaticSiteImportCard', () => {
 		const { recordTracksEvent } = render( <StaticSiteImport /> );
 
 		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
 
-		const [ dismissReadyNotice ] = screen.getAllByRole( 'button', { name: 'Dismiss' } );
-		await userEvent.click( dismissReadyNotice );
-
-		expect( screen.queryByText( 'Your site is ready' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
-		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
-		const feedbackEvents = jest
-			.mocked( recordTracksEvent )
-			.mock.calls.filter(
-				( [ name ] ) => name === 'calypso_dashboard_static_site_import_feedback'
-			);
-		expect( feedbackEvents ).toHaveLength( 1 );
-	} );
-
-	it( 'records a bad rating when the user says something is off', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
-
-		const { recordTracksEvent } = render( <StaticSiteImport /> );
-
-		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Something’s off' } ) );
-
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_feedback',
-			{ site_id: 42, source_platform: 'wix', rating: 'bad' }
-		);
-		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
-	} );
-
-	it( 'hides the feedback question when it is closed', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
-
-		const { recordTracksEvent } = render( <StaticSiteImport /> );
-
-		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
-		const [ , dismissFeedback ] = screen.getAllByRole( 'button', { name: 'Dismiss' } );
-		await userEvent.click( dismissFeedback );
-
-		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
+		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_dashboard_static_site_import_feedback',
 			expect.anything()

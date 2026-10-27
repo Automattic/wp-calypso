@@ -96,60 +96,6 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-/** Asks whether the moved site looks right, once the user has opened it. */
-function PreviewFeedback( { siteId, platform }: { siteId: number; platform?: string } ) {
-	const { recordTracksEvent } = useAnalytics();
-	const { setShowHelpCenter } = useHelpCenter();
-	const [ hasVoted, setHasVoted ] = useState( false );
-	const [ isDismissed, setIsDismissed ] = useState( false );
-
-	if ( isDismissed ) {
-		return null;
-	}
-
-	const onVote = ( rating: 'good' | 'bad' ) => {
-		setHasVoted( true );
-		recordTracksEvent( 'calypso_dashboard_static_site_import_feedback', {
-			site_id: siteId,
-			source_platform: platform,
-			rating,
-		} );
-		if ( rating === 'bad' ) {
-			setShowHelpCenter( true );
-		}
-	};
-
-	if ( hasVoted ) {
-		return (
-			<Notice variant="info" onClose={ () => setIsDismissed( true ) }>
-				{ __( 'Thanks for the feedback!' ) }
-			</Notice>
-		);
-	}
-
-	return (
-		<Notice
-			variant="info"
-			title={ __( 'Does your site look right?' ) }
-			onClose={ () => setIsDismissed( true ) }
-			actions={
-				<>
-					<Button __next40pxDefaultSize variant="secondary" onClick={ () => onVote( 'good' ) }>
-						{ __( 'Looks right' ) }
-					</Button>
-					<Button __next40pxDefaultSize variant="secondary" onClick={ () => onVote( 'bad' ) }>
-						{ __( 'Something’s off' ) }
-					</Button>
-				</>
-			}
-		>
-			{ __(
-				'Compare it with your current site. If something is missing or looks different, we’ll help you fix it.'
-			) }
-		</Notice>
-	);
-}
-
 /** Takes the place of the overview cards while the site is being moved. */
 export function StaticSiteImportProgress( {
 	siteImport,
@@ -201,7 +147,6 @@ export function StaticSiteImportNotice( {
 	const { recordTracksEvent } = useAnalytics();
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const [ hasPreviewed, setHasPreviewed ] = useState( false );
 	const { from, platform } = search;
 	const sourceHost = getSourceHost( from );
 	const isReady = siteImport.status === 'finished';
@@ -275,8 +220,6 @@ export function StaticSiteImportNotice( {
 		back_to: redirectToDashboardLink(),
 	} );
 
-	const feedback = hasPreviewed && <PreviewFeedback siteId={ site.ID } platform={ platform } />;
-
 	return (
 		<>
 			{ ! isDismissed && (
@@ -314,10 +257,7 @@ export function StaticSiteImportNotice( {
 								rel="noopener noreferrer"
 								icon={ external }
 								iconPosition="right"
-								onClick={ () => {
-									recordClick( 'preview_site' );
-									setHasPreviewed( true );
-								} }
+								onClick={ () => recordClick( 'preview_site' ) }
 							>
 								{ __( 'Preview site' ) }
 							</Button>
@@ -337,7 +277,6 @@ export function StaticSiteImportNotice( {
 							) }
 				</Notice>
 			) }
-			{ feedback }
 		</>
 	);
 }
