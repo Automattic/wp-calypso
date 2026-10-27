@@ -141,14 +141,27 @@ const RENDER_OVERRIDES =
 	'*{content-visibility:visible!important;contain:none!important;}' +
 	'*,*::before,*::after{animation-delay:-1s!important;animation-duration:1ms!important;' +
 	'animation-iteration-count:1!important;animation-fill-mode:both!important;' +
-	'transition:none!important;}';
+	'transition:none!important;}' +
+	// The canvas's own <html>, copied around the body so rules written from
+	// `html` match. Zoomed out, the editor scales, shifts, pads and clips it,
+	// which in the capture would do it all a second time: the bands are
+	// measured from the page as laid out, not as zoomed.
+	'html{transform:none!important;scale:none!important;translate:none!important;' +
+	'margin:0!important;padding:0!important;overflow:visible!important;' +
+	// Mid-animation it is also pinned to the viewport and shifted up by the
+	// scroll position.
+	'position:static!important;top:auto!important;bottom:auto!important;}';
 
 interface CaptureRect {
 	x: number;
 	y: number;
 	width: number;
 	height: number;
-	/** How many of the named blocks the band was framed on. */
+	/**
+	 * How many of the named blocks the band was framed on, each counted in the
+	 * first band that shows it so the counts add up to the blocks shown. A
+	 * stack's later bands count none: they continue its first band's blocks.
+	 */
 	framed: number;
 }
 
@@ -167,10 +180,17 @@ type CaptureFailureReason = 'stylesheet' | 'font' | 'blank' | 'canvas' | 'error'
  */
 export class UnfaithfulCaptureError extends Error {
 	reason: CaptureFailureReason;
+	/** Numbers that place the failure, unlike the message safe to record as analytics properties. */
+	details: Record< string, number >;
 
-	constructor( message: string, reason: CaptureFailureReason = 'error' ) {
+	constructor(
+		message: string,
+		reason: CaptureFailureReason = 'error',
+		details: Record< string, number > = {}
+	) {
 		super( message );
 		this.reason = reason;
+		this.details = details;
 	}
 }
 
@@ -360,7 +380,16 @@ export const clusterSpans = (
 		.forEach( ( span ) => {
 			const current = clusters[ clusters.length - 1 ];
 
-			if ( current && Math.max( current.bottom, span.bottom ) - current.top <= viewportHeight ) {
+			// A group already taller than the viewport takes in anything that does
+			// not make it taller: its bands already show it. One that runs past it
+			// keeps a band of its own, shown whole though it overlaps the stack,
+			// rather than joining it and being split over a seam; one a stack band
+			// shows whole loses its band to that one later.
+			if (
+				current &&
+				Math.max( current.bottom, span.bottom ) - current.top <=
+					Math.max( viewportHeight, current.bottom - current.top )
+			) {
 				current.bottom = Math.max( current.bottom, span.bottom );
 				current.count += 1;
 
@@ -407,6 +436,62 @@ const bandForSpan = (
 		height,
 		framed: span.count,
 	};
+};
+
+/** A band, with the group it was centred on, or none for a band in a stack. */
+interface CandidateBand {
+	rect: CaptureRect;
+	span: { top: number; bottom: number } | null;
+}
+
+/**
+ * Bands top to bottom, less any centred band whose group another band shows
+ * whole. A band centred on a group can land inside the stack on a taller group
+ * nearby, and a picture of what another picture shows only reads as a second
+ * place. Shown whole by one band, not by several between them, which would
+ * leave the group split over a seam; and a stack's bands always stay, since
+ * no one band shows a group that needed a stack.
+ * @param bands The bands, each with the group it was centred on, or none for a stack's.
+ * @returns The bands to capture.
+ */
+const dropBandsShownElsewhere = ( bands: CandidateBand[] ): CaptureRect[] =>
+	bands
+		.filter(
+			( { span }, index ) =>
+				! span ||
+				! bands.some(
+					( other, otherIndex ) =>
+						otherIndex !== index &&
+						// Of two centred bands that show each other's group, keep the first.
+						( ! other.span || otherIndex < index ) &&
+						other.rect.y <= span.top + 1 &&
+						other.rect.y + other.rect.height >= span.bottom - 1
+				)
+		)
+		.map( ( { rect } ) => rect )
+		.sort( ( a, b ) => a.y - b.y );
+
+/**
+ * Viewport-tall bands stacked down a span taller than one, from its top. The
+ * last is kept on the page, so it may overlap the one before it.
+ */
+const stackBandsOnSpan = (
+	span: { top: number; bottom: number; count: number },
+	canvasWindow: Window,
+	documentHeight: number
+): CaptureRect[] => {
+	const height = canvasWindow.innerHeight;
+
+	return Array.from(
+		{ length: Math.ceil( ( span.bottom - span.top ) / height ) },
+		( _, index ) => ( {
+			x: 0,
+			y: Math.max( 0, Math.min( span.top + index * height, documentHeight - height ) ),
+			width: canvasWindow.innerWidth,
+			height,
+			framed: span.count,
+		} )
+	);
 };
 
 /**
@@ -456,14 +541,14 @@ export const getCaptureRect = (
  * itself — and the comparisons this exists for are exactly the ones that need
  * two distant areas both legible.
  *
- * `null` means the blocks cannot be covered this way, and the caller should fall
- * back to the whole page. Two ways that happens:
+ * A group taller than the viewport gets bands stacked down it, one screenful
+ * each, rather than one band centred on it: that would show its middle and
+ * silently drop the rest, which is the failure this whole path exists to avoid.
  *
- * - More groups than `MAX_CAPTURES`. A sweeping change — every heading on the
- *   page recoloured — lands in a dozen places, and a dozen pictures is not a
- *   better answer than one overview.
- * - A group taller than the viewport. A band would show its middle and silently
- *   drop the rest, which is the failure this whole path exists to avoid.
+ * `null` means more bands than `MAX_CAPTURES` would be needed, and the caller
+ * should fall back to the whole page. A sweeping change — every heading on the
+ * page recoloured — lands in a dozen places, and a dozen pictures is not a
+ * better answer than one overview; nor is a stack of them down a long section.
  * @param canvasDocument The canvas document.
  * @param canvasWindow   The canvas window.
  * @param clientIds      Blocks to frame.
@@ -489,15 +574,47 @@ export const getCaptureRects = (
 		return null;
 	}
 
-	if ( clusters.some( ( cluster ) => cluster.bottom - cluster.top > viewportHeight ) ) {
+	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
+
+	// Already top to bottom: `clusterSpans` groups in that order, a band sits at
+	// its group's midpoint, and a stack runs down its group.
+	const rects = dropBandsShownElsewhere(
+		clusters.flatMap( ( cluster ): CandidateBand[] =>
+			cluster.bottom - cluster.top > viewportHeight
+				? stackBandsOnSpan( cluster, canvasWindow, documentHeight ).map( ( rect ) => ( {
+						rect,
+						span: null,
+					} ) )
+				: [ { rect: bandForSpan( cluster, canvasWindow, documentHeight ), span: cluster } ]
+		)
+	);
+
+	if ( rects.length > MAX_CAPTURES ) {
 		return null;
 	}
 
-	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
+	// Counted again over the bands that are left: a stack's bands each hold
+	// part of the same blocks, and a dropped band's blocks are in another. Each
+	// block counts once, so the counts add up to the blocks the pictures hold:
+	// in the first band that shows it whole, or failing that, the first that
+	// shows any of it.
+	const framed = rects.map( () => 0 );
 
-	// Already top to bottom: `clusterSpans` groups in that order, and a band
-	// sits at its group's midpoint.
-	return clusters.map( ( cluster ) => bandForSpan( cluster, canvasWindow, documentHeight ) );
+	spans.forEach( ( span ) => {
+		const whole = rects.findIndex(
+			( rect ) => rect.y <= span.top + 1 && rect.y + rect.height >= span.bottom - 1
+		);
+		const index =
+			whole >= 0
+				? whole
+				: rects.findIndex( ( rect ) => span.bottom > rect.y && span.top < rect.y + rect.height );
+
+		if ( index >= 0 ) {
+			framed[ index ]++;
+		}
+	} );
+
+	return rects.map( ( rect, index ) => ( { ...rect, framed: framed[ index ] } ) );
 };
 
 /**
@@ -949,6 +1066,15 @@ const getPreparedStyleText = async (
 };
 
 /**
+ * The cloned body as XHTML, inside the copy of the canvas's `<html>` it was
+ * given, when it was given one.
+ * @param clone The cloned body.
+ * @returns The markup to embed.
+ */
+const serializePage = ( clone: Element ): string =>
+	new window.XMLSerializer().serializeToString( clone.parentElement ?? clone );
+
+/**
  * Wraps serialized markup and CSS in an SVG framing one band of the page.
  *
  * The whole body is embedded rather than just the edited blocks: a block's
@@ -991,9 +1117,12 @@ export const buildSvg = (
 		// renderer gives up partway, and these are the rules that decide whether
 		// any content paints at all.
 		`<style xmlns="http://www.w3.org/1999/xhtml"><![CDATA[${ RENDER_OVERRIDES }]]></style>`,
-		// The serialized `<body>` goes in as a sibling of the style rather than
-		// inside a wrapper. Nested in a `<div>` it is no longer the document
-		// body, and rules written against `body` stop applying to it.
+		// The serialized page goes in as a sibling of the style rather than
+		// inside a wrapper. Nested in a `<div>` the body is no longer the
+		// document body, and rules written against `body` stop applying to it.
+		// The page is normally the canvas's `<html>` holding the clone: block
+		// supports write rules from `html`, such as the solid style a border
+		// colour needs, and without it those borders draw as nothing.
 		markup,
 		'</foreignObject>',
 		'</svg>',
@@ -1398,7 +1527,7 @@ const drawRegionsToBlobs = async (
 		// well-formed XML, and HTML serialization leaves void elements unclosed
 		// and bare ampersands unescaped.
 		const serializeStartedAt = performance.now();
-		const markup = new window.XMLSerializer().serializeToString( clone );
+		const markup = serializePage( clone );
 		serialize += performance.now() - serializeStartedAt;
 		markupBytes += markup.length;
 
@@ -1421,13 +1550,16 @@ const drawRegionsToBlobs = async (
 /**
  * Renders the whole page by rasterizing it in bands and stitching them.
  *
- * Bands are drawn straight into the final, already-scaled canvas rather than
- * into a full-size intermediate, which for a page this tall would run to tens of
- * megabytes before being thrown away.
+ * Each band is drawn at native scale into one band-sized scratch canvas, then
+ * copied scaled into the final page. A full-size intermediate would run to tens
+ * of megabytes for a page this tall before being thrown away.
  *
- * Individual bands are not held to the blank check — the gaps between sections
- * are legitimately empty — but the finished page is, so a systematic rendering
- * failure is still caught.
+ * The blank check runs on the scratch canvas, never on the scaled page: on a
+ * tall page a band's text shrinks to a few grey pixels that the sampling
+ * misses. A band that should draw something must, and a band over a gap
+ * between sections may be empty. A page where no band drew anything is
+ * refused as well, since a systematic rendering failure looks exactly like
+ * that and a page with nothing the ink check can see might hide one.
  * @param clone               The cloned body, reused across bands.
  * @param styleText           CSS to embed.
  * @param documentSize        The page's laid-out size.
@@ -1437,7 +1569,7 @@ const drawRegionsToBlobs = async (
  * @param inkSpans            Page spans that should draw something.
  * @returns The stitched image.
  */
-const drawPageToBlob = async (
+export const drawPageToBlob = async (
 	clone: Element,
 	styleText: string,
 	documentSize: { width: number; height: number },
@@ -1451,21 +1583,32 @@ const drawPageToBlob = async (
 	canvas.width = Math.round( documentSize.width * scale );
 	canvas.height = Math.round( documentSize.height * scale );
 
-	const context = canvas.getContext( '2d', { willReadFrequently: true } );
+	const scratch = document.createElement( 'canvas' );
+	scratch.width = documentSize.width;
+	scratch.height = bandHeight;
 
-	if ( ! context ) {
+	const context = canvas.getContext( '2d' );
+	const scratchContext = scratch.getContext( '2d', { willReadFrequently: true } );
+
+	if ( ! context || ! scratchContext ) {
 		throw new UnfaithfulCaptureError( 'No 2d context available', 'canvas' );
 	}
 
-	for ( const band of bands ) {
+	let drewAnything = false;
+
+	for ( const [ bandIndex, band ] of bands.entries() ) {
 		offsetCloneToBand( clone as HTMLElement, band.y, documentSize.width );
 
-		const image = await decodeSvg(
-			buildSvg( new window.XMLSerializer().serializeToString( clone ), styleText, {
-				width: documentSize.width,
-				height: band.height,
-			} )
-		);
+		// Framed at the viewport's height even when the band is the short one at
+		// the foot of the page. The frame is the initial containing block, so a
+		// shorter one resolves `vh` against it: a full-height cover shrinks,
+		// everything below it moves up, and the offset lands past the end of
+		// the page. Only the band's own rows are copied out below.
+		const svg = buildSvg( serializePage( clone ), styleText, {
+			width: documentSize.width,
+			height: bandHeight,
+		} );
+		const image = await decodeSvg( svg );
 
 		// Destination edges are rounded from the band's own boundaries rather
 		// than from a rounded height, so consecutive bands share an edge exactly
@@ -1482,24 +1625,14 @@ const drawPageToBlob = async (
 
 		for ( const settleMs of RENDER_SETTLE_STEPS ) {
 			await settle( settleMs );
-			context.clearRect( 0, top, canvas.width, bottom - top );
-			context.drawImage(
-				image,
-				0,
-				0,
-				documentSize.width,
-				band.height,
-				0,
-				top,
-				canvas.width,
-				bottom - top
-			);
+			scratchContext.clearRect( 0, 0, scratch.width, scratch.height );
+			scratchContext.drawImage( image, 0, 0 );
 
 			rendered =
 				! inkExpected ||
-				! looksUnrendered( context, canvas.width, canvas.height, {
-					top,
-					height: bottom - top,
+				! looksUnrendered( scratchContext, scratch.width, scratch.height, {
+					top: 0,
+					height: band.height,
 				} );
 
 			if ( rendered ) {
@@ -1510,14 +1643,44 @@ const drawPageToBlob = async (
 		// Refused rather than kept: on the assembled page one lost band among
 		// six is invisible, a result complete apart from a missing section.
 		if ( ! rendered ) {
-			throw new UnfaithfulCaptureError( `The band at ${ band.y }px rendered blank`, 'blank' );
+			throw new UnfaithfulCaptureError( `The band at ${ band.y }px rendered blank`, 'blank', {
+				band_y: band.y,
+				band_index: bandIndex,
+				band_count: bands.length,
+				page_height: documentSize.height,
+				scale: Math.round( scale * 1000 ) / 1000,
+			} );
 		}
+
+		drewAnything ||=
+			inkExpected ||
+			! looksUnrendered( scratchContext, scratch.width, scratch.height, {
+				top: 0,
+				height: band.height,
+			} );
+
+		context.drawImage(
+			scratch,
+			0,
+			0,
+			documentSize.width,
+			band.height,
+			0,
+			top,
+			canvas.width,
+			bottom - top
+		);
 	}
 
-	if ( looksUnrendered( context, canvas.width, canvas.height ) ) {
+	if ( ! drewAnything ) {
 		throw new UnfaithfulCaptureError(
 			`The page rendered blank across all ${ bands.length } bands`,
-			'blank'
+			'blank',
+			{
+				band_count: bands.length,
+				page_height: documentSize.height,
+				scale: Math.round( scale * 1000 ) / 1000,
+			}
 		);
 	}
 
@@ -1555,9 +1718,10 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	await whenStill( canvasDocument, canvasWindow, clientIds );
 
 	// Areas close together share a band; areas far apart get one each, so both
-	// sides of a comparison stay at native scale. `null` means bands cannot
-	// honestly cover them — too many, or one taller than a screenful — and the
-	// whole page, scaling and all, is the only picture that shows everything.
+	// sides of a comparison stay at native scale, and a group taller than a
+	// screenful gets a stack of bands. `null` means more bands than the cap
+	// would be needed, and the whole page, scaling and all, is the only
+	// picture that shows everything.
 	const rects = getCaptureRects( canvasDocument, canvasWindow, clientIds );
 	const wholePage = Boolean( fullPage ) || rects === null;
 	const bands = rects ?? [];
@@ -1604,6 +1768,8 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	);
 	const clone = await time( 'clone', () => {
 		const cloned = body.cloneNode( true ) as Element;
+		// The element alone, with its attributes, for the rules written from it.
+		canvasDocument.documentElement?.cloneNode( false ).appendChild( cloned );
 		replaceImagesWithPlaceholders( body, cloned, canvasWindow );
 
 		// Whenever the document is rendered more than once. A single band
@@ -1659,7 +1825,8 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 					...diagnostics,
 					stages,
 				} ) }`,
-				( error as UnfaithfulCaptureError ).reason || 'error'
+				( error as UnfaithfulCaptureError ).reason || 'error',
+				( error as UnfaithfulCaptureError ).details
 			);
 		}
 	} );
@@ -1685,7 +1852,8 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 			imagesArePlaceholders: true,
 			fullPage: wholePage,
 			// Blocks framed by this band, not by the capture as a whole, so a
-			// reader can tell which picture holds what it asked about.
+			// reader can tell which picture holds what it asked about. Each is
+			// counted once, in the first band that shows it.
 			framed: wholePage
 				? ( getEditedSpan( canvasDocument, canvasWindow, clientIds )?.count ?? 0 )
 				: bands[ index ].framed,

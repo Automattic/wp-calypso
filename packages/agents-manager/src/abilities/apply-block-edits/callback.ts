@@ -5,16 +5,18 @@ import {
 	captureCanvas,
 	describeCaptureShape,
 	describeMeasuredLayout,
+	describeMeasuredWidths,
 	describeTextContrast,
 	describeUnmoved,
 	getUnframedClientIds,
 	snapshotLayout,
 	type ContrastBackdrop,
+	type WidthShortfall,
 	type LayoutSnapshot,
 } from '../../utils/canvas-capture';
 import { checkpointKeys, sealCheckpointForSwap, withCheckpoint } from '../../utils/checkpoints';
 import { deepClone } from '../../utils/deep-clone';
-import { getPageBlocks, openUndoLevel } from '../../utils/editor-blocks';
+import { getBlock, getPageBlocks, openUndoLevel } from '../../utils/editor-blocks';
 import {
 	getCustomCss,
 	getEditedGlobalStyles,
@@ -53,6 +55,11 @@ interface ApplyBlockEditsInput extends RawBlockEdits {
 	visualCheckPending?: unknown;
 	/** Blocks this edit is being compared against, which the capture must also show. */
 	visualCheckClientIds?: unknown;
+	/**
+	 * The block the call is about, from the server: framed and measured like an
+	 * edited block, which on a CSS-only call there is none of.
+	 */
+	visualCheckTargetClientId?: unknown;
 }
 
 interface ApplyBlockEditsResultData {
@@ -67,6 +74,10 @@ interface ApplyBlockEditsResultData {
 	contrastFailures?: number;
 	/** The blocks painting backgrounds that text fails contrast against, for the server to name in a correction. */
 	contrastBackdrops?: ContrastBackdrop[];
+	/** Blocks narrower than their parent because a flex column does not stretch them, for the server to correct. */
+	widthShortfalls?: WidthShortfall[];
+	/** The blocks whose width was measured: without a shortfall, measured and wide enough. */
+	measuredClientIds?: string[];
 	error?: string;
 	details?: Record< string, unknown >;
 	outcome?: ApplyBlockEditsOutcome;
@@ -390,10 +401,12 @@ export async function applyBlockEditsCallback(
 
 	// Captured after every path that reached the page, the no-change and
 	// failure ones most of all: there the block tree cannot say whether the
-	// user's problem is fixed. A call that changes custom CSS gets the whole
-	// page, which the CSS can reach anywhere of, with or without block edits;
-	// a request refused before any write, or a call stopped by a move, gets
-	// none.
+	// user's problem is fixed. A call that changes custom CSS also gets the
+	// whole page, which the CSS can reach anywhere of, after the full-size
+	// picture of the blocks it touched: scaled to fit, the page hides exactly
+	// the detail an edit to those blocks needs checking against, such as a
+	// row's width or a muted border. A request refused before any write, or a
+	// call stopped by a move, gets none.
 	//
 	// A relative request — "make this match Project details" — cannot be checked
 	// from a picture of the edited side alone, so the blocks it is being compared
@@ -403,6 +416,16 @@ export async function applyBlockEditsCallback(
 	const changedClientIds = edits
 		? [ ...getEditedClientIds( edits, resolver.resolve ), ...insertedClientIds ]
 		: [];
+	// The block the call is about joins the edited ones, unless it is one of
+	// them or names no block.
+	const targetClientId =
+		typeof input.visualCheckTargetClientId === 'string' && input.visualCheckTargetClientId
+			? resolver.resolve( input.visualCheckTargetClientId )
+			: undefined;
+	const subjectClientIds =
+		targetClientId && ! changedClientIds.includes( targetClientId ) && getBlock( targetClientId )
+			? [ ...changedClientIds, targetClientId ]
+			: changedClientIds;
 	const referenceClientIds = (
 		Array.isArray( input.visualCheckClientIds ) ? input.visualCheckClientIds : []
 	)
@@ -410,17 +433,44 @@ export async function applyBlockEditsCallback(
 		.map( resolver.resolve )
 		.filter(
 			( clientId, index, all ) =>
-				! changedClientIds.includes( clientId ) && all.indexOf( clientId ) === index
+				! subjectClientIds.includes( clientId ) && all.indexOf( clientId ) === index
 		);
 
 	const wholePage = edits?.customCSS !== undefined;
+	const framedClientIds = [ ...subjectClientIds, ...referenceClientIds ];
+	const canCapture = !! edits && ! getBlockingMove();
+	// With custom CSS the whole page comes as well, so the full-size capture
+	// is only worth taking on blocks the canvas lays out. Without any, it would
+	// fall back to wherever the user is scrolled, which the page already shows
+	// and which would pass for a picture of the blocks the call named.
+	const blockParts =
+		canCapture &&
+		( ! wholePage || getUnframedClientIds( framedClientIds ).length < framedClientIds.length )
+			? await captureCanvas( { clientIds: framedClientIds, fullPage: false } )
+			: null;
+	// Not again when the blocks were too spread out for bands, and the
+	// rasterizer already fell back to the whole page.
+	const pageCaptureRan = canCapture && wholePage && ! blockParts?.[ 0 ]?.metadata?.fullPage;
+	const pageParts = pageCaptureRan
+		? await captureCanvas( { clientIds: framedClientIds, fullPage: true } )
+		: null;
+	// Both: the bands keep their own numbering, top to bottom, and their
+	// counts of the blocks they frame. The page is not another area below
+	// them, and counting its blocks again would count them twice.
 	const fileParts =
-		! edits || getBlockingMove()
-			? null
-			: await captureCanvas( {
-					clientIds: [ ...changedClientIds, ...referenceClientIds ],
-					fullPage: wholePage,
-				} );
+		blockParts && pageParts
+			? [
+					...blockParts,
+					...pageParts.map( ( part ) => {
+						const { regionIndex, regionCount, framed, ...metadata } = part.metadata ?? {};
+
+						return { ...part, metadata };
+					} ),
+				]
+			: ( blockParts ?? pageParts );
+	// The bands came back but the page did not: without saying so, the
+	// pictures read as everything the CSS could reach.
+	const pageMissing = pageCaptureRan && ! pageParts && !! blockParts;
 
 	// Two separate facts about the pictures that came back. The shape says how
 	// many there are and what they cover, which the rasterizer decides from how
@@ -434,18 +484,29 @@ export async function applyBlockEditsCallback(
 	// easy to miss in a scaled-down picture. Custom CSS can recolour any block
 	// on the page, edited or not, so with it the whole page is measured, the
 	// edited blocks first. The server acts on the failure count rather than
-	// the notes' wording, so the field is left out when no text was measured.
+	// the notes' wording, so the field is left out when no text was measured;
+	// and on the width shortfalls rather than the width notes, for the same
+	// reason, so they too are left out when there are none.
 	// Kept out of `message`, which the user may see as the reply.
 	if ( fileParts ) {
 		const contrast = describeTextContrast(
 			wholePage ? [ ...changedClientIds, ...getPageClientIds() ] : changedClientIds,
 			{ wholePage }
 		);
+		// The edited blocks and the block the call is about; failing both, as on a
+		// CSS-only call with no target, the blocks it names for comparison.
+		const widths = describeMeasuredWidths(
+			subjectClientIds.length ? subjectClientIds : referenceClientIds
+		);
 		const captureNotes = [
 			describeCaptureShape( fileParts ),
+			pageMissing
+				? 'The picture of the whole page could not be made, so only the areas shown can be checked; the custom CSS can change the rest of the page too.'
+				: '',
 			describeReferenceFraming( referenceClientIds, getUnframedClientIds( referenceClientIds ) ),
 			...( contrast?.notes ?? [] ),
 			...describeMeasuredLayout( changedClientIds ),
+			...widths.notes,
 			layoutBefore && result.outcome === 'updated' ? describeUnmoved( layoutBefore ) : '',
 		].filter( Boolean );
 
@@ -454,6 +515,10 @@ export async function applyBlockEditsCallback(
 			...( captureNotes.length > 0 && { captureNotes } ),
 			...( typeof contrast?.failures === 'number' && { contrastFailures: contrast.failures } ),
 			...( contrast && contrast.backdrops.length > 0 && { contrastBackdrops: contrast.backdrops } ),
+			...( widths.shortfalls.length > 0 && { widthShortfalls: widths.shortfalls } ),
+			...( widths.measuredClientIds.length > 0 && {
+				measuredClientIds: widths.measuredClientIds,
+			} ),
 		};
 	}
 

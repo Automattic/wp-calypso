@@ -5,6 +5,10 @@ jest.mock( '@wordpress/blocks', () => ( {
 	] ),
 } ) );
 jest.mock( '../../../utils/editor-blocks', () => ( { getBlock: jest.fn() } ) );
+// The agent's id for a block is its clientId here, so the lists read plainly.
+jest.mock( '../../../utils/block-ids', () => ( {
+	getAgentBlockId: ( clientId: string ) => clientId,
+} ) );
 
 import { getBlock } from '../../../utils/editor-blocks';
 import {
@@ -138,6 +142,41 @@ describe( 'getEditedClientIds', () => {
 } );
 
 describe( 'getValidationDetails', () => {
+	it( 'lists every block the call changed, past the cap on the attribute results', () => {
+		// The server needs the whole set the call touched, not the first ten
+		// attribute writes.
+		const ids = Array.from( { length: 12 }, ( _, index ) => `p${ index }` );
+		const details = validate(
+			edits( {
+				updates: [
+					...ids.map( ( clientId ) => ( {
+						clientId,
+						name: 'core/paragraph',
+						attributes: { content: 'After' },
+					} ) ),
+					{ clientId: 'p0', name: 'core/paragraph', attributes: { content: 'Again' } },
+				],
+			} ),
+			page( ids.map( ( clientId ) => block( clientId, 'core/paragraph', { content: 'Before' } ) ) ),
+			page( ids.map( ( clientId ) => block( clientId, 'core/paragraph', { content: 'After' } ) ) )
+		);
+
+		expect( details.attributeResults ).toHaveLength( 10 );
+		expect( details.changedClientIds ).toEqual( ids );
+	} );
+
+	it( 'lists the blocks the call inserted among those it changed', () => {
+		const details = validate(
+			edits( {
+				inserts: [ { block: { name: 'core/paragraph', attributes: { content: 'New' } } } ],
+			} ),
+			page( [ paragraph( 'Before' ) ] ),
+			page( [ paragraph( 'Before' ), block( 'new1', 'core/paragraph', { content: 'New' } ) ] )
+		);
+
+		expect( details.changedClientIds ).toEqual( [ 'new1' ] );
+	} );
+
 	it( 'reports a content change with the text the page now shows', () => {
 		const details = validate(
 			edits( { updates: [ contentUpdate( '<strong>After</strong> text' ) ] } ),
@@ -147,6 +186,7 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 0, modifiedCount: 1 },
+			changedClientIds: [ 'paragraph' ],
 			attributeResults: [
 				{
 					blockName: 'core/paragraph',
@@ -212,6 +252,8 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 1, modifiedCount: 0 },
+			// A target that named no block touched nothing.
+			changedClientIds: [ 'gone', 'stuck' ],
 			unresolvedTargets: [
 				{
 					operation: 'delete',
@@ -339,6 +381,7 @@ describe( 'getValidationDetails', () => {
 
 		expect( details ).toEqual( {
 			appliedOperations: { addedCount: 0, removedCount: 0, modifiedCount: 0 },
+			changedClientIds: [ 'title' ],
 			attributeResults: [
 				expect.objectContaining( { path: 'level', before: 2, after: 1, status: 'changed' } ),
 			],

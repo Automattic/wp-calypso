@@ -6,6 +6,7 @@
  */
 
 import { getBlockTypes } from '@wordpress/blocks';
+import { getAgentBlockId } from '../../utils/block-ids';
 import { deepClone } from '../../utils/deep-clone';
 import { getBlock } from '../../utils/editor-blocks';
 import { isRecord } from '../../utils/is-record';
@@ -14,6 +15,9 @@ import type { BlockEdits, ResolveClientId } from './types';
 import type { EditorBlock, PageBlocks } from '../../utils/editor-blocks';
 
 const MAX_ITEMS = 10;
+// Separate from the lists above, which are capped short: the server reads this
+// as the whole set the call touched.
+const MAX_CHANGED_IDS = 50;
 const MAX_STRING_LENGTH = 300;
 
 type BlockSnapshot = Pick< EditorBlock, 'clientId' | 'name' | 'attributes' >;
@@ -75,6 +79,12 @@ type ValidationDetails = {
 	attributeResults?: AttributeResult[];
 	unsupportedAttributes?: UnsupportedAttribute[];
 	contentTextSnapshot?: string;
+	/**
+	 * Every block the call updated, deleted or inserted, by the short id the
+	 * agent knows it by, the same the width measurements use. A target that
+	 * named no block is left out.
+	 */
+	changedClientIds?: string[];
 };
 
 type BlocksByClientId = Map< string, BlockSnapshot >;
@@ -430,6 +440,18 @@ export function getValidationDetails( {
 	const attributeResults = getAttributeResults( edits, resolve, previous, current );
 	const unsupportedAttributes = getUnsupportedAttributes( edits );
 	const contentTextSnapshot = getContentTextSnapshot( edits, current );
+	const targetClientIds = [
+		...edits.updates.map( ( update ) => update.clientId ),
+		...edits.deletes,
+	]
+		.map( resolve )
+		.filter( ( clientId ) => previous.has( clientId ) || current.has( clientId ) );
+	const insertedClientIds = [ ...current.keys() ].filter(
+		( clientId ) => ! previous.has( clientId )
+	);
+	const changedClientIds = [
+		...new Set( [ ...targetClientIds, ...insertedClientIds ].map( getAgentBlockId ) ),
+	].slice( 0, MAX_CHANGED_IDS );
 
 	return {
 		appliedOperations,
@@ -438,6 +460,7 @@ export function getValidationDetails( {
 		...( attributeResults.length && { attributeResults } ),
 		...( unsupportedAttributes.length && { unsupportedAttributes } ),
 		...( contentTextSnapshot && { contentTextSnapshot } ),
+		...( changedClientIds.length && { changedClientIds } ),
 	};
 }
 

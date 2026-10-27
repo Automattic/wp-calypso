@@ -9,8 +9,9 @@
  */
 
 import { getCanvasDocument } from '../editor-canvas';
-import { recordBigSkyTracksEvent } from '../tracks';
+import { getIsTest, recordBigSkyTracksEvent } from '../tracks';
 import { rasterizeCanvas } from './rasterizer';
+import type { UnfaithfulCaptureError } from './rasterizer';
 import type { FilePart } from '@automattic/agenttic-client';
 
 export interface CanvasCaptureContext {
@@ -44,8 +45,13 @@ export interface CanvasCaptureOptions {
  * nothing; this is the only record. Successes are not counted: the server can
  * see for itself whether an image arrived.
  */
-function recordCaptureFailure( reason: string, fullPage: boolean ): void {
+function recordCaptureFailure(
+	reason: string,
+	fullPage: boolean,
+	details: Record< string, number > = {}
+): void {
 	recordBigSkyTracksEvent( 'jetpack_big_sky_canvas_capture_failed', {
+		...details,
 		reason,
 		full_page: fullPage,
 	} );
@@ -85,10 +91,18 @@ export async function captureCanvasFileParts( {
 
 		return fileParts;
 	} catch ( error ) {
-		// Not logged: a refusal is a handled outcome, reported to Tracks. The
-		// reason goes, not the message, which carries stylesheet hrefs and font
-		// URLs that are unusable as an analytics property.
-		recordCaptureFailure( ( error as { reason?: string } )?.reason || 'error', fullPage );
+		// A refusal is a handled outcome, reported to Tracks. The reason and the
+		// numeric details go, not the message, which carries stylesheet hrefs and
+		// font URLs that are unusable as an analytics property. The message holds
+		// the stage timings and crop the details leave out, so dev mode logs it.
+		const { reason, details } = ( error ?? {} ) as Partial< UnfaithfulCaptureError >;
+
+		if ( getIsTest() ) {
+			// eslint-disable-next-line no-console
+			console.warn( '[AgentsManager] Canvas capture refused:', error );
+		}
+
+		recordCaptureFailure( reason || 'error', fullPage, details );
 
 		return null;
 	}

@@ -1,5 +1,8 @@
 jest.mock( '../../block-ids', () => ( {
-	createShortIdLookup: () => ( { findShortId: ( clientId: string ) => clientId } ),
+	createShortIdLookup: () => ( {
+		findShortId: ( clientId: string ) => clientId,
+		toShortId: ( clientId: string ) => clientId,
+	} ),
 } ) );
 jest.mock( '../../editor-blocks', () => ( {
 	getBlock: jest.fn(),
@@ -8,7 +11,12 @@ jest.mock( '../../editor-blocks', () => ( {
 } ) );
 
 import { getBlock, getBlockRootClientId, getBlocks } from '../../editor-blocks';
-import { describeMeasuredLayout, describeUnmoved, snapshotLayout } from '../measurements';
+import {
+	describeMeasuredLayout,
+	describeMeasuredWidths,
+	describeUnmoved,
+	snapshotLayout,
+} from '../measurements';
 import type { EditorBlock } from '../../editor-blocks';
 
 interface Rect {
@@ -32,6 +40,8 @@ interface CanvasBlock {
 	style?: Partial< CSSStyleDeclaration >;
 	/** Builds the block's own markup instead, for the editor's real nesting. */
 	build?: ( element: HTMLElement, canvasDocument: Document ) => void;
+	/** A wrapper that is not a block, at this box, holding the children: a cover's inner container. */
+	wrap?: Rect;
 	children?: CanvasBlock[];
 }
 
@@ -68,7 +78,16 @@ function mountCanvas( roots: CanvasBlock[] ) {
 		block.build?.( element, canvasDocument );
 		container.append( element );
 		store[ block.clientId ] = { block, parent };
-		block.children?.forEach( ( child ) => mount( child, element, block.clientId ) );
+
+		const childContainer = block.wrap
+			? withRect( canvasDocument.createElement( 'div' ), block.wrap )
+			: element;
+
+		if ( block.wrap ) {
+			element.append( childContainer );
+		}
+
+		block.children?.forEach( ( child ) => mount( child, childContainer, block.clientId ) );
 	};
 
 	roots.forEach( ( root ) => mount( root, canvasDocument.body ) );
@@ -412,5 +431,284 @@ describe( 'whether anything moved', () => {
 		mountCanvas( [ header( { build: editorSiteLogo( null ) } ) ] );
 
 		expect( snapshotLayout( [ 'zteD' ] ) ).toBeNull();
+	} );
+} );
+
+describe( 'describeMeasuredWidths', () => {
+	const details = ( clientId: string, top: number ): CanvasBlock => ( {
+		clientId,
+		name: 'core/details',
+		rect: { top, left: 20, width: 412, height: 40 },
+		text: 'Question?',
+	} );
+
+	/**
+	 * The FAQ of WPAGENT-229: the list group sits in a flex column that does not
+	 * stretch its children, so it is only as wide as its widest question, and
+	 * the questions inside it fill it.
+	 */
+	const faq = ( listWidth = 412 ): CanvasBlock => ( {
+		clientId: 'v3nd',
+		name: 'core/group',
+		rect: { top: 0, left: 0, width: 1140, height: 200 },
+		style: {
+			display: 'flex',
+			flexDirection: 'column',
+			alignItems: 'flex-start',
+			paddingLeft: '20px',
+			paddingRight: '20px',
+		},
+		children: [
+			{
+				clientId: 'tu1q',
+				name: 'core/group',
+				rect: { top: 0, left: 20, width: listWidth, height: 160 },
+				children: [ 'd1', 'd2', 'd3', 'd4' ].map( ( clientId, index ) =>
+					details( clientId, index * 40 )
+				),
+			},
+		],
+	} );
+
+	const sizePage = ( width: number ) => {
+		const canvasDocument = ( document.querySelector( 'iframe' ) as HTMLIFrameElement )
+			.contentDocument as Document;
+		withRect( canvasDocument.body, { top: 0, left: 0, width, height: 2000 } );
+	};
+
+	it( 'names the narrow parent when the edited blocks already fill it', () => {
+		// The first attempt in the trace: width: 100% on the questions, which
+		// were already as wide as the list.
+		mountCanvas( [ faq() ] );
+
+		expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ).notes ).toEqual( [
+			'Width: details (d1), details (d2), details (d3), details (d4) are as wide as the boxes they sit in allow, up to group (tu1q), but group (tu1q) is only 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
+		] );
+	} );
+
+	it( 'says how wide an edited block is against the box it sits in', () => {
+		mountCanvas( [ faq() ] );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).notes ).toEqual( [
+			'Width: group (tu1q) is 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
+		] );
+	} );
+
+	it( 'confirms a block that fills every box up to the page', () => {
+		mountCanvas( [ faq( 1100 ) ] );
+		sizePage( 1140 );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).notes ).toEqual( [
+			"Width: group (tu1q) is 1100px wide, as wide as the boxes it sits in allow, up to the page's content area (1140px).",
+		] );
+	} );
+
+	it( 'says when a max-width is what holds a block narrow', () => {
+		mountCanvas( [
+			{
+				clientId: 'p1',
+				name: 'core/paragraph',
+				rect: { top: 0, left: 0, width: 645, height: 20 },
+				style: { maxWidth: '645px' },
+				text: 'Hello',
+			},
+		] );
+		sizePage( 1140 );
+
+		expect( describeMeasuredWidths( [ 'p1' ] ).notes ).toEqual( [
+			"Width: paragraph (p1) is 645px wide inside the page's content area, whose content box is 1140px wide. It is held there by its max-width of 645px.",
+		] );
+	} );
+
+	it( "states the block's own width when padding above it, not a narrow box, takes the room", () => {
+		mountCanvas( [
+			{
+				clientId: 'g1',
+				name: 'core/group',
+				rect: { top: 0, left: 0, width: 1200, height: 100 },
+				style: { paddingLeft: '40px', paddingRight: '40px' },
+				children: [
+					{
+						clientId: 'p1',
+						name: 'core/paragraph',
+						rect: { top: 0, left: 40, width: 1120, height: 20 },
+						text: 'Hello',
+					},
+				],
+			},
+		] );
+		sizePage( 1200 );
+
+		expect( describeMeasuredWidths( [ 'p1' ] ).notes ).toEqual( [
+			"Width: paragraph (p1) is 1120px wide, as wide as the boxes it sits in allow, up to the page's content area (1200px).",
+		] );
+	} );
+
+	it( 'names a wrapper that is not a block when it is the narrow box', () => {
+		// A cover lays its content out in an inner container of its own, which
+		// is where a narrow content width lives.
+		mountCanvas( [
+			{
+				clientId: 'c1',
+				name: 'core/cover',
+				rect: { top: 0, left: 0, width: 1100, height: 400 },
+				wrap: { top: 0, left: 250, width: 600, height: 400 },
+				children: [
+					{
+						clientId: 'h1',
+						name: 'core/heading',
+						rect: { top: 0, left: 250, width: 600, height: 40 },
+						text: 'Title',
+					},
+				],
+			},
+		] );
+
+		expect( describeMeasuredWidths( [ 'h1' ] ).notes ).toEqual( [
+			'Width: heading (h1) is as wide as the boxes it sits in allow, up to the inner container of cover (c1), but the inner container of cover (c1) is only 600px wide inside cover (c1), whose content box is 1100px wide.',
+		] );
+	} );
+
+	describe( 'shortfalls', () => {
+		const faqShortfall = ( fromClientIds: string[] ) => ( {
+			clientId: 'tu1q',
+			width: 412,
+			parentClientId: 'v3nd',
+			parentWidth: 1100,
+			alignItems: 'flex-start',
+			fromClientIds,
+		} );
+
+		it( 'names the narrow block, not the edited blocks inside it, once', () => {
+			// The correction stretches the list; stretching the questions,
+			// already as wide as the list, changes nothing.
+			mountCanvas( [ faq() ] );
+
+			// Saying which edited blocks it came from, since the server corrects
+			// only for blocks the call is about.
+			expect( describeMeasuredWidths( [ 'd1', 'd2', 'd3', 'd4' ] ).shortfalls ).toEqual( [
+				faqShortfall( [ 'd1', 'd2', 'd3', 'd4' ] ),
+			] );
+		} );
+
+		it( 'names an edited block that is itself the narrow one', () => {
+			mountCanvas( [ faq() ] );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual(
+				expect.objectContaining( {
+					shortfalls: [ faqShortfall( [ 'tu1q' ] ) ],
+					measuredClientIds: [ 'tu1q' ],
+				} )
+			);
+		} );
+
+		it( 'has none once the block fills its parent, and still lists it as measured', () => {
+			// "Measured and wide enough", which the server tells from "not
+			// measured" by the list.
+			mountCanvas( [ faq( 1100 ) ] );
+			sizePage( 1140 );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ) ).toEqual(
+				expect.objectContaining( { shortfalls: [], measuredClientIds: [ 'tu1q' ] } )
+			);
+		} );
+
+		it.each( [
+			[ 'its own max-width holds it', { style: { maxWidth: '412px' } }, {} ],
+			[
+				'its side margins take up the rest of the row',
+				{ style: { marginLeft: '344px', marginRight: '344px' } },
+				{},
+			],
+			[ 'the column already stretches it', {}, { alignItems: 'stretch' } ],
+		] )( 'has none when %s, which a stretch cannot change', ( _name, list, column ) => {
+			const base = faq();
+			const [ tu1q ] = base.children as CanvasBlock[];
+
+			mountCanvas( [
+				{
+					...base,
+					style: { ...base.style, ...column },
+					children: [ { ...tu1q, ...list } ],
+				},
+			] );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
+		} );
+
+		it( 'has none for a narrow wrapper, which cannot take a class', () => {
+			mountCanvas( [
+				{
+					clientId: 'c1',
+					name: 'core/cover',
+					rect: { top: 0, left: 0, width: 1100, height: 400 },
+					style: { display: 'flex', flexDirection: 'column', alignItems: 'center' },
+					wrap: { top: 0, left: 250, width: 600, height: 400 },
+					children: [
+						{
+							clientId: 'h1',
+							name: 'core/heading',
+							rect: { top: 0, left: 250, width: 600, height: 40 },
+							text: 'Title',
+						},
+					],
+				},
+			] );
+
+			expect( describeMeasuredWidths( [ 'h1' ] ).shortfalls ).toEqual( [] );
+		} );
+
+		it( 'has none outside a flex column, where align-items does not set the width', () => {
+			mountCanvas( [
+				{
+					...faq(),
+					style: { display: 'flex', flexDirection: 'row', alignItems: 'flex-start' },
+				},
+			] );
+
+			expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
+		} );
+	} );
+
+	it( "scales the container by its own transform, not the block's", () => {
+		// Scaled to 90% by custom CSS, the list still fills its parent; read
+		// against the list's scale, the parent would look 11% wider.
+		mountCanvas( [ faq( 990 ) ] );
+		sizePage( 1140 );
+
+		const canvasDocument = ( document.querySelector( 'iframe' ) as HTMLIFrameElement )
+			.contentDocument as Document;
+		Object.defineProperty( canvasDocument.querySelector( '[data-block="tu1q"]' ), 'offsetWidth', {
+			value: 1100,
+		} );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).shortfalls ).toEqual( [] );
+	} );
+
+	it( 'does not read a percentage max-width as pixels', () => {
+		const base = faq( 100 );
+		const [ tu1q ] = base.children as CanvasBlock[];
+
+		mountCanvas( [ { ...base, children: [ { ...tu1q, style: { maxWidth: '100%' } } ] } ] );
+
+		expect( describeMeasuredWidths( [ 'tu1q' ] ).notes[ 0 ] ).not.toContain( 'max-width' );
+	} );
+
+	it( 'describes the narrow block alone when a block inside it is edited too', () => {
+		mountCanvas( [ faq() ] );
+
+		expect( describeMeasuredWidths( [ 'd1', 'tu1q' ] ).notes ).toEqual( [
+			'Width: group (tu1q) is 412px wide inside group (v3nd), whose content box is 1100px wide; group (v3nd) is a flex column with align-items: flex-start.',
+		] );
+	} );
+
+	it( 'gives nothing for a block the canvas does not lay out, nor lists it as measured', () => {
+		mountCanvas( [ { ...details( 'd1', 0 ), rect: { top: 0, left: 0, width: 0, height: 0 } } ] );
+
+		expect( describeMeasuredWidths( [ 'd1' ] ) ).toEqual( {
+			notes: [],
+			shortfalls: [],
+			measuredClientIds: [],
+		} );
 	} );
 } );
