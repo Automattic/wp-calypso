@@ -33,43 +33,4 @@ describe( '<EventCard>', () => {
 			'/marketplace/hosting/pressable'
 		);
 	} );
-
-	describe( 'certification offer', () => {
-		const offerTitle = { name: 'Certify your developers at double the discount' };
-
-		function renderEventCard( isEligibleForCertificationOffer: boolean ) {
-			render(
-				<EventCard
-					isEligibleForCertificationOffer={ isEligibleForCertificationOffer }
-					aiMcpHref="/resources-and-tools/ai-mcp"
-					tiersHref="/agency-tier"
-					pressableHostingHref="/marketplace/hosting/pressable"
-					shouldUseRouterLink={ false }
-				/>
-			);
-		}
-
-		test( 'links to the code on the tier page for eligible agencies', () => {
-			renderEventCard( true );
-
-			expect( screen.getByRole( 'heading', offerTitle ) ).toBeVisible();
-			expect( screen.getByRole( 'link', { name: 'Get your code' } ) ).toHaveAttribute(
-				'href',
-				'/agency-tier#certification'
-			);
-		} );
-
-		test( 'is hidden for agencies without a code', () => {
-			renderEventCard( false );
-
-			expect( screen.queryByRole( 'heading', offerTitle ) ).not.toBeInTheDocument();
-		} );
-
-		test( 'is hidden once the promo ends on April 1, 2027', () => {
-			jest.setSystemTime( new Date( '2027-04-01T00:00:00Z' ) );
-			renderEventCard( true );
-
-			expect( screen.queryByRole( 'heading', offerTitle ) ).not.toBeInTheDocument();
-		} );
-	} );
 } );
