@@ -56,6 +56,8 @@ export interface AgencyOverviewContentProps {
 	tourLabel?: string;
 	/** The welcome band is showing and already says what the Pending card would. */
 	hidesPendingCard?: boolean;
+	/** Replaces the snackbar after the certification share message is copied, for hosts that don't render `@wordpress/notices`. */
+	onCertificationShareCopy?: () => void;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
@@ -81,6 +83,7 @@ export default function AgencyOverviewContent( {
 	onRelaunchTour,
 	tourLabel,
 	hidesPendingCard,
+	onCertificationShareCopy,
 	recordTracksEvent,
 }: AgencyOverviewContentProps ) {
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
@@ -155,6 +158,11 @@ export default function AgencyOverviewContent( {
 					isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 					isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 					isEligibleForCertificationOffer={ certification.isEligible && certification.isPromo }
+					certificationOffer={ {
+						discount: certification.discount,
+						shareMessage: certification.shareMessage,
+					} }
+					onCertificationShareCopy={ onCertificationShareCopy }
 					aiMcpHref={ links.aiMcp }
 					tiersHref={ links.tiers }
 					pressableHostingHref={ links.pressableHosting }

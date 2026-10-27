@@ -5,6 +5,7 @@ import { getIntlLocale } from '../../utils/locale';
 import { ALL_TIERS } from '../tiers/constants';
 import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
 import { BASE_DISCOUNT, PROMO_LAST_DAY, PROMO_MULTIPLIER } from './constants';
+import { getCertificationShareMessage } from './share-message';
 import type { AgencyTierId } from '@automattic/api-core';
 
 function isPromoRunning() {
@@ -45,14 +46,18 @@ export function useCertification() {
 	const couponDiscount = Number.parseFloat( coupon?.discount_percent ?? '' );
 	const hasCouponDiscount = Number.isFinite( couponDiscount ) && couponDiscount > 0;
 
+	const code = coupon?.code ?? '';
+	const discount = hasCouponDiscount ? couponDiscount : getDiscount( tierId, isPromo );
+
 	return {
 		// Nothing to show unless the agency has an active coupon.
-		isEligible: isApproved && !! coupon?.code,
+		isEligible: isApproved && !! code,
 		isLoading,
-		code: coupon?.code ?? '',
+		code,
 		tierId,
-		discount: hasCouponDiscount ? couponDiscount : getDiscount( tierId, isPromo ),
+		discount,
 		isPromo,
 		promoLastDay,
+		shareMessage: getCertificationShareMessage( { code, discount, isPromo, promoLastDay } ),
 	};
 }

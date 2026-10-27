@@ -58,6 +58,10 @@ export default function AgencyTierOverviewContent( {
 		dispatch( successNotice( __( 'Discount code copied to clipboard.' ) ) );
 	}, [ dispatch ] );
 
+	const onShareCopy = useCallback( () => {
+		dispatch( successNotice( __( 'Message copied. Paste it into a chat or email.' ) ) );
+	}, [ dispatch ] );
+
 	return (
 		<VStack spacing={ 6 }>
 			<Card>
@@ -74,7 +78,11 @@ export default function AgencyTierOverviewContent( {
 				recordTracksEvent={ recordTracks }
 			/>
 			<Divider style={ { color: 'var(--color-gray-100)', marginBlock: '16px' } } />
-			<CertificationTierPageCard onCodeCopy={ onCodeCopy } recordTracksEvent={ recordTracks } />
+			<CertificationTierPageCard
+				onCodeCopy={ onCodeCopy }
+				onShareCopy={ onShareCopy }
+				recordTracksEvent={ recordTracks }
+			/>
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracks }
