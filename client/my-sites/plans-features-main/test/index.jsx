@@ -461,4 +461,59 @@ describe( 'PlansFeaturesMain', () => {
 			);
 		} );
 	} );
+
+	describe( 'PlansFeaturesMain. onIntentResolved', () => {
+		test( 'reports the intent prop', () => {
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					intent="plans-newsletter"
+					onIntentResolved={ onIntentResolved }
+				/>
+			);
+
+			expect( onIntentResolved ).toHaveBeenCalledWith( 'plans-newsletter' );
+		} );
+
+		test( 'reports the default intent when no intent is provided', () => {
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
+			);
+
+			expect( onIntentResolved ).toHaveBeenCalledWith( 'plans-default-wpcom' );
+		} );
+
+		test( 'reports the site-meta intent when no intent prop is provided', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
+			);
+
+			expect( onIntentResolved ).toHaveBeenCalledWith( 'plans-newsletter' );
+			expect( onIntentResolved ).not.toHaveBeenCalledWith( 'plans-default-wpcom' );
+		} );
+
+		test( 'does not report while the site metadata is still loading', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: true,
+				intent: undefined,
+			} ) );
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
+			);
+
+			expect( onIntentResolved ).not.toHaveBeenCalled();
+		} );
+	} );
 } );
