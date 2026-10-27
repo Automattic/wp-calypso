@@ -6,12 +6,12 @@ import {
 } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import clsx from 'clsx';
 import { Fragment, useMemo, useState } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { CollapsibleCard } from '../../../components/collapsible-card';
 import { SectionHeader } from '../../../components/section-header';
 import { Text } from '../../../components/text';
+import FilterPills from '../../components/filter-pills';
 import {
 	AnnouncementCtas,
 	AnnouncementDate,
@@ -22,6 +22,7 @@ import {
 } from './announcement-parts';
 import type { AnnouncementActionProps } from './announcement-parts';
 import type { Announcement, AnnouncementType } from './announcements';
+import type { FilterPill } from '../../components/filter-pills';
 import type { Field, View } from '@wordpress/dataviews';
 
 import './style.scss';
@@ -58,12 +59,8 @@ function NewsHeader( { children }: { children?: React.ReactNode } ) {
 	);
 }
 
-/**
- * The filter pills: the Marketplace category tile (agency/components/showcase/spot-tiles)
- * made short. The same Card surface and outline, label type, hover ring and behaviour:
- * picking the selected one again goes back to All. Only the types in the list get one.
- */
-function FilterPills( {
+/** Only the types in the list get a pill; picking the selected one again goes back to All. */
+function NewsFilters( {
 	announcements,
 	value,
 	onChange,
@@ -78,66 +75,21 @@ function FilterPills( {
 	if ( types.length < 2 ) {
 		return null;
 	}
-	const pills: { name: NewsFilter; label: string; count: number }[] = [
-		{ name: 'all', label: __( 'All' ), count: announcements.length },
+	const options: FilterPill< NewsFilter >[] = [
+		{ value: 'all', label: __( 'All' ), count: announcements.length },
 		...types.map( ( type ) => ( {
-			name: type,
+			value: type,
 			label: TYPE_LABELS[ type ],
 			count: announcements.filter( ( item ) => item.type === type ).length,
 		} ) ),
 	];
 	return (
-		<HStack
-			spacing={ 2 }
-			justify="flex-start"
-			wrap
-			role="group"
-			aria-label={ __( 'Show' ) }
-			className="a4a-news-filters"
-		>
-			{ pills.map( ( pill ) => {
-				const isSelected = value === pill.name;
-				const select = () => onChange( isSelected && pill.name !== 'all' ? 'all' : pill.name );
-				return (
-					<Card
-						key={ pill.name }
-						size="xSmall"
-						className={ clsx( 'a4a-news-filter', { 'is-selected': isSelected } ) }
-						role="button"
-						tabIndex={ 0 }
-						aria-pressed={ isSelected }
-						onClick={ select }
-						onKeyDown={ ( event: React.KeyboardEvent ) => {
-							if ( event.key === 'Enter' || event.key === ' ' ) {
-								event.preventDefault();
-								select();
-							}
-						} }
-					>
-						<CardBody className="a4a-news-filter-body">
-							<HStack spacing={ 1 } expanded={ false }>
-								<Text
-									size={ 13 }
-									weight={ 500 }
-									lineHeight="16px"
-									className="a4a-news-filter-label"
-								>
-									{ pill.label }
-								</Text>
-								<Text
-									variant="muted"
-									size={ 13 }
-									lineHeight="16px"
-									className="a4a-news-filter-count"
-								>
-									{ pill.count }
-								</Text>
-							</HStack>
-						</CardBody>
-					</Card>
-				);
-			} ) }
-		</HStack>
+		<FilterPills
+			label={ __( 'Show' ) }
+			options={ options }
+			value={ value }
+			onChange={ ( next ) => onChange( next === value && next !== 'all' ? 'all' : next ) }
+		/>
 	);
 }
 
@@ -289,7 +241,7 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 				getItemId={ ( item ) => item.id }
 			>
 				<NewsHeader>
-					<FilterPills
+					<NewsFilters
 						announcements={ announcements }
 						value={ filterValue }
 						onChange={ changeFilter }
