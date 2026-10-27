@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -100,8 +101,8 @@ export function AnnouncementDate( { announcement }: { announcement: Announcement
 		} else if ( days === 1 ) {
 			note = __( 'Tomorrow' );
 		} else {
-			/* translators: %d is the number of days until the event */
-			note = sprintf( _n( 'In %d day', 'In %d days', days ), days );
+			/* translators: %s is the number of days until the event */
+			note = sprintf( _n( 'In %s day', 'In %s days', days ), formatNumber( days ) );
 		}
 	} else if ( when.kind === 'ends' ) {
 		note = __( 'Offer ends' );
