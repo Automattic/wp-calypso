@@ -8,12 +8,14 @@ import type { Note } from '../types';
 
 import './style.scss';
 
-function focusToNote( noteListRef: React.RefObject< HTMLObjectElement | null >, note?: Note ) {
-	const noteEl = noteListRef.current?.querySelector(
+function getNoteRow( noteListRef: React.RefObject< HTMLObjectElement | null >, note?: Note ) {
+	return noteListRef.current?.querySelector< HTMLElement >(
 		`.dataviews-view-list__item[id$="-${ note?.id }-item-wrapper"]`
-	) as HTMLElement;
+	);
+}
 
-	noteEl?.focus();
+function focusToNote( noteListRef: React.RefObject< HTMLObjectElement | null >, note?: Note ) {
+	getNoteRow( noteListRef, note )?.focus();
 }
 
 // Set the focus in the note list to the last selected note,
@@ -77,9 +79,11 @@ export function useNoteListFocusToLastSelectedNote( {
 export function useNoteListNavigationKeyboardShortcuts( {
 	noteListRef,
 	visibleNotes,
+	setSelectedNoteId,
 }: {
 	noteListRef: React.RefObject< HTMLObjectElement | null >;
 	visibleNotes: Note[];
+	setSelectedNoteId: ( noteId: string | undefined ) => void;
 } ) {
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
 
@@ -102,6 +106,16 @@ export function useNoteListNavigationKeyboardShortcuts( {
 				if ( ! hasFocus ) {
 					stopEvent( event );
 					focusToNote( noteListRef, visibleNotes[ 0 ] );
+				}
+			}
+
+			if ( event.key === 'ArrowLeft' ) {
+				const focusedNote = visibleNotes.find(
+					( note ) => getNoteRow( noteListRef, note ) === document.activeElement
+				);
+				if ( focusedNote ) {
+					stopEvent( event );
+					setSelectedNoteId( String( focusedNote.id ) );
 				}
 			}
 		};

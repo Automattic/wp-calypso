@@ -101,6 +101,12 @@ export function useNoteNavigation( {
 					stopEvent( event );
 					goToPreviousNote();
 					break;
+				case 'ArrowRight':
+					if ( selectedNote ) {
+						stopEvent( event );
+						setSelectedNoteId( undefined );
+					}
+					break;
 			}
 		};
 

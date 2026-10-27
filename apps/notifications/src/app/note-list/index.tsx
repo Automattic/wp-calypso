@@ -199,7 +199,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
 	useNoteListFocusToLastSelectedNote( { noteListRef, notes: tab.notes } );
-	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes } );
+	useNoteListNavigationKeyboardShortcuts( { noteListRef, visibleNotes, setSelectedNoteId } );
 
 	// Spinner instead of an empty message while the view may still be filling: more
 	// notes to page, this tab's fetch in flight, or a tab never fetched yet (no
