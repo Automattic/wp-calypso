@@ -6,20 +6,6 @@ import OverviewCard from '../../components/overview-card';
 import { REQUIRED_LEAD_MATCHING_FIELDS } from '../partner-directory/lead-matching/form-data';
 import type { RecordTracksEvent } from '../tiers/types';
 
-/**
- * Behind the design preview flag, `lm-answered=<n>` stands in for a saved
- * profile with n answers, so the partly answered state can be reviewed.
- */
-export function getPreviewAnsweredCount(): number | undefined {
-	const answered = Number.parseInt(
-		new URLSearchParams( window.location.search ).get( 'lm-answered' ) ?? '',
-		10
-	);
-	return Number.isNaN( answered )
-		? undefined
-		: Math.min( Math.max( answered, 0 ), REQUIRED_LEAD_MATCHING_FIELDS.length );
-}
-
 function getMatchingPromptCopy( answered: number ) {
 	const total = REQUIRED_LEAD_MATCHING_FIELDS.length;
 

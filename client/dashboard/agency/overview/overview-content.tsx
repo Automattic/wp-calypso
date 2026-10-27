@@ -7,7 +7,7 @@ import { PendingTierCard, RejectedTierCard } from './application-status-cards';
 import EventCard from './event-card';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
-import MatchingProfilePreview, { getPreviewAnsweredCount } from './matching-profile-preview';
+import MatchingProfilePreview from './matching-profile-preview';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -100,8 +100,7 @@ export default function AgencyOverviewContent( {
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 	const isDesignPreview = isEnabled( 'a4a-lead-matching-design-preview' );
 	const showMatchingPrompt = showMatchingProfilePreview || isDesignPreview;
-	const matchingAnswered =
-		( isDesignPreview ? getPreviewAnsweredCount() : undefined ) ?? matchingProfileAnswered;
+	const matchingAnswered = matchingProfileAnswered;
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
