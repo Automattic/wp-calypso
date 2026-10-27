@@ -1,5 +1,4 @@
 import { activeAgencyQuery, agencyLeadMatchingQuery } from '@automattic/api-queries';
-import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -46,15 +45,14 @@ export default function AgencyOverview() {
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
 		);
-	const isLeadMatchingEnabled =
-		isEnabled( 'a4a-lead-matching-design-preview' ) &&
+	const canAccessLeadMatching =
 		!! agencyId &&
 		!! agency?.partner_directory?.allowed &&
 		!! agency?.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
 		hasPartnerDirectoryListing;
 	const leadMatchingQuery = useQuery( {
 		...agencyLeadMatchingQuery( agencyId ),
-		enabled: isLeadMatchingEnabled,
+		enabled: canAccessLeadMatching,
 	} );
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
@@ -127,7 +125,7 @@ export default function AgencyOverview() {
 				capabilities={ agency.user?.capabilities }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 				showMatchingProfilePreview={
-					isLeadMatchingEnabled &&
+					canAccessLeadMatching &&
 					leadMatchingQuery.isSuccess &&
 					hasIncompleteSavedMatchingProfile( agencyId, leadMatchingQuery.data )
 				}

@@ -53,8 +53,8 @@ function SaveProfile() {
 	);
 }
 
-function renderOverview( queryClient: QueryClient, withSave = false ) {
-	const initialState = { a8cForAgencies: { agencies: { activeAgency: makeAgency() } } };
+function renderOverview( queryClient: QueryClient, withSave = false, agency = makeAgency() ) {
+	const initialState = { a8cForAgencies: { agencies: { activeAgency: agency } } };
 	const store = createStore(
 		(
 			state = initialState,
@@ -77,9 +77,7 @@ function renderOverview( queryClient: QueryClient, withSave = false ) {
 }
 
 beforeEach( () => {
-	jest
-		.mocked( isEnabled )
-		.mockImplementation( ( flag ) => flag === 'a4a-lead-matching-design-preview' );
+	jest.mocked( isEnabled ).mockReturnValue( false );
 } );
 
 test( 'uses the classic endpoint cache for saved answers, saves and agency changes', async () => {
@@ -91,10 +89,7 @@ test( 'uses the classic endpoint cache for saved answers, saves and agency chang
 	const store = renderOverview( queryClient, true );
 	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
 	expect( fetched.isDone() ).toBe( true );
-	expect( profileLink() ).toHaveAttribute(
-		'href',
-		'/partner-directory/lead-matching?flags=a4a-lead-matching-design-preview'
-	);
+	expect( profileLink() ).toHaveAttribute( 'href', '/partner-directory/lead-matching' );
 
 	const failedSync = nock( API )
 		.put( matchingPath )
@@ -139,18 +134,38 @@ test( 'uses the classic endpoint cache for saved answers, saves and agency chang
 	queryClient.clear();
 } );
 
-test( 'disables the classic query and hides cached answers when the flag is off', async () => {
-	jest.mocked( isEnabled ).mockReturnValue( false );
+test( 'disables the classic query and hides cached answers for an ineligible agency', async () => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	queryClient.setQueryData( matchingKey, {
 		agency_id: 123,
 		lead_matching_profile: incompleteProfile,
 	} );
 	const scope = nock( API ).get( matchingPath ).query( true ).reply( 200, {} );
-	renderOverview( queryClient );
+	const agency = makeAgency();
+	agency.partner_directory.allowed = false;
+	renderOverview( queryClient, false, agency );
 	expect( await screen.findByRole( 'link', { name: 'Contact sales & support' } ) ).toBeVisible();
 	expect( profileLink() ).not.toBeInTheDocument();
 	expect( queryClient.getQueryState( matchingKey )?.fetchStatus ).toBe( 'idle' );
+	expect( scope.isDone() ).toBe( false );
+	queryClient.clear();
+} );
+
+test( 'forces the classic card for design review without granting access', async () => {
+	jest
+		.mocked( isEnabled )
+		.mockImplementation( ( flag ) => flag === 'a4a-lead-matching-design-preview' );
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	queryClient.setQueryData( matchingKey, {
+		agency_id: 123,
+		lead_matching_profile: completeProfile,
+	} );
+	const agency = makeAgency();
+	agency.partner_directory.allowed = false;
+	const scope = nock( API ).get( matchingPath ).query( true ).reply( 200, {} );
+	renderOverview( queryClient, false, agency );
+
+	expect( await screen.findByRole( 'link', { name: 'Complete profile' } ) ).toBeVisible();
 	expect( scope.isDone() ).toBe( false );
 	queryClient.clear();
 } );

@@ -95,6 +95,7 @@ export default function AgencyOverviewContent( {
 	// A rejection is already spelled out by the tier card, so only pending accounts get the note.
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
+	const isDesignPreview = isEnabled( 'a4a-lead-matching-design-preview' );
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
@@ -124,15 +125,14 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				{ isEnabled( 'a4a-lead-matching-design-preview' ) &&
-					showMatchingProfilePreview &&
-					links.leadMatching && (
-						<MatchingProfilePreview
-							href={ links.leadMatching }
-							agencyId={ agencyId }
-							recordTracksEvent={ recordTracksEvent }
-						/>
-					) }
+				{ ( showMatchingProfilePreview || isDesignPreview ) && links.leadMatching && (
+					<MatchingProfilePreview
+						href={ links.leadMatching }
+						agencyId={ agencyId }
+						isDesignPreview={ isDesignPreview }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 				{ ! isRejected && (
 					<GrowthCard
 						isPending={ isPending }
