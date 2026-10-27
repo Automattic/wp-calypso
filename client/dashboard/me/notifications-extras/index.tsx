@@ -112,6 +112,8 @@ export default function NotificationsExtras() {
 
 				<AchievementsCard />
 
+				{ isEnabled( 'me/email-tracking-consent' ) && <EmailTrackingCard /> }
+
 				<ExtrasToggleCard
 					extraSettings={ extraSettings }
 					isSaving={ isSaving }
@@ -138,8 +140,6 @@ export default function NotificationsExtras() {
 						</Text>
 					}
 				/>
-
-				{ isEnabled( 'me/email-tracking-consent' ) && <EmailTrackingCard /> }
 			</VStack>
 		</PageLayout>
 	);
