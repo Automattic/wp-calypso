@@ -35,7 +35,7 @@ const mockDeleteDomainGlueRecordApiRequest = ( {
 	responseCode?: number;
 } = {} ) => {
 	return nock( 'https://public-api.wordpress.com' )
-		.delete( `/wpcom/v2/domains/glue-records/${ domainName }`, {
+		.delete( `/wpcom/v2/domains/glue-records/${ domainName }/`, {
 			name_server: glueRecord.nameserver,
 		} )
 		.once()

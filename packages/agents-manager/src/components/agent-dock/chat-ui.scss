@@ -1,3 +1,5 @@
+@use '../../styles/variables' as *;
+
 // Reveals the chat: `useAgentLayoutManager` creates the portal node with an
 // inline `display: none`, which only `!important` overrides, so a page without
 // this stylesheet shows no chat instead of an unstyled one.

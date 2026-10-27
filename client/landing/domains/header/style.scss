@@ -27,3 +27,17 @@
 		height: 24px;
 	}
 }
+
+.header__wordmark {
+	display: block;
+	height: 28px;
+	margin: 0 auto;
+
+	@include breakpoint-deprecated( "<960px" ) {
+		height: 24px;
+	}
+
+	@include breakpoint-deprecated( "<660px" ) {
+		height: 20px;
+	}
+}

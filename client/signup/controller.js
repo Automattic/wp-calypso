@@ -82,7 +82,9 @@ export default {
 			let urlWithoutLocale = getStepUrl( flowName, stepName, stepSectionName );
 
 			if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-				return page.redirect( urlWithoutLocale );
+				return page.redirect(
+					urlWithoutLocale + ( context.querystring ? '?' + context.querystring : '' )
+				);
 			}
 
 			if ( ! isEmpty( context.query ) ) {
@@ -106,9 +108,11 @@ export default {
 			initialContext = Object.assign( {}, context );
 		} else if (
 			getFlowName( initialContext.params, userLoggedIn ) !==
-			getFlowName( context.params, userLoggedIn )
+				getFlowName( context.params, userLoggedIn ) ||
+			! getStepName( context.params )
 		) {
-			// Update the `initialContext` when the flow changes.
+			// Update the `initialContext` when the flow changes, or when the flow is entered again
+			// from a URL without a step, so its query doesn't come from the previous visit.
 			initialContext = Object.assign( {}, initialContext, context );
 		}
 
