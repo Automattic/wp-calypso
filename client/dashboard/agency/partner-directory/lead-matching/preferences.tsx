@@ -204,7 +204,12 @@ function LeadMatchingPreferencesForm( {
 							</VStack>
 						</CardBody>
 					</Card>
-					{ section === 'availability' && <ContactOptionsPreview key={ agencyId } /> }
+					{ section === 'availability' && (
+						<ContactOptionsPreview
+							key={ agencyId }
+							countryCode={ agency.profile?.company_details?.country }
+						/>
+					) }
 				</Fragment>
 			) ) }
 

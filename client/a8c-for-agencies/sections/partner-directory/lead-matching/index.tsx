@@ -586,7 +586,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 					</FormField>
 				</FormSection>
 
-				<ContactOptionsPreview key={ agency?.id } />
+				<ContactOptionsPreview
+					key={ agency?.id }
+					countryCode={ agency?.profile?.company_details?.country }
+				/>
 
 				<FormSection
 					title={ __( 'Regions and languages' ) }

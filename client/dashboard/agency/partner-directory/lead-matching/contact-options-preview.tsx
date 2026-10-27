@@ -1,11 +1,22 @@
-import { Notice, TextControl, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Notice,
+	Spinner,
+	TextControl,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
+import { ErrorBoundary } from '../../../components/error-boundary';
+import PhoneNumberInput, { type SecuritySMSNumber } from '../../../components/phone-number-input';
 import { SectionHeader } from '../../../components/section-header';
 
-export default function ContactOptionsPreview() {
-	const [ phone, setPhone ] = useState( '' );
+export default function ContactOptionsPreview( { countryCode = '' }: { countryCode?: string } ) {
+	const [ phone, setPhone ] = useState< SecuritySMSNumber >( {
+		countryCode,
+		countryNumericCode: '',
+		phoneNumber: '',
+	} );
 	const [ bookingLink, setBookingLink ] = useState( '' );
 
 	return (
@@ -15,26 +26,38 @@ export default function ContactOptionsPreview() {
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Contact options' ) }
-						description={ __( 'Matched clients can use these details to contact your agency.' ) }
+						description={ __(
+							'We add these to the email that introduces you to a matched client, so they can call you or book a time right away.'
+						) }
 					/>
 					<Notice status="info" isDismissible={ false }>
 						{ __(
 							'Design preview: These contact details are not saved. Other profile fields save as usual.'
 						) }
 					</Notice>
-					<TextControl
-						__next40pxDefaultSize
-						__nextHasNoMarginBottom
-						label={ __( 'Agency phone number (optional)' ) }
-						inputMode="tel"
-						autoComplete="off"
-						value={ phone }
-						onChange={ setPhone }
-					/>
+					<ErrorBoundary
+						fallback={
+							<Notice status="warning" isDismissible={ false }>
+								{ __(
+									'The phone number field is temporarily unavailable. You can still save your preferences.'
+								) }
+							</Notice>
+						}
+						sentryTags={ { feature: 'agency-lead-matching-contact-options' } }
+					>
+						<Suspense fallback={ <Spinner /> }>
+							<PhoneNumberInput
+								label={ __( 'Phone number (optional)' ) }
+								data={ phone }
+								onChange={ ( value ) => setPhone( ( state ) => ( { ...state, ...value } ) ) }
+							/>
+						</Suspense>
+					</ErrorBoundary>
 					<TextControl
 						__next40pxDefaultSize
 						__nextHasNoMarginBottom
 						label={ __( 'Booking link (optional)' ) }
+						help={ __( 'Where clients can book a call with you.' ) }
 						inputMode="url"
 						autoComplete="off"
 						value={ bookingLink }

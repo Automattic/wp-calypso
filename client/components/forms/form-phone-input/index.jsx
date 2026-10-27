@@ -19,6 +19,7 @@ export class FormPhoneInput extends Component {
 		isDisabled: PropTypes.bool,
 		countrySelectProps: PropTypes.object,
 		phoneInputProps: PropTypes.object,
+		phoneNumberLabel: PropTypes.string,
 		onChange: PropTypes.func,
 		translate: PropTypes.func,
 	};
@@ -63,7 +64,9 @@ export class FormPhoneInput extends Component {
 				</FormFieldset>
 
 				<FormFieldset className="form-phone-input__phone-number">
-					<FormLabel htmlFor="phone_number">{ this.props.translate( 'Phone number' ) }</FormLabel>
+					<FormLabel htmlFor="phone_number">
+						{ this.props.phoneNumberLabel ?? this.props.translate( 'Phone number' ) }
+					</FormLabel>
 					<FormTelInput
 						{ ...this.props.phoneInputProps }
 						disabled={ this.props.isDisabled }

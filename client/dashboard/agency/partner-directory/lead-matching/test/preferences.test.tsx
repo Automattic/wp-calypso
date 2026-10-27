@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
@@ -15,6 +15,7 @@ import {
 	mockLeadMatching,
 	mockLeadMatchingSave,
 	mockProfileSave,
+	mockSmsCountryCodes,
 } from './fixtures';
 import type { AgencyLeadMatchingProfile } from '@automattic/api-core';
 
@@ -31,14 +32,69 @@ beforeEach( () => {
 } );
 
 describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
-	test( 'saves every answer in one request', async () => {
+	test( 'keeps booking and real preferences usable while the phone lookup loads or fails', async () => {
 		mockAgency();
 		mockLeadMatching( completeProfile );
+		let failSmsLookup = () => {};
+		const smsLookup = nock( API )
+			.get( '/rest/v1.1/meta/sms-country-codes/' )
+			.reply( ( _uri, _body, callback ) => {
+				failSmsLookup = () => callback( null, [ 500, { code: 'error', message: 'Error' } ] );
+			} );
+		let savedProfile: AgencyLeadMatchingProfile | undefined;
+		const save = mockLeadMatchingSave( ( body ) => ( savedProfile = body ) );
+
+		render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
+		const serviceLevel = await screen.findByRole( 'combobox', {
+			name: 'Which max service level are you most comfortable with right now?',
+		} );
+		const booking = screen.getByRole( 'textbox', { name: 'Booking link (optional)' } );
+		await userEvent.type( booking, 'not a URL' );
+		expect( smsLookup.isDone() ).toBe( true );
+		await act( async () => failSmsLookup() );
+		expect(
+			await screen.findByText(
+				'The phone number field is temporarily unavailable. You can still save your preferences.'
+			)
+		).toBeVisible();
+		expect( booking ).toHaveValue( 'not a URL' );
+		expect(
+			screen.getByText(
+				'Design preview: These contact details are not saved. Other profile fields save as usual.'
+			)
+		).toBeVisible();
+
+		await userEvent.selectOptions( serviceLevel, 'premium' );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+		await waitForSaved();
+		expect( save.isDone() ).toBe( true );
+		expect( savedProfile ).toEqual( {
+			...completeProfile,
+			service_and_budget: { ...completeProfile.service_and_budget, max_service_level: 'premium' },
+		} );
+	} );
+
+	test( 'saves every answer without persisting or validating local contact drafts', async () => {
+		mockAgency();
+		mockLeadMatching( completeProfile );
+		mockSmsCountryCodes();
 
 		let savedProfile: AgencyLeadMatchingProfile | undefined;
 		const scope = mockLeadMatchingSave( ( body ) => ( savedProfile = body ) );
 
-		render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
+		const view = render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
+		expect( await screen.findByRole( 'combobox', { name: 'Country code' } ) ).toHaveValue(
+			'United States (+1)'
+		);
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Phone number (optional)' } ),
+			'not a phone'
+		);
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ),
+			'not a URL'
+		);
+		expect( scope.isDone() ).toBe( false );
 
 		await userEvent.selectOptions(
 			await screen.findByRole( 'combobox', {
@@ -50,14 +106,23 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 
 		await waitForSaved();
 		expect( scope.isDone() ).toBe( true );
-		expect( savedProfile?.service_and_budget.max_service_level ).toBe( 'premium' );
-		expect( savedProfile?.geography_and_language.supported_regions ).toEqual( [ 'emea' ] );
-		expect( savedProfile?.availability.accepting_work ).toBe( true );
+		expect( savedProfile ).toEqual( {
+			...completeProfile,
+			service_and_budget: { ...completeProfile.service_and_budget, max_service_level: 'premium' },
+		} );
+
+		view.unmount();
+		render( <AgencyPartnerDirectoryLeadMatchingPreferences />, { queryClient: view.queryClient } );
+		expect( await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } ) ).toHaveValue(
+			''
+		);
+		expect( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) ).toHaveValue( '' );
 	} );
 
 	test( 'saves a changed availability on the public profile only', async () => {
 		mockAgency();
 		mockLeadMatching( completeProfile );
+		mockSmsCountryCodes();
 
 		let isAvailable: unknown;
 		const profileScope = mockProfileSave(
@@ -81,6 +146,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 	test( 'saves the availability first, then the answers with it', async () => {
 		mockAgency();
 		mockLeadMatching( completeProfile );
+		mockSmsCountryCodes();
 
 		const requests: string[] = [];
 		let savedProfile: AgencyLeadMatchingProfile | undefined;
@@ -112,6 +178,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 	test( 'does not save the answers when the availability fails to save', async () => {
 		mockAgency();
 		mockLeadMatching( completeProfile );
+		mockSmsCountryCodes();
 		const profileScope = nock( API )
 			.put( '/wpcom/v2/agency/123/profile' )
 			.query( true )
@@ -137,6 +204,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 	test( 'reports a failed sync as an error', async () => {
 		mockAgency();
 		mockLeadMatching( completeProfile );
+		mockSmsCountryCodes();
 		nock( API )
 			.put( '/wpcom/v2/agency/123/lead-matching' )
 			.query( true )
