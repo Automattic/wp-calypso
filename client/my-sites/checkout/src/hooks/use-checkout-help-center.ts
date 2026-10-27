@@ -1,6 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
-import { isAkismetProduct, isJetpackPurchasableItem } from '@automattic/calypso-products';
+import {
+	isDomainProduct,
+	isDomainTransfer,
+	isGSuiteOrGoogleWorkspace,
+	isTitanMail,
+	isWpComPlan,
+} from '@automattic/calypso-products';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import {
 	useProductsCustomOptions,
@@ -26,28 +32,24 @@ import { loadCheckoutSupportVariation } from '../lib/checkout-support-routing';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
-// Checkouts for other brands, which the checkout support experiment leaves out.
-const OTHER_BRAND_CHECKOUT_PATHS = [
-	'/checkout/jetpack',
-	'/checkout/akismet',
-	'/checkout/agency',
-	'/checkout/marketplace',
-	'/checkout/passport',
-];
+// Agencies buy WordPress.com plans too, sometimes for a WordPress.com site, but have support of
+// their own.
+const isAgencyCheckoutPath = ( pathname: string ) =>
+	pathname === '/checkout/agency' || pathname.startsWith( '/checkout/agency/' );
 
-const isOtherBrandCheckoutPath = ( pathname: string ) =>
-	OTHER_BRAND_CHECKOUT_PATHS.some(
-		( path ) => pathname === path || pathname.startsWith( `${ path }/` )
-	);
-
-// Renewals of other brands go through /checkout/renew/:subscriptionId with no site selected,
-// so only the cart tells them apart.
-const isOtherBrandCart = ( products: { product_slug: string }[] ) =>
+// Renewals and domain-only purchases have no site selected, so only the cart shows they're
+// WordPress.com purchases.
+const isWordPressComCart = (
+	products: { product_slug: string; is_domain_registration?: boolean }[]
+) =>
 	products.length > 0 &&
 	products.every(
 		( product ) =>
-			isJetpackPurchasableItem( product.product_slug, { includeLegacy: true } ) ||
-			isAkismetProduct( product )
+			isWpComPlan( product.product_slug ) ||
+			isDomainProduct( product ) ||
+			isDomainTransfer( product ) ||
+			isGSuiteOrGoogleWorkspace( product ) ||
+			isTitanMail( product )
 	);
 
 // Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
@@ -64,8 +66,10 @@ export const useCheckoutHelpCenter = (): {
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const sectionName = useSelector( getSectionName );
-	const isJetpackNotAtomic = useSelector(
-		( state ) => !! siteId && !! isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId )
+	// Atomic sites are Jetpack sites too, but hosted on WordPress.com.
+	const isWordPressComSite = useSelector(
+		( state ) =>
+			!! siteId && ( ! isJetpackSite( state, siteId ) || !! isAtomicSite( state, siteId ) )
 	);
 
 	const cartKey = useCartKey();
@@ -85,14 +89,13 @@ export const useCheckoutHelpCenter = (): {
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
 	// Only the WordPress.com checkout itself is in the checkout support experiment: not the pending
-	// and thank-you pages, which share this hook, not checkouts for other brands, whose buyers
-	// shouldn't be sent to WordPress.com support, and not carts that already go straight to a human.
-	// Both of those read the cart, so nobody joins until it's ready: a renewal's cart is empty
-	// until its product is added.
-	const isOtherBrandCheckout =
-		isJetpackNotAtomic ||
-		isOtherBrandCheckoutPath( window.location.pathname ) ||
-		isOtherBrandCart( responseCart.products );
+	// and thank-you pages, which share this hook, not carts that already go straight to a human,
+	// and not any checkout that isn't recognizably WordPress.com, since its buyers shouldn't be sent
+	// to WordPress.com support. Both checks read the cart, so nobody joins until it's ready: a
+	// renewal's cart is empty until its product is added.
+	const isWordPressComCheckout =
+		! isAgencyCheckoutPath( window.location.pathname ) &&
+		( isWordPressComSite || ( ! siteId && isWordPressComCart( responseCart.products ) ) );
 	const canJoinCheckoutSupportExperiment =
 		config.isEnabled( 'checkout/support-routing' ) &&
 		sectionName === 'checkout' &&
@@ -100,7 +103,7 @@ export const useCheckoutHelpCenter = (): {
 		! isCartLoading &&
 		! isCartUpdating &&
 		responseCart.products.length > 0 &&
-		! isOtherBrandCheckout &&
+		isWordPressComCheckout &&
 		! hasPremiumSupport;
 
 	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT );

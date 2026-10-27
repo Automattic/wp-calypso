@@ -16,6 +16,7 @@ let mockIsMinimized = false;
 let mockStoredVariation: string | undefined;
 let mockIsLoggedIn = true;
 let mockSectionName = 'checkout';
+let mockSiteId: number | null = 123;
 let mockIsJetpackSite = false;
 let mockIsAtomicSite = false;
 let mockCartProducts: { product_slug: string }[] = [];
@@ -33,10 +34,14 @@ jest.mock( '@automattic/calypso-config', () => ( {
 
 // The package's UI imports don't load with the mocked data module, so stand in for its slug checks.
 jest.mock( '@automattic/calypso-products', () => ( {
-	isAkismetProduct: ( { product_slug }: { product_slug: string } ) =>
-		product_slug === 'ak_plus_yearly_1',
-	isJetpackPurchasableItem: ( slug: string, { includeLegacy = false } = {} ) =>
-		slug === 'jetpack_backup_t1_yearly' || ( includeLegacy && slug === 'jetpack_personal' ),
+	isWpComPlan: ( slug: string ) => slug === 'personal-bundle',
+	isDomainProduct: ( { product_slug }: { product_slug: string } ) => product_slug === 'domain_reg',
+	isDomainTransfer: ( { product_slug }: { product_slug: string } ) =>
+		product_slug === 'domain_transfer',
+	isGSuiteOrGoogleWorkspace: ( { product_slug }: { product_slug: string } ) =>
+		product_slug === 'google_workspace_business_starter_yearly',
+	isTitanMail: ( { product_slug }: { product_slug: string } ) =>
+		product_slug === 'wp_titan_mail_yearly',
 } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
@@ -106,7 +111,7 @@ jest.mock( 'calypso/state/sites/selectors', () => ( {
 
 jest.mock( 'calypso/state/ui/selectors', () => ( {
 	getSectionName: () => mockSectionName,
-	getSelectedSiteId: () => 123,
+	getSelectedSiteId: () => mockSiteId,
 	getSelectedSiteSlug: () => 'example.wordpress.com',
 } ) );
 
@@ -125,6 +130,13 @@ const openHelpCenter = async () => {
 	} );
 };
 
+// A checkout with no site selected, such as a renewal or a siteless checkout for another brand.
+const siteless = ( path: string, ...productSlugs: string[] ) => {
+	window.history.replaceState( null, '', path );
+	mockSiteId = null;
+	mockCartProducts = productSlugs.map( ( product_slug ) => ( { product_slug } ) );
+};
+
 const shownWith = () => mockSetShowHelpCenter.mock.calls.at( -1 )?.[ 1 ];
 const route = () => mockSetNavigateToRoute.mock.calls.at( -1 )?.[ 0 ];
 
@@ -136,6 +148,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		mockStoredVariation = undefined;
 		mockIsLoggedIn = true;
 		mockSectionName = 'checkout';
+		mockSiteId = 123;
 		mockIsJetpackSite = false;
 		mockIsAtomicSite = false;
 		mockCartProducts = [ { product_slug: 'personal-bundle' } ];
@@ -184,27 +197,32 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		[ 'when logged out', () => ( mockIsLoggedIn = false ) ],
 		[
 			'in the Jetpack checkout',
-			() => window.history.replaceState( null, '', '/checkout/jetpack/jetpack_backup_t1_yearly' ),
+			() => siteless( '/checkout/jetpack/jetpack_backup_t1_yearly', 'jetpack_backup_t1_yearly' ),
 		],
 		[
 			'in the Akismet checkout',
-			() => window.history.replaceState( null, '', '/checkout/akismet/ak_plus_yearly_1' ),
+			() => siteless( '/checkout/akismet/ak_plus_yearly_1', 'ak_plus_yearly_1' ),
 		],
 		[
-			'in the agency checkout',
+			'in the agency checkout, even for a WordPress.com plan',
 			() => window.history.replaceState( null, '', '/checkout/agency/purchase' ),
 		],
 		[ 'for a Jetpack site', () => ( mockIsJetpackSite = true ) ],
 		[
 			'when renewing a Jetpack product',
-			() => {
-				window.history.replaceState( null, '', '/checkout/renew/123' );
-				mockCartProducts = [ { product_slug: 'jetpack_backup_t1_yearly' } ];
-			},
+			() => siteless( '/checkout/renew/123', 'jetpack_backup_t1_yearly' ),
 		],
 		[
-			'when renewing a legacy Jetpack plan',
-			() => ( mockCartProducts = [ { product_slug: 'jetpack_personal' } ] ),
+			'when renewing an Akismet product',
+			() => siteless( '/checkout/renew/123', 'ak_plus_yearly_1' ),
+		],
+		[
+			'for any other checkout without a site',
+			() => siteless( '/checkout/new-brand/some_new_product', 'some_new_product' ),
+		],
+		[
+			'without a site when only some products are WordPress.com ones',
+			() => siteless( '/checkout/renew/123', 'personal-bundle', 'jetpack_backup_t1_yearly' ),
 		],
 		[ 'when the cart is empty', () => ( mockCartProducts = [] ) ],
 		[
@@ -217,14 +235,9 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		[
 			'while the renewal is added to the cart',
 			() => {
-				window.history.replaceState( null, '', '/checkout/renew/123' );
+				siteless( '/checkout/renew/123' );
 				mockIsCartUpdating = true;
-				mockCartProducts = [];
 			},
-		],
-		[
-			'when renewing an Akismet product',
-			() => ( mockCartProducts = [ { product_slug: 'ak_plus_yearly_1' } ] ),
 		],
 	] )( 'leaves users out of the experiment %s', async ( _case, setUp ) => {
 		setUp();
@@ -241,17 +254,14 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 			'a site whose address starts with a brand name',
 			() => window.history.replaceState( null, '', '/checkout/agencynews.wordpress.com/personal' ),
 		],
+		[ 'a WordPress.com renewal', () => siteless( '/checkout/renew/123', 'personal-bundle' ) ],
 		[
-			'a WordPress.com renewal',
-			() => window.history.replaceState( null, '', '/checkout/renew/123' ),
+			'a domain-only purchase',
+			() => siteless( '/checkout/no-site', 'domain_reg', 'wp_titan_mail_yearly' ),
 		],
 		[
-			'a cart with a WordPress.com plan and a Jetpack product',
-			() =>
-				( mockCartProducts = [
-					{ product_slug: 'personal-bundle' },
-					{ product_slug: 'jetpack_backup_t1_yearly' },
-				] ),
+			'a WordPress.com site buying a Jetpack product',
+			() => ( mockCartProducts = [ { product_slug: 'jetpack_backup_t1_yearly' } ] ),
 		],
 	] )( 'keeps %s in the experiment', async ( _case, setUp ) => {
 		setUp();
