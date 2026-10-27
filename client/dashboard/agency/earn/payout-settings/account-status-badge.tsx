@@ -38,7 +38,7 @@ export default function AccountStatusBadge( {
 						if ( ! isReasonOpen ) {
 							recordTracksEvent( 'calypso_a4a_payout_status_reason_open', {
 								source,
-								status: accountStatus.status,
+								status: accountStatus.statusKey,
 							} );
 						}
 						setIsReasonOpen( ! isReasonOpen );

@@ -4,6 +4,7 @@ import type { Badge } from '@wordpress/ui';
 import type { ComponentProps } from 'react';
 
 interface AccountStatus {
+	statusKey: 'not_payable' | 'confirmed' | 'suspended' | 'blocked' | 'closed';
 	statusType: 'success' | 'warning' | 'error';
 	badgeIntent: NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
 	status: string;
@@ -11,7 +12,7 @@ interface AccountStatus {
 	actionRequired: boolean;
 }
 
-// One sentence per combination, so the reason reads as an instruction rather than a list.
+// One sentence per combination of missing details.
 function getNotPayableReason( reasons: string[] = [] ) {
 	const isBankDetailsMissing = reasons.includes( 'No PM' );
 	const isTaxFormMissing = reasons.includes( 'Tax' );
@@ -33,11 +34,15 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 		return null;
 	}
 	const { Status, IsPayable, PayableReason } = data;
-	let statusMeta: Pick< AccountStatus, 'statusType' | 'status' | 'statusReason' > | null = null;
+	let statusMeta: Pick<
+		AccountStatus,
+		'statusKey' | 'statusType' | 'status' | 'statusReason'
+	> | null = null;
 	switch ( Status ) {
 		case 'Active':
 			if ( ! IsPayable ) {
 				statusMeta = {
+					statusKey: 'not_payable',
 					statusType: 'warning',
 					status: __( 'Not Payable' ),
 					statusReason: getNotPayableReason( PayableReason ),
@@ -45,18 +50,21 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 				break;
 			}
 			statusMeta = {
+				statusKey: 'confirmed',
 				statusType: 'success',
 				status: __( 'Confirmed' ),
 			};
 			break;
 		case 'Suspended':
 			statusMeta = {
+				statusKey: 'suspended',
 				statusType: 'error',
 				status: __( 'Suspended' ),
 			};
 			break;
 		case 'Blocked':
 			statusMeta = {
+				statusKey: 'blocked',
 				statusType: 'error',
 				status: __( 'Blocked' ),
 				statusReason: __( 'Your account is blocked.' ),
@@ -64,6 +72,7 @@ export function getAccountStatus( data: TipaltiPayee | null | undefined ): Accou
 			break;
 		case 'Closed':
 			statusMeta = {
+				statusKey: 'closed',
 				statusType: 'error',
 				status: __( 'Closed' ),
 				statusReason: __( 'Your account is closed.' ),
