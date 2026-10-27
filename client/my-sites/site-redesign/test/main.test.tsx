@@ -4,12 +4,15 @@
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { StrictMode } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import {
 	activateRedesign,
 	applyRedesign,
 	fetchPreview,
 	fetchRedesign,
+	generateRedesign,
+	openRedesign,
 	type Candidate,
 	type Redesign,
 } from '../api';
@@ -65,12 +68,12 @@ const session = ( overrides: Partial< Redesign > = {} ): Redesign => ( {
 	...overrides,
 } );
 
-const renderPage = ( resume = false ) =>
+const renderPage = ( resume = false, redesignId: string | null = REDESIGN_ID ) =>
 	renderWithProvider(
 		<SiteRedesign
 			siteId={ 1 }
 			siteSlug="example.wordpress.com"
-			redesignId={ REDESIGN_ID }
+			redesignId={ redesignId }
 			resume={ resume }
 		/>
 	);
@@ -87,6 +90,130 @@ describe( 'SiteRedesign', () => {
 		);
 	} );
 	afterEach( () => jest.clearAllMocks() );
+
+	it( 'automatically starts an empty first session once, including in Strict Mode', async () => {
+		jest
+			.mocked( openRedesign )
+			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
+		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		renderWithProvider(
+			<StrictMode>
+				<SiteRedesign
+					siteId={ 1 }
+					siteSlug="example.wordpress.com"
+					redesignId={ null }
+					resume={ false }
+				/>
+			</StrictMode>
+		);
+
+		expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Getting your designs ready…' );
+		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
+		expect( openRedesign ).toHaveBeenCalledTimes( 1 );
+		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
+		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID );
+		expect( screen.queryByRole( 'button', { name: 'Show me four designs' } ) ).toBeNull();
+	} );
+
+	it.each( [ 'preview_ready', 'generating', 'failed', 'installed' ] as const )(
+		'resumes a %s session on entry without generating another batch',
+		async ( status ) => {
+			jest.mocked( openRedesign ).mockResolvedValue( session( { status } ) );
+			renderPage( false, null );
+
+			await waitFor( () =>
+				expect( page.replace ).toHaveBeenCalledWith(
+					`/site-redesign/example.wordpress.com?redesign=${ REDESIGN_ID }`
+				)
+			);
+			expect( generateRedesign ).not.toHaveBeenCalled();
+		}
+	);
+
+	it( 'starts an empty session reached by its saved URL', async () => {
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
+		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		renderPage();
+
+		expect( await screen.findByText( 'Making four designs from your content…' ) ).toBeVisible();
+		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
+		expect( openRedesign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not generate when preview eligibility is denied', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				status: 'interview',
+				candidates: [],
+				eligibility: { ...session().eligibility, can_preview: false },
+			} )
+		);
+		renderPage();
+
+		expect(
+			await screen.findByText( 'Design previews are not available for this site.' )
+		).toBeVisible();
+		expect( generateRedesign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'retries a failed session only after an explicit click', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'failed' } ) );
+		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		renderPage();
+
+		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
+		expect( generateRedesign ).not.toHaveBeenCalled();
+		await userEvent.click( retry );
+		expect( await screen.findByText( 'Making four designs from your content…' ) ).toBeVisible();
+		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'offers Retry after an opening error instead of looping', async () => {
+		jest.mocked( openRedesign ).mockRejectedValueOnce( new Error( 'Could not open redesign.' ) );
+		renderPage( false, null );
+
+		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
+		expect(
+			screen.getByText( 'Could not open redesign.', { selector: '.components-notice__content' } )
+		).toBeVisible();
+		expect( openRedesign ).toHaveBeenCalledTimes( 1 );
+		jest.mocked( openRedesign ).mockResolvedValue( session() );
+		await userEvent.click( retry );
+		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
+		expect( openRedesign ).toHaveBeenCalledTimes( 2 );
+		expect( generateRedesign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reconnects when another request has already started generation', async () => {
+		jest
+			.mocked( openRedesign )
+			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
+		jest.mocked( generateRedesign ).mockRejectedValue( { code: 'site_redesign_busy' } );
+		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		renderPage( false, null );
+
+		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
+		expect( fetchRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID );
+		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
+		expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).toBeNull();
+	} );
+
+	it( 'does not automatically repeat a failed generation request', async () => {
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValue( session( { status: 'interview', candidates: [] } ) );
+		jest.mocked( generateRedesign ).mockRejectedValueOnce( new Error( 'Generation failed.' ) );
+		renderPage();
+
+		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
+		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
+		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		await userEvent.click( retry );
+		expect( await screen.findByText( 'Making four designs from your content…' ) ).toBeVisible();
+		expect( generateRedesign ).toHaveBeenCalledTimes( 2 );
+	} );
 
 	it( 'shows the four candidates of the newest batch in opaque frames', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( session() );

@@ -169,6 +169,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 	const queryClient = useQueryClient();
 	const [ notice, setNotice ] = useState< string | null >( null );
 	const resumed = useRef( false );
+	const started = useRef< string | null >( null );
 
 	const redesignQuery = useQuery( {
 		queryKey: redesignKey( siteId, redesignId ),
@@ -200,14 +201,44 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 	};
 
 	const start = useMutation( {
-		mutationFn: async () => {
-			const open = await openRedesign( siteId );
-			const needsDesigns = open.status === 'interview' || open.status === 'failed';
-			return needsDesigns ? generateRedesign( siteId, open.id ) : open;
+		mutationFn: async ( retryFailed: boolean ) => {
+			const open = redesignId
+				? await fetchRedesign( siteId, redesignId )
+				: await openRedesign( siteId );
+			const needsDesigns =
+				( open.status === 'interview' && open.candidates.length === 0 ) ||
+				( retryFailed && open.status === 'failed' );
+			if ( ! needsDesigns || ! open.eligibility.can_preview ) {
+				return open;
+			}
+			try {
+				return await generateRedesign( siteId, open.id );
+			} catch ( error ) {
+				if ( errorCode( error ) === 'site_redesign_busy' ) {
+					return fetchRedesign( siteId, open.id );
+				}
+				throw error;
+			}
 		},
 		...noticeHandlers,
 		onSuccess: store,
 	} );
+
+	const { mutate: startDesigns } = start;
+	useEffect( () => {
+		const key = `${ siteId }:${ redesignId ?? '' }`;
+		if (
+			! resume &&
+			started.current !== key &&
+			( ! redesignId ||
+				( redesign?.status === 'interview' &&
+					redesign.candidates.length === 0 &&
+					redesign.eligibility.can_preview ) )
+		) {
+			started.current = key;
+			startDesigns( false );
+		}
+	}, [ siteId, redesignId, redesign, resume, startDesigns ] );
 
 	const choose = useMutation( {
 		mutationFn: ( generationId: string ) =>
@@ -265,30 +296,27 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		</>
 	);
 
-	const startButton = (
+	const retryButton = (
 		<Button
 			__next40pxDefaultSize
 			variant="primary"
 			isBusy={ start.isPending }
 			disabled={ start.isPending }
-			onClick={ () => start.mutate() }
+			onClick={ () => startDesigns( true ) }
 		>
-			{ __( 'Show me four designs' ) }
+			{ __( 'Retry' ) }
 		</Button>
+	);
+	const opening = (
+		<HStack justify="flex-start" role="status">
+			<Spinner />
+			<Text>{ __( 'Getting your designs ready…' ) }</Text>
+		</HStack>
 	);
 
 	const renderBody = () => {
 		if ( ! redesignId ) {
-			return (
-				<VStack alignment="topLeft" spacing={ 4 }>
-					<Text>
-						{ __(
-							'We’ll make four designs that keep your pages, posts and images. Choosing one asks for the Personal plan or higher.'
-						) }
-					</Text>
-					{ startButton }
-				</VStack>
-			);
+			return start.isError ? retryButton : opening;
 		}
 		if ( ! redesign ) {
 			return redesignQuery.isError ? (
@@ -366,6 +394,10 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 					</VStack>
 				);
 			case 'interview':
+				if ( ! redesign.eligibility.can_preview ) {
+					return <Text>{ __( 'Design previews are not available for this site.' ) }</Text>;
+				}
+				return start.isError ? retryButton : opening;
 			case 'failed':
 			case 'rolled_back':
 			case 'superseded':
@@ -374,7 +406,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 						{ redesign.status === 'failed' && (
 							<Text>{ __( 'We couldn’t make designs for your site this time.' ) }</Text>
 						) }
-						{ startButton }
+						{ retryButton }
 					</VStack>
 				);
 		}
