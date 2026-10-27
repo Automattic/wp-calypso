@@ -10,7 +10,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useMemo, useEffect, useCallback, useRef } from 'react';
+import { createContext, useMemo, useEffect, useCallback, useContext, useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
@@ -28,6 +28,10 @@ interface EmailSectionProps {
 	userSettings: UserSettings;
 	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
+	/**
+	 * An error from saving the email address, shown on the field until the address is changed.
+	 */
+	serverError?: string | null;
 }
 
 type EmailFormData = { user_email: string };
@@ -38,22 +42,29 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 );
 const { ValidatedInputControl } = unlock( privateApis );
 
+const RevealEmailErrorContext = createContext( false );
+
 /**
  * A validity message only shows once the field has been blurred. An error that appears without the
  * user typing, like a bouncing email, needs to show straight away, so mark the field blurred then.
- * A synthetic `focusout` does that without moving focus, unlike an `invalid` event.
+ * A synthetic `focusout` does that without moving focus, unlike an `invalid` event. A save error
+ * arrives while the input may still have focus, so reveal that even then.
  */
 function EmailEdit( { data, field, onChange, validity }: DataFormControlProps< EmailFormData > ) {
+	const revealError = useContext( RevealEmailErrorContext );
 	const inputRef = useRef< HTMLInputElement >( null );
 	const isInvalid = validity?.custom?.type === 'invalid';
 
 	useEffect( () => {
 		const input = inputRef.current;
-		if ( ! isInvalid || ! input || input.ownerDocument.activeElement === input ) {
+		if ( ! isInvalid || ! input ) {
+			return;
+		}
+		if ( ! revealError && input.ownerDocument.activeElement === input ) {
 			return;
 		}
 		input.dispatchEvent( new FocusEvent( 'focusout', { bubbles: true } ) );
-	}, [ isInvalid ] );
+	}, [ isInvalid, revealError ] );
 
 	return (
 		<ValidatedInputControl
@@ -104,6 +115,7 @@ export default function EmailSection( {
 	userSettings,
 	isEmailVerified,
 	onValidationChange,
+	serverError,
 }: EmailSectionProps ) {
 	const mutation = cancelPendingEmailChangeMutation();
 	const isEmailWritePending = useIsEmailWritePending();
@@ -162,6 +174,10 @@ export default function EmailSection( {
 			return undefined;
 		}
 
+		if ( serverError ) {
+			return { user_email: { custom: { type: 'invalid', message: serverError } } };
+		}
+
 		if ( showBouncingEmailError ) {
 			return {
 				user_email: {
@@ -211,7 +227,14 @@ export default function EmailSection( {
 		}
 
 		return undefined;
-	}, [ isEmailPending, showBouncingEmailError, value, currentEmail, emailValidationState ] );
+	}, [
+		isEmailPending,
+		serverError,
+		showBouncingEmailError,
+		value,
+		currentEmail,
+		emailValidationState,
+	] );
 
 	const hasEmailError = validity?.user_email?.custom?.type === 'invalid';
 
@@ -273,13 +296,15 @@ export default function EmailSection( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<DataForm< EmailFormData >
-				data={ formData }
-				fields={ fields }
-				form={ emailForm }
-				validity={ validity }
-				onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
-			/>
+			<RevealEmailErrorContext.Provider value={ showBouncingEmailError || !! serverError }>
+				<DataForm< EmailFormData >
+					data={ formData }
+					fields={ fields }
+					form={ emailForm }
+					validity={ validity }
+					onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
+				/>
+			</RevealEmailErrorContext.Provider>
 			{ showCustomDomainWarning && (
 				<Notice
 					variant="warning"
