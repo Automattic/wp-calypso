@@ -220,6 +220,11 @@ export interface PlansFeaturesMainProps {
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
 	onReady?: () => void;
+	/**
+	 * Called with the resolved plans intent (props, site metadata, upsell and the escape hatch
+	 * applied) once it is known, and again whenever it changes.
+	 */
+	onIntentResolved?: ( intent: PlansIntent ) => void;
 
 	/*
 	 * Shows the free plan as a plain text anchor instead of a plan card.
@@ -289,6 +294,7 @@ const PlansFeaturesMain = ( {
 	onPlanIntervalUpdate,
 	selectedThemeType,
 	onReady,
+	onIntentResolved,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
@@ -742,6 +748,12 @@ const PlansFeaturesMain = ( {
 		intentFromSiteMeta.processing,
 		defaultWpcomPlansIntent,
 	] );
+
+	useEffect( () => {
+		if ( intent ) {
+			onIntentResolved?.( intent );
+		}
+	}, [ intent, onIntentResolved ] );
 
 	const isDisplayingPlansNeededForFeature =
 		!! selectedFeature &&

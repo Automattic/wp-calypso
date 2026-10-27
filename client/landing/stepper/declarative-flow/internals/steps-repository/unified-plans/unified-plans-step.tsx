@@ -41,7 +41,6 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
-import useDefaultWpcomPlansIntent from 'calypso/my-sites/plans-features-main/hooks/use-default-wpcom-plans-intent';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
@@ -298,10 +297,14 @@ function UnifiedPlansStep( {
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
-	const defaultWpcomPlansIntent = useDefaultWpcomPlansIntent();
+	// PlansFeaturesMain owns intent resolution (site metadata and upsells can override the
+	// prop), so the heading copy follows the intent it settles on. Until then the prop is the
+	// best guess; the V2 layout stays hidden behind Step.Loading during that window anyway.
+	const [ resolvedIntent, setResolvedIntent ] = useState< PlansIntent >();
+	const displayIntent = resolvedIntent ?? intent;
 	const { showDifferentiatorHeader } = usePlansGridRedesignExperiment( {
 		isInSignup,
-		intent: intent ?? defaultWpcomPlansIntent,
+		intent: resolvedIntent,
 	} );
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
@@ -465,23 +468,23 @@ function UnifiedPlansStep( {
 			return translate( 'Host with the best' );
 		}
 
-		if ( intent === 'plans-wordpress-hosting' ) {
+		if ( displayIntent === 'plans-wordpress-hosting' ) {
 			return translate( 'Managed hosting without limits' );
 		}
 
-		if ( intent === 'plans-website-builder' ) {
+		if ( displayIntent === 'plans-website-builder' ) {
 			return translate( 'Create a beautiful WordPress website' );
 		}
 
-		if ( intent === 'plans-woo-hosted' ) {
+		if ( displayIntent === 'plans-woo-hosted' ) {
 			return translate( 'Select a plan to launch your store' );
 		}
 
-		if ( intent === 'plans-woo-hosting-solutions' ) {
+		if ( displayIntent === 'plans-woo-hosting-solutions' ) {
 			return translate( 'Pick a plan for your store' );
 		}
 
-		if ( intent === 'plans-upgrade-or-downgrade' ) {
+		if ( displayIntent === 'plans-upgrade-or-downgrade' ) {
 			return translate( 'Find your best fit' );
 		}
 
@@ -533,13 +536,13 @@ function UnifiedPlansStep( {
 			);
 		}
 
-		if ( intent === 'plans-wordpress-hosting' ) {
+		if ( displayIntent === 'plans-wordpress-hosting' ) {
 			return translate(
 				'All the security, flexibility, and control you need — without the overhead.'
 			);
 		}
 
-		if ( intent === 'plans-website-builder' ) {
+		if ( displayIntent === 'plans-website-builder' ) {
 			if ( deemphasizeFreePlan ) {
 				if ( shouldUseModalBackedFreePlanCTA ) {
 					return translate(
@@ -557,7 +560,7 @@ function UnifiedPlansStep( {
 			);
 		}
 
-		if ( intent === 'plans-woo-hosted' ) {
+		if ( displayIntent === 'plans-woo-hosted' ) {
 			if ( ! currentPlan && ! selectedSite?.plan ) {
 				return null;
 			}
@@ -582,7 +585,7 @@ function UnifiedPlansStep( {
 			return translate( 'Choose the plan that fits your business.' );
 		}
 
-		if ( intent === 'plans-woo-hosting-solutions' ) {
+		if ( displayIntent === 'plans-woo-hosting-solutions' ) {
 			return translate(
 				'All plans come with WooCommerce. Pick the level of support and features you want.'
 			);
@@ -608,18 +611,18 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
-		if ( intent === 'plans-upgrade-or-downgrade' ) {
+		if ( displayIntent === 'plans-upgrade-or-downgrade' ) {
 			return translate(
 				'Compare plans and pick the one that works for where your site is headed.'
 			);
 		}
 
 		// The differentiator header under the heading replaces this generic subhead.
-		if ( showDifferentiatorHeader ) {
+		if ( ! resolvedIntent || showDifferentiatorHeader ) {
 			return null;
 		}
 
-		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
+		if ( isOnboardingFlow( flowName ) || displayIntent === 'plans-upgrade' ) {
 			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
 	};
@@ -674,7 +677,7 @@ function UnifiedPlansStep( {
 		<div
 			className={ clsx( {
 				'step-container-v2__visual-split':
-					intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder',
+					displayIntent === 'plans-wordpress-hosting' || displayIntent === 'plans-website-builder',
 			} ) }
 		>
 			{ 'invalid' === step?.status && (
@@ -727,6 +730,7 @@ function UnifiedPlansStep( {
 				selectedThemeType={ selectedThemeType }
 				selectedFeature={ selectedFeature }
 				onReady={ useStepContainerV2 ? handlePlansReady : undefined }
+				onIntentResolved={ setResolvedIntent }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;
