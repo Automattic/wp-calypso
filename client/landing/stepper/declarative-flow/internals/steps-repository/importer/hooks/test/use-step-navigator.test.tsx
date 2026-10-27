@@ -26,12 +26,17 @@ describe( 'useStepNavigator', () => {
 	} );
 
 	it.each( [
-		{ siteId: 123, siteSlug: 'import-target.wordpress.com', url: '/home/123' },
+		{
+			siteId: 123,
+			siteSlug: 'import-target.wordpress.com',
+			url: '/home/import-target.wordpress.com',
+		},
 		{
 			siteId: null,
 			siteSlug: 'import-target.wordpress.com',
 			url: '/home/import-target.wordpress.com',
 		},
+		{ siteId: 123, siteSlug: null, url: '/home/123' },
 		{ siteId: null, siteSlug: null, url: '/home/' },
 	] )(
 		'should redirect to $url for site ID $siteId and slug $siteSlug',
