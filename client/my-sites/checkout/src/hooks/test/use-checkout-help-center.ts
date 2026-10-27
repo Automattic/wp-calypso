@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useProductsWithPremiumSupport } from '@automattic/help-center/src/hooks';
 import { act, renderHook } from '@testing-library/react';
@@ -205,6 +206,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 			'when renewing a legacy Jetpack plan',
 			() => ( mockCartProducts = [ { product_slug: 'jetpack_personal' } ] ),
 		],
+		[ 'when the cart is empty', () => ( mockCartProducts = [] ) ],
 		[
 			'while the cart loads',
 			() => {
@@ -287,6 +289,17 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		expect( route() ).toContain( 'userFieldFlowName=messaging_flow_dotcom_100_year_plan' );
 	} );
 
+	it( 'records closing the Help Center', async () => {
+		mockIsHelpCenterShown = true;
+
+		await openHelpCenter();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_thank_you_inlinehelp_close',
+			expect.anything()
+		);
+	} );
+
 	it( 'does not assign a variation when closing the Help Center', async () => {
 		mockIsHelpCenterShown = true;
 
@@ -301,6 +314,21 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 			// A minimized Help Center still counts as shown.
 			mockIsHelpCenterShown = true;
 			mockIsMinimized = true;
+		} );
+
+		it( 'records bringing it back as showing it', async () => {
+			mockStoredVariation = 'human_only';
+
+			await openHelpCenter();
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_thank_you_inlinehelp_show',
+				expect.anything()
+			);
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_thank_you_inlinehelp_close',
+				expect.anything()
+			);
 		} );
 
 		it( 'brings back a checkout support chat as it was', async () => {

@@ -136,8 +136,10 @@ export const useCheckoutHelpCenter = (): {
 	const toggleHelpCenter = async () => {
 		const toggle = ++toggleCountRef.current;
 		const pathname = window.location.pathname;
+		// A minimized Help Center still counts as shown, but clicking brings it back.
+		const isOpening = ! isShowingHelpCenter || isMinimized;
 
-		recordTracksEvent( `calypso_thank_you_inlinehelp_${ isShowingHelpCenter ? 'close' : 'show' }`, {
+		recordTracksEvent( `calypso_thank_you_inlinehelp_${ isOpening ? 'show' : 'close' }`, {
 			force_site_id: true,
 			location: 'thank-you-help-center',
 		} );
@@ -145,21 +147,20 @@ export const useCheckoutHelpCenter = (): {
 		// Unified onboarding help-adoption signal, tagged by step. Only in the
 		// onboarding-flow checkout and only when opening (matches the domains,
 		// use-my-domain and plans steps).
-		if ( ! isShowingHelpCenter ) {
+		if ( isOpening ) {
 			const flow = new URLSearchParams( window.location.search ).get( 'flow' );
 			if ( flow === ONBOARDING_FLOW ) {
 				recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'checkout' } );
 			}
 		}
 
-		// A minimized Help Center still counts as shown. When checkout support minimized it, bring it
-		// back as it was, like the Help Center's own header does, so a human chat keeps its route.
-		// Otherwise, bringing it back is a new opening from checkout.
+		// When checkout support minimized it, bring it back as it was, like the Help Center's own
+		// header does, so a human chat keeps its route. Otherwise, bringing it back is a new opening
+		// from checkout.
 		if ( isMinimized && currentCheckoutSupportVariation ) {
 			setIsMinimized( false );
 			return;
 		}
-		const isOpening = ! isShowingHelpCenter || isMinimized;
 
 		// Assign the variation only when opening, so only people who ask for help are in the experiment.
 		const checkoutSupportVariation =
