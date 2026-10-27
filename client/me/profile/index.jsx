@@ -41,10 +41,6 @@ class Profile extends Component {
 		return () => this.props.recordGoogleEvent( 'Me', 'Focused on ' + action );
 	}
 
-	toggleIsDevAccount = ( isDevAccount ) => {
-		this.props.setUserSetting( 'is_dev_account', isDevAccount );
-	};
-
 	/**
 	 * Handles URL normalization on blur
 	 * @param {Event} event - The blur event

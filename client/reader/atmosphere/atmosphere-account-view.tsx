@@ -63,7 +63,7 @@ export function AtmosphereAccountView( { connectionId, tab }: Props ) {
 		? translate(
 				'Catch up with the latest from the people you follow on Bluesky with @%(handle)s',
 				{ args: { handle } }
-		  )
+			)
 		: translate( 'Catch up with the latest from the people you follow on Bluesky.' );
 
 	const title = (

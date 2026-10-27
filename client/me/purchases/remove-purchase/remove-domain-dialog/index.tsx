@@ -235,7 +235,7 @@ class RemoveDomainDialog extends Component< RemoveDomainDialogProps, RemoveDomai
 								this.state.step === 3 ? translate( 'Delete this domain' ) : translate( 'Continue' ),
 							onClick: this.nextStep,
 						},
-				  ]
+					]
 				: [] ),
 		];
 

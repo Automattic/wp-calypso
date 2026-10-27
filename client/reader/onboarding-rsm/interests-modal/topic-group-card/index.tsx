@@ -86,7 +86,7 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 					/* translators: %s is a compact number like "10.4K" */
 					_n( '%s reader', '%s readers', totalSubscribers ),
 					formatNumberCompact( totalSubscribers )
-			  )
+				)
 			: null;
 
 	const visibleBlogs = blogs.slice( 0, MAX_VISIBLE_AVATARS );
@@ -98,14 +98,14 @@ const TopicGroupCard: React.FC< TopicGroupCardProps > = ( {
 				/* translators: %d is a number of topics. */
 				_n( '%d topic', '%d topics', tagCount ),
 				tagCount
-		  )
+			)
 		: '';
 	const blogSummary = blogs.length
 		? sprintf(
 				/* translators: %d is a number of blogs. */
 				_n( '%d blog', '%d blogs', blogs.length ),
 				blogs.length
-		  )
+			)
 		: '';
 	const meta = [ tagSummary, blogSummary ].filter( Boolean ).join( ' · ' );
 	let subscribeLabel: string = __( 'Subscribe' );

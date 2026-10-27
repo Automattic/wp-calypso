@@ -9,10 +9,10 @@ import type { RecordTracksEvent } from './types';
 import type { McpAvailableAbility, McpSettings, McpSettingsUpdate } from '@automattic/api-core';
 import type { MouseEvent } from 'react';
 
-const MCP_READ_TOOLS_PATH = '/resources/ai-mcp/read';
-const MCP_WRITE_TOOLS_PATH = '/resources/ai-mcp/write';
-const MCP_CONNECT_PATH = '/resources/ai-mcp/connect';
-const MCP_PROMPTS_PATH = '/resources/ai-mcp/prompts';
+const MCP_READ_TOOLS_PATH = '/agency/ai/read';
+const MCP_WRITE_TOOLS_PATH = '/agency/ai/write';
+const MCP_CONNECT_PATH = '/agency/ai/connect';
+const MCP_PROMPTS_PATH = '/agency/ai/prompts';
 
 function getToolsBadge( abilities: McpAvailableAbility[] ) {
 	if ( abilities.length === 0 ) {

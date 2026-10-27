@@ -1,13 +1,8 @@
 import { select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import { deepClone } from '../../utils/deep-clone';
+import type { EditorBlock } from '../../utils/editor-blocks';
 import type { AbilityResult } from '../types';
-
-type EditorBlock = {
-	clientId: string;
-	name: string;
-	attributes?: Record< string, unknown >;
-	innerBlocks?: EditorBlock[];
-};
 
 type BlockTreeNode = {
 	clientId: string;
@@ -21,14 +16,6 @@ type BlockEditorSelectors = {
 	getSelectedBlockClientId: () => string | null;
 };
 
-function cloneAttributes( attributes: Record< string, unknown > | undefined ) {
-	if ( ! attributes ) {
-		return {};
-	}
-
-	return JSON.parse( JSON.stringify( attributes ) ) as Record< string, unknown >;
-}
-
 function readBlockTree(
 	blocks: EditorBlock[],
 	selectors: BlockEditorSelectors,
@@ -38,14 +25,14 @@ function readBlockTree(
 	const result: BlockTreeNode[] = [];
 
 	for ( const block of blocks ) {
-		if ( ! block?.clientId || visited.has( block.clientId ) ) {
+		if ( ! block.clientId || visited.has( block.clientId ) ) {
 			continue;
 		}
 
 		visited.add( block.clientId );
 		const children = selectors.getBlocks( block.clientId );
 		const childTree = readBlockTree(
-			children.length ? children : block.innerBlocks || [],
+			children.length ? children : block.innerBlocks,
 			selectors,
 			visited
 		);
@@ -53,7 +40,7 @@ function readBlockTree(
 		result.push( {
 			clientId: block.clientId,
 			name: block.name,
-			attributes: cloneAttributes( block.attributes ),
+			attributes: deepClone( block.attributes ),
 			innerBlocks: childTree.blocks,
 		} );
 		count += childTree.count + 1;

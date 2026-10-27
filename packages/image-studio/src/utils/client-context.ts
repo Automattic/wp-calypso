@@ -264,7 +264,7 @@ function detectImageEntity(): DetectedEntity | null {
 					width: attachment.media_details?.width,
 					height: attachment.media_details?.height,
 					description: getRenderedText( attachment.description ),
-			  }
+				}
 			: {};
 
 		if ( isVideo ) {

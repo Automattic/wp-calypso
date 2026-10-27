@@ -1,5 +1,5 @@
 import page from '@automattic/calypso-router';
-import { setQueryArgs, updateQueryArgs, getQueryArgs } from '../index';
+import { setQueryArgs, getQueryArgs } from '../index';
 
 jest.mock( 'react' );
 jest.mock( '@automattic/calypso-router' );
@@ -64,15 +64,5 @@ describe( '#getQueryArgs', () => {
 		global.window.location.href = 'https://wordpress.com/plugins?a=1&b=2&c=3';
 
 		expect( getQueryArgs() ).toEqual( { a: '1', b: '2', c: '3' } );
-	} );
-} );
-
-describe( '#updateQueryArgs', () => {
-	test( 'getQueryArgs should get the current url parameters', () => {
-		global.window.location.href = 'https://wordpress.com/plugins?a=1&b=2&c=3';
-
-		updateQueryArgs( { a: 'replaced-value' } );
-
-		expect( page ).toHaveBeenLastCalledWith( '/plugins?a=replaced-value&b=2&c=3' );
 	} );
 } );

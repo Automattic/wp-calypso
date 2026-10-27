@@ -363,9 +363,9 @@ export function useImageUploads( opts: UseImageUploadsOptions ) {
 		const target = imagesRef.current.find( ( i ) => i.localId === id );
 		const didTransition = Boolean(
 			target &&
-				( target.kind === 'uploading' || target.kind === 'uploaded' || target.kind === 'failed' ) &&
-				target.alt.length === 0 &&
-				alt.length > 0
+			( target.kind === 'uploading' || target.kind === 'uploaded' || target.kind === 'failed' ) &&
+			target.alt.length === 0 &&
+			alt.length > 0
 		);
 		setImages( ( cur ) =>
 			cur.map( ( i ) => {

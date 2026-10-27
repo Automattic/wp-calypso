@@ -1,5 +1,10 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { ReferralApiResponse, ReferralCommissionPayout } from './types';
+import type {
+	ReferralApiResponse,
+	ReferralCommissionPayout,
+	ReferralEmailPreview,
+	ReferralEmailPreviewParams,
+} from './types';
 
 export async function fetchReferrals( agencyId: number ): Promise< ReferralApiResponse[] > {
 	return wpcom.req.get( {
@@ -14,5 +19,17 @@ export async function fetchReferralCommissionPayout(
 	return wpcom.req.get( {
 		path: `/agency/${ agencyId }/referrals/commission-payout`,
 		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+/** A POST, but a read: the rendered email for the preview modal. */
+export async function fetchReferralEmailPreview(
+	agencyId: number,
+	params: ReferralEmailPreviewParams
+): Promise< ReferralEmailPreview > {
+	return wpcom.req.post( {
+		apiNamespace: 'wpcom/v2',
+		path: `/agency/${ agencyId }/referral-email-preview`,
+		body: params,
 	} );
 }

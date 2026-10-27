@@ -10,8 +10,6 @@ import {
 	FormLabel,
 	Button,
 } from '@automattic/components';
-import { ToggleControl } from '@wordpress/components';
-import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import googleIllustration from 'calypso/assets/images/illustrations/google-analytics-logo.svg';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -24,11 +22,9 @@ import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
 import './style.scss';
 
 const GoogleAnalyticsSimpleForm = ( {
-	displayForm,
 	enableForm,
 	fields,
 	handleCodeChange,
-	handleFieldChange,
 	handleFieldFocus,
 	handleFieldKeypress,
 	handleSubmitForm,
@@ -37,7 +33,6 @@ const GoogleAnalyticsSimpleForm = ( {
 	isSavingSettings,
 	isSubmitButtonDisabled,
 	placeholderText,
-	setDisplayForm,
 	showUpgradeNudge,
 	site,
 	siteId,
@@ -51,24 +46,7 @@ const GoogleAnalyticsSimpleForm = ( {
 		getSiteAdminUrl( state, siteId, 'admin.php?page=stats' )
 	);
 
-	useEffect( () => {
-		if ( fields?.wga?.code ) {
-			setDisplayForm( true );
-		} else {
-			setDisplayForm( false );
-		}
-	}, [ fields, setDisplayForm ] );
-
-	const handleFormToggle = () => {
-		if ( displayForm ) {
-			setDisplayForm( false );
-			handleFieldChange( 'code', '', () => {
-				handleSubmitForm();
-			} );
-		} else {
-			setDisplayForm( true );
-		}
-	};
+	const displayForm = ! showUpgradeNudge || !! fields?.wga?.code;
 
 	const renderForm = () => {
 		const plan = findFirstSimilarPlanKey( site.plan.product_slug, {
@@ -101,9 +79,11 @@ const GoogleAnalyticsSimpleForm = ( {
 						</div>
 						<div className="analytics site-settings__analytics-text">
 							<p>
-								{ translate(
-									'A free analytics tool that offers additional insights into your site.'
-								) }{ ' ' }
+								{ translate( 'Free analytics that works alongside {{a}}Jetpack Stats{{/a}}.', {
+									components: {
+										a: <a href={ statsUrl } />,
+									},
+								} ) }
 							</p>
 						</div>
 					</div>
@@ -137,43 +117,20 @@ const GoogleAnalyticsSimpleForm = ( {
 									{ translate( 'Where can I find my Measurement ID?' ) }
 								</InlineSupportLink>
 							</FormFieldset>
-							<p>
-								{ translate(
-									'Google Analytics is a free service that complements our {{a}}built-in stats{{/a}} ' +
-										'with different insights into your traffic. Jetpack Stats and Google Analytics ' +
-										'use different methods to identify and track activity on your site, so they will ' +
-										'normally show slightly different totals for your visits, views, etc.',
-									{
-										components: {
-											a: <a href={ statsUrl } />,
-										},
-									}
-								) }
-							</p>
 						</div>
 					) }
 				</>
 				{ showUpgradeNudge && site && site.plan ? (
 					nudge
 				) : (
-					<>
-						<div className="analytics site-settings__analytics">
-							<ToggleControl
-								checked={ displayForm }
-								disabled={ isRequestingSettings || isSavingSettings }
-								onChange={ handleFormToggle }
-								label={ translate( 'Add Google Analytics' ) }
-							/>
-						</div>
-						<Button
-							className="is-primary"
-							disabled={ isSubmitButtonDisabled }
-							busy={ isSavingSettings }
-							onClick={ handleSubmitForm }
-						>
-							{ translate( 'Save' ) }
-						</Button>
-					</>
+					<Button
+						className="is-primary"
+						disabled={ isSubmitButtonDisabled }
+						busy={ isSavingSettings }
+						onClick={ handleSubmitForm }
+					>
+						{ translate( 'Save' ) }
+					</Button>
 				) }
 			</form>
 		);

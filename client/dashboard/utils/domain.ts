@@ -6,11 +6,9 @@ import {
 	DomainTypes,
 } from '@automattic/api-core';
 import { isAfter, subMinutes, subDays } from 'date-fns';
-import { getRenewalUrlFromPurchase } from './purchase';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
 import type {
-	Purchase,
 	Domain,
 	DomainSummary,
 	Site,
@@ -22,10 +20,6 @@ import type {
 
 export function getDomainSiteSlug( domain: DomainSummary ) {
 	return domain.primary_domain ? domain.domain : domain.site_slug;
-}
-
-export function getDomainRenewalUrl( domain: DomainSummary, purchase: Purchase ) {
-	return getRenewalUrlFromPurchase( purchase, getDomainSiteSlug( domain ) );
 }
 
 export function isRegisteredDomain( domain: DomainSummary ) {
@@ -155,6 +149,18 @@ export function canSetAsPrimary( {
 			user,
 		} )
 	);
+}
+
+export function canSetAsPrimaryIgnoringSsl( {
+	domain,
+	site,
+	user,
+}: {
+	domain: DomainSummary;
+	site: Site;
+	user: User;
+} ): boolean {
+	return canSetAsPrimary( { domain, site, user } ) && ! ( site.options?.is_redirect ?? false );
 }
 
 export function hasGSuiteWithUs( domain: Domain ) {
@@ -413,15 +419,10 @@ export function isTldInMaintenance( domain: Domain ) {
 }
 
 /**
- * Returns true if a domain is a registration that should become primary but
- * the background job hasn't completed yet. Used on CIAB dashboards to show
- * a "setting up" notice.
+ * Returns true while the backend's set-primary-domain job is still expected to
+ * make this domain the site's primary address. Used to show a "setting up" notice.
  */
 export function isPendingPrimaryDomain( domain: DomainSummary ): boolean {
-	return (
-		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		domain.can_set_as_primary &&
-		! domain.primary_domain &&
-		! domain.expired
-	);
+	// A payload cached before the field existed must not show the notice.
+	return domain.set_primary_domain_pending === true;
 }

@@ -4,6 +4,7 @@ import { isTransferringHostedSiteCreationFlow, Step } from '@automattic/onboardi
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { parseTransferCreatedAt } from 'calypso/components/transfer-wait/transfer-created-at';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
@@ -16,7 +17,13 @@ import type { OnboardSelect } from '@automattic/data-stores';
 const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow } ) {
 	const [ searchParams ] = useSearchParams();
 	const { submit } = navigation;
-	const { setPendingAction, setProgress: setProgressAction } = useDispatch( ONBOARD_STORE );
+	const {
+		setPendingAction,
+		setProgress: setProgressAction,
+		setTransferStartedAt,
+		setTransferStatus,
+		setTransferTimedOut,
+	} = useDispatch( ONBOARD_STORE );
 	const site = useSite();
 
 	let siteId = site?.ID as number;
@@ -34,12 +41,15 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			code: failureInfo.code,
 			error: failureInfo.error,
 			intent: getIntent(),
+			recoverable: !! failureInfo.recoverable,
 		} );
 
 		logToLogstash( {
 			feature: 'calypso_client',
 			message: failureInfo.error,
-			severity: config( 'env_id' ) === 'production' ? 'error' : 'debug',
+			// A wait that carried on is not a production error, whatever the event is called.
+			severity:
+				config( 'env_id' ) === 'production' && ! failureInfo.recoverable ? 'error' : 'debug',
 			blog_id: siteId,
 			properties: {
 				env: config( 'env_id' ),
@@ -47,6 +57,7 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 				action: failureInfo.type,
 				site: site?.URL,
 				code: failureInfo.code,
+				recoverable: !! failureInfo.recoverable,
 			},
 		} );
 	};
@@ -71,7 +82,27 @@ const WaitForAtomic: StepType = function WaitForAtomic( { navigation, data, flow
 			setProgress( 10 );
 			await waitForInitiateTransfer();
 			setProgress( 25 );
-			await waitForTransfer();
+			if ( isTransferringHostedSiteCreationFlow( flow ) ) {
+				setTransferStatus( null );
+				setTransferStartedAt( null );
+				setTransferTimedOut( false );
+				await waitForTransfer( {
+					// Anchoring on the transfer's own start keeps the elapsed time honest across a
+					// reload, where a client-side clock would restart a wait already minutes old.
+					onTransferStatusChange: ( status, createdAt ) => {
+						setTransferStatus( status );
+						if ( createdAt ) {
+							const startedAt = parseTransferCreatedAt( createdAt );
+							setTransferStartedAt( Number.isNaN( startedAt ) ? null : startedAt );
+						}
+					},
+					// The transfer is still running, so the wait says so and offers a way out rather
+					// than sending a customer whose site is on its way to the error step.
+					onDeadlineExceeded: () => setTransferTimedOut( true ),
+				} );
+			} else {
+				await waitForTransfer();
+			}
 			setProgress( 50 );
 			await waitForFeature();
 			setProgress( 75 );

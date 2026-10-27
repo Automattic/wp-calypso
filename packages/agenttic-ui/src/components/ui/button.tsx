@@ -39,8 +39,14 @@ const Button = React.forwardRef< HTMLButtonElement, ButtonProps >( function Butt
 			aria-pressed={ pressed }
 			{ ...props }
 		>
-			{ icon }
-			{ children }
+			{ asChild ? (
+				children
+			) : (
+				<>
+					{ icon }
+					{ children }
+				</>
+			) }
 		</Comp>
 	);
 } );

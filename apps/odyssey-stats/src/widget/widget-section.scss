@@ -1,0 +1,49 @@
+// The height of the date range control. Pinning every heading to it keeps the section
+// headers the same height whether or not they hold a control.
+$section-header-content-height: var(--wpds-dimension-size-md, 32px);
+
+.stats-widget-section {
+
+	.stats-widget-section__header {
+		align-items: center;
+		min-block-size: 0;
+	}
+
+	// CardBody's `size` prop has no 12px step. Two classes outrank its emotion class.
+	.stats-widget-section__body {
+		padding: var(--wpds-dimension-padding-sm, 8px) var(--wpds-dimension-padding-md, 12px) var(--wpds-dimension-padding-md, 12px);
+	}
+
+	.stats-widget-section__heading {
+		display: flex;
+		align-items: center;
+		gap: var(--wpds-dimension-gap-sm, 8px);
+		min-block-size: $section-header-content-height;
+
+		// Block so the icon centres instead of sitting on the text baseline. The -1px is an
+		// optical nudge: the icons' ink sits slightly low in their 24px box.
+		svg {
+			display: block;
+			flex-shrink: 0;
+			margin-block-start: -1px;
+		}
+	}
+
+}
+
+// wp-admin styles dashboard headings with `#dashboard-widgets h3` (1,0,1), which beats our
+// `:where()`-scoped classes. `:is()` takes the specificity of its most specific argument
+// whichever one matches, so the id lifts this rule to (1,1,0) without `!important` while
+// `.stats-widget-section` does the matching. The id is the div stats-admin mounts the widget
+// in, not the postbox around it (`jetpack_summary_widget`), and its spelling is not ours.
+/* stylelint-disable-next-line selector-id-pattern */
+:is(#dashboard_stats, .stats-widget-section) .stats-widget-section__title {
+	margin: 0;
+	padding: 0;
+	font-family: inherit;
+	font-size: var(--wpds-typography-font-size-lg, 15px);
+	// The design's medium weight; the typography tokens stop at 400 and 600.
+	font-weight: 500;
+	line-height: var(--wpds-typography-line-height-sm, 20px);
+	color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+}

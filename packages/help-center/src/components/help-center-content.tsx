@@ -48,7 +48,7 @@ class RoutesErrorBoundary extends Component<
 	render() {
 		if ( this.state.hasError ) {
 			return (
-				<p className="help-center-article__error">
+				<p className="help-center__container-content-error">
 					{ __(
 						'Something went wrong. Please close and reopen the Help Center.',
 						__i18n_text_domain__

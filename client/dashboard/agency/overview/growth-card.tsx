@@ -8,10 +8,10 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import { IconListItem } from '../../components/icon-list/icon-list-item';
 import { SectionHeader } from '../../components/section-header';
+import NewTabLabel from '../components/new-tab-label';
 import { TARGET_INFLUENCED_REVENUE } from '../tiers/constants';
 import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
 import { PARTNER_PROGRAM_GUIDE_URL, PROGRAM_INCENTIVES_URL } from './constants';
-import NewTabLabel from './new-tab-label';
 import OverviewLinkButton from './overview-link-button';
 import type { AgencyOverviewLinks } from './overview-content';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
@@ -134,7 +134,7 @@ function getAgencyContent( links: GrowthCardLinks ): GrowthContent {
 		description: sprintf(
 			/* translators: %s is the influenced revenue target, e.g. $5,000 */
 			__(
-				'Reach %s IAR to become a Pro Partner and unlock free agency hosting, a dedicated Partner Manager, and priority support. All three paths below count toward your IAR.'
+				'Reach %s IAR to become a Pro Partner and unlock qualified leads, a dedicated Partner Manager, and priority support. All three paths below count toward your IAR.'
 			),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'pro-agency-partner' ], 'USD', {
 				stripZeros: true,
@@ -179,7 +179,7 @@ function getPremierContent(
 						actionLabel: __( 'Review sites' ),
 						href: links.sites,
 						requiredCapability: 'a4a_read_managed_sites',
-				  }
+					}
 				: {
 						id: 'partner-directory',
 						icon: globe,
@@ -190,7 +190,7 @@ function getPremierContent(
 						actionLabel: __( 'Set up listing' ),
 						href: links.partnerDirectory,
 						requiredCapability: 'a4a_read_partner_directory',
-				  },
+					},
 			{
 				id: 'set-up-woopayments',
 				icon: payment,

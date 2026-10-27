@@ -38,10 +38,10 @@ export type AllTimeData = {
 };
 
 type MostPopularData = {
-	day: string;
-	percent: number;
-	hour: string;
-	hourPercent: number;
+	day?: string;
+	percent?: number;
+	hour?: string;
+	hourPercent?: number;
 };
 
 export default function AllTimeHighlightsSection( {
@@ -97,19 +97,25 @@ export default function AllTimeHighlightsSection( {
 					id: 'bestDay',
 					header: translate( 'Best day' ),
 					content: day,
-					footer: translate( '%(percent)d%% of views', {
-						args: { percent: percent || 0 },
-						context: 'Stats: Percentage of views',
-					} ),
+					footer:
+						typeof percent === 'number'
+							? translate( '%(percent)d%% of views', {
+									args: { percent },
+									context: 'Stats: Percentage of views',
+								} )
+							: null,
 				},
 				{
 					id: 'bestHour',
 					header: translate( 'Best hour' ),
 					content: hour,
-					footer: translate( '%(percent)d%% of views', {
-						args: { percent: hourPercent || 0 },
-						context: 'Stats: Percentage of views',
-					} ),
+					footer:
+						typeof hourPercent === 'number'
+							? translate( '%(percent)d%% of views', {
+									args: { percent: hourPercent },
+									context: 'Stats: Percentage of views',
+								} )
+							: null,
 				},
 			],
 		};
@@ -264,7 +270,7 @@ function AllTimeStatsCard( { infoItems, siteId }: AllTimeStatsCardProps ) {
 type CardInfoItem = {
 	id: string;
 	header: string;
-	content: string | JSX.Element;
+	content: string | JSX.Element | undefined;
 	footer: string | React.ReactNode;
 };
 

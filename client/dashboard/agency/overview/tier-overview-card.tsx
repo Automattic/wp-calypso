@@ -1,16 +1,19 @@
 import {
 	Button,
+	Icon,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { published } from '@wordpress/icons';
+import { commentAuthorAvatar, published } from '@wordpress/icons';
+import { useState } from 'react';
 import OverviewCard from '../../components/overview-card';
 import { Text } from '../../components/text';
 import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
 import InfluencedRevenue from '../tiers/influenced-revenue';
 import { TIER_OVERVIEW_CONTENT } from './constants';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
+import type { AgencyPartnerManager } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 interface TierOverviewCardProps {
@@ -21,6 +24,46 @@ interface TierOverviewCardProps {
 	onScheduleCall?: () => void;
 	isSchedulingCall?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
+	/** Agencies without an assigned partner manager get the generic copy. */
+	partnerManager?: AgencyPartnerManager | null;
+}
+
+const AVATAR_SIZE = 32;
+
+// Keep the fallback the same size as the photo so the row height is stable.
+function PartnerManagerAvatar( { avatarUrl }: { avatarUrl?: string | null } ) {
+	const [ hasFailed, setHasFailed ] = useState( false );
+
+	if ( ! avatarUrl || hasFailed ) {
+		return <Icon icon={ commentAuthorAvatar } size={ AVATAR_SIZE } />;
+	}
+
+	return (
+		<img
+			src={ avatarUrl }
+			alt=""
+			width={ AVATAR_SIZE }
+			height={ AVATAR_SIZE }
+			style={ { borderRadius: '50%', flexShrink: 0 } }
+			onError={ () => setHasFailed( true ) }
+		/>
+	);
+}
+
+function PartnerManagerTitle( { partnerManager }: { partnerManager: AgencyPartnerManager } ) {
+	return (
+		<HStack spacing={ 3 } justify="flex-start" alignment="center" expanded={ false }>
+			<PartnerManagerAvatar avatarUrl={ partnerManager.avatar_url } />
+			<VStack spacing={ 0 }>
+				<Text size={ 13 } weight={ 500 } lineHeight="20px">
+					{ partnerManager.name }
+				</Text>
+				<Text variant="muted" size={ 12 } lineHeight="16px">
+					{ __( 'Get strategic guidance from your partner manager.' ) }
+				</Text>
+			</VStack>
+		</HStack>
+	);
 }
 
 function TierFooterSection( {
@@ -29,7 +72,7 @@ function TierFooterSection( {
 	action,
 }: {
 	label: string;
-	title: string;
+	title: ReactNode;
 	action: ReactNode;
 } ) {
 	return (
@@ -38,9 +81,13 @@ function TierFooterSection( {
 				{ label }
 			</Text>
 			<HStack justify="space-between" alignment="center" wrap>
-				<Text size={ 13 } lineHeight="20px">
-					{ title }
-				</Text>
+				{ typeof title === 'string' ? (
+					<Text size={ 13 } lineHeight="20px">
+						{ title }
+					</Text>
+				) : (
+					title
+				) }
 				{ action }
 			</HStack>
 		</VStack>
@@ -55,6 +102,7 @@ export default function TierOverviewCard( {
 	onScheduleCall,
 	isSchedulingCall,
 	recordTracksEvent,
+	partnerManager,
 }: TierOverviewCardProps ) {
 	const tier = getCurrentAgencyTier( tierId );
 	if ( ! tier ) {
@@ -74,6 +122,11 @@ export default function TierOverviewCard( {
 			link={ tiersHref }
 			shouldUseRouterLink={ shouldUseRouterLink }
 			tracksId="agency-overview-tier"
+			onClick={ () =>
+				recordTracksEvent?.( 'calypso_a4a_agency_tier_progress_card_explore_click', {
+					agency_tier: tierId,
+				} )
+			}
 			bottom={
 				<VStack spacing={ 4 }>
 					<InfluencedRevenue
@@ -88,7 +141,7 @@ export default function TierOverviewCard( {
 							action={
 								<Button
 									size="compact"
-									variant="secondary"
+									variant="primary"
 									isBusy={ isSchedulingCall }
 									onClick={ () => {
 										recordTracksEvent?.( 'calypso_a4a_overview_tier_card_schedule_call_click', {
@@ -105,11 +158,17 @@ export default function TierOverviewCard( {
 					{ showPartnerManager && (
 						<TierFooterSection
 							label={ __( 'Your partner manager' ) }
-							title={ __( 'Get strategic guidance from your dedicated partner manager.' ) }
+							title={
+								partnerManager ? (
+									<PartnerManagerTitle partnerManager={ partnerManager } />
+								) : (
+									__( 'Get strategic guidance from your dedicated partner manager.' )
+								)
+							}
 							action={
 								<Button
 									size="compact"
-									variant="secondary"
+									variant="primary"
 									isBusy={ isSchedulingCall }
 									onClick={ () => {
 										recordTracksEvent?.(

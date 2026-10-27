@@ -1,5 +1,5 @@
-import { __ } from '@wordpress/i18n';
 import FlashMessage from '../components/flash-message';
+import { getCheckoutSuccessMessage } from './checkout-success-flash';
 
 /**
  * Flash id used to show a post-checkout success snackbar when the checkout
@@ -14,10 +14,5 @@ import FlashMessage from '../components/flash-message';
 export const CHECKOUT_SUCCESS_FLASH_ID = 'checkout-success';
 
 export function CheckoutSuccessFlashMessage() {
-	return (
-		<FlashMessage
-			id={ CHECKOUT_SUCCESS_FLASH_ID }
-			message={ __( 'Your purchase was completed.' ) }
-		/>
-	);
+	return <FlashMessage id={ CHECKOUT_SUCCESS_FLASH_ID } message={ getCheckoutSuccessMessage() } />;
 }

@@ -427,7 +427,7 @@ export const followFediverseActorMutation = ( queryClient: QueryClient ) =>
 								following: isLocked ? false : true,
 								requested: isLocked ? true : false,
 							},
-					  }
+						}
 					: old
 			);
 			return { previous };
@@ -449,7 +449,7 @@ export const followFediverseActorMutation = ( queryClient: QueryClient ) =>
 					? {
 							...old,
 							viewer: data.viewer,
-					  }
+						}
 					: old
 			);
 			if ( ! updated ) {
@@ -502,7 +502,7 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 								following: false,
 								requested: false,
 							},
-					  }
+						}
 					: old
 			);
 			return { previous };
@@ -522,7 +522,7 @@ export const unfollowFediverseActorMutation = ( queryClient: QueryClient ) =>
 					? {
 							...old,
 							viewer: data.viewer,
-					  }
+						}
 					: old
 			);
 			if ( ! updated ) {

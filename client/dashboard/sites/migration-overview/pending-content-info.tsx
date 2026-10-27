@@ -149,7 +149,7 @@ export function PendingContentInfo( {
 									{
 										em: <em />,
 									}
-							  )
+								)
 							: __( 'Start your migration today and get ready for unmatched WordPress hosting.' )
 					}
 				/>

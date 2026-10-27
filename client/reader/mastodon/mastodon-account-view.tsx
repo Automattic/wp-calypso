@@ -77,7 +77,7 @@ export function MastodonAccountView( { connectionId, tab }: Props ) {
 		? translate(
 				'Catch up with the latest from the people you follow on Mastodon with @%(handle)s',
 				{ args: { handle } }
-		  )
+			)
 		: translate( 'Catch up with the latest from the people you follow on Mastodon.' );
 
 	const title = (

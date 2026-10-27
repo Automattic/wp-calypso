@@ -1,6 +1,6 @@
-import { Badge, Tooltip } from '@automattic/components';
+import { Badge, Tooltip } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useRef, useState, ComponentProps, type JSX } from 'react';
+import { ComponentProps, type JSX } from 'react';
 
 import './style.scss';
 
@@ -12,19 +12,26 @@ export default function StatusBadge( {
 		isRounded?: boolean;
 	};
 } ) {
-	const [ showPopover, setShowPopover ] = useState( false );
+	const { tooltip, isRounded, intent, children, className, ...restProps } = statusProps || {};
 
-	const wrapperRef = useRef< HTMLDivElement | null >( null );
-
-	const { tooltip, isRounded, ...badgeProps } = statusProps || {};
-
-	const badge = (
+	const badge = isRounded ? (
+		<span
+			className={ clsx(
+				'step-section-item__status-indicator',
+				className,
+				intent && `step-section-item__status-indicator--${ intent }`
+			) }
+		>
+			{ children ?? '' }
+		</span>
+	) : (
 		<Badge
-			className={ clsx( 'step-section-item__status', {
-				'step-section-item__status--rounded': isRounded,
-			} ) }
-			{ ...badgeProps }
-		/>
+			className={ clsx( 'step-section-item__status', className ) }
+			intent={ intent }
+			{ ...restProps }
+		>
+			{ children ?? '' }
+		</Badge>
 	);
 
 	if ( ! tooltip ) {
@@ -32,20 +39,20 @@ export default function StatusBadge( {
 	}
 
 	return (
-		<span
-			className="step-section-item__status-wrapper"
-			onMouseEnter={ () => setShowPopover( true ) }
-			onMouseLeave={ () => setShowPopover( false ) }
-			onMouseDown={ () => setShowPopover( false ) }
-			role="button"
-			tabIndex={ 0 }
-			ref={ wrapperRef }
-		>
-			{ badge }
-
-			<Tooltip context={ wrapperRef.current } isVisible={ showPopover } position="bottom">
-				{ tooltip }
-			</Tooltip>
-		</span>
+		<Tooltip.Root>
+			<Tooltip.Trigger
+				render={ ( triggerProps ) => (
+					<span
+						role="button"
+						tabIndex={ 0 }
+						{ ...triggerProps }
+						className={ clsx( 'step-section-item__status-wrapper', triggerProps.className ) }
+					>
+						{ badge }
+					</span>
+				) }
+			/>
+			<Tooltip.Popup positioner={ <Tooltip.Positioner side="bottom" /> }>{ tooltip }</Tooltip.Popup>
+		</Tooltip.Root>
 	);
 }

@@ -24,6 +24,7 @@ jest.mock( 'calypso/landing/stepper/utils/wow-funnel', () => ( {
 	getWowFunnelDest: () => 'editor',
 	getWowFunnelConfig: () => ( { interstitials: [] } ),
 	isKnownWowFunnel: ( slug: string | null ) => Boolean( slug ),
+	isSameWowFunnelRun: ( run: { funnelSlug: string }, slug: string ) => run.funnelSlug === slug,
 	getRememberedWowFunnelSite: () => null,
 	clearWowFunnelSite: jest.fn(),
 	wowFunnelSiteIsPaid: () => false,
@@ -168,6 +169,22 @@ describe( 'wow funnel resume', () => {
 		expect( mockGoToCheckout ).not.toHaveBeenCalled();
 	} );
 
+	/**
+	 * Resuming a site another run built would carry this run's checkout over it, and this run's
+	 * own follow-up would never run. Tearing it down on entry would let a reloaded CTA churn sites,
+	 * so the customer is asked instead.
+	 */
+	it( 'asks the customer when the pending site was built by a different run', async () => {
+		mockFetchPending.mockResolvedValue( { ...PENDING, funnelSlug: 'blueprint' } );
+
+		await expect( onboarding.initialize( store ) ).resolves.toBe( false );
+		expect( mockAssign.mock.calls[ 0 ][ 0 ] ).toContain( '/setup/onboarding/wow-funnel-pending' );
+		expect( mockAssign.mock.calls[ 0 ][ 0 ] ).toContain( 'wow_funnel=default' );
+		expect( mockAdopt ).not.toHaveBeenCalled();
+		expect( mockHasCartItems ).not.toHaveBeenCalled();
+		expect( mockGoToCheckout ).not.toHaveBeenCalled();
+	} );
+
 	it( 'starts the flow normally when the customer has no site standing', async () => {
 		mockFetchPending.mockResolvedValue( null );
 
@@ -189,6 +206,33 @@ describe( 'wow funnel resume', () => {
 		expect( mockFetchPending ).not.toHaveBeenCalled();
 		expect( mockGoToCheckout ).not.toHaveBeenCalled();
 		expect( mockAssign ).not.toHaveBeenCalled();
+	} );
+
+	/**
+	 * A non-English customer's step carries the locale after it. Missing that would send a customer
+	 * on the pending step straight back to it, forever.
+	 */
+	it( 'never resumes on a step with a locale after it', async () => {
+		enterAt( '/setup/onboarding/wow-funnel-pending/fr' );
+		mockFetchPending.mockResolvedValue( { ...PENDING, funnelSlug: 'blueprint' } );
+
+		await expect( onboarding.initialize( store ) ).resolves.not.toBe( false );
+		expect( mockFetchPending ).not.toHaveBeenCalled();
+		expect( mockAssign ).not.toHaveBeenCalled();
+	} );
+
+	/**
+	 * A locale alone is not a step: `/setup/onboarding/fr` is the entry URL the pending step sends a
+	 * non-English customer back to, and it must resume like the English one.
+	 */
+	it( 'resumes on the bare flow URL with only a locale after it', async () => {
+		enterAt( '/setup/onboarding/fr' );
+		mockFetchPending.mockResolvedValue( PENDING );
+		mockHasCartItems.mockResolvedValue( true );
+
+		await expect( onboarding.initialize( store ) ).resolves.toBe( false );
+		expect( mockFetchPending ).toHaveBeenCalled();
+		expect( mockGoToCheckout ).toHaveBeenCalled();
 	} );
 
 	it( 'does not ask the server about a logged-out visitor', async () => {

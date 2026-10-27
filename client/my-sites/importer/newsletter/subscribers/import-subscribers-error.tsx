@@ -48,7 +48,7 @@ export default function PaidImportSubscribersError( { error }: Props ) {
 							? error.message
 							: __(
 									'An unexpected error occurred. Please try again later or contact support if the problem persists.'
-							  );
+								);
 				}
 			} )() }
 		</FormInputValidation>

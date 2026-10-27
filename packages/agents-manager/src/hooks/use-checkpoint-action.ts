@@ -2,6 +2,7 @@ import { createElement, useCallback, useEffect, useRef } from '@wordpress/elemen
 import { __ } from '@wordpress/i18n';
 import { undo, Icon } from '@wordpress/icons';
 import ResolvedEditAction from '../components/resolved-edit-action';
+import { CHECKPOINT_ACTION_ID } from '../utils/message-actions';
 import {
 	APPLY_BLOCK_EDITS_TOOL_ID,
 	getApplyBlockEditsOutcome,
@@ -64,8 +65,8 @@ function isTextContentEdit( toolId: unknown, data: unknown ): boolean {
 /**
  * Gets checkpoint details embedded in a tool message.
  *
- * Restored conversations can carry a checkpoint ID, but provider checkpoint
- * state is session-only; `hasCheckpoint` filters out stale IDs.
+ * Restored conversations can carry a checkpoint ID, but checkpoint state is
+ * session-only; `hasCheckpoint` filters out stale IDs.
  */
 function getCheckpointInfo(
 	message: Pick< UIMessage, 'content' >
@@ -158,7 +159,7 @@ export default function useCheckpointAction(
 		const getCurrentActionState = (): CheckpointActionState =>
 			invalidatedCheckpointIds.has( checkpointInfo.checkpointId )
 				? 'hidden'
-				: getCheckpointActionStateRef.current?.( checkpointInfo.checkpointId ) ?? 'enabled';
+				: ( getCheckpointActionStateRef.current?.( checkpointInfo.checkpointId ) ?? 'enabled' );
 		const actionState = getCurrentActionState();
 		if (
 			actionState !== 'disabled' &&
@@ -177,7 +178,7 @@ export default function useCheckpointAction(
 			canCheckSwapAvailability &&
 			( isActionAvailable || ( actionState === 'disabled' && isReverted ) )
 				? pendingSwapCheckpointIdsRef.current.has( checkpointInfo.checkpointId ) ||
-				  currentCheckpoint.canSwapCheckpoint?.( checkpointInfo.checkpointId )
+					currentCheckpoint.canSwapCheckpoint?.( checkpointInfo.checkpointId )
 				: undefined;
 		const supportsSwap =
 			swapAvailability !== undefined || redoableCheckpointIds.has( checkpointInfo.checkpointId );
@@ -264,6 +265,9 @@ export default function useCheckpointAction(
 		if ( checkpointInfo.showResolvedEditAction ) {
 			const canAct = isActionAvailable && ( ! supportsSwap || swapAvailability === true );
 			const showDisabledAction = actionState === 'disabled';
+			// A superseded edit keeps its Undo / Redo, disabled.
+			const showUndoRedo = canAct || showDisabledAction;
+
 			let label: string = canAct
 				? __( 'Updated and Undo', __i18n_text_domain__ )
 				: __( 'Updated', __i18n_text_domain__ );
@@ -273,17 +277,18 @@ export default function useCheckpointAction(
 						? __( 'Reverted and Redo', __i18n_text_domain__ )
 						: __( 'Reverted', __i18n_text_domain__ );
 			}
+
 			return [
 				{
 					type: 'component',
-					id: 'checkpoint',
+					id: CHECKPOINT_ACTION_ID,
 					label,
 					component: ResolvedEditAction,
 					componentProps: {
 						initiallyReverted: isReverted,
 						...( showDisabledAction && { disabled: true } ),
-						...( canAct && { onUndo: () => applyCheckpointAction( true ) } ),
-						...( canAct &&
+						...( showUndoRedo && { onUndo: () => applyCheckpointAction( true ) } ),
+						...( showUndoRedo &&
 							supportsSwap && {
 								onRedo: () => applyCheckpointAction( false ),
 							} ),
@@ -299,7 +304,7 @@ export default function useCheckpointAction(
 
 		return [
 			{
-				id: 'checkpoint',
+				id: CHECKPOINT_ACTION_ID,
 				label: __( 'Undo', __i18n_text_domain__ ),
 				icon: createElement( Icon, {
 					icon: undo,

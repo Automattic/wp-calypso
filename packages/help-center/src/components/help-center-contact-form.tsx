@@ -223,7 +223,7 @@ export const HelpCenterContactForm = () => {
 		const productName = plan?.getTitle();
 		const productTerm = getPlanTermLabel( productSlug, ( text ) => text );
 
-		const aiChatId = wapuuFlow ? odieId?.toString() ?? '' : gptResponse?.answer_id;
+		const aiChatId = wapuuFlow ? ( odieId?.toString() ?? '' ) : gptResponse?.answer_id;
 
 		if ( supportSite ) {
 			const ticketMeta = [

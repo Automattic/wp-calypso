@@ -98,7 +98,7 @@ export default function UpsellStep( {
 	const hasEnTranslation = useHasEnTranslation();
 	const numberOfPluginsThemes = formatNumber( 50000 );
 	const discountRate = 25;
-	const couponCode = 'BIZWPC25';
+	const couponCode = 'BIZRENEW25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 	const { setSubject, setShowHelpCenter } = useHelpCenter();
@@ -158,7 +158,7 @@ export default function UpsellStep( {
 								{
 									b: <strong />,
 								}
-						  )
+							)
 						: createInterpolateElement(
 								__(
 									'If you’re feeling a bit stuck with your site, our expert <b>Happiness Engineers</b> are always ready to chat. ' +
@@ -167,7 +167,7 @@ export default function UpsellStep( {
 								{
 									b: <strong />,
 								}
-						  ) }
+							) }
 				</Upsell>
 			);
 		case 'built-by':
@@ -205,10 +205,9 @@ export default function UpsellStep( {
 					acceptButtonUrl={ wpcomLink(
 						`/checkout/${
 							purchase.site_slug
-						}/business?coupon=${ couponCode }&cancel_to=${ redirectToDashboardLink().replace(
-							'/cancel',
-							''
-						) }`
+						}/business?coupon=${ couponCode }&cancel_to=${ redirectToDashboardLink( {
+							supportBackport: true,
+						} ).replace( '/cancel', '' ) }`
 					) }
 					onAccept={ () => {
 						recordTracksEvent( 'calypso_cancellation_upgrade_at_step_upgrade_click' );
@@ -277,7 +276,7 @@ export default function UpsellStep( {
 									{
 										refundAmount: formatCurrency( refundAmount, currencyCode ),
 									}
-							  )
+								)
 							: null }
 					</>
 				</Upsell>
@@ -313,7 +312,7 @@ export default function UpsellStep( {
 									{
 										amount: formatCurrency( refundAmount, currencyCode ),
 									}
-							  )
+								)
 							: null }
 					</>
 				</Upsell>

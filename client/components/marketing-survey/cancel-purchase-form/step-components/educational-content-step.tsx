@@ -271,7 +271,7 @@ export default function EducationalContentStep( { type, site, ...props }: StepPr
 												chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 											},
 										}
-								  )
+									)
 								: translate(
 										'Read more about domain connection {{link}}here{{/link}} or {{chat}}chat with a real person{{/chat}} right now.',
 										{
@@ -287,7 +287,7 @@ export default function EducationalContentStep( { type, site, ...props }: StepPr
 												chat: <Button onClick={ onRequestHelpClick } variant="link" />,
 											},
 										}
-								  ) }
+									) }
 						</li>
 					</ul>
 				</Content>

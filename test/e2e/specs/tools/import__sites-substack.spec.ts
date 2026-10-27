@@ -48,14 +48,12 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
+			await test.step( 'Then I see a "Processing uploaded file" message', async function () {
 				await expect( pageImportContentFromSubstack.processingUploadedFileButton ).toBeVisible();
-				await pageImportContentFromSubstack.processingUploadedFileButton.waitFor( {
-					state: 'detached',
-				} );
 			} );
 
 			await test.step( 'Then I see a "Import content from Substack" page with a conversion summary', async function () {
+				await pageImportContentFromSubstack.waitForConversionSummary();
 				await expect( pageImportContentFromSubstack.importContentHeading ).toBeVisible();
 				await expect(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
@@ -110,14 +108,12 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
+			await test.step( 'Then I see a "Processing uploaded file" message', async function () {
 				await expect( pageImportContentFromSubstack.processingUploadedFileButton ).toBeVisible();
-				await pageImportContentFromSubstack.processingUploadedFileButton.waitFor( {
-					state: 'detached',
-				} );
 			} );
 
 			await test.step( 'Then I see a "Import content from Substack" page with a conversion summary', async function () {
+				await pageImportContentFromSubstack.waitForConversionSummary();
 				await expect( pageImportContentFromSubstack.importContentHeading ).toBeVisible();
 				await expect(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
@@ -182,14 +178,12 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'Then I see a "Processing uploaded file" message temporarily', async function () {
+			await test.step( 'Then I see a "Processing uploaded file" message', async function () {
 				await expect( pageImportContentFromSubstack.processingUploadedFileButton ).toBeVisible();
-				await pageImportContentFromSubstack.processingUploadedFileButton.waitFor( {
-					state: 'detached',
-				} );
 			} );
 
 			await test.step( 'Then I see a page with a conversion summary', async function () {
+				await pageImportContentFromSubstack.waitForConversionSummary();
 				await expect(
 					pageImportContentFromSubstack.importHeading( substackSiteName )
 				).toBeVisible();

@@ -169,7 +169,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 					? modulePath
 					: Object.keys( translationsByRef ).find(
 							( ref ) => ref.indexOf( modulePath + '.' ) === 0
-					  );
+						);
 
 				if ( ! key ) {
 					return;

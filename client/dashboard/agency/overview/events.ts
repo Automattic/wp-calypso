@@ -1,7 +1,9 @@
 import { __ } from '@wordpress/i18n';
+import A4ALogo from 'calypso/assets/images/a8c-for-agencies/events/a4a-logo.svg';
+import EvolveDigitalLogo from 'calypso/assets/images/a8c-for-agencies/events/evolvedigital-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import {
-	MARKETPLACE_HOSTING_PRESSABLE_PATH,
+	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
@@ -31,10 +33,11 @@ export interface FeaturedEvent {
 	 */
 	logo?: string;
 	logoAlt?: string;
+	/** Uppercase eyebrow above the title: a date for events, a label for announcements. */
 	when: string;
 	title: string;
 	subtitle: string;
-	/** One entry per paragraph. */
+	/** One entry per paragraph. Supports `<strong>` and `<code>` tags. */
 	description: string[];
 	ctas: FeaturedEventCta[];
 	/** ISO date the card stops showing itself, typically the day after the event. */
@@ -49,29 +52,35 @@ export interface FeaturedEvent {
  * legacy list lives in client/a8c-for-agencies/sections/overview/body/events.
  */
 export const FEATURED_EVENT: FeaturedEvent | null = {
-	id: 'a4a-wordcamp-us-2026',
-	logo: 'https://automattic.wordpress.com/wp-content/uploads/2026/07/wcus_2026.png',
-	logoAlt: __( 'WordCamp US 2026' ),
-	when: __( 'August 16th–19th, Phoenix, Arizona' ),
-	title: __( 'Join us at WordCamp US 2026!' ),
-	subtitle: __( 'Automattic for Agencies' ),
+	id: 'a4a-evolvedigital-nyc-2026',
+	logo: EvolveDigitalLogo,
+	logoAlt: __( 'EvolveDigital' ),
+	when: __( 'November 19–20 · Civic Hall, NYC' ),
+	title: __( 'Join us at EvolveDigital NYC 2026' ),
+	subtitle: __( 'Automattic for Agencies & EvolveDigital' ),
 	description: [
 		__(
-			'Join us at WordCamp US in Phoenix, August 16 to 19 at the Phoenix Convention Center. The Automattic for Agencies team will be there, along with the people behind WordPress.com, Pressable, WordPress VIP, Woo, and Jetpack.'
+			'Automattic is a Presenting Sponsor of EvolveDigital NYC 2026, bringing the teams behind WordPress.com, WordPress VIP, and WooCommerce to a room of developers, designers, strategists, and digital leaders from higher ed, government, nonprofits, and agencies.'
 		),
+		/* translators: Automattic50Off is a ticket discount code. Keep it exactly as written. */
 		__(
-			'Come talk shop with our partner managers, get answers in person, and grab a pin while they last.'
+			'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50% off General Admission tickets with the code <strong><code>Automattic50Off</code></strong>, so come say hello to our team while you’re there.'
 		),
 	],
 	ctas: [
 		{
-			id: 'register',
-			label: __( 'Get your spot!' ),
-			url: 'https://us.wordcamp.org/2026/',
+			id: 'purchase-tickets',
+			label: __( 'Purchase tickets' ),
+			url: 'https://www.evolvedigital.com/',
+			variant: 'primary',
 			isExternal: true,
+			legacyTrackEventName:
+				'calypso_a4a_overview_events_evolvedigital_nyc_2026_purchase_tickets_click',
 		},
 	],
-	endsAt: '2026-08-20',
+	// Hidden at midnight ET when the event starts (November 19), not at
+	// midnight UTC, which would drop it the evening before for US agencies.
+	endsAt: '2026-11-19T05:00:00Z',
 };
 
 /**
@@ -81,7 +90,7 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
  * targets agencies without a Pressable plan through A4A, the expansion offer
  * agencies with one that missed the introductory offer.
  */
-export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
+export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): FeaturedEvent => ( {
 	id: 'a4a-pressable-promo-offer-2026-q3',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
@@ -97,7 +106,7 @@ export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
 		{
 			id: 'view-promo-details',
 			label: __( 'View promo details' ),
-			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
+			url: pressableHostingHref,
 			variant: 'primary',
 			legacyTrackEventName:
 				'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
@@ -112,9 +121,11 @@ export const PRESSABLE_INTRO_OFFER_EVENT: FeaturedEvent = {
 		},
 	],
 	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
-};
+} );
 
-export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
+export const getPressableExpansionOfferEvent = (
+	pressableHostingHref: string
+): FeaturedEvent => ( {
 	id: 'a4a-pressable-expansion-offer-2026-q3',
 	logo: PressableLogo,
 	logoAlt: __( 'Pressable' ),
@@ -142,10 +153,49 @@ export const PRESSABLE_EXPANSION_OFFER_EVENT: FeaturedEvent = {
 		{
 			id: 'see-pressable-plans',
 			label: __( 'See Pressable plans' ),
-			url: MARKETPLACE_HOSTING_PRESSABLE_PATH,
+			url: pressableHostingHref,
 			legacyTrackEventName:
 				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
 		},
 	],
 	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
-};
+} );
+
+/**
+ * The MCP launch announcement, shown to every agency below the Pressable promos.
+ *
+ * Takes the AI & MCP href because the two shells mount that screen at different
+ * paths (/resources-and-tools/ai-mcp in classic A4A, /agency/ai in the
+ * dashboard), so it arrives through AgencyOverviewLinks rather than a constant.
+ */
+export const getAiMcpAnnouncement = ( aiMcpHref: string ): FeaturedEvent => ( {
+	id: 'a4a-ai-mcp-announcement',
+	logo: A4ALogo,
+	logoAlt: __( 'Automattic for Agencies' ),
+	when: __( 'New · AI and MCP' ),
+	title: __( 'Bring Automattic for Agencies into your AI tools' ),
+	subtitle: __( 'Automattic for Agencies MCP' ),
+	description: [
+		__(
+			'Get answers about your agency without hunting through the dashboard. Ask about your tier, commissions, billing, or site health from Claude, ChatGPT, Cursor, or whatever AI tool your team already uses, and the answer comes back from your live account in seconds.'
+		),
+		__(
+			'Schedule a weekly digest to Slack, or build a custom dashboard your whole team can use. Our MCP is free and connects in minutes.'
+		),
+	],
+	ctas: [
+		{
+			id: 'enable-mcp',
+			label: __( 'Enable MCP' ),
+			url: aiMcpHref,
+			variant: 'primary',
+		},
+		{
+			id: 'see-how-it-works',
+			label: __( 'See how it works' ),
+			url: AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
+			isExternal: true,
+		},
+	],
+	endsAt: '2026-10-08',
+} );

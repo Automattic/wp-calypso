@@ -30,6 +30,7 @@ import {
 	loadNewSubscriptionPage,
 } from './controller';
 import postCacheMiddleware from './data/post/middleware';
+import { fourForFour } from './four-for-four/controller';
 import { readerNotFound } from './lib/reader-router';
 import {
 	createList,
@@ -76,14 +77,19 @@ export default async function (): Promise< void > {
 	// On This Day
 	page( '/reader/on-this-day', redirectLoggedOut, sidebar, onThisDay, makeLayout, clientRender );
 
+	if ( config.isEnabled( 'reader/four-for-four' ) ) {
+		page(
+			'/reader/four-for-four',
+			redirectLoggedOutToSignup,
+			sidebar,
+			fourForFour,
+			makeLayout,
+			clientRender
+		);
+	}
+
 	page(
-		[
-			'/reader/new',
-			'/reader/new/reddit',
-			'/reader/new/youtube',
-			'/reader/new/tumblr',
-			'/reader/new/substack',
-		],
+		[ '/reader/new', '/reader/new/youtube', '/reader/new/tumblr', '/reader/new/substack' ],
 		redirectLoggedOutToSignup,
 		sidebar,
 		setSelectedSiteIdByOrigin,
@@ -145,14 +151,49 @@ export default async function (): Promise< void > {
 	page( '/reader/feeds/lookup/*', redirectLoggedOutToSignup, feedLookup );
 
 	// Lists
-	page( '/reader/list/:user/:list/edit/items', sidebar, editListItems, makeLayout, clientRender );
-	page( '/reader/list/:user/:list/edit', sidebar, editList, makeLayout, clientRender );
+	page(
+		'/reader/list/:user/:list/edit/items',
+		redirectLoggedOutToSignup,
+		sidebar,
+		editListItems,
+		makeLayout,
+		clientRender
+	);
+	page(
+		'/reader/list/:user/:list/edit',
+		redirectLoggedOutToSignup,
+		sidebar,
+		editList,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/reader/list/new', sidebar, createList, makeLayout, clientRender );
+	page(
+		'/reader/list/new',
+		redirectLoggedOutToSignup,
+		sidebar,
+		createList,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/reader/list/:user/:list/export', sidebar, exportList, makeLayout, clientRender );
+	page(
+		'/reader/list/:user/:list/export',
+		redirectLoggedOutToSignup,
+		sidebar,
+		exportList,
+		makeLayout,
+		clientRender
+	);
 
-	page( '/reader/list/:user/:list/delete', sidebar, deleteList, makeLayout, clientRender );
+	page(
+		'/reader/list/:user/:list/delete',
+		redirectLoggedOutToSignup,
+		sidebar,
+		deleteList,
+		makeLayout,
+		clientRender
+	);
 
 	page(
 		[ '/reader/list/:user/:list', '/reader/list/:user/:list/:view' ],
@@ -286,6 +327,11 @@ function setupReaderRedirects(): void {
 		{
 			path: '/reader/feed',
 			getRedirect: () => '/reader',
+		},
+		// Reddit ended RSS. Old add-a-feed links land on the generic form.
+		{
+			path: '/reader/new/reddit',
+			getRedirect: () => '/reader/new',
 		},
 		// Feed stream
 		{

@@ -1,8 +1,11 @@
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useCallback, useEffect, useRef } from '@wordpress/element';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { getAmAgentBlockId } from '../../abilities';
 import { useAgentsManagerContext } from '../../contexts';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { markActionOrigin } from '../../utils/action-origin';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import {
 	removeExternalContextCard,
 	removeExternalContextEntry,
@@ -11,11 +14,14 @@ import {
 } from '../../utils/external-context';
 import { isReaderChatAgent } from '../../utils/is-reader-chat-agent';
 import { setSiteEditorAction } from '../../utils/site-editor-context';
+import { getTabId } from '../../utils/tab-id';
 import {
 	BIG_SKY_EVENT_PREFIX,
+	recordAgentsManagerTracksEvent,
 	recordBigSkyTracksEvent,
 	type BigSkyEventName,
 } from '../../utils/tracks';
+import { getTurnId } from '../../utils/turn-id';
 import type { AgentsManagerSelect } from '@automattic/data-stores';
 
 /** Bridge-facing recorder: drops malformed calls instead of emitting `jetpack_big_sky_undefined`. */
@@ -32,6 +38,37 @@ function recordGuardedBigSkyTracksEvent(
 	}
 
 	recordBigSkyTracksEvent( eventName, props );
+}
+
+/** Tracks values are lowercase with underscores; hosts pass free text like "WooCommerce AI". */
+function toTracksValue( value: unknown ): string {
+	const normalized =
+		typeof value === 'string'
+			? value
+					.trim()
+					.toLowerCase()
+					.replace( /[^a-z0-9]+/g, '_' )
+					.replace( /^_|_$/g, '' )
+			: '';
+	return normalized || 'none';
+}
+
+/**
+ * Bridge-facing context publisher: records that a host handed the chat
+ * something to talk about, so the hand-off is a step in the journey.
+ */
+function publishExternalContextEntry(
+	entry: Parameters< typeof setExternalContextEntry >[ 0 ]
+): void {
+	setExternalContextEntry( entry );
+	if ( ! entry?.id ) {
+		return;
+	}
+	recordAgentsManagerTracksEvent( 'calypso_agents_manager_context_published', {
+		source: toTracksValue( entry.source ),
+		type: toTracksValue( entry.type ),
+		delivery: toTracksValue( entry.delivery || 'next-message' ),
+	} );
 }
 
 /**
@@ -88,24 +125,27 @@ export function useSetupCustomActions( {
 	setIsChatEnabled,
 	setDesktopMediaQuery,
 }: SetupProps ): void {
-	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition } = useSelect( ( select ) => {
-		const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
-		return store.getAgentsManagerState();
-	}, [] );
+	const { hasLoaded, isOpen, isDocked, isMinimized, floatingPosition, isChatVisible } = useSelect(
+		( select ) => {
+			const store: AgentsManagerSelect = select( AGENTS_MANAGER_STORE );
+			return store.getAgentsManagerState();
+		},
+		[]
+	);
 	const { setIsOpen, setIsDocked, setIsMinimized } = useDispatch( AGENTS_MANAGER_STORE );
 	const { agentConfig, getTabSessionId, resumeChat } = useAgentsManagerContext();
 	const navigate = useNavigate();
-	const location = useLocation();
-	// Keep the latest location in a ref so `getCurrentRoute` stays a stable
-	// reference while always reporting the chat's current route.
-	const locationRef = useRef( location );
-	locationRef.current = location;
-	const resolveRef = useRef< ( ( state: AgentsManagerChatState ) => void ) | null >( null );
+	const pendingChatStateResolversRef = useRef< ( ( state: AgentsManagerChatState ) => void )[] >(
+		[]
+	);
 	const shouldPersistOpenState = ! isReaderChatAgent( agentConfig?.agentId );
 
 	const setChatOpen = useCallback(
 		( shouldOpen: boolean ) => {
-			if ( typeof shouldOpen !== 'boolean' ) {
+			if (
+				typeof shouldOpen !== 'boolean' ||
+				( ! shouldOpen && ! getChatPresentation().dismissible )
+			) {
 				return;
 			}
 
@@ -113,6 +153,17 @@ export function useSetupCustomActions( {
 			// concurrent one and clobber it.
 			if ( shouldOpen && isMinimized ) {
 				setIsMinimized( false );
+			}
+
+			// Mark any host call that will make the chat visible, including an
+			// un-minimize: `isOpen` stays true there, but the dock still records
+			// `chat_opened` because `chatIsOpen` flips, and that event must not
+			// fall through to `trigger=user`.
+			if ( shouldOpen && ( ! isOpen || isMinimized ) ) {
+				markActionOrigin( 'open', 'host' );
+			}
+			if ( ! shouldOpen && isOpen ) {
+				markActionOrigin( 'close', 'host' );
 			}
 
 			// Open state is unchanged; nothing more to persist.
@@ -193,51 +244,57 @@ export function useSetupCustomActions( {
 		[ setDesktopMediaQuery ]
 	);
 
+	const readChatState = useCallback(
+		(): AgentsManagerChatState => ( {
+			isOpen: isOpen || ! getChatPresentation().dismissible,
+			isDocked,
+			floatingPosition,
+		} ),
+		[ isOpen, isDocked, floatingPosition ]
+	);
+
 	const getChatState = useCallback( (): Promise< AgentsManagerChatState > => {
 		if ( hasLoaded ) {
-			return Promise.resolve( {
-				isOpen,
-				isDocked,
-				floatingPosition,
-			} );
+			return Promise.resolve( readChatState() );
 		}
 
 		return new Promise( ( resolve ) => {
-			resolveRef.current = resolve;
+			pendingChatStateResolversRef.current.push( resolve );
 		} );
-	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
+	}, [ hasLoaded, readChatState ] );
 
-	// Resolve any pending `getChatState()` call once the store has loaded.
+	// Resolve every `getChatState()` call made before the store loaded.
 	useEffect( () => {
-		if ( hasLoaded && resolveRef.current ) {
-			resolveRef.current( {
-				isOpen,
-				isDocked,
-				floatingPosition,
-			} );
-			resolveRef.current = null;
+		if ( ! hasLoaded || ! pendingChatStateResolversRef.current.length ) {
+			return;
 		}
-	}, [ hasLoaded, isOpen, isDocked, floatingPosition ] );
 
-	// Whether the chat is visible (open and not minimized). Entry points outside
-	// the bundle (e.g. the Calypso masterbar) read this to toggle.
-	const isChatVisible = useCallback( () => isOpen && ! isMinimized, [ isOpen, isMinimized ] );
+		const chatState = readChatState();
+		pendingChatStateResolversRef.current.forEach( ( resolve ) => resolve( chatState ) );
+		pendingChatStateResolversRef.current = [];
+	}, [ hasLoaded, readChatState ] );
 
-	// The chat's current route (e.g. `/chat`), so callers can detect a same-route re-click.
-	const getCurrentRoute = useCallback( () => locationRef.current.pathname, [] );
+	// Entry points outside the bundle (the omnibar AI button, Jetpack's AI
+	// sidebar) read this to decide whether a click closes or opens.
+	const getIsChatVisible = useCallback(
+		() => isChatVisible || ! getChatPresentation().dismissible,
+		[ isChatVisible ]
+	);
 
 	useRegisterCustomActions( {
 		getChatState,
-		isChatVisible,
-		getCurrentRoute,
+		isChatVisible: getIsChatVisible,
 		getSessionId: getTabSessionId,
+		getTabId,
+		getTurnId,
+		getAgentBlockId: getAmAgentBlockId,
 		recordBigSkyTracksEvent: recordGuardedBigSkyTracksEvent,
 		setChatOpen,
 		setChatDocked,
 		setChatEnabled,
 		setChatCompactMode,
 		setChatDesktopMediaQuery,
-		setContextEntry: setExternalContextEntry,
+		setContextEntry: publishExternalContextEntry,
 		removeContextEntry: removeExternalContextEntry,
 		setContextCard: setExternalContextCard,
 		removeContextCard: removeExternalContextCard,
@@ -245,12 +302,9 @@ export function useSetupCustomActions( {
 		chatNavigate: navigate,
 		resumeChat,
 		isReady: true,
-		// See the field's doc in global.d.ts. Advertised here, where the API
-		// is assembled, so a host reading it can trust the events are wired.
-		broadcastsAgentActivity: true,
 	} );
 
-	// Hosts (e.g. CIAB) listen for `agents-manager-ready` to invoke actions without polling.
+	// Hosts listen for `agents-manager-ready` to invoke actions without polling.
 	useEffect( () => {
 		window.dispatchEvent( new CustomEvent( 'agents-manager-ready' ) );
 	}, [] );

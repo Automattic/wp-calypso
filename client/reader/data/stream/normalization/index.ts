@@ -10,8 +10,8 @@ export * from './helpers';
 
 /**
  * Picks the field on each item that should be used as the stream's
- * chronological key. Conversations sort by last comment, liked streams by the
- * like timestamp, everything else by post date.
+ * chronological key. Conversations sort by last comment, liked and saved
+ * streams by the like or save timestamp, everything else by post date.
  */
 export function getStreamDateProperty( streamType: string ): string {
 	if ( streamType === 'conversations' || streamType === 'conversations-a8c' ) {
@@ -19,6 +19,9 @@ export function getStreamDateProperty( streamType: string ): string {
 	}
 	if ( streamType === 'likes' ) {
 		return 'date_liked';
+	}
+	if ( streamType === 'saved' ) {
+		return 'date_saved';
 	}
 	return 'date';
 }

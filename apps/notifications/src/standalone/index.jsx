@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { setLocaleData } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
@@ -47,7 +46,7 @@ const ACTION_HANDLERS = {
 						action: 'render',
 						num_new: newNoteCount,
 						latest_type: latestType,
-				  } )
+					} )
 				: sendMessage( { action: 'renderAllSeen' } ),
 	],
 	CLOSE_PANEL: [ () => sendMessage( { action: 'togglePanel' } ) ],

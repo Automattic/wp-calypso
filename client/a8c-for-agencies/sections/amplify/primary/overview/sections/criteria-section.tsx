@@ -1,11 +1,11 @@
 import {
 	Card,
 	CardBody,
-	__experimentalGrid as Grid,
 	__experimentalHeading as Heading,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import Grid from 'calypso/dashboard/components/grid';
 import { preventWidows } from 'calypso/lib/formatting';
 import type { ReactNode } from 'react';
 
@@ -50,7 +50,7 @@ export default function AmplifyCriteriaSection( {
 				</Text>
 			</VStack>
 
-			<Grid templateColumns="repeat(auto-fit, minmax(160px, 1fr))" gap={ 6 }>
+			<Grid templateColumns="repeat(auto-fit, minmax(160px, 1fr))" gap="xl">
 				{ stats.map( ( stat ) => (
 					<Card key={ stat.label } size="small">
 						<CardBody>
@@ -65,7 +65,7 @@ export default function AmplifyCriteriaSection( {
 				) ) }
 			</Grid>
 
-			<Grid templateColumns="repeat(auto-fill, minmax(280px, 1fr))" gap={ 4 }>
+			<Grid templateColumns="repeat(auto-fill, minmax(280px, 1fr))" gap="lg">
 				{ criteria.map( ( criterion ) => (
 					<Card key={ criterion.id } size="small">
 						<CardBody>

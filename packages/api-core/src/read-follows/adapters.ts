@@ -36,12 +36,12 @@ const normalizeDeliveryMethods = (
 						: undefined,
 					send_posts: deliveryMethods.email.send_posts ?? false,
 				},
-		  }
+			}
 		: {} ),
 	...( deliveryMethods?.notification
 		? {
 				notification: deliveryMethods.notification,
-		  }
+			}
 		: {} ),
 } );
 
@@ -89,7 +89,7 @@ export const adaptSiteSubscriptionsResponse = (
 		? response.subscriptions.map( adaptSiteSubscription )
 		: [],
 	totalCount:
-		response.page === 1 || response.number > 0 ? response.total_subscriptions ?? null : null,
+		response.page === 1 || response.number > 0 ? ( response.total_subscriptions ?? null ) : null,
 	page: response.page,
 	number: response.number,
 } );

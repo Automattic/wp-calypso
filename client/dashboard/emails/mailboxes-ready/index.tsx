@@ -119,7 +119,7 @@ export default function MailboxesReady() {
 											? buildGoogleFinishSetupLink(
 													email.mailbox + '@' + email.domain,
 													email.domain
-											  )
+												)
 											: getMailboxUrl( email )
 									}
 									variant="link"

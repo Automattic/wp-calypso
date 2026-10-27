@@ -63,7 +63,7 @@ const ProfessionalEmailPrice = ( {
 						months: offerMonths,
 					},
 					comment: '%(months)d is the number of free trial months',
-			  } )
+				} )
 			: translate( '3 months free' );
 
 	const priceWithInterval = (

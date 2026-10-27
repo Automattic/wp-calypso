@@ -1,14 +1,19 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useLocale } from '../../../app/locale';
+import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import { AgencyNotices } from '../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
 import AddWooPaymentsToSite from './add-woopayments-to-site';
 import CommissionsTable from './commissions-table';
 import ConsolidatedViews from './consolidated-views';
@@ -28,9 +33,23 @@ export default function EarnWooPayments() {
 		isLoadingWooPaymentsData,
 		sitesWithPluginsStates,
 	} = useWooPaymentsDashboardData( agencyId );
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: hasSites,
+		isLoadingActivity: isLoading,
+	} );
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
+	const router = useRouter();
+
+	const navigateToSiteSetup = useCallback(
+		( siteId: number ) =>
+			router.navigate( {
+				to: earnWooPaymentsSetupRoute.fullPath,
+				params: { siteId: String( siteId ) },
+			} ),
+		[ router ]
+	);
 
 	const excludedSiteIds = useMemo(
 		() => sitesWithPluginsStates.map( ( site ) => site.blogId ),
@@ -47,9 +66,8 @@ export default function EarnWooPayments() {
 						agencyId={ agencyId }
 						excludedSiteIds={ excludedSiteIds }
 						recordTracksEvent={ recordTracksEvent }
-						navigate={ ( url ) => {
-							window.location.href = url;
-						} }
+						onSelectSite={ navigateToSiteSetup }
+						shouldUseRouterLink
 					/>
 				) : undefined
 			}
@@ -63,7 +81,22 @@ export default function EarnWooPayments() {
 	return (
 		<PageLayout
 			header={ header }
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity={ hasSites } /> }
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice
+									hasCommissionActivity={ hasSites }
+									commissionType="woopayments"
+								/>
+							),
+						},
+					] }
+				/>
+			}
 		>
 			{ showEmptyState ? (
 				<WooPaymentsDashboardEmptyState />
@@ -81,6 +114,7 @@ export default function EarnWooPayments() {
 							isLoadingWooPaymentsData={ isLoadingWooPaymentsData }
 							recordTracksEvent={ recordTracksEvent }
 							onDownloadReport={ downloadCommissionsReport }
+							onContinueSetup={ navigateToSiteSetup }
 						/>
 					</DataViewsCard>
 				</VStack>

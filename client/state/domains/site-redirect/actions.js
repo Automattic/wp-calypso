@@ -34,7 +34,7 @@ export const fetchSiteRedirect = ( siteId ) => ( dispatch ) => {
 					? error.message
 					: i18n.translate(
 							'There was a problem retrieving the redirect settings. Please try again later or contact support.'
-					  ),
+						),
 			} );
 		}
 	);

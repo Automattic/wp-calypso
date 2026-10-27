@@ -21,7 +21,6 @@ import {
 	A4A_SITES_LINK_DEVELOPMENT,
 	A4A_SITES_LINK_WALKTHROUGH_TOUR,
 	A4A_SITES_LINK_ADD_NEW_SITE_TOUR,
-	A4A_SITES_CONNECT_URL_LINK,
 	A4A_PLUGINS_LINK,
 	A4A_MARKETPLACE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
@@ -83,7 +82,6 @@ const MEMBER_ACCESSIBLE_PATHS: Record< string, string[] > = {
 	[ A4A_SITES_LINK_DEVELOPMENT ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_LINK_WALKTHROUGH_TOUR ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_SITES_LINK_ADD_NEW_SITE_TOUR ]: [ 'a4a_read_managed_sites' ],
-	[ A4A_SITES_CONNECT_URL_LINK ]: [ 'a4a_read_managed_sites' ],
 	[ A4A_REPORTS_LINK ]: [ 'a4a_read_reports' ],
 	[ A4A_REPORTS_OVERVIEW_LINK ]: [ 'a4a_read_reports' ],
 	[ A4A_REPORTS_DASHBOARD_LINK ]: [ 'a4a_read_reports' ],
@@ -182,8 +180,8 @@ export const isPathAllowed = ( pathname: string, agency: Agency | null ) => {
 		for ( const [ key, pattern ] of Object.entries( DYNAMIC_PATH_PATTERNS ) ) {
 			if ( pattern.test( pathname ) ) {
 				const dynamicPermissions = MEMBER_ACCESSIBLE_DYNAMIC_PATHS[ key ];
-				return capabilities.some(
-					( capability: string ) => dynamicPermissions?.includes( capability )
+				return capabilities.some( ( capability: string ) =>
+					dynamicPermissions?.includes( capability )
 				);
 			}
 		}

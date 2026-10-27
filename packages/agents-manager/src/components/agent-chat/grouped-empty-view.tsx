@@ -10,13 +10,16 @@ import {
 	WHAT_ELSE_CAN_I_DO_SUGGESTION_ID,
 	WRITING_SUGGESTION_IDS,
 } from '../../hooks/use-empty-view-suggestions';
+import { getSuggestionClickPayload } from '../../utils/get-suggestion-click-payload';
 import { isEditorPage } from '../../utils/is-editor-page';
-import getSuggestionClickPayload from './get-suggestion-click-payload';
 import './grouped-empty-view.scss';
+import type { ReactNode } from 'react';
 
 interface Props {
 	heading: string;
 	help?: string;
+	/** Takes the place of the suggestion chips, under the heading. */
+	content?: ReactNode;
 	suggestions: Suggestion[];
 	groupWritingSuggestions: boolean;
 	onSuggestionClick?: (
@@ -28,6 +31,7 @@ interface Props {
 export default function GroupedEmptyView( {
 	heading,
 	help,
+	content,
 	suggestions,
 	groupWritingSuggestions,
 	onSuggestionClick,
@@ -58,6 +62,14 @@ export default function GroupedEmptyView( {
 			suggestions
 		);
 	};
+
+	if ( content ) {
+		return (
+			<EmptyView heading={ heading } help={ help }>
+				{ content }
+			</EmptyView>
+		);
+	}
 
 	if ( ! groupWritingSuggestions || writingSuggestions.length === 0 || ! hasDesignSuggestions ) {
 		return (
@@ -116,11 +128,13 @@ export default function GroupedEmptyView( {
 					/>
 				</button>
 				<div id={ writingSuggestionListId } hidden={ ! isWritingExpanded }>
+					{ /* `visible` keeps the collapsed chips out of what Agenttic reports as rendered. */ }
 					<Suggestions
 						className="agents-manager-writing-suggestions__list"
 						layout="vertical"
 						translateY={ 0 }
 						suggestions={ writingSuggestions }
+						visible={ isWritingExpanded }
 						onSubmit={ handleSuggestionClick }
 					/>
 				</div>

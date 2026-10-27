@@ -6,11 +6,7 @@ import {
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import {
-	__experimentalVStack as VStack,
-	__experimentalHStack as HStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
@@ -298,7 +294,7 @@ export default function DomainDns() {
 					<PageHeader
 						prefix={ <Breadcrumbs length={ 2 } /> }
 						actions={
-							<HStack>
+							<>
 								<Button
 									variant="primary"
 									onClick={ () => {
@@ -330,7 +326,7 @@ export default function DomainDns() {
 										}
 									/>
 								</PageHeader.ActionMenu>
-							</HStack>
+							</>
 						}
 						description={ <DnsDescription /> }
 					/>
@@ -386,7 +382,7 @@ export default function DomainDns() {
 			<RestoreDefaultEmailRecords
 				onConfirm={ handleRestoreDefaultEmailRecords }
 				onCancel={ () => setIsRestoreDefaultEmailRecordsDialogOpen( false ) }
-				isBusy={ updateDnsMutation.isPending }
+				isBusy={ restoreDefaultEmailRecordsMutation.isPending }
 				isOpen={ isRestoreDefaultEmailRecordsDialogOpen }
 			/>
 			{ isImportDialogOpen && (

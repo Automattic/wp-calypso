@@ -9,9 +9,11 @@ import './error.scss';
 export const DomainSuggestionErrorCTA = ( {
 	errorMessage,
 	callback,
+	label,
 }: {
 	errorMessage: string;
 	callback: () => void;
+	label?: string;
 } ) => {
 	const { __ } = useI18n();
 	const listContext = useDomainSuggestionContainerContext();
@@ -33,11 +35,11 @@ export const DomainSuggestionErrorCTA = ( {
 					isDestructive
 					variant="primary"
 					__next40pxDefaultSize
-					label={ __( 'Add to cart' ) }
+					label={ label ?? __( 'Add to cart' ) }
 					onClick={ callback }
 					icon={ warning }
 				>
-					{ listContext.isFeatured ? __( 'Add to cart' ) : undefined }
+					{ listContext.isFeatured ? ( label ?? __( 'Add to cart' ) ) : undefined }
 				</Button>
 			</Tooltip>
 		</div>

@@ -6,15 +6,22 @@ import VariationPicker from '../variation-picker';
 
 // Mock the `Variation` component
 jest.mock( '../variation-picker/variation', () => {
-	const MockVariation = ( { variation }: { variation: { title: string } } ) => (
-		<div data-testid="variation">{ variation?.title }</div>
+	const MockVariation = ( {
+		variation,
+		isDisabled,
+	}: {
+		variation: { title: string };
+		isDisabled?: boolean;
+	} ) => (
+		<div data-testid="variation" data-disabled={ isDisabled }>
+			{ variation?.title }
+		</div>
 	);
 	MockVariation.displayName = 'MockVariation';
 	return MockVariation;
 } );
 
 jest.mock( '@wordpress/components', () => ( {
-	__experimentalGrid: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	__experimentalVStack: ( { children }: { children: React.ReactNode } ) => <div>{ children }</div>,
 	Button: ( { children, ...props }: { children: React.ReactNode } ) => (
 		<button { ...props }>{ children }</button>
@@ -61,6 +68,16 @@ const visibleVariations = () =>
 describe( 'VariationPicker', () => {
 	beforeEach( () => {
 		mockWidth = null;
+	} );
+
+	it( 'disables every card when disabled', () => {
+		render(
+			<VariationPicker { ...defaultProps } variations={ mockVariations } type="color" disabled />
+		);
+
+		for ( const variation of screen.getAllByTestId( 'variation' ) ) {
+			expect( variation ).toHaveAttribute( 'data-disabled', 'true' );
+		}
 	} );
 
 	it( 'fits two rows per page with pagination at larger widths', () => {

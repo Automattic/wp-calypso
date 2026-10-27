@@ -86,9 +86,14 @@ function recordSubmitStep( flow, stepName, providedDependencies, optionalProps )
 				[ 'cart_items', 'domain_item', 'email_item' ].includes( propName ) &&
 				typeof propValue !== 'string'
 			) {
-				propValue = Object.entries( propValue || {} )
-					.map( ( pair ) => pair.join( ':' ) )
-					.join( ',' );
+				propValue = Array.isArray( propValue )
+					? propValue
+							.map( ( item ) => item?.product_slug )
+							.filter( Boolean )
+							.join( ',' )
+					: Object.entries( propValue || {} )
+							.map( ( pair ) => pair.join( ':' ) )
+							.join( ',' );
 			}
 
 			if ( propName === 'selected_design' ) {

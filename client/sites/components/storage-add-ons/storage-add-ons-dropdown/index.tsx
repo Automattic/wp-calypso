@@ -70,7 +70,7 @@ export const StorageAddOnsDropdown = ( {
 						( ( addOn.prices.yearlyPrice || 0 ) - purchasedStorageAddOnYearlyPrice ) / 12,
 						addOn.prices.currencyCode,
 						{ isSmallestUnit: true }
-				  )
+					)
 				: null;
 
 		return {
@@ -91,7 +91,7 @@ export const StorageAddOnsDropdown = ( {
 						12,
 					selectedStorageAddOn.prices.currencyCode,
 					{ isSmallestUnit: true }
-			  )
+				)
 			: null;
 	const selectedOption = {
 		key: selectedStorageAddOnSlug,

@@ -17,9 +17,15 @@ export interface ReferralPurchaseSubscription {
 
 export interface ReferralPurchaseLicense {
 	license_key: string;
+	quantity?: number | null;
 	issued_at: string;
 	attached_at: string | null;
 	revoked_at: string | null;
+}
+
+export interface ReferralPurchaseMeta {
+	titan_domain?: string | null;
+	titan_plan?: string | null;
 }
 
 export interface ReferralPurchaseCommissions {
@@ -33,6 +39,7 @@ export interface ReferralPurchase {
 	quantity: number;
 	license: ReferralPurchaseLicense;
 	site_assigned: string;
+	meta?: ReferralPurchaseMeta;
 	subscription?: ReferralPurchaseSubscription;
 	commissions?: ReferralPurchaseCommissions;
 	referral_id: number;
@@ -47,6 +54,40 @@ export interface ReferralApiResponse {
 	products: ReferralPurchase[];
 	status: string;
 	checkout_url: string;
+}
+
+export type ReferralFlowType = 'send' | 'copy';
+
+export interface ReferralLogoPayload {
+	type: 'profile' | 'custom' | 'none';
+	url?: string;
+}
+
+/**
+ * Body of POST /agency/{agencyId}/referrals: a payment request for a client.
+ */
+export interface CreateReferralParams {
+	client_email: string;
+	client_message: string;
+	/** Comma-separated product ids. */
+	product_ids: string;
+	licenses?: { product_id: number; license_id: number }[];
+	flow_type: ReferralFlowType;
+	logo?: ReferralLogoPayload;
+}
+
+/**
+ * Body of POST /agency/{agencyId}/referral-email-preview.
+ */
+export interface ReferralEmailPreviewParams {
+	product_ids: number[];
+	greeting_line: string;
+	logo_url?: string;
+	term_pricing: 'monthly' | 'yearly';
+}
+
+export interface ReferralEmailPreview {
+	html: string;
 }
 
 /**

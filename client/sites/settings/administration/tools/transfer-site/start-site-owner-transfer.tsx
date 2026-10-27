@@ -1,19 +1,20 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { Button, Gridicon } from '@automattic/components';
 import styled from '@emotion/styled';
+import { useQuery } from '@tanstack/react-query';
 import { ToggleControl } from '@wordpress/components';
 import { localize, useTranslate } from 'i18n-calypso';
 import { FormEvent, useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import Notice from 'calypso/components/notice';
 import { PanelCardHeading } from 'calypso/components/panel';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { ResponseDomain } from 'calypso/lib/domains/types';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import { useStartSiteOwnerTransfer } from './use-start-site-owner-transfer';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 type Props = {
 	selectedSiteId: number | null;
@@ -131,12 +132,12 @@ const UpgradesCard = ( {
 	siteSlug,
 	siteOwner,
 }: {
-	purchases: Purchase[];
+	purchases: Purchase[] | undefined;
 	siteSlug: string | null;
 	siteOwner: string;
 } ) => {
 	const translate = useTranslate();
-	if ( purchases.length === 0 ) {
+	if ( ! purchases?.length ) {
 		return null;
 	}
 	return (
@@ -236,7 +237,10 @@ const StartSiteOwnerTransfer = ( {
 	const [ startSiteTransferError, setStartSiteTransferError ] = useState( '' );
 	const [ startSiteTransferSuccess, setStartSiteTransferSuccess ] = useState( false );
 
-	const purchases = useSelector( ( state ) => getSitePurchases( state, selectedSiteId ) );
+	const { data: purchases } = useQuery( {
+		...sitePurchasesQuery( selectedSiteId ?? 0 ),
+		enabled: Boolean( selectedSiteId ),
+	} );
 
 	const { startSiteOwnerTransfer, isPending: isStartingSiteTransfer } = useStartSiteOwnerTransfer(
 		selectedSiteId,
@@ -289,7 +293,7 @@ const StartSiteOwnerTransfer = ( {
 			<FormToggleControl
 				disabled={ false }
 				label={
-					purchases.length === 0
+					! purchases?.length
 						? translate( 'I want to transfer the ownership of the site.' )
 						: translate( 'I want to transfer ownership of the site and all my related upgrades.' )
 				}

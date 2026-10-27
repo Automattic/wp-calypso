@@ -82,16 +82,27 @@ describe( 'ReaderListHeader', () => {
 		expect( screen.getByText( 'A test list' ) ).toBeVisible();
 	} );
 
-	test( 'shows owner name when list is not owned by current user', () => {
+	test( 'shows a Created by line when list is not owned by current user', () => {
 		renderReaderListHeader( { list: { ...defaultList, owner: 'otheruser', is_owner: false } } );
 
-		expect( screen.getByText( 'otheruser' ) ).toBeVisible();
+		expect( screen.getByText( 'A test list' ).closest( 'p' ) ).toHaveTextContent(
+			'A test list – Created by otheruser'
+		);
 	} );
 
-	test( 'does not show owner name when list is owned by current user', () => {
+	test( 'does not show a Created by line when list is owned by current user', () => {
 		renderReaderListHeader();
 
-		expect( screen.queryByText( /\(/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Created by/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'test_user' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not render a subtitle when there is nothing to show', () => {
+		const { container } = renderReaderListHeader( {
+			list: { ...defaultList, description: '' },
+		} );
+
+		expect( container.querySelector( '.formatted-header__subtitle' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows lock icon for private lists', () => {
@@ -186,7 +197,9 @@ describe( 'ReaderListHeader', () => {
 	} );
 
 	test( 'shows total items count on Sites tab', async () => {
-		nockListItems( 'test_user', 'my-list', { total_items: 42, items: [] } );
+		nockListItems( 'test_user', 'my-list', { total_items: 42, items: [] } )
+			// Persist so that unmocked requests left in flight by earlier tests can't use up the mock.
+			.persist();
 
 		renderReaderListHeader();
 

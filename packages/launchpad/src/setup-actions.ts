@@ -1,7 +1,8 @@
-import { updateLaunchpadSettings } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { isMobile } from '@automattic/viewport';
 import wpcomRequest from 'wpcom-proxy-request';
+import { updateLaunchpadSettings } from './use-launchpad';
 import type { LaunchpadTaskActionsProps, Task } from './types';
 
 const TASKS_TO_COMPLETE_ON_CLICK = [
@@ -104,12 +105,16 @@ export const setUpActionsForTasks = ( {
 
 				case 'customize_welcome_message':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `https://${ siteSlug }/wp-admin/admin.php?page=jetpack-newsletter`;
+					task.calypso_path = newsletterAdminUrl( `https://${ siteSlug }/wp-admin/`, {
+						tab: 'settings',
+					} );
 					break;
 
 				case 'manage_subscribers':
 					logMissingCalypsoPath = true;
-					task.calypso_path = `/subscribers/${ siteSlug }`;
+					task.calypso_path = newsletterAdminUrl( `https://${ siteSlug }/wp-admin/`, {
+						tab: 'subscribers',
+					} );
 					break;
 
 				case 'site_launched':

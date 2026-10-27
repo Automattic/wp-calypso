@@ -194,7 +194,7 @@ const SiteSettingPrivacyForm = ( {
 							{ isWpcomStagingSite
 								? translate(
 										'Your site is visible to everyone, but search engines are discouraged from indexing staging sites.'
-								  )
+									)
 								: translate( 'Your site is visible to everyone.' ) }
 						</FormSettingExplanation>
 					</>

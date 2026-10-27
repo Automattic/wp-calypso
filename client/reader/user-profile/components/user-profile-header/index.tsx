@@ -53,7 +53,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 						path: userProfileUrl,
 						selected: view === 'posts',
 					},
-			  ]
+				]
 			: [] ),
 		...( showSites
 			? [
@@ -63,7 +63,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 						path: `${ userProfileUrl }/sites`,
 						selected: view === 'sites',
 					},
-			  ]
+				]
 			: [] ),
 		{
 			label: translate( 'Lists' ),
@@ -83,7 +83,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 						path: `${ userProfileUrl }/achievements`,
 						selected: view === 'achievements',
 					},
-			  ]
+				]
 			: [] ),
 		...( isOwnProfile
 			? [
@@ -92,7 +92,7 @@ const UserProfileHeader = ( { user, view }: UserProfileHeaderProps ): JSX.Elemen
 						path: `${ userProfileUrl }/settings`,
 						selected: view === 'settings',
 					},
-			  ]
+				]
 			: [] ),
 	];
 

@@ -1,6 +1,6 @@
 module.exports = {
 	preset: '../../test/packages/jest-preset.js',
-	testMatch: [ '<rootDir>/**/__tests__/**/*.[jt]s?(x)', '!**/.eslintrc.*' ],
+	testMatch: [ '<rootDir>/**/__tests__/**/*.[jt]s?(x)' ],
 	setupFilesAfterEnv: [
 		'@automattic/calypso-build/jest/mocks/match-media',
 		'<rootDir>/jest.setup.js',

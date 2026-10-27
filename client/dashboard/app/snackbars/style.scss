@@ -3,8 +3,13 @@
 @import '@wordpress/base-styles/variables';
 @import '@wordpress/base-styles/mixins';
 
-.dashboard-snackbars {
+// Extra specificity so the position and z-index beat `.components-snackbar-list`
+// regardless of stylesheet load order.
+.components-snackbar-list.dashboard-snackbars {
 	@include snackbar-container();
+
+	// `.dataviews-action-modal` is 1000001.
+	z-index: 1000002;
 
 	@include ui-mixins.when-dark-theme {
 		.components-snackbar {

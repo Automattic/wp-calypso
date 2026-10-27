@@ -1,4 +1,4 @@
-import { Meta } from '@storybook/blocks';
+import { Meta } from '@storybook/addon-docs/blocks';
 import * as MessageActionsStories from '../components/chat/MessageActions.stories';
 
 <Meta of={MessageActionsStories} />
@@ -19,6 +19,7 @@ interface MessageAction {
   onClick: (message: Message) => void | Promise<void>;
   disabled?: boolean;
   tooltip?: string;
+  visibility?: 'always' | 'latest-turn'; // latest-turn: inline on the latest turn; floats in a panel on hover for earlier turns, docking once pressed
 }
 ```
 

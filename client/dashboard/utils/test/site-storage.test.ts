@@ -1,0 +1,44 @@
+import { formatStorage, getStorageUsagePercent } from '../site-storage';
+
+const KB = 1024;
+const MB = KB * 1024;
+const GB = MB * 1024;
+
+describe( 'formatStorage', () => {
+	test( 'matches wp-admin size_format output', () => {
+		expect( formatStorage( 573_175_398, 'en' ) ).toBe( '546.6 MB' );
+		expect( formatStorage( 3.1 * GB, 'en' ) ).toBe( '3.1 GB' );
+		expect( formatStorage( 3 * GB, 'en' ) ).toBe( '3 GB' );
+		expect( formatStorage( 6 * GB, 'en' ) ).toBe( '6 GB' );
+	} );
+
+	test( 'picks the largest unit the value reaches, like size_format', () => {
+		expect( formatStorage( 0, 'en' ) ).toBe( '0 B' );
+		expect( formatStorage( 1023, 'en' ) ).toBe( '1,023 B' );
+		expect( formatStorage( KB, 'en' ) ).toBe( '1 KB' );
+		expect( formatStorage( 1023.99 * MB, 'en' ) ).toBe( '1,024 MB' );
+		expect( formatStorage( 1024 * GB, 'en' ) ).toBe( '1 TB' );
+	} );
+
+	test( 'drops a trailing .0 but keeps real decimals', () => {
+		expect( formatStorage( 3 * GB, 'en' ) ).toBe( '3 GB' );
+		expect( formatStorage( 3.04 * GB, 'en' ) ).toBe( '3 GB' );
+		expect( formatStorage( 3.07 * GB, 'en' ) ).toBe( '3.1 GB' );
+	} );
+
+	test( 'formats the number in the given locale', () => {
+		expect( formatStorage( 573_175_398, 'de' ) ).toBe( '546,6 MB' );
+		expect( formatStorage( 573_175_398, 'bn' ) ).toBe( '546.6 MB' );
+	} );
+} );
+
+describe( 'getStorageUsagePercent', () => {
+	test( 'rounds to a whole percent like wp-admin', () => {
+		expect(
+			getStorageUsagePercent( { storage_used_bytes: 573_175_398, max_storage_bytes: 3.1 * GB } )
+		).toBe( 17 );
+		expect( getStorageUsagePercent( { storage_used_bytes: 50, max_storage_bytes: 100 } ) ).toBe(
+			50
+		);
+	} );
+} );

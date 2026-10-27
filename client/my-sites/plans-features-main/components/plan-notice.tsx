@@ -8,16 +8,17 @@ import { getDiscountByName } from 'calypso/lib/discounts';
 import { ActiveDiscount } from 'calypso/lib/discounts/active-discounts';
 import { useUpgradeCreditsNoticeData } from 'calypso/my-sites/plans-features-main/hooks/use-upgrade-credits-notice';
 import { useSelector } from 'calypso/state';
-import { getByPurchaseId } from 'calypso/state/purchases/selectors';
 import { getCurrentPlan, isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors';
 import { getSitePlan, isCurrentPlanPaid } from 'calypso/state/sites/selectors';
 import PlanNoticeUpgradeCredit from './plan-notice-upgrade-credit';
+import type { Purchase } from '@automattic/api-core';
 
 export type PlanNoticeProps = {
 	siteId: number;
 	visiblePlans: PlanSlug[];
 	isInSignup?: boolean;
 	intent?: PlansIntent;
+	currentPurchase?: Purchase;
 	discountInformation?: {
 		coupon: string;
 		discountEndDate: Date;
@@ -41,7 +42,14 @@ export type PlanNoticeTypes =
 	| typeof CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 
 function useResolveNoticeType(
-	{ siteId, isInSignup, visiblePlans = [], discountInformation, intent }: PlanNoticeProps,
+	{
+		siteId,
+		isInSignup,
+		visiblePlans = [],
+		discountInformation,
+		intent,
+		currentPurchase,
+	}: PlanNoticeProps,
 	isNoticeDismissed: boolean
 ): PlanNoticeTypes {
 	const canUserPurchasePlan = useSelector(
@@ -56,9 +64,6 @@ function useResolveNoticeType(
 	const sitePlanSlug = sitePlan?.product_slug ?? '';
 	const isCurrentPlanRetired = isProPlan( sitePlanSlug ) || isStarterPlan( sitePlanSlug );
 	const currentPlan = useSelector( ( state ) => getCurrentPlan( state, siteId ) );
-	const currentPurchase = useSelector( ( state ) =>
-		getByPurchaseId( state, currentPlan?.id ?? 0 )
-	);
 
 	if ( isNoticeDismissed || isInSignup ) {
 		return NO_NOTICE;
@@ -66,7 +71,7 @@ function useResolveNoticeType(
 		return USER_CANNOT_PURCHASE_NOTICE;
 	} else if ( isCurrentPlanRetired ) {
 		return PLAN_RETIREMENT_NOTICE;
-	} else if ( currentPurchase?.isInAppPurchase ) {
+	} else if ( currentPurchase?.is_iap_purchase ) {
 		return CURRENT_PLAN_IN_APP_PURCHASE_NOTICE;
 	} else if ( activeDiscount ) {
 		return ACTIVE_DISCOUNT_NOTICE;

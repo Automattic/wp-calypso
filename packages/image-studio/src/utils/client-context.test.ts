@@ -247,7 +247,7 @@ describe( 'getClientContext', () => {
 								alt_text: '',
 								media_details: { width: 1080, height: 1920 },
 								description: { rendered: '' },
-						  }
+							}
 						: null,
 			},
 		} );

@@ -23,7 +23,7 @@ const DEFAULT_PERMISSIONS_TITLE = ( { siteURL } = {} ) =>
 				/* translators: %(siteURL)s is the site's hostname (no protocol). */
 				__( 'This connection on %(siteURL)s allows Jetpack to:' ),
 				{ siteURL }
-		  )
+			)
 		: __( 'This connection allows Jetpack to:' );
 
 /**

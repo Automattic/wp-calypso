@@ -28,6 +28,7 @@ object WebApp : Project({
 	buildType(PlaywrightTestDashboardPRMatrix)
 	buildType(PlaywrightTestA4APRMatrix)
 	buildType(AuthenticationE2ETests)
+	buildType(LoggedOutSignupContentBlockerE2ETests)
 })
 
 object BuildDockerImage : BuildType({
@@ -504,6 +505,10 @@ object RunAllUnitTests : BuildType({
 				echo -n "Yarn version: " && yarn --version
 				echo -n "NPM version: " && npm --version
 
+				# Jest and tsc read workspace packages from source, so skip the full
+				# postinstall build; the packages that still need theirs are built below.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
 				# Install modules
 				${_self.yarn_install_cmd}
 
@@ -539,6 +544,8 @@ object RunAllUnitTests : BuildType({
 					echo "##teamcity[buildProblem description='${'$'}num_errors error${'$'}s occurred during yarn install.' identity='yarn_problem']"
 					exit 1
 				fi
+
+				yarn build-packages:unit-tests
 			"""
 		}
 		bashNodeScript {
@@ -695,6 +702,9 @@ object CheckCodeStyleBranch : BuildType({
 			scriptContent = """
 				export NODE_ENV="test"
 
+				# Linters read workspace packages from source, so skip building them.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -709,7 +719,7 @@ object CheckCodeStyleBranch : BuildType({
 				# Find lintable files touched in this branch, except those deleted
 				function _find_files_to_lint() {
 					git diff --name-only --diff-filter=d refs/remotes/origin/trunk...HEAD \
-						| grep -E '(\.[jt]sx?|\.json|\.md)${'$'}' \
+						| grep -E '(\.[cm]?[jt]sx?|\.json|\.md)${'$'}' \
 						|| true
 				}
 
@@ -873,6 +883,11 @@ object Translate : BuildType({
 		bashNodeScript {
 			name = "Prepare environment"
 			scriptContent = """
+				# String extraction only reads source files, so skip building workspace packages
+				# and downloading the Playwright browsers this image would otherwise fetch.
+				export SKIP_CALYPSO_POSTINSTALL=true
+				export PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+
 				# Install modules
 				${_self.yarn_install_cmd}
 			"""
@@ -1052,7 +1067,8 @@ object PreReleaseE2ETests : BuildType({
 			}
 			branchFilter = "+:<default>"
 			buildFailedToStart = true
-			buildFailed = true
+			// Glorybot posts failures here, but only for the run that gates the currently staged commit.
+			buildFailed = false
 			buildFinishedSuccessfully = false
 			buildProbablyHanging = true
 		}
@@ -1203,6 +1219,76 @@ object AuthenticationE2ETests : BuildType({
 			branchFilter = "+:<default>"
 			triggerBuild = always()
 			withPendingChangesOnly = true
+		}
+	}
+})
+
+object LoggedOutSignupContentBlockerE2ETests : BuildType({
+	templates(CalypsoE2ETestsBuildTemplate)
+	id("calypso_WebApp_Calypso_E2E_Logged_Out_Signup_Content_Blocker")
+	uuid = "a845946a-7e81-44ed-88f5-1aae87662d25"
+	name = "Logged-out signup content-blocker E2E Tests"
+	description = "Opens the logged-out wordpress.com homepage in a browser that runs common content-blocker lists and checks that Get started still reaches a usable signup step (DOTOBRD-569)."
+	// Failures come from production or the filter lists, not the trunk commit a scheduled run is pinned to.
+	disableSettings("calypso_e2e_commit_status_publisher")
+
+	params {
+		param("TEST_GROUP", "@content-blocker")
+		param("CALYPSO_BASE_URL", "https://wordpress.com")
+		param("DASHBOARD_BASE_URL", "https://my.wordpress.com")
+	}
+
+	steps {
+		bashNodeScript {
+			name = "Add the run summary to the build status"
+			id = "add_run_summary"
+			// The spec writes which Calypso commit production served and which filter list
+			// versions it used, so a failure shows what changed since the last pass.
+			executionMode = BuildStep.ExecutionMode.ALWAYS
+			scriptContent = """
+				SUMMARY_FILE=test/e2e/output/content-blocker-run-summary.txt
+				[[ -f "${'$'}SUMMARY_FILE" ]] || exit 0
+				echo "Filter lists:"
+				tail -n +2 "${'$'}SUMMARY_FILE"
+				# Escape the characters TeamCity service messages reserve.
+				COMMIT=${'$'}(head -n 1 "${'$'}SUMMARY_FILE" | sed -e "s/|/||/g" -e "s/'/|'/g" -e "s/\[/|[/g" -e "s/\]/|]/g")
+				echo "##teamcity[buildStatus text='{build.status.text} · ${'$'}COMMIT']"
+			"""
+		}
+	}
+
+	features {
+		matrix {
+			param("PROJECT", listOf(
+				value("desktop", label = "Desktop"),
+				value("mobile", label = "Mobile"),
+			))
+		}
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#dotcom-quake"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
+	}
+
+	triggers {
+		schedule {
+			schedulingPolicy = cron {
+				hours = "*/6"
+			}
+			branchFilter = "+:<default>"
+			triggerBuild = always()
+			// The check targets what production serves, which changes without a trunk commit.
+			withPendingChangesOnly = false
 		}
 	}
 })

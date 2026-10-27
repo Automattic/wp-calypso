@@ -27,11 +27,11 @@ export const HostingSection: React.FC< HostingSectionProps > = ( props ) => {
 					? translate(
 							'Your hosting {{good}}speed and uptime is excellent{{/good}}, providing a reliable and enjoyable user experience.',
 							getTitleTranslateOptions()
-					  )
+						)
 					: translate(
 							'Struggles with hosting {{poor}}speed and uptime{{/poor}} deter visitors. A switch to WordPress.com could transform the user experience.',
 							getTitleTranslateOptions()
-					  )
+						)
 			}
 			subtitle={ ! isWPcom ? translate( 'Upgrade your hosting with WordPress.com' ) : null }
 			subtitleOnClick={ () => page( `/setup/site-migration?ref=site-profiler&from=${ url }` ) }

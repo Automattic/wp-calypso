@@ -24,7 +24,7 @@ import { getOpenLiveInteractions } from '../utils/get-open-live-interactions';
 import { getIsAgentsManagerAvailable } from '../utils/is-agents-manager-available';
 import { requestLoggedOutWpcomOdie } from './request-logged-out-wpcom-odie';
 import { useCurrentSupportInteraction } from './use-current-support-interaction';
-import { useManageSupportInteraction, broadcastOdieMessage } from '.';
+import { useManageSupportInteraction } from '.';
 import type { Chat, Message, ReturnedChat, SupportInteraction } from '../types';
 
 const HELP_CENTER_STORE = HelpCenter.register();
@@ -102,7 +102,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		selectedSiteId,
 		version,
 		setChat,
-		odieBroadcastClientId,
 		setChatStatus,
 		setExperimentVariationName,
 		chat,
@@ -114,6 +113,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		newLoggedOutInteractionsBotSlug,
 		externalChatProvider,
 		externalChatId,
+		checkoutSupportVariation,
 	} = useOdieAssistantContext();
 
 	const botSlug = getBotSlug(
@@ -182,7 +182,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						messages: [ ...prevChat.messages, getConversationLimitReachedMessage() ],
 						status: 'loaded',
 					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				} else if ( forceEmailSupport ) {
 					setChat( ( prevChat ) => ( {
@@ -191,7 +190,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						messages: [ ...prevChat.messages, getOdieEmailFallbackMessage() ],
 						status: 'loaded',
 					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				} else if (
 					warnAboutExistingConversation &&
@@ -205,7 +203,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						messages: [ ...prevChat.messages, getExistingConversationMessage() ],
 						status: 'loaded',
 					} ) );
-					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				} else if ( ! chat.conversationId && canConnectToZendesk && isUserEligibleForPaidSupport ) {
 					setChat( ( prevChat ) => ( {
@@ -220,7 +217,6 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 						isFromError,
 						escalationOnSecondAttempt: hasTriedToEscalateToSupport,
 					} );
-					broadcastOdieMessage( message, odieBroadcastClientId );
 					return;
 				}
 
@@ -252,7 +248,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 			const currentScreen = { url };
 			const isAgentsManagerAvailable = getIsAgentsManagerAvailable();
-			const context = { selectedSiteId, currentScreen, pathname, isAgentsManagerAvailable };
+			const context = {
+				selectedSiteId,
+				currentScreen,
+				pathname,
+				isAgentsManagerAvailable,
+				...( checkoutSupportVariation && { checkoutSupportVariation } ),
+			};
 
 			if ( canAccessWpcomApis() ) {
 				if ( isLoggedOutSession ) {
@@ -360,7 +362,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 			} catch ( error ) {
 				trackEvent( 'error_updating_support_interaction', {
 					error_message:
-						error instanceof Error ? error.message : error?.toString?.() ?? 'Unknown error',
+						error instanceof Error ? error.message : ( error?.toString?.() ?? 'Unknown error' ),
 					existing_interaction_id: supportInteraction?.uuid ?? null,
 					chat_id: chatId ?? null,
 				} );

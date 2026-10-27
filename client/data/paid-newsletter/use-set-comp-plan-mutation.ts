@@ -11,15 +11,19 @@ interface MutationVariables {
 	siteId: number;
 	engine: string;
 	currentStep: string;
-	stripePlanId: string;
+	compProductId: string;
 }
+
+// Lets a screen that does not own this mutation still tell whether a selection is in flight.
+export const setCompPlanMutationKey = [ 'paid-newsletter-set-comp-plan' ];
 
 export const useSetCompPlanMutation = (
 	options: UseMutationOptions< unknown, DefaultError, MutationVariables > = {}
 ) => {
 	const queryClient = useQueryClient();
 	const mutation = useMutation( {
-		mutationFn: async ( { siteId, engine, currentStep, stripePlanId }: MutationVariables ) => {
+		mutationKey: setCompPlanMutationKey,
+		mutationFn: async ( { siteId, engine, currentStep, compProductId }: MutationVariables ) => {
 			// Optimistically set the value.
 			queryClient.setQueryData(
 				[ 'paid-newsletter-importer', siteId, engine ],
@@ -27,7 +31,9 @@ export const useSetCompPlanMutation = (
 					if ( ! previous ) {
 						return previous;
 					}
-					previous.steps[ 'subscribers' ].content.comp_stripe_plan_id = stripePlanId;
+					previous.steps[ 'subscribers' ].content.comp_product_id = compProductId
+						? parseInt( compProductId )
+						: null;
 					return previous;
 				}
 			);
@@ -40,7 +46,7 @@ export const useSetCompPlanMutation = (
 				{
 					engine: engine,
 					current_step: currentStep,
-					comp_stripe_plan_id: stripePlanId,
+					comp_product_id: compProductId,
 				}
 			);
 
@@ -61,8 +67,8 @@ export const useSetCompPlanMutation = (
 	const { mutate } = mutation;
 
 	const setCompPlan = useCallback(
-		( siteId: number, engine: string, currentStep: string, stripePlanId: string ) =>
-			mutate( { siteId, engine, currentStep, stripePlanId } ),
+		( siteId: number, engine: string, currentStep: string, compProductId: string ) =>
+			mutate( { siteId, engine, currentStep, compProductId } ),
 		[ mutate ]
 	);
 

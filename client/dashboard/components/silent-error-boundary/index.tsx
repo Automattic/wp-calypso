@@ -1,6 +1,5 @@
-import { captureException } from '@automattic/calypso-sentry';
-import { Component } from 'react';
-import type { ReactNode, ErrorInfo } from 'react';
+import { ErrorBoundary } from '../error-boundary';
+import type { ReactNode } from 'react';
 
 interface SilentErrorBoundaryProps {
 	children: ReactNode;
@@ -20,24 +19,10 @@ interface SilentErrorBoundaryProps {
  * its error to the router's error page, unless it can be caught somewhere more
  * appropriate.
  */
-export class SilentErrorBoundary extends Component<
-	SilentErrorBoundaryProps,
-	{ hasError: boolean }
-> {
-	state = { hasError: false };
-
-	static getDerivedStateFromError() {
-		return { hasError: true };
-	}
-
-	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
-		captureException( error, {
-			tags: { ...this.props.sentryTags, calypso_section: 'dashboard' },
-			extra: { componentStack: errorInfo.componentStack },
-		} );
-	}
-
-	render() {
-		return this.state.hasError ? null : this.props.children;
-	}
+export function SilentErrorBoundary( { children, sentryTags }: SilentErrorBoundaryProps ) {
+	return (
+		<ErrorBoundary fallback={ null } sentryTags={ sentryTags }>
+			{ children }
+		</ErrorBoundary>
+	);
 }

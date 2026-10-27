@@ -74,16 +74,14 @@ interface BillingDashboardQueryError {
 function selectBillingSummary( api: APIBilling ): Billing {
 	return {
 		date: api.date,
-		products: api.products.map(
-			( product ): BillingProduct => ( {
-				productSlug: product.product_slug,
-				productName: product.product_name,
-				productQuantity: product.product_quantity,
-				productCost: product.product_cost,
-				productTotalCost: product.product_total_cost,
-				counts: product.counts,
-			} )
-		),
+		products: api.products.map( ( product ): BillingProduct => ( {
+			productSlug: product.product_slug,
+			productName: product.product_name,
+			productQuantity: product.product_quantity,
+			productCost: product.product_cost,
+			productTotalCost: product.product_total_cost,
+			counts: product.counts,
+		} ) ),
 		licenses: api.licenses,
 		costs: api.costs,
 		priceInterval: api.price_interval,

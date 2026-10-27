@@ -6,7 +6,7 @@ const mockComboboxClick = jest.fn();
 const mockSetSelectedStorageOptionForPlan = jest.fn();
 
 jest.mock( '@wordpress/components', () => {
-	const ReactActual = jest.requireActual< typeof import('react') >( 'react' );
+	const ReactActual = jest.requireActual< typeof import( 'react' ) >( 'react' );
 
 	return {
 		CustomSelectControl: ( { label }: { label: string } ) =>

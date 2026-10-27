@@ -8,8 +8,7 @@ import { useThankYouRedirect } from '../use-thank-you-redirect';
 
 // Capture what the recovery hook is wired with.
 let mockRecoveryProps:
-	| { enabled: boolean; canActivate: boolean; ownsActivation: boolean }
-	| undefined;
+	{ enabled: boolean; canActivate: boolean; ownsActivation: boolean } | undefined;
 jest.mock( '../use-post-transfer-plugin-recovery', () => ( {
 	usePostTransferPluginRecovery: ( props: typeof mockRecoveryProps ) => {
 		mockRecoveryProps = props;

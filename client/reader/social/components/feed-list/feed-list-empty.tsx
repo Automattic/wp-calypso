@@ -83,10 +83,10 @@ export function FeedListEmpty( {
 										count: retryAfter,
 										args: { protocol: protocolLabel, n: retryAfter },
 									}
-							  )
+								)
 							: translate( '%(protocol)s is asking us to slow down. Try again in a moment.', {
 									args: { protocol: protocolLabel },
-							  } )
+								} )
 					}
 					action={
 						<Button variant="primary" onClick={ onRetry }>

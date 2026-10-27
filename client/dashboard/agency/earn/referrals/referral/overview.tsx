@@ -1,15 +1,20 @@
 import { agencyProductsQuery, referralCommissionPayoutQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalGrid as Grid, __experimentalHStack as HStack } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { useMemo } from 'react';
 import { useAnalytics } from '../../../../app/analytics';
 import { useLocale } from '../../../../app/locale';
+import Grid from '../../../../components/grid';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { Text } from '../../../../components/text';
+import { AgencyNotices } from '../../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../../missing-payment-settings-notice';
 import ConsolidatedViews from '../consolidated-views';
 import { useReferral } from '../hooks/use-referral';
 import { getOrderSummary } from '../lib/get-order-summary';
@@ -28,6 +33,21 @@ type PurchaseItem = ReferralPurchase & { _id: string };
 
 const REFERRAL_LIST_VIEW: View = { type: 'list', titleField: 'summary', fields: [ 'status' ] };
 const PURCHASE_LIST_VIEW: View = { type: 'list', titleField: 'product', fields: [ 'status' ] };
+
+function WrappableEmail( { email }: { email: string } ) {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex <= 0 ) {
+		return email;
+	}
+
+	return (
+		<span style={ { wordBreak: 'break-word', hyphens: 'none' } }>
+			{ email.slice( 0, atIndex ) }
+			<wbr />
+			{ email.slice( atIndex ) }
+		</span>
+	);
+}
 
 function StatusBadge( { status }: { status: string } ) {
 	const { status: label, type } = getReferralStatus( status );
@@ -87,6 +107,7 @@ export default function ReferralOverview() {
 
 	const referralFields = useMemo( () => getReferralFields( products ), [ products ] );
 	const purchaseFields = useMemo( () => getPurchaseFields( products ), [ products ] );
+	const missingPaymentSettings = useMissingPaymentSettings( { hasCommissionActivity: true } );
 
 	if ( ! referral ) {
 		return <ReferralNotFound />;
@@ -105,13 +126,26 @@ export default function ReferralOverview() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ referral.client.email }
+					title={ <WrappableEmail email={ referral.client.email } /> }
 					description={
 						<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
 							<Text>{ __( 'Payment status' ) }</Text>
 							<SubscriptionStatus item={ referral } />
 						</HStack>
 					}
+				/>
+			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice hasCommissionActivity commissionType="referrals" />
+							),
+						},
+					] }
 				/>
 			}
 		>
@@ -124,13 +158,13 @@ export default function ReferralOverview() {
 				products={ products }
 				recordTracksEvent={ recordTracksEvent }
 			/>
-			<Grid templateColumns="repeat(auto-fit, minmax(320px, 1fr))" gap={ 6 } align="start">
+			<Grid templateColumns="repeat(auto-fit, minmax(320px, 1fr))" gap="xl" align="start">
 				<PreviewListCard
 					title={ __( 'Recent referrals' ) }
 					isEmpty={ recentReferrals.length === 0 }
 					emptyText={ __( 'No referrals yet.' ) }
 					seeAllTitle={ __( 'See all referrals' ) }
-					seeAllHref={ `/earn/referrals/${ referralId }/orders` }
+					seeAllHref={ `/referrals/${ referralId }/orders` }
 				>
 					<DataViews< ReferralApiResponse >
 						data={ recentReferrals }
@@ -149,7 +183,7 @@ export default function ReferralOverview() {
 					isEmpty={ recentPurchases.length === 0 }
 					emptyText={ __( 'No purchases yet.' ) }
 					seeAllTitle={ __( 'See all purchases' ) }
-					seeAllHref={ `/earn/referrals/${ referralId }/purchases` }
+					seeAllHref={ `/referrals/${ referralId }/purchases` }
 				>
 					<DataViews< PurchaseItem >
 						data={ recentPurchases }

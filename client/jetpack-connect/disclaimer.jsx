@@ -15,12 +15,20 @@ export function useDisclaimerText( props ) {
 		buttonText,
 	} = props;
 
+	const disclaimerTracksProps = {
+		company_name: companyName,
+		is_woo_jpc: isWooJPC,
+		site_name: siteName,
+		from,
+		button_text: buttonText,
+	};
+
 	const detailsLink = (
 		<a
 			target="_blank"
 			rel="noopener noreferrer"
 			onClick={ () => {
-				props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click', { ...props } );
+				props.recordTracksEvent( 'calypso_jpc_disclaimer_link_click', disclaimerTracksProps );
 			} }
 			href={ localizeUrl( 'https://jetpack.com/support/what-data-does-jetpack-sync/' ) }
 			className="jetpack-connect__sso-actions-modal-link"
@@ -35,9 +43,7 @@ export function useDisclaimerText( props ) {
 				rel="noopener noreferrer"
 				className="jetpack-connect__sso-actions-modal-link"
 				onClick={ () => {
-					props.recordTracksEvent( 'calypso_jpc_disclaimer_tos_link_click', {
-						...props,
-					} );
+					props.recordTracksEvent( 'calypso_jpc_disclaimer_tos_link_click', disclaimerTracksProps );
 				} }
 			/>
 		);
@@ -48,9 +54,10 @@ export function useDisclaimerText( props ) {
 				rel="noopener noreferrer"
 				className="jetpack-connect__sso-actions-modal-link"
 				onClick={ () => {
-					props.recordTracksEvent( 'calypso_jpc_disclaimer_sync_data_link_click', {
-						...props,
-					} );
+					props.recordTracksEvent(
+						'calypso_jpc_disclaimer_sync_data_link_click',
+						disclaimerTracksProps
+					);
 				} }
 			/>
 		);

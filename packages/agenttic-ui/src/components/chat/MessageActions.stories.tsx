@@ -222,3 +222,47 @@ export const DisabledActions: Story = {
 		return <Message message={ messageWithDisabledActions } />;
 	},
 };
+
+// Story 7: Actions show on the latest turn and on hover for earlier turns
+export const LatestTurn: Story = {
+	args: {
+		message: mockAgentMessage,
+	},
+	render: () => {
+		const feedbackManager = createFeedbackActions( {
+			onFeedback: async ( messageId: string, feedback: 'up' | 'down' ) => {
+				console.log( `Feedback submitted: ${ messageId } - ${ feedback }` );
+			},
+			icons: {
+				up: <ThumbsUpIcon />,
+				down: <ThumbsDownIcon />,
+			},
+		} );
+		const previousTurn: MessageType = {
+			...mockAgentMessage,
+			id: 'previous-turn',
+			actions: feedbackManager.getActionsForMessage( mockAgentMessage ),
+		};
+		const latestTurn: MessageType = {
+			...mockLongAgentMessage,
+			id: 'latest-turn',
+			actions: feedbackManager.getActionsForMessage( mockLongAgentMessage ),
+		};
+
+		return (
+			<div>
+				<Message message={ previousTurn } isLatestTurn={ false } />
+				<Message message={ mockUserMessage } />
+				<Message message={ latestTurn } />
+			</div>
+		);
+	},
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'The latest turn shows its actions inline. On an earlier turn they float in a panel below the reply while it is hovered or focused, and dock into a plain row once a thumb is pressed.',
+			},
+		},
+	},
+};

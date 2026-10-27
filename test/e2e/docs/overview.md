@@ -29,6 +29,7 @@ Running specs:
 - [Running tests on CI](./tests_ci.md)
 - [Debugging](./debugging.md)
 - [Troubleshooting](./troubleshooting.md)
+- [Google authentication session renewal](./google_authentication.md)
 
 Writing specs:
 

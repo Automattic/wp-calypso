@@ -10,7 +10,6 @@ import {
 	highImpactAudits,
 } from 'calypso/performance-profiler/utils/metrics';
 import { profilerVersion } from 'calypso/performance-profiler/utils/profiler-version';
-import { updateQueryParams } from 'calypso/performance-profiler/utils/query-params';
 import type { PerformanceMetricAudit } from '@automattic/api-core';
 import './style.scss';
 
@@ -44,11 +43,7 @@ const UnforwardedInsightsSection = (
 				filter: option.value,
 			} );
 			setSelectedFilter( option.value );
-			if ( onRecommendationsFilterChange ) {
-				onRecommendationsFilterChange( option.value );
-			} else {
-				updateQueryParams( { filter: option.value }, true );
-			}
+			onRecommendationsFilterChange?.( option.value );
 		},
 		[ onRecommendationsFilterChange ]
 	);

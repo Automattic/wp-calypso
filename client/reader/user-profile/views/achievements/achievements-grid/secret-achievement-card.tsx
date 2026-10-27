@@ -33,7 +33,7 @@ export default function SecretAchievementCard( {
 	const caption = unlockedDate
 		? translate( 'Unlocked: {{timeSince/}}', {
 				components: { timeSince: <TimeSince date={ unlockedDate } /> },
-		  } )
+			} )
 		: undefined;
 
 	return (

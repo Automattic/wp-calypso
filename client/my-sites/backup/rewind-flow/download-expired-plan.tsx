@@ -179,7 +179,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-			  )
+				)
 			: translate(
 					'We successfully retrieved a backup of your site from {{strong}}%(backupDisplayDate)s{{/strong}}.',
 					{
@@ -190,7 +190,7 @@ const BackupDownloadFlowExpiredPlan: FunctionComponent< Props > = ( {
 							strong: <strong />,
 						},
 					}
-			  );
+				);
 
 	const trackFileDownload = useTrackCallback( noop, 'calypso_jetpack_backup_file_download' );
 	const renderReady = () => (

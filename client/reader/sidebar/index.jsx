@@ -1,13 +1,12 @@
 import 'calypso/my-sites/sidebar/style.scss'; // Copy styles from the My Sites sidebar.
 import './style.scss';
-import { readSubscribedListsQuery } from '@automattic/api-queries';
+import { readSubscribedListsQuery, refetchSeenCounts } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { Icon, commentAuthorAvatar, plus, search } from '@wordpress/icons';
 import clsx from 'clsx';
-import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -63,6 +62,11 @@ const TrackingKeys = {
 		gaEvent: 'Clicked Reader Sidebar A8C Conversations',
 		tracksEvent: 'calypso_reader_sidebar_automattic_conversations_clicked',
 	},
+	conversationsInbox: {
+		action: 'clicked_reader_sidebar_conversations_inbox',
+		gaEvent: 'Clicked Reader Sidebar Conversations Inbox',
+		tracksEvent: 'calypso_reader_sidebar_conversations_inbox_clicked',
+	},
 	discover: {
 		action: 'clicked_reader_sidebar_discover',
 		gaEvent: 'Clicked Reader Sidebar Discover',
@@ -99,7 +103,7 @@ const TrackingKeys = {
  * Loads every page of the shared site-subscriptions query once for the whole sidebar.
  */
 function SyncAllSiteSubscriptions() {
-	useSiteSubscriptions( { fetchAllPages: true } );
+	useSiteSubscriptions( { fetchAllPages: true }, { refetchOnMount: refetchSeenCounts } );
 	return null;
 }
 
@@ -112,7 +116,7 @@ export class ReaderSidebar extends Component {
 	}
 
 	handleClick = ( event ) => {
-		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
+		if ( ! event.isDefaultPrevented() && event.target.closest( 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 		}
 	};
@@ -313,6 +317,20 @@ export class ReaderSidebar extends Component {
 						/>
 					) }
 
+					{ isAutomatticTeamMember( teams ) && (
+						<SidebarItem
+							className={ ReaderSidebarHelper.itemLinkClassStartsWithOneOf(
+								[ '/reader/conversations/inbox' ],
+								path,
+								{ 'sidebar-streams__conversations': true }
+							) }
+							label={ translate( 'Conversations (WIP)' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversationsInbox ) }
+							link="/reader/conversations/inbox"
+							customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
+						/>
+					) }
+
 					<li className="reader-sidebar__section-header" role="presentation">
 						<span role="heading" aria-level="3">
 							{ translate( 'Account' ) }
@@ -378,7 +396,10 @@ export class ReaderSidebar extends Component {
 
 function withSubscribedLists( WrappedComponent ) {
 	return function WithSubscribedLists( props ) {
-		const { data } = useQuery( readSubscribedListsQuery() );
+		const { data } = useQuery( {
+			...readSubscribedListsQuery(),
+			refetchOnMount: refetchSeenCounts,
+		} );
 		const collator = useSelector( getCurrentIntlCollator );
 		const subscribedLists = useMemo( () => {
 			if ( ! data?.lists ) {

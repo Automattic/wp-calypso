@@ -43,6 +43,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/wpcom-checkout#readme",
 	"dependencies": {
+		"@automattic/api-core": "workspace:^",
 		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/calypso-stripe": "workspace:^",
@@ -50,7 +51,7 @@
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.2.0",
+		"@automattic/number-formatters": "^1.2.10",
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.11.0",
 		"@fnando/cnpj": "2.0.0",
@@ -62,7 +63,7 @@
 		"@wordpress/react-i18n": "^4.48.0",
 		"debug": "^4.4.1",
 		"i18n-calypso": "workspace:^",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"prop-types": "^15.8.1"
 	},
 	"peerDependencies": {
@@ -72,11 +73,11 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/dom": "^10.4.1",
-		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^16.3.2",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	}
 }

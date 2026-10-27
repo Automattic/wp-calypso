@@ -5,7 +5,10 @@ import { check, wordpress } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import { BuildVisualization } from './build-visualization';
+import { BuildWowStreamCanvas } from './stream/build-canvas';
+import type { BuildWowStreamView } from './stream/use-build-wow-stream';
 import type { SiteGenerationState } from './use-site-generation';
+import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import type { CSSProperties } from 'react';
 
 const WordPressMark = () => <Icon className="site-generation__wordpress-mark" icon={ wordpress } />;
@@ -109,11 +112,11 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 			? translate( '%(minutes)dm %(seconds)ds', {
 					args: { minutes, seconds },
 					comment: 'Short elapsed duration. “m” means minutes and “s” means seconds.',
-			  } )
+				} )
 			: translate( '%(seconds)ds', {
 					args: { seconds },
 					comment: 'Short elapsed duration. “s” means seconds.',
-			  } );
+				} );
 	const elapsedTimeLabel = translate( 'Elapsed time: %(elapsedTime)s', {
 		args: { elapsedTime: String( elapsedTime ) },
 	} );
@@ -129,8 +132,52 @@ function ElapsedTime( { startedAt }: { startedAt: number } ) {
 	);
 }
 
-function WaitingCanvas( { onPreviewTap }: { onPreviewTap: () => void } ) {
+function WaitingCanvas( {
+	graph,
+	stream,
+	streamRequested,
+	imageBaseUrl,
+	activityLabel,
+	hostState,
+	isComplete,
+	onPreviewReady,
+	onPreviewTap,
+}: {
+	graph?: BuildWowGraph;
+	stream?: BuildWowStreamView | null;
+	streamRequested: boolean;
+	imageBaseUrl?: string;
+	activityLabel?: string;
+	hostState?: string;
+	isComplete?: boolean;
+	onPreviewReady?: ( ready: boolean ) => void;
+	onPreviewTap: () => void;
+} ) {
 	const translate = useTranslate();
+	const description =
+		graph === 'dsl'
+			? translate(
+					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
+				)
+			: translate(
+					'This usually takes a few minutes. No worries, you’ll receive an email when the site is ready.'
+				);
+
+	if ( streamRequested || stream ) {
+		return (
+			<div className="site-generation__waiting site-generation__waiting--live">
+				<BuildWowStreamCanvas
+					activityLabel={ activityLabel }
+					hostState={ hostState }
+					isComplete={ isComplete }
+					onPreviewReady={ onPreviewReady }
+					imageBaseUrl={ imageBaseUrl }
+					reassurance={ String( translate( 'You’ll receive an email when your site is ready.' ) ) }
+					stream={ stream ?? null }
+				/>
+			</div>
+		);
+	}
 
 	return (
 		<div className="site-generation__waiting">
@@ -139,11 +186,7 @@ function WaitingCanvas( { onPreviewTap }: { onPreviewTap: () => void } ) {
 				<h1 className="site-generation__waiting-title">
 					{ translate( 'All good things are worth the wait' ) }
 				</h1>
-				<p className="site-generation__waiting-description">
-					{ translate(
-						'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
-					) }
-				</p>
+				<p className="site-generation__waiting-description">{ description }</p>
 			</div>
 		</div>
 	);
@@ -154,8 +197,13 @@ function ErrorCanvas( { state, onReload }: { state: SiteGenerationState; onReloa
 	const failureReason = state.failureReason ?? 'missing-parameters';
 
 	let title = translate( 'We couldn’t check your site' );
-	let description = translate( 'The site or editor destination is missing from this page.' );
+	let description = translate( 'The site is missing from this page.' );
 	let actionLabel = translate( 'Reload' );
+
+	if ( failureReason === 'editor-unavailable' ) {
+		title = translate( 'Your site is ready, but we couldn’t open the editor' );
+		description = translate( 'Reload this page to try again.' );
+	}
 
 	if ( failureReason === 'timed-out' || failureReason === 'build-failed' ) {
 		title = translate( 'This is taking longer than expected' );
@@ -264,10 +312,20 @@ function BuildProgress( { state }: { state: SiteGenerationState } ) {
 
 export function SiteGenerationView( {
 	state,
+	graph,
+	stream,
+	streamRequested = false,
+	siteSlug,
 	onReload,
+	onPreviewReady,
 }: {
 	state: SiteGenerationState;
+	graph?: BuildWowGraph;
+	stream?: BuildWowStreamView | null;
+	streamRequested?: boolean;
+	siteSlug?: string | null;
 	onReload: () => void;
+	onPreviewReady?: ( ready: boolean ) => void;
 } ) {
 	const translate = useTranslate();
 	const shouldReduceMotion = useReducedMotion();
@@ -277,6 +335,22 @@ export function SiteGenerationView( {
 		'--site-generation-hue': hue ?? undefined,
 		'--site-generation-canvas-base': baseColor ?? undefined,
 	} as CSSProperties;
+	const activeStepLabel = state.steps.find( ( step ) => step.status === 'active' )?.label;
+	let imageBaseUrl: string | undefined;
+	if ( siteSlug && ! /[/?#@]/.test( siteSlug ) ) {
+		try {
+			const siteUrl = new URL( `https://${ siteSlug }` );
+			if ( siteUrl.hostname === siteSlug.toLowerCase() ) {
+				imageBaseUrl = siteUrl.origin;
+			}
+		} catch {
+			// The live canvas can still show image status when the site has no valid host.
+		}
+	}
+
+	const completionMessage = state.isLocalPreview
+		? translate( 'Your site is ready.' )
+		: translate( 'Your site is ready. Opening your editor…' );
 
 	return (
 		<main className="site-generation" data-generation-view={ state.status }>
@@ -311,7 +385,17 @@ export function SiteGenerationView( {
 					{ state.status === 'failed' ? (
 						<ErrorCanvas state={ state } onReload={ onReload } />
 					) : (
-						<WaitingCanvas onPreviewTap={ cycleTint } />
+						<WaitingCanvas
+							activityLabel={ activeStepLabel }
+							hostState={ state.hostState }
+							isComplete={ state.isComplete }
+							onPreviewReady={ onPreviewReady }
+							graph={ graph }
+							imageBaseUrl={ imageBaseUrl }
+							onPreviewTap={ cycleTint }
+							stream={ state.status === 'working' ? stream : null }
+							streamRequested={ streamRequested }
+						/>
 					) }
 				</div>
 			</section>
@@ -326,7 +410,11 @@ export function SiteGenerationView( {
 				</div>
 				<div className="site-generation__conversation">
 					<p className="site-generation__conversation-message">
-						{ translate( 'Hello! I’m the WordPress Agent, and I’m building your site right now.' ) }
+						{ state.isComplete
+							? completionMessage
+							: translate(
+									'Hello! I’m the WordPress Agent, and I’m building your site right now.'
+								) }
 					</p>
 					<BuildProgress state={ state } />
 				</div>

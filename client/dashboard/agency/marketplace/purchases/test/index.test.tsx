@@ -1,0 +1,335 @@
+/**
+ * @jest-environment jsdom
+ */
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
+import Snackbars from '../../../../app/snackbars';
+import { render } from '../../../../test-utils';
+import MarketplacePurchases from '../index';
+
+const API = 'https://public-api.wordpress.com';
+const AGENCY_ID = 123;
+const LICENSE_KEY = 'wpcom-hosting-business_abc';
+
+const unassignedWpcomLicense = {
+	license_id: 1,
+	license_key: LICENSE_KEY,
+	product_id: 1,
+	product: 'WordPress.com Business',
+	user_id: null,
+	username: null,
+	blog_id: null,
+	siteurl: null,
+	has_downloads: false,
+	issued_at: '2026-01-01 00:00:00',
+	attached_at: null,
+	revoked_at: null,
+	owner_type: 'jetpack_partner_key',
+	quantity: null,
+	parent_license_id: null,
+	meta: null,
+	referral: null,
+};
+
+function mockAgency() {
+	nock( API )
+		.get( '/wpcom/v2/agency' )
+		.query( true )
+		.reply( 200, [ { id: AGENCY_ID } ] )
+		.persist();
+}
+
+// The view is persisted to user preferences, which the page reads on mount.
+function mockPreferences( feedback?: Record< string, unknown > ) {
+	nock( API )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, {
+			calypso_preferences: feedback ? { 'a4a-feedback': feedback } : {},
+		} )
+		.persist();
+}
+
+function mockLicenses( items: unknown[] = [ unassignedWpcomLicense ] ) {
+	nock( API )
+		.get( '/wpcom/v2/jetpack-licensing/licenses' )
+		.query( true )
+		.reply( 200, { items, total_items: items.length, total_pages: 1 } )
+		.persist();
+}
+
+// A WordPress.com hosting license (like unassignedWpcomLicense) is only ever
+// offered "Create site", never "Assign to site", so the assign flow needs its
+// own, otherwise-assignable license.
+const ASSIGNABLE_LICENSE_KEY = 'jetpack-backup-t1_xyz';
+
+const unassignedJetpackLicense = {
+	license_id: 2,
+	license_key: ASSIGNABLE_LICENSE_KEY,
+	product_id: 2,
+	product: 'Jetpack VaultPress Backup',
+	user_id: null,
+	username: null,
+	blog_id: null,
+	siteurl: null,
+	has_downloads: true,
+	issued_at: '2026-01-01 00:00:00',
+	attached_at: null,
+	revoked_at: null,
+	owner_type: 'jetpack_partner_key',
+	quantity: null,
+	parent_license_id: null,
+	meta: null,
+	referral: null,
+};
+
+function mockAssignableLicense() {
+	nock( API )
+		.get( '/wpcom/v2/jetpack-licensing/licenses' )
+		.query( true )
+		.reply( 200, { items: [ unassignedJetpackLicense ], total_items: 1, total_pages: 1 } )
+		.persist();
+}
+
+function mockPendingSites( state: string ) {
+	nock( API )
+		.get( `/wpcom/v2/agency/${ AGENCY_ID }/sites/pending` )
+		.reply( 200, [ { id: 7, features: { wpcom_atomic: { license_key: LICENSE_KEY, state } } } ] )
+		.persist();
+}
+
+async function openRowActions() {
+	const user = userEvent.setup();
+	await user.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+	return user;
+}
+
+function mockAssignableSites() {
+	nock( API )
+		.get( '/wpcom/v2/jetpack-agency/sites' )
+		.query( true )
+		.reply( 200, { sites: [ { blog_id: 55, url: 'https://client.example.com' } ], total: 1 } )
+		.persist();
+}
+
+function mockAssign() {
+	nock( API )
+		.post( `/wpcom/v2/jetpack-licensing/license/${ ASSIGNABLE_LICENSE_KEY }/site` )
+		.reply( 200, {} );
+}
+
+async function assignLicense() {
+	const user = await openRowActions();
+	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site' } ) );
+	await user.click( await screen.findByRole( 'radio', { name: 'https://client.example.com' } ) );
+	await user.click( screen.getByRole( 'button', { name: 'Assign to selected site' } ) );
+	return user;
+}
+
+describe( '<MarketplacePurchases>', () => {
+	afterEach( () => {
+		nock.cleanAll();
+		sessionStorage.clear();
+		window.history.replaceState( {}, '', '/purchases' );
+	} );
+
+	test( 'empties the cart and drops the receipt when a checkout returns here', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+		window.history.replaceState(
+			{},
+			'',
+			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+		);
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
+	} );
+
+	test( 'empties the referral cart and leaves referral mode when a free referral cart was bought', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+		sessionStorage.setItem( 'referrals-shopping-card-selected-items', 'jetpack-stats-free:1' );
+		sessionStorage.setItem( 'marketplace-type', 'referral' );
+		window.history.replaceState( {}, '', '/purchases?cart=referral&receipt_id=123' );
+
+		render( <MarketplacePurchases /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( sessionStorage.getItem( 'referrals-shopping-card-selected-items' ) ).toBeNull();
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBe( 'regular' );
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
+
+	test( 'leaves the cart alone without a receipt', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+		sessionStorage.setItem( 'shopping-card-selected-items', 'jetpack-backup-t1:1' );
+
+		render( <MarketplacePurchases /> );
+		await screen.findByText( 'Not assigned' );
+
+		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBe(
+			'jetpack-backup-t1:1'
+		);
+	} );
+
+	test( 'reports a license whose site is being created', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'provisioning' );
+
+		render( <MarketplacePurchases /> );
+
+		expect( await screen.findByText( 'Being created…' ) ).toBeVisible();
+	} );
+
+	test( 'keeps site creation out of reach while a site is being created', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'provisioning' );
+
+		render( <MarketplacePurchases /> );
+		await screen.findByText( 'Being created…' );
+		await openRowActions();
+
+		// The action stays in the menu so the agency can see it exists; the Site
+		// column is what says why it is out of reach.
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+	} );
+
+	test( 'offers site creation when nothing is being created', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+
+		render( <MarketplacePurchases /> );
+		await screen.findByText( 'Not assigned' );
+		await openRowActions();
+
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).not.toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+	} );
+
+	test( 'names the client who owns a referred license', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses( [
+			{
+				...unassignedWpcomLicense,
+				referral: { id: 9, client: { id: 4, email: 'owner@example.com' } },
+			},
+		] );
+		mockPendingSites( 'pending' );
+
+		render( <MarketplacePurchases /> );
+
+		expect( await screen.findByText( /owns this/ ) ).toHaveTextContent(
+			'owner@example.com owns this'
+		);
+		expect( await screen.findByText( 'Referral' ) ).toBeVisible();
+	} );
+
+	test( 'says nothing about ownership for a license the agency bought', async () => {
+		mockAgency();
+		mockPreferences();
+		mockLicenses();
+		mockPendingSites( 'pending' );
+
+		render( <MarketplacePurchases /> );
+		await screen.findByText( 'Not assigned' );
+
+		expect( screen.queryByText( /owns this/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not ask a partner who already answered', async () => {
+		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
+		window.scrollTo = jest.fn();
+		mockAgency();
+		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );
+		mockAssignableLicense();
+		mockPendingSites( 'pending' );
+		mockAssignableSites();
+		mockAssign();
+
+		render(
+			<>
+				<MarketplacePurchases />
+				<Snackbars />
+			</>
+		);
+		await screen.findByText( 'Not assigned' );
+		await assignLicense();
+
+		await waitFor( () =>
+			expect(
+				screen.queryByRole( 'button', { name: 'Assign to selected site' } )
+			).not.toBeInTheDocument()
+		);
+		expect( screen.queryByText( 'Purchase complete!' ) ).not.toBeInTheDocument();
+		// The notice text also lands in the a11y live region, so this matches twice.
+		const [ notice ] = await screen.findAllByText(
+			'Jetpack VaultPress Backup has been assigned to https://client.example.com.'
+		);
+		expect( notice ).toBeVisible();
+	} );
+
+	describe( 'Manage in Pressable', () => {
+		const DAY_MS = 24 * 60 * 60 * 1000;
+
+		function mockOwnerAgency() {
+			nock( API )
+				.get( '/wpcom/v2/agency' )
+				.query( true )
+				.reply( 200, [ { id: AGENCY_ID, user: { role: 'a4a_administrator' } } ] )
+				.persist();
+		}
+
+		function pressableLicenseAttached( daysAgo: number ) {
+			// The endpoint reports UTC times without a zone: "YYYY-MM-DD HH:MM:SS".
+			const attachedAt = new Date( Date.now() - daysAgo * DAY_MS )
+				.toISOString()
+				.replace( 'T', ' ' )
+				.slice( 0, 19 );
+			return {
+				...unassignedWpcomLicense,
+				license_key: 'pressable-wp-1_abc',
+				product: 'Pressable Signature 1',
+				attached_at: attachedAt,
+			};
+		}
+
+		test( 'asks for feedback within a week of the purchase', async () => {
+			mockOwnerAgency();
+			mockPreferences();
+			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
+			mockPendingSites( 'pending' );
+
+			render( <MarketplacePurchases /> );
+			await userEvent.click( await screen.findByRole( 'link', { name: /Manage in Pressable/ } ) );
+
+			expect( await screen.findByRole( 'dialog', { name: 'Purchase complete!' } ) ).toBeVisible();
+		} );
+	} );
+} );

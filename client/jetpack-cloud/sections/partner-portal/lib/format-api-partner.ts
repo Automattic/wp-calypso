@@ -25,7 +25,7 @@ export default function formatApiPartner( partner: APIPartner ): Partner {
 						total: key.latest_invoice.total,
 						currency: key.latest_invoice.currency,
 						pdfUrl: key.latest_invoice.invoice_pdf,
-				  }
+					}
 				: null,
 		} ) ),
 	};

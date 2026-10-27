@@ -15,7 +15,7 @@ import {
 } from '@automattic/calypso-products';
 import clsx from 'clsx';
 import debugFactory from 'debug';
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
 import Banner from 'calypso/components/banner';
@@ -104,6 +104,7 @@ type OwnProps = {
 	tracksDismissProperties?: Record< string, unknown >;
 	tracksImpressionName?: string;
 	tracksImpressionProperties?: Record< string, unknown >;
+	children?: ReactNode;
 };
 
 type Props = OwnProps & ConnectedProps;
@@ -159,6 +160,7 @@ export const UpsellNudge = ( {
 	isBusy,
 	isEligibleForOneClickCheckout,
 	isOneClickCheckoutEnabled = true,
+	children,
 }: Props ) => {
 	const [ showPurchaseModal, setShowPurchaseModal ] = useState( false );
 	const shouldNotDisplay =
@@ -246,16 +248,6 @@ export const UpsellNudge = ( {
 					setShowPurchaseModal={ setShowPurchaseModal }
 				/>
 			) }
-			{ ! isEligibleForOneClickCheckout?.isLoading && (
-				<TrackComponentView
-					eventName="calypso_upsell_nudge_impression"
-					eventProperties={ {
-						is_eligible_for_one_click_checkout: !! isEligibleForOneClickCheckout?.result,
-						plan: plan,
-						event,
-					} }
-				/>
-			) }
 			<Banner
 				callToAction={ callToAction }
 				secondaryCallToAction={ secondaryCallToAction }
@@ -297,7 +289,19 @@ export const UpsellNudge = ( {
 				isBusy={
 					isBusy || ( isOneClickCheckoutEnabled && isEligibleForOneClickCheckout?.isLoading )
 				}
-			/>
+			>
+				{ ! isEligibleForOneClickCheckout?.isLoading && (
+					<TrackComponentView
+						eventName="calypso_upsell_nudge_impression"
+						eventProperties={ {
+							is_eligible_for_one_click_checkout: !! isEligibleForOneClickCheckout?.result,
+							plan: plan,
+							event,
+						} }
+					/>
+				) }
+				{ children }
+			</Banner>
 		</>
 	);
 };

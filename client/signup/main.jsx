@@ -8,7 +8,7 @@ import {
 import page from '@automattic/calypso-router';
 import { GravatarTextLogo } from '@automattic/components';
 import { isBlankCanvasDesign } from '@automattic/design-picker';
-import { camelToSnakeCase, kebabCase, omit, isEmpty } from '@automattic/js-utils';
+import { camelToSnakeCase, kebabCase, omit } from '@automattic/js-utils';
 import * as oauthToken from '@automattic/oauth-token';
 import { isDomainForGravatarFlow } from '@automattic/onboarding';
 import debugModule from 'debug';
@@ -139,7 +139,7 @@ class Signup extends Component {
 
 	// @TODO: Please update https://github.com/Automattic/wp-calypso/issues/58453 if you are refactoring away from UNSAFE_* lifecycle methods!
 	UNSAFE_componentWillMount() {
-		let providedDependencies = this.getDependenciesInQuery();
+		let providedDependencies = this.getEntryDependencies();
 
 		// Prevent duplicate sites, check pau2Xa-1Io-p2#comment-6759.
 		// Note that there are in general three ways of touching this code that can be obscured:
@@ -569,8 +569,35 @@ class Signup extends Component {
 
 		if ( flows.excludedSteps.includes( stepName ) ) {
 			this._recordStepsInOrder( { forStep: stepName } );
-			this.goToNextStep( flowName );
+			this.skipExcludedStep( nextProps );
 		}
+	};
+
+	// The excluded step is gone from `getFlow()` and `this.props` may still describe the
+	// previous step, so resolve the successor from the full step order. Replacing the history
+	// entry keeps browser Back from landing on the excluded step again.
+	skipExcludedStep = ( { flowName, isLoggedIn, stepName } ) => {
+		const allSteps = flows.getFlows()[ flowName ]?.steps ?? [];
+		const availableSteps = flows.getFlow( flowName, isLoggedIn ).steps;
+		const nextStepName = allSteps
+			.slice( allSteps.indexOf( stepName ) + 1 )
+			.find( ( step ) => availableSteps.includes( step ) );
+
+		if ( ! nextStepName || this.isEveryStepSubmitted() ) {
+			this.goToNextStep( flowName );
+			return;
+		}
+
+		const locale = ! isLoggedIn ? this.props.locale : '';
+		page.replace(
+			getStepUrl(
+				flowName,
+				nextStepName,
+				this.props.progress?.[ nextStepName ]?.stepSectionName || '',
+				locale,
+				this.getCurrentFlowSupportedQueryParams()
+			)
+		);
 	};
 
 	preloadNextStep() {
@@ -622,7 +649,7 @@ class Signup extends Component {
 			const signupDomainOriginValue =
 				isTransfer || isMapping
 					? SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
-					: signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET;
+					: ( signupDomainOrigin ?? SIGNUP_DOMAIN_ORIGIN.NOT_SET );
 
 			recordSignupComplete( {
 				flow: this.props.flowName,
@@ -703,14 +730,6 @@ class Signup extends Component {
 
 			const { bearer_token: bearerToken, username } = dependencies;
 
-			if (
-				isEmpty( bearerToken ) &&
-				isEmpty( username ) &&
-				'onboarding-registrationless' === this.props.flowName
-			) {
-				return;
-			}
-
 			if ( this.state.bearerToken !== bearerToken && this.state.username !== username ) {
 				debug( 'Performing regular login' );
 				this.setState( {
@@ -751,6 +770,17 @@ class Signup extends Component {
 		const requiredDependenciesInQuery = flow?.providesDependenciesInQuery ?? [];
 
 		return this.extractFlowDependenciesFromQuery( requiredDependenciesInQuery );
+	};
+
+	getEntryDependencies = () => {
+		const flow = flows.getFlow( this.props.flowName, this.props.isLoggedIn );
+		const clearedDependencies = flow?.clearsMissingDependenciesInQuery
+			? Object.fromEntries(
+					( flow.optionalDependenciesInQuery ?? [] ).map( ( key ) => [ key, undefined ] )
+				)
+			: {};
+
+		return { ...clearedDependencies, ...this.getDependenciesInQuery() };
 	};
 
 	getCurrentFlowSupportedQueryParams = () => {

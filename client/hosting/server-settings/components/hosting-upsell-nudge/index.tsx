@@ -51,7 +51,7 @@ export function HostingUpsellNudge( { siteId, targetPlan }: HostingUpsellNudgePr
 		? targetPlan.href
 		: addQueryArgs( `/checkout/${ siteId }/business`, {
 				redirect_to: `/hosting-features/${ siteId }`,
-		  } );
+			} );
 	const plan = targetPlan ? targetPlan.plan : PLAN_BUSINESS;
 	const title = targetPlan ? targetPlan.title : titleText;
 

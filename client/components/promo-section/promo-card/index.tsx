@@ -113,7 +113,7 @@ const PromoCard: FunctionComponent< Props > = ( {
 								return child;
 							}
 							return PromoCardCta === child.type ? cloneElement( child, { isPrimary } ) : child;
-					  } )
+						} )
 					: children }
 			</ActionPanelBody>
 		</ActionPanel>

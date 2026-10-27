@@ -54,6 +54,6 @@ export function getJetpackCriticalErrorMessage( site: Site ): string | null {
 	return isAdmin
 		? __(
 				'There has been a critical error on this website. Here is what we know and what you can do next.'
-		  )
+			)
 		: __( 'There has been a critical error on this site. A site administrator has been notified.' );
 }

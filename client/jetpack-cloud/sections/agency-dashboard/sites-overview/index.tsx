@@ -269,14 +269,14 @@ export default function SitesOverview() {
 								args: {
 									numLicenses: selectedLicensesCount,
 								},
-						  } )
+							} )
 						: translate( 'Issue %(numLicenses)d license', 'Issue %(numLicenses)d licenses', {
 								context: 'button label',
 								count: selectedLicensesCount,
 								args: {
 									numLicenses: selectedLicensesCount,
 								},
-						  } ) }
+							} ) }
 				</Button>
 			</div>
 		);

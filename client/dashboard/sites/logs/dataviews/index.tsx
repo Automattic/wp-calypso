@@ -1,7 +1,7 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
@@ -89,27 +89,9 @@ function SiteLogsDataViews( {
 		[ persistedView, startPosition ]
 	);
 
-	// We want to parse 'from' and 'to' from the URL.
-	const parseUrlSeconds = useMemo( () => {
-		const searchParams = new URLSearchParams( search );
-
-		const readSeconds = ( key: 'from' | 'to' ) => {
-			const raw = searchParams.get( key );
-			if ( ! raw ) {
-				return null;
-			}
-			const number = Number.parseInt( raw, 10 );
-			if ( ! Number.isFinite( number ) ) {
-				return null;
-			}
-			// Enforce seconds-only here. The page-level normalizer will rewrite ms→s on mount.
-			return number > 1e11 ? null : number;
-		};
-
-		const from = readSeconds( 'from' );
-		const to = readSeconds( 'to' );
-		return from != null && to != null ? { from, to } : null;
-	}, [ search ] );
+	const { from: urlFrom, to: urlTo } = useSearch( { strict: false } );
+	const parseUrlSeconds =
+		urlFrom !== undefined && urlTo !== undefined ? { from: urlFrom, to: urlTo } : null;
 
 	const computed = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -277,13 +259,14 @@ function SiteLogsDataViews( {
 			}
 		}
 
-		// Detect filters/sort/perPage changes. Normalize the filters, otherwise an
-		// unfiltered view compares `[]` against `undefined` and reports a change on
-		// every call — including each time infinite scroll advances the window.
+		// Compare what the request will actually ask for, not the view: picking a field
+		// from the filter menu adds it with no value yet, and dropping the loaded pages
+		// for that would swap the table for a spinner and close the menu being opened.
+		const nextFilter = toFilterParams( { view: { ...next, filters: sourceFilters }, logType } );
 		const datasetChanged =
 			next.perPage !== view.perPage ||
 			next.sort?.direction !== view.sort?.direction ||
-			! fastDeepEqual( sourceFilters, view.filters ?? [] );
+			! fastDeepEqual( nextFilter, filter );
 
 		const url = new URL( window.location.href );
 		// Always keep canonical time range params
@@ -369,7 +352,7 @@ function SiteLogsDataViews( {
 								wpDebugLog: <code />,
 								errorLog: <code />,
 							}
-					  )
+						)
 					: __( 'No server requests were logged for the selected time range.' )
 			}
 		/>

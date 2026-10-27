@@ -1,6 +1,7 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { Step, StepContainer } from '@automattic/onboarding';
+import { localizeUrl } from '@automattic/i18n-utils';
+import { ONBOARDING_FLOW, Step, StepContainer } from '@automattic/onboarding';
 import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -23,6 +24,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
+import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
@@ -51,6 +53,7 @@ import { useSocialService } from './use-social-service';
 import { useUpdateEmail } from './use-update-email';
 import type { SignupAllowedService } from 'calypso/components/social-buttons/utils';
 
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 // Social providers shown on the mobile treatment per the design. Also keeps the
@@ -62,9 +65,8 @@ export type UserStepAccepts = {
 	headerText?: string;
 	subHeaderText?: string;
 	/**
-	 * Hides the top-level "Log in" link (V2 top bar / V1 footer). The email-first
-	 * account-step variant keeps its own in-form "Have an account? Log in" link.
-	 * Existing users can still sign in via the social / email buttons either way.
+	 * Drops the step's own "Log in" link, wherever the layout puts it. The email-first
+	 * account-step variant keeps its in-form link regardless.
 	 */
 	hideLoginLink?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
@@ -110,7 +112,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	// knows who it is yet, and Redux still reports nobody logged in.
 	const isWaitingForCreatedAccount = !! wpAccountCreateResponse && gateStatus === 'pending';
 	const { socialServiceResponse } = useSocialService();
-	const { topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
+	const { hasCustomBranding, topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
 	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
@@ -121,6 +123,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
 		useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
+	// The experiment runs on onboarding only. Woo referrers are left out: their email-first layout
+	// already has the in-form link and no email button, so the treatment would not change it.
+	const isEntryClarityTreatment = useEntryClarityExperiment(
+		flow === ONBOARDING_FLOW && ! isWooReferrer
+	);
 
 	// Load the new account's token and refresh the current user. Depends only on the
 	// account-create response, so gate/navigation state changes don't repeat it.
@@ -172,6 +179,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	const locale = useFlowLocale();
+	const shouldLinkLogo = flow === ONBOARDING_FLOW && ! hasCustomBranding && ! isEditingEmail;
 
 	const loginLink = login( {
 		signupUrl,
@@ -179,6 +187,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		locale,
 		from: partnerConfig?.id ?? queryArgs.get( 'from' ) ?? undefined,
 	} );
+
+	// `origin` says which placement was clicked; `flow` tells V1 and V2 apart.
+	const recordLoginLinkClick = ( origin: 'top-bar' | 'form' ) =>
+		recordTracksEvent( 'calypso_signup_login_link_click', { flow, step: stepName, origin } );
 
 	const returnToGate = () => setEditing( null );
 
@@ -279,6 +291,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
 
+	// The email-edit screen has no second account to offer.
+	const showsInFormLoginLink = isEntryClarityTreatment && ! isEditingEmail && ! hideLoginLink;
+
 	const emailLabelText = isStepContainerV2 ? translate( 'Enter your email' ) : undefined;
 	// Partner branding always wins: isMobileCompactLayout is already false whenever
 	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
@@ -305,6 +320,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				goToNextStep={ setWpAccountCreateResponse }
 				passDataToNextStep
 				logInUrl={ loginLink }
+				onLogInClick={ () => recordLoginLinkClick( 'form' ) }
 				handleSocialResponse={ handleSocialResponse }
 				socialServiceResponse={ socialServiceResponse }
 				redirectToAfterLoginUrl={ window.location.href }
@@ -318,6 +334,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailFirstVariant={ isEmailFirstVariant }
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
+				showLoginLink={ showsInFormLoginLink }
+				showEnvelopeIcon={ isEntryClarityTreatment }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 				activationEmailFrom={ emailVerificationEnabled ? ACTIVATION_EMAIL_SOURCE : undefined }
@@ -377,28 +395,29 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			// The locale suggestions are going to be reworked. Don't worry about it now.
 			<>
 				{ localeSuggestions }
-				<Step.Heading
-					text={ headingText }
-					subText={ headingSubText }
-					align={ isEmailFirstVariant ? 'left' : undefined }
-				/>
+				<Step.Heading text={ headingText } subText={ headingSubText } />
 			</>
 		);
-
-		// Leaving the flow would walk past a gate the user is still owed, and Continue is already
-		// the way back from the account screen.
-		const backButton =
-			navigation.goBack && ! isEditingEmail ? (
-				<Step.BackButton onClick={ navigation.goBack } />
-			) : undefined;
 
 		const topBar = (
 			<Step.TopBar
 				logo={ topBarLogo }
-				leftElement={ backButton }
+				logoHref={ shouldLinkLogo ? localizeUrl( 'https://wordpress.com/', locale ) : undefined }
+				onLogoClick={
+					shouldLinkLogo
+						? () => recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+						: undefined
+				}
 				rightElement={
-					hideLoginLink || isEmailFirstVariant || isEditingEmail ? null : (
-						<Step.LinkButton href={ loginLink }>{ translate( 'Log in' ) }</Step.LinkButton>
+					hideLoginLink || isEmailFirstVariant || isEditingEmail || showsInFormLoginLink ? null : (
+						<nav className="account-template__top-bar-links">
+							<Step.LinkButton
+								href={ loginLink }
+								onClick={ () => recordLoginLinkClick( 'top-bar' ) }
+							>
+								{ translate( 'Log in' ) }
+							</Step.LinkButton>
+						</nav>
 					)
 				}
 			/>
@@ -418,7 +437,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						verticalAlign="center"
 						headingColumnWidth={ 4 }
 						columnWidth={ 4 }
-						heading={ heading }
+						heading={ <div className="account-template">{ heading }</div> }
 						topBar={ topBar }
 						noGap
 					>
@@ -433,13 +452,16 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--user', {
 					'step-container-v2--user-mobile': isMobileCompactLayout,
+					'step-container-v2--user-entry-clarity': isEntryClarityTreatment,
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }
-				heading={ heading }
 				topBar={ topBar }
 			>
-				{ stepContent }
+				<div className="account-template">
+					{ heading }
+					{ stepContent }
+				</div>
 			</Step.CenteredColumnLayout>
 		);
 	}
@@ -472,6 +494,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						<Button
 							className="step-wrapper__navigation-link forward"
 							href={ loginLink }
+							onClick={ () => recordLoginLinkClick( 'top-bar' ) }
 							variant="link"
 						>
 							<span>{ translate( 'Log in' ) }</span>

@@ -17,12 +17,10 @@ import {
 	IMPORTS_UPLOAD_START,
 } from 'calypso/state/action-types';
 import { fromApi, toApi } from './api';
-import { appStates } from './constants';
+import { appStates, ID_GENERATOR_PREFIX } from './constants';
 import { isImporterLocked } from './selectors';
 
 import 'calypso/state/imports/init';
-
-const ID_GENERATOR_PREFIX = 'local-generated-id-';
 
 /*
  * The following `order` functions prepare objects that can be
@@ -70,6 +68,9 @@ export const uploadExportFile = ( siteId, params ) =>
 
 		if ( params.url ) {
 			formData.push( [ 'url', params.url ] );
+		}
+		if ( params.autoStart ) {
+			formData.push( [ 'autoStart', '1' ] );
 		}
 
 		const req = wp.req.post(

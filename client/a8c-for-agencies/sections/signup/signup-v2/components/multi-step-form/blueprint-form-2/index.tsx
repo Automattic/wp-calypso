@@ -15,7 +15,7 @@ import useBlueprintForm2Validation from './hooks/use-blueprint-form-2-validation
 type Props = {
 	onContinue: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 	initialFormData: Partial< AgencyDetailsSignupPayload >;
-	goBack: () => void;
+	goBack: ( data: Partial< AgencyDetailsSignupPayload > ) => void;
 };
 
 const BlueprintFormRadio = ( {
@@ -145,7 +145,7 @@ const BlueprintForm2: React.FC< Props > = ( { onContinue, initialFormData, goBac
 				<Button
 					className="signup-multi-step-form__back-button"
 					variant="tertiary"
-					onClick={ goBack }
+					onClick={ () => goBack( formData ) }
 					icon={ arrowLeft }
 					iconSize={ 18 }
 				>

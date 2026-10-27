@@ -1,10 +1,6 @@
-import { DomainProductSlugs, DotcomFeatures } from '@automattic/api-core';
-import {
-	OnboardActions,
-	OnboardSelect,
-	updateLaunchpadSettings,
-	useLaunchpad,
-} from '@automattic/data-stores';
+import { DotcomFeatures } from '@automattic/api-core';
+import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
+import { updateLaunchpadSettings, useLaunchpad } from '@automattic/launchpad';
 import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
@@ -18,6 +14,7 @@ import { useQuery } from '../../../hooks/use-query';
 import { useSite } from '../../../hooks/use-site';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
+import { getSingleMappingDomain } from '../../../utils/get-single-mapping-domain';
 import { STEPS } from '../../internals/steps';
 import { AssertConditionState, ProvidedDependencies } from '../../internals/types';
 import type { Flow } from '../../internals/types';
@@ -41,25 +38,6 @@ function isSafeDomainConnectionSetupUrl( value: string ) {
 	} catch {
 		return false;
 	}
-}
-
-/**
- * The name of the domain being connected, when the cart holds exactly that and
- * nothing else. Shared by the direct-connect branch and the post-checkout
- * destination so the two paths cannot drift apart.
- */
-function getSingleMappingDomain( domainCartItems: MinimalRequestCartProduct[] ) {
-	if ( domainCartItems.length !== 1 ) {
-		return null;
-	}
-
-	const [ domainCartItem ] = domainCartItems;
-
-	if ( domainCartItem.product_slug !== DomainProductSlugs.DOMAIN_MAPPING ) {
-		return null;
-	}
-
-	return domainCartItem.meta ?? null;
 }
 
 const domainUpsell: Flow = {
@@ -229,8 +207,7 @@ const domainUpsell: Flow = {
 					}
 
 					const domainCartItem = providedDependencies.domainCartItem as
-						| MinimalRequestCartProduct
-						| undefined;
+						MinimalRequestCartProduct | undefined;
 
 					if ( ! domainCartItem ) {
 						return navigate( STEPS.PLANS.slug );

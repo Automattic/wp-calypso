@@ -1,6 +1,6 @@
 {
 	"name": "WordPressDesktop",
-	"version": "8.2.3",
+	"version": "8.2.4",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/Automattic/wp-calypso/",
@@ -28,26 +28,25 @@
 		"build:app": "yarn electron-builder ${ELECTRON_BUILDER_ARGS:-} build --publish never",
 		"build:main": "yarn run build:config && webpack --stats-preset errors-only",
 		"build:config": "node bin/build-desktop-config.js",
-		"build:secrets": "node bin/build-desktop-secrets.js",
 		"test:e2e": "jest -c test/e2e/config/jest.config.js",
 		"test:unit": "jest -c test/unit/jest.config.js"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
-		"@automattic/calypso-eslint-overrides": "workspace:^",
-		"@electron/notarize": "^2.4.0",
+		"@automattic/calypso-eslint-config": "workspace:^",
+		"@electron/notarize": "^2.5.0",
 		"@electron/rebuild": "4.0.4",
 		"@playwright/browser-chromium": "1.57.0",
-		"copy-webpack-plugin": "^10.2.4",
-		"electron": "39.8.10",
+		"copy-webpack-plugin": "^14.0.0",
+		"electron": "42.11.16",
 		"electron-builder": "26.15.0",
-		"jest": "^29.7.0",
+		"jest": "^30.5.2",
 		"playwright": "1.57.0",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"webpack": "^5.99.8",
-		"webpack-cli": "^4.10.0"
+		"webpack": "^5.111.1",
+		"webpack-cli": "^7.2.3"
 	},
 	"dependencies": {
 		"archiver": "^3.1.1",
@@ -55,7 +54,7 @@
 		"electron-fetch": "^1.7.4",
 		"electron-store": "^8.1.0",
 		"electron-updater": "6.8.9",
-		"js-yaml": "5.2.2",
+		"js-yaml": "5.4.1",
 		"semver": "^7.7.2",
 		"superagent": "^3.8.3",
 		"winston": "^3.3.3",

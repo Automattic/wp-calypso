@@ -96,10 +96,9 @@ export function useSiteLaunch(
 			} );
 		}
 
-		return addQueryArgs( wpcomLink( '/start/launch-site' ), {
+		return addQueryArgs( wpcomLink( '/setup/launch-site' ), {
 			siteSlug: site.slug,
 			new: site.name,
-			hide_initial_query: 'yes',
 			back_to: backTo
 				? dashboardLinkWithBackport( backTo )
 				: redirectToDashboardLink( { supportBackport: true } ),

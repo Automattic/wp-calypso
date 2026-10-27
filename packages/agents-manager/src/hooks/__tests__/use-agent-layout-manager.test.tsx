@@ -29,6 +29,8 @@ const EDITOR_BODY_CLASSES = [ 'post-php', 'post-new-php', 'site-editor-php' ] as
 type Options = NonNullable< Parameters< typeof useAgentLayoutManager >[ 0 ] >;
 
 let container: HTMLElement;
+// The package stylesheet is not loaded in jsdom, so the hook reports it missing.
+let consoleError: jest.SpyInstance;
 
 // Render the hook against the shared `container`. Defaults to a docked-open
 // sidebar (the common case); pass overrides here or to the returned `rerender`.
@@ -61,10 +63,12 @@ beforeEach( () => {
 	mockIsDesktop = true;
 	container = document.createElement( 'div' );
 	document.body.appendChild( container );
+	consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 } );
 
 afterEach( () => {
 	container.remove();
+	consoleError.mockRestore();
 } );
 
 describe( 'useAgentLayoutManager — docking gate', () => {
@@ -213,6 +217,42 @@ describe( 'useAgentLayoutManager — split-screen class', () => {
 
 		act( () => unmount() );
 		expect( container.classList.contains( SPLIT_SCREEN_CLASS ) ).toBe( false );
+	} );
+} );
+
+describe( 'useAgentLayoutManager — portal node', () => {
+	it( 'returns the node the chat renders into, without firing the lifecycle callbacks', () => {
+		const onDock = jest.fn();
+		const onUndock = jest.fn();
+
+		const { result } = render( { onDock, onUndock } );
+
+		expect( result.current.portalNode?.parentElement ).toBe( container );
+
+		expect( onDock ).not.toHaveBeenCalled();
+		expect( onUndock ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'useAgentLayoutManager — stylesheet gate', () => {
+	it( 'creates the portal node hidden, and reports the stylesheet missing when nothing reveals it', () => {
+		const { result } = render();
+
+		expect( result.current.portalNode?.style.display ).toBe( 'none' );
+		expect( consoleError ).toHaveBeenCalledWith(
+			expect.stringContaining( '[AgentsManager] The Agents Manager stylesheet is not applied' )
+		);
+	} );
+
+	it( 'reports nothing when the stylesheet reveals the node', () => {
+		const getComputedStyle = jest
+			.spyOn( window, 'getComputedStyle' )
+			.mockReturnValue( { display: 'block' } as CSSStyleDeclaration );
+
+		render();
+
+		expect( consoleError ).not.toHaveBeenCalled();
+		getComputedStyle.mockRestore();
 	} );
 } );
 

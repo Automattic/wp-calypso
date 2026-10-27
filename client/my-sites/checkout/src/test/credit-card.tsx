@@ -13,7 +13,6 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { RegistryProvider, createRegistry, useDispatch, useRegistry } from '@wordpress/data';
 import { useState } from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import GlobalNotices from 'calypso/components/global-notices';
@@ -43,25 +42,25 @@ jest.mock( '@stripe/react-stripe-js', () => {
 	return { ...stripe, useElements: mockUseElements };
 } );
 
-function TestWrapper( { paymentProcessors = undefined } ) {
+function TestWrapper( { paymentProcessors = undefined, additionalMethodArgs = undefined } ) {
 	const [ store ] = useState( () => createTestReduxStore() );
 	const [ queryClient ] = useState( () => new QueryClient() );
-	const [ testRegistry ] = useState( () => createRegistry( {} ) );
 
 	return (
-		<RegistryProvider value={ testRegistry }>
-			<ReduxProvider store={ store }>
-				<QueryClientProvider client={ queryClient }>
-					<TestWrapperInner paymentProcessors={ paymentProcessors } />
-				</QueryClientProvider>
-			</ReduxProvider>
-		</RegistryProvider>
+		<ReduxProvider store={ store }>
+			<QueryClientProvider client={ queryClient }>
+				<TestWrapperInner
+					paymentProcessors={ paymentProcessors }
+					additionalMethodArgs={ additionalMethodArgs }
+				/>
+			</QueryClientProvider>
+		</ReduxProvider>
 	);
 }
 
-function TestWrapperInner( { paymentProcessors = undefined } ) {
+function TestWrapperInner( { paymentProcessors = undefined, additionalMethodArgs = undefined } ) {
 	const creditCardStore = useCreateCreditCardStore();
-	const paymentMethod = useCreateCreditCardMethod( creditCardStore );
+	const paymentMethod = useCreateCreditCardMethod( creditCardStore, additionalMethodArgs );
 	return (
 		<>
 			<GlobalNotices />
@@ -72,7 +71,7 @@ function TestWrapperInner( { paymentProcessors = undefined } ) {
 					paymentProcessors={ paymentProcessors ?? {} }
 				>
 					<CheckoutStepGroup>
-						<CompleteCreditCardFields />
+						<CompleteCreditCardFields store={ creditCardStore } />
 						<PaymentMethodStep />
 						<CheckoutFormSubmit />
 					</CheckoutStepGroup>
@@ -87,7 +86,7 @@ const cardNumber = '4242424242424242';
 const cardExpiry = '05/99';
 const cardCvv = '123';
 const activePayButtonText = 'Complete Checkout';
-function useCreateCreditCardMethod( store: CardStoreType, additionalArgs = {} ) {
+function useCreateCreditCardMethod( store: CardStoreType, additionalArgs = undefined ) {
 	const [ method ] = useState( () =>
 		createCreditCardMethod( {
 			store,
@@ -99,20 +98,16 @@ function useCreateCreditCardMethod( store: CardStoreType, additionalArgs = {} ) 
 }
 
 function useCreateCreditCardStore() {
-	// NOTE: the return type of useRegistry is `Function` which is incorrect
-	// and causes a type error here, but it does actually return a registry.
-	const registry = useRegistry();
-	const [ store ] = useState( () => createCreditCardPaymentMethodStore( { registry } ) );
+	const [ store ] = useState( () => createCreditCardPaymentMethodStore( {} ) );
 	return store;
 }
 
-function CompleteCreditCardFields() {
-	const { setCardDataComplete } = useDispatch( 'wpcom-credit-card' );
+function CompleteCreditCardFields( { store }: { store: CardStoreType } ) {
 	const completeFields = () => {
 		// Stripe fields will not actually operate in this test so we have to pretend they are complete.
-		setCardDataComplete( 'cardNumber', true );
-		setCardDataComplete( 'cardExpiry', true );
-		setCardDataComplete( 'cardCvc', true );
+		store.setCardDataComplete( 'cardNumber', true );
+		store.setCardDataComplete( 'cardExpiry', true );
+		store.setCardDataComplete( 'cardCvc', true );
 	};
 	return <button onClick={ completeFields }>Mark credit fields as complete</button>;
 }
@@ -178,16 +173,60 @@ describe( 'Credit card payment method', () => {
 
 		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
 
-		// Partially fill the form, leaving security code field empty
+		// Fill in the cardholder name only. Typing into the Stripe elements does
+		// not mark them complete here (they never really run in this test, so
+		// only CompleteCreditCardFields can flip that), so all three stay empty.
 		await user.type( screen.getAllByLabelText( /Cardholder name/i )[ 1 ], customerName );
-		await user.type( screen.getByLabelText( /Card number/i ), cardNumber );
-		await user.type( screen.getByLabelText( /Expiry date/i ), cardExpiry );
 
 		// Try to submit the form
 		await user.click( await screen.findByText( activePayButtonText ) );
 
-		// Verify the error message overlay appears
-		const element = await screen.findByText( /Something seems to be missing/i );
+		// Verify the error message overlay appears and names every empty field,
+		// in the order the fields appear in the form. The store reports them in
+		// a different order (cardNumber, cardCvc, cardExpiry), so this also
+		// covers the reordering.
+		const element = await screen.findByText(
+			'Please fill out the required fields: Card number, Expiry date, and Security code'
+		);
 		expect( element ).not.toBeFalsy();
+	} );
+
+	it( 'names the cardholder name in the error message when only that field is empty', async () => {
+		const user = userEvent.setup();
+		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		render( <TestWrapper paymentProcessors={ { card: processorFunction } }></TestWrapper> );
+
+		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
+
+		// Complete the card fields but leave the cardholder name empty.
+		await user.click( await screen.findByText( 'Mark credit fields as complete' ) );
+		await user.click( await screen.findByText( activePayButtonText ) );
+
+		const element = await screen.findByText(
+			'Please fill out the required fields: Cardholder name'
+		);
+		expect( element ).not.toBeFalsy();
+		expect( processorFunction ).not.toHaveBeenCalled();
+	} );
+
+	it( 'names the missing billing fields when using Ebanx', async () => {
+		const user = userEvent.setup();
+		const processorFunction = jest.fn( () => Promise.resolve( makeSuccessResponse( {} ) ) );
+		render(
+			<TestWrapper
+				paymentProcessors={ { card: processorFunction } }
+				additionalMethodArgs={ { shouldUseEbanx: true } }
+			/>
+		);
+
+		await waitFor( () => expect( screen.getByText( activePayButtonText ) ).not.toBeDisabled() );
+		await user.click( await screen.findByText( activePayButtonText ) );
+
+		// Every billing field is empty, so all of them are named, in form order.
+		const element = await screen.findByText(
+			'Please fill out the required fields: Cardholder name, Taxpayer Identification Number, Phone, Address, Street Number, City, State, and Postal Code'
+		);
+		expect( element ).not.toBeFalsy();
+		expect( processorFunction ).not.toHaveBeenCalled();
 	} );
 } );

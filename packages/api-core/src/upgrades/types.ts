@@ -56,15 +56,6 @@ export interface PriceTierEntry {
 	flat_fee?: number | null;
 }
 
-export interface PurchasePriceTier {
-	minimumUnits: number;
-	maximumUnits?: null | number;
-	minimumPrice: number;
-	maximumPrice: number;
-	minimumPriceDisplay: string;
-	maximumPriceDisplay?: string | null;
-}
-
 /**
  * A subscription or one-time purchase.
  *
@@ -238,6 +229,12 @@ export interface Purchase {
 	 * be an empty string.
 	 */
 	included_domain: string;
+
+	/**
+	 * If this subscription is for a plan with a bundled domain, the ID of that
+	 * domain's subscription. Otherwise null.
+	 */
+	included_domain_purchase_id: number | null;
 
 	included_domain_purchase_amount: number;
 	introductory_offer: RawPurchaseIntroductoryOffer | null;
@@ -666,6 +663,29 @@ export interface Purchase {
 	 * renewal, or null when no delayed downgrade is scheduled.
 	 */
 	delayed_downgrade_to_product_slug: string | null;
+
+	/**
+	 * What the next renewal will charge once the scheduled delayed downgrade
+	 * takes effect, in the smallest unit of `currency_code` and excluding
+	 * taxes. This is priced from the billing plan pinned when the downgrade was
+	 * scheduled, so it matches the pre-renewal email and the eventual charge
+	 * rather than `price_integer`, which is the current plan's renewal price.
+	 *
+	 * Null when no delayed downgrade is scheduled or the target price cannot
+	 * be resolved; undefined from backends that predate the field.
+	 */
+	delayed_downgrade_price_integer?: number | null;
+
+	/**
+	 * The billing period, in days, of the plan the scheduled delayed downgrade
+	 * moves to (see `bill_period_days`). A value shorter than
+	 * `bill_period_days` means the change also shortens the term, e.g. from
+	 * yearly to monthly.
+	 *
+	 * Null when no delayed downgrade is scheduled; undefined from backends that
+	 * predate the field.
+	 */
+	delayed_downgrade_bill_period_days?: SubscriptionBillPeriodValue | null;
 }
 
 export type RawPurchase = Purchase & {
@@ -760,4 +780,10 @@ export interface UpgradesCancelFeaturesResponse {
 	 * Array of features that would be lost if this subscription is cancelled
 	 */
 	features: CancellationFeature[];
+
+	/**
+	 * When `target_product_slug` is passed, whether the change moves from an
+	 * annual-or-longer term to a monthly one. Always false without a target.
+	 */
+	is_change_to_monthly?: boolean;
 }

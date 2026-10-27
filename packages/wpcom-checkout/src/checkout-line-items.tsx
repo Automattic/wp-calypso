@@ -31,6 +31,7 @@ import { formatCurrency } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
+import { A4ATitanInboxMeta, isA4ATitanInboxProduct } from './a4a-titan-inbox';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { type CartBundleLineItem } from './group-bundle-line-items';
 import {
@@ -78,6 +79,8 @@ export const NonProductLineItem = styled( WPNonProductLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+		white-space: nowrap;
+		flex-shrink: 0;
 	}
 `;
 
@@ -97,6 +100,8 @@ export const LineItem = styled( CheckoutLineItem )< {
 
 	.checkout-line-item__price {
 		position: relative;
+		white-space: nowrap;
+		flex-shrink: 0;
 
 		${ ( { shouldShowComparison } ) =>
 			shouldShowComparison &&
@@ -194,6 +199,7 @@ const LineItemPriceWrapper = styled.span`
 	gap: 4px;
 	margin-left: 12px;
 	font-size: inherit;
+	white-space: nowrap;
 
 	.rtl & {
 		margin-right: 12px;
@@ -772,7 +778,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your plan will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your plan will be removed from the cart and your site will continue to run with its current plan.'
-						  )
+							)
 				),
 			};
 		case 'domain':
@@ -828,7 +834,7 @@ function returnModalCopy(
 						? translate( 'When you press Continue, your product will be removed from the cart.' )
 						: translate(
 								'When you press Continue, your product will be removed from the cart and your site will continue to run without it.'
-						  )
+							)
 				),
 			};
 	}
@@ -1120,7 +1126,7 @@ export function LineItemSublabelAndPrice( {
 						{ isRenewalPricingExperiment
 							? translate( 'Auto-renews at %(price)s/month. Billed every month.', {
 									args: { price: actualMonthlyPrice },
-							  } )
+								} )
 							: translate( 'Billed every month' ) }
 					</LineItemSublabelTitle>
 					{ showCrossedOutPrice && (
@@ -1522,7 +1528,12 @@ function IntroductoryOfferCallout( {
 	);
 
 	const planSlug = product.product_slug;
-	if ( isRenewalPricingExperiment && isWpComPlan( planSlug ) ) {
+	// Titan inbox line items show only the domain and inbox count; the totals
+	// and terms of service carry the trial and renewal terms.
+	if (
+		( isRenewalPricingExperiment && isWpComPlan( planSlug ) ) ||
+		isA4ATitanInboxProduct( product )
+	) {
 		return null;
 	}
 
@@ -1607,7 +1618,7 @@ function GSuiteDiscountCallout( { product }: { product: ResponseCartProduct } ) 
 
 	if (
 		isGSuiteOrGoogleWorkspaceProductSlug( product.product_slug ) &&
-		product.item_original_subtotal_integer < product.item_original_subtotal_integer &&
+		product.item_subtotal_integer < product.item_original_subtotal_integer &&
 		product.is_sale_coupon_applied
 	) {
 		return <DiscountCallout>{ translate( 'Discount for first year' ) }</DiscountCallout>;
@@ -1825,7 +1836,7 @@ function CheckoutLineItem( {
 			? formatCurrency( compareToPrice, product.currency, {
 					isSmallestUnit: true,
 					stripZeros: true,
-			  } )
+				} )
 			: undefined;
 
 	// For products with stacked cost overrides (e.g. premium domains with a
@@ -1840,7 +1851,7 @@ function CheckoutLineItem( {
 		? formatCurrency( priceBeforeDiscountsInteger, product.currency, {
 				isSmallestUnit: true,
 				stripZeros: true,
-		  } )
+			} )
 		: undefined;
 
 	const isEmail =
@@ -2010,6 +2021,8 @@ function CheckoutLineItem( {
 			{ isJetpackSearch( product ) && <JetpackSearchMeta product={ product } /> }
 
 			{ isEmail && <EmailMeta product={ product } isRenewal={ isRenewal } /> }
+
+			{ isA4ATitanInboxProduct( product ) && <A4ATitanInboxMeta product={ product } /> }
 
 			{ children }
 

@@ -1,5 +1,7 @@
 import { Page, ElementHandle } from 'playwright';
 
+const TYPE_TIMEOUT_PER_CHAR_MS = 250;
+
 /**
  * Represents the Paragraph block.
  */
@@ -25,7 +27,9 @@ export class ParagraphBlock {
 	 */
 	async enterParagraph( text: string, { type }: { type?: boolean } = {} ): Promise< void > {
 		if ( type ) {
-			await this.block.type( text );
+			// Each keystroke re-renders the editor; under CI load a 100-char string can
+			// take over the 10s action timeout, so budget the timeout per character.
+			await this.block.type( text, { timeout: text.length * TYPE_TIMEOUT_PER_CHAR_MS } );
 		} else {
 			await this.block.fill( text );
 		}

@@ -1,8 +1,10 @@
+import { userPurchasesQuery } from '@automattic/api-queries';
 import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { getContextResults } from '@automattic/data-stores';
 import { useHelpSearchQuery } from '@automattic/help-center';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { useQuery } from '@tanstack/react-query';
 import { speak } from '@wordpress/a11y';
 import { debounce } from '@wordpress/compose';
 import { useDispatch as useDataStoreDispatch } from '@wordpress/data';
@@ -11,10 +13,9 @@ import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Fragment, useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import QueryUserPurchases from 'calypso/components/data/query-user-purchases';
+import { hasCancelablePurchases } from 'calypso/dashboard/utils/purchase';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import hasCancelableUserPurchases from 'calypso/state/selectors/has-cancelable-user-purchases';
 import { useSiteOption } from 'calypso/state/sites/hooks';
 import { getSectionName } from 'calypso/state/ui/selectors';
 import {
@@ -59,7 +60,10 @@ function HelpSearchResults( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 
-	const hasPurchases = useSelector( hasCancelableUserPurchases );
+	const { data: hasPurchases = false } = useQuery( {
+		...userPurchasesQuery(),
+		select: hasCancelablePurchases,
+	} );
 	const sectionName = useSelector( getSectionName );
 	const isPurchasesSection = [ 'purchases', 'site-purchases' ].includes( sectionName );
 	const siteIntent = useSiteOption( 'site_intent' );
@@ -245,12 +249,7 @@ function HelpSearchResults( {
 		);
 	};
 
-	return (
-		<>
-			<QueryUserPurchases />
-			{ renderSearchResults() }
-		</>
-	);
+	return renderSearchResults();
 }
 
 HelpSearchResults.propTypes = {

@@ -2,17 +2,23 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
+import { takeActionOrigin } from '../../utils/action-origin';
+import { getExternalContextEntries } from '../../utils/external-context';
 import { clearSiteEditorActions, getSiteEditorActions } from '../../utils/site-editor-context';
-import { recordBigSkyTracksEvent } from '../../utils/tracks';
+import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../../utils/tracks';
 import { useRegisterCustomActions, useSetupCustomActions } from '../custom-actions';
 
 jest.mock( '../../utils/tracks', () => ( {
 	BIG_SKY_EVENT_PREFIX: jest.requireActual( '../../utils/tracks' ).BIG_SKY_EVENT_PREFIX,
+	recordAgentsManagerTracksEvent: jest.fn(),
 	recordBigSkyTracksEvent: jest.fn(),
 } ) );
 
 const mockRecordBigSkyTracksEvent = recordBigSkyTracksEvent as jest.MockedFunction<
 	typeof recordBigSkyTracksEvent
+>;
+const mockRecordAgentsManagerTracksEvent = recordAgentsManagerTracksEvent as jest.MockedFunction<
+	typeof recordAgentsManagerTracksEvent
 >;
 
 const mockSetIsOpen = jest.fn();
@@ -28,6 +34,7 @@ let mockSelectState: {
 	isOpen: boolean;
 	isDocked: boolean;
 	isMinimized?: boolean;
+	isChatVisible?: boolean;
 	floatingPosition: string;
 } = {
 	hasLoaded: true,
@@ -35,7 +42,6 @@ let mockSelectState: {
 	isDocked: false,
 	floatingPosition: '',
 };
-let mockLocation = { pathname: '/chat' };
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( () => mockSelectState ),
@@ -48,7 +54,6 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: jest.fn( () => jest.fn() ),
-	useLocation: jest.fn( () => mockLocation ),
 } ) );
 
 jest.mock( '../../contexts', () => ( {
@@ -73,15 +78,18 @@ const baseProps = {
 describe( 'useSetupCustomActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		delete window.__agentsManagerConfig;
 		delete window.__agentsManagerActions;
 		clearSiteEditorActions();
+		takeActionOrigin( 'open' );
+		takeActionOrigin( 'close' );
+		takeActionOrigin( 'send' );
 		mockContext = {
 			getTabSessionId: jest.fn( () => 'session-123' ),
 			resumeChat: jest.fn(),
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
-		mockLocation = { pathname: '/chat' };
 	} );
 
 	it( 'sets `isReady` on the global after mount', () => {
@@ -159,6 +167,27 @@ describe( 'useSetupCustomActions', () => {
 		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'reports a non-dismissible chat as open even with a closed saved preference', async () => {
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+		renderHook( () => useSetupCustomActions( baseProps ) );
+		expect( ( await window.__agentsManagerActions?.getChatState() )?.isOpen ).toBe( true );
+		expect( window.__agentsManagerActions?.isChatVisible() ).toBe( true );
+		delete window.__agentsManagerConfig;
+	} );
+
+	it.each( [ true, false ] )(
+		'ignores host close requests when not dismissible (docked: %s)',
+		( isDocked ) => {
+			window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+			mockSelectState = { hasLoaded: true, isOpen: true, isDocked, floatingPosition: '' };
+			renderHook( () => useSetupCustomActions( { ...baseProps, canDock: isDocked } ) );
+			window.__agentsManagerActions?.setChatOpen( false );
+			expect( mockSetIsOpen ).not.toHaveBeenCalled();
+			expect( baseProps.closeSidebar ).not.toHaveBeenCalled();
+			delete window.__agentsManagerConfig;
+		}
+	);
+
 	it( 'opens Reader Chat without persisting shared Agents Manager state', () => {
 		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
 
@@ -180,6 +209,65 @@ describe( 'useSetupCustomActions', () => {
 		expect( mockSetIsOpen ).toHaveBeenCalledWith( true, true );
 	} );
 
+	it( 'marks an open asked for through the bridge as host-triggered', () => {
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( takeActionOrigin( 'open' ) ).toBe( 'host' );
+	} );
+
+	it( 'does not mark an open that changes nothing', () => {
+		mockSelectState = { ...mockSelectState, isOpen: true };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( true );
+
+		expect( takeActionOrigin( 'open' ) ).toBe( 'user' );
+	} );
+
+	it( 'records a context hand-off from a host', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( {
+			id: 'woocommerce-ai/intelligence',
+			type: 'intelligence-tool',
+			source: 'WooCommerce AI',
+			delivery: 'conversation',
+		} );
+
+		expect( getExternalContextEntries().map( ( entry ) => entry.id ) ).toEqual( [
+			'woocommerce-ai/intelligence',
+		] );
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_context_published',
+			{ source: 'woocommerce_ai', type: 'intelligence_tool', delivery: 'conversation' }
+		);
+	} );
+
+	it( 'normalises a missing delivery to Tracks form', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( {
+			id: 'woocommerce-ai/page',
+			source: 'WooCommerce AI',
+			type: 'external-context',
+		} );
+
+		expect( mockRecordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_context_published',
+			{ source: 'woocommerce_ai', type: 'external_context', delivery: 'next_message' }
+		);
+	} );
+
+	it( 'records nothing for a context entry without an id', () => {
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		window.__agentsManagerActions?.setContextEntry?.( { id: '' } );
+
+		expect( mockRecordAgentsManagerTracksEvent ).not.toHaveBeenCalled();
+	} );
+
 	it( 'expands a minimized chat with a single save: un-minimize, no redundant open', () => {
 		mockSelectState = {
 			hasLoaded: true,
@@ -195,6 +283,7 @@ describe( 'useSetupCustomActions', () => {
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
 		// Open is unchanged, so no second (racing) save.
 		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+		expect( takeActionOrigin( 'open' ) ).toBe( 'host' );
 	} );
 
 	it( 'opens a closed chat without a redundant minimized save', () => {
@@ -214,6 +303,20 @@ describe( 'useSetupCustomActions', () => {
 		window.__agentsManagerActions?.setChatOpen?.( false );
 
 		expect( mockSetIsMinimized ).not.toHaveBeenCalled();
+	} );
+
+	it( 'marks a close a host asked for, but not one that changes nothing', () => {
+		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: '' };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( false );
+		expect( takeActionOrigin( 'close' ) ).toBe( 'host' );
+
+		mockSelectState = { ...mockSelectState, isOpen: false };
+		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
+
+		window.__agentsManagerActions?.setChatOpen?.( false );
+		expect( takeActionOrigin( 'close' ) ).toBe( 'user' );
 	} );
 
 	it( 'removes its actions from the global on unmount', () => {
@@ -252,21 +355,20 @@ describe( 'useSetupCustomActions', () => {
 		} );
 	} );
 
-	it( 'resolves a pending `getChatState` once the store finishes loading', async () => {
+	it( 'resolves every pending `getChatState` once the store finishes loading', async () => {
 		mockSelectState = { hasLoaded: false, isOpen: true, isDocked: false, floatingPosition: 'br' };
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
 
-		// Called before the store loads: the promise must stay pending.
-		const pending = window.__agentsManagerActions!.getChatState();
+		// Called before the store loads: the promises must stay pending.
+		const first = window.__agentsManagerActions!.getChatState();
+		const second = window.__agentsManagerActions!.getChatState();
 
 		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: 'br' };
 		rerender();
 
-		await expect( pending ).resolves.toEqual( {
-			isOpen: true,
-			isDocked: false,
-			floatingPosition: 'br',
-		} );
+		const expected = { isOpen: true, isDocked: false, floatingPosition: 'br' };
+		await expect( first ).resolves.toEqual( expected );
+		await expect( second ).resolves.toEqual( expected );
 	} );
 
 	it( 'exposes a site editor action recorder on the actions API', () => {
@@ -279,27 +381,38 @@ describe( 'useSetupCustomActions', () => {
 		} );
 	} );
 
-	it( '`isChatVisible` is true only when open and not minimized', () => {
+	it( '`isChatVisible` reports the chat visibility from the store', () => {
 		mockSelectState = {
 			hasLoaded: true,
 			isOpen: true,
 			isDocked: false,
 			isMinimized: false,
+			isChatVisible: true,
 			floatingPosition: '',
 		};
+
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( true );
 
-		mockSelectState = { ...mockSelectState, isMinimized: true };
+		mockSelectState = { ...mockSelectState, isChatVisible: false };
 		rerender();
+
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
 	} );
 
-	it( 'reports the current route via `getCurrentRoute`', () => {
-		mockLocation = { pathname: '/history' };
+	it( 'exposes the tab id the chat events carry via `getTabId`', () => {
 		renderHook( () => useSetupCustomActions( baseProps ) );
 
-		expect( window.__agentsManagerActions?.getCurrentRoute?.() ).toBe( '/history' );
+		expect( window.__agentsManagerActions?.getTabId?.() ).toBe( 'fake-uuid' );
+	} );
+
+	it( 'exposes the current turn the chat events carry via `getTurnId`', () => {
+		sessionStorage.setItem( 'agents-manager-turn-id', 'turn-1' );
+		renderHook( () => useSetupCustomActions( baseProps ) );
+
+		expect( window.__agentsManagerActions?.getTurnId?.() ).toBe( 'turn-1' );
+		sessionStorage.removeItem( 'agents-manager-turn-id' );
 	} );
 } );
 

@@ -32,8 +32,9 @@ export default function EditButton( { sites, isLargeScreen, isLoading }: Props )
 	const handleToggleSelect = () => {
 		// Filter sites with site error or monitor error or is Atomic site as they are not selectable.
 		const filteredSite = sites.filter( ( { site, monitor } ) => {
-			const isConnected = connectionTests.find( ( { ID } ) => ID === site.value.blog_id )
-				?.connected;
+			const isConnected = connectionTests.find(
+				( { ID } ) => ID === site.value.blog_id
+			)?.connected;
 			return isConnected && ! monitor.error && ! site.value.is_atomic;
 		} );
 		setSelectedSites( filteredSite.map( ( item ) => item.site.value ) );

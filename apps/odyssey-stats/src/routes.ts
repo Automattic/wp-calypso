@@ -11,6 +11,7 @@ import {
 	redirectToDefaultModulePage,
 	redirectToDefaultWordAdsPeriod,
 	purchase,
+	settings,
 	emailStats,
 	emailSummary,
 	redirectToDaySummary,
@@ -77,6 +78,10 @@ export default function ( pageBase = '/' ) {
 
 	// Stat Insights Page
 	statsPage( '/stats/insights/:site', insights );
+
+	// Stats settings. Links from outside the app cannot know the blog ID, so the bare path adds it.
+	page( '/stats/settings', () => page.redirect( `/stats/settings/${ config( 'blog_id' ) }` ) );
+	statsPage( '/stats/settings/:site', settings );
 
 	// Stat Subscribers Page (do not confuse with people/subscribers/)
 	statsPage( '/stats/subscribers/:site', subscribers );

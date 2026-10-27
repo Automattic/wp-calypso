@@ -32,6 +32,7 @@ export async function assignNewCardProcessor(
 			taxCity?: string;
 			taxOrganization?: string;
 			taxAddress?: string;
+			taxIsForBusiness?: boolean;
 			setupKey?: string;
 		} ) => Promise< unknown >;
 		updateCreditCard: ( params: {
@@ -46,6 +47,7 @@ export async function assignNewCardProcessor(
 			taxCity?: string;
 			taxOrganization?: string;
 			taxAddress?: string;
+			taxIsForBusiness?: boolean;
 			setupKey?: string;
 		} ) => Promise< unknown >;
 	},
@@ -71,6 +73,7 @@ export async function assignNewCardProcessor(
 			organization,
 			address,
 			useForAllSubscriptions,
+			useForBusiness,
 			cardElement,
 		} = submitData;
 
@@ -124,6 +127,7 @@ export async function assignNewCardProcessor(
 				taxCity: city,
 				taxOrganization: organization,
 				taxAddress: address,
+				taxIsForBusiness: useForBusiness,
 				setupKey,
 			} );
 
@@ -141,6 +145,7 @@ export async function assignNewCardProcessor(
 			taxCity: city,
 			taxOrganization: organization,
 			taxAddress: address,
+			taxIsForBusiness: useForBusiness,
 			setupKey,
 		} );
 
@@ -164,5 +169,6 @@ interface NewCardSubmitData {
 	organization?: string;
 	address?: string;
 	useForAllSubscriptions: boolean;
+	useForBusiness?: boolean;
 	cardElement: StripeCardNumberElement;
 }

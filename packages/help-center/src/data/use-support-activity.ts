@@ -13,11 +13,11 @@ export function useSupportActivity( enabled = true ) {
 				? wpcomRequest< SupportActivity[] >( {
 						path: '/support-activity',
 						apiNamespace: 'wpcom/v2',
-				  } )
+					} )
 				: apiFetch< SupportActivity[] >( {
 						path: 'help-center/support-activity',
 						global: true,
-				  } as { path: string; global: boolean } ),
+					} as { path: string; global: boolean } ),
 		refetchOnWindowFocus: false,
 		refetchOnMount: true,
 		enabled,

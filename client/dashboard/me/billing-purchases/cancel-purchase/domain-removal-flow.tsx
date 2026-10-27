@@ -22,9 +22,8 @@ export default function DomainRemovalFlow( { purchase, onCancel }: DomainRemoval
 	const [ currentStep, setCurrentStep ] = useState< RemovalStep >( 'warning' );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { navigateAfterRemoval, invalidateSiteAfterRemoval } = usePostRemovalNavigation( purchase );
-	const { mutate: removePurchase, isPending: isRemovingPurchase } = useMutation(
-		removePurchaseMutation()
-	);
+	const { mutate: removePurchase, isPending: isRemovingPurchase } =
+		useMutation( removePurchaseMutation() );
 
 	const handleContinue = useCallback( () => {
 		setCurrentStep( 'confirmation' );

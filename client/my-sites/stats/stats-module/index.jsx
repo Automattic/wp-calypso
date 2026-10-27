@@ -327,11 +327,11 @@ class StatsModule extends Component {
 										data.length >= 10
 											? translate( 'View all', {
 													context: 'Stats: Button link to show more detailed stats information',
-											  } )
+												} )
 											: translate( 'View details', {
 													context: 'Stats: Button label to see the detailed content of a panel',
-											  } ),
-							  }
+												} ),
+								}
 							: undefined
 					}
 					error={ hasError && <ErrorPanel /> }

@@ -57,6 +57,12 @@ export function plans( context, next ) {
 			discountEndDate={ context.query.ts }
 			redirectTo={ context.query.redirect_to }
 			pluginSlug={ context.query.plugin }
+			// Purchase attribution (e.g. an agent's upgrade link) that checkout reads
+			// from its own URL; the plans page forwards it to the checkout it opens.
+			checkoutAttribution={ {
+				source: context.query.source,
+				aiSessionId: context.query.ai_session_id,
+			} }
 			redirectToAddDomainFlow={
 				context.query.addDomainFlow !== undefined
 					? context.query.addDomainFlow === 'true'

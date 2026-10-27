@@ -349,7 +349,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		} catch ( e ) {}
 	}
 
-	function* setStaticHomepageOnSite( siteID: number, pageId: number ) {
+	function* setStaticHomepageOnSite( siteID: number | string, pageId: number ) {
 		try {
 			yield wpcomRequest( {
 				path: `/sites/${ encodeURIComponent( siteID ) }/homepage`,
@@ -379,7 +379,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		yield saveSiteSettings( siteId, { blogdescription } );
 	}
 
-	function* installTheme( siteSlugOrId: string | string, themeSlug: string ) {
+	function* installTheme( siteSlugOrId: string | number, themeSlug: string ) {
 		yield wpcomRequest( {
 			path: `/sites/${ siteSlugOrId }/themes/${ themeSlug }/install`,
 			apiVersion: '1.1',
@@ -492,7 +492,7 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 	}
 
 	function* assembleSite(
-		siteSlug: string,
+		siteSlug: string | number,
 		stylesheet = '',
 		{
 			homeHtml,
@@ -551,9 +551,8 @@ export function createActions( clientCreds: WpcomClientCredentials ) {
 		message,
 	} );
 
-	const clearSiteSetupError = ( siteId: number ) => ( {
+	const clearSiteSetupError = () => ( {
 		type: 'CLEAR_SITE_SETUP_ERROR',
-		siteId,
 	} );
 
 	const atomicTransferStart = (

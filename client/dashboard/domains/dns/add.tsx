@@ -1,4 +1,4 @@
-import { domainDnsMutation, domainQuery } from '@automattic/api-queries';
+import { domainDnsMutation, domainDnsQuery, domainQuery } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { __, sprintf } from '@wordpress/i18n';
@@ -18,6 +18,7 @@ export default function DomainAddDNS() {
 	const navigate = useNavigate();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const { data: dnsRecords } = useSuspenseQuery( domainDnsQuery( domainName ) );
 	const mutation = useMutation(
 		withSnackbar( domainDnsMutation( domainName ), {
 			/* translators: %s is the domain name */
@@ -55,6 +56,7 @@ export default function DomainAddDNS() {
 				isBusy={ mutation.isPending }
 				submitButtonText={ __( 'Add DNS record' ) }
 				onSubmit={ handleSubmit }
+				existingRecords={ dnsRecords.records }
 				navigateToDNSOverviewPage={ navigateToDNSOverviewPage }
 			/>
 		</PageLayout>

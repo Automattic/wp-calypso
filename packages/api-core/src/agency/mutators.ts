@@ -1,9 +1,16 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
 	Agency,
+	AgencyHostingReferral,
+	AgencyHostingReferralResponse,
+	AgencyLeadMatchingProfile,
+	AgencyLeadMatchingResponse,
 	AgencyMediaUpload,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyResourceEvent,
+	AgencyResourceEventResponse,
+	AgencyVipPartnerOpportunity,
 } from './types';
 
 /**
@@ -20,6 +27,23 @@ export async function updateAgencyPartnerDirectoryApplication(
 			method: 'PUT',
 		},
 		update
+	);
+}
+
+/**
+ * Replaces the agency's lead matching preferences with the given profile.
+ */
+export async function updateAgencyLeadMatching(
+	agencyId: number,
+	profile: AgencyLeadMatchingProfile
+): Promise< AgencyLeadMatchingResponse > {
+	return wpcom.req.put(
+		{
+			path: `/agency/${ agencyId }/lead-matching`,
+			apiNamespace: 'wpcom/v2',
+			method: 'PUT',
+		},
+		profile
 	);
 }
 
@@ -55,5 +79,50 @@ export async function uploadAgencyPartnerDirectoryLogo(
 		path: `/agency/${ agencyId }/media`,
 		apiNamespace: 'wpcom/v2',
 		body: formData,
+	} );
+}
+
+/**
+ * Refers a client to WordPress VIP hosting on behalf of the agency.
+ */
+export async function submitAgencyVipPartnerOpportunity(
+	agencyId: number,
+	referral: AgencyVipPartnerOpportunity
+): Promise< AgencyHostingReferralResponse > {
+	return wpcom.req.post( {
+		path: '/agency/vip/partner-opportunity',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...referral },
+	} );
+}
+
+/**
+ * Refers a client to a Pressable Premium plan on behalf of the agency.
+ */
+export async function submitAgencyPressablePremiumPlanReferral(
+	agencyId: number,
+	referral: AgencyHostingReferral
+): Promise< AgencyHostingReferralResponse > {
+	return wpcom.req.post( {
+		path: '/agency/pressable/premium-plan-referral',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...referral },
+	} );
+}
+
+/**
+ * Records an agency's engagement with a resource.
+ *
+ * Fire-and-forget: callers should not block opening the resource on the
+ * response.
+ */
+export async function recordAgencyResourceEvent(
+	agencyId: number,
+	event: AgencyResourceEvent
+): Promise< AgencyResourceEventResponse > {
+	return wpcom.req.post( {
+		path: '/agency/resources/record-event',
+		apiNamespace: 'wpcom/v2',
+		body: { agency_id: agencyId, ...event },
 	} );
 }

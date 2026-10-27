@@ -4,31 +4,31 @@ export interface OmnibarNode {
 	id: string;
 	title?: string;
 	label?: string;
+	tooltip?: string;
 	icon?: React.ReactElement;
 	group?: boolean;
 	variant?: 'secondary';
 	href?: string;
+	target?: string;
+	rel?: string;
 	onClick?: ( event: React.MouseEvent ) => void;
+	onView?: () => void;
 	disabled?: boolean;
 	active?: boolean;
 	className?: string;
-	meta?: SiteActionNodeMeta & UserInfoNodeMeta;
+	meta?: UserInfoNodeMeta;
 	render?: ( node: OmnibarNode ) => React.ReactNode;
 	children?: OmnibarNode[];
 }
 
 export type OmnibarNodeBuilders = Record<
 	string,
-	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode >
+	( adminBarNode: AdminBarNode ) => Partial< OmnibarNode > | null
 >;
 
 export type OmnibarHrefResolver = ( href: string ) => string;
 
 export type OmnibarNodeTransformer = ( node: OmnibarNode ) => OmnibarNode;
-
-export interface SiteActionNodeMeta {
-	subtitle?: string;
-}
 
 export interface UserInfoNodeMeta {
 	displayName?: string;
@@ -38,9 +38,8 @@ export interface UserInfoNodeMeta {
 export interface OmnibarNodes {
 	home?: OmnibarNode;
 	site?: OmnibarNode;
-	siteActions?: OmnibarNode[];
-	sitePlugins?: OmnibarNode[];
-	plugins?: OmnibarNode[];
+	siteNodes?: OmnibarNode[];
+	userNodes?: OmnibarNode[];
 	user?: OmnibarNode;
 }
 

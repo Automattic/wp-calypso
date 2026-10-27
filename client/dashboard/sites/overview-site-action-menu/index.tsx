@@ -40,7 +40,11 @@ const SiteActionMenu = ( { site }: { site: Site } ) => {
 	};
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
+		<DropdownMenu
+			toggleProps={ { __next40pxDefaultSize: true } }
+			icon={ moreVertical }
+			label={ __( 'Quick actions' ) }
+		>
 			{ () => (
 				<MenuGroup>
 					<MenuItem disabled={ isSiteUsingBlockThemeLoading } onClick={ handleEditSite }>

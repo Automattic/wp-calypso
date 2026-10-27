@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { render } from '../../../test-utils';
-import { PurchaseExpiryStatus } from '../index';
+import { PurchaseExpiryStatus, getPurchaseExpiryStatusText } from '../index';
 import type { Purchase } from '@automattic/api-core';
 
 // The copy counts whole calendar days in the viewer's time zone, so these
@@ -119,6 +119,53 @@ describe( '<PurchaseExpiryStatus>', () => {
 		} );
 	} );
 
+	describe( 'a free trial', () => {
+		const freeTrial = ( overrides: Partial< Purchase > = {} ) =>
+			createPurchase( {
+				expiry_status: 'manual-renew',
+				expiry_date: daysFromNow( 30 ),
+				introductory_offer: {
+					cost_per_interval: 0,
+					end_date: daysFromNow( 30 ),
+					is_within_period: true,
+				},
+				...overrides,
+			} as Partial< Purchase > );
+
+		test( 'is described by when the trial runs out', () => {
+			render( <PurchaseExpiryStatus purchase={ freeTrial() } /> );
+
+			expect( screen.getByText( /free trial ends on march 26, 2026/i ) ).toBeVisible();
+		} );
+
+		test( 'is described by its expiry once an early renewal has paid past the trial', () => {
+			render(
+				<PurchaseExpiryStatus purchase={ freeTrial( { expiry_date: daysFromNow( 395 ) } ) } />
+			);
+
+			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.getByText( /expires on/i ) ).toBeVisible();
+			expect( screen.getByText( 'March 26, 2027' ) ).toBeVisible();
+		} );
+
+		test( 'is described by its renewal once an early renewal has paid past the trial', () => {
+			render(
+				<PurchaseExpiryStatus
+					purchase={ freeTrial( {
+						expiry_status: 'active',
+						expiry_date: daysFromNow( 395 ),
+						renew_date: daysFromNow( 395 ),
+						price_integer: 3500,
+						currency_code: 'USD',
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByText( /free trial/i ) ).toBeNull();
+			expect( screen.getByText( /renews yearly at \$35/i ) ).toBeVisible();
+		} );
+	} );
+
 	describe( 'a purchase the viewer cannot renew', () => {
 		test.each( [
 			[ 'is not theirs', { user_id: OWNER_ID + 1 } ],
@@ -131,5 +178,40 @@ describe( '<PurchaseExpiryStatus>', () => {
 			expect( screen.getByText( /expires in 45 days/i ) ).toBeVisible();
 			expect( renewLink() ).toBeNull();
 		} );
+	} );
+} );
+
+describe( 'getPurchaseExpiryStatusText()', () => {
+	beforeEach( () => MockDate.set( NOW ) );
+	afterEach( () => MockDate.reset() );
+
+	test.each( [
+		[ 'an expiring purchase', {}, /expires in 45 days/i ],
+		[
+			'an expired purchase',
+			{ expiry_status: 'expired', expiry_date: daysFromNow( -3 ) },
+			/expired 3 days ago/i,
+		],
+		[
+			'an in-app purchase',
+			{
+				is_iap_purchase: true,
+				iap_purchase_management_link: 'https://apps.apple.com/account/subscriptions',
+			},
+			/in-app purchase/i,
+		],
+	] )( 'describes %s with nothing to click', ( _label, overrides, text ) => {
+		render(
+			<>
+				{ getPurchaseExpiryStatusText(
+					createPurchase( overrides as Partial< Purchase > ),
+					'en',
+					() => true
+				) }
+			</>
+		);
+
+		expect( screen.getByText( text ) ).toBeVisible();
+		expect( renewLink() ).toBeNull();
 	} );
 } );

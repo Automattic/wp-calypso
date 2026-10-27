@@ -22,7 +22,7 @@ const createMessage = ( id: string, role: 'user' | 'agent' ): UIMessage => ( {
 	showIcon: true,
 } );
 
-const latestComplete = { isLatestAgentMessage: true, isStreaming: false };
+const latestComplete = { isLatestAgentMessage: true };
 
 describe( 'useRegenerateAction', () => {
 	const onRegenerate = jest.fn();
@@ -69,6 +69,7 @@ describe( 'useRegenerateAction', () => {
 					} ),
 				} ),
 				order: 3.5,
+				visibility: 'latest-turn',
 			} ),
 		] );
 		expect( getRegenerateHandler ).toHaveBeenCalledWith( message );
@@ -81,7 +82,6 @@ describe( 'useRegenerateAction', () => {
 
 		const [ action ] = result.current( createMessage( 'agent-1', 'agent' ), {
 			isLatestAgentMessage: false,
-			isStreaming: false,
 		} );
 
 		expect( action ).toEqual(
@@ -89,29 +89,7 @@ describe( 'useRegenerateAction', () => {
 		);
 	} );
 
-	it( 'shows a disabled placeholder on the latest message while streaming', () => {
-		// Mid-stream the turn is not yet regeneratable, so agenttic returns no handler.
-		getRegenerateHandler.mockReturnValueOnce( null as unknown as typeof onRegenerate );
-
-		const { result } = renderHook( () =>
-			useRegenerateAction( { enabled: true, getRegenerateHandler } )
-		);
-
-		const [ action ] = result.current( createMessage( 'agent-1', 'agent' ), {
-			isLatestAgentMessage: true,
-			isStreaming: true,
-		} );
-
-		expect( action ).toEqual(
-			expect.objectContaining( {
-				id: 'regenerate',
-				disabled: true,
-				onClick: expect.any( Function ),
-			} )
-		);
-	} );
-
-	it( 'returns no action for a non-latest message with no handler', () => {
+	it( 'returns no action while the turn has no handler yet', () => {
 		getRegenerateHandler.mockReturnValueOnce( null as unknown as typeof onRegenerate );
 
 		const { result } = renderHook( () =>
@@ -119,10 +97,7 @@ describe( 'useRegenerateAction', () => {
 		);
 
 		expect(
-			result.current( createMessage( 'agent-1', 'agent' ), {
-				isLatestAgentMessage: false,
-				isStreaming: true,
-			} )
+			result.current( createMessage( 'agent-1', 'agent' ), { isLatestAgentMessage: true } )
 		).toEqual( [] );
 	} );
 

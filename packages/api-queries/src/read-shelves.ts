@@ -206,18 +206,16 @@ export const updateReadShelfMutation = ( queryClient: QueryClient ) =>
 				queryClient.getQueryData< ReadShelfDetails >( readShelfQuery( shelfId ).queryKey )?.slug;
 			// `params.layout` is a partial merge (see `UpdateReadShelfParams`), so merge
 			// it onto the existing layout rather than replacing it.
-			queryClient.setQueryData< ReadShelf[] >(
-				readShelvesQuery().queryKey,
-				( previous ) =>
-					previous?.map( ( item ) =>
-						item.id === shelfId
-							? {
-									...item,
-									...( params.name !== undefined ? { name: params.name } : {} ),
-									layout: { ...item.layout, ...params.layout },
-							  }
-							: item
-					)
+			queryClient.setQueryData< ReadShelf[] >( readShelvesQuery().queryKey, ( previous ) =>
+				previous?.map( ( item ) =>
+					item.id === shelfId
+						? {
+								...item,
+								...( params.name !== undefined ? { name: params.name } : {} ),
+								layout: { ...item.layout, ...params.layout },
+							}
+						: item
+				)
 			);
 			return { previousList, previousSlug };
 		},
@@ -230,9 +228,8 @@ export const updateReadShelfMutation = ( queryClient: QueryClient ) =>
 			// Update may change summary fields (title/slug/layout), so refresh the
 			// matching list item as well as the detail caches.
 			const summary = toSummary( shelf );
-			queryClient.setQueryData< ReadShelf[] >(
-				readShelvesQuery().queryKey,
-				( previous ) => previous?.map( ( item ) => ( item.id === shelf.id ? summary : item ) )
+			queryClient.setQueryData< ReadShelf[] >( readShelvesQuery().queryKey, ( previous ) =>
+				previous?.map( ( item ) => ( item.id === shelf.id ? summary : item ) )
 			);
 			setReadShelfDetailCaches( queryClient, shelf );
 			// A rename changes the slug, so the entry the old URL resolved through is
@@ -266,9 +263,8 @@ export const deleteReadShelfMutation = ( queryClient: QueryClient ) =>
 					?.find( ( shelf ) => shelf.id === shelfId )?.slug ??
 				queryClient.getQueryData< ReadShelfDetails >( readShelfQuery( shelfId ).queryKey )?.slug;
 			// Remove the deleted shelf from the cached list...
-			queryClient.setQueryData< ReadShelf[] >(
-				readShelvesQuery().queryKey,
-				( previous ) => previous?.filter( ( shelf ) => shelf.id !== shelfId )
+			queryClient.setQueryData< ReadShelf[] >( readShelvesQuery().queryKey, ( previous ) =>
+				previous?.filter( ( shelf ) => shelf.id !== shelfId )
 			);
 			// ...and discard its now-defunct detail caches (id- and slug-keyed).
 			queryClient.removeQueries( { queryKey: readShelfQuery( shelfId ).queryKey } );

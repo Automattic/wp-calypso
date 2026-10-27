@@ -2,7 +2,15 @@
  * @jest-environment jsdom
  */
 
-import { createAgencyRoutes, hasAnyCapability, isAllowedByCapabilities } from '../agency';
+import {
+	createAgencyRoutes,
+	earnPayoutSettingsRoute,
+	earnReferralsRoute,
+	earnSectionRoutes,
+	hasAnyCapability,
+	isAllowedByCapabilities,
+	isRouteAllowedByCapabilities,
+} from '../agency';
 import type { StaticDataRouteOption } from '@tanstack/react-router';
 
 type RouteNode = {
@@ -16,6 +24,7 @@ type RouteNode = {
 const OPEN_ROUTE_PATHS = new Set( [
 	'', // the pathless `agency` guard route itself
 	'overview', // the fallback the capability guard redirects to
+	'/team/invite/accept', // the invitee has no agency yet, so no capabilities either
 ] );
 
 function collectUnguardedRoutes(
@@ -113,5 +122,18 @@ describe( 'createAgencyRoutes capability coverage', () => {
 		);
 
 		expect( unguarded ).toEqual( [] );
+	} );
+} );
+
+describe( 'earnSectionRoutes', () => {
+	const firstAllowed = ( capabilities: string[] ) =>
+		earnSectionRoutes.find( ( route ) => isRouteAllowedByCapabilities( route, capabilities ) );
+
+	test( 'sends referral users to Referrals', () => {
+		expect( firstAllowed( [ 'a4a_read_referrals' ] ) ).toBe( earnReferralsRoute );
+	} );
+
+	test( 'lets migrations-only users reach Payout settings', () => {
+		expect( firstAllowed( [ 'a4a_read_migrations' ] ) ).toBe( earnPayoutSettingsRoute );
 	} );
 } );

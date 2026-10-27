@@ -11,6 +11,33 @@ export type StepperMiscellaneousFields = Partial< {
 		entryPoint: string;
 	};
 	site: CreatedSite;
+	/**
+	 * Whether identify has already handled the address a landing page handed over (`start=true`), so returning
+	 * to it shows the form instead of checking again.
+	 */
+	migrationArrivalChecked: boolean;
+	migrationHandoff: {
+		siteId: number;
+		siteSlug: string;
+		from: string;
+		shouldGoToCheckout: boolean;
+		plan?: string;
+	};
+	/**
+	 * The site the create-site step made, so reaching that step again adopts it rather than asking
+	 * /sites/new for a second one.
+	 *
+	 * Separate from `site`, which flows using `useCreateSite` write and `useSite` reads. This is
+	 * carried by the name the site was asked for, because a flow without
+	 * `__experimentalUseSessions` keys its state on the flow alone — nothing scopes the record to
+	 * one run, so a later run has to be able to tell that the site on file is not the one it is
+	 * asking for.
+	 */
+	createdSite: {
+		siteId: number;
+		siteSlug: string;
+		requestedName: string;
+	};
 } >;
 
 export type FlowStateManifest = StepperMiscellaneousFields & StepperStepsUnionedType;

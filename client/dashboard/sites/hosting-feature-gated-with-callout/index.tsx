@@ -30,6 +30,7 @@ export default function HostingFeatureGatedWithCallout( {
 	upsellImage,
 	upsellTitle,
 	upsellDescription,
+	upsellPlanRequirement,
 	...props
 }: HostingFeatureGatedWithCalloutProps ) {
 	const { site, upsellId, upsellFeatureId, feature } = props;
@@ -66,6 +67,7 @@ export default function HostingFeatureGatedWithCallout( {
 						upsellImage={ upsellImage }
 						upsellTitle={ upsellTitle }
 						upsellDescription={ upsellDescription }
+						upsellPlanRequirement={ upsellPlanRequirement }
 						feature={ feature }
 					/>
 				);

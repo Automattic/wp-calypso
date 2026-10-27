@@ -1,5 +1,6 @@
 import { clearStepPersistedState, EDUCATION_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -22,13 +23,17 @@ import { ONBOARD_STORE } from '../../../stores';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { withLocale } from '../../helpers/with-locale';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 export const STUDENT_PLAN_SLUG = 'wp_bundle_student_yearly';
+export const EDUCATION_BUNDLED_TLDS = [ 'blog', 'art' ];
 
 function initialize() {
 	const steps = [
@@ -48,6 +53,20 @@ const education: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
+	useStepsProps() {
+		const { __ } = useI18n();
+
+		return {
+			[ STEPS.DOMAIN_SEARCH.slug ]: {
+				headerText: __( 'Your Student Plan includes a free domain name' ),
+				subHeaderText: __(
+					'Get a .blog or .art domain name for free, or choose a different extension at regular price. You can also connect a domain you already own.'
+				),
+				hideFreeDomainPromo: true,
+				freeForFirstYearTlds: EDUCATION_BUNDLED_TLDS,
+			},
+		};
+	},
 	useStepNavigation( currentStepSlug, navigate ) {
 		const flowName = this.name;
 		const locale = useFlowLocale();
@@ -144,14 +163,16 @@ const education: FlowV2< typeof initialize > = {
 					}
 
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, {
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+						} );
 					}
 
 					const siteSlug = providedDependencies.siteSlug as string | undefined;
 					const siteId = providedDependencies.siteId as number | undefined;
 
 					if ( ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' } );
 					}
 
 					const destination = addQueryArgs( `/home/${ siteSlug }`, { ref: flowName } );

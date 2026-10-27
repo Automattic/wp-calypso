@@ -18,11 +18,11 @@ const withDeleteUser = ( Component ) =>
 							? translate( 'Successfully removed @%(user)s', {
 									args: { user: user.login },
 									context: 'Success message after a user has been modified.',
-							  } )
+								} )
 							: translate( 'Successfully deleted @%(user)s', {
 									args: { user: user.login },
 									context: 'Success message after a user has been modified.',
-							  } ),
+								} ),
 						{ id: 'delete-user-notice', displayOnNextPage: true }
 					)
 				);
@@ -67,11 +67,11 @@ const withDeleteUser = ( Component ) =>
 						? translate( 'There was an error removing @%(user)s', {
 								args: { user: user.login },
 								context: 'Error message after A site has failed to perform actions on a user.',
-						  } )
+							} )
 						: translate( 'There was an error deleting @%(user)s', {
 								args: { user: user.login },
 								context: 'Error message after A site has failed to perform actions on a user.',
-						  } );
+							} );
 				}
 
 				dispatch( errorNotice( message, { id: 'delete-user-notice' } ) );

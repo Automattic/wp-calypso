@@ -29,6 +29,9 @@ const RANDOM_SUFFIX_LENGTH = 4;
 // never what gives way to the budget below.
 const TEST_ACCOUNT_NAMESPACE = 'e2eflowtesting';
 
+// Where wp-admin points its links to Calypso pages, whichever Calypso a test runs against.
+const WPCOM_CALYPSO_ORIGIN = 'https://wordpress.com';
+
 /**
  * Strips everything wpcom drops before it derives a username from an address.
  *
@@ -194,6 +197,26 @@ export function getCalypsoURL(
 	);
 
 	return url.toString();
+}
+
+/**
+ * Rebases a link to production Calypso onto the Calypso under test.
+ *
+ * wp-admin links its Calypso pages to https://wordpress.com (e.g. Appearance > Theme
+ * Showcase), so following one as-is from a staging or calypso.live run would leave the
+ * build being tested. Links to anywhere else are returned unchanged.
+ *
+ * @param {string} href Absolute URL of the link.
+ * @returns {string} The same route on CALYPSO_BASE_URL, or `href` when it is not a Calypso link.
+ */
+export function toCalypsoURL( href: string ): string {
+	const url = new URL( href );
+
+	if ( url.origin !== WPCOM_CALYPSO_ORIGIN ) {
+		return href;
+	}
+
+	return getCalypsoURL( url.pathname + url.search + url.hash );
 }
 
 /**

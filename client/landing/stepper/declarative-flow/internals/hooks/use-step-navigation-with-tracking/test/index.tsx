@@ -86,6 +86,18 @@ describe( 'useStepNavigationWithTracking', () => {
 		} );
 	} );
 
+	it( 'forwards submit to the flow without recording it when shouldSkipSubmitTracking is set', () => {
+		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
+		const providedDependencies = { action: 'update-query', shouldSkipSubmitTracking: true };
+
+		act( () => {
+			result.current.submit?.( providedDependencies );
+		} );
+
+		expect( stepNavControls.submit ).toHaveBeenCalledWith( providedDependencies );
+		expect( recordStepNavigation ).not.toHaveBeenCalled();
+	} );
+
 	it( 'returns callbacks for all known navigation controls', () => {
 		const { result } = renderHook( () => useStepNavigationWithTracking( BaseFlow ) );
 

@@ -83,10 +83,10 @@ export const PatternsGetAccessModal = ( {
 						)
 							? translate(
 									'Build sites faster using hundreds of professionally designed layouts. All you need is a WordPress.com account to get started.'
-							  )
+								)
 							: translate(
 									"Build sites faster using hundreds of professionally designed layouts. All you need's a WordPress.com account to get started."
-							  ) }
+								) }
 					</div>
 					<div className="patterns-get-access-modal__upgrade-buttons">
 						<Button

@@ -42,7 +42,7 @@ function getAnnualPrice( plan: PricedAPIPlan ) {
 }
 
 /**
- * Formats the plan price according to 'format-currency' package rules
+ * Formats the plan price with formatCurrency
  * We use this for consistency in prices formats across monthly and annual plans
  * @param plan the plan object
  */

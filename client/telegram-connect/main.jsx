@@ -115,7 +115,7 @@ export default function TelegramConnectPage( { telegramId, token, ts, bot } ) {
 		const title = username
 			? translate( 'Allow Telegram to connect to your WordPress.com account %(username)s?', {
 					args: { username },
-			  } )
+				} )
 			: translate( 'Allow Telegram to connect to your WordPress.com account?' );
 		return (
 			<>

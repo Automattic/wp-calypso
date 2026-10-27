@@ -1,15 +1,22 @@
 import {
 	assignJetpackLicenseToSite,
+	fetchAgencyDevLicenses,
 	fetchJetpackLicenseCounts,
 	fetchJetpackLicenseDownloadUrl,
 	fetchJetpackLicenses,
+	fetchJetpackLicensesPage,
 	issueJetpackLicenses,
 	revokeJetpackLicense,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import { referralsQuery } from './agency-referrals';
 import { agencySitesQueryKey } from './jetpack-agency-sites';
 import { queryClient } from './query-client';
-import type { FetchJetpackLicensesOptions, IssueJetpackLicensesInput } from '@automattic/api-core';
+import type {
+	FetchJetpackLicensesOptions,
+	FetchJetpackLicensesPageOptions,
+	IssueJetpackLicensesInput,
+} from '@automattic/api-core';
 
 export const jetpackAgencyLicensesQuery = (
 	agencyId: number,
@@ -20,13 +27,29 @@ export const jetpackAgencyLicensesQuery = (
 		queryFn: () => fetchJetpackLicenses( agencyId, options ),
 	} );
 
+// One page of licenses, with the totals the caller needs to paginate.
+export const paginatedJetpackAgencyLicensesQuery = (
+	agencyId: number,
+	options: FetchJetpackLicensesPageOptions
+) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'paginated', options ],
+		queryFn: () => fetchJetpackLicensesPage( agencyId, options ),
+	} );
+
 export const jetpackAgencyLicenseCountsQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'counts' ],
 		queryFn: () => fetchJetpackLicenseCounts( agencyId ),
 	} );
 
-function invalidateAgencyLicenses( agencyId: number | undefined ) {
+export const agencyDevLicensesQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses', 'dev-licenses' ],
+		queryFn: () => fetchAgencyDevLicenses( agencyId ),
+	} );
+
+export function invalidateAgencyLicenses( agencyId: number | undefined ) {
 	queryClient.invalidateQueries( {
 		queryKey: [ 'agency', agencyId, 'jetpack-agency-licenses' ],
 	} );
@@ -44,10 +67,14 @@ export const jetpackAgencyLicenseAssignMutation = ( agencyId: number | undefined
 		meta: { statId: 'agcy-license-assign' },
 		mutationFn: ( { licenseKey, siteId }: { licenseKey: string; siteId: number } ) =>
 			assignJetpackLicenseToSite( agencyId, licenseKey, siteId ),
-		// Assigning or revoking also changes which products the site has.
+		// Assigning or revoking also changes which products the site has, and a
+		// referred license can be assigned from the referral's own screen.
 		onSuccess: () => {
 			invalidateAgencyLicenses( agencyId );
 			queryClient.invalidateQueries( { queryKey: agencySitesQueryKey } );
+			if ( agencyId ) {
+				queryClient.invalidateQueries( { queryKey: referralsQuery( agencyId ).queryKey } );
+			}
 		},
 	} );
 

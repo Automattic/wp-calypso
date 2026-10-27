@@ -3,7 +3,14 @@ import React, { createContext, useCallback, useContext, useRef, useState } from 
 import { LightweightMarkdownRenderer } from './LightweightMarkdownRenderer';
 import { ComplianceDisclosure, DefaultComplianceDisclosure } from './chat/ComplianceDisclosure';
 import { SourcesCard } from './sources';
-import type { AgentUIProps, Message, NoticeConfig, Suggestion } from '../types';
+import type {
+	AgentUIProps,
+	Message,
+	NoticeConfig,
+	SubmitSource,
+	Suggestion,
+	TrailingActions,
+} from '../types';
 
 interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	inputValue: string;
@@ -11,7 +18,7 @@ interface EmbeddedAgentUIContextValue extends AgentUIProps {
 	files: File[];
 	setFiles: ( files: File[] ) => void;
 	fileInputRef: React.RefObject< HTMLInputElement | null >;
-	submit: ( message?: string ) => Promise< void >;
+	submit: ( message?: string, source?: SubmitSource, onAccepted?: () => void ) => Promise< void >;
 }
 
 const EmbeddedAgentUIContext = createContext< EmbeddedAgentUIContextValue | null >( null );
@@ -108,8 +115,16 @@ export function EmbeddedAgentUIMessages( {
 }: {
 	className?: string;
 } = {} ) {
-	const { messages, isProcessing, error, emptyView, thinkingMessage, messagesPosition } =
-		useEmbeddedAgentUIContext();
+	const {
+		messages,
+		isProcessing,
+		isReplying,
+		error,
+		errorNotice,
+		emptyView,
+		thinkingMessage,
+		messagesPosition,
+	} = useEmbeddedAgentUIContext();
 	const visibleMessages = messages.filter(
 		( message ) => getRenderableBlocks( message ).length > 0
 	);
@@ -145,8 +160,9 @@ export function EmbeddedAgentUIMessages( {
 			{ visibleMessages.map( ( message ) => (
 				<EmbeddedMessage key={ message.reactKey || message.id } message={ message } />
 			) ) }
-			{ isProcessing && <ThinkingMessage content={ thinkingMessage } /> }
+			{ isProcessing && ! isReplying && <ThinkingMessage content={ thinkingMessage } /> }
 			{ error && <div className="agenttic-embedded__error">{ error }</div> }
+			{ errorNotice && <EmbeddedNotice notice={ errorNotice } /> }
 		</div>
 	);
 }
@@ -182,13 +198,16 @@ export function EmbeddedAgentUISuggestions( {
 						key={ suggestion.id }
 						type="button"
 						onClick={ async () => {
-							onSelect?.( value );
-							onSuggestionClick?.( suggestion, suggestions );
-							clearSuggestions?.();
+							const selectSuggestion = () => {
+								onSelect?.( value );
+								onSuggestionClick?.( suggestion, suggestions );
+								clearSuggestions?.();
+							};
 							if ( suggestion.autoSubmit ) {
-								await submit( value );
+								await submit( value, 'suggestion', selectSuggestion );
 								return;
 							}
+							selectSuggestion();
 							setInputValue( value );
 						} }
 					>
@@ -196,6 +215,38 @@ export function EmbeddedAgentUISuggestions( {
 					</button>
 				);
 			} ) }
+		</div>
+	);
+}
+
+function EmbeddedNotice( { notice, className }: { notice: NoticeConfig; className?: string } ) {
+	return (
+		<div
+			className={ [
+				'agenttic-embedded__notice',
+				notice.status ? `agenttic-embedded__notice--${ notice.status }` : '',
+				className,
+			]
+				.filter( Boolean )
+				.join( ' ' ) }
+		>
+			<span>{ notice.message }</span>
+			{ notice.action?.href !== undefined ? (
+				<a
+					href={ notice.action.href }
+					target={ notice.action.target }
+					rel={ notice.action.rel }
+					onClick={ notice.action.onClick }
+				>
+					{ notice.action.label }
+				</a>
+			) : (
+				notice.action && (
+					<button type="button" onClick={ notice.action.onClick }>
+						{ notice.action.label }
+					</button>
+				)
+			) }
 		</div>
 	);
 }
@@ -210,33 +261,20 @@ export function EmbeddedAgentUINotice( {
 		return null;
 	}
 
-	return (
-		<div
-			className={ [
-				'agenttic-embedded__notice',
-				notice.status ? `agenttic-embedded__notice--${ notice.status }` : '',
-				className,
-			]
-				.filter( Boolean )
-				.join( ' ' ) }
-		>
-			<span>{ notice.message }</span>
-			{ notice.action && (
-				<button type="button" onClick={ notice.action.onClick }>
-					{ notice.action.label }
-				</button>
-			) }
-		</div>
-	);
+	return <EmbeddedNotice notice={ notice } className={ className } />;
 }
 
 export function EmbeddedAgentUIInput( {
 	className,
 	disabled,
+	leadingActions,
+	trailingActions,
 	onKeyDown,
 }: {
 	className?: string;
 	disabled?: boolean;
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 } = {} ) {
 	const {
@@ -246,6 +284,8 @@ export function EmbeddedAgentUIInput( {
 		files,
 		inputValue,
 		isProcessing,
+		leadingActions: contextLeadingActions,
+		trailingActions: contextTrailingActions,
 		maxInputLength = 600,
 		onStop,
 		placeholder,
@@ -257,6 +297,28 @@ export function EmbeddedAgentUIInput( {
 		! disabled &&
 		( isProcessing || ( !! inputValue.trim() && inputValue.length <= maxInputLength ) );
 	const placeholderText = Array.isArray( placeholder ) ? placeholder[ 0 ] : placeholder;
+
+	const resolvedTrailingActions = trailingActions ?? contextTrailingActions;
+	const submitButton = (
+		<button
+			type="button"
+			aria-label={
+				isProcessing
+					? __( 'Stop processing', 'a8c-agenttic' )
+					: __( 'Send message', 'a8c-agenttic' )
+			}
+			disabled={ ! canSubmit }
+			onClick={ () => {
+				if ( isProcessing ) {
+					onStop?.();
+					return;
+				}
+				submit();
+			} }
+		>
+			{ isProcessing ? '■' : '↑' }
+		</button>
+	);
 
 	return (
 		<div
@@ -282,6 +344,7 @@ export function EmbeddedAgentUIInput( {
 					</button>
 				</>
 			) }
+			{ leadingActions ?? contextLeadingActions }
 			<textarea
 				aria-label={ __( 'Chat input', 'a8c-agenttic' ) }
 				placeholder={ placeholderText }
@@ -301,24 +364,14 @@ export function EmbeddedAgentUIInput( {
 					}
 				} }
 			/>
-			<button
-				type="button"
-				aria-label={
-					isProcessing
-						? __( 'Stop processing', 'a8c-agenttic' )
-						: __( 'Send message', 'a8c-agenttic' )
-				}
-				disabled={ ! canSubmit }
-				onClick={ () => {
-					if ( isProcessing ) {
-						onStop?.();
-						return;
-					}
-					submit();
-				} }
-			>
-				{ isProcessing ? '■' : '↑' }
-			</button>
+			{ typeof resolvedTrailingActions === 'function' ? (
+				resolvedTrailingActions( submitButton )
+			) : (
+				<>
+					{ resolvedTrailingActions }
+					{ submitButton }
+				</>
+			) }
 			{ files.length > 0 && (
 				<span className="agenttic-embedded__attachment-count">{ files.length }</span>
 			) }
@@ -390,11 +443,15 @@ export function EmbeddedAgentUIContainer( {
 	const setInputValue = props.onInputChange ?? setUncontrolledInputValue;
 
 	const submit = useCallback(
-		async ( explicitMessage?: string ) => {
+		async ( explicitMessage?: string, source: SubmitSource = 'input', onAccepted?: () => void ) => {
 			const message = ( explicitMessage ?? inputValue ).trim();
 			if ( ! message || props.isProcessing ) {
 				return;
 			}
+			if ( props.beforeSubmit?.( message, source ) === false ) {
+				return;
+			}
+			onAccepted?.();
 			setInputValue( '' );
 			setFiles( [] );
 			await props.onSubmit( message, props.allowAttachments ? files : undefined );

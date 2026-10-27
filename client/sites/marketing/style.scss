@@ -4,6 +4,11 @@
 @import "calypso/assets/stylesheets/shared/mixins/breakpoints";
 @import "calypso/assets/stylesheets/shared/mixins/clear-fix";
 
+// Section-wide, so it has to live here rather than with any one screen.
+.is-section-marketing .layout__content {
+	background-color: var(--color-surface);
+}
+
 .foldable-card.sharing-service {
 	.foldable-card__main > div {
 		display: flex;

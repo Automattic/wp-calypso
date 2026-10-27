@@ -11,6 +11,7 @@ import QueryJetpackModules from 'calypso/components/data/query-jetpack-modules';
 import SectionNav from 'calypso/components/section-nav';
 import NavItem from 'calypso/components/section-nav/item';
 import NavTabs from 'calypso/components/section-nav/tabs';
+import canManageStatsSettings from 'calypso/my-sites/stats/pages/settings/can-manage-stats-settings';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isGoogleMyBusinessLocationConnectedSelector from 'calypso/state/selectors/is-google-my-business-location-connected';
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
@@ -151,6 +152,7 @@ class StatsNavigation extends Component {
 			siteId,
 			isSubscriptionsModuleActive,
 			isSimple,
+			canManageSettings,
 		} = this.props;
 
 		switch ( item ) {
@@ -179,6 +181,9 @@ class StatsNavigation extends Component {
 					return false;
 				}
 				return config.isEnabled( 'stats/real-time-tab' );
+
+			case 'settings':
+				return canManageSettings;
 
 			default:
 				return true;
@@ -259,6 +264,7 @@ export default connect(
 			hasVideoPress: siteHasFeature( state, siteId, 'videopress' ),
 			isSimple: isSimpleSite( state, siteId ),
 			isSubscriptionsModuleActive: isJetpackModuleActive( state, siteId, 'subscriptions', true ),
+			canManageSettings: canManageStatsSettings( state, siteId ),
 			siteId,
 			pageModuleToggles: getModuleToggles( state, siteId, [ selectedItem ] ),
 			adminUrl: getSiteAdminUrl( state, siteId ),

@@ -34,7 +34,6 @@ export const setSiteUrl = ( siteUrl: string ) => ( {
 } );
 
 export function* createSenseiSite( {
-	username = '',
 	languageSlug = '',
 	visibility = Visibility.PublicNotIndexed,
 } ) {
@@ -43,7 +42,7 @@ export function* createSenseiSite( {
 		'getState'
 	);
 
-	const siteUrl = domain?.domain_name || siteTitle || username;
+	const siteUrl = domain?.domain_name || siteTitle;
 	const lang_id = ( getLanguage( languageSlug ) as Language )?.value;
 	const blogTitle = siteTitle.trim() === '' ? __( 'Site Title' ) : siteTitle;
 
@@ -246,6 +245,21 @@ export const setProgressTitle = ( progressTitle: string | undefined ) => ( {
 	progressTitle,
 } );
 
+export const setTransferStatus = ( transferStatus: string | null ) => ( {
+	type: 'SET_TRANSFER_STATUS' as const,
+	transferStatus,
+} );
+
+export const setTransferStartedAt = ( transferStartedAt: number | null ) => ( {
+	type: 'SET_TRANSFER_STARTED_AT' as const,
+	transferStartedAt,
+} );
+
+export const setTransferTimedOut = ( transferTimedOut: boolean ) => ( {
+	type: 'SET_TRANSFER_TIMED_OUT' as const,
+	transferTimedOut,
+} );
+
 export const setGoals = ( goals: SiteGoal[] ) => ( {
 	type: 'SET_GOALS' as const,
 	goals,
@@ -413,6 +427,9 @@ export type OnboardAction = ReturnType<
 	| typeof setPendingAction
 	| typeof setProgress
 	| typeof setProgressTitle
+	| typeof setTransferStatus
+	| typeof setTransferStartedAt
+	| typeof setTransferTimedOut
 	| typeof setGoals
 	| typeof clearImportGoal
 	| typeof clearDIFMGoal

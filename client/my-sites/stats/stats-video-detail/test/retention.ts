@@ -49,4 +49,22 @@ describe( 'calculatePlayWeightedRetention', () => {
 			] )
 		).toBe( 0 );
 	} );
+
+	test( 'excludes unknown buckets from the weighting', () => {
+		const rate = calculatePlayWeightedRetention( [
+			{ plays: 10, retentionRate: 80 },
+			{ plays: 90, retentionRate: null },
+		] );
+
+		expect( rate ).toBe( 80 );
+	} );
+
+	test( 'returns null when every bucket is unknown', () => {
+		expect(
+			calculatePlayWeightedRetention( [
+				{ plays: 10, retentionRate: null },
+				{ plays: 20, retentionRate: null },
+			] )
+		).toBeNull();
+	} );
 } );

@@ -7,6 +7,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useEffect } from 'react';
 import { ColorSchemeProvider, useColorScheme, withColorScheme } from 'calypso/lib/color-scheme';
 import type { ColorScheme } from 'calypso/lib/color-scheme';
 
@@ -17,6 +18,7 @@ const surfaceBodyClasses = [ 'is-reader-dark-mode', 'is-themes-dark-mode' ];
 
 const mockUpdatePreference = jest.fn();
 const mockOnSaveSuccess = jest.fn();
+const mockChildMount = jest.fn();
 
 function mockGetPreferences(
 	preferences: Record< string, unknown >,
@@ -64,6 +66,9 @@ function mockUpdateColorScheme(
 
 function CurrentScheme() {
 	const { colorScheme, setColorScheme } = useColorScheme();
+	useEffect( () => {
+		mockChildMount();
+	}, [] );
 	return (
 		<div>
 			<span data-testid="scheme">{ colorScheme }</span>
@@ -116,6 +121,7 @@ beforeEach( () => {
 	} );
 	mockUpdatePreference.mockClear();
 	mockOnSaveSuccess.mockClear();
+	mockChildMount.mockClear();
 	nock.cleanAll();
 	document.documentElement.removeAttribute( 'data-theme' );
 	removeSurfaceBodyClasses();
@@ -220,6 +226,22 @@ test( 'defaults to light when loading preferences fails without cached preferenc
 		expect( mockUpdatePreference ).not.toHaveBeenCalled();
 		expect( mockOnSaveSuccess ).not.toHaveBeenCalled();
 	} );
+} );
+
+test( 'keeps children mounted when a failed preferences query refetches', async () => {
+	mockGetPreferences( {}, { status: 500 } );
+
+	renderColorSchemeProvider();
+
+	await waitFor( () => expect( screen.getByTestId( 'scheme' ) ).toBeVisible() );
+	expect( mockChildMount ).toHaveBeenCalledTimes( 1 );
+
+	// A refetch resets the errored, data-less query back to a pending state.
+	mockGetPreferences( {}, { status: 500, delay: 20 } );
+	await queryClient.refetchQueries( { queryKey: [ 'me', 'preferences' ] } );
+
+	await waitFor( () => expect( screen.getByTestId( 'scheme' ) ).toBeVisible() );
+	expect( mockChildMount ).toHaveBeenCalledTimes( 1 );
 } );
 
 test( 'optimistically applies a user-initiated color scheme change', async () => {

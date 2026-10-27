@@ -1,4 +1,4 @@
-import { generateMessageId } from '../client/utils/core';
+import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
 import type { DataPart, FilePart, Message, TextPart } from '../client/types/index';
 
 /**
@@ -14,6 +14,11 @@ export function extractNewContentFromMessage( message: Message ): Message {
 			return true;
 		}
 		if ( part.type === 'data' ) {
+			// INCLUDE interactive UI surfaces
+			if ( isA2uiDataPart( part ) ) {
+				return true;
+			}
+
 			// EXCLUDE conversation history data parts (role + text combinations)
 			if ( 'role' in part.data && 'text' in part.data ) {
 				return false;
@@ -76,16 +81,19 @@ export function conversationMessagesToDataParts(
 	const historyParts: ( DataPart | FilePart )[] = [];
 
 	for ( const message of conversationMessages ) {
+		let textItem: DataPart | undefined;
+
 		for ( const part of message.parts ) {
 			if ( part.type === 'text' ) {
 				// Convert text parts to history data parts
-				historyParts.push( {
+				textItem = {
 					type: 'data',
 					data: {
 						role: message.role,
 						text: ( part as TextPart ).text,
 					},
-				} );
+				};
+				historyParts.push( textItem );
 			} else if ( part.type === 'file' ) {
 				// INCLUDE file parts in history so uploaded files persist across messages
 				historyParts.push( part as FilePart );
@@ -110,6 +118,15 @@ export function conversationMessagesToDataParts(
 
 				// Skip all other data parts (tool definitions, context, etc.)
 			}
+		}
+
+		// INCLUDE the reply's interactive UI surface on its text, so the agent reads them together
+		const surface = message.parts.find( isA2uiDataPart );
+
+		if ( surface && textItem ) {
+			textItem.data.a2ui = surface;
+		} else if ( surface ) {
+			historyParts.push( { type: 'data', data: { role: message.role, text: '', a2ui: surface } } );
 		}
 	}
 

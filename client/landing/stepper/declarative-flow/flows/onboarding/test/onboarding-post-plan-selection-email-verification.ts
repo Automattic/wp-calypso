@@ -36,7 +36,7 @@ jest.mock( '@wordpress/data', () => ( {
 		setHideFreePlan: jest.fn(),
 	} ),
 	useSelect: jest.fn( () => ( {} ) ),
-	resolveSelect: jest.fn(),
+	resolveSelect: jest.fn( () => ( { getSite: async () => ( { options: {} } ) } ) ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
@@ -90,23 +90,14 @@ jest.mock( '@automattic/onboarding', () => ( {
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 } ) );
 
-jest.mock( 'calypso/lib/ai-launchpad', () => ( {
-	resolveLaunchpadPersonalizationVariation: jest.fn( async () => 'control' ),
-	getLaunchpadPersonalizationDestination: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/lib/url', () => ( { pathToUrl: ( path: string ) => path } ) );
 
 jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( {
 	getOnboardingPostCheckoutDestination: jest.fn( () => [
 		'/home/example.wordpress.com',
-		null,
-		null,
+		'/setup/onboarding/plans?siteSlug=example.wordpress.com',
+		'/setup/onboarding/domains?siteSlug=example.wordpress.com',
 	] ),
-} ) );
-
-jest.mock( '../step-counter-config', () => ( {
-	getOnboardingStepperPosition: () => ( { current: 3, total: 3 } ),
 } ) );
 
 // Runs the `processing` case for a successful, paid order (goToCheckout) with a mocked
@@ -214,6 +205,10 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, false );
 	} );
 
+	// Both advances replace rather than push. A pushed gate stays in the history behind the step it
+	// advanced to, and it advances again the moment it renders against a verified account — so Back
+	// off the destination walks the customer forwards into site creation a second time, which
+	// /sites/new refuses as `blog_name_exists`.
 	it( 'advances the verification step to the target named in the next query param', async () => {
 		mockQueryParams = new URLSearchParams( 'next=post-checkout-onboarding' );
 		const navigate = jest.fn();
@@ -230,7 +225,7 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 			providedDependencies: {},
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
-		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding' );
+		expect( navigate ).toHaveBeenCalledWith( 'post-checkout-onboarding', undefined, true );
 	} );
 
 	// Without a `next`, the verification step falls back to site creation rather than a blank target.
@@ -249,7 +244,7 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 			providedDependencies: {},
 		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
 
-		expect( navigate ).toHaveBeenCalledWith( 'create-site' );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', undefined, true );
 	} );
 
 	it( 'points a paid order back at the verification step on return from checkout', async () => {
@@ -260,6 +255,15 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 		// post-checkout-onboarding once verified.
 		expect( checkoutUrl ).toContain( '/setup/onboarding/email-verification' );
 		expect( checkoutUrl ).toContain( 'next=post-checkout-onboarding' );
+	} );
+
+	it( 'keeps the coupon on both ways back from checkout', async () => {
+		mockQueryParams = new URLSearchParams( 'coupon=WC_ABC' );
+
+		const checkoutUrl = await submitPaidProcessing();
+
+		expect( checkoutUrl ).toContain( '/plans?siteSlug=example.wordpress.com&coupon=WC_ABC' );
+		expect( checkoutUrl ).toContain( '/domains?siteSlug=example.wordpress.com&coupon=WC_ABC' );
 	} );
 
 	it( 'sends a paid order straight to post-checkout-onboarding under the control arm', async () => {

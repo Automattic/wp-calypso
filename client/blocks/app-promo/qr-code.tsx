@@ -9,9 +9,14 @@ const loadQrCode = () => import( /* webpackChunkName: "async-load-qrcode-react" 
 interface QrCodeProps {
 	campaign?: string;
 	size?: number;
+	onLinkClick?: () => void;
 }
 
-export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 }: QrCodeProps ) => {
+export const QrCode = ( {
+	campaign = 'calypso-app-promo',
+	size = 150,
+	onLinkClick,
+}: QrCodeProps ) => {
 	const translate = useTranslate();
 	const localizeUrl = useLocalizeUrl();
 	return (
@@ -42,6 +47,7 @@ export const QrCode = ( { campaign = 'calypso-app-promo', size = 150 }: QrCodePr
 											campaign
 										) }-shortlink`
 									) }
+									onClick={ onLinkClick }
 								/>
 							),
 						},

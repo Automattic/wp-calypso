@@ -1,3 +1,4 @@
+import { FEATURE_ADVANCED_SEO } from '@automattic/calypso-products';
 import { pick } from '@automattic/js-utils';
 import { Page } from '@wordpress/admin-ui';
 import { localize } from 'i18n-calypso';
@@ -23,9 +24,13 @@ import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-v
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
+import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
+import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
+import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
+import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
@@ -35,6 +40,20 @@ const loadForm = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-form" */ 'calypso/my-sites/site-settings/seo-settings/form'
 	);
+
+const loadVisibilityNotice = () =>
+	import(
+		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
+	);
+
+// Temporary: detects the new Jetpack › SEO page from the site's admin menu, which lists it
+// only once the page is live there. The page covers SEO, Sitemaps and Site verification, so
+// once a rollback is unlikely, remove this check and the legacy cards it hides.
+export const isJetpackSeoPageAvailable = ( state, siteId ) => {
+	const menu = getAdminMenu( state, siteId ) ?? [];
+
+	return menu.some( ( item ) => item.children?.some( ( child ) => child.slug === 'jetpack-seo' ) );
+};
 
 export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
 	return isBlazeEnabled( state, siteId ) || isSiteComingSoon( state, siteId );
@@ -61,6 +80,8 @@ const SiteSettingsTraffic = ( {
 	siteId,
 	siteSlug,
 	shouldShowAdvertisingOption,
+	showSeoSettings,
+	showSeoVisibilityNotice,
 	translate,
 } ) => {
 	useEffect( () => {
@@ -102,6 +123,9 @@ const SiteSettingsTraffic = ( {
 						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 					) }
 					<JetpackDevModeNotice />
+					{ isAdmin && showSeoSettings && showSeoVisibilityNotice && (
+						<AsyncLoad require={ loadVisibilityNotice } placeholder={ null } />
+					) }
 					{ isAdmin && shouldShowAdvertisingOption && (
 						<PromoCardBlock
 							productSlug="blaze"
@@ -117,10 +141,12 @@ const SiteSettingsTraffic = ( {
 							href={ blazeAdvertisingUrl }
 						/>
 					) }
-					{ isAdmin && (
+					{ isAdmin && showSeoSettings && (
 						<SeoSettingsHelpCard disabled={ isRequestingSettings || isSavingSettings } />
 					) }
-					{ isAdmin && <AsyncLoad key={ siteId } require={ loadForm } placeholder={ null } /> }
+					{ isAdmin && showSeoSettings && (
+						<AsyncLoad key={ siteId } require={ loadForm } placeholder={ null } />
+					) }
 					{ isJetpackAdmin && (
 						<JetpackSiteStats
 							handleAutosavingToggle={ handleAutosavingToggle }
@@ -141,14 +167,14 @@ const SiteSettingsTraffic = ( {
 							onSubmitForm={ handleSubmitForm }
 						/>
 					) }
-					{ isAdmin && (
+					{ isAdmin && showSeoSettings && (
 						<Sitemaps
 							isSavingSettings={ isSavingSettings }
 							isRequestingSettings={ isRequestingSettings }
 							fields={ fields }
 						/>
 					) }
-					{ isAdmin && <SiteVerification /> }
+					{ isAdmin && showSeoSettings && <SiteVerification /> }
 				</div>
 			</Page>
 			<JetpackFooter />
@@ -171,6 +197,10 @@ const connectComponent = connect( ( state ) => {
 		isJetpackAdmin,
 		siteSlug,
 		shouldShowAdvertisingOption: showAdvertisingOption,
+		showSeoSettings: ! isJetpackSeoPageAvailable( state, siteId ),
+		showSeoVisibilityNotice:
+			siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
+			( isPrivateSite( state, siteId ) || isHiddenSite( state, siteId ) ),
 	};
 } );
 

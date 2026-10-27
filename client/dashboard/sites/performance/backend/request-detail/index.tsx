@@ -1,4 +1,5 @@
 import { siteApmDetailQuery, siteBySlugQuery } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
@@ -23,9 +24,9 @@ function formatBucketLabel( entry: ApmDetailEntry ): string {
 	const time = isNaN( date.getTime() ) ? bucket_minute : date.toLocaleString();
 	return sprintf(
 		/* translators: 1: a date/time, 2: a number of transactions captured in that minute. */
-		__( '%1$s (%2$d tx)' ),
+		__( '%1$s (%2$s tx)' ),
 		time,
-		transactions_in_bucket
+		formatNumber( transactions_in_bucket )
 	);
 }
 
@@ -94,9 +95,9 @@ export default function RequestDetail( {
 								) }
 								<Text variant="muted" size={ 12 }>
 									{ sprintf(
-										/* translators: %d is a number of transactions. */
-										__( '%d transactions in this minute.' ),
-										selected.extra.transactions_in_bucket
+										/* translators: %s is a formatted number of transactions. */
+										__( '%s transactions in this minute.' ),
+										formatNumber( selected.extra.transactions_in_bucket )
 									) }
 								</Text>
 							</VStack>

@@ -23,8 +23,9 @@
 		}
 	}
 
+	// Pre-2026 only: the 2026 nav floats over the hero, and the layout already clears the admin bar.
 	.is-logged-in {
-		.lpc-header-nav-wrapper {
+		.lpc-header-nav-wrapper:not( :has( .x-nav--2026-redesign ) ) {
 			padding-top: 32px;
 
 			@media ( max-width: $break-medium ) {
@@ -59,14 +60,14 @@
 		}
 	}
 
-	// Closed over the dark hero: white nav ink, inverted CTA hover swap.
+	// Closed over the dark hero: white nav ink, white-filled CTA with blue label.
 	.lpc-header-nav-container:not(
 			:has( .x-dropdown--2026.x-dropdown-content[aria-hidden='false'] )
 		):not( .is-scrolled )
 		.x-nav--2026-redesign
 		.x-nav-item {
-		--x-nav-2026-cta-hover-fill: var( --studio-white );
-		--x-nav-2026-cta-hover-ink: var( --studio-gray-100 );
+		--x-nav-2026-cta-fill: var( --studio-white );
+		--x-nav-2026-cta-ink: var( --studio-wordpress-blue-50 );
 
 		color: var( --studio-white ) !important;
 

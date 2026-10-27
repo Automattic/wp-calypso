@@ -33,7 +33,7 @@ export const getThreatMessage = ( threat: Threat ): string | TranslateResult => 
 			return version
 				? translate( 'The installed version of WordPress (%s) has a known vulnerability.', {
 						args: [ version ],
-				  } )
+					} )
 				: translate( 'The installed version of WordPress has a known vulnerability.' );
 
 		case 'core_file':

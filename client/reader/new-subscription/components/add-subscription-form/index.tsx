@@ -111,13 +111,11 @@ export default function AddSubscriptionForm( props: AddSubscriptionFormProps ): 
 							</h2>
 
 							<ul className="reader-add-subscription__instructions-list">
-								{ configInstructions.infoList.map(
-									( item, index ): JSX.Element => (
-										<li key={ `${ slug }-${ index }` }>
-											<strong>{ item.label }</strong> { item.info }
-										</li>
-									)
-								) }
+								{ configInstructions.infoList.map( ( item, index ): JSX.Element => (
+									<li key={ `${ slug }-${ index }` }>
+										<strong>{ item.label }</strong> { item.info }
+									</li>
+								) ) }
 							</ul>
 						</div>
 					) : (

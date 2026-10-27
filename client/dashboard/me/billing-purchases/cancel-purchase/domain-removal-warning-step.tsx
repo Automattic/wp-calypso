@@ -86,7 +86,7 @@ export default function DomainRemovalWarningStep( {
 										/>
 									),
 								}
-						  )
+							)
 						: createInterpolateElement(
 								/* translators: <domainName /> is the domain name */
 								__(
@@ -102,7 +102,7 @@ export default function DomainRemovalWarningStep( {
 										/>
 									),
 								}
-						  ) }
+							) }
 				</Text>
 
 				<Text>{ __( 'Do you still want to continue with deleting your domain?' ) }</Text>

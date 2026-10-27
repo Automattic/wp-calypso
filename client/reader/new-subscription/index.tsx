@@ -62,18 +62,16 @@ export default function ReaderNewSubscriptionPage(
 
 			<SectionNav className="new-subscription-navigation" variation="minimal" enforceTabsView>
 				<NavTabs>
-					{ ADD_SUBSCRIPTION_TABS.map(
-						( tab: Tab ): JSX.Element => (
-							<NavItem
-								key={ tab.slug }
-								selected={ selectedTab === tab.slug }
-								path={ tab.path }
-								onClick={ () => recordTabClick( tab.slug ) }
-							>
-								{ tab.title }
-							</NavItem>
-						)
-					) }
+					{ ADD_SUBSCRIPTION_TABS.map( ( tab: Tab ): JSX.Element => (
+						<NavItem
+							key={ tab.slug }
+							selected={ selectedTab === tab.slug }
+							path={ tab.path }
+							onClick={ () => recordTabClick( tab.slug ) }
+						>
+							{ tab.title }
+						</NavItem>
+					) ) }
 				</NavTabs>
 			</SectionNav>
 

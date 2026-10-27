@@ -34,6 +34,9 @@ function ProductIconExample() {
 				<div style={ iconStyle }>
 					<ProductIcon slug="ecommerce-bundle" />
 				</div>
+				<div style={ iconStyle }>
+					<ProductIcon slug="wp_bundle_student_yearly" />
+				</div>
 			</div>
 
 			<hr />

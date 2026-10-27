@@ -1,3 +1,4 @@
+import page from '@automattic/calypso-router';
 import { getAnyLanguageRouteParam } from '@automattic/i18n-utils';
 import AsyncLoad from 'calypso/components/async-load';
 import {
@@ -52,7 +53,7 @@ const discover = ( context, next ) => {
 
 	context.primary = (
 		<>
-			<DiscoverDocumentHead />
+			<DiscoverDocumentHead noindex={ !! context.query?.selectedTag } />
 			<AsyncLoad
 				require={ loadDiscoverStream }
 				key="discover-page"
@@ -79,8 +80,17 @@ const discover = ( context, next ) => {
 	next();
 };
 
+function redirectRetiredReddit( context ) {
+	const localePrefix = context.params.lang ? `/${ context.params.lang }` : '';
+	const query = context.querystring ? `?${ context.querystring }` : '';
+	page.redirect( `${ localePrefix }/discover/add-new${ query }` );
+}
+
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
+
+	// Reddit ended RSS. Old Discover links land on the generic add-a-feed form.
+	router( [ '/discover/reddit', `/${ anyLangParam }/discover/reddit` ], redirectRetiredReddit );
 
 	const localeMiddleware = [
 		redirectInvalidLanguage,

@@ -27,7 +27,7 @@ const Badge: React.FC< BadgeProps > = ( { variation, onClick, isSelected } ) => 
 
 	const title = variation.title
 		? // translators: %(title)s - the style variation title.
-		  sprintf( __( 'Style: %(title)s' ), { title: variation.title } )
+			sprintf( __( 'Style: %(title)s' ), { title: variation.title } )
 		: __( 'Preview with this style' );
 
 	return (

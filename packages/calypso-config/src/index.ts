@@ -111,6 +111,15 @@ if (
 }
 const configApi = createConfig( configData );
 export default configApi;
+
+/**
+ * Reads a key that may be absent, without the `ReferenceError` that `config()` raises for an unknown key in development or the console error it logs in the browser.
+ * Odyssey Stats replaces this module with its own config API, which exports the same function.
+ */
+export function optionalConfig< T >( key: string ): T | undefined {
+	return key in configData ? configApi< T >( key ) : undefined;
+}
+
 export const isEnabled = configApi.isEnabled;
 export const enabledFeatures = configApi.enabledFeatures;
 export const enable = configApi.enable;

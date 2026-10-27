@@ -2,6 +2,7 @@ import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useOdieAssistantContext } from '../context';
 import { handleSupportInteractionsFetch } from './handle-support-interactions-fetch';
+import { getSupportInteractionQueryKey } from './use-get-support-interaction-by-id';
 import type { SupportInteraction, SupportInteractionEvent } from '../types';
 
 /**
@@ -23,12 +24,7 @@ export const useManageSupportInteraction = () => {
 			} ) as unknown as Promise< SupportInteraction >,
 		onSuccess: ( interaction ) => {
 			const isTestMode = isTestModeEnvironment();
-			const queryKey = [
-				'support-interactions',
-				'get-interaction-by-id',
-				interaction.uuid,
-				isTestMode,
-			];
+			const queryKey = getSupportInteractionQueryKey( interaction.uuid, isTestMode );
 			// Save the interaction to the query client to avoid a new API call.
 			queryClient.setQueryData( queryKey, interaction );
 			// Add the new interaction to the list of interactions without refetching them.
@@ -76,12 +72,7 @@ export const useManageSupportInteraction = () => {
 			) as unknown as Promise< SupportInteraction >,
 		onSuccess: ( interaction ) => {
 			const isTestMode = isTestModeEnvironment();
-			const queryKey = [
-				'support-interactions',
-				'get-interaction-by-id',
-				interaction.uuid,
-				isTestMode,
-			];
+			const queryKey = getSupportInteractionQueryKey( interaction.uuid, isTestMode );
 			// Update the interaction with the new events.
 			queryClient.setQueryData( queryKey, interaction );
 			// The support history relies on the list of interactions to have fresh events.

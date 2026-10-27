@@ -171,7 +171,7 @@ export function RenderDomainUpsell( { isFreePlan, isMonthlyPlan, searchTerm, sit
 							domainSuggestion: domainSuggestionName,
 						},
 					}
-			  )
+				)
 			: cardSubtitleFreePlansCopy;
 
 	return (

@@ -6,6 +6,7 @@ import {
 	PLAN_ECOMMERCE,
 	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
 	WPCOM_FEATURES_ATOMIC,
+	WPCOM_FEATURES_PARTNER_THEMES,
 } from '@automattic/calypso-products';
 import { getQueryArgs } from '@wordpress/url';
 import ThemeQueryManager from 'calypso/lib/query-manager/theme';
@@ -2644,7 +2645,7 @@ describe( 'themes selectors', () => {
 					features: {
 						1234: {
 							data: {
-								active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ],
+								active: [ WPCOM_FEATURES_PARTNER_THEMES ],
 							},
 						},
 					},
@@ -2654,6 +2655,25 @@ describe( 'themes selectors', () => {
 		);
 
 		expect( isSiteEligible ).toEqual( true );
+	} );
+
+	test( 'does not have managed-external theme features with only woop and atomic', () => {
+		const isSiteEligible = isSiteEligibleForManagedExternalThemes(
+			{
+				sites: {
+					features: {
+						1234: {
+							data: {
+								active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ],
+							},
+						},
+					},
+				},
+			},
+			1234
+		);
+
+		expect( isSiteEligible ).toEqual( false );
 	} );
 
 	test( 'does not have managed-external theme features', () => {
@@ -3132,7 +3152,7 @@ describe( '#getIsLivePreviewSupported()', () => {
 			features: {
 				2916284: {
 					data: {
-						active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC ],
+						active: [ FEATURE_WOOP, WPCOM_FEATURES_ATOMIC, WPCOM_FEATURES_PARTNER_THEMES ],
 					},
 				},
 			},

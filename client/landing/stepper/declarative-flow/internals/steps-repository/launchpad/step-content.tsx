@@ -10,7 +10,6 @@ import { createSiteDomainObject } from 'calypso/state/sites/domains/assembler';
 import LaunchpadSitePreview from './launchpad-site-preview';
 import Sidebar from './sidebar';
 import { getLaunchpadTranslations } from './translations';
-import type { SiteSelect } from '@automattic/data-stores';
 
 type StepContentProps = {
 	launchpadKey: string;
@@ -36,8 +35,7 @@ const StepContent = ( {
 	const { flowName } = getLaunchpadTranslations( flow );
 	const site = useSite();
 	const adminUrl = useSelect(
-		( select ) =>
-			site && ( select( SITE_STORE ) as SiteSelect ).getSiteOption( site.ID, 'admin_url' ),
+		( select ) => site && select( SITE_STORE ).getSiteOption( site.ID, 'admin_url' ),
 		[ site ]
 	);
 	const { data: allDomains = [] } = useGetDomainsQuery( site?.ID ?? null, {

@@ -61,7 +61,6 @@ import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import { ClassicColorSchemeProvider, withColorScheme } from 'calypso/lib/color-scheme';
 import { decodeEntities } from 'calypso/lib/formatting';
 import { PerformanceTrackerStop } from 'calypso/lib/performance-tracking';
-import { ReviewsSummary } from 'calypso/my-sites/marketplace/components/reviews-summary';
 import ActivationModal from 'calypso/my-sites/themes/activation-modal';
 import {
 	localizeThemesPath,
@@ -127,7 +126,6 @@ import {
 import { getIsLoadingCart } from 'calypso/state/themes/selectors/get-is-loading-cart';
 import { getBackPath } from 'calypso/state/themes/themes-ui/selectors';
 import { getSelectedSite, getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { ReviewsModal } from '../marketplace/components/reviews-modal';
 import EligibilityWarningModal from '../themes/atomic-transfer-dialog';
 import ThemeActiveBadge from './theme-active-badge';
 import ThemeDownloadCard from './theme-download-card';
@@ -189,9 +187,14 @@ function BlueprintCtaButton( {
 	// so the finished site is waiting the moment the customer pays; dest=site-spec hands them to
 	// the AI site-spec afterwards. The step falls back to the legacy Simple-site runner when the
 	// blueprint has no archive.
+	// from_wfm=1 opts this CTA into the WoW fleet: /sites/new hands out a
+	// pre-provisioned Atomic site instead of building one, so the customer skips
+	// the provision wait. Purely an opt-in hint — the server falls back to the
+	// ordinary funnel build when the fleet is disabled, empty, or contended.
 	const href = addQueryArgs( '/setup/onboarding/blueprint', {
 		blueprint: blueprintId,
 		wow_funnel: 'blueprint',
+		from_wfm: 1,
 		dest: 'site-spec',
 		ref: `theme-${ themeId }`,
 	} );
@@ -286,7 +289,6 @@ class ThemeSheet extends Component {
 		showUnlockStyleUpgradeModal: false,
 		isAtomicTransferCompleted: false,
 		isRedirectingToEditorWebPreview: false,
-		isReviewsModalVisible: false,
 		isSiteSelectorModalVisible: false,
 		isActivationModalVisible: false,
 		isWide: isWithinBreakpoint( '>960px' ),
@@ -809,37 +811,6 @@ class ThemeSheet extends Component {
 		);
 	};
 
-	renderReviews = () => {
-		const { name, themeId } = this.props;
-		const { isReviewsModalVisible } = this.state;
-
-		return (
-			<div className="theme__sheet-reviews-summary">
-				<ReviewsModal
-					isVisible={ isReviewsModalVisible }
-					onClose={ () => {
-						this.setState( {
-							isReviewsModalVisible: false,
-						} );
-					} }
-					productName={ name }
-					slug={ themeId }
-					productType="theme"
-				/>
-				<ReviewsSummary
-					slug={ themeId }
-					productName={ name }
-					productType="theme"
-					onReviewsClick={ () => {
-						this.setState( {
-							isReviewsModalVisible: true,
-						} );
-					} }
-				/>
-			</div>
-		);
-	};
-
 	renderStyleVariations = () => {
 		const { isFreePlan, themeTier, shouldLimitGlobalStyles, styleVariations } = this.props;
 
@@ -884,7 +855,7 @@ class ThemeSheet extends Component {
 							learnMoreLink: <InlineSupportLink supportContext="themes-retired" />,
 						},
 					}
-			  )
+				)
 			: this.props.translate(
 					'This theme has been retired and will only receive security updates. It is no longer available to sites that are not already using it. {{learnMoreLink}}Learn more{{/learnMoreLink}}',
 					{
@@ -897,7 +868,7 @@ class ThemeSheet extends Component {
 							),
 						},
 					}
-			  );
+				);
 
 		return (
 			<div className="theme__sheet-retired-notice">
@@ -1034,7 +1005,7 @@ class ThemeSheet extends Component {
 								tierFilter: tier,
 								styleVariationSlug,
 								themeTier,
-						  } )
+							} )
 						: null
 				}
 				onClick={ ( event ) => {
@@ -1290,7 +1261,7 @@ class ThemeSheet extends Component {
 			? seo_title
 			: translate( '%(themeName)s Theme', {
 					args: { themeName },
-			  } );
+				} );
 
 		const metas = [
 			{ property: 'og:title', content: title },
@@ -1342,7 +1313,12 @@ class ThemeSheet extends Component {
 					title={ analyticsPageTitle }
 					properties={ { is_logged_in: isLoggedIn } }
 				/>
-				<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+				<AsyncLoad
+					require={ loadGlobalNotices }
+					placeholder={ null }
+					loadFailureFallback={ null }
+					id="notices"
+				/>
 				{
 					siteId && (
 						<QueryActiveTheme siteId={ siteId } />
@@ -1382,7 +1358,6 @@ class ThemeSheet extends Component {
 						{ this.renderStagingPaidThemeNotice() }
 						{ this.renderNotice() }
 						{ this.renderHeader() }
-						{ this.renderReviews() }
 					</div>
 					<div className="theme__sheet-column-left">{ this.renderSectionContent( section ) }</div>
 					{ ! isRemoved && (
@@ -1546,7 +1521,7 @@ export default connect(
 		const error = theme
 			? false
 			: getThemeRequestErrors( state, themeId, 'wpcom' ) ||
-			  getThemeRequestErrors( state, themeId, siteId );
+				getThemeRequestErrors( state, themeId, siteId );
 		const englishUrl = 'https://wordpress.com' + getThemeDetailsUrl( state, themeId );
 
 		const isAtomic = isSiteAutomatedTransfer( state, siteId );

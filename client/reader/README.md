@@ -22,6 +22,7 @@ These routes are served by the module:
 | `/reader/p2`                         | P2 posts                                                |
 | `/reader/search`                     | Redirects to `/discover/search`                         |
 | `/reader/notifications`              | Reader notifications                                    |
+| `/reader/four-for-four`              | 4 for 4: subscribe to four new writers (feature flag)   |
 | `/reader/feeds/lookup/*`             | Feed URL lookup (redirects to `/reader/feeds/:feed_id`) |
 | `/activities/likes`                  | Liked posts                                             |
 
@@ -35,7 +36,6 @@ These routes are served by the module:
 | `/reader/subscriptions/:subscription_id` | Individual subscription (by ID)      | Yes            |
 | `/reader/site/subscription/:blog_id`     | Individual subscription (by blog ID) | Yes            |
 | `/reader/new`                            | New subscription                     | Yes            |
-| `/reader/new/reddit`                     | New Reddit subscription              | Yes            |
 | `/reader/new/youtube`                    | New YouTube subscription             | Yes            |
 | `/reader/new/tumblr`                     | New Tumblr subscription              | Yes            |
 | `/reader/new/substack`                   | New Substack subscription            | Yes            |
@@ -61,17 +61,16 @@ These routes are served by the module:
 | `/discover/freshly-pressed` | Freshly Pressed                 |
 | `/discover/tags`            | Featured tags                   |
 | `/discover/latest`          | Latest posts                    |
-| `/discover/reddit`          | Reddit content (requires login) |
 | `/discover/add-new`         | Add new source (requires login) |
 
 ### Tags and conversations
 
-| Route                       | Description          |
-| --------------------------- | -------------------- |
-| `/tag/:tag`                 | Tag stream           |
-| `/tags`                     | Tags listing         |
-| `/reader/conversations`     | Conversations stream |
-| `/reader/conversations/a8c` | A8C conversations    |
+| Route                       | Description                                                                           |
+| --------------------------- | ------------------------------------------------------------------------------------- |
+| `/tag/:tag`                 | Tag stream (requires login; logged-out visitors are redirected to `/discover/tags`)   |
+| `/tags`                     | Tags listing (requires login; logged-out visitors are redirected to `/discover/tags`) |
+| `/reader/conversations`     | Conversations stream                                                                  |
+| `/reader/conversations/a8c` | A8C conversations                                                                     |
 
 ### User profile
 
@@ -83,7 +82,7 @@ These routes are served by the module:
 
 ### Legacy redirects
 
-Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, `/recommendations`, and `/reader/search` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader`, `/tag/:tag`, `/tags`, and `/discover/*`.
+Many legacy `/read/*` routes redirect to Reader routes, often under `/reader/*`, but there are exceptions such as `/read/tag/:tag_name`, which redirects to `/tag/:tag_name`. Routes like `/following`, `/following/manage`, `/recommendations`, and `/reader/search` are also redirected. Locale prefixes (`/:lang/`) are supported on: `/reader` and `/discover/*`. The `/tag/:tag` and `/tags` variants still route, but only so old localized URLs redirect (logged-out to `/discover/tags`, logged-in to the unprefixed path).
 
 ## Block Rendering Development
 

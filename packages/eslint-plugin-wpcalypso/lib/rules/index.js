@@ -25,6 +25,10 @@ module.exports = {
 	'jsx-async-load-require-top-level': adapt( require( './jsx-async-load-require-top-level' ) ),
 	'jsx-classname-namespace': adapt( require( './jsx-classname-namespace' ) ),
 	'jsx-gridicon-size': adapt( require( './jsx-gridicon-size' ) ),
+	'no-conditional-text-nodes-with-siblings': adapt(
+		require( './no-conditional-text-nodes-with-siblings' )
+	),
+	'no-return-text-nodes': adapt( require( './no-return-text-nodes' ) ),
 	'post-message-no-wildcard-targets': adapt( require( './post-message-no-wildcard-targets' ) ),
 	'redux-no-bound-selectors': adapt( require( './redux-no-bound-selectors' ) ),
 	'no-unsafe-wp-apis': adapt( require( './no-unsafe-wp-apis' ) ),

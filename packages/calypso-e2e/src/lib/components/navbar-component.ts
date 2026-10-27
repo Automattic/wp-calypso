@@ -72,7 +72,7 @@ export class NavbarComponent {
 		}
 
 		const notificationsButtonLocator = this.page
-			.getByLabel( 'Notifications', { exact: true } )
+			.getByLabel( /^(Notifications|Manage your notifications)$/ )
 			.first();
 
 		return await notificationsButtonLocator.click();

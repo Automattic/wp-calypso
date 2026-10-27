@@ -6,7 +6,6 @@ const SassConfig = require( '@automattic/calypso-build/webpack/sass' );
 const TranspileConfig = require( '@automattic/calypso-build/webpack/transpile' );
 const { shouldTranspileDependency } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
-const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const DependencyExtractionWebpackPlugin = require( '@wordpress/dependency-extraction-webpack-plugin' );
 const {
 	defaultRequestToExternal,
@@ -97,9 +96,7 @@ module.exports = {
 					config: false,
 					plugins: [ autoprefixerPlugin() ],
 				},
-				prelude: `@use '${ require.resolve(
-					'calypso/assets/stylesheets/shared/_utils.scss'
-				) }' as *;`,
+				prelude: `@use '${ require.resolve( 'calypso/assets/stylesheets/shared/_utils.scss' ) }' as *;`,
 			} ),
 			FileConfig.loader(),
 			{
@@ -141,26 +138,15 @@ module.exports = {
 		new DependencyExtractionWebpackPlugin( {
 			injectPolyfill: true,
 			useDefaults: false,
-			requestToHandle: ( request ) => {
-				// `react-dom/client` is not a registered handle; reuse `react-dom`.
-				if ( request === 'react-dom/client' ) {
-					return 'react-dom';
-				}
-				return defaultRequestToHandle( request );
-			},
+			requestToHandle: defaultRequestToHandle,
 			requestToExternal: ( request ) => {
-				// The default extraction only maps bare `react-dom`, so this subpath would
-				// otherwise bundle a second react-dom that crashes against the page's external
-				// React. Same fix as help-center (#112576) and agents-manager.
-				if ( request === 'react-dom/client' ) {
-					return 'ReactDOM';
-				}
 				if (
 					! [
 						'lodash',
 						'lodash-es',
 						'react',
 						'react-dom',
+						'react-dom/client',
 						// Externalize the JSX runtime alongside react/react-dom so it matches the
 						// React that WordPress provides. Bundling it (the default here, since it is
 						// absent from this allow list) ships an older React's runtime, whose elements
@@ -202,8 +188,6 @@ module.exports = {
 		),
 		new webpack.IgnorePlugin( { resourceRegExp: /^\.\/locale$/, contextRegExp: /moment$/ } ),
 		new ExtensiveLodashReplacementPlugin(),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.[tj]s$/ ),
-		new InlineConstantExportsPlugin( /\/client\/state\/themes\/action-types.[tj]s$/ ),
 		new webpack.NormalModuleReplacementPlugin( /^path$/, 'path-browserify' ),
 		// Repalce the `packages/components/src/gridicon/index.tsx` with a replacement that does not enqueue the SVG sprite.
 		// The sprite is loaded separately in Jetpack.

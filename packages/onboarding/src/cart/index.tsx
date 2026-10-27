@@ -6,11 +6,11 @@ import { getTld, isFreeSubdomainQuery } from '@automattic/domain-search';
 import { guessTimezone, getLanguage } from '@automattic/i18n-utils';
 import debugFactory from 'debug';
 import { getLocaleSlug } from 'i18n-calypso';
+import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
 import {
 	setupSiteAfterCreation,
 	isTailoredSignupFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
-	isAnyHostingFlow,
 	AI_SITE_BUILDER_FLOW,
 } from '../';
 import wpcomRequest from '../wpcom-request';
@@ -28,7 +28,6 @@ interface GetNewSiteParams {
 	siteAccentColor: string;
 	useThemeHeadstart: boolean;
 	siteVisibility: Site.Visibility;
-	username: string;
 	partnerBundle: string | null;
 	sourceSlug?: string;
 	siteIntent?: string;
@@ -65,12 +64,7 @@ type NewSiteParams = {
 	validate: boolean;
 };
 
-const getBlogNameGenerationParams = ( {
-	siteUrl,
-	siteTitle,
-	flowToCheck,
-	username,
-}: GetNewSiteParams ) => {
+const getBlogNameGenerationParams = ( { siteUrl, siteTitle }: GetNewSiteParams ) => {
 	if ( siteUrl ) {
 		const blogName = siteUrl.replace( '.wordpress.com', '' );
 
@@ -89,15 +83,9 @@ const getBlogNameGenerationParams = ( {
 		};
 	}
 
-	if ( isAnyHostingFlow( flowToCheck ) ) {
-		return {
-			blog_name: '',
-			find_available_url: true,
-		};
-	}
-
+	// With no name to work from, the server generates the address.
 	return {
-		blog_name: username,
+		blog_name: '',
 		find_available_url: true,
 	};
 };
@@ -165,7 +153,6 @@ export const createSite = async (
 	siteTitle: string,
 	siteAccentColor: string,
 	useThemeHeadstart: boolean,
-	username: string,
 	partnerBundle: string | null,
 	storedSiteUrl?: string,
 	domainItem?: DomainSuggestion,
@@ -192,7 +179,6 @@ export const createSite = async (
 		siteAccentColor,
 		useThemeHeadstart,
 		siteVisibility,
-		username,
 		sourceSlug,
 		siteIntent,
 		partnerBundle,
@@ -216,11 +202,19 @@ export const createSite = async (
 	// This is the parameter that will contain the internal referral, e.g. a landing page.
 	const refParam = new URLSearchParams( document.location.search ).get( 'ref' );
 
-	const siteCreationResponse: NewSiteSuccessResponse = await wpcomRequest( {
-		path: '/sites/new',
-		apiVersion: '1.1',
-		method: 'POST',
-		body: {
+	// Through the shared client, never the bare proxy request. An account created in this session
+	// is signed in by a bearer token that only the shared client carries. A bare proxy request is
+	// authenticated by a JWT bound to the browser's login cookie instead, and any login, logout or
+	// second signup in the same browser invalidates that JWT while the token stays good. The gate
+	// polls /me through the shared client, so it reports the account verified right up to the
+	// moment this request answers authorization_required.
+	const siteCreationResponse: NewSiteSuccessResponse = await wpcom.req.post(
+		{
+			path: '/sites/new',
+			apiVersion: '1.1',
+		},
+		{},
+		{
 			...newSiteParams,
 			locale,
 			lang_id: getLanguage( locale as string )?.value,
@@ -253,8 +247,8 @@ export const createSite = async (
 						trigger_backend_build: false,
 					} ),
 			},
-		},
-	} );
+		}
+	);
 
 	if ( ! siteCreationResponse.success ) {
 		// TODO ebuccelli: Manage siteCreationResponse.errors

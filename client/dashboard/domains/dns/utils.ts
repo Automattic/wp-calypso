@@ -91,10 +91,11 @@ export const getNormalizedName = ( name: string, type: DnsRecordType, domainName
  *
  * This is done after loading a DNS record from the backend.
  * For example, `name` fields that are the root domain name are replaced with an empty string.
- * @param record
+ * @param sourceRecord - The DNS record as returned by the backend
  * @returns
  */
-export const getProcessedRecord = ( record: DnsRecord ): DnsRecord => {
+export const getProcessedRecord = ( sourceRecord: DnsRecord ): DnsRecord => {
+	const record = { ...sourceRecord };
 	const isRootDomainRecord = record.name === `${ record.domain }.`;
 	if ( isRootDomainRecord ) {
 		record.name = '';
@@ -117,3 +118,30 @@ export const getProcessedRecord = ( record: DnsRecord ): DnsRecord => {
 
 	return record;
 };
+
+const isSameRRset = ( existingRecord: DnsRecord, record: DnsRecord ): boolean => {
+	if (
+		existingRecord.type !== record.type ||
+		existingRecord.name.toLowerCase() !== record.name.toLowerCase()
+	) {
+		return false;
+	}
+
+	// SRV records keep the service and protocol out of `name`. The API returns the service with a
+	// leading underscore, but the form accepts it with or without one.
+	if ( record.type === 'SRV' ) {
+		const service = '_' + ( record.service ?? '' ).replace( /^_/, '' );
+		return existingRecord.service === service && existingRecord.protocol === record.protocol;
+	}
+
+	return true;
+};
+
+/**
+ * Returns the TTL of the existing records with the same name and type (the RRset) as `record`
+ * @param records - The existing DNS records of the domain
+ * @param record - The DNS record to look up, with its `name` normalized by `getNormalizedName()`
+ * @returns The TTL of the RRset, or `undefined` if there are no records with the same name and type
+ */
+export const getRRsetTtl = ( records: DnsRecord[], record: DnsRecord ): number | undefined =>
+	records.find( ( existingRecord ) => isSameRRset( existingRecord, record ) )?.ttl;

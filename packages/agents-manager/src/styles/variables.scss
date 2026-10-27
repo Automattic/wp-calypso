@@ -1,5 +1,7 @@
-@import '@wordpress/base-styles/colors';
-@import '@wordpress/base-styles/variables';
+@forward '@wordpress/base-styles/breakpoints';
+@forward '@wordpress/base-styles/colors';
+@forward '@wordpress/base-styles/variables';
+@use '@wordpress/base-styles/variables' as *;
 
 $layout-spacing: $grid-unit-20;
 // CSS custom-property wrapper so split-screen can flip the width at runtime;
@@ -16,10 +18,10 @@ $transition-timing: $transition-duration cubic-bezier( 0, 0, 0.2, 1 );
 // (packages/help-center/src/components/_variables.scss). A focused panel must
 // always beat an unfocused one, so they share one base + focused offset.
 $overlay-panel-z-index-base: 999990;
-$overlay-panel-z-index-focused: 999995;
+$overlay-panel-z-index-focused: 999994;
 $agents-manager-z-index-docked: $overlay-panel-z-index-base;
 $agents-manager-z-index-focused: $overlay-panel-z-index-focused;
 $agents-manager-z-index-sidebar: $overlay-panel-z-index-base - 1;
 
 /* WP Admin */
-$admin-menu-width-unified: 272px;
+$admin-menu-width-wide: 272px;

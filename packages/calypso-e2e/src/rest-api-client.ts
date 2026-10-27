@@ -49,6 +49,7 @@ import type {
 	SitePostState,
 	AllPurchasesResponse,
 	PurchaseCancelParams,
+	ShoppingCartResponse,
 } from './types';
 
 /* Internal types and interfaces */
@@ -1398,6 +1399,107 @@ export class RestAPIClient {
 				blog_id: siteId === 'no-site' ? 0 : siteId,
 				products: [],
 				temporary: false,
+			} ),
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/me/shopping-cart/${ siteId }` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Gets the current user's shopping cart for a site.
+	 *
+	 * @param {number} siteId Site that has the shopping cart.
+	 * @throws {Error} If the API responded with an error.
+	 * @returns {Promise<ShoppingCartResponse>} The saved cart.
+	 */
+	async getShoppingCart( siteId: number ): Promise< ShoppingCartResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '1.1', `/me/shopping-cart/${ siteId }` ),
+			params
+		);
+
+		if ( response.hasOwnProperty( 'error' ) ) {
+			throw new Error(
+				`${ ( response as ErrorResponse ).error }: ${ ( response as ErrorResponse ).message }`
+			);
+		}
+
+		return response;
+	}
+
+	/**
+	 * Removes the products whose `meta` contains a keyword from the current
+	 * user's shopping cart for a site, e.g. every domain a search for
+	 * `example` added (`example.blog`, `getexample.com`).
+	 *
+	 * The rest of the cart is posted back in the request shape Calypso's
+	 * shopping-cart package sends (`convertResponseCartToRequestCart`), so the
+	 * other products, the coupon and the tax location survive.
+	 *
+	 * @param {number} siteId Site that has the shopping cart.
+	 * @param {string} keyword Text the `meta` of the products to remove contains.
+	 * @throws {Error} If the API responded with an error.
+	 * @returns {Promise<ShoppingCartResponse>} The saved cart.
+	 */
+	async removeCartProducts( siteId: number, keyword: string ): Promise< ShoppingCartResponse > {
+		const cart = await this.getShoppingCart( siteId );
+
+		const products = cart.products
+			.filter( ( product ) => ! product.meta?.includes( keyword ) )
+			.map( ( { product_slug, meta, product_id, extra, volume, quantity } ) => ( {
+				product_slug,
+				meta,
+				product_id,
+				extra,
+				volume,
+				quantity,
+			} ) );
+
+		// Calypso sends only these location fields, and a null tax when none is
+		// set. The response location also carries fields such as `ip_address`.
+		const location = {
+			country_code: cart.tax.location.country_code,
+			postal_code: cart.tax.location.postal_code,
+			subdivision_code: cart.tax.location.subdivision_code,
+			vat_id: cart.tax.location.vat_id,
+			organization: cart.tax.location.organization,
+			address: cart.tax.location.address,
+			city: cart.tax.location.city,
+			is_for_business: cart.tax.location.is_for_business,
+		};
+		const tax = Object.values( location ).some( Boolean ) ? { location } : null;
+
+		const params: RequestParams = {
+			method: 'post',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+				'Content-Type': this.getContentTypeHeader( 'json' ),
+			},
+			body: JSON.stringify( {
+				blog_id: cart.blog_id,
+				coupon: cart.coupon,
+				products,
+				temporary: false,
+				tax,
 			} ),
 		};
 

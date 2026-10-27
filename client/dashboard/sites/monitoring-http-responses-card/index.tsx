@@ -1,5 +1,6 @@
 import { siteMetricsQuery } from '@automattic/api-queries';
 import { type DataPointDate, LineChart, SeriesData } from '@automattic/charts';
+import { formatNumber } from '@automattic/number-formatters';
 import '@automattic/charts/style.css';
 import { useQuery } from '@tanstack/react-query';
 import {
@@ -254,7 +255,12 @@ export default function MonitoringHttpResponsesCard( {
 											</svg>
 											{ series.key }
 										</Text>
-										<Text weight="normal">{ series.datum.value }</Text>
+										<Text weight="normal">
+											{ series.datum.value !== null &&
+												formatNumber( series.datum.value, {
+													numberFormatOptions: { maximumFractionDigits: 2 },
+												} ) }
+										</Text>
 									</div>
 								) ) }
 							</div>

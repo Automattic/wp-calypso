@@ -143,6 +143,15 @@ describe( 'InviteAccept', () => {
 			);
 		} );
 
+		it( 'does not flag a signed-in address that differs from the invited one only by letter case', () => {
+			mockCurrentUser = { email: 'Invited@Example.com' };
+			renderInvite( { forceMatchingEmail: true } );
+
+			expect( mockLoggedIn ).toHaveBeenCalledWith(
+				expect.objectContaining( { forceMatchingEmail: false } )
+			);
+		} );
+
 		it( 'does not flag an unbound invite', () => {
 			mockCurrentUser = { email: 'someone.else@example.com' };
 			renderInvite( { forceMatchingEmail: false } );

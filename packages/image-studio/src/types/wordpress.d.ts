@@ -52,22 +52,22 @@ export interface CurriedImageStudioSelectors {
 	getImageStudioAiProcessing: () => boolean;
 	getIsAnnotationMode: () => boolean;
 	getImageStudioTransitioning: () => boolean;
-	getAnnotationCanvasRef: () => import('../store').AnnotationCanvasRef | null;
+	getAnnotationCanvasRef: () => import( '../store' ).AnnotationCanvasRef | null;
 	getOriginalAttachmentId: () => number | null;
 	getDraftIds: () => number[];
 	getHasUpdatedMetadata: () => boolean;
-	getCanvasMetadata: () => import('../store').CanvasMetadata | null;
+	getCanvasMetadata: () => import( '../store' ).CanvasMetadata | null;
 	getIsAnnotationSaving: () => boolean;
 	getAnnotatedAttachmentIds: () => number[];
 	getLastSavedAttachmentId: () => number | null;
 	getSavedAttachmentIds: () => number[];
 	getHasUnsavedChanges: () => boolean;
 	getIsExitConfirmed: () => boolean;
-	getEntryPoint: () => import('../store').ImageStudioEntryPoint | null;
+	getEntryPoint: () => import( '../store' ).ImageStudioEntryPoint | null;
 	getOnCloseCallback: () =>
-		| ( ( image: import('../utils/get-image-data').ImageData | null ) => Promise< void > | void )
+		| ( ( image: import( '../utils/get-image-data' ).ImageData | null ) => Promise< void > | void )
 		| null;
-	getNotices: () => import('../store').Notice[];
+	getNotices: () => import( '../store' ).Notice[];
 	getNavigableAttachmentIds: () => number[];
 	getCurrentNavigationIndex: () => number;
 	getHasNextImage: () => boolean;

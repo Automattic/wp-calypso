@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import accessibleFocus from '@automattic/accessible-focus';
 import { initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
@@ -6,17 +5,16 @@ import {
 	setRequester as setDataStoresRequester,
 	UserActions,
 	User as UserStore,
-	HelpCenter,
 } from '@automattic/data-stores';
+import { setRequester as setLaunchpadRequester } from '@automattic/launchpad';
 import {
 	AI_SITE_BUILDER_FLOW,
 	AI_SITE_BUILDER_SPEC_FLOW,
 	DOMAIN_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
 	setRequester as setOnboardingRequester,
 } from '@automattic/onboarding';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { useSelect, dispatch } from '@wordpress/data';
+import { dispatch } from '@wordpress/data';
 import defaultCalypsoI18n from 'i18n-calypso';
 import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -55,7 +53,7 @@ import { DEFAULT_FLOW, getFlowFromURL, getStepFromURL } from './utils/get-flow-f
 import { startStepperPerformanceTracking } from './utils/performance-tracking';
 import { getSessionId } from './utils/use-session-id';
 import { WindowLocaleEffectManager } from './utils/window-locale-effect-manager';
-import type { CurrentUser, HelpCenterSelect, HelpCenterDispatch } from '@automattic/data-stores';
+import type { CurrentUser } from '@automattic/data-stores';
 import type { AnyAction } from 'redux';
 import type { WpcomRequestParams } from 'wpcom-proxy-request';
 
@@ -66,10 +64,6 @@ const loadCookieBanner = () =>
 const loadGlobalNotices = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-components-global-notices" */ 'calypso/components/global-notices'
-	);
-const loadAgentsManagerLoader = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-layout-agents-manager-loader" */ 'calypso/layout/agents-manager-loader'
 	);
 const loadWebpackBuildMonitor = () =>
 	import(
@@ -103,25 +97,6 @@ const FLOWS_WITHOUT_HELP_CENTER = new Set< string >( [
 	AI_SITE_BUILDER_SPEC_FLOW,
 	DOMAIN_FLOW,
 ] );
-
-const HELP_CENTER_STORE = HelpCenter.register();
-
-/**
- * Mounts the Help Center only when programmatically opened. Prevents the disruptive auto-open
- * from persisted preferences while still allowing on-demand opens (e.g., plan downgrade support).
- */
-function LazyHelpCenter( { currentUser }: { currentUser: UserStore.CurrentUser } ) {
-	const isHelpCenterShown = useSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
-		[]
-	);
-
-	if ( ! isHelpCenterShown ) {
-		return null;
-	}
-
-	return <AsyncHelpCenterApp currentUser={ currentUser } sectionName="stepper" />;
-}
 
 async function main() {
 	const { pathname, search } = window.location;
@@ -160,7 +135,11 @@ async function main() {
 				}
 			} );
 		};
+		// Each package holds its own requester. One left out here silently falls back to an
+		// unauthenticated proxy request instead of failing, so every package that talks to
+		// the API on Stepper's behalf needs a line below.
 		setDataStoresRequester( requester );
+		setLaunchpadRequester( requester );
 		setOnboardingRequester( requester );
 	}
 
@@ -259,12 +238,6 @@ async function main() {
 		flow = enhanceFlowWithAuth( flow );
 	}
 
-	// Clear any persisted help_center_open preference before React renders so the
-	// isHelpCenterShown resolver won't auto-open the Help Center in this flow.
-	if ( flowName === WOO_HOSTED_PLANS_FLOW ) {
-		( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch[ 'dispatch' ] ).showHelpCenter( false );
-	}
-
 	const root = createRoot( document.getElementById( 'wpcom' ) as HTMLElement );
 
 	root.render(
@@ -275,24 +248,22 @@ async function main() {
 					<BrowserRouter basename="setup">
 						<FlowRenderer flow={ flow } steps={ flowSteps } />
 						{ config.isEnabled( 'cookie-banner' ) && (
-							<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+							<AsyncLoad
+								require={ loadCookieBanner }
+								placeholder={ null }
+								loadFailureFallback={ null }
+							/>
 						) }
-						<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+						<AsyncLoad
+							require={ loadGlobalNotices }
+							placeholder={ null }
+							loadFailureFallback={ null }
+							id="notices"
+						/>
 					</BrowserRouter>
-					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) &&
-						( flowName === WOO_HOSTED_PLANS_FLOW ? (
-							<LazyHelpCenter currentUser={ user as UserStore.CurrentUser } />
-						) : (
-							<>
-								<AsyncHelpCenterApp requireLogin sectionName="stepper" />
-								<AsyncLoad
-									require={ loadAgentsManagerLoader }
-									placeholder={ null }
-									sectionName={ flowName }
-									loadAgentsManager
-								/>
-							</>
-						) ) }
+					{ ! FLOWS_WITHOUT_HELP_CENTER.has( flowName ) && (
+						<AsyncHelpCenterApp requireLogin sectionName="stepper" />
+					) }
 					{ 'development' === process.env.NODE_ENV && (
 						<AsyncLoad require={ loadWebpackBuildMonitor } placeholder={ null } />
 					) }

@@ -4,24 +4,11 @@
 
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT } from 'calypso/lib/ai-launchpad';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import SiteOverview from '../index';
-import type { Site } from '@automattic/api-core';
-
-// Seed a live ExPlat assignment into the storage the real useExperiment hook reads from, so it
-// resolves to the given variation through its normal code path — no module or network mocking.
-function assignPersonalizationVariation( variationName: string | null ) {
-	window.localStorage.setItem(
-		`explat-experiment--${ LAUNCHPAD_PERSONALIZATION_EXPERIMENT }`,
-		JSON.stringify( {
-			experimentName: LAUNCHPAD_PERSONALIZATION_EXPERIMENT,
-			variationName,
-			retrievedTimestamp: Date.now(),
-			ttl: 3600,
-		} )
-	);
-}
+import type { AppConfig } from '../../../app/context';
+import type { Site, User } from '@automattic/api-core';
 
 const site = {
 	ID: 1,
@@ -60,6 +47,12 @@ let agencyBlogResponse: { status: number; body: unknown } = {
 	status: 404,
 	body: { code: 'partner_for_blog_not_found' },
 };
+
+let mediaStorageResponse: [ number, unknown ];
+
+// Default: a clean exact-match suggestion. Tests can override to exercise the
+// upsell card's no-good-suggestion fallback.
+let domainSuggestionsResponse: unknown;
 
 function mockSite( mockedSite: Site ) {
 	nock( 'https://public-api.wordpress.com' )
@@ -111,10 +104,12 @@ describe( '<SiteOverview>', () => {
 			.query( true )
 			.reply( 200, { domains: [] } );
 
+		domainSuggestionsResponse = [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ];
 		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( '/rest/v1.1/domains/suggestions' )
 			.query( true )
-			.reply( 200, [ { domain_name: 'test-site.com', product_slug: 'dotcom_domain' } ] );
+			.reply( () => [ 200, domainSuggestionsResponse ] );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/wpcom/v2/sites/${ site.ID }/activity` )
@@ -136,10 +131,15 @@ describe( '<SiteOverview>', () => {
 			.query( true )
 			.reply( 200, { pages: [] } );
 
+		mediaStorageResponse = [
+			200,
+			{ max_storage_bytes: 1073741824, storage_used_bytes: 100000000 },
+		];
 		nock( 'https://public-api.wordpress.com' )
+			.persist()
 			.get( `/rest/v1.1/sites/${ site.ID }/media-storage` )
 			.query( true )
-			.reply( 200, { max_storage_bytes: 1073741824, storage_used_bytes: 100000000 } );
+			.reply( () => mediaStorageResponse );
 
 		nock( 'https://public-api.wordpress.com' )
 			.get( `/rest/v1.4/sites/${ site.ID }/plans` )
@@ -170,15 +170,27 @@ describe( '<SiteOverview>', () => {
 			.get( `/wpcom/v2/sites/${ site.ID }/hosting/metrics` )
 			.query( true )
 			.reply( 200, { data: { periods: {} } } );
-
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/sites/${ site.ID }/flex-usage` )
-			.query( true )
-			.reply( 200, {} );
 	} );
 
 	afterEach( () => {
 		window.localStorage.clear();
+	} );
+
+	test( 'renders the overview when the user cannot read media storage', async () => {
+		mediaStorageResponse = [
+			403,
+			{ error: 'unauthorized', message: 'User cannot view media storage limits' },
+		];
+		mockSite( site );
+
+		render( <SiteOverview siteSlug={ site.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Business' );
+
+		const planCard = await getCard( 'Business' );
+		expect( planCard ).toBeVisible();
+		expect( await within( planCard ).findByText( 'Information unavailable' ) ).toBeVisible();
+		expect( within( planCard ).getByText( 'Bandwidth' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a site with free plan', async () => {
@@ -205,6 +217,38 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'Plan' ) ).toBeVisible();
 		expect( await getCard( 'Latest activity' ) ).toBeVisible();
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+	} );
+
+	test( 'falls back to generic domain-upsell copy when the vendor returns no clean suggestion', async () => {
+		// "examplesite" is a clean query, so the hyphenated respelling is rejected.
+		domainSuggestionsResponse = [
+			{ domain_name: 'ex-ample-site.com', product_slug: 'dotcom_domain' },
+		];
+		const freeSite = {
+			...site,
+			slug: 'examplesite.wordpress.com',
+			plan: {
+				product_slug: 'free_plan',
+				product_name_short: 'Free',
+				is_free: true,
+				features: { active: [] },
+			},
+		} as unknown as Site;
+		mockSite( freeSite );
+
+		render( <SiteOverview siteSlug={ freeSite.slug } /> );
+		await screen.findByRole( 'heading', { name: 'Test Site' } );
+		await waitForFeatureGatedCards( 'Free' );
+
+		const domainCard = await getCard( 'The perfect domain awaits' );
+		// The suggestions query resolves after the card mounts; wait for the copy to
+		// settle on the no-suggestion fallback rather than the blurred placeholder.
+		await waitFor( () =>
+			expect( domainCard ).toHaveTextContent(
+				'Upgrade to an annual paid plan to get a custom domain free for one year. You can also choose your own domain name.'
+			)
+		);
+		expect( domainCard ).not.toHaveTextContent( 'ex-ample-site.com' );
 	} );
 
 	test( 'renders the overview of a site with a paid plan on Atomic', async () => {
@@ -259,9 +303,13 @@ describe( '<SiteOverview>', () => {
 		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
 	} );
 
-	test( 'shows a plain coming-soon visibility card for the no_guidance launchpad-personalization variation', async () => {
-		assignPersonalizationVariation( 'no_guidance' );
-		mockSite( { ...site, launch_status: 'unlaunched' } as Site );
+	test( 'shows a plain coming-soon visibility card for no-guidance sites', async () => {
+		mockSite( {
+			...site,
+			launch_status: 'unlaunched',
+			capabilities: { manage_options: true },
+			options: { ...site.options, wpcom_ai_launchpad_no_guidance: true },
+		} as Site );
 		render( <SiteOverview siteSlug={ site.slug } /> );
 
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
@@ -272,19 +320,6 @@ describe( '<SiteOverview>', () => {
 			expect( within( card ).queryByRole( 'progressbar' ) ).not.toBeInTheDocument()
 		);
 		expect( screen.queryByText( 'Finish setting up your site.' ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'renders the overview of a commerce garden site', async () => {
-		mockSite( { ...site, is_garden: true, garden_name: 'commerce' } as Site );
-		render( <SiteOverview siteSlug={ site.slug } /> );
-
-		await screen.findByRole( 'heading', { name: 'Test Site' } );
-
-		expect( screen.getByRole( 'link', { name: 'Manage store' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: /WP Admin/ } ) ).not.toBeInTheDocument();
-
-		expect( await getCard( 'Plan' ) ).toBeVisible();
-		expect( await getCard( 'Visibility' ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of a self-hosted free Jetpack connected site', async () => {
@@ -367,22 +402,32 @@ describe( '<SiteOverview>', () => {
 		);
 	} );
 
-	test( 'renders the overview of a site with Flex plan', async () => {
-		mockSite( { ...site, is_wpcom_flex: true } as Site );
+	test( 'shows the two-step-required notice when the site requires it and the user has no two-step', async () => {
+		// The notice links to /me, so it only renders where the dashboard variant supports it.
+		const configWithMeSupport: AppConfig = {
+			...APP_CONTEXT_DEFAULT_CONFIG,
+			supports: {
+				...APP_CONTEXT_DEFAULT_CONFIG.supports,
+				me: { billing: { monetizeSubscriptions: true }, security: { sshKey: true }, apps: true },
+			},
+		};
+		mockSite( {
+			...site,
+			jetpack: true,
+			jetpack_modules: [ 'sso' ],
+			options: { ...site.options, jetpack_sso_require_two_step: true },
+		} as Site );
 
-		render( <SiteOverview siteSlug={ site.slug } /> );
+		render( <SiteOverview siteSlug={ site.slug } />, {
+			config: configWithMeSupport,
+			user: { ID: 1, two_step_enabled: false } as User,
+		} );
 		await screen.findByRole( 'heading', { name: 'Test Site' } );
-		await waitForFeatureGatedCards( 'Business' );
 
-		expect( screen.getByRole( 'link', { name: /WP Admin/ } ) ).toBeVisible();
-
-		expect( await getCard( 'Last backup' ) ).toBeVisible();
-		expect( await getCard( 'Performance' ) ).toBeVisible();
-		expect( await getCard( 'Last scan' ) ).toBeVisible();
-		expect( await getCard( 'Plan' ) ).toBeVisible();
-		expect( await getCard( 'Latest activity' ) ).toBeVisible();
-		expect( await getCard( 'Month-to-date site usage' ) ).toBeVisible();
-		expect( await getCard( 'The perfect domain awaits' ) ).toBeVisible();
+		expect(
+			await screen.findByText( 'Set up two-step authentication to access WP Admin' )
+		).toBeVisible();
+		expect( screen.getByText( /Test Site requires two-step authentication/ ) ).toBeVisible();
 	} );
 
 	test( 'renders the overview of an inaccessible Jetpack site', async () => {

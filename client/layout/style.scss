@@ -191,10 +191,8 @@ body.is-focus-sites {
 }
 body.is-mobile-app-view {
 	/* We are ignoring these lines because without the px value the calc function does not work as expected */
-	/* stylelint-disable length-zero-no-unit */
 	--sidebar-width-max: 0px;
 	--sidebar-width-min: 0px;
-	/* stylelint-enable length-zero-no-unit */
 	.layout__secondary {
 		display: none;
 	}
@@ -429,7 +427,6 @@ body.is-mobile-app-view {
 .layout.has-no-masterbar.is-group-sites,
 .layout.has-no-masterbar.is-section-reader {
 	/* We are ignoring these lines because without the px value the calc function does not work as expected */
-	/* stylelint-disable-next-line length-zero-no-unit */
 	--masterbar-height: 0px;
 
 	.layout__content {
@@ -580,7 +577,7 @@ body.is-mobile-app-view {
 // Source of truth for the fixed 2026 nav's geometry; everything that clears or sticks
 // to the nav derives from these vars.
 .layout:has( .x-nav--2026-redesign ) {
-	/* stylelint-disable-next-line length-zero-no-unit -- px needed for the consuming calc() */
+	/* px needed for the consuming calc() */
 	--nav-2026-admin-offset: 0px; // admin-bar height logged-in, 0 logged-out
 	--nav-2026-height: 64px;
 	--nav-2026-sticky-offset: calc( var( --nav-2026-admin-offset ) + var( --nav-2026-height ) );

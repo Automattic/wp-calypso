@@ -59,7 +59,7 @@ export function useThemeCollection( query: ThemesQuery ) {
 							theme.id,
 							isInstallingTheme( state, theme.id, siteIdForThemeSelectors ),
 						] )
-				  ),
+					),
 		shallowEqual
 	);
 	const isInstalling = useCallback(

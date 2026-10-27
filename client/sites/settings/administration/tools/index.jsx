@@ -3,7 +3,6 @@ import { localize, fixMe } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import QueryRewindState from 'calypso/components/data/query-rewind-state';
 import { withSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import SettingsSectionHeader from 'calypso/my-sites/site-settings/settings-section-header';
@@ -13,7 +12,6 @@ import {
 	getPurchasesError,
 } from 'calypso/state/purchases/selectors';
 import canCurrentUserStartSiteOwnerTransfer from 'calypso/state/selectors/can-current-user-start-site-owner-transfer';
-import getRewindState from 'calypso/state/selectors/get-rewind-state';
 import hasCancelableSitePurchases from 'calypso/state/selectors/has-cancelable-site-purchases';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import isSiteP2Hub from 'calypso/state/selectors/is-site-p2-hub';
@@ -78,9 +76,7 @@ class SiteTools extends Component {
 			translate,
 			siteSlug,
 			copySiteUrl,
-			cloneUrl,
 			showChangeAddress,
-			showClone,
 			showRestorePlanSoftware,
 			showDeleteContent,
 			showDeleteSite,
@@ -128,9 +124,6 @@ class SiteTools extends Component {
 		const copyTitle = translate( 'Copy site' );
 		const copyText = translate( 'Copy this site with all of its data to a new site.' );
 
-		const cloneTitle = translate( 'Clone', { context: 'verb' } );
-		const cloneText = translate( 'Clone your existing site and all its data to a new location.' );
-
 		const startSiteTransferTitle = translate( 'Transfer site' );
 		const startSiteTransferText = fixMe( {
 			text: 'Transfer your site, plan, and purchases to a new or existing site member.',
@@ -142,7 +135,6 @@ class SiteTools extends Component {
 
 		return (
 			<>
-				<QueryRewindState siteId={ siteId } />
 				{ headerTitle && <SettingsSectionHeader id="site-tools__header" title={ headerTitle } /> }
 				{ showChangeAddress && (
 					<AdministrationToolCard
@@ -161,13 +153,6 @@ class SiteTools extends Component {
 						} }
 						title={ copyTitle }
 						description={ copyText }
-					/>
-				) }
-				{ showClone && (
-					<AdministrationToolCard
-						href={ cloneUrl }
-						title={ cloneTitle }
-						description={ cloneText }
 					/>
 				) }
 				{ showStartSiteTransfer && (
@@ -260,10 +245,7 @@ export default connect(
 		const isVip = isVipSite( state, siteId );
 		const isP2 = isSiteWPForTeams( state, siteId );
 		const isP2Hub = isSiteP2Hub( state, siteId );
-		const rewindState = getRewindState( state, siteId );
 		const sitePurchasesLoaded = hasLoadedSitePurchasesFromServer( state );
-
-		const cloneUrl = `/start/clone-site/${ siteSlug }`;
 
 		const copySiteUrl = addQueryArgs( `/setup/copy-site`, {
 			sourceSlug: siteSlug,
@@ -282,9 +264,7 @@ export default connect(
 			copySiteUrl,
 			siteSlug,
 			purchasesError: getPurchasesError( state ),
-			cloneUrl,
 			showChangeAddress: ! isJetpack && ! isVip && ! isP2,
-			showClone: 'active' === rewindState.state && ! isAtomic,
 			showRestorePlanSoftware: isAtomic,
 			showDeleteContent: isAtomic || ( ! isJetpack && ! isVip && ! isP2Hub ),
 			showDeleteSite: ( ! isJetpack || isAtomic ) && ! isVip && sitePurchasesLoaded,

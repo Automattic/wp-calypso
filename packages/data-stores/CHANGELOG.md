@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Breaking changes
+
+- Move the Launchpad query and mutation hooks (`useLaunchpad`, `useSortedLaunchpadTasks`, `updateLaunchpadSettings`, `useLaunchpadDismisser`, `fetchLaunchpad`, and their types) to `@automattic/launchpad`.
+
 ## 3.2.2
 
 - Publish against `i18n-calypso@^8.0.0`, resolving a duplicate/mismatched `i18n-calypso` version in the installed dependency tree (previously published `3.2.1` pinned `i18n-calypso@^7.4.1`).

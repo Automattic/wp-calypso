@@ -2,20 +2,22 @@ import { isAutomatticianQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { BigSkyLogo, SummaryButton } from '@automattic/components';
 import { Step } from '@automattic/onboarding';
-import { useQuery as useReactQuery } from '@tanstack/react-query';
+import { useQuery as useDataQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
-	__experimentalText as Text,
 	Button,
 	Icon,
 	TextareaControl,
 } from '@wordpress/components';
-import { arrowUp, layout, brush } from '@wordpress/icons';
+import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
+import {
+	planBuildsStoreOnBuildWow,
+	planSupportsBuildWow,
+} from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
@@ -23,6 +25,7 @@ import { useQuery } from '../../../../hooks/use-query';
 import { useSiteData } from '../../../../hooks/use-site-data';
 import { usePurchasePlanNotification } from '../../hooks/use-purchase-plan-notification';
 import type { Step as StepType } from '../../types';
+import type { BuildWowGraph } from 'calypso/landing/stepper/utils/build-wow';
 import './style.scss';
 
 const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
@@ -36,22 +39,28 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	usePurchasePlanNotification( siteId, site?.plan?.product_slug );
 	const showPromptInput = ref === WOO_HOSTING_SOLUTIONS_REF;
 	const [ prompt, setPrompt ] = useState( '' );
-	// Where the site builder swap is enabled, the custom design card goes to the
-	// build-wow AI theme generation flow (which provisions a WP Cloud site up
-	// front) on any Atomic-capable plan, and Automatticians get a link back to the
-	// previous Big Sky builder. Otherwise Automatticians get a separate "Generate
-	// Theme" card into build-wow, as before the swap.
-	const { data: isAutomattician } = useReactQuery( isAutomatticianQuery() );
-	const swapSiteBuilders =
-		config.isEnabled( 'calypso/ai-site-builder-build-wow' ) && config.isEnabled( 'site-spec' );
 	// Prefer the cart item (what was just bought) over site.plan, which can be
 	// stale before the plan assignment syncs. The cart item persists across runs,
 	// so only trust it when the checkout it came from was for this site.
 	const planCartItem = usePlanCartItem();
 	const boughtPlanSlug =
 		getSignupCompleteSlug() === siteSlug ? planCartItem?.product_slug : undefined;
+	// The build-wow destination lives in the ai-site-builder-spec flow, which bounces
+	// to plain onboarding without the site-spec feature; the card falls back to the
+	// legacy builder there.
+	const planSlug = boughtPlanSlug ?? site?.plan?.product_slug;
 	const offerBuildWow =
-		swapSiteBuilders && planSupportsBuildWow( boughtPlanSlug ?? site?.plan?.product_slug );
+		config.isEnabled( 'site-spec' ) &&
+		( planSupportsBuildWow( planSlug ) || planBuildsStoreOnBuildWow( planSlug ) );
+	// Staging and development only, for Automatticians: a build on the blocks-first
+	// graph, to compare it with the DSL build the main card runs.
+	const canOfferBuildWowBlocksFirst =
+		offerBuildWow && config.isEnabled( 'site-spec/build-wow-blocks-first' );
+	const { data: isAutomattician = false } = useDataQuery( {
+		...isAutomatticianQuery(),
+		enabled: canOfferBuildWowBlocksFirst,
+	} );
+	const offerBuildWowBlocksFirst = canOfferBuildWowBlocksFirst && isAutomattician;
 
 	// One choice per visit: submitting navigates away, so the controls disable and
 	// later clicks are ignored. The ref covers clicks landing before the re-render.
@@ -84,6 +93,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'build-with-ai',
 			has_prompt: Boolean( trimmedPrompt ),
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
@@ -94,28 +104,25 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const submitGenerateTheme = () => {
+	const submitGenerateTheme = ( graph: BuildWowGraph ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'generate-theme',
+			graph,
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
 			setupChoice: 'generate-theme',
 			siteSlug,
 			siteId,
+			graph,
+			...( planBuildsStoreOnBuildWow( planSlug ) ? { buildsStore: true } : {} ),
 		} );
 	};
 
-	const handleBuildWithAIClick = () => {
-		if ( ! claimSubmit() ) {
-			return;
-		}
-		submitBuildWithAI();
-	};
-
-	// The Woo hosting-solutions prompt form stays on the legacy builder regardless
-	// of the swap: only that path runs the store spec interview (store type, address
-	// for tax and shipping) and a WooCommerce-aware build.
+	// The Woo hosting-solutions prompt form always stays on the legacy builder:
+	// only that path runs the store spec interview (store type, address for tax
+	// and shipping) and a WooCommerce-aware build.
 	const handleBuildWithAISubmit = ( event: FormEvent ) => {
 		event.preventDefault();
 		if ( ! claimSubmit() ) {
@@ -130,6 +137,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		}
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'blank-site',
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
@@ -138,24 +146,24 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		} );
 	};
 
-	const handleGenerateTheme = () => {
-		if ( ! claimSubmit() ) {
-			return;
-		}
-		submitGenerateTheme();
-	};
-
 	const handleCustomDesignClick = () => {
 		if ( ! claimSubmit() ) {
 			return;
 		}
 
 		if ( offerBuildWow ) {
-			submitGenerateTheme();
+			submitGenerateTheme( 'dsl' );
 			return;
 		}
 
 		submitBuildWithAI();
+	};
+
+	const handleCustomDesignBlocksFirstClick = () => {
+		if ( ! claimSubmit() ) {
+			return;
+		}
+		submitGenerateTheme( 'blocks-first' );
 	};
 
 	const buildWithAIPromptCard = (
@@ -219,28 +227,12 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		/>
 	);
 
-	const legacySiteBuilderSection = offerBuildWow && isAutomattician && (
-		<VStack spacing={ 1 } alignment="left" className="setup-your-site-ai-step__legacy-builder">
-			<Step.LinkButton
-				className="setup-your-site-ai-step__legacy-builder-link"
-				onClick={ handleBuildWithAIClick }
-				disabled={ isSubmitting }
-				accessibleWhenDisabled
-			>
-				Create a custom design with the legacy site builder
-			</Step.LinkButton>
-			<Text variant="muted" size={ 12 }>
-				(Note: this link is only visible to Automatticians)
-			</Text>
-		</VStack>
-	);
-
-	const generateThemeCard = ! swapSiteBuilders && isAutomattician && (
+	const buildWithAIBlocksFirstSummary = offerBuildWowBlocksFirst && (
 		<SummaryButton
-			title="Generate Theme"
-			description="Automattician only: provision a WordPress.com Cloud site and generate a custom theme with AI."
-			decoration={ <Icon icon={ brush } /> }
-			onClick={ handleGenerateTheme }
+			title="Create a custom design (blocks-first)"
+			description="Automatticians only: build the site on the blocks-first graph."
+			decoration={ <BigSkyLogo.CentralLogo heartless /> }
+			onClick={ handleCustomDesignBlocksFirstClick }
 			disabled={ isSubmitting }
 		/>
 	);
@@ -248,14 +240,14 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const startWithTemplateCard = (
 		<SummaryButton
 			title={ i18n.fixMe( {
-				text: 'Start with a template',
-				newCopy: translate( 'Start with a template' ),
-				oldCopy: translate( 'Manual setup' ),
+				text: 'Start with a pre-made design',
+				newCopy: translate( 'Start with a pre-made design' ),
+				oldCopy: translate( 'Start with a template' ),
 			} ) }
 			description={ i18n.fixMe( {
-				text: 'Get a simple, ready-to-go site to make your own.',
-				newCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
-				oldCopy: translate( 'Get started instantly with a simple, ready-to-go WordPress site.' ),
+				text: "We'll install a ready-to-edit theme for you.",
+				newCopy: translate( "We'll install a ready-to-edit theme for you." ),
+				oldCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
 			} ) }
 			decoration={ <Icon icon={ layout } /> }
 			onClick={ handleBlankSite }
@@ -272,12 +264,11 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 				</>
 			) : (
 				<>
-					{ startWithTemplateCard }
 					{ buildWithAISummary }
-					{ legacySiteBuilderSection }
+					{ startWithTemplateCard }
+					{ buildWithAIBlocksFirstSummary }
 				</>
 			) }
-			{ generateThemeCard }
 		</VStack>
 	);
 

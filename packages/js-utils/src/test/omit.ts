@@ -37,4 +37,12 @@ describe( 'omit', () => {
 		const nullable: typeof object | null | undefined = undefined;
 		expect( omit( nullable, 'a' ) ).toStrictEqual( {} );
 	} );
+
+	it( 'copies an own `__proto__` key as data without inheriting from it', () => {
+		const hostile = JSON.parse( '{"__proto__":{"isAdmin":true},"keep":1}' );
+		const result = omit( hostile, 'keep' ) as Record< string, unknown >;
+		expect( Object.getPrototypeOf( result ) ).toBe( Object.prototype );
+		expect( result.isAdmin ).toBeUndefined();
+		expect( Object.hasOwn( result, '__proto__' ) ).toBe( true );
+	} );
 } );

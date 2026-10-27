@@ -1,0 +1,38 @@
+.ring {
+	display: block;
+	/* Start the arc at 12 o'clock. */
+	transform: rotate( -90deg );
+}
+
+.track {
+	fill: none;
+	stroke: var( --color-input-border );
+}
+
+.fill {
+	fill: none;
+	stroke: var( --color-primary );
+	stroke-linecap: round;
+	transition:
+		stroke-dashoffset 300ms cubic-bezier( 0.4, 0, 0.2, 1 ),
+		stroke 150ms ease,
+		opacity 150ms ease;
+}
+
+.error .fill {
+	stroke: var( --color-error-accent );
+}
+
+.muted .fill {
+	stroke: var( --color-muted-foreground );
+}
+
+.empty .fill {
+	opacity: 0;
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.fill {
+		transition: none;
+	}
+}

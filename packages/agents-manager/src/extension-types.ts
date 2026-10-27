@@ -1,16 +1,11 @@
 /**
  * Types for plugin extensions to the AI Agents system.
  *
- * These types allow external plugins (like Big Sky, CIAB Admin) to extend
+ * These types allow external plugins like Big Sky to extend
  * the wp-calypso orchestrator agent with custom abilities and context.
  */
 
-import type { Ability } from './abilities/types';
-
-/**
- * Re-export `Ability` for use by external plugins.
- */
-export type { Ability } from './abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Tool Provider Interface
@@ -70,14 +65,7 @@ export interface ClientContextType {
 	/**
 	 * Environment identifier
 	 */
-	environment:
-		| 'wp-admin'
-		| 'ciab-admin'
-		| 'calypso'
-		| 'wp-admin-disconnected'
-		| 'gutenberg-disconnected'
-		| 'ciab-disconnected'
-		| string;
+	environment: 'wp-admin' | 'calypso' | 'gutenberg-disconnected' | string;
 
 	/**
 	 * Optional context entries (sitemap, entities, etc.).
@@ -134,9 +122,6 @@ export interface BaseContextEntry {
  */
 export type ContextEntry = BaseContextEntry;
 
-// Re-export Suggestion from agenttic-ui for convenience
-export type { Suggestion } from '@automattic/agenttic-ui';
-
 /**
  * Big Sky Message Format
  *
@@ -155,14 +140,9 @@ export interface BigSkyMessage {
 	role: 'user' | 'assistant';
 
 	/**
-	 * Message content array
+	 * Message content: text parts.
 	 */
-	content: Array< {
-		type: 'text' | 'component' | 'context';
-		text?: string;
-		component?: React.ComponentType;
-		componentProps?: Record< string, unknown >;
-	} >;
+	content: Array< { type: 'text'; text: string } >;
 
 	/**
 	 * Unix timestamp in seconds (converted to milliseconds for UI)
@@ -178,4 +158,10 @@ export interface BigSkyMessage {
 	 * Optional: whether to show icon (defaults to true)
 	 */
 	showIcon?: boolean;
+
+	/**
+	 * Optional: lists AM's editor empty-view suggestions under the message until
+	 * the user replies, e.g. to offer next steps after a site build.
+	 */
+	hasEditorEmptyViewSuggestions?: boolean;
 }

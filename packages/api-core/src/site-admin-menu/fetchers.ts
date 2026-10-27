@@ -10,5 +10,5 @@ export async function fetchSiteAdminMenu( siteId: number ): Promise< AdminMenuIt
 		{ _locale: 'user' }
 	);
 
-	return Array.isArray( response ) ? response : response.menu ?? [];
+	return Array.isArray( response ) ? response : ( response.menu ?? [] );
 }

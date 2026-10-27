@@ -52,9 +52,11 @@ const useIssueLicenses = ( options: UseIssueLicensesOptions = {} ) => {
 		const requests: Promise< IssueLicenseResult >[] = selectedLicenses.map(
 			( { slug, quantity } ) =>
 				mutateAsync( { product: slug, quantity } )
-					.then(
-						( value ): FulfilledIssueLicenseResult => ( { slug, status: 'fulfilled', ...value } )
-					)
+					.then( ( value ): FulfilledIssueLicenseResult => ( {
+						slug,
+						status: 'fulfilled',
+						...value,
+					} ) )
 					.catch( (): RejectedIssueLicenseResult => ( { slug, status: 'rejected' } ) )
 		);
 

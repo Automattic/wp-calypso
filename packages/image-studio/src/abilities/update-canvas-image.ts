@@ -311,7 +311,7 @@ export async function registerUpdateCanvasImageAbility(): Promise< void > {
 											url: notice.upgrade_url,
 											openInNewTab: true,
 										},
-								  ]
+									]
 								: undefined,
 							true // dismissible
 						);

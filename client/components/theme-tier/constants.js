@@ -48,12 +48,12 @@ export const THEME_TIERS = {
 	},
 	[ THEME_TIER_PREMIUM ]: {
 		get label() {
-			return getIncludedWithLabel( PLAN_PREMIUM );
+			return getIncludedWithLabel( PLAN_PERSONAL );
 		},
 		get labelModern() {
 			return translate( 'Premium' );
 		},
-		minimumUpsellPlan: PLAN_PREMIUM,
+		minimumUpsellPlan: PLAN_PERSONAL,
 		isFilterable: true,
 	},
 	[ THEME_TIER_PARTNER ]: {
@@ -62,7 +62,7 @@ export const THEME_TIERS = {
 				context: 'This theme is developed and supported by a theme partner',
 			} );
 		},
-		minimumUpsellPlan: PLAN_BUSINESS,
+		minimumUpsellPlan: PLAN_PERSONAL,
 		isFilterable: true,
 	},
 	woocommerce: {

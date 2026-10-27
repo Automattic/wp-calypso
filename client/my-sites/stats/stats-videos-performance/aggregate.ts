@@ -4,7 +4,7 @@ export interface VideoPlaysRow {
 	views: number;
 	impressions: number;
 	watch_time: number;
-	retention_rate: number;
+	retention_rate: number | null;
 }
 
 export interface PerformanceTotals {
@@ -41,26 +41,31 @@ export function flattenVideoPlaysRows( data: unknown ): VideoPlaysRow[] {
 /**
  * Sum the per-video rows into the card's four totals. Views, impressions and
  * watch time are additive. Retention rate is not, so it is reported as a
- * views-weighted average; with no views there is nothing to weight and it is
- * `null` (rendered as a dash).
+ * views-weighted average. Rows whose rate is unknown (`null`) are left out of
+ * the average rather than counted as 0; with no known-rate views there is
+ * nothing to weight and it is `null` (rendered as a dash).
  */
 export function aggregateVideoPerformance( rows: VideoPlaysRow[] ): PerformanceTotals {
 	let views = 0;
 	let impressions = 0;
 	let watchTime = 0;
 	let retentionWeighted = 0;
+	let retentionViews = 0;
 
 	for ( const row of rows ) {
 		views += row.views || 0;
 		impressions += row.impressions || 0;
 		watchTime += row.watch_time || 0;
-		retentionWeighted += ( row.retention_rate || 0 ) * ( row.views || 0 );
+		if ( row.retention_rate !== null && row.retention_rate !== undefined ) {
+			retentionWeighted += row.retention_rate * ( row.views || 0 );
+			retentionViews += row.views || 0;
+		}
 	}
 
 	return {
 		views,
 		impressions,
 		watch_time: watchTime,
-		retention_rate: views > 0 ? retentionWeighted / views : null,
+		retention_rate: retentionViews > 0 ? retentionWeighted / retentionViews : null,
 	};
 }

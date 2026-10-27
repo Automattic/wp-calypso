@@ -1,3 +1,5 @@
+import type { ReferralApiResponse } from '../agency-referrals/types';
+
 export interface JetpackLicenseMeta {
 	a4a_is_dev_site?: string;
 	a4a_was_dev_site?: string;
@@ -5,6 +7,8 @@ export interface JetpackLicenseMeta {
 	a4a_dev_site_period_start?: string;
 	a4a_transferred_subscription_id?: string;
 	a4a_transferred_subscription_expiration?: string;
+	/** The domain a Pressable Titan inbox license is for. */
+	pressable_titan_domain?: string;
 }
 
 export interface JetpackLicenseSubscription {
@@ -15,6 +19,9 @@ export interface JetpackLicenseSubscription {
 	billing_interval_unit: string;
 	status: string;
 	expiry: string | null;
+	/** When the product's introductory offer (trial) ends, whether or not it is still running. */
+	trial_end?: string | null;
+	is_active_trial?: boolean;
 	is_auto_renew_enabled: boolean;
 	is_refundable: boolean;
 }
@@ -36,7 +43,8 @@ export interface JetpackLicense {
 	quantity: number | null;
 	parent_license_id: number | null;
 	meta: JetpackLicenseMeta | null;
-	referral: unknown;
+	/** Set when a client paid for this license through a referral. */
+	referral: ReferralApiResponse | null;
 	subscription?: JetpackLicenseSubscription | null;
 }
 
@@ -66,6 +74,18 @@ export interface FetchJetpackLicensesOptions {
 	sortDirection: JetpackLicenseSortDirection;
 }
 
+export interface FetchJetpackLicensesPageOptions extends FetchJetpackLicensesOptions {
+	page?: number;
+	perPage?: number;
+}
+
+export interface JetpackLicensesPage {
+	items: JetpackLicense[];
+	total_items: number;
+	items_per_page: number;
+	total_pages: number;
+}
+
 export interface JetpackLicenseCounts {
 	attached: number;
 	detached: number;
@@ -93,4 +113,11 @@ export interface IssueJetpackLicensesInput {
 
 export interface JetpackLicenseDownloadUrl {
 	download_url: string;
+}
+
+/** Free WordPress.com development-site licenses granted to an agency. */
+export interface AgencyDevLicenses {
+	licenses: JetpackLicense[];
+	/** How many free development licenses are still unused. */
+	available: number;
 }

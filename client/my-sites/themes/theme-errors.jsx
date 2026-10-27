@@ -40,7 +40,7 @@ const ThemeErrors = ( { siteId } ) => {
 						? {
 								...theme,
 								errors: theme.errors.filter( ( _, index ) => index !== errorIndex ),
-						  }
+							}
 						: theme
 				)
 				.filter( ( theme ) => theme.errors.length > 0 )

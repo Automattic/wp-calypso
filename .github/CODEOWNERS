@@ -86,7 +86,6 @@
 /build-tools/webpack/require-chunk-callback-plugin.js @Automattic/i18n
 /client/boot/locale.js @Automattic/i18n
 /client/components/calypso-i18n-provider @Automattic/i18n
-/client/components/community-translator @Automattic/i18n
 /client/components/language-picker @Automattic/i18n
 /client/components/locale-suggestions @Automattic/i18n
 /client/components/localized-moment @Automattic/i18n
@@ -120,6 +119,7 @@
 /client/landing/stepper/declarative-flow/internals/steps-repository/domain-search @Automattic/quake
 /client/my-sites/domains/domain-search @Automattic/quake
 /packages/domain-search @Automattic/quake
+/packages/domain-search/src/name-pulse @sejas @gavande1
 
 # Plans
 /client/my-sites/plans-grid @Automattic/martech

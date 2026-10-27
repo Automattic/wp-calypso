@@ -1,8 +1,9 @@
 import { __ } from '@wordpress/i18n';
 import React, { useMemo } from 'react';
 import { useAgentUIContext } from '../../context/AgentUIContext';
-import { type ActionButton, ChatInput } from '../chat/ChatInput';
+import { type ActionButton, ActionButtons, ChatInput } from '../chat/ChatInput';
 import { PlusIcon } from '../icons/PlusIcon';
+import type { TrailingActions } from '../../types';
 import type { ImageUploaderHandle } from '../chat/ImageUploader';
 
 export interface AgentUIInputProps {
@@ -10,6 +11,13 @@ export interface AgentUIInputProps {
 	disabled?: boolean;
 	// Locks the textarea without disabling the submit/stop button
 	readOnly?: boolean;
+	// Pinned to the start of the actions row, after the upload button when one
+	// is connected. Defaults to the container's `leadingActions`.
+	leadingActions?: React.ReactNode;
+	// Grouped with the submit button; a function receives it and decides the
+	// order. Defaults to the container's `trailingActions`.
+	trailingActions?: TrailingActions;
+	// Legacy: prefer leadingActions / trailingActions
 	customActions?: ActionButton[];
 	actionOrder?: 'before-submit' | 'after-submit';
 	onKeyDown?: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
@@ -23,6 +31,8 @@ export function AgentUIInput( {
 	className,
 	disabled,
 	readOnly,
+	leadingActions,
+	trailingActions,
 	customActions,
 	actionOrder,
 	onKeyDown,
@@ -45,7 +55,12 @@ export function AgentUIInput( {
 		focusOnMount,
 		onInputFocus,
 		onInputBlur,
+		leadingActions: contextLeadingActions,
+		trailingActions: contextTrailingActions,
 	} = useAgentUIContext();
+
+	const resolvedTrailingActions = trailingActions ?? contextTrailingActions;
+	const hostLeadingActions = leadingActions ?? contextLeadingActions;
 
 	const onKeyDownHandler = ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => {
 		onKeyDown?.( e );
@@ -57,13 +72,12 @@ export function AgentUIInput( {
 		handleKeyDown( e );
 	};
 
-	// When imageUploaderRef is provided, prepend a "+" button to custom actions
-	const resolvedActions = useMemo( () => {
+	const uploadAction = useMemo< ActionButton | undefined >( () => {
 		if ( ! imageUploaderRef ) {
-			return customActions;
+			return undefined;
 		}
 
-		const uploadAction: ActionButton = {
+		return {
 			id: 'image-upload',
 			icon: <PlusIcon />,
 			onClick: () => imageUploaderRef.current?.openFileDialog(),
@@ -71,9 +85,20 @@ export function AgentUIInput( {
 			disabled: imageUploadDisabled,
 			'aria-label': __( 'Upload image', 'a8c-agenttic' ),
 		};
-
-		return [ uploadAction, ...( customActions || [] ) ];
-	}, [ imageUploaderRef, customActions, imageUploadDisabled ] );
+	}, [ imageUploaderRef, imageUploadDisabled ] );
+	const uploadAfterSubmit = actionOrder === 'after-submit' && uploadAction;
+	const resolvedLeadingActions =
+		uploadAction && ! uploadAfterSubmit ? (
+			<>
+				<ActionButtons actions={ [ uploadAction ] } />
+				{ hostLeadingActions }
+			</>
+		) : (
+			hostLeadingActions
+		);
+	const resolvedCustomActions = uploadAfterSubmit
+		? [ uploadAction, ...( customActions ?? [] ) ]
+		: customActions;
 
 	// Default to stacked layout when image uploader is connected
 	const resolvedLayout = layout ?? ( imageUploaderRef ? 'stacked' : 'inline' );
@@ -96,7 +121,9 @@ export function AgentUIInput( {
 			focusOnMount={ focusOnMount }
 			disabled={ disabled }
 			readOnly={ readOnly }
-			customActions={ resolvedActions }
+			leadingActions={ resolvedLeadingActions }
+			trailingActions={ resolvedTrailingActions }
+			customActions={ resolvedCustomActions }
 			actionOrder={ actionOrder }
 			className={ className }
 			layout={ resolvedLayout }

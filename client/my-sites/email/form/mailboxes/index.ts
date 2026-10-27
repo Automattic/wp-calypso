@@ -53,7 +53,8 @@ class MailboxForm< T extends EmailProvider > {
 		const domainField = this.getFormField< string >( FIELD_DOMAIN );
 		const domainName = domainField?.value ?? '';
 		const mailboxHasDomainError = Boolean( domainField?.error );
-		const minimumPasswordLength = this.provider === EmailProvider.Titan ? 10 : 12;
+		const isTitan = this.provider === EmailProvider.Titan;
+		const minimumPasswordLength = isTitan ? 10 : 12;
 		const areApostrophesSupported = this.provider === EmailProvider.Google;
 
 		return [
@@ -71,7 +72,13 @@ class MailboxForm< T extends EmailProvider > {
 				new MailboxNameValidator( domainName, mailboxHasDomainError, areApostrophesSupported ),
 			],
 			[ FIELD_PASSWORD, new RequiredValidator< string >() ],
-			[ FIELD_PASSWORD, new PasswordValidator( minimumPasswordLength ) ],
+			[
+				FIELD_PASSWORD,
+				new PasswordValidator( minimumPasswordLength, {
+					requireNumber: isTitan,
+					requireSpecialCharacter: isTitan,
+				} ),
+			],
 			[ FIELD_PASSWORD_RESET_EMAIL, new RequiredValidator< string >() ],
 			[ FIELD_PASSWORD_RESET_EMAIL, new PasswordResetEmailValidator( domainName ) ],
 			[ FIELD_UUID, new RequiredValidator< string >() ],
@@ -135,13 +142,13 @@ class MailboxForm< T extends EmailProvider > {
 					firstname: this.getFieldValue< string >( FIELD_FIRSTNAME ),
 					lastname: this.getFieldValue< string >( FIELD_LASTNAME ),
 					recoveryEmail: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
-			  }
+				}
 			: {
 					...commonFields,
 					alternative_email: this.getFieldValue< string >( FIELD_PASSWORD_RESET_EMAIL ),
 					is_admin: this.getFieldValue< boolean >( FIELD_IS_ADMIN ),
 					name: this.getFieldValue< string >( FIELD_NAME ),
-			  };
+				};
 	}
 
 	getAsFlatObject(): Record< FormFieldNames, string | boolean | undefined > {

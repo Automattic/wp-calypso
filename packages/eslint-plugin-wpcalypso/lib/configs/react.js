@@ -1,20 +1,10 @@
+// The rules `react` adds on top of `recommended`.
 module.exports = {
-	extends: 'plugin:wpcalypso/recommended',
-	parserOptions: {
-		ecmaVersion: 7,
-		ecmaFeatures: {
-			jsx: true,
-		},
-		sourceType: 'module',
-	},
-	plugins: [ 'react', 'react-hooks' ],
 	rules: {
-		'react/jsx-curly-spacing': [ 2, 'always' ],
 		'react/jsx-key': 1,
 		'react/jsx-no-duplicate-props': 2,
 		'react/jsx-no-target-blank': 2,
 		'react/jsx-no-undef': 2,
-		'react/jsx-tag-spacing': 2,
 		'react/jsx-uses-react': 0,
 		'react/jsx-uses-vars': 2,
 		'react/no-danger': 2,

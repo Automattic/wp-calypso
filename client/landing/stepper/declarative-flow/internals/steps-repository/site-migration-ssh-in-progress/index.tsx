@@ -102,7 +102,7 @@ const SiteMigrationSshInProgress: StepType< {
 					args: { siteDomain },
 					components: { strong: <strong /> },
 				}
-		  )
+			)
 		: null;
 
 	return (

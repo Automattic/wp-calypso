@@ -3,6 +3,7 @@ import { TranslateResult } from 'i18n-calypso';
 import { useState, type ChangeEvent, type InvalidEvent, type JSX } from 'react';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormPasswordInput from 'calypso/components/forms/form-password-input';
+import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import FormTextInputWithAffixes from 'calypso/components/forms/form-text-input-with-affixes';
 import { useGetDefaultFieldLabelText } from 'calypso/my-sites/email/form/mailboxes/components/use-get-default-field-label-text';
@@ -14,6 +15,7 @@ import type {
 import './style.scss';
 
 interface MailboxFormFieldProps {
+	explanationText?: TranslateResult;
 	field: MailboxFormFieldBase< string >;
 	fieldLabelText?: TranslateResult;
 	isAutoFocusEnabled?: boolean;
@@ -80,6 +82,7 @@ const MailboxField = ( {
 	);
 
 	const {
+		explanationText,
 		field: originalField,
 		fieldLabelText = defaultFieldLabelText,
 		lowerCaseChangeValue = false,
@@ -140,6 +143,7 @@ const MailboxField = ( {
 				/>
 				{ children }
 			</FormLabel>
+			{ explanationText && <FormSettingExplanation>{ explanationText }</FormSettingExplanation> }
 			{ field.error && <FormInputValidation text={ field.error } isError /> }
 		</FormFieldset>
 	);

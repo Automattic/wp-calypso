@@ -220,7 +220,7 @@ const DesignButtonCover: FC< DesignButtonCoverProps > = ( {
 					{ shouldUpgrade
 						? __( 'Upgrade Plan' )
 						: // translators: %s is the title of design with currency. Eg: Alves
-						  sprintf( __( 'Start with %s' ), design.title ) }
+							sprintf( __( 'Start with %s' ), design.title ) }
 				</Button>
 				<Button className="design-button-cover__button" onClick={ () => onPreview( design ) }>
 					{

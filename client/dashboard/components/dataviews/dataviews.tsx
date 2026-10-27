@@ -44,3 +44,4 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 
 DataViews.Layout = WPDataViews.Layout;
 DataViews.Pagination = WPDataViews.Pagination;
+DataViews.Search = WPDataViews.Search;

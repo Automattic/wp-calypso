@@ -6,6 +6,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 const mockSetIsMinimized = jest.fn();
+let mockIsInternalOnly = false;
 
 jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
@@ -13,13 +14,14 @@ jest.mock( '@wordpress/components', () => ( {
 		className,
 		label,
 		onClick,
+		...props
 	}: {
 		children?: React.ReactNode;
 		className?: string;
 		label?: string;
 		onClick?: () => void;
 	} ) => (
-		<button className={ className } onClick={ onClick }>
+		<button className={ className } onClick={ onClick } { ...props }>
 			{ label }
 			{ children }
 		</button>
@@ -37,15 +39,16 @@ jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( { setIsMinimized: mockSetIsMinimized } ),
 } ) );
 jest.mock( '../../stores', () => ( { AGENTS_MANAGER_STORE: 'agents-manager' } ) );
+jest.mock( '../../contexts', () => ( {
+	useAgentsManagerContext: () => ( { isInternalOnly: mockIsInternalOnly } ),
+} ) );
 jest.mock( '../../utils/tracks', () => ( {
 	recordBigSkyTracksEvent: jest.fn(),
 	recordAgentsManagerTracksEvent: jest.fn(),
 } ) );
 jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
-	default: () =>
-		!! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ) ||
-		!! globalThis.document.querySelector( '.masterbar__item-agents-manager-ai-chat' ),
+	default: () => !! globalThis.document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' ),
 } ) );
 jest.mock( '../chat-header/style.scss', () => ( {} ) );
 
@@ -57,27 +60,40 @@ function installAdminBarTrigger() {
 	document.body.appendChild( el );
 }
 
-function installMasterbarTrigger() {
-	const el = document.createElement( 'div' );
-	el.className = 'masterbar__item-agents-manager-ai-chat';
-	document.body.appendChild( el );
-}
-
-function renderChatHeader( title?: string, isDocked = false ) {
+function renderChatHeader( title?: string, isDocked = false, onBack?: () => void ) {
 	return render(
 		<MemoryRouter>
-			<ChatHeader onClose={ jest.fn() } options={ [] } title={ title } isDocked={ isDocked } />
+			<ChatHeader
+				onClose={ jest.fn() }
+				options={ [] }
+				title={ title }
+				onBack={ onBack }
+				isDocked={ isDocked }
+			/>
 		</MemoryRouter>
 	);
 }
 
 describe( 'ChatHeader', () => {
 	afterEach( () => {
+		delete window.__agentsManagerConfig;
 		mockSetIsMinimized.mockClear();
+		mockIsInternalOnly = false;
 		document.getElementById( 'wp-admin-bar-agents-manager-ai-chat' )?.remove();
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-		document.querySelector( '.masterbar__item-agents-manager-ai-chat' )?.remove();
 	} );
+
+	it.each( [ true, false ] )(
+		'hides dismiss controls for a non-dismissible chat (docked: %s)',
+		( isDocked ) => {
+			window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+			installAdminBarTrigger();
+			renderChatHeader( 'History', isDocked, jest.fn() );
+			expect( screen.queryByText( 'Close' ) ).toBeNull();
+			expect( screen.queryByText( 'Minimize' ) ).toBeNull();
+			expect( screen.getByText( 'More Options' ) ).toBeInTheDocument();
+		}
+	);
 
 	it( 'renders the title with a matching title attribute so the full text shows on hover when truncated', () => {
 		const title = 'A very long support guides title';
@@ -92,6 +108,54 @@ describe( 'ChatHeader', () => {
 		expect( container.querySelector( '.agents-manager-chat-header__title' ) ).toBeNull();
 	} );
 
+	it( 'shows the internal-only pill with an explanatory title', () => {
+		mockIsInternalOnly = true;
+
+		renderChatHeader();
+
+		expect( screen.getByText( 'A8C Only' ) ).toHaveAttribute(
+			'title',
+			'The current screen only has WordPress Agent enabled for internal use.'
+		);
+	} );
+
+	it( 'places the internal-only pill after the back button and title', () => {
+		mockIsInternalOnly = true;
+
+		const { container } = renderChatHeader( 'Chat history', false, jest.fn() );
+		const header = container.querySelector( '.agents-manager-chat-header' );
+
+		expect( Array.from( header?.children ?? [] ).map( ( child ) => child.className ) ).toEqual( [
+			'agents-manager-chat-header__back-btn',
+			'agents-manager-chat-header__title',
+			'agents-manager-chat-header__internal-only',
+			'agents-manager-chat-header__actions',
+		] );
+	} );
+
+	it( 'exempts its controls, but not the title, from the floating panel drag', () => {
+		installAdminBarTrigger();
+
+		const { container } = renderChatHeader( 'History', false, jest.fn() );
+		// agenttic's non-draggable selector for header controls.
+		const isExempt = ( element: Element | null ) =>
+			!! element?.closest( '[data-slot="chat-header"] [data-slot="button"]' );
+
+		expect( isExempt( container.querySelector( '.agents-manager-chat-header__back-btn' ) ) ).toBe(
+			true
+		);
+		expect( isExempt( screen.getByText( 'Minimize' ) ) ).toBe( true );
+		expect( isExempt( screen.getByText( 'More Options' ) ) ).toBe( true );
+		expect( isExempt( screen.getByText( 'Close' ) ) ).toBe( true );
+		expect( isExempt( screen.getByText( 'History' ) ) ).toBe( false );
+	} );
+
+	it( 'hides the internal-only pill on generally available screens', () => {
+		renderChatHeader();
+
+		expect( screen.queryByText( 'A8C Only' ) ).toBeNull();
+	} );
+
 	it( 'minimizes the chat when the Minimize button is clicked', () => {
 		installAdminBarTrigger();
 
@@ -99,14 +163,6 @@ describe( 'ChatHeader', () => {
 		fireEvent.click( screen.getByText( 'Minimize' ) );
 
 		expect( mockSetIsMinimized ).toHaveBeenCalledWith( true );
-	} );
-
-	it( 'shows the Minimize button with the Calypso masterbar trigger', () => {
-		installMasterbarTrigger();
-
-		renderChatHeader();
-
-		expect( screen.getByText( 'Minimize' ) ).toBeInTheDocument();
 	} );
 
 	it( 'hides the Minimize button without an entry-point trigger', () => {

@@ -80,7 +80,7 @@ function generateLayout(
 					height: 1,
 					order: i,
 					fillWidth: useFill || undefined,
-			  };
+				};
 		items.push( item );
 	}
 	return items;

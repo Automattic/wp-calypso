@@ -21,10 +21,8 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key', () => ( {
 	default: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/state', () => ( { useDispatch: jest.fn( () => jest.fn() ) } ) );
-
-jest.mock( 'calypso/state/analytics/actions', () => ( {
-	recordTracksEvent: () => ( { type: 'NOOP_RECORD_TRACKS_EVENT' } ),
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( '../../hooks/product-variants', () => ( {
@@ -50,6 +48,7 @@ jest.mock( 'calypso/components/promo-section/promo-card', () => {
 		children: React.ReactNode;
 		className?: string;
 	} ) {
+		// eslint-disable-next-line @typescript-eslint/no-require-imports -- jest.mock factories cannot use imports
 		const React = require( 'react' );
 		return React.createElement(
 			'div',
@@ -64,6 +63,7 @@ jest.mock( 'calypso/components/promo-section/promo-card/cta', () => {
 	return function MockPromoCardCTA( props: {
 		cta: { text: React.ReactNode; action: () => void; disabled: boolean };
 	} ) {
+		// eslint-disable-next-line @typescript-eslint/no-require-imports -- jest.mock factories cannot use imports
 		const React = require( 'react' );
 		return React.createElement(
 			'button',

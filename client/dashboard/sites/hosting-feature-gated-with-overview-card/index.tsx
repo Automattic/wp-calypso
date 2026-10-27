@@ -5,8 +5,10 @@ import HostingFeatureGate from '../hosting-feature-gate';
 import type { OverviewCardProps } from '../../components/overview-card';
 import type { HostingFeatureGateProps } from '../hosting-feature-gate';
 
-interface HostingFeatureGatedWithOverviewCardProps
-	extends Omit< HostingFeatureGateProps, 'renderUpsellComponent' | 'renderActivationComponent' > {
+interface HostingFeatureGatedWithOverviewCardProps extends Omit<
+	HostingFeatureGateProps,
+	'renderUpsellComponent' | 'renderActivationComponent'
+> {
 	featureIcon: OverviewCardProps[ 'icon' ];
 	upsellHeading: OverviewCardProps[ 'heading' ];
 	upsellDescription: OverviewCardProps[ 'description' ];

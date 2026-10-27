@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { setSiteLogoCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * The `set-site-logo` ability definition.
@@ -13,7 +13,7 @@ export const setSiteLogoAbility: Ability = {
 	name: 'big-sky/set-site-logo',
 	label: __( 'Set Site Logo', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __( 'Set the site logo', __i18n_text_domain__ ),
+	description: 'Set the site logo',
 	input_schema: {
 		type: 'object',
 		properties: {

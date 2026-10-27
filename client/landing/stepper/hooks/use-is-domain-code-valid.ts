@@ -59,7 +59,7 @@ export function useIsDomainCodeValid( pair: DomainCodePair, queryOptions = {} ) 
 								return acc;
 							},
 							{} as Record< string, string >
-					  );
+						);
 				const availability = await wpcom.req.get< DomainLockResponse >(
 					{
 						apiVersion: '1.3',

@@ -3,11 +3,7 @@
  */
 import { PLAN_FREE, PLAN_PERSONAL } from '@automattic/calypso-products';
 import { screen, renderHook } from '@testing-library/react';
-import {
-	FREE_PLAN_FREE_DOMAIN_DIALOG,
-	FREE_PLAN_PAID_DOMAIN_DIALOG,
-	PAID_PLAN_PAID_DOMAIN_DIALOG,
-} from '..';
+import { FREE_PLAN_PAID_DOMAIN_DIALOG, PAID_PLAN_PAID_DOMAIN_DIALOG } from '..';
 import { renderWithProvider } from '../../../../../test-helpers/testing-library';
 import { useModalResolutionCallback } from '../hooks/use-modal-resolution-callback';
 
@@ -49,13 +45,11 @@ describe( 'PlanUpsellModal tests', () => {
 			);
 		} );
 
-		test( 'A free domain should show the FREE_PLAN_FREE_DOMAIN_DIALOG when custom domains are enabled for the Free plan', () => {
+		test( 'A free domain should NOT show any Dialog when custom domains are enabled for the Free plan', () => {
 			renderWithProvider(
 				<MockPlansFeaturesMain isCustomDomainAllowedOnFreePlan selectedPlan={ PLAN_FREE } />
 			);
-			expect( screen.getByTestId( 'modal-render' ) ).toHaveTextContent(
-				FREE_PLAN_FREE_DOMAIN_DIALOG
-			);
+			expect( screen.queryByText( /DIALOG/i ) ).toBeNull();
 		} );
 
 		test( 'A free domain on the onboarding flow should NOT show any Dialog', () => {

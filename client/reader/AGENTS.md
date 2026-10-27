@@ -186,6 +186,7 @@ Post cards live in `client/blocks/reader-post-card/` with variants: `standard` (
 | `/reader/p2`                                      | `client/reader/p2/main.jsx`                                                    |
 | `/discover/search`                                | `client/reader/discover/search-controller.jsx`, `client/reader/search-stream/` |
 | `/reader/notifications`                           | `client/reader/notifications/`                                                 |
+| `/reader/four-for-four`                           | `client/reader/four-for-four/`                                                 |
 | `/reader/new`                                     | `client/reader/new-subscription/`                                              |
 | `/reader/subscriptions`                           | `client/reader/site-subscriptions-manager/`                                    |
 | `/reader/subscriptions/comments`                  | `client/reader/site-subscriptions-manager/comment-subscriptions-manager/`      |
@@ -271,7 +272,7 @@ contract.
 
 ### SSR file variants
 
-Some routes have both `.node.js` (server) and `.web.js` (client) file variants for isomorphic rendering. Examples: `discover/index.node.js` / `discover/index.web.js`, `tags/index.node.js` / `tags/index.web.js`. The `.node.js` variant renders placeholder components for SSR, while `.web.js` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required.
+Some routes have both `.node` (server) and `.web` (client) file variants for isomorphic rendering. Example: `discover/index.node.jsx` / `discover/index.web.jsx`. The `.node` variant renders placeholder components for SSR, while `.web` uses `AsyncLoad` and full interactivity. When adding new routes that need SSR support, both variants are required, along with a `package.json` shim mapping `main` to the node variant and `browser` to the web variant.
 
 ### Analytics
 

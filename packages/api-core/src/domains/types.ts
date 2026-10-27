@@ -69,10 +69,12 @@ export interface DomainSummary {
 	auto_renewing: boolean;
 	current_user_is_owner: boolean | null;
 	is_domain_only_site: boolean;
+	is_suspended_site?: boolean;
 	expiry: string | null;
 	expired: boolean;
 	primary_domain: boolean;
 	can_set_as_primary: boolean;
+	set_primary_domain_pending: boolean;
 	domain_status: {
 		id: DomainStatus;
 		label: string;

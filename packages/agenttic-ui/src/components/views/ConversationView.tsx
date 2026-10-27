@@ -3,7 +3,7 @@ import { ChatFooter } from '../chat/ChatFooter';
 import { ChatHeader } from '../chat/ChatHeader';
 import { Messages } from '../chat/Messages';
 import styles from './ConversationView.module.css';
-import type { Message, NoticeConfig, Suggestion } from '../../types';
+import type { Message, NoticeConfig, Suggestion, TrailingActions } from '../../types';
 import type { ComponentType } from 'react';
 
 interface InputHandlers {
@@ -13,6 +13,8 @@ interface InputHandlers {
 	onKeyDown: ( e: React.KeyboardEvent< HTMLTextAreaElement > ) => void;
 	textareaRef: React.RefObject< HTMLTextAreaElement | null >;
 	placeholder?: string | string[];
+	leadingActions?: React.ReactNode;
+	trailingActions?: TrailingActions;
 	isProcessing: boolean;
 	onStop?: () => void;
 }
@@ -22,7 +24,10 @@ interface ConversationViewProps extends InputHandlers {
 	messages: Message[];
 
 	// Agent state
+	isStreaming?: boolean;
+	isReplying?: boolean;
 	error?: string | null;
+	errorNotice?: NoticeConfig;
 
 	// UI state
 	fromCompact?: boolean;
@@ -55,13 +60,18 @@ interface ConversationViewProps extends InputHandlers {
 export function ConversationView( {
 	messages,
 	error,
+	errorNotice,
 	inputValue,
 	onInputChange,
 	onSubmit,
 	onKeyDown,
 	textareaRef,
 	placeholder,
+	leadingActions,
+	trailingActions,
 	isProcessing,
+	isStreaming,
+	isReplying,
 	onStop,
 	fromCompact = false,
 	showHeader = false,
@@ -101,7 +111,10 @@ export function ConversationView( {
 			<Messages
 				messages={ messages }
 				isProcessing={ isProcessing }
+				isStreaming={ isStreaming }
+				isReplying={ isReplying }
 				error={ error }
+				errorNotice={ errorNotice }
 				emptyView={ emptyView }
 				messageRenderer={ messageRenderer }
 				showAgentIcon={ showAgentIcon }
@@ -113,6 +126,8 @@ export function ConversationView( {
 				onKeyDown={ onKeyDown }
 				textareaRef={ textareaRef }
 				placeholder={ placeholder }
+				leadingActions={ leadingActions }
+				trailingActions={ trailingActions }
 				isProcessing={ isProcessing }
 				onStop={ onStop }
 				fromCompact={ fromCompact }

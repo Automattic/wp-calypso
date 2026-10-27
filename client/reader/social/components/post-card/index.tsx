@@ -76,7 +76,7 @@ export function SocialPostCard( {
 				uri: post.uri,
 				author: { did: post.author.id },
 				reply_parent: post.reply_parent ? { uri: post.reply_parent.uri } : null,
-		  }
+			}
 		: null;
 	// `postActionsPost` is only set when `showPostActions` is true, which in turn
 	// requires `connectionId !== undefined`. The `connectionId !== undefined`

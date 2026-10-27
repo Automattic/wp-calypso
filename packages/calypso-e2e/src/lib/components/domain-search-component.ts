@@ -20,6 +20,12 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 	}
 };
 
+// Name Pulse rows have their domain in `data-domain`, not in `title`.
+const NAME_PULSE_ROW_SELECTOR = '.name-pulse-row[data-domain]';
+
+// `reloadAndRetry` runs the search closure three times, inside a 120s test.
+const SEARCH_BUDGET = 60 * 1000;
+
 const normalizeText = ( value?: string | null ): string =>
 	( value ?? '' ).replace( /\s+/g, ' ' ).trim();
 
@@ -74,6 +80,7 @@ const summarizeCartResponse = async ( response: Response ): Promise< CartRespons
  */
 export class DomainSearchComponent {
 	private page: Page;
+	private searchedLabel?: string;
 	container?: Locator;
 	readonly claimYourSpaceHeading: Locator;
 	/**
@@ -105,6 +112,43 @@ export class DomainSearchComponent {
 	 */
 	async search( keyword: string ): Promise< void > {
 		const container = this.getContainer();
+		const startedAt = Date.now();
+		const deadline = startedAt + SEARCH_BUDGET;
+
+		// Every wait below is bounded on its own, and `reloadAndRetry` runs the
+		// closure three times, so the search as a whole has to be bounded too: one
+		// that outlives the 120s test timeout reports that timeout instead of its
+		// own error - or the throttle the error stands for. Playwright reads a zero
+		// timeout as "wait forever", so a spent budget ends the search rather than
+		// reaching one.
+		const within = ( cap: number ): number => {
+			const left = deadline - Date.now();
+
+			if ( left <= 0 ) {
+				throw new Error(
+					`Search for "${ keyword }" exceeded its ${ SEARCH_BUDGET / 1000 }s budget.`
+				);
+			}
+
+			return Math.min( cap, left );
+		};
+
+		const normalizedKeyword = keyword.trim().toLowerCase();
+		// Suggestion titles are domain names, so compare on the second-level
+		// label only, letters and digits, so `coffee shop` matches
+		// `coffeeshop.com` and `e2e-flow-testing` matches `e2eflowtesting.blog`.
+		const keywordLabel = normalizedKeyword.split( '.' )[ 0 ].replace( /[^a-z0-9]/g, '' );
+		this.searchedLabel = keywordLabel;
+		const titleMatchesKeyword = ( title: string | null ) =>
+			!! title &&
+			title
+				.toLowerCase()
+				.replace( /[^a-z0-9]/g, '' )
+				.includes( keywordLabel );
+		const isKeywordSuggestionsResponse = ( response: Response ) =>
+			/suggestions\?/.test( response.url() ) &&
+			new URL( response.url() ).searchParams.get( 'query' )?.trim().toLowerCase() ===
+				normalizedKeyword;
 
 		/**
 		 *
@@ -113,26 +157,28 @@ export class DomainSearchComponent {
 		 * @param {Page} page Page object.
 		 */
 		async function searchDomainClosure( page: Page ): Promise< void > {
-			// Capture the first suggestion's title before searching. If
-			// suggestions are already visible (e.g. pre-populated from the
-			// site slug), this lets us detect when React re-renders the list
-			// with new results after the API response arrives.
+			const searchbox = page.getByRole( 'searchbox' );
 			const firstListitem = container.getByRole( 'listitem' ).first();
-			let previousTitle: string | null = null;
-			if ( ( await firstListitem.count() ) > 0 ) {
-				previousTitle = await firstListitem.getAttribute( 'title' );
+
+			// Site flows pre-fill the searchbox and search for that value on
+			// mount. Typing before that first list renders drops the typed
+			// query: the input keeps the text but no request is made for it.
+			if ( ( await searchbox.inputValue() ) !== '' ) {
+				await firstListitem.waitFor( { timeout: within( 30 * 1000 ) } ).catch( () => {} );
 			}
 
 			const searchAndPressEnter = async () => {
-				await page.getByRole( 'searchbox' ).fill( keyword );
-				await page.getByRole( 'searchbox' ).press( 'Enter' );
+				await searchbox.fill( keyword );
+				await searchbox.press( 'Enter' );
 			};
 
 			const [ response ] = await Promise.all( [
-				// The domain lookup service is external and regularly exceeds the
-				// 10s default timeout under load; give it a longer budget instead
-				// of burning reloadAndRetry attempts on a slow-but-healthy service.
-				page.waitForResponse( /suggestions\?/, { timeout: 30 * 1000 } ),
+				// Match the request for this keyword, not the pre-fill request
+				// that can still be in flight. The domain lookup service is
+				// external and regularly exceeds the 10s default timeout under
+				// load; give it a longer budget instead of burning reloadAndRetry
+				// attempts on a slow-but-healthy service.
+				page.waitForResponse( isKeywordSuggestionsResponse, { timeout: within( 30 * 1000 ) } ),
 				searchAndPressEnter(),
 			] );
 
@@ -145,20 +191,32 @@ export class DomainSearchComponent {
 
 			await recordResponseThrottle( response );
 
-			// Wait for the DOM to reflect the new search results. The API
-			// response resolves before React re-renders the suggestion list
-			// (TanStack Query keeps isLoading false on refetch while prior
-			// data is cached), so without this guard selectFirstSuggestion
-			// can read a stale title from the previous search.
-			if ( previousTitle ) {
-				for ( let attempt = 0; attempt < 50; attempt++ ) {
-					const current = await firstListitem.getAttribute( 'title' );
-					if ( current !== previousTitle ) {
-						break;
+			// The response resolves before React re-renders the list, and a
+			// pre-fill response can land after it. Wait until the list shows the
+			// keyword: the first row in the classic list, any row in Name Pulse,
+			// which renders fresh results for each search.
+			const namePulseRows = container.locator( NAME_PULSE_ROW_SELECTOR );
+			let seenDomain: string | null = null;
+			for ( let attempt = 0; attempt < 50; attempt++ ) {
+				const namePulseDomains = await namePulseRows.evaluateAll( ( rows ) =>
+					rows.map( ( row ) => row.getAttribute( 'data-domain' ) )
+				);
+				if ( namePulseDomains.length ) {
+					seenDomain = namePulseDomains[ 0 ];
+					if ( namePulseDomains.some( titleMatchesKeyword ) ) {
+						return;
 					}
-					await page.waitForTimeout( 200 );
+				} else {
+					seenDomain = await firstListitem.getAttribute( 'title' );
+					if ( titleMatchesKeyword( seenDomain ) ) {
+						return;
+					}
 				}
+				await page.waitForTimeout( within( 200 ) );
 			}
+			throw new Error(
+				`Domain suggestions did not update for "${ keyword }": first suggestion is "${ seenDomain }".`
+			);
 		}
 
 		// Outside the retry: `reloadAndRetry` swallows the closure's error on every
@@ -170,8 +228,10 @@ export class DomainSearchComponent {
 			// Retry a few times when this is encountered.
 			await reloadAndRetry( this.page, searchDomainClosure );
 		} catch ( error ) {
-			// The failure might be due to a ban.
-			handleActiveThrottles( [ 'domain-suggestions' ] );
+			// The failure might be due to a ban. Read as of when the search began:
+			// a ban lasts as long as the budget does, so one met early in the search
+			// has lapsed by the time the budget is spent.
+			handleActiveThrottles( [ 'domain-suggestions' ], startedAt );
 			throw error;
 		}
 	}
@@ -260,6 +320,10 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion( waitForContinueButton: boolean = true ): Promise< string > {
+		if ( ( await this.getContainer().locator( NAME_PULSE_ROW_SELECTOR ).count() ) > 0 ) {
+			return this.selectFirstNamePulseSuggestion( waitForContinueButton );
+		}
+
 		const targetRow = this.getContainer().getByRole( 'listitem' ).first();
 		const suggestion = await this.selectSuggestion( targetRow, waitForContinueButton );
 
@@ -307,7 +371,15 @@ export class DomainSearchComponent {
 		}
 
 		const addToCartButton = row.getByRole( 'button', { name: 'Add to cart' } );
-		await addToCartButton.waitFor();
+		try {
+			await addToCartButton.waitFor();
+		} catch ( error ) {
+			// The check on entry only sees a ban that was already in force then; this
+			// one sees one raised since, by this worker or by a peer's. Reaching the
+			// throw means none was, and the wait's own error stands.
+			handleActiveThrottles( [ 'domain-availability' ] );
+			throw error;
+		}
 
 		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
 		const trackCartResponse = ( response: Response ) => {
@@ -367,6 +439,115 @@ export class DomainSearchComponent {
 		}
 
 		return selectedDomain;
+	}
+
+	/**
+	 * Adds the first available Name Pulse row to the cart, preferring rows that
+	 * contain the searched keyword. If adding fails, tries the next row.
+	 *
+	 * @param {boolean} waitForContinueButton Whether to wait for the continue button.
+	 * @returns {string} Domain that was selected.
+	 */
+	private async selectFirstNamePulseSuggestion(
+		waitForContinueButton: boolean
+	): Promise< string > {
+		const container = this.getContainer();
+		const addToCart = this.page.getByRole( 'button', { name: 'Add to cart' } );
+		const failedDomains: string[] = [];
+		const errors: string[] = [];
+
+		handleActiveThrottles( [ 'domain-availability' ] );
+
+		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
+		const trackCartResponse = ( response: Response ) => {
+			if ( isShoppingCartResponse( response ) ) {
+				cartResponseSummaries.push( summarizeCartResponse( response ) );
+			}
+		};
+
+		this.page.on( 'response', trackCartResponse );
+
+		try {
+			for ( let attempt = 1; attempt <= 3; attempt++ ) {
+				const untried = failedDomains.map( ( domain ) => `:not([data-domain="${ domain }"])` );
+				const availableRows = container
+					.locator( NAME_PULSE_ROW_SELECTOR + untried.join( '' ) )
+					.filter( { has: addToCart } );
+				const keywordRows = this.searchedLabel
+					? availableRows.and( container.locator( `[data-domain*="${ this.searchedLabel }"]` ) )
+					: availableRows;
+
+				let candidate = keywordRows.first();
+				try {
+					await candidate.waitFor( { timeout: attempt === 1 ? 30 * 1000 : 5 * 1000 } );
+				} catch {
+					candidate = availableRows.first();
+					await candidate.waitFor( { timeout: 5 * 1000 } );
+				}
+
+				const domain = ( await candidate.getAttribute( 'data-domain' ) ) as string;
+				// Target the row by domain: `candidate` could match another row by now.
+				const rowsForDomain = container.locator( `.name-pulse-row[data-domain="${ domain }"]` );
+				const added = rowsForDomain.getByRole( 'button', { name: 'Remove from cart' } );
+				const failed = rowsForDomain.locator( '.name-pulse-row__cart--error' );
+
+				await rowsForDomain
+					.filter( { has: addToCart } )
+					.first()
+					.getByRole( 'button', { name: 'Add to cart' } )
+					.click();
+				await added
+					.or( failed )
+					.first()
+					.waitFor( { timeout: 30 * 1000 } );
+
+				if ( ( await added.count() ) > 0 ) {
+					if ( waitForContinueButton ) {
+						await this.page
+							.getByRole( 'button', { name: 'Continue' } )
+							.first()
+							.waitFor( { timeout: 30 * 1000 } );
+					}
+
+					return domain;
+				}
+
+				handleActiveThrottles( [ 'domain-availability' ] );
+				failedDomains.push( domain );
+				errors.push(
+					`${ domain }: ${ await failed.first().getAttribute( 'aria-label', { timeout: 1000 } ) }`
+				);
+			}
+
+			throw new Error( 'Every attempt to add a domain to the cart failed.' );
+		} catch ( error ) {
+			// A ban skips the test; don't report it as a failure.
+			handleActiveThrottles( [ 'domain-availability' ] );
+
+			const cartResponses = ( await Promise.allSettled( cartResponseSummaries ) ).map(
+				( result ) =>
+					result.status === 'fulfilled' ? result.value : { error: formatError( result.reason ) }
+			);
+
+			throw new Error(
+				[
+					'Failed to select a Name Pulse domain suggestion.',
+					`Original error: ${ formatError( error ) }`,
+					`Diagnostics: ${ JSON.stringify(
+						{
+							currentUrl: this.page.url(),
+							searchedLabel: this.searchedLabel,
+							errors,
+							cartResponses: cartResponses.slice( -5 ),
+						},
+						null,
+						2
+					) }`,
+				].join( '\n' )
+			);
+		} finally {
+			this.page.off( 'response', trackCartResponse );
+		}
 	}
 
 	/**
@@ -462,8 +643,11 @@ export class DomainSearchComponent {
 	/**
 	 * Skips the domain search screen.
 	 */
-	async skipPurchase(): Promise< string > {
-		const button = this.page.getByRole( 'button', { name: 'Skip purchase' } );
+	async skipPurchase(): Promise< void > {
+		// Onboarding labels the button without the free subdomain.
+		const button = this.page.getByRole( 'button', {
+			name: /^(Skip purchase|Skip the domain for now)/,
+		} );
 
 		try {
 			await button.waitFor();
@@ -479,15 +663,6 @@ export class DomainSearchComponent {
 			throw error;
 		}
 
-		let domain = await button.getAttribute( 'aria-label' );
-		domain = domain?.replace( 'Skip purchase and continue with ', '' ) ?? null;
-
-		if ( ! domain ) {
-			throw new Error( 'No domain found for skip purchase button' );
-		}
-
 		await button.click();
-
-		return domain;
 	}
 }

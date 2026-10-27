@@ -10,18 +10,18 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../i18n-translate-identifier' );
+const plugin = require( '../../..' );
 
 //------------------------------------------------------------------------------
 // Tests
 //------------------------------------------------------------------------------
 
 new RuleTester( {
-	parserOptions: {
+	languageOptions: {
 		sourceType: 'module',
 		ecmaVersion: 6,
 	},
-} ).run( 'i18n-translate-identifier', rule, {
+} ).run( 'i18n-translate-identifier', plugin.rules[ 'i18n-translate-identifier' ], {
 	valid: [
 		'var translate = useTranslate();',
 		'const translate = useTranslate();',

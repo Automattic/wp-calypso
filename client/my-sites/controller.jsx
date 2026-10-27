@@ -130,8 +130,10 @@ export function renderRebloggingEmptySites( context ) {
 	const actionURL = addQueryArgs(
 		{
 			blog_post: context.query?.url,
+			// Keeps reblog signups separable from the rest of onboarding in its Tracks events.
+			ref: 'reblog',
 		},
-		'/setup/reblogging'
+		'/setup/onboarding'
 	);
 
 	context.primary = createElement( () =>
@@ -705,7 +707,7 @@ export function siteSelection( context, next ) {
 		const promise = shouldUpdateStateAfterUpgrade
 			? dispatch( requestSite( siteId ) ).catch( () => {
 					return null;
-			  } )
+				} )
 			: Promise.resolve();
 		promise.then( () => {
 			if ( onSelectedSiteAvailable( context ) ) {

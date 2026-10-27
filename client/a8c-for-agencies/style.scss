@@ -9,6 +9,9 @@
 	--a4a-corners-sharp: 0;
 	--a4a-corners-soft: 4px;
 
+	// Match the classic .tooltip.popover layer so wp-ui tooltips render above the sidebar.
+	--wp-ui-tooltip-z-index: 100000;
+
 	--color-surface-backdrop: #021a23;
 	--color-overview-header-background: #05374a;
 	--color-light-backdrop: var(--studio-white);
@@ -372,7 +375,6 @@
 .theme-a8c-for-agencies .layout.has-no-masterbar {
 	/* We are ignoring these lines because without the
 	// px value the calc function does not work as expected */
-	/* stylelint-disable-next-line length-zero-no-unit */
 	--masterbar-height: 0px;
 
 	.layout__content {

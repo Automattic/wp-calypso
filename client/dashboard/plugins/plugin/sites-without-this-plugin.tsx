@@ -112,20 +112,13 @@ export const SitesWithoutThisPlugin = ( {
 				getValue: ( { item }: { item: Site } ) => getSitePlanDisplayName( item ) ?? '',
 				render: ( { field, item } ) => (
 					<Plan
-						// Match behaviour of the main sites DataView plan field
-						nag={ item.plan?.expired ? { isExpired: true, site: item } : { isExpired: false } }
+						site={ item }
 						isSelfHostedJetpackConnected={ isSelfHostedJetpackConnected( item ) }
 						isJetpack={ item.jetpack }
 						value={ field.getValue( { item } ) }
 					/>
 				),
 				enableSorting: true,
-				sort: ( a, b, direction ) => {
-					const planA = getSitePlanDisplayName( a ) ?? '';
-					const planB = getSitePlanDisplayName( b ) ?? '';
-
-					return direction === 'asc' ? planA.localeCompare( planB ) : planB.localeCompare( planA );
-				},
 			},
 		],
 		[]
@@ -139,9 +132,8 @@ export const SitesWithoutThisPlugin = ( {
 				isPrimary: isDesktop,
 				modalHeader: __( 'Install plugin' ),
 				RenderModal: ( { items, closeModal } ) => {
-					const { mutateAsync: installPluginMutate, isPending: isInstalling } = useMutation(
-						installPluginMutation()
-					);
+					const { mutateAsync: installPluginMutate, isPending: isInstalling } =
+						useMutation( installPluginMutation() );
 					const site = items[ 0 ];
 					const siteName = getSiteDisplayName( site );
 					const siteUrl = getSiteDisplayUrl( site );

@@ -5,23 +5,29 @@ This document outlines all the analytics events tracked during the login process
 ## Magic Login Authentication Events
 
 ### `calypso_login_magic_authenticate_attempt`
+
 **Description**: Tracks when a magic login authentication is attempted (either code or link)
 
 **Properties**:
+
 - `flow` (string|null): The client's login flow (e.g., gravatar flows)
 - `token_type` (string): Either "code" or "link"
 
 ### `calypso_login_magic_authenticate_success`
+
 **Description**: Tracks successful magic login authentication
 
 **Properties**:
+
 - `flow` (string|null): The client's login flow
 - `token_type` (string): Either "code" or "link"
 
 ### `calypso_login_magic_authenticate_failure`
+
 **Description**: Tracks failed magic login authentication attempts
 
 **Properties**:
+
 - `flow` (string|null): The client's login flow
 - `token_type` (string): Either "code" or "link"
 - `error_code` (number): HTTP status code of the error
@@ -30,37 +36,46 @@ This document outlines all the analytics events tracked during the login process
 ## Magic Code Verification Events
 
 ### `calypso_login_magic_code_submit`
+
 **Description**: Tracks when user submits a magic code for verification
 
 **Properties**:
+
 - `code_length` (number): Length of the submitted verification code
 
 ## Email Link Events
 
 ### `calypso_login_email_link_submit`
+
 **Description**: Tracks when user requests a magic login email
 
 **Properties**:
+
 - `flow` (string|null): The client's login flow
 - `token_type` (string): Token type being requested
 
 ### `calypso_login_email_link_success`
+
 **Description**: Tracks successful email link request
 
 **Properties**:
+
 - `flow` (string|null): The client's login flow
 - `token_type` (string): Token type that was requested
 
 ### `calypso_login_email_link_failure`
+
 **Description**: Tracks failed email link requests
 
 **Properties**:
+
 - `flow` (string|null): The client's login flow
 - `token_type` (string): Token type that was requested
 - `error_code` (string): Error code from the API
 - `error_message` (string): Error message from the API
 
 ### `calypso_login_email_link_handle_click_view`
+
 **Description**: Tracks when user views the email link handling page
 
 **Properties**: None
@@ -68,12 +83,45 @@ This document outlines all the analytics events tracked during the login process
 ## General Login Events
 
 ### `calypso_login_success`
+
 **Description**: Tracks overall successful login completion
 
 **Properties**:
+
 - `is_jetpack` (boolean): Whether this is a Jetpack login
 - `is_magic_login` (boolean): Whether magic login was used
 - `login_method` (string): The method used for login
+
+### `calypso_login_sign_up_link_click`
+
+**Description**: Tracks when user clicks a link from the login page to signup
+
+**Properties**:
+
+- `origin` (string): Which link was clicked
+  - `login-footer`: "Don't have an account? Sign up" below the buttons on the main login view, 960px and up, in the `calypso_account_step_entry_clarity_202609` treatment
+  - `login-layout`: "Create an account" in the top bar, everywhere else
+  - `login-notice`: the notice shown when signup finds an existing account
+
+Before the footer line existed, desktop clicks on the main login view reported `login-layout`.
+
+### `calypso_login_logo_click`
+
+**Description**: Tracks when user clicks the WordPress.com logo in the top bar, which links to the homepage (plain WordPress.com logins only)
+
+**Properties**:
+
+- `page` (string): The current route
+
+### `calypso_signup_logo_click`
+
+**Description**: Tracks when user clicks the WordPress.com logo in the top bar of the `/start/account` or `/setup/onboarding/user` signup screens, which links to the homepage
+
+**Properties**:
+
+- `page` (string): The current route (`/start/account` only)
+- `flow` (string): The stepper flow (`/setup/onboarding/user` only)
+- `step` (string): The stepper step (`/setup/onboarding/user` only)
 
 ## Event Flow
 
@@ -88,4 +136,4 @@ This document outlines all the analytics events tracked during the login process
 - **Email requests**: `client/state/data-layer/wpcom/auth/send-login-email/index.js`
 - **Authentication**: `client/state/login/magic-login/actions.js`
 - **Code verification**: `client/login/magic-login/verify-login-code.jsx`
-- **Final login**: `client/state/login/actions/reboot-after-login.ts` 
+- **Final login**: `client/state/login/actions/reboot-after-login.ts`

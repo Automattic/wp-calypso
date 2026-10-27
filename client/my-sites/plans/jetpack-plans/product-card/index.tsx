@@ -14,12 +14,11 @@ import { useMemo } from 'react';
 import * as React from 'react';
 import JetpackProductCard from 'calypso/components/jetpack/card/jetpack-product-card';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { isCloseToExpiration } from 'calypso/lib/purchases';
-import { getPurchaseByProductSlug } from 'calypso/lib/purchases/utils';
+import { isCloseToExpiration } from 'calypso/me/purchases/lib/raw-purchase-helpers';
 import OwnerInfo from 'calypso/me/purchases/purchase-item/owner-info';
 import { ITEM_TYPE_PLAN } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import { useSelector } from 'calypso/state';
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 import { useIsUserPurchaseOwner } from 'calypso/state/purchases/utils';
 import { getSiteAvailableProduct } from 'calypso/state/sites/products/selectors';
 import { isJetpackSiteMultiSite } from 'calypso/state/sites/selectors';
@@ -76,14 +75,14 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	const sitePlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 	const isMultisite = useSelector( ( state ) => siteId && isJetpackSiteMultiSite( state, siteId ) );
 	const siteProducts = useSelector( ( state ) => getSiteProducts( state, siteId ) );
-	const purchases = useSelector( ( state ) => getSitePurchases( state, siteId ) );
+	const purchases = useSelector( ( state ) => getRawSitePurchases( state, siteId ) );
 	const siteProduct: SiteProduct | undefined = useSelector( ( state ) =>
 		getSiteAvailableProduct( state, siteId, item.productSlug )
 	);
 	const isCurrentUserPurchaseOwner = useIsUserPurchaseOwner();
 
-	const jetpackUpgradesLocked = purchases.some( ( purchase ) => purchase.isLocked );
-	const existingPurchaseIsIapPurchase = purchases.some( ( purchase ) => purchase.isInAppPurchase );
+	const jetpackUpgradesLocked = purchases.some( ( purchase ) => purchase.is_locked );
+	const existingPurchaseIsIapPurchase = purchases.some( ( purchase ) => purchase.is_iap_purchase );
 
 	// Determine whether product is owned.
 	const isOwned = useMemo( () => {
@@ -124,10 +123,11 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 	);
 
 	// If item is a plan feature, use the plan purchase object.
-	const purchase =
-		isItemPlanFeature || isSuperseded
-			? getPurchaseByProductSlug( purchases, sitePlan?.product_slug || '' )
-			: getPurchaseByProductSlug( purchases, item.productSlug );
+	const purchasedSlug =
+		isItemPlanFeature || isSuperseded ? sitePlan?.product_slug || '' : item.productSlug;
+	const purchase = purchases.find(
+		( sitePurchase ) => sitePurchase.product_slug === purchasedSlug
+	);
 
 	const isNotPlanOwner = ! isCurrentUserPurchaseOwner( purchase );
 
@@ -227,7 +227,7 @@ const ProductCard: React.FC< ProductCardProps > = ( {
 				createButtonURL ? createButtonURL( item, isUpgradeableToYearly, purchase ) : undefined
 			}
 			buttonDisabled={ isDisabled || buttonDisabled || isLoadingUpsellPageExperiment }
-			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiryDate ) : undefined }
+			expiryDate={ showExpiryNotice && purchase ? moment( purchase.expiry_date ) : undefined }
 			isFeatured={ isFeatured }
 			isOwned={ isOwned }
 			isIncludedInPlan={ isIncludedInPlan || isSuperseded }

@@ -1,7 +1,6 @@
 import {
 	PLAN_HOSTING_TRIAL_MONTHLY,
 	PLAN_MIGRATION_TRIAL_MONTHLY,
-	PlanSlug,
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { useLocale } from '@automattic/i18n-utils';
@@ -10,7 +9,7 @@ import { useState, useEffect } from 'react';
 import type { Moment } from 'moment/moment';
 
 export default function useBannerSubtitle(
-	currentPlanSlug: PlanSlug | null,
+	currentPlanSlug: string | null | undefined,
 	trialExpired: boolean | null,
 	trialDaysLeftToDisplay: number,
 	trialExpiration: Moment | null,

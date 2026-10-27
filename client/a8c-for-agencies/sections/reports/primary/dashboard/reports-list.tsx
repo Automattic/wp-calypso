@@ -91,7 +91,7 @@ export default function ReportsList( {
 							enableHiding: false,
 							enableSorting: false,
 						},
-				  ]
+					]
 				: [] ),
 		],
 		[ translate, isDesktop, dataViewsState.selectedItem, openReportPreviewPane ]

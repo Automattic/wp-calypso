@@ -52,7 +52,7 @@ const DomainStatusField = ( props: Props ) => {
 				monthsUtilCreditCardExpires:
 					domainStatusPurchaseActions?.monthsUtilCreditCardExpires?.( domain ),
 				isVipSite: site?.is_vip,
-		  } )
+			} )
 		: null;
 
 	return (

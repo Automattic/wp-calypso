@@ -4,6 +4,7 @@ import { useSelect, useDispatch } from '@wordpress/data';
 import { Icon, published, error } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import './style.scss';
 
 const statusIcon: Record< string, React.JSX.Element > = {
@@ -57,11 +58,17 @@ export default function Snackbars() {
 			};
 		} );
 
-	return (
-		<SnackbarList
-			notices={ snackbarNotices }
-			className="dashboard-snackbars"
-			onRemove={ removeNotice }
-		/>
+	// Portalled to <body> so it isn't inside the app root that `Modal` hides with
+	// `aria-hidden`. Modal skips `aria-live` elements; `off` because `Snackbar`
+	// announces itself via `speak()` and we don't want to hear it twice.
+	return createPortal(
+		<div aria-live="off">
+			<SnackbarList
+				notices={ snackbarNotices }
+				className="dashboard-snackbars"
+				onRemove={ removeNotice }
+			/>
+		</div>,
+		document.body
 	);
 }

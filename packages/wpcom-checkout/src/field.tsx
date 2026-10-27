@@ -143,7 +143,7 @@ const InputWrapper = styled.div< { isError?: boolean } >`
 	border-radius: 3px;
 	:focus-within {
 		outline: ${ ( props ) =>
-				props.isError ? props.theme.colors.error : props.theme.colors.outline }
+			props.isError ? props.theme.colors.error : props.theme.colors.outline }
 			solid 2px;
 	}
 `;

@@ -46,7 +46,7 @@ export default function AlternativesModal( {
 						supportLink: localizeUrl( 'https://wordpress.com/support/delete-site/' ),
 						useRouterButton: true,
 					},
-			  ]
+				]
 			: [] ),
 		{
 			text: __( 'Start a new site' ),

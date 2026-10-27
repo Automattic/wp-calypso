@@ -135,7 +135,7 @@ describe( '<AgencyPartnerDirectoryExpertise>', () => {
 			<PartnerDirectoryExpertiseContent
 				agency={ { id: 123, profile: makeProfile( application ) } }
 				recordTracksEvent={ jest.fn() }
-				dashboardUrl="/agency/partner-directory"
+				dashboardUrl="/partner-directory"
 				onSubmitSuccess={ onSubmitSuccess }
 			/>
 		);

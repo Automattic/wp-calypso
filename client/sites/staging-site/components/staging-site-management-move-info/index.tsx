@@ -6,7 +6,6 @@ import {
 	__experimentalText as Text,
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
-	__experimentalGrid as Grid,
 	__experimentalItem as Item,
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
@@ -14,6 +13,7 @@ import { __ } from '@wordpress/i18n';
 import { arrowUp, cog, plus, chevronUpDown, trash, reusableBlock } from '@wordpress/icons';
 import { FunctionComponent } from 'react';
 import { useSelector } from 'react-redux';
+import Grid from 'calypso/dashboard/components/grid';
 import { urlToSlug } from 'calypso/lib/url';
 import { getSite } from 'calypso/state/sites/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -171,12 +171,7 @@ const StagingSiteManagementMoveInfo: FunctionComponent = () => {
 					{ __( 'Find everything you need in the new locations highlighted below.' ) }
 				</Text>
 			</VStack>
-			<Grid
-				alignment="topLeft"
-				columns={ isMobile ? 1 : 2 }
-				gap={ 6 }
-				style={ { maxWidth: '748px' } }
-			>
+			<Grid align="start" columns={ isMobile ? 1 : 2 } gap="xl" style={ { maxWidth: '748px' } }>
 				{ infoCardItems.map( ( item, index ) => (
 					<Item key={ index } style={ { padding: '0' } }>
 						<InfoCard item={ item } />

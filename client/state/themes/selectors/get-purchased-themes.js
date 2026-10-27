@@ -1,4 +1,4 @@
-import { getSitePurchases } from 'calypso/state/purchases/selectors';
+import { getRawSitePurchases } from 'calypso/state/purchases/selectors';
 
 import 'calypso/state/themes/init';
 
@@ -11,8 +11,8 @@ import 'calypso/state/themes/init';
  * @returns {Array}  Array of themeIds that have been purchased
  */
 export function getPurchasedThemes( state, siteId ) {
-	const sitePurchases = getSitePurchases( state, siteId );
+	const sitePurchases = getRawSitePurchases( state, siteId );
 	return sitePurchases
-		.filter( ( purchase ) => purchase?.productType === 'theme' )
+		.filter( ( purchase ) => purchase?.product_type === 'theme' )
 		.map( ( purchase ) => purchase.meta );
 }

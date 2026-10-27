@@ -1,5 +1,4 @@
 import {
-	addAddOnsToCart,
 	addPlanToCart,
 	addWithThemePlanToCart,
 	addWithPluginPlanToCart,
@@ -9,16 +8,14 @@ import {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
-	maybeAddStorageAddonToCart,
 	isDomainFulfilled,
-	maybeRemoveStepForUserlessCheckout,
+	isMailboxFulfilled,
 	createSiteAndAddDIFMToCart,
 	submitWebsiteContent,
 } from 'calypso/lib/signup/step-actions';
 import { generateSteps } from './steps-pure';
 
 export default generateSteps( {
-	addAddOnsToCart,
 	addPlanToCart,
 	addWithThemePlanToCart,
 	addWithPluginPlanToCart,
@@ -28,9 +25,8 @@ export default generateSteps( {
 	addDomainToCart,
 	launchSiteApi,
 	isPlanFulfilled,
-	maybeAddStorageAddonToCart,
 	isDomainFulfilled,
-	maybeRemoveStepForUserlessCheckout,
+	isMailboxFulfilled,
 	createSiteAndAddDIFMToCart,
 	submitWebsiteContent,
 } );

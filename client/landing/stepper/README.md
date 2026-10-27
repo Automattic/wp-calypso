@@ -377,11 +377,20 @@ flows keep working unchanged:
 - The `domain-search` step exposes `headerText`, `subHeaderText`, `hideUseMyDomainLink`
   (suppresses the "Use a domain I own" CTA on both V2 top bar and V1 skip-button surfaces),
   `hideFreeDomainPromo` (hides the free-domain-for-a-year banner), `freeDomainPromoTitle`
-  and `freeDomainPromoSubtitle` (copy overrides for that banner), and `allowedTlds`
-  (per-flow TLD filter that the URL `?tld=` query param can override). All optional and
-  default-safe; the same prop is applied across all three render paths
-  (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`). See
+  and `freeDomainPromoSubtitle` (copy overrides for that banner), `freeSubdomainTitle` and
+  `freeSubdomainButtonLabel` (copy overrides for the "Start free with %(domain)s" free-subdomain
+  skip card and its "Start Free" button — the title may keep the `%(domain)s` placeholder, which
+  the `@automattic/domain-search` package interpolates; these win over the per-flow default in
+  `getSkipSuggestionCopy`), `allowedTlds` (per-flow TLD filter that the URL `?tld=` query param
+  can override), and `freeForFirstYearTlds` (TLDs priced as free for the first year in suggestions
+  and the cart). All optional and default-safe; each is applied across all three render paths
+  (HundredYearPlanStepWrapper, V2 `Step.CenteredColumnLayout`, V1 `StepContainer`) — the
+  subdomain-copy props travel via the shared `config` object, which all three branches render. See
   [`steps-repository/domain-search/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/domain-search/index.tsx).
+- `%(domain)s` is interpolated only on the free-subdomain card itself. A `?wow_funnel` request
+  hides that card (`hideFreeSubdomainSuggestion`) and renders a skip-only control that has no
+  subdomain to substitute, so a `freeSubdomainTitle` carrying the placeholder renders it
+  literally there.
 - The `unified-plans` (`plans`) step exposes `headerText` and `subHeaderText` (override the
   per-intent header/subheader chains in `getHeaderText()` / `getSubheaderText()`), the
   plan-visibility toggles `hideFreePlan`, `hideEnterprisePlan`, `hidePersonalPlan`,
@@ -395,19 +404,36 @@ flows keep working unchanged:
   `titleBadge`, the pill next to the plan title, resolved in `useTitleBadges`; the second overrides
   a plan's `tagline`, the line under the title, winning over the computed and experiment copy in
   `useGridPlans`. Both are honored by the features grid only — the comparison grid renders neither
-  field). All optional and default-safe. See
+  field), plus the launch-page props `isLaunchPage` (launch-page CTAs — "Keep this plan" /
+  "Select X"), `isCustomDomainAllowedOnFreePlan` (picking Free keeps a paid domain via a dialog)
+  and `deemphasizeFreePlan` (de-emphasizes the Free plan). All optional and default-safe. See
   [`steps-repository/unified-plans/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/index.tsx).
 - The `__user` (`user`) step exposes `headerText`, `subHeaderText`, `hideLoginLink` (hides the
-  top-level "Log in" link in the V2 top bar / V1 footer — note the email-first account-step
-  variant keeps its own in-form "Have an account? Log in" link, and existing users can still sign
-  in via the social / email buttons regardless) and `allowedSocialServices` (restricts
-  which social sign-in providers are offered). This step is special: it is **auto-injected** by
+  "Log in" link: the V2 top bar's, the V2 in-form "Have an account? Log in" line that the
+  onboarding flow's `calypso_account_step_entry_clarity_202609` treatment shows at 960px and up,
+  and the V1 footer's. The email-first account-step variant keeps its own in-form
+  link, and existing users can still sign in via the social / email buttons regardless) and
+  `allowedSocialServices` (restricts which social sign-in providers are offered). This step is special: it is **auto-injected** by
   `injectUserStepInSteps()` when a flow marks a step `requiresLoggedInUser`, so it is not in the
   flow's `initialize()` array. Its props are therefore passed under the reserved `user` key of
   `useStepsProps()` — the return type is widened with
   `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>` so a flow can set them once. All
   optional and default-safe. See
   [`steps-repository/__user/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/__user/index.tsx).
+- The `processing` (`processing-step`) step exposes `loadingMessages` (a
+  `{ title: string; subtitle?: ReactNode; duration?: number }[]` override for the rotating
+  loading-carousel copy — the "Laying the foundations" / "Turning on the lights" / … sequence).
+  When a flow passes it via `useStepsProps()` it replaces the default per-flow / per-intent carousel
+  computed by `useProcessingLoadingMessages`; omitting it preserves today's messages. `duration` is
+  optional; `useLoadingMessageIndex` holds a message for 5s when it omits a usable duration. The
+  override applies to both the V2 `Step.Loading` and V1 `StepContainer` render paths; the tailored (`TailoredFlowPreCheckoutScreen`,
+  newsletter / update-design) and hundred-year processing screens short-circuit earlier and keep
+  their own dedicated copy, so they are intentionally out of scope. The pre-existing `title` /
+  `subtitle` props still override the single visible frame and win over the carousel.
+  `skipSignupComplete` stops the step recording `calypso_signup_complete` when its pending action
+  succeeds, for a run whose completion was already recorded elsewhere (e.g. the legacy
+  `site-selected` signup flow handing its purchase to onboarding's post-checkout steps). See
+  [`steps-repository/processing-step/index.tsx`](/client/landing/stepper/declarative-flow/internals/steps-repository/processing-step/index.tsx).
 
 #### Renaming steps
 

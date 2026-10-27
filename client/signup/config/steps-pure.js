@@ -1,20 +1,4 @@
 import config from '@automattic/calypso-config';
-import {
-	PLAN_PERSONAL,
-	PLAN_PREMIUM,
-	PLAN_BUSINESS,
-	PLAN_PERSONAL_MONTHLY,
-	PLAN_PREMIUM_MONTHLY,
-	PLAN_BUSINESS_MONTHLY,
-	PLAN_ECOMMERCE_MONTHLY,
-	PLAN_PERSONAL_2_YEARS,
-	PLAN_PREMIUM_2_YEARS,
-	PLAN_BUSINESS_2_YEARS,
-	PLAN_PERSONAL_3_YEARS,
-	PLAN_PREMIUM_3_YEARS,
-	PLAN_BUSINESS_3_YEARS,
-	PLAN_ECOMMERCE,
-} from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
 const noop = () => {};
@@ -23,16 +7,14 @@ export function generateSteps( {
 	addPlanToCart = noop,
 	addWithThemePlanToCart = noop,
 	addWithPluginPlanToCart = noop,
-	addAddOnsToCart = noop,
 	createAccount = noop,
 	createSiteOrDomain = noop,
 	createSiteWithCart = noop,
 	addDomainToCart = noop,
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
-	maybeAddStorageAddonToCart = noop,
 	isDomainFulfilled = noop,
-	maybeRemoveStepForUserlessCheckout = noop,
+	isMailboxFulfilled = noop,
 	createSiteAndAddDIFMToCart = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
@@ -110,18 +92,11 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'redirect',
-				'allowUnauthenticated',
 				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
-			optionalDependencies: [
-				'redirect',
-				'allowUnauthenticated',
-				'is_new_account',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
+			optionalDependencies: [ 'redirect', 'is_new_account', 'oauth2_client_id', 'oauth2_redirect' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
@@ -136,52 +111,14 @@ export function generateSteps( {
 				'username',
 				'marketing_price_group',
 				'redirect',
-				'allowUnauthenticated',
 				'is_new_account',
 				'oauth2_client_id',
 				'oauth2_redirect',
 			],
-			optionalDependencies: [
-				'redirect',
-				'allowUnauthenticated',
-				'is_new_account',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
+			optionalDependencies: [ 'redirect', 'is_new_account', 'oauth2_client_id', 'oauth2_redirect' ],
 			props: {
 				isSocialFirst: true,
 				isSocialSignupEnabled: true,
-			},
-		},
-
-		'user-new': {
-			stepName: 'user-new',
-			apiRequestFunction: createAccount,
-			fulfilledStepCallback: maybeRemoveStepForUserlessCheckout,
-			providesToken: true,
-			dependencies: [ 'cartItem', 'domainItem' ],
-			providesDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'allowUnauthenticated',
-				'is_new_account',
-				'redirect',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
-			optionalDependencies: [
-				'bearer_token',
-				'username',
-				'marketing_price_group',
-				'allowUnauthenticated',
-				'is_new_account',
-				'redirect',
-				'oauth2_client_id',
-				'oauth2_redirect',
-			],
-			props: {
-				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 			},
 		},
 
@@ -207,13 +144,6 @@ export function generateSteps( {
 			providesDependencies: [ 'stepperHostingFlow' ],
 		},
 
-		'plans-new': {
-			stepName: 'plans',
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
-		},
-
 		'plans-import': {
 			stepName: 'plans-import',
 			apiRequestFunction: addPlanToCart,
@@ -223,42 +153,6 @@ export function generateSteps( {
 			fulfilledStepCallback: isPlanFulfilled,
 			props: {
 				intent: 'plans-import',
-			},
-		},
-
-		'plans-personal': {
-			stepName: 'plans-personal',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL,
-			},
-		},
-
-		'plans-premium': {
-			stepName: 'plans-premium',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM,
-			},
-		},
-
-		'plans-business': {
-			stepName: 'plans-business',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS,
 			},
 		},
 
@@ -272,18 +166,6 @@ export function generateSteps( {
 			props: {
 				hideFreePlan: true,
 				hideEnterprisePlan: true,
-			},
-		},
-
-		'plans-ecommerce-fulfilled': {
-			stepName: 'plans-ecommerce-fulfilled',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
 			},
 		},
 
@@ -319,7 +201,7 @@ export function generateSteps( {
 			stepName: 'mailbox-plan',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug', 'emailItem' ],
+			dependencies: [ 'siteSlug', 'emailItem', 'domainItem' ],
 			providesDependencies: [ 'themeSlugWithRepo', 'cartItems' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
@@ -359,6 +241,9 @@ export function generateSteps( {
 		},
 		mailbox: {
 			stepName: 'mailbox',
+			fulfilledStepCallback: isMailboxFulfilled,
+			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
+				!! props.signupDependencies?.domainItem?.meta,
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'domainItem', 'emailItem' ],
 			props: {
@@ -475,11 +360,10 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'allowUnauthenticated',
 				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
+			optionalDependencies: [ 'redirect', 'is_new_account' ],
 		},
 
 		'oauth2-name': {
@@ -492,11 +376,10 @@ export function generateSteps( {
 				'oauth2_client_id',
 				'oauth2_redirect',
 				'marketing_price_group',
-				'allowUnauthenticated',
 				'is_new_account',
 				'redirect',
 			],
-			optionalDependencies: [ 'allowUnauthenticated', 'redirect', 'is_new_account' ],
+			optionalDependencies: [ 'redirect', 'is_new_account' ],
 			props: {
 				isSocialSignupEnabled: config.isEnabled( 'signup/social' ),
 				oauth2Signup: true,
@@ -569,36 +452,6 @@ export function generateSteps( {
 			providesDependencies: [ 'rewindconfig' ],
 		},
 
-		'clone-start': {
-			stepName: 'clone-start',
-			providesDependencies: [ 'originSiteSlug', 'originSiteName', 'originBlogId' ],
-		},
-
-		'clone-destination': {
-			stepName: 'clone-destination',
-			providesDependencies: [ 'destinationSiteName', 'destinationSiteUrl' ],
-		},
-
-		'clone-credentials': {
-			stepName: 'clone-credentials',
-			providesDependencies: [ 'roleName' ],
-		},
-
-		'clone-point': {
-			stepName: 'clone-point',
-			providesDependencies: [ 'clonePoint' ],
-		},
-
-		'clone-ready': {
-			stepName: 'clone-ready',
-			providesDependencies: [],
-		},
-
-		'clone-cloning': {
-			stepName: 'clone-cloning',
-			providesDependencies: [],
-		},
-
 		launch: {
 			stepName: 'launch',
 			apiRequestFunction: launchSiteApi,
@@ -608,136 +461,9 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-personal-monthly': {
-			stepName: 'plans-personal-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL_MONTHLY,
-			},
-		},
-
-		'plans-premium-monthly': {
-			stepName: 'plans-premium-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM_MONTHLY,
-			},
-		},
-
-		'plans-business-monthly': {
-			stepName: 'plans-business-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS_MONTHLY,
-			},
-		},
-
-		'plans-ecommerce-monthly': {
-			stepName: 'plans-ecommerce-monthly',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE_MONTHLY,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
-
-		'plans-personal-2y': {
-			stepName: 'plans-personal-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL_2_YEARS,
-			},
-		},
-
-		'plans-premium-2y': {
-			stepName: 'plans-premium-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM_2_YEARS,
-			},
-		},
-
-		'plans-business-2y': {
-			stepName: 'plans-business-2y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS_2_YEARS,
-			},
-		},
-		'plans-personal-3y': {
-			stepName: 'plans-personal-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PERSONAL_3_YEARS,
-			},
-		},
-		'plans-premium-3y': {
-			stepName: 'plans-premium-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_PREMIUM_3_YEARS,
-			},
-		},
-
-		'plans-business-3y': {
-			stepName: 'plans-business-3y',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_BUSINESS_3_YEARS,
-			},
-		},
-
 		'new-or-existing-site': {
 			stepName: 'new-or-existing-site',
 			providesDependencies: [ 'newOrExistingSiteChoice', 'forceAutoGeneratedBlogName' ],
-		},
-
-		'storage-addon': {
-			stepName: 'storage-addon',
-			apiRequestFunction: addAddOnsToCart,
-			fulfilledStepCallback: maybeAddStorageAddonToCart,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItem' ],
-			optionalDependencies: [ 'cartItem' ],
 		},
 
 		'difm-site-picker': {
@@ -833,26 +559,6 @@ export function generateSteps( {
 			stepName: 'website-content',
 			dependencies: [ 'siteSlug' ],
 			apiRequestFunction: submitWebsiteContent,
-		},
-
-		// Woocommerce Install steps.
-		'store-address': {
-			stepName: 'store-address',
-			dependencies: [ 'siteSlug', 'back_to' ],
-			optionalDependencies: [ 'back_to' ],
-		},
-		'business-info': {
-			stepName: 'business-info',
-			dependencies: [ 'siteSlug' ],
-		},
-		confirm: {
-			stepName: 'confirm',
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'siteConfirmed' ],
-		},
-		transfer: {
-			stepName: 'transfer',
-			dependencies: [ 'siteSlug', 'siteConfirmed' ],
 		},
 	};
 }

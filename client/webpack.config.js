@@ -12,9 +12,8 @@ const {
 	shouldTranspileDependency,
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
-const InlineConstantExportsPlugin = require( '@automattic/webpack-inline-constant-exports-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
-const SentryCliPlugin = require( '@sentry/webpack-plugin' );
+const { sentryWebpackPlugin } = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -71,6 +70,7 @@ const shouldProfile = process.env.PROFILE === 'true';
 const shouldCreateSentryRelease =
 	( process.env.MANUAL_SENTRY_RELEASE === 'true' || process.env.IS_DEFAULT_BRANCH === 'true' ) &&
 	process.env.SENTRY_AUTH_TOKEN?.length > 1;
+const sentryRelease = `calypso_${ process.env.COMMIT_SHA }`;
 let sourceMapType = process.env.SOURCEMAP;
 if ( ! sourceMapType && shouldCreateSentryRelease ) {
 	sourceMapType = 'hidden-source-map';
@@ -211,12 +211,12 @@ const fileLoader = FileConfig.loader(
 		? {
 				publicPath: `/calypso/${ extraPath }/`,
 				outputPath: 'images/',
-		  }
+			}
 		: {
 				// Build off `outputPath` for a result like `/…/public/evergreen/../images/`.
 				publicPath: '/calypso/images/',
 				outputPath: '../images/',
-		  }
+			}
 );
 
 const filePaths = {
@@ -236,7 +236,6 @@ const webpackConfig = {
 		'entry-subscriptions': [ path.join( __dirname, 'landing', 'subscriptions' ) ],
 		'entry-dashboard-dotcom': [ path.join( __dirname, 'dashboard', 'app-dotcom' ) ],
 		'entry-dashboard-a4a': [ path.join( __dirname, 'dashboard', 'app-a4a' ) ],
-		'entry-dashboard-ciab': [ path.join( __dirname, 'dashboard', 'app-ciab' ) ],
 		'entry-reauth-required': [ path.join( __dirname, 'reauth-required', 'bundle' ) ],
 	} ),
 	mode: isDevelopment ? 'development' : 'production',
@@ -352,6 +351,8 @@ const webpackConfig = {
 			),
 			__i18n_text_domain__: JSON.stringify( 'default' ),
 			global: 'window',
+			// The Sentry SDK uses this release when `initSentry()` doesn't set one.
+			__SENTRY_RELEASE__: shouldCreateSentryRelease ? JSON.stringify( sentryRelease ) : 'undefined',
 		} ),
 		// Node polyfills
 		new webpack.ProvidePlugin( {
@@ -394,7 +395,6 @@ const webpackConfig = {
 			endYear: 2030,
 			cacheDir: path.resolve( cachePath, 'moment-timezone' ),
 		} ),
-		new InlineConstantExportsPlugin( /\/client\/state\/action-types.js$/ ),
 		shouldBuildChunksMap &&
 			new GenerateChunksMapPlugin( {
 				output: path.resolve( './public/chunks-map.json' ),
@@ -426,17 +426,26 @@ const webpackConfig = {
 
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
-			new SentryCliPlugin( {
+			sentryWebpackPlugin( {
 				org: 'a8c',
 				project: 'calypso',
 				authToken: process.env.SENTRY_AUTH_TOKEN,
-				release: `calypso_${ process.env.COMMIT_SHA }`,
-				include: filePaths.path,
-				urlPrefix: `~${ filePaths.publicPath }`,
-				errorHandler: ( err, invokeErr, compilation ) => {
-					// Sentry should _never_ fail the webpack build, so only emit warnings here:
-					compilation.warnings.push( 'Sentry CLI Plugin: ' + err.message );
-					console.error( 'Sentry CLI Plugin Error:', err.message );
+				telemetry: false,
+				// Upload source maps by release and URL, without injecting debug IDs into every chunk.
+				sourcemaps: { disable: true },
+				release: {
+					name: sentryRelease,
+					// `__SENTRY_RELEASE__` covers this without prepending the release to every chunk.
+					inject: false,
+					setCommits: false,
+					uploadLegacySourcemaps: {
+						paths: [ filePaths.path ],
+						urlPrefix: `~${ filePaths.publicPath }`,
+					},
+				},
+				errorHandler: ( err ) => {
+					// Sentry should _never_ fail the webpack build, so only log here:
+					console.error( 'Sentry Webpack Plugin Error:', err.message );
 					console.error( 'Sentry Full error:', err );
 				},
 			} ),
@@ -468,7 +477,7 @@ const webpackConfig = {
 							infrastructureLogging: {
 								debug: /webpack\.cache/,
 							},
-					  }
+						}
 					: {} ),
 				snapshot: {
 					managedPaths: [
@@ -476,7 +485,7 @@ const webpackConfig = {
 						path.resolve( __dirname, 'node_modules' ),
 					],
 				},
-		  }
+			}
 		: {} ),
 
 	experiments: {

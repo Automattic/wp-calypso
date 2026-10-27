@@ -828,7 +828,7 @@ export class EditorPage {
 		// asserted against it, not against "some pattern inserted".
 		const actualPatternName = exactMatch
 			? patternName
-			: ( await locator.getAttribute( 'aria-label' ) ) ?? '';
+			: ( ( await locator.getAttribute( 'aria-label' ) ) ?? '' );
 
 		// Assert insertion via the toast naming this specific pattern. getByText
 		// with an exact string avoids the selector breaking on a pattern name

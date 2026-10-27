@@ -57,23 +57,31 @@ export default function SSHMigrationComplete( { siteSlug }: { siteSlug: string }
 						<VStack spacing={ 4 }>
 							<SectionHeader title={ __( 'Connect your domain' ) } level={ 3 } />
 							<Text as="p" variant="muted">
-								{ siteDomain &&
-									createInterpolateElement(
-										__(
-											'You can preview your new site at <siteLink />. Connecting your domain will make it available at <remoteDomain />.'
-										),
-										{
-											siteLink: previewLink,
-											remoteDomain: <>{ siteDomain }</>,
-										}
-									) }
-								{ ! siteDomain &&
-									createInterpolateElement(
-										__( 'You can preview your new site at <siteLink />.' ),
-										{
-											siteLink: previewLink,
-										}
-									) }
+								{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+								{ siteDomain && (
+									<span>
+										{ createInterpolateElement(
+											__(
+												'You can preview your new site at <siteLink />. Connecting your domain will make it available at <remoteDomain />.'
+											),
+											{
+												siteLink: previewLink,
+												remoteDomain: <>{ siteDomain }</>,
+											}
+										) }
+									</span>
+								) }
+								{ /* Wrap in span; avoids a Google Translate DOM crash (react/react#11538) */ }
+								{ ! siteDomain && (
+									<span>
+										{ createInterpolateElement(
+											__( 'You can preview your new site at <siteLink />.' ),
+											{
+												siteLink: previewLink,
+											}
+										) }
+									</span>
+								) }
 							</Text>
 							<ButtonStack justify="flex-start" expanded={ false }>
 								<Button

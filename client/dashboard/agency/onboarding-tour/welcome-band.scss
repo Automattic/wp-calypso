@@ -1,0 +1,165 @@
+@import '@automattic/color-studio/dist/color-variables';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+// The layout follows the band's own width, not the window's: the sidebar decides how
+// much room it really has.
+.a4a-welcome-band-layout {
+	--a4a-welcome-band-pin-halo: color-mix(
+		in srgb,
+		var( --dashboard-marketplace-referral__color ) 18%,
+		transparent
+	);
+	--a4a-welcome-band-muted: #{$studio-gray-60};
+	position: relative;
+	container: a4a-welcome-band / inline-size;
+}
+
+// The close button sits in the band's corner, over the steps on wide screens.
+.a4a-welcome-band-close {
+	position: absolute;
+	z-index: 1;
+	inset-block-start: 8px;
+	inset-inline-end: 8px;
+}
+
+.a4a-welcome-band-intro {
+	align-self: center;
+	padding: 24px;
+
+	// Stacked above the steps, the intro keeps clear of the close button.
+	@container a4a-welcome-band ( max-width: 1079px ) {
+		padding-inline-end: 48px;
+	}
+}
+
+.a4a-welcome-band-grid {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+
+	@container a4a-welcome-band ( min-width: 1080px ) {
+		grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
+	}
+}
+
+.a4a-welcome-band-steps {
+	display: grid;
+	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+	column-gap: 24px;
+	margin: 0;
+	padding: 32px;
+	list-style: none;
+	background-color: var( --dashboard-marketplace-referral__tint-color );
+
+	@container a4a-welcome-band ( max-width: 1079px ) {
+		padding: 24px;
+	}
+
+	// Narrow: a numbered list without the drawings.
+	@container a4a-welcome-band ( max-width: 719px ) {
+		grid-template-columns: minmax( 0, 1fr );
+		row-gap: 16px;
+	}
+}
+
+// Each step spans three rows of the list (drawing, text, action) and shares them with the
+// other steps, so the actions line up however the descriptions wrap.
+.a4a-welcome-band-step {
+	display: grid;
+	grid-row: span 3;
+	grid-template-rows: subgrid;
+	grid-template-columns: auto minmax( 0, 1fr );
+	grid-template-areas:
+		'art art'
+		'number text'
+		'. action';
+	gap: 12px 8px;
+	position: relative;
+	justify-self: center;
+	inline-size: 100%;
+	max-inline-size: 280px;
+	min-inline-size: 0;
+
+	@container a4a-welcome-band ( max-width: 719px ) {
+		grid-row: auto;
+		grid-template-rows: none;
+		grid-template-areas:
+			'number text'
+			'. action';
+		row-gap: 12px;
+		max-inline-size: none;
+	}
+}
+
+// The whole step answers a click: our own label inside each step's button stretches a layer
+// over the step, so the button stays the one control for keyboards and screen readers.
+.a4a-welcome-band-cta-label::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+}
+
+// Centres the title's first line on the 26px number.
+.a4a-welcome-band-text {
+	grid-area: text;
+	padding-block-start: 4px;
+}
+
+.a4a-welcome-band-action {
+	grid-area: action;
+	align-self: end;
+}
+
+.a4a-welcome-band-art {
+	grid-area: art;
+	display: block;
+	// The design's 14px under the drawing; the step's row gap gives 12px.
+	margin-block-end: 2px;
+	inline-size: 100%;
+	max-inline-size: 240px;
+	block-size: auto;
+	filter: drop-shadow( 0 10px 24px rgba( $black, 0.1 ) )
+		drop-shadow( 0 1px 3px rgba( $black, 0.06 ) );
+	transition:
+		transform 160ms ease-out,
+		filter 160ms ease-out;
+
+	.a4a-welcome-band-step:has( .a4a-welcome-band-cta-label ):hover &,
+	.a4a-welcome-band-step:has( :focus-visible ) & {
+		transform: translateY( -2px );
+		filter: drop-shadow( 0 14px 32px rgba( $black, 0.14 ) )
+			drop-shadow( 0 2px 4px rgba( $black, 0.08 ) );
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+
+	.a4a-welcome-band-step.is-locked & {
+		opacity: 0.5;
+		filter: none;
+	}
+
+	@container a4a-welcome-band ( max-width: 719px ) {
+		display: none;
+	}
+}
+
+// The step number, as in the Marketplace referral mode band: a filled pin with a halo.
+.a4a-welcome-band-number {
+	grid-area: number;
+	align-self: start;
+	display: grid;
+	place-items: center;
+	inline-size: 18px;
+	block-size: 18px;
+	// The halo sits in the margin, so the pin takes the design's 26px.
+	margin: 4px;
+	border-radius: $radius-round;
+	background: var( --dashboard-marketplace-referral__color );
+	box-shadow: 0 0 0 4px var( --a4a-welcome-band-pin-halo );
+	color: var( --dashboard-marketplace-referral__on-color );
+	font-size: 10px;
+	font-weight: 600;
+	line-height: 1;
+}

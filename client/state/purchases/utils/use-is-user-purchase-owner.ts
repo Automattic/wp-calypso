@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { isUserPurchaseOwner } from './is-user-purchase-owner';
-import type { Purchase } from 'calypso/lib/purchases/types';
+import type { Purchase } from '@automattic/api-core';
 
 const DEFAULT_OPTIONS = {
 	fallbackToCurrentUser: true,

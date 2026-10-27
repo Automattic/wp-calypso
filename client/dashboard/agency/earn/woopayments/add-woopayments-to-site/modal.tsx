@@ -1,3 +1,4 @@
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -7,43 +8,44 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
 import { useState } from 'react';
 import AddWooPaymentsToSiteTable, { type WooPaymentsSiteItem } from './add-site-table';
 import type { RecordTracksEvent } from '../types';
 
 import './style.scss';
 
-// Adding WooPayments to a site links out to the classic A4A site-setup flow, which is not part of
-// the dashboard.
-const A4A_WOOPAYMENTS_SITE_SETUP_LINK = '/woopayments/site-setup';
 const A4A_SITES_LINK = '/sites';
 
 interface AddWooPaymentsToSiteModalProps {
 	agencyId: number;
 	excludedSiteIds: number[];
 	recordTracksEvent: RecordTracksEvent;
-	navigate: ( url: string ) => void;
+	onSelectSite: ( siteId: number ) => void;
 	onClose: () => void;
+	/**
+	 * Set to false in apps without the dashboard's TanStack Router, so the
+	 * Sites link renders a plain anchor for the host app's own router.
+	 */
+	shouldUseRouterLink?: boolean;
 }
 
 export default function AddWooPaymentsToSiteModal( {
 	agencyId,
 	excludedSiteIds,
 	recordTracksEvent,
-	navigate,
+	onSelectSite,
 	onClose,
+	shouldUseRouterLink = false,
 }: AddWooPaymentsToSiteModalProps ) {
 	const [ selectedSite, setSelectedSite ] = useState< WooPaymentsSiteItem | null >( null );
+
+	const onSitesDashboardClick = () =>
+		recordTracksEvent( 'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click' );
 
 	const handleAddSite = () => {
 		if ( selectedSite ) {
 			recordTracksEvent( 'calypso_a4a_woopayments_add_site_confirm_click' );
-			navigate(
-				addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, {
-					site_id: selectedSite.rawSite.blog_id,
-				} )
-			);
+			onSelectSite( selectedSite.rawSite.blog_id );
 		}
 	};
 
@@ -61,15 +63,10 @@ export default function AddWooPaymentsToSiteModal( {
 							"If you don't see the site in the list, connect it first via the <a>Sites Dashboard</a>."
 						),
 						{
-							a: (
-								<a
-									href={ A4A_SITES_LINK }
-									onClick={ () =>
-										recordTracksEvent(
-											'calypso_a4a_woopayments_add_site_modal_sites_dashboard_click'
-										)
-									}
-								/>
+							a: shouldUseRouterLink ? (
+								<Link to={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
+							) : (
+								<a href={ A4A_SITES_LINK } onClick={ onSitesDashboardClick } />
 							),
 						}
 					) }

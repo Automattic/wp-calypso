@@ -1,16 +1,19 @@
 import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { useFuzzySearch } from '@automattic/search';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
+import { useLocation } from '@tanstack/react-router';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	Button,
 	ToggleControl,
+	SearchControl,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { chevronDown, chevronUp } from '@wordpress/icons';
-import { Fragment, useRef, useState } from 'react';
+import { Fragment, useDeferredValue, useEffect, useRef, useState } from 'react';
 import { groupIntentKey, getOverridesToMatch } from '../../../../me/mcp/group-intents';
 import { groupToolsByGroup, groupToolsBySubCategory } from '../../../../me/mcp/groups';
 import { useMcpTracksAudienceProps } from '../../../../me/mcp/tracks';
@@ -18,12 +21,15 @@ import { getGroupDescriptors, getAccountMcpAbilities } from '../../../../me/mcp/
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
+import AnchorCopyButton from '../../../components/anchor-copy-button';
 import { Card, CardBody } from '../../../components/card';
 import ComponentViewTracker from '../../../components/component-view-tracker';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { isWriteTool } from '../categories';
 import type { McpAbility, McpGroupDescriptor } from '@automattic/api-core';
+
+import '../toolbar.scss';
 
 const TOOL_CATEGORY = 'write' as const;
 
@@ -66,9 +72,49 @@ export default function McpWrite() {
 		.filter( ( [ , tool ] ) => tool.visible !== false )
 		.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
 
+	// Tool search: fuzzy-filters the tools on this page.
+	const locationHash = ( useLocation().hash ?? '' ).replace( /^#/, '' );
+	const [ search, setSearch ] = useState( '' );
+	const deferredSearch = useDeferredValue( search );
+	const query = deferredSearch.trim();
+
+	const searchableTools = allTools.map( ( [ toolId, tool ] ) => ( { toolId, tool } ) );
+	const filteredSearchable = useFuzzySearch( {
+		data: searchableTools,
+		keys: [ 'tool.title', 'tool.description' ],
+		query,
+	} );
+	const filteredTools = filteredSearchable.map(
+		( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ]
+	);
+
 	const groupDescriptors = getGroupDescriptors( userSettings || {} ) as McpGroupDescriptor[];
-	const groups = groupToolsByGroup( allTools, groupDescriptors ) as ToolGroup[];
+	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
 	const pageAllEnabled = allTools.length > 0 && allTools.every( ( [ , tool ] ) => tool.enabled );
+
+	// Open the group containing a tool anchor (or the group named by a group
+	// anchor), scrolling the target into view. Every other tool stays visible.
+	// Runs once per hash value, after the groups exist.
+	const handledHash = useRef( '' );
+	useEffect( () => {
+		if ( ! locationHash || groups.length === 0 || handledHash.current === locationHash ) {
+			return;
+		}
+		handledHash.current = locationHash;
+		groups.forEach( ( { group: descriptor, tools: groupTools } ) => {
+			const groupKey = descriptor?.name ?? '__other__';
+			if (
+				locationHash === groupKey ||
+				locationHash.startsWith( `${ groupKey }/` ) ||
+				groupTools.some( ( [ toolId ] ) => toolId === locationHash )
+			) {
+				openGroupsRef.current.add( groupKey );
+				setOpenGroups( new Set( openGroupsRef.current ) );
+				document.getElementById( locationHash )?.scrollIntoView?.( { block: 'start' } );
+			}
+		} );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [ locationHash, groups ] );
 
 	const mutation = useMutation(
 		withSnackbar( userSettingsMutation(), {
@@ -99,8 +145,7 @@ export default function McpWrite() {
 
 	const handlePageToggle = ( enabled: boolean ) => {
 		const overrides = getOverridesToMatch( allTools, enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 		const groupIntents: Record< string, boolean > = { [ TOOL_CATEGORY ]: enabled };
 		if ( ! enabled ) {
 			groupDescriptors.forEach( ( group ) => {
@@ -132,8 +177,7 @@ export default function McpWrite() {
 		enabled: boolean
 	) => {
 		const overrides = getOverridesToMatch( groupTools, enabled ) as
-			| Record< string, boolean >
-			| undefined;
+			Record< string, boolean > | undefined;
 		const groupIntents = groupName
 			? { [ groupIntentKey( TOOL_CATEGORY, groupName ) ]: enabled }
 			: undefined;
@@ -177,28 +221,39 @@ export default function McpWrite() {
 				eventName="calypso_dashboard_mcp_write_view"
 				properties={ tracksAudienceProps }
 			/>
-			<VStack spacing={ 4 }>
-				<Card>
-					<CardBody>
-						<ToggleControl
-							__nextHasNoMarginBottom
-							checked={ pageAllEnabled }
-							disabled={ mutation.isPending || allTools.length === 0 }
-							label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
-							onChange={ handlePageToggle }
-						/>
-					</CardBody>
-				</Card>
+			<div className="mcp-tools-page">
+				<div className="mcp-tools-toolbar">
+					<Card>
+						<CardBody>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ pageAllEnabled }
+								disabled={ mutation.isPending || allTools.length === 0 }
+								label={ <Text weight="600">{ __( 'Enable all' ) }</Text> }
+								onChange={ handlePageToggle }
+							/>
+						</CardBody>
+					</Card>
+
+					<SearchControl
+						value={ search }
+						placeholder={ __( 'Search tools' ) }
+						onChange={ ( value: string ) => {
+							setSearch( value );
+						} }
+						__nextHasNoMarginBottom
+					/>
+				</div>
 
 				{ groups.length > 0 ? (
 					<VStack spacing={ 3 }>
 						{ groups.map( ( { group: descriptor, label, tools: groupTools }: ToolGroup ) => {
 							const groupKey = descriptor?.name ?? '__other__';
 							const allGroupEnabled = groupTools.every( ( [ , t ] ) => t.enabled );
-							const isOpen = openGroups.has( groupKey );
+							const isOpen = openGroups.has( groupKey ) || query.length > 0;
 
 							return (
-								<Card key={ groupKey }>
+								<Card key={ groupKey } id={ groupKey }>
 									<CardBody>
 										{ isDesktop ? (
 											<HStack justify="space-between" alignment="center" spacing={ 4 }>
@@ -278,17 +333,31 @@ export default function McpWrite() {
 													<CardBody>
 														<VStack spacing={ 4 }>
 															{ subTools.map( ( [ toolId, tool ] ) => (
-																<ToggleControl
-																	key={ toolId }
-																	__nextHasNoMarginBottom
-																	checked={ tool.enabled }
-																	disabled={ mutation.isPending }
-																	label={ tool.title }
-																	help={ tool.description }
-																	onChange={ ( checked ) =>
-																		handleToolChange( toolId, checked, descriptor?.name ?? null )
-																	}
-																/>
+																<div key={ toolId } id={ toolId }>
+																	<HStack
+																		justify="space-between"
+																		alignment="flex-start"
+																		spacing={ 2 }
+																	>
+																		<div style={ { flex: 1, minWidth: 0 } }>
+																			<ToggleControl
+																				__nextHasNoMarginBottom
+																				checked={ tool.enabled }
+																				disabled={ mutation.isPending }
+																				label={ tool.title }
+																				help={ tool.description }
+																				onChange={ ( checked ) =>
+																					handleToolChange(
+																						toolId,
+																						checked,
+																						descriptor?.name ?? null
+																					)
+																				}
+																			/>
+																		</div>
+																		<AnchorCopyButton anchor={ toolId } />
+																	</HStack>
+																</div>
 															) ) }
 														</VStack>
 													</CardBody>
@@ -308,7 +377,7 @@ export default function McpWrite() {
 						</CardBody>
 					</Card>
 				) }
-			</VStack>
+			</div>
 		</PageLayout>
 	);
 }

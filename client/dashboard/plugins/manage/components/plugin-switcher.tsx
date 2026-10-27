@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { throttle } from '@wordpress/compose';
 import { Field, View } from '@wordpress/dataviews';
 import { decodeEntities } from '@wordpress/html-entities';
@@ -21,13 +22,15 @@ export const PluginSwitcher = ( {
 	view,
 	onChangeView,
 	paginationInfo,
+	isError,
 }: {
-	pluginsWithIcon: PluginListRow[];
+	pluginsWithIcon?: PluginListRow[];
 	searchableFields: Field< PluginListRow >[];
 	selectedPluginSlug?: string;
 	view: View;
 	onChangeView: Dispatch< SetStateAction< View > >;
 	paginationInfo: { totalItems: number; totalPages: number };
+	isError: boolean;
 } ) => {
 	const scrollRef = useRef< HTMLDivElement >( null );
 	const [ itemsPerPage ] = useState( view.perPage );
@@ -82,21 +85,21 @@ export const PluginSwitcher = ( {
 
 	const renderItem = useCallback( ( { item }: { item: PluginListRow } ) => {
 		const sitesText = sprintf(
-			// translators: %(siteCount)d is the number of sites the plugin is installed on.
-			_n( '%(siteCount)d site', '%(siteCount)d sites', item.sitesCount ),
-			{ siteCount: item.sitesCount }
+			// translators: %(siteCount)s is the formatted number of sites the plugin is installed on.
+			_n( '%(siteCount)s site', '%(siteCount)s sites', item.sitesCount ),
+			{ siteCount: formatNumber( item.sitesCount ) }
 		);
 
 		const updatesText = item.sitesWithPluginUpdate.length
 			? sprintf(
-					// translators: %(updateCount)d is the number of updates available.
+					// translators: %(updateCount)s is the formatted number of updates available.
 					_n(
-						'%(updateCount)d update available',
-						'%(updateCount)d updates available',
+						'%(updateCount)s update available',
+						'%(updateCount)s updates available',
 						item.sitesWithPluginUpdate.length
 					),
-					{ updateCount: item.sitesWithPluginUpdate.length }
-			  )
+					{ updateCount: formatNumber( item.sitesWithPluginUpdate.length ) }
+				)
 			: '';
 
 		return (
@@ -131,17 +134,22 @@ export const PluginSwitcher = ( {
 					view={ view }
 					onChangeView={ onChangeView }
 					items={ pluginsWithIcon }
+					loading={ { itemCount: 10, hasMedia: true, hasDescription: true, spacing: 3 } }
 					resetScroll={ false }
 					getItemUrl={ ( item ) => pluginRoute.to.replace( '$pluginId', item.slug ) }
 					renderItem={ renderItem }
 					searchableFields={ searchableFields }
-					noResultsText={ __( 'No plugins found.' ) }
+					noResultsText={
+						isError
+							? __( 'Couldn’t load your plugins. Please try again later.' )
+							: __( 'No plugins found.' )
+					}
 					onClose={ () => {} }
 					width="auto"
 					filter={
 						<PluginUpdatesFilter
 							siteCount={
-								pluginsWithIcon.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
+								pluginsWithIcon?.filter( ( plugin ) => plugin.sitesWithPluginUpdate.length > 0 )
 									.length
 							}
 							updatesField={ updatesField }

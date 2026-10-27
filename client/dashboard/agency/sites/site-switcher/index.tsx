@@ -41,6 +41,7 @@ export default function AgencySiteSwitcher( props: AgencySiteSwitcherProps ) {
 				/>
 			) }
 			items={ sites }
+			loading={ { itemCount: 3, hasMedia: true, hasDescription: true } }
 			value={ site }
 			searchableFields={ searchableFields }
 			getItemUrl={ ( item ) => `/sites/${ item.url }` }

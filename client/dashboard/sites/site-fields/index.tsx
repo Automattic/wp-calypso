@@ -6,6 +6,7 @@ import {
 	siteEngagementStatsQuery,
 	siteUptimeQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import {
@@ -14,11 +15,9 @@ import {
 	ExternalLink,
 } from '@wordpress/components';
 import { useResizeObserver } from '@wordpress/compose';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { useInView } from 'react-intersection-observer';
-import { LAUNCHPAD_PERSONALIZATION_EXPERIMENT, normalizeVariation } from 'calypso/lib/ai-launchpad';
-import { useExperiment } from 'calypso/lib/explat';
 import { useAnalytics } from '../../app/analytics';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import SiteIcon from '../../components/site-icon';
@@ -30,23 +29,20 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { wpcomLink } from '../../utils/link';
 import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
-import { getSitePlanUpgradeUrl } from '../../utils/site-url';
+import { getStorageUsagePercent } from '../../utils/site-storage';
 import { getVisibilityLabels } from '../../utils/site-visibility';
 import { canManageSite } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
-import { isSitePlanTrial } from '../plans';
 import SitePreview from '../site-preview';
-import { JetpackLogo } from './jetpack-logo';
+import { PlanAwaitingCheckout, useSiteAwaitingCheckout } from './plan-awaiting-checkout';
+import { PlanExpiryStatus } from './plan-expiry-status';
+import { useIsSiteUnreachable } from './site-unreachable-status';
 import type { SiteBadge, SiteBlockingStatus, SiteVisibility } from '../../types';
-import type { Site } from '@automattic/api-core';
+import type { Site, WowFunnelPendingSite } from '@automattic/api-core';
 import type { ComponentProps } from 'react';
 
 function IneligibleIndicator() {
 	return <Text color="#CCCCCC">-</Text>;
-}
-
-function LoadingIndicator( { label }: { label: string } ) {
-	return <TextBlur>{ label }</TextBlur>;
 }
 
 function getSiteManagementUrl( site: Site ) {
@@ -89,19 +85,30 @@ export function SiteLink( {
 }
 
 export function Name( { site, value }: { site: Site; value: string } ) {
-	return <NameRenderer badge={ getSiteBadge( site ) } muted={ site.is_deleted } value={ value } />;
+	const { ref, inView } = useInView( { triggerOnce: true, fallbackInView: true } );
+	const isUnreachable = useIsSiteUnreachable( site, inView );
+
+	return (
+		<div ref={ ref }>
+			<NameRenderer
+				badges={ [ getSiteBadge( site ), isUnreachable ? 'unreachable' : null ] }
+				muted={ site.is_deleted }
+				value={ value }
+			/>
+		</div>
+	);
 }
 
 export function NameRenderer( {
-	badge,
+	badges,
 	muted,
 	value,
 }: {
-	badge: SiteBadge;
+	badges: SiteBadge[];
 	muted: boolean;
 	value: string;
 } ) {
-	const renderBadge = () => {
+	const renderBadge = ( badge: SiteBadge ) => {
 		switch ( badge ) {
 			case 'redirect':
 				return <Badge intent="draft">{ __( 'Redirect' ) }</Badge>;
@@ -119,12 +126,12 @@ export function NameRenderer( {
 				return <Badge intent="low">{ __( 'Migration pending' ) }</Badge>;
 			case 'migration_started':
 				return <Badge intent="informational">{ __( 'Migration started' ) }</Badge>;
+			case 'unreachable':
+				return <Badge intent="high">{ __( 'Unreachable' ) }</Badge>;
 			default:
 				return null;
 		}
 	};
-
-	const badgeElement = renderBadge();
 
 	return (
 		<HStack justify="flex-start" alignment="center" spacing={ 1 }>
@@ -133,7 +140,14 @@ export function NameRenderer( {
 			) : (
 				<span style={ titleFieldTextOverflowStyles }>{ value }</span>
 			) }
-			{ badgeElement && <span style={ { flexShrink: 0 } }>{ badgeElement }</span> }
+			{ badges.map(
+				( badge ) =>
+					badge && (
+						<span key={ badge } style={ { flexShrink: 0 } }>
+							{ renderBadge( badge ) }
+						</span>
+					)
+			) }
 		</HStack>
 	);
 }
@@ -213,19 +227,25 @@ export function AsyncEngagementStat( {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100" />;
+		if ( isPending ) {
+			return '100';
 		}
 
 		if ( ! isEligible ) {
 			return <IneligibleIndicator />;
 		}
 
-		return stats?.currentData[ type ];
+		const value = stats?.currentData[ type ];
+		return typeof value === 'number' ? formatNumber( value ) : value;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function EngagementStat( { value }: { value: number | null } ) {
@@ -245,9 +265,10 @@ export function LastBackup( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="Unknown" />;
+		if ( isPending ) {
+			return 'Unknown';
 		}
 
 		if ( ! isEligible ) {
@@ -261,7 +282,11 @@ export function LastBackup( { site }: { site?: Site } ) {
 		return <TimeSince timestamp={ lastBackup.published } />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function Uptime( { site }: { site?: Site } ) {
@@ -273,9 +298,10 @@ export function Uptime( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && isEligible && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! isEligible ) {
@@ -285,7 +311,11 @@ export function Uptime( { site }: { site?: Site } ) {
 		return uptime ? `${ uptime }%` : <IneligibleIndicator />;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
@@ -304,7 +334,11 @@ export function PHPVersion( { site }: { site: Site } ) {
 		return <IneligibleIndicator />;
 	}
 
-	return <span ref={ ref }>{ ! isLoading ? data : <LoadingIndicator label="X.Y" /> }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isLoading }>{ isLoading ? 'X.Y' : data }</TextBlur>
+		</span>
+	);
 }
 
 export function MediaStorage( { site }: { site?: Site } ) {
@@ -318,33 +352,31 @@ export function MediaStorage( { site }: { site?: Site } ) {
 		enabled: !! site?.ID && inView,
 	} );
 
+	const isPending = ! site || isLoading;
 	const renderContent = () => {
-		if ( ! site || isLoading ) {
-			return <LoadingIndicator label="100%" />;
+		if ( isPending ) {
+			return '100%';
 		}
 
 		if ( ! mediaStorage ) {
 			return <IneligibleIndicator />;
 		}
 
-		const { storage_used_bytes, max_storage_bytes } = mediaStorage;
-		return `${ Math.round( ( storage_used_bytes / max_storage_bytes ) * 1000 ) / 10 }%`;
+		return `${ getStorageUsagePercent( mediaStorage ) }%`;
 	};
 
-	return <span ref={ ref }>{ renderContent() }</span>;
+	return (
+		<span ref={ ref }>
+			<TextBlur isBlurred={ isPending }>{ renderContent() }</TextBlur>
+		</span>
+	);
 }
 
-function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
+function SiteLaunchNag( { siteId, siteSlug }: { siteId: number; siteSlug: string } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { isCompleted, setupUrl } = useAiLaunchpad( siteSlug );
-	const [ , personalizationAssignment ] = useExperiment( LAUNCHPAD_PERSONALIZATION_EXPERIMENT );
+	const { isCompleted, isNoGuidance, setupUrl } = useAiLaunchpad( siteSlug );
 
-	if ( isCompleted ) {
-		return null;
-	}
-
-	// The no_guidance launchpad-personalization variation shows no launchpad mention at all.
-	if ( normalizeVariation( personalizationAssignment?.variationName ) === 'no_guidance' ) {
+	if ( isCompleted || isNoGuidance ) {
 		return null;
 	}
 
@@ -354,11 +386,16 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	// uses `overflow:hidden` to prevent any of the fields from overflowing.
 	return (
 		<>
-			<ComponentViewTracker eventName="calypso_dashboard_sites_site_launch_nag_impression" />
+			<ComponentViewTracker
+				eventName="calypso_dashboard_sites_site_launch_nag_impression"
+				properties={ { site_id: siteId } }
+			/>
 			<ExternalLink
 				href={ href }
 				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click' );
+					recordTracksEvent( 'calypso_dashboard_sites_site_launch_nag_click', {
+						site_id: siteId,
+					} );
 				} }
 			>
 				{ __( 'Finish setup' ) }
@@ -367,41 +404,14 @@ function SiteLaunchNag( { siteSlug }: { siteSlug: string } ) {
 	);
 }
 
-function PlanRenewNag( { site, source }: { site: Site; source: string } ) {
-	const { recordTracksEvent } = useAnalytics();
-	const isTrial = isSitePlanTrial( site );
-
-	return (
-		<>
-			<ComponentViewTracker
-				eventName="calypso_dashboard_sites_plan_renew_nag_impression"
-				properties={ { product_slug: site.plan?.product_slug, source } }
-			/>
-			<ExternalLink
-				href={
-					isTrial
-						? getSitePlanUpgradeUrl( site )
-						: wpcomLink( `/checkout/${ site.slug }/${ site.plan?.product_slug }` )
-				}
-				onClick={ () => {
-					recordTracksEvent( 'calypso_dashboard_sites_plan_renew_nag_click', {
-						product_slug: site.plan?.product_slug,
-						source,
-					} );
-				} }
-			>
-				{ isTrial ? __( 'Upgrade' ) : __( 'Renew plan' ) }
-			</ExternalLink>
-		</>
-	);
-}
-
 export function Visibility( {
+	siteId,
 	siteSlug,
 	visibility,
 	status,
 	isLaunched,
 }: {
+	siteId: number;
 	siteSlug: string;
 	visibility: SiteVisibility;
 	status: SiteBlockingStatus;
@@ -412,50 +422,60 @@ export function Visibility( {
 		<VStack spacing={ 1 }>
 			<span>{ visibilityLabels[ visibility ] }</span>
 			{ /* We don't want to show LaunchNag if there is any pending status. */ }
-			{ ! status && ! isLaunched && <SiteLaunchNag siteSlug={ siteSlug } /> }
+			{ ! status && ! isLaunched && <SiteLaunchNag siteId={ siteId } siteSlug={ siteSlug } /> }
 		</VStack>
 	);
 }
 
+/**
+ * The line under the plan name: where to finish buying a site held for checkout, or else how the
+ * plan's expiry stands. One place that decides which, so the plan cell does not.
+ *
+ * This does not keep the page's own elements stable when the held-site lookup answers: one of the
+ * two is still unmounted for the other, as the expiry status already mounts once its purchase
+ * loads. The span above is what stays put.
+ */
+function PlanSubStatus( {
+	site,
+	awaitingCheckout,
+}: {
+	site: Site;
+	awaitingCheckout: WowFunnelPendingSite | undefined;
+} ) {
+	if ( awaitingCheckout ) {
+		return <PlanAwaitingCheckout pending={ awaitingCheckout } />;
+	}
+
+	return <PlanExpiryStatus site={ site } />;
+}
+
 export function Plan( {
-	nag,
+	site,
 	isSelfHostedJetpackConnected,
 	isJetpack,
-	isOwner,
 	value,
 }: {
-	nag: { isExpired: false } | { isExpired: true; site: Site };
+	site: Site;
 	isSelfHostedJetpackConnected: boolean;
 	isJetpack: boolean;
-	isOwner?: boolean;
 	value: string;
 } ) {
+	const awaitingCheckout = useSiteAwaitingCheckout( site );
+
 	if ( isSelfHostedJetpackConnected ) {
 		if ( ! isJetpack ) {
 			return <IneligibleIndicator />;
 		}
-		return (
-			<HStack spacing={ 1 } expanded={ false } justify="flex-start">
-				<JetpackLogo size={ 16 } />
-				<span>{ value }</span>
-			</HStack>
-		);
+		return <span>{ value }</span>;
 	}
 
-	if ( nag.isExpired ) {
-		return (
-			<VStack spacing={ 1 }>
-				<Text intent="error">
-					{ sprintf(
-						/* translators: %s: plan name */
-						__( '%s-expired' ),
-						value
-					) }
-				</Text>
-				{ isOwner && <PlanRenewNag site={ nag.site } source="plan" /> }
-			</VStack>
-		);
-	}
-
-	return value;
+	return (
+		<VStack spacing={ 1 }>
+			{ /* The same span either way, with only its text changing: the answer arrives after
+			     first paint, and swapping elements across that boundary crashes under Google
+			     Translate (react/react#11538). */ }
+			<span>{ awaitingCheckout ? __( 'Awaiting checkout' ) : value }</span>
+			<PlanSubStatus site={ site } awaitingCheckout={ awaitingCheckout } />
+		</VStack>
+	);
 }

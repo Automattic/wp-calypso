@@ -5,17 +5,26 @@
 	flex-direction: column;
 }
 
+// A route with `isFullscreen` static data takes the whole screen: no sidebar
+// (the root skips it) and no omnibar, which lives outside the React root.
+.dashboard-root__layout.is-fullscreen {
+	// The value feeds calc(), which needs a unit.
+	--masterbar-height: 0px;
+}
+
+body:has( #wpcom-omnibar ):has( .dashboard-root__layout.is-fullscreen ) {
+	#wpcom-omnibar {
+		display: none;
+	}
+
+	#wpcom {
+		padding-block-start: 0;
+		min-height: 100vh;
+	}
+}
+
 .dashboard-root__body {
 	display: flex;
-	min-height: calc( 100vh - var( --masterbar-height ) );
-
-	&:has( > .dashboard-responsive-sidebar__sidebar ) {
-		padding-inline-start: $sidebar-width;
-	}
-
-	&:has( .dashboard-responsive-sidebar ) {
-		overflow-x: hidden;
-	}
 }
 
 .dashboard-root__content {
@@ -24,11 +33,33 @@
 	flex-direction: column;
 	flex: 1;
 	min-width: 0;
-	transition: transform 0.3s ease-in;
+}
 
-	.dashboard-root__body:has( .dashboard-responsive-sidebar.is-open ) & {
-		transform: translateX( $sidebar-width );
-		overflow: hidden;
+// Scoped to `screen` rather than undone under `print` because the `:has()`
+// selectors below outrank the bare `.dashboard-root__body` a print override
+// would use — the override would silently lose.
+// the bare `.dashboard-root__body` a print override would use — the override
+// would silently lose and leave an empty 272px gutter on the page.
+@media screen {
+	.dashboard-root__body {
+		min-height: calc( 100vh - var( --masterbar-height ) );
+
+		&:has( > .dashboard-responsive-sidebar__sidebar ) {
+			padding-inline-start: $sidebar-width;
+		}
+
+		&:has( .dashboard-responsive-sidebar ) {
+			overflow-x: hidden;
+		}
+	}
+
+	.dashboard-root__content {
+		transition: transform 0.3s ease-in;
+
+		.dashboard-root__body:has( .dashboard-responsive-sidebar.is-open ) & {
+			transform: translateX( $sidebar-width );
+			overflow: hidden;
+		}
 	}
 }
 
@@ -37,15 +68,5 @@
 	.dashboard-responsive-sidebar__sidebar,
 	.dashboard-responsive-sidebar__overlay {
 		display: none;
-	}
-
-	.dashboard-root__body {
-		padding-inline-start: 0;
-		overflow-x: visible;
-	}
-
-	.dashboard-root__content {
-		transform: none;
-		overflow: visible;
 	}
 }

@@ -156,6 +156,7 @@ const {
 	// Chat state
 	messages, // UIMessage[] - formatted for display
 	isProcessing, // boolean - request in progress
+	isReplying, // boolean | undefined - reply text is streaming in (with `trackReplying`, during a request)
 	error, // string | null - last error
 
 	// Core methods
@@ -182,6 +183,7 @@ const {
 - `contextProvider?: ContextProvider` - Dynamic context injection
 - `toolProvider?: ToolProvider` - Tool execution capabilities
 - `authProvider?: AuthProvider` - Authentication headers
+- `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Needs `enableStreaming`. Reply text then also clears `progressMessage` and `progressPhase`
 
 ### useClientContext Hook
 
@@ -394,7 +396,7 @@ Add interactive buttons to agent messages:
 ```typescript
 const { registerMessageActions, getRegenerateHandler } = useAgentChat( config );
 
-// Built-in feedback actions
+// Built-in feedback actions: inline on the latest turn, on hover for earlier turns
 registerMessageActions(
 	createFeedbackActions( {
 		onFeedback: async ( messageId, feedback ) => {
@@ -414,6 +416,7 @@ registerMessageActions( {
 			icon: '📋',
 			onClick: ( message ) =>
 				navigator.clipboard.writeText( message.content[ 0 ].text ),
+			visibility: 'latest-turn', // Like the feedback actions. Defaults to `always`.
 		},
 	],
 } );
@@ -528,10 +531,13 @@ interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component';
+		type: 'text' | 'component' | 'context' | 'data';
 		text?: string;
-		image_url?: string;
 		component?: React.ComponentType;
+		componentProps?: any;
+		// Data the host reads, such as `sources`, or an interactive UI surface under `a2ui`:
+		// A2UI's A2A data part, for the host to render.
+		data?: Record< string, unknown >;
 	} >;
 	timestamp: number;
 	actions?: UIMessageAction[];
@@ -549,7 +555,11 @@ interface Tool {
 }
 
 type AuthProvider = () => Promise< Record< string, string > >;
-type ContextProvider = { getClientContext: () => any };
+type ContextProvider = {
+	getClientContext: () => any;
+	// Metadata the agent reads on every message, such as A2UI's `a2uiRendererCapabilities`.
+	getMessageMetadata?: () => Record< string, unknown >;
+};
 type ToolProvider = {
 	getAvailableTools: () => Promise< Tool[] >;
 	getDispatchableTools?: () => Promise< Tool[] >;

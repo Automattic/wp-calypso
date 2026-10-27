@@ -86,7 +86,7 @@ export class UploadingPane extends PureComponent {
 					importerState === appStates.UPLOADING && uploadPercent < 99
 						? this.props.translate( 'Uploading %(filename)s\u2026', {
 								args: { filename: truncate( filename, { length: 40 } ) },
-						  } )
+							} )
 						: this.props.translate( 'Processing uploaded file\u2026' );
 
 				return (

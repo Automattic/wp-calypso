@@ -15,8 +15,5 @@
  */
 export const PURCHASE_NOTICE_QUERY_KEY = 'notice';
 export const PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE = 'plan-and-domain';
-
-export function appendNoticeQueryParam( url: string, value: string ): string {
-	const separator = url.includes( '?' ) ? '&' : '?';
-	return `${ url }${ separator }${ PURCHASE_NOTICE_QUERY_KEY }=${ value }`;
-}
+// Set by `get-thank-you-page-url` on signup destinations; the editor reads it too.
+export const PURCHASE_SUCCESS_NOTICE_QUERY_VALUE = 'purchase-success';

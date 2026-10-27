@@ -86,7 +86,7 @@ const ECommerceTrialIncluded: FunctionComponent< Props > = ( props ) => {
 	const whatsIncluded = displayAll
 		? allIncludedFeatures
 		: // Show only first 4 items
-		  allIncludedFeatures.slice( 0, 4 );
+			allIncludedFeatures.slice( 0, 4 );
 
 	return (
 		<>

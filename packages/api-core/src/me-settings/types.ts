@@ -44,6 +44,8 @@ export type McpSiteOverride = {
 	abilities?: Record< string, unknown >;
 	/** Site-level group "enable all" intents (AIINT-471): keys are `read`, `write`, or a bare group slug (e.g. `site`). */
 	group_intents?: Record< string, boolean >;
+	/** Site allowlist for site-published (remote) abilities (AI-1329): keys are `{read|write|destructive}:{namespace}`, lowercased. Only allowed groups are stored; a missing group denies. */
+	remote_groups?: Record< string, boolean >;
 };
 
 export type McpAbilities = {
@@ -57,6 +59,14 @@ export type McpAbilities = {
 	group_intents?: Record< string, boolean >;
 };
 
+/** `expires_at` is a Unix timestamp in seconds; `null` while active means it stays on until turned off. */
+export type McpApprovalBypass = {
+	active: boolean;
+	expires_at: number | null;
+};
+
+export type McpApprovalBypassDuration = '30m' | '2h' | '12h' | 'forever' | 'off';
+
 export interface UserSettings {
 	advertising_targeting_opt_out: boolean;
 	avatar_URL: string;
@@ -64,7 +74,6 @@ export interface UserSettings {
 	first_name: string;
 	last_name: string;
 	display_name: string;
-	is_dev_account: boolean;
 	password: string;
 	is_passwordless_user: boolean;
 	tracks_opt_out: boolean;
@@ -98,6 +107,8 @@ export interface UserSettings {
 
 	primary_site_ID?: number;
 	mcp_abilities?: McpAbilities;
+	/** Present only for Automatticians. */
+	mcp_approval_bypass?: McpApprovalBypass;
 	/** When true, account-level AI assistant features are enabled (requires API support). */
 	ai_assistant?: boolean | null;
 
@@ -111,6 +122,11 @@ export interface UserSettings {
 	user_email_change_requested_from?: string;
 	new_user_email?: string;
 }
+
+// `mcp_approval_bypass` is read as its state but written as a duration.
+export type UserSettingsUpdate = Partial< Omit< UserSettings, 'mcp_approval_bypass' > > & {
+	mcp_approval_bypass?: McpApprovalBypassDuration;
+};
 
 export interface PasswordValidationResponse {
 	passed: boolean;

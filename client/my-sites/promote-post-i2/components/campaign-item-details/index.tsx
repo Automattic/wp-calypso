@@ -307,7 +307,7 @@ export default function CampaignItemDetails( props: Props ) {
 			? formatAmount(
 					conversion_value[ conversion_last_currency_found ],
 					conversion_last_currency_found
-			  )
+				)
 			: '-';
 	const conversionsRateFormatted = conversion_rate
 		? `${ ( conversion_rate * 100 ).toFixed( 2 ) }%`
@@ -336,7 +336,7 @@ export default function CampaignItemDetails( props: Props ) {
 				/* translators: %s is the duration in days */
 				_n( '%s day', '%s days', duration_days ),
 				formatNumber( duration_days, true )
-		  )
+			)
 		: '';
 
 	const initialRange =
@@ -551,7 +551,7 @@ export default function CampaignItemDetails( props: Props ) {
 			? __( 'If you continue, your campaign will immediately stop running.' )
 			: __(
 					"If you continue, an approval request for your ad will be canceled, and the campaign won't start."
-			  );
+				);
 
 	const shouldShowStats =
 		!! ui_status &&
@@ -1497,7 +1497,7 @@ export default function CampaignItemDetails( props: Props ) {
 																</div>
 															</div>
 														);
-												  } )
+													} )
 												: [] }
 											{ orders && orders.length > 0 && (
 												<div className="campaign-item-details__weekly-orders-row">

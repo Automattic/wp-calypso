@@ -1,5 +1,6 @@
 import { parse } from '@wordpress/blocks';
 import { normalizeAbilityName } from '../abilities/ability-name';
+import { isRecord } from '../utils/is-record';
 import {
 	APPLY_BLOCK_EDITS_ABILITY_NAME,
 	GET_BLOCK_TREE_ABILITY_NAME,
@@ -9,9 +10,9 @@ import {
 	getWebMcpInputSchema,
 	isWebMcpMutatingServerAbilityName,
 } from './contracts';
-import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
+import type { Ability } from '@wordpress/abilities';
 import type { Block } from '@wordpress/blocks';
 
 export { createWebMcpToolProvider } from './server-ability-provider';
@@ -84,10 +85,6 @@ type ExecutionContext = {
 	knownBlockClientIds: Set< string >;
 };
 
-function isRecord( value: unknown ): value is Record< string, unknown > {
-	return !! value && typeof value === 'object' && ! Array.isArray( value );
-}
-
 function rememberBlockClientIds( result: unknown, context: ExecutionContext ): void {
 	if (
 		! isRecord( result ) ||
@@ -144,7 +141,7 @@ function prepareApplyBlockEditsInput(
 					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
 					block: toBlockData( block ),
 				} ) );
-		  } )
+			} )
 		: undefined;
 	const reverseMap = Object.fromEntries(
 		Array.from( context.knownBlockClientIds, ( clientId ) => [ clientId, clientId ] )
@@ -156,7 +153,6 @@ function prepareApplyBlockEditsInput(
 		...( Array.isArray( input.deletes ) ? { deletes: input.deletes } : {} ),
 		...( typeof input.summary === 'string' ? { summary: input.summary } : {} ),
 		reverseMap,
-		suppressAssistantMessage: true,
 	};
 }
 
@@ -210,7 +206,7 @@ function createTool(
 			const preparedInput =
 				ability.name === APPLY_BLOCK_EDITS_ABILITY_NAME
 					? prepareApplyBlockEditsInput( input ?? {}, executionContext )
-					: input ?? {};
+					: ( input ?? {} );
 			const result = await toolProvider.executeAbility( ability.name, preparedInput );
 
 			if ( ability.name === GET_BLOCK_TREE_ABILITY_NAME ) {

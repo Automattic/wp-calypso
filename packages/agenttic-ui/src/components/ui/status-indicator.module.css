@@ -1,0 +1,17 @@
+.dot {
+	display: block;
+}
+
+/* The circle takes the fill, so a host rule on the svg such as wp's
+   `.components-button svg { fill: currentColor }` can't recolour it. */
+.fill {
+	fill: var( --color-primary );
+}
+
+.error .fill {
+	fill: var( --color-error-accent );
+}
+
+.muted .fill {
+	fill: var( --color-muted-foreground );
+}

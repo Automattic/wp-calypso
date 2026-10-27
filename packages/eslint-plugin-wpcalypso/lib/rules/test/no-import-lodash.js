@@ -9,11 +9,10 @@
 // Requirements
 //------------------------------------------------------------------------------
 
-const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/no-import-lodash' );
-
 // TypeScript-only syntax (`import x = require( … )`) needs the TS parser.
-const tsParser = require.resolve( '@typescript-eslint/parser' );
+const tsParser = require( '@typescript-eslint/parser' );
+const RuleTester = require( 'eslint' ).RuleTester;
+const plugin = require( '../../..' );
 
 //------------------------------------------------------------------------------
 // Tests
@@ -25,10 +24,10 @@ const message =
 const errors = [ { message } ];
 
 const ruleTester = new RuleTester( {
-	parserOptions: { ecmaVersion: 2022, sourceType: 'module' },
+	languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
 } );
 
-ruleTester.run( 'no-import-lodash', rule, {
+ruleTester.run( 'no-import-lodash', plugin.rules[ 'no-import-lodash' ], {
 	valid: [
 		// Unrelated names that merely begin with "lodash" must not be flagged.
 		"import x from 'lodashy';",
@@ -62,10 +61,18 @@ ruleTester.run( 'no-import-lodash', rule, {
 		{ code: "const _ = require( 'lodash-es' );", errors },
 		{ code: "const map = require( 'lodash-es/map' );", errors },
 		// TypeScript `import =` (`import x = require( … )`).
-		{ code: "import _ = require( 'lodash' );", parser: tsParser, errors },
-		{ code: "import _ = require( 'lodash-es' );", parser: tsParser, errors },
+		{ code: "import _ = require( 'lodash' );", languageOptions: { parser: tsParser }, errors },
+		{ code: "import _ = require( 'lodash-es' );", languageOptions: { parser: tsParser }, errors },
 		// TypeScript import-type query (`type X = import( … ).Foo`).
-		{ code: "type X = import( 'lodash' ).LoDashStatic;", parser: tsParser, errors },
-		{ code: "type X = import( 'lodash-es' ).LoDashStatic;", parser: tsParser, errors },
+		{
+			code: "type X = import( 'lodash' ).LoDashStatic;",
+			languageOptions: { parser: tsParser },
+			errors,
+		},
+		{
+			code: "type X = import( 'lodash-es' ).LoDashStatic;",
+			languageOptions: { parser: tsParser },
+			errors,
+		},
 	],
 } );

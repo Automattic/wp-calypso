@@ -3,12 +3,14 @@
 Thin integration layer around [Survicate](https://survicate.com/), the third-party
 survey SDK used to run in-product surveys on WordPress.com surfaces. This package
 loads the SDK, sets visitor traits, fires events, and — importantly — keeps surveys
-from interrupting users who are in the Help Center.
+from interrupting users who are in the Help Center or being helped by a Happiness
+Engineer.
 
 ## What this package does (and doesn't)
 
 - **Does**: decide whether to load Survicate, inject the SDK script, set visitor
-  traits, invoke named events, and suppress/close surveys when the Help Center is open.
+  traits, invoke named events, and suppress/close surveys during a support session
+  or when the Help Center is open.
 - **Doesn't**: define survey content, targeting, or campaign rules. Those live in the
   Survicate dashboard (workspace `e4794374cce15378101b63de24117572`). We only control
   the SDK lifecycle on our side.
@@ -62,7 +64,7 @@ msd_visits_b >= 3`) need no code change.
   `hosting-dashboard-visit-count-<slug>` user preference. Gated on
   `survicate_enabled`.
 - **Publishing**: `useSurvicateVisitTraits()` in
-  `client/dashboard/app/survicate/index.tsx` (mounted in the layout) reads those
+  `client/dashboard/app/survicate/index.ts` (mounted in the layout) reads those
   preferences and pushes `{ msd_visits_<slug>: count }` via
   `setSurvicateVisitorTraits`, re-pushing when counts change. Incrementing and
   publishing are deliberately decoupled — they share only the preference store.
@@ -90,31 +92,166 @@ because `_sva.setVisitorTraits` **merges** traits across calls (upsert), rather
 than replacing the whole set — so the visit-count push does not clobber the
 email/account-age traits, and vice versa.
 
-## Help Center coordination (defense-in-depth)
+## Support sessions
 
-Surveys must not cover the Help Center while a user is actively seeking support. Three
-complementary touch points enforce this — keep all three:
+Surveys must never appear while a Happiness Engineer is working inside the user's
+account: they interrupt the session, and any answer is recorded against the account
+holder who never gave it.
+
+Detection is `isSupportSession()` from `@automattic/calypso-support-session` — the same
+helper the rest of the codebase uses (see `client/dashboard/utils/domain-permissions.ts`).
+It already does the job; don't wrap it or read `window.isSupportSession` directly.
+Guarded at two layers:
+
+1. **Load gate** — `shouldLoadSurvicate()` returns `false`, so the SDK script is never
+   injected. This is the real fix: no script, no auto-campaigns, no events. Every
+   consumer (`useSurvicate`, `addSurvicate`, the wp-admin bundle) funnels through it,
+   though the check is inert in wp-admin (see below).
+2. **Suppression** — `getSuppressionReason()` returns `'support_session'` first, covering
+   the `invokeSurvicateEvent()` call sites that fire without consulting the load gate.
+
+A support session neither begins nor ends within a page lifetime, so there is no
+transition to handle and nothing to resume. `load-script.ts` therefore needs no
+support-session handling of its own: it only ever runs once the load gate has passed,
+which means there is no support session. Its tests mock `isSupportSession()` to a
+constant `false` to keep that invariant explicit — don't add support-session cases there.
+
+**wp-admin runs this same package** (built by `apps/survicate/`, enqueued by
+`class-survicate.php` in the Jetpack monorepo), but `isSupportSession()` reads
+browser state Calypso sets (`sessionStorage.boot_support_user`,
+`window.isSupportSession`) that does not exist in wp-admin, so the gate is
+inert there. A wp-admin support-session signal would have to come from PHP
+through `window.wpcomSurvicateConfig`. Tracked as a follow-up.
+
+## Modal & Help Center coordination (defense-in-depth)
+
+Surveys must not cover the Help Center while a user is actively seeking support, nor
+draw over any other open modal dialog (onboarding modals, WP `Modal`, native
+`<dialog>`). The umbrella check is `shouldSuppressSurvey()` (`invoke-event.ts`):
+`isSupportSession() || isHelpCenterOpen() || isModalOpen()`. The touch points — keep all of them:
 
 1. **Open HC while a survey is showing** → `packages/data-stores/src/help-center/actions.ts`
    (`setShowHelpCenter`) calls `window._sva?.closeSurvey?.()` on open. (Note: that file
    intentionally inlines the call rather than importing this package — data-stores is a
    lower-level shared package and must not depend on `@automattic/survicate`.)
-2. **Invoke an event while HC is open** → `invoke-event.ts` checks `isHelpCenterOpen()`
-   and skips the trigger (both immediately and deferred at `SurvicateReady` time).
-3. **Any survey displays while HC is open** → `load-script.ts` subscribes to
+2. **Invoke an event while HC/a modal is open** → `invoke-event.ts` checks
+   `shouldSuppressSurvey()` and skips the trigger (both immediately and deferred at
+   `SurvicateReady` time).
+3. **Any survey displays while HC/a modal is open** → `load-script.ts` subscribes to
    `survey_displayed` and closes it. This is the comprehensive net that also catches
    auto-campaigns (path 2 above).
+4. **A modal opens while a survey is showing** → `load-script.ts` starts
+   `observeModals()`, which closes the survey (and records the suppression when a
+   survey was actually visible). Both this observer and the
+   `survey_displayed` listener are torn down via the optional `AbortSignal`
+   passed to `loadSurvicateScript` — `useSurvicate` passes its effect's signal,
+   so repeated loads don't accumulate observers. Because `SurvicateReady` fires
+   only once per page, the wiring runs immediately when the SDK is already
+   loaded (a consumer effect re-running after an earlier abort) and otherwise
+   waits for `SurvicateReady`; this re-establishes suppression on re-mount
+   instead of dropping it permanently. Without a signal it lives for the page
+   lifetime.
+5. **The Help Center opens/closes** → `load-script.ts` starts
+   `observeHelpCenter()` (`invoke-event.ts`), a store-change subscription that
+   pauses targeting and closes any visible survey on open, and resumes (via the
+   shared `resumeIfClear()`) on close. Torn down by the same `AbortSignal`.
 
 `isHelpCenterOpen()` (exported from `invoke-event.ts`) reads the `automattic/help-center`
 `@wordpress/data` store by string and returns `false` if the store isn't registered, so
-it's safe to call even when the Help Center isn't loaded on the surface.
+it's safe to call even when the Help Center isn't loaded on the surface. It is kept
+separate from DOM detection on purpose: the Help Center is a side panel without
+`aria-modal`, so the store is the reliable signal for it.
 
-**Known caveat — the display flash**: `survey_displayed` fires *after* the survey
-renders, so closing it produces a brief show-then-hide flicker for auto-campaigns. The
-SDK exposes no pre-display veto. If the flash ever becomes a real problem, the
-alternative is Survicate-side targeting (set a `help_center_open` visitor trait via
-`setSurvicateVisitorTraits` and exclude it in campaign config) — more reliable but
-requires dashboard coordination. Don't build that pre-emptively.
+### Modal detection (`modal-detection.ts`)
+
+- `MODAL_SELECTOR` matches `[role="dialog"][aria-modal="true"]` (requiring
+  `aria-modal` excludes generic `role="dialog"` widgets), native `dialog[open]`,
+  `.components-modal__screen-overlay` (older WP `Modal` versions),
+  `[data-wp-ui-overlay-modal]` (wp-admin UI overlay modals), and
+  `.components-popover:not(.components-tooltip):not(.block-editor-block-popover)`
+  (WP `Popover`; `Tooltip` reuses the popover class and must not suppress surveys
+  on every hover, and the block editor's `BlockPopover` chrome — block toolbar,
+  in-between inserter, drop zone — mounts and unmounts as the user types or
+  selects blocks, so counting it would pause and `retarget()` Survicate
+  constantly in the editors that wp-admin surveys target).
+- **Self-exclusion is load-bearing**: the Survicate widget itself renders
+  `role="dialog"`/`aria-modal="true"` elements inside
+  `<div id="survicate-box" class="survicate-box-<type>">` (verified in
+  `widget_core-28.33.0.js`). Candidates inside
+  `#survicate-box, [class*="survicate-box"]` are skipped — otherwise every survey
+  would close itself on display.
+- `isModalOpen()` also requires the candidate to be rendered, preferring
+  `Element.checkVisibility()` with a `getClientRects()` fallback. Called with no
+  options, `checkVisibility()` only treats `display: none`, `content-visibility`,
+  and detached nodes as not-rendered — **not** `visibility: hidden` or
+  `opacity: 0` — so this guards the common "mounted but `display: none`" dialog,
+  not every hidden-but-mounted one. In practice WP `Modal` / native `dialog`
+  fully unmount on close, so the residual cases don't arise. jsdom implements no
+  layout (`getClientRects()` is always empty), so tests stub `checkVisibility`
+  per element.
+- `observeModals( onOpen, onAllClosed? )` watches `document.body` for **added and
+  removed nodes only** (no attribute observation — a native `<dialog>` toggled via
+  `open` in place is missed, but the `survey_displayed` net still covers it).
+  `onAllClosed` fires when a batch removes a modal and `isModalOpen()` is then
+  false. Returns a disconnect function.
+- Everything fails **open**: any error in detection means "no modal", so surveys
+  behave as they did before this module existed.
+
+### Targeting pause/resume (`targeting.ts`)
+
+**Closing a suppressed auto-campaign survey is not enough.** The SDK's targeting
+engine re-evaluates every few seconds and re-displays a closed survey while its
+campaign still matches, producing an endless display→close loop (and a stream of
+`targeting`/`seen.json`/`survey_interactions` requests). The fix uses two SDK
+affordances verified in `widget_core-28.33.0.js`:
+
+- `window._sva.disableTargeting` is read **live** by the targeting engine: while
+  truthy, only API-triggered surveys stay eligible; auto-campaigns are not
+  scheduled at all.
+- `window._sva.retarget()` (public) re-runs the targeting evaluation.
+
+`pauseSurvicateTargeting()` sets the flag; `resumeSurvicateTargeting()` clears it
+and calls `retarget()` (no-op unless paused). `load-script.ts` pauses when a
+modal opens (`observeModals` `onOpen`), when the Help Center opens
+(`observeHelpCenter` `onOpen`), when a survey displays with either open, and up
+front at wire time if either is already open — that last one means a modal or
+Help Center shown before the SDK loads produces **no flash at all**. Resume goes
+through one shared `resumeIfClear()` — it only resumes when
+`shouldSuppressSurvey()` is false, because one suppressor going away is not
+enough (the last modal can close while the Help Center is still open, and vice
+versa) — reached from `observeModals` `onAllClosed` and `observeHelpCenter`
+`onClose`. Consumer abort resumes unconditionally so a torn-down consumer never
+leaves the SDK paused.
+
+### Measuring suppression (`track-suppression.ts`)
+
+Every suppression records a `calypso_survicate_survey_suppressed` Tracks event
+(`recordSurveySuppressed`), so we can measure how often surveys are suppressed —
+and in particular how many the modal rule catches versus the older Help Center
+rule. Properties:
+
+- `reason` — `support_session`, `help_center` or `modal`. `getSuppressionReason()`
+  checks them in that order — most- to least-specific — so `reason: 'modal'` fires
+  only when a modal is the **sole** reason; filtering on it measures the
+  incremental effect of the modal rule.
+- `trigger` — `survey_displayed` (a survey rendered and was closed — the
+  auto-campaign case), `modal_opened` / `help_center_opened` (a modal or the
+  Help Center opened over a survey already on screen; gated on
+  `isSurveyVisible()` so it doesn't fire on every open), or `invoke_event` (an
+  explicit `invokeSurvicateEvent()` was skipped, plus an `event_name` property).
+
+Recording is best-effort and wrapped in `try/catch` — a failing analytics call
+never interferes with suppression. The wp-admin bundle does **not** emit it:
+`apps/survicate` swaps `@automattic/calypso-analytics` for a no-op stub, because on
+Atomic custom domains the wordpress.com consent cookies are absent and the real
+module would record events for users who opted out.
+
+**Known caveat — the display flash**: `survey_displayed` fires _after_ the survey
+renders, so closing it produces a brief show-then-hide flicker. The SDK exposes no
+pre-display veto. This is largely mitigated by the targeting pause
+(`targeting.ts`): a modal or Help Center open before the SDK is ready, or opened
+while it is paused, prevents display entirely; the flash remains only for the
+race where a survey is already mid-display as a modal or the Help Center appears.
 
 ## File map
 
@@ -122,7 +259,14 @@ requires dashboard coordination. Don't build that pre-emptively.
   only) and `SURVICATE_WORKSPACE_ID`.
 - `load-script.ts` — `loadSurvicateScript()` injects the SDK and wires the
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
-- `invoke-event.ts` — `invokeSurvicateEvent()` and `isHelpCenterOpen()`.
+- `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`,
+  `observeHelpCenter()`, `getSuppressionReason()`, and `shouldSuppressSurvey()`.
+- `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
+  `MODAL_SELECTOR`.
+- `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:
+  gate the SDK's auto-campaign targeting via the `disableTargeting` flag.
+- `track-suppression.ts` — `recordSurveySuppressed()`: the
+  `calypso_survicate_survey_suppressed` Tracks event.
 - `close-survey.ts` — `closeSurvicateSurvey()`: the single, guarded `_sva.closeSurvey()`
   helper reused by the suppression call sites.
 - `visitor-traits.ts` — `setSurvicateVisitorTraits()`, `getAccountAgeInDays()`, and the
@@ -131,9 +275,66 @@ requires dashboard coordination. Don't build that pre-emptively.
 
 ## Consumers
 
-The package's entry point is `client/dashboard/app/survicate/index.tsx` (`useSurvicate`
-hook), gated behind the `survicate_enabled` config flag. `invokeSurvicateEvent` is also
-called from classic Calypso purchase/cancel and checkout flows.
+Three consumers, all funnelled through `shouldLoadSurvicate()`:
+
+- **Multi-site Dashboard** — `client/dashboard/app/survicate/index.ts` (`useSurvicate`),
+  gated behind the `survicate_enabled` config flag. Pushes identity and visit-count traits.
+- **Classic Calypso** — `client/lib/analytics/survicate.js` (`addSurvicate`), and
+  `invokeSurvicateEvent` from purchase/cancel and checkout flows.
+- **wp-admin on Simple and Atomic** — `apps/survicate/survicate.js`, bundled to
+  `https://widgets.wp.com/survicate/survicate.min.js` and enqueued by
+  `class-survicate.php` in `jetpack-mu-wpcom`. PHP decides eligibility and emits
+  site-level traits on `window.wpcomSurvicateConfig`; the bundle does the rest.
+  Ship a change to wp-admin with `install-plugin.sh survicate --release` on a
+  sandbox followed by `deploy wpcom` — no Jetpack release needed.
+
+## Pull requests
+
+Any PR that changes `packages/survicate/` or `apps/survicate/` ships to wp-admin
+through a separate widgets.wp.com deploy, not just the Calypso deploy. Reviewers
+and whoever merges need those steps, so **always add the two sections below to the
+PR description** (after "Testing Instructions" in `.github/PULL_REQUEST_TEMPLATE.md`).
+Adapt the feature-specific checks; keep the deploy steps as they are.
+
+```markdown
+## Deployment
+
+Merging to trunk is not enough for wp-admin. After merge:
+
+1. Deploy Calypso as usual (covers Calypso and the Multi-site Dashboard).
+2. TeamCity's "Build Calypso Apps" builds `survicate.zip` and tags it `survicate-release-build`.
+3. On a sandbox: `install-plugin.sh survicate --release`, push to the WPCOM repository when prompted, merge the generated PR once checks pass, then `deploy wpcom`.
+4. Verify: the `version` in `https://widgets.wp.com/survicate/survicate.asset.json` changed, and the manifest still lists only `wp-data`.
+
+Simple sites pick up the new bundle immediately; Atomic sites within an hour (Jetpack caches the manifest).
+
+## Testing in wp-admin
+
+1. Sandbox your site and `widgets.wp.com`.
+2. `cd apps/survicate && yarn dev --sync`, then open wp-admin as an English-locale user.
+3. Run `localStorage.debug = 'survicate'` and reload to see the package's debug log.
+4. <feature-specific checks, e.g. what should close a survey or set `window._sva.disableTargeting`>
+```
+
+## Seeing a real survey while testing
+
+Use the shared test survey,
+[`572afd0e9cd810f6`](https://panel.survicate.com/o/1314199/w/1280163/surveys/572afd0e9cd810f6)
+("Test Survey - Used for Quake's tests"). It only targets pages whose URL contains
+`test_survey=true`, so add that query parameter to the page you are testing (e.g.
+`/plugins/manage?test_survey=true`). Without it no survey shows, even when the event
+fires correctly. The rule lives in the Survicate panel, not in our code.
+
+- **Which events trigger it**: edit the survey's targeting in the panel to add the event
+  you are testing. To check what is configured, open the workspace's
+  `web_surveys.js` (see the page's network requests) and search it for the event name.
+  A paused survey is missing from that file entirely.
+- **Showing it again**: once the survey has been shown, the SDK's single-tab lock
+  `localStorage['survi::e4794374cce15378101b63de24117572::singleTabId:572afd0e9cd810f6']`
+  blocks it on later pages. Remove that key and reload before testing again.
+- **Confirming the event without the survey**: wrap `window._sva.invokeEvent` in the
+  console to log each call along with `window._sva.disableTargeting`. An event
+  invoked while targeting is disabled never shows an event-triggered survey.
 
 ## Conventions & gotchas
 
@@ -142,7 +343,7 @@ called from classic Calypso purchase/cancel and checkout flows.
   inside this package.
 - **Listeners that wait for `SurvicateReady`** should use `{ once: true }`. Note the
   event fires only once per page load — code that registers a `SurvicateReady` listener
-  *after* the SDK already loaded will never run, so register at load time.
+  _after_ the SDK already loaded will never run, so register at load time.
 - Each `src/*.ts` file has a matching `src/test/*.test.ts`. Tests use
   `@jest-environment jsdom`, mock `@wordpress/data`'s `select`, and stub `window._sva`.
 - Tab indentation, tabs for alignment (match existing files).

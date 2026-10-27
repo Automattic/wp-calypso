@@ -1,6 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { CircularProgressBar } from '@automattic/components';
-import { useLaunchpad } from '@automattic/data-stores';
+import { useLaunchpad } from '@automattic/launchpad';
 import styled from '@emotion/styled';
 import { useI18n } from '@wordpress/react-i18n';
 import { useInView } from 'react-intersection-observer';

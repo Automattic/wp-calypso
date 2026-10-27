@@ -73,7 +73,7 @@ export default function MigrationsAddSitesTable( {
 	const onSelectAllSites = useCallback( () => {
 		const isAllSitesSelected = selectedSites.length === availableSites.length;
 		setSelectedSites( isAllSitesSelected ? [] : availableSites );
-		recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_all_sites_click', {
+		recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_select_all_sites_click', {
 			type: isAllSitesSelected ? 'deselect' : 'select',
 		} );
 	}, [ recordTracksEvent, availableSites, selectedSites.length, setSelectedSites ] );
@@ -85,7 +85,7 @@ export default function MigrationsAddSitesTable( {
 			} else {
 				setSelectedSites( selectedSites.filter( ( site ) => site.id !== item.id ) );
 			}
-			recordTracksEvent( 'calypso_a8c_migrations_tag_sites_modal_select_site_click', {
+			recordTracksEvent( 'calypso_a4a_migrations_tag_sites_modal_select_site_click', {
 				type: checked ? 'select' : 'deselect',
 			} );
 		},
@@ -147,32 +147,30 @@ export default function MigrationsAddSitesTable( {
 	}, [ availableSites, view, fields ] );
 
 	return (
-		<>
-			<BaseControl label={ __( 'Select sites to tag' ) }>
-				{ migrationSourceHost && (
-					<Spacer marginY={ 4 }>
-						<Text variant="muted">
-							{ sprintf(
-								/* translators: %s: the hosting provider name */
-								__( 'Make sure you only select sites previously hosted on %s' ),
-								migrationSourceHost
-							) }
-						</Text>
-					</Spacer>
-				) }
-				<DataViews
-					data={ allSites }
-					view={ view }
-					onChangeView={ setView }
-					fields={ fields }
-					search={ false }
-					actions={ [] }
-					getItemId={ ( item ) => `${ item.id }` }
-					paginationInfo={ paginationInfo }
-					defaultLayouts={ { table: {} } }
-					isLoading={ isLoading }
-				/>
-			</BaseControl>
-		</>
+		<BaseControl label={ __( 'Select sites to tag' ) }>
+			{ migrationSourceHost && (
+				<Spacer marginY={ 4 }>
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s: the hosting provider name */
+							__( 'Make sure you only select sites previously hosted on %s' ),
+							migrationSourceHost
+						) }
+					</Text>
+				</Spacer>
+			) }
+			<DataViews
+				data={ allSites }
+				view={ view }
+				onChangeView={ setView }
+				fields={ fields }
+				search={ false }
+				actions={ [] }
+				getItemId={ ( item ) => `${ item.id }` }
+				paginationInfo={ paginationInfo }
+				defaultLayouts={ { table: {} } }
+				isLoading={ isLoading }
+			/>
+		</BaseControl>
 	);
 }

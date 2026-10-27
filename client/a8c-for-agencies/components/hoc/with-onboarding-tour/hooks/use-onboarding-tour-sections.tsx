@@ -150,7 +150,7 @@ export default function useOnboardingTourSections() {
 					title: translate( 'Buy at a discount or earn commission—your choice!' ),
 					descriptions: [
 						translate(
-							'Our marketplace is a one-stop shop for all of your client hosting and product needs. Enjoy up to 80% off with volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission without the billing headaches.'
+							'Our marketplace is a one-stop shop for all of your client hosting and product needs. Enjoy up to 77% off with volume discounts, or switch to referral mode and let clients pay while you earn up to 50% commission without the billing headaches.'
 						),
 						translate( 'Did we mention this is a recurring commission?' ),
 					],

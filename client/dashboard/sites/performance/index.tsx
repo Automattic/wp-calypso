@@ -5,11 +5,12 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute } from '../../app/router/sites';
+import EmptyState from '../../components/empty-state';
 import InlineSupportLink from '../../components/inline-support-link';
-import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
+import { SitesNoticeArbiter } from '../notice-arbiter';
 import { SiteLaunchButton } from '../site-launch-button';
 import { getPerformanceCalloutProps } from './performance-callout';
 
@@ -31,15 +32,20 @@ export function SitePerformanceContent( { siteSlug }: { siteSlug: string } ) {
 							) }
 						/>
 					}
-					notices={
-						<Notice
-							title={ __( 'Launch your site to start measuring performance' ) }
-							actions={ <SiteLaunchButton site={ site } tracksContext="site_performance" /> }
-						>
-							{ __( 'Performance statistics are only available for public sites.' ) }
-						</Notice>
-					}
-				/>
+					notices={ <SitesNoticeArbiter /> }
+				>
+					<EmptyState.Wrapper>
+						<EmptyState.Header>
+							<EmptyState.Title>
+								{ __( 'Launch your site to start measuring performance' ) }
+							</EmptyState.Title>
+							<EmptyState.Description>
+								{ __( 'Performance statistics are only available for public sites.' ) }
+							</EmptyState.Description>
+						</EmptyState.Header>
+						<SiteLaunchButton site={ site } tracksContext="site_performance" />
+					</EmptyState.Wrapper>
+				</PageLayout>
 			) : (
 				<Outlet />
 			) }

@@ -106,7 +106,7 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 	const noPurchaseTitle = isWPCOMPaidStatsFlow
 		? ( translate( 'Grow faster with %(product)s', {
 				args: { product: STATS_PRODUCT_NAME },
-		  } ) as string )
+			} ) as string )
 		: ( translate( 'Unlock more Stats with a paid plan' ) as string );
 	const freeTitle = translate( 'Want to get the most out of %(product)s?', {
 		args: { product: STATS_PRODUCT_NAME },
@@ -122,11 +122,11 @@ const FreeSiteUpgradeNotice = ( { siteId, hasFreeStats, isOdysseyStats }: StatsN
 				{
 					args: getPlan( PLAN_PREMIUM )?.getTitle() ?? '',
 				}
-		  )
+			)
 		: translate(
 				'%(product)s is free to keep using. A paid plan adds UTM stats, device stats, and region and city stats.',
 				{ args: { product: STATS_PRODUCT_NAME } }
-		  );
+			);
 
 	const CTAText = translate( 'Upgrade' );
 

@@ -11,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import InlineSupportLink from '../inline-support-link';
+import Notice from '../notice';
 import PhoneNumberInput from '../phone-number-input';
 import {
 	createFieldAsyncValidator,
@@ -117,6 +118,27 @@ function PhoneNumberField( {
 	);
 }
 
+/**
+ * Notice shown below the organization field.
+ *
+ * It is a separate read-only field because DataForm renders a field description
+ * inside a `<p>`, which can't hold a Notice.
+ */
+function OrganizationNotice() {
+	return (
+		<Notice variant="warning">
+			{ createInterpolateElement(
+				__(
+					'By completing the organization field, you agree that the listed organization will be considered the legal domain owner and that this information will be publicly visible. You can choose to hide it using <link>privacy protection</link>.'
+				),
+				{
+					link: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
+				}
+			) }
+		</Notice>
+	);
+}
+
 export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
 	statesList: StatesListItem[] | undefined,
@@ -149,6 +171,14 @@ export const getContactFormFields = (
 			isValid: {
 				custom: createFieldAsyncValidator( 'organization', asyncValidator ),
 			},
+		},
+		{
+			id: 'organizationNotice',
+			label: __( 'Organization notice' ),
+			// DataForm skips a field without an Edit control, even a read-only one.
+			type: 'text',
+			readOnly: true,
+			render: OrganizationNotice,
 		},
 		{
 			id: 'email',

@@ -1,21 +1,31 @@
 import {
 	fetchAgency,
-	fetchAgencyResources,
+	fetchAgencyLeadMatching,
+	fetchAgencyProgramStats,
+	fetchAgencyEnablementResources,
+	recordAgencyResourceEvent,
 	fetchAgencyScheduleCallLink,
 	fetchAgencyMcpSettings,
+	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
 	updateAgencyPartnerDirectoryApplication,
 	updateAgencyProfile,
 	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
 	fetchTipaltiPayee,
+	submitAgencyPressablePremiumPlanReferral,
+	submitAgencyVipPartnerOpportunity,
 } from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type {
 	Agency,
+	AgencyHostingReferral,
+	AgencyLeadMatchingProfile,
 	AgencyPartnerDirectoryApplicationUpdate,
 	AgencyProfileUpdate,
+	AgencyResourceEvent,
+	AgencyVipPartnerOpportunity,
 	McpSettings,
 	McpSettingsUpdate,
 } from '@automattic/api-core';
@@ -97,11 +107,32 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		retry: false,
 	} );
 
-export const agencyResourcesQuery = () =>
+export const agencyProgramStatsQuery = () =>
 	queryOptions( {
-		queryKey: [ 'agency', 'resources' ] as const,
-		queryFn: fetchAgencyResources,
+		queryKey: [ 'agency', 'program-stats' ] as const,
+		queryFn: fetchAgencyProgramStats,
+	} );
+
+/**
+ * Enablement resources with the v2 taxonomy.
+ */
+export const agencyEnablementResourcesQuery = () =>
+	queryOptions( {
+		queryKey: [ 'agency', 'resources', 'v2' ] as const,
+		queryFn: fetchAgencyEnablementResources,
 		staleTime: 5 * 60 * 1000,
+	} );
+
+/**
+ * Records engagement with a resource so it can be correlated to the agency.
+ *
+ * There is nothing to invalidate: the endpoint writes to the engagement log,
+ * not to the resource list.
+ */
+export const agencyResourceEventMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-resource-record' },
+		mutationFn: ( event: AgencyResourceEvent ) => recordAgencyResourceEvent( agencyId, event ),
 	} );
 
 export const tipaltiIFrameUrlQuery = ( agencyId: number ) =>
@@ -160,6 +191,44 @@ export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-pd-logo-upload' },
 		mutationFn: ( file: File ) => uploadAgencyPartnerDirectoryLogo( agencyId, file ),
+	} );
+
+export const agencyVipPartnerOpportunityMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-vip-opp-submit' },
+		mutationFn: ( referral: AgencyVipPartnerOpportunity ) =>
+			submitAgencyVipPartnerOpportunity( agencyId, referral ),
+	} );
+
+export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-press-prem-submit' },
+		mutationFn: ( referral: AgencyHostingReferral ) =>
+			submitAgencyPressablePremiumPlanReferral( agencyId, referral ),
+	} );
+
+export const agencyLeadMatchingQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'lead-matching' ] as const,
+		queryFn: () => fetchAgencyLeadMatching( agencyId ),
+		enabled: !! agencyId,
+	} );
+
+export const agencyLeadMatchingMutation = ( agencyId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-lead-matching-update' },
+		mutationFn: async ( profile: AgencyLeadMatchingProfile ) => {
+			const response = await updateAgencyLeadMatching( agencyId, profile );
+			// The preferences are saved but not passed on to lead matching when
+			// the sync fails, so a 2xx with a failed sync is an error too.
+			if ( ! response?.lead_matching_profile || response.sync?.status === 'failed' ) {
+				throw new Error( 'The lead matching preferences were not saved.' );
+			}
+			return response;
+		},
+		onSuccess: ( response ) => {
+			queryClient.setQueryData( agencyLeadMatchingQuery( agencyId ).queryKey, response );
+		},
 	} );
 
 export const mcpSettingsQuery = ( agencyId: number ) =>

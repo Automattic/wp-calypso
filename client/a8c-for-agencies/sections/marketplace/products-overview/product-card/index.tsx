@@ -210,7 +210,7 @@ function ProductCard( props: Props ) {
 										? translate( 'Applies to %(siteDomain)s', {
 												args: { siteDomain: pressableMemoryTarget },
 												comment: '%(siteDomain)s is the target site/domain for the add-on.',
-										  } )
+											} )
 										: translate( 'Applies to one Pressable site/domain.' ) }
 								</div>
 							) }

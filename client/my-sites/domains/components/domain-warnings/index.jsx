@@ -81,7 +81,7 @@ export class DomainWarnings extends PureComponent {
 
 	renewLink( domains, onClick ) {
 		const count = domains.length;
-		const { selectedSite, translate } = this.props;
+		const { translate } = this.props;
 		const fullMessage = translate( 'Renew it now.', 'Renew them now.', {
 			count,
 			context: 'Call to action link for renewing an expiring/expired domain',
@@ -89,13 +89,8 @@ export class DomainWarnings extends PureComponent {
 		const compactMessage = translate( 'Renew', {
 			context: 'Call to action link for renewing an expiring/expired domain',
 		} );
-		const domain = domains[ 0 ].name;
 		const subscriptionId = domains[ 0 ].subscriptionId;
-		const productSlug = domains[ 0 ].productSlug;
-		const link =
-			count === 1
-				? `/checkout/${ productSlug }:${ domain }/renew/${ subscriptionId }/${ selectedSite.slug }`
-				: purchasesRoot;
+		const link = count === 1 ? `/checkout/renew/${ subscriptionId }` : purchasesRoot;
 
 		return (
 			<NoticeAction href={ link } onClick={ onClick }>

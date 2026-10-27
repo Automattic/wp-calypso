@@ -47,5 +47,8 @@ export interface AmplifyApiError {
 	message: string;
 	data?: {
 		status?: number;
+		// A failed `validate_callback` arrives as `rest_invalid_param`, with the
+		// field's own error kept here, keyed by the parameter it rejected.
+		details?: Record< string, { code?: string; message?: string } >;
 	};
 }

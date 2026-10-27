@@ -1,0 +1,7 @@
+.mcp-approval-bypass.is-open .summary-button-navigation-icon {
+	transform: rotate( 90deg );
+}
+
+.rtl .mcp-approval-bypass.is-open .summary-button-navigation-icon {
+	transform: rotate( -90deg );
+}

@@ -19,13 +19,13 @@ export function useUpdateZendeskUserFields() {
 						apiNamespace: 'wpcom/v2',
 						method: 'POST',
 						body: { fields: userFields },
-				  } )
+					} )
 				: apiFetch( {
 						global: true,
 						path: '/help-center/zendesk/user-fields',
 						method: 'POST',
 						data: { fields: userFields },
-				  } as APIFetchOptions );
+					} as APIFetchOptions );
 		},
 	} );
 }

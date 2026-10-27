@@ -80,12 +80,12 @@ const BackupFailed = ( { backup, status = null } ) => {
 										url: 'https://jetpack.com/support/how-to-add-jetpack-ips-allowlist/',
 									},
 								}
-						  )
+							)
 						: translate(
 								'A backup for your site was attempted on %(displayDate)s at %(displayTime)s and was not ' +
 									'able to be completed.',
 								{ args: { displayDate, displayTime } }
-						  ) }
+							) }
 				</div>
 				{ ! mayBeBlockedByHost && (
 					<p>

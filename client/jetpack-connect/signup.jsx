@@ -42,6 +42,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import AuthFormHeader from './auth-form-header';
 import { getSignupCopy } from './connection-content';
 import { getConnectorBranding } from './connector-branding-config';
+import { isUnifiedFlow } from './entry-points';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
@@ -157,16 +158,13 @@ export class JetpackSignup extends Component {
 		return 'automattic-for-agencies-client' === this.props.authQuery.from;
 	}
 
-	isFromJetpackConnector( props = this.props ) {
-		return 'jetpack-connector' === props.authQuery.from;
-	}
-
 	isFromJetpackOnboarding( props = this.props ) {
 		return 'jetpack-onboarding' === props.authQuery.from;
 	}
 
 	isUnifiedConnectionFlow( props = this.props ) {
-		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
+		// Onboarding uses the unified layout but still shows its static content.
+		return isUnifiedFlow( props.authQuery.from ) || this.isFromJetpackOnboarding( props );
 	}
 
 	handleExistingAccountClick = () => {
@@ -250,15 +248,15 @@ export class JetpackSignup extends Component {
 			const text =
 				error.data && error.data.email
 					? // translators: email is an email address. eg you@name.com
-					  translate(
+						translate(
 							'The email address "%(email)s" is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.',
 							{ args: { email: error.data.email } }
-					  )
+						)
 					: translate(
 							'The email address is associated with a WordPress.com account. ' +
 								'Log in to connect it to your Google profile, or choose a different Google profile.'
-					  );
+						);
 
 			warningNotice( text, {
 				button: <a href={ this.getLoginRoute() }>{ translate( 'Log in' ) }</a>,
@@ -314,13 +312,11 @@ export class JetpackSignup extends Component {
 	render() {
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
 		const isWooJPC = this.isWooJPC();
-		const isFromJetpackConnector = this.isFromJetpackConnector();
-		const connectorBranding = isFromJetpackConnector
+		const showsUnifiedContent = isUnifiedFlow( this.props.authQuery.from );
+		const connectorBranding = showsUnifiedContent
 			? getConnectorBranding( this.props.authQuery.plugins )
 			: null;
-		const signupCopy = isFromJetpackConnector
-			? getSignupCopy( this.props.authQuery.plugins )
-			: null;
+		const signupCopy = showsUnifiedContent ? getSignupCopy( this.props.authQuery.plugins ) : null;
 
 		const isLogging = newUsername && bearerToken;
 		if ( isWooJPC && ( isCreatingAccount || isLogging ) ) {
@@ -344,14 +340,14 @@ export class JetpackSignup extends Component {
 		return (
 			<MainWrapper
 				className={ clsx( {
-					'jetpack-connect__authorize-form-wrapper--connector': isFromJetpackConnector,
+					'jetpack-connect__authorize-form-wrapper--connector': showsUnifiedContent,
 				} ) }
 				isWooJPC={ isWooJPC }
-				isJetpackConnector={ isFromJetpackConnector }
+				isJetpackConnector={ showsUnifiedContent }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ isFromJetpackConnector && connectorBranding && signupCopy ? (
+					{ showsUnifiedContent && connectorBranding && signupCopy ? (
 						<BrandHeader
 							logo={ connectorBranding.logo }
 							logoAlt=""

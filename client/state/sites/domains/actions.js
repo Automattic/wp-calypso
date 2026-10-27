@@ -131,7 +131,7 @@ export function fetchSiteDomains( siteId ) {
 						? error.message
 						: translate(
 								'There was a problem fetching site domains. Please try again later or contact support.'
-						  );
+							);
 
 				dispatch( domainsRequestFailureAction( siteId, message ) );
 			} );
@@ -327,7 +327,7 @@ export function fetchDomainDetails( domain ) {
 						? error.message
 						: translate(
 								'There was a problem fetching domain details. Please try again later or contact support.'
-						  );
+							);
 
 				dispatch( domainDetailsRequestFailureAction( domain, message ) );
 			} );

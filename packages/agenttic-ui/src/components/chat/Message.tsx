@@ -14,10 +14,20 @@ export interface MessageProps {
 	message: MessageType;
 	messageRenderer?: ComponentType< { children: string } >;
 	showAgentIcon?: boolean;
+	/** The message belongs to the turn after the user's latest message. */
+	isLatestTurn?: boolean;
+	/** Whether the latest reply is still streaming. */
+	isStreaming?: boolean;
 }
 
 export const Message = React.forwardRef< HTMLDivElement, MessageProps >( function Message(
-	{ message, messageRenderer: MessageRenderer = Markdown, showAgentIcon = false },
+	{
+		message,
+		messageRenderer: MessageRenderer = Markdown,
+		showAgentIcon = false,
+		isLatestTurn,
+		isStreaming,
+	},
 	ref
 ) {
 	// Ensure `message.content` is an array
@@ -34,6 +44,10 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >( functio
 		messageContent.some(
 			( contentBlock ) => contentBlock.type === 'text' && Boolean( contentBlock.text )
 		);
+
+	const messageActions = (
+		<MessageActions message={ message } isLatestTurn={ isLatestTurn } isStreaming={ isStreaming } />
+	);
 
 	const renderMessageContent = () => {
 		return (
@@ -79,10 +93,12 @@ export const Message = React.forwardRef< HTMLDivElement, MessageProps >( functio
 						: undefined
 				}
 			>
-				<div className={ styles.bubble }>{ renderMessageContent() }</div>
-				{ message.role !== 'user' && <MessageActions message={ message } /> }
+				<div className={ styles.bubble } data-slot="message-bubble">
+					{ renderMessageContent() }
+				</div>
+				{ message.role !== 'user' && messageActions }
 			</div>
-			{ message.role === 'user' && <MessageActions message={ message } /> }
+			{ message.role === 'user' && messageActions }
 		</motion.div>
 	);
 } );

@@ -45,6 +45,7 @@ Plan or product slug. Can be one of the following:
 - `business-bundle-monthly`
 - `pro-plan`
 - `starter-plan`
+- `wp_bundle_student_yearly`
 - `jetpack_free`
 - `jetpack_personal`
 - `jetpack_personal_monthly`

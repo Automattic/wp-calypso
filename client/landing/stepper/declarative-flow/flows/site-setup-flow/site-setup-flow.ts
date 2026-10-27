@@ -1,4 +1,5 @@
 import { Onboard } from '@automattic/data-stores';
+import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useFlowState } from 'calypso/landing/stepper/declarative-flow/internals/state-manager/store';
@@ -28,7 +29,7 @@ import {
 	type Flow,
 	type ProvidedDependencies,
 } from '../../internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -73,10 +74,6 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 		const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
-		const goals = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getGoals(),
-			[]
-		);
 		const selectedDesign = useSelect(
 			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getSelectedDesign(),
 			[]
@@ -102,7 +99,7 @@ const siteSetupFlow: Flow = {
 		const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 		const isAtomic = useSelect(
-			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ),
 			[ site ]
 		);
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
@@ -141,7 +138,7 @@ const siteSetupFlow: Flow = {
 				 * The new Promise returned is never resolved or rejected.
 				 *
 				 * If we were to resolve the promise when all pending actions complete,
-				 * I found out this results in setIntentOnSite and setGoalsOnSite being called multiple times
+				 * I found out this results in the onboarding-customization request being sent multiple times
 				 * because the exitFlow itself is called more than once on actual flow exits.
 				 */
 				return new Promise( () => {
@@ -153,7 +150,6 @@ const siteSetupFlow: Flow = {
 
 					const settings = {
 						site_intent: siteIntent,
-						...( goals.length && { site_goals: goals } ),
 						launchpad_screen: undefined as string | undefined,
 					};
 
@@ -213,7 +209,7 @@ const siteSetupFlow: Flow = {
 			navigate( 'processing' );
 
 			// Clean-up the store so that if onboard for new site will be launched it will be launched with no preselected values
-			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent', 'skipGoals' ] );
+			resetOnboardStoreWithSkipFlags( [ 'skipPendingAction', 'skipIntent' ] );
 
 			// After finishing the site setup flow, we can safely clean the signup destination cookie.
 			// This will prevent undesired redirects to the /site-setup from the Plans page after the onboarding flow is finished.
@@ -273,7 +269,7 @@ const siteSetupFlow: Flow = {
 						return window.location.assign(
 							addQueryArgs(
 								{ siteSlug, siteId, from, ref: entryPoint },
-								'/setup/site-migration/' + STEPS.SITE_MIGRATION_IMPORT_OR_MIGRATE.slug
+								'/setup/site-migration/' + STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug
 							)
 						);
 					}
@@ -330,7 +326,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importerPlayground': {
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					// The step waits for the import, so the site is ready here.
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
 				case 'trialAcknowledge': {
@@ -388,8 +385,8 @@ const siteSetupFlow: Flow = {
 					// Importers launched from the wp-admin Newsletter UI (e.g. the Substack
 					// importer in the Subscribers screen) should return there, not to the
 					// importer list.
-					if ( entryPoint === 'wp-admin-newsletter-ui' ) {
-						return window.location.assign( `${ adminUrl }admin.php?page=jetpack-newsletter` );
+					if ( entryPoint === 'wp-admin-newsletter-ui' && adminUrl ) {
+						return window.location.assign( newsletterAdminUrl( adminUrl, { tab: 'subscribers' } ) );
 					}
 
 					return navigate( addQueryArgs( { origin, siteSlug }, 'importList' ) );
@@ -455,7 +452,7 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 		const fetchingSiteError = useSelect(
-			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+			( select ) => select( SITE_STORE ).getFetchingSiteError(),
 			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };

@@ -1,18 +1,15 @@
 import { siteBySlugQuery, siteCrontabsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
-import { useNavigate } from '@tanstack/react-router';
-import {
-	siteRoute,
-	siteSettingsCrontabEditRoute,
-	siteSettingsCrontabRoute,
-} from '../../app/router/sites';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import CrontabForm from './crontab-form';
 
 export default function EditCrontab() {
-	const { siteSlug } = siteRoute.useParams();
-	const { cronId } = siteSettingsCrontabEditRoute.useParams();
+	const { siteSlug, cronId } = useParams( { strict: false } ) as {
+		siteSlug: string;
+		cronId: number;
+	};
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
-	const navigate = useNavigate( { from: siteSettingsCrontabEditRoute.fullPath } );
+	const navigate = useNavigate();
 
 	// Data is preloaded by the route loader
 	const { data: crontabs = [] } = useSuspenseQuery( siteCrontabsQuery( site.ID ) );
@@ -20,10 +17,7 @@ export default function EditCrontab() {
 
 	// If crontab not found, redirect back to list
 	if ( ! crontab ) {
-		navigate( {
-			to: siteSettingsCrontabRoute.fullPath,
-			params: { siteSlug },
-		} );
+		navigate( { to: `/sites/${ siteSlug }/settings/crontab` } );
 		return null;
 	}
 

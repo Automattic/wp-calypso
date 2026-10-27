@@ -15,7 +15,7 @@ export default function MigrationsCommissionsEmptyState( {
 	canTagSitesForCommission: boolean;
 } ) {
 	const onTagMySelfMigratedSitesClick = useCallback( () => {
-		recordTracksEvent( 'calypso_a8c_migrations_commissions_tag_my_self_migrated_sites_click' );
+		recordTracksEvent( 'calypso_a4a_migrations_commissions_tag_my_self_migrated_sites_click' );
 		onTagSitesClick();
 	}, [ recordTracksEvent, onTagSitesClick ] );
 
@@ -40,11 +40,11 @@ export default function MigrationsCommissionsEmptyState( {
 						/>
 						{ canTagSitesForCommission && (
 							<EmptyState.ActionItem
-								title={ __( 'Tag your transferred sites so we can pay you for them.' ) }
+								title={ __( 'Tag the sites you moved to Automattic so we can pay you for them.' ) }
 								description={
 									<>
 										{ __(
-											'If you transferred sites by yourself, follow these two steps to indicate which ones we should pay you for.'
+											'If you moved sites to Automattic yourself, follow these two steps to indicate which ones we should pay you for.'
 										) }
 										<ol>
 											<li>
@@ -59,7 +59,7 @@ export default function MigrationsCommissionsEmptyState( {
 																href={ a4aPluginUrl }
 																onClick={ () => {
 																	recordTracksEvent(
-																		'calypso_a8c_migrations_commissions_a4a_plugin_link_click'
+																		'calypso_a4a_migrations_commissions_a4a_plugin_link_click'
 																	);
 																} }
 															/>
@@ -72,7 +72,11 @@ export default function MigrationsCommissionsEmptyState( {
 									</>
 								}
 								actions={
-									<Button variant="primary" onClick={ onTagMySelfMigratedSitesClick }>
+									<Button
+										variant="primary"
+										size="compact"
+										onClick={ onTagMySelfMigratedSitesClick }
+									>
 										{ __( 'Tag my self-migrated sites' ) }
 									</Button>
 								}

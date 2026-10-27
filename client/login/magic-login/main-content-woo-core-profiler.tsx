@@ -125,7 +125,7 @@ const MainContentWooCoreProfiler: FC< Props > = ( { emailAddress, redirectTo } )
 					{ resendEmailCountdown > 0
 						? translate( 'resend the email (%(countdown)d)', {
 								args: { countdown: resendEmailCountdown },
-						  } )
+							} )
 						: translate( 'resend the email' ) }
 				</button>
 			</p>

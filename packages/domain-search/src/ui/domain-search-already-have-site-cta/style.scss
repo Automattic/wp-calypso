@@ -1,0 +1,15 @@
+.domain-search-already-have-site-cta {
+	&.summary-button.components-button {
+		width: auto;
+		margin: 0 auto;
+	}
+
+	.summary-button-description {
+		text-align: left;
+	}
+}
+
+.domain-search-already-have-site-cta__icon {
+	// Turn the diagonal `update` arrows into a horizontal, clockwise repeat glyph.
+	transform: scaleX( -1 ) rotate( -45deg );
+}

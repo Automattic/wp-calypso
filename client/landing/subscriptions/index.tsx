@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CurrentUser, User, UserActions } from '@automattic/data-stores';
@@ -65,20 +64,21 @@ async function main() {
 					<MomentProvider>
 						<WindowLocaleEffectManager />
 						<BrowserRouter>
-							<RecordPageView />
-							<Routes>
-								<Route
-									path="/subscriptions/site/:blogId/*"
-									element={
-										<SubscriptionManagerContextProvider
-											portal={ SubscriptionsPortal.Subscriptions }
-										>
-											<SiteSubscriptionPage />
-										</SubscriptionManagerContextProvider>
-									}
-								/>
-								<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
-							</Routes>
+							<RecordPageView>
+								<Routes>
+									<Route
+										path="/subscriptions/site/:blogId/*"
+										element={
+											<SubscriptionManagerContextProvider
+												portal={ SubscriptionsPortal.Subscriptions }
+											>
+												<SiteSubscriptionPage />
+											</SubscriptionManagerContextProvider>
+										}
+									/>
+									<Route path="/subscriptions/*" element={ <SubscriptionManagerPage /> } />
+								</Routes>
+							</RecordPageView>
 						</BrowserRouter>
 					</MomentProvider>
 				</QueryClientProvider>

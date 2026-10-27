@@ -33,7 +33,7 @@ import {
 	getTotalLineItemFromCart,
 	getCreditsLineItemFromCart,
 } from '@automattic/wpcom-checkout';
-import { css, keyframes } from '@emotion/react';
+import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
 import { useViewportMatch } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -44,9 +44,7 @@ import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import useEquivalentMonthlyTotals, {
 	getSubtotalBeforeDiscounts,
 } from 'calypso/my-sites/checkout/utils/use-equivalent-monthly-totals';
-import { useSelector } from 'calypso/state';
-import { getCurrentPlan } from 'calypso/state/sites/plans/selectors';
-import { useCheckoutUiRedesignExperiment } from '../hooks/use-checkout-ui-redesign-experiment';
+import { getActivePlanSlug, useCheckoutSite } from '../hooks/use-checkout-site';
 import getAkismetProductFeatures from '../lib/get-akismet-product-features';
 import getJetpackProductFeatures from '../lib/get-jetpack-product-features';
 import getPlanFeatures from '../lib/get-plan-features';
@@ -159,7 +157,6 @@ function CheckoutSummaryPriceList() {
 	const totalLineItem = getTotalLineItemFromCart( responseCart );
 	const translate = useTranslate();
 	const monthlyPrices = useEquivalentMonthlyTotals( responseCart.products );
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { setSlotEl } = useSubmitButtonSlot();
 	const isLargeViewport = useViewportMatch( 'large', '>=' );
 	const { formStatus } = useFormStatus();
@@ -182,7 +179,6 @@ function CheckoutSummaryPriceList() {
 					<CheckoutSummarySubtotal
 						key="checkout-summary-line-item-subtotal"
 						className="wp-checkout-order-summary__subtotal"
-						isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
 					>
 						<span>{ translate( 'Subtotal' ) }</span>
 						{ isCartUpdating ? (
@@ -614,11 +610,8 @@ function CheckoutSummarySupportIfAvailable( props: {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
-	const currentPlan = useSelector( ( state ) =>
-		props.siteId ? getCurrentPlan( state, props.siteId ) : undefined
-	);
-
-	const currentPlanSlug = currentPlan?.productSlug;
+	const { data: site } = useCheckoutSite( props.siteId );
+	const currentPlanSlug = getActivePlanSlug( site );
 
 	const isSupportAvailable =
 		props.hasDomainTransferInCart ||
@@ -636,7 +629,7 @@ function CheckoutSummarySupportIfAvailable( props: {
 		return (
 			<CheckoutSummaryFeaturesListItem>
 				<WPCheckoutCheckIcon />
-				{ isWpComPremiumPlan( currentPlanSlug )
+				{ isWpComPremiumPlan( currentPlanSlug ?? '' )
 					? translate( 'Fast support' )
 					: translate( 'Priority support 24/7' ) }
 			</CheckoutSummaryFeaturesListItem>
@@ -700,13 +693,13 @@ function CheckoutSummaryAnnualUpsell( props: {
 									? translate( 'Fast support' )
 									: translate( 'Priority support 24/7' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  )
+						)
 					: ! isWpComPersonalPlan( productSlug ) && (
 							<CheckoutSummaryFeaturesListItem isSupported={ false }>
 								<WPCheckoutCheckIcon />
 								{ translate( 'Live chat support' ) }
 							</CheckoutSummaryFeaturesListItem>
-					  ) }
+						) }
 			</CheckoutSummaryFeaturesListWrapper>
 			{ props.onChangeSelection && (
 				<SwitchToAnnualPlan plan={ props.plan } onChangeSelection={ props.onChangeSelection } />
@@ -754,6 +747,11 @@ const CheckoutSummaryPayButtonSlot = styled.div`
 		width: 100%;
 		height: 50px;
 		box-sizing: border-box;
+	}
+
+	/* The portaled wrapper keeps the form's 24px padding; the sidebar card already pads it. */
+	.checkout-steps__submit-button-wrapper {
+		padding: 0;
 	}
 `;
 const CheckoutSummaryFeatures = styled.div`
@@ -858,14 +856,14 @@ const CheckoutSummaryTitle = styled.div`
 
 const CheckoutSubtotalSection = styled.div`
 	border-bottom: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	margin-bottom: 20px;
-	padding-bottom: 20px;
+	margin-bottom: 16px;
+	padding-bottom: 16px;
 `;
 
 const CheckoutSummaryAmountWrapper = styled.div`
 	border-top: 1px solid ${ ( props ) => props.theme.colors.borderColorLight };
-	padding: 20px 0 0 0;
-	margin-top: 20px;
+	padding: 16px 0 0 0;
+	margin-top: 16px;
 `;
 
 const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
@@ -877,6 +875,10 @@ const CheckoutSummaryLineItem = styled.div< { isDiscount?: boolean } >`
 	margin-bottom: 4px;
 
 	color: ${ ( props ) => ( props.isDiscount ? props.theme.colors.discount : 'inherit' ) };
+
+	& > span:last-child {
+		white-space: nowrap;
+	}
 `;
 
 export const PriceLoadingIndicator = styled.span< { width?: string; height?: string } >`
@@ -889,21 +891,12 @@ export const PriceLoadingIndicator = styled.span< { width?: string; height?: str
 	vertical-align: middle;
 `;
 
-const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
-	isCheckoutUiRedesignV1?: boolean;
-} >`
+const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )`
 	color: ${ ( props ) => props.theme.colors.textColorDark };
 	font-weight: ${ ( props ) => props.theme.weights.bold };
-	line-height: 26px;
+	line-height: 24px;
 	margin-bottom: 0px;
-	font-size: 20px;
-	${ ( { isCheckoutUiRedesignV1 } ) =>
-		isCheckoutUiRedesignV1 &&
-		css`
-			& > span:first-child {
-				font-size: 14px;
-			}
-		` }
+	font-size: 16px;
 	& .wp-checkout-order-summary__subtotal-price {
 		font-size: 14px;
 
@@ -911,6 +904,7 @@ const CheckoutSummarySubtotal = styled( CheckoutSummaryLineItem )< {
 		flex: 0 0 auto;
 		gap: 4px;
 		margin-left: auto;
+		white-space: nowrap;
 
 		.rtl & {
 			margin-right: auto;
@@ -931,6 +925,7 @@ const CheckoutSummaryTotalDiscount = styled( CheckoutSummaryLineItem )`
 	& .wp-checkout-order-summary__subtotal-discount {
 		color: ${ COLOR_GREEN_60 };
 		font-weight: 500;
+		white-space: nowrap;
 	}
 `;
 
@@ -940,6 +935,10 @@ const CheckoutSummaryTotal = styled( CheckoutSummaryLineItem )`
 	line-height: 26px;
 	margin-bottom: 0px;
 	font-size: 20px;
+
+	.wp-checkout-order-summary__total-price {
+		white-space: nowrap;
+	}
 `;
 
 const LoadingCopy = styled.p`

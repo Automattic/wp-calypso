@@ -35,9 +35,8 @@ jest.mock( 'calypso/lib/domains', () => ( {
 	getCurrentUserCannotAddEmailReason: jest.fn( ( domain ) =>
 		domain && ! domain.currentUserCanAddEmail ? domain.currentUserCannotAddEmailReason : null
 	),
-	getSelectedDomain: jest.fn(
-		( { domains, selectedDomainName } ) =>
-			domains?.find( ( domain: ResponseDomain ) => domain.name === selectedDomainName )
+	getSelectedDomain: jest.fn( ( { domains, selectedDomainName } ) =>
+		domains?.find( ( domain: ResponseDomain ) => domain.name === selectedDomainName )
 	),
 } ) );
 

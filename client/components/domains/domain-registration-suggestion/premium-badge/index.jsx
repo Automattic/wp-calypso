@@ -37,12 +37,12 @@ class PremiumBadge extends Component {
 					args: { domainName },
 					comment:
 						'Accessible label for premium badge when a domain is restricted. %(domainName)s is the domain name',
-			  } )
+				} )
 			: translate( '%(domainName)s is a premium domain. Learn more', {
 					args: { domainName },
 					comment:
 						'Accessible label for premium badge when a domain is not restricted. %(domainName)s is the domain name',
-			  } );
+				} );
 
 		return (
 			<Badge className={ badgeClassNames }>

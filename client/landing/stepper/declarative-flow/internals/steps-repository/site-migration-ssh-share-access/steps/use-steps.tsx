@@ -395,7 +395,7 @@ export const useSteps = ( {
 						action: isOpening ? 'expand_accordion' : 'collapse_accordion',
 					} );
 					setCurrentStep( newStepState );
-			  }
+				}
 			: undefined;
 
 		// Render the content with the step-specific elements

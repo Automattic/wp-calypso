@@ -4,6 +4,7 @@
 import {
 	getSiteSubscriptionsQueryKey,
 	patchSiteSubscription,
+	refetchSeenCounts,
 	type SiteSubscriptionsInfiniteData,
 } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -237,5 +238,44 @@ describe( 'subscriptions hooks', () => {
 
 	it( 'does not export hook or function names containing Reader', () => {
 		expect( Object.keys( selectors ).filter( ( name ) => /Reader/.test( name ) ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'useSiteSubscriptions refetchOnMount', () => {
+	afterEach( () => nock.cleanAll() );
+
+	const mockFollowing = () =>
+		nock( BASE )
+			.get( '/rest/v1.2/read/following/mine' )
+			.query( true )
+			.reply( 200, { subscriptions: [], total_subscriptions: 0, page: 1, number: 100 } );
+
+	it( 'refetches stale seen counts on mount when requested', async () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ makeFollow() ] ), {
+			updatedAt: Date.now() - 31_000,
+		} );
+		const request = mockFollowing();
+
+		renderHook( () => useSiteSubscriptions( {}, { refetchOnMount: refetchSeenCounts } ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+	} );
+
+	it( 'does not refetch fresh seen counts on mount', () => {
+		const queryClient = makeQueryClient();
+		queryClient.setQueryData( getSiteSubscriptionsQueryKey(), makeData( [ makeFollow() ] ), {
+			updatedAt: Date.now() - 1_000,
+		} );
+		const request = mockFollowing();
+
+		renderHook( () => useSiteSubscriptions( {}, { refetchOnMount: refetchSeenCounts } ), {
+			wrapper: makeWrapper( queryClient ),
+		} );
+
+		expect( queryClient.isFetching() ).toBe( 0 );
+		expect( request.isDone() ).toBe( false );
 	} );
 } );

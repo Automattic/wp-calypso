@@ -37,13 +37,23 @@ describe( 'isEditorPage', () => {
 		expect( isEditorPage() ).toBe( true );
 	} );
 
-	it( 'returns `false` when editing a custom post type', () => {
+	it( 'returns `true` when editing a custom post type in the block editor', () => {
+		setBodyClasses( 'wp-admin post-php post-type-product block-editor-page' );
+		expect( isEditorPage() ).toBe( true );
+	} );
+
+	it( 'returns `false` when editing a custom post type in the classic editor', () => {
 		setBodyClasses( 'wp-admin post-php post-type-product' );
 		expect( isEditorPage() ).toBe( false );
 	} );
 
-	it( 'returns `false` when creating a custom post type', () => {
+	it( 'returns `false` when creating a custom post type in the classic editor', () => {
 		setBodyClasses( 'wp-admin post-new-php post-type-product' );
+		expect( isEditorPage() ).toBe( false );
+	} );
+
+	it( 'returns `false` for the block widgets editor (editor screen class absent)', () => {
+		setBodyClasses( 'wp-admin widgets-php block-editor-page' );
 		expect( isEditorPage() ).toBe( false );
 	} );
 

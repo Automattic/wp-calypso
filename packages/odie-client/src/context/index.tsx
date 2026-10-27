@@ -7,7 +7,6 @@ import {
 	ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 } from '../constants';
-import { useOdieBroadcastWithCallbacks } from '../data';
 import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
@@ -44,10 +43,11 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	currentUser: { display_name: 'Me' },
 	experimentVariationName: null,
 	hasUserEverEscalatedToHumanSupport: false,
+	isLoadingZendeskHistory: false,
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
-	odieBroadcastClientId: '',
+	hasOpenZendeskChat: false,
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
@@ -59,9 +59,6 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 // Custom hook to access the OdieAssistantContext
 export const useOdieAssistantContext = () => useContext( OdieAssistantContext );
 
-// Generate random client id
-export const odieBroadcastClientId = Math.random().toString( 36 ).substring( 2, 15 );
-
 /**
  * Provider for the Odie Assistant context.
  */
@@ -71,12 +68,15 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	newLoggedOutInteractionsBotSlug,
 	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
+	hasOpenZendeskChat = false,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
 	selectedSiteId,
 	selectedSiteURL,
 	userFieldMessage,
 	userFieldFlowName,
+	zendeskConversationTags,
+	zendeskIntegrationKey,
 	externalChatProvider,
 	externalChatId,
 	version = null,
@@ -86,22 +86,24 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	launcherContext,
 	children,
 } ) => {
-	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded, checkoutSupportVariation } =
+		useSelect(
+			( select ) => {
+				const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? ( store.getOdieBotNameSlug() as OdieAllowedBots )
-				: newInteractionsBotSlug;
+				const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+					? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+					: newInteractionsBotSlug;
 
-			return {
-				dynamicNewInteractionsBotSlug: odieBotNameSlug,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[ newInteractionsBotSlug ]
-	);
+				return {
+					dynamicNewInteractionsBotSlug: odieBotNameSlug,
+					isMinimized: store.getIsMinimized(),
+					isChatLoaded: store.getIsChatLoaded(),
+					checkoutSupportVariation: store.getCheckoutSupportVariation(),
+				};
+			},
+			[ newInteractionsBotSlug ]
+		);
 
 	const navigate = useNavigate();
 
@@ -113,8 +115,8 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * The main chat thread.
 	 * This is where we manage the state of the chat.
 	 */
-	const { mainChatState, setMainChatState } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk,
+	const { mainChatState, setMainChatState, isLoadingZendeskHistory } = useGetCombinedChat(
+		( isUserEligibleForPaidSupport || hasOpenZendeskChat ) && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
 
@@ -169,8 +171,6 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		setMainChatState( ( prevChat ) => ( { ...prevChat, status } ) );
 	};
 
-	useOdieBroadcastWithCallbacks( { addMessage }, odieBroadcastClientId );
-
 	/**
 	 * Version for Odie API.
 	 * Set this query param to override the version in the request.
@@ -194,14 +194,17 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isMinimized,
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
+				hasOpenZendeskChat,
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
-				odieBroadcastClientId,
+				isLoadingZendeskHistory,
 				selectedSiteId,
 				selectedSiteURL,
 				userFieldMessage,
 				userFieldFlowName,
+				zendeskConversationTags,
+				zendeskIntegrationKey,
 				externalChatProvider,
 				externalChatId,
 				setChatStatus,
@@ -211,6 +214,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				forceEmailSupport,
 				isChatRestricted,
 				launcherContext,
+				checkoutSupportVariation,
 			} }
 		>
 			{ children }

@@ -104,12 +104,12 @@ export const DomainSuggestionPrice = ( {
 										// translators: %(price)s is the price of the domain.
 										__( 'Price: %(price)s/year' ),
 										{ price }
-								  )
+									)
 								: sprintf(
 										// translators: %(price)s is the price of the domain.
 										__( 'Price: %(price)s' ),
 										{ price }
-								  )
+									)
 						}
 					>
 						<Text size={ priceSize } align={ alignment }>

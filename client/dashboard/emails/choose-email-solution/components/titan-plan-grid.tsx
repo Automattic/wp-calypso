@@ -13,6 +13,11 @@ import poweredByTitanLogo from '../../resources/powered-by-titan-caps.svg';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../types';
 import { getTrialMonths } from '../../utils/get-trial-months';
 import { isEligibleForIntroductoryOffer } from '../../utils/is-eligible-for-introductory-offer';
+import {
+	getTitanDowngradeTargetId,
+	getTitanTierName,
+	isLowerTitanTier,
+} from '../../utils/titan-tiers';
 import type { Domain, EmailSubscription, Product } from '@automattic/api-core';
 
 interface TitanPlan {
@@ -24,33 +29,22 @@ interface TitanPlan {
 	everythingInName?: string;
 }
 
-const getTierName = ( tier: TitanPlanTier ): string => {
-	switch ( tier ) {
-		case TitanPlanTier.Pro:
-			return __( 'Pro' );
-		case TitanPlanTier.Premium:
-			return __( 'Premium' );
-		case TitanPlanTier.Ultra:
-			return __( 'Ultra' );
-	}
-};
-
-// Descriptions remain placeholder copy; feature lists reflect the tier
-// comparison from DOTEMP-111.
 const getTierDetails = ( tier: TitanPlanTier ): { description: string; features: string[] } => {
 	switch ( tier ) {
 		case TitanPlanTier.Pro:
 			return {
 				description: __( 'Everything you need to get started with professional, secure email.' ),
 				features: [
-					__( '30 GB / mailbox' ),
-					__( '10 read receipts' ),
+					__( '30 GB storage per mailbox' ),
+					__( '50 read receipts' ),
 					__( '1 email template' ),
 					__( '1 contact group' ),
-					__( 'Blocklist' ),
-					__( 'Allowlist' ),
-					__( 'Grammar & spell check' ),
+					__( 'Calendar and contacts' ),
+					__( 'Blocklist and allowlist' ),
+					__( 'Grammar and spell check' ),
 					__( 'Undo send' ),
+					__( 'Turbo search' ),
+					__( 'Two-factor authentication' ),
 				],
 			};
 		case TitanPlanTier.Premium:
@@ -59,54 +53,41 @@ const getTierDetails = ( tier: TitanPlanTier ): { description: string; features:
 					'Smarter tools to help your growing business stay organized and productive.'
 				),
 				features: [
-					__( '50 GB / mailbox' ),
+					__( '50 GB storage per mailbox' ),
 					__( 'Unlimited read receipts' ),
 					__( 'Unlimited email templates' ),
 					__( 'Unlimited contact groups' ),
-					__( 'Two-factor authentication' ),
-					__( 'Priority inbox' ),
+					__( 'Send later and follow-up reminders' ),
+					__( 'Priority inbox and email labels' ),
+					__( 'Auto clean and spam filter controls' ),
+					__( 'Send as alias and branding' ),
 					__( 'Business auto reply' ),
-					__( 'Titan Task' ),
-					__( 'Titan Drive (1 GB storage)' ),
-					__( 'Email labels' ),
-					__( 'Auto-clean' ),
-					__( 'Send later' ),
-					__( 'Follow-up reminders' ),
-					__( 'Turbo search' ),
-					__( 'Send as alias' ),
-					__( 'Undo send' ),
-					__( 'Branding' ),
-					__( 'Team chat' ),
+					__( 'Tasks and team chat' ),
+					__( '1 GB Titan Drive' ),
+					__( 'Titan MCP' ),
 				],
 			};
 		case TitanPlanTier.Ultra:
 			return {
 				description: __( 'AI-powered email to scale your business and boost marketing impact.' ),
 				features: [
-					__( '100 GB / mailbox' ),
-					__( 'Email backup (50 GB storage)' ),
-					__( 'File transfer' ),
-					__( 'Titan AI (compose, reply)' ),
-					__( 'AI summary' ),
-					__( 'Titan Booking' ),
-					__( 'Titan Drive (50 GB storage)' ),
-					__( 'Signature designer' ),
-					__( 'File and link tracking' ),
-					__( 'Email designer' ),
+					__( '100 GB storage per mailbox' ),
+					__( 'Titan AI to write and reply faster' ),
+					__( 'Titan AI email summaries' ),
+					__( 'Titan Booking for appointments' ),
 					__( 'Email campaigns' ),
 					__( 'Invoice builder' ),
+					__( 'Email designer' ),
+					__( 'Signature designer' ),
+					__( '50 GB email backup' ),
+					__( '50 GB Titan Drive' ),
+					__( 'File transfer' ),
+					__( 'File and link tracking' ),
+					__( '7 external forwarders' ),
 				],
 			};
 	}
 };
-
-// Tiers ordered from lowest to highest, used to tell upgrades from downgrades
-// relative to the current tier.
-const TIER_ORDER: TitanPlanTier[] = [
-	TitanPlanTier.Pro,
-	TitanPlanTier.Premium,
-	TitanPlanTier.Ultra,
-];
 
 export function TitanPlanGrid( {
 	domain,
@@ -114,18 +95,45 @@ export function TitanPlanGrid( {
 	interval,
 	available,
 	currentTier,
+	subscriptionInterval,
+	canDowngrade = false,
+	isDowngradePending = false,
+	pendingDowngradeTier,
+	busyDowngradeTier,
 	onUpgrade,
+	onDowngrade,
+	onCancelScheduledDowngrade,
+	onSelect,
 }: {
 	domain?: Domain;
 	domainName: string;
 	interval: IntervalLength;
 	available: boolean;
 	// The tier the user is currently subscribed to. When set, the grid is in
-	// upgrade mode: lower tiers are shown with a disabled button, the current
-	// tier is labeled, and higher tiers offer an upgrade.
+	// plan-change mode: the current tier is labeled, higher tiers offer an
+	// upgrade, and lower tiers offer a downgrade.
 	currentTier?: TitanPlanTier;
-	// Called when a higher tier is selected in upgrade mode (currentTier set).
+	// Billing term of the current subscription. A downgrade keeps that term, so
+	// lower tiers are only actionable while the selected interval matches it.
+	subscriptionInterval?: IntervalLength;
+	// False when no live subscription backs the grid, which leaves lower tiers
+	// disabled instead of offering an action that would fail.
+	canDowngrade?: boolean;
+	// Whether a downgrade is already scheduled.
+	isDowngradePending?: boolean;
+	// Tier that downgrade targets, when it maps to a known tier. Only labels
+	// which card offers to cancel it.
+	pendingDowngradeTier?: TitanPlanTier;
+	// Tier whose downgrade action is in flight.
+	busyDowngradeTier?: TitanPlanTier;
+	// Upgrades are purchases, so this routes to checkout.
 	onUpgrade?: ( tier: TitanPlanTier ) => void;
+	// Downgrades are a direct API call, so this never goes to checkout.
+	onDowngrade?: ( tier: TitanPlanTier, toProductId: number ) => void;
+	onCancelScheduledDowngrade?: () => void;
+	// Replaces the default navigation to add-mailbox when buying a new plan,
+	// e.g. when no domain has been picked yet.
+	onSelect?: ( tier: TitanPlanTier ) => void;
 } ) {
 	const navigate = useNavigate();
 
@@ -166,7 +174,7 @@ export function TitanPlanGrid( {
 			hasFreeTrial: hasFreeTrial( premiumProduct ),
 			trialMonths: getTrialMonths( premiumProduct ),
 			isPopular: true,
-			everythingInName: getTierName( TitanPlanTier.Pro ),
+			everythingInName: getTitanTierName( TitanPlanTier.Pro ),
 		},
 		{
 			tier: TitanPlanTier.Ultra,
@@ -174,18 +182,35 @@ export function TitanPlanGrid( {
 			hasFreeTrial: hasFreeTrial( ultraProduct ),
 			trialMonths: getTrialMonths( ultraProduct ),
 			isPopular: false,
-			everythingInName: getTierName( TitanPlanTier.Premium ),
+			everythingInName: getTitanTierName( TitanPlanTier.Premium ),
 		},
 	];
 
-	// All tiers stay visible when upgrading; lower tiers render with a disabled
-	// button since this flow cannot downgrade.
-	const isLowerTier = ( tier: TitanPlanTier ) =>
-		currentTier ? TIER_ORDER.indexOf( tier ) < TIER_ORDER.indexOf( currentTier ) : false;
+	// All tiers stay visible when changing plan; lower tiers offer a downgrade.
+	const isLowerTier = ( tier: TitanPlanTier ) => isLowerTitanTier( tier, currentTier );
+
+	const productForTier = ( tier: TitanPlanTier ) =>
+		plans.find( ( plan ) => plan.tier === tier )?.product;
+
+	// The interval selector is still available to monthly subscribers so they can
+	// upgrade onto annual billing. Downgrades cannot change term, so they are
+	// offered only while the selected interval matches the subscription's.
+	const isSubscriptionInterval = ! subscriptionInterval || interval === subscriptionInterval;
+
+	const getDowngradeTargetId = ( tier: TitanPlanTier ) =>
+		isSubscriptionInterval
+			? getTitanDowngradeTargetId( {
+					currentTier,
+					currentProduct: currentTier ? productForTier( currentTier ) : undefined,
+					targetTier: tier,
+					targetProduct: productForTier( tier ),
+					interval,
+				} )
+			: undefined;
 
 	// The tier that gets the emphasized (primary) button: the recommended plan when
 	// buying, or the recommended upgrade target when upgrading. The current and lower
-	// tiers are never emphasized because their buttons are disabled.
+	// tiers are never emphasized because upgrading is the encouraged action.
 	const primaryTier = ( () => {
 		const candidates = currentTier
 			? plans.filter( ( plan ) => plan.tier !== currentTier && ! isLowerTier( plan.tier ) )
@@ -205,16 +230,28 @@ export function TitanPlanGrid( {
 	return (
 		<div className="email-providers">
 			{ plans.map( ( plan ) => {
-				const planName = getTierName( plan.tier );
+				const planName = getTitanTierName( plan.tier );
 				const details = getTierDetails( plan.tier );
 				const isCurrentPlan = plan.tier === currentTier;
 				const isDowngrade = isLowerTier( plan.tier );
+				const downgradeTargetId = getDowngradeTargetId( plan.tier );
+				const isPendingDowngrade = Boolean(
+					pendingDowngradeTier && plan.tier === pendingDowngradeTier
+				);
+				// Scheduling a second downgrade would replace the first.
+				const isBlockedByPendingDowngrade =
+					isDowngradePending && isDowngrade && ! isPendingDowngrade;
+				const isBlockedByInterval = isDowngrade && ! isSubscriptionInterval;
+				const isDowngradeAvailable =
+					isDowngrade && canDowngrade && Boolean( downgradeTargetId ) && ! isDowngradePending;
 
 				let actionLabel;
 				if ( isCurrentPlan ) {
 					actionLabel = __( 'Current plan' );
+				} else if ( isPendingDowngrade ) {
+					actionLabel = __( 'Cancel scheduled change' );
 				} else if ( isDowngrade ) {
-					actionLabel = __( 'Included in your plan' );
+					actionLabel = __( 'Downgrade' );
 				} else if ( currentTier ) {
 					actionLabel = __( 'Upgrade' );
 				} else if ( plan.hasFreeTrial ) {
@@ -226,6 +263,11 @@ export function TitanPlanGrid( {
 						planName
 					);
 				}
+
+				const isActionDisabled =
+					! available ||
+					isCurrentPlan ||
+					( isDowngrade && ! isPendingDowngrade && ! isDowngradeAvailable );
 
 				return (
 					<VStack
@@ -288,12 +330,24 @@ export function TitanPlanGrid( {
 							__next40pxDefaultSize
 							className="email-provider-action"
 							variant={ plan.tier === primaryTier ? 'primary' : 'secondary' }
-							disabled={ ! available || isCurrentPlan || isDowngrade }
+							disabled={ isActionDisabled || Boolean( busyDowngradeTier ) }
+							isBusy={ busyDowngradeTier === plan.tier }
 							onClick={ () => {
-								// Upgrade mode goes to checkout for the picked tier; otherwise the
-								// grid is buying a new plan, so collect mailboxes first.
+								if ( isPendingDowngrade ) {
+									onCancelScheduledDowngrade?.();
+									return;
+								}
+								// Downgrades call the API directly; only upgrades go to checkout.
+								if ( isDowngradeAvailable && downgradeTargetId ) {
+									onDowngrade?.( plan.tier, downgradeTargetId );
+									return;
+								}
 								if ( currentTier ) {
 									onUpgrade?.( plan.tier );
+									return;
+								}
+								if ( onSelect ) {
+									onSelect( plan.tier );
 									return;
 								}
 								navigate( {
@@ -309,12 +363,22 @@ export function TitanPlanGrid( {
 						>
 							{ actionLabel }
 						</Button>
+						{ isBlockedByPendingDowngrade && (
+							<Text variant="muted" className="email-titan-plan-downgrade-note">
+								{ __( 'Cancel your scheduled plan change to pick a different plan.' ) }
+							</Text>
+						) }
+						{ isBlockedByInterval && (
+							<Text variant="muted" className="email-titan-plan-downgrade-note">
+								{ __( 'Switch back to your current billing period to downgrade.' ) }
+							</Text>
+						) }
 						<VStack spacing={ 1 }>
 							<Text weight={ 600 } className="email-titan-plan-everything-in">
 								{ plan.everythingInName &&
 									sprintf(
 										/* translators: %s is the name of the previous, cheaper email plan. */
-										__( 'Everything in %s' ),
+										__( 'Everything in %s, plus:' ),
 										plan.everythingInName
 									) }
 							</Text>

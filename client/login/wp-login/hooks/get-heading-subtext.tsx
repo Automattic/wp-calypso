@@ -9,7 +9,7 @@ interface Props {
 	action?: string;
 	isWooJPC?: boolean;
 	partnerConfig?: PartnerConfig | null;
-	isFromJetpackConnector?: boolean;
+	showsUnifiedContent?: boolean;
 	connectorPlugins?: string[];
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -24,7 +24,7 @@ const getHeadingSubText = ( {
 	translate,
 	isWooJPC,
 	partnerConfig,
-	isFromJetpackConnector,
+	showsUnifiedContent,
 	connectorPlugins,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
@@ -54,7 +54,7 @@ const getHeadingSubText = ( {
 								),
 							},
 						}
-				  )
+					)
 				: translate(
 						'By continuing with any of the options below, you agree to our {{tosLink}}Terms of Service{{/tosLink}} and have read our {{privacyLink}}Privacy Policy{{/privacyLink}}.',
 						{
@@ -75,17 +75,17 @@ const getHeadingSubText = ( {
 								),
 							},
 						}
-				  ) }
+					) }
 		</span>
 	);
 
-	// Unified connection flow (jetpack-connector): a prominent, dotcom-styled
+	// Unified connection flow: a prominent, dotcom-styled
 	// subtitle sourced from the shared resolver sits between the H1 and the
 	// existing ToS line. The resolver returns the family-driven benefit
 	// clause for the active plugin set; the ToS keeps its established
 	// subtle styling underneath. Lostpassword keeps the standard
 	// reset-instructions copy.
-	if ( isFromJetpackConnector && 'lostpassword' !== action ) {
+	if ( showsUnifiedContent && 'lostpassword' !== action ) {
 		return {
 			primary: getLoginCopy( connectorPlugins ).subtitle,
 			secondary: tos,
@@ -95,7 +95,7 @@ const getHeadingSubText = ( {
 	const primary = isWooJPC
 		? translate(
 				"To access all of the features and functionality of the extensions you've chosen, you'll first need to connect your store to an account."
-		  )
+			)
 		: tos;
 
 	const secondary = isWooJPC && 'lostpassword' !== action ? tos : null;
@@ -105,7 +105,7 @@ const getHeadingSubText = ( {
 			'lostpassword' === action
 				? translate(
 						"Please enter your username or email address. You'll receive a link to create a new password via email."
-				  )
+					)
 				: primary,
 		secondary,
 	};

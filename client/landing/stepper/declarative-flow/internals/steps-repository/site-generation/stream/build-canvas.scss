@@ -1,0 +1,665 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+// One beat for every loop on the card, so overlapping loops breathe together;
+// the preview's walk holds two beats (TOUR_HOLD in html-preview-runtime).
+$site-generation-beat: 2800ms;
+$site-generation-half-beat: 1400ms;
+
+.site-generation-canvas {
+	--site-generation-canvas-pane-top: calc( clamp( 32px, 8vh, 80px ) - 30px );
+
+	position: relative;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	width: 100%;
+	min-block-size: min( 720px, calc( 100vh - 160px ) );
+	background: var( --site-generation-canvas-background, var( --studio-gray-0 ) );
+	overflow: hidden;
+}
+
+.site-generation-canvas__status {
+	margin: 0;
+	padding: 16px;
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+}
+
+.site-generation-canvas__views {
+	z-index: 1;
+	inline-size: calc( 100% - 32px );
+	max-inline-size: 320px;
+	margin-block: 16px 0;
+	margin-inline: auto;
+}
+
+.site-generation-canvas__view-switch {
+	--view-switch-pad: 3px;
+
+	position: relative;
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	box-sizing: border-box;
+	block-size: 44px;
+	padding: var( --view-switch-pad );
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 4px;
+	background: var( --color-surface );
+}
+
+.site-generation-canvas__view-switch-thumb {
+	position: absolute;
+	inset-block: var( --view-switch-pad );
+	inset-inline-start: var( --view-switch-pad );
+	inline-size: calc( 50% - var( --view-switch-pad ) );
+	border-radius: 2px;
+	background: var( --color-primary-5 );
+	transition: inset-inline-start 200ms ease;
+}
+
+.site-generation-canvas__view-switch[data-active='site']
+	.site-generation-canvas__view-switch-thumb {
+	inset-inline-start: 50%;
+}
+
+.site-generation-canvas__view-switch-option {
+	position: relative;
+	z-index: 1;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	font-weight: 500;
+	cursor: pointer;
+	fill: currentcolor;
+
+	&.is-active {
+		color: var( --color-primary-60 );
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --color-primary );
+		outline-offset: 2px;
+	}
+}
+
+.site-generation-canvas__body {
+	position: relative;
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-block-size: 0;
+}
+
+.site-generation-canvas__design,
+.site-generation-canvas__site {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-block-size: 480px;
+	opacity: 1;
+	transform: none;
+	visibility: visible;
+	transition:
+		opacity 420ms ease-out 120ms,
+		transform 520ms cubic-bezier( 0.16, 1, 0.3, 1 ) 120ms,
+		visibility 0s;
+
+	&[aria-hidden='true'] {
+		position: absolute;
+		inset: 0;
+		pointer-events: none;
+		opacity: 0;
+		visibility: hidden;
+		transition:
+			opacity 260ms ease-in,
+			transform 300ms ease-in,
+			visibility 0s 300ms;
+	}
+}
+
+.site-generation-canvas__design[aria-hidden='true'] {
+	transform: translateY( -18px ) scale( 0.98 );
+}
+
+.site-generation-canvas__site[aria-hidden='true'] {
+	transform: translateY( 24px );
+}
+
+.site-generation-canvas__design {
+	align-items: center;
+	gap: 16px;
+	padding-block: var( --site-generation-canvas-pane-top ) 40px;
+	padding-inline: 32px;
+}
+
+.site-generation-canvas__site {
+	padding-block-start: var( --site-generation-canvas-pane-top );
+}
+
+.site-generation-canvas__brief {
+	width: 100%;
+	max-width: 600px;
+}
+
+.site-generation-canvas__brief .site-generation-canvas__brief-content {
+	padding-block: 32px 36px;
+	padding-inline: 36px;
+}
+
+.site-generation-canvas__brief-title {
+	margin: 0;
+	color: var( --color-text );
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.3;
+
+	&.is-branded {
+		font-size: 1.5rem;
+		line-height: 1.2;
+	}
+}
+
+.site-generation-canvas__brief-direction {
+	overflow-wrap: anywhere;
+	max-width: 480px;
+	margin-block: 8px 0;
+	margin-inline: 0;
+	color: var( --color-text-subtle );
+	font-size: 0.875rem;
+	line-height: 1.6;
+}
+
+.site-generation-canvas__brief-direction:not( .is-revealed ) {
+	margin-block-start: 20px;
+}
+
+.site-generation-canvas__brief-direction.is-revealed {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+
+.site-generation-canvas__brief-chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 6px;
+	margin-block: 12px 0;
+	margin-inline: 0;
+	padding: 0;
+	list-style: none;
+
+	li {
+		padding-block: 2px;
+		padding-inline: 8px;
+		color: var( --color-text-subtle );
+		font-size: 0.75rem;
+		border: 1px solid var( --color-border-subtle );
+		border-radius: 2px;
+	}
+}
+
+.site-generation-canvas__brief-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 32px;
+	margin-block-start: 28px;
+	padding-block-start: 24px;
+	border-block-start: 1px solid var( --color-border-subtle );
+}
+
+.site-generation-canvas__brief-label {
+	margin-block: 0 14px;
+	margin-inline: 0;
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	font-weight: 500;
+}
+
+.site-generation-canvas__fonts,
+.site-generation-canvas__palette {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.site-generation-canvas__fonts {
+	display: grid;
+	gap: 14px;
+}
+
+.site-generation-canvas__font {
+	display: grid;
+	grid-template-columns: 56px 1fr;
+	column-gap: 12px;
+	align-items: center;
+}
+
+.site-generation-canvas__font-specimen {
+	grid-row: 1 / 3;
+	color: var( --color-text );
+	font-size: 2.25rem;
+	line-height: 1;
+}
+
+.site-generation-canvas__font-name {
+	color: var( --color-text );
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+.site-generation-canvas__font-role {
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+}
+
+.site-generation-canvas__palette {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+}
+
+.site-generation-canvas__swatch {
+	min-inline-size: 44px;
+}
+
+.site-generation-canvas__swatch-chip {
+	display: block;
+	width: 44px;
+	height: 44px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 2px;
+}
+
+.site-generation-canvas__brief-heading {
+	display: flex;
+	gap: 12px;
+	align-items: baseline;
+	justify-content: space-between;
+	margin-block-end: 14px;
+
+	.site-generation-canvas__brief-label {
+		margin-block: 0;
+	}
+}
+
+.site-generation-canvas__brief-meta {
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+}
+
+.site-generation-canvas__brief-chips.site-generation-canvas__page-list {
+	margin-block-start: 0;
+
+	li {
+		position: relative;
+		overflow: hidden;
+	}
+
+	// A page being built carries a sweep along its lower edge; a finished one
+	// goes quiet.
+	li[data-progress='building']::after {
+		content: '';
+		position: absolute;
+		inset-block-end: 0;
+		inset-inline-start: 0;
+		inline-size: 100%;
+		block-size: 2px;
+		background: var( --site-generation-brand, var( --color-primary ) );
+		transform: translateX( -100% );
+		animation: site-generation-canvas-building $site-generation-half-beat
+			cubic-bezier( 0.645, 0.045, 0.355, 1 ) infinite;
+	}
+}
+
+@keyframes site-generation-canvas-building {
+	0% {
+		transform: translateX( -100% );
+	}
+
+	60%,
+	100% {
+		transform: translateX( 100% );
+	}
+}
+
+.site-generation-canvas__page-jump {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+
+	&:hover {
+		color: var( --color-text );
+	}
+
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+// The chip clips its own overflow for the sweep, so the focus ring sits on
+// the chip rather than on the button inside it.
+.site-generation-canvas__page-list li:has( .site-generation-canvas__page-jump:focus-visible ) {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}
+
+.site-generation-canvas__image-strip {
+	display: grid;
+	grid-template-columns: repeat( auto-fill, minmax( 88px, 1fr ) );
+	gap: 8px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.site-generation-canvas__image {
+	aspect-ratio: 4 / 3;
+	overflow: hidden;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 2px;
+}
+
+.site-generation-canvas__image-picture,
+.site-generation-canvas__image-placeholder {
+	display: block;
+	width: 100%;
+	height: 100%;
+}
+
+.site-generation-canvas__image-picture {
+	object-fit: cover;
+}
+
+.site-generation-canvas__image-picture.is-mark {
+	object-fit: contain;
+}
+
+.site-generation-canvas__image-placeholder {
+	border-radius: 0;
+}
+
+// A pending tile says what is being drawn and breathes while it waits, so a
+// slow image generation still reads as work in progress. Transform and
+// opacity only.
+.site-generation-canvas__image-pending {
+	position: relative;
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	overflow: hidden;
+	animation: site-generation-canvas-pulse $site-generation-beat
+		cubic-bezier( 0.645, 0.045, 0.355, 1 ) infinite;
+
+	.site-generation-canvas__image-placeholder {
+		animation: none;
+	}
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: -20%;
+		background: radial-gradient(
+			circle at 50% 55%,
+			color-mix( in srgb, var( --color-text ) 22%, transparent ),
+			transparent 62%
+		);
+		opacity: 0;
+		animation: site-generation-canvas-wash $site-generation-beat
+			cubic-bezier( 0.645, 0.045, 0.355, 1 ) infinite;
+		animation-delay: inherit;
+		pointer-events: none;
+	}
+
+	// The one being drawn right now breathes faster and says what it is.
+	&.is-generating,
+	&.is-generating::before {
+		animation-duration: $site-generation-half-beat;
+	}
+
+	&.is-generating .site-generation-canvas__image-caption {
+		color: var( --color-text );
+	}
+
+	// Slots the plan decided to leave empty hold still.
+	&.is-settled,
+	&.is-settled::before {
+		animation: none;
+	}
+}
+
+@for $i from 1 through 8 {
+	.site-generation-canvas__image:nth-child( #{$i} ) .site-generation-canvas__image-pending {
+		animation-delay: #{( $i - 1 ) * 280}ms;
+	}
+}
+
+@keyframes site-generation-canvas-pulse {
+	0%,
+	100% {
+		transform: translateY( 0 ) scale( 1 );
+	}
+
+	50% {
+		transform: translateY( -2px ) scale( 0.97 );
+	}
+}
+
+@keyframes site-generation-canvas-wash {
+	0%,
+	100% {
+		opacity: 0;
+		transform: scale( 0.7 );
+	}
+
+	50% {
+		opacity: 1;
+		transform: scale( 1 );
+	}
+}
+
+.site-generation-canvas__image-caption {
+	position: absolute;
+	inset: 0;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	padding: 8px;
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	line-height: 1.35;
+	transition: color 200ms ease;
+}
+
+.site-generation-canvas__reassurance {
+	margin: 0;
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	line-height: 1.6;
+	max-width: 600px;
+	text-align: center;
+}
+
+.site-generation-canvas__status-line {
+	position: sticky;
+	inset-block-end: 0;
+	z-index: 1;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding-block: 12px;
+	padding-inline: 16px;
+	background: var( --site-generation-canvas-background, var( --studio-gray-0 ) );
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	animation: site-generation-canvas-enter 400ms ease-out;
+}
+
+.site-generation-canvas__status-activity {
+	display: block;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	inline-size: 14px;
+	block-size: 14px;
+	border: 2px solid var( --color-border-subtle );
+	border-block-start-color: var( --site-generation-brand, var( --color-primary ) );
+	border-radius: 50%;
+	animation: site-generation-canvas-spin 0.8s linear infinite;
+}
+
+.site-generation-canvas__status-line[data-complete='true'] {
+	color: var( --color-text );
+}
+
+.site-generation-canvas__status-check {
+	flex-shrink: 0;
+	color: var( --site-generation-brand, var( --color-primary ) );
+	fill: currentcolor;
+	animation: site-generation-canvas-check 320ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
+}
+
+@keyframes site-generation-canvas-check {
+	from {
+		opacity: 0;
+		transform: scale( 0.6 );
+	}
+}
+
+@keyframes site-generation-canvas-spin {
+	to {
+		transform: rotate( 360deg );
+	}
+}
+
+.site-generation-canvas__brief .is-revealed {
+	animation: site-generation-canvas-enter 600ms cubic-bezier( 0.2, 0, 0, 1 );
+}
+
+.site-generation-canvas__font:nth-child( 2 ) .site-generation-canvas__placeholder {
+	animation-delay: -600ms;
+}
+
+.site-generation-canvas__swatch:nth-child( even ) .site-generation-canvas__placeholder {
+	animation-delay: -1200ms;
+}
+
+.site-generation-canvas__image:nth-child( even ) .site-generation-canvas__placeholder {
+	animation-delay: -1200ms;
+}
+
+.site-generation-canvas__design[aria-hidden='true'] * {
+	animation-play-state: paused;
+}
+
+.site-generation-canvas__placeholder {
+	display: block;
+	background: var( --studio-gray-5 );
+	border-radius: 2px;
+	animation: site-generation-canvas-breathe $site-generation-beat ease-in-out infinite;
+}
+
+.site-generation-canvas__placeholder-line {
+	width: 80%;
+	height: 10px;
+
+	& + & {
+		margin-block-start: 8px;
+	}
+
+	&.is-short {
+		width: 50%;
+	}
+}
+
+.site-generation-canvas__placeholder-specimen {
+	grid-row: 1 / 3;
+	width: 40px;
+	height: 34px;
+}
+
+.site-generation-canvas__font .site-generation-canvas__placeholder-line {
+	margin-block: 4px;
+}
+
+@keyframes site-generation-canvas-breathe {
+	50% {
+		opacity: 0.55;
+	}
+}
+
+@keyframes site-generation-canvas-enter {
+	from {
+		opacity: 0;
+	}
+}
+
+@media ( max-width: $break-small ) {
+	.site-generation-canvas {
+		--site-generation-canvas-pane-top: 4px;
+
+		min-block-size: 0;
+	}
+
+	.site-generation-canvas__design,
+	.site-generation-canvas__site {
+		min-block-size: min( 480px, 64svh );
+	}
+
+	.site-generation-canvas__design {
+		padding-block: var( --site-generation-canvas-pane-top ) 32px;
+		padding-inline: 16px;
+	}
+
+	.site-generation-canvas__brief .site-generation-canvas__brief-content {
+		padding-block: 24px 28px;
+		padding-inline: 20px;
+	}
+
+	.site-generation-canvas__brief-grid {
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.site-generation-canvas__view-switch-thumb {
+		transition: none;
+	}
+
+	.site-generation-canvas__design,
+	.site-generation-canvas__site {
+		&,
+		&[aria-hidden='true'] {
+			transform: none;
+			transition: none;
+		}
+	}
+
+	.site-generation-canvas__design,
+	.site-generation-canvas__site,
+	.site-generation-canvas__placeholder,
+	.site-generation-canvas__brief .is-revealed,
+	.site-generation-canvas__status-line,
+	.site-generation-canvas__status-activity,
+	.site-generation-canvas__status-check,
+	.site-generation-canvas__brief-chips.site-generation-canvas__page-list
+		li[data-progress='building']::after,
+	.site-generation-canvas__image-pending,
+	.site-generation-canvas__image-pending::before {
+		animation: none;
+	}
+}

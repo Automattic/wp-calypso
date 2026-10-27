@@ -5,7 +5,13 @@
 		"checkJs": false,
 		"outDir": "dist/esm",
 		"declarationDir": "dist/types",
-		"rootDir": "src"
+		"rootDir": "src",
+		// Private `Menu` API types, which `@wordpress/components` doesn't export.
+		"paths": {
+			"@wordpress/components/src/menu/types": [
+				"../../node_modules/@wordpress/components/build-types/menu/types.d.ts"
+			]
+		}
 	},
 	"include": [ "src" ],
 	"exclude": [ "**/docs/*", "**/test/*" ],
@@ -13,7 +19,6 @@
 		{ "path": "../calypso-analytics" },
 		{ "path": "../calypso-url" },
 		{ "path": "../i18n-utils" },
-		{ "path": "../js-utils" },
-		{ "path": "../ui" }
+		{ "path": "../js-utils" }
 	]
 }

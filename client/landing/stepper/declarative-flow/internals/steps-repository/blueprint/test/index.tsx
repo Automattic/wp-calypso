@@ -12,6 +12,7 @@ import BlueprintStep from '..';
 import { mockStepProps, renderStep } from '../../test/helpers';
 
 jest.mock( 'calypso/landing/stepper/utils/blueprint-archive-import', () => ( {
+	BLUEPRINT_BUILD_DEST_SIMPLE: 'simple',
 	checkBlueprintExists: jest.fn(),
 	logBlueprintArchiveEvent: jest.fn(),
 } ) );
@@ -115,6 +116,40 @@ describe( 'BlueprintStep', () => {
 
 		await waitFor( () => expect( submit ).toHaveBeenCalled() );
 		expect( checkBlueprintExists ).not.toHaveBeenCalled();
+	} );
+
+	it( 'verifies a Simple build against the Simple lookup and keeps build_dest=simple', async () => {
+		( checkBlueprintExists as jest.Mock ).mockResolvedValue( true );
+		let searchAtSubmit = '';
+		const submit = jest.fn( () => {
+			searchAtSubmit = currentSearch;
+		} );
+
+		render( '/blueprint?blueprint=zoom&build_dest=simple', submit );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		// Simple needs a published blueprint, not an archive, so the archive check would
+		// wrongly turn a theme-only blueprint away.
+		expect( checkBlueprintExists ).toHaveBeenCalledWith( 'zoom', { target: 'simple' } );
+		expect( searchAtSubmit ).toContain( 'build_dest=simple' );
+	} );
+
+	it( 'strips build_dest=simple when the blueprint does not exist for Simple', async () => {
+		( checkBlueprintExists as jest.Mock ).mockResolvedValue( false );
+		let searchAtSubmit = '';
+		const submit = jest.fn( () => {
+			searchAtSubmit = currentSearch;
+		} );
+
+		render( '/blueprint?blueprint=zoom&build_dest=simple', submit );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalled() );
+		expect( searchAtSubmit ).not.toContain( 'build_dest' );
+		expect( searchAtSubmit ).toContain( 'blueprint=zoom' );
+		expect( submit ).toHaveBeenCalledTimes( 1 );
+		expect( logBlueprintArchiveEvent ).toHaveBeenCalledWith( 'simple_blueprint_missing', {
+			blueprint: 'zoom',
+		} );
 	} );
 
 	it( 'accepts a blueprint slug', async () => {

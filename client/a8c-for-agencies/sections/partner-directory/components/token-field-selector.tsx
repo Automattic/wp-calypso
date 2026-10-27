@@ -1,6 +1,5 @@
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { useCallback, useMemo } from 'react';
-import FormTokenFieldWrapper from './form-token-field-wrapper';
+import FormTokenFieldWrapper, { type Tokens } from './form-token-field-wrapper';
 import { reverseMap } from './hooks/use-form-selectors';
 
 type Props = {
@@ -24,7 +23,7 @@ const TokenFieldSelector = ( {
 	} );
 
 	const onSelected = useCallback(
-		( selectedLabels: ( string | TokenItem )[] ) => {
+		( selectedLabels: Tokens ) => {
 			onChange(
 				selectedLabels.map( ( label ) => optionsByLabel[ label as string ] ).filter( Boolean )
 			);

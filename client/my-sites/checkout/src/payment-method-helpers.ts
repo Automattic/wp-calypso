@@ -1,28 +1,32 @@
+import { createUser } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import i18n from 'i18n-calypso';
+import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
 import { stringifyBody } from 'calypso/state/login/utils';
+import type { NewUserResponse } from '@automattic/api-core';
 
-interface CreateAccountResponse {
-	success: boolean;
-	bearer_token?: string;
-	username?: string;
-	blog_details?: {
-		blogid?: string;
-	};
+function isBlackboxUserlessCheckoutEnabled() {
+	return (
+		!! getBlackboxApiKey( 'blackbox-userless-checkout' ) &&
+		config.isEnabled( 'blackbox' ) &&
+		config.isEnabled( 'blackbox-userless-checkout' )
+	);
 }
 
-function isCreateAccountResponse( response: unknown ): response is CreateAccountResponse {
-	if ( ! response ) {
-		return false;
+function resetBlackbox() {
+	try {
+		window.Blackbox?.reset?.();
+	} catch {
+		// Blackbox must never block checkout.
 	}
-	return true;
 }
 
-async function createAccountCallback( response: CreateAccountResponse ): Promise< void > {
+async function createAccountCallback( response: NewUserResponse ): Promise< void > {
 	if ( ! response.bearer_token ) {
 		return;
 	}
@@ -54,7 +58,7 @@ export async function createAccount( {
 	email: string | undefined;
 	siteId: number | undefined;
 	recaptchaClientId: number | undefined;
-} ): Promise< CreateAccountResponse > {
+} ): Promise< NewUserResponse > {
 	let newSiteParams = null;
 	try {
 		newSiteParams = JSON.parse( window.localStorage.getItem( 'siteParams' ) || '{}' );
@@ -81,9 +85,14 @@ export async function createAccount( {
 	}
 
 	const blogName = newSiteParams?.blog_name;
+	const blackboxApiKey = getBlackboxApiKey( 'blackbox-userless-checkout' );
+	const blackboxSessionId =
+		blackboxApiKey && isBlackboxUserlessCheckoutEnabled()
+			? await getBlackboxSessionId( blackboxApiKey )
+			: undefined;
 
 	try {
-		const response = await wp.req.post( '/users/new', {
+		const response = await createUser( {
 			email,
 			'g-recaptcha-error': recaptchaError,
 			'g-recaptcha-response': recaptchaToken || undefined,
@@ -97,15 +106,19 @@ export async function createAccount( {
 			client_id: config( 'wpcom_signup_id' ),
 			client_secret: config( 'wpcom_signup_key' ),
 			tos: getToSAcceptancePayload(),
+			...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
 		} );
 
-		if ( ! isCreateAccountResponse( response ) || ! response.success ) {
+		if ( ! response?.success ) {
 			throw new Error( 'Failed to create account' );
 		}
 
 		createAccountCallback( response );
 		return response;
 	} catch ( error ) {
+		if ( isBlackboxUserlessCheckoutEnabled() ) {
+			resetBlackbox();
+		}
 		const errorMessage = ( error as Error )?.message
 			? getErrorMessage( error as Error )
 			: ( error as string );

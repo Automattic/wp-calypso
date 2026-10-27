@@ -20,6 +20,7 @@ import wpcomEcommerce from './images/wpcom-ecommerce.svg';
 import wpcomFree from './images/wpcom-free.svg';
 import wpcomPersonal from './images/wpcom-personal.svg';
 import wpcomPremium from './images/wpcom-premium.svg';
+import wpcomStudent from './images/wpcom-student.svg';
 
 export const paths = {
 	'jetpack-ai': jetpackAI,
@@ -32,6 +33,7 @@ export const paths = {
 	'jetpack-free': jetpackFree,
 	'jetpack-personal': jetpackBundles,
 	'jetpack-premium': jetpackBundles,
+	'jetpack-pro': jetpackBundles,
 	'jetpack-professional': jetpackBundles,
 	'jetpack-scan': jetpackScan,
 	'jetpack-search': jetpackSearch,
@@ -46,6 +48,7 @@ export const paths = {
 	'wpcom-free': wpcomFree,
 	'wpcom-personal': wpcomPersonal,
 	'wpcom-premium': wpcomPremium,
+	'wpcom-student': wpcomStudent,
 	'jetpack-backup-addon': jetpackBackupAddon,
 	'jetpack-golden-token-lifetime': jetpackGoldenToken,
 	'jetpack-creator': jetpackCreator,
@@ -76,6 +79,7 @@ export type SupportedSlugs =
 	| 'pro-plan'
 	| 'starter-plan'
 	| 'wp_com_hundred_year_bundle_centennially'
+	| 'wp_bundle_student_yearly'
 	| 'jetpack_ai_monthly'
 	| 'jetpack_ai_yearly'
 	| 'jetpack_free'
@@ -93,6 +97,9 @@ export type SupportedSlugs =
 	| 'jetpack_growth_monthly'
 	| 'jetpack_growth_yearly'
 	| 'jetpack_growth_bi_yearly'
+	| 'jetpack_pro_monthly'
+	| 'jetpack_pro_yearly'
+	| 'jetpack_pro_bi_yearly'
 	| 'jetpack_crm'
 	| 'jetpack_crm_monthly'
 	| 'jetpack_backup_daily'
@@ -199,6 +206,7 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'business-bundle-monthly',
 		'business-bundle-3y',
 	],
+	'wpcom-student': [ 'wp_bundle_student_yearly' ],
 	'jetpack-ai': [ 'jetpack_ai_monthly', 'jetpack_ai_yearly' ],
 	'jetpack-free': [ 'jetpack_free' ],
 	'jetpack-personal': [ 'jetpack_personal', 'jetpack_personal_monthly' ],
@@ -301,4 +309,5 @@ export const iconToProductSlugMap: Record< keyof typeof paths, readonly Supporte
 		'jetpack_growth_yearly',
 		'jetpack_growth_bi_yearly',
 	],
+	'jetpack-pro': [ 'jetpack_pro_monthly', 'jetpack_pro_yearly', 'jetpack_pro_bi_yearly' ],
 } as const;

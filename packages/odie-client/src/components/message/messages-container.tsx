@@ -2,10 +2,16 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { Spinner } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import clx from 'classnames';
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { NavigationType, useNavigate, useNavigationType, useSearchParams } from 'react-router-dom';
-import { getOdieInitialMessage, ODIE_DEFAULT_BOT_SLUG_LEGACY } from '../../constants';
+import {
+	getConversationLimitReachedMessage,
+	getOdieEmailFallbackMessage,
+	getOdieInitialMessage,
+	getOdieZendeskConnectionErrorMessage,
+	ODIE_DEFAULT_BOT_SLUG_LEGACY,
+} from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
 import {
@@ -23,14 +29,25 @@ import { ThinkingPlaceholder } from './thinking-placeholder';
 import { getMessageUniqueIdentifier } from './utils/get-message-unique-identifier';
 import { ZendeskTypingIndicator } from './zendesk-typing-indicator';
 import ChatMessage from '.';
-import type { CurrentUser } from '../../types';
+import type { CurrentUser, Message } from '../../types';
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
 
+// How long going straight to a human waits for the chat client before giving up.
+export const CHAT_CLIENT_TIMEOUT_MS = 15000;
+
 export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
-	const { chat, isChatLoaded, isUserEligibleForPaidSupport, forceEmailSupport, launcherContext } =
-		useOdieAssistantContext();
+	const {
+		chat,
+		addMessage,
+		trackEvent,
+		isChatLoaded,
+		isUserEligibleForPaidSupport,
+		forceEmailSupport,
+		launcherContext,
+		isLoadingZendeskHistory,
+	} = useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
 	const hasEnTranslation = useHasEnTranslation();
 	const createZendeskConversation = useCreateZendeskConversation();
@@ -38,6 +55,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const navigate = useNavigate();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
+	const isStartingDirectChat =
+		isForwardingToZendesk && isUserEligibleForPaidSupport && ! chat.conversationId;
+	const isWaitingForChatClient = isStartingDirectChat && ! forceEmailSupport && ! isChatLoaded;
+	const [ hasChatClientTimedOut, setHasChatClientTimedOut ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
 	const { data: supportInteraction } = useCurrentSupportInteraction();
 	const navType: NavigationType = useNavigationType();
@@ -73,44 +94,90 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		}
 	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, searchParams ] );
 
+	// Don't leave someone waiting on a chat client that never loads.
+	useEffect( () => {
+		if ( ! isWaitingForChatClient ) {
+			return;
+		}
+		const timeoutId = setTimeout( () => setHasChatClientTimedOut( true ), CHAT_CLIENT_TIMEOUT_MS );
+		return () => clearTimeout( timeoutId );
+	}, [ isWaitingForChatClient ] );
+
 	/**
 	 * Handle the case where we are directly forwarding to Zendesk without AI first.
+	 * Check eligibility here too: the effect above only edits the params, so `isForwardingToZendesk`
+	 * stays true for this render, and the chat can be loaded without paid support (an open human chat).
 	 */
 	useEffect( () => {
-		if ( isForwardingToZendesk && ! chat.conversationId && isChatLoaded && ! forceEmailSupport ) {
-			searchParams.delete( 'provider' );
-			searchParams.set( 'direct-zd-chat', '1' );
-			setSearchParams( searchParams );
-
-			// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
-			// conversation list outside React without triggering a re-render.
-			const { mostRecentSupportInteractionId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
-				getOpenLiveInteractions( interactionStatusByUuid );
-
-			// when forwarding to zd avoid creating new chats
-			if ( alreadyHasActiveZendeskChatId ) {
-				// Redirect to the existing Zendesk chat.
-				searchParams.set( 'id', alreadyHasActiveZendeskChatId );
-				navigate( '/odie?' + searchParams.toString() );
-				return;
-			}
-
-			// Don't create a new conversation if the user has reached the limit.
-			if ( hasReachedLimit ) {
-				return;
-			}
-
-			searchParams.delete( 'id' );
-			setSearchParams( searchParams );
-			createZendeskConversation( {
-				createdFrom: 'direct_url',
-			} );
+		// Wait for the chat to load: loading a new chat replaces its messages, including any added here.
+		// Read the param again: a run of this effect for the same render may have removed it already.
+		if (
+			! isStartingDirectChat ||
+			chat.status === 'loading' ||
+			searchParams.get( 'provider' ) !== 'zendesk'
+		) {
+			return;
 		}
+
+		// When the chat can't start, say why and stop forwarding. The message offers what the user
+		// can do instead, and they can still ask the AI.
+		const stopForwarding = ( message: Message, reason: string ) => {
+			searchParams.delete( 'provider' );
+			setSearchParams( searchParams );
+			addMessage( message );
+			trackEvent( 'direct_chat_unavailable', { reason } );
+		};
+
+		if ( forceEmailSupport ) {
+			stopForwarding( getOdieEmailFallbackMessage(), 'email_only' );
+			return;
+		}
+
+		if ( ! isChatLoaded ) {
+			if ( hasChatClientTimedOut ) {
+				setHasChatClientTimedOut( false );
+				stopForwarding( getOdieZendeskConnectionErrorMessage(), 'chat_client_timeout' );
+			}
+			return;
+		}
+
+		searchParams.delete( 'provider' );
+		searchParams.set( 'direct-zd-chat', '1' );
+		setSearchParams( searchParams );
+
+		// Compute from a fresh Smooch snapshot at call time: Smooch can mutate its
+		// conversation list outside React without triggering a re-render.
+		const { mostRecentSupportInteractionId: alreadyHasActiveZendeskChatId, hasReachedLimit } =
+			getOpenLiveInteractions( interactionStatusByUuid );
+
+		// when forwarding to zd avoid creating new chats
+		if ( alreadyHasActiveZendeskChatId ) {
+			// Redirect to the existing Zendesk chat.
+			searchParams.set( 'id', alreadyHasActiveZendeskChatId );
+			navigate( '/odie?' + searchParams.toString() );
+			return;
+		}
+
+		// Don't create a new conversation if the user has reached the limit. Offer the open ones instead.
+		if ( hasReachedLimit ) {
+			addMessage( getConversationLimitReachedMessage() );
+			trackEvent( 'conversation_limit_reached', { created_from: 'direct_url' } );
+			return;
+		}
+
+		searchParams.delete( 'id' );
+		setSearchParams( searchParams );
+		createZendeskConversation( {
+			createdFrom: 'direct_url',
+		} );
 	}, [
 		navigate,
-		isForwardingToZendesk,
+		isStartingDirectChat,
+		chat.status,
 		isChatLoaded,
-		chat?.conversationId,
+		hasChatClientTimedOut,
+		addMessage,
+		trackEvent,
 		createZendeskConversation,
 		forceEmailSupport,
 		interactionStatusByUuid,
@@ -120,7 +187,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	return (
 		<div
-			className={ clx( 'chatbox-messages', {
+			className={ clsx( 'chatbox-messages', {
 				'force-email-support': forceEmailSupport && chat.provider === 'zendesk',
 			} ) }
 			ref={ messagesContainerRef }
@@ -139,7 +206,7 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 			</div>
 			<>
 				<div
-					className={ clx( 'chatbox-loading-chat__spinner', {
+					className={ clsx( 'chatbox-loading-chat__spinner', {
 						'is-visible': chat.status === 'loading' || ( isScrolling && chat.status !== 'sending' ),
 					} ) }
 				>
@@ -156,11 +223,16 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 						key={ 0 }
 					/>
 				) }
-				{ chat.messages?.length > 0 && <MessagesClusterizer messages={ chat.messages } /> }
+				{ chat.messages?.length > 0 && (
+					<MessagesClusterizer
+						messages={ chat.messages }
+						isLoadingZendeskHistory={ isLoadingZendeskHistory }
+					/>
+				) }
 				<JumpToRecent containerReference={ messagesContainerRef } />
 
 				{ chat.provider === 'odie' && chat.status === 'sending' && <ThinkingPlaceholder /> }
-				{ chat.provider === 'odie' && chat.status === 'transfer' && (
+				{ chat.provider === 'odie' && ( chat.status === 'transfer' || isWaitingForChatClient ) && (
 					<ThinkingPlaceholder
 						content={
 							__( 'Requesting human support', __i18n_text_domain__ ) +

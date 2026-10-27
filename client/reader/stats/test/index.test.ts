@@ -748,12 +748,6 @@ describe( 'reader stats', () => {
 					searchParams: {},
 				},
 				{
-					url: '/discover/reddit',
-					expected: 'discover_reddit',
-					description: 'discover reddit page',
-					searchParams: {},
-				},
-				{
 					url: '/discover/latest',
 					expected: 'discover_latest',
 					description: 'discover latest page',

@@ -1,4 +1,3 @@
-import { Gridicon, ExternalLink } from '@automattic/components';
 import { GravatarQuickEditorCore } from '@gravatar-com/quick-editor';
 import { Icon, Button } from '@wordpress/components';
 import { caution } from '@wordpress/icons';
@@ -10,7 +9,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import VerifyEmailDialog from 'calypso/components/email-verification/email-verification-dialog';
 import Gravatar from 'calypso/components/gravatar';
-import InfoPopover from 'calypso/components/info-popover';
 import {
 	recordTracksEvent,
 	recordGoogleEvent,
@@ -19,8 +17,6 @@ import {
 import { setCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { receiveGravatarDetails } from 'calypso/state/gravatar-status/actions';
-import getUserSetting from 'calypso/state/selectors/get-user-setting';
-import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 
 import './style.scss';
 
@@ -84,64 +80,8 @@ export class EditGravatar extends Component {
 		}
 	};
 
-	renderEditGravatarIsLoading = () => {
-		return (
-			<div className="edit-gravatar">
-				<div className="edit-gravatar__image-container">
-					<div className="edit-gravatar__avatar-placeholder" />
-				</div>
-				<div className="edit-gravatar__explanation-container">
-					<div className="edit-gravatar__action-button-placeholder" />
-				</div>
-			</div>
-		);
-	};
-
-	renderGravatarProfileHidden = () => {
-		return (
-			<div className="edit-gravatar">
-				<div className="edit-gravatar__image-container">
-					<div className="edit-gravatar__hidden-avatar" data-testid="hidden-avatar">
-						<Gridicon
-							icon="user"
-							size={ 96 } /* eslint-disable-line wpcalypso/jsx-gridicon-size */
-						/>
-					</div>
-				</div>
-				<div className="edit-gravatar__explanation-container">
-					<p className="edit-gravatar__explanation">
-						{ this.props.translate( 'Your avatar is hidden.' ) }
-					</p>
-					<InfoPopover className="edit-gravatar__pop-over" position="left">
-						{ this.props.translate(
-							'{{p}}The avatar you use on WordPress.com comes ' +
-								'from {{ExternalLink}}Gravatar{{/ExternalLink}}, a universal avatar service ' +
-								'(it stands for "Globally Recognized Avatar," get it?).{{/p}}' +
-								'{{p}}However, because your Gravatar is currently disabled, ' +
-								'both your avatar and Gravatar profile are hidden and won’t appear on any site.{{/p}}',
-							{
-								components: {
-									ExternalLink: <ExternalLink href="https://gravatar.com" target="_blank" icon />,
-									p: <p />,
-								},
-							}
-						) }
-					</InfoPopover>
-				</div>
-			</div>
-		);
-	};
-
 	render() {
-		const { isGravatarProfileHidden, translate, user, recordClickButtonEvent } = this.props;
-
-		if ( this.props.isFetchingUserSettings ) {
-			return this.renderEditGravatarIsLoading();
-		}
-
-		if ( isGravatarProfileHidden ) {
-			return this.renderGravatarProfileHidden();
-		}
+		const { translate, user, recordClickButtonEvent } = this.props;
 
 		return (
 			<div
@@ -173,7 +113,7 @@ export class EditGravatar extends Component {
 								this.quickEditor?.open();
 							} }
 						>
-							{ translate( 'Edit your public avatar' ) }
+							{ translate( 'Edit your avatar' ) }
 						</Button>
 					) : (
 						<Button
@@ -204,8 +144,6 @@ const recordAvatarUpdatedEvent = () => recordTracksEvent( 'calypso_edit_gravatar
 export default connect(
 	( state ) => ( {
 		user: getCurrentUser( state ) || {},
-		isFetchingUserSettings: isFetchingUserSettings( state ),
-		isGravatarProfileHidden: getUserSetting( state, 'gravatar_profile_hidden' ),
 	} ),
 	{
 		setCurrentUser,

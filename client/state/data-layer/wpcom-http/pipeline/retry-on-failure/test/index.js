@@ -23,7 +23,7 @@ const withRetries = ( retryCount ) => ( actionOrInbound ) =>
 	undefined !== actionOrInbound.originalRequest
 		? merge( actionOrInbound, {
 				originalRequest: withRetries( retryCount )( actionOrInbound.originalRequest ),
-		  } )
+			} )
 		: merge( actionOrInbound, { meta: { dataLayer: { retryCount } } } );
 
 const createMockStore = () => ( { dispatch: jest.fn() } );

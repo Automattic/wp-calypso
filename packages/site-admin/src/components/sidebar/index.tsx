@@ -101,7 +101,7 @@ function SidebarContentWrapper( { children, shouldAnimate }: SidebarContentWrapp
 			? {
 					'slide-from-left': navAnimation === 'back',
 					'slide-from-right': navAnimation === 'forward',
-			  }
+				}
 			: {}
 	);
 

@@ -51,9 +51,9 @@ const selectedLicenses: Reducer<
 				licenses:
 					action.siteId !== state.siteId
 						? // If the site is different, reset existing licenses.
-						  [ action.license ]
+							[ action.license ]
 						: // Otherwise, append the license to the list.
-						  [ ...state.licenses, action.license ],
+							[ ...state.licenses, action.license ],
 			};
 		case JETPACK_AGENCY_DASHBOARD_UNSELECT_LICENSE: {
 			const filtered = state.licenses.filter( ( license ) => license !== action.license );
@@ -97,7 +97,7 @@ const removeLicense = ( state: AppState, siteId: number, license: string ) => {
 			? {
 					...licenceItem,
 					products: licenceItem.products.filter( ( product: string ) => product !== license ),
-			  }
+				}
 			: licenceItem
 	);
 };

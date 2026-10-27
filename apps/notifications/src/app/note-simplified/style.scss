@@ -1,0 +1,171 @@
+@use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+.wpnc-simplified__quiet-links a,
+.wpnc-simplified__quiet-links a:visited {
+	color: inherit;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+}
+
+// The sentence is markup from the API: text between ranges is bare, so its direct
+// children are the people and things it names.
+.wpnc-simplified__sentence > :is(a, span) {
+	font-weight: 600;
+}
+
+.wpnc-simplified__meta {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: $grid-unit-05;
+
+	> :not(:last-child)::after {
+		content: '·';
+		margin-inline-start: $grid-unit-05;
+	}
+}
+
+.wpnc-simplified__thread {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	overflow-wrap: anywhere;
+
+	&.is-reply > li > :last-child {
+		padding-inline-start: 48px;
+	}
+
+	&.is-reply .wpnc-simplified__thread-parent {
+		position: relative;
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset-block: 48px -4px;
+			inset-inline-start: 17px;
+			width: 2px;
+			border-radius: 2px;
+			background: var(--wp-components-color-gray-300, #{$gray-300});
+		}
+
+		.wpnc-simplified__author,
+		.wpnc-simplified__parent-text {
+			font-size: 13px;
+			line-height: 20px;
+		}
+
+		.wpnc-simplified__parent-text {
+			color: var(--wp-components-color-gray-700, #{$gray-700});
+		}
+	}
+}
+
+.wpnc-simplified__card + .wpnc-simplified__thread,
+.wpnc-simplified__thread + .wpnc-simplified__heading {
+	margin-top: $grid-unit-10;
+}
+
+.wpnc-simplified__photo {
+	display: flex;
+	flex-shrink: 0;
+}
+
+.wpnc-simplified__pending-approval {
+	flex-shrink: 0;
+	font-size: $font-size-medium;
+	font-weight: $font-weight-medium;
+	color: var(--wpds-color-foreground-content-warning-weak, #926300);
+
+	@include ui-mixins.when-dark-theme {
+		color: var(--dashboard__foreground-color-warning, #f5c15c);
+	}
+
+	svg {
+		align-self: center;
+		fill: currentColor;
+	}
+
+	a,
+	a:visited {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover {
+			text-decoration: underline;
+		}
+	}
+}
+
+.wpnc-simplified__parent-text {
+	white-space: pre-line;
+
+	&.is-truncated {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 2;
+		overflow: hidden;
+		white-space: normal;
+	}
+}
+
+.wpnc-simplified__card {
+	display: block;
+	overflow-wrap: anywhere;
+
+	&,
+	&:visited {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	&:focus-visible {
+		outline: var(--wp-admin-border-width-focus, 2px) solid var(--wp-admin-theme-color);
+		outline-offset: 2px;
+	}
+
+	&:hover {
+		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 2%, transparent);
+		box-shadow: 0 0 0 1px color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
+	}
+}
+
+.wpnc-simplified__card-arrow {
+	flex-shrink: 0;
+	fill: var(--wp-components-color-gray-600, #{$gray-600});
+}
+
+.wpnc-simplified__site-icon {
+	flex-shrink: 0;
+	border-radius: $radius-medium;
+
+	&.is-placeholder {
+		padding: $grid-unit-05;
+		background: var(--wp-components-color-gray-100, #{$gray-100});
+		fill: var(--wp-components-color-gray-700, #{$gray-700});
+	}
+}
+
+.wpnc-simplified .wpnc__body .wpnc__body-content > :last-child > .wpnc__paragraph:last-child {
+	padding-bottom: 0;
+}
+
+.wpnc-simplified .wpnc__reply {
+	.wpnc__gridicon {
+		margin-inline-end: 2px;
+	}
+
+	a {
+		font-weight: 400;
+	}
+}
+
+.wpnc-simplified .wpnc__body-content .wpnc__comment,
+.wpnc-simplified .wpnc__new_post .wpnc__body .wpnc__body-content,
+.wpnc-simplified__parent-text {
+	font-size: 15px;
+	line-height: 24px;
+}

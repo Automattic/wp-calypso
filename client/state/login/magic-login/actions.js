@@ -66,10 +66,11 @@ async function postMagicLoginRequest( url, bodyObj ) {
  * @param	{string}	redirectTo	Url to redirect the user to upon successful login
  * @param	{string | null}	flow	The client's login flow
  * @param	{boolean}	isMagicCode	Whether this is a magic code (true) or magic link (false)
+ * @param	{string}	[blackboxSessionId]	Blackbox session from the code form, when collect succeeded
  * @returns	{Function}	A thunk that can be dispatched
  */
 export const fetchMagicLoginAuthenticate =
-	( token, redirectTo, flow = null, isMagicCode = false ) =>
+	( token, redirectTo, flow = null, isMagicCode = false, blackboxSessionId = null ) =>
 	( dispatch ) => {
 		dispatch( { type: MAGIC_LOGIN_REQUEST_AUTH_FETCH } );
 
@@ -87,6 +88,7 @@ export const fetchMagicLoginAuthenticate =
 			token,
 			redirect_to: redirectTo,
 			flow,
+			...( blackboxSessionId ? { blackbox_session_id: blackboxSessionId } : {} ),
 		} )
 			.then( ( json ) => {
 				// Track successful authentication

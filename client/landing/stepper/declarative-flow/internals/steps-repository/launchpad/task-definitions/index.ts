@@ -8,12 +8,12 @@ import { actions as emailActions } from './email';
 import { actions as paymentsActions } from './payments';
 import { actions as planActions } from './plan';
 import { actions as postActions } from './post';
-import { actions as readymadeTemplateActions } from './readymade-templates';
 import { actions as setupActions } from './setup';
 import { actions as siteActions } from './site';
 import { actions as subscribersActions } from './subscribers';
 import type { Task, TaskId, TaskContext, TaskActionTable } from '../types';
-import type { SiteDetails, ChecklistStatuses } from '@automattic/data-stores';
+import type { SiteDetails } from '@automattic/data-stores';
+import type { ChecklistStatuses } from '@automattic/launchpad';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Dispatch, SetStateAction } from 'react';
@@ -28,7 +28,6 @@ const DEFINITIONS: TaskActionTable = {
 	...emailActions,
 	...subscribersActions,
 	...contentActions,
-	...readymadeTemplateActions,
 	...bioActions,
 	...paymentsActions,
 };
@@ -84,10 +83,6 @@ export function getEnhancedTasks( {
 	if ( ! tasks ) {
 		return [];
 	}
-
-	// We have to use the site id if the flow allows the user to change the site address
-	// as the domain name of the site may be changed.
-	// See https://github.com/Automattic/wp-calypso/pull/84532.
 
 	const context: TaskContext = {
 		site,

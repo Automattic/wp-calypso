@@ -1,15 +1,15 @@
 import { HostingFeatures, LogType } from '@automattic/api-core';
 import { siteBySlugQuery } from '@automattic/api-queries';
-import { DateRangePicker } from '@automattic/date-range-picker';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useDateRange } from '../../../app/hooks/use-date-range';
 import { useSiteTimezoneWithJetpackFallback } from '../../../app/hooks/use-site-timezone';
-import { useLocale } from '../../../app/locale';
+import { useIntlLocale } from '../../../app/locale';
 import { agencySiteActivityRoute, agencySiteRoute } from '../../../app/router/agency';
 import { Card, CardBody } from '../../../components/card';
+import { DateRangePicker } from '../../../components/date-range-picker';
 import InlineSupportLink from '../../../components/inline-support-link';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
@@ -21,7 +21,7 @@ export default function AgencySiteActivity() {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { gmtOffset, timezoneString } = useSiteTimezoneWithJetpackFallback( site );
 
-	const locale = useLocale();
+	const locale = useIntlLocale();
 	const searchParams = agencySiteActivityRoute.useSearch();
 
 	// Activity has no auto-refresh, but the shared DataViews props require this state.

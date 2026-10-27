@@ -61,7 +61,11 @@ interface AppsBadgeProps {
 	utm_source: string;
 	utm_campaign?: string;
 	utm_medium?: string;
-	recordTracksEvent: ( event: string, props: { utm_source_string: string } ) => void;
+	onClick?: () => void;
+	recordTracksEvent: (
+		event: string,
+		props: { utm_source_string: string; utm_campaign?: string }
+	) => void;
 }
 
 interface AppsBadgeState {
@@ -124,10 +128,12 @@ export class AppsBadge extends PureComponent< AppsBadgeProps, AppsBadgeState > {
 	};
 
 	onLinkClick = (): void => {
-		const { storeName, utm_source } = this.props;
+		const { storeName, utm_source, utm_campaign, onClick } = this.props;
 		this.props.recordTracksEvent( APP_STORE_BADGE_URLS[ storeName ].tracksEvent, {
 			utm_source_string: utm_source,
+			utm_campaign,
 		} );
+		onClick?.();
 	};
 
 	render() {

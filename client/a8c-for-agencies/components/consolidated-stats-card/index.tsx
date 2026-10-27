@@ -41,7 +41,7 @@ const CardInfo = ( { children, wrapperRef, footerText, title, footerAction }: Ca
 								title
 									? ( translate( 'Learn more about %(statName)s', {
 											args: { statName: title },
-									  } ) as string )
+										} ) as string )
 									: translate( 'Learn more' )
 							}
 							onActivate={ () => setShowPopover( true ) }

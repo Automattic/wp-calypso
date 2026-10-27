@@ -1,27 +1,56 @@
-import { planSupportsBuildWow } from '../build-wow-plans';
+import { planBuildsStoreOnBuildWow, planSupportsBuildWow } from '../build-wow-plans';
 
 describe( 'planSupportsBuildWow', () => {
 	it.each( [
 		'personal-bundle',
 		'personal-bundle-monthly',
+		'personal-bundle-2y',
 		'value_bundle',
 		'value_bundle_monthly',
 		'value_bundle-2y',
 		'business-bundle',
 		'business-bundle-monthly',
 		'business-bundle-3y',
-		'ecommerce-bundle',
-		'ecommerce-bundle-monthly',
-	] )( 'accepts the Atomic-capable plan %s', ( slug ) => {
+	] )( 'accepts the build-wow-eligible plan %s', ( slug ) => {
 		expect( planSupportsBuildWow( slug ) ).toBe( true );
 	} );
 
-	it.each( [ 'free_plan', 'pro-plan', 'not-a-plan' ] )( 'rejects %s', ( slug ) => {
+	it.each( [
+		'free_plan',
+		'pro-plan',
+		'ecommerce-bundle',
+		'ecommerce-bundle-monthly',
+		'ecommerce-trial-bundle-monthly',
+		'not-a-plan',
+	] )( 'rejects %s', ( slug ) => {
 		expect( planSupportsBuildWow( slug ) ).toBe( false );
 	} );
 
 	it( 'rejects a missing plan', () => {
 		expect( planSupportsBuildWow( undefined ) ).toBe( false );
 		expect( planSupportsBuildWow( null ) ).toBe( false );
+	} );
+} );
+
+describe( 'planBuildsStoreOnBuildWow', () => {
+	it.each( [
+		'ecommerce-bundle',
+		'ecommerce-bundle-monthly',
+		'ecommerce-bundle-2y',
+		'ecommerce-trial-bundle-monthly',
+	] )( 'accepts the Commerce plan %s', ( slug ) => {
+		expect( planBuildsStoreOnBuildWow( slug ) ).toBe( true );
+	} );
+
+	it.each( [ 'free_plan', 'personal-bundle', 'value_bundle', 'business-bundle', 'not-a-plan' ] )(
+		'rejects %s',
+		( slug ) => {
+			expect( planBuildsStoreOnBuildWow( slug ) ).toBe( false );
+		}
+	);
+
+	it( 'rejects a missing plan', () => {
+		expect( planBuildsStoreOnBuildWow( undefined ) ).toBe( false );
+		expect( planBuildsStoreOnBuildWow( null ) ).toBe( false );
 	} );
 } );

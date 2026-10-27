@@ -1,4 +1,6 @@
 @import "@automattic/typography/styles/variables";
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/mixins";
 
 .one-login__footer {
 	display: flex;
@@ -15,12 +17,15 @@
 		height: auto;
 
 		// For ExternalLink-rendered footer links, only underline the text content
-		// so the trailing "opens in new tab" arrow icon stays clean.
+		// so the trailing "opens in new tab" arrow icon stays clean. The offset is
+		// reset because ExternalLink's own 0.2em offset drops the underline below
+		// the neighbouring footer links.
 		&.components-external-link {
 			text-decoration: none;
 
 			.components-external-link__contents {
 				text-decoration: underline;
+				text-underline-offset: inherit;
 			}
 		}
 	}
@@ -47,6 +52,34 @@
 			color: inherit;
 			font-weight: inherit;
 			font-size: inherit;
+		}
+	}
+
+	// Mirrors the signup page's "Have an account? Log in" line. Font family inherits rather
+	// than copying signup's hardcoded "SF Pro Text". Desktop only: below 960px the top bar
+	// carries the route to signup.
+	.one-login__footer-signup {
+		display: none;
+		margin: 0;
+		font-size: 0.875rem;
+		line-height: 20px;
+		color: var( --color-neutral-60 );
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+
+		@include break-large {
+			display: block;
+		}
+	}
+
+	// The other half of that swap: the lost-password link is the footer's on mobile, and the
+	// password label row's on desktop.
+	.one-login__footer-mobile {
+		@include break-large {
+			display: none;
 		}
 	}
 }

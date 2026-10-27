@@ -1,5 +1,6 @@
 import type { ITEM_TYPE_PLAN, ITEM_TYPE_PRODUCT } from './constants';
 import type { PlanRecommendation } from './plan-upgrade/types';
+import type { Purchase } from '@automattic/api-core';
 import type {
 	TERM_ANNUALLY,
 	TERM_MONTHLY,
@@ -17,7 +18,6 @@ import type {
 	JetpackTag,
 	FAQ,
 } from '@automattic/calypso-products';
-import type { Purchase } from 'calypso/lib/purchases/types';
 import type { TranslateResult } from 'i18n-calypso';
 import type { ReactNode, ReactElement } from 'react';
 

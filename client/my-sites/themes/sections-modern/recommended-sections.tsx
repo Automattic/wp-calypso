@@ -1,4 +1,4 @@
-import { getPlan, PLAN_BUSINESS } from '@automattic/calypso-products';
+import { PLAN_PERSONAL } from '@automattic/calypso-products';
 import { useTranslate } from 'i18n-calypso';
 import { ThemesQuery } from 'calypso/my-sites/themes/collections/use-theme-collection';
 import AIBuilderBanner from '../banners-modern/ai-builder-banner';
@@ -80,9 +80,7 @@ export default function RecommendedSections( {
 					<>
 						{ translate( 'Level up your site with exclusive themes from expert partners.' ) }
 						<br />
-						{ translate( 'Available on %(planName)s plans with an additional theme subscription.', {
-							args: { planName: getPlan( PLAN_BUSINESS )?.getTitle() ?? '' },
-						} ) }
+						{ translate( 'Available on all paid plans with an additional theme subscription.' ) }
 					</>
 				}
 				buttonLabel={ translate( 'See all' ) }
@@ -91,7 +89,7 @@ export default function RecommendedSections( {
 				query={ PARTNER_QUERY }
 				sectionSlug="partner"
 				sectionIndex={ 2 }
-				banner={ <PlanUpgradeBanner planSlug={ PLAN_BUSINESS } variant="dark" /> }
+				banner={ <PlanUpgradeBanner planSlug={ PLAN_PERSONAL } variant="dark" /> }
 				getActionLabel={ getActionLabel }
 				getOptions={ getOptions }
 				getScreenshotUrl={ getScreenshotUrl }

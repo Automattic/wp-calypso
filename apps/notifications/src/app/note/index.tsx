@@ -1,5 +1,4 @@
 import {
-	__experimentalDivider as Divider,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
@@ -16,11 +15,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
-import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
+import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
 import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import { NoteBody, ActionBlock } from '../templates/body';
+import SimplifiedNote, { hasNoteContext } from '../note-simplified';
+import { getTemporaryNoteTitle } from '../note-simplified/labels';
+import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
 import NoteSummary from '../templates/note-summary';
+import { useIsSimplifiedNote } from '../use-is-simplified-note';
 import './style.scss';
 import type { NoteNavigation } from './hooks';
 import type { Note as NoteObject, Block } from '../types';
@@ -33,15 +35,14 @@ const hasBadge = ( body: NoteObject[ 'body' ] ) =>
 
 const getClasses = ( {
 	note,
-	isApproved,
+	isPendingApproval,
 	isRead,
 }: {
 	note: NoteObject;
-	isApproved: boolean;
+	isPendingApproval: boolean;
 	isRead: boolean;
 } ) => {
 	let hasCommentReply = false;
-	let hasUnapprovedComment = false;
 	if ( 'comment' === note.type ) {
 		const noteBody = note.body;
 		const noteActions = getActions( note );
@@ -49,11 +50,6 @@ const getClasses = ( {
 			/* Check if note has a reply to another comment */
 			if ( noteBody[ 1 ] && noteBody[ 1 ].nest_level && noteBody[ 1 ].nest_level > 0 ) {
 				hasCommentReply = true;
-			}
-
-			/* Check if note has unapproved comment */
-			if ( 'approve-comment' in noteActions && ! isApproved ) {
-				hasUnapprovedComment = true;
 			}
 		}
 	}
@@ -63,7 +59,7 @@ const getClasses = ( {
 		read: isRead,
 		unread: ! isRead,
 		wpnc__badge: hasBadge( note.body ),
-		'wpnc__comment-unapproved': hasUnapprovedComment,
+		'wpnc__comment-unapproved': isPendingApproval,
 	} );
 };
 
@@ -84,8 +80,11 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
 
-	const isApproved = useSelector( ( state ) => note && getIsNoteApproved( state, note ) );
+	const isPendingApproval = useSelector(
+		( state ) => !! note && getIsNotePendingApproval( state, note )
+	);
 	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
+	const isSimplified = useIsSimplifiedNote();
 
 	useEffect( () => {
 		if ( note?.id ) {
@@ -96,6 +95,8 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	if ( ! note ) {
 		return null;
 	}
+
+	const isSimplifiedNote = isSimplified && hasNoteContext( note );
 
 	return (
 		<>
@@ -119,7 +120,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							/>
 						) }
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
-							{ note.title }
+							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
@@ -148,15 +149,34 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 				</HStack>
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
-				<VStack justify="flex-start" spacing={ 4 }>
-					<NoteSummary note={ note } />
-					<Divider style={ { color: 'var( --color-border-subtle, #f0f0f0 )' } } />
-					<div className={ getClasses( { note, isApproved, isRead } ) }>
-						<NoteBody note={ note } />
-					</div>
+				<VStack justify="flex-start" spacing={ isSimplifiedNote ? 6 : 4 }>
+					{ isSimplifiedNote && <SimplifiedNote note={ note } /> }
+					{ ! isSimplifiedNote && !! note.header?.length && (
+						<>
+							<NoteSummary header={ note.header } url={ note.url } />
+							<hr
+								style={ {
+									border: 0,
+									borderBlockEnd: '1px solid var( --color-border-subtle, #f0f0f0 )',
+									blockSize: 0,
+									margin: 0,
+								} }
+							/>
+						</>
+					) }
+					{ ! isSimplifiedNote && (
+						<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
+							<NoteBody note={ note } />
+						</div>
+					) }
+					{ isSimplifiedNote && <SimplifiedActionBlock note={ note } goBack={ goBack } /> }
 				</VStack>
 			</CardBody>
-			<ActionBlock note={ note } goBack={ goBack } />
+			{ isSimplifiedNote ? (
+				<ReplyFooter note={ note } />
+			) : (
+				<ActionBlock note={ note } goBack={ goBack } />
+			) }
 		</>
 	);
 };

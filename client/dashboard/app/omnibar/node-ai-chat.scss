@@ -1,0 +1,19 @@
+.omnibar .omnibar__secondary .omnibar__menu.masterbar__item-agents-manager-ai-chat {
+	@media ( min-width: 782px ) {
+		padding-inline: 10px 12px;
+	}
+}
+
+.omnibar .omnibar__menu .omnibar__ai-chat-icon {
+	display: flex;
+
+	svg {
+		width: 30px;
+		height: 30px;
+
+		@media ( min-width: 782px ) {
+			width: 22px;
+			height: 22px;
+		}
+	}
+}

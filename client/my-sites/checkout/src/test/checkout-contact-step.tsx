@@ -2,16 +2,14 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
+import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
-import { getDomainsBySiteId, hasLoadedSiteDomains } from 'calypso/state/sites/domains/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
 	domainTransferProduct,
@@ -25,20 +23,22 @@ import {
 	mockCachedContactDetailsEndpoint,
 	mockGetPaymentMethodsEndpoint,
 	mockLogStashEndpoint,
+	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
 	oneTimePurchase,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 import type { CartKey, ResponseCart } from '@automattic/shopping-cart';
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/sites/domains/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( '@wordpress/compose', () => ( {
+	...jest.requireActual( '@wordpress/compose' ),
+	useViewportMatch: jest.fn(),
+} ) );
 
 describe( 'Checkout contact step', () => {
 	const mainCartKey = 'foo.com' as CartKey;
@@ -51,15 +51,14 @@ describe( 'Checkout contact step', () => {
 	getPlansBySiteId.mockImplementation( () => ( {
 		data: getActivePersonalPlanDataForType( 'yearly' ),
 	} ) );
-	hasLoadedSiteDomains.mockImplementation( () => true );
-	getDomainsBySiteId.mockImplementation( () => [] );
+	mockGetSiteDomainsEndpoint( [] );
 	isMarketplaceProduct.mockImplementation( () => false );
-	isJetpackSite.mockImplementation( () => false );
 	( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 	mockMatchMediaOnWindow();
 
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
+		( useViewportMatch as jest.Mock ).mockReturnValue( false );
+		resetCheckoutStores();
 		nock.cleanAll();
 		mockGetVatInfoEndpoint( {} );
 		mockGetPaymentMethodsEndpoint( [] );
@@ -100,6 +99,20 @@ describe( 'Checkout contact step', () => {
 		).toBeInTheDocument();
 	} );
 
+	it( 'disables the sidebar Continue button until cached contact details have prefilled', async () => {
+		// The sidebar submit area, which renders this Continue, is only used at large viewports.
+		( useViewportMatch as jest.Mock ).mockReturnValue( true );
+		render( <MockCheckout { ...defaultPropsForMockCheckout } /> );
+		expect( await screen.findByText( 'Retrieving contact details…' ) ).toBeInTheDocument();
+		expect( await screen.findByLabelText( 'Continue to the next step' ) ).toBeDisabled();
+		await waitFor( () => {
+			expect( screen.queryByText( 'Retrieving contact details…' ) ).not.toBeInTheDocument();
+		} );
+		await waitFor( () => {
+			expect( screen.getByLabelText( 'Continue to the next step' ) ).not.toBeDisabled();
+		} );
+	} );
+
 	it( 'renders the tax fields only when no domain is in the cart', async () => {
 		const cartChanges = { products: [ planWithoutDomain ] };
 		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
@@ -122,6 +135,17 @@ describe( 'Checkout contact step', () => {
 		expect( await screen.findByText( 'Country' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
+	} );
+
+	it( 'renders a help link in the contact step title when a domain is in the cart', async () => {
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		render( <MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } /> );
+
+		expect( await screen.findByText( 'Enter your contact information' ) ).toBeInTheDocument();
+		expect( await screen.findByRole( 'link', { name: 'Learn more' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/support/domains/private-domain-registration/'
+		);
 	} );
 
 	it( 'does not render country-specific domain fields when no country has been chosen and a domain is in the cart', async () => {
@@ -177,6 +201,19 @@ describe( 'Checkout contact step', () => {
 		expect( screen.getByText( 'Phone' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'Email' ) ).toBeInTheDocument();
 		expect( screen.getByText( 'ZIP code' ) ).toBeInTheDocument();
+	} );
+
+	it( 'autodetects the phone country from a dialing code typed into the phone field', async () => {
+		const user = userEvent.setup();
+		const cartChanges = { products: [ planWithBundledDomain, domainProduct ] };
+		const { container } = render(
+			<MockCheckout { ...defaultPropsForMockCheckout } cartChanges={ cartChanges } />
+		);
+		await user.selectOptions( await screen.findByLabelText( 'Country' ), 'US' );
+		await user.type( screen.getByPlaceholderText( 'Phone' ), '+447911123456' );
+
+		expect( container.querySelector( '.phone-input__country-select' ) ).toHaveValue( 'GB' );
+		expect( screen.getByPlaceholderText( 'Phone' ) ).toHaveValue( '+44 7911 123456' );
 	} );
 
 	it( 'renders domain fields except postal code when a country without postal code support has been chosen and a domain is in the cart', async () => {

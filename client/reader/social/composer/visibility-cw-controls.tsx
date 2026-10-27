@@ -132,7 +132,7 @@ export function VisibilityCwControls< V extends string >( {
 								translate(
 									'Public is shown to everyone. Quiet public is hidden from public timelines and search but still appears in your followers’ feed and is reachable by URL. Followers limits it to people who follow you.'
 								)
-						  )
+							)
 				}
 				selected={ visibility }
 				onChange={ handleVisibility }

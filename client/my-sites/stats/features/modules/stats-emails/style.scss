@@ -78,18 +78,19 @@
 		flex-basis: $metric-column-width;
 	}
 
+	/* Grid, not flex: Firefox sizes an auto-basis flex wrapper from the cells' text,
+	   not their flex-basis, so the end-aligned numbers spill left over the title. */
 	.stats-card-header__additional,
 	.horizontal-bar-list-item--additional {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat(3, $metric-column-width);
 		flex: 0 0 auto;
-		justify-content: flex-end;
-		align-items: flex-end;
+		align-items: end;
 		gap: 0 8px;
 
 		/* Fixed tracks so long translated headers (sv "Öppningsfrekvens") wrap instead
 		   of widening the column. */
 		> span {
-			flex: 0 0 $metric-column-width;
 			min-width: 0;
 			text-align: end;
 			white-space: normal;

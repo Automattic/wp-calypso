@@ -21,7 +21,7 @@ export const initiateTransferWithPluginZip = ( action ) => {
 	const { siteId, pluginZip } = action;
 
 	return [
-		recordTracksEvent( 'calypso_automated_transfer_inititate_transfer', {
+		recordTracksEvent( 'calypso_automated_transfer_initiate_transfer', {
 			context: 'plugin_upload',
 		} ),
 		http(
@@ -60,7 +60,7 @@ const showErrorNotice = ( error ) => {
 
 export const receiveError = ( { siteId }, error ) => {
 	return [
-		recordTracksEvent( 'calypso_automated_transfer_inititate_failure', {
+		recordTracksEvent( 'calypso_automated_transfer_initiate_failure', {
 			context: 'plugin_upload',
 			error: error.error,
 		} ),
@@ -75,7 +75,7 @@ export const receiveResponse = ( action, { success } ) => {
 	}
 
 	return [
-		recordTracksEvent( 'calypso_automated_transfer_inititate_success', {
+		recordTracksEvent( 'calypso_automated_transfer_initiate_success', {
 			context: 'plugin_upload',
 		} ),
 		fetchAutomatedTransferStatus( action.siteId ),

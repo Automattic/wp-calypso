@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
-import { getAgentManager } from './agentManager';
+import { getAgentManager, type ToolResultInput, type TurnToolCall } from './agentManager';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -84,13 +85,59 @@ export interface ImageData {
 
 // Extra options for submitting a message
 export interface SubmitOptions {
-	type?: ContentType | 'tool_result'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI)
+	type?: ContentType | 'tool_result' | 'tool_results'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI)
 	archived?: boolean;
 	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
 	toolCallId?: string; // Required when type is `tool_result`: the tool call ID to respond to
 	toolId?: string; // Required when type is `tool_result`: the tool ID
 	fileParts?: FilePart[]; // Optional when type is `tool_result`: files (typically images) produced by the tool
+	toolResults?: ToolResultInput[]; // Required when type is `tool_results`: one result per call being answered
+	turnToolCalls?: TurnToolCall[]; // Optional with `tool_results`: the turn's calls, added to history when this page never saw them
+	promptSource?: PromptSource; // Where the prompt came from (e.g. an item of a host's checklist); kept on the message and sent with the client context
+}
+
+/**
+ * Where a prompt came from, as opposed to who sent it: `source` names the host
+ * UI (e.g. `site-setup-checklist`), `id` the item within it. Not to be confused
+ * with `clientContext.metadata.source`, which names the calling client and is
+ * an analytics dimension. Kept as client metadata on the user message, sent to
+ * the server in the client context's `metadata`, and surfaced in the UI message
+ * as a `data` part either way, so a live message and one restored from the
+ * server look the same.
+ */
+export interface PromptSource {
+	source: string;
+	id?: string;
+}
+
+/** The client metadata a prompt source is kept under (flat, matching the server's stored context). */
+function promptSourceMetadata( promptSource: PromptSource | undefined ): Record< string, unknown > {
+	if ( ! promptSource ) {
+		return {};
+	}
+	return {
+		promptSource: promptSource.source,
+		...( promptSource.id && { promptSourceId: promptSource.id } ),
+	};
+}
+
+/** The `data` part that carries a prompt source in the UI. */
+function promptSourceDataPart( promptSource: PromptSource ): {
+	type: 'data';
+	data: Record< string, unknown >;
+} {
+	return { type: 'data', data: promptSourceMetadata( promptSource ) };
+}
+
+/** The prompt source a client message keeps in its metadata, if any. */
+function readPromptSource( metadata: Record< string, unknown > | undefined ): PromptSource | null {
+	const source = metadata?.promptSource;
+	if ( typeof source !== 'string' || source === '' ) {
+		return null;
+	}
+	const id = metadata?.promptSourceId;
+	return { source, ...( typeof id === 'string' && id !== '' && { id } ) };
 }
 
 // UI Message format (simplified for UI components)
@@ -112,6 +159,9 @@ export interface UIMessage {
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
 }
 
+// Mirrors `MessageAction.visibility` in agenttic-ui.
+type MessageActionVisibility = 'always' | 'latest-turn';
+
 // Message action type for UI, resolved from condition and passed to the dumb component
 export type UIMessageAction =
 	| {
@@ -125,6 +175,7 @@ export type UIMessageAction =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  }
 	| {
 			type: 'component';
@@ -133,6 +184,7 @@ export type UIMessageAction =
 			component: React.ComponentType< any >;
 			componentProps?: Record< string, unknown >;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  };
 
 // Internal types for message actions with conditional logic
@@ -149,6 +201,7 @@ export type MessageActionDefinition =
 			pressed?: boolean;
 			showLabel?: boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  }
 	| {
 			type: 'component';
@@ -158,6 +211,7 @@ export type MessageActionDefinition =
 			componentProps?: Record< string, unknown >;
 			condition?: ( message: UIMessage ) => boolean;
 			order?: number;
+			visibility?: MessageActionVisibility;
 	  };
 
 export interface MessageActionsRegistration {
@@ -215,6 +269,14 @@ export const transformClientMessageToUI = (
 				}
 			}
 			if ( part.type === 'data' ) {
+				// Keep an interactive UI surface under `a2ui` for the host to render
+				if ( isA2uiDataPart( part ) ) {
+					return {
+						type: 'data' as const,
+						data: { a2ui: part },
+					};
+				}
+
 				// Handle `data` parts that might contain `component` information
 				const data = part.data as any;
 				if ( data.component && data.componentProps ) {
@@ -243,6 +305,14 @@ export const transformClientMessageToUI = (
 						data,
 					};
 				}
+				// Preserve where a client said a prompt came from (restored from the
+				// stored context), so hosts can tell how a conversation started.
+				if ( typeof data.promptSource === 'string' && data.promptSource !== '' ) {
+					return {
+						type: 'data' as const,
+						data,
+					};
+				}
 				// Unknown `data` shapes are internal metadata. Drop them so
 				// they don't show up as raw JSON. Add a handler above to
 				// render a new shape.
@@ -256,6 +326,16 @@ export const transformClientMessageToUI = (
 			};
 		} )
 		.filter( ( item ): item is NonNullable< typeof item > => item !== null );
+
+	// A live user message keeps its prompt source as client metadata; a restored
+	// one already carries it as a `data` part (see `serverMessageToMessage`).
+	const livePromptSource = readPromptSource( clientMessage.metadata );
+	if (
+		livePromptSource &&
+		! content.some( ( part ) => part.type === 'data' && 'promptSource' in ( part.data ?? {} ) )
+	) {
+		content.push( promptSourceDataPart( livePromptSource ) );
+	}
 
 	// Drop messages with nothing to show. Keeping them would add empty
 	// entries to the list and throw off message counts.
@@ -332,6 +412,7 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
 }
 
 // Hook return interface
@@ -344,6 +425,7 @@ export interface UseAgentChatReturn {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying?: boolean; // Whether reply text is streaming in. Only with `trackReplying`, during a request.
 
 	// UI management methods
 	registerSuggestions: ( suggestions: Suggestion[] ) => void;
@@ -377,6 +459,7 @@ export interface AgentChatState {
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
+	isReplying: boolean;
 }
 
 export interface InternalSubmitOptions {
@@ -420,6 +503,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
+		isReplying: false,
 	} );
 
 	// Initialize message actions
@@ -438,12 +522,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		stateRef.current = state;
 	}, [ state ] );
 
-	// Keep the raw task-update observer fresh without reinitializing the agent
-	// or changing the stable onSubmit callback identity.
+	// Keep the raw task-update observer and `trackReplying` fresh without
+	// reinitializing the agent or changing the stable onSubmit callback identity.
 	const onTaskUpdateRef = useRef( config.onTaskUpdate );
 	useEffect( () => {
 		onTaskUpdateRef.current = config.onTaskUpdate;
 	}, [ config.onTaskUpdate ] );
+	const trackReplyingRef = useRef( config.trackReplying );
+	useEffect( () => {
+		trackReplyingRef.current = config.trackReplying;
+	}, [ config.trackReplying ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -471,7 +559,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
-			const hasAgent = agentManager.hasAgent( agentKey );
+			let hasAgent = agentManager.hasAgent( agentKey );
+			if (
+				hasAgent &&
+				agentManager.getAgentSessionId( agentKey ) !== ( agentConfig.sessionId || null )
+			) {
+				agentManager.abortCurrentRequest( agentKey );
+				agentManager.removeAgent( agentKey );
+				hasAgent = false;
+				setState( ( prev ) => ( { ...prev, clientMessages: [], uiMessages: [] } ) );
+			}
 
 			// Always ensure agent exists, even for new chats with empty sessionId
 			if ( ! hasAgent ) {
@@ -555,12 +652,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( 'Invalid agent configuration' );
 			}
 
-			const isToolResult = options?.type === 'tool_result';
+			const isToolResults = options?.type === 'tool_results';
+			const isToolResult = options?.type === 'tool_result' || isToolResults;
 
 			// Validate before claiming the send lock — only the `finally` at
 			// the end of the send releases it, so a throw above that point
 			// would strand it and silently drop every later send.
-			if ( isToolResult && ( ! options?.toolCallId || ! options?.toolId ) ) {
+			if ( isToolResults && ! options?.toolResults?.length ) {
+				throw new Error( '`toolResults` is required when type is `tool_results`' );
+			}
+			if ( isToolResult && ! isToolResults && ( ! options?.toolCallId || ! options?.toolId ) ) {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
@@ -569,6 +670,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 			isSendingRef.current = true;
 
+			// Keep in-flight updates attached to the site and agent that started the request.
+			const onTaskUpdate = onTaskUpdateRef.current;
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
@@ -607,6 +710,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Create user message immediately for UI (skipped for tool results)
 			if ( ! isToolResult ) {
 				const contentType = ( options?.type || 'text' ) as ContentType;
+				const promptSourcePart = options?.promptSource
+					? promptSourceDataPart( options.promptSource )
+					: null;
 				const userMessage = internalOptions?.messageOverride
 					? transformClientMessageToUI( internalOptions.messageOverride, [] )
 					: ( {
@@ -619,25 +725,28 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 									const url = typeof imageData === 'string' ? imageData : imageData.url;
 									return createImageComponent( url );
 								} ) ?? [] ),
+								...( promptSourcePart ? [ promptSourcePart ] : [] ),
 							],
 							timestamp: messageTimestamp,
 							archived: options?.archived ?? false,
 							showIcon: false,
-					  } as UIMessage );
+						} as UIMessage );
 
 				setState( ( prev ) => ( {
 					...prev,
 					clientMessages: internalOptions?.initialClientMessages ?? prev.clientMessages,
 					uiMessages: userMessage
 						? [ ...( internalOptions?.initialUiMessages ?? prev.uiMessages ), userMessage ]
-						: internalOptions?.initialUiMessages ?? prev.uiMessages,
+						: ( internalOptions?.initialUiMessages ?? prev.uiMessages ),
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
 					...prev,
 					isProcessing: true,
+					isReplying: false,
 					error: null,
 				} ) );
 			}
@@ -656,10 +765,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
 				const hasContentType = !! options?.type && ! isToolResult;
-				if ( options?.archived || hasContentType ) {
+				if ( options?.archived || hasContentType || options?.promptSource ) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
 						...( hasContentType && { contentType: options!.type } ),
+						...promptSourceMetadata( options?.promptSource ),
 					};
 				}
 				// Pass sessionId if provided (overrides agent's default sessionId)
@@ -675,27 +785,54 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					messageOptions.message = internalOptions.messageOverride;
 				}
 
-				// Use `sendToolResult` for tool results (cleans up duplicate results
-				// from conversation history and sends a `ToolResultDataPart` message),
-				// otherwise use regular `sendMessageStream`.
-				const stream = isToolResult
-					? agentManager.sendToolResult(
-							agentKey,
-							options!.toolCallId!,
-							options!.toolId!,
-							{ success: true, message },
-							messageOptions,
-							options?.fileParts
-					  )
-					: agentManager.sendMessageStream( agentKey, message, messageOptions );
+				// Use `sendToolResults` / `sendToolResult` for tool results (they clean
+				// up duplicate results from conversation history and send
+				// `ToolResultDataPart`s), otherwise use regular `sendMessageStream`.
+				let stream: AsyncIterable< TaskUpdate >;
+				if ( isToolResults ) {
+					stream = agentManager.sendToolResults(
+						agentKey,
+						options!.toolResults!,
+						options?.turnToolCalls,
+						messageOptions
+					);
+				} else if ( isToolResult ) {
+					stream = agentManager.sendToolResult(
+						agentKey,
+						options!.toolCallId!,
+						options!.toolId!,
+						{ success: true, message },
+						messageOptions,
+						options?.fileParts
+					);
+				} else {
+					stream = agentManager.sendMessageStream( agentKey, message, messageOptions );
+				}
 
 				for await ( const update of stream ) {
-					if ( onTaskUpdateRef.current ) {
+					if ( onTaskUpdate ) {
 						try {
-							await onTaskUpdateRef.current( update );
+							await onTaskUpdate( update );
 						} catch ( observerError ) {
 							logger( 'Error in onTaskUpdate callback: %O', observerError );
 						}
+					}
+
+					// Reply text means the agent is talking; any other update means it's working.
+					// An empty content delta is a keep-alive and changes nothing.
+					const isContentDelta = update.delta?.deltaType === 'content';
+					const isKeepAlive = isContentDelta && ! update.delta?.content;
+					if ( trackReplyingRef.current && ! isKeepAlive ) {
+						setState( ( prev ) =>
+							prev.isReplying === isContentDelta
+								? prev
+								: {
+										...prev,
+										isReplying: isContentDelta,
+										// The progress text is stale once the reply starts.
+										...( isContentDelta && { progressMessage: null, progressPhase: null } ),
+									}
+						);
 					}
 
 					// Update progress message and phase if present
@@ -741,7 +878,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 														text: update.text,
 													},
 												],
-										  }
+											}
 										: msg
 								),
 							} ) );
@@ -784,10 +921,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 											msg.content[ 0 ]?.text &&
 											finalMessage.content[ 0 ].text.length > msg.content[ 0 ].text.length;
 
+										// The streamed bubble has only text, so add the final message's surfaces
+										const surfaceContent = finalMessage.content.filter(
+											( content ) => content.type === 'data' && isA2uiDataPart( content.data?.a2ui )
+										);
+
 										return {
 											...finalMessage,
 											reactKey: msg.reactKey || currentStreamingId, // Keep stable reactKey
-											content: useServerContent ? finalMessage.content : msg.content,
+											content: useServerContent
+												? finalMessage.content
+												: [ ...msg.content, ...surfaceContent ],
 										};
 									}
 									return msg;
@@ -1010,6 +1154,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,
 		progressPhase: state.progressPhase,
+		isReplying: config.trackReplying && state.isProcessing ? state.isReplying : undefined,
 
 		// UI management methods
 		registerSuggestions,

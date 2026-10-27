@@ -41,11 +41,7 @@ export type AgencyCapability =
 	| 'a4a_remove_managed_sites';
 
 export type AgencyPartnerDirectorySlug =
-	| 'wordpress'
-	| 'jetpack'
-	| 'woocommerce'
-	| 'pressable'
-	| 'vip';
+	'wordpress' | 'jetpack' | 'woocommerce' | 'pressable' | 'vip';
 
 export type AgencyPartnerDirectoryEntryStatus = 'pending' | 'approved' | 'rejected' | 'closed';
 
@@ -112,6 +108,70 @@ export interface AgencyProfileUpdate {
 }
 
 /**
+ * An agency's lead matching preferences, grouped the way
+ * GET and PUT /wpcom/v2/agency/$agencyId/lead-matching exchange them.
+ */
+export interface AgencyLeadMatchingProfile {
+	availability: {
+		accepting_work: boolean;
+		lead_eligibility: string | null;
+		profile_v2_complete: boolean;
+	};
+	geography_and_language: {
+		supported_regions: string[];
+		global_remote: boolean;
+		supported_languages: string[];
+	};
+	business_fit: {
+		supported_business_types: string[];
+		ideal_business_types: string[];
+		supported_company_sizes: string[];
+	};
+	platform_and_hosting: {
+		supported_hosting_environments: string[];
+		migration_platforms: string[];
+		can_recommend_better_hosting: boolean;
+	};
+	ecommerce: {
+		supports_ecommerce_projects: boolean;
+		ecommerce_focus: boolean;
+		supported_complexity_flags: string[];
+	};
+	project_types: {
+		supported_project_types: string[];
+		accepts_small_fixes: boolean;
+	};
+	service_and_budget: {
+		max_service_level: string;
+		supported_budget_bands: string[];
+		minimum_budget_band: string;
+	};
+	timing: {
+		supported_start_timings: string[];
+		supports_hard_deadlines: boolean;
+	};
+	delivery_model: {
+		supported_decision_processes: string[];
+		offers_care_plans: boolean;
+		trains_clients: boolean;
+		works_with_internal_technical_teams: boolean;
+		requires_maintenance_plan: boolean;
+	};
+}
+
+export interface AgencyLeadMatchingSyncState {
+	status?: string;
+	last_synced_at?: string | null;
+	error?: string | null;
+}
+
+export interface AgencyLeadMatchingResponse {
+	agency_id: number;
+	lead_matching_profile: AgencyLeadMatchingProfile | null;
+	sync?: AgencyLeadMatchingSyncState;
+}
+
+/**
  * Response from POST /wpcom/v2/agency/$agencyId/media.
  */
 export interface AgencyMediaUpload {
@@ -147,32 +207,87 @@ export interface Agency {
 	name: string;
 	url: string;
 	tier?: AgencyTier;
-	mcp?: {
-		allowed: boolean;
-	};
 	influenced_revenue?: number;
 	approval_status?: AgencyApprovalStatus | '';
+	/** False while an unpaid invoice or a missing payment method blocks new licenses. */
+	can_issue_licenses?: boolean;
 	profile?: AgencyProfile;
+	/** The logo the agency last uploaded for a referral email. */
+	referrals_logo?: string | null;
 	partner_directory?: {
 		allowed: boolean;
 		directories: AgencyPartnerDirectorySlug[];
+	};
+	amplify?: {
+		allowed: boolean;
+	};
+	signup_meta?: {
+		/** The site count band chosen at signup, e.g. '1-5'. */
+		number_sites?: string;
 	};
 	created_at: string;
 	billing_system?: 'billingdragon' | 'legacy';
 	user?: {
 		capabilities: string[];
+		role?: 'a4a_administrator' | 'a4a_manager';
 	};
 	third_party?: null | {
 		pressable?: null | {
 			pressable_id?: number;
 			/** Null for a regular Pressable plan not bought through the A4A marketplace. */
 			a4a_id?: string | null;
-			usage?: null | {
-				start_date?: string;
-				end_date?: string;
-			};
+			usage?: null | AgencyPressableUsage;
+			titan_usage?: null | AgencyPressableTitanUsage;
 		};
 	};
+	notifications?: AgencyNotification[];
+	payment_notice?: AgencyPaymentNotice | null;
+	/** The partner manager the agency's HubSpot record assigns; null when none is assigned. */
+	partner_manager?: AgencyPartnerManager | null;
+}
+
+export interface AgencyPaymentNotice {
+	state: 'card_expiry' | 'renewal_failure';
+	severity: 'warning' | 'error';
+	title?: string;
+	content?: string;
+	/** Older name for the primary action, still sent alongside it. */
+	action_label?: string;
+	action_url?: string;
+	primary_action_label?: string;
+	primary_action_url?: string;
+	secondary_action_label?: string;
+	secondary_action_url?: string;
+	can_current_user_manage_payment_method?: boolean;
+}
+
+export interface AgencyPartnerManager {
+	name: string;
+	avatar_url?: string | null;
+}
+
+export interface AgencyPressableUsage {
+	storage_gb?: number;
+	visits_count?: number;
+	sites_count?: number;
+	start_date?: string;
+	end_date?: string;
+}
+
+export interface AgencyPressableTitanOrder {
+	domain: string;
+	status: string;
+	billable_inboxes: number;
+	trial_end_at: string | null;
+}
+
+export interface AgencyPressableTitanUsage {
+	orders?: AgencyPressableTitanOrder[];
+}
+
+export interface AgencyNotification {
+	timestamp: number;
+	reference: string;
 }
 
 /**
@@ -223,27 +338,102 @@ export interface AgencyBlog {
 }
 
 /**
- * A single learn/resource item, as returned by GET /wpcom/v2/agency/resources.
+ * Response from GET /wpcom/v2/agency/stats. Public, program-wide counts.
  */
-export interface AgencyResource {
+export interface AgencyProgramStats {
+	active_agencies: number;
+}
+
+/**
+ * The enablement taxonomy used by the v2 resources endpoint.
+ *
+ * Every value is a stable slug rather than a display string: the client owns
+ * the translated labels, so renaming a label never breaks a saved filter.
+ */
+export type AgencyResourceProduct =
+	| 'automattic-for-agencies'
+	| 'jetpack'
+	| 'pressable'
+	| 'woocommerce'
+	| 'wordpress-com'
+	| 'wordpress-org'
+	| 'wordpress-vip';
+
+export type AgencyResourceStage = 'learn' | 'sell' | 'manage' | 'grow';
+
+export type AgencyResourceAudience = 'all' | 'developer' | 'business' | 'client';
+
+/**
+ * The resource hub's content types. A new one means updating this list, so
+ * derive filter options from the response rather than from it, and give any
+ * slug-keyed lookup a fallback: the API is not validated against this union at
+ * runtime.
+ */
+export type AgencyResourceContentType =
+	| 'battlecard'
+	| 'case-study'
+	| 'checklist'
+	| 'guide'
+	| 'one-pager'
+	| 'slide-deck'
+	| 'talk-track'
+	| 'technical-brief'
+	| 'video'
+	| 'webinar';
+
+/** The kind of file the resource is, and a filter axis of its own. */
+export type AgencyResourceFormat = 'pdf' | 'slides' | 'doc' | 'spreadsheet' | 'video' | 'webpage';
+
+/**
+ * A single resource from the enablement hub, as returned by
+ * GET /wpcom/v2/agency/resources/v2.
+ */
+export interface AgencyEnablementResource {
 	id: number;
 	name: string;
 	description: string;
+
+	/**
+	 * The resource itself: the file for a PDF or deck, the page for a webpage,
+	 * the watch URL for a video.
+	 */
 	external_url: string;
-	format: string;
-	related_product: string;
-	related_product_type: string;
-	resource_type: string;
-	preview_image: string;
-	section: string;
+
+	/**
+	 * An image of the resource, such as a document's first page or a still from
+	 * a video, shown in its details. Cards are built from `product`,
+	 * `content_type` and `name` instead.
+	 */
+	thumbnail_url: string | null;
+
+	product: AgencyResourceProduct;
+	/** Expected on every resource, but null where one was published without it. */
+	stage: AgencyResourceStage | null;
+	audience: AgencyResourceAudience | null;
+	content_type: AgencyResourceContentType | null;
+	format: AgencyResourceFormat | null;
+
+	/** Surfaced first in every view. Labelled "Top resource" in the UI. */
+	is_featured: boolean;
+	/** Shown in the Library's "Recommended for you" row. */
+	is_recommended: boolean;
 	created_at: string;
-	updated_at: string;
 }
 
-export interface AgencyResourcesResponse {
-	status: string;
-	results: AgencyResource[];
-	total: number;
+export interface AgencyEnablementResourcesResponse {
+	results: AgencyEnablementResource[];
+}
+
+/**
+ * An agency opening a resource, recorded against the agency.
+ */
+export interface AgencyResourceEvent {
+	resource_id: number;
+	resource_name: string;
+}
+
+export interface AgencyResourceEventResponse {
+	status: 'success';
 }
 
 export interface TipaltiIFrameUrl {
@@ -254,4 +444,34 @@ export interface TipaltiPayee {
 	Status: string;
 	IsPayable: boolean;
 	PayableReason: string[];
+}
+
+/**
+ * A client an agency refers for hosting, as the referral endpoints take it.
+ * `state` is only accepted for the US, Canada and Australia.
+ */
+export interface AgencyHostingReferral {
+	company_name: string;
+	address: string;
+	country_code: string;
+	state: string;
+	city: string;
+	zip: string;
+	first_name: string;
+	last_name: string;
+	title: string;
+	phone: string;
+	email: string;
+	website: string;
+	opportunity_description: string;
+}
+
+export interface AgencyVipPartnerOpportunity extends AgencyHostingReferral {
+	lead_type: string;
+	is_rfp: boolean;
+}
+
+export interface AgencyHostingReferralResponse {
+	status: string;
+	message: string;
 }

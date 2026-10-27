@@ -102,7 +102,7 @@ describe( 'getSidebarType', () => {
 							},
 						},
 					},
-			  }
+				}
 			: {};
 
 		if ( selectedSite?.isPlansPageUntangled ) {

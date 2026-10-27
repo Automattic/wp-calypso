@@ -1,7 +1,8 @@
 import { store as coreStore } from '@wordpress/core-data';
-import { dispatch, select, subscribe } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { isEditorPage } from '../../utils/is-editor-page';
+import { waitForStore } from '../../utils/wait-for-store';
 import type { AbilityResult } from '../types';
 
 /**
@@ -221,43 +222,8 @@ function hasTemplateParts(): boolean {
  * rather than the dispatch.
  * @returns Whether a part's blocks arrived before the timeout.
  */
-function waitForTemplateParts(): Promise< boolean > {
-	if ( hasTemplateParts() ) {
-		return Promise.resolve( true );
-	}
-
-	return new Promise( ( resolve ) => {
-		let settled = false;
-		// A holder, so `finish` can reach both handles without being declared
-		// after the two calls that need it as their callback.
-		const pending: { timer?: ReturnType< typeof setTimeout >; unsubscribe?: () => void } = {};
-
-		const finish = ( found: boolean ) => {
-			if ( settled ) {
-				return;
-			}
-			settled = true;
-			if ( pending.timer !== undefined ) {
-				clearTimeout( pending.timer );
-			}
-			pending.unsubscribe?.();
-			resolve( found );
-		};
-
-		pending.timer = setTimeout( () => finish( false ), TEMPLATE_PARTS_TIMEOUT_MS );
-		pending.unsubscribe = subscribe( () => {
-			if ( hasTemplateParts() ) {
-				finish( true );
-			}
-		}, 'core/block-editor' );
-
-		// A part that landed between the check above and the listener attaching
-		// would never fire a change of its own.
-		if ( hasTemplateParts() ) {
-			finish( true );
-		}
-	} );
-}
+const waitForTemplateParts = (): Promise< boolean > =>
+	waitForStore( 'core/block-editor', hasTemplateParts, TEMPLATE_PARTS_TIMEOUT_MS );
 
 /**
  * The `show-template` ability callback.

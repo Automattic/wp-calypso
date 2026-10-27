@@ -48,7 +48,7 @@ export function buildChainedCheckoutUrl( args: BuildChainedCheckoutUrlArgs ): st
 				redirect_to: externalRedirect,
 				siteSlug,
 				siteId: siteId !== undefined ? String( siteId ) : undefined,
-		  } )
+			} )
 		: `/home/${ siteSlug }`;
 
 	// Path: /checkout/<plan>/<site>. The plan-first form makes checkout

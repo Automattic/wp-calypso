@@ -2,7 +2,9 @@ import { wpcom } from '../wpcom-fetcher';
 import type {
 	AgencyApiResponse,
 	AgencyBlog,
-	AgencyResourcesResponse,
+	AgencyProgramStats,
+	AgencyEnablementResourcesResponse,
+	AgencyLeadMatchingResponse,
 	McpSettings,
 	McpSettingsUpdate,
 	TipaltiIFrameUrl,
@@ -16,9 +18,19 @@ export async function fetchAgency(): Promise< AgencyApiResponse > {
 	} );
 }
 
-export async function fetchAgencyResources(): Promise< AgencyResourcesResponse > {
+export async function fetchAgencyProgramStats(): Promise< AgencyProgramStats > {
 	return wpcom.req.get( {
-		path: '/agency/resources',
+		path: '/agency/stats',
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+/**
+ * Fetches enablement resources with the v2 taxonomy.
+ */
+export async function fetchAgencyEnablementResources(): Promise< AgencyEnablementResourcesResponse > {
+	return wpcom.req.get( {
+		path: '/agency/resources/v2',
 		apiNamespace: 'wpcom/v2',
 	} );
 }
@@ -37,6 +49,15 @@ export async function fetchAgencyBlog( siteId: number ): Promise< AgencyBlog > {
 export async function fetchAgencyScheduleCallLink( agencyId: number ): Promise< string > {
 	return wpcom.req.get( {
 		path: `/agency/${ agencyId }/schedule-call-link`,
+		apiNamespace: 'wpcom/v2',
+	} );
+}
+
+export async function fetchAgencyLeadMatching(
+	agencyId: number
+): Promise< AgencyLeadMatchingResponse > {
+	return wpcom.req.get( {
+		path: `/agency/${ agencyId }/lead-matching`,
 		apiNamespace: 'wpcom/v2',
 	} );
 }

@@ -9,10 +9,9 @@ import debugFactory from 'debug';
 import { useCallback, type FC, useMemo } from 'react';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { preventWidows } from 'calypso/lib/formatting';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { getItemVariantDiscount } from '../item-variation-picker/util';
 
@@ -34,7 +33,6 @@ const isJetpackAkismetProduct = ( product: ResponseCartProduct ) =>
 
 const useCurrentProductWithVariants = () => {
 	const cartKey = useCartKey();
-	const reduxDispatch = useDispatch();
 	const { responseCart, replaceProductInCart } = useShoppingCart( cartKey );
 	const product = responseCart.products.find( isJetpackAkismetProduct );
 	const variantsArray = useGetProductVariants( product );
@@ -48,19 +46,17 @@ const useCurrentProductWithVariants = () => {
 		}
 
 		debug( 'switching from', current.productSlug, 'to', biennial.productSlug );
-		reduxDispatch(
-			recordTracksEvent( 'calypso_jetpack_checkout_sidebar_upsell_click', {
-				upsell_type: 'biennial-plan',
-				switching_from: current.productSlug,
-				switching_to: biennial.productSlug,
-			} )
-		);
+		recordTracksEvent( 'calypso_jetpack_checkout_sidebar_upsell_click', {
+			upsell_type: 'biennial-plan',
+			switching_from: current.productSlug,
+			switching_to: biennial.productSlug,
+		} );
 
 		replaceProductInCart( product.uuid, {
 			product_id: biennial.productId,
 			product_slug: biennial.productSlug,
 		} );
-	}, [ product, current, biennial, reduxDispatch, replaceProductInCart ] );
+	}, [ product, current, biennial, replaceProductInCart ] );
 
 	return {
 		product,
@@ -254,7 +250,7 @@ const JetpackAkismetCheckoutSidebarPlanUpsell: FC = () => {
 
 	const isLoading = FormStatus.READY !== formStatus;
 	const cardTitle = sprintf(
-		// translators: "percentSavings" is the savings percentage for the upgrade as a number, like '20' for '20%'.
+		// translators: %(percentSavings)d is the savings percentage for the upgrade as a number, like '20' for '20%'.
 		__( 'Save %(percentSavings)d%% by paying for two years.' ),
 		{ percentSavings }
 	);

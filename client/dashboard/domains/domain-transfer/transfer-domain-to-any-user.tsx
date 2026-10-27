@@ -54,18 +54,18 @@ export default function TransferDomainToAnyUser() {
 	const { domainName } = domainRoute.useParams() as { domainName: string };
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
 	const { data: domainTransferRequest } = useSuspenseQuery(
-		domainTransferRequestQuery( domainName, domain.site_slug )
+		domainTransferRequestQuery( domainName, domain.blog_id )
 	);
 	const { mutate: deleteDomainTransferRequest, isPending: isDeletingDomainTransferRequest } =
 		useMutation(
-			withSnackbar( deleteDomainTransferRequestMutation( domainName, domain.site_slug ), {
+			withSnackbar( deleteDomainTransferRequestMutation( domainName, domain.blog_id ), {
 				success: __( 'Domain transfer cancelled.' ),
 				error: __( 'Failed to cancel domain transfer.' ),
 			} )
 		);
 	const { mutate: updateDomainTransferRequest, isPending: isUpdatingDomainTransferRequest } =
 		useMutation(
-			withSnackbar( updateDomainTransferRequestMutation( domainName, domain.site_slug ), {
+			withSnackbar( updateDomainTransferRequestMutation( domainName, domain.blog_id ), {
 				success: __( 'A domain transfer request has been emailed to the recipient’s address.' ),
 				error: __( 'Failed to initiate domain transfer.' ),
 			} )

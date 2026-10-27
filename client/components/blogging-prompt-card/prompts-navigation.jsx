@@ -10,18 +10,28 @@ import isBloganuary from 'calypso/data/blogging-prompt/is-bloganuary';
 import { isAIBLoggingPrompt } from 'calypso/data/blogging-prompt/use-ai-blogging-prompts';
 import { navigate } from 'calypso/lib/navigate';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import getEditorUrl from 'calypso/state/selectors/get-editor-url';
-import { getSiteAdminUrl } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, isWpcomSite } from 'calypso/state/sites/selectors';
 import BloganuaryIcon from './bloganuary-icon';
 import LightbulbIcon from './lightbulb-icon';
 import NoResponsesIcon from './no-responses-icon';
 import './style.scss';
 
-const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => {
+const PromptsNavigation = ( { siteId, prompts, tracksPrefix, viewContext, index, menu } ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const editorUrl = useSelector( ( state ) => getEditorUrl( state, siteId ) );
 	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
+	// Write ships from jetpack-mu-wpcom and wpcomsh, so it only exists on
+	// WordPress.com-platform sites, and its admin page requires `publish_posts`
+	// where post-new.php only needs `edit_posts`.
+	const hasWriteEditor = useSelector(
+		( state ) =>
+			!! siteId &&
+			!! isWpcomSite( state, siteId ) &&
+			!! canCurrentUser( state, siteId, 'publish_posts' )
+	);
 
 	const backIcon = 'arrow-left';
 	const forwardIcon = 'arrow-right';
@@ -34,9 +44,32 @@ const PromptsNavigation = ( { siteId, prompts, tracksPrefix, index, menu } ) => 
 		return prompts ? prompts[ promptIndex ] : null;
 	};
 
-	// If no site ID set, go through site selector before rendering post editor
-	const getNewPostLink = () =>
-		addQueryArgs( siteId ? editorUrl : '/post', { answer_prompt: getPrompt()?.id } );
+	const getNewPostLink = () => {
+		const answerPrompt = getPrompt()?.id;
+
+		// With no site, or none whose admin URL has loaded, hand off to Calypso's
+		// site selector, which carries `answer_prompt` through to the editor.
+		// wpcom's /write-editor picker forwards only source/post/url and would
+		// drop it.
+		if ( ! siteId || ! siteAdminUrl ) {
+			return addQueryArgs( '/post', { answer_prompt: answerPrompt } );
+		}
+
+		if ( ! hasWriteEditor ) {
+			return addQueryArgs( editorUrl, { answer_prompt: answerPrompt } );
+		}
+
+		// Per-surface token, so the editor's back button returns to the screen the
+		// answer started from. The bare `writing_prompt` belongs to the wp-admin
+		// Daily Writing Prompt widget, which wants wp-admin back.
+		const source = viewContext === 'reader' ? 'writing_prompt_reader' : 'writing_prompt_home';
+
+		return addQueryArgs( `${ siteAdminUrl }admin.php`, {
+			page: 'write',
+			answer_prompt: answerPrompt,
+			source,
+		} );
+	};
 
 	const goToPreviousStep = () => {
 		let nextIndex = promptIndex - 1;

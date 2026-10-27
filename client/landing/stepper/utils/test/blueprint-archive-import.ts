@@ -3,11 +3,19 @@
  */
 import wpcom from 'calypso/lib/wp';
 import {
+	isPrefillComplete,
 	applyBlueprintSpec,
+	checkBlueprintExists,
 	getBlueprintArchiveSiteSpecUrl,
+	getSimpleSiteEditorUrl,
 	getSiteEditorUrl,
+	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
+	getStandaloneBlueprintSimpleSlug,
+	lookupBlueprintArchive,
+	startBlueprintSimpleImport,
 	waitForAtomicTransferComplete,
+	waitForBlueprintImportComplete,
 } from '../blueprint-archive-import';
 
 jest.mock( 'calypso/lib/wp', () => ( {
@@ -37,9 +45,253 @@ describe( 'getStandaloneBlueprintArchiveSlug', () => {
 	} );
 } );
 
+describe( 'getStandaloneBlueprintSimpleSlug', () => {
+	it( 'returns the blueprint for a build_dest=simple run', () => {
+		expect( getStandaloneBlueprintSimpleSlug( 'zoom', null, 'simple' ) ).toBe( 'zoom' );
+	} );
+
+	it( 'is not the archive destination, and vice versa', () => {
+		expect( getStandaloneBlueprintSimpleSlug( 'zoom', null, 'wow' ) ).toBeNull();
+		expect( getStandaloneBlueprintArchiveSlug( 'zoom', null, 'simple' ) ).toBeNull();
+	} );
+
+	it( 'yields to a Playground id, as the archive slug does', () => {
+		expect( getStandaloneBlueprintSimpleSlug( 'zoom', 'playground-uuid', 'simple' ) ).toBeNull();
+	} );
+} );
+
+describe( 'getSpecMetaFromQuery', () => {
+	it( 'picks up the allow-listed entry parameters and nothing else', () => {
+		expect(
+			getSpecMetaFromQuery(
+				new URLSearchParams(
+					'blueprint=zoom&zoom_booking_url=https%3A%2F%2Fscheduler.zoom.us%2Fjason&other=1'
+				)
+			)
+		).toEqual( { zoom_booking_url: 'https://scheduler.zoom.us/jason' } );
+	} );
+
+	it( 'drops empty values', () => {
+		expect( getSpecMetaFromQuery( new URLSearchParams( 'zoom_booking_url=' ) ) ).toEqual( {} );
+		expect( getSpecMetaFromQuery( new URLSearchParams( 'blueprint=zoom' ) ) ).toEqual( {} );
+	} );
+
+	// A partner can hand over the site title (a business or person's name) as plain text.
+	it( 'picks up a plain site title and drops one with markup or line breaks', () => {
+		expect(
+			getSpecMetaFromQuery( new URLSearchParams( { site_title: '  Cedar & Keel Boat School ' } ) )
+		).toEqual( { site_title: 'Cedar & Keel Boat School' } );
+		for ( const value of [ 'Cedar <b>Keel</b>', 'Cedar\nKeel', 'a'.repeat( 121 ) ] ) {
+			expect( getSpecMetaFromQuery( new URLSearchParams( { site_title: value } ) ) ).toEqual( {} );
+		}
+	} );
+
+	// The widget may render the booking URL as a link, so nothing but a web URL gets that far.
+	it( 'drops booking URL values that are not web URLs', () => {
+		for ( const value of [
+			'javascript:alert(document.cookie)',
+			'data:text/html,hi',
+			'scheduler.zoom.us/jason',
+			'not a url',
+		] ) {
+			expect( getSpecMetaFromQuery( new URLSearchParams( { zoom_booking_url: value } ) ) ).toEqual(
+				{}
+			);
+		}
+	} );
+} );
+
+describe( 'lookupBlueprintArchive prefill', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+	} );
+
+	it( 'keeps only the names the server lists, and reads a missing field as none', async () => {
+		mockGet.mockResolvedValue( {
+			slug: 'zoom',
+			exists: true,
+			prefill: [ 123, '', 'site_title', null, 'zoom_booking_url' ],
+		} );
+		await expect( lookupBlueprintArchive( 'zoom', { target: 'simple' } ) ).resolves.toMatchObject( {
+			prefill: [ 'site_title', 'zoom_booking_url' ],
+		} );
+
+		mockGet.mockResolvedValue( { slug: 'zoom', exists: true } );
+		await expect( lookupBlueprintArchive( 'zoom', { target: 'simple' } ) ).resolves.toMatchObject( {
+			prefill: [],
+		} );
+	} );
+} );
+
+describe( 'isPrefillComplete', () => {
+	it( 'is complete only when the blueprint declares names and the link carries all of them', () => {
+		expect( isPrefillComplete( [], { site_title: 'Cedar' } ) ).toBe( false );
+		expect( isPrefillComplete( [ 'site_title' ], {} ) ).toBe( false );
+		expect(
+			isPrefillComplete( [ 'site_title', 'zoom_booking_url' ], { site_title: 'Cedar' } )
+		).toBe( false );
+		expect(
+			isPrefillComplete( [ 'site_title', 'zoom_booking_url' ], {
+				site_title: 'Cedar',
+				zoom_booking_url: 'https://scheduler.zoom.us/c',
+			} )
+		).toBe( true );
+	} );
+} );
+
+describe( 'startBlueprintSimpleImport', () => {
+	beforeEach( () => {
+		mockPost.mockReset();
+		mockGet.mockReset();
+	} );
+
+	it( 'starts the v1.1 library import with the blog id the endpoint checks against', async () => {
+		mockPost.mockResolvedValue( { importId: 'import-1', importStatus: 'importing' } );
+
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123 );
+
+		expect( mockGet ).not.toHaveBeenCalled();
+		expect( mockPost ).toHaveBeenCalledTimes( 1 );
+		const [ params ] = mockPost.mock.calls[ 0 ];
+		expect( params ).toMatchObject( {
+			path: '/sites/example.wordpress.com/imports/library/new',
+			apiVersion: '1.1',
+		} );
+		expect( params.formData ).toEqual( [
+			[
+				'importStatus',
+				JSON.stringify( {
+					importStatus: 'importer-ready-for-upload',
+					siteId: 123,
+					type: 'wordpress',
+				} ),
+			],
+			[ 'blueprint', 'zoom' ],
+		] );
+	} );
+
+	// The job fills the blueprint content's placeholders from these, so they have to be on
+	// the request that queues it, not on a later call.
+	it( 'sends the site values with the import request', async () => {
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123, {
+			zoom_booking_url: 'https://scheduler.zoom.us/jason',
+		} );
+
+		const [ params ] = mockPost.mock.calls[ 0 ];
+		expect( params.formData ).toContainEqual( [
+			'site_values[zoom_booking_url]',
+			'https://scheduler.zoom.us/jason',
+		] );
+	} );
+
+	// With no site-spec step to follow, the import is asked to confirm the spec itself.
+	it( 'asks the import to apply the partner spec when told to', async () => {
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport(
+			'example.wordpress.com',
+			'zoom',
+			123,
+			{},
+			{ applySpec: true }
+		);
+		expect( mockPost.mock.calls[ 0 ][ 0 ].formData ).toContainEqual( [ 'apply_spec', '1' ] );
+
+		mockPost.mockClear();
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom', 123 );
+		expect( mockPost.mock.calls[ 0 ][ 0 ].formData ).not.toContainEqual( [ 'apply_spec', '1' ] );
+	} );
+
+	it( 'resolves the blog id first when the caller only has a slug', async () => {
+		mockGet.mockResolvedValue( { ID: 456 } );
+		mockPost.mockResolvedValue( {} );
+
+		await startBlueprintSimpleImport( 'example.wordpress.com', 'zoom' );
+
+		expect( mockGet ).toHaveBeenCalledWith(
+			{ path: '/sites/example.wordpress.com', apiVersion: '1.1' },
+			{ fields: 'ID' }
+		);
+		const [ params ] = mockPost.mock.calls[ 0 ];
+		expect( JSON.parse( params.formData[ 0 ][ 1 ] ).siteId ).toBe( 456 );
+	} );
+
+	it( 'refuses to start without a blog id rather than sending one the endpoint will reject', async () => {
+		mockGet.mockResolvedValue( {} );
+
+		await expect( startBlueprintSimpleImport( 'example.wordpress.com', 'zoom' ) ).rejects.toThrow(
+			'blog id'
+		);
+		expect( mockPost ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'getSimpleSiteEditorUrl', () => {
+	it( 'lands on the site editor directly, with no SSO hop and no Big Sky parameters', () => {
+		expect( getSimpleSiteEditorUrl( 'https://example.wordpress.com/wp-admin/' ) ).toBe(
+			'https://example.wordpress.com/wp-admin/site-editor.php'
+		);
+	} );
+
+	it( 'tolerates an admin URL without a trailing slash', () => {
+		expect( getSimpleSiteEditorUrl( 'https://example.wordpress.com/wp-admin' ) ).toBe(
+			'https://example.wordpress.com/wp-admin/site-editor.php'
+		);
+	} );
+} );
+
+describe( 'lookupBlueprintArchive target', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+		mockGet.mockResolvedValue( { exists: true, title: 'Zoom', suggested_plans: [] } );
+	} );
+
+	it( 'asks for the Simple lookup when told to', async () => {
+		await expect( checkBlueprintExists( 'zoom', { target: 'simple' } ) ).resolves.toBe( true );
+
+		expect( mockGet ).toHaveBeenCalledWith(
+			{ path: '/blueprint-archive/zoom', apiNamespace: 'wpcom/v2' },
+			{ target: 'simple' }
+		);
+	} );
+
+	it( 'sends nothing for the default, so an older wpcom sees the request it always did', async () => {
+		await lookupBlueprintArchive( 'zoom' );
+		await lookupBlueprintArchive( 'zoom', { target: 'atomic' } );
+
+		for ( const call of mockGet.mock.calls ) {
+			expect( call[ 1 ] ).toBeUndefined();
+		}
+	} );
+} );
+
 describe( 'applyBlueprintSpec', () => {
 	beforeEach( () => {
 		mockPost.mockReset();
+	} );
+
+	it( 'surfaces the admin URL the response carries, so the caller need not fetch it', async () => {
+		mockPost.mockResolvedValue( {
+			success: true,
+			admin_url: 'https://example.wpcomstaging.com/wp-admin/',
+		} );
+
+		await expect( applyBlueprintSpec( 'example.wordpress.com', 'spec-123' ) ).resolves.toEqual( {
+			applied: true,
+			adminUrl: 'https://example.wpcomstaging.com/wp-admin/',
+		} );
+	} );
+
+	it( 'reports a null admin URL when the field is absent, rather than inventing one', async () => {
+		// A wpcom that predates the field. The caller has to fall back, so this must not guess.
+		mockPost.mockResolvedValue( { success: true } );
+
+		await expect( applyBlueprintSpec( 'example.wordpress.com', 'spec-123' ) ).resolves.toEqual( {
+			applied: true,
+			adminUrl: null,
+		} );
 	} );
 
 	it( 'posts the spec and blueprint to the apply endpoint', async () => {
@@ -47,7 +299,7 @@ describe( 'applyBlueprintSpec', () => {
 
 		await expect(
 			applyBlueprintSpec( 'example.wordpress.com', 'spec-123', 'coachava' )
-		).resolves.toBe( true );
+		).resolves.toEqual( { applied: true, adminUrl: null } );
 
 		expect( mockPost ).toHaveBeenCalledWith(
 			{
@@ -67,7 +319,10 @@ describe( 'applyBlueprintSpec', () => {
 	} );
 
 	it( 'skips the request without a spec id', async () => {
-		await expect( applyBlueprintSpec( '12345', '' ) ).resolves.toBe( false );
+		await expect( applyBlueprintSpec( '12345', '' ) ).resolves.toEqual( {
+			applied: false,
+			adminUrl: null,
+		} );
 
 		expect( mockPost ).not.toHaveBeenCalled();
 	} );
@@ -79,7 +334,10 @@ describe( 'applyBlueprintSpec', () => {
 	it( 'resolves false instead of throwing when the request fails', async () => {
 		mockPost.mockRejectedValue( new Error( 'nope' ) );
 
-		await expect( applyBlueprintSpec( '12345', 'spec-123', 'coachava' ) ).resolves.toBe( false );
+		await expect( applyBlueprintSpec( '12345', 'spec-123', 'coachava' ) ).resolves.toEqual( {
+			applied: false,
+			adminUrl: null,
+		} );
 	} );
 } );
 
@@ -155,6 +413,26 @@ describe( 'getSiteEditorUrl', () => {
 	} );
 
 	/**
+	 * Easy mode is an opt-in the Big Sky plugin reads from the URL once and
+	 * then remembers in a cookie, so the hand-off has to carry it.
+	 */
+	it( 'opts into easy mode when asked', () => {
+		const url = getSiteEditorUrl( 'https://example.com/wp-admin/', {
+			canvasEdit: true,
+			easyMode: true,
+		} );
+		const redirect = new URL( url ).searchParams.get( 'redirect_to' );
+
+		expect( redirect ).toBe( '/wp-admin/site-editor.php?canvas=edit&easy-mode=true' );
+	} );
+
+	it( 'says nothing about easy mode unless asked', () => {
+		expect(
+			getSiteEditorUrl( 'https://example.com/wp-admin/', { canvasEdit: true } )
+		).not.toContain( 'easy-mode' );
+	} );
+
+	/**
 	 * The copy walkthrough is rolled back: the editor opens quietly and the
 	 * customer speaks first. Nothing on the hand-off may start it.
 	 */
@@ -182,6 +460,33 @@ describe( 'getBlueprintArchiveSiteSpecUrl', () => {
 		expect( url ).toContain( 'wow_funnel=blueprint' );
 		expect( url ).toContain( 'blueprint_archive_import=1' );
 		expect( url ).toContain( 'blueprint_slug=coachava' );
+	} );
+
+	it( 'carries build=custom-theme only when the run asked for it', () => {
+		const base = { siteSlug: 'example.wordpress.com', siteId: 123, blueprintSlug: 'zoom' };
+
+		expect( getBlueprintArchiveSiteSpecUrl( { ...base, customThemeBuild: true } ) ).toContain(
+			'build=custom-theme'
+		);
+		expect( getBlueprintArchiveSiteSpecUrl( base ) ).not.toContain( 'build=' );
+	} );
+
+	it( 'marks a Simple build with its own parameter and carries the spec meta', () => {
+		const url = getBlueprintArchiveSiteSpecUrl( {
+			siteSlug: 'example.wordpress.com',
+			siteId: 123,
+			blueprintSlug: 'zoom',
+			simpleImport: true,
+			specMeta: { zoom_booking_url: 'https://scheduler.zoom.us/jason' },
+		} );
+		const params = new URL( url, 'https://wordpress.com' ).searchParams;
+
+		expect( params.get( 'blueprint_simple_import' ) ).toBe( '1' );
+		// Its own parameter, not a value of the archive one: a site-spec that predates it must
+		// ignore the run rather than start an Atomic transfer for it.
+		expect( params.get( 'blueprint_archive_import' ) ).toBeNull();
+		expect( params.get( 'blueprint_slug' ) ).toBe( 'zoom' );
+		expect( params.get( 'zoom_booking_url' ) ).toBe( 'https://scheduler.zoom.us/jason' );
 	} );
 
 	it( 'omits the funnel for a standalone run', () => {
@@ -252,5 +557,104 @@ describe( 'waitForAtomicTransferComplete first-poll timing', () => {
 		await jest.advanceTimersByTimeAsync( 5000 );
 		await pending;
 		expect( mockGet ).toHaveBeenCalledTimes( 2 );
+	} );
+} );
+
+describe( 'waitForBlueprintImportComplete with no import record', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+	} );
+
+	/**
+	 * Every caller starts the import before polling, so a site with no record has nothing coming.
+	 * It used to hold the customer on the loading screen for the full fifteen minutes.
+	 */
+	it( 'gives up after a minute of empty answers', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( [] );
+
+		const pending = waitForBlueprintImportComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+		const outcome = expect( pending ).rejects.toThrow( 'no import record' );
+
+		await jest.advanceTimersByTimeAsync( 65000 );
+		await outcome;
+		expect( mockGet.mock.calls.length ).toBeLessThan( 20 );
+	} );
+
+	it( 'keeps waiting on an import that is running', async () => {
+		jest.useFakeTimers();
+		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importing' } );
+
+		const pending = waitForBlueprintImportComplete( 'site.example.com', {
+			pollIntervalMs: 5000,
+			initialDelayMs: 0,
+		} );
+		let settled = false;
+		pending.then(
+			() => ( settled = true ),
+			() => ( settled = true )
+		);
+
+		await jest.advanceTimersByTimeAsync( 120000 );
+		expect( settled ).toBe( false );
+
+		mockGet.mockResolvedValue( { importId: 'abc', importStatus: 'importSuccess' } );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		await expect( pending ).resolves.toBeUndefined();
+	} );
+} );
+
+/**
+ * Onboarding names a blueprint to the customer by its title ("Punk"), so the lookup carries it —
+ * and a server that predates the field must not break the plans it already returns.
+ */
+describe( 'lookupBlueprintArchive title', () => {
+	beforeEach( () => {
+		mockGet.mockReset();
+	} );
+
+	it( 'returns the blueprint title alongside the suggested plans', async () => {
+		mockGet.mockResolvedValue( {
+			slug: 'punk',
+			exists: true,
+			title: ' Punk ',
+			suggested_plans: [ 'value_bundle' ],
+		} );
+
+		await expect( lookupBlueprintArchive( 'punk' ) ).resolves.toEqual( {
+			exists: true,
+			title: 'Punk',
+			suggestedPlans: [ 'value_bundle' ],
+			prefill: [],
+		} );
+	} );
+
+	it( 'reads a missing title as empty', async () => {
+		mockGet.mockResolvedValue( { slug: 'punk', exists: true, suggested_plans: [] } );
+
+		await expect( lookupBlueprintArchive( 'punk' ) ).resolves.toEqual( {
+			exists: true,
+			title: '',
+			suggestedPlans: [],
+			prefill: [],
+		} );
+	} );
+
+	it( 'has no title for a blueprint that does not resolve', async () => {
+		mockGet.mockRejectedValue( new Error( 'Not found' ) );
+
+		await expect( lookupBlueprintArchive( 'nope' ) ).resolves.toEqual( {
+			exists: false,
+			title: '',
+			suggestedPlans: [],
+			prefill: [],
+		} );
 	} );
 } );

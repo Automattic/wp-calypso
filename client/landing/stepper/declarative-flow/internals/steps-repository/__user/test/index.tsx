@@ -6,14 +6,26 @@ jest.mock( 'calypso/lib/partner-branding', () => ( {
 	usePartnerBranding: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
+	recordTracksEvent: jest.fn(),
+} ) );
+
 jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn(),
 } ) );
 
-import { screen } from '@testing-library/dom';
+jest.mock( 'calypso/lib/explat', () => {
+	const actual = jest.requireActual( 'calypso/lib/explat' );
+	return { ...actual, useExperiment: jest.fn( actual.useExperiment ) };
+} );
+
+import { fireEvent, screen } from '@testing-library/dom';
 import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { useExperiment } from 'calypso/lib/explat';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
@@ -22,13 +34,46 @@ import UserStep, { type UserStepAccepts } from '..';
 
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
+const mockUseExperiment = useExperiment as unknown as jest.Mock;
 
-// Drives isMobileViewport = useViewportMatch( 'small', '<' ). Every other call
-// (e.g. useViewportMatch( 'large' )) resolves to false, i.e. not a wide viewport.
-const setViewport = ( { isMobile }: { isMobile: boolean } ) =>
-	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) =>
-		breakpoint === 'small' && operator === '<' ? isMobile : false
-	);
+const ENTRY_CLARITY_EXPERIMENT = 'calypso_account_step_entry_clarity_202609';
+
+// Answers for the entry-clarity experiment only, the way ExPlat does: no assignment for an
+// ineligible user. The step's other experiments keep the real hook.
+const setEntryClarityArm = ( variationName: 'control' | 'treatment', isLoading = false ) =>
+	mockUseExperiment.mockImplementation( ( name: string, options?: { isEligible?: boolean } ) => {
+		if ( name !== ENTRY_CLARITY_EXPERIMENT ) {
+			return jest.requireActual( 'calypso/lib/explat' ).useExperiment( name, options );
+		}
+		if ( options?.isEligible === false ) {
+			return [ false, null ];
+		}
+		return [ isLoading, isLoading ? null : { variationName } ];
+	} );
+
+const isEligibleForEntryClarity = () =>
+	mockUseExperiment.mock.calls
+		.filter( ( [ name ] ) => name === ENTRY_CLARITY_EXPERIMENT )
+		.at( -1 )?.[ 1 ]?.isEligible;
+
+// isMobileViewport is useViewportMatch( 'small', '<' ) at 600px and isLargeViewport is
+// useViewportMatch( 'large' ) at 960px. Pass both to reach the band in between.
+const setViewport = ( {
+	isMobile,
+	isLarge = ! isMobile,
+}: {
+	isMobile: boolean;
+	isLarge?: boolean;
+} ) =>
+	mockUseViewportMatch.mockImplementation( ( breakpoint: string, operator?: string ) => {
+		if ( breakpoint === 'small' && operator === '<' ) {
+			return isMobile;
+		}
+		if ( breakpoint === 'large' ) {
+			return isLarge;
+		}
+		return false;
+	} );
 
 const noPartnerBranding = {
 	hasCustomBranding: false,
@@ -41,24 +86,71 @@ describe( 'User email signup step', () => {
 	beforeEach( () => {
 		setViewport( { isMobile: false } );
 		mockUsePartnerBranding.mockReturnValue( noPartnerBranding );
+		mockUseExperiment.mockClear();
+		setEntryClarityArm( 'treatment' );
 	} );
 
 	const renderUserStep = (
 		url = '/onboarding/user?user_email=test@example.com',
-		props: Partial< UserStepAccepts > = {}
+		props: Partial< UserStepAccepts > = {},
+		flow = 'onboarding'
 	) => {
 		return renderWithProvider(
 			<MemoryRouter initialEntries={ [ url ] }>
-				<UserStep
-					flow="onboarding"
-					stepName="user"
-					navigation={ { submit: jest.fn() } }
-					{ ...props }
-				/>
+				<UserStep flow={ flow } stepName="user" navigation={ { submit: jest.fn() } } { ...props } />
 			</MemoryRouter>,
 			{ reducers: { login: loginReducer, route: routeReducer } }
 		);
 	};
+
+	describe( 'top bar logo', () => {
+		it( 'links the logo to the homepage in the onboarding flow', () => {
+			renderUserStep();
+			expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+				'href',
+				'https://wordpress.com/'
+			);
+		} );
+
+		it( 'does not link the logo in other flows', () => {
+			renderUserStep( '/site-setup/user', {}, 'site-setup' );
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'link', { name: 'WordPress.com home' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'does not link the logo with partner branding', () => {
+			mockUsePartnerBranding.mockReturnValue( { ...noPartnerBranding, hasCustomBranding: true } );
+			renderUserStep();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'link', { name: 'WordPress.com home' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'Log in link tracking', () => {
+		beforeEach( () => {
+			( recordTracksEvent as jest.Mock ).mockClear();
+		} );
+
+		it.each( [
+			[ 'form', '/onboarding/user', 'onboarding', false ],
+			[ 'top-bar', '/onboarding/user', 'onboarding', true ],
+			[ 'form', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding', false ],
+			[ 'top-bar', '/test-flow/user', 'test-flow', false ],
+		] )( 'records a click on the %s link at %s', ( origin, url, flow, isMobile ) => {
+			setViewport( { isMobile } );
+			renderUserStep( url, {}, flow );
+			fireEvent.click( screen.getByRole( 'link', { name: 'Log in' } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_signup_login_link_click', {
+				flow,
+				step: 'user',
+				origin,
+			} );
+		} );
+	} );
 
 	it( 'passes userEmail from user_email query param to SignupFormSocialFirst', () => {
 		renderUserStep( '/onboarding/user?user_email=hello@wp.com' );
@@ -144,6 +236,77 @@ describe( 'User email signup step', () => {
 				allowedSocialServices: [ 'google', 'apple' ],
 			} );
 			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'entry clarity experiment', () => {
+		const loginLinkSelector = '.signup-form-social-first__login-link';
+		const gapClass = 'step-container-v2--user-entry-clarity';
+		const emailButtonIcon = () =>
+			screen.getByRole( 'button', { name: /Continue with email/i } ).querySelector( 'svg' );
+
+		it( 'gives treatment the in-form "Log in", the envelope and the login heading gap', () => {
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).toBeVisible();
+			// One route to logging in, not two: the top bar no longer carries its own.
+			expect( screen.getAllByRole( 'link', { name: 'Log in' } ) ).toHaveLength( 1 );
+			expect(
+				screen.getByRole( 'link', { name: 'Log in' } ).closest( loginLinkSelector )
+			).toBeVisible();
+			expect( emailButtonIcon() ).toHaveClass( 'social-icons__envelope' );
+			expect( container.getElementsByClassName( gapClass ) ).toHaveLength( 1 );
+		} );
+
+		it.each( [
+			[ 'control', false ],
+			[ 'treatment while the assignment loads', true ],
+		] )( 'keeps the current experience for %s', ( _label, isLoading ) => {
+			setEntryClarityArm( isLoading ? 'treatment' : 'control', isLoading );
+
+			const { container } = renderUserStep();
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+			expect( emailButtonIcon() ).not.toHaveClass( 'social-icons__envelope' );
+			expect( container.getElementsByClassName( gapClass ) ).toHaveLength( 0 );
+		} );
+
+		it( 'leaves the compact mobile layout out of the experiment', () => {
+			setViewport( { isMobile: true } );
+
+			const { container } = renderUserStep();
+
+			expect( isEligibleForEntryClarity() ).toBe( false );
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it( 'leaves the band between the breakpoints out of the experiment', () => {
+			// Between 600px and 960px the login link stays in the top bar, matching login.
+			setViewport( { isMobile: false, isLarge: false } );
+
+			const { container } = renderUserStep();
+
+			expect( isEligibleForEntryClarity() ).toBe( false );
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
+		} );
+
+		it.each( [
+			[ 'other flows', '/site-setup/user', 'site-setup' ],
+			[ 'Woo-referrer users', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
+		] )( 'leaves %s out of the experiment', ( _label, url, flow ) => {
+			renderUserStep( url, {}, flow );
+
+			expect( isEligibleForEntryClarity() ).toBe( false );
+		} );
+
+		it( 'drops the link entirely when hideLoginLink is set', () => {
+			const { container } = renderUserStep( '/onboarding/user', { hideLoginLink: true } );
+
+			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'link', { name: 'Log in' } ) ).not.toBeInTheDocument();
 		} );
 	} );
 } );

@@ -268,7 +268,7 @@ export default function UserContactSupportModalForm( {
 							isPressableSelected
 								? translate(
 										'Please provide the team with a detailed explanation of the issue you’re facing, including steps to reproduce the issue on our end and/or URLs. Providing these details will greatly help us with your support request.'
-								  )
+									)
 								: translate( 'Add your message here' )
 						}
 						value={ message }

@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import cookie from 'cookie';
+import MockBlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import LoginForm from 'calypso/blocks/login/login-form';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import loginReducer from 'calypso/state/login/reducer';
@@ -20,13 +21,7 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
 } ) );
 
-jest.mock( 'calypso/blocks/login/blackbox-challenge', () => {
-	const { useEffect } = require( 'react' );
-	return ( { onSubmitBlockedChange } ) => {
-		useEffect( () => onSubmitBlockedChange?.( false ), [ onSubmitBlockedChange ] );
-		return null;
-	};
-} );
+jest.mock( 'calypso/blocks/login/blackbox-challenge' );
 
 const render = ( el, options ) =>
 	renderWithProvider( el, { ...options, reducers: { login: loginReducer, route: routeReducer } } );
@@ -53,8 +48,9 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account with the email address/i );
-		expect( notice ).toBeInTheDocument();
+		const notice = screen.getByText( /already a WordPress.com account for/i );
+		expect( notice ).toBeVisible();
+		expect( notice.closest( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 	} );
 
 	test( 'displays notice when social account is linking and last used authentication method is set', async () => {
@@ -64,7 +60,7 @@ describe( 'LoginForm', () => {
 			initialState: { login: { socialAccountLink: { isLinking: true } } },
 		} );
 
-		const notice = screen.getByText( /We found a WordPress.com account with the email address/i );
+		const notice = screen.getByText( /already a WordPress.com account for/i );
 		expect( notice ).toBeInTheDocument();
 	} );
 
@@ -94,7 +90,7 @@ describe( 'LoginForm', () => {
 		const username = screen.getByLabelText( /username/i );
 		await userEvent.type( username, 'test@example.com' );
 
-		const notice = screen.queryByText( /We found a WordPress.com account with the email address/i );
+		const notice = screen.queryByText( /already a WordPress.com account for/i );
 		expect( notice ).not.toBeInTheDocument();
 	} );
 
@@ -164,7 +160,7 @@ describe( 'LoginForm', () => {
 		const password = screen.getByLabelText( /^password$/i );
 		expect( password ).toBeInTheDocument();
 
-		const btn = screen.getByRole( 'button', { name: /Log In/i } );
+		const btn = screen.getByRole( 'button', { name: /^Log in$/ } );
 		expect( btn ).toBeInTheDocument();
 	} );
 
@@ -190,6 +186,42 @@ describe( 'LoginForm', () => {
 		expect( passwordContainer ).toHaveClass( 'is-hidden' );
 	} );
 
+	test( 'puts the lost-password link on the password label row once the field is shown', async () => {
+		const { container } = render(
+			<LoginForm isSocialFirst lostPasswordLink={ <a href="/">Lost your password?</a> } />,
+			{ initialState: { login: { authAccountType: 'regular' } } }
+		);
+
+		const row = container.getElementsByClassName( 'login__form-password-label-row' )[ 0 ];
+		expect( row ).toContainElement( screen.getByText( 'Password' ) );
+		expect( row ).toContainElement( screen.getByRole( 'link', { name: 'Lost your password?' } ) );
+	} );
+
+	test( 'does not render the lost-password link while the password field is hidden', async () => {
+		const { container } = render(
+			<LoginForm isSocialFirst lostPasswordLink={ <a href="/">Lost your password?</a> } />
+		);
+
+		expect( container.getElementsByClassName( 'login__form-password' )[ 0 ] ).toHaveClass(
+			'is-hidden'
+		);
+		expect( screen.queryByRole( 'link', { name: 'Lost your password?' } ) ).not.toBeInTheDocument();
+		expect( container.getElementsByClassName( 'login__form-password-label-row' ) ).toHaveLength(
+			0
+		);
+	} );
+
+	test( 'renders a plain password label when no lost-password link is passed', async () => {
+		const { container } = render( <LoginForm isSocialFirst />, {
+			initialState: { login: { authAccountType: 'regular' } },
+		} );
+
+		expect( screen.getByLabelText( /^password$/i ) ).toBeVisible();
+		expect( container.getElementsByClassName( 'login__form-password-label-row' ) ).toHaveLength(
+			0
+		);
+	} );
+
 	test( 'shows "Continue" button text for passwordless accounts', async () => {
 		render( <LoginForm isSocialFirst />, {
 			initialState: {
@@ -201,14 +233,14 @@ describe( 'LoginForm', () => {
 		expect( btn ).toBeInTheDocument();
 	} );
 
-	test( 'shows "Log In" button text for regular accounts', async () => {
+	test( 'shows "Log in" button text for regular accounts', async () => {
 		render( <LoginForm isSocialFirst />, {
 			initialState: {
 				login: { authAccountType: 'regular' },
 			},
 		} );
 
-		const btn = screen.getByRole( 'button', { name: /Log In/i } );
+		const btn = screen.getByRole( 'button', { name: /^Log in$/ } );
 		expect( btn ).toBeInTheDocument();
 	} );
 
@@ -253,6 +285,43 @@ describe( 'LoginForm', () => {
 		expect( screen.getByText( 'Your username' ) ).toBeInTheDocument();
 	} );
 
+	test( 'prefills the email from the OAuth2 redirect_to URL', async () => {
+		render( <LoginForm />, {
+			initialState: {
+				route: {
+					query: {
+						current: {
+							redirect_to:
+								'https://public-api.wordpress.com/oauth2/authorize/?client_id=1&email_address=test%2Btag%40example.com',
+						},
+						initial: {},
+					},
+				},
+			},
+		} );
+
+		expect( screen.getByLabelText( /username/i ) ).toHaveValue( 'test+tag@example.com' );
+	} );
+
+	test( 'prefers the top-level email_address over the one in redirect_to', async () => {
+		render( <LoginForm />, {
+			initialState: {
+				route: {
+					query: {
+						current: {
+							email_address: 'top@example.com',
+							redirect_to:
+								'https://public-api.wordpress.com/oauth2/authorize/?client_id=1&email_address=nested%40example.com',
+						},
+						initial: {},
+					},
+				},
+			},
+		} );
+
+		expect( screen.getByLabelText( /username/i ) ).toHaveValue( 'top@example.com' );
+	} );
+
 	describe( 'Blackbox integration', () => {
 		const mockFetch = jest.fn();
 
@@ -275,6 +344,7 @@ describe( 'LoginForm', () => {
 			mockFetch.mockReset();
 			getBlackboxSessionId.mockReset();
 			getBlackboxSessionId.mockResolvedValue( undefined );
+			MockBlackboxChallenge.blocked = false;
 			delete window.Blackbox;
 		} );
 
@@ -286,7 +356,7 @@ describe( 'LoginForm', () => {
 			} );
 
 			renderRegularLoginForm();
-			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /^Log in$/ } ) );
 
 			await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
 
@@ -303,7 +373,7 @@ describe( 'LoginForm', () => {
 			} );
 
 			renderRegularLoginForm();
-			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /^Log in$/ } ) );
 
 			await waitFor( () => expect( mockFetch ).toHaveBeenCalled() );
 
@@ -321,9 +391,24 @@ describe( 'LoginForm', () => {
 			} );
 
 			renderRegularLoginForm();
-			await userEvent.click( screen.getByRole( 'button', { name: /Log In/i } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /^Log in$/ } ) );
 
 			await waitFor( () => expect( window.Blackbox.reset ).toHaveBeenCalledTimes( 1 ) );
+		} );
+
+		test( 'sends no request when Enter submits while a challenge is blocking', async () => {
+			MockBlackboxChallenge.blocked = true;
+			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+
+			renderRegularLoginForm();
+
+			const form = document.querySelector( 'form[method="post"]' );
+			act( () => {
+				form.requestSubmit();
+			} );
+
+			await waitFor( () => expect( getBlackboxSessionId ).not.toHaveBeenCalled() );
+			expect( mockFetch ).not.toHaveBeenCalled();
 		} );
 
 		test( 'sends only one login request when the form is submitted twice', async () => {

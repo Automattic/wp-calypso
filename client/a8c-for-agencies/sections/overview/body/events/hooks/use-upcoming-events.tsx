@@ -11,6 +11,7 @@ import {
 import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-pressable-offer-eligibility';
 import { A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { UpcomingEventProps } from 'calypso/a8c-for-agencies/components/upcoming-event/types';
+import EvolveDigitalLogo from 'calypso/assets/images/a8c-for-agencies/events/evolvedigital-logo.svg';
 import PressableLogo from 'calypso/assets/images/a8c-for-agencies/events/pressable-logo.svg';
 import WordCampAsia2026Image from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-compliment-image.svg';
 import WordCampAsia2026Logo from 'calypso/assets/images/a8c-for-agencies/events/wordcamp-asia2026-image.svg';
@@ -25,6 +26,43 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 
 	return useMemo( () => {
 		const eventsData: UpcomingEventProps[] = [
+			{
+				id: 'a4a-evolvedigital-nyc-2026',
+				// Promo window, not the event dates (those live in displayDate): the
+				// list hides an entry after `to`, so this stops showing on November 19.
+				date: {
+					from: moment( '2026-10-26' ),
+					to: moment( '2026-11-18' ),
+				},
+				displayDate: translate( 'November 19–20 · Civic Hall, NYC' ),
+				title: translate( 'Join us at EvolveDigital NYC 2026' ),
+				subtitle: translate( 'Automattic for Agencies & EvolveDigital' ),
+				descriptions: [
+					translate(
+						'Automattic is a Presenting Sponsor of EvolveDigital NYC 2026, bringing the teams behind WordPress.com, WordPress VIP, and WooCommerce to a room of developers, designers, strategists, and digital leaders from higher ed, government, nonprofits, and agencies.'
+					),
+					translate(
+						'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50%% off General Admission tickets with the code {{strong}}{{code}}%(code)s{{/code}}{{/strong}}, so come say hello to our team while you’re there.',
+						{
+							args: { code: 'Automattic50Off' },
+							components: { strong: <strong />, code: <code /> },
+							comment: 'The code is a ticket discount code, shown as-is.',
+						}
+					),
+				],
+				ctas: [
+					{
+						variant: 'primary',
+						label: translate( 'Purchase tickets' ),
+						url: 'https://www.evolvedigital.com/',
+						isExternal: true,
+						trackEventName:
+							'calypso_a4a_overview_events_evolvedigital_nyc_2026_purchase_tickets_click',
+					},
+				],
+				logoUrl: EvolveDigitalLogo,
+				dateClassName: 'a4a-event__date--a4a',
+			},
 			{
 				id: 'a4a-wordcamp-us-2026-08-16',
 				date: {
@@ -148,7 +186,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 							logoUrl: PressableLogo,
 							dateClassName: 'a4a-event__date--a4a',
 						},
-				  ]
+					]
 				: [] ),
 			...( showPressableExpansionOffer
 				? [
@@ -190,7 +228,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 							logoUrl: PressableLogo,
 							dateClassName: 'a4a-event__date--a4a',
 						},
-				  ]
+					]
 				: [] ),
 		];
 

@@ -6,11 +6,7 @@ import usePaymentMethod from '../../purchases/payment-methods/hooks/use-payment-
 import type { SiteDetails } from '@automattic/data-stores';
 
 type StepKey =
-	| 'issueLicense'
-	| 'reviewLicense'
-	| 'addPaymentMethod'
-	| 'assignLicense'
-	| 'downloadProducts';
+	'issueLicense' | 'reviewLicense' | 'addPaymentMethod' | 'assignLicense' | 'downloadProducts';
 
 interface Step {
 	key: StepKey;

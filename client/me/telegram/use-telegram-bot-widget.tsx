@@ -54,6 +54,8 @@ export function useTelegramBotWidget( args: UseTelegramBotWidgetArgs = {} ) {
 	const containerRef = useRef< HTMLDivElement | null >( null );
 	const injectedContainerRef = useRef< HTMLDivElement | null >( null );
 
+	const [ pendingAuth, setPendingAuth ] = useState< TelegramAuthPayload | null >( null );
+	const [ isConnecting, setIsConnecting ] = useState( false );
 	const [ isConnected, setIsConnected ] = useState( false );
 	/** When false, status has not been fetched yet — do not show widget or assume disconnected. */
 	const [ isStatusReady, setIsStatusReady ] = useState( false );
@@ -76,25 +78,7 @@ export function useTelegramBotWidget( args: UseTelegramBotWidgetArgs = {} ) {
 		window.dollyOnTelegramAuth = ( user ) => {
 			trackAuthCallback?.( user );
 
-			wpcom.req
-				.post( { path: '/telegram-bot/connect', apiNamespace: 'wpcom/v2' }, user )
-				.then( () => {
-					dispatch(
-						successNotice(
-							translate( 'Telegram connected successfully.' ),
-							TELEGRAM_TRANSIENT_NOTICE
-						)
-					);
-					setConnectedTrue();
-				} )
-				.catch( ( err: Error ) => {
-					dispatch(
-						errorNotice(
-							err?.message || translate( 'Failed to connect Telegram. Please try again.' ),
-							TELEGRAM_TRANSIENT_NOTICE
-						)
-					);
-				} );
+			setPendingAuth( ( current ) => current ?? user );
 		};
 
 		// Defer injection so the container div is committed to the DOM.
@@ -189,6 +173,36 @@ export function useTelegramBotWidget( args: UseTelegramBotWidgetArgs = {} ) {
 		};
 	}, [ isConfigured ] );
 
+	const handleConnect = () => {
+		if ( ! pendingAuth || isConnecting ) {
+			return;
+		}
+		setIsConnecting( true );
+
+		wpcom.req
+			.post( { path: '/telegram-bot/connect', apiNamespace: 'wpcom/v2' }, pendingAuth )
+			.then( () => {
+				dispatch(
+					successNotice(
+						translate( 'Telegram connected successfully.' ),
+						TELEGRAM_TRANSIENT_NOTICE
+					)
+				);
+				setConnectedTrue();
+				setPendingAuth( null );
+			} )
+			.catch( ( err: Error ) => {
+				dispatch(
+					errorNotice(
+						err?.message || translate( 'Failed to connect Telegram. Please try again.' ),
+						TELEGRAM_TRANSIENT_NOTICE
+					)
+				);
+			} )
+			.finally( () => setIsConnecting( false ) );
+	};
+	const handleCancel = () => setPendingAuth( null );
+
 	const handleDisconnect = useCallback( () => {
 		wpcom.req
 			.post( { path: '/telegram-bot/disconnect', apiNamespace: 'wpcom/v2' } )
@@ -215,5 +229,9 @@ export function useTelegramBotWidget( args: UseTelegramBotWidgetArgs = {} ) {
 		isStatusReady,
 		containerRef,
 		handleDisconnect,
+		pendingAuth,
+		isConnecting,
+		handleConnect,
+		handleCancel,
 	} as const;
 }

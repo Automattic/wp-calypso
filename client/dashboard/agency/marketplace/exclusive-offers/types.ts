@@ -27,3 +27,12 @@ export type RecordTracksEvent = (
 	eventName: string,
 	properties?: Record< string, unknown >
 ) => void;
+
+export interface PartnerOfferLinks {
+	hostingWpcom: string;
+	hostingPressable: string;
+	referPressablePremium: string;
+	referEnterprise: string;
+	products: string;
+	woopayments: string;
+}

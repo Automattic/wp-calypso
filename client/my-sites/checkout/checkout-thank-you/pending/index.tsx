@@ -7,11 +7,12 @@ import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import React, { useState, useEffect, useRef } from 'react';
 import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
+import { CHECKOUT_SUCCESS_PLAN_PARAM } from 'calypso/dashboard/app/checkout-success-flash';
 import { CHECKOUT_SUCCESS_FLASH_ID } from 'calypso/dashboard/app/checkout-success-flash-message';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
@@ -20,23 +21,21 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useSelector, useDispatch } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
-import { SUCCESS } from 'calypso/state/order-transactions/constants';
-import getOrderTransactionError from 'calypso/state/selectors/get-order-transaction-error';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestSite } from 'calypso/state/sites/actions';
 import usePurchaseOrder from '../../src/hooks/use-purchase-order';
 import { logStashLoadErrorEvent } from '../../src/lib/analytics';
+import { recordCompletedPurchaseAnalytics } from '../../src/lib/record-completed-purchase-analytics';
+import { SUCCESS } from '../../src/types/order-transaction';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
-	appendNoticeQueryParam,
+	PURCHASE_NOTICE_QUERY_KEY,
 } from '../purchase-notice-constants';
+import type { OrderTransaction, OrderTransactionSuccess } from '../../src/types/order-transaction';
 import type { RedirectInstructions } from 'calypso/my-sites/checkout/src/lib/pending-page';
-import type {
-	OrderTransaction,
-	OrderTransactionSuccess,
-} from 'calypso/state/selectors/get-order-transaction';
 import type { CalypsoDispatch } from 'calypso/state/types';
 
 import './style.scss';
@@ -148,6 +147,35 @@ function isDashboardUrl( url: string ): boolean {
 	}
 }
 
+/**
+ * Tags a successful redirect so the destination can show a success toast on
+ * arrival. The Dashboard (a separate SPA) can't rely on the classic notice
+ * mechanisms, so it gets its own `flash` param for `<CheckoutSuccessFlashMessage>`.
+ * Classic My Home reads `notice`. Both name a newly bought plan.
+ */
+function addSuccessNoticeParams(
+	url: string,
+	{ purchasedPlanSlug, isRenewal }: { purchasedPlanSlug?: string; isRenewal: boolean }
+): string {
+	const planArgs = purchasedPlanSlug ? { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } : {};
+
+	if ( isDashboardUrl( url ) ) {
+		// Drop a plan slug left over from an earlier checkout started on the same page.
+		const cleanUrl = removeQueryArgs( url, CHECKOUT_SUCCESS_PLAN_PARAM );
+		return addQueryArgs( cleanUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID, ...planArgs } );
+	}
+
+	if ( url.startsWith( '/home/' ) ) {
+		// Renewals get their own notice (see `triggerPostRedirectNotices`), so drop
+		// the generic one a saved signup destination carries.
+		return isRenewal
+			? removeQueryArgs( url, PURCHASE_NOTICE_QUERY_KEY )
+			: addQueryArgs( url, planArgs );
+	}
+
+	return url;
+}
+
 function performRedirect( url: string ): void {
 	if ( url.startsWith( '/' ) ) {
 		page( url );
@@ -211,9 +239,6 @@ function useRedirectOnTransactionSuccess( {
 	} );
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
 
-	const error: Error | null = useSelector( ( state ) =>
-		orderId ? getOrderTransactionError( state, orderId ) : null
-	);
 	const reduxDispatch = useDispatch();
 	const queryClient = useQueryClient();
 	const cartKey = useCartKey();
@@ -231,6 +256,9 @@ function useRedirectOnTransactionSuccess( {
 		( receipt?.items.some( ( item ) => item.is_plan ) &&
 			receipt?.items.some( ( item ) => item.is_domain_registration ) ) ??
 		false;
+	const purchasedPlanSlug = receipt?.items.find(
+		( item ) => item.is_plan && item.type === 'new purchase'
+	)?.wpcom_product_slug;
 	const blogId = firstItem?.site_id;
 	const saasRedirectUrl = receipt?.items.reduce< string | undefined >(
 		( url, item ) => url ?? ( item.saas_redirect_url || undefined ),
@@ -321,7 +349,6 @@ function useRedirectOnTransactionSuccess( {
 
 		const redirectInstructions = getRedirectFromPendingPage( {
 			isLoadingOrder,
-			error,
 			transaction,
 			orderId,
 			receiptId,
@@ -366,7 +393,9 @@ function useRedirectOnTransactionSuccess( {
 			reduxDispatch( requestSite( blogId ) );
 		}
 
+		// Help Center reads Calypso's client; this page renders under the api-queries one.
 		queryClient.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
+		getCalypsoQueryClient()?.invalidateQueries( { queryKey: SUPPORT_STATUS_QUERY_KEY } );
 
 		// For plan + domain purchases the `domain-and-plan` flow sends the user to
 		// `/home/<site>` instead of the thank-you page. Tag the destination URL with
@@ -374,18 +403,25 @@ function useRedirectOnTransactionSuccess( {
 		// arrival - we cannot dispatch from here because the global notice renderer
 		// has no concept of "show only on the next page".
 		let finalUrl = isPlanAndDomainPurchase
-			? appendNoticeQueryParam( redirectInstructions.url, PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE )
+			? addQueryArgs( redirectInstructions.url, {
+					[ PURCHASE_NOTICE_QUERY_KEY ]: PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
+				} )
 			: redirectInstructions.url;
 
-		// A successful redirect back into the Dashboard (a separate SPA) can't rely on
-		// the classic notice mechanisms, so tag the URL with the Dashboard's `flash`
-		// param and let `<CheckoutSuccessFlashMessage>` show the toast on arrival.
-		const isSuccessRedirect = ! redirectInstructions.isError && ! redirectInstructions.isUnknown;
-		if ( isSuccessRedirect && isDashboardUrl( finalUrl ) ) {
-			finalUrl = addQueryArgs( finalUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID } );
+		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			finalUrl = addSuccessNoticeParams( finalUrl, { purchasedPlanSlug, isRenewal } );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
+
+		// This is the first point where we know the purchase is complete, so
+		// record it before leaving the page.
+		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			recordCompletedPurchaseAnalytics( receipt ).then( () =>
+				notifyAndPerformRedirect( siteSlug, finalRedirectInstructions )
+			);
+			return;
+		}
 
 		notifyAndPerformRedirect( siteSlug, finalRedirectInstructions );
 	}, [
@@ -395,11 +431,11 @@ function useRedirectOnTransactionSuccess( {
 		isUnifiedCheckout,
 		isUserRefreshedForUnified,
 		connectingJetpackText,
-		error,
 		finalReceiptId,
 		isReceiptLoaded,
 		isRenewal,
 		isPlanAndDomainPurchase,
+		purchasedPlanSlug,
 		blogId,
 		orderId,
 		productName,

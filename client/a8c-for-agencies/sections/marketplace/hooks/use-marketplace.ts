@@ -41,7 +41,7 @@ export const getWPCOMTieredPrice = (
 ) => {
 	// Calculate actual cost (base product price * quantity)
 	const basePricePerUnit =
-		termPricing === 'yearly' ? product.yearly_price ?? 0 : product.monthly_price ?? 0;
+		termPricing === 'yearly' ? ( product.yearly_price ?? 0 ) : ( product.monthly_price ?? 0 );
 	const actualCost = basePricePerUnit * quantity;
 	const tierPrices =
 		termPricing === 'yearly' ? product.tier_yearly_prices : product.tier_monthly_prices;
@@ -415,10 +415,10 @@ export const useTotalInvoiceValue = ( termPricing?: TermPricingType, currency?: 
 			return isTermPricingEnabled && termPricing === 'yearly'
 				? translate( '%(total)s/yr', {
 						args: { total: formatCurrency( cost, currency ?? 'USD' ) },
-				  } )
+					} )
 				: translate( '%(total)s/mo', {
 						args: { total: formatCurrency( cost, currency ?? 'USD' ) },
-				  } );
+					} );
 		};
 
 		return {

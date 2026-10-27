@@ -41,7 +41,7 @@ function getMatchReasonPhrasesMap( tld: string ) {
 			tld === 'com'
 				? __( '".com" is the most common extension' )
 				: /* translators: %(tld)s is the TLD */
-				  sprintf( __( '".%(tld)s" is a common extension' ), { tld } ),
+					sprintf( __( '".%(tld)s" is a common extension' ), { tld } ),
 		],
 	] );
 }

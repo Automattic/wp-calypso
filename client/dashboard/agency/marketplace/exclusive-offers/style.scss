@@ -1,3 +1,8 @@
+// The DataViews wrapper paints its own surface; the filter bar sits on the page background.
+.exclusive-offers-filters {
+	--wp-dataviews-color-background: transparent;
+}
+
 .exclusive-offers-card-logo {
 	min-block-size: 24px;
 	min-inline-size: 0;

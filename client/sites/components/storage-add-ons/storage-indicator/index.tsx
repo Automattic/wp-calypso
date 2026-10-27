@@ -1,7 +1,8 @@
 import { SiteMediaStorage, AddOns, StorageAddOnSlug } from '@automattic/data-stores';
-import filesize from 'filesize';
-import { useTranslate } from 'i18n-calypso';
+import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import React from 'react';
+import { getIntlLocale } from 'calypso/dashboard/utils/locale';
+import { formatStorage } from 'calypso/dashboard/utils/site-storage';
 
 import './style.scss';
 
@@ -29,10 +30,11 @@ const StorageAddOnIndicator: React.FC< Props > = ( {
 	const planStorageBytes = maxStorageBytes - maxStorageBytesFromAddOns;
 	const addOnStorageBytes = maxStorageBytesFromAddOns + selectedAddOnStorageBytes;
 
-	const newMaxStorage = filesize( newMaxStorageBytes, { round: 0 } );
-	const usedStorage = filesize( storageUsedBytes, { round: 0 } );
-	const planStorage = filesize( planStorageBytes, { round: 0 } );
-	const addOnStorage = filesize( addOnStorageBytes, { round: 0 } );
+	const locale = getIntlLocale( getLocaleSlug() );
+	const newMaxStorage = formatStorage( newMaxStorageBytes, locale );
+	const usedStorage = formatStorage( storageUsedBytes, locale );
+	const planStorage = formatStorage( planStorageBytes, locale );
+	const addOnStorage = formatStorage( addOnStorageBytes, locale );
 
 	const planStorageRatio = planStorageBytes / newMaxStorageBytes;
 

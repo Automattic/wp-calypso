@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { getBlockTreeCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 const BLOCK_TREE_NODE_SCHEMA = {
 	type: 'object',
@@ -21,10 +21,8 @@ export const getBlockTreeAbility: Ability = {
 	name: 'agents-manager/get-block-tree',
 	label: __( 'Get Block Tree', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
-	description: __(
+	description:
 		'Reads the current editor block tree, including real client IDs, block names, attributes, nesting, and the selected block. Call this immediately before applying block edits and use the returned client IDs unchanged.',
-		__i18n_text_domain__
-	),
 	input_schema: {
 		type: 'object',
 		properties: {},

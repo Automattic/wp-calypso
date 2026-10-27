@@ -15,6 +15,7 @@ const mockSetChat = jest.fn();
 const mockSubmitUserFields = jest.fn();
 const mockAddEventToInteraction = jest.fn();
 const mockStartNewInteraction = jest.fn();
+const mockGetOdieTransferMessages = jest.fn().mockReturnValue( [] );
 let mockHasReachedLimit = false;
 
 jest.mock( 'smooch', () => ( {
@@ -68,7 +69,7 @@ jest.mock( '../use-open-interaction-status-map', () => ( {
 
 jest.mock( '../../constants', () => ( {
 	getErrorTryAgainLaterMessage: () => ( { content: 'try-again', role: 'bot', type: 'message' } ),
-	getOdieTransferMessages: () => [],
+	getOdieTransferMessages: ( ...args: unknown[] ) => mockGetOdieTransferMessages( ...args ),
 	getZendeskChatStartedMetaMessage: () => ( {
 		content: 'chat-started',
 		role: 'bot',
@@ -213,5 +214,67 @@ describe( 'useCreateZendeskConversation — Smooch-not-ready retry loop', () => 
 		expect( smoochCreateConversation ).toHaveBeenCalledTimes( 1 );
 		const error = lastTrackedProps( 'error_creating_zendesk_conversation' );
 		expect( error ).toMatchObject( { smooch_attempts: 1, smooch_waited_ms: 0 } );
+	} );
+} );
+
+describe( 'useCreateZendeskConversation — transfer messages', () => {
+	// Runs the chat update the hook queued once the conversation exists.
+	const applyChatUpdate = ( prevChat: { odieId: string | null } ) => {
+		const update = mockSetChat.mock.calls.at( -1 )?.[ 0 ];
+		return update( { ...prevChat, messages: [] } );
+	};
+
+	beforeEach( () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+	} );
+
+	it( 'refers back to the Odie chat after a handoff', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		applyChatUpdate( { odieId: 'odie-1' } );
+
+		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith( expect.any( Function ), false );
+	} );
+
+	it( 'uses the direct copy when the user went straight to a human', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'direct_url' } );
+
+		applyChatUpdate( { odieId: null } );
+
+		expect( mockGetOdieTransferMessages ).toHaveBeenCalledWith( expect.any( Function ), true );
+	} );
+} );
+
+describe( 'useCreateZendeskConversation — conversation tags', () => {
+	beforeEach( () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+	} );
+
+	it( 'writes the configured tags on the conversation', async () => {
+		const context = ( useOdieAssistantContext as jest.Mock )();
+		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			...context,
+			zendeskConversationTags: [ 'woo_support_flow_help_center', 'second_tag' ],
+		} );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
+			metadata: expect.objectContaining( {
+				'zen:ticket:tags': 'woo_support_flow_help_center,second_tag',
+			} ),
+		} );
+	} );
+
+	it( 'writes no tags when none are configured', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata ).not.toHaveProperty(
+			'zen:ticket:tags'
+		);
 	} );
 } );

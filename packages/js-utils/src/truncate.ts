@@ -75,7 +75,7 @@ const reUnicode = RegExp( rsFitz + '(?=' + rsFitz + ')|' + rsSymbol + rsSeq, 'g'
 const reHasUnicode = RegExp( '[' + rsZWJ + rsAstralRange + rsComboRange + rsVarRange + ']' );
 
 const stringToArray = ( string: string ): string[] =>
-	reHasUnicode.test( string ) ? string.match( reUnicode ) ?? [] : string.split( '' );
+	reHasUnicode.test( string ) ? ( string.match( reUnicode ) ?? [] ) : string.split( '' );
 
 /**
  * Truncates `string` if it is longer than the given maximum length, replacing

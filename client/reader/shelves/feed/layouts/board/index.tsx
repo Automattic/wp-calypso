@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { useMemo } from 'react';
 import ReaderPostActions from 'calypso/blocks/reader-post-actions';
 import { SiteIcon } from 'calypso/blocks/site-icon';
+import AutoDirection from 'calypso/components/auto-direction';
 import { useCachedPost } from 'calypso/reader/data/post/cache';
 import { type StreamPostKey } from 'calypso/reader/data/stream';
 import { useInfiniteList } from 'calypso/reader/hooks/use-infinite-list';
@@ -62,11 +63,13 @@ function BoardCard( {
 					</a>
 				</h3>
 				{ fields.excerptHtml && (
-					<div
-						className="shelf-feed-board__excerpt"
-						// Sanitized by the Reader's formatExcerpt (allows only p/br/sup/sub).
-						dangerouslySetInnerHTML={ { __html: fields.excerptHtml } } // eslint-disable-line react/no-danger
-					/>
+					<AutoDirection>
+						<div
+							className="shelf-feed-board__excerpt"
+							// Sanitized by the Reader's formatExcerpt (allows only p/br/sup/sub).
+							dangerouslySetInnerHTML={ { __html: fields.excerptHtml } } // eslint-disable-line react/no-danger
+						/>
+					</AutoDirection>
 				) }
 				<div className="shelf-feed-board__footer">
 					<span className="shelf-feed-board__source-group">

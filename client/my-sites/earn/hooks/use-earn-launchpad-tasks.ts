@@ -1,5 +1,4 @@
-import { useLaunchpad } from '@automattic/data-stores';
-import { Task } from '@automattic/launchpad';
+import { useLaunchpad, type Task } from '@automattic/launchpad';
 import { useSelector } from 'calypso/state';
 import { getProductsForSiteId } from 'calypso/state/memberships/product-list/selectors';
 import { getIsConnectedForSiteId } from 'calypso/state/memberships/settings/selectors';

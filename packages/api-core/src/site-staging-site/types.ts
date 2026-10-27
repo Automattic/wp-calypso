@@ -8,20 +8,10 @@ export interface StagingSite {
 export type StagingSiteSyncDirection = 'pull' | 'push';
 
 export type StagingSiteSyncStateOptions =
-	| 'sqls'
-	| 'themes'
-	| 'plugins'
-	| 'uploads'
-	| 'roots'
-	| 'contents';
+	'sqls' | 'themes' | 'plugins' | 'uploads' | 'roots' | 'contents';
 
 export type StagingSiteSyncStatus =
-	| 'pending'
-	| 'backing_up'
-	| 'restoring'
-	| 'completed'
-	| 'failed'
-	| 'allow_retry';
+	'pending' | 'backing_up' | 'restoring' | 'completed' | 'failed' | 'allow_retry';
 
 export interface StagingSiteSyncState {
 	direction: StagingSiteSyncDirection;

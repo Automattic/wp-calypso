@@ -8,6 +8,7 @@ import { shouldUseMagicCode } from 'calypso/blocks/login/utils/should-use-magic-
 import GlobalNotices from 'calypso/components/global-notices';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Main from 'calypso/components/main';
+import { isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
 import {
 	isAndroidOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -275,7 +276,7 @@ export class MagicLogin extends Component {
 			isWooJPC,
 			isJetpackLogin,
 			isUnifiedConnectionFlow,
-			isFromJetpackConnector,
+			showsUnifiedContent,
 			connectorPlugins,
 		} = this.props;
 		const { usernameOrEmail } = this.state;
@@ -298,7 +299,7 @@ export class MagicLogin extends Component {
 				? {
 						customFormLabel: translate( 'Your email address' ),
 						submitButtonLabel: translate( 'Send activation link' ),
-				  }
+					}
 				: {} ),
 		};
 
@@ -337,9 +338,10 @@ export class MagicLogin extends Component {
 		return (
 			<OneLoginLayout
 				isJetpack={ isJetpackLogin }
-				isFromJetpackConnector={ isFromJetpackConnector }
+				showsUnifiedContent={ showsUnifiedContent }
 				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
+				linkLogoToHome
 			>
 				{ mainContent }
 			</OneLoginLayout>
@@ -373,7 +375,7 @@ export const getMagicLoginInitialHeaders = ( props, translate ) => {
 				args: {
 					partnerName: props.partnerConfig.displayName,
 				},
-		  } )
+			} )
 		: undefined;
 
 	return getEmailLinkHeaders( translate, { headingOverride } );
@@ -393,13 +395,13 @@ const MagicLoginWithContext = ( props ) => {
 export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
 	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
 	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
-	const isFromJetpackConnector = from === 'jetpack-connector';
-	const rawPlugins = isFromJetpackConnector
+	const showsUnifiedContent = isUnifiedFlow( from );
+	const rawPlugins = showsUnifiedContent
 		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
 		: '';
 	return {
-		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes( from ),
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow: 'jetpack-onboarding' === from || showsUnifiedContent,
+		showsUnifiedContent,
 		connectorPlugins: rawPlugins
 			.split( ',' )
 			.map( ( s ) => s.trim() )

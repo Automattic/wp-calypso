@@ -7,7 +7,6 @@ import {
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
-	CheckboxControl,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
@@ -102,38 +101,11 @@ export default function PersonalDetailsSection() {
 		},
 	];
 
-	const devAccountField: Field< UserSettings > = {
-		id: 'is_dev_account',
-		label: __( 'I am a developer' ),
-		type: 'boolean',
-		description: __( 'Opt in to previews of new developer-focused features.' ),
-		Edit: ( { field, onChange, data, hideLabelFromVision } ) => {
-			const { id, getValue, description } = field;
-			return (
-				<CheckboxControl
-					__nextHasNoMarginBottom
-					label={ hideLabelFromVision ? '' : field.label }
-					help={ description }
-					checked={ getValue( { item: data } ) }
-					onChange={ () => onChange( { [ id ]: ! getValue( { item: data } ) } ) }
-				/>
-			);
-		},
-	};
-
 	const nameForm: Form = {
 		layout: {
 			type: isMobile ? ( 'regular' as const ) : ( 'row' as const ),
 		},
 		fields: [ 'first_name', 'last_name' ],
-	};
-
-	const devForm: Form = {
-		layout: {
-			type: 'regular' as const,
-			labelPosition: 'top' as const,
-		},
-		fields: [ 'is_dev_account' ],
 	};
 
 	return (
@@ -183,14 +155,6 @@ export default function PersonalDetailsSection() {
 							userSettings={ userSettings }
 							isEmailVerified={ isEmailVerified }
 							onValidationChange={ setIsEmailValid }
-						/>
-
-						{ /* Developer checkbox */ }
-						<DataForm< UserSettings >
-							data={ data }
-							fields={ [ devAccountField ] }
-							form={ devForm }
-							onChange={ handleFieldChange }
 						/>
 
 						<HStack justify="flex-start">

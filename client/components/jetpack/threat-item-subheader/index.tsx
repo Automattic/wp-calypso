@@ -37,10 +37,10 @@ const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, t
 			? translate( 'Threat fixed on %(date)s', {
 					args: { date },
 					comment: 'Past tense action: a threat was fixed on a specific date',
-			  } )
+				} )
 			: translate( 'Threat fixed', {
 					comment: 'Past tense action: a threat was fixed on an unspecified date',
-			  } );
+				} );
 	}
 
 	if ( status === 'ignored' ) {
@@ -48,10 +48,10 @@ const getThreatStatusMessage = ( translate: ReturnType< typeof useTranslate >, t
 			? translate( 'Threat ignored on %(date)s', {
 					args: { date },
 					comment: 'Past tense action: a threat was ignored on a specific date',
-			  } )
+				} )
 			: translate( 'Threat ignored', {
 					comment: 'Past tense action: a threat was ignored on an unspecified date',
-			  } );
+				} );
 	}
 
 	return null;

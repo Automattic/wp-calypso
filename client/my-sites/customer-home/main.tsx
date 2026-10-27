@@ -2,10 +2,15 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
+import {
+	CHECKOUT_SUCCESS_PLAN_PARAM,
+	getCheckoutSuccessMessage,
+} from 'calypso/dashboard/app/checkout-success-flash';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import {
 	PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE,
 	PURCHASE_NOTICE_QUERY_KEY,
+	PURCHASE_SUCCESS_NOTICE_QUERY_VALUE,
 } from 'calypso/my-sites/checkout/checkout-thank-you/purchase-notice-constants';
 import { useDispatch } from 'calypso/state';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -13,10 +18,10 @@ import HomeContent from './components/home-content';
 import type { SiteDetails } from '@automattic/data-stores';
 
 /**
- * Pending checkout pages (`checkout-thank-you/pending`) tag certain redirect
- * URLs with `?notice=<value>` so the destination can show a post-purchase
- * success toast on arrival. Read the param, dispatch the matching notice once,
- * then strip it from the URL so a refresh doesn't re-fire.
+ * Checkout tags redirects to this page with `?notice=<value>`, plus
+ * `?purchased_plan=<slug>` to name a new plan, so it can show a post-purchase
+ * success toast on arrival. Read the params, dispatch the matching notice
+ * once, then strip them from the URL so a refresh doesn't re-fire.
  */
 function usePostPurchaseNotice(): void {
 	const reduxDispatch = useDispatch();
@@ -24,18 +29,27 @@ function usePostPurchaseNotice(): void {
 
 	useEffect( () => {
 		const params = new URLSearchParams( window.location.search );
-		if ( params.get( PURCHASE_NOTICE_QUERY_KEY ) !== PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE ) {
+		const notice = params.get( PURCHASE_NOTICE_QUERY_KEY );
+		if (
+			notice !== PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE &&
+			notice !== PURCHASE_SUCCESS_NOTICE_QUERY_VALUE
+		) {
 			return;
 		}
 
+		const message =
+			notice === PLAN_AND_DOMAIN_NOTICE_QUERY_VALUE
+				? translate( 'Your plan and domain are ready!' )
+				: getCheckoutSuccessMessage();
 		reduxDispatch(
-			successNotice( translate( 'Your plan and domain are ready!' ), {
-				id: 'plan-and-domain-purchase-success',
+			successNotice( message, {
+				id: 'post-purchase-success',
 				duration: 10000,
 			} )
 		);
 
 		params.delete( PURCHASE_NOTICE_QUERY_KEY );
+		params.delete( CHECKOUT_SUCCESS_PLAN_PARAM );
 		const newSearch = params.toString();
 		const newUrl =
 			window.location.pathname + ( newSearch ? `?${ newSearch }` : '' ) + window.location.hash;

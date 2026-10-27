@@ -110,12 +110,43 @@ describe( 'ThemeTierBadge', () => {
 		expect( container ).toBeEmptyDOMElement();
 	} );
 
+	it( 'should render the retired badge for active & retired themes', () => {
+		render(
+			<ThemeTierBadge
+				themeId="drinkify"
+				siteId={ 123 }
+				siteSlug="test-site"
+				isLockedStyleVariation={ false }
+				isThemeRetired
+				isThemeActiveForSite
+			/>
+		);
+		expect( screen.getByText( 'Retired' ) ).toBeInTheDocument();
+	} );
+
 	it( 'should render upgrade badge for non-allowed themes', async () => {
 		jest.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
 
 		render(
 			<ThemeTierBadge
 				themeId="nion"
+				siteId={ 123 }
+				siteSlug="test-site"
+				isLockedStyleVariation={ false }
+			/>
+		);
+
+		await waitFor( () => {
+			expect( screen.getByText( 'Available on Personal' ) ).toBeInTheDocument();
+		} );
+	} );
+
+	it( 'should upsell Personal for a premium-tier theme', async () => {
+		jest.mocked( wpcomProxyRequest ).mockResolvedValue( [ PERSONAL_PLAN ] );
+
+		render(
+			<ThemeTierBadge
+				themeId="meraki"
 				siteId={ 123 }
 				siteSlug="test-site"
 				isLockedStyleVariation={ false }

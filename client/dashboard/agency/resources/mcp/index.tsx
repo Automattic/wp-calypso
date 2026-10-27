@@ -30,7 +30,7 @@ export default function Mcp() {
 				onSave={ save }
 				recordTracksEvent={ recordTracksEvent }
 				onNavigate={ ( path ) =>
-					navigate( { to: path as '/resources/ai-mcp/read' | '/resources/ai-mcp/write' } )
+					navigate( { to: path as '/agency/ai/read' | '/agency/ai/write' } )
 				}
 			/>
 		</PageLayout>

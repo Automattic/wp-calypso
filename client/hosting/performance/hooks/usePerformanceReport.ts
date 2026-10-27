@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useUrlBasicMetricsQuery } from 'calypso/data/site-profiler/use-url-basic-metrics-query';
 import { useUrlPerformanceInsightsQuery } from 'calypso/data/site-profiler/use-url-performance-insights';
-import { TabType } from 'calypso/performance-profiler/components/header';
+import { TabType } from 'calypso/hosting/performance/contexts/device-tab-context';
 import { isValidURL } from '../utils';
 import type { PageSpeedReport } from 'calypso/data/site-profiler/types';
 

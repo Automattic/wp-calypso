@@ -19,11 +19,10 @@ import QuerySiteDomains from 'calypso/components/data/query-site-domains';
 import HundredYearLoaderView from 'calypso/components/hundred-year-loader-view';
 import { navigateToLandingPage } from 'calypso/lib/landing-page';
 import { useDispatch, useSelector } from 'calypso/state';
-import { fetchReceipt } from 'calypso/state/receipts/actions';
-import { getReceiptById } from 'calypso/state/receipts/selectors';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSiteId } from 'calypso/state/sites/selectors';
 import { hideMasterbar } from 'calypso/state/ui/actions';
+import { useCheckoutReceipt } from '../receipt';
 
 const VideoContainer = styled.div< { isMobile: boolean } >`
 	overflow: hidden;
@@ -158,13 +157,13 @@ export default function HundredYearThankYou( {
 	const siteIdFromSiteSlug = useSelector( ( state ) => getSiteId( state, siteSlug ?? null ) );
 	const siteId = siteIdFromProps ?? siteIdFromSiteSlug;
 
-	const receipt = useSelector( ( state ) => getReceiptById( state, receiptId ) );
-	const isReceiptLoading = ! receipt.hasLoadedFromServer || receipt.isRequesting;
+	const { data: receipt, isSuccess: hasLoadedReceipt } = useCheckoutReceipt( receiptId );
+	const isReceiptLoading = ! hasLoadedReceipt;
 
 	// Infer whether this is a 100-year domain registration/transfer or the 100-year plan
 	// If both are purchased, prioritize showing the plan variant
 	const resolvedProductSlug = useMemo( () => {
-		const purchases = receipt?.data?.purchases || [];
+		const purchases = receipt?.purchases || [];
 		// First check if there's a 100-year plan purchase - this takes precedence
 		const hundredYearPlanPurchase = purchases.find( ( p ) => is100Year( p ) );
 		if ( hundredYearPlanPurchase ) {
@@ -185,7 +184,7 @@ export default function HundredYearThankYou( {
 	);
 
 	const purchasedDomainName = useMemo( () => {
-		const purchases = receipt?.data?.purchases || [];
+		const purchases = receipt?.purchases || [];
 		const hundredYearDomainPurchase = purchases.find( ( p ) => p.isHundredYearDomain );
 		return hundredYearDomainPurchase?.meta || null;
 	}, [ receipt ] );
@@ -194,10 +193,7 @@ export default function HundredYearThankYou( {
 
 	useEffect( () => {
 		dispatch( hideMasterbar() );
-		if ( isReceiptLoading && receiptId ) {
-			dispatch( fetchReceipt( receiptId ) );
-		}
-	}, [ dispatch, isReceiptLoading, receiptId ] );
+	}, [ dispatch ] );
 
 	useEffect( () => {
 		if ( resolvedProductSlug && submitUserFields && siteId ) {
@@ -216,7 +212,7 @@ export default function HundredYearThankYou( {
 
 	if (
 		! isReceiptLoading &&
-		( ! receipt.data?.purchases?.length || receipt.data?.purchases[ 0 ].blogId !== siteId ) &&
+		( ! receipt?.purchases.length || receipt.purchases[ 0 ].blogId !== siteId ) &&
 		// For transfers, the current siteId might be different - purchase performed with no site (siteId = null)
 		// and blog created after the purchase (siteId != null).
 		resolvedProductSlug !== domainProductSlugs.TRANSFER_IN
@@ -250,12 +246,12 @@ export default function HundredYearThankYou( {
 					args: {
 						domain: displayDomain,
 					},
-			  } )
+				} )
 			: translate( 'Your 100-Year Domain %(domain)s is being transferred.', {
 					args: {
 						domain: displayDomain,
 					},
-			  } );
+				} );
 	const hundredYearPlanDescription = translate( 'Your %(planTitle)s is now active.', {
 		args: {
 			planTitle: getPlan( PLAN_100_YEARS )?.getTitle() || '',

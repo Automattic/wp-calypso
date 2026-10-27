@@ -84,7 +84,7 @@ export const wpcomAgentStudioService: AgentStudioService = {
 			};
 		} else {
 			const title = input.title ?? '';
-			const text = title ? `${ title }\n\n${ input.brief ?? '' }` : input.brief ?? '';
+			const text = title ? `${ title }\n\n${ input.brief ?? '' }` : ( input.brief ?? '' );
 
 			// `brand` and `project_id` are omitted on purpose. The recipe's
 			// abilities disagree on `brand`'s type so the only value that

@@ -5,7 +5,6 @@
 import * as page from '@automattic/calypso-router';
 import configureStore from 'redux-mock-store';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { navigate } from 'calypso/lib/navigate';
 import addQueryArgs from 'calypso/lib/url/add-query-args';
 import {
 	maybeRedirectToMultiSiteDashboard,
@@ -17,7 +16,6 @@ jest.mock( '@automattic/calypso-router' );
 jest.mock( 'wpcom-proxy-request', () => ( {
 	isCookieAuthMissing: jest.fn( () => false ),
 } ) );
-jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
 jest.mock( 'calypso/dashboard/utils/link', () => ( {
 	dashboardLink: jest.fn( ( path ) => `https://my.wordpress.com${ path }` ),
 } ) );
@@ -42,12 +40,23 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 		path: '/email/example.com/purchase/example.wordpress.com',
 	} );
 
+	const originalLocation = Object.getOwnPropertyDescriptor( window, 'location' );
 	let next;
+	let locationReplace;
 
 	beforeEach( () => {
 		next = jest.fn();
-		navigate.mockClear();
+		locationReplace = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			writable: true,
+			value: { replace: locationReplace },
+		} );
 		dashboardLink.mockClear();
+	} );
+
+	afterEach( () => {
+		Object.defineProperty( window, 'location', originalLocation );
 	} );
 
 	it( 'does not redirect when the flag is disabled and the user is not enrolled', () => {
@@ -56,14 +65,14 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 			next
 		);
 
-		expect( navigate ).not.toHaveBeenCalled();
+		expect( locationReplace ).not.toHaveBeenCalled();
 		expect( next ).toHaveBeenCalled();
 	} );
 
 	it( 'redirects to the flag target when the predicate returns true', () => {
 		maybeRedirectToMultiSiteDashboard( targetPath, () => true )( buildContext(), next );
 
-		expect( navigate ).toHaveBeenCalledWith(
+		expect( locationReplace ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/emails/choose-email-solution/example.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
@@ -75,7 +84,7 @@ describe( 'maybeRedirectToMultiSiteDashboard', () => {
 			next
 		);
 
-		expect( navigate ).toHaveBeenCalledWith(
+		expect( locationReplace ).toHaveBeenCalledWith(
 			'https://my.wordpress.com/emails/choose-email-solution/example.com'
 		);
 		expect( next ).not.toHaveBeenCalled();
@@ -174,6 +183,56 @@ describe( 'redirectLoggedOut', () => {
 
 		replaceState.mockRestore();
 	} );
+
+	describe( 'immediate login prefill', () => {
+		const buildImmediateLoginContext = ( { query = {}, immediateLogin = {} } = {} ) => ( {
+			store: mockStore( {
+				currentUser: { id: null },
+				immediateLogin,
+			} ),
+			query,
+			params: {},
+			path: '/me/purchases',
+			pathname: '/me/purchases',
+		} );
+
+		it( 'prefills the email and locale from the query before ROUTE_SET has run', async () => {
+			// `setupRoutes()` registers this middleware ahead of the `ROUTE_SET`
+			// catch-all, so an immediate login link reaches it with an empty store.
+			const context = buildImmediateLoginContext( {
+				query: {
+					immediate_login_attempt: '1',
+					login_email: 'jane@example.com',
+					login_locale: 'fr',
+				},
+			} );
+
+			await redirectLoggedOut( context, next );
+
+			expect( window.location ).toBe(
+				'/log-in/fr?redirect_to=%2Fme%2Fpurchases&email_address=jane%40example.com'
+			);
+			expect( next ).not.toHaveBeenCalled();
+		} );
+
+		it( 'falls back to the stored values once the query has been stripped', async () => {
+			const context = buildImmediateLoginContext( {
+				immediateLogin: { email: 'jane@example.com', locale: 'fr' },
+			} );
+
+			await redirectLoggedOut( context, next );
+
+			expect( window.location ).toBe(
+				'/log-in/fr?redirect_to=%2Fme%2Fpurchases&email_address=jane%40example.com'
+			);
+		} );
+
+		it( 'omits both parameters when neither the query nor the store has them', async () => {
+			await redirectLoggedOut( buildImmediateLoginContext(), next );
+
+			expect( window.location ).toBe( '/log-in?redirect_to=%2Fme%2Fpurchases' );
+		} );
+	} );
 } );
 
 describe( 'redirectMyJetpack', () => {
@@ -251,4 +310,68 @@ describe( 'redirectMyJetpack', () => {
 		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).not.toHaveBeenCalled();
 	} );
+
+	const buildStatsContext = ( source ) => {
+		const statsQuery = { ...query, source };
+		const productSlug = 'jetpack_stats_yearly:-q-10000';
+		return {
+			...context,
+			query: statsQuery,
+			params: { domainOrProduct: productSlug, product: '123123' },
+			path: addQueryArgs( statsQuery, `/checkout/123123/${ productSlug }` ),
+			pathname: `/checkout/123123/${ productSlug }`,
+		};
+	};
+
+	it.each( [ 'my-jetpack', 'jetpack_premium_analytics_upsell' ] )(
+		'sends a logged-out buyer of a Stats tier with source=%s to siteless checkout',
+		( source ) => {
+			const statsContext = buildStatsContext( source );
+			const redirectUrl = addQueryArgs(
+				{
+					connect_after_checkout: true,
+					from_site_slug: statsContext.query.site,
+					admin_url: statsContext.query.redirect_to.split( '?' )[ 0 ],
+				},
+				statsContext.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+			);
+
+			redirectMyJetpack( statsContext, next );
+
+			expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
+			expect( next ).not.toHaveBeenCalled();
+		}
+	);
+
+	it( 'sends a logged-out buyer without redirect_to to siteless checkout without admin_url', () => {
+		const statsContext = buildStatsContext( 'jetpack_premium_analytics_upsell' );
+		const queryWithoutRedirect = { ...statsContext.query, redirect_to: undefined };
+		const contextWithoutRedirect = {
+			...statsContext,
+			query: queryWithoutRedirect,
+			path: addQueryArgs( queryWithoutRedirect, statsContext.pathname ),
+		};
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: queryWithoutRedirect.site,
+			},
+			contextWithoutRedirect.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+
+		redirectMyJetpack( contextWithoutRedirect, next );
+
+		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [ 'jetpack_premium_analytics_onboarding', 'jetpack-newsletter', undefined ] )(
+		'leaves a logged-out buyer with source=%s to the login redirect',
+		( source ) => {
+			redirectMyJetpack( buildStatsContext( source ), next );
+
+			expect( pageSpy ).not.toHaveBeenCalled();
+			expect( next ).toHaveBeenCalled();
+		}
+	);
 } );

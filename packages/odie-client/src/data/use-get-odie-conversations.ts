@@ -37,11 +37,11 @@ export const useGetOdieConversations = (
 						method: 'GET',
 						path: `/odie/conversations/${ botSlugs }?${ queryParams }`,
 						apiNamespace: 'wpcom/v2',
-				  } )
+					} )
 				: await apiFetch( {
 						path: `/help-center/odie/conversations/${ botSlugs }?${ queryParams }`,
 						method: 'GET',
-				  } );
+					} );
 
 			return response.map( ( conversation: any ) => {
 				const summary = conversation.first_message ?? conversation.last_message;
@@ -55,7 +55,7 @@ export const useGetOdieConversations = (
 									role: summary.role ?? 'bot',
 									text: summary.content ?? '',
 								},
-						  ]
+							]
 						: [],
 				};
 			} ) as OdieConversation[];

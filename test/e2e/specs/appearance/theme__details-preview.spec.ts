@@ -1,4 +1,5 @@
-import { tags, test } from '../../lib/pw-base';
+import { DataHelper } from '@automattic/calypso-e2e';
+import { expect, tags, test } from '../../lib/pw-base';
 
 test.describe(
 	'Appearance: Theme Details Preview',
@@ -22,8 +23,13 @@ test.describe(
 				await accountGutenbergSimple.authenticate( page );
 			} );
 
-			await test.step( 'When I navigate to Appearance > Themes', async function () {
-				await componentSidebar.navigate( 'Appearance', 'Themes' );
+			// The site uses the Classic interface, where Appearance > Themes is wp-admin's
+			// own page and Theme Showcase is Calypso's.
+			await test.step( 'When I navigate to Appearance > Theme Showcase', async function () {
+				await componentSidebar.navigate( 'Appearance', 'Theme Showcase' );
+
+				// wp-admin links the showcase to production; the build under test must serve it.
+				expect( new URL( page.url() ).origin ).toBe( new URL( DataHelper.getCalypsoURL() ).origin );
 			} );
 
 			await test.step( `And I choose the test site ${ testAccountSiteDomain } if the site selector is shown`, async function () {

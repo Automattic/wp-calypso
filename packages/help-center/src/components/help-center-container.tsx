@@ -1,10 +1,10 @@
 /**
  * External Dependencies
  */
-import observeEditorCanvasPointerDown from '@automattic/agents-manager/src/utils/observe-editor-canvas-pointerdown';
+import useRaiseOnFocus from '@automattic/agents-manager/src/hooks/use-raise-on-focus';
 import { useWindowDimensions } from '@automattic/viewport';
 import { useMobileBreakpoint } from '@automattic/viewport-react';
-import { Card, __experimentalElevation as Elevation } from '@wordpress/components';
+import { Card } from '@wordpress/components';
 import {
 	useConstrainedTabbing,
 	useFocusOnMount,
@@ -67,10 +67,9 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const recordTracksEvent = useHelpCenterTracksEvent();
 	const nodeRef = useRef< HTMLDivElement >( null );
 	const isMobile = useMobileBreakpoint();
-	const [ isFocused, setIsFocused ] = useState( false );
+	const [ node, setNode ] = useState< HTMLElement | null >( null );
 	const classNames = clsx( 'help-center__container', isMobile ? 'is-mobile' : 'is-desktop', {
 		'is-minimized': isMinimized,
-		'is-focused': isFocused,
 	} );
 
 	useActionHooks();
@@ -94,8 +93,9 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const constrainedTabbingRef = useConstrainedTabbing();
 	const isModalSheet = isMobile && ! isMinimized;
 
-	const cardMergeRefs = useMergeRefs( [
+	const cardMergeRefs = useMergeRefs< HTMLDivElement >( [
 		nodeRef,
+		setNode,
 		focusReturnRef,
 		focusOnMountRef,
 		isModalSheet ? constrainedTabbingRef : null,
@@ -118,64 +118,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 		};
 	}, [ shouldCloseOnEscapeRef, onDismiss ] );
 
-	// Track focus so this panel can raise its z-index above the Agents Manager
-	// panel when the user interacts with it. `pointerdown` also covers clicks on
-	// non-focusable regions (drag handle, scroll area) that don't fire `focusin`.
-	useEffect( () => {
-		const node = nodeRef.current;
-		if ( ! node ) {
-			return;
-		}
-		// Raise the panel on open so it paints above Agents Manager. Paint-order
-		// only — no real DOM focus. The handlers below still demote it afterward.
-		if ( show && ! hidden ) {
-			setIsFocused( true );
-		}
-		const handleFocusIn = () => {
-			setIsFocused( true );
-		};
-		let pendingFocusOut: number | undefined;
-		const handleFocusOut = () => {
-			// Defer: in-panel navigation unmounts the focused element, transiently
-			// dropping focus to <body>. Re-test activeElement after focus settles so
-			// we only demote when it truly moved to a real element outside the panel.
-			if ( pendingFocusOut !== undefined ) {
-				cancelAnimationFrame( pendingFocusOut );
-			}
-			pendingFocusOut = requestAnimationFrame( () => {
-				pendingFocusOut = undefined;
-				const active = document.activeElement;
-				if ( active !== document.body && ! node.contains( active ) ) {
-					setIsFocused( false );
-				}
-			} );
-		};
-		const handlePointerDown = () => {
-			setIsFocused( true );
-		};
-		const handleDocumentPointerDown = ( e: PointerEvent ) => {
-			if ( ! node.contains( e.target as Node | null ) ) {
-				setIsFocused( false );
-			}
-		};
-
-		node.addEventListener( 'focusin', handleFocusIn );
-		node.addEventListener( 'focusout', handleFocusOut );
-		node.addEventListener( 'pointerdown', handlePointerDown );
-		document.addEventListener( 'pointerdown', handleDocumentPointerDown );
-		const stopCanvasObserver = observeEditorCanvasPointerDown( handleDocumentPointerDown );
-
-		return () => {
-			if ( pendingFocusOut !== undefined ) {
-				cancelAnimationFrame( pendingFocusOut );
-			}
-			node.removeEventListener( 'focusin', handleFocusIn );
-			node.removeEventListener( 'focusout', handleFocusOut );
-			node.removeEventListener( 'pointerdown', handlePointerDown );
-			document.removeEventListener( 'pointerdown', handleDocumentPointerDown );
-			stopCanvasObserver();
-		};
-	}, [ show, hidden ] );
+	useRaiseOnFocus( node, ! isMinimized );
 
 	if ( ! show || hidden ) {
 		return null;
@@ -202,12 +145,6 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 					{ ! isMinimized && <ZendeskStagingNotice /> }
 					<HelpCenterContent currentRoute={ currentRoute } />
 					{ ! isMinimized && <HelpCenterFooter /> }
-					{ ! isMobile && (
-						<Elevation
-							borderRadius={ isMinimized ? '16px 16px 0 0' : '16px' }
-							value={ 4 }
-						></Elevation>
-					) }
 				</Card>
 			</OptionalDraggable>
 		</PersistentRouter>

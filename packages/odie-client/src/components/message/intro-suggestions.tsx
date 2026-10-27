@@ -6,6 +6,7 @@ import { useMemo } from 'react';
 import { isPlansPresalesExperience, PLANS_PRESALES_LAUNCHER_CONTEXT } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useSendChatMessage } from '../../hooks';
+import { trackConversationStart } from '../../utils/track-conversation-start';
 import type { Message } from '../../types';
 import './intro-suggestions.scss';
 
@@ -87,6 +88,7 @@ const PlansPresalesSuggestions = () => {
 					role: 'user',
 					type: 'message',
 				} as Message;
+				trackConversationStart( chat, selected.prompt ?? selected.label, trackEvent );
 				sendMessage( messageObj ).catch( () => {} );
 			} }
 		/>

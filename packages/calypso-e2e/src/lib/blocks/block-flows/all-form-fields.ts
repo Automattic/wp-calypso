@@ -106,12 +106,12 @@ export class AllFormFieldsFlow implements BlockFlow {
 					[ 'Button', 'Button text' ],
 					[ 'Option', 'Add option…', 'Single choice (radio)' ],
 					[ 'Option', 'Add option…', 'Multiple choice (checkbox)' ],
-			  ]
+				]
 			: [
 					[ 'Button', 'Add text…' ],
 					[ 'Single Choice Option', 'Add option…' ],
 					[ 'Multiple Choice Option', 'Add option…' ],
-			  ];
+				];
 
 		for ( const [ blockName, accessibleLabelName, parentBlockName ] of otherBlocksToLabel ) {
 			await labelFormFieldBlock( context.addedBlockLocator, {

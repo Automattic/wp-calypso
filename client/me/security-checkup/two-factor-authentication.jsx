@@ -76,11 +76,11 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 					? translate(
 							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}, and security keys have been registered.',
 							options
-					  )
+						)
 					: translate(
 							'You have two-step authentication {{strong}}enabled{{/strong}} using SMS messages to {{strong}}%(phoneNumber)s{{/strong}}.',
 							options
-					  );
+						);
 			} else if ( hasTwoStepEnabled ) {
 				const options = {
 					components: {
@@ -92,11 +92,11 @@ class SecurityCheckupTwoFactorAuthentication extends Component {
 					? translate(
 							'You have two-step authentication {{strong}}enabled{{/strong}} using an app, and security keys have been registered.',
 							options
-					  )
+						)
 					: translate(
 							'You have two-step authentication {{strong}}enabled{{/strong}} using an app.',
 							options
-					  );
+						);
 			}
 		}
 

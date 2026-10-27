@@ -1,5 +1,4 @@
 import { fetchGeo } from '@automattic/api-core';
-// eslint-disable-next-line no-restricted-imports -- Helper functions for tracking preferences
 import { isRegionInCcpaZone } from '@automattic/calypso-analytics';
 import cookie from 'cookie';
 import { useEffect, useState } from 'react';

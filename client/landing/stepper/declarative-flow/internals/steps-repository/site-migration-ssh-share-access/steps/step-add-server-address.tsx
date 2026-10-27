@@ -63,10 +63,10 @@ export const StepAddServerAddress: FC< StepAddServerAddressProps > = ( {
 				{
 					args: { currentHost: hostDisplayName },
 				}
-		  )
+			)
 		: translate(
 				"We'll use your server address to securely connect and copy your site. You can find it in your hosting provider's SSH settings."
-		  );
+			);
 
 	return (
 		<div>

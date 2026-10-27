@@ -21,6 +21,6 @@ export default function useMessageSizeErrorNotice( messageLength: number ) {
 					}
 				),
 				dismissible: true,
-		  }
+			}
 		: undefined;
 }

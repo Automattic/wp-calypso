@@ -32,6 +32,7 @@ export default function ReferralSwitcher( {
 	return (
 		<Switcher< Referral >
 			items={ referrals }
+			loading={ { itemCount: 3, hasMedia: false, hasDescription: false } }
 			value={ referral }
 			searchableFields={ searchableFields }
 			headerTitle={ __( 'Switch referral' ) }

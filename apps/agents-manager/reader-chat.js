@@ -144,6 +144,7 @@ function injectScopedReset() {
 		}
 		.agents-manager-chat .agents-manager-chat-header .components-button.has-icon:not(.components-dropdown-menu__menu-item),
 		.agents-manager-chat .agents-manager-copy-action-button.components-button.has-icon {
+			cursor: pointer !important;
 			height: 32px !important;
 			padding: 6px !important;
 			width: 32px !important;
@@ -154,7 +155,6 @@ function injectScopedReset() {
 		}
 		.agents-manager-chat-header__menu-popover {
 			--color-foreground: #1e1e1e;
-			--color-muted: rgba( 0, 0, 0, 0.06 );
 			font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", Arial, sans-serif !important;
 			font-size: 13px !important;
 			line-height: 1.4 !important;
@@ -179,12 +179,14 @@ function injectScopedReset() {
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item,
 		.agents-manager-chat .agents-manager-chat-header .components-dropdown-menu__menu .components-dropdown-menu__menu-item {
 			align-items: center !important;
+			border: 1px solid transparent !important;
+			border-radius: 4px !important;
 			box-sizing: border-box !important;
+			cursor: pointer !important;
 			display: flex !important;
-			gap: 8px !important;
-			height: auto !important;
+			gap: 4px !important;
+			height: 32px !important;
 			justify-content: flex-start !important;
-			min-height: 32px !important;
 			padding: 6px 8px !important;
 			text-align: left !important;
 			white-space: nowrap !important;
@@ -194,26 +196,21 @@ function injectScopedReset() {
 			margin: 0 !important;
 			max-width: none !important;
 		}
-		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:hover:not(:disabled):not([aria-disabled="true"]) {
-			background: var( --color-muted, rgba( 0, 0, 0, 0.06 ) ) !important;
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:hover:not(:disabled):not([aria-disabled="true"]),
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:focus-visible:not(:disabled):not([aria-disabled="true"]) {
+			background: #e9e9e9 !important;
+			color: var( --color-foreground, #1e1e1e ) !important;
+			outline: none !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item[aria-disabled="true"],
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item:disabled {
 			background: transparent !important;
-			color: var( --color-foreground, #1e1e1e ) !important;
+			color: #949494 !important;
 			cursor: default !important;
-			opacity: 0.5 !important;
 		}
 		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu-item svg {
 			fill: currentColor !important;
 		}
-		/*
-		 * wp-components dropdown/menu fix: the popover is portalled to body
-		 * and the theme's global CSS doesn't always include the full
-		 * components-dropdown-menu rules. Items default to display: inline-block
-		 * via .components-button and end up flowing horizontally. Force them
-		 * block and give the menu a usable layout.
-		 */
 		/*
 		 * Popover itself has z-index: auto by default — sits behind the
 		 * chat container's stacking context. Force it above everything
@@ -222,33 +219,27 @@ function injectScopedReset() {
 		.components-popover {
 			z-index: 2147483647 !important;
 		}
-		.components-dropdown-menu__menu {
+		/*
+		 * Blog pages may not load the wp-components styles, so match the main
+		 * chat's menu here: one box, on the popover.
+		 */
+		.agents-manager-chat-header__menu-popover .components-popover__content {
+			background: #ffffff !important;
+			border: 0 !important;
+			border-radius: 4px !important;
+			box-shadow: 0 0 0 1px #cccccc, 0 2px 3px rgba( 0, 0, 0, 0.05 ), 0 4px 5px rgba( 0, 0, 0, 0.04 ), 0 12px 12px rgba( 0, 0, 0, 0.03 ), 0 16px 16px rgba( 0, 0, 0, 0.02 ) !important;
+			box-sizing: border-box !important;
+			padding: 0 !important;
+			width: min-content !important;
+		}
+		.agents-manager-chat-header__menu-popover .components-dropdown-menu__menu {
 			display: flex !important;
 			flex-direction: column !important;
-			min-width: 200px !important;
-			padding: 4px !important;
-			background: #ffffff !important;
-			border: 1px solid #dddddd !important;
-			border-radius: 4px !important;
-			box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
-		}
-		.components-dropdown-menu__menu-item {
-			display: flex !important;
-			align-items: center !important;
-			gap: 8px !important;
-			width: 100% !important;
-			padding: 8px 12px !important;
+			gap: 2px !important;
+			padding: 8px !important;
 			background: transparent !important;
 			border: 0 !important;
-			text-align: left !important;
-			cursor: pointer !important;
-		}
-		.components-dropdown-menu__menu-item:hover {
-			background: #f0f0f0 !important;
-		}
-		.components-dropdown-menu__menu-item[aria-disabled="true"] {
-			opacity: 0.5 !important;
-			cursor: default !important;
+			box-shadow: none !important;
 		}
 		/*
 		 * Move reader-chat launcher and panel to the bottom-left.
@@ -1089,7 +1080,7 @@ function ReaderChatApp() {
 				ID: readerSiteId,
 				URL: config.siteUrl || window.location.origin,
 				name: config.siteName || '',
-		  }
+			}
 		: null;
 
 	return (

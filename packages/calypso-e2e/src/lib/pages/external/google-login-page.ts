@@ -7,6 +7,22 @@ const selectors = {
 };
 
 /**
+ * A returning-session failure whose message carries no private details,
+ * so callers can surface it as is.
+ */
+export class GoogleSessionError extends Error {
+	name = 'GoogleSessionError';
+}
+
+/**
+ * Google asked for credentials or human verification: the stored session
+ * must be renewed by a maintainer, retrying will not help.
+ */
+export class GoogleSessionRenewalError extends GoogleSessionError {
+	name = 'GoogleSessionRenewalError';
+}
+
+/**
  * Represents the login screens shown by Google.
  */
 export class GoogleLoginPage {
@@ -16,6 +32,48 @@ export class GoogleLoginPage {
 	 * @param {Page} page Page object.
 	 */
 	constructor( private page: Page ) {}
+
+	/** Advances returning-account selection or consent without entering credentials. */
+	async continueWithSession( email: string ): Promise< void > {
+		try {
+			const pathname = new URL( this.page.url() ).pathname;
+			if (
+				/challenge|recaptcha|identifier|rejected/.test( pathname ) ||
+				( await this.page
+					.getByRole( 'textbox', { name: /Email or phone|Enter your password/ } )
+					.first()
+					.isVisible() ) ||
+				( await this.page
+					.getByText( /Confirm you[’']re not a robot/ )
+					.first()
+					.isVisible() )
+			) {
+				throw new GoogleSessionRenewalError(
+					'Google session requires renewal; complete account verification manually.'
+				);
+			}
+			const consent = this.page.getByRole( 'button', { name: /^(Continue|Allow)$/ } );
+			const account = this.page.getByText( email, { exact: true } ).first();
+			if ( await consent.isVisible() ) {
+				await consent.click( { timeout: 10000 } );
+			} else if ( /accountchooser/i.test( pathname ) && ( await account.isVisible() ) ) {
+				await account.click( { timeout: 10000 } );
+			}
+		} catch ( error ) {
+			// Consent closes the popup before some in-flight locator operations finish.
+			if ( this.page.isClosed() ) {
+				return;
+			}
+			if ( error instanceof GoogleSessionRenewalError ) {
+				throw error;
+			}
+			const category =
+				error instanceof Error && error.name === 'TimeoutError' ? 'timeout' : 'interaction';
+			throw new GoogleSessionError(
+				`Google returning-session ${ category } failure; private details suppressed.`
+			);
+		}
+	}
 
 	/**
 	 * Waits until the target locator is stable.
@@ -77,7 +135,21 @@ export class GoogleLoginPage {
 	async enterPassword( password: string ): Promise< void > {
 		const locator = this.page.getByRole( 'textbox', { name: 'Enter your password' } );
 
-		await this.waitUntilStable( locator );
+		try {
+			await this.waitUntilStable( locator );
+		} catch ( error ) {
+			const challengeVisible = await this.page
+				.getByText( /Confirm you[’']re not a robot/ )
+				.first()
+				.isVisible()
+				.catch( () => false );
+			if ( challengeVisible ) {
+				throw new Error( 'Google human verification required before password entry.', {
+					cause: error,
+				} );
+			}
+			throw error;
+		}
 
 		await locator.type( password, { delay: 30 } );
 	}

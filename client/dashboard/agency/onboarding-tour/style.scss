@@ -1,0 +1,143 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+// The modal's own content padding with its header hidden; the drawing pulls into it.
+$modal-padding: $grid-unit-30;
+
+$close-size: $button-size;
+$close-inset: $grid-unit-10;
+
+// The tour fills the modal edge to edge, as in the design: our own grid pulls into the modal's
+// padding on every side instead of changing it. The modal hugs its content, so the grid's
+// width is the modal's, as in the design: 220px of sections and 480px of content.
+.a4a-onboarding-tour {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+	inline-size: 700px;
+	max-inline-size: calc( 100% + #{$modal-padding * 2} );
+	margin: -$modal-padding;
+
+	@include break-small {
+		grid-template-columns: 220px minmax( 0, 1fr );
+	}
+}
+
+// The section list stays in view while a long section scrolls: it takes its own height and
+// sticks over the modal's own padding at the top.
+.a4a-onboarding-tour-aside {
+	position: sticky;
+	inset-block-start: -$modal-padding;
+	align-self: start;
+	padding: 16px 12px;
+}
+
+.a4a-onboarding-tour-main {
+	min-inline-size: 0;
+
+	@include break-small {
+		border-inline-start: 1px solid $gray-100;
+	}
+}
+
+.a4a-onboarding-tour-content {
+	padding: $modal-padding;
+}
+
+// Stays in the corner while a long section scrolls; it takes no height, so the field still
+// starts at the top.
+.a4a-onboarding-tour-close {
+	position: sticky;
+	inset-block-start: -$modal-padding;
+	z-index: 1;
+	display: flex;
+	justify-content: flex-end;
+	block-size: 0;
+	padding-inline-end: $close-inset;
+	translate: 0 $close-inset;
+}
+
+// The field behind every drawing: a soft glow in the A4A blues (set inline) under a grain
+// tile. The field is its own stacking context, so the drawing layers sit behind it.
+.a4a-onboarding-tour-field {
+	position: relative;
+	overflow: hidden;
+	isolation: isolate;
+	block-size: 200px;
+	background-color: var( --dashboard-marketplace-referral__tint-color );
+	background-position: center;
+	background-size: cover;
+
+	@include break-medium {
+		block-size: 260px;
+	}
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background-image: url( data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20width%3D%27160%27%20height%3D%27160%27%3E%3Cfilter%20id%3D%27n%27%3E%3CfeTurbulence%20type%3D%27fractalNoise%27%20baseFrequency%3D%270.9%27%20numOctaves%3D%273%27%20stitchTiles%3D%27stitch%27%2F%3E%3CfeColorMatrix%20values%3D%270%200%200%200%200.008%200%200%200%200%200.251%200%200%200%200%200.894%200%200%200%200.6%200%27%2F%3E%3C%2Ffilter%3E%3Crect%20width%3D%27100%25%27%20height%3D%27100%25%27%20filter%3D%27url%28%23n%29%27%2F%3E%3C%2Fsvg%3E );
+		z-index: -2;
+		opacity: 0.3;
+		pointer-events: none;
+	}
+}
+
+// White cards on a transparent canvas; the shadow follows the cards' own corners.
+.a4a-onboarding-tour-drawing {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: contain;
+	opacity: 0;
+	filter: drop-shadow( 0 10px 24px rgba( $black, 0.1 ) )
+		drop-shadow( 0 1px 3px rgba( $black, 0.06 ) );
+	transition: opacity 0.2s ease-out;
+
+	&.is-visible {
+		opacity: 1;
+	}
+
+	@media ( prefers-reduced-motion: reduce ) {
+		transition: none;
+	}
+}
+
+// Every section's text sits in the same cell, so the cell keeps the height of the longest one
+// and the buttons below never move. Only the current one shows; the others are hidden from
+// screen readers and the tab order too.
+.a4a-onboarding-tour-slides {
+	display: grid;
+	padding-inline-end: $close-inset * 2 + $close-size - $modal-padding;
+}
+
+.a4a-onboarding-tour-slide {
+	grid-area: 1 / 1;
+	visibility: hidden;
+
+	&.is-current {
+		visibility: visible;
+	}
+}
+
+// The buttons stay in view when the modal is too short for the whole section and scrolls,
+// set apart by a line. The row reaches the panel's edges and takes the place of the content's
+// padding below; it sticks over the modal's own padding so no text shows under it.
+.a4a-onboarding-tour-actions {
+	position: sticky;
+	inset-block-end: -$modal-padding;
+	margin-block: 0 ( -$modal-padding );
+	margin-inline: ( -$modal-padding );
+	padding-block: 16px $modal-padding;
+	padding-inline: $modal-padding;
+	border-block-start: 1px solid $gray-100;
+	background-color: $white;
+}
+
+.a4a-onboarding-tour-button-label {
+	inline-size: 100%;
+	text-align: center;
+}

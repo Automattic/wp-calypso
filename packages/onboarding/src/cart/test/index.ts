@@ -1,6 +1,58 @@
 import { Visibility } from '@automattic/data-stores';
-import { getNewSiteParams } from '..';
-import { HOSTING_LP_FLOW } from '../../utils/flows';
+import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
+import { createSite, getNewSiteParams } from '..';
+import { HOSTING_LP_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
+import wpcomRequest from '../../wpcom-request';
+
+jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn() } } ), { virtual: true } );
+jest.mock( '../../wpcom-request', () => jest.fn() );
+jest.mock( '@automattic/calypso-config', () => {
+	const config = ( key: string ) => `config:${ key }`;
+	config.isEnabled = () => false;
+	return { __esModule: true, default: config, isEnabled: config.isEnabled };
+} );
+
+// The account this flow just created is signed in by a bearer token the shared wpcom client
+// carries. A bare proxy request has no token and is authenticated by a JWT bound to the browser's
+// login cookie instead, which any login, logout or second signup in the browser invalidates. So
+// site creation must go through the shared client, as the other site-creation paths do.
+describe( 'createSite', () => {
+	afterEach( () => jest.clearAllMocks() );
+
+	test( 'posts /sites/new through the shared wpcom client, not the bare proxy', async () => {
+		( wpcom.req.post as jest.Mock ).mockResolvedValue( {
+			success: true,
+			blog_details: { url: 'https://example.wordpress.com', blogid: 123 },
+		} );
+
+		const result = await createSite(
+			'onboarding',
+			'pub/twentytwentyfour',
+			Visibility.Private,
+			'Example',
+			'#113AF5',
+			false,
+			null,
+			'example'
+		);
+
+		expect( wpcomRequest ).not.toHaveBeenCalled();
+		expect( wpcom.req.post ).toHaveBeenCalledWith(
+			{ path: '/sites/new', apiVersion: '1.1' },
+			{},
+			expect.objectContaining( {
+				blog_name: 'example',
+				client_id: 'config:wpcom_signup_id',
+				client_secret: 'config:wpcom_signup_key',
+			} )
+		);
+		expect( result ).toEqual( {
+			siteId: 123,
+			siteSlug: 'example.wordpress.com',
+			domainItem: undefined,
+		} );
+	} );
+} );
 
 describe( 'getNewSiteParams', () => {
 	function testParams( partialParams: Partial< Parameters< typeof getNewSiteParams >[ 0 ] > = {} ) {
@@ -11,7 +63,6 @@ describe( 'getNewSiteParams', () => {
 			siteAccentColor: '#deface',
 			useThemeHeadstart: false,
 			siteVisibility: Visibility.Private,
-			username: 'testuser',
 			...partialParams,
 			partnerBundle: partialParams.partnerBundle ?? null,
 		} satisfies Parameters< typeof getNewSiteParams >[ 0 ];
@@ -84,40 +135,25 @@ describe( 'getNewSiteParams', () => {
 		);
 	} );
 
-	test( 'blog_name hint falls back to the username when no site URL or title is present', () => {
-		expect(
-			getNewSiteParams(
-				testParams( {
-					flowToCheck: HOSTING_LP_FLOW,
-					siteUrl: undefined,
-					siteTitle: '',
-					username: 'janedoe',
+	test.each( [ 'test-flow', ONBOARDING_FLOW, HOSTING_LP_FLOW, 'copy-site', 'do-it-for-me' ] )(
+		'%s flow sends an empty blog_name when no site URL or title is present',
+		( flowToCheck ) => {
+			expect(
+				getNewSiteParams(
+					testParams( {
+						flowToCheck,
+						siteUrl: undefined,
+						siteTitle: '',
+					} )
+				)
+			).toEqual(
+				expect.objectContaining( {
+					blog_name: '',
+					find_available_url: true,
 				} )
-			)
-		).toEqual(
-			expect.objectContaining( {
-				blog_name: '',
-				find_available_url: true,
-			} )
-		);
-	} );
-
-	test( 'Hosting flow does not fall back to username when site title and URL are missing', () => {
-		expect(
-			getNewSiteParams(
-				testParams( {
-					siteUrl: undefined,
-					siteTitle: '',
-					username: 'janedoe',
-				} )
-			)
-		).toEqual(
-			expect.objectContaining( {
-				blog_name: 'janedoe',
-				find_available_url: true,
-			} )
-		);
-	} );
+			);
+		}
+	);
 
 	test( 'blog_name hint uses the site URL when present', () => {
 		expect(
@@ -125,7 +161,6 @@ describe( 'getNewSiteParams', () => {
 				testParams( {
 					siteUrl: 'testing123.wordpress.com',
 					siteTitle: 'Testing Inc.',
-					username: 'janedoe',
 				} )
 			)
 		).toEqual(
@@ -142,7 +177,6 @@ describe( 'getNewSiteParams', () => {
 				testParams( {
 					siteUrl: 'example.com',
 					siteTitle: 'Testing Inc.',
-					username: 'janedoe',
 				} )
 			)
 		).toEqual(
@@ -159,7 +193,6 @@ describe( 'getNewSiteParams', () => {
 				testParams( {
 					siteUrl: 'mysite.tech.blog',
 					siteTitle: 'Testing Inc.',
-					username: 'janedoe',
 				} )
 			)
 		).toEqual(

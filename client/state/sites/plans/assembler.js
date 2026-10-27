@@ -1,3 +1,7 @@
+/**
+ * @param {Object} [plan] Raw plan from the `/sites/$site/plans` payload.
+ * @returns {import('./types').SitePlanData} The assembled, camelCase site plan.
+ */
 export const createSitePlanObject = ( plan ) => {
 	if ( ! plan ) {
 		return {};
@@ -10,6 +14,8 @@ export const createSitePlanObject = ( plan ) => {
 		// Left un-coerced so `undefined` (field absent) stays distinct from `false`.
 		availableForDowngrade: plan.available_for_downgrade,
 		availableForUpgrade: plan.available_for_upgrade,
+		isDelayedDowngradeAvailable: plan.is_delayed_downgrade_available,
+		isInstantDowngradeAvailable: plan.is_instant_downgrade_available,
 		currentPlan: Boolean( plan.current_plan ),
 		currencyCode: plan.currency_code,
 		expired: plan.is_expired,

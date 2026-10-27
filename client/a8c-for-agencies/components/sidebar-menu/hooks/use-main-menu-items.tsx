@@ -84,7 +84,7 @@ const useMainMenuItems = ( path: string ) => {
 						menu_item: 'Automattic for Agencies / Migrations',
 					},
 					withChevron: true,
-			  }
+				}
 			: {};
 
 		return [
@@ -127,7 +127,7 @@ const useMainMenuItems = ( path: string ) => {
 							},
 							withChevron: true,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				icon: category,
@@ -150,7 +150,7 @@ const useMainMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Plugins',
 							},
 						},
-				  ]
+					]
 				: [] ),
 			{
 				icon: tag,
@@ -212,7 +212,7 @@ const useMainMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Settings',
 							},
 						},
-				  ]
+					]
 				: [] ),
 			...( isSectionNameEnabled( 'a8c-for-agencies-team' )
 				? [
@@ -225,7 +225,7 @@ const useMainMenuItems = ( path: string ) => {
 								menu_item: 'Automattic for Agencies / Team',
 							},
 						},
-				  ]
+					]
 				: [] ),
 			...( agency?.amplify?.allowed
 				? [
@@ -240,7 +240,7 @@ const useMainMenuItems = ( path: string ) => {
 							},
 							withChevron: true,
 						},
-				  ]
+					]
 				: [] ),
 			{
 				icon: chartBar,

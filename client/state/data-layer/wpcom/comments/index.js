@@ -37,7 +37,7 @@ export const commentsFromApi = ( comments ) =>
 						...comment.author,
 						name: decodeEntities( comment?.author?.name ),
 					},
-			  }
+				}
 			: comment
 	);
 

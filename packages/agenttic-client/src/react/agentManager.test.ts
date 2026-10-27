@@ -444,6 +444,27 @@ describe( 'agentManager', () => {
 			await agentManager.createAgent( 'test-key', testConfig );
 		} );
 
+		it( 'sends a message under its history copy’s ID', async () => {
+			vi.mocked( createTextMessage ).mockReturnValueOnce( {
+				role: 'user',
+				kind: 'message',
+				parts: [ { type: 'text', text: 'Hello' } ],
+				messageId: 'user-1',
+			} );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+				void update;
+			}
+
+			expect( mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.messageId ).toBe(
+				'user-1'
+			);
+			expect( agentManager.getConversationHistory( 'test-key' ).at( -1 )?.messageId ).toBe(
+				'user-1'
+			);
+		} );
+
 		it( 'sendToolResult supersedes a stale recorded result for the same call', async () => {
 			// The executor records a local result for every executed tool; a
 			// later tool-result send must replace it, not duplicate it.
@@ -484,6 +505,144 @@ describe( 'agentManager', () => {
 			expect( resultParts ).toHaveLength( 1 );
 			expect( ( resultParts[ 0 ] as any ).data.result ).toEqual( { success: false } );
 			expect( parts.some( ( part: any ) => 'arguments' in ( part.data ?? {} ) ) ).toBe( true );
+		} );
+
+		it( 'sendToolResults pairs every call of a turn this page never saw', async () => {
+			// A turn resumed after a page change: this page only has the question.
+			await agentManager.replaceMessages( 'test-key', [
+				{
+					role: 'user',
+					kind: 'message',
+					parts: [ { type: 'text', text: 'Top 5 products?' } ],
+					messageId: 'm1',
+				},
+			] as Message[] );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+			vi.mocked( createToolResultDataPart ).mockImplementation(
+				( toolCallId: string, toolId: string, result: unknown ) => ( {
+					type: 'data',
+					data: { toolCallId, toolId, result },
+				} )
+			);
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of agentManager.sendToolResults(
+				'test-key',
+				[ { toolCallId: 'call-top', toolId: 'top_products', result: { error: 'interrupted' } } ],
+				[ { toolCallId: 'call-top', toolId: 'top_products', arguments: { limit: 5 } } ]
+			) ) {
+				// Drain.
+			}
+
+			const sent = mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.parts.filter(
+				( part: any ) => part.type === 'data' && 'toolCallId' in ( part.data ?? {} )
+			);
+			expect(
+				sent.map( ( part: any ) => [ part.data.toolCallId, 'result' in part.data ] )
+			).toEqual( [
+				[ 'call-top', false ],
+				[ 'call-top', true ],
+			] );
+			expect( sent[ 1 ].data.result ).toEqual( { error: 'interrupted' } );
+		} );
+
+		it( 'sendToolResults leaves calls already in history alone and replaces their results', async () => {
+			await agentManager.replaceMessages( 'test-key', [
+				{
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { toolCallId: 'call-top', toolId: 'top_products', arguments: {} },
+						},
+					],
+					messageId: 'm1',
+				},
+				{
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { toolCallId: 'call-top', toolId: 'top_products', result: { rows: 1 } },
+						},
+					],
+					messageId: 'm2',
+				},
+			] as Message[] );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+			vi.mocked( createToolResultDataPart ).mockImplementation(
+				( toolCallId: string, toolId: string, result: unknown ) => ( {
+					type: 'data',
+					data: { toolCallId, toolId, result },
+				} )
+			);
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of agentManager.sendToolResults(
+				'test-key',
+				[ { toolCallId: 'call-top', toolId: 'top_products', result: { rows: 5 } } ],
+				[ { toolCallId: 'call-top', toolId: 'top_products', arguments: {} } ]
+			) ) {
+				// Drain.
+			}
+
+			const sent = mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.parts.filter(
+				( part: any ) => part.type === 'data' && 'toolCallId' in ( part.data ?? {} )
+			);
+			expect( sent ).toHaveLength( 2 );
+			expect( sent[ 1 ].data.result ).toEqual( { rows: 5 } );
+		} );
+
+		it( 'sendToolResults adds only the calls of a turn missing from history', async () => {
+			await agentManager.replaceMessages( 'test-key', [
+				{
+					role: 'agent',
+					kind: 'message',
+					parts: [
+						{
+							type: 'data',
+							data: { toolCallId: 'call-top', toolId: 'top_products', arguments: {} },
+						},
+					],
+					messageId: 'm1',
+				},
+			] as Message[] );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+			vi.mocked( createToolResultDataPart ).mockImplementation(
+				( toolCallId: string, toolId: string, result: unknown ) => ( {
+					type: 'data',
+					data: { toolCallId, toolId, result },
+				} )
+			);
+
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
+			for await ( const update of agentManager.sendToolResults(
+				'test-key',
+				[
+					{ toolCallId: 'call-top', toolId: 'top_products', result: { error: 'interrupted' } },
+					{ toolCallId: 'call-stock', toolId: 'stock', result: { error: 'interrupted' } },
+				],
+				[
+					{ toolCallId: 'call-top', toolId: 'top_products', arguments: {} },
+					{ toolCallId: 'call-stock', toolId: 'stock', arguments: {} },
+				]
+			) ) {
+				// Drain.
+			}
+
+			const sent = mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.parts.filter(
+				( part: any ) => part.type === 'data' && 'toolCallId' in ( part.data ?? {} )
+			);
+			expect(
+				sent.map( ( part: any ) => [ part.data.toolCallId, 'result' in part.data ] )
+			).toEqual( [
+				[ 'call-top', false ],
+				[ 'call-stock', false ],
+				[ 'call-top', true ],
+				[ 'call-stock', true ],
+			] );
 		} );
 
 		it( 'should stream messages from agent', async () => {

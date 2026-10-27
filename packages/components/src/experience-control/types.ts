@@ -54,7 +54,7 @@ export type ExperienceControlProps = {
 	/** The callback function when experience value changes */
 	onChange: ( experience: ExperienceValue ) => void;
 	/** The current selected experience value */
-	value: ExperienceValue;
+	value?: ExperienceValue;
 	/** Optional name attribute for the control */
 	name?: string;
 };

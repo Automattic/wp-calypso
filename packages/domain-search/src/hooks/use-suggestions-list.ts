@@ -1,8 +1,9 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
+import { type DomainAvailability } from '@automattic/api-core';
 import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { isFqdnQuery, isWpcomSubdomainQuery, stripWpcomSubdomainSuffix } from '../helpers';
 import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
+import { isFqdnShownAsSuggestion } from '../helpers/is-fqdn-shown-as-suggestion';
 import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
@@ -43,16 +44,15 @@ export const useSuggestionsList = () => {
 		enabled: config.skippable && ! isFqdn,
 	} );
 
-	// The top bundle card is the FQDN path: a bare-term search shows inline
-	// bundle rows instead (see useInlineBundles), and the backend returns no
-	// bundle_suggestion for a bare term anyway, so this query stays gated to
-	// FQDN queries. It shares a query key with useInlineBundles' bundleTriggers
-	// (see api-queries domains.ts), so the two dedupe to a single request even
-	// when both are enabled on the same FQDN query.
+	// The bundle card is keyed on the featured suggestion, not the typed query
+	// (DOMAINS-2238): the backend anchors a bare-term bundle on the first
+	// trigger-TLD suggestion in its list, so the query runs for every query
+	// shape. It shares a query key with useInlineBundles' bundleTriggers (see
+	// api-queries domains.ts), so the two dedupe to a single request.
 	// Still gated behind the frontend `domain-bundling` flag (config.showBundleSuggestions).
-	const { data: bundleSuggestion } = useQuery( {
+	const { data: bundleSuggestion, isLoading: isLoadingBundleSuggestion } = useQuery( {
 		...queries.bundleSuggestion( query ),
-		enabled: config.showBundleSuggestions && isFqdn,
+		enabled: config.showBundleSuggestions,
 	} );
 
 	const { isLoading: isLoadingQueryAvailability, data: fqdnAvailability } = useQuery( {
@@ -89,12 +89,13 @@ export const useSuggestionsList = () => {
 		isLoadingAvailablePremiumDomains;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
-		if ( suggestions && fqdnAvailability && query === fqdnAvailability.domain_name ) {
-			addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
-		}
+		const suggestionsWithFqdn =
+			fqdnAvailability && query === fqdnAvailability.domain_name
+				? addAvailabilityAsSuggestion( suggestions, fqdnAvailability )
+				: suggestions;
 
 		return partitionSuggestions( {
-			suggestions: suggestions
+			suggestions: suggestionsWithFqdn
 				.filter( ( { domain_name: suggestion, is_premium } ) => {
 					if ( suggestion !== query ) {
 						return ! is_premium || availablePremiumDomains.includes( suggestion );
@@ -104,15 +105,10 @@ export const useSuggestionsList = () => {
 						return false;
 					}
 
-					if (
-						fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ||
-						( config.includeOwnedDomainInSuggestions &&
-							fqdnAvailability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER )
-					) {
-						return true;
-					}
-
-					return isSupportedPremiumDomain( fqdnAvailability );
+					return isFqdnShownAsSuggestion(
+						fqdnAvailability,
+						config.includeOwnedDomainInSuggestions
+					);
 				} )
 				.map( ( suggestion ) => suggestion.domain_name ),
 			query,
@@ -132,5 +128,6 @@ export const useSuggestionsList = () => {
 		featuredSuggestions,
 		regularSuggestions,
 		bundleSuggestion,
+		isLoadingBundleSuggestion,
 	};
 };

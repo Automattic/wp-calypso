@@ -108,7 +108,7 @@ export default function ThemeCollection( {
 										slidesPerView: 3,
 										spaceBetween: -32,
 									},
-							  }
+								}
 							: {
 									// deprecated Calypso breakpoints used in the Theme Showcase
 									660: {
@@ -125,7 +125,7 @@ export default function ThemeCollection( {
 										slidesPerView: 3,
 										spaceBetween: -32,
 									},
-							  },
+								},
 						modules: [ Navigation, Keyboard, Mousewheel ],
 					} );
 					setSwiperLoaded( true );

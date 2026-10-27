@@ -3,6 +3,7 @@ import {
 	HOSTING_LP_FLOW,
 	ENTREPRENEUR_FLOW,
 	READER_FLOW,
+	WPCC_FLOW,
 } from '@automattic/onboarding';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -56,6 +57,7 @@ const useSteps = ( {
 		case HOSTING_LP_FLOW:
 		case ENTREPRENEUR_FLOW:
 		case READER_FLOW:
+		case WPCC_FLOW:
 			steps = [ { title: __( 'Creating your account' ) } ];
 			break;
 		case 'do-it-for-me':

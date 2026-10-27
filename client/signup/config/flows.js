@@ -1,26 +1,29 @@
+import { isBusiness, isPersonal, isPremium } from '@automattic/calypso-products';
 import {
 	PREMIUM_THEME,
 	DOT_ORG_THEME,
 	BUNDLED_THEME,
 	MARKETPLACE_THEME,
 } from '@automattic/design-picker';
-import { DOMAIN_FOR_GRAVATAR_FLOW, isDomainForGravatarFlow } from '@automattic/onboarding';
+import {
+	DOMAIN_FOR_GRAVATAR_FLOW,
+	isDomainForGravatarFlow,
+	ONBOARDING_FLOW,
+} from '@automattic/onboarding';
 import { isURL } from '@wordpress/url';
 import { getDashboardFromQuery } from 'calypso/dashboard/app/routing';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { SITE_SELECTED_REF } from 'calypso/landing/stepper/constants';
 import { getOnboardingPostCheckoutDestination } from 'calypso/landing/stepper/declarative-flow/helpers/get-onboarding-post-checkout-destination';
+import { withLocale } from 'calypso/landing/stepper/declarative-flow/helpers/with-locale';
+import { getPlanCartItem } from 'calypso/lib/cart-values/cart-items';
 import { getQueryArgs } from 'calypso/lib/query-args';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { generateFlows } from 'calypso/signup/config/flows-pure';
 import stepConfig from './steps';
 
 function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
-	let checkoutURL = `/checkout/${ dependencies.siteSlug }`;
-
-	// Append the locale slug for the userless checkout page.
-	if ( 'no-site' === dependencies.siteSlug && true === dependencies.allowUnauthenticated ) {
-		checkoutURL += `/${ localeSlug }`;
-	}
+	const checkoutURL = `/checkout/${ dependencies.siteSlug }`;
 
 	const isDomainOnly = [ 'domain', DOMAIN_FOR_GRAVATAR_FLOW ].includes( flowName );
 	const isGravatarDomain = isDomainForGravatarFlow( flowName );
@@ -45,6 +48,10 @@ function getCheckoutUrl( dependencies, localeSlug, flowName, destination ) {
 			},
 			`/start/with-plugin/plans-with-plugin${ localeSlug ? `/${ localeSlug }` : '' }`
 		);
+	} else if ( flowName === 'site-selected' ) {
+		// site-selected: its destination is the post-checkout step, which would treat leaving
+		// checkout as a purchase, so land on My Home instead.
+		backDestination = getSignupDestination( { ...dependencies, localeSlug, flowName } );
 	}
 
 	// checkoutBackUrl is required to be a complete URL, and will be further sanitized within the checkout package.
@@ -124,26 +131,46 @@ function getSignupDestination( { siteSlug, redirect_to, localeSlug, flowName } )
 	return redirectTo;
 }
 
-function getLaunchReturnTarget( dependencies ) {
-	// If a back_to parameter is provided, use it as the destination
-	if ( dependencies.back_to ) {
-		return { url: dependencies.back_to, celebrateArgs: { celebrateLaunch: 'true' } };
+/**
+ * A site that already exists (e.g. a domain-only site turned into a full one) lands on the same
+ * post-checkout step as the onboarding flow once it buys a plan that can include Big Sky, so it
+ * gets the setup-your-site-ai chooser. Other plans, such as Commerce with its Atomic transfer,
+ * go straight to My Home.
+ * @param {Object} dependencies the signup dependency store
+ * @param {string} localeSlug the signup locale
+ * @returns {string} the URL to land on after checkout
+ */
+function getSiteSelectedDestination( dependencies, localeSlug ) {
+	const { siteSlug, redirect_to, cartItems } = dependencies;
+	const planCartItem = getPlanCartItem( cartItems );
+
+	const canIncludeBigSky =
+		!! planCartItem &&
+		( isPersonal( planCartItem ) || isPremium( planCartItem ) || isBusiness( planCartItem ) );
+
+	if ( redirect_to || ! siteSlug || ! canIncludeBigSky ) {
+		return getSignupDestination( dependencies );
 	}
 
+	return addQueryArgs(
+		{ siteSlug, ref: SITE_SELECTED_REF },
+		withLocale( `/setup/${ ONBOARDING_FLOW }/post-checkout-onboarding`, localeSlug )
+	);
+}
+
+/**
+ * The wp-admin screen a launch started from, as named by its `ref`.
+ * @param {Object} dependencies the signup dependency store
+ * @returns {string|null} the screen's URL, or null when the launch didn't start in wp-admin
+ */
+function getWpAdminLaunchUrl( dependencies ) {
 	const ref = dependencies.refParameter?.trim() ?? '';
-	const isWpAdminPath = ref === 'wp-admin' || ref.startsWith( 'wp-admin/' );
 
-	if ( isWpAdminPath ) {
-		return {
-			url: `https://${ dependencies.siteSlug }/${ ref }`,
-			celebrateArgs: { 'celebrate-launch': 'true' },
-		};
+	if ( ref !== 'wp-admin' && ! ref.startsWith( 'wp-admin/' ) ) {
+		return null;
 	}
 
-	return {
-		url: `/home/${ dependencies.siteSlug }`,
-		celebrateArgs: { celebrateLaunch: 'true' },
-	};
+	return `https://${ dependencies.siteSlug }/${ ref }`;
 }
 
 /**
@@ -153,19 +180,38 @@ function getLaunchReturnTarget( dependencies ) {
  * @returns {string} the URL to send the user back to
  */
 export function getLaunchReturnUrl( dependencies ) {
-	return getLaunchReturnTarget( dependencies ).url;
+	return (
+		dependencies.back_to ||
+		getWpAdminLaunchUrl( dependencies ) ||
+		`/home/${ dependencies.siteSlug }`
+	);
+}
+
+/**
+ * The query argument that shows the launch celebration on the given page. wp-admin reads
+ * `celebrate-launch`, while Calypso reads `celebrateLaunch`.
+ * @param {string} url an absolute URL or a Calypso path
+ * @returns {Object} the query argument to add
+ */
+function getCelebrateLaunchArgs( url ) {
+	const { pathname } = new URL( url, 'https://wordpress.com' );
+
+	return /\/wp-admin(\/|$)/.test( pathname )
+		? { 'celebrate-launch': 'true' }
+		: { celebrateLaunch: 'true' };
 }
 
 function getLaunchDestination( dependencies ) {
 	// `redirect_to` lands the user somewhere other than where they came from once the site is live,
-	// so `back_to` is free to keep meaning "the page the Back button returns to".
-	if ( dependencies.redirect_to ) {
-		return addQueryArgs( { celebrateLaunch: 'true' }, dependencies.redirect_to );
-	}
+	// so `back_to` is free to keep meaning "the page the Back button returns to". Likewise, `ref`
+	// names a wp-admin screen that celebrates the launch, while a wp-admin `back_to` can be any
+	// screen.
+	const url =
+		dependencies.redirect_to ||
+		getWpAdminLaunchUrl( dependencies ) ||
+		getLaunchReturnUrl( dependencies );
 
-	const { url, celebrateArgs } = getLaunchReturnTarget( dependencies );
-
-	return addQueryArgs( celebrateArgs, url );
+	return addQueryArgs( getCelebrateLaunchArgs( url ), url );
 }
 
 function getDomainSignupFlowDestination( { designType, siteSlug, flowName } ) {
@@ -261,6 +307,7 @@ function getHostingFlowDestination( { stepperHostingFlow } ) {
 const flows = generateFlows( {
 	getRedirectDestination,
 	getSignupDestination,
+	getSiteSelectedDestination,
 	getLaunchDestination,
 	getDomainSignupFlowDestination,
 	getEmailSignupFlowDestination,

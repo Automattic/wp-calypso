@@ -9,5 +9,5 @@ export async function fetchAgencyMigrationCommissionSites(
 		apiNamespace: 'wpcom/v2',
 	} );
 
-	return Array.isArray( response ) ? response : response.sites ?? [];
+	return Array.isArray( response ) ? response : ( response.sites ?? [] );
 }

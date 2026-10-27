@@ -2,6 +2,7 @@ import {
 	MEMBERSHIPS_PRODUCTS_RECEIVE,
 	MEMBERSHIPS_PRODUCT_RECEIVE,
 	MEMBERSHIPS_PRODUCT_DELETE,
+	MEMBERSHIPS_PRODUCT_DELETE_FAILURE,
 } from 'calypso/state/action-types';
 import { combineReducers, withSchemaValidation } from 'calypso/state/utils';
 import productListSchema from './schema';
@@ -60,6 +61,14 @@ export const items = withSchemaValidation( productListSchema, ( state = {}, acti
 				[ siteId ]: state[ siteId ].filter(
 					( existingProduct ) => existingProduct.ID !== product.ID
 				),
+			};
+		}
+		case MEMBERSHIPS_PRODUCT_DELETE_FAILURE: {
+			const { siteId, product } = action;
+
+			return {
+				...state,
+				[ siteId ]: addOrEditProduct( state[ siteId ], product ),
 			};
 		}
 	}

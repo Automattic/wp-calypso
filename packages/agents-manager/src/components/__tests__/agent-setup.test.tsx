@@ -11,7 +11,9 @@ const mockAgentManager = {
 };
 let mockIsOpen = true;
 let mockHasAiChatEntry = false;
-const mockUseAbilitiesSetup = jest.fn();
+let mockIsStoreReady = true;
+let mockAgentDockCatchAll = false;
+let mockAgentConfig = { agentId: 'wp-orchestrator' };
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
 		agentId,
@@ -27,7 +29,7 @@ jest.mock( '@automattic/data-stores', () => ( {} ), { virtual: true } );
 
 // Simulate `store` ready so the component renders
 jest.mock( '@wordpress/data', () => ( {
-	useSelect: () => ( { hasLoaded: true, isOpen: mockIsOpen } ),
+	useSelect: () => ( { hasLoaded: mockIsStoreReady, isOpen: mockIsOpen } ),
 } ) );
 jest.mock( '../../hooks/use-has-ai-chat-entry-button', () => ( {
 	__esModule: true,
@@ -44,7 +46,7 @@ jest.mock( '../../utils/create-agent-config', () => ( {
 		mockCreateAgentConfig( options ),
 } ) );
 jest.mock( '../../hooks/use-agent-config', () => ( {
-	useAgentConfig: () => ( { agentId: 'wp-orchestrator', isLoading: false } ),
+	useAgentConfig: () => mockAgentConfig,
 } ) );
 jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 	useOpenChatUrlParam: () => true,
@@ -52,7 +54,6 @@ jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 jest.mock( '../../utils/load-external-providers', () => ( {
 	loadExternalProviders: async () => ( {
 		providerIds: [],
-		useAbilitiesSetup: mockUseAbilitiesSetup,
 	} ),
 } ) );
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
@@ -60,11 +61,11 @@ jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
 } ) );
 jest.mock( '../agent-dock', () => {
 	const { useAgentsManagerContext } = jest.requireActual( '../../contexts' );
-	const { useNavigate } = jest.requireActual( 'react-router-dom' );
+	const { Navigate, Route, Routes, useNavigate } = jest.requireActual( 'react-router-dom' );
 	function MockAgentDock() {
 		const { agentConfig } = useAgentsManagerContext();
 		const navigate = useNavigate();
-		return (
+		const dock = (
 			<>
 				<div data-testid="published-session">{ agentConfig?.sessionId ?? '' }</div>
 				<button onClick={ () => navigate( '/history' ) }>go-history</button>
@@ -74,6 +75,17 @@ jest.mock( '../agent-dock', () => {
 				</button>
 			</>
 		);
+
+		if ( mockAgentDockCatchAll ) {
+			return (
+				<Routes>
+					<Route path="/chat" element={ dock } />
+					<Route path="*" element={ <Navigate to="/chat" replace /> } />
+				</Routes>
+			);
+		}
+
+		return dock;
 	}
 	return { __esModule: true, default: MockAgentDock };
 } );
@@ -105,43 +117,15 @@ describe( 'AgentSetup', () => {
 		mockAgentManager.hasAgent.mockReturnValue( true );
 		mockIsOpen = true;
 		mockHasAiChatEntry = false;
+		mockIsStoreReady = true;
+		mockAgentDockCatchAll = false;
+		mockAgentConfig = { agentId: 'wp-orchestrator' };
 		sessionStorage.clear();
 		document.body.className = '';
 		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
 		setSessionSiteKey( 'no-site' );
 		setSessionUserId( undefined );
-	} );
-
-	it( 'mounts provider ability setup for eligible WebMCP without opening chat', async () => {
-		mockIsOpen = false;
-		mockHasAiChatEntry = true;
-		document.body.className = 'site-editor-php';
-		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
-			isDevMode: true,
-		};
-		Object.defineProperty( document, 'modelContext', {
-			configurable: true,
-			value: { registerTool: jest.fn() },
-		} );
-
-		render( manager( 111 ) );
-
-		await waitFor( () => expect( mockUseAbilitiesSetup ).toHaveBeenCalled() );
-	} );
-
-	it( 'does not mount provider ability setup outside development mode', async () => {
-		document.body.className = 'site-editor-php';
-		Object.defineProperty( document, 'modelContext', {
-			configurable: true,
-			value: { registerTool: jest.fn() },
-		} );
-
-		render( manager( 111 ) );
-
-		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalled() );
-		expect( mockUseAbilitiesSetup ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not re-initialize while the chat view stays shown', async () => {
@@ -156,6 +140,137 @@ describe( 'AgentSetup', () => {
 
 		await act( async () => {} );
 		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'prefers the URL session over the stored session', async () => {
+		mockAgentDockCatchAll = true;
+		document.body.className = 'site-editor-php';
+		saveSessionId( 'stored-session', undefined, '111' );
+		const onPopState = jest.fn();
+		window.addEventListener( 'popstate', onPopState );
+		window.history.replaceState(
+			{ canvas: 'edit' },
+			'',
+			'/?canvas=edit&wp-agent-chat=url-session'
+		);
+
+		render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: 'url-session' } )
+			)
+		);
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+		expect( new URLSearchParams( window.location.search ).has( 'wp-agent-chat' ) ).toBe( false );
+		expect( window.location.search ).toBe( '?canvas=edit' );
+		expect( window.history.state ).toEqual( { canvas: 'edit' } );
+		expect( onPopState ).toHaveBeenCalledTimes( 1 );
+		window.removeEventListener( 'popstate', onPopState );
+	} );
+
+	it( 'does not emit popstate outside the Site Editor', async () => {
+		const onPopState = jest.fn();
+		window.addEventListener( 'popstate', onPopState );
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( onPopState ).not.toHaveBeenCalled();
+		window.removeEventListener( 'popstate', onPopState );
+	} );
+
+	it( 'captures the initial session before the store is ready', async () => {
+		mockIsStoreReady = false;
+		mockAgentManager.hasAgent.mockReturnValue( false );
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		const { rerender } = render( manager( 111 ) );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( mockCreateAgentConfig ).not.toHaveBeenCalled();
+
+		window.history.replaceState( {}, '', '/?canvas=edit' );
+		mockIsStoreReady = true;
+		rerender( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					agentId: 'wp-orchestrator',
+					sessionId: 'url-session',
+				} )
+			)
+		);
+		expect( getSessionId( 'wp-orchestrator', '111' ) ).toBe( 'url-session' );
+		expect( window.location.search ).toBe( '?canvas=edit' );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not reuse the initial session for a later new chat', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+
+		fireEvent.click( screen.getByText( 'go-new-chat' ) );
+
+		await waitFor( () => expect( getSessionId( undefined, '111' ) ).toBe( 'fake-uuid' ) );
+	} );
+
+	it( 'resumes a session handed off for this site', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: 'url-session' } )
+			)
+		);
+		expect( getSessionId( undefined, '111' ) ).toBe( 'url-session' );
+		expect( window.location.search ).toBe( '' );
+	} );
+
+	it( 'keeps a session handed off for another site until that site is reached', async () => {
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=222' );
+
+		const { rerender } = render( manager( 111 ) );
+
+		// Site 111 starts its own chat rather than the one handed off for 222.
+		await waitFor( () =>
+			expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+				expect.objectContaining( { sessionId: 'fake-uuid' } )
+			)
+		);
+		expect( getSessionId( undefined, '222' ) ).toBe( 'url-session' );
+		mockAgentManager.removeAgent.mockImplementation( () => {
+			mockAgentManager.hasAgent.mockReturnValue( false );
+		} );
+
+		rerender( manager( 222 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
+			expect.objectContaining( { sessionId: 'url-session' } )
+		);
+	} );
+
+	it( 'ignores a handed-off session for a surface-bound agent', async () => {
+		mockAgentConfig = { agentId: 'custom-agent' };
+		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
+
+		render( manager( 111 ) );
+
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+		expect( mockCreateAgentConfig ).toHaveBeenCalledWith(
+			expect.objectContaining( { sessionId: '' } )
+		);
+		expect( getSessionId( 'custom-agent', '111' ) ).toBe( '' );
+		expect( window.location.search ).toBe( '' );
 	} );
 
 	it( 'aligns the config with the stored session when leaving the chat view', async () => {
@@ -206,13 +321,14 @@ describe( 'AgentSetup', () => {
 
 		await waitFor( () => expect( mockAgentManager.removeAgent ).toHaveBeenCalled() );
 		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
-		expect( getSessionId() ).toBe( '' );
+		// The orchestrator mints the new chat's session id up front.
+		await waitFor( () => expect( getSessionId() ).toBe( 'fake-uuid' ) );
 
-		// A fresh config must publish even though it matches the cleared session,
+		// A fresh config must publish even though it matches the new session,
 		// or `useAgentChat` never recreates the removed agent.
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { sessionId: '' } )
+			expect.objectContaining( { sessionId: 'fake-uuid' } )
 		);
 	} );
 

@@ -519,7 +519,7 @@ export const ImageUploader = forwardRef< ImageUploaderHandle, ImageUploaderProps
 					/* translators: %s: maximum file size (e.g., "5 MB") */
 					__( 'Upload image files up to %s each.', 'a8c-agenttic' ),
 					formatMaxFileSize( maxFileSize )
-			  )
+				)
 			: '';
 
 		const invalidFileMessage = sprintf(

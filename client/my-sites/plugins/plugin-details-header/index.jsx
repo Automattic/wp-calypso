@@ -1,13 +1,9 @@
-import { Badge, Button } from '@automattic/components';
+import { Badge } from '@automattic/components';
 import { formatNumberCompact } from '@automattic/number-formatters';
 import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'react-redux';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import Rating from 'calypso/components/rating';
-import {
-	useMarketplaceReviewsQuery,
-	useMarketplaceReviewsStatsQuery,
-} from 'calypso/data/marketplace/use-marketplace-reviews';
 import { gaRecordEvent } from 'calypso/lib/analytics/ga';
 import { preventWidows } from 'calypso/lib/formatting';
 import { useIsMarketplaceRedesignEnabled } from 'calypso/my-sites/plugins/hooks/use-is-marketplace-redesign-enabled';
@@ -18,13 +14,7 @@ import usePluginVersionInfo from '../plugin-management-v2/hooks/use-plugin-versi
 
 import './style.scss';
 
-const PluginDetailsHeader = ( {
-	plugin,
-	isPlaceholder,
-	isJetpackCloud,
-	onReviewsClick = () => {},
-	isMarketplaceProduct,
-} ) => {
+const PluginDetailsHeader = ( { plugin, isPlaceholder, isJetpackCloud, isMarketplaceProduct } ) => {
 	const moment = useLocalizedMoment();
 	const translate = useTranslate();
 	const { localizePath } = useLocalizedPlugins();
@@ -34,46 +24,13 @@ const PluginDetailsHeader = ( {
 
 	const { currentVersionsRange } = usePluginVersionInfo( plugin, selectedSite?.ID );
 
-	const { data: reviewsStats } = useMarketplaceReviewsStatsQuery( {
-		productType: 'plugin',
-		slug: plugin.slug,
-	} );
-
-	const { data: marketplaceReviews } = useMarketplaceReviewsQuery( {
-		productType: 'plugin',
-		slug: plugin.slug,
-	} );
-
-	// Rating can be a valid number, 0 or null, discard undefined for easier comparison
-	let rating = plugin.rating ?? null;
-	if ( isMarketplaceProduct ) {
-		rating = reviewsStats?.ratings_average ? ( reviewsStats.ratings_average * 100 ) / 5 : 0;
-	}
+	// Rating can be a valid number, 0 or null, discard undefined for easier comparison.
+	// Marketplace products carry their WooCommerce.com rating, and only show it when there is one.
+	const rating = isMarketplaceProduct ? plugin.rating || null : ( plugin.rating ?? null );
 
 	if ( isPlaceholder ) {
 		return <PluginDetailsHeaderPlaceholder />;
 	}
-
-	const getMarketPlacePluginReviewsLink = () => {
-		const numberOfReviews = marketplaceReviews?.length || 0;
-
-		return (
-			<Button
-				borderless
-				className="plugin-details-header__number-reviews-link is-link"
-				onClick={ onReviewsClick }
-			>
-				{ numberOfReviews > 0 &&
-					translate( '%(numberOfReviews)d review', '%(numberOfReviews)d reviews', {
-						count: numberOfReviews,
-						args: {
-							numberOfReviews,
-						},
-					} ) }
-				{ numberOfReviews === 0 && translate( 'Add a review' ) }
-			</Button>
-		);
-	};
 
 	const getPluginReviewsLink = () => {
 		if ( plugin.num_ratings > 0 ) {
@@ -101,7 +58,7 @@ const PluginDetailsHeader = ( {
 		? plugin.version
 		: `${ currentVersionsRange?.min || plugin.version }${
 				currentVersionsRange?.max ? ` - ${ currentVersionsRange.max }` : ''
-		  }`;
+			}`;
 
 	return (
 		<div className="plugin-details-header__container">
@@ -131,7 +88,7 @@ const PluginDetailsHeader = ( {
 												</a>
 											),
 										},
-								  } ) }
+									} ) }
 						</span>
 
 						<span className="plugin-details-header__subtitle-separator">·</span>
@@ -143,7 +100,7 @@ const PluginDetailsHeader = ( {
 			</div>
 			{ ! isJetpackCloud && <Tags plugin={ plugin } /> }
 			<div className="plugin-details-header__additional-info">
-				{ /* We want to accept rating 0, which means no rating for Marketplace products */ }
+				{ /* We want to accept rating 0, which means the plugin has no ratings yet */ }
 				{ rating !== null && (
 					<div className="plugin-details-header__info">
 						<div className="plugin-details-header__info-title">
@@ -159,7 +116,7 @@ const PluginDetailsHeader = ( {
 								) : (
 									<div>{ `${ formatPluginRating( rating, true ) }/5` }</div>
 								) ) }
-							{ isMarketplaceProduct ? getMarketPlacePluginReviewsLink() : getPluginReviewsLink() }
+							{ ! isMarketplaceProduct && getPluginReviewsLink() }
 						</div>
 					</div>
 				) }

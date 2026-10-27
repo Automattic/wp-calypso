@@ -18,7 +18,7 @@ jest.mock( 'calypso/state/query-client', () => ( {
 	getCalypsoQueryClient: () => null,
 } ) );
 
-const realActivate = jest.requireActual< typeof import('../activate') >( '../activate' );
+const realActivate = jest.requireActual< typeof import( '../activate' ) >( '../activate' );
 
 const KONAMI_KEYS = [
 	'ArrowUp',

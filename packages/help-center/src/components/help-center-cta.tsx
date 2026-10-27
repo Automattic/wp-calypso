@@ -96,7 +96,7 @@ export const HelpCenterCTA: React.FC< HelpCenterCTAProps > = ( {
 					placement: variantDefinition.placement,
 					...( planFamily && { plan_family: planFamily } ),
 					...( locale && { locale } ),
-			  }
+				}
 			: null,
 		purchasedAt
 	);
