@@ -1,5 +1,6 @@
 import { A2uiError, DataModel, MessageProcessor, RELAXED_VALIDATION } from '@a2ui/web_core';
 import { getInteractiveUiOperation } from './operation';
+import type { InteractiveUiActionMode } from '../capabilities';
 import type { InteractiveUiCatalog } from './catalog';
 import type { ReactComponentImplementation } from '@a2ui/react';
 import type { A2uiErrorPayload, ActionPayload, SurfaceModel } from '@a2ui/web_core';
@@ -14,9 +15,12 @@ export interface InteractiveUiDataModel {
 	surfaces: Record< string, Record< string, unknown > >;
 }
 
-interface InteractiveUiRuntimeBaseOptions {
+export interface InteractiveUiRuntimeOptions {
 	/** From `createInteractiveUiCatalog()`. Each surface renders with the one its messages name. */
 	catalogs: InteractiveUiCatalog[];
+	actionMode?: InteractiveUiActionMode;
+	/** Handles actions in the selected mode; tool execution must reject on failure. */
+	onAction: ( action: ActionPayload ) => Promise< void >;
 	/**
 	 * Reports each error with the owner of its batch or surface, and the surface's ID when known:
 	 * a message the runtime rejects, or a surface's own error, such as a component its catalog
@@ -24,27 +28,6 @@ interface InteractiveUiRuntimeBaseOptions {
 	 */
 	onError: ( error: A2uiErrorPayload, ownerId: string ) => void;
 }
-
-export interface InteractiveUiToolCall {
-	name: string;
-	arguments: Record< string, unknown >;
-}
-
-export type InteractiveUiRuntimeOptions = InteractiveUiRuntimeBaseOptions &
-	(
-		| {
-				actionMode?: 'agent';
-				/** Sends actions to the agent; the host controls message visibility. */
-				onAction: ( action: ActionPayload ) => Promise< void >;
-				onToolCall?: never;
-		  }
-		| {
-				actionMode: 'tool-call';
-				/** Executes the tool, handles its result, and throws if execution fails. */
-				onToolCall: ( call: InteractiveUiToolCall ) => Promise< void >;
-				onAction?: never;
-		  }
-	);
 
 /**
  * The data model paths a surface's obscured TextFields bind to, or `undefined` when one binds a
@@ -92,7 +75,7 @@ export function createInteractiveUiRuntime( options: InteractiveUiRuntimeOptions
 			const ownerId = surfaceOwnerIds.get( action.surfaceId ) ?? '';
 
 			try {
-				await options.onToolCall( { name: action.name, arguments: action.context } );
+				await options.onAction( action );
 			} catch ( error ) {
 				onError(
 					{

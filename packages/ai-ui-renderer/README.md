@@ -181,23 +181,23 @@ own styles.
 
 ### Action modes
 
-The default `agent` mode passes events to `onAction`. Agents Manager uses it to send hidden
-context messages. MCP Apps can execute tools directly:
+Both modes pass events to `onAction`. In the default `agent` mode, Agents Manager sends hidden
+context messages. MCP Apps can use `tool-call` mode to execute tools directly:
 
 ```ts
 const runtime = createInteractiveUiRuntime( {
 	catalogs,
 	actionMode: 'tool-call',
-	onToolCall: executeTool,
+	onAction: ( { name, context } ) => executeTool( { name, arguments: context } ),
 	onError,
 } );
 ```
 
 An event's `name` is the tool name and its resolved `context` contains the complete arguments.
-The host's `executeTool({ name, arguments })` calls the tool and handles its result, including
-any UI updates. It must reject on failure, including MCP results with `isError`; the runtime
-reports `TOOL_CALL_FAILED` through `onError`. Disable the surface while a call is pending.
-Catalog `functionCall` actions still run locally.
+The host maps the action's `context` to tool `arguments`, executes the tool, and handles its
+result, including any UI updates. `onAction` must reject on failure, including MCP results with
+`isError`; the runtime reports `TOOL_CALL_FAILED` through `onError`. Disable the surface while a
+call is pending. Catalog `functionCall` actions still run locally.
 
 Include `getInteractiveUiActionInstructions('tool-call')` from the `capabilities` entry in the
 rendering tool's description. Callers must name an available tool and bind editable values into

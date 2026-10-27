@@ -39,7 +39,7 @@ it.each( [ new Error( 'Tool failed' ), 'Tool failed' ] )(
 		const runtime = createInteractiveUiRuntime( {
 			catalogs: [ createInteractiveUiCatalog() ],
 			actionMode: 'tool-call',
-			onToolCall: async () => {
+			onAction: async () => {
 				runtime.processMessages(
 					[ { version: 'v1.0', deleteSurface: { surfaceId: 'first' } } ],
 					'message-2'
