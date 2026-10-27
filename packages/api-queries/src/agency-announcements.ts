@@ -8,4 +8,6 @@ export const agencyAnnouncementsQuery = ( agencyId: number ) =>
 		enabled: !! agencyId,
 		// The server caches announcements for five minutes, so refetching sooner can't show anything new.
 		staleTime: 5 * 60 * 1000,
+		// Not persisted: items expire by date, so a restored list could show ones that have ended.
+		meta: { persist: false },
 	} );
