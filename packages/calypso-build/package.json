@@ -37,6 +37,7 @@
 		"@automattic/calypso-babel-config": "workspace:^",
 		"@automattic/languages": "workspace:^",
 		"@automattic/webpack-rtl-plugin": "workspace:^",
+		"@babel/cli": "^7.29.7",
 		"@babel/compat-data": "^7.29.7",
 		"@babel/core": "^7.29.7",
 		"@swc/core": "^1.11.24",

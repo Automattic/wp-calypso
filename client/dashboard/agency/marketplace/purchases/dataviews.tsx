@@ -11,7 +11,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { Text as DashboardText } from '../../../components/text';
 import { DEFAULT_PER_PAGE } from '../../../sites/dataviews/views';
@@ -31,6 +31,7 @@ import {
 	isBundleParent,
 	isLicenseStatus,
 	isPressableLicense,
+	isPressableTitanLicense,
 	isRecentlyTransferred,
 } from './license-status';
 import LicenseStatusBadge from './status-badge';
@@ -139,7 +140,7 @@ export function recordLicenseViewChanges(
 
 export const getLicenseId = ( license: JetpackLicense ) => String( license.license_id );
 
-function SiteCell( {
+export function SiteCell( {
 	license,
 	isAgencyOwner,
 	isProvisioning,
@@ -150,6 +151,10 @@ function SiteCell( {
 	isProvisioning: boolean;
 	onManageSite: ( license: JetpackLicense ) => void;
 } ) {
+	if ( isPressableTitanLicense( license ) ) {
+		const titanDomain = license.meta?.pressable_titan_domain;
+		return <Text variant={ titanDomain ? undefined : 'muted' }>{ titanDomain || '—' }</Text>;
+	}
 	if ( isPressableLicense( license ) && ! license.revoked_at ) {
 		return isAgencyOwner ? (
 			<ExternalLink href={ PRESSABLE_AGENCY_URL } onClick={ () => onManageSite( license ) }>
@@ -228,15 +233,47 @@ export function RenewalCell( { license, locale }: { license: JetpackLicense; loc
 	);
 }
 
-function ProductCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
+function TitanTrialLine( { license, locale }: { license: JetpackLicense; locale: string } ) {
+	const trialEnd = license.subscription?.trial_end;
+	if ( ! trialEnd || license.revoked_at ) {
+		return null;
+	}
+
+	const date = formatDate( parseDateAsUTC( trialEnd ), locale, {
+		dateStyle: 'medium',
+		timeZone: 'UTC',
+	} );
+	return (
+		<Text variant="muted">
+			{ license.subscription?.is_active_trial
+				? /* translators: %s is the date the trial ends, e.g. Oct 22, 2026. */
+					sprintf( __( '90-day trial ends %s' ), date )
+				: /* translators: %s is the date the trial ended, e.g. Oct 22, 2026. */
+					sprintf( __( '90-day trial expired %s' ), date ) }
+		</Text>
+	);
+}
+
+export function ProductCell( { license, locale }: { license: JetpackLicense; locale: string } ) {
 	const transferredUntil = license.meta?.a4a_transferred_subscription_expiration;
 	const clientEmail = license.referral?.client?.email;
+	const isTitan = isPressableTitanLicense( license );
+	const inboxes = license.quantity ?? 0;
 	return (
 		<VStack spacing={ 0 }>
 			<HStack justify="flex-start" spacing={ 2 } expanded={ false } wrap>
 				<Text weight={ 500 }>{ getLicenseProductName( license ) }</Text>
 				{ isBundleParent( license ) && (
 					<Text variant="muted">×{ formatNumber( license.quantity ?? 0 ) }</Text>
+				) }
+				{ isTitan && inboxes > 0 && (
+					<Text variant="muted">
+						{ sprintf(
+							/* translators: %s is the formatted number of email inboxes. */
+							_n( '%s inbox', '%s inboxes', inboxes ),
+							formatNumber( inboxes )
+						) }
+					</Text>
 				) }
 				{ getLicenseTags( license ).map( ( tag ) => (
 					<Badge key={ tag }>{ tag }</Badge>
@@ -245,6 +282,7 @@ function ProductCell( { license, locale }: { license: JetpackLicense; locale: st
 					<TransferredBadge billedFrom={ transferredUntil } locale={ locale } />
 				) }
 			</HStack>
+			{ isTitan && <TitanTrialLine license={ license } locale={ locale } /> }
 			{ clientEmail && (
 				<Text variant="muted" title={ clientEmail }>
 					{ createInterpolateElement( __( '<email /> owns this' ), {
@@ -307,7 +345,10 @@ export function getLicenseFields( {
 			type: 'text',
 			filterBy: false,
 			enableSorting: false,
-			getValue: ( { item } ) => item.siteurl ?? '',
+			getValue: ( { item } ) =>
+				isPressableTitanLicense( item )
+					? ( item.meta?.pressable_titan_domain ?? '' )
+					: ( item.siteurl ?? '' ),
 			render: ( { item } ) => (
 				<SiteCell
 					license={ item }

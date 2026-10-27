@@ -4,6 +4,7 @@ import { DataHelper, LoggedOutHomePage } from '@automattic/calypso-e2e';
 import { FiltersEngine, Request, fromPlaywrightDetails } from '@ghostery/adblocker-playwright';
 import { expect, tags, test } from '../../lib/pw-base';
 import { swapBaseUrl } from '../shared';
+import type { APIRequestContext } from '@playwright/test';
 
 /**
  * The lists uBlock Origin, AdGuard and Brave enable by default or offer one click
@@ -72,14 +73,19 @@ function describeList( url: string, text: string ): string {
 }
 
 /**
+ * Downloads go through Playwright's request context rather than Node's `fetch`. Node's
+ * undici crashes the whole worker with an uncatchable `assert(!this.paused)` when a
+ * server closes the socket while a large body is still being drained (nodejs/undici#5360),
+ * which these multi-megabyte lists hit now and then.
+ *
  * Fails on error responses, which `fromLists` would otherwise parse as filters, and
  * on stalled connections, including while reading the body. `fromLists` retries a
  * rejected fetch.
  */
-async function fetchList( url: string ): Promise< Response > {
-	const response = await fetch( url, { signal: AbortSignal.timeout( 20_000 ) } );
-	if ( ! response.ok ) {
-		throw new Error( `${ url } responded ${ response.status }` );
+async function fetchList( request: APIRequestContext, url: string ): Promise< Response > {
+	const response = await request.get( url, { timeout: 20_000 } );
+	if ( ! response.ok() ) {
+		throw new Error( `${ url } responded ${ response.status() }` );
 	}
 	const text = await response.text();
 	listVersions.set( url, describeList( url, text ) );
@@ -91,11 +97,11 @@ async function fetchList( url: string ): Promise< Response > {
  * every Calypso page sets. Tried twice, since a single stalled request would leave the
  * alert without it.
  */
-async function fetchServedCommit( baseUrl: string ): Promise< string > {
+async function fetchServedCommit( request: APIRequestContext, baseUrl: string ): Promise< string > {
 	for ( let attempt = 1; attempt <= 2; attempt++ ) {
 		try {
-			const response = await fetch( new URL( '/setup/onboarding/user', baseUrl ), {
-				signal: AbortSignal.timeout( 20_000 ),
+			const response = await request.get( new URL( '/setup/onboarding/user', baseUrl ).href, {
+				timeout: 20_000,
 			} );
 			const sha = /var COMMIT_SHA = "([0-9a-f]+)"/.exec( await response.text() )?.[ 1 ];
 			if ( sha ) {
@@ -117,6 +123,7 @@ test.describe(
 	() => {
 		test( 'As a logged-out visitor with a content blocker, I can reach a usable signup step from the homepage', async ( {
 			page,
+			request,
 			environment,
 		}, testInfo ) => {
 			const loggedOutHomePage = new LoggedOutHomePage( page );
@@ -125,8 +132,8 @@ test.describe(
 
 			await test.step( 'Given my browser blocks requests the way Brave and uBlock Origin do', async function () {
 				const [ blocker, servedCommit ] = await Promise.all( [
-					FiltersEngine.fromLists( fetchList, FILTER_LISTS ),
-					fetchServedCommit( environment.CALYPSO_BASE_URL ),
+					FiltersEngine.fromLists( ( url: string ) => fetchList( request, url ), FILTER_LISTS ),
+					fetchServedCommit( request, environment.CALYPSO_BASE_URL ),
 				] );
 
 				const summary = [
