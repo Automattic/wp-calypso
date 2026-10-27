@@ -203,8 +203,8 @@ const DifferentiatorPrefix = styled.span`
 // Inline SVG components
 const ShieldIcon = () => (
 	<svg
-		width="11.25"
-		height="13.76"
+		width="11"
+		height="14"
 		viewBox="4.375 2.646 11.25 13.76"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
@@ -220,8 +220,8 @@ const ShieldIcon = () => (
 
 const ManagedHostingIcon = () => (
 	<svg
-		width="13.33"
-		height="13.33"
+		width="13"
+		height="13"
 		viewBox="3.333 3.333 13.333 13.333"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
@@ -237,8 +237,8 @@ const ManagedHostingIcon = () => (
 
 const FastLoadingIcon = () => (
 	<svg
-		width="13.33"
-		height="11.38"
+		width="13"
+		height="11"
 		viewBox="3.333 4.167 13.333 11.381"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
@@ -253,7 +253,7 @@ const FastLoadingIcon = () => (
 const UnlimitedIcon = () => (
 	<svg
 		width="10"
-		height="12.5"
+		height="13"
 		viewBox="5 4.167 10 12.5"
 		fill="none"
 		xmlns="http://www.w3.org/2000/svg"
@@ -267,8 +267,8 @@ const UnlimitedIcon = () => (
 	</svg>
 );
 
-// The icon viewBoxes are cropped to the glyph, so the gap to the label and the gap between
-// items are measured from the visible edge rather than from a 20px frame.
+// The icon viewBoxes are cropped to the glyph so the 4px gap to the label and the 8px gap
+// between items are measured from the visible edge.
 const IconWrapper = styled.span`
 	display: inline-flex;
 	align-items: center;
