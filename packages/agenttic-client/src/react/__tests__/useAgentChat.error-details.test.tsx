@@ -5,6 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } 
 import { AgentRequestError } from '../../client/utils/internal/errors';
 import { getAgentManager } from '../agentManager';
 import { useAgentChat, type UseAgentChatReturn } from '../useAgentChat';
+import type { TaskUpdate } from '../../client/types/index';
 
 // Required for React 18's act() in jsdom.
 ( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
@@ -31,15 +32,27 @@ vi.mock( '../agentManager', () => {
 } );
 
 let chat: UseAgentChatReturn | undefined;
+const onSilentError = vi.fn();
 
 function HookHarness(): null {
 	chat = useAgentChat( {
 		agentId: 'test-agent',
 		agentUrl: 'https://example.com/agents',
 		sessionId: 'test-session',
+		onSilentError,
 	} );
 	return null;
 }
+
+const abortError = ( fields: Record< string, unknown > = {} ) =>
+	Object.assign( new Error( 'The operation was aborted.' ), { name: 'AbortError', ...fields } );
+
+const taskUpdate = ( state: TaskUpdate[ 'status' ][ 'state' ], final: boolean ): TaskUpdate => ( {
+	id: 'task-1',
+	status: { state },
+	final,
+	text: '',
+} );
 
 describe( 'useAgentChat — error details', () => {
 	let container: HTMLDivElement;
@@ -106,13 +119,47 @@ describe( 'useAgentChat — error details', () => {
 		expect( chat?.errorDetails ).toEqual( { name: 'TypeError' } );
 	} );
 
-	it( 'shows a timed-out request as an error', async () => {
-		failSendWith( new AgentRequestError( 'Request timed out', { name: 'TimeoutError' } ) );
+	it( 'shows nothing for a timed-out request, but reports it', async () => {
+		failSendWith( abortError( { timedOut: true } ) );
 
 		await send();
 
-		expect( chat?.error ).toBe( 'Request timed out' );
-		expect( chat?.errorDetails ).toEqual( { name: 'TimeoutError' } );
+		expect( chat?.error ).toBeNull();
+		expect( chat?.errorDetails ).toBeNull();
+		expect( onSilentError ).toHaveBeenCalledWith( { name: 'AbortError', timedOut: true } );
+	} );
+
+	it( 'shows nothing for a stream that ends mid-turn, but reports it', async () => {
+		sendMessageStream.mockImplementation( async function* () {
+			yield taskUpdate( 'working', false );
+		} );
+
+		await send();
+
+		expect( chat?.error ).toBeNull();
+		expect( chat?.isProcessing ).toBe( false );
+		expect( onSilentError ).toHaveBeenCalledWith( { name: 'StreamIncompleteError' } );
+	} );
+
+	it( 'reports nothing for a completed turn', async () => {
+		sendMessageStream.mockImplementation( async function* () {
+			yield taskUpdate( 'working', false );
+			yield taskUpdate( 'completed', true );
+		} );
+
+		await send();
+
+		expect( onSilentError ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reports nothing for a turn paused on a client-side tool call', async () => {
+		sendMessageStream.mockImplementation( async function* () {
+			yield taskUpdate( 'input-required', false );
+		} );
+
+		await send();
+
+		expect( onSilentError ).not.toHaveBeenCalled();
 	} );
 
 	it( 'clears the details with the error on the next send', async () => {
@@ -127,13 +174,12 @@ describe( 'useAgentChat — error details', () => {
 	} );
 
 	it( 'shows nothing for a cancelled request', async () => {
-		failSendWith(
-			Object.assign( new Error( 'The operation was aborted.' ), { name: 'AbortError' } )
-		);
+		failSendWith( abortError() );
 
 		await send();
 
 		expect( chat?.error ).toBeNull();
 		expect( chat?.errorDetails ).toBeNull();
+		expect( onSilentError ).not.toHaveBeenCalled();
 	} );
 } );

@@ -74,7 +74,7 @@ describe( 'getOrchestratorErrorClass', () => {
 		[ 'HTTP error! status: 502', { name: 'AgentRequestError', status: 502 }, '5xx' ],
 		[ 'HTTP error! status: 403', { name: 'AgentRequestError', status: 403 }, '4xx' ],
 		[ 'HTTP error! status: 429', { name: 'AgentRequestError', status: 429 }, 'rate_limit' ],
-		[ 'Request timed out', { name: 'TimeoutError' }, 'timeout' ],
+		[ 'The operation was aborted.', { name: 'AbortError', timedOut: true as const }, 'timeout' ],
 		[ 'The operation was aborted.', { name: 'AbortError' }, 'abort' ],
 		[
 			'Continue task stream ended without final result',

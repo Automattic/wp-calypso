@@ -3,7 +3,12 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { DataPart, TaskState, TaskUpdate } from '@automattic/agenttic-client';
+import type {
+	AgentErrorDetails,
+	DataPart,
+	TaskState,
+	TaskUpdate,
+} from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { InteractiveUiPresentation } from '../../interactive-ui/use-interactive-ui';
 import type { ComponentProps } from 'react';
@@ -17,7 +22,12 @@ let mockConversationHistory: Array< {
 	messageId?: string;
 	parts: Array< Record< string, unknown > >;
 } > = [];
-let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
+let mockAgentChatConfig:
+	| {
+			onTaskUpdate?: ( update: TaskUpdate ) => Promise< void >;
+			onSilentError?: ( details: AgentErrorDetails ) => void;
+	  }
+	| undefined;
 let mockConversationConfig:
 	| {
 			onSuccess?: (
@@ -2323,6 +2333,20 @@ describe( 'OrchestratorChat', () => {
 					{ ...errorProps( 'other', '5xx' ), http_status: 503, error_code: 'upstream_down' },
 				],
 			] );
+		} );
+
+		it.each( [
+			[ 'a timed-out request', { name: 'AbortError', timedOut: true as const }, 'timeout' ],
+			[ 'a stream that ended mid-turn', { name: 'StreamIncompleteError' }, 'stream_incomplete' ],
+		] )( 'records %s, which the chat doesn’t show', ( _case, details, errorClass ) => {
+			render( chat() );
+
+			act( () => mockAgentChatConfig?.onSilentError?.( details ) );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other', errorClass ) ],
+			] );
+			expect( mockTakeRefusalCode ).not.toHaveBeenCalled();
 		} );
 
 		it( 'flags an error that lands after the page started to unload', () => {

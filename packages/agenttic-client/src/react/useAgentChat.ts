@@ -414,6 +414,9 @@ export interface UseAgentChatConfig {
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
+	// Called for a failure the chat doesn't show: a request the client's timer cut off
+	// (`timedOut`), or a stream that ended without finishing the turn (`StreamIncompleteError`).
+	onSilentError?: ( details: AgentErrorDetails ) => void;
 }
 
 // Hook return interface
@@ -537,6 +540,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	useEffect( () => {
 		trackReplyingRef.current = config.trackReplying;
 	}, [ config.trackReplying ] );
+	const onSilentErrorRef = useRef( config.onSilentError );
+	useEffect( () => {
+		onSilentErrorRef.current = config.onSilentError;
+	}, [ config.onSilentError ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -772,6 +779,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Track streaming message for incremental updates
 				let streamingMessageId: string | null = null;
 				let finalMessageAdded = false;
+				// As in `agentManager`: a final update, or a pause for a tool result or user input.
+				let sawTurnTerminus = false;
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
@@ -821,6 +830,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				}
 
 				for await ( const update of stream ) {
+					if ( update.final || update.status?.state === 'input-required' ) {
+						sawTurnTerminus = true;
+					}
+
 					if ( onTaskUpdate ) {
 						try {
 							await onTaskUpdate( update );
@@ -973,6 +986,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					}
 				}
 
+				// An SSE reader that hits EOF mid-turn reads as a clean finish. The
+				// turn settles as before; the failure is only reported.
+				if ( ! sawTurnTerminus ) {
+					onSilentErrorRef.current?.( { name: 'StreamIncompleteError' } );
+				}
+
 				// Only update from conversation history if we didn't already handle the final message
 				if ( ! finalMessageAdded ) {
 					// Update internal messages and transform for UI
@@ -1018,6 +1037,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			} catch ( error ) {
 				// Handle AbortError specially - it's not really an error, just user cancellation
 				if ( error instanceof Error && error.name === 'AbortError' ) {
+					const errorDetails = getAgentErrorDetails( error );
+					if ( errorDetails.timedOut ) {
+						onSilentErrorRef.current?.( errorDetails );
+					}
 					logger( 'Request was aborted by user' );
 					const restored = await restoreMessagesOnError( null, null );
 					if ( ! restored ) {

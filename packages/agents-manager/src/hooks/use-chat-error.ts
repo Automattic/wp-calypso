@@ -1,4 +1,4 @@
-import { useEffect, useRef } from '@wordpress/element';
+import { useCallback, useEffect, useRef } from '@wordpress/element';
 import {
 	getOrchestratorErrorClass,
 	getOrchestratorErrorCode,
@@ -23,12 +23,31 @@ interface ChatError {
 	message: string | null;
 	/** Shown in the thread in place of `message`. */
 	notice?: NoticeConfig;
+	/** Records a failure the chat doesn't show, for `useAgentChat`'s `onSilentError`. */
+	recordSilentError: ( details: AgentErrorDetails ) => void;
+}
+
+function recordChatError(
+	error: string,
+	errorDetails: AgentErrorDetails | null,
+	refusalCode: string | undefined,
+	isNavigating: boolean
+) {
+	const errorCode = getOrchestratorErrorCode( errorDetails, refusalCode );
+	recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
+		error_type: getOrchestratorErrorType( error, refusalCode ),
+		error_class: getOrchestratorErrorClass( error, errorDetails, refusalCode ),
+		...( errorDetails?.status !== undefined && { http_status: errorDetails.status } ),
+		...( errorCode && { error_code: errorCode } ),
+		navigating: isNavigating,
+	} );
 }
 
 /**
  * Gets a chat error's text, or the refusal notice that replaces it, and records one event per
  * error shown. `error` resets to null between attempts, so a repeat on a later send counts again.
- * The event carries the error's class, status and code, never its text.
+ * The event carries the error's class, status and code, never its text. A failure the chat
+ * doesn't show is recorded through `recordSilentError`.
  */
 export function useChatError( {
 	error,
@@ -60,22 +79,20 @@ export function useChatError( {
 			return;
 		}
 
-		const refusalCode = takeRefusalCode();
-		const errorCode = getOrchestratorErrorCode( errorDetails, refusalCode );
-		recordAgentsManagerTracksEvent( 'calypso_agents_manager_chat_error', {
-			error_type: getOrchestratorErrorType( error, refusalCode ),
-			error_class: getOrchestratorErrorClass( error, errorDetails, refusalCode ),
-			...( errorDetails?.status !== undefined && { http_status: errorDetails.status } ),
-			...( errorCode && { error_code: errorCode } ),
-			navigating: isNavigatingRef.current,
-		} );
+		recordChatError( error, errorDetails, takeRefusalCode(), isNavigatingRef.current );
 	}, [ error, errorDetails, takeRefusalCode ] );
 
+	// No refusal code: that belongs to a reply that failed and shows its error.
+	const recordSilentError = useCallback( ( details: AgentErrorDetails ) => {
+		recordChatError( '', details, undefined, isNavigatingRef.current );
+	}, [] );
+
 	if ( error && refusalNotice ) {
-		return { message: null, notice: refusalNotice };
+		return { message: null, notice: refusalNotice, recordSilentError };
 	}
 
 	return {
+		recordSilentError,
 		message: isReaderChat
 			? getReaderChatErrorMessage( error )
 			: getOrchestratorErrorMessage( error ),

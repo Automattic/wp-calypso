@@ -2,16 +2,57 @@ import { describe, expect, it } from 'vitest';
 import {
 	AgentRequestError,
 	getAgentErrorDetails,
-	toTimeoutError,
+	markTimeoutError,
 	validateHttpResponse,
 	validateJsonRpcResponse,
 } from '../errors';
 
 describe( 'validateHttpResponse', () => {
-	it( 'keeps the status on the error, with the message unchanged', () => {
-		expect( () => validateHttpResponse( new Response( null, { status: 502 } ) ) ).toThrow(
-			expect.objectContaining( { message: 'HTTP error! status: 502', status: 502 } )
+	const jsonResponse = ( body: unknown, status: number ) =>
+		new Response( JSON.stringify( body ), {
+			status,
+			headers: { 'Content-Type': 'application/json' },
+		} );
+
+	it( 'keeps the status on the error, with the message unchanged', async () => {
+		await expect( validateHttpResponse( new Response( null, { status: 502 } ) ) ).rejects.toEqual(
+			new AgentRequestError( 'HTTP error! status: 502', { status: 502 } )
 		);
+	} );
+
+	it.each( [
+		[ 'WP REST', { code: 'rest_forbidden', message: 'Sorry, you are not allowed to do that.' } ],
+		[ 'error', { error: { code: 'rest_forbidden', message: 'Forbidden' } } ],
+		[ 'data', { data: { code: 'rest_forbidden' } } ],
+	] )( 'reads the code from a %s-style body', async ( _style, body ) => {
+		await expect( validateHttpResponse( jsonResponse( body, 403 ) ) ).rejects.toMatchObject( {
+			message: 'HTTP error! status: 403',
+			status: 403,
+			code: 'rest_forbidden',
+		} );
+	} );
+
+	it( 'leaves the body unread', async () => {
+		const response = jsonResponse( { code: 'rest_forbidden' }, 403 );
+
+		await expect( validateHttpResponse( response ) ).rejects.toThrow();
+
+		expect( response.bodyUsed ).toBe( false );
+	} );
+
+	it( 'keeps only the status when the body isn’t JSON', async () => {
+		const error = await validateHttpResponse(
+			new Response( '<html>Bad gateway</html>', { status: 502 } )
+		).catch( ( caught: unknown ) => caught );
+
+		expect( error ).toMatchObject( { status: 502, code: undefined } );
+	} );
+
+	it( 'passes an ok response without reading it', async () => {
+		const response = jsonResponse( { code: 'ignored' }, 200 );
+
+		await expect( validateHttpResponse( response ) ).resolves.toBeUndefined();
+		expect( response.bodyUsed ).toBe( false );
 	} );
 } );
 
@@ -37,10 +78,9 @@ describe( 'validateJsonRpcResponse', () => {
 	} );
 } );
 
-describe( 'toTimeoutError', () => {
-	const abortError = Object.assign( new Error( 'The operation was aborted.' ), {
-		name: 'AbortError',
-	} );
+describe( 'markTimeoutError', () => {
+	const abortError = () =>
+		Object.assign( new Error( 'The operation was aborted.' ), { name: 'AbortError' } );
 
 	const abortedSignal = () => {
 		const controller = new AbortController();
@@ -48,20 +88,26 @@ describe( 'toTimeoutError', () => {
 		return controller.signal;
 	};
 
-	it( 'turns the timer’s abort into a TimeoutError', () => {
-		expect( toTimeoutError( abortError, abortedSignal() ) ).toMatchObject( {
-			name: 'TimeoutError',
-		} );
+	it( 'marks the timer’s abort, which stays an AbortError', () => {
+		const error = abortError();
+
+		expect( markTimeoutError( error, abortedSignal() ) ).toBe( error );
+		expect( error ).toMatchObject( { name: 'AbortError', timedOut: true } );
 	} );
 
-	it( 'keeps the caller’s own abort an AbortError', () => {
-		expect( toTimeoutError( abortError, abortedSignal(), abortedSignal() ) ).toBe( abortError );
+	it( 'leaves the caller’s own abort unmarked', () => {
+		const error = abortError();
+
+		markTimeoutError( error, abortedSignal(), abortedSignal() );
+
+		expect( error ).not.toHaveProperty( 'timedOut' );
 	} );
 
 	it( 'passes an error through while the timer has not fired', () => {
 		const error = new TypeError( 'Failed to fetch' );
 
-		expect( toTimeoutError( error, new AbortController().signal ) ).toBe( error );
+		expect( markTimeoutError( error, new AbortController().signal ) ).toBe( error );
+		expect( error ).not.toHaveProperty( 'timedOut' );
 	} );
 } );
 
@@ -70,6 +116,12 @@ describe( 'getAgentErrorDetails', () => {
 		expect(
 			getAgentErrorDetails( new AgentRequestError( 'HTTP error! status: 503', { status: 503 } ) )
 		).toEqual( { name: 'AgentRequestError', status: 503 } );
+	} );
+
+	it( 'reads a timed-out abort', () => {
+		const error = Object.assign( new Error( 'aborted' ), { name: 'AbortError', timedOut: true } );
+
+		expect( getAgentErrorDetails( error ) ).toEqual( { name: 'AbortError', timedOut: true } );
 	} );
 
 	it( 'keeps a fetch failure’s name and nothing else', () => {

@@ -3,14 +3,13 @@ import type { JsonRpcError, JsonRpcResponse } from '../../types/index';
 
 /**
  * A request failure that keeps what the server said about it, so callers can
- * tell causes apart without parsing the message. `name` names client-side
- * causes: `TimeoutError` when the request timer fired, `StreamIncompleteError`
- * when a stream ended without a final result.
+ * tell causes apart without parsing the message. A stream that ended without
+ * a final result is named `StreamIncompleteError`.
  */
 export class AgentRequestError extends Error {
 	/** The HTTP status of a failed response. */
 	readonly status?: number;
-	/** The JSON-RPC error's `data.code` when the server names one, else its numeric code. */
+	/** The server's error code: from the JSON-RPC error, or a failed response's JSON body. */
 	readonly code?: string | number;
 
 	constructor(
@@ -32,6 +31,14 @@ export interface AgentErrorDetails {
 	name: string;
 	status?: number;
 	code?: string | number;
+	/** Set on the `AbortError` of a request the client's own timer cut off. */
+	timedOut?: true;
+}
+
+function readErrorCode( value: unknown ): string | number | undefined {
+	return ( typeof value === 'string' && value !== '' ) || typeof value === 'number'
+		? value
+		: undefined;
 }
 
 export function getAgentErrorDetails( error: unknown ): AgentErrorDetails {
@@ -39,11 +46,17 @@ export function getAgentErrorDetails( error: unknown ): AgentErrorDetails {
 		return { name: 'Error' };
 	}
 
-	const { status, code } = error as { status?: unknown; code?: unknown };
+	const { status, code, timedOut } = error as {
+		status?: unknown;
+		code?: unknown;
+		timedOut?: unknown;
+	};
+	const errorCode = readErrorCode( code );
 	return {
 		name: error.name,
 		...( typeof status === 'number' && { status } ),
-		...( ( typeof code === 'string' || typeof code === 'number' ) && { code } ),
+		...( errorCode !== undefined && { code: errorCode } ),
+		...( timedOut === true && { timedOut } ),
 	};
 }
 
@@ -57,22 +70,23 @@ export function getJsonRpcErrorCode( error: JsonRpcError ): string | number {
 }
 
 /**
- * Turns the abort the request timer caused into a `TimeoutError`, so it isn't
- * mistaken for a cancellation. Any other error passes through.
- * @param error         - The error that occurred
- * @param timeoutSignal - The signal the request timer aborts
+ * Marks the abort the request timer caused with `timedOut`, so it can be told
+ * from a cancellation. It stays an `AbortError`, so callers that ignore aborts
+ * still do. Any other error passes through.
+ * @param error          - The error that occurred
+ * @param timeoutSignal  - The signal the request timer aborts
  * @param externalSignal - The caller's own abort signal
  */
-export function toTimeoutError(
+export function markTimeoutError(
 	error: unknown,
 	timeoutSignal: AbortSignal,
 	externalSignal?: AbortSignal
 ): unknown {
-	if ( ! timeoutSignal.aborted || externalSignal?.aborted ) {
+	if ( ! timeoutSignal.aborted || externalSignal?.aborted || ! ( error instanceof Error ) ) {
 		return error;
 	}
 
-	return new AgentRequestError( 'Request timed out', { name: 'TimeoutError' } );
+	return Object.assign( error, { timedOut: true } );
 }
 
 /**
@@ -98,13 +112,37 @@ export function handleRequestError(
 }
 
 /**
+ * The code a failed response's JSON body names: WP REST's `code`, or
+ * `error.code` / `data.code`. Read from a clone, so the body stays unread.
+ * @param response - The failed HTTP response
+ */
+async function readResponseErrorCode( response: Response ): Promise< string | number | undefined > {
+	try {
+		const body = ( await response.clone().json() ) as {
+			code?: unknown;
+			error?: { code?: unknown };
+			data?: { code?: unknown };
+		} | null;
+		return (
+			readErrorCode( body?.code ) ??
+			readErrorCode( body?.error?.code ) ??
+			readErrorCode( body?.data?.code )
+		);
+	} catch {
+		// Not JSON, or no body to read: the status alone describes the failure.
+		return undefined;
+	}
+}
+
+/**
  * Validate HTTP response and throw if not ok
  * @param response   - The HTTP response
  */
-export function validateHttpResponse( response: Response ): void {
+export async function validateHttpResponse( response: Response ): Promise< void > {
 	if ( ! response.ok ) {
 		throw new AgentRequestError( `HTTP error! status: ${ response.status }`, {
 			status: response.status,
+			code: await readResponseErrorCode( response ),
 		} );
 	}
 }
@@ -137,11 +175,11 @@ export function validateJsonRpcResponse< T >(
  * @param response  - The HTTP response
  * @param operation - Description of the operation
  */
-export function validateStreamingResponse(
+export async function validateStreamingResponse(
 	response: Response,
 	operation: string = 'streaming request'
-): void {
-	validateHttpResponse( response );
+): Promise< void > {
+	await validateHttpResponse( response );
 
 	if ( ! response.body ) {
 		throw new Error( `No response body for ${ operation }` );

@@ -5,8 +5,9 @@ import type { AgentErrorDetails } from '@automattic/agenttic-client';
 type OrchestratorErrorType = 'credits' | 'usage_limit' | 'rate_limit' | 'other';
 
 /**
- * `calypso_agents_manager_chat_error`'s `error_class`. `abort` is for completeness: a cancelled
- * request clears the error, so it isn't recorded today.
+ * `calypso_agents_manager_chat_error`'s `error_class`. `timeout` and `stream_incomplete` are also
+ * recorded when the chat shows no error. `abort` is for completeness: a cancelled request shows
+ * nothing and isn't recorded.
  */
 export type OrchestratorErrorClass =
 	| Exclude< OrchestratorErrorType, 'other' >
@@ -94,9 +95,11 @@ export function getOrchestratorErrorClass(
 		return '5xx';
 	}
 
+	if ( details?.timedOut ) {
+		return 'timeout';
+	}
+
 	switch ( details?.name ) {
-		case 'TimeoutError':
-			return 'timeout';
 		case 'AbortError':
 			return 'abort';
 		case 'StreamIncompleteError':
