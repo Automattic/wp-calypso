@@ -861,6 +861,55 @@ describe( 'Playground', () => {
 			] );
 		} );
 
+		it( 'should record the host of a blueprint-url', async () => {
+			const blueprintUrl = encodeURIComponent(
+				'https://woocommerce.com/wp-admin/admin-ajax.php?action=wccom_start_playground_blueprint'
+			);
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry: `/setup/onboarding/playground?blueprint-url=${ blueprintUrl }&playground=1&intent=woocommerce`,
+					}
+				);
+			} );
+
+			postStoreMessage( {
+				type: 'woocommerce-playground-tracks',
+				event: 'wcadmin_page_view',
+				properties: { path: 'wc-admin' },
+			} );
+
+			expect( getStoreEvents() ).toEqual( [
+				[
+					'calypso_playground_woo_page_view',
+					expect.objectContaining( { blueprint_host: 'woocommerce.com', path: 'wc-admin' } ),
+				],
+			] );
+		} );
+
+		it( 'should stop recording after 200 events', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry:
+							'/setup/onboarding/playground?blueprint=woocommerce&playground=1&intent=woocommerce',
+					}
+				);
+			} );
+
+			for ( let count = 0; count < 201; count++ ) {
+				postStoreMessage( {
+					type: 'woocommerce-playground-tracks',
+					event: 'wcadmin_page_view',
+					properties: { path: `page-${ count }` },
+				} );
+			}
+
+			expect( getStoreEvents() ).toHaveLength( 200 );
+		} );
+
 		it( 'should record nothing outside the WooCommerce entry', async () => {
 			await act( async () => {
 				renderPlaygroundStep(

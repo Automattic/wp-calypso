@@ -22,6 +22,10 @@ const PROPERTY_VALUE_PATTERN = /^[\w./?&=%:+-]{1,200}$/;
 // which would split each page by store.
 const PLAYGROUND_SCOPE_PREFIX = /^\/scope:[^/]+/;
 
+// Code in the store can post these in a loop, so a page load records at most
+// this many.
+export const MAX_WOO_TRACKS_EVENTS = 200;
+
 export interface WooTracksEvent {
 	name: string;
 	properties: Record< string, string >;
