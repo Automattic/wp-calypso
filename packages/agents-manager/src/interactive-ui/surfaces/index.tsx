@@ -65,7 +65,7 @@ export function InteractiveUiSurfaces( { messageId, presentation }: Props ) {
 		</p>
 	);
 
-	// Opts the surfaces out of the chat's typography reset.
+	// Opts the surfaces out of the chat's reset and typography.
 	return (
 		<div className="agents-manager-interactive-ui-surfaces" data-agenttic-isolated>
 			{ runtime.getSurfaceIds( messageId ).map( ( surfaceId ) => {

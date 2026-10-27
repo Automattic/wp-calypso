@@ -11,7 +11,7 @@ const storybookConfig = storybookDefaultConfig( {
 	stories: [
 		'../client/components/**/*.stories.{js,jsx,tsx}',
 		'../client/blocks/**/*.stories.{js,jsx,tsx}',
-		'../client/dashboard/**/*.stories.{js,jsx,tsx}',
+		'../client/dashboard/**/*.stories.{js,jsx,ts,tsx}',
 		'../client/my-sites/stats/components/**/*.stories.{js,jsx,tsx}',
 
 		'../packages/design-picker/src/**/*.stories.{ts,tsx}',

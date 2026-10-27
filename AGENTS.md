@@ -58,6 +58,14 @@ yarn start-dashboard
 
 If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
 
+### Checking a change in a browser
+
+- Use the Node version in `.nvmrc`. The first webpack build takes several minutes after "wp-calypso booted"; until it finishes the page shows only the W logo.
+- Sign in on `wordpress.com/log-in` first, then open `calypso.localhost:3000/read?flags=oauth` once. Signing in on the calypso.localhost form doesn't stick, because the login cookie is refused as a cross-site cookie.
+- With `?flags=oauth`, loading or reloading a signed-in URL directly (for example `/tags`) redirects to `/discover`, because the server can't see the sign-in. Load `/read?flags=oauth`, wait for the Reader, then navigate inside the app.
+- A headless or automated Chrome profile blocks third-party cookies by default; allow them (see `docs/install.md`) or the app never sees the sign-in.
+- Test with an account made for testing, never a personal one, and don't save network requests from the login: they hold the password and session cookies.
+
 ## Testing instructions
 
 > **Note**: E2E tests require a local Calypso development instance to be running.
@@ -99,6 +107,8 @@ Before pushing a branch or running `gh pr create`, run the type-check that CI wi
 yarn               # Install dependencies first if you haven't already
 yarn typecheck-client
 ```
+
+If it runs out of memory, give it a bigger heap: `NODE_OPTIONS=--max-old-space-size=12288 yarn typecheck-client`. If it fails on a workspace package that has no `dist/` yet, build that package first (`cd packages/<name> && yarn build`).
 
 If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
 
