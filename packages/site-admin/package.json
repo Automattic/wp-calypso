@@ -57,7 +57,7 @@
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/html-entities": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
+		"@wordpress/icons": "^15.5.0",
 		"@wordpress/keycodes": "^4.48.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",

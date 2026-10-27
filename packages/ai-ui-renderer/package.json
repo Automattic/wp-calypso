@@ -53,7 +53,7 @@
 		"@a2ui/web_core": "0.14.0",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
+		"@wordpress/icons": "^15.5.0",
 		"@wordpress/ui": "^0.23.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.8.1",
