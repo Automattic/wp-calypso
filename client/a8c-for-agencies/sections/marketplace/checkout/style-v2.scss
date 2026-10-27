@@ -31,6 +31,18 @@
 	}
 }
 
+// Both checkout stylesheets load on either version, so V2-only fixes are scoped to `.checkout-v2`
+// and outrank the shared V1 rules for the gradient and the main title.
+.checkout.checkout-v2 .hosting-dashboard-layout__body {
+	@include break-large {
+		background: var( --color-surface );
+	}
+}
+
+.checkout.checkout-v2 .checkout-main-content .checkout__main-title {
+	margin-block: 0;
+}
+
 .checkout .hosting-dashboard-layout__body-wrapper {
 	height: 100%;
 

@@ -14,12 +14,18 @@ import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
+import { AgencyNotices } from '../../components/agency-notices';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
-import MissingPaymentSettingsNotice from '../missing-payment-settings-notice';
+import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
+import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../missing-payment-settings-notice';
 import BankDetailsNotice from './bank-details-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
 import ReferralsEmptyState from './empty-state';
+import NewReferralFeedback from './new-referral-feedback';
 import NewReferralNotice from './new-referral-notice';
 import ReferralsList from './referrals-list';
 import type { View } from '@wordpress/dataviews';
@@ -37,12 +43,17 @@ export default function EarnReferrals() {
 	);
 	const { data: products } = useQuery( agencyProductsQuery( agencyId ) );
 	const { recordTracksEvent } = useAnalytics();
+	const { updateMarketplaceType } = useMarketplaceType();
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 
 	// Counts the pre-agency window as loading, so the empty state doesn't flash.
 	const isLoading = agency === undefined || isLoadingReferrals;
 	const hasReferrals = referrals.length > 0;
+	const missingPaymentSettings = useMissingPaymentSettings( {
+		hasCommissionActivity: hasReferrals,
+		isLoadingActivity: isLoading,
+	} );
 
 	return (
 		<PageLayout
@@ -51,15 +62,17 @@ export default function EarnReferrals() {
 					title={ __( 'Referrals' ) }
 					description={ __( 'Refer products and services and earn commissions.' ) }
 					actions={
-						hasReferrals && isAgencyApproved( agency ) ? (
+						! isLoading && isAgencyApproved( agency ) ? (
 							<RouterLinkButton
 								variant="primary"
-								to="/exclusive-offers"
-								onClick={ () =>
-									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' )
-								}
+								__next40pxDefaultSize
+								to={ MARKETPLACE_HOSTING_ROUTE }
+								onClick={ () => {
+									updateMarketplaceType( 'referral' );
+									recordTracksEvent( 'calypso_a4a_referrals_make_a_referral_button_click' );
+								} }
 							>
-								{ __( 'New referral' ) }
+								{ hasReferrals ? __( 'New referral' ) : __( 'Make a referral' ) }
 							</RouterLinkButton>
 						) : undefined
 					}
@@ -68,9 +81,19 @@ export default function EarnReferrals() {
 			notices={
 				<>
 					<NewReferralNotice />
-					<MissingPaymentSettingsNotice
-						hasCommissionActivity={ hasReferrals }
-						commissionType="referrals"
+					<AgencyNotices
+						candidates={ [
+							{
+								id: 'missing-payment-settings',
+								...missingPaymentSettings,
+								notice: (
+									<MissingPaymentSettingsNotice
+										hasCommissionActivity={ hasReferrals }
+										commissionType="referrals"
+									/>
+								),
+							},
+						] }
 					/>
 					{ ! isLoading && ! hasReferrals && <BankDetailsNotice agencyId={ agencyId } /> }
 				</>
@@ -111,6 +134,7 @@ export default function EarnReferrals() {
 					</DataViewsCard>
 				</>
 			) }
+			<NewReferralFeedback />
 		</PageLayout>
 	);
 }

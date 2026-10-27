@@ -25,12 +25,28 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { successNotice, errorNotice } from 'calypso/state/notices/actions';
 import { SectionHeader } from '../../dashboard/components/section-header';
 import { getSiteDisplayName } from '../../dashboard/utils/site-name';
-import { getSiteDisplayUrl } from '../../dashboard/utils/site-url';
+import { isSelfHostedJetpackConnected } from '../../dashboard/utils/site-types';
+import { getSiteDisplayUrl, getSiteJetpackMcpSettingsUrl } from '../../dashboard/utils/site-url';
 import { useMcpPageChrome } from './mcp-page-header';
 import McpSiteCombobox from './mcp-site-combobox';
 import { getAccountMcpAbilities, getEnabledSiteIds, hasEnabledAccountTools } from './utils';
 
 import './style.scss';
+
+/**
+ * Where a site's Manage link goes. Self-hosted Jetpack sites can't open the
+ * dashboard's site settings routes, so they get the site's wp-admin MCP page
+ * instead, unless the user couldn't open it anyway.
+ */
+function getManageHref( site, slug ) {
+	if ( site && isSelfHostedJetpackConnected( site ) ) {
+		if ( site.capabilities?.manage_options === false ) {
+			return null;
+		}
+		return getSiteJetpackMcpSettingsUrl( site );
+	}
+	return slug ? `/sites/${ slug }/settings/ai-tools` : null;
+}
 
 export default function McpAddSitePage( { path } ) {
 	const translate = useTranslate();
@@ -233,49 +249,53 @@ export default function McpAddSitePage( { path } ) {
 									<Card>
 										<CardBody>
 											<VStack spacing={ 6 } alignment="stretch">
-												{ enabledSites.map( ( { id, site, name, domain, slug } ) => (
-													<HStack
-														key={ id }
-														justify="space-between"
-														alignment="center"
-														spacing={ 4 }
-													>
-														<HStack spacing={ 3 } alignment="left">
-															{ site && <SiteIcon site={ site } size={ 40 } /> }
-															<FlexItem isBlock>
-																<VStack spacing={ 1 } alignment="stretch">
-																	<Text as="div" weight={ 600 } size={ 14 } lineHeight={ 1.4 }>
-																		{ name }
-																	</Text>
-																	{ domain && (
-																		<Text variant="muted" as="div" size={ 12 } lineHeight={ 1.4 }>
-																			{ domain }
+												{ enabledSites.map( ( { id, site, name, domain, slug } ) => {
+													const manageHref = getManageHref( site, slug );
+													return (
+														<HStack
+															key={ id }
+															justify="space-between"
+															alignment="center"
+															spacing={ 4 }
+														>
+															<HStack spacing={ 3 } alignment="left">
+																{ site && <SiteIcon site={ site } size={ 40 } /> }
+																<FlexItem isBlock>
+																	<VStack spacing={ 1 } alignment="stretch">
+																		<Text as="div" weight={ 600 } size={ 14 } lineHeight={ 1.4 }>
+																			{ name }
 																		</Text>
-																	) }
-																</VStack>
-															</FlexItem>
-														</HStack>
-														<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
-															{ slug && (
+																		{ domain && (
+																			<Text variant="muted" as="div" size={ 12 } lineHeight={ 1.4 }>
+																				{ domain }
+																			</Text>
+																		) }
+																	</VStack>
+																</FlexItem>
+															</HStack>
+															<HStack spacing={ 4 } justify="flex-end" expanded={ false }>
+																{ manageHref && (
+																	<Button
+																		variant="tertiary"
+																		size="compact"
+																		__next40pxDefaultSize
+																		href={ manageHref }
+																	>
+																		{ translate( 'Manage' ) }
+																	</Button>
+																) }
 																<Button
-																	variant="tertiary"
+																	variant="secondary"
 																	size="compact"
-																	href={ `/sites/${ slug }/settings/ai-tools` }
+																	disabled={ mutation.isPending }
+																	onClick={ () => handleRemoveSite( id ) }
 																>
-																	{ translate( 'Manage' ) }
+																	{ translate( 'Remove' ) }
 																</Button>
-															) }
-															<Button
-																variant="secondary"
-																size="compact"
-																disabled={ mutation.isPending }
-																onClick={ () => handleRemoveSite( id ) }
-															>
-																{ translate( 'Remove' ) }
-															</Button>
+															</HStack>
 														</HStack>
-													</HStack>
-												) ) }
+													);
+												} ) }
 											</VStack>
 										</CardBody>
 									</Card>

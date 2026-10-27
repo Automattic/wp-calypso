@@ -4,3 +4,10 @@
 	block-size: 0;
 	margin: 0;
 }
+
+.dashboard-divider.is-vertical {
+	align-self: stretch;
+	border-block-end: 0;
+	border-inline-start: var( --wpds-border-width-xs, 1px ) solid currentColor;
+	block-size: auto;
+}

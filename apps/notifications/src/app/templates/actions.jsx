@@ -18,7 +18,7 @@ import ReplyInput from './comment-reply-input';
 
 const getType = ( note ) => ( null === getReferenceId( note, 'comment' ) ? 'post' : 'comment' );
 
-const getInitialReplyValue = ( note ) => {
+export const getInitialReplyValue = ( note ) => {
 	let ranges;
 	let username;
 

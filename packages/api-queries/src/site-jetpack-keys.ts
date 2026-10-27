@@ -5,4 +5,5 @@ export const siteJetpackKeysQuery = ( siteId: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'jetpack_keys' ],
 		queryFn: () => fetchJetpackKeys( siteId ),
+		meta: { persist: false },
 	} );

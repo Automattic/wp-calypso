@@ -1,5 +1,6 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
+import { QueryClient } from '@tanstack/react-query';
 import React, { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
@@ -12,6 +13,7 @@ export interface RenderStepOptions {
 	initialEntry?: string;
 	reducers?: Record< string, Reducer >;
 	initialState?: unknown;
+	queryClient?: QueryClient;
 }
 
 /** Utility to render a step for testing purposes */
@@ -20,12 +22,14 @@ export const renderStep = ( step: ReactElement< Step >, options?: RenderStepOpti
 		initialEntry = '/some-path?siteId=123',
 		reducers = [],
 		initialState = {},
+		queryClient,
 	} = options ?? {};
 
 	return renderWithProvider(
 		<MemoryRouter initialEntries={ [ initialEntry ] }>{ step }</MemoryRouter>,
 		{
 			initialState,
+			queryClient,
 			reducers: {
 				ui: uiReducer,
 				documentHead: documentHeadReducer,

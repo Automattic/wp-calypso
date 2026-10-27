@@ -18,13 +18,24 @@ const createDomain = ( overrides: Partial< Domain > = {} ): Domain =>
 	} ) as Domain;
 
 describe( 'shouldShowTransferAction', () => {
-	it( 'returns false when domain cannot be transferred to any user or another site', () => {
+	it( 'returns false when a domain connection cannot be transferred to any user or another site', () => {
 		const domain = createDomain( {
 			can_transfer_to_any_user: false,
 			can_transfer_to_other_site: false,
+			subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
 		} );
 
 		expect( shouldShowTransferAction( domain ) ).toBe( false );
+	} );
+
+	it( 'returns true when a registration cannot be transferred to any user or another site', () => {
+		const domain = createDomain( {
+			can_transfer_to_any_user: false,
+			can_transfer_to_other_site: false,
+			is_gravatar_restricted_domain: true,
+		} );
+
+		expect( shouldShowTransferAction( domain ) ).toBe( true );
 	} );
 
 	it( 'returns true when domain can be transferred to any user', () => {

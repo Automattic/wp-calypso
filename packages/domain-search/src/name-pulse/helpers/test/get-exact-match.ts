@@ -1,5 +1,5 @@
 import { DomainAvailabilityStatus } from '@automattic/api-core';
-import { getNamePulseExactMatch } from '..';
+import { getNamePulseExactMatch, getNamePulseExactTarget, getResultsLayout } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
 
 const fqdn = { baseName: 'icecream', tld: 'blog', fullDomain: 'icecream.blog' };
@@ -68,5 +68,36 @@ describe( 'getNamePulseExactMatch', () => {
 
 	it( 'has no card when the check fails', () => {
 		expect( getNamePulseExactMatch( fqdn, undefined, true ) ).toBeNull();
+	} );
+} );
+
+describe( 'getNamePulseExactTarget', () => {
+	const tlds = [ 'com', 'net', 'blog', 'app' ];
+	const layoutFor = ( query: string ) => getResultsLayout( query, tlds );
+
+	it( 'is the typed domain, whatever the filter', () => {
+		expect( getNamePulseExactTarget( layoutFor( 'icecream.blog' ), [ 'com' ] ) ).toEqual( fqdn );
+	} );
+
+	it( 'is the name with the one ending the filter allows', () => {
+		expect( getNamePulseExactTarget( layoutFor( 'ice cream' ), [ 'com' ] ) ).toEqual( {
+			baseName: 'icecream',
+			tld: 'com',
+			fullDomain: 'icecream.com',
+		} );
+	} );
+
+	it( 'splits a name that ends in the filtered ending, like its grid row', () => {
+		expect( getNamePulseExactTarget( layoutFor( 'myapp' ), [ 'app' ] )?.fullDomain ).toBe(
+			'my.app'
+		);
+	} );
+
+	it.each( [
+		[ 'no ending is chosen', 'icecream', [] ],
+		[ 'several endings are chosen', 'icecream', [ 'com', 'net' ] ],
+		[ 'the query has no exact grid', 'a blog about ice cream', [ 'com' ] ],
+	] )( 'is unset when %s', ( _, query, selectedTlds ) => {
+		expect( getNamePulseExactTarget( layoutFor( query ), selectedTlds ) ).toBeUndefined();
 	} );
 } );

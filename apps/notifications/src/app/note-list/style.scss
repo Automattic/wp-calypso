@@ -28,6 +28,20 @@
 
 	.wpnc__subject {
 		flex: 1;
+		font-weight: var(--wpds-typography-font-weight-default, 400);
+
+		.wpnc__user,
+		.wpnc__site,
+		.wpnc__post,
+		.wpnc__comment,
+		.wpnc__strong,
+		.wpnc__a {
+			font-weight: 600;
+		}
+
+		.wpnc__gridicon {
+			margin-right: 2px;
+		}
 	}
 
 	.wpnc__note-icon .wpnc__gridicon {

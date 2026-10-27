@@ -3,7 +3,11 @@ import { siteCurrentUserQuery, sitePurchasesQuery } from '@automattic/api-querie
 import { queryOptions, useQuery } from '@tanstack/react-query';
 import { getCalendarDaysUntil } from '../../utils/datetime';
 import { getPlanExpiryNotice, pickSitewideExpiryPurchase } from '../plan-expiry-notice';
-import { findPlanExpiryNoticeDismissMetaKey, isPlanExpiryNoticeDismissed } from './dismissal';
+import {
+	findPlanExpiryNoticeDismissMetaKey,
+	getPurchaseExpiryCutoff,
+	isPlanExpiryNoticeDismissed,
+} from './dismissal';
 import type { PlanExpiryNoticeStage } from '../plan-expiry-notice';
 import type { AtomicTransfer, Purchase } from '@automattic/api-core';
 
@@ -42,6 +46,8 @@ export interface SiteExpiryPurchaseState {
 	purchase: Purchase;
 	stage: PlanExpiryNoticeStage;
 	isPlanOwner: boolean;
+	/** The per-site meta key a dismissal writes to, only where the notice is dismissible. */
+	dismissMetaKey?: string;
 }
 
 export interface SiteExpiryRevertedState {
@@ -127,6 +133,16 @@ export function useSiteExpiryNotice(
 	} );
 	const purchase = purchases ? pickSitewideExpiryPurchase( purchases ) : null;
 
+	// Derived from the notice itself, not from `getSitewideExpiryStage`: an
+	// auto-renewing annual plan before its first renewal attempt has a stage
+	// window but no notice, and a candidate must never self-null.
+	const stage = purchase
+		? ( getPlanExpiryNotice( purchase, { scope: 'sitewide', locale } )?.stage ?? null )
+		: null;
+
+	// As in wp-admin: an Atomic site in grace still has plugins and themes to lose.
+	const isDismissibleGrace = stage === 'grace' && ! isAtomic;
+
 	// Only a Simple site with no plan can be past the revert.
 	const mayBeReverted = hasPurchases && ! purchase && ! isAtomic;
 
@@ -149,41 +165,46 @@ export function useSiteExpiryNotice(
 	// fetched the meta already, and a cache the loader filled is a fetch too.
 	const { data: currentUser, dataUpdatedAt: currentUserUpdatedAt } = useQuery( {
 		...siteCurrentUserQuery( siteId ),
-		enabled: isInRevertWindow,
+		enabled: isInRevertWindow || isDismissibleGrace,
 	} );
 
+	// A dismissal made on another surface only arrives with this fetch, so a
+	// cached copy from before it would flash the notice back up; a failed fetch hides it too.
+	function unlessDismissed< T extends SiteExpiryNoticeState >(
+		state: T,
+		referenceTime: number
+	): T | null {
+		if ( currentUserUpdatedAt === 0 ) {
+			return null;
+		}
+		const dismissMetaKey = findPlanExpiryNoticeDismissMetaKey( currentUser?.meta, siteId );
+		if (
+			dismissMetaKey &&
+			isPlanExpiryNoticeDismissed( currentUser?.meta?.[ dismissMetaKey ], referenceTime )
+		) {
+			return null;
+		}
+		return { ...state, dismissMetaKey };
+	}
+
 	if ( purchase ) {
-		// Derived from the notice itself, not from `getSitewideExpiryStage`: an
-		// auto-renewing annual plan before its first renewal attempt has a stage
-		// window but no notice, and a candidate must never self-null.
-		const stage = getPlanExpiryNotice( purchase, { scope: 'sitewide', locale } )?.stage ?? null;
 		if ( ! stage || ( stage === 'early-warning' && ! isDashboardScreen ) ) {
 			return null;
 		}
-		return {
+		const state: SiteExpiryPurchaseState = {
 			kind: 'purchase',
 			purchase,
 			stage,
 			isPlanOwner: String( purchase.user_id ) === String( currentUserId ),
 		};
+		return isDismissibleGrace
+			? unlessDismissed( state, getPurchaseExpiryCutoff( purchase.expiry_date ) )
+			: state;
 	}
 
 	if ( ! mayBeReverted || isTransferPending || ! isInRevertWindow ) {
 		return null;
 	}
 
-	// A dismissal made on another surface only arrives with this fetch, so a
-	// cached copy from before it would flash the notice back up.
-	if ( currentUserUpdatedAt === 0 ) {
-		return null;
-	}
-	const dismissMetaKey = findPlanExpiryNoticeDismissMetaKey( currentUser?.meta );
-	if (
-		dismissMetaKey &&
-		isPlanExpiryNoticeDismissed( currentUser?.meta?.[ dismissMetaKey ], revertedAt )
-	) {
-		return null;
-	}
-
-	return { kind: 'reverted', revertedAt, dismissMetaKey };
+	return unlessDismissed( { kind: 'reverted', revertedAt }, revertedAt );
 }

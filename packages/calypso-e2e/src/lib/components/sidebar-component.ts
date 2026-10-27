@@ -1,5 +1,5 @@
 import { Page } from 'playwright';
-import { getCalypsoURL } from '../../data-helper';
+import { getCalypsoURL, toCalypsoURL } from '../../data-helper';
 import envVariables from '../../env-variables';
 import { NavbarComponent } from './navbar-component';
 
@@ -15,6 +15,14 @@ const selectors = {
 	// Buttons and links within Sidebar
 	linkWithText: ( text: string ) => `a:has-text("${ text }")`,
 	planName: ':text-is("Upgrades"):visible .sidebar__inline-text',
+
+	// wp-admin menu, shown instead of the sidebar on sites using the Classic interface.
+	wpAdminMenu: '#adminmenu',
+	wpAdminMenuToggle: '#wp-admin-bar-menu-toggle a',
+	wpAdminMenuOpen: '#wpwrap.wp-responsive-open',
+	wpAdminMenuItem: ( item: string ) =>
+		`#adminmenu > li:has(> a .wp-menu-name:text-is("${ item }"))`,
+	wpAdminSubmenuLink: ( subitem: string ) => `.wp-submenu a:text-is("${ subitem }")`,
 };
 
 /**
@@ -64,6 +72,11 @@ export class SidebarComponent {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async navigate( item: string, subitem?: string ): Promise< void > {
+		// Sites on the Classic interface land in wp-admin, which has its own menu.
+		if ( this.page.url().includes( '/wp-admin/' ) ) {
+			return await this.navigateWpAdmin( item, subitem );
+		}
+
 		await this.waitForSidebarInitialization();
 
 		if ( envVariables.VIEWPORT_NAME === 'mobile' ) {
@@ -132,6 +145,69 @@ export class SidebarComponent {
 			locator.waitFor( { state: 'attached' } ),
 			this.page.waitForURL( ( url ) => ! url.href.startsWith( getCalypsoURL() ) ),
 		] );
+	}
+
+	/**
+	 * Navigates to given (sub)item of the wp-admin menu.
+	 *
+	 * @param {string} item Plaintext representation of the top level heading.
+	 * @param {string} subitem Plaintext representation of the child level heading.
+	 */
+	private async navigateWpAdmin( item: string, subitem?: string ): Promise< void > {
+		const isMobile = envVariables.VIEWPORT_NAME === 'mobile';
+
+		// The menu's toggle and flyouts are wired by wp-admin's scripts, which run before load.
+		await Promise.all( [
+			this.page.waitForLoadState( 'load', { timeout: 30 * 1000 } ),
+			this.page
+				.locator( selectors.wpAdminMenu )
+				.waitFor( { state: 'attached', timeout: 30 * 1000 } ),
+		] );
+
+		// Narrow viewports hide the menu behind the admin bar toggle.
+		if ( isMobile ) {
+			await this.page.locator( selectors.wpAdminMenuToggle ).click();
+			await this.page.locator( selectors.wpAdminMenuOpen ).waitFor();
+		}
+
+		const itemLocator = this.page.locator( selectors.wpAdminMenuItem( item ) );
+		let linkLocator = itemLocator.locator( '> a' );
+
+		// Desktop opens a submenu as a flyout on hover; the responsive menu expands it on tap
+		// instead of following the link.
+		if ( subitem ) {
+			if ( isMobile ) {
+				await linkLocator.click();
+			} else {
+				await linkLocator.hover();
+			}
+
+			linkLocator = itemLocator.locator( selectors.wpAdminSubmenuLink( subitem ) );
+			await linkLocator.waitFor();
+		}
+
+		const href = await linkLocator.getAttribute( 'href' );
+
+		if ( href === null ) {
+			throw new Error( `wp-admin menu item "${ subitem ?? item }" has no link.` );
+		}
+
+		const url = new URL( href, this.page.url() );
+		const calypsoURL = toCalypsoURL( url.href );
+
+		// Links into Calypso point at production; open the same page on the Calypso under test.
+		if ( calypsoURL !== url.href ) {
+			await this.page.goto( calypsoURL );
+			return;
+		}
+
+		// A flyout can reach below the viewport, and scrolling to it ends the hover that holds
+		// it open, so the click is dispatched like the sidebar's. Waiting on the new document
+		// rather than a URL: wp-admin targets can share the current page's path
+		// (admin.php?page=…), or redirect on arrival (plugins.php).
+		const loaded = this.page.waitForEvent( 'domcontentloaded', { timeout: 30 * 1000 } );
+		await linkLocator.dispatchEvent( 'click' );
+		await loaded;
 	}
 
 	/**

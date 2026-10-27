@@ -115,7 +115,9 @@
 		}
 	}
 
-	a, a:visited {
+	// Stepper also puts `.use-my-domain` on the step route, so leave the top bar's Back link alone.
+	a:not(.components-button),
+	a:not(.components-button):visited {
 		color: var(--color-accent);
 	}
 }

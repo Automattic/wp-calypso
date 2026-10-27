@@ -1,4 +1,4 @@
-import type { AgencyPendingSite } from '@automattic/api-core';
+import type { AgencyPendingSite, AgencySite } from '@automattic/api-core';
 
 /**
  * A license that has been paid for (it carries a license key) but whose site
@@ -7,4 +7,8 @@ import type { AgencyPendingSite } from '@automattic/api-core';
  */
 export function hasWpcomLicenseWithoutSite( { features }: AgencyPendingSite ): boolean {
 	return features?.wpcom_atomic?.state === 'pending' && !! features?.wpcom_atomic?.license_key;
+}
+
+export function isPressableSite( agencySite: AgencySite | null | undefined ): boolean {
+	return agencySite?.hosting_provider_guess === 'pressable';
 }

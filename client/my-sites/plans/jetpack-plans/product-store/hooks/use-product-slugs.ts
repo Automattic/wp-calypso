@@ -4,6 +4,7 @@ import { useSelector } from 'calypso/state';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { getPlansToDisplay, getProductsToDisplay } from '../../product-grid/utils';
 import useGetPlansGridProducts from '../../use-get-plans-grid-products';
+import useIsOnSale from '../../use-is-on-sale';
 import { ProductSlugsProps } from '../types';
 
 const useProductSlugs = ( { siteId, duration }: ProductSlugsProps ): string[] => {
@@ -11,6 +12,7 @@ const useProductSlugs = ( { siteId, duration }: ProductSlugsProps ): string[] =>
 	const currentPlanSlug = currentPlan?.product_slug || null;
 	const { availableProducts, purchasedProducts, includedInPlanProducts } =
 		useGetPlansGridProducts( siteId );
+	const isOnSale = useIsOnSale();
 
 	return useMemo(
 		() =>
@@ -21,7 +23,7 @@ const useProductSlugs = ( { siteId, duration }: ProductSlugsProps ): string[] =>
 					purchasedProducts,
 					includedInPlanProducts,
 				} ),
-				...getPlansToDisplay( { duration, currentPlanSlug } ),
+				...getPlansToDisplay( { duration, currentPlanSlug, isOnSale } ),
 			]
 				.map( ( { productSlug } ) => productSlug )
 				// TO-DO: Once Jetpack Social pricing tiers and the introductory discount have been worked on, filtering should be removed.
@@ -29,7 +31,14 @@ const useProductSlugs = ( { siteId, duration }: ProductSlugsProps ): string[] =>
 					( productSlug ) =>
 						! ( JETPACK_SOCIAL_PRODUCTS as ReadonlyArray< string > ).includes( productSlug )
 				),
-		[ duration, availableProducts, purchasedProducts, includedInPlanProducts, currentPlanSlug ]
+		[
+			duration,
+			availableProducts,
+			purchasedProducts,
+			includedInPlanProducts,
+			currentPlanSlug,
+			isOnSale,
+		]
 	);
 };
 

@@ -1,7 +1,5 @@
 import apiFetch from '@wordpress/api-fetch';
-import { isBlobURL } from '@wordpress/blob';
 import { useCallback, useMemo, useRef, useState } from '@wordpress/element';
-import { type Attachment, uploadMedia } from '@wordpress/media-utils';
 import type { UploadedImage, UploadingImage } from '@automattic/agenttic-ui';
 
 export interface MediaObject {
@@ -15,7 +13,6 @@ export interface MediaObject {
 		height: number;
 	};
 	uploadDate: string;
-	uploadedBy: number;
 	url: string;
 	alt: string;
 	caption: string;
@@ -47,25 +44,42 @@ export interface UseImageUploadResult {
 	abortUpload?: () => boolean;
 }
 
+/** The `/wp/v2/media` fields this hook reads; a POST returns the `edit` context. */
+interface RestMedia {
+	id: number;
+	date: string;
+	slug: string;
+	mime_type: string;
+	source_url: string;
+	alt_text: string;
+	title: { raw: string };
+	caption?: { raw: string };
+	media_details?: {
+		file?: string;
+		filesize?: number;
+		width?: number;
+		height?: number;
+	};
+}
+
 /**
  * Transform WordPress media API response into our MediaObject format.
  */
-function transformMediaObject( media: Attachment ): MediaObject {
+function transformMediaObject( media: RestMedia ): MediaObject {
 	return {
 		id: media.id,
-		title: media.title || '',
-		fileName: ( media.media_details?.file as string ) || media.slug || '',
+		title: media.title.raw || '',
+		fileName: media.media_details?.file || media.slug || '',
 		fileType: media.mime_type || '',
-		fileSize: ( media.media_details?.filesize as number ) || 0,
+		fileSize: media.media_details?.filesize || 0,
 		dimensions: {
-			width: ( media.media_details?.width as number ) || 0,
-			height: ( media.media_details?.height as number ) || 0,
+			width: media.media_details?.width || 0,
+			height: media.media_details?.height || 0,
 		},
 		uploadDate: media.date || '',
-		uploadedBy: media.author || 0,
-		url: media.url || '',
-		alt: media.alt || '',
-		caption: media.caption || '',
+		url: media.source_url || '',
+		alt: media.alt_text || '',
+		caption: media.caption?.raw || '',
 	};
 }
 
@@ -92,23 +106,37 @@ function createImagePreviewFromFile( file: File ): Promise< ImagePreview > {
 	} );
 }
 
-const isAttachment = ( media?: Partial< Attachment > ): media is Attachment => {
-	return typeof media === 'object' && media !== null && 'id' in media;
-};
-
 interface UploadBatch {
 	images: ImagePreview[];
 	/** Attachments that already reached the media library, kept for cleanup. */
 	landed: MediaObject[];
 	aborted: boolean;
 	controller: AbortController;
-	reject: ( error: Error ) => void;
+	reject: ( error: unknown ) => void;
 }
 
 function createAbortError(): Error {
 	const error = new Error( 'Image upload aborted' );
 	error.name = 'AbortError';
 	return error;
+}
+
+/**
+ * Upload one file as `@wordpress/media-utils` does, without importing it: that
+ * would make every wp-admin entry enqueue its script.
+ */
+async function uploadFile( file: File, signal: AbortSignal ): Promise< MediaObject > {
+	const body = new FormData();
+	body.append( 'file', file, file.name || file.type.replace( '/', '.' ) );
+
+	const media = await apiFetch< RestMedia >( {
+		path: '/wp/v2/media',
+		method: 'POST',
+		body,
+		signal,
+	} );
+
+	return transformMediaObject( media );
 }
 
 /**
@@ -173,11 +201,14 @@ export function useImageUpload(): UseImageUploadResult {
 			return Promise.reject( new Error( 'An image upload is already in progress' ) );
 		}
 
-		// `uploadMedia` never fires a callback for an empty list — without this
-		// the promise would hang with `isUploadingImages` stuck `true`, locking
-		// the composer.
+		// Nothing to upload: skip the uploading state instead of flashing it.
 		if ( pendingImages.length === 0 ) {
 			return Promise.resolve( [] );
+		}
+
+		// The server rejects an empty file; check first so nothing else uploads and needs deleting.
+		if ( pendingImages.some( ( image ) => image.file.size <= 0 ) ) {
+			return Promise.reject( new Error( 'Cannot upload an empty file' ) );
 		}
 
 		const imagesToUpload = [ ...pendingImages ];
@@ -198,41 +229,35 @@ export function useImageUpload(): UseImageUploadResult {
 			};
 			activeBatchRef.current = batch;
 
-			const files = imagesToUpload.map( ( img ) => img.file );
+			const uploads = imagesToUpload.map( async ( image ) => {
+				const media = await uploadFile( image.file, batch.controller.signal );
 
-			uploadMedia( {
-				filesList: files,
-				signal: batch.controller.signal,
-				onFileChange: ( changedFiles ) => {
-					const landed: MediaObject[] = [];
-					changedFiles.forEach( ( media ) => {
-						if ( ! isBlobURL( media?.url ) && isAttachment( media ) ) {
-							landed.push( transformMediaObject( media ) );
-						}
-					} );
-					batch.landed = landed;
+				// A file landing after the batch aborted or failed is unused, so delete it.
+				if ( batch.aborted ) {
+					deleteAttachment( media.id );
+				} else {
+					batch.landed.push( media );
+				}
 
-					// Anything landing after an abort is unused — delete it instead of
-					// resolving a settled promise. Re-deleting an already-deleted
-					// attachment is a harmless no-op.
+				return media;
+			} );
+
+			Promise.all( uploads ).then(
+				( mediaObjects ) => {
 					if ( batch.aborted ) {
-						batch.landed.forEach( ( media ) => deleteAttachment( media.id ) );
-						return;
-					}
-
-					if ( batch.landed.length !== files.length ) {
 						return;
 					}
 
 					activeBatchRef.current = null;
 					setUploadingImages( [] );
 					setIsUploadingImages( false );
-					resolve( batch.landed );
+					resolve( mediaObjects );
 				},
-				onError: ( uploadError ) => {
+				( uploadError: unknown ) => {
 					if ( batch.aborted ) {
 						return;
 					}
+
 					activeBatchRef.current = null;
 					batch.aborted = true;
 					// Cancel the remaining siblings and delete the ones that already
@@ -244,8 +269,8 @@ export function useImageUpload(): UseImageUploadResult {
 					// Restore the previews so the user can retry without re-selecting.
 					setPendingImages( ( prevImages ) => [ ...batch.images, ...prevImages ] );
 					reject( uploadError );
-				},
-			} );
+				}
+			);
 		} );
 	}, [ pendingImages ] );
 

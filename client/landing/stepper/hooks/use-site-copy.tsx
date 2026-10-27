@@ -13,7 +13,6 @@ import isRequestingSiteFeatures from 'calypso/state/selectors/is-requesting-site
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSiteFeatures } from 'calypso/state/sites/features/actions';
 import type { Purchase } from '@automattic/api-core';
-import type { SiteSelect } from '@automattic/data-stores';
 import type { SiteExcerptData } from '@automattic/sites';
 
 interface SiteCopyOptions {
@@ -76,8 +75,7 @@ export const useSiteCopy = (
 		isRequestingSiteFeatures( state, site?.ID )
 	);
 	const isAtomic = useSelect(
-		( select ) =>
-			site && options.enabled && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site?.ID ),
+		( select ) => site && options.enabled && select( SITE_STORE ).isSiteAtomic( site?.ID ),
 		[ site, options.enabled ]
 	);
 	const plan = site?.plan;
@@ -90,9 +88,9 @@ export const useSiteCopy = (
 
 	const { setPlanCartItem, setProductCartItems, resetOnboardStore } = useDispatch( ONBOARD_STORE );
 
-	const shouldShowSiteCopyItem = useMemo( () => {
-		return hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases;
-	}, [ hasCopySiteFeature, isSiteOwner, plan, isLoadingPurchases, isAtomic ] );
+	const shouldShowSiteCopyItem = Boolean(
+		options.enabled && hasCopySiteFeature && isSiteOwner && plan && isAtomic && ! isLoadingPurchases
+	);
 
 	const startSiteCopy = useCallback( () => {
 		if ( ! shouldShowSiteCopyItem || ! site?.ID ) {

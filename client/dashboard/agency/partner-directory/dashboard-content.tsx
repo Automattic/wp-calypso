@@ -61,6 +61,10 @@ interface Props {
 	 * buttons render plain anchors for the host app's own router to pick up.
 	 */
 	shouldUseRouterLink?: boolean;
+	/**
+	 * Set to false where the page header already introduces the program.
+	 */
+	showIntro?: boolean;
 }
 
 /*
@@ -79,6 +83,7 @@ export default function PartnerDirectoryDashboardContent( {
 	onPublishError,
 	openSupportGuide,
 	shouldUseRouterLink,
+	showIntro = true,
 }: Props ) {
 	const profile = agency.profile;
 	const application = profile?.partner_directory_application;
@@ -258,6 +263,7 @@ export default function PartnerDirectoryDashboardContent( {
 						<>
 							<LinkButton
 								variant="secondary"
+								size="compact"
 								href={ expertiseUrl }
 								onClick={ onEditExpertiseClick }
 								shouldUseRouterLink={ shouldUseRouterLink }
@@ -266,6 +272,7 @@ export default function PartnerDirectoryDashboardContent( {
 							</LinkButton>
 							<LinkButton
 								variant="secondary"
+								size="compact"
 								href={ profileUrl }
 								onClick={ onEditProfileClick }
 								shouldUseRouterLink={ shouldUseRouterLink }
@@ -282,12 +289,14 @@ export default function PartnerDirectoryDashboardContent( {
 
 	return (
 		<VStack spacing={ 8 }>
-			<SectionHeader
-				title={ __( 'Boost your agency’s visibility across Automattic listings.' ) }
-				description={ __(
-					'List your agency in our Partner Directories. Showcase your skills, attract clients, and grow your business.'
-				) }
-			/>
+			{ showIntro && (
+				<SectionHeader
+					title={ __( 'Boost your agency’s visibility across Automattic listings.' ) }
+					description={ __(
+						'List your agency in our Partner Directories. Showcase your skills, attract clients, and grow your business.'
+					) }
+				/>
+			) }
 			<VStack spacing={ 4 }>
 				<SectionHeader level={ 3 } title={ __( 'How do I start?' ) } />
 				<ActionList>
@@ -307,6 +316,7 @@ export default function PartnerDirectoryDashboardContent( {
 						actions={
 							<LinkButton
 								variant={ applicationWasSubmitted ? 'secondary' : 'primary' }
+								size="compact"
 								href={ expertiseUrl }
 								onClick={ applicationWasSubmitted ? onEditExpertiseClick : onApplyNowClick }
 								shouldUseRouterLink={ shouldUseRouterLink }
@@ -315,8 +325,6 @@ export default function PartnerDirectoryDashboardContent( {
 							</LinkButton>
 						}
 					/>
-				</ActionList>
-				<ActionList>
 					<ActionList.ActionItem
 						layout={ itemLayout }
 						title={ __( 'Finish adding details to your public profile' ) }
@@ -330,6 +338,7 @@ export default function PartnerDirectoryDashboardContent( {
 										? 'primary'
 										: 'secondary'
 								}
+								size="compact"
 								href={ profileUrl }
 								onClick={ onFinishProfileClick }
 								disabled={ ! applicationWasSubmitted || ! hasDirectoryApproval }
@@ -339,8 +348,6 @@ export default function PartnerDirectoryDashboardContent( {
 							</LinkButton>
 						}
 					/>
-				</ActionList>
-				<ActionList>
 					<ActionList.ActionItem
 						layout={ itemLayout }
 						title={ __( 'New clients will find you' ) }
@@ -350,6 +357,7 @@ export default function PartnerDirectoryDashboardContent( {
 						actions={
 							<Button
 								variant={ applicationWasSubmitted ? 'primary' : 'secondary' }
+								size="compact"
 								onClick={ onPublishProfileClick }
 								disabled={
 									! applicationWasSubmitted ||
@@ -359,7 +367,7 @@ export default function PartnerDirectoryDashboardContent( {
 								}
 								isBusy={ isPublishingProfile }
 							>
-								{ __( 'Done' ) }
+								{ __( 'Publish profile' ) }
 							</Button>
 						}
 					/>

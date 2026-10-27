@@ -72,7 +72,7 @@ export default function VipSection( { isReferralMode }: { isReferralMode: boolea
 
 	return (
 		<div className="dashboard-marketplace-hosting__layout">
-			<VStack spacing={ 8 } justify="flex-start">
+			<VStack className="dashboard-marketplace-hosting__layout-steps">
 				<Card>
 					<CardHeader>
 						<SectionHeader
@@ -123,6 +123,8 @@ export default function VipSection( { isReferralMode }: { isReferralMode: boolea
 						</VStack>
 					</CardBody>
 				</Card>
+			</VStack>
+			<VStack spacing={ 8 } className="dashboard-marketplace-hosting__layout-more">
 				<VipCapabilities />
 				<Divider style={ { color: 'var(--dashboard-overview__divider-color)' } } />
 				<Testimonials brand="vip" />

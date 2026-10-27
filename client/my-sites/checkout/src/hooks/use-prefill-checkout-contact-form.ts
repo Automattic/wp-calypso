@@ -3,9 +3,8 @@ import { useCompleteAllSteps, useSuppressNextForwardScroll } from '@automattic/c
 import { getCountryPostalCodeSupport } from '@automattic/wpcom-checkout';
 import debugFactory from 'debug';
 import { useEffect, useRef, useState } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { logToLogstash } from 'calypso/lib/logstash';
-import { useDispatch as useReduxDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { convertErrorToString } from '../lib/analytics';
 import { contactDetailsActions } from '../lib/checkout-stores';
 import { useCachedContactDetails } from './use-cached-contact-details';
@@ -20,7 +19,6 @@ function useCachedContactDetailsForCheckoutForm(
 	suppressScrollOnAutoComplete?: boolean
 ): boolean {
 	const countriesList = useCountryList();
-	const reduxDispatch = useReduxDispatch();
 	const completeAllSteps = useCompleteAllSteps();
 	const suppressNextForwardScroll = useSuppressNextForwardScroll();
 	const [ isComplete, setComplete ] = useState( false );
@@ -100,7 +98,7 @@ function useCachedContactDetailsForCheckoutForm(
 					return false;
 				}
 				if ( didSkip ) {
-					reduxDispatch( recordTracksEvent( 'calypso_checkout_skip_to_last_step' ) );
+					recordTracksEvent( 'calypso_checkout_skip_to_last_step' );
 				}
 				setShouldShowContactDetailsValidationErrors?.( true );
 				setComplete( true );
@@ -127,7 +125,6 @@ function useCachedContactDetailsForCheckoutForm(
 			} );
 	}, [
 		setShouldShowContactDetailsValidationErrors,
-		reduxDispatch,
 		completeAllSteps,
 		suppressNextForwardScroll,
 		suppressScrollOnAutoComplete,

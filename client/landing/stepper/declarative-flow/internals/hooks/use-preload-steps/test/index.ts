@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 import { SiteDetails } from '@automattic/data-stores';
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, fireEvent, render, screen } from '@testing-library/react';
+import { createElement, lazy, Suspense, useState, type ChangeEvent } from 'react';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
-import { usePreloadSteps } from '../../use-preload-steps';
+import { lazyCache, tryPreload, usePreloadSteps } from '../../use-preload-steps';
 import type { Flow, StepperStep } from '../../../types';
 
 // Mock dependencies
@@ -20,6 +21,52 @@ jest.mock( 'calypso/state/current-user/selectors', () => ( {
 jest.mock( 'debug', () => () => jest.fn() );
 
 const PRELOAD_DELAY_MS = 5000;
+
+describe( 'tryPreload', () => {
+	it( 'caches a component when the renderer has not cached it yet', async () => {
+		const Component = () => null;
+		const step = {
+			slug: 'error',
+			asyncComponent: async () => ( { default: Component } ),
+		} satisfies StepperStep;
+
+		await tryPreload( step );
+
+		expect( lazyCache.get( step.asyncComponent ) ).toBe( Component );
+	} );
+
+	it( 'preserves an edited address after preloading and rerendering', async () => {
+		const initialValue = 'https://wordpress.org/';
+		function Address() {
+			const [ value, setValue ] = useState( initialValue );
+			return createElement( 'input', {
+				'aria-label': 'Site address',
+				value,
+				onChange: ( event: ChangeEvent< HTMLInputElement > ) => setValue( event.target.value ),
+			} );
+		}
+		const step = {
+			slug: 'error',
+			asyncComponent: async () => ( { default: Address } ),
+		} satisfies StepperStep;
+		const preloading = tryPreload( step );
+		const LazyStep = lazy( step.asyncComponent );
+		lazyCache.set( step.asyncComponent, LazyStep );
+		const { rerender } = render(
+			createElement( Suspense, { fallback: null }, createElement( LazyStep ) )
+		);
+		await act( async () => {
+			await preloading;
+		} );
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( initialValue );
+		fireEvent.change( screen.getByRole( 'textbox' ), { target: { value: 'cotrim.dev' } } );
+		const CachedStep = lazyCache.get( step.asyncComponent ) as typeof LazyStep;
+		rerender( createElement( Suspense, { fallback: null }, createElement( CachedStep ) ) );
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'cotrim.dev' );
+	} );
+} );
 
 describe( 'usePreloadSteps', () => {
 	// Mock step components

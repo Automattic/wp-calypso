@@ -1,17 +1,23 @@
-import { ToggleControl } from '@wordpress/components';
+import {
+	__experimentalToggleGroupControl as ToggleGroupControl,
+	__experimentalToggleGroupControlOption as ToggleGroupControlOption,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import clsx from 'clsx';
 import { useAnalytics } from '../../app/analytics';
 import { useMarketplaceType } from './use-marketplace-type';
 import { useTermPricing } from './use-term-pricing';
 import type { TermPricing } from './use-term-pricing';
 
-export default function TermPricingToggle() {
+import './term-pricing-toggle.scss';
+
+export default function TermPricingToggle( { short = false }: { short?: boolean } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { marketplaceType } = useMarketplaceType();
 	const { termPricing, setTermPricing } = useTermPricing();
 
-	const handleToggle = ( checked: boolean ) => {
-		const nextTerm: TermPricing = checked ? 'yearly' : 'monthly';
+	const handleChange = ( value: string | number | undefined ) => {
+		const nextTerm: TermPricing = value === 'monthly' ? 'monthly' : 'yearly';
 		setTermPricing( nextTerm );
 		recordTracksEvent( 'calypso_a4a_marketplace_term_pricing_toggle', {
 			term_pricing: nextTerm,
@@ -20,11 +26,25 @@ export default function TermPricingToggle() {
 	};
 
 	return (
-		<ToggleControl
-			__nextHasNoMarginBottom
-			checked={ termPricing === 'yearly' }
-			label={ __( 'Billed annually' ) }
-			onChange={ handleToggle }
-		/>
+		<div className={ clsx( 'dashboard-marketplace-term-pricing', { 'is-short': short } ) }>
+			<ToggleGroupControl
+				__nextHasNoMarginBottom
+				__next40pxDefaultSize
+				label={ __( 'Billing' ) }
+				hideLabelFromVision
+				isBlock
+				value={ termPricing }
+				onChange={ handleChange }
+			>
+				<ToggleGroupControlOption
+					value="monthly"
+					label={ short ? __( 'Monthly' ) : __( 'Billed monthly' ) }
+				/>
+				<ToggleGroupControlOption
+					value="yearly"
+					label={ short ? __( 'Yearly' ) : __( 'Billed yearly' ) }
+				/>
+			</ToggleGroupControl>
+		</div>
 	);
 }

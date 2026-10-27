@@ -18,7 +18,6 @@ import { useQuery } from '../../../../hooks/use-query';
 import StepContent from './step-content';
 import { areLaunchpadTasksCompleted } from './task-helper';
 import type { Step } from '../../types';
-import type { SiteSelect } from '@automattic/data-stores';
 
 import './style.scss';
 
@@ -43,7 +42,7 @@ const Launchpad: Step = ( { navigation, flow } ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 
 	const fetchingSiteError = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+		( select ) => select( SITE_STORE ).getFetchingSiteError(),
 		[]
 	);
 
@@ -56,7 +55,9 @@ const Launchpad: Step = ( { navigation, flow } ) => {
 	}
 
 	if ( areLaunchpadTasksCompleted( launchpadChecklist, isSiteLaunched ) ) {
-		saveSiteSettings( site?.ID, { launchpad_screen: 'off' } );
+		if ( site?.ID ) {
+			saveSiteSettings( site.ID, { launchpad_screen: 'off' } );
+		}
 		redirectToSiteHome( siteSlug, flow );
 	}
 

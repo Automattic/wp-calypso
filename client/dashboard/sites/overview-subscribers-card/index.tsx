@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { __ } from '@wordpress/i18n';
 import { people } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
@@ -9,7 +10,7 @@ export default function SubscribersCard( { site }: { site: Site } ) {
 		<OverviewCard
 			icon={ people }
 			title={ __( 'Subscribers' ) }
-			heading={ site.subscribers_count }
+			heading={ formatNumber( site.subscribers_count ) }
 			description={ __( 'Total subscribers.' ) }
 			link={ getSiteSubscribersUrl( site ) }
 			intent="success"

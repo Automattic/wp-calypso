@@ -1,11 +1,13 @@
 import { NavigatorScreens, useNavigatorButtons } from '@automattic/onboarding';
-import { Navigator } from '@wordpress/components/build-types/navigator/types';
 import { Element, useMemo } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { useTranslate } from 'i18n-calypso';
 import { MutableRefObject } from 'react';
-import type { Category } from '@automattic/design-picker/src/types';
+import type { Category } from '@automattic/design-picker';
 import type { NavigatorScreenObject } from '@automattic/onboarding';
+import type { useNavigator } from '@wordpress/components';
+
+type Navigator = ReturnType< typeof useNavigator >;
 
 interface CategoryBadgeProps {
 	category: Category;

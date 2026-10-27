@@ -9,8 +9,11 @@ import { createStore } from 'redux';
 import ReaderPostActions from '../index';
 
 let mockReaderShelvesEnabled = false;
+let mockSavedPostsEnabled = false;
 jest.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: ( flag ) => ( flag === 'reader/shelves' ? mockReaderShelvesEnabled : false ),
+	isEnabled: ( flag ) =>
+		( flag === 'reader/shelves' && mockReaderShelvesEnabled ) ||
+		( flag === 'reader/saved-posts' && mockSavedPostsEnabled ),
 } ) );
 
 const mockRecordReaderTracksEvent = jest.fn( () => ( { type: 'MOCK_TRACKS_EVENT' } ) );
@@ -21,14 +24,15 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 // Mock the components that are complex to test
 jest.mock( 'calypso/blocks/comment-button', () => () => <div data-testid="comment-button" /> );
 jest.mock( 'calypso/blocks/reader-share', () => () => <div data-testid="share-button" /> );
+jest.mock( 'calypso/blocks/reader-save-button', () => () => <div data-testid="save-button" /> );
 jest.mock( 'calypso/reader/like-button', () => () => <div data-testid="like-button" /> );
 jest.mock( 'calypso/reader/shelves/subscribe-with-shelf/shelf-picker-modal', () => ( {
 	ShelfPickerModal: () => null,
 } ) );
 
 // Simple mock store
-const createMockStore = () => {
-	const reducer = ( state = {} ) => state;
+const createMockStore = ( initialState = {} ) => {
+	const reducer = ( state = initialState ) => state;
 	return createStore( reducer );
 };
 
@@ -52,6 +56,7 @@ const defaultProps = {
 describe( 'ReaderPostActions', () => {
 	beforeEach( () => {
 		mockReaderShelvesEnabled = false;
+		mockSavedPostsEnabled = false;
 		mockRecordReaderTracksEvent.mockClear();
 	} );
 
@@ -135,5 +140,63 @@ describe( 'ReaderPostActions', () => {
 				source: 'post_actions',
 			}
 		);
+	} );
+
+	describe( 'the Save button', () => {
+		const renderActions = ( {
+			post = defaultProps.post,
+			state = { currentUser: { id: 1 } },
+		} = {} ) =>
+			render(
+				<QueryClientProvider client={ createQueryClient() }>
+					<Provider store={ createMockStore( state ) }>
+						<ReaderPostActions { ...defaultProps } post={ post } />
+					</Provider>
+				</QueryClientProvider>
+			);
+
+		beforeEach( () => {
+			mockSavedPostsEnabled = true;
+		} );
+
+		it( 'shows for a logged-in user', () => {
+			renderActions();
+
+			expect( screen.getByTestId( 'save-button' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden when the saved posts feature is off', () => {
+			mockSavedPostsEnabled = false;
+
+			renderActions();
+
+			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'is hidden from a logged-out user', () => {
+			renderActions( { state: { currentUser: { id: null } } } );
+
+			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows on an RSS post', () => {
+			renderActions( {
+				post: {
+					ID: 9000,
+					feed_ID: 60,
+					feed_item_ID: 9000,
+					is_external: true,
+					URL: 'https://example.com/post',
+				},
+			} );
+
+			expect( screen.getByTestId( 'save-button' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden on a post without the IDs the saved posts API needs', () => {
+			renderActions( { post: { ...defaultProps.post, site_ID: undefined } } );
+
+			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
+		} );
 	} );
 } );

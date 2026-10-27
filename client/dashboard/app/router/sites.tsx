@@ -1,4 +1,4 @@
-import { HostingFeatures, DotcomFeatures, LogType, fetchTwoStep } from '@automattic/api-core';
+import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	bulkDomainUpdateStatusQuery,
@@ -58,7 +58,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
-import { reauthRequiredLink } from '../../utils/link';
+import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -66,14 +66,24 @@ import {
 } from '../../utils/site-features';
 import { isInJetpackCriticalErrorState } from '../../utils/site-jetpack-critical-error';
 import { getSiteDisplayName } from '../../utils/site-name';
-import { isSiteMigrationInProgress, getSiteMigrationState } from '../../utils/site-status';
+import {
+	getSiteMigrationState,
+	isSiteMigrationInProgress,
+	isWordPressMigration,
+} from '../../utils/site-status';
 import { hasSiteTrialEnded } from '../../utils/site-trial';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
 import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { userHasNoLiveSites } from '../../utils/user';
 import { AUTH_QUERY_KEY } from '../auth';
-import { dashboardRedirect, redirectAsNotAllowed } from './redirect';
+import {
+	dashboardRedirect,
+	redirectAsNotAllowed,
+	redirectIfTwoStepReauthRequired,
+} from './redirect';
 import { rootRoute } from './root';
+import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
+import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
 import type { DifmWebsiteContentResponse, Site, User } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
@@ -219,6 +229,19 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
+	validateSearch: ( search ): StaticSiteImportSearch & DifmOfferSearch => {
+		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
+		return {
+			importSessionId: asString( search.importSessionId ),
+			from: asString( search.from ),
+			platform: asString( search.platform ),
+			difmOffer:
+				search.difmOffer === 'purchased' || search.difmOffer === 'open'
+					? search.difmOffer
+					: undefined,
+			source: asString( search.source ),
+		};
+	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( preload ) {
@@ -319,6 +342,7 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+	validateSearch: validateDateRangeSearch,
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -471,6 +495,7 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	validateSearch: validateDateRangeSearch,
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
@@ -840,16 +865,6 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
-		if ( cause === 'preload' ) {
-			return;
-		}
-
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( site.is_wpcom_flex ) {
-			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
-		}
-	},
 	loader: async ( { context, params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
@@ -890,10 +905,7 @@ export const siteSettingsAIToolsRoute = createRoute( {
 		}
 
 		if ( cause === 'enter' ) {
-			const twoStep = await fetchTwoStep();
-			if ( twoStep.two_step_reauthorization_required ) {
-				throw dashboardRedirect( { href: reauthRequiredLink(), reloadDocument: true } );
-			}
+			await redirectIfTwoStepReauthRequired();
 		}
 	},
 	loader: async ( { params: { siteSlug } } ) => {
@@ -1725,7 +1737,10 @@ export const siteMigrationOverviewRoute = createRoute( {
 	head: ( { loaderData }: { loaderData?: { site: Site } } ) => {
 		const migrationState = loaderData && getSiteMigrationState( loaderData.site );
 		let title;
-		if ( migrationState?.status === 'pending' ) {
+		if ( loaderData && isWordPressMigration( loaderData.site ) ) {
+			// One page walks a WordPress migration through all of its states, so the title can't name just one.
+			title = __( 'Your migration' );
+		} else if ( migrationState?.status === 'pending' ) {
 			title = __( 'Your WordPress site is ready to be migrated' );
 		} else if ( migrationState?.type === 'difm' ) {
 			title = __( 'We’ve received your migration request' );
@@ -1748,15 +1763,22 @@ export const siteMigrationOverviewRoute = createRoute( {
 			return;
 		}
 
-		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		let site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isSiteMigrationInProgress( site ) ) {
+			// A cached site can predate its migration, as when arriving from the flow that just started one.
+			// So read it again before turning anyone away, unless it was read moments ago for this navigation.
+			site = await queryClient
+				.fetchQuery( { ...siteBySlugQuery( siteSlug ), staleTime: 1000, retry: false } )
+				.catch( () => site );
+		}
+
 		if ( ! isSiteMigrationInProgress( site ) ) {
 			throw dashboardRedirect( { to: siteOverviewRoute.fullPath, params: { siteSlug } } );
 		}
-
-		return {
-			site,
-		};
 	},
+	loader: async ( { params: { siteSlug } } ) => ( {
+		site: await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) ),
+	} ),
 } ).lazy( () =>
 	import( '../../sites/migration-overview' ).then( ( d ) =>
 		createLazyRoute( 'migration-overview' )( {

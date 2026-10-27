@@ -12,9 +12,8 @@ import {
 import isJetpackCheckout from 'calypso/lib/jetpack/is-jetpack-checkout';
 import DomainPromotionalPricingRestrictions from 'calypso/my-sites/checkout/src/components/domain-promotional-pricing-restrictions';
 import { useSelector } from 'calypso/state';
-import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import { isJetpackNotAtomicSite, useCheckoutSite } from '../hooks/use-checkout-site';
 import { useContactDetails } from '../lib/checkout-stores';
 import AdditionalTermsOfServiceInCart from './additional-terms-of-service-in-cart';
 import BundledDomainNotice, { showBundledDomainNotice } from './bundled-domain-notice';
@@ -70,9 +69,8 @@ export default function CheckoutTerms( {
 	const isGiftPurchase = cart.is_gift_purchase;
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
-	const isJetpackNotAtomic = useSelector( ( state ) => {
-		return siteId && isJetpackSite( state, siteId ) && ! isAtomicSite( state, siteId );
-	} );
+	const { data: site } = useCheckoutSite( siteId );
+	const isJetpackNotAtomic = isJetpackNotAtomicSite( site );
 	const contactInfo = useContactDetails();
 	const isNotJetpackOrAkismetCheckout =
 		! isJetpackCheckout() && ! isJetpackNotAtomic && ! isAkismetCheckout();

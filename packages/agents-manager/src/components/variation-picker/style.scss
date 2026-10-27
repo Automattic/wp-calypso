@@ -34,6 +34,12 @@
 				outline-color: var( --color-muted-foreground );
 			}
 		}
+
+		// The preview sets an inline pointer cursor, so ignore the pointer instead of overriding it.
+		&[aria-disabled='true'] {
+			opacity: 0.6;
+			pointer-events: none;
+		}
 	}
 
 	&__preview {
@@ -84,9 +90,16 @@
 	}
 }
 
-// Pull the actions row up one row height to sit beside the pagination row
-// instead of stacking below it as a large gap.
+// Pull the actions row, or the hover-only panel, up beside the pagination row.
 .Message-module_content:has( .agents-manager-variation-picker__arrows )
 	.MessageActions-module_container {
 	margin-top: -32px;
+
+	// Hover-only actions take no space until pressed, so reserve the pagination
+	// row and the usual gap below it.
+	@media ( hover: hover ) {
+		&:has( > .MessageActions-module_dock:not( .MessageActions-module_docked ):first-child ) {
+			padding-bottom: calc( 32px + var( --spacing-2 ) );
+		}
+	}
 }

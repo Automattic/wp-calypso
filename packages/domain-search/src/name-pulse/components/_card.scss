@@ -1,0 +1,45 @@
+// The frame and footer divider shared by the exact-match and bundle cards, so
+// the two stay identical side by side.
+@mixin name-pulse-card {
+	box-sizing: border-box;
+	min-width: 0;
+	padding: 24px;
+	border-radius: 8px;
+	box-shadow:
+		0 0 0 1px rgba( 0, 0, 0, 0.1 ),
+		0 1px 2px rgba( 0, 0, 0, 0.05 );
+}
+
+@mixin name-pulse-card-footer {
+	padding-top: 16px;
+	border-top: 1px solid rgba( 0, 0, 0, 0.08 );
+}
+
+// A skeleton bar over stand-in text: the text keeps its line height and
+// wrapping, so a placeholder takes the height of the card it stands for.
+@mixin name-pulse-card-skeleton {
+	border-radius: 4px;
+	background: linear-gradient( 90deg, #ddd, #eee 49.5%, rgba( 238, 238, 238, 0.5 ) );
+	color: transparent;
+	animation: name-pulse-skeleton 1.2s ease-in-out infinite;
+	box-decoration-break: clone;
+
+	&--icon {
+		display: inline-block;
+		width: 20px;
+		height: 20px;
+		flex-shrink: 0;
+	}
+
+	&--badge {
+		display: inline-block;
+		width: 9rem;
+		height: 24px;
+	}
+
+	&--cta {
+		display: inline-block;
+		width: 7.5rem;
+		height: 40px;
+	}
+}

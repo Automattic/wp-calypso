@@ -29,11 +29,10 @@ test.describe(
 				await editorPage.visit( 'post', { siteSlug } );
 			} );
 
+			// Only the unstable APIs that code shipped from this repo reads from the editor's
+			// `window.wp`: wpcom-block-editor's inserter search tracking uses this one.
 			const experimentalPackages = [
 				[ 'blockEditor', '__unstableInserterMenuExtension', 'function' ],
-				[ 'date', '__experimentalGetSettings', 'function' ],
-				[ 'components', '__experimentalNavigatorBackButton', 'object' ],
-				[ 'editPost', '__experimentalMainDashboardButton', 'function' ],
 			];
 
 			for ( const [ packageName, feature, featureType ] of experimentalPackages ) {
@@ -54,15 +53,6 @@ test.describe(
 					expect( featureAvailable ).toContain( featureType );
 				} );
 			}
-
-			await test.step( 'Experimental data is available', async () => {
-				const editorParent = await editorPage.getEditorParent();
-				const blockPatterns = await editorParent.evaluate(
-					"Array.isArray( window.wp.data.select( 'core/editor' ).getEditorSettings().__experimentalBlockPatterns )"
-				);
-				// If this test fails, please contact #team-ganon to update premium pattern highlighting.
-				expect( blockPatterns ).toStrictEqual( true );
-			} );
 
 			await test.step( 'Block pattern count should be greater than default', async () => {
 				const expectedBlockPatternCount = 50;

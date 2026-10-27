@@ -44,9 +44,12 @@ export interface BlocksRoot {
 export const DOCUMENT_ROOT_CLIENT_ID = '__agents-manager-document-root__';
 
 interface BlockEditorSelect {
+	areInnerBlocksControlled?: ( clientId: string ) => boolean;
 	getBlock?: ( clientId: string ) => EditorBlock | null;
 	getBlocks: ( rootClientId?: string ) => EditorBlock[];
 	getBlocksByName?: ( name: string ) => string[];
+	getClientIdsWithDescendants?: () => string[];
+	getBlockName?: ( clientId: string ) => string | null;
 	getBlockParents?: ( clientId: string ) => string[];
 	getBlockRootClientId?: ( clientId: string ) => string | null;
 	getSelectedBlockClientId?: () => string | null;
@@ -91,6 +94,18 @@ export const getBlock = ( clientId: string ): EditorBlock | undefined =>
 /** The clientIds of every `name` block, at any depth. */
 export const getBlocksByName = ( name: string ): string[] =>
 	blockEditorSelect()?.getBlocksByName?.( name ) ?? [];
+
+/** The names of the block types in the editor, at any depth. */
+export function getBlockNames(): Set< string > {
+	const blockEditor = blockEditorSelect();
+	const clientIds = blockEditor?.getClientIdsWithDescendants?.() ?? [];
+
+	return new Set(
+		clientIds
+			.map( ( clientId ) => blockEditor?.getBlockName?.( clientId ) )
+			.filter( ( name ): name is string => !! name )
+	);
+}
 
 /** The ancestors of `clientId`, outermost first. */
 export const getBlockParents = ( clientId: string ): string[] =>
@@ -237,10 +252,14 @@ export function updateBlockAttributes( clientId: string, attributes: BlockAttrib
 	requireBlockEditor().updateBlockAttributes( clientId, attributes );
 }
 
+/** The block list a write changes, by its parent: `undefined` for the document's own. */
+export type WrittenList< Args extends unknown[] > = ( ...args: Args ) => string | undefined;
+
 export interface UndoLevel {
 	/** Wraps a write so that it lands in this level. */
 	write: < Args extends unknown[] >(
-		write: ( ...args: Args ) => void
+		write: ( ...args: Args ) => void,
+		writtenList: WrittenList< Args >
 	) => ( ...args: Args ) => void;
 	/** Folds the writes into one undo record; nothing to fold is a no-op. */
 	close: () => void;
@@ -248,25 +267,63 @@ export interface UndoLevel {
 }
 
 /**
+ * The block whose inner blocks sync to their own record and hold `clientId`'s
+ * list, such as a template part or a post's content, or `''` for the
+ * document root.
+ */
+function getSyncedRoot( clientId: string | undefined ): string {
+	const blockEditor = blockEditorSelect();
+
+	if ( ! clientId ) {
+		return '';
+	}
+
+	return (
+		[ ...getBlockParents( clientId ), clientId ]
+			.reverse()
+			.find( ( id ) => blockEditor?.areInnerBlocksControlled?.( id ) ) ?? ''
+	);
+}
+
+/**
  * Block writes that undo as one level. The first write commits whatever the
- * user was typing, so that stays its own level, and opens this one; every
- * later write stays out of the undo stack until `close()` folds it in.
+ * user was typing, so that stays its own level. In each record the writes
+ * change (a template part, a post's content, the document), the first write
+ * that lands opens this level as a persistent change; every later one stays
+ * out of the undo stack and is folded into it.
+ *
+ * Only a write that lands can open the level: one that a restricted list
+ * drops changes nothing, so a later write marked transient would leave the
+ * record without a `content` edit to save, and fold into whatever undo record
+ * came before (WPAGENT-201).
  */
 export function openUndoLevel(): UndoLevel {
+	const openedRoots = new Set< string >();
 	let hasWritten = false;
 
 	return {
 		write:
-			( write ) =>
+			( write, writtenList ) =>
 			( ...args ) => {
-				if ( hasWritten ) {
-					requireBlockEditor().__unstableMarkNextChangeAsNotPersistent();
-				} else {
+				const root = getSyncedRoot( writtenList( ...args ) );
+				const isOpen = openedRoots.has( root );
+
+				if ( ! hasWritten ) {
 					requireBlockEditor().__unstableMarkLastChangeAsPersistent();
 					hasWritten = true;
 				}
 
+				if ( isOpen ) {
+					requireBlockEditor().__unstableMarkNextChangeAsNotPersistent();
+				}
+
+				const blocksBefore = getBlocks( root );
+
 				write( ...args );
+
+				if ( ! isOpen && getBlocks( root ) !== blocksBefore ) {
+					openedRoots.add( root );
+				}
 			},
 		close: () => {
 			if ( hasWritten ) {

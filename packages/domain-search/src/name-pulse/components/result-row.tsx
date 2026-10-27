@@ -4,9 +4,9 @@ import { useViewportMatch } from '@wordpress/compose';
 import { sprintf } from '@wordpress/i18n';
 import { cautionFilled, cart as cartIcon } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { Badge, Dialog, Button as DialogButton } from '@wordpress/ui';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useDomainSearch } from '../../page/context';
 import { DomainSearchTrademarkClaimsModal } from '../../ui';
 import {
@@ -14,17 +14,37 @@ import {
 	getNamePulseSalePrice,
 	NamePulseDomainStatus,
 	toNamePulseRealtimeVerdict,
+	getNamePulseRenderTracksProps,
+	toNamePulseTracksSuggestion,
 	type NamePulseDomainResult,
+	type NamePulseResultGroup,
 } from '../helpers';
 import { useNamePulseCartToggle } from '../hooks/use-name-pulse-cart-toggle';
+import { useNamePulseLabelLimit } from '../hooks/use-name-pulse-label-limit';
+import {
+	getNamePulseRenderKey,
+	recordNamePulseRender,
+	useNamePulseResultSet,
+} from '../hooks/use-name-pulse-result-set';
 import { setNamePulseVerdict } from '../hooks/use-name-pulse-verdicts';
+import { NamePulsePolicyNoticeDialog } from './policy-notice-dialog';
+
+export type NamePulseResultRowVariant = 'row' | 'card';
 
 interface NamePulseResultRowProps {
 	result: NamePulseDomainResult;
+	group: NamePulseResultGroup;
 	position: number;
+	variant?: NamePulseResultRowVariant;
 }
 
-const Price = ( { result }: { result: NamePulseDomainResult } ) => {
+const Price = ( {
+	result,
+	variant,
+}: {
+	result: NamePulseDomainResult;
+	variant: NamePulseResultRowVariant;
+} ) => {
 	const { __ } = useI18n();
 	const { cost, raw_price: rawPrice, currency_code: currencyCode } = result;
 	const yearlyPrice =
@@ -38,6 +58,42 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 
 	const salePrice = getNamePulseSalePrice( result );
 	const isSale = !! salePrice;
+	const renewal =
+		isSale &&
+		sprintf(
+			// translators: %(price)s is the domain renewal price.
+			__( '%(price)s/year renewal' ),
+			{ price: yearlyPrice }
+		);
+
+	// A card has room for the whole offer on one line: the regular price struck
+	// through, the sale price, and the renewal price after it.
+	if ( variant === 'card' ) {
+		return (
+			<span className="name-pulse-row__price name-pulse-row__price--card">
+				{ isSale && (
+					<Text as="s" size={ 18 } lineHeight="26px" variant="muted">
+						{ yearlyPrice }
+					</Text>
+				) }
+				<Text
+					size={ 18 }
+					lineHeight="26px"
+					color={ isSale ? 'var( --domain-search-promotional-price-color )' : undefined }
+				>
+					{ salePrice ?? yearlyPrice }
+				</Text>
+				<Text size={ 11 } lineHeight="20px">
+					{ isSale ? __( '/first year' ) : __( '/year' ) }
+				</Text>
+				{ renewal && (
+					<Text size={ 11 } lineHeight="20px" variant="muted">
+						{ renewal }
+					</Text>
+				) }
+			</span>
+		);
+	}
 
 	return (
 		<span className={ clsx( 'name-pulse-row__price', isSale && 'name-pulse-row__price--sale' ) }>
@@ -52,40 +108,28 @@ const Price = ( { result }: { result: NamePulseDomainResult } ) => {
 					{ isSale ? __( '/first year' ) : __( '/year' ) }
 				</Text>
 			</span>
-			{ isSale && (
+			{ renewal && (
 				<Text size={ 12 } variant="muted">
-					{ sprintf(
-						// translators: %(price)s is the domain renewal price.
-						__( '%(price)s/year renewal' ),
-						{ price: yearlyPrice }
-					) }
+					{ renewal }
 				</Text>
 			) }
 		</span>
 	);
 };
 
-export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProps ) => {
+export const NamePulseResultRow = ( {
+	result,
+	group,
+	position,
+	variant = 'row',
+}: NamePulseResultRowProps ) => {
 	const { __ } = useI18n();
-	const { queries } = useDomainSearch();
+	const { queries, events } = useDomainSearch();
+	const resultSet = useNamePulseResultSet();
 	const queryClient = useQueryClient();
 	// Below wide desktop the row is too narrow to truncate without losing most of
 	// the name, so the name wraps onto a second line instead.
 	const wrapName = useViewportMatch( 'large', '<' );
-	const {
-		inCart,
-		isPending,
-		error,
-		toggleCart,
-		trademarkClaimsNoticeInfo,
-		acceptTrademarkClaim,
-		closeTrademarkClaims,
-	} = useNamePulseCartToggle( result.domain_name, position );
-	const [ isPolicyNoticeOpen, setIsPolicyNoticeOpen ] = useState( false );
-	// Held from the moment the dialog opens: the real-time check that runs on
-	// confirming can update the row's notices while the dialog is still showing.
-	const [ policyNotice, setPolicyNotice ] = useState< { title: string; message: string } >();
-	const policyNoticeRef = useRef< HTMLDivElement >( null );
 
 	const { domain_name: domainName, suffix, source } = result;
 	const label = suffix ? domainName.slice( 0, -( suffix.length + 1 ) ) : domainName;
@@ -126,30 +170,67 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	const isUnknown = status === NamePulseDomainStatus.UNKNOWN;
 	const isAvailable = status === NamePulseDomainStatus.AVAILABLE;
 	const isUnavailable = ! isWaiting && ! isUnknown && ! isAvailable;
+	const renderKey = getNamePulseRenderKey( group, domainName );
+	const getRendered = () => resultSet?.rendered.get( renderKey );
 	// A failed check leaves the row on its badge alone: no price, and no skeleton
 	// waiting for one that is not coming.
 	const isPremiumPriceMissing = needsPremiumPrice && ! realtimeVerdict;
 	const showPremiumBadge = isAvailable && isPremium;
 	// TLDs with special requirements are rarely registered, so the requirements
 	// stay off the row and are confirmed in a dialog before the name goes to the cart.
-	const policyNotices = isAvailable && ! inCart ? ( row.policy_notices ?? [] ) : [];
-	const labelTruncateLimit = showPremiumBadge ? 12 : 20;
+	const {
+		inCart,
+		isPending,
+		error,
+		toggleCart,
+		trademarkClaimsNoticeInfo,
+		acceptTrademarkClaim,
+		closeTrademarkClaims,
+		policyNotice,
+		isPolicyNoticeOpen,
+		confirmPolicyNotice,
+		closePolicyNotice,
+	} = useNamePulseCartToggle( row, position, getRendered, row.policy_notices );
+
+	// Reported once per result set, when the row has a verdict, taken names included.
+	useEffect( () => {
+		const id = resultSet?.id;
+
+		if ( isWaiting || ! id || resultSet.rendered.has( renderKey ) ) {
+			return;
+		}
+
+		const report = recordNamePulseRender( { ...resultSet, id }, renderKey, group, position );
+		events.onSuggestionRender(
+			toNamePulseTracksSuggestion( row, position ),
+			undefined,
+			getNamePulseRenderTracksProps( row, report )
+		);
+	} );
+	const { nameRef, labelRef, limit: labelLimit } = useNamePulseLabelLimit( label );
+	const isCard = variant === 'card';
+	const nameSize = isCard ? 20 : undefined;
 	const suffixText = (
-		<Text as="span" weight={ 600 } variant={ isUnavailable ? 'muted' : undefined }>
+		<Text
+			as="span"
+			size={ nameSize }
+			weight={ isCard ? 400 : 600 }
+			variant={ isUnavailable ? 'muted' : undefined }
+		>
 			{ suffix ? `.${ suffix }` : '' }
 		</Text>
 	);
 
 	return (
 		<div
-			className="name-pulse-row"
+			className={ clsx( 'name-pulse-row', isCard && 'name-pulse-row--card' ) }
 			data-domain={ domainName }
 			data-status={ NamePulseDomainStatus[ status ].toLowerCase() }
 		>
-			<span className="name-pulse-row__name">
+			<span ref={ nameRef } className="name-pulse-row__name">
 				{ wrapName ? (
 					<span className="name-pulse-row__domain name-pulse-row__domain--wrap">
-						<Text as="span" variant="muted">
+						<Text as="span" size={ nameSize } variant="muted">
 							{ label }
 						</Text>
 						<wbr />
@@ -159,11 +240,13 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 					<Tooltip text={ domainName }>
 						<span className="name-pulse-row__domain">
 							<Text
+								ref={ labelRef }
 								as="span"
+								size={ nameSize }
 								variant="muted"
 								truncate
 								ellipsizeMode="middle"
-								limit={ labelTruncateLimit }
+								limit={ labelLimit }
 							>
 								{ label }
 							</Text>
@@ -190,7 +273,7 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						aria-label={ __( 'Checking price…' ) }
 					/>
 				) }
-				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } /> }
+				{ isAvailable && ! isPremiumPriceMissing && <Price result={ row } variant={ variant } /> }
 				{ error && (
 					<Tooltip delay={ 0 } text={ error.message } placement="top">
 						<Button
@@ -216,46 +299,18 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 						isBusy={ isPending }
 						disabled={ isPending }
 						aria-pressed={ inCart }
-						onClick={ () => {
-							if ( policyNotices.length === 0 ) {
-								toggleCart();
-								return;
-							}
-							setPolicyNotice( {
-								title: policyNotices[ 0 ].label,
-								message: policyNotices.map( ( notice ) => notice.message ).join( ' ' ),
-							} );
-							setIsPolicyNoticeOpen( true );
-						} }
+						onClick={ toggleCart }
 					/>
 				) }
 			</span>
 			{ policyNotice && (
-				<Dialog.Root
+				<NamePulsePolicyNoticeDialog
+					notice={ policyNotice }
 					open={ isPolicyNoticeOpen }
-					onOpenChange={ ( open ) => ! isPending && setIsPolicyNoticeOpen( open ) }
-				>
-					<Dialog.Popup size="small" ref={ policyNoticeRef } initialFocus={ policyNoticeRef }>
-						<Dialog.Header>
-							<Dialog.Title>{ policyNotice.title }</Dialog.Title>
-							<Dialog.CloseIcon />
-						</Dialog.Header>
-						<Dialog.Content>
-							<Dialog.Description>{ policyNotice.message }</Dialog.Description>
-						</Dialog.Content>
-						<Dialog.Footer>
-							<Dialog.Action variant="minimal" disabled={ isPending }>
-								{ __( 'Cancel' ) }
-							</Dialog.Action>
-							<DialogButton
-								loading={ isPending }
-								onClick={ () => toggleCart( { onSettled: () => setIsPolicyNoticeOpen( false ) } ) }
-							>
-								{ __( 'Add to cart' ) }
-							</DialogButton>
-						</Dialog.Footer>
-					</Dialog.Popup>
-				</Dialog.Root>
+					isPending={ isPending }
+					onConfirm={ confirmPolicyNotice }
+					onClose={ closePolicyNotice }
+				/>
 			) }
 			{ trademarkClaimsNoticeInfo && (
 				<DomainSearchTrademarkClaimsModal
@@ -269,8 +324,19 @@ export const NamePulseResultRow = ( { result, position }: NamePulseResultRowProp
 	);
 };
 
-export const NamePulseResultRowSkeleton = () => (
-	<div className="name-pulse-row name-pulse-row--skeleton" aria-hidden="true">
+export const NamePulseResultRowSkeleton = ( {
+	variant = 'row',
+}: {
+	variant?: NamePulseResultRowVariant;
+} ) => (
+	<div
+		className={ clsx(
+			'name-pulse-row',
+			'name-pulse-row--skeleton',
+			variant === 'card' && 'name-pulse-row--card'
+		) }
+		aria-hidden="true"
+	>
 		<span className="name-pulse-row__skeleton name-pulse-row__skeleton--name" />
 		<span className="name-pulse-row__skeleton" />
 	</div>

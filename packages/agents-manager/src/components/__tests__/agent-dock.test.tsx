@@ -168,15 +168,6 @@ jest.mock( '../support-guide', () => ( {
 	__esModule: true,
 	default: () => <div data-testid="support-guide">Support guide</div>,
 } ) );
-jest.mock( '../support-guides', () => ( {
-	__esModule: true,
-	default: ( { onExpand }: { onExpand: () => void } ) => (
-		<div data-testid="support-guides">
-			Support guides
-			<button onClick={ onExpand }>Expand guides</button>
-		</div>
-	),
-} ) );
 
 import AgentDock from '../agent-dock';
 import { markActionOrigin, takeActionOrigin } from '../../utils/action-origin';
@@ -224,6 +215,7 @@ function useWpAdminAgent() {
 
 describe( 'AgentDock', () => {
 	beforeEach( () => {
+		delete window.__agentsManagerConfig;
 		jest.clearAllMocks();
 		setLoadedProviderIds( undefined );
 		takeActionOrigin( 'open' );
@@ -313,33 +305,22 @@ describe( 'AgentDock', () => {
 		const { onOpenSidebar } = mockUseAgentLayoutManager.mock.calls.at( -1 )[ 0 ];
 		act( () => onOpenSidebar() );
 
-		// Opening the docked sidebar must not override a route chosen from the
-		// WP admin bar (e.g. Chat history / Support guides).
+		// Opening the docked sidebar must not override the route the WP admin bar chose.
 		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/history' );
 	} );
 
-	it( 'keeps the support guides view when expanding from the minimized state', () => {
+	it( 'keeps a non-dismissible chat expanded when the saved state is closed and minimized', () => {
 		useWpAdminAgent();
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
 		mockHasAdminBar = true;
-		mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
-
-		renderAgentDock( '/support-guides' );
-		fireEvent.click( screen.getByText( 'Expand guides' ) );
-
-		expect( mockResumeChat ).not.toHaveBeenCalled();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
-	} );
-
-	it( 'keeps the support guides list without the WP admin bar trigger', () => {
-		// The route stays registered even without an entry button, so a
-		// mid-session entry-button change (Site Editor navigation) can't
-		// redirect a user off the list.
-		useWpAdminAgent();
-
-		renderAgentDock( '/support-guides' );
-
-		expect( screen.getByTestId( 'support-guides' ) ).toBeInTheDocument();
-		expect( screen.getByTestId( 'location' ).textContent ).toBe( '/support-guides' );
+		mockAgentsManagerState = { isOpen: false, isDocked: false, isMinimized: true };
+		renderAgentDock();
+		expect( mockUseAgentLayoutManager ).toHaveBeenCalledWith(
+			expect.objectContaining( { defaultOpen: true } )
+		);
+		fireEvent.click( screen.getByText( 'Close chat' ) );
+		expect( mockSetIsOpen ).not.toHaveBeenCalled();
+		delete window.__agentsManagerConfig;
 	} );
 
 	it( 'clears the minimized flag when the entry button disappears mid-session', () => {
@@ -862,6 +843,83 @@ describe( 'AgentDock', () => {
 			rerender( dock() );
 
 			expect( chatClosedCalls() ).toEqual( [] );
+		} );
+	} );
+
+	describe( 'chat open and close window events', () => {
+		const dock = () => (
+			<MemoryRouter initialEntries={ [ '/chat' ] }>
+				<AgentDock />
+			</MemoryRouter>
+		);
+
+		const listen = ( eventName: string ) => {
+			const details: unknown[] = [];
+			const listener = ( event: Event ) => details.push( ( event as CustomEvent ).detail );
+			window.addEventListener( eventName, listener );
+			return {
+				details,
+				stop: () => window.removeEventListener( eventName, listener ),
+			};
+		};
+
+		it( 'broadcasts each open with who asked for it', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			const opened = listen( 'agents-manager-chat-opened' );
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			markActionOrigin( 'open', 'host' );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+			opened.stop();
+
+			expect( opened.details ).toEqual( [
+				{ restored: true, trigger: 'restored' },
+				{ restored: false, trigger: 'host' },
+				{ restored: false, trigger: 'user' },
+			] );
+		} );
+
+		it( 'broadcasts each close with who asked for it', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			const closed = listen( 'agents-manager-chat-closed' );
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			rerender( dock() );
+			markActionOrigin( 'close', 'host' );
+			mockAgentsManagerState = { isOpen: false, isDocked: false };
+			rerender( dock() );
+			closed.stop();
+
+			expect( closed.details ).toEqual( [ { trigger: 'user' }, { trigger: 'host' } ] );
+		} );
+
+		it( 'does not broadcast a close when the chat is only minimized', () => {
+			useWpAdminAgent();
+			mockHasAdminBar = true;
+			mockAgentsManagerState = { isOpen: true, isDocked: false };
+			const closed = listen( 'agents-manager-chat-closed' );
+			const { rerender } = render( dock() );
+
+			mockAgentsManagerState = { isOpen: true, isDocked: false, isMinimized: true };
+			rerender( dock() );
+			closed.stop();
+
+			expect( closed.details ).toEqual( [] );
 		} );
 	} );
 } );

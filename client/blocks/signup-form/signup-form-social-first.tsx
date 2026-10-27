@@ -30,6 +30,7 @@ interface SignupFormSocialFirst {
 	flowName: string;
 	redirectToAfterLoginUrl: string;
 	logInUrl: string;
+	onLogInClick?: () => void;
 	socialServiceResponse: object;
 	handleSocialResponse: (
 		service: string,
@@ -52,6 +53,15 @@ interface SignupFormSocialFirst {
 	isEmailFirstVariant?: boolean;
 	isEmailAtBottom?: boolean;
 	isMobileCompactVariant?: boolean;
+	/**
+	 * Renders the "Have an account? Log in" line below the buttons. The email-first variants
+	 * always render it.
+	 */
+	showLoginLink?: boolean;
+	/**
+	 * Shows an envelope instead of the WordPress.com logo on the email button.
+	 */
+	showEnvelopeIcon?: boolean;
 	allowedSocialServices?: SignupAllowedService[];
 	customTosElement?: JSX.Element;
 	activationEmailFrom?: string;
@@ -105,6 +115,7 @@ const SignupFormSocialFirst = ( {
 	flowName,
 	redirectToAfterLoginUrl,
 	logInUrl,
+	onLogInClick,
 	socialServiceResponse,
 	handleSocialResponse,
 	onCreateAccountSuccess,
@@ -118,6 +129,8 @@ const SignupFormSocialFirst = ( {
 	isEmailFirstVariant,
 	isEmailAtBottom,
 	isMobileCompactVariant,
+	showLoginLink,
+	showEnvelopeIcon,
 	allowedSocialServices,
 	customTosElement,
 	activationEmailFrom,
@@ -252,7 +265,7 @@ const SignupFormSocialFirst = ( {
 	const loginLinkParagraph = (
 		<p className="signup-form-social-first__login-link">
 			{ createInterpolateElement( __( 'Have an account? <link>Log in</link>' ), {
-				link: <Step.LinkButton href={ logInUrl } />,
+				link: <Step.LinkButton href={ logInUrl } onClick={ onLogInClick } />,
 			} ) }
 		</p>
 	);
@@ -349,6 +362,7 @@ const SignupFormSocialFirst = ( {
 					compact
 					isSocialFirst={ isSocialFirst }
 					shouldShowEmailButton={ ! isEmailFirstVariant }
+					showEnvelopeIcon={ showEnvelopeIcon }
 					allowedSocialServices={ allowedSocialServices }
 				/>
 				{ emailLoginBlock && isEmailAtBottom && (
@@ -360,6 +374,8 @@ const SignupFormSocialFirst = ( {
 				{ isEmailFirstVariant && loginLinkParagraph }
 			</div>
 			<div className={ getVisibilityClassName( 'email' ) }>{ emailScreen }</div>
+			{ /* Below both screens, so it stays on screen after "Continue with email". */ }
+			{ showLoginLink && ! isEmailFirstVariant && loginLinkParagraph }
 		</div>
 	);
 };

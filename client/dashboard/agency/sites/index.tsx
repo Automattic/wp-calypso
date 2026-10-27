@@ -22,6 +22,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';
 import ConnectSiteModal from './add-new-site/connect-site-modal';
@@ -141,7 +142,7 @@ export default function AgencySites() {
 
 	const handleSiteClick = useCallback(
 		( site: AgencySite ) =>
-			recordTracksEvent( 'calypso_dashboard_sites_item_click', { site_id: site.blog_id } ),
+			recordTracksEvent( 'calypso_a4a_sites_item_click', { site_id: site.blog_id } ),
 		[ recordTracksEvent ]
 	);
 
@@ -173,7 +174,7 @@ export default function AgencySites() {
 						<Button
 							variant="primary"
 							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_agency_sites_add_new_site_clicked' );
+								recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
 								setActiveModal( 'menu' );
 							} }
 							__next40pxDefaultSize
@@ -183,7 +184,12 @@ export default function AgencySites() {
 					}
 				/>
 			}
-			notices={ <ProvisioningSiteNotices /> }
+			notices={
+				<>
+					<ProvisioningSiteNotices />
+					<AgencyNotices />
+				</>
+			}
 		>
 			{ activeModal === 'menu' && (
 				<Modal title={ __( 'Add new site' ) } onRequestClose={ closeModal }>
@@ -215,11 +221,13 @@ export default function AgencySites() {
 					empty={
 						view.search ? (
 							<DataViewsEmptyStateLayout
+								isBorderless
 								title={ __( 'No sites match your search' ) }
 								description={ __( 'Try a different search term.' ) }
 							/>
 						) : (
 							<DataViewsEmptyStateLayout
+								isBorderless
 								title={ __( 'No sites' ) }
 								description={ __( 'No agency-managed sites were found.' ) }
 							/>

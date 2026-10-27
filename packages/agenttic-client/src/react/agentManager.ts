@@ -31,7 +31,22 @@ import type {
 	SendMessageParams,
 	Task,
 	TaskUpdate,
+	ToolCallDataPart,
 } from '../client/types/index';
+
+/** One result in a batch sent by `sendToolResults`. */
+export interface ToolResultInput {
+	toolCallId: string;
+	toolId: string;
+	result: unknown;
+}
+
+/** A tool call of the turn being answered, for `sendToolResults` to add to history when this page never saw it. */
+export interface TurnToolCall {
+	toolCallId: string;
+	toolId: string;
+	arguments: unknown;
+}
 
 /**
  * Update localStorage with new session ID when server returns a stable session ID
@@ -179,7 +194,7 @@ interface ManagedAgent {
 	storageConfig: ConversationStorageConfig;
 	conversationHistory: Message[];
 	currentAbortController: AbortController | null;
-	/** User turn awaiting delivery resolution across tool follow-ups. */
+	/** User turn still running, across its tool follow-ups. */
 	inFlightUserMessageId: string | null;
 }
 
@@ -210,9 +225,17 @@ export interface AgentManager {
 		options?: Partial< SendMessageParams >,
 		fileParts?: FilePart[]
 	) => AsyncIterable< TaskUpdate >;
+	// Used internally by `useAgentChat` — not intended for direct external use.
+	sendToolResults: (
+		key: string,
+		results: ToolResultInput[],
+		turnToolCalls?: TurnToolCall[],
+		options?: Partial< SendMessageParams >
+	) => AsyncIterable< TaskUpdate >;
 	resetConversation: ( key: string ) => Promise< void >;
 	replaceMessages: ( key: string, messages: Message[] ) => Promise< void >;
 	getConversationHistory: ( key: string ) => Message[];
+	getAgentSessionId: ( key: string ) => string | null;
 	updateSessionId: ( key: string, sessionId: string ) => void;
 	abortCurrentRequest: ( key: string ) => void;
 	/**
@@ -469,6 +492,9 @@ function createAgentManager(): AgentManager {
 				await persistConversationHistory( key, resolvedConversationHistory );
 			}
 
+			// The user message's history copy. A pre-built message (e.g., tool results) is used directly.
+			const userMessage = optionsMessage || createTextMessage( message, options.metadata );
+
 			let messageObj: Message;
 			if ( optionsMessage ) {
 				// When a pre-built message is provided (e.g., tool results),
@@ -479,11 +505,15 @@ function createAgentManager(): AgentManager {
 					parts: [ ...historyParts, ...optionsMessage.parts ],
 				};
 			} else {
-				messageObj = createTextMessageWithHistory(
-					message,
-					resolvedConversationHistory,
-					options.imageUrls
-				);
+				// Sent under its history copy's ID, so the server stores it under that ID too.
+				messageObj = {
+					...createTextMessageWithHistory(
+						message,
+						resolvedConversationHistory,
+						options.imageUrls
+					),
+					messageId: userMessage.messageId,
+				};
 			}
 
 			// Add metadata to the message object that will be sent to the agent
@@ -509,10 +539,6 @@ function createAgentManager(): AgentManager {
 				}
 			}
 
-			// Add user message to local conversation history before streaming (always)
-			// When a pre-built message is provided (e.g., tool results), use it directly.
-			const userMessage = optionsMessage || createTextMessage( message, options.metadata );
-
 			// Add image parts if present
 			if ( options.imageUrls && options.imageUrls.length > 0 ) {
 				const imageParts: FilePart[] = options.imageUrls.map( ( imageData ) => {
@@ -537,12 +563,8 @@ function createAgentManager(): AgentManager {
 				userMessage.parts.push( ...imageParts );
 			}
 			// Tool-result follow-ups reuse the opener's in-flight id; only
-			// mark a new pending delivery for real user turns that persist.
+			// real user turns that persist start a new one.
 			if ( withHistory && ! isToolResultOnlyMessage( userMessage ) ) {
-				userMessage.metadata = {
-					...( userMessage.metadata || {} ),
-					deliveryStatus: 'pending',
-				};
 				managedAgent.inFlightUserMessageId = userMessage.messageId;
 			}
 
@@ -700,31 +722,7 @@ function createAgentManager(): AgentManager {
 						// Clear tool call tracking for next batch
 						currentToolCallIds = [];
 
-						// Resolve only the in-flight opener; older pending stay.
-						const inFlightId = managedAgent.inFlightUserMessageId;
-						const nextStatus =
-							update.status?.state === 'failed' || update.status?.state === 'canceled'
-								? 'failed'
-								: 'complete';
-						if ( inFlightId ) {
-							currentConversationHistory = currentConversationHistory.map( ( m ) => {
-								if ( m.messageId !== inFlightId ) {
-									return m;
-								}
-								const status = m.metadata?.deliveryStatus;
-								if ( status === 'pending' || status === 'streaming' ) {
-									return {
-										...m,
-										metadata: {
-											...( m.metadata || {} ),
-											deliveryStatus: nextStatus,
-										},
-									};
-								}
-								return m;
-							} );
-							managedAgent.inFlightUserMessageId = null;
-						}
+						managedAgent.inFlightUserMessageId = null;
 
 						if ( update.status?.message ) {
 							const finalAgentMessage = extractNewContentFromMessage( update.status.message );
@@ -815,6 +813,85 @@ function createAgentManager(): AgentManager {
 			} );
 		},
 
+		/**
+		 * Send the results of several tool calls of one turn in one message: the
+		 * server only continues a turn whose every call has a result.
+		 *
+		 * A turn resumed on another page (after a page change) may have calls this
+		 * page never saw. `turnToolCalls` lists the turn's calls; those missing from
+		 * history are added as an agent message before sending, so the server sees
+		 * each result paired with its call.
+		 * @param key           - The agent key
+		 * @param results       - One result per call being answered
+		 * @param turnToolCalls - The turn's calls, to add to history when missing
+		 * @param options       - Optional send message params
+		 */
+		async *sendToolResults(
+			key: string,
+			results: ToolResultInput[],
+			turnToolCalls: TurnToolCall[] = [],
+			options: Partial< SendMessageParams > = {}
+		): AsyncIterable< TaskUpdate > {
+			const managedAgent = agents.get( key );
+			if ( ! managedAgent ) {
+				throw new Error( `Agent with key "${ key }" not found` );
+			}
+
+			const answered = new Set( results.map( ( { toolCallId } ) => toolCallId ) );
+			const isAnsweredResult = ( part: any ) =>
+				part.type === 'data' && answered.has( part.data?.toolCallId ) && 'result' in part.data;
+
+			// Drop earlier results for the answered calls; the server rejects a call
+			// with two results.
+			managedAgent.conversationHistory = managedAgent.conversationHistory
+				.map( ( msg ) => ( {
+					...msg,
+					parts: msg.parts.filter( ( p ) => ! isAnsweredResult( p ) ),
+				} ) )
+				.filter( ( msg ) => msg.parts.length > 0 );
+
+			const knownCallIds = new Set(
+				managedAgent.conversationHistory.flatMap( ( msg ) =>
+					msg.parts
+						.filter( ( p: any ) => p.type === 'data' && 'arguments' in ( p.data ?? {} ) )
+						.map( ( p: any ) => p.data.toolCallId )
+				)
+			);
+			const missingParts = turnToolCalls
+				.filter( ( { toolCallId } ) => ! knownCallIds.has( toolCallId ) )
+				.map( ( call ) => ( {
+					type: 'data' as const,
+					data: {
+						toolCallId: call.toolCallId,
+						toolId: call.toolId,
+						arguments: call.arguments as ToolCallDataPart[ 'data' ][ 'arguments' ],
+					},
+				} ) );
+			if ( missingParts.length > 0 ) {
+				managedAgent.conversationHistory = [
+					...managedAgent.conversationHistory,
+					{
+						role: 'agent',
+						kind: 'message',
+						parts: missingParts,
+						messageId: generateMessageId(),
+					},
+				];
+			}
+
+			yield* this.sendMessageStream( key, '', {
+				...options,
+				message: {
+					role: 'user',
+					kind: 'message',
+					parts: results.map( ( { toolCallId, toolId, result } ) =>
+						createToolResultDataPart( toolCallId, toolId, result )
+					),
+					messageId: generateMessageId(),
+				},
+			} );
+		},
+
 		async resetConversation( key: string ): Promise< void > {
 			const managedAgent = agents.get( key );
 			if ( ! managedAgent ) {
@@ -851,6 +928,10 @@ function createAgentManager(): AgentManager {
 			}
 
 			return [ ...managedAgent.conversationHistory ];
+		},
+
+		getAgentSessionId( key: string ): string | null {
+			return agents.get( key )?.sessionId || null;
 		},
 
 		updateSessionId( key: string, sessionId: string ): void {

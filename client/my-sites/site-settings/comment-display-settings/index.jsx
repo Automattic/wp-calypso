@@ -4,7 +4,6 @@ import { localize } from 'i18n-calypso';
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
-import FormSelect from 'calypso/components/forms/form-select';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import SupportInfo from 'calypso/components/support-info';
@@ -33,15 +32,15 @@ class CommentDisplaySettings extends Component {
 		} = this.props;
 
 		const commentsToggleLabel = translate(
-			'Let visitors use a WordPress.com or Facebook account to comment.'
+			'Replace the default comment form with Jetpack Comments, where visitors can also log in with WordPress.com.'
 		);
 
 		return (
 			<FormFieldset className="comment-display-settings">
 				<SupportInfo
 					text={ translate(
-						'Replaces the standard WordPress comment form with a new comment system ' +
-							'that includes social media login options.'
+						'Replaces the standard WordPress comment form with Jetpack Comments, ' +
+							'which adds WordPress.com login and a block editor for comments.'
 					) }
 					link="https://jetpack.com/support/comments/"
 				/>
@@ -53,16 +52,16 @@ class CommentDisplaySettings extends Component {
 						disabled={ !! submittingForm }
 					/>
 				) : (
-					<span className="verbum-comments-toggle">
+					<span className="jetpack-comments-toggle">
 						<ToggleControl
-							id={ `${ selectedSiteId }-verbum-comments-toggle` }
+							id={ `${ selectedSiteId }-jetpack-comments-toggle` }
 							checked={ !! fields.enable_verbum_commenting }
 							onChange={ handleAutosavingToggle( 'enable_verbum_commenting' ) }
 							disabled={ !! submittingForm }
 							label={ commentsToggleLabel }
 						/>
 						<ToggleControl
-							id={ `${ selectedSiteId }-verbum-comments-blocks-toggle` }
+							id={ `${ selectedSiteId }-jetpack-comments-blocks-toggle` }
 							checked={ !! fields.enable_blocks_comments }
 							onChange={ handleAutosavingToggle( 'enable_blocks_comments' ) }
 							disabled={ !! submittingForm || ! fields.enable_verbum_commenting }
@@ -84,21 +83,6 @@ class CommentDisplaySettings extends Component {
 					<FormSettingExplanation>
 						{ translate( 'A few catchy words to motivate your readers to comment.' ) }
 					</FormSettingExplanation>
-				</div>
-				<div className="comment-display-settings__module-setting is-indented">
-					<FormLabel htmlFor="jetpack_comment_form_color_scheme">
-						{ translate( 'Color scheme' ) }
-					</FormLabel>
-					<FormSelect
-						name="jetpack_comment_form_color_scheme"
-						value={ fields.jetpack_comment_form_color_scheme || 'transparent' }
-						onChange={ onChangeField( 'jetpack_comment_form_color_scheme' ) }
-						disabled={ this.shouldEnableSettings() }
-					>
-						<option value="light">{ translate( 'Light' ) }</option>
-						<option value="dark">{ translate( 'Dark' ) }</option>
-						<option value="transparent">{ translate( 'Transparent' ) }</option>
-					</FormSelect>
 				</div>
 			</FormFieldset>
 		);

@@ -60,6 +60,7 @@ export { generateAdminSections } from './contextual-help/admin-sections';
 export type { LinksForSection } from './contextual-help/contextual-help';
 export * from './contextual-help/constants';
 export type {
+	CheckoutSupportVariation,
 	HelpCenterSite,
 	HelpCenterSelect,
 	Dispatch as HelpCenterDispatch,
@@ -69,8 +70,6 @@ export type {
 	AgentsManagerSelect,
 	AgentsManagerSite,
 	Dispatch as AgentsManagerDispatch,
-	PerSiteRouterHistory,
-	SingleRouterHistory,
 } from './agents-manager/types';
 export type { OnboardSelect, OnboardActions } from './onboard';
 export type { StepperInternalSelect } from './stepper-internal';

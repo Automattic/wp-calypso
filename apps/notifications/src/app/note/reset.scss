@@ -100,13 +100,8 @@
 	q {
 		quotes: "" "";
 	}
-	a:focus {
-		outline: var(--color-primary-light) solid 2px;
-	}
-	a:hover,
-	a:active {
-		/* Improves readability when focused and also mouse hovered in all browsers people.opera.com/patrickl/experiments/keyboard/test */
-		outline: 0;
+	a:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color);
 	}
 	a img {
 		border: 0;

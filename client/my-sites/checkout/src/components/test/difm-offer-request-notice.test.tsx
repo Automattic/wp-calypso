@@ -10,7 +10,7 @@ import DIFMOfferRequestNotice from '../difm-offer-request-notice';
 import type { ResponseCart, ResponseCartProductExtra } from '@automattic/shopping-cart';
 
 const NOTICE_COPY =
-	"Thank you for submitting your request. After you complete checkout, we'll be in touch within 24 hours to discuss your project.";
+	"Thank you for submitting your request. After you complete checkout, we'll be in touch within one business day to discuss your project.";
 
 function cartWith( product_slug: string, extra: ResponseCartProductExtra = {} ): ResponseCart {
 	const cart = getEmptyResponseCart();

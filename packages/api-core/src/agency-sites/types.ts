@@ -59,3 +59,14 @@ export interface ProvisionAgencyDevSiteResponse {
 		url: string;
 	};
 }
+
+/**
+ * The free development license behind one of the agency's development sites,
+ * from GET /agency/license/dev-site. Referring the site passes it to the client.
+ */
+export interface AgencyDevSiteLicense {
+	a4a_site_id: number;
+	license_id: number;
+	product_id: number;
+	site_url: string;
+}

@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
+import { Site } from '@automattic/data-stores';
 import { createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
 import { useFlowState } from '../../../state-manager/store';
@@ -9,7 +11,9 @@ import CreateSite from '../index';
 // The action the step hands to the processing step, captured as it is set.
 let pendingAction: ( () => Promise< unknown > ) | undefined;
 let flowStateStore: Record< string, unknown >;
+const mockReadFlowState = () => flowStateStore;
 let mockBlueprint: string | null = null;
+let mockSiteUrl = 'my-site.wordpress.com';
 let mockQueryParams = new URLSearchParams( '' );
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
@@ -24,6 +28,7 @@ jest.mock( '@automattic/data-stores', () => ( {
 
 jest.mock( '@automattic/onboarding', () => ( {
 	AI_SITE_BUILDER_FLOW: 'ai-site-builder',
+	SITE_MIGRATION_FLOW: 'site-migration',
 	EDUCATION_FLOW: 'education',
 	ENTREPRENEUR_FLOW: 'entrepreneur',
 	StepContainer: () => null,
@@ -40,10 +45,13 @@ jest.mock( '@automattic/onboarding', () => ( {
 	isEntrepreneurFlow: () => false,
 	isNewHostedSiteCreationFlow: () => false,
 	isNewsletterFlow: () => false,
-	isReadymadeFlow: () => false,
 	isWriteOnFlow: () => false,
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 	isNewSiteMigrationFlow: () => false,
+} ) );
+
+jest.mock( '@tanstack/react-query', () => ( {
+	useQueryClient: () => ( { getQueryData: mockReadFlowState } ),
 } ) );
 
 jest.mock( '@wordpress/data', () => ( {
@@ -59,7 +67,7 @@ jest.mock( '@wordpress/data', () => ( {
 		planCartItem: null,
 		productCartItems: [],
 		selectedSiteTitle: 'My site',
-		siteUrl: 'my-site.wordpress.com',
+		siteUrl: mockSiteUrl,
 		progress: 0,
 		partnerBundle: null,
 		gardenName: null,
@@ -130,11 +138,14 @@ describe( 'create-site', () => {
 		pendingAction = undefined;
 		flowStateStore = {};
 		mockBlueprint = null;
+		mockSiteUrl = 'my-site.wordpress.com';
 		mockQueryParams = new URLSearchParams( '' );
 		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
 			get: ( key: string ) => flowStateStore[ key ],
+			sessionId: 'migration-session',
+			queryKey: [ 'stepper-state-item', 'site-migration', 'migration-session', 'v1' ],
 			set: ( key: string, value: unknown ) => {
 				flowStateStore[ key ] = value;
 			},
@@ -167,6 +178,31 @@ describe( 'create-site', () => {
 		expect( createSite ).not.toHaveBeenCalled();
 		expect( result ).toMatchObject( { siteId: 222, siteSlug: 'already-made.wordpress.com' } );
 	} );
+
+	it.each( [ true, false ] )(
+		'reuses an unnamed migration site only with the flag enabled (%s)',
+		async ( enabled ) => {
+			jest
+				.spyOn( config, 'isEnabled' )
+				.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' && enabled );
+			mockSiteUrl = '';
+			( useFlowState as jest.Mock ).mockImplementation( () => ( {
+				get: () => undefined,
+				sessionId: 'migration-session',
+				queryKey: [ 'migration-session' ],
+				set: ( key: string, value: unknown ) => {
+					flowStateStore = { [ key ]: value };
+				},
+			} ) );
+			await runStep( { flow: 'site-migration' } );
+			const handoff = { from: 'https://source.example.com' };
+			flowStateStore.migrationHandoff = handoff;
+			await pendingAction!();
+			expect( createSite ).toHaveBeenCalledTimes( enabled ? 1 : 2 );
+			expect( flowStateStore.migrationHandoff ).toEqual( enabled ? handoff : undefined );
+			jest.restoreAllMocks();
+		}
+	);
 
 	// Nothing scopes the record to one run — the onboarding flow doesn't declare
 	// `__experimentalUseSessions`, so its state is keyed on the flow alone and outlives the signup
@@ -247,6 +283,16 @@ describe( 'create-site', () => {
 		await expect( runStep() ).rejects.toThrow( 'Failed to create site' );
 	} );
 
+	// Without this, a reblog's site waits behind Coming Soon while its owner publishes the reblog.
+	it( 'creates a public site for an onboarding reblog run', async () => {
+		mockQueryParams = new URLSearchParams( 'blog_post=https://example.blog/a-post/' );
+		await runStep();
+		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+		expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ 2 ] ).toBe(
+			Site.Visibility.PublicIndexed
+		);
+	} );
+
 	describe( 'AI Launchpad enablement', () => {
 		it( 'enables the AI Launchpad for onboarding sites', async () => {
 			await runStep();
@@ -269,6 +315,13 @@ describe( 'create-site', () => {
 
 		it( 'does not enable it for a playground run', async () => {
 			mockQueryParams = new URLSearchParams( 'playground=some-playground' );
+			await runStep();
+			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+			expect( getAiLaunchpadEnabledArg() ).toBe( false );
+		} );
+
+		it( 'does not enable it for a reblog run', async () => {
+			mockQueryParams = new URLSearchParams( 'blog_post=https://example.blog/a-post/' );
 			await runStep();
 			await waitFor( () => expect( createSite ).toHaveBeenCalled() );
 			expect( getAiLaunchpadEnabledArg() ).toBe( false );

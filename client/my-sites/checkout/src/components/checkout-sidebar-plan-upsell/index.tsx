@@ -13,9 +13,8 @@ import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
 import PromoCard from 'calypso/components/promo-section/promo-card';
 import PromoCardCTA from 'calypso/components/promo-section/promo-card/cta';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { useGetProductVariants } from '../../hooks/product-variants';
 import { CheckoutSummaryFeaturedList } from '../wp-checkout-order-summary';
 import type { WPCOMProductVariant } from '../item-variation-picker';
@@ -96,7 +95,6 @@ function getTracksEventUpsellType( upsellVariant: WPCOMProductVariant ) {
 
 export function CheckoutSidebarPlanUpsell() {
 	const { formStatus } = useFormStatus();
-	const reduxDispatch = useDispatch();
 	const isFormLoading = FormStatus.READY !== formStatus;
 	const [ isClicked, setIsClicked ] = useState( false );
 	const { __ } = useI18n();
@@ -157,13 +155,11 @@ export function CheckoutSidebarPlanUpsell() {
 		};
 
 		debug( 'switching from', plan.product_slug, 'to', newPlan.product_slug );
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
-				upsell_type: getTracksEventUpsellType( upsellVariant ),
-				switching_from: plan.product_slug,
-				switching_to: newPlan.product_slug,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_sidebar_upsell_click', {
+			upsell_type: getTracksEventUpsellType( upsellVariant ),
+			switching_from: plan.product_slug,
+			switching_to: newPlan.product_slug,
+		} );
 		try {
 			await replaceProductInCart( plan.uuid, newPlan );
 			setIsClicked( false );

@@ -13,7 +13,6 @@ jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', (
 	return { useQueryHandler: jest.fn( () => handler ) };
 } );
 
-import config from '@automattic/calypso-config';
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -148,17 +147,8 @@ describe( 'DomainSearchStep — domain-only checkout simplification', () => {
 } );
 
 describe( 'DomainSearchStep — Name Pulse search', () => {
-	let isEnabledSpy: jest.SpyInstance;
-
 	beforeEach( () => {
 		mockWPCOMDomainSearch.mockReturnValue( null );
-		isEnabledSpy = jest
-			.spyOn( config, 'isEnabled' )
-			.mockImplementation( ( flag: string ) => flag === 'domain-search/name-pulse' );
-	} );
-
-	afterEach( () => {
-		isEnabledSpy.mockRestore();
 	} );
 
 	const namePulseWiring = ( events: { onQueryClear: () => void } ) => {
@@ -171,7 +161,7 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		};
 	};
 
-	it( 'enables it for the domain-only flow when the flag is on: no persisted query, clearing resets', () => {
+	it( 'enables it for the domain-only flow: no persisted query, clearing resets', () => {
 		expect( namePulseWiring( renderStep() ) ).toEqual( {
 			showNamePulseSearch: true,
 			persistQuery: false,
@@ -187,34 +177,16 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		} );
 	} );
 
-	it( 'keeps it off when the flag is off', () => {
-		isEnabledSpy.mockImplementation( () => false );
-
-		expect( namePulseWiring( renderStep() ) ).toEqual( {
-			showNamePulseSearch: false,
-			persistQuery: true,
-			clearedWith: 'clearQuery',
-		} );
-	} );
-
 	it( 'seeds the search from ?new= so Name Pulse can restore it after a refresh', () => {
 		renderStep( { ...baseProps, queryObject: { new: 'coffeeshop' } } );
 
 		expect( mockUseQueryHandler.mock.calls[ 0 ][ 0 ].initialQuery ).toBe( 'coffeeshop' );
 	} );
 
-	it( 'lifts the domain-only exclusion on the free-first-year promo', () => {
+	it( 'shows the free-first-year promo in the domain-only flow', () => {
 		renderStep();
 
 		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].slots.BeforeResults() ).not.toBeNull();
-	} );
-
-	it( 'keeps the promo hidden on the classic domain-only results page', () => {
-		isEnabledSpy.mockImplementation( () => false );
-
-		renderStep();
-
-		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].slots.BeforeResults() ).toBeNull();
 	} );
 } );
 

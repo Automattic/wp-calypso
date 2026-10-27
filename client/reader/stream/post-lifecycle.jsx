@@ -168,6 +168,8 @@ const ConnectedPostLifecycle = connect(
 	}
 )( PostLifecycle );
 
+// The inner name labels the component in React DevTools.
+// eslint-disable-next-line no-shadow
 const PostLifecycleWithPost = forwardRef( function PostLifecycleWithPost( props, ref ) {
 	const post = useCachedPost( props.postKey );
 	return <ConnectedPostLifecycle { ...props } post={ post } ref={ ref } />;

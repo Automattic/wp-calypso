@@ -28,10 +28,18 @@ import {
 	isUserEligibleForFreeHostingTrial,
 } from 'calypso/state/selectors/is-user-eligible-for-free-hosting-trial';
 import { getSitePlan } from 'calypso/state/sites/plans/selectors';
+import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
 import { isCurrentUserCurrentPlanOwner } from 'calypso/state/sites/plans/selectors/is-current-user-current-plan-owner';
 import isCurrentPlanPaid from 'calypso/state/sites/selectors/is-current-plan-paid';
 import { IAppState } from 'calypso/state/types';
-import useGenerateActionCallback from './use-generate-action-callback';
+import {
+	isScheduledOnlyPlanChange,
+	isScheduledTermChangeEnabled,
+	isShorterTermPlanChange,
+} from '../scheduled-term-change';
+import useGenerateActionCallback, {
+	type CheckoutAttribution,
+} from './use-generate-action-callback';
 import useRenewalPricingPostButtonText from './use-renewal-pricing-post-button-text';
 import type {
 	GridAction,
@@ -76,6 +84,7 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures,
 	redirectTo,
 	pluginSlug,
+	checkoutAttribution,
 	isDelayedDowngradePending,
 	delayedDowngradeToProductSlug,
 	onRenewCurrentPlan,
@@ -92,6 +101,8 @@ export default function useGenerateActionHook( {
 	enableCategorisedFeatures?: boolean;
 	redirectTo?: string;
 	pluginSlug?: string;
+	/** Purchase attribution forwarded to the upgrade checkout. */
+	checkoutAttribution?: CheckoutAttribution;
 	/** True when a downgrade has been scheduled for the current plan's renewal. */
 	isDelayedDowngradePending?: boolean;
 	/** The product slug the scheduled downgrade will land on, if any. */
@@ -130,6 +141,7 @@ export default function useGenerateActionHook( {
 		coupon,
 		redirectTo,
 		pluginSlug,
+		checkoutAttribution,
 	} );
 
 	const useActionHook = ( {
@@ -152,6 +164,20 @@ export default function useGenerateActionHook( {
 						?.availableForDowngrade
 				: undefined
 		);
+		const getScheduledChangeSitePlans = ( state: IAppState ) =>
+			siteId && isScheduledTermChangeEnabled() ? getPlansBySiteId( state, siteId ).data : null;
+		const isScheduledOnlyTarget = useSelector( ( state: IAppState ) =>
+			isScheduledOnlyPlanChange(
+				getScheduledChangeSitePlans( state )?.find( ( p ) => p.productSlug === planSlug )
+			)
+		);
+		const isScheduledTermChange = useSelector( ( state: IAppState ) => {
+			const sitePlans = getScheduledChangeSitePlans( state );
+			return isShorterTermPlanChange(
+				sitePlans?.find( ( p ) => p.currentPlan ),
+				sitePlans?.find( ( p ) => p.productSlug === planSlug )
+			);
+		} );
 		// Get renewal pricing text - this will be used as postButtonText if available
 		const renewalPricingText = useRenewalPricingPostButtonText( {
 			planSlug,
@@ -230,6 +256,8 @@ export default function useGenerateActionHook( {
 			sitePlanSlug,
 			availableForPurchase,
 			availableForDowngrade,
+			isScheduledOnlyTarget,
+			isScheduledTermChange,
 			domainFromHomeUpsellFlow,
 			canUserManageCurrentPlan,
 			isPlanExpired,
@@ -434,6 +462,8 @@ function getLoggedInPlansAction( {
 	sitePlanSlug,
 	availableForPurchase,
 	availableForDowngrade,
+	isScheduledOnlyTarget,
+	isScheduledTermChange,
 	domainFromHomeUpsellFlow,
 	canUserManageCurrentPlan,
 	isPlanExpired,
@@ -457,6 +487,13 @@ function getLoggedInPlansAction( {
 	setIsLoading: ( value: boolean ) => void;
 	plansIntent?: PlansIntent | null;
 	availableForDowngrade?: boolean;
+	/** Whether the server only allows moving to this plan at the current plan's renewal. */
+	isScheduledOnlyTarget?: boolean;
+	/**
+	 * Whether this plan bills on a shorter term than the current one, such as
+	 * monthly from annual: a plan change rather than a downgrade.
+	 */
+	isScheduledTermChange?: boolean;
 	isDelayedDowngradePending?: boolean;
 	delayedDowngradeToProductSlug?: string | null;
 	onRenewCurrentPlan?: () => void;
@@ -560,17 +597,30 @@ function getLoggedInPlansAction( {
 		if ( availableForDowngrade ) {
 			// When this is the plan a scheduled downgrade will land on, surface that it
 			// is already queued rather than offering to downgrade again.
-			const isDelayedDowngradeTarget =
-				isUpgradeFlow &&
-				isDelayedDowngradePending &&
-				delayedDowngradeToProductSlug &&
-				getPlanClass( planSlug ) === getPlanClass( delayedDowngradeToProductSlug as PlanSlug );
+			// Once terms can differ, only the exact product is the target: a scheduled
+			// Premium monthly must not also mark the Premium annual card.
+			const isDelayedDowngradeTarget = isScheduledTermChangeEnabled()
+				? isDelayedDowngradePending && planSlug === delayedDowngradeToProductSlug
+				: isUpgradeFlow &&
+					isDelayedDowngradePending &&
+					delayedDowngradeToProductSlug &&
+					getPlanClass( planSlug ) === getPlanClass( delayedDowngradeToProductSlug as PlanSlug );
 			if ( isDelayedDowngradeTarget ) {
 				return createLoggedInPlansAction(
-					translate( 'Downgrade at renewal' ),
+					isScheduledTermChange
+						? translate( 'Changing at renewal' )
+						: translate( 'Downgrade at renewal' ),
 					'secondary',
 					undefined,
 					'disabled'
+				);
+			}
+			if ( isScheduledTermChange ) {
+				return createLoggedInPlansAction(
+					translate( 'Switch at renewal', { context: 'verb' } ),
+					'secondary',
+					undefined,
+					canUserManageCurrentPlan ? undefined : 'disabled'
 				);
 			}
 			return createLoggedInPlansAction(
@@ -598,6 +648,14 @@ function getLoggedInPlansAction( {
 		billingPeriod &&
 		currentPlanBillingPeriod > billingPeriod
 	) {
+		if ( isScheduledOnlyTarget ) {
+			return createLoggedInPlansAction(
+				translate( 'Switch at renewal', { context: 'verb' } ),
+				'secondary',
+				undefined,
+				canUserManageCurrentPlan ? undefined : 'disabled'
+			);
+		}
 		return createLoggedInPlansAction(
 			translate( 'Contact support', { context: 'verb' } ),
 			'secondary'

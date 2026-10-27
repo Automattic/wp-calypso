@@ -4,11 +4,12 @@ import {
 	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
 import { useResizeObserver } from '@wordpress/compose';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
@@ -22,6 +23,7 @@ import {
 	purchasesRoute,
 } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
+import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
@@ -37,6 +39,7 @@ import {
 	usePurchasesListActions,
 } from './dataviews';
 import { PurchaseRemovedNotice } from './purchase-removed-notice';
+import { useOtherUsersSitePurchases } from './use-other-users-site-purchases';
 
 export default function PurchasesList() {
 	const { supports } = useAppContext();
@@ -75,7 +78,6 @@ export default function PurchasesList() {
 		userTransferredPurchasesQuery()
 	);
 	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
-	const isLoading = isLoadingPurchases || isLoadingTransferredPurchases || isLoadingSites;
 
 	// Dismiss the success notice when the background mutation rolls back —
 	// detected by the captured purchase reappearing in the userPurchasesQuery
@@ -113,6 +115,20 @@ export default function PurchasesList() {
 		}
 	} );
 
+	const siteFilterValue = view.filters?.find( ( filter ) => filter.field === 'site' )?.value;
+	const siteFilterIds = useMemo(
+		() => ( Array.isArray( siteFilterValue ) ? siteFilterValue.map( Number ) : [] ),
+		[ siteFilterValue ]
+	);
+	const { purchases: otherUsersPurchases, isLoading: isLoadingOtherUsersPurchases } =
+		useOtherUsersSitePurchases( { siteIds: siteFilterIds, sites } );
+
+	const isLoading =
+		isLoadingPurchases ||
+		isLoadingTransferredPurchases ||
+		isLoadingSites ||
+		isLoadingOtherUsersPurchases;
+
 	const { data: paymentMethods = [] } = useQuery( userPaymentMethodsQuery( {} ) );
 	const purchasesDataFields = getFields( {
 		sites,
@@ -123,9 +139,15 @@ export default function PurchasesList() {
 		canFilterBySite: supportsMe,
 	} );
 
+	// A transferred purchase can also be another user's purchase on a filtered site.
+	const extraOtherUsersPurchases = useMemo( () => {
+		const knownIds = new Set( transferredPurchases.map( ( purchase ) => purchase.ID ) );
+		return otherUsersPurchases.filter( ( purchase ) => ! knownIds.has( purchase.ID ) );
+	}, [ otherUsersPurchases, transferredPurchases ] );
+
 	const allSubscriptions = useMemo( () => {
-		return isLoading ? [] : [ ...purchases, ...transferredPurchases ];
-	}, [ isLoading, purchases, transferredPurchases ] );
+		return isLoading ? [] : [ ...purchases, ...transferredPurchases, ...extraOtherUsersPurchases ];
+	}, [ isLoading, purchases, transferredPurchases, extraOtherUsersPurchases ] );
 
 	const { data: filteredSubscriptions, paginationInfo } = useMemo( () => {
 		return filterSortAndPaginate( allSubscriptions, view, purchasesDataFields );
@@ -136,11 +158,7 @@ export default function PurchasesList() {
 	} );
 
 	const { recordTracksEvent } = useAnalytics();
-	const siteFilterValue = view.filters?.find( ( filter ) => filter.field === 'site' )?.value;
-	const activeSiteId =
-		Array.isArray( siteFilterValue ) && siteFilterValue.length === 1
-			? Number( siteFilterValue[ 0 ] )
-			: undefined;
+	const activeSiteId = siteFilterIds.length === 1 ? siteFilterIds[ 0 ] : undefined;
 
 	return (
 		<PageLayout
@@ -187,6 +205,29 @@ export default function PurchasesList() {
 					atomicDomain={ removedNoticeData?.atomicDomain }
 					onClose={ () => setShowRemovedNotice( false ) }
 				/>
+			) }
+			{ ! isLoading && extraOtherUsersPurchases.length > 0 && (
+				<Notice>
+					{ siteFilterIds.length === 1
+						? sprintf(
+								/* translators: %s is the number of subscriptions. */
+								_n(
+									'Includes %s subscription on this site purchased by another user.',
+									'Includes %s subscriptions on this site purchased by other users.',
+									extraOtherUsersPurchases.length
+								),
+								formatNumber( extraOtherUsersPurchases.length )
+							)
+						: sprintf(
+								/* translators: %s is the number of subscriptions. */
+								_n(
+									'Includes %s subscription on these sites purchased by another user.',
+									'Includes %s subscriptions on these sites purchased by other users.',
+									extraOtherUsersPurchases.length
+								),
+								formatNumber( extraOtherUsersPurchases.length )
+							) }
+				</Notice>
 			) }
 			<div ref={ ref }>
 				<DataViewsCard className="purchases-list__wrapper">

@@ -9,9 +9,22 @@ import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { parseDateAsUTC } from '../../utils/datetime';
 import type { FeedbackAnswer, FeedbackType } from './types';
 
 const PREFERENCE = 'a4a-feedback';
+const FEEDBACK_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Whether a milestone is recent enough to ask about. A milestone with no date
+ * is always recent enough.
+ */
+export function isWithinFeedbackWindow( date: string | null ): boolean {
+	if ( ! date ) {
+		return true;
+	}
+	return Math.abs( Date.now() - parseDateAsUTC( date ).getTime() ) <= FEEDBACK_WINDOW_MS;
+}
 
 export function useMilestoneFeedback( type: FeedbackType ) {
 	const { recordTracksEvent } = useAnalytics();

@@ -1,0 +1,12 @@
+<svg width="480" height="260" viewBox="0 0 480 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="80" y="85" width="320" height="90" rx="16" fill="white"/>
+<rect x="96" y="103" width="32" height="32" rx="8" fill="#F0F0F1"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="14" font-weight="590" letter-spacing="0em"><tspan x="107" y="124.477">H</tspan></text>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="15" font-weight="590" letter-spacing="0em"><tspan x="140" y="115.332">harbordental.com</tspan></text>
+<text fill="#646970" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="13" letter-spacing="0em"><tspan x="140" y="133.621">Moving to Pressable</tspan></text>
+<circle cx="368" cy="119" r="16" fill="#DD3A03"/>
+<path d="M361.146 110.68C360.699 110.68 360.335 111.044 360.335 111.491V126.509C360.335 126.956 360.699 127.32 361.146 127.32H369.876L376.975 120.221V111.491C376.975 111.044 376.611 110.68 376.164 110.68H361.146ZM371.632 120.044C370.908 120.691 369.805 121.014 368.323 121.014H367.328V124.198C367.328 124.327 367.224 124.431 367.095 124.431H364.823C364.694 124.431 364.591 124.327 364.591 124.198V113.798C364.591 113.669 364.694 113.565 364.823 113.565H368.307C369.867 113.565 370.991 113.885 371.683 114.528C372.374 115.171 372.719 116.099 372.719 117.316C372.719 118.532 372.358 119.399 371.632 120.044Z" fill="white"/>
+<path d="M369.568 116.23C369.291 116.014 368.865 115.908 368.291 115.908H367.328V118.696H368.291C368.833 118.696 369.25 118.59 369.545 118.38C369.837 118.17 369.985 117.815 369.985 117.318C369.985 116.82 369.847 116.447 369.57 116.23H369.568Z" fill="white"/>
+<rect x="96" y="153" width="288" height="6" rx="3" fill="#F0F0F1"/>
+<rect x="96" y="153" width="196" height="6" rx="3" fill="#0240E4"/>
+</svg>

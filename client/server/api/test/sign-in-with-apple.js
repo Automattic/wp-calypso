@@ -10,7 +10,6 @@ describe( 'isAllowedRedirectUrl', () => {
 		'/start/user?foo=bar',
 		'https://my.wordpress.com',
 		'https://my.wordpress.com/v2/me/security',
-		'https://my.woo.ai',
 		'https://agencies-beta.automattic.com',
 	] )( 'allows %s', ( url ) => {
 		expect( isAllowedRedirectUrl( url ) ).toBe( true );
@@ -22,6 +21,7 @@ describe( 'isAllowedRedirectUrl', () => {
 		'https://my.wordpress.com@evil.com/path',
 		'https://my.wordpress.com.evil.com',
 		'http://my.wordpress.com',
+		'https://my.woo.ai',
 		'https://my.woo.ai.evil.com',
 		'http://my.woo.ai',
 		'//evil.com/path',

@@ -57,7 +57,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'login',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack' ],
 		} );
 
@@ -77,7 +77,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'login',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'woocommerce', 'jetpack' ],
 		} );
 
@@ -93,7 +93,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'lostpassword',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack' ],
 		} );
 

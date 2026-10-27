@@ -1,7 +1,12 @@
 import config from '@automattic/calypso-config';
 import { isInSupportSession } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
-import { AgentticMessage, ZendeskMessage } from './types';
+import {
+	SMOOCH_INTEGRATION_ID,
+	SMOOCH_INTEGRATION_ID_CUSTOM,
+	SMOOCH_INTEGRATION_ID_STAGING,
+} from './constants';
+import { AgentticMessage, SmoochIntegrationKey, ZendeskMessage } from './types';
 
 export const SUPPORTED_IMAGE_TYPES = [ 'image/jpeg', 'image/jpg', 'image/png', 'image/gif' ];
 export const MAX_ATTACHMENTS = 5;
@@ -117,6 +122,18 @@ export const isTestModeEnvironment = () => {
 
 	// If `env` is not configured, default to production to avoid routing customers to staging.
 	return env !== undefined && env !== 'production';
+};
+
+/**
+ * The Smooch integration that conversations are created on and files are uploaded to.
+ * Test mode always uses the staging integration, since staging has no per-product ones.
+ */
+export const getSmoochIntegrationId = ( integrationKey?: SmoochIntegrationKey | null ) => {
+	if ( isTestModeEnvironment() ) {
+		return SMOOCH_INTEGRATION_ID_STAGING;
+	}
+
+	return integrationKey ? SMOOCH_INTEGRATION_ID_CUSTOM[ integrationKey ] : SMOOCH_INTEGRATION_ID;
 };
 
 export const getBadRatingReasons = () => {

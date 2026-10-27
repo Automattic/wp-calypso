@@ -90,6 +90,11 @@ export class HandleEmailedLinkForm extends Component {
 	}
 
 	componentDidMount() {
+		const { emailAddress, token, isExpired } = this.props;
+		if ( emailAddress && token && ! isExpired ) {
+			this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
+		}
+
 		if (
 			this.props.clientId === config( 'wpcom_signup_id' ) &&
 			! this.props.isImmediateLoginAttempt &&
@@ -269,8 +274,6 @@ export class HandleEmailedLinkForm extends Component {
 				</p>
 			);
 		}
-
-		this.props.recordTracksEvent( 'calypso_login_email_link_handle_click_view' );
 
 		if ( isGravPoweredClient ) {
 			return (

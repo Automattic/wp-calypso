@@ -38,6 +38,8 @@ export const purchaseChangePaymentMethod = dashboardBackport();
 
 export const purchaseSiteActions = dashboardBackport();
 
+export const purchaseMove = dashboardBackport();
+
 export const paymentMethods = dashboardBackport( 'paymentMethods' );
 
 export const addPaymentMethod = dashboardBackport();

@@ -1,6 +1,5 @@
-import { SubTitle, Title } from '@automattic/onboarding';
+import { Step, SubTitle, Title } from '@automattic/onboarding';
 import { createSitesListComponent, GroupableSiteLaunchStatuses } from '@automattic/sites';
-import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
@@ -52,10 +51,10 @@ const SitePicker = function SitePicker( props: Props ) {
 				<SubTitle>
 					{ createInterpolateElement(
 						__(
-							'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>'
+							'Select the WordPress.com site where you’ll move your old site or <button>create a new one</button>.'
 						),
 						{
-							button: <Button onClick={ onCreateSite } />,
+							button: <Step.LinkButton onClick={ onCreateSite } />,
 						}
 					) }
 				</SubTitle>

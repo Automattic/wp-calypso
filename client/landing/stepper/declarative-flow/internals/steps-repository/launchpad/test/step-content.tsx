@@ -48,10 +48,11 @@ jest.mock( '@wordpress/data', () => {
 		createRegistrySelector: jest.fn(),
 		registerStore: jest.fn(),
 		combineReducers: jest.fn( () => ( { sites: { launch: { inProgress: jest.fn() } } } ) ),
-		createReduxStore: jest.fn(),
+		createReduxStore: jest.fn( ( name ) => ( { name } ) ),
 		register: jest.fn(),
 		useSelect: jest.fn().mockImplementation( ( selectFunc ) => {
-			const select = ( storeName ) => {
+			const select = ( store ) => {
+				const storeName = typeof store === 'string' ? store : store.name;
 				if ( storeName === 'automattic/onboard' ) {
 					return {
 						getPlanCartItem: () => [ { product_slug: 'value_bundle' } ],

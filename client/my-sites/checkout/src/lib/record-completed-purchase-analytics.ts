@@ -1,13 +1,12 @@
 import debugFactory from 'debug';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	mergeDomainMappingsIntoDomains,
 	removeFailedPurchases,
 } from 'calypso/lib/analytics/utils/receipt-item-details';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { recordCompositeCheckoutErrorDuringAnalytics } from './analytics';
 import type { Receipt } from '@automattic/api-core';
-import type { CalypsoDispatch } from 'calypso/state/types';
 
 const debug = debugFactory( 'calypso:composite-checkout:record-completed-purchase-analytics' );
 
@@ -51,10 +50,7 @@ function markReceiptRecorded( receiptId: number ): void {
  * Resolves when the analytics have been sent or after a timeout, whichever
  * comes first. It never rejects.
  */
-export async function recordCompletedPurchaseAnalytics(
-	fullReceipt: Receipt,
-	reduxDispatch: CalypsoDispatch
-): Promise< void > {
+export async function recordCompletedPurchaseAnalytics( fullReceipt: Receipt ): Promise< void > {
 	const receipt = removeFailedPurchases( mergeDomainMappingsIntoDomains( fullReceipt ) );
 	if ( getRecordedReceiptIds().includes( receipt.id ) ) {
 		debug( 'receipt already recorded', receipt.id );
@@ -63,17 +59,15 @@ export async function recordCompletedPurchaseAnalytics(
 	markReceiptRecorded( receipt.id );
 	debug( 'recording purchase for receipt', receipt.id );
 
-	recordDomainBundlePurchasedEvents( receipt, reduxDispatch );
+	recordDomainBundlePurchasedEvents( receipt );
 
 	const purchaseRecorded = recordPurchase( receipt ).catch( ( error ) => {
 		// eslint-disable-next-line no-console
 		console.error( error );
-		reduxDispatch(
-			recordCompositeCheckoutErrorDuringAnalytics( {
-				errorObject: error as Error,
-				failureDescription: 'recordCompletedPurchaseAnalytics',
-			} )
-		);
+		recordCompositeCheckoutErrorDuringAnalytics( {
+			errorObject: error as Error,
+			failureDescription: 'recordCompletedPurchaseAnalytics',
+		} );
 	} );
 	const timeout = new Promise< void >( ( resolve ) => setTimeout( resolve, ANALYTICS_TIMEOUT_MS ) );
 	await Promise.race( [ purchaseRecorded, timeout ] );
@@ -84,7 +78,7 @@ export async function recordCompletedPurchaseAnalytics(
  * `calypso_domain_bundle_purchased` Tracks event per distinct bundle in the receipt.
  * Matches the shape of the `shown`/`accepted` events emitted during domain search.
  */
-function recordDomainBundlePurchasedEvents( receipt: Receipt, reduxDispatch: CalypsoDispatch ) {
+function recordDomainBundlePurchasedEvents( receipt: Receipt ) {
 	const domainCountByBundle = new Map< string, number >();
 	for ( const item of receipt.items ) {
 		const groupId = item.domain_bundle_group_id;
@@ -95,11 +89,9 @@ function recordDomainBundlePurchasedEvents( receipt: Receipt, reduxDispatch: Cal
 	}
 
 	for ( const [ groupId, domainCount ] of domainCountByBundle ) {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_domain_bundle_purchased', {
-				domain_bundle_group_id: groupId,
-				domain_count: domainCount,
-			} )
-		);
+		recordTracksEvent( 'calypso_domain_bundle_purchased', {
+			domain_bundle_group_id: groupId,
+			domain_count: domainCount,
+		} );
 	}
 }

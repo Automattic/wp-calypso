@@ -21,8 +21,19 @@ const discoverSsr = ( context, next ) => {
 	next();
 };
 
+function redirectRetiredReddit( context ) {
+	const localePrefix = context.params.lang ? `/${ context.params.lang }` : '';
+	// Server route context exposes originalUrl, not querystring.
+	const queryIndex = context.originalUrl.indexOf( '?' );
+	const query = queryIndex >= 0 ? context.originalUrl.slice( queryIndex ) : '';
+	context.res.redirect( 301, `${ localePrefix }/discover/add-new${ query }` );
+}
+
 export default function ( router ) {
 	const anyLangParam = getAnyLanguageRouteParam();
+
+	// Reddit ended RSS. Old Discover links land on the generic add-a-feed form.
+	router( [ '/discover/reddit', `/${ anyLangParam }/discover/reddit` ], redirectRetiredReddit );
 
 	router(
 		getLocalizedRoutes( anyLangParam ),

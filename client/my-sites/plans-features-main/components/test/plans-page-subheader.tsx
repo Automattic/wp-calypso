@@ -36,6 +36,18 @@ describe( 'PlansPageSubheader', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	test( 'renders the free-plan CTA outside stepper-v2 when the flow name implies stepper-v2', () => {
+		renderWithProvider(
+			<PlansPageSubheader
+				{ ...defaultProps }
+				flowName="launch-site"
+				isInStepContainerV2={ false }
+			/>
+		);
+
+		expect( screen.getByRole( 'button', { name: 'start with a free plan' } ) ).toBeVisible();
+	} );
+
 	test( 'renders a modal-backed free-plan CTA in stepper-v2 when requested', () => {
 		renderWithProvider(
 			<PlansPageSubheader { ...defaultProps } renderFreePlanCtaInStepContainerV2 />

@@ -115,8 +115,16 @@ export function EmbeddedAgentUIMessages( {
 }: {
 	className?: string;
 } = {} ) {
-	const { messages, isProcessing, error, emptyView, thinkingMessage, messagesPosition } =
-		useEmbeddedAgentUIContext();
+	const {
+		messages,
+		isProcessing,
+		isReplying,
+		error,
+		errorNotice,
+		emptyView,
+		thinkingMessage,
+		messagesPosition,
+	} = useEmbeddedAgentUIContext();
 	const visibleMessages = messages.filter(
 		( message ) => getRenderableBlocks( message ).length > 0
 	);
@@ -152,8 +160,9 @@ export function EmbeddedAgentUIMessages( {
 			{ visibleMessages.map( ( message ) => (
 				<EmbeddedMessage key={ message.reactKey || message.id } message={ message } />
 			) ) }
-			{ isProcessing && <ThinkingMessage content={ thinkingMessage } /> }
+			{ isProcessing && ! isReplying && <ThinkingMessage content={ thinkingMessage } /> }
 			{ error && <div className="agenttic-embedded__error">{ error }</div> }
+			{ errorNotice && <EmbeddedNotice notice={ errorNotice } /> }
 		</div>
 	);
 }
@@ -210,16 +219,7 @@ export function EmbeddedAgentUISuggestions( {
 	);
 }
 
-export function EmbeddedAgentUINotice( {
-	className,
-}: {
-	className?: string;
-} = {} ) {
-	const { notice } = useEmbeddedAgentUIContext();
-	if ( ! notice ) {
-		return null;
-	}
-
+function EmbeddedNotice( { notice, className }: { notice: NoticeConfig; className?: string } ) {
 	return (
 		<div
 			className={ [
@@ -232,7 +232,12 @@ export function EmbeddedAgentUINotice( {
 		>
 			<span>{ notice.message }</span>
 			{ notice.action?.href !== undefined ? (
-				<a href={ notice.action.href } target={ notice.action.target } rel={ notice.action.rel }>
+				<a
+					href={ notice.action.href }
+					target={ notice.action.target }
+					rel={ notice.action.rel }
+					onClick={ notice.action.onClick }
+				>
 					{ notice.action.label }
 				</a>
 			) : (
@@ -244,6 +249,19 @@ export function EmbeddedAgentUINotice( {
 			) }
 		</div>
 	);
+}
+
+export function EmbeddedAgentUINotice( {
+	className,
+}: {
+	className?: string;
+} = {} ) {
+	const { notice } = useEmbeddedAgentUIContext();
+	if ( ! notice ) {
+		return null;
+	}
+
+	return <EmbeddedNotice notice={ notice } className={ className } />;
 }
 
 export function EmbeddedAgentUIInput( {

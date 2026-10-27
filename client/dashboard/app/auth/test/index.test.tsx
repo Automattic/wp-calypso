@@ -11,6 +11,7 @@ import {
 	AUTH_QUERY_KEY,
 	AuthProvider,
 	authQueryFn,
+	logout,
 	sessionStateQuery,
 	updateCurrentUser,
 	useAuth,
@@ -419,5 +420,46 @@ describe( 'useSessionStateQuery', () => {
 			waitFor( () => expect( nock.isDone() ).toBe( true ), { timeout: 250 } )
 		).rejects.toThrow();
 		expect( result.current.data ).toBe( 'alive' );
+	} );
+} );
+
+describe( 'logout', () => {
+	const user = {
+		...testUser,
+		logout_URL: 'https://wordpress.com/wp-login.php?action=logout&_wpnonce=abc123',
+	};
+
+	beforeEach( () => {
+		Object.defineProperty( window, 'location', {
+			writable: true,
+			value: { href: 'https://my.wordpress.com/sites', origin: 'https://my.wordpress.com' },
+		} );
+	} );
+
+	test( 'ends the WordPress.com session through the logout endpoint', async () => {
+		const scope = nock( 'https://wordpress.com' )
+			.post( '/wp-login.php', ( body ) => {
+				expect( body ).toMatchObject( { logout_nonce: 'abc123' } );
+				return true;
+			} )
+			.query( { action: 'logout-endpoint' } )
+			.reply( 200, { success: true, data: { redirect_to: 'https://wordpress.com/?apppromo' } } );
+
+		await logout( user );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( window.location.href ).toBe( 'https://wordpress.com/?apppromo' );
+	} );
+
+	test( 'falls back to logout_URL when the logout endpoint fails', async () => {
+		const scope = nock( 'https://wordpress.com' )
+			.post( '/wp-login.php' )
+			.query( { action: 'logout-endpoint' } )
+			.reply( 403, 'Invalid nonce' );
+
+		await logout( user );
+
+		expect( scope.isDone() ).toBe( true );
+		expect( window.location.href ).toBe( user.logout_URL );
 	} );
 } );

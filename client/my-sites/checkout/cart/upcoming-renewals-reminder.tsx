@@ -10,6 +10,7 @@ import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import SectionHeader from 'calypso/components/section-header';
 import { getRelativeDayString } from 'calypso/dashboard/utils/datetime';
 import TrackComponentView from 'calypso/lib/analytics/track-component-view';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getRenewalItemFromProduct } from 'calypso/lib/cart-values/cart-items';
 import {
 	getName,
@@ -20,7 +21,6 @@ import {
 import UpcomingRenewalsDialog from 'calypso/me/purchases/upcoming-renewals/upcoming-renewals-dialog';
 import { PartialCart } from 'calypso/my-sites/checkout/src/components/secondary-cart-promotions';
 import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -138,25 +138,21 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 
 	const addSelectedPurchasesToCart = useCallback(
 		( purchases: Purchase[] ) => {
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
-					selected: purchases.length,
-					available: renewablePurchasesNotAlreadyInCart.length,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_upcoming_renewals_dialog_submit', {
+				selected: purchases.length,
+				available: renewablePurchasesNotAlreadyInCart.length,
+			} );
 			addPurchasesToCart( purchases );
 		},
-		[ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ]
+		[ addPurchasesToCart, renewablePurchasesNotAlreadyInCart ]
 	);
 
 	const addAllPurchasesToCart = useCallback( () => {
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_upcoming_renewals_add_all_click', {
-				available: renewablePurchasesNotAlreadyInCart.length,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_upcoming_renewals_add_all_click', {
+			available: renewablePurchasesNotAlreadyInCart.length,
+		} );
 		addPurchasesToCart( renewablePurchasesNotAlreadyInCart );
-	}, [ addPurchasesToCart, reduxDispatch, renewablePurchasesNotAlreadyInCart ] );
+	}, [ addPurchasesToCart, renewablePurchasesNotAlreadyInCart ] );
 
 	const onConfirm = useCallback(
 		( selectedPurchases: Purchase[] ) => {
@@ -170,7 +166,7 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		setUpcomingRenewalsDialogVisible( false );
 		if ( dialogVariant === 'urgent' ) {
 			reduxDispatch( dismissCard( dismissPreferenceName ) );
-			reduxDispatch( recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_dismiss' ) );
+			recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_dismiss' );
 		}
 	}, [ dialogVariant, dismissPreferenceName, reduxDispatch ] );
 
@@ -198,11 +194,9 @@ const UpcomingRenewalsReminder: FunctionComponent< Props > = ( { cart, addItemTo
 		hasAutoOpened.current = true;
 		setDialogVariant( 'urgent' );
 		setUpcomingRenewalsDialogVisible( true );
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_impression', {
-				urgent_count: urgentPurchases.length,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_urgent_renewals_modal_impression', {
+			urgent_count: urgentPurchases.length,
+		} );
 	}, [
 		arePurchasesLoaded,
 		arePreferencesLoaded,

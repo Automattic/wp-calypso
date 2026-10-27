@@ -1,13 +1,12 @@
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/jsx-async-load-require-top-level' );
+const plugin = require( '../../..' );
 
 new RuleTester( {
-	parser: require.resolve( '@babel/eslint-parser' ),
-	parserOptions: {
-		ecmaFeatures: { jsx: true },
+	languageOptions: {
 		sourceType: 'module',
+		parserOptions: { ecmaFeatures: { jsx: true } },
 	},
-} ).run( 'jsx-async-load-require-top-level', rule, {
+} ).run( 'jsx-async-load-require-top-level', plugin.rules[ 'jsx-async-load-require-top-level' ], {
 	valid: [
 		{
 			code: `

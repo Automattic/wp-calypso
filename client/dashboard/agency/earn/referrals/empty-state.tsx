@@ -1,16 +1,26 @@
-import { tipaltiPayeeQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useQuery } from '@tanstack/react-query';
-import { __experimentalHStack as HStack, ExternalLink, Icon, Tooltip } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	Button,
+	ExternalLink,
+	Icon,
+	Tooltip,
+} from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
+import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
+import { isAgencyApproved } from '../../marketplace/is-agency-approved';
+import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
+import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
 import { getAccountStatus } from '../payout-settings/get-account-status';
 import tipaltiLogo from './lib/tipalti-logo';
 
@@ -19,9 +29,13 @@ const AGENCY_EARNINGS_LEARN_MORE_LINK =
 
 export default function ReferralsEmptyState( { agencyId }: { agencyId: number } ) {
 	const { recordTracksEvent } = useAnalytics();
+	const { updateMarketplaceType } = useMarketplaceType();
 	const { data: payee } = useQuery( tipaltiPayeeQuery( agencyId ) );
 	const accountStatus = useMemo( () => getAccountStatus( payee ), [ payee ] );
 	const hasPayeeAccount = !! accountStatus?.status;
+	const { data: agency } = useQuery( activeAgencyQuery() );
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	const statusBadge = useMemo( () => {
 		if ( ! accountStatus ) {
@@ -37,6 +51,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 
 	return (
 		<EmptyState.Wrapper>
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ () => setIsGateOpen( false ) } /> }
 			<EmptyState>
 				<EmptyState.Header>
 					<EmptyState.Title>
@@ -73,49 +88,63 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 							) }
 							decoration={ <Icon icon={ reusableBlock } size={ 24 } /> }
 							actions={
-								<RouterLinkButton
-									variant={ hasPayeeAccount ? 'primary' : 'secondary' }
-									size="compact"
-									__next40pxDefaultSize
-									to="/exclusive-offers"
-									onClick={ () =>
-										recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' )
-									}
-								>
-									{ __( 'Get started' ) }
-								</RouterLinkButton>
+								isGated ? (
+									<Button
+										variant="primary"
+										size="compact"
+										__next40pxDefaultSize
+										onClick={ () => setIsGateOpen( true ) }
+									>
+										{ __( 'Get started' ) }
+									</Button>
+								) : (
+									<RouterLinkButton
+										variant={ hasPayeeAccount ? 'primary' : 'secondary' }
+										size="compact"
+										__next40pxDefaultSize
+										to={ MARKETPLACE_HOSTING_ROUTE }
+										onClick={ () => {
+											updateMarketplaceType( 'referral' );
+											recordTracksEvent( 'calypso_a4a_referrals_get_started_button_click' );
+										} }
+									>
+										{ __( 'Get started' ) }
+									</RouterLinkButton>
+								)
 							}
 						/>
-						<EmptyState.ActionItem
-							title={
-								<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
-									<span>{ __( 'Prepare to get paid' ) }</span>
-									{ statusBadge }
-								</HStack>
-							}
-							description={ createInterpolateElement(
-								__( 'With <a>Tipalti</a>, our secure platform.' ),
-								{ a: <ExternalLink href="https://tipalti.com/" children={ null } /> }
-							) }
-							decoration={
-								<span style={ { display: 'flex', alignItems: 'center', height: 24 } }>
-									{ tipaltiLogo }
-								</span>
-							}
-							actions={
-								<RouterLinkButton
-									variant={ hasPayeeAccount ? 'secondary' : 'primary' }
-									size="compact"
-									__next40pxDefaultSize
-									to="/payout-settings"
-									onClick={ () =>
-										recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' )
-									}
-								>
-									{ hasPayeeAccount ? __( 'Edit my details' ) : __( 'Add my details' ) }
-								</RouterLinkButton>
-							}
-						/>
+						{ isAgencyApproved( agency ) && (
+							<EmptyState.ActionItem
+								title={
+									<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
+										<span>{ __( 'Prepare to get paid' ) }</span>
+										{ statusBadge }
+									</HStack>
+								}
+								description={ createInterpolateElement(
+									__( 'With <a>Tipalti</a>, our secure platform.' ),
+									{ a: <ExternalLink href="https://tipalti.com/" children={ null } /> }
+								) }
+								decoration={
+									<span style={ { display: 'flex', alignItems: 'center', height: 24 } }>
+										{ tipaltiLogo }
+									</span>
+								}
+								actions={
+									<RouterLinkButton
+										variant={ hasPayeeAccount ? 'secondary' : 'primary' }
+										size="compact"
+										__next40pxDefaultSize
+										to="/payout-settings"
+										onClick={ () =>
+											recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' )
+										}
+									>
+										{ hasPayeeAccount ? __( 'Edit my details' ) : __( 'Add my details' ) }
+									</RouterLinkButton>
+								}
+							/>
+						) }
 					</EmptyState.ActionList>
 				</EmptyState.Content>
 			</EmptyState>

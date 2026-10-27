@@ -100,16 +100,16 @@ describe( 'ReaderNewSubscriptionPage', () => {
 			screen.getByText( 'Subscribe to new blogs, newsletters, and RSS feeds.' )
 		).toBeInTheDocument();
 		expect( screen.getByRole( 'menuitem', { name: 'Add new' } ) ).toBeVisible();
-		expect( screen.getByRole( 'menuitem', { name: 'Reddit' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'menuitem', { name: 'Reddit' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'menuitem', { name: 'YouTube' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Tumblr' } ) ).toBeVisible();
 		expect( screen.getByRole( 'menuitem', { name: 'Substack' } ) ).toBeVisible();
 	} );
 
 	it( 'marks the selected tab as current', () => {
-		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="reddit" /> );
+		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="youtube" /> );
 
-		expect( screen.getByRole( 'menuitem', { name: 'Reddit' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'menuitem', { name: 'YouTube' } ) ).toHaveAttribute(
 			'aria-current',
 			'true'
 		);
@@ -131,13 +131,13 @@ describe( 'ReaderNewSubscriptionPage', () => {
 	it( 'records analytics when a tab is clicked', async () => {
 		renderWithProvider( <ReaderNewSubscriptionPage selectedTab="add-new" /> );
 
-		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Reddit' } ) );
+		await userEvent.click( screen.getByRole( 'menuitem', { name: 'YouTube' } ) );
 
 		expect( recordAction ).toHaveBeenCalledWith( 'click_new_subscription_tab' );
 		expect( recordGaEvent ).toHaveBeenCalledWith( 'Clicked New Subscription Tab' );
 		expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_new_subscription_tab_clicked',
-			{ tab_slug: 'reddit' }
+			{ tab_slug: 'youtube' }
 		);
 	} );
 } );

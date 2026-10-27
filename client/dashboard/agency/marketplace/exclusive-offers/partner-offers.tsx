@@ -40,14 +40,17 @@ function PartnerOfferCard( {
 }: {
 	item: PartnerOffer;
 	recordTracksEvent: RecordTracksEvent;
-	onCtaClick?: ( offer: PartnerOffer ) => void;
+	onCtaClick?: ( offer: PartnerOffer, event: React.MouseEvent ) => void;
 	shouldUseRouterLink: boolean;
 } ) {
 	const offerType = filterOptions.offerTypes.find( ( option ) => option.value === item.offerType );
 
-	const handleCTAClick = () => {
-		onCtaClick?.( item );
-		recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+	const handleCTAClick = ( event: React.MouseEvent ) => {
+		onCtaClick?.( item, event );
+		// A host that stops the click (an offer the agency can't take yet) records its own event.
+		if ( ! event.defaultPrevented ) {
+			recordTracksEvent( 'calypso_a4a_exclusive_offers_cta_click', { offer_id: item.id } );
+		}
 	};
 
 	const handleViewTermsClick = () => {
@@ -91,6 +94,7 @@ function PartnerOfferCard( {
 						{ shouldUseRouterLink && isDashboardPath( item.cta.url ) ? (
 							<RouterLinkButton
 								variant="secondary"
+								size="compact"
 								to={ item.cta.url.split( '?' )[ 0 ] }
 								search={ getQueryArgs( item.cta.url ) }
 								onClick={ handleCTAClick }
@@ -100,6 +104,7 @@ function PartnerOfferCard( {
 						) : (
 							<Button
 								variant="secondary"
+								size="compact"
 								href={ item.cta.url }
 								target={ item.cta.external ? '_blank' : undefined }
 								rel={ item.cta.external ? 'noopener noreferrer' : undefined }
@@ -134,7 +139,7 @@ export default function PartnerOffers( {
 }: {
 	links: PartnerOfferLinks;
 	recordTracksEvent?: RecordTracksEvent;
-	onCtaClick?: ( offer: PartnerOffer ) => void;
+	onCtaClick?: ( offer: PartnerOffer, event: React.MouseEvent ) => void;
 	/**
 	 * Set to false in apps without the dashboard's TanStack Router, so the CTAs
 	 * render plain anchors for the host app's own router to pick up.
@@ -211,23 +216,25 @@ export default function PartnerOffers( {
 				</Text>
 			</Spacer>
 
-			<DataViews< PartnerOffer >
-				data={ partnerOffers }
-				fields={ fields }
-				view={ view }
-				onChangeView={ setView }
-				paginationInfo={ { totalItems: partnerOffers.length, totalPages: 1 } }
-				defaultLayouts={ { list: {} } }
-				search
-			>
-				<HStack justify="start" style={ { paddingBlock: '16px' } }>
-					<DataViews.Search />
-					<DataViews.FiltersToggle />
-				</HStack>
-				<Spacer marginBottom={ 4 }>
-					<DataViews.FiltersToggled />
-				</Spacer>
-			</DataViews>
+			<div className="exclusive-offers-filters">
+				<DataViews< PartnerOffer >
+					data={ partnerOffers }
+					fields={ fields }
+					view={ view }
+					onChangeView={ setView }
+					paginationInfo={ { totalItems: partnerOffers.length, totalPages: 1 } }
+					defaultLayouts={ { list: {} } }
+					search
+				>
+					<HStack justify="start" style={ { paddingBlock: '16px' } }>
+						<DataViews.Search />
+						<DataViews.FiltersToggle />
+					</HStack>
+					<Spacer marginBottom={ 4 }>
+						<DataViews.FiltersToggled />
+					</Spacer>
+				</DataViews>
+			</div>
 			<Grid templateColumns="repeat( auto-fill, minmax( 280px, 1fr ) )" gap="2xl">
 				{ filteredData.map( ( item ) => (
 					<PartnerOfferCard

@@ -42,7 +42,6 @@ let mockSelectState: {
 	isDocked: false,
 	floatingPosition: '',
 };
-let mockLocation = { pathname: '/chat' };
 
 jest.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn( () => mockSelectState ),
@@ -55,7 +54,6 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: jest.fn( () => jest.fn() ),
-	useLocation: jest.fn( () => mockLocation ),
 } ) );
 
 jest.mock( '../../contexts', () => ( {
@@ -80,6 +78,7 @@ const baseProps = {
 describe( 'useSetupCustomActions', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		delete window.__agentsManagerConfig;
 		delete window.__agentsManagerActions;
 		clearSiteEditorActions();
 		takeActionOrigin( 'open' );
@@ -91,7 +90,6 @@ describe( 'useSetupCustomActions', () => {
 			agentConfig: { agentId: 'reader-chat' },
 		};
 		mockSelectState = { hasLoaded: true, isOpen: false, isDocked: false, floatingPosition: '' };
-		mockLocation = { pathname: '/chat' };
 	} );
 
 	it( 'sets `isReady` on the global after mount', () => {
@@ -168,6 +166,27 @@ describe( 'useSetupCustomActions', () => {
 		record( 123 );
 		expect( mockRecordBigSkyTracksEvent ).not.toHaveBeenCalled();
 	} );
+
+	it( 'reports a non-dismissible chat as open even with a closed saved preference', async () => {
+		window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+		renderHook( () => useSetupCustomActions( baseProps ) );
+		expect( ( await window.__agentsManagerActions?.getChatState() )?.isOpen ).toBe( true );
+		expect( window.__agentsManagerActions?.isChatVisible() ).toBe( true );
+		delete window.__agentsManagerConfig;
+	} );
+
+	it.each( [ true, false ] )(
+		'ignores host close requests when not dismissible (docked: %s)',
+		( isDocked ) => {
+			window.__agentsManagerConfig = { chatPresentation: { dismissible: false } };
+			mockSelectState = { hasLoaded: true, isOpen: true, isDocked, floatingPosition: '' };
+			renderHook( () => useSetupCustomActions( { ...baseProps, canDock: isDocked } ) );
+			window.__agentsManagerActions?.setChatOpen( false );
+			expect( mockSetIsOpen ).not.toHaveBeenCalled();
+			expect( baseProps.closeSidebar ).not.toHaveBeenCalled();
+			delete window.__agentsManagerConfig;
+		}
+	);
 
 	it( 'opens Reader Chat without persisting shared Agents Manager state', () => {
 		renderHook( () => useSetupCustomActions( { ...baseProps, canDock: false } ) );
@@ -336,21 +355,20 @@ describe( 'useSetupCustomActions', () => {
 		} );
 	} );
 
-	it( 'resolves a pending `getChatState` once the store finishes loading', async () => {
+	it( 'resolves every pending `getChatState` once the store finishes loading', async () => {
 		mockSelectState = { hasLoaded: false, isOpen: true, isDocked: false, floatingPosition: 'br' };
 		const { rerender } = renderHook( () => useSetupCustomActions( baseProps ) );
 
-		// Called before the store loads: the promise must stay pending.
-		const pending = window.__agentsManagerActions!.getChatState();
+		// Called before the store loads: the promises must stay pending.
+		const first = window.__agentsManagerActions!.getChatState();
+		const second = window.__agentsManagerActions!.getChatState();
 
 		mockSelectState = { hasLoaded: true, isOpen: true, isDocked: false, floatingPosition: 'br' };
 		rerender();
 
-		await expect( pending ).resolves.toEqual( {
-			isOpen: true,
-			isDocked: false,
-			floatingPosition: 'br',
-		} );
+		const expected = { isOpen: true, isDocked: false, floatingPosition: 'br' };
+		await expect( first ).resolves.toEqual( expected );
+		await expect( second ).resolves.toEqual( expected );
 	} );
 
 	it( 'exposes a site editor action recorder on the actions API', () => {
@@ -381,13 +399,6 @@ describe( 'useSetupCustomActions', () => {
 		rerender();
 
 		expect( window.__agentsManagerActions?.isChatVisible?.() ).toBe( false );
-	} );
-
-	it( 'reports the current route via `getCurrentRoute`', () => {
-		mockLocation = { pathname: '/history' };
-		renderHook( () => useSetupCustomActions( baseProps ) );
-
-		expect( window.__agentsManagerActions?.getCurrentRoute?.() ).toBe( '/history' );
 	} );
 
 	it( 'exposes the tab id the chat events carry via `getTabId`', () => {

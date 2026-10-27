@@ -13,9 +13,6 @@ import { recordBigSkyTracksEvent } from '../tracks';
 import { rasterizeCanvas } from './rasterizer';
 import type { FilePart } from '@automattic/agenttic-client';
 
-/** A file sent alongside a tool result, in the agent client's wire shape. */
-export type { FilePart };
-
 export interface CanvasCaptureContext {
 	/**
 	 * The live canvas document. Read it synchronously: the editor can repaint at

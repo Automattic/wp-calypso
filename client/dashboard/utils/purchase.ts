@@ -1,11 +1,11 @@
 import {
+	AI_CREDITS_PRODUCTS,
 	AkismetPlans,
 	DomainProductSlugs,
 	JetpackPlans,
 	GoogleWorkspaceSlugs,
 	JetpackSearchProducts,
 	PRODUCT_1GB_SPACE,
-	PRODUCT_STUDIO_CODE_AI_CREDITS,
 	SubscriptionBillPeriod,
 	TitanMailSlugs,
 	WPCOM_DIFM_LITE,
@@ -15,11 +15,12 @@ import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { isAfter, parseISO, startOfDay } from 'date-fns';
+import { getAiCreditsTitle } from './ai-credits';
 import { isAkismetPro500Plan } from './akismet';
 import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datetime';
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
-import { getStudioCodeAiCreditsTitle } from './studio-code-ai-credits';
+import { getPurchaseSettingsRedirectBase } from './site-url';
 import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
@@ -457,13 +458,10 @@ export function getTitleForDisplay( purchase: Purchase, includeProductType = tru
 	}
 
 	if (
-		PRODUCT_STUDIO_CODE_AI_CREDITS === purchase.product_slug &&
+		AI_CREDITS_PRODUCTS.includes( purchase.product_slug ) &&
 		purchase.renewal_price_tier_usage_quantity
 	) {
-		return getStudioCodeAiCreditsTitle(
-			purchase.product_name,
-			purchase.renewal_price_tier_usage_quantity
-		);
+		return getAiCreditsTitle( purchase.product_name, purchase.renewal_price_tier_usage_quantity );
 	}
 
 	if (
@@ -486,10 +484,10 @@ export function getTitleForDisplay( purchase: Purchase, includeProductType = tru
 		purchase.renewal_price_tier_usage_quantity &&
 		purchase.renewal_price_tier_usage_quantity > 1
 	) {
-		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)d is a number of requests/month */
-		return sprintf( __( '%(productName)s (%(requests)d requests/month)' ), {
+		/* translators: %(productName)s is the product name "Akismet Pro", %(requests)s is a formatted number of requests/month */
+		return sprintf( __( '%(productName)s (%(requests)s requests/month)' ), {
 			productName: purchase.product_name.replace( /\s*\(.*$/, '' ).trim(),
-			requests: 500 * purchase.renewal_price_tier_usage_quantity,
+			requests: formatNumber( 500 * purchase.renewal_price_tier_usage_quantity ),
 		} );
 	}
 
@@ -601,6 +599,8 @@ export function isJetpackCrmProduct( keyOrSlug: string ): boolean {
 	return (
 		keyOrSlug.startsWith( 'jetpack-complete' ) ||
 		keyOrSlug.startsWith( 'jetpack_complete' ) ||
+		keyOrSlug.startsWith( 'jetpack-pro_' ) ||
+		keyOrSlug.startsWith( 'jetpack_pro_' ) ||
 		keyOrSlug.startsWith( 'jetpack-crm' ) ||
 		keyOrSlug.startsWith( 'jetpack_crm' )
 	);
@@ -637,10 +637,6 @@ export function isDomainMapping( purchase: Purchase | ObjectWithProductSlug ): b
 
 export function isSiteRedirect( purchase: Purchase ): boolean {
 	return purchase.product_slug === OFFSITE_REDIRECT;
-}
-
-export function isWpcomFlexSubscription( purchase: Purchase ): boolean {
-	return purchase.product_slug === 'flex-hosting-plan-monthly';
 }
 
 /**
@@ -731,11 +727,12 @@ export function getRenewalUrlFromPurchase( purchase: Purchase, backUrl?: string 
  * `backUrl` is where checkout returns to, whether the renewal goes through or is
  * abandoned. It defaults to the dashboard page the user is on, so surfaces
  * outside the dashboard have to say where they are.
+ *
+ * Checkout turns a renewal of a removed subscription into a new purchase, so by
+ * default a successful one returns to the new subscription's page rather than
+ * to the removed one.
  */
-export function getRenewUrlForPurchases(
-	purchases: Purchase[],
-	backUrl: string = redirectToDashboardLink( { supportBackport: true } )
-): string {
+export function getRenewUrlForPurchases( purchases: Purchase[], backUrl?: string ): string {
 	if ( purchases.length < 1 ) {
 		throw new Error( 'Could not find product slug or purchase id for renewal.' );
 	}
@@ -745,9 +742,16 @@ export function getRenewUrlForPurchases(
 	// experience. Everything else renews from the subscription ID alone.
 	const servicePath = getServicePathForCheckoutFromPurchase( purchases[ 0 ] );
 
+	const cancelTo = backUrl ?? redirectToDashboardLink( { supportBackport: true } );
+	const redirectTo =
+		backUrl ??
+		( purchases.length === 1 && isRemoved( purchases[ 0 ] )
+			? getPurchaseSettingsRedirectBase( purchases[ 0 ] )
+			: cancelTo );
+
 	return addQueryArgs( wpcomLink( `/checkout/${ servicePath }renew/${ purchaseIds }` ), {
-		cancel_to: backUrl,
-		redirect_to: backUrl,
+		cancel_to: cancelTo,
+		redirect_to: redirectTo,
 	} );
 }
 

@@ -8,7 +8,7 @@
  */
 
 import { getCanvasDocument } from '../editor-canvas';
-import type { FilePart } from './capture';
+import type { FilePart } from '@automattic/agenttic-client';
 
 /**
  * Which of the given blocks the canvas cannot show.

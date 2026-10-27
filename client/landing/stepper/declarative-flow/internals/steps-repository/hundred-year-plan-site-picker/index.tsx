@@ -15,7 +15,7 @@ import { SITE_STORE } from 'calypso/landing/stepper/stores';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { SMALL_BREAKPOINT } from '../hundred-year-plan-step-wrapper/constants';
 import type { Step } from '../../types';
-import type { SiteDetails, SiteSelect } from '@automattic/data-stores';
+import type { SiteDetails } from '@automattic/data-stores';
 import type { SiteId } from 'calypso/types';
 
 import './styles.scss';
@@ -242,24 +242,18 @@ const HundredYearPlanSitePicker: Step< { submits: { siteSlug: string; siteId: nu
 
 		const siteDomain = useSelect(
 			( select ) =>
-				( selectedSiteId &&
-					( select( SITE_STORE ) as SiteSelect ).getPrimarySiteDomain( selectedSiteId ) ) ||
+				( selectedSiteId && select( SITE_STORE ).getPrimarySiteDomain( selectedSiteId ) ) ||
 				undefined,
 			[ selectedSiteId ]
 		);
 
 		const siteTitle = useSelect(
-			( select ) =>
-				( selectedSiteId &&
-					( select( SITE_STORE ) as SiteSelect ).getSiteTitle( selectedSiteId ) ) ||
-				'',
+			( select ) => ( selectedSiteId && select( SITE_STORE ).getSiteTitle( selectedSiteId ) ) || '',
 			[ selectedSiteId ]
 		);
 
 		const site = useSelect(
-			( select ) =>
-				( selectedSiteId && ( select( SITE_STORE ) as SiteSelect ).getSite( selectedSiteId ) ) ||
-				null,
+			( select ) => ( selectedSiteId && select( SITE_STORE ).getSite( selectedSiteId ) ) || null,
 			[ selectedSiteId ]
 		);
 		const isFetching = ! site || ! siteDomain || ! siteTitle;

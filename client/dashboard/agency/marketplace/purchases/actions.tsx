@@ -1,4 +1,5 @@
 import { jetpackAgencyLicenseDownloadUrlMutation } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
@@ -8,6 +9,7 @@ import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
+import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
 import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
@@ -20,6 +22,7 @@ import {
 	isPartnerLicense,
 	isPressableAddonLicense,
 	isPressableLicense,
+	isPressableTitanLicense,
 	isWpcomHostingLicense,
 } from './license-status';
 import RevokeLicenseModal from './revoke-license-modal';
@@ -94,7 +97,7 @@ export function getLicenseActions( {
 			},
 		},
 		// No capability check here: `/sites/$siteSlug/settings` redirects users without
-		// `manage_options` back to the site, which explains it with a flash message.
+		// `manage_options` back to the site overview, which explains it.
 		{
 			id: 'hosting-configuration',
 			label: __( 'Hosting configuration' ),
@@ -121,6 +124,13 @@ export function getLicenseActions( {
 				recordTracksEvent( 'calypso_a4a_licenses_debug_site_click' );
 				openExternal( `https://jptools.wordpress.com/debug/?url=${ items[ 0 ].siteurl }` );
 			},
+		},
+		{
+			id: 'manage-in-pressable',
+			label: __( 'Manage in Pressable' ),
+			isEligible: ( item ) =>
+				canAct( item ) && isPressableLicense( item ) && getLicenseStatus( item ) !== 'revoked',
+			callback: () => openExternal( PRESSABLE_AGENCY_URL ),
 		},
 		{
 			id: 'upgrade',
@@ -164,12 +174,14 @@ export function getLicenseActions( {
 			label: __( 'Assign to site' ),
 			isPrimary: true,
 			isEligible: ( item ) => isAssignable( item ) && ! isWpcomHostingLicense( item ),
-			modalHeader: __( 'Which site would you like to assign this license to?' ),
+			modalHeader: __( 'Assign a license to a site' ),
 			modalSize: 'medium',
 			RenderModal: ( { items, closeModal } ) => (
 				<AssignLicenseModal
 					licenseKey={ items[ 0 ].license_key }
 					productName={ getLicenseProductName( items[ 0 ] ) }
+					issuedAt={ items[ 0 ].issued_at }
+					clientEmail={ items[ 0 ].referral?.client?.email }
 					closeModal={ closeModal }
 					onAssigned={ onLicenseAssigned }
 				/>
@@ -204,7 +216,8 @@ export function getLicenseActions( {
 			label: __( 'Revoke license' ),
 			// Referral licenses are paid for by the client, so the agency cannot revoke them.
 			isEligible: ( item ) => {
-				if ( ! canAct( item ) || ! canRevoke ) {
+				// Titan inboxes are cancelled in Pressable.
+				if ( ! canAct( item ) || ! canRevoke || isPressableTitanLicense( item ) ) {
 					return false;
 				}
 				// Classic gates a bundle on the capability alone.
@@ -223,9 +236,9 @@ export function getLicenseActions( {
 			modalHeader: ( items ) =>
 				isBundleParent( items[ 0 ] )
 					? sprintf(
-							/* translators: %1$d is the number of licenses in the bundle, %2$s is the product name. */
-							__( 'Revoke bundle of %1$d %2$s licenses?' ),
-							items[ 0 ].quantity ?? 0,
+							/* translators: %1$s is the formatted number of licenses in the bundle, %2$s is the product name. */
+							__( 'Revoke bundle of %1$s %2$s licenses?' ),
+							formatNumber( items[ 0 ].quantity ?? 0 ),
 							getLicenseProductName( items[ 0 ] )
 						)
 					: sprintf(

@@ -48,10 +48,12 @@ function CreateSiteModal( {
 function AssignToSiteModal( {
 	purchase,
 	products,
+	clientEmail,
 	closeModal,
 }: {
 	purchase: PurchaseItem;
 	products?: AgencyProduct[];
+	clientEmail?: string;
 	closeModal?: () => void;
 } ) {
 	useRecordPlacementStart();
@@ -59,6 +61,8 @@ function AssignToSiteModal( {
 		<AssignLicenseModal
 			licenseKey={ purchase.license.license_key }
 			productName={ getProductName( purchase, products ) }
+			issuedAt={ purchase.license.issued_at }
+			clientEmail={ clientEmail }
 			closeModal={ closeModal }
 		/>
 	);
@@ -143,18 +147,19 @@ export default function ReferralPurchases() {
 				label: __( 'Assign to site' ),
 				isPrimary: true,
 				isEligible: ( item ) => canPlacePurchase( item ) && ! isWpcomHostingPurchase( item ),
-				modalHeader: __( 'Which site would you like to assign this license to?' ),
+				modalHeader: __( 'Assign a license to a site' ),
 				modalSize: 'medium',
 				RenderModal: ( { items, closeModal } ) => (
 					<AssignToSiteModal
 						purchase={ items[ 0 ] }
 						products={ products }
+						clientEmail={ referral?.client.email }
 						closeModal={ closeModal }
 					/>
 				),
 			},
 		],
-		[ products ]
+		[ products, referral?.client.email ]
 	);
 
 	const { data: paginatedItems, paginationInfo } = useMemo(

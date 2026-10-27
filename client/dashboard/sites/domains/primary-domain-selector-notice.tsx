@@ -44,11 +44,9 @@ const PrimaryDomainSelectorNotice = ( {
 	const [ showForm, setShowForm ] = useState( false );
 	const primaryWithPlanOnly = userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' );
 	const isOnFreePlan = site?.plan?.is_free ?? false;
-	const isFlexSite = site?.is_wpcom_flex ?? false;
 	const canUserSetPrimaryDomainOnThisSite =
-		( ! ( primaryWithPlanOnly && isOnFreePlan ) &&
-			( site?.plan?.features?.active.includes( 'set-primary-custom-domain' ) ?? false ) ) ||
-		isFlexSite;
+		! ( primaryWithPlanOnly && isOnFreePlan ) &&
+		( site?.plan?.features?.active.includes( 'set-primary-custom-domain' ) ?? false );
 	const setPrimaryDomainMutation = useMutation(
 		withSnackbar( siteSetPrimaryDomainMutation(), {
 			success: sprintf(

@@ -1,11 +1,10 @@
 import { translate } from 'i18n-calypso';
-import ReaderRedditIcon from 'calypso/reader/components/icons/reddit-icon';
 import ReaderSubstackIcon from 'calypso/reader/components/icons/substack-icon';
 import ReaderTumblrIcon from 'calypso/reader/components/icons/tumblr-icon';
 import ReaderYouTubeIcon from 'calypso/reader/components/icons/youtube-icon';
 import type { JSX } from 'react';
 
-export type SubscriptionType = 'add-new' | 'reddit' | 'youtube' | 'tumblr' | 'substack';
+export type SubscriptionType = 'add-new' | 'youtube' | 'tumblr' | 'substack';
 
 interface AddSubscriptionFormConfig {
 	slug: SubscriptionType;
@@ -29,40 +28,6 @@ export const ADD_SUBSCRIPTION_CONFIGS: Record< SubscriptionType, AddSubscription
 			url: `/${ BASE_URL }`,
 			source: 'reader-add-new',
 			placeholder: undefined,
-		},
-		[ 'reddit' ]: {
-			slug: 'reddit',
-			title: translate( 'Reddit' ),
-			url: `/${ BASE_URL }/reddit`,
-			source: 'reader-add-reddit',
-			placeholder: translate( 'Search by Reddit URL' ),
-			instructions: {
-				icon: <ReaderRedditIcon iconSize={ 75 } />,
-				title: translate( 'Common Reddit URLs' ),
-				infoList: [
-					{ label: translate( 'Front page:' ), info: 'www.reddit.com/.rss' },
-					{
-						label: translate( 'A subreddit:' ),
-						info: 'www.reddit.com/r/{ SUBREDDIT }/.rss',
-					},
-					{
-						label: translate( 'A user:' ),
-						info: 'www.reddit.com/user/{ REDDITOR }/.rss',
-					},
-					{
-						label: translate( 'User comments:' ),
-						info: 'www.reddit.com/user/{ REDDITOR }/comments/.rss',
-					},
-					{
-						label: translate( 'User submissions:' ),
-						info: 'www.reddit.com/user/{ REDDITOR }/submitted/.rss',
-					},
-					{
-						label: translate( 'Search result:' ),
-						info: 'www.reddit.com/search.rss?q={ QUERY }',
-					},
-				],
-			},
 		},
 		[ 'youtube' ]: {
 			slug: 'youtube',

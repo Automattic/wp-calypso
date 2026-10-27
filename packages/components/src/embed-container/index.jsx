@@ -328,6 +328,7 @@ function embedGallery( domNode ) {
 
 /**
  * A component that notices when the content has embeds that require outside JS. Load the outside JS and process the embeds
+ * @augments {PureComponent<any>}
  */
 export default class EmbedContainer extends PureComponent {
 	startMarkerRef = createRef();

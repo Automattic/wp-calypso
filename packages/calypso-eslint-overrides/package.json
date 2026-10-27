@@ -19,6 +19,9 @@
 		"access": "public"
 	},
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
+	"dependencies": {
+		"globals": "^14.0.0"
+	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"
 	}

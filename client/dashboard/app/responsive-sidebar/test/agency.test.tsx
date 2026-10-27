@@ -36,7 +36,8 @@ const config = {
 function mockAgency(
 	capabilities: string[],
 	amplifyAllowed = true,
-	partnerDirectoryAllowed = true
+	partnerDirectoryAllowed = true,
+	approvalStatus = 'approved'
 ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -44,6 +45,7 @@ function mockAgency(
 		.reply( 200, [
 			{
 				id: 1,
+				approval_status: approvalStatus,
 				partner_directory: { allowed: partnerDirectoryAllowed, directories: [] },
 				amplify: { allowed: amplifyAllowed },
 				user: { capabilities },
@@ -54,9 +56,10 @@ function mockAgency(
 async function renderSidebar(
 	capabilities: string[],
 	amplifyAllowed = true,
-	partnerDirectoryAllowed = true
+	partnerDirectoryAllowed = true,
+	approvalStatus = 'approved'
 ) {
-	mockAgency( capabilities, amplifyAllowed, partnerDirectoryAllowed );
+	mockAgency( capabilities, amplifyAllowed, partnerDirectoryAllowed, approvalStatus );
 	render(
 		<AppProvider config={ config }>
 			<AgencySidebar />
@@ -88,7 +91,7 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'button', { name: 'Grow' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Earn' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Agency' } ) ).toBeVisible();
-		for ( const name of [ 'Hosting', 'Products', 'Purchases', 'Exclusive offers' ] ) {
+		for ( const name of [ 'Hosting', 'Plugins and add-ons', 'Purchases', 'Exclusive offers' ] ) {
 			expect( screen.getByRole( 'link', { name } ) ).toBeVisible();
 		}
 	} );
@@ -169,6 +172,19 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.queryByRole( 'link', { name: 'WooPayments' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'hides Payout settings until the agency is approved', async () => {
+		await renderSidebar( [ 'a4a_read_referrals' ], true, true, 'pending' );
+
+		expect( screen.getByRole( 'link', { name: 'Referrals' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Payout settings' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'drops the Earn menu when Payout settings is all it would hold and the agency is not approved', async () => {
+		await renderSidebar( [ 'a4a_read_migrations' ], true, true, 'pending' );
+
+		expect( screen.queryByRole( 'button', { name: 'Earn' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'lists Migrations under Clients', async () => {
 		await renderSidebar( [ 'a4a_read_migrations' ] );
 
@@ -182,7 +198,7 @@ describe( '<AgencySidebar>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Hosting' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Products' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Plugins and add-ons' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Exclusive offers' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'Purchases' } ) ).not.toBeInTheDocument();
 	} );
@@ -193,7 +209,7 @@ describe( '<AgencySidebar>', () => {
 		expect( screen.getByRole( 'button', { name: 'Marketplace' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Purchases' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Hosting' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'link', { name: 'Products' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Plugins and add-ons' } ) ).not.toBeInTheDocument();
 	} );
 
 	// Only the capability hides Partner Directories. Agencies below Agency

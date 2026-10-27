@@ -26,15 +26,16 @@ const analyticsClient: AnalyticsClient = {
 	recordPageView: () => {},
 };
 
-function useOmnibarBridge() {
+function useOmnibarBridge( { sectionGroup }: { sectionGroup?: string } ) {
 	const dispatch = useDispatch();
-	const siteId = useSelector( getSelectedSiteId );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	// Show selected site only on site-specific sections
+	const siteId = sectionGroup === 'sites' ? selectedSiteId : null;
 	const unseenCount = useSelector( getUnseenCount );
 	const isNotificationsOpen = useSelector( getIsNotificationsOpen );
 	const currentLayoutFocus = useSelector( getCurrentLayoutFocus );
 
 	useEffect( () => {
-		queryClient.cancelQueries( { queryKey: omnibarSiteIdQuery().queryKey } );
 		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, siteId ?? null );
 	}, [ siteId ] );
 
@@ -68,7 +69,7 @@ export default function Omnibar( {
 	sectionGroup?: string;
 	loadHelpCenterIcon?: boolean;
 } ) {
-	useOmnibarBridge();
+	useOmnibarBridge( { sectionGroup } );
 
 	const sectionName = useSelector( getSectionName );
 	const config: AppConfig = {

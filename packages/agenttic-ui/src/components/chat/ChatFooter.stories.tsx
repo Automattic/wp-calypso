@@ -125,7 +125,7 @@ const mockContextValue = {
 	// Suggestions
 	suggestions: undefined,
 	clearSuggestions: () => {},
-	handleSuggestionSubmit: () => {},
+	handleSuggestionSubmit: () => false,
 
 	// Notice
 	notice: undefined,

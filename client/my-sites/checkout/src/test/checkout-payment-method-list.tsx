@@ -6,7 +6,6 @@ import { render, screen, waitFor } from '@testing-library/react';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	mockSetCartEndpointWith,
@@ -24,8 +23,6 @@ import { MockCheckout } from './util/mock-checkout';
 
 /* eslint-disable jest/no-conditional-expect */
 
-jest.mock( 'calypso/state/sites/selectors' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
@@ -49,7 +46,6 @@ describe( 'Checkout payment methods list', () => {
 		} ) );
 		mockGetSiteDomainsEndpoint( [] );
 		isMarketplaceProduct.mockImplementation( () => false );
-		isJetpackSite.mockImplementation( () => false );
 		( useCartKey as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );

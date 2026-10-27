@@ -1,3 +1,5 @@
+import './notify-me-of-new-posts-toggle.scss';
+
 import { JetpackLogo } from '@automattic/components';
 import { ToggleControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';

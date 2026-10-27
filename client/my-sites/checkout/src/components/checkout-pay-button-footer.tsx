@@ -1,9 +1,11 @@
+import { usePaymentMethod } from '@automattic/composite-checkout';
 import { localizeUrl } from '@automattic/i18n-utils';
 import styled from '@emotion/styled';
 import { Icon } from '@wordpress/components';
 import { lock, reusableBlock } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import CheckoutProcessorNotice from './checkout-processor-notice';
 import CheckoutTermsModal from './checkout-terms-modal';
 import { getRefundWindowCopy } from './refund-policies';
 import {
@@ -68,6 +70,7 @@ const LegalNotice = styled.p`
 
 export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart } ) {
 	const translate = useTranslate();
+	const paymentMethod = usePaymentMethod();
 	const [ isTermsModalOpen, setIsTermsModalOpen ] = useState( false );
 	const refundWindowCopy = getRefundWindowCopy( cart, translate );
 
@@ -91,10 +94,12 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 
 	return (
 		<Wrapper className="checkout-pay-button-footer">
-			<TrustLine>
-				<Icon icon={ lock } size={ 18 } />
-				<span>{ translate( 'SSL secure payment · 256-bit encryption' ) }</span>
-			</TrustLine>
+			{ paymentMethod?.id !== 'free-purchase' && (
+				<TrustLine>
+					<Icon icon={ lock } size={ 18 } />
+					<span>{ translate( 'SSL secure payment · 256-bit encryption' ) }</span>
+				</TrustLine>
+			) }
 
 			{ refundWindowCopy && (
 				<TrustLine>
@@ -127,6 +132,8 @@ export default function CheckoutPayButtonFooter( { cart }: { cart: ResponseCart 
 							{ components }
 						) }
 			</LegalNotice>
+
+			<CheckoutProcessorNotice />
 
 			<CheckoutTermsModal
 				cart={ cart }

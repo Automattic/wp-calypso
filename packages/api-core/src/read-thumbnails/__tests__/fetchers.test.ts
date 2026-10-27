@@ -1,6 +1,7 @@
+/**
+ * @jest-environment node
+ */
 import nock from 'nock';
-// Importing `jest-fetch-mock` adds a jest-friendly `fetch` polyfill to the global scope.
-import 'jest-fetch-mock';
 import { fetchReaderThumbnail } from '../fetchers';
 
 describe( 'fetchReaderThumbnail', () => {

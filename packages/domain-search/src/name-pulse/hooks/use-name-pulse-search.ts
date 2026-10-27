@@ -10,10 +10,10 @@ import {
 	generateExactMatches,
 	getAiTopResults,
 	getNamePulseExactMatch,
+	getNamePulseExactTarget,
 	getNamePulseNotice,
 	getResultsLayout,
 	getTopResults,
-	NAME_PULSE_AI_TIMEOUT_MS,
 	NAME_PULSE_INITIAL_CHECK_MULTI_WORD,
 	NAME_PULSE_INITIAL_CHECK_SINGLE_WORD,
 	NAME_PULSE_QUERY_SETTLE_MS,
@@ -81,11 +81,10 @@ const useNamePulseSuggestions = ( {
 		() => ( useAi || filter.tlds.length === 0 ? [] : [ ...filter.tlds ].sort() ),
 		[ useAi, filter.tlds ]
 	);
-	const { data, isPending } = useQuery( {
+	const { data, isPending, isError } = useQuery( {
 		...queries.namePulseSuggestions( {
 			query: active ? suggestionsQuery : '',
 			use_ai: useAi,
-			...( useAi ? { timeout: NAME_PULSE_AI_TIMEOUT_MS } : {} ),
 			...( requestTlds.length > 0 ? { tlds: requestTlds } : {} ),
 		} ),
 		enabled: active,
@@ -107,7 +106,7 @@ const useNamePulseSuggestions = ( {
 		[ rows, verdicts ]
 	);
 
-	return { results, isLoading: show && ( ! isSettled || isPending ) };
+	return { results, isLoading: show && ( ! isSettled || isPending ), isError: active && isError };
 };
 
 /**
@@ -199,18 +198,26 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	// The bulk check is zone-file based: it says a domain is taken, not why.
 	// Both wait for the query to settle, so half-typed input is not checked or flagged.
-	const typedDomain = isSettled ? ( layout.fqdn?.fullDomain ?? '' ) : '';
-	const { data: typedDomainAvailability, isError: isTypedDomainError } = useQuery( {
-		...queries.domainAvailability( typedDomain ),
-		enabled: Boolean( typedDomain ),
+	const exactTarget = useMemo(
+		() => getNamePulseExactTarget( layout, filter.tlds ),
+		[ layout, filter.tlds ]
+	);
+	const exactDomain = isSettled ? ( exactTarget?.fullDomain ?? '' ) : '';
+	const { data: exactDomainAvailability, isError: isExactDomainError } = useQuery( {
+		...queries.domainAvailability( exactDomain ),
+		enabled: Boolean( exactDomain ),
 	} );
+	// Only a typed domain gets a notice; a filtered one that is taken just stays
+	// in the grid.
+	const typedDomainAvailability = layout.fqdn ? exactDomainAvailability : undefined;
+	const isTypedDomainError = Boolean( layout.fqdn ) && isExactDomainError;
 
-	// The typed domain leaves the grid for its own card while it is checked, so
+	// The exact domain leaves the grid for its own card while it is checked, so
 	// neither its row nor Top results quote a bulk price and a cart button the
 	// notice may be about to contradict. A taken name comes back to the grid.
 	const exactMatch = useMemo(
-		() => getNamePulseExactMatch( layout.fqdn, typedDomainAvailability, isTypedDomainError ),
-		[ layout.fqdn, typedDomainAvailability, isTypedDomainError ]
+		() => getNamePulseExactMatch( exactTarget, exactDomainAvailability, isExactDomainError ),
+		[ exactTarget, exactDomainAvailability, isExactDomainError ]
 	);
 	const exactMatchName = exactMatch?.domainName;
 
@@ -224,13 +231,21 @@ export const useNamePulseSearch = ( query: string ) => {
 		[ exactRows, exactVerdicts, exactMatchName ]
 	);
 
-	const { results: rawKeywordResults, isLoading: isLoadingKeyword } = useNamePulseSuggestions( {
+	const {
+		results: rawKeywordResults,
+		isLoading: isLoadingKeyword,
+		isError: isKeywordError,
+	} = useNamePulseSuggestions( {
 		suggestionsQuery,
 		isSettled,
 		show: layout.suggestions.show,
 		source: 'keyword',
 	} );
-	const { results: rawCreativeResults, isLoading: isLoadingCreative } = useNamePulseSuggestions( {
+	const {
+		results: rawCreativeResults,
+		isLoading: isLoadingCreative,
+		isError: isCreativeError,
+	} = useNamePulseSuggestions( {
 		suggestionsQuery,
 		isSettled,
 		show: layout.creative.show,
@@ -366,6 +381,16 @@ export const useNamePulseSearch = ( query: string ) => {
 
 	return {
 		layout,
+		settledQuery,
+		settledLayout,
+		isSettled,
+		hasTlds: tlds !== undefined || isTldsError,
+		typedDomainAvailability,
+		isTypedDomainError,
+		isSuggestionsError: isKeywordError || isCreativeError,
+		// Only the exact-match grid needs the TLD list, so its failure takes down
+		// Top results with it but leaves the suggestion sections alone.
+		hasTldsError: layout.exactGrid.show && isTldsError,
 		notice,
 		exactMatch,
 		bundleAnchors,

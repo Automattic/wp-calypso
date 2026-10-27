@@ -1,7 +1,7 @@
 import apiFetch from '@wordpress/api-fetch';
 import { createWebMcpToolProvider } from '../server-ability-provider';
-import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@wordpress/api-fetch' );
 

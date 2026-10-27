@@ -1,9 +1,12 @@
+import config from '@automattic/calypso-config';
 import { isEcommerce } from '@automattic/calypso-products';
 import { Site, Onboard } from '@automattic/data-stores';
 import {
 	AI_SITE_BUILDER_FLOW,
 	EDUCATION_FLOW,
 	ENTREPRENEUR_FLOW,
+	STATIC_SITE_IMPORT_FLOW,
+	SITE_MIGRATION_FLOW,
 	StepContainer,
 	addProductsToCart,
 	createSite,
@@ -12,13 +15,13 @@ import {
 	isEntrepreneurFlow,
 	isNewHostedSiteCreationFlow,
 	isNewsletterFlow,
-	isReadymadeFlow,
 	isWriteOnFlow,
 	isOnboardingFlow,
 	Step,
 	isNewSiteMigrationFlow,
 	setThemeOnSite,
 } from '@automattic/onboarding';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
@@ -54,6 +57,7 @@ import {
 	getEarlyCreatedSiteId,
 	pollForAtomicProvisioning,
 } from './early-provisioning';
+import type { FlowStateManifest } from '../../state-manager/stepper-state-manifest';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
 import './styles.scss';
@@ -181,6 +185,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 
 	const { setPendingAction } = useDispatch( ONBOARD_STORE );
 	const flowState = useFlowState();
+	const queryClient = useQueryClient();
+	const urlQueryParams = useQuery();
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -196,17 +202,17 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	let siteVisibility = Site.Visibility.PublicIndexed;
 	const wooFlows = [ ENTREPRENEUR_FLOW ];
 
-	// These flows default to "Coming Soon"
+	// These flows default to "Coming Soon"; a reblog run's site starts public, as the reblogging flow's did.
 	if (
-		isOnboardingFlow( flow ) ||
+		( isOnboardingFlow( flow ) && ! urlQueryParams.get( 'blog_post' ) ) ||
 		isCopySiteFlow( flow ) ||
 		isWriteOnFlow( flow ) ||
 		isNewHostedSiteCreationFlow( flow ) ||
-		isReadymadeFlow( flow ) ||
 		wooFlows.includes( flow || '' ) ||
 		flow === AI_SITE_BUILDER_FLOW ||
 		isAIBuilderOnboardingFlow( flow ) ||
-		flow === EDUCATION_FLOW
+		flow === EDUCATION_FLOW ||
+		flow === STATIC_SITE_IMPORT_FLOW
 	) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
@@ -218,7 +224,6 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const isManageSiteFlow = Boolean(
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
-	const urlQueryParams = useQuery();
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	const useThemeHeadstart =
 		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow );
@@ -341,11 +346,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const isPlaygroundPublish =
 			sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 
-		// Playground and blueprint runs import a prebuilt site, so they keep the regular landing.
+		// Playground and blueprint runs import a prebuilt site, so they keep the regular landing. A
+		// reblog's site is launched at creation, so the launchpad's launch task could never complete.
 		const aiLaunchpadEnabled =
 			isOnboardingFlow( flow ) &&
 			! isPlaygroundPublish &&
 			! urlQueryParams.get( 'playground' ) &&
+			! urlQueryParams.get( 'blog_post' ) &&
 			! blueprint;
 
 		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a
@@ -358,12 +365,20 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// Matched on the name being asked for, which is what `createSite` derives the blog name
 		// from. Nothing scopes this record to a single run, so a later signup must be able to tell
 		// that the site on file is not the one it is asking for — and an unnamed request, which
-		// /sites/new answers with a name of its own choosing, matches nothing.
+		// /sites/new answers with a name of its own choosing, matches nothing outside a migration session.
 		const requestedName = siteUrl || domainItem?.domain_name || '';
 		return runOnce( requestedName, async () => {
-			const recordedSite = flowState.get( 'createdSite' );
+			const canReuseUnnamedSite =
+				flow === SITE_MIGRATION_FLOW &&
+				config.isEnabled( 'migration/reprint-flow' ) &&
+				!! flowState.sessionId;
+			const recordedSite = canReuseUnnamedSite
+				? queryClient.getQueryData< FlowStateManifest >( flowState.queryKey )?.createdSite
+				: flowState.get( 'createdSite' );
 			const siteFromThisRun =
-				requestedName && recordedSite?.requestedName === requestedName ? recordedSite : undefined;
+				( requestedName || canReuseUnnamedSite ) && recordedSite?.requestedName === requestedName
+					? recordedSite
+					: undefined;
 
 			const site = siteFromThisRun
 				? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
@@ -399,11 +414,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			// Atomic and garden polls run for minutes, and leaving during one is how someone comes back
 			// here with a site already made. The slug can still be the pre-transfer one, so the adopting
 			// run re-polls on the ID and settles it again.
-			flowState.set( 'createdSite', {
-				siteId: site.siteId,
-				siteSlug: site.siteSlug,
-				requestedName,
-			} );
+			if ( ! canReuseUnnamedSite || ! siteFromThisRun ) {
+				flowState.set( 'createdSite', {
+					siteId: site.siteId,
+					siteSlug: site.siteSlug,
+					requestedName,
+				} );
+			}
 
 			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {
 				const atomicSite = await pollForAtomicProvisioning( site.siteId );

@@ -1,15 +1,30 @@
 import { isOnboardingFlow } from '@automattic/onboarding';
+import { useExperiment } from 'calypso/lib/explat';
+
+const EXPERIMENT_NAME = 'calypso_signup_onboarding_domain_results_variants_202610';
+
+const VARIATIONS = [
+	'control',
+	'free_banner_top',
+	'tone_down_purchase',
+	'custom_domain_banner_copy',
+] as const;
+
+export type DomainSearchResultsVariation = ( typeof VARIATIONS )[ number ];
 
 /**
- * Variations of the onboarding domain search results experiment.
+ * Assigns the onboarding domain search results experiment. Other flows that use the
+ * domain search step always get control and are never assigned.
  */
-export type DomainSearchResultsVariation =
-	'control' | 'free_banner_top' | 'tone_down_purchase' | 'custom_domain_banner_copy';
-
-// Placeholder until the ExPlat experiment exists. Set a variation name here to preview it.
-const DOMAIN_SEARCH_RESULTS_VARIATION: DomainSearchResultsVariation = 'control';
-
-export const getDomainSearchResultsVariation = (
+export const useDomainSearchResultsExperiment = (
 	flow: string | null
-): DomainSearchResultsVariation =>
-	isOnboardingFlow( flow ) ? DOMAIN_SEARCH_RESULTS_VARIATION : 'control';
+): { isLoading: boolean; variation: DomainSearchResultsVariation } => {
+	const [ isLoading, assignment ] = useExperiment( EXPERIMENT_NAME, {
+		isEligible: isOnboardingFlow( flow ),
+	} );
+
+	return {
+		isLoading,
+		variation: VARIATIONS.find( ( name ) => name === assignment?.variationName ) ?? 'control',
+	};
+};

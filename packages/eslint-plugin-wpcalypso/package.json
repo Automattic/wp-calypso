@@ -21,15 +21,17 @@
 		"lib/"
 	],
 	"engines": {
-		"node": ">=v24.15.0"
+		"node": ">=v24.22.1"
+	},
+	"dependencies": {
+		"@eslint/js": "^9.39.5"
 	},
 	"peerDependencies": {
-		"@babel/core": ">=7.27.1",
-		"eslint": ">=8.57.1",
+		"eslint": "^10.13.0",
 		"eslint-plugin-inclusive-language": "^2.2.1",
-		"eslint-plugin-jsdoc": "^50.0.0",
-		"eslint-plugin-react": "^7.37.4",
-		"eslint-plugin-react-hooks": "^5.0.0"
+		"eslint-plugin-jsdoc": "^65.3.4",
+		"eslint-plugin-react": "^7.37.5",
+		"eslint-plugin-react-hooks": "^7.1.1"
 	},
 	"peerDependenciesMeta": {
 		"eslint-plugin-react": {
@@ -40,10 +42,8 @@
 		}
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@babel/core": "^7.27.1",
-		"@babel/eslint-parser": "^7.27.1",
-		"@babel/parser": "^7.27.2",
-		"eslint": "^8.57.1"
+		"espree": "^11.2.0"
 	}
 }

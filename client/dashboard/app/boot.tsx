@@ -47,6 +47,7 @@ function boot( config: AppConfig ) {
 		.then( ( user ) => {
 			// Seed the query cache with the auth query result. Avoids
 			// redundant request by AuthProvider.
+			queryClient.setQueryDefaults( AUTH_QUERY_KEY, { meta: { persist: false } } );
 			queryClient.setQueryData( AUTH_QUERY_KEY, user );
 			return user.ID;
 		} )

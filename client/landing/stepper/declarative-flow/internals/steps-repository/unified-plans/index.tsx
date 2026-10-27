@@ -1,7 +1,14 @@
 import { getIntervalTypeForTerm, getPlan, isFreePlan } from '@automattic/calypso-products';
 import { OnboardSelect } from '@automattic/data-stores';
-import { DOMAIN_FLOW, ONBOARDING_FLOW, Step, useStepPersistedState } from '@automattic/onboarding';
+import {
+	DOMAIN_FLOW,
+	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
+	Step,
+	useStepPersistedState,
+} from '@automattic/onboarding';
 import { useSelect, useDispatch as useWPDispatch } from '@wordpress/data';
+import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useState, useEffect } from 'react';
 import { useQueryTheme } from 'calypso/components/data/query-theme';
 import Loading from 'calypso/components/loading';
@@ -29,11 +36,11 @@ import type { Step as StepType } from '../../types';
 import type { PlanSlug } from '@automattic/calypso-products';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
-import type { TranslateResult } from 'i18n-calypso';
 import './style.scss';
 
 type ProvidedDependencies = {
 	stepName: 'plans';
+	action?: 'select-existing-site';
 	cartItems: MinimalRequestCartProduct[] | null;
 };
 
@@ -46,6 +53,7 @@ const PlansStepAdaptor: StepType< {
 		displayedIntervals?: SupportedIntervalTypes[];
 		headerText?: string;
 		subHeaderText?: string;
+		showExistingSiteLink?: boolean;
 		hideFreePlan?: boolean;
 		hideEnterprisePlan?: boolean;
 		hidePersonalPlan?: boolean;
@@ -56,6 +64,10 @@ const PlansStepAdaptor: StepType< {
 		highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 		taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
+		isLaunchPage?: boolean;
+		isCustomDomainAllowedOnFreePlan?: boolean;
+		deemphasizeFreePlan?: boolean;
+		intent?: PlansIntent;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -72,6 +84,7 @@ const PlansStepAdaptor: StepType< {
 		wrapperProps,
 		headerText,
 		subHeaderText,
+		showExistingSiteLink,
 		hideFreePlan: hideFreePlanOverride,
 		hideEnterprisePlan: hideEnterprisePlanOverride,
 		hidePersonalPlan: hidePersonalPlanOverride,
@@ -82,9 +95,18 @@ const PlansStepAdaptor: StepType< {
 		highlightLabelOverrides,
 		titleBadgeOverrides,
 		taglineOverrides,
+		isLaunchPage,
+		isCustomDomainAllowedOnFreePlan,
+		deemphasizeFreePlan,
+		intent: intentOverride,
 	} = props;
+	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
-	const siteSlug = useSiteSlug();
+	const query = useQuery();
+	const isMigrationFlow = props.flow === SITE_MIGRATION_FLOW;
+	const hasMigrationDestination = !! ( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
+	const resolvedSiteSlug = useSiteSlug();
+	const siteSlug = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSiteSlug;
 
 	const { siteTitle, domainItem, domainItems, selectedDesign, hideFreePlan } = useSelect(
 		( select: ( key: string ) => OnboardSelect ) => {
@@ -137,7 +159,10 @@ const PlansStepAdaptor: StepType< {
 	const postSignUpSiteSlugParam = getSignupCompleteSlug();
 	const postSignUpSiteIdParam = getSignupCompleteSiteID();
 
-	const site = useSite( postSignUpSiteSlugParam || postSignUpSiteIdParam );
+	const resolvedSite = useSite(
+		isMigrationFlow ? undefined : postSignUpSiteSlugParam || postSignUpSiteIdParam
+	);
+	const site = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSite;
 	const customerType = useQuery().get( 'customerType' ) ?? undefined;
 
 	// A blueprint import narrows the grid to the plans the blueprint suggests
@@ -234,7 +259,31 @@ const PlansStepAdaptor: StepType< {
 			hideEcommercePlan={ hideEcommercePlanOverride || blueprintHideProps.hideEcommercePlan }
 			hidePlanTypeSelector={ hidePlanTypeSelectorOverride }
 			headerText={ headerText }
-			subHeaderText={ subHeaderText }
+			subHeaderText={
+				showExistingSiteLink ? (
+					<>
+						{ subHeaderText }
+						<br />
+						{ translate( 'Or {{link}}migrate to a site you already have{{/link}}.', {
+							components: {
+								link: (
+									<Step.LinkButton
+										onClick={ () =>
+											props.navigation.submit?.( {
+												stepName: 'plans',
+												cartItems: null,
+												action: 'select-existing-site',
+											} )
+										}
+									/>
+								),
+							},
+						} ) }
+					</>
+				) : (
+					subHeaderText
+				)
+			}
 			highlightLabelOverrides={ highlightLabelOverrides }
 			titleBadgeOverrides={ titleBadgeOverrides }
 			taglineOverrides={ taglineOverrides }
@@ -264,7 +313,7 @@ const PlansStepAdaptor: StepType< {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			intent={ plansIntent ?? undefined }
+			intent={ intentOverride ?? plansIntent ?? undefined }
 			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }
@@ -280,6 +329,9 @@ const PlansStepAdaptor: StepType< {
 			isInSignup={ isInSignup }
 			isStepperUpgradeFlow={ isStepperUpgradeFlow }
 			selectedFeature={ selectedFeature }
+			isLaunchPage={ isLaunchPage }
+			isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
+			deemphasizeFreePlan={ deemphasizeFreePlan }
 		/>
 	);
 };

@@ -3,9 +3,9 @@
  *
  * Hosts that render their own editing surface around the chat (Big Sky's easy
  * mode) need two things they cannot see from outside: whether a turn is in
- * flight, and when an ability has finished writing. Without them, the only
- * signal left is the editor's own dirty state, which blocks also change on
- * mount — so a page opening reads the same as an agent editing it.
+ * flight, and when an ability has finished writing. Easy mode holds its own
+ * navigation while the agent works, shows what changed once the turn ends, and
+ * follows an ability that moves the editor.
  *
  * Same channel as `agents-manager-ready` and `agents-manager-conversation-changed`:
  * a window event, because the listeners are other bundles.
@@ -14,7 +14,7 @@
 /** A turn began: the user sent a message and the agent is working on it. */
 export const AGENT_TURN_STARTED_EVENT = 'agents-manager-turn-started';
 
-/** The turn finished, was aborted, or the chat unmounted with it open. */
+/** The turn finished or was aborted. */
 export const AGENT_TURN_ENDED_EVENT = 'agents-manager-turn-ended';
 
 /**

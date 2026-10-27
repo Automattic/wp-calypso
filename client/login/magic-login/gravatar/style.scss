@@ -297,6 +297,10 @@
 		display: flex;
 		flex-direction: column;
 		margin-top: 24px;
+
+		.login__form-blackbox-challenge.has-visible-challenge {
+			margin-block-start: 24px;
+		}
 	}
 
 	.grav-powered-magic-login__account-options {

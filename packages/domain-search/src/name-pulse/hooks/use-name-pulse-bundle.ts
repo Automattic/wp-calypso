@@ -2,6 +2,10 @@ import { useQueries } from '@tanstack/react-query';
 import { useDomainSearch } from '../../page/context';
 import type { BundleSuggestion } from '@automattic/api-core';
 
+// Mirrors the backend's `bundle_triggers` list, which Name Pulse does not fetch:
+// that would cost a suggestions request to save a few bundle ones.
+const isBundleTrigger = ( fqdn: string ) => fqdn.endsWith( '.com' );
+
 const hasCompanion = ( bundle: BundleSuggestion | null | undefined ): bundle is BundleSuggestion =>
 	!! bundle && bundle.domains.length > 1;
 
@@ -17,7 +21,7 @@ export const useNamePulseBundle = ( anchors: string[] | null ) => {
 	const enabled = config.showBundleSuggestions && anchors !== null;
 
 	const results = useQueries( {
-		queries: ( enabled ? anchors : [] ).map( ( fqdn ) => ( {
+		queries: ( enabled ? anchors.filter( isBundleTrigger ) : [] ).map( ( fqdn ) => ( {
 			...queries.bundleForDomain( fqdn ),
 			enabled: true,
 		} ) ),

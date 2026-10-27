@@ -7,7 +7,7 @@
  */
 
 import { dispatch, select, subscribe } from '@wordpress/data';
-import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register } from '..';
+import { AtomicSoftwareStatus, AtomicSoftwareStatusError, register, STORE_KEY } from '..';
 import wpcomRequest from '../../wpcom-request';
 import {
 	getAtomicSoftwareStatus,
@@ -38,6 +38,19 @@ beforeEach( () => {
 } );
 
 describe( 'getBundledPluginSlug', () => {
+	it( 'reuses the registered descriptor and persists the bundled plugin selection', () => {
+		const siteSlug = 'test.wordpress.com';
+		const pluginSlug = 'woocommerce';
+
+		expect( register( { client_id: '', client_secret: '' } ) ).toBe( store );
+		expect( store.name ).toBe( STORE_KEY );
+		dispatch( store ).setBundledPluginSlug( siteSlug, pluginSlug );
+		expect( select( store ).getBundledPluginSlug( siteSlug ) ).toBe( pluginSlug );
+		expect(
+			JSON.parse( localStorage.getItem( 'WPCOM_7_DAYS_PERSISTENCE' ) ?? '{}' )[ STORE_KEY ]
+		).toEqual( { bundledPluginSlug: { [ siteSlug ]: pluginSlug } } );
+	} );
+
 	it( 'retrieves the bundled plugin slug from the store', () => {
 		const siteSlug = 'test.wordpress.com';
 		const pluginSlug = 'woocommerce';

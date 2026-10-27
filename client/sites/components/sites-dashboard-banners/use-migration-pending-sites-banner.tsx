@@ -5,9 +5,15 @@ import { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { isCardDismissed } from 'calypso/blocks/dismissible-card/selectors';
 import Banner from 'calypso/components/banner';
-import type { Status } from '@automattic/sites/src/use-sites-list-grouping';
+import type { useSitesListGrouping } from '@automattic/sites';
 
-export function useMigrationPendingSitesBanner( { sitesStatuses }: { sitesStatuses: Status[] } ) {
+export type SiteStatus = ReturnType< typeof useSitesListGrouping >[ 'statuses' ][ number ];
+
+export function useMigrationPendingSitesBanner( {
+	sitesStatuses,
+}: {
+	sitesStatuses: SiteStatus[];
+} ) {
 	const id = 'migration-pending-sites';
 
 	const migrationPendingSitesCount = sitesStatuses.find(

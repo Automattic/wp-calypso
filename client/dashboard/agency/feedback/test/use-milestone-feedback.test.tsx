@@ -4,7 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { useMilestoneFeedback } from '../use-milestone-feedback';
+import { isWithinFeedbackWindow, useMilestoneFeedback } from '../use-milestone-feedback';
 import type { A4AFeedbackEntry } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
@@ -82,5 +82,27 @@ describe( 'useMilestoneFeedback', () => {
 		render( <Probe /> );
 
 		await waitFor( () => expect( screen.getByText( 'quiet' ) ).toBeVisible() );
+	} );
+} );
+
+describe( 'isWithinFeedbackWindow', () => {
+	beforeEach( () => jest.useFakeTimers( { now: new Date( '2026-10-13T12:00:00Z' ) } ) );
+	afterEach( () => jest.useRealTimers() );
+
+	test( 'asks about a milestone with no date', () => {
+		expect( isWithinFeedbackWindow( null ) ).toBe( true );
+	} );
+
+	test( 'asks within a week', () => {
+		expect( isWithinFeedbackWindow( '2026-10-11 12:00:00' ) ).toBe( true );
+	} );
+
+	test( 'reads the API date format as UTC', () => {
+		expect( isWithinFeedbackWindow( '2026-10-06 12:30:00' ) ).toBe( true );
+		expect( isWithinFeedbackWindow( '2026-10-06 11:30:00' ) ).toBe( false );
+	} );
+
+	test( 'does not ask after a week', () => {
+		expect( isWithinFeedbackWindow( '2026-10-05 12:00:00' ) ).toBe( false );
 	} );
 } );

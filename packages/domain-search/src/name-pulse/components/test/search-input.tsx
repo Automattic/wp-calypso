@@ -100,4 +100,14 @@ describe( 'NamePulseSearchInput', () => {
 		expect( onQueryChange ).toHaveBeenLastCalledWith( 'coffee' );
 		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( '' );
 	} );
+
+	it( 'scrolls to the top of the page when the query is edited', async () => {
+		const scrollTo = jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
+		const { user, input } = renderInput();
+
+		await user.type( input, 'x' );
+
+		expect( scrollTo ).toHaveBeenCalledWith( { top: 0 } );
+		scrollTo.mockRestore();
+	} );
 } );

@@ -1,5 +1,6 @@
-import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
-import type { ZendeskConversation } from '@automattic/zendesk-client';
+import { ODIE_ALLOWED_BOTS } from './constants';
+import type { CheckoutSupportVariation } from '@automattic/data-stores';
+import type { SmoochIntegrationKey, ZendeskConversation } from '@automattic/zendesk-client';
 import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
@@ -19,15 +20,21 @@ export type OdieAssistantContextInterface = {
 	isLoadingZendeskHistory: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
+	// An open human chat can be reopened even without paid support.
+	hasOpenZendeskChat: boolean;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
 	launcherContext?: string;
+	// Set while the Help Center is open from checkout as part of the checkout support experiment.
+	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -43,12 +50,15 @@ export type OdieAssistantProviderProps = {
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	isUserEligibleForPaidSupport?: boolean;
+	hasOpenZendeskChat?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	version?: string | null;
@@ -203,7 +213,6 @@ export type Chat = OdieChat & {
 };
 
 export type OdieAllowedBots = ( typeof ODIE_ALLOWED_BOTS )[ number ];
-export type OdieAllBotSlugs = ( typeof ODIE_ALL_BOT_SLUGS )[ number ];
 
 export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
 

@@ -3,11 +3,15 @@ jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn(),
 } ) );
 jest.mock( '../../../utils/canvas-binding', () => ( { getBlockingMove: jest.fn() } ) );
-// Only the capture itself is stubbed; the sentences describing what came back
-// are pure and stay real, so the assertions here exercise them.
+// The capture and the canvas measurements are stubbed; the sentences describing
+// what came back are pure and stay real, so the assertions here exercise them.
 jest.mock( '../../../utils/canvas-capture', () => ( {
 	...jest.requireActual( '../../../utils/canvas-capture' ),
 	captureCanvas: jest.fn(),
+	describeMeasuredLayout: jest.fn(),
+	describeTextContrast: jest.fn(),
+	describeUnmoved: jest.fn(),
+	snapshotLayout: jest.fn(),
 } ) );
 jest.mock( '../../../utils/checkpoints', () => ( {
 	checkpointKeys: { BLOCKS: 'blocks', CUSTOM_CSS: 'custom_css', NAVIGATION: 'navigation' },
@@ -50,7 +54,13 @@ jest.mock( '../validation-details', () => ( {
 
 import { repointBlockId, resolveClientId } from '../../../utils/block-ids';
 import { getBlockingMove } from '../../../utils/canvas-binding';
-import { captureCanvas } from '../../../utils/canvas-capture';
+import {
+	captureCanvas,
+	describeMeasuredLayout,
+	describeTextContrast,
+	describeUnmoved,
+	snapshotLayout,
+} from '../../../utils/canvas-capture';
 import { sealCheckpointForSwap, withCheckpoint } from '../../../utils/checkpoints';
 import { getPageBlocks, openUndoLevel } from '../../../utils/editor-blocks';
 import {
@@ -133,6 +143,10 @@ beforeEach( () => {
 		.mocked( applyEdits )
 		.mockResolvedValue( { recoveredTargetIds: new Set(), insertedClientIds: [] } );
 	jest.mocked( captureCanvas ).mockResolvedValue( null );
+	jest.mocked( describeMeasuredLayout ).mockReturnValue( [] );
+	jest.mocked( describeTextContrast ).mockReturnValue( null );
+	jest.mocked( snapshotLayout ).mockReturnValue( null );
+	jest.mocked( describeUnmoved ).mockReturnValue( '' );
 	// The checkpoint engine is exercised in its own suite; here it runs the write.
 	jest
 		.mocked( withCheckpoint )
@@ -617,6 +631,216 @@ describe( 'applyBlockEditsCallback', () => {
 
 			expect( result.result.message ).toBe( 'Done.' );
 			expect( result.result.captureNotes ).toHaveLength( 2 );
+		} );
+
+		it( 'adds the measured layout of the edited blocks', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( describeMeasuredLayout ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+			expect( result.result.captureNotes ).toEqual( [ 'Row in group (abcd): …' ] );
+		} );
+
+		it( 'puts the text contrast between the reference note and the measured layout', async () => {
+			mountCanvasWith( [ 'resolved-ref1' ] );
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest
+				.mocked( describeTextContrast )
+				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops: [] } );
+			jest.mocked( describeMeasuredLayout ).mockReturnValue( [ 'Row in group (abcd): …' ] );
+
+			const result = await applyBlockEditsCallback( {
+				...input,
+				visualCheckClientIds: [ 'ref1' ],
+			} );
+
+			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ], {
+				wholePage: false,
+			} );
+			expect( result.result.captureNotes ).toEqual( [
+				expect.stringContaining( 'named for comparison' ),
+				'Text contrast too low: …',
+				'Row in group (abcd): …',
+			] );
+		} );
+
+		it( 'reports the contrast failure count beside the notes', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest
+				.mocked( describeTextContrast )
+				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 2, backdrops: [] } );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result.contrastFailures ).toBe( 2 );
+		} );
+
+		it( 'reports a count of zero when the edited text measured readable', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest
+				.mocked( describeTextContrast )
+				.mockReturnValue( { notes: [ 'Text contrast: all 1 …' ], failures: 0, backdrops: [] } );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result.contrastFailures ).toBe( 0 );
+		} );
+
+		it( 'sends the backdrops to fix beside the count', async () => {
+			const backdrops = [
+				{ clientId: 'c25n', name: 'core/group', ownBackground: false, textClientIds: [ 'ueo8' ] },
+			];
+
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest
+				.mocked( describeTextContrast )
+				.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops } );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result.contrastBackdrops ).toEqual( backdrops );
+		} );
+
+		it( 'leaves the backdrops out when there are none to fix', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest
+				.mocked( describeTextContrast )
+				.mockReturnValue( { notes: [ 'Text contrast: all 1 …' ], failures: 0, backdrops: [] } );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result.contrastFailures ).toBe( 0 );
+			expect( result.result ).not.toHaveProperty( 'contrastBackdrops' );
+		} );
+
+		it( 'leaves the count out when there was no text to measure', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result ).not.toHaveProperty( 'contrastFailures' );
+		} );
+
+		it( 'leaves the count out, keeping the note, when no text could be measured', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+			jest.mocked( describeTextContrast ).mockReturnValue( {
+				notes: [ 'Contrast could not be measured …' ],
+				failures: null,
+				backdrops: [],
+			} );
+
+			const result = await applyBlockEditsCallback( input );
+
+			expect( result.result ).not.toHaveProperty( 'contrastFailures' );
+			expect( result.result.captureNotes ).toEqual( [ 'Contrast could not be measured …' ] );
+		} );
+
+		describe( 'with custom CSS', () => {
+			const headerBlock = { ...paragraph( 'Header' ), clientId: 'h1' };
+
+			beforeEach( () => {
+				jest.mocked( captureCanvas ).mockResolvedValue( [ band( { fullPage: true } ) ] );
+				jest.mocked( getPageBlocks ).mockReturnValue( {
+					blocks: [ paragraph( 'Old' ) ],
+					templateParts: [ { slug: 'header', blocks: [ headerBlock ] } ],
+				} );
+				jest
+					.mocked( describeTextContrast )
+					.mockReturnValue( { notes: [ 'Text contrast too low: …' ], failures: 1, backdrops: [] } );
+			} );
+
+			it( 'measures the whole page when only the CSS changed, with no edited block', async () => {
+				// The case a CSS-only edit hit: no updates or inserts, so no
+				// edited block to measure, though the CSS can recolour any of them.
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { updates: [], customCSS: 'p{}' } ) );
+				jest.mocked( getEditedClientIds ).mockReturnValue( [] );
+
+				const result = await applyBlockEditsCallback( { customCSS: 'p{}', toolCallId: 'call-1' } );
+
+				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'p1', 'h1' ], {
+					wholePage: true,
+				} );
+				expect( result.result.contrastFailures ).toBe( 1 );
+				expect( result.result.captureNotes ).toContain( 'Text contrast too low: …' );
+			} );
+
+			it( 'captures and measures the whole page for block edits with CSS, the edited blocks first', async () => {
+				// The picture has to show what the notes leave to it.
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { customCSS: 'p{}' } ) );
+
+				await applyBlockEditsCallback( { ...input, customCSS: 'p{}' } );
+
+				expect( captureCanvas ).toHaveBeenCalledWith(
+					expect.objectContaining( { fullPage: true } )
+				);
+
+				expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1', 'p1', 'h1' ], {
+					wholePage: true,
+				} );
+			} );
+		} );
+
+		it( 'measures only the edited blocks when no CSS changed', async () => {
+			jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+
+			await applyBlockEditsCallback( input );
+
+			expect( describeTextContrast ).toHaveBeenCalledWith( [ 'resolved-a1' ], {
+				wholePage: false,
+			} );
+		} );
+
+		it( 'measures nothing without a capture', async () => {
+			const result = await applyBlockEditsCallback( input );
+
+			expect( describeMeasuredLayout ).not.toHaveBeenCalled();
+			expect( describeTextContrast ).not.toHaveBeenCalled();
+			expect( result.result.captureNotes ).toBeUndefined();
+		} );
+
+		describe( 'whether anything moved', () => {
+			const snapshot = { boxes: new Map(), labels: [ 'group (ndP2)' ] };
+			const unmoved = 'No edited block moved: group (ndP2) and its children are where they were.';
+
+			beforeEach( () => {
+				jest.mocked( captureCanvas ).mockResolvedValue( [ band() ] );
+				jest.mocked( snapshotLayout ).mockReturnValue( snapshot );
+				jest.mocked( describeUnmoved ).mockReturnValue( unmoved );
+			} );
+
+			it( 'reads the edited blocks before the writes and compares after them', async () => {
+				jest.mocked( applyEdits ).mockImplementation( async () => {
+					expect( snapshotLayout ).toHaveBeenCalledWith( [ 'resolved-a1' ] );
+					expect( describeUnmoved ).not.toHaveBeenCalled();
+
+					return { recoveredTargetIds: new Set(), insertedClientIds: [] };
+				} );
+
+				const result = await applyBlockEditsCallback( input );
+
+				expect( describeUnmoved ).toHaveBeenCalledWith( snapshot );
+				expect( result.result.captureNotes ).toEqual( [ unmoved ] );
+			} );
+
+			it( 'does not compare an edit that inserts or deletes', async () => {
+				jest.mocked( normalizeEdits ).mockReturnValue( edits( { deletes: [ 'b1' ] } ) );
+
+				await applyBlockEditsCallback( input );
+
+				expect( snapshotLayout ).not.toHaveBeenCalled();
+				expect( describeUnmoved ).not.toHaveBeenCalled();
+			} );
+
+			it( 'does not compare an edit that changed nothing', async () => {
+				jest.mocked( areUpdateEditsAlreadySatisfied ).mockReturnValue( true );
+
+				const result = await applyBlockEditsCallback( input );
+
+				expect( describeUnmoved ).not.toHaveBeenCalled();
+				expect( result.result.captureNotes ).toBeUndefined();
+			} );
 		} );
 	} );
 

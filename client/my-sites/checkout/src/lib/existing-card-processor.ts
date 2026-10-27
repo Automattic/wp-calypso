@@ -6,7 +6,7 @@ import {
 	makeErrorResponse,
 } from '@automattic/composite-checkout';
 import debugFactory from 'debug';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { recordTransactionBeginAnalytics, logStashEvent } from '../lib/analytics';
 import getDomainDetails from './get-domain-details';
 import getPostalCode from './get-postal-code';
@@ -41,30 +41,22 @@ export default async function existingCardProcessor(
 	if ( ! isValidTransactionData( transactionData ) ) {
 		throw new Error( 'Required purchase data is missing' );
 	}
-	const {
-		stripe,
-		includeDomainDetails,
-		includeGSuiteDetails,
-		contactDetails,
-		reduxDispatch,
-		responseCart,
-	} = dataForProcessor;
+	const { stripe, includeDomainDetails, includeGSuiteDetails, contactDetails, responseCart } =
+		dataForProcessor;
 	if ( ! stripe ) {
 		throw new Error( 'Stripe is required to submit an existing card payment' );
 	}
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'existingCard' } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId: 'existingCard' } );
 
 	const cartCountry = responseCart.tax.location.country_code ?? '';
 	const formCountry = contactDetails?.countryCode?.value ?? '';
 	if ( cartCountry !== formCountry ) {
 		// Changes to the contact form data should always be sent to the cart, so
 		// this should not be possible.
-		reduxDispatch(
-			recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
-				form_country: formCountry,
-				cart_country: cartCountry,
-			} )
-		);
+		recordTracksEvent( 'calypso_checkout_mismatched_tax_location', {
+			form_country: formCountry,
+			cart_country: cartCountry,
+		} );
 	}
 
 	const domainDetails = getDomainDetails( contactDetails, {
@@ -106,7 +98,6 @@ export default async function existingCardProcessor(
 					: undefined;
 
 				await handle3DSChallenge(
-					reduxDispatch,
 					cardSpecificStripe ?? stripe,
 					stripeResponse.message.payment_intent_client_secret,
 					paymentIntentId
@@ -129,12 +120,10 @@ export default async function existingCardProcessor(
 		} )
 		.catch( ( error: Error ) => {
 			debug( 'transaction failed' );
-			reduxDispatch(
-				recordTracksEvent( 'calypso_checkout_existing_card_transaction_failed', {
-					payment_intent_id: paymentIntentId ?? '',
-					error: error.message,
-				} )
-			);
+			recordTracksEvent( 'calypso_checkout_existing_card_transaction_failed', {
+				payment_intent_id: paymentIntentId ?? '',
+				error: error.message,
+			} );
 			logStashEvent(
 				'calypso_checkout_existing_card_transaction_failed',
 				{

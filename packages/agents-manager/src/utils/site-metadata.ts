@@ -71,7 +71,6 @@ export function setSiteMetadata( changes: SiteMetadata ): SiteMetadata {
 	return merged;
 }
 
-// TODO (ability-migration): Delete once Big Sky no longer writes this field.
 /**
  * Keeps Big Sky's copy in step: it rebuilds this field from its own store, so
  * a write it never saw would be undone by its next one. Its reducer merges, so

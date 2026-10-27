@@ -107,7 +107,6 @@ export default myFlow;
 | --------------------- | --------------------- | ---------------------------------- |
 | `SEGMENTATION_SURVEY` | `segmentation-survey` | Survey to segment user by use case |
 | `DESIGN_SETUP`        | `design-setup`        | Select a theme / design            |
-| `SITE_OPTIONS`        | `options`             | Set site title, tagline, icon      |
 | `BUSINESS_INFO`       | `businessInfo`        | Business details (name, category)  |
 | `STORE_ADDRESS`       | `storeAddress`        | WooCommerce store address          |
 | `SITE_SPEC`           | `site-spec`           | AI-assisted site specification     |
@@ -129,19 +128,17 @@ export default myFlow;
 
 ### Site creation & processing
 
-| `STEPS.*` constant   | slug                 | Purpose                                                          |
-| -------------------- | -------------------- | ---------------------------------------------------------------- |
-| `PROCESSING`         | `processing`         | Runs `setPendingAction`, shows progress bar, then submits result |
-| `SITE_CREATION_STEP` | `create-site`        | Creates the site explicitly (use when you need a separate step)  |
-| `FLEX_SITE_CREATION` | `flex-site-creation` | Flexible site creation variant                                   |
-| `SITE_LAUNCH`        | `site-launch`        | Launches (un-privatizes) an existing site                        |
+| `STEPS.*` constant   | slug          | Purpose                                                          |
+| -------------------- | ------------- | ---------------------------------------------------------------- |
+| `PROCESSING`         | `processing`  | Runs `setPendingAction`, shows progress bar, then submits result |
+| `SITE_CREATION_STEP` | `create-site` | Creates the site explicitly (use when you need a separate step)  |
+| `SITE_LAUNCH`        | `site-launch` | Launches (un-privatizes) an existing site                        |
 
 ### Post-signup
 
 | `STEPS.*` constant         | slug                       | Purpose                             |
 | -------------------------- | -------------------------- | ----------------------------------- |
 | `LAUNCHPAD`                | `launchpad`                | Post-creation checklist / dashboard |
-| `CELEBRATION_STEP`         | `celebration-step`         | Congratulations screen              |
 | `SUBSCRIBERS`              | `subscribers`              | Add newsletter subscribers          |
 | `POST_CHECKOUT_ONBOARDING` | `post-checkout-onboarding` | Onboarding after checkout           |
 
@@ -151,14 +148,12 @@ export default myFlow;
 | ------------------ | ----------------- | ----------------------------- |
 | `NEWSLETTER_SETUP` | `newsletterSetup` | Newsletter name, description  |
 | `NEWSLETTER_GOALS` | `newsletterGoals` | Newsletter monetization goals |
-| `FREE_POST_SETUP`  | `freePostSetup`   | Free newsletter post setup    |
 
 ### Site picker / utility
 
 | `STEPS.*` constant     | slug                   | Purpose                                     |
 | ---------------------- | ---------------------- | ------------------------------------------- |
 | `NEW_OR_EXISTING_SITE` | `new-or-existing-site` | Ask user to create new or use existing site |
-| `SITES_CHECKER`        | `check-sites`          | Check whether user has existing sites       |
 | `PICK_SITE`            | `site-picker`          | Pick from a list of existing sites          |
 | `SITE_PICKER`          | `sitePicker`           | Single site picker variant                  |
 | `TRIAL_ACKNOWLEDGE`    | `trialAcknowledge`     | User acknowledges trial conditions          |
@@ -184,12 +179,11 @@ export default myFlow;
 
 ### AI / other
 
-| `STEPS.*` constant                    | slug                 | Purpose                        |
-| ------------------------------------- | -------------------- | ------------------------------ |
-| `LAUNCH_BIG_SKY`                      | `launch-big-sky`     | BigSky AI site builder         |
-| `SETUP_YOUR_SITE_AI`                  | `setup-your-site-ai` | AI-assisted site setup         |
-| `BLUEPRINT`                           | `blueprint`          | Blueprint template selection   |
-| `READYMADE_TEMPLATE_GENERATE_CONTENT` | `generateContent`    | Generate content from template |
+| `STEPS.*` constant   | slug                 | Purpose                      |
+| -------------------- | -------------------- | ---------------------------- |
+| `LAUNCH_BIG_SKY`     | `launch-big-sky`     | BigSky AI site builder       |
+| `SETUP_YOUR_SITE_AI` | `setup-your-site-ai` | AI-assisted site setup       |
+| `BLUEPRINT`          | `blueprint`          | Blueprint template selection |
 
 ## Step customization — what the flow can change without touching step code
 
@@ -234,6 +228,9 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 | `highlightLabelOverrides`                                                                                                | `{ [PlanSlug]?: TranslateResult }`              | Re-labels a plan's highlight tag (top pill)                                                |
 | `titleBadgeOverrides`                                                                                                    | `{ [PlanSlug]?: TranslateResult }`              | Re-labels the badge next to a plan's title (features grid only)                            |
 | `taglineOverrides`                                                                                                       | `{ [PlanSlug]?: TranslateResult }`              | Overrides a plan's tagline, winning over computed and experiment copy (features grid only) |
+| `isLaunchPage`                                                                                                           | `boolean`                                       | Launch-page CTAs ("Keep this plan" / "Select X")                                           |
+| `isCustomDomainAllowedOnFreePlan`                                                                                        | `boolean`                                       | Picking Free keeps a paid domain via a dialog                                              |
+| `deemphasizeFreePlan`                                                                                                    | `boolean`                                       | De-emphasizes the Free plan                                                                |
 | `wrapperProps.hideBack`                                                                                                  | `boolean`                                       | Hides the back button                                                                      |
 | `wrapperProps.goBack`                                                                                                    | `() => void`                                    | Custom back button handler                                                                 |
 
@@ -255,6 +252,7 @@ step" → Worked example** section of [`README.md`](README.md); the tables below
 | -------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | `title` / `subtitle` | `string`                     | Override the single visible frame; these win over the carousel                                                            |
 | `loadingMessages`    | `ProcessingLoadingMessage[]` | Replace the rotating loading-carousel copy. `duration` is optional per message — one without a usable duration is held 5s |
+| `skipSignupComplete` | `boolean`                    | Don't record `calypso_signup_complete` when the pending action succeeds, for a run whose completion was recorded earlier  |
 
 Applies to the generic V1 `StepContainer` / `Loading` and V2 `Step.Loading` paths only. The
 tailored (`TailoredFlowPreCheckoutScreen`, newsletter / update-design) and hundred-year
@@ -266,11 +264,11 @@ Auto-injected by `stepsWithRequiredLogin()` — it is **not** in the flow's `ini
 so its props are passed under a reserved `user` key of `useStepsProps()` (the return type is
 widened via `MapStepsToTheirAcceptedProps<[ typeof PRIVATE_STEPS.USER ]>`).
 
-| Prop                           | Type       | What it does                                                   |
-| ------------------------------ | ---------- | -------------------------------------------------------------- |
-| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading |
-| `hideLoginLink`                | `boolean`  | Hide the top-level "Log in" link (V2 top bar / V1 footer)      |
-| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered            |
+| Prop                           | Type       | What it does                                                    |
+| ------------------------------ | ---------- | --------------------------------------------------------------- |
+| `headerText` / `subHeaderText` | `string`   | Override the "Create your account" heading / add a sub-heading  |
+| `hideLoginLink`                | `boolean`  | Hide the "Log in" link (V2 top bar or in-form line / V1 footer) |
+| `allowedSocialServices`        | `string[]` | Restrict which social sign-in providers are offered             |
 
 ```ts
 const myFlow: FlowV2< typeof initialize > = {
@@ -293,9 +291,9 @@ Call them via `dispatch( ONBOARD_STORE )` inside `initialize()`.
 | Call                                         | Effect                                                           |
 | -------------------------------------------- | ---------------------------------------------------------------- |
 | `setHidePlansFeatureComparison( true )`      | Hides the plan feature comparison table in `STEPS.UNIFIED_PLANS` |
-| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps (site-options, etc.)         |
+| `setIntent( Onboard.SiteIntent.Newsletter )` | Switches copy in intent-aware steps                              |
 | `setIntent( Onboard.SiteIntent.Build )`      | Generic "build a site" intent                                    |
-| `setIntent( Onboard.SiteIntent.Sell )`       | Store intent — changes site-options labels                       |
+| `setIntent( Onboard.SiteIntent.Sell )`       | Store intent                                                     |
 | `setIntent( Onboard.SiteIntent.Write )`      | Blog intent                                                      |
 | `clearSignupDestinationCookie()`             | Ensures a fresh signup start (no redirect leftovers)             |
 
@@ -445,6 +443,18 @@ async function initialize() {
 ```
 
 ## How to add a new flow (four touchpoints)
+
+**Don't add a new flow by default.** Extend the main onboarding flow
+(`/setup/onboarding`) instead, customizing it through step props (see "Step
+customization" above). Only if it genuinely can't cover the use case, stop and
+ask the developer for an agreed P2 proposal before writing any flow code,
+naming who will own the flow, up to and including deleting it.
+
+Each flow is another copy of signup logic. It drifts from the main flow, so
+customers get inconsistent steps for the same task, and every change to the
+Stepper framework has to migrate it too. Once the project behind it ends, it's
+usually abandoned: nobody knows who owns it or how to test it, and it lingers
+as dead code until a cleanup removes it.
 
 ### 1. Add flow constant
 

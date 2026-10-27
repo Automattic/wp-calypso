@@ -95,6 +95,28 @@ export const getSiteSubscriptionsCountFromData = (
 	return Math.max( totalCount, followingCount );
 };
 
+/**
+ * Whether every subscription row has been fetched, so a site missing from the
+ * cache really isn't followed. Pages can come back short (see
+ * `getNextPageParam`), so this counts requested rows, not returned ones. Stays
+ * false for users with more than MAX_ITEMS rows, whose extra rows never load.
+ */
+export const getHasAllSiteSubscriptionsFromData = (
+	data: SiteSubscriptionsInfiniteData | undefined
+): boolean => {
+	const pages = data?.pages ?? [];
+	if ( ! pages.length ) {
+		return false;
+	}
+
+	const totalCount = pages.find( ( page ) => typeof page.totalCount === 'number' )?.totalCount;
+	if ( typeof totalCount !== 'number' ) {
+		return pages[ pages.length - 1 ].subscriptions.length === 0;
+	}
+
+	return totalCount <= MAX_ITEMS && pages.length * ITEMS_PER_PAGE >= totalCount;
+};
+
 export const getSiteSubscriptionByFeedIdFromData = (
 	data: SiteSubscriptionsInfiniteData | undefined,
 	feedId: number | string

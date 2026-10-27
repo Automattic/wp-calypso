@@ -1,5 +1,6 @@
 import {
 	createAgencySite,
+	fetchAgencyDevSiteLicense,
 	fetchAgencyMigrationCommissionSites,
 	fetchAgencyPendingSites,
 	fetchAgencySitesWithPlugins,
@@ -20,6 +21,17 @@ export const agencySitesWithPluginsQuery = ( agencyId: number, plugins: string[]
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'sites-with-plugins', plugins ],
 		queryFn: () => fetchAgencySitesWithPlugins( agencyId, plugins ),
+	} );
+
+// The development license of one of the agency's sites, which a referral hands to the client.
+export const agencyDevSiteLicenseQuery = ( agencyId: number, blogId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'sites', blogId, 'dev-license' ] as const,
+		queryFn: () => fetchAgencyDevSiteLicense( agencyId, blogId ),
+		enabled: agencyId > 0 && blogId > 0,
+		// A site without a license is an answer, not a glitch to retry.
+		retry: false,
+		meta: { persist: false },
 	} );
 
 // Sites the agency has paid for but not yet set up.

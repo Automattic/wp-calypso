@@ -3,6 +3,7 @@ import {
 	JETPACK_BACKUP_PRODUCTS,
 	JETPACK_COMPLETE_PLANS,
 	JETPACK_GROWTH_PLANS,
+	JETPACK_PRO_PLANS,
 	JETPACK_SCAN_PRODUCTS,
 	JETPACK_SEARCH_PRODUCTS,
 	JETPACK_SECURITY_PLANS,
@@ -77,6 +78,20 @@ const useGetJetpackActivationConfirmationInfo = (
 			text: translate( "You're all set!" ),
 			buttonUrl: jetpackAdminUrl || baseJetpackCloudUrl,
 		},
+		jetpack_pro: {
+			image: successImageDefault,
+			text: translate(
+				'You can see your backups, security scans, and restore your site on {{a}}cloud.jetpack.com{{/a}}. If you ever lose access to your site, you can restore it there.',
+				{
+					components: {
+						a: createElement( 'a', { href: baseJetpackCloudUrl } ),
+					},
+				}
+			),
+			buttonUrl: siteSlug
+				? `${ baseJetpackCloudUrl }/backup/${ siteSlug }`
+				: `${ baseJetpackCloudUrl }/landing`,
+		},
 		jetpack_scan: {
 			image: successImageScan,
 			text: translate( 'You can see your security scans on {{a}}cloud.jetpack.com{{/a}}.', {
@@ -130,6 +145,7 @@ const useGetJetpackActivationConfirmationInfo = (
 		jetpack_security: JETPACK_SECURITY_PLANS,
 		jetpack_videopress: JETPACK_VIDEOPRESS_PRODUCTS,
 		jetpack_growth: JETPACK_GROWTH_PLANS,
+		jetpack_pro: JETPACK_PRO_PLANS,
 	};
 
 	const productGroup =

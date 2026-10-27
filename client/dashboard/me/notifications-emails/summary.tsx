@@ -3,7 +3,7 @@ import { Density, SummaryButtonBadgeProps } from '@automattic/components/src/sum
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { layout } from '@wordpress/icons';
+import { envelope } from '@wordpress/icons';
 import { useMemo } from 'react';
 import { notificationsEmailsRoute } from '../../app/router/me';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
@@ -26,7 +26,7 @@ export const NotificationsEmailsSummary = ( { density }: { density?: Density } )
 			description={ __(
 				'Manage how you receive emails. Set the frequency, choose a format, or pause all emails.'
 			) }
-			decoration={ <Icon icon={ layout } /> }
+			decoration={ <Icon icon={ envelope } /> }
 			badges={ badges }
 		/>
 	);

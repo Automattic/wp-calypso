@@ -113,6 +113,7 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 		newLoggedOutInteractionsBotSlug,
 		externalChatProvider,
 		externalChatId,
+		checkoutSupportVariation,
 	} = useOdieAssistantContext();
 
 	const botSlug = getBotSlug(
@@ -247,7 +248,13 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 
 			const currentScreen = { url };
 			const isAgentsManagerAvailable = getIsAgentsManagerAvailable();
-			const context = { selectedSiteId, currentScreen, pathname, isAgentsManagerAvailable };
+			const context = {
+				selectedSiteId,
+				currentScreen,
+				pathname,
+				isAgentsManagerAvailable,
+				...( checkoutSupportVariation && { checkoutSupportVariation } ),
+			};
 
 			if ( canAccessWpcomApis() ) {
 				if ( isLoggedOutSession ) {

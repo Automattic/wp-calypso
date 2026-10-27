@@ -1,6 +1,10 @@
-import { siteMigrationZendeskTicketQuery, cancelSiteMigrationQuery } from '@automattic/api-queries';
+import {
+	siteMigrationZendeskTicketQuery,
+	cancelSiteMigrationQuery,
+	siteBySlugQuery,
+} from '@automattic/api-queries';
 import { invokeSurvicateEvent } from '@automattic/survicate';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -36,12 +40,21 @@ const GUIDE_LIST = [
 	},
 ];
 
-function CancellationModal( { site, onClose }: { site: Site; onClose: () => void } ) {
+function CancellationModal( {
+	site,
+	hasTicket,
+	onClose,
+}: {
+	site: Site;
+	hasTicket: boolean;
+	onClose: () => void;
+} ) {
 	const navigate = useNavigate();
+	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice, createSuccessNotice } = useDispatch( noticesStore );
-	const mutation = useMutation( cancelSiteMigrationQuery( site.ID ) );
 	const isMigrationInProgress = site.site_migration?.in_progress;
+	const mutation = useMutation( cancelSiteMigrationQuery( site.ID ) );
 
 	const modalProps = isMigrationInProgress
 		? {
@@ -53,35 +66,38 @@ function CancellationModal( { site, onClose }: { site: Site; onClose: () => void
 			}
 		: {
 				title: __( 'Cancel migration' ),
-				description: __(
-					'If you cancel now, our Happiness Engineers will be notified that you’ve chosen not to move your site to WordPress.com, and your current site will remain exactly as it is.'
-				),
-				buttonText: __( 'Send request' ),
+				description: hasTicket
+					? __(
+							'If you cancel now, our Happiness Engineers will be notified that you’ve chosen not to move your site to WordPress.com, and your current site will remain exactly as it is.'
+						)
+					: __(
+							'When you cancel your migration your original site will stay as is. You can always restart the migration when you’re ready.'
+						),
+				buttonText: hasTicket ? __( 'Send request' ) : __( 'Cancel migration' ),
 			};
 
-	const handleConfirmCancel = () => {
+	const handleConfirmCancel = async () => {
 		recordTracksEvent(
 			'calypso_dashboard_migration_started_difm_cancellation_modal_confirm_click'
 		);
-		mutation.mutate( undefined, {
-			onSuccess: () => {
-				recordTracksEvent( 'calypso_dashboard_migration_started_difm_cancellation_modal_success' );
-				if ( isMigrationInProgress ) {
-					createSuccessNotice( __( 'Migration cancellation request sent.' ), { type: 'snackbar' } );
-					return;
-				}
+		try {
+			await mutation.mutateAsync();
+			recordTracksEvent( 'calypso_dashboard_migration_started_difm_cancellation_modal_success' );
+			if ( isMigrationInProgress ) {
+				createSuccessNotice( __( 'Migration cancellation request sent.' ), { type: 'snackbar' } );
+				return;
+			}
 
-				createSuccessNotice( __( 'Migration cancelled.' ), { type: 'snackbar' } );
-				navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug } } );
-			},
-			onError: () => {
-				recordTracksEvent( 'calypso_dashboard_migration_started_difm_cancellation_modal_failure' );
-				createErrorNotice(
-					__( 'We couldn’t cancel your migration. Our support team will reach out to help.' ),
-					{ type: 'snackbar' }
-				);
-			},
-		} );
+			await queryClient.invalidateQueries( siteBySlugQuery( site.slug ), { throwOnError: true } );
+			createSuccessNotice( __( 'Migration cancelled.' ), { type: 'snackbar' } );
+			navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug } } );
+		} catch {
+			recordTracksEvent( 'calypso_dashboard_migration_started_difm_cancellation_modal_failure' );
+			createErrorNotice(
+				__( 'We couldn’t cancel your migration. Please try again or contact support.' ),
+				{ type: 'snackbar' }
+			);
+		}
 	};
 
 	return (
@@ -125,6 +141,8 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 		...siteMigrationZendeskTicketQuery( site.ID ),
 		enabled: ! site.site_migration?.is_complete,
 	} );
+	const canCancelMigration =
+		! site.site_migration?.is_complete && ( ! site.site_migration?.in_progress || !! ticketId );
 
 	return (
 		<>
@@ -135,20 +153,7 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 						'We will review your site to make sure we have everything we need. Here’s what you can expect next:'
 					) }
 				/>
-				<Card size="small">
-					{ GUIDE_LIST.map( ( item, index ) => (
-						<Fragment key={ index }>
-							<CardBody>
-								<HStack justify="flex-start">
-									<Icon icon={ item.icon } />
-									<Text>{ item.text }</Text>
-								</HStack>
-							</CardBody>
-							{ index < GUIDE_LIST.length - 1 && <CardDivider /> }
-						</Fragment>
-					) ) }
-				</Card>
-				{ ticketId && (
+				{ canCancelMigration && (
 					<ButtonStack justify="flex-start">
 						<Button
 							variant="link"
@@ -163,9 +168,26 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 						</Button>
 					</ButtonStack>
 				) }
+				<Card size="small">
+					{ GUIDE_LIST.map( ( item, index ) => (
+						<Fragment key={ index }>
+							<CardBody>
+								<HStack justify="flex-start">
+									<Icon icon={ item.icon } />
+									<Text>{ item.text }</Text>
+								</HStack>
+							</CardBody>
+							{ index < GUIDE_LIST.length - 1 && <CardDivider /> }
+						</Fragment>
+					) ) }
+				</Card>
 			</VStack>
 			{ isCancellationModalOpen && (
-				<CancellationModal site={ site } onClose={ () => setIsCancellationModalOpen( false ) } />
+				<CancellationModal
+					site={ site }
+					hasTicket={ !! ticketId }
+					onClose={ () => setIsCancellationModalOpen( false ) }
+				/>
 			) }
 		</>
 	);

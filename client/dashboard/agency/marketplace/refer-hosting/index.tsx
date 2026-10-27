@@ -8,7 +8,8 @@ import { ButtonStack } from '../../../components/button-stack';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
-import AgencyApprovalNotice from '../agency-approval-notice';
+import { AgencyNotices } from '../../components/agency-notices';
+import AgencyApprovalNotice, { useAgencyApprovalNotice } from '../agency-approval-notice';
 import { getMarketplaceHostingSectionRoute } from '../paths';
 import { getReferralConfig } from './config';
 import ReferHostingForm from './form';
@@ -17,6 +18,7 @@ import type { ReferHostingType } from './types';
 export default function ReferHosting( { type }: { type: ReferHostingType } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
+	const approvalNotice = useAgencyApprovalNotice( agency );
 	const [ isSubmitted, setIsSubmitted ] = useState( false );
 	const config = getReferralConfig( type );
 
@@ -60,7 +62,17 @@ export default function ReferHosting( { type }: { type: ReferHostingType } ) {
 					) }
 				/>
 			}
-			notices={ <AgencyApprovalNotice agency={ agency } /> }
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'agency-approval',
+							...approvalNotice,
+							notice: <AgencyApprovalNotice agency={ agency } />,
+						},
+					] }
+				/>
+			}
 		>
 			{ agency && (
 				<ReferHostingForm

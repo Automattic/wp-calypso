@@ -113,6 +113,7 @@ export type ResponseDomain = {
 	isRedeemable: boolean;
 	isRenewable: boolean;
 	isSubdomain: boolean;
+	isSuspendedSite: boolean;
 	isWPCOMDomain: boolean;
 	isWpcomStagingDomain: boolean;
 	lastTransferError?: string | null;

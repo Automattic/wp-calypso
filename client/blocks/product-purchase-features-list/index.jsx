@@ -15,6 +15,7 @@ import {
 	TYPE_SECURITY_DAILY,
 	TYPE_SECURITY_REALTIME,
 	TYPE_ALL,
+	TYPE_JETPACK_PRO,
 	TERM_MONTHLY,
 	getPlans,
 	TYPE_PRO,
@@ -442,6 +443,7 @@ export class ProductPurchaseFeaturesList extends Component {
 				[ TYPE_SECURITY_DAILY ]: () => this.getJetpackSecurityFeatures(),
 				[ TYPE_SECURITY_REALTIME ]: () => this.getJetpackSecurityFeatures(),
 				[ TYPE_ALL ]: () => this.getJetpackCompleteFeatures(),
+				[ TYPE_JETPACK_PRO ]: () => this.getJetpackCompleteFeatures(),
 			},
 		};
 

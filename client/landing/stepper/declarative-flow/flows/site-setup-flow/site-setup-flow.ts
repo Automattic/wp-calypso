@@ -29,7 +29,7 @@ import {
 	type Flow,
 	type ProvidedDependencies,
 } from '../../internals/types';
-import type { OnboardSelect, SiteSelect, UserSelect } from '@automattic/data-stores';
+import type { OnboardSelect, UserSelect } from '@automattic/data-stores';
 
 const SiteIntent = Onboard.SiteIntent;
 
@@ -99,7 +99,7 @@ const siteSetupFlow: Flow = {
 		const adminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 
 		const isAtomic = useSelect(
-			( select ) => site && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( site.ID ),
+			( select ) => site && select( SITE_STORE ).isSiteAtomic( site.ID ),
 			[ site ]
 		);
 		const { setPendingAction, resetOnboardStoreWithSkipFlags } = useDispatch( ONBOARD_STORE );
@@ -326,7 +326,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importerPlayground': {
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					// The step waits for the import, so the site is ready here.
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
 				case 'trialAcknowledge': {
@@ -451,7 +452,7 @@ const siteSetupFlow: Flow = {
 			[]
 		);
 		const fetchingSiteError = useSelect(
-			( select ) => ( select( SITE_STORE ) as SiteSelect ).getFetchingSiteError(),
+			( select ) => select( SITE_STORE ).getFetchingSiteError(),
 			[]
 		);
 		let result: AssertConditionResult = { state: AssertConditionState.SUCCESS };

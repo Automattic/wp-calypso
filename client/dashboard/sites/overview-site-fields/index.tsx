@@ -8,7 +8,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { MetadataList, MetadataItem } from '../../components/metadata-list';
 import { hasHostingFeature } from '../../utils/site-features';
 import { getSiteProviderName, DEFAULT_PROVIDER_NAME } from '../../utils/site-provider';
-import { isSelfHostedJetpackConnected, isCommerceGarden } from '../../utils/site-types';
+import { isSelfHostedJetpackConnected } from '../../utils/site-types';
 import { getSiteDisplayUrl } from '../../utils/site-url';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { PHPVersion } from '../site-fields';
@@ -93,13 +93,11 @@ const SiteOverviewFields = ( { site }: { site: Site } ) => {
 		);
 	}
 
-	if ( ! isCommerceGarden( site ) ) {
-		fields.push(
-			<MetadataItem key="hosting">
-				<HostingProvider site={ site } />
-			</MetadataItem>
-		);
-	}
+	fields.push(
+		<MetadataItem key="hosting">
+			<HostingProvider site={ site } />
+		</MetadataItem>
+	);
 
 	return <MetadataList>{ fields }</MetadataList>;
 };

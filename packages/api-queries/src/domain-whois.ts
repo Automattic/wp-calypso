@@ -12,6 +12,7 @@ export const domainWhoisQuery = ( domainName: string ) =>
 	queryOptions( {
 		queryKey: [ 'domains', domainName, 'whois' ],
 		queryFn: () => fetchDomainWhois( domainName ),
+		meta: { persist: false },
 	} );
 
 export const domainWhoisValidateMutation = ( domainNames: string[] ) =>

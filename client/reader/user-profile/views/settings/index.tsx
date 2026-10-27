@@ -7,6 +7,7 @@ import useSetAchievementsVisibility from 'calypso/reader/components/achievements
 import { useSetProfileTabVisibility } from 'calypso/reader/data/user-profile';
 import { useSelector } from 'calypso/state';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import PreferencesCard from './preferences-card';
 import ProfileIdentityCard from './profile-identity-card';
 import ProfileVisibilityCard from './profile-visibility-card';
 import SitesVisibilityCard from './sites-visibility-card';
@@ -68,6 +69,7 @@ export default function UserProfileSettings( {
 	return (
 		<VStack spacing={ 6 } className="user-profile-settings">
 			<ProfileIdentityCard user={ user } />
+			<PreferencesCard />
 			<ProfileVisibilityCard
 				postsVisible={ postsVisible }
 				sitesVisible={ sitesVisible }

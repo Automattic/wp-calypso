@@ -9,7 +9,7 @@ import { ensureNumericCost } from './assembler';
 import 'calypso/state/currency-code/init';
 import 'calypso/state/products-list/init';
 
-export function receiveProductsList( productsList, type = null ) {
+export function receiveProductsList( productsList, type = null, isPartialList = false ) {
 	// Since the request succeeded, productsList should be guaranteed non-null;
 	// thus, we don't have any safety checks before this line.
 
@@ -25,6 +25,7 @@ export function receiveProductsList( productsList, type = null ) {
 		type: PRODUCTS_LIST_RECEIVE,
 		productsList: sanitizedProductsList,
 		productsListType: type,
+		isPartialList,
 	};
 }
 
@@ -54,7 +55,9 @@ export function requestProductsList( query = {}, siteQueryFailed = false ) {
 
 		return wpcom.req
 			.get( path, requestQuery )
-			.then( ( productsList ) => dispatch( receiveProductsList( productsList, query.type ) ) )
+			.then( ( productsList ) =>
+				dispatch( receiveProductsList( productsList, query.type, !! query.product_slugs?.length ) )
+			)
 			.catch( ( error ) => {
 				// If the query had the site in context and it failed, it means there was either a server error or the site doesn't exist.
 				// In this case, we should retry to fetch the products list without the site in context.

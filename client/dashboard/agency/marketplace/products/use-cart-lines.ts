@@ -5,6 +5,7 @@ import { getEffectivePressableOwnership } from '../hosting/lib/pressable-product
 import { WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { useOwnedWpcomSites } from '../use-owned-wpcom-sites';
+import { matchesCartEntry } from './lib/pressable-memory-addon';
 import { getProductPriceInfo, getWpcomTieredPrice } from './lib/product-pricing';
 import type { TermPricing } from '../use-term-pricing';
 import type { ProductPriceInfo } from './lib/product-pricing';
@@ -49,7 +50,7 @@ export function useCartLines( {
 		() =>
 			items
 				.map( ( item ): CartLine | null => {
-					const product = products.find( ( candidate ) => candidate.slug === item.slug );
+					const product = products.find( ( candidate ) => matchesCartEntry( candidate, item ) );
 					if ( ! product ) {
 						return null;
 					}

@@ -13,8 +13,7 @@ let mockIsOpen = true;
 let mockHasAiChatEntry = false;
 let mockIsStoreReady = true;
 let mockAgentDockCatchAll = false;
-let mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
-const mockUseAbilitiesSetup = jest.fn();
+let mockAgentConfig = { agentId: 'wp-orchestrator' };
 const mockCreateAgentConfig = jest.fn(
 	async ( { sessionId, agentId }: { sessionId: string; agentId: string } ) => ( {
 		agentId,
@@ -55,7 +54,6 @@ jest.mock( '../../hooks/use-open-chat-url-param', () => ( {
 jest.mock( '../../utils/load-external-providers', () => ( {
 	loadExternalProviders: async () => ( {
 		providerIds: [],
-		useAbilitiesSetup: mockUseAbilitiesSetup,
 	} ),
 } ) );
 jest.mock( '../../hooks/use-empty-view-suggestions', () => ( {
@@ -121,44 +119,13 @@ describe( 'AgentSetup', () => {
 		mockHasAiChatEntry = false;
 		mockIsStoreReady = true;
 		mockAgentDockCatchAll = false;
-		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
+		mockAgentConfig = { agentId: 'wp-orchestrator' };
 		sessionStorage.clear();
 		document.body.className = '';
 		window.history.replaceState( {}, '', '/' );
 		delete ( globalThis as { agentsManagerData?: unknown } ).agentsManagerData;
-		Object.defineProperty( document, 'modelContext', { configurable: true, value: undefined } );
 		setSessionSiteKey( 'no-site' );
 		setSessionUserId( undefined );
-	} );
-
-	it( 'mounts provider ability setup for eligible WebMCP without opening chat', async () => {
-		mockIsOpen = false;
-		mockHasAiChatEntry = true;
-		document.body.className = 'site-editor-php';
-		( globalThis as { agentsManagerData?: unknown } ).agentsManagerData = {
-			isDevMode: true,
-		};
-		Object.defineProperty( document, 'modelContext', {
-			configurable: true,
-			value: { registerTool: jest.fn() },
-		} );
-
-		render( manager( 111 ) );
-
-		await waitFor( () => expect( mockUseAbilitiesSetup ).toHaveBeenCalled() );
-	} );
-
-	it( 'does not mount provider ability setup outside development mode', async () => {
-		document.body.className = 'site-editor-php';
-		Object.defineProperty( document, 'modelContext', {
-			configurable: true,
-			value: { registerTool: jest.fn() },
-		} );
-
-		render( manager( 111 ) );
-
-		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalled() );
-		expect( mockUseAbilitiesSetup ).not.toHaveBeenCalled();
 	} );
 
 	it( 'does not re-initialize while the chat view stays shown', async () => {
@@ -214,10 +181,9 @@ describe( 'AgentSetup', () => {
 		window.removeEventListener( 'popstate', onPopState );
 	} );
 
-	it( 'captures the initial session before loading gates resolve', async () => {
+	it( 'captures the initial session before the store is ready', async () => {
 		mockIsStoreReady = false;
 		mockAgentManager.hasAgent.mockReturnValue( false );
-		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: true };
 		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session' );
 
 		const { rerender } = render( manager( 111 ) );
@@ -227,7 +193,6 @@ describe( 'AgentSetup', () => {
 
 		window.history.replaceState( {}, '', '/?canvas=edit' );
 		mockIsStoreReady = true;
-		mockAgentConfig = { agentId: 'wp-orchestrator', isLoading: false };
 		rerender( manager( 111 ) );
 
 		await waitFor( () =>
@@ -295,7 +260,7 @@ describe( 'AgentSetup', () => {
 	} );
 
 	it( 'ignores a handed-off session for a surface-bound agent', async () => {
-		mockAgentConfig = { agentId: 'custom-agent', isLoading: false };
+		mockAgentConfig = { agentId: 'custom-agent' };
 		window.history.replaceState( {}, '', '/?wp-agent-chat=url-session&wp-agent-site=111' );
 
 		render( manager( 111 ) );

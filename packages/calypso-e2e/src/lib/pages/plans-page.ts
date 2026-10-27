@@ -127,8 +127,8 @@ export class PlansPage {
 		// Wait for the page to settle after any preceding navigation before
 		// clicking, to avoid the navigation consuming the action timeout budget.
 		await locator.first().waitFor( { state: 'visible', timeout: 30_000 } );
-		// In the `/plans` view, there are two buttons for "Upgrade" on the
-		// plan comparison chart. Select the first one.
+		// The features grid and the comparison grid each render a button for
+		// the plan. Select the first one.
 		await locator.first().click();
 	}
 

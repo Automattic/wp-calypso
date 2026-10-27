@@ -122,8 +122,12 @@ object CalypsoApps: BuildType({
 		bashNodeScript {
 			name = "Install dependencies"
 			scriptContent = """
-				composer install
-				yarn install
+				# Webpack reads most workspace packages from source, so skip the full
+				# postinstall build; the packages that still need theirs are built below.
+				export SKIP_CALYPSO_POSTINSTALL=true
+
+				ELECTRON_SKIP_BINARY_DOWNLOAD=1 yarn install
+				yarn build-packages:apps
 			"""
 		}
 

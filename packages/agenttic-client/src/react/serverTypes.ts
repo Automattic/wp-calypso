@@ -3,7 +3,7 @@
  * Maps to odie-assistant.php endpoints on WordPress.com
  */
 
-import { generateMessageId } from '../client/utils/core';
+import { isA2uiDataPart } from '../client/utils/core';
 import type { FilePart, Message, Part, TextPart } from '../client/types/index';
 
 /**
@@ -18,12 +18,17 @@ export interface ServerFilePart {
 }
 
 /**
- * Context structure that may contain file parts, sources, and flags (e.g. forward_to_human_support)
+ * Context structure that may contain file parts, sources, flags (e.g. forward_to_human_support),
+ * where the client said the prompt came from (`clientContext.metadata.promptSource`), and an
+ * interactive UI surface (`a2ui`, A2UI's A2A data part).
  */
 export interface ServerMessageContext {
 	file_parts?: ServerFilePart[];
 	sources?: unknown;
 	flags?: Record< string, unknown >;
+	promptSource?: string;
+	promptSourceId?: string;
+	a2ui?: unknown;
 	[ key: string ]: unknown;
 }
 
@@ -39,6 +44,8 @@ export interface ServerMessage {
 	context?: ServerMessageContext | unknown[];
 	created_at: string; // MySQL datetime format: "2025-11-06 14:29:49"
 	ts?: number;
+	/** The ID the message had live, if the server recorded it. */
+	a2a_message_id?: string;
 }
 
 /**
@@ -59,6 +66,27 @@ export interface ServerChat {
 	};
 	created_at: string;
 	updated_at: string;
+	/** Set on page 1 when the last turn is waiting on browser tool calls. */
+	pending_client_tools?: PendingClientTools;
+}
+
+/**
+ * The browser tool calls a chat's last turn is still waiting on, as reported by
+ * the server. After a page change no page sends their results, so the turn stays
+ * paused until one does.
+ */
+export interface PendingClientTools {
+	/**
+	 * `unanswered`: no result arrived for the calls listed. `running`: a run is in
+	 * progress on the session.
+	 */
+	state: 'unanswered' | 'running';
+	/** The calls still waiting on the browser, with the arguments it would have run them with. */
+	calls: Array< {
+		toolCallId: string;
+		toolId: string;
+		arguments: unknown;
+	} >;
 }
 
 /**
@@ -80,6 +108,7 @@ export interface ServerLoadResult {
 	pagination: PaginationMeta;
 	chatId: number;
 	sessionId?: string;
+	pendingClientTools?: PendingClientTools;
 }
 
 /**
@@ -154,19 +183,32 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 		}
 	}
 
-	// Preserve flags (e.g. forward_to_human_support) and sources from context as a data part.
+	// Restore an interactive UI surface as the data part the reply sent it in
+	if ( context && ! Array.isArray( context ) && isA2uiDataPart( context.a2ui ) ) {
+		parts.push( context.a2ui );
+	}
+
+	// Preserve flags (e.g. forward_to_human_support), sources and the prompt
+	// source from context as a data part.
 	if ( context && ! Array.isArray( context ) ) {
 		const ctx = context as ServerMessageContext;
 		const hasFlags = ctx.flags && typeof ctx.flags === 'object' && ctx.flags !== null;
 		const hasSources = Array.isArray( ctx.sources ) && ctx.sources.length > 0;
+		const hasPromptSource = typeof ctx.promptSource === 'string' && ctx.promptSource !== '';
 
-		if ( hasFlags || hasSources ) {
+		if ( hasFlags || hasSources || hasPromptSource ) {
 			const data: Record< string, unknown > = {};
 			if ( hasFlags ) {
 				data.flags = ctx.flags;
 			}
 			if ( hasSources ) {
 				data.sources = ctx.sources;
+			}
+			if ( hasPromptSource ) {
+				data.promptSource = ctx.promptSource;
+				if ( typeof ctx.promptSourceId === 'string' && ctx.promptSourceId !== '' ) {
+					data.promptSourceId = ctx.promptSourceId;
+				}
 			}
 			parts.push( {
 				type: 'data',
@@ -191,13 +233,38 @@ export function serverMessageToMessage( serverMessage: ServerMessage ): Message 
 		role,
 		kind: 'message',
 		parts,
-		messageId: generateMessageId(),
+		// The ID it had live, so every copy names it the same. Without one, its row ID, which some
+		// agents also use live.
+		messageId: serverMessage.a2a_message_id || String( serverMessage.message_id ),
 		metadata: {
 			timestamp,
 			serverId: serverMessage.message_id,
 			chatId: serverMessage.chat_id,
 		},
 	};
+}
+
+/**
+ * Keeps message IDs unique across joined history pages. A retried turn can store one ID on two
+ * rows, and the server dedupes only within a page, so here too the newest row keeps the ID and the
+ * others take their row IDs.
+ * @param messages - Messages mapped by `serverMessageToMessage`, from one or more pages
+ */
+export function withUniqueMessageIds( messages: Message[] ): Message[] {
+	const newestRows = new Map< string, number >();
+	for ( const { messageId, metadata } of messages ) {
+		const serverId = Number( metadata?.serverId );
+		if ( serverId > ( newestRows.get( messageId ) ?? 0 ) ) {
+			newestRows.set( messageId, serverId );
+		}
+	}
+
+	return messages.map( ( message ) => {
+		const serverId = Number( message.metadata?.serverId );
+		return serverId > 0 && serverId !== newestRows.get( message.messageId )
+			? { ...message, messageId: String( serverId ) }
+			: message;
+	} );
 }
 
 /**
@@ -265,6 +332,9 @@ export function serverChatToLoadResult(
 		pagination,
 		chatId: serverChat.chat_id,
 		sessionId: serverChat.session_id,
+		...( serverChat.pending_client_tools && {
+			pendingClientTools: serverChat.pending_client_tools,
+		} ),
 	};
 }
 

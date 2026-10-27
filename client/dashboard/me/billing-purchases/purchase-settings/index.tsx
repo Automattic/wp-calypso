@@ -14,6 +14,7 @@ import {
 	siteJetpackKeysQuery,
 	reinstallMarketplacePluginsQuery,
 	siteBySlugQuery,
+	productsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { domainManagementEdit, domainUseMyDomain } from '@automattic/domains-table/src/utils/paths';
@@ -97,7 +98,6 @@ import {
 	isDotcomPlan,
 	getRenewalUrlFromPurchase,
 	isStorageUpgradeEligible,
-	isWpcomFlexSubscription,
 	isAkismetFreeProduct,
 	isExpiredAndInGracePeriod,
 	isExpiredWithNoAutoRenewAttemptsLeft,
@@ -116,9 +116,9 @@ import {
 	getSitePurchaseStorageUpgradeUrl,
 	getUpgradedPurchaseRedirectUrl,
 } from '../../../utils/site-url';
-import BillingFlexUsageCard from '../../billing-flex-usage';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { BillingPurchaseInfoPopover } from '../dataviews';
+import { MovePurchaseActionItem } from '../move-purchase/move-purchase-action-item';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
@@ -148,9 +148,25 @@ function renewPurchase( purchase: Purchase ): void {
 	window.location.href = getRenewalUrlFromPurchase( purchase );
 }
 
+/**
+ * Whether a product is on sale, `undefined` until known. Fetched only for Jetpack purchases.
+ */
+function useIsOnSale( purchase: Purchase ): ( ( productSlug: string ) => boolean ) | undefined {
+	const { data, isError, isFetching } = useQuery( {
+		...productsQuery(),
+		enabled: purchase.is_jetpack_plan_or_product,
+	} );
+	// Stale data, kept while refreshing or after a failed refresh, may predate the launch.
+	if ( ! data || isError || isFetching ) {
+		return undefined;
+	}
+	return ( productSlug ) => data[ productSlug ]?.available === true;
+}
+
 /** Where to send anything that isn't a WordPress.com plan to upgrade. */
 function getNonPlanUpgradeAction(
-	purchase: Purchase
+	purchase: Purchase,
+	isOnSale?: ( productSlug: string ) => boolean
 ): { href: string; title: string } | undefined {
 	if ( ! purchase.is_upgradable ) {
 		return undefined;
@@ -165,7 +181,11 @@ function getNonPlanUpgradeAction(
 	if ( isEmailPlanAtHighestTier( purchase ) ) {
 		return undefined;
 	}
-	const href = getSitePurchaseUpgradeUrl( purchase, getUpgradedPurchaseRedirectUrl( purchase ) );
+	const href = getSitePurchaseUpgradeUrl(
+		purchase,
+		getUpgradedPurchaseRedirectUrl( purchase ),
+		isOnSale
+	);
 	return href
 		? {
 				href,
@@ -219,7 +239,10 @@ function getUpgradeControlLabel(
  * Label and destination for the header CTA and quick-actions menu, which promote
  * upgrades only — offering downgrades is the body action's job.
  */
-function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: string } | undefined {
+function getHeaderUpgradeAction(
+	purchase: Purchase,
+	isOnSale?: ( productSlug: string ) => boolean
+): { href: string; title: string } | undefined {
 	// WordPress.com plans go through the shared helper. A plan that gets nothing
 	// back has no upgrade to offer, and the non-plan path rejects it too.
 	const planAction = getPlanChangeAction( purchase, {
@@ -230,7 +253,7 @@ function getHeaderUpgradeAction( purchase: Purchase ): { href: string; title: st
 		return { href: planAction.href, title: planAction.title };
 	}
 
-	return getNonPlanUpgradeAction( purchase );
+	return getNonPlanUpgradeAction( purchase, isOnSale );
 }
 
 function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
@@ -294,6 +317,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	const isOnSale = useIsOnSale( purchase );
 
 	// The purchase list gates its renewal link on ownership too.
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
@@ -301,7 +325,7 @@ function usePurchaseHeaderActions( purchase: Purchase ): PurchaseHeaderAction[] 
 	}
 
 	const actions: PurchaseHeaderAction[] = [];
-	const upgradeAction = getHeaderUpgradeAction( purchase );
+	const upgradeAction = getHeaderUpgradeAction( purchase, isOnSale );
 	const storageUpgradeUrl = getSitePurchaseStorageUpgradeUrl( purchase );
 
 	if ( upgradeAction ) {
@@ -352,7 +376,11 @@ function PurchaseActionMenu( { actions }: { actions: PurchaseHeaderAction[] } ) 
 	}
 
 	return (
-		<DropdownMenu icon={ moreVertical } label={ __( 'Quick actions' ) }>
+		<DropdownMenu
+			toggleProps={ { __next40pxDefaultSize: true } }
+			icon={ moreVertical }
+			label={ __( 'Quick actions' ) }
+		>
 			{ () => (
 				<MenuGroup>
 					{ actions.map( ( action ) => (
@@ -395,7 +423,7 @@ export function PurchaseHeaderActions( {
 		: actions.filter( ( action ) => action !== promotedAction );
 
 	return (
-		<HStack justify="space-between">
+		<>
 			{ promotedAction && (
 				<Button
 					__next40pxDefaultSize
@@ -411,7 +439,7 @@ export function PurchaseHeaderActions( {
 					<PurchaseActionMenu actions={ overflowActions } />
 				</PageHeader.ActionMenu>
 			) }
-		</HStack>
+		</>
 	);
 }
 
@@ -616,6 +644,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 	const hasEnTranslation = useHasEnTranslation();
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
+	const isOnSale = useIsOnSale( purchase );
 
 	if ( String( user.ID ) !== String( purchase.user_id ) ) {
 		return null;
@@ -662,7 +691,7 @@ export function ProductChangeActionItem( { purchase }: { purchase: Purchase } ) 
 		);
 	}
 
-	const upgradeAction = getNonPlanUpgradeAction( purchase );
+	const upgradeAction = getNonPlanUpgradeAction( purchase, isOnSale );
 	if ( ! upgradeAction ) {
 		return null;
 	}
@@ -837,6 +866,7 @@ function PurchaseSettingsActions( { purchase }: { purchase: Purchase } ) {
 					<AddMailboxesActionItem purchase={ purchase } />
 				) }
 				<RenewActionButton purchase={ purchase } />
+				<MovePurchaseActionItem purchase={ purchase } />
 				<CancelOrRemoveActionButton purchase={ purchase } />
 			</ActionList>
 		</VStack>
@@ -1856,9 +1886,6 @@ export default function PurchaseSettings() {
 				) }
 				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
 					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
-				) }
-				{ isWpcomFlexSubscription( purchase ) && (
-					<BillingFlexUsageCard purchaseId={ purchase.ID } />
 				) }
 				<PurchaseSettingsActions purchase={ purchase } />
 			</VStack>

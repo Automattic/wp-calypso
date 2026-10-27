@@ -43,6 +43,8 @@ jest.mock( 'smooch', () => ( {
 		loadConversation: jest.fn(),
 		on: jest.fn(),
 		off: jest.fn(),
+		startTyping: jest.fn(),
+		stopTyping: jest.fn(),
 	},
 } ) );
 
@@ -106,6 +108,8 @@ const smooch = Smooch as unknown as {
 	loadConversation: jest.Mock;
 	on: jest.Mock;
 	off: jest.Mock;
+	startTyping: jest.Mock;
+	stopTyping: jest.Mock;
 };
 
 type SmoochInitOptions = { delegate: { onInvalidAuth: () => Promise< string > } };
@@ -263,6 +267,31 @@ describe( 'useManagedZendeskChat', () => {
 		);
 
 		expect( smooch.createConversation ).not.toHaveBeenCalled();
+	} );
+
+	it( 'signals typing on the loaded conversation', async () => {
+		const { result } = renderUseManagedZendeskChat( { conversationId: 'conversation-1' } );
+
+		await waitFor( () => expect( result.current.conversation?.id ).toBe( 'conversation-1' ) );
+
+		result.current.onTypingStatusChange( true );
+		result.current.onTypingStatusChange( false );
+
+		expect( smooch.startTyping ).toHaveBeenCalledWith( 'conversation-1' );
+		expect( smooch.stopTyping ).toHaveBeenCalledWith( 'conversation-1' );
+	} );
+
+	it( 'does not signal typing before the conversation exists', async () => {
+		smooch.createConversation.mockReturnValue( new Promise( () => {} ) );
+		const { result } = renderUseManagedZendeskChat( {} );
+
+		await waitFor( () => expect( smooch.createConversation ).toHaveBeenCalled() );
+
+		result.current.onTypingStatusChange( true );
+		result.current.onTypingStatusChange( false );
+
+		expect( smooch.startTyping ).not.toHaveBeenCalled();
+		expect( smooch.stopTyping ).not.toHaveBeenCalled();
 	} );
 
 	describe( 'site context on Smooch auth errors', () => {

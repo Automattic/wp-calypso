@@ -1,4 +1,5 @@
 import { Site } from '@automattic/api-core';
+import { formatNumber } from '@automattic/number-formatters';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -72,66 +73,66 @@ function getConfirmText( actionId: string, extraActions: string[], items: Plugin
 		case 'activate': {
 			const inactiveCount = items[ 0 ].sitesWithPluginInactive.length;
 			return sprintf(
-				// translators: %1$s is the plugin name. %2$d is the number of sites.
+				// translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 				_n(
-					'You are about to activate the %1$s plugin on %2$d site.',
-					'You are about to activate the %1$s plugin on %2$d sites.',
+					'You are about to activate the %1$s plugin on %2$s site.',
+					'You are about to activate the %1$s plugin on %2$s sites.',
 					inactiveCount
 				),
 				pluginName,
-				inactiveCount
+				formatNumber( inactiveCount )
 			);
 		}
 		case 'deactivate': {
 			const activeCount = items[ 0 ].sitesWithPluginActive.length;
 			return sprintf(
-				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 				_n(
-					'You are about to deactivate the %1$s plugin installed on %2$d site.',
-					'You are about to deactivate the %1$s plugin installed on %2$d sites.',
+					'You are about to deactivate the %1$s plugin installed on %2$s site.',
+					'You are about to deactivate the %1$s plugin installed on %2$s sites.',
 					activeCount
 				),
 				pluginName,
-				activeCount
+				formatNumber( activeCount )
 			);
 		}
 		case 'update': {
 			const updateCount = items[ 0 ].sitesWithPluginUpdate.length;
 			return sprintf(
-				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 				_n(
-					'You are about to update the %1$s plugin installed on %2$d site.',
-					'You are about to update the %1$s plugin installed on %2$d sites.',
+					'You are about to update the %1$s plugin installed on %2$s site.',
+					'You are about to update the %1$s plugin installed on %2$s sites.',
 					updateCount
 				),
 				pluginName,
-				updateCount
+				formatNumber( updateCount )
 			);
 		}
 		case 'enable-autoupdate': {
 			const disabledCount = items[ 0 ].sitesWithPluginNotAutoupdated.length;
 			return sprintf(
-				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 				_n(
-					'You are about to enable auto‑updates for the %1$s plugin installed on %2$d site.',
-					'You are about to enable auto‑updates for the %1$s plugin installed on %2$d sites.',
+					'You are about to enable auto‑updates for the %1$s plugin installed on %2$s site.',
+					'You are about to enable auto‑updates for the %1$s plugin installed on %2$s sites.',
 					disabledCount
 				),
 				pluginName,
-				disabledCount
+				formatNumber( disabledCount )
 			);
 		}
 		case 'disable-autoupdate': {
 			const enabledCount = items[ 0 ].sitesWithPluginAutoupdated.length;
 			return sprintf(
-				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 				_n(
-					'You are about to disable auto‑updates for the %1$s plugin installed on %2$d site.',
-					'You are about to disable auto‑updates for the %1$s plugin installed on %2$d sites.',
+					'You are about to disable auto‑updates for the %1$s plugin installed on %2$s site.',
+					'You are about to disable auto‑updates for the %1$s plugin installed on %2$s sites.',
 					enabledCount
 				),
 				pluginName,
-				enabledCount
+				formatNumber( enabledCount )
 			);
 		}
 		case 'delete':
@@ -140,59 +141,59 @@ function getConfirmText( actionId: string, extraActions: string[], items: Plugin
 				extraActions.includes( 'disable-autoupdate' )
 			) {
 				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 					_n(
-						'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d site.',
-						'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$d sites.',
+						'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$s site.',
+						'You are about to deactivate, disable auto‑updates, and remove the %1$s plugin installed on %2$s sites.',
 						count
 					),
 					pluginName,
-					count
+					formatNumber( count )
 				);
 			}
 
 			if ( extraActions.includes( 'deactivate' ) ) {
 				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 					_n(
-						'You are about to deactivate and remove the %1$s plugin installed on %2$d site.',
-						'You are about to deactivate and remove the %1$s plugin installed on %2$d sites.',
+						'You are about to deactivate and remove the %1$s plugin installed on %2$s site.',
+						'You are about to deactivate and remove the %1$s plugin installed on %2$s sites.',
 						count
 					),
 					pluginName,
-					count
+					formatNumber( count )
 				);
 			}
 
 			if ( extraActions.includes( 'disable-autoupdate' ) ) {
 				return sprintf(
-					// Translators: %1$s is the plugin name. %2$d is the number of sites.
+					// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 					_n(
-						'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d site.',
-						'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$d sites.',
+						'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$s site.',
+						'You are about to disable auto‑updates and remove the %1$s plugin installed on %2$s sites.',
 						count
 					),
 					pluginName,
-					count
+					formatNumber( count )
 				);
 			}
 
 			return sprintf(
-				// Translators: %1$s is the plugin name. %2$d is the number of sites.
+				// Translators: %1$s is the plugin name. %2$s is the formatted number of sites.
 				_n(
-					'You are about to remove the %1$s plugin installed on %2$d site.',
-					'You are about to remove the %1$s plugin installed on %2$d sites.',
+					'You are about to remove the %1$s plugin installed on %2$s site.',
+					'You are about to remove the %1$s plugin installed on %2$s sites.',
 					count
 				),
 				pluginName,
-				count
+				formatNumber( count )
 			);
 		default:
 			return __( 'You are about to perform this action.' );
 	}
 }
 
-function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< number, Site > ) {
+function getSiteList( actionId: string, items: PluginListRow[], sitesById?: Map< number, Site > ) {
 	if ( items.length !== 1 ) {
 		return null;
 	}
@@ -230,7 +231,7 @@ function getSiteList( actionId: string, items: PluginListRow[], sitesById: Map< 
 	return (
 		<ul>
 			{ sites.map( ( siteId ) => {
-				const site = sitesById.get( siteId );
+				const site = sitesById?.get( siteId );
 
 				if ( ! site ) {
 					return null;
@@ -271,59 +272,59 @@ export default function ActionRenderModal( {
 		switch ( action ) {
 			case 'activate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Activated %1$s on %2$d site', 'Activated %1$s on %2$d sites', siteCount ),
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
+					_n( 'Activated %1$s on %2$s site', 'Activated %1$s on %2$s sites', siteCount ),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'deactivate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Deactivated %1$s on %2$d site', 'Deactivated %1$s on %2$d sites', siteCount ),
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
+					_n( 'Deactivated %1$s on %2$s site', 'Deactivated %1$s on %2$s sites', siteCount ),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'update':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Updated %1$s on %2$d site', 'Updated %1$s on %2$d sites', siteCount ),
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
+					_n( 'Updated %1$s on %2$s site', 'Updated %1$s on %2$s sites', siteCount ),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'enable-autoupdate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Enabled auto‑updates for %1$s on %2$d site',
-						'Enabled auto‑updates for %1$s on %2$d sites',
+						'Enabled auto‑updates for %1$s on %2$s site',
+						'Enabled auto‑updates for %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'disable-autoupdate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Disabled auto‑updates for %1$s on %2$d site',
-						'Disabled auto‑updates for %1$s on %2$d sites',
+						'Disabled auto‑updates for %1$s on %2$s site',
+						'Disabled auto‑updates for %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'delete':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
-					_n( 'Deleted %1$s on %2$d site', 'Deleted %1$s on %2$d sites', siteCount ),
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
+					_n( 'Deleted %1$s on %2$s site', 'Deleted %1$s on %2$s sites', siteCount ),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			default:
 				return sprintf(
-					// translators: %d is the number of sites.
-					_n( 'Action completed on %d site', 'Action completed on %d sites', siteCount ),
-					siteCount
+					// translators: %s is the formatted number of sites.
+					_n( 'Action completed on %s site', 'Action completed on %s sites', siteCount ),
+					formatNumber( siteCount )
 				);
 		}
 	};
@@ -333,75 +334,75 @@ export default function ActionRenderModal( {
 		switch ( action ) {
 			case 'activate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Failed to activate %1$s on %2$d site',
-						'Failed to activate %1$s on %2$d sites',
+						'Failed to activate %1$s on %2$s site',
+						'Failed to activate %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'deactivate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Failed to deactivate %1$s on %2$d site',
-						'Failed to deactivate %1$s on %2$d sites',
+						'Failed to deactivate %1$s on %2$s site',
+						'Failed to deactivate %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'update':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Failed to update %1$s on %2$d site',
-						'Failed to update %1$s on %2$d sites',
+						'Failed to update %1$s on %2$s site',
+						'Failed to update %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'enable-autoupdate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Failed to enable auto‑updates for %1$s on %2$d site',
-						'Failed to enable auto‑updates for %1$s on %2$d sites',
+						'Failed to enable auto‑updates for %1$s on %2$s site',
+						'Failed to enable auto‑updates for %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'disable-autoupdate':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Failed to disable auto‑updates for %1$s on %2$d site',
-						'Failed to disable auto‑updates for %1$s on %2$d sites',
+						'Failed to disable auto‑updates for %1$s on %2$s site',
+						'Failed to disable auto‑updates for %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			case 'delete':
 				return sprintf(
-					// translators: %1$s is the plugin name, %2$d is the number of sites.
+					// translators: %1$s is the plugin name, %2$s is the formatted number of sites.
 					_n(
-						'Failed to delete %1$s on %2$d site',
-						'Failed to delete %1$s on %2$d sites',
+						'Failed to delete %1$s on %2$s site',
+						'Failed to delete %1$s on %2$s sites',
 						siteCount
 					),
 					pluginName,
-					siteCount
+					formatNumber( siteCount )
 				);
 			default:
 				return sprintf(
-					// translators: %d is the number of sites.
-					_n( 'Action failed on %d site', 'Action failed on %d sites', siteCount ),
-					siteCount
+					// translators: %s is the formatted number of sites.
+					_n( 'Action failed on %s site', 'Action failed on %s sites', siteCount ),
+					formatNumber( siteCount )
 				);
 		}
 	};

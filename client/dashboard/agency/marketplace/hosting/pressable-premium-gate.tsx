@@ -10,10 +10,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import { ApprovalGate } from '../../approval-gate';
 import { useScheduleCall } from '../../tiers/use-schedule-call';
+import { HOSTING_REFERRAL_COMMISSION_PERCENTAGE } from '../lib/referral-commission';
 import { useReferralToggle } from '../use-referral-toggle';
-
-const PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE = 20;
 
 interface Props {
 	/** The selected plan, e.g. "Pressable Premium 3". */
@@ -23,12 +23,14 @@ interface Props {
 /** The purchase rail on the Premium tab with referrals off: Premium plans are only sold through referrals. */
 export default function PressablePremiumGate( { label }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { checked, disabled, onChange } = useReferralToggle();
+	const { checked, disabled, onChange, isGated, isGateOpen, closeGate } = useReferralToggle();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { scheduleCall, isLoading } = useScheduleCall( agency?.id );
 
 	const onReferToggle = ( value: boolean ) => {
-		recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_premium_refer_now_click' );
+		if ( ! ( value && isGated ) ) {
+			recordTracksEvent( 'calypso_a4a_marketplace_hosting_pressable_premium_refer_now_click' );
+		}
 		onChange( value );
 	};
 
@@ -39,6 +41,7 @@ export default function PressablePremiumGate( { label }: Props ) {
 
 	return (
 		<Card>
+			{ isGateOpen && <ApprovalGate kind="referral" onClose={ closeGate } /> }
 			<CardHeader>
 				<SectionHeader level={ 3 } title={ __( 'Currently selected' ) } />
 			</CardHeader>
@@ -50,9 +53,9 @@ export default function PressablePremiumGate( { label }: Props ) {
 							{ sprintf(
 								/* translators: %d is the commission percentage. */
 								__(
-									'Premium plans are sold through referrals. Turn on Refer products to refer this plan to a client and earn %d%% commission on every payment.'
+									'Premium plans are sold through referrals. Turn on “Refer to clients” to refer this plan to a client and earn %d%% commission on every payment.'
 								),
-								PRESSABLE_PREMIUM_PLAN_COMMISSION_PERCENTAGE
+								HOSTING_REFERRAL_COMMISSION_PERCENTAGE
 							) }
 						</Text>
 					</VStack>
@@ -60,7 +63,7 @@ export default function PressablePremiumGate( { label }: Props ) {
 						__nextHasNoMarginBottom
 						checked={ checked }
 						disabled={ disabled }
-						label={ __( 'Refer products' ) }
+						label={ __( 'Refer to clients' ) }
 						onChange={ onReferToggle }
 					/>
 					<CardDivider />

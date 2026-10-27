@@ -1,3 +1,4 @@
+import { decodeSiteDomain } from 'calypso/dashboard/agency/marketplace/products/lib/pressable-memory-addon';
 import { MAX_CART_ITEM_QUANTITY } from 'calypso/dashboard/agency/marketplace/products/use-shopping-cart';
 import {
 	buildA4ADashboardLink,
@@ -14,6 +15,8 @@ const DEFAULT_RETURN_PATH = '/purchases';
 export interface AgencyCartEntry {
 	slug: string;
 	quantity: number;
+	/** The Pressable site a PHP memory add-on applies to. */
+	siteDomain?: string;
 }
 
 export interface AgencyCheckoutParams {
@@ -25,7 +28,8 @@ export interface AgencyCheckoutParams {
 
 /**
  * Parses the `products` query param the dashboard cart sends:
- * `slug:quantity,slug:quantity`. A missing or invalid quantity counts as one,
+ * `slug:quantity,slug:quantity:domain`, where a PHP memory add-on names the
+ * Pressable site it applies to. A missing or invalid quantity counts as one,
  * and a quantity above what a cart line can hold is brought down to it.
  */
 export function parseAgencyCartEntries( products: string | null | undefined ): AgencyCartEntry[] {
@@ -35,10 +39,12 @@ export function parseAgencyCartEntries( products: string | null | undefined ): A
 	return products
 		.split( ',' )
 		.map( ( entry ) => {
-			const [ slug = '', quantity ] = entry.split( ':' );
+			const [ slug = '', quantity, encodedSiteDomain ] = entry.split( ':' );
+			const siteDomain = decodeSiteDomain( encodedSiteDomain );
 			return {
 				slug: slug.trim(),
 				quantity: Math.min( MAX_CART_ITEM_QUANTITY, Math.max( 1, parseInt( quantity, 10 ) || 1 ) ),
+				...( siteDomain ? { siteDomain } : {} ),
 			};
 		} )
 		.filter( ( entry ) => entry.slug !== '' );

@@ -24,7 +24,7 @@ import {
 import { getEligibility } from 'calypso/state/automated-transfer/selectors';
 import SupportCard from '../store-address/support-card';
 import type { Step } from '../../types';
-import type { SiteSelect } from '@automattic/data-stores';
+
 import './style.scss';
 
 const ActionSection = styled.div`
@@ -71,7 +71,7 @@ const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function Bun
 	const siteId = site && site?.ID;
 	const pluginSlug = useSitePluginSlug();
 	const isAtomicSite = useSelect(
-		( select ) => siteId && ( select( SITE_STORE ) as SiteSelect ).isSiteAtomic( siteId ),
+		( select ) => siteId && select( SITE_STORE ).isSiteAtomic( siteId ),
 		[ siteId ]
 	);
 	const { requestLatestAtomicTransfer } = useDispatch( SITE_STORE );
@@ -92,12 +92,11 @@ const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function Bun
 	const warnings =
 		eligibilityWarnings?.filter( ( { id } ) => id !== 'wordpress_subdomain' ) ?? null;
 	const latestAtomicTransfer = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransfer( siteId || 0 ),
+		( select ) => select( SITE_STORE ).getSiteLatestAtomicTransfer( siteId || 0 ),
 		[ siteId ]
 	);
 	const latestAtomicTransferError = useSelect(
-		( select ) =>
-			( select( SITE_STORE ) as SiteSelect ).getSiteLatestAtomicTransferError( siteId || 0 ),
+		( select ) => select( SITE_STORE ).getSiteLatestAtomicTransferError( siteId || 0 ),
 		[ siteId ]
 	);
 	const productsList = useSelect(
@@ -105,7 +104,7 @@ const BundleConfirm: Step< { submits: { checkoutUrl: string } } > = function Bun
 		[]
 	);
 	const requiresUpgrade = useSelect(
-		( select ) => ( select( SITE_STORE ) as SiteSelect ).requiresUpgrade( siteId ),
+		( select ) => select( SITE_STORE ).requiresUpgrade( siteId ),
 		[ siteId ]
 	);
 

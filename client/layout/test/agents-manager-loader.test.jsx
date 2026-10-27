@@ -108,6 +108,14 @@ it( 'preserves shared loader behavior outside plugins and initializes plugins on
 	expect( window.agentsManagerData.agentProviders ).toHaveLength( 1 );
 } );
 
+it( 'declares the masterbar AI chat button only while the masterbar is visible', async () => {
+	const { rerender } = render( <AgentsManagerLoader sectionName="hosting" isMasterbarVisible /> );
+	expect( loadedProps().hasMasterbarAiChatButton ).toBe( true );
+
+	rerender( <AgentsManagerLoader sectionName="hosting" isMasterbarVisible={ false } /> );
+	expect( loadedProps().hasMasterbarAiChatButton ).toBe( false );
+} );
+
 it( 'does not fall back to the primary site on global plugin pages', async () => {
 	getSelectedSite.mockReturnValue( null );
 	useHelpCenterSite.mockReturnValue( { selectedSite: null, site: primarySite } );

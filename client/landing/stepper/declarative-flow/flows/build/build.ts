@@ -10,11 +10,12 @@ import { useExitFlow } from '../../../hooks/use-exit-flow';
 import { useSiteIdParam } from '../../../hooks/use-site-id-param';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
+import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { useLaunchpadDecider } from '../../internals/hooks/use-launchpad-decider';
 import { STEPS } from '../../internals/steps';
 import { Flow, ProvidedDependencies } from '../../internals/types';
 
-const steps = [ STEPS.LAUNCHPAD, STEPS.PROCESSING ];
+const steps = stepsWithRequiredLogin( [ STEPS.LAUNCHPAD, STEPS.PROCESSING ] );
 
 const build: Flow = {
 	name: BUILD_FLOW,
@@ -24,6 +25,10 @@ const build: Flow = {
 	isSignupFlow: false,
 	useSteps() {
 		return steps;
+	},
+	// Everyone here already has an account, so log them in rather than offering signup.
+	useLoginParams() {
+		return { customLoginPath: '/log-in' };
 	},
 	useTracksEventProps() {
 		const goals = useSelect(

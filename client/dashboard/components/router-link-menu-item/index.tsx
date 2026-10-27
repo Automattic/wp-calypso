@@ -1,11 +1,9 @@
 import { createLink } from '@tanstack/react-router';
 import { MenuItem } from '@wordpress/components';
-import { WordPressComponentProps } from '@wordpress/components/build-types/context/wordpress-component';
-import { MenuItemProps } from '@wordpress/components/build-types/menu-item/types';
-import { forwardRef } from 'react';
+import { forwardRef, type ComponentPropsWithoutRef } from 'react';
 
 function RouterLinkMenuItem(
-	props: WordPressComponentProps< MenuItemProps, 'button', false >,
+	props: ComponentPropsWithoutRef< typeof MenuItem >,
 	// To do: Fix MenuItemProps so that it allows HTMLAnchorElement.
 	ref: React.Ref< HTMLButtonElement >
 ) {

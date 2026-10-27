@@ -1,5 +1,14 @@
 #### Unreleased
 
+- Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 65.3.4 and `eslint-plugin-react-hooks` to 7.1.1. `jsdoc/check-param-names` now also checks the properties of object-typed parameters.
+- Turned off the rules `eslint-plugin-jsdoc` added to its recommended config after v50: `escape-inline-tags`, `reject-any-type`, `reject-function-type`, `require-throws-type`, `require-yields-type` and `ts-no-empty-object-type`.
+- Breaking: Requires ESLint 10.13 or later in 10.x. The presets are flat config only: `recommended` and `react`. The eslintrc presets `plugin:wpcalypso/recommended` and `plugin:wpcalypso/react` are removed, since ESLint 10 can't load eslintrc; stay on 8.x to keep using them. Scope the presets to your JavaScript files with `files` and `extends`, as the README shows.
+- Breaking: The presets use ESLint's own parser instead of `@babel/eslint-parser`, which is no longer a peer dependency, so they no longer need a Babel config. Set your own parser after them for Flow, TypeScript or proposal syntax; `@babel/eslint-parser` needs version 8 on ESLint 10. With ESLint's parser, `no-undef` also reports undefined JSX components, as `react/jsx-no-undef` does; `no-use-before-define` also counts JSX references, so a component that renders one declared below it with `const` is reported; built-in globals now include those added after ES2015, such as `globalThis`; and a top-level `return` is a parse error in `.js` and `.mjs` files, which ESLint lints as ES modules.
+- The presets use `@eslint/js` 9's recommended rules, a new dependency. `comma-dangle` still doesn't check function arguments and parameters. They don't turn on `no-unassigned-vars`, `no-useless-assignment` or `preserve-caught-error`, which `@eslint/js` 10 added.
+- Breaking: `react` no longer turns on `react/jsx-curly-spacing` and `react/jsx-tag-spacing`, which crash on ESLint 10. Prettier covers `jsx-tag-spacing`; for the spaces inside JSX braces that `jsx-curly-spacing` enforced, use wp-prettier or `@stylistic/jsx-curly-spacing`.
+- The `i18n-ellipsis` and `jsx-async-load-require-top-level` rules use `context.sourceCode` instead of `context.getSourceCode()`, which ESLint 10 removed.
+- The presets give `eslint-plugin-inclusive-language`'s rule `context.getSourceCode()`, which ESLint 10 removed, so don't register that plugin yourself next to them. `new-cap` allows `new this.constructor()`, which ESLint 10 started reporting.
+
 #### v8.0.0 (2023-09-14)
 
 - Breaking: Updated peer dependency `eslint-plugin-jsdoc` to 46.5.1, which

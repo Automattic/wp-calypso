@@ -3,4 +3,4 @@ package. They help Calypso interpret the credentials API’s step-by-step progre
 state machine that maps the progress messages (or state transitions) to a list of steps that can
 more easily be rendered by the UI.
 
-When this directory is removed, remember to update /.eslintignore and /.prettierignore!
+When this directory is removed, remember to update /.prettierignore!

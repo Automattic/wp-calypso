@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.20
 
 ARG cache_mode=seed
-ARG node_version=24.15.0
+ARG node_version=24.22.1
 ARG cache_seed_image=registry.a8c.com/calypso/cache-seed:latest
 
 ###################
@@ -37,6 +37,7 @@ FROM builder-cache-${cache_mode} AS deps
 WORKDIR /calypso
 ENV PLAYWRIGHT_SKIP_DOWNLOAD=true
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV ELECTRON_SKIP_BINARY_DOWNLOAD=1
 ENV SKIP_TSC=true
 ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true

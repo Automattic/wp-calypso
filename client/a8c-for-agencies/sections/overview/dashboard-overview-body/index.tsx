@@ -23,6 +23,7 @@ import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-co
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
+import { successNotice } from 'calypso/state/notices/actions';
 
 function DashboardOverviewBodyContent( {
 	isEligibleForPressableExpansionOffer,
@@ -46,6 +47,10 @@ function DashboardOverviewBodyContent( {
 		},
 		[ dispatch ]
 	);
+
+	const handleCertificationShareCopy = useCallback( () => {
+		dispatch( successNotice( __( 'Message copied. Paste it into a chat or email.' ) ) );
+	}, [ dispatch ] );
 
 	const handleRelaunchTour = useCallback( () => {
 		window.location.hash = ONBOARDING_TOUR_HASH;
@@ -98,6 +103,8 @@ function DashboardOverviewBodyContent( {
 			onScheduleCall={ scheduleCall }
 			isSchedulingCall={ isSchedulingCall }
 			onRelaunchTour={ handleRelaunchTour }
+			partnerManager={ agency.partner_manager }
+			onCertificationShareCopy={ handleCertificationShareCopy }
 			recordTracksEvent={ handleRecordTracksEvent }
 		/>
 	);

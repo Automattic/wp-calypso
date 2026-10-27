@@ -10,18 +10,17 @@ import {
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
-import type { AuthProvider, UseAgentChatReturn } from '@automattic/agenttic-client';
-import type { Message, MessageAction } from '@automattic/agenttic-ui/dist/types';
+import type { AuthProvider, UIMessage as Message } from '@automattic/agenttic-client';
+import type { MessageAction } from '@automattic/agenttic-ui';
 
 const FEEDBACK_API_BASE = 'https://public-api.wordpress.com/wpcom/v2/ai/feedback';
 
-export interface UseFeedbackActionConfig {
-	registerMessageActions: UseAgentChatReturn[ 'registerMessageActions' ];
+interface UseFeedbackActionConfig {
 	messages: Message[];
 	getTraceIdForMessage?: ( messageId: string ) => string | undefined;
 }
 
-export interface UseFeedbackActionReturn {
+interface UseFeedbackActionReturn {
 	showFeedbackInput: boolean;
 	submitFeedbackText: ( feedbackText: string ) => Promise< void >;
 	resetFeedback: () => void;

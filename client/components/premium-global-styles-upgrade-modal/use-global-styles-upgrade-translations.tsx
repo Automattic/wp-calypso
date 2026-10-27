@@ -16,7 +16,7 @@ const useGlobalStylesUpgradeTranslations = ( { numOfSelectedGlobalStyles = 1 }: 
 
 	const personalFeatures = [
 		<strong>{ translate( 'Free domain for one year' ) }</strong>,
-		<strong>{ translate( 'Dozens of premium themes' ) }</strong>,
+		<strong>{ translate( 'All premium themes' ) }</strong>,
 		translate( 'Style customization' ),
 		translate( 'Ad-free experience' ),
 	];

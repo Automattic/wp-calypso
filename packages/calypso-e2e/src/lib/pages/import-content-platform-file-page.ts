@@ -31,6 +31,6 @@ export class ImportContentFromAnotherPlatformOrFilePage {
 	 * @returns A promise that resolves when the action is complete.
 	 */
 	async clickWordPressOption(): Promise< void > {
-		await this.page.getByRole( 'button', { name: 'WordPress' } ).click();
+		await this.page.getByRole( 'button', { name: 'WordPress', exact: true } ).click();
 	}
 }

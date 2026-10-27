@@ -1,14 +1,18 @@
 import config from '@automattic/calypso-config';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprint } from './blueprint';
+import { createBootProgressCallbacks } from './boot-progress';
 import { PLAYGROUND_HOST } from './constants';
+import { PlaygroundNotFoundError } from './playground-not-found-error';
+import type { PlaygroundBootProgress } from './boot-progress';
 import type { Blueprint, BlueprintV1, MountDescriptor, PlaygroundClient } from './types';
 
 export async function initializeWordPressPlayground(
 	iframe: HTMLIFrameElement,
 	recommendedPhpVersion: string,
 	setSearchParams: ( callback: ( prev: URLSearchParams ) => URLSearchParams ) => void,
-	onPlaygroundClientLoaded?: () => void
+	onPlaygroundClientLoaded?: () => void,
+	onBootProgress?: ( progress: PlaygroundBootProgress ) => void
 ): Promise< { blueprint: Blueprint | null; client: PlaygroundClient } > {
 	let isWordPressInstalled = false;
 	let needsUrlUpdate = false;
@@ -41,14 +45,25 @@ export async function initializeWordPressPlayground(
 			/* webpackIgnore: true */ PLAYGROUND_HOST + '/client/index.js'
 		);
 		onPlaygroundClientLoaded?.();
-		const client = await startPlaygroundWeb( {
-			iframe,
-			remoteUrl: PLAYGROUND_HOST + '/remote.html',
-			scope: playgroundSlug,
-			blueprint: blueprint as BlueprintV1,
-			shouldInstallWordPress: ! isWordPressInstalled,
-			mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
-		} );
+		let client: PlaygroundClient;
+		try {
+			client = await startPlaygroundWeb( {
+				iframe,
+				remoteUrl: PLAYGROUND_HOST + '/remote.html',
+				scope: playgroundSlug,
+				blueprint: blueprint as BlueprintV1,
+				shouldInstallWordPress: ! isWordPressInstalled,
+				mounts: isWordPressInstalled ? [ mountDescriptor ] : [],
+				...( onBootProgress && ! isWordPressInstalled
+					? createBootProgressCallbacks( onBootProgress )
+					: {} ),
+			} );
+		} catch ( error ) {
+			if ( isWordPressInstalled ) {
+				throw new PlaygroundNotFoundError( playgroundId, error );
+			}
+			throw error;
+		}
 
 		if ( ! isWordPressInstalled ) {
 			const blueprintDeclaration = await getBlueprintDeclaration( blueprint );
@@ -92,10 +107,8 @@ export async function initializeWordPressPlayground(
 
 		return { blueprint, client };
 	} catch ( error ) {
-		if ( needsUrlUpdate ) {
-			updateUrlWithPlaygroundId( playgroundId, url, setSearchParams );
-		}
-
+		// Don't persist a freshly generated ID in the URL: nothing was written to OPFS,
+		// so a retry would otherwise try to restore a playground that never existed.
 		logToLogstash( {
 			feature: 'calypso_client',
 			tags: [ 'playground-setup' ],

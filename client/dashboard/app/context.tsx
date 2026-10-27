@@ -50,10 +50,6 @@ export type MeSupports = {
 	apps: boolean;
 };
 
-export type SiteOverviewSupports = {
-	preview: boolean;
-};
-
 export type AppConfig = {
 	name: string;
 	unifiedAdminPageViewApp?: 'msd' | 'a4a';
@@ -75,8 +71,6 @@ export type AppConfig = {
 		me: MeSupports | false;
 		commandPalette: boolean;
 		domainOnlySites: boolean;
-		startStoreRoute?: boolean;
-		siteOverview: SiteOverviewSupports;
 		colorScheme: boolean;
 		darkMode: boolean;
 	};
@@ -126,10 +120,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		me: false,
 		commandPalette: false,
 		domainOnlySites: false,
-		startStoreRoute: false,
-		siteOverview: {
-			preview: false,
-		},
 		colorScheme: false,
 		darkMode: false,
 	},

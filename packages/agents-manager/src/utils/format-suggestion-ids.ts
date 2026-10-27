@@ -1,4 +1,4 @@
-import type { Suggestion } from '../types';
+import type { Suggestion } from '@automattic/agenttic-ui';
 
 /**
  * Pipe-delimited list of suggestion ids (e.g. `|id1|id2|`), matching Big Sky's

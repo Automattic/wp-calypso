@@ -142,6 +142,25 @@ export interface ReceiptItem {
 	 * example a Woo Express trial), or null if this item was not an upgrade.
 	 */
 	previous_plan_slug: string | null;
+	/**
+	 * The product's meta value, as on `/me/transactions` purchases: the domain
+	 * for domain, email and site-redirect products, or the theme ID for a theme.
+	 * Null on rows other than purchases (refunds, chargebacks and so on), where
+	 * the underlying note is free text.
+	 */
+	meta: string | null;
+	/**
+	 * True for a domain transfer whose provisioning waits on the customer.
+	 * Only set by the single-receipt endpoint; always false in the
+	 * billing-history list.
+	 */
+	delayed_provisioning: boolean;
+	/**
+	 * True for a 100-year domain registration or transfer. In the
+	 * billing-history list, a 100-year transfer that is still in progress shows
+	 * false; the single-receipt endpoint also checks the transfer's options.
+	 */
+	is_hundred_year_domain: boolean;
 }
 
 export interface Receipt {
@@ -169,7 +188,6 @@ export interface Receipt {
 	cc_num: string;
 	cc_name: string;
 	cc_email: string;
-	credit: string;
 	items: ReceiptItem[];
 	tax_vendor_info?: TaxVendorInfo;
 	/**

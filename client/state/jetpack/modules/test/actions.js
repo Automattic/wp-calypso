@@ -26,8 +26,8 @@ describe( 'actions', () => {
 		const siteId = 123456;
 		const silent = true;
 
-		test( 'should dispatch JETPACK_MODULE_ACTIVATE when trying to activate a module', () => {
-			activateModule( siteId, 'module-a', silent )( spy );
+		test( 'should dispatch JETPACK_MODULE_ACTIVATE when trying to activate a module', async () => {
+			const result = activateModule( siteId, 'module-a', silent )( spy );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_MODULE_ACTIVATE,
@@ -35,6 +35,9 @@ describe( 'actions', () => {
 				moduleSlug: 'module-a',
 				silent,
 			} );
+
+			// Let the request settle so it can't consume a later test's mock.
+			await result;
 		} );
 
 		describe( '#success', () => {
@@ -97,8 +100,8 @@ describe( 'actions', () => {
 		const siteId = 123456;
 		const silent = true;
 
-		test( 'should dispatch JETPACK_MODULE_DEACTIVATE when trying to deactivate a module', () => {
-			deactivateModule( siteId, 'module-b', silent )( spy );
+		test( 'should dispatch JETPACK_MODULE_DEACTIVATE when trying to deactivate a module', async () => {
+			const result = deactivateModule( siteId, 'module-b', silent )( spy );
 
 			expect( spy ).toHaveBeenCalledWith( {
 				type: JETPACK_MODULE_DEACTIVATE,
@@ -106,6 +109,9 @@ describe( 'actions', () => {
 				moduleSlug: 'module-b',
 				silent,
 			} );
+
+			// Let the request settle so it can't consume a later test's mock.
+			await result;
 		} );
 
 		describe( '#success', () => {

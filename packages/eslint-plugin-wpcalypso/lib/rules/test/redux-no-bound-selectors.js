@@ -10,7 +10,7 @@
 //------------------------------------------------------------------------------
 
 const RuleTester = require( 'eslint' ).RuleTester;
-const rule = require( '../../../lib/rules/redux-no-bound-selectors' );
+const plugin = require( '../../..' );
 
 const REF = ' See wp-calypso#14024';
 const BIND_ERROR_MESSAGE = "Don't bind functions within `connect`." + REF;
@@ -20,9 +20,12 @@ const FUNC_ERROR_MESSAGE = "Don't instantiate functions within `connect`." + REF
 // Tests
 //------------------------------------------------------------------------------
 
-new RuleTester().run( 'redux-no-bound-selectors', rule, {
-	valid: [
-		`createSelector( function( state ) {
+new RuleTester( { languageOptions: { ecmaVersion: 5, sourceType: 'script' } } ).run(
+	'redux-no-bound-selectors',
+	plugin.rules[ 'redux-no-bound-selectors' ],
+	{
+		valid: [
+			`createSelector( function( state ) {
 			return state.foos.map( function( foo ) {
 				return state.bars.items[ foo ];
 			} );
@@ -30,7 +33,7 @@ new RuleTester().run( 'redux-no-bound-selectors', rule, {
 			return state.foos;
 		} )`,
 
-		`React.createClass( {
+			`React.createClass( {
 			setFoo: function( foo ) {
 				this.setState( { foo: foo }, function( state ) {
 					action( state.bars );
@@ -38,7 +41,7 @@ new RuleTester().run( 'redux-no-bound-selectors', rule, {
 			}
 		} )`,
 
-		`var mapState = function( state ) {
+			`var mapState = function( state ) {
 			return {
 				getSite: getSite.bind( null, state ),
 				getFoos: function( id ) {
@@ -47,7 +50,7 @@ new RuleTester().run( 'redux-no-bound-selectors', rule, {
 			};
 		};`,
 
-		`var mapState = function( state ) {
+			`var mapState = function( state ) {
 			return {
 				getSite: getSite.bind( null, state ),
 				getFoos: function( id ) {
@@ -58,83 +61,83 @@ new RuleTester().run( 'redux-no-bound-selectors', rule, {
 		connect( mapStateToProps );
 		`,
 
-		`connect( function( state ) {
+			`connect( function( state ) {
 			return {
 				value: state.foo.bind.bar
 			};
 		} )( Foo )
 		`,
 
-		'connect();',
+			'connect();',
 
-		"connect( partialRight( mapState, 'foo' ) );",
-	],
+			"connect( partialRight( mapState, 'foo' ) );",
+		],
 
-	invalid: [
-		{
-			code: `connect( function( state ) {
+		invalid: [
+			{
+				code: `connect( function( state ) {
 				return {
 					getSite: getSite.bind( null, state )
 				};
 			} )( Foo )`,
-			errors: [
-				{
-					message: BIND_ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: `connect( function( state ) {
+				errors: [
+					{
+						message: BIND_ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: `connect( function( state ) {
 				return {
 					getSite: bind( getSite, state )
 				};
 			} )( Foo )`,
-			errors: [
-				{
-					message: BIND_ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: `connect( function( state ) {
+				errors: [
+					{
+						message: BIND_ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: `connect( function( state ) {
 				return {
 					getSite: partial( getSite, state )
 				};
 			} )( Foo )`,
-			errors: [
-				{
-					message: BIND_ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: `connect( function( state ) {
+				errors: [
+					{
+						message: BIND_ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: `connect( function( state ) {
 				return {
 					getSite: partialRight( getSite, state )
 				};
 			} )( Foo )`,
-			errors: [
-				{
-					message: BIND_ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: `connect( function( state ) {
+				errors: [
+					{
+						message: BIND_ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: `connect( function( state ) {
 				return {
 					getFoos: function( id ) {
 						return getFoos( state, id );
 					}
 				};
 			} )( Foo )`,
-			errors: [
-				{
-					message: FUNC_ERROR_MESSAGE,
-				},
-			],
-		},
-		{
-			code: `var mapState = function( state ) {
+				errors: [
+					{
+						message: FUNC_ERROR_MESSAGE,
+					},
+				],
+			},
+			{
+				code: `var mapState = function( state ) {
 				return {
 					getSite: getSite.bind( null, state ),
 					getFoos: function( id ) {
@@ -144,7 +147,8 @@ new RuleTester().run( 'redux-no-bound-selectors', rule, {
 			};
 			connect( mapState );
 			`,
-			errors: [ { message: BIND_ERROR_MESSAGE }, { message: FUNC_ERROR_MESSAGE } ],
-		},
-	],
-} );
+				errors: [ { message: BIND_ERROR_MESSAGE }, { message: FUNC_ERROR_MESSAGE } ],
+			},
+		],
+	}
+);

@@ -20,6 +20,9 @@ const isShoppingCartResponse = ( response: Response ): boolean => {
 	}
 };
 
+// Name Pulse rows have their domain in `data-domain`, not in `title`.
+const NAME_PULSE_ROW_SELECTOR = '.name-pulse-row[data-domain]';
+
 // `reloadAndRetry` runs the search closure three times, inside a 120s test.
 const SEARCH_BUDGET = 60 * 1000;
 
@@ -77,6 +80,7 @@ const summarizeCartResponse = async ( response: Response ): Promise< CartRespons
  */
 export class DomainSearchComponent {
 	private page: Page;
+	private searchedLabel?: string;
 	container?: Locator;
 	readonly claimYourSpaceHeading: Locator;
 	/**
@@ -134,6 +138,7 @@ export class DomainSearchComponent {
 		// label only, letters and digits, so `coffee shop` matches
 		// `coffeeshop.com` and `e2e-flow-testing` matches `e2eflowtesting.blog`.
 		const keywordLabel = normalizedKeyword.split( '.' )[ 0 ].replace( /[^a-z0-9]/g, '' );
+		this.searchedLabel = keywordLabel;
 		const titleMatchesKeyword = ( title: string | null ) =>
 			!! title &&
 			title
@@ -187,19 +192,30 @@ export class DomainSearchComponent {
 			await recordResponseThrottle( response );
 
 			// The response resolves before React re-renders the list, and a
-			// pre-fill response can land after it. Wait until the first row is
-			// a suggestion for this keyword, so selectFirstSuggestion never reads
-			// a row from another search.
-			let firstTitle: string | null = null;
+			// pre-fill response can land after it. Wait until the list shows the
+			// keyword: the first row in the classic list, any row in Name Pulse,
+			// which renders fresh results for each search.
+			const namePulseRows = container.locator( NAME_PULSE_ROW_SELECTOR );
+			let seenDomain: string | null = null;
 			for ( let attempt = 0; attempt < 50; attempt++ ) {
-				firstTitle = await firstListitem.getAttribute( 'title' );
-				if ( titleMatchesKeyword( firstTitle ) ) {
-					return;
+				const namePulseDomains = await namePulseRows.evaluateAll( ( rows ) =>
+					rows.map( ( row ) => row.getAttribute( 'data-domain' ) )
+				);
+				if ( namePulseDomains.length ) {
+					seenDomain = namePulseDomains[ 0 ];
+					if ( namePulseDomains.some( titleMatchesKeyword ) ) {
+						return;
+					}
+				} else {
+					seenDomain = await firstListitem.getAttribute( 'title' );
+					if ( titleMatchesKeyword( seenDomain ) ) {
+						return;
+					}
 				}
 				await page.waitForTimeout( within( 200 ) );
 			}
 			throw new Error(
-				`Domain suggestions did not update for "${ keyword }": first suggestion is "${ firstTitle }".`
+				`Domain suggestions did not update for "${ keyword }": first suggestion is "${ seenDomain }".`
 			);
 		}
 
@@ -304,6 +320,10 @@ export class DomainSearchComponent {
 	 * @returns {string} Domain that was selected.
 	 */
 	async selectFirstSuggestion( waitForContinueButton: boolean = true ): Promise< string > {
+		if ( ( await this.getContainer().locator( NAME_PULSE_ROW_SELECTOR ).count() ) > 0 ) {
+			return this.selectFirstNamePulseSuggestion( waitForContinueButton );
+		}
+
 		const targetRow = this.getContainer().getByRole( 'listitem' ).first();
 		const suggestion = await this.selectSuggestion( targetRow, waitForContinueButton );
 
@@ -419,6 +439,115 @@ export class DomainSearchComponent {
 		}
 
 		return selectedDomain;
+	}
+
+	/**
+	 * Adds the first available Name Pulse row to the cart, preferring rows that
+	 * contain the searched keyword. If adding fails, tries the next row.
+	 *
+	 * @param {boolean} waitForContinueButton Whether to wait for the continue button.
+	 * @returns {string} Domain that was selected.
+	 */
+	private async selectFirstNamePulseSuggestion(
+		waitForContinueButton: boolean
+	): Promise< string > {
+		const container = this.getContainer();
+		const addToCart = this.page.getByRole( 'button', { name: 'Add to cart' } );
+		const failedDomains: string[] = [];
+		const errors: string[] = [];
+
+		handleActiveThrottles( [ 'domain-availability' ] );
+
+		const cartResponseSummaries: Promise< CartResponseDiagnostic >[] = [];
+		const trackCartResponse = ( response: Response ) => {
+			if ( isShoppingCartResponse( response ) ) {
+				cartResponseSummaries.push( summarizeCartResponse( response ) );
+			}
+		};
+
+		this.page.on( 'response', trackCartResponse );
+
+		try {
+			for ( let attempt = 1; attempt <= 3; attempt++ ) {
+				const untried = failedDomains.map( ( domain ) => `:not([data-domain="${ domain }"])` );
+				const availableRows = container
+					.locator( NAME_PULSE_ROW_SELECTOR + untried.join( '' ) )
+					.filter( { has: addToCart } );
+				const keywordRows = this.searchedLabel
+					? availableRows.and( container.locator( `[data-domain*="${ this.searchedLabel }"]` ) )
+					: availableRows;
+
+				let candidate = keywordRows.first();
+				try {
+					await candidate.waitFor( { timeout: attempt === 1 ? 30 * 1000 : 5 * 1000 } );
+				} catch {
+					candidate = availableRows.first();
+					await candidate.waitFor( { timeout: 5 * 1000 } );
+				}
+
+				const domain = ( await candidate.getAttribute( 'data-domain' ) ) as string;
+				// Target the row by domain: `candidate` could match another row by now.
+				const rowsForDomain = container.locator( `.name-pulse-row[data-domain="${ domain }"]` );
+				const added = rowsForDomain.getByRole( 'button', { name: 'Remove from cart' } );
+				const failed = rowsForDomain.locator( '.name-pulse-row__cart--error' );
+
+				await rowsForDomain
+					.filter( { has: addToCart } )
+					.first()
+					.getByRole( 'button', { name: 'Add to cart' } )
+					.click();
+				await added
+					.or( failed )
+					.first()
+					.waitFor( { timeout: 30 * 1000 } );
+
+				if ( ( await added.count() ) > 0 ) {
+					if ( waitForContinueButton ) {
+						await this.page
+							.getByRole( 'button', { name: 'Continue' } )
+							.first()
+							.waitFor( { timeout: 30 * 1000 } );
+					}
+
+					return domain;
+				}
+
+				handleActiveThrottles( [ 'domain-availability' ] );
+				failedDomains.push( domain );
+				errors.push(
+					`${ domain }: ${ await failed.first().getAttribute( 'aria-label', { timeout: 1000 } ) }`
+				);
+			}
+
+			throw new Error( 'Every attempt to add a domain to the cart failed.' );
+		} catch ( error ) {
+			// A ban skips the test; don't report it as a failure.
+			handleActiveThrottles( [ 'domain-availability' ] );
+
+			const cartResponses = ( await Promise.allSettled( cartResponseSummaries ) ).map(
+				( result ) =>
+					result.status === 'fulfilled' ? result.value : { error: formatError( result.reason ) }
+			);
+
+			throw new Error(
+				[
+					'Failed to select a Name Pulse domain suggestion.',
+					`Original error: ${ formatError( error ) }`,
+					`Diagnostics: ${ JSON.stringify(
+						{
+							currentUrl: this.page.url(),
+							searchedLabel: this.searchedLabel,
+							errors,
+							cartResponses: cartResponses.slice( -5 ),
+						},
+						null,
+						2
+					) }`,
+				].join( '\n' )
+			);
+		} finally {
+			this.page.off( 'response', trackCartResponse );
+		}
 	}
 
 	/**

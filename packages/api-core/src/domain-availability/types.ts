@@ -95,6 +95,13 @@ export interface DomainAvailability {
 	maintenance_end_time?: string;
 
 	/**
+	 * Whether the root domain of a queried subdomain is registered or mapped on
+	 * WordPress.com by a different account than the current user
+	 * @example true
+	 */
+	root_domain_owned_by_other_user?: boolean;
+
+	/**
 	 * Primary domain of other site
 	 * @example "example.com"
 	 */

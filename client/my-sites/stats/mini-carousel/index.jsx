@@ -120,7 +120,7 @@ const MiniCarousel = ( { slug, isSitePrivate } ) => {
 					'Changing your site from private to public helps people find you and get more visitors. Don’t worry, you can keep working on your site.'
 				) }
 				ctaText={ translate( 'Launch your site' ) }
-				href={ getCalypsoUrl( `/settings/general/${ slug }` ) }
+				href={ getCalypsoUrl( `/sites/${ slug }/settings/site-visibility` ) }
 				key="launch-your-site"
 			/>
 		);

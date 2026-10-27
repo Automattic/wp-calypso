@@ -33,6 +33,18 @@ describe( 'getDisplayName', () => {
 		).toBe( 'Studio Code AI Credits (500 credits)' );
 	} );
 
+	test( 'shows credit count for an AI Credits purchase', () => {
+		expect(
+			getDisplayName(
+				makePurchase( {
+					product_slug: 'ai-credits-lifetime',
+					product_name: 'AI Credits',
+					renewal_price_tier_usage_quantity: 1000,
+				} )
+			)
+		).toBe( 'AI Credits (1,000 credits)' );
+	} );
+
 	test.each( [ null, undefined, 0 ] )(
 		'shows the product name for a quantity of %p',
 		( quantity ) => {
