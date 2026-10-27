@@ -32,7 +32,7 @@ export function PlaygroundIframe( {
 }: {
 	className?: string;
 	hasPlaygroundClient: boolean;
-	setPlaygroundClient: ( client: PlaygroundClient ) => void;
+	setPlaygroundClient: ( client: PlaygroundClient, details: { isNewPlayground: boolean } ) => void;
 	// Covers the page with the Woo intro, instead of the loader, while a new Playground boots.
 	withIntro?: boolean;
 	onIntroChange?: ( isShown: boolean ) => void;
@@ -102,7 +102,7 @@ export function PlaygroundIframe( {
 			showIntro ? setBootProgress : undefined
 		)
 			.then( ( result ) => {
-				setPlaygroundClient( result.client );
+				setPlaygroundClient( result.client, { isNewPlayground: result.isNewPlayground } );
 				if ( showIntro ) {
 					setBootProgress( null );
 					speak( __( 'Your store is ready.' ) );

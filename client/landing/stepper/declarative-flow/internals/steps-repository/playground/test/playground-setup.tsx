@@ -32,11 +32,23 @@ jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
 } ) );
 
+// Set to override what the fake iframe reports about the boot.
+const mockBoot: { isNewPlayground?: boolean } = {};
+
 jest.mock( '../components/playground-iframe', () => ( {
-	PlaygroundIframe: ( { setPlaygroundClient }: { setPlaygroundClient: ( c: object ) => void } ) => {
-		// Like the real iframe, hand over the client once after it boots.
+	PlaygroundIframe: ( {
+		setPlaygroundClient,
+	}: {
+		setPlaygroundClient: ( c: object, details: { isNewPlayground: boolean } ) => void;
+	} ) => {
+		const [ params ] = jest.requireActual( 'react-router-dom' ).useSearchParams();
+		// Like the real iframe, hand over the client once after it boots, and say
+		// whether the boot created a blank Playground because none was requested.
 		jest.requireActual( 'react' ).useEffect( () => {
-			setPlaygroundClient( {} );
+			setPlaygroundClient(
+				{},
+				{ isNewPlayground: mockBoot.isNewPlayground ?? ! params.has( 'playground' ) }
+			);
 			// eslint-disable-next-line react-hooks/exhaustive-deps
 		}, [] );
 		return null;
@@ -90,6 +102,7 @@ describe( 'PlaygroundSetupStep', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		sessionStorage.clear();
+		delete mockBoot.isNewPlayground;
 	} );
 
 	it( 'shows that the Playground site is loading before packing starts', async () => {
@@ -236,6 +249,7 @@ describe( 'PlaygroundSetupStep', () => {
 		const props = await renderSetupStep( BLUEPRINT_SEARCH );
 
 		expect( screen.getByText( 'Your site could not be imported' ) ).toBeVisible();
+		expect( screen.getByText( /while setting up your site/ ) ).toBeVisible();
 		expect( props.navigation.submit ).not.toHaveBeenCalled();
 		expect( importBlueprintMock ).toHaveBeenCalledTimes( 1 );
 
@@ -255,7 +269,7 @@ describe( 'PlaygroundSetupStep', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_playground_blueprint_import_failed',
-			{ site_id: 123 }
+			{ site_id: 123, blueprint: 'my-blueprint', error_message: 'nope' }
 		);
 	} );
 
@@ -275,6 +289,22 @@ describe( 'PlaygroundSetupStep', () => {
 		expect( importPlaygroundSiteMock ).not.toHaveBeenCalled();
 		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'link', { name: 'Go to dashboard' } ) ).toBeVisible();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_playground_import_failed', {
+			site_id: 123,
+			reason: 'playground_not_found',
+		} );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_playground_import_started',
+			expect.anything()
+		);
+	} );
+
+	it( 'does not upload a blank Playground that the boot created under the requested id', async () => {
+		mockBoot.isNewPlayground = true;
+		await renderSetupStep();
+
+		expect( screen.getByText( /could not be found in this browser/ ) ).toBeVisible();
+		expect( importPlaygroundSiteMock ).not.toHaveBeenCalled();
 	} );
 
 	it( 'offers only the dashboard when the upload is not a Playground export', async () => {

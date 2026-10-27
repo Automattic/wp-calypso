@@ -2,7 +2,7 @@ import { ProgressBar } from '@automattic/components';
 import { Progress, SubTitle, Title } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
-import { useRef, useEffect, useState } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProgressScreen from 'calypso/blocks/importer/components/progress-screen';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -24,7 +24,13 @@ import type { PlaygroundClient } from '../../lib/types';
 import './style.scss';
 
 type ImportFailureReason =
-	'timeout' | 'unsupported_file_type' | 'playground_not_found' | 'import_failure';
+	| 'timeout'
+	| 'unsupported_file_type'
+	| 'playground_not_found'
+	| 'import_failure'
+	| 'blueprint_import_failure';
+
+const RETRYABLE_REASONS: ImportFailureReason[] = [ 'import_failure', 'blueprint_import_failure' ];
 
 function getFailureReason( error: unknown ): ImportFailureReason {
 	if ( error instanceof ImportTimeoutError ) {
@@ -51,40 +57,44 @@ export const PlaygroundSetupStep: Step< {
 
 	const [ progress, setProgress ] = useState< PlaygroundImportProgress | null >( null );
 	const [ failureReason, setFailureReason ] = useState< ImportFailureReason | null >( null );
-	// navigation.submit is recreated on every flow render, so the effect's deps
-	// change while a blueprint import is pending. The ref makes each attempt run
-	// exactly once; "Try again" bumps the attempt.
-	const [ blueprintAttempt, setBlueprintAttempt ] = useState( 0 );
-	const startedBlueprintAttemptRef = useRef< number | null >( null );
 	const keepOpenSubtitle = __(
 		'This usually takes a few minutes. Keep this window open until your site is ready.'
 	);
 
-	useEffect( () => {
-		const blueprint = query.get( 'blueprint' );
-		if ( ! blueprint || ! submit || ! siteId ) {
-			return;
-		}
-		if ( startedBlueprintAttemptRef.current === blueprintAttempt ) {
-			return;
-		}
-		startedBlueprintAttemptRef.current = blueprintAttempt;
+	// navigation.submit is recreated on every flow render. Reading it through a
+	// ref keeps it out of effect deps, so a pending import is not started again.
+	const submitRef = useRef( submit );
+	submitRef.current = submit;
 
-		const runBlueprintImport = async () => {
+	const startBlueprintImport = useCallback(
+		async ( blueprint: string ) => {
+			setFailureReason( null );
 			try {
 				await importBlueprint( { blueprint, siteId } );
 			} catch ( error ) {
-				recordTracksEvent( 'calypso_playground_blueprint_import_failed', { site_id: siteId } );
-				setFailureReason( 'import_failure' );
+				recordTracksEvent( 'calypso_playground_blueprint_import_failed', {
+					site_id: siteId,
+					blueprint,
+					error_message: error instanceof Error ? error.message : String( error ),
+				} );
+				setFailureReason( 'blueprint_import_failure' );
 				return;
 			}
-			submit( { siteSlug, siteId } );
-		};
-		runBlueprintImport();
-	}, [ query, submit, siteSlug, siteId, importBlueprint, blueprintAttempt ] );
+			submitRef.current?.( { siteSlug, siteId } );
+		},
+		[ importBlueprint, siteId, siteSlug ]
+	);
 
-	const startImport = async ( client: PlaygroundClient ) => {
-		if ( ! client || ! submit ) {
+	useEffect( () => {
+		const blueprint = query.get( 'blueprint' );
+		if ( ! blueprint || ! siteId ) {
+			return;
+		}
+		startBlueprintImport( blueprint );
+	}, [ query, siteId, startBlueprintImport ] );
+
+	const startImport = async ( client: PlaygroundClient, { isNewPlayground = false } = {} ) => {
+		if ( ! client ) {
 			return;
 		}
 
@@ -92,20 +102,25 @@ export const PlaygroundSetupStep: Step< {
 		setFailureReason( null );
 		setProgress( null );
 
-		// The saved Playground can be gone from this browser, in which case the
-		// iframe boots a blank site and there is nothing to import.
-		const playgroundSlug = query.get( 'playground' );
-		if ( ! playgroundSlug ) {
-			setFailureReason( 'playground_not_found' );
-			return;
-		}
-
 		// The Playground publish flow (entrepreneur) exports a WooCommerce sandbox
 		// that carries sandbox-only plugins.
 		const isPublishFlow = sessionStorage.getItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH ) === '1';
 		const eventPrefix = isPublishFlow
 			? 'calypso_playground_woo_import'
 			: 'calypso_playground_import';
+
+		// The saved Playground can be gone from this browser, in which case the
+		// iframe boots a blank site and there is nothing to import.
+		const playgroundSlug = query.get( 'playground' );
+		if ( isNewPlayground || ! playgroundSlug ) {
+			recordTracksEvent( `${ eventPrefix }_failed`, {
+				site_id: siteId,
+				reason: 'playground_not_found',
+			} );
+			setFailureReason( 'playground_not_found' );
+			return;
+		}
+
 		const importStartedAt = Date.now();
 		const durationSeconds = () => Math.round( ( Date.now() - importStartedAt ) / 1000 );
 
@@ -132,16 +147,18 @@ export const PlaygroundSetupStep: Step< {
 		} );
 
 		// Each flow owns where the user goes once the site is ready.
-		submit( { siteSlug, siteId } );
+		submitRef.current?.( { siteSlug, siteId } );
 	};
 
 	const retryImport = () => {
-		if ( playgroundClientRef.current ) {
-			startImport( playgroundClientRef.current );
+		const blueprint = query.get( 'blueprint' );
+		if ( blueprint ) {
+			startBlueprintImport( blueprint );
 			return;
 		}
-		setFailureReason( null );
-		setBlueprintAttempt( ( previous ) => previous + 1 );
+		if ( playgroundClientRef.current ) {
+			startImport( playgroundClientRef.current );
+		}
 	};
 
 	// Without a percentage, the bar pulses.
@@ -175,6 +192,9 @@ export const PlaygroundSetupStep: Step< {
 		import_failure: __(
 			'Something went wrong while importing your Playground site. Please try again.'
 		),
+		blueprint_import_failure: __(
+			'Something went wrong while setting up your site. Please try again.'
+		),
 	};
 
 	const getStatus = () => {
@@ -185,13 +205,13 @@ export const PlaygroundSetupStep: Step< {
 						<Title>{ __( 'Your site could not be imported' ) }</Title>
 						<SubTitle>{ failureMessages[ failureReason ] }</SubTitle>
 						<div className="playground-setup__actions">
-							{ failureReason === 'import_failure' && (
+							{ RETRYABLE_REASONS.includes( failureReason ) && (
 								<Button variant="primary" onClick={ retryImport }>
 									{ __( 'Try again' ) }
 								</Button>
 							) }
 							<Button
-								variant={ failureReason === 'import_failure' ? 'secondary' : 'primary' }
+								variant={ RETRYABLE_REASONS.includes( failureReason ) ? 'secondary' : 'primary' }
 								href={ `/home/${ siteSlug || siteId }` }
 							>
 								{ __( 'Go to dashboard' ) }
