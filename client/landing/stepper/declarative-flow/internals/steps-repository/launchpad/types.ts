@@ -19,7 +19,6 @@ export interface TranslatedLaunchpadStrings {
 // TODO: Convert this type to enum, because union string doesnt protect from duplicates or typos;
 //
 export type TaskId =
-	| 'setup_free'
 	| 'setup_newsletter'
 	| 'setup_blog'
 	| 'blog_launched'

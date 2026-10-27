@@ -1,6 +1,6 @@
 import { createComponentImplementation } from '@a2ui/react';
-import { createElement, useContext } from '@wordpress/element';
-import { InteractiveUiHostPropsContext, InteractiveUiSurfaceContext } from '../contexts/surface';
+import { createElement, Suspense } from '@wordpress/element';
+import { useInteractiveUiHostProps, useInteractiveUiSurface } from '../contexts/surface';
 import type { ReactComponentImplementation } from '@a2ui/react';
 import type { ComponentApi, FunctionImplementation } from '@a2ui/web_core';
 import type { ComponentType } from 'react';
@@ -29,8 +29,17 @@ export interface InteractiveUiCatalogDefinition {
 	catalog: InteractiveUiCatalogDocument;
 
 	/**
+	 * Whether the agent can compose surfaces with the catalog. Set it to `false` for a catalog only
+	 * abilities build surfaces with: the host still lists its ID, but not its document. Defaults to
+	 * `true`.
+	 */
+	agentComposable?: boolean;
+
+	/**
 	 * Each of the document's components. They get bound values resolved, a `set<Prop>` setter for
-	 * each, actions as functions, their `surfaceId` and `disabled` state, and the host's props.
+	 * each, actions as functions, their `surfaceId`, `disabled` and `isShowingErrors` state, the
+	 * host's props, and, when they declare `checks`, `isValid` and `validationErrors`. A `lazy()`
+	 * one renders nothing while it loads.
 	 */
 	// A catalog holds components with different props types.
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,12 +59,23 @@ export function toComponentImplementation(
 	component: ComponentType< any >
 ): ReactComponentImplementation {
 	function DefinitionComponent( { props }: { props: Record< string, unknown > } ) {
-		const { surfaceId, disabled } = useContext( InteractiveUiSurfaceContext );
-		const hostProps = useContext( InteractiveUiHostPropsContext );
+		const { surfaceId, disabled, isShowingErrors } = useInteractiveUiSurface();
+		const hostProps = useInteractiveUiHostProps();
 
-		// Like the basic components, it's disabled with its surface. The surface's own state and
-		// the host's props win, so a surface can't override them.
-		return createElement( component, { ...props, surfaceId, disabled, ...hostProps } );
+		// Like the basic components, it gets its surface's disabled and error state. The surface's
+		// own state and the host's props win, so a surface can't override them. Its own boundary
+		// keeps a `lazy()` one from holding back the rest of the page while it loads.
+		return createElement(
+			Suspense,
+			{ fallback: null },
+			createElement( component, {
+				...props,
+				surfaceId,
+				disabled,
+				isShowingErrors,
+				...hostProps,
+			} )
+		);
 	}
 
 	return {

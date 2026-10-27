@@ -15,6 +15,7 @@ const ThreadItem = ( {
 	authorUrl,
 	meta,
 	status,
+	className,
 	children,
 }: {
 	avatar?: string | null;
@@ -22,13 +23,14 @@ const ThreadItem = ( {
 	authorUrl?: string | null;
 	meta?: ReactNode;
 	status?: ReactNode;
+	className?: string;
 	children: ReactNode;
 } ) => {
 	const photo = (
 		<NoteIcon className="wpnc-simplified__photo" icon={ avatar ?? undefined } size={ 36 } />
 	);
 	const name = author && (
-		<Text size={ 15 } weight={ 600 }>
+		<Text className="wpnc-simplified__author" size={ 15 } weight={ 600 }>
 			{ authorUrl ? (
 				<a href={ authorUrl } target="_blank" rel="noreferrer">
 					{ author }
@@ -40,7 +42,7 @@ const ThreadItem = ( {
 	);
 
 	return (
-		<VStack as="li" spacing={ 3 }>
+		<VStack as="li" className={ className } spacing={ 3 }>
 			<HStack alignment="top" justify="flex-start" spacing={ 3 }>
 				{ authorUrl ? (
 					// The name beside it links to the same profile, so the photo stays out of the tab order.
@@ -77,6 +79,7 @@ export function ThreadParent( {
 } ) {
 	return (
 		<ThreadItem
+			className="wpnc-simplified__thread-parent"
 			avatar={ comment.author_avatar }
 			author={ comment.author_name }
 			authorUrl={ comment.author_url }
@@ -123,9 +126,21 @@ export function ThreadReply( {
 	);
 }
 
-export default function Thread( { children }: { children: ReactNode } ) {
+export default function Thread( {
+	spacing = 4,
+	isReply = false,
+	children,
+}: {
+	spacing?: number;
+	isReply?: boolean;
+	children: ReactNode;
+} ) {
 	return (
-		<VStack as="ol" className="wpnc-simplified__thread" spacing={ 4 }>
+		<VStack
+			as="ol"
+			className={ clsx( 'wpnc-simplified__thread', { 'is-reply': isReply } ) }
+			spacing={ spacing }
+		>
 			{ children }
 		</VStack>
 	);

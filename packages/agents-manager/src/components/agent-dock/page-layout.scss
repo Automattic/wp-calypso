@@ -1,3 +1,5 @@
+@use '../../styles/variables' as *;
+
 /* Shrink mixins */
 // The container narrows in place and the chat slides in beside it on the
 // same timing; visibility flips only after the close slide. Not `transform`

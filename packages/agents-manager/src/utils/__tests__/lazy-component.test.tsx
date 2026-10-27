@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import { render, screen, waitFor } from '@testing-library/react';
-import lazyComponent from '../lazy-component';
+import { Component, Suspense } from '@wordpress/element';
+import lazyComponent, { lazyWithRetry } from '../lazy-component';
 
 // The failure paths wait on the helper's real retry delay, so they need more
 // than Testing Library's default timeout.
@@ -50,5 +51,38 @@ describe( 'lazyComponent', () => {
 			RETRY_TIMEOUT
 		);
 		expect( container ).toBeEmptyDOMElement();
+	} );
+} );
+
+describe( 'lazyWithRetry', () => {
+	class Boundary extends Component< { children: React.ReactNode }, { error?: Error } > {
+		state: { error?: Error } = {};
+
+		static getDerivedStateFromError( error: Error ) {
+			return { error };
+		}
+
+		render() {
+			return this.state.error ? <p>{ this.state.error.message }</p> : this.props.children;
+		}
+	}
+
+	it( 'throws to the boundary around it when the chunk fails twice', async () => {
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const load = jest.fn( () => Promise.reject( new Error( 'Chunk failed.' ) ) );
+		const Lazy = lazyWithRetry( load );
+
+		render(
+			<Boundary>
+				<Suspense fallback={ null }>
+					<Lazy />
+				</Suspense>
+			</Boundary>
+		);
+
+		expect( await screen.findByText( 'Chunk failed.', undefined, RETRY_TIMEOUT ) ).toBeVisible();
+		expect( load ).toHaveBeenCalledTimes( 2 );
+
+		consoleError.mockRestore();
 	} );
 } );

@@ -189,7 +189,7 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 	);
 } );
 
-it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () => {
+it( 'describes the catalogs the chat renders as A2UI renderer capabilities, listing an ability-only catalog by ID only', () => {
 	const wooCatalog = {
 		catalog: {
 			catalogId: WOO_CATALOG_ID,
@@ -221,11 +221,6 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 		'v1.0': {
 			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
 			inlineCatalogs: [
-				expect.objectContaining( {
-					$id: AGENTS_MANAGER_CATALOG_ID,
-					catalogId: AGENTS_MANAGER_CATALOG_ID,
-					protocolVersion: '1.0',
-				} ),
 				{
 					$id: WOO_CATALOG_ID,
 					catalogId: WOO_CATALOG_ID,

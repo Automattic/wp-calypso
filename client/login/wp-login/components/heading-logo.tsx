@@ -52,7 +52,7 @@ const JETPACK_PUSH_LOGO_URL =
 
 interface Props {
 	isJetpack?: boolean;
-	isFromJetpackConnector?: boolean;
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 }
 
@@ -62,7 +62,7 @@ interface Props {
  */
 export const useHeadingLogo = ( {
 	isJetpack,
-	isFromJetpackConnector,
+	isUnifiedConnectionFlow,
 	connectorPlugins,
 }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
@@ -109,7 +109,7 @@ export const useHeadingLogo = ( {
 				viewBox="0 0 60 24"
 			/>
 		);
-	} else if ( isFromJetpackConnector ) {
+	} else if ( isUnifiedConnectionFlow ) {
 		const connectorLogo = getConnectorLogoUrl( connectorPlugins );
 		logo = (
 			<img
