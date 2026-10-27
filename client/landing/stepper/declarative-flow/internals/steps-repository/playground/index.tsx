@@ -3,7 +3,7 @@ import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { isPlaygroundWooIntent } from 'calypso/landing/stepper/utils/playground-woo-intent';
@@ -14,6 +14,7 @@ import { PlaygroundLeaveModal } from './components/playground-leave-modal';
 import { PlaygroundSaveModal } from './components/playground-save-modal';
 import { getBlueprintLabelForTracking } from './lib/blueprint';
 import { DEFAULT_PLAN_INTENT, TRACKS_FLUSH_DELAY, WOO_START_HOSTS_URL } from './lib/constants';
+import { parseWooTracksMessage } from './lib/woo-tracks';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
 
@@ -53,6 +54,16 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			is_woocommerce_intent: isWooCommerceIntent,
 		} ),
 		[ flow, query, isWooCommerceIntent ]
+	);
+
+	const recordWooTracksMessage = useCallback(
+		( data: unknown ) => {
+			const event = parseWooTracksMessage( data );
+			if ( event ) {
+				recordTracksEvent( event.name, { ...tracksProps, ...event.properties } );
+			}
+		},
+		[ tracksProps ]
 	);
 
 	useEffect( () => {
@@ -222,6 +233,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 					setPlaygroundClient={ setPlaygroundClient }
 					withIntro={ isWooCommerceIntent }
 					onIntroChange={ setIsIntroShown }
+					onPlaygroundMessage={ isWooCommerceIntent ? recordWooTracksMessage : undefined }
 				/>
 			</Step.PlaygroundLayout>
 			{ isLeaveModal( activeModal ) && (

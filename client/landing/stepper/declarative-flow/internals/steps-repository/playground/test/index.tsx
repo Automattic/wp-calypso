@@ -810,6 +810,75 @@ describe( 'Playground', () => {
 		} );
 	} );
 
+	describe( 'WooCommerce events from the Playground store', () => {
+		const postStoreMessage = ( data ) =>
+			act( () => {
+				window.dispatchEvent(
+					new MessageEvent( 'message', {
+						data,
+						origin: 'https://playground.wordpress.net',
+						source: screen.getByTitle( 'WordPress Playground' ).contentWindow,
+					} )
+				);
+			} );
+
+		const getStoreEvents = () =>
+			recordTracksEvent.mock.calls.filter( ( [ eventName ] ) =>
+				/^calypso_playground_woo_(page|task)_view$/.test( eventName )
+			);
+
+		it.each( [
+			[ 'wcadmin_page_view', { path: 'wc-admin' }, 'calypso_playground_woo_page_view' ],
+			[ 'wcadmin_task_view', { task_name: 'products' }, 'calypso_playground_woo_task_view' ],
+		] )( 'should record %s with the step props', async ( event, properties, eventName ) => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{
+						initialEntry:
+							'/setup/onboarding/playground?blueprint=woocommerce&playground=1&intent=woocommerce',
+					}
+				);
+			} );
+
+			postStoreMessage( {
+				type: 'woocommerce-playground-tracks',
+				event,
+				properties: { ...properties, email: 'shop@example.com' },
+			} );
+
+			expect( getStoreEvents() ).toEqual( [
+				[
+					eventName,
+					{
+						flow: 'onboarding',
+						step: 'playground',
+						blueprint: expect.any( String ),
+						is_woocommerce_intent: true,
+						...properties,
+					},
+				],
+			] );
+		} );
+
+		it( 'should record nothing outside the WooCommerce entry', async () => {
+			await act( async () => {
+				renderPlaygroundStep(
+					{},
+					{ initialEntry: '/setup/onboarding/playground?blueprint=woocommerce&playground=1' }
+				);
+			} );
+
+			postStoreMessage( {
+				type: 'woocommerce-playground-tracks',
+				event: 'wcadmin_page_view',
+				properties: { path: 'wc-admin' },
+			} );
+
+			expect( getStoreEvents() ).toEqual( [] );
+		} );
+	} );
+
 	describe( 'PlaygroundIframe error handling', () => {
 		it( 'should render PlaygroundError when initialization fails', async () => {
 			initializeWordPressPlayground.mockRejectedValue(
