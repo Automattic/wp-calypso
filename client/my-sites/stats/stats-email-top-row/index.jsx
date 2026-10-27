@@ -1,7 +1,8 @@
 import { Gridicon } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { Icon, send, seen, link } from '@wordpress/icons';
 import clsx from 'clsx';
-import { formatNumber, useTranslate } from 'i18n-calypso';
+import { useTranslate } from 'i18n-calypso';
 import moment from 'moment';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
