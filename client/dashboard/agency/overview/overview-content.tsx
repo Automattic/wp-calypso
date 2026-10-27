@@ -131,7 +131,11 @@ export default function AgencyOverviewContent( {
 					/>
 				) }
 				{ isEnabled( 'a4a-lead-matching-design-preview' ) && links.leadMatching && (
-					<MatchingProfilePreview href={ links.leadMatching } />
+					<MatchingProfilePreview
+						href={ links.leadMatching }
+						agencyId={ agencyId }
+						recordTracksEvent={ recordTracksEvent }
+					/>
 				) }
 				{ showContactOptionsAnnouncement && links.leadMatching && (
 					<SingleEventCard

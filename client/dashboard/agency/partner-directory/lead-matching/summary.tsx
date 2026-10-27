@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -174,6 +175,13 @@ export default function LeadMatchingSummary( {
 	const answered = getAnsweredRequiredFieldCount( formData );
 	const status = getLeadMatchingStatus( formData, isAvailable );
 	const copy = getStatusCopy( status, answered );
+	const previewSearch = isEnabled( 'a4a-lead-matching-design-preview' )
+		? {
+				flags:
+					new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) ).get( 'flags' ) ??
+					'a4a-lead-matching-design-preview',
+			}
+		: undefined;
 
 	return (
 		<VStack spacing={ 8 }>
@@ -199,6 +207,7 @@ export default function LeadMatchingSummary( {
 							<RouterLinkButton
 								variant="primary"
 								to={ PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_ROUTE }
+								search={ previewSearch }
 								onClick={ () =>
 									recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_status_click', {
 										status,

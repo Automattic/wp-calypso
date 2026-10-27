@@ -11,12 +11,13 @@ const CALYPSO_LIVE_ORIGIN = 'https://calypso.live';
  * previewed build's container for the given app flavour. Returns null
  * everywhere else, so callers fall back to their normal static URLs.
  *
- * `env` selects classic Calypso, the my.wordpress.com Dashboard, or legacy A4A.
- * The redirector carries the path and any remaining query params across its 302.
+ * `env` selects the flavour: 'wpcom' for classic Calypso, 'dashboard' for the
+ * my.wordpress.com Dashboard. The redirector carries the path and any remaining
+ * query params across its 302.
  */
 export function calypsoLiveRedirectorLink(
 	path: string,
-	env: 'wpcom' | 'dashboard' | 'a8c-for-agencies'
+	env: 'wpcom' | 'dashboard'
 ): string | null {
 	const image = config( 'calypso_live_image' );
 	if ( ! image ) {
@@ -31,7 +32,7 @@ export function calypsoLiveRedirectorLink(
 	}
 
 	url.searchParams.set( 'image', String( image ) );
-	if ( env !== 'wpcom' ) {
+	if ( env === 'dashboard' ) {
 		url.searchParams.set( 'env', env );
 	}
 	return url.href;
