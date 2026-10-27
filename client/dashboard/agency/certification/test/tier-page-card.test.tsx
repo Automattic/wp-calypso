@@ -54,6 +54,26 @@ describe( '<CertificationTierPageCard>', () => {
 		expect( screen.getByText( '30% off the exam fee' ) ).toBeVisible();
 	} );
 
+	test( 'previews the share message, then copies it', async () => {
+		const writeText = jest.fn().mockResolvedValue( undefined );
+		Object.defineProperty( window.navigator, 'clipboard', {
+			value: { writeText },
+			configurable: true,
+		} );
+		mockAgency();
+		mockDiscountCode( { code: 'HUBSPOT-CODE-123', discount_percent: '30' } );
+		render( <CertificationTierPageCard /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Share with your team' } ) );
+		const message = screen.getByRole( 'textbox', { name: 'Message' } ) as HTMLTextAreaElement;
+		expect( message.value ).toContain( 'We get 30% off the Advanced Professional WordPress' );
+		expect( message.value ).toContain( 'Discount code: HUBSPOT-CODE-123' );
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Copy message' } ) );
+		expect( writeText ).toHaveBeenCalledWith( message.value );
+		await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+	} );
+
 	test( 'records a view, code copies and exam clicks', async () => {
 		const recordTracksEvent = jest.fn();
 		mockAgency();

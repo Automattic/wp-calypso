@@ -6,11 +6,13 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
+import { Fragment } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { isDashboardPath } from '../../utils/link';
+import CertificationShareButton from '../certification/share-button';
 import NewTabLabel from '../components/new-tab-label';
 import {
 	FEATURED_EVENT,
@@ -19,13 +21,18 @@ import {
 	getPressableExpansionOfferEvent,
 	getPressableIntroOfferEvent,
 } from './events';
-import type { FeaturedEvent } from './events';
+import type { FeaturedEvent, FeaturedEventActionCta } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
 
 interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
 	isEligibleForCertificationOffer?: boolean;
+	/** The agency's own certification discount, already doubled while the offer runs. */
+	certificationDiscount?: number;
+	/** What "Share with your team" puts on the clipboard. */
+	certificationShareMessage?: string;
+	onCertificationShareCopy?: () => void;
 	aiMcpHref: string;
 	tiersHref?: string;
 	pressableHostingHref: string;
@@ -84,15 +91,32 @@ function SingleEventCard( {
 					</VStack>
 					<ButtonStack justify="flex-start" wrap>
 						{ ctas.map( ( cta ) => {
+							const trackClick = () =>
+								recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+									event_id: id,
+									cta_id: cta.id,
+								} );
+							const style = isMobileViewport
+								? { width: '100%', justifyContent: 'center' }
+								: undefined;
+							if ( 'render' in cta ) {
+								return (
+									<Fragment key={ cta.id }>
+										{ cta.render( {
+											size: 'compact',
+											variant: 'secondary',
+											style,
+											onClick: trackClick,
+										} ) }
+									</Fragment>
+								);
+							}
 							const buttonProps = {
 								size: 'compact' as const,
 								variant: cta.variant ?? ( 'secondary' as const ),
-								style: isMobileViewport ? { width: '100%', justifyContent: 'center' } : undefined,
+								style,
 								onClick: () => {
-									recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
-										event_id: id,
-										cta_id: cta.id,
-									} );
+									trackClick();
 									if ( cta.legacyTrackEventName ) {
 										recordTracksEvent?.( cta.legacyTrackEventName );
 									}
@@ -130,6 +154,9 @@ export default function EventCard( {
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	isEligibleForCertificationOffer,
+	certificationDiscount,
+	certificationShareMessage,
+	onCertificationShareCopy,
 	aiMcpHref,
 	tiersHref,
 	pressableHostingHref,
@@ -137,9 +164,23 @@ export default function EventCard( {
 	recordTracksEvent,
 }: EventCardProps ) {
 	const now = new Date();
+	const certificationShareCta: FeaturedEventActionCta | undefined = certificationShareMessage
+		? {
+				id: 'share-with-your-team',
+				render: ( buttonProps ) => (
+					<CertificationShareButton
+						{ ...buttonProps }
+						message={ certificationShareMessage }
+						onCopy={ onCertificationShareCopy }
+					/>
+				),
+			}
+		: undefined;
 	const events = [
 		FEATURED_EVENT,
-		isEligibleForCertificationOffer && tiersHref ? getCertificationPromoEvent( tiersHref ) : null,
+		isEligibleForCertificationOffer && tiersHref && certificationDiscount
+			? getCertificationPromoEvent( tiersHref, certificationDiscount, certificationShareCta )
+			: null,
 		isEligibleForPressableIntroOffer ? getPressableIntroOfferEvent( pressableHostingHref ) : null,
 		isEligibleForPressableExpansionOffer
 			? getPressableExpansionOfferEvent( pressableHostingHref )

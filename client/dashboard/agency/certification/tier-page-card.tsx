@@ -8,6 +8,7 @@ import { useViewportMatch } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { code as codeIcon } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 import { Text } from '../../components/text';
@@ -15,6 +16,7 @@ import NewTabLabel from '../components/new-tab-label';
 import CertificationCardSkeleton from './certification-card-skeleton';
 import CertificationCodeField from './certification-code-field';
 import { CERTIFICATION_EXAM_URL } from './constants';
+import CertificationShareButton from './share-button';
 import TierDiscountList from './tier-discount-list';
 import { useCertification } from './use-certification';
 import { useTrackCertificationView } from './use-track-certification-view';
@@ -26,12 +28,14 @@ import type { RecordTracksEvent } from '../tiers/types';
  */
 export default function CertificationTierPageCard( {
 	onCodeCopy,
+	onShareCopy,
 	recordTracksEvent,
 }: {
 	onCodeCopy?: () => void;
+	onShareCopy?: () => void;
 	recordTracksEvent?: RecordTracksEvent;
 } = {} ) {
-	const { isEligible, isLoading, code, tierId, discount, isPromo, promoLastDay } =
+	const { isEligible, isLoading, code, tierId, discount, isPromo, promoLastDay, shareMessage } =
 		useCertification();
 	useTrackCertificationView( isEligible, 'agency_tier', recordTracksEvent );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
@@ -122,20 +126,23 @@ export default function CertificationTierPageCard( {
 									recordTracksEvent={ recordTracksEvent }
 								/>
 							</div>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
-								href={ CERTIFICATION_EXAM_URL }
-								target="_blank"
-								rel="noreferrer"
-								onClick={ () =>
-									recordTracksEvent?.( 'calypso_a4a_certification_exam_click', {
-										source: 'agency_tier',
-									} )
-								}
-							>
-								<NewTabLabel>{ __( 'Sign up for the exam' ) }</NewTabLabel>
-							</Button>
+							<ButtonStack justify="flex-start" wrap>
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									href={ CERTIFICATION_EXAM_URL }
+									target="_blank"
+									rel="noreferrer"
+									onClick={ () =>
+										recordTracksEvent?.( 'calypso_a4a_certification_exam_click', {
+											source: 'agency_tier',
+										} )
+									}
+								>
+									<NewTabLabel>{ __( 'Sign up for the exam' ) }</NewTabLabel>
+								</Button>
+								<CertificationShareButton message={ shareMessage } onCopy={ onShareCopy } />
+							</ButtonStack>
 						</VStack>
 					</HStack>
 				</CardBody>
