@@ -123,14 +123,7 @@ export function AnnouncementDate( { announcement }: { announcement: Announcement
 
 export function AnnouncementEyebrow( { children }: { children: string } ) {
 	return (
-		<Text
-			variant="muted"
-			size={ 11 }
-			weight={ 500 }
-			lineHeight="16px"
-			upperCase
-			className="a4a-news-pretty"
-		>
+		<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
 			{ bindLastWords( children ) }
 		</Text>
 	);
@@ -145,7 +138,7 @@ export function AnnouncementDescription( { announcement }: { announcement: Annou
 	return (
 		<VStack spacing={ 2 }>
 			{ paragraphs.map( ( paragraph, index ) => (
-				<Text key={ index } as="p" size={ 13 } lineHeight="20px" className="a4a-news-pretty">
+				<Text key={ index } as="p" size={ 13 } lineHeight="20px">
 					{ bindLastWords( paragraph ) }
 				</Text>
 			) ) }

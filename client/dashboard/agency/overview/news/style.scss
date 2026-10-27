@@ -14,15 +14,7 @@
 .a4a-news-text {
 	flex: 1;
 	min-width: 0;
-}
-
-.a4a-news-balance {
 	text-wrap: balance;
-}
-
-.a4a-news-pretty {
-	margin: 0;
-	text-wrap: pretty;
 }
 
 // The summary fills the row, beside the card's own toggle.
@@ -45,4 +37,5 @@
 .a4a-news-row-panel {
 	margin-block-start: 16px;
 	padding-inline-start: 44px;
+	text-wrap: pretty;
 }
