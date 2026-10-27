@@ -46,7 +46,7 @@ describe( 'SectionImport', () => {
 			update( [ { ...importFailure } ] );
 
 			expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_importer_import_fail', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_importer_import_failure', {
 				importer_id: 'importer-type-wordpress',
 			} );
 		} );
@@ -61,7 +61,7 @@ describe( 'SectionImport', () => {
 
 			expect( recordTracksEvent.mock.calls.map( ( [ name ] ) => name ) ).toEqual( [
 				'calypso_importer_import_start',
-				'calypso_importer_import_fail',
+				'calypso_importer_import_failure',
 			] );
 		} );
 
@@ -75,7 +75,7 @@ describe( 'SectionImport', () => {
 
 			expect( recordTracksEvent.mock.calls ).toEqual( [
 				[
-					'calypso_importer_upload_fail',
+					'calypso_importer_upload_failure',
 					{
 						importer_id: 'importer-type-wordpress',
 						error_code: undefined,
@@ -84,7 +84,7 @@ describe( 'SectionImport', () => {
 					},
 				],
 				[
-					'calypso_importer_upload_fail',
+					'calypso_importer_upload_failure',
 					{
 						importer_id: 'importer-type-wordpress',
 						error_code: 'file_too_large',
@@ -93,7 +93,7 @@ describe( 'SectionImport', () => {
 					},
 				],
 				[
-					'calypso_importer_upload_fail',
+					'calypso_importer_upload_failure',
 					{
 						importer_id: 'importer-type-wordpress',
 						error_code: 'file_too_large',
@@ -122,7 +122,7 @@ describe( 'SectionImport', () => {
 
 			expect( recordTracksEvent.mock.calls ).toEqual( [
 				[
-					'calypso_importer_import_fail',
+					'calypso_importer_import_failure',
 					{
 						importer_id: 'importer-type-wordpress',
 						error_code: 'some_code',
@@ -143,11 +143,11 @@ describe( 'SectionImport', () => {
 
 			expect( recordTracksEvent.mock.calls ).toEqual( [
 				[
-					'calypso_importer_import_fail',
+					'calypso_importer_import_failure',
 					{ importer_id: 'importer-type-wordpress', error_code: undefined, error_type: undefined },
 				],
 				[
-					'calypso_importer_upload_fail',
+					'calypso_importer_upload_failure',
 					{
 						importer_id: 'importer-type-medium',
 						error_code: undefined,
@@ -172,7 +172,7 @@ describe( 'SectionImport', () => {
 				},
 			] );
 
-			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_importer_upload_fail', {
+			expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_importer_upload_failure', {
 				importer_id: 'importer-type-wordpress',
 				error_code: 'no_import_file',
 				error_type: 'uploadError',
@@ -202,7 +202,7 @@ describe( 'SectionImport', () => {
 			expect( recordTracksEvent.mock.calls ).toEqual( [
 				[ 'calypso_importer_import_start', { importer_id: 'importer-type-wordpress' } ],
 				[ 'calypso_importer_import_start', { importer_id: 'importer-type-medium' } ],
-				[ 'calypso_importer_import_fail', { importer_id: 'importer-type-medium' } ],
+				[ 'calypso_importer_import_failure', { importer_id: 'importer-type-medium' } ],
 			] );
 		} );
 

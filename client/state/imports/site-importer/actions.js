@@ -164,7 +164,7 @@ export const importSite =
 			} )
 			.catch( ( error ) => {
 				dispatch(
-					recordTracksEvent( 'calypso_site_importer_start_import_fail', {
+					recordTracksEvent( 'calypso_site_importer_start_import_request_failure', {
 						...trackingParams,
 						error_code: error?.code,
 						// `InternalServerError` and the like for API errors, `TypeError` and the like
@@ -220,7 +220,7 @@ export const validateSiteIsImportable =
 			dispatch( siteImporterIsSiteImportableSuccessful( response ) );
 		} else {
 			dispatch(
-				recordTracksEvent( 'calypso_site_importer_validate_site_fail', {
+				recordTracksEvent( 'calypso_site_importer_validate_site_failure', {
 					blog_id: siteId,
 					site_url: targetSiteUrl,
 					error_code: isSiteImportableResult?.reason?.code,

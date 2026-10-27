@@ -23,28 +23,22 @@ describe( 'ErrorMessage', () => {
 		);
 
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_site_importer_start_import_failure',
-			{
-				error_code: 'some_code',
-				error_type: 'importError',
-				importer_file_type: 'content',
-			}
-		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_site_importer_import_failure_view', {
+			error_code: 'some_code',
+			error_type: 'importError',
+			importer_file_type: 'content',
+		} );
 	} );
 
 	it( 'records the event without a reason when there is no error data', () => {
 		render( <ErrorMessage /> );
 
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_site_importer_start_import_failure',
-			{
-				error_code: undefined,
-				error_type: undefined,
-				importer_file_type: undefined,
-			}
-		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_site_importer_import_failure_view', {
+			error_code: undefined,
+			error_type: undefined,
+			importer_file_type: undefined,
+		} );
 	} );
 
 	it( 'does not record again when re-rendered with equal error data', () => {

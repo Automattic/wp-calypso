@@ -67,7 +67,10 @@ describe( 'site importer actions', () => {
 
 			const dispatch = await runImportSite();
 
-			const properties = getTracksEvent( dispatch, 'calypso_site_importer_start_import_fail' );
+			const properties = getTracksEvent(
+				dispatch,
+				'calypso_site_importer_start_import_request_failure'
+			);
 			expect( properties ).toMatchObject( {
 				blog_id: 123,
 				site_url: targetSiteUrl,
@@ -82,7 +85,10 @@ describe( 'site importer actions', () => {
 
 			const dispatch = await runImportSite();
 
-			const properties = getTracksEvent( dispatch, 'calypso_site_importer_start_import_fail' );
+			const properties = getTracksEvent(
+				dispatch,
+				'calypso_site_importer_start_import_request_failure'
+			);
 			expect( properties.error_code ).toBeUndefined();
 			expect( properties.error_type ).toBe( 'TypeError' );
 		} );
@@ -102,7 +108,7 @@ describe( 'site importer actions', () => {
 
 			await validateSiteIsImportable( { params: {}, site, targetSiteUrl } )( dispatch );
 
-			expect( getTracksEvent( dispatch, 'calypso_site_importer_validate_site_fail' ) ).toEqual( {
+			expect( getTracksEvent( dispatch, 'calypso_site_importer_validate_site_failure' ) ).toEqual( {
 				blog_id: 123,
 				site_url: targetSiteUrl,
 				error_code: 'unauthorized',
@@ -115,7 +121,7 @@ describe( 'site importer actions', () => {
 
 			await validateSiteIsImportable( { params: {}, site, targetSiteUrl } )( dispatch );
 
-			const properties = getTracksEvent( dispatch, 'calypso_site_importer_validate_site_fail' );
+			const properties = getTracksEvent( dispatch, 'calypso_site_importer_validate_site_failure' );
 			expect( properties.blog_id ).toBe( 123 );
 			expect( properties.error_code ).toBeUndefined();
 		} );

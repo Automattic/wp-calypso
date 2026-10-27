@@ -23,7 +23,7 @@ const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	const errorType = errorData?.type;
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_site_importer_start_import_failure', {
+		recordTracksEvent( 'calypso_site_importer_import_failure_view', {
 			error_code: errorCode,
 			error_type: errorType,
 			importer_file_type: importerFileType,

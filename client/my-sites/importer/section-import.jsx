@@ -172,11 +172,11 @@ export class SectionImport extends Component {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
 			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
 			[ appStates.UPLOAD_SUCCESS ]: 'calypso_importer_upload_success',
-			[ appStates.UPLOAD_FAILURE ]: 'calypso_importer_upload_fail',
+			[ appStates.UPLOAD_FAILURE ]: 'calypso_importer_upload_failure',
 			[ appStates.MAP_AUTHORS ]: 'calypso_importer_map_authors_view',
 			[ appStates.IMPORTING ]: 'calypso_importer_import_start',
 			[ appStates.IMPORT_SUCCESS ]: 'calypso_importer_import_success',
-			[ appStates.IMPORT_FAILURE ]: 'calypso_importer_import_fail',
+			[ appStates.IMPORT_FAILURE ]: 'calypso_importer_import_failure',
 		};
 		if ( stateToEventNameMap[ importerState ] ) {
 			this.props.recordTracksEvent( stateToEventNameMap[ importerState ], {

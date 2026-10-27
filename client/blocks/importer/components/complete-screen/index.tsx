@@ -18,7 +18,7 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { job, siteId, buttonLabel, resetImport, onSiteViewClick } = props;
 
 	useEffect( () => {
-		recordTracksEvent( 'calypso_site_importer_start_import_success' );
+		recordTracksEvent( 'calypso_site_importer_import_success_view' );
 	}, [] );
 
 	return (
