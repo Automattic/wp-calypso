@@ -26,13 +26,15 @@ const signature4License = {
 	quantity: null,
 };
 
+const renderSharedPlan = jest.fn( () => <span>Jetpack Complete</span> );
+
 const sharedPlanField: Field< AgencySite > = {
 	id: 'plan',
 	label: 'Plan',
-	render: () => <span>Jetpack Complete</span>,
+	render: renderSharedPlan,
 };
 
-function mockAgency( licenses: unknown[] ) {
+function mockAgency( licenses: unknown[], { productsDelay = 0 } = {} ) {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
@@ -40,6 +42,7 @@ function mockAgency( licenses: unknown[] ) {
 	nock( API )
 		.get( '/wpcom/v2/agency/products' )
 		.query( true )
+		.delay( productsDelay )
 		.reply( 200, [ { slug: 'pressable-hosting', products: [ signature4 ] } ] );
 	nock( API )
 		.get( '/wpcom/v2/jetpack-licensing/licenses' )
@@ -60,6 +63,16 @@ describe( 'withPressablePlan', () => {
 
 		expect( await screen.findByText( 'Pressable Signature 4' ) ).toBeVisible();
 		expect( screen.queryByText( 'Jetpack Complete' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not show the site’s own plan while the plan catalog loads', async () => {
+		renderSharedPlan.mockClear();
+		mockAgency( [ signature4License ], { productsDelay: 200 } );
+
+		renderPlanCell( { blog_id: 1, hosting_provider_guess: 'pressable' } as AgencySite );
+
+		expect( await screen.findByText( 'Pressable Signature 4' ) ).toBeVisible();
+		expect( renderSharedPlan ).not.toHaveBeenCalled();
 	} );
 
 	test( 'keeps the site’s own plan when the agency has no Pressable plan', async () => {

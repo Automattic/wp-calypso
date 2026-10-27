@@ -6,7 +6,7 @@ import { useAgencyPressablePlan } from '../marketplace/use-agency-pressable-plan
  * and on the site overview. `plan` and `planInfo` are unset without a Pressable
  * plan bought through A4A, and the site then shows its own plan.
  */
-export function useSitePressablePlan() {
+export function usePressableSitesPlan() {
 	const { plan, licenses, products, isReady } = useAgencyPressablePlan();
 	const planInfo = plan ? getPressablePlanInfo( plan ) : undefined;
 
