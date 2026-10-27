@@ -206,6 +206,8 @@
 		"themes/blueprint-cta": true,
 		"themes/discovery": true,
 		"themes/premium": true,
+		"themes/site-redesign": true,
+		"themes/site-redesign-fixtures": true,
 		"themes/showcase-modern": true,
 		"themes/universal-header": true,
 		"titan/iframe-control-panel": false,

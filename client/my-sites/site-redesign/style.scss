@@ -1,0 +1,30 @@
+.site-redesign__grid {
+	display: grid;
+	gap: 24px;
+	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.site-redesign__thumbnail {
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	aspect-ratio: 16 / 10;
+	overflow: hidden;
+	border: 1px solid var(--color-border-subtle);
+	border-radius: 4px;
+	background: var(--color-surface);
+}
+
+// The document is laid out at desktop width and scaled down to the card.
+.site-redesign__frame {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	width: 400%;
+	height: 400%;
+	border: 0;
+	transform: scale(0.25);
+	transform-origin: top left;
+	pointer-events: none;
+}
