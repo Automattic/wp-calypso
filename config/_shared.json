@@ -9,6 +9,7 @@
 	"client_slug": false,
 	"facebook_api_key": false,
 	"features": {
+		"a4a-lead-matching-contact-preview": false,
 		"a4a-lead-matching-design-preview": false
 	},
 	"google_recaptcha_site_key": false,
