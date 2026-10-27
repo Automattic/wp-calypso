@@ -5,16 +5,11 @@ import {
 	isValidEmailAddress,
 } from '@automattic/onboarding/src/utils/email-validation';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	__experimentalInputControl as InputControl,
-	__experimentalVStack as VStack,
-	Button,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, info, check } from '@wordpress/icons';
-import { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
@@ -22,10 +17,9 @@ import RouterLinkButton from '../../components/router-link-button';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
 import { useIsEmailWritePending } from './use-email-write-pending';
+import { createValidatedTextEdit, ShowValidityImmediatelyContext } from './validated-text-edit';
 import type { UserSettings } from '@automattic/api-core';
-import type { DataFormControlProps, Field, Form } from '@wordpress/dataviews';
-import type { ReactNode } from 'react';
-import './style.scss';
+import type { Field, Form, FormValidity } from '@wordpress/dataviews';
 
 interface EmailSectionProps {
 	value: string;
@@ -38,39 +32,11 @@ interface EmailSectionProps {
 
 type EmailFormData = { user_email: string };
 
-const EmailFieldContext = createContext< {
-	help: ReactNode;
-	className: string;
-	disabled: boolean;
-} >( { help: null, className: '', disabled: false } );
-
-function EmailEdit( { data, field, onChange }: DataFormControlProps< EmailFormData > ) {
-	const { help, className, disabled } = useContext( EmailFieldContext );
-	return (
-		<InputControl
-			__next40pxDefaultSize
-			id="email-input"
-			type="text"
-			label={ field.label }
-			value={ data.user_email }
-			onChange={ ( newValue?: string ) => onChange( { user_email: newValue ?? '' } ) }
-			autoComplete="email"
-			disabled={ disabled }
-			className={ className }
-			help={ help }
-			aria-describedby={ help ? 'email-help' : undefined }
-		/>
-	);
-}
-
-const emailFields: Field< EmailFormData >[] = [
-	{
-		id: 'user_email',
-		label: __( 'Email address' ),
-		type: 'text',
-		Edit: EmailEdit,
-	},
-];
+const EmailEdit = createValidatedTextEdit< EmailFormData >( {
+	id: 'email-input',
+	type: 'text',
+	autoComplete: 'email',
+} );
 
 const emailForm: Form = {
 	layout: { type: 'regular' },
@@ -177,25 +143,7 @@ export default function EmailSection( {
 		isAccountRecoveryReady &&
 		! hasRecoveryMethod;
 
-	const getValidationClass = () => {
-		if ( isEmailPending ) {
-			return '';
-		}
-		if ( showBouncingEmailError ) {
-			return 'has-error';
-		}
-		if ( emailValidationState === 'valid' ) {
-			return 'has-success';
-		}
-		if ( emailValidationState === 'invalid' || emailValidationState === 'unknown_tld' ) {
-			return 'has-error';
-		}
-		return '';
-	};
-
-	// Inline helper messages
-	const getHelpText = useCallback( () => {
-		// Pending state static message
+	const description = useMemo( () => {
 		if ( isEmailPending ) {
 			return (
 				<>
@@ -221,81 +169,97 @@ export default function EmailSection( {
 			);
 		}
 
-		if ( showBouncingEmailError ) {
-			return (
-				<>
-					<Icon icon={ info } size={ 16 } />
-					{ __( 'Messages we send to this address are bouncing back. Please update your email.' ) }
-				</>
-			);
-		}
-
-		// Input validation messages
-		if ( value && value !== currentEmail ) {
-			if ( emailValidationState === 'valid' ) {
-				return (
-					<>
-						<Icon icon={ check } size={ 16 } />
-						{ __( 'Email address looks good!' ) }
-					</>
-				);
-			}
-
-			if ( emailValidationState === 'unknown_tld' ) {
-				return (
-					<>
-						<Icon icon={ info } size={ 16 } />
-						{ sprintf(
-							/* translators: %s: the domain part of the email address the user typed */
-							__( '“%s” doesn’t look like a real domain. Check the address for typos.' ),
-							getEmailDomain( value )
-						) }
-					</>
-				);
-			}
-
-			if ( emailValidationState === 'invalid' ) {
-				return (
-					<>
-						<Icon icon={ info } size={ 16 } />
-						{ __( 'Please enter a valid email address.' ) }
-					</>
-				);
-			}
-		}
-
 		// The saved email address has never been verified (and no change is pending).
 		if ( ! isEmailVerified ) {
 			return __( 'Your email has not been verified yet.' );
 		}
 
-		return null;
-	}, [
-		isEmailPending,
-		isEmailVerified,
-		showBouncingEmailError,
-		value,
-		currentEmail,
-		emailValidationState,
-		handleCancelPendingEmail,
-		isEmailWritePending,
-	] );
+		return undefined;
+	}, [ isEmailPending, isEmailVerified, handleCancelPendingEmail, isEmailWritePending ] );
+
+	const validity = useMemo( (): FormValidity => {
+		if ( isEmailPending ) {
+			return undefined;
+		}
+
+		if ( showBouncingEmailError ) {
+			return {
+				user_email: {
+					custom: {
+						type: 'invalid',
+						message: __(
+							'Messages we send to this address are bouncing back. Please update your email.'
+						),
+					},
+				},
+			};
+		}
+
+		if ( ! value || value === currentEmail ) {
+			return undefined;
+		}
+
+		if ( emailValidationState === 'valid' ) {
+			return {
+				user_email: {
+					custom: { type: 'valid', message: __( 'Email address looks good!' ) },
+				},
+			};
+		}
+
+		if ( emailValidationState === 'unknown_tld' ) {
+			return {
+				user_email: {
+					custom: {
+						type: 'invalid',
+						message: sprintf(
+							/* translators: %s: the domain part of the email address the user typed */
+							__( '“%s” doesn’t look like a real domain. Check the address for typos.' ),
+							getEmailDomain( value )
+						),
+					},
+				},
+			};
+		}
+
+		if ( emailValidationState === 'invalid' ) {
+			return {
+				user_email: {
+					custom: { type: 'invalid', message: __( 'Please enter a valid email address.' ) },
+				},
+			};
+		}
+
+		return undefined;
+	}, [ isEmailPending, showBouncingEmailError, value, currentEmail, emailValidationState ] );
+
+	const fields = useMemo(
+		(): Field< EmailFormData >[] => [
+			{
+				id: 'user_email',
+				label: __( 'Email address' ),
+				type: 'text',
+				description,
+				isDisabled: disabled || !! isEmailPending,
+				Edit: EmailEdit,
+			},
+		],
+		[ description, disabled, isEmailPending ]
+	);
 
 	const formData = useMemo( () => ( { user_email: value } ), [ value ] );
-	const help = getHelpText();
-	const className = getValidationClass();
-	const fieldContext = { help, className, disabled: disabled || !! isEmailPending };
 
 	return (
 		<VStack spacing={ 4 }>
-			<EmailFieldContext.Provider value={ fieldContext }>
+			<ShowValidityImmediatelyContext.Provider value={ showBouncingEmailError }>
 				<DataForm< EmailFormData >
 					data={ formData }
-					fields={ emailFields }
+					fields={ fields }
 					form={ emailForm }
+					validity={ validity }
 					onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
 				/>
-			</EmailFieldContext.Provider>
+			</ShowValidityImmediatelyContext.Provider>
 			{ showCustomDomainWarning && (
 				<Notice
 					variant="warning"

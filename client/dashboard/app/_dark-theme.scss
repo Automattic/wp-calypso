@@ -154,21 +154,6 @@
 @mixin dashboard-dark-theme-form-controls {
 	@include color-scheme-dark-theme-form-controls;
 
-	.components-input-control.has-error .components-input-control__backdrop,
-	.components-input-control.has-error
-		.components-input-control__input:focus
-		+ .components-input-control__backdrop {
-		border-color: var( --dashboard-danger__color );
-	}
-
-	.components-input-control.has-error .components-base-control__help {
-		color: var( --dashboard-danger__color-hover );
-	}
-
-	.components-input-control.has-error .components-base-control__help svg {
-		fill: var( --dashboard-danger__color-hover );
-	}
-
 	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
 		.components-input-control__backdrop,
 	.components-validated-control__wrapper-with-error-delegate:has(
