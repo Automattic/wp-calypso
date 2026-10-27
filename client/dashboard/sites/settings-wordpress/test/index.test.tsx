@@ -7,10 +7,11 @@ import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import MockDate from 'mockdate';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import WordPressSettings from '../index';
-import type { Site } from '@automattic/api-core';
+import type { Site, WordPressPrerelease } from '@automattic/api-core';
 
 const site = {
 	ID: 123,
@@ -206,6 +207,102 @@ describe( '<WordPressSettings>', () => {
 
 		expect( screen.getByRole( 'button', { name: 'Upgrade plan' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: /Opt out/ } ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'for a site auto-enrolled in a pre-release', () => {
+		const productionSite = { ...site, is_wpcom_staging_site: false } as Site;
+		const siteWithoutSelfServeBackups = {
+			...productionSite,
+			plan: {
+				product_slug: 'value_bundle',
+				product_name_short: 'Premium',
+				is_free: false,
+				features: { active: [ 'atomic' ] },
+			},
+		} as unknown as Site;
+
+		function mockPrerelease( prerelease: Partial< WordPressPrerelease > = {} ) {
+			nock( 'https://public-api.wordpress.com' )
+				.persist()
+				.get( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version/prerelease` )
+				.query( true )
+				.reply( 200, {
+					auto_enrolled: true,
+					version: '7.0-RC2',
+					release_date: '2026-12-08',
+					...prerelease,
+				} );
+		}
+
+		beforeEach( () => MockDate.set( '2026-11-01T12:00:00Z' ) );
+		afterEach( () => MockDate.reset() );
+
+		test( 'switches a site without self-serve backups back right away', async () => {
+			const user = userEvent.setup();
+			mockApi( 'beta', siteWithoutSelfServeBackups );
+			mockPrerelease();
+			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			seedWpOrgCoreVersions( queryClient );
+
+			render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+
+			expect(
+				await screen.findByText( 'Your site is running WordPress 7.0 RC as part of early access' )
+			).toBeVisible();
+			expect(
+				screen.getByText(
+					/We picked your site to run WordPress 7\.0 before its December 8 release/
+				)
+			).toBeVisible();
+
+			const scope = mockWordPressVersionSaved( 'latest' );
+			await user.click( screen.getByRole( 'button', { name: 'Switch back to WordPress 6.8' } ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+			expect( await screen.findByText( 'WordPress version updated' ) ).toBeVisible();
+		} );
+
+		test( 'switches a site with self-serve backups back through a backup', async () => {
+			const user = userEvent.setup();
+			mockApi( 'beta', productionSite );
+			mockPrerelease();
+			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			seedWpOrgCoreVersions( queryClient );
+
+			render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+
+			expect(
+				await screen.findByText( 'Your site is running WordPress 7.0 RC as part of early access' )
+			).toBeVisible();
+
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( `/wpcom/v2/sites/${ site.ID }/hosting/wp-version`, ( body ) => {
+					expect( body ).toMatchObject( { version: 'latest', defer_until_backup_complete: true } );
+					return true;
+				} )
+				.reply( 200 );
+			await user.click( screen.getByRole( 'button', { name: 'Switch back to WordPress 6.8' } ) );
+
+			await waitFor( () => {
+				expect( scope.isDone() ).toBe( true );
+			} );
+		} );
+
+		test( 'keeps the generic beta notice for a site its owner put on the beta track', async () => {
+			mockApi( 'beta', siteWithoutSelfServeBackups );
+			mockPrerelease( { auto_enrolled: false } );
+			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+			seedWpOrgCoreVersions( queryClient );
+
+			render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Opt out of the WordPress beta version' } )
+			).toBeVisible();
+			expect( screen.queryByText( /as part of early access/ ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'with beta program disabled', () => {

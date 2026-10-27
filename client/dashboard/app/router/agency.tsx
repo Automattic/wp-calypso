@@ -80,6 +80,7 @@ import {
 import { isPressableSite } from '../../agency/sites/lib';
 import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
+import { ensureWordPressPrereleaseNoticeData } from '../../components/wordpress-prerelease-notice';
 import {
 	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
@@ -1920,6 +1921,7 @@ const agencySiteSettingsWordPressRoute = createRoute( {
 			queryClient.prefetchQuery( wpOrgCoreVersionQuery( 'beta' ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
+		await ensureWordPressPrereleaseNoticeData( site );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-wordpress' ).then( ( d ) =>

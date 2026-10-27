@@ -16,9 +16,10 @@ import type { Site } from '@automattic/api-core';
 interface BetaOptOutButtonProps {
 	site: Site;
 	onSuccess?: () => void;
+	children?: React.ReactNode;
 }
 
-export function BetaOptOutButton( { site, onSuccess }: BetaOptOutButtonProps ) {
+export function BetaOptOutButton( { site, onSuccess, children }: BetaOptOutButtonProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
 	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
@@ -53,7 +54,7 @@ export function BetaOptOutButton( { site, onSuccess }: BetaOptOutButtonProps ) {
 			isBusy={ mutation.isPending }
 			disabled={ mutation.isPending }
 		>
-			{ __( 'Opt out of the WordPress beta version' ) }
+			{ children ?? __( 'Opt out of the WordPress beta version' ) }
 		</Button>
 	);
 }

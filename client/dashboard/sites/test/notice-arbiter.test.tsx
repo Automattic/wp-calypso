@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import Notice from '../../components/notice';
 import { useSiteExpiryNoticeCandidate } from '../../components/site-expiry-notice';
+import { useWordPressPrereleaseNoticeCandidate } from '../../components/wordpress-prerelease-notice';
 import { render } from '../../test-utils';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 
@@ -15,7 +16,15 @@ jest.mock( '../../components/site-expiry-notice', () => ( {
 } ) );
 const mockCandidate = jest.mocked( useSiteExpiryNoticeCandidate );
 
-afterEach( () => mockCandidate.mockReturnValue( null ) );
+jest.mock( '../../components/wordpress-prerelease-notice', () => ( {
+	useWordPressPrereleaseNoticeCandidate: jest.fn( () => null ),
+} ) );
+const mockPrereleaseCandidate = jest.mocked( useWordPressPrereleaseNoticeCandidate );
+
+afterEach( () => {
+	mockCandidate.mockReturnValue( null );
+	mockPrereleaseCandidate.mockReturnValue( null );
+} );
 
 describe( '<SitesNoticeArbiter>', () => {
 	test( 'renders only the first page candidate when several are eligible', async () => {
@@ -160,5 +169,50 @@ describe( '<SitesNoticeArbiter>', () => {
 		mockCandidate.mockReturnValue( { node: <Notice>Plan expiring</Notice>, isUrgent: false } );
 		render( <SitesNoticeArbiter /> );
 		expect( await screen.findByText( 'Plan expiring' ) ).toBeVisible();
+	} );
+
+	test( 'the pre-release notice fills an empty slot', async () => {
+		mockPrereleaseCandidate.mockReturnValue( {
+			node: <Notice>Early access</Notice>,
+			isUrgent: false,
+		} );
+		render( <SitesNoticeArbiter /> );
+		expect( await screen.findByText( 'Early access' ) ).toBeVisible();
+	} );
+
+	test( 'the plan-expiry notice outranks the pre-release notice', async () => {
+		mockCandidate.mockReturnValue( { node: <Notice>Plan expiring</Notice>, isUrgent: false } );
+		mockPrereleaseCandidate.mockReturnValue( {
+			node: <Notice>Early access</Notice>,
+			isUrgent: false,
+		} );
+		render( <SitesNoticeArbiter /> );
+		expect( await screen.findByText( 'Plan expiring' ) ).toBeVisible();
+		expect( screen.queryByText( 'Early access' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'leaves the slot empty when the plan-expiry notice goes null after mount', async () => {
+		function Page() {
+			const [ , rerender ] = useState( 0 );
+			return (
+				<>
+					<button onClick={ () => rerender( ( n ) => n + 1 ) }>Rerender</button>
+					<SitesNoticeArbiter />
+				</>
+			);
+		}
+		mockCandidate.mockReturnValue( { node: <Notice>Plan expiring</Notice>, isUrgent: false } );
+		mockPrereleaseCandidate.mockReturnValue( {
+			node: <Notice>Early access</Notice>,
+			isUrgent: false,
+		} );
+		render( <Page /> );
+		expect( await screen.findByText( 'Plan expiring' ) ).toBeVisible();
+
+		mockCandidate.mockReturnValue( null );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Rerender' } ) );
+
+		expect( screen.queryByText( 'Plan expiring' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Early access' ) ).not.toBeInTheDocument();
 	} );
 } );

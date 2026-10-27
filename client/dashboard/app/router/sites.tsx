@@ -50,6 +50,7 @@ import { isSupportSession } from '@automattic/calypso-support-session';
 import { createLazyRoute, createRoute, lazyRouteComponent, notFound } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice';
+import { ensureWordPressPrereleaseNoticeData } from '../../components/wordpress-prerelease-notice';
 import {
 	canManageSite,
 	canOptOutOfWordPressBeta,
@@ -212,6 +213,7 @@ export const siteRoute = createRoute( {
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 			// Settles the plan-expiry notice before paint so it can outrank page notices.
 			ensureSiteExpiryNoticeData( site ),
+			ensureWordPressPrereleaseNoticeData( site ),
 		] );
 
 		return { site };
@@ -1104,6 +1106,8 @@ export const siteSettingsWordPressRoute = createRoute( {
 			queryClient.prefetchQuery( wpOrgCoreVersionQuery( 'beta' ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
+		// Shares the site route's request, so the auto-enrollment notice doesn't pop in.
+		await ensureWordPressPrereleaseNoticeData( site );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-wordpress' ).then( ( d ) =>

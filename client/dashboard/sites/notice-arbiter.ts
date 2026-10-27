@@ -1,13 +1,23 @@
 import { Children, useState } from 'react';
 import { useSiteExpiryNoticeCandidate } from '../components/site-expiry-notice';
+import { useWordPressPrereleaseNoticeCandidate } from '../components/wordpress-prerelease-notice';
 import type { ReactNode } from 'react';
 
 /**
- * Shared candidates compete on every page that renders the arbiter. Today there
- * is one: the sitewide plan-expiry notice, null off `/sites/*` site pages.
+ * Shared candidates compete on every page that renders the arbiter, and are null
+ * off `/sites/*` site pages: the sitewide plan-expiry notice, then the notice for
+ * sites auto-enrolled in a WordPress pre-release. Whichever held the slot on mount
+ * keeps it, so dismissing the expiry notice doesn't summon the other one.
  */
 function useSharedCandidate(): { node: ReactNode; isUrgent: boolean } | null {
-	return useSiteExpiryNoticeCandidate();
+	const expiryCandidate = useSiteExpiryNoticeCandidate();
+	const prereleaseCandidate = useWordPressPrereleaseNoticeCandidate();
+	const [ hadExpiryCandidateOnMount ] = useState( !! expiryCandidate );
+
+	if ( expiryCandidate || hadExpiryCandidateOnMount ) {
+		return expiryCandidate;
+	}
+	return prereleaseCandidate;
 }
 
 /**
