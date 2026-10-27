@@ -10,6 +10,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
@@ -32,6 +33,8 @@ import './style.scss';
 
 const POLL_MS = 3000;
 const POLLED_STATUSES = [ 'generating', 'applying' ];
+// About two minutes of waiting for a purchase to reach the site after checkout.
+const PURCHASE_POLLS = 40;
 
 type Props = {
 	siteId: number;
@@ -41,6 +44,20 @@ type Props = {
 };
 
 const redesignKey = ( siteId: number, id: string | null ) => [ 'site-redesign', siteId, id ];
+
+const isWaitingForPurchase = ( redesign: Redesign | undefined, resume: boolean ) =>
+	resume &&
+	redesign?.status === 'preview_ready' &&
+	!! redesign.pending_apply &&
+	! redesign.eligibility.can_apply;
+
+function httpUrl( url: string | undefined ): string | undefined {
+	try {
+		return url && [ 'http:', 'https:' ].includes( new URL( url ).protocol ) ? url : undefined;
+	} catch {
+		return undefined;
+	}
+}
 
 function messageOf( error: unknown ): string {
 	const message = ( error as { message?: unknown } | null )?.message;
@@ -102,18 +119,18 @@ function CandidatePreview( {
 
 function CandidateCard( {
 	siteId,
-	redesign,
+	redesignId,
 	candidate,
 	index,
+	canChoose,
 	onChoose,
-	choosing,
 }: {
 	siteId: number;
-	redesign: Redesign;
+	redesignId: string;
 	candidate: Candidate;
 	index: number;
-	onChoose: ( candidate: Candidate ) => void;
-	choosing: boolean;
+	canChoose: boolean;
+	onChoose: () => void;
 } ) {
 	return (
 		<VStack className="site-redesign__candidate" spacing={ 3 }>
@@ -121,7 +138,7 @@ function CandidateCard( {
 				{ candidate.status === 'succeeded' && (
 					<CandidatePreview
 						siteId={ siteId }
-						redesignId={ redesign.id }
+						redesignId={ redesignId }
 						candidate={ candidate }
 						index={ index }
 					/>
@@ -134,10 +151,8 @@ function CandidateCard( {
 			<Button
 				__next40pxDefaultSize
 				variant="primary"
-				disabled={
-					candidate.status !== 'succeeded' || redesign.status !== 'preview_ready' || choosing
-				}
-				onClick={ () => onChoose( candidate ) }
+				disabled={ ! canChoose || candidate.status !== 'succeeded' }
+				onClick={ onChoose }
 			>
 				{ __( 'Choose this design' ) }
 			</Button>
@@ -154,35 +169,45 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		queryKey: redesignKey( siteId, redesignId ),
 		queryFn: () => fetchRedesign( siteId, redesignId as string ),
 		enabled: !! redesignId,
-		refetchInterval: ( query ) =>
-			POLLED_STATUSES.includes( query.state.data?.status ?? '' ) ? POLL_MS : false,
+		staleTime: POLL_MS,
+		refetchInterval: ( query ) => {
+			const data = query.state.data;
+			if ( POLLED_STATUSES.includes( data?.status ?? '' ) ) {
+				return POLL_MS;
+			}
+			return isWaitingForPurchase( data, resume ) && query.state.dataUpdateCount < PURCHASE_POLLS
+				? POLL_MS
+				: false;
+		},
 	} );
 	const redesign = redesignQuery.data;
 
 	const store = ( next: Redesign ) => {
 		queryClient.setQueryData( redesignKey( siteId, next.id ), next );
 		if ( next.id !== redesignId ) {
-			page.replace( `/site-redesign/${ siteSlug }?redesign=${ encodeURIComponent( next.id ) }` );
+			page.replace( addQueryArgs( `/site-redesign/${ siteSlug }`, { redesign: next.id } ) );
 		}
+	};
+
+	const noticeHandlers = {
+		onMutate: () => setNotice( null ),
+		onError: ( error: unknown ) => setNotice( messageOf( error ) ),
 	};
 
 	const start = useMutation( {
 		mutationFn: async () => {
 			const open = await openRedesign( siteId );
-			const hasDesigns = [ 'generating', 'preview_ready', 'applying', 'installed' ].includes(
-				open.status
-			);
-			return hasDesigns ? open : generateRedesign( siteId, open.id );
+			const needsDesigns = open.status === 'interview' || open.status === 'failed';
+			return needsDesigns ? generateRedesign( siteId, open.id ) : open;
 		},
-		onMutate: () => setNotice( null ),
+		...noticeHandlers,
 		onSuccess: store,
-		onError: ( error ) => setNotice( messageOf( error ) ),
 	} );
 
 	const choose = useMutation( {
 		mutationFn: ( generationId: string ) =>
 			applyRedesign( siteId, redesign?.id as string, generationId ),
-		onMutate: () => setNotice( null ),
+		onMutate: noticeHandlers.onMutate,
 		onSuccess: store,
 		onError: ( error ) => {
 			const checkoutUrl = getCheckoutUrl( error );
@@ -203,9 +228,8 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 
 	const activate = useMutation( {
 		mutationFn: () => activateRedesign( siteId, redesign?.id as string ),
-		onMutate: () => setNotice( null ),
+		...noticeHandlers,
 		onSuccess: store,
-		onError: ( error ) => setNotice( messageOf( error ) ),
 	} );
 
 	// Back from checkout: the server keeps the choice in `pending_apply` and usually starts the
@@ -236,6 +260,18 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		</>
 	);
 
+	const startButton = (
+		<Button
+			__next40pxDefaultSize
+			variant="primary"
+			isBusy={ start.isPending }
+			disabled={ start.isPending }
+			onClick={ () => start.mutate() }
+		>
+			{ __( 'Show me four designs' ) }
+		</Button>
+	);
+
 	const renderBody = () => {
 		if ( ! redesignId ) {
 			return (
@@ -245,15 +281,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 							'We’ll make four designs that keep your pages, posts and images. Choosing one asks for the Personal plan or higher.'
 						) }
 					</Text>
-					<Button
-						__next40pxDefaultSize
-						variant="primary"
-						isBusy={ start.isPending }
-						disabled={ start.isPending }
-						onClick={ () => start.mutate() }
-					>
-						{ __( 'Show me four designs' ) }
-					</Button>
+					{ startButton }
 				</VStack>
 			);
 		}
@@ -262,6 +290,23 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		}
 		if ( ! redesign ) {
 			return <Spinner />;
+		}
+
+		if ( isWaitingForPurchase( redesign, resume ) ) {
+			const polls =
+				queryClient.getQueryState( redesignKey( siteId, redesignId ) )?.dataUpdateCount ?? 0;
+			return polls < PURCHASE_POLLS ? (
+				<HStack justify="flex-start">
+					<Spinner />
+					<Text>{ __( 'Finishing your purchase…' ) }</Text>
+				</HStack>
+			) : (
+				<Text>
+					{ __(
+						'Your purchase is taking longer than usual. Reload this page in a few minutes to see your new design.'
+					) }
+				</Text>
+			);
 		}
 
 		switch ( redesign.status ) {
@@ -285,7 +330,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 							<Button
 								__next40pxDefaultSize
 								variant="secondary"
-								href={ redesign.applied?.preview_url }
+								href={ httpUrl( redesign.applied?.preview_url ) }
 							>
 								{ __( 'Preview' ) }
 							</Button>
@@ -305,7 +350,11 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 				return (
 					<VStack alignment="topLeft" spacing={ 4 }>
 						<Heading level={ 2 }>{ __( 'Your site has its new design' ) }</Heading>
-						<Button __next40pxDefaultSize variant="primary" href={ redesign.applied?.preview_url }>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							href={ httpUrl( redesign.applied?.preview_url ) }
+						>
 							{ __( 'View site' ) }
 						</Button>
 					</VStack>
@@ -319,15 +368,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 						{ redesign.status === 'failed' && (
 							<Text>{ __( 'We couldn’t make designs for your site this time.' ) }</Text>
 						) }
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							isBusy={ start.isPending }
-							disabled={ start.isPending }
-							onClick={ () => start.mutate() }
-						>
-							{ __( 'Show me four designs' ) }
-						</Button>
+						{ startButton }
 					</VStack>
 				);
 		}
@@ -345,11 +386,11 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 						<CandidateCard
 							key={ candidate.id }
 							siteId={ siteId }
-							redesign={ redesign }
+							redesignId={ redesign.id }
 							candidate={ candidate }
 							index={ index }
-							choosing={ choose.isPending }
-							onChoose={ ( chosen ) => chooseCandidate( chosen.id ) }
+							canChoose={ redesign.status === 'preview_ready' && ! choose.isPending }
+							onChoose={ () => chooseCandidate( candidate.id ) }
 						/>
 					) ) }
 				</div>

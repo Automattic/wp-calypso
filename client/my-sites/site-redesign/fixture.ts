@@ -48,9 +48,7 @@ function save( sessions: Record< string, StoredSession > ) {
 function fail( status: number, code: string, message: string, data: object = {} ) {
 	return Promise.reject( {
 		code,
-		error: code,
 		message,
-		statusCode: status,
 		data: { status, ...data },
 	} );
 }

@@ -183,6 +183,43 @@ describe( 'SiteRedesign', () => {
 		expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, pending );
 	} );
 
+	it( 'tries the pending apply only once when it keeps failing', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				pending_apply: candidate( 3 ).id,
+				eligibility: {
+					can_preview: true,
+					can_apply: true,
+					reason: null,
+					required_plan: 'personal',
+				},
+			} )
+		);
+		jest.mocked( applyRedesign ).mockRejectedValue( {
+			code: 'site_redesign_not_ready',
+			message: 'This design is not ready yet.',
+		} );
+		renderPage( true );
+
+		expect(
+			await screen.findByText( 'This design is not ready yet.', {
+				selector: '.components-notice__content',
+			} )
+		).toBeVisible();
+		expect( applyRedesign ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'waits for the purchase instead of offering checkout again', async () => {
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValue( session( { pending_apply: candidate( 3 ).id } ) );
+		renderPage( true );
+
+		expect( await screen.findByText( 'Finishing your purchase…' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Choose this design' } ) ).toBeNull();
+		expect( applyRedesign ).not.toHaveBeenCalled();
+	} );
+
 	it( 'offers the Live Preview from the API once the theme is installed', async () => {
 		const previewUrl =
 			'https://example.wordpress.com/wp-admin/site-editor.php?wp_theme_preview=pub/new';

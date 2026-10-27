@@ -1,6 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
-import { fixtureRequest } from './fixture';
 
 export type RedesignError = { code: string; message: string; retryable?: boolean };
 
@@ -74,11 +73,13 @@ export type ApiRequest = {
 
 // Until the wpcom routes are deployed, the `themes/site-redesign-fixtures` flag answers from
 // fixture.ts, which follows the shape in the shared API contract.
-function request< T >( siteId: number, { method, path, query, body }: ApiRequest ): Promise< T > {
-	const fullPath = `/sites/${ siteId }/site-redesign${ path }`;
+async function request< T >( siteId: number, req: ApiRequest ): Promise< T > {
 	if ( isEnabled( 'themes/site-redesign-fixtures' ) ) {
-		return fixtureRequest< T >( siteId, { method, path, query, body } );
+		const { fixtureRequest } = await import( './fixture' );
+		return fixtureRequest< T >( siteId, req );
 	}
+	const { method, path, query, body } = req;
+	const fullPath = `/sites/${ siteId }/site-redesign${ path }`;
 	if ( method === 'GET' ) {
 		return wpcom.req.get( { apiNamespace: 'wpcom/v2', path: fullPath }, query ?? {} );
 	}
@@ -121,9 +122,8 @@ export function errorCode( error: unknown ): string | null {
 	if ( ! error || typeof error !== 'object' ) {
 		return null;
 	}
-	const { error: legacyCode, code } = error as { error?: unknown; code?: unknown };
-	const value = code ?? legacyCode;
-	return typeof value === 'string' ? value : null;
+	const { code } = error as { code?: unknown };
+	return typeof code === 'string' ? code : null;
 }
 
 /**
