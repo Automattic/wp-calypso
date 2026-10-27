@@ -81,7 +81,8 @@ $modal-padding: $grid-unit-30;
 }
 
 .a4a-crossover-content {
-	padding: $modal-padding $modal-padding 0;
+	padding-block-start: $modal-padding;
+	padding-inline: $modal-padding;
 }
 
 .a4a-crossover-rows {
@@ -101,6 +102,7 @@ $modal-padding: $grid-unit-30;
 
 .a4a-crossover-actions {
 	margin-block-start: $modal-padding;
-	padding: $grid-unit-20 $modal-padding $modal-padding;
+	padding-block: $grid-unit-20 $modal-padding;
+	padding-inline: $modal-padding;
 	border-block-start: 1px solid $gray-100;
 }
