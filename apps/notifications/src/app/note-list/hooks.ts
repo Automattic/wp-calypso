@@ -79,10 +79,12 @@ export function useNoteListFocusToLastSelectedNote( {
 export function useNoteListNavigationKeyboardShortcuts( {
 	noteListRef,
 	visibleNotes,
+	selectedNoteId,
 	setSelectedNoteId,
 }: {
 	noteListRef: React.RefObject< HTMLObjectElement | null >;
 	visibleNotes: Note[];
+	selectedNoteId: string | undefined;
 	setSelectedNoteId: ( noteId: string | undefined ) => void;
 } ) {
 	const areKeyboardShortcutsEnabled = useSelector( getKeyboardShortcutsEnabled );
@@ -109,7 +111,7 @@ export function useNoteListNavigationKeyboardShortcuts( {
 				}
 			}
 
-			if ( event.key === 'ArrowLeft' ) {
+			if ( event.key === 'ArrowLeft' && selectedNoteId === undefined ) {
 				const focusedNote = visibleNotes.find(
 					( note ) => getNoteRow( noteListRef, note ) === document.activeElement
 				);
@@ -124,5 +126,5 @@ export function useNoteListNavigationKeyboardShortcuts( {
 		return () => {
 			window.removeEventListener( 'keydown', handleKeyDown, false );
 		};
-	}, [ areKeyboardShortcutsEnabled, visibleNotes ] ); // eslint-disable-line react-hooks/exhaustive-deps
+	}, [ areKeyboardShortcutsEnabled, visibleNotes, selectedNoteId ] ); // eslint-disable-line react-hooks/exhaustive-deps
 }
