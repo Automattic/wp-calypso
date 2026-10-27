@@ -15,7 +15,6 @@ import NavigationHeader from 'calypso/components/navigation-header';
 import SectionHeader from 'calypso/components/section-header';
 import { getImporterByKey, getImporters } from 'calypso/lib/importer/importer-config';
 import { EVERY_FIVE_SECONDS, Interval } from 'calypso/lib/interval';
-import memoizeLast from 'calypso/lib/memoize-last';
 import version_compare from 'calypso/lib/version-compare';
 import BloggerImporter from 'calypso/my-sites/importer/importer-blogger';
 import MediumImporter from 'calypso/my-sites/importer/importer-medium';
@@ -87,7 +86,7 @@ const bytesToFilesizeRange = ( bytes ) => {
  */
 const JETPACK_IMPORT_MIN_PLUGIN_VERSION = '12.1';
 
-class SectionImport extends Component {
+export class SectionImport extends Component {
 	static propTypes = {
 		site: PropTypes.object,
 		engine: PropTypes.string,
@@ -119,6 +118,8 @@ class SectionImport extends Component {
 		afterStartImport?.();
 	} );
 
+	lastTrackedStates = new Map();
+
 	handleStateChanges = () => {
 		this.props.siteImports.map( ( importItem ) => {
 			const { importerState, type: importerId } = importItem;
@@ -139,7 +140,15 @@ class SectionImport extends Component {
 				this.setState( { latestSuccessImport: importItem } );
 			}
 
-			this.trackImporterStateChange( importerState, importerId, eventProps );
+			const trackedState = JSON.stringify( [
+				importerState,
+				importItem.errorData?.code,
+				importItem.errorData?.type,
+			] );
+			if ( this.lastTrackedStates.get( importerId ) !== trackedState ) {
+				this.lastTrackedStates.set( importerId, trackedState );
+				this.trackImporterStateChange( importerState, importerId, eventProps );
+			}
 		} );
 	};
 
@@ -149,7 +158,7 @@ class SectionImport extends Component {
 			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
 	};
 
-	trackImporterStateChange = memoizeLast( ( importerState, importerId, eventProps = {} ) => {
+	trackImporterStateChange = ( importerState, importerId, eventProps = {} ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',
 			[ appStates.UPLOADING ]: 'calypso_importer_upload_start',
@@ -166,7 +175,7 @@ class SectionImport extends Component {
 				...eventProps,
 			} );
 		}
-	} );
+	};
 
 	componentDidMount() {
 		this.updateFromAPI();
