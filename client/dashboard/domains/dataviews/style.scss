@@ -1,8 +1,0 @@
-// Every row action on the domain lists is a visible link, not a hover-revealed button.
-.domains-dataviews
-	.dataviews-view-table
-	tr
-	.dataviews-item-actions
-	.components-button:not( .dataviews-all-actions-button ) {
-	opacity: 1;
-}

@@ -32,7 +32,6 @@ import { isPendingPrimaryDomain } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
-import '../../domains/dataviews/style.scss';
 
 function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -132,7 +131,7 @@ function SiteDomains() {
 				</>
 			}
 		>
-			<DataViewsCard className="domains-dataviews">
+			<DataViewsCard>
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
