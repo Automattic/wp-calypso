@@ -1,4 +1,3 @@
-import { __ } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 
 export default function PrimaryAddressIllustration() {
@@ -15,7 +14,8 @@ export default function PrimaryAddressIllustration() {
 			</div>
 			<div className="primary-address-illustration__address">
 				<Icon icon={ wordpress } size={ 22 } />
-				<span>{ __( 'your-primary-address.com' ) }</span>
+				{ /* Not translated: the drawing is laid out for this text length. */ }
+				<span>example.com</span>
 			</div>
 		</div>
 	);
