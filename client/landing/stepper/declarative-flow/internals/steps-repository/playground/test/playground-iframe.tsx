@@ -6,6 +6,7 @@ import { act, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { speak } from '@wordpress/a11y';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { PlaygroundIframe } from '../components/playground-iframe';
 import { BlueprintLoadError } from '../lib/blueprint-load-error';
 import { initializeWordPressPlayground } from '../lib/initialize-playground';
@@ -14,6 +15,9 @@ import { PlaygroundNotFoundError } from '../lib/playground-not-found-error';
 jest.mock( '../lib/initialize-playground' );
 jest.mock( '@wordpress/a11y', () => ( { speak: jest.fn() } ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+jest.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: jest.fn( () => Promise.resolve() ),
+} ) );
 jest.mock( 'calypso/data/php-versions', () => ( {
 	getPHPVersions: () => ( { recommendedValue: '8.3' } ),
 } ) );
@@ -219,16 +223,34 @@ describe( 'PlaygroundIframe messages', () => {
 			window.dispatchEvent( new MessageEvent( 'message', { data, ...init } ) );
 		} );
 
-	const getIframeElement = ( onPlaygroundMessage?: ( data: unknown ) => void ) => (
+	const getIframeElement = (
+		onPlaygroundMessage?: ( data: unknown ) => void,
+		withIntro = false
+	) => (
 		<PlaygroundIframe
 			hasPlaygroundClient={ false }
 			setPlaygroundClient={ jest.fn() }
+			withIntro={ withIntro }
 			onPlaygroundMessage={ onPlaygroundMessage }
 		/>
 	);
 
-	const renderIframe = ( onPlaygroundMessage?: ( data: unknown ) => void ) =>
-		render( getIframeElement( onPlaygroundMessage ) );
+	const renderIframe = ( onPlaygroundMessage?: ( data: unknown ) => void, withIntro = false ) =>
+		render( getIframeElement( onPlaygroundMessage, withIntro ) );
+
+	const deferBoot = () => {
+		const boot: {
+			resolve: ( value: unknown ) => void;
+			reject: ( error: Error ) => void;
+		} = { resolve: () => {}, reject: () => {} };
+		jest.mocked( initializeWordPressPlayground ).mockReturnValue(
+			new Promise( ( resolve, reject ) => {
+				boot.resolve = resolve as ( value: unknown ) => void;
+				boot.reject = reject;
+			} ) as ReturnType< typeof initializeWordPressPlayground >
+		);
+		return boot;
+	};
 
 	const appendFrame = ( document: Document ) => {
 		const frame = document.createElement( 'iframe' );
@@ -282,6 +304,60 @@ describe( 'PlaygroundIframe messages', () => {
 		postMessage( getInit() );
 
 		expect( onPlaygroundMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'holds messages posted during the intro until the Playground is ready', async () => {
+		mockSearchParams = new URLSearchParams( { blueprint: 'woocommerce' } );
+		const boot = deferBoot();
+		const onPlaygroundMessage = jest.fn();
+		renderIframe( onPlaygroundMessage, true );
+
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+		expect( onPlaygroundMessage ).not.toHaveBeenCalled();
+
+		await act( async () => boot.resolve( { blueprint: null, client: {} } ) );
+		expect( onPlaygroundMessage ).toHaveBeenCalledTimes( 1 );
+		expect( onPlaygroundMessage ).toHaveBeenCalledWith( data );
+
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+		expect( onPlaygroundMessage ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'drops messages posted during the intro when the boot fails', async () => {
+		mockSearchParams = new URLSearchParams( { blueprint: 'woocommerce' } );
+		const boot = deferBoot();
+		const onPlaygroundMessage = jest.fn();
+		renderIframe( onPlaygroundMessage, true );
+
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+		await act( async () => boot.reject( new Error( 'boot failed' ) ) );
+
+		expect( await screen.findByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+		expect( onPlaygroundMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'logs the first message from an unknown origin inside the Playground', () => {
+		renderIframe( jest.fn() );
+
+		postMessage( { origin: 'https://example.com', source: getIframe().contentWindow } );
+		postMessage( { origin: 'https://example.org', source: getIframe().contentWindow } );
+
+		expect( logToLogstash ).toHaveBeenCalledTimes( 1 );
+		expect( logToLogstash ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				tags: [ 'playground-unknown-origin' ],
+				properties: expect.objectContaining( { origin: 'https://example.com' } ),
+			} )
+		);
+	} );
+
+	it( 'does not log messages from known origins or from outside the Playground', () => {
+		renderIframe( jest.fn() );
+
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+		postMessage( { origin: 'https://example.com', source: appendFrame( document ).contentWindow } );
+
+		expect( logToLogstash ).not.toHaveBeenCalled();
 	} );
 
 	it( 'only passes messages on to the current callback', () => {

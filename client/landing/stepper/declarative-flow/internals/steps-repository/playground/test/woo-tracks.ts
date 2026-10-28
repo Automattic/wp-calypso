@@ -40,6 +40,11 @@ describe( 'parseWooTracksMessage', () => {
 			'/wp-admin/admin.php?page=wc-orders',
 		],
 		[
+			'a classic page, whatever characters its other query keys hold',
+			'/wp-admin/admin.php?page=wc-orders&s=jane@example.com',
+			'/wp-admin/admin.php?page=wc-orders',
+		],
+		[
 			'a classic page, without a query of only other keys',
 			'/wp-admin/edit.php?s=shirt+blue',
 			'/wp-admin/edit.php',

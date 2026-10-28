@@ -72,17 +72,13 @@ export function parseWooTracksMessage( data: unknown ): WooTracksEvent | null {
 		return null;
 	}
 
-	const value = rawValue.replace( PLAYGROUND_SCOPE_PREFIX, '' );
+	const unscopedValue = rawValue.replace( PLAYGROUND_SCOPE_PREFIX, '' );
+	const value = mapping.property === 'path' ? keepScreenQueryKeys( unscopedValue ) : unscopedValue;
 	if ( ! PROPERTY_VALUE_PATTERN.test( value ) ) {
 		return null;
 	}
 
-	return {
-		name: mapping.name,
-		properties: {
-			[ mapping.recordAs ]: mapping.property === 'path' ? keepScreenQueryKeys( value ) : value,
-		},
-	};
+	return { name: mapping.name, properties: { [ mapping.recordAs ]: value } };
 }
 
 function keepScreenQueryKeys( path: string ): string {
