@@ -32,11 +32,11 @@ export type HumanRoutingProduct = {
 	isRevShare: boolean;
 	/** WooCommerce Core itself, rather than an extension. */
 	isCore: boolean;
-	isPaymentExtension: boolean;
 };
 
 export type HumanRoutingCustomer = {
-	supportTier: SupportTier;
+	/** Null when WooCommerce.com couldn't work out the tier. */
+	supportTier: SupportTier | null;
 	isPaying: boolean;
 	isTargetCustomer: boolean;
 	isWooEnterpriseCustomer: boolean;
@@ -51,7 +51,7 @@ export type HumanRoutingFlags = {
 
 export type HumanRoutingInput = {
 	flags: HumanRoutingFlags;
-	/** Null when the lookup failed, so the tier is unknown. */
+	/** Null without merchant data; routed like a Tier 2 or 3 merchant who isn't paying. */
 	customer: HumanRoutingCustomer | null;
 	question: HumanSupportQuestionType;
 	/** Null when no product was picked. */
@@ -61,7 +61,6 @@ export type HumanRoutingInput = {
 /** Values derived once from the input, so each row reads as one condition. */
 export type HumanRoutingFacts = HumanRoutingInput & {
 	isPaying: boolean;
-	isTierKnown: boolean;
 	isTier1: boolean;
 	isCore: boolean;
 	isWooProduct: boolean;

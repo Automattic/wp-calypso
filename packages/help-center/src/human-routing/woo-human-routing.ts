@@ -5,7 +5,8 @@ import type { HumanRoutingDecision, HumanRoutingInput, HumanRoutingRow } from '.
  * Who gets a human on WooCommerce.com (WOOPUBR-2400). Rows are checked top to bottom, and the
  * first one that matches decides the route. Asking for a human doesn't override the table.
  *
- * Row ids match the decision table in WOOPUBR-2400; keep them when reordering or editing rows.
+ * Row ids match the decision table in WOOPUBR-2400; keep them when reordering or editing rows,
+ * and give a new row the next unused id.
  */
 export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
 	{
@@ -24,12 +25,6 @@ export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
 		id: 3,
 		description: 'Emergency, not paying',
 		when: ( { flags, isPaying } ) => flags.isEmergency && ! isPaying,
-		route: 'ticket',
-	},
-	{
-		id: 4,
-		description: 'Tier unknown (lookup failed)',
-		when: ( { isTierKnown } ) => ! isTierKnown,
 		route: 'ticket',
 	},
 	{
@@ -63,6 +58,13 @@ export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
 		route: 'chat',
 	},
 	{
+		id: 15,
+		// A rev-share product counts as paying, so this is a free product without rev-share.
+		description: 'Not paying, Woo product',
+		when: ( { isPaying, isWooProduct } ) => ! isPaying && isWooProduct,
+		route: 'forums',
+	},
+	{
 		id: 10,
 		description: 'Tier 2 or 3, Woo product or account',
 		when: ( { isTier1, isWooProduct, question } ) =>
@@ -83,10 +85,14 @@ export const WOO_HUMAN_ROUTING_ROWS: readonly HumanRoutingRow[] = [
 	},
 	{
 		id: 13,
-		description: 'Not paying, pre-sales or payment extension',
-		when: ( { isPaying, question, product } ) =>
-			! isPaying && ( question === 'pre-sales' || !! product?.isPaymentExtension ),
-		route: 'email-form',
+		// The rules send these to email only without an account, and merchants here are signed in.
+		description: 'Not paying, pre-sales, start or scale a store, or Marketplace vendors',
+		when: ( { isPaying, question } ) =>
+			! isPaying &&
+			( question === 'pre-sales' ||
+				question === 'start-scale-store' ||
+				question === 'marketplace-vendor' ),
+		route: 'ticket',
 	},
 	{
 		id: 14,

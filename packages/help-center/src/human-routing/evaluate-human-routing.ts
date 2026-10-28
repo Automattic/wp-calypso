@@ -13,7 +13,6 @@ export function getHumanRoutingFacts( input: HumanRoutingInput ): HumanRoutingFa
 		...input,
 		// A rev-share product counts as paying.
 		isPaying: !! customer?.isPaying || !! product?.isRevShare,
-		isTierKnown: customer !== null,
 		// Zendesk gives target customers Tier 1 too.
 		isTier1: customer?.supportTier === 'tier_1' || !! customer?.isTargetCustomer,
 		isCore,
