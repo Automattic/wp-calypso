@@ -336,6 +336,8 @@ export async function* executeStreamingRequest(
 
 		yield* parseSSEStream( response.body as ReadableStream< Uint8Array >, {
 			supportDeltas,
+			// The request timer stops at the headers; a stream that then goes quiet is cut off the same way.
+			idleTimeout: { ms: streamingTimeout, onIdle: () => controller.abort() },
 		} );
 	} catch ( error ) {
 		handleRequestError(
