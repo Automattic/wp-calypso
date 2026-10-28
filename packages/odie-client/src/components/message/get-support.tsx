@@ -6,8 +6,9 @@ import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useOdieAssistantContext } from '../../context';
 import { useGetSupportInteractionById } from '../../data';
-import { useCreateZendeskConversation } from '../../hooks';
+import { useRequestHumanSupport } from '../../hooks';
 import { useOpenLiveInteractions } from '../../hooks/use-open-interaction-status-map';
+import { getLatestHumanSupportFlags } from '../../utils/human-support-flags';
 
 import './get-support.scss';
 
@@ -36,7 +37,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 	forceAIConversation = false,
 } ) => {
 	const navigate = useNavigate();
-	const createZendeskConversation = useCreateZendeskConversation();
+	const requestHumanSupport = useRequestHumanSupport();
 	const { search } = useLocation();
 	const params = new URLSearchParams( search );
 
@@ -47,6 +48,7 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		trackEvent,
 		isChatLoaded,
 		forceEmailSupport: contextForceEmailSupport,
+		humanSupportRouting,
 	} = useOdieAssistantContext();
 
 	const { mostRecentSupportInteractionId, hasReachedLimit: isConversationLimitReached } =
@@ -56,7 +58,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 		mostRecentSupportInteractionId || null
 	);
 
-	const isPaidUser = isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport;
+	// With a routing step, the host decides who gets a human.
+	const isPaidUser =
+		isUserEligibleForPaidSupport || contextIsUserEligibleForPaidSupport || !! humanSupportRouting;
 	const isEmailForced = forceEmailSupport || contextForceEmailSupport;
 	const hasZendeskAccess = canConnectToZendesk || contextCanConnectToZendesk;
 
@@ -133,8 +137,9 @@ export const GetSupport: React.FC< GetSupportProps > = ( {
 							onClickAdditionalEvent?.( 'chat', {
 								has_open_conversation: !! supportInteraction,
 							} );
-							await createZendeskConversation( {
+							await requestHumanSupport( {
 								createdFrom: 'chat_support_button',
+								flags: getLatestHumanSupportFlags( chat.messages ),
 							} );
 						},
 					} );

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { OdieAssistantProvider, useOdieAssistantContext } from '../index';
 import type { CheckoutSupportVariation } from '@automattic/data-stores';
 
@@ -131,5 +131,66 @@ describe( 'OdieAssistantProvider – loading human chats from Zendesk', () => {
 		} );
 
 		expect( canLoadZendeskChats() ).toBe( false );
+	} );
+} );
+
+describe( 'OdieAssistantProvider – pending request for a human', () => {
+	const request = {
+		createdFrom: 'automatic_escalation',
+		flags: { isEmergency: false, emergencyType: null, routeToEmail: false },
+	};
+
+	let setPending: ( value: typeof request | null ) => void = () => {};
+
+	const PendingReader = () => {
+		const { pendingHumanSupportRequest, setPendingHumanSupportRequest } = useOdieAssistantContext();
+		setPending = setPendingHumanSupportRequest;
+		return <span data-testid="pending">{ pendingHumanSupportRequest?.createdFrom ?? 'none' }</span>;
+	};
+
+	const provider = () => (
+		<OdieAssistantProvider
+			newInteractionsBotSlug="wpcom-workflow-support_chat"
+			newLoggedOutInteractionsBotSlug="wpcom-workflow-chat_loggedout"
+			currentUser={ { display_name: 'Me' } }
+		>
+			<PendingReader />
+		</OdieAssistantProvider>
+	);
+
+	const mockChat = ( odieId: number ) =>
+		mockUseGetCombinedChat.mockReturnValue( {
+			mainChatState: { messages: [], odieId },
+			setMainChatState: jest.fn(),
+			isLoadingZendeskHistory: false,
+		} );
+
+	afterEach( () => {
+		mockUseGetCombinedChat.mockReset();
+		mockUseGetCombinedChat.mockReturnValue( {
+			mainChatState: { messages: [] },
+			setMainChatState: jest.fn(),
+			isLoadingZendeskHistory: false,
+		} );
+	} );
+
+	it( 'keeps the request for the chat it was made in', () => {
+		mockChat( 1 );
+		render( provider() );
+
+		act( () => setPending( request ) );
+
+		expect( screen.getByTestId( 'pending' ).textContent ).toBe( 'automatic_escalation' );
+	} );
+
+	it( "doesn't carry the request into another chat", () => {
+		mockChat( 1 );
+		const { rerender } = render( provider() );
+		act( () => setPending( request ) );
+
+		mockChat( 2 );
+		rerender( provider() );
+
+		expect( screen.getByTestId( 'pending' ).textContent ).toBe( 'none' );
 	} );
 } );

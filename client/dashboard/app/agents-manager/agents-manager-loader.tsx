@@ -10,9 +10,6 @@ import { useAppContext } from '../context';
 import { useCanShowAiChatNode } from '../omnibar/ai-chat-node/can-show';
 import useShouldLoadAgentsManager from './use-should-load-agents-manager';
 
-// Only these pages load a site; every other page has none.
-const SITE_PAGE_ROUTE = /^\/sites\/[^/]+/;
-
 const AgentsManager = lazy(
 	() =>
 		import(
@@ -32,17 +29,12 @@ export default function AgentsManagerLoader( { pathname }: { pathname: string } 
 	} );
 	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager( pathname, siteId );
 
-	// A site page needs its site ID, so the omnibar must not offer the chat before then.
-	const isSitePage = SITE_PAGE_ROUTE.test( pathname );
-	const isChatEnabled = routeIsEnabled && ( ! isSitePage || !! siteId );
-	const chatSite = isSitePage ? site : undefined;
-
 	useEffect( () => {
 		queryClient.cancelQueries( { queryKey: omnibarAgentsManagerEnabledQuery().queryKey } );
-		queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, isChatEnabled );
-	}, [ queryClient, isChatEnabled ] );
+		queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, routeIsEnabled );
+	}, [ queryClient, routeIsEnabled ] );
 
-	if ( ! isChatEnabled || ( isSitePage && ! chatSite ) ) {
+	if ( ! routeIsEnabled || ! siteId || ! site ) {
 		return null;
 	}
 
@@ -51,8 +43,8 @@ export default function AgentsManagerLoader( { pathname }: { pathname: string } 
 			<AgentsManager
 				currentUser={ user }
 				sectionName="dashboard"
-				site={ chatSite ? { ID: chatSite.ID, domain: chatSite.slug, URL: chatSite.URL } : null }
-				currentSiteId={ chatSite?.ID }
+				site={ { ID: site.ID, domain: site.slug, URL: site.URL } }
+				currentSiteId={ siteId }
 				currentRoute={ pathname }
 				isInternalOnly={ isInternalOnly }
 				// A variant's own omnibar has no AI chat button.
