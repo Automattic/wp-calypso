@@ -15,7 +15,10 @@ export type SSHKeyType = ( typeof SSHKeyTypes )[ keyof typeof SSHKeyTypes ];
 
 export interface UserSshKey {
 	name: string;
-	label: string;
+	/**
+	 * Missing for keys added before labels existed, and from backends that don't return it yet.
+	 */
+	label?: string;
 	key: string;
 	type: SSHKeyType;
 	sha256: string;

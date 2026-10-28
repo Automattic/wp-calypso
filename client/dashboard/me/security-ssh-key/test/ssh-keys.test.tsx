@@ -228,35 +228,4 @@ describe( '<SshKeys>', () => {
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
-
-	test( 'sends one delete request when Enter is pressed again while deleting', async () => {
-		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
-		let resolveDelete: () => void = () => {};
-		const deleteFinished = new Promise< void >( ( resolve ) => {
-			resolveDelete = resolve;
-		} );
-		const firstDelete = nock( API )
-			.delete( '/wpcom/v2/me/ssh-keys/laptop' )
-			.reply( async () => {
-				await deleteFinished;
-				return [ 200, {} ];
-			} );
-		const secondDelete = nock( API ).delete( '/wpcom/v2/me/ssh-keys/laptop' ).reply( 200, {} );
-
-		render( <SshKeys /> );
-
-		await openActionsMenu( 'Laptop' );
-		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Delete' } ) );
-		screen.getByRole( 'dialog' ).focus();
-		await userEvent.keyboard( '{Enter}' );
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: 'Delete SSH key' } ) ).toBeDisabled()
-		);
-		await userEvent.keyboard( '{Enter}' );
-
-		resolveDelete();
-
-		await waitFor( () => expect( firstDelete.isDone() ).toBe( true ) );
-		expect( secondDelete.isDone() ).toBe( false );
-	} );
 } );

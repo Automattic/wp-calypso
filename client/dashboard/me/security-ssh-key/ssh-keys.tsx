@@ -21,7 +21,7 @@ import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
-import { MAX_SSH_KEYS } from '../../utils/ssh';
+import { getSshKeyLabel, MAX_SSH_KEYS } from '../../utils/ssh';
 import AddSshKeyModal from './add-ssh-key-modal';
 import EditSshKeyModal from './edit-ssh-key-modal';
 import SshKeyItem from './ssh-key-item';
@@ -34,7 +34,7 @@ function getDeleteConfirmationMessage( sshKey: UserSshKey ) {
 		return sprintf(
 			/* translators: %s is the SSH key label. */
 			__( 'Are you sure you want to delete the SSH key “%s”?' ),
-			sshKey.label
+			getSshKeyLabel( sshKey )
 		);
 	}
 
@@ -45,7 +45,7 @@ function getDeleteConfirmationMessage( sshKey: UserSshKey ) {
 			'Are you sure you want to delete the SSH key “%1$s”? It will be detached from %2$s sites.',
 			siteCount
 		),
-		sshKey.label,
+		getSshKeyLabel( sshKey ),
 		formatNumber( siteCount )
 	);
 }

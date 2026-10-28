@@ -10,6 +10,7 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { useIntlLocale } from '../../app/locale';
 import { ActionList } from '../../components/action-list';
+import { getSshKeyLabel } from '../../utils/ssh';
 import type { UserSshKey } from '@automattic/api-core';
 
 export default function SshKeyItem( {
@@ -22,6 +23,7 @@ export default function SshKeyItem( {
 	onDelete: () => void;
 } ) {
 	const userLocale = useIntlLocale();
+	const label = getSshKeyLabel( sshKey );
 	const siteCount = sshKey.site_ids?.length ?? 0;
 
 	const addedOn = sprintf(
@@ -42,7 +44,7 @@ export default function SshKeyItem( {
 
 	return (
 		<ActionList.ActionItem
-			title={ sshKey.label }
+			title={ label }
 			description={
 				<VStack spacing={ 1 }>
 					<Text variant="muted" lineHeight="20px" size="13px" style={ { wordBreak: 'break-all' } }>
@@ -60,7 +62,7 @@ export default function SshKeyItem( {
 					label={ sprintf(
 						/* translators: %s is the SSH key label. */
 						__( 'Actions for %s' ),
-						sshKey.label
+						label
 					) }
 				>
 					{ ( { onClose } ) => (

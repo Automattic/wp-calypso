@@ -15,7 +15,7 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
-import { isSshKeyValid, SSH_KEY_LABEL_MAX_LENGTH } from '../../utils/ssh';
+import { getSshKeyLabel, isSshKeyValid, SSH_KEY_LABEL_MAX_LENGTH } from '../../utils/ssh';
 import { getInvalidSshKeyMessage, getSshKeyHelpText } from './messages';
 import type { UserSshKey } from '@automattic/api-core';
 
@@ -31,12 +31,13 @@ export default function EditSshKeyModal( {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
 
-	const [ label, setLabel ] = useState( sshKey.label );
+	const currentLabel = getSshKeyLabel( sshKey );
+	const [ label, setLabel ] = useState( currentLabel );
 	const [ key, setKey ] = useState( '' );
 
 	const trimmedLabel = label.trim();
 	const trimmedKey = key.trim();
-	const isLabelChanged = trimmedLabel !== sshKey.label;
+	const isLabelChanged = trimmedLabel !== currentLabel;
 	const isKeyChanged = trimmedKey !== '';
 
 	const { mutate: updateSshKey, isPending } = useMutation(
