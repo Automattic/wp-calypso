@@ -30,9 +30,8 @@ type McpClient =
 
 const QUICK_SETUP_CLIENTS: McpClient[] = [ 'claude', 'claude-code', 'chatgpt', 'cursor' ];
 
-const CLIENT_DOCUMENTATION: Record< Exclude< McpClient, 'chatgpt' >, string > = {
-	claude:
-		'https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp',
+// Claude and ChatGPT have no manual setup card, so no documentation link either.
+const CLIENT_DOCUMENTATION: Record< Exclude< McpClient, 'chatgpt' | 'claude' >, string > = {
 	'claude-code': 'https://code.claude.com/docs/en/mcp',
 	vscode: 'https://code.visualstudio.com/docs/agent-customization/mcp-servers',
 	cursor: 'https://cursor.com/docs/mcp',
@@ -70,8 +69,7 @@ export default function McpSetupInstructions() {
 		{ label: __( 'Other MCP client' ), value: 'default' },
 	];
 
-	const clientDocumentationLabels: Record< Exclude< McpClient, 'chatgpt' >, string > = {
-		claude: __( 'Claude documentation' ),
+	const clientDocumentationLabels: Record< Exclude< McpClient, 'chatgpt' | 'claude' >, string > = {
 		'claude-code': __( 'Claude Code documentation' ),
 		vscode: __( 'VS Code documentation' ),
 		cursor: __( 'Cursor documentation' ),
@@ -254,8 +252,10 @@ export default function McpSetupInstructions() {
 				</Card>
 			) }
 
-			{ /* ChatGPT connects through its own plugins UI, so there is no config to copy. */ }
-			{ selectedMcpClient !== 'chatgpt' && (
+			{ /* ChatGPT connects through its own plugins UI, and Claude (claude.ai and Claude
+			     Desktop) only through its connector: claude_desktop_config.json rejects a url-only
+			     server entry (MCP-538). Neither has a config to copy. */ }
+			{ selectedMcpClient !== 'chatgpt' && selectedMcpClient !== 'claude' && (
 				<Card>
 					<CardBody>
 						<VStack spacing={ 2 }>
