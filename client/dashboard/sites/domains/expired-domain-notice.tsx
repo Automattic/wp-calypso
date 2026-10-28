@@ -2,7 +2,7 @@ import { purchaseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -52,13 +52,12 @@ export default function ExpiredDomainNotice( { domain }: { domain: DomainSummary
 			}
 		>
 			{ createInterpolateElement(
-				sprintf(
-					/* translators: %1$s is a domain name, %2$s is the date it expired, e.g. September 4, 2026. */
-					__( '<strong>%1$s</strong> expired on %2$s and will be released if it is not renewed.' ),
-					domain.domain,
-					expiryDate
-				),
-				{ strong: <strong /> }
+				/* translators: <domainName /> is a domain name, <expiryDate /> is the date it expired, e.g. September 4, 2026. */
+				__( '<domainName /> expired on <expiryDate /> and will be released if it is not renewed.' ),
+				{
+					domainName: <strong>{ domain.domain }</strong>,
+					expiryDate: <span>{ expiryDate }</span>,
+				}
 			) }
 		</Notice>
 	);
