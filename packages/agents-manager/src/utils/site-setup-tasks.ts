@@ -28,6 +28,18 @@ export interface SiteSetupTaskStart {
 	summary: string;
 }
 
+/** The list with one task's status replaced; the rest, and the progress, untouched. */
+export function withSiteSetupTaskStatus(
+	data: SiteSetupTasks,
+	taskId: string,
+	status: SiteSetupTaskStatus
+): SiteSetupTasks {
+	return {
+		...data,
+		tasks: data.tasks.map( ( task ) => ( task.id === taskId ? { ...task, status } : task ) ),
+	};
+}
+
 const READ_ABILITY_NAME = 'wpcom/get-site-setup-tasks';
 const START_ABILITY_NAME = 'wpcom/start-site-setup-task';
 

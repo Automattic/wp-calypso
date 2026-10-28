@@ -327,6 +327,43 @@ describe( 'Checklist', () => {
 		expect( action ).toHaveBeenCalled();
 	} );
 
+	it( 'shows a task that settled while collapsed for a beat, then opens the list', () => {
+		vi.useFakeTimers();
+		try {
+			render( { defaultCollapsed: true, expandOnSettle: true } );
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			const settled = items.map( ( item ) =>
+				item.id === 'images' ? { ...item, status: 'done' as const } : item
+			);
+			render( { defaultCollapsed: true, expandOnSettle: true, items: settled } );
+
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+
+			act( () => {
+				vi.advanceTimersByTime( 1200 );
+			} );
+
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+			expect( rows() ).toHaveLength( items.length );
+		} finally {
+			vi.useRealTimers();
+		}
+	} );
+
+	it( 'hides a settled task at once and stays collapsed without expandOnSettle', () => {
+		render( { defaultCollapsed: true } );
+		const settled = items.map( ( item ) =>
+			item.id === 'images' ? { ...item, status: 'done' as const } : item
+		);
+
+		render( { defaultCollapsed: true, items: settled } );
+
+		expect( rowLabels() ).toEqual( [] );
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+	} );
+
 	it( 'follows a controlled collapsed prop', () => {
 		const onCollapsedChange = vi.fn();
 		render( { collapsed: true, onCollapsedChange } );

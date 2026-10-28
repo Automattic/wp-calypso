@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../utils/classNames';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
@@ -16,6 +16,11 @@ export interface ChecklistProps {
 	onCollapsedChange?: ( collapsed: boolean ) => void;
 	/** Collapse the list once an item is selected. Defaults to true. */
 	collapseOnSelect?: boolean;
+	/**
+	 * When an in-progress item settles while the list is collapsed, keep it in
+	 * view for a beat, then expand the list so the next task is at hand.
+	 */
+	expandOnSettle?: boolean;
 	/** Return false when the prompt was not actually sent; the list then stays open. */
 	onSubmit?: ( selectedItem: ChecklistItem, items: ChecklistItem[] ) => boolean | void;
 	/** While true (e.g. a reply is streaming) open tasks look and act inert. */
@@ -26,6 +31,9 @@ export interface ChecklistProps {
 }
 
 const getStatus = ( item: ChecklistItem ): ChecklistItemStatus => item.status ?? 'todo';
+
+// Long enough to read the check on a task that just settled, before the list opens.
+const SETTLED_REVEAL_MS = 1200;
 
 export const isSettled = ( item: ChecklistItem ): boolean =>
 	[ 'done', 'skipped' ].includes( getStatus( item ) );
@@ -159,7 +167,9 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * A task list that lives in the chat: a header with progress and a
  * collapse toggle, and one row per task. Clicking an open task submits it
  * the way a suggestion would, then collapses the list down to whatever is
- * in progress. In-progress and settled (done / skipped) rows are inert.
+ * in progress. In-progress and settled (done / skipped) rows are inert. With
+ * `expandOnSettle`, a task that settles while collapsed stays in view for a
+ * beat and the list then opens on the next one.
  * @param props                   Component props.
  * @param props.title
  * @param props.items
@@ -167,6 +177,7 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * @param props.defaultCollapsed
  * @param props.onCollapsedChange
  * @param props.collapseOnSelect
+ * @param props.expandOnSettle   Reveal a task that just settled, then open the list.
  * @param props.onSubmit
  * @param props.busy
  * @param props.focusHeaderOnMount Move focus to the header on mount.
@@ -179,6 +190,7 @@ export function Checklist( {
 	defaultCollapsed = false,
 	onCollapsedChange,
 	collapseOnSelect = true,
+	expandOnSettle = false,
 	onSubmit,
 	busy = false,
 	focusHeaderOnMount = false,
@@ -201,12 +213,59 @@ export function Checklist( {
 		}
 	}, [] );
 
-	const setCollapsed = ( next: boolean ) => {
-		if ( ! isControlled ) {
-			setInternalCollapsed( next );
+	const setCollapsed = useCallback(
+		( next: boolean ) => {
+			if ( ! isControlled ) {
+				setInternalCollapsed( next );
+			}
+			onCollapsedChange?.( next );
+		},
+		[ isControlled, onCollapsedChange ]
+	);
+
+	// Items that settled while collapsed and are shown for a beat before the
+	// list opens. The timer outlives item updates that bring no new settle.
+	const [ revealedIds, setRevealedIds ] = useState< ReadonlySet< string > >( () => new Set() );
+	const previousStatusesRef = useRef(
+		new Map( items.map( ( item ) => [ item.id, getStatus( item ) ] ) )
+	);
+	const revealTimerRef = useRef< number | null >( null );
+
+	useEffect( () => {
+		const previous = previousStatusesRef.current;
+		previousStatusesRef.current = new Map(
+			items.map( ( item ) => [ item.id, getStatus( item ) ] )
+		);
+
+		const settledNow = items
+			.filter( ( item ) => previous.get( item.id ) === 'in-progress' && isSettled( item ) )
+			.map( ( item ) => item.id );
+
+		if ( ! expandOnSettle || ! isCollapsed || settledNow.length === 0 ) {
+			return;
 		}
-		onCollapsedChange?.( next );
-	};
+
+		setRevealedIds( ( current ) => new Set( [ ...current, ...settledNow ] ) );
+
+		if ( revealTimerRef.current !== null ) {
+			window.clearTimeout( revealTimerRef.current );
+		}
+
+		revealTimerRef.current = window.setTimeout( () => {
+			revealTimerRef.current = null;
+			setRevealedIds( new Set() );
+			setCollapsed( false );
+		}, SETTLED_REVEAL_MS );
+	}, [ items, expandOnSettle, isCollapsed, setCollapsed ] );
+
+	useEffect(
+		() => () => {
+			if ( revealTimerRef.current !== null ) {
+				window.clearTimeout( revealTimerRef.current );
+			}
+		},
+		[]
+	);
 
 	const settledCount = items.filter( isSettled ).length;
 
@@ -279,7 +338,10 @@ export function Checklist( {
 			   to zero height and out of the accessibility tree. */ }
 			<ul id={ listId } className={ styles.list }>
 				{ items.map( ( item ) => {
-					const hidden = isCollapsed && ( foldEverything || getStatus( item ) !== 'in-progress' );
+					const hidden =
+						isCollapsed &&
+						! revealedIds.has( item.id ) &&
+						( foldEverything || getStatus( item ) !== 'in-progress' );
 					return (
 						<li
 							key={ item.id }

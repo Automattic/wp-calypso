@@ -37,7 +37,11 @@ describe( 'SiteSetupChecklist', () => {
 			<SiteSetupChecklist items={ [] } variant="pinned" focusHeaderOnMount />
 		);
 		expect( mockAgentUIChecklist ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { defaultCollapsed: true, focusHeaderOnMount: true } )
+			expect.objectContaining( {
+				defaultCollapsed: true,
+				expandOnSettle: true,
+				focusHeaderOnMount: true,
+			} )
 		);
 		const block = container.querySelector( '.agents-manager-site-setup-checklist--pinned' );
 

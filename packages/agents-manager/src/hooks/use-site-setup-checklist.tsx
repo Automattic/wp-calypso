@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import {
 	isChatStartedFromSiteSetup,
@@ -9,7 +9,9 @@ import {
 	fetchSiteSetupTasks,
 	getSiteSetupSiteId,
 	startSiteSetupTask,
+	withSiteSetupTaskStatus,
 	type SiteSetupTask,
+	type SiteSetupTasks,
 } from '../utils/site-setup-tasks';
 import type { UIMessage } from '@automattic/agenttic-client';
 import type { ChecklistItem } from '@automattic/agenttic-ui';
@@ -70,8 +72,10 @@ export default function useSiteSetupChecklist( {
 	const siteId = getSiteSetupSiteId();
 	const isEnabled = enabled && siteId !== null && isSiteSetupChecklistEnabled();
 
+	const queryClient = useQueryClient();
+	const queryKey = useMemo( () => [ ...SITE_SETUP_TASKS_QUERY_KEY, siteId ], [ siteId ] );
 	const { data, isLoading, refetch } = useQuery( {
-		queryKey: [ ...SITE_SETUP_TASKS_QUERY_KEY, siteId ],
+		queryKey,
 		queryFn: () => fetchSiteSetupTasks( siteId as number ),
 		enabled: isEnabled,
 	} );
@@ -91,24 +95,32 @@ export default function useSiteSetupChecklist( {
 		}
 	}, [ isProcessing, isOpen, isEnabled, refetch ] );
 
-	// A failed start must not hold the prompt back: the task still reaches the
-	// agent, and the next read shows whatever the server has.
+	// The picked task goes in progress in the cache at once and stays so until
+	// the turn ends, whatever the server answers: the pinned list folds down to
+	// the in-progress rows and mounts only once the prompt is sent, so a task
+	// that completes on click would otherwise arrive there already done and
+	// fold away unseen. The re-read at the end of the turn settles it, and the
+	// list then reveals the settled row. A failed start must not hold the
+	// prompt back: the task still reaches the agent, and the re-read shows
+	// whatever the server has.
 	const startTask = useCallback(
 		async ( task: SiteSetupTask ) => {
 			if ( siteId === null ) {
 				return;
 			}
+			queryClient.setQueryData< SiteSetupTasks >( queryKey, ( current ) =>
+				current ? withSiteSetupTaskStatus( current, task.id, 'in-progress' ) : current
+			);
 
 			try {
 				await startSiteSetupTask( siteId, task.id );
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
 				console.error( '[AgentsManager] Error recording the Site Setup task as started:', error );
+				refetch();
 			}
-
-			refetch();
 		},
-		[ siteId, refetch ]
+		[ siteId, queryClient, queryKey, refetch ]
 	);
 
 	const isStartedFromList = useMemo( () => isChatStartedFromSiteSetup( messages ), [ messages ] );

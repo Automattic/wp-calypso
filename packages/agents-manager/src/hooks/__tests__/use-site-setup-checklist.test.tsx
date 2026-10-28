@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+const mockSetQueryData = jest.fn();
 jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
+	useQueryClient: () => ( { setQueryData: mockSetQueryData } ),
 } ) );
 
 const mockIsSiteSetupChecklistEnabled = jest.fn( () => true );
@@ -16,6 +18,7 @@ const mockFetchSiteSetupTasks = jest.fn();
 const mockStartSiteSetupTask = jest.fn();
 const mockGetSiteSetupSiteId = jest.fn( (): number | null => 123 );
 jest.mock( '../../utils/site-setup-tasks', () => ( {
+	...jest.requireActual( '../../utils/site-setup-tasks' ),
 	fetchSiteSetupTasks: ( ...args: unknown[] ) => mockFetchSiteSetupTasks( ...args ),
 	startSiteSetupTask: ( ...args: unknown[] ) => mockStartSiteSetupTask( ...args ),
 	getSiteSetupSiteId: () => mockGetSiteSetupSiteId(),
@@ -101,7 +104,7 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 	} );
 
-	it( 'records a picked task on the server, then re-reads the list', async () => {
+	it( 'records a picked task on the server and leaves the re-read to the turn end', async () => {
 		mockStartSiteSetupTask.mockResolvedValue( {
 			task_id: 'design',
 			status: 'in-progress',
@@ -112,10 +115,23 @@ describe( 'useSiteSetupChecklist', () => {
 		await expect( result.current.items[ 0 ].action?.() ).resolves.toBe( true );
 
 		expect( mockStartSiteSetupTask ).toHaveBeenCalledWith( 123, 'design' );
-		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+		expect( mockRefetch ).not.toHaveBeenCalled();
 	} );
 
-	it( 'lets the prompt go when the start fails, and still re-reads the list', async () => {
+	it( 'puts the picked task in progress in the cache at once, even when the server settles it', async () => {
+		mockStartSiteSetupTask.mockResolvedValue( { task_id: 'design', status: 'done', summary: '' } );
+		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+
+		await result.current.items[ 0 ].action?.();
+
+		expect( mockSetQueryData ).toHaveBeenCalledTimes( 1 );
+		const [ key, update ] = mockSetQueryData.mock.calls[ 0 ];
+		expect( key ).toContain( 123 );
+		expect( update( DETAILS ).tasks[ 0 ].status ).toBe( 'in-progress' );
+		expect( update( undefined ) ).toBeUndefined();
+	} );
+
+	it( 'lets the prompt go when the start fails, and re-reads the list to drop the guess', async () => {
 		mockStartSiteSetupTask.mockRejectedValue( new Error( 'nope' ) );
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
