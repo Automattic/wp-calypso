@@ -1,16 +1,16 @@
 import { Button, CheckoutStepBody } from '@automattic/composite-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { login } from 'calypso/lib/paths';
 import { useSelector, useDispatch } from 'calypso/state';
-import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 
 export function WrongAccountRenewal() {
 	const reduxDispatch = useDispatch();
 	useEffect( () => {
-		reduxDispatch( recordTracksEvent( 'calypso_checkout_wrong_account_renewal' ) );
+		recordTracksEvent( 'calypso_checkout_wrong_account_renewal' );
 	}, [ reduxDispatch ] );
 
 	return (
@@ -69,7 +69,7 @@ export function LogInToCorrectAccountButton() {
 			buttonType="primary"
 			fullWidth
 			onClick={ () => {
-				reduxDispatch( recordTracksEvent( 'calypso_checkout_wrong_account_renewal_login_click' ) );
+				recordTracksEvent( 'calypso_checkout_wrong_account_renewal_login_click' );
 				reduxDispatch( redirectToLogout( login( { redirectTo: window.location.href } ) ) );
 			} }
 		>

@@ -9,7 +9,6 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { LoadingCopy, styled } from '@automattic/wpcom-checkout';
 import { useTranslate } from 'i18n-calypso';
 import { FunctionComponent } from 'react';
-import { useCheckoutUiRedesignExperiment } from 'calypso/my-sites/checkout/src/hooks/use-checkout-ui-redesign-experiment';
 import { useMobileCheckoutStickySummaryExperiment } from 'calypso/my-sites/checkout/src/hooks/use-mobile-checkout-sticky-summary-experiment';
 import useCartKey from '../../../use-cart-key';
 import type { WPCOMProductVariant } from './types';
@@ -45,11 +44,9 @@ const Discount = styled.span< { isMobileCheckoutStickySummary?: boolean } >`
 `;
 
 const Price = styled.span< {
-	isCheckoutUiRedesignV1?: boolean;
 	isMobileCheckoutStickySummary?: boolean;
 } >`
 	color: ${ colorStudio.colors[ 'Black' ] };
-	${ ( props ) => props.isCheckoutUiRedesignV1 && 'padding-right: 6px;' }
 	${ ( props ) =>
 		props.isMobileCheckoutStickySummary &&
 		`
@@ -67,10 +64,10 @@ const PriceSuffix = styled.span`
 const Variant = styled.div< { isMobileCheckoutStickySummary?: boolean } >`
 	align-items: center;
 	display: flex;
-	font-size: 16px;
+	font-size: 14px;
 	font-weight: 400;
 	justify-content: space-between;
-	line-height: 24px;
+	line-height: 20px;
 	width: 100%;
 
 	${ ( props ) =>
@@ -82,27 +79,18 @@ const Variant = styled.div< { isMobileCheckoutStickySummary?: boolean } >`
 	` }
 `;
 
-const VariantTermLabel = styled.span< { isCheckoutUiRedesignV1?: boolean } >`
+const VariantTermLabel = styled.span`
 	display: flex;
 	flex-direction: column;
-	${ ( props ) => props.isCheckoutUiRedesignV1 && 'align-items: flex-start;' }
 	gap: 2px;
 `;
 
-const PriceArea = styled.span< { inlineDiscount?: boolean; isCheckoutUiRedesignV1?: boolean } >`
+const PriceArea = styled.span< { inlineDiscount?: boolean } >`
 	text-align: right;
 	display: flex;
-	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'column' ) };
-	gap: ${ ( props ) => ( props.inlineDiscount ? '8px' : '2px' ) };
-	align-items: ${ ( props ) => ( props.inlineDiscount ? 'center' : 'flex-end' ) };
-	${ ( props ) =>
-		props.isCheckoutUiRedesignV1 &&
-		`
-		> span:last-child {
-			min-width: 80px;
-			text-align: right;
-		}
-	` }
+	flex-direction: ${ ( props ) => ( props.inlineDiscount ? 'row' : 'row-reverse' ) };
+	gap: 8px;
+	align-items: center;
 `;
 
 const DiscountPercentage: FunctionComponent< {
@@ -129,7 +117,6 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	const cartKey = useCartKey();
 	const { couponStatus } = useShoppingCart( cartKey );
 	const isApplyingCoupon = couponStatus === 'pending';
-	const [ , isCheckoutUiRedesignV1 ] = useCheckoutUiRedesignExperiment();
 	const { isMobileCheckoutStickySummary } = useMobileCheckoutStickySummaryExperiment();
 	const compareToInfo = compareTo ? fromVariantPriceData( compareTo ) : null;
 	const variantInfo = fromVariantPriceData( variant );
@@ -165,13 +152,6 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 				</>
 			);
 		}
-		if ( isCheckoutUiRedesignV1 ) {
-			return translate( '%(pricePerMonth)s/mo', {
-				args: {
-					pricePerMonth: pricePerMonthFormatted,
-				},
-			} );
-		}
 		return translate( '%(pricePerMonth)s /mo', {
 			args: {
 				pricePerMonth: pricePerMonthFormatted,
@@ -180,17 +160,11 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 	} )();
 	const label =
 		variant.termIntervalInMonths === 1 ? translate( 'Month' ) : variant.variantLabel.noun;
-	const showInlineDiscount =
-		( isCheckoutUiRedesignV1 || isMobileCheckoutStickySummary ) && discountPercentage > 0;
+	const showInlineDiscount = isMobileCheckoutStickySummary && discountPercentage > 0;
 	return (
 		<Variant isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
-			<VariantTermLabel isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }>
-				{ label }
-			</VariantTermLabel>
-			<PriceArea
-				inlineDiscount={ showInlineDiscount }
-				isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-			>
+			<VariantTermLabel>{ label }</VariantTermLabel>
+			<PriceArea inlineDiscount={ showInlineDiscount }>
 				{ isApplyingCoupon ? (
 					<LoadingCopy width="70px" height="16px" noMargin />
 				) : (
@@ -201,15 +175,12 @@ export const ItemVariantRadioPrice: FunctionComponent< {
 								isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
 							/>
 						) }
-						<Price
-							isCheckoutUiRedesignV1={ isCheckoutUiRedesignV1 }
-							isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }
-						>
+						<Price isMobileCheckoutStickySummary={ isMobileCheckoutStickySummary }>
 							{ priceDisplay }
 						</Price>
-						{ ! isCheckoutUiRedesignV1 &&
-							! isMobileCheckoutStickySummary &&
-							discountPercentage > 0 && <DiscountPercentage percent={ discountPercentage } /> }
+						{ ! isMobileCheckoutStickySummary && discountPercentage > 0 && (
+							<DiscountPercentage percent={ discountPercentage } />
+						) }
 					</>
 				) }
 			</PriceArea>

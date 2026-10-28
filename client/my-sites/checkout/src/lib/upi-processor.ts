@@ -74,14 +74,13 @@ export default async function upiProcessor(
 		siteId,
 		includeDomainDetails,
 		includeGSuiteDetails,
-		reduxDispatch,
 		responseCart,
 		contactDetails,
 		fromSiteSlug,
 	} = options;
 	const paymentMethodId = 'stripe-upi';
 
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId } );
 
 	const {
 		origin = 'https://wordpress.com',

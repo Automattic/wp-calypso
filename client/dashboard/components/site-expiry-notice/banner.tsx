@@ -1,6 +1,7 @@
 import { PlanExpiryNotice } from '../plan-expiry-notice';
 import { SiteRevertedNotice } from './site-reverted-notice';
-import type { SiteExpiryNoticeState } from './use-site-expiry-notice';
+import { useExpiryNoticeDismissal } from './use-expiry-notice-dismissal';
+import type { SiteExpiryNoticeState, SiteExpiryPurchaseState } from './use-site-expiry-notice';
 
 export interface SiteExpiryNoticeBannerProps {
 	siteId: number;
@@ -43,16 +44,43 @@ export function SiteExpiryNoticeBanner( {
 	}
 
 	return (
-		<PlanExpiryNotice
-			purchase={ state.purchase }
-			scope="sitewide"
-			isPlanOwner={ state.isPlanOwner }
+		<SitePlanExpiryNotice
+			siteId={ siteId }
+			state={ state }
 			locale={ locale }
 			surface={ surface }
 			recordTracksEvent={ recordTracksEvent }
 			eventProperties={ eventProperties }
 			renewReturnUrl={ renewReturnUrl }
 			viewOtherPlansUrl={ viewOtherPlansUrl }
+		/>
+	);
+}
+
+function SitePlanExpiryNotice( {
+	siteId,
+	state,
+	recordTracksEvent,
+	...props
+}: Omit< SiteExpiryNoticeBannerProps, 'state' | 'onContactSupport' > & {
+	state: SiteExpiryPurchaseState;
+} ) {
+	const { isDismissed, dismiss } = useExpiryNoticeDismissal(
+		siteId,
+		state.dismissMetaKey,
+		recordTracksEvent
+	);
+	if ( isDismissed ) {
+		return null;
+	}
+	return (
+		<PlanExpiryNotice
+			{ ...props }
+			purchase={ state.purchase }
+			scope="sitewide"
+			isPlanOwner={ state.isPlanOwner }
+			recordTracksEvent={ recordTracksEvent }
+			onClose={ dismiss }
 		/>
 	);
 }

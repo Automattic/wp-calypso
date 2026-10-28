@@ -1,7 +1,6 @@
 jest.mock( '@automattic/data-stores', () => ( {
 	AgentsManager: {
 		register: jest.fn( () => 'automattic/agents-manager' ),
-		persistAgentsManagerState: jest.fn(),
 	},
 } ) );
 

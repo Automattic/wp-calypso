@@ -68,7 +68,7 @@ function getLiveChatUrl( type: string, purchase: Purchase ) {
 	return '';
 }
 
-type StepProps = {
+type UpsellStepProps = {
 	cancelBundledDomain?: boolean;
 	cancellationReason?: string;
 	cancellationInProgress?: boolean;
@@ -94,11 +94,11 @@ export default function UpsellStep( {
 	cancellationInProgress,
 	plans,
 	...props
-}: StepProps ) {
+}: UpsellStepProps ) {
 	const hasEnTranslation = useHasEnTranslation();
 	const numberOfPluginsThemes = formatNumber( 50000 );
 	const discountRate = 25;
-	const couponCode = 'BIZWPC25';
+	const couponCode = 'BIZRENEW25';
 	const builtByURL = 'https://wordpress.com/website-design-service/?ref=wpcom-cancel-flow';
 	const { refundAmount } = props;
 	const { setSubject, setShowHelpCenter } = useHelpCenter();

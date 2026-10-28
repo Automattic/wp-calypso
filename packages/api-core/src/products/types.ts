@@ -77,6 +77,7 @@ interface IntroductoryOffer {
 	cost_per_interval: number;
 	transition_after_renewal_count: number;
 	should_prorate_when_offer_ends: boolean;
+	first_renewal_price_integer?: number;
 }
 
 interface SaleCoupon {

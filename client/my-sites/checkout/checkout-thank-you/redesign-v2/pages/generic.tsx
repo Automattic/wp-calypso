@@ -14,7 +14,7 @@ import { ThankYouTitanProduct } from '../products/titan-product';
 import getDomainFooterDetails from './content/get-domain-footer-details';
 import getTitanFooterDetails from './content/get-titan-footer-details';
 import type { ThankYouFooterDetailProps } from 'calypso/components/thank-you-v2/footer';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 interface GenericThankYouProps {
 	purchases: ReceiptPurchase[];

@@ -3,11 +3,15 @@ import { handleActiveThrottles, recordResponseThrottle } from '../../throttle-fl
 import { PlansPage, Plans } from '../plans-page';
 import type { NewSiteResponse } from '../../../types/rest-api-client.types';
 
+// Creating a site routinely outlasts the actionTimeout route.fetch inherits; this stays
+// inside the budget selectPlan gives the redirect that follows.
+const NEW_SITE_FETCH_TIMEOUT = 60 * 1000;
+
 /**
  * The plans page URL regex.
  */
 export const plansPageUrl =
-	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-plugin\/plans-with-plugin|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|start\/launch-site\/plans-launch.*/;
+	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-plugin\/plans-with-plugin|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|start\/launch-site\/plans-launch|setup\/launch-site\/plans.*/;
 
 /**
  * Represents the Signup > Pick a Plan page.
@@ -53,7 +57,7 @@ export class SignupPickPlanPage {
 				/.*\/sites\/new\?.*/,
 				async ( route ) => {
 					try {
-						const response = await route.fetch();
+						const response = await route.fetch( { timeout: NEW_SITE_FETCH_TIMEOUT } );
 						const body = await response.body();
 						await route.fulfill( { response } );
 
@@ -99,7 +103,9 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
+			redirectUrl ??= new RegExp(
+				'.*(setup/site-setup|site-setup-wp-admin|home/.+ref=onboarding).*'
+			);
 		}
 
 		// Awaited alongside the redirect rather than after it: a refused creation
@@ -133,7 +139,9 @@ export class SignupPickPlanPage {
 			// Non-free plans should redirect to the Checkout cart.
 			redirectUrl ??= new RegExp( '.*checkout.*' );
 		} else {
-			redirectUrl ??= new RegExp( '.*(setup/site-setup|home/.+ref=onboarding).*' );
+			redirectUrl ??= new RegExp(
+				'.*(setup/site-setup|site-setup-wp-admin|home/.+ref=onboarding).*'
+			);
 		}
 
 		const actions = [

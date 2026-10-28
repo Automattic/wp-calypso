@@ -15,6 +15,10 @@ const selectors = {
 	cookieConsentAccept: '#eu-cookie-law .accept',
 };
 
+// `popup` fires only once the r-login.wordpress.com login popup commits its
+// first URL, which can take longer than the default 10s.
+const POPUP_LOGIN_TIMEOUT = 30 * 1000;
+
 /**
  * Represents the published site's post listings page.
  */
@@ -105,19 +109,18 @@ export class PublishedPostPage {
 		handleLoginPopup,
 	}: { handleLoginPopup?: ( popup: Page ) => Promise< void > } = {} ): Promise< void > {
 		if ( handleLoginPopup ) {
-			const popupPromise = this.page.waitForEvent( 'popup' );
+			const popupPromise = this.page.waitForEvent( 'popup', { timeout: POPUP_LOGIN_TIMEOUT } );
 			await this.clickLikeButton();
 			await handleLoginPopup( await popupPromise );
 		} else {
 			await this.clickLikeButton();
 		}
 
-		// The button should now read "Liked". The popup login handshake can run
-		// long, so allow extra time before the widget reflects the like.
+		// The button should now read "Liked".
 		const iframe = this.page.frameLocator( 'iframe[title="Like or Reblog"]' );
 		await iframe
 			.getByRole( 'link', { name: 'Liked', exact: true } )
-			.waitFor( { timeout: handleLoginPopup ? 30 * 1000 : undefined } );
+			.waitFor( { timeout: handleLoginPopup ? POPUP_LOGIN_TIMEOUT : undefined } );
 	}
 
 	/**

@@ -159,7 +159,7 @@ export const useGetHistoryChats = (): UseGetHistoryChatsResult => {
 	const { data: odieSupportInteractions, isLoading: isLoadingOdieSupportInteractions } =
 		useGetSupportInteractions( 'odie', chatEnabled );
 
-	// When filtering by bot slug is enabled (e.g. CIAB context), only show
+	// When filtering by bot slug is enabled (e.g. on WooCommerce.com), only show
 	// conversations matching the current bot slug.
 	const filteredOdieSupportInteractions = useMemo( () => {
 		if ( ! featureConfig.chat.filterByBotSlug ) {

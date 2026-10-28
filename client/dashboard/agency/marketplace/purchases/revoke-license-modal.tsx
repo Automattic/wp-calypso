@@ -3,6 +3,7 @@ import {
 	activeAgencyQuery,
 	jetpackAgencyLicenseRevokeMutation,
 } from '@automattic/api-queries';
+import { formatNumber } from '@automattic/number-formatters';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -35,12 +36,12 @@ import {
 } from './license-status';
 import type { JetpackLicense } from '@automattic/api-core';
 
-interface Props {
+interface RevokeLicenseModalProps {
 	license: JetpackLicense;
 	closeModal?: () => void;
 }
 
-export default function RevokeLicenseModal( { license, closeModal }: Props ) {
+export default function RevokeLicenseModal( { license, closeModal }: RevokeLicenseModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -189,7 +190,7 @@ export default function RevokeLicenseModal( { license, closeModal }: Props ) {
 				),
 				{
 					productName: <strong>{ getLicenseProductName( license ) }</strong>,
-					count: <>{ license.quantity ?? 0 }</>,
+					count: <>{ formatNumber( license.quantity ?? 0 ) }</>,
 				}
 			);
 		}

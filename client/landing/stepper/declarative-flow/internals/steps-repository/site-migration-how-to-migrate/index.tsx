@@ -8,7 +8,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useMigrationCancellation } from 'calypso/data/site-migration/landing/use-migration-cancellation';
 import { useMigrationStickerMutation } from 'calypso/data/site-migration/use-migration-sticker';
 import { HOW_TO_MIGRATE_OPTIONS } from 'calypso/landing/stepper/constants';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import {
 	recordMigrationStartEvent,
 	recordMigrationStartFacebookEvent,
@@ -29,7 +29,7 @@ const SiteMigrationHowToMigrate: StepType< {
 } > = ( props ) => {
 	const { navigation, headerText, subHeaderText } = props;
 	const translate = useTranslate();
-	const site = useSite();
+	const { data: site, isLoading, isError, refetch } = useSiteQuery();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
 	const { deleteMigrationSticker } = useMigrationStickerMutation();
 
@@ -65,9 +65,15 @@ const SiteMigrationHowToMigrate: StepType< {
 	};
 
 	const goBack = useCallback( () => {
-		cancelMigration();
-		navigation?.goBack?.();
-	}, [ cancelMigration, navigation ] );
+		if ( site?.ID ) {
+			cancelMigration();
+		}
+		if ( navigation?.goBack ) {
+			navigation.goBack();
+		} else {
+			history.back();
+		}
+	}, [ cancelMigration, navigation, site?.ID ] );
 
 	const handleImport = () => {
 		if ( site?.ID ) {
@@ -102,6 +108,40 @@ const SiteMigrationHowToMigrate: StepType< {
 			</div>
 		);
 	};
+
+	if ( isLoading ) {
+		return <Step.Loading />;
+	}
+
+	if ( isError || ! site ) {
+		const errorTitle = translate( "We couldn't load your site" );
+
+		return (
+			<>
+				<DocumentHead title={ errorTitle } />
+				<Step.CenteredColumnLayout
+					columnWidth={ 6 }
+					topBar={ <Step.TopBar leftElement={ <Step.BackButton onClick={ goBack } /> } /> }
+					heading={
+						<Step.Heading
+							text={ errorTitle }
+							subText={
+								isError
+									? translate( 'Please try again, or go back to choose another site.' )
+									: translate( 'Go back to choose a destination site.' )
+							}
+						/>
+					}
+				>
+					{ isError && (
+						<div className="how-to-migrate__experiment-expectations">
+							<NextButton onClick={ refetch }>{ translate( 'Try again' ) }</NextButton>
+						</div>
+					) }
+				</Step.CenteredColumnLayout>
+			</>
+		);
+	}
 
 	return (
 		<>

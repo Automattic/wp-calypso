@@ -23,7 +23,7 @@ const matchMediaMock = jest.fn( ( query ) => {
 describe( 'viewport', () => {
 	beforeAll( async () => {
 		window.matchMedia = matchMediaMock;
-		viewport = await import( '..' );
+		viewport = await import( '../src' );
 		// Disable console warnings.
 		jest.spyOn( console, 'warn' ).mockImplementation( () => '' );
 	} );

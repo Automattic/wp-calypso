@@ -34,7 +34,10 @@ import { usePost } from 'calypso/reader/data/post';
 import { withPostLikeActions } from 'calypso/reader/data/post/likes';
 import { useCanMarkSeen, withSeenPostsMutations } from 'calypso/reader/data/seen-posts';
 import { withSite } from 'calypso/reader/data/site';
-import { useSiteSubscriptionForFeed } from 'calypso/reader/data/site-subscriptions';
+import {
+	getCachedIsFollowingPost,
+	useSiteSubscriptionForFeed,
+} from 'calypso/reader/data/site-subscriptions';
 import { getSiteName } from 'calypso/reader/get-helpers';
 import readerContentWidth from 'calypso/reader/lib/content-width';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
@@ -48,6 +51,8 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
@@ -93,6 +98,18 @@ export class FullPostView extends Component {
 
 	openSuggestedFollowsModal = ( followClicked ) => {
 		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
+	};
+	showFollowSuccessNotice = ( following, siteName ) => {
+		if ( ! siteName ) {
+			return;
+		}
+
+		this.props.successNotice(
+			following
+				? translate( 'Success! You are now subscribed to "%s".', { args: siteName } )
+				: translate( 'Success! You are now unsubscribed from "%s".', { args: siteName } ),
+			{ duration: 3000 }
+		);
 	};
 	onCloseSuggestedFollowModal = () => {
 		this.setState( { isSuggestedFollowsModalOpen: false } );
@@ -557,7 +574,7 @@ export class FullPostView extends Component {
 			recordTrackForPost(
 				'calypso_reader_article_opened',
 				post,
-				{},
+				{ is_following: getCachedIsFollowingPost( getCalypsoQueryClient(), post ) },
 				{
 					pathnameOverride: this.props.referralStream,
 				}
@@ -801,6 +818,9 @@ export class FullPostView extends Component {
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
 									onFollowToggle={ this.openSuggestedFollowsModal }
+									onFollowSuccess={ ( following ) =>
+										this.showFollowSuccessNotice( following, siteName )
+									}
 								/>
 							) }
 
@@ -960,6 +980,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 	showSelectedPost,
+	successNotice,
 } )(
 	withSite(
 		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),

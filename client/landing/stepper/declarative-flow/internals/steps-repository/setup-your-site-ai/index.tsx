@@ -14,7 +14,10 @@ import { arrowUp, layout } from '@wordpress/icons';
 import i18n, { useTranslate } from 'i18n-calypso';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
-import { planSupportsBuildWow } from 'calypso/landing/stepper/utils/build-wow-plans';
+import {
+	planBuildsStoreOnBuildWow,
+	planSupportsBuildWow,
+} from 'calypso/landing/stepper/utils/build-wow-plans';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../hooks/use-plan-cart-item';
@@ -46,7 +49,9 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	// to plain onboarding without the site-spec feature; the card falls back to the
 	// legacy builder there.
 	const planSlug = boughtPlanSlug ?? site?.plan?.product_slug;
-	const offerBuildWow = config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planSlug );
+	const offerBuildWow =
+		config.isEnabled( 'site-spec' ) &&
+		( planSupportsBuildWow( planSlug ) || planBuildsStoreOnBuildWow( planSlug ) );
 	// Staging and development only, for Automatticians: a build on the blocks-first
 	// graph, to compare it with the DSL build the main card runs.
 	const canOfferBuildWowBlocksFirst =
@@ -88,6 +93,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'build-with-ai',
 			has_prompt: Boolean( trimmedPrompt ),
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
@@ -102,6 +108,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'generate-theme',
 			graph,
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
@@ -109,6 +116,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 			siteSlug,
 			siteId,
 			graph,
+			...( planBuildsStoreOnBuildWow( planSlug ) ? { buildsStore: true } : {} ),
 		} );
 	};
 
@@ -129,6 +137,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 		}
 		recordTracksEvent( 'calypso_onboarding_setup_your_site_with_ai_selection', {
 			selection: 'blank-site',
+			...( ref ? { ref } : {} ),
 		} );
 
 		navigation.submit( {
@@ -221,7 +230,7 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const buildWithAIBlocksFirstSummary = offerBuildWowBlocksFirst && (
 		<SummaryButton
 			title="Create a custom design (blocks-first)"
-			description="Staging only: build the site on the blocks-first graph."
+			description="Automatticians only: build the site on the blocks-first graph."
 			decoration={ <BigSkyLogo.CentralLogo heartless /> }
 			onClick={ handleCustomDesignBlocksFirstClick }
 			disabled={ isSubmitting }
@@ -231,14 +240,14 @@ const SetupYourSiteAIStep: StepType = ( { navigation } ) => {
 	const startWithTemplateCard = (
 		<SummaryButton
 			title={ i18n.fixMe( {
-				text: 'Start with a template',
-				newCopy: translate( 'Start with a template' ),
-				oldCopy: translate( 'Manual setup' ),
+				text: 'Start with a pre-made design',
+				newCopy: translate( 'Start with a pre-made design' ),
+				oldCopy: translate( 'Start with a template' ),
 			} ) }
 			description={ i18n.fixMe( {
-				text: 'Get a simple, ready-to-go site to make your own.',
-				newCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
-				oldCopy: translate( 'Get started instantly with a simple, ready-to-go WordPress site.' ),
+				text: "We'll install a ready-to-edit theme for you.",
+				newCopy: translate( "We'll install a ready-to-edit theme for you." ),
+				oldCopy: translate( 'Get a simple, ready-to-go site to make your own.' ),
 			} ) }
 			decoration={ <Icon icon={ layout } /> }
 			onClick={ handleBlankSite }

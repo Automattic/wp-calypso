@@ -133,6 +133,17 @@ export const requestEmailSuccess = ( state = false, action ) => {
 	return state;
 };
 
+export const isNewAccount = ( state = false, action ) => {
+	switch ( action.type ) {
+		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS:
+			return action.response?.new_user === true;
+		case MAGIC_LOGIN_RESET_REQUEST_FORM:
+			return false;
+	}
+
+	return state;
+};
+
 export const publicToken = ( state = null, action ) => {
 	switch ( action.type ) {
 		case MAGIC_LOGIN_REQUEST_LOGIN_EMAIL_SUCCESS:
@@ -166,5 +177,6 @@ export default combineReducers( {
 	requestEmailSuccess,
 	currentView,
 	publicToken,
+	isNewAccount,
 	authSuccessData,
 } );

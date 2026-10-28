@@ -24,10 +24,10 @@
 		"npm-package-json-lint": "^8.0.0"
 	},
 	"devDependencies": {
-		"@automattic/calypso-eslint-overrides": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {
-		"eslint": ">=8.57.1"
+		"eslint": "^10.13.0"
 	}
 }

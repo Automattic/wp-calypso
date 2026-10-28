@@ -22,7 +22,6 @@ import type {
 	ManagedContactDetailsErrors,
 	ManagedContactDetailsUpdate,
 	ManagedContactDetailsUpdaters,
-	WpcomStoreState,
 	SignupValidationResponse,
 	DomainContactValidationRequest,
 	GSuiteContactValidationRequest,
@@ -945,47 +944,10 @@ function applyDomainContactDetailsUpdate(
 }
 
 export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
-	updatePhone: ( oldDetails: ManagedContactDetails, newPhone: string ): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			phone: touchIfDifferent( newPhone, oldDetails.phone ),
-		};
-	},
-
-	updatePhoneNumberCountry: (
-		oldDetails: ManagedContactDetails,
-		newPhoneNumberCountry: string
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			phoneNumberCountry: touchIfDifferent( newPhoneNumberCountry, oldDetails.phoneNumberCountry ),
-		};
-	},
-
-	updatePostalCode: (
-		oldDetails: ManagedContactDetails,
-		newPostalCode: string
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			postalCode: touchIfDifferent( newPostalCode, oldDetails.postalCode ),
-		};
-	},
-
 	updateEmail: ( oldDetails: ManagedContactDetails, newEmail: string ): ManagedContactDetails => {
 		return {
 			...oldDetails,
 			email: touchIfDifferent( newEmail, oldDetails.email ),
-		};
-	},
-
-	updateCountryCode: (
-		oldDetails: ManagedContactDetails,
-		newCountryCode: string
-	): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			countryCode: touchIfDifferent( newCountryCode, oldDetails.countryCode ),
 		};
 	},
 
@@ -1008,13 +970,6 @@ export const managedContactDetailsUpdaters: ManagedContactDetailsUpdaters = {
 
 	touchContactFields: ( oldDetails: ManagedContactDetails ): ManagedContactDetails => {
 		return mapManagedContactDetailsShape( touchField, oldDetails );
-	},
-
-	updateVatId: ( oldDetails: ManagedContactDetails, newVatId: string ): ManagedContactDetails => {
-		return {
-			...oldDetails,
-			vatId: touchIfDifferent( newVatId, oldDetails.vatId ),
-		};
 	},
 
 	setErrorMessages: (
@@ -1077,14 +1032,3 @@ export const emptyManagedContactDetails: ManagedContactDetails = {
 	vatId: getInitialManagedValue(),
 	tldExtraFields: {},
 };
-
-export function getInitialWpcomStoreState(
-	contactDetails: ManagedContactDetails
-): WpcomStoreState {
-	return {
-		recaptchaClientId: -1,
-		transactionResult: undefined,
-		contactDetails,
-		vatDetails: {},
-	};
-}

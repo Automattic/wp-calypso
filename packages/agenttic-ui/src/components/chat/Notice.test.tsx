@@ -61,6 +61,17 @@ describe.each( [ 'standard', 'embedded' ] )( '%s notice actions', ( renderer ) =
 		expect( container.querySelector( 'a' )?.hasAttribute( 'target' ) ).toBe( false );
 	} );
 
+	it( 'runs a link’s callback and keeps the link', async () => {
+		const onClick = vi.fn();
+		await render( { message: 'Notice', action: { label: 'Upgrade', href: '/plans', onClick } } );
+		const link = container.querySelector( 'a' )!;
+		link.addEventListener( 'click', ( event ) => event.preventDefault() );
+		await act( async () => link.click() );
+		expect( onClick ).toHaveBeenCalledOnce();
+		expect( link.getAttribute( 'href' ) ).toBe( '/plans' );
+		expect( container.querySelector( 'button' ) ).toBeNull();
+	} );
+
 	it( 'preserves callback actions and omits unavailable actions', async () => {
 		const onClick = vi.fn();
 		await render( { message: 'Notice', action: { label: 'Retry', onClick } } );

@@ -7,9 +7,17 @@ import store from 'store';
 import { notFound } from 'calypso/controller';
 import { login } from 'calypso/lib/paths';
 import {
+	LEGACY_LAUNCH_SITE_FLOW,
+	getLegacyLaunchSiteRedirect,
+} from 'calypso/lib/signup/legacy-launch-site-flow';
+import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import {
+	LEGACY_WOOCOMMERCE_INSTALL_FLOW,
+	getWooCommercePluginPage,
+} from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import { addQueryArgs } from 'calypso/lib/url';
 import flows from 'calypso/signup/config/flows';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -74,7 +82,9 @@ export default {
 			let urlWithoutLocale = getStepUrl( flowName, stepName, stepSectionName );
 
 			if ( config.isEnabled( 'wpcom-user-bootstrap' ) ) {
-				return page.redirect( urlWithoutLocale );
+				return page.redirect(
+					urlWithoutLocale + ( context.querystring ? '?' + context.querystring : '' )
+				);
 			}
 
 			if ( ! isEmpty( context.query ) ) {
@@ -98,9 +108,11 @@ export default {
 			initialContext = Object.assign( {}, context );
 		} else if (
 			getFlowName( initialContext.params, userLoggedIn ) !==
-			getFlowName( context.params, userLoggedIn )
+				getFlowName( context.params, userLoggedIn ) ||
+			! getStepName( context.params )
 		) {
-			// Update the `initialContext` when the flow changes.
+			// Update the `initialContext` when the flow changes, or when the flow is entered again
+			// from a URL without a step, so its query doesn't come from the previous visit.
 			initialContext = Object.assign( {}, initialContext, context );
 		}
 
@@ -110,14 +122,30 @@ export default {
 	// The server redirect only sees hard navigations; `/start` is also a client route, so an
 	// in-app link reaches this router instead. Runs before anything touches signup state so
 	// the hand-off to Stepper leaves nothing half-written behind.
-	redirectLegacyPlanFlow( context, next ) {
+	redirectLegacyFlow( context, next ) {
 		const { flowName, lang } = context.params;
 
-		if ( ! shouldRedirectLegacyPlanFlow( flowName ) ) {
-			return next();
+		if ( shouldRedirectLegacyPlanFlow( flowName ) ) {
+			window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
+			return;
 		}
 
-		window.location.replace( getLegacyPlanFlowRedirect( flowName, context.query, lang ) );
+		if ( flowName === LEGACY_LAUNCH_SITE_FLOW ) {
+			// The legacy flow fell back to the stored site when the query had none.
+			const siteSlug =
+				context.query?.siteSlug || getSignupDependencyStore( context.store.getState() )?.siteSlug;
+			window.location.replace(
+				getLegacyLaunchSiteRedirect( { ...context.query, ...( siteSlug && { siteSlug } ) } )
+			);
+			return;
+		}
+
+		if ( flowName === LEGACY_WOOCOMMERCE_INSTALL_FLOW ) {
+			window.location.replace( getWooCommercePluginPage( context.query?.siteSlug ) );
+			return;
+		}
+
+		next();
 	},
 
 	async redirectToFlow( context, next ) {
@@ -229,16 +257,6 @@ export default {
 		const { providesDependenciesInQuery, excludeFromManageSiteFlows, persistsDomainsOnReEntry } =
 			flows.getFlow( flowName, userLoggedIn );
 
-		// Update initialContext to help woocommerce-install support site switching.
-		if ( 'woocommerce-install' === flowName ) {
-			if ( context?.query?.back_to ) {
-				// forces back_to update
-				context.store.dispatch( updateDependencies( { back_to: context.query.back_to } ) );
-			}
-
-			initialContext = context;
-		}
-
 		const { query } = initialContext;
 
 		// wait for the step component module to load
@@ -323,11 +341,17 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
-		if ( 'launch-site' === flowName ) {
-			// The dependency store persists between visits, and `redirect_to` is optional, so an
-			// abandoned launch would otherwise decide where the next one leaves the user. Re-read it
-			// from the query the flow was entered with.
-			context.store.dispatch( updateDependencies( { redirect_to: query?.redirect_to ?? null } ) );
+		if ( [ 'launch-site', 'site-selected' ].includes( flowName ) ) {
+			// The dependency store persists between visits, and `back_to`, `redirect_to` and `ref` are
+			// optional, so an abandoned flow would otherwise decide where the next one leaves the user.
+			// Re-read them from the query the flow was entered with.
+			context.store.dispatch(
+				updateDependencies( {
+					back_to: query?.back_to ?? null,
+					redirect_to: query?.redirect_to ?? null,
+					refParameter: query?.ref ?? null,
+				} )
+			);
 		}
 
 		context.primary = createElement( SignupComponent, {
@@ -349,21 +373,12 @@ export default {
 	},
 	setSelectedSiteForSignup( context, next ) {
 		const { getState, dispatch } = context.store;
-		const userLoggedIn = isUserLoggedIn( getState() );
-		const flowName = getFlowName( context.params, userLoggedIn );
 		const signupDependencies = getSignupDependencyStore( getState() );
-		let siteIdOrSlug;
-
-		if ( 'woocommerce-install' === flowName || 'launch-site' === flowName ) {
-			// forces query precedence on woocommerce-install
-			siteIdOrSlug = context.query?.siteSlug || signupDependencies?.siteSlug;
-		} else {
-			siteIdOrSlug =
-				signupDependencies?.siteSlug ||
-				context.query?.siteSlug ||
-				signupDependencies?.siteId ||
-				context.query?.siteId;
-		}
+		const siteIdOrSlug =
+			signupDependencies?.siteSlug ||
+			context.query?.siteSlug ||
+			signupDependencies?.siteId ||
+			context.query?.siteId;
 
 		if ( ! siteIdOrSlug ) {
 			next();

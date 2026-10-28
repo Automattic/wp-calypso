@@ -52,6 +52,9 @@ const TURN_EVENTS = new Set< string >( [
 	'calypso_agents_manager_chat_response_completed',
 	'calypso_agents_manager_chat_response_stopped',
 	'calypso_agents_manager_chat_error',
+	'calypso_agents_manager_interactive_ui_rendered',
+	'calypso_agents_manager_interactive_ui_action',
+	'calypso_agents_manager_interactive_ui_error',
 ] );
 
 type EditorSelectStore =
@@ -65,7 +68,7 @@ type CoreSelectStore =
 	{ getEntityRecord?: ( kind: string, name: string, key?: number ) => unknown } | undefined;
 
 /** Reads the optional server-provided Automattician tracking signal. */
-function getIsA11n(): boolean | undefined {
+export function getIsA11n(): boolean | undefined {
 	const isA11n = getAgentsManagerInlineData()?.isA11n;
 	return typeof isA11n === 'boolean' ? isA11n : undefined;
 }
@@ -237,7 +240,7 @@ function hasEditorStore(): boolean {
  * Injected `agentsManagerData` means a wp-admin host (Jetpack, Woo AI); its
  * absence means a Calypso-rendered page.
  */
-function getAgentsManagerSurface(): string {
+export function getAgentsManagerSurface(): string {
 	if ( isReaderChatHost() ) {
 		return 'reader-chat';
 	}

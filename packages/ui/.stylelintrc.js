@@ -12,7 +12,8 @@ export default {
 			'border-radius': 3,
 			inset: 3,
 		},
-		'plugin/use-logical-properties-and-values': [
+		'logical-css/require-logical-keywords': true,
+		'logical-css/require-logical-properties': [
 			true,
 			{
 				ignore: [

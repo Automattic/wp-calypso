@@ -207,13 +207,13 @@ const SitePerformanceContent = ( { path }: { path?: string } ) => {
 		} );
 
 		// Gating: 'semi_gated_site_launch' is the shipped default, routing to
-		// `/start/launch-site` via the pre-launch bridge. Other branches are
+		// `/setup/launch-site` via the pre-launch bridge. Other branches are
 		// scaffolding for future experiments; see useSiteLaunchGatingVariant().
 		switch ( experimentVariant ) {
 			case 'semi_gated_site_launch':
 			case null:
 			default: {
-				const url = addQueryArgs( '/start/launch-site', {
+				const url = addQueryArgs( '/setup/launch-site', {
 					siteSlug: site?.slug,
 					back_to: window.location.pathname,
 				} );

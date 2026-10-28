@@ -1,13 +1,13 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`Marketplace SignupSuccess should render the page as expected 1`] = `
 <div>
   <header
-    class="masterbar css-auvqj6-MasterbarStyledBlock etx5n0d1"
+    class="masterbar css-821uok"
     id="header"
   >
     <svg
-      class="css-mr3s8x-WordPressLogoStyled etx5n0d0"
+      class="css-1u3505m"
       height="72"
       viewBox="0 0 72 72"
       width="72"

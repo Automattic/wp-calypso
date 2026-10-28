@@ -2,7 +2,7 @@ import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 
 const Notice = styled.p`
-	margin: 8px 0 0;
+	margin: 0;
 	font-size: 12px;
 	line-height: 1.5;
 	color: ${ ( props ) => props.theme.colors.textColorLight };

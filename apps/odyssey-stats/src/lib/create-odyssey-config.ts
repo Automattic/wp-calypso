@@ -1,6 +1,6 @@
-import { ConfigData } from '@automattic/create-calypso-config/src';
 // The JSON is filtered by `apps/stats/filter-json-config-loader.js`.
 import productionConfig from '../../../../config/production.json';
+import type { ConfigData } from '@automattic/create-calypso-config';
 
 export class ConfigApi extends Function {
 	// Holds the config data.

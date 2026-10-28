@@ -13,7 +13,7 @@ export default function () {
 			`/start/:flowName/:stepName/${ lang }`,
 			`/start/:flowName/:stepName/:stepSectionName/${ lang }`,
 		],
-		controller.redirectLegacyPlanFlow,
+		controller.redirectLegacyFlow,
 		controller.saveInitialContext,
 		controller.redirectWithoutLocaleIfLoggedIn,
 		controller.redirectToFlow,

@@ -1,4 +1,3 @@
-import '@automattic/calypso-polyfills';
 import { getGenericSuperPropsGetter, initializeAnalytics } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { CurrentUser, User, UserActions } from '@automattic/data-stores';

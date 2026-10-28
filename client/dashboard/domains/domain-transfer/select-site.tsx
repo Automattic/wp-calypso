@@ -15,17 +15,25 @@ import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 import './select-site.scss';
 
-interface Props {
+interface SelectSiteProps {
 	attachedSiteId?: number;
+	/**
+	 * Narrows the sites offered beyond those the user can manage.
+	 */
+	filter?: ( site: Site ) => boolean;
 	onSiteSelect: ( site: Site ) => void;
 }
 
-export function SelectSite( { attachedSiteId, onSiteSelect }: Props ) {
+export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSiteProps ) {
 	const { queries } = useAppContext();
 	const { data: allSites = [], isLoading } = useQuery( queries.sitesQuery() );
 	const sites = useMemo(
-		() => allSites.filter( ( site ) => canManageSite( site ) && site.ID !== attachedSiteId ),
-		[ allSites, attachedSiteId ]
+		() =>
+			allSites.filter(
+				( site ) =>
+					canManageSite( site ) && site.ID !== attachedSiteId && ( ! filter || filter( site ) )
+			),
+		[ allSites, attachedSiteId, filter ]
 	);
 	const searchInputRef = useRef< HTMLInputElement >( null );
 

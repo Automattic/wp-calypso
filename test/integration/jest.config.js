@@ -9,7 +9,6 @@ module.exports = {
 	testMatch: [
 		'<rootDir>/client/**/integration/*.[jt]s',
 		'<rootDir>/test/test/helpers/**/integration/*.[jt]s',
-		'!**/.eslintrc.*',
 	],
 	verbose: false,
 };

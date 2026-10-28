@@ -178,6 +178,7 @@ export default function TierCards( {
 						<Button
 							onClick={ () => handleViewBenefits( tier.id as string ) }
 							variant={ isSecondary ? 'secondary' : 'primary' }
+							size="compact"
 							style={ { marginBlockStart: '24px', alignSelf: 'flex-start' } }
 						>
 							{ hasHigherTier ? __( 'See what you’ll unlock' ) : __( 'View your benefits' ) }

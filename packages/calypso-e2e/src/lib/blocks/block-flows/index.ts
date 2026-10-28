@@ -1,8 +1,6 @@
 /* Block Flows */
 export * from './instagram';
 export * from './twitter';
-export * from './pay-with-paypal';
-export * from './opentable';
 export * from './business-hours';
 export * from './whatsapp-button';
 export * from './contact-form';
@@ -11,7 +9,6 @@ export * from './post-carousel';
 export * from './timeline';
 export * from './paid-content';
 export * from './subscribe';
-export * from './payments';
 export * from './contact-info';
 export * from './star-rating';
 export * from './slideshow';

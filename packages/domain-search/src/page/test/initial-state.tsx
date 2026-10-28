@@ -63,6 +63,48 @@ describe( 'InitialState', () => {
 		expect( onExternalDomainClick ).toHaveBeenCalled();
 	} );
 
+	it( 'does not render the already have a site CTA without onMigrateSiteClick', () => {
+		render(
+			<TestDomainSearch>
+				<InitialState />
+			</TestDomainSearch>
+		);
+
+		expect( screen.queryByText( /already have a site/i ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'renders both CTAs and calls onMigrateSiteClick when the site CTA is clicked', async () => {
+		const onMigrateSiteClick = jest.fn();
+
+		render(
+			<TestDomainSearch
+				config={ { allowsUsingOwnDomain: true } }
+				events={ { onExternalDomainClick: jest.fn(), onMigrateSiteClick } }
+			>
+				<InitialState />
+			</TestDomainSearch>
+		);
+
+		expect( screen.getByText( /already have a domain/i ) ).toBeInTheDocument();
+
+		await userEvent.click( screen.getByText( /already have a site/i ) );
+		expect( onMigrateSiteClick ).toHaveBeenCalled();
+	} );
+
+	it( 'renders the already have a site CTA when using your own domain is not allowed', () => {
+		render(
+			<TestDomainSearch
+				config={ { allowsUsingOwnDomain: false } }
+				events={ { onMigrateSiteClick: jest.fn() } }
+			>
+				<InitialState />
+			</TestDomainSearch>
+		);
+
+		expect( screen.getByText( /already have a site/i ) ).toBeInTheDocument();
+		expect( screen.queryByText( /already have a domain/i ) ).not.toBeInTheDocument();
+	} );
+
 	describe( 'with Name Pulse on', () => {
 		beforeEach( () => {
 			jest.useFakeTimers();

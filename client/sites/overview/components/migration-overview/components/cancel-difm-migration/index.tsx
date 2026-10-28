@@ -52,11 +52,13 @@ const CancelMigrationModal = ( {
 	handleCancelMigration,
 	siteId,
 	isMigrationInProgress,
+	hasTicket,
 }: {
 	closeModal: () => void;
 	handleCancelMigration: ( siteId: number ) => void;
 	siteId: number;
 	isMigrationInProgress: boolean;
+	hasTicket: boolean;
 } ) => {
 	const translate = useTranslate();
 
@@ -64,13 +66,18 @@ const CancelMigrationModal = ( {
 		? translate( 'Cancel migration' )
 		: translate( 'Request migration cancellation' );
 
-	const modalContent = ! isMigrationInProgress
-		? translate(
-				"If you cancel now, our Happiness Engineers will be notified that you've chosen not to move your site to WordPress.com, and your current site will remain exactly as it is."
-			)
-		: translate(
-				"Since your migration is already underway, you'll need to send us a cancellation request. If you cancel now, you'll lose all your progress."
-			);
+	let modalContent = translate(
+		"If you cancel now, our Happiness Engineers will be notified that you've chosen not to move your site to WordPress.com, and your current site will remain exactly as it is."
+	);
+	if ( isMigrationInProgress ) {
+		modalContent = translate(
+			"Since your migration is already underway, you'll need to send us a cancellation request. If you cancel now, you'll lose all your progress."
+		);
+	} else if ( ! hasTicket ) {
+		modalContent = translate(
+			"When you cancel your migration, your original site will remain unchanged on your current hosting provider. You can always restart the migration when you're ready."
+		);
+	}
 
 	return (
 		<Modal
@@ -109,7 +116,7 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 	const { site, isMigrationCompleted, isMigrationInProgress } = useSiteMigrationStatus( siteId );
 	const { data } = useFindZendeskMigrationTicket( siteId, isMigrationCompleted === false );
 
-	if ( ! data?.ticket_id ) {
+	if ( isMigrationInProgress && ! data?.ticket_id ) {
 		return null;
 	}
 
@@ -137,9 +144,7 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 			setCancellationStatus( 'error' );
 			dispatch(
 				errorNotice(
-					translate(
-						"We couldn't cancel your migration. Our support team will reach out to help."
-					),
+					translate( "We couldn't cancel your migration. Please try again or contact support." ),
 					{ duration: 5000 }
 				)
 			);
@@ -177,6 +182,7 @@ const CancelDifmMigrationForm = ( { siteId }: { siteId: number } ) => {
 					handleCancelMigration={ handleCancelMigration }
 					siteId={ siteId }
 					isMigrationInProgress={ isMigrationInProgress }
+					hasTicket={ !! data?.ticket_id }
 				/>
 			) }
 		</div>

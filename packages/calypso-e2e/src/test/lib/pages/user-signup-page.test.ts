@@ -1,4 +1,4 @@
-import { describe, expect, jest, test } from '@jest/globals';
+import { afterEach, describe, expect, jest, test } from '@jest/globals';
 import {
 	assertSuccessfulNewUserResponse,
 	UserSignupPage,
@@ -119,6 +119,10 @@ const answerSignupRequest = async ( handler: RouteHandler, status: number, body:
 };
 
 describe( 'UserSignupPage', () => {
+	afterEach( () => {
+		jest.restoreAllMocks();
+	} );
+
 	test( 'surfaces a rejected signup response without waiting for an ok response', async () => {
 		const { handlers, page } = buildRoutedPage();
 
@@ -177,6 +181,67 @@ describe( 'UserSignupPage', () => {
 		await answerSignupRequest( handlers[ 0 ], 200, response );
 
 		await expect( signup ).resolves.toEqual( response );
+	} );
+
+	test( 'backs off before each reload after a transient server error', async () => {
+		// A deploy rollout serves a stock 502 for a few seconds; reloading straight
+		// away lands on the same 502 and burns every attempt in milliseconds.
+		const { page } = buildRoutedPage();
+		const waitForTimeout = jest.fn( async () => undefined );
+		const reload = jest.fn( async () => null );
+		Object.assign( page, { waitForTimeout, reload } );
+		jest.mocked( page.evaluate ).mockResolvedValue( true );
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+
+		await expect(
+			new UserSignupPage( page ).signupWithEmail( 'test@example.com' )
+		).rejects.toThrow( 'Signup page returned a transient server error.' );
+
+		expect( waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ], [ 10_000 ], [ 20_000 ] ] );
+		expect( reload ).toHaveBeenCalledTimes( 3 );
+		reload.mock.invocationCallOrder.forEach( ( order, index ) => {
+			expect( waitForTimeout.mock.invocationCallOrder[ index ] ).toBeLessThan( order );
+		} );
+		expect( warn ).toHaveBeenCalledTimes( 3 );
+	} );
+
+	test( 'recovers through signupWithEmail once the server error clears', async () => {
+		const { handlers, page } = buildRoutedPage();
+		const waitForTimeout = jest.fn( async () => undefined );
+		const reload = jest.fn( async () => null );
+		Object.assign( page, { waitForTimeout, reload } );
+		jest.mocked( page.evaluate ).mockResolvedValueOnce( true );
+		jest.spyOn( console, 'warn' ).mockImplementation( () => undefined );
+		const response = {
+			code: 200,
+			body: { success: true, user_id: 123, username: 'e2eflowtesting123', bearer_token: 'token' },
+		};
+
+		const signup = new UserSignupPage( page ).signupWithEmail( 'test@example.com' );
+		await settle();
+
+		await answerSignupRequest( handlers[ 0 ], 200, response );
+
+		await expect( signup ).resolves.toEqual( response );
+		expect( waitForTimeout.mock.calls ).toEqual( [ [ 5_000 ] ] );
+		expect( reload ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'throws a non-transient signup failure without waiting or reloading', async () => {
+		const { page } = buildRoutedPage();
+		const waitForTimeout = jest.fn( async () => undefined );
+		const reload = jest.fn( async () => null );
+		Object.assign( page, { waitForTimeout, reload } );
+		jest
+			.mocked( page.locator( 'input[name="email"]' ).fill )
+			.mockRejectedValue( new Error( 'Form broke.' ) );
+
+		await expect(
+			new UserSignupPage( page ).signupWithEmail( 'test@example.com' )
+		).rejects.toThrow( 'Form broke.' );
+
+		expect( waitForTimeout ).not.toHaveBeenCalled();
+		expect( reload ).not.toHaveBeenCalled();
 	} );
 
 	test( 'leaves later signup requests alone once it has captured one', async () => {

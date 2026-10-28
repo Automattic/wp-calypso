@@ -10,9 +10,9 @@ import {
 	getWebMcpInputSchema,
 	isWebMcpMutatingServerAbilityName,
 } from './contracts';
-import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from './types';
+import type { Ability } from '@wordpress/abilities';
 import type { Block } from '@wordpress/blocks';
 
 export { createWebMcpToolProvider } from './server-ability-provider';
@@ -153,7 +153,6 @@ function prepareApplyBlockEditsInput(
 		...( Array.isArray( input.deletes ) ? { deletes: input.deletes } : {} ),
 		...( typeof input.summary === 'string' ? { summary: input.summary } : {} ),
 		reverseMap,
-		suppressAssistantMessage: true,
 	};
 }
 

@@ -17,7 +17,6 @@ import JetpackCloudMasterbar from 'calypso/components/jetpack/masterbar';
 import { withCurrentRoute } from 'calypso/components/route';
 import SympathyDevWarning from 'calypso/components/sympathy-dev-warning';
 import useShouldLoadAgentsManager from 'calypso/dashboard/app/agents-manager/use-should-load-agents-manager';
-import { getDashboardFromHostname } from 'calypso/dashboard/app/routing';
 import { retrieveMobileRedirect } from 'calypso/jetpack-connect/persistence-utils';
 import { installKonamiListener } from 'calypso/layout/arcade-mode/detect';
 import EmptyMasterbar from 'calypso/layout/masterbar/empty';
@@ -66,6 +65,7 @@ import BodySectionCssClass from './body-section-css-class';
 import { getColorScheme, getColorSchemeFromCurrentQuery, refreshColorScheme } from './color-scheme';
 import HelpCenterLoader from './help-center-loader';
 import LayoutLoader from './loader';
+import { PublicMarketplaceFooter } from './public-marketplace-footer';
 import { shouldLoadInlineHelp, handleScroll, clearSidebarScrollStyles } from './utils';
 
 /*
@@ -150,7 +150,7 @@ const Omnibar = ( props ) => (
 	/>
 );
 
-function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
+function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId, isMasterbarVisible } ) {
 	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager(
 		currentRoute,
 		siteId,
@@ -161,7 +161,13 @@ function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId } ) {
 		return null;
 	}
 
-	return <AgentsManagerLoader sectionName={ sectionName } isInternalOnly={ isInternalOnly } />;
+	return (
+		<AgentsManagerLoader
+			sectionName={ sectionName }
+			isInternalOnly={ isInternalOnly }
+			isMasterbarVisible={ isMasterbarVisible }
+		/>
+	);
 }
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
@@ -325,6 +331,13 @@ class Layout extends Component {
 			return null;
 		}
 
+		// These pages render their own masterbar.
+		if (
+			[ 'checkout-thank-you', 'professional-email-upsell' ].includes( this.props.sectionName )
+		) {
+			return null;
+		}
+
 		let MasterbarComponent = MasterbarLoggedIn;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			MasterbarComponent = JetpackCloudMasterbar;
@@ -435,6 +448,7 @@ class Layout extends Component {
 					sectionName={ this.props.sectionName }
 					currentRoute={ this.props.currentRoute }
 					siteId={ this.props.siteId }
+					isMasterbarVisible={ ! this.props.masterbarIsHidden }
 				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
@@ -480,7 +494,12 @@ class Layout extends Component {
 							messagePath={ `calypso:${ this.props.sectionJitmPath }:admin_notices` }
 						/>
 					) }
-					<AsyncLoad require={ loadGlobalNotices } placeholder={ null } id="notices" />
+					<AsyncLoad
+						require={ loadGlobalNotices }
+						placeholder={ null }
+						loadFailureFallback={ null }
+						id="notices"
+					/>
 					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
 						<>
 							<div id="secondary" className="layout__secondary" role="navigation">
@@ -492,6 +511,13 @@ class Layout extends Component {
 						</>
 					) }
 				</div>
+				<PublicMarketplaceFooter
+					sectionName={ this.props.sectionName }
+					currentRoute={ this.props.currentRoute }
+					isLoggedIn={ this.props.isLoggedIn }
+					hasSidebar={ Boolean( this.props.secondary ) }
+					hasSelectedSite={ Boolean( this.props.siteId ) }
+				/>
 				<AsyncLoad require={ loadCommunityTranslator } placeholder={ null } />
 				{ 'development' === process.env.NODE_ENV && (
 					<>
@@ -503,7 +529,11 @@ class Layout extends Component {
 					<AsyncLoad require={ loadSupportArticleDialog } placeholder={ null } />
 				) }
 				{ config.isEnabled( 'cookie-banner' ) && (
-					<AsyncLoad require={ loadCookieBanner } placeholder={ null } />
+					<AsyncLoad
+						require={ loadCookieBanner }
+						placeholder={ null }
+						loadFailureFallback={ null }
+					/>
 				) }
 				{ config.isEnabled( 'layout/app-banner' ) && (
 					<AsyncLoad require={ loadAppBanner } placeholder={ null } />
@@ -521,7 +551,6 @@ class Layout extends Component {
 
 export default withCurrentRoute(
 	connect( ( state, { currentSection, currentRoute, currentQuery, secondary } ) => {
-		const dashboard = getDashboardFromHostname( window?.location?.hostname );
 		const sectionGroup = currentSection?.group ?? null;
 		const sectionName = currentSection?.name ?? null;
 
@@ -562,7 +591,6 @@ export default withCurrentRoute(
 		const noMasterbarForSection =
 			// hide the masterBar until the section is loaded. To flicker the masterBar in, is better than to flicker it out.
 			! sectionName ||
-			( dashboard === 'ciab' && isCheckoutSection ) ||
 			( ! isWooJPC && ! isBlazePro && [ 'signup', 'jetpack-connect' ].includes( sectionName ) );
 		const isFromAutomatticForAgenciesPlugin =
 			'automattic-for-agencies-client' === currentQuery?.from;

@@ -35,10 +35,6 @@
 	transition: all 0.1s ease-in-out;
 	margin-bottom: 15px;
 
-	&.is-seen {
-		opacity: 0.65;
-	}
-
 	&.is-selected,
 	&.is-x-post.is-selected,
 	&.tag-afk.is-selected {
@@ -168,6 +164,11 @@
 		padding: 16px 24px;
 		display: flex;
 		align-items: center;
+
+		.reader__x-post-avatar {
+			position: relative;
+			display: flex;
+		}
 
 		.reader__post-title {
 			font-size: $font-body;

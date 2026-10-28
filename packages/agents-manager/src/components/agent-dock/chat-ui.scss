@@ -1,3 +1,12 @@
+@use '../../styles/variables' as *;
+
+// Reveals the chat: `useAgentLayoutManager` creates the portal node with an
+// inline `display: none`, which only `!important` overrides, so a page without
+// this stylesheet shows no chat instead of an unstyled one.
+.agents-manager-chat {
+	display: block !important;
+}
+
 /* Docked chat base */
 // A hidden, fixed strip at the right edge, plus the FAB that reopens a
 // closed docked chat.
@@ -52,10 +61,6 @@ body.wp-admin.modal-open .agents-manager-chat--docked {
 // Shared styles for the docked and undocked chat.
 .agenttic {
 	.Messages-module_container {
-		.big-sky__completed-plan:first-child {
-			margin-top: 0;
-		}
-
 		.button-module_button:has( .agents-manager-message-action-icon ) {
 			width: 32px;
 			height: 32px;

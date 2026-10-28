@@ -8,6 +8,12 @@ body.is-section-marketing-traffic {
 	@include admin-ui-page-layout;
 	@include admin-ui-page-layout-constrained-content;
 	@include admin-ui-page-sticky-footer;
+
+	// The admin-ui Page content box scrolls but isn't positioned, so absolutely positioned
+	// descendants (e.g. screen-reader text) escape it and make `.main` scroll the page away.
+	.admin-ui-navigable-region > :last-child {
+		position: relative;
+	}
 }
 
 .settings-traffic.site-settings {

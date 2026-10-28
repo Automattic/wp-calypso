@@ -1,9 +1,8 @@
 import { Button, useFormStatus, FormStatus } from '@automattic/composite-checkout';
 import styled from '@emotion/styled';
-import { useSelect } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
 import debugFactory from 'debug';
-import { Fragment, ReactNode, useEffect, useState } from 'react';
+import { Fragment, ReactNode, useEffect, useState, useSyncExternalStore } from 'react';
 import Field from '../field';
 import { PaymentMethodLogos } from '../payment-method-logos';
 import { SummaryLine, SummaryDetails } from '../summary-details';
@@ -138,33 +137,42 @@ const StripeUpiField = styled( Field )`
 	}
 `;
 
-function StripeUpiFields( { state }: { state: StripeUpiPaymentMethodState } ) {
+/**
+ * A source of the live contact details entered in checkout.
+ */
+export interface ContactDetailsSource {
+	get(): ManagedContactDetails;
+	subscribe( callback: () => void ): () => void;
+}
+
+function StripeUpiFields( {
+	state,
+	contactDetails,
+}: {
+	state: StripeUpiPaymentMethodState;
+	contactDetails: ContactDetailsSource;
+} ) {
 	const { __ } = useI18n();
 	useSubscribeToEventEmitter( state );
 	const { formStatus } = useFormStatus();
 	const isDisabled = formStatus !== FormStatus.READY;
 
-	// Get live contact details from checkout store
-	const checkoutContactDetails = useSelect( ( select ) => {
-		const store = select( 'wpcom-checkout' );
-		return store && typeof store === 'object' && 'getContactInfo' in store
-			? ( store as { getContactInfo: () => ManagedContactDetails } ).getContactInfo()
-			: null;
-	}, [] ) as ManagedContactDetails | null;
+	const checkoutContactDetails = useSyncExternalStore(
+		contactDetails.subscribe,
+		contactDetails.get
+	);
 
 	// Keep state, postalCode, and country synced with live checkout contact details.
 	// These fields are disabled/readonly, so they should always reflect billing info.
 	useEffect( () => {
-		if ( checkoutContactDetails ) {
-			if ( checkoutContactDetails.state?.value ) {
-				state.change( 'state', checkoutContactDetails.state.value );
-			}
-			if ( checkoutContactDetails.postalCode?.value ) {
-				state.change( 'postalCode', checkoutContactDetails.postalCode.value );
-			}
-			if ( checkoutContactDetails.countryCode?.value ) {
-				state.change( 'country', checkoutContactDetails.countryCode.value );
-			}
+		if ( checkoutContactDetails.state?.value ) {
+			state.change( 'state', checkoutContactDetails.state.value );
+		}
+		if ( checkoutContactDetails.postalCode?.value ) {
+			state.change( 'postalCode', checkoutContactDetails.postalCode.value );
+		}
+		if ( checkoutContactDetails.countryCode?.value ) {
+			state.change( 'country', checkoutContactDetails.countryCode.value );
 		}
 	}, [ checkoutContactDetails, state ] );
 
@@ -261,8 +269,10 @@ function StripeUpiFields( { state }: { state: StripeUpiPaymentMethodState } ) {
 
 export function createStripeUpiMethod( {
 	submitButtonContent,
+	contactDetails,
 }: {
 	submitButtonContent: ReactNode;
+	contactDetails: ContactDetailsSource;
 } ): PaymentMethod {
 	const state = new StripeUpiPaymentMethodState();
 
@@ -271,7 +281,7 @@ export function createStripeUpiMethod( {
 		hasRequiredFields: true,
 		paymentProcessorId: 'stripe-upi',
 		label: <StripeUpiLabel />,
-		activeContent: <StripeUpiFields state={ state } />,
+		activeContent: <StripeUpiFields state={ state } contactDetails={ contactDetails } />,
 		submitButton: (
 			<StripeUpiSubmitButton submitButtonContent={ submitButtonContent } state={ state } />
 		),

@@ -1,6 +1,5 @@
 /* POMs */
 export * from './navbar-component';
-export * from './navbar-cart-component';
 export * from './comments-component';
 export * from './sidebar-component';
 export * from './help-center';
@@ -15,7 +14,6 @@ export * from './isolated-block-editor-component';
 export * from './block-widget-editor-component';
 export * from './notice-component';
 export * from './dashboard-snackbar-component';
-export * from './react-modal-component';
 export * from './editor-component';
 export * from './editor-inline-block-inserter-component';
 export * from './editor-publish-panel-component';
@@ -39,7 +37,6 @@ export * from './editor-dimensions-component';
 export * from './jetpack-instant-search-modal-component';
 export * from './select-items-component';
 export * from './wp-admin-notice-component';
-export * from './wp-admin-sidebar-component';
 export * from './launch-celebration-component';
 
 export * from './me';

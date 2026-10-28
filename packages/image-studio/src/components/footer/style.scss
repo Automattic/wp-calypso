@@ -14,6 +14,11 @@
 		margin-top: var(--spacing-8, 32px);
 	}
 
+	// Grow with the chat notice so the input doesn't cover the latest messages.
+	.image-studio-modal--edit:has([data-slot="notice"]) & {
+		flex-basis: $footer-height + $chat-notice-height;
+	}
+
 	&__inner {
 		opacity: 1;
 		padding: 0 $modal-padding;

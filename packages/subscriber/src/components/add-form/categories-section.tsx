@@ -1,10 +1,13 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { localizeUrl } from '@automattic/i18n-utils';
+import { newsletterAdminUrl } from '@automattic/newsletter-urls';
 import { Button, Popover, ToggleControl, FormTokenField } from '@wordpress/components';
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
 import { createInterpolateElement, useRef, useState } from '@wordpress/element';
 import { info } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
+import type { ComponentProps } from 'react';
+
+type Tokens = NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >;
 
 interface Props {
 	siteId: number;
@@ -28,7 +31,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 	const [ showInfoPopover, setShowInfoPopover ] = useState( false );
 	const infoButtonRef = useRef< HTMLButtonElement >( null );
 
-	const handleCategoryChange = ( tokens: ( string | TokenItem )[] ) => {
+	const handleCategoryChange = ( tokens: Tokens ) => {
 		// Filter out any invalid category names.
 		const validTokens = tokens
 			.map( ( token ) => {
@@ -62,9 +65,7 @@ export const CategoriesSection: React.FC< Props > = ( {
 		if ( ! siteUrl ) {
 			return '#';
 		}
-		return `${ siteUrl }/wp-admin/admin.php?page=jetpack-newsletter&p=${ encodeURIComponent(
-			'/?tab=settings'
-		) }`;
+		return newsletterAdminUrl( `${ siteUrl }/wp-admin/`, { tab: 'settings' } );
 	};
 
 	return (

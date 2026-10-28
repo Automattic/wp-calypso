@@ -22,7 +22,10 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import { SectionHeader } from '../../components/section-header';
+import McpApprovalBypassControl from './approval-bypass';
 import { isWriteTool } from './categories';
+
+import './style.scss';
 
 interface McpAbility {
 	title: string;
@@ -175,84 +178,78 @@ function McpComponent() {
 				eventName="calypso_dashboard_mcp_view"
 				properties={ tracksAudienceProps }
 			/>
-			<VStack spacing={ 8 }>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						level={ 2 }
-						title={ __( 'MCP' ) }
-						description={ __(
-							'Control how external AI agents access your WordPress.com account and sites.'
-						) }
-					/>
-					<Card>
-						<CardBody>
-							<VStack spacing={ 4 }>
-								<SectionHeader
-									level={ 3 }
-									title={ __( 'External AI agent access' ) }
-									description={ __(
-										'Allow external AI agents to access your WordPress.com account and sites via MCP.'
-									) }
-								/>
-								<ToggleControl
-									__nextHasNoMarginBottom
-									checked={ mcpEnabled }
-									disabled={ mutation.isPending }
-									label={ __( 'Enable MCP access' ) }
-									onChange={ handleMcpToggle }
-								/>
-							</VStack>
-						</CardBody>
-
-						{ mcpEnabled && (
-							<>
-								<CardDivider />
-								<RouterLinkSummaryButton
-									to="/me/preferences/mcp/read"
-									density="medium"
-									title={ __( 'Read' ) }
-									decoration={ <Icon icon={ seen } size={ 24 } /> }
-									badges={ [ readBadge ] }
-								/>
-								<RouterLinkSummaryButton
-									to="/me/preferences/mcp/write"
-									density="medium"
-									title={ __( 'Write' ) }
-									decoration={ <Icon icon={ pencil } size={ 24 } /> }
-									badges={ [ writeBadge ] }
-								/>
-								<RouterLinkSummaryButton
-									to="/me/preferences/mcp/mcp-sites"
-									density="medium"
-									title={ __( 'Site exceptions' ) }
-									decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
-									badges={ [ exceptionBadge ] }
-								/>
-							</>
-						) }
-						{ ! mcpEnabled && (
-							<>
-								<CardDivider />
-								<RouterLinkSummaryButton
-									to="/me/preferences/mcp/mcp-sites"
-									density="medium"
-									title={ __( 'Add to specific sites' ) }
-									decoration={ <Icon icon={ globe } size={ 24 } /> }
-									badges={ [ addSiteBadge ] }
-								/>
-							</>
-						) }
-					</Card>
+			<VStack spacing={ 4 }>
+				<Card className="mcp-preferences__access-card">
+					<CardBody>
+						<VStack spacing={ 4 }>
+							<SectionHeader
+								level={ 3 }
+								title={ __( 'External AI agent access' ) }
+								description={ __(
+									'Allow external AI agents to access your WordPress.com account and sites via MCP.'
+								) }
+							/>
+							<ToggleControl
+								__nextHasNoMarginBottom
+								checked={ mcpEnabled }
+								disabled={ mutation.isPending }
+								label={ __( 'Enable MCP access' ) }
+								onChange={ handleMcpToggle }
+							/>
+						</VStack>
+					</CardBody>
 
 					{ mcpEnabled && (
-						<RouterLinkSummaryButton
-							to="/me/preferences/mcp/setup"
-							title={ __( 'Connect external AI assistant' ) }
-							description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-							decoration={ <Icon icon={ connection } size={ 24 } /> }
-						/>
+						<>
+							<CardDivider />
+							<RouterLinkSummaryButton
+								to="/me/preferences/mcp/read"
+								density="medium"
+								title={ __( 'Read' ) }
+								decoration={ <Icon icon={ seen } size={ 24 } /> }
+								badges={ [ readBadge ] }
+							/>
+							<RouterLinkSummaryButton
+								to="/me/preferences/mcp/write"
+								density="medium"
+								title={ __( 'Write' ) }
+								decoration={ <Icon icon={ pencil } size={ 24 } /> }
+								badges={ [ writeBadge ] }
+							/>
+							<RouterLinkSummaryButton
+								to="/me/preferences/mcp/mcp-sites"
+								density="medium"
+								title={ __( 'Site exceptions' ) }
+								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
+								badges={ [ exceptionBadge ] }
+							/>
+							{ userSettings?.mcp_approval_bypass && (
+								<McpApprovalBypassControl approvalBypass={ userSettings.mcp_approval_bypass } />
+							) }
+						</>
 					) }
-				</VStack>
+					{ ! mcpEnabled && (
+						<>
+							<CardDivider />
+							<RouterLinkSummaryButton
+								to="/me/preferences/mcp/mcp-sites"
+								density="medium"
+								title={ __( 'Add to specific sites' ) }
+								decoration={ <Icon icon={ globe } size={ 24 } /> }
+								badges={ [ addSiteBadge ] }
+							/>
+						</>
+					) }
+				</Card>
+
+				{ mcpEnabled && (
+					<RouterLinkSummaryButton
+						to="/me/preferences/mcp/setup"
+						title={ __( 'Connect external AI assistant' ) }
+						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
+						decoration={ <Icon icon={ connection } size={ 24 } /> }
+					/>
+				) }
 			</VStack>
 		</PageLayout>
 	);

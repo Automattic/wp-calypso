@@ -24,7 +24,6 @@ export default async function payPalProcessor(
 	const {
 		getThankYouUrl,
 		createUserAndSiteBeforeTransaction,
-		reduxDispatch,
 		includeDomainDetails,
 		includeGSuiteDetails,
 		responseCart,
@@ -33,7 +32,7 @@ export default async function payPalProcessor(
 		contactDetails,
 		fromSiteSlug,
 	} = transactionOptions;
-	reduxDispatch( recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-express' } ) );
+	recordTransactionBeginAnalytics( { paymentMethodId: 'paypal-express' } );
 
 	const thankYouUrl = getThankYouUrl();
 	let currentUrl;

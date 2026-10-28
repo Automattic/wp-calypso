@@ -21,7 +21,9 @@ export function Chat( {
 	messages,
 	isProcessing,
 	isStreaming,
+	isReplying,
 	error,
+	errorNotice,
 	onSubmit,
 	beforeSubmit,
 	leadingActions,
@@ -283,12 +285,14 @@ export function Chat( {
 					trailingActions={ trailingActions }
 					isProcessing={ isProcessing }
 					isStreaming={ isStreaming }
+					isReplying={ isReplying }
 					onStop={ onStop }
 					showHeader={ false }
 					notice={ notice }
 					suggestions={ suggestions }
 					clearSuggestions={ clearSuggestions }
 					error={ error }
+					errorNotice={ errorNotice }
 					emptyView={ emptyView }
 					messageRenderer={ messageRenderer }
 					showAgentIcon={ showAgentIcon }
@@ -439,6 +443,7 @@ export function Chat( {
 								trailingActions={ trailingActions }
 								isProcessing={ isProcessing }
 								isStreaming={ isStreaming }
+								isReplying={ isReplying }
 								onStop={ onStop }
 								showHeader
 								onClose={ handleClose }
@@ -447,6 +452,7 @@ export function Chat( {
 								suggestions={ suggestions }
 								clearSuggestions={ clearSuggestions }
 								error={ error }
+								errorNotice={ errorNotice }
 								emptyView={ emptyView }
 								messageRenderer={ messageRenderer }
 								showAgentIcon={ showAgentIcon }

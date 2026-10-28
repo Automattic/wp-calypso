@@ -141,6 +141,16 @@ describe( 'addUrlToPendingPageRedirect', () => {
 			) }&receiptId=${ encodedReceiptPlaceholder }&isGravatarDomain=1`
 		);
 	} );
+	it( 'preserves signed Pressable SUCCESS bytes through pending and receipt completion', () => {
+		const successUrl =
+			'https://my.pressable.com/titan_email/checkout_return?agency_id=42&checkout_status=SUCCESS&signature=a%2Bb%2fc%3D';
+		const pendingUrl = addUrlToPendingPageRedirect( successUrl, { fromExternalCheckout: true } );
+		const redirectTo = new URL( pendingUrl ).searchParams.get( 'redirect_to' );
+		expect( redirectTo ).toBe( successUrl );
+		expect(
+			getRedirectFromPendingPage( { isLoadingOrder: false, receiptId: 12345, redirectTo } )
+		).toEqual( { url: successUrl } );
+	} );
 } );
 
 describe( 'redirectThroughPending', () => {
@@ -253,6 +263,16 @@ describe( 'getRedirectFromPendingPage', () => {
 			receiptId: 12345,
 		} );
 		expect( actual ).toEqual( { url: 'https://wordpress.com/home' } );
+	} );
+
+	it( 'blocks a lookalike Pressable hostname after successful payment', () => {
+		expect(
+			getRedirectFromPendingPage( {
+				isLoadingOrder: false,
+				receiptId: 12345,
+				redirectTo: 'https://my.pressable.com.evil.test/titan_email/checkout_return',
+			} )
+		).toEqual( { url: '/checkout/thank-you/no-site/12345' } );
 	} );
 
 	it( 'returns a simple absolute url if it matches the siteSlug and there is also a receipt', () => {

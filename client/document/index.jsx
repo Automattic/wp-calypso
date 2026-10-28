@@ -22,12 +22,11 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import Loading from 'calypso/components/loading';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
 import { InitialOmnibar } from 'calypso/dashboard/app/omnibar/omnibar';
-import { getDashboardStepperLogo } from 'calypso/dashboard/app/stepper-logo';
 import { A4AOmnibarHomeIcon } from 'calypso/dashboard/app-a4a/omnibar-home-icon';
 import { A4A_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-a4a/section';
-import { CIAB_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-ciab/section';
 import { DOTCOM_DASHBOARD_SECTION_DEFINITION } from 'calypso/dashboard/app-dotcom/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
+import { WooTopBarLogo } from 'calypso/landing/stepper/declarative-flow/internals/components/woo-top-bar-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
@@ -73,10 +72,12 @@ class Document extends Component {
 			sectionName,
 			storeSandboxHelper,
 			blackboxHelper,
+			subscriptionManagementSubkey,
 			target,
 			user,
 			useTranslationChunks,
 			showStepContainerV2Loader,
+			isPlaygroundWoo,
 		} = this.props;
 
 		const theme = config( 'theme' );
@@ -95,6 +96,11 @@ class Document extends Component {
 			`var BUILD_TIMESTAMP = ${ jsonStringifyForHtml( buildTimestamp ) };\n` +
 			`var BUILD_TARGET = ${ jsonStringifyForHtml( target ) };\n` +
 			( user ? `var currentUser = ${ jsonStringifyForHtml( user ) };\n` : '' ) +
+			( subscriptionManagementSubkey
+				? `var subscriptionManagementSubkey = ${ jsonStringifyForHtml(
+						subscriptionManagementSubkey
+					) };\n`
+				: '' ) +
 			( isSupportSession ? 'var isSupportSession = true;\n' : '' ) +
 			( isSSP ? 'var isSSP = true;\n' : '' ) +
 			( app ? `var app = ${ jsonStringifyForHtml( app ) };\n` : '' ) +
@@ -117,13 +123,11 @@ class Document extends Component {
 
 		const isDashboardSection =
 			sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
-			sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
 			sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name;
 
 		const isDashboardOmnibarPage =
 			( isDashboardEnv() || env === 'development' ) &&
 			( sectionName === DOTCOM_DASHBOARD_SECTION_DEFINITION.name ||
-				sectionName === CIAB_DASHBOARD_SECTION_DEFINITION.name ||
 				sectionName === A4A_DASHBOARD_SECTION_DEFINITION.name );
 
 		// Hostname overrides only reach the request's client data, not the base config.
@@ -226,6 +230,7 @@ class Document extends Component {
 											path === '/me/security/qr-login' && query?.origin === 'woocommerce'
 										}
 										showStepContainerV2Loader={ showStepContainerV2Loader }
+										isPlaygroundWoo={ isPlaygroundWoo }
 									/>
 								</div>
 							</div>
@@ -352,6 +357,7 @@ function LoadingPlaceholder( {
 	isOneTapAuth,
 	isWooCommerceQrLoginAuthCheck,
 	showStepContainerV2Loader,
+	isPlaygroundWoo,
 } ) {
 	const shouldNotShowLoadingLogo =
 		sectionName === 'checkout' ||
@@ -365,9 +371,9 @@ function LoadingPlaceholder( {
 			flowName: '',
 			stepName: '',
 			recordTracksEvent: () => {},
-			logo: getDashboardStepperLogo( dashboard ),
+			logo: isPlaygroundWoo ? <WooTopBarLogo /> : null,
 		} ),
-		[ dashboard ]
+		[ isPlaygroundWoo ]
 	);
 
 	if ( shouldNotShowLoadingLogo ) {

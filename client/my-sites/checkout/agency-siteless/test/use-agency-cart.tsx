@@ -6,7 +6,7 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import useAgencyCart from '../use-agency-cart';
-import type { AgencyCartEntry } from '../lib/agency-checkout-params';
+import type { AgencyCartEntry } from '../../agency-checkout/lib/agency-checkout-params';
 import type { Agency, AgencyProduct } from '@automattic/api-core';
 import type { PropsWithChildren } from 'react';
 
@@ -26,13 +26,18 @@ const products = [
 		yearly_alternative_product_id: 1010,
 	},
 	{ slug: 'jetpack-backup-t1', product_id: 2112, alternative_product_id: 2010 },
+	{ slug: 'pressable-addon-php-memory-512', product_id: 4001, site_domain: 'one.example.com' },
+	{ slug: 'pressable-addon-php-memory-512', product_id: 4001, site_domain: 'two.example.com' },
 ] as AgencyProduct[];
 
 const replaceProductsInCart = jest.fn();
+const EXIT_URL = 'https://agencies-beta.automattic.com/products';
 
 function renderCart(
 	entries: AgencyCartEntry[],
-	{ agency = { id: AGENCY_ID } as Agency }: { agency?: Agency | null } = {}
+	{
+		agency = { id: AGENCY_ID, approval_status: 'approved' } as Agency,
+	}: { agency?: Agency | null } = {}
 ) {
 	const queryClient = new QueryClient( {
 		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
@@ -40,7 +45,7 @@ function renderCart(
 	queryClient.setQueryData( activeAgencyQuery().queryKey, agency );
 	queryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, products );
 
-	return renderHook( () => useAgencyCart( entries, 'yearly' ), {
+	return renderHook( () => useAgencyCart( entries, 'yearly', EXIT_URL ), {
 		wrapper: ( { children }: PropsWithChildren ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		),
@@ -98,6 +103,23 @@ describe( 'useAgencyCart', () => {
 		] );
 	} );
 
+	it( 'sends each PHP memory add-on with the site it applies to', async () => {
+		const { result } = renderCart( [
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'one.example.com' },
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'two.example.com' },
+			{ slug: 'pressable-addon-php-memory-512', quantity: 1, siteDomain: 'not-owned.example.com' },
+		] );
+
+		await waitFor( () => expect( result.current.isReady ).toBe( true ) );
+
+		expect(
+			addedLines().map(
+				( line: { extra: { a4a_pressable_site_domain?: string } } ) =>
+					line.extra.a4a_pressable_site_domain
+			)
+		).toEqual( [ 'one.example.com', 'two.example.com' ] );
+	} );
+
 	it( 'leaves out a product the agency cannot buy', async () => {
 		const { result } = renderCart( [
 			{ slug: 'not-a-product', quantity: 2 },
@@ -126,6 +148,26 @@ describe( 'useAgencyCart', () => {
 
 		await waitFor( () => expect( result.current.error ).toBe( 'We could not find your agency.' ) );
 		expect( replaceProductsInCart ).not.toHaveBeenCalled();
+	} );
+
+	it( 'sends an agency that is not approved back to the dashboard without filling the cart', async () => {
+		const { location } = window;
+		const replace = jest.fn();
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { ...location, replace },
+		} );
+
+		try {
+			renderCart( [ { slug: 'jetpack-backup-t1', quantity: 1 } ], {
+				agency: { id: AGENCY_ID, approval_status: 'pending' } as Agency,
+			} );
+
+			await waitFor( () => expect( replace ).toHaveBeenCalledWith( EXIT_URL ) );
+			expect( replaceProductsInCart ).not.toHaveBeenCalled();
+		} finally {
+			Object.defineProperty( window, 'location', { configurable: true, value: location } );
+		}
 	} );
 
 	it( 'reports a cart that could not be filled', async () => {

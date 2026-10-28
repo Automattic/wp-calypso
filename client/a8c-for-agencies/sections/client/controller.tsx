@@ -106,7 +106,7 @@ export const clientCheckoutV2Context: Callback = ( context, next ) => {
 	context.primary = (
 		<>
 			<PageViewTracker title="Client > Checkout V2" path="/client/checkout/v2" />
-			<ClientCheckoutV2 />
+			<ClientCheckoutV2 skipActiveCart={ context.query.skip_active_cart === '1' } />
 		</>
 	);
 	next();

@@ -5,6 +5,7 @@ import { close, moreVertical, chevronLeft, Icon } from '@wordpress/icons';
 import { useAgentsManagerContext } from '../../contexts';
 import useHasAiChatEntryButton from '../../hooks/use-has-ai-chat-entry-button';
 import { AGENTS_MANAGER_STORE } from '../../stores';
+import { getChatPresentation } from '../../utils/chat-presentation';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { Minimize } from '../icons';
 import type { ComponentProps } from 'react';
@@ -28,12 +29,17 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 
 	// Minimize only applies to the floating chat reachable from an AI chat entry button
 	// (wp-admin bar, Calypso masterbar, or editor toolbar).
-	const showMinimize = hasAiChatEntry && ! isDocked;
+	const { dismissible } = getChatPresentation();
+	const showMinimize = dismissible && hasAiChatEntry && ! isDocked;
 
 	return (
-		<div className="agents-manager-chat-header">
+		// The `data-slot`s stop the floating panel from dragging on these buttons, as
+		// agenttic's header does. Otherwise a click leaves focus in the composer, and
+		// the menu opens with its first item highlighted.
+		<div className="agents-manager-chat-header" data-slot="chat-header">
 			{ onBack && (
 				<Button
+					data-slot="button"
 					className="agents-manager-chat-header__back-btn"
 					onClick={ onBack }
 					aria-label={ __( 'Go Back', __i18n_text_domain__ ) }
@@ -59,7 +65,7 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					{ __( 'A8C Only', __i18n_text_domain__ ) }
 				</span>
 			) }
-			<div className="agents-manager-chat-header__actions">
+			<div className="agents-manager-chat-header__actions" data-slot="button">
 				{ showMinimize && (
 					<Button
 						className="agents-manager-chat-header__minimize-btn"
@@ -84,13 +90,15 @@ export default function ChatHeader( { onClose, options, title, onBack, isDocked 
 					} }
 					toggleProps={ { size: 'small' } }
 				/>
-				<Button
-					className="agents-manager-chat-header__close-btn"
-					icon={ close }
-					onClick={ onClose }
-					label={ __( 'Close', __i18n_text_domain__ ) }
-					size="small"
-				/>
+				{ dismissible && (
+					<Button
+						className="agents-manager-chat-header__close-btn"
+						icon={ close }
+						onClick={ onClose }
+						label={ __( 'Close', __i18n_text_domain__ ) }
+						size="small"
+					/>
+				) }
 			</div>
 		</div>
 	);

@@ -13,11 +13,11 @@ const noop = () => {};
 const client = { hasMoreNotes: () => false, loadMore: noop, setFilter: noop };
 
 const POST_TITLE = 'An intro to widgets';
-const SENTENCE = `Ashar liked your comment on ${ POST_TITLE }`;
+const SENTENCE = `Somebody liked your post ${ POST_TITLE }`;
 
 const noteAboutAPost = () => ( {
 	id: 1,
-	type: 'comment',
+	type: 'like',
 	read: 0,
 	noticon: '',
 	timestamp: '2026-06-01T00:00:00+00:00',
@@ -38,6 +38,10 @@ const noteAboutAPost = () => ( {
 		{ text: 'Nice post, really helpful!', ranges: [], media: [] },
 	],
 	body: [],
+	meta: {
+		summary: { text: 'Somebody liked your post', ranges: [] },
+		post: { title: POST_TITLE, url: '', date: null, author_name: '' },
+	},
 } );
 
 const REPLY_TITLE = 'The tide tables are wrong';
@@ -66,8 +70,14 @@ const replyNote = () => ( {
 			],
 			media: [],
 		},
+		{ text: 'Checked them against the harbour office, you are right.', ranges: [], media: [] },
 	],
 	body: [],
+	meta: {
+		ids: { comment: 3, parent_comment: 2, reply_comment: 4 },
+		summary: { text: 'Ben Quah replied to your comment', ranges: [] },
+		post: { title: POST_TITLE, url: '', date: null, author_name: '' },
+	},
 } );
 
 const renderList = (
@@ -120,7 +130,7 @@ describe( 'NoteList simplified layout', () => {
 		const { container } = renderList();
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
-			'Ashar liked your comment'
+			'Somebody liked your post'
 		);
 	} );
 
@@ -133,22 +143,76 @@ describe( 'NoteList simplified layout', () => {
 		expect( screen.getByText( 'Nice post, really helpful!' ) ).toBeVisible();
 	} );
 
-	// The reply gridicon rides on a zero-width range, so slicing the sentence as plain
-	// text silently drops it. It has to survive the switch to the simplified layout.
-	it( 'keeps the reply icon when the action is simplified', () => {
+	it( 'keeps the reply icon and previews the reply itself, not the comment it replied to', () => {
 		const { container } = renderList( 'simplified', { note: replyNote() as never } );
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
 			'Ben Quah replied to your comment'
 		);
 		expect( container.querySelector( '.wpnc__subject .gridicons-reply' ) ).toBeInTheDocument();
+		expect( container.querySelector( '.wpnc__excerpt' ) ).toHaveTextContent(
+			'Checked them against the harbour office, you are right.'
+		);
+		expect( screen.queryByText( REPLY_TITLE ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'previews the liked comment, not the post', () => {
+		const note = noteAboutAPost();
+		const { container } = renderList( 'simplified', {
+			note: {
+				...note,
+				type: 'comment_like',
+				meta: {
+					...note.meta,
+					parent_comment: {
+						text: 'Proof it overnight in the fridge.',
+						author_name: 'You',
+						author_avatar: null,
+						date: null,
+						url: '',
+					},
+				},
+			} as never,
+		} );
+
+		expect( container.querySelector( '.wpnc__excerpt' ) ).toHaveTextContent(
+			'Proof it overnight in the fridge.'
+		);
+	} );
+
+	it( 'does not render a link inside the row, so the whole row opens the note', () => {
+		const domain = 'kettleandcrust.blog';
+		const text = `Act now! ${ domain } expired`;
+		const { container } = renderList( 'detailed', {
+			note: {
+				...noteAboutAPost(),
+				type: 'expired_domain',
+				subject: [
+					{
+						text,
+						ranges: [
+							{
+								type: 'a',
+								url: `https://${ domain }`,
+								indices: [ text.indexOf( domain ), text.indexOf( domain ) + domain.length ],
+							},
+						],
+						media: [],
+					},
+				],
+				meta: {},
+			} as never,
+		} );
+
+		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent( text );
+		expect( screen.queryByRole( 'link', { name: domain } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'leads with the action, puts the post under it, and drops the excerpt', () => {
 		const { container } = renderList( 'simplified' );
 
 		expect( container.querySelector( '.wpnc__subject' ) ).toHaveTextContent(
-			'Ashar liked your comment'
+			'Somebody liked your post'
 		);
 		expect( container.querySelector( '.wpnc__excerpt' ) ).toHaveTextContent( POST_TITLE );
 		expect( screen.queryByText( SENTENCE ) ).not.toBeInTheDocument();

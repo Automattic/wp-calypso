@@ -15,7 +15,7 @@ import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/
 import { getSiteOptions, getSiteUrl, getSiteWooCommerceUrl } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import ThankYouPlanProduct from '../products/plan-product';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 interface PlanOnlyThankYouProps {
 	primaryPurchase: ReceiptPurchase;

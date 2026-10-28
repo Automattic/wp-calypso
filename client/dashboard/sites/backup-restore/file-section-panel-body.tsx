@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalVStack as VStack, PanelBody } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Text } from '../../components/text';
@@ -84,9 +85,9 @@ export default function FileSectionPanelBody( {
 				{ remainingCount > 0 && (
 					<Text>
 						{ sprintf(
-							/* translators: %d is the number of additional files */
-							__( 'and %d more files' ),
-							remainingCount
+							/* translators: %s is the formatted number of additional files */
+							__( 'and %s more files' ),
+							formatNumber( remainingCount )
 						) }
 					</Text>
 				) }

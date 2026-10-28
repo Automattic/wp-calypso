@@ -123,7 +123,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		if ( props.compact ) {
 			return '12px 12px 12px 43px';
 		}
-		return '16px 14px 16px 56px';
+		return '12px 14px 12px 56px';
 	} };
 	border-radius: 3px;
 	box-sizing: border-box;
@@ -136,7 +136,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	align-content: center;
 	font-size: 14px;
 	height: fit-content;
-	min-height: 72px;
+	min-height: 52px;
 
 	.rtl & {
 		padding: ${ ( props ) => {
@@ -158,7 +158,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		content: '';
 		border: 1px solid ${ ( props ) => props.theme.colors.borderColor };
 		border-radius: 100%;
-		top: 40%;
+		top: calc( 50% - 8px );
 		left: ${ ( props ) => ( props.compact ? '16px' : '24px' ) };
 		position: absolute;
 		background: ${ ( props ) => props.theme.colors.surface };
@@ -177,8 +177,7 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 		height: 8px;
 		content: '';
 		border-radius: 100%;
-		margin-top: 4px;
-		top: 40%;
+		top: calc( 50% - 4px );
 		left: ${ ( props ) => ( props.compact ? '20px' : '28px' ) };
 		position: absolute;
 		background: ${ getRadioColor };
@@ -192,14 +191,11 @@ const Label = styled.label< LabelProps & React.LabelHTMLAttributes< HTMLLabelEle
 	}
 
 	@media ( ${ ( props ) => props.theme.breakpoints.smallPhoneUp } ) {
-			flex-direction: row;
-			align-items: center;
-			justify-content: space-between;
-			gap: 7px;
-		}
-}
-
-	${ handleLabelDisabled };
+		flex-direction: row;
+		align-items: center;
+		justify-content: space-between;
+		gap: 7px;
+	}
 `;
 
 const RadioButtonChildren = styled.div<
@@ -317,34 +313,6 @@ function handleWrapperDisabled( { disabled, checked }: { disabled?: boolean; che
 	}
 
 	return styles;
-}
-
-function handleLabelDisabled( { disabled }: { disabled?: boolean } ) {
-	if ( ! disabled ) {
-		return null;
-	}
-
-	return `
-		color: lightgray;
-		font-style: italic;
-
-		:hover {
-			cursor: default;
-		}
-
-		::before {
-			border: 1px solid lightgray;
-			background: lightgray;
-		}
-
-		::after {
-			background: white;
-		}
-
-		span {
-			color: lightgray;
-		}
-	`;
 }
 
 function getBorderColor( { checked, theme }: { checked?: boolean; theme: Theme } ) {

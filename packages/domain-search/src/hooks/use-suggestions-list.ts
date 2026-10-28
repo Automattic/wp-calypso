@@ -1,8 +1,9 @@
-import { type DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
+import { type DomainAvailability } from '@automattic/api-core';
 import { DefinedUseQueryResult, useQueries, useQuery, UseQueryResult } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { isFqdnQuery, isWpcomSubdomainQuery, stripWpcomSubdomainSuffix } from '../helpers';
 import { addAvailabilityAsSuggestion } from '../helpers/add-availability-as-suggestion';
+import { isFqdnShownAsSuggestion } from '../helpers/is-fqdn-shown-as-suggestion';
 import { isSupportedPremiumDomain } from '../helpers/is-supported-premium-domain';
 import { partitionSuggestions } from '../helpers/partition-suggestions';
 import { useDomainSearch } from '../page/context';
@@ -88,12 +89,13 @@ export const useSuggestionsList = () => {
 		isLoadingAvailablePremiumDomains;
 
 	const { featuredSuggestions, regularSuggestions } = useMemo( () => {
-		if ( suggestions && fqdnAvailability && query === fqdnAvailability.domain_name ) {
-			addAvailabilityAsSuggestion( suggestions, fqdnAvailability );
-		}
+		const suggestionsWithFqdn =
+			fqdnAvailability && query === fqdnAvailability.domain_name
+				? addAvailabilityAsSuggestion( suggestions, fqdnAvailability )
+				: suggestions;
 
 		return partitionSuggestions( {
-			suggestions: suggestions
+			suggestions: suggestionsWithFqdn
 				.filter( ( { domain_name: suggestion, is_premium } ) => {
 					if ( suggestion !== query ) {
 						return ! is_premium || availablePremiumDomains.includes( suggestion );
@@ -103,15 +105,10 @@ export const useSuggestionsList = () => {
 						return false;
 					}
 
-					if (
-						fqdnAvailability.status === DomainAvailabilityStatus.AVAILABLE ||
-						( config.includeOwnedDomainInSuggestions &&
-							fqdnAvailability.status === DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER )
-					) {
-						return true;
-					}
-
-					return isSupportedPremiumDomain( fqdnAvailability );
+					return isFqdnShownAsSuggestion(
+						fqdnAvailability,
+						config.includeOwnedDomainInSuggestions
+					);
 				} )
 				.map( ( suggestion ) => suggestion.domain_name ),
 			query,

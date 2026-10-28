@@ -7,7 +7,6 @@ import {
 import { html } from '../../panel/indices-to-html';
 import NoteIcon from '../note-icon';
 import type { Subject } from '../types';
-import type { CSSProperties } from 'react';
 
 // Resolve the link used to wrap the header avatar / subject text. A user range
 // whose id differs from the site id links to the Reader profile (some site
@@ -24,15 +23,13 @@ const getHeaderLink = ( block: Subject ): string | undefined => {
 	return range.url;
 };
 
-const iconWrapStyle: CSSProperties = { display: 'flex', flexShrink: 0 };
-
 const NoteSummaryIcon = ( { iconUrl, link }: { iconUrl?: string; link?: string } ) => {
-	const content = <NoteIcon icon={ iconUrl } size={ 32 } />;
+	const content = <NoteIcon icon={ iconUrl } size={ 36 } />;
 	if ( ! link ) {
-		return <div style={ iconWrapStyle }>{ content }</div>;
+		return <div className="wpnc__user-icon">{ content }</div>;
 	}
 	return (
-		<a href={ link } style={ iconWrapStyle } target="_blank" rel="noopener noreferrer">
+		<a className="wpnc__user-icon" href={ link } target="_blank" rel="noopener noreferrer">
 			{ content }
 		</a>
 	);

@@ -290,6 +290,9 @@ export interface SiteDetailsOptions {
 	site_segment?: string | null;
 	site_vertical_id?: string | null;
 	site_creation_flow?: string;
+	wpcom_ai_launchpad_enabled?: boolean;
+	wpcom_ai_launchpad_dismissed?: boolean;
+	wpcom_ai_launchpad_no_guidance?: boolean;
 	software_version?: string;
 	theme_slug?: string;
 	timezone?: string;

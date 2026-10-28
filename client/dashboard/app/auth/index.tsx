@@ -1,4 +1,4 @@
-import { fetchUser, isWpError, User } from '@automattic/api-core';
+import { fetchUser, isWpError, logoutUser, User } from '@automattic/api-core';
 import { clearQueryClient, disablePersistQueryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { setUser } from '@automattic/calypso-sentry';
@@ -10,27 +10,24 @@ import {
 	useQueryClient,
 	type QueryCacheNotifyEvent,
 	type MutationCacheNotifyEvent,
+	type QueryFunctionContext,
 	QueryClient,
 } from '@tanstack/react-query';
 import { createContext, useContext, useMemo, useEffect, useRef, useCallback } from 'react';
 import { wpcomLink } from '../../utils/link';
 import { bumpStat } from '../analytics';
-import { useAppContext } from '../context';
 import { OAUTH_CALLBACK_PATH } from './oauth-callback';
 import type { WPError } from '@automattic/api-core';
 
 export const AUTH_QUERY_KEY = [ 'auth', 'user' ];
 
 /**
- * Patches the current user so `useAuth()` consumers see a change without a reload. A
- * bootstrapped session refetches `window.currentUser` instead of `/me`, so the change has to
- * land there too or the next refetch undoes it.
+ * Patches the current user so `useAuth()` consumers see a change straight away, then
+ * refetches it from `/me` to confirm.
  */
 export function updateCurrentUser( queryClient: QueryClient, changes: Partial< User > ) {
-	if ( window.currentUser ) {
-		window.currentUser = { ...window.currentUser, ...changes };
-	}
 	queryClient.setQueryData< User >( AUTH_QUERY_KEY, ( user ) => user && { ...user, ...changes } );
+	queryClient.invalidateQueries( { queryKey: AUTH_QUERY_KEY } );
 }
 
 const BOOTSTRAP_ERROR_MESSAGE = 'Failed to bootstrap user object';
@@ -132,12 +129,10 @@ function getOAuthAuthorizeUrl( {
 	state,
 	next = '',
 	isLogout = false,
-	isNewUser = false,
 }: {
 	state: string;
 	next?: string;
 	isLogout?: boolean;
-	isNewUser?: boolean;
 } ): string {
 	const redirectUri = new URL( OAUTH_CALLBACK_PATH, window.location.origin );
 
@@ -154,7 +149,6 @@ function getOAuthAuthorizeUrl( {
 		blog_id: '0',
 		state,
 		...( isLogout === true ? { implicit: 'false' } : {} ),
-		...( isNewUser === true ? { 'new-user': '1' } : {} ),
 	} ).toString();
 
 	return authUri.toString();
@@ -173,7 +167,7 @@ function shouldUseBootstrap(): boolean {
 	return ! isSupportUserSession() && config.isEnabled( 'wpcom-user-bootstrap' );
 }
 
-export async function initializeCurrentUser(): Promise< User > {
+export async function loadInitialUser(): Promise< User > {
 	if ( shouldUseBootstrap() ) {
 		if ( window.currentUser ) {
 			return window.currentUser;
@@ -182,6 +176,17 @@ export async function initializeCurrentUser(): Promise< User > {
 	}
 
 	return fetchUser();
+}
+
+/**
+ * The bootstrapped `window.currentUser` is only fresh on page load, so once the cache holds a
+ * user every later fetch goes to `/me`.
+ */
+export function authQueryFn( { client, queryKey }: QueryFunctionContext ): Promise< User > {
+	if ( client.getQueryData< User >( queryKey ) ) {
+		return fetchUser();
+	}
+	return loadInitialUser();
 }
 
 function getAuthErrorReason( error: unknown ): string {
@@ -206,7 +211,6 @@ function getAuthErrorReason( error: unknown ): string {
  */
 export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	const authErrorHandled = useRef( false );
-	const { supports } = useAppContext();
 	const queryClient = useQueryClient();
 	const {
 		data: user,
@@ -215,7 +219,7 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		error: userError,
 	} = useQuery( {
 		queryKey: AUTH_QUERY_KEY,
-		queryFn: initializeCurrentUser,
+		queryFn: authQueryFn,
 		staleTime: 30 * 60 * 1000, // Consider auth valid for 30 minutes
 		retry: false, // Don't retry on 401 errors
 		meta: {
@@ -234,43 +238,35 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		};
 	}, [ user ] );
 
-	const handleAuthError = useCallback(
-		( reason: string ) => {
-			// Prevents repeated calls to redirect
-			if ( authErrorHandled.current ) {
-				return;
-			}
+	const handleAuthError = useCallback( ( reason: string ) => {
+		// Prevents repeated calls to redirect
+		if ( authErrorHandled.current ) {
+			return;
+		}
 
-			authErrorHandled.current = true;
+		authErrorHandled.current = true;
 
-			bumpStat( 'dashboard-auth', `bounce:${ reason }` );
-			trackAuthBounceLoop();
+		bumpStat( 'dashboard-auth', `bounce:${ reason }` );
+		trackAuthBounceLoop();
 
-			if ( config.isEnabled( 'oauth' ) ) {
-				const state = crypto.randomUUID();
-				sessionStorage.setItem( 'wpcom_oauth_state', state );
+		if ( config.isEnabled( 'oauth' ) ) {
+			const state = crypto.randomUUID();
+			sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-				// Default to the signup screen rather than the login screen for certain routes.
-				const isNewUser =
-					supports.startStoreRoute === true && window.location.pathname === '/start-store';
+			window.location.replace(
+				getOAuthAuthorizeUrl( {
+					state,
+					next: window.location.pathname + window.location.search,
+				} )
+			);
+			return;
+		}
 
-				window.location.replace(
-					getOAuthAuthorizeUrl( {
-						state,
-						isNewUser,
-						next: window.location.pathname + window.location.search,
-					} )
-				);
-				return;
-			}
-
-			const currentPath = window.location.href;
-			const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
-			const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
-			window.location.href = loginUrl;
-		},
-		[ supports.startStoreRoute ]
-	);
+		const currentPath = window.location.href;
+		const path = config( 'wpcom_login_url' ) || wpcomLink( '/log-in' );
+		const loginUrl = `${ path }?redirect_to=${ encodeURIComponent( currentPath ) }`;
+		window.location.href = loginUrl;
+	}, [] );
 
 	// Subscribe to network errors and when errors occur due to being logged
 	// out, redirect the user to the log in screen.
@@ -314,11 +310,12 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 		}
 	}, [ user ] );
 
-	// Handles _all_ errors fetching the user object, regardless of whether they are
-	// `authorization_required` errors or not.
-	if ( userIsError ) {
+	// Before the user has loaded, any error fetching it is fatal. After that, a failed refetch
+	// keeps the cached user unless the session is no longer authorized.
+	const authErrorReason = userIsError ? getAuthErrorReason( userError ) : null;
+	if ( authErrorReason && ( ! user || authErrorReason === 'unauthorized' ) ) {
 		if ( typeof window !== 'undefined' ) {
-			handleAuthError( getAuthErrorReason( userError ) );
+			handleAuthError( authErrorReason );
 		}
 		return null;
 	}
@@ -330,7 +327,16 @@ export function AuthProvider( { children }: { children: React.ReactNode } ) {
 	return <AuthContext.Provider value={ value }>{ children }</AuthContext.Provider>;
 }
 
-export async function logout( user: User ): Promise< void > {
+/**
+ * Ends the user's session and returns where to send them afterwards. Priority:
+ *
+ * 1. OAuth dashboards with no static logout_url: redirect through the OAuth flow with
+ *    implicit=false, allowing the user to switch accounts.
+ * 2. always_use_logout_url: force the static logout_url from config.
+ * 3. user.logout_URL: end the WordPress.com session that the cookie belongs to.
+ * 4. Fallback: the static logout_url from config, or the dashboard root.
+ */
+async function endSession( user: User ): Promise< string > {
 	let configLogoutUrl = config( 'logout_url' ) as string | false;
 
 	// Apply locale subdomain to static logout URLs (e.g., |subdomain|wordpress.com)
@@ -339,27 +345,36 @@ export async function logout( user: User ): Promise< void > {
 		configLogoutUrl = configLogoutUrl.replace( '|subdomain|', subdomain );
 	}
 
-	// Determine where to send the user after logout. Priority:
-	//
-	// 1. OAuth dashboards with no static logout_url: redirect through the
-	//    OAuth flow with implicit=false, allowing the user to switch accounts.
-	// 2. always_use_logout_url: force the static logout_url from config,
-	//    ignoring the user's API-provided logout URL.
-	// 3. user.logout_URL: the WP.com logout URL from the /me API response.
-	// 4. Fallback: the static logout_url from config, or the dashboard root.
-	let logoutUrl = '';
 	if ( config.isEnabled( 'oauth' ) && ! configLogoutUrl ) {
 		const state = crypto.randomUUID();
 		sessionStorage.setItem( 'wpcom_oauth_state', state );
 
-		logoutUrl = getOAuthAuthorizeUrl( { state, isLogout: true } );
-	} else if ( config.isEnabled( 'always_use_logout_url' ) && configLogoutUrl ) {
-		logoutUrl = configLogoutUrl;
-	} else if ( user.logout_URL ) {
-		logoutUrl = user.logout_URL;
-	} else {
-		logoutUrl = configLogoutUrl || window.location.origin;
+		return getOAuthAuthorizeUrl( { state, isLogout: true } );
 	}
+	if ( config.isEnabled( 'always_use_logout_url' ) && configLogoutUrl ) {
+		return configLogoutUrl;
+	}
+	if ( user.logout_URL ) {
+		return await endWpcomSession( user.logout_URL );
+	}
+	return configLogoutUrl || window.location.origin;
+}
+
+async function endWpcomSession( logoutUrl: string ): Promise< string > {
+	try {
+		const { redirect_to } = await logoutUser( {
+			logout_nonce: new URL( logoutUrl ).searchParams.get( '_wpnonce' ) ?? '',
+			client_id: String( config( 'wpcom_signup_id' ) ),
+			client_secret: String( config( 'wpcom_signup_key' ) ),
+		} );
+		return redirect_to || wpcomLink( '/log-in' );
+	} catch {
+		return logoutUrl;
+	}
+}
+
+export async function logout( user: User ): Promise< void > {
+	const destination = await endSession( user );
 
 	disablePersistQueryClient();
 	clearQueryClient();
@@ -370,7 +385,7 @@ export async function logout( user: User ): Promise< void > {
 	disablePersistence();
 	clearStore();
 
-	window.location.href = logoutUrl;
+	window.location.href = destination;
 }
 
 /**

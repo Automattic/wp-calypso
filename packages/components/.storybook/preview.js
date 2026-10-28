@@ -42,4 +42,5 @@ const parameters = {
 
 export default {
 	parameters,
+	tags: [ 'autodocs' ],
 };

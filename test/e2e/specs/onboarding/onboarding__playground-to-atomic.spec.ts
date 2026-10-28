@@ -4,6 +4,7 @@ import {
 	RestAPIClient,
 	type NewSiteResponse,
 	type NewUserResponse,
+	watchImportFailure,
 } from '@automattic/calypso-e2e';
 import { expect, skipIfNotTrunk, tags, test } from '../../lib/pw-base';
 import { apiCancelAtomicPlan, apiCloseAccount, recordAccountLeakMarker } from '../shared';
@@ -59,7 +60,7 @@ test.describe(
 			test.setTimeout( 30 * 60 * 1000 );
 
 			let playgroundId: string;
-			let selectedFreeDomain: string;
+			const selectedFreeDomain = `${ blogName }.wordpress.com`;
 
 			await test.step( 'Given the store is configured for sandbox purchases', async () => {
 				await BrowserManager.setStoreCookie( page, { currency: 'GBP' } );
@@ -119,8 +120,7 @@ test.describe(
 
 			await test.step( 'And I choose a free WordPress.com address', async () => {
 				await componentDomainSearch.search( blogName );
-				selectedFreeDomain = await componentDomainSearch.skipPurchase();
-				expect( selectedFreeDomain ).toBe( `${ blogName }.wordpress.com` );
+				await componentDomainSearch.skipPurchase();
 			} );
 
 			await test.step( 'And I select the Business plan', async () => {
@@ -150,70 +150,55 @@ test.describe(
 				] );
 			} );
 
-			await test.step( 'Then the original Playground is exported to the new site', async () => {
+			await test.step( 'Then the Playground import runs on the same screen', async () => {
 				const importerUrl = new URL( page.url() );
 				expect( importerUrl.searchParams.get( 'playground' ) ).toBe( playgroundId );
 				expect( importerUrl.searchParams.get( 'siteId' ) ).toBe(
 					String( newSiteDetails!.blog_details.blogid )
 				);
-
-				await page.waitForURL(
-					( url ) =>
-						url.pathname.includes( '/setup/site-setup/importerWordpress' ) &&
-						url.searchParams.get( 'playground' ) === playgroundId,
-					{ timeout: 240 * 1000 }
-				);
-			} );
-
-			await test.step( 'And the Playground import completes', async () => {
 				await expect(
 					page.getByText(
-						'Feel free to close this window. We’ll email you when your new site is ready.'
+						'This usually takes a few minutes. Keep this window open until your site is ready.'
 					)
 				).toBeVisible( { timeout: 120 * 1000 } );
-				// The importer renders an error screen when the import fails, so stop waiting
-				// as soon as either outcome shows up instead of burning the full timeout.
-				const successHeading = page.getByRole( 'heading', { name: 'Hooray!' } );
-				const errorHeading = page.getByRole( 'heading', { name: 'Oops, something went wrong' } );
-				await expect( successHeading.or( errorHeading ) ).toBeVisible( {
-					timeout: 10 * 60 * 1000,
-				} );
-				await expect( errorHeading, 'The Playground import failed on WordPress.com' ).toBeHidden( {
-					timeout: 1000,
-				} );
-				await expect( successHeading ).toBeVisible();
-				await expect(
-					page.getByText( 'Congratulations. Your content was successfully imported.' )
-				).toBeVisible();
 			} );
 
-			await test.step( 'When I continue to the imported site', async () => {
-				const expectedAtomicHostname = selectedFreeDomain.replace(
-					/\.wordpress\.com$/,
-					'.wpcomstaging.com'
+			await test.step( 'And the import completes on My Home', async () => {
+				const siteId = String( newSiteDetails!.blog_details.blogid );
+				// WordPress.com can fail the import without the step showing an error
+				// screen, so also stop waiting as soon as its status poll reports a failure.
+				const importFailure = watchImportFailure( page );
+				const errorHeading = page.getByRole( 'heading', {
+					name: 'Your site could not be imported',
+				} );
+				const importOutcome = page.waitForURL(
+					( url ) =>
+						url.pathname === `/home/${ siteId }` ||
+						url.pathname === `/home/${ selectedFreeDomain }`,
+					{ timeout: 10 * 60 * 1000 }
 				);
-
-				await Promise.all( [
-					page.waitForURL(
-						( url ) =>
-							url.hostname === expectedAtomicHostname && url.pathname.startsWith( '/wp-admin' ),
-						{ timeout: 180 * 1000 }
-					),
-					page.getByRole( 'button', { name: 'Go to dashboard' } ).click(),
-				] );
-			} );
-
-			await test.step( 'Then I am authenticated in WP Admin on the named Atomic site', async () => {
-				const expectedAtomicHostname = `${ blogName }.wpcomstaging.com`;
-				const wpAdminUrl = new URL( page.url() );
-				expect( wpAdminUrl.hostname ).toBe( expectedAtomicHostname );
-				expect( wpAdminUrl.pathname ).toMatch( /^\/wp-admin/ );
-				await expect( page.locator( '#wpadminbar' ) ).toBeVisible( { timeout: 60 * 1000 } );
+				const errorShown = errorHeading.waitFor( { timeout: 10 * 60 * 1000 } ).then( () => {
+					throw new Error( 'The Playground import failed on WordPress.com' );
+				} );
+				importOutcome.catch( () => {} );
+				errorShown.catch( () => {} );
+				try {
+					await Promise.race( [ importOutcome, errorShown, importFailure.failed ] );
+				} finally {
+					importFailure.stop();
+				}
 			} );
 
 			await test.step( 'And my Playground changes exist on the Atomic site', async () => {
 				const expectedAtomicHostname = `${ blogName }.wpcomstaging.com`;
 				await page.goto( `https://${ expectedAtomicHostname }/wp-admin/options-general.php` );
+				await page.waitForURL(
+					( url ) =>
+						url.hostname === expectedAtomicHostname &&
+						url.pathname === '/wp-admin/options-general.php',
+					{ timeout: 180 * 1000 }
+				);
+				await expect( page.locator( '#wpadminbar' ) ).toBeVisible( { timeout: 60 * 1000 } );
 				await expect( page.getByRole( 'textbox', { name: 'Site Title' } ) ).toHaveValue(
 					playgroundSiteTitle,
 					{ timeout: 60 * 1000 }

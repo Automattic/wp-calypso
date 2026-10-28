@@ -1,12 +1,11 @@
 import { FormStatus, useFormStatus, useIsStepActive } from '@automattic/composite-checkout';
 import { css } from '@emotion/react';
 import styled from '@emotion/styled';
-import { useSelect } from '@wordpress/data';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import { useMobileCheckoutStickySummaryExperiment } from '../hooks/use-mobile-checkout-sticky-summary-experiment';
 import { usePrefillCheckoutContactForm } from '../hooks/use-prefill-checkout-contact-form';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { useContactDetails } from '../lib/checkout-stores';
 import ContactDetailsContainer from './contact-details-container';
 import type { CountryListItem, ContactDetailsType } from '@automattic/wpcom-checkout';
 
@@ -92,7 +91,7 @@ export default function WPContactForm( {
 	setIsPrefillPending?: ( isPending: boolean ) => void;
 } ) {
 	const translate = useTranslate();
-	const contactInfo = useSelect( ( select ) => select( CHECKOUT_STORE ).getContactInfo(), [] );
+	const contactInfo = useContactDetails();
 	const { formStatus } = useFormStatus();
 	const isStepActive = useIsStepActive();
 	const isDisabled = ! isStepActive || formStatus !== FormStatus.READY;

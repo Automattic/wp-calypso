@@ -1,4 +1,4 @@
-import { DomainSubtype, FreeSiteAddressType } from '@automattic/api-core';
+import { DomainSubtype, FreeSiteAddressType, isWpError } from '@automattic/api-core';
 import {
 	validateSiteAddressChangeMutation,
 	changeSiteAddressChangeMutation,
@@ -12,7 +12,8 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { check, closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
@@ -41,10 +42,12 @@ const SubdomainInputControlEdit = < Item, >( {
 	field,
 	data,
 	onChange,
+	validity,
 }: DataFormControlProps< Item > ) => {
 	const { id, getValue } = field;
 	return (
 		<SuffixInputControl
+			customValidity={ validity?.custom }
 			label={ field.label }
 			value={ getValue( { item: data } ) }
 			suffix={ DOMAIN_SUFFIX }
@@ -78,6 +81,18 @@ const NewSiteAddressForm = ( {
 	const [ formData, setFormData ] = useState( {
 		subdomain: '',
 	} );
+	const [ addressError, setAddressError ] = useState< {
+		subdomain: string;
+		message: string;
+	} | null >( null );
+	const formRef = useRef< HTMLFormElement >( null );
+
+	const currentAddressError =
+		addressError?.subdomain === formData.subdomain ? addressError.message : null;
+
+	const validity = currentAddressError
+		? ( { subdomain: { custom: { type: 'invalid', message: currentAddressError } } } as const )
+		: undefined;
 
 	const fields: Field< NewSiteAddressFormData >[] = [
 		{
@@ -104,9 +119,10 @@ const NewSiteAddressForm = ( {
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
 
-	const isDisabled = ! formData.subdomain || formData.subdomain === currentSubdomain;
+	const isDisabled =
+		! formData.subdomain || formData.subdomain === currentSubdomain || !! currentAddressError;
 
-	const handleSubmit = ( event: React.FormEvent ) => {
+	const handleSubmit = ( event: React.SubmitEvent ) => {
 		event.preventDefault();
 
 		mutation.mutate(
@@ -121,9 +137,25 @@ const NewSiteAddressForm = ( {
 					onSubmit( formData );
 				},
 				onError: ( error ) => {
-					// TODO: Show the error via Data Form when the ValidatedInputControl is ready.
 					const { text, link } = parseHtmlMessage( error.message ?? '' );
-					createErrorNotice( text || __( 'Sorry, that site address is unavailable.' ), {
+
+					// `invalid` errors are about the address itself, so these errors are presented
+					// attached to the subdomain field.
+					if ( isWpError( error ) && error.code === 'invalid' ) {
+						// Commit synchronously so the input's custom validity is set before reporting it.
+						// DataForm hides a field's error until it's touched, which it isn't when the form
+						// is submitted with Enter.
+						flushSync( () =>
+							setAddressError( {
+								subdomain: formData.subdomain,
+								message: text || __( 'Sorry, that site address is unavailable.' ),
+							} )
+						);
+						formRef.current?.reportValidity();
+						return;
+					}
+
+					createErrorNotice( text || __( 'Failed to validate site address.' ), {
 						type: 'snackbar',
 						actions: link ? [ link ] : undefined,
 					} );
@@ -135,7 +167,7 @@ const NewSiteAddressForm = ( {
 	return (
 		<VStack spacing={ 4 }>
 			{ !! siteDomains && ! hasCustomDomain && (
-				<Notice variant="warning" density="medium">
+				<Notice variant="warning">
 					<Text>
 						{ createInterpolateElement(
 							__(
@@ -155,12 +187,13 @@ const NewSiteAddressForm = ( {
 					wpcomDomain?.domain ?? ''
 				) }
 			</Text>
-			<form onSubmit={ handleSubmit }>
+			<form ref={ formRef } onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
 					<DataForm< NewSiteAddressFormData >
 						data={ formData }
 						fields={ fields }
 						form={ form }
+						validity={ validity }
 						onChange={ ( edits: Partial< NewSiteAddressFormData > ) => {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }

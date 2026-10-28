@@ -4,8 +4,8 @@ import { useAgentUIContext } from '../../context/AgentUIContext.tsx';
 import { cn } from '../../utils/classNames';
 import { fastSpringWithDelay } from '../animations';
 import { Button } from '../ui/button';
+import { Tooltip } from '../ui/tooltip';
 import { SuggestionDropdown } from './SuggestionDropdown';
-import { SuggestionTooltip } from './SuggestionTooltip';
 import styles from './Suggestions.module.css';
 import type { Suggestion } from '../../types';
 
@@ -153,12 +153,9 @@ export const Suggestions: React.FC< SuggestionsProps > = ( {
 								} }
 							>
 								{ reasonId ? (
-									<SuggestionTooltip
-										label={ suggestion.disabledReason as string }
-										descriptionId={ reasonId }
-									>
+									<Tooltip label={ suggestion.disabledReason as string } descriptionId={ reasonId }>
 										{ chip }
-									</SuggestionTooltip>
+									</Tooltip>
 								) : (
 									chip
 								) }

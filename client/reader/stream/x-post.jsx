@@ -2,14 +2,15 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { Card } from '@automattic/components';
 import { uniqBy } from '@automattic/js-utils';
 import clsx from 'clsx';
-import closest from 'component-closest';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { createRef, PureComponent } from 'react';
+import { PureComponent } from 'react';
+import UnreadIndicator from 'calypso/blocks/reader-post-card/unread-indicator';
 import UserAvatar from 'calypso/blocks/user-avatar';
 import { useFeedQuery } from 'calypso/reader/data/feed';
 import {
 	useCanMarkSeen,
+	useIsSeenEnabled,
 	useIsSeenVisible,
 	useMarkAsSeenMutation,
 } from 'calypso/reader/data/seen-posts';
@@ -28,42 +29,23 @@ export class CrossPost extends PureComponent {
 		site: PropTypes.object,
 		feed: PropTypes.object,
 		canMarkSeen: PropTypes.bool,
-		isSeenVisible: PropTypes.bool,
+		isUnread: PropTypes.bool,
 		requestMarkAsSeen: PropTypes.func.isRequired,
 	};
 
-	cardRef = createRef();
-
-	// Merge the internal card ref with an optional `itemRef` from InfiniteList so the
-	// parent list can measure this item's DOM node without `findDOMNode`.
-	setCardRef = ( node ) => {
-		this.cardRef.current = node;
-		const { itemRef } = this.props;
-		if ( typeof itemRef === 'function' ) {
-			itemRef( node );
-		} else if ( itemRef ) {
-			itemRef.current = node;
-		}
-	};
-
 	handleCardClick = ( event ) => {
-		const rootNode = this.cardRef.current;
-
-		if ( closest( event.target, '.should-scroll', rootNode ) ) {
+		if ( event.target.closest( '.should-scroll' ) ) {
 			setTimeout( function () {
 				window.scrollTo( 0, 0 );
 			}, 100 );
 		}
 
-		if ( closest( event.target, '.ignore-click', rootNode ) ) {
+		if ( event.target.closest( '.ignore-click' ) ) {
 			return;
 		}
 
 		// ignore clicks on anchors inside inline content
-		if (
-			closest( event.target, 'a', rootNode ) &&
-			closest( event.target, '.reader__x-post', rootNode )
-		) {
+		if ( event.target.closest( 'a' ) && event.target.closest( '.reader__x-post' ) ) {
 			return;
 		}
 
@@ -182,7 +164,7 @@ export class CrossPost extends PureComponent {
 			reader__card: true,
 			'is-x-post': true,
 			'is-selected': this.props.isSelected,
-			'is-seen': this.props.isSeenVisible,
+			'is-unread': this.props.isUnread,
 		} );
 
 		// Remove the x-post text from the title.
@@ -196,12 +178,15 @@ export class CrossPost extends PureComponent {
 
 		return (
 			<Card
-				ref={ this.setCardRef }
+				ref={ this.props.itemRef }
 				tagName="article"
 				onClick={ this.handleCardClick }
 				className={ articleClasses }
 			>
-				<UserAvatar user={ post.author } size={ 40 } />
+				<div className="reader__x-post-avatar">
+					{ this.props.isUnread && <UnreadIndicator /> }
+					<UserAvatar user={ post.author } size={ 40 } />
+				</div>
 
 				<div className="reader__x-post">
 					{ post.title && (
@@ -237,7 +222,9 @@ export default function CrossPostContainer( props ) {
 	const { mutate: requestMarkAsSeen } = useMarkAsSeenMutation();
 	const seenProps = { feedId: resolvedFeedId, blogId: siteId, post: props.post };
 	const canMarkSeen = useCanMarkSeen( seenProps );
+	const isSeenEnabled = useIsSeenEnabled( seenProps );
 	const isSeenVisible = useIsSeenVisible( seenProps );
+	const isUnread = isSeenEnabled && ! isSeenVisible; // Check isSeenEnabled too, since isSeenVisible is also false when read status is off.
 
 	return (
 		<LocalizedCrossPost
@@ -245,7 +232,7 @@ export default function CrossPostContainer( props ) {
 			site={ site }
 			feed={ feedFromKey || feedFromSite }
 			canMarkSeen={ canMarkSeen }
-			isSeenVisible={ isSeenVisible }
+			isUnread={ isUnread }
 			requestMarkAsSeen={ requestMarkAsSeen }
 		/>
 	);

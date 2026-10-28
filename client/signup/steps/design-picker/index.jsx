@@ -1,7 +1,4 @@
-import {
-	PLAN_PREMIUM,
-	WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED,
-} from '@automattic/calypso-products';
+import { WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED } from '@automattic/calypso-products';
 import { PremiumBadge } from '@automattic/components';
 import { isBlankCanvasDesign, useThemeDesignsQuery } from '@automattic/design-picker';
 import { englishLocales } from '@automattic/i18n-utils';
@@ -13,7 +10,11 @@ import PropTypes from 'prop-types';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { THEME_TIER_PARTNER, THEME_TIER_PREMIUM } from 'calypso/components/theme-tier/constants';
+import {
+	THEME_TIER_PARTNER,
+	THEME_TIER_PREMIUM,
+	THEME_TIERS,
+} from 'calypso/components/theme-tier/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
 import StepWrapper from 'calypso/signup/step-wrapper';
@@ -151,9 +152,14 @@ export default function DesignPickerStep( props ) {
 		submitDesign( _selectedDesign );
 	}
 
-	function upgradePlan() {
+	function upgradePlan( design ) {
+		const planSlug = THEME_TIERS[ design?.design_tier ]?.minimumUpsellPlan;
+		if ( ! planSlug ) {
+			return;
+		}
+
 		const relativeCurrentPath = window.location.href.replace( window.location.origin, '' );
-		const checkoutUrl = addQueryArgs( `/checkout/${ siteId }/${ PLAN_PREMIUM }`, {
+		const checkoutUrl = addQueryArgs( `/checkout/${ siteId }/${ planSlug }`, {
 			redirect_to: relativeCurrentPath,
 			cancel_to: relativeCurrentPath,
 			signup: '1',
@@ -167,7 +173,7 @@ export default function DesignPickerStep( props ) {
 			'calypso_signup_design_upgrade_button_click',
 			getEventPropsByDesign( design )
 		);
-		upgradePlan();
+		upgradePlan( design );
 	}
 
 	function submitDesign( _selectedDesign ) {

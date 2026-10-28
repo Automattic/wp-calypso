@@ -85,8 +85,11 @@ interface PlanExpiryNoticeProps {
 	scope?: PlanExpiryNoticeScope;
 	isPlanOwner?: boolean;
 
-	/** Renders a close button. The caller owns the dismissal; the notice keeps rendering until unmounted. */
-	onClose?: () => void;
+	/**
+	 * Renders a close button. The caller owns the dismissal; the notice keeps rendering until
+	 * unmounted. Gets the notice's event properties, to record the dismissal with.
+	 */
+	onClose?: ( eventProperties: Record< string, unknown > ) => void;
 
 	/** Extra properties for every event this notice records. */
 	eventProperties?: Record< string, unknown >;
@@ -249,7 +252,7 @@ export function PlanExpiryNotice( {
 		<Notice
 			variant={ notice.variant }
 			title={ notice.title }
-			onClose={ onClose }
+			onClose={ onClose && ( () => onClose( eventProperties ) ) }
 			actions={
 				( primaryAction || secondaryAction ) && (
 					<>

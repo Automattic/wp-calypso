@@ -1,5 +1,4 @@
-import { DotcomFeatures, HostingFeatures } from '@automattic/api-core';
-import { siteTypeSupportsFeature } from './site-type-feature-support';
+import { DotcomFeatures } from '@automattic/api-core';
 import type {
 	DotcomFeatureSlug,
 	HostingFeatureSlug,
@@ -25,20 +24,11 @@ export function hasPlanFeature(
 // which is a feature that requires Atomic or self-hosted infrastructure.
 export function hasHostingFeature( site: Site, feature: HostingFeatureSlug ) {
 	if ( hasPlanFeature( site, DotcomFeatures.ATOMIC ) ) {
-		const isWoAOrFlexSite = site.is_wpcom_atomic || site.is_wpcom_flex;
-		if ( site.plan?.expired || ! isWoAOrFlexSite ) {
+		if ( site.plan?.expired || ! site.is_wpcom_atomic ) {
 			return false;
 		}
 	}
 	return hasPlanFeature( site, feature );
-}
-
-export function canAccessSftpSettings( site: Site ) {
-	return (
-		!! site.capabilities?.manage_options &&
-		siteTypeSupportsFeature( site, 'settingsServer' ) &&
-		hasHostingFeature( site, HostingFeatures.SFTP )
-	);
 }
 
 export function hasJetpackModule( site: Site, module: `${ JetpackModuleSlug }` ) {

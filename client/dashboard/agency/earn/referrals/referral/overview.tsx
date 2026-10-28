@@ -11,7 +11,10 @@ import Grid from '../../../../components/grid';
 import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { Text } from '../../../../components/text';
-import MissingPaymentSettingsNotice from '../../missing-payment-settings-notice';
+import { AgencyNotices } from '../../../components/agency-notices';
+import MissingPaymentSettingsNotice, {
+	useMissingPaymentSettings,
+} from '../../missing-payment-settings-notice';
 import ConsolidatedViews from '../consolidated-views';
 import { useReferral } from '../hooks/use-referral';
 import { getOrderSummary } from '../lib/get-order-summary';
@@ -30,6 +33,21 @@ type PurchaseItem = ReferralPurchase & { _id: string };
 
 const REFERRAL_LIST_VIEW: View = { type: 'list', titleField: 'summary', fields: [ 'status' ] };
 const PURCHASE_LIST_VIEW: View = { type: 'list', titleField: 'product', fields: [ 'status' ] };
+
+function WrappableEmail( { email }: { email: string } ) {
+	const atIndex = email.lastIndexOf( '@' );
+	if ( atIndex <= 0 ) {
+		return email;
+	}
+
+	return (
+		<span style={ { wordBreak: 'break-word', hyphens: 'none' } }>
+			{ email.slice( 0, atIndex ) }
+			<wbr />
+			{ email.slice( atIndex ) }
+		</span>
+	);
+}
 
 function StatusBadge( { status }: { status: string } ) {
 	const { status: label, type } = getReferralStatus( status );
@@ -89,6 +107,7 @@ export default function ReferralOverview() {
 
 	const referralFields = useMemo( () => getReferralFields( products ), [ products ] );
 	const purchaseFields = useMemo( () => getPurchaseFields( products ), [ products ] );
+	const missingPaymentSettings = useMissingPaymentSettings( { hasCommissionActivity: true } );
 
 	if ( ! referral ) {
 		return <ReferralNotFound />;
@@ -107,7 +126,7 @@ export default function ReferralOverview() {
 		<PageLayout
 			header={
 				<PageHeader
-					title={ referral.client.email }
+					title={ <WrappableEmail email={ referral.client.email } /> }
 					description={
 						<HStack spacing={ 2 } justify="flex-start" alignment="center" expanded={ false }>
 							<Text>{ __( 'Payment status' ) }</Text>
@@ -116,7 +135,19 @@ export default function ReferralOverview() {
 					}
 				/>
 			}
-			notices={ <MissingPaymentSettingsNotice hasCommissionActivity commissionType="referrals" /> }
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'missing-payment-settings',
+							...missingPaymentSettings,
+							notice: (
+								<MissingPaymentSettingsNotice hasCommissionActivity commissionType="referrals" />
+							),
+						},
+					] }
+				/>
+			}
 		>
 			<ConsolidatedViews
 				isSingleClient

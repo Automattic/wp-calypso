@@ -8,7 +8,7 @@ import ImgStyle from './images/style.svg';
 
 import './style.scss';
 
-export function PatternsCopyPasteInfo( { theme }: { theme?: 'dark' | 'gray' } ) {
+export function PatternsCopyPasteInfo() {
 	const translate = useTranslate();
 	return (
 		<PatternsSection
@@ -20,7 +20,7 @@ export function PatternsCopyPasteInfo( { theme }: { theme?: 'dark' | 'gray' } ) 
 					textOnly: true,
 				}
 			) }
-			theme={ theme }
+			theme="dark"
 			title={ translate( 'Copy, paste, customize—it’s easy like that', {
 				comment:
 					'Heading text in a section that contains info about block patterns built by WordPress.com',

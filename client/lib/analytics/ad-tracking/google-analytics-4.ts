@@ -2,7 +2,7 @@ import { gtag } from 'ga-gtag'; // eslint-disable-line @typescript-eslint/no-unu
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import isAkismetCheckout from 'calypso/lib/akismet/is-akismet-checkout';
 import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
-import { GaPurchase } from '../utils/cart-to-ga-purchase';
+import { GaPurchase } from '../utils/receipt-to-ga-purchase';
 import { TRACKING_IDS } from './constants';
 
 // Ensure setup has run.

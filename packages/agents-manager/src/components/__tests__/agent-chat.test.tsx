@@ -11,6 +11,8 @@ import type { ComponentProps, ReactNode, Ref } from 'react';
 const mockSetFloatingPosition = jest.fn();
 const mockContainerProps = jest.fn();
 const mockContainerCallbacks = jest.fn();
+const mockContainerSuggestionClick = jest.fn();
+const mockContainerErrors = jest.fn();
 const mockSuggestionsProps = jest.fn();
 const mockInputProps = jest.fn();
 const mockImageUploaderProps = jest.fn();
@@ -29,20 +31,28 @@ jest.mock(
 			suggestions = [],
 			onSuggestionClick,
 			onSuggestionsRendered,
+			onTypingStatusChange,
+			error,
+			errorNotice,
 		}: {
 			children: ReactNode;
 			emptyView: ReactNode;
 			floatingChatState?: string;
 			triggerTitle?: string;
+			error?: string | null;
+			errorNotice?: unknown;
 			suggestions?: Suggestion[];
 			onSuggestionClick?: (
 				selectedSuggestion: Suggestion,
 				availableSuggestions: Suggestion[]
 			) => void;
 			onSuggestionsRendered?: ( shown: Suggestion[] ) => void;
+			onTypingStatusChange?: ( isTyping: boolean ) => void;
 		} ) {
 			mockContainerProps( { floatingChatState, triggerTitle } );
-			mockContainerCallbacks( { onSuggestionsRendered } );
+			mockContainerErrors( { error, errorNotice } );
+			mockContainerCallbacks( { onSuggestionsRendered, onTypingStatusChange } );
+			mockContainerSuggestionClick.mockImplementation( onSuggestionClick ?? ( () => {} ) );
 			return (
 				<div>
 					{ emptyView }
@@ -403,6 +413,24 @@ describe( 'AgentChat', () => {
 		expect( onSuggestionClick ).toHaveBeenCalledWith( suggestion, [ suggestion ] );
 	} );
 
+	it( 'reports the list a suggestion in a message comes from', () => {
+		const footerSuggestion = { id: 'translate', label: 'Translate', prompt: 'Translate this' };
+		const listSuggestions = [
+			{ id: 'customize-colors', label: 'Customize colors', prompt: 'Show me palettes' },
+		];
+		const onSuggestionClick = jest.fn();
+
+		renderAgentChat( {
+			isOpen: true,
+			messages: [ { id: 'site-ready', role: 'agent', content: [] } ] as never,
+			suggestions: [ footerSuggestion ],
+			onSuggestionClick,
+		} );
+		act( () => mockContainerSuggestionClick( listSuggestions[ 0 ], listSuggestions ) );
+
+		expect( onSuggestionClick ).toHaveBeenCalledWith( listSuggestions[ 0 ], listSuggestions, true );
+	} );
+
 	it( 'preserves the selected prompt from an inline dropdown suggestion', async () => {
 		const user = userEvent.setup();
 		const option = {
@@ -422,9 +450,11 @@ describe( 'AgentChat', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Change tone: Formal' } ) );
 
-		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
-			suggestion,
-		] );
+		expect( onSuggestionClick ).toHaveBeenCalledWith(
+			{ ...suggestion, prompt: option.value },
+			[ suggestion ],
+			false
+		);
 	} );
 
 	it( 'preserves the selected prompt from an empty-view dropdown suggestion', async () => {
@@ -454,6 +484,22 @@ describe( 'AgentChat', () => {
 		expect( onSuggestionClick ).toHaveBeenCalledWith( { ...suggestion, prompt: option.value }, [
 			suggestion,
 		] );
+	} );
+
+	it( 'renders pinned content above the messages', () => {
+		renderAgentChat( { pinnedContent: <div data-testid="pinned" /> } );
+
+		expect( screen.getByTestId( 'pinned' ) ).toBeInTheDocument();
+	} );
+
+	it( 'passes the error notice to the chat with the error', () => {
+		const errorNotice = { message: 'You’ve used all your site credits.' };
+		renderAgentChat( { error: 'Failed to upload images. Please try again.', errorNotice } );
+
+		expect( mockContainerErrors ).toHaveBeenLastCalledWith( {
+			error: 'Failed to upload images. Please try again.',
+			errorNotice,
+		} );
 	} );
 
 	it( 'expands when open', () => {
@@ -663,6 +709,14 @@ describe( 'AgentChat', () => {
 		renderAgentChat( { onSuggestionsRendered } );
 
 		expect( mockContainerCallbacks ).toHaveBeenLastCalledWith( { onSuggestionsRendered } );
+	} );
+
+	it( 'forwards the typing status callback to the Agenttic container', () => {
+		const onTypingStatusChange = jest.fn();
+
+		renderAgentChat( { onTypingStatusChange } );
+
+		expect( mockContainerCallbacks ).toHaveBeenLastCalledWith( { onTypingStatusChange } );
 	} );
 
 	it( 'keeps collapsed writing suggestions out of what Agenttic renders', async () => {

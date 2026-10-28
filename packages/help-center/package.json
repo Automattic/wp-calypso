@@ -16,6 +16,12 @@
 			"require": "./dist/cjs/index.js"
 		},
 		"./src/*": {
+			"types": [
+				"./src/*.ts",
+				"./src/*.tsx",
+				"./src/*/index.ts",
+				"./src/*/index.tsx"
+			],
 			"calypso:src": "./src/*"
 		}
 	},
@@ -50,7 +56,6 @@
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
-		"@popperjs/core": "^2.11.8",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
@@ -68,7 +73,7 @@
 		"@automattic/calypso-color-schemes": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@types/smooch": "^5.6.0",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3"

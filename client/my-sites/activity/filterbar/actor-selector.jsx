@@ -1,4 +1,4 @@
-import { localize } from 'i18n-calypso';
+import { localize, useTranslate } from 'i18n-calypso';
 import { connect } from 'react-redux';
 import useActivityLogActorsQuery from 'calypso/data/activity-log/use-activity-log-actors-query';
 import { updateFilter } from 'calypso/state/activity-log/actions';
@@ -19,11 +19,26 @@ const ActorSelector = ( { translate, variant = 'default', ...otherProps } ) => {
 	);
 };
 
+// Reserved actor ID that the activity endpoint matches against every MCP agent event.
+export const ALL_AI_AGENTS_ACTOR_ID = 'mcp:*';
+
+// Links can preset "All AI agents"; it has no entry in the actors list, so add one to label it.
+export const withAllAiAgents = ( actors, selected, translate ) =>
+	selected?.includes( ALL_AI_AGENTS_ACTOR_ID )
+		? [ { key: ALL_AI_AGENTS_ACTOR_ID, name: translate( 'All AI agents' ) }, ...actors ]
+		: actors;
+
 const withActors = ( WrappedComponent ) => {
 	const WithActors = ( props ) => {
 		const { siteId, filter } = props;
+		const translate = useTranslate();
 		const { data } = useActivityLogActorsQuery( siteId, filter );
-		return <WrappedComponent { ...props } types={ data ?? [] } />;
+		return (
+			<WrappedComponent
+				{ ...props }
+				types={ withAllAiAgents( data ?? [], filter?.actor, translate ) }
+			/>
+		);
 	};
 	WithActors.displayName = `withActors(${
 		WrappedComponent.displayName || WrappedComponent.name || 'Component'

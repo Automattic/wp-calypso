@@ -9,10 +9,11 @@
 		"gettext-parser": "^4.0.3"
 	},
 	"devDependencies": {
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^"
 	},
 	"peerDependencies": {
-		"@babel/core": "^7.27.1"
+		"@babel/core": "^7.29.7"
 	},
 	"publishConfig": {
 		"access": "public"

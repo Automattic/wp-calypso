@@ -2,6 +2,12 @@ import apiFetch, { APIFetchOptions } from '@wordpress/api-fetch';
 import wpcomRequest from '../../wpcom-request';
 import isValidId from './validators';
 
+declare global {
+	interface Window {
+		subscriptionManagementSubkey?: string;
+	}
+}
+
 type callApiParams = {
 	apiNamespace?: string;
 	path: string;
@@ -13,7 +19,7 @@ type callApiParams = {
 
 // Get cookie named subkey
 const getSubkey = () => {
-	return window.currentUser?.subscriptionManagementSubkey;
+	return window.subscriptionManagementSubkey;
 };
 
 // Helper function for fetching from subkey authenticated API. Subkey authentication process is only applied in case of logged-out users.

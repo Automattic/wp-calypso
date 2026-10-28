@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
@@ -30,6 +30,11 @@ interface UseBlackboxProtectionOptions {
 	 * challenge can render until this flips back to false.
 	 */
 	suspended?: boolean;
+	/**
+	 * When this becomes a failed result, retire the session and start a
+	 * replacement collect. Pass the same value until the next failure.
+	 */
+	resetOnError?: unknown;
 }
 
 const noopGetSessionId = () => Promise.resolve( undefined );
@@ -40,11 +45,14 @@ const noopGetSessionId = () => Promise.resolve( undefined );
 export function useBlackboxProtection( {
 	feature,
 	suspended,
+	resetOnError,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
 	const apiKey = getBlackboxApiKey( feature );
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
-	const [ isSubmitBlocked, setIsSubmitBlocked ] = useState( enabled );
+	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
+	const [ replacementInFlight, setReplacementInFlight ] = useState( false );
+	const isSubmitBlocked = challengeBlocksSubmit || replacementInFlight;
 
 	// Re-block during render when a suspended surface re-enables: the challenge
 	// only re-blocks from a post-paint effect, which would leave the submit
@@ -52,17 +60,48 @@ export function useBlackboxProtection( {
 	const prevEnabled = useRef( enabled );
 	if ( prevEnabled.current !== enabled ) {
 		prevEnabled.current = enabled;
-		setIsSubmitBlocked( enabled );
+		setChallengeBlocksSubmit( enabled );
 	}
 
 	const handleSubmitBlockedChange = useCallback( ( isBlocked: boolean ) => {
-		setIsSubmitBlocked( isBlocked );
+		setChallengeBlocksSubmit( isBlocked );
 	}, [] );
 
 	const getSessionId = useCallback(
 		() => ( apiKey ? getBlackboxSessionId( apiKey ) : Promise.resolve( undefined ) ),
 		[ apiKey ]
 	);
+
+	const reset = useCallback( () => {
+		try {
+			window.Blackbox?.reset?.();
+		} catch {
+			// Intentionally ignored — Blackbox must never block the host form.
+		}
+	}, [] );
+
+	useEffect( () => {
+		if ( ! enabled || ! resetOnError ) {
+			setReplacementInFlight( false );
+			return;
+		}
+
+		let cancelled = false;
+		// reset() aborts the visible challenge before the replacement collect
+		// decides, and that abort would re-enable submit. Hold it until the
+		// collect settles; a challenge that starts keeps its own block.
+		setReplacementInFlight( true );
+		reset();
+		getSessionId().finally( () => {
+			if ( ! cancelled ) {
+				setReplacementInFlight( false );
+			}
+		} );
+
+		return () => {
+			cancelled = true;
+		};
+	}, [ enabled, resetOnError, reset, getSessionId ] );
 
 	return {
 		isSubmitBlocked,
@@ -74,12 +113,6 @@ export function useBlackboxProtection( {
 			/>
 		),
 		getSessionId: enabled ? getSessionId : noopGetSessionId,
-		reset: () => {
-			try {
-				window.Blackbox?.reset?.();
-			} catch {
-				// Intentionally ignored — Blackbox must never block the host form.
-			}
-		},
+		reset,
 	};
 }

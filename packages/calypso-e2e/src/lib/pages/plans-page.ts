@@ -25,6 +25,7 @@ const selectors = {
 		return `.plans-grid-next-plan-storage[data-plan-title="${ name }"]`;
 	},
 	addOnComboboxButton: 'button[role="combobox"]',
+	addOnAddMoreButton: 'button.plans-grid-next-storage-feature-label__add-more',
 	addOnComboboxOption: ( addOn: string ) => `[role="option"]:has-text("${ addOn }")`,
 	selectPlanButton: ( name: Plans ) => `button.is-${ name.toLowerCase() }-plan:visible`,
 
@@ -102,18 +103,37 @@ export class PlansPage {
 	 */
 	async selectAddOn( plan: Plans, addOn: string ): Promise< void > {
 		const combobox = this.page.locator( selectors.addOnCombobox( plan ) );
-
+		const addMoreButton = combobox.locator( selectors.addOnAddMoreButton );
 		const comboboxSelect = combobox.locator( selectors.addOnComboboxButton );
-		// Callers resolve on API responses (e.g. `/users/new?`), which can
-		// return before the React step transition has rendered the plans grid.
-		// Wait for the combobox itself so the action timeout is spent on the
-		// click, not on the preceding navigation.
-		await comboboxSelect.first().waitFor( { state: 'visible', timeout: 30_000 } );
-		await comboboxSelect.first().click();
-
 		const comboboxOption = combobox.locator(
 			selectors.addOnComboboxOption( `50 GB + ${ addOn }` )
 		);
+
+		// Callers resolve on API responses (e.g. `/users/new?`), which can
+		// return before the React step transition has rendered the plans grid.
+		// Wait for the storage control itself so the action timeout is spent on
+		// the click, not on the preceding navigation.
+		await addMoreButton
+			.or( comboboxSelect )
+			.first()
+			.waitFor( { state: 'visible', timeout: 30_000 } );
+
+		// The redesigned grid shows the storage amount with an "Add more" button and
+		// only mounts the dropdown, already open, once that button is clicked.
+		if ( await addMoreButton.count() ) {
+			await addMoreButton.first().click();
+			// The dropdown opens itself a tick after mounting. Give it that moment so the
+			// fallback click below cannot land first and toggle it closed again.
+			await comboboxOption
+				.first()
+				.waitFor( { state: 'visible', timeout: 5_000 } )
+				.catch( () => undefined );
+		}
+
+		if ( ! ( await comboboxOption.first().isVisible() ) ) {
+			await comboboxSelect.first().waitFor( { state: 'visible' } );
+			await comboboxSelect.first().click();
+		}
 		await comboboxOption.first().click();
 	}
 
@@ -127,8 +147,8 @@ export class PlansPage {
 		// Wait for the page to settle after any preceding navigation before
 		// clicking, to avoid the navigation consuming the action timeout budget.
 		await locator.first().waitFor( { state: 'visible', timeout: 30_000 } );
-		// In the `/plans` view, there are two buttons for "Upgrade" on the
-		// plan comparison chart. Select the first one.
+		// The features grid and the comparison grid each render a button for
+		// the plan. Select the first one.
 		await locator.first().click();
 	}
 

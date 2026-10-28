@@ -45,12 +45,15 @@ export interface SiteOptions {
 	created_at?: string;
 	difm_lite_site_options?: DifmLiteSiteOptions;
 	is_domain_only?: boolean;
+	is_mapped_domain?: boolean;
 	is_redirect?: boolean;
 	is_difm_lite_in_progress?: boolean;
 	is_gating_business_q1?: boolean;
 	/** Whether a plan change would move the site off the pre-2026 feature gating. */
 	is_legacy_gating_site?: boolean;
 	is_wpforteams_site?: boolean;
+	/** Slugs of the active plugins that use the Jetpack connection, e.g. `jetpack-backup`. */
+	jetpack_connection_active_plugins?: string[];
 	jetpack_recovery_mode_status?: {
 		recovery_mode_email_last_sent?: number;
 		recovery_session_entered_at?: number;
@@ -58,6 +61,7 @@ export interface SiteOptions {
 		recovery_session_errors?: JetpackRecoverySessionError[];
 	} | null;
 	jetpack_sso_require_two_step?: boolean;
+	jetpack_version?: string;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
 	site_creation_flow?: string;
@@ -71,6 +75,7 @@ export interface SiteOptions {
 	wpcom_ai_launchpad_enabled?: boolean;
 	wpcom_ai_launchpad_dismissed?: boolean;
 	wpcom_ai_launchpad_completed?: boolean;
+	wpcom_ai_launchpad_no_guidance?: boolean;
 	wpcom_production_blog_id?: number;
 	wpcom_staging_blog_ids?: number[];
 	import_engine?: string | null;
@@ -111,12 +116,13 @@ export interface Site {
 	is_coming_soon: boolean;
 	is_private: boolean;
 	is_wpcom_atomic: boolean;
-	is_wpcom_flex: boolean;
 	is_wpcom_staging_site: boolean;
 	is_vip: boolean;
 	lang: string;
 	launch_status: string | boolean;
 	site_migration: {
+		type?: 'wordpress' | 'blogvault' | 'assisted';
+		status_v2?: 'pending' | 'started' | 'in_progress' | 'completed';
 		migration_status?: string;
 		in_progress: boolean;
 		is_complete: boolean;
@@ -130,11 +136,7 @@ export interface Site {
 	was_migration_trial: boolean;
 	was_hosting_trial: boolean;
 	was_upgraded_from_trial: boolean;
-	is_garden: boolean;
 	is_multisite?: boolean;
-	garden_name: string | null;
-	garden_partner: string | null;
-	garden_is_provisioned: boolean | null;
 	/** Present when requested via SITE_FIELDS; indicates Big Sky / AI builder availability. */
 	big_sky_enabled?: boolean;
 	atomic_email_block?: AtomicEmailBlock | null;

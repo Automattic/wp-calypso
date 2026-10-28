@@ -33,6 +33,7 @@ class SocialSignupForm extends Component {
 		isSocialFirst: PropTypes.bool,
 		shouldShowEmailButton: PropTypes.bool,
 		allowedSocialServices: PropTypes.arrayOf( PropTypes.string ),
+		showEnvelopeIcon: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -91,6 +92,7 @@ class SocialSignupForm extends Component {
 			setCurrentStep,
 			isSocialFirst,
 			shouldShowEmailButton,
+			showEnvelopeIcon,
 		} = this.props;
 
 		return [
@@ -149,6 +151,7 @@ class SocialSignupForm extends Component {
 					<UsernameOrEmailButton
 						key="social-signup-button-email"
 						onClick={ () => setCurrentStep( 'email' ) }
+						showEnvelopeIcon={ showEnvelopeIcon }
 					/>
 				),
 			},

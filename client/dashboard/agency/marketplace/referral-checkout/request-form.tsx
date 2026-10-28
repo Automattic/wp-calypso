@@ -6,22 +6,32 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
 import { Text } from '../../../components/text';
+import ReferralLogoField from './logo-field';
+import type { ReferralLogo } from './lib/logo';
 
-interface Props {
+interface RequestClientPaymentFormProps {
 	email: string;
 	emailError: string | null;
 	message: string;
+	logo: ReferralLogo;
+	profileLogoUrl: string | null;
+	lastReferralLogoUrl: string | null;
 	onEmailChange: ( email: string ) => void;
 	onMessageChange: ( message: string ) => void;
+	onLogoChange: ( logo: ReferralLogo ) => void;
 }
 
 export default function RequestClientPaymentForm( {
 	email,
 	emailError,
 	message,
+	logo,
+	profileLogoUrl,
+	lastReferralLogoUrl,
 	onEmailChange,
 	onMessageChange,
-}: Props ) {
+	onLogoChange,
+}: RequestClientPaymentFormProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	return (
@@ -55,6 +65,12 @@ export default function RequestClientPaymentForm( {
 				onClick={ () => recordTracksEvent( 'calypso_a4a_client_referral_form_message_click' ) }
 				placeholder={ __( 'Optional. A line your client will see above the order.' ) }
 				rows={ 4 }
+			/>
+			<ReferralLogoField
+				value={ logo }
+				onChange={ onLogoChange }
+				profileLogoUrl={ profileLogoUrl }
+				lastReferralLogoUrl={ lastReferralLogoUrl }
 			/>
 		</VStack>
 	);

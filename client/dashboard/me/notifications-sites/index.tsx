@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Suspense } from 'react';
@@ -9,6 +10,7 @@ import { BrowserNotificationNotice } from './browser-notification-notice';
 import { Loading } from './loading';
 import { PausedNotificationNotice } from './paused-notification-notice';
 import { SiteListSettings } from './site-list-settings';
+import { SubscriberNotificationCard } from './subscriber-notification-card';
 
 export default function NotificationsSites() {
 	return (
@@ -29,6 +31,7 @@ export default function NotificationsSites() {
 
 			<VStack spacing={ 8 }>
 				<BrowserNotificationCard />
+				{ isEnabled( 'notifications/subscriber-alerts' ) && <SubscriberNotificationCard /> }
 				<Suspense fallback={ <Loading /> }>
 					<SiteListSettings />
 				</Suspense>

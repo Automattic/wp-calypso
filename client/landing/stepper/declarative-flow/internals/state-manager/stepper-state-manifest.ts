@@ -12,6 +12,18 @@ export type StepperMiscellaneousFields = Partial< {
 	};
 	site: CreatedSite;
 	/**
+	 * Whether identify has already handled the address a landing page handed over (`start=true`), so returning
+	 * to it shows the form instead of checking again.
+	 */
+	migrationArrivalChecked: boolean;
+	migrationHandoff: {
+		siteId: number;
+		siteSlug: string;
+		from: string;
+		shouldGoToCheckout: boolean;
+		plan?: string;
+	};
+	/**
 	 * The site the create-site step made, so reaching that step again adopts it rather than asking
 	 * /sites/new for a second one.
 	 *

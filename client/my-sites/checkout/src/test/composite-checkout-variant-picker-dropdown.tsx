@@ -6,12 +6,10 @@ import { formatCurrency } from '@automattic/number-formatters';
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
 import { isMarketplaceProduct } from 'calypso/state/products-list/selectors';
 import { getPlansBySiteId } from 'calypso/state/sites/plans/selectors/get-plans-by-site';
-import { isJetpackSite } from 'calypso/state/sites/selectors';
 import useCartKey from '../../use-cart-key';
-import { CHECKOUT_STORE } from '../lib/wpcom-store';
+import { resetCheckoutStores } from '../lib/checkout-stores';
 import {
 	domainProduct,
 	planWithoutDomain,
@@ -38,9 +36,7 @@ jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/state/products-list/selectors' );
 jest.mock( 'calypso/state/selectors/get-intro-offer-price' );
-jest.mock( 'calypso/state/selectors/is-site-automated-transfer' );
 jest.mock( 'calypso/state/sites/plans/selectors/get-plans-by-site' );
-jest.mock( 'calypso/state/sites/selectors' );
 
 // These tests seem to be particularly slow (it might be because of using
 // it.each; it's not clear but the timeout might apply to the whole loop
@@ -56,14 +52,13 @@ describe.skip( 'CheckoutMain with a variant picker', () => {
 	const mainCartKey = 123456;
 
 	beforeEach( () => {
-		dispatch( CHECKOUT_STORE ).reset();
+		resetCheckoutStores();
 		jest.clearAllMocks();
 		( getPlansBySiteId as jest.Mock ).mockImplementation( () => ( {
 			data: getActivePersonalPlanDataForType( 'yearly' ),
 		} ) );
 		mockGetSiteDomainsEndpoint( [] );
 		( isMarketplaceProduct as unknown as jest.Mock ).mockImplementation( () => false );
-		( isJetpackSite as unknown as jest.Mock ).mockImplementation( () => false );
 		( useCartKey as unknown as jest.Mock ).mockImplementation( () => mainCartKey );
 
 		mockGetPaymentMethodsEndpoint( [] );

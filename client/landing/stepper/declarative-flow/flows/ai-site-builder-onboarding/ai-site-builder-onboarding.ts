@@ -1,4 +1,5 @@
 import config from '@automattic/calypso-config';
+import { isEcommercePlan } from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { AI_SITE_BUILDER_ONBOARDING_FLOW, clearStepPersistedState } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -26,7 +27,10 @@ import { getBuildWowSiteSpecUrl } from '../../../utils/build-wow';
 import { planSupportsBuildWow } from '../../../utils/build-wow-plans';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { DomainSuggestion } from '@automattic/api-core';
 import type { OnboardActions, OnboardSelect } from '@automattic/data-stores';
@@ -211,16 +215,28 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					return navigate( STEPS.SITE_CREATION_STEP.slug );
 				}
 
+				// create-site creates a site as soon as it mounts, so it must not stay in history,
+				// where a Back would reach it.
 				case STEPS.SITE_CREATION_STEP.slug:
-					return navigate( STEPS.PROCESSING.slug );
+					return navigate( STEPS.PROCESSING.slug, undefined, true );
 
 				case STEPS.PROCESSING.slug: {
-					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
-						return navigate( STEPS.ERROR.slug );
+					// NO_ACTION follows a reload or a Back from checkout, after initialize has reset
+					// the onboard store. Nothing failed, so the customer picks a plan again, which is
+					// also where checkoutBackUrl leads. The processing step has no timeout, so
+					// returning here would leave the customer on the spinner.
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug, undefined, true );
 					}
 
 					if ( providedDependencies.processingResult !== ProcessingResult.SUCCESS ) {
-						return;
+						return navigate(
+							STEPS.ERROR.slug,
+							{
+								errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+							},
+							true
+						);
 					}
 
 					if ( ! providedDependencies.goToCheckout ) {
@@ -231,21 +247,24 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 					const siteSlug = ( providedDependencies.siteSlug || getSignupCompleteSlug() ) as string;
 
 					if ( ! siteId || ! siteSlug ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'processing_missing_site' }, true );
 					}
 
 					const site = await resolveSelect( SITE_STORE ).getSite( siteId );
 
 					if ( ! site || ! site.URL ) {
-						return navigate( STEPS.ERROR.slug );
+						return navigate( STEPS.ERROR.slug, { errorReason: 'site_lookup_failed' }, true );
 					}
 
 					// The build-wow endpoint prepares the site itself, so the Big Sky editor
 					// preparation is only for the legacy site editor destination. The build-wow
 					// destination lives in the ai-site-builder-spec flow, which bounces to plain
 					// onboarding without the site-spec feature.
+					const planSlug = planCartItem?.product_slug;
 					const useBuildWow =
-						config.isEnabled( 'site-spec' ) && planSupportsBuildWow( planCartItem?.product_slug );
+						config.isEnabled( 'site-spec' ) &&
+						!! planSlug &&
+						( planSupportsBuildWow( planSlug ) || isEcommercePlan( planSlug ) );
 
 					const prompt =
 						query.get( 'prompt' ) || window.sessionStorage.getItem( 'stored_ai_prompt' ) || '';
@@ -290,10 +309,11 @@ const aiSiteBuilderOnboarding: FlowV2< typeof initialize > = {
 						)
 					);
 
-					persistSignupDestination( destination );
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					setSignupCompleteSiteID( siteId );
+
+					persistSignupDestination( destination );
 
 					return window.location.assign(
 						addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {

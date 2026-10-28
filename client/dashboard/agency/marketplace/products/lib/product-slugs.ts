@@ -97,8 +97,6 @@ export const PRESSABLE_ADDON_FAMILY_SLUG = 'pressable-addon';
 
 export const WOOPAYMENTS_PRODUCT_SLUG = 'woocommerce-woopayments';
 
-export const JETPACK_COMPLETE_PRODUCT_SLUG = 'jetpack-complete';
-
 // Products the classic dashboard hides from the marketplace.
 export const EXCLUDED_PRODUCT_SLUGS = [
 	'free',

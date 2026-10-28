@@ -123,6 +123,20 @@ describe( 'getAiTopResults', () => {
 		expect( shared[ 0 ].source ).toBe( 'keyword' );
 	} );
 
+	it( 'ranks a row on sale by its first-year price', () => {
+		const keyword = [
+			suggestion( 'regular.org', 18 ),
+			{ ...suggestion( 'onsale.store', 60 ), sale_cost: 1 },
+			{ ...suggestion( 'onsale.blog', 30 ), sale_cost: 2 },
+		];
+
+		expect( getAiTopResults( [ keyword ] ).map( ( r ) => r.domain_name ) ).toEqual( [
+			'onsale.store',
+			'onsale.blog',
+			'regular.org',
+		] );
+	} );
+
 	it( 'sorts rows with no price last', () => {
 		expect(
 			getAiTopResults( [ [ row( 'unpriced.com' ), suggestion( 'priced.com', 30 ) ] ] ).map(

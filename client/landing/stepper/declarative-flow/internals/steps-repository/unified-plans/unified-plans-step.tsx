@@ -14,7 +14,9 @@ import {
 	isNewHostedSiteCreationFlow,
 	isOnboardingFlow,
 	isTailoredSignupFlow,
+	LAUNCH_SITE_FLOW,
 	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
 	Step,
 	StepContainer,
 } from '@automattic/onboarding';
@@ -28,6 +30,7 @@ import { useTranslate, TranslateResult } from 'i18n-calypso';
 import moment from 'moment';
 import { parse as parseQs } from 'qs';
 import AsyncLoad from 'calypso/components/async-load';
+import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import MarketingMessage from 'calypso/components/marketing-message';
 import Notice from 'calypso/components/notice';
@@ -38,6 +41,7 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { buildUpgradeFunction } from 'calypso/lib/signup/step-actions';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import IntentToggle from 'calypso/my-sites/plans-features-main/components/intent-toggle';
+import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getStepUrl } from 'calypso/signup/utils';
 import { getDomainFromUrl } from 'calypso/site-profiler/utils/get-valid-url';
 import { useDispatch as reduxUseDispatch, useSelector } from 'calypso/state';
@@ -126,7 +130,7 @@ export interface UnifiedPlansStepProps {
 		Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >
 	>;
 	headerText?: string;
-	subHeaderText?: string;
+	subHeaderText?: TranslateResult;
 	highlightLabelOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	titleBadgeOverrides?: { [ K in PlanSlug ]?: TranslateResult };
 	taglineOverrides?: { [ K in PlanSlug ]?: TranslateResult };
@@ -293,6 +297,15 @@ function UnifiedPlansStep( {
 		setShowHelpCenter( ! isHelpCenterShown );
 	};
 	const stepCounter = useOnboardingStepCounter( flowName, 'plans' );
+	// PlansFeaturesMain owns intent resolution (site metadata and upsells can override the
+	// prop), so the heading copy follows the intent it settles on. Until then the prop is the
+	// best guess; the V2 layout stays hidden behind Step.Loading during that window anyway.
+	const [ resolvedIntent, setResolvedIntent ] = useState< PlansIntent >();
+	const displayIntent = resolvedIntent ?? intent;
+	const { showDifferentiatorHeader } = usePlansGridRedesignExperiment( {
+		isInSignup,
+		intent: resolvedIntent,
+	} );
 	const showProgress = useShowOnboardingProgress( isOnboardingFlow( flowName ) );
 	const initializedSitesBackUrl = useSelector( ( state ) => {
 		if ( getCurrentUserSiteCount( state ) ) {
@@ -455,23 +468,23 @@ function UnifiedPlansStep( {
 			return translate( 'Host with the best' );
 		}
 
-		if ( intent === 'plans-wordpress-hosting' ) {
+		if ( displayIntent === 'plans-wordpress-hosting' ) {
 			return translate( 'Managed hosting without limits' );
 		}
 
-		if ( intent === 'plans-website-builder' ) {
+		if ( displayIntent === 'plans-website-builder' ) {
 			return translate( 'Create a beautiful WordPress website' );
 		}
 
-		if ( intent === 'plans-woo-hosted' ) {
+		if ( displayIntent === 'plans-woo-hosted' ) {
 			return translate( 'Select a plan to launch your store' );
 		}
 
-		if ( intent === 'plans-woo-hosting-solutions' ) {
+		if ( displayIntent === 'plans-woo-hosting-solutions' ) {
 			return translate( 'Pick a plan for your store' );
 		}
 
-		if ( intent === 'plans-upgrade-or-downgrade' ) {
+		if ( displayIntent === 'plans-upgrade-or-downgrade' ) {
 			return translate( 'Find your best fit' );
 		}
 
@@ -523,13 +536,13 @@ function UnifiedPlansStep( {
 			);
 		}
 
-		if ( intent === 'plans-wordpress-hosting' ) {
+		if ( displayIntent === 'plans-wordpress-hosting' ) {
 			return translate(
 				'All the security, flexibility, and control you need — without the overhead.'
 			);
 		}
 
-		if ( intent === 'plans-website-builder' ) {
+		if ( displayIntent === 'plans-website-builder' ) {
 			if ( deemphasizeFreePlan ) {
 				if ( shouldUseModalBackedFreePlanCTA ) {
 					return translate(
@@ -547,7 +560,7 @@ function UnifiedPlansStep( {
 			);
 		}
 
-		if ( intent === 'plans-woo-hosted' ) {
+		if ( displayIntent === 'plans-woo-hosted' ) {
 			if ( ! currentPlan && ! selectedSite?.plan ) {
 				return null;
 			}
@@ -572,7 +585,7 @@ function UnifiedPlansStep( {
 			return translate( 'Choose the plan that fits your business.' );
 		}
 
-		if ( intent === 'plans-woo-hosting-solutions' ) {
+		if ( displayIntent === 'plans-woo-hosting-solutions' ) {
 			return translate(
 				'All plans come with WooCommerce. Pick the level of support and features you want.'
 			);
@@ -598,13 +611,18 @@ function UnifiedPlansStep( {
 			return null;
 		}
 
-		if ( intent === 'plans-upgrade-or-downgrade' ) {
+		if ( displayIntent === 'plans-upgrade-or-downgrade' ) {
 			return translate(
 				'Compare plans and pick the one that works for where your site is headed.'
 			);
 		}
 
-		if ( isOnboardingFlow( flowName ) || intent === 'plans-upgrade' ) {
+		// The differentiator header under the heading replaces this generic subhead.
+		if ( ! resolvedIntent || showDifferentiatorHeader ) {
+			return null;
+		}
+
+		if ( isOnboardingFlow( flowName ) || displayIntent === 'plans-upgrade' ) {
 			return translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' );
 		}
 	};
@@ -659,7 +677,7 @@ function UnifiedPlansStep( {
 		<div
 			className={ clsx( {
 				'step-container-v2__visual-split':
-					intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder',
+					displayIntent === 'plans-wordpress-hosting' || displayIntent === 'plans-website-builder',
 			} ) }
 		>
 			{ 'invalid' === step?.status && (
@@ -687,6 +705,9 @@ function UnifiedPlansStep( {
 				customerType={ customerType }
 				deemphasizeFreePlan={ deemphasizeFreePlan }
 				renderFreePlanCtaInStepContainerV2={ shouldUseModalBackedFreePlanCTA }
+				// Legacy /start/launch-site shares its flow name with the Stepper flow, so the name
+				// alone can't tell which container the plans render in.
+				isInStepContainerV2={ flowName === LAUNCH_SITE_FLOW ? !! useStepContainerV2 : undefined }
 				plansWithScroll={ isDesktop }
 				intent={ intent }
 				flowName={ flowName }
@@ -709,6 +730,7 @@ function UnifiedPlansStep( {
 				selectedThemeType={ selectedThemeType }
 				selectedFeature={ selectedFeature }
 				onReady={ useStepContainerV2 ? handlePlansReady : undefined }
+				onIntentResolved={ setResolvedIntent }
 				renderSiblingWhenLoaded={ () => {
 					if ( ! isNewHostedSiteCreationFlow( flowName ) ) {
 						return null;
@@ -725,6 +747,7 @@ function UnifiedPlansStep( {
 
 		return (
 			<>
+				{ flowName === SITE_MIGRATION_FLOW && <DocumentHead title={ headerText } /> }
 				{ /*
 				 * The layout mounts hidden (CSS: visibility:hidden + position:absolute) so
 				 * PlansFeaturesMain's data-fetching hooks run immediately. Step.Loading
@@ -751,7 +774,7 @@ function UnifiedPlansStep( {
 									) : undefined
 								}
 								rightElement={
-									isOnboardingFlow( flowName ) ? (
+									stepCounter || isOnboardingFlow( flowName ) ? (
 										<>
 											{ stepCounter && (
 												<Step.StepCounter
@@ -759,9 +782,11 @@ function UnifiedPlansStep( {
 													total={ stepCounter.total }
 												/>
 											) }
-											<Step.LinkButton onClick={ toggleHelpCenter }>
-												{ translate( 'Need help?' ) }
-											</Step.LinkButton>
+											{ isOnboardingFlow( flowName ) && (
+												<Step.LinkButton onClick={ toggleHelpCenter }>
+													{ translate( 'Need help?' ) }
+												</Step.LinkButton>
+											) }
 										</>
 									) : undefined
 								}

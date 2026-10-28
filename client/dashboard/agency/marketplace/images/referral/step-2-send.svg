@@ -1,0 +1,8 @@
+<svg width="280" height="114" viewBox="0 0 280 114" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="280" height="114" rx="8" fill="white"/>
+<text fill="#50575E" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="11" font-weight="510" letter-spacing="0em"><tspan x="16" y="26.4102">Client&#x2019;s email address</tspan></text>
+<rect x="16.5" y="33.5" width="247" height="29" rx="3.5" fill="white" stroke="#DCDCDE"/>
+<text fill="#1D2327" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" letter-spacing="0em"><tspan x="25" y="52.2656">hi@fernhollow.com</tspan></text>
+<rect x="16" y="71" width="248" height="28" rx="4" fill="#EDF0FD"/>
+<text fill="#1D35B4" style="white-space: pre" xml:space="preserve" font-family="SF Pro, SF Pro Text, -apple-system, BlinkMacSystemFont, system-ui, sans-serif" font-size="12" font-weight="590" letter-spacing="0em" text-anchor="middle"><tspan x="140" y="89.2656">Send to client</tspan></text>
+</svg>

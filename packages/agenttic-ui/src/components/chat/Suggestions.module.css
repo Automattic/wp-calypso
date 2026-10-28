@@ -54,8 +54,12 @@
 		}
 
 		&:hover {
-			box-shadow: none;
 			background-color: color-mix( in srgb, var( --color-background ) 50%, var( --color-muted ) );
+		}
+
+		/* More specific than the outline variant's hover, so its ring doesn't show and get cut by the next row. */
+		&:hover:not( :disabled ):not( [aria-disabled='true'] ) {
+			box-shadow: none;
 		}
 
 		&:focus-visible {

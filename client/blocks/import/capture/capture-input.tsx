@@ -7,21 +7,21 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getValidationMessage from './url-validation-message-helper';
+import { getUrlValidationError, getValidationMessage } from './url-validation-message-helper';
 import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent, ReactNode } from 'react';
 
 interface Props {
 	dontHaveSiteAddressLabel?: string;
 	hasError?: boolean;
+	isBusy?: boolean;
 	hideImporterListLink?: boolean;
 	label?: ReactNode;
 	nextLabelText?: string;
-	onDontHaveSiteAddressClick?: () => void;
+	onDontHaveSiteAddressClick?: ( url?: string ) => void;
 	onInputChange?: OnInputChange;
 	onInputEnter: OnInputEnter;
 	placeholder?: string;
@@ -33,6 +33,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		onInputChange,
 		onDontHaveSiteAddressClick,
 		hasError,
+		isBusy,
 		skipInitialChecking,
 		label,
 		placeholder = 'artfulbaker.blog',
@@ -63,7 +64,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 
 		if ( urlValue ) {
-			const isValid = CAPTURE_URL_RGX.test( urlValue );
+			const isValid = ! getUrlValidationError( urlValue );
 			if ( isValid && ! hasError ) {
 				onInputEnter( urlValue );
 				setSubmitted( true );
@@ -74,10 +75,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function validateUrl( url: string ) {
-		const isValid = CAPTURE_URL_RGX.test( url );
-		setIsValid( isValid );
-		const tempValidationMessage = isValid ? '' : getValidationMessage( url, translate );
-		setValidationMessage( tempValidationMessage );
+		const error = getUrlValidationError( url );
+		setIsValid( ! error );
+		setValidationMessage( error ? getValidationMessage( error, translate ) : '' );
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
@@ -90,16 +90,19 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 	function onFormSubmit( e: FormEvent< HTMLFormElement > ) {
 		e.preventDefault();
+		if ( isBusy ) {
+			return;
+		}
 		if ( isValid ) {
 			onInputEnter( urlValue );
 		}
 		setSubmitted( true );
 
-		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
+		const error = urlValue ? getUrlValidationError( urlValue ) : null;
+		if ( error && urlValue.length > 4 && urlValue !== lastInvalidValue.current ) {
 			lastInvalidValue.current = urlValue;
-			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
-				url: urlValue,
-			} );
+			// Recorded on submit, once per distinct invalid value.
+			recordTracksEvent( 'calypso_importer_capture_input_invalid', { error_code: error } );
 		}
 	}
 
@@ -118,6 +121,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 					autoComplete="off"
 					autoCorrect="off"
 					spellCheck="false"
+					readOnly={ isBusy }
 					value={ urlValue }
 					placeholder={ placeholder }
 					onChange={ onChange }
@@ -137,7 +141,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 				</FormSettingExplanation>
 			</FormFieldset>
 
-			<NextButton type="submit">{ nextLabelText ?? translate( 'Continue' ) }</NextButton>
+			<NextButton type="submit" isBusy={ isBusy } aria-disabled={ isBusy }>
+				{ nextLabelText ?? translate( 'Continue' ) }
+			</NextButton>
 
 			<div className="action-buttons__importer-list">
 				{ ! hideImporterListLink &&
@@ -148,7 +154,12 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 						{
 							button: createElement( Button, {
 								borderless: true,
-								onClick: onDontHaveSiteAddressClick,
+								'aria-disabled': isBusy,
+								onClick: () => {
+									if ( ! isBusy ) {
+										onDontHaveSiteAddressClick( isValid ? urlValue : undefined );
+									}
+								},
 							} ),
 						}
 					) }

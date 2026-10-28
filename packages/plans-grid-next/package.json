@@ -16,6 +16,12 @@
 			"require": "./dist/cjs/index.js"
 		},
 		"./src/*": {
+			"types": [
+				"./src/*.ts",
+				"./src/*.tsx",
+				"./src/*/index.ts",
+				"./src/*/index.tsx"
+			],
 			"calypso:src": "./src/*"
 		}
 	},
@@ -50,7 +56,7 @@
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
-		"@automattic/number-formatters": "^1.2.0",
+		"@automattic/number-formatters": "^1.2.10",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/typography": "workspace:^",
 		"@emotion/react": "11.11.1",
@@ -64,32 +70,32 @@
 		"@wordpress/warning": "^3.48.0",
 		"clsx": "^2.1.1",
 		"i18n-calypso": "workspace:^",
-		"react-intersection-observer": "^9.4.3",
 		"react-transition-group": "^4.4.5",
 		"tslib": "^2.8.1"
 	},
 	"peerDependencies": {
 		"@wordpress/i18n": "^6.21.0",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-color-schemes": "workspace:^",
+		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
-		"@testing-library/dom": "^10.4.1",
-		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^16.3.2",
-		"@testing-library/user-event": "^14.6.1",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
+		"@testing-library/user-event": "^14.6.8",
 		"msw": "^2.2.14",
 		"msw-storybook-addon": "^2.0.7",
 		"resize-observer-polyfill": "^1.5.1",
-		"storybook": "^9.1.20",
+		"storybook": "^10.6.2",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
+		"webpack": "^5.111.1"
 	},
 	"msw": {
 		"workerDirectory": "static"

@@ -1,6 +1,7 @@
-import { ODIE_ALLOWED_BOTS, ODIE_ALL_BOT_SLUGS } from './constants';
-import type { ZendeskConversation } from '@automattic/zendesk-client';
-import type { ReactNode, PropsWithChildren, SetStateAction } from 'react';
+import { ODIE_ALLOWED_BOTS } from './constants';
+import type { CheckoutSupportVariation } from '@automattic/data-stores';
+import type { SmoochIntegrationKey, ZendeskConversation } from '@automattic/zendesk-client';
+import type { ComponentType, ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
 	isChatLoaded: boolean;
@@ -19,15 +20,25 @@ export type OdieAssistantContextInterface = {
 	isLoadingZendeskHistory: boolean;
 	isMinimized?: boolean;
 	isUserEligibleForPaidSupport: boolean;
+	// An open human chat can be reopened even without paid support.
+	hasOpenZendeskChat: boolean;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
+	humanSupportRouting?: HumanSupportRouting | null;
+	// A request for a human that the routing step hasn't decided on yet.
+	pendingHumanSupportRequest: HumanSupportRequest | null;
+	setPendingHumanSupportRequest: ( request: HumanSupportRequest | null ) => void;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	forceEmailSupport: boolean;
 	isChatRestricted: boolean;
 	launcherContext?: string;
+	// Set while the Help Center is open from checkout as part of the checkout support experiment.
+	checkoutSupportVariation?: CheckoutSupportVariation;
 	setExperimentVariationName: ( variationName: string | null | undefined ) => void;
 	setChat: ( chat: Chat | SetStateAction< Chat > ) => void;
 	setChatStatus: ( status: ChatStatus ) => void;
@@ -43,12 +54,16 @@ export type OdieAssistantProviderProps = {
 	isLoadingCanConnectToZendesk?: boolean;
 	botName?: string;
 	isUserEligibleForPaidSupport?: boolean;
+	hasOpenZendeskChat?: boolean;
 	isMinimized?: boolean;
 	currentUser: CurrentUser;
 	selectedSiteId?: number | null;
 	selectedSiteURL?: string | null;
 	userFieldMessage?: string | null;
 	userFieldFlowName?: string | null;
+	zendeskConversationTags?: string[];
+	zendeskIntegrationKey?: SmoochIntegrationKey | null;
+	humanSupportRouting?: HumanSupportRouting | null;
 	externalChatProvider?: string | null;
 	externalChatId?: string | null;
 	version?: string | null;
@@ -123,6 +138,10 @@ export type Context = {
 		hide_disclaimer_content?: boolean;
 		show_ai_avatar?: boolean;
 		is_error_message?: boolean;
+		// Sent with `forward_to_human_support` by the Woo bot.
+		is_emergency?: boolean;
+		emergency_type?: string | null;
+		route_to_email?: boolean;
 	};
 };
 
@@ -203,7 +222,6 @@ export type Chat = OdieChat & {
 };
 
 export type OdieAllowedBots = ( typeof ODIE_ALLOWED_BOTS )[ number ];
-export type OdieAllBotSlugs = ( typeof ODIE_ALL_BOT_SLUGS )[ number ];
 
 export type SupportProvider = 'zendesk' | 'odie' | 'zendesk-staging' | 'help-center';
 
@@ -278,4 +296,35 @@ export type SupportInteraction = {
 	users: SupportInteractionUser[];
 	events: SupportInteractionEvent[];
 	environment: 'staging' | 'production';
+};
+
+/** The bot's flags that come with a request for a human. */
+export type HumanSupportFlags = {
+	isEmergency: boolean;
+	emergencyType: string | null;
+	routeToEmail: boolean;
+};
+
+export type HumanSupportRequest = {
+	createdFrom: string;
+	flags: HumanSupportFlags;
+	isFromError?: boolean;
+	errorReason?: string;
+	escalationOnSecondAttempt?: boolean;
+};
+
+export type HumanSupportRoutingStepProps = {
+	request: HumanSupportRequest;
+	/** Starts the Zendesk chat for the request. */
+	startChat: () => void;
+	/** Drops the request, for example after sending the user somewhere else. */
+	dismiss: () => void;
+};
+
+/**
+ * Lets the host decide where a request for a human goes. When set, requests show `Step` in
+ * the chat instead of starting a Zendesk chat right away.
+ */
+export type HumanSupportRouting = {
+	Step: ComponentType< HumanSupportRoutingStepProps >;
 };

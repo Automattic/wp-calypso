@@ -1,5 +1,9 @@
-// Bounds the site list so it scrolls inside the modal with its pagination
-// pinned at the bottom, instead of the footer floating over the rows.
-.dashboard-marketplace-purchases__site-picker {
-	block-size: 320px;
+// Holds the height of a full page of sites, so the buttons below don't move
+// while searching or on a shorter last page.
+.dashboard-marketplace-purchases__site-list {
+	min-block-size: 309px;
+}
+
+.dashboard-marketplace-purchases__site-search {
+	padding: var( --wpds-dimension-padding-lg ) var( --wpds-dimension-padding-2xl );
 }

@@ -93,7 +93,7 @@ const HelpCenterContainer: React.FC< Container > = ( { handleClose, hidden, curr
 	const constrainedTabbingRef = useConstrainedTabbing();
 	const isModalSheet = isMobile && ! isMinimized;
 
-	const cardMergeRefs = useMergeRefs( [
+	const cardMergeRefs = useMergeRefs< HTMLDivElement >( [
 		nodeRef,
 		setNode,
 		focusReturnRef,

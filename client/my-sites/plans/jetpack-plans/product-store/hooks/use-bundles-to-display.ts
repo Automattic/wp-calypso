@@ -4,6 +4,7 @@ import { useSelector } from 'calypso/state';
 import { getSitePlan } from 'calypso/state/sites/selectors';
 import { MOST_POPULAR_BUNDLES } from '../../constants';
 import { getPlansToDisplay } from '../../product-grid/utils';
+import useIsOnSale from '../../use-is-on-sale';
 import { ItemToDisplayProps } from '../types';
 import { isolatePopularItems } from '../utils/isolate-popular-items';
 
@@ -12,9 +13,10 @@ export const useBundlesToDisplay = ( { siteId, duration }: ItemToDisplayProps ) 
 	const currentPlan = useSelector( ( state ) => getSitePlan( state, siteId ) );
 
 	const currentPlanSlug = currentPlan?.product_slug || null;
+	const isOnSale = useIsOnSale();
 
 	return useMemo( () => {
-		const allItems = getPlansToDisplay( { duration, currentPlanSlug } );
+		const allItems = getPlansToDisplay( { duration, currentPlanSlug, isOnSale } );
 
 		return isolatePopularItems( allItems, MOST_POPULAR_BUNDLES );
 
@@ -24,5 +26,5 @@ export const useBundlesToDisplay = ( { siteId, duration }: ItemToDisplayProps ) 
 		// when i18n data changes (i.e. after async translations are being loaded).
 		//
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [ duration, currentPlanSlug, translate ] );
+	}, [ duration, currentPlanSlug, isOnSale, translate ] );
 };

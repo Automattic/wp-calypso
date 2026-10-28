@@ -16,6 +16,12 @@
 			"require": "./dist/cjs/index.js"
 		},
 		"./src/*": {
+			"types": [
+				"./src/*.ts",
+				"./src/*.tsx",
+				"./src/*/index.ts",
+				"./src/*/index.tsx"
+			],
 			"calypso:src": "./src/*"
 		}
 	},
@@ -43,6 +49,7 @@
 	"dependencies": {
 		"@automattic/agenttic-client": "workspace:^",
 		"@automattic/agenttic-ui": "workspace:^",
+		"@automattic/ai-ui-renderer": "workspace:^",
 		"@automattic/calypso-analytics": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -54,7 +61,6 @@
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/abilities": "^0.14.0",
 		"@wordpress/api-fetch": "^7.48.0",
-		"@wordpress/blob": "4.48.0",
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
 		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/components": "^37.0.0",
@@ -63,7 +69,6 @@
 		"@wordpress/html-entities": "^4.48.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",
-		"@wordpress/media-utils": "^5.48.0",
 		"@wordpress/primitives": "^4.48.0",
 		"@wordpress/private-apis": "^1.51.0",
 		"@wordpress/router": "^1.51.0",
@@ -74,14 +79,14 @@
 		"fast-average-color": "^9.3.0",
 		"history": "^5.3.0",
 		"i18n-calypso": "workspace:^",
-		"react-router-dom": "7.18.2",
+		"react-router-dom": "7.18.4",
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/dom": "^10.4.1",
-		"@testing-library/react": "^15.0.7",
-		"@testing-library/user-event": "^14.6.1",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/react": "^16.3.3",
+		"@testing-library/user-event": "^14.6.8",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
 		"@wordpress/base-styles": "^9.1.0",

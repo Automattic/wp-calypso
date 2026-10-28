@@ -1,7 +1,9 @@
 import {
+	getFeaturedProducts,
 	getItemId,
 	getItemProducts,
 	getMarketplaceProducts,
+	getProductListItems,
 	getProductSections,
 } from '../product-groups';
 import { EXCLUDED_PRODUCT_SLUGS, FEATURED_PRODUCT_SLUGS } from '../product-slugs';
@@ -30,95 +32,104 @@ describe( 'getMarketplaceProducts', () => {
 	} );
 } );
 
+describe( 'getFeaturedProducts', () => {
+	test( 'keeps the hand-picked order and skips products the agency cannot buy', () => {
+		const featured = FEATURED_PRODUCT_SLUGS.slice( 1 ).map( ( slug ) =>
+			product( slug, 'woocommerce-products' )
+		);
+		expect( getFeaturedProducts( [ ...featured ].reverse() ).map( getItemId ) ).toEqual(
+			FEATURED_PRODUCT_SLUGS.slice( 1 )
+		);
+	} );
+} );
+
+describe( 'getProductListItems', () => {
+	test( 'sorts backup add-ons by product id and Pressable add-ons naturally by name', () => {
+		const storage1tb = product(
+			'jetpack-backup-addon-storage-1tb-monthly',
+			'jetpack-backup-storage',
+			'Jetpack VaultPress Backup Add-on Storage (1TB)'
+		);
+		const storage10gb = product(
+			'jetpack-backup-addon-storage-10gb-monthly',
+			'jetpack-backup-storage',
+			'Jetpack VaultPress Backup Add-on Storage (10GB)'
+		);
+		const sites10 = product( 'pressable-addon-sites-10', 'pressable-addon', 'Pressable 10 sites' );
+		const sites5 = product( 'pressable-addon-sites-5', 'pressable-addon', 'Pressable 5 sites' );
+		expect(
+			getProductListItems( [ storage10gb, sites10, storage1tb, sites5 ] ).map( getItemId )
+		).toEqual( [
+			'jetpack-backup-addon-storage-1tb-monthly',
+			'jetpack-backup-addon-storage-10gb-monthly',
+			'pressable-addon-sites-5',
+			'pressable-addon-sites-10',
+		] );
+	} );
+} );
+
 describe( 'getProductSections', () => {
 	const securityT1 = product( 'jetpack-security-t1', 'jetpack-packs', 'Jetpack Security (10GB)' );
 	const securityT2 = product( 'jetpack-security-t2', 'jetpack-packs', 'Jetpack Security (1TB)' );
 	const complete = product( 'jetpack-complete', 'jetpack-packs', 'Jetpack Complete' );
 	const scan = product( 'jetpack-scan', 'jetpack-products', 'Jetpack Scan' );
-	const boost = product( 'jetpack-boost', 'jetpack-products', 'Jetpack Boost' );
-	const storage1tb = product(
-		'jetpack-backup-addon-storage-1tb-monthly',
-		'jetpack-backup-storage',
-		'1TB'
-	);
+	const backup = product( 'jetpack-backup-t1', 'jetpack-products', 'Jetpack VaultPress Backup' );
 	const storage10gb = product(
 		'jetpack-backup-addon-storage-10gb-monthly',
 		'jetpack-backup-storage',
-		'10GB'
+		'Jetpack VaultPress Backup Add-on Storage (10GB)'
 	);
-	const featured = FEATURED_PRODUCT_SLUGS.map( ( slug ) =>
-		product( slug, 'woocommerce-products', slug )
-	);
-	const bookings = product(
-		'woocommerce-bookings',
-		'woocommerce-products',
-		'WooCommerce Bookings'
-	);
-	const sites10 = product( 'pressable-addon-sites-10', 'pressable-addon', 'Pressable 10 sites' );
+	const woopayments = product( 'woocommerce-woopayments', 'woocommerce-products', 'WooPayments' );
 	const sites5 = product( 'pressable-addon-sites-5', 'pressable-addon', 'Pressable 5 sites' );
 
 	const sections = getProductSections( [
 		scan,
 		securityT2,
-		bookings,
-		boost,
-		storage1tb,
 		complete,
 		securityT1,
+		backup,
 		storage10gb,
-		sites10,
+		woopayments,
 		sites5,
-		...[ ...featured ].reverse(),
 	] );
 	const section = ( key: string ) => sections.find( ( item ) => item.key === key );
 
-	test( 'keeps the classic section order and skips empty sections', () => {
+	test( 'keeps the category order, ends with the uncategorised products, and skips empty jobs', () => {
 		expect( sections.map( ( { key } ) => key ) ).toEqual( [
-			'featured',
-			'woocommerce',
-			'jetpack-plans',
-			'jetpack-products',
-			'backup-addons',
-			'pressable-addons',
-		] );
-		expect( getProductSections( [ scan ] ).map( ( { key } ) => key ) ).toEqual( [
-			'jetpack-products',
+			'payments',
+			'security',
+			'store-management',
+			'other',
 		] );
 	} );
 
-	test( 'orders featured products as hand-picked', () => {
-		expect( section( 'featured' )?.items.map( getItemId ) ).toEqual( FEATURED_PRODUCT_SLUGS );
-	} );
-
-	test( 'sorts WooCommerce extensions and Jetpack products by name', () => {
-		expect( section( 'woocommerce' )?.items.map( getItemId ) ).toEqual( [
-			'woocommerce-bookings',
-			...[ ...FEATURED_PRODUCT_SLUGS ].sort(),
+	test( 'shows a product in every job it does', () => {
+		expect( section( 'payments' )?.items.map( getItemId ) ).toEqual( [
+			'woocommerce-woopayments',
 		] );
-		expect( section( 'jetpack-products' )?.items.map( getItemId ) ).toEqual( [
-			'jetpack-boost',
-			'jetpack-scan',
+		expect( section( 'store-management' )?.items.map( getItemId ) ).toEqual( [
+			'woocommerce-woopayments',
 		] );
 	} );
 
-	test( 'folds size tiers of the same plan into one card', () => {
-		const plans = section( 'jetpack-plans' )?.items ?? [];
-		expect( plans.map( getItemId ) ).toEqual( [ 'jetpack-security-t2', 'jetpack-complete' ] );
-		expect( getItemProducts( plans[ 0 ] ).map( ( { slug } ) => slug ) ).toEqual( [
+	test( 'folds size tiers into one card but keeps each backup add-on its own', () => {
+		const security = section( 'security' )?.items ?? [];
+		const tiers = section( 'other' )?.items.find(
+			( item ) => getItemId( item ) === 'jetpack-security-t2'
+		);
+		expect( tiers && getItemProducts( tiers ).map( ( { slug } ) => slug ) ).toEqual( [
 			'jetpack-security-t2',
 			'jetpack-security-t1',
 		] );
-		expect( getItemProducts( plans[ 1 ] ) ).toEqual( [ complete ] );
+		expect( security.map( getItemId ) ).toContain( 'jetpack-backup-addon-storage-10gb-monthly' );
+		expect( security.map( getItemId ) ).toContain( 'jetpack-backup-t1' );
 	} );
 
-	test( 'sorts backup add-ons by product id and Pressable add-ons naturally by name', () => {
-		expect( section( 'backup-addons' )?.items.map( getItemId ) ).toEqual( [
-			'jetpack-backup-addon-storage-1tb-monthly',
-			'jetpack-backup-addon-storage-10gb-monthly',
-		] );
-		expect( section( 'pressable-addons' )?.items.map( getItemId ) ).toEqual( [
+	test( 'puts products with no job category last', () => {
+		expect( section( 'other' )?.items.map( getItemId ) ).toEqual( [
+			'jetpack-complete',
+			'jetpack-security-t2',
 			'pressable-addon-sites-5',
-			'pressable-addon-sites-10',
 		] );
 	} );
 } );

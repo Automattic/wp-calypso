@@ -1,9 +1,10 @@
 import { FormTokenField } from '@wordpress/components';
-import { TokenItem } from '@wordpress/components/build-types/form-token-field/types';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, type ComponentProps } from 'react';
+
+export type Tokens = NonNullable< ComponentProps< typeof FormTokenField >[ 'value' ] >;
 
 type Props = {
-	onChange: ( selectedItems: ( string | TokenItem )[] ) => void;
+	onChange: ( selectedItems: Tokens ) => void;
 	suggestions: string[];
 	value: string[];
 	label?: string;

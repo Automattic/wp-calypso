@@ -50,7 +50,6 @@ function makeReceipt( id: number, siteId: number, variation: string ): Receipt {
 		cc_num: '',
 		cc_name: '',
 		cc_email: '',
-		credit: '',
 		items: [
 			{
 				id,

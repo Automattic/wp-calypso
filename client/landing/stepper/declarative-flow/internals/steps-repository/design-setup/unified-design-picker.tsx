@@ -39,7 +39,7 @@ import useRecipe from './hooks/use-recipe';
 import useTrackFilters from './hooks/use-track-filters';
 import UnifiedDesignPickerPreview from './unified-design-picker-preview';
 import type { Step as StepType } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 import type { Design, StyleVariation } from '@automattic/design-picker';
 import type { GlobalStylesObject } from '@automattic/global-styles';
 import './style.scss';
@@ -95,10 +95,7 @@ const UnifiedDesignPickerStep: StepType< {
 		useSelect(
 			( select ) =>
 				site &&
-				( select( SITE_STORE ) as SiteSelect ).siteHasFeature(
-					site.ID,
-					WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED
-				),
+				select( SITE_STORE ).siteHasFeature( site.ID, WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ),
 			[ site ]
 		)
 	);

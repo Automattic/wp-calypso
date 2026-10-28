@@ -577,8 +577,8 @@ const contextLinks = {
 		blog_id: DEVELOPER_WORDPRESS_BLOG_ID,
 	},
 	'site-monitoring-logs': {
-		link: 'https://wordpress.com/support/site-monitoring/#view-the-site-logs',
-		post_id: 259521,
+		link: 'https://wordpress.com/support/site-logs/',
+		post_id: 240030,
 	},
 	'github-deployments': {
 		link: 'https://wordpress.com/support/github-deployments/',
@@ -681,7 +681,7 @@ const contextLinks = {
 		post_id: 365563,
 	},
 	'domain-contact-information-requirements': {
-		link: 'https://wordpress.com/support/domains/private-domain-registration/#information-we-collect-and-why',
+		link: 'https://wordpress.com/support/domains/private-domain-registration/',
 		post_id: 365563,
 	},
 	'https-ssl': {

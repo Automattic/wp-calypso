@@ -8,6 +8,10 @@ import { useAttachmentHandler } from '../use-attachment-handler';
 const mockAddMessage = jest.fn();
 const mockAttachFileToConversation = jest.fn().mockResolvedValue( undefined );
 const mockTrackEvent = jest.fn();
+// Arguments: whether the token may be fetched, and the token type.
+const mockUseAuthenticateZendeskMessaging = jest.fn< object, [ boolean, string ] >( () => ( {
+	data: { token: 'token' },
+} ) );
 
 jest.mock( '@wordpress/i18n', () => {
 	Object.assign( globalThis, { __i18n_text_domain__: 'default' } );
@@ -32,7 +36,8 @@ jest.mock(
 			isPending: false,
 			mutateAsync: mockAttachFileToConversation,
 		} ),
-		useAuthenticateZendeskMessaging: () => ( { data: { token: 'token' } } ),
+		useAuthenticateZendeskMessaging: ( enabled: boolean, type: string ) =>
+			mockUseAuthenticateZendeskMessaging( enabled, type ),
 		zendeskMessageConverter: jest.fn( ( message ) => ( {
 			...message,
 			content: message.type === 'file-placeholder' ? `📎 ${ message.altText }` : '',
@@ -152,6 +157,50 @@ describe( 'useAttachmentHandler', () => {
 					type: 'file-placeholder',
 					altText: 'system-status.txt',
 				} )
+			);
+		} );
+	} );
+} );
+
+describe( 'useAttachmentHandler – chat token', () => {
+	const withContext = ( overrides: Record< string, unknown > ) =>
+		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			...( useOdieAssistantContext as jest.Mock )(),
+			...overrides,
+		} );
+
+	it( 'requests the token for a user without paid support who has an open human chat', () => {
+		withContext( { isUserEligibleForPaidSupport: false, hasOpenZendeskChat: true } );
+
+		renderHook( () => useAttachmentHandler() );
+
+		expect( mockUseAuthenticateZendeskMessaging ).toHaveBeenLastCalledWith( true, 'messenger' );
+	} );
+
+	it( 'does not request it for a user without paid support or an open human chat', () => {
+		withContext( { isUserEligibleForPaidSupport: false, hasOpenZendeskChat: false } );
+
+		renderHook( () => useAttachmentHandler() );
+
+		expect( mockUseAuthenticateZendeskMessaging ).toHaveBeenLastCalledWith( false, 'messenger' );
+	} );
+} );
+
+describe( 'useAttachmentHandler – messaging integration', () => {
+	it( "uploads files on the chat's messaging integration", async () => {
+		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			...( useOdieAssistantContext as jest.Mock )(),
+			zendeskIntegrationKey: 'woo',
+		} );
+		const { result } = renderHook( () => useAttachmentHandler() );
+		const file = new File( [ 'status' ], 'system-status.txt', { type: 'text/plain' } );
+
+		await act( async () => result.current.handleFileUpload( [ file ] ) );
+		await act( async () => result.current.sendAttachments() );
+
+		await waitFor( () => {
+			expect( mockAttachFileToConversation ).toHaveBeenCalledWith(
+				expect.objectContaining( { file, integrationKey: 'woo' } )
 			);
 		} );
 	} );

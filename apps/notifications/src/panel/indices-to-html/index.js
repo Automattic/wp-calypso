@@ -61,6 +61,9 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			if ( new_sub_text.trim().length > 0 ) {
 				new_container.setAttribute( 'alt', new_sub_text );
 			}
+			if ( range_info.emoji ) {
+				new_classes.push( 'emoji' );
+			}
 			break;
 		// All of the following are simple element types we want to create and then
 		// recurse into for their constituent blocks or texts
@@ -118,7 +121,7 @@ function render_range( new_sub_text, new_sub_range, range_info, range_data, opti
 			new_classes.push( 'is-primary' );
 		default:
 			// Most range types fall here
-			if ( ( options.links && range_info.url ) || range_info_type === 'a' ) {
+			if ( options.links && ( range_info.url || range_info_type === 'a' ) ) {
 				// We are a link of some sort...
 				new_container = document.createElement( 'a' );
 				new_container.setAttribute( 'href', range_info.url );

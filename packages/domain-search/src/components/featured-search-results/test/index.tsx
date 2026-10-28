@@ -8,6 +8,34 @@ import { mockGetSuggestionsQuery } from '../../../test-helpers/queries/suggestio
 import { TestDomainSearchWithSuggestions } from '../../../test-helpers/renderer';
 
 describe( 'FeaturedSearchResults', () => {
+	it( 'keeps rendering the other featured results if one of them throws', async () => {
+		// React logs the error caught by the boundary.
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const onSuggestionNotFound = jest.fn();
+
+		mockGetSuggestionsQuery( {
+			params: { query: 'test' },
+			suggestions: [ buildSuggestion( { domain_name: 'test-featured.com' } ) ],
+		} );
+
+		render(
+			<TestDomainSearchWithSuggestions query="test" events={ { onSuggestionNotFound } }>
+				<FeaturedSearchResults
+					suggestions={ [
+						{ reason: 'recommended', suggestion: 'test-missing.com' },
+						{ reason: 'best-alternative', suggestion: 'test-featured.com' },
+					] }
+				/>
+			</TestDomainSearchWithSuggestions>
+		);
+
+		expect( await screen.findByTitle( 'test-featured.com' ) ).toBeInTheDocument();
+		expect( screen.queryByTitle( 'test-missing.com' ) ).not.toBeInTheDocument();
+		expect( onSuggestionNotFound ).toHaveBeenCalledWith( 'test-missing.com' );
+
+		consoleError.mockRestore();
+	} );
+
 	it( 'renders a single featured suggestion', async () => {
 		mockGetSuggestionsQuery( {
 			params: { query: 'single-featured.com' },

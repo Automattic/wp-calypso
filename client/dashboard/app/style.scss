@@ -74,6 +74,12 @@ a {
 	}
 }
 
+body:has( #wpcom-omnibar ) #wpcom {
+	padding-block-start: var( --masterbar-height, 47px );
+	height: auto;
+	min-height: calc( 100vh - var( --masterbar-height, 47px ) );
+}
+
 @media print {
 	#wpcom-omnibar {
 		display: none;

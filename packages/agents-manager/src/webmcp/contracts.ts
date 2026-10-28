@@ -1,4 +1,4 @@
-import type { Ability } from '../abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 export const GET_BLOCK_TREE_ABILITY_NAME = 'agents-manager/get-block-tree';
 export const APPLY_BLOCK_EDITS_ABILITY_NAME = 'big-sky/apply-block-edits';

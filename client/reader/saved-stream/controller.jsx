@@ -1,6 +1,10 @@
 import AsyncLoad from 'calypso/components/async-load';
 import { sectionify } from 'calypso/lib/route';
-import { trackPageLoad } from 'calypso/reader/controller-helper';
+import {
+	trackPageLoad,
+	trackUpdatesLoaded,
+	trackScrollPage,
+} from 'calypso/reader/controller-helper';
 
 const loadMain = () =>
 	import(
@@ -14,10 +18,26 @@ const exported = {
 		const basePath = sectionify( context.path );
 		const fullAnalyticsPageTitle = analyticsPageTitle + ' > Saved';
 		const mcKey = 'saved';
+		const streamKey = 'saved';
 
 		trackPageLoad( basePath, fullAnalyticsPageTitle, mcKey );
 
-		context.primary = <AsyncLoad require={ loadMain } key="saved" placeholder={ null } />;
+		context.primary = (
+			<AsyncLoad
+				require={ loadMain }
+				key="saved"
+				streamKey={ streamKey }
+				trackScrollPage={ trackScrollPage.bind(
+					null,
+					basePath,
+					fullAnalyticsPageTitle,
+					analyticsPageTitle,
+					mcKey
+				) }
+				onUpdatesShown={ trackUpdatesLoaded.bind( null, mcKey ) }
+				placeholder={ null }
+			/>
+		);
 		next();
 	},
 };

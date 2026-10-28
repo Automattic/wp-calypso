@@ -1,6 +1,6 @@
 import { recordTracksEvent, withSiteContext } from '@automattic/calypso-analytics';
 import { useSelect } from '@wordpress/data';
-import { createContext, useCallback, useContext, useState } from 'react';
+import { createContext, useCallback, useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
 	HELP_CENTER_STORE,
@@ -11,6 +11,7 @@ import { useGetCombinedChat } from '../hooks';
 import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
 import type {
 	Chat,
+	HumanSupportRequest,
 	Message,
 	OdieAllowedBots,
 	ChatStatus,
@@ -47,12 +48,15 @@ export const OdieAssistantContext = createContext< OdieAssistantContextInterface
 	isChatLoaded: false,
 	isMinimized: false,
 	isUserEligibleForPaidSupport: false,
+	hasOpenZendeskChat: false,
 	setChat: noop,
 	setChatStatus: noop,
 	setExperimentVariationName: noop,
 	trackEvent: noop,
 	forceEmailSupport: false,
 	isChatRestricted: false,
+	pendingHumanSupportRequest: null,
+	setPendingHumanSupportRequest: noop,
 } );
 
 // Custom hook to access the OdieAssistantContext
@@ -67,12 +71,16 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	newLoggedOutInteractionsBotSlug,
 	newInteractionsBotVersion,
 	isUserEligibleForPaidSupport = true,
+	hasOpenZendeskChat = false,
 	canConnectToZendesk = false,
 	isLoadingCanConnectToZendesk = false,
 	selectedSiteId,
 	selectedSiteURL,
 	userFieldMessage,
 	userFieldFlowName,
+	zendeskConversationTags,
+	zendeskIntegrationKey,
+	humanSupportRouting = null,
 	externalChatProvider,
 	externalChatId,
 	version = null,
@@ -82,22 +90,24 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	launcherContext,
 	children,
 } ) => {
-	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded } = useSelect(
-		( select ) => {
-			const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+	const { dynamicNewInteractionsBotSlug, isMinimized, isChatLoaded, checkoutSupportVariation } =
+		useSelect(
+			( select ) => {
+				const store = select( HELP_CENTER_STORE ) as HelpCenterSelect;
 
-			const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
-				? ( store.getOdieBotNameSlug() as OdieAllowedBots )
-				: newInteractionsBotSlug;
+				const odieBotNameSlug = isOdieAllowedBot( store.getOdieBotNameSlug() )
+					? ( store.getOdieBotNameSlug() as OdieAllowedBots )
+					: newInteractionsBotSlug;
 
-			return {
-				dynamicNewInteractionsBotSlug: odieBotNameSlug,
-				isMinimized: store.getIsMinimized(),
-				isChatLoaded: store.getIsChatLoaded(),
-			};
-		},
-		[ newInteractionsBotSlug ]
-	);
+				return {
+					dynamicNewInteractionsBotSlug: odieBotNameSlug,
+					isMinimized: store.getIsMinimized(),
+					isChatLoaded: store.getIsChatLoaded(),
+					checkoutSupportVariation: store.getCheckoutSupportVariation(),
+				};
+			},
+			[ newInteractionsBotSlug ]
+		);
 
 	const navigate = useNavigate();
 
@@ -110,7 +120,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 	 * This is where we manage the state of the chat.
 	 */
 	const { mainChatState, setMainChatState, isLoadingZendeskHistory } = useGetCombinedChat(
-		isUserEligibleForPaidSupport && canConnectToZendesk,
+		( isUserEligibleForPaidSupport || hasOpenZendeskChat ) && canConnectToZendesk,
 		isLoadingCanConnectToZendesk
 	);
 
@@ -142,6 +152,21 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 		},
 		[ newInteractionsBotSlug, mainChatState, selectedSiteId ]
 	);
+
+	// A pending request for a human belongs to the chat it was made in.
+	const odieIdRef = useRef( mainChatState?.odieId );
+	odieIdRef.current = mainChatState?.odieId;
+	const [ pendingHumanSupport, setPendingHumanSupport ] = useState< {
+		request: HumanSupportRequest;
+		odieId: Chat[ 'odieId' ];
+	} | null >( null );
+	const pendingHumanSupportRequest =
+		pendingHumanSupport && pendingHumanSupport.odieId === mainChatState?.odieId
+			? pendingHumanSupport.request
+			: null;
+	const setPendingHumanSupportRequest = useCallback( ( request: HumanSupportRequest | null ) => {
+		setPendingHumanSupport( request ? { request, odieId: odieIdRef.current } : null );
+	}, [] );
 
 	const clearChat = useCallback( () => {
 		trackEvent( 'chat_cleared', {} );
@@ -188,6 +213,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				isMinimized,
 				experimentVariationName,
 				isUserEligibleForPaidSupport,
+				hasOpenZendeskChat,
 				canConnectToZendesk,
 				isLoadingCanConnectToZendesk,
 				hasUserEverEscalatedToHumanSupport,
@@ -196,6 +222,11 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				selectedSiteURL,
 				userFieldMessage,
 				userFieldFlowName,
+				zendeskConversationTags,
+				zendeskIntegrationKey,
+				humanSupportRouting,
+				pendingHumanSupportRequest,
+				setPendingHumanSupportRequest,
 				externalChatProvider,
 				externalChatId,
 				setChatStatus,
@@ -205,6 +236,7 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 				forceEmailSupport,
 				isChatRestricted,
 				launcherContext,
+				checkoutSupportVariation,
 			} }
 		>
 			{ children }

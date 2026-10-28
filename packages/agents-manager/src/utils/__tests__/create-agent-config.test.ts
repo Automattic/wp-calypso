@@ -10,15 +10,23 @@ jest.mock( '../can-connect-to-zendesk', () => ( {
 	canConnectToZendesk: jest.fn( () => Promise.resolve( false ) ),
 } ) );
 
+jest.mock( '../turn-id', () => ( {
+	getTurnId: jest.fn( () => '' ),
+} ) );
+
 import { DOLLY_AGENT_ID } from '../../constants';
+import { getInteractiveUiSession, showInteractiveUiSession } from '../../interactive-ui/session';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { getSessionId } from '../agent-session';
+import { getTurnId } from '../turn-id';
+import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
+const mockGetTurnId = getTurnId as jest.Mock;
 
 function setAgentsManagerData( data: Record< string, unknown > ) {
 	( window as unknown as { agentsManagerData?: Record< string, unknown > } ).agentsManagerData =
@@ -224,6 +232,44 @@ describe( 'createAgentConfig', () => {
 		);
 	} );
 
+	it( 'lists the providers’ interactive UI catalogs in each message’s metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+			interactiveUiCatalogs: [ { catalog: { catalogId: 'urn:woo-ai:v1' } } ],
+		} );
+
+		expect( config.contextProvider?.getMessageMetadata?.() ).toHaveProperty(
+			[ 'a2uiRendererCapabilities', 'v1.0', 'supportedCatalogIds' ],
+			expect.arrayContaining( [ 'urn:woo-ai:v1' ] )
+		);
+		expect( config.contextProvider?.getClientContext() ).not.toHaveProperty(
+			'a2uiRendererCapabilities'
+		);
+	} );
+
+	it( 'sends the shown conversation’s interactive UI data in each message’s metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+		} );
+
+		const dataModel = { version: 'v1.0', surfaces: { form: { name: 'Ada' } } };
+		const session = getInteractiveUiSession( undefined, 'scope', 'session-1' );
+		session.runtime = { getDataModel: () => dataModel } as unknown as InteractiveUiRuntime;
+
+		const hide = showInteractiveUiSession( session );
+
+		expect( config.contextProvider?.getMessageMetadata?.() ).toEqual( {
+			a2uiRendererCapabilities: expect.any( Object ),
+			a2uiRendererDataModel: dataModel,
+		} );
+
+		hide();
+	} );
+
 	it( 'merges site editor actions into default client context', async () => {
 		setSiteEditorAction( 'colorPickerItemSelected', 'Ruby' );
 
@@ -284,5 +330,102 @@ describe( 'createAgentConfig', () => {
 				},
 			} )
 		);
+	} );
+	const clientContexts = [
+		[ 'default', undefined ],
+		[
+			'provider',
+			{
+				getClientContext: () => ( {
+					url: 'https://example.com/wp-admin/',
+					pathname: '/wp-admin/',
+					search: '',
+					environment: 'wp-admin',
+				} ),
+			},
+		],
+	] as const;
+
+	it.each( clientContexts )(
+		'sends the host tracking opt-in, the turn id and the traffic flags in the %s client context',
+		async ( _, contextProvider ) => {
+			setAgentsManagerData( { isTrackingAllowed: true, isDevMode: true, isA11n: true } );
+			mockGetTurnId.mockReturnValueOnce( 'turn-1' );
+
+			const config = await createAgentConfig( {
+				sessionId: 'session-1',
+				sessionSiteKey: 'no-site',
+				agentId: DOLLY_AGENT_ID,
+				contextProvider,
+			} );
+
+			expect( config.contextProvider?.getClientContext() ).toEqual(
+				expect.objectContaining( {
+					isTrackingAllowed: true,
+					turnId: 'turn-1',
+					isTest: true,
+					isA11n: true,
+				} )
+			);
+		}
+	);
+
+	it.each( clientContexts )(
+		'sends the host tracking opt-out in the %s client context',
+		async ( _, contextProvider ) => {
+			setAgentsManagerData( { isTrackingAllowed: false } );
+
+			const config = await createAgentConfig( {
+				sessionId: 'session-1',
+				sessionSiteKey: 'no-site',
+				agentId: DOLLY_AGENT_ID,
+				contextProvider,
+			} );
+
+			expect( config.contextProvider?.getClientContext() ).toHaveProperty(
+				'isTrackingAllowed',
+				false
+			);
+		}
+	);
+
+	it.each( clientContexts )(
+		'sends the browser events’ surface in the %s client context',
+		async ( _, contextProvider ) => {
+			const createConfig = () =>
+				createAgentConfig( {
+					sessionId: 'session-1',
+					sessionSiteKey: 'no-site',
+					agentId: DOLLY_AGENT_ID,
+					contextProvider,
+				} );
+
+			const calypsoConfig = await createConfig();
+			expect( calypsoConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'calypso'
+			);
+
+			setAgentsManagerData( {} );
+			const wpAdminConfig = await createConfig();
+			expect( wpAdminConfig.contextProvider?.getClientContext() ).toHaveProperty(
+				'surface',
+				'wp-admin'
+			);
+		}
+	);
+
+	it( 'omits the tracking opt-in and the Automattician flag when the host does not set them, and the turn id before a send', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+		} );
+		const context = config.contextProvider?.getClientContext();
+
+		expect( context ).not.toHaveProperty( 'isTrackingAllowed' );
+		expect( context ).not.toHaveProperty( 'turnId' );
+		expect( context ).not.toHaveProperty( 'isA11n' );
+		expect( context ).toHaveProperty( 'isTest', false );
 	} );
 } );

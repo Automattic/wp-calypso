@@ -1,5 +1,5 @@
 import { findAbilityByName } from './ability-name';
-import type { Ability } from './types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Finds an ability by its raw or normalized name and runs its callback.

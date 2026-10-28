@@ -12,7 +12,11 @@
  * capture, and drawing cross-origin pixels taints the canvas, which makes
  * `toBlob` throw outright. Whether the right image landed is also the one thing
  * the block tree already answers, through the `url` attribute. The placeholder
- * keeps the element's rendered box so the layout around it is unchanged.
+ * keeps the element's rendered box so the layout around it is unchanged. The
+ * exception is the framed blocks themselves: an edit to an image is judged by
+ * what is in it — a crop, a focal point, text laid over it — so their images
+ * are fetched, downscaled and inlined, and any that cannot be fall back to a
+ * placeholder rather than failing the capture.
  *
  * Fonts are inlined, and a font that cannot be inlined fails the whole capture.
  * Line breaking is a function of font metrics: substitute the font and the
@@ -22,13 +26,38 @@
  * Internals are exported for their tests only; `rasterizeCanvas` is the entry point.
  */
 
+import {
+	drawScaledCopy,
+	getBackgroundImageUrls,
+	rememberImagePixels,
+	URL_PATTERN,
+} from './image-pixels';
 import type { CanvasCaptureContext, CanvasRasterizer } from './capture';
 
 // Bounds the encoded size and the model's per-image token cost, which scale with
 // output pixels rather than with page complexity.
 const MAX_LONG_EDGE = 1400;
 
+// How many separate pictures one capture may return.
+//
+// Areas far apart on the page used to be answered with a single whole-page
+// image, which is scaled to fit and therefore illegible — useless for the
+// comparisons that need two distant sections both readable. Framing each area
+// in its own viewport-sized band keeps every one of them at native scale.
+//
+// Capped because each band is a full serialize-and-rasterize of the document,
+// and because a reader given a dozen pictures of one page is no better off
+// than one given a thumbnail of it. Past the cap the whole page is the honest
+// answer, scaling and all.
+const MAX_CAPTURES = 4;
+
 const PLACEHOLDER_FILL = '#d5d7da';
+
+// How many images in the framed blocks are shown for real. Each is a fetch, a
+// decode and a re-encode, all waited on by the edit the capture follows.
+const MAX_INLINED_IMAGES = 6;
+const IMAGE_FETCH_TIMEOUT = 3000;
+const INLINED_IMAGE_QUALITY = 0.85;
 const IMAGE_MIME = 'image/webp';
 const IMAGE_QUALITY = 0.92;
 
@@ -284,85 +313,102 @@ const getDocumentSize = (
  * @param clientIds      Blocks to frame the capture on.
  * @returns The span, or null when none resolved.
  */
+const getBlockSpans = (
+	canvasDocument: Document,
+	canvasWindow: Window,
+	clientIds: string[]
+): Array< { top: number; bottom: number } > => {
+	const scrollY = canvasWindow.scrollY || 0;
+
+	return (
+		findBlockElements( canvasDocument, clientIds )
+			.map( ( element ) => element.getBoundingClientRect() )
+			// A block scrolled out of view still has a box; a block with no layout
+			// (display:none, or detached) does not, and framing on it would show an
+			// arbitrary part of the page.
+			.filter( ( box ) => box.width > 0 && box.height > 0 )
+			.map( ( box ) => ( { top: box.top + scrollY, bottom: box.bottom + scrollY } ) )
+	);
+};
+
 const getEditedSpan = (
 	canvasDocument: Document,
 	canvasWindow: Window,
 	clientIds: string[]
 ): { top: number; bottom: number; count: number } | null => {
-	const scrollY = canvasWindow.scrollY || 0;
-	const boxes = findBlockElements( canvasDocument, clientIds )
-		.map( ( element ) => element.getBoundingClientRect() )
-		// A block scrolled out of view still has a box; a block with no layout
-		// (display:none, or detached) does not, and framing on it would show an
-		// arbitrary part of the page.
-		.filter( ( box ) => box.width > 0 && box.height > 0 );
+	const spans = getBlockSpans( canvasDocument, canvasWindow, clientIds );
 
-	if ( ! boxes.length ) {
+	if ( ! spans.length ) {
 		return null;
 	}
 
 	return {
-		top: Math.min( ...boxes.map( ( box ) => box.top ) ) + scrollY,
-		bottom: Math.max( ...boxes.map( ( box ) => box.bottom ) ) + scrollY,
-		count: boxes.length,
+		top: Math.min( ...spans.map( ( span ) => span.top ) ),
+		bottom: Math.max( ...spans.map( ( span ) => span.bottom ) ),
+		count: spans.length,
 	};
 };
 
 /**
- * Whether the edited blocks reach further than a single screenful.
+ * Groups block spans into the fewest bands that each hold their group whole.
  *
- * A sweeping change — recolouring every heading on the page, say — leaves blocks
- * spread from top to bottom. Centring one band on their midpoint then frames the
- * middle of the document and shows a single screenful of it, quite possibly a
- * stretch where nothing looks different, while the forty other changes go
- * unseen. When the edit is that wide, the whole page is the only honest picture
- * of it.
- * @param canvasDocument The canvas document.
- * @param canvasWindow   The canvas window.
- * @param clientIds      Blocks to frame the capture on.
- * @returns Whether they outgrow the viewport.
+ * Two blocks a few hundred pixels apart belong in one picture: separating them
+ * would answer a question about their relationship with two pictures that each
+ * show one side of it. Two blocks three screens apart do not, and forcing them
+ * into one frame means scaling the page down until neither is readable.
+ *
+ * So the test is simply whether they still fit a screenful together. Greedy
+ * from the top, which is enough: the spans are laid out on one axis, and a
+ * group that has already outgrown the viewport cannot be rescued by what comes
+ * after it.
+ * @param spans          Block spans, in any order.
+ * @param viewportHeight How much fits in one band.
+ * @returns The groups, top to bottom.
  */
-export const editOutgrowsViewport = (
-	canvasDocument: Document,
-	canvasWindow: Window,
-	clientIds: string[]
-): boolean => {
-	const span = getEditedSpan( canvasDocument, canvasWindow, clientIds );
+export const clusterSpans = (
+	spans: Array< { top: number; bottom: number } >,
+	viewportHeight: number
+): Array< { top: number; bottom: number; count: number } > => {
+	const clusters: Array< { top: number; bottom: number; count: number } > = [];
 
-	return !! span && span.bottom - span.top > canvasWindow.innerHeight;
+	[ ...spans ]
+		.sort( ( a, b ) => a.top - b.top )
+		.forEach( ( span ) => {
+			const current = clusters[ clusters.length - 1 ];
+
+			if ( current && Math.max( current.bottom, span.bottom ) - current.top <= viewportHeight ) {
+				current.bottom = Math.max( current.bottom, span.bottom );
+				current.count += 1;
+
+				return;
+			}
+
+			clusters.push( { top: span.top, bottom: span.bottom, count: 1 } );
+		} );
+
+	return clusters;
 };
 
 /**
- * The region to capture, in canvas document coordinates.
+ * The viewport-sized band that shows a span, centred on it.
  *
- * Always a full-width band the height of the viewport. Any blocks given decide
- * where that band sits; they never narrow it.
- * @param canvasDocument The canvas document.
+ * Clamped to the document, so a span near either end gives a band that stops at
+ * the edge rather than one padded with nothing.
+ * @param span           The span to frame, and how many blocks it holds.
+ * @param span.top       Its top, in document coordinates.
+ * @param span.bottom    Its bottom, in document coordinates.
+ * @param span.count     How many blocks it groups.
  * @param canvasWindow   The canvas window.
- * @param clientIds      Blocks to centre the band on.
- * @returns The region to capture.
+ * @param documentHeight The page height, to clamp against.
+ * @returns The band.
  */
-export const getCaptureRect = (
-	canvasDocument: Document,
+const bandForSpan = (
+	span: { top: number; bottom: number; count: number },
 	canvasWindow: Window,
-	clientIds: string[]
+	documentHeight: number
 ): CaptureRect => {
-	const scrollY = canvasWindow.scrollY || 0;
 	const width = canvasWindow.innerWidth;
 	const height = canvasWindow.innerHeight;
-	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
-
-	// Always a full-width, viewport-tall band. Framing tightly on the blocks
-	// produced pictures too small and too close-cropped to answer the questions
-	// this exists for — whether a heading crowds what follows it, whether
-	// spacing looks right against its neighbours — all of which need to see what
-	// surrounds the block. It is also the one geometry that has proven to
-	// rasterize reliably.
-	const span = getEditedSpan( canvasDocument, canvasWindow, clientIds );
-
-	if ( ! span ) {
-		return { x: 0, y: scrollY, width, height, framed: 0 };
-	}
 
 	// The blocks decide where to look, never how much. The agent routinely edits
 	// something the user has not scrolled to, and a band at the current scroll
@@ -380,6 +426,97 @@ export const getCaptureRect = (
 };
 
 /**
+ * The region to capture, in canvas document coordinates.
+ *
+ * Always a full-width band the height of the viewport. Any blocks given decide
+ * where that band sits; they never narrow it.
+ * @param canvasDocument The canvas document.
+ * @param canvasWindow   The canvas window.
+ * @param clientIds      Blocks to centre the band on.
+ * @returns The region to capture.
+ */
+export const getCaptureRect = (
+	canvasDocument: Document,
+	canvasWindow: Window,
+	clientIds: string[]
+): CaptureRect => {
+	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
+
+	// Always a full-width, viewport-tall band. Framing tightly on the blocks
+	// produced pictures too small and too close-cropped to answer the questions
+	// this exists for — whether a heading crowds what follows it, whether
+	// spacing looks right against its neighbours — all of which need to see what
+	// surrounds the block. It is also the one geometry that has proven to
+	// rasterize reliably.
+	const span = getEditedSpan( canvasDocument, canvasWindow, clientIds );
+
+	if ( ! span ) {
+		return {
+			x: 0,
+			y: canvasWindow.scrollY || 0,
+			width: canvasWindow.innerWidth,
+			height: canvasWindow.innerHeight,
+			framed: 0,
+		};
+	}
+
+	return bandForSpan( span, canvasWindow, documentHeight );
+};
+
+/**
+ * One band per group of blocks, or `null` when bands cannot cover them.
+ *
+ * This is what decides between a handful of native-scale pictures and one
+ * scaled-down picture of everything. Bands win whenever they can, because a
+ * whole-page capture of a tall document is too small to read — the tool says so
+ * itself — and the comparisons this exists for are exactly the ones that need
+ * two distant areas both legible.
+ *
+ * `null` means the blocks cannot be covered this way, and the caller should fall
+ * back to the whole page. Two ways that happens:
+ *
+ * - More groups than `MAX_CAPTURES`. A sweeping change — every heading on the
+ *   page recoloured — lands in a dozen places, and a dozen pictures is not a
+ *   better answer than one overview.
+ * - A group taller than the viewport. A band would show its middle and silently
+ *   drop the rest, which is the failure this whole path exists to avoid.
+ * @param canvasDocument The canvas document.
+ * @param canvasWindow   The canvas window.
+ * @param clientIds      Blocks to frame.
+ * @returns The bands, top to bottom, or null.
+ */
+export const getCaptureRects = (
+	canvasDocument: Document,
+	canvasWindow: Window,
+	clientIds: string[]
+): CaptureRect[] | null => {
+	const spans = getBlockSpans( canvasDocument, canvasWindow, clientIds );
+
+	// No blocks resolved, so there is nothing to group: one band wherever the
+	// user is looking, exactly as before.
+	if ( ! spans.length ) {
+		return [ getCaptureRect( canvasDocument, canvasWindow, clientIds ) ];
+	}
+
+	const viewportHeight = canvasWindow.innerHeight;
+	const clusters = clusterSpans( spans, viewportHeight );
+
+	if ( clusters.length > MAX_CAPTURES ) {
+		return null;
+	}
+
+	if ( clusters.some( ( cluster ) => cluster.bottom - cluster.top > viewportHeight ) ) {
+		return null;
+	}
+
+	const documentHeight = getDocumentSize( canvasDocument, canvasWindow ).height;
+
+	// Already top to bottom: `clusterSpans` groups in that order, and a band
+	// sits at its group's midpoint.
+	return clusters.map( ( cluster ) => bandForSpan( cluster, canvasWindow, documentHeight ) );
+};
+
+/**
  * Swaps every image in the clone for a box of the same rendered size.
  *
  * Measurements come from the live elements, because the clone is not in a
@@ -393,7 +530,8 @@ export const getCaptureRect = (
 export const replaceImagesWithPlaceholders = (
 	liveRoot: Element,
 	cloneRoot: Element,
-	view: Window
+	view: Window,
+	inlinedImages: Map< Element, string > = new Map()
 ): void => {
 	const liveImages = Array.from( liveRoot.querySelectorAll( 'img' ) );
 	const cloneImages = Array.from( cloneRoot.querySelectorAll( 'img' ) );
@@ -409,13 +547,17 @@ export const replaceImagesWithPlaceholders = (
 		// intrinsic size, which would shift everything laid out around it and
 		// make the capture misreport the very spacing it exists to show.
 		const box = liveImage.getBoundingClientRect();
-		cloneImage.setAttribute( 'src', BLANK_PIXEL );
+		const inlined = inlinedImages.get( liveImage );
+		cloneImage.setAttribute( 'src', inlined ?? BLANK_PIXEL );
 		cloneImage.removeAttribute( 'srcset' );
 		cloneImage.removeAttribute( 'sizes' );
 		cloneImage.removeAttribute( 'loading' );
 		cloneImage.style.width = `${ box.width }px`;
 		cloneImage.style.height = `${ box.height }px`;
-		cloneImage.style.backgroundColor = PLACEHOLDER_FILL;
+
+		if ( ! inlined ) {
+			cloneImage.style.backgroundColor = PLACEHOLDER_FILL;
+		}
 	} );
 
 	// CSS background images never appear in the markup, so they have to be found
@@ -435,14 +577,25 @@ export const replaceImagesWithPlaceholders = (
 		// A gradient is colour, not a photograph, and paints without a fetch.
 		const backgroundImage = view.getComputedStyle( liveElement ).backgroundImage;
 
-		if ( backgroundImage && /url\(/i.test( backgroundImage ) ) {
+		if ( ! backgroundImage || ! /url\(/i.test( backgroundImage ) ) {
+			return;
+		}
+
+		const inlined = inlinedImages.get( liveElement );
+
+		// Rewritten inside the computed value, so a gradient layered over the
+		// photograph stays where it was.
+		if ( inlined ) {
+			cloneElement.style.backgroundImage = backgroundImage.replace(
+				URL_PATTERN,
+				`url("${ inlined }")`
+			);
+		} else {
 			cloneElement.style.backgroundImage = 'none';
 			cloneElement.style.backgroundColor = PLACEHOLDER_FILL;
 		}
 	} );
 };
-
-const URL_PATTERN = /url\(\s*['"]?([^'")]+)['"]?\s*\)/g;
 
 // `@font-face` carries no nested braces, so matching to the first `}` is enough.
 const FONT_FACE_PATTERN = /@font-face\s*\{[^}]*\}/gi;
@@ -458,6 +611,28 @@ const FONT_FACE_PATTERN = /@font-face\s*\{[^}]*\}/gi;
  * theme write rewrites a stylesheet in place and no cheap key catches it.
  */
 const fontCache = new Map< string, string >();
+
+/**
+ * Inlined images, keyed by URL and the size they were scaled to, with the
+ * pixels kept for the contrast measurement. Like a font, an image at a given
+ * URL does not change, and a capture after every edit would otherwise decode
+ * and re-encode the same photograph each time. Bounded, unlike the fonts: the
+ * images change with what is framed.
+ */
+interface EncodedImage {
+	dataUri: string;
+	/** An `<img>`'s kept pixels; the measurement reads no CSS background. */
+	pixels: HTMLCanvasElement | null;
+}
+
+// In-flight encodes too, so an image shown twice in one capture is fetched once.
+const imageCache = new Map< string, Promise< EncodedImage > >();
+const MAX_CACHED_IMAGES = 12;
+
+/** Forgets the inlined images. For tests. */
+export const clearImageCache = (): void => {
+	imageCache.clear();
+};
 
 /**
  * Forgets the inlined fonts, so the next capture fetches them again.
@@ -675,6 +850,226 @@ const bytesToBase64 = ( bytes: Uint8Array ): string => {
 };
 
 const toBase64 = ( buffer: ArrayBuffer ): string => bytesToBase64( new Uint8Array( buffer ) );
+
+/** Fetches, scales and encodes one image for `fetchImageAsDataUri`. */
+const encodeImage = async (
+	url: string,
+	box: DOMRect | null,
+	keepPixels: boolean
+): Promise< EncodedImage > => {
+	// A cors-mode request, so it rejects for any server that does not allow
+	// this origin, rather than handing back pixels that would taint the canvas.
+	const response = await fetchWithDeadline( url, IMAGE_FETCH_TIMEOUT );
+
+	if ( ! response.ok ) {
+		throw new Error( `HTTP ${ response.status }` );
+	}
+
+	const blob = await response.blob();
+
+	// Vector, and already small: drawn at any size without re-encoding.
+	if ( blob.type === 'image/svg+xml' ) {
+		return {
+			dataUri: `data:image/svg+xml;base64,${ toBase64( await blob.arrayBuffer() ) }`,
+			pixels: null,
+		};
+	}
+
+	const bitmap = await createImageBitmap( blob );
+	const scale = box
+		? Math.min( 1, Math.max( box.width / bitmap.width, box.height / bitmap.height ) )
+		: 1;
+	let canvas: HTMLCanvasElement | null;
+
+	try {
+		canvas = drawScaledCopy( bitmap, bitmap.width, bitmap.height, scale );
+	} finally {
+		bitmap.close();
+	}
+
+	if ( ! canvas ) {
+		throw new Error( 'No 2d context available' );
+	}
+
+	const pixels = keepPixels ? drawScaledCopy( canvas, canvas.width, canvas.height ) : null;
+	const encoded = await new Promise< Blob | null >( ( resolve ) =>
+		canvas.toBlob( resolve, IMAGE_MIME, INLINED_IMAGE_QUALITY )
+	);
+
+	if ( ! encoded ) {
+		throw new Error( 'Could not encode image' );
+	}
+
+	// The blob's own type: a browser that cannot encode WebP falls back to PNG.
+	return {
+		dataUri: `data:${ encoded.type };base64,${ toBase64( await encoded.arrayBuffer() ) }`,
+		pixels,
+	};
+};
+
+/**
+ * An image as a data URI no larger than the box it renders in.
+ *
+ * Downscaled because a photograph straight from the media library can run to
+ * megabytes, every one of which would be base64-encoded into the SVG and
+ * parsed again by the renderer, only to be drawn into a few hundred pixels.
+ * The scale is the one `cover` would use, so an image fitted to its box is
+ * never drawn larger than it was encoded; a fixed background is fitted to
+ * the viewport instead. One drawn at its own size, as a repeated cover's tiles
+ * are, is kept at that size, since shrinking it would change what the
+ * capture shows.
+ * A small copy of the pixels is kept for the contrast measurement, which
+ * reads text over a cover's photograph against them.
+ * @param element The live element showing the image.
+ * @param url     The image's URL.
+ * @param box     The size it renders at, in CSS pixels, when it is fitted to
+ *                it; `null` when it is drawn at its own size.
+ * @returns The data URI.
+ */
+const fetchImageAsDataUri = async (
+	element: Element,
+	url: string,
+	box: DOMRect | null
+): Promise< string > => {
+	if ( url.startsWith( 'data:' ) ) {
+		return url;
+	}
+
+	// By kind too, since only an `<img>`'s encode keeps pixels.
+	const isImage = element.tagName === 'IMG';
+	const size = box ? `${ Math.round( box.width ) }x${ Math.round( box.height ) }` : 'own';
+	const key = `${ isImage ? 'img' : 'background' } ${ size } ${ url }`;
+	let encoded = imageCache.get( key );
+
+	// Re-set on a hit too, so the eviction below drops the least recently used.
+	imageCache.delete( key );
+
+	if ( ! encoded ) {
+		encoded = encodeImage( url, box, isImage );
+		// Only successes stay: a failure cached would refuse the image for
+		// the rest of the session.
+		encoded.catch( () => imageCache.delete( key ) );
+	}
+
+	imageCache.set( key, encoded );
+
+	// Oldest first, as a Map iterates.
+	if ( imageCache.size > MAX_CACHED_IMAGES ) {
+		imageCache.delete( imageCache.keys().next().value as string );
+	}
+
+	const { dataUri, pixels } = await encoded;
+
+	if ( pixels ) {
+		rememberImagePixels( element, url, pixels );
+	}
+
+	return dataUri;
+};
+
+/**
+ * Where to look for images to inline: the framed blocks, and before them any
+ * cover holding one. Text edited inside a cover is framed without the cover,
+ * and the contrast measurement needs the cover's photograph to read it against.
+ * @param canvasDocument The canvas document.
+ * @param clientIds      The framed blocks.
+ * @returns The elements, covers first.
+ */
+export const findImageRoots = ( canvasDocument: Document, clientIds: string[] ): Element[] => {
+	const blocks = findBlockElements( canvasDocument, clientIds );
+	const covers = blocks.flatMap( ( block ) => {
+		const cover = block.parentElement?.closest( '.wp-block-cover' );
+
+		return cover ? [ cover ] : [];
+	} );
+
+	return [ ...new Set( [ ...covers, ...blocks ] ) ];
+};
+
+/**
+ * The real pixels of the images in the given blocks, keyed by the live element
+ * that shows each one: `<img>`s, and CSS backgrounds, where cover blocks keep
+ * their photograph.
+ *
+ * Never rejects. An image that cannot be fetched — most often a host that does
+ * not send CORS headers — is left out, and `replaceImagesWithPlaceholders`
+ * gives it a placeholder like any other.
+ * @param roots The framed blocks' elements.
+ * @param view  The window they belong to.
+ * @returns Data URIs by live element.
+ */
+export const inlineBlockImages = async (
+	roots: Element[],
+	view: Window
+): Promise< Map< Element, string > > => {
+	const seen = new Set< Element >();
+	const candidates: { element: Element; url: string; box: DOMRect | null }[] = [];
+
+	for ( const element of roots.flatMap( ( root ) => [
+		root,
+		...Array.from( root.querySelectorAll( '*' ) ),
+	] ) ) {
+		if ( candidates.length >= MAX_INLINED_IMAGES ) {
+			break;
+		}
+
+		// A block nested inside another framed block is reached twice.
+		if ( seen.has( element ) ) {
+			continue;
+		}
+
+		seen.add( element );
+
+		const box = element.getBoundingClientRect();
+
+		if ( ! box.width || ! box.height ) {
+			continue;
+		}
+
+		// By tag name: the canvas is an iframe, so its elements are not
+		// instances of this window's `HTMLImageElement`.
+		let url: string | undefined;
+		let fitted: boolean;
+		let fittedTo = box;
+
+		if ( element.tagName === 'IMG' ) {
+			const image = element as HTMLImageElement;
+			url = image.currentSrc || image.src;
+			fitted = ! [ 'none', 'scale-down' ].includes( view.getComputedStyle( image ).objectFit );
+		} else {
+			const style = view.getComputedStyle( element );
+			const urls = getBackgroundImageUrls( style.backgroundImage );
+
+			// One photograph to stand in for. Several layered urls would all be
+			// rewritten to the same one. A data URI is left to its placeholder:
+			// one with quotes in it is cut short by the url pattern, and the
+			// rewrite would leave broken CSS where the background was.
+			url = urls.length === 1 && ! urls[ 0 ].startsWith( 'data:' ) ? urls[ 0 ] : undefined;
+			fitted = [ 'cover', 'contain' ].includes( style.backgroundSize );
+
+			// A fixed background is sized to the viewport, not its box.
+			if ( fitted && style.backgroundAttachment === 'fixed' ) {
+				fittedTo = { width: view.innerWidth, height: view.innerHeight } as DOMRect;
+			}
+		}
+
+		if ( url ) {
+			candidates.push( { element, url, box: fitted ? fittedTo : null } );
+		}
+	}
+
+	const inlined = await Promise.all(
+		candidates.map( async ( { element, url, box } ) => {
+			try {
+				return [ element, await fetchImageAsDataUri( element, url, box ) ] as const;
+			} catch {
+				return null;
+			}
+		} )
+	);
+
+	return new Map( inlined.filter( ( entry ) => entry !== null ) );
+};
 
 const FONT_FAMILY_PATTERN = /font-family\s*:\s*([^;}]+)/i;
 
@@ -952,26 +1347,6 @@ const settle = ( milliseconds: number ) =>
 	nextFrame( window ).then(
 		() => new Promise( ( resolve ) => setTimeout( resolve, milliseconds ) )
 	);
-
-/**
- * Whether the region being captured should contain visible marks.
- *
- * The blank check exists to catch a half-rasterized render, but a crop can be
- * legitimately flat: recolouring a group's background, or editing a spacer,
- * frames a region with nothing in it. Refusing those would mean never capturing
- * them at all. Asking the source DOM whether there is any text to draw separates
- * "nothing rendered" from "nothing to render".
- * @param canvasDocument The canvas document.
- * @param clientIds      Blocks the capture framed.
- * @returns Whether marks are expected.
- */
-const expectsInk = ( canvasDocument: Document, clientIds: string[] ): boolean => {
-	const roots = clientIds.length
-		? findBlockElements( canvasDocument, clientIds )
-		: [ canvasDocument.body ];
-
-	return roots.some( ( root ) => ( root.textContent || '' ).trim().length > 0 );
-};
 
 /**
  * Yields until the canvas window is idle, so the capture is not taken mid-render.
@@ -1256,6 +1631,68 @@ const bandExpectsInk = (
 ): boolean => spans.some( ( span ) => span.bottom > band.y && span.top < band.y + band.height );
 
 /**
+ * Renders each band as its own image, reusing one clone and one set of rules.
+ *
+ * The expensive parts of a capture — reading every rule, inlining the fonts,
+ * cloning the body — are page-wide and do not change between bands, so they are
+ * paid once however many pictures come out. What repeats is the per-band
+ * serialize and rasterize, which is the same work `drawPageToBlob` already does
+ * per band; the difference is only that these end up as separate images at
+ * native scale rather than stitched into one scaled-down sheet.
+ *
+ * A band that will not render is fatal to the whole capture rather than quietly
+ * dropped. A set of pictures with one missing looks exactly like a set that was
+ * only ever meant to have the rest.
+ * @param clone                The cloned body, reused across bands.
+ * @param styleText            CSS to embed.
+ * @param documentSize         The page's laid-out size.
+ * @param documentSize.width   Page width.
+ * @param documentSize.height  Page height.
+ * @param rects                The bands to render.
+ * @param inkSpans             Page spans that should draw something.
+ * @param onStats              Receives the serialize cost.
+ * @returns One image per band.
+ */
+const drawRegionsToBlobs = async (
+	clone: Element,
+	styleText: string,
+	documentSize: { width: number; height: number },
+	rects: CaptureRect[],
+	inkSpans: Array< { top: number; bottom: number } >,
+	onStats?: ( stats: { serialize: number; markupBytes: number } ) => void
+): Promise< Blob[] > => {
+	const blobs: Blob[] = [];
+	let serialize = 0;
+	let markupBytes = 0;
+
+	for ( const rect of rects ) {
+		offsetCloneToBand( clone as HTMLElement, rect.y, documentSize.width );
+
+		// XMLSerializer, not innerHTML: `<foreignObject>` content must be
+		// well-formed XML, and HTML serialization leaves void elements unclosed
+		// and bare ampersands unescaped.
+		const serializeStartedAt = performance.now();
+		const markup = new window.XMLSerializer().serializeToString( clone );
+		serialize += performance.now() - serializeStartedAt;
+		markupBytes += markup.length;
+
+		const blob = await drawToBlob(
+			buildSvg( markup, styleText, { width: documentSize.width, height: rect.height } ),
+			rect,
+			bandExpectsInk( inkSpans, { y: rect.y, height: rect.height } )
+		);
+
+		if ( blob ) {
+			blobs.push( blob );
+		}
+	}
+
+	onStats?.( { serialize: Math.round( serialize ), markupBytes } );
+
+	return blobs;
+};
+
+/**
  * Renders the whole page by rasterizing it in bands and stitching them.
  *
  * Bands are drawn straight into the final, already-scaled canvas rather than
@@ -1391,15 +1828,19 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	await whenIdle( canvasWindow );
 	await whenStill( canvasDocument, canvasWindow, clientIds );
 
-	// A band cannot show an edit that reaches past a screenful, so a sweeping
-	// change picks the whole page for itself rather than framing the middle of
-	// it and leaving the rest unseen.
-	const wholePage =
-		Boolean( fullPage ) || editOutgrowsViewport( canvasDocument, canvasWindow, clientIds );
+	// Areas close together share a band; areas far apart get one each, so both
+	// sides of a comparison stay at native scale. `null` means bands cannot
+	// honestly cover them — too many, or one taller than a screenful — and the
+	// whole page, scaling and all, is the only picture that shows everything.
+	const rects = getCaptureRects( canvasDocument, canvasWindow, clientIds );
+	const wholePage = Boolean( fullPage ) || rects === null;
+	const bands = rects ?? [];
 
-	const rect = getCaptureRect( canvasDocument, canvasWindow, clientIds );
+	// Every band is the viewport's size, and it is also what the stitched page
+	// is rendered in. A canvas with no laid-out viewport cannot be drawn at all.
+	const bandHeight = canvasWindow.innerHeight;
 
-	if ( ! rect.width || ! rect.height ) {
+	if ( ! canvasWindow.innerWidth || ! bandHeight ) {
 		return null;
 	}
 
@@ -1415,6 +1856,16 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 
 		return value;
 	};
+
+	// Started alongside the CSS, which it does not depend on: both are mostly
+	// waiting on the network. Never rejects. The whole page keeps its
+	// placeholders: scaled to fit, no photograph in it is legible, and they
+	// would cost the PNG its compression.
+	const images = wholePage
+		? Promise.resolve( new Map< Element, string >() )
+		: time( 'images', () =>
+				inlineBlockImages( findImageRoots( canvasDocument, clientIds ), canvasWindow )
+			);
 
 	// Split, because the two halves have different fixes if this ever needs
 	// speeding up: reading ~12,000 rules is CPU, and inlining fonts is fetches
@@ -1435,18 +1886,19 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 			}
 		} )
 	);
+	const inlinedImages = await images;
+
 	const clone = await time( 'clone', () => {
 		const cloned = body.cloneNode( true ) as Element;
-		replaceImagesWithPlaceholders( body, cloned, canvasWindow );
+		replaceImagesWithPlaceholders( body, cloned, canvasWindow, inlinedImages );
 
-		// Only for a full page. A single band renders the document once, so a
-		// viewport-positioned element lands where it belongs; it is repeated
-		// renders that duplicate it.
-		if ( wholePage ) {
+		// Whenever the document is rendered more than once. A single band
+		// renders it once, so a viewport-positioned element lands where it
+		// belongs; it is repeated renders — a stitched page, or several bands —
+		// that would draw the fixed header into every one of them.
+		if ( wholePage || bands.length > 1 ) {
 			pinViewportPositionedElements( body, cloned, canvasWindow );
 		}
-
-		offsetCloneToBand( cloned as HTMLElement, rect.y, documentSize.width );
 
 		return cloned;
 	} );
@@ -1455,7 +1907,7 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 	// render says nothing on its own; the crop, the document it was measured
 	// against, and whether the requested blocks even resolved say a great deal.
 	const diagnostics = {
-		rect,
+		bands,
 		documentSize,
 		clientIds,
 		wholePage,
@@ -1464,35 +1916,27 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		cssBytes: styleText.length,
 	};
 
-	const blob = await time( 'render', async () => {
+	const inkSpans = getInkSpans( body, canvasWindow );
+	const blobs = await time( 'render', async () => {
 		try {
 			// A full page serializes the clone once per band as it draws.
 			if ( wholePage ) {
-				return await drawPageToBlob(
-					clone,
-					styleText,
-					documentSize,
-					rect.height,
-					getInkSpans( body, canvasWindow )
-				);
+				const page = await drawPageToBlob( clone, styleText, documentSize, bandHeight, inkSpans );
+
+				return page ? [ page ] : [];
 			}
 
-			// XMLSerializer, not innerHTML: `<foreignObject>` content must be
-			// well-formed XML, and HTML serialization leaves void elements unclosed
-			// and bare ampersands unescaped.
-			const markup = await time( 'serialize', () =>
-				new window.XMLSerializer().serializeToString( clone )
+			return await drawRegionsToBlobs(
+				clone,
+				styleText,
+				documentSize,
+				bands,
+				inkSpans,
+				( stats ) => {
+					stages.serialize = stats.serialize;
+					stages.markup_bytes = stats.markupBytes;
+				}
 			);
-
-			// The frame is a full-width band at the crop's height. Vertical
-			// positioning is done by the offset above; the horizontal crop is taken
-			// at draw time.
-			const svg = buildSvg( markup, styleText, {
-				width: documentSize.width,
-				height: rect.height,
-			} );
-
-			return await drawToBlob( svg, rect, expectsInk( canvasDocument, clientIds ) );
 		} catch ( error ) {
 			// Re-thrown with the context gathered above, so the one error that
 			// leaves here carries what is needed to diagnose it.
@@ -1506,23 +1950,38 @@ export const rasterizeCanvas: CanvasRasterizer = async ( {
 		}
 	} );
 
-	if ( ! blob ) {
+	if ( ! blobs.length ) {
 		return null;
 	}
 
-	const bytes = await time( 'encode', async () => toBase64( await blob.arrayBuffer() ) );
+	const encoded = await time( 'encode', async () =>
+		Promise.all( blobs.map( async ( blob ) => toBase64( await blob.arrayBuffer() ) ) )
+	);
 
-	return [
-		{
-			type: 'file',
-			file: {
-				name: wholePage ? 'canvas-page.png' : 'canvas.webp',
-				mimeType: wholePage ? FULL_PAGE_MIME : IMAGE_MIME,
-				bytes,
-			},
-			// Images are placeholders, so a reader of this capture must not
-			// conclude the page's photographs are missing or broken.
-			metadata: { imagesArePlaceholders: true, fullPage: wholePage, framed: rect.framed },
+	return encoded.map( ( bytes, index ) => ( {
+		type: 'file' as const,
+		file: {
+			name: wholePage ? 'canvas-page.png' : `canvas-${ index + 1 }.webp`,
+			mimeType: wholePage ? FULL_PAGE_MIME : IMAGE_MIME,
+			bytes,
 		},
-	];
+		metadata: {
+			// Images are placeholders, so a reader of this capture must not
+			// conclude the page's photographs are missing or broken — except for
+			// these, the framed blocks' own, which are shown as they are.
+			imagesArePlaceholders: true,
+			inlinedImages: inlinedImages.size,
+			fullPage: wholePage,
+			// Blocks framed by this band, not by the capture as a whole, so a
+			// reader can tell which picture holds what it asked about.
+			framed: wholePage
+				? ( getEditedSpan( canvasDocument, canvasWindow, clientIds )?.count ?? 0 )
+				: bands[ index ].framed,
+			// Which of several pictures of one page this is, top to bottom.
+			// Without it a reader has no way to tell a set of different areas
+			// from a set of attempts at the same one.
+			regionIndex: index + 1,
+			regionCount: encoded.length,
+		},
+	} ) );
 };

@@ -34,7 +34,7 @@ Example: [EditorPage](../../../packages/calypso-e2e/src/lib/pages/editor-page.ts
 
 **Flows** - these encapsulate interactions that span multiple pages or components, or start at one location and end at another. Interactions for each page of the flow can be implemented directly in the Flow object, or by importing relevant Page/Component objects and calling their methods.
 
-Example: [StartSiteFlow](../../../packages/calypso-e2e/src/lib/flows/start-site-flow.ts)
+Example: [CloseAccountFlow](../../../packages/calypso-e2e/src/lib/flows/close-account-flow.ts)
 
 ## Components
 
@@ -79,9 +79,7 @@ export class SidebarComponent {
 Then in a test spec (using a custom fixture)
 
 ```typescript
-test( 'As a user, I can reach the Posts list from the sidebar', async ( {
-	componentSidebar,
-} ) => {
+test( 'As a user, I can reach the Posts list from the sidebar', async ( { componentSidebar } ) => {
 	await test.step( 'When I select "Posts" in the sidebar', async function () {
 		await componentSidebar.navigate( 'Posts' );
 	} );

@@ -132,7 +132,7 @@ function mockApis( {
 
 	if ( ssl ) {
 		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/domains/ssl/${ ssl.domain }` )
+			.get( `/wpcom/v2/domains/ssl/${ ssl.domain }/` )
 			.query( true )
 			.reply( 200, {
 				data: {
@@ -177,6 +177,30 @@ describe( '<SiteDomains>', () => {
 		render( <SiteDomains />, { user: ownerUser } );
 
 		expect( await screen.findByRole( 'dialog', { name: 'Change site address' } ) ).toBeVisible();
+	} );
+
+	test( 'shows "Change site address" action for the default address', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( { domains: [ defaultAddressDomain ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await user.click( await screen.findByLabelText( 'Actions' ) );
+
+		expect( screen.getByText( 'Change site address' ) ).toBeVisible();
+	} );
+
+	test( 'hides "Change site address" action when the site is suspended', async () => {
+		nock.cleanAll();
+		mockApis( { domains: [ { ...defaultAddressDomain, is_suspended_site: true } ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect( within( table ).getByText( 'test-site.wordpress.com' ) ).toBeVisible();
+
+		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'sorts domains by whether they are primary', async () => {

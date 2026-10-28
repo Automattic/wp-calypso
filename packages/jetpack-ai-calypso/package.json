@@ -64,7 +64,6 @@
 		"wpcom-proxy-request": "workspace:^"
 	},
 	"peerDependencies": {
-		"@babel/runtime": "^7.27.1",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
 		"react": "^18.3.1 || ^19.0.0",
@@ -73,18 +72,13 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@testing-library/dom": "^10.4.1",
-		"@testing-library/jest-dom": "^6.9.1",
-		"@testing-library/react": "^16.3.2",
-		"postcss": "^8.5.15",
+		"@testing-library/dom": "^10.4.2",
+		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"typescript": "^6.0.3",
-		"webpack": "^5.99.8"
-	},
-	"peerDependenciesMeta": {
-		"@babel/runtime": {
-			"optional": true
-		}
+		"webpack": "^5.111.1"
 	}
 }

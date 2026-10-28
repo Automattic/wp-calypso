@@ -1,12 +1,11 @@
-import inherits from 'inherits';
 import wpcom from 'calypso/lib/wp';
 
-function ValidationError( code ) {
-	this.code = code;
-	this.message = code;
+class ValidationError extends Error {
+	constructor( code ) {
+		super( code );
+		this.code = code;
+	}
 }
-
-inherits( ValidationError, Error );
 
 export function canRedirect( siteId, domainName, onComplete ) {
 	if ( ! domainName ) {

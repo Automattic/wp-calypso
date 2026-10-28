@@ -5,7 +5,7 @@ import { Locator, Page } from 'playwright';
  * eligible paid-plan users land on after checkout in the onboarding flow
  * (`/setup/onboarding/setup-your-site-ai`).
  *
- * The screen offers a choice between "Start with a template" and "Create a
+ * The screen offers a choice between "Start with a pre-made design" and "Create a
  * custom design". Flow tests reaching it generally navigate on to a specific
  * page of their own, so this object just exposes a check that the screen was
  * rendered — which confirms checkout completed and routed here.

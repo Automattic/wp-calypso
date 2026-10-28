@@ -22,6 +22,12 @@ export function getTopResults(
 }
 
 /**
+ * A row on sale leads with its first-year price, so that is the price it ranks by.
+ */
+const getFirstYearPrice = ( result: NamePulseDomainResult ) =>
+	result.sale_cost ?? result.raw_price ?? Infinity;
+
+/**
  * AI mode has no exact matches to feature, so the cheapest available
  * suggestions stand in; the name breaks ties to keep the order stable.
  */
@@ -40,7 +46,7 @@ export function getAiTopResults(
 	return Array.from( byName.values() )
 		.sort(
 			( a, b ) =>
-				( a.raw_price ?? Infinity ) - ( b.raw_price ?? Infinity ) ||
+				getFirstYearPrice( a ) - getFirstYearPrice( b ) ||
 				a.domain_name.localeCompare( b.domain_name )
 		)
 		.slice( 0, count );

@@ -1,7 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import { BIG_SKY_ABILITY_CATEGORY } from '../constants';
 import { captureCanvasCallback } from './callback';
-import type { Ability } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Lets the agent look at the page whenever it needs to: `apply-block-edits`
@@ -16,7 +16,7 @@ export const captureCanvasAbility: Ability = {
 	label: __( 'Capture Canvas', __i18n_text_domain__ ),
 	category: BIG_SKY_ABILITY_CATEGORY,
 	description:
-		'Takes a picture of the editor canvas as it currently renders, including unsaved changes. Use it to check how the page actually looks when the block data alone cannot answer that — after changing styles, colours, spacing or CSS, or whenever a reported problem is visual. Pass fullPage to see the whole page at once, which is what a theme or global styles change needs checking against. Photographs are replaced by flat placeholder boxes at their real size.',
+		'Takes a picture of the editor canvas as it currently renders, including unsaved changes. Use it to check how the page actually looks when the block data alone cannot answer that — after changing styles, colours, spacing or CSS, or whenever a reported problem is visual. Pass fullPage to see the whole page at once, which is what a theme or global styles change needs checking against. Photographs are replaced by flat placeholder boxes at their real size, except those inside the blocks named in clientIds, which are shown as they are when they can be loaded.',
 	input_schema: {
 		type: 'object',
 		properties: {
@@ -24,7 +24,7 @@ export const captureCanvasAbility: Ability = {
 				type: 'array',
 				items: { type: 'string' },
 				description:
-					'Blocks to centre the picture on. Omit to capture the visible area of the canvas. Naming the blocks in question is what guarantees they are in frame, since the user may be scrolled elsewhere. Ignored when fullPage is set.',
+					'Blocks to centre the picture on. Omit to capture the visible area of the canvas. Naming the blocks in question is what guarantees they are in frame, since the user may be scrolled elsewhere. To compare two areas, name the blocks on both sides — a picture framing one of them cannot answer whether they match. Ignored when fullPage is set.',
 			},
 			fullPage: {
 				type: 'boolean',

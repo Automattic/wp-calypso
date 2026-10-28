@@ -10,6 +10,12 @@ $gray-50: #646970;
 $breakpoint-mobile: 660px;
 
 .step-route.user {
+	// Match the login page's 2rem so the form does not jump between the two screens. The class
+	// sits on the form's row, so the rule reaches up to the wrapper that owns the gap.
+	.step-container-v2__content-wrapper:has(> .step-container-v2--user-entry-clarity) {
+		gap: 2rem;
+	}
+
 	.form-fieldset {
 		margin-bottom: 8px;
 	}
@@ -32,6 +38,8 @@ $breakpoint-mobile: 660px;
 		a {
 			color: var(--studio-gray-60, #646970);
 			text-decoration-line: underline;
+			// Step.LinkButton sets 500; links in these lines use the paragraph's 400.
+			font-weight: inherit;
 		}
 	}
 
@@ -313,11 +321,6 @@ $breakpoint-mobile: 660px;
 		.step-container-v2__content-row:first-child {
 			margin-block-start: auto;
 		}
-	}
-
-	// Subtitle color: Gray 50 (#646970) per Figma.
-	.step-container-v2__heading p {
-		color: var(--studio-gray-50);
 	}
 
 	.signup-form-social-first--mobile-compact {

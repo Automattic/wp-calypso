@@ -1,15 +1,17 @@
 import { DomainAvailabilityStatus, type DomainAvailability } from '@automattic/api-core';
+import { createElement, createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import type { NamePulseResultsLayout } from './get-results-layout';
+import type { ReactNode } from 'react';
 
 export type NamePulseAvailabilityVerdict = Pick<
 	DomainAvailability,
-	'status' | 'domain_name' | 'tld'
+	'status' | 'domain_name' | 'tld' | 'is_supported_premium_domain'
 >;
 
 export interface NamePulseNotice {
 	status: 'warning' | 'neutral' | 'error';
-	message: string;
+	message: ReactNode;
 	/** Set when the domain is registered elsewhere and could be brought over. */
 	transferDomain?: string;
 	/** Only the notices about how the query was read. */
@@ -71,6 +73,25 @@ function fromAvailability( verdict: NamePulseAvailabilityVerdict ): NamePulseNot
 		};
 	}
 
+	if (
+		verdict.status === DomainAvailabilityStatus.AVAILABLE_PREMIUM &&
+		! verdict.is_supported_premium_domain
+	) {
+		return {
+			status: 'error',
+			message: createInterpolateElement(
+				sprintf(
+					/* translators: %(domain)s is the domain name */
+					__(
+						"Sorry, <strong>%(domain)s</strong> is a premium domain. We don't support purchasing this premium domain on WordPress.com."
+					),
+					{ domain: verdict.domain_name }
+				),
+				{ strong: createElement( 'strong' ) }
+			),
+		};
+	}
+
 	if ( UNSUPPORTED_ENDING.includes( verdict.status ) ) {
 		return {
 			status: 'error',
@@ -94,12 +115,8 @@ function fromQueryShape( layout: NamePulseResultsLayout ): NamePulseNotice | nul
 		return {
 			status: 'warning',
 			dismissible: true,
-			message: sprintf(
-				// translators: %(ending)s is the domain ending the user typed, such as "d". %(name)s is the name searched instead.
-				__(
-					'We don’t recognize .%(ending)s, so we’re showing results for “%(name)s”. Try .com or .blog instead.'
-				),
-				{ ending: layout.unknownEnding, name: layout.baseName }
+			message: __(
+				'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 			),
 		};
 	}

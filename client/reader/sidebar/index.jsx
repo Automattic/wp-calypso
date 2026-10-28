@@ -7,7 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { Icon, commentAuthorAvatar, plus, search } from '@wordpress/icons';
 import clsx from 'clsx';
-import closest from 'component-closest';
 import i18n, { localize } from 'i18n-calypso';
 import { Component, useMemo } from 'react';
 import { connect, useSelector } from 'react-redux';
@@ -63,6 +62,11 @@ const TrackingKeys = {
 		gaEvent: 'Clicked Reader Sidebar A8C Conversations',
 		tracksEvent: 'calypso_reader_sidebar_automattic_conversations_clicked',
 	},
+	conversationsInbox: {
+		action: 'clicked_reader_sidebar_conversations_inbox',
+		gaEvent: 'Clicked Reader Sidebar Conversations Inbox',
+		tracksEvent: 'calypso_reader_sidebar_conversations_inbox_clicked',
+	},
 	discover: {
 		action: 'clicked_reader_sidebar_discover',
 		gaEvent: 'Clicked Reader Sidebar Discover',
@@ -112,7 +116,7 @@ export class ReaderSidebar extends Component {
 	}
 
 	handleClick = ( event ) => {
-		if ( ! event.isDefaultPrevented() && closest( event.target, 'a,span' ) ) {
+		if ( ! event.isDefaultPrevented() && event.target.closest( 'a,span' ) ) {
 			this.props.setNextLayoutFocus( 'content' );
 		}
 	};
@@ -310,6 +314,20 @@ export class ReaderSidebar extends Component {
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.a8cConversations ) }
 							link="/reader/conversations/a8c"
 							customIcon={ <ReaderA8cConversationsIcon size={ 24 } viewBox="-2 -2 24 24" /> }
+						/>
+					) }
+
+					{ isAutomatticTeamMember( teams ) && (
+						<SidebarItem
+							className={ ReaderSidebarHelper.itemLinkClassStartsWithOneOf(
+								[ '/reader/conversations/inbox' ],
+								path,
+								{ 'sidebar-streams__conversations': true }
+							) }
+							label={ translate( 'Conversations (WIP)' ) }
+							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.conversationsInbox ) }
+							link="/reader/conversations/inbox"
+							customIcon={ <ReaderConversationsIcon iconSize={ 24 } viewBox="0 0 24 24" /> }
 						/>
 					) }
 

@@ -63,9 +63,9 @@ export const TimeMismatchNotice = ( {
 	}
 
 	const reason = createInterpolateElement(
-		/** Translators: settingsLink is a link to the site general options page. */
+		/** Translators: settingsLink is a link to the site general options page. The link ends with an external link icon, so the sentence has no trailing full stop. */
 		__(
-			"This page uses your site's time zone, which differs from yours. <settingsLink>You can update it if needed</settingsLink>."
+			'This page uses your site’s time zone, which differs from yours. <settingsLink>You can update it if needed</settingsLink>'
 		),
 		{
 			settingsLink: (

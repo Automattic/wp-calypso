@@ -4,6 +4,7 @@
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../../test-utils';
 import { PurchaseHeaderActions } from '../index';
 import type { Purchase } from '@automattic/api-core';
@@ -75,6 +76,39 @@ describe( '<PurchaseHeaderActions />', () => {
 		expect( screen.queryByRole( 'link', { name: 'Renew' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Quick actions' } ) ).toBeVisible();
 	} );
+
+	test.each( [
+		[ false, '/checkout/example.com/jetpack_security_t1_yearly' ],
+		[ true, '/plans/example.com' ],
+	] )(
+		'upgrades a Jetpack Starter plan when Pro on sale is %s via %s',
+		async ( isProOnSale, path ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/rest/v1.1/products/' )
+				.reply( 200, {
+					jetpack_pro_yearly: { available: isProOnSale, price_tier_list: [] },
+					jetpack_security_t1_yearly: { available: true, price_tier_list: [] },
+				} );
+
+			render(
+				<PurchaseHeaderActions
+					purchase={ makePlan( {
+						product_slug: 'jetpack_starter_yearly',
+						is_jetpack_plan_or_product: true,
+						can_explicit_renew: false,
+					} ) }
+					planExpiryNoticeShowing={ false }
+				/>
+			);
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'link', { name: 'Upgrade' } ) ).toHaveAttribute(
+					'href',
+					expect.stringContaining( path )
+				)
+			);
+		}
+	);
 
 	test( 'offers nothing to someone who does not own the purchase', () => {
 		render(

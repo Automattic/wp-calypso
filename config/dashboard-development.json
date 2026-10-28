@@ -5,7 +5,7 @@
 	"client_slug": "browser",
 	"survicate_enabled": true,
 	"hostname": "my.localhost",
-	"hostname_allowlist": [ "my.localhost", "my.woo.localhost", "my.a4a.localhost" ],
+	"hostname_allowlist": [ "my.localhost", "my.a4a.localhost" ],
 	"hostname_overrides": {
 		"my.a4a.localhost": {
 			"favicon_url": "/calypso/images/favicons/favicon-a4a-dev.ico",
@@ -21,11 +21,6 @@
 				"checkout/stripe-upi": true,
 				"upgrades/redirect-payments": true
 			}
-		},
-		"my.woo.localhost": {
-			"oauth_client_id": 134404,
-			"wpcom_login_url": false,
-			"features": { "oauth": true }
 		}
 	},
 	"i18n_default_locale_slug": "en",
@@ -49,13 +44,15 @@
 		"dev/auth-helper": true,
 		"dev/preferences-helper": true,
 		"dev/store-sandbox-helper": true,
+		"difm-offer/force-treatment": false,
 		"dolly/telegram": true,
-		"domain-search/name-pulse": true,
 		"domain-transfer-redesign": true,
 		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
 		"me/legacy-contact": true,
+		"migration/reprint-flow": true,
+		"notifications/subscriber-alerts": true,
 		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
@@ -63,9 +60,11 @@
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"purchases/split-cancel-remove": false,
+		"purchases/site-transfer": true,
 		"resurrected-users/90-day-eligibility": true,
 		"rum-tracking/logstash": true,
 		"site-spec": true,
+		"ssh-multiple-keys": true,
 		"two-factor/enhanced-security": true,
 		"webauthn/related-origin-requests": true,
 		"wordpress-agent-slack": true,

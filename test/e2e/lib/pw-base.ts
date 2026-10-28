@@ -32,7 +32,6 @@ import {
 	abandonPendingLoginLockWaits,
 	AddPeoplePage,
 	AdvertisingPage,
-	AppleLoginPage,
 	BlazeCampaignPage,
 	BlockWidgetEditorComponent,
 	CartCheckoutPage,
@@ -66,17 +65,14 @@ import {
 	LOHPThemeSignupFlow,
 	MarketingPage,
 	MediaHelper,
-	MeSidebarComponent,
-	MyProfilePage,
 	NewSiteResponse,
-	NoticeComponent,
 	PeoplePage,
 	PostCheckoutSetupSitePage,
 	PreviewComponent,
-	PurchasesPage,
 	RestAPIClient,
 	Secrets,
 	SecretsManager,
+	setRunningSpecFile,
 	SidebarComponent,
 	SiteSelectComponent,
 	SignupPickPlanPage,
@@ -128,9 +124,8 @@ export type CustomOptions = {
 /**
  * Test accounts exposed as a fixture of the same name, logged in on first use.
  *
- * Two accounts are fixtures without belonging here: `accountGivenByEnvironment`, which
- * resolves at run time, and `accountSMS`, whose 2FA code costs a Mailosaur email only a
- * couple of specs need.
+ * One account is a fixture without belonging here: `accountGivenByEnvironment`, which
+ * resolves at run time.
  */
 export const fixtureAccounts = {
 	accountAtomic: 'atomicUser',
@@ -264,15 +259,12 @@ export const test = base.extend<
 		[ K in keyof typeof fixtureAccounts ]: TestAccount;
 	} & {
 		_abandonLoginLockWaits: void;
+		_runningSpecFile: void;
 		_throttleActionHandler: void;
 		/**
 		 * Test account selected based on the current environment variables.
 		 */
 		accountGivenByEnvironment: TestAccount;
-		/**
-		 * Test account used for SMS-based 2FA.
-		 */
-		accountSMS: TestAccount;
 		/**
 		 * Client for interacting with emails during tests.
 		 */
@@ -310,14 +302,6 @@ export const test = base.extend<
 		 */
 		componentDashboardSnackbar: DashboardSnackbarComponent;
 		/**
-		 * Component for the Me sidebar (profile/settings)
-		 */
-		componentMeSidebar: MeSidebarComponent;
-		/**
-		 * Component for displaying notices (e.g., success/error messages).
-		 */
-		componentNotice: NoticeComponent;
-		/**
 		 * Component for selecting items in various flows.
 		 */
 		componentSelectItems: SelectItemsComponent;
@@ -345,10 +329,6 @@ export const test = base.extend<
 		 * Page object representing the WordPress.com Advertising page.
 		 */
 		pageAdvertising: AdvertisingPage;
-		/**
-		 * Page object representing the Apple login page.
-		 */
-		pageAppleLogin: AppleLoginPage;
 		/**
 		 * Page object representing the Blaze campaign page.
 		 */
@@ -434,10 +414,6 @@ export const test = base.extend<
 		 */
 		pageMarketing: MarketingPage;
 		/**
-		 * Page object representing the WordPress.com My Profile page.
-		 */
-		pageMyProfile: MyProfilePage;
-		/**
 		 * Page object representing the WordPress.com Add People page.
 		 */
 		pageAddPeople: AddPeoplePage;
@@ -457,10 +433,6 @@ export const test = base.extend<
 		 * Page object representing the post-checkout "Let’s design your site" choice screen.
 		 */
 		pagePostCheckoutSetupSite: PostCheckoutSetupSitePage;
-		/**
-		 * Page object representing the WordPress.com purchases page.
-		 */
-		pagePurchases: PurchasesPage;
 		/**
 		 * Page object representing the Multi-site Dashboard Billing > Active upgrades screens.
 		 */
@@ -506,6 +478,21 @@ export const test = base.extend<
 			// Any teardown running means the test body is over: a wait still pending belongs to
 			// no live test, so abandoning it here cannot fail one.
 			abandonPendingLoginLockWaits();
+		},
+		{ auto: true },
+	],
+	_runningSpecFile: [
+		async ( {}, use, testInfo ) => {
+			// Lets a mixed Atomic run resolve the test's variation from fixtures, which run
+			// outside the spec file: `accountGivenByEnvironment` has to pick that site's account.
+			// The title path starts with the spec file Playwright loaded; `testInfo.file` would
+			// name the shared helper that declares the test, as `block-smoke-testing.ts` does.
+			setRunningSpecFile( testInfo.titlePath[ 0 ] );
+			try {
+				await use();
+			} finally {
+				setRunningSpecFile( undefined );
+			}
 		},
 		{ auto: true },
 	],
@@ -568,10 +555,6 @@ export const test = base.extend<
 		const testAccount = await getAccount( page, accountName );
 		await use( testAccount );
 	},
-	accountSMS: async ( { page }, use ) => {
-		const testAccount = await getAccount( page, 'smsUser' );
-		await use( testAccount );
-	},
 	clientEmail: async ( {}, use ) => {
 		const emailClient = new EmailClient();
 		await use( emailClient );
@@ -591,14 +574,6 @@ export const test = base.extend<
 	componentDashboardSnackbar: async ( { page }, use ) => {
 		const dashboardSnackbarComponent = new DashboardSnackbarComponent( page );
 		await use( dashboardSnackbarComponent );
-	},
-	componentMeSidebar: async ( { page }, use ) => {
-		const meSidebarComponent = new MeSidebarComponent( page );
-		await use( meSidebarComponent );
-	},
-	componentNotice: async ( { page }, use ) => {
-		const noticeComponent = new NoticeComponent( page );
-		await use( noticeComponent );
 	},
 	componentPreview: async ( { page }, use ) => {
 		const previewComponent = new PreviewComponent( page );
@@ -644,10 +619,6 @@ export const test = base.extend<
 	pageAdvertising: async ( { page }, use ) => {
 		const advertisingPage = new AdvertisingPage( page );
 		await use( advertisingPage );
-	},
-	pageAppleLogin: async ( { page }, use ) => {
-		const appleLoginPage = new AppleLoginPage( page );
-		await use( appleLoginPage );
 	},
 	pageDashboard: async ( { page }, use ) => {
 		const dashboardPage = new DashboardPage( page );
@@ -738,10 +709,6 @@ export const test = base.extend<
 		const myHomePage = new MyHomePage( page );
 		await use( myHomePage );
 	},
-	pageMyProfile: async ( { page }, use ) => {
-		const myProfilePage = new MyProfilePage( page );
-		await use( myProfilePage );
-	},
 	pageAddPeople: async ( { page }, use ) => {
 		const addPeoplePage = new AddPeoplePage( page );
 		await use( addPeoplePage );
@@ -757,10 +724,6 @@ export const test = base.extend<
 	pagePostCheckoutSetupSite: async ( { page }, use ) => {
 		const postCheckoutSetupSitePage = new PostCheckoutSetupSitePage( page );
 		await use( postCheckoutSetupSitePage );
-	},
-	pagePurchases: async ( { page }, use ) => {
-		const purchasesPage = new PurchasesPage( page );
-		await use( purchasesPage );
 	},
 	pageDashboardPurchases: async ( { page }, use ) => {
 		const dashboardPurchasesPage = new DashboardPurchasesPage( page );
@@ -879,6 +842,7 @@ export const tags = {
 	AUTHENTICATION: '@authentication',
 	CALYPSO_PR: '@calypso-pr',
 	CALYPSO_RELEASE: '@calypso-release',
+	CONTENT_BLOCKER: '@content-blocker',
 	DASHBOARD_PR: '@dashboard-pr',
 	DESKTOP_ONLY: '@desktop-only',
 	EDITOR_TRACKING: '@editor-tracking',

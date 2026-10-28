@@ -15,6 +15,7 @@ import {
 	getAlgorithmForStream,
 	getQueryString,
 	getQueryStringForPoll,
+	getStreamDateProperty,
 } from '..';
 
 describe( 'getQueryString', () => {
@@ -411,5 +412,34 @@ describe( 'extractPageHandle', () => {
 		expect(
 			extractPageHandle( 'following', noAction, { date_range: { after: '2026-01-01' } } )
 		).toEqual( { before: '2026-01-01' } );
+	} );
+
+	it( 'pages the saved stream by next_page_handle', () => {
+		expect(
+			extractPageHandle( 'saved', noAction, {
+				next_page_handle: 'NPH',
+				date_range: { after: '2026-01-01T00:00:00+00:00' },
+			} )
+		).toEqual( { page_handle: 'NPH' } );
+	} );
+
+	it( 'ends the saved stream when next_page_handle is missing', () => {
+		expect(
+			extractPageHandle( 'saved', noAction, {
+				date_range: { after: '2026-01-01T00:00:00+00:00' },
+			} )
+		).toBeNull();
+	} );
+} );
+
+describe( 'getStreamDateProperty', () => {
+	it.each( [
+		[ 'conversations', 'last_comment_date_gmt' ],
+		[ 'conversations-a8c', 'last_comment_date_gmt' ],
+		[ 'likes', 'date_liked' ],
+		[ 'saved', 'date_saved' ],
+		[ 'following', 'date' ],
+	] )( 'dates %s stream items by %s', ( streamType, dateProperty ) => {
+		expect( getStreamDateProperty( streamType ) ).toBe( dateProperty );
 	} );
 } );

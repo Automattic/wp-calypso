@@ -1,8 +1,10 @@
 /** @jest-environment jsdom */
 import page from '@automattic/calypso-router';
+import { render } from '@testing-library/react';
 import { HandleEmailedLinkForm } from '../handle-emailed-link-form';
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
+jest.mock( '../emailed-login-link-expired', () => () => null );
 
 // The two-factor-challenge fields the auth thunk dispatches via LOGIN_REQUEST_SUCCESS.
 const TWO_FACTOR_PROPS = {
@@ -120,5 +122,54 @@ describe( 'HandleEmailedLinkForm 2FA handoff', () => {
 		expect( instance.props.showMagicLoginLinkExpiredPage ).toHaveBeenCalled();
 		expect( page ).not.toHaveBeenCalled();
 		expect( instance.props.rebootAfterLogin ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'HandleEmailedLinkForm view tracking', () => {
+	const baseProps = {
+		emailAddress: 'user@example.com',
+		token: 'a-token',
+		oauth2Client: {},
+		initialQuery: {},
+		translate: ( text ) => text,
+		fetchMagicLoginAuthenticate: jest.fn(),
+		showMagicLoginLinkExpiredPage: jest.fn(),
+		rebootAfterLogin: jest.fn(),
+	};
+
+	it( 'records the view event once across re-renders', () => {
+		const recordTracksEvent = jest.fn();
+		const { rerender } = render(
+			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } />
+		);
+
+		rerender(
+			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } isFetching />
+		);
+
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_login_email_link_handle_click_view'
+		);
+	} );
+
+	it( 'does not record the view event when the link is already expired on mount', () => {
+		const recordTracksEvent = jest.fn();
+
+		render(
+			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } isExpired />
+		);
+
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not record the view event when the link has no token', () => {
+		const recordTracksEvent = jest.fn();
+
+		render(
+			<HandleEmailedLinkForm { ...baseProps } recordTracksEvent={ recordTracksEvent } token="" />
+		);
+
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 } );

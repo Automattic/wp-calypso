@@ -36,8 +36,8 @@ export interface CurrencyFormatter {
 	 *
 	 * If `isSmallestUnit` is set and the number is not an integer, it will be
 	 * rounded to an integer.
-	 * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
-	 * @param      {string}                   code       currency code e.g. 'USD'
+	 * @param      {number}                   amount     number to format; assumed to be a float unless isSmallestUnit is set.
+	 * @param      {string}                   currencyCode currency code e.g. 'USD'
 	 * @param      {CurrencyObjectOptions}    options    options object
 	 * @returns    {string}                  A formatted string.
 	 */
@@ -81,8 +81,8 @@ export interface CurrencyFormatter {
 	 *
 	 * If `isSmallestUnit` is set and the number is not an integer, it will be
 	 * rounded to an integer.
-	 * @param      {number}                   number     number to format; assumed to be a float unless isSmallestUnit is set.
-	 * @param      {string}                   code       currency code e.g. 'USD'
+	 * @param      {number}                   amount     number to format; assumed to be a float unless isSmallestUnit is set.
+	 * @param      {string}                   currencyCode currency code e.g. 'USD'
 	 * @param      {CurrencyObjectOptions}    options    options object
 	 * @returns    {CurrencyObject}          A formatted string e.g. { symbol:'$', integer: '$99', fraction: '.99', sign: '-' }
 	 */

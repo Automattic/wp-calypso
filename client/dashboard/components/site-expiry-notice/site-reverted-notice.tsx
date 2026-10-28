@@ -1,11 +1,10 @@
-import { siteCurrentUserMetaMutation } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { getCalendarDaysUntil } from '../../utils/datetime';
 import Notice from '../notice';
 import { getExpiryStateName, getSiteRevertedNotice } from '../plan-expiry-notice';
+import { useExpiryNoticeDismissal } from './use-expiry-notice-dismissal';
 import type { PlanExpiryEventStage } from '../plan-expiry-notice';
 import type { SiteExpiryRevertedState } from './use-site-expiry-notice';
 
@@ -34,8 +33,11 @@ export function SiteRevertedNotice( {
 	onContactSupport,
 }: SiteRevertedNoticeProps ) {
 	const { revertedAt, dismissMetaKey } = state;
-	const [ isDismissed, setIsDismissed ] = useState( false );
-	const { mutate: updateMeta } = useMutation( siteCurrentUserMetaMutation( siteId ) );
+	const { isDismissed, dismiss } = useExpiryNoticeDismissal(
+		siteId,
+		dismissMetaKey,
+		recordTracksEvent
+	);
 	const notice = getSiteRevertedNotice();
 
 	const daysRemaining = getCalendarDaysUntil( new Date( revertedAt ) );
@@ -57,26 +59,6 @@ export function SiteRevertedNotice( {
 		recordTracksEvent( 'calypso_purchases_plan_expiry_notice_impression', eventProperties );
 	}, [ recordTracksEvent, eventProperties ] );
 
-	const dismiss = () => {
-		if ( ! dismissMetaKey ) {
-			return;
-		}
-		setIsDismissed( true );
-		recordTracksEvent( 'calypso_purchases_plan_expiry_notice_dismiss', eventProperties );
-		updateMeta(
-			{ [ dismissMetaKey ]: 1 },
-			{
-				onError: ( error ) => {
-					setIsDismissed( false );
-					recordTracksEvent( 'calypso_purchases_plan_expiry_notice_dismiss_failed', {
-						...eventProperties,
-						error_message: error instanceof Error ? error.message : String( error ),
-					} );
-				},
-			}
-		);
-	};
-
 	const contactSupport = () => {
 		recordTracksEvent( 'calypso_purchases_plan_expiry_notice_click', {
 			...eventProperties,
@@ -94,7 +76,7 @@ export function SiteRevertedNotice( {
 		<Notice
 			variant="error"
 			title={ notice.title }
-			onClose={ dismissMetaKey ? dismiss : undefined }
+			onClose={ dismiss && ( () => dismiss( eventProperties ) ) }
 			actions={
 				onContactSupport && (
 					<Button variant="primary" onClick={ contactSupport }>

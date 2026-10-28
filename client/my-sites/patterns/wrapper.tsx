@@ -10,12 +10,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 
 import './style.scss';
 
-type PatternsWrapperProps = React.PropsWithChildren< { hideGetStartedCta?: boolean } >;
-
-export const PatternsWrapper = ( {
-	hideGetStartedCta = false,
-	children,
-}: PatternsWrapperProps ) => {
+export const PatternsWrapper = ( { children }: React.PropsWithChildren ) => {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const locale = useLocale();
 	const footerColorway = getFooterColorway(
@@ -26,11 +21,7 @@ export const PatternsWrapper = ( {
 	return (
 		<>
 			{ isLoggedIn && (
-				<Nav2026UniversalHeader
-					hideGetStartedCta={ hideGetStartedCta }
-					isLoggedIn
-					startUrl={ getOnboardingUrl( locale, isLoggedIn ) }
-				/>
+				<Nav2026UniversalHeader isLoggedIn startUrl={ getOnboardingUrl( locale, isLoggedIn ) } />
 			) }
 
 			<Main fullWidthLayout>{ children }</Main>

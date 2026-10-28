@@ -25,6 +25,36 @@ describe( 'useStepNavigator', () => {
 		);
 	} );
 
+	it.each( [
+		{
+			siteId: 123,
+			siteSlug: 'import-target.wordpress.com',
+			url: '/home/import-target.wordpress.com',
+		},
+		{
+			siteId: null,
+			siteSlug: 'import-target.wordpress.com',
+			url: '/home/import-target.wordpress.com',
+		},
+		{ siteId: 123, siteSlug: null, url: '/home/123' },
+		{ siteId: null, siteSlug: null, url: '/home/' },
+	] )(
+		'should redirect to $url for site ID $siteId and slug $siteSlug',
+		( { siteId, siteSlug, url } ) => {
+			const navigation = { submit: jest.fn() };
+			const { result } = renderHook(
+				() => useStepNavigator( flow, navigation, siteId, siteSlug, null, null ),
+				{ wrapper }
+			);
+
+			act( () => {
+				result.current.goToDashboardPage?.();
+			} );
+
+			expect( navigation.submit ).toHaveBeenCalledWith( { type: 'redirect', url } );
+		}
+	);
+
 	it( 'should return default checkout url', async () => {
 		const navigation = {
 			submit: jest.fn(),

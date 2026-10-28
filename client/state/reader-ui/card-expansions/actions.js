@@ -1,6 +1,8 @@
 import DISPLAY_TYPES from 'calypso/reader/data/post/display-types';
+import { getCachedIsFollowingPost } from 'calypso/reader/data/site-subscriptions/cache';
 import { markPostSeen } from 'calypso/reader/mark-post-seen';
 import * as stats from 'calypso/reader/stats';
+import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	READER_EXPAND_CARD,
 	READER_RESET_CARD_EXPANSIONS,
@@ -15,7 +17,9 @@ export const expandCard = ( { postKey, post, site } ) => {
 		} else if ( post.display_type & DISPLAY_TYPES.FEATURED_VIDEO ) {
 			stats.recordTrackForPost( 'calypso_reader_video_expanded', post );
 		}
-		stats.recordTrackForPost( 'calypso_reader_article_opened', post );
+		stats.recordTrackForPost( 'calypso_reader_article_opened', post, {
+			is_following: getCachedIsFollowingPost( getCalypsoQueryClient(), post ),
+		} );
 
 		// Record page view
 		markPostSeen( post, site );

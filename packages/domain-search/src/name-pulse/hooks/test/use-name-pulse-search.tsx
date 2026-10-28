@@ -17,11 +17,7 @@ import {
 	withNamePulseQueries,
 } from '../../../test-helpers/factories/name-pulse';
 import { queryClient, TestDomainSearch } from '../../../test-helpers/renderer';
-import {
-	NAME_PULSE_AI_TIMEOUT_MS,
-	NAME_PULSE_QUERY_SETTLE_MS,
-	NamePulseDomainStatus,
-} from '../../helpers';
+import { NAME_PULSE_QUERY_SETTLE_MS, NamePulseDomainStatus } from '../../helpers';
 import { useNamePulseSearch } from '../use-name-pulse-search';
 import { namePulseVerdictQueryKey, setNamePulseVerdict } from '../use-name-pulse-verdicts';
 import type {
@@ -377,7 +373,6 @@ describe( 'useNamePulseSearch', () => {
 		expect( suggestions ).toHaveBeenCalledWith( {
 			query: 'a blog about icecream',
 			use_ai: true,
-			timeout: NAME_PULSE_AI_TIMEOUT_MS,
 		} );
 
 		await waitFor( () => expect( result.current.isLoadingTop ).toBe( false ) );
@@ -444,7 +439,7 @@ describe( 'useNamePulseSearch', () => {
 
 		await waitFor( () =>
 			expect( result.current.notice?.message ).toBe(
-				'We don’t recognize .d, so we’re showing results for “icecreamd”. Try .com or .blog instead.'
+				'We don’t recognize that ending. Try .com or .blog, or enter just the name and we’ll suggest the rest.'
 			)
 		);
 		await waitFor( () =>

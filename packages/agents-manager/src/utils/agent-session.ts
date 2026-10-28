@@ -19,6 +19,9 @@ import { getResolvedAgentId } from './resolved-agent-id';
 /** Base storage key; `getTabSessionKey` scopes it per agent, site and user. */
 const SESSION_STORAGE_KEY = 'agents-manager-session-id';
 
+/** Marks a client-minted session no turn has been sent in yet. */
+const UNSENT_SESSION_KEY_PREFIX = 'agents-manager-unsent-session:';
+
 /** Scope placeholders for a chat with no selected site, or no logged-in user. */
 export const NO_SITE = 'no-site';
 const NO_USER = 'no-user';
@@ -75,8 +78,9 @@ export function getSessionId(
 
 /**
  * The active session ID for non-React callers (ability callbacks, the Tracks
- * wrapper) — read under the agent scope the Provider publishes, so the answer
- * matches the mounted chat's on every surface, Dolly included.
+ * wrapper) and the credits purchase link, which must match its click event — read
+ * under the agent scope the Provider publishes, so the answer matches the mounted
+ * chat's on every surface, Dolly included.
  */
 export function getActiveSessionId(): string {
 	return getSessionId( getResolvedAgentId() );
@@ -132,9 +136,50 @@ export function getOrCreateSessionId(
 		return existing;
 	}
 
-	saveSessionId( generateUUID(), agentId, siteKey, userId );
+	const sessionId = generateUUID();
+	saveSessionId( sessionId, agentId, siteKey, userId );
+	try {
+		sessionStorage.setItem( UNSENT_SESSION_KEY_PREFIX + sessionId, '1' );
+	} catch {}
 
 	// Read back so unavailable storage yields a stable '' instead of a fresh
 	// UUID per call, which would re-initialize the agent on every render.
 	return getSessionId( agentId, siteKey, userId );
+}
+
+/**
+ * Whether `sessionId` was minted in this tab and has had no turn sent yet, so
+ * the server does not know it and there is no transcript to fetch.
+ */
+export function isUnsentSession( sessionId: string ): boolean {
+	try {
+		return sessionStorage.getItem( UNSENT_SESSION_KEY_PREFIX + sessionId ) === '1';
+	} catch {
+		return false;
+	}
+}
+
+/** Record that a turn was sent in `sessionId`, so later page loads fetch it. */
+export function markSessionSent( sessionId: string ): void {
+	try {
+		sessionStorage.removeItem( UNSENT_SESSION_KEY_PREFIX + sessionId );
+	} catch {}
+}
+
+interface SessionScope {
+	/** The site, user and agent the session belongs to. */
+	scopeIdentity: string;
+	sessionId: string;
+}
+
+/**
+ * Whether a session switch is a new chat's bootstrap: it starts with an empty
+ * session ID, then switches to the server's within the same scope.
+ */
+export function isSessionBootstrap( previous: SessionScope, next: SessionScope ): boolean {
+	return (
+		previous.scopeIdentity === next.scopeIdentity &&
+		previous.sessionId === '' &&
+		next.sessionId !== ''
+	);
 }

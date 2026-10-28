@@ -2,9 +2,11 @@
  * @jest-environment jsdom
  */
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import VideoSummary from '../video-summary';
+import type { ReactNode } from 'react';
 
 jest.mock( 'calypso/components/data/query-site-stats', () => () => null );
 jest.mock( 'calypso/state/ui/selectors', () => ( { getSelectedSiteId: () => 123 } ) );
@@ -16,8 +18,25 @@ jest.mock( 'calypso/state/stats/lists/selectors', () => ( {
 	isRequestingSiteStatsForQuery: () => false,
 } ) );
 
-jest.mock( '../../stats-period-navigation', () => () => null );
-jest.mock( '../../stats-date-label', () => () => null );
+// The site's "today", read through the site-zone moment the header clamps on.
+let mockSiteToday = '2026-07-02';
+jest.mock( '../../hooks/use-moment-site-zone', () => ( {
+	useMomentInSite: () => ( dateInput?: string ) =>
+		jest.requireActual( 'moment' )( dateInput ?? mockSiteToday ),
+} ) );
+
+jest.mock(
+	'../../stats-period-navigation',
+	() =>
+		( { children }: { children: ReactNode } ) =>
+			children
+);
+
+let mockDateLabelProps: { dateRange?: { chartStart: string; chartEnd: string } };
+jest.mock( '../../stats-date-label', () => ( props: typeof mockDateLabelProps ) => {
+	mockDateLabelProps = props;
+	return null;
+} );
 
 let mockChartProps: { data: Array< { formattedValue?: string } > };
 jest.mock( '../../stats-summary', () => ( props: typeof mockChartProps ) => {
@@ -74,5 +93,29 @@ describe( 'VideoSummary retention rate', () => {
 
 		expect( retentionTabValue() ).toContain( '0.0%' );
 		expect( mockChartProps.data[ 0 ].formattedValue ).toBe( '0.0%' );
+	} );
+} );
+
+describe( 'VideoSummary header range', () => {
+	it.each( [
+		[
+			"ends on the site's today, not the end of the period",
+			[ '2026-07-01' ],
+			'2026-07-02',
+			'2026-07-02',
+		],
+		[
+			'never ends before the newest charted bucket',
+			[ '2026-07-01', '2026-07-03' ],
+			'2026-07-02',
+			'2026-07-03',
+		],
+	] )( '%s', async ( _, periods, siteToday, chartEnd ) => {
+		mockSiteToday = siteToday;
+		renderSummary( periods.map( ( period ) => ( { period, plays: 1, retention_rate: 50 } ) ) );
+
+		await userEvent.click( screen.getByText( 'Months' ) );
+
+		expect( mockDateLabelProps.dateRange ).toEqual( { chartStart: '2026-07-01', chartEnd } );
 	} );
 } );

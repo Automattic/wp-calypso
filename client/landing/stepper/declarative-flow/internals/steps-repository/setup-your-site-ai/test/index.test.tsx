@@ -4,7 +4,7 @@
 import config from '@automattic/calypso-config';
 import { useQuery as useDataQuery } from '@tanstack/react-query';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import { SITE_SELECTED_REF, WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getSignupCompleteSlug } from 'calypso/signup/storageUtils';
 import { usePlanCartItem } from '../../../../../hooks/use-plan-cart-item';
@@ -59,9 +59,14 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 	getSignupCompleteSlug: jest.fn(),
 } ) );
 
-jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => ( {
-	planSupportsBuildWow: ( slug?: string ) => !! slug && slug !== 'pro-plan',
-} ) );
+jest.mock( 'calypso/landing/stepper/utils/build-wow-plans', () => {
+	const isCommerce = ( slug?: string ) => /^ecommerce-(trial-)?bundle/.test( slug ?? '' );
+	return {
+		planSupportsBuildWow: ( slug?: string ) =>
+			!! slug && slug !== 'pro-plan' && ! isCommerce( slug ),
+		planBuildsStoreOnBuildWow: isCommerce,
+	};
+} );
 
 jest.mock( '../../../../../hooks/use-plan-cart-item', () => ( {
 	usePlanCartItem: jest.fn(),
@@ -132,7 +137,10 @@ describe( 'SetupYourSiteAIStep', () => {
 		it( 'renders the custom design card before the template card by default', () => {
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
 		} );
 
 		it( 'keeps the AI prompt card before the template card for the Woo hosting solutions ref', () => {
@@ -140,7 +148,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a pre-made design' ] );
 		} );
 	} );
 
@@ -148,7 +156,7 @@ describe( 'SetupYourSiteAIStep', () => {
 		it( 'submits the blank-site choice from the template card', () => {
 			renderStep();
 
-			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a template' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) );
 
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_onboarding_setup_your_site_with_ai_selection',
@@ -159,6 +167,42 @@ describe( 'SetupYourSiteAIStep', () => {
 				siteSlug: 'example.wordpress.com',
 			} );
 		} );
+
+		it.each( [
+			{
+				selection: 'blank-site',
+				choose: () =>
+					fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) ),
+				properties: { selection: 'blank-site' },
+			},
+			{
+				selection: 'generate-theme',
+				choose: () => clickCustomDesign(),
+				properties: { selection: 'generate-theme', graph: 'dsl' },
+			},
+			{
+				selection: 'build-with-ai',
+				plan: 'pro-plan',
+				choose: () => clickCustomDesign(),
+				properties: { selection: 'build-with-ai', has_prompt: false },
+			},
+		] )(
+			'tags the $selection selection with the ref the step was reached with',
+			( { plan, choose, properties } ) => {
+				mockQueryParams = new URLSearchParams( { ref: SITE_SELECTED_REF } );
+				if ( plan ) {
+					setSitePlan( plan );
+				}
+
+				renderStep();
+				choose();
+
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_onboarding_setup_your_site_with_ai_selection',
+					{ ...properties, ref: SITE_SELECTED_REF }
+				);
+			}
+		);
 
 		it( 'submits the generate-theme choice from the custom design card on an Atomic-capable plan', () => {
 			renderStep();
@@ -194,6 +238,25 @@ describe( 'SetupYourSiteAIStep', () => {
 				siteId: 123,
 			} );
 		} );
+
+		it.each( [ 'ecommerce-bundle', 'ecommerce-trial-bundle-monthly' ] )(
+			'submits the generate-theme choice from the custom design card on %s',
+			( planSlug ) => {
+				setSitePlan( planSlug );
+
+				renderStep();
+
+				clickCustomDesign();
+
+				expect( navigation.submit ).toHaveBeenCalledWith( {
+					setupChoice: 'generate-theme',
+					siteSlug: 'example.wordpress.com',
+					siteId: 123,
+					graph: 'dsl',
+					buildsStore: true,
+				} );
+			}
+		);
 
 		it( 'keeps the Woo hosting solutions form on build-with-ai', () => {
 			mockQueryParams = new URLSearchParams( { ref: WOO_HOSTING_SOLUTIONS_REF } );
@@ -244,13 +307,17 @@ describe( 'SetupYourSiteAIStep', () => {
 			renderStep();
 
 			clickCustomDesign();
-			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Start with a pre-made design' } )
+			).toBeDisabled();
 
 			const pageshow = new Event( 'pageshow' ) as PageTransitionEvent;
 			Object.defineProperty( pageshow, 'persisted', { value: true } );
 			fireEvent( window, pageshow );
 
-			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeEnabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Start with a pre-made design' } )
+			).toBeEnabled();
 		} );
 
 		it( 'submits a choice only once per visit and disables the controls', () => {
@@ -258,10 +325,12 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			clickCustomDesign();
 			clickCustomDesign();
-			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a template' } ) );
+			fireEvent.click( screen.getByRole( 'button', { name: 'Start with a pre-made design' } ) );
 
 			expect( navigation.submit ).toHaveBeenCalledTimes( 1 );
-			expect( screen.getByRole( 'button', { name: 'Start with a template' } ) ).toBeDisabled();
+			expect(
+				screen.getByRole( 'button', { name: 'Start with a pre-made design' } )
+			).toBeDisabled();
 			expect( screen.getByRole( 'button', { name: 'Create a custom design' } ) ).toBeDisabled();
 		} );
 	} );
@@ -276,7 +345,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			expect( getButtonNames() ).toEqual( [
 				'Create a custom design',
-				'Start with a template',
+				'Start with a pre-made design',
 				'Create a custom design (blocks-first)',
 			] );
 		} );
@@ -305,7 +374,10 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
 		} );
 
 		it( 'hides the blocks-first card on a plan that cannot take build-wow', () => {
@@ -313,7 +385,10 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Create a custom design', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [
+				'Create a custom design',
+				'Start with a pre-made design',
+			] );
 		} );
 
 		it( 'hides the blocks-first card for the Woo hosting solutions ref', () => {
@@ -321,7 +396,7 @@ describe( 'SetupYourSiteAIStep', () => {
 
 			renderStep();
 
-			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a template' ] );
+			expect( getButtonNames() ).toEqual( [ 'Build with AI', 'Start with a pre-made design' ] );
 		} );
 	} );
 
@@ -329,6 +404,21 @@ describe( 'SetupYourSiteAIStep', () => {
 		beforeEach( () => {
 			isEnabled.mockImplementation( ( flag: string ) => flag !== 'site-spec' );
 		} );
+
+		it.each( [ 'ecommerce-bundle', 'ecommerce-trial-bundle-monthly' ] )(
+			'keeps %s on build-with-ai',
+			( planSlug ) => {
+				setSitePlan( planSlug );
+
+				renderStep();
+
+				clickCustomDesign();
+
+				expect( navigation.submit ).toHaveBeenCalledWith(
+					expect.objectContaining( { setupChoice: 'build-with-ai' } )
+				);
+			}
+		);
 
 		it( 'submits the build-with-ai choice from the custom design card', () => {
 			renderStep();

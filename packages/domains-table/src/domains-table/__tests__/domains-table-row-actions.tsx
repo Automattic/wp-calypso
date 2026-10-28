@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { screen, act } from '@testing-library/react';
+import { screen, act, waitFor } from '@testing-library/react';
 import { renderWithProvider } from '../../test-utils';
 import { ResponseDomain } from '../../utils/types';
 import { DomainsTableStateContext } from '../domains-table';
@@ -121,4 +121,43 @@ test( 'when transfer action is clicked it should show the transfer page', async 
 	expect( page ).toHaveBeenCalledWith(
 		'/domains/add/use-my-domain/example?initialQuery=example.com&initialMode=transfer-domain'
 	);
+} );
+
+describe( 'change site address action', () => {
+	const siteAddressDomain = {
+		...domain,
+		name: 'example.wordpress.com',
+		domain: 'example.wordpress.com',
+		type: 'wpcom',
+	} as ResponseDomain;
+
+	const openMenu = async (
+		props: Partial< React.ComponentProps< typeof DomainsTableRowActions > >
+	) => {
+		render(
+			<DomainsTableRowActions
+				{ ...defaultProps }
+				domain={ siteAddressDomain }
+				isAllSitesView={ false }
+				isSimpleSite
+				{ ...props }
+			/>
+		);
+
+		await act( async () => {
+			screen.getByRole( 'button', { name: 'Domain actions' } ).click();
+		} );
+	};
+
+	test( 'is shown for a Simple site', async () => {
+		await openMenu( {} );
+
+		await waitFor( () => expect( screen.getByText( 'Change site address' ) ).toBeVisible() );
+	} );
+
+	test( 'is hidden for a suspended site', async () => {
+		await openMenu( { domain: { ...siteAddressDomain, isSuspendedSite: true } } );
+
+		expect( screen.queryByText( 'Change site address' ) ).not.toBeInTheDocument();
+	} );
 } );

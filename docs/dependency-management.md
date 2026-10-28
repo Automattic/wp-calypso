@@ -48,11 +48,11 @@ yarn add -w <dependency>
 
 Sometimes you'll want to [create a package](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/guide/monorepo.md#a-sample-packagejson) and use it as another workspace's dependency before it's published. To add such dependency, make sure you **specify its exact version** because otherwise, `yarn` will try to resolve it from the `npm` registry and throw the `Not found` error.
 
-Let's say you created a polyfill package and want to add it as a dependency to `packages/calypso-polyfills`. Doing this will make `yarn` resolve to your fresh (unpublished) package and install it as a symlink:
+Let's say you created a package and want to add it as a dependency to another workspace, such as `packages/<package-dir>`. Doing this will make `yarn` resolve to your fresh (unpublished) package and install it as a symlink:
 
 ```
-cd packages/calypso-polyfills
-yarn add @automattic/my-awesome-polyfill@1.0.0
+cd packages/<package-dir>
+yarn add @automattic/my-awesome-package@1.0.0
 ```
 
 That's it! Don't forget to [publish the package](https://github.com/Automattic/wp-calypso/blob/HEAD/docs/guide/monorepo.md#publishing) after merging your PR!
@@ -73,6 +73,8 @@ To delete a dependency of the root project, run:
 ```
 yarn remove -w uuid
 ```
+
+The root `package.json` lists `@babel/code-frame`, `@babel/generator`, `@babel/helper-module-imports`, `@babel/helper-plugin-utils`, `@babel/parser`, `@babel/template`, `@babel/traverse` and `@babel/types` although nothing at the root imports them. They put the Babel 8 copies at the root of `node_modules`. Without them, tools still on Babel 7 (Jest's internals, react-docgen and others) keep the 7.x copies there, every Babel 8 plugin gets its own nested 8.x copy, and each webpack Babel worker loads up to 16 copies of `@babel/types`. Remove them once `yarn why @babel/types` shows nothing that asks for 7.x.
 
 ### Update a dependency
 

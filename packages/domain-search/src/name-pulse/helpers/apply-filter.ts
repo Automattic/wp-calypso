@@ -1,8 +1,7 @@
 import type { NamePulseDomainResult } from './types';
 
 /**
- * The suggestions endpoint takes no filter, so the selected endings are applied
- * to the rows. Nothing selected keeps every row.
+ * For AI suggestions, which ignore `tlds`. Nothing selected keeps every row.
  */
 export function filterNamePulseSuggestions(
 	results: NamePulseDomainResult[],

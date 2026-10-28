@@ -42,7 +42,6 @@ checkstyle.xml
 /coverage
 
 /build
-/packages/webpack-inline-constant-exports-plugin/test/build
 
 /public/
 
@@ -121,10 +120,6 @@ yarn-json-output.json
 # Storybook
 storybook-static
 packages/plans-grid-next/static/mockServiceWorker.js
-
-# PHPUnit cache
-.phpunit.result.cache
-.phpunit.cache
 
 # Playwright
 playwright-report/

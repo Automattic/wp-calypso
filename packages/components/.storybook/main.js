@@ -1,12 +1,9 @@
-const storybookDefaultConfig = require( '@automattic/calypso-storybook' );
+import storybookDefaultConfig from '@automattic/calypso-storybook';
 
-module.exports = {
-	...storybookDefaultConfig( {
-		stories: [
-			'../{src,styles}/**/*.stories.{js,jsx,ts,tsx}',
-			'../{src,styles}/**/*.mdx',
-			'./**/*.mdx',
-		],
-	} ),
-	docs: { autodocs: true },
-};
+export default storybookDefaultConfig( {
+	stories: [
+		'../{src,styles}/**/*.stories.{js,jsx,ts,tsx}',
+		'../{src,styles}/**/*.mdx',
+		'./**/*.mdx',
+	],
+} );

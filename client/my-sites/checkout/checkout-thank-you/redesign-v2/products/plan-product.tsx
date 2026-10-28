@@ -1,5 +1,7 @@
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { isWpComEcommercePlan } from '@automattic/calypso-products';
 import { useLaunchpad } from '@automattic/launchpad';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { useDispatch as useWPDispatch } from '@wordpress/data';
 import { translate } from 'i18n-calypso';
@@ -7,13 +9,7 @@ import moment from 'moment';
 import { useCallback, useEffect, useState } from 'react';
 import ThankYouProduct from 'calypso/components/thank-you-v2/product';
 import { SITE_STORE } from 'calypso/landing/stepper/stores';
-import { useSelector } from 'calypso/state';
-import {
-	getRawSitePurchases,
-	hasLoadedSitePurchasesFromServer,
-	isFetchingSitePurchases,
-} from 'calypso/state/purchases/selectors';
-import { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 export type ThankYouPlanProductProps = {
 	purchase: ReceiptPurchase;
@@ -28,20 +24,16 @@ export default function ThankYouPlanProduct( {
 	siteId,
 	checkoutType,
 }: ThankYouPlanProductProps ) {
-	const isLoadingPurchases = useSelector(
-		( state ) => isFetchingSitePurchases( state ) || ! hasLoadedSitePurchasesFromServer( state )
-	);
+	const { data: productPurchase, isPending: isLoadingPurchases } = useQuery( {
+		...sitePurchasesQuery( siteId ?? 0 ),
+		enabled: !! siteId,
+		select: ( sitePurchases ) =>
+			sitePurchases.find( ( sitePurchase ) => sitePurchase.product_slug === purchase.productSlug ),
+	} );
 
-	const productPurchase = useSelector( ( state ) =>
-		getRawSitePurchases( state, siteId ).find(
-			( sitePurchase ) => sitePurchase.product_slug === purchase.productSlug
-		)
-	);
-
-	const expirationDate =
-		! isLoadingPurchases && productPurchase
-			? translate( 'Expires on %s', { args: moment( productPurchase.expiry_date ).format( 'LL' ) } )
-			: '';
+	const expirationDate = productPurchase
+		? translate( 'Expires on %s', { args: moment( productPurchase.expiry_date ).format( 'LL' ) } )
+		: '';
 
 	const [ letsWorkButtonBusy, setLetsWorkButtonBusy ] = useState< boolean >( false );
 	const [ redirectTo, setRedirectTo ] = useState< 'home' | 'launchpad' >( 'home' );
@@ -86,7 +78,7 @@ export default function ThankYouPlanProduct( {
 				setLetsWorkButtonBusy( true );
 
 				const redirect = async () => {
-					if ( launchpad.launchpad_screen === 'skipped' ) {
+					if ( siteId && launchpad.launchpad_screen === 'skipped' ) {
 						await saveSiteSettings( siteId, { launchpad_screen: 'full' } );
 					}
 					setLetsWorkButtonBusy( false );

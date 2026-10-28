@@ -43,34 +43,12 @@
 				}
 			}
 
-			&.plan-is-footer {
-				padding-top: 50px;
-				padding-bottom: 24px;
-			}
-
 			&.is-placeholder-header-cell {
 				display: initial;
 			}
 		}
 
-		@include plans-grid-large {
-			&.plan-is-footer {
-				padding-top: 110px;
-			}
-		}
-
 		&.popular-plan-parent-class {
-			.plan-features-2023-grid__popular-badge {
-				&.is-current-plan {
-					.plans-grid__plan-pill {
-						background: #e0e0e0;
-						color: var(--studio-gray-100);
-					}
-				}
-			}
-		}
-
-		&.popular-plan-parent-class:not(.plan-is-footer) {
 			.plan-features-2023-grid__popular-badge {
 				width: 100%;
 				background: #fff;
@@ -78,6 +56,13 @@
 
 				.plans-grid__plan-pill {
 					top: 20px;
+				}
+
+				&.is-current-plan {
+					.plans-grid__plan-pill {
+						background: #e0e0e0;
+						color: var(--studio-gray-100);
+					}
 				}
 			}
 
@@ -171,9 +156,6 @@
 
 			@include plans-grid-medium-large {
 				left: 15px;
-			}
-			@include plans-grid-large {
-				top: 55px;
 			}
 		}
 	}

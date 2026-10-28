@@ -10,13 +10,12 @@ const openComment = ( { siteId, postId, href, commentId } ) => ( {
 } );
 
 export const interceptLinks = ( event ) => ( dispatch ) => {
-	const { target } = event;
+	const node = event.target.closest?.( 'a' );
 
-	if ( 'A' !== target.tagName && 'A' !== target.parentNode.tagName ) {
+	if ( ! node ) {
 		return;
 	}
 
-	const node = 'A' === target.tagName ? target : target.parentNode;
 	const { dataset = {}, href } = node;
 	const { linkType, postId, siteId, commentId, tracksEvent } = dataset;
 

@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { prepareTimestamp, validateTimeSlot, validatePlugins } from '../helpers';
+import { prepareTimestamp, validateTimeSlot, validatePlugins } from '../utils';
 import { useSchedulesBySite } from './use-schedules-by-site';
 import type { Frequency, Weekday, ScheduleCollisions } from '../types';
 

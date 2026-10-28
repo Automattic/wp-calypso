@@ -4,11 +4,14 @@
 @import '@wordpress/base-styles/mixins';
 @import './reset.scss';
 
-.wpnc__note .wpnc__body .wpnc__body-content {
+.wpnc__note .wpnc__body .wpnc__body-content,
+.wpnc-simplified__parent-text {
 	padding: 0;
 	margin: 0;
 	line-height: 20px;
-	text-wrap: balance;
+	// Balancing evens out line lengths by breaking early, which leaves paragraphs
+	// ragged; it is kept for headings only.
+	text-wrap: pretty;
 	// Break long unbroken strings (e.g. URLs) so they wrap instead of
 	// overflowing horizontally, which is especially visible on mobile.
 	overflow-wrap: break-word;
@@ -29,22 +32,28 @@
 		text-align: justify;
 	}
 
-	.wpnc__h1 {
-		font-size: $font-size-2x-large;
-		font-weight: 850; /* stylelint-disable-line scales/font-weights */
-		line-height: 1.4;
+	// Headings sit beside 13px text in a narrow panel, so they mark sections rather
+	// than title a page: close to body size, with room above to separate them.
+	:is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
+		margin: $grid-unit-10 0 $grid-unit-05;
+		font-size: $font-size-large;
+		font-weight: $font-weight-medium;
+		line-height: 24px;
+		text-wrap: balance;
+
+		&:first-child {
+			margin-block-start: 0;
+		}
 	}
 
-	.wpnc__h2 {
-		font-size: 26px;
-		font-weight: 750; /* stylelint-disable-line scales/font-weights */
-		line-height: 1.4;
+	:is(h3, h4, h5, h6, .wpnc__h3) {
+		font-size: $font-size-large;
+		line-height: 20px;
 	}
 
-	.wpnc__h3 {
-		font-size: 18px;
-		font-weight: 700;
-		line-height: 1.4;
+	// Matches the dashboard's emphasis, which is lighter than the browser's bold.
+	:is(strong, b) {
+		font-weight: 600;
 	}
 
 	.uppercase {
@@ -86,7 +95,14 @@
 		display: block;
 		max-width: 100%;
 		height: auto;
-		margin: auto;
+		margin: 0 auto $grid-unit-10;
+		border-radius: $radius-small;
+	}
+
+	// Emojis arrive as images wrapped in an inline span and must stay on the text line.
+	.wpnc__span > .wpnc__image {
+		margin-bottom: 0;
+		border-radius: 0;
 	}
 
 	.wpnc__badge {
@@ -134,6 +150,11 @@
 			color: var(--wp-components-color-accent-inverted, #fff);
 			background: var(--wp-components-color-accent-darker-10, var(--wp-admin-theme-color-darker-10, #2145e6));
 		}
+
+		&:focus-visible {
+			outline: var(--wp-admin-border-width-focus, 2px) solid var(--wp-admin-theme-color);
+			outline-offset: 2px;
+		}
 	}
 
 	.wpnc__hr-separator {
@@ -142,14 +163,14 @@
 	}
 
 	// Links
-	a,
-	a:visited {
+	a:not(.wpnc__button),
+	a:not(.wpnc__button):visited {
 		color: var(--wp-admin-theme-color);
 	}
 
-	a:hover,
-	a:focus,
-	a:active {
+	a:not(.wpnc__button):hover,
+	a:not(.wpnc__button):focus,
+	a:not(.wpnc__button):active {
 		color: var(--wp-admin-theme-color);
 	}
 
@@ -180,7 +201,15 @@
 	ul,
 	ol {
 		margin-left: 1.5em;
+		// Paragraph spacing comes from blank lines in the note's text, and a list's
+		// closing tag can share its line with what follows, so the list carries its own.
+		margin-bottom: $grid-unit-20;
 		list-style-position: inside;
+
+		// Where a blank line does follow, it would double the gap.
+		+ br {
+			display: none;
+		}
 	}
 
 	ul {
@@ -199,6 +228,16 @@
 
 	li {
 		margin: auto;
+	}
+
+	// Posts often carry empty paragraphs, which would otherwise add stray gaps.
+	p:empty {
+		display: none;
+	}
+
+	// Only between items, so the list's own top and bottom spacing is unchanged.
+	li + li {
+		margin-top: $grid-unit-05;
 	}
 
 	// Monospaced, boxed styling for inline code and code blocks.
@@ -302,6 +341,16 @@
 	a {
 		text-decoration: none;
 	}
+
+	a:focus-visible {
+		outline: 2px solid var(--wp-admin-theme-color);
+	}
+}
+
+// The body's reset pins every element to its parent's font size, which outranks the
+// size the Text component would set.
+.wpnc__body-content .wpnc__user-site {
+	font-size: $font-size-small;
 }
 
 /**
@@ -321,19 +370,19 @@
  */
 .wpnc__note.wpnc__like .wpnc__body .wpnc__body-content,
 .wpnc__note.wpnc__comment_like .wpnc__body .wpnc__body-content,
-.wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content {
+.wpnc__note.wpnc__follow .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__reblog .wpnc__body .wpnc__body-content,
+.wpnc__note.wpnc__blogger_follow_reco .wpnc__body .wpnc__body-content {
 	.wpnc__user {
-		padding: 12px 0;
-		border-bottom: 1px solid var( --wpnc-divider__color, #{$gray-100} );
+		padding-block: 8px;
 
 		&:first-child {
-			padding-top: 0;
-			margin-top: -4px;
+			padding-block-start: 0;
 		}
 	}
 
 	.wpnc__paragraph {
-		padding: 16px 0 0;
+		padding-block: 8px 0;
 	}
 }
 
@@ -349,6 +398,32 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	white-space: normal;
+}
+
+.wpnc__action-link.components-button.is-tertiary.has-text {
+	gap: 2px;
+	padding-inline-start: 0;
+	font-size: $font-size-medium;
+	font-weight: $font-weight-medium;
+	color: var(--wpnc-action__color, #{$gray-700});
+
+	&:hover:not(:disabled) {
+		background: none;
+		color: var(--wpnc-action__color-hover, #{$gray-900});
+	}
+
+	&.active-action,
+	&.active-action:hover:not(:disabled) {
+		color: var(--wp-admin-theme-color);
+	}
+}
+
+.wpnc__actions-menu-toggle.components-button {
+	flex-shrink: 0;
+}
+
+.wpnc__actions-menu .components-menu-group + .components-menu-group {
+	border-top-color: var( --wpnc-divider__color, #{$gray-100} );
 }
 
 /**
@@ -426,10 +501,18 @@
 // readable muted quote text (passes AA on the overlay panel), a neutral quote
 // bar, and the gray-400 divider used across the dark overlays (Help Center).
 .wpnc-app {
+	.components-card__header,
+	.components-card__footer,
+	.components-card__divider {
+		border-color: var( --wpnc-divider__color, #{$gray-100} );
+	}
+
 	@include ui-mixins.when-dark-theme {
 		--wpnc-quote__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-quote__text-color: var( --wp-components-color-gray-700, #9aa2b1 );
 		--wpnc-divider__color: var( --wp-components-color-gray-400, #424855 );
+		--wpnc-action__color: var( --wp-components-color-gray-700, #9aa2b1 );
+		--wpnc-action__color-hover: var( --wp-components-color-gray-100, #f0f0f1 );
 
 		// Code blocks: a subtly raised surface against the dark panel, with a
 		// neutral border and light text that keeps AA contrast.
@@ -437,16 +520,8 @@
 		--wpnc-code__border-color: var( --wp-components-color-gray-600, #758095 );
 		--wpnc-code__text-color: var( --wp-components-color-gray-100, #f0f0f1 );
 
-		// Two frame-level dividers miss the dashboard's border handling:
-		//   - the action-block CardFooter (above Like/Reply) — the dark card
-		//     mixin themes card header/divider but not the footer, so its
-		//     border falls back to a near-invisible rgba(0,0,0,0.1).
-		//   - the list/detail pane separator — $wpnc-pane-border.
-		// Route both to the same gray-400 divider as the rest of the panel.
-		.components-card__footer {
-			border-top-color: var( --wpnc-divider__color );
-		}
-
+		// The list/detail pane separator ($wpnc-pane-border) misses the dashboard's
+		// border handling. Route it to the same gray-400 divider as the rest of the panel.
 		.wpnc-app__list-pane,
 		.wpnc-app__detail-pane {
 			border-color: var( --wpnc-divider__color );

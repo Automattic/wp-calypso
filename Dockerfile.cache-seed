@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1.20
 
-ARG node_version=24.15.0
+ARG node_version=24.22.1
 ARG commit_sha="(unknown)"
 ARG cache_seed_key="(unknown)"
 
@@ -14,6 +14,7 @@ WORKDIR /calypso
 ENV HOME=/calypso
 ENV NPM_CONFIG_CACHE=/calypso/.cache
 ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
+ENV ELECTRON_SKIP_BINARY_DOWNLOAD=1
 ENV SKIP_TSC=true
 ENV SKIP_CALYPSO_POSTINSTALL=true
 ENV SKIP_CALYPSO_PACKAGE_BUILDS=true

@@ -75,22 +75,11 @@ export const DEFAULT_EMPTY_VIEW_SUGGESTION_IDS = {
 } as const;
 
 /**
- * Hook to manage empty view suggestions, handling Big Sky's theme-dependent suggestions
- *
- * If Big Sky provides getEmptyViewSuggestions, this hook waits for WordPress core store
- * (specifically theme data) to be ready before calling it. This prevents the suggestions
- * from "jumping" as the theme data loads.
- * If Big Sky doesn't provide custom suggestions, returns translated default suggestions.
- * @param params - Hook parameters
- * @param params.loadedProviders - External providers loaded from plugins (e.g., Big Sky)
- * @returns The computed suggestions (either from Big Sky or defaults), or null while loading
- */
-/**
  * Direct override path: a host that renders AgentsManager (e.g. reader-chat
  * on a blog frontend) can set
  * `window.agentsManagerData.readerSuggestions` to a
  * Suggestion[] and this hook will return it verbatim, bypassing the provider
- * flow (and the Big Sky theme-readiness gate further below). Reassigning the
+ * flow (and the theme-readiness gate further below). Reassigning the
  * global and forcing a re-render causes the empty view to update with fresh
  * suggestions.
  */
@@ -229,6 +218,15 @@ function filterEmptyViewSuggestions(
 	);
 }
 
+/**
+ * The empty view's suggestions: a provider's own when one supplies
+ * `getEmptyViewSuggestions`, otherwise the translated defaults. A provider's
+ * are read once the theme has loaded, since they can depend on it (AM's editor
+ * suggestions do) and would otherwise jump.
+ * @param params                 - Hook parameters
+ * @param params.loadedProviders - External providers loaded from plugins
+ * @returns The suggestions, or null while loading
+ */
 export function useEmptyViewSuggestions( {
 	loadedProviders,
 }: UseEmptyViewSuggestionsOptions ): Suggestion[] | null {
@@ -239,7 +237,6 @@ export function useEmptyViewSuggestions( {
 		isEditedPostEmpty,
 	} = usePageOrSiteEditorSurface();
 
-	// Default suggestions - used when Big Sky doesn't provide custom ones
 	const defaultSuggestions = useMemo(
 		() => [
 			{
@@ -260,31 +257,27 @@ export function useEmptyViewSuggestions( {
 		],
 		[]
 	);
-	// Check if Big Sky provides suggestions
-	const hasBigSkySuggestions = !! loadedProviders?.getEmptyViewSuggestions;
+	const hasProviderSuggestions = !! loadedProviders?.getEmptyViewSuggestions;
 
-	// Wait for WordPress core store to be ready (specifically theme data)
-	// This is needed because Big Sky's getEmptyViewSuggestions filters by theme
+	// A provider's suggestions can depend on the theme, so wait for it to load.
 	const isCoreStoreReady = useSelect(
 		( select ) => {
-			if ( ! hasBigSkySuggestions ) {
-				return true; // No need to wait if not using Big Sky suggestions
+			if ( ! hasProviderSuggestions ) {
+				return true;
 			}
 			try {
 				const coreStore = select( 'core' ) as {
 					getCurrentTheme?: () => unknown;
 				};
-				// Check if getCurrentTheme returns a value (meaning store is ready)
 				const theme = coreStore?.getCurrentTheme?.();
 				return !! theme;
 			} catch {
 				return false;
 			}
 		},
-		[ hasBigSkySuggestions ]
+		[ hasProviderSuggestions ]
 	);
 
-	// Compute empty view suggestions when store/context is ready.
 	const [ emptyViewSuggestions, setEmptyViewSuggestions ] = useState< Suggestion[] | null >( null );
 
 	// Signal that bumps whenever the host dispatches
@@ -338,11 +331,9 @@ export function useEmptyViewSuggestions( {
 		const suppressDefaults = loadedProviders.suppressEmptyViewDefaults === true;
 		const fallbackSuggestions = suppressDefaults ? [] : defaultSuggestions;
 
-		if ( ! hasBigSkySuggestions ) {
-			// No Big Sky suggestions provider, use defaults immediately
+		if ( ! hasProviderSuggestions ) {
 			setSuggestionsIfChanged( fallbackSuggestions );
 		} else {
-			// Big Sky provides suggestions and store is ready - get filtered suggestions
 			const providerSuggestions = loadedProviders.getEmptyViewSuggestions?.() ?? [];
 			const suggestions = filterEmptyViewSuggestions(
 				providerSuggestions,
@@ -366,7 +357,7 @@ export function useEmptyViewSuggestions( {
 	}, [
 		loadedProviders,
 		isCoreStoreReady,
-		hasBigSkySuggestions,
+		hasProviderSuggestions,
 		defaultSuggestions,
 		emptyViewSuggestions,
 		overrideVersion,

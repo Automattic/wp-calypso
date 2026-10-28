@@ -17,6 +17,7 @@ import RouterLinkButton from '../../../../components/router-link-button';
 import { Text } from '../../../../components/text';
 import { formatDate } from '../../../../utils/datetime';
 import { urlToSlug } from '../../../../utils/url';
+import { PRESSABLE_AGENCY_URL } from '../../../marketplace/hosting/lib/pressable-plans';
 import { findAgencyProduct } from '../lib/get-product-name';
 import { getPurchaseStatus } from '../lib/get-purchase-status';
 import { isCancelledButActive } from '../lib/purchase-placement';
@@ -24,7 +25,6 @@ import type { AgencyProduct, ReferralPurchase } from '@automattic/api-core';
 
 import './purchase-site-details.scss';
 
-const PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';
 const CANCELLATION_SUPPORT_URL =
 	'https://wordpress.com/support/manage-purchases/cancel-a-purchase/';
 
@@ -89,7 +89,9 @@ export default function PurchaseSiteDetails( {
 	const licenseKey = purchase.license?.license_key ?? '';
 
 	if ( licenseKey.startsWith( 'pressable-' ) ) {
-		return <ExternalLink href={ PRESSABLE_AUTH_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>;
+		return (
+			<ExternalLink href={ PRESSABLE_AGENCY_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>
+		);
 	}
 
 	if ( purchase.site_assigned ) {

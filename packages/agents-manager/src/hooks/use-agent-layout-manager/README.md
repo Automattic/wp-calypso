@@ -10,42 +10,33 @@ On Gutenberg editor screens (`post-php`, `post-new-php`, `site-editor-php`), doc
 
 ### React Example
 
-Here's how to use the `useAgentLayoutManager` hook in your React app:
+The hook is internal to this package. A component in `components/` uses it like this:
 
 ```jsx
-import { AgentUI } from '@agents-manager/components';
-import useAgentLayoutManager from '@hooks/use-agent-layout-manager';
-import { ChatHeader } from './components/chat-header';
+import { Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import useAgentLayoutManager from '../hooks/use-agent-layout-manager';
+import ChatView from './chat-view'; // Your chat UI.
 
-function App() {
-	const { isDocked, canDock, dock, undock, openSidebar, closeSidebar, createAgentPortal } =
+function Chat( { onClose } ) {
+	const { isDocked, canDock, dock, undock, closeSidebar, createAgentPortal } =
 		useAgentLayoutManager( {
 			sidebarContainer: '.sidebar-container',
 			defaultOpen: true,
-			onDock: () => console.log( 'Docked!' ),
-			onUndock: () => console.log( 'Undocked!' ),
 		} );
 
-	const handleClose = () => {
-		// Handle closing the floating chat (e.g., hide it)
-	};
-
 	return createAgentPortal(
-		<AgentUI.Container variant={ isDocked ? 'embedded' : 'floating' }>
-			<AgentUI.ConversationView>
-				<ChatHeader
-					onClose={ isDocked ? closeSidebar : handleClose }
-					onDock={ dock }
-					onUndock={ undock }
-					showDockOption={ canDock }
-				/>
-				<AgentUI.Messages />
-				<AgentUI.Footer>
-					<AgentUI.Suggestions />
-					<AgentUI.Input />
-				</AgentUI.Footer>
-			</AgentUI.ConversationView>
-		</AgentUI.Container>
+		<>
+			{ canDock && (
+				<Button onClick={ isDocked ? undock : dock }>
+					{ isDocked ? __( 'Undock', __i18n_text_domain__ ) : __( 'Dock', __i18n_text_domain__ ) }
+				</Button>
+			) }
+			<Button onClick={ isDocked ? closeSidebar : onClose }>
+				{ __( 'Close', __i18n_text_domain__ ) }
+			</Button>
+			<ChatView variant={ isDocked ? 'embedded' : 'floating' } />
+		</>
 	);
 }
 ```
@@ -73,6 +64,8 @@ The hook automatically manages these CSS classes based on the chat state:
 - `agents-manager-sidebar-container--sidebar-open` is added when the sidebar is open
 - `agents-manager-chat--docked` or `agents-manager-chat--undocked` based on mode
 - `is-split-screen` is toggled on the container when the `isSplitScreen` option is `true`, letting consumer SCSS opt into a wider docked layout
+
+Jetpack's pre-paint docking gate (`projects/packages/agents-manager/src/js/sidebar-docking-gate.ts`) mirrors the docking conditions and these class names, so a change to either needs a matching Jetpack change.
 
 **SCSS Example:**
 
@@ -117,21 +110,21 @@ The hook accepts a single options object. All properties are optional.
 
 - **`sidebarContainer`** (`HTMLElement` | `string`, default: `'body'`) - The container element where the sidebar will be rendered. This should be the parent of both the main section (e.g., the editor) and the sidebar itself. Can be either a DOM element or a CSS selector string.
 
-- **`isReady`** (`boolean`, default: `true`) - Controls whether the layout manager is active. When `false`, all functions (`dock`, `undock`, `openSidebar`, `closeSidebar`) become no-ops and the portal setup is skipped. Useful for async persisted states loaded, allowing the hook to wait until state is ready before activating the layout manager.
+- **`isReady`** (`boolean`, default: `true`) - Controls whether the layout manager is active. When `false`, all functions (`dock`, `undock`, `openSidebar`, `closeSidebar`) become no-ops and the portal setup is skipped. Turning it back to `false` later doesn't remove a portal that already exists. Useful for async persisted states loaded, allowing the hook to wait until state is ready before activating the layout manager.
 
 - **`defaultDocked`** (`boolean`, default: `true`) - Sets the initial docked state. If `true`, the chat starts docked (on desktop only). If `false`, it starts in floating (undocked) mode. After initialization, the state can be changed via `dock()` and `undock()` methods.
 
-- **`defaultOpen`** (`boolean`, default: `false`) - Sets whether the sidebar is initially open. Only applies on first mount when the chat is docked on desktop (i.e., when `defaultDocked` is `true` and viewport matches `desktopMediaQuery`).
+- **`defaultOpen`** (`boolean`, default: `false`) - Whether the sidebar opens when the docked layout first renders and each time it is re-entered (`dock()`, a wider viewport, entering fullscreen). The initial state is also open when the container already has `agents-manager-sidebar-container--sidebar-open`.
 
 - **`desktopMediaQuery`** (`string`, default: `'(min-width: 1200px)'`) - Media query string to determine desktop layout.
 
-- **`onOpenSidebar`** (`() => void`, default: `() => {}`) - Callback fired when the sidebar is opened.
+- **`onOpenSidebar`** (`() => void`, default: `() => {}`) - Callback fired when `openSidebar()` runs, which the FAB and `dock()` call. Not fired when the sidebar starts open, or when `defaultOpen` reopens it as the docked layout comes back.
 
-- **`onCloseSidebar`** (`() => void`, default: `() => {}`) - Callback fired when the sidebar is closed.
+- **`onCloseSidebar`** (`() => void`, default: `() => {}`) - Callback fired when `closeSidebar()` closes the sidebar. Not fired when undocking or losing `canDock` hides it (`onUndock` fires instead).
 
-- **`onDock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to docked (sidebar) mode.
+- **`onDock`** (`() => void`, default: `() => {}`) - Callback fired each time the docked layout is entered after the chat element is created: `dock()`, a wider viewport or entering fullscreen.
 
-- **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches to floating (undocked) mode.
+- **`onUndock`** (`() => void`, default: `() => {}`) - Callback fired when the chat switches from docked to floating: `undock()`, a narrower viewport or leaving fullscreen. Also fires when the docked preference changes while `canDock` is `false`, but not when the chat element is created.
 
 - **`isSplitScreen`** (`boolean`, default: `false`) - When `true`, the hook toggles an `is-split-screen` modifier class on the sidebar container so consumer SCSS can opt into a wider docked layout (e.g. `--am-sidebar-width: 50vw`).
 
@@ -141,16 +134,18 @@ The hook returns an object with the following properties:
 
 - **`isDocked`** (`boolean`) - `true` when the chat is in docked (sidebar) mode. Requires `canDock` to be `true` AND docked mode to be enabled (via `defaultDocked` or `dock()`).
 
+- **`isSidebarOpen`** (`boolean`) - `true` when the chat is docked and the sidebar is open.
+
 - **`canDock`** (`boolean`) - `true` when docking is possible. Requires a desktop viewport (matches `desktopMediaQuery`) and — on Gutenberg editor screens (`post-php`, `post-new-php`, `site-editor-php`) — fullscreen mode (`body.is-fullscreen-mode`). Updates dynamically as these conditions change. Use this to show or hide dock/undock UI controls.
 
-- **`dock`** (`() => void`) - Switches to sidebar mode. When on desktop, this enables the docked layout and automatically opens the sidebar. No-op when `isReady` is `false` or `sidebarContainer` is not found.
+- **`dock`** (`() => void`) - Sets the docked preference. When `canDock` is `true`, the docked layout renders and the sidebar opens. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
 - **`undock`** (`() => void`) - Switches to floating mode. This disables the docked layout. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
-- **`openSidebar`** (`() => void`) - Opens the sidebar. Only works when docked on desktop. No-op when `isReady` is `false` or `sidebarContainer` is not found.
+- **`openSidebar`** (`() => void`) - Opens the sidebar and fires `onOpenSidebar`. Works whenever `canDock` is `true`, even while undocked; the open state shows once docked. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
-- **`closeSidebar`** (`() => void`) - Closes the sidebar. Only works when docked on desktop. No-op when `isReady` is `false` or `sidebarContainer` is not found.
+- **`closeSidebar`** (`() => void`) - Closes the sidebar and fires `onCloseSidebar`. Works whenever `canDock` is `true`. No-op when `isReady` is `false` or `sidebarContainer` is not found.
 
 - **`portalNode`** (`HTMLElement | null`) - The node the chat renders into, e.g. to pass to `useRaiseOnFocus`. `null` until it is created.
 
-- **`createAgentPortal`** (`(children: React.ReactNode) => React.ReactNode | React.ReactPortal`) - Creates a React Portal for the chat UI. When docked, wraps children in a portal rendered inside the sidebar element and adds a FAB (floating action button) to reopen the sidebar when closed. When undocked, returns children in a portal without the FAB. Returns `null` if the portal element is not yet created (first render only). Portal children can call `useResponsiveUndock()` from `./responsive-undock-context` to read `isResponsiveUndocked` (the chat is floating only because the viewport is below `desktopMediaQuery` while the docked preference is on) and `undockCount` (bumped on each responsive undock — `useFloatingPanelProps` uses it as the floating panel's `layoutCommand` id).
+- **`createAgentPortal`** (`(children: React.ReactNode) => React.ReactNode | React.ReactPortal`) - Creates a React Portal for the chat UI. The portal renders into the `.agents-manager-chat` element the hook appends to `sidebarContainer`. When docked, it adds a FAB (floating action button) to reopen the sidebar when closed; when undocked, it renders the children without the FAB. Returns `null` until that element exists. It's created only while `isReady` is `true` and the container exists, and it stays until the container changes or the hook unmounts. The element is created hidden; only the package stylesheet (`components/agent-dock/chat-ui.scss`) reveals it, so a page without the stylesheet shows no chat and gets an `[AgentsManager]` console error. Portal children can call `useResponsiveUndock()` from `./responsive-undock-context` to read `isResponsiveUndocked` (the chat is floating only because the viewport is below `desktopMediaQuery` while the docked preference is on) and `undockCount` (bumped on each responsive undock — `useFloatingPanelProps` uses it as the floating panel's `layoutCommand` id).

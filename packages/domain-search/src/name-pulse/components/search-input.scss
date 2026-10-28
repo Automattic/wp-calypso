@@ -30,6 +30,13 @@
 		}
 	}
 
+	// The secondary Button adds an accent border outside the inset box-shadow
+	// outline and keeps its own radius; match the input's outline instead.
+	.domain-search-controls__filters > .components-button {
+		border: 0;
+		border-radius: var( --domain-search-input-border-radius );
+	}
+
 	@media ( max-width: #{ $break-small - 1px } ) {
 		.domain-search-controls__input
 			.components-input-control__container

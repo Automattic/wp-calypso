@@ -36,7 +36,7 @@ jest.mock( '@wordpress/data', () => ( {
 		setHideFreePlan: jest.fn(),
 	} ),
 	useSelect: jest.fn( () => ( {} ) ),
-	resolveSelect: jest.fn(),
+	resolveSelect: jest.fn( () => ( { getSite: async () => ( { options: {} } ) } ) ),
 } ) );
 
 jest.mock( 'calypso/landing/stepper/hooks/use-query', () => ( {
@@ -90,18 +90,13 @@ jest.mock( '@automattic/onboarding', () => ( {
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
 } ) );
 
-jest.mock( 'calypso/lib/ai-launchpad', () => ( {
-	resolveLaunchpadPersonalizationVariation: jest.fn( async () => 'control' ),
-	getLaunchpadPersonalizationDestination: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/lib/url', () => ( { pathToUrl: ( path: string ) => path } ) );
 
 jest.mock( '../../../helpers/get-onboarding-post-checkout-destination', () => ( {
 	getOnboardingPostCheckoutDestination: jest.fn( () => [
 		'/home/example.wordpress.com',
-		null,
-		null,
+		'/setup/onboarding/plans?siteSlug=example.wordpress.com',
+		'/setup/onboarding/domains?siteSlug=example.wordpress.com',
 	] ),
 } ) );
 
@@ -260,6 +255,15 @@ describe( 'onboarding post-plan-selection email verification (Variant B)', () =>
 		// post-checkout-onboarding once verified.
 		expect( checkoutUrl ).toContain( '/setup/onboarding/email-verification' );
 		expect( checkoutUrl ).toContain( 'next=post-checkout-onboarding' );
+	} );
+
+	it( 'keeps the coupon on both ways back from checkout', async () => {
+		mockQueryParams = new URLSearchParams( 'coupon=WC_ABC' );
+
+		const checkoutUrl = await submitPaidProcessing();
+
+		expect( checkoutUrl ).toContain( '/plans?siteSlug=example.wordpress.com&coupon=WC_ABC' );
+		expect( checkoutUrl ).toContain( '/domains?siteSlug=example.wordpress.com&coupon=WC_ABC' );
 	} );
 
 	it( 'sends a paid order straight to post-checkout-onboarding under the control arm', async () => {

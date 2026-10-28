@@ -2,6 +2,8 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
+import { activeAgencyQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -9,6 +11,7 @@ import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import { getReferralConfig } from '../config';
 import ReferHostingForm from '../form';
+import type { Agency } from '@automattic/api-core';
 
 const API = 'https://public-api.wordpress.com';
 
@@ -45,6 +48,10 @@ async function fillSharedFields( user: ReturnType< typeof userEvent.setup > ) {
 	fillText( 'Website', 'example.com' );
 	fillText( 'Tell us more about this opportunity', 'A big site.' );
 }
+
+// Every change re-renders and re-validates the whole form, so filling it in
+// takes several seconds on a busy CI agent.
+const FULL_FORM_TIMEOUT = 15000;
 
 const sharedPayload = {
 	agency_id: 1,
@@ -88,6 +95,30 @@ describe( '<ReferHostingForm>', () => {
 		expect( screen.getByText( 'Please enter a valid email' ) ).toBeVisible();
 		expect( screen.getByText( 'Please select a lead type' ) ).toBeVisible();
 		expect( request.isDone() ).toBe( false );
+		expect( onSubmitted ).not.toHaveBeenCalled();
+	} );
+
+	test( 'opens the approval gate instead of sending a referral while the agency is in review', async () => {
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( activeAgencyQuery().queryKey, {
+			id: 1,
+			approval_status: 'pending',
+		} as Agency );
+		const onSubmitted = jest.fn();
+		render(
+			<ReferHostingForm
+				agencyId={ 1 }
+				config={ getReferralConfig( 'premium' ) }
+				onSubmitted={ onSubmitted }
+			/>,
+			{ queryClient }
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Referrals unlock once you’re approved' } )
+		).toBeVisible();
 		expect( onSubmitted ).not.toHaveBeenCalled();
 	} );
 
@@ -136,97 +167,111 @@ describe( '<ReferHostingForm>', () => {
 		expect( screen.getByRole( 'combobox', { name: 'State' } ) ).toHaveValue( '' );
 	} );
 
-	test( 'keeps the form and shows an error when the referral fails to send', async () => {
-		const user = userEvent.setup();
-		const onSubmitted = jest.fn();
-		nock( API )
-			.post( '/wpcom/v2/agency/pressable/premium-plan-referral' )
-			.reply( 500, { error: 'submission_failed', message: 'Nope' } );
+	test(
+		'keeps the form and shows an error when the referral fails to send',
+		async () => {
+			const user = userEvent.setup();
+			const onSubmitted = jest.fn();
+			nock( API )
+				.post( '/wpcom/v2/agency/pressable/premium-plan-referral' )
+				.reply( 500, { error: 'submission_failed', message: 'Nope' } );
 
-		render(
-			<>
+			render(
+				<>
+					<ReferHostingForm
+						agencyId={ 1 }
+						config={ getReferralConfig( 'premium' ) }
+						onSubmitted={ onSubmitted }
+					/>
+					<Snackbars />
+				</>
+			);
+			await fillSharedFields( user );
+			await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+
+			// The message is also announced in the a11y live region, so read the snackbar itself.
+			expect(
+				await screen.findByText( 'Failed to submit referral.', {
+					selector: '.components-snackbar__content',
+				} )
+			).toBeInTheDocument();
+			expect( onSubmitted ).not.toHaveBeenCalled();
+			expect(
+				screen.getByRole( 'button', { name: 'Submit Premium plan referral' } )
+			).toBeEnabled();
+		},
+		FULL_FORM_TIMEOUT
+	);
+
+	test(
+		'sends the Enterprise referral with the lead type and RFP answer',
+		async () => {
+			const user = userEvent.setup();
+			const onSubmitted = jest.fn();
+			let body: unknown;
+			const request = nock( API )
+				.post( '/wpcom/v2/agency/vip/partner-opportunity', ( requestBody ) => {
+					body = requestBody;
+					return true;
+				} )
+				.reply( 200, { status: 'success', message: 'Form submitted successfully.' } );
+
+			const { recordTracksEvent } = render(
+				<ReferHostingForm
+					agencyId={ 1 }
+					config={ getReferralConfig( 'enterprise' ) }
+					onSubmitted={ onSubmitted }
+				/>
+			);
+			await fillSharedFields( user );
+			await user.click( screen.getByRole( 'combobox', { name: 'Type of lead' } ) );
+			await user.click( await screen.findByRole( 'option', { name: 'Public sector' } ) );
+			await user.click( screen.getByRole( 'radio', { name: 'Yes' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Submit VIP referral' } ) );
+
+			await waitFor( () => expect( onSubmitted ).toHaveBeenCalled() );
+			expect( request.isDone() ).toBe( true );
+			expect( body ).toEqual( { ...sharedPayload, lead_type: 'Public Sector', is_rfp: true } );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_a4a_marketplace_hosting_enterprise_refer_form_submit'
+			);
+		},
+		FULL_FORM_TIMEOUT
+	);
+
+	test(
+		'sends the Premium referral without the Enterprise-only fields',
+		async () => {
+			const user = userEvent.setup();
+			const onSubmitted = jest.fn();
+			let body: unknown;
+			const request = nock( API )
+				.post( '/wpcom/v2/agency/pressable/premium-plan-referral', ( requestBody ) => {
+					body = requestBody;
+					return true;
+				} )
+				.reply( 200, { status: 'success', message: 'Form submitted successfully.' } );
+
+			const { recordTracksEvent } = render(
 				<ReferHostingForm
 					agencyId={ 1 }
 					config={ getReferralConfig( 'premium' ) }
 					onSubmitted={ onSubmitted }
 				/>
-				<Snackbars />
-			</>
-		);
-		await fillSharedFields( user );
-		await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
+			);
+			expect( screen.queryByRole( 'combobox', { name: 'Type of lead' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'radio', { name: 'Yes' } ) ).not.toBeInTheDocument();
 
-		// The message is also announced in the a11y live region, so read the snackbar itself.
-		expect(
-			await screen.findByText( 'Failed to submit referral.', {
-				selector: '.components-snackbar__content',
-			} )
-		).toBeInTheDocument();
-		expect( onSubmitted ).not.toHaveBeenCalled();
-		expect( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) ).toBeEnabled();
-	} );
+			await fillSharedFields( user );
+			await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
 
-	test( 'sends the Enterprise referral with the lead type and RFP answer', async () => {
-		const user = userEvent.setup();
-		const onSubmitted = jest.fn();
-		let body: unknown;
-		const request = nock( API )
-			.post( '/wpcom/v2/agency/vip/partner-opportunity', ( requestBody ) => {
-				body = requestBody;
-				return true;
-			} )
-			.reply( 200, { status: 'success', message: 'Form submitted successfully.' } );
-
-		const { recordTracksEvent } = render(
-			<ReferHostingForm
-				agencyId={ 1 }
-				config={ getReferralConfig( 'enterprise' ) }
-				onSubmitted={ onSubmitted }
-			/>
-		);
-		await fillSharedFields( user );
-		await user.click( screen.getByRole( 'combobox', { name: 'Type of lead' } ) );
-		await user.click( await screen.findByRole( 'option', { name: 'Public sector' } ) );
-		await user.click( screen.getByRole( 'radio', { name: 'Yes' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Submit VIP referral' } ) );
-
-		await waitFor( () => expect( onSubmitted ).toHaveBeenCalled() );
-		expect( request.isDone() ).toBe( true );
-		expect( body ).toEqual( { ...sharedPayload, lead_type: 'Public Sector', is_rfp: true } );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a4a_marketplace_hosting_enterprise_refer_form_submit'
-		);
-	} );
-
-	test( 'sends the Premium referral without the Enterprise-only fields', async () => {
-		const user = userEvent.setup();
-		const onSubmitted = jest.fn();
-		let body: unknown;
-		const request = nock( API )
-			.post( '/wpcom/v2/agency/pressable/premium-plan-referral', ( requestBody ) => {
-				body = requestBody;
-				return true;
-			} )
-			.reply( 200, { status: 'success', message: 'Form submitted successfully.' } );
-
-		const { recordTracksEvent } = render(
-			<ReferHostingForm
-				agencyId={ 1 }
-				config={ getReferralConfig( 'premium' ) }
-				onSubmitted={ onSubmitted }
-			/>
-		);
-		expect( screen.queryByRole( 'combobox', { name: 'Type of lead' } ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'radio', { name: 'Yes' } ) ).not.toBeInTheDocument();
-
-		await fillSharedFields( user );
-		await user.click( screen.getByRole( 'button', { name: 'Submit Premium plan referral' } ) );
-
-		await waitFor( () => expect( onSubmitted ).toHaveBeenCalled() );
-		expect( request.isDone() ).toBe( true );
-		expect( body ).toEqual( sharedPayload );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_a4a_marketplace_hosting_premium_refer_form_submit'
-		);
-	} );
+			await waitFor( () => expect( onSubmitted ).toHaveBeenCalled() );
+			expect( request.isDone() ).toBe( true );
+			expect( body ).toEqual( sharedPayload );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_a4a_marketplace_hosting_premium_refer_form_submit'
+			);
+		},
+		FULL_FORM_TIMEOUT
+	);
 } );

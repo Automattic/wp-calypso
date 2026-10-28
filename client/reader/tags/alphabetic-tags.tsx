@@ -1,4 +1,3 @@
-import { addLocaleToPathLocaleInFront } from '@automattic/i18n-utils';
 import { Button } from '@wordpress/components';
 import { debounce } from '@wordpress/compose';
 import { useTranslate } from 'i18n-calypso';
@@ -6,6 +5,7 @@ import { createRef } from 'react';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import scrollIntoViewport from 'calypso/lib/scroll-into-viewport';
 import { AlphabeticTagsResult, Tag } from './controller';
+import { getTagPath, getTagTitle } from './utils';
 
 interface AlphabeticTagsProps {
 	alphabeticTags: AlphabeticTagsResult;
@@ -31,11 +31,11 @@ const trackTagClick = ( slug: string ) => {
 };
 
 const TagsColumn = ( props: TagsColProps ) => {
-	const path = addLocaleToPathLocaleInFront( `/tag/${ encodeURIComponent( props.slug ) }` );
+	const path = getTagPath( props.slug );
 	return (
 		<div key={ props.slug }>
 			<a href={ path } onClick={ trackTagClick.bind( null, props.slug ) }>
-				<span className="alphabetic-tags__title">{ props.title }</span>
+				<span className="alphabetic-tags__title">{ getTagTitle( props ) }</span>
 			</a>
 		</div>
 	);
@@ -103,7 +103,7 @@ export default function AlphabeticTags( { alphabeticTags }: AlphabeticTagsProps 
 
 	for ( const letter in alphabeticTags ) {
 		const sortedTags = alphabeticTags[ letter ].sort( ( a, b ) => {
-			return a.title.localeCompare( b.title );
+			return getTagTitle( a ).localeCompare( getTagTitle( b ) );
 		} );
 		tagTables[ letter ] = formatTable( sortedTags );
 	}

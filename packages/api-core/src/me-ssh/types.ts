@@ -9,17 +9,31 @@ export const SSHKeyTypes = {
 	EC_DSA_SHA2_NISTP256: 'ecdsa-sha2-nistp256',
 	EC_DSA_SHA2_NISTP384: 'ecdsa-sha2-nistp384',
 	EC_DSA_SHA2_NISTP521: 'ecdsa-sha2-nistp521',
-};
+} as const;
+
+export type SSHKeyType = ( typeof SSHKeyTypes )[ keyof typeof SSHKeyTypes ];
 
 export interface UserSshKey {
 	name: string;
+	/**
+	 * Missing for keys added before labels existed, and from backends that don't return it yet.
+	 */
+	label?: string;
 	key: string;
-	type: typeof SSHKeyTypes;
+	type: SSHKeyType;
 	sha256: string;
 	created_at: string;
+	updated_at: string;
+	site_ids: number[];
 }
 
 export interface CreateSshKeyArgs {
-	name: string;
+	label?: string;
 	key: string;
+}
+
+export interface UpdateSshKeyArgs {
+	name: string;
+	key?: string;
+	label?: string;
 }

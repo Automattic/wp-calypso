@@ -1,7 +1,13 @@
 jest.mock( '../../../utils/block-ids', () => ( {
 	resolveClientId: jest.fn( ( id: string ) => `resolved-${ id }` ),
 } ) );
-jest.mock( '../../../utils/canvas-capture', () => ( { captureCanvas: jest.fn() } ) );
+// Only the capture itself is stubbed. `describeCaptureShape` is a pure
+// function of the files that came back, so the real sentences are under test
+// rather than a second copy of them written into a mock.
+jest.mock( '../../../utils/canvas-capture', () => ( {
+	...jest.requireActual( '../../../utils/canvas-capture' ),
+	captureCanvas: jest.fn(),
+} ) );
 
 import { captureCanvas } from '../../../utils/canvas-capture';
 import { captureCanvasCallback } from '../callback';
@@ -32,6 +38,24 @@ describe( 'captureCanvasCallback', () => {
 			returnToAgent: true,
 			__file_parts: [ filePart( { framed: 2 } ) ],
 		} );
+	} );
+
+	// Placeholders are still described as such when no fetch succeeded, so a
+	// grey box is never read as a real, empty image.
+	it( 'says the framed blocks show their real images only when some were inlined', async () => {
+		jest
+			.mocked( captureCanvas )
+			.mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 1 } ) ] );
+		const inlined = await captureCanvasCallback( { clientIds: [ 'a1' ] } );
+
+		jest
+			.mocked( captureCanvas )
+			.mockResolvedValue( [ filePart( { framed: 1, inlinedImages: 0 } ) ] );
+		const placeholders = await captureCanvasCallback( { clientIds: [ 'a1' ] } );
+
+		expect( inlined.result.message ).toContain( 'shown as they really are' );
+		expect( placeholders.result.message ).not.toContain( 'shown as they really are' );
+		expect( placeholders.result.message ).toContain( 'flat placeholder boxes' );
 	} );
 
 	it.each( [ {}, null ] )(

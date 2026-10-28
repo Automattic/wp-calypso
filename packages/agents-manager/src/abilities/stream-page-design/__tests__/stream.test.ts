@@ -9,7 +9,6 @@ import {
 	PAGE_DESIGN_STREAM_STARTED_EVENT,
 	setStreamHandler,
 	STREAM_PAGE_DESIGN_TOOL_ID,
-	withPageDesignStream,
 } from '../stream';
 import type { Part, TaskUpdate } from '@automattic/agenttic-client';
 
@@ -127,6 +126,13 @@ describe( 'handlePageDesignTaskUpdate', () => {
 		await streamed( 'call-1', '<p>a' );
 
 		expect( handler ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	// Wire data: the parts may not be a list.
+	it( 'ignores an update whose parts are not a list', async () => {
+		await handlePageDesignTaskUpdate( update( { type: 'text' } as unknown as Part[] ) );
+
+		expect( handler ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores parts of other kinds and tools, and one with no markup yet', async () => {
@@ -289,42 +295,5 @@ describe( 'finalizePendingStreams', () => {
 			'[AgentsManager] The page design could not be finalized:',
 			expect.any( Error )
 		);
-	} );
-} );
-
-describe( 'withPageDesignStream', () => {
-	const text = { type: 'text', text: 'hi' } as Part;
-
-	it( 'handles the stream and keeps its parts from the next callback', async () => {
-		const next = jest.fn();
-
-		await withPageDesignStream( next )(
-			update( [ text, streamPart( 'call-1', { markup: '<p>a' } ) ] )
-		);
-
-		expect( handler ).toHaveBeenCalledWith( { toolCallId: 'call-1' } );
-		expect( next ).toHaveBeenCalledWith( update( [ text ] ) );
-	} );
-
-	// Wire data: neither the transport nor the wrapper may trip on parts that are not a list.
-	it.each( [
-		{ case: 'with no stream', parts: [ text ] },
-		{ case: 'whose parts are not a list', parts: { type: 'text' } as unknown as Part[] },
-	] )( 'passes an update $case on untouched', async ( { parts } ) => {
-		const next = jest.fn();
-		const plain = update( parts );
-
-		await withPageDesignStream( next )( plain );
-
-		expect( handler ).not.toHaveBeenCalled();
-		expect( next.mock.calls[ 0 ][ 0 ] ).toBe( plain );
-	} );
-
-	it( 'handles the stream with no next callback', async () => {
-		await withPageDesignStream( undefined )(
-			update( [ streamPart( 'call-1', { markup: '<p>a' } ) ] )
-		);
-
-		expect( handler ).toHaveBeenCalled();
 	} );
 } );

@@ -14,7 +14,7 @@ import {
 	transferStates,
 } from '../../../../utils/atomic-transfer-outcome';
 import type { Step } from '../../types';
-import type { OnboardSelect, SiteSelect } from '@automattic/data-stores';
+import type { OnboardSelect } from '@automattic/data-stores';
 
 export interface FailureInfo {
 	type: string;
@@ -40,7 +40,7 @@ const BundleTransfer: Step = function BundleTransfer( { navigation, flow } ) {
 		getSiteLatestAtomicTransferError,
 		getAtomicSoftwareStatus,
 		getAtomicSoftwareError,
-	} = useSelect( ( select ) => select( SITE_STORE ) as SiteSelect, [] );
+	} = useSelect( ( select ) => select( SITE_STORE ), [] );
 	const { getIntent } = useSelect( ( select ) => select( ONBOARD_STORE ) as OnboardSelect, [] );
 
 	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
