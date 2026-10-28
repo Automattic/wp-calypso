@@ -49,6 +49,7 @@ jest.mock( '../../../data/use-current-support-interaction', () => ( {
 
 jest.mock( '../../../hooks', () => ( {
 	useCreateZendeskConversation: () => jest.fn(),
+	useRequestHumanSupport: () => jest.fn(),
 } ) );
 
 jest.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
