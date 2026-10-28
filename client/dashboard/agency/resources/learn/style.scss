@@ -82,8 +82,15 @@ $resource-brands: (
 		isolation: isolate;
 		background: var( --resource-brand );
 
-		&:is( [data-product='pressable'], [data-product='wordpress-vip'] ) {
+		// The gold is too light for white text.
+		&[data-product='wordpress-vip'] {
 			--resource-card-ink: #{$studio-gray-100};
+		}
+
+		// Neither white nor dark text reaches 4.5:1 on Pressable's red-orange, so
+		// the tile takes a shade darker, for white text at 4.65:1.
+		&[data-product='pressable'] {
+			--resource-brand: #d93802;
 		}
 
 		// A faint pattern for the content type, drifting behind the content.
