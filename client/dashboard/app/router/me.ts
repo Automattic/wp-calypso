@@ -956,6 +956,10 @@ export const privacyRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'privacy',
+	loader: () =>
+		isEnabled( 'me/email-tracking-consent' )
+			? queryClient.ensureQueryData( userNotificationsSettingsQuery() )
+			: undefined,
 } ).lazy( () =>
 	import( '../../me/privacy' ).then( ( d ) =>
 		createLazyRoute( 'privacy' )( {
