@@ -166,11 +166,14 @@ describe( 'useAgentChat — error details', () => {
 		failSendWith( new AgentRequestError( 'HTTP error! status: 503', { status: 503 } ) );
 		await send();
 
-		sendMessageStream.mockImplementation( async function* () {} );
+		sendMessageStream.mockImplementation( async function* () {
+			yield taskUpdate( 'completed', true );
+		} );
 		await send();
 
 		expect( chat?.error ).toBeNull();
 		expect( chat?.errorDetails ).toBeNull();
+		expect( onSilentError ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows nothing for a cancelled request', async () => {
