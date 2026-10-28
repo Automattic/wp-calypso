@@ -45,6 +45,13 @@ const mockPage = ( n: number, body: unknown ) =>
 		.query( { number: 100, page: n, known_threats_only: 'true' } )
 		.reply( 200, body );
 
+// A site without Scan: the per-backup endpoint refuses, so the lookup pages through the list.
+const mockNoScan = () =>
+	nock( BASE )
+		.persist()
+		.get( /\/rewind\/backups\/[\d.]+\/threats$/ )
+		.reply( 403, { code: 'scan_required', message: 'scan_required' } );
+
 const threatsPath = ( period: number ) =>
 	`/wpcom/v2/sites/${ SITE_ID }/rewind/backups/${ period }/threats`;
 
@@ -92,6 +99,7 @@ describe( 'site backup known threats queries', () => {
 	} );
 
 	it( 'pages until the backup is found', async () => {
+		mockNoScan();
 		const first = mockPage( 1, page( 1, 3, [ backup( '300', counts( 1 ) ) ] ) );
 		const second = mockPage( 2, page( 2, 3, [ backup( '200', counts( 4 ) ) ] ) );
 
@@ -112,6 +120,7 @@ describe( 'site backup known threats queries', () => {
 	} );
 
 	it( 'stops after 30 pages', async () => {
+		mockNoScan();
 		let requests = 0;
 		nock( BASE )
 			.persist()
@@ -169,6 +178,7 @@ describe( 'site backup known threats queries', () => {
 	} );
 
 	it( 'pages to the containing backup when it is on a later page', async () => {
+		mockNoScan();
 		const first = mockPage( 1, page( 1, 3, [ backup( '300', counts( 1 ) ) ] ) );
 		const second = mockPage( 2, page( 2, 3, [ backup( '200', counts( 4 ) ) ] ) );
 
@@ -190,6 +200,7 @@ describe( 'site backup known threats queries', () => {
 	} );
 
 	it( 'returns null for a rewind id older than every backup', async () => {
+		mockNoScan();
 		mockPage( 1, page( 1, 2, [ backup( '300', counts( 1 ) ) ] ) );
 		mockPage( 2, page( 2, 2, [ backup( '200', counts( 2 ) ) ] ) );
 
@@ -258,6 +269,7 @@ describe( 'site backup known threats queries', () => {
 	} );
 
 	it( 'takes latestWithoutKnownThreats from page 1', async () => {
+		mockNoScan();
 		mockPage(
 			1,
 			page( 1, 2, [ backup( '300', counts( 1 ) ) ], { latest_without_known_threats: 250 } )
@@ -305,6 +317,7 @@ describe( 'site backup known threats queries', () => {
 	} );
 
 	it( 'fetches each page once across per-backup queries', async () => {
+		mockNoScan();
 		let requests = 0;
 		nock( BASE )
 			.persist()
@@ -374,6 +387,30 @@ describe( 'site backup known threats queries', () => {
 		expect( result.knownThreats ).toEqual( counts( 2 ) );
 		expect( result.backupPeriod ).toBe( 200 );
 	} );
+
+	it.each( [
+		[ 404, 'rest_no_route' ],
+		[ 503, 'threats_unavailable' ],
+	] )(
+		'has no verdict without paging when the per-backup endpoint answers %d %s',
+		async ( status, code ) => {
+			mockPage(
+				1,
+				page( 1, 3, [ backup( '300', counts( 1 ) ) ], { latest_without_known_threats: 300 } )
+			);
+			const second = mockPage( 2, page( 2, 3, [ backup( '200', counts( 2 ) ) ] ) );
+			nock( BASE ).get( threatsPath( 250 ) ).reply( status, { code, message: code } );
+
+			const result = await run( '250.123' );
+
+			expect( second.isDone() ).toBe( false );
+			expect( result ).toEqual( {
+				knownThreats: null,
+				latestWithoutKnownThreats: 300,
+				backupPeriod: null,
+			} );
+		}
+	);
 
 	it( 'leaves out the per-backup endpoint when page 1 holds the backup', async () => {
 		mockPage( 1, page( 1, 2, [ backup( '300', counts( 1 ) ), backup( '200', counts( 2 ) ) ] ) );
