@@ -9,13 +9,13 @@ export default function PrimaryAddressIllustration() {
 					<span />
 					<span />
 				</div>
-				<div className="primary-address-illustration__window-line" />
 				<div className="primary-address-illustration__window-image" />
 			</div>
 			<div className="primary-address-illustration__address">
 				<Icon icon={ wordpress } size={ 22 } />
 				{ /* Not translated: the drawing is laid out for this text length. */ }
-				<span>example.com</span>
+				<span>yourgroovydomain.com</span>
+				<span className="primary-address-illustration__address-line" />
 			</div>
 		</div>
 	);

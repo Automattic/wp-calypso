@@ -59,20 +59,13 @@
 	}
 }
 
-.primary-address-illustration__window-line {
-	width: 18cqw;
-	height: 0.9cqw;
-	margin-block-start: 13cqw;
-	margin-inline-start: 3.4cqw;
-	background: rgb(240, 240, 241);
-	border-radius: 0.5cqw;
-}
-
 .primary-address-illustration__window-image {
 	position: absolute;
 	inset-block: 18% 0;
-	inset-inline: 44% 0;
+	inset-inline: 44% 3.4cqw;
 	background: linear-gradient(155deg, rgb(182, 186, 191) 0%, rgb(202, 195, 188) 55%, rgb(242, 217, 193) 100%);
+	border-start-start-radius: 1cqw;
+	border-start-end-radius: 1cqw;
 }
 
 .primary-address-illustration__address {
@@ -96,5 +89,17 @@
 		flex-shrink: 0;
 		fill: var(--wpds-color-foreground-interactive-brand);
 	}
+}
+
+// Centered under the address so it stays aligned whatever the text width.
+.primary-address-illustration__address-line {
+	position: absolute;
+	inset-block-start: calc(100% + 3cqw);
+	inset-inline: 0;
+	width: 18cqw;
+	height: 0.9cqw;
+	margin-inline: auto;
+	background: rgb(240, 240, 241);
+	border-radius: 0.5cqw;
 }
 /* stylelint-enable unit-allowed-list, declaration-property-unit-allowed-list */
