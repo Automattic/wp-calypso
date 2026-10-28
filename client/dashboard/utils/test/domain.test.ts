@@ -1,12 +1,11 @@
 import { DomainStatus, DomainSubtype, WhoisType } from '@automattic/api-core';
 import {
 	canEnableAutoRenew,
-	canSetAsPrimaryIgnoringSsl,
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
 	isPendingPrimaryDomain,
 } from '../domain';
-import type { DomainSummary, Site, User, WhoisDataEntry } from '@automattic/api-core';
+import type { DomainSummary, WhoisDataEntry } from '@automattic/api-core';
 
 describe( 'utils', () => {
 	const whoisData = [
@@ -59,41 +58,6 @@ describe( 'utils', () => {
 
 		test( 'returns false for a non-primary registration the backend does not report as pending', () => {
 			expect( isPendingPrimaryDomain( baseDomain ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'canSetAsPrimaryIgnoringSsl', () => {
-		const baseDomain = {
-			subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Connection' },
-			can_set_as_primary: true,
-			primary_domain: false,
-			domain_status: { id: DomainStatus.ACTIVE, label: 'Active', type: 'success' },
-		} as DomainSummary;
-		const site = { options: { is_redirect: false } } as Site;
-		const user = { meta: { data: { flags: { active_flags: [] } } } } as unknown as User;
-
-		test( 'returns true for an eligible non-redirect domain', () => {
-			expect( canSetAsPrimaryIgnoringSsl( { domain: baseDomain, site, user } ) ).toBe( true );
-		} );
-
-		test( 'returns false when the site is a redirect', () => {
-			expect(
-				canSetAsPrimaryIgnoringSsl( {
-					domain: baseDomain,
-					site: { options: { is_redirect: true } } as Site,
-					user,
-				} )
-			).toBe( false );
-		} );
-
-		test( 'returns false when the domain cannot be set as primary', () => {
-			expect(
-				canSetAsPrimaryIgnoringSsl( {
-					domain: { ...baseDomain, can_set_as_primary: false },
-					site,
-					user,
-				} )
-			).toBe( false );
 		} );
 	} );
 

@@ -56,6 +56,24 @@ describe( 'filterSortAndPaginateDomains', () => {
 		expect( firstPage.paginationInfo ).toEqual( { totalItems: 5, totalPages: 2 } );
 	} );
 
+	test( 'pins the wpcomstaging.com address of an Atomic site first', () => {
+		const atomicDomains = [
+			makeDomain( 'site.com', { primary_domain: true } ),
+			makeDomain( 'site.wpcomstaging.com', {
+				subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: '' },
+				tags: [ 'wpcom_staging' ],
+			} ),
+		];
+		const { data } = filterSortAndPaginateDomains( atomicDomains, view, fields, {
+			getPinnedRank: getSiteDomainPinnedRank,
+		} );
+
+		expect( data.map( ( { domain } ) => domain ) ).toEqual( [
+			'site.wpcomstaging.com',
+			'site.com',
+		] );
+	} );
+
 	test( 'only pins domains that match the search', () => {
 		const { data } = filterSortAndPaginateDomains( domains, { ...view, search: 'z.com' }, fields, {
 			getPinnedRank: getSiteDomainPinnedRank,
