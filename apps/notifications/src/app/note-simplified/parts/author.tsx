@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import NoteIcon from '../../note-icon';
 import type { ReactNode } from 'react';
 
 /**
@@ -17,13 +18,7 @@ export default function Author( {
 
 	return (
 		<HStack as="span" spacing={ 1 } justify="flex-start" expanded={ false }>
-			<img
-				className="wpnc-simplified__byline-avatar"
-				src={ avatar }
-				alt=""
-				width={ 12 }
-				height={ 12 }
-			/>
+			<NoteIcon icon={ avatar } size={ 12 } />
 			<span>{ children }</span>
 		</HStack>
 	);
