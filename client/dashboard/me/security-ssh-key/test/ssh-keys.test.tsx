@@ -66,7 +66,8 @@ describe( '<SshKeys>', () => {
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Add SSH key' } ) );
 		const dialog = screen.getByRole( 'dialog', { name: 'Add SSH key' } );
-		await userEvent.type( within( dialog ).getByLabelText( 'Public SSH key' ), VALID_KEY );
+		await userEvent.click( within( dialog ).getByLabelText( 'Public SSH key' ) );
+		await userEvent.paste( VALID_KEY );
 
 		expect( within( dialog ).getByLabelText( 'Label' ) ).toHaveValue( 'wojtek@macbook' );
 
@@ -88,7 +89,8 @@ describe( '<SshKeys>', () => {
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Add SSH key' } ) );
 		const dialog = screen.getByRole( 'dialog', { name: 'Add SSH key' } );
 		await userEvent.type( within( dialog ).getByLabelText( 'Label' ), 'Work laptop' );
-		await userEvent.type( within( dialog ).getByLabelText( 'Public SSH key' ), VALID_KEY );
+		await userEvent.click( within( dialog ).getByLabelText( 'Public SSH key' ) );
+		await userEvent.paste( VALID_KEY );
 
 		expect( within( dialog ).getByLabelText( 'Label' ) ).toHaveValue( 'Work laptop' );
 	} );
@@ -145,10 +147,8 @@ describe( '<SshKeys>', () => {
 		await openActionsMenu( 'Laptop' );
 		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit' } ) );
 		const dialog = screen.getByRole( 'dialog', { name: 'Edit SSH key' } );
-		await userEvent.type(
-			within( dialog ).getByLabelText( 'New public SSH key (optional)' ),
-			VALID_KEY
-		);
+		await userEvent.click( within( dialog ).getByLabelText( 'New public SSH key (optional)' ) );
+		await userEvent.paste( VALID_KEY );
 		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
@@ -171,10 +171,8 @@ describe( '<SshKeys>', () => {
 		const input = within( dialog ).getByLabelText( 'Label' );
 		await userEvent.clear( input );
 		await userEvent.type( input, 'New laptop' );
-		await userEvent.type(
-			within( dialog ).getByLabelText( 'New public SSH key (optional)' ),
-			VALID_KEY
-		);
+		await userEvent.click( within( dialog ).getByLabelText( 'New public SSH key (optional)' ) );
+		await userEvent.paste( VALID_KEY );
 		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
@@ -199,10 +197,8 @@ describe( '<SshKeys>', () => {
 
 		await openActionsMenu( 'Laptop' );
 		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit' } ) );
-		await userEvent.type(
-			screen.getByLabelText( 'New public SSH key (optional)' ),
-			'ssh-dss AAAA'
-		);
+		await userEvent.click( screen.getByLabelText( 'New public SSH key (optional)' ) );
+		await userEvent.paste( 'ssh-dss AAAA' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 		expect( scope.isDone() ).toBe( false );

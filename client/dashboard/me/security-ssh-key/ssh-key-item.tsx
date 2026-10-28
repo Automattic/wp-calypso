@@ -3,6 +3,7 @@ import {
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
 } from '@wordpress/components';
@@ -51,10 +52,10 @@ export default function SshKeyItem( {
 					<Text variant="muted" lineHeight="20px" size="13px" style={ { wordBreak: 'break-all' } }>
 						{ sshKey.sha256 }
 					</Text>
-					<Text variant="muted" lineHeight="20px" size="13px">
-						{ attachedTo }
-					</Text>
-					<Badge intent="informational">{ addedOn }</Badge>
+					<HStack spacing={ 2 } justify="flex-start" wrap>
+						<Badge intent="informational">{ addedOn }</Badge>
+						<Badge intent={ siteCount ? 'stable' : 'draft' }>{ attachedTo }</Badge>
+					</HStack>
 				</VStack>
 			}
 			actions={
