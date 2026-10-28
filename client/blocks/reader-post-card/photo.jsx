@@ -7,13 +7,16 @@ import cssSafeUrl from 'calypso/lib/css-safe-url';
 
 const noop = () => {};
 
+// Collapsed frame height from `.reader-post-card__photo` in style.scss.
+const COLLAPSED_PHOTO_HEIGHT = 300;
+
 class PostPhoto extends Component {
 	state = {
-		cardWidth: 800,
+		cardWidth: 0,
 	};
 
 	handleClick = ( event ) => {
-		if ( this.props.isExpanded ) {
+		if ( this.props.isExpanded || ! this.canExpand() ) {
 			this.props.onClick( event );
 			return;
 		}
@@ -22,6 +25,47 @@ class PostPhoto extends Component {
 		const { post, site, postKey } = this.props;
 		this.props.expandCard( { post, site, postKey } );
 	};
+
+	getNaturalSize() {
+		const { width, height } = this.props.post?.canonical_media ?? {};
+		return width > 0 && height > 0 ? { width, height } : null;
+	}
+
+	imageExceedsCollapsedSlot() {
+		const naturalSize = this.getNaturalSize();
+		const { cardWidth } = this.state;
+
+		// `background-size: cover` upscales a photo that is smaller than the slot on either axis.
+		return (
+			!! naturalSize &&
+			cardWidth > 0 &&
+			naturalSize.width > cardWidth &&
+			naturalSize.height > COLLAPSED_PHOTO_HEIGHT
+		);
+	}
+
+	// Scales the photo to fit within the card and `maxHeight` without upscaling it.
+	getFittedSize( maxHeight ) {
+		const naturalSize = this.getNaturalSize();
+		const { cardWidth } = this.state;
+
+		if ( ! naturalSize || cardWidth <= 0 || maxHeight <= 0 ) {
+			return null;
+		}
+
+		const scale = Math.min( 1, cardWidth / naturalSize.width, maxHeight / naturalSize.height );
+		return { width: naturalSize.width * scale, height: naturalSize.height * scale };
+	}
+
+	canExpand() {
+		if ( this.imageExceedsCollapsedSlot() ) {
+			return true;
+		}
+
+		const collapsedSize = this.getFittedSize( COLLAPSED_PHOTO_HEIGHT );
+		const expandedSize = this.getFittedSize( this.getMaxPhotoHeight() );
+		return !! collapsedSize && !! expandedSize && expandedSize.height > collapsedSize.height;
+	}
 
 	getViewportHeight = () =>
 		Math.max( document.documentElement.clientHeight, window.innerHeight || 0 );
@@ -36,16 +80,18 @@ class PostPhoto extends Component {
 	getMaxPhotoHeight = () => this.getViewportHeight() - 176;
 
 	setCardWidth = () => {
-		if ( this.widthDivRef ) {
-			const cardWidth = this.widthDivRef.getClientRects()[ 0 ].width;
-			if ( cardWidth > 0 ) {
-				this.setState( { cardWidth } );
-			}
+		if ( ! this.postRef ) {
+			return;
+		}
+
+		const cardWidth = this.postRef.getClientRects()[ 0 ]?.width;
+		if ( cardWidth > 0 ) {
+			this.setState( { cardWidth } );
 		}
 	};
 
-	handleWidthDivLoaded = ( ref ) => {
-		this.widthDivRef = ref;
+	handlePostRef = ( ref ) => {
+		this.postRef = ref;
 	};
 
 	componentDidMount() {
@@ -58,44 +104,37 @@ class PostPhoto extends Component {
 	}
 
 	renderFeaturedImage() {
-		const { post, title } = this.props;
+		const { post, title, isExpanded } = this.props;
 		const imageUrl = post.canonical_media.src;
-		const imageSize = {
-			height: post.canonical_media.height,
-			width: post.canonical_media.width,
-		};
+		const fillsCollapsedSlot = ! isExpanded && this.imageExceedsCollapsedSlot();
 
 		const featuredImageStyle = {
 			backgroundImage: 'url(' + cssSafeUrl( imageUrl ) + ')',
-			backgroundSize: this.props.isExpanded ? 'contain' : 'cover',
+			backgroundSize: fillsCollapsedSlot ? 'cover' : 'contain',
 			backgroundRepeat: 'no-repeat',
 			backgroundPosition: 'center',
 		};
 
-		let newWidth;
-		let newHeight;
-		if ( this.props.isExpanded ) {
-			const cardWidth = this.state.cardWidth;
-			const { width: naturalWidth, height: naturalHeight } = imageSize;
+		// The photo frame shrinks to the photo so the title overlay and gradient stay on the image.
+		const photoSize = fillsCollapsedSlot
+			? null
+			: this.getFittedSize( isExpanded ? this.getMaxPhotoHeight() : COLLAPSED_PHOTO_HEIGHT );
 
-			newHeight = Math.min(
-				( naturalHeight / naturalWidth ) * cardWidth,
-				this.getMaxPhotoHeight()
-			);
-			newWidth = ( naturalWidth / naturalHeight ) * newHeight;
-			featuredImageStyle.height = newHeight;
-			featuredImageStyle.width = newWidth;
+		if ( photoSize ) {
+			featuredImageStyle.width = photoSize.width;
+			featuredImageStyle.height = photoSize.height;
 		}
 
 		const classes = clsx( {
 			'reader-post-card__photo': true,
-			'is-expanded': this.props.isExpanded,
+			'is-expanded': isExpanded,
+			'is-zoomable': ! isExpanded && this.canExpand(),
 		} );
 
 		// force to non-breaking space if `title` is empty so that the title h1 doesn't collapse and complicate things
 		const linkTitle = title || '\xa0';
-		const divStyle = this.props.isExpanded
-			? { height: newHeight, width: newWidth, margin: '0 auto' }
+		const divStyle = photoSize
+			? { width: photoSize.width, margin: '0 auto', maxWidth: '100%' }
 			: {};
 
 		return (
@@ -105,9 +144,7 @@ class PostPhoto extends Component {
 					href={ post.URL }
 					style={ featuredImageStyle }
 					onClick={ this.handleClick }
-				>
-					<div ref={ this.handleWidthDivLoaded } style={ { width: '100%' } } />
-				</a>
+				/>
 				<AutoDirection>
 					<h2 className="reader-post-card__title">
 						<a
@@ -128,7 +165,7 @@ class PostPhoto extends Component {
 		const featuredImage = post.canonical_media.src ? this.renderFeaturedImage() : null;
 
 		return (
-			<div className="reader-post-card__post">
+			<div className="reader-post-card__post" ref={ this.handlePostRef }>
 				{ featuredImage }
 				<div className="reader-post-card__post-details">{ children }</div>
 			</div>

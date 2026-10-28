@@ -11,6 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getBlueprintID, getBlueprintLabelForTracking } from '../../lib/blueprint';
 import { BlueprintLoadError } from '../../lib/blueprint-load-error';
 import { INITIAL_BOOT_PROGRESS } from '../../lib/boot-progress';
+import { PLAYGROUND_HOST } from '../../lib/constants';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
 import { PlaygroundIntro } from '../playground-intro';
@@ -23,12 +24,32 @@ import './style.scss';
 const isNewBlueprintBoot = ( params: URLSearchParams ) =>
 	! params.has( 'playground' ) && ( params.has( 'blueprint' ) || params.has( 'blueprint-url' ) );
 
+// WordPress runs in a frame nested inside the Playground iframe, so walk up from the sender.
+const isWithinFrame = ( source: MessageEventSource | null, frame: Window | null | undefined ) => {
+	if ( ! source || ! frame || ! ( 'parent' in source ) ) {
+		return false;
+	}
+
+	// `parent` is null once a frame is removed, and the top window is its own parent.
+	for (
+		let current: Window | null = source;
+		current;
+		current = current.parent === current ? null : current.parent
+	) {
+		if ( current === frame ) {
+			return true;
+		}
+	}
+	return false;
+};
+
 export function PlaygroundIframe( {
 	className,
 	hasPlaygroundClient,
 	setPlaygroundClient,
 	withIntro = false,
 	onIntroChange,
+	onPlaygroundMessage,
 }: {
 	className?: string;
 	hasPlaygroundClient: boolean;
@@ -36,6 +57,8 @@ export function PlaygroundIframe( {
 	// Covers the page with the Woo intro, instead of the loader, while a new Playground boots.
 	withIntro?: boolean;
 	onIntroChange?: ( isShown: boolean ) => void;
+	// Receives the data of each message posted from inside this Playground.
+	onPlaygroundMessage?: ( data: unknown ) => void;
 } ) {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
@@ -57,6 +80,30 @@ export function PlaygroundIframe( {
 	useEffect( () => {
 		onIntroChange?.( isIntroShown );
 	}, [ isIntroShown, onIntroChange ] );
+
+	// Read through a ref, so a new callback doesn't re-register the window listener.
+	const onPlaygroundMessageRef = useRef( onPlaygroundMessage );
+	useEffect( () => {
+		onPlaygroundMessageRef.current = onPlaygroundMessage;
+	} );
+
+	const hasMessageListener = Boolean( onPlaygroundMessage );
+	useEffect( () => {
+		if ( ! hasMessageListener ) {
+			return;
+		}
+
+		const handleMessage = ( event: MessageEvent ) => {
+			if (
+				event.origin === PLAYGROUND_HOST &&
+				isWithinFrame( event.source, iframeRef.current?.contentWindow )
+			) {
+				onPlaygroundMessageRef.current?.( event.data );
+			}
+		};
+		window.addEventListener( 'message', handleMessage );
+		return () => window.removeEventListener( 'message', handleMessage );
+	}, [ hasMessageListener ] );
 
 	const retry = () => {
 		// A failed dynamic import can remain cached for the lifetime of the document.

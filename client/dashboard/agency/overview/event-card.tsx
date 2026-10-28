@@ -6,25 +6,37 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
+import { Fragment } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { isDashboardPath } from '../../utils/link';
+import CertificationShareButton from '../certification/share-button';
 import NewTabLabel from '../components/new-tab-label';
 import {
 	FEATURED_EVENT,
 	getAiMcpAnnouncement,
+	getCertificationPromoEvent,
 	getPressableExpansionOfferEvent,
 	getPressableIntroOfferEvent,
 } from './events';
-import type { FeaturedEvent } from './events';
+import type { FeaturedEvent, FeaturedEventActionCta } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
 
 interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
+	isEligibleForCertificationOffer?: boolean;
+	certificationOffer?: {
+		/** The agency's own discount, already doubled while the offer runs. */
+		discount: number;
+		/** What "Share with your team" puts on the clipboard. */
+		shareMessage: string;
+	};
+	onCertificationShareCopy?: () => void;
 	aiMcpHref: string;
+	tiersHref?: string;
 	pressableHostingHref: string;
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
@@ -81,23 +93,42 @@ function SingleEventCard( {
 					</VStack>
 					<ButtonStack justify="flex-start" wrap>
 						{ ctas.map( ( cta ) => {
+							const trackClick = () =>
+								recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
+									event_id: id,
+									cta_id: cta.id,
+								} );
+							const style = isMobileViewport
+								? { width: '100%', justifyContent: 'center' }
+								: undefined;
+							if ( 'render' in cta ) {
+								return (
+									<Fragment key={ cta.id }>
+										{ cta.render( {
+											size: 'compact',
+											variant: 'secondary',
+											style,
+											onClick: trackClick,
+										} ) }
+									</Fragment>
+								);
+							}
 							const buttonProps = {
 								size: 'compact' as const,
 								variant: cta.variant ?? ( 'secondary' as const ),
-								style: isMobileViewport ? { width: '100%', justifyContent: 'center' } : undefined,
+								style,
 								onClick: () => {
-									recordTracksEvent?.( 'calypso_a4a_overview_event_cta_click', {
-										event_id: id,
-										cta_id: cta.id,
-									} );
+									trackClick();
 									if ( cta.legacyTrackEventName ) {
 										recordTracksEvent?.( cta.legacyTrackEventName );
 									}
 								},
 							};
 							if ( shouldUseRouterLink && ! cta.isExternal && isDashboardPath( cta.url ) ) {
+								// The router takes the hash separately; left in `to`, it is dropped.
+								const [ to, hash ] = cta.url.split( '#' );
 								return (
-									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ cta.url }>
+									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ to } hash={ hash }>
 										{ cta.label }
 									</RouterLinkButton>
 								);
@@ -124,14 +155,33 @@ function SingleEventCard( {
 export default function EventCard( {
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
+	isEligibleForCertificationOffer,
+	certificationOffer,
+	onCertificationShareCopy,
 	aiMcpHref,
+	tiersHref,
 	pressableHostingHref,
 	shouldUseRouterLink = true,
 	recordTracksEvent,
 }: EventCardProps ) {
 	const now = new Date();
+	const certificationShareCta: FeaturedEventActionCta | undefined = certificationOffer && {
+		id: 'share-with-your-team',
+		render: ( buttonProps ) => (
+			<CertificationShareButton
+				{ ...buttonProps }
+				message={ certificationOffer.shareMessage }
+				source="overview"
+				onCopy={ onCertificationShareCopy }
+				recordTracksEvent={ recordTracksEvent }
+			/>
+		),
+	};
 	const events = [
 		FEATURED_EVENT,
+		isEligibleForCertificationOffer && tiersHref && certificationOffer
+			? getCertificationPromoEvent( tiersHref, certificationOffer.discount, certificationShareCta )
+			: null,
 		isEligibleForPressableIntroOffer ? getPressableIntroOfferEvent( pressableHostingHref ) : null,
 		isEligibleForPressableExpansionOffer
 			? getPressableExpansionOfferEvent( pressableHostingHref )
