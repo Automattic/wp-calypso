@@ -11,39 +11,30 @@ import type {
 	SummaryButtonBadgeProps,
 } from '@automattic/components/src/summary-button/types';
 
+function getMultipleKeysBadgeText( keyCount: number ) {
+	if ( ! keyCount ) {
+		return __( 'No SSH keys added' );
+	}
+	return sprintf(
+		/* translators: %s is the number of SSH keys. */
+		_n( '%s SSH key', '%s SSH keys', keyCount ),
+		formatNumber( keyCount )
+	);
+}
+
 export default function SecuritySshKeySummary( { density }: { density?: Density } ) {
 	const { data: sshKeys } = useSuspenseQuery( sshKeysQuery() );
 	const keyCount = sshKeys.length;
+	const isMultipleKeysEnabled = isEnabled( 'ssh-multiple-keys' );
 
-	if ( isEnabled( 'ssh-multiple-keys' ) ) {
-		return (
-			<RouterLinkSummaryButton
-				density={ density }
-				to="/me/security/ssh-key"
-				title={ __( 'SSH keys' ) }
-				description={ __(
-					'Add SSH keys to your WordPress.com account to make them available for SFTP and SSH authentication.'
-				) }
-				decoration={ <Icon icon={ key } /> }
-				badges={ [
-					{
-						text: keyCount
-							? sprintf(
-									/* translators: %s is the number of SSH keys. */
-									_n( '%s SSH key', '%s SSH keys', keyCount ),
-									formatNumber( keyCount )
-								)
-							: __( 'No SSH keys added' ),
-						intent: keyCount ? 'stable' : 'draft',
-					},
-				] }
-			/>
-		);
+	let badgeText: string = keyCount ? __( 'SSH key added' ) : __( 'No SSH key added' );
+	if ( isMultipleKeysEnabled ) {
+		badgeText = getMultipleKeysBadgeText( keyCount );
 	}
 
 	const badges: SummaryButtonBadgeProps[] = [
 		{
-			text: keyCount ? __( 'SSH key added' ) : __( 'No SSH key added' ),
+			text: badgeText,
 			intent: keyCount ? 'stable' : 'draft',
 		},
 	];
@@ -52,10 +43,16 @@ export default function SecuritySshKeySummary( { density }: { density?: Density 
 		<RouterLinkSummaryButton
 			density={ density }
 			to="/me/security/ssh-key"
-			title={ __( 'SSH key' ) }
-			description={ __(
-				'Add a SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
-			) }
+			title={ isMultipleKeysEnabled ? __( 'SSH keys' ) : __( 'SSH key' ) }
+			description={
+				isMultipleKeysEnabled
+					? __(
+							'Add SSH keys to your WordPress.com account to make them available for SFTP and SSH authentication.'
+						)
+					: __(
+							'Add a SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
+						)
+			}
 			decoration={ <Icon icon={ key } /> }
 			badges={ badges }
 		/>

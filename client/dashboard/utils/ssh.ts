@@ -1,6 +1,9 @@
 import { SSHKeyTypes } from '@automattic/api-core';
 import type { UserSshKey } from '@automattic/api-core';
 
+/**
+ * The backend enforces both limits. We need to keep them in sync with `POST /me/ssh-keys` in WPCOM.
+ */
 export const MAX_SSH_KEYS = 10;
 
 export const SSH_KEY_LABEL_MAX_LENGTH = 50;

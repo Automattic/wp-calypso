@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useIntlLocale } from '../../app/locale';
 import { ActionList } from '../../components/action-list';
 import { getSshKeyLabel } from '../../utils/ssh';
@@ -46,13 +47,14 @@ export default function SshKeyItem( {
 		<ActionList.ActionItem
 			title={ label }
 			description={
-				<VStack spacing={ 1 }>
+				<VStack spacing={ 2 } alignment="flex-start">
 					<Text variant="muted" lineHeight="20px" size="13px" style={ { wordBreak: 'break-all' } }>
 						{ sshKey.sha256 }
 					</Text>
 					<Text variant="muted" lineHeight="20px" size="13px">
-						{ `${ addedOn } · ${ attachedTo }` }
+						{ attachedTo }
 					</Text>
+					<Badge intent="informational">{ addedOn }</Badge>
 				</VStack>
 			}
 			actions={
