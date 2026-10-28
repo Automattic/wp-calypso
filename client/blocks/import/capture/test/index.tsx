@@ -109,7 +109,7 @@ describe( 'CaptureInput', () => {
 		);
 
 		// enter an invalid URL
-		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'not a url' );
+		await userEvent.type( screen.getByLabelText( /Enter the URL of the site/ ), 'notaurl' );
 
 		// try to submit the same value twice
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );

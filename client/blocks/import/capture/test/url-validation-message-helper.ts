@@ -29,18 +29,14 @@ describe( 'getUrlValidationError', () => {
 describe( 'getValidationMessage', () => {
 	const translate = ( text: string ) => text;
 
-	it( 'returns a different message for each reason', () => {
-		const messages = (
-			[
-				'email',
-				'idn',
-				'invalid_characters',
-				'missing_tld',
-				'invalid_protocol',
-				'invalid_url',
-			] as const
-		 ).map( ( reason ) => getValidationMessage( reason, translate ) );
-
-		expect( new Set( messages ).size ).toBe( messages.length );
+	it.each( [
+		[ 'email', /email address/ ],
+		[ 'idn', /internationalized domain name/ ],
+		[ 'invalid_characters', /invalid characters/ ],
+		[ 'missing_tld', /domain extension/ ],
+		[ 'invalid_protocol', /start with http:\/\/ or https:\/\// ],
+		[ 'invalid_url', /valid website address/ ],
+	] as const )( 'explains %s', ( reason, message ) => {
+		expect( getValidationMessage( reason, translate ) ).toMatch( message );
 	} );
 } );

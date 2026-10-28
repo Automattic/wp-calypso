@@ -165,8 +165,8 @@ export class SectionImport extends Component {
 			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
 	};
 
-	// Recorded once per job and state, not on every status poll (see `handleStateChanges`). A
-	// `.zip` upload the server can't process reaches `calypso_importer_import_fail` with
+	// Recorded once per job, state and error, not on every status poll (see `handleStateChanges`).
+	// A `.zip` upload the server can't process reaches `calypso_importer_import_fail` with
 	// `error_type: 'uploadError'`, not `calypso_importer_upload_fail`.
 	trackImporterStateChange = ( importerState, importerId, eventProps = {} ) => {
 		const stateToEventNameMap = {
