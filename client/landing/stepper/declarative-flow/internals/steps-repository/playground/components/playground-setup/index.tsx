@@ -148,7 +148,7 @@ export const PlaygroundSetupStep: Step< {
 		} );
 
 		// Each flow owns where the user goes once the site is ready.
-		latestRef.current.submit?.( { siteSlug, siteId } );
+		latestRef.current.submit?.( { siteSlug: latestRef.current.siteSlug, siteId } );
 	};
 
 	const retryImport = () => {
