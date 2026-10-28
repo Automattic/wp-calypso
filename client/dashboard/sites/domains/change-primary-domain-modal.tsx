@@ -78,6 +78,7 @@ export default function ChangePrimaryDomainModal( {
 					{ currentPrimaryDomain && (
 						<Text as="p">
 							{ createInterpolateElement(
+								/* translators: <currentPrimaryDomain /> is the current primary site address, e.g. example.com */
 								__(
 									'The current primary site address for this site is <currentPrimaryDomain />. You can change it to a different one from the list below.'
 								),
