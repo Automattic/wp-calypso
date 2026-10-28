@@ -4,7 +4,6 @@ import type { WordPressPrerelease } from '@automattic/api-core';
 const prerelease: WordPressPrerelease = {
 	auto_enrolled: true,
 	version: '7.2',
-	stage: 'rc',
 	release_date: '2026-12-08',
 };
 

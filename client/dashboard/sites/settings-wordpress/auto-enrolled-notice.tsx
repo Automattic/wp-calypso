@@ -5,12 +5,16 @@ import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
-import { getMajorWordPressVersion } from '../../utils/wp-version';
-import type { WordPressPrerelease } from '@automattic/api-core';
+import { formatWordPressVersion, getMajorWordPressVersion } from '../../utils/wp-version';
+import type { Site, WordPressPrerelease } from '@automattic/api-core';
 
-/** "7.2 Beta" or "7.2 RC", as WordPress names its pre-releases. */
-function getPrereleaseName( { version, stage }: WordPressPrerelease ) {
-	return `${ version } ${ stage === 'rc' ? 'RC' : 'Beta' }`;
+/** "7.2 Beta" for "7.2-beta2" and "7.2 RC" for "7.2-RC1", as WordPress names its pre-releases. */
+function getPrereleaseName( wpVersion: string ) {
+	const [ , version, stage ] = wpVersion.match( /^([\d.]+)-(beta|rc)/i ) ?? [];
+	if ( ! version ) {
+		return formatWordPressVersion( wpVersion, undefined, true );
+	}
+	return `${ version } ${ stage.toLowerCase() === 'rc' ? 'RC' : 'Beta' }`;
 }
 
 /** "December 8" for "2026-12-08". The date is a calendar day, so it is read in UTC to keep it from shifting. */
@@ -31,12 +35,14 @@ export function getSwitchBackLabel( stableVersion: string ) {
 }
 
 interface AutoEnrolledNoticeProps {
+	site: Site;
 	prerelease: WordPressPrerelease;
 	stableVersion: string;
 	actions: React.ReactNode;
 }
 
 export function AutoEnrolledNotice( {
+	site,
 	prerelease,
 	stableVersion,
 	actions,
@@ -51,7 +57,7 @@ export function AutoEnrolledNotice( {
 			title={ sprintf(
 				// translators: %s: WordPress version and release stage, e.g. "7.2 Beta" or "7.2 RC"
 				__( 'Your site is running WordPress %s as part of early access' ),
-				getPrereleaseName( prerelease )
+				getPrereleaseName( site.options?.software_version ?? '' )
 			) }
 		>
 			{ createInterpolateElement(

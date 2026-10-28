@@ -3,7 +3,6 @@ export interface WordPressPrerelease {
 	auto_enrolled: boolean;
 	/** The upcoming WordPress version, e.g. "7.2". */
 	version: string;
-	stage: 'beta' | 'rc';
 	/** The planned release date of that version, as `YYYY-MM-DD`. */
 	release_date: string;
 }

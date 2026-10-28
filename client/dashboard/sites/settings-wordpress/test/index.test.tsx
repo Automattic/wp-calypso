@@ -210,9 +210,14 @@ describe( '<WordPressSettings>', () => {
 	} );
 
 	describe( 'for a site auto-enrolled in a pre-release', () => {
-		const productionSite = { ...site, is_wpcom_staging_site: false } as Site;
+		const productionSite = {
+			...site,
+			is_wpcom_staging_site: false,
+			options: { software_version: '7.0-RC2' },
+		} as Site;
 		const siteWithoutSelfServeBackups = {
 			...productionSite,
+			options: { software_version: '7.0-beta2' },
 			plan: {
 				product_slug: 'value_bundle',
 				product_name_short: 'Premium',
@@ -229,7 +234,6 @@ describe( '<WordPressSettings>', () => {
 				.reply( 200, {
 					auto_enrolled: true,
 					version: '7.0',
-					stage: 'rc',
 					release_date: '2026-12-08',
 					...prerelease,
 				} );
@@ -248,7 +252,7 @@ describe( '<WordPressSettings>', () => {
 			render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 
 			expect(
-				await screen.findByText( 'Your site is running WordPress 7.0 RC as part of early access' )
+				await screen.findByText( 'Your site is running WordPress 7.0 Beta as part of early access' )
 			).toBeVisible();
 			expect(
 				screen.getByText(

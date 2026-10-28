@@ -60,6 +60,7 @@ function VersionManagement( { site }: { site: Site } ) {
 		// Backs the site up first, like saving the form below.
 		notice = (
 			<AutoEnrolledNotice
+				site={ site }
 				prerelease={ autoEnrolledPrerelease }
 				stableVersion={ latestVersion }
 				actions={
@@ -118,6 +119,7 @@ function BetaProgramContent( { site }: { site: Site } ) {
 		if ( autoEnrolledPrerelease && latestVersion ) {
 			return (
 				<AutoEnrolledNotice
+					site={ site }
 					prerelease={ autoEnrolledPrerelease }
 					stableVersion={ latestVersion }
 					actions={
