@@ -22,6 +22,7 @@ import {
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
 import type { DomainSummary } from '@automattic/api-core';
+import './dataviews/style.scss';
 
 export function getDomainId( domain: DomainSummary ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -88,7 +89,7 @@ function Domains() {
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
-					<DataViewsCard>
+					<DataViewsCard className="domains-dataviews">
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }
