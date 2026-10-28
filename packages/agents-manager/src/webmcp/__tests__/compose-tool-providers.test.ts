@@ -23,12 +23,11 @@ describe( 'mergeToolProviders', () => {
 			createAbility( 'demo/write' ),
 		] );
 
-		const abilities = await mergeToolProviders( () => [ first, second ], jest.fn() ).getAbilities();
+		const snapshot = await mergeToolProviders( () => [ first, second ], jest.fn() ).getSnapshot();
 
-		expect( abilities.map( ( ability ) => `${ ability.name }:${ ability.label }` ) ).toEqual( [
-			'demo/read:First copy',
-			'demo/write:demo/write',
-		] );
+		expect(
+			[ ...snapshot.values() ].map( ( { ability } ) => `${ ability.name }:${ ability.label }` )
+		).toEqual( [ 'demo/read:First copy', 'demo/write:demo/write' ] );
 	} );
 
 	it( 'resolves the winning definition and provider by original ability name', async () => {
@@ -38,11 +37,11 @@ describe( 'mergeToolProviders', () => {
 		const second = createProvider( [ createAbility( 'demo/read', 'Second copy' ), write ] );
 		const merged = mergeToolProviders( () => [ first, second ], jest.fn() );
 
-		await expect( merged.resolveAbility( 'demo/read' ) ).resolves.toEqual( {
+		expect( ( await merged.getSnapshot() ).get( 'demo/read' ) ).toEqual( {
 			ability: read,
 			provider: first,
 		} );
-		await expect( merged.resolveAbility( 'demo/write' ) ).resolves.toEqual( {
+		expect( ( await merged.getSnapshot() ).get( 'demo/write' ) ).toEqual( {
 			ability: write,
 			provider: second,
 		} );
@@ -52,7 +51,7 @@ describe( 'mergeToolProviders', () => {
 		const provider = createProvider( [ createAbility( 'demo/read' ) ] );
 		const merged = mergeToolProviders( () => [ provider ], jest.fn() );
 
-		await expect( merged.resolveAbility( 'demo__read' ) ).resolves.toBeUndefined();
+		expect( ( await merged.getSnapshot() ).get( 'demo__read' ) ).toBeUndefined();
 	} );
 
 	it( 'resolves the providers and the owner live on every call', async () => {
@@ -61,12 +60,12 @@ describe( 'mergeToolProviders', () => {
 		let providers = [ second ];
 		const merged = mergeToolProviders( () => providers, jest.fn() );
 
-		const original = await merged.resolveAbility( 'demo/read' );
+		const original = ( await merged.getSnapshot() ).get( 'demo/read' );
 		expect( original?.provider ).toBe( second );
 
 		providers = [ first, second ];
 		jest.mocked( first.getAbilities ).mockResolvedValue( [ createAbility( 'demo/read' ) ] );
-		const current = await merged.resolveAbility( 'demo/read' );
+		const current = ( await merged.getSnapshot() ).get( 'demo/read' );
 		expect( current?.provider ).toBe( first );
 		expect( original?.provider ).toBe( second );
 	} );
@@ -79,10 +78,10 @@ describe( 'mergeToolProviders', () => {
 		const onError = jest.fn();
 		const merged = mergeToolProviders( () => [ first, second ], onError );
 
-		const abilities = await merged.getAbilities();
-		expect( abilities.map( ( ability ) => ability.name ) ).toEqual( [ 'demo/read' ] );
+		const snapshot = await merged.getSnapshot();
+		expect( [ ...snapshot.keys() ] ).toEqual( [ 'demo/read' ] );
 		expect( onError ).toHaveBeenCalledWith( error );
-		await expect( merged.resolveAbility( 'demo/read' ) ).resolves.toEqual( {
+		expect( ( await merged.getSnapshot() ).get( 'demo/read' ) ).toEqual( {
 			ability: createAbility( 'demo/read' ),
 			provider: second,
 		} );
@@ -92,6 +91,6 @@ describe( 'mergeToolProviders', () => {
 	it( 'returns no owner for an ability no provider lists', async () => {
 		const merged = mergeToolProviders( () => [ createProvider( [] ) ], jest.fn() );
 
-		await expect( merged.resolveAbility( 'demo/missing' ) ).resolves.toBeUndefined();
+		expect( ( await merged.getSnapshot() ).get( 'demo/missing' ) ).toBeUndefined();
 	} );
 } );

@@ -185,6 +185,62 @@ describe( 'WebMCP adapter', () => {
 		warn.mockRestore();
 	} );
 
+	it( 'rejects a new collision and restores execution only through a fresh registration', async () => {
+		const first = createAbility( {
+			name: 'demo--plugin/read',
+			meta: { webmcp: { public: true }, annotations: { clientRegistered: true } },
+		} );
+		const second = createAbility( {
+			name: 'demo/plugin--read',
+			meta: { webmcp: { public: true }, annotations: { clientRegistered: true } },
+		} );
+		const harness = createHarness( [ first ] );
+		await harness.adapter.sync();
+		const tool = harness.tools.get( 'demo__plugin__read' )!;
+		const signal = harness.signals.get( tool.name );
+		harness.setAbilities( [ first, second ] );
+
+		// eslint-disable-next-line no-console
+		const warn = jest.spyOn( console, 'warn' ).mockImplementation();
+		try {
+			await expect( tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+			expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+			expect( signal?.aborted ).toBe( true );
+
+			harness.setAbilities( [ first ] );
+			await harness.adapter.sync();
+			await expect( tool.execute( {} ) ).rejects.toThrow( 'aborted' );
+			await expect( harness.tools.get( tool.name )!.execute( {} ) ).resolves.toEqual( {
+				input: {},
+			} );
+			expect( harness.toolProvider.executeAbility ).toHaveBeenCalledTimes( 1 );
+		} finally {
+			warn.mockRestore();
+		}
+	} );
+
+	it( 'ignores private colliding abilities at dispatch', async () => {
+		const first = createAbility( {
+			name: 'demo--plugin/read',
+			meta: { webmcp: { public: true }, annotations: { clientRegistered: true } },
+		} );
+		const second = createAbility( {
+			name: 'demo/plugin--read',
+			meta: { webmcp: { public: false }, annotations: { clientRegistered: true } },
+		} );
+		const harness = createHarness( [ first ] );
+		await harness.adapter.sync();
+		const tool = harness.tools.get( 'demo__plugin__read' )!;
+		const signal = harness.signals.get( tool.name );
+		harness.setAbilities( [ first, second ] );
+
+		const readsBefore = jest.mocked( harness.toolProvider.getAbilities ).mock.calls.length;
+		await expect( tool.execute( {} ) ).resolves.toEqual( { input: {} } );
+		expect( harness.toolProvider.executeAbility ).toHaveBeenCalledWith( first.name, {} );
+		expect( harness.toolProvider.getAbilities ).toHaveBeenCalledTimes( readsBefore + 1 );
+		expect( signal?.aborted ).toBe( false );
+	} );
+
 	it( 'keeps registering other tools when one registration fails', async () => {
 		const harness = createHarness( [ createBlockTreeAbility(), createAbility() ] );
 		( harness.modelContext.registerTool as jest.Mock ).mockRejectedValueOnce(

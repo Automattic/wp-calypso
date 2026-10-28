@@ -5,11 +5,7 @@ import {
 	getWebMcpInputSchema,
 	normalizeInputSchema,
 } from './contracts';
-import {
-	isWebMcpConsequential,
-	selectExposedAbilities,
-	shouldExposeWebMcpAbility,
-} from './exposure';
+import { isWebMcpConsequential, selectExposedAbilities } from './exposure';
 import type { WebMcpToolProvider } from './compose-tool-providers';
 import type {
 	WebMcpAdapter,
@@ -137,10 +133,14 @@ export function createWebMcpAdapter( {
 				throw createAbortError();
 			}
 
-			const resolved = await toolProvider.resolveAbility( ability.name );
+			const snapshot = await toolProvider.getSnapshot();
+			const { exposed } = selectExposedAbilities(
+				[ ...snapshot.values() ].map( ( entry ) => entry.ability )
+			);
+			const resolved = snapshot.get( ability.name );
 			if (
 				! resolved ||
-				! shouldExposeWebMcpAbility( resolved.ability ) ||
+				! exposed.has( ability.name ) ||
 				describeTool( resolved.ability )?.fingerprint !== fingerprint
 			) {
 				await sync().catch( () => {} );
@@ -164,12 +164,14 @@ export function createWebMcpAdapter( {
 		};
 
 	const reconcile = async () => {
-		const abilities = await toolProvider.getAbilities();
+		const snapshot = await toolProvider.getSnapshot();
 		if ( disposed ) {
 			return;
 		}
 
-		const { exposed, collisions } = selectExposedAbilities( abilities );
+		const { exposed, collisions } = selectExposedAbilities(
+			[ ...snapshot.values() ].map( ( entry ) => entry.ability )
+		);
 		reportCollisions( collisions );
 
 		for ( const [ abilityName, registration ] of registrations ) {

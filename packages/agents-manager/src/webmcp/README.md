@@ -53,10 +53,11 @@ authorization.
 
 The merge lives in `src/webmcp/compose-tool-providers.ts` and mirrors the first-wins rule of the
 chat provider chain without sharing code with it. Before dispatch, a tool resolves the live winning
-definition and its owning source together. It rejects the call when that winner is gone, opted out,
-or carries a different descriptor, then reconciles the tools so the browser can discover them
-afresh. Execution uses that validated source without another cross-source lookup; a recovering
-source or provider replacement takes effect on the next call. A winner that changed source but
+definition and its owning source from one snapshot of all winning abilities. It applies the same
+exposure and tool-name collision policy used for registration to that snapshot. It rejects the call
+when that winner is gone, opted out, colliding, or carries a different descriptor, then reconciles
+the tools so the browser can discover them afresh. Execution uses that validated source without
+another cross-source lookup; a recovering source or provider replacement takes effect on the next call. A winner that changed source but
 kept an identical descriptor keeps its registration and executes through the new source. Callbacks
 from replaced or disposed registrations reject. Within a call, each owner still dispatches by
 ability name, because the `ToolProvider` contract and the registry's `executeAbility()` are

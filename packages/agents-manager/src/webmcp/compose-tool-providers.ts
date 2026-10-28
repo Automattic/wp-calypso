@@ -7,15 +7,14 @@ type ProvidedAbility = {
 };
 
 export type WebMcpToolProvider = {
-	getAbilities: ToolProvider[ 'getAbilities' ];
-	/** Resolves an original ability name, not a normalized browser tool name. */
-	resolveAbility: ( abilityName: string ) => Promise< ProvidedAbility | undefined >;
+	/** Keyed by original ability name, before exposure and collision filtering. */
+	getSnapshot: () => Promise< ReadonlyMap< string, ProvidedAbility > >;
 };
 
 /**
  * Merges the sources first-wins by ability name: the first source to list an
- * ability defines it and executes it. Resolution returns the definition and
- * owner together so validation and dispatch cannot select different sources.
+ * ability defines it and executes it. Each snapshot includes every winning
+ * definition and its owner so validation and dispatch cannot select different sources.
  * Each call resolves live; failed sources are reported and skipped.
  */
 export function mergeToolProviders(
@@ -47,8 +46,5 @@ export function mergeToolProviders(
 		return merged;
 	};
 
-	return {
-		getAbilities: async () => [ ...( await collect() ).values() ].map( ( { ability } ) => ability ),
-		resolveAbility: async ( abilityName ) => ( await collect() ).get( abilityName ),
-	};
+	return { getSnapshot: collect };
 }
