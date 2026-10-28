@@ -4,6 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
+import { isContextOnlyMessage } from '../utils/context-only-message';
 import {
 	type CreditsPlan,
 	type CreditsStatus,
@@ -593,6 +594,17 @@ export function useCredits( {
 			.trim();
 		return text || undefined;
 	}, [ chat.messages ] );
+	// The refusal brings only its code, so the thread says whether the turn showed anything first.
+	// A tool's chat message, such as a block edit's summary, is an agent message too, so it counts.
+	const hasTurnOutput = useMemo( () => {
+		const questionIndex = getLatestUserMessageIndex( chat.messages );
+		return (
+			questionIndex >= 0 &&
+			chat.messages
+				.slice( questionIndex + 1 )
+				.some( ( message ) => message.role === 'agent' && ! isContextOnlyMessage( message ) )
+		);
+	}, [ chat.messages ] );
 	const tryAgainAction = useMemo< NoticeConfig[ 'action' ] >(
 		() =>
 			onTryAgain && refusedQuestion
@@ -676,7 +688,8 @@ export function useCredits( {
 			purchaseAction && {
 				...purchaseAction,
 				onClick: () => recordPurchaseClick( 'refusal', shown ),
-			}
+			},
+			hasTurnOutput
 		);
 	}, [
 		isRefusedForCredits,
@@ -686,6 +699,7 @@ export function useCredits( {
 		purchaseKind,
 		purchaseAction,
 		recordPurchaseClick,
+		hasTurnOutput,
 	] );
 	// An unknown balance keeps this refusal's last notice, as a failed read keeps the last answer.
 	// Only an earlier render knows that notice, so it's state, updated while rendering.
