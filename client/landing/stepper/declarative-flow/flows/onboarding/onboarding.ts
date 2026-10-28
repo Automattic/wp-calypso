@@ -418,14 +418,14 @@ const onboarding: FlowV2< typeof initialize > = {
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
-		// From `/start/import`: the run ends in site migration, which brings the content over.
+		// From `/start/import`: onboarding ends in site migration, which brings the content over.
 		const isImport = queryParams.get( 'flow' ) === 'import';
-		// Every URL that re-enters onboarding must keep these, or the run loses its ending.
-		const endingQueryArgs = {
+		// Every URL that re-enters onboarding must keep these, or it forgets where to land.
+		const persistedQueryArgs = {
 			...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
 			...( isImport ? { flow: 'import' } : {} ),
 		};
-		const hasFixedEnding = !! blogPostToReblog || isImport;
+		const hasCustomDestination = !! blogPostToReblog || isImport;
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -820,7 +820,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								siteSlug: siteSlugParam,
 								...( siteIdParam ? { siteId: siteIdParam } : {} ),
 								...( refParameter ? { ref: refParameter } : {} ),
-								...endingQueryArgs,
+								...persistedQueryArgs,
 							} )
 						);
 						return;
@@ -882,7 +882,7 @@ const onboarding: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId: providedDependencies.siteId,
 										...( refParameter ? { ref: refParameter } : {} ),
-										...endingQueryArgs,
+										...persistedQueryArgs,
 									}
 								);
 							}
@@ -890,8 +890,8 @@ const onboarding: FlowV2< typeof initialize > = {
 							// Leaving checkout must not turn a reblog or an import into plain onboarding.
 							// The plans grid prices a coupon only from the URL.
 							const checkoutBackQueryArgs = {
-								...endingQueryArgs,
-								...( hasFixedEnding && refParameter ? { ref: refParameter } : {} ),
+								...persistedQueryArgs,
+								...( hasCustomDestination && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
 							};
 
@@ -911,7 +911,7 @@ const onboarding: FlowV2< typeof initialize > = {
 										blueprintArchiveSlug ||
 										blueprintSimpleSlug ||
 										isKnownWowFunnel( wowFunnelSlug ) ||
-										( hasFixedEnding && ! returnsThroughVerification )
+										( hasCustomDestination && ! returnsThroughVerification )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -936,7 +936,7 @@ const onboarding: FlowV2< typeof initialize > = {
 							blueprintArchiveSlug ||
 							blueprintSimpleSlug ||
 							isKnownWowFunnel( wowFunnelSlug ) ||
-							hasFixedEnding
+							hasCustomDestination
 						) {
 							// build_dest=wow, build_dest=simple, the WoW funnel, a reblog and an import
 							// never show the setup-your-site-ai chooser; go straight to their destination.
