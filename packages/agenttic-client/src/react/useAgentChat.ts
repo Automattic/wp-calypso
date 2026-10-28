@@ -687,6 +687,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
+			// A consumer's reporter must not change the turn. `onTaskUpdate` is guarded the same way.
+			const reportSilentError = ( details: AgentErrorDetails ) => {
+				try {
+					onSilentErrorRef.current?.( details );
+				} catch ( reporterError ) {
+					logger( 'Error in onSilentError callback: %O', reporterError );
+				}
+			};
+
 			const restoreMessagesOnError = async (
 				error: string | null,
 				errorDetails: AgentErrorDetails | null
@@ -989,7 +998,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// An SSE reader that hits EOF mid-turn reads as a clean finish. The
 				// turn settles as before; the failure is only reported.
 				if ( ! sawTurnTerminus ) {
-					onSilentErrorRef.current?.( { name: 'StreamIncompleteError' } );
+					reportSilentError( { name: 'StreamIncompleteError' } );
 				}
 
 				// Only update from conversation history if we didn't already handle the final message
@@ -1039,9 +1048,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				if ( error instanceof Error && error.name === 'AbortError' ) {
 					const errorDetails = getAgentErrorDetails( error );
 					if ( errorDetails.timedOut ) {
-						onSilentErrorRef.current?.( errorDetails );
+						reportSilentError( errorDetails );
+						logger( 'Request was cut off by the client timer' );
+					} else {
+						logger( 'Request was aborted by user' );
 					}
-					logger( 'Request was aborted by user' );
 					const restored = await restoreMessagesOnError( null, null );
 					if ( ! restored ) {
 						setState( ( prev ) => ( {

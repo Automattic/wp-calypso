@@ -119,6 +119,32 @@ describe( 'useAgentChat — error details', () => {
 		expect( chat?.errorDetails ).toEqual( { name: 'TypeError' } );
 	} );
 
+	it( 'settles a timed-out request when the reporter throws', async () => {
+		onSilentError.mockImplementationOnce( () => {
+			throw new Error( 'tracks failed' );
+		} );
+		failSendWith( abortError( { timedOut: true } ) );
+
+		await send();
+
+		expect( chat?.error ).toBeNull();
+		expect( chat?.isProcessing ).toBe( false );
+	} );
+
+	it( 'settles a stream that ends mid-turn when the reporter throws', async () => {
+		onSilentError.mockImplementationOnce( () => {
+			throw new Error( 'tracks failed' );
+		} );
+		sendMessageStream.mockImplementation( async function* () {
+			yield taskUpdate( 'working', false );
+		} );
+
+		await send();
+
+		expect( chat?.error ).toBeNull();
+		expect( chat?.isProcessing ).toBe( false );
+	} );
+
 	it( 'shows nothing for a timed-out request, but reports it', async () => {
 		failSendWith( abortError( { timedOut: true } ) );
 
