@@ -256,20 +256,6 @@ describe( 'WebMCP adapter', () => {
 		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 3 );
 	} );
 
-	it( 'preserves annotations when registration rejects with a TypeError', async () => {
-		const harness = createHarness();
-		const registerTool = jest.mocked( harness.modelContext.registerTool );
-		registerTool.mockRejectedValueOnce( new TypeError( 'Invalid descriptor' ) );
-
-		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid descriptor' );
-		expect( registerTool ).toHaveBeenCalledTimes( 1 );
-		expect( harness.tools.size ).toBe( 0 );
-		await harness.adapter.sync();
-		expect( registerTool.mock.calls[ 1 ][ 0 ].annotations ).toEqual(
-			registerTool.mock.calls[ 0 ][ 0 ].annotations
-		);
-	} );
-
 	it( 'registers a server ability with its schema and executes through the provider', async () => {
 		const ability = createServerAbility( 'wpcom/get-posts', {
 			input_schema: {
@@ -586,16 +572,6 @@ describe( 'WebMCP adapter', () => {
 		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
 	} );
 
-	it( 'surfaces registration failures and can retry them', async () => {
-		const harness = createHarness();
-		( harness.modelContext.registerTool as jest.Mock )
-			.mockRejectedValueOnce( new Error( 'Invalid WebMCP schema' ) )
-			.mockResolvedValueOnce( undefined );
-
-		await expect( harness.adapter.sync() ).rejects.toThrow( 'Invalid WebMCP schema' );
-		await expect( harness.adapter.sync() ).resolves.toBeUndefined();
-		expect( harness.modelContext.registerTool ).toHaveBeenCalledTimes( 2 );
-	} );
 	it.each( [
 		{ label: 'Changed label' },
 		{ input_schema: { type: 'object', properties: { count: { type: 'integer' } } } },

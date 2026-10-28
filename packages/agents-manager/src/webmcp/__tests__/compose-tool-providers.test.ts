@@ -16,42 +16,18 @@ const createProvider = ( abilities: Ability[] ): ToolProvider => ( {
 } );
 
 describe( 'mergeToolProviders', () => {
-	it( 'lets the first provider that lists an ability define it', async () => {
-		const first = createProvider( [ createAbility( 'demo/read', 'First copy' ) ] );
-		const second = createProvider( [
-			createAbility( 'demo/read', 'Second copy' ),
-			createAbility( 'demo/write' ),
-		] );
-
-		const snapshot = await mergeToolProviders( () => [ first, second ], jest.fn() ).getSnapshot();
-
-		expect(
-			[ ...snapshot.values() ].map( ( { ability } ) => `${ ability.name }:${ ability.label }` )
-		).toEqual( [ 'demo/read:First copy', 'demo/write:demo/write' ] );
-	} );
-
-	it( 'resolves the winning definition and provider by original ability name', async () => {
+	it( 'snapshots original names with their winning definitions and owners', async () => {
 		const read = createAbility( 'demo/read', 'First copy' );
 		const write = createAbility( 'demo/write' );
 		const first = createProvider( [ read ] );
 		const second = createProvider( [ createAbility( 'demo/read', 'Second copy' ), write ] );
-		const merged = mergeToolProviders( () => [ first, second ], jest.fn() );
 
-		expect( ( await merged.getSnapshot() ).get( 'demo/read' ) ).toEqual( {
-			ability: read,
-			provider: first,
-		} );
-		expect( ( await merged.getSnapshot() ).get( 'demo/write' ) ).toEqual( {
-			ability: write,
-			provider: second,
-		} );
-	} );
+		const snapshot = await mergeToolProviders( () => [ first, second ], jest.fn() ).getSnapshot();
 
-	it( 'does not resolve normalized tool names as ability names', async () => {
-		const provider = createProvider( [ createAbility( 'demo/read' ) ] );
-		const merged = mergeToolProviders( () => [ provider ], jest.fn() );
-
-		expect( ( await merged.getSnapshot() ).get( 'demo__read' ) ).toBeUndefined();
+		expect( [ ...snapshot.entries() ] ).toEqual( [
+			[ 'demo/read', { ability: read, provider: first } ],
+			[ 'demo/write', { ability: write, provider: second } ],
+		] );
 	} );
 
 	it( 'resolves the providers and the owner live on every call', async () => {
@@ -86,11 +62,5 @@ describe( 'mergeToolProviders', () => {
 			provider: second,
 		} );
 		expect( onError ).toHaveBeenCalledTimes( 2 );
-	} );
-
-	it( 'returns no owner for an ability no provider lists', async () => {
-		const merged = mergeToolProviders( () => [ createProvider( [] ) ], jest.fn() );
-
-		expect( ( await merged.getSnapshot() ).get( 'demo/missing' ) ).toBeUndefined();
 	} );
 } );

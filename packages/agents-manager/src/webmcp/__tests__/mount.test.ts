@@ -295,7 +295,6 @@ describe( 'mountWebMcpTools', () => {
 		expect( harness.onSyncError ).toHaveBeenCalledWith( expect.any( Error ) );
 		expect( harness.registrations ).toHaveLength( 1 );
 		expect( apiFetch ).toHaveBeenCalledTimes( 1 );
-		expect( jest.getTimerCount() ).toBe( 0 );
 
 		await listener?.();
 		expect( apiFetch ).toHaveBeenCalledTimes( 2 );

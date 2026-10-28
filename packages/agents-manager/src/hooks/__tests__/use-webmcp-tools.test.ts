@@ -91,7 +91,7 @@ describe( 'useWebMcpTools', () => {
 		unmount();
 	} );
 
-	it( 'follows the abilities registry without polling', async () => {
+	it( 'registers and removes tools when the abilities registry changes', async () => {
 		const registrations: Array< { signal?: AbortSignal; tool: WebMcpTool } > = [];
 		Object.defineProperty( document, 'modelContext', {
 			configurable: true,
