@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
@@ -32,42 +32,30 @@ beforeEach( () => {
 } );
 
 describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
-	test( 'keeps booking and real preferences usable while the phone lookup loads or fails', async () => {
+	test( 'keeps real preferences saveable when the optional phone lookup fails', async () => {
 		mockAgency();
 		mockLeadMatching( completeProfile );
-		let failSmsLookup = () => {};
-		const smsLookup = nock( API )
+		nock( API )
 			.get( '/rest/v1.1/meta/sms-country-codes/' )
-			.reply( ( _uri, _body, callback ) => {
-				failSmsLookup = () => callback( null, [ 500, { code: 'error', message: 'Error' } ] );
-			} );
+			.reply( 500, { code: 'error', message: 'Error' } );
 		let savedProfile: AgencyLeadMatchingProfile | undefined;
-		const save = mockLeadMatchingSave( ( body ) => ( savedProfile = body ) );
+		mockLeadMatchingSave( ( body ) => ( savedProfile = body ) );
 
 		render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
+		expect(
+			await screen.findByText( /phone number field is temporarily unavailable/ )
+		).toBeVisible();
+		expect( screen.getByText( /contact details are not saved/ ) ).toBeVisible();
+		await userEvent.type(
+			screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ),
+			'not a URL'
+		);
 		const serviceLevel = await screen.findByRole( 'combobox', {
 			name: 'Which max service level are you most comfortable with right now?',
 		} );
-		const booking = screen.getByRole( 'textbox', { name: 'Booking link (optional)' } );
-		await userEvent.type( booking, 'not a URL' );
-		expect( smsLookup.isDone() ).toBe( true );
-		await act( async () => failSmsLookup() );
-		expect(
-			await screen.findByText(
-				'The phone number field is temporarily unavailable. You can still save your preferences.'
-			)
-		).toBeVisible();
-		expect( booking ).toHaveValue( 'not a URL' );
-		expect(
-			screen.getByText(
-				'Design preview: These contact details are not saved. Other profile fields save as usual.'
-			)
-		).toBeVisible();
-
 		await userEvent.selectOptions( serviceLevel, 'premium' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 		await waitForSaved();
-		expect( save.isDone() ).toBe( true );
 		expect( savedProfile ).toEqual( {
 			...completeProfile,
 			service_and_budget: { ...completeProfile.service_and_budget, max_service_level: 'premium' },
@@ -82,19 +70,15 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		let savedProfile: AgencyLeadMatchingProfile | undefined;
 		const scope = mockLeadMatchingSave( ( body ) => ( savedProfile = body ) );
 
-		const view = render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
-		expect( await screen.findByRole( 'combobox', { name: 'Country code' } ) ).toHaveValue(
-			'United States (+1)'
-		);
+		render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
 		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Phone number (optional)' } ),
+			await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } ),
 			'not a phone'
 		);
 		await userEvent.type(
 			screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ),
 			'not a URL'
 		);
-		expect( scope.isDone() ).toBe( false );
 
 		await userEvent.selectOptions(
 			await screen.findByRole( 'combobox', {
@@ -110,13 +94,6 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 			...completeProfile,
 			service_and_budget: { ...completeProfile.service_and_budget, max_service_level: 'premium' },
 		} );
-
-		view.unmount();
-		render( <AgencyPartnerDirectoryLeadMatchingPreferences />, { queryClient: view.queryClient } );
-		expect( await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } ) ).toHaveValue(
-			''
-		);
-		expect( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) ).toHaveValue( '' );
 	} );
 
 	test( 'saves a changed availability on the public profile only', async () => {

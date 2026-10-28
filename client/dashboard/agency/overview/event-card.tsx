@@ -7,7 +7,6 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { Fragment } from 'react';
-import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
@@ -135,13 +134,7 @@ function SingleEventCard( {
 								// The router takes the hash separately; left in `to`, it is dropped.
 								const [ to, hash ] = cta.url.split( '#' );
 								return (
-									<RouterLinkButton
-										key={ cta.id }
-										{ ...buttonProps }
-										to={ to.split( '?' )[ 0 ] }
-										hash={ hash }
-										search={ getQueryArgs( cta.url ) }
-									>
+									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ to } hash={ hash }>
 										{ cta.label }
 									</RouterLinkButton>
 								);
@@ -191,16 +184,6 @@ export default function EventCard( {
 			/>
 		),
 	};
-	let contactAnnouncement: FeaturedEvent | null = null;
-	if ( leadMatchingHref ) {
-		// Calypso flags use a literal plus as an enable prefix, rather than a space.
-		const flags = new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) ).get(
-			'flags'
-		);
-		contactAnnouncement = getLeadMatchingContactAnnouncement(
-			flags ? addQueryArgs( leadMatchingHref, { flags } ) : leadMatchingHref
-		);
-	}
 	const events = [
 		FEATURED_EVENT,
 		isEligibleForCertificationOffer && tiersHref && certificationOffer
@@ -211,7 +194,7 @@ export default function EventCard( {
 			? getPressableExpansionOfferEvent( pressableHostingHref )
 			: null,
 		getAiMcpAnnouncement( aiMcpHref ),
-		contactAnnouncement,
+		leadMatchingHref ? getLeadMatchingContactAnnouncement( leadMatchingHref ) : null,
 	].filter(
 		( event ): event is FeaturedEvent =>
 			!! event && ( event.endsAt === undefined || now < new Date( event.endsAt ) )

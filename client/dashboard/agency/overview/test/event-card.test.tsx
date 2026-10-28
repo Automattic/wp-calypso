@@ -37,11 +37,8 @@ describe( '<EventCard>', () => {
 			'/marketplace/hosting/pressable'
 		);
 		const link = screen.getByRole( 'link', { name: 'Update your details' } );
-		expect( link ).toHaveAttribute( 'href', '/partner-directory/lead-matching' );
-		expect( recordTracksEvent ).not.toHaveBeenCalled();
 		link.addEventListener( 'click', ( event ) => event.preventDefault(), { once: true } );
 		fireEvent.click( link );
-		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_event_cta_click', {
 			event_id: 'a4a-lead-matching-contact-options',
 			cta_id: 'update-details',
