@@ -26,10 +26,9 @@ chain does:
 2. The merged `ToolProvider` returned by `loadExternalProviders()`. It combines Agents
    Manager-owned abilities with external fallback providers, resolves duplicate names using the
    established precedence, and applies the existing canvas guard. The abilities it lists execute
-   through `toolProvider.executeAbility()` with the original slash-based name. While the
-   experiment is eligible, the external provider's ability-setup hook also mounts at the stable
-   Agents Manager lifecycle so hook-dependent abilities can register without opening the chat
-   route.
+   through `toolProvider.executeAbility()` with the original slash-based name. Agents Manager's
+   editor abilities load and register when its provider is queried, without opening chat. External
+   providers must make their abilities available independently of chat setup to support this too.
 3. The `core/abilities` client registry from `@wordpress/abilities`: everything the page
    registered, whichever plugin did it. These execute through the registry's `executeAbility()`,
    which runs the ability's permission callback and schema validation, under the same canvas
@@ -143,6 +142,11 @@ A rejected registration is reported and retried with the complete descriptor on 
 reconcile. The experiment requires a browser that accepts the current draft's descriptor.
 
 ## Lifecycle
+
+WebMCP runs while Agents Manager is mounted, independently of whether chat is open. Provider
+`useAbilitiesSetup` hooks remain owned by the chat and receive its live actions; WebMCP does not
+invoke them. A third-party ability registered only by a chat setup hook becomes discoverable after
+chat opens, subject to the exposure policy.
 
 The adapter subscribes to the `core/abilities` store and reconciles on every change, so abilities
 registered by later React effects or by other plugins appear without polling. The merged provider

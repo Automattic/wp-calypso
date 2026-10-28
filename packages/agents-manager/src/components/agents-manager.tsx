@@ -29,8 +29,6 @@ import { createAgentConfig } from '../utils/create-agent-config';
 import { isReaderChatAgent } from '../utils/is-reader-chat-agent';
 import { loadExternalProviders, type LoadedProviders } from '../utils/load-external-providers';
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
-import { canExposeWebMcpTools } from '../webmcp/eligibility';
-import { WebMcpProviderAbilitiesSetup } from '../webmcp/provider-abilities-setup';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
 import type { JSX } from 'react';
@@ -347,25 +345,18 @@ function AgentSetup( {
 	}
 
 	return (
-		<>
-			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools() && (
-				<WebMcpProviderAbilitiesSetup
-					useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-				/>
-			) }
-			<AgentDock
-				emptyViewSuggestions={ emptyViewSuggestions }
-				markdownComponents={ loadedProviders.markdownComponents || {} }
-				markdownExtensions={ loadedProviders.markdownExtensions || {} }
-				useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-				useSuggestions={ loadedProviders.useSuggestions }
-				getChatComponent={ loadedProviders.getChatComponent }
-				interactiveUiCatalogs={ loadedProviders.interactiveUiCatalogs }
-				siteBuildUtils={ loadedProviders.siteBuildUtils }
-				transformMessages={ loadedProviders.transformMessages }
-				useCheckpoint={ loadedProviders.useCheckpoint }
-				capabilities={ loadedProviders.capabilities }
-			/>
-		</>
+		<AgentDock
+			emptyViewSuggestions={ emptyViewSuggestions }
+			markdownComponents={ loadedProviders.markdownComponents || {} }
+			markdownExtensions={ loadedProviders.markdownExtensions || {} }
+			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+			useSuggestions={ loadedProviders.useSuggestions }
+			getChatComponent={ loadedProviders.getChatComponent }
+			interactiveUiCatalogs={ loadedProviders.interactiveUiCatalogs }
+			siteBuildUtils={ loadedProviders.siteBuildUtils }
+			transformMessages={ loadedProviders.transformMessages }
+			useCheckpoint={ loadedProviders.useCheckpoint }
+			capabilities={ loadedProviders.capabilities }
+		/>
 	);
 }
