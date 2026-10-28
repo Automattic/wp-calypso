@@ -373,6 +373,20 @@ describe( 'Checklist', () => {
 		expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
 	} );
 
+	it( 'marks only the active in-progress row as active', () => {
+		const twoInProgress = items.map( ( item ) =>
+			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+		);
+		render( { items: twoInProgress, activeItemId: 'images' } );
+
+		expect(
+			rowFor( 'Replace placeholder images' ).querySelector( '[class*="item-active"]' )
+		).not.toBeNull();
+		expect(
+			rowFor( 'Publish the About page' ).querySelector( '[class*="item-active"]' )
+		).toBeNull();
+	} );
+
 	it( 'keeps only the active item in view while collapsed', () => {
 		const twoInProgress = items.map( ( item ) =>
 			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item

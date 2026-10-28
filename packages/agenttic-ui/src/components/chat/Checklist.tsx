@@ -137,6 +137,7 @@ function ChecklistRow( {
 	const status = getStatus( item );
 	const className = cn( styles.item, {
 		[ styles[ 'item-in-progress' ] ]: status === 'in-progress',
+		[ styles[ 'item-active' ] ]: status === 'in-progress' && item.id === actionable.activeItemId,
 		[ styles.settled ]: isSettled( item ),
 	} );
 	const content = (

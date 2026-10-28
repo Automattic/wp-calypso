@@ -178,10 +178,11 @@
 
 	.item-in-progress {
 		color: var( --color-foreground );
+	}
 
-		.label {
-			font-weight: var( --font-weight-semibold );
-		}
+	/* The task the conversation is on; other in-progress rows read as resumable. */
+	.item-active .label {
+		font-weight: var( --font-weight-semibold );
 	}
 
 	.settled {
