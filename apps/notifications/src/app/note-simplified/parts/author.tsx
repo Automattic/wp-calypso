@@ -17,7 +17,7 @@ export default function Author( {
 	}
 
 	return (
-		<HStack as="span" spacing={ 1 } justify="flex-start" expanded={ false }>
+		<HStack as="span" spacing={ 1.5 } justify="flex-start" expanded={ false }>
 			<NoteIcon icon={ avatar } size={ 12 } />
 			<span>{ children }</span>
 		</HStack>
