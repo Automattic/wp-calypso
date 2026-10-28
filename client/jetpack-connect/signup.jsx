@@ -42,6 +42,7 @@ import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import AuthFormHeader from './auth-form-header';
 import { getSignupCopy } from './connection-content';
 import { getConnectorBranding } from './connector-branding-config';
+import { isUnifiedFlow } from './entry-points';
 import MainWrapper from './main-wrapper';
 import { authQueryPropTypes } from './utils';
 import wooDnaConfig from './woo-dna-config';
@@ -157,16 +158,8 @@ export class JetpackSignup extends Component {
 		return 'automattic-for-agencies-client' === this.props.authQuery.from;
 	}
 
-	isFromJetpackConnector( props = this.props ) {
-		return 'jetpack-connector' === props.authQuery.from;
-	}
-
-	isFromJetpackOnboarding( props = this.props ) {
-		return 'jetpack-onboarding' === props.authQuery.from;
-	}
-
 	isUnifiedConnectionFlow( props = this.props ) {
-		return this.isFromJetpackOnboarding( props ) || this.isFromJetpackConnector( props );
+		return isUnifiedFlow( props.authQuery.from );
 	}
 
 	handleExistingAccountClick = () => {
@@ -314,13 +307,11 @@ export class JetpackSignup extends Component {
 	render() {
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
 		const isWooJPC = this.isWooJPC();
-		const isFromJetpackConnector = this.isFromJetpackConnector();
-		const connectorBranding = isFromJetpackConnector
+		const isUnifiedConnection = this.isUnifiedConnectionFlow();
+		const connectorBranding = isUnifiedConnection
 			? getConnectorBranding( this.props.authQuery.plugins )
 			: null;
-		const signupCopy = isFromJetpackConnector
-			? getSignupCopy( this.props.authQuery.plugins )
-			: null;
+		const signupCopy = isUnifiedConnection ? getSignupCopy( this.props.authQuery.plugins ) : null;
 
 		const isLogging = newUsername && bearerToken;
 		if ( isWooJPC && ( isCreatingAccount || isLogging ) ) {
@@ -344,14 +335,14 @@ export class JetpackSignup extends Component {
 		return (
 			<MainWrapper
 				className={ clsx( {
-					'jetpack-connect__authorize-form-wrapper--connector': isFromJetpackConnector,
+					'jetpack-connect__authorize-form-wrapper--connector': isUnifiedConnection,
 				} ) }
 				isWooJPC={ isWooJPC }
-				isJetpackConnector={ isFromJetpackConnector }
+				isJetpackConnector={ isUnifiedConnection }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ isFromJetpackConnector && connectorBranding && signupCopy ? (
+					{ isUnifiedConnection ? (
 						<BrandHeader
 							logo={ connectorBranding.logo }
 							logoAlt=""

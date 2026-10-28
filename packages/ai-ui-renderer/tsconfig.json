@@ -4,8 +4,7 @@
 		"declarationDir": "dist/types",
 		"outDir": "dist/esm",
 		"rootDir": "src",
-		"types": [ "jest" ]
+		"types": [ "jest", "@testing-library/jest-dom" ]
 	},
-	"include": [ "src" ],
-	"exclude": [ "**/__tests__/**" ]
+	"include": [ "src" ]
 }

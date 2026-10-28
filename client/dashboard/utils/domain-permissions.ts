@@ -44,8 +44,14 @@ const checkCanTransferToAnyUser: DomainCheckFunction = ( domain: Domain ) =>
 const checkCanTransferToOtherSite: DomainCheckFunction = ( domain: Domain ) =>
 	!! domain.can_transfer_to_other_site;
 
+// Registrations can be transferred to another registrar even when internal transfers aren't allowed (e.g. Gravatar domains).
+const checkCanTransferToOtherRegistrar: DomainCheckFunction = ( domain: Domain ) =>
+	domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION;
+
 const checkCanTransfer: DomainCheckFunction = ( domain: Domain ) =>
-	checkCanTransferToAnyUser( domain ) || checkCanTransferToOtherSite( domain );
+	checkCanTransferToAnyUser( domain ) ||
+	checkCanTransferToOtherSite( domain ) ||
+	checkCanTransferToOtherRegistrar( domain );
 
 const checkCanManageNameServers: DomainCheckFunction = ( domain: Domain ) =>
 	!! domain.can_manage_name_servers;

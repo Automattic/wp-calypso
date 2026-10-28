@@ -5,14 +5,23 @@ import { readSavedKeysQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
-import { canSavePost, savedKeyForPost, useIsPostSaved, useSavePost } from '..';
+import { canSavePost, savedKeyForPost, savedKeysForPost, useIsPostSaved, useSavePost } from '..';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
 
 const WPCOM_POST = { ID: 1, site_ID: 100, feed_ID: 50, feed_item_ID: 9001, is_external: false };
-const RSS_POST = { ID: 9000, site_ID: 0, feed_ID: 60, feed_item_ID: 9000, is_external: true };
+// `/read/saved` returns an RSS post with its feed ID as `site_ID`.
+const RSS_POST = { ID: 9000, site_ID: 60, feed_ID: 60, feed_item_ID: 9000, is_external: true };
+// A Jetpack post shown with its WordPress.com copy, after being saved while that
+// copy failed to load.
+const JETPACK_POST = { ID: 45, site_ID: 123, feed_ID: 70, feed_item_ID: 6000, is_external: false };
+// The same Jetpack post saved under both of its keys.
+const JETPACK_SAVED_KEYS = [
+	{ blog_id: 123, post_id: 45, date_saved: '2026-10-02T00:00:00+00:00' },
+	{ feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' },
+];
 
 function makeClient() {
 	return new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -53,14 +62,38 @@ describe( 'savedKeyForPost', () => {
 	} );
 } );
 
-describe( 'canSavePost', () => {
-	it( 'allows a WordPress.com post', () => {
-		expect( canSavePost( WPCOM_POST ) ).toBe( true );
+describe( 'savedKeysForPost', () => {
+	it( 'adds the feed item key to a post that is not external', () => {
+		expect( savedKeysForPost( WPCOM_POST ) ).toEqual( [
+			{ blog_id: 100, post_id: 1 },
+			{ feed_item_id: 9001 },
+		] );
 	} );
 
-	it( 'does not allow an RSS post or a post without the IDs the API needs', () => {
-		expect( canSavePost( RSS_POST ) ).toBe( false );
+	it( 'returns only the feed item key for an RSS post', () => {
+		expect( savedKeysForPost( RSS_POST ) ).toEqual( [ { feed_item_id: 9000 } ] );
+	} );
+
+	it( 'returns only the blog and post key for a post without a feed item', () => {
+		expect( savedKeysForPost( { ID: 1, site_ID: 100 } ) ).toEqual( [
+			{ blog_id: 100, post_id: 1 },
+		] );
+	} );
+
+	it( 'returns no keys for a post without the IDs the API needs', () => {
+		expect( savedKeysForPost( { ID: 1, feed_item_ID: 9001 } ) ).toEqual( [] );
+	} );
+} );
+
+describe( 'canSavePost', () => {
+	it( 'allows WordPress.com and RSS posts', () => {
+		expect( canSavePost( WPCOM_POST ) ).toBe( true );
+		expect( canSavePost( RSS_POST ) ).toBe( true );
+	} );
+
+	it( 'does not allow a post without the IDs the API needs', () => {
 		expect( canSavePost( { ID: 1 } ) ).toBe( false );
+		expect( canSavePost( { is_external: true } ) ).toBe( false );
 	} );
 } );
 
@@ -91,6 +124,17 @@ describe( 'useIsPostSaved', () => {
 		expect( request.isDone() ).toBe( true );
 		expect( result.current.rss ).toBe( true );
 		expect( result.current.other ).toBe( false );
+	} );
+
+	it( 'reports a post saved under its feed item before it had a blog and post ID', () => {
+		const client = makeClient();
+		setKeys( client, [ { feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' } ] );
+
+		const { result } = renderHook( () => useIsPostSaved( JETPACK_POST, { enabled: false } ), {
+			wrapper: makeWrapper( client ),
+		} );
+
+		expect( result.current ).toBe( true );
 	} );
 
 	it( 'does not fetch when disabled or when the post has no key', () => {
@@ -173,6 +217,62 @@ describe( 'useSavePost', () => {
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
 		expect( result.current.isSaved ).toBe( false );
 	} );
+
+	it( 'unsaves the post by the key it was saved under', async () => {
+		const client = makeClient();
+		setKeys( client, [ { feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' } ] );
+		const request = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 0 } );
+		const result = renderSavePost( client, JETPACK_POST );
+
+		act( () => result.current.unsavePost( JETPACK_POST ) );
+
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		expect( result.current.isSaved ).toBe( false );
+	} );
+
+	it( 'unsaves a post saved under both of its keys', async () => {
+		const client = makeClient();
+		setKeys( client, JETPACK_SAVED_KEYS );
+		const requests = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { blog_id: 123, post_id: 45 }, total: 1 } )
+			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { feed_item_id: 6000 }, total: 0 } );
+		const onSuccess = jest.fn();
+		const result = renderSavePost( client, JETPACK_POST );
+
+		act( () => result.current.unsavePost( JETPACK_POST, { onSuccess } ) );
+
+		await waitFor( () => expect( onSuccess ).toHaveBeenCalledTimes( 1 ) );
+		expect( requests.isDone() ).toBe( true );
+		expect( result.current.isSaved ).toBe( false );
+	} );
+
+	it.each( [
+		{ failing: 'blog and post', blogPostStatus: 500, feedItemStatus: 200 },
+		{ failing: 'feed item', blogPostStatus: 200, feedItemStatus: 500 },
+	] )(
+		'calls onError once when the $failing key fails to unsave',
+		async ( { blogPostStatus, feedItemStatus } ) => {
+			const client = makeClient();
+			setKeys( client, JETPACK_SAVED_KEYS );
+			const requests = nock( BASE )
+				.post( '/wpcom/v2/read/saved/delete', { blog_id: 123, post_id: 45, source: 'reader-web' } )
+				.reply( blogPostStatus )
+				.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 6000, source: 'reader-web' } )
+				.reply( feedItemStatus );
+			const onError = jest.fn();
+			const result = renderSavePost( client, JETPACK_POST );
+
+			act( () => result.current.unsavePost( JETPACK_POST, { onError } ) );
+
+			await waitFor( () => expect( onError ).toHaveBeenCalledTimes( 1 ) );
+			expect( requests.isDone() ).toBe( true );
+			expect( result.current.isSaved ).toBe( true );
+		}
+	);
 
 	it( 'shows the post as unsaved and calls onError when the save fails', async () => {
 		const client = makeClient();

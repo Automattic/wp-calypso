@@ -31,18 +31,24 @@ jest.mock( '@wordpress/components', () => ( {
 	Button: ( {
 		children,
 		disabled,
+		href,
 		isBusy,
 		onClick,
 	}: {
 		children: ReactNode;
 		disabled?: boolean;
+		href?: string;
 		isBusy?: boolean;
 		onClick?: () => void;
-	} ) => (
-		<button data-busy={ isBusy } disabled={ disabled } onClick={ onClick }>
-			{ children }
-		</button>
-	),
+	} ) =>
+		href ? (
+			<a href={ href }>{ children }</a>
+		) : (
+			<button data-busy={ isBusy } disabled={ disabled } onClick={ onClick }>
+				{ children }
+			</button>
+		),
+	VisuallyHidden: ( { children }: { children: ReactNode } ) => <span>{ children }</span>,
 } ) );
 
 jest.mock( 'calypso/a8c-for-agencies/components/layout/banner', () => ( {
@@ -99,15 +105,6 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 
 jest.mock( 'calypso/state/user-settings/actions', () => ( {
 	fetchUserSettings: jest.fn( () => ( { type: 'USER_SETTINGS_REQUEST' } ) ),
-	setUnsavedUserSetting: jest.fn( ( key, value ) => ( {
-		type: 'SET_UNSAVED_USER_SETTING',
-		key,
-		value,
-	} ) ),
-} ) );
-
-jest.mock( 'calypso/state/user-settings/thunks', () => ( {
-	saveUnsavedUserSettings: jest.fn( () => ( { type: 'SAVE_UNSAVED_USER_SETTINGS' } ) ),
 } ) );
 
 jest.mock( 'calypso/dashboard/utils/email-verification-resend', () => ( {
@@ -150,6 +147,18 @@ describe( 'EmailVerificationNotification', () => {
 		expect( screen.getByRole( 'heading', { name: 'Verify your email address' } ) ).toBeVisible();
 		expect( screen.getByText( /user@example\.com/ ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Resend email' } ) ).toBeVisible();
+	} );
+
+	it( 'links a pending email change to WordPress.com instead of resending it here', () => {
+		mockEmailToVerify = 'new@example.com';
+		mockIsEmailChangePending = true;
+
+		render( <EmailVerificationNotification /> );
+
+		expect(
+			screen.getByRole( 'link', { name: 'Resend email (opens in a new tab)' } )
+		).toHaveAttribute( 'href', 'https://wordpress.com/me' );
+		expect( screen.queryByRole( 'button', { name: 'Resend email' } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'renders as a warning-level banner', () => {

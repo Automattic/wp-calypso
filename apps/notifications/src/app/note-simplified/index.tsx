@@ -1,5 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import CommentNote from './layouts/comment';
+import FollowNote from './layouts/follow';
 import NewPostNote from './layouts/new-post';
 import NoticeNote from './layouts/notice';
 import ReactionsNote from './layouts/reactions';
@@ -23,7 +24,7 @@ const NOTE_TYPES: Record< string, NoteTypeConfig > = {
 		getPreview: ( note ) => note.meta?.parent_comment?.text,
 	},
 	reblog: { Layout: ReactionsNote },
-	follow: { Layout: ReactionsNote },
+	follow: { Layout: FollowNote },
 	new_post: { Layout: NewPostNote },
 };
 

@@ -192,7 +192,7 @@ export function StaticSiteImportNotice( {
 } ) {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const { from, platform, domainChoice } = search;
+	const { from, platform } = search;
 	const sourceHost = getSourceHost( from );
 
 	if ( isDismissed ) {
@@ -238,7 +238,6 @@ export function StaticSiteImportNotice( {
 		);
 	}
 
-	const keepsDomain = domainChoice === 'keep' && Boolean( sourceHost );
 	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
 		initialQuery: sourceHost,
 		siteSlug: site.slug,
@@ -253,7 +252,7 @@ export function StaticSiteImportNotice( {
 			onClose={ () => setIsDismissed( true ) }
 			actions={
 				<HStack justify="space-between" wrap>
-					{ keepsDomain && (
+					{ sourceHost && (
 						<Button variant="link" href={ connectDomainUrl }>
 							{ sprintf(
 								/* translators: %s: the site's domain, e.g. example.com. */

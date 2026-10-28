@@ -132,7 +132,7 @@ function mockApis( {
 
 	if ( ssl ) {
 		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/domains/ssl/${ ssl.domain }` )
+			.get( `/wpcom/v2/domains/ssl/${ ssl.domain }/` )
 			.query( true )
 			.reply( 200, {
 				data: {

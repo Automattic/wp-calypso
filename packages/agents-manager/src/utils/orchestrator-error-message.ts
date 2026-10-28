@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { CREDITS_REFUSAL_PREFIX } from './credits-tracks';
 
 function isUsageLimitError( error: string ): boolean {
 	return error === 'ai_editorial_review_over_limit' || /jetpack ai usage limit/i.test( error );
@@ -31,7 +32,7 @@ export function getOrchestratorErrorType(
 	error: string,
 	code?: string
 ): 'credits' | 'usage_limit' | 'rate_limit' | 'other' {
-	if ( code?.startsWith( 'ai_credit_allowance_' ) ) {
+	if ( code?.startsWith( CREDITS_REFUSAL_PREFIX ) ) {
 		return 'credits';
 	}
 

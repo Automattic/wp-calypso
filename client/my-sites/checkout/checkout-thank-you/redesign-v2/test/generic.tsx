@@ -4,7 +4,7 @@
 import { PRODUCT_STUDIO_CODE_AI_CREDITS } from '@automattic/api-core';
 import { render, screen } from '@testing-library/react';
 import GenericThankYou from '../pages/generic';
-import type { ReceiptPurchase } from 'calypso/state/receipts/types';
+import type { ReceiptPurchase } from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 let mockSelectedSiteSlug: string | null = null;
 

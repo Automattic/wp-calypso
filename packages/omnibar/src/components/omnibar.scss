@@ -134,7 +134,7 @@ body:has( .omnibar ) {
 		}
 	}
 
-	.omnibar__menu:has( .omnibar__site-action ) {
+	.omnibar__menu.omnibar__site-nodes-item {
 		@media ( max-width: 480px ) {
 			min-width: 52px;
 		}
@@ -202,7 +202,6 @@ body:has( .omnibar ) {
 		}
 	}
 
-	.omnibar__site-action,
 	.omnibar__node-content {
 		gap: 6px;
 	}

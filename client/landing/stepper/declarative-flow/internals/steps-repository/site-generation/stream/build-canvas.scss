@@ -1,6 +1,11 @@
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
+// One beat for every loop on the card, so overlapping loops breathe together;
+// the preview's walk holds two beats (TOUR_HOLD in html-preview-runtime).
+$site-generation-beat: 2800ms;
+$site-generation-half-beat: 1400ms;
+
 .site-generation-canvas {
 	--site-generation-canvas-pane-top: calc( clamp( 32px, 8vh, 80px ) - 30px );
 
@@ -154,6 +159,11 @@
 	font-size: 1.25rem;
 	font-weight: 600;
 	line-height: 1.3;
+
+	&.is-branded {
+		font-size: 1.5rem;
+		line-height: 1.2;
+	}
 }
 
 .site-generation-canvas__brief-direction {
@@ -287,6 +297,62 @@
 
 .site-generation-canvas__brief-chips.site-generation-canvas__page-list {
 	margin-block-start: 0;
+
+	li {
+		position: relative;
+		overflow: hidden;
+	}
+
+	// A page being built carries a sweep along its lower edge; a finished one
+	// goes quiet.
+	li[data-progress='building']::after {
+		content: '';
+		position: absolute;
+		inset-block-end: 0;
+		inset-inline-start: 0;
+		inline-size: 100%;
+		block-size: 2px;
+		background: var( --site-generation-brand, var( --color-primary ) );
+		transform: translateX( -100% );
+		animation: site-generation-canvas-building $site-generation-half-beat
+			cubic-bezier( 0.645, 0.045, 0.355, 1 ) infinite;
+	}
+}
+
+@keyframes site-generation-canvas-building {
+	0% {
+		transform: translateX( -100% );
+	}
+
+	60%,
+	100% {
+		transform: translateX( 100% );
+	}
+}
+
+.site-generation-canvas__page-jump {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	cursor: pointer;
+
+	&:hover {
+		color: var( --color-text );
+	}
+
+	&:focus-visible {
+		outline: none;
+	}
+}
+
+// The chip clips its own overflow for the sweep, so the focus ring sits on
+// the chip rather than on the button inside it.
+.site-generation-canvas__page-list li:has( .site-generation-canvas__page-jump:focus-visible ) {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
 }
 
 .site-generation-canvas__image-strip {
@@ -324,6 +390,99 @@
 	border-radius: 0;
 }
 
+// A pending tile says what is being drawn and breathes while it waits, so a
+// slow image generation still reads as work in progress. Transform and
+// opacity only.
+.site-generation-canvas__image-pending {
+	position: relative;
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	overflow: hidden;
+	animation: site-generation-canvas-pulse $site-generation-beat
+		cubic-bezier( 0.645, 0.045, 0.355, 1 ) infinite;
+
+	.site-generation-canvas__image-placeholder {
+		animation: none;
+	}
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: -20%;
+		background: radial-gradient(
+			circle at 50% 55%,
+			color-mix( in srgb, var( --color-text ) 22%, transparent ),
+			transparent 62%
+		);
+		opacity: 0;
+		animation: site-generation-canvas-wash $site-generation-beat
+			cubic-bezier( 0.645, 0.045, 0.355, 1 ) infinite;
+		animation-delay: inherit;
+		pointer-events: none;
+	}
+
+	// The one being drawn right now breathes faster and says what it is.
+	&.is-generating,
+	&.is-generating::before {
+		animation-duration: $site-generation-half-beat;
+	}
+
+	&.is-generating .site-generation-canvas__image-caption {
+		color: var( --color-text );
+	}
+
+	// Slots the plan decided to leave empty hold still.
+	&.is-settled,
+	&.is-settled::before {
+		animation: none;
+	}
+}
+
+@for $i from 1 through 8 {
+	.site-generation-canvas__image:nth-child( #{$i} ) .site-generation-canvas__image-pending {
+		animation-delay: #{( $i - 1 ) * 280}ms;
+	}
+}
+
+@keyframes site-generation-canvas-pulse {
+	0%,
+	100% {
+		transform: translateY( 0 ) scale( 1 );
+	}
+
+	50% {
+		transform: translateY( -2px ) scale( 0.97 );
+	}
+}
+
+@keyframes site-generation-canvas-wash {
+	0%,
+	100% {
+		opacity: 0;
+		transform: scale( 0.7 );
+	}
+
+	50% {
+		opacity: 1;
+		transform: scale( 1 );
+	}
+}
+
+.site-generation-canvas__image-caption {
+	position: absolute;
+	inset: 0;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	overflow: hidden;
+	padding: 8px;
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	line-height: 1.35;
+	transition: color 200ms ease;
+}
+
 .site-generation-canvas__reassurance {
 	margin: 0;
 	color: var( --color-text-subtle );
@@ -331,6 +490,59 @@
 	line-height: 1.6;
 	max-width: 600px;
 	text-align: center;
+}
+
+.site-generation-canvas__status-line {
+	position: sticky;
+	inset-block-end: 0;
+	z-index: 1;
+	display: flex;
+	gap: 10px;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding-block: 12px;
+	padding-inline: 16px;
+	background: var( --site-generation-canvas-background, var( --studio-gray-0 ) );
+	color: var( --color-text-subtle );
+	font-size: 0.75rem;
+	animation: site-generation-canvas-enter 400ms ease-out;
+}
+
+.site-generation-canvas__status-activity {
+	display: block;
+	flex-shrink: 0;
+	box-sizing: border-box;
+	inline-size: 14px;
+	block-size: 14px;
+	border: 2px solid var( --color-border-subtle );
+	border-block-start-color: var( --site-generation-brand, var( --color-primary ) );
+	border-radius: 50%;
+	animation: site-generation-canvas-spin 0.8s linear infinite;
+}
+
+.site-generation-canvas__status-line[data-complete='true'] {
+	color: var( --color-text );
+}
+
+.site-generation-canvas__status-check {
+	flex-shrink: 0;
+	color: var( --site-generation-brand, var( --color-primary ) );
+	fill: currentcolor;
+	animation: site-generation-canvas-check 320ms cubic-bezier( 0.34, 1.56, 0.64, 1 );
+}
+
+@keyframes site-generation-canvas-check {
+	from {
+		opacity: 0;
+		transform: scale( 0.6 );
+	}
+}
+
+@keyframes site-generation-canvas-spin {
+	to {
+		transform: rotate( 360deg );
+	}
 }
 
 .site-generation-canvas__brief .is-revealed {
@@ -357,7 +569,7 @@
 	display: block;
 	background: var( --studio-gray-5 );
 	border-radius: 2px;
-	animation: site-generation-canvas-breathe 2.4s ease-in-out infinite;
+	animation: site-generation-canvas-breathe $site-generation-beat ease-in-out infinite;
 }
 
 .site-generation-canvas__placeholder-line {
@@ -440,7 +652,14 @@
 	.site-generation-canvas__design,
 	.site-generation-canvas__site,
 	.site-generation-canvas__placeholder,
-	.site-generation-canvas__brief .is-revealed {
+	.site-generation-canvas__brief .is-revealed,
+	.site-generation-canvas__status-line,
+	.site-generation-canvas__status-activity,
+	.site-generation-canvas__status-check,
+	.site-generation-canvas__brief-chips.site-generation-canvas__page-list
+		li[data-progress='building']::after,
+	.site-generation-canvas__image-pending,
+	.site-generation-canvas__image-pending::before {
 		animation: none;
 	}
 }

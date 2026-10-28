@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Breaking: Requires `@babel/core` 8, which needs Node.js `^22.18.0 || >=24.11.0`.
+- The preset transforms with its own `babel-jest` dependency, so tests compile with the project's `@babel/core` rather than whichever one Jest's internal `babel-jest` copy resolves.
 - Update Jest, `jest-config` and `babel-jest` to v30.
 
 Initial release

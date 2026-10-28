@@ -11,7 +11,6 @@ import {
 import { useDispatch } from 'calypso/state';
 import { startImport, resetImport, startImporting } from 'calypso/state/imports/actions';
 import { appStates } from 'calypso/state/imports/constants';
-import { importSite } from 'calypso/state/imports/site-importer/actions';
 import CompleteScreen from '../../components/complete-screen';
 import ErrorMessage from '../../components/error-message';
 import ImporterDrag from '../../components/importer-drag';
@@ -19,12 +18,7 @@ import { getImportDragConfig } from '../../components/importer-drag/config';
 import MigrationPlansGrid from '../../components/migration-plans-grid';
 import ProgressScreen from '../../components/progress-screen';
 import type { SiteDetails } from '@automattic/data-stores';
-import type {
-	Importer,
-	ImportJob,
-	ImportJobParams,
-	StepNavigator,
-} from 'calypso/blocks/importer/types';
+import type { Importer, ImportJob, StepNavigator } from 'calypso/blocks/importer/types';
 import './style.scss';
 
 type RenderState = 'idle' | 'progress' | 'upgrade-plan' | 'error' | 'success';
@@ -54,28 +48,10 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	/**
 	 ↓ Callbacks
 	 */
-	const prepareImportParams = useCallback( () => {
-		const targetSiteUrl = siteSlug.startsWith( 'http' ) ? siteSlug : 'https://' + siteSlug;
-
-		return {
-			engine: importer,
-			importerStatus: job as ImportJob,
-			params: { engine: importer },
-			site: { ID: siteItem?.ID as number },
-			targetSiteUrl,
-			supportedContent: [],
-			unsupportedContent: [],
-		} as ImportJobParams;
-	}, [ siteItem, siteSlug, importer, job ] );
-
 	const handleJobStateTransition = useCallback( () => {
 		// If there is no existing import job, create a new job
 		if ( job === undefined ) {
 			dispatch( startImport( siteItem?.ID, getImporterTypeForEngine( importer ) ) );
-		}
-		// If the job is in a ready state, start the import process
-		else if ( job.importerState === appStates.READY_FOR_UPLOAD ) {
-			dispatch( importSite( prepareImportParams() ) );
 		}
 		// If the file type is a playground and the upload was successful, start the import process
 		else if (

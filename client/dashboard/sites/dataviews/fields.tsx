@@ -142,6 +142,7 @@ function getDefaultFields( {
 			},
 			render: ( { item, field } ) => (
 				<Visibility
+					siteId={ item.ID }
 					siteSlug={ item.slug }
 					visibility={ field.getValue( { item } ) }
 					status={ getSiteBlockingStatus( item ) }

@@ -12,7 +12,8 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import useSignupLink from '../hooks/use-signup-link';
-import HeadingLogo from './heading-logo';
+import HeadingLogo, { useHeadingLogo } from './heading-logo';
+import 'calypso/components/account-template/style.scss';
 import './one-login-layout.scss';
 
 export const ensureHeadingProvided = (
@@ -29,10 +30,9 @@ export const ensureHeadingProvided = (
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
-	isFromJetpackConnector?: boolean;
 	/**
-	 * Jetpack onboarding or connector flow, which the user is completing from a
-	 * Jetpack site.
+	 * The unified connection flow (`isUnifiedFlow()`), which the user is
+	 * completing from a Jetpack site.
 	 */
 	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
@@ -52,20 +52,19 @@ interface OneLoginLayoutProps {
 	signupLinkMobileOnly?: boolean;
 	noThanksRedirectUrl?: string;
 	/**
-	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`. Defaults to 6.
+	 * Optional override for the content column width passed to `Step.CenteredColumnLayout`.
+	 * Defaults to 4, the 432px column every account screen shares, or 6 with a logo above the title.
 	 */
 	columnWidth?: 4 | 5 | 6 | 8 | 10;
+	/**
+	 * Centers the heading over a wider layout, like the main login screen's side-by-side
+	 * form and social buttons. Defaults to left-aligned, or centered with a logo above the title.
+	 */
+	isCentered?: boolean;
 	/**
 	 * Optional flag to control whether the heading logo should be displayed. Defaults to true.
 	 */
 	showLogo?: boolean;
-	/**
-	 * When true, the primary subtext slot is rendered in the dotcom-prominent
-	 * variant (slightly darker text color and a step up on the typography
-	 * scale). Use it when the primary line is a real subtitle rather than the
-	 * default quiet ToS treatment.
-	 */
-	subHeadingProminent?: boolean;
 	/**
 	 * Rendered above the heading. Pass a component that returns `null` when it
 	 * has nothing to show, so the layout keeps its spacing.
@@ -80,7 +79,6 @@ interface OneLoginLayoutProps {
 
 const OneLoginLayout = ( {
 	isJetpack,
-	isFromJetpackConnector,
 	isUnifiedConnectionFlow,
 	connectorPlugins,
 	children,
@@ -90,9 +88,9 @@ const OneLoginLayout = ( {
 	isLostPasswordView,
 	signupLinkMobileOnly,
 	noThanksRedirectUrl,
-	columnWidth,
+	columnWidth: columnWidthProp,
+	isCentered: isCenteredProp,
 	showLogo = true,
-	subHeadingProminent = false,
 	notice,
 	linkLogoToHome = false,
 }: OneLoginLayoutProps ) => {
@@ -105,10 +103,18 @@ const OneLoginLayout = ( {
 	const currentRoute = useSelector( getCurrentRoute );
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWooJPC = useSelector( isWooJPCFlow );
-	const { headingText, subHeadingText, subHeadingTextSecondary } = useLoginContext();
+	const { headingText, subHeadingText, subHeadingTextSecondary, siteIcon } = useLoginContext();
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
+	const headingLogo = useHeadingLogo( { isJetpack, isUnifiedConnectionFlow, connectorPlugins } );
+
+	// Product and partner logins with a logo above the title (Woo, Jetpack, Crowdsignal,
+	// Akismet...) are designed around it, so they stay centered. A logo in the top bar
+	// doesn't count: those screens follow the account template.
+	const hasLogoAboveTitle = showLogo && headingLogo !== null;
+	const columnWidth = columnWidthProp ?? ( hasLogoAboveTitle ? 6 : 4 );
+	const isCentered = isCenteredProp ?? hasLogoAboveTitle;
 
 	const renderSignUpLink = () => {
 		if ( isLostPasswordView ) {
@@ -162,7 +168,6 @@ const OneLoginLayout = ( {
 	const shouldLinkLogo =
 		linkLogoToHome &&
 		! isJetpack &&
-		! isFromJetpackConnector &&
 		! isUnifiedConnectionFlow &&
 		! isWooJPC &&
 		! oauth2Client &&
@@ -180,7 +185,7 @@ const OneLoginLayout = ( {
 		// Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook
 		// would render the mobile arrangement and jump on hydration.
 		const rightElement = (
-			<nav className="wp-login__one-login-layout-top-right">
+			<nav className="wp-login__one-login-layout-top-right account-template__top-bar-links">
 				{ signupLinkMobileOnly ? (
 					<span className="wp-login__top-right-mobile">{ signupOrLoginLink }</span>
 				) : (
@@ -200,21 +205,28 @@ const OneLoginLayout = ( {
 		);
 	};
 
-	const effectiveColumnWidth: 4 | 5 | 6 | 8 | 10 = ( columnWidth ?? 6 ) as 4 | 5 | 6 | 8 | 10;
-
 	return (
 		<Step.CenteredColumnLayout
-			columnWidth={ effectiveColumnWidth }
+			columnWidth={ columnWidth }
 			topBar={ topBar() }
 			verticalAlign="center"
 		>
-			<div className="wp-login__one-login-layout-content-wrapper">
+			<div
+				className={ clsx( 'wp-login__one-login-layout-content-wrapper', 'account-template', {
+					'is-centered': isCentered,
+				} ) }
+			>
 				{ notice }
 				<div className="wp-login__one-login-layout-heading">
+					{ showLogo && ! headingLogo && siteIcon && (
+						<div className="wp-login__one-login-layout-heading-logo is-site-icon">
+							<img src={ siteIcon.src } width={ 64 } height={ 64 } alt={ siteIcon.alt } />
+						</div>
+					) }
 					{ showLogo && (
 						<HeadingLogo
 							isJetpack={ isJetpack }
-							isFromJetpackConnector={ isFromJetpackConnector }
+							isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 							connectorPlugins={ connectorPlugins }
 						/>
 					) }
@@ -226,13 +238,7 @@ const OneLoginLayout = ( {
 						}
 					/>
 					<div className="wp-login__one-login-layout-heading-subtext-wrapper">
-						<h2
-							className={ clsx( 'wp-login__one-login-layout-heading-subtext', {
-								'is-prominent': subHeadingProminent,
-							} ) }
-						>
-							{ subHeadingText }
-						</h2>
+						<h2 className="wp-login__one-login-layout-heading-subtext">{ subHeadingText }</h2>
 						{ subHeadingTextSecondary && (
 							<h3 className="wp-login__one-login-layout-heading-subtext is-secondary">
 								{ subHeadingTextSecondary }

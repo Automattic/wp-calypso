@@ -42,7 +42,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"jest": "^30.5.2",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"redux": "^5.0.1",

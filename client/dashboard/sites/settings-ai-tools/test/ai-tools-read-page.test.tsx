@@ -121,14 +121,14 @@ describe( '<SiteAIToolsRead>', () => {
 		expect( screen.queryByRole( 'heading', { name: 'Site' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'a tool anchor in the URL loads just that setting', () => {
+	test( 'a tool anchor in the URL opens its group and keeps the other tools visible', () => {
 		window.location.hash = '#wpcom-mcp/posts-list';
 		seed();
 		render( <SiteAIToolsRead />, { queryClient } );
 
-		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( 'List posts' );
+		expect( screen.getByRole( 'searchbox' ) ).toHaveValue( '' );
 		expect( screen.getByRole( 'checkbox', { name: 'List posts' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'checkbox', { name: 'List pages' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'checkbox', { name: 'List pages' } ) ).toBeVisible();
 	} );
 
 	test( 'the page-level Enable all saves every tool and remote group on the page', async () => {

@@ -531,10 +531,13 @@ interface UIMessage {
 	id: string;
 	role: 'user' | 'agent';
 	content: Array< {
-		type: 'text' | 'image_url' | 'component';
+		type: 'text' | 'component' | 'context' | 'data';
 		text?: string;
-		image_url?: string;
 		component?: React.ComponentType;
+		componentProps?: any;
+		// Data the host reads, such as `sources`, or an interactive UI surface under `a2ui`:
+		// A2UI's A2A data part, for the host to render.
+		data?: Record< string, unknown >;
 	} >;
 	timestamp: number;
 	actions?: UIMessageAction[];
@@ -552,7 +555,11 @@ interface Tool {
 }
 
 type AuthProvider = () => Promise< Record< string, string > >;
-type ContextProvider = { getClientContext: () => any };
+type ContextProvider = {
+	getClientContext: () => any;
+	// Metadata the agent reads on every message, such as A2UI's `a2uiRendererCapabilities`.
+	getMessageMetadata?: () => Record< string, unknown >;
+};
 type ToolProvider = {
 	getAvailableTools: () => Promise< Tool[] >;
 	getDispatchableTools?: () => Promise< Tool[] >;

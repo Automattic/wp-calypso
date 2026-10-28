@@ -84,58 +84,10 @@
 	}
 }
 
-.import__site-identify-hosting-details {
-	background-color: #f6f7f7;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	gap: 1.25rem;
-	margin: 40px auto 0 auto;
-	max-width: 368px;
-	padding: 1.5rem;
-
-	&--title {
-		color: var( --studio-gray-100 );
-		font-size: 1.25rem;
-		font-weight: 500;
-	}
-
-	&--list {
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-
-		&-item {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
-
-			&-description {
-				color: var( --studio-gray-60 );
-				font-size: 0.875rem;
-				font-weight: 400;
-				letter-spacing: -0.16px;
-			}
-
-			&-title {
-				color: var( --studio-gray-70 );
-				font-size: 1rem;
-				font-weight: 500;
-				letter-spacing: -0.32px;
-			}
-		}
-	}
-}
-
 .step-container-v2:has( .step-container-v2--site-migration-identify ) {
 	.import__capture-container {
 		max-width: 100%;
 		margin: unset;
-	}
-
-	.checklist-card {
-		margin: 40px auto 0;
-		max-width: 100%;
 	}
 }
 
@@ -164,7 +116,6 @@
 	.site-migration-identify--reprint {
 		max-width: 464px;
 
-		&.site-migration-identify--checking,
 		&.site-migration-identify--connection-issue {
 			max-width: 660px;
 		}
@@ -172,13 +123,6 @@
 
 	.step-container-v2__top-bar-wordpress-logo--wordmark {
 		height: 18px;
-	}
-
-	.step-container-v2__top-bar-left-element::before {
-		content: '';
-		height: 16px;
-		border-inline-start: 1px solid var( --color-neutral-5 );
-		margin-inline: 8px 16px;
 	}
 
 	.step-container-v2__back-button {
@@ -342,16 +286,6 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10px;
-	}
-
-	.site-migration-identify__progress-bar {
-		width: 100%;
-		height: 4px;
-		background: var( --color-neutral-5 );
-
-		> div {
-			background: var( --color-link );
-		}
 	}
 }
 

@@ -45,9 +45,17 @@ export async function captureCanvasCallback( rawInput: unknown ): Promise< Abili
 		described =
 			'Here is the whole page, top to bottom. It is scaled down to fit, so body text will not be legible — read it for colour, type scale, spacing and section rhythm, and take an ordinary picture of a specific area when wording or fine detail matters. Photographs are shown as flat placeholder boxes at their real size.';
 	} else if ( framed > 0 ) {
+		// Only as many as the rasterizer actually inlined: an image whose host
+		// refused the fetch is still a placeholder, however framed it was.
+		const inlinedImages = fileParts[ 0 ].metadata?.inlinedImages;
+		const images =
+			typeof inlinedImages === 'number' && inlinedImages > 0
+				? 'Some images in and around those blocks are shown as they really are, such as the photograph of a cover holding them. Every other photograph is a flat placeholder box at its real size, so treat any grey rectangle as an image that is present, not as a missing or broken one.'
+				: 'Photographs are shown as flat placeholder boxes at their real size, so treat any grey rectangle as an image that is present, not as a missing one.';
+
 		described = `Here is the canvas around ${ framed } ${
 			framed === 1 ? 'block' : 'blocks'
-		}. Photographs are shown as flat placeholder boxes at their real size, so treat any grey rectangle as an image that is present, not as a missing one.`;
+		}. ${ images }`;
 	} else {
 		described =
 			'Here is the visible area of the canvas. Photographs are shown as flat placeholder boxes at their real size, so treat any grey rectangle as an image that is present, not as a missing one.';
