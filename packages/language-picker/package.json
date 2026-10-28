@@ -37,11 +37,11 @@
 	"dependencies": {
 		"@automattic/languages": "workspace:^",
 		"@automattic/search": "workspace:^",
-		"@babel/runtime": "^7.29.10",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/react-i18n": "^4.48.0"
+		"@wordpress/react-i18n": "^4.48.0",
+		"tslib": "^2.8.1"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",

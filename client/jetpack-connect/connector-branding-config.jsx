@@ -48,9 +48,8 @@ export function getConnectorLogoUrl( pluginSlugs = [] ) {
  *
  * The connector authorize page no longer reads `permissions*` from this
  * resolver — it renders the dynamic `<FeaturesSection />` instead. The
- * remaining consumers are the legacy `isFromJetpackOnboarding` and
- * `isFromMyJetpack` paths, which still render the static
- * `<PermissionsList />`.
+ * remaining consumer is the legacy `isFromMyJetpack` path, which still
+ * renders the static `<PermissionsList />`.
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
  * @returns {{ logo: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
  */

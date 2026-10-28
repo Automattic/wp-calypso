@@ -1,4 +1,5 @@
 import { OmnibarMenu } from './omnibar-menu';
+import { OmnibarNodeBoundary } from './omnibar-node-boundary';
 import type { OmnibarNode } from '../types';
 
 export function OmnibarNodeList( {
@@ -9,6 +10,8 @@ export function OmnibarNodeList( {
 	className?: string;
 } ) {
 	return nodes.map( ( node ) => (
-		<OmnibarMenu key={ node.id } node={ node } className={ className } />
+		<OmnibarNodeBoundary key={ node.id }>
+			<OmnibarMenu node={ node } className={ className } />
+		</OmnibarNodeBoundary>
 	) );
 }

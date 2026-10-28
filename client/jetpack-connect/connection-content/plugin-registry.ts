@@ -66,6 +66,11 @@ export const PLUGIN_REGISTRY: Record< string, PluginEntry > = {
 		family: 'jetpack',
 		displayName: 'Jetpack VideoPress',
 	},
+	'jetpack-premium-analytics': {
+		slug: 'jetpack-premium-analytics',
+		family: 'jetpack',
+		displayName: 'Jetpack Stats',
+	},
 	woocommerce: {
 		slug: 'woocommerce',
 		family: 'woo',

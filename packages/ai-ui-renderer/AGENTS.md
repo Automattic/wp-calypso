@@ -18,8 +18,8 @@ Style colors with A2UI's `--a2ui-*` tokens and their defaults, keeping `THEME_PR
 `utils/theme.ts` in sync with `style.scss`. Keep host-specific chat isolation, token values and
 modal stacking rules in consumers.
 
-WordPress components come in two copies: Calypso bundles `@wordpress/components`, while wp-admin and
-the editor use the page's Gutenberg copy, which may be newer. Both read some colors from the
-`--wpds-*` design tokens, and `style.scss` maps the theme onto those too, so check a theme change
-against both, in light and dark mode. Theme a new or changed component as README.md's "Theming a new
-component" says.
+WordPress UI components come from `@wordpress/ui` and load their own styles. `style.scss` maps the
+A2UI theme onto their `--wpds-*` design tokens and uses the host's WordPress component colors as
+fallbacks. wp-admin and the editor also set the `--wpds-*` size and font tokens from their own
+Gutenberg copy, so check a theme change in Calypso and wp-admin, in light and dark mode. Add or
+change a component as README.md's "Adding a component" says.

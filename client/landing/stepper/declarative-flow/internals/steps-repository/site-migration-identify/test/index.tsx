@@ -224,7 +224,7 @@ describe( 'SiteMigrationIdentify', () => {
 	} );
 
 	it.each( [ false, true ] )(
-		'shows the source placeholder and hosting benefits (reprint: %s)',
+		'shows the source placeholder without a hosting pitch (reprint: %s)',
 		( enabled ) => {
 			jest
 				.spyOn( config, 'isEnabled' )
@@ -235,18 +235,8 @@ describe( 'SiteMigrationIdentify', () => {
 			render( { navigation: { submit } } );
 
 			expect( getInput() ).toHaveAttribute( 'placeholder', 'your-existing-site.com' );
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
-			expect(
-				screen.getByText(
-					/Blazing fast speeds with lightning-fast load times for a seamless experience/
-				)
-			).toBeVisible();
-			expect(
-				screen.getByText( /Unmatched reliability with 99.999% uptime and unmetered traffic./ )
-			).toBeVisible();
-			expect(
-				screen.getByText( /Round-the-clock security monitoring and DDoS protection./ )
-			).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /Blazing fast speeds/ ) ).not.toBeInTheDocument();
 		}
 	);
 
@@ -291,7 +281,7 @@ describe( 'SiteMigrationIdentify', () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeVisible();
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
+			expect( screen.queryByText( /Why should you host with us/ ) ).not.toBeInTheDocument();
 			expect(
 				screen.queryByRole( 'button', { name: /Only have a backup file/ } )
 			).not.toBeInTheDocument();
@@ -346,7 +336,6 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( screen.getByRole( 'heading', { name: "Let's find your site" } ) ).toBeVisible();
 			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'Checking your site' );
-			expect( screen.getByText( /Why should you host with us/ ) ).toBeVisible();
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveFocus();
 			expect( getInput() ).toHaveAttribute( 'readonly' );

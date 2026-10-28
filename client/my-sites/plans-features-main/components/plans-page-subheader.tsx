@@ -202,7 +202,7 @@ const DifferentiatorPrefix = styled.span`
 
 // Inline SVG components
 const ShieldIcon = () => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg width="12" height="15" viewBox="4 2 12 15" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
@@ -213,7 +213,7 @@ const ShieldIcon = () => (
 );
 
 const ManagedHostingIcon = () => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg width="14" height="14" viewBox="3 3 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
@@ -224,7 +224,7 @@ const ManagedHostingIcon = () => (
 );
 
 const FastLoadingIcon = () => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg width="14" height="12" viewBox="3 4 14 12" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			d="M10.0005 4.1665C11.1296 4.16656 12.2287 4.4542 13.2017 4.98682L12.271 5.9165C11.5657 5.59092 10.7922 5.41655 10.0005 5.4165C8.5639 5.4165 7.18526 5.98662 6.16943 7.00244C5.15361 8.01826 4.5835 9.39691 4.5835 10.8335C4.58358 12.2699 5.15379 13.6478 6.16943 14.6636L5.28564 15.5474C4.03558 14.2972 3.33358 12.6014 3.3335 10.8335C3.3335 9.06539 4.0354 7.36889 5.28564 6.11865C6.53589 4.86841 8.23238 4.1665 10.0005 4.1665ZM15.8511 7.64014C16.3808 8.61114 16.6665 9.7075 16.6665 10.8335C16.6664 12.6015 15.9645 14.2972 14.7144 15.5474L13.8306 14.6636C14.8463 13.6478 15.4164 12.27 15.4165 10.8335C15.4165 10.0448 15.2436 9.274 14.9204 8.5708L15.8511 7.64014ZM14.5591 5.39111C14.8032 5.14763 15.199 5.14723 15.4429 5.39111C15.6865 5.63501 15.6863 6.03085 15.4429 6.2749L11.2065 10.5103C11.2341 10.6134 11.2505 10.7216 11.2505 10.8335C11.2504 11.5237 10.6907 12.0833 10.0005 12.0835C9.31017 12.0835 8.75055 11.5238 8.75049 10.8335C8.75049 10.1431 9.31013 9.5835 10.0005 9.5835C10.1119 9.58353 10.22 9.59909 10.3228 9.62646L14.5591 5.39111Z"
 			fill="currentColor"
@@ -233,7 +233,7 @@ const FastLoadingIcon = () => (
 );
 
 const UnlimitedIcon = () => (
-	<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+	<svg width="10" height="13" viewBox="5 4 10 13" fill="none" xmlns="http://www.w3.org/2000/svg">
 		<path
 			fillRule="evenodd"
 			clipRule="evenodd"
@@ -243,6 +243,8 @@ const UnlimitedIcon = () => (
 	</svg>
 );
 
+// The icon viewBoxes are cropped to the glyph so the 4px gap to the label and the 8px gap
+// between items are measured from the visible edge.
 const IconWrapper = styled.span`
 	display: inline-flex;
 	align-items: center;
@@ -252,8 +254,6 @@ const IconWrapper = styled.span`
 	color: inherit;
 
 	svg {
-		width: 20px;
-		height: 20px;
 		color: inherit;
 	}
 `;
@@ -451,7 +451,11 @@ const PlansPageSubheader = ( {
 			);
 		}
 
-		if ( ! isUsingStepContainerV2 && ( isOnboarding || intent === 'plans-upgrade' ) ) {
+		if (
+			! isUsingStepContainerV2 &&
+			! showDifferentiatorHeader &&
+			( isOnboarding || intent === 'plans-upgrade' )
+		) {
 			return (
 				<Subheader { ...subheaderCommonProps }>
 					{ translate( 'Whatever site you’re building, there’s a plan to make it happen sooner.' ) }

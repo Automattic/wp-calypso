@@ -1,6 +1,11 @@
 import { store as coreStore } from '@wordpress/core-data';
 import { dispatch, select } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
+import {
+	getBlocksByName,
+	isTemplatePartLoaded,
+	TEMPLATE_PART_BLOCK,
+} from '../../utils/editor-blocks';
 import { isEditorPage } from '../../utils/is-editor-page';
 import { waitForStore } from '../../utils/wait-for-store';
 import type { AbilityResult } from '../types';
@@ -20,7 +25,7 @@ const TEMPLATE_LOCKED = 'template-locked';
 const TEMPLATE_POST_TYPES = [ 'wp_template', 'wp_template_part' ];
 
 /**
- * How long to wait for a part's own blocks to reach the tree after the mode flips.
+ * How long to wait for the template's parts to load after the mode flips.
  *
  * The agent's next move is to re-read the page structure, which is built from
  * the client context captured on that request — so returning before the parts
@@ -41,7 +46,7 @@ export interface ShowTemplateIO {
 	getRenderingModes: () => RenderingModes | undefined;
 	setRenderingMode: ( mode: string ) => void;
 	setRenderingModes: ( modes: RenderingModes ) => void;
-	/** Resolves true once a template part's blocks are in the tree, false on timeout. */
+	/** Resolves true once the template's parts have loaded, false on timeout. */
 	waitForTemplateParts: () => Promise< boolean >;
 }
 
@@ -160,7 +165,7 @@ export async function showTemplate( io: ShowTemplateIO ): Promise< AbilityResult
 }
 
 /*
- * The editor, preferences and block-editor stores are reached by name rather
+ * The editor and preferences stores are reached by name rather
  * than by store descriptor, so this ability adds no `@wordpress/*` dependency
  * to the package. A dependency change rewrites the `.asset.json` files, which
  * Jetpack fetches from production rather than a sandbox — so it would not take
@@ -186,44 +191,37 @@ type PreferencesActions = {
 	set?: ( scope: string, name: string, value: unknown ) => void;
 };
 
-type BlockEditorSelectors = {
-	getBlocksByName?: ( name: string ) => string[];
-	getBlocks?: ( rootClientId?: string ) => unknown[];
-};
-
 const editorSelect = () => select( 'core/editor' ) as EditorSelectors | undefined;
 const editorDispatch = () => dispatch( 'core/editor' ) as EditorActions | undefined;
 const preferencesSelect = () => select( 'core/preferences' ) as PreferencesSelectors | undefined;
 const preferencesDispatch = () => dispatch( 'core/preferences' ) as PreferencesActions | undefined;
-const blockEditorSelect = () => select( 'core/block-editor' ) as BlockEditorSelectors | undefined;
 
 /*
- * A part counts as in view only once its own blocks have arrived, not when the
- * node for it appears. A template part holds no content of its own: the block
- * mounts first and fetches the `wp_template_part` entity behind it, so for a
- * beat it sits in the tree with nothing under it. The page structure the agent
- * reads is built from those children — a part with none contributes no header
- * or footer section at all — so returning on the node alone hands the agent a
- * structure that reports no part in view, which is the reading that makes it
- * refuse.
+ * A part counts as in view only once it has loaded, not when the node for it
+ * appears. A template part holds no content of its own: the block mounts first
+ * and fetches the `wp_template_part` entity behind it, so for a beat it sits in
+ * the tree with nothing under it. The page structure leaves a part out until it
+ * loads, so returning on the node alone hands the agent a structure that
+ * reports no part in view, which is the reading that makes it refuse. Every
+ * part is waited for: one still loading is one the agent cannot see.
  */
 function hasTemplateParts(): boolean {
-	const blockEditor = blockEditorSelect();
-	const parts = blockEditor?.getBlocksByName?.( 'core/template-part' ) ?? [];
+	const parts = getBlocksByName( TEMPLATE_PART_BLOCK );
 
-	return parts.some( ( clientId ) => ( blockEditor?.getBlocks?.( clientId )?.length ?? 0 ) > 0 );
+	return parts.length > 0 && parts.every( isTemplatePartLoaded );
 }
 
 /**
- * Resolve once a template part's blocks are in the tree.
+ * Resolve once the template's parts have loaded.
  *
  * Flipping the mode does not fill the tree synchronously — the editor has to
  * render the page inside its template first — so this waits for the result
- * rather than the dispatch.
- * @returns Whether a part's blocks arrived before the timeout.
+ * rather than the dispatch. A part saved empty gets no blocks, so its entity
+ * resolving in `core` is the change that settles it.
+ * @returns Whether the parts loaded before the timeout.
  */
 const waitForTemplateParts = (): Promise< boolean > =>
-	waitForStore( 'core/block-editor', hasTemplateParts, TEMPLATE_PARTS_TIMEOUT_MS );
+	waitForStore( [ 'core/block-editor', 'core' ], hasTemplateParts, TEMPLATE_PARTS_TIMEOUT_MS );
 
 /**
  * The `show-template` ability callback.

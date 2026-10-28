@@ -22,19 +22,7 @@ module.exports = function storybookDefaultConfig( {
 
 				// Reuse presets and plugins from the base Calypso config
 				presets: [ ...( storybookConfig.presets ?? [] ), ...( baseConfig.presets ?? [] ) ],
-				plugins: [
-					...( storybookConfig.plugins ?? [] ),
-					...( baseConfig.plugins ?? [] ),
-
-					// Forces some plugins to load in loose mode, used by Storybook.
-					// See https://github.com/storybookjs/storybook/issues/14805
-					[
-						require.resolve( '@babel/plugin-transform-private-property-in-object' ),
-						{ loose: true },
-					],
-					[ require.resolve( '@babel/plugin-transform-class-properties' ), { loose: true } ],
-					[ require.resolve( '@babel/plugin-transform-private-methods' ), { loose: true } ],
-				],
+				plugins: [ ...( storybookConfig.plugins ?? [] ), ...( baseConfig.plugins ?? [] ) ],
 			};
 		},
 		staticDirs,

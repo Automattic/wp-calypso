@@ -27,7 +27,7 @@ import type { AgencyProduct } from '@automattic/api-core';
 
 import './cart-menu.scss';
 
-interface Props {
+interface CartMenuProps {
 	items: ShoppingCartItem[];
 	products: AgencyProduct[];
 	term: TermPricing;
@@ -58,7 +58,7 @@ export default function CartMenu( {
 	onToggle,
 	onRemove,
 	onCheckout,
-}: Props ) {
+}: CartMenuProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const location = useLocation();
 	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {

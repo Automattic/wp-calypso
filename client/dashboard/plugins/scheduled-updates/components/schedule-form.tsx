@@ -27,7 +27,7 @@ type Inputs = {
 export type InitialValues = Partial< Inputs >;
 export type ScheduledUpdatesFormOnSubmit = ( inputs: Inputs ) => Promise< void > | void;
 
-type Props = {
+type ScheduledUpdatesFormProps = {
 	submitLabel: string;
 	onSubmit: ScheduledUpdatesFormOnSubmit;
 	initial?: InitialValues;
@@ -45,7 +45,7 @@ export function ScheduledUpdatesForm( {
 	initial,
 	onSitesChange,
 	editedSchedule,
-}: Props ) {
+}: ScheduledUpdatesFormProps ) {
 	const { data: eligibleSites = [] } = useEligibleSites();
 	const [ selectedSiteIds, setSelectedSiteIds ] = useState< string[] >(
 		() => initial?.siteIds || []

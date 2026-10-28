@@ -34,6 +34,8 @@ export interface ConversationLoadResult {
  * Simplified stored message format for efficient serialization
  */
 interface StoredMessage {
+	/** Restored as is, so a message keeps its ID. Older entries have none. */
+	messageId?: string;
 	role: 'user' | 'agent';
 	content: string;
 	contentType?: ContentType;
@@ -193,6 +195,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 	const archived = ( message.metadata?.archived as boolean ) ?? undefined;
 
 	return {
+		messageId: message.messageId,
 		role: storageRole,
 		content: textParts || '(No text content)',
 		timestamp,
@@ -293,7 +296,7 @@ function restoreMessage( stored: StoredMessage ): Message {
 		role: stored.role,
 		kind: 'message',
 		parts,
-		messageId: generateMessageId(),
+		messageId: stored.messageId ?? generateMessageId(),
 		metadata: {
 			timestamp: stored.timestamp,
 			// only store archived if it was already present.

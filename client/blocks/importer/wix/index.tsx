@@ -90,7 +90,9 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 	}
 
 	function onTryAgainClick() {
-		job?.importerId && resetImport( siteId, job.importerId );
+		if ( job?.importerId ) {
+			resetImport( siteId, job.importerId );
+		}
 		stepNavigator?.goToImportCapturePage?.();
 	}
 
@@ -106,11 +108,21 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 		return job && job.importerState === appStates.IMPORT_SUCCESS;
 	}
 
+	function checkIsJobFailed() {
+		return job?.importerState === appStates.IMPORT_FAILURE;
+	}
+
 	function checkIsFailed() {
-		return (
-			( job && job.importerState === appStates.IMPORT_FAILURE ) ||
-			( error?.error && error?.errorType === 'importError' )
-		);
+		return checkIsJobFailed() || ( error?.error && error?.errorType === 'importError' );
+	}
+
+	function getFailureErrorData() {
+		if ( checkIsJobFailed() ) {
+			return job?.errorData;
+		}
+
+		// The import job didn't fail: a site importer API request did, and its own event has the reason.
+		return { type: 'siteImporterError' };
 	}
 
 	function showVideoComponent() {
@@ -127,7 +139,13 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 			<div className={ clsx( `importer-${ importer }` ) }>
 				{ ( () => {
 					if ( checkIsFailed() ) {
-						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
+						return (
+							<ErrorMessage
+								onPrimaryBtnClick={ onTryAgainClick }
+								errorData={ getFailureErrorData() }
+								importerFileType={ job?.importerFileType }
+							/>
+						);
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } />;
 					} else if ( checkIsSuccess() ) {

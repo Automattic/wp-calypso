@@ -8,3 +8,9 @@ export const FALLBACK_PHP_VERSION = '8.4';
 // Check PR #108910 (https://github.com/Automattic/wp-calypso/pull/108910) on
 // how we were dynamically calculating it earlier on hover of Launch button.
 export const DEFAULT_PLAN_INTENT = 'plans-playground';
+
+export const WOO_START_HOSTS_URL = 'https://woocommerce.com/start/#hosts';
+
+// How long to wait after recording a Tracks event before a full page navigation,
+// so the queued event has time to go out before the page unloads.
+export const TRACKS_FLUSH_DELAY = 250;

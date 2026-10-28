@@ -40,7 +40,7 @@ module.exports = {
 			...shared,
 			displayName: 'dashboard',
 			// Override testMatch to only run dashboard tests
-			testMatch: [ '<rootDir>/dashboard/**/test/*.[jt]s?(x)' ],
+			testMatch: [ '<rootDir>/dashboard/**/test/*.test.[jt]s?(x)' ],
 			setupFiles: [ ...shared.setupFiles, '<rootDir>/../test/client/setup-globals.js' ],
 			setupFilesAfterEnv: [
 				...shared.setupFilesAfterEnv,
