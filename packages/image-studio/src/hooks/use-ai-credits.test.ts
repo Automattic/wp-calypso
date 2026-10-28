@@ -42,9 +42,9 @@ vi.mock( '../utils/tracking', async () => ( {
 	getImageStudioSiteType: (
 		await vi.importActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' )
 	).getImageStudioSiteType,
-	getImageStudioIsDevMode: (
+	getImageStudioIsMetered: (
 		await vi.importActual< typeof import( '../utils/tracking' ) >( '../utils/tracking' )
-	).getImageStudioIsDevMode,
+	).getImageStudioIsMetered,
 	trackImageStudioCreditsMeterOpened: vi.fn(),
 	trackImageStudioUpgradeNoticeShown: vi.fn(),
 	trackImageStudioUpgradeNoticeClick: vi.fn(),
@@ -1032,9 +1032,9 @@ describe( 'useAiCredits', () => {
 		consoleError.mockRestore();
 	} );
 
-	describe( 'while the page says it isn’t in dev mode', () => {
+	describe( 'while the page says the site isn’t metered', () => {
 		beforeEach( () => {
-			window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isDevMode: false };
+			window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isMetered: false };
 		} );
 
 		it( 'doesn’t ask or hold suggestions back, even before the credentials arrive', async () => {
@@ -1085,7 +1085,7 @@ describe( 'useAiCredits', () => {
 		it( 'keeps the choice it made on opening until it opens again', async () => {
 			respondWith( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } );
 			const first = renderCredits();
-			window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isDevMode: true };
+			window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', isMetered: true };
 			first.rerender( { mode: ImageStudioMode.Generate, authProvider } );
 			await act( async () => {} );
 			expect( fetchMock ).not.toHaveBeenCalled();
@@ -1099,18 +1099,15 @@ describe( 'useAiCredits', () => {
 	} );
 
 	it.each( [
-		[ 'doesn’t ask outside dev mode', { isDevMode: false }, 0 ],
+		[ 'doesn’t ask when the page says the site isn’t metered', { isMetered: false }, 0 ],
 		[
-			'doesn’t ask outside dev mode, even for an Automattician',
-			{ isDevMode: false, isA11n: true },
+			'doesn’t ask when the site isn’t metered, even for an Automattician',
+			{ isMetered: false, isA11n: true },
 			0,
 		],
+		[ 'asks when the page says the site is metered', { isMetered: true }, 1 ],
+		[ 'asks outside dev mode', { isDevMode: false }, 1 ],
 		[ 'asks in dev mode', { isDevMode: true }, 1 ],
-		[
-			'asks in dev mode for someone who isn’t an Automattician',
-			{ isDevMode: true, isA11n: false },
-			1,
-		],
 		[ 'asks when the page leaves the flag out', {}, 1 ],
 	] )( '%s', async ( _name, flags, requests ) => {
 		window.imageStudioData = { blogId: BLOG_ID, siteType: 'simple', ...flags };
@@ -1137,6 +1134,97 @@ describe( 'useAiCredits', () => {
 		const { result } = renderCredits();
 
 		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( stateOf( result ) ).toEqual( NOTHING );
+	} );
+
+	it( 'tries again after a 5xx, and shows the meter when the retry works', async () => {
+		vi.useFakeTimers();
+		fetchMock
+			.mockResolvedValueOnce( { ok: false, status: 503, json: async () => ( {} ) } )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } ),
+			} );
+
+		const { result } = renderCredits();
+		await act( async () => {} );
+		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+		expect( result.current.meter ).toBeUndefined();
+
+		await act( async () => {
+			vi.advanceTimersByTime( 2000 );
+		} );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+		expect( result.current.meter ).toEqual( meterAt( 75 ) );
+	} );
+
+	it( 'drops a pending retry when another check starts', async () => {
+		vi.useFakeTimers();
+		fetchMock
+			.mockResolvedValueOnce( { ok: false, status: 503, json: async () => ( {} ) } )
+			.mockResolvedValueOnce( {
+				ok: true,
+				json: async () => ( { ai_credits: planSnapshot( 30_000 ), ...PLAN_BUYER } ),
+			} );
+
+		const { result } = renderCredits();
+		await act( async () => {} );
+		await act( async () => {
+			window.dispatchEvent( new Event( 'focus' ) );
+		} );
+		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+		expect( result.current.meter ).toEqual( meterAt( 75 ) );
+
+		await act( async () => {
+			vi.advanceTimersByTime( 60000 );
+		} );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'drops a pending retry when the modal closes', async () => {
+		vi.useFakeTimers();
+		fetchMock.mockResolvedValue( { ok: false, status: 503, json: async () => ( {} ) } );
+
+		const { unmount } = renderCredits();
+		await act( async () => {} );
+		unmount();
+		await act( async () => {
+			vi.advanceTimersByTime( 60000 );
+		} );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'tries again after a network error, a limited number of times', async () => {
+		vi.useFakeTimers();
+		const consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
+		fetchMock.mockRejectedValue( new Error( 'offline' ) );
+
+		renderCredits();
+		await act( async () => {} );
+		for ( const delay of [ 2000, 5000, 15000, 60000 ] ) {
+			await act( async () => {
+				vi.advanceTimersByTime( delay );
+			} );
+		}
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 4 );
+		consoleError.mockRestore();
+	} );
+
+	it( 'stays silent and doesn’t try again after a 404', async () => {
+		vi.useFakeTimers();
+		fetchMock.mockResolvedValue( { ok: false, status: 404, json: async () => ( {} ) } );
+
+		const { result } = renderCredits();
+		await act( async () => {} );
+		await act( async () => {
+			vi.advanceTimersByTime( 60000 );
+		} );
+
+		expect( fetchMock ).toHaveBeenCalledTimes( 1 );
 		expect( stateOf( result ) ).toEqual( NOTHING );
 	} );
 
@@ -1520,8 +1608,8 @@ describe( 'useAiCredits', () => {
 				auth: authProvider,
 			},
 			{
-				name: 'the page isn’t in dev mode',
-				data: { blogId: BLOG_ID, siteType: 'simple', isDevMode: false },
+				name: 'the page says the site isn’t metered',
+				data: { blogId: BLOG_ID, siteType: 'simple', isMetered: false },
 				auth: authProvider,
 			},
 			{
