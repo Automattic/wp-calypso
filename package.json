@@ -248,6 +248,7 @@
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@types/chroma-js": "^2.4.5",
+		"@types/convert-source-map": "^2.0.3",
 		"@types/eslint": "^9.6.1",
 		"@types/ga-gtag": "^1.2.0",
 		"@types/gtag.js": "^0.0.20",

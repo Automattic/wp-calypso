@@ -11747,6 +11747,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/convert-source-map@npm:^2.0.3":
+  version: 2.0.3
+  resolution: "@types/convert-source-map@npm:2.0.3"
+  checksum: 43dd8ccad61489c245342220db74c1baf3b75586074f99609943fe1bdecf7d5dcff0acd038cb0063dd7533a90cc980101d5899afa70a638883752ad8d66de20b
+  languageName: node
+  linkType: hard
+
 "@types/cookie@npm:^0.6.0":
   version: 0.6.0
   resolution: "@types/cookie@npm:0.6.0"
@@ -35987,6 +35994,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@types/chroma-js": "npm:^2.4.5"
+    "@types/convert-source-map": "npm:^2.0.3"
     "@types/cookie": "npm:^0.6.0"
     "@types/debug": "npm:^4.1.12"
     "@types/eslint": "npm:^9.6.1"
