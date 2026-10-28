@@ -37,4 +37,4 @@ For an npm package, `yarn why <package>` lists the dependencies that pull it in.
 git grep -n -e "'<package>'" -e "'<package>/" -- client packages
 ```
 
-Both only show direct dependents. For the full chain of imports that pulls a module into a chunk, set `reasons: true` in the `statsOptions` of `client/webpack.config.js` and run `yarn build-client-stats`; each module in `client/stats.json` then lists the modules that import it.
+Both only show direct dependents. For the full chain of imports that pulls a module into a chunk, set `reasons: true` in the `statsOptions` of `client/webpack.config.js` and run `yarn build-client-stats`; each module in `client/stats.json` then lists the modules that import it. The file runs to several gigabytes, too large for `JSON.parse`; read it with a streaming parser such as `stream-json`, as `bin/icfy-compare.js` does.
