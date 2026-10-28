@@ -125,7 +125,7 @@ export function getLegacyPlanFlowRedirect(
 
 	// Last, so a caller cannot name its own plan through a flow that already names one.
 	if ( flow === IMPORT_FLOW ) {
-		forwarded.import = '1';
+		forwarded.goal = 'import';
 	} else if ( flow !== PLANS_FIRST_FLOW ) {
 		forwarded.plan = REDIRECTED_PLAN_FLOWS[ flow ];
 	}

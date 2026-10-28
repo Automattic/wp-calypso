@@ -354,7 +354,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			! isPlaygroundPublish &&
 			! urlQueryParams.get( 'playground' ) &&
 			! urlQueryParams.get( 'blog_post' ) &&
-			urlQueryParams.get( 'import' ) !== '1' &&
+			urlQueryParams.get( 'goal' ) !== 'import' &&
 			! blueprint;
 
 		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a
