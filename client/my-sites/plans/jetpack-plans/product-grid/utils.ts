@@ -9,8 +9,10 @@ import {
 	PRODUCT_JETPACK_STATS_YEARLY,
 	findPlansKeys,
 	getPlan,
+	isSupersedingJetpackItem,
 	JETPACK_SEARCH_PRODUCTS,
 	PRODUCT_JETPACK_SEARCH,
+	JetpackPurchasableItemSlug,
 } from '@automattic/calypso-products';
 import { SELECTOR_PLANS } from '../constants';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -60,7 +62,15 @@ export const getPlansToDisplay = ( {
 				product.term === duration &&
 				isOnSale( product.productSlug ) &&
 				// Don't include a plan the user already owns, regardless of the term
-				! currentPlanTerms.includes( product.productSlug )
+				! currentPlanTerms.includes( product.productSlug ) &&
+				// Or one their plan already covers, such as Pro for a Complete owner
+				! (
+					currentPlanSlug &&
+					isSupersedingJetpackItem(
+						currentPlanSlug as JetpackPurchasableItemSlug,
+						product.productSlug as JetpackPurchasableItemSlug
+					)
+				)
 		);
 
 	if (
