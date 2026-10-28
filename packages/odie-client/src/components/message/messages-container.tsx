@@ -22,9 +22,11 @@ import {
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
+import { useLoggedOutSession } from '../../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../../hooks/use-open-interaction-status-map';
 import { getOpenLiveInteractions } from '../../utils/get-open-live-interactions';
 import { NO_HUMAN_SUPPORT_FLAGS } from '../../utils/human-support-flags';
+import { getOdieIdFromInteraction } from '../../utils/support-interaction-utils';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -67,7 +69,15 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	const isWaitingForChatClient = isStartingDirectChat && ! forceEmailSupport && ! isChatLoaded;
 	const [ hasChatClientTimedOut, setHasChatClientTimedOut ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
-	const { data: supportInteraction } = useCurrentSupportInteraction();
+	const { data: supportInteraction, isLoading: isLoadingSupportInteraction } =
+		useCurrentSupportInteraction();
+	const { loggedOutOdieChatId } = useLoggedOutSession();
+	// Whether the chat on show is the one the route leads to. Following a link from another chat, the
+	// provider swaps the linked chat in only after this component's effects run.
+	const isShowingLinkedChat =
+		! isLoadingSupportInteraction &&
+		String( chat.odieId ?? '' ) ===
+			String( loggedOutOdieChatId || getOdieIdFromInteraction( supportInteraction ) || '' );
 	const navType: NavigationType = useNavigationType();
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
@@ -118,10 +128,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useEffect( () => {
 		// Wait for the chat to load: loading a new chat replaces its messages, including any added here.
 		// Read the param again: a run of this effect for the same render may have removed it already.
+		// A routing step shows in the chat the request is made in, so wait for the chat the link leads
+		// to. Without one, the human chat starts at once and replaces whatever is on show.
 		if (
 			! isStartingDirectChat ||
 			chat.status === 'loading' ||
-			searchParams.get( 'provider' ) !== 'zendesk'
+			searchParams.get( 'provider' ) !== 'zendesk' ||
+			( humanSupportRouting && ! isShowingLinkedChat )
 		) {
 			return;
 		}
@@ -188,6 +201,8 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		trackEvent,
 		requestHumanSupport,
 		forceEmailSupport,
+		humanSupportRouting,
+		isShowingLinkedChat,
 		interactionStatusByUuid,
 		searchParams,
 		setSearchParams,

@@ -71,6 +71,10 @@ jest.mock( '../../../hooks/use-help-center-chat-scroll', () => ( {
 	useHelpCenterChatScroll: () => {},
 } ) );
 
+jest.mock( '../../../hooks/use-logged-out-session', () => ( {
+	useLoggedOutSession: () => ( { isLoggedOutSession: false } ),
+} ) );
+
 jest.mock( '../../../hooks/use-open-interaction-status-map', () => ( {
 	useOpenInteractionStatusMap: () => ( {} ),
 } ) );
@@ -102,6 +106,8 @@ const mockContext = ( {
 	isChatLoaded = true,
 	forceEmailSupport = false,
 	chatStatus = 'loaded',
+	// The route has no interaction, so it leads to a new chat, without an odieId.
+	odieId = null as number | null,
 	humanSupportRouting = null as HumanSupportRouting | null,
 	pendingHumanSupportRequest = null as HumanSupportRequest | null,
 } = {} ) => {
@@ -109,7 +115,7 @@ const mockContext = ( {
 		chat: {
 			provider: 'odie',
 			conversationId: null,
-			odieId: null,
+			odieId,
 			messages: [],
 			status: chatStatus,
 		},
@@ -152,6 +158,13 @@ describe( 'MessagesContainer direct link to a human', () => {
 
 		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 		expect( mockAddMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'opens it from the chat on show when the link is followed from another chat', () => {
+		// The provider swaps in the new chat afterwards; the human chat replaces both.
+		renderDirectLink( { odieId: 5 } );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 	} );
 
 	it( "doesn't open a new human chat without paid support, even with the chat client loaded", () => {
@@ -311,6 +324,22 @@ describe( 'MessagesContainer routing step', () => {
 			isUserEligibleForPaidSupport: false,
 			humanSupportRouting: { Step: RoutingStep },
 		} );
+
+		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
+	} );
+
+	it( 'waits for the chat the link leads to before asking for a human', () => {
+		// Following the link from another chat: the provider swaps the new chat in after this renders.
+		const { rerender } = renderDirectLink( {
+			humanSupportRouting: { Step: RoutingStep },
+			odieId: 5,
+		} );
+
+		expect( mockCreateZendeskConversation ).not.toHaveBeenCalled();
+		expect( mockSearchParams.get( 'provider' ) ).toBe( 'zendesk' );
+
+		mockContext( { humanSupportRouting: { Step: RoutingStep } } );
+		rerender( container() );
 
 		expect( mockCreateZendeskConversation ).toHaveBeenCalledWith( { createdFrom: 'direct_url' } );
 	} );
