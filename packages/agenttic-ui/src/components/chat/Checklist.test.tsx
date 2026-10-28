@@ -135,18 +135,18 @@ describe( 'Checklist', () => {
 		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
 	} );
 
-	it( 'renders settled items without a button, open and in-progress ones with', () => {
+	it( 'renders settled and in-progress items without a button', () => {
 		render();
 
 		expect( rowFor( 'Customize the design' ).querySelector( 'button' ) ).toBeNull();
 		expect( rowFor( 'Add a custom domain' ).querySelector( 'button' ) ).toBeNull();
-		expect( rowFor( 'Replace placeholder images' ).querySelector( 'button' ) ).not.toBeNull();
+		expect( rowFor( 'Replace placeholder images' ).querySelector( 'button' ) ).toBeNull();
 		expect( rowFor( 'Publish the About page' ).querySelector( 'button' ) ).not.toBeNull();
 	} );
 
-	it( 'resumes an in-progress item by submitting its prompt again', async () => {
+	it( 'resumes an in-progress item by submitting its prompt again when asked to', async () => {
 		const onSubmit = vi.fn();
-		render( { onSubmit } );
+		render( { onSubmit, resumeInProgress: true } );
 
 		await act( async () => {
 			rowFor( 'Replace placeholder images' ).querySelector( 'button' )?.click();
@@ -343,10 +343,34 @@ describe( 'Checklist', () => {
 
 	it( 'keeps the active in-progress item inert: the conversation is already on it', () => {
 		const onSubmit = vi.fn();
-		render( { onSubmit, activeItemId: 'images' } );
+		render( { onSubmit, resumeInProgress: true, activeItemId: 'images' } );
 
 		expect( rowFor( 'Replace placeholder images' ).querySelector( 'button' ) ).toBeNull();
 		expect( rowFor( 'Publish the About page' ).querySelector( 'button' ) ).not.toBeNull();
+	} );
+
+	it.each( [
+		[ 'resuming another in-progress item', 'Publish the About page' ],
+		[ 'picking the last open item', 'Launch site' ],
+	] )( 'collapses down to the active item after %s', async ( _label, label ) => {
+		// Everything but `launch` is in progress or settled; `images` is the active one.
+		const busyList = items.map( ( item ) =>
+			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+		);
+		render( {
+			items: busyList,
+			onSubmit: vi.fn(),
+			resumeInProgress: true,
+			activeItemId: 'images',
+		} );
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+
+		await act( async () => {
+			rowFor( label ).querySelector( 'button' )?.click();
+		} );
+
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
 	} );
 
 	it( 'keeps only the active item in view while collapsed', () => {

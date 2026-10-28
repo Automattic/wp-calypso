@@ -28,7 +28,12 @@ describe( 'SiteSetupChecklist', () => {
 		expect( screen.getByTestId( 'checklist' ) ).toBeInTheDocument();
 		expect( container.querySelector( '.agents-manager-site-setup-checklist--pinned' ) ).toBeNull();
 		expect( mockAgentUIChecklist ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { defaultCollapsed: false, busy: true, focusHeaderOnMount: false } )
+			expect.objectContaining( {
+				defaultCollapsed: false,
+				busy: true,
+				focusHeaderOnMount: false,
+				resumeInProgress: true,
+			} )
 		);
 	} );
 

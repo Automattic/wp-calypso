@@ -49,6 +49,7 @@ export default function SiteSetupChecklist( {
 			items={ items }
 			defaultCollapsed={ pinned }
 			activeItemId={ activeItemId }
+			resumeInProgress
 			busy={ busy }
 			focusHeaderOnMount={ focusHeaderOnMount }
 		/>
