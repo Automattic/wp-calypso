@@ -117,26 +117,43 @@ export function handleRequestError(
 	throw error;
 }
 
+// Headers have already arrived, and the request timer is cleared before this
+// read, so a stalled error body needs its own bound.
+const ERROR_BODY_READ_MS = 1000;
+
 /**
  * The code a failed response's JSON body names: WP REST's `code`, or
  * `error.code` / `data.code`. Read from a clone, so the body stays unread.
+ * Gives up when the body does not arrive, and reports the status alone.
  * @param response - The failed HTTP response
  */
 async function readResponseErrorCode( response: Response ): Promise< string | number | undefined > {
+	const clone = response.clone();
+	let timer: ReturnType< typeof setTimeout > | undefined;
+	// A body that isn't JSON rejects; that is "no code", not a failure of this read.
+	const body = clone.json().then(
+		( parsed ) => parsed,
+		() => undefined
+	);
 	try {
-		const body = ( await response.clone().json() ) as {
+		const parsed = await Promise.race( [
+			body,
+			new Promise< undefined >( ( resolve ) => {
+				timer = setTimeout( () => resolve( undefined ), ERROR_BODY_READ_MS );
+			} ),
+		] );
+		const record = parsed as {
 			code?: unknown;
 			error?: { code?: unknown };
 			data?: { code?: unknown };
 		} | null;
 		return (
-			readErrorCode( body?.code ) ??
-			readErrorCode( body?.error?.code ) ??
-			readErrorCode( body?.data?.code )
+			readErrorCode( record?.code ) ??
+			readErrorCode( record?.error?.code ) ??
+			readErrorCode( record?.data?.code )
 		);
-	} catch {
-		// Not JSON, or no body to read: the status alone describes the failure.
-		return undefined;
+	} finally {
+		clearTimeout( timer );
 	}
 }
 

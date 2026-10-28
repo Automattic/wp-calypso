@@ -40,6 +40,26 @@ describe( 'validateHttpResponse', () => {
 		expect( response.bodyUsed ).toBe( false );
 	} );
 
+	it( 'reports the status when the error body never arrives', async () => {
+		let stream: ReadableStreamDefaultController< Uint8Array > | undefined;
+		const response = new Response(
+			new ReadableStream( {
+				start( controller ) {
+					stream = controller;
+				},
+			} ),
+			{
+				status: 502,
+				headers: { 'Content-Type': 'application/json' },
+			}
+		);
+
+		const error = await validateHttpResponse( response ).catch( ( caught: unknown ) => caught );
+
+		expect( error ).toMatchObject( { status: 502, code: undefined } );
+		stream?.error( new Error( 'stop' ) );
+	} );
+
 	it( 'keeps only the status when the body isn’t JSON', async () => {
 		const error = await validateHttpResponse(
 			new Response( '<html>Bad gateway</html>', { status: 502 } )
