@@ -94,25 +94,40 @@ function renderToolbar( {
 	attributes = { id: 1, url: BASE_URL },
 	name = 'core/image',
 	settings = { mediaUpload: jest.fn() },
+	isSelected = true,
 }: {
 	attachment?: ReturnType< typeof makeAttachment > | null;
 	hasResolved?: boolean;
 	attributes?: { id?: number; url?: string };
 	name?: string;
 	settings?: { mediaUpload?: unknown };
+	isSelected?: boolean;
 } = {} ) {
+	const getEntityRecord = jest.fn( () => attachment );
 	( useSelect as jest.Mock ).mockImplementation(
 		( callback: ( select: () => Record< string, jest.Mock > ) => unknown ) =>
 			callback( () => ( {
 				getSettings: jest.fn( () => settings ),
-				getEntityRecord: jest.fn( () => attachment ),
+				getEntityRecord,
 				hasFinishedResolution: jest.fn( () => hasResolved ),
 			} ) )
 	);
 
-	return render(
-		<ToolbarBlockEdit name={ name } attributes={ attributes } setAttributes={ jest.fn() } />
+	const block = ( selected: boolean ) => (
+		<ToolbarBlockEdit
+			name={ name }
+			attributes={ attributes }
+			isSelected={ selected }
+			setAttributes={ jest.fn() }
+		/>
 	);
+	const view = render( block( isSelected ) );
+
+	return {
+		...view,
+		getEntityRecord,
+		setSelected: ( selected: boolean ) => view.rerender( block( selected ) ),
+	};
 }
 
 describe( 'withImageStudioToolbarButton', () => {
@@ -136,6 +151,7 @@ describe( 'withImageStudioToolbarButton', () => {
 			<ToolbarBlockEdit
 				name="core/image"
 				attributes={ { id: 1, url: BASE_URL } }
+				isSelected
 				setAttributes={ jest.fn() }
 			/>
 		);
@@ -257,6 +273,63 @@ describe( 'withImageStudioToolbarButton', () => {
 			renderToolbar( { attachment: null, attributes: { id: 1, url: BASE_URL } } );
 			expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
 			expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'attachment read', () => {
+		it.each( [ 'core/cover', 'core/video', 'core/file', 'core/media-text' ] )(
+			'does not read the attachment for %s blocks',
+			( name ) => {
+				const { getEntityRecord } = renderToolbar( { name } );
+				expect( getEntityRecord ).not.toHaveBeenCalled();
+				expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
+			}
+		);
+
+		it.each( [ BASE_URL, undefined ] )(
+			'does not read the attachment for an unselected image block with url %s',
+			( url ) => {
+				const { getEntityRecord } = renderToolbar( {
+					isSelected: false,
+					attributes: { id: 1, url },
+				} );
+				expect( getEntityRecord ).not.toHaveBeenCalled();
+				expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
+				expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
+			}
+		);
+
+		it( 'reads the attachment once for a selected image block', () => {
+			const { getEntityRecord } = renderToolbar();
+			expect( getEntityRecord ).toHaveBeenCalledTimes( 1 );
+			expect( getEntityRecord ).toHaveBeenCalledWith( 'postType', 'attachment', 1 );
+			expect( screen.getByTestId( 'toolbar-button' ) ).toBeInTheDocument();
+		} );
+
+		it( 'starts the read when the image block becomes selected', () => {
+			const { getEntityRecord, setSelected } = renderToolbar( { isSelected: false } );
+			expect( getEntityRecord ).not.toHaveBeenCalled();
+			setSelected( true );
+			expect( getEntityRecord ).toHaveBeenCalledWith( 'postType', 'attachment', 1 );
+			expect( screen.getByTestId( 'toolbar-button' ) ).toBeInTheDocument();
+		} );
+
+		it( 'hides the button without a new read when the image block is deselected', () => {
+			const { getEntityRecord, setSelected } = renderToolbar();
+			const readsWhileSelected = getEntityRecord.mock.calls.length;
+			setSelected( false );
+			expect( getEntityRecord ).toHaveBeenCalledTimes( readsWhileSelected );
+			expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'shows the button on first selection while the read is pending', () => {
+			const { setSelected } = renderToolbar( {
+				isSelected: false,
+				hasResolved: false,
+				attachment: null,
+			} );
+			setSelected( true );
+			expect( screen.getByTestId( 'toolbar-button' ) ).toBeInTheDocument();
 		} );
 	} );
 

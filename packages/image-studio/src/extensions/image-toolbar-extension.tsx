@@ -29,7 +29,13 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						getSettings: () => { mediaUpload?: unknown };
 					};
 					const canUploadFiles = !! getSettings().mediaUpload;
-					if ( ! canUploadFiles || ! attributes?.id ) {
+					// This filter wraps every block, but only a selected Image block shows the button.
+					if (
+						! canUploadFiles ||
+						! attributes?.id ||
+						props.name !== 'core/image' ||
+						! props.isSelected
+					) {
 						return { media: null, hasResolved: true, canUploadFiles };
 					}
 					return {
@@ -46,7 +52,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						] ),
 					};
 				},
-				[ attributes?.id ]
+				[ attributes?.id, props.name, props.isSelected ]
 			);
 
 			const handleClose = useCallback(
@@ -85,7 +91,12 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock, props.name );
 			}, [ attachmentId, handleClose, openImageStudio, props.name ] );
 
-			if ( props.name !== 'core/image' || ! attributes?.id || ! canUploadFiles ) {
+			if (
+				props.name !== 'core/image' ||
+				! props.isSelected ||
+				! attributes?.id ||
+				! canUploadFiles
+			) {
 				return <BlockEdit { ...props } />;
 			}
 
