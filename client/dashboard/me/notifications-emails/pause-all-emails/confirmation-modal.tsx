@@ -1,14 +1,19 @@
 import { __ } from '@wordpress/i18n';
 import ConfirmModal from '../../../components/confirm-modal';
 
-interface Props {
+interface ConfirmationModalProps {
 	onCancel: () => void;
 	onConfirm: () => void;
 	isBusy: boolean;
 	isOpen: boolean;
 }
 
-export const ConfirmationModal = ( { onCancel, onConfirm, isBusy, isOpen }: Props ) => {
+export const ConfirmationModal = ( {
+	onCancel,
+	onConfirm,
+	isBusy,
+	isOpen,
+}: ConfirmationModalProps ) => {
 	return (
 		<ConfirmModal
 			isOpen={ isOpen }

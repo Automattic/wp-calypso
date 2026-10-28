@@ -13,11 +13,11 @@ import './add-new-domain.css';
 
 export type AddNewDomainOrigin = 'choose-domain' | 'add-forwarder' | 'emails';
 
-type Props = {
+type AddNewDomainProps = {
 	origin?: AddNewDomainOrigin;
 };
 
-export default function AddNewDomain( { origin = 'emails' }: Props ) {
+export default function AddNewDomain( { origin = 'emails' }: AddNewDomainProps ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
