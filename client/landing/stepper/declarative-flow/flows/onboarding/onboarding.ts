@@ -333,6 +333,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		// coupon stands alone too: WordCamp coupon links name no plan.
 		const couponParam = query.get( 'coupon' );
 		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
+		// The legacy flow a link came from, such as `import` or `reblogging`.
+		const fromFlow = query.get( 'flow' );
 
 		// A new object each render would record a new signup start, so this has to be memoised.
 		return useMemo( () => {
@@ -342,16 +344,17 @@ const onboarding: FlowV2< typeof initialize > = {
 				...( preselectedPlan ? { preselected_plan: preselectedPlan } : {} ),
 				...( couponParam ? { coupon: couponParam } : {} ),
 				...( storageParam ? { storage: storageParam } : {} ),
+				...( fromFlow ? { from_flow: fromFlow } : {} ),
 			};
 
 			return {
 				isLoading: false,
 				eventsProperties:
-					preselectedPlan || couponParam
+					preselectedPlan || couponParam || fromFlow
 						? { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: signupStartProperties }
 						: {},
 			};
-		}, [ preselectedPlan, couponParam, storageParam ] );
+		}, [ preselectedPlan, couponParam, storageParam, fromFlow ] );
 	},
 	useStepsProps() {
 		// The site-selected signup flow records its own completion before checkout, so the
@@ -418,12 +421,14 @@ const onboarding: FlowV2< typeof initialize > = {
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
+		// The legacy flow a link came from, which signup start reports.
+		const fromFlow = queryParams.get( 'flow' );
 		// From `/start/import`: onboarding ends in site migration, which brings the content over.
-		const isImport = queryParams.get( 'flow' ) === 'import';
+		const isImport = fromFlow === 'import';
 		// Every URL that re-enters onboarding must keep these, or it forgets where to land.
 		const persistedQueryArgs = {
 			...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
-			...( isImport ? { flow: 'import' } : {} ),
+			...( fromFlow ? { flow: fromFlow } : {} ),
 		};
 		const hasCustomDestination = !! blogPostToReblog || isImport;
 
