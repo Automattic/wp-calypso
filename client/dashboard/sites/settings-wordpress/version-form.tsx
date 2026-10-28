@@ -1,4 +1,4 @@
-import { wpOrgCoreVersionQuery } from '@automattic/api-queries';
+import { siteWordPressTrackVersionsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
@@ -19,8 +19,9 @@ interface VersionFormProps {
 }
 
 export function VersionForm( { site, currentVersion, versionSwitch }: VersionFormProps ) {
-	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
-	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const { data: trackVersions } = useQuery( siteWordPressTrackVersionsQuery( site.ID ) );
+	const latestVersion = trackVersions?.latest;
+	const betaVersion = trackVersions?.beta;
 
 	const { isSwitching, pendingVersion, switchVersion, isSaving } = versionSwitch;
 

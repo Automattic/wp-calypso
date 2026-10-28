@@ -17,7 +17,10 @@ import DocumentHead from 'calypso/components/data/document-head';
 import FormattedHeader from 'calypso/components/formatted-header';
 import LocaleSuggestions from 'calypso/components/locale-suggestions';
 import Notice from 'calypso/dashboard/components/notice';
-import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
+import {
+	THEME_GRID_SIGNUP_LAYOUT,
+	WOO_HOSTING_SOLUTIONS_REF,
+} from 'calypso/landing/stepper/constants';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -41,6 +44,7 @@ import EmailVerificationGate from './email-verification';
 import { claimGateConfirmation, gateScope } from './email-verification/storage';
 import { useHandleSocialResponse } from './handle-social-response';
 import { SignupSlider } from './signup-slider';
+import { SignupThemeGrid } from './signup-theme-grid';
 import useAccountCreationExperiment from './use-account-creation-experiment';
 import { useBackoffPoll } from './use-backoff-poll';
 import {
@@ -114,19 +118,26 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { socialServiceResponse } = useSocialService();
 	const { hasCustomBranding, topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
-	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118.
+	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118, and the
+	// theme grid layout is email-first with the grid instead of the slider, email below social: that
+	// round lost fewer social signups than email on top.
 	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
 	//   - control                            -> default single-column signup
 	//   - treatment_email_slider_webp        -> open email + slider, email on top
 	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
 	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
-	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
-		useAccountCreationExperiment( { flow } );
-	const isEmailFirstVariant = isWooReferrer || isEmailFirstFromExperiment;
-	// The experiment runs on onboarding only. Woo referrers are left out: their email-first layout
-	// already has the in-form link and no email button, so the treatment would not change it.
+	const isThemeGridLayout = queryArgs.get( 'signup_layout' ) === THEME_GRID_SIGNUP_LAYOUT;
+	const {
+		isEmailFirstVariant: isEmailFirstFromExperiment,
+		isEmailAtBottom: isEmailAtBottomFromExperiment,
+	} = useAccountCreationExperiment( { flow } );
+	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isEmailFirstFromExperiment;
+	const isEmailAtBottom = isThemeGridLayout || isEmailAtBottomFromExperiment;
+	// The experiment runs on onboarding only. Woo referrers and the theme grid layout are left out:
+	// their email-first layout already has the in-form link and no email button, so the treatment
+	// would not change it.
 	const isEntryClarityTreatment = useEntryClarityExperiment(
-		flow === ONBOARDING_FLOW && ! isWooReferrer
+		flow === ONBOARDING_FLOW && ! isWooReferrer && ! isThemeGridLayout
 	);
 
 	// Load the new account's token and refresh the current user. Depends only on the
@@ -380,14 +391,19 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	}
 
 	if ( isStepContainerV2 ) {
-		let headingText = headerText ?? translate( 'Create your account' );
+		let headingText =
+			headerText ??
+			( isThemeGridLayout
+				? translate( 'Create an account to get started' )
+				: translate( 'Create your account' ) );
 		let headingSubText = subHeaderText;
 		if ( partnerConfig ) {
 			headingText = translate( 'Create an account for %(partner)s', {
 				args: { partner: partnerConfig.displayName },
 				textOnly: true,
 			} );
-		} else if ( isMobileCompactLayout ) {
+		} else if ( isMobileCompactLayout && ! isThemeGridLayout ) {
+			// The theme grid layout keeps its own heading at every width.
 			headingText = translate( 'Welcome to WordPress.com' );
 			headingSubText = translate( 'Sign up free to start creating your site.' );
 		}
@@ -409,7 +425,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						: undefined
 				}
 				rightElement={
-					hideLoginLink || isEmailFirstVariant || isEditingEmail || showsInFormLoginLink ? null : (
+					// Email-first forms carry their own login link, except the compact one.
+					hideLoginLink ||
+					( isEmailFirstVariant && ! isMobileCompactLayout ) ||
+					isEditingEmail ||
+					showsInFormLoginLink ? null : (
 						<nav className="account-template__top-bar-links">
 							<Step.LinkButton
 								href={ loginLink }
@@ -424,6 +444,19 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		);
 
 		if ( isLargeViewport && isEmailFirstVariant ) {
+			const formColumn = (
+				<Step.CenteredColumnLayout
+					verticalAlign="center"
+					headingColumnWidth={ 4 }
+					columnWidth={ 4 }
+					heading={ <div className="account-template">{ heading }</div> }
+					topBar={ topBar }
+					noGap
+				>
+					{ stepContent }
+				</Step.CenteredColumnLayout>
+			);
+
 			return (
 				<Step.TwoColumnLayout
 					className="step-container-v2--user"
@@ -433,17 +466,18 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					noInlinePadding
 					isFullWidth
 				>
-					<Step.CenteredColumnLayout
-						verticalAlign="center"
-						headingColumnWidth={ 4 }
-						columnWidth={ 4 }
-						heading={ <div className="account-template">{ heading }</div> }
-						topBar={ topBar }
-						noGap
-					>
-						{ stepContent }
-					</Step.CenteredColumnLayout>
-					<SignupSlider />
+					{ /* The theme grid leads with the pitch, so it takes the first column. */ }
+					{ isThemeGridLayout ? (
+						<>
+							<SignupThemeGrid />
+							{ formColumn }
+						</>
+					) : (
+						<>
+							{ formColumn }
+							<SignupSlider />
+						</>
+					) }
 				</Step.TwoColumnLayout>
 			);
 		}
@@ -459,6 +493,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				topBar={ topBar }
 			>
 				<div className="account-template">
+					{ isThemeGridLayout && <SignupThemeGrid isCompact /> }
 					{ heading }
 					{ stepContent }
 				</div>

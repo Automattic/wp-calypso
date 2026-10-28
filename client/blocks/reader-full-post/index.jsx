@@ -51,6 +51,7 @@ import { useStreamPostKeySelection } from 'calypso/reader/stream/use-stream-post
 import { getPostTitleFallback, showSelectedPost } from 'calypso/reader/utils';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { useSelector } from 'calypso/state';
+import { successNotice } from 'calypso/state/notices/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	setViewingFullPostKey,
@@ -97,6 +98,18 @@ export class FullPostView extends Component {
 
 	openSuggestedFollowsModal = ( followClicked ) => {
 		this.setState( { isSuggestedFollowsModalOpen: followClicked } );
+	};
+	showFollowSuccessNotice = ( following, siteName ) => {
+		if ( ! siteName ) {
+			return;
+		}
+
+		this.props.successNotice(
+			following
+				? translate( 'Success! You are now subscribed to "%s".', { args: siteName } )
+				: translate( 'Success! You are now unsubscribed from "%s".', { args: siteName } ),
+			{ duration: 3000 }
+		);
 	};
 	onCloseSuggestedFollowModal = () => {
 		this.setState( { isSuggestedFollowsModalOpen: false } );
@@ -805,6 +818,9 @@ export class FullPostView extends Component {
 									feedUrl={ feedUrl }
 									siteUrl={ post.site_URL }
 									onFollowToggle={ this.openSuggestedFollowsModal }
+									onFollowSuccess={ ( following ) =>
+										this.showFollowSuccessNotice( following, siteName )
+									}
 								/>
 							) }
 
@@ -964,6 +980,7 @@ const ConnectedFullPostView = connect( mapStateToFullPostProps, {
 	setViewingFullPostKey,
 	unsetViewingFullPostKey,
 	showSelectedPost,
+	successNotice,
 } )(
 	withSite(
 		withPostLikes( withPostLikeActions( withSeenPostsMutations( FullPostView ) ) ),

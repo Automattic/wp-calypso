@@ -3,7 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { toSelectOption } from '../to-select-options';
 
-interface Props {
+interface NextAdventureStepProps {
 	isPlan: boolean;
 	adventureOptions: string[];
 	onChangeText?: ( text: string ) => void;
@@ -12,7 +12,7 @@ interface Props {
 	onValidationChange?: ( isValid: boolean ) => void;
 }
 
-export default function NextAdventureStep( props: Props ) {
+export default function NextAdventureStep( props: NextAdventureStepProps ) {
 	const { isPlan, onValidationChange } = props;
 	const [ text, setText ] = useState( '' );
 	const [ nextAdventure, setNextAdventure ] = useState( '' );

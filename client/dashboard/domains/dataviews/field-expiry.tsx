@@ -54,7 +54,7 @@ export const DomainExpiryField = ( {
 			);
 
 	return (
-		<VStack justify="flex-start" alignment="left" spacing={ 1 }>
+		<VStack justify="flex-start" alignment="left" spacing={ 0 }>
 			<Text intent={ domain.expired ? 'error' : undefined }>{ value }</Text>
 			{ renewLabel && <Text variant="muted">{ renewLabel }</Text> }
 		</VStack>

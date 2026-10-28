@@ -9,6 +9,7 @@ import {
 	getCancelIntentFromSearch,
 	getDelayedDowngradeRenewalPriceText,
 	getDisplayVariant,
+	getDowngradeRefundAmount,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
 	hasQueryableSite,
@@ -675,6 +676,46 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 				} )
 			)
 		).toBe( false );
+	} );
+} );
+
+describe( 'getDowngradeRefundAmount', () => {
+	test( 'matches the target by product ID in any order', () => {
+		const businessAnnual = makePurchase( {
+			total_refund_amount: 104.84,
+			refund_options: [
+				{ to_product_id: 1018, refund_amount: 40, refund_currency_symbol: '$' },
+				{ to_product_id: 1009, refund_amount: 52.42, refund_currency_symbol: '$' },
+			],
+		} );
+
+		expect( getDowngradeRefundAmount( businessAnnual, 1018 ) ).toBe( 40 );
+		expect( getDowngradeRefundAmount( businessAnnual, 1009 ) ).toBe( 52.42 );
+	} );
+
+	test( 'returns 0 for an empty or null list, an unlisted product, or an undefined product ID', () => {
+		const premiumAnnual = makePurchase( {
+			total_refund_amount: 104.84,
+			refund_options: [
+				{ to_product_id: 1009, refund_amount: 52.42, refund_currency_symbol: '$' },
+				{ to_product_id: 1013, refund_amount: 82.42, refund_currency_symbol: '$' },
+			],
+		} );
+
+		expect(
+			getDowngradeRefundAmount(
+				makePurchase( { total_refund_amount: 104.84, refund_options: [] } ),
+				1009
+			)
+		).toBe( 0 );
+		expect(
+			getDowngradeRefundAmount(
+				makePurchase( { total_refund_amount: 104.84, refund_options: null } ),
+				1009
+			)
+		).toBe( 0 );
+		expect( getDowngradeRefundAmount( premiumAnnual, 1019 ) ).toBe( 0 );
+		expect( getDowngradeRefundAmount( premiumAnnual, undefined ) ).toBe( 0 );
 	} );
 } );
 

@@ -101,14 +101,11 @@ export default function ChangePrimaryDomainModal( {
 						{ currentPrimaryDomain && (
 							<Text as="p">
 								{ createInterpolateElement(
-									sprintf(
-										/* translators: %s is the current primary site address, e.g. example.com */
-										__(
-											'The current primary site address for this site is <strong>%s</strong>. You can change it to a different one from the list below.'
-										),
-										currentPrimaryDomain
+									/* translators: <currentPrimaryDomain /> is the current primary site address, e.g. example.com */
+									__(
+										'The current primary site address for this site is <currentPrimaryDomain />. You can change it to a different one from the list below.'
 									),
-									{ strong: <strong /> }
+									{ currentPrimaryDomain: <strong>{ currentPrimaryDomain }</strong> }
 								) }
 							</Text>
 						) }
@@ -118,6 +115,7 @@ export default function ChangePrimaryDomainModal( {
 						label={ __( 'Primary site address' ) }
 						value={ selectedDomain }
 						options={ options }
+						disabled={ setPrimaryDomainMutation.isPending }
 						onChange={ setSelectedDomain }
 					/>
 					<ButtonStack justify="flex-end">

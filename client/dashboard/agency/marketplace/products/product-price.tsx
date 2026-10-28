@@ -4,13 +4,17 @@ import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import type { ProductPriceInfo } from './lib/product-pricing';
 
-interface Props {
+interface ProductPriceProps {
 	priceInfo: ProductPriceInfo;
 	currency: string;
 	size?: 'default' | 'large';
 }
 
-export default function ProductPrice( { priceInfo, currency, size = 'default' }: Props ) {
+export default function ProductPrice( {
+	priceInfo,
+	currency,
+	size = 'default',
+}: ProductPriceProps ) {
 	if ( priceInfo.isFree ) {
 		return (
 			<Text weight={ 600 } size={ size === 'large' ? 24 : undefined }>

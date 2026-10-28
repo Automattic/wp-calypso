@@ -22,6 +22,7 @@ import {
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
 import type { DomainSummary } from '@automattic/api-core';
+import './dataviews/style.scss';
 
 export function getDomainId( domain: DomainSummary ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -41,7 +42,7 @@ const defaultView = {
 function Domains() {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
-	const fields = useFields( { showPrimaryDomainBadge: false } );
+	const fields = useFields();
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
 
@@ -88,7 +89,7 @@ function Domains() {
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
-					<DataViewsCard>
+					<DataViewsCard className="domains-dataviews">
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }

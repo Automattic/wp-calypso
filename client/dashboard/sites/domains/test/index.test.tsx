@@ -331,6 +331,38 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'opens the primary site address modal from "Change primary" on the primary domain row', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ primaryCandidateDomain, domain, defaultAddressDomain ],
+			siteResponse: siteWithPrimaryDomainFeature,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		const changePrimaryButtons = await within( table ).findAllByRole( 'button', {
+			name: 'Change primary',
+		} );
+		expect( changePrimaryButtons ).toHaveLength( 1 );
+		expect( changePrimaryButtons[ 0 ].closest( 'tr' ) ).toHaveTextContent( 'test-site.com' );
+
+		await user.click( changePrimaryButtons[ 0 ] );
+
+		expect( await screen.findByRole( 'dialog', { name: 'Primary site address' } ) ).toBeVisible();
+	} );
+
+	test( 'hides "Change primary" when the plan does not allow a custom primary site address', async () => {
+		nock.cleanAll();
+		mockApis( { domains: [ primaryCandidateDomain, domain, defaultAddressDomain ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByRole( 'table' );
+		expect( screen.queryByRole( 'button', { name: 'Change primary' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'sorts domains by whether they are primary', async () => {
 		nock.cleanAll();
 		mockApis( {

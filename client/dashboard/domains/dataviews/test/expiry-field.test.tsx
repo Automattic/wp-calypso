@@ -49,7 +49,7 @@ async function getFields() {
 	let fields: Field< DomainSummary >[] = [];
 
 	function Probe() {
-		fields = useFields( { showPrimaryDomainBadge: false } );
+		fields = useFields();
 		return null;
 	}
 
