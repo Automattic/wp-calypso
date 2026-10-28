@@ -24,6 +24,8 @@ type Registration = {
 type CreateWebMcpAdapterOptions = {
 	toolProvider: WebMcpToolProvider;
 	modelContext: WebMcpModelContext;
+	/** Reports a reconcile that a stale dispatch started; the dispatch itself still rejects. */
+	onSyncError: ( error: unknown ) => void;
 };
 
 function createAbortError(): Error {
@@ -78,6 +80,7 @@ function describeTool( ability: Ability ): ToolDescription | undefined {
 export function createWebMcpAdapter( {
 	toolProvider,
 	modelContext,
+	onSyncError,
 }: CreateWebMcpAdapterOptions ): WebMcpAdapter {
 	const registrations = new Map< string, Registration >();
 	const pendingControllers = new Set< AbortController >();
@@ -143,7 +146,7 @@ export function createWebMcpAdapter( {
 				! exposed.has( ability.name ) ||
 				describeTool( resolved.ability )?.fingerprint !== fingerprint
 			) {
-				await sync().catch( () => {} );
+				await sync().catch( onSyncError );
 				throw new Error(
 					`WebMCP tool changed: ${ toolName }. Discover tools again before retrying.`
 				);

@@ -80,16 +80,19 @@ function createHarness( initialAbilities: Ability[] = [ createAbility() ] ) {
 		} ),
 	};
 	const onSourceError = jest.fn();
+	const onSyncError = jest.fn();
 	const adapter = createWebMcpAdapter( {
 		// The same seam the mount uses, over this single source.
 		toolProvider: mergeToolProviders( () => [ toolProvider ], onSourceError ),
 		modelContext,
+		onSyncError,
 	} );
 
 	return {
 		adapter,
 		modelContext,
 		onSourceError,
+		onSyncError,
 		setAbilities: ( next: Ability[] ) => {
 			abilities = next;
 		},
@@ -596,6 +599,21 @@ describe( 'WebMCP adapter', () => {
 
 		await expect( tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
 		expect( harness.toolProvider.executeAbility ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reports a failed reconcile triggered by a stale dispatch', async () => {
+		const harness = createHarness();
+		await harness.adapter.sync();
+		const tool = harness.tools.get( 'big_sky__apply_block_edits' )!;
+		harness.setAbilities( [ createAbility( { label: 'Renamed' } ) ] );
+		( harness.modelContext.registerTool as jest.Mock ).mockRejectedValueOnce(
+			new Error( 'Invalid WebMCP schema' )
+		);
+
+		await expect( tool.execute( {} ) ).rejects.toThrow( 'WebMCP tool changed' );
+		expect( harness.onSyncError ).toHaveBeenCalledWith(
+			expect.objectContaining( { message: 'Invalid WebMCP schema' } )
+		);
 	} );
 
 	it( 'rejects cancellation while validating the registered definition', async () => {

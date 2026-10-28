@@ -39,6 +39,7 @@ export function mountWebMcpTools( {
 				: [ serverProvider, registryProvider ];
 		}, onSyncError ),
 		modelContext,
+		onSyncError,
 	} );
 	const sync = () => adapter.sync().catch( onSyncError );
 	const unsubscribe = subscribe( sync, abilitiesStore );
