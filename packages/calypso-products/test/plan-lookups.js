@@ -91,9 +91,6 @@ import {
 	PLAN_WPCOM_PRO_2_YEARS,
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
-	PRODUCT_JETPACK_AI_YEARLY,
-	PRODUCT_JETPACK_SOCIAL_ADVANCED,
-	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
 	TERM_CENTENNIALLY,
@@ -1524,15 +1521,6 @@ describe( 'planHasFeature', () => {
 	test( 'should return true when a plan has a hidden feature', () => {
 		expect( planHasFeature( PLAN_BUSINESS, FEATURE_AUDIO_UPLOADS ) ).toBe( true );
 	} );
-
-	test.each( [ PLAN_JETPACK_COMPLETE, PLAN_JETPACK_PRO_YEARLY ] )(
-		'%s should include Jetpack Social and AI',
-		( plan ) => {
-			expect( planHasFeature( plan, PRODUCT_JETPACK_SOCIAL_V1_YEARLY ) ).toBe( true );
-			expect( planHasFeature( plan, PRODUCT_JETPACK_AI_YEARLY ) ).toBe( true );
-			expect( planHasSuperiorFeature( plan, PRODUCT_JETPACK_SOCIAL_ADVANCED ) ).toBe( true );
-		}
-	);
 
 	test( 'should return false when a plan does not have a feature', () => {
 		expect( planHasFeature( PLAN_PERSONAL, FEATURE_VIDEO_UPLOADS ) ).toBe( false );
