@@ -1,4 +1,4 @@
-import { __experimentalText as Text } from '@wordpress/components';
+import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
 import { Children } from 'react';
 import type { ReactNode } from 'react';
 
@@ -20,7 +20,9 @@ export default function MetaList( { children }: { children: ReactNode } ) {
 			variant="muted"
 		>
 			{ items.map( ( item, index ) => (
-				<span key={ index }>{ item }</span>
+				<HStack key={ index } as="span" spacing={ 1 } justify="flex-start" expanded={ false }>
+					{ item }
+				</HStack>
 			) ) }
 		</Text>
 	);

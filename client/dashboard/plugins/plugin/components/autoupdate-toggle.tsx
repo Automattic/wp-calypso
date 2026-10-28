@@ -3,7 +3,7 @@ import FieldActionToggle from './field-action-toggle';
 import type { SiteWithPluginData } from '../use-plugin';
 import type { Dispatch, SetStateAction } from 'react';
 
-type AutoupdateFieldProps = {
+type AutoupdateToggleProps = {
 	item: SiteWithPluginData;
 	plugin: { id?: string; name?: string } | null | undefined;
 	autoupdate: boolean;
@@ -26,7 +26,7 @@ export const AutoupdateToggle = ( {
 	optimisticAutoupdate,
 	setOptimisticAutoupdate,
 	disabled,
-}: AutoupdateFieldProps ) => {
+}: AutoupdateToggleProps ) => {
 	const serverChecked = autoupdate;
 	const optimistic = optimisticAutoupdate[ item.ID ];
 

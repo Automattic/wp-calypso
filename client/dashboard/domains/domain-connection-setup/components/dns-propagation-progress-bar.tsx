@@ -9,7 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import type { DomainMappingSetupInfo, DomainMappingStatus } from '@automattic/api-core';
 
-interface Props {
+interface DnsPropagationProgressBarProps {
 	domainMappingStatus: DomainMappingStatus;
 	domainConnectionSetupInfo: DomainMappingSetupInfo;
 }
@@ -41,7 +41,7 @@ function calculateProgress( currentValues: string[], expectedValues: string[] ):
 export default function DnsPropagationProgressBar( {
 	domainMappingStatus,
 	domainConnectionSetupInfo,
-}: Props ) {
+}: DnsPropagationProgressBarProps ) {
 	const mode = domainMappingStatus.mode;
 	const hasCloudflareIpAddresses = domainMappingStatus.has_cloudflare_ip_addresses;
 	let progressPercentage = 0;

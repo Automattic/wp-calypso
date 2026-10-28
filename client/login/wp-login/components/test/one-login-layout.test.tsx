@@ -129,12 +129,7 @@ describe( 'OneLoginLayout logo link', () => {
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'does not link the logo on the unified connection screen', () => {
-		renderLayout( { linkLogoToHome: true, showsUnifiedContent: true } );
-		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
-	} );
-
-	test( 'does not link the logo for Jetpack onboarding and connector flows', () => {
+	test( 'does not link the logo on the unified connection flow', () => {
 		renderLayout( { linkLogoToHome: true, isUnifiedConnectionFlow: true } );
 		expect( screen.queryByRole( 'link', { name: 'WordPress.com home' } ) ).not.toBeInTheDocument();
 	} );

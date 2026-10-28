@@ -33,10 +33,13 @@ describe( 'isStandardEntryPoint', () => {
 describe( 'isUnifiedFlow', () => {
 	test.each( [
 		[ 'jetpack-connector', true ],
+		[ 'jetpack-onboarding', true ],
 		[ 'jetpack_premium_analytics_onboarding', true ],
 		[ 'delete_connection_owner_notice', true ],
 		[ 'jetpack-connector-v2', false ],
-		[ 'jetpack-onboarding', false ],
+		[ 'jetpack-onboarding-v2', false ],
+		[ 'jetpack-onboarding-wizard', false ],
+		[ 'my-jetpack-connection', false ],
 		[ 'jetpack-newsletter', false ],
 		[ 'my-jetpack', false ],
 		[ 'jetpack-x_y', false ],
