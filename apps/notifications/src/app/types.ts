@@ -26,6 +26,7 @@ type Media = {
 	parent?: string | number | null;
 	height?: string | number;
 	width?: string | number;
+	emoji?: boolean;
 };
 
 export type Subject = {
@@ -54,6 +55,7 @@ export type NoteParentComment = {
 	author_url?: string | null;
 	date: string | null;
 	url: string;
+	content?: Block;
 };
 
 export type NoteActor = {
