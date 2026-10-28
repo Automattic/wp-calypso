@@ -5,9 +5,9 @@ import { useExperiment } from 'calypso/lib/explat';
  * Whether to show the calypso_account_step_entry_clarity_202609 treatment: the switch between
  * signup and login sits below the buttons on both screens.
  *
- * The signup step and the login page share the assignment, so someone who moves between them
- * sees one arrangement. Only 960px and up takes part: below it both screens keep the
- * top-right link.
+ * The signup step assigns; the login page only takes part when reached from that step, so someone
+ * who moves between them sees one arrangement and nobody is assigned on /log-in alone. Only 960px
+ * and up takes part: below it both screens keep the top-right link.
  */
 export default function useEntryClarityExperiment( isEligible: boolean ): boolean {
 	// False while the server-rendered login page hydrates, so the first render matches the
