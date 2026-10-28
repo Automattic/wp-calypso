@@ -150,18 +150,11 @@ const Omnibar = ( props ) => (
 	/>
 );
 
-function CalypsoAgentsManagerLoader( {
-	sectionName,
-	currentRoute,
-	siteId,
-	isMasterbarVisible,
-	isOmnibarVisible,
-} ) {
+function CalypsoAgentsManagerLoader( { sectionName, currentRoute, siteId, isMasterbarVisible } ) {
 	const { routeIsEnabled, isInternalOnly } = useShouldLoadAgentsManager(
 		currentRoute,
 		siteId,
-		sectionName === 'plugins',
-		isOmnibarVisible
+		sectionName === 'plugins'
 	);
 
 	if ( ! routeIsEnabled ) {
@@ -176,12 +169,6 @@ function CalypsoAgentsManagerLoader( {
 		/>
 	);
 }
-
-// These pages render their own masterbar.
-const SECTIONS_WITH_OWN_MASTERBAR = [ 'checkout-thank-you', 'professional-email-upsell' ];
-
-// This page renders its own masterbar too, but keeps the omnibar mounted and hides it with CSS.
-const MARKETPLACE_INSTALL_ROUTE = /^\/marketplace\/(?:plugin|theme)\/(?:[^/]+\/)?install(?:\/|$)/;
 
 const READER_DARK_MODE_BODY_CLASS = 'is-reader-dark-mode';
 
@@ -329,22 +316,6 @@ class Layout extends Component {
 		return null;
 	}
 
-	// Whether the masterbar is the WordPress.com omnibar, the only one with the AI chat button.
-	hasOmnibar() {
-		return (
-			! this.props.masterbarIsHidden &&
-			! this.props.isWooJPC &&
-			! this.props.isBlazePro &&
-			! config.isEnabled( 'jetpack-cloud' ) &&
-			! SECTIONS_WITH_OWN_MASTERBAR.includes( this.props.sectionName ) &&
-			! [ 'checkout', 'checkout-pending' ].includes( this.props.sectionName )
-		);
-	}
-
-	isOmnibarVisible() {
-		return this.hasOmnibar() && ! MARKETPLACE_INSTALL_ROUTE.test( this.props.currentRoute );
-	}
-
 	renderMasterbar( loadHelpCenterIcon ) {
 		if ( this.props.masterbarIsHidden ) {
 			return <EmptyMasterbar />;
@@ -360,14 +331,20 @@ class Layout extends Component {
 			return null;
 		}
 
-		if ( SECTIONS_WITH_OWN_MASTERBAR.includes( this.props.sectionName ) ) {
+		// These pages render their own masterbar.
+		if (
+			[ 'checkout-thank-you', 'professional-email-upsell' ].includes( this.props.sectionName )
+		) {
 			return null;
 		}
 
 		let MasterbarComponent = MasterbarLoggedIn;
 		if ( config.isEnabled( 'jetpack-cloud' ) ) {
 			MasterbarComponent = JetpackCloudMasterbar;
-		} else if ( this.hasOmnibar() ) {
+		} else if (
+			this.props.sectionName !== 'checkout' &&
+			this.props.sectionName !== 'checkout-pending'
+		) {
 			MasterbarComponent = Omnibar;
 		}
 
@@ -472,7 +449,6 @@ class Layout extends Component {
 					currentRoute={ this.props.currentRoute }
 					siteId={ this.props.siteId }
 					isMasterbarVisible={ ! this.props.masterbarIsHidden }
-					isOmnibarVisible={ this.isOmnibarVisible() }
 				/>
 				{ ! shouldDisableSidebarScrollSynchronizer && <SidebarScrollSynchronizer /> }
 				<SidebarOverflowDelay layoutFocus={ this.props.currentLayoutFocus } />
