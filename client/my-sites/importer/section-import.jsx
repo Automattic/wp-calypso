@@ -132,9 +132,7 @@ export class SectionImport extends Component {
 				eventProps = {
 					error_code: importItem.errorData?.code,
 					error_type: importItem.errorData?.type,
-					...( importItem.importerFileType && {
-						importer_file_type: importItem.importerFileType,
-					} ),
+					importer_file_type: importItem.importerFileType,
 				};
 			}
 

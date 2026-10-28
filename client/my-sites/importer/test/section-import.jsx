@@ -144,7 +144,12 @@ describe( 'SectionImport', () => {
 			expect( recordTracksEvent.mock.calls ).toEqual( [
 				[
 					'calypso_importer_import_fail',
-					{ importer_id: 'importer-type-wordpress', error_code: undefined, error_type: undefined },
+					{
+						importer_id: 'importer-type-wordpress',
+						error_code: undefined,
+						error_type: undefined,
+						importer_file_type: undefined,
+					},
 				],
 				[
 					'calypso_importer_upload_fail',
@@ -152,13 +157,11 @@ describe( 'SectionImport', () => {
 						importer_id: 'importer-type-medium',
 						error_code: undefined,
 						error_type: undefined,
+						importer_file_type: undefined,
 						filesize_range: null,
 					},
 				],
 			] );
-			expect( Object.keys( recordTracksEvent.mock.calls[ 0 ][ 1 ] ) ).not.toContain(
-				'importer_file_type'
-			);
 		} );
 
 		test( 'records the file type and size range on upload failures', () => {
