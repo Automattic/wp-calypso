@@ -1,3 +1,5 @@
+import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
+
 function isIDN( url: string ): boolean {
 	try {
 		// Regex to extract the hostname from the URL.
@@ -29,13 +31,18 @@ export type UrlValidationErrorReason =
 	'email' | 'idn' | 'invalid_characters' | 'missing_tld' | 'invalid_protocol' | 'invalid_url';
 
 /*
- * Get a stable identifier for the rule that rejects the given URL.
+ * Validate a site URL the user entered.
  *
  * @param {string} url The URL to validate.
  *
- * @return {UrlValidationErrorReason} The reason the URL is invalid.
+ * @return {UrlValidationErrorReason | null} `null` if the URL is valid, otherwise a stable
+ * identifier for the rule that rejects it.
  */
-export function getValidationErrorReason( url: string ): UrlValidationErrorReason {
+export function getUrlValidationError( url: string ): UrlValidationErrorReason | null {
+	if ( CAPTURE_URL_RGX.test( url ) ) {
+		return null;
+	}
+
 	const missingTLDRegex = /^(?:https?:\/\/)?(?!.*\.[a-z]{2,})([a-zA-Z0-9-_]+)$/;
 	const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	const invalidURLProtocolRegex = /^(?!https?:\/\/)\S+:\/\//;
@@ -59,15 +66,18 @@ export function getValidationErrorReason( url: string ): UrlValidationErrorReaso
 }
 
 /*
- * Get the validation message for the given URL.
+ * Get the validation message for a reason returned by `getUrlValidationError()`.
  *
- * @param {string} url The URL to validate.
+ * @param {UrlValidationErrorReason} reason Why the URL is invalid.
  * @param {Function} translate The translation function.
  *
- * @return {string} The validation message for the given URL.
+ * @return {string} The validation message.
  */
-export default function getValidationMessage( url: string, translate: ( key: string ) => string ) {
-	switch ( getValidationErrorReason( url ) ) {
+export function getValidationMessage(
+	reason: UrlValidationErrorReason,
+	translate: ( key: string ) => string
+) {
+	switch ( reason ) {
 		case 'email':
 			return translate(
 				"Looks like you might have added an email address. Please use a URL instead, like 'example.com'."

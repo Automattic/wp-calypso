@@ -1,6 +1,15 @@
-import getValidationMessage, { getValidationErrorReason } from '../url-validation-message-helper';
+import { getUrlValidationError, getValidationMessage } from '../url-validation-message-helper';
 
-describe( 'getValidationErrorReason', () => {
+describe( 'getUrlValidationError', () => {
+	it.each( [
+		'example.com',
+		'https://www.example.com',
+		'example.wordpress.com/blog',
+		'medium.com/@john.doe',
+	] )( 'accepts %s', ( url ) => {
+		expect( getUrlValidationError( url ) ).toBeNull();
+	} );
+
 	it.each( [
 		[ 'myblog', 'missing_tld' ],
 		[ 'https://myblog', 'missing_tld' ],
@@ -12,8 +21,8 @@ describe( 'getValidationErrorReason', () => {
 		[ 'https://xn--example.com', 'idn' ],
 		[ 'www.例子.测试', 'idn' ],
 		[ 'example.com-', 'invalid_url' ],
-	] )( '%s → %s', ( url, reason ) => {
-		expect( getValidationErrorReason( url ) ).toBe( reason );
+	] )( 'rejects %s as %s', ( url, reason ) => {
+		expect( getUrlValidationError( url ) ).toBe( reason );
 	} );
 } );
 
@@ -21,14 +30,16 @@ describe( 'getValidationMessage', () => {
 	const translate = ( text: string ) => text;
 
 	it( 'returns a different message for each reason', () => {
-		const messages = [
-			'myblog',
-			'user@example.com',
-			'http://my^blog.com',
-			'ftp://example.com',
-			'https://xn--example.com',
-			'example.com-',
-		].map( ( url ) => getValidationMessage( url, translate ) );
+		const messages = (
+			[
+				'email',
+				'idn',
+				'invalid_characters',
+				'missing_tld',
+				'invalid_protocol',
+				'invalid_url',
+			] as const
+		 ).map( ( reason ) => getValidationMessage( reason, translate ) );
 
 		expect( new Set( messages ).size ).toBe( messages.length );
 	} );
