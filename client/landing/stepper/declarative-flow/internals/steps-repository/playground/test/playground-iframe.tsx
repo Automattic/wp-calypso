@@ -207,3 +207,117 @@ describe( 'PlaygroundIframe intro', () => {
 		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 } );
+
+describe( 'PlaygroundIframe messages', () => {
+	const PLAYGROUND_ORIGIN = 'https://playground.wordpress.net';
+	const data = { type: 'test' };
+
+	const getIframe = () => screen.getByTitle( 'WordPress Playground' ) as HTMLIFrameElement;
+
+	const postMessage = ( init: MessageEventInit ) =>
+		act( () => {
+			window.dispatchEvent( new MessageEvent( 'message', { data, ...init } ) );
+		} );
+
+	const getIframeElement = ( onPlaygroundMessage?: ( data: unknown ) => void ) => (
+		<PlaygroundIframe
+			hasPlaygroundClient={ false }
+			setPlaygroundClient={ jest.fn() }
+			onPlaygroundMessage={ onPlaygroundMessage }
+		/>
+	);
+
+	const renderIframe = ( onPlaygroundMessage?: ( data: unknown ) => void ) =>
+		render( getIframeElement( onPlaygroundMessage ) );
+
+	const appendFrame = ( document: Document ) => {
+		const frame = document.createElement( 'iframe' );
+		document.body.appendChild( frame );
+		return frame;
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockSearchParams = new URLSearchParams();
+		jest.mocked( initializeWordPressPlayground ).mockReturnValue( new Promise( () => {} ) );
+	} );
+
+	it( 'passes on messages from the Playground iframe', () => {
+		const onPlaygroundMessage = jest.fn();
+		renderIframe( onPlaygroundMessage );
+
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+
+		expect( onPlaygroundMessage ).toHaveBeenCalledWith( data );
+	} );
+
+	it( 'passes on messages from the WordPress frame inside it', () => {
+		const onPlaygroundMessage = jest.fn();
+		renderIframe( onPlaygroundMessage );
+		const wordPressFrame = appendFrame( getIframe().contentDocument! );
+
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: wordPressFrame.contentWindow } );
+
+		expect( onPlaygroundMessage ).toHaveBeenCalledWith( data );
+	} );
+
+	it.each( [
+		[
+			'another origin',
+			() => ( { origin: 'https://example.com', source: getIframe().contentWindow } ),
+		],
+		[ 'the top window', () => ( { origin: PLAYGROUND_ORIGIN, source: window } ) ],
+		[
+			'a frame outside the Playground',
+			() => ( { origin: PLAYGROUND_ORIGIN, source: appendFrame( document ).contentWindow } ),
+		],
+		[ 'no window', () => ( { origin: PLAYGROUND_ORIGIN, source: null } ) ],
+	] )( 'ignores messages from %s', ( _name, getInit ) => {
+		const onPlaygroundMessage = jest.fn();
+		renderIframe( onPlaygroundMessage );
+
+		postMessage( getInit() );
+
+		expect( onPlaygroundMessage ).not.toHaveBeenCalled();
+	} );
+
+	it( 'only passes messages on to the current callback', () => {
+		const addEventListener = jest.spyOn( window, 'addEventListener' );
+		const first = jest.fn();
+		const second = jest.fn();
+		const { rerender } = renderIframe( first );
+
+		rerender( getIframeElement( second ) );
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+		rerender( getIframeElement() );
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+
+		expect( first ).not.toHaveBeenCalled();
+		expect( second ).toHaveBeenCalledTimes( 1 );
+		expect( addEventListener.mock.calls.filter( ( [ type ] ) => type === 'message' ) ).toHaveLength(
+			1
+		);
+		addEventListener.mockRestore();
+	} );
+
+	it( 'ignores the old iframe once a new playground replaces it', async () => {
+		jest
+			.mocked( initializeWordPressPlayground )
+			.mockRejectedValueOnce( new BlueprintLoadError( 'https://example.com', new Error() ) )
+			.mockReturnValue( new Promise( () => {} ) );
+		const onPlaygroundMessage = jest.fn();
+		renderIframe( onPlaygroundMessage );
+		const oldSource = getIframe().contentWindow;
+
+		const startNew = await screen.findByRole( 'button', { name: 'Start a new playground' } );
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: oldSource } );
+		await userEvent.click( startNew );
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: oldSource } );
+
+		expect( onPlaygroundMessage ).not.toHaveBeenCalled();
+
+		postMessage( { origin: PLAYGROUND_ORIGIN, source: getIframe().contentWindow } );
+
+		expect( onPlaygroundMessage ).toHaveBeenCalledTimes( 1 );
+	} );
+} );

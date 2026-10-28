@@ -3,7 +3,7 @@ import { Step } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import { close } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { isPlaygroundWooIntent } from 'calypso/landing/stepper/utils/playground-woo-intent';
@@ -12,8 +12,9 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { PlaygroundIframe } from './components/playground-iframe';
 import { PlaygroundLeaveModal } from './components/playground-leave-modal';
 import { PlaygroundSaveModal } from './components/playground-save-modal';
-import { getBlueprintLabelForTracking } from './lib/blueprint';
+import { getBlueprintLabelForTracking, getBlueprintUrlHost } from './lib/blueprint';
 import { DEFAULT_PLAN_INTENT, TRACKS_FLUSH_DELAY, WOO_START_HOSTS_URL } from './lib/constants';
+import { MAX_WOO_TRACKS_EVENTS, parseWooTracksMessage } from './lib/woo-tracks';
 import type { Step as StepType } from '../../types';
 import type { PlaygroundClient } from './lib/types';
 
@@ -53,6 +54,25 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			is_woocommerce_intent: isWooCommerceIntent,
 		} ),
 		[ flow, query, isWooCommerceIntent ]
+	);
+
+	const wooTracksCountRef = useRef( 0 );
+	const recordWooTracksMessage = useCallback(
+		( data: unknown ) => {
+			const event = parseWooTracksMessage( data );
+			if ( ! event || wooTracksCountRef.current >= MAX_WOO_TRACKS_EVENTS ) {
+				return;
+			}
+
+			wooTracksCountRef.current++;
+			const blueprintHost = getBlueprintUrlHost( query );
+			recordTracksEvent( event.name, {
+				...tracksProps,
+				...( blueprintHost && { blueprint_host: blueprintHost } ),
+				...event.properties,
+			} );
+		},
+		[ tracksProps, query ]
 	);
 
 	useEffect( () => {
@@ -222,6 +242,7 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 					setPlaygroundClient={ setPlaygroundClient }
 					withIntro={ isWooCommerceIntent }
 					onIntroChange={ setIsIntroShown }
+					onPlaygroundMessage={ isWooCommerceIntent ? recordWooTracksMessage : undefined }
 				/>
 			</Step.PlaygroundLayout>
 			{ isLeaveModal( activeModal ) && (
