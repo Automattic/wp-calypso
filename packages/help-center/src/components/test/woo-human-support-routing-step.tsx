@@ -40,6 +40,7 @@ const merchant = ( overrides: Partial< WooHandoffData > = {} ): WooHandoffData =
 			isRevShare: false,
 			externalSupportUrl: 'https://example.com/support',
 		},
+		{ slug: 'wc-core', name: 'WooCommerce', supportType: 'woo', isRevShare: false },
 	],
 	isVendor: false,
 	...overrides,
@@ -204,8 +205,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		await userEvent.selectOptions( screen.getByLabelText( 'Product' ), 'stripe-tax' );
 
 		expect( screen.queryByLabelText( 'Store' ) ).not.toBeInTheDocument();
-		await userEvent.click( continueButton() );
-		expect( lastDecision() ).toMatchObject( { route: 'link-out', row_id: 6 } );
+		expect( continueButton() ).not.toHaveAttribute( 'aria-disabled', 'true' );
 	} );
 
 	it( 'offers vendor questions to vendors only', () => {
@@ -257,5 +257,74 @@ describe( 'WooHumanSupportRoutingStep', () => {
 
 		expect( dismiss ).toHaveBeenCalled();
 		expect( startChat ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'routes the Help Center answers itself', () => {
+		it( 'links to the support of an externally supported product', async () => {
+			renderStep();
+
+			await userEvent.selectOptions( question(), 'technical-support' );
+			await userEvent.selectOptions( screen.getByLabelText( 'Product' ), 'stripe-tax' );
+			await userEvent.click( continueButton() );
+
+			expect( screen.getByText( 'Stripe Tax has its own support' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: 'Contact Stripe Tax Support' } ) ).toHaveAttribute(
+				'href',
+				'https://example.com/support'
+			);
+			expect( startChat ).not.toHaveBeenCalled();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Done' } ) );
+			expect( dismiss ).toHaveBeenCalled();
+		} );
+
+		it( 'starts a chat for an externally supported product without a support link', async () => {
+			mockWooHandoff = merchant( {
+				supportedProducts: [
+					{ slug: 'stripe-tax', name: 'Stripe Tax', supportType: 'external', isRevShare: false },
+				],
+			} );
+			renderStep();
+
+			await userEvent.selectOptions( question(), 'technical-support' );
+			await userEvent.selectOptions( screen.getByLabelText( 'Product' ), 'stripe-tax' );
+			await userEvent.click( continueButton() );
+
+			expect( startChat ).toHaveBeenCalled();
+		} );
+
+		it( "points to the forums for a Woo product when the merchant isn't paying", async () => {
+			mockWooHandoff = merchant( { supportTier: 'tier_3', isPaying: false } );
+			renderStep();
+
+			await userEvent.selectOptions( question(), 'technical-support' );
+			await userEvent.selectOptions(
+				screen.getByLabelText( 'Product' ),
+				'woocommerce-subscriptions'
+			);
+			await userEvent.selectOptions( screen.getByLabelText( 'Store' ), 'https://one.example' );
+			await userEvent.click( continueButton() );
+
+			expect( lastDecision() ).toMatchObject( { route: 'forums', row_id: 15 } );
+			expect( screen.getByText( 'Ask the WooCommerce community' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'link', { name: /community forums/ } ) ).toHaveAttribute(
+				'href',
+				'https://wordpress.org/support/plugin/woocommerce/'
+			);
+			expect( startChat ).not.toHaveBeenCalled();
+		} );
+
+		it( 'points to the forums after the AI reply for Core', async () => {
+			renderStep();
+
+			await userEvent.selectOptions( question(), 'technical-support' );
+			await userEvent.selectOptions( screen.getByLabelText( 'Product' ), 'wc-core' );
+			await userEvent.selectOptions( screen.getByLabelText( 'Store' ), 'https://one.example' );
+			await userEvent.click( continueButton() );
+
+			expect( lastDecision() ).toMatchObject( { route: 'ai-reply-then-forums', row_id: 11 } );
+			expect( screen.getByText( /If the answer above doesn’t help/ ) ).toBeInTheDocument();
+			expect( startChat ).not.toHaveBeenCalled();
+		} );
 	} );
 } );
