@@ -80,6 +80,12 @@
 		line-height: var(--wpds-typography-line-height-sm, 20px);
 	}
 
+	// Tighten the title-to-excerpt gap. DataViews sets the 4px gap inline, so
+	// `!important` is needed to override it.
+	.dataviews-view-list__field-wrapper {
+		gap: 2px !important;
+	}
+
 	// Notes without an excerpt render an empty description field, but DataViews
 	// still emits its cell as a flex item in the column, which doubles the row
 	// gap. Drop the empty cell so only one gap remains.
