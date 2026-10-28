@@ -106,15 +106,17 @@ function FollowButtonContainer( {
 				)
 			);
 			followSite( { feedUrl: siteUrl, source: followSource } );
-			// onFollowToggle reports a completed follow to the caller.
+			// The follow waits on email verification, so neither onFollowToggle nor onFollowSuccess fires.
 			return;
 		}
 
 		const toggleSite = followingSite ? followSiteAsync : unfollowSiteAsync;
-		// The promise settles even if this button unmounts first. Errors are already shown by the mutation hooks.
-		toggleSite( { feedUrl: siteUrl, source: followSource } )
-			.then( () => onFollowSuccess?.( followingSite ) )
-			.catch( () => {} );
+		// The promise settles even if this button unmounts first. Request errors are already shown by the
+		// mutation hooks, so only those are swallowed; an error thrown by onFollowSuccess still surfaces.
+		toggleSite( { feedUrl: siteUrl, source: followSource } ).then(
+			() => onFollowSuccess?.( followingSite ),
+			() => {}
+		);
 
 		onFollowToggle( followingSite );
 	};
