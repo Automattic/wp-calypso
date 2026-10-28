@@ -81,7 +81,7 @@
 		"@automattic/wpcom-checkout": "workspace:^",
 		"@automattic/wpcom-template-parts": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
-		"@babel/core": "^7.29.7",
+		"@babel/core": "^8.0.7",
 		"@date-fns/tz": "^1.5.0",
 		"@emotion/cache": "^11.14.0",
 		"@emotion/css": "^11.11.2",
