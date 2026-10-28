@@ -43,7 +43,8 @@ function makeAgency(): Agency {
 	return {
 		id: 123,
 		name: 'Test Agency',
-		profile: makeAgencyProfile( false ),
+		profile: makeAgencyProfile(),
+		tier: { id: 'pro-agency-partner' },
 		partner_directory: { allowed: true },
 		user: { capabilities: [ 'a4a_read_partner_directory' ] },
 	} as Agency;
@@ -158,6 +159,8 @@ test( 'forces the card without granting access and only displays trusted saved p
 		.mocked( isEnabled )
 		.mockImplementation( ( flag ) => flag === 'a4a-lead-matching-design-preview' );
 	const agency = makeAgency();
+	agency.tier!.id = 'agency-partner';
+	agency.profile!.listing_details.is_available = false;
 	agency.partner_directory = { allowed: false, directories: [] };
 	queryClient.setQueryData( matchingKey, {
 		agency_id: 123,
@@ -195,6 +198,44 @@ test( 'forces the card without granting access and only displays trusted saved p
 	expect(
 		screen.queryByRole( 'progressbar', { value: { text: /questions answered/ } } )
 	).not.toBeInTheDocument();
+} );
+
+test( 'follows saved agency availability and tier without trusting the matching availability mirror', async () => {
+	nock( API )
+		.get( matchingPath )
+		.query( true )
+		.reply( 200, { agency_id: 123, lead_matching_profile: incompleteProfile } );
+	renderOverview();
+	expect( await screen.findByRole( 'link', { name: 'Finish preferences' } ) ).toBeVisible();
+
+	const setAgency = ( changes: object ) => {
+		act( () => {
+			queryClient.setQueryData( activeAgencyQuery().queryKey, { ...makeAgency(), ...changes } );
+		} );
+	};
+	const unavailableProfile = makeAgencyProfile( false );
+	setAgency( { profile: unavailableProfile } );
+	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
+	setAgency( {
+		profile: {
+			...unavailableProfile,
+			listing_details: { ...unavailableProfile.listing_details, is_available: undefined },
+		},
+	} );
+	expect( profileLink() ).not.toBeInTheDocument();
+	setAgency( { tier: undefined } );
+	expect( profileLink() ).not.toBeInTheDocument();
+	setAgency( { tier: { id: 'unknown' } } );
+	expect( profileLink() ).not.toBeInTheDocument();
+	setAgency( { tier: { id: 'vip-pro-agency-partner' } } );
+	expect( await screen.findByRole( 'link', { name: 'Finish preferences' } ) ).toBeVisible();
+	act( () => {
+		queryClient.setQueryData( matchingKey, {
+			agency_id: 123,
+			lead_matching_profile: completeProfile,
+		} );
+	} );
+	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
 } );
 
 test( 'hides cached answers after a failed refetch', async () => {

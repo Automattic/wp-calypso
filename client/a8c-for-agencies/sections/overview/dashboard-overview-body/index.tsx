@@ -88,6 +88,8 @@ function DashboardOverviewBodyContent( {
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
 			showMatchingProfilePreview={
+				canAccessLeadMatching &&
+				agency.profile?.listing_details?.is_available === true &&
 				answeredRequiredFieldCount !== undefined &&
 				answeredRequiredFieldCount < REQUIRED_LEAD_MATCHING_FIELDS.length
 			}

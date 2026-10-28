@@ -19,6 +19,7 @@ import {
 } from 'calypso/dashboard/agency/partner-directory/lead-matching/test/fixtures';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import DashboardOverviewBody from '..';
+import type { AgencyTierId } from '@automattic/api-core';
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
@@ -36,6 +37,7 @@ function makeAgency( id = 123 ) {
 	return {
 		id,
 		profile: makeAgencyProfile(),
+		tier: { id: 'pro-agency-partner' as AgencyTierId },
 		partner_directory: { allowed: true },
 		user: { capabilities: [ 'a4a_read_partner_directory' ] },
 		lead_matching: {
@@ -80,6 +82,8 @@ function renderOverview( queryClient: QueryClient, withSave = false, agency = ma
 beforeEach( () => {
 	jest.mocked( isEnabled ).mockReturnValue( false );
 } );
+
+afterEach( () => nock.cleanAll() );
 
 test( 'uses the classic endpoint cache for saved answers, saves and agency changes', async () => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
@@ -165,6 +169,30 @@ test( 'disables the classic query and hides cached answers for an ineligible age
 	queryClient.clear();
 } );
 
+test( 'updates the normal card as the saved agency tier and availability change', async () => {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	nock( API )
+		.get( matchingPath )
+		.query( true )
+		.reply( 200, { agency_id: 123, lead_matching_profile: incompleteProfile } );
+	const store = renderOverview( queryClient );
+	expect( await screen.findByRole( 'link', { name: 'Finish preferences' } ) ).toBeVisible();
+	const setAgency = ( agency: ReturnType< typeof makeAgency > ) => {
+		act( () => store.dispatch( { type: 'switch-agency', agency } ) );
+	};
+	setAgency( { ...makeAgency(), tier: { id: 'agency-partner' } } );
+	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
+	setAgency( { ...makeAgency(), tier: { id: 'premier-partner' } } );
+	expect( await screen.findByRole( 'link', { name: 'Finish preferences' } ) ).toBeVisible();
+	setAgency( { ...makeAgency(), profile: makeAgencyProfile( false ) } );
+	await waitFor( () => expect( profileLink() ).not.toBeInTheDocument() );
+	const profile = makeAgencyProfile();
+	Object.assign( profile.listing_details, { is_available: undefined } );
+	setAgency( { ...makeAgency(), profile } );
+	expect( profileLink() ).not.toBeInTheDocument();
+	queryClient.clear();
+} );
+
 test( 'forces the classic card for design review without granting access', async () => {
 	jest
 		.mocked( isEnabled )
@@ -175,6 +203,8 @@ test( 'forces the classic card for design review without granting access', async
 		lead_matching_profile: completeProfile,
 	} );
 	const agency = makeAgency();
+	agency.tier.id = 'agency-partner';
+	agency.profile.listing_details.is_available = false;
 	agency.partner_directory.allowed = false;
 	const scope = nock( API ).get( matchingPath ).query( true ).reply( 200, {} );
 	renderOverview( queryClient, false, agency );
