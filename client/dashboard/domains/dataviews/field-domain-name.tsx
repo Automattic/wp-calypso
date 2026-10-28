@@ -14,12 +14,10 @@ export const DomainNameField = ( {
 	domain,
 	site,
 	value,
-	showPrimaryDomainBadge,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
-	showPrimaryDomainBadge?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
@@ -34,9 +32,9 @@ export const DomainNameField = ( {
 			: domainOverviewRoute.fullPath;
 
 	const content = (
-		<VStack spacing={ 1 }>
+		<VStack spacing={ 0 }>
 			<span style={ textOverflowStyles }>{ value }</span>
-			{ showPrimaryDomainBadge && domain.primary_domain && (
+			{ domain.primary_domain ? (
 				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
 						style={ {
@@ -50,11 +48,12 @@ export const DomainNameField = ( {
 						{ __( 'Primary site address' ) }
 					</span>
 				</Tooltip>
-			) }
-			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
-				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
-					{ domain.subtype.label }
-				</Text>
+			) : (
+				domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+					<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
+						{ domain.subtype.label }
+					</Text>
+				)
 			) }
 		</VStack>
 	);

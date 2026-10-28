@@ -1,6 +1,7 @@
 import { __experimentalText as Text } from '@wordpress/components';
 import { useAppContext } from '../../context';
 import { formatDate } from '../format-note-time';
+import Author from './author';
 import LinkCard from './link-card';
 import MetaList from './meta-list';
 import SiteIdentity from './site-identity';
@@ -18,7 +19,7 @@ export default function PostCard( {
 	const { locale } = useAppContext();
 	const byline = (
 		<MetaList>
-			{ post.author_name }
+			{ post.author_name && <Author avatar={ post.author_avatar }>{ post.author_name }</Author> }
 			{ post.date && formatDate( post.date, locale ) }
 		</MetaList>
 	);

@@ -41,8 +41,8 @@ import {
 	siteSftpUsersQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
+	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
-	wpOrgCoreVersionQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -1097,11 +1097,10 @@ export const siteSettingsWordPressRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
-			// Fire-and-forget the external wp.org queries so a slow upstream
+			// Fire-and-forget the track versions so a slow site or wp.org
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
-			queryClient.prefetchQuery( wpOrgCoreVersionQuery() );
-			queryClient.prefetchQuery( wpOrgCoreVersionQuery( 'beta' ) );
+			queryClient.prefetchQuery( siteWordPressTrackVersionsQuery( site.ID ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
 	},

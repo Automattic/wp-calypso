@@ -137,7 +137,11 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				<Connect site={ site } failure={ connectionFailure } />
 			) }
 			{ migration?.status === 'running' && (
-				<Running phase={ migration.phase } sourceHost={ sourceHost } />
+				<Running
+					phase={ migration.phase }
+					sourceHost={ sourceHost }
+					notificationEmails={ migration.notification_emails }
+				/>
 			) }
 			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
 				! connectionFailure && <Findings site={ site } migration={ migration } /> }

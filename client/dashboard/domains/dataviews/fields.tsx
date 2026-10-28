@@ -17,11 +17,9 @@ import type { Field, Operator } from '@wordpress/dataviews';
 
 export const useFields = ( {
 	site,
-	showPrimaryDomainBadge = true,
 	inOverview = false,
 }: {
 	site?: Site;
-	showPrimaryDomainBadge?: boolean;
 	inOverview?: boolean;
 } = {} ) => {
 	const { queries } = useAppContext();
@@ -55,12 +53,7 @@ export const useFields = ( {
 				enableGlobalSearch: true,
 				getValue: ( { item }: { item: DomainSummary } ) => item.domain,
 				render: ( { field, item } ) => (
-					<DomainNameField
-						domain={ item }
-						site={ site }
-						value={ field.getValue( { item } ) }
-						showPrimaryDomainBadge={ showPrimaryDomainBadge }
-					/>
+					<DomainNameField domain={ item } site={ site } value={ field.getValue( { item } ) } />
 				),
 			},
 			{
@@ -189,7 +182,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
+		[ site, siteElements, inOverview ]
 	);
 
 	return fields;

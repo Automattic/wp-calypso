@@ -1,4 +1,3 @@
-import { type DomainSummary, type Site, type User } from '@automattic/api-core';
 import {
 	Button,
 	__experimentalVStack as VStack,
@@ -11,9 +10,10 @@ import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
 import UpsellCTAButton from '../../components/upsell-cta-button';
+import { canUserSetPrimaryDomain, isPrimaryDomainCandidate } from '../../utils/domain';
 import { getSitePlanUpgradeUrl } from '../../utils/site-url';
 import ChangePrimaryDomainModal from './change-primary-domain-modal';
-import { usePrimaryDomainChange } from './use-primary-domain-change';
+import type { DomainSummary, Site, User } from '@automattic/api-core';
 
 interface PrimaryDomainSelectorNoticeProps {
 	domains: DomainSummary[];
@@ -27,16 +27,9 @@ const PrimaryDomainSelectorNotice = ( {
 	user,
 }: PrimaryDomainSelectorNoticeProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
-	const {
-		canUserSetPrimaryDomainOnThisSite,
-		canChangePrimaryDomain,
-		currentPrimaryDomain,
-		eligibleDomains,
-	} = usePrimaryDomainChange( { domains, site, user } );
-
-	if ( ! domains || ! site ) {
-		return null;
-	}
+	const canUserSetPrimaryDomainOnThisSite = canUserSetPrimaryDomain( site, user );
+	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
+	const domainsList = domains.filter( isPrimaryDomainCandidate );
 
 	const renderMessage = () => {
 		if ( ! canUserSetPrimaryDomainOnThisSite ) {
@@ -61,7 +54,7 @@ const PrimaryDomainSelectorNotice = ( {
 			return message;
 		}
 
-		if ( eligibleDomains.length === 0 ) {
+		if ( domainsList.length === 0 ) {
 			return createInterpolateElement(
 				__(
 					'Before changing your primary site address you must register or connect a new custom domain. <learnMoreLink />'
@@ -87,7 +80,7 @@ const PrimaryDomainSelectorNotice = ( {
 		<Notice variant="info" title={ __( 'Primary site address' ) }>
 			<VStack spacing={ 4 }>
 				<Text as="p">{ renderMessage() }</Text>
-				{ canChangePrimaryDomain && (
+				{ canUserSetPrimaryDomainOnThisSite && domainsList.length > 0 && (
 					<HStack justify="flex-start">
 						<Button variant="link" onClick={ () => setIsModalOpen( true ) }>
 							{ __( 'Change primary site address' ) }
@@ -99,7 +92,7 @@ const PrimaryDomainSelectorNotice = ( {
 				<ChangePrimaryDomainModal
 					site={ site }
 					currentPrimaryDomain={ currentPrimaryDomain }
-					eligibleDomains={ eligibleDomains }
+					eligibleDomains={ domainsList }
 					onClose={ () => setIsModalOpen( false ) }
 				/>
 			) }

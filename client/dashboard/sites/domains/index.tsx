@@ -3,7 +3,7 @@ import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -29,14 +29,18 @@ import {
 	SITE_CONTEXT_VIEW,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { isDomainRenewable, isPendingPrimaryDomain } from '../../utils/domain';
+import {
+	canUserSetPrimaryDomain,
+	isDomainRenewable,
+	isPendingPrimaryDomain,
+	isPrimaryDomainCandidate,
+} from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import ChangePrimaryDomainModal from './change-primary-domain-modal';
 import ExpiredDomainNotice from './expired-domain-notice';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
-import { usePrimaryDomainChange } from './use-primary-domain-change';
 import type { DomainSummary } from '@automattic/api-core';
-import type { Action } from '@wordpress/dataviews';
+import '../../domains/dataviews/style.scss';
 
 function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -69,25 +73,20 @@ function SiteDomains() {
 		site,
 	} );
 
-	const { canChangePrimaryDomain, currentPrimaryDomain, eligibleDomains } = usePrimaryDomainChange(
-		{ domains: siteDomains, site, user }
-	);
-	const [ isChangePrimaryModalOpen, setIsChangePrimaryModalOpen ] = useState( false );
+	const [ isChangePrimaryDomainOpen, setIsChangePrimaryDomainOpen ] = useState( false );
+	const showPrimaryDomainControls = ! hasRedirect && ! pendingDomain;
+	const canChangePrimaryDomain =
+		showPrimaryDomainControls &&
+		canUserSetPrimaryDomain( site, user ) &&
+		siteDomains.some( isPrimaryDomainCandidate );
 
-	const domainActions = useActions( { sites: [ site ] } );
-	const actions: Action< DomainSummary >[] = useMemo(
-		() => [
-			{
-				id: 'change-primary',
-				isPrimary: true,
-				label: __( 'Change primary' ),
-				callback: () => setIsChangePrimaryModalOpen( true ),
-				isEligible: ( item: DomainSummary ) => item.primary_domain && canChangePrimaryDomain,
-			},
-			...domainActions,
-		],
-		[ domainActions, canChangePrimaryDomain ]
-	);
+	const openChangePrimaryDomain = useCallback( () => setIsChangePrimaryDomainOpen( true ), [] );
+
+	const sites = useMemo( () => [ site ], [ site ] );
+	const actions = useActions( {
+		sites,
+		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
+	} );
 
 	const searchParams = siteDomainsRoute.useSearch();
 	const navigate = useNavigate();
@@ -132,7 +131,7 @@ function SiteDomains() {
 								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
 							/>
 						) }
-						{ ! hasRedirect && ! pendingDomain && (
+						{ showPrimaryDomainControls && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
 						{ hasRedirect && (
@@ -158,7 +157,7 @@ function SiteDomains() {
 				</>
 			}
 		>
-			<DataViewsCard>
+			<DataViewsCard className="domains-dataviews">
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
@@ -173,12 +172,12 @@ function SiteDomains() {
 				/>
 			</DataViewsCard>
 			{ deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
-			{ isChangePrimaryModalOpen && (
+			{ isChangePrimaryDomainOpen && (
 				<ChangePrimaryDomainModal
 					site={ site }
-					currentPrimaryDomain={ currentPrimaryDomain }
-					eligibleDomains={ eligibleDomains }
-					onClose={ () => setIsChangePrimaryModalOpen( false ) }
+					currentPrimaryDomain={ siteDomains.find( ( domain ) => domain.primary_domain )?.domain }
+					eligibleDomains={ siteDomains.filter( isPrimaryDomainCandidate ) }
+					onClose={ () => setIsChangePrimaryDomainOpen( false ) }
 				/>
 			) }
 			<PerformanceTrackerStop />

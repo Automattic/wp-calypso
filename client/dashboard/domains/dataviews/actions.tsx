@@ -32,7 +32,13 @@ const noop = () => {};
  * links and DataViews never shows the "more actions" menu. Everything else (renewal before expiry,
  * DNS, contact information, auto-renew, email, transfers) lives on the domain's Settings page.
  */
-export const useActions = ( { sites }: { sites?: Site[] } ) => {
+export const useActions = ( {
+	sites,
+	onChangePrimaryDomain,
+}: {
+	sites?: Site[];
+	onChangePrimaryDomain?: () => void;
+} ) => {
 	const router = useRouter();
 	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
@@ -95,6 +101,20 @@ export const useActions = ( { sites }: { sites?: Site[] } ) => {
 					window.location.href = getRenewalUrlFromPurchase( purchase );
 				},
 				isEligible: ( item: DomainSummary ) => item.expired && isDomainRenewable( item ),
+			},
+			{
+				id: 'change-primary-domain',
+				isPrimary: true,
+				/* translators: Row action on the primary site address that opens the dialog to pick another one. */
+				label: __( 'Change primary' ),
+				callback: ( items: DomainSummary[] ) => {
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'change-primary-domain',
+						domain: items[ 0 ].domain,
+					} );
+					onChangePrimaryDomain?.();
+				},
+				isEligible: ( item: DomainSummary ) => !! onChangePrimaryDomain && item.primary_domain,
 			},
 			{
 				id: 'manage-domain',
@@ -160,7 +180,14 @@ export const useActions = ( { sites }: { sites?: Site[] } ) => {
 				},
 			},
 		],
-		[ router, queryClient, sitesByBlogId, recordTracksEvent, hasEnTranslation ]
+		[
+			router,
+			queryClient,
+			sitesByBlogId,
+			recordTracksEvent,
+			hasEnTranslation,
+			onChangePrimaryDomain,
+		]
 	);
 
 	return actions;

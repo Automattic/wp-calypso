@@ -24,10 +24,7 @@ const expiryBucketField: Field< DomainSummary > = {
  * WordPress.com address always comes first, the primary site address second, then the rest.
  */
 export function getSiteDomainPinnedRank( domain: DomainSummary ): number {
-	if (
-		domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS &&
-		! domain.tags.includes( 'wpcom_staging' )
-	) {
+	if ( domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) {
 		return 0;
 	}
 	if ( domain.primary_domain ) {

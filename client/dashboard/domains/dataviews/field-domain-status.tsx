@@ -56,7 +56,7 @@ export const DomainStatusField = ( {
 	value: string;
 } ) => {
 	return (
-		<VStack spacing={ 1 }>
+		<VStack spacing={ 0 }>
 			<Text intent={ domain.domain_status.type }>{ value }</Text>
 			{ domain.domain_status?.cta && getCtaLink( domain ) }
 		</VStack>
