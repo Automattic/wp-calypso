@@ -1,7 +1,7 @@
 import { parseAdminBarNodeTitle } from '@automattic/omnibar';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-reader.scss';
+import './style.scss';
 
 function ReaderIcon() {
 	return (

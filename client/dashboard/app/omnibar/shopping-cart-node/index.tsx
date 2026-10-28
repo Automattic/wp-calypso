@@ -2,17 +2,14 @@ import { useShoppingCart } from '@automattic/shopping-cart';
 import { Popover } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
-import { useAnalytics } from '../analytics';
+import { useAnalytics } from '../../analytics';
 import type { Site } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
-import './node-shopping-cart.scss';
+import './style.scss';
 
 const ShoppingCartNodePanel = lazy(
-	() =>
-		import(
-			/* webpackChunkName: "async-omnibar-shopping-cart-panel" */ './node-shopping-cart-panel'
-		)
+	() => import( /* webpackChunkName: "async-omnibar-shopping-cart-panel" */ './panel' )
 );
 
 function CartIcon() {

@@ -1,10 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { MiniCart } from '@automattic/mini-cart';
-import { wpcomLink } from '../../utils/link';
-import { useAnalytics } from '../analytics';
+import { wpcomLink } from '../../../utils/link';
+import { useAnalytics } from '../../analytics';
 
-import './node-shopping-cart-panel.scss';
+import './panel.scss';
 
 export default function ShoppingCartNodePanel( {
 	siteId,

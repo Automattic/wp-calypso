@@ -2,25 +2,12 @@
  * @jest-environment jsdom
  */
 
-import { omnibarSiteIdQuery } from '@automattic/api-queries';
-import { QueryClient } from '@tanstack/react-query';
+import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { act, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
-import { render } from '../../../test-utils';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
-import { shoppingCartManagerClient } from '../../shopping-cart';
-import { omnibarEvents } from '../events';
-import OmnibarContainer from '../omnibar';
-import type { AppConfig } from '../../context';
-
-const config: AppConfig = {
-	...APP_CONTEXT_DEFAULT_CONFIG,
-	supports: {
-		...APP_CONTEXT_DEFAULT_CONFIG.supports,
-		notifications: true,
-	},
-};
+import { render } from '../../../../test-utils';
+import { omnibarEvents } from '../../events';
+import { useNotificationsNodeBuilder } from '../index';
 
 const notesNode = {
 	id: 'notes',
@@ -31,40 +18,17 @@ const notesNode = {
 	group: false,
 };
 
-const myAccountNode = {
-	id: 'my-account',
-	title:
-		"Howdy, <span class=\"display-name\">Test User</span><img alt='Test User&#039;s avatar' src='https://1.gravatar.com/avatar/test' class='avatar avatar-28' />",
-	parent: 'top-secondary',
-	href: 'https://my.wordpress.com/me/account',
-	group: false,
-	meta: {
-		menu_title: 'Howdy, Test User',
-	},
-};
-
-function renderOmnibar() {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	queryClient.setQueryData( omnibarSiteIdQuery().queryKey, null );
-
-	return render( <OmnibarContainer cartManagerClient={ shoppingCartManagerClient } />, {
-		config,
-		queryClient,
+function NotificationsNodeOmnibar() {
+	const { nodeBuilder } = useNotificationsNodeBuilder( {} );
+	const { userNodes } = buildOmnibarNodesFromAdminBarNodes( [ notesNode ], {
+		notes: nodeBuilder,
 	} );
+	return <Omnibar nodes={ { userNodes } } />;
 }
 
 describe( '<Omnibar> notifications node', () => {
-	beforeEach( () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/dashboard/admin-bar' )
-			.query( true )
-			.reply( 200, { nodes: [ notesNode, myAccountNode ] } );
-	} );
-
-	afterEach( () => nock.cleanAll() );
-
 	test( 'shows the node', async () => {
-		renderOmnibar();
+		render( <NotificationsNodeOmnibar /> );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		const notificationsNode = await within( toolbar ).findByRole( 'button', {
@@ -78,7 +42,7 @@ describe( '<Omnibar> notifications node', () => {
 		const onToggle = jest.fn();
 		const unsubscribe = omnibarEvents.notifications.subscribe( onToggle );
 
-		renderOmnibar();
+		render( <NotificationsNodeOmnibar /> );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		await user.click(
@@ -90,7 +54,7 @@ describe( '<Omnibar> notifications node', () => {
 	} );
 
 	test( 'pulses the bell when a subscriber note arrives', async () => {
-		renderOmnibar();
+		render( <NotificationsNodeOmnibar /> );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		const notificationsNode = await within( toolbar ).findByRole( 'button', {

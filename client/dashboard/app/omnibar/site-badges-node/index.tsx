@@ -1,6 +1,6 @@
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-site-badges.scss';
+import './style.scss';
 
 export function createSiteBadgeNodeBuilder() {
 	return ( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => {

@@ -1,10 +1,10 @@
 import { siteHourlyViewsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { StatsSparkline } from '../../components/stats-sparkline';
+import { StatsSparkline } from '../../../components/stats-sparkline';
 import type { OmnibarNode } from '@automattic/omnibar';
 
-import './node-stats-sparkline.scss';
+import './style.scss';
 
 function StatsSparklineNodeContent( { siteId, label }: { siteId: number; label: string } ) {
 	const { data: hourlyViews } = useSuspenseQuery( siteHourlyViewsQuery( siteId ) );

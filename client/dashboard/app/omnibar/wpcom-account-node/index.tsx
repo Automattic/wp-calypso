@@ -1,7 +1,7 @@
-import { OmnibarHomeIcon } from './home';
+import { OmnibarHomeIcon } from '../home';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-wpcom-account.scss';
+import './style.scss';
 
 export function createWpcomAccountNodeBuilder() {
 	return ( adminBarNode: AdminBarNode ): Partial< OmnibarNode > => {

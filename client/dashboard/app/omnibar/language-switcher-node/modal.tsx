@@ -8,10 +8,10 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
-import { setSessionLocale } from '../locale/session-locale';
+import { setSessionLocale } from '../../locale/session-locale';
 import type { Language } from '@automattic/languages';
 
-import './node-language-switcher-modal.scss';
+import './modal.scss';
 
 export default function LanguageSwitcherNodeModal( {
 	currentLocale,

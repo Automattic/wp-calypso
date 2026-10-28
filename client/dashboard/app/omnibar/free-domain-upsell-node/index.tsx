@@ -1,9 +1,9 @@
 import { Icon } from '@wordpress/components';
-import { upsell } from '../../components/icons';
-import type { AnalyticsClient } from '../analytics';
+import { upsell } from '../../../components/icons';
+import type { AnalyticsClient } from '../../analytics';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-free-domain-upsell.scss';
+import './style.scss';
 
 export function createFreeDomainUpsellNodeBuilder( {
 	sectionName,

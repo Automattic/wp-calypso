@@ -3,24 +3,26 @@
  */
 
 import { fetchShoppingCart, updateShoppingCart } from '@automattic/api-core';
-import { omnibarSiteIdQuery } from '@automattic/api-queries';
+import { Omnibar } from '@automattic/omnibar';
 import {
+	ShoppingCartProvider,
 	createShoppingCartManagerClient,
 	getEmptyResponseCart,
 	getEmptyResponseCartProduct,
 } from '@automattic/shopping-cart';
-import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import OmnibarContainer from '../omnibar';
+import { render } from '../../../../test-utils';
+import { useShoppingCartNode } from '../index';
+import type { Site } from '@automattic/api-core';
+import type { ShoppingCartManagerClient } from '@automattic/shopping-cart';
 
 const site = {
 	ID: 1,
+	slug: 'test-site.wordpress.com',
 	name: 'Test Site',
-	site_migration: {},
-};
+} as Site;
 
 const cartWithProduct = {
 	...getEmptyResponseCart(),
@@ -35,18 +37,6 @@ const cartWithProduct = {
 	],
 };
 
-const myAccountNode = {
-	id: 'my-account',
-	title:
-		"Howdy, <span class=\"display-name\">Test User</span><img alt='Test User&#039;s avatar' src='https://1.gravatar.com/avatar/test' class='avatar avatar-28' />",
-	parent: 'top-secondary',
-	href: 'https://test-site.wordpress.com/wp-admin/profile.php',
-	group: false,
-	meta: {
-		menu_title: 'Howdy, Test User',
-	},
-};
-
 function mockCart( cart: object ) {
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
@@ -54,44 +44,38 @@ function mockCart( cart: object ) {
 		.reply( 200, cart );
 }
 
-function renderOmnibar() {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	queryClient.setQueryData( omnibarSiteIdQuery().queryKey, site.ID );
+function ShoppingCartNodeOmnibar() {
+	const { node, panel } = useShoppingCartNode( { site } );
+	return (
+		<>
+			<Omnibar nodes={ { userNodes: node ? [ node ] : [] } } />
+			{ panel }
+		</>
+	);
+}
 
+function renderNode() {
 	// A fresh client per test, since a client caches the carts it has loaded.
-	const cartManagerClient = createShoppingCartManagerClient( {
+	const cartManagerClient: ShoppingCartManagerClient = createShoppingCartManagerClient( {
 		getCart: fetchShoppingCart,
 		setCart: updateShoppingCart,
 	} );
 
 	return {
-		...render( <OmnibarContainer cartManagerClient={ cartManagerClient } />, { queryClient } ),
+		...render(
+			<ShoppingCartProvider managerClient={ cartManagerClient }>
+				<ShoppingCartNodeOmnibar />
+			</ShoppingCartProvider>
+		),
 		cartManagerClient,
 	};
 }
 
 describe( '<Omnibar> shopping cart node', () => {
-	beforeEach( () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/dashboard/admin-bar' )
-			.query( true )
-			.reply( 200, { nodes: [] } );
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/sites/${ site.ID }/admin-bar` )
-			.query( true )
-			.reply( 200, { nodes: [ myAccountNode ] } );
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/rest/v1.1/sites/${ site.ID }` )
-			.query( true )
-			.reply( 200, site );
-	} );
-
-	afterEach( () => nock.cleanAll() );
-
 	test( 'shows the node', async () => {
 		mockCart( cartWithProduct );
 
-		const { recordTracksEvent } = renderOmnibar();
+		const { recordTracksEvent } = renderNode();
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		expect(
@@ -103,10 +87,9 @@ describe( '<Omnibar> shopping cart node', () => {
 	test( 'hides the node when the cart is empty', async () => {
 		mockCart( getEmptyResponseCart() );
 
-		const { cartManagerClient } = renderOmnibar();
+		const { cartManagerClient } = renderNode();
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
-		await within( toolbar ).findByRole( 'button', { name: 'Howdy, Test User' } );
 		await waitFor( () =>
 			expect( cartManagerClient.forCartKey( site.ID ).getState().isLoading ).toBe( false )
 		);
@@ -119,7 +102,7 @@ describe( '<Omnibar> shopping cart node', () => {
 		const user = userEvent.setup();
 		mockCart( cartWithProduct );
 
-		const { recordTracksEvent } = renderOmnibar();
+		const { recordTracksEvent } = renderNode();
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		await user.click(
