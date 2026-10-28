@@ -7,7 +7,7 @@ finish their request there. It's built on [A2UI v1.0](https://a2ui.org).
   sidebar and WooCommerce AI, and other hosts, such as MCP apps, follow it.
 - **Where it runs:** in clients that render the surface's catalog, which each message lists.
   Elsewhere, the chat keeps its older UI. The `a2ui-render-interactive-ui` blog sticker only adds
-  guidance to the agent's prompt on when to compose surfaces.
+  the interactive UI section to the orchestrator's prompt.
 - **What's shared:** the [renderer](../../../ai-ui-renderer/README.md) is a shared library with the
   basic components. Custom components live in the project that owns them.
 
@@ -265,11 +265,11 @@ return {
   doesn't declare, still note `card_shown` but show the failure notice.
 - **When it doesn't:** in a client without your catalog, or for a result the content filter
   blocks, wpcom strips the hint without the note, and an agent other than wp-orchestrator passes
-  it on unread. It also strips a hint that isn't that shape or is
-  over 8 KB as JSON, and tags the trace `invalid_interactive_ui_hint`. A result with
-  `returnToAgent: false` never reaches wpcom, so it gets no card. A hinted result whose turn then
-  ends on a later ability's `returnToAgent: false` loses its card but still notes `card_shown`, so
-  don't hint a result whose turn usually ends that way.
+  it on unread. It also strips a hint that isn't that shape or is over 8 KB as JSON, and tags the
+  trace `invalid_interactive_ui_hint`. A result with `returnToAgent: false` never reaches wpcom, so
+  it gets no card. A hinted result whose turn then ends on a later ability's `returnToAgent: false`
+  loses its card but still notes `card_shown`, so don't hint a result whose turn usually ends that
+  way.
 - **Your instructions** keep the text or fenced card unless the result carries `card_shown`.
 - **One card a result:** don't hint a batch plan, a `PROPOSAL_TOOL_IDS` result with an
   `operation_uuid`, since wpcom places its card and it would show twice. Their other results, such
@@ -280,7 +280,7 @@ return {
 Ask the agent for a small form, such as "Use wpcom/render-interactive-ui for a feedback form with a
 TextField and a Submit Button."
 
-If the old UI shows, the gate fell back: check that the chat request's
+If the old UI shows, check that the chat has a site and that the chat request's
 `metadata.a2uiRendererCapabilities['v1.0'].supportedCatalogIds` lists exactly the catalog ID your
 ability checks or your card hint names. If it's missing, look in the console for
 `[AgentsManager] Skipped an interactive UI catalog:`, or your provider doesn't export
@@ -296,8 +296,8 @@ waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
   Agents Manager's color, font and button pickers already do.
 - **A client button** (Agents Manager's Help Center button): the server ability that decides to
   show it returns a catalog component wrapping the same button, as wpcom's
-  `ability.support-query.php` does with `AgentsManagerHelpCenterButton` for an approved hand-off.
-  A basic `Button` can't record the button's own Tracks events, such as when it's shown.
+  `ability.support-query.php` does with `AgentsManagerOpenHelpCenterButton` for an approved
+  hand-off. A basic `Button` can't record the button's own Tracks events, such as when it's shown.
 - **Markdown cards** (WooCommerce AI's `markdownComponents`): its abilities run in the browser, so
   they return a card hint for its catalog's component instead
   ([Moving a browser ability's card](#moving-a-browser-abilitys-card)). A card keeps its side

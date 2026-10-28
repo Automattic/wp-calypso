@@ -15,8 +15,8 @@ interface Props {
 }
 
 /**
- * The button the support hand-off shows, as the `AgentsManagerHelpCenterButton` surface component
- * or the `open-help-center` ability's row: one click opens the support chat.
+ * The button the support hand-off shows, as the `AgentsManagerOpenHelpCenterButton` surface
+ * component or the `open-help-center` ability's row: one click opens the support chat.
  */
 export default function OpenHelpCenterButton( { message, isMessageStale, disabled }: Props ) {
 	useEffect( () => {

@@ -40,7 +40,7 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 				},
 				required: [ 'buttonVariations' ],
 			},
-			AgentsManagerHelpCenterButton: {
+			AgentsManagerOpenHelpCenterButton: {
 				type: 'object',
 				properties: { message: { type: 'string' } },
 			},
@@ -53,7 +53,7 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 		AgentsManagerColorPicker: ColorPicker,
 		AgentsManagerFontPicker: FontPicker,
 		AgentsManagerButtonPicker: ButtonPicker,
-		AgentsManagerHelpCenterButton: OpenHelpCenterButton,
+		AgentsManagerOpenHelpCenterButton: OpenHelpCenterButton,
 	},
 };
 

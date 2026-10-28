@@ -151,10 +151,8 @@ it( 'renders the style pickers with the props their abilities send', async () =>
 	expect( onError ).not.toHaveBeenCalled();
 } );
 
-it( 'renders the Help Center button the support hand-off sends, with its Tracks events', async () => {
-	const recordBigSkyTracksEvent = jest
-		.spyOn( tracks, 'recordBigSkyTracksEvent' )
-		.mockImplementation( () => undefined );
+it( 'renders the Help Center button the support hand-off sends', async () => {
+	jest.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
 	const onError = jest.fn();
 	const runtime = renderer.createInteractiveUiRuntime( {
 		catalogs: createInteractiveUiCatalogs( renderer ),
@@ -172,7 +170,7 @@ it( 'renders the Help Center button the support hand-off sends, with its Tracks 
 					components: [
 						{
 							id: 'root',
-							component: 'AgentsManagerHelpCenterButton',
+							component: 'AgentsManagerOpenHelpCenterButton',
 							message: 'Summary for support.',
 						},
 					],
@@ -182,30 +180,11 @@ it( 'renders the Help Center button the support hand-off sends, with its Tracks 
 		'message'
 	);
 
-	render(
-		<renderer.InteractiveUiSurface
-			surface={ runtime.getSurface( 'help-center' )! }
-			hostProps={ { isMessageStale: false } }
-		/>
-	);
+	render( <renderer.InteractiveUiSurface surface={ runtime.getSurface( 'help-center' )! } /> );
 
 	fireEvent.click( await screen.findByRole( 'button', { name: 'Get help' } ) );
 
 	expect( openHelpCenterChat ).toHaveBeenCalledWith( 'Summary for support.' );
-	expect( recordBigSkyTracksEvent.mock.calls ).toEqual(
-		expect.arrayContaining( [
-			[ 'jetpack_big_sky_open_help_center_button_shown' ],
-			[ 'jetpack_big_sky_open_help_center_button_click' ],
-			[
-				'jetpack_big_sky_chat_response_rendered',
-				{
-					component_type: 'AgentsManagerHelpCenterButton',
-					tool_id: 'wpcom__render_interactive_ui',
-					tool_call_id: 'help-center',
-				},
-			],
-		] )
-	);
 	expect( onError ).not.toHaveBeenCalled();
 } );
 

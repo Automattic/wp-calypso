@@ -3,8 +3,8 @@
 	align-self: flex-start;
 }
 
-// A disabled primary button keeps its accent fill, and darkens on hover, so on a surface it takes
-// the renderer's disabled colors, as the basic Buttons do.
+// A disabled primary button keeps its accent fill, so on a surface it takes the renderer's disabled
+// colors, as the basic Buttons do.
 .ai-ui-renderer
 	.components-button.is-primary.agents-manager-open-help-center-button[aria-disabled='true'] {
 	background: var( --ai-ui-renderer-disabled-background );
