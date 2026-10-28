@@ -56,6 +56,7 @@
 		"calypso/write-on-flow": true,
 		"checkout/stripe-upi": true,
 		"checkout/stripe-wallet": true,
+		"checkout/support-routing": false,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"comments/filters-in-posts": true,
