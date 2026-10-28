@@ -144,6 +144,7 @@ export const importSite =
 				],
 			} )
 			.then( ( response ) => {
+				// `CompleteScreen` records the same event name when it mounts.
 				dispatch(
 					recordTracksEvent( 'calypso_site_importer_start_import_success', trackingParams )
 				);
@@ -163,6 +164,8 @@ export const importSite =
 				);
 			} )
 			.catch( ( error ) => {
+				// Recorded whether or not the user sees an error. The failure screen records
+				// `calypso_site_importer_start_import_failure` separately.
 				dispatch(
 					recordTracksEvent( 'calypso_site_importer_start_import_fail', {
 						...trackingParams,

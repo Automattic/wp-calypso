@@ -22,6 +22,8 @@ const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	const errorCode = errorData?.code;
 	const errorType = errorData?.type;
 
+	// A view of the failure screen, whatever failed. Not the same as
+	// `calypso_site_importer_start_import_fail`, which records a failed `import-site` request.
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_start_import_failure', {
 			error_code: errorCode,

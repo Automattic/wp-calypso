@@ -102,6 +102,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 
 		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
 			lastInvalidValue.current = urlValue;
+			// Recorded on submit, once per distinct invalid value.
 			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
 				url: urlValue,
 				error_code: getValidationErrorReason( urlValue ),

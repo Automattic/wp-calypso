@@ -17,6 +17,8 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
 	const { job, siteId, buttonLabel, resetImport, onSiteViewClick } = props;
 
+	// The `import-site` request success in `state/imports/site-importer/actions` records the same
+	// event name, so one import can record it twice.
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_start_import_success' );
 	}, [] );
