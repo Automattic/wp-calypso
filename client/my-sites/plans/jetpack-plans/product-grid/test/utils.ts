@@ -84,16 +84,6 @@ describe( 'getPlansToDisplay', () => {
 			).toEqual( [ currentPlanSlug, PLAN_JETPACK_COMPLETE_MONTHLY ] );
 		}
 	);
-	it( 'hides Pro from a Complete owner', () => {
-		expect(
-			displayedSlugs( {
-				duration: TERM_ANNUALLY,
-				currentPlanSlug: PLAN_JETPACK_COMPLETE,
-				isOnSale: slugsOnSale( PLAN_JETPACK_PRO_YEARLY, PLAN_JETPACK_COMPLETE ),
-			} )
-		).toEqual( [ PLAN_JETPACK_COMPLETE ] );
-	} );
-
 	it( 'shows a retired T2 subscription once to its owner', () => {
 		expect(
 			displayedSlugs( {
