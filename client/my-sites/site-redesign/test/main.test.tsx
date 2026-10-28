@@ -3,7 +3,7 @@
  */
 import page from '@automattic/calypso-router';
 import { QueryClient } from '@tanstack/react-query';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, configure, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -84,12 +84,19 @@ const renderPage = (
 		{ queryClient }
 	);
 
+// The selection bar arrives 1.5s after the last preview; waits here outlast it.
+configure( { asyncUtilTimeout: 3000 } );
+
 const chooseButton = () => screen.getByRole( 'button', { name: 'Choose this one' } );
+const waitForBar = () => screen.findByRole( 'button', { name: 'Choose this one' } );
 
 // Selecting is enough only once the design's preview has rendered.
-const selectDesign = async ( name: string, preview: string ) => {
+const selectDesign = async ( name: string, preview: string, { withBar = true } = {} ) => {
 	await userEvent.click( await screen.findByRole( 'button', { name } ) );
 	await waitFor( () => expect( screen.getByTitle( preview ) ).toHaveClass( 'is-loaded' ) );
+	if ( withBar ) {
+		await waitForBar();
+	}
 };
 
 describe( 'SiteRedesign', () => {
@@ -419,7 +426,8 @@ describe( 'SiteRedesign', () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const { container } = renderPage();
 
-		( await screen.findByRole( 'button', { name: 'Preview: Desktop' } ) ).focus();
+		await waitForBar();
+		screen.getByRole( 'button', { name: 'Preview: Desktop' } ).focus();
 		await userEvent.keyboard( '{ArrowDown}' );
 		expect( screen.getByRole( 'button', { name: 'Preview: Desktop' } ) ).toHaveAttribute(
 			'aria-expanded',
@@ -489,7 +497,7 @@ describe( 'SiteRedesign', () => {
 			expect( screen.getByRole( 'button', { name: `Design ${ n } of 4` } ) ).toBeDisabled()
 		);
 
-		await selectDesign( 'Design 1 of 4', 'Preview of design 1' );
+		await selectDesign( 'Design 1 of 4', 'Preview of design 1', { withBar: false } );
 		expect( screen.getByRole( 'button', { name: 'Design 1 of 4' } ) ).toHaveAttribute(
 			'aria-pressed',
 			'true'
@@ -527,6 +535,37 @@ describe( 'SiteRedesign', () => {
 
 		expect( await screen.findByRole( 'button', { name: 'Choose this one' } ) ).toBeDisabled();
 		expect( screen.getByText( 'Select a design' ) ).toBeVisible();
+	} );
+
+	it( 'holds the bar back for 1.5s after the last preview, then keeps it', async () => {
+		jest.useFakeTimers();
+		try {
+			const queryClient = new QueryClient();
+			jest.mocked( fetchRedesign ).mockResolvedValue( session() );
+			const { container } = renderPage( false, REDESIGN_ID, queryClient );
+			const bar = () => container.querySelector( '.step-container-v2__sticky-bottom-bar' );
+
+			await waitFor( () =>
+				expect( container.querySelectorAll( '.site-redesign__frame.is-loaded' ) ).toHaveLength( 4 )
+			);
+			act( () => jest.advanceTimersByTime( 1499 ) );
+			expect( bar() ).toBeNull();
+			expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
+
+			act( () => jest.advanceTimersByTime( 1 ) );
+			const shown = bar();
+			expect( shown ).not.toBeNull();
+			expect( chooseButton() ).toBeDisabled();
+
+			// A poll with the same designs re-renders the page, not the bar.
+			act( () => {
+				queryClient.setQueryData( [ 'site-redesign', 1, REDESIGN_ID ], session() );
+			} );
+			act( () => jest.advanceTimersByTime( 3000 ) );
+			expect( bar() ).toBe( shown );
+		} finally {
+			jest.useRealTimers();
+		}
 	} );
 
 	it( 'brings the bar once the designs there are have loaded, past a failed one', async () => {

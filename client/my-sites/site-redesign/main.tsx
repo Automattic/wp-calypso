@@ -48,6 +48,8 @@ import { SiteSkeleton } from './site-skeleton';
 import './style.scss';
 
 const POLL_MS = 3000;
+// A beat with every preview on screen before the bar asks for a choice.
+const SELECTION_BAR_DELAY_MS = 1500;
 const POLLED_STATUSES = [ 'generating', 'applying' ];
 // About two minutes of waiting for a purchase to reach the site after checkout.
 const PURCHASE_WAIT_MS = 120000;
@@ -594,6 +596,16 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 				previewStates[ candidate.id ] === 'ready' ||
 				previewStates[ candidate.id ] === 'error'
 		);
+	const isSelectionBarDue = showsDesigns && isSelectionReady;
+	const [ selectionBarShown, setSelectionBarShown ] = useState( false );
+	useEffect( () => {
+		if ( ! isSelectionBarDue ) {
+			setSelectionBarShown( false );
+			return;
+		}
+		const timer = setTimeout( () => setSelectionBarShown( true ), SELECTION_BAR_DELAY_MS );
+		return () => clearTimeout( timer );
+	}, [ isSelectionBarDue ] );
 	const canChooseSelected =
 		redesign?.status === 'preview_ready' &&
 		selected?.status === 'succeeded' &&
@@ -830,7 +842,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 				topBar={ <Step.TopBar /> }
 				heading={ heading }
 				stickyBottomBar={
-					( showsDesigns && isSelectionReady ) || isInstalled ? bottomBar : undefined
+					( isSelectionBarDue && selectionBarShown ) || isInstalled ? bottomBar : undefined
 				}
 			>
 				<VStack spacing={ 4 }>

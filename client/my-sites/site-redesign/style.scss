@@ -82,8 +82,9 @@ body.is-section-site-redesign {
 // Lines the bar's contents up with the grid: the step's own gutters, and the 1344px track
 // ContentWrapper caps content at (its custom property is scoped there, out of the bar's reach).
 body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
-	// Plays once, when the bar first appears; later renders keep the same element.
-	animation: site-redesign-bar-in 250ms ease-out;
+	// Plays once, when the bar first appears, rising from just below the viewport by its own full
+	// height (safe area included); later renders keep the same element.
+	animation: site-redesign-bar-in 300ms ease-out both;
 	padding-inline: max(
 		var( --step-container-v2-content-inline-padding ),
 		calc( ( 100% - 1344px ) / 2 )
@@ -226,8 +227,7 @@ body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
 
 @keyframes site-redesign-bar-in {
 	from {
-		opacity: 0;
-		transform: translateY( -12px );
+		transform: translateY( 100% );
 	}
 }
 
