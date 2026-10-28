@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 import page from '@automattic/calypso-router';
-import { screen, waitFor } from '@testing-library/react';
+import { QueryClient } from '@tanstack/react-query';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { StrictMode } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -186,6 +187,16 @@ describe( 'SiteRedesign', () => {
 		expect( generateRedesign ).not.toHaveBeenCalled();
 	} );
 
+	it.each( [
+		[ 'rolled_back', 'This redesign was rolled back.' ],
+		[ 'superseded', 'A newer redesign replaced this one.' ],
+	] as const )( 'explains a %s session without an inert Retry', async ( status, message ) => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status } ) );
+		renderPage();
+		expect( await screen.findByText( message ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).toBeNull();
+	} );
+
 	it( 'reconnects when another request has already started generation', async () => {
 		jest
 			.mocked( openRedesign )
@@ -356,6 +367,67 @@ describe( 'SiteRedesign', () => {
 		expect( await screen.findByText( 'Finishing your purchase…' ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: /Choose design/ } ) ).toBeNull();
 		expect( applyRedesign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'allows a full purchase wait after earlier generation polls', async () => {
+		jest.useFakeTimers();
+		const queryClient = new QueryClient();
+		const pending = session( { pending_apply: candidate( 3 ).id } );
+		for ( let i = 0; i < 45; i++ ) {
+			queryClient.setQueryData( [ 'site-redesign', 1, REDESIGN_ID ], pending );
+		}
+		jest.mocked( fetchRedesign ).mockResolvedValue( {
+			...pending,
+			eligibility: { ...pending.eligibility, can_apply: true },
+		} );
+		jest.mocked( applyRedesign ).mockResolvedValue( session( { status: 'applying' } ) );
+		const { unmount } = renderWithProvider(
+			<SiteRedesign
+				siteId={ 1 }
+				siteSlug="example.wordpress.com"
+				redesignId={ REDESIGN_ID }
+				resume
+			/>,
+			{ queryClient }
+		);
+		try {
+			expect( screen.getByText( 'Finishing your purchase…' ) ).toBeVisible();
+			await act( async () => {
+				await jest.advanceTimersByTimeAsync( 3100 );
+			} );
+			expect( fetchRedesign ).toHaveBeenCalled();
+			expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 3 ).id );
+		} finally {
+			unmount();
+			queryClient.clear();
+			jest.useRealTimers();
+		}
+	} );
+
+	it( 'ends the purchase wait after two minutes', async () => {
+		jest.useFakeTimers();
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValue( session( { pending_apply: candidate( 3 ).id } ) );
+		const { unmount } = renderPage( true );
+		try {
+			await act( async () => {
+				await jest.advanceTimersByTimeAsync( 100 );
+			} );
+			expect( screen.getByText( 'Finishing your purchase…' ) ).toBeVisible();
+			await act( async () => {
+				await jest.advanceTimersByTimeAsync( 120000 );
+			} );
+			expect( screen.getByText( /Your purchase is taking longer than usual/ ) ).toBeVisible();
+			const calls = jest.mocked( fetchRedesign ).mock.calls.length;
+			await act( async () => {
+				await jest.advanceTimersByTimeAsync( 6000 );
+			} );
+			expect( fetchRedesign ).toHaveBeenCalledTimes( calls );
+		} finally {
+			unmount();
+			jest.useRealTimers();
+		}
 	} );
 
 	it( 'polls when the purchase listener started the apply first', async () => {

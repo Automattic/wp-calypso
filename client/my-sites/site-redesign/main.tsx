@@ -34,7 +34,7 @@ import './style.scss';
 const POLL_MS = 3000;
 const POLLED_STATUSES = [ 'generating', 'applying' ];
 // About two minutes of waiting for a purchase to reach the site after checkout.
-const PURCHASE_POLLS = 40;
+const PURCHASE_WAIT_MS = 120000;
 
 type Props = {
 	siteId: number;
@@ -168,6 +168,7 @@ function CandidateCard( {
 export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: Props ) {
 	const queryClient = useQueryClient();
 	const [ notice, setNotice ] = useState< string | null >( null );
+	const [ purchaseTimedOut, setPurchaseTimedOut ] = useState( false );
 	const resumed = useRef( false );
 	const started = useRef< string | null >( null );
 
@@ -181,12 +182,19 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			if ( POLLED_STATUSES.includes( data?.status ?? '' ) ) {
 				return POLL_MS;
 			}
-			return isWaitingForPurchase( data, resume ) && query.state.dataUpdateCount < PURCHASE_POLLS
-				? POLL_MS
-				: false;
+			return isWaitingForPurchase( data, resume ) && ! purchaseTimedOut ? POLL_MS : false;
 		},
 	} );
 	const redesign = redesignQuery.data;
+	const waitingForPurchase = isWaitingForPurchase( redesign, resume );
+	useEffect( () => {
+		setPurchaseTimedOut( false );
+		if ( ! waitingForPurchase ) {
+			return;
+		}
+		const timeout = window.setTimeout( () => setPurchaseTimedOut( true ), PURCHASE_WAIT_MS );
+		return () => window.clearTimeout( timeout );
+	}, [ waitingForPurchase, siteId, redesignId ] );
 
 	const store = ( next: Redesign ) => {
 		queryClient.setQueryData( redesignKey( siteId, next.id ), next );
@@ -326,10 +334,8 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			);
 		}
 
-		if ( isWaitingForPurchase( redesign, resume ) ) {
-			const polls =
-				queryClient.getQueryState( redesignKey( siteId, redesignId ) )?.dataUpdateCount ?? 0;
-			return polls < PURCHASE_POLLS ? (
+		if ( waitingForPurchase ) {
+			return ! purchaseTimedOut ? (
 				<HStack justify="flex-start">
 					<Spinner />
 					<Text>{ __( 'Finishing your purchase…' ) }</Text>
@@ -399,8 +405,6 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 				}
 				return start.isError ? retryButton : opening;
 			case 'failed':
-			case 'rolled_back':
-			case 'superseded':
 				return (
 					<VStack alignment="topLeft" spacing={ 4 }>
 						{ redesign.status === 'failed' && (
@@ -409,6 +413,10 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 						{ retryButton }
 					</VStack>
 				);
+			case 'rolled_back':
+				return <Text>{ __( 'This redesign was rolled back.' ) }</Text>;
+			case 'superseded':
+				return <Text>{ __( 'A newer redesign replaced this one.' ) }</Text>;
 		}
 
 		return (
