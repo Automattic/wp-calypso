@@ -92,6 +92,7 @@ import {
 	PLAN_WPCOM_PRO_MONTHLY,
 	PLAN_WPCOM_STARTER,
 	PRODUCT_JETPACK_AI_YEARLY,
+	PRODUCT_JETPACK_SOCIAL_ADVANCED,
 	PRODUCT_JETPACK_SOCIAL_V1_YEARLY,
 	TERM_ANNUALLY,
 	TERM_BIENNIALLY,
@@ -1529,6 +1530,7 @@ describe( 'planHasFeature', () => {
 		( plan ) => {
 			expect( planHasFeature( plan, PRODUCT_JETPACK_SOCIAL_V1_YEARLY ) ).toBe( true );
 			expect( planHasFeature( plan, PRODUCT_JETPACK_AI_YEARLY ) ).toBe( true );
+			expect( planHasSuperiorFeature( plan, PRODUCT_JETPACK_SOCIAL_ADVANCED ) ).toBe( true );
 		}
 	);
 
