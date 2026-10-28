@@ -238,6 +238,25 @@ describe( 'site backup known threats queries', () => {
 		} );
 	} );
 
+	it( 'asks nothing more about an older backup before VaultPress ships', async () => {
+		const first = mockPage( 1, page( 1, 3, [ backup( '300' ), backup( '250' ) ] ) );
+		const threats = nock( BASE )
+			.get( threatsPath( 200 ) )
+			.reply( 200, threatsBody( 200, counts( 2 ) ) );
+		const second = mockPage( 2, page( 2, 3, [ backup( '200' ) ] ) );
+
+		const result = await run( '200' );
+
+		expect( first.isDone() ).toBe( true );
+		expect( threats.isDone() ).toBe( false );
+		expect( second.isDone() ).toBe( false );
+		expect( result ).toEqual( {
+			knownThreats: null,
+			latestWithoutKnownThreats: null,
+			backupPeriod: null,
+		} );
+	} );
+
 	it( 'takes latestWithoutKnownThreats from page 1', async () => {
 		mockPage(
 			1,
