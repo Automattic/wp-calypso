@@ -25,7 +25,7 @@ const migration = ( status: string, extra = {} ) => ( {
 	source_url: 'https://www.example.com',
 	started_at: null,
 	completed_at: null,
-	notification_email: null,
+	notification_emails: [],
 	...extra,
 } );
 
@@ -38,7 +38,7 @@ const finding = ( code: string, severity: string ) => ( {
 
 const running = migration( 'running', {
 	phase: 'migration',
-	notification_email: 'owner@example.com',
+	notification_emails: [ 'owner@example.com', 'admin@example.com' ],
 } );
 
 const configuration = {
@@ -121,7 +121,7 @@ describe( 'WordPressMigration', () => {
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
 		expect(
 			screen.getByText(
-				'You can leave this page. The migration carries on in the background. We will email you at owner@example.com when the migration is ready.'
+				'You can leave this page. The migration carries on in the background. We will email you at owner@example.com and admin@example.com when the migration is ready.'
 			)
 		).toBeVisible();
 		expect( configure.isDone() ).toBe( true );
@@ -214,11 +214,31 @@ describe( 'WordPressMigration', () => {
 		expect( run.isDone() ).toBe( true );
 	} );
 
+	it( 'names only the viewer’s address when they’re one of the recipients', async () => {
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply( 200, {
+				...running,
+				notification_emails: [ 'owner@example.com', 'TEST@example.com' ],
+			} )
+			.persist();
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'You can leave this page. The migration carries on in the background. We will email you at TEST@example.com when the migration is ready.'
+			)
+		).toBeVisible();
+	} );
+
 	it( 'leaves out the email promise when no one will be notified', async () => {
 		mockApi()
 			.get( statusPath )
 			.query( true )
-			.reply( 200, { ...running, notification_email: null } )
+			.reply( 200, { ...running, notification_emails: [] } )
 			.persist();
 
 		render( <WordPressMigration site={ site } />, { queryClient } );

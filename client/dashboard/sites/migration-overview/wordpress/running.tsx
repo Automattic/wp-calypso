@@ -1,6 +1,8 @@
 import { __experimentalVStack as VStack, Button, ProgressBar } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { useAuth } from '../../../app/auth';
 import { useHelpCenter } from '../../../app/help-center';
+import { useIntlLocale } from '../../../app/locale';
 import Grid from '../../../components/grid';
 import { Text } from '../../../components/text';
 import { MigrationCard, StatusIcon } from './migration-card';
@@ -12,13 +14,23 @@ type Phase = WordPressMigrationStatus[ 'phase' ];
 export function Running( {
 	phase,
 	sourceHost,
-	notificationEmail,
+	notificationEmails,
 }: {
 	phase: Phase;
 	sourceHost: string;
-	notificationEmail: string | null;
+	notificationEmails: string[];
 } ) {
+	const { user } = useAuth();
+	const locale = useIntlLocale();
 	const { setShowHelpCenter } = useHelpCenter();
+
+	// Name only the viewer's own address when they're among the recipients.
+	const ownEmail = notificationEmails.find(
+		( email ) => email.toLowerCase() === user.email.toLowerCase()
+	);
+	const recipients = new Intl.ListFormat( locale, { type: 'conjunction' } ).format(
+		ownEmail ? [ ownEmail ] : notificationEmails
+	);
 
 	const steps: { label: string; phases: Phase[] }[] = [
 		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
@@ -58,13 +70,13 @@ export function Running( {
 				} ) }
 			</Grid>
 			<Text variant="muted">
-				{ notificationEmail
+				{ notificationEmails.length
 					? sprintf(
-							/* translators: %s: the email address we notify when the migration is ready. */
+							/* translators: %s: the email addresses we notify when the migration is ready, e.g. "a@example.com and b@example.com". */
 							__(
 								'You can leave this page. The migration carries on in the background. We will email you at %s when the migration is ready.'
 							),
-							notificationEmail
+							recipients
 						)
 					: __( 'You can leave this page. The migration carries on in the background.' ) }
 			</Text>

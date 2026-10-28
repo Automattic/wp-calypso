@@ -140,7 +140,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				<Running
 					phase={ migration.phase }
 					sourceHost={ sourceHost }
-					notificationEmail={ migration.notification_email }
+					notificationEmails={ migration.notification_emails }
 				/>
 			) }
 			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
