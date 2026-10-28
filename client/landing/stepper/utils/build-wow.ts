@@ -22,8 +22,9 @@ export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph 
 }
 
 /**
- * Shows the site-spec widget's site plan in build-wow, so "Pick my design"
- * offers four designs of the top of the front page before the build.
+ * Shows the site-spec widget's design picker in build-wow: after the user
+ * confirms the brief, four designs of the top of the front page to pick from
+ * before the build. The widget's site plan has its own picker.
  */
 export const DESIGN_CANDIDATES_FLAG = 'site-spec/design-candidates';
 

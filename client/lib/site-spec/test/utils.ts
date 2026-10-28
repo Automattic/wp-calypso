@@ -230,14 +230,16 @@ describe( 'SiteSpec Utils', () => {
 			expect( result.features?.siteBrief ).toBe( 'next' );
 		} );
 
-		it( 'shows the site plan, with its design picker, only when asked', () => {
+		it( 'shows the design picker only when asked', () => {
 			expect(
-				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } ).features?.sitePlan
+				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } ).features?.designPicker
 			).toBeUndefined();
-			expect(
-				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com', sitePlan: true } ).features
-					?.sitePlan
-			).toBe( true );
+			const config = getBuildWowSiteSpecConfig( {
+				siteSlug: 'example.wordpress.com',
+				designPicker: true,
+			} );
+			expect( config.features?.designPicker ).toBe( true );
+			expect( config.features?.sitePlan ).toBeUndefined();
 		} );
 
 		it( 'should offer social links only', () => {

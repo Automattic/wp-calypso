@@ -764,7 +764,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					ref: queryParams.get( 'ref' ),
 					source: querySource,
 					graph: getBuildWowGraph( queryParams ),
-					sitePlan: config.isEnabled( DESIGN_CANDIDATES_FLAG ),
+					designPicker: config.isEnabled( DESIGN_CANDIDATES_FLAG ),
 				} ) }
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>
