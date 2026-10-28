@@ -17,7 +17,7 @@ import type { User } from '@automattic/api-core';
 
 type Step = 'intro' | 'warning' | 'confirm';
 
-interface Props {
+interface RemoveDomainDialogProps {
 	user: User;
 	domain: Domain;
 	isOpen: boolean;
@@ -32,7 +32,7 @@ export default function RemoveDomainDialog( {
 	onConfirm,
 	closeDialog,
 	...props
-}: Props ) {
+}: RemoveDomainDialogProps ) {
 	const [ step, setStep ] = useState< Step >( 'intro' );
 	const [ confirmInputValue, setConfirmInputValue ] = useState( '' );
 	const [ domainConfirmed, setDomainConfirmed ] = useState( false );

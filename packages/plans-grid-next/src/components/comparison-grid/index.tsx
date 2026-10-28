@@ -261,7 +261,7 @@ const Cell = styled.div< { textAlign?: 'start' | 'center' | 'end' } >`
 		border-right: none;
 	}
 
-	${ Row }:last-of-type & {
+	.plan-comparison-grid__feature-group-row:last-of-type & {
 		padding-bottom: 24px;
 
 		${ plansGridMediumLarge( css`

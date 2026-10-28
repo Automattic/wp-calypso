@@ -30,7 +30,6 @@
 		"@babel/preset-react": "^7.29.7",
 		"@babel/preset-typescript": "^7.29.7",
 		"@babel/runtime": "^7.29.10",
-		"@emotion/babel-plugin": "^11.11.0",
 		"babel-plugin-transform-react-remove-prop-types": "^0.4.24"
 	}
 }
