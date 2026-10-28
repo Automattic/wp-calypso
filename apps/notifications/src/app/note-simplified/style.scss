@@ -25,14 +25,11 @@
 
 	> :not(:last-child)::after {
 		content: '·';
-		margin-inline-start: $grid-unit-05;
 	}
 }
 
 .wpnc-simplified__byline-avatar {
-	margin-inline-end: $grid-unit-05;
 	border-radius: 50%;
-	vertical-align: calc(0.35em - 6px);
 }
 
 .wpnc-simplified__thread {
