@@ -237,8 +237,8 @@
 		"@automattic/calypso-package-generator": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/eslint-plugin-json": "workspace:^",
-		"@babel/core": "^7.29.7",
-		"@babel/runtime": "^7.29.10",
+		"@babel/core": "^8.0.7",
+		"@babel/runtime": "^8.0.7",
 		"@eslint/compat": "^2.1.1",
 		"@eslint/markdown": "^8.0.3",
 		"@pmmmwh/react-refresh-webpack-plugin": "0.5.15",
@@ -317,6 +317,7 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
+		"@storybook/addon-webpack5-compiler-babel/@babel/core": "^8.0.7",
 		"jest-environment-jsdom/jsdom": "^20.0.3",
 		"@opentelemetry/core@npm:2.2.0": "2.8.0",
 		"@opentelemetry/core@npm:2.5.1": "2.8.0",

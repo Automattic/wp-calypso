@@ -17,11 +17,15 @@ module.exports = ( api, opts ) => ( {
 			require.resolve( '@babel/preset-env' ),
 			{
 				debug: opts.debug ? opts.debug : false,
-				bugfixes: opts.bugfixes ? opts.bugfixes : false,
 				modules: modulesOption( opts ),
 			},
 		],
-		[ require.resolve( '@babel/preset-typescript' ), { allowDeclareFields: true } ],
+		[
+			require.resolve( '@babel/preset-typescript' ),
+			// Babel 8 defaults this to true, which keeps imports used only as types unless written as
+			// `import type`; their modules may have no runtime exports at all.
+			{ onlyRemoveTypeImports: false },
+		],
 	],
 	// JSX syntax only for files that can contain it: in a .ts file, `<T>value` assertions and generic
 	// arrows (`<T>( x ) =>`) would parse as JSX. Babel 7's TypeScript plugin turned JSX off for .ts
@@ -34,6 +38,9 @@ module.exports = ( api, opts ) => ( {
 					require.resolve( '@babel/preset-react' ),
 					{
 						runtime: 'automatic',
+						// Babel 8 turns this on in development builds, importing `react/jsx-dev-runtime`, which WordPress
+						// doesn't provide to the apps that take React from it.
+						development: false,
 						importSource: opts.importSource ?? process.env.IMPORT_SOURCE,
 					},
 				],
@@ -44,7 +51,6 @@ module.exports = ( api, opts ) => ( {
 		[
 			require.resolve( '@babel/plugin-transform-runtime' ),
 			{
-				regenerator: false,
 				// Needed so that helpers aren't duplicated.
 				// This will need to be kept up to date while https://github.com/babel/babel/issues/10261 is unresolved.
 				version: require( '@babel/helpers/package.json' ).version,
