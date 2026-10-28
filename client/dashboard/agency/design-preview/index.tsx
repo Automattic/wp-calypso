@@ -19,6 +19,12 @@ const subscribe = ( listener: () => void ) => {
 		listeners.delete( listener );
 	};
 };
+export type EntryVariant = 'cards' | 'button' | 'address';
+const ENTRY_VARIANTS: { value: EntryVariant; label: string }[] = [
+	{ value: 'cards', label: 'A. Three cards' },
+	{ value: 'button', label: 'B. One button, then the cards' },
+	{ value: 'address', label: 'C. One address field' },
+];
 const statuses = [ 'pending', 'verified', 'paid', 'ineligible', 'reverification', 'rejected' ];
 export const sampleSites: AgencySite[] = Array.from( { length: 24 }, ( _, index ) => ( {
 	blog_id: -1000 - index,
@@ -52,6 +58,7 @@ let snapshot = {
 	tagged: [] as MigrationCommissionSite[],
 	wizardJump: null as WizardJump | null,
 	wizardPosition: null as WizardJump | null,
+	entry: 'cards' as EntryVariant,
 };
 const getSnapshot = () => snapshot;
 function update( changes: Partial< typeof snapshot > ) {
@@ -97,6 +104,10 @@ export function jumpToWizardStep( target: WizardJump ) {
 		setPreviewPreset( 'sites', '0' );
 	}
 	update( { wizardJump: { ...target } } );
+}
+export function setEntryVariant( entry: EntryVariant ) {
+	update( { entry } );
+	jumpToWizardStep( { journey: 'connect', step: 'start' } );
 }
 export function consumeWizardJump() {
 	update( { wizardJump: null } );
@@ -195,6 +206,9 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 			setPreviewPreset( 'sites', saved.sites );
 			setPreviewPreset( 'migrations', saved.migrations );
 			update( {
+				entry: ENTRY_VARIANTS.some( ( variant ) => variant.value === saved.entry )
+					? saved.entry
+					: 'cards',
 				canTag: saved.canTag !== false,
 				candidates: [ '0', '1', '2', '24' ].includes( saved.candidates ) ? saved.candidates : '2',
 			} );
@@ -214,12 +228,13 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 					migrations: state.migrations,
 					canTag: state.canTag,
 					candidates: state.candidates,
+					entry: state.entry,
 				} )
 			);
 		} catch {
 			/* Storage may be unavailable. */
 		}
-	}, [ state.sites, state.migrations, state.canTag, state.candidates ] );
+	}, [ state.sites, state.migrations, state.canTag, state.candidates, state.entry ] );
 	if ( ! enabled || ! ready ) {
 		return null;
 	}
@@ -276,6 +291,12 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 					>
 						{ __( 'Fill with 30 sample sites' ) }
 					</button>
+					<SelectControl
+						label="First-site entry"
+						value={ state.entry }
+						options={ ENTRY_VARIANTS }
+						onChange={ ( entry ) => setEntryVariant( entry as EntryVariant ) }
+					/>
 					<FlowMap current={ state.wizardPosition } onJump={ jumpToWizardStep } />
 				</>
 			) }
