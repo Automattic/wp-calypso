@@ -274,7 +274,7 @@ object CalypsoE2ETestsBuildTemplate : Template({
 
 					AWS_ACCESS_KEY_ID=%A8C_TEST_REPORTS_S3_ACCESS_KEY% \
 					AWS_SECRET_ACCESS_KEY=%A8C_TEST_REPORTS_S3_SECRET_ACCESS_KEY% \
-						aws s3 cp "${'$'}CTRF_REPORT" %A8C_TEST_REPORTS_S3_ROOT%/reports/ctrf/wp-calypso/
+						aws s3 cp "${'$'}CTRF_REPORT" %A8C_TEST_REPORTS_S3_ROOT%/reports/ctrf/calypso/
 					echo "CTRF report uploaded successfully"
 				else
 					echo "No CTRF report found, skipping upload"
