@@ -39,6 +39,7 @@ import {
 	termDescription,
 } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import clsx from 'clsx';
 import { useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -128,7 +129,7 @@ function UpgradeRequiredBadge() {
 
 const TELEGRAM_CONNECTION_PATH = '/me/agent';
 
-function EmailAssistantCard( {
+function EmailAssistantSection( {
 	site,
 	recordTracksEvent,
 	disabled = false,
@@ -201,60 +202,57 @@ function EmailAssistantCard( {
 	};
 
 	return (
-		<Card className={ disabled ? 'ai-tools-settings__locked-card' : undefined }>
-			<CardBody>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						title={ __( 'Email WordPress Agent' ) }
-						description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
-						actions={ disabled ? <UpgradeRequiredBadge /> : undefined }
-						level={ 3 }
-					/>
-					<ToggleControl
-						__nextHasNoMarginBottom
-						checked={ isAgentEmailEnabled }
-						disabled={ isEmailAddressActionDisabled }
-						label={ __( 'Enable WordPress Agent email address' ) }
-						onChange={ handleEmailAddressToggle }
-					/>
-					<Notice density="medium">
-						{ __(
-							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
-						) }
-					</Notice>
-					{ agentEmailAddress && (
-						<VStack spacing={ 3 }>
-							<ClipboardInputControl
-								label={ __( 'WordPress Agent email address' ) }
-								value={ agentEmailAddress }
-								readOnly
-								onCopy={ handleCopyAddress }
-							/>
-							<HStack justify="flex-start">
-								<Button
-									__next40pxDefaultSize
-									variant="secondary"
-									href={ vCardHref }
-									download={ vCardFileName }
-									onClick={ handleAddToContacts }
-								>
-									{ __( 'Add to contacts' ) }
-								</Button>
-								<Button
-									__next40pxDefaultSize
-									variant="secondary"
-									isBusy={ emailAddressMutation.isPending }
-									disabled={ isEmailAddressActionDisabled }
-									onClick={ handleRegenerateAddress }
-								>
-									{ __( 'Regenerate address' ) }
-								</Button>
-							</HStack>
-						</VStack>
+		<CardBody>
+			<VStack spacing={ 4 }>
+				<SectionHeader
+					title={ __( 'Email WordPress Agent' ) }
+					description={ __( 'Email this site’s WordPress Agent using a private address.' ) }
+					level={ 3 }
+				/>
+				<ToggleControl
+					__nextHasNoMarginBottom
+					checked={ isAgentEmailEnabled }
+					disabled={ isEmailAddressActionDisabled }
+					label={ __( 'Enable WordPress Agent email address' ) }
+					onChange={ handleEmailAddressToggle }
+				/>
+				<Notice density="medium">
+					{ __(
+						'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
 					) }
-				</VStack>
-			</CardBody>
-		</Card>
+				</Notice>
+				{ agentEmailAddress && (
+					<VStack spacing={ 3 }>
+						<ClipboardInputControl
+							label={ __( 'WordPress Agent email address' ) }
+							value={ agentEmailAddress }
+							readOnly
+							onCopy={ handleCopyAddress }
+						/>
+						<HStack justify="flex-start">
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								href={ vCardHref }
+								download={ vCardFileName }
+								onClick={ handleAddToContacts }
+							>
+								{ __( 'Add to contacts' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								isBusy={ emailAddressMutation.isPending }
+								disabled={ isEmailAddressActionDisabled }
+								onClick={ handleRegenerateAddress }
+							>
+								{ __( 'Regenerate address' ) }
+							</Button>
+						</HStack>
+					</VStack>
+				) }
+			</VStack>
+		</CardBody>
 	);
 }
 
@@ -413,7 +411,7 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const description = isAvailable
 		? createInterpolateElement(
 				__(
-					'Create content, transform designs, generate images, and get instant help with AI. <learnMoreLink />'
+					'Use ChatGPT, Claude, or the WordPress Agent to edit content and design your site. <learnMoreLink />'
 				),
 				{
 					learnMoreLink: <InlineSupportLink supportContext="ai-tools" />,
@@ -446,12 +444,71 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	const renderSettings = () => {
 		return (
 			<>
-				<Card className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
+				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
+					<Card className="mcp-settings__access-card">
+						<CardBody>
+							<VStack spacing={ 4 }>
+								<SectionHeader
+									title={ __( 'Access for ChatGPT, Claude, or other AI tools' ) }
+									description={ __(
+										'Let the AI tools you already use read and update this site through MCP. Turn on access, then connect your tool.'
+									) }
+									level={ 3 }
+								/>
+								<ToggleControl
+									__nextHasNoMarginBottom
+									checked={ isMcpEnabled }
+									disabled={ mcpMutation.isPending }
+									label={ __( 'Enable MCP access for this site' ) }
+									onChange={ handleMcpToggle }
+								/>
+							</VStack>
+						</CardBody>
+						<CardDivider className="mcp-settings__sub-divider" />
+						<RouterLinkSummaryButton
+							to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
+							density="medium-low"
+							title={ __( 'Connect to ChatGPT, Claude, and other external AI tools' ) }
+							description={
+								isMcpEnabled
+									? __( 'Get step-by-step setup instructions for your AI tool.' )
+									: __( 'Turn on access above to get setup instructions.' )
+							}
+							decoration={ <Icon icon={ connection } size={ 24 } /> }
+							disabled={ ! isMcpEnabled }
+						/>
+						{ isMcpEnabled && (
+							<>
+								<RouterLinkSummaryButton
+									to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
+									density="medium"
+									title={ __( 'Read' ) }
+									decoration={ <Icon icon={ seen } size={ 24 } /> }
+									badges={ [ readBadge ] }
+								/>
+								<RouterLinkSummaryButton
+									to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
+									density="medium"
+									title={ __( 'Write' ) }
+									decoration={ <Icon icon={ pencil } size={ 24 } /> }
+									badges={ [ writeBadge ] }
+								/>
+							</>
+						) }
+					</Card>
+				) }
+				<Card
+					className={ clsx( 'ai-tools-settings__agent-card', {
+						'ai-tools-settings__locked-card': ! isAvailable,
+					} ) }
+				>
 					<CardBody>
 						<VStack spacing={ 4 }>
 							<SectionHeader
 								title={ __( 'WordPress Agent' ) }
-								description={ __( 'Helps with site setup, content, design, and more.' ) }
+								description={ __(
+									'Built into your WordPress dashboard to help with site setup, content, and design. No need to connect ChatGPT, Claude, or other AI models.'
+								) }
 								actions={ ! isAvailable ? <UpgradeRequiredBadge /> : undefined }
 								level={ 3 }
 							/>
@@ -480,80 +537,33 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 							</VStack>
 						</CardFooter>
 					) }
-				</Card>
-				<EmailAssistantCard
-					site={ site }
-					recordTracksEvent={ recordTracksEvent }
-					disabled={ ! isAvailable }
-				/>
-				{ config.isEnabled( 'dolly/telegram' ) && (
-					<div className={ ! isAvailable ? 'ai-tools-settings__locked-card' : undefined }>
-						<SummaryButton
-							href={ TELEGRAM_CONNECTION_PATH }
-							title={ __( 'Connect WordPress Agent to Telegram' ) }
-							description={ __(
-								'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
-							) }
-							decoration={ <Icon icon={ send } size={ 24 } /> }
-							onClick={ () => {
-								recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
-									site_id: site.ID,
-								} );
-							} }
-							badges={ ! isAvailable ? [ upgradeRequiredBadge ] : undefined }
-							disabled={ ! isAvailable }
-						/>
-					</div>
-				) }
-				{ config.isEnabled( 'mcp-settings' ) && isAvailable && (
-					<>
-						<Card className="mcp-settings__access-card">
-							<CardBody>
-								<VStack spacing={ 4 }>
-									<SectionHeader
-										title={ __( 'External AI agent access' ) }
-										description={ __( 'Allow external AI agents to access this site via MCP.' ) }
-										level={ 3 }
-									/>
-									<ToggleControl
-										__nextHasNoMarginBottom
-										checked={ isMcpEnabled }
-										disabled={ mcpMutation.isPending }
-										label={ __( 'Enable MCP access for this site' ) }
-										onChange={ handleMcpToggle }
-									/>
-								</VStack>
-							</CardBody>
-							{ isMcpEnabled && (
-								<>
-									<CardDivider className="mcp-settings__sub-divider" />
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/read` }
-										density="medium"
-										title={ __( 'Read' ) }
-										decoration={ <Icon icon={ seen } size={ 24 } /> }
-										badges={ [ readBadge ] }
-									/>
-									<RouterLinkSummaryButton
-										to={ `/sites/${ siteSlug }/settings/ai-tools/write` }
-										density="medium"
-										title={ __( 'Write' ) }
-										decoration={ <Icon icon={ pencil } size={ 24 } /> }
-										badges={ [ writeBadge ] }
-									/>
-								</>
-							) }
-						</Card>
-						{ isMcpEnabled && (
-							<RouterLinkSummaryButton
-								to={ `/sites/${ siteSlug }/settings/ai-tools/setup` }
-								title={ __( 'Connect external AI agent' ) }
-								description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-								decoration={ <Icon icon={ connection } size={ 24 } /> }
+					<CardDivider className="mcp-settings__sub-divider" />
+					<EmailAssistantSection
+						site={ site }
+						recordTracksEvent={ recordTracksEvent }
+						disabled={ ! isAvailable }
+					/>
+					{ config.isEnabled( 'dolly/telegram' ) && (
+						<>
+							<CardDivider className="mcp-settings__sub-divider" />
+							<SummaryButton
+								href={ TELEGRAM_CONNECTION_PATH }
+								density="medium-low"
+								title={ __( 'Connect WordPress Agent to Telegram' ) }
+								description={ __(
+									'Connect your WordPress.com account to Telegram. This connection is shared across multiple sites.'
+								) }
+								decoration={ <Icon icon={ send } size={ 24 } /> }
+								onClick={ () => {
+									recordTracksEvent( 'calypso_dashboard_ai_tool_connect_telegram_click', {
+										site_id: site.ID,
+									} );
+								} }
+								disabled={ ! isAvailable }
 							/>
-						) }
-					</>
-				) }
+						</>
+					) }
+				</Card>
 				{ isFreeTrial && (
 					<ConfirmModal
 						isOpen={ isConfirmModalOpen }
