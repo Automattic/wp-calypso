@@ -85,7 +85,7 @@ export default function SshKeys() {
 	};
 
 	const handleDelete = () => {
-		if ( ! sshKeyToDelete ) {
+		if ( ! sshKeyToDelete || isDeletingSshKey ) {
 			return;
 		}
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_remove_click', {
