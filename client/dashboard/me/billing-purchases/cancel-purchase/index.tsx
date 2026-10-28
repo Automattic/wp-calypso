@@ -277,7 +277,7 @@ function CancelPurchaseInner() {
 
 	const lastSiteQueryIsError = useRef< boolean >( false );
 	const { data: hasBeenExtended } = useQuery( {
-		...hasPurchaseBeenExtendedQuery( purchase.blog_id ),
+		...hasPurchaseBeenExtendedQuery( purchase.ID ),
 		enabled: purchaseHasQueryableSite,
 	} );
 	const {
@@ -853,7 +853,9 @@ function CancelPurchaseInner() {
 		}
 
 		const upsellType = getUpsellType( value, purchase, {
-			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
+			// Offer only when the check answers false. It stays undefined while loading, on error, or with no site.
+			canOfferFreeMonth:
+				!! freeMonthOfferClick && hasBeenExtended === false && ! purchase.is_refundable,
 		} );
 		const solutionsReason = getSolutionsReason( value, detailsValue, state.questionOneRadio );
 		const hasSolutionsCards =
