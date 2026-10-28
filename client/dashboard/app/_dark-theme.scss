@@ -466,10 +466,27 @@
 			color: var( --dashboard__text-muted-color );
 		}
 	}
+}
 
-	// The close button sits on the illustration, which stays light in dark mode.
-	.change-primary-domain-modal__close {
-		color: var( --wp-components-color-foreground-inverted );
+/* Primary site address illustration */
+@mixin dashboard-dark-theme-primary-address-illustration {
+	.primary-address-illustration {
+		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
+		--wpds-color-stroke-interactive-brand: var( --wp-admin-theme-color-darker-20 );
+		--wpds-color-foreground-interactive-brand: var( --wp-admin-theme-color-darker-20 );
+		background: var( --dashboard__background-color );
+	}
+
+	.primary-address-illustration__window-dots span {
+		border-color: var( --wp-components-color-gray-600 );
+	}
+
+	.primary-address-illustration__window-line {
+		background: var( --wp-components-color-gray-600 );
+	}
+
+	.primary-address-illustration__address {
+		color: var( --dashboard__text-color );
 	}
 }
 
@@ -513,6 +530,7 @@
 	@include color-scheme-dark-theme-palettes;
 	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
+	@include dashboard-dark-theme-primary-address-illustration;
 	@include color-scheme-dark-theme-popover;
 	@include color-scheme-dark-theme-primary-button;
 	@include dashboard-dark-theme-scan;
