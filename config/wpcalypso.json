@@ -34,6 +34,7 @@
 		"catch-js-errors": false,
 		"checkout/stripe-upi": true,
 		"checkout/stripe-wallet": false,
+		"checkout/support-routing": false,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"cookie-banner": true,

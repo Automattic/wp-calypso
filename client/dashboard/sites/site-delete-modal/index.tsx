@@ -272,7 +272,10 @@ export default function SiteDeleteModal( { site, onClose }: { site: Site; onClos
 		select: ( purchases ) => purchases.some( ( purchase ) => purchase.blocks_site_deletion ),
 	} );
 
-	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesThatBlockSiteDeletion;
+	const canBeDeleted =
+		canDeleteSite( site ) &&
+		! ( site.plan?.is_free && site.is_wpcom_atomic ) && // Can occur when atomic removal already in progress.
+		! hasPurchasesThatBlockSiteDeletion;
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
 
 	if ( isLoading ) {

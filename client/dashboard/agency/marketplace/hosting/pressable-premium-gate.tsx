@@ -15,13 +15,13 @@ import { useScheduleCall } from '../../tiers/use-schedule-call';
 import { HOSTING_REFERRAL_COMMISSION_PERCENTAGE } from '../lib/referral-commission';
 import { useReferralToggle } from '../use-referral-toggle';
 
-interface Props {
+interface PressablePremiumGateProps {
 	/** The selected plan, e.g. "Pressable Premium 3". */
 	label: string;
 }
 
 /** The purchase rail on the Premium tab with referrals off: Premium plans are only sold through referrals. */
-export default function PressablePremiumGate( { label }: Props ) {
+export default function PressablePremiumGate( { label }: PressablePremiumGateProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { checked, disabled, onChange, isGated, isGateOpen, closeGate } = useReferralToggle();
 	const { data: agency } = useQuery( activeAgencyQuery() );
