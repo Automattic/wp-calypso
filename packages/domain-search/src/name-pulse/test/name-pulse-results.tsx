@@ -1233,6 +1233,66 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
+		it( 'counts every group in the result count, not only the suggestions', async () => {
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalled() );
+
+			const [ [ , , , properties ] ] = events.onSuggestionsReceive.mock.calls;
+
+			expect( properties.result_count ).toBe(
+				properties.result_count_exact +
+					properties.result_count_top +
+					properties.result_count_exact_tlds +
+					properties.result_count_related +
+					properties.result_count_creative
+			);
+			expect( properties.result_count ).toBeGreaterThan( properties.result_count_related );
+		} );
+
+		it( 'records neither the search nor its cards when the query changes before it has results', async () => {
+			const events = buildEvents();
+			// The first query's suggestions never arrive, so its result set is never complete.
+			const suggestions = ( { query, use_ai }: NamePulseSuggestionsQuery ) =>
+				query === 'icecream'
+					? new Promise< NamePulseSuggestionsResponse >( () => {} )
+					: Promise.resolve( {
+							suggestions: use_ai
+								? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+								: NAME_PULSE_SUGGESTIONS_FIXTURE,
+							errors: [],
+						} );
+
+			const { rerender } = render(
+				<NamePulseTestSearch query="icecream" events={ events } suggestions={ suggestions } />
+			);
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			// Longer than the settle delay, so the first query has settled with cards on the page.
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 500 ) ) );
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
+			expect( events.onSuggestionRender ).not.toHaveBeenCalled();
+
+			rerender(
+				<NamePulseTestSearch query="ice cream" events={ events } suggestions={ suggestions } />
+			);
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalled() );
+			await waitFor( () => expect( events.onSuggestionRender ).toHaveBeenCalled() );
+
+			const [ [ , , , { result_set_id: resultSetId } ] ] = events.onSuggestionsReceive.mock.calls;
+
+			expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 1 );
+			expect( events.onNamePulseSearch.mock.calls[ 0 ][ 0 ] ).toBe( 'ice cream' );
+			expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 );
+			expect(
+				events.onSuggestionRender.mock.calls.every(
+					( [ , , properties ] ) => properties.result_set_id === resultSetId
+				)
+			).toBe( true );
+		} );
+
 		it( 'reports every name with a verdict once, taken ones included, each with its own railcar', async () => {
 			const events = buildEvents();
 
@@ -1401,6 +1461,42 @@ describe( 'NamePulseResults', () => {
 				expect.objectContaining( { domain_name: 'icecream.net', position: 0 } ),
 				renderCall?.[ 2 ].railcar
 			);
+		} );
+
+		it( 'records no interaction when the real-time check finds the name taken', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.NOT_AVAILABLE,
+						} )
+					}
+				/>
+			);
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			await waitFor( () =>
+				expect( events.onSuggestionRender ).toHaveBeenCalledWith(
+					expect.objectContaining( { domain_name: 'icecream.net' } ),
+					undefined,
+					expect.anything()
+				)
+			);
+			await user.click(
+				within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			);
+
+			expect(
+				await within( rowFor( 'icecream.net' ) ).findByText( 'Unavailable' )
+			).toBeInTheDocument();
+			expect( events.onSuggestionInteract ).not.toHaveBeenCalled();
+			expect( events.onAddDomainToCart ).not.toHaveBeenCalled();
 		} );
 
 		it( 'adds to the cart without an interaction when the name has not reported its render', async () => {
