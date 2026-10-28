@@ -4,9 +4,23 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useHelpCenter } from '../../app/help-center';
 import { useLocale } from '../../app/locale';
 import { Notice } from '../../components/notice';
-import { formatReleaseDate, getPrereleaseName } from '../../components/wordpress-prerelease-notice';
+import { formatDate } from '../../utils/datetime';
 import { getMajorWordPressVersion } from '../../utils/wp-version';
 import type { WordPressPrerelease } from '@automattic/api-core';
+
+/** "7.2 Beta" or "7.2 RC", as WordPress names its pre-releases. */
+function getPrereleaseName( { version, stage }: WordPressPrerelease ) {
+	return `${ version } ${ stage === 'rc' ? 'RC' : 'Beta' }`;
+}
+
+/** "December 8" for "2026-12-08". The date is a calendar day, so it is read in UTC to keep it from shifting. */
+function formatReleaseDate( releaseDate: string, locale: string ) {
+	return formatDate( new Date( `${ releaseDate }T00:00:00Z` ), locale, {
+		month: 'long',
+		day: 'numeric',
+		timeZone: 'UTC',
+	} );
+}
 
 export function getSwitchBackLabel( stableVersion: string ) {
 	return sprintf(

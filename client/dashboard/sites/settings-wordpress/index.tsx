@@ -19,7 +19,6 @@ import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { useAutoEnrolledWordPressPrerelease } from '../../components/wordpress-prerelease-notice';
 import { getFormattedWordPressVersion } from '../../utils/wp-version';
 import { canOptOutOfWordPressBeta, canSwitchWordPressVersion } from '../features';
 import HostingFeatureGatedWithCallout from '../hosting-feature-gated-with-callout';
@@ -27,6 +26,7 @@ import { AutoEnrolledNotice, getSwitchBackLabel } from './auto-enrolled-notice';
 import { BetaOptOutButton } from './beta-opt-out-button';
 import { BetaProgramNotice } from './beta-program-notice';
 import { LatestVersionNotice } from './latest-version-notice';
+import { useAutoEnrolledPrerelease } from './use-auto-enrolled-prerelease';
 import { useVersionSwitch } from './use-version-switch';
 import { VersionForm } from './version-form';
 import { VersionSwitchNotice } from './version-switch-notice';
@@ -35,7 +35,7 @@ import type { Site } from '@automattic/api-core';
 function VersionManagement( { site }: { site: Site } ) {
 	const { data: currentVersion } = useQuery( siteWordPressVersionQuery( site.ID ) );
 	const versionSwitch = useVersionSwitch( site );
-	const autoEnrolledPrerelease = useAutoEnrolledWordPressPrerelease( site );
+	const autoEnrolledPrerelease = useAutoEnrolledPrerelease( site );
 	const { isSwitching, switchedToBeta, switchedToLatest, backupState, targetVersion } =
 		versionSwitch;
 
@@ -94,7 +94,7 @@ function VersionManagement( { site }: { site: Site } ) {
 function BetaProgramContent( { site }: { site: Site } ) {
 	const [ justOptedOut, setJustOptedOut ] = useState( false );
 	const isEligible = canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' );
-	const autoEnrolledPrerelease = useAutoEnrolledWordPressPrerelease( site );
+	const autoEnrolledPrerelease = useAutoEnrolledPrerelease( site );
 	const { data: currentVersion } = useQuery( {
 		...siteWordPressVersionQuery( site.ID ),
 		enabled: isEligible,

@@ -80,13 +80,13 @@ import {
 import { isPressableSite } from '../../agency/sites/lib';
 import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
-import { ensureWordPressPrereleaseNoticeData } from '../../components/wordpress-prerelease-notice';
 import {
 	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import { ensureAutoEnrolledPrereleaseData } from '../../sites/settings-wordpress/use-auto-enrolled-prerelease';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -1921,7 +1921,7 @@ const agencySiteSettingsWordPressRoute = createRoute( {
 			queryClient.prefetchQuery( wpOrgCoreVersionQuery( 'beta' ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
-		await ensureWordPressPrereleaseNoticeData( site );
+		await ensureAutoEnrolledPrereleaseData( site );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-wordpress' ).then( ( d ) =>
