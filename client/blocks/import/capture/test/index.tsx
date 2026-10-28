@@ -130,10 +130,7 @@ describe( 'CaptureInput', () => {
 		expect( mockedRecordTracksEvent.mock.calls.length ).toBe( 1 );
 		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_importer_capture_input_invalid',
-			{
-				url: 'notaurl',
-				error_code: 'missing_tld',
-			}
+			{ error_code: 'missing_tld' }
 		);
 	} );
 
