@@ -80,23 +80,18 @@
 		line-height: var(--wpds-typography-line-height-sm, 20px);
 	}
 
+	// Tighten the title-to-excerpt gap and center short text in the column's
+	// two-line min-height. DataViews sets the gap inline, hence `!important`.
+	.dataviews-view-list__field-wrapper {
+		gap: calc(var(--wpds-dimension-base, 4px) / 2) !important;
+		justify-content: center;
+	}
+
 	// Notes without an excerpt render an empty description field, but DataViews
 	// still emits its cell as a flex item in the column, which doubles the row
 	// gap. Drop the empty cell so only one gap remains.
 	.dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty {
 		display: none;
-	}
-
-	// A note with no excerpt leaves its title at the top of the text column,
-	// which DataViews keeps at a two-line min-height. Center the title and the
-	// icon in the row instead.
-	.dataviews-view-list__field-wrapper:has(> .dataviews-view-list__field:empty) {
-		justify-content: center;
-	}
-
-	.dataviews-view-list__media-wrapper:has(+ .dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty) {
-		align-self: center;
-		margin-block-start: 0;
 	}
 
 	// We override styles with the selected styles for unread items.
@@ -161,7 +156,9 @@
 		width: 36px;
 		height: 36px;
 		margin-inline-end: $grid-unit-05;
-		margin-block-start: 4px;
+		// Half the difference between the text column's 48px min-height and the
+		// icon, so it centers on short rows and stays by the first line on tall ones.
+		margin-block-start: calc(var(--wpds-dimension-base, 4px) * 1.5);
 		border-radius: 50%;
 		overflow: visible;
 
