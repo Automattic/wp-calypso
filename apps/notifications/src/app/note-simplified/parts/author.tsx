@@ -10,20 +10,18 @@ export default function Author( {
 	avatar?: string | null;
 	children: ReactNode;
 } ) {
-	if ( ! avatar ) {
-		return <>{ children }</>;
-	}
-
 	return (
-		<span className="wpnc-simplified__byline-author">
-			<img
-				className="wpnc-simplified__byline-avatar"
-				src={ avatar }
-				alt=""
-				width={ 12 }
-				height={ 12 }
-			/>
+		<>
+			{ avatar && (
+				<img
+					className="wpnc-simplified__byline-avatar"
+					src={ avatar }
+					alt=""
+					width={ 12 }
+					height={ 12 }
+				/>
+			) }
 			{ children }
-		</span>
+		</>
 	);
 }

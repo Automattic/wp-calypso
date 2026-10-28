@@ -29,15 +29,10 @@
 	}
 }
 
-.wpnc-simplified__byline-author {
-	display: inline-flex;
-	align-items: center;
-	gap: $grid-unit-05;
-}
-
 .wpnc-simplified__byline-avatar {
-	flex-shrink: 0;
+	margin-inline-end: $grid-unit-05;
 	border-radius: 50%;
+	vertical-align: middle;
 }
 
 .wpnc-simplified__thread {
