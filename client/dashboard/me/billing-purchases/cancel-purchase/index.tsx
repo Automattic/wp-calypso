@@ -500,17 +500,6 @@ function CancelPurchaseInner() {
 	const atomicRevertOnClickCheckTwo = ( isChecked: boolean ) =>
 		setState( ( state ) => ( { ...state, atomicRevertCheckTwo: isChecked } ) );
 
-	const setStateBasedOnExtendedStatus = useCallback( async () => {
-		const newState: Partial< CancelPurchaseState > = {};
-		if ( hasBeenExtended && newState.upsell === 'free-month-offer' ) {
-			newState.upsell = '';
-		}
-		setState( ( state ) => ( {
-			...state,
-			...newState,
-		} ) );
-	}, [ hasBeenExtended ] );
-
 	const recordEvent = useCallback(
 		( name: string, properties: Record< string, unknown > = {} ) => {
 			recordTracksEvent( name, {
@@ -1349,25 +1338,13 @@ function CancelPurchaseInner() {
 		if ( didRunEffect.current ) {
 			return;
 		}
-		if ( purchase.ID && purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD ) {
-			setStateBasedOnExtendedStatus();
-		}
 		if ( ! isDataValid() ) {
 			redirectBack();
 			return;
 		}
 		track();
 		didRunEffect.current = true;
-	}, [
-		setStateBasedOnExtendedStatus,
-		isDataValid,
-		purchase.ID,
-		purchase.bill_period_days,
-		purchase.product_slug,
-		redirectBack,
-		track,
-		createErrorNotice,
-	] );
+	}, [ isDataValid, purchase.product_slug, redirectBack, track, createErrorNotice ] );
 
 	// componentDidUpdate
 	useEffect( () => {
