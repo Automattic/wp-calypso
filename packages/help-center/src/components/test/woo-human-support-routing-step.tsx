@@ -113,6 +113,22 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		expect( startChat ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'keeps Continue in view when questions are added', async () => {
+		// jsdom doesn't scroll.
+		const scrollIntoView = jest.fn();
+		Element.prototype.scrollIntoView = scrollIntoView;
+		try {
+			renderStep();
+			scrollIntoView.mockClear();
+
+			await userEvent.selectOptions( question(), 'technical-support' );
+
+			expect( scrollIntoView.mock.contexts ).toContain( continueButton().parentElement );
+		} finally {
+			delete ( Element.prototype as Partial< Element > ).scrollIntoView;
+		}
+	} );
+
 	it( 'asks for the product and store for technical support', async () => {
 		renderStep();
 

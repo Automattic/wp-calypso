@@ -43,6 +43,7 @@ export function WooHumanSupportRoutingStep( {
 	const [ storeChoice, setStoreChoice ] = useState< string | null >( null );
 	const [ otherStoreUrl, setOtherStoreUrl ] = useState( '' );
 	const stepRef = useRef< HTMLDivElement >( null );
+	const actionsRef = useRef< HTMLDivElement >( null );
 	// A second click before the step closes would start a second chat.
 	const hasContinuedRef = useRef( false );
 
@@ -62,6 +63,11 @@ export function WooHumanSupportRoutingStep( {
 	const showStorePicker = storeIsAsked && ! onlyStore && stores.length > 0;
 	const showOtherStore =
 		storeIsAsked && ! onlyStore && ( stores.length === 0 || storeChoice === ANOTHER_SITE );
+
+	// New questions push Continue down, out of the chat's view, so bring it back.
+	useEffect( () => {
+		actionsRef.current?.scrollIntoView?.( { behavior: 'smooth', block: 'nearest' } );
+	}, [ showProduct, showStorePicker, showOtherStore ] );
 
 	let storeUrl: string | null = null;
 	if ( onlyStore && storeIsAsked ) {
@@ -175,7 +181,7 @@ export function WooHumanSupportRoutingStep( {
 					onChange={ setOtherStoreUrl }
 				/>
 			) }
-			<div className="help-center-woo-routing-step__actions">
+			<div className="help-center-woo-routing-step__actions" ref={ actionsRef }>
 				<Button __next40pxDefaultSize variant="tertiary" onClick={ dismiss }>
 					{ __( 'Cancel', __i18n_text_domain__ ) }
 				</Button>
