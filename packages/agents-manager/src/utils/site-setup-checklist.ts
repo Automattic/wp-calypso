@@ -36,9 +36,8 @@ export function siteSetupTaskPrompt( task: SiteSetupTask ): string {
  * Maps Site Setup tasks to checklist items. A task the user picked from the
  * list stays `in-progress` until the server reports it done or skipped. The
  * item's `action` runs before its prompt is sent and declares where the prompt
- * comes from, which the sent message then carries. A task in progress links
- * to where its work is (its `url`: the draft in the editor, the themes
- * showcase…), since its prompt was already sent.
+ * comes from, which the sent message then carries. A task in progress sends
+ * the same prompt again, to resume it with the agent.
  */
 export function toChecklistItems(
 	tasks: SiteSetupTask[],
@@ -56,7 +55,6 @@ export function toChecklistItems(
 			prompt,
 			autoSubmit: true,
 			disabled: task.disabled,
-			...( status === 'in-progress' && task.url && { href: task.url } ),
 			action: () => {
 				markNextPromptSource( { source: SITE_SETUP_PROMPT_SOURCE, id: task.id }, prompt );
 				return true;

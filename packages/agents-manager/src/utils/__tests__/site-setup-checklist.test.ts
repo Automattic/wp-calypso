@@ -15,13 +15,7 @@ const TASKS: SiteSetupTask[] = [
 	{ id: 'design', title: 'Customize the design', status: 'todo', disabled: false },
 	{ id: 'about', title: 'Publish the About page', status: 'done', disabled: false },
 	{ id: 'domain', title: 'Add a custom domain', status: 'todo', disabled: true },
-	{
-		id: 'images',
-		title: 'Replace placeholder images',
-		status: 'in-progress',
-		disabled: false,
-		url: 'https://example.com/wp-admin/post.php?post=7&action=edit',
-	},
+	{ id: 'images', title: 'Replace placeholder images', status: 'in-progress', disabled: false },
 ];
 
 describe( 'isSiteSetupChecklistEnabled', () => {
@@ -73,17 +67,6 @@ describe( 'toChecklistItems', () => {
 
 		expect( items[ 0 ].status ).toBe( 'in-progress' );
 		expect( items[ 1 ].status ).toBe( 'done' );
-	} );
-
-	it( 'links a task in progress to where its work is, and nothing else', () => {
-		const items = toChecklistItems( TASKS, new Set() );
-
-		expect( items[ 3 ].href ).toBe( 'https://example.com/wp-admin/post.php?post=7&action=edit' );
-		expect( items.slice( 0, 3 ).map( ( item ) => item.href ) ).toEqual( [
-			undefined,
-			undefined,
-			undefined,
-		] );
 	} );
 
 	it( 'declares where the task prompt comes from before it is sent', async () => {

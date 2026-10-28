@@ -135,13 +135,27 @@ describe( 'Checklist', () => {
 		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
 	} );
 
-	it( 'renders settled and in-progress items without a button', () => {
+	it( 'renders settled items without a button, open and in-progress ones with', () => {
 		render();
 
 		expect( rowFor( 'Customize the design' ).querySelector( 'button' ) ).toBeNull();
 		expect( rowFor( 'Add a custom domain' ).querySelector( 'button' ) ).toBeNull();
-		expect( rowFor( 'Replace placeholder images' ).querySelector( 'button' ) ).toBeNull();
+		expect( rowFor( 'Replace placeholder images' ).querySelector( 'button' ) ).not.toBeNull();
 		expect( rowFor( 'Publish the About page' ).querySelector( 'button' ) ).not.toBeNull();
+	} );
+
+	it( 'resumes an in-progress item by submitting its prompt again', async () => {
+		const onSubmit = vi.fn();
+		render( { onSubmit } );
+
+		await act( async () => {
+			rowFor( 'Replace placeholder images' ).querySelector( 'button' )?.click();
+		} );
+
+		expect( onSubmit ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: 'images', status: 'in-progress' } ),
+			items
+		);
 	} );
 
 	it( 'keeps a disabled item focusable and describes it by its reason', () => {
@@ -337,17 +351,6 @@ describe( 'Checklist', () => {
 		render( { items: twoInProgress, defaultCollapsed: true, activeItemId: 'about' } );
 
 		expect( rowLabels() ).toEqual( [ 'Publish the About page' ] );
-	} );
-
-	it( 'links an in-progress item to where its work is', () => {
-		const withHref = items.map( ( item ) =>
-			item.id === 'images' ? { ...item, href: '/wp-admin/post.php?post=7&action=edit' } : item
-		);
-		render( { items: withHref } );
-
-		const link = rowFor( 'Replace placeholder images' ).querySelector( 'a' );
-		expect( link?.getAttribute( 'href' ) ).toBe( '/wp-admin/post.php?post=7&action=edit' );
-		expect( rowFor( 'Add a custom domain' ).querySelector( 'a, button' ) ).toBeNull();
 	} );
 
 	it( 'follows a controlled collapsed prop', () => {

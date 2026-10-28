@@ -35,11 +35,13 @@ const getStatus = ( item: ChecklistItem ): ChecklistItemStatus => item.status ??
 export const isSettled = ( item: ChecklistItem ): boolean =>
 	[ 'done', 'skipped' ].includes( getStatus( item ) );
 
-// Only an open task can be started: in-progress ones were already sent, and
-// settled ones have nothing left to do. A task with neither a prompt nor an
-// action has nothing to trigger. All of those render as plain rows.
+// An open task can be started and an in-progress one resumed (its prompt goes
+// again); settled ones have nothing left to do. A task with neither a prompt
+// nor an action has nothing to trigger. All of those render as plain rows.
 const isActionable = ( item: ChecklistItem ): boolean =>
-	! item.disabled && getStatus( item ) === 'todo' && Boolean( item.prompt || item.action );
+	! item.disabled &&
+	[ 'todo', 'in-progress' ].includes( getStatus( item ) ) &&
+	Boolean( item.prompt || item.action );
 
 // Eight arc segments: the dashed ring of an open task.
 const RING_DASHED =
@@ -83,15 +85,11 @@ function StatusIcon( { status }: { status: ChecklistItemStatus } ) {
 	);
 }
 
-type RowKind = 'open' | 'link' | 'disabled' | 'inert';
+type RowKind = 'open' | 'disabled' | 'inert';
 
 const getRowKind = ( item: ChecklistItem ): RowKind => {
 	if ( isActionable( item ) ) {
 		return 'open';
-	}
-	// An in-progress task was already sent; its row takes the user to where the work is.
-	if ( getStatus( item ) === 'in-progress' && item.href ) {
-		return 'link';
 	}
 	// Status wins over `disabled`: only an open task can be a disabled one.
 	return item.disabled && getStatus( item ) === 'todo' ? 'disabled' : 'inert';
@@ -138,12 +136,6 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
 					{ content }
 				</button>
 			);
-		case 'link':
-			return (
-				<a href={ item.href } className={ cn( className, styles.actionable ) }>
-					{ content }
-				</a>
-			);
 		case 'disabled': {
 			// Stays focusable so the reason is reachable from the keyboard.
 			const reasonId = item.disabledReason ? `${ idPrefix }-reason-${ item.id }` : undefined;
@@ -175,8 +167,8 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * collapse toggle, and one row per task. Clicking an open task submits it
  * the way a suggestion would, then collapses the list down to whatever is
  * in progress, or to `activeItemId` alone when the host names the task the
- * user is on. Settled (done / skipped) rows are inert; an in-progress row
- * links to where its work is when the item carries an `href`.
+ * user is on. Clicking an in-progress task submits its prompt again, to
+ * resume it. Settled (done / skipped) rows are inert.
  * @param props                   Component props.
  * @param props.title
  * @param props.items

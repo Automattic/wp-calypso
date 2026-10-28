@@ -54,7 +54,6 @@ export type ChecklistItemStatus = 'todo' | 'in-progress' | 'done' | 'skipped';
 // suggestion does. `done` and `skipped` items are settled and inert.
 export interface ChecklistItem extends Omit< Suggestion, 'options' > {
 	status?: ChecklistItemStatus; // Defaults to 'todo'
-	href?: string; // Where the work is for an in-progress task: the row links there instead of being inert
 }
 
 export interface QuestionChoice {

@@ -137,10 +137,6 @@
 		}
 	}
 
-	a.item {
-		text-decoration: none;
-	}
-
 	.actionable {
 		cursor: pointer;
 		transition: var( --transition-colors );
