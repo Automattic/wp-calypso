@@ -341,6 +341,14 @@ describe( 'Checklist', () => {
 		expect( action ).toHaveBeenCalled();
 	} );
 
+	it( 'keeps the active in-progress item inert: the conversation is already on it', () => {
+		const onSubmit = vi.fn();
+		render( { onSubmit, activeItemId: 'images' } );
+
+		expect( rowFor( 'Replace placeholder images' ).querySelector( 'button' ) ).toBeNull();
+		expect( rowFor( 'Publish the About page' ).querySelector( 'button' ) ).not.toBeNull();
+	} );
+
 	it( 'keeps only the active item in view while collapsed', () => {
 		const twoInProgress = items.map( ( item ) =>
 			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item

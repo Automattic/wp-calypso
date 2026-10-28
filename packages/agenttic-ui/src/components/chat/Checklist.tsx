@@ -36,11 +36,13 @@ export const isSettled = ( item: ChecklistItem ): boolean =>
 	[ 'done', 'skipped' ].includes( getStatus( item ) );
 
 // An open task can be started and an in-progress one resumed (its prompt goes
-// again); settled ones have nothing left to do. A task with neither a prompt
-// nor an action has nothing to trigger. All of those render as plain rows.
-const isActionable = ( item: ChecklistItem ): boolean =>
+// again), except the active one, which the conversation is already on; settled
+// ones have nothing left to do. A task with neither a prompt nor an action has
+// nothing to trigger. All of those render as plain rows.
+const isActionable = ( item: ChecklistItem, activeItemId?: string ): boolean =>
 	! item.disabled &&
 	[ 'todo', 'in-progress' ].includes( getStatus( item ) ) &&
+	item.id !== activeItemId &&
 	Boolean( item.prompt || item.action );
 
 // Eight arc segments: the dashed ring of an open task.
@@ -87,8 +89,8 @@ function StatusIcon( { status }: { status: ChecklistItemStatus } ) {
 
 type RowKind = 'open' | 'disabled' | 'inert';
 
-const getRowKind = ( item: ChecklistItem ): RowKind => {
-	if ( isActionable( item ) ) {
+const getRowKind = ( item: ChecklistItem, activeItemId?: string ): RowKind => {
+	if ( isActionable( item, activeItemId ) ) {
 		return 'open';
 	}
 	// Status wins over `disabled`: only an open task can be a disabled one.
@@ -101,10 +103,18 @@ interface ChecklistRowProps {
 	idPrefix: string;
 	statusLabel: string;
 	busy: boolean;
+	activeItemId?: string;
 	onSelect: ( item: ChecklistItem ) => void;
 }
 
-function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: ChecklistRowProps ) {
+function ChecklistRow( {
+	item,
+	idPrefix,
+	statusLabel,
+	busy,
+	activeItemId,
+	onSelect,
+}: ChecklistRowProps ) {
 	const status = getStatus( item );
 	const className = cn( styles.item, {
 		[ styles[ 'item-in-progress' ] ]: status === 'in-progress',
@@ -118,7 +128,7 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
 		</>
 	);
 
-	switch ( getRowKind( item ) ) {
+	switch ( getRowKind( item, activeItemId ) ) {
 		case 'open':
 			// Kept focusable while busy so keyboard position survives a stream.
 			return (
@@ -167,8 +177,8 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * collapse toggle, and one row per task. Clicking an open task submits it
  * the way a suggestion would, then collapses the list down to whatever is
  * in progress, or to `activeItemId` alone when the host names the task the
- * user is on. Clicking an in-progress task submits its prompt again, to
- * resume it. Settled (done / skipped) rows are inert.
+ * user is on. Clicking another in-progress task submits its prompt again, to
+ * resume it; the active one and the settled (done / skipped) rows are inert.
  * @param props                   Component props.
  * @param props.title
  * @param props.items
@@ -237,7 +247,7 @@ export function Checklist( {
 	const busyRef = useRef( false );
 
 	const handleItemClick = async ( item: ChecklistItem ) => {
-		if ( busyRef.current || ! isActionable( item ) ) {
+		if ( busyRef.current || ! isActionable( item, activeItemId ) ) {
 			return;
 		}
 		busyRef.current = true;
@@ -307,6 +317,7 @@ export function Checklist( {
 										item={ item }
 										idPrefix={ listId }
 										busy={ busy }
+										activeItemId={ activeItemId }
 										statusLabel={ statusLabels[ getStatus( item ) ] }
 										onSelect={ handleItemClick }
 									/>
