@@ -39,6 +39,7 @@ export type NotePost = {
 	url: string;
 	date: string | null;
 	author_name: string;
+	author_avatar?: string | null;
 };
 
 export type NoteSite = {
