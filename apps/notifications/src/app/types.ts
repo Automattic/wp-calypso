@@ -26,6 +26,7 @@ type Media = {
 	parent?: string | number | null;
 	height?: string | number;
 	width?: string | number;
+	emoji?: boolean;
 };
 
 export type Subject = {

@@ -117,6 +117,14 @@
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	white-space: normal;
+
+	p {
+		margin-bottom: 0;
+	}
+
+	img:not(.emoji) {
+		display: none;
+	}
 }
 
 .wpnc-simplified__card {
