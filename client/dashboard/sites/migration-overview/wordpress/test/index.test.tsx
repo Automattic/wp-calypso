@@ -119,11 +119,10 @@ describe( 'WordPressMigration', () => {
 		expect(
 			screen.getAllByRole( 'progressbar' ).map( ( bar ) => bar.getAttribute( 'aria-label' ) )
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
-		expect(
-			screen.getByText(
-				'You can leave this page. The migration carries on in the background. We will email you at owner@example.com and admin@example.com when the migration is ready.'
-			)
-		).toBeVisible();
+		expect( screen.getAllByRole( 'strong' ).map( ( email ) => email.textContent ) ).toEqual( [
+			'owner@example.com',
+			'admin@example.com',
+		] );
 		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
 	} );
@@ -227,11 +226,9 @@ describe( 'WordPressMigration', () => {
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
-		expect(
-			screen.getByText(
-				'You can leave this page. The migration carries on in the background. We will email you at TEST@example.com when the migration is ready.'
-			)
-		).toBeVisible();
+		expect( screen.getAllByRole( 'strong' ).map( ( email ) => email.textContent ) ).toEqual( [
+			'TEST@example.com',
+		] );
 	} );
 
 	it( 'leaves out the email promise when no one will be notified', async () => {

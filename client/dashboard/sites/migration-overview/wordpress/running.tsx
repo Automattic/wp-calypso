@@ -1,4 +1,5 @@
 import { __experimentalVStack as VStack, Button, ProgressBar } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAuth } from '../../../app/auth';
 import { useHelpCenter } from '../../../app/help-center';
@@ -28,9 +29,11 @@ export function Running( {
 	const ownEmail = notificationEmails.find(
 		( email ) => email.toLowerCase() === user.email.toLowerCase()
 	);
-	const recipients = new Intl.ListFormat( locale, { type: 'conjunction' } ).format(
-		ownEmail ? [ ownEmail ] : notificationEmails
-	);
+	const recipients = new Intl.ListFormat( locale, { type: 'conjunction' } )
+		.formatToParts( ownEmail ? [ ownEmail ] : notificationEmails )
+		.map( ( { type, value }, index ) =>
+			type === 'element' ? <strong key={ index }>{ value }</strong> : value
+		);
 
 	const steps: { label: string; phases: Phase[] }[] = [
 		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
@@ -71,12 +74,12 @@ export function Running( {
 			</Grid>
 			<Text variant="muted">
 				{ notificationEmails.length
-					? sprintf(
-							/* translators: %s: the email addresses we notify when the migration is ready, e.g. "a@example.com and b@example.com". */
+					? createInterpolateElement(
+							/* translators: <emails /> is the email addresses we notify when the migration is ready, e.g. "a@example.com and b@example.com". */
 							__(
-								'You can leave this page. The migration carries on in the background. We will email you at %s when the migration is ready.'
+								'You can leave this page. The migration carries on in the background. We will email you at <emails /> when the migration is ready.'
 							),
-							recipients
+							{ emails: <>{ recipients }</> }
 						)
 					: __( 'You can leave this page. The migration carries on in the background.' ) }
 			</Text>
