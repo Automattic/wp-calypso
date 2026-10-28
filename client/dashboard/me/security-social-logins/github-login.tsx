@@ -1,9 +1,9 @@
 import { addQueryArgs } from '@wordpress/url';
 import OAuth2Login, { OAuth2LoginProps } from './oauth2-login';
 
-type Props = Omit< OAuth2LoginProps, 'service' | 'label' | 'onClick' >;
+type GitHubLoginProps = Omit< OAuth2LoginProps, 'service' | 'label' | 'onClick' >;
 
-export default function GitHubLogin( { ...rest }: Props ) {
+export default function GitHubLogin( { ...rest }: GitHubLoginProps ) {
 	return (
 		<OAuth2Login
 			service="github"

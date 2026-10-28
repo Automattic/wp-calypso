@@ -30,7 +30,7 @@ import type { AgencyProduct } from '@automattic/api-core';
 const CLIENT_PLUGIN_HELP_URL =
 	'https://agencieshelp.automattic.com/knowledge-base/the-automattic-for-agencies-client-plugin/';
 
-interface Props {
+interface ProductDetailsModalProps {
 	product: AgencyProduct;
 	term: TermPricing;
 	isReferralMode: boolean;
@@ -46,7 +46,7 @@ export default function ProductDetailsModal( {
 	inCart,
 	onToggleCart,
 	onClose,
-}: Props ) {
+}: ProductDetailsModalProps ) {
 	const isWooPayments = product.slug === WOOPAYMENTS_PRODUCT_SLUG;
 	const vendor = getVendorInfo( product.slug );
 	const { description, features } = getProductDescription( product.slug );

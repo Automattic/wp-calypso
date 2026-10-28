@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import AgentsManager from '@automattic/agents-manager';
 import {
 	omnibarAgentsManagerEnabledQuery,
 	omnibarSiteIdQuery,
@@ -16,9 +17,10 @@ import type { Site } from '@automattic/api-core';
 jest.mock( '../use-should-load-agents-manager' );
 jest.mock( '@automattic/agents-manager', () => ( {
 	__esModule: true,
-	default: () => <div role="region" aria-label="Agents Manager" />,
+	default: jest.fn( () => <div role="region" aria-label="Agents Manager" /> ),
 } ) );
 
+const mockedAgentsManager = jest.mocked( AgentsManager );
 const mockedUseShouldLoadAgentsManager = jest.mocked( useShouldLoadAgentsManager );
 const siteId = 123;
 const site = {
@@ -53,6 +55,42 @@ describe( '<AgentsManagerLoader />', () => {
 		expect( cancelQueries ).toHaveBeenCalledWith( {
 			queryKey: omnibarAgentsManagerEnabledQuery().queryKey,
 		} );
+	} );
+
+	it( 'loads the chat without a site on a page that has none, ignoring a leftover site ID', async () => {
+		mockedUseShouldLoadAgentsManager.mockReturnValue( {
+			routeIsEnabled: true,
+			isInternalOnly: true,
+		} );
+
+		render( <AgentsManagerLoader pathname="/me" />, { queryClient } );
+
+		expect( await screen.findByRole( 'region', { name: 'Agents Manager' } ) ).toBeVisible();
+		expect( mockedAgentsManager.mock.lastCall?.[ 0 ] ).toEqual(
+			expect.objectContaining( { site: null, currentSiteId: undefined } )
+		);
+		await waitFor( () =>
+			expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe( true )
+		);
+	} );
+
+	it( 'waits for the site ID on a site page', async () => {
+		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, null );
+		mockedUseShouldLoadAgentsManager.mockReturnValue( {
+			routeIsEnabled: true,
+			isInternalOnly: true,
+		} );
+
+		const { container } = render( <AgentsManagerLoader pathname="/sites/example.com/domains" />, {
+			queryClient,
+		} );
+
+		expect( container ).toBeEmptyDOMElement();
+		await waitFor( () =>
+			expect( queryClient.getQueryData( omnibarAgentsManagerEnabledQuery().queryKey ) ).toBe(
+				false
+			)
+		);
 	} );
 
 	it( 'publishes disabled eligibility outside the allowlist', async () => {

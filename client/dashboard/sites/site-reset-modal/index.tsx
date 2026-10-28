@@ -92,7 +92,7 @@ function SiteResetContent( {
 
 	return (
 		<VStack spacing={ 6 }>
-			<Notice variant="warning" density="medium">
+			<Notice variant="warning">
 				<Text>
 					{ createInterpolateElement(
 						__(

@@ -9,5 +9,5 @@ module.exports = () => ( {
 			},
 		],
 	],
-	plugins: [ [ '@babel/transform-runtime', { regenerator: false } ] ],
+	plugins: [ '@babel/transform-runtime' ],
 } );

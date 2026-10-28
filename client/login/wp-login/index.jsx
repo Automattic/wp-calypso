@@ -26,7 +26,7 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
-import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
+import { useEntryClarityLoginTreatment } from 'calypso/lib/signup/use-entry-clarity-experiment';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -538,9 +538,9 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
-	// Logged-out visitors on the main login view, the same audience as the signup step. Gravatar-
-	// powered logins have their own layout, which the treatment does not change.
-	const isEntryClarityTreatment = useEntryClarityExperiment(
+	// Logged-out visitors on the main login view. Gravatar-powered logins have their own layout,
+	// which the treatment does not change.
+	const isEntryClarityTreatment = useEntryClarityLoginTreatment(
 		props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient
 	);
 
