@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
@@ -9,7 +8,7 @@ import EventCard, { SingleEventCard } from './event-card';
 import { getLeadMatchingContactAnnouncement } from './events';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
-import MatchingProfilePreview from './matching-profile-preview';
+import MatchingProfileCard from './matching-profile-card';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -28,7 +27,7 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
-	leadMatching?: string;
+	leadMatching: string;
 	/** A URL, or a callback that opens contact support in-app. */
 	contactSupport: string | ( () => void );
 	aiMcp: string;
@@ -46,7 +45,7 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
-	showMatchingProfilePreview?: boolean;
+	showMatchingProfileCard?: boolean;
 	matchingProfileAnswered?: number;
 	showContactOptionsAnnouncement?: boolean;
 	/** Shows the Pressable introductory offer in the news column. */
@@ -80,7 +79,7 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
-	showMatchingProfilePreview = false,
+	showMatchingProfileCard = false,
 	matchingProfileAnswered = 0,
 	showContactOptionsAnnouncement = false,
 	isEligibleForPressableIntroOffer,
@@ -105,7 +104,6 @@ export default function AgencyOverviewContent( {
 	const isLocked = isPending || isRejected || ! canAccessEarnings;
 	const lockedNote = isPending ? __( 'Unlocks when your account is activated' ) : undefined;
 	const certification = useCertification();
-	const isDesignPreview = isEnabled( 'a4a-lead-matching-design-preview' );
 
 	return (
 		<Grid columns={ isSmallViewport ? 1 : 2 } gap={ isSmallViewport ? 'lg' : 'xl' }>
@@ -135,12 +133,11 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
-				{ ( showMatchingProfilePreview || isDesignPreview ) && links.leadMatching && (
-					<MatchingProfilePreview
+				{ showMatchingProfileCard && (
+					<MatchingProfileCard
 						href={ links.leadMatching }
 						answered={ matchingProfileAnswered }
 						agencyId={ agencyId }
-						isDesignPreview={ isDesignPreview }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }

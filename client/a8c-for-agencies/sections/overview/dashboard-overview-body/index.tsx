@@ -87,7 +87,7 @@ function DashboardOverviewBodyContent( {
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
-			showMatchingProfilePreview={
+			showMatchingProfileCard={
 				canAccessLeadMatching &&
 				agency.profile?.listing_details?.is_available === true &&
 				answeredRequiredFieldCount !== undefined &&

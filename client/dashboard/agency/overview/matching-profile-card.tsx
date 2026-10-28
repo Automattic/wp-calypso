@@ -1,7 +1,6 @@
 import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { people } from '@wordpress/icons';
-import { addQueryArgs } from '@wordpress/url';
 import OverviewCard from '../../components/overview-card';
 import { REQUIRED_LEAD_MATCHING_FIELDS } from '../partner-directory/lead-matching/form-data';
 import type { RecordTracksEvent } from '../tiers/types';
@@ -18,16 +17,6 @@ function getMatchingPromptCopy( answered: number ) {
 			action: __( 'Set up preferences' ),
 		};
 	}
-	if ( answered === total ) {
-		return {
-			description: sprintf(
-				/* translators: %(answered)d is the number of answered questions and %(total)d is the total. */
-				__( '%(answered)d of %(total)d questions answered.' ),
-				{ answered, total }
-			),
-			action: __( 'Review preferences' ),
-		};
-	}
 	return {
 		description: sprintf(
 			/* translators: %(answered)d is the number of answered questions, %(total)d is the total and %(left)d is the number remaining. */
@@ -40,23 +29,17 @@ function getMatchingPromptCopy( answered: number ) {
 	};
 }
 
-export default function MatchingProfilePreview( {
+export default function MatchingProfileCard( {
 	href,
 	answered,
 	agencyId,
-	isDesignPreview = false,
 	recordTracksEvent,
 }: {
 	href: string;
 	answered: number;
 	agencyId?: number;
-	isDesignPreview?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 } ) {
-	// Calypso flags use a literal plus as an enable prefix, rather than a space.
-	const searchParams = new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) );
-	const flags = searchParams.get( 'flags' );
-	const matchingHref = flags ? addQueryArgs( href, { flags } ) : href;
 	const total = REQUIRED_LEAD_MATCHING_FIELDS.length;
 	const copy = getMatchingPromptCopy( answered );
 
@@ -86,11 +69,10 @@ export default function MatchingProfilePreview( {
 						__next40pxDefaultSize
 						size="compact"
 						variant="secondary"
-						href={ matchingHref }
+						href={ href }
 						onClick={ () =>
 							recordTracksEvent?.( 'calypso_a4a_overview_lead_matching_click', {
 								agency_id: agencyId,
-								is_design_preview: isDesignPreview,
 							} )
 						}
 					>
