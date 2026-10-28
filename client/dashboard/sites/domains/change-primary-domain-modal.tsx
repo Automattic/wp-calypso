@@ -91,6 +91,7 @@ export default function ChangePrimaryDomainModal( {
 						label={ __( 'Primary site address' ) }
 						value={ selectedDomain }
 						options={ options }
+						disabled={ setPrimaryDomainMutation.isPending }
 						onChange={ setSelectedDomain }
 					/>
 					<ButtonStack justify="flex-end">
