@@ -28,6 +28,8 @@ declare const agentsManagerData:
 			isDevMode?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
 			isA11n?: boolean;
+			/** Set by WordPress.com where only Automatticians get the chat; shows the "A8C Only" label. */
+			isInternalOnly?: boolean;
 			/**
 			 * The site's own usage-tracking opt-in, where the host has one (a WooCommerce
 			 * store's). `false` stops every Tracks event; absent means allowed. Also sent
