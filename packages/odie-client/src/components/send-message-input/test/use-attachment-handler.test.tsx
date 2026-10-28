@@ -162,6 +162,40 @@ describe( 'useAttachmentHandler', () => {
 	} );
 } );
 
+describe( 'useAttachmentHandler – attach button', () => {
+	const openPicker = ( onClick: () => void ) => {
+		const click = jest
+			.spyOn( HTMLInputElement.prototype, 'click' )
+			.mockImplementation( () => undefined );
+		onClick();
+		click.mockRestore();
+		return document.body.querySelector< HTMLInputElement >( 'input[type="file"]' );
+	};
+
+	it( 'keeps the file input in the document until a file is picked', async () => {
+		const { result } = renderHook( () => useAttachmentHandler() );
+		const input = openPicker( result.current.attachmentAction.onClick );
+
+		expect( input ).not.toBeNull();
+
+		const file = new File( [ 'jpeg' ], 'image.jpg', { type: 'image/jpeg' } );
+		Object.defineProperty( input, 'files', { value: [ file ] } );
+		await act( async () => input!.dispatchEvent( new Event( 'change' ) ) );
+
+		expect( document.body.contains( input ) ).toBe( false );
+		expect( getPreviewFiles( result.current.attachmentPreviews ) ).toEqual( [ file ] );
+	} );
+
+	it( 'removes the file input when the picker is cancelled', () => {
+		const { result } = renderHook( () => useAttachmentHandler() );
+		const input = openPicker( result.current.attachmentAction.onClick );
+
+		input!.dispatchEvent( new Event( 'cancel' ) );
+
+		expect( document.body.contains( input ) ).toBe( false );
+	} );
+} );
+
 describe( 'useAttachmentHandler – chat token', () => {
 	const withContext = ( overrides: Record< string, unknown > ) =>
 		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
