@@ -28,7 +28,13 @@ const noop = () => {};
  * links and DataViews never shows the "more actions" menu. Everything else (renewal, DNS, contact
  * information, auto-renew, email, transfers) lives on the domain's Settings page.
  */
-export const useActions = ( { sites }: { sites?: Site[] } ) => {
+export const useActions = ( {
+	sites,
+	onChangePrimaryDomain,
+}: {
+	sites?: Site[];
+	onChangePrimaryDomain?: () => void;
+} ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
 	const hasEnTranslation = useHasEnTranslation();
@@ -70,6 +76,20 @@ export const useActions = ( { sites }: { sites?: Site[] } ) => {
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
+			},
+			{
+				id: 'change-primary-domain',
+				isPrimary: true,
+				/* translators: Row action on the primary site address that opens the dialog to pick another one. */
+				label: __( 'Change primary' ),
+				callback: ( items: DomainSummary[] ) => {
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'change-primary-domain',
+						domain: items[ 0 ].domain,
+					} );
+					onChangePrimaryDomain?.();
+				},
+				isEligible: ( item: DomainSummary ) => !! onChangePrimaryDomain && item.primary_domain,
 			},
 			{
 				id: 'manage-domain',
@@ -135,7 +155,7 @@ export const useActions = ( { sites }: { sites?: Site[] } ) => {
 				},
 			},
 		],
-		[ router, sitesByBlogId, recordTracksEvent, hasEnTranslation ]
+		[ router, sitesByBlogId, recordTracksEvent, hasEnTranslation, onChangePrimaryDomain ]
 	);
 
 	return actions;

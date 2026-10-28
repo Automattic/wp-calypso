@@ -1,8 +1,18 @@
-import { WhoisType, DomainSubtype, DomainStatus, DomainTypes } from '@automattic/api-core';
+import {
+	DotcomFeatures,
+	WhoisType,
+	DomainSubtype,
+	DomainStatus,
+	DomainTypes,
+} from '@automattic/api-core';
 import { isAfter, subMinutes, subDays } from 'date-fns';
+import { hasPlanFeature } from './site-features';
+import { userHasFlag } from './user';
 import type {
 	Domain,
 	DomainSummary,
+	Site,
+	User,
 	WhoisDataEntry,
 	TitanEmailSubscription,
 	GoogleEmailSubscription,
@@ -360,6 +370,25 @@ export function isTldInMaintenance( domain: Domain ) {
  * Returns true while the backend's set-primary-domain job is still expected to
  * make this domain the site's primary address. Used to show a "setting up" notice.
  */
+export function canUserSetPrimaryDomain( site: Site, user: User ): boolean {
+	const primaryWithPlanOnly = userHasFlag( user, 'calypso_allow_nonprimary_domains_without_plan' );
+	return (
+		! ( primaryWithPlanOnly && site.plan?.is_free ) &&
+		hasPlanFeature( site, DotcomFeatures.SET_PRIMARY_CUSTOM_DOMAIN )
+	);
+}
+
+export function isPrimaryDomainCandidate( domain: DomainSummary ): boolean {
+	return (
+		( domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DEFAULT_ADDRESS ) &&
+		domain.can_set_as_primary &&
+		! domain.primary_domain &&
+		domain.domain_status.id !== DomainStatus.CONNECTION_ERROR
+	);
+}
+
 export function isPendingPrimaryDomain( domain: DomainSummary ): boolean {
 	// A payload cached before the field existed must not show the notice.
 	return domain.set_primary_domain_pending === true;
