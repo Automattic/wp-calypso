@@ -56,6 +56,11 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 		[ flow, query, isWooCommerceIntent ]
 	);
 
+	const wooTracksProps = useMemo( () => {
+		const blueprintHost = getBlueprintUrlHost( query );
+		return { ...tracksProps, ...( blueprintHost && { blueprint_host: blueprintHost } ) };
+	}, [ tracksProps, query ] );
+
 	const wooTracksCountRef = useRef( 0 );
 	const recordWooTracksMessage = useCallback(
 		( data: unknown ) => {
@@ -65,14 +70,9 @@ export const PlaygroundStep: StepType = ( { navigation, flow, stepName } ) => {
 			}
 
 			wooTracksCountRef.current++;
-			const blueprintHost = getBlueprintUrlHost( query );
-			recordTracksEvent( event.name, {
-				...tracksProps,
-				...( blueprintHost && { blueprint_host: blueprintHost } ),
-				...event.properties,
-			} );
+			recordTracksEvent( event.name, { ...wooTracksProps, ...event.properties } );
 		},
-		[ tracksProps, query ]
+		[ wooTracksProps ]
 	);
 
 	useEffect( () => {
