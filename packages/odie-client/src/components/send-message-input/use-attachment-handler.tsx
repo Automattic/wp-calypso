@@ -239,12 +239,17 @@ export const useAttachmentHandler = () => {
 			input.accept = SUPPORTED_ATTACHMENT_MIME_TYPES.concat( SUPPORTED_ATTACHMENT_EXTENSIONS ).join(
 				', '
 			);
-			input.onchange = ( e ) => {
-				const files = ( e.target as HTMLInputElement ).files;
+			// iOS Safari never fires `change` on a file input that isn't in the document.
+			input.style.display = 'none';
+			document.body.appendChild( input );
+			input.onchange = () => {
+				const files = input.files;
+				input.remove();
 				if ( files?.length ) {
 					handleFileUpload( Array.from( files ) );
 				}
 			};
+			input.addEventListener( 'cancel', () => input.remove() );
 			input.click();
 		},
 		variant: 'ghost' as const,
