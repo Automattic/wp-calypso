@@ -293,14 +293,19 @@ describe( 'WooHumanSupportRoutingStep', () => {
 			expect( startChat ).toHaveBeenCalled();
 		} );
 
-		it( 'points to the forums', async () => {
+		it( "points to the forums for a Woo product when the merchant isn't paying", async () => {
 			mockWooHandoff = merchant( { supportTier: 'tier_3', isPaying: false } );
 			renderStep();
 
-			await userEvent.selectOptions( question(), 'start-scale-store' );
+			await userEvent.selectOptions( question(), 'technical-support' );
+			await userEvent.selectOptions(
+				screen.getByLabelText( 'Product' ),
+				'woocommerce-subscriptions'
+			);
+			await userEvent.selectOptions( screen.getByLabelText( 'Store' ), 'https://one.example' );
 			await userEvent.click( continueButton() );
 
-			expect( lastDecision() ).toMatchObject( { route: 'forums', row_id: 14 } );
+			expect( lastDecision() ).toMatchObject( { route: 'forums', row_id: 15 } );
 			expect( screen.getByText( 'Ask the WooCommerce community' ) ).toBeInTheDocument();
 			expect( screen.getByRole( 'link', { name: /community forums/ } ) ).toHaveAttribute(
 				'href',
