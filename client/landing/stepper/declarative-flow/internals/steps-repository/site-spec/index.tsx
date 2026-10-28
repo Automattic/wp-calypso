@@ -340,17 +340,23 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			const specConfirmStartTime = Date.now();
 			const elapsedMs = () => Date.now() - specConfirmStartTime;
 			let responseBlogId: number | undefined;
-			// The design the user picked in the site plan. The server builds a picked design on
-			// the DSL graph, so the generation screen waits for that graph too.
-			const designCandidate = getDesignCandidate(
-				( specData as { designCandidateId?: unknown } | null )?.designCandidateId
-			);
-			const graph = designCandidate ? 'dsl' : getBuildWowGraph( queryParams );
+			// The design the user picked in the site-spec widget, only while the flag is on. The
+			// server builds a picked design on the DSL graph when it can continue it, and designs
+			// the site again when it cannot (for example after the design expired), so the graph
+			// stays the one asked for and a retry can send the same pick.
+			const designCandidate = config.isEnabled( DESIGN_CANDIDATES_FLAG )
+				? getDesignCandidate(
+						( specData as { designCandidateId?: unknown } | null )?.designCandidateId
+					)
+				: undefined;
+			const graph = getBuildWowGraph( queryParams );
 
 			try {
 				logBuildWowEvent( 'spec_confirm_request_start', {
 					spec_id: specId,
 					site_identifier: buildWowSiteIdentifier,
+					graph: graph ?? null,
+					design_candidate: designCandidate ?? null,
 				} );
 
 				const response = await requestBuildWowSite(
@@ -460,7 +466,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 
 	useEffect( () => {
 		if ( activeFlow === 'build-wow' && buildWowSpecId && buildWowSiteIdentifier ) {
-			// The site plan's build URL carries the design the user picked.
+			// The widget's build URL carries the design the user picked.
 			handleBuildWowSpecConfirm( {
 				spec_id: buildWowSpecId,
 				designCandidateId: queryParams.get( 'design_candidate' ) ?? undefined,
