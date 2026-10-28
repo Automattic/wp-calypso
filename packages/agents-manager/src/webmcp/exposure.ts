@@ -7,7 +7,7 @@ import {
 	isWebMcpMutatingServerAbilityName,
 	isWebMcpServerAbilityName,
 } from './ability-names';
-import type { Ability } from '../abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 /**
  * Transitional allowlist for client abilities that carry no exposure flag yet.

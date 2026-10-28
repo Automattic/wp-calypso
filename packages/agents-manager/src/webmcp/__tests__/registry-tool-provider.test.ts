@@ -1,6 +1,6 @@
 import { executeAbility, getAbilities } from '@wordpress/abilities';
 import { createRegistryToolProvider } from '../registry-tool-provider';
-import type { Ability } from '../../abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@wordpress/abilities', () => ( {
 	executeAbility: jest.fn(),

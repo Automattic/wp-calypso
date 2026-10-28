@@ -11,14 +11,13 @@ import {
 	shouldExposeWebMcpAbility,
 } from './exposure';
 import type { WebMcpToolProvider } from './compose-tool-providers';
-import type { Ability } from '@wordpress/abilities';
 import type {
 	WebMcpAdapter,
 	WebMcpExecutionContext,
 	WebMcpModelContext,
 	WebMcpTool,
 } from './types';
-import type { Ability } from '../abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 type Registration = {
 	abortController: AbortController;

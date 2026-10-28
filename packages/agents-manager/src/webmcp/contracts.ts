@@ -148,7 +148,7 @@ function prepareApplyBlockEditsInput(
 					...( typeof placement.index === 'number' ? { index: placement.index + offset } : {} ),
 					block: toBlockData( block ),
 				} ) );
-		  } )
+			} )
 		: undefined;
 	const reverseMap = Object.fromEntries(
 		Array.from( context.knownBlockClientIds, ( clientId ) => [ clientId, clientId ] )
@@ -160,7 +160,6 @@ function prepareApplyBlockEditsInput(
 		...( Array.isArray( input.deletes ) ? { deletes: input.deletes } : {} ),
 		...( typeof input.summary === 'string' ? { summary: input.summary } : {} ),
 		reverseMap,
-		suppressAssistantMessage: true,
 	};
 }
 

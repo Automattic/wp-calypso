@@ -347,18 +347,25 @@ function AgentSetup( {
 	}
 
 	return (
-		<AgentDock
-			emptyViewSuggestions={ emptyViewSuggestions }
-			markdownComponents={ loadedProviders.markdownComponents || {} }
-			markdownExtensions={ loadedProviders.markdownExtensions || {} }
-			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
-			useSuggestions={ loadedProviders.useSuggestions }
-			getChatComponent={ loadedProviders.getChatComponent }
-			interactiveUiCatalogs={ loadedProviders.interactiveUiCatalogs }
-			siteBuildUtils={ loadedProviders.siteBuildUtils }
-			transformMessages={ loadedProviders.transformMessages }
-			useCheckpoint={ loadedProviders.useCheckpoint }
-			capabilities={ loadedProviders.capabilities }
-		/>
+		<>
+			{ loadedProviders.useAbilitiesSetup && canExposeWebMcpTools() && (
+				<WebMcpProviderAbilitiesSetup
+					useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+				/>
+			) }
+			<AgentDock
+				emptyViewSuggestions={ emptyViewSuggestions }
+				markdownComponents={ loadedProviders.markdownComponents || {} }
+				markdownExtensions={ loadedProviders.markdownExtensions || {} }
+				useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
+				useSuggestions={ loadedProviders.useSuggestions }
+				getChatComponent={ loadedProviders.getChatComponent }
+				interactiveUiCatalogs={ loadedProviders.interactiveUiCatalogs }
+				siteBuildUtils={ loadedProviders.siteBuildUtils }
+				transformMessages={ loadedProviders.transformMessages }
+				useCheckpoint={ loadedProviders.useCheckpoint }
+				capabilities={ loadedProviders.capabilities }
+			/>
+		</>
 	);
 }

@@ -10,7 +10,6 @@ const INERT_CHAT_ACTIONS = {
 	getAgentManager,
 	isProcessing: false,
 	setIsThinking: () => {},
-	deleteMarkedMessages: () => {},
 	getSessionId: () => undefined,
 	setIsBuildingSite: () => {},
 	setThinkingMessage: () => {},

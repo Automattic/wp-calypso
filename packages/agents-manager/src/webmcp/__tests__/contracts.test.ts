@@ -4,7 +4,7 @@ import {
 	getWebMcpInputSchema,
 	normalizeInputSchema,
 } from '../contracts';
-import type { Ability } from '../../abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@wordpress/blocks', () => ( { parse: jest.fn() } ) );
 

@@ -5,7 +5,7 @@ import {
 	selectExposedAbilities,
 	shouldExposeWebMcpAbility,
 } from '../exposure';
-import type { Ability } from '../../abilities/types';
+import type { Ability } from '@wordpress/abilities';
 
 const createClientAbility = ( overrides: Partial< Ability > = {} ): Ability => ( {
 	name: 'big-sky/apply-block-edits',

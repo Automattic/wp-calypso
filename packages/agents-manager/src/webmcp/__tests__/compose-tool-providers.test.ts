@@ -1,6 +1,6 @@
 import { mergeToolProviders } from '../compose-tool-providers';
-import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
+import type { Ability } from '@wordpress/abilities';
 
 const createAbility = ( name: string, label = name ): Ability => ( {
 	name,

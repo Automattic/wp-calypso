@@ -159,7 +159,7 @@ definition. An in-flight provider execution cannot currently be cancelled becaus
 `ToolProvider.executeAbility()` has no signal.
 
 The edit tool should be preceded by a fresh block-tree read. This keeps its targets aligned with the
-current editor and refreshes the identity map used by the Big Sky callback.
+current editor and refreshes the identity map the callback resolves through.
 
 To expose another ability, prefer the flags: `meta.public` for a read, `meta.webmcp.public` for a
 write, after verifying its complete implementation, permissions, annotations, and execution path.

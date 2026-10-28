@@ -1,6 +1,6 @@
 import { findAbilityByName } from '../abilities/ability-name';
-import type { Ability } from '../abilities/types';
 import type { ToolProvider } from '../extension-types';
+import type { Ability } from '@wordpress/abilities';
 
 type ProvidedAbility = {
 	ability: Ability;

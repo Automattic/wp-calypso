@@ -2,9 +2,9 @@ import { getAbilities, executeAbility } from '@wordpress/abilities';
 import apiFetch from '@wordpress/api-fetch';
 import { subscribe } from '@wordpress/data';
 import { mountWebMcpTools } from '../mount';
-import type { Ability } from '../../abilities/types';
 import type { ToolProvider } from '../../extension-types';
 import type { WebMcpAdapter, WebMcpModelContext, WebMcpTool } from '../types';
+import type { Ability } from '@wordpress/abilities';
 
 jest.mock( '@wordpress/api-fetch' );
 jest.mock( '@wordpress/blocks', () => ( { parse: jest.fn() } ) );
