@@ -146,9 +146,7 @@
 		"typecheck-apps": "find apps -depth 2 -name tsconfig.json | xargs -n 1 -P 4 -I {} yarn tsc --noEmit --project {}",
 		"typecheck-packages": "tsc --build packages/tsconfig.json",
 		"vscode:link": "node bin/set-up-vs-code.js",
-		"vscode:unlink": "node bin/set-up-vs-code.js --unlink",
-		"whybundled": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-client && whybundled client/stats.json",
-		"whybundled:server": "NODE_ENV=production CALYPSO_ENV=production EMIT_STATS=withreasons CONCATENATE_MODULES=false yarn run build-server && whybundled client/stats-server.json"
+		"vscode:unlink": "node bin/set-up-vs-code.js --unlink"
 	},
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
@@ -322,7 +320,6 @@
 		"webpack": "^5.111.1",
 		"webpack-bundle-analyzer": "^5.4.0",
 		"webpack-cli": "^7.2.3",
-		"whybundled": "^2.0.0",
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
