@@ -79,7 +79,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
 		expect(
 			screen.getByText(
-				'busybearscleaning.com is copied and running on WordPress.com. It stays private until you point your domain to it.'
+				'busybearscleaning.com is copied and running on WordPress.com. It stays private until you launch it.'
 			)
 		).toBeVisible();
 

@@ -268,7 +268,7 @@ export function StaticSiteImportNotice( {
 						? sprintf(
 								/* translators: %s: the domain of the site that was moved, e.g. example.com. */
 								__(
-									'%s is copied and running on WordPress.com. It stays private until you point your domain to it.'
+									'%s is copied and running on WordPress.com. It stays private until you launch it.'
 								),
 								sourceHost
 							)
