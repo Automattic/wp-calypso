@@ -1,6 +1,10 @@
 import { ODIE_ALLOWED_BOTS } from './constants';
 import type { CheckoutSupportVariation } from '@automattic/data-stores';
-import type { SmoochIntegrationKey, ZendeskConversation } from '@automattic/zendesk-client';
+import type {
+	SmoochIntegrationKey,
+	ZendeskConversation,
+	ZendeskTicketFields,
+} from '@automattic/zendesk-client';
 import type { ComponentType, ReactNode, PropsWithChildren, SetStateAction } from 'react';
 
 export type OdieAssistantContextInterface = {
@@ -313,10 +317,23 @@ export type HumanSupportRequest = {
 	escalationOnSecondAttempt?: boolean;
 };
 
+/**
+ * What the host knows about one request for a human, sent when its Zendesk conversation is
+ * created so routing can use it from the start.
+ */
+export type HumanSupportChatValues = {
+	/** The site the request is about, as the Site URL. Defaults to the selected site or the page. */
+	siteUrl?: string | null;
+	/** Zendesk ticket fields by field ID. */
+	ticketFields?: ZendeskTicketFields;
+	/** Tags added to the product's conversation tags. */
+	tags?: string[];
+};
+
 export type HumanSupportRoutingStepProps = {
 	request: HumanSupportRequest;
-	/** Starts the Zendesk chat for the request. */
-	startChat: () => void;
+	/** Starts the Zendesk chat for the request, with what the step learned about it. */
+	startChat: ( values?: HumanSupportChatValues ) => void;
 	/** Drops the request, for example after sending the user somewhere else. */
 	dismiss: () => void;
 };

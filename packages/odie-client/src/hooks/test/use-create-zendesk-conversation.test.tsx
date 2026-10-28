@@ -33,6 +33,13 @@ jest.mock( 'react-router-dom', () => ( {
 } ) );
 
 jest.mock( '@automattic/zendesk-client', () => ( {
+	// Like the real helper: empty values are left out.
+	getTicketFieldMetadata: ( fields: Record< string, unknown > ) =>
+		Object.fromEntries(
+			Object.entries( fields )
+				.filter( ( [ , value ] ) => value !== undefined && value !== null && value !== '' )
+				.map( ( [ id, value ] ) => [ `zen:ticket_field:${ id }`, value ] )
+		),
 	useUpdateZendeskUserFields: () => ( {
 		isPending: false,
 		mutateAsync: mockSubmitUserFields,
@@ -314,6 +321,70 @@ describe( 'useCreateZendeskConversation — conversation tags', () => {
 
 		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata ).not.toHaveProperty(
 			'zen:ticket:tags'
+		);
+	} );
+} );
+
+describe( 'useCreateZendeskConversation — what the host knows about the request', () => {
+	const websiteField = 'zen:ticket_field:22054927';
+
+	beforeEach( () => {
+		smoochCreateConversation.mockResolvedValueOnce( { id: 'conv-1', metadata: {} } );
+	} );
+
+	it( 'uses the given site as the Site URL', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( {
+			createdFrom: 'automatic_escalation',
+			siteUrl: 'https://store.example',
+		} );
+
+		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata[ websiteField ] ).toBe(
+			'https://store.example'
+		);
+		expect( mockSubmitUserFields ).toHaveBeenCalledWith(
+			expect.objectContaining( { messaging_url: 'https://store.example' } )
+		);
+	} );
+
+	it( 'keeps the selected site without one', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata[ websiteField ] ).toBe(
+			'https://example.com'
+		);
+	} );
+
+	it( 'adds the given ticket fields', async () => {
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( {
+			createdFrom: 'automatic_escalation',
+			ticketFields: { 25254766: 'woocommerce_subscriptions', 999: '' },
+		} );
+
+		const { metadata } = smoochCreateConversation.mock.calls[ 0 ][ 0 ];
+		expect( metadata ).toMatchObject( {
+			'zen:ticket_field:25254766': 'woocommerce_subscriptions',
+		} );
+		expect( metadata ).not.toHaveProperty( 'zen:ticket_field:999' );
+	} );
+
+	it( "adds the given tags to the product's tags", async () => {
+		const context = ( useOdieAssistantContext as jest.Mock )();
+		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			...context,
+			zendeskConversationTags: [ 'woo_support_flow_help_center' ],
+		} );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( {
+			createdFrom: 'automatic_escalation',
+			tags: [ 'is_emergency', 'woo_support_flow_help_center' ],
+		} );
+
+		expect( smoochCreateConversation.mock.calls[ 0 ][ 0 ].metadata[ 'zen:ticket:tags' ] ).toBe(
+			'woo_support_flow_help_center,is_emergency'
 		);
 	} );
 } );

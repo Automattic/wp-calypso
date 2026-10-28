@@ -33,7 +33,7 @@ import { ThinkingPlaceholder } from './thinking-placeholder';
 import { getMessageUniqueIdentifier } from './utils/get-message-unique-identifier';
 import { ZendeskTypingIndicator } from './zendesk-typing-indicator';
 import ChatMessage from '.';
-import type { CurrentUser, Message } from '../../types';
+import type { CurrentUser, HumanSupportChatValues, Message } from '../../types';
 interface ChatMessagesProps {
 	currentUser: CurrentUser;
 }
@@ -209,18 +209,23 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	] );
 
 	const RoutingStep = humanSupportRouting?.Step;
-	const startRoutedChat = () => {
+	const startRoutedChat = ( values?: HumanSupportChatValues ) => {
 		if ( ! pendingHumanSupportRequest ) {
 			return;
 		}
 		const { createdFrom, isFromError, errorReason, escalationOnSecondAttempt } =
 			pendingHumanSupportRequest;
+		// Only the known values, in case a step passes `startChat` straight to `onClick`.
+		const { siteUrl, ticketFields, tags } = values ?? {};
 		setPendingHumanSupportRequest( null );
 		createZendeskConversation( {
 			createdFrom,
 			isFromError,
 			errorReason,
 			escalationOnSecondAttempt,
+			siteUrl,
+			ticketFields,
+			tags,
 		} );
 	};
 

@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import {
+	getWooChatValues,
 	getWooRoutingInput,
 	isProductAsked,
 	isProductRequired,
@@ -123,7 +124,7 @@ export function WooHumanSupportRoutingStep( {
 
 		// Until the ticket and email routes are built (WOOPUBR-2404), they start a chat, as every
 		// request does today.
-		startChat();
+		startChat( getWooChatValues( { storeUrl, product: showProduct ? product : null } ) );
 	};
 
 	if ( outcome ) {

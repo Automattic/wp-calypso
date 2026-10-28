@@ -1,3 +1,4 @@
+import { ZENDESK_CUSTOM_FIELD_PRODUCT } from '@automattic/zendesk-client';
 import type {
 	HumanRoutingFlags,
 	HumanRoutingInput,
@@ -5,6 +6,7 @@ import type {
 	ProductSupportType,
 	SupportTier,
 } from './types';
+import type { HumanSupportChatValues } from '@automattic/odie-client';
 
 /** The synthetic product the support form uses for WooCommerce Core itself. */
 export const WOO_CORE_PRODUCT_SLUG = 'wc-core';
@@ -21,6 +23,8 @@ export type WooHandoffProduct = {
 	isRevShare: boolean;
 	/** Where an externally supported product takes support requests. */
 	externalSupportUrl?: string | null;
+	/** The value of Zendesk's Product field for this product, as the support form sends it. */
+	zendeskSlug?: string | null;
 };
 
 /**
@@ -92,5 +96,25 @@ export function getWooRoutingInput( {
 			isRevShare: product.isRevShare,
 			isCore: product.slug === WOO_CORE_PRODUCT_SLUG,
 		},
+	};
+}
+
+/** A typed store address without a scheme gets one, as the support form does. */
+export const normalizeStoreUrl = ( url: string ) =>
+	/^https?:\/\//i.test( url ) ? url : `https://${ url }`;
+
+/** What the merchant told the Help Center, sent to Zendesk when the chat is created. */
+export function getWooChatValues( {
+	storeUrl,
+	product,
+}: {
+	storeUrl: string | null;
+	product: WooHandoffProduct | null;
+} ): HumanSupportChatValues {
+	return {
+		...( storeUrl && { siteUrl: normalizeStoreUrl( storeUrl ) } ),
+		...( product?.zendeskSlug && {
+			ticketFields: { [ ZENDESK_CUSTOM_FIELD_PRODUCT ]: product.zendeskSlug },
+		} ),
 	};
 }

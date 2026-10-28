@@ -32,6 +32,7 @@ const merchant = ( overrides: Partial< WooHandoffData > = {} ): WooHandoffData =
 			name: 'WooCommerce Subscriptions',
 			supportType: 'woo',
 			isRevShare: false,
+			zendeskSlug: 'woocommerce_subscriptions',
 		},
 		{
 			slug: 'stripe-tax',
@@ -151,6 +152,28 @@ describe( 'WooHumanSupportRoutingStep', () => {
 			product: 'woocommerce-subscriptions',
 			has_store: true,
 		} );
+		// The store and product go to Zendesk with the chat.
+		expect( startChat ).toHaveBeenCalledWith( {
+			siteUrl: 'https://two.example',
+			ticketFields: { 25254766: 'woocommerce_subscriptions' },
+		} );
+	} );
+
+	it( 'sends a typed store address with https://', async () => {
+		renderStep();
+
+		await userEvent.selectOptions( question(), 'technical-support' );
+		await userEvent.selectOptions(
+			screen.getByLabelText( 'Product' ),
+			'woocommerce-subscriptions'
+		);
+		await userEvent.selectOptions( screen.getByLabelText( 'Store' ), 'another-site' );
+		await userEvent.type( screen.getByLabelText( 'Store address' ), 'other.example' );
+		await userEvent.click( continueButton() );
+
+		expect( startChat ).toHaveBeenCalledWith(
+			expect.objectContaining( { siteUrl: 'https://other.example' } )
+		);
 	} );
 
 	it( 'asks for the address of another site', async () => {
