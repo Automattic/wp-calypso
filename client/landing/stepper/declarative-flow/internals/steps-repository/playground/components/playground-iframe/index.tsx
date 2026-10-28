@@ -11,7 +11,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { getBlueprintID, getBlueprintLabelForTracking } from '../../lib/blueprint';
 import { BlueprintLoadError } from '../../lib/blueprint-load-error';
 import { INITIAL_BOOT_PROGRESS } from '../../lib/boot-progress';
-import { PLAYGROUND_HOST } from '../../lib/constants';
+import { PLAYGROUND_ORIGINS } from '../../lib/constants';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
 import { PlaygroundIntro } from '../playground-intro';
@@ -95,7 +95,7 @@ export function PlaygroundIframe( {
 
 		const handleMessage = ( event: MessageEvent ) => {
 			if (
-				event.origin === PLAYGROUND_HOST &&
+				PLAYGROUND_ORIGINS.includes( event.origin ) &&
 				isWithinFrame( event.source, iframeRef.current?.contentWindow )
 			) {
 				onPlaygroundMessageRef.current?.( event.data );

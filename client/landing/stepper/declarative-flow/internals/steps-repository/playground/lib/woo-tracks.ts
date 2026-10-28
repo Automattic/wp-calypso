@@ -4,13 +4,22 @@
  * stays off in the store, so Calypso records these as its own events instead:
  *
  * { type: 'woocommerce-playground-tracks', event: 'wcadmin_page_view', properties: { path: 'wc-admin' } }
+ *
+ * `path` is recorded as `woo_path`, since Tracks super props read `path` to
+ * decide whether to attach the selected site's `blog_id`.
  */
 export const WOO_TRACKS_MESSAGE_TYPE = 'woocommerce-playground-tracks';
 
-// Each forwarded event and the one property kept from it.
+// Each forwarded event, the one property kept from it, and the name it is recorded under.
 const WOO_TRACKS_EVENTS = new Map( [
-	[ 'wcadmin_page_view', { name: 'calypso_playground_woo_page_view', property: 'path' } ],
-	[ 'wcadmin_task_view', { name: 'calypso_playground_woo_task_view', property: 'task_name' } ],
+	[
+		'wcadmin_page_view',
+		{ name: 'calypso_playground_woo_page_view', property: 'path', recordAs: 'woo_path' },
+	],
+	[
+		'wcadmin_task_view',
+		{ name: 'calypso_playground_woo_task_view', property: 'task_name', recordAs: 'task_name' },
+	],
 ] );
 
 // Anything in the store can post these, so only short slugs and URL paths are
@@ -22,8 +31,12 @@ const PROPERTY_VALUE_PATTERN = /^[\w./?&=%:+-]{1,200}$/;
 // which would split each page by store.
 const PLAYGROUND_SCOPE_PREFIX = /^\/scope:[^/]+/;
 
-// Code in the store can post these in a loop, so a page load records at most
-// this many.
+// The query string of a classic page can hold search terms and IDs, so only the
+// keys that name the screen are kept.
+const PATH_QUERY_KEYS = [ 'page', 'tab', 'section', 'post_type' ];
+
+// Code in the store can post these in a loop, so each visit to the step records
+// at most this many.
 export const MAX_WOO_TRACKS_EVENTS = 200;
 
 export interface WooTracksEvent {
@@ -64,5 +77,29 @@ export function parseWooTracksMessage( data: unknown ): WooTracksEvent | null {
 		return null;
 	}
 
-	return { name: mapping.name, properties: { [ mapping.property ]: value } };
+	return {
+		name: mapping.name,
+		properties: {
+			[ mapping.recordAs ]: mapping.property === 'path' ? keepScreenQueryKeys( value ) : value,
+		},
+	};
+}
+
+function keepScreenQueryKeys( path: string ): string {
+	const queryStart = path.indexOf( '?' );
+	if ( queryStart === -1 ) {
+		return path;
+	}
+
+	const query = new URLSearchParams( path.slice( queryStart + 1 ) );
+	const screenQuery = new URLSearchParams();
+	for ( const key of PATH_QUERY_KEYS ) {
+		const value = query.get( key );
+		if ( value !== null ) {
+			screenQuery.set( key, value );
+		}
+	}
+
+	const search = screenQuery.toString();
+	return path.slice( 0, queryStart ) + ( search && `?${ search }` );
 }

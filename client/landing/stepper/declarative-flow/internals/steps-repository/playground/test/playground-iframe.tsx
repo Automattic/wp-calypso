@@ -251,15 +251,18 @@ describe( 'PlaygroundIframe messages', () => {
 		expect( onPlaygroundMessage ).toHaveBeenCalledWith( data );
 	} );
 
-	it( 'passes on messages from the WordPress frame inside it', () => {
-		const onPlaygroundMessage = jest.fn();
-		renderIframe( onPlaygroundMessage );
-		const wordPressFrame = appendFrame( getIframe().contentDocument! );
+	it.each( [ PLAYGROUND_ORIGIN, 'https://wpsandbox.wordpress.net' ] )(
+		'passes on messages from the WordPress frame inside it on %s',
+		( origin ) => {
+			const onPlaygroundMessage = jest.fn();
+			renderIframe( onPlaygroundMessage );
+			const wordPressFrame = appendFrame( getIframe().contentDocument! );
 
-		postMessage( { origin: PLAYGROUND_ORIGIN, source: wordPressFrame.contentWindow } );
+			postMessage( { origin, source: wordPressFrame.contentWindow } );
 
-		expect( onPlaygroundMessage ).toHaveBeenCalledWith( data );
-	} );
+			expect( onPlaygroundMessage ).toHaveBeenCalledWith( data );
+		}
+	);
 
 	it.each( [
 		[

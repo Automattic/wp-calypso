@@ -816,7 +816,7 @@ describe( 'Playground', () => {
 				window.dispatchEvent(
 					new MessageEvent( 'message', {
 						data,
-						origin: 'https://playground.wordpress.net',
+						origin: 'https://wpsandbox.wordpress.net',
 						source: screen.getByTitle( 'WordPress Playground' ).contentWindow,
 					} )
 				);
@@ -828,38 +828,51 @@ describe( 'Playground', () => {
 			);
 
 		it.each( [
-			[ 'wcadmin_page_view', { path: 'wc-admin' }, 'calypso_playground_woo_page_view' ],
-			[ 'wcadmin_task_view', { task_name: 'products' }, 'calypso_playground_woo_task_view' ],
-		] )( 'should record %s with the step props', async ( event, properties, eventName ) => {
-			await act( async () => {
-				renderPlaygroundStep(
-					{},
-					{
-						initialEntry:
-							'/setup/onboarding/playground?blueprint=woocommerce&playground=1&intent=woocommerce',
-					}
-				);
-			} );
+			[
+				'wcadmin_page_view',
+				{ path: 'wc-admin' },
+				'calypso_playground_woo_page_view',
+				{ woo_path: 'wc-admin' },
+			],
+			[
+				'wcadmin_task_view',
+				{ task_name: 'products' },
+				'calypso_playground_woo_task_view',
+				{ task_name: 'products' },
+			],
+		] )(
+			'should record %s with the step props',
+			async ( event, properties, eventName, recorded ) => {
+				await act( async () => {
+					renderPlaygroundStep(
+						{},
+						{
+							initialEntry:
+								'/setup/onboarding/playground?blueprint=woocommerce&playground=1&intent=woocommerce',
+						}
+					);
+				} );
 
-			postStoreMessage( {
-				type: 'woocommerce-playground-tracks',
-				event,
-				properties: { ...properties, email: 'shop@example.com' },
-			} );
+				postStoreMessage( {
+					type: 'woocommerce-playground-tracks',
+					event,
+					properties: { ...properties, email: 'shop@example.com' },
+				} );
 
-			expect( getStoreEvents() ).toEqual( [
-				[
-					eventName,
-					{
-						flow: 'onboarding',
-						step: 'playground',
-						blueprint: expect.any( String ),
-						is_woocommerce_intent: true,
-						...properties,
-					},
-				],
-			] );
-		} );
+				expect( getStoreEvents() ).toEqual( [
+					[
+						eventName,
+						{
+							flow: 'onboarding',
+							step: 'playground',
+							blueprint: expect.any( String ),
+							is_woocommerce_intent: true,
+							...recorded,
+						},
+					],
+				] );
+			}
+		);
 
 		it( 'should record the host of a blueprint-url', async () => {
 			const blueprintUrl = encodeURIComponent(
@@ -883,7 +896,7 @@ describe( 'Playground', () => {
 			expect( getStoreEvents() ).toEqual( [
 				[
 					'calypso_playground_woo_page_view',
-					expect.objectContaining( { blueprint_host: 'woocommerce.com', path: 'wc-admin' } ),
+					expect.objectContaining( { blueprint_host: 'woocommerce.com', woo_path: 'wc-admin' } ),
 				],
 			] );
 		} );
