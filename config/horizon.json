@@ -26,6 +26,7 @@
 		"calypso/write-on-flow": true,
 		"catch-js-errors": true,
 		"checkout/stripe-upi": true,
+		"checkout/support-routing": false,
 		"ciab/allow-domain-features": true,
 		"ciab/custom-branding": true,
 		"cookie-banner": true,

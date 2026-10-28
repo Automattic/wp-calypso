@@ -125,15 +125,22 @@ export class SectionImport extends Component {
 			const { importerState, type: importerId } = importItem;
 			let eventProps = {};
 
+			if (
+				importerState === appStates.UPLOAD_FAILURE ||
+				importerState === appStates.IMPORT_FAILURE
+			) {
+				eventProps = {
+					error_code: importItem.errorData?.code,
+					error_type: importItem.errorData?.type,
+					importer_file_type: importItem.importerFileType,
+				};
+			}
+
 			// Log more info about upload failures
 			if ( importerState === appStates.UPLOAD_FAILURE ) {
-				eventProps = {
-					error_code: importItem.errorData.code,
-					error_type: importItem.errorData.type,
-					filesize_range: importItem.file?.size
-						? bytesToFilesizeRange( importItem.file.size )
-						: null,
-				};
+				eventProps.filesize_range = importItem.file?.size
+					? bytesToFilesizeRange( importItem.file.size )
+					: null;
 			}
 
 			if ( importerState === appStates.IMPORT_SUCCESS && ! this.state.latestSuccessImport ) {
@@ -158,6 +165,9 @@ export class SectionImport extends Component {
 			.forEach( ( x ) => this.props.cancelImport( x.site.ID, x.importerId ) );
 	};
 
+	// Recorded once per job, state and error, not on every status poll (see `handleStateChanges`).
+	// A `.zip` upload the server can't process reaches `calypso_importer_import_fail` with
+	// `error_type: 'uploadError'`, not `calypso_importer_upload_fail`.
 	trackImporterStateChange = ( importerState, importerId, eventProps = {} ) => {
 		const stateToEventNameMap = {
 			[ appStates.READY_FOR_UPLOAD ]: 'calypso_importer_view',

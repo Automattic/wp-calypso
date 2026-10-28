@@ -454,7 +454,6 @@ __metadata:
     clsx: "npm:^2.1.1"
     framer-motion: "npm:^12.23.0"
     jsdom: "npm:^24.1.3"
-    lucide-react: "npm:^0.525.0"
     marked: "npm:^16.4.2"
     postcss: "npm:^8.5.30"
     react: "npm:^18.0.0"
@@ -1559,7 +1558,6 @@ __metadata:
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
-    "@popperjs/core": "npm:^2.11.8"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/smooch": "npm:^5.6.0"
     "@wordpress/base-styles": "npm:^9.1.0"
@@ -1604,7 +1602,6 @@ __metadata:
     "@wordpress/i18n": "npm:^6.21.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-test-renderer: "npm:^18.3.1"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
   peerDependencies:
@@ -2434,7 +2431,6 @@ __metadata:
     "@automattic/onboarding": "workspace:^"
     "@automattic/viewport": "workspace:^"
     "@automattic/viewport-react": "workspace:^"
-    "@popperjs/core": "npm:^2.11.8"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/dom": "npm:^4.48.0"
@@ -2446,7 +2442,6 @@ __metadata:
     clsx: "npm:^2.1.1"
     debug: "npm:^4.4.1"
     email-validator: "npm:^2.0.4"
-    react-popper: "npm:^2.3.0"
     typescript: "npm:^6.0.3"
   peerDependencies:
     "@wordpress/data": ^10.48.0
@@ -7416,7 +7411,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/react-is-18@npm:react-is@^18.3.1, react-is@npm:^16.12.0 || ^17.0.0 || ^18.0.0, react-is@npm:^18.0.0, react-is@npm:^18.3.0, react-is@npm:^18.3.1":
+"@jest/react-is-18@npm:react-is@^18.3.1, react-is@npm:^18.0.0, react-is@npm:^18.3.0":
   version: 18.3.1
   resolution: "react-is@npm:18.3.1"
   checksum: f2f1e60010c683479e74c63f96b09fb41603527cd131a9959e2aee1e5a8b0caf270b365e5ca77d4a6b18aae659b60a86150bb3979073528877029b35aecd2072
@@ -8966,13 +8961,6 @@ __metadata:
   version: 1.0.0-next.29
   resolution: "@polka/url@npm:1.0.0-next.29"
   checksum: 0d58e081844095cb029d3c19a659bfefd09d5d51a2f791bc61eba7ea826f13d6ee204a8a448c2f5a855c17df07b37517373ff916dd05801063c0568ae9937684
-  languageName: node
-  linkType: hard
-
-"@popperjs/core@npm:^2.11.8":
-  version: 2.11.8
-  resolution: "@popperjs/core@npm:2.11.8"
-  checksum: 4681e682abc006d25eb380d0cf3efc7557043f53b6aea7a5057d0d1e7df849a00e281cd8ea79c902a35a414d7919621fc2ba293ecec05f413598e0b23d5a1e63
   languageName: node
   linkType: hard
 
@@ -17316,7 +17304,6 @@ __metadata:
     react-router: "npm:7.18.4"
     react-router-dom: "npm:7.18.4"
     react-slider: "npm:^2.0.6"
-    react-test-renderer: "npm:^18.3.1"
     react-transition-group: "npm:^4.4.5"
     redux: "npm:^5.0.1"
     redux-dynamic-middlewares: "npm:^2.2.0"
@@ -23266,7 +23253,6 @@ __metadata:
     lru: "npm:^3.1.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-test-renderer: "npm:^18.3.1"
     tannin: "npm:^1.2.0"
     tslib: "npm:^2.8.1"
     typescript: "npm:^6.0.3"
@@ -25780,7 +25766,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loose-envify@npm:^1.0.0, loose-envify@npm:^1.1.0, loose-envify@npm:^1.4.0":
+"loose-envify@npm:^1.0.0, loose-envify@npm:^1.4.0":
   version: 1.4.0
   resolution: "loose-envify@npm:1.4.0"
   dependencies:
@@ -25859,15 +25845,6 @@ __metadata:
   dependencies:
     inherits: "npm:^2.0.1"
   checksum: b05d4bece5eca2251252034932dfb660a52efe9bd512951c52623f4e3b8f05ae91b7776c559dfe36946b81dc0d8c35245d258cd82d2fdef5b9dd9d9616c7ea19
-  languageName: node
-  linkType: hard
-
-"lucide-react@npm:^0.525.0":
-  version: 0.525.0
-  resolution: "lucide-react@npm:0.525.0"
-  peerDependencies:
-    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 81c4438e2cf1c86ea2ebe0a97b378201512450894283cccce766a89bc6a4e47c8df1d9115d845d98f582bb0a10be31c454aa232520fea35018dac1cd8466ea9b
   languageName: node
   linkType: hard
 
@@ -30306,13 +30283,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-fast-compare@npm:^3.0.1":
-  version: 3.2.2
-  resolution: "react-fast-compare@npm:3.2.2"
-  checksum: 0bbd2f3eb41ab2ff7380daaa55105db698d965c396df73e6874831dbafec8c4b5b08ba36ff09df01526caa3c61595247e3269558c284e37646241cba2b90a367
-  languageName: node
-  linkType: hard
-
 "react-google-charts@npm:^5.2.1":
   version: 5.2.1
   resolution: "react-google-charts@npm:5.2.1"
@@ -30446,20 +30416,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-popper@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "react-popper@npm:2.3.0"
-  dependencies:
-    react-fast-compare: "npm:^3.0.1"
-    warning: "npm:^4.0.2"
-  peerDependencies:
-    "@popperjs/core": ^2.0.0
-    react: ^16.8.0 || ^17 || ^18
-    react-dom: ^16.8.0 || ^17 || ^18
-  checksum: 23f93540537ca4c035425bb8d5e51b11131fbc921d7ac1d041d0ae557feac8c877f3a012d36b94df8787803f52ed81e6df9257ac9e58719875f7805518d6db3f
-  languageName: node
-  linkType: hard
-
 "react-property@npm:2.0.2":
   version: 2.0.2
   resolution: "react-property@npm:2.0.2"
@@ -30575,18 +30531,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-shallow-renderer@npm:^16.15.0":
-  version: 16.15.0
-  resolution: "react-shallow-renderer@npm:16.15.0"
-  dependencies:
-    object-assign: "npm:^4.1.1"
-    react-is: "npm:^16.12.0 || ^17.0.0 || ^18.0.0"
-  peerDependencies:
-    react: ^16.0.0 || ^17.0.0 || ^18.0.0
-  checksum: c194d741792e86043a4ae272f7353c1cb9412bc649945c4220c6a101a6ea5410cceb3d65d5a4d750f11a24f7426e8eec7977e8a4e3ad5d3ee235ca2b18166fa8
-  languageName: node
-  linkType: hard
-
 "react-slider@npm:^2.0.6":
   version: 2.0.6
   resolution: "react-slider@npm:2.0.6"
@@ -30611,19 +30555,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 841938ff16d16a6b76895f4cb2e1fea957e5fe3b30febbf03a54892dae1c9153f2383e231dea0b3ba41192ad2f2849448fa859caccd288943bce32639e971bee
-  languageName: node
-  linkType: hard
-
-"react-test-renderer@npm:^18.3.1":
-  version: 18.3.1
-  resolution: "react-test-renderer@npm:18.3.1"
-  dependencies:
-    react-is: "npm:^18.3.1"
-    react-shallow-renderer: "npm:^16.15.0"
-    scheduler: "npm:^0.23.2"
-  peerDependencies:
-    react: ^18.3.1
-  checksum: c633558ef9af33bc68f0c4dbb5163a004c4fb9eade7bd0a7cfc0355fb367f36bd9d96533c90b7e85a146be6c525113a15f58683d269e0177ad77e2b04d4fe51c
   languageName: node
   linkType: hard
 
@@ -32034,15 +31965,6 @@ __metadata:
   dependencies:
     xmlchars: "npm:^2.2.0"
   checksum: 3847b839f060ef3476eb8623d099aa502ad658f5c40fd60c105ebce86d244389b0d76fcae30f4d0c728d7705ceb2f7e9b34bb54717b6a7dbedaf5dad2d9a4b74
-  languageName: node
-  linkType: hard
-
-"scheduler@npm:^0.23.2":
-  version: 0.23.2
-  resolution: "scheduler@npm:0.23.2"
-  dependencies:
-    loose-envify: "npm:^1.1.0"
-  checksum: 26383305e249651d4c58e6705d5f8425f153211aef95f15161c151f7b8de885f24751b377e4a0b3dd42cce09aad3f87a61dab7636859c0d89b7daf1a1e2a5c78
   languageName: node
   linkType: hard
 
@@ -35426,7 +35348,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"warning@npm:^4.0.2, warning@npm:^4.0.3":
+"warning@npm:^4.0.3":
   version: 4.0.3
   resolution: "warning@npm:4.0.3"
   dependencies:

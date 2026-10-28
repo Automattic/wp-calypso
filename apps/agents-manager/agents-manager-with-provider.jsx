@@ -21,6 +21,7 @@ export default function AgentsManagerWithProvider( {
 				currentUser={ agentsManagerData.currentUser }
 				site={ agentsManagerData.site }
 				currentSiteId={ agentsManagerData.site?.ID }
+				isInternalOnly={ agentsManagerData.isInternalOnly === true }
 				zendeskConversationTags={ zendeskConversationTags }
 				zendeskSmoochIntegrationKey={ zendeskSmoochIntegrationKey }
 				zendeskTicketProductFieldValue={ zendeskTicketProductFieldValue }
