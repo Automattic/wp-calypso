@@ -188,7 +188,12 @@ context messages. MCP Apps can use `tool-call` mode to execute tools directly:
 const runtime = createInteractiveUiRuntime( {
 	catalogs,
 	actionMode: 'tool-call',
-	onAction: ( { name, context } ) => executeTool( { name, arguments: context } ),
+	onAction: async ( { name, context } ) => {
+		const result = await executeTool( { name, arguments: context } );
+		if ( result.isError ) {
+			throw new Error( 'Tool call failed' );
+		}
+	},
 	onError,
 } );
 ```
