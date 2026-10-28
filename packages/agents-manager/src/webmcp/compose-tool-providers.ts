@@ -1,4 +1,3 @@
-import { findAbilityByName } from '../abilities/ability-name';
 import type { ToolProvider } from '../extension-types';
 import type { Ability } from '@wordpress/abilities';
 
@@ -9,7 +8,8 @@ type ProvidedAbility = {
 
 export type WebMcpToolProvider = {
 	getAbilities: ToolProvider[ 'getAbilities' ];
-	resolveAbility: ( name: string ) => Promise< ProvidedAbility | undefined >;
+	/** Resolves an original ability name, not a normalized browser tool name. */
+	resolveAbility: ( abilityName: string ) => Promise< ProvidedAbility | undefined >;
 };
 
 /**
@@ -49,13 +49,6 @@ export function mergeToolProviders(
 
 	return {
 		getAbilities: async () => [ ...( await collect() ).values() ].map( ( { ability } ) => ability ),
-		resolveAbility: async ( name ) => {
-			const merged = await collect();
-			const ability = findAbilityByName(
-				[ ...merged.values() ].map( ( entry ) => entry.ability ),
-				name
-			);
-			return ability ? merged.get( ability.name ) : undefined;
-		},
+		resolveAbility: async ( abilityName ) => ( await collect() ).get( abilityName ),
 	};
 }

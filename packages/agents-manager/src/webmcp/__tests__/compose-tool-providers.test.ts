@@ -31,7 +31,7 @@ describe( 'mergeToolProviders', () => {
 		] );
 	} );
 
-	it( 'resolves the winning definition and provider by either name form', async () => {
+	it( 'resolves the winning definition and provider by original ability name', async () => {
 		const read = createAbility( 'demo/read', 'First copy' );
 		const write = createAbility( 'demo/write' );
 		const first = createProvider( [ read ] );
@@ -42,10 +42,17 @@ describe( 'mergeToolProviders', () => {
 			ability: read,
 			provider: first,
 		} );
-		await expect( merged.resolveAbility( 'demo__write' ) ).resolves.toEqual( {
+		await expect( merged.resolveAbility( 'demo/write' ) ).resolves.toEqual( {
 			ability: write,
 			provider: second,
 		} );
+	} );
+
+	it( 'does not resolve normalized tool names as ability names', async () => {
+		const provider = createProvider( [ createAbility( 'demo/read' ) ] );
+		const merged = mergeToolProviders( () => [ provider ], jest.fn() );
+
+		await expect( merged.resolveAbility( 'demo__read' ) ).resolves.toBeUndefined();
 	} );
 
 	it( 'resolves the providers and the owner live on every call', async () => {
