@@ -16,8 +16,7 @@ import { Icon, info, check } from '@wordpress/icons';
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import Notice from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import Notice, { RouterNoticeActionLinkButton } from '../../components/notice';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
 import { useIsEmailWritePending } from './use-email-write-pending';
@@ -257,9 +256,9 @@ export default function EmailSection( {
 					variant="warning"
 					title={ __( 'Protect access to your account' ) }
 					actions={
-						<RouterLinkButton variant="secondary" to="/me/security/account-recovery">
+						<RouterNoticeActionLinkButton variant="outline" to="/me/security/account-recovery">
 							{ __( 'Set up account recovery' ) }
-						</RouterLinkButton>
+						</RouterNoticeActionLinkButton>
 					}
 				>
 					{ __(

@@ -18,7 +18,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
 import { sanitizePhoneNumber } from '../../components/domain-contact-details-form/contact-validation-utils';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton } from '../../components/notice';
 import PhoneNumberInput from '../../components/phone-number-input';
 import { SectionHeader } from '../../components/section-header';
 import { validatePhone } from '../../utils/phone-number';
@@ -206,13 +206,13 @@ export default function RecoverySMS() {
 								title={ __( 'Please validate your recovery SMS number' ) }
 								actions={
 									showResendButton && (
-										<Button
-											variant="link"
+										<NoticeActionButton
+											variant="minimal"
 											onClick={ handleResendValidation }
 											disabled={ isResendValidationPending }
 										>
 											{ __( 'Resend code' ) }
-										</Button>
+										</NoticeActionButton>
 									)
 								}
 							>

@@ -1,8 +1,7 @@
 import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
 import { isAgencyApproved } from '../marketplace/is-agency-approved';
 
 type CommissionType = 'referrals' | 'migrations' | 'woopayments';
@@ -71,9 +70,9 @@ export default function MissingPaymentSettingsNotice( {
 			variant="warning"
 			title={ __( 'Add your payout information to get paid.' ) }
 			actions={
-				<RouterLinkButton variant="primary" to="/payout-settings">
+				<RouterNoticeActionLinkButton variant="solid" to="/payout-settings">
 					{ __( 'Add payout information now' ) }
-				</RouterLinkButton>
+				</RouterNoticeActionLinkButton>
 			}
 		>
 			{ getDescription( commissionType ) }

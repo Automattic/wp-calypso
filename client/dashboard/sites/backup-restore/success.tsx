@@ -1,7 +1,6 @@
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionButton } from '../../components/notice';
 import type { Site } from '@automattic/api-core';
 
 const SiteBackupRestoreSuccess = ( {
@@ -23,11 +22,9 @@ const SiteBackupRestoreSuccess = ( {
 			variant="success"
 			title={ __( 'Site successfully restored' ) }
 			actions={
-				<Button
-					variant="primary"
-					text={ __( 'View website ↗' ) }
-					onClick={ handleViewWebsiteClick }
-				/>
+				<NoticeActionButton variant="solid" onClick={ handleViewWebsiteClick }>
+					{ __( 'View website ↗' ) }
+				</NoticeActionButton>
 			}
 		>
 			{ sprintf(

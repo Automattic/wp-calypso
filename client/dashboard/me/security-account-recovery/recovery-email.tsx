@@ -16,7 +16,7 @@ import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import ConfirmModal from '../../components/confirm-modal';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
 import { recoveryEmailMatchesAccountEmail } from './utils';
 import type { Field } from '@wordpress/dataviews';
@@ -168,13 +168,13 @@ export default function RecoveryEmail() {
 								title={ __( 'Please validate your email address' ) }
 								actions={
 									showResendButton && (
-										<Button
-											variant="link"
+										<NoticeActionButton
+											variant="minimal"
 											onClick={ handleResendValidation }
 											disabled={ isResendValidationPending }
 										>
 											{ __( 'Resend validation email' ) }
-										</Button>
+										</NoticeActionButton>
 									)
 								}
 							>

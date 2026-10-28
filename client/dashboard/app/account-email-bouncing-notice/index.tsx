@@ -1,7 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 
@@ -29,15 +28,15 @@ export default function AccountEmailBouncingNotice() {
 				variant="warning"
 				title={ __( 'Your account email isn’t receiving our messages' ) }
 				actions={
-					<RouterLinkButton
+					<RouterNoticeActionLinkButton
 						to="/me/account"
-						variant="primary"
+						variant="solid"
 						onClick={ () =>
 							recordTracksEvent( 'calypso_dashboard_account_email_bouncing_notice_click' )
 						}
 					>
 						{ __( 'Update your email address' ) }
-					</RouterLinkButton>
+					</RouterNoticeActionLinkButton>
 				}
 			>
 				{ sprintf(

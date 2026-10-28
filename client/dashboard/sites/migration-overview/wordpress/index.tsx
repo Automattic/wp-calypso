@@ -6,7 +6,7 @@ import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { getSiteDisplayName } from '../../../utils/site-name';
@@ -111,9 +111,9 @@ export function WordPressMigration( { site }: { site: Site } ) {
 						variant="error"
 						actions={
 							<>
-								<Button __next40pxDefaultSize variant="primary" onClick={ () => refetch() }>
+								<NoticeActionButton variant="solid" onClick={ () => refetch() }>
 									{ __( 'Try again' ) }
-								</Button>
+								</NoticeActionButton>
 								{ contactUs }
 							</>
 						}

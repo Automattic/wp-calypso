@@ -1,14 +1,12 @@
 import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState, useEffect } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton, RouterNoticeActionLink } from '../../../components/notice';
 import { formatCooldown } from '../../../utils/email-verification-resend';
 import { useEmailVerificationResend } from '../../../utils/use-email-verification-resend';
 import { useIsEmailWritePending } from '../use-email-write-pending';
@@ -161,7 +159,11 @@ export default function EmailVerificationBanner( {
 				title={ title }
 				onClose={ () => setShowSuccessNotice( false ) }
 				actions={
-					wasEmailChange ? <Link to="/domains/">{ __( 'Update domain contacts' ) }</Link> : null
+					wasEmailChange ? (
+						<RouterNoticeActionLink to="/domains/">
+							{ __( 'Update domain contacts' ) }
+						</RouterNoticeActionLink>
+					) : null
 				}
 			>
 				{ wasEmailChange
@@ -182,13 +184,11 @@ export default function EmailVerificationBanner( {
 			title={ __( 'Verify your email' ) }
 			actions={
 				<>
-					<Button
-						className="dashboard-email-verification-resend"
-						variant="primary"
-						__next40pxDefaultSize
+					<NoticeActionButton
+						variant="solid"
 						onClick={ resendEmail }
 						disabled={ isEmailWritePending || isSendPending || isAwaitingResend }
-						isBusy={ isResendPending }
+						loading={ isResendPending }
 					>
 						{ isAwaitingResend
 							? sprintf(
@@ -197,17 +197,16 @@ export default function EmailVerificationBanner( {
 									formatCooldown( secondsUntilResend )
 								)
 							: __( 'Resend email' ) }
-					</Button>
+					</NoticeActionButton>
 					{ isEmailChangePending && (
-						<Button
-							variant="secondary"
-							__next40pxDefaultSize
+						<NoticeActionButton
+							variant="outline"
 							onClick={ () => cancelPendingEmail() }
 							disabled={ isEmailWritePending }
-							isBusy={ isCancelPending }
+							loading={ isCancelPending }
 						>
 							{ __( 'Cancel the pending email change' ) }
-						</Button>
+						</NoticeActionButton>
 					) }
 				</>
 			}

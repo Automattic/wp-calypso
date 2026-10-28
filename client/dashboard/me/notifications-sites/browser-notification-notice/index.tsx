@@ -2,9 +2,8 @@
 import { notificationPushPermissionStateQuery } from '@automattic/api-queries';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
-import { ExternalLink } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { Notice } from '../../../components/notice';
+import { Notice, NoticeActionLink } from '../../../components/notice';
 
 export const BrowserNotificationNotice = () => {
 	const { data: status } = useQuery( notificationPushPermissionStateQuery() );
@@ -18,13 +17,14 @@ export const BrowserNotificationNotice = () => {
 			variant="warning"
 			title={ __( 'Browser notifications are blocked' ) }
 			actions={
-				<ExternalLink
+				<NoticeActionLink
 					href={ localizeUrl(
 						'https://wordpress.com/support/notifications/browser-notifications/#troubleshooting'
 					) }
+					openInNewTab
 				>
 					{ __( 'View instructions to enable' ) }
-				</ExternalLink>
+				</NoticeActionLink>
 			}
 		>
 			{ __(

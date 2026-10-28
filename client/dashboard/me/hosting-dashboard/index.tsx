@@ -1,11 +1,6 @@
 import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import {
-	Button,
-	ToggleControl,
-	__experimentalVStack as VStack,
-	ExternalLink,
-} from '@wordpress/components';
+import { ToggleControl, __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -13,7 +8,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { Card, CardBody } from '../../components/card';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionLinkButton } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -108,9 +103,9 @@ export default function HostingDashboard() {
 						title={ __( 'Prefer the previous version?' ) }
 						variant="info"
 						actions={
-							<Button variant="primary" __next40pxDefaultSize href={ wpcomLink( '/me/account' ) }>
+							<NoticeActionLinkButton variant="solid" href={ wpcomLink( '/me/account' ) }>
 								{ __( 'Return to previous version' ) }
-							</Button>
+							</NoticeActionLinkButton>
 						}
 					>
 						{ createInterpolateElement(

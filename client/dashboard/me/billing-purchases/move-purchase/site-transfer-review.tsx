@@ -21,7 +21,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import { SectionHeader } from '../../../components/section-header';
 import SiteIcon from '../../../components/site-icon';
 import { getTitleForDisplay, isDotcomPlan } from '../../../utils/purchase';
@@ -166,12 +166,12 @@ export function SiteTransferReview( {
 				title={ __( 'Failed to check whether this purchase can move' ) }
 				actions={
 					<>
-						<Button variant="secondary" onClick={ () => refetchPreview() }>
+						<NoticeActionButton variant="outline" onClick={ () => refetchPreview() }>
 							{ __( 'Try again' ) }
-						</Button>
-						<Button variant="tertiary" onClick={ onChangeSite }>
+						</NoticeActionButton>
+						<NoticeActionButton variant="minimal" onClick={ onChangeSite }>
 							{ __( 'Choose a different site' ) }
-						</Button>
+						</NoticeActionButton>
 					</>
 				}
 			>

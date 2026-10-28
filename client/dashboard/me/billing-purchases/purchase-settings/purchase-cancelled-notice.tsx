@@ -1,7 +1,6 @@
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { intlFormat } from 'date-fns';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionLinkButton } from '../../../components/notice';
 import { classifyPurchaseForCopy, getProductNounForCategory } from './classify-purchase-for-copy';
 import type { Purchase } from '@automattic/api-core';
 
@@ -52,9 +51,14 @@ export function PurchaseCancelledNotice( {
 				variant="success"
 				onClose={ onClose }
 				actions={
-					<Button variant="primary" href={ exportUrl } target="_blank" rel="noreferrer">
+					<NoticeActionLinkButton
+						variant="solid"
+						href={ exportUrl }
+						target="_blank"
+						rel="noreferrer"
+					>
 						{ __( 'Download backup' ) }
-					</Button>
+					</NoticeActionLinkButton>
 				}
 			>
 				{ sprintf(

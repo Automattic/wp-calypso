@@ -1,6 +1,5 @@
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionLinkButton } from '../../components/notice';
 
 /**
  * Dismissible success notice shown on the purchases list after a remove.
@@ -24,9 +23,14 @@ export function PurchaseRemovedNotice( {
 				variant="success"
 				onClose={ onClose }
 				actions={
-					<Button variant="primary" href={ exportUrl } target="_blank" rel="noreferrer">
+					<NoticeActionLinkButton
+						variant="solid"
+						href={ exportUrl }
+						target="_blank"
+						rel="noreferrer"
+					>
 						{ __( 'Download backup' ) }
-					</Button>
+					</NoticeActionLinkButton>
 				}
 			>
 				{ sprintf(

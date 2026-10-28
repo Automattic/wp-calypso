@@ -1,6 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { Notice } from '../../../components/notice';
-import RouterLinkButton from '../../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../../components/notice';
 
 export function EmptyCartNotice( { backTo }: { backTo: string } ) {
 	return (
@@ -9,9 +8,9 @@ export function EmptyCartNotice( { backTo }: { backTo: string } ) {
 				variant="info"
 				title={ __( 'Your cart is empty.' ) }
 				actions={
-					<RouterLinkButton variant="primary" to={ backTo }>
+					<RouterNoticeActionLinkButton variant="solid" to={ backTo }>
 						{ __( 'Back to the marketplace' ) }
-					</RouterLinkButton>
+					</RouterNoticeActionLinkButton>
 				}
 			>
 				{ __( 'Add the products you want to refer, then come back to request the payment.' ) }
@@ -28,9 +27,9 @@ export function MissingSitePlanNotice( { backTo }: { backTo: string } ) {
 				variant="error"
 				title={ __( 'Failed to load the site’s plan.' ) }
 				actions={
-					<RouterLinkButton variant="primary" to={ backTo }>
+					<RouterNoticeActionLinkButton variant="solid" to={ backTo }>
 						{ __( 'Back' ) }
-					</RouterLinkButton>
+					</RouterNoticeActionLinkButton>
 				}
 			>
 				{ __(
