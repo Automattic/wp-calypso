@@ -1,8 +1,8 @@
 export interface WordPressPrerelease {
-	/** Whether the site was put on the beta track by the automatic enrollment, not by its owner. */
-	auto_enrolled: boolean;
 	/** The upcoming WordPress version, e.g. "7.2". */
 	version: string;
-	/** The planned release date of that version, as `YYYY-MM-DD`. */
-	release_date: string;
+	/** Whether the site was picked for early access to that version. */
+	enrolled_this_cycle: boolean;
+	/** Whether the owner asked for the site not to be picked again. */
+	opted_out: boolean;
 }

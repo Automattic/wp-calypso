@@ -52,13 +52,12 @@ import { __ } from '@wordpress/i18n';
 import { ensureSiteExpiryNoticeData } from '../../components/site-expiry-notice';
 import {
 	canManageSite,
-	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
-import { ensureAutoEnrolledPrereleaseData } from '../../sites/settings-wordpress/use-auto-enrolled-prerelease';
+import { ensureWordPressPrereleaseData } from '../../sites/settings-wordpress/use-wordpress-prerelease';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	getActivityLogHiddenGroups,
@@ -1097,14 +1096,14 @@ export const siteSettingsWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
+		const prerelease = await ensureWordPressPrereleaseData( site );
+		if ( canSwitchWordPressVersion( site, prerelease ) ) {
 			// Fire-and-forget the track versions so a slow site or wp.org
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
 			queryClient.prefetchQuery( siteWordPressTrackVersionsQuery( site.ID ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
-		await ensureAutoEnrolledPrereleaseData( site );
 	},
 } ).lazy( () =>
 	import( '../../sites/settings-wordpress' ).then( ( d ) =>

@@ -47,8 +47,3 @@ export function formatWordPressVersion(
 
 	return wpVersion;
 }
-
-/** "7.1" for "7.1.3". */
-export function getMajorWordPressVersion( wpVersion: string ) {
-	return wpVersion.match( /^\d+\.\d+/ )?.[ 0 ] ?? wpVersion;
-}
