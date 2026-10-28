@@ -25,7 +25,6 @@
 
 	> :not(:last-child)::after {
 		content: '·';
-		margin-inline-start: $grid-unit-05;
 	}
 }
 
