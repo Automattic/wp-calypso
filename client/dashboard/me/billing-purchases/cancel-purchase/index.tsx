@@ -618,7 +618,7 @@ function CancelPurchaseInner() {
 				},
 				onError: ( error ) => {
 					createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
-					setState( ( state ) => ( { ...state, isLoading: false } ) );
+					setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
 				},
 			} );
 			recordEvent( 'calypso_purchases_free_month_offer_form_submit' );
