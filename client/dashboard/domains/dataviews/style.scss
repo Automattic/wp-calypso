@@ -16,3 +16,8 @@
 		background: none;
 	}
 }
+
+// Single-line cells sit between the two lines of the taller cells in the row.
+.domains-dataviews .dataviews-view-table td {
+	vertical-align: middle;
+}
