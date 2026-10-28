@@ -6,20 +6,8 @@ module.exports = () => ( {
 			'@babel/preset-env',
 			{
 				modules: false,
-				// Exclude transforms that make all code slower, see https://github.com/facebook/create-react-app/pull/5278
-				exclude: [ 'transform-typeof-symbol' ],
 			},
 		],
 	],
-	plugins: [
-		[
-			'@babel/transform-runtime',
-			{
-				corejs: false,
-				helpers: true,
-				regenerator: false,
-				useESModules: false,
-			},
-		],
-	],
+	plugins: [ '@babel/transform-runtime' ],
 } );

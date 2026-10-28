@@ -85,6 +85,7 @@ import { withLocale } from '../../helpers/with-locale';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
 import { useIsPostPlanSelectionEmailVerification } from '../../internals/steps-repository/__user/use-email-verification-gate';
+import { TRACKS_FLUSH_DELAY } from '../../internals/steps-repository/playground/lib/constants';
 import {
 	getProcessingErrorReason,
 	ProcessingResult,
@@ -965,12 +966,14 @@ const onboarding: FlowV2< typeof initialize > = {
 					const locationParams = new URLSearchParams( window.location.search );
 					if ( locationParams.get( 'intent' ) === 'woocommerce' ) {
 						const playgroundId = locationParams.get( 'playground' );
-						return window.location.assign(
-							addQueryArgs( '/setup/entrepreneur', {
-								from: 'playground-publish',
-								...( playgroundId ? { playground: playgroundId } : {} ),
-							} )
-						);
+						const destination = addQueryArgs( '/setup/entrepreneur', {
+							from: 'playground-publish',
+							...( playgroundId ? { playground: playgroundId } : {} ),
+						} );
+						// This leaves Stepper with a full page load, so give Tracks time to send the
+						// step's events and Stepper's submit event first.
+						setTimeout( () => window.location.assign( destination ), TRACKS_FLUSH_DELAY );
+						return;
 					}
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(

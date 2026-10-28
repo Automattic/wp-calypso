@@ -7,8 +7,9 @@
   styles, which every host shares.
 - **What isn't:** custom components. Put one in your own project, in your own catalog
   ([Catalogs](#catalogs)), not here. Chat, session, transport and error handling stay in the host.
-- **How hosts use it:** see the
-  [interactive UI architecture](../agents-manager/src/interactive-ui/README.md).
+- **How hosts use it:** see [Capabilities](#capabilities), [Rendering](#rendering) and
+  [Theming](#theming). Agents Manager's
+  [interactive UI architecture](../agents-manager/src/interactive-ui/README.md) shows a whole host.
 
 ## Basic components
 
@@ -16,41 +17,49 @@
 `CheckBox`, `ChoicePicker`, `DateTimeInput`, `Video`, `AudioPlayer`, `Tabs`, `Modal` and
 `Slider`.
 
-- Buttons send an `event` to the agent, or call a catalog function with `functionCall`. To submit
+- Buttons dispatch an `event` in the runtime's action mode, or call a catalog function with
+  `functionCall`. By default, events go to the agent. To submit
   edits, bind the inputs and the action's context to the same data paths. The agent gets the
   event's `name` and `context`, so name it for what it does, such as `save_title`, and put in its
   context what acting on it needs, such as the item's ID.
-- Values, such as a `Text`'s `text`, take a literal or a `{"@path": …}` binding, never a
-  `{"@call": …}` as A2UI's Basic catalog allows: only actions and checks call functions. So send
+- Values, such as a `Text`'s `text`, take a literal or a `{"@path": …}` binding. Unlike in A2UI's
+  Basic catalog, they never take a `{"@call": …}`: only actions and checks call functions. So send
   display text ready to show: formatted, such as a date or a price, and in the person's language.
+- A `Text` renders Markdown, except inside a `Button`, so write a heading as `### Title`.
 - A modal's `Button` trigger opens it instead of sending its action, and stays usable on a
   disabled surface. Its title, which also names the dialog, is its `accessibility.label`, or
-  "Details". Its inputs share the surface's data model and are disabled with it. Its own
+  "Details" without one. Its inputs share the surface's data model and are disabled with it. Its own
   buttons send their actions and leave it open; only the person closes it.
 - Text fields keep their values as strings, choice pickers as string arrays, and date/time inputs
-  as local ISO strings.
+  as local ISO strings. A slider moves in whole numbers from its `min`, or in `steps` equal parts.
 - `Button`, `TextField`, `CheckBox`, `ChoicePicker`, `Slider` and `DateTimeInput` take A2UI's
   `checks`. A button is disabled while any of its own checks fails, with their messages as its
-  accessible description, and a field shows its first failed check once it's touched (when the
-  person leaves a text or date field, or changes a check box, a choice or a slider) or once the
-  person clicks a disabled button whose checks fail, which also moves focus to the surface's first
-  invalid field outside a hidden tab. A check of a path with no value runs on it as empty:
-  `required`, `email` and `numeric` fail, and `length` and `regex` check an empty string. One that
-  can't run, such as `numeric` given a text field's string, also fails and is reported through
-  `onError`. A failed check shows its own `message`, never the English one A2UI's validation
-  functions return, so give every check a `message` in the person's language that names the field
-  and says what to enter, as a button reads all of its failing messages together: one without shows
-  A2UI's generic English "Validation failed".
+  accessible description.
+- A field shows its first failed check once it's touched: when the person leaves a text or date
+  field, or changes a check box, a choice or a slider. Every field shows it once the person clicks
+  a disabled button whose checks fail, or presses Enter or Space on it, which also moves focus to
+  the surface's first invalid field outside a hidden tab.
+- A check of a path with no value runs on it as empty: `required`, `email` and `numeric` fail, and
+  `length` and `regex` check an empty string. One that can't run, such as `numeric` given a text
+  field's string, also fails and is reported through `onError`.
+- A failed check shows its own `message`, never the English one A2UI's validation functions
+  return. A button reads all of its failing messages together, so give every check a `message` in
+  the person's language that names the field and says what to enter. One without shows A2UI's
+  generic English "Validation failed".
 - An `Image`'s `description` is its alt text, so one without it is decorative. An `AudioPlayer`'s
   shows above the player and names it.
-- Components ignore A2UI v1.0 properties they don't support, such as `weight` and the
-  `accessibility` of components other than `Modal`, instead of rejecting the surface.
+- Components ignore A2UI v1.0 properties they don't support, such as `weight`, a `Text`'s
+  `variant` and the `accessibility` of components other than `Modal`, instead of rejecting the
+  surface.
 
 ## Catalogs
 
 A host or provider with its own components and functions declares one catalog: an
 [A2UI v1.0 catalog document](https://a2ui.org/specification/v1_0/catalog_definition.json) and the
-code that implements it.
+code that implements it. `createInteractiveUiCatalog( definition )` builds it for the runtime: the
+basic components and functions plus the definition's own, which replace basic ones of the same
+name. It throws when the definition fails `assertInteractiveUiCatalogDefinition()` or its document
+isn't a valid A2UI catalog. `createInteractiveUiCatalog()` builds A2UI's Basic catalog.
 
 ```ts
 const exampleCatalog: InteractiveUiCatalogDefinition = {
@@ -96,27 +105,18 @@ const exampleCatalog: InteractiveUiCatalogDefinition = {
   does nothing for a literal value, so keep an input's value in local state too, as the basic
   inputs do. It doesn't get A2UI's `buildChild`, so it can't render other components: a
   `ComponentId` or `ChildList` prop arrives as IDs only. Make custom components leaves, laid out
-  with the basic ones.
+  with the basic ones. A `lazy()` component renders nothing while it loads.
 - A component that declares `checks` (an array of `CheckRule`s) also gets `isValid` and
-  `validationErrors`, its failed checks' messages. Like the [basic components](#basic-components),
-  show the first message once the person touches the field or `isShowingErrors` is true (an
-  invalid Button was clicked), and disable inputs and actions with `disabled` while keeping what
-  only shows or reveals content usable. A `lazy()` component renders nothing while it loads.
-- Keep a custom component accessible like the basic components: label its fields, show a failed
-  check's message as the field's `help` with `aria-invalid` on its focusable control, which a click
-  on an invalid button focuses, and set `accessibleWhenDisabled` on buttons, since the surface
-  disables them right after a click and a plainly `disabled` button drops keyboard focus.
+  `validationErrors`, its failed checks' messages. `isShowingErrors` turns true once the person
+  activates a `Button` whose checks fail. Show the messages and handle `disabled` as
+  [Adding a component](#adding-a-component) says.
 - A function declares its `returnType`, and may be async. Its arguments come from the agent, so
-  treat them as untrusted. It runs only from a click, unless the document sets
-  `requiresUserActivation: false` so a check or a custom component's `Dynamic…` prop can call it,
-  such as one that formats text.
+  treat them as untrusted. It runs only from a click. To let a check or a custom component's
+  `Dynamic…` prop call it, such as one that formats text, set `requiresUserActivation: false` on it
+  in the document.
 - `agentComposable: false` on a definition marks a catalog that only abilities build surfaces
   with, such as one whose components need data the agent can't supply. Hosts still list its ID,
   but don't send its document, so the agent can't compose with it. It defaults to `true`.
-
-`createInteractiveUiCatalog()` builds A2UI's Basic catalog, and
-`createInteractiveUiCatalog( definition )` a catalog with the basic components and functions plus
-the definition's own, which replace basic ones of the same name.
 
 ## Capabilities
 
@@ -125,15 +125,17 @@ before loading the renderer:
 
 - `assertInteractiveUiCatalogDefinition( definition )` throws when a definition has no ID, a
   component or function that isn't an object schema, or code that doesn't match its document.
-  Check catalogs with it before advertising them, since
-  `createInteractiveUiCatalog()` rejects those that fail.
+  `createInteractiveUiCatalog()` rejects those, so check each catalog with it before listing it in
+  the capabilities below.
 - `getInteractiveUiRendererCapabilities( definitions )` returns A2UI's `a2uiRendererCapabilities`
   for the Basic catalog and those catalogs: their IDs (`supportedCatalogIds`), and the documents of
-  those that aren't `agentComposable: false` (`inlineCatalogs`) in A2UI's form. Send it in each
+  those without `agentComposable: false` (`inlineCatalogs`) in A2UI's form. Send it in each
   message's metadata, as A2UI's A2A binding does, so the agent shows only UI the host can render.
 - `getInteractiveUiOperation( message )` returns an A2UI message's operation name and surface ID,
   or `undefined` for a malformed message, as the agent's messages aren't validated.
 - `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
+- `getInteractiveUiActionInstructions( actionMode )` returns guidance for the agent composing
+  actions. Include it in the host's rendering tool description. It defaults to `agent` mode.
 
 ## Rendering
 
@@ -150,9 +152,9 @@ before loading the renderer:
 4. Send A2UI's `a2uiRendererDataModel` with each message to the agent, from
    `runtime.getDataModel(surfaceIds)`: the data models of those surfaces that set
    `sendDataModel`, or `undefined` if none do. Unlike A2UI's, it covers only the surfaces you
-   pass, such as those the user can still change, and leaves out the values obscured `TextField`s
-   bind to, or the whole surface when one binds a relative path, which a `List` template resolves
-   per item.
+   pass, such as those the user can still change. It leaves out the values of password fields
+   (`TextField`s with the `obscured` variant), and the whole surface when one of its password fields
+   binds a relative path, which a `List` template resolves per item.
 
 `onError` gets every error in A2UI's shape, with its `code`, `message` and, when it has one, its
 `surfaceId`: each message the runtime rejects, a component a surface's catalog lacks
@@ -173,8 +175,39 @@ content. Its second argument is the owner of the rejected message's batch or of 
 - `className` adds classes to the surface and its modal overlay ([Theming](#theming)).
 
 Import `@automattic/ai-ui-renderer/style.scss` (Sass) with the renderer, in the same lazy
-`import()` when you load it on demand, and the WordPress components stylesheet, and give the modal
-overlay (`ai-ui-renderer__modal`) a stacking rule.
+`import()` when you load it on demand, and give the modal overlay (`ai-ui-renderer__modal`) a
+`z-index` above your UI, since it renders outside the surface. WordPress UI components load their
+own styles.
+
+### Action modes
+
+Both modes pass events to `onAction`. In the default `agent` mode, Agents Manager sends hidden
+context messages. MCP Apps can use `tool-call` mode to execute tools directly:
+
+```ts
+const runtime = createInteractiveUiRuntime( {
+	catalogs,
+	actionMode: 'tool-call',
+	onAction: async ( { name, context } ) => {
+		const result = await executeTool( { name, arguments: context } );
+		if ( result.isError ) {
+			throw new Error( 'Tool call failed' );
+		}
+	},
+	onError,
+} );
+```
+
+An event's `name` is the tool name and its resolved `context` contains the complete arguments.
+The host maps the action's `context` to tool `arguments`, executes the tool, and handles its
+result, including any UI updates. `onAction` must reject on failure, including MCP results with
+`isError`; the runtime reports `TOOL_CALL_FAILED` through `onError`. Disable the surface while a
+call is pending. Catalog `functionCall` actions still run locally.
+
+Include `getInteractiveUiActionInstructions('tool-call')` from the `capabilities` entry in the
+rendering tool's description. Callers must name an available tool and bind editable values into
+its arguments. No LLM interprets a click or provides an assistant follow-up. The app sends no
+chat message, though the client may display tool activity.
 
 ## Theming
 
@@ -187,7 +220,7 @@ and the renderer applies them to the basic components and the WordPress componen
 | `--a2ui-color-on-primary`                                                         | Text and marks on the primary color                      |
 | `--a2ui-color-surface`, `--a2ui-color-on-surface`                                 | Cards and the modal                                      |
 | `--a2ui-color-input`, `--a2ui-color-on-input`                                     | Inputs, and the text and labels of controls              |
-| `--a2ui-color-border`                                                             | Card outlines and dividers                               |
+| `--a2ui-color-border`                                                             | Card and modal outlines, and dividers                    |
 
 Set them on the class you pass as `className`, or on an ancestor. Pick light or dark with the
 page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class:
@@ -204,30 +237,61 @@ page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class:
 }
 ```
 
-An unset token keeps the host's WordPress components color (`--wp-components-color-*`), or else a
-default from WordPress's palette that follows the light or dark mode. A custom
-`--a2ui-color-primary` without its own `-hover` and `-dark` gets them derived from it, as A2UI does.
+An unset primary or input token, or its `on-` pair, keeps the host's WordPress components color
+(`--wp-components-color-*`), or else a default from WordPress's palette. An unset surface or border
+token gets that palette default directly. The input, surface and border defaults follow the light
+or dark mode. A custom `--a2ui-color-primary` without its own `-hover` and `-dark` gets them derived
+from it, as A2UI does.
 The modal renders outside the host, so it copies its surface's theme when it opens.
 
-Disabled controls use the renderer's disabled colors (`--ai-ui-renderer-disabled-background`,
-`--ai-ui-renderer-disabled-border` and `--ai-ui-renderer-disabled-foreground`), which follow the
-light or dark mode.
+The renderer derives its own colors from those, which follow the light or dark mode:
 
-Accent-colored text and fills on the surface use the renderer's accent colors
-(`--ai-ui-renderer-accent-text`, `--ai-ui-renderer-accent-text-hover` and
-`--ai-ui-renderer-accent-fill`), which are lighter in dark mode so they stay readable.
+- Disabled controls use its disabled colors: `--ai-ui-renderer-disabled-background`,
+  `--ai-ui-renderer-disabled-border` and `--ai-ui-renderer-disabled-foreground`.
+- Primary-colored text and lines, such as focus rings, the tab marker, the slider and a checked
+  control's edge, use its accent colors: `--ai-ui-renderer-accent-text`,
+  `--ai-ui-renderer-accent-text-hover` and `--ai-ui-renderer-accent-line`. They're lighter in dark
+  mode, so they stand out on the surface. Fills, such as a primary Button or a checked check box,
+  keep the primary in both modes, with `--a2ui-color-on-primary` text and marks on top.
 
-### Theming a new component
+## Adding a component
 
-When you add a basic or custom component:
+Add a basic component in `src/components`, or a custom one to its owner's catalog
+([Catalogs](#catalogs)). One that Agents Manager renders, from its own or a provider's catalog,
+also follows its [rules](../agents-manager/src/interactive-ui/README.md#rules). Build it from
+WordPress components (`@wordpress/ui`, or the `@wordpress/components` your project uses), which
+handle most of this:
 
-1. Color it with the tokens, such as `var( --a2ui-color-on-surface )`, the accent colors for
-   primary-colored text or fills on the surface, and the disabled colors, or use WordPress
-   components, which follow them. Never use a chat's own variables.
-2. Check it in light and dark mode, enabled and disabled (a stale surface).
-3. If a WordPress component hard-codes light colors, enabled or disabled, or doesn't color its
-   disabled state, add a rule for it: in `style.scss` for a basic component, or in the custom
-   component's own stylesheet.
+- Label fields and icon-only buttons, give meaningful images alt text, and let a screen reader
+  announce the state, such as checked or invalid.
+- Make it work with the keyboard alone, with a visible focus ring: Tab reaches each control in
+  reading order, Enter or Space acts on it, arrow keys move within a group and Escape closes what it
+  opens. Keep buttons focusable when disabled (`focusableWhenDisabled`, or `accessibleWhenDisabled`
+  in `@wordpress/components`), since the surface disables them right after a click and a plainly
+  `disabled` button drops keyboard focus.
+- Give an input `checks`. Once the person touches it or `isShowingErrors` is true, show its first
+  failed check as its description, with `aria-invalid` on its focusable control so an invalid
+  `Button` can focus it, and clear it once the value passes. Basic inputs get both from
+  `useFieldProps()`.
+- Make every state look distinct (hover, focus, pressed, checked, invalid and disabled), never by
+  color alone. While `disabled`, disable inputs and actions, but keep what only shows or reveals
+  content usable.
+- Fit a narrow chat: long text wraps, nothing overflows the surface, and the component's own text
+  is translated and still fits when longer. Show the agent's text as given, so a custom prop's
+  `description` asks for text ready to show, such as a date formatted in the person's language.
+- Take colors from A2UI's tokens, the renderer's accent and disabled colors ([Theming](#theming))
+  or `@wordpress/ui` components, never a chat's own variables or fixed colors. Keep WCAG AA
+  contrast: 4.5:1 for text and 3:1 for other parts. `@wordpress/components` follow only A2UI's
+  tokens, so give them the accent and disabled colors yourself. If a WordPress component hard-codes
+  a light color or leaves a state uncolored, fix it in `style.scss` for a basic component, or in the
+  custom component's own stylesheet.
+- Check it in light and dark mode, in every state, with the keyboard and a screen reader. Agents
+  Manager can render every basic component and those in its own and its providers' catalogs, so
+  check them in its chat's dark mode too
+  ([Try it](../agents-manager/src/interactive-ui/README.md#try-it)).
+- Test it: a basic component gets cases for its value, checks and disabled state in
+  `src/components/__tests__/interactive-ui-surface.test.tsx`, and a custom one gets tests in its own
+  project.
 
 ## Development
 

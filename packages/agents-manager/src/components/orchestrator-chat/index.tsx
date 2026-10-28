@@ -222,10 +222,11 @@ export default function OrchestratorChat( {
 
 	// Keeps pickers on screen while a stream drops them. A regeneration rewinds
 	// them along with the turn's streamed checkpoints.
-	const { pauseRetentionForRegeneration, withRetainedShowComponents } = useShowComponentRetention( {
-		messages,
-		isProcessing,
-	} );
+	const { pauseRetentionForRegeneration, withRetainedShowComponents, expectHistoryLoad } =
+		useShowComponentRetention( {
+			messages,
+			isProcessing,
+		} );
 
 	const handleRegenerationStart = useCallback(
 		( messageId: string | undefined ) => {
@@ -298,6 +299,7 @@ export default function OrchestratorChat( {
 		hadParkedNavigation,
 		loadMessages,
 		onFetch: invalidateLoadedCheckpoints,
+		onHistoryLoad: expectHistoryLoad,
 		isProcessing,
 		onRetry: submitRetryMessage,
 		onSubmit,

@@ -92,11 +92,11 @@ const initialState = {
 	},
 };
 
-function renderPreview( license: License ) {
+function renderPreview( license: License, licenseType = LicenseType.Partner ) {
 	return renderWithProvider(
 		<LicensePreview
 			license={ license }
-			licenseType={ LicenseType.Partner }
+			licenseType={ licenseType }
 			parentLicenseId={ license.licenseId }
 			productName={ license.product }
 			productId={ license.productId }
@@ -125,6 +125,13 @@ describe( 'LicensePreview', () => {
 		expect( screen.queryByText( 'Bundle details panel' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'shows a single inbox when the API omits the Titan quantity', () => {
+		renderPreview( { ...titanLicense, quantity: null } );
+
+		expect( screen.getByText( '1 Inbox' ) ).toBeVisible();
+		expect( screen.queryByText( 'Bundle dropdown' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps rendering a non-Titan quantity as a bundle', async () => {
 		const user = userEvent.setup();
 		renderPreview( { ...baseLicense, quantity: 3 } );
@@ -148,5 +155,17 @@ describe( 'LicensePreview', () => {
 		renderPreview( { ...baseLicense, subscription: titanLicense.subscription } );
 
 		expect( screen.queryByText( /90-day trial/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'labels a license purchased on Jetpack.com as a standard license', () => {
+		renderPreview( { ...baseLicense, ownerType: 'user' }, LicenseType.Standard );
+
+		expect( screen.getByText( 'Standard license' ) ).toBeVisible();
+	} );
+
+	it( 'does not label an agency license as a standard license', () => {
+		renderPreview( baseLicense );
+
+		expect( screen.queryByText( 'Standard license' ) ).not.toBeInTheDocument();
 	} );
 } );

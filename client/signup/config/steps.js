@@ -9,6 +9,7 @@ import {
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,
+	isMailboxFulfilled,
 	createSiteAndAddDIFMToCart,
 	submitWebsiteContent,
 } from 'calypso/lib/signup/step-actions';
@@ -25,6 +26,7 @@ export default generateSteps( {
 	launchSiteApi,
 	isPlanFulfilled,
 	isDomainFulfilled,
+	isMailboxFulfilled,
 	createSiteAndAddDIFMToCart,
 	submitWebsiteContent,
 } );
