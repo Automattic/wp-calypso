@@ -99,189 +99,37 @@ afterEach( () => {
 } );
 
 describe( 'JetpackAuthorize', () => {
+	describe( 'unified migration connection', () => {
+		const authQuery = {
+			...DEFAULT_PROPS.authQuery,
+			from: 'wpcom_migration_dashboard',
+			plugins: [ 'wpcom-migration', 'jetpack' ],
+		};
+		test( 'passes migration context to branding, copy, and cards', () => {
+			const { container } = renderWithRedux(
+				<JetpackAuthorize { ...DEFAULT_PROPS } authQuery={ authQuery } />
+			);
+			expect(
+				container.querySelector( '.connect-screen-brand-header__logo-image' )
+			).toHaveAttribute( 'src', 'jetpack-connect-migration.svg' );
+			expect( screen.getByText( /connecting your account lets you migrate/ ) ).toBeVisible();
+			expect( screen.getByRole( 'article', { name: 'WordPress.com migration' } ) ).toBeVisible();
+		} );
+		test( 'passes migration context to secondary-admin copy', () => {
+			renderWithRedux(
+				<JetpackAuthorize
+					{ ...DEFAULT_PROPS }
+					authQuery={ { ...authQuery, hasConnectedOwner: true } }
+				/>
+			);
+			expect( screen.getByText( /Connect your account to help migrate this site/ ) ).toBeVisible();
+		} );
+	} );
+
 	test( 'renders as expected', () => {
 		const { container } = renderWithRedux( <JetpackAuthorize { ...DEFAULT_PROPS } /> );
 
 		expect( container ).toMatchSnapshot();
-	} );
-
-	describe( 'migration connection screen', () => {
-		const props = {
-			...DEFAULT_PROPS,
-			authQuery: { ...DEFAULT_PROPS.authQuery, from: 'wpcom-migration' },
-			user: { ...DEFAULT_PROPS.user, email: 'user@example.com' },
-		};
-		const inferredAuthQuery = {
-			...props.authQuery,
-			from: '[unknown]',
-			plugins: [ 'jetpack', 'wpcom-migration' ],
-			redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?page=wpcom-migration-status&wpcom_migration_connected=1`,
-		};
-
-		test.each( [ undefined, '[unknown]' ] )(
-			'infers migration branding from the plugin and return URL when from=%s',
-			( from ) => {
-				renderWithRedux(
-					<JetpackAuthorize { ...props } authQuery={ { ...inferredAuthQuery, from } } />
-				);
-
-				expect( screen.getByRole( 'heading', { name: 'Connect to WordPress.com' } ) ).toBeVisible();
-				expect( screen.getByRole( 'button', { name: 'Connect to WordPress.com' } ) ).toBeEnabled();
-				expect( screen.getByText( props.user.email ) ).toBeVisible();
-				expect( screen.getByText( /By connecting your site, you agree to/ ) ).toBeVisible();
-				expect( screen.queryByText( /Jetpack/ ) ).toBeNull();
-			}
-		);
-
-		test.each( [
-			[ 'another plugin', { plugins: [ 'jetpack' ] } ],
-			[ 'a similar plugin slug', { plugins: [ 'wpcom-migration-other' ] } ],
-			[ 'no plugin list', { plugins: undefined } ],
-			[ 'another return page', { redirectAfterAuth: props.authQuery.redirectAfterAuth } ],
-			[ 'no return URL', { redirectAfterAuth: null } ],
-			[
-				'the migration page name in an unrelated query argument',
-				{
-					redirectAfterAuth: `http://${ SITE_SLUG }/wp-admin/admin.php?other=wpcom-migration-status`,
-				},
-			],
-		] )( 'does not infer migration branding with %s', ( description, overrides ) => {
-			renderWithRedux(
-				<JetpackAuthorize { ...props } authQuery={ { ...inferredAuthQuery, ...overrides } } />
-			);
-
-			expect( screen.getByRole( 'button', { name: 'Approve' } ) ).toBeVisible();
-			expect( screen.queryByRole( 'heading', { name: 'Connect to WordPress.com' } ) ).toBeNull();
-		} );
-
-		test( 'preserves an explicit connector entry point when the migration plugin is installed', () => {
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...props }
-					authQuery={ { ...inferredAuthQuery, from: 'jetpack-connector' } }
-				/>
-			);
-
-			expect( screen.getByRole( 'heading', { name: 'Connect your account' } ) ).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Connect account' } ) ).toBeVisible();
-		} );
-
-		test.each( [ 'wpcom-migration', 'wpcom-migration-plugin' ] )(
-			'from=%s shows WordPress branding and migration copy',
-			( from ) => {
-				const { container } = renderWithRedux(
-					<JetpackAuthorize { ...props } authQuery={ { ...props.authQuery, from } } />
-				);
-
-				expect( screen.getByTitle( 'WordPress' ).closest( 'svg' ) ).toBeVisible();
-				expect( screen.getByRole( 'heading', { name: 'Connect to WordPress.com' } ) ).toBeVisible();
-				expect(
-					screen.getByText(
-						`Connect ${ SITE_SLUG } to your WordPress.com account to start your migration.`
-					)
-				).toBeVisible();
-				expect( screen.getByText( props.user.display_name ) ).toBeVisible();
-				expect( screen.getByText( props.user.email ) ).toBeVisible();
-				expect( screen.getByRole( 'link', { name: 'Use a different account' } ) ).toHaveAttribute(
-					'href',
-					expect.stringContaining( `from=${ from }` )
-				);
-				expect( screen.getByText( /By connecting your site, you agree to/ ) ).toBeVisible();
-				expect( container.querySelector( '.jetpack-connect__main-logo' ) ).toBeNull();
-				expect( screen.queryByText( /Jetpack/ ) ).toBeNull();
-			}
-		);
-
-		test.each( [
-			[ 'the explicit marker', props.authQuery ],
-			[ 'inferred migration branding', inferredAuthQuery ],
-		] )(
-			'connects using the existing authorization request for %s',
-			async ( source, authQuery ) => {
-				const authorize = jest.fn();
-				renderWithRedux(
-					<JetpackAuthorize { ...props } authQuery={ authQuery } authorize={ authorize } />
-				);
-
-				await userEvent.click( screen.getByRole( 'button', { name: 'Connect to WordPress.com' } ) );
-
-				expect( authorize ).toHaveBeenCalledTimes( 1 );
-				expect( authorize ).toHaveBeenCalledWith( {
-					_wp_nonce: props.authQuery.nonce,
-					client_id: props.authQuery.clientId,
-					from: authQuery.from,
-					jp_version: props.authQuery.jpVersion,
-					redirect_uri: props.authQuery.redirectUri,
-					scope: props.authQuery.scope,
-					secret: props.authQuery.secret,
-					state: props.authQuery.state,
-				} );
-			}
-		);
-
-		test.each( [
-			[ 'authorizing', { authorizationData: { ...props.authorizationData, isAuthorizing: true } } ],
-			[ 'fetching the site', { isFetchingAuthorizationSite: true } ],
-			[ 'fetching purchases', { isRequestingSitePurchases: true } ],
-		] )( 'prevents approval and account switching while %s', ( status, overrides ) => {
-			renderWithRedux( <JetpackAuthorize { ...props } { ...overrides } /> );
-
-			expect( screen.queryByRole( 'button' ) ).toBeNull();
-			expect( screen.getByText( 'Use a different account' ) ).toHaveAttribute(
-				'aria-disabled',
-				'true'
-			);
-			expect( screen.getByText( 'Use a different account' ) ).not.toHaveAttribute( 'href' );
-		} );
-
-		test( 'keeps authorization errors and retry available', () => {
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...props }
-					authorizationData={ {
-						...props.authorizationData,
-						authorizeError: { message: 'Authorization failed' },
-					} }
-				/>
-			);
-
-			expect( screen.getByText( /Error authorizing your site/ ) ).toBeVisible();
-			expect( screen.getByText( 'Authorization failed' ) ).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeEnabled();
-		} );
-
-		test( 'keeps the XML-RPC recovery notice and disables approval', () => {
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...props }
-					hasXmlrpcError
-					authorizationData={ {
-						...props.authorizationData,
-						authorizeError: { message: 'XML-RPC failed' },
-					} }
-				/>
-			);
-
-			expect( screen.getByText( /Can't connect to your site/ ) ).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeDisabled();
-		} );
-
-		test( 'prevents connections and account switching for blocked sites', () => {
-			renderWithRedux(
-				<JetpackAuthorize
-					{ ...props }
-					isSiteBlocked
-					authorizationData={ {
-						...props.authorizationData,
-						authorizeError: { message: 'Site blocked' },
-					} }
-				/>
-			);
-
-			expect( screen.getByText( /This site can't be connected to WordPress.com/ ) ).toBeVisible();
-			expect( screen.queryByRole( 'button' ) ).toBeNull();
-			expect( screen.queryByText( 'Use a different account' ) ).toBeNull();
-		} );
 	} );
 
 	test( 'names WooPayments in the Woo header when the core profiler sends it inside a plugin list', () => {
@@ -1104,71 +952,20 @@ describe( 'JetpackAuthorize', () => {
 		test.each( [
 			[ 'jetpack_premium_analytics_onboarding', redirectAfterAuth ],
 			[ 'delete_connection_owner_notice', redirectAfterAuth ],
+			[ 'wpcom_migration', redirectAfterAuth ],
+			[ 'wpcom_migration_dashboard', redirectAfterAuth ],
+			[ 'wpcom-migration', `/setup/site-migration?ref=jetpack-connect&from=${ SITE_SLUG }` ],
+			[ 'wpcom-migration-plugin', `/setup/site-migration?ref=jetpack-connect&from=${ SITE_SLUG }` ],
 			[ 'jetpack-connector', `${ redirectAfterAuth }&from=jetpack-connector` ],
 			[ 'jetpack-onboarding', `${ redirectAfterAuth }&from=jetpack-onboarding` ],
 			[ 'jetpack-onboarding-wizard', plansPage ],
 			[ 'my-jetpack', plansPage ],
 			[ 'jetpack-newsletter', plansPage ],
 			[ 'jetpack-x_y', plansPage ],
-			[ 'wpcom-migration', `/setup/site-migration?ref=jetpack-connect&from=${ SITE_SLUG }` ],
-			[ 'wpcom-migration-plugin', `/setup/site-migration?ref=jetpack-connect&from=${ SITE_SLUG }` ],
 		] )( 'from=%s goes to %s', async ( from, expected ) => {
 			await approve( { authQuery: { from } } );
 
 			expect( windowOpenSpy ).toHaveBeenCalledWith( expected, expect.any( String ) );
-		} );
-
-		test( 'continues to migration when the authorized site is received', () => {
-			const props = {
-				...DEFAULT_PROPS,
-				authQuery: { ...DEFAULT_PROPS.authQuery, from: 'wpcom-migration' },
-			};
-			const { rerender } = renderWithRedux( <JetpackAuthorize { ...props } /> );
-
-			rerender(
-				<JetpackAuthorize
-					{ ...props }
-					authorizationData={ {
-						...props.authorizationData,
-						authorizeSuccess: true,
-						siteReceived: true,
-					} }
-				/>
-			);
-
-			expect( windowOpenSpy ).toHaveBeenCalledWith(
-				`/setup/site-migration?ref=jetpack-connect&from=${ SITE_SLUG }`,
-				expect.any( String )
-			);
-		} );
-
-		test( 'inferred migration branding preserves the plugin return URL', () => {
-			const returnUrl = `http://${ SITE_SLUG }/wp-admin/admin.php?page=wpcom-migration-status&wpcom_migration_connected=1`;
-			const props = {
-				...DEFAULT_PROPS,
-				authQuery: {
-					...DEFAULT_PROPS.authQuery,
-					from: '[unknown]',
-					plugins: [ 'wpcom-migration' ],
-					redirectAfterAuth: returnUrl,
-				},
-			};
-			global.window.location.search = '?skip_pricing=1';
-			const { rerender } = renderWithRedux( <JetpackAuthorize { ...props } /> );
-
-			rerender(
-				<JetpackAuthorize
-					{ ...props }
-					authorizationData={ {
-						...props.authorizationData,
-						authorizeSuccess: true,
-						siteReceived: true,
-					} }
-				/>
-			);
-
-			expect( windowOpenSpy ).toHaveBeenCalledTimes( 1 );
-			expect( windowOpenSpy ).toHaveBeenCalledWith( returnUrl, expect.any( String ) );
 		} );
 
 		test( 'a standard entry-point name skips the stored-plan checkout', async () => {

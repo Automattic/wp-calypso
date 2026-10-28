@@ -63,6 +63,29 @@ const DEFAULT_PROPS = deepFreeze( {
 } );
 
 describe( 'JetpackSignup', () => {
+	test( 'uses migration copy and WordPress branding on unified signup', () => {
+		const { container } = render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'wpcom_migration',
+					plugins: [ 'wpcom-migration', 'jetpack' ],
+				} }
+			/>
+		);
+		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				"You'll use it to migrate your site to WordPress.com and connect its other active plugins."
+			)
+		).toBeVisible();
+		expect( container.querySelector( '.connect-screen-brand-header__logo-image' ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect-migration.svg'
+		);
+	} );
+
 	let originalScrollTo;
 
 	beforeAll( () => {

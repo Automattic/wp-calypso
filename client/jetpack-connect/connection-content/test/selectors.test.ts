@@ -200,3 +200,30 @@ describe( 'getFeatureSelection', () => {
 		);
 	} );
 } );
+
+describe( 'migration entry and families', () => {
+	const plugins = [ 'wpcom-migration', 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ];
+	test( 'prioritizes migration without dropping any supporting family', () => {
+		expect( getFeatureSelection( plugins, undefined, 'wpcom_migration' ).cardKeys ).toEqual( [
+			'migration',
+			'a4a',
+			'woo',
+			'jetpack',
+		] );
+	} );
+	test.each( [ undefined, 'jetpack-connector', 'wpcom-migration' ] )(
+		'hides migration outside its entry point (%s)',
+		( from ) => {
+			expect( getFeatureSelection( plugins, undefined, from ).cardKeys ).toEqual( [
+				'a4a',
+				'woo',
+				'jetpack',
+			] );
+		}
+	);
+	test( 'requires the migration plugin as well as its entry point', () => {
+		expect( getFeatureSelection( [ 'jetpack' ], undefined, 'wpcom_migration' ).cardKeys ).toEqual( [
+			'jetpack',
+		] );
+	} );
+} );

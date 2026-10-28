@@ -75,6 +75,12 @@ function getLoginSubtitles(): Record< SubtitleScenario, string > {
 			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack VideoPress's ad-free video hosting."
 		),
 		JETPACK_MULTI: jetpackFull,
+		MIGRATION: __(
+			'Your site is registered with WordPress.com — finish connecting your account to start your migration.'
+		),
+		MIGRATION_WITH_PLUGINS: __(
+			'Your site is registered with WordPress.com — finish connecting your account to start your migration. Other active plugins will also use this connection.'
+		),
 		OTHER_ONLY: __(
 			'Your site is registered with WordPress.com — finish connecting your account to power your active plugins.'
 		),
@@ -151,6 +157,12 @@ function getAuthSubtitles(): Record< SubtitleScenario, string > {
 			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack VideoPress.'
 		),
 		JETPACK_MULTI: jetpackFull,
+		MIGRATION: __(
+			'Your site is registered with WordPress.com — connecting your account lets you migrate it to WordPress.com.'
+		),
+		MIGRATION_WITH_PLUGINS: __(
+			'Your site is registered with WordPress.com — connecting your account lets you migrate it to WordPress.com. Other active plugins will also use this connection.'
+		),
 		OTHER_ONLY: __(
 			'Your site is registered with WordPress.com — connecting your account gives it secure access to the features your active plugins need.'
 		),
@@ -215,6 +227,10 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
 			"You'll use it to enable Jetpack VideoPress's ad-free video hosting on your site."
 		),
 		JETPACK_MULTI: jetpackFull,
+		MIGRATION: __( "You'll use it to migrate your site to WordPress.com." ),
+		MIGRATION_WITH_PLUGINS: __(
+			"You'll use it to migrate your site to WordPress.com and connect its other active plugins."
+		),
 		OTHER_ONLY: __( "You'll use it to power your active plugins." ),
 	};
 }
@@ -223,14 +239,17 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
  * Title + subtitle for the authorize page in the unified connection flow.
  *
  * The H1 is the static `Connect your account`. The subtitle switches
- * between 16 pre-composed sentences keyed by the active plugin set's
+ * between 18 pre-composed sentences keyed by the active plugin set's
  * family/composition. See `scenarios.ts` for the decision order and
  * `getAuthSubtitles` above for the full string table.
  */
-export function getAuthCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
+export function getAuthCopy(
+	pluginSlugs: readonly string[] = [],
+	from?: string | null
+): SurfaceCopy {
 	return {
 		title: __( 'Connect your account' ),
-		subtitle: getAuthSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
+		subtitle: getAuthSubtitles()[ getSubtitleScenario( pluginSlugs, from ) ],
 	};
 }
 
@@ -240,10 +259,13 @@ export function getAuthCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy 
  * The H1 is the static `Create your account`. The subtitle is a
  * family-driven value-prop string from `getSignupSubtitles`.
  */
-export function getSignupCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
+export function getSignupCopy(
+	pluginSlugs: readonly string[] = [],
+	from?: string | null
+): SurfaceCopy {
 	return {
 		title: __( 'Create your account' ),
-		subtitle: getSignupSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
+		subtitle: getSignupSubtitles()[ getSubtitleScenario( pluginSlugs, from ) ],
 	};
 }
 
@@ -255,10 +277,13 @@ export function getSignupCopy( pluginSlugs: readonly string[] = [] ): SurfaceCop
  * Terms-of-Service line keeps its existing studio-gray-50 secondary slot
  * (rendered separately by `get-heading-subtext.tsx`).
  */
-export function getLoginCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
+export function getLoginCopy(
+	pluginSlugs: readonly string[] = [],
+	from?: string | null
+): SurfaceCopy {
 	return {
 		title: __( 'Log in to WordPress.com' ),
-		subtitle: getLoginSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
+		subtitle: getLoginSubtitles()[ getSubtitleScenario( pluginSlugs, from ) ],
 	};
 }
 
@@ -273,7 +298,8 @@ export function getLoginCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy
  */
 export function getSecondaryAuthCopy(
 	isAdmin: boolean,
-	pluginSlugs: readonly string[] = []
+	pluginSlugs: readonly string[] = [],
+	from?: string | null
 ): SurfaceCopy {
 	if ( ! isAdmin ) {
 		return {
@@ -282,7 +308,18 @@ export function getSecondaryAuthCopy(
 		};
 	}
 
-	const families = getPresentFamilies( pluginSlugs );
+	const families = getPresentFamilies( pluginSlugs, from );
+	if ( families.includes( 'migration' ) ) {
+		return {
+			title: __( 'Connect your account' ),
+			subtitle:
+				families.length > 1
+					? __(
+							'Connect your account to help migrate this site to WordPress.com. Other active plugins will also use this connection.'
+						)
+					: __( 'Connect your account to help migrate this site to WordPress.com.' ),
+		};
+	}
 	const hasJetpack = families.includes( 'jetpack' );
 	const hasWoo = families.includes( 'woo' );
 

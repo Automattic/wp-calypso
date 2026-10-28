@@ -8,12 +8,14 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 
 		expect( params ).toEqual( {
 			isUnifiedConnectionFlow: true,
+			connectorFrom: 'jetpack-connector',
 			connectorPlugins: [ 'jetpack', 'woocommerce' ],
 		} );
 	} );
 
 	it.each( [
 		'jetpack-onboarding',
+		'wpcom_migration',
 		'jetpack_premium_analytics_onboarding',
 		'delete_connection_owner_notice',
 	] )( 'flags the connector flow and parses plugins for from=%s', ( from ) => {
@@ -23,6 +25,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 
 		expect( params ).toEqual( {
 			isUnifiedConnectionFlow: true,
+			connectorFrom: from,
 			connectorPlugins: [ 'jetpack-premium-analytics' ],
 		} );
 	} );
@@ -36,6 +39,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 
 			expect( params ).toEqual( {
 				isUnifiedConnectionFlow: false,
+				connectorFrom: from,
 				connectorPlugins: [],
 			} );
 		}
@@ -58,6 +62,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 
 		expect( params.isUnifiedConnectionFlow ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [ 'jetpack', 'woocommerce' ] );
+		expect( params.connectorFrom ).toBe( 'jetpack-connector' );
 	} );
 
 	it( 'prefers redirect_to over currentQuery for from and plugins when both are present', () => {
@@ -68,6 +73,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 
 		expect( params.isUnifiedConnectionFlow ).toBe( true );
 		expect( params.connectorPlugins ).toEqual( [ 'jetpack' ] );
+		expect( params.connectorFrom ).toBe( 'jetpack-connector' );
 	} );
 
 	it( 'trims whitespace inside the plugins list', () => {
@@ -90,6 +96,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 	it( 'returns sensible defaults when redirect_to is missing', () => {
 		expect( getConnectionFlowFromRedirectTo( undefined ) ).toEqual( {
 			isUnifiedConnectionFlow: false,
+			connectorFrom: null,
 			connectorPlugins: [],
 		} );
 	} );
@@ -97,6 +104,7 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 	it( 'returns sensible defaults when the current query is null', () => {
 		expect( getConnectionFlowFromRedirectTo( '/jetpack/connect/authorize', null ) ).toEqual( {
 			isUnifiedConnectionFlow: false,
+			connectorFrom: null,
 			connectorPlugins: [],
 		} );
 	} );

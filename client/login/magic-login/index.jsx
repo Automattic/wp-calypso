@@ -277,6 +277,7 @@ export class MagicLogin extends Component {
 			isJetpackLogin,
 			isUnifiedConnectionFlow,
 			connectorPlugins,
+			connectorFrom,
 		} = this.props;
 		const { usernameOrEmail } = this.state;
 
@@ -339,6 +340,7 @@ export class MagicLogin extends Component {
 				isJetpack={ isJetpackLogin }
 				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
+				connectorFrom={ connectorFrom }
 				linkLogoToHome
 			>
 				{ mainContent }

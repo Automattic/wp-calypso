@@ -11,6 +11,7 @@ interface Props {
 	partnerConfig?: PartnerConfig | null;
 	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
+	connectorFrom?: string | null;
 	translate: LocalizeProps[ 'translate' ];
 }
 
@@ -26,6 +27,7 @@ const getHeadingSubText = ( {
 	partnerConfig,
 	isUnifiedConnectionFlow,
 	connectorPlugins,
+	connectorFrom,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
 		return null;
@@ -87,7 +89,7 @@ const getHeadingSubText = ( {
 	// reset-instructions copy.
 	if ( isUnifiedConnectionFlow && 'lostpassword' !== action ) {
 		return {
-			primary: getLoginCopy( connectorPlugins ).subtitle,
+			primary: getLoginCopy( connectorPlugins, connectorFrom ).subtitle,
 			secondary: tos,
 		};
 	}

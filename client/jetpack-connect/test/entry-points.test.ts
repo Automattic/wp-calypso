@@ -1,4 +1,4 @@
-import { isStandardEntryPoint, isUnifiedFlow } from '../entry-points';
+import { isMigrationEntryPoint, isStandardEntryPoint, isUnifiedFlow } from '../entry-points';
 
 describe( 'isStandardEntryPoint', () => {
 	test.each( [
@@ -46,5 +46,16 @@ describe( 'isUnifiedFlow', () => {
 		[ null, false ],
 	] )( '%p → %p', ( from, expected ) => {
 		expect( isUnifiedFlow( from ) ).toBe( expected );
+	} );
+} );
+
+describe( 'isMigrationEntryPoint', () => {
+	test.each( [
+		[ 'wpcom_migration', true ],
+		[ 'wpcom_migration_dashboard', true ],
+		[ 'wpcom_migrationother', false ],
+		[ 'wpcom-migration', false ],
+	] )( '%p → %p', ( from, expected ) => {
+		expect( isMigrationEntryPoint( from ) ).toBe( expected );
 	} );
 } );

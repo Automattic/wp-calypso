@@ -52,19 +52,6 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 	@include jetpack-connector-wpcom-colors();
 }
 
-.jetpack-connect__migration {
-	@include jetpack-connector-wpcom-colors();
-
-	.wordpress-logo {
-		fill: var(--color-primary);
-		margin: 0;
-	}
-
-	.connect-screen-consent-text {
-		margin: 0;
-	}
-}
-
 .is-section-jetpack-connect,
 .is-section-purchase-product {
 	.layout__content {

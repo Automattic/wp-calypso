@@ -18,6 +18,13 @@ export function isStandardEntryPoint( from?: string | null ): boolean {
 	);
 }
 
+export function isMigrationEntryPoint( from?: string | null ): boolean {
+	return (
+		isStandardEntryPoint( from ) &&
+		( from === 'wpcom_migration' || from?.startsWith( 'wpcom_migration_' ) === true )
+	);
+}
+
 /**
  * Whether `from` gets the unified connection flow: the plugin-aware logo,
  * title, subtitle and feature cards on the authorize, signup and login

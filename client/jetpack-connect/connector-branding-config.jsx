@@ -31,10 +31,11 @@ const DEFAULT_PERMISSIONS_TITLE = ( { siteURL } = {} ) =>
  * present in the slugs list. Mirrors the PHP `get_connector_logo_url()` logic
  * in class-jetpack-connector.php.
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
+ * @param {string|null} [from] Connection entry point.
  * @returns {string} Imported SVG URL for the matching connector logo.
  */
-export function getConnectorLogoUrl( pluginSlugs = [] ) {
-	return getLogoForFamilies( getPresentFamilies( pluginSlugs ) );
+export function getConnectorLogoUrl( pluginSlugs = [], from = undefined ) {
+	return getLogoForFamilies( getPresentFamilies( pluginSlugs, from ) );
 }
 
 /**
@@ -51,14 +52,16 @@ export function getConnectorLogoUrl( pluginSlugs = [] ) {
  * remaining consumer is the legacy `isFromMyJetpack` path, which still
  * renders the static `<PermissionsList />`.
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
- * @returns {{ logo: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
+ * @param {string|null} [from] Connection entry point.
+ * @returns {{ logo: string, logoAlt: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
  */
-export function getConnectorBranding( pluginSlugs = [] ) {
-	const families = getPresentFamilies( pluginSlugs );
+export function getConnectorBranding( pluginSlugs = [], from = undefined ) {
+	const families = getPresentFamilies( pluginSlugs, from );
 	const logo = getLogoForFamilies( families );
 
 	return {
 		logo,
+		logoAlt: families.includes( 'migration' ) ? 'WordPress.com' : 'Jetpack Connection logo',
 		permissionsTitle: DEFAULT_PERMISSIONS_TITLE,
 		permissions: DEFAULT_PERMISSIONS,
 	};

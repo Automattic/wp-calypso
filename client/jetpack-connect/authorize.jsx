@@ -5,9 +5,8 @@ import {
 	getJetpackProductOrPlanDisplayName,
 } from '@automattic/calypso-products';
 import { getUrlParts } from '@automattic/calypso-url';
-import { Button, Card, FormLabel, Gridicon, WordPressLogo } from '@automattic/components';
+import { Button, Card, FormLabel, Gridicon } from '@automattic/components';
 import { Spinner as WPSpinner, Modal } from '@wordpress/components';
-import { __, sprintf } from '@wordpress/i18n';
 import { getQueryArg } from '@wordpress/url';
 import clsx from 'clsx';
 import debugModule from 'debug';
@@ -22,9 +21,7 @@ import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { ConsentText } from 'calypso/components/connect-screen/consent-text';
 import { FeaturesSection } from 'calypso/components/connect-screen/features-section';
 import { PermissionsList } from 'calypso/components/connect-screen/permissions-list';
-import { ScreenLayout } from 'calypso/components/connect-screen/screen-layout';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
-import DocumentHead from 'calypso/components/data/document-head';
 import QuerySiteFeatures from 'calypso/components/data/query-site-features';
 import QuerySitePurchases from 'calypso/components/data/query-site-purchases';
 import QueryUserConnection from 'calypso/components/data/query-user-connection';
@@ -505,16 +502,6 @@ export class JetpackAuthorize extends Component {
 		return ( from ?? '' ).startsWith( 'wpcom-migration' );
 	}
 
-	shouldShowMigrationScreen( props = this.props ) {
-		const { from, plugins = [], redirectAfterAuth } = props.authQuery;
-		return (
-			this.isFromMigrationPlugin( props ) ||
-			( ( ! from || from === '[unknown]' ) &&
-				plugins.includes( 'wpcom-migration' ) &&
-				getQueryArg( redirectAfterAuth || '', 'page' ) === 'wpcom-migration-status' )
-		);
-	}
-
 	isFromAutomatticForAgenciesPlugin( props = this.props ) {
 		const { from } = props.authQuery;
 		return ( from ?? '' ).startsWith( 'automattic-for-agencies-client' );
@@ -867,10 +854,6 @@ export class JetpackAuthorize extends Component {
 			return translate( 'Connect account' );
 		}
 
-		if ( this.shouldShowMigrationScreen() ) {
-			return __( 'Connect to WordPress.com' );
-		}
-
 		return translate( 'Approve' );
 	}
 
@@ -1104,9 +1087,9 @@ export class JetpackAuthorize extends Component {
 			if ( isSecondary && ! isAdmin ) {
 				featureCardsResult = { cards: [], heroFirstCard: false };
 			} else if ( isSecondary ) {
-				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins );
+				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins, authQuery.from );
 			} else {
-				featureCardsResult = getConnectorFeatureCards( authQuery.plugins );
+				featureCardsResult = getConnectorFeatureCards( authQuery.plugins, authQuery.from );
 			}
 			const { cards, heroFirstCard } = featureCardsResult;
 
@@ -1326,8 +1309,6 @@ export class JetpackAuthorize extends Component {
 		}
 
 		const { blogname, from } = this.props.authQuery;
-		const usesConnectScreen =
-			this.isUnifiedConnectionFlow() || this.isFromMyJetpack() || this.shouldShowMigrationScreen();
 
 		const actionButton = (
 			<Button primary onClick={ this.handleSubmit }>
@@ -1340,12 +1321,16 @@ export class JetpackAuthorize extends Component {
 				siteName={ decodeEntities( blogname ) }
 				companyName={ this.getCompanyName() }
 				from={ from }
-				as={ usesConnectScreen ? 'span' : 'p' }
-				buttonText={ usesConnectScreen ? this.getButtonText() : undefined }
+				as={ this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ? 'span' : 'p' }
+				buttonText={
+					this.isUnifiedConnectionFlow() || this.isFromMyJetpack()
+						? this.getButtonText()
+						: undefined
+				}
 			/>
 		);
 
-		if ( usesConnectScreen ) {
+		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
 			// The "Use a different account" link is now rendered next to the
 			// user card by `renderUseDifferentAccountLink()`, and the
 			// disclaimer drops below the action button so the call-to-action
@@ -1414,56 +1399,22 @@ export class JetpackAuthorize extends Component {
 				.replace( /^https?:\/\//, '' )
 				.replace( /\/$/, '' )
 		);
-
-		if ( this.shouldShowMigrationScreen() ) {
-			const { user } = this.props;
-
-			return (
-				<ScreenLayout className="jetpack-connect__migration">
-					<DocumentHead title={ __( 'Connect to WordPress.com' ) } skipTitleFormatting />
-					<QuerySiteFeatures siteIds={ [ authSiteId ] } />
-					<QuerySitePurchases siteId={ authSiteId } />
-					<QueryUserConnection
-						siteId={ authSiteId }
-						siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
-					/>
-					<BrandHeader
-						logo={ <WordPressLogo size={ 48 } /> }
-						title={ __( 'Connect to WordPress.com' ) }
-						description={ sprintf(
-							/* translators: %s is the domain of the site being migrated. */
-							__( 'Connect %s to your WordPress.com account to start your migration.' ),
-							siteName
-						) }
-					/>
-					<UserCard
-						user={ {
-							displayName: user.display_name,
-							email: user.email,
-							avatarUrl: user.avatar_URL,
-						} }
-						size="small"
-					/>
-					{ this.renderUseDifferentAccountLink() }
-					{ this.renderNotices() }
-					{ this.renderStateAction() }
-					<AuthorizationScreenReaderIndicator message={ this.getScreenReaderAuthMessage() } />
-				</ScreenLayout>
-			);
-		}
-
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const isUnifiedConnection = this.isUnifiedConnectionFlow();
 		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
 		const connectorBranding = isUnifiedConnection
-			? getConnectorBranding( this.props.authQuery.plugins )
+			? getConnectorBranding( this.props.authQuery.plugins, this.props.authQuery.from )
 			: null;
 		const isSecondary = this.isSecondaryConnection();
 		let authCopy = null;
 		if ( isSecondary ) {
-			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), this.props.authQuery.plugins );
+			authCopy = getSecondaryAuthCopy(
+				this.isAdminConnection(),
+				this.props.authQuery.plugins,
+				this.props.authQuery.from
+			);
 		} else if ( isUnifiedConnection ) {
-			authCopy = getAuthCopy( this.props.authQuery.plugins );
+			authCopy = getAuthCopy( this.props.authQuery.plugins, this.props.authQuery.from );
 		}
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {

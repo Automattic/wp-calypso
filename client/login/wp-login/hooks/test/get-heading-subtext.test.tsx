@@ -7,6 +7,20 @@ import { useTranslate } from 'i18n-calypso';
 import getHeadingSubText from '../get-heading-subtext';
 
 describe( 'getHeadingSubText', () => {
+	test( 'uses migration login copy from the preserved entry point', () => {
+		const subtext = getHeadingSubText( {
+			isSocialFirst: true,
+			twoFactorAuthType: '',
+			translate: ( ( text ) => text ) as ReturnType< typeof useTranslate >,
+			isUnifiedConnectionFlow: true,
+			connectorFrom: 'wpcom_migration',
+			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+		} );
+		expect( subtext?.primary ).toContain( 'start your migration' );
+		expect( subtext?.primary ).toContain( 'Other active plugins' );
+		expect( subtext?.secondary ).toBeTruthy();
+	} );
+
 	const translate = ( ( text ) => text ) as ReturnType< typeof useTranslate >;
 
 	test( 'appends partner consent copy when ToS is primary', () => {

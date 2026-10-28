@@ -93,6 +93,19 @@ describe( 'OneLoginLayout logo link', () => {
 		} );
 	} );
 
+	test( 'uses WordPress branding when switching into a migration account', () => {
+		renderLayout( {
+			isJetpack: true,
+			isUnifiedConnectionFlow: true,
+			connectorFrom: 'wpcom_migration',
+			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+		} );
+		expect( screen.getByRole( 'img', { name: 'WordPress.com' } ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect-migration.svg'
+		);
+	} );
+
 	test( 'records a login event when the logo is clicked', () => {
 		renderLayout( { linkLogoToHome: true } );
 		fireEvent.click( screen.getByRole( 'link', { name: 'WordPress.com home' } ) );

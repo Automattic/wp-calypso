@@ -1,3 +1,4 @@
+import { isMigrationEntryPoint } from '../entry-points';
 import { FAMILY_PRIORITY, getFamilyFromSlug } from './families';
 import { getPluginEntry } from './plugin-registry';
 import type { Family } from './families';
@@ -14,14 +15,20 @@ export const MAX_FEATURED_CARDS = 3;
 
 /**
  * Return families present in the active plugin list, ordered by priority
- * (A4A → Woo → Jetpack → Other). Each family appears at most once.
+ * (Migration → A4A → Woo → Jetpack → Other). Migration requires a migration entry.
  */
-export function getPresentFamilies( pluginSlugs: readonly string[] ): Family[] {
+export function getPresentFamilies(
+	pluginSlugs: readonly string[],
+	from?: string | null
+): Family[] {
 	const present = new Set< Family >();
 	for ( const slug of pluginSlugs ) {
 		present.add( getFamilyFromSlug( slug ) );
 	}
-	return FAMILY_PRIORITY.filter( ( family ) => present.has( family ) );
+	return FAMILY_PRIORITY.filter(
+		( family ) =>
+			present.has( family ) && ( family !== 'migration' || isMigrationEntryPoint( from ) )
+	);
 }
 
 /**
@@ -105,7 +112,8 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
 
 /**
  * Pick the cards to feature in the connect-account features section,
- * capped at `max` cards (default `MAX_FEATURED_CARDS` so the function
+ * capped at `max` supporting cards plus a migration hero (default
+ * `MAX_FEATURED_CARDS` so the function
  * stays aligned with the layout's card cap).
  *
  * Decision order:
@@ -119,9 +127,10 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
  */
 export function getFeatureSelection(
 	pluginSlugs: readonly string[],
-	max: number = MAX_FEATURED_CARDS
+	max: number = MAX_FEATURED_CARDS,
+	from?: string | null
 ): FeatureSelection {
-	const knownFamilies = getPresentFamilies( pluginSlugs ).filter(
+	const knownFamilies = getPresentFamilies( pluginSlugs, from ).filter(
 		( family ) => family !== 'other'
 	);
 
@@ -129,7 +138,8 @@ export function getFeatureSelection(
 		return { cardKeys: [ 'other' ] };
 	}
 
-	const featured = knownFamilies.slice( 0, max );
+	// The migration hero leaves room for all three supporting families.
+	const featured = knownFamilies.slice( 0, max + Number( knownFamilies.includes( 'migration' ) ) );
 	const cardKeys = featured.map( ( family ) => getFamilyCardKey( family, pluginSlugs ) );
 
 	return { cardKeys };

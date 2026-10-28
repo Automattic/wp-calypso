@@ -15,6 +15,7 @@ import { __ } from '@wordpress/i18n';
  * `getFeatureCardData()`.
  */
 export type FeatureCardKey =
+	| 'migration'
 	| 'a4a'
 	| 'woo'
 	| 'jetpack'
@@ -55,6 +56,15 @@ export interface FeatureCardData {
  * voice — they only render when A4A is absent.
  */
 export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
+	if ( key === 'migration' ) {
+		return {
+			title: __( 'WordPress.com migration' ),
+			bullets: [
+				__( "Copy the site's posts, pages, and media to WordPress.com." ),
+				__( 'Bring over your themes, plugins, and settings too.' ),
+			],
+		};
+	}
 	switch ( key ) {
 		case 'a4a':
 			return {
@@ -177,6 +187,12 @@ export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
  * teammate or a site co-owner who happens to care about the feature.
  */
 export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardData {
+	if ( key === 'migration' ) {
+		return {
+			title: __( 'WordPress.com migration' ),
+			bullets: [ __( 'Help migrate this site to WordPress.com.' ) ],
+		};
+	}
 	switch ( key ) {
 		case 'a4a':
 			return {
