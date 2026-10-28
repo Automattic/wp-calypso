@@ -224,7 +224,7 @@ describe( '<CancelPurchase />', () => {
 			);
 		} );
 
-		test( 'records the exposure with the flow props when the reason has options', async () => {
+		test( 'records the exposure with the purchase and flow details when the reason has options', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = renderPersonalFlow();
 
