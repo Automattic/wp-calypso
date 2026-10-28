@@ -57,6 +57,10 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
 				return 'plans-woo-hosting-solutions';
 			}
+			// No Commerce: its site would still be moving to Atomic when the import hands it to site migration.
+			if ( search.get( 'goal' ) === 'import' ) {
+				return 'plans-import';
+			}
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}

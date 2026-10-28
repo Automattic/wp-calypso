@@ -225,8 +225,10 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		wasSignupCheckoutPageUnloaded() && signupDestinationCookieExists && isReEnteringFlow
 	);
 	const platform = urlQueryParams.get( 'platform' ) || '';
+	// An import's site receives content from elsewhere, so it starts empty and without an intent.
+	const isImport = urlQueryParams.get( 'goal' ) === 'import';
 	const useThemeHeadstart =
-		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow );
+		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow ) && ! isImport;
 	const shouldGoToCheckout = Boolean( planCartItem );
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
@@ -337,7 +339,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			// launchpad. Setting it at creation (rather than post-checkout) is what
 			// makes it stick: the Atomic transfer restores the creation-time intent.
 			siteIntent = Onboard.SiteIntent.Sell;
-		} else if ( isSimplifiedOnboarding ) {
+		} else if ( isSimplifiedOnboarding && ! isImport ) {
 			// For the simplified onboarding flow, we'll use the build intent since user can't choose the intent.
 			siteIntent = Onboard.SiteIntent.Build;
 		}
@@ -354,7 +356,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 			! isPlaygroundPublish &&
 			! urlQueryParams.get( 'playground' ) &&
 			! urlQueryParams.get( 'blog_post' ) &&
-			urlQueryParams.get( 'goal' ) !== 'import' &&
+			! isImport &&
 			! blueprint;
 
 		// A run creates one site. Arriving here again — Back onto a step that advances by itself, a

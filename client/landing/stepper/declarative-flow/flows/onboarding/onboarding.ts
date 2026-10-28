@@ -890,12 +890,8 @@ const onboarding: FlowV2< typeof initialize > = {
 							// Leaving checkout must not turn a reblog or an import into plain onboarding.
 							// The plans grid prices a coupon only from the URL.
 							const checkoutBackQueryArgs = {
-								...( hasFixedEnding
-									? {
-											...endingQueryArgs,
-											...( refParameter ? { ref: refParameter } : {} ),
-										}
-									: {} ),
+								...endingQueryArgs,
+								...( hasFixedEnding && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
 							};
 
