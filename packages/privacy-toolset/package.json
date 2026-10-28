@@ -62,6 +62,6 @@
 		"require-from-string": "^2.0.2",
 		"storybook": "^10.6.2",
 		"typescript": "^6.0.3",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.0"
 	}
 }

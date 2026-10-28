@@ -95,7 +95,7 @@
 		"resize-observer-polyfill": "^1.5.1",
 		"storybook": "^10.6.2",
 		"typescript": "^6.0.3",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.0"
 	},
 	"msw": {
 		"workerDirectory": "static"
