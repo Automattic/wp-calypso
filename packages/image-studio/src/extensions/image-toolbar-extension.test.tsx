@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useSelect } from '@wordpress/data';
 // eslint-disable-next-line import/order
 import React from 'react';
@@ -28,12 +28,31 @@ const makeAttachment = ( overrides = {} ) => ( {
 	...overrides,
 } );
 
+const STALE_ATTACHMENT = {
+	source_url: 'https://example.com/wp-content/uploads/2024/01/other.jpg',
+	media_details: {
+		sizes: {
+			thumbnail: {
+				source_url: 'https://example.com/wp-content/uploads/2024/01/other-150x150.jpg',
+			},
+		},
+	},
+};
+
 jest.mock( '@wordpress/core-data', () => ( {
 	store: 'core',
 } ) );
 
+const mockOpenImageStudio = jest.fn();
+const mockCreateNotice = jest.fn();
+const mockResolveEntityRecord = jest.fn();
+
 jest.mock( '@wordpress/data', () => ( {
-	dispatch: jest.fn( () => ( { openImageStudio: jest.fn() } ) ),
+	dispatch: jest.fn( () => ( { openImageStudio: mockOpenImageStudio } ) ),
+	resolveSelect: jest.fn( () => ( { getEntityRecord: mockResolveEntityRecord } ) ),
+	useDispatch: jest.fn( ( store: string ) =>
+		store === 'core/notices' ? { createNotice: mockCreateNotice } : {}
+	),
 	useSelect: jest.fn(),
 } ) );
 
@@ -45,8 +64,27 @@ jest.mock( '@wordpress/block-editor', () => ( {
 } ) );
 
 jest.mock( '@wordpress/components', () => ( {
-	ToolbarButton: ( { children, label }: { children: React.ReactNode; label: string } ) => (
-		<button data-testid="toolbar-button" aria-label={ label }>
+	ToolbarButton: ( {
+		children,
+		label,
+		onClick,
+		isBusy,
+		disabled,
+	}: {
+		children: React.ReactNode;
+		label: string;
+		onClick: () => void;
+		isBusy?: boolean;
+		disabled?: boolean;
+	} ) => (
+		// ToolbarButton keeps a disabled button focusable, exposing it as aria-disabled.
+		<button
+			data-testid="toolbar-button"
+			aria-label={ label }
+			data-busy={ String( !! isBusy ) }
+			aria-disabled={ String( !! disabled ) }
+			onClick={ onClick }
+		>
 			{ children }
 		</button>
 	),
@@ -83,6 +121,7 @@ jest.mock( '../utils/tracking', () => ( {
 jest.mock( '../utils/get-image-data', () => ( {} ) );
 
 // Must import after jest.mock() calls to receive the mocked dependencies.
+import { trackImageStudioOpened } from '../utils/tracking';
 import { withImageStudioToolbarButton } from './image-toolbar-extension';
 
 const BlockEdit = () => <div data-testid="block-edit" />;
@@ -113,10 +152,10 @@ function renderToolbar( {
 			} ) )
 	);
 
-	const block = ( selected: boolean ) => (
+	const block = ( selected: boolean, blockAttributes = attributes ) => (
 		<ToolbarBlockEdit
 			name={ name }
-			attributes={ attributes }
+			attributes={ blockAttributes }
 			isSelected={ selected }
 			setAttributes={ jest.fn() }
 		/>
@@ -127,6 +166,8 @@ function renderToolbar( {
 		...view,
 		getEntityRecord,
 		setSelected: ( selected: boolean ) => view.rerender( block( selected ) ),
+		setBlockAttributes: ( blockAttributes: { id?: number; url?: string } ) =>
+			view.rerender( block( isSelected, blockAttributes ) ),
 	};
 }
 
@@ -234,16 +275,7 @@ describe( 'withImageStudioToolbarButton', () => {
 
 		it( 'should hide button for a stale attachment ID', () => {
 			renderToolbar( {
-				attachment: makeAttachment( {
-					source_url: 'https://example.com/wp-content/uploads/2024/01/other.jpg',
-					media_details: {
-						sizes: {
-							thumbnail: {
-								source_url: 'https://example.com/wp-content/uploads/2024/01/other-150x150.jpg',
-							},
-						},
-					},
-				} ),
+				attachment: makeAttachment( STALE_ATTACHMENT ),
 				attributes: { id: 1, url: BASE_URL },
 			} );
 			expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
@@ -269,39 +301,50 @@ describe( 'withImageStudioToolbarButton', () => {
 			expect( screen.getByTestId( 'toolbar-button' ) ).toBeInTheDocument();
 		} );
 
-		it( 'should hide button when attachment is null after resolution', () => {
-			renderToolbar( { attachment: null, attributes: { id: 1, url: BASE_URL } } );
+		it( 'should hide button for a stale attachment already cached while resolution is pending', () => {
+			renderToolbar( { hasResolved: false, attachment: makeAttachment( STALE_ATTACHMENT ) } );
 			expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
 			expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
 		} );
+
+		it.each( [
+			[ 'a url', BASE_URL ],
+			[ 'no url', undefined ],
+		] )(
+			'should hide button when attachment is null after resolution for a block with %s',
+			( _, url ) => {
+				renderToolbar( { attachment: null, attributes: { id: 1, url } } );
+				expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
+				expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
+			}
+		);
 	} );
 
 	describe( 'attachment read', () => {
 		it.each( [ 'core/cover', 'core/video', 'core/file', 'core/media-text' ] )(
 			'does not read the attachment for %s blocks',
 			( name ) => {
-				const { getEntityRecord } = renderToolbar( { name } );
+				const { getEntityRecord } = renderToolbar( { name, attributes: { id: 1 } } );
 				expect( getEntityRecord ).not.toHaveBeenCalled();
 				expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
 			}
 		);
 
-		it.each( [ BASE_URL, undefined ] )(
-			'does not read the attachment for an unselected image block with url %s',
-			( url ) => {
-				const { getEntityRecord } = renderToolbar( {
-					isSelected: false,
-					attributes: { id: 1, url },
-				} );
-				expect( getEntityRecord ).not.toHaveBeenCalled();
-				expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
-				expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
-			}
-		);
+		it.each( [
+			[ 'a url', BASE_URL ],
+			[ 'no url', undefined ],
+		] )( 'does not read the attachment for an unselected image block with %s', ( _, url ) => {
+			const { getEntityRecord } = renderToolbar( {
+				isSelected: false,
+				attributes: { id: 1, url },
+			} );
+			expect( getEntityRecord ).not.toHaveBeenCalled();
+			expect( screen.getByTestId( 'block-edit' ) ).toBeInTheDocument();
+			expect( screen.queryByTestId( 'toolbar-button' ) ).not.toBeInTheDocument();
+		} );
 
-		it( 'reads the attachment once for a selected image block', () => {
+		it( 'reads the attachment for a selected image block', () => {
 			const { getEntityRecord } = renderToolbar();
-			expect( getEntityRecord ).toHaveBeenCalledTimes( 1 );
 			expect( getEntityRecord ).toHaveBeenCalledWith( 'postType', 'attachment', 1 );
 			expect( screen.getByTestId( 'toolbar-button' ) ).toBeInTheDocument();
 		} );
@@ -331,6 +374,160 @@ describe( 'withImageStudioToolbarButton', () => {
 			setSelected( true );
 			expect( screen.getByTestId( 'toolbar-button' ) ).toBeInTheDocument();
 		} );
+	} );
+
+	describe( 'opening Image Studio', () => {
+		const clickEdit = () =>
+			fireEvent.click( screen.getByRole( 'button', { name: 'Edit image with AI' } ) );
+
+		it( 'opens straight away when the read has resolved', () => {
+			renderToolbar();
+			clickEdit();
+			expect( mockResolveEntityRecord ).not.toHaveBeenCalled();
+			expect( mockOpenImageStudio ).toHaveBeenCalledWith(
+				1,
+				expect.any( Function ),
+				'editor-block',
+				'core/image'
+			);
+			expect( trackImageStudioOpened ).toHaveBeenCalledTimes( 1 );
+			expect( mockCreateNotice ).not.toHaveBeenCalled();
+		} );
+
+		it( 'opens once the pending read confirms the attachment', async () => {
+			mockResolveEntityRecord.mockResolvedValue( makeAttachment() );
+			renderToolbar( { hasResolved: false, attachment: null } );
+			clickEdit();
+			expect( mockOpenImageStudio ).not.toHaveBeenCalled();
+			await waitFor( () => expect( mockOpenImageStudio ).toHaveBeenCalled() );
+			expect( mockResolveEntityRecord ).toHaveBeenCalledWith( 'postType', 'attachment', 1 );
+			expect( trackImageStudioOpened ).toHaveBeenCalledTimes( 1 );
+			expect( mockCreateNotice ).not.toHaveBeenCalled();
+		} );
+
+		it( 'marks the button busy and ignores clicks until the pending read finishes', async () => {
+			let finishRead: ( record: unknown ) => void = () => {};
+			mockResolveEntityRecord.mockReturnValue(
+				new Promise( ( resolve ) => ( finishRead = resolve ) )
+			);
+			renderToolbar( { hasResolved: false, attachment: null } );
+			clickEdit();
+			clickEdit();
+			const button = screen.getByTestId( 'toolbar-button' );
+			expect( button ).toHaveAttribute( 'data-busy', 'true' );
+			expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+
+			await act( async () => finishRead( makeAttachment() ) );
+			expect( button ).toHaveAttribute( 'data-busy', 'false' );
+			expect( button ).toHaveAttribute( 'aria-disabled', 'false' );
+			expect( mockResolveEntityRecord ).toHaveBeenCalledTimes( 1 );
+			expect( mockOpenImageStudio ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it.each( [
+			[
+				'its image is replaced',
+				( view: ReturnType< typeof renderToolbar > ) =>
+					view.setBlockAttributes( { id: 2, url: BASE_URL } ),
+			],
+			[
+				'it is deselected',
+				( view: ReturnType< typeof renderToolbar > ) => view.setSelected( false ),
+			],
+			[ 'it is removed', ( view: ReturnType< typeof renderToolbar > ) => view.unmount() ],
+		] )(
+			'does nothing when the block changes because %s while the read is pending',
+			async ( _, change ) => {
+				let finishRead: ( record: unknown ) => void = () => {};
+				mockResolveEntityRecord.mockReturnValue(
+					new Promise( ( resolve ) => ( finishRead = resolve ) )
+				);
+				const view = renderToolbar( { hasResolved: false, attachment: null } );
+				clickEdit();
+				change( view );
+
+				await act( async () => finishRead( makeAttachment() ) );
+				expect( mockOpenImageStudio ).not.toHaveBeenCalled();
+				expect( mockCreateNotice ).not.toHaveBeenCalled();
+			}
+		);
+
+		it.each( [
+			[ 'another site', 'https://other-site.com/different-image.jpg', 0, 1 ],
+			[ 'another size of the same image', BASE_URL.replace( '.jpg', '-1024x768.jpg' ), 1, 0 ],
+		] )(
+			'checks the latest block url when it changes to %s while the read is pending',
+			async ( _, url, opens, notices ) => {
+				let finishRead: ( record: unknown ) => void = () => {};
+				mockResolveEntityRecord.mockReturnValue(
+					new Promise( ( resolve ) => ( finishRead = resolve ) )
+				);
+				const view = renderToolbar( { hasResolved: false, attachment: null } );
+				clickEdit();
+				view.setBlockAttributes( { id: 1, url } );
+
+				await act( async () => finishRead( makeAttachment() ) );
+				expect( mockOpenImageStudio ).toHaveBeenCalledTimes( opens );
+				expect( mockCreateNotice ).toHaveBeenCalledTimes( notices );
+			}
+		);
+
+		it( 'logs the error when the pending read fails', async () => {
+			const consoleErrorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+			try {
+				const error = new Error( 'Not found' );
+				mockResolveEntityRecord.mockRejectedValue( error );
+				renderToolbar( { hasResolved: false, attachment: null } );
+				clickEdit();
+
+				await waitFor( () =>
+					expect( consoleErrorSpy ).toHaveBeenCalledWith(
+						'[Image Studio] Failed to load attachment 1:',
+						error
+					)
+				);
+			} finally {
+				consoleErrorSpy.mockRestore();
+			}
+		} );
+
+		it.each( [
+			[
+				'a stale attachment',
+				() => Promise.resolve( makeAttachment( STALE_ATTACHMENT ) ),
+				BASE_URL,
+			],
+			[
+				'an unsupported MIME type',
+				() => Promise.resolve( makeAttachment( { mime_type: 'image/svg+xml' } ) ),
+				BASE_URL,
+			],
+			[ 'no attachment', () => Promise.resolve( null ), BASE_URL ],
+			[ 'an error', () => Promise.reject( new Error( 'Not found' ) ), BASE_URL ],
+			[
+				'an error for a block without a url',
+				() => Promise.reject( new Error( 'Not found' ) ),
+				undefined,
+			],
+		] )(
+			'shows a snackbar instead of opening when the pending read returns %s',
+			async ( _, read, url ) => {
+				mockResolveEntityRecord.mockImplementation( read );
+				renderToolbar( { hasResolved: false, attachment: null, attributes: { id: 1, url } } );
+				clickEdit();
+				await waitFor( () =>
+					expect( screen.getByTestId( 'toolbar-button' ) ).toHaveAttribute( 'data-busy', 'false' )
+				);
+				expect( mockOpenImageStudio ).not.toHaveBeenCalled();
+				expect( trackImageStudioOpened ).not.toHaveBeenCalled();
+				expect( mockCreateNotice ).toHaveBeenCalledTimes( 1 );
+				expect( mockCreateNotice ).toHaveBeenCalledWith(
+					'error',
+					"This image can't be edited with AI. Replace it with another image from your Media Library.",
+					{ type: 'snackbar', isDismissible: true }
+				);
+			}
+		);
 	} );
 
 	describe( 'guard conditions', () => {
