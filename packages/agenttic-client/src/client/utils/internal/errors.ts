@@ -46,12 +46,13 @@ export function getAgentErrorDetails( error: unknown ): AgentErrorDetails {
 		return { name: 'Error' };
 	}
 
-	const { status, code, timedOut } = error as {
+	const { status, timedOut } = error as {
 		status?: unknown;
-		code?: unknown;
 		timedOut?: unknown;
 	};
-	const errorCode = readErrorCode( code );
+	// Only a request error carries a server code. A DOMException's legacy numeric
+	// `code` (AbortError is 20) is not one, and must not be recorded.
+	const errorCode = error instanceof AgentRequestError ? readErrorCode( error.code ) : undefined;
 	return {
 		name: error.name,
 		...( typeof status === 'number' && { status } ),

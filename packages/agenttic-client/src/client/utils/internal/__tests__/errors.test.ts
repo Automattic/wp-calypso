@@ -126,6 +126,24 @@ describe( 'getAgentErrorDetails', () => {
 		).toEqual( { name: 'AgentRequestError', status: 503 } );
 	} );
 
+	it( 'reads a server code, including a numeric one', () => {
+		expect( getAgentErrorDetails( new AgentRequestError( 'rejected', { code: 20 } ) ) ).toEqual( {
+			name: 'AgentRequestError',
+			code: 20,
+		} );
+	} );
+
+	it( 'does not read a DOMException’s legacy numeric code', () => {
+		// A browser AbortError is a DOMException, so `code` is 20. Node's DOMException
+		// is not an Error, so this is the shape the browser gives the helper.
+		const error = Object.assign( new Error( 'The operation was aborted.' ), {
+			name: 'AbortError',
+			code: 20,
+		} );
+
+		expect( getAgentErrorDetails( error ) ).toEqual( { name: 'AbortError' } );
+	} );
+
 	it( 'reads a timed-out abort', () => {
 		const error = Object.assign( new Error( 'aborted' ), { name: 'AbortError', timedOut: true } );
 
