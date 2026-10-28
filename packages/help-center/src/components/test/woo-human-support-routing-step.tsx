@@ -204,7 +204,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		expect( screen.getByRole( 'option', { name: 'Marketplace Vendors' } ) ).toBeInTheDocument();
 	} );
 
-	it( 'treats the tier as unknown without merchant data', async () => {
+	it( "routes like a merchant who isn't paying without merchant data", async () => {
 		mockWooHandoff = null;
 		renderStep();
 
@@ -215,8 +215,8 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		await userEvent.click( continueButton() );
 
 		expect( lastDecision() ).toMatchObject( {
-			route: 'ticket',
-			row_id: 4,
+			route: 'forums',
+			row_id: 14,
 			has_merchant_data: false,
 		} );
 	} );

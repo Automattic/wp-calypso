@@ -19,7 +19,6 @@ export type WooHandoffProduct = {
 	name: string;
 	supportType: ProductSupportType;
 	isRevShare: boolean;
-	isPaymentExtension?: boolean;
 	/** Where an externally supported product takes support requests. */
 	externalSupportUrl?: string | null;
 };
@@ -68,7 +67,7 @@ export function getWooRoutingInput( {
 	answers,
 	flags,
 }: {
-	/** Null when WooCommerce.com sent nothing, so the tier is unknown. */
+	/** Null when WooCommerce.com sent nothing. */
 	data: WooHandoffData | null;
 	answers: WooHandoffAnswers;
 	flags: HumanRoutingFlags;
@@ -79,7 +78,7 @@ export function getWooRoutingInput( {
 	return {
 		flags,
 		question: answers.question,
-		customer: data?.supportTier
+		customer: data
 			? {
 					supportTier: data.supportTier,
 					isPaying: data.isPaying,
@@ -92,7 +91,6 @@ export function getWooRoutingInput( {
 			supportType: product.supportType,
 			isRevShare: product.isRevShare,
 			isCore: product.slug === WOO_CORE_PRODUCT_SLUG,
-			isPaymentExtension: !! product.isPaymentExtension,
 		},
 	};
 }

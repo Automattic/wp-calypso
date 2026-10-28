@@ -68,7 +68,6 @@ describe( 'getWooRoutingInput', () => {
 				supportType: 'woo',
 				isRevShare: false,
 				isCore: false,
-				isPaymentExtension: false,
 			},
 		} );
 	} );
@@ -87,13 +86,23 @@ describe( 'getWooRoutingInput', () => {
 		expect( input.product?.isCore ).toBe( true );
 	} );
 
-	it( 'leaves the tier unknown without merchant data or a tier', () => {
+	it( 'has no customer without merchant data', () => {
 		const answers = { question: 'account' as const, productSlug: null, storeUrl: null };
 
 		expect( getWooRoutingInput( { data: null, flags, answers } ).customer ).toBeNull();
+	} );
+
+	it( 'keeps the merchant when WooCommerce.com has no tier for them', () => {
+		const answers = { question: 'account' as const, productSlug: null, storeUrl: null };
+
 		expect(
 			getWooRoutingInput( { data: { ...data, supportTier: null }, flags, answers } ).customer
-		).toBeNull();
+		).toEqual( {
+			supportTier: null,
+			isPaying: true,
+			isTargetCustomer: false,
+			isWooEnterpriseCustomer: false,
+		} );
 	} );
 
 	it( 'has no product when none was picked or it is not in the list', () => {
