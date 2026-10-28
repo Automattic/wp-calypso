@@ -10,6 +10,9 @@ import type { BackupKnownThreats, BackupsKnownThreatsPage } from '@automattic/ap
 
 const MAX_KNOWN_THREATS_PAGES = 30;
 
+// Per-backup endpoint answers after which paging through the list can still find the backup.
+const PAGE_THROUGH_ERRORS = [ 'scan_required', 'unknown_backup' ];
+
 export const siteBackupsKnownThreatsPageQuery = ( siteId: number, page: number ) =>
 	queryOptions( {
 		queryKey: [ 'site', siteId, 'backups', 'known-threats', 'page', page ],
@@ -71,8 +74,13 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 					latestWithoutKnownThreats: firstPage.latestWithoutKnownThreats,
 					backupPeriod: threats.backup_id,
 				};
-			} catch {
-				// Not a backup period, or no Scan: page through instead.
+			} catch ( error ) {
+				// Not a backup period, or no Scan: page through instead. Any other failure, such as a
+				// server without the endpoint yet, would make paging just as unreliable and much costlier.
+				const { error: code, code: altCode } = ( error ?? {} ) as { error?: string; code?: string };
+				if ( ! PAGE_THROUGH_ERRORS.includes( code ?? altCode ?? '' ) ) {
+					return fromPages( [ firstPage ], period );
+				}
 			}
 
 			const pages: BackupsKnownThreatsPage[] = [ firstPage ];
