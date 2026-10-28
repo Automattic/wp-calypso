@@ -1,7 +1,8 @@
 import * as renderer from '@automattic/ai-ui-renderer';
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ButtonPicker, ColorPicker, FontPicker } from '../../components/style-pickers';
+import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import * as tracks from '../../utils/tracks';
 import {
 	AGENTS_MANAGER_CATALOG_ID,
@@ -16,6 +17,7 @@ jest.mock( '../../components/style-pickers', () => ( {
 	ColorPicker: jest.fn( () => null ),
 	FontPicker: jest.fn( () => null ),
 } ) );
+jest.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: jest.fn() } ) );
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';
 
@@ -146,6 +148,64 @@ it( 'renders the style pickers with the props their abilities send', async () =>
 		buttonVariations: variations,
 		maxButtonsToShow: 6,
 	} );
+	expect( onError ).not.toHaveBeenCalled();
+} );
+
+it( 'renders the Help Center button the support hand-off sends, with its Tracks events', async () => {
+	const recordBigSkyTracksEvent = jest
+		.spyOn( tracks, 'recordBigSkyTracksEvent' )
+		.mockImplementation( () => undefined );
+	const onError = jest.fn();
+	const runtime = renderer.createInteractiveUiRuntime( {
+		catalogs: createInteractiveUiCatalogs( renderer ),
+		onAction: jest.fn(),
+		onError,
+	} );
+
+	runtime.processMessages(
+		[
+			{
+				version: 'v1.0',
+				createSurface: {
+					surfaceId: 'help-center',
+					catalogId: AGENTS_MANAGER_CATALOG_ID,
+					components: [
+						{
+							id: 'root',
+							component: 'AgentsManagerHelpCenterButton',
+							message: 'Summary for support.',
+						},
+					],
+				},
+			},
+		],
+		'message'
+	);
+
+	render(
+		<renderer.InteractiveUiSurface
+			surface={ runtime.getSurface( 'help-center' )! }
+			hostProps={ { isMessageStale: false } }
+		/>
+	);
+
+	fireEvent.click( await screen.findByRole( 'button', { name: 'Get help' } ) );
+
+	expect( openHelpCenterChat ).toHaveBeenCalledWith( 'Summary for support.' );
+	expect( recordBigSkyTracksEvent.mock.calls ).toEqual(
+		expect.arrayContaining( [
+			[ 'jetpack_big_sky_open_help_center_button_shown' ],
+			[ 'jetpack_big_sky_open_help_center_button_click' ],
+			[
+				'jetpack_big_sky_chat_response_rendered',
+				{
+					component_type: 'AgentsManagerHelpCenterButton',
+					tool_id: 'wpcom__render_interactive_ui',
+					tool_call_id: 'help-center',
+				},
+			],
+		] )
+	);
 	expect( onError ).not.toHaveBeenCalled();
 } );
 

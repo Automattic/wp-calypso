@@ -5,8 +5,9 @@ finish their request there. It's built on [A2UI v1.0](https://a2ui.org).
 
 - **Who follows it:** Agents Manager owns this architecture. Its providers, such as the Jetpack AI
   sidebar and WooCommerce AI, and other hosts, such as MCP apps, follow it.
-- **Where it runs:** on sites with the `a2ui-render-interactive-ui` blog sticker, in clients that
-  render the surface's catalog. Elsewhere, the chat keeps its older UI.
+- **Where it runs:** in clients that render the surface's catalog, which each message lists.
+  Elsewhere, the chat keeps its older UI. The `a2ui-render-interactive-ui` blog sticker only adds
+  guidance to the agent's prompt on when to compose surfaces.
 - **What's shared:** the [renderer](../../../ai-ui-renderer/README.md) is a shared library with the
   basic components. Custom components live in the project that owns them.
 
@@ -15,7 +16,7 @@ Ticket numbers mark parts still to come.
 ## How it works
 
 1. **wpcom builds a surface** for a client that renders its catalog, in one of three ways:
-   - **An ability builds it in code**, for a known flow such as a style picker or, in AM-117, a
+   - **An ability builds it in code**, for a known flow such as a style picker or the Help Center
      hand-off button. The agent only calls the ability, so the surface is reliable, cheap in
      tokens and testable.
    - **A browser ability asks for a card** with an `__interactive_ui` hint in its result, for a
@@ -60,9 +61,9 @@ Ticket numbers mark parts still to come.
   - `with-chat-response-tracking.tsx` records the shared response events for each catalog
     component.
 - **Custom components and functions** live in the project that owns them: Agents Manager's in this
-  package, such as its color, font and button pickers (declared in `AGENTS_MANAGER_CATALOG` in
-  `catalogs.ts`), and its providers' in theirs: WooCommerce AI's repo, or
-  `packages/jetpack-ai-sidebar` for the Jetpack AI sidebar, whose server abilities are in wpcom.
+  package, such as its color, font and button pickers and its Help Center button (declared in
+  `AGENTS_MANAGER_CATALOG` in `catalogs.ts`), and its providers' in theirs: WooCommerce AI's repo,
+  or `packages/jetpack-ai-sidebar` for the Jetpack AI sidebar, whose server abilities are in wpcom.
   Providers declare their catalog in the provider contract's `interactiveUi` field
   (`LoadedProviders` in `src/utils/load-external-providers.ts`), an
   `InteractiveUiCatalogDefinition`. A Calypso package imports that type from
@@ -262,9 +263,9 @@ return {
 - **When it shows:** wpcom builds the card and notes `card_shown` in the hint's place. It doesn't
   check `props` against the component's schema, so props the component rejects, such as one it
   doesn't declare, still note `card_shown` but show the failure notice.
-- **When it doesn't:** without the sticker, in a client without your catalog, or for a result the
-  content filter blocks, wpcom strips the hint without the note, and an agent other than
-  wp-orchestrator passes it on unread. It also strips a hint that isn't that shape or is
+- **When it doesn't:** in a client without your catalog, or for a result the content filter
+  blocks, wpcom strips the hint without the note, and an agent other than wp-orchestrator passes
+  it on unread. It also strips a hint that isn't that shape or is
   over 8 KB as JSON, and tags the trace `invalid_interactive_ui_hint`. A result with
   `returnToAgent: false` never reaches wpcom, so it gets no card. A hinted result whose turn then
   ends on a later ability's `returnToAgent: false` loses its card but still notes `card_shown`, so
@@ -276,13 +277,12 @@ return {
 
 ## Try it
 
-Add the `a2ui-render-interactive-ui` blog sticker to a test site, then ask the agent for a small
-form, such as "Use wpcom/render-interactive-ui for a feedback form with a TextField and a Submit
-Button."
+Ask the agent for a small form, such as "Use wpcom/render-interactive-ui for a feedback form with a
+TextField and a Submit Button."
 
-If the old UI shows, the gate fell back: check that the site has the sticker and that the chat
-request's `metadata.a2uiRendererCapabilities['v1.0'].supportedCatalogIds` lists exactly the
-catalog ID your ability checks or your card hint names. If it's missing, look in the console for
+If the old UI shows, the gate fell back: check that the chat request's
+`metadata.a2uiRendererCapabilities['v1.0'].supportedCatalogIds` lists exactly the catalog ID your
+ability checks or your card hint names. If it's missing, look in the console for
 `[AgentsManager] Skipped an interactive UI catalog:`, or your provider doesn't export
 `interactiveUi` ([Jetpack AI sidebar](../../../../apps/agents-manager/AGENTS.md#pitfalls)).
 
@@ -294,8 +294,10 @@ waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
 - **A server ability returning `show-component`** (the Jetpack AI sidebar's components): the
   ability returns a surface with a catalog component wrapping the same React component, as
   Agents Manager's color, font and button pickers already do.
-- **A client button** (Agents Manager's Help Center button): a server ability returns a basic
-  `Button` that calls a catalog function.
+- **A client button** (Agents Manager's Help Center button): the server ability that decides to
+  show it returns a catalog component wrapping the same button, as wpcom's
+  `ability.support-query.php` does with `AgentsManagerHelpCenterButton` for an approved hand-off.
+  A basic `Button` can't record the button's own Tracks events, such as when it's shown.
 - **Markdown cards** (WooCommerce AI's `markdownComponents`): its abilities run in the browser, so
   they return a card hint for its catalog's component instead
   ([Moving a browser ability's card](#moving-a-browser-abilitys-card)). A card keeps its side
@@ -319,8 +321,8 @@ return them with `surface_result()`.
    `responseTrackingProperties` (such as the Jetpack AI sidebar's review counts), keep returning
    `show-component` for it: surfaces don't support either yet.
 2. **Return a surface from the ability** (wpcom) when `Agent_Ability::can_show_interactive_ui()`
-   passes: in an agent's chat whose client renders the component's catalog, on a site with the
-   sticker. Otherwise, keep returning the `show-component` result.
+   passes: in an agent's chat whose client renders the component's catalog. Otherwise, keep
+   returning the `show-component` result.
    - **Helpers:** `Interactive_UI::component_result()` shows one component under the agent's
      summary, or a generic prompt to choose when there's none. `surface_result()` takes a layout of
      your own, with its data model, which `$send_data_model` sends back with the user's next message
@@ -343,11 +345,11 @@ return them with `surface_result()`.
      for its own components and the Jetpack AI sidebar's (it builds that sidebar's bundle). A client
      without the component still lists the catalog's ID, so it would get the surface and show only
      the failed-surface notice.
-3. **Test both paths.** With the sticker, the surface renders (also for a request with a step after
-   it), goes stale after a reply, a reload or, if it acts on a post, a post switch, can still be
-   undone (through `restore-checkpoint` for a checkpoint in Agents Manager's store), and records
-   the shared response events under its component's name and surface ID. Without it, the old UI
-   shows as before.
+3. **Test both paths.** When the gate passes, the surface renders (also for a request with a step
+   after it), goes stale after a reply, a reload or, if it acts on a post, a post switch, can still
+   be undone (through `restore-checkpoint` for a checkpoint in Agents Manager's store), and records
+   the shared response events under its component's name and surface ID. When it fails, outside
+   an agent's chat or in a client without the catalog, the old UI shows as before.
 
 ### Moving a browser ability's card
 
@@ -362,8 +364,8 @@ For a card a browser ability's result renders today, such as a fenced Markdown c
    that have a card: `__interactive_ui` with your catalog's ID, the component and the card's fields
    as `props` ([Browser ability cards](#browser-ability-cards)).
 4. **Keep the fallback:** change the ability's instructions to write the fenced card unless the
-   result carries `card_shown`, and keep your fence renderer, so sites without the sticker, older
-   clients and past chats still show the card.
-5. **Test both paths.** With the sticker, the card shows under the reply, the reply has no fenced
-   block, and a reload shows the card again, stale, without recording its render. Without it, the
-   fenced card shows as before.
+   result carries `card_shown`, and keep your fence renderer, so older clients and past chats still
+   show the card.
+5. **Test both paths.** In a client with your catalog, the card shows under the reply, the reply has
+   no fenced block, and a reload shows the card again, stale, without recording its render. Without
+   it, the fenced card shows as before.
