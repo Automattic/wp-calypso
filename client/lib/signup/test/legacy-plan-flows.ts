@@ -40,7 +40,7 @@ describe( 'legacy plan flows', () => {
 		const url = target( 'import', { ref: 'import-lp' } );
 
 		expect( url.pathname ).toBe( '/setup/onboarding' );
-		expect( url.searchParams.get( 'goal' ) ).toBe( 'import' );
+		expect( url.searchParams.get( 'flow' ) ).toBe( 'import' );
 		expect( url.searchParams.get( 'ref' ) ).toBe( 'import-lp' );
 		expect( url.searchParams.has( 'plan' ) ).toBe( false );
 	} );

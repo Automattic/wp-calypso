@@ -419,11 +419,11 @@ const onboarding: FlowV2< typeof initialize > = {
 		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
 		// From `/start/import`: the run ends in site migration, which brings the content over.
-		const isImport = queryParams.get( 'goal' ) === 'import';
+		const isImport = queryParams.get( 'flow' ) === 'import';
 		// Every URL that re-enters onboarding must keep these, or the run loses its ending.
 		const endingQueryArgs = {
 			...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
-			...( isImport ? { goal: 'import' } : {} ),
+			...( isImport ? { flow: 'import' } : {} ),
 		};
 		const hasFixedEnding = !! blogPostToReblog || isImport;
 

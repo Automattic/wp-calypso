@@ -20,7 +20,7 @@ describe( 'getPlansIntent', () => {
 
 	// Without this, an import is offered Commerce, whose site is still moving to Atomic at hand-off.
 	it( 'offers an import the plans that can take one', () => {
-		window.history.replaceState( {}, '', '/?goal=import' );
+		window.history.replaceState( {}, '', '/?flow=import' );
 
 		expect( getPlansIntent( ONBOARDING_FLOW ) ).toBe( 'plans-import' );
 	} );

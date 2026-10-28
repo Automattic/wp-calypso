@@ -297,7 +297,7 @@ describe( 'create-site', () => {
 
 	// Without this, imported posts land next to the theme's demo content and a "build" checklist.
 	it( 'creates an empty site with no intent or AI Launchpad for an import', async () => {
-		mockQueryParams = new URLSearchParams( 'goal=import' );
+		mockQueryParams = new URLSearchParams( 'flow=import' );
 		mockIsSimplifiedOnboarding = true;
 		await runStep();
 		await waitFor( () => expect( createSite ).toHaveBeenCalled() );

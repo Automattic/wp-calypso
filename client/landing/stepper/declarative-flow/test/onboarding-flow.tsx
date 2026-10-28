@@ -446,7 +446,7 @@ describe( 'Onboarding Flow', () => {
 
 				await runUseStepNavigationSubmit( {
 					currentStep: STEPS.PROCESSING.slug,
-					currentURL: '/setup/onboarding/processing?goal=import',
+					currentURL: '/setup/onboarding/processing?flow=import',
 					dependencies: {
 						siteSlug: 'test-site.wordpress.com',
 						siteId: 123,
@@ -476,7 +476,7 @@ describe( 'Onboarding Flow', () => {
 				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
 				const back = new URL( checkoutUrl.searchParams.get( 'checkoutBackUrl' ) ?? '' );
 
-				expect( back.searchParams.get( 'goal' ) ).toBe( 'import' );
+				expect( back.searchParams.get( 'flow' ) ).toBe( 'import' );
 			} );
 		} );
 

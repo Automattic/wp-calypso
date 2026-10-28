@@ -226,7 +226,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	);
 	const platform = urlQueryParams.get( 'platform' ) || '';
 	// An import's site receives content from elsewhere, so it starts empty and without an intent.
-	const isImport = urlQueryParams.get( 'goal' ) === 'import';
+	const isImport = urlQueryParams.get( 'flow' ) === 'import';
 	const useThemeHeadstart =
 		! isNewHostedSiteCreationFlow( flow ) && ! isNewSiteMigrationFlow( flow ) && ! isImport;
 	const shouldGoToCheckout = Boolean( planCartItem );
