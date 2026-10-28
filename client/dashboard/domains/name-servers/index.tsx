@@ -15,7 +15,6 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
-import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -96,20 +95,16 @@ export default function NameServers() {
 				/>
 			}
 		>
-			<Card>
-				<CardBody>
-					<NameServersForm
-						domainName={ domainName }
-						domainSiteSlug={ getDomainSiteSlug( domain ) }
-						nameServers={ nameServers }
-						defaultNameServers={ defaultNameServers }
-						isUsingDefaultNameServers={ isUsingDefaultNameServers }
-						isBusy={ isUpdatingNameServers }
-						showUpsellNudge={ showUpsellNudge }
-						onSubmit={ onSubmit }
-					/>
-				</CardBody>
-			</Card>
+			<NameServersForm
+				domainName={ domainName }
+				domainSiteSlug={ getDomainSiteSlug( domain ) }
+				nameServers={ nameServers }
+				defaultNameServers={ defaultNameServers }
+				isUsingDefaultNameServers={ isUsingDefaultNameServers }
+				isBusy={ isUpdatingNameServers }
+				showUpsellNudge={ showUpsellNudge }
+				onSubmit={ onSubmit }
+			/>
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

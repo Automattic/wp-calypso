@@ -11,6 +11,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState, useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { Card, CardBody, CardDivider, CardFooter } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import Notice from '../../components/notice';
 import { MIN_NAME_SERVERS_LENGTH, MAX_NAME_SERVERS_LENGTH, FormData, NameServerKey } from './types';
@@ -129,18 +130,28 @@ export default function NameServersForm( {
 		return initialData as FormData;
 	} );
 
+	const nameServerKeys = useMemo(
+		() =>
+			Array.from(
+				{ length: MAX_NAME_SERVERS_LENGTH },
+				( _, i ) => `nameServer${ i + 1 }` as NameServerKey
+			),
+		[]
+	);
 	const form = useMemo(
 		() => ( {
 			layout: { type: 'regular' as const },
-			fields: [
-				'useWpcomNameServers',
-				...Array.from(
-					{ length: MAX_NAME_SERVERS_LENGTH },
-					( _, i ) => `nameServer${ i + 1 }` as NameServerKey
-				),
-			],
+			fields: [ 'useWpcomNameServers', ...nameServerKeys ],
 		} ),
+		[ nameServerKeys ]
+	);
+	const choiceForm = useMemo(
+		() => ( { layout: { type: 'regular' as const }, fields: [ 'useWpcomNameServers' ] } ),
 		[]
+	);
+	const nameServersForm = useMemo(
+		() => ( { layout: { type: 'regular' as const }, fields: nameServerKeys } ),
+		[ nameServerKeys ]
 	);
 
 	// Separate memo (no formData dep) keeps the Edit reference stable across
@@ -230,62 +241,75 @@ export default function NameServersForm( {
 
 	const canSubmit = ! isBusy && isValid && isNameServersChanged( formData, nameServers );
 
+	const onChange = ( value: Partial< FormData > ) => {
+		setFormData( ( data ) => ( { ...data, ...value } ) );
+	};
+
 	return (
 		<form onSubmit={ handleSubmit }>
-			<VStack spacing={ 4 }>
-				<DataForm< FormData >
-					data={ formData }
-					fields={ fields }
-					form={ form }
-					onChange={ ( value ) => {
-						setFormData( ( data ) => ( { ...data, ...value } ) );
-					} }
-				/>
-				{ formData.useWpcomNameServers ? (
-					<VStack spacing={ 2 }>
-						{ getFormNameServers( formData ).map( ( nameServer, index ) => (
-							<Text key={ index }>{ nameServer }</Text>
-						) ) }
-					</VStack>
-				) : (
-					<>
-						<Text>
-							{ createInterpolateElement(
-								/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
-								hasEnTranslation(
-									'Not sure what to enter? <link>Look up</link> the name servers for popular hosts.'
-								)
-									? __(
-											'Not sure what to enter? <link>Look up</link> the name servers for popular hosts.'
-										)
-									: __( '<link>Look up</link> the name servers for popular hosts.' ),
-								{
-									link: (
-										<InlineSupportLink
-											supportContext="change-name-servers-finding-out-new-ns"
-											onClick={ () => {
-												recordTracksEvent(
-													'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_look_up_click',
-													{
-														domain: domainName,
-													}
-												);
-											} }
-										/>
-									),
-								}
-							) }
-						</Text>
-						{ isUsingDefaultNameServers && (
-							<Notice>
-								{ __(
-									'After you save, the new host is in charge of this domain. Your WordPress.com site and email will stop working at this address.'
+			<Card>
+				<CardBody>
+					<DataForm< FormData >
+						data={ formData }
+						fields={ fields }
+						form={ choiceForm }
+						onChange={ onChange }
+					/>
+				</CardBody>
+				<CardDivider />
+				<CardBody>
+					{ formData.useWpcomNameServers ? (
+						<VStack spacing={ 6 }>
+							{ getFormNameServers( formData ).map( ( nameServer, index ) => (
+								<Text key={ index }>{ nameServer }</Text>
+							) ) }
+						</VStack>
+					) : (
+						<VStack spacing={ 4 }>
+							<DataForm< FormData >
+								data={ formData }
+								fields={ fields }
+								form={ nameServersForm }
+								onChange={ onChange }
+							/>
+							<Text>
+								{ createInterpolateElement(
+									/* translators: <link> will be replaced with an anchor tag to open the support article in a new tab */
+									hasEnTranslation(
+										'Not sure what to enter? <link>Look up</link> the name servers for popular hosts.'
+									)
+										? __(
+												'Not sure what to enter? <link>Look up</link> the name servers for popular hosts.'
+											)
+										: __( '<link>Look up</link> the name servers for popular hosts.' ),
+									{
+										link: (
+											<InlineSupportLink
+												supportContext="change-name-servers-finding-out-new-ns"
+												onClick={ () => {
+													recordTracksEvent(
+														'calypso_dashboard_domain_management_name_servers_wpcom_name_servers_look_up_click',
+														{
+															domain: domainName,
+														}
+													);
+												} }
+											/>
+										),
+									}
 								) }
-							</Notice>
-						) }
-					</>
-				) }
-				<div>
+							</Text>
+							{ isUsingDefaultNameServers && (
+								<Notice>
+									{ __(
+										'After you save, the new host is in charge of this domain. Your WordPress.com site and email will stop working at this address.'
+									) }
+								</Notice>
+							) }
+						</VStack>
+					) }
+				</CardBody>
+				<CardFooter justify="flex-start">
 					<Button
 						__next40pxDefaultSize
 						variant="primary"
@@ -295,8 +319,8 @@ export default function NameServersForm( {
 					>
 						{ __( 'Save' ) }
 					</Button>
-				</div>
-			</VStack>
+				</CardFooter>
+			</Card>
 		</form>
 	);
 }

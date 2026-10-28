@@ -1,5 +1,4 @@
 import { action } from 'storybook/actions';
-import { Card, CardBody } from '../../components/card';
 import PageLayout from '../../components/page-layout';
 import NameServersForm from './form';
 import type { Meta, StoryObj } from '@storybook/react';
@@ -14,11 +13,7 @@ const meta: Meta< typeof NameServersForm > = {
 	decorators: [
 		( Story ) => (
 			<PageLayout size="small">
-				<Card>
-					<CardBody>
-						<Story />
-					</CardBody>
-				</Card>
+				<Story />
 			</PageLayout>
 		),
 	],
