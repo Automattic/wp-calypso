@@ -170,7 +170,7 @@
 	flex-direction: column;
 	justify-content: center;
 	align-items: flex-start;
-	margin-top: 0.5rem;
+	margin-top: 1rem;
 }
 
 // Scoped to the footer so it outranks `.button { margin: 0 }` regardless of CSS chunk load order.
