@@ -31,3 +31,8 @@
 	padding-block-start: 16px;
 	border-block-start: 1px solid var( --color-warning-10 );
 }
+
+.rewind-flow-known-threats__acknowledgement-error {
+	color: var( --color-error );
+	font-weight: 600;
+}

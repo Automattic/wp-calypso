@@ -14,7 +14,7 @@
  * // Renders: Updated <a href="/reader/blogs/123/posts/456">Hello World</a>
  */
 import { ExternalLink } from '@wordpress/components';
-import { Fragment, type MouseEvent, type ReactNode } from 'react';
+import { createContext, Fragment, useContext, type MouseEvent, type ReactNode } from 'react';
 import isA8CForAgencies from '../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../lib/jetpack/is-jetpack-cloud';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
@@ -217,9 +217,25 @@ const Theme: BlockRenderer = ( { content, children, onClick, meta } ) => {
 	);
 };
 
-const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
-	const { url, siteSlug, activity, intent, section } = content;
+// Outside the dashboard app itself, backup ranges keep opening the Backup page.
+const isInDashboardApp = () =>
+	! isDashboardBackport() && ! isJetpackCloud() && ! isA8CForAgencies();
 
+/**
+ * Whether backup ranges open the backup's details. The dashboard provides it from its `AppConfig`;
+ * classic Calypso also renders these blocks, so this module must not import the dashboard app.
+ */
+export const BackupDetailsLinksContext = createContext( false );
+
+// A component rather than a plain renderer, because renderers are called as functions and can't use hooks.
+function BackupBlock( { content, children, onClick, meta }: Parameters< BlockRenderer >[ 0 ] ) {
+	const backupDetailsLinks = useContext( BackupDetailsLinksContext );
+	const { url, siteSlug, rewindId, activity, intent, section } = content;
+
+	const backupDetailsPath =
+		! url && siteSlug && rewindId && backupDetailsLinks && isInDashboardApp()
+			? `/sites/${ siteSlug }/backups/${ rewindId }`
+			: null;
 	const href = url ?? ( siteSlug ? `/backup/${ siteSlug }` : null );
 
 	if ( ! href ) {
@@ -228,7 +244,7 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 
 	return (
 		<a
-			href={ getWpcomHref( href ) }
+			href={ backupDetailsPath ?? getWpcomHref( href ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'backups' }
@@ -237,7 +253,9 @@ const Backup: BlockRenderer = ( { content, children, onClick, meta } ) => {
 			{ children }
 		</a>
 	);
-};
+}
+
+const Backup: BlockRenderer = ( args ) => <BackupBlock { ...args } />;
 
 const blockTypeMapping: Record< string, BlockRenderer > = {
 	b: ( { children } ) => <Strong>{ children }</Strong>,

@@ -83,14 +83,16 @@ export function rewindRequestDismiss( siteId ) {
  * @param {string|number} siteId the site ID
  * @param {string|number} timestamp Unix timestamp to restore site to
  * @param {Object} args Additional request params, such as `types`
+ * @param {boolean} acknowledgeThreats Whether the user acknowledged the backup's known threats
  * @returns {Object} action object
  */
-export function rewindRestore( siteId, timestamp, args ) {
+export function rewindRestore( siteId, timestamp, args, acknowledgeThreats = false ) {
 	return {
 		type: REWIND_RESTORE,
 		siteId,
 		timestamp,
 		args,
+		acknowledgeThreats,
 	};
 }
 
@@ -100,15 +102,23 @@ export function rewindRestore( siteId, timestamp, args ) {
  * @param {string|number} timestamp Unix timestamp to restore site to
  * @param {string} includePaths List of included files, separated by comma
  * @param {string} excludePaths List of excluded files, separated by comma
+ * @param {boolean} acknowledgeThreats Whether the user acknowledged the backup's known threats
  * @returns {Object} action object
  */
-export function rewindGranularRestore( siteId, timestamp, includePaths, excludePaths = '' ) {
+export function rewindGranularRestore(
+	siteId,
+	timestamp,
+	includePaths,
+	excludePaths = '',
+	acknowledgeThreats = false
+) {
 	return {
 		type: REWIND_GRANULAR_RESTORE,
 		siteId,
 		timestamp,
 		includePaths,
 		excludePaths,
+		acknowledgeThreats,
 	};
 }
 

@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { speak } from '@wordpress/a11y';
 import { CheckboxControl } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useState } from 'react';
 import { useSelector } from 'react-redux';
 import {
 	BackupKnownThreatsList,
@@ -17,7 +17,8 @@ import {
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 import RewindFlowNotice, { RewindFlowNoticeLevel } from './rewind-flow-notice';
-import type { FunctionComponent } from 'react';
+import type { BackupKnownThreats } from '@automattic/api-core';
+import type { FunctionComponent, MutableRefObject } from 'react';
 
 import './known-threats-notice.scss';
 
@@ -28,8 +29,14 @@ interface Props {
 	acknowledged?: boolean;
 	onAcknowledgedChange?: ( value: boolean ) => void;
 	onKnownThreatsChange?: ( hasKnownThreats: boolean ) => void;
+	/** Set to the acknowledgement checkbox, so the caller can move focus to it. */
+	acknowledgementRef?: MutableRefObject< HTMLInputElement | null >;
 	/** Said when the box is ticked; say where the restore button is if it isn't the next stop. */
 	acknowledgedMessage?: string;
+	/** Why the restore was held back, shown under the checkbox and tied to it. */
+	acknowledgementError?: string | null;
+	/** Counts from a server refusal to restore without the acknowledgement; flagged is 0 when it sent none. */
+	refusedKnownThreats?: BackupKnownThreats | null;
 }
 
 export const isRestoreDisabled = (
@@ -50,11 +57,23 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 	acknowledged = false,
 	onAcknowledgedChange,
 	onKnownThreatsChange,
+	acknowledgementRef,
 	acknowledgedMessage,
+	acknowledgementError,
+	refusedKnownThreats,
 } ) => {
 	const translate = useTranslate();
 	const [ isOpen, setIsOpen ] = useState( false );
 	const threatsRegionId = useId();
+	// CheckboxControl doesn't forward a ref to its input.
+	const acknowledgementWrapperRef = useCallback(
+		( wrapper: HTMLDivElement | null ) => {
+			if ( acknowledgementRef ) {
+				acknowledgementRef.current = wrapper?.querySelector( 'input' ) ?? null;
+			}
+		},
+		[ acknowledgementRef ]
+	);
 	const siteSlug = useSelector( getSelectedSiteSlug );
 	const hasScan = useSelector( ( state ) =>
 		siteHasFeature( state, siteId, WPCOM_FEATURES_SCAN_SELF_SERVE )
@@ -65,28 +84,37 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 		enabled: hasScan && isOpen && counts?.backupPeriod != null,
 	} );
 
-	const knownThreats = counts?.knownThreats;
-	const hasKnownThreats = !! knownThreats && isFlagged( knownThreats );
+	// The server refuses a restore it knows is flagged even when this lookup failed or missed it.
+	const isRefused = ! isFlagged( counts?.knownThreats ) && !! refusedKnownThreats;
+	const knownThreats = isRefused ? refusedKnownThreats : counts?.knownThreats;
+	const flagged = knownThreats?.flagged ?? 0;
+	const hasKnownThreats = isRefused || flagged > 0;
 
 	useEffect( () => {
 		onKnownThreatsChange?.( hasKnownThreats );
 	}, [ hasKnownThreats, onKnownThreatsChange ] );
 
-	if ( ! knownThreats || ! hasKnownThreats ) {
+	if ( ! hasKnownThreats ) {
 		return null;
 	}
 
 	return (
 		<RewindFlowNotice
 			gridicon="notice"
-			title={ getKnownThreatsWarning( translate, knownThreats.flagged ) }
+			title={
+				flagged > 0
+					? getKnownThreatsWarning( translate, flagged )
+					: translate(
+							'This backup is known to contain security threats. Acknowledge them to restore it.'
+						)
+			}
 			type={ RewindFlowNoticeLevel.WARNING }
 		>
 			<div className="rewind-flow-known-threats">
-				{ hasScan && (
+				{ hasScan && flagged > 0 && counts?.backupPeriod != null && (
 					<div className="rewind-flow-known-threats__details">
 						<KnownThreatsToggleButton
-							flagged={ knownThreats.flagged }
+							flagged={ flagged }
 							isOpen={ isOpen }
 							onToggle={ () => setIsOpen( ( open ) => ! open ) }
 							controlsId={ threatsRegionId }
@@ -111,12 +139,15 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 					<RestoreThatOneInsteadLink
 						siteId={ siteId }
 						siteSlug={ siteSlug }
-						latestWithoutKnownThreats={ counts.latestWithoutKnownThreats }
-						currentBackupPeriod={ counts.backupPeriod }
+						latestWithoutKnownThreats={ counts?.latestWithoutKnownThreats }
+						currentBackupPeriod={ counts?.backupPeriod }
 					/>
 				) }
 				{ requireAcknowledgement && (
-					<div className="rewind-flow-known-threats__acknowledgement">
+					<div
+						className="rewind-flow-known-threats__acknowledgement"
+						ref={ acknowledgementWrapperRef }
+					>
 						<CheckboxControl
 							__nextHasNoMarginBottom
 							checked={ acknowledged }
@@ -133,6 +164,14 @@ const KnownThreatsNotice: FunctionComponent< Props > = ( {
 							label={ translate(
 								'I understand this backup contains known threats and want to restore it anyway.'
 							) }
+							// The help text is what the checkbox's aria-describedby points at.
+							help={
+								acknowledgementError ? (
+									<span className="rewind-flow-known-threats__acknowledgement-error">
+										{ acknowledgementError }
+									</span>
+								) : undefined
+							}
 						/>
 					</div>
 				) }

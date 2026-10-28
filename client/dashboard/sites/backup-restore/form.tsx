@@ -1,3 +1,4 @@
+import { getRefusedKnownThreats } from '@automattic/api-core';
 import { siteBackupRestoreInitiateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
@@ -6,7 +7,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useCallback, useId, useState } from 'react';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
@@ -14,7 +15,7 @@ import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
 import { useRestoreInsteadFocusRef } from '../backups/known-threats/restore-that-one-instead-link';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
 import type { RestoreTrackingProps } from './types';
-import type { RestoreConfig, Site } from '@automattic/api-core';
+import type { BackupKnownThreats, RestoreConfig, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< RestoreConfig >[] = [
@@ -85,6 +86,14 @@ function SiteBackupRestoreForm( {
 
 	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
 	const [ acknowledged, setAcknowledged ] = useState( false );
+	const acknowledgementRef = useRef< HTMLInputElement | null >( null );
+	const shouldFocusAcknowledgementRef = useRef( false );
+	const [ refusedCounts, setRefusedCounts ] = useState< {
+		rewindId: string;
+		knownThreats: BackupKnownThreats;
+	} | null >( null );
+	const refusedKnownThreats =
+		refusedCounts?.rewindId === rewindId ? refusedCounts.knownThreats : null;
 	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
 		setHasKnownThreats( value );
 		if ( ! value ) {
@@ -106,6 +115,7 @@ function SiteBackupRestoreForm( {
 			{
 				timestamp: rewindId,
 				config: formData,
+				acknowledgeThreats: hasKnownThreats && acknowledged,
 			},
 			{
 				onSuccess: ( restoreId ) => {
@@ -114,7 +124,23 @@ function SiteBackupRestoreForm( {
 						known_threats_acknowledged: hasKnownThreats && acknowledged,
 					} );
 				},
-				onError: () => {
+				onError: ( error: Error & { error?: string; data?: { known_threats?: unknown } } ) => {
+					if ( error.error === 'threats_not_acknowledged' ) {
+						setAcknowledged( false );
+						// Shows the checkbox even if the notice's own lookup missed the threats.
+						setRefusedCounts( {
+							rewindId,
+							knownThreats: getRefusedKnownThreats( error.data?.known_threats ),
+						} );
+						shouldFocusAcknowledgementRef.current = true;
+						createErrorNotice(
+							__(
+								'This backup is known to contain security threats. Acknowledge them to restore it.'
+							),
+							{ type: 'snackbar' }
+						);
+						return;
+					}
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
 						type: 'snackbar',
 					} );
@@ -124,6 +150,14 @@ function SiteBackupRestoreForm( {
 	};
 
 	const isFormValid = Object.values( formData ).some( ( value ) => value );
+	// The checkbox may mount only once the refusal has rendered.
+	useEffect( () => {
+		if ( shouldFocusAcknowledgementRef.current && acknowledgementRef.current ) {
+			shouldFocusAcknowledgementRef.current = false;
+			acknowledgementRef.current.focus();
+		}
+	} );
+
 	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
 	const isRestoreDisabled = ! isFormValid || isRestoreMutationPending || awaitingAcknowledgement;
 	const acknowledgementHintId = useId();
@@ -184,6 +218,8 @@ function SiteBackupRestoreForm( {
 					acknowledged={ acknowledged }
 					onAcknowledgedChange={ setAcknowledged }
 					onKnownThreatsChange={ handleKnownThreatsChange }
+					acknowledgementRef={ acknowledgementRef }
+					refusedKnownThreats={ refusedKnownThreats }
 				/>
 
 				<ButtonStack justify="flex-start">

@@ -27,10 +27,12 @@ jest.mock( '@wordpress/a11y', () => ( {
 	speak: jest.fn(),
 } ) );
 
+const mockCreateErrorNotice = jest.fn();
+
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createErrorNotice: mockCreateErrorNotice,
 	} ),
 	useRegistry: () => ( {} ),
 	combineReducers: jest.fn(),
@@ -149,7 +151,10 @@ const restoreButton = () => screen.getByRole( 'button', { name: 'Restore now' } 
 afterEach( () => {
 	nock.cleanAll();
 	jest.mocked( speak ).mockClear();
+	mockCreateErrorNotice.mockClear();
 } );
+
+const restorePath = `/rest/v1/activity-log/${ siteId }/rewind/to/${ rewindId }`;
 
 test( 'disables Restore now until the box is ticked', async () => {
 	const user = userEvent.setup();
@@ -482,3 +487,190 @@ test( 'renders no link when the caller supplies no restore route', async () => {
 	expect( await screen.findByText( /known to contain 3/ ) ).toBeVisible();
 	expect( screen.queryByRole( 'link', { name: /^Restore .+ instead$/ } ) ).not.toBeInTheDocument();
 } );
+
+describe( 'always sends acknowledge_threats, true only when acknowledged', () => {
+	test( 'sends it after the box is ticked', async () => {
+		const user = userEvent.setup();
+		mockBackups( { known_threats: knownThreats( 3 ) } );
+		const scope = nock( API_BASE )
+			.post( restorePath, ( body ) => {
+				expect( body ).toEqual( expect.objectContaining( { acknowledge_threats: true } ) );
+				return true;
+			} )
+			.reply( 200, { restore_id: '42' } );
+		renderForm();
+
+		await user.click( await screen.findByRole( 'checkbox', { name: /I understand/ } ) );
+		await user.click( restoreButton() );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+
+	test( 'sends false for backups without known threats', async () => {
+		const user = userEvent.setup();
+		mockBackups( { known_threats: knownThreats( 0 ) } );
+		const scope = nock( API_BASE )
+			.post( restorePath, ( body ) => {
+				expect( body.acknowledge_threats ).toBe( false );
+				return true;
+			} )
+			.reply( 200, { restore_id: '42' } );
+		renderForm();
+
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+		await user.click( restoreButton() );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+} );
+
+test( 'shows the known-threats message on threats_not_acknowledged', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	nock( API_BASE ).post( restorePath ).reply( 409, {
+		error: 'threats_not_acknowledged',
+		message: 'This backup contains known threats.',
+	} );
+	renderForm();
+
+	const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	await user.click( restoreButton() );
+
+	await waitFor( () =>
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'This backup is known to contain security threats. Acknowledge them to restore it.',
+			expect.anything()
+		)
+	);
+	expect( checkbox ).not.toBeChecked();
+	expect( restoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	await waitFor( () => expect( checkbox ).toHaveFocus() );
+} );
+
+test( 'keeps the generic message for other restore errors', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	nock( API_BASE ).post( restorePath ).reply( 500, { error: 'server_error', message: 'Oops' } );
+	renderForm();
+
+	const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	await user.click( restoreButton() );
+
+	await waitFor( () =>
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'Failed to initiate restore. Please try again.',
+			expect.anything()
+		)
+	);
+	expect( checkbox ).toBeChecked();
+} );
+
+const renderGranularForm = () =>
+	render(
+		<SiteBackupGranularRestoreForm
+			site={ site }
+			siteId={ siteId }
+			rewindId={ rewindId }
+			restorePointDate="Oct 16"
+			onRestoreInitiate={ jest.fn() }
+		/>
+	);
+
+const granularRestoreButton = () => screen.getByRole( 'button', { name: 'Restore selected file' } );
+
+test( 'granular form sends acknowledge_threats after the box is ticked', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	const scope = nock( API_BASE )
+		.post( restorePath, ( body ) => {
+			expect( body ).toEqual(
+				expect.objectContaining( { types: 'paths', acknowledge_threats: true } )
+			);
+			return true;
+		} )
+		.reply( 200, { restore_id: '42' } );
+	renderGranularForm();
+
+	await user.click( await screen.findByRole( 'checkbox', { name: /I understand/ } ) );
+	await user.click( granularRestoreButton() );
+
+	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+} );
+
+test( 'granular form sends acknowledge_threats false for backups without known threats', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 0 ) } );
+	const scope = nock( API_BASE )
+		.post( restorePath, ( body ) => {
+			expect( body.acknowledge_threats ).toBe( false );
+			return true;
+		} )
+		.reply( 200, { restore_id: '42' } );
+	renderGranularForm();
+
+	await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+	await user.click( granularRestoreButton() );
+
+	await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+} );
+
+test( 'granular form shows the known-threats message on threats_not_acknowledged', async () => {
+	const user = userEvent.setup();
+	mockBackups( { known_threats: knownThreats( 3 ) } );
+	nock( API_BASE ).post( restorePath ).reply( 409, {
+		error: 'threats_not_acknowledged',
+		message: 'This backup contains known threats.',
+	} );
+	renderGranularForm();
+
+	const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+	await user.click( checkbox );
+	await user.click( granularRestoreButton() );
+
+	await waitFor( () =>
+		expect( mockCreateErrorNotice ).toHaveBeenCalledWith(
+			'This backup is known to contain security threats. Acknowledge them to restore it.',
+			expect.anything()
+		)
+	);
+	expect( checkbox ).not.toBeChecked();
+	expect( granularRestoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+	await waitFor( () => expect( checkbox ).toHaveFocus() );
+} );
+
+test.each( [
+	[ 'form', renderForm, restoreButton ],
+	[ 'granular form', renderGranularForm, granularRestoreButton ],
+] )(
+	'%s asks for the acknowledgement when refused for threats its own lookup missed',
+	async ( _, renderRestoreForm, getRestoreButton ) => {
+		const user = userEvent.setup();
+		mockBackups( { known_threats: knownThreats( 0 ) } );
+		nock( API_BASE )
+			.post( restorePath, ( body ) => ! body.acknowledge_threats )
+			.reply( 409, {
+				error: 'threats_not_acknowledged',
+				message: 'This backup contains known threats.',
+				data: { known_threats: knownThreats( 3 ), backup_period: 1792244301 },
+			} );
+		const acknowledgedScope = nock( API_BASE )
+			.post( restorePath, ( body ) => body.acknowledge_threats === true )
+			.reply( 200, { restore_id: '42' } );
+		renderRestoreForm();
+
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 200 ) ) );
+		expect( screen.queryByRole( 'checkbox', { name: /I understand/ } ) ).not.toBeInTheDocument();
+		await user.click( getRestoreButton() );
+
+		const checkbox = await screen.findByRole( 'checkbox', { name: /I understand/ } );
+		expect( screen.getByText( /known to contain 3 security threats/ ) ).toBeVisible();
+		await waitFor( () => expect( checkbox ).toHaveFocus() );
+		expect( getRestoreButton() ).toHaveAttribute( 'aria-disabled', 'true' );
+
+		await user.click( checkbox );
+		await user.click( getRestoreButton() );
+		await waitFor( () => expect( acknowledgedScope.isDone() ).toBe( true ) );
+	}
+);
