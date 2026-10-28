@@ -268,16 +268,14 @@ describe( 'DomainConnectionVerification', () => {
 				resolves_to_wpcom: false,
 			} );
 
-			const { container } = render(
+			render(
 				<DomainConnectionVerification
 					{ ...defaultProps }
 					domainMappingStatus={ domainMappingStatus }
 				/>
 			);
 
-			const noticeElement = container.querySelector( '.dashboard-notice.is-info' );
-			expect( noticeElement ).toBeInTheDocument();
-			expect( noticeElement?.textContent ).toContain( 'checking your DNS records' );
+			expect( screen.getByText( /checking your DNS records/ ) ).toBeVisible();
 		} );
 
 		test( 'does not display info notice when domain is connected', () => {
