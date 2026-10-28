@@ -1,5 +1,6 @@
 @import '@automattic/onboarding/styles/mixins';
 @import '@wordpress/base-styles/breakpoints';
+@import '@automattic/plans-grid-next/src/variables';
 
 .step-route.plans:not( :has( .step-container-v2 ) ) {
 	padding: 60px 0 0;
@@ -45,6 +46,15 @@
 			.plan-features-2023-grid__table:is( .has-4-cols, .has-5-cols, .has-6-cols )
 	) {
 		--step-container-v2-content-inline-padding: clamp( 1rem, 2vw, 2rem );
+	}
+
+	// The redesigned table allows 280px per column up to five columns and the shared
+	// $redesign-table-max-width at six, both wider than the 1344px default content width.
+	.step-container-v2__content-wrapper.axis-vertical:has(
+		.plans-grid-next.is-plans-grid-redesign-experiment
+			.plan-features-2023-grid__table:is( .has-5-cols, .has-6-cols )
+	) {
+		--step-container-v2-content-max-width: #{$redesign-table-max-width};
 	}
 
 	.step-container-v2__content-wrapper.axis-vertical:has(

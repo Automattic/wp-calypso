@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { bigSkyPluginQuery, queryClient } from '@automattic/api-queries';
+import { bigSkyPluginQuery, dashboardAdminBarQuery, queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
 import useShouldLoadAgentsManager, {
@@ -115,5 +115,70 @@ describe( 'marketplace eligibility', () => {
 				getAgentsManagerEligibility( `/plugins/${ route }${ suffix }`, true, true ).routeIsEnabled
 			).toBe( false );
 		}
+	} );
+} );
+
+describe( 'proxied Automattician eligibility', () => {
+	const siteId = 123;
+
+	function setAdminBarNodes( ids: string[] ) {
+		queryClient.setQueryData( dashboardAdminBarQuery().queryKey, {
+			nodes: ids.map( ( id ) => ( { id, title: false, parent: false, href: '', group: false } ) ),
+		} );
+	}
+
+	beforeEach( () => {
+		queryClient.clear();
+		mockedIsEnabled.mockReturnValue( true );
+		queryClient.setQueryData( bigSkyPluginQuery( siteId ).queryKey, {
+			blog_id: siteId,
+			enabled: false,
+			available: true,
+			on_free_trial: false,
+		} );
+	} );
+
+	it.each( [
+		[ '/sites/example.com', siteId ],
+		[ '/me', null ],
+	] )(
+		'loads as internal-only at %s with the AI chat node, even with WordPress Agent off',
+		( route, id ) => {
+			setAdminBarNodes( [ 'agents-manager-ai-chat' ] );
+
+			const { result } = renderHook( () => useShouldLoadAgentsManager( route, id ) );
+
+			expect( result.current ).toEqual( { routeIsEnabled: true, isInternalOnly: true } );
+		}
+	);
+
+	it.each( [
+		[ 'without the AI chat node', [ 'help-center' ], true ],
+		[ 'without the omnibar', [ 'agents-manager-ai-chat' ], false ],
+	] )( 'stays off %s', ( _label, ids, isOmnibarVisible ) => {
+		setAdminBarNodes( ids );
+
+		const { result } = renderHook( () =>
+			useShouldLoadAgentsManager( '/me', null, false, isOmnibarVisible )
+		);
+
+		expect( result.current.routeIsEnabled ).toBe( false );
+	} );
+
+	it( 'stays off before the omnibar loads the admin bar, without fetching it', () => {
+		const { result } = renderHook( () => useShouldLoadAgentsManager( '/me', null ) );
+
+		expect( result.current.routeIsEnabled ).toBe( false );
+		expect( queryClient.getQueryState( dashboardAdminBarQuery().queryKey )?.fetchStatus ).toBe(
+			'idle'
+		);
+	} );
+
+	it( 'keeps the public marketplace route public', () => {
+		setAdminBarNodes( [ 'agents-manager-ai-chat' ] );
+
+		const { result } = renderHook( () => useShouldLoadAgentsManager( '/plugins', null, true ) );
+
+		expect( result.current ).toEqual( { routeIsEnabled: true, isInternalOnly: false } );
 	} );
 } );

@@ -23,7 +23,7 @@ import type { TermPricing } from '../use-term-pricing';
 import type { ProductListItem } from './lib/product-groups';
 import type { AgencyProduct } from '@automattic/api-core';
 
-interface Props {
+interface ProductStoreCardProps {
 	item: ProductListItem;
 	term: TermPricing;
 	isReferralMode: boolean;
@@ -72,7 +72,7 @@ export default function ProductStoreCard( {
 	onToggleCart,
 	onViewDetails,
 	onSelectVariant,
-}: Props ) {
+}: ProductStoreCardProps ) {
 	const variants = getItemProducts( item );
 	const [ selectedSlug, setSelectedSlug ] = useState( variants[ 0 ].slug );
 	const product = variants.find( ( variant ) => variant.slug === selectedSlug ) ?? variants[ 0 ];
