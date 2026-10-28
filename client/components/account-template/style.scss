@@ -1,0 +1,210 @@
+@import '@automattic/typography/styles/variables';
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+@import '@wordpress/base-styles/variables';
+
+// The template every account screen follows: log in, sign up, lost password,
+// magic link, two-step authentication. A 432px column (`columnWidth={ 4 }`)
+// with the heading left-aligned above the form. The main login screen is the
+// exception: its form and social buttons sit side by side, so it opts into
+// `.is-centered` and keeps its wider column.
+.account-template {
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 2rem;
+	width: 100%;
+	text-align: start;
+
+	.step-container-v2__heading,
+	.wp-login__one-login-layout-heading {
+		width: 100%;
+		text-align: start;
+	}
+
+	// Only the heading is centered: form labels and fields keep their own alignment.
+	&.is-centered {
+		align-items: center;
+
+		.step-container-v2__heading,
+		.wp-login__one-login-layout-heading {
+			text-align: center;
+		}
+	}
+
+	// Title: 32/40 on mobile, 44/52 from the small breakpoint.
+	.step-container-v2__heading h1.wp-brand-font {
+		color: var( --color-neutral-100 );
+		font-size: $font-title-large;
+		line-height: $font-line-height-2x-large;
+		letter-spacing: -0.32px;
+
+		@include break-small {
+			// No size or line-height token for the 44/52 title.
+			font-size: 2.75rem;
+			line-height: 52px;
+			letter-spacing: 0.2px;
+		}
+	}
+
+	// Subtitle: one treatment whatever it says, terms line included. Gray 100,
+	// 14/20 on mobile, 16/24 from the small breakpoint.
+	.step-container-v2__heading p,
+	.wp-login__one-login-layout-heading-subtext,
+	.step-container-v2__heading
+		+ .signup-form
+		.signup-form-social-first-screen
+		> .signup-form-social-first__tos-link:first-child {
+		margin-block: 0.5rem 0;
+		// Balanced wrapping suits centered text; left-aligned, it splits a two-line
+		// subtitle in half and leaves a ragged gap on the right.
+		text-wrap: pretty;
+		color: var( --color-neutral-100 );
+		font-size: $font-body-small;
+		line-height: $font-line-height-small;
+		letter-spacing: -0.15px;
+
+		@include break-small {
+			font-size: $font-body;
+			line-height: $font-line-height-medium;
+			letter-spacing: -0.32px;
+		}
+
+		.wp-login__one-login-layout-tos,
+		a {
+			color: inherit;
+		}
+
+		a {
+			text-decoration: underline;
+		}
+	}
+
+	&.is-centered .step-container-v2__heading p,
+	&.is-centered .wp-login__one-login-layout-heading-subtext {
+		text-wrap: balance;
+	}
+
+	.wp-login__one-login-layout-heading-subtext.is-secondary {
+		font-size: $font-body-extra-small;
+		line-height: $font-line-height-x-small;
+	}
+
+	// Inside the column, forms take its full width instead of their own caps.
+	&:not( .is-centered ) {
+		--login-form-column-max-width: 100%;
+		--signup-form-column-max-width: 100%;
+
+		.login form,
+		.login__lost-password-form-wrapper,
+		.magic-login__request-link,
+		.magic-login__form .logged-out-form,
+		.auth-form__social,
+		.signup-form-social-first {
+			max-width: none;
+		}
+
+		// Magic link: the card's own padding would inset the form from the heading.
+		.magic-login__form {
+			padding-top: 0;
+
+			.card.logged-out-form {
+				padding: 0;
+			}
+
+			form {
+				max-width: none;
+			}
+
+			// Field to CTA is 16px, and the CTA is 40px like every other account button.
+			.magic-login__email-fields {
+				margin-bottom: 0;
+			}
+
+			.magic-login__tos {
+				margin-block: 1rem 0;
+			}
+
+			.magic-login__form-action {
+				margin-top: 1rem;
+			}
+
+			.connect-screen-action-buttons__main {
+				margin-bottom: 0;
+			}
+
+			.connect-screen-action-buttons__primary {
+				min-height: 40px;
+			}
+		}
+
+		// The link under the CTA ("Enter a password instead") is the template's secondary
+		// button: 8px below the CTA, centered in a 40px row.
+		.magic-login__form + .one-login__footer {
+			margin-top: 0.5rem;
+
+			.one-login__footer-link {
+				display: inline-flex;
+				align-items: center;
+				min-height: 40px;
+			}
+		}
+	}
+
+	// Stepper signup renders the terms line as the form's first paragraph rather than
+	// as the heading's subtitle, so it reads as one: left-aligned and 8px under the title.
+	.step-container-v2__heading
+		+ .signup-form
+		.signup-form-social-first-screen
+		> .signup-form-social-first__tos-link:first-child {
+		margin-block: -1.5rem 2rem;
+		text-align: start;
+	}
+}
+
+// The legacy signup step (/start) caps each part of the form at 360-400px with
+// selectors rooted at `.layout`, so these need the extra specificity.
+.layout .account-template:not( .is-centered ) {
+	.signup-form,
+	.signup-form .card.logged-out-form,
+	.signup-form .auth-form__separator {
+		max-width: none;
+		margin-inline: 0;
+	}
+
+	.signup-form .card.auth-form__social {
+		padding-inline: 0;
+	}
+}
+
+// Top bar links. Up to two, separated by a divider, e.g. "Use my own domain | Help Center".
+.account-template__top-bar-links {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+	font-size: 13px;
+	line-height: $font-line-height-small;
+
+	> * + * {
+		position: relative;
+
+		&::before {
+			content: '';
+			position: absolute;
+			// Half the gap, so the divider sits centered between the two links.
+			inset-inline-start: -0.375rem;
+			top: 50%;
+			width: 1px;
+			height: 1rem;
+			transform: translateY( -50% );
+			background: var( --color-neutral-5 );
+		}
+	}
+
+	.components-button.is-link {
+		color: var( --color-neutral-100 );
+		font-size: inherit;
+		font-weight: 400;
+		line-height: inherit;
+	}
+}

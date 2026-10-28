@@ -68,6 +68,36 @@
 	}
 }
 
+// The conversations inbox: the author over the box, and the actions under it.
+.comments__form.is-composer {
+	padding: 0;
+
+	.comments__form-author {
+		display: flex;
+		align-items: center;
+		gap: 12px;
+		margin-block-end: 12px;
+		font-size: $font-body;
+		font-weight: 500;
+		color: var(--color-text);
+	}
+
+	.comments__form-author .user-avatar {
+		position: static;
+	}
+
+	.comments__form-actions {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		margin-block-start: 12px;
+	}
+
+	.comments__form-actions .components-button {
+		margin: 0;
+	}
+}
+
 // On /reader/conversations, balance the space below and
 // above the "Send" button.  The default negative margin
 // of -19px is intended for the pages like

@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { STEPS } from '../../../internals/steps';
+import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import directToCart from '../direct-to-cart';
 
 jest.mock( 'calypso/my-sites/checkout/get-thank-you-page-url', () => ( {
@@ -10,6 +12,13 @@ jest.mock( 'calypso/my-sites/checkout/get-thank-you-page-url', () => ( {
 jest.mock( 'calypso/lib/wp', () => ( {
 	__esModule: true,
 	default: { req: { get: jest.fn() } },
+} ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( { recordTracksEvent: jest.fn() } ) );
+jest.mock( 'calypso/lib/logstash', () => ( { logToLogstash: jest.fn() } ) );
+
+jest.mock( '../../../../hooks/use-query', () => ( {
+	useQuery: () => new URLSearchParams( 'plan=business-bundle' ),
 } ) );
 
 function setLocation( search: string ): void {
@@ -52,5 +61,32 @@ describe( 'direct-to-cart flow — initialize', () => {
 		const steps = await ( directToCart.initialize as () => Promise< Array< { slug: string } > > )();
 		const slugs = steps.map( ( s ) => s.slug );
 		expect( slugs ).toContain( 'create-site' );
+	} );
+} );
+
+describe( 'direct-to-cart flow — navigation', () => {
+	const submitProcessing = ( providedDependencies: Record< string, unknown > ) => {
+		const navigate = jest.fn();
+		const { submit } = directToCart.useStepNavigation( STEPS.PROCESSING.slug as never, navigate );
+		submit?.( { slug: STEPS.PROCESSING.slug, providedDependencies } as never );
+		return navigate;
+	};
+
+	it.each( [
+		[ ProcessingResult.FAILURE, 'processing_failed' ],
+		[ ProcessingResult.NO_ACTION, 'processing_no_action' ],
+		[ undefined, 'processing_failed' ],
+	] )( 'names the cause when processing ends with %s', ( processingResult, errorReason ) => {
+		const navigate = submitProcessing( { processingResult } );
+
+		expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, { errorReason } );
+	} );
+
+	it( 'names the cause when processing succeeds without a site', () => {
+		const navigate = submitProcessing( { processingResult: ProcessingResult.SUCCESS } );
+
+		expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug, {
+			errorReason: 'processing_missing_site',
+		} );
 	} );
 } );

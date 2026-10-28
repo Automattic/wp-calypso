@@ -6,6 +6,7 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { appStates } from 'calypso/state/imports/constants';
 import { mockStepProps, renderStep } from '../../test/helpers';
 import PlaygroundSetupStep from '../components/playground-setup';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from '../lib/constants';
 import {
 	ImportFailureError,
 	ImportTimeoutError,
@@ -93,7 +94,7 @@ describe( 'PlaygroundSetupStep', () => {
 	} );
 
 	it( 'calls a WooCommerce launch a store', async () => {
-		sessionStorage.setItem( 'entrepreneur_playground_woo_intent', '1' );
+		sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
 		await renderDuring( { phase: 'packing' } );
 
 		expect( screen.getByText( 'Packing up your store...' ) ).toBeVisible();
@@ -141,7 +142,7 @@ describe( 'PlaygroundSetupStep', () => {
 
 	it.each( [
 		[ 'a site launch', null ],
-		[ 'a WooCommerce publish launch', 'entrepreneur_from_playground_publish' ],
+		[ 'a WooCommerce publish launch', SESSION_KEY_FROM_PLAYGROUND_PUBLISH ],
 	] )( 'hands %s back to its flow when the import finishes', async ( _name, flag ) => {
 		if ( flag ) {
 			sessionStorage.setItem( flag, '1' );

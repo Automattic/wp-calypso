@@ -22,7 +22,7 @@ import type { CartLine } from '../products/use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
 import type { AgencyProduct } from '@automattic/api-core';
 
-interface Props {
+interface ReferralSummaryProps {
 	lines: CartLine[];
 	/** The development site whose plan the lines are, when there is one. */
 	siteUrl?: string;
@@ -81,7 +81,7 @@ export default function ReferralSummary( {
 	onCopy,
 	onCheckout,
 	onPreview,
-}: Props ) {
+}: ReferralSummaryProps ) {
 	const suffix = getTermSuffix( term );
 
 	const actions = isFreeOnly ? (

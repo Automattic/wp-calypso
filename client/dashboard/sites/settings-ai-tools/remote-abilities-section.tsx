@@ -21,6 +21,7 @@ import {
 	getRemoteAbilityKey,
 	getSiteRemoteGroups,
 	isRemoteAbilityEnabled,
+	isRemoteKeyEnabled,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -102,13 +103,13 @@ export default function RemoteAbilitiesSection( {
 	site,
 	category,
 	search = '',
-	anchorTool = null,
+	defaultEnabled = false,
 }: {
 	site: Site;
 	category: RemoteAbilityCategory;
 	search?: string;
-	/** Exact ability-name filter from a URL anchor; beats the fuzzy search. */
-	anchorTool?: string | null;
+	/** State of abilities with no saved choice: follows the user's MCP access for this category. */
+	defaultEnabled?: boolean;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
@@ -133,18 +134,8 @@ export default function RemoteAbilitiesSection( {
 		keys: [ 'label', 'description', 'name' ],
 		query,
 	} );
-	const visibleAbilities = anchorTool
-		? ( abilities ?? [] ).filter( ( ability ) => ability.name === anchorTool )
-		: filteredAbilities;
-	const namespaces = collectNamespaces( visibleAbilities, savedGroups, category );
-	if ( anchorTool ) {
-		// An exact anchor shows just its own card; anything without the tool goes.
-		[ ...namespaces.keys() ].forEach( ( namespace ) => {
-			if ( ( namespaces.get( namespace ) as NamespaceGroup ).abilities.length === 0 ) {
-				namespaces.delete( namespace );
-			}
-		} );
-	} else if ( query ) {
+	const namespaces = collectNamespaces( filteredAbilities, savedGroups, category );
+	if ( query ) {
 		// A saved-only card (no catalog abilities to match against) stays only
 		// when its own name matches the query.
 		[ ...namespaces.keys() ].forEach( ( namespace ) => {
@@ -200,7 +191,7 @@ export default function RemoteAbilitiesSection( {
 				<SectionHeader
 					title={ __( 'Site-published abilities' ) }
 					description={ __(
-						'Advanced: choose which abilities this site’s plugins publish to external AI agents. Off by default.'
+						'Choose which abilities this site’s plugins publish to external AI agents.'
 					) }
 					level={ 3 }
 				/>
@@ -216,10 +207,17 @@ export default function RemoteAbilitiesSection( {
 			{ [ ...namespaces.entries() ].map( ( [ namespace, group ] ) => {
 				const namespaceEnabled =
 					group.keys.length > 0 &&
-					group.keys.every( ( key ) => savedGroups[ key ] === true ) &&
-					group.abilityKeys.every( ( key ) => savedGroups[ key ] === true ) &&
+					group.keys.every( ( key ) => isRemoteKeyEnabled( savedGroups, key, defaultEnabled ) ) &&
+					group.abilityKeys.every( ( key ) =>
+						isRemoteKeyEnabled( savedGroups, key, defaultEnabled )
+					) &&
 					group.abilities.every( ( ability ) =>
-						isRemoteAbilityEnabled( savedGroups, ability.name, ability.meta?.annotations )
+						isRemoteAbilityEnabled(
+							savedGroups,
+							ability.name,
+							ability.meta?.annotations,
+							defaultEnabled
+						)
 					);
 				// Both directions write the group keys and any saved ability-level
 				// keys: enabling overwrites stale denies, and disabling clears
@@ -234,7 +232,7 @@ export default function RemoteAbilitiesSection( {
 						toolAnchors={ group.abilities.map( ( ability ) => ability.name ) }
 						allEnabled={ namespaceEnabled }
 						disabled={ mutation.isPending }
-						forceOpen={ query.length > 0 || anchorTool !== null }
+						forceOpen={ query.length > 0 }
 						onEnableAll={ ( checked ) =>
 							saveGroups( intentKeys, checked, `${ category }:${ namespace }` )
 						}
@@ -252,7 +250,8 @@ export default function RemoteAbilitiesSection( {
 														checked={ isRemoteAbilityEnabled(
 															savedGroups,
 															ability.name,
-															ability.meta?.annotations
+															ability.meta?.annotations,
+															defaultEnabled
 														) }
 														disabled={ mutation.isPending }
 														label={ ability.label || ability.name }

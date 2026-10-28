@@ -20,11 +20,11 @@ import RouterLinkButton from '../../components/router-link-button';
 import SiteIcon from '../../components/site-icon';
 import { SiteLink } from '../../sites/site-fields';
 import { formatDate } from '../../utils/datetime';
-import { prepareScheduleName } from './helpers';
 import { useDeleteSchedules } from './hooks/use-delete-schedules';
 import { useScheduledUpdates } from './hooks/use-scheduled-updates';
 import { useToggleScheduleActive } from './hooks/use-toggle-schedule-active';
 import { ScheduledUpdateRow } from './types';
+import { prepareScheduleName } from './utils';
 
 // Create stable mapping for unique schedule names with invisible suffixes
 const getUniqueScheduleName = ( () => {

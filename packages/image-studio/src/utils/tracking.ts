@@ -5,6 +5,7 @@
  * Adapted from big-sky-plugin for wp-calypso using calypso-analytics.
  */
 
+import { getAgentEnvironment } from '@automattic/agents-manager';
 import { recordTracksEvent as recordTracksEventBase } from '@automattic/calypso-analytics';
 import { select } from '@wordpress/data';
 // ImageStudioEntryPoint is a value import here, not type-only: the Feature Clip
@@ -12,6 +13,7 @@ import { select } from '@wordpress/data';
 import { store as imageStudioStore, ImageStudioEntryPoint } from '../store';
 import { ImageStudioMode, type MetadataField } from '../types';
 import { getSessionId } from '../utils/session';
+import { contextProvider } from './client-context';
 import { parseErrorUrl } from './parse-error-url';
 import type { CreditsCtaType } from '@automattic/agents-manager';
 
@@ -567,7 +569,10 @@ export function trackImageStudioError( {
 	recordImageStudioEvent( 'image_studio_error', properties );
 }
 
-/** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
+/**
+ * What showed the notice: the credits check on open, a re-check after a turn or on returning
+ * to the page, or a failed request.
+ */
 export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
 
 /** What opened the credits meter's popover, as the Agent's `credits_meter_opened` event names it. */
@@ -584,6 +589,8 @@ export interface CreditsMeterDetails {
 	state: 'ok' | 'low' | 'zero';
 	planTier: string;
 	creditsLeft: number | 'none';
+	/** The popover's top-ups row, so a used-up pack sends 0. */
+	topUpCreditsLeft: number | 'none';
 }
 
 export interface UpgradeNoticeCredits extends CreditsMeterDetails {
@@ -614,6 +621,8 @@ function getUpgradeNoticeProperties( event: UpgradeNoticeEvent | UpgradeNoticeCl
 		state: event.state,
 		plan_tier: event.planTier,
 		credits_left: event.creditsLeft,
+		top_up_credits_left: event.topUpCreditsLeft,
+		agent_environment: getAgentEnvironment( contextProvider ),
 		cta_type: event.ctaType,
 		ref: event.ref,
 	};
@@ -650,6 +659,8 @@ export function trackImageStudioCreditsMeterOpened( event: CreditsMeterOpenedEve
 		state: event.state,
 		plan_tier: event.planTier,
 		credits_left: event.creditsLeft,
+		top_up_credits_left: event.topUpCreditsLeft,
+		agent_environment: getAgentEnvironment( contextProvider ),
 	} );
 }
 

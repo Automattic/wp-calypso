@@ -12,8 +12,8 @@ export default function CommentNote( { note }: { note: Note } ) {
 
 	return (
 		<>
-			{ post && <PostCard post={ post } site={ site } /> }
-			<Thread>
+			{ post && <PostCard post={ post } site={ site } url={ note.url } /> }
+			<Thread spacing={ 4 } isReply={ !! repliedTo }>
 				{ repliedTo && <ThreadParent comment={ repliedTo } truncate /> }
 				{ actor && (
 					<ThreadReply

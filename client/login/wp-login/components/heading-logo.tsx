@@ -52,11 +52,19 @@ const JETPACK_PUSH_LOGO_URL =
 
 interface Props {
 	isJetpack?: boolean;
-	isFromJetpackConnector?: boolean;
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 }
 
-const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: Props ) => {
+/**
+ * The product or partner logo shown above the heading, or `null` on a plain WordPress.com screen.
+ * Screens with this logo keep a centered layout, so `OneLoginLayout` reads this too.
+ */
+export const useHeadingLogo = ( {
+	isJetpack,
+	isUnifiedConnectionFlow,
+	connectorPlugins,
+}: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
 	const isAkismet = useSelector( getIsAkismet );
@@ -101,7 +109,7 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 				viewBox="0 0 60 24"
 			/>
 		);
-	} else if ( isFromJetpackConnector ) {
+	} else if ( isUnifiedConnectionFlow ) {
 		const connectorLogo = getConnectorLogoUrl( connectorPlugins );
 		logo = (
 			<img
@@ -148,6 +156,12 @@ const HeadingLogo = ( { isJetpack, isFromJetpackConnector, connectorPlugins }: P
 		 */
 		logo = <img src={ gravatarLogo } alt="Gravatar Logo" />;
 	}
+
+	return logo;
+};
+
+const HeadingLogo = ( props: Props ) => {
+	const logo = useHeadingLogo( props );
 
 	return logo ? <div className="wp-login__one-login-layout-heading-logo">{ logo }</div> : null;
 };

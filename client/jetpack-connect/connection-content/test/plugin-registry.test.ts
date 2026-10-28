@@ -44,6 +44,7 @@ describe( 'PLUGIN_REGISTRY', () => {
 describe( 'getPluginEntry', () => {
 	test( 'returns the entry for known slugs', () => {
 		expect( getPluginEntry( 'jetpack' )?.family ).toBe( 'jetpack' );
+		expect( getPluginEntry( 'jetpack-premium-analytics' )?.family ).toBe( 'jetpack' );
 		expect( getPluginEntry( 'woocommerce' )?.family ).toBe( 'woo' );
 		expect( getPluginEntry( 'automattic-for-agencies-client' )?.family ).toBe( 'a4a' );
 	} );

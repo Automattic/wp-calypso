@@ -2,6 +2,7 @@ import {
 	getAgentManager,
 	loadAllMessagesFromServer,
 	loadChatFromServer,
+	withUniqueMessageIds,
 	type Message,
 	type ServerLoadResult,
 	type ToolResultInput,
@@ -114,7 +115,7 @@ export default function useConversation( {
 				const newestPage = await loadChatFromServer( sessionId, config, 1, 50, true );
 				return {
 					...newestPage,
-					messages: mergeNewestPage( loaded.messages, newestPage.messages ),
+					messages: withUniqueMessageIds( mergeNewestPage( loaded.messages, newestPage.messages ) ),
 				};
 			}
 
@@ -125,6 +126,8 @@ export default function useConversation( {
 		// usually do not have.
 		enabled: !! sessionId && ! isUnsent && ! isReaderChatAgent( agentId ),
 		refetchOnWindowFocus: false,
+		// Every fetch runs `onSuccess`, even when nothing changed.
+		structuralSharing: false,
 		refetchInterval: replyWait === 'waiting' ? REPLY_POLL_INTERVAL_MS : false,
 		// The wait's cap keeps running in a background tab, so polling has to as well.
 		refetchIntervalInBackground: true,

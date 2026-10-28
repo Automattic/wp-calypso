@@ -36,6 +36,7 @@ export type {
 	TextPart,
 	FilePart,
 	DataPart,
+	A2uiDataPart,
 	ToolDataPart,
 	ToolCallDataPart,
 	ContextDataPart,
@@ -80,6 +81,7 @@ export type {
 	Suggestion,
 	SuggestionOption,
 	SubmitOptions,
+	PromptSource,
 } from './react/useAgentChat';
 
 // Constants
@@ -119,16 +121,8 @@ export {
 	loadChatFromServer,
 	loadAllMessagesFromServer,
 } from './react/odieService';
+export { withUniqueMessageIds } from './react/serverTypes';
 
-// Turn reconciliation across page loads. Persist a delivery status via
-// `message.metadata.deliveryStatus` and use `getUnresolvedMessages` on chat
-// panel boot to find in-flight turns that need to be reconciled with the
-// server.
-export {
-	getUnresolvedMessages,
-	reconcileWithServer,
-	type DeliveryStatus,
-} from './react/conversationStorage';
 export type { OdieServiceConfig } from './react/odieService';
 export type {
 	ServerLoadResult,

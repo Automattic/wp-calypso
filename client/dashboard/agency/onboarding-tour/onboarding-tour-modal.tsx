@@ -16,7 +16,7 @@ import { Notice } from '../../components/notice';
 import PageDots from '../../components/page-dots';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import NewTabLabel from '../overview/new-tab-label';
+import NewTabLabel from '../components/new-tab-label';
 import glow from './images/tour/glow.jpg';
 import { getOnboardingTourSections } from './sections';
 import type { OnboardingTourLinks, OnboardingTourSectionId } from './sections';

@@ -10,11 +10,11 @@ This component is used to display an Passport Logo
 import PassportLogo from 'calypso/components/passport-logo';
 
 export default function PassportLogoExample() {
-    return (
-        <div>
-            <PassportLogo className="example-class" />
-        </div>
-    )
+	return (
+		<div>
+			<PassportLogo className="example-class" />
+		</div>
+	);
 }
 ```
 

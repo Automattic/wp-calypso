@@ -1,13 +1,17 @@
+import { recallImagePixels } from '../image-pixels';
 import {
 	buildSvg,
 	clearFontCache,
+	clearImageCache,
 	clusterSpans,
 	collectStyleText,
 	getBands,
 	getCaptureRect,
 	getCaptureRects,
 	getInkSpans,
+	findImageRoots,
 	getUsedFontFamilies,
+	inlineBlockImages,
 	inlineFonts,
 	offsetCloneToBand,
 	pinViewportPositionedElements,
@@ -47,6 +51,7 @@ afterEach( () => {
 	delete abortSignal.timeout;
 	delete globals.fetch;
 	clearFontCache();
+	clearImageCache();
 } );
 
 const box = ( {
@@ -309,6 +314,398 @@ describe( 'replaceImagesWithPlaceholders', () => {
 		replaceImagesWithPlaceholders( live, clone, view );
 
 		expect( ( clone.querySelector( '.plain' ) as HTMLElement ).style.backgroundColor ).toBe( '' );
+	} );
+} );
+
+describe( 'replaceImagesWithPlaceholders, given inlined images', () => {
+	const IMAGE_URI = 'data:image/webp;base64,AAAA';
+
+	it( 'shows an inlined image instead of a placeholder, at the same box', () => {
+		const live = document.createElement( 'div' );
+		live.innerHTML =
+			'<img src="https://example.com/a.jpg" /><img src="https://example.com/b.jpg" />';
+		const [ inlined, other ] = Array.from( live.querySelectorAll( 'img' ) );
+		[ inlined, other ].forEach( ( image ) => {
+			image.getBoundingClientRect = () =>
+				box( { left: 0, top: 0, width: 320, height: 240 } ) as DOMRect;
+		} );
+		const clone = live.cloneNode( true ) as HTMLElement;
+		const view = asWindow( { getComputedStyle: () => ( { backgroundImage: 'none' } ) } );
+
+		replaceImagesWithPlaceholders( live, clone, view, new Map( [ [ inlined, IMAGE_URI ] ] ) );
+
+		const [ shown, placeholder ] = Array.from( clone.querySelectorAll( 'img' ) );
+
+		expect( shown.getAttribute( 'src' ) ).toBe( IMAGE_URI );
+		expect( shown.style.width ).toBe( '320px' );
+		expect( shown.style.backgroundColor ).toBe( '' );
+		expect( placeholder.getAttribute( 'src' ) ).toMatch( /^data:image\/gif/ );
+	} );
+
+	it( 'shows an inlined background photograph instead of a placeholder', () => {
+		const live = document.createElement( 'div' );
+		live.innerHTML = '<div class="cover"></div>';
+		const clone = live.cloneNode( true ) as HTMLElement;
+		const view = asWindow( {
+			getComputedStyle: () => ( {
+				backgroundImage: 'url("https://example.com/cover.jpg")',
+			} ),
+		} );
+
+		replaceImagesWithPlaceholders(
+			live,
+			clone,
+			view,
+			new Map( [ [ live.querySelector( '.cover' ) as Element, IMAGE_URI ] ] )
+		);
+
+		const cover = clone.querySelector( '.cover' ) as HTMLElement;
+
+		expect( cover.style.backgroundImage ).toContain( IMAGE_URI );
+		expect( cover.style.backgroundImage ).not.toContain( 'cover.jpg' );
+		expect( cover.style.backgroundColor ).toBe( '' );
+	} );
+} );
+
+describe( 'inlineBlockImages', () => {
+	const SVG = '<svg xmlns="http://www.w3.org/2000/svg"/>';
+
+	const blockWith = (
+		html: string,
+		{ backgroundImage = 'none', backgroundSize = 'cover', backgroundAttachment = 'scroll' } = {}
+	) => {
+		const root = document.createElement( 'figure' );
+		root.innerHTML = html;
+		[ root, ...Array.from( root.querySelectorAll( '*' ) ) ].forEach( ( element ) => {
+			element.getBoundingClientRect = () =>
+				box( { left: 0, top: 0, width: 200, height: 100 } ) as DOMRect;
+		} );
+		const view = asWindow( {
+			getComputedStyle: ( element: Element ) => ( {
+				backgroundImage: element.classList.contains( 'bg' ) ? backgroundImage : 'none',
+				backgroundSize,
+				backgroundAttachment,
+				objectFit: '',
+			} ),
+			innerWidth: 400,
+			innerHeight: 300,
+		} );
+
+		return { root, view };
+	};
+
+	const stubSvg = () =>
+		stubFetch( async () => ( {
+			ok: true,
+			blob: async () => ( {
+				type: 'image/svg+xml',
+				arrayBuffer: async () => new TextEncoder().encode( SVG ).buffer,
+			} ),
+		} ) );
+
+	it( 'inlines an image in the block, fetched with a deadline', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<img src="https://example.com/logo.svg" />' );
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledWith( 'https://example.com/logo.svg', {
+			signal: 'deadline:3000',
+		} );
+		expect( inlined.get( root.querySelector( 'img' ) as Element ) ).toBe(
+			`data:image/svg+xml;base64,${ btoa( SVG ) }`
+		);
+	} );
+
+	it( 'inlines a background photograph, where cover blocks keep theirs', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<div class="bg"></div>', {
+			backgroundImage: 'url("https://example.com/cover.svg")',
+		} );
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( inlined.has( root.querySelector( '.bg' ) as Element ) ).toBe( true );
+	} );
+
+	// A host without CORS headers is the ordinary case, and must cost only the
+	// one image, never the capture.
+	it( 'leaves out an image that cannot be fetched', async () => {
+		stubFetch( async () => {
+			throw new TypeError( 'Failed to fetch' );
+		} );
+		const { root, view } = blockWith( '<img src="https://example.com/a.jpg" />' );
+
+		await expect( inlineBlockImages( [ root ], view ) ).resolves.toEqual( new Map() );
+	} );
+
+	it( 'leaves out an image the server answered with an error', async () => {
+		stubFetch( async () => ( { ok: false, status: 404 } ) );
+		const { root, view } = blockWith( '<img src="https://example.com/a.jpg" />' );
+
+		await expect( inlineBlockImages( [ root ], view ) ).resolves.toEqual( new Map() );
+	} );
+
+	it( 'fetches each image once, though nested framed blocks reach it twice', async () => {
+		stubSvg();
+		const { root, view } = blockWith(
+			'<div class="inner"><img src="https://example.com/a.svg" /></div>'
+		);
+
+		await inlineBlockImages( [ root, root.querySelector( '.inner' ) as Element ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	// A capture follows every edit, and the same photograph would otherwise
+	// be decoded and re-encoded each time.
+	it( 'fetches an image again only when it is wanted at another size', async () => {
+		stubSvg();
+		const first = blockWith( '<img src="https://example.com/a.svg" />' );
+		const second = blockWith( '<img src="https://example.com/a.svg" />' );
+
+		await inlineBlockImages( [ first.root ], first.view );
+		const inlined = await inlineBlockImages( [ second.root ], second.view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 1 );
+		expect( inlined.size ).toBe( 1 );
+
+		( second.root.querySelector( 'img' ) as Element ).getBoundingClientRect = () =>
+			box( { left: 0, top: 0, width: 400, height: 200 } ) as DOMRect;
+		await inlineBlockImages( [ second.root ], second.view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'fetches an image shown twice in one capture once', async () => {
+		stubSvg();
+		const { root, view } = blockWith(
+			'<img src="https://example.com/a.svg" /><img src="https://example.com/a.svg" />'
+		);
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 1 );
+		expect( inlined.size ).toBe( 2 );
+	} );
+
+	it( 'keeps an image used on every capture over ones used once', async () => {
+		stubSvg();
+		const capture = async ( name: string ) => {
+			const { root, view } = blockWith( `<img src="https://example.com/${ name }.svg" />` );
+
+			await inlineBlockImages( [ root ], view );
+		};
+
+		await capture( 'hero' );
+
+		for ( let index = 0; index < 12; index++ ) {
+			await capture( 'hero' );
+			await capture( `other-${ index }` );
+		}
+
+		fetchMock().mockClear();
+		await capture( 'hero' );
+
+		expect( fetchMock() ).not.toHaveBeenCalled();
+	} );
+
+	it( 'fetches an image again after a failed fetch', async () => {
+		stubFetch( async () => {
+			throw new TypeError( 'Failed to fetch' );
+		} );
+		const { root, view } = blockWith( '<img src="https://example.com/a.svg" />' );
+
+		await inlineBlockImages( [ root ], view );
+		stubSvg();
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( inlined.size ).toBe( 1 );
+	} );
+
+	it( 'caps how many images one capture fetches', async () => {
+		stubSvg();
+		const { root, view } = blockWith(
+			Array.from(
+				{ length: 10 },
+				( _, index ) => `<img src="https://example.com/${ index }.svg" />`
+			).join( '' )
+		);
+
+		const inlined = await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).toHaveBeenCalledTimes( 6 );
+		expect( inlined.size ).toBe( 6 );
+	} );
+
+	it( 'skips an image with no rendered box', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<img src="https://example.com/a.svg" />' );
+		( root.querySelector( 'img' ) as Element ).getBoundingClientRect = () =>
+			box( { left: 0, top: 0, width: 0, height: 0 } ) as DOMRect;
+
+		await inlineBlockImages( [ root ], view );
+
+		expect( fetchMock() ).not.toHaveBeenCalled();
+	} );
+
+	// A data URI with quotes in it is cut short by the url pattern, and the
+	// rewrite would leave broken CSS where the background was.
+	it( 'leaves a data URI background to its placeholder', async () => {
+		stubSvg();
+		const { root, view } = blockWith( '<div class="bg"></div>', {
+			backgroundImage:
+				'url("data:image/svg+xml;utf8,<svg xmlns=\\"http://www.w3.org/2000/svg\\"/>")',
+		} );
+
+		await expect( inlineBlockImages( [ root ], view ) ).resolves.toEqual( new Map() );
+		expect( fetchMock() ).not.toHaveBeenCalled();
+	} );
+
+	describe( 'with a raster image', () => {
+		const drawImage = jest.fn();
+		const globalsWithBitmap = globalThis as { createImageBitmap?: unknown };
+		let restore: () => void;
+
+		beforeEach( () => {
+			drawImage.mockClear();
+			globalsWithBitmap.createImageBitmap = jest.fn( async () => ( {
+				width: 2000,
+				height: 1000,
+				close: jest.fn(),
+			} ) );
+			const getContext = jest
+				.spyOn( HTMLCanvasElement.prototype, 'getContext' )
+				.mockReturnValue( { drawImage } as unknown as CanvasRenderingContext2D );
+			const toBlob = jest
+				.spyOn( HTMLCanvasElement.prototype, 'toBlob' )
+				.mockImplementation( ( resolve ) =>
+					resolve( {
+						type: 'image/webp',
+						arrayBuffer: async () => new Uint8Array( [ 1, 2, 3 ] ).buffer,
+					} as unknown as Blob )
+				);
+			stubFetch( async () => ( { ok: true, blob: async () => ( { type: 'image/jpeg' } ) } ) );
+			restore = () => {
+				getContext.mockRestore();
+				toBlob.mockRestore();
+				delete globalsWithBitmap.createImageBitmap;
+			};
+		} );
+
+		afterEach( () => restore() );
+
+		// Shrinking a tile, or a background sized to the viewport, would
+		// change what the capture shows.
+		it.each( [
+			[ 'a repeated background', { backgroundSize: 'auto' } ],
+			[ 'a fixed repeated background', { backgroundSize: 'auto', backgroundAttachment: 'fixed' } ],
+		] )( 'keeps %s at its own size', async ( _, style ) => {
+			const { root, view } = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/tile.jpg")',
+				...style,
+			} );
+
+			await inlineBlockImages( [ root ], view );
+
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 2000, 1000 );
+		} );
+
+		// Sized to the viewport, which is all the browser draws of it.
+		it( 'fits a fixed background to the viewport, not its box', async () => {
+			const { root, view } = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/parallax.jpg")',
+				backgroundAttachment: 'fixed',
+			} );
+
+			await inlineBlockImages( [ root ], view );
+
+			// max( 400 / 2000, 300 / 1000 ) is 0.3.
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 600, 300 );
+		} );
+
+		// Only an `<img>`'s encode keeps pixels, so the two are cached apart.
+		it( 'keeps an image’s pixels though a background of the same photo was cached first', async () => {
+			const background = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/photo.jpg")',
+			} );
+			const image = blockWith( '<img src="https://example.com/photo.jpg" />' );
+
+			await inlineBlockImages( [ background.root ], background.view );
+			await inlineBlockImages( [ image.root ], image.view );
+
+			expect(
+				recallImagePixels(
+					image.root.querySelector( 'img' ) as Element,
+					'https://example.com/photo.jpg'
+				)
+			).not.toBeNull();
+		} );
+
+		it( 'shrinks a background sized to cover its box', async () => {
+			const { root, view } = blockWith( '<div class="bg"></div>', {
+				backgroundImage: 'url("https://example.com/photo.jpg")',
+			} );
+
+			await inlineBlockImages( [ root ], view );
+
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 200, 100 );
+			expect( drawImage ).not.toHaveBeenCalledWith( expect.anything(), 0, 0, 2000, 1000 );
+		} );
+	} );
+
+	it( 'downscales a raster image to the box it renders in', async () => {
+		const close = jest.fn();
+		const drawImage = jest.fn();
+		const globalsWithBitmap = globalThis as { createImageBitmap?: unknown };
+		globalsWithBitmap.createImageBitmap = jest.fn( async () => ( {
+			width: 2000,
+			height: 1000,
+			close,
+		} ) );
+		const getContext = jest
+			.spyOn( HTMLCanvasElement.prototype, 'getContext' )
+			.mockReturnValue( { drawImage } as unknown as CanvasRenderingContext2D );
+		const toBlob = jest
+			.spyOn( HTMLCanvasElement.prototype, 'toBlob' )
+			.mockImplementation( ( resolve ) =>
+				resolve( {
+					type: 'image/webp',
+					arrayBuffer: async () => new Uint8Array( [ 1, 2, 3 ] ).buffer,
+				} as unknown as Blob )
+			);
+		stubFetch( async () => ( { ok: true, blob: async () => ( { type: 'image/jpeg' } ) } ) );
+		const { root, view } = blockWith( '<img src="https://example.com/photo.jpg" />' );
+
+		try {
+			const inlined = await inlineBlockImages( [ root ], view );
+
+			// A 200×100 box needs a tenth of a 2000×1000 photograph.
+			expect( drawImage ).toHaveBeenCalledWith( expect.anything(), 0, 0, 200, 100 );
+			expect( close ).toHaveBeenCalled();
+			expect( inlined.get( root.querySelector( 'img' ) as Element ) ).toBe(
+				'data:image/webp;base64,AQID'
+			);
+		} finally {
+			getContext.mockRestore();
+			toBlob.mockRestore();
+			delete globalsWithBitmap.createImageBitmap;
+		}
+	} );
+} );
+
+describe( 'findImageRoots', () => {
+	it( 'puts the cover holding a framed block first, and each element once', () => {
+		document.body.innerHTML =
+			'<div class="wp-block-cover" data-block="hero"><div><h2 data-block="head"></h2><p data-block="lead"></p></div></div><p data-block="out"></p>';
+
+		expect(
+			findImageRoots( document, [ 'head', 'lead', 'out' ] ).map( ( element ) =>
+				element.getAttribute( 'data-block' )
+			)
+		).toEqual( [ 'hero', 'head', 'lead', 'out' ] );
+
+		document.body.innerHTML = '';
 	} );
 } );
 

@@ -1,7 +1,8 @@
-import { Button } from '@wordpress/components';
+import { Button, VisuallyHidden } from '@wordpress/components';
 import { Substitution, useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
+import { EXTERNAL_WPCOM_ACCOUNT_URL } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useGetEmailToVerify from 'calypso/components/email-verification/hooks/use-get-email-to-verify';
 import {
 	formatCooldown,
@@ -13,8 +14,7 @@ import { useSendEmailVerification } from 'calypso/landing/stepper/hooks/use-send
 import { useDispatch, useSelector } from 'calypso/state';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import isPendingEmailChange from 'calypso/state/selectors/is-pending-email-change';
-import { fetchUserSettings, setUnsavedUserSetting } from 'calypso/state/user-settings/actions';
-import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
+import { fetchUserSettings } from 'calypso/state/user-settings/actions';
 
 import './style.scss';
 
@@ -37,8 +37,7 @@ export default function EmailVerificationNotification( {
 	}, [ dispatch ] );
 
 	const { secondsUntilResend, hold: holdResend } = useResendCooldown();
-	// Rate limiting only applies to the dedicated resend endpoint, not the settings path used for pending email changes.
-	const isAwaitingResend = ! isEmailChangePending && secondsUntilResend > 0;
+	const isAwaitingResend = secondsUntilResend > 0;
 
 	const resendEmailToVerify = useCallback( async () => {
 		setIsSendingEmail( true );
@@ -46,21 +45,12 @@ export default function EmailVerificationNotification( {
 			'There was an error while resending the email. Please try again.'
 		);
 		try {
-			if ( isEmailChangePending ) {
-				// For pending email changes, re-submit the new email via PUT /me/settings
-				// since POST /me/send-verification-email only works for the original email.
-				dispatch( setUnsavedUserSetting( 'user_email', emailToVerify ) );
-				await dispatch( saveUnsavedUserSettings( [ 'user_email' ] ) );
-			} else {
-				// For unverified original emails, use the dedicated endpoint since
-				// PUT /me/settings won't resend when the email hasn't changed.
-				const response = await sendVerificationEmail();
-				if ( ! response?.success ) {
-					dispatch( errorNotice( genericError ) );
-					return;
-				}
-				holdResend( resendAcceptedRetryAfter( response ) );
+			const response = await sendVerificationEmail();
+			if ( ! response?.success ) {
+				dispatch( errorNotice( genericError ) );
+				return;
 			}
+			holdResend( resendAcceptedRetryAfter( response ) );
 			dispatch(
 				successNotice(
 					translate(
@@ -78,14 +68,7 @@ export default function EmailVerificationNotification( {
 		} finally {
 			setIsSendingEmail( false );
 		}
-	}, [
-		dispatch,
-		emailToVerify,
-		holdResend,
-		isEmailChangePending,
-		sendVerificationEmail,
-		translate,
-	] );
+	}, [ dispatch, emailToVerify, holdResend, sendVerificationEmail, translate ] );
 
 	if ( ! emailToVerify ) {
 		return null;
@@ -105,16 +88,34 @@ export default function EmailVerificationNotification( {
 			level="warning"
 			title={ translate( 'Verify your email address' ) }
 			actions={ [
-				<Button
-					key="resend"
-					variant="primary"
-					onClick={ resendEmailToVerify }
-					disabled={ isAwaitingResend || isSendingEmail }
-					isBusy={ isSendingEmail }
-					__next40pxDefaultSize
-				>
-					{ resendLabel }
-				</Button>,
+				// Resending to a pending address re-saves it, which WordPress.com only accepts from
+				// its own clients, so that resend happens there.
+				isEmailChangePending ? (
+					<Button
+						key="resend"
+						variant="primary"
+						href={ EXTERNAL_WPCOM_ACCOUNT_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+						__next40pxDefaultSize
+					>
+						<span>
+							{ translate( 'Resend email' ) } <span aria-hidden="true">↗</span>
+						</span>
+						<VisuallyHidden>{ translate( '(opens in a new tab)' ) }</VisuallyHidden>
+					</Button>
+				) : (
+					<Button
+						key="resend"
+						variant="primary"
+						onClick={ resendEmailToVerify }
+						disabled={ isAwaitingResend || isSendingEmail }
+						isBusy={ isSendingEmail }
+						__next40pxDefaultSize
+					>
+						{ resendLabel }
+					</Button>
+				),
 			] }
 			hideCloseButton
 			allowTemporaryDismissal

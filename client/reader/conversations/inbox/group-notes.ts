@@ -1,4 +1,4 @@
-import type { Note } from '@automattic/notifications/src/app/types';
+import type { NotificationNote as Note } from '@automattic/api-core';
 
 export interface Commenter {
 	name: string;

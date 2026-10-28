@@ -49,6 +49,7 @@ import isWooJPCFlow, {
 	isWooCommercePaymentsOnboardingFlow,
 } from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import { getConnectionFlowFromRedirectTo } from '../connection-flow';
 import LoginContextProvider, { LoginContext } from '../login-context';
 import OneLoginFooter from './components/one-login-footer';
 import OneLoginLayout from './components/one-login-layout';
@@ -121,7 +122,7 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
-			'isFromJetpackConnector',
+			'isUnifiedConnectionFlow',
 			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
@@ -409,7 +410,7 @@ export class Login extends Component {
 
 				<DocumentHead
 					title={ getPartnerFormattedWindowTitle(
-						translate( 'Log In', { textOnly: true } ),
+						translate( 'Log in', { textOnly: true } ),
 						partnerConfig
 					) }
 					skipTitleFormatting
@@ -431,20 +432,25 @@ export class Login extends Component {
 		);
 
 		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+		// The login form sits beside the social buttons, so it needs the wider, centered layout.
+		// Lost password and two-step screens follow the layout's default: the 432px account
+		// template, or centered with a logo above the title.
+		const isLoginFormView = ! isLostPasswordView && ! this.props.twoFactorAuthType;
 
 		return (
 			<>
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
-						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						isUnifiedConnectionFlow={ this.props.isUnifiedConnectionFlow }
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						columnWidth={ isLoginFormView ? 6 : undefined }
+						isCentered={ isLoginFormView || undefined }
 						// The footer carries the route to signup on desktop instead.
 						signupLinkMobileOnly={ isEntryClarityTreatment }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
-						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
 						linkLogoToHome
 					>
@@ -473,7 +479,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -499,7 +505,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -515,7 +521,7 @@ function getInitialHeadingState( props, translate ) {
 		translate,
 		isWooJPC,
 		partnerConfig,
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 	} );
 
@@ -553,23 +559,16 @@ const LoginWithContext = ( props ) => {
 	);
 };
 
-const trimString = ( s ) => s.trim();
-
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
 
-		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
-		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
-		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
-		const connectorPlugins = isFromJetpackConnector
-			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
-					.split( ',' )
-					.map( trimString )
-					.filter( Boolean )
-			: [];
+		const { isUnifiedConnectionFlow, connectorPlugins } = getConnectionFlowFromRedirectTo(
+			getRedirectToOriginal( state ),
+			currentQuery
+		);
 
 		return {
 			locale: getCurrentLocaleSlug( state ),
@@ -610,7 +609,7 @@ export default connect(
 				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			isFromJetpackConnector,
+			isUnifiedConnectionFlow,
 			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),

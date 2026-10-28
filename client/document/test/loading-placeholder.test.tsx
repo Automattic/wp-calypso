@@ -73,6 +73,20 @@ describe( 'Document LoadingPlaceholder', () => {
 		expect( html ).not.toContain( 'wpcom-site__logo' );
 		expect( html ).toContain( 'wpcom-loading__boot' );
 	} );
+
+	it( 'shows the Woo logo in the stepper loader on the Playground step with the WooCommerce intent', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } isPlaygroundWoo /> );
+
+		expect( html ).toContain( 'woo-top-bar-logo' );
+		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo' );
+	} );
+
+	it( 'shows the WordPress.com logo in the stepper loader on the Playground step without the WooCommerce intent', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } isPlaygroundWoo={ false } /> );
+
+		expect( html ).not.toContain( 'woo-top-bar-logo' );
+		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo' );
+	} );
 } );
 
 describe( 'Document RTL CSS handling', () => {
