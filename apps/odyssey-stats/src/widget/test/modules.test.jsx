@@ -227,6 +227,22 @@ describe( 'Modules', () => {
 			);
 		} );
 
+		it( 'falls back to a generic message for a code whose text is not written for the viewer', async () => {
+			moduleStates( { protect: failed( 'not_active' ), akismet: ok( 12345 ) } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'some_updated',
+				status: 400,
+				message: ' protect: The requested Jetpack module is not supported by your plan.',
+			} );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Something went wrong. Please try again.'
+			);
+		} );
+
 		it( 'clears the message when they try again', async () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_active' ) } );
 			wpcom.req.post.mockRejectedValueOnce( {

@@ -12,6 +12,10 @@ import { recordWidgetEventThenFollow } from './record-widget-event';
 import WidgetSection from './widget-section';
 import './modules.scss';
 
+// Routes whose failure message is a sentence meant for the viewer. Others, such as
+// `some_updated` from `/settings`, prefix the module slug and HTML-escape the text.
+const USER_FACING_ERROR_CODES = new Set( [ 'rest_forbidden', 'not_allowed' ] );
+
 interface ModuleCardProps {
 	title: string;
 	value: number;
@@ -22,8 +26,11 @@ interface ModuleCardProps {
 	isLoading: boolean;
 	isError: boolean;
 	canManageModule: boolean;
-	/** Whether the route behind the Install and Activate buttons would let the viewer through. */
-	canActivate: boolean;
+	/**
+	 * Whether the route behind the Install and Activate buttons asks for more than
+	 * `canManageModule` covers.
+	 */
+	canActivate?: boolean;
 	className?: string;
 	manageUrl?: string;
 }
@@ -41,7 +48,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 	activateProduct,
 	manageUrl,
 	canManageModule,
-	canActivate,
+	canActivate = true,
 	isLoading,
 	isError,
 	className = null,
@@ -55,7 +62,7 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 		activateProduct().catch( ( activationError: { code?: string; message?: string } ) => {
 			setDisabled( false );
 			setFailure(
-				( activationError?.code && activationError.message ) ||
+				( USER_FACING_ERROR_CODES.has( activationError?.code ?? '' ) && activationError.message ) ||
 					( translate( 'Something went wrong. Please try again.' ) as string )
 			);
 		} );
@@ -195,7 +202,6 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 					error={ protect.error instanceof Error ? protect.error.message : '' }
 					isLoading={ protect.isPending }
 					canManageModule={ canManageModules }
-					canActivate={ canManageModules }
 					activateProduct={ activateProtect }
 				/>
 				<ModuleCard
