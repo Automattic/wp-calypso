@@ -32,7 +32,7 @@
 .wpnc-simplified__byline-avatar {
 	margin-inline-end: $grid-unit-05;
 	border-radius: 50%;
-	vertical-align: middle;
+	vertical-align: calc(0.35em - 6px);
 }
 
 .wpnc-simplified__thread {
