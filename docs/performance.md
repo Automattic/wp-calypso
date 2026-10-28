@@ -31,4 +31,10 @@ To see what makes up the client bundle and how much each module weighs, run `yar
 
 ### Why is X bundled?
 
-For an npm package, `yarn why <package>` lists the dependencies that pull it in. To find which of our own files import it, search the source, for example `git grep -n "from '<package>'" -- client packages`.
+For an npm package, `yarn why <package>` lists the dependencies that pull it in. To find which of our own files import it, including `require()` calls and subpath imports, search the source:
+
+```sh
+git grep -n -e "'<package>'" -e "'<package>/" -- client packages
+```
+
+Both only show direct dependents. For the full chain of imports that pulls a module into a chunk, set `reasons: true` in the `statsOptions` of `client/webpack.config.js` and run `yarn build-client-stats`; each module in `client/stats.json` then lists the modules that import it.
