@@ -34,10 +34,14 @@ describe( 'SiteSetupChecklist', () => {
 
 	it( 'unfolds the pinned block, folded and focused, on the frame after it mounts', async () => {
 		const { container } = render(
-			<SiteSetupChecklist items={ [] } variant="pinned" focusHeaderOnMount />
+			<SiteSetupChecklist items={ [] } variant="pinned" focusHeaderOnMount activeItemId="about" />
 		);
 		expect( mockAgentUIChecklist ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { defaultCollapsed: true, focusHeaderOnMount: true } )
+			expect.objectContaining( {
+				defaultCollapsed: true,
+				focusHeaderOnMount: true,
+				activeItemId: 'about',
+			} )
 		);
 		const block = container.querySelector( '.agents-manager-site-setup-checklist--pinned' );
 

@@ -327,6 +327,29 @@ describe( 'Checklist', () => {
 		expect( action ).toHaveBeenCalled();
 	} );
 
+	it( 'keeps only the active item in view while collapsed', () => {
+		const twoInProgress = items.map( ( item ) =>
+			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+		);
+		render( { items: twoInProgress, defaultCollapsed: true } );
+		expect( rowLabels() ).toEqual( [ 'Publish the About page', 'Replace placeholder images' ] );
+
+		render( { items: twoInProgress, defaultCollapsed: true, activeItemId: 'about' } );
+
+		expect( rowLabels() ).toEqual( [ 'Publish the About page' ] );
+	} );
+
+	it( 'links an in-progress item to where its work is', () => {
+		const withHref = items.map( ( item ) =>
+			item.id === 'images' ? { ...item, href: '/wp-admin/post.php?post=7&action=edit' } : item
+		);
+		render( { items: withHref } );
+
+		const link = rowFor( 'Replace placeholder images' ).querySelector( 'a' );
+		expect( link?.getAttribute( 'href' ) ).toBe( '/wp-admin/post.php?post=7&action=edit' );
+		expect( rowFor( 'Add a custom domain' ).querySelector( 'a, button' ) ).toBeNull();
+	} );
+
 	it( 'follows a controlled collapsed prop', () => {
 		const onCollapsedChange = vi.fn();
 		render( { collapsed: true, onCollapsedChange } );

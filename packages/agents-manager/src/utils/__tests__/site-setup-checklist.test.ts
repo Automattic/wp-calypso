@@ -3,6 +3,7 @@
  */
 import { consumePromptSource } from '../prompt-source';
 import {
+	getLastPickedSiteSetupTask,
 	getSiteSetupStartedTasks,
 	isSiteSetupChecklistEnabled,
 	toChecklistItems,
@@ -14,7 +15,13 @@ const TASKS: SiteSetupTask[] = [
 	{ id: 'design', title: 'Customize the design', status: 'todo', disabled: false },
 	{ id: 'about', title: 'Publish the About page', status: 'done', disabled: false },
 	{ id: 'domain', title: 'Add a custom domain', status: 'todo', disabled: true },
-	{ id: 'images', title: 'Replace placeholder images', status: 'in-progress', disabled: false },
+	{
+		id: 'images',
+		title: 'Replace placeholder images',
+		status: 'in-progress',
+		disabled: false,
+		url: 'https://example.com/wp-admin/post.php?post=7&action=edit',
+	},
 ];
 
 describe( 'isSiteSetupChecklistEnabled', () => {
@@ -68,6 +75,17 @@ describe( 'toChecklistItems', () => {
 		expect( items[ 1 ].status ).toBe( 'done' );
 	} );
 
+	it( 'links a task in progress to where its work is, and nothing else', () => {
+		const items = toChecklistItems( TASKS, new Set() );
+
+		expect( items[ 3 ].href ).toBe( 'https://example.com/wp-admin/post.php?post=7&action=edit' );
+		expect( items.slice( 0, 3 ).map( ( item ) => item.href ) ).toEqual( [
+			undefined,
+			undefined,
+			undefined,
+		] );
+	} );
+
 	it( 'declares where the task prompt comes from before it is sent', async () => {
 		const [ item ] = toChecklistItems( TASKS, new Set() );
 
@@ -112,6 +130,19 @@ describe( 'getSiteSetupStartedTasks', () => {
 
 	it( 'still marks the chat as started when the stored message has no task id', () => {
 		expect( getSiteSetupStartedTasks( [ message( 'user', checklist() ) ] )?.size ).toBe( 0 );
+	} );
+
+	it( 'names the task picked last, skipping messages without a task id', () => {
+		expect(
+			getLastPickedSiteSetupTask( [
+				message( 'user', checklist( 'theme' ) ),
+				message( 'user', checklist( 'about' ) ),
+				message( 'user', checklist() ),
+				message( 'agent' ),
+			] )
+		).toBe( 'about' );
+		expect( getLastPickedSiteSetupTask( [ message( 'user', checklist() ) ] ) ).toBeNull();
+		expect( getLastPickedSiteSetupTask( [ message( 'agent', checklist( 'theme' ) ) ] ) ).toBeNull();
 	} );
 
 	it( 'is null for other sources, agent messages and plain chats', () => {

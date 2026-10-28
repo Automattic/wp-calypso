@@ -16,6 +16,11 @@ export interface ChecklistProps {
 	onCollapsedChange?: ( collapsed: boolean ) => void;
 	/** Collapse the list once an item is selected. Defaults to true. */
 	collapseOnSelect?: boolean;
+	/**
+	 * The one item a collapsed list keeps in view, instead of every in-progress
+	 * one: the task the user is on. Unset, every in-progress row stays.
+	 */
+	activeItemId?: string;
 	/** Return false when the prompt was not actually sent; the list then stays open. */
 	onSubmit?: ( selectedItem: ChecklistItem, items: ChecklistItem[] ) => boolean | void;
 	/** While true (e.g. a reply is streaming) open tasks look and act inert. */
@@ -78,11 +83,15 @@ function StatusIcon( { status }: { status: ChecklistItemStatus } ) {
 	);
 }
 
-type RowKind = 'open' | 'disabled' | 'inert';
+type RowKind = 'open' | 'link' | 'disabled' | 'inert';
 
 const getRowKind = ( item: ChecklistItem ): RowKind => {
 	if ( isActionable( item ) ) {
 		return 'open';
+	}
+	// An in-progress task was already sent; its row takes the user to where the work is.
+	if ( getStatus( item ) === 'in-progress' && item.href ) {
+		return 'link';
 	}
 	// Status wins over `disabled`: only an open task can be a disabled one.
 	return item.disabled && getStatus( item ) === 'todo' ? 'disabled' : 'inert';
@@ -129,6 +138,12 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
 					{ content }
 				</button>
 			);
+		case 'link':
+			return (
+				<a href={ item.href } className={ cn( className, styles.actionable ) }>
+					{ content }
+				</a>
+			);
 		case 'disabled': {
 			// Stays focusable so the reason is reachable from the keyboard.
 			const reasonId = item.disabledReason ? `${ idPrefix }-reason-${ item.id }` : undefined;
@@ -159,7 +174,9 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * A task list that lives in the chat: a header with progress and a
  * collapse toggle, and one row per task. Clicking an open task submits it
  * the way a suggestion would, then collapses the list down to whatever is
- * in progress. In-progress and settled (done / skipped) rows are inert.
+ * in progress, or to `activeItemId` alone when the host names the task the
+ * user is on. Settled (done / skipped) rows are inert; an in-progress row
+ * links to where its work is when the item carries an `href`.
  * @param props                   Component props.
  * @param props.title
  * @param props.items
@@ -167,6 +184,7 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * @param props.defaultCollapsed
  * @param props.onCollapsedChange
  * @param props.collapseOnSelect
+ * @param props.activeItemId     The one item a collapsed list keeps in view.
  * @param props.onSubmit
  * @param props.busy
  * @param props.focusHeaderOnMount Move focus to the header on mount.
@@ -179,6 +197,7 @@ export function Checklist( {
 	defaultCollapsed = false,
 	onCollapsedChange,
 	collapseOnSelect = true,
+	activeItemId,
 	onSubmit,
 	busy = false,
 	focusHeaderOnMount = false,
@@ -187,9 +206,13 @@ export function Checklist( {
 	const [ internalCollapsed, setInternalCollapsed ] = useState( defaultCollapsed );
 	const isControlled = collapsed !== undefined;
 	const isCollapsed = isControlled ? collapsed : internalCollapsed;
-	// Collapsing keeps the in-progress rows; when every row is in progress
-	// that would hide nothing, so it folds them all instead.
+	// Collapsing keeps the active row, or the in-progress rows; when every row
+	// is in progress that would hide nothing, so it folds them all instead.
 	const foldEverything = items.every( ( item ) => getStatus( item ) === 'in-progress' );
+	const staysWhenCollapsed = ( item: ChecklistItem ): boolean =>
+		activeItemId !== undefined
+			? item.id === activeItemId
+			: ! foldEverything && getStatus( item ) === 'in-progress';
 	const listId = useId();
 	const headerRef = useRef< HTMLButtonElement >( null );
 
@@ -279,7 +302,7 @@ export function Checklist( {
 			   to zero height and out of the accessibility tree. */ }
 			<ul id={ listId } className={ styles.list }>
 				{ items.map( ( item ) => {
-					const hidden = isCollapsed && ( foldEverything || getStatus( item ) !== 'in-progress' );
+					const hidden = isCollapsed && ! staysWhenCollapsed( item );
 					return (
 						<li
 							key={ item.id }
