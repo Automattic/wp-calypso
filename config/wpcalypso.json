@@ -157,6 +157,7 @@
 		"site-spec": true,
 		"site-spec/build-wow-blocks-first": true,
 		"site-spec/build-wow-streaming": true,
+		"site-spec/design-candidates": true,
 		"ssr/prefetch-timebox": true,
 		"stats/archive-breakdown": true,
 		"stats/chart-library": true,
