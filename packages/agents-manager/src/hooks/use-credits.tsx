@@ -94,13 +94,16 @@ function isTerminalUpdate( update: TaskUpdate ): boolean {
 	);
 }
 
+// A failed read is tried again after each of these, so a site that is metered doesn't look unmetered.
+const RETRY_DELAYS_MS = [ 2000, 5000, 15000 ];
+
 // What a read needs for the whole visit; whether the chat is open or busy is checked per read.
-// TODO: Remove the dev mode check before AI credits reach customers (FORNO-538).
+// An absent `isMetered` asks the endpoint, since an Atomic site's PHP can't tell.
 function canReadBalance< Scope extends { siteId?: number; authProvider?: AuthProvider } >(
 	scope: Scope
 ): scope is Scope & { siteId: number; authProvider: AuthProvider } {
 	return (
-		!! scope.siteId && !! scope.authProvider && getAgentsManagerInlineData()?.isDevMode !== false
+		!! scope.siteId && !! scope.authProvider && getAgentsManagerInlineData()?.isMetered !== false
 	);
 }
 
@@ -145,9 +148,9 @@ export interface UseCreditsResult {
  * the chat was hidden isn't drawn again until the opening read, or a turn that
  * ends while it shows, confirms it, since credits bought in another tab would
  * otherwise greet the user as a stale zero.
- * While AI credits are only on internal test sites, pages the host says aren't
- * in dev mode don't ask, since nearly every site answers 404; a balance a turn
- * reports still shows.
+ * Pages the host says aren't metered don't ask; a balance a turn reports still
+ * shows. A 404 means the site isn't metered and shows nothing. A 5xx or a network
+ * error keeps the last balance and tries again a few times.
  */
 export function useCredits( {
 	enabled,
@@ -180,6 +183,10 @@ export function useCredits( {
 	const currentScope = useRef( scope );
 	currentScope.current = scope;
 	const balanceRequest = useRef< AbortController | undefined >( undefined );
+	const retry = useRef< { attempt: number; timer?: ReturnType< typeof setTimeout > } >( {
+		attempt: 0,
+	} );
+	const refreshRef = useRef< ( () => Promise< void > ) | undefined >( undefined );
 	const [ balance, setBalance ] = useState< {
 		scope: typeof scope;
 		snapshot: CreditSnapshot;
@@ -322,6 +329,13 @@ export function useCredits( {
 			return;
 		}
 		const { authProvider } = scope;
+		clearTimeout( retry.current.timer );
+		const retryLater = () => {
+			const delay = RETRY_DELAYS_MS[ retry.current.attempt++ ];
+			if ( delay !== undefined ) {
+				retry.current.timer = setTimeout( () => void refreshRef.current?.(), delay );
+			}
+		};
 		const controller = new AbortController();
 		balanceRequest.current = controller;
 		const revision = scope.validTerminalRevision;
@@ -340,11 +354,17 @@ export function useCredits( {
 				`${ API_BASE_URL }/wpcom/v2/sites/${ scope.siteId }/ai/credits`,
 				{ method: 'GET', headers, signal: controller.signal, cache: 'no-store' }
 			);
+			const isTransientFailure = ! response.ok && response.status >= 500;
 			const data = response.ok ? await response.json() : undefined;
 			if ( ! isCurrent() ) {
 				return;
 			}
 			// A failed read keeps the last answer; checkout still enforces it.
+			if ( isTransientFailure ) {
+				retryLater();
+				return;
+			}
+			retry.current.attempt = 0;
 			if ( data ) {
 				setUpgradeAccess( { scope, ...parseCreditsAccess( data ) } );
 			}
@@ -356,7 +376,7 @@ export function useCredits( {
 			}
 		} catch {
 			if ( isCurrent() ) {
-				invalidateBalance();
+				retryLater();
 			}
 		} finally {
 			if ( balanceRequest.current === controller ) {
@@ -364,6 +384,7 @@ export function useCredits( {
 			}
 		}
 	}, [ scope, isOpen, confirmBalance, invalidateBalance ] );
+	refreshRef.current = refreshBalance;
 	useEffect( () => {
 		scope.active = true;
 		return () => {
@@ -386,6 +407,8 @@ export function useCredits( {
 		return () => {
 			balanceRequest.current?.abort();
 			balanceRequest.current = undefined;
+			clearTimeout( retry.current.timer );
+			retry.current.attempt = 0;
 			window.removeEventListener( 'focus', onFocus );
 			window.removeEventListener( 'online', onFocus );
 			document.removeEventListener( 'visibilitychange', onFocus );
