@@ -8,8 +8,15 @@ import { html } from '../../../panel/indices-to-html';
 import { p } from '../../../panel/templates/functions';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
-import type { NoteActor, NoteParentComment } from '../../types';
+import type { Block, NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
+
+/**
+ * Flattens a block onto one line and drops its media, for a clamped preview.
+ */
+function toPreview( block: Block ): Block {
+	return { ...block, text: block.text.replace( /\n/g, ' ' ), media: undefined };
+}
 
 const ThreadItem = ( {
 	avatar,
@@ -79,10 +86,7 @@ export function ThreadParent( {
 	comment: NoteParentComment;
 	truncate?: boolean;
 } ) {
-	const content =
-		comment.content?.text && truncate
-			? { ...comment.content, text: comment.content.text.replace( /\n/g, ' ' ) }
-			: comment.content;
+	const content = comment.content ?? { text: comment.text };
 
 	return (
 		<ThreadItem
@@ -98,23 +102,9 @@ export function ThreadParent( {
 				)
 			}
 		>
-			{ content?.text ? (
-				<div
-					className={ clsx( 'wpnc-simplified__parent-content', {
-						'is-truncated': truncate,
-					} ) }
-				>
-					{ p( html( content ) ) }
-				</div>
-			) : (
-				<div
-					className={ clsx( 'wpnc-simplified__parent-text', {
-						'is-truncated': truncate,
-					} ) }
-				>
-					{ comment.text }
-				</div>
-			) }
+			<div className={ clsx( 'wpnc-simplified__parent-text', { 'is-truncated': truncate } ) }>
+				{ p( html( truncate ? toPreview( content ) : content ) ) }
+			</div>
 		</ThreadItem>
 	);
 }
