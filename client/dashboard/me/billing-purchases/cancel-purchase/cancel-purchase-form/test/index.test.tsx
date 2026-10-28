@@ -400,7 +400,7 @@ describe( '<CancelPurchaseForm />', () => {
 			expect( recordEvent ).not.toHaveBeenCalled();
 		} );
 
-		test( 'waits for a click to record the exposure', () => {
+		test( 'skips the exposure on mount and remount', () => {
 			const first = renderReasonStep();
 			first.unmount();
 			const second = renderReasonStep();

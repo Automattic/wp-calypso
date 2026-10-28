@@ -225,7 +225,7 @@ describe( '<CancelPurchase />', () => {
 			);
 		} );
 
-		test( 'records the exposure with the flow props when the reason has options', async () => {
+		test( 'records the exposure with the purchase and flow details when the reason has options', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = renderPersonalFlow();
 
@@ -339,7 +339,7 @@ describe( '<CancelPurchase />', () => {
 			expect( offerIndex ).toBeGreaterThan( exposureIndex );
 		} );
 
-		test( 'records the answer as the exposure reason for "Another reason" with text typed', async () => {
+		test( 'records "Another reason" as the exposure reason with text typed', async () => {
 			const user = userEvent.setup();
 			const { recordTracksEvent } = renderRemoveFlow();
 
