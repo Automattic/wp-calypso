@@ -55,4 +55,17 @@ describe( 'ErrorMessage', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'does not record again when the error data is cleared before it unmounts', () => {
+		const { rerender } = render(
+			<ErrorMessage errorData={ { code: 'some_code', type: 'importError' } } />
+		);
+		rerender( <ErrorMessage errorData={ undefined } /> );
+
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_site_importer_start_import_failure',
+			expect.objectContaining( { error_code: 'some_code' } )
+		);
+	} );
 } );

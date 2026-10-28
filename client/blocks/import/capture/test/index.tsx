@@ -134,6 +134,18 @@ describe( 'CaptureInput', () => {
 		);
 	} );
 
+	it( 'does not record a valid URL from the query string as invalid', async () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=example.com' ] }>
+				<CaptureInput onInputEnter={ jest.fn() } hasError />
+			</MemoryRouter>
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
 	it( 'shows a custom CTA label', async () => {
 		render(
 			<MemoryRouter>

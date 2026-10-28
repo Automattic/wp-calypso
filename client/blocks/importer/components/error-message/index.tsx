@@ -19,18 +19,19 @@ interface Props {
 const ErrorMessage: React.FunctionComponent< Props > = ( props ) => {
 	const translate = useTranslate();
 	const { primaryBtnText, onPrimaryBtnClick, errorData, importerFileType } = props;
-	const errorCode = errorData?.code;
-	const errorType = errorData?.type;
 
 	// A view of the failure screen, whatever failed. Not the same as
-	// `calypso_site_importer_start_import_fail`, which records a failed `import-site` request.
+	// `calypso_site_importer_start_import_fail`, which records a failed `import-site` API request.
+	// Recorded on mount only: on "Try again" the parent clears the job before it unmounts this
+	// screen, so later renders can have no error data.
 	useEffect( () => {
 		recordTracksEvent( 'calypso_site_importer_start_import_failure', {
-			error_code: errorCode,
-			error_type: errorType,
+			error_code: errorData?.code,
+			error_type: errorData?.type,
 			importer_file_type: importerFileType,
 		} );
-	}, [ errorCode, errorType, importerFileType ] );
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
 
 	return (
 		<div className="import__error-message import-layout__center">

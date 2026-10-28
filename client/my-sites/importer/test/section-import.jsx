@@ -137,8 +137,16 @@ describe( 'SectionImport', () => {
 			const { recordTracksEvent, update } = renderSectionImport( [] );
 
 			update( [
-				{ type: 'importer-type-wordpress', importerState: appStates.IMPORT_FAILURE },
-				{ type: 'importer-type-medium', importerState: appStates.UPLOAD_FAILURE },
+				{
+					importerId: 'job-1',
+					type: 'importer-type-wordpress',
+					importerState: appStates.IMPORT_FAILURE,
+				},
+				{
+					importerId: 'job-2',
+					type: 'importer-type-medium',
+					importerState: appStates.UPLOAD_FAILURE,
+				},
 			] );
 
 			expect( recordTracksEvent.mock.calls ).toEqual( [

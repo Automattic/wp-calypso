@@ -98,7 +98,7 @@ export function getValidationMessage(
 			return translate(
 				"URLs usually start with http:// or https:// (rather than file:/, ftp://, or similar). Please try again with a URL like 'https://example.com'."
 			);
-		default:
+		case 'invalid_url':
 			return translate(
 				"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps."
 			);

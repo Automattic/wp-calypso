@@ -121,7 +121,7 @@ export const WixImporter: React.FunctionComponent< Props > = ( props ) => {
 			return job?.errorData;
 		}
 
-		// The import job didn't fail: the site importer request did, and its own event has the reason.
+		// The import job didn't fail: a site importer API request did, and its own event has the reason.
 		return { type: 'siteImporterError' };
 	}
 
