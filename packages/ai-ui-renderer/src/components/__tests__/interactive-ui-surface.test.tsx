@@ -38,6 +38,43 @@ beforeEach( () => {
 
 afterEach( () => runtime.dispose() );
 
+it.each( [ 'agent', 'tool-call' ] as const )(
+	'dispatches edited arguments in %s mode',
+	async ( actionMode ) => {
+		runtime.dispose();
+		runtime = createInteractiveUiRuntime( {
+			catalogs: [ createInteractiveUiCatalog() ],
+			onError,
+			actionMode,
+			onAction,
+		} );
+		const surface = createSurface( [
+			{ id: 'root', component: 'Column', children: [ 'name', 'save' ] },
+			{ id: 'name', component: 'TextField', label: 'Name', value: { '@path': '/name' } },
+			{
+				id: 'save',
+				component: 'Button',
+				child: 'label',
+				action: { event: { name: 'save_name', context: { name: { '@path': '/name' } } } },
+			},
+			{ id: 'label', component: 'Text', text: 'Save' },
+		] );
+
+		render( <InteractiveUiSurface surface={ surface } /> );
+		fireEvent.change( screen.getByRole( 'textbox', { name: 'Name' } ), {
+			target: { value: 'Ada' },
+		} );
+		fireEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+		await waitFor( () =>
+			expect( onAction.mock.calls ).toEqual( [
+				[ expect.objectContaining( { name: 'save_name', context: { name: 'Ada' } } ) ],
+			] )
+		);
+		expect( onError ).not.toHaveBeenCalled();
+	}
+);
+
 function createSurface(
 	components: ( { id: string; component: string } & Record< string, unknown > )[],
 	catalogId = BASIC_CATALOG_ID
