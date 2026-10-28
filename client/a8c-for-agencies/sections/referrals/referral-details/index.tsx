@@ -100,9 +100,9 @@ export default function ReferralDetails( {
 				selectedReferralTab,
 				setSelectedReferralTab,
 				! isDesktop ? (
-					<ReferralPurchasesMobile purchases={ purchases } />
+					<ReferralPurchasesMobile referralId={ referral.id } purchases={ purchases } />
 				) : (
-					<ReferralPurchases purchases={ purchases } />
+					<ReferralPurchases referralId={ referral.id } purchases={ purchases } />
 				)
 			),
 			createFeaturePreview(
