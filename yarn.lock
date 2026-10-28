@@ -3349,7 +3349,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.4, @babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8, @babel/parser@npm:^7.29.9, @babel/parser@npm:^7.5.5, @babel/parser@npm:^7.8.4":
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.4, @babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8, @babel/parser@npm:^7.29.9, @babel/parser@npm:^7.5.5":
   version: 7.29.9
   resolution: "@babel/parser@npm:7.29.9"
   dependencies:
@@ -5423,7 +5423,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/traverse@npm:^7.28.0, @babel/traverse@npm:^7.29.7, @babel/traverse@npm:^7.29.8, @babel/traverse@npm:^7.8.4":
+"@babel/traverse@npm:^7.28.0, @babel/traverse@npm:^7.29.7, @babel/traverse@npm:^7.29.8":
   version: 7.29.10
   resolution: "@babel/traverse@npm:7.29.10"
   dependencies:
@@ -5735,13 +5735,6 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 0a31153456a41c83b7af4eda0a050a0e92777871187e14b3be2000c8bf055dc4eb2e83a5a7def1ce055a79f15a521774ddfd56b527309468823d37ff66504dec
-  languageName: node
-  linkType: hard
-
-"@discoveryjs/json-ext@npm:^0.5.2":
-  version: 0.5.7
-  resolution: "@discoveryjs/json-ext@npm:0.5.7"
-  checksum: e10f1b02b78e4812646ddf289b7d9f2cb567d336c363b266bd50cd223cf3de7c2c74018d91cd2613041568397ef3a4a2b500aba588c6e5bd78c38374ba68f38c
   languageName: node
   linkType: hard
 
@@ -8149,59 +8142,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opaline/core@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "@opaline/core@npm:0.5.3"
-  dependencies:
-    "@babel/parser": "npm:^7.8.4"
-    "@babel/traverse": "npm:^7.8.4"
-    "@opaline/help-theme-default": "npm:^0.0.2"
-    "@opaline/runner": "npm:^0.1.1"
-    "@rollup/plugin-node-resolve": "npm:^7.1.3"
-    "@rollup/plugin-sucrase": "npm:^3.0.0"
-    "@types/babel__traverse": "npm:^7.0.9"
-    "@types/doctrine": "npm:^0.0.3"
-    "@types/minimist": "npm:^1.2.0"
-    "@types/node": "npm:^12.6.9"
-    chalk: "npm:^3.0.0"
-    chokidar: "npm:^3.3.1"
-    comment-parser: "npm:^0.7.4"
-    doctrine: "npm:^3.0.0"
-    enquirer: "npm:^2.3.5"
-    minimist: "npm:^1.2.3"
-    minimist-options: "npm:^4.0.2"
-    mkdirp: "npm:^1.0.4"
-    read-pkg-up: "npm:^7.0.1"
-    rimraf: "npm:^3.0.2"
-    rollup: "npm:^2.3.3"
-  bin:
-    opaline: cli/cli.js
-  checksum: 4044137f265ee657d068c91d72d409ffa1e6adabdba16f5cb04e201e4e5d44a74f7e6b91c35764488755c8886ca0bac089b00c5ea58f18078bf06715692f15d3
-  languageName: node
-  linkType: hard
-
-"@opaline/help-theme-default@npm:^0.0.2":
-  version: 0.0.2
-  resolution: "@opaline/help-theme-default@npm:0.0.2"
-  dependencies:
-    "@types/node": "npm:^12.6.9"
-    chalk: "npm:^3.0.0"
-  checksum: b4716aa6645c9711efbbeac1d38ac46e7d8871f1bfd08dad30147a61f380847cda61d4e4973be3b0fd1099457a675fe13208e3926915d449005ce93d28db7cc5
-  languageName: node
-  linkType: hard
-
-"@opaline/runner@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@opaline/runner@npm:0.1.1"
-  dependencies:
-    "@types/node": "npm:^12.6.9"
-    "@types/ora": "npm:^3.2.0"
-    chalk: "npm:^3.0.0"
-    ora: "npm:^4.0.3"
-  checksum: f458cc29929d2f3c6afc9b3091516a417da9e394538fbdccfa3d96d44d2c3a1501f475242a3a2daa4d573548d6d898db1be4b71217ed29443c63f1a092c4aa0f
-  languageName: node
-  linkType: hard
-
 "@open-draft/deferred-promise@npm:^2.2.0":
   version: 2.2.0
   resolution: "@open-draft/deferred-promise@npm:2.2.0"
@@ -10226,46 +10166,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-node-resolve@npm:^7.1.3":
-  version: 7.1.3
-  resolution: "@rollup/plugin-node-resolve@npm:7.1.3"
-  dependencies:
-    "@rollup/pluginutils": "npm:^3.0.8"
-    "@types/resolve": "npm:0.0.8"
-    builtin-modules: "npm:^3.1.0"
-    is-module: "npm:^1.0.0"
-    resolve: "npm:^1.14.2"
-  peerDependencies:
-    rollup: ^1.20.0||^2.0.0
-  checksum: c0a3f27ef952bd0dca454d952d6a9d7eb8cb05a5eb5407db81db770bfed9e62b698f8406e98be33429f271dbc065eb3abf758896c15ea1185a0b54f97f47c413
-  languageName: node
-  linkType: hard
-
-"@rollup/plugin-sucrase@npm:^3.0.0":
-  version: 3.1.0
-  resolution: "@rollup/plugin-sucrase@npm:3.1.0"
-  dependencies:
-    "@rollup/pluginutils": "npm:^3.0.1"
-    sucrase: "npm:^3.10.1"
-  peerDependencies:
-    rollup: ^1.20.0 || ^2.0.0
-  checksum: 7be97c00b5fb7be91f12ef4e22dc1b087b0d3513736587e2eb2f061f0478fb94a460a08578bf86ac0c590cc6c64e928e2bfc8451badbf156e21943ecccc63ff0
-  languageName: node
-  linkType: hard
-
-"@rollup/pluginutils@npm:^3.0.1, @rollup/pluginutils@npm:^3.0.8":
-  version: 3.1.0
-  resolution: "@rollup/pluginutils@npm:3.1.0"
-  dependencies:
-    "@types/estree": "npm:0.0.39"
-    estree-walker: "npm:^1.0.1"
-    picomatch: "npm:^2.2.2"
-  peerDependencies:
-    rollup: ^1.20.0||^2.0.0
-  checksum: 7151753160d15ba2b259461a6c25b3932150994ea52dba8fd3144f634c7647c2e56733d986e2c15de67c4d96a9ee7d6278efa6d2e626a7169898fd64adc0f90c
-  languageName: node
-  linkType: hard
-
 "@rollup/pluginutils@npm:^5.0.2":
   version: 5.4.0
   resolution: "@rollup/pluginutils@npm:5.4.0"
@@ -11657,7 +11557,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__traverse@npm:*, @types/babel__traverse@npm:^7.0.9, @types/babel__traverse@npm:^7.20.7":
+"@types/babel__traverse@npm:*, @types/babel__traverse@npm:^7.20.7":
   version: 7.28.0
   resolution: "@types/babel__traverse@npm:7.28.0"
   dependencies:
@@ -11673,13 +11573,6 @@ __metadata:
     "@types/connect": "npm:*"
     "@types/node": "npm:*"
   checksum: c2dd533e1d4af958d656bdba7f376df68437d8dfb7e4522c88b6f3e6f827549e4be5bf0be68a5f1878accf5752ea37fba7e8a4b6dda53d0d122d77e27b69c750
-  languageName: node
-  linkType: hard
-
-"@types/braces@npm:*":
-  version: 3.0.0
-  resolution: "@types/braces@npm:3.0.0"
-  checksum: 87f19190bb8ec194d2ae1e3960cedff2052a3e71fd311524a6adb49031708b7a1527e43d045eceaf7fb8cf0806e91b75e8536b4addd02971aa3c175144d87631
   languageName: node
   linkType: hard
 
@@ -11878,13 +11771,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/doctrine@npm:^0.0.3":
-  version: 0.0.3
-  resolution: "@types/doctrine@npm:0.0.3"
-  checksum: 566dcdc988c97ff01d14493ceb2223643347f07cf0a88c86cd7cb7c2821cfc837fd39295e6809a29614fdfdc6c4e981408155ca909b2e5da5d947af939b6c966
-  languageName: node
-  linkType: hard
-
 "@types/doctrine@npm:^0.0.9":
   version: 0.0.9
   resolution: "@types/doctrine@npm:0.0.9"
@@ -11945,13 +11831,6 @@ __metadata:
   version: 1.0.9
   resolution: "@types/estree@npm:1.0.9"
   checksum: 3ad3286ca2988cd550dafb8f2ad599c8474868e954fa601a36655bdfefd8039f7c714b8c1c7f2ae219ffbd58bd4660e66fa7479a0120fc02d4777057d4865387
-  languageName: node
-  linkType: hard
-
-"@types/estree@npm:0.0.39":
-  version: 0.0.39
-  resolution: "@types/estree@npm:0.0.39"
-  checksum: f0af6c95ac1988c4827964bd9d3b51d24da442e2188943f6dfcb1e1559103d5d024d564b2e9d3f84c53714a02a0a7435c7441138eb63d9af5de4dfc66cdc0d92
   languageName: node
   linkType: hard
 
@@ -12234,15 +12113,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/micromatch@npm:^4.0.1":
-  version: 4.0.1
-  resolution: "@types/micromatch@npm:4.0.1"
-  dependencies:
-    "@types/braces": "npm:*"
-  checksum: eab58130f915873015d6caa8b54212fefa0b1fc7fcd41dd5a271c7586a057cb82dae6f4713f8ecea89d364c91025011e81d69801f60e69070a84008ed9e480de
-  languageName: node
-  linkType: hard
-
 "@types/mime@npm:^1":
   version: 1.3.2
   resolution: "@types/mime@npm:1.3.2"
@@ -12296,13 +12166,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^12.6.9":
-  version: 12.20.13
-  resolution: "@types/node@npm:12.20.13"
-  checksum: 9a6e80ef77376c498806b9f816a8764ca8b6b8fcfba591ee05ae6d99424356fc8106a64bcc1351a44feea4283e4385fcf074534e9beeb0e39b085c7e22c52b5b
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:^20.0.0, @types/node@npm:^20.12.7":
   version: 20.19.43
   resolution: "@types/node@npm:20.19.43"
@@ -12325,15 +12188,6 @@ __metadata:
   version: 2.4.0
   resolution: "@types/normalize-package-data@npm:2.4.0"
   checksum: f5504a9fe5cb6b82d9d2fb7982e4681f51bd31dc6c4750f833ca6499a2372294e58c0e2e0f5d78066f3c212c553c85cdbf653c5d6035f902d00822e7f3590c28
-  languageName: node
-  linkType: hard
-
-"@types/ora@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "@types/ora@npm:3.2.0"
-  dependencies:
-    ora: "npm:*"
-  checksum: d38376c67eb077ce37ee8792ab5613c5ca9b89c1b995f88d001b9c1e9f9b8c7cb2019156e8bc51bdf479aa5e1844940941faf2487b545c441a414cf9ebdab1c5
   languageName: node
   linkType: hard
 
@@ -12423,15 +12277,6 @@ __metadata:
   dependencies:
     redux: "npm:^4.0.5"
   checksum: d23bc4fce2f504f8e42c650b8b0b798c833471078fe6513aeb7cba16ced22798464f2a2b997e8fa54afb574de8186090c749fdf61cf47fdcd7bb245aebe9113d
-  languageName: node
-  linkType: hard
-
-"@types/resolve@npm:0.0.8":
-  version: 0.0.8
-  resolution: "@types/resolve@npm:0.0.8"
-  dependencies:
-    "@types/node": "npm:*"
-  checksum: ead6902f01e7240918e6f6dabf0e2bc37035492b1da16f605bbd1e153c17d0639df77981b2ec042480361be76c9e967543287d9b312cd668ed9123524994c344
   languageName: node
   linkType: hard
 
@@ -12544,13 +12389,6 @@ __metadata:
   version: 4.0.2
   resolution: "@types/tough-cookie@npm:4.0.2"
   checksum: 38d01fc79a9a87166253b8c548bb401599424c57a818bea1b47a68be6dcd37fc3bff381f978354e00221f284937d5066bb92d58bf79952f9d21deb934e8ec9a7
-  languageName: node
-  linkType: hard
-
-"@types/treeify@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@types/treeify@npm:1.0.0"
-  checksum: 8a279d0f1897e47cc02b4b5a570141ab70de6bc5d95cafe976aaee78740c13c2e80dae69f7ae9ca1c735c653b65a4ec59a7eed6970683cd04fc0ddf4b98794ff
   languageName: node
   linkType: hard
 
@@ -15845,13 +15683,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ansi-colors@npm:^4.1.1":
-  version: 4.1.1
-  resolution: "ansi-colors@npm:4.1.1"
-  checksum: 6086ade4336b4250b6b25e144b83e5623bcaf654d3df0c3546ce09c9c5ff999cb6a6f00c87e802d05cf98aef79d92dc76ade2670a2493b8dcb80220bec457838
-  languageName: node
-  linkType: hard
-
 "ansi-escapes@npm:^4.2.1, ansi-escapes@npm:^4.3.2":
   version: 4.3.2
   resolution: "ansi-escapes@npm:4.3.2"
@@ -16899,13 +16730,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"builtin-modules@npm:^3.1.0":
-  version: 3.3.0
-  resolution: "builtin-modules@npm:3.3.0"
-  checksum: 2cb3448b4f7306dc853632a4fcddc95e8d4e4b9868c139400027b71938fc6806d4ff44007deffb362ac85724bd40c2c6452fb6a0aa4531650eeddb98d8e5ee8a
-  languageName: node
-  linkType: hard
-
 "builtin-status-codes@npm:^2.0.0":
   version: 2.0.0
   resolution: "builtin-status-codes@npm:2.0.0"
@@ -17450,7 +17274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^2.3.0, chalk@npm:^2.4.1, chalk@npm:^2.4.2":
+"chalk@npm:^2.3.0, chalk@npm:^2.4.1":
   version: 2.4.2
   resolution: "chalk@npm:2.4.2"
   dependencies:
@@ -17601,7 +17425,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.3.1, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.3.0, chokidar@npm:^3.5.3, chokidar@npm:^3.6.0":
   version: 3.6.0
   resolution: "chokidar@npm:3.6.0"
   dependencies:
@@ -17762,7 +17586,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-spinners@npm:^2.2.0, cli-spinners@npm:^2.5.0, cli-spinners@npm:^2.6.1, cli-spinners@npm:^2.9.2":
+"cli-spinners@npm:^2.5.0, cli-spinners@npm:^2.6.1, cli-spinners@npm:^2.9.2":
   version: 2.9.2
   resolution: "cli-spinners@npm:2.9.2"
   checksum: 907a1c227ddf0d7a101e7ab8b300affc742ead4b4ebe920a5bf1bc6d45dce2958fcd195eb28fa25275062fe6fa9b109b93b63bc8033396ed3bcb50297008b3a3
@@ -18102,13 +17926,6 @@ __metadata:
   version: 1.4.9
   resolution: "comment-parser@npm:1.4.9"
   checksum: bf81563f8588a9de7f1b49f46c8660899147c8313a01a5c48cc88a89a401c68952004cdd15644f21d9fb10c1f21e63366dc8627468a576d5d3400ee5ca7178a4
-  languageName: node
-  linkType: hard
-
-"comment-parser@npm:^0.7.4":
-  version: 0.7.6
-  resolution: "comment-parser@npm:0.7.6"
-  checksum: 7b9b19f81faaffc0e477958a017195fda37b7b48ef063d139d729b98dd68843b9133e723137b8e8c35cef9f44e529de3d7291374a4bbb78c3796b0866aeb32ec
   languageName: node
   linkType: hard
 
@@ -20018,15 +19835,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"enquirer@npm:^2.3.5":
-  version: 2.3.6
-  resolution: "enquirer@npm:2.3.6"
-  dependencies:
-    ansi-colors: "npm:^4.1.1"
-  checksum: 8e070e052c2c64326a2803db9084d21c8aaa8c688327f133bf65c4a712586beb126fd98c8a01cfb0433e82a4bd3b6262705c55a63e0f7fb91d06b9cedbde9a11
-  languageName: node
-  linkType: hard
-
 "entities@npm:^2.0.0":
   version: 2.1.0
   resolution: "entities@npm:2.1.0"
@@ -21091,13 +20899,6 @@ __metadata:
   version: 0.6.1
   resolution: "estree-walker@npm:0.6.1"
   checksum: 6dabc855faa04a1ffb17b6a9121b6008ba75ab5a163ad9dc3d7fca05cfda374c5f5e91418d783496620ca75e99a73c40874d8b75f23b4117508cc8bde78e7b41
-  languageName: node
-  linkType: hard
-
-"estree-walker@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "estree-walker@npm:1.0.1"
-  checksum: fa9e5f8c1bbe8d01e314c0f03067b64a4f22d4c58410fc5237060d0c15b81e58c23921c41acc60abbdab490f1fdfcbd6408ede2d03ca704454272e0244d61a55
   languageName: node
   linkType: hard
 
@@ -23821,13 +23622,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-module@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "is-module@npm:1.0.0"
-  checksum: 795a3914bcae7c26a1c23a1e5574c42eac13429625045737bf3e324ce865c0601d61aee7a5afbca1bee8cb300c7d9647e7dc98860c9bdbc3b7fdc51d8ac0bffc
-  languageName: node
-  linkType: hard
-
 "is-my-ip-valid@npm:^1.0.0":
   version: 1.0.0
   resolution: "is-my-ip-valid@npm:1.0.0"
@@ -25710,15 +25504,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"log-symbols@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "log-symbols@npm:3.0.0"
-  dependencies:
-    chalk: "npm:^2.4.2"
-  checksum: d11582a1b499b76aa1415988234ad54d9fb3f888f4cb4186cbc20ee4d314ac4b5f3d9fe9edd828748d2c0d372df2ea9f5dfd89100510988a8ce5ddf483ae015e
-  languageName: node
-  linkType: hard
-
 "log-symbols@npm:^4.1.0":
   version: 4.1.0
   resolution: "log-symbols@npm:4.1.0"
@@ -27233,7 +27018,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist-options@npm:4.1.0, minimist-options@npm:^4.0.2":
+"minimist-options@npm:4.1.0":
   version: 4.1.0
   resolution: "minimist-options@npm:4.1.0"
   dependencies:
@@ -27244,7 +27029,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"minimist@npm:^1.2.0, minimist@npm:^1.2.3, minimist@npm:^1.2.5, minimist@npm:^1.2.6":
+"minimist@npm:^1.2.0, minimist@npm:^1.2.5, minimist@npm:^1.2.6":
   version: 1.2.7
   resolution: "minimist@npm:1.2.7"
   checksum: 8808da67ca50ee19ab2d69051d77ee78572e67297fd8a1635ecc757a15106ccdfb5b8c4d11d84750120142f1684e5329a141295728c755e5d149eedd73cc6572
@@ -28328,39 +28113,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ora@npm:*, ora@npm:^6.0.1":
-  version: 6.1.2
-  resolution: "ora@npm:6.1.2"
-  dependencies:
-    bl: "npm:^5.0.0"
-    chalk: "npm:^5.0.0"
-    cli-cursor: "npm:^4.0.0"
-    cli-spinners: "npm:^2.6.1"
-    is-interactive: "npm:^2.0.0"
-    is-unicode-supported: "npm:^1.1.0"
-    log-symbols: "npm:^5.1.0"
-    strip-ansi: "npm:^7.0.1"
-    wcwidth: "npm:^1.0.1"
-  checksum: 5b791e244d1085195df16afdb603e42868aba68aec114e89bb77927dda278c950d5540561774bb130a8d86319be5c56a474a771cdfe9be254c36ed4c7415c74c
-  languageName: node
-  linkType: hard
-
-"ora@npm:^4.0.3":
-  version: 4.1.1
-  resolution: "ora@npm:4.1.1"
-  dependencies:
-    chalk: "npm:^3.0.0"
-    cli-cursor: "npm:^3.1.0"
-    cli-spinners: "npm:^2.2.0"
-    is-interactive: "npm:^1.0.0"
-    log-symbols: "npm:^3.0.0"
-    mute-stream: "npm:0.0.8"
-    strip-ansi: "npm:^6.0.0"
-    wcwidth: "npm:^1.0.1"
-  checksum: 5203b4cc615cbd970244981679471aedb2b935e0659602efb5c872c01b3fcdb10be8fd541ed9d4ca51e2d7b2ebe601c03f33653ef44fd284d0cab44f67775aa1
-  languageName: node
-  linkType: hard
-
 "ora@npm:^5.1.0, ora@npm:^5.4.1":
   version: 5.4.1
   resolution: "ora@npm:5.4.1"
@@ -28375,6 +28127,23 @@ __metadata:
     strip-ansi: "npm:^6.0.0"
     wcwidth: "npm:^1.0.1"
   checksum: 10ff14aace236d0e2f044193362b22edce4784add08b779eccc8f8ef97195cae1248db8ec1ec5f5ff076f91acbe573f5f42a98c19b78dba8c54eefff983cae85
+  languageName: node
+  linkType: hard
+
+"ora@npm:^6.0.1":
+  version: 6.1.2
+  resolution: "ora@npm:6.1.2"
+  dependencies:
+    bl: "npm:^5.0.0"
+    chalk: "npm:^5.0.0"
+    cli-cursor: "npm:^4.0.0"
+    cli-spinners: "npm:^2.6.1"
+    is-interactive: "npm:^2.0.0"
+    is-unicode-supported: "npm:^1.1.0"
+    log-symbols: "npm:^5.1.0"
+    strip-ansi: "npm:^7.0.1"
+    wcwidth: "npm:^1.0.1"
+  checksum: 5b791e244d1085195df16afdb603e42868aba68aec114e89bb77927dda278c950d5540561774bb130a8d86319be5c56a474a771cdfe9be254c36ed4c7415c74c
   languageName: node
   linkType: hard
 
@@ -28969,7 +28738,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.2.2, picomatch@npm:^2.3.1":
+"picomatch@npm:^2.0.4, picomatch@npm:^2.2.1, picomatch@npm:^2.3.1":
   version: 2.3.2
   resolution: "picomatch@npm:2.3.2"
   checksum: a554d1709e59be97d1acb9eaedbbc700a5c03dbd4579807baed95100b00420bc729335440ef15004ae2378984e2487a7c1cebd743cfdb72b6fa9ab69223c0d61
@@ -31192,7 +30961,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@npm:^1.10.0, resolve@npm:^1.14.2, resolve@npm:^1.19.0, resolve@npm:^1.20.0, resolve@npm:^1.22.1, resolve@npm:^1.22.11, resolve@npm:^1.22.4, resolve@npm:^1.22.8, resolve@npm:~1.22.1, resolve@npm:~1.22.2":
+"resolve@npm:^1.10.0, resolve@npm:^1.19.0, resolve@npm:^1.20.0, resolve@npm:^1.22.1, resolve@npm:^1.22.11, resolve@npm:^1.22.4, resolve@npm:^1.22.8, resolve@npm:~1.22.1, resolve@npm:~1.22.2":
   version: 1.22.13
   resolution: "resolve@npm:1.22.13"
   dependencies:
@@ -31219,7 +30988,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.14.2#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.19.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.11#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.8#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.2#optional!builtin<compat/resolve>":
+"resolve@patch:resolve@npm%3A^1.10.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.19.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.20.0#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.11#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.4#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A^1.22.8#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.1#optional!builtin<compat/resolve>, resolve@patch:resolve@npm%3A~1.22.2#optional!builtin<compat/resolve>":
   version: 1.22.13
   resolution: "resolve@patch:resolve@npm%3A1.22.13#optional!builtin<compat/resolve>::version=1.22.13&hash=c3c19d"
   dependencies:
@@ -31405,20 +31174,6 @@ __metadata:
   bin:
     rolldown: ./bin/cli.mjs
   checksum: 084cbdcc222e534c9aff90e77488cdeb6a685a20a34e6e3ba77c3b8646723cea2f090f05522f452ed51217cce68b7aa67df8661b49b4ac0227a5edfcb0383b68
-  languageName: node
-  linkType: hard
-
-"rollup@npm:^2.3.3":
-  version: 2.80.0
-  resolution: "rollup@npm:2.80.0"
-  dependencies:
-    fsevents: "npm:~2.3.2"
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  bin:
-    rollup: dist/bin/rollup
-  checksum: 48ad7b79a4ef9332cf90692d28c05f904132820964f012941372ec4f31c18635e1b7909823058964fb2b216154713bfbe82ec00920d71b15f3fe13bb9df3eac8
   languageName: node
   linkType: hard
 
@@ -33210,7 +32965,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sucrase@npm:^3.10.1, sucrase@npm:^3.35.0":
+"sucrase@npm:^3.35.0":
   version: 3.35.0
   resolution: "sucrase@npm:3.35.0"
   dependencies:
@@ -33926,13 +33681,6 @@ __metadata:
   bin:
     tree-kill: cli.js
   checksum: 7b1b7c7f17608a8f8d20a162e7957ac1ef6cd1636db1aba92f4e072dc31818c2ff0efac1e3d91064ede67ed5dc57c565420531a8134090a12ac10cf792ab14d2
-  languageName: node
-  linkType: hard
-
-"treeify@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "treeify@npm:1.1.0"
-  checksum: 2f0dea9e89328b8a42296a3963d341ab19897a05b723d6b0bced6b28701a340d2a7b03241aef807844198e46009aaf3755139274eb082cfce6fdc1935cbd69dd
   languageName: node
   linkType: hard
 
@@ -35792,24 +35540,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"whybundled@npm:^2.0.0":
-  version: 2.0.0
-  resolution: "whybundled@npm:2.0.0"
-  dependencies:
-    "@discoveryjs/json-ext": "npm:^0.5.2"
-    "@opaline/core": "npm:^0.5.3"
-    "@types/micromatch": "npm:^4.0.1"
-    "@types/treeify": "npm:^1.0.0"
-    chalk: "npm:^4.1.0"
-    micromatch: "npm:^4.0.2"
-    treeify: "npm:^1.1.0"
-  bin:
-    wbd: dist/cli.js
-    whybundled: dist/cli.js
-  checksum: 245c1d47264f97131c0c049760ad23b2ad0c753cd0caf0ee20b51a92cd0cf8615debac4dd953f563d1c17b8ea16df5d33cd3e752164a382c83e5a90a167892a9
-  languageName: node
-  linkType: hard
-
 "wide-align@npm:^1.1.0":
   version: 1.1.5
   resolution: "wide-align@npm:1.1.5"
@@ -36037,7 +35767,6 @@ __metadata:
     webpack: "npm:^5.111.1"
     webpack-bundle-analyzer: "npm:^5.4.0"
     webpack-cli: "npm:^7.2.3"
-    whybundled: "npm:^2.0.0"
     wpcom: "workspace:^"
     yargs: "npm:^17.0.1"
   dependenciesMeta:
