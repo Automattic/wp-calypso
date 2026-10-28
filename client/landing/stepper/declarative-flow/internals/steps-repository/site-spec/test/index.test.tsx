@@ -250,6 +250,69 @@ describe( 'SiteSpec early provisioning step', () => {
 		);
 	} );
 
+	it( 'continues the design the user picked in the site plan, on the DSL graph', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&ref=site-card&source=site-overview'
+		);
+		wpcomPostMock.mockResolvedValue( {
+			blog_id: 123,
+			atomic: {
+				is_atomic: true,
+				ready_for_editor: true,
+			},
+			remote_option_ready: true,
+		} );
+
+		renderSiteSpec();
+
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( siteSpecOptions.siteSpecConfig ).toEqual( {
+			agentId: 'build-wow-site-spec',
+		} );
+
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-456', designCandidateId: '2' } );
+		} );
+
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			{
+				path: '/sites/example.wordpress.com/big-sky/build-wow',
+				apiNamespace: 'wpcom/v2',
+			},
+			{
+				spec_id: 'spec-456',
+				graph: 'dsl',
+				stream_events: true,
+				design_candidate: 2,
+			}
+		);
+
+		const redirect = new URL( window.location.href, 'https://wordpress.com' );
+		expect( redirect.pathname ).toBe( '/setup/ai-site-builder-spec/site-generation' );
+		expect( redirect.searchParams.get( 'siteId' ) ).toBe( '123' );
+		expect( redirect.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( redirect.searchParams.get( 'specId' ) ).toBe( 'spec-456' );
+		expect( redirect.searchParams.get( 'designCandidate' ) ).toBe( '2' );
+		expect( redirect.searchParams.get( 'graph' ) ).toBe( 'dsl' );
+		expect( redirect.searchParams.get( 'ref' ) ).toBe( 'site-card' );
+		expect( redirect.searchParams.get( 'source' ) ).toBe( 'site-overview' );
+		expect( redirect.searchParams.has( 'editorUrl' ) ).toBe( false );
+
+		expect( logToLogstashMock ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				blog_id: 123,
+				properties: expect.objectContaining( {
+					type: 'build_wow_spec_confirm_response',
+					spec_id: 'spec-456',
+					site_identifier: 'example.wordpress.com',
+					atomic_ready_for_editor: true,
+					remote_option_ready: true,
+					is_atomic: true,
+				} ),
+			} )
+		);
+	} );
+
 	it( 'builds on the requested graph and carries it to site generation for retries', async () => {
 		mockQueryParams = new URLSearchParams(
 			'build_wow=1&siteSlug=example.wordpress.com&spec_id=spec-dsl&graph=dsl'

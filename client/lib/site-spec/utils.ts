@@ -136,6 +136,9 @@ export interface SiteSpecConfig {
 		// card and remove button. Sub-feature of `siteBrief: 'next'` — the
 		// widget ignores it otherwise.
 		links?: 'social' | 'all';
+		// Chat on one side and the live site plan on the other. Its "Pick my
+		// design" shows the design candidates before the build.
+		sitePlan?: boolean;
 	};
 	tosConfig?: ToSConfig;
 	placeholder?: string | string[];
@@ -419,12 +422,15 @@ export function getBuildWowSiteSpecConfig( {
 	ref,
 	source,
 	graph,
+	sitePlan,
 }: {
 	siteSlug?: string | null;
 	siteId?: string | number | null;
 	ref?: string | null;
 	source?: string | null;
 	graph?: string | null;
+	/** Shows the widget's site plan, whose "Pick my design" offers the design candidates. */
+	sitePlan?: boolean;
 } = {} ): SiteSpecConfig {
 	const buildSiteUrl = addQueryArgs( '/setup/ai-site-builder-spec/site-spec', {
 		build_wow: '1',
@@ -447,6 +453,7 @@ export function getBuildWowSiteSpecConfig( {
 			// it so this flow keeps offering social links and nothing else if
 			// that default ever moves.
 			links: 'social',
+			...( sitePlan ? { sitePlan: true } : {} ),
 		},
 	};
 }

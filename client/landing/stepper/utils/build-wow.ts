@@ -22,6 +22,20 @@ export function getBuildWowGraph( queryParams: URLSearchParams ): BuildWowGraph 
 }
 
 /**
+ * Shows the site-spec widget's site plan in build-wow, so "Pick my design"
+ * offers four designs of the top of the front page before the build.
+ */
+export const DESIGN_CANDIDATES_FLAG = 'site-spec/design-candidates';
+
+/**
+ * The design candidate the user picked in the site-spec widget: "1" to "4",
+ * or undefined when there is none. The build continues that candidate.
+ */
+export function getDesignCandidate( value: unknown ): string | undefined {
+	return typeof value === 'string' && /^[1-4]$/.test( value ) ? value : undefined;
+}
+
+/**
  * The live feed's switch in Calypso. While it is on, every build asks for the
  * feed and the generation screen follows the stream the server advertises.
  */
@@ -114,7 +128,8 @@ export async function requestBuildWowSite(
 	siteIdentifier: string,
 	specId?: string,
 	graph?: BuildWowGraph,
-	blueprintId?: string
+	blueprintId?: string,
+	designCandidate?: string
 ): Promise< BuildWowResponse > {
 	// Like graph, only a call that queues a build carries the opt-in, and only
 	// while the streaming flag is on. It only requests the live feed: the server
@@ -137,6 +152,8 @@ export async function requestBuildWowSite(
 			// The blueprint hybrid: the blueprint onboarding already put the site on Atomic, which
 			// the server otherwise refuses as somebody's established site.
 			...( blueprintId ? { blueprint_id: blueprintId } : {} ),
+			// The design candidate the widget picked; the server builds it on the DSL graph.
+			...( specId && designCandidate ? { design_candidate: Number( designCandidate ) } : {} ),
 		}
 	);
 }
