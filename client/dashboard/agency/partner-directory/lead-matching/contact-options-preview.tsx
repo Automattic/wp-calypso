@@ -30,11 +30,6 @@ export default function ContactOptionsPreview( { countryCode = '' }: { countryCo
 							'We add these to the email that introduces you to a matched client, so they can call you or book a time right away.'
 						) }
 					/>
-					<Notice status="info" isDismissible={ false }>
-						{ __(
-							'Design preview: These contact details are not saved. Other profile fields save as usual.'
-						) }
-					</Notice>
 					<ErrorBoundary
 						fallback={
 							<Notice status="warning" isDismissible={ false }>

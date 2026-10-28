@@ -1,4 +1,4 @@
-import { Notice, TextControl } from '@wordpress/components';
+import { TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useId, useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
@@ -28,11 +28,6 @@ export default function ContactOptionsPreview( { countryCode }: { countryCode?: 
 			) }
 			className="partner-directory-lead-matching__form-section"
 		>
-			<Notice status="info" isDismissible={ false }>
-				{ __(
-					'Design preview: These contact details are not saved. Other profile fields save as usual.'
-				) }
-			</Notice>
 			{ countriesList.length === 0 && <QuerySmsCountries /> }
 			<FormPhoneInput
 				className="partner-directory-lead-matching__phone-input"

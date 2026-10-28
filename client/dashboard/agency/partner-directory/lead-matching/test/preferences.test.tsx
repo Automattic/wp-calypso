@@ -45,7 +45,6 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		expect(
 			await screen.findByText( /phone number field is temporarily unavailable/ )
 		).toBeVisible();
-		expect( screen.getByText( /contact details are not saved/ ) ).toBeVisible();
 		await userEvent.type(
 			screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ),
 			'not a URL'
