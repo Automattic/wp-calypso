@@ -119,7 +119,13 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 		>
 			{ renderState === 'progress' && <ProgressScreen job={ job } showHeading={ renderHeading } /> }
 
-			{ renderState === 'error' && <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } /> }
+			{ renderState === 'error' && (
+				<ErrorMessage
+					onPrimaryBtnClick={ onTryAgainClick }
+					errorData={ job?.errorData }
+					importerFileType={ job?.importerFileType }
+				/>
+			) }
 
 			{ renderState === 'upgrade-plan' && (
 				<MigrationPlansGrid
