@@ -41,7 +41,7 @@ const defaultView = {
 function Domains() {
 	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
-	const fields = useFields( { showPrimaryDomainBadge: false } );
+	const fields = useFields();
 	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
 

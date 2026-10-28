@@ -239,7 +239,7 @@ function SiteDomainsList() {
  */
 function AllDomainsList() {
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const fields = useFields( { showPrimaryDomainBadge: false } );
+	const fields = useFields();
 	const domains = allDomains.filter(
 		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 	);
