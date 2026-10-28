@@ -31,10 +31,6 @@ export interface CreateSshKeyArgs {
 
 export interface UpdateSshKeyArgs {
 	name: string;
-	key: string;
-}
-
-export interface UpdateSshKeyLabelArgs {
-	name: string;
-	label: string;
+	key?: string;
+	label?: string;
 }

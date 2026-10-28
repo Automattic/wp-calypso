@@ -23,8 +23,7 @@ import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
 import { MAX_SSH_KEYS } from '../../utils/ssh';
 import AddSshKeyModal from './add-ssh-key-modal';
-import EditSshKeyLabelModal from './edit-ssh-key-label-modal';
-import ReplaceSshKeyModal from './replace-ssh-key-modal';
+import EditSshKeyModal from './edit-ssh-key-modal';
 import SshKeyItem from './ssh-key-item';
 import type { UserSshKey } from '@automattic/api-core';
 
@@ -58,8 +57,7 @@ export default function SshKeys() {
 	const hasReachedLimit = keyCount >= MAX_SSH_KEYS;
 
 	const [ isAddModalOpen, setIsAddModalOpen ] = useState( false );
-	const [ sshKeyToEditLabel, setSshKeyToEditLabel ] = useState< UserSshKey | null >( null );
-	const [ sshKeyToReplace, setSshKeyToReplace ] = useState< UserSshKey | null >( null );
+	const [ sshKeyToEdit, setSshKeyToEdit ] = useState< UserSshKey | null >( null );
 	const [ sshKeyToDelete, setSshKeyToDelete ] = useState< UserSshKey | null >( null );
 
 	const { mutate: deleteSshKey, isPending: isDeletingSshKey } = useMutation(
@@ -74,16 +72,9 @@ export default function SshKeys() {
 		setIsAddModalOpen( true );
 	};
 
-	const handleEditLabel = ( sshKey: UserSshKey ) => {
-		recordTracksEvent( 'calypso_dashboard_security_ssh_key_label_edit_click', {
-			key_count: keyCount,
-		} );
-		setSshKeyToEditLabel( sshKey );
-	};
-
-	const handleReplace = ( sshKey: UserSshKey ) => {
+	const handleEdit = ( sshKey: UserSshKey ) => {
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_edit_click', { key_count: keyCount } );
-		setSshKeyToReplace( sshKey );
+		setSshKeyToEdit( sshKey );
 	};
 
 	const handleDeleteDialogOpen = ( sshKey: UserSshKey ) => {
@@ -176,8 +167,7 @@ export default function SshKeys() {
 						<SshKeyItem
 							key={ sshKey.name }
 							sshKey={ sshKey }
-							onEditLabel={ () => handleEditLabel( sshKey ) }
-							onReplace={ () => handleReplace( sshKey ) }
+							onEdit={ () => handleEdit( sshKey ) }
 							onDelete={ () => handleDeleteDialogOpen( sshKey ) }
 						/>
 					) ) }
@@ -186,18 +176,11 @@ export default function SshKeys() {
 			{ isAddModalOpen && (
 				<AddSshKeyModal keyCount={ keyCount } onClose={ () => setIsAddModalOpen( false ) } />
 			) }
-			{ sshKeyToEditLabel && (
-				<EditSshKeyLabelModal
-					sshKey={ sshKeyToEditLabel }
+			{ sshKeyToEdit && (
+				<EditSshKeyModal
+					sshKey={ sshKeyToEdit }
 					keyCount={ keyCount }
-					onClose={ () => setSshKeyToEditLabel( null ) }
-				/>
-			) }
-			{ sshKeyToReplace && (
-				<ReplaceSshKeyModal
-					sshKey={ sshKeyToReplace }
-					keyCount={ keyCount }
-					onClose={ () => setSshKeyToReplace( null ) }
+					onClose={ () => setSshKeyToEdit( null ) }
 				/>
 			) }
 			<ConfirmModal

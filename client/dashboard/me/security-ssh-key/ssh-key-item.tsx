@@ -14,13 +14,11 @@ import type { UserSshKey } from '@automattic/api-core';
 
 export default function SshKeyItem( {
 	sshKey,
-	onEditLabel,
-	onReplace,
+	onEdit,
 	onDelete,
 }: {
 	sshKey: UserSshKey;
-	onEditLabel: () => void;
-	onReplace: () => void;
+	onEdit: () => void;
 	onDelete: () => void;
 } ) {
 	const userLocale = useIntlLocale();
@@ -69,19 +67,11 @@ export default function SshKeyItem( {
 						<MenuGroup>
 							<MenuItem
 								onClick={ () => {
-									onEditLabel();
+									onEdit();
 									onClose();
 								} }
 							>
-								{ __( 'Edit label' ) }
-							</MenuItem>
-							<MenuItem
-								onClick={ () => {
-									onReplace();
-									onClose();
-								} }
-							>
-								{ __( 'Replace key' ) }
+								{ __( 'Edit' ) }
 							</MenuItem>
 							<MenuItem
 								isDestructive

@@ -6,19 +6,20 @@ import {
 	TextareaControl,
 	__experimentalVStack as VStack,
 	__experimentalText as Text,
+	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
-import { isSshKeyValid } from '../../utils/ssh';
+import { isSshKeyValid, SSH_KEY_LABEL_MAX_LENGTH } from '../../utils/ssh';
 import { getInvalidSshKeyMessage, getSshKeyHelpText } from './messages';
 import type { UserSshKey } from '@automattic/api-core';
 
-export default function ReplaceSshKeyModal( {
+export default function EditSshKeyModal( {
 	sshKey,
 	keyCount,
 	onClose,
@@ -29,7 +30,14 @@ export default function ReplaceSshKeyModal( {
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createErrorNotice } = useDispatch( noticesStore );
+
+	const [ label, setLabel ] = useState( sshKey.label );
 	const [ key, setKey ] = useState( '' );
+
+	const trimmedLabel = label.trim();
+	const trimmedKey = key.trim();
+	const isLabelChanged = trimmedLabel !== sshKey.label;
+	const isKeyChanged = trimmedKey !== '';
 
 	const { mutate: updateSshKey, isPending } = useMutation(
 		withSnackbar( updateSshKeyMutation(), {
@@ -40,31 +48,38 @@ export default function ReplaceSshKeyModal( {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! isSshKeyValid( key.trim() ) ) {
+		if ( isKeyChanged && ! isSshKeyValid( trimmedKey ) ) {
 			createErrorNotice( getInvalidSshKeyMessage(), { type: 'snackbar' } );
 			return;
 		}
-		recordTracksEvent( 'calypso_dashboard_security_ssh_key_update_click', { key_count: keyCount } );
-		updateSshKey( { name: sshKey.name, key: key.trim() }, { onSuccess: onClose } );
+		recordTracksEvent( 'calypso_dashboard_security_ssh_key_update_click', {
+			key_count: keyCount,
+			label_changed: isLabelChanged,
+			key_changed: isKeyChanged,
+		} );
+		updateSshKey(
+			{
+				name: sshKey.name,
+				...( isLabelChanged && { label: trimmedLabel } ),
+				...( isKeyChanged && { key: trimmedKey } ),
+			},
+			{ onSuccess: onClose }
+		);
 	};
 
 	return (
-		<Modal
-			title={ sprintf(
-				/* translators: %s is the SSH key label. */
-				__( 'Replace SSH key “%s”' ),
-				sshKey.label
-			) }
-			size="medium"
-			onRequestClose={ onClose }
-		>
+		<Modal title={ __( 'Edit SSH key' ) } size="medium" onRequestClose={ onClose }>
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 4 }>
-					<Text as="p">
-						{ __(
-							'The new key replaces the current one on all attached sites. The label stays the same.'
-						) }
-					</Text>
+					<InputControl
+						__next40pxDefaultSize
+						label={ __( 'Label' ) }
+						help={ __( 'Admins of sites this key is attached to can see its label.' ) }
+						value={ label }
+						onChange={ ( value ) => setLabel( value ?? '' ) }
+						maxLength={ SSH_KEY_LABEL_MAX_LENGTH }
+						disabled={ isPending }
+					/>
 					<VStack spacing={ 1 }>
 						<Text weight={ 500 }>{ __( 'Current key fingerprint' ) }</Text>
 						<Text variant="muted" size="13px" style={ { wordBreak: 'break-all' } }>
@@ -73,8 +88,10 @@ export default function ReplaceSshKeyModal( {
 					</VStack>
 					<TextareaControl
 						__nextHasNoMarginBottom
-						label={ __( 'New public SSH key' ) }
-						help={ getSshKeyHelpText() }
+						label={ __( 'New public SSH key (optional)' ) }
+						help={ `${ __(
+							'Leave empty to keep the current key. A new key replaces the current one on all attached sites.'
+						) } ${ getSshKeyHelpText() }` }
 						value={ key }
 						onChange={ setKey }
 						disabled={ isPending }
@@ -93,9 +110,9 @@ export default function ReplaceSshKeyModal( {
 							variant="primary"
 							type="submit"
 							isBusy={ isPending }
-							disabled={ isPending || ! key.trim() }
+							disabled={ isPending || ! trimmedLabel || ( ! isLabelChanged && ! isKeyChanged ) }
 						>
-							{ __( 'Replace key' ) }
+							{ __( 'Save' ) }
 						</Button>
 					</ButtonStack>
 				</VStack>

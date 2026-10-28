@@ -109,7 +109,7 @@ describe( '<SshKeys>', () => {
 		expect( screen.getByText( /You can add up to 10 SSH keys/ ) ).toBeVisible();
 	} );
 
-	test( 'edits the label of a key', async () => {
+	test( 'edits only the label when the key field is left empty', async () => {
 		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
 		const scope = nock( API )
 			.post( '/wpcom/v2/me/ssh-keys/laptop', ( body ) => {
@@ -121,16 +121,17 @@ describe( '<SshKeys>', () => {
 		render( <SshKeys /> );
 
 		await openActionsMenu( 'Laptop' );
-		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit label' } ) );
-		const input = screen.getByLabelText( 'Label' );
+		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit' } ) );
+		const dialog = screen.getByRole( 'dialog', { name: 'Edit SSH key' } );
+		const input = within( dialog ).getByLabelText( 'Label' );
 		await userEvent.clear( input );
 		await userEvent.type( input, 'Personal MacBook' );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
+		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
-	test( 'replaces a key without changing its label', async () => {
+	test( 'replaces only the key when the label is unchanged', async () => {
 		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
 		const scope = nock( API )
 			.post( '/wpcom/v2/me/ssh-keys/laptop', ( body ) => {
@@ -142,26 +143,70 @@ describe( '<SshKeys>', () => {
 		render( <SshKeys /> );
 
 		await openActionsMenu( 'Laptop' );
-		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Replace key' } ) );
-		await userEvent.type( screen.getByLabelText( 'New public SSH key' ), VALID_KEY );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Replace key' } ) );
+		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit' } ) );
+		const dialog = screen.getByRole( 'dialog', { name: 'Edit SSH key' } );
+		await userEvent.type(
+			within( dialog ).getByLabelText( 'New public SSH key (optional)' ),
+			VALID_KEY
+		);
+		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Save' } ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
-	test( 'does not replace a key with an invalid public key', async () => {
+	test( 'changes the label and the key together', async () => {
+		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
+		const scope = nock( API )
+			.post( '/wpcom/v2/me/ssh-keys/laptop', ( body ) => {
+				expect( body ).toEqual( { label: 'New laptop', key: VALID_KEY } );
+				return true;
+			} )
+			.reply( 200, buildKey( { name: 'laptop', label: 'New laptop' } ) );
+
+		render( <SshKeys /> );
+
+		await openActionsMenu( 'Laptop' );
+		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit' } ) );
+		const dialog = screen.getByRole( 'dialog', { name: 'Edit SSH key' } );
+		const input = within( dialog ).getByLabelText( 'Label' );
+		await userEvent.clear( input );
+		await userEvent.type( input, 'New laptop' );
+		await userEvent.type(
+			within( dialog ).getByLabelText( 'New public SSH key (optional)' ),
+			VALID_KEY
+		);
+		await userEvent.click( within( dialog ).getByRole( 'button', { name: 'Save' } ) );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+	} );
+
+	test( 'disables saving until something changes', async () => {
+		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
+
+		render( <SshKeys /> );
+
+		await openActionsMenu( 'Laptop' );
+		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+	} );
+
+	test( 'does not save an invalid public key', async () => {
 		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
 		const scope = nock( API ).post( '/wpcom/v2/me/ssh-keys/laptop' ).reply( 200, {} );
 
 		render( <SshKeys /> );
 
 		await openActionsMenu( 'Laptop' );
-		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Replace key' } ) );
-		await userEvent.type( screen.getByLabelText( 'New public SSH key' ), 'ssh-dss AAAA' );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Replace key' } ) );
+		await userEvent.click( screen.getByRole( 'menuitem', { name: 'Edit' } ) );
+		await userEvent.type(
+			screen.getByLabelText( 'New public SSH key (optional)' ),
+			'ssh-dss AAAA'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 		expect( scope.isDone() ).toBe( false );
-		expect( screen.getByRole( 'dialog' ) ).toBeVisible();
+		expect( screen.getByRole( 'dialog', { name: 'Edit SSH key' } ) ).toBeVisible();
 	} );
 
 	test( 'deletes a key after confirming how many sites it is detached from', async () => {
