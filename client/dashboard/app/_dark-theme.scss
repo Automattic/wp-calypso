@@ -466,6 +466,11 @@
 			color: var( --dashboard__text-muted-color );
 		}
 	}
+
+	// The close button sits on the illustration, which stays light in dark mode.
+	.change-primary-domain-modal__close {
+		color: var( --wp-components-color-foreground-inverted );
+	}
 }
 
 @mixin dashboard-dark-theme-site-launch-modal {

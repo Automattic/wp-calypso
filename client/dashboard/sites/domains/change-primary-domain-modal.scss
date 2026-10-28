@@ -1,5 +1,4 @@
 @import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/breakpoints';
 
 .change-primary-domain-modal {
 	// Clip the full-bleed illustration to the modal's rounded corners.
@@ -14,8 +13,8 @@
 
 .change-primary-domain-modal__close {
 	position: absolute;
-	inset-block-start: $grid-unit-15;
-	inset-inline-end: $grid-unit-15;
+	inset-block-start: 2px;
+	inset-inline-end: 2px;
 }
 
 // The modal content padding is removed so the illustration can bleed to the edges.
@@ -23,13 +22,17 @@
 	padding: $grid-unit-30;
 }
 
-// Positions are percentages so the drawing keeps its layout when the modal is narrower.
+// Copied from the domains IA prototype. Sizes are in container query units so the drawing scales
+// with the modal width, which the design-system scales do not cover.
+/* stylelint-disable unit-allowed-list, declaration-property-unit-allowed-list */
 .primary-address-illustration {
 	position: relative;
-	width: 100%;
+	width: calc(100% + 16px);
+	margin: -8px -8px 0;
 	aspect-ratio: 1024 / 352;
 	overflow: hidden;
-	background: color-mix(in oklch, var(--wpds-color-stroke-interactive-brand) 17%, var(--wpds-color-background-surface-neutral-strong));
+	background: rgb(221, 227, 251);
+	container-type: inline-size;
 }
 
 .primary-address-illustration__window {
@@ -38,38 +41,38 @@
 	inset-inline: 22% 12%;
 	overflow: hidden;
 	background: var(--wpds-color-background-surface-neutral-strong);
-	border-start-start-radius: 16px;
-	border-start-end-radius: 16px;
+	border-start-start-radius: 2.5cqw;
+	border-start-end-radius: 2.5cqw;
 }
 
 .primary-address-illustration__window-dots {
 	display: flex;
-	gap: $grid-unit-20;
-	padding-block-start: $grid-unit-20;
-	padding-inline-start: $grid-unit-20;
+	gap: 3cqw;
+	padding-block-start: 3.4cqw;
+	padding-inline-start: 3.4cqw;
 
 	span {
-		width: 12px;
-		height: 12px;
-		border: 2px solid var(--wpds-color-background-track-neutral);
+		width: 2.2cqw;
+		height: 2.2cqw;
+		border: 0.3cqw solid rgb(198, 202, 216);
 		border-radius: $radius-round;
 	}
 }
 
 .primary-address-illustration__window-line {
-	width: 30%;
-	height: 4px;
-	margin-block-start: 72px;
-	margin-inline-start: $grid-unit-20;
-	background: var(--wpds-color-background-track-neutral-weak);
-	border-radius: $radius-small;
+	width: 18cqw;
+	height: 0.9cqw;
+	margin-block-start: 13cqw;
+	margin-inline-start: 3.4cqw;
+	background: rgb(240, 240, 241);
+	border-radius: 0.5cqw;
 }
 
 .primary-address-illustration__window-image {
 	position: absolute;
 	inset-block: 18% 0;
 	inset-inline: 44% 0;
-	background: linear-gradient(155deg, var(--wpds-color-background-track-neutral) 0%, var(--wpds-color-background-surface-warning) 100%);
+	background: linear-gradient(155deg, rgb(182, 186, 191) 0%, rgb(202, 195, 188) 55%, rgb(242, 217, 193) 100%);
 }
 
 .primary-address-illustration__address {
@@ -78,14 +81,14 @@
 	inset-inline-start: 11%;
 	display: flex;
 	align-items: center;
-	gap: $grid-unit-10;
-	padding: $grid-unit-10 $grid-unit-20;
-	color: var(--wpds-color-foreground-content-neutral);
-	font-size: 1.25rem;
+	gap: 1.4cqw;
+	padding: 1.6cqw 3cqw;
+	color: rgb(16, 21, 23);
+	font-size: 3.4cqw;
 	line-height: 1.2;
 	white-space: nowrap;
 	background: var(--wpds-color-background-surface-neutral-strong);
-	border: 1px solid var(--wpds-color-stroke-interactive-brand);
+	border: 0.22cqw solid var(--wpds-color-stroke-interactive-brand);
 	border-radius: $radius-full;
 	transform: translateY(-50%);
 
@@ -93,8 +96,5 @@
 		flex-shrink: 0;
 		fill: var(--wpds-color-foreground-interactive-brand);
 	}
-
-	@media (max-width: $break-small) {
-		font-size: 1rem;
-	}
 }
+/* stylelint-enable unit-allowed-list, declaration-property-unit-allowed-list */

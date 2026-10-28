@@ -95,7 +95,7 @@ export default function ChangePrimaryDomainModal( {
 			<form className="change-primary-domain-modal__body" onSubmit={ handleSubmit }>
 				<VStack spacing={ 6 }>
 					<VStack spacing={ 2 }>
-						<Heading id={ titleId } level={ 1 } size={ 20 } weight={ 600 }>
+						<Heading id={ titleId } level={ 1 } size={ 20 } weight={ 700 }>
 							{ __( 'Primary site address' ) }
 						</Heading>
 						{ currentPrimaryDomain && (
