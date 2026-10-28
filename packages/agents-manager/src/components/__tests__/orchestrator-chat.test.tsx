@@ -2380,6 +2380,60 @@ describe( 'OrchestratorChat', () => {
 				[ 'calypso_agents_manager_chat_error', errorProps( 'other', 'network' ) ],
 			] );
 		} );
+
+		it( 'flags the send that was in flight when the page was hidden, after restore', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', 'network' ), navigating: true },
+				],
+			] );
+		} );
+
+		it( 'does not flag a later error when the hidden send finished with none', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other', 'network' ) ],
+			] );
+		} );
+
+		it( 'flags a silent failure of the send that was in flight when the page was hidden', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			act( () => mockAgentChatConfig?.onSilentError?.( { name: 'AbortError', timedOut: true } ) );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', 'timeout' ), navigating: true },
+				],
+			] );
+		} );
 	} );
 
 	describe( 'credits refusal notice', () => {

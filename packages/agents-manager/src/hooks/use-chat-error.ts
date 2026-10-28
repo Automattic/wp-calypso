@@ -14,6 +14,7 @@ import type { NoticeConfig } from '@automattic/agenttic-ui';
 interface UseChatErrorOptions {
 	error: string | null;
 	errorDetails: AgentErrorDetails | null;
+	isProcessing: boolean;
 	isReaderChat: boolean;
 	takeRefusalCode: UseCreditsResult[ 'takeRefusalCode' ];
 	refusalNotice: UseCreditsResult[ 'refusalNotice' ];
@@ -52,15 +53,23 @@ function recordChatError(
 export function useChatError( {
 	error,
 	errorDetails,
+	isProcessing,
 	isReaderChat,
 	takeRefusalCode,
 	refusalNotice,
 }: UseChatErrorOptions ): ChatError {
 	// An error after `pagehide` is most likely the page closing the stream, not the chat failing.
+	// The send in flight at `pagehide` keeps that mark after `pageshow`, until it settles.
 	const isNavigatingRef = useRef( false );
+	const hiddenSendRef = useRef( false );
+	const isProcessingRef = useRef( isProcessing );
+	isProcessingRef.current = isProcessing;
 	useEffect( () => {
 		const onPageHide = () => {
 			isNavigatingRef.current = true;
+			if ( isProcessingRef.current ) {
+				hiddenSendRef.current = true;
+			}
 		};
 		// A page restored from the back/forward cache is back in use.
 		const onPageShow = () => {
@@ -79,12 +88,26 @@ export function useChatError( {
 			return;
 		}
 
-		recordChatError( error, errorDetails, takeRefusalCode(), isNavigatingRef.current );
+		recordChatError(
+			error,
+			errorDetails,
+			takeRefusalCode(),
+			isNavigatingRef.current || hiddenSendRef.current
+		);
+		hiddenSendRef.current = false;
 	}, [ error, errorDetails, takeRefusalCode ] );
+
+	// A hidden send that finishes with no error must not flag the next one.
+	useEffect( () => {
+		if ( ! isProcessing && ! error ) {
+			hiddenSendRef.current = false;
+		}
+	}, [ isProcessing, error ] );
 
 	// No refusal code: that belongs to a reply that failed and shows its error.
 	const recordSilentError = useCallback( ( details: AgentErrorDetails ) => {
-		recordChatError( '', details, undefined, isNavigatingRef.current );
+		recordChatError( '', details, undefined, isNavigatingRef.current || hiddenSendRef.current );
+		hiddenSendRef.current = false;
 	}, [] );
 
 	if ( error && refusalNotice ) {
