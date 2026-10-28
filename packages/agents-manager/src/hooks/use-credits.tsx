@@ -115,12 +115,12 @@ function isTerminalUpdate( update: TaskUpdate ): boolean {
 }
 
 // What a read needs for the whole visit; whether the chat is open or busy is checked per read.
-// TODO: Remove the dev mode check before AI credits reach customers (FORNO-538).
+// An absent `isMetered` asks the endpoint, since an Atomic site's PHP can't tell.
 function canReadBalance< Scope extends { siteId?: number; authProvider?: AuthProvider } >(
 	scope: Scope
 ): scope is Scope & { siteId: number; authProvider: AuthProvider } {
 	return (
-		!! scope.siteId && !! scope.authProvider && getAgentsManagerInlineData()?.isDevMode !== false
+		!! scope.siteId && !! scope.authProvider && getAgentsManagerInlineData()?.isMetered !== false
 	);
 }
 
@@ -191,9 +191,8 @@ export type CreditsCommandReply =
  * the chat was hidden isn't drawn again until the opening read, or a turn that
  * ends while it shows, confirms it, since credits bought in another tab would
  * otherwise greet the user as a stale zero.
- * While AI credits are only on internal test sites, pages the host says aren't
- * in dev mode don't ask, since nearly every site answers 404; a balance a turn
- * reports still shows.
+ * Pages the host says aren't metered don't ask; a balance a turn reports still
+ * shows.
  */
 export function useCredits( {
 	enabled,
@@ -987,7 +986,7 @@ export function useCredits( {
 	const failedOutcome = readOutcome?.scope === scope ? readOutcome.outcome : undefined;
 	// Live balances only: a mock balance, or a read that can't run, has nothing true to say.
 	const creditsCommand = useMemo< CreditsCommandReply | undefined >( () => {
-		if ( ! enabled || ! siteId || ! canReadBalance( scope ) ) {
+		if ( ! enabled || ! siteId || ! scope.authProvider ) {
 			return undefined;
 		}
 		if ( isKnownUnmetered() ) {

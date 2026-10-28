@@ -1072,13 +1072,13 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 } );
 
-describe( 'while the host says the page isn’t in dev mode', () => {
+describe( 'while the host says the site isn’t metered', () => {
 	const purchaseHint = ( value: ReturnType< typeof useCredits > ) =>
 		( value.trailingActions as ReactElement< { purchaseHint?: string } > | undefined )?.props
 			.purchaseHint;
 
 	beforeEach( () => {
-		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isMetered: false };
 	} );
 	afterEach( () => {
 		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -1160,24 +1160,21 @@ describe( 'while the host says the page isn’t in dev mode', () => {
 		expect( fetchMock ).not.toHaveBeenCalled();
 	} );
 } );
-describe( 'the dev mode gate', () => {
+describe( 'the metered flag', () => {
 	afterEach( () => {
 		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
 	it.each( [
-		[ 'never reads outside dev mode', { isDevMode: false }, 0 ],
+		[ 'never reads when the host says the site isn’t metered', { isMetered: false }, 0 ],
 		[
-			'never reads outside dev mode, even for an Automattician',
-			{ isDevMode: false, isA11n: true },
+			'never reads when the site isn’t metered, even for an Automattician',
+			{ isMetered: false, isA11n: true },
 			0,
 		],
+		[ 'reads when the host says the site is metered', { isMetered: true }, 1 ],
+		[ 'reads outside dev mode', { isDevMode: false }, 1 ],
 		[ 'reads in dev mode', { isDevMode: true }, 1 ],
-		[
-			'reads in dev mode for someone who isn’t an Automattician',
-			{ isDevMode: true, isA11n: false },
-			1,
-		],
 		[ 'reads when the host leaves the flag out', {}, 1 ],
 		[ 'reads with no host data, like Calypso', undefined, 1 ],
 	] )( '%s', async ( _name, inlineData, reads ) => {
@@ -2065,9 +2062,9 @@ describe( 'credits Tracks events', () => {
 		expect( creditsEvents() ).toHaveLength( 2 );
 	} );
 
-	describe( 'outside dev mode', () => {
+	describe( 'while the host says the site isn’t metered', () => {
 		beforeEach( () => {
-			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isMetered: false };
 		} );
 		afterEach( () => {
 			delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -3608,15 +3605,5 @@ describe( 'credits answer', () => {
 		const { result } = renderCredits( { siteKey: NO_SITE } );
 
 		expect( result.current.creditsCommand ).toBeUndefined();
-	} );
-
-	it( 'is absent where the host says the page isn’t in dev mode, which reads nothing', async () => {
-		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
-		const { result } = renderCredits();
-		await flush();
-
-		expect( fetchMock ).not.toHaveBeenCalled();
-		expect( result.current.creditsCommand ).toBeUndefined();
-		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 } );
