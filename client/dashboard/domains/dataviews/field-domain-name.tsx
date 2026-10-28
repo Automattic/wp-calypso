@@ -32,7 +32,7 @@ export const DomainNameField = ( {
 			: domainOverviewRoute.fullPath;
 
 	const content = (
-		<VStack spacing={ 1 }>
+		<VStack spacing={ 0 }>
 			<span style={ textOverflowStyles }>{ value }</span>
 			{ domain.primary_domain ? (
 				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
