@@ -7,6 +7,7 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { Fragment } from 'react';
+import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
@@ -18,6 +19,7 @@ import {
 	FEATURED_EVENT,
 	getAiMcpAnnouncement,
 	getCertificationPromoEvent,
+	getLeadMatchingContactAnnouncement,
 	getPressableExpansionOfferEvent,
 	getPressableIntroOfferEvent,
 } from './events';
@@ -38,6 +40,7 @@ interface EventCardProps {
 	aiMcpHref: string;
 	tiersHref?: string;
 	pressableHostingHref: string;
+	leadMatchingHref?: string;
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
@@ -61,15 +64,19 @@ function SingleEventCard( {
 					<HStack spacing={ 3 } justify="flex-start" alignment="center">
 						{ logo && <img src={ logo } alt={ logoAlt ?? '' } width={ 64 } height={ 64 } /> }
 						<VStack spacing={ 1 }>
-							<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
-								{ when }
-							</Text>
+							{ when && (
+								<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
+									{ when }
+								</Text>
+							) }
 							<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 								{ title }
 							</Heading>
-							<Text variant="muted" size={ 12 } lineHeight="16px">
-								{ subtitle }
-							</Text>
+							{ subtitle && (
+								<Text variant="muted" size={ 12 } lineHeight="16px">
+									{ subtitle }
+								</Text>
+							) }
 						</VStack>
 					</HStack>
 					<VStack spacing={ 4 }>
@@ -128,7 +135,13 @@ function SingleEventCard( {
 								// The router takes the hash separately; left in `to`, it is dropped.
 								const [ to, hash ] = cta.url.split( '#' );
 								return (
-									<RouterLinkButton key={ cta.id } { ...buttonProps } to={ to } hash={ hash }>
+									<RouterLinkButton
+										key={ cta.id }
+										{ ...buttonProps }
+										to={ to.split( '?' )[ 0 ] }
+										hash={ hash }
+										search={ getQueryArgs( cta.url ) }
+									>
 										{ cta.label }
 									</RouterLinkButton>
 								);
@@ -161,6 +174,7 @@ export default function EventCard( {
 	aiMcpHref,
 	tiersHref,
 	pressableHostingHref,
+	leadMatchingHref,
 	shouldUseRouterLink = true,
 	recordTracksEvent,
 }: EventCardProps ) {
@@ -177,6 +191,16 @@ export default function EventCard( {
 			/>
 		),
 	};
+	let contactAnnouncement: FeaturedEvent | null = null;
+	if ( leadMatchingHref ) {
+		// Calypso flags use a literal plus as an enable prefix, rather than a space.
+		const flags = new URLSearchParams( window.location.search.replace( /\+/g, '%2B' ) ).get(
+			'flags'
+		);
+		contactAnnouncement = getLeadMatchingContactAnnouncement(
+			flags ? addQueryArgs( leadMatchingHref, { flags } ) : leadMatchingHref
+		);
+	}
 	const events = [
 		FEATURED_EVENT,
 		isEligibleForCertificationOffer && tiersHref && certificationOffer
@@ -187,7 +211,11 @@ export default function EventCard( {
 			? getPressableExpansionOfferEvent( pressableHostingHref )
 			: null,
 		getAiMcpAnnouncement( aiMcpHref ),
-	].filter( ( event ): event is FeaturedEvent => !! event && now < new Date( event.endsAt ) );
+		contactAnnouncement,
+	].filter(
+		( event ): event is FeaturedEvent =>
+			!! event && ( event.endsAt === undefined || now < new Date( event.endsAt ) )
+	);
 
 	if ( ! events.length ) {
 		return null;

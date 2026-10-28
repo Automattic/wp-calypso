@@ -53,14 +53,14 @@ export interface FeaturedEvent {
 	logo?: string;
 	logoAlt?: string;
 	/** Uppercase eyebrow above the title: a date for events, a label for announcements. */
-	when: string;
+	when?: string;
 	title: string;
-	subtitle: string;
+	subtitle?: string;
 	/** One entry per paragraph. Supports `<strong>` and `<code>` tags. */
 	description: string[];
 	ctas: ( FeaturedEventCta | FeaturedEventActionCta )[];
-	/** ISO date the card stops showing itself, typically the day after the event. */
-	endsAt: string;
+	/** ISO expiry for dated events; omitted for announcements without an expiry. */
+	endsAt?: string;
 }
 
 /**
@@ -178,6 +178,24 @@ export const getPressableExpansionOfferEvent = (
 		},
 	],
 	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+} );
+
+export const getLeadMatchingContactAnnouncement = ( leadMatchingHref: string ): FeaturedEvent => ( {
+	id: 'a4a-lead-matching-contact-options',
+	title: __( 'Add your phone number and booking link for newly matched leads' ),
+	description: [
+		__(
+			'You can now add your agency’s phone number and booking link so new leads you’re matched with can contact you right away.'
+		),
+	],
+	ctas: [
+		{
+			id: 'update-details',
+			label: __( 'Update your details' ),
+			url: leadMatchingHref,
+			variant: 'secondary',
+		},
+	],
 } );
 
 /**

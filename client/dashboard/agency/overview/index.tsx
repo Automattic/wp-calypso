@@ -18,8 +18,12 @@ import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
 import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
-import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
+import {
+	PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_ROUTE,
+	PARTNER_DIRECTORY_ROUTE,
+} from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
+import { isProPartnerOrHigher } from '../tiers/get-current-agency-tier';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
 import AgencyOverviewContent from './overview-content';
@@ -111,6 +115,13 @@ export default function AgencyOverview() {
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+				showContactOptionsAnnouncement={
+					isProPartnerOrHigher( agency.tier?.id ) &&
+					!! agencyId &&
+					!! agency.partner_directory?.allowed &&
+					!! agency.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
+					hasPartnerDirectoryListing
+				}
 				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
@@ -120,6 +131,7 @@ export default function AgencyOverview() {
 					woopayments: '/woopayments',
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
+					leadMatching: PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_ROUTE,
 					contactSupport: () => openContactForm(),
 					aiMcp: '/agency/ai',
 					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),

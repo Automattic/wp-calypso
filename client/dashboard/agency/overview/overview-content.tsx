@@ -25,6 +25,7 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
+	leadMatching?: string;
 	/** A URL, or a callback that opens contact support in-app. */
 	contactSupport: string | ( () => void );
 	aiMcp: string;
@@ -42,6 +43,7 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
+	showContactOptionsAnnouncement?: boolean;
 	/** Shows the Pressable introductory offer in the news column. */
 	isEligibleForPressableIntroOffer?: boolean;
 	/** Shows the Pressable expansion offer in the news column. */
@@ -73,6 +75,7 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
+	showContactOptionsAnnouncement = false,
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	links,
@@ -166,6 +169,7 @@ export default function AgencyOverviewContent( {
 					aiMcpHref={ links.aiMcp }
 					tiersHref={ links.tiers }
 					pressableHostingHref={ links.pressableHosting }
+					leadMatchingHref={ showContactOptionsAnnouncement ? links.leadMatching : undefined }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>
