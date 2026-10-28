@@ -749,8 +749,8 @@ export function resolveFeatureGroupsForComparisonGrid( props?: {
 				getTitle: () => i18n.translate( 'Developer tools' ),
 				getFeatures: () => [
 					FEATURE_MULTI_SITE,
-					FEATURE_WORDPRESS_STUDIO_SYNC,
 					FEATURE_WP_UPDATES,
+					FEATURE_WORDPRESS_STUDIO_SYNC,
 					FEATURE_DEV_TOOLS,
 					FEATURE_DEV_TOOLS_SSH,
 					FEATURE_DEV_TOOLS_GIT,
