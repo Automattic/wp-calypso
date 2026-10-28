@@ -12,10 +12,10 @@ import type { Block, NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
 
 /**
- * Flattens a block onto one line and drops its media, for a clamped preview.
+ * Flattens a block onto one line, for a clamped preview.
  */
 function toPreview( block: Block ): Block {
-	return { ...block, text: block.text.replace( /\n/g, ' ' ), media: undefined };
+	return { ...block, text: block.text.replace( /\n/g, ' ' ) };
 }
 
 const ThreadItem = ( {
