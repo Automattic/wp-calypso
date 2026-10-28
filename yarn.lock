@@ -1312,7 +1312,6 @@ __metadata:
     "@wordpress/react-i18n": "npm:^4.48.0"
     "@wordpress/ui": "npm:^0.20.0"
     clsx: "npm:^2.1.1"
-    copyfiles: "npm:^2.4.1"
     moment: "npm:^2.30.1"
     nock: "npm:^14.0.17"
     qs: "npm:^6.15.2"
@@ -11915,16 +11914,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/eslint@npm:^9.6.1":
-  version: 9.6.1
-  resolution: "@types/eslint@npm:9.6.1"
-  dependencies:
-    "@types/estree": "npm:*"
-    "@types/json-schema": "npm:*"
-  checksum: 69ba24fee600d1e4c5abe0df086c1a4d798abf13792d8cfab912d76817fe1a894359a1518557d21237fbaf6eda93c5ab9309143dee4c59ef54336d1b3570420e
-  languageName: node
-  linkType: hard
-
 "@types/esrecurse@npm:^4.3.1":
   version: 4.3.1
   resolution: "@types/esrecurse@npm:4.3.1"
@@ -11995,15 +11984,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ga-gtag@npm:^1.2.0":
-  version: 1.2.0
-  resolution: "@types/ga-gtag@npm:1.2.0"
-  dependencies:
-    "@types/gtag.js": "npm:^0.0"
-  checksum: 154080cfd240da068b8e4339c0781d46d522680ca1b27e61b27d71fa95f10f6afad8d3d26c4e78b6dfb03451ce7844c09c805f36c31b35b133eeba1d76ae888d
-  languageName: node
-  linkType: hard
-
 "@types/gensync@npm:^1.0.5":
   version: 1.0.5
   resolution: "@types/gensync@npm:1.0.5"
@@ -12045,7 +12025,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/gtag.js@npm:^0.0, @types/gtag.js@npm:^0.0.20":
+"@types/gtag.js@npm:^0.0.20":
   version: 0.0.20
   resolution: "@types/gtag.js@npm:0.0.20"
   checksum: eb878aa3cfab6b98f5e69ef3383e9788aaea6a4d0611c72078678374dcbb4731f533ff2bf479a865536f1626a57887b1198279ff35a65d223fe4f93d9c76dbdd
@@ -12169,7 +12149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/json-schema@npm:*, @types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.8":
+"@types/json-schema@npm:^7.0.15, @types/json-schema@npm:^7.0.8":
   version: 7.0.15
   resolution: "@types/json-schema@npm:7.0.15"
   checksum: a996a745e6c5d60292f36731dd41341339d4eeed8180bb09226e5c8d23759067692b1d88e5d91d72ee83dfc00d3aca8e7bd43ea120516c17922cbcb7c3e252db
@@ -35927,8 +35907,6 @@ __metadata:
     "@types/convert-source-map": "npm:^2.0.3"
     "@types/cookie": "npm:^0.6.0"
     "@types/debug": "npm:^4.1.12"
-    "@types/eslint": "npm:^9.6.1"
-    "@types/ga-gtag": "npm:^1.2.0"
     "@types/gtag.js": "npm:^0.0.20"
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.12.2"
@@ -35956,7 +35934,6 @@ __metadata:
     "@wordpress/icons": "npm:^13.3.0"
     "@wordpress/is-shallow-equal": "npm:^5.48.0"
     "@wordpress/keycodes": "npm:^4.48.0"
-    "@wordpress/prettier-config": "npm:^4.48.0"
     "@wordpress/primitives": "npm:^4.48.0"
     "@wordpress/rich-text": "npm:^7.48.0"
     "@wordpress/stylelint-config": "npm:^26.1.0"
