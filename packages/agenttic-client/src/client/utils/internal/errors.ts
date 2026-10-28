@@ -70,9 +70,9 @@ export function getJsonRpcErrorCode( error: JsonRpcError ): string | number {
 }
 
 /**
- * Marks the abort the request timer caused with `timedOut`, so it can be told
- * from a cancellation. It stays an `AbortError`, so callers that ignore aborts
- * still do. Any other error passes through.
+ * Marks the timer's `AbortError` with `timedOut`, so it can be told from a
+ * cancellation. It stays an `AbortError`, so callers that ignore aborts still
+ * do. Any other error passes through, even if the timer has already fired.
  * @param error          - The error that occurred
  * @param timeoutSignal  - The signal the request timer aborts
  * @param externalSignal - The caller's own abort signal
@@ -82,7 +82,12 @@ export function markTimeoutError(
 	timeoutSignal: AbortSignal,
 	externalSignal?: AbortSignal
 ): unknown {
-	if ( ! timeoutSignal.aborted || externalSignal?.aborted || ! ( error instanceof Error ) ) {
+	if (
+		! timeoutSignal.aborted ||
+		externalSignal?.aborted ||
+		! ( error instanceof Error ) ||
+		error.name !== 'AbortError'
+	) {
 		return error;
 	}
 

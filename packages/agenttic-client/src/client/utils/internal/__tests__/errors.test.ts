@@ -109,6 +109,14 @@ describe( 'markTimeoutError', () => {
 		expect( markTimeoutError( error, new AbortController().signal ) ).toBe( error );
 		expect( error ).not.toHaveProperty( 'timedOut' );
 	} );
+
+	it( 'leaves a non-abort error unmarked when the timer has fired', () => {
+		const error = new TypeError( 'Failed to fetch' );
+
+		markTimeoutError( error, abortedSignal() );
+
+		expect( error ).not.toHaveProperty( 'timedOut' );
+	} );
 } );
 
 describe( 'getAgentErrorDetails', () => {
