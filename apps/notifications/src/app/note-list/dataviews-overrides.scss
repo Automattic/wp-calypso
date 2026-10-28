@@ -121,20 +121,22 @@
 		}
 	}
 
-	// Open note: a left accent bar marks the row whose detail is showing. Driven
-	// by our own `is-active` marker (see getFields), not DataViews selection, so
-	// the unread tint still shows through on a selected unread row.
-	div[role="article"]:has(.wpnc__subject.is-active) {
-		.dataviews-view-list__item-wrapper {
-			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
+	&:not(:has(.dataviews-view-list__item:focus-visible)) {
+		// Open note: a left accent bar marks the row whose detail is showing. Driven
+		// by our own `is-active` marker (see getFields), not DataViews selection, so
+		// the unread tint still shows through on a selected unread row.
+		div[role="article"]:has(.wpnc__subject.is-active) {
+			.dataviews-view-list__item-wrapper {
+				box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
+			}
 		}
-	}
 
-	// A pending comment keeps its warning color when open, so the bar matches its
-	// icon badge and its Pending badge rather than switching to the theme accent.
-	div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
-		.dataviews-view-list__item-wrapper {
-			box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+		// A pending comment keeps its warning color when open, so the bar matches its
+		// icon badge and its Pending badge rather than switching to the theme accent.
+		div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
+			.dataviews-view-list__item-wrapper {
+				box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+			}
 		}
 	}
 
