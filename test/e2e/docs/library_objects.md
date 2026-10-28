@@ -79,7 +79,9 @@ export class SidebarComponent {
 Then in a test spec (using a custom fixture)
 
 ```typescript
-test( 'As a user, I can reach the Posts list from the sidebar', async ( { componentSidebar } ) => {
+test( 'As a user, I can reach the Posts list from the sidebar', async ( {
+	componentSidebar,
+} ) => {
 	await test.step( 'When I select "Posts" in the sidebar', async function () {
 		await componentSidebar.navigate( 'Posts' );
 	} );

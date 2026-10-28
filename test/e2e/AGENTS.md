@@ -44,11 +44,11 @@ yarn playwright test specs/path/to/test.spec.ts
 import { tags, test, expect } from '../../lib/pw-base';
 
 test.describe( 'Test Suite', { tag: [ tags.TAG_NAME ] }, () => {
-	test( 'As a user, I can do something', async ( { page } ) => {
-		await test.step( 'Given precondition', async function () {
-			// test code
-		} );
-	} );
+  test( 'As a user, I can do something', async ( { page } ) => {
+    await test.step( 'Given precondition', async function () {
+      // test code
+    } );
+  } );
 } );
 ```
 
@@ -56,9 +56,9 @@ test.describe( 'Test Suite', { tag: [ tags.TAG_NAME ] }, () => {
 
 ```typescript
 test( 'Test', async ( { accountDefaultUser, page } ) => {
-	await test.step( 'Given I am authenticated', async function () {
-		await accountDefaultUser.authenticate( page );
-	} );
+  await test.step( 'Given I am authenticated', async function () {
+    await accountDefaultUser.authenticate( page );
+  } );
 } );
 ```
 
@@ -66,8 +66,8 @@ test( 'Test', async ( { accountDefaultUser, page } ) => {
 
 ```typescript
 test( 'Test', async ( { pageLogin, componentSidebar } ) => {
-	await pageLogin.visit();
-	await componentSidebar.navigate( 'Menu', 'Item' );
+  await pageLogin.visit();
+  await componentSidebar.navigate( 'Menu', 'Item' );
 } );
 ```
 
@@ -104,7 +104,7 @@ await test.step( 'Then I am logged in', async function () {} );
 
 ```typescript
 test( 'Test', async ( { environment } ) => {
-	test.skip( environment.TEST_ON_ATOMIC, 'Reason' );
+  test.skip( environment.TEST_ON_ATOMIC, 'Reason' );
 } );
 ```
 
@@ -112,7 +112,7 @@ test( 'Test', async ( { environment } ) => {
 
 ```typescript
 test( 'Test', async ( { page, pageIncognito } ) => {
-	// page = authenticated context
-	// pageIncognito = unauthenticated context
+  // page = authenticated context
+  // pageIncognito = unauthenticated context
 } );
 ```
