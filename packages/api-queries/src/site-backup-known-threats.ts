@@ -57,7 +57,9 @@ export const siteBackupKnownThreatsQuery = ( siteId: number, rewindId: string ) 
 			// about. For an older backup, ask the per-backup endpoint rather than page through: it
 			// needs a backup period (not an Activity Log rewind id) and Scan, so page otherwise.
 			const firstPage = await client.fetchQuery( siteBackupsKnownThreatsPageQuery( siteId, 1 ) );
-			if ( coversPeriod( firstPage, period ) ) {
+			// No backup on page 1 carries known_threats when VaultPress doesn't send them yet (or couldn't
+			// count them), so neither the per-backup endpoint nor later pages would have a verdict.
+			if ( coversPeriod( firstPage, period ) || ! Object.keys( firstPage.byPeriod ).length ) {
 				return fromPages( [ firstPage ], period );
 			}
 
