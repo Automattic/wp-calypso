@@ -33,7 +33,7 @@
 	margin-bottom: 40px;
 	background-image:
 		linear-gradient( to bottom, transparent 70%, var( --studio-gray-0 ) ),
-		url( ../signup-slider/images/img-01@2x.webp );
+		url( ./images/theme-grid@2x.webp );
 	background-repeat: no-repeat;
 	background-size: cover;
 	background-position: center top;
@@ -66,7 +66,7 @@
 	margin-bottom: 24px;
 	padding: 0;
 	border-radius: 8px;
-	background-image: url( ../signup-slider/images/img-01.webp );
+	background-image: url( ./images/theme-grid.webp );
 	background-size: cover;
 	background-position: center;
 	mask-image: linear-gradient( to bottom, #000 60%, transparent );

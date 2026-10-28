@@ -236,6 +236,17 @@ describe( 'User email signup step', () => {
 			).not.toBeInTheDocument();
 		} );
 
+		it( 'puts the email field below the social buttons', () => {
+			renderUserStep( themeGridUrl );
+
+			expect(
+				screen
+					.getByText( /Continue with Google/i )
+					.compareDocumentPosition( screen.getByLabelText( 'Enter your email' ) ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+
 		it.each( [
 			[ 'mobile', { isMobile: true } ],
 			[ 'the band between the breakpoints', { isMobile: false, isLarge: false } ],

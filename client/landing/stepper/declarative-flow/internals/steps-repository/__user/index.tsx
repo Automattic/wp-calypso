@@ -119,16 +119,20 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const { hasCustomBranding, topBarLogo, partnerConfig, signupTosElement } = usePartnerBranding();
 
 	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118, and the
-	// theme grid layout is email-first with the grid instead of the slider.
+	// theme grid layout is email-first with the grid instead of the slider, email below social: that
+	// round lost fewer social signups than email on top.
 	// Everyone else is bucketed by calypso_account_step_improvement_202606_v2 (round 2):
 	//   - control                            -> default single-column signup
 	//   - treatment_email_slider_webp        -> open email + slider, email on top
 	//   - treatment_email_bottom_slider_webp -> open email + slider, email below social
 	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const isThemeGridLayout = queryArgs.get( 'signup_layout' ) === THEME_GRID_SIGNUP_LAYOUT;
-	const { isEmailFirstVariant: isEmailFirstFromExperiment, isEmailAtBottom } =
-		useAccountCreationExperiment( { flow } );
+	const {
+		isEmailFirstVariant: isEmailFirstFromExperiment,
+		isEmailAtBottom: isEmailAtBottomFromExperiment,
+	} = useAccountCreationExperiment( { flow } );
 	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isEmailFirstFromExperiment;
+	const isEmailAtBottom = isThemeGridLayout || isEmailAtBottomFromExperiment;
 	// The experiment runs on onboarding only. Woo referrers and the theme grid layout are left out:
 	// their email-first layout already has the in-form link and no email button, so the treatment
 	// would not change it.

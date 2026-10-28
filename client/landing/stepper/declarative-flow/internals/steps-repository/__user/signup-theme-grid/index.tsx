@@ -21,7 +21,7 @@ export const SignupThemeGrid = ( { isCompact = false }: { isCompact?: boolean } 
 				</p>
 				<p className="signup-theme-grid__description">
 					{ translate(
-						'WordPress powers 40.2% of the web. No coding needed: pick a design, make it yours, and publish. Start for free.'
+						'WordPress powers 39.5% of the web. No coding needed: pick a design, make it yours, and publish. Start for free.'
 					) }
 				</p>
 			</div>
