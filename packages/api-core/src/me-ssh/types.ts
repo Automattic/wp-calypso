@@ -15,6 +15,7 @@ export type SSHKeyType = ( typeof SSHKeyTypes )[ keyof typeof SSHKeyTypes ];
 
 export interface UserSshKey {
 	name: string;
+	label: string;
 	key: string;
 	type: SSHKeyType;
 	sha256: string;
@@ -24,11 +25,16 @@ export interface UserSshKey {
 }
 
 export interface CreateSshKeyArgs {
-	name: string;
+	label?: string;
 	key: string;
 }
 
 export interface UpdateSshKeyArgs {
 	name: string;
 	key: string;
+}
+
+export interface UpdateSshKeyLabelArgs {
+	name: string;
+	label: string;
 }

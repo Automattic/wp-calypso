@@ -1,4 +1,10 @@
-import { fetchSshKeys, createSshKey, updateSshKey, deleteSshKey } from '@automattic/api-core';
+import {
+	fetchSshKeys,
+	createSshKey,
+	updateSshKey,
+	updateSshKeyLabel,
+	deleteSshKey,
+} from '@automattic/api-core';
 import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 
@@ -25,6 +31,15 @@ export const updateSshKeyMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'ssh-key-update' },
 		mutationFn: updateSshKey,
+		onSuccess: () => {
+			queryClient.invalidateQueries( sshKeysQuery() );
+		},
+	} );
+
+export const updateSshKeyLabelMutation = () =>
+	mutationOptions( {
+		meta: { statId: 'ssh-key-label-update' },
+		mutationFn: updateSshKeyLabel,
 		onSuccess: () => {
 			queryClient.invalidateQueries( sshKeysQuery() );
 		},
