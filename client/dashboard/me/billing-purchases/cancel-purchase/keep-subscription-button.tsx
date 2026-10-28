@@ -9,12 +9,14 @@ interface KeepSubscriptionButtonProps {
 	purchase: Purchase;
 	intent: DisplayVariant;
 	onKeepSubscriptionClick: () => void;
+	disabled?: boolean;
 }
 
 export default function KeepSubscriptionButton( {
 	purchase,
 	intent,
 	onKeepSubscriptionClick,
+	disabled,
 }: KeepSubscriptionButtonProps ) {
 	const navigate = useNavigate();
 
@@ -23,6 +25,7 @@ export default function KeepSubscriptionButton( {
 	return (
 		<Button
 			variant="tertiary"
+			disabled={ disabled }
 			onClick={ () => {
 				navigate( { to: purchaseSettingsRoute.fullPath, params: { purchaseId: purchase.ID } } );
 				onKeepSubscriptionClick();

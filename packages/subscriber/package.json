@@ -45,7 +45,6 @@
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
-		"@popperjs/core": "^2.11.8",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/dom": "^4.48.0",
@@ -56,8 +55,7 @@
 		"@wordpress/react-i18n": "^4.48.0",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.1",
-		"email-validator": "^2.0.4",
-		"react-popper": "^2.3.0"
+		"email-validator": "^2.0.4"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",

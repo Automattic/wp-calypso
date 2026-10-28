@@ -5,6 +5,7 @@ import {
 	fetchAgencyEnablementResources,
 	recordAgencyResourceEvent,
 	fetchAgencyScheduleCallLink,
+	fetchAgencyApwdDiscountCode,
 	fetchAgencyMcpSettings,
 	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
@@ -105,6 +106,21 @@ export const agencyScheduleCallLinkQuery = ( agencyId: number ) =>
 		enabled: false,
 		staleTime: 5 * 60 * 1000,
 		retry: false,
+	} );
+
+/**
+ * The agency's Advanced Professional WordPress Developer discount code, or null
+ * when it has no active coupon.
+ */
+export const agencyApwdDiscountCodeQuery = ( agencyId: number ) =>
+	queryOptions( {
+		queryKey: [ 'agency', agencyId, 'apwd-discount-code' ] as const,
+		queryFn: () => fetchAgencyApwdDiscountCode( agencyId ),
+		// Matches the server's HubSpot cache.
+		staleTime: 15 * 60 * 1000,
+		retry: false,
+		// The code works as a coupon, so it stays out of localStorage.
+		meta: { persist: false },
 	} );
 
 export const agencyProgramStatsQuery = () =>

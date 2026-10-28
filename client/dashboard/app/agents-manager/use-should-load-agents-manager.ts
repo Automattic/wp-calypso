@@ -1,4 +1,9 @@
-import { bigSkyPluginQuery, queryClient } from '@automattic/api-queries';
+import {
+	bigSkyPluginQuery,
+	dashboardAdminBarQuery,
+	hasAiChatNode,
+	queryClient,
+} from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
@@ -61,7 +66,8 @@ export function getAgentsManagerEligibility(
 export default function useShouldLoadAgentsManager(
 	currentRoute?: string | null,
 	siteId?: number | null,
-	isMarketplace = false
+	isMarketplace = false,
+	isOmnibarVisible = true
 ): AgentsManagerEligibility {
 	const routeEligibility = useMemo(
 		() => getAgentsManagerEligibility( currentRoute, true, isMarketplace ),
@@ -76,10 +82,19 @@ export default function useShouldLoadAgentsManager(
 		queryClient
 	);
 
-	return {
-		...routeEligibility,
-		routeIsEnabled:
-			routeEligibility.routeIsEnabled &&
-			( isMarketplaceRoute( currentRoute ) || pluginStatus?.enabled === true ),
-	};
+	// Read without fetching: the WordPress.com omnibar loads it, and hosts the chat's entry point.
+	const { data: isProxiedAutomattician = false } = useQuery(
+		{ ...dashboardAdminBarQuery(), select: hasAiChatNode, enabled: false },
+		queryClient
+	);
+
+	const routeIsEnabled =
+		routeEligibility.routeIsEnabled &&
+		( isMarketplaceRoute( currentRoute ) || pluginStatus?.enabled === true );
+
+	if ( ! routeIsEnabled && isOmnibarVisible && isProxiedAutomattician ) {
+		return { routeIsEnabled: true, isInternalOnly: true };
+	}
+
+	return { ...routeEligibility, routeIsEnabled };
 }

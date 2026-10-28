@@ -1,8 +1,8 @@
 import { HostingFeatures } from '@automattic/api-core';
 import {
 	siteBySlugQuery,
+	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
-	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -40,8 +40,9 @@ function VersionManagement( { site }: { site: Site } ) {
 		versionSwitch;
 
 	// Resolve the target version tag (e.g. "beta") to a display string (e.g. "7.0-RC2").
-	const { data: latestVersion = '' } = useQuery( wpOrgCoreVersionQuery() );
-	const { data: betaVersion = '' } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const { data: trackVersions } = useQuery( siteWordPressTrackVersionsQuery( site.ID ) );
+	const latestVersion = trackVersions?.latest ?? '';
+	const betaVersion = trackVersions?.beta ?? '';
 	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
 
 	let notice;
@@ -100,14 +101,12 @@ function BetaProgramContent( { site }: { site: Site } ) {
 		...siteWordPressVersionQuery( site.ID ),
 		enabled: isEligible,
 	} );
-	const { data: betaVersion = '' } = useQuery( {
-		...wpOrgCoreVersionQuery( 'beta' ),
+	const { data: trackVersions } = useQuery( {
+		...siteWordPressTrackVersionsQuery( site.ID ),
 		enabled: isEligible,
 	} );
-	const { data: latestVersion = '' } = useQuery( {
-		...wpOrgCoreVersionQuery(),
-		enabled: isEligible,
-	} );
+	const latestVersion = trackVersions?.latest ?? '';
+	const betaVersion = trackVersions?.beta ?? '';
 
 	const versionsMatch = !! latestVersion && latestVersion === betaVersion;
 

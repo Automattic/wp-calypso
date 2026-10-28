@@ -2,9 +2,9 @@ import {
 	queryClient,
 	siteBySlugQuery,
 	sitePendingWordPressVersionQuery,
+	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionMutation,
 	siteWordPressVersionQuery,
-	wpOrgCoreVersionQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -21,8 +21,7 @@ interface BetaOptOutButtonProps {
 
 export function BetaOptOutButton( { site, onSuccess, children }: BetaOptOutButtonProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { data: latestVersion } = useQuery( wpOrgCoreVersionQuery() );
-	const { data: betaVersion } = useQuery( wpOrgCoreVersionQuery( 'beta' ) );
+	const { data: trackVersions } = useQuery( siteWordPressTrackVersionsQuery( site.ID ) );
 
 	const mutation = useMutation( {
 		...withSnackbar( siteWordPressVersionMutation( site.ID, { deferUntilBackupComplete: false } ), {
@@ -41,8 +40,8 @@ export function BetaOptOutButton( { site, onSuccess, children }: BetaOptOutButto
 	const handleClick = () => {
 		recordTracksEvent( 'calypso_dashboard_wp_beta_opt_out_click', {
 			site_id: site.ID,
-			from_version: betaVersion ?? '',
-			to_version: latestVersion ?? '',
+			from_version: trackVersions?.beta ?? '',
+			to_version: trackVersions?.latest ?? '',
 		} );
 		mutation.mutate( 'latest' );
 	};
