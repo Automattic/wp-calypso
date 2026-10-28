@@ -248,9 +248,9 @@ describe( 'User email signup step', () => {
 		} );
 
 		it.each( [
-			[ 'mobile', { isMobile: true } ],
-			[ 'the band between the breakpoints', { isMobile: false, isLarge: false } ],
-		] )( 'shows only the strip above the form on %s', ( _label, viewport ) => {
+			[ 'mobile, in the compact layout', { isMobile: true }, true ],
+			[ 'the band between the breakpoints', { isMobile: false, isLarge: false }, false ],
+		] )( 'shows only the strip above the form on %s', ( _label, viewport, isCompactLayout ) => {
 			setViewport( viewport );
 
 			const { container } = renderUserStep( themeGridUrl );
@@ -263,6 +263,12 @@ describe( 'User email signup step', () => {
 			expect(
 				screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
 			).not.toBeInTheDocument();
+			// The compact layout's ToS sits inside the form, below the sign-up options.
+			expect( !! screen.queryByText( /By continuing with any of the options above/i ) ).toBe(
+				isCompactLayout
+			);
+			// In the top bar in the compact layout, in the form otherwise.
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeInTheDocument();
 		} );
 
 		it( 'keeps the default layout without the parameter', () => {

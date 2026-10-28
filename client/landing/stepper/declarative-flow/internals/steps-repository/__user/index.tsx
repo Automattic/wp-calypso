@@ -294,19 +294,13 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
-	// permanent email-first treatment, the theme grid layout keeps its strip above
-	// the form, and partner-branded flows keep their own SSO providers, ToS, and
-	// heading copy — all are excluded so the compact layout never overrides them.
-	// So is the screen the gate hands back, which the form renders in its standard
-	// shape: the compact frame pins a ToS that isn't there, and its heading offers
-	// to start a site rather than fix an address.
+	// permanent email-first treatment and partner-branded flows keep their own
+	// SSO providers, ToS, and heading copy — both are excluded so the compact
+	// layout never overrides them. So is the screen the gate hands back, which the
+	// form renders in its standard shape: the compact frame pins a ToS that isn't
+	// there, and its heading offers to start a site rather than fix an address.
 	const isMobileCompactLayout =
-		isStepContainerV2 &&
-		isMobileViewport &&
-		! isWooReferrer &&
-		! isThemeGridLayout &&
-		! partnerConfig &&
-		! isEditingEmail;
+		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig && ! isEditingEmail;
 
 	// The email-edit screen has no second account to offer.
 	const showsInFormLoginLink = isEntryClarityTreatment && ! isEditingEmail && ! hideLoginLink;
@@ -408,7 +402,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				args: { partner: partnerConfig.displayName },
 				textOnly: true,
 			} );
-		} else if ( isMobileCompactLayout ) {
+		} else if ( isMobileCompactLayout && ! isThemeGridLayout ) {
+			// The theme grid layout keeps its own heading at every width.
 			headingText = translate( 'Welcome to WordPress.com' );
 			headingSubText = translate( 'Sign up free to start creating your site.' );
 		}
@@ -430,7 +425,11 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 						: undefined
 				}
 				rightElement={
-					hideLoginLink || isEmailFirstVariant || isEditingEmail || showsInFormLoginLink ? null : (
+					// Email-first forms carry their own login link, except the compact one.
+					hideLoginLink ||
+					( isEmailFirstVariant && ! isMobileCompactLayout ) ||
+					isEditingEmail ||
+					showsInFormLoginLink ? null : (
 						<nav className="account-template__top-bar-links">
 							<Step.LinkButton
 								href={ loginLink }

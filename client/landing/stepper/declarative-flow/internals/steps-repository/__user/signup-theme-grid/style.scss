@@ -66,8 +66,34 @@
 	margin-bottom: 24px;
 	padding: 0;
 	border-radius: 8px;
-	background-image: url( ./images/theme-grid.webp );
+	background-image: url( ./images/theme-grid@2x.webp );
 	background-size: cover;
 	background-position: center;
 	mask-image: linear-gradient( to bottom, #000 60%, transparent );
+}
+
+// The compact phone layout leaves free space above the heading. The strip grows into it instead,
+// and is left out on screens too short to spare any, so the form still fits without scrolling.
+.step-container-v2:has( .signup-theme-grid--compact )
+	.step-container-v2__content-wrapper
+	.step-container-v2__content-row.step-container-v2--user-mobile:first-child {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	margin-block-start: 0;
+
+	.account-template {
+		flex: 1;
+		justify-content: flex-end;
+	}
+
+	.signup-theme-grid--compact {
+		flex: 1 1 0;
+		height: auto;
+		min-height: 96px;
+
+		@media ( max-height: 719px ) {
+			display: none;
+		}
+	}
 }
