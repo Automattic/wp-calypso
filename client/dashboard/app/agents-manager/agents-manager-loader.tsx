@@ -7,7 +7,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { lazy, Suspense, useEffect } from 'react';
 import { useAuth } from '../auth';
 import { useAppContext } from '../context';
-import { useCanShowAiChatNode } from '../omnibar/node-ai-chat-can-show';
+import { useCanShowAiChatNode } from '../omnibar/ai-chat-node/can-show';
 import useShouldLoadAgentsManager from './use-should-load-agents-manager';
 
 // Only these pages load a site; every other page has none.

@@ -3,16 +3,13 @@ import { Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { Suspense, lazy, useState } from 'react';
-import { getUserLanguage } from '../locale';
-import { useSessionLocale } from '../locale/session-locale';
+import { getUserLanguage } from '../../locale';
+import { useSessionLocale } from '../../locale/session-locale';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 
 const LanguageSwitcherNodeModal = lazy(
-	() =>
-		import(
-			/* webpackChunkName: "async-omnibar-language-switcher-modal" */ './node-language-switcher-modal'
-		)
+	() => import( /* webpackChunkName: "async-omnibar-language-switcher-modal" */ './modal' )
 );
 
 export function useLanguageSwitcherNode( { user }: { user?: User } ): {

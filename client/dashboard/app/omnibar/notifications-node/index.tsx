@@ -1,12 +1,12 @@
 import { parseAdminBarNodeTitle } from '@automattic/omnibar';
 import clsx from 'clsx';
 import { useCallback, useState } from 'react';
-import { omnibarEvents, useOmnibarEvent } from './events';
-import { NOTIFICATIONS_ICON_CLASS } from './node-notifications-icon-class';
+import { omnibarEvents, useOmnibarEvent } from '../events';
+import { NOTIFICATIONS_ICON_CLASS } from './icon-class';
 import type { User } from '@automattic/api-core';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-notifications.scss';
+import './style.scss';
 
 function BellIcon( { hasUnread }: { hasUnread: boolean } ) {
 	return (

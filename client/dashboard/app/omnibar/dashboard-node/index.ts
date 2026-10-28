@@ -1,6 +1,6 @@
 import { __ } from '@wordpress/i18n';
-import { wpcomLink } from '../../utils/link';
-import { usesWpAdminInterface } from '../../utils/site-types';
+import { wpcomLink } from '../../../utils/link';
+import { usesWpAdminInterface } from '../../../utils/site-types';
 import type { Site } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 

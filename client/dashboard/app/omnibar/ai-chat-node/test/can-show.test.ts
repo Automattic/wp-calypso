@@ -9,7 +9,7 @@ import {
 } from '@automattic/api-queries';
 import { renderHook } from '@testing-library/react';
 import nock from 'nock';
-import { useCanShowAiChatNode } from '../node-ai-chat-can-show';
+import { useCanShowAiChatNode } from '../can-show';
 
 const siteId = 123;
 

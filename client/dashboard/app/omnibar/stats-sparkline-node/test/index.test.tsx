@@ -2,19 +2,15 @@
  * @jest-environment jsdom
  */
 
-import { omnibarSiteIdQuery, siteHourlyViewsQuery } from '@automattic/api-queries';
-import { QueryClient } from '@tanstack/react-query';
+import { siteHourlyViewsQuery } from '@automattic/api-queries';
+import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { screen, waitFor, within } from '@testing-library/react';
 import nock from 'nock';
-import { render } from '../../../test-utils';
-import { shoppingCartManagerClient } from '../../shopping-cart';
-import OmnibarContainer from '../omnibar';
+import { render } from '../../../../test-utils';
+import { createStatsSparklineNodeBuilder } from '../index';
+import type { AdminBarNode } from '@automattic/omnibar';
 
-const site = {
-	ID: 1,
-	name: 'Test Site',
-	site_migration: {},
-};
+const siteId = 1;
 
 const statsNode = {
 	id: 'stats',
@@ -26,42 +22,23 @@ const statsNode = {
 	meta: {
 		menu_title: 'Stats',
 	},
-};
+} as AdminBarNode;
 
 function mockHourlyViews( status: number, body?: object ) {
 	return nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.1/sites/${ site.ID }/stats/visits` )
+		.get( `/rest/v1.1/sites/${ siteId }/stats/visits` )
 		.query( true )
 		.reply( status, body );
 }
 
-function renderOmnibar() {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	queryClient.setQueryData( omnibarSiteIdQuery().queryKey, site.ID );
-
-	return render( <OmnibarContainer cartManagerClient={ shoppingCartManagerClient } />, {
-		queryClient,
+function StatsSparklineNodeOmnibar() {
+	const { siteNodes } = buildOmnibarNodesFromAdminBarNodes( [ statsNode ], {
+		stats: createStatsSparklineNodeBuilder( { siteId } ),
 	} );
+	return <Omnibar nodes={ { site: { id: 'site-name', title: 'Test Site' }, siteNodes } } />;
 }
 
 describe( '<Omnibar> stats sparkline node', () => {
-	beforeEach( () => {
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/dashboard/admin-bar' )
-			.query( true )
-			.reply( 200, { nodes: [] } );
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/wpcom/v2/sites/${ site.ID }/admin-bar` )
-			.query( true )
-			.reply( 200, { nodes: [ statsNode ] } );
-		nock( 'https://public-api.wordpress.com' )
-			.get( `/rest/v1.1/sites/${ site.ID }` )
-			.query( true )
-			.reply( 200, site );
-	} );
-
-	afterEach( () => nock.cleanAll() );
-
 	test( 'shows the node', async () => {
 		mockHourlyViews( 200, {
 			data: [
@@ -70,7 +47,7 @@ describe( '<Omnibar> stats sparkline node', () => {
 			],
 		} );
 
-		renderOmnibar();
+		render( <StatsSparklineNodeOmnibar /> );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		const statsSparklineNode = await within( toolbar ).findByRole( 'button', {
@@ -85,12 +62,11 @@ describe( '<Omnibar> stats sparkline node', () => {
 		mockHourlyViews( 500 );
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
-		const { queryClient } = renderOmnibar();
+		const { queryClient } = render( <StatsSparklineNodeOmnibar /> );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
-		await within( toolbar ).findByRole( 'button', { name: 'Test Site' } );
 		await waitFor( () =>
-			expect( queryClient.getQueryState( siteHourlyViewsQuery( site.ID ).queryKey )?.status ).toBe(
+			expect( queryClient.getQueryState( siteHourlyViewsQuery( siteId ).queryKey )?.status ).toBe(
 				'error'
 			)
 		);

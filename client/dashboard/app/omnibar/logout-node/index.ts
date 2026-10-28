@@ -1,4 +1,4 @@
-import { logout } from '../auth';
+import { logout } from '../../auth';
 import type { User } from '@automattic/api-core';
 import type { OmnibarNode } from '@automattic/omnibar';
 

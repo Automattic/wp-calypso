@@ -3,12 +3,12 @@ import { withSiteContext } from '@automattic/calypso-analytics';
 import { parseAdminBarNodeTitle } from '@automattic/omnibar';
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect } from 'react';
-import { useAnalytics } from '../analytics';
-import { useHelpCenter } from '../help-center';
-import { adminBarIcon } from './admin-bar-icon';
+import { useAnalytics } from '../../analytics';
+import { useHelpCenter } from '../../help-center';
+import { adminBarIcon } from '../admin-bar-icon';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-help-center.scss';
+import './style.scss';
 
 function HelpCenterIcon( { name, sectionName }: { name?: string; sectionName?: string } ) {
 	const { recordTracksEvent } = useAnalytics();

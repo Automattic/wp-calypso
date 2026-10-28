@@ -1,12 +1,12 @@
 import { parseAdminBarNodeTitle } from '@automattic/omnibar';
-import { useSiteLaunch } from '../../sites/site-launch-button/use-site-launch';
-import { dashboardLinkWithBackport } from '../../utils/link';
-import { useAnalytics } from '../analytics';
-import { useAppContext } from '../context';
+import { useSiteLaunch } from '../../../sites/site-launch-button/use-site-launch';
+import { dashboardLinkWithBackport } from '../../../utils/link';
+import { useAnalytics } from '../../analytics';
+import { useAppContext } from '../../context';
 import type { Site } from '@automattic/api-core';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-launch-site.scss';
+import './style.scss';
 
 function LaunchRocketIcon() {
 	return (

@@ -2,27 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { omnibarAgentsManagerEnabledQuery, omnibarSiteIdQuery } from '@automattic/api-queries';
+import { omnibarAgentsManagerEnabledQuery } from '@automattic/api-queries';
 import { analyticsEvents } from '@automattic/calypso-analytics';
+import { Omnibar } from '@automattic/omnibar';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import nock from 'nock';
-import { render } from '../../../test-utils';
-import { shoppingCartManagerClient } from '../../shopping-cart';
-import OmnibarContainer from '../omnibar';
-
-const myAccountNode = {
-	id: 'my-account',
-	title:
-		"Howdy, <span class=\"display-name\">Test User</span><img alt='Test User&#039;s avatar' src='https://1.gravatar.com/avatar/test' class='avatar avatar-28' />",
-	parent: 'top-secondary',
-	href: 'https://my.wordpress.com/me/account',
-	group: false,
-	meta: {
-		menu_title: 'Howdy, Test User',
-	},
-};
+import { render } from '../../../../test-utils';
+import { useAiChatNode } from '../index';
 
 // The actions the Agents Manager app publishes for entry points such as the omnibar.
 function mockAgentsManagerActions( { isChatVisible = false } = {} ) {
@@ -37,21 +24,19 @@ function mockAgentsManagerActions( { isChatVisible = false } = {} ) {
 	return actions;
 }
 
-function renderOmnibar( {
+function AiChatNodeOmnibar( { sectionName }: { sectionName?: string } ) {
+	const { node } = useAiChatNode( { sectionName, adminBarNodes: [] } );
+	return <Omnibar nodes={ { userNodes: node ? [ node ] : [] } } />;
+}
+
+function renderNode( {
 	enabled = true,
 	sectionName,
 }: { enabled?: boolean; sectionName?: string } = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-	queryClient.setQueryData( omnibarSiteIdQuery().queryKey, null );
 	queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, enabled );
 
-	return render(
-		<OmnibarContainer
-			cartManagerClient={ shoppingCartManagerClient }
-			sectionName={ sectionName }
-		/>,
-		{ queryClient }
-	);
+	return render( <AiChatNodeOmnibar sectionName={ sectionName } />, { queryClient } );
 }
 
 describe( '<Omnibar> AI chat node', () => {
@@ -59,33 +44,26 @@ describe( '<Omnibar> AI chat node', () => {
 
 	beforeEach( () => {
 		analyticsEvents.on( 'record-event', onRecordEvent );
-		nock( 'https://public-api.wordpress.com' )
-			.get( '/wpcom/v2/dashboard/admin-bar' )
-			.query( true )
-			.reply( 200, { nodes: [ myAccountNode ] } );
 	} );
 
 	afterEach( () => {
 		analyticsEvents.off( 'record-event', onRecordEvent );
 		onRecordEvent.mockReset();
-		nock.cleanAll();
 		delete ( window as { __agentsManagerActions?: unknown } ).__agentsManagerActions;
 	} );
 
 	test( 'shows the node', async () => {
-		renderOmnibar();
+		renderNode();
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		const node = await within( toolbar ).findByRole( 'button', { name: 'Agent' } );
 		expect( within( node ).getByText( 'Agent' ) ).toBeVisible();
 	} );
 
-	test( 'hides the node when Agents Manager is not enabled', async () => {
-		const { queryClient } = renderOmnibar( { enabled: false } );
+	test( 'hides the node when Agents Manager is not enabled', () => {
+		renderNode( { enabled: false } );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
-		await within( toolbar ).findByRole( 'button', { name: 'Howdy, Test User' } );
-		await waitFor( () => expect( queryClient.isFetching() ).toBe( 0 ) );
 		expect( within( toolbar ).queryByRole( 'button', { name: 'Agent' } ) ).not.toBeInTheDocument();
 	} );
 
@@ -93,7 +71,7 @@ describe( '<Omnibar> AI chat node', () => {
 		const user = userEvent.setup();
 		const actions = mockAgentsManagerActions();
 
-		renderOmnibar( { sectionName: 'sites' } );
+		renderNode( { sectionName: 'sites' } );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		await user.click( await within( toolbar ).findByRole( 'button', { name: 'Agent' } ) );
@@ -110,7 +88,7 @@ describe( '<Omnibar> AI chat node', () => {
 		const user = userEvent.setup();
 		const actions = mockAgentsManagerActions( { isChatVisible: true } );
 
-		renderOmnibar();
+		renderNode();
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		await user.click( await within( toolbar ).findByRole( 'button', { name: 'Agent' } ) );

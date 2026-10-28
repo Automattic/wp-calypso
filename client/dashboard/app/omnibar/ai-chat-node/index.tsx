@@ -8,10 +8,10 @@ import {
 import { omnibarAgentsManagerEnabledQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
-import { adminBarIcon } from './admin-bar-icon';
+import { adminBarIcon } from '../admin-bar-icon';
 import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
 
-import './node-ai-chat.scss';
+import './style.scss';
 
 export function useAiChatNode( {
 	sectionName,

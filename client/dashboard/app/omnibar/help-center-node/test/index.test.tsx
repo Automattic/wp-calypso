@@ -3,24 +3,14 @@
  */
 
 import { omnibarSiteIdQuery } from '@automattic/api-queries';
+import { Omnibar, buildOmnibarNodesFromAdminBarNodes } from '@automattic/omnibar';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { select } from '@wordpress/data';
-import nock from 'nock';
-import { render } from '../../../test-utils';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
-import { shoppingCartManagerClient } from '../../shopping-cart';
-import OmnibarContainer from '../omnibar';
-import type { AppConfig } from '../../context';
-
-const config: AppConfig = {
-	...APP_CONTEXT_DEFAULT_CONFIG,
-	supports: {
-		...APP_CONTEXT_DEFAULT_CONFIG.supports,
-		help: true,
-	},
-};
+import { render } from '../../../../test-utils';
+import { useHelpCenterNodeBuilder } from '../index';
+import type { AdminBarNode } from '@automattic/omnibar';
 
 const helpCenterNode = {
 	id: 'help-center',
@@ -35,42 +25,24 @@ const helpCenterNode = {
 	},
 };
 
-const myAccountNode = {
-	id: 'my-account',
-	title:
-		"Howdy, <span class=\"display-name\">Test User</span><img alt='Test User&#039;s avatar' src='https://1.gravatar.com/avatar/test' class='avatar avatar-28' />",
-	parent: 'top-secondary',
-	href: 'https://my.wordpress.com/me/account',
-	group: false,
-	meta: {
-		menu_title: 'Howdy, Test User',
-	},
-};
-
-function mockDashboardAdminBar( nodes: object[] ) {
-	nock( 'https://public-api.wordpress.com' )
-		.get( '/wpcom/v2/dashboard/admin-bar' )
-		.query( true )
-		.reply( 200, { nodes } );
+function HelpCenterNodeOmnibar( { adminBarNode }: { adminBarNode: AdminBarNode } ) {
+	const { nodeBuilder } = useHelpCenterNodeBuilder( {} );
+	const { userNodes } = buildOmnibarNodesFromAdminBarNodes( [ adminBarNode ], {
+		'help-center': nodeBuilder,
+	} );
+	return <Omnibar nodes={ { userNodes } } />;
 }
 
-function renderOmnibar() {
+function renderNode( adminBarNode: AdminBarNode = helpCenterNode ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	queryClient.setQueryData( omnibarSiteIdQuery().queryKey, null );
 
-	return render( <OmnibarContainer cartManagerClient={ shoppingCartManagerClient } />, {
-		config,
-		queryClient,
-	} );
+	return render( <HelpCenterNodeOmnibar adminBarNode={ adminBarNode } />, { queryClient } );
 }
 
 describe( '<Omnibar> help center node', () => {
-	afterEach( () => nock.cleanAll() );
-
 	test( 'shows the node', async () => {
-		mockDashboardAdminBar( [ helpCenterNode, myAccountNode ] );
-
-		const { recordTracksEvent } = renderOmnibar();
+		const { recordTracksEvent } = renderNode();
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		const node = await within( toolbar ).findByRole( 'button', { name: 'Help Center' } );
@@ -83,12 +55,7 @@ describe( '<Omnibar> help center node', () => {
 	} );
 
 	test( 'shows the menu title the backend sends', async () => {
-		mockDashboardAdminBar( [
-			{ ...helpCenterNode, meta: { ...helpCenterNode.meta, menu_title: 'Get Help' } },
-			myAccountNode,
-		] );
-
-		renderOmnibar();
+		renderNode( { ...helpCenterNode, meta: { ...helpCenterNode.meta, menu_title: 'Get Help' } } );
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		const node = await within( toolbar ).findByRole( 'button', { name: 'Get Help' } );
@@ -97,9 +64,8 @@ describe( '<Omnibar> help center node', () => {
 
 	test( 'opens the Help Center when clicking the node', async () => {
 		const user = userEvent.setup();
-		mockDashboardAdminBar( [ helpCenterNode, myAccountNode ] );
 
-		renderOmnibar();
+		renderNode();
 
 		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
 		await user.click( await within( toolbar ).findByRole( 'button', { name: 'Help Center' } ) );
