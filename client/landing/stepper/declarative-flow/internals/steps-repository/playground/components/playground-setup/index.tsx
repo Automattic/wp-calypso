@@ -61,10 +61,11 @@ export const PlaygroundSetupStep: Step< {
 		'This usually takes a few minutes. Keep this window open until your site is ready.'
 	);
 
-	// navigation.submit is recreated on every flow render. Reading it through a
-	// ref keeps it out of effect deps, so a pending import is not started again.
-	const submitRef = useRef( submit );
-	submitRef.current = submit;
+	// navigation.submit is recreated on every flow render, and siteSlug changes
+	// once the site loads. Reading both through a ref keeps them out of effect
+	// deps, so a pending import is not started again.
+	const latestRef = useRef( { submit, siteSlug } );
+	latestRef.current = { submit, siteSlug };
 
 	const startBlueprintImport = useCallback(
 		async ( blueprint: string ) => {
@@ -80,9 +81,9 @@ export const PlaygroundSetupStep: Step< {
 				setFailureReason( 'blueprint_import_failure' );
 				return;
 			}
-			submitRef.current?.( { siteSlug, siteId } );
+			latestRef.current.submit?.( { siteSlug: latestRef.current.siteSlug, siteId } );
 		},
-		[ importBlueprint, siteId, siteSlug ]
+		[ importBlueprint, siteId ]
 	);
 
 	useEffect( () => {
@@ -147,7 +148,7 @@ export const PlaygroundSetupStep: Step< {
 		} );
 
 		// Each flow owns where the user goes once the site is ready.
-		submitRef.current?.( { siteSlug, siteId } );
+		latestRef.current.submit?.( { siteSlug, siteId } );
 	};
 
 	const retryImport = () => {

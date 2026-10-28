@@ -55,8 +55,9 @@ jest.mock( '../components/playground-iframe', () => ( {
 	},
 } ) );
 
+const mockSiteData = { siteId: 123, siteSlug: 'example.wordpress.com' };
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
-	useSiteData: () => ( { siteId: 123, siteSlug: 'example.wordpress.com' } ),
+	useSiteData: () => ( { ...mockSiteData } ),
 } ) );
 
 const importPlaygroundSiteMock = importPlaygroundSite as jest.Mock;
@@ -103,6 +104,7 @@ describe( 'PlaygroundSetupStep', () => {
 		jest.clearAllMocks();
 		sessionStorage.clear();
 		delete mockBoot.isNewPlayground;
+		mockSiteData.siteSlug = 'example.wordpress.com';
 	} );
 
 	it( 'shows that the Playground site is loading before packing starts', async () => {
@@ -280,6 +282,24 @@ describe( 'PlaygroundSetupStep', () => {
 		await props.rerender( { ...props, navigation: { ...props.navigation, submit: jest.fn() } } );
 
 		expect( importBlueprintMock ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'starts a blueprint import once even when the site slug changes after the site loads', async () => {
+		let finishImport: ( value: unknown ) => void = () => {};
+		importBlueprintMock.mockReturnValueOnce(
+			new Promise( ( resolve ) => ( finishImport = resolve ) )
+		);
+		const props = await renderSetupStep( BLUEPRINT_SEARCH );
+
+		mockSiteData.siteSlug = 'example.com';
+		await props.rerender( props );
+		await act( async () => finishImport( { importId: '1' } ) );
+
+		expect( importBlueprintMock ).toHaveBeenCalledTimes( 1 );
+		expect( props.navigation.submit ).toHaveBeenCalledWith( {
+			siteSlug: 'example.com',
+			siteId: 123,
+		} );
 	} );
 
 	it( 'offers only the dashboard when the saved Playground is gone', async () => {
