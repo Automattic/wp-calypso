@@ -4,6 +4,7 @@ import { useResizeObserver } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Icon, wordpress } from '@wordpress/icons';
 import { useRedesignEligibility } from './eligibility';
+import { SiteSkeleton } from './site-skeleton';
 
 import 'calypso/components/theme-tier/theme-tier-badge/style.scss';
 import './card.scss';
@@ -26,22 +27,7 @@ export function DesignYourOwnCard() {
 	return (
 		<Card tagName="article" className="site-redesign-card" ref={ observeCard }>
 			<div className="site-redesign-card__image">
-				<div className="site-redesign-card__skeleton" aria-hidden="true">
-					<div className="site-redesign-card__logo" />
-					<div className="site-redesign-card__nav-first" />
-					<div className="site-redesign-card__nav-second" />
-					<div className="site-redesign-card__nav-third" />
-					<div className="site-redesign-card__nav-button" />
-					<div className="site-redesign-card__hero-image" />
-					<div className="site-redesign-card__heading-first" />
-					<div className="site-redesign-card__heading-second" />
-					<div className="site-redesign-card__line-first" />
-					<div className="site-redesign-card__line-second" />
-					<div className="site-redesign-card__action" />
-					<div className="site-redesign-card__column-first" />
-					<div className="site-redesign-card__column-second" />
-					<div className="site-redesign-card__column-third" />
-				</div>
+				<SiteSkeleton />
 				<Button __next40pxDefaultSize className="site-redesign-card__badge" href={ redesignUrl }>
 					<Icon icon={ wordpress } />
 					{ __( 'Built with the WordPress Agent' ) }

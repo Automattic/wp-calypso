@@ -6,7 +6,7 @@ import {
 	redirectLoggedOut,
 	render,
 } from 'calypso/controller';
-import { navigation, sites, siteSelection } from 'calypso/my-sites/controller';
+import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { renderSiteRedesign } from './controller';
 
 export default function () {
@@ -21,7 +21,6 @@ export default function () {
 		redirectIfCurrentUserCannot( 'manage_options' ),
 		redirectIfCurrentUserCannot( 'edit_theme_options' ),
 		renderSiteRedesign,
-		navigation,
 		makeLayout,
 		render
 	);

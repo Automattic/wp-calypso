@@ -1,7 +1,146 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/mixins';
+
+body.is-section-site-redesign {
+	background: var( --color-surface );
+
+	.layout__content {
+		padding: 0;
+	}
+
+	// Fixed rather than sticky, so the bar never leaves the viewport. The renderer's measured height
+	// reserves the same space under the content, so the last row always scrolls clear of it.
+	.step-container-v2 {
+		padding-block-end: var( --step-container-v2-sticky-bottom-bar-height );
+	}
+
+	.step-container-v2__sticky-bottom-bar-wrapper {
+		position: fixed;
+		inset-inline: 0;
+		bottom: 0;
+		z-index: 1;
+	}
+}
+
 .site-redesign__grid {
 	display: grid;
-	gap: 24px;
-	grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+	gap: 32px;
+	grid-template-columns: minmax( 0, 1fr );
+	// Breathing room between the last row and the bar's separator.
+	padding-block-end: 16px;
+
+	@include break-medium {
+		gap: 40px 32px;
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+
+	// Whole phone frames, as many to a row as stay readable, never wider than the phone itself and
+	// centered when the columns can't fill the row.
+	&.is-mobile {
+		grid-template-columns: minmax( 0, 390px );
+		justify-content: center;
+
+		@include break-small {
+			grid-template-columns: repeat( 2, minmax( 0, 390px ) );
+		}
+
+		@include break-large {
+			grid-template-columns: repeat( 3, minmax( 0, 390px ) );
+		}
+
+		@include break-wide {
+			grid-template-columns: repeat( 4, minmax( 0, 390px ) );
+		}
+	}
+}
+
+.site-redesign__candidate {
+	position: relative;
+}
+
+.site-redesign__select {
+	position: absolute;
+	inset: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 4px;
+	background: none;
+	cursor: pointer;
+
+	&:disabled {
+		cursor: default;
+	}
+
+	// Set apart from the selection outline by a gap, so focus and choice never read as one.
+	&:focus-visible {
+		outline: 2px solid var( --wp-admin-theme-color );
+		outline-offset: 6px;
+	}
+}
+
+// Lines the bar's contents up with the grid: the step's own gutters, and the 1344px track
+// ContentWrapper caps content at (its custom property is scoped there, out of the bar's reach).
+body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
+	// Plays once, when the bar first appears; later renders keep the same element.
+	animation: site-redesign-bar-in 250ms ease-out;
+	padding-inline: max(
+		var( --step-container-v2-content-inline-padding ),
+		calc( ( 100% - 1344px ) / 2 )
+	);
+	padding-block: 16px calc( 16px + env( safe-area-inset-bottom ) );
+	// On phones the controls always take a line of their own; wider, they always share the status's.
+	// Either way the bar's height doesn't change with the status copy.
+	flex-wrap: wrap;
+	gap: 12px 16px;
+
+	.step-container-v2__sticky-bottom-bar-left-element,
+	.step-container-v2__sticky-bottom-bar-right-element {
+		margin: 0;
+	}
+
+	.step-container-v2__sticky-bottom-bar-left-element {
+		flex: 1 1 100%;
+		min-width: 0;
+
+		@include break-small {
+			flex-basis: 0;
+		}
+	}
+
+	.step-container-v2__sticky-bottom-bar-right-element {
+		margin-inline-start: auto;
+	}
+}
+
+// Fits the menu to its three short labels; MenuItem otherwise holds every label at 160px.
+.site-redesign__device-menu .components-menu-item__item {
+	min-width: 0;
+}
+
+// Calypso colors every link, visited and focused ones too. This one is an icon button, neutral like
+// the device menu beside it until hovered, with WordPress Button's own colors.
+.site-redesign__open-preview.components-button {
+	&,
+	&:visited,
+	&:focus,
+	&:active {
+		color: var(
+			--wp-components-color-foreground,
+			var( --wpds-color-foreground-content-neutral, var( --color-neutral-100 ) )
+		);
+	}
+
+	&:hover {
+		color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+	}
+}
+
+// The chosen device's icon on a dark square, as in the block editor's preview menu.
+.site-redesign__device-menu .components-menu-item__button[aria-checked='true'] svg {
+	border-radius: 2px;
+	background: var( --wp-components-color-foreground, var( --color-neutral-100 ) );
+	fill: var( --wp-components-color-foreground-inverted, var( --color-text-inverted ) );
 }
 
 .site-redesign__thumbnail {
@@ -9,22 +148,106 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	aspect-ratio: 16 / 10;
+	aspect-ratio: var( --site-redesign-frame-width ) / var( --site-redesign-frame-height );
 	overflow: hidden;
-	border: 1px solid var(--color-border-subtle);
+	border: 1px solid var( --color-border-subtle );
 	border-radius: 4px;
-	background: var(--color-surface);
+	background: var( --color-surface );
+
+	// Paint only, so choosing a design never moves or resizes anything.
+	.site-redesign__candidate.is-selected & {
+		outline: 2px solid var( --wp-admin-theme-color );
+		outline-offset: 2px;
+	}
 }
 
-// The document is laid out at desktop width and scaled down to the card.
+// The document is laid out at the device's own viewport and scaled down to the card. Calypso caps
+// every iframe at its container's width, which would leave the scaled document a narrow strip.
 .site-redesign__frame {
 	position: absolute;
 	inset-block-start: 0;
 	inset-inline-start: 0;
-	width: 400%;
-	height: 400%;
+	width: calc( var( --site-redesign-frame-width ) * 1px );
+	height: calc( var( --site-redesign-frame-height ) * 1px );
+	max-inline-size: none;
 	border: 0;
-	transform: scale(0.25);
+	transform: scale(
+		calc( var( --site-redesign-thumbnail-width ) / var( --site-redesign-frame-width ) )
+	);
 	transform-origin: top left;
 	pointer-events: none;
+	opacity: 0;
+	transition: opacity 400ms ease-out;
+
+	&.is-loaded {
+		opacity: 1;
+	}
+}
+
+// The installed site, on a neutral canvas, at the chosen device's size and never above it.
+.site-redesign__installed {
+	box-sizing: border-box;
+	padding: 32px 16px;
+	border-radius: 4px;
+	background: var( --color-neutral-0 );
+
+	@include break-small {
+		padding: 48px;
+	}
+}
+
+.site-redesign__installed-frame {
+	inline-size: 100%;
+	max-inline-size: calc( var( --site-redesign-frame-width ) * 1px );
+}
+
+// Unlike the candidates, the installed site can be scrolled and clicked through.
+.site-redesign__frame.is-live {
+	pointer-events: auto;
+}
+
+// Same beat as the Site Builder canvas placeholders, so loading reads the same in both.
+.site-redesign__skeleton > div,
+.site-redesign__caption-skeleton {
+	animation: site-redesign-breathe 2800ms ease-in-out infinite;
+}
+
+.site-redesign__candidate:nth-child( even ) .site-redesign__skeleton > div,
+.site-redesign__candidate:nth-child( even ) .site-redesign__caption-skeleton {
+	animation-delay: -1200ms;
+}
+
+.site-redesign__caption-skeleton {
+	block-size: 20px;
+	inline-size: 96px;
+	border-radius: 2px;
+	background: var( --studio-gray-5 );
+}
+
+@keyframes site-redesign-bar-in {
+	from {
+		opacity: 0;
+		transform: translateY( -12px );
+	}
+}
+
+@keyframes site-redesign-breathe {
+	50% {
+		opacity: 0.55;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.site-redesign__frame {
+		transition: none;
+	}
+
+	body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
+		animation: none;
+	}
+
+	.site-redesign__skeleton > div,
+	.site-redesign__caption-skeleton {
+		animation: none;
+	}
 }
