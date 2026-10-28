@@ -17,12 +17,16 @@ import { useCurrentSupportInteraction } from '../../data/use-current-support-int
 import {
 	useAutoScroll,
 	useCreateZendeskConversation,
+	useRequestHumanSupport,
 	useZendeskMessageListener,
 	useUpdateDocumentTitle,
 } from '../../hooks';
 import { useHelpCenterChatScroll } from '../../hooks/use-help-center-chat-scroll';
+import { useLoggedOutSession } from '../../hooks/use-logged-out-session';
 import { useOpenInteractionStatusMap } from '../../hooks/use-open-interaction-status-map';
 import { getOpenLiveInteractions } from '../../utils/get-open-live-interactions';
+import { NO_HUMAN_SUPPORT_FLAGS } from '../../utils/human-support-flags';
+import { getOdieIdFromInteraction } from '../../utils/support-interaction-utils';
 import { JumpToRecent } from './jump-to-recent';
 import { MessagesClusterizer } from './messages-cluster/messages-cluster';
 import { ThinkingPlaceholder } from './thinking-placeholder';
@@ -47,20 +51,33 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		forceEmailSupport,
 		launcherContext,
 		isLoadingZendeskHistory,
+		humanSupportRouting,
+		pendingHumanSupportRequest,
+		setPendingHumanSupportRequest,
 	} = useOdieAssistantContext();
 	const isTestMode = isTestModeEnvironment();
 	const hasEnTranslation = useHasEnTranslation();
 	const createZendeskConversation = useCreateZendeskConversation();
+	const requestHumanSupport = useRequestHumanSupport();
+	// With a routing step, the host decides who gets a human.
+	const canRequestHuman = isUserEligibleForPaidSupport || !! humanSupportRouting;
 	const [ searchParams, setSearchParams ] = useSearchParams();
 	const navigate = useNavigate();
 	const isForwardingToZendesk =
 		searchParams.get( 'provider' ) === 'zendesk' && chat.provider !== 'zendesk';
-	const isStartingDirectChat =
-		isForwardingToZendesk && isUserEligibleForPaidSupport && ! chat.conversationId;
+	const isStartingDirectChat = isForwardingToZendesk && canRequestHuman && ! chat.conversationId;
 	const isWaitingForChatClient = isStartingDirectChat && ! forceEmailSupport && ! isChatLoaded;
 	const [ hasChatClientTimedOut, setHasChatClientTimedOut ] = useState( false );
 	const [ shouldEnableAutoScroll, setShouldEnableAutoScroll ] = useState( true );
-	const { data: supportInteraction } = useCurrentSupportInteraction();
+	const { data: supportInteraction, isLoading: isLoadingSupportInteraction } =
+		useCurrentSupportInteraction();
+	const { loggedOutOdieChatId } = useLoggedOutSession();
+	// Whether the chat on show is the one the route leads to. Following a link from another chat, the
+	// provider swaps the linked chat in only after this component's effects run.
+	const isShowingLinkedChat =
+		! isLoadingSupportInteraction &&
+		String( chat.odieId ?? '' ) ===
+			String( loggedOutOdieChatId || getOdieIdFromInteraction( supportInteraction ) || '' );
 	const navType: NavigationType = useNavigationType();
 
 	const messagesContainerRef = useRef< HTMLDivElement >( null );
@@ -89,10 +106,10 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 	// prevent zd transfer for non-eligible users
 	useEffect( () => {
-		if ( isForwardingToZendesk && ! isUserEligibleForPaidSupport ) {
+		if ( isForwardingToZendesk && ! canRequestHuman ) {
 			searchParams.delete( 'provider' );
 		}
-	}, [ isForwardingToZendesk, isUserEligibleForPaidSupport, searchParams ] );
+	}, [ isForwardingToZendesk, canRequestHuman, searchParams ] );
 
 	// Don't leave someone waiting on a chat client that never loads.
 	useEffect( () => {
@@ -111,10 +128,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 	useEffect( () => {
 		// Wait for the chat to load: loading a new chat replaces its messages, including any added here.
 		// Read the param again: a run of this effect for the same render may have removed it already.
+		// A routing step shows in the chat the request is made in, so wait for the chat the link leads
+		// to. Without one, the human chat starts at once and replaces whatever is on show.
 		if (
 			! isStartingDirectChat ||
 			chat.status === 'loading' ||
-			searchParams.get( 'provider' ) !== 'zendesk'
+			searchParams.get( 'provider' ) !== 'zendesk' ||
+			( humanSupportRouting && ! isShowingLinkedChat )
 		) {
 			return;
 		}
@@ -167,8 +187,9 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 
 		searchParams.delete( 'id' );
 		setSearchParams( searchParams );
-		createZendeskConversation( {
+		requestHumanSupport( {
 			createdFrom: 'direct_url',
+			flags: NO_HUMAN_SUPPORT_FLAGS,
 		} );
 	}, [
 		navigate,
@@ -178,12 +199,30 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 		hasChatClientTimedOut,
 		addMessage,
 		trackEvent,
-		createZendeskConversation,
+		requestHumanSupport,
 		forceEmailSupport,
+		humanSupportRouting,
+		isShowingLinkedChat,
 		interactionStatusByUuid,
 		searchParams,
 		setSearchParams,
 	] );
+
+	const RoutingStep = humanSupportRouting?.Step;
+	const startRoutedChat = () => {
+		if ( ! pendingHumanSupportRequest ) {
+			return;
+		}
+		const { createdFrom, isFromError, errorReason, escalationOnSecondAttempt } =
+			pendingHumanSupportRequest;
+		setPendingHumanSupportRequest( null );
+		createZendeskConversation( {
+			createdFrom,
+			isFromError,
+			errorReason,
+			escalationOnSecondAttempt,
+		} );
+	};
 
 	return (
 		<div
@@ -238,6 +277,13 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 							__( 'Requesting human support', __i18n_text_domain__ ) +
 							( isTestMode ? '… (ZENDESK STAGING)' : '…' )
 						}
+					/>
+				) }
+				{ chat.provider === 'odie' && RoutingStep && pendingHumanSupportRequest && (
+					<RoutingStep
+						request={ pendingHumanSupportRequest }
+						startChat={ startRoutedChat }
+						dismiss={ () => setPendingHumanSupportRequest( null ) }
 					/>
 				) }
 				{ chat.provider.startsWith( 'zendesk' ) && (
