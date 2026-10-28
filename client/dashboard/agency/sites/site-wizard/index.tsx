@@ -22,6 +22,7 @@ import ConnectionSetup, { ConnectionInstructions, ConnectionSites } from './conn
 import ConnectionWaiting from './connection-waiting';
 import CreateChoices from './create-choices';
 import EntryChoices from './entry-choices';
+import EntryIllustration from './entry-illustration';
 import HostedShowcase from './hosted-showcase';
 import HostingChoice from './hosting-choice';
 import SitesOverviewStory from './overview-story';
@@ -58,7 +59,8 @@ export default function SiteWizard( {
 	isFirstSite,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { wizardJump, sitesRevision } = useDesignPreview();
+	const { wizardJump, sitesRevision, entry: previewEntry } = useDesignPreview();
+	const entry = isFirstSite ? previewEntry : 'cards';
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const developmentLicenses = useQuery( {
 		...agencyDevLicensesQuery( agency?.id ?? 0 ),
@@ -95,7 +97,8 @@ export default function SiteWizard( {
 	useEffect( () => () => setWizardPosition( null ), [] );
 	const container = useRef< HTMLDivElement >( null );
 	const titleId = useId();
-	const isUrlStep = step === 'url' || step === 'source';
+	const isUrlStep =
+		step === 'url' || step === 'source' || ( step === 'start' && entry === 'address' );
 	const previousStep = useRef( step );
 	useEffect( () => {
 		if ( previousStep.current !== step ) {
@@ -109,7 +112,7 @@ export default function SiteWizard( {
 		changeStep( next );
 	};
 	const chooseJourney = ( journey: Journey, next: Step ) => {
-		change( { journey } );
+		change( { journey, undecided: false } );
 		go( next );
 	};
 	const hostName = data.host === 'wpcom' ? 'WordPress.com' : 'Pressable';
@@ -120,7 +123,8 @@ export default function SiteWizard( {
 	const isMigration = data.journey === 'migrate';
 	const isDevelopment = data.journey === 'development';
 	const siteAddress = `${ data.address }.${ data.host === 'wpcom' ? 'wpcomstaging.com' : 'mystagingwebsite.com' }`;
-	const reviewSites = ( input: string ) => {
+	// Entry C asks for addresses first and the keep-or-move question after them.
+	const reviewSites = ( input: string, undecided = data.undecided ) => {
 		const { sites, duplicates } = parseSiteList( input );
 		if ( ! sites.length ) {
 			setError(
@@ -144,8 +148,12 @@ export default function SiteWizard( {
 			duplicates,
 			chosen: sites.length <= SITE_REVIEW_BULK_THRESHOLD ? eligible.map( ( site ) => site.id ) : [],
 			url: sites[ 0 ].url,
+			...( undecided ? { journey: 'connect' as const, undecided } : {} ),
 		} );
-		const nextStep = isMigration ? 'host' : 'authorize';
+		let nextStep: Step = isMigration ? 'host' : 'authorize';
+		if ( undecided ) {
+			nextStep = 'path';
+		}
 		go( sites.length === 1 ? nextStep : 'review' );
 	};
 	const batch = data.sites.filter( ( site ) => data.chosen.includes( site.id ) );
@@ -164,6 +172,10 @@ export default function SiteWizard( {
 			return;
 		}
 		change( { url: batch[ 0 ].url } );
+		if ( data.undecided ) {
+			go( 'path' );
+			return;
+		}
 		go( isMigration ? 'host' : 'authorize' );
 	};
 	const finish = ( kind: 'connect' | 'picker' | 'create' | 'migrate', ids = data.selected ) => {
@@ -297,6 +309,103 @@ export default function SiteWizard( {
 					onCreate={ () => go( 'new' ) }
 				/>
 			);
+			if ( entry === 'button' ) {
+				// The hero carries its own heading, so the shared intro stays empty.
+				title = '';
+				content = (
+					<div className="agency-site-wizard__hero">
+						<div className="agency-site-wizard__hero-drawings" aria-hidden="true">
+							<EntryIllustration kind="connect" />
+							<EntryIllustration kind="move" />
+							<EntryIllustration kind="create" />
+						</div>
+						<div className="agency-site-wizard__intro">
+							<Heading level={ 2 } id={ titleId } tabIndex={ -1 }>
+								{ __( 'Add your first site' ) }
+							</Heading>
+							<p>
+								{ __( 'Bring in the WordPress sites you already manage, or start a new one.' ) }
+							</p>
+						</div>
+						<Button
+							className="agency-site-wizard__hero-cta"
+							variant="primary"
+							type="button"
+							onClick={ () => go( 'choose' ) }
+							__next40pxDefaultSize
+						>
+							{ __( 'Get started' ) }
+						</Button>
+					</div>
+				);
+			}
+			if ( entry === 'address' ) {
+				description = __(
+					'Enter a client’s site address or paste your list. Next, choose to keep or move the hosting.'
+				);
+				content = (
+					<div className="agency-site-wizard__intake-layout">
+						<SiteIntake
+							compact
+							describedBy={ titleId }
+							value={ data.intake }
+							onChange={ ( intake ) => change( { intake } ) }
+							onReview={ ( input ) => reviewSites( input, true ) }
+							onError={ setError }
+							error={ error }
+							footer={
+								<Button variant="link" onClick={ () => go( 'new' ) }>
+									{ __( 'Create a new site instead' ) }
+								</Button>
+							}
+						/>
+					</div>
+				);
+			}
+			break;
+		case 'choose':
+			title = __( 'How do you want to add your site?' );
+			description = __(
+				'Connect it where it’s hosted today, move it to new hosting, or create something new.'
+			);
+			content = (
+				<EntryChoices
+					onConnect={ () => chooseJourney( 'connect', 'url' ) }
+					onMove={ () => chooseJourney( 'migrate', 'source' ) }
+					onCreate={ () => go( 'new' ) }
+				/>
+			);
+			break;
+		case 'path':
+			title =
+				batchSize > 1
+					? __( 'Keep their hosting, or move them?' )
+					: __( 'Keep its hosting, or move it?' );
+			description = sprintf(
+				/* translators: %s is a site address or a number of sites. */
+				__( 'Either way, you’ll manage %s from this dashboard. You can move later, too.' ),
+				batchNames ?? __( 'your sites' )
+			);
+			content = (
+				<div className="agency-site-wizard__choices agency-site-wizard__entry-options">
+					<Choice
+						illustration={ <EntryIllustration kind="connect" /> }
+						title={ __( 'Keep current hosting' ) }
+						description={ __(
+							'Connect with a plugin. The site, domain, and hosting stay where they are.'
+						) }
+						onClick={ () => chooseJourney( 'connect', 'authorize' ) }
+					/>
+					<Choice
+						illustration={ <EntryIllustration kind="move" /> }
+						title={ __( 'Move to new hosting' ) }
+						description={ __(
+							'Choose WordPress.com or Pressable, then move on your own or with our help.'
+						) }
+						onClick={ () => chooseJourney( 'migrate', 'host' ) }
+					/>
+				</div>
+			);
 			break;
 		case 'new':
 			title = __( 'What kind of site are you creating?' );
@@ -346,6 +455,12 @@ export default function SiteWizard( {
 			description = isMigration
 				? __( 'Uncheck any sites you don’t want to move yet. You’ll choose hosting next.' )
 				: __( 'Uncheck any sites you don’t want to connect yet. Their hosting stays the same.' );
+			if ( data.undecided ) {
+				title = __( 'Choose which sites to add' );
+				description = __(
+					'Uncheck any sites you don’t want to add yet. Next, you’ll choose to keep their hosting or move them.'
+				);
+			}
 			if ( data.sites.length > SITE_REVIEW_BULK_THRESHOLD ) {
 				description = __(
 					'Choose a first batch to work on together. You can return for the rest.'
@@ -843,10 +958,12 @@ export default function SiteWizard( {
 		step
 	);
 	return (
-		<div className="agency-site-wizard" data-step={ step }>
+		<div className="agency-site-wizard" data-step={ step } data-entry={ entry }>
 			<Card className="agency-site-wizard__workspace">
 				<AmplifyBackdrop />
-				{ isFirstSite && step === 'start' && <HostedShowcase /> }
+				{ isFirstSite && step === 'start' && ( entry === 'cards' || entry === 'address' ) && (
+					<HostedShowcase />
+				) }
 				<div className="agency-site-wizard__navigation">
 					{ canGoBack && (
 						<Button
@@ -870,12 +987,14 @@ export default function SiteWizard( {
 					} }
 				>
 					<div className="agency-site-wizard__body" ref={ container }>
-						<div className="agency-site-wizard__intro">
-							<Heading level={ 2 } id={ titleId } tabIndex={ -1 }>
-								{ title }
-							</Heading>
-							<p>{ description }</p>
-						</div>
+						{ title && (
+							<div className="agency-site-wizard__intro">
+								<Heading level={ 2 } id={ titleId } tabIndex={ -1 }>
+									{ title }
+								</Heading>
+								<p>{ description }</p>
+							</div>
+						) }
 						<div className="agency-site-wizard__step-content">
 							{ batch.length === 1 && step === 'host' && (
 								<div className="agency-site-wizard__source-preview">

@@ -5,6 +5,8 @@ import type { IntakeSite } from './site-intake';
 
 export type Step =
 	| 'start'
+	| 'choose'
+	| 'path'
 	| 'new'
 	| 'picker'
 	| 'url'
@@ -41,6 +43,7 @@ const initialData = {
 	chosen: [] as string[],
 	completed: [] as string[],
 	duplicates: 0,
+	undecided: false,
 };
 
 export interface WizardSnapshot {

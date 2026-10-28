@@ -2,7 +2,7 @@ import { Button, TextareaControl, __experimentalHeading as Heading } from '@word
 import { __, sprintf, _n } from '@wordpress/i18n';
 import { arrowRight } from '@wordpress/icons';
 import { isAppleOS } from '@wordpress/keycodes';
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { Choice } from './choices';
 import IntakeIllustration from './intake-illustration';
 import { readSiteFile } from './site-intake';
@@ -16,6 +16,8 @@ export default function SiteIntake( {
 	onError,
 	error,
 	onChooseAccount,
+	compact,
+	footer,
 }: {
 	describedBy?: string;
 	value: string;
@@ -24,6 +26,8 @@ export default function SiteIntake( {
 	onError: ( message: string ) => void;
 	error: string;
 	onChooseAccount?: () => void;
+	compact?: boolean;
+	footer?: ReactNode;
 } ) {
 	const fileInput = useRef< HTMLInputElement >( null );
 	const [ reading, setReading ] = useState( false );
@@ -112,46 +116,55 @@ export default function SiteIntake( {
 					{ error }
 				</p>
 			</div>
-			<section
-				className="agency-site-wizard__intake-alternatives"
-				aria-labelledby="site-wizard-intake-alternatives"
-			>
-				<Heading level={ 3 } id="site-wizard-intake-alternatives">
-					{ __( 'Other ways to add sites' ) }
-				</Heading>
-				<div className="agency-site-wizard__intake-options">
-					<Choice
-						className="agency-site-wizard__intake-option"
-						title={ __( 'Upload a spreadsheet' ) }
-						description={ __(
-							'Choose a file or drop it here. Excel, CSV, TSV, and text files all work.'
-						) }
-						illustration={ <IntakeIllustration kind="spreadsheet" /> }
-						onClick={ () => fileInput.current?.click() }
-						isBusy={ reading }
-						disabled={ reading }
-						onDragOver={ ( event ) => event.preventDefault() }
-						onDrop={ ( event ) => {
-							event.preventDefault();
-							const file = event.dataTransfer.files[ 0 ];
-							if ( file && ! reading ) {
-								void read( file );
-							}
-						} }
-					/>
-					{ onChooseAccount && (
+			{ compact ? (
+				<div className="agency-site-wizard__intake-links">
+					<Button variant="link" onClick={ () => fileInput.current?.click() } disabled={ reading }>
+						{ __( 'Upload a spreadsheet' ) }
+					</Button>
+					{ footer }
+				</div>
+			) : (
+				<section
+					className="agency-site-wizard__intake-alternatives"
+					aria-labelledby="site-wizard-intake-alternatives"
+				>
+					<Heading level={ 3 } id="site-wizard-intake-alternatives">
+						{ __( 'Other ways to add sites' ) }
+					</Heading>
+					<div className="agency-site-wizard__intake-options">
 						<Choice
 							className="agency-site-wizard__intake-option"
-							title={ __( 'Choose from WordPress.com' ) }
+							title={ __( 'Upload a spreadsheet' ) }
 							description={ __(
-								'Select sites linked to your account that aren’t in your agency dashboard yet.'
+								'Choose a file or drop it here. Excel, CSV, TSV, and text files all work.'
 							) }
-							illustration={ <IntakeIllustration kind="account" /> }
-							onClick={ onChooseAccount }
+							illustration={ <IntakeIllustration kind="spreadsheet" /> }
+							onClick={ () => fileInput.current?.click() }
+							isBusy={ reading }
+							disabled={ reading }
+							onDragOver={ ( event ) => event.preventDefault() }
+							onDrop={ ( event ) => {
+								event.preventDefault();
+								const file = event.dataTransfer.files[ 0 ];
+								if ( file && ! reading ) {
+									void read( file );
+								}
+							} }
 						/>
-					) }
-				</div>
-			</section>
+						{ onChooseAccount && (
+							<Choice
+								className="agency-site-wizard__intake-option"
+								title={ __( 'Choose from WordPress.com' ) }
+								description={ __(
+									'Select sites linked to your account that aren’t in your agency dashboard yet.'
+								) }
+								illustration={ <IntakeIllustration kind="account" /> }
+								onClick={ onChooseAccount }
+							/>
+						) }
+					</div>
+				</section>
+			) }
 			<input
 				ref={ fileInput }
 				type="file"
