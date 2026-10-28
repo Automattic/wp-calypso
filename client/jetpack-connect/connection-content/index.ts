@@ -6,6 +6,7 @@ export {
 	getPluginEntry,
 	getPluginDisplayName,
 	getLogoForFamilies,
+	isMigrationOnly,
 } from './plugin-registry';
 export type { FeatureSelection } from './selectors';
 export {

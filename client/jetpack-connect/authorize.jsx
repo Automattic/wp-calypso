@@ -357,8 +357,6 @@ export class JetpackAuthorize extends Component {
 		} else if ( this.isFromJetpackBackupPlugin() && ! siteHasBackups ) {
 			debug( `Redirecting directly to cart with ${ PRODUCT_JETPACK_BACKUP_T1_YEARLY } in cart.` );
 			navigate( `/checkout/${ urlToSlug( homeUrl ) }/${ PRODUCT_JETPACK_BACKUP_T1_YEARLY }` );
-		} else if ( this.isFromMigrationPlugin() ) {
-			navigate( `/setup/site-migration?ref=jetpack-connect&from=${ urlToSlug( homeUrl ) }` );
 		} else if ( this.isFromStandardEntryPoint() && redirectAfterAuth ) {
 			// Standard entry points put their own marker in the return URL, so
 			// there's no plans page and no `from` to append.
@@ -495,11 +493,6 @@ export class JetpackAuthorize extends Component {
 	isJetpackPartnerCoupon( props = this.props ) {
 		const { from } = props.authQuery;
 		return ( from ?? '' ).startsWith( 'jetpack-partner-coupon' );
-	}
-
-	isFromMigrationPlugin( props = this.props ) {
-		const { from } = props.authQuery;
-		return ( from ?? '' ).startsWith( 'wpcom-migration' );
 	}
 
 	isFromAutomatticForAgenciesPlugin( props = this.props ) {

@@ -86,6 +86,11 @@ export const PLUGIN_REGISTRY: Record< string, PluginEntry > = {
 		family: 'a4a',
 		displayName: 'Automattic for Agencies',
 	},
+	'wpcom-migration': {
+		slug: 'wpcom-migration',
+		family: 'other',
+		displayName: 'Migrate to WordPress.com',
+	},
 };
 
 /**
@@ -97,6 +102,15 @@ export const PLUGIN_REGISTRY: Record< string, PluginEntry > = {
  */
 export function getPluginDisplayName( slug: string ): string {
 	return PLUGIN_REGISTRY[ slug ]?.displayName ?? slug;
+}
+
+/**
+ * Whether the WordPress.com migration plugin is the only plugin using the
+ * connection, which means the connect is for a migration. It has no family of
+ * its own, so callers check this before the `other` fallback.
+ */
+export function isMigrationOnly( pluginSlugs: readonly string[] ): boolean {
+	return pluginSlugs.length === 1 && pluginSlugs[ 0 ] === PLUGIN_REGISTRY[ 'wpcom-migration' ].slug;
 }
 
 /**

@@ -11,6 +11,7 @@ const ALL_KEYS: FeatureCardKey[] = [
 	'jetpack-search',
 	'jetpack-social',
 	'jetpack-videopress',
+	'migration',
 	'other',
 ];
 
@@ -36,6 +37,7 @@ describe( 'getFeatureCardData', () => {
 		expect( getFeatureCardData( 'jetpack-search' ).title ).toBe( 'Jetpack Search' );
 		expect( getFeatureCardData( 'jetpack-social' ).title ).toBe( 'Jetpack Social' );
 		expect( getFeatureCardData( 'jetpack-videopress' ).title ).toBe( 'Jetpack VideoPress' );
+		expect( getFeatureCardData( 'migration' ).title ).toBe( 'WordPress.com migration' );
 		expect( getFeatureCardData( 'other' ).title ).toBe( 'Your active plugins' );
 	} );
 } );

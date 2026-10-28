@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import { isMigrationOnly } from './plugin-registry';
 import { getSubtitleScenario, type SubtitleScenario } from './scenarios';
 import { getPresentFamilies } from './selectors';
 
@@ -75,6 +76,9 @@ function getLoginSubtitles(): Record< SubtitleScenario, string > {
 			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack VideoPress's ad-free video hosting."
 		),
 		JETPACK_MULTI: jetpackFull,
+		MIGRATION_ONLY: __(
+			'Your site is registered with WordPress.com — finish connecting your account to start your migration.'
+		),
 		OTHER_ONLY: __(
 			'Your site is registered with WordPress.com — finish connecting your account to power your active plugins.'
 		),
@@ -151,6 +155,9 @@ function getAuthSubtitles(): Record< SubtitleScenario, string > {
 			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack VideoPress.'
 		),
 		JETPACK_MULTI: jetpackFull,
+		MIGRATION_ONLY: __(
+			'Your site is registered with WordPress.com — connecting your account lets you migrate it to WordPress.com.'
+		),
 		OTHER_ONLY: __(
 			'Your site is registered with WordPress.com — connecting your account gives it secure access to the features your active plugins need.'
 		),
@@ -215,6 +222,7 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
 			"You'll use it to enable Jetpack VideoPress's ad-free video hosting on your site."
 		),
 		JETPACK_MULTI: jetpackFull,
+		MIGRATION_ONLY: __( "You'll use it to migrate your site to WordPress.com." ),
 		OTHER_ONLY: __( "You'll use it to power your active plugins." ),
 	};
 }
@@ -223,7 +231,7 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
  * Title + subtitle for the authorize page in the unified connection flow.
  *
  * The H1 is the static `Connect your account`. The subtitle switches
- * between 16 pre-composed sentences keyed by the active plugin set's
+ * between 17 pre-composed sentences keyed by the active plugin set's
  * family/composition. See `scenarios.ts` for the decision order and
  * `getAuthSubtitles` above for the full string table.
  */
@@ -279,6 +287,13 @@ export function getSecondaryAuthCopy(
 		return {
 			title: __( 'Connect your account' ),
 			subtitle: __( 'Connect to manage this site using your WordPress.com account.' ),
+		};
+	}
+
+	if ( isMigrationOnly( pluginSlugs ) ) {
+		return {
+			title: __( 'Connect your account' ),
+			subtitle: __( 'Connect your account to help migrate this site to WordPress.com.' ),
 		};
 	}
 

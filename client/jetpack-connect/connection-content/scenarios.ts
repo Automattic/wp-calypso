@@ -1,5 +1,5 @@
 import { getFamilyFromSlug } from './families';
-import { getPluginEntry } from './plugin-registry';
+import { getPluginEntry, isMigrationOnly } from './plugin-registry';
 
 /**
  * Identifier for the subtitle scenario that drives copy selection on every
@@ -18,7 +18,7 @@ import { getPluginEntry } from './plugin-registry';
  * handles the impossible-but-still-possible case where the plugin list
  * arrives malformed (URL truncation, etc.) — see the Woo branch below.
  *
- * The 16 keys are the canonical scenario set, and each surface's
+ * The 17 keys are the canonical scenario set, and each surface's
  * pre-composed subtitle table is keyed by exactly these values — see
  * `copy.ts`.
  */
@@ -38,6 +38,7 @@ export type SubtitleScenario =
 	| 'JETPACK_SOCIAL'
 	| 'JETPACK_VIDEOPRESS'
 	| 'JETPACK_MULTI'
+	| 'MIGRATION_ONLY'
 	| 'OTHER_ONLY';
 
 /**
@@ -82,7 +83,9 @@ function getJetpackSingleScenario( slug: string ): SubtitleScenario | null {
  *      the full-Jetpack copy by design — the per-plugin specificity lives
  *      in the feature cards, not in the subtitle.
  *    - A4A: only one plugin in this family.
- * 3. `OTHER_ONLY` for empty input or only-unknown plugins.
+ * 3. `MIGRATION_ONLY` when the WordPress.com migration plugin is the only
+ *    plugin using the connection, so the connect is for a migration.
+ * 4. `OTHER_ONLY` for empty input or only-unknown plugins.
  *
  * Unknown ("other"-family) plugins are silently ignored once a known family
  * is present — they don't influence subtitle copy.
@@ -128,6 +131,10 @@ export function getSubtitleScenario( pluginSlugs: readonly string[] = [] ): Subt
 			return getJetpackSingleScenario( jetpackSlugs[ 0 ] ) ?? 'JETPACK_MULTI';
 		}
 		return 'JETPACK_MULTI';
+	}
+
+	if ( isMigrationOnly( pluginSlugs ) ) {
+		return 'MIGRATION_ONLY';
 	}
 
 	return 'OTHER_ONLY';

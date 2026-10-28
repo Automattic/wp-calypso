@@ -25,6 +25,7 @@ const SCENARIO_SLUGS: Record< SubtitleScenario, readonly string[] > = {
 	JETPACK_SOCIAL: [ 'jetpack-social' ],
 	JETPACK_VIDEOPRESS: [ 'jetpack-videopress' ],
 	JETPACK_MULTI: [ 'jetpack-backup', 'jetpack-protect' ],
+	MIGRATION_ONLY: [ 'wpcom-migration' ],
 	OTHER_ONLY: [],
 };
 
@@ -107,6 +108,10 @@ describe( 'login subtitles', () => {
 			"Your site is registered with WordPress.com — finish connecting your account to enable Jetpack VideoPress's ad-free video hosting.",
 		],
 		[
+			'MIGRATION_ONLY',
+			'Your site is registered with WordPress.com — finish connecting your account to start your migration.',
+		],
+		[
 			'OTHER_ONLY',
 			'Your site is registered with WordPress.com — finish connecting your account to power your active plugins.',
 		],
@@ -183,6 +188,10 @@ describe( 'auth subtitles', () => {
 			'Your site is registered with WordPress.com — connecting your account gives it secure access to features from Jetpack VideoPress.',
 		],
 		[
+			'MIGRATION_ONLY',
+			'Your site is registered with WordPress.com — connecting your account lets you migrate it to WordPress.com.',
+		],
+		[
 			'OTHER_ONLY',
 			'Your site is registered with WordPress.com — connecting your account gives it secure access to the features your active plugins need.',
 		],
@@ -246,6 +255,7 @@ describe( 'signup subtitles', () => {
 			'JETPACK_VIDEOPRESS',
 			"You'll use it to enable Jetpack VideoPress's ad-free video hosting on your site.",
 		],
+		[ 'MIGRATION_ONLY', "You'll use it to migrate your site to WordPress.com." ],
 		[ 'OTHER_ONLY', "You'll use it to power your active plugins." ],
 	] satisfies Array< [ SubtitleScenario, string ] > )(
 		'%s renders the expected pre-composed sentence',
@@ -296,6 +306,15 @@ describe( 'secondary auth copy', () => {
 		const { subtitle } = getSecondaryAuthCopy( true, [ 'jetpack' ] );
 		expect( subtitle ).toContain( 'activity logs' );
 		expect( subtitle ).toContain( 'Jetpack Cloud' );
+	} );
+
+	test( 'admin subtitle mentions the migration when the migration plugin is alone', () => {
+		expect( getSecondaryAuthCopy( true, [ 'wpcom-migration' ] ).subtitle ).toBe(
+			'Connect your account to help migrate this site to WordPress.com.'
+		);
+		expect( getSecondaryAuthCopy( true, [ 'wpcom-migration', 'jetpack' ] ).subtitle ).toContain(
+			'Jetpack Cloud'
+		);
 	} );
 
 	test( 'admin subtitle with Woo (no Jetpack) mentions store analytics and Woo mobile app', () => {

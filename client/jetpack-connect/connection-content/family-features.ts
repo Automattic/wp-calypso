@@ -8,7 +8,9 @@ import { __ } from '@wordpress/i18n';
  * `jetpack-*` keys are per-plugin overrides used when *exactly one* Jetpack
  * sub-plugin is active (and the full Jetpack plugin is not) — that single-
  * plugin context lets the card be more specific than the generic family
- * card. The `other` key is the empty-recognized-families fallback.
+ * card. `migration` is used when the WordPress.com migration plugin is the
+ * only plugin using the connection. The `other` key is the
+ * empty-recognized-families fallback.
  *
  * The card key set is consumer-driven: every key is rendered by exactly the
  * same `<FeaturesSection />` component using the data returned from
@@ -24,6 +26,7 @@ export type FeatureCardKey =
 	| 'jetpack-search'
 	| 'jetpack-social'
 	| 'jetpack-videopress'
+	| 'migration'
 	| 'other';
 
 /**
@@ -146,6 +149,15 @@ export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
 				],
 			};
 
+		case 'migration':
+			return {
+				title: __( 'WordPress.com migration' ),
+				bullets: [
+					__( "Copy the site's posts, pages, and media to WordPress.com." ),
+					__( 'Bring over your themes, plugins, and settings too.' ),
+				],
+			};
+
 		case 'other':
 		default:
 			return {
@@ -230,6 +242,12 @@ export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardD
 			return {
 				title: __( 'Jetpack VideoPress' ),
 				bullets: [ __( 'Manage videos and view analytics from Jetpack Cloud.' ) ],
+			};
+
+		case 'migration':
+			return {
+				title: __( 'WordPress.com migration' ),
+				bullets: [ __( 'Help migrate this site to WordPress.com.' ) ],
 			};
 
 		case 'other':

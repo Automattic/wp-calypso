@@ -1,5 +1,5 @@
 import { FAMILY_PRIORITY, getFamilyFromSlug } from './families';
-import { getPluginEntry } from './plugin-registry';
+import { getPluginEntry, isMigrationOnly } from './plugin-registry';
 import type { Family } from './families';
 import type { FeatureCardKey } from './family-features';
 
@@ -126,7 +126,7 @@ export function getFeatureSelection(
 	);
 
 	if ( knownFamilies.length === 0 ) {
-		return { cardKeys: [ 'other' ] };
+		return { cardKeys: [ isMigrationOnly( pluginSlugs ) ? 'migration' : 'other' ] };
 	}
 
 	const featured = knownFamilies.slice( 0, max );

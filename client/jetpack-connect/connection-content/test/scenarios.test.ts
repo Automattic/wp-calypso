@@ -99,6 +99,20 @@ describe( 'getSubtitleScenario', () => {
 		} );
 	} );
 
+	describe( 'migration', () => {
+		test( 'returns MIGRATION_ONLY when the migration plugin is the only connected plugin', () => {
+			expect( getSubtitleScenario( [ 'wpcom-migration' ] ) ).toBe( 'MIGRATION_ONLY' );
+		} );
+
+		test( 'ignores the migration plugin when other plugins use the connection', () => {
+			expect( getSubtitleScenario( [ 'wpcom-migration', 'jetpack' ] ) ).toBe( 'JETPACK_FULL' );
+			expect( getSubtitleScenario( [ 'wpcom-migration', 'woocommerce' ] ) ).toBe( 'WOO_ONLY' );
+			expect( getSubtitleScenario( [ 'wpcom-migration', 'some-third-party-plugin' ] ) ).toBe(
+				'OTHER_ONLY'
+			);
+		} );
+	} );
+
 	describe( 'fallback', () => {
 		test( 'returns OTHER_ONLY for an empty plugin list', () => {
 			expect( getSubtitleScenario( [] ) ).toBe( 'OTHER_ONLY' );
