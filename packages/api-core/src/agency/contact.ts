@@ -1,6 +1,25 @@
 import { __ } from '@wordpress/i18n';
 import { prependHTTPS } from '@wordpress/url';
-import type { AgencyLeadMatchingProfile } from './types';
+import type { AgencyLeadMatchingProfile, AgencyLeadMatchingResponse } from './types';
+
+export function preserveIgnoredAgencyContacts(
+	profile: AgencyLeadMatchingProfile,
+	previousProfile: AgencyLeadMatchingProfile | null | undefined,
+	ignoredFields: AgencyLeadMatchingResponse[ 'ignored_contact_fields' ]
+): AgencyLeadMatchingProfile {
+	if ( ! ignoredFields?.length ) {
+		return profile;
+	}
+
+	const contact = { ...profile.contact };
+	for ( const field of ignoredFields ) {
+		const savedValue = previousProfile?.contact?.[ field ];
+		if ( savedValue !== undefined ) {
+			contact[ field ] = savedValue;
+		}
+	}
+	return { ...profile, contact };
+}
 
 export function normalizeAgencyBookingLink( value: string ): string {
 	return prependHTTPS( value.trim() );

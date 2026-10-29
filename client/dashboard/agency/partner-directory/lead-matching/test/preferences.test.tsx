@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { agencyLeadMatchingQuery, queryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
@@ -18,7 +19,7 @@ import {
 	mockProfileSave,
 	mockSmsCountryCodes,
 } from './fixtures';
-import type { AgencyLeadMatchingProfile } from '@automattic/api-core';
+import type { AgencyLeadMatchingProfile, AgencyLeadMatchingResponse } from '@automattic/api-core';
 
 const noticeContents = () =>
 	select( noticesStore )
@@ -30,6 +31,7 @@ const waitForSaved = () =>
 
 beforeEach( () => {
 	dispatch( noticesStore ).removeAllNotices( 'snackbar' );
+	window.history.replaceState( null, '', '/' );
 } );
 
 describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
@@ -70,6 +72,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 	} );
 
 	test( 'hydrates, saves contact-only edits on an incomplete profile, and clears them on reload', async () => {
+		const user = userEvent.setup();
 		mockAgency();
 		mockSmsCountryCodes();
 		let savedProfile = getLeadMatchingProfile( getEmptyLeadMatchingFormData(), null, true );
@@ -96,22 +99,24 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 
 		let view = render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
 		let phone = await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } );
-		expect( phone ).toHaveValue( savedProfile.contact.phone );
+		expect( phone ).toHaveValue( '4256559999 ext 12' );
 		expect( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) ).toHaveValue(
 			savedProfile.contact.booking_link
 		);
-		await userEvent.clear( phone );
-		await userEvent.type( phone, '(425) 655-1234 ext 9' );
+		await user.clear( phone );
+		await user.paste( '+34 911 234 567 ext 9' );
+		expect( phone ).toHaveValue( '911234567 ext 9' );
+		expect( screen.getByRole( 'combobox', { name: 'Country code' } ) ).toHaveValue( 'Spain (+34)' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 		await waitForSaved();
-		expect( savedProfile.contact.phone ).toBe( '+14256551234 ext 9' );
+		expect( savedProfile.contact?.phone ).toBe( '+34911234567 ext 9' );
 		expect( savedProfile.availability.profile_v2_complete ).toBe( false );
 		expect( savedProfile.geography_and_language.global_remote ).toBe( false );
 		view.unmount();
 
 		view = render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
 		phone = await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } );
-		expect( phone ).toHaveValue( '+14256551234 ext 9' );
+		expect( phone ).toHaveValue( '911234567 ext 9' );
 		await userEvent.clear( phone );
 		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
@@ -207,10 +212,30 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		expect( leadMatchingScope.isDone() ).toBe( false );
 	} );
 
-	test( 'retains invalid contacts and failed sync edits without reporting success', async () => {
+	test( 'saves preferences while retaining skipped contacts and failed sync edits without reporting full success', async () => {
 		mockAgency();
-		mockLeadMatching( completeProfile );
+		const profile = {
+			...completeProfile,
+			contact: { phone: '+14256559999 ext 12', booking_link: 'https://book.example.com' },
+		};
+		mockLeadMatching( profile );
 		mockSmsCountryCodes();
+		const partialScope = nock( API )
+			.put( '/wpcom/v2/agency/123/lead-matching', ( body ) => {
+				expect( body.contact ).toEqual( {
+					phone: '+44abc1234',
+					booking_link: 'https://not a URL',
+				} );
+				expect( body.service_and_budget.max_service_level ).toBe( 'premium' );
+				expect( body.geography_and_language ).toEqual( profile.geography_and_language );
+				return true;
+			} )
+			.query( true )
+			.reply( 200, ( _uri, body ) => ( {
+				agency_id: 123,
+				lead_matching_profile: { ...( body as AgencyLeadMatchingProfile ), contact: {} },
+				ignored_contact_fields: [ 'phone', 'booking_link' ],
+			} ) );
 		nock( API )
 			.put( '/wpcom/v2/agency/123/lead-matching' )
 			.query( true )
@@ -220,15 +245,35 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 				sync: { status: 'failed' },
 			} );
 
-		render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
+		const view = render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
 
 		const phone = await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } );
 		const booking = screen.getByRole( 'textbox', { name: 'Booking link (optional)' } );
+		await userEvent.clear( phone );
 		await userEvent.type( phone, '+44abc1234' );
-		await userEvent.type( booking, 'http:booking.example.com' );
+		await userEvent.clear( booking );
+		await userEvent.type( booking, 'not a URL' );
+		const serviceLevel = screen.getByRole( 'combobox', {
+			name: 'Which max service level are you most comfortable with right now?',
+		} );
+		await userEvent.selectOptions( serviceLevel, 'premium' );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+		await waitFor( () =>
+			expect( noticeContents() ).toContain(
+				'Preferences saved, but these contact fields were not saved: Phone number, Booking link. Check them and try again.'
+			)
+		);
+		expect( partialScope.isDone() ).toBe( true );
 		expect( booking ).toHaveAttribute( 'aria-invalid', 'true' );
 		expect( phone ).toHaveValue( '+44abc1234' );
+		expect( booking ).toHaveValue( 'https://not a URL' );
+		expect( serviceLevel ).toHaveValue( 'premium' );
+		expect( view.router.state.location.pathname ).toBe( '/' );
+		const saved = queryClient.getQueryData< AgencyLeadMatchingResponse >(
+			agencyLeadMatchingQuery( 123 ).queryKey
+		);
+		expect( saved?.lead_matching_profile?.contact ).toEqual( profile.contact );
+		expect( saved?.lead_matching_profile?.service_and_budget.max_service_level ).toBe( 'premium' );
 		expect( noticeContents() ).not.toContain( 'Lead matching preferences saved.' );
 		await userEvent.clear( phone );
 		await userEvent.type( phone, '+1234' );
@@ -239,7 +284,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		await waitFor( () =>
 			expect( noticeContents() ).toContain( 'Failed to save lead matching preferences.' )
 		);
-		expect( phone ).toHaveValue( '+1234' );
+		expect( phone ).toHaveValue( '234' );
 		expect( booking ).toHaveValue( 'https://book.example.com/?a=1' );
 		expect( noticeContents() ).not.toContain( 'Lead matching preferences saved.' );
 	} );

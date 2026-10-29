@@ -50,8 +50,8 @@ export interface LeadMatchingDetails {
 
 export interface AgencyLeadMatchingProfile {
 	contact?: {
-		phone: string;
-		booking_link: string;
+		phone?: string;
+		booking_link?: string;
 	};
 	availability: {
 		accepting_work: boolean | null;
@@ -109,5 +109,6 @@ export interface AgencyLeadMatchingSyncState {
 export interface AgencyLeadMatchingResponse {
 	agency_id: number;
 	lead_matching_profile: AgencyLeadMatchingProfile;
+	ignored_contact_fields?: Array< 'phone' | 'booking_link' >;
 	sync?: AgencyLeadMatchingSyncState;
 }

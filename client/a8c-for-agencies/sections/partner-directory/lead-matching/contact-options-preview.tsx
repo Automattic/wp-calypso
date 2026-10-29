@@ -1,4 +1,5 @@
 import { normalizeAgencyBookingLink } from '@automattic/api-core';
+import { getNationalPhoneNumber } from '@automattic/js-utils';
 import { TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useId } from 'react';
@@ -9,7 +10,7 @@ import FormPhoneInput from 'calypso/components/forms/form-phone-input';
 import { useSelector } from 'calypso/state';
 import getCountries from 'calypso/state/selectors/get-countries';
 import type { LeadMatchingDetails } from '../types';
-import type { KeyboardEvent } from 'react';
+import type { ClipboardEvent, KeyboardEvent } from 'react';
 
 function preventFormSubmit( event: KeyboardEvent< HTMLInputElement | HTMLSelectElement > ) {
 	if ( event.key === 'Enter' ) {
@@ -30,6 +31,10 @@ export default function ContactOptionsPreview( {
 } ) {
 	const id = useId();
 	const countriesList = useSelector( ( state ) => getCountries( state, 'sms' ) ) ?? [];
+	const phone = getNationalPhoneNumber(
+		formData.phoneNumber,
+		formData.phoneCountryCode || countryCode || countriesList[ 0 ]?.code || ''
+	);
 
 	return (
 		<FormSection
@@ -44,13 +49,14 @@ export default function ContactOptionsPreview( {
 				className="partner-directory-lead-matching__phone-input"
 				countriesList={ countriesList }
 				initialCountryCode={ countryCode }
-				value={ {
-					countryCode: formData.phoneCountryCode || countryCode || countriesList[ 0 ]?.code || '',
-					phoneNumber: formData.phoneNumber,
+				value={ phone }
+				onChangeRaw={ ( value: { countryCode: string; phoneNumber: string } ) => {
+					const nextPhone = getNationalPhoneNumber( value.phoneNumber, value.countryCode );
+					onChange( {
+						phoneCountryCode: nextPhone.countryCode,
+						phoneNumber: nextPhone.phoneNumber,
+					} );
 				} }
-				onChangeRaw={ ( value: { countryCode: string; phoneNumber: string } ) =>
-					onChange( { phoneCountryCode: value.countryCode, phoneNumber: value.phoneNumber } )
-				}
 				isDisabled={ countriesList.length === 0 }
 				phoneNumberLabel={ __( 'Phone number (optional)' ) }
 				countrySelectProps={ {
@@ -58,12 +64,25 @@ export default function ContactOptionsPreview( {
 				} }
 				phoneInputProps={ {
 					id: 'phone_number',
-					placeholder: __( 'e.g. 123456789' ),
+					placeholder: __( 'e.g. 123456789 ext 6' ),
+					maxLength: 30,
 					autoComplete: 'off',
 					pattern: undefined,
 					'aria-invalid': !! errors.phone,
 					'aria-describedby': errors.phone ? `${ id }-phone-error` : undefined,
 					onKeyDown: preventFormSubmit,
+					onPaste: ( event: ClipboardEvent< HTMLInputElement > ) => {
+						const value = event.clipboardData.getData( 'text' );
+						const nextPhone = getNationalPhoneNumber( value, phone.countryCode );
+						if ( ! value.trim().startsWith( '+' ) || nextPhone.phoneNumber === value ) {
+							return;
+						}
+						event.preventDefault();
+						onChange( {
+							phoneNumber: nextPhone.phoneNumber.slice( 0, event.currentTarget.maxLength ),
+							phoneCountryCode: nextPhone.countryCode,
+						} );
+					},
 				} }
 			/>
 			{ errors.phone && (

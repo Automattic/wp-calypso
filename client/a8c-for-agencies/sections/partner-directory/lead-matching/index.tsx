@@ -21,7 +21,12 @@ import {
 } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	errorNotice,
+	removeNotice,
+	successNotice,
+	warningNotice,
+} from 'calypso/state/notices/actions';
 import { useFormSelectors } from '../components/hooks/use-form-selectors';
 import LanguagesSelector from '../components/languages-selector';
 import {
@@ -37,6 +42,7 @@ import {
 	hasLeadMatchingAnswerChanges,
 	mapAgencyDetailsFormData,
 	mapLeadMatchingDetailsToProfile,
+	mapLeadMatchingProfileToFormData,
 } from '../utils/map-application-form-data';
 import ContactOptionsPreview from './contact-options-preview';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
@@ -243,15 +249,53 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 
 	const onSubmitSuccess = useCallback(
 		( response: AgencyLeadMatchingResponse, { source }: { source: 'manual' | 'exit' } ) => {
+			const ignoredFields = response.ignored_contact_fields ?? [];
+			const savedFormData =
+				mapLeadMatchingProfileToFormData( response.lead_matching_profile ) ?? formData;
+			if ( ignoredFields.includes( 'phone' ) ) {
+				savedFormData.phoneNumber = formData.phoneNumber;
+				savedFormData.phoneCountryCode = formData.phoneCountryCode;
+			}
+			if ( ignoredFields.includes( 'booking_link' ) ) {
+				savedFormData.bookingLink = formData.bookingLink;
+			}
 			setHasSavedSuccessfully( true );
 			dispatch(
 				updateActiveAgencyLeadMatching( {
-					draft: null,
+					draft: ignoredFields.length ? savedFormData : null,
 					profile: response.lead_matching_profile,
 					sync: response.sync,
 				} )
 			);
 
+			if ( ignoredFields.length ) {
+				dispatch(
+					warningNotice(
+						sprintf(
+							/* translators: %s is a list of contact fields that were not saved. */
+							__(
+								'Preferences saved, but these contact fields were not saved: %s. Check them and try again.'
+							),
+							ignoredFields
+								.map( ( field ) =>
+									field === 'phone' ? __( 'Phone number' ) : __( 'Booking link' )
+								)
+								.join( ', ' )
+						),
+						{ id: 'lead-matching-contact-warning', displayOnNextPage: true }
+					)
+				);
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_partial', {
+						agency_id: agency?.id,
+						source,
+						ignored_contact_fields: ignoredFields,
+					} )
+				);
+				return;
+			}
+
+			dispatch( removeNotice( 'lead-matching-contact-warning' ) );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_success', {
 					agency_id: agency?.id,
@@ -272,7 +316,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				}
 			}
 		},
-		[ agency, dispatch ]
+		[ agency?.id, dispatch, formData ]
 	);
 
 	const onSubmitError = useCallback(
@@ -367,9 +411,6 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				mapLeadMatchingDetailsToProfile( formData, profile ).contact
 			);
 			setContactErrors( errors );
-			if ( hasUnsavedChanges && Object.keys( errors ).length ) {
-				return undefined;
-			}
 			const didSaveAvailability = await saveAvailability( source );
 
 			if ( ! didSaveAvailability ) {

@@ -9,7 +9,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button, ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { Fragment, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
@@ -83,11 +83,13 @@ function LeadMatchingPreferencesForm( {
 } ) {
 	const agencyId = agency.id;
 	const savedAvailability = agency.profile?.listing_details?.is_available ?? true;
-	const savedFormData = useMemo( () => getLeadMatchingFormData( profile ), [ profile ] );
+	const [ savedProfile, setSavedProfile ] = useState( profile );
+	const savedFormData = useMemo( () => getLeadMatchingFormData( savedProfile ), [ savedProfile ] );
 
 	const { recordTracksEvent } = useAnalytics();
 	const navigate = useNavigate();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice, createWarningNotice, removeNotice } =
+		useDispatch( noticesStore );
 
 	const [ formData, setFormData ] = useState< LeadMatchingFormData >( savedFormData );
 	const [ isAvailable, setIsAvailable ] = useState( savedAvailability );
@@ -99,7 +101,7 @@ function LeadMatchingPreferencesForm( {
 		agencyProfileMutation( agencyId )
 	);
 	const { mutateAsync: savePreferences, isPending: isSavingPreferences } = useMutation(
-		agencyLeadMatchingMutation( agencyId )
+		agencyLeadMatchingMutation( agencyId, savedProfile )
 	);
 	const isSubmitting = isSavingAvailability || isSavingPreferences;
 
@@ -142,12 +144,9 @@ function LeadMatchingPreferencesForm( {
 			return;
 		}
 
-		const payload = getLeadMatchingProfile( formData, profile, isAvailable );
+		const payload = getLeadMatchingProfile( formData, savedProfile, isAvailable );
 		const errors = validateAgencyLeadMatchingContact( payload.contact );
 		setContactErrors( errors );
-		if ( hasAnswerChanges && Object.keys( errors ).length ) {
-			return;
-		}
 
 		// The availability lives on the public profile, so it saves there
 		// first; the preferences are only sent when an answer changed.
@@ -170,7 +169,39 @@ function LeadMatchingPreferencesForm( {
 		if ( hasAnswerChanges ) {
 			try {
 				const response = await savePreferences( payload );
-				setFormData( getLeadMatchingFormData( response.lead_matching_profile ) );
+				const savedData = getLeadMatchingFormData( response.lead_matching_profile );
+				const ignoredFields = response.ignored_contact_fields ?? [];
+				setSavedProfile( response.lead_matching_profile );
+				if ( ignoredFields.includes( 'phone' ) ) {
+					savedData.phoneNumber = formData.phoneNumber;
+					savedData.phoneCountryCode = formData.phoneCountryCode;
+				}
+				if ( ignoredFields.includes( 'booking_link' ) ) {
+					savedData.bookingLink = formData.bookingLink;
+				}
+				setFormData( savedData );
+				if ( ignoredFields.length ) {
+					createWarningNotice(
+						sprintf(
+							/* translators: %s is a list of contact fields that were not saved. */
+							__(
+								'Preferences saved, but these contact fields were not saved: %s. Check them and try again.'
+							),
+							ignoredFields
+								.map( ( field ) =>
+									field === 'phone' ? __( 'Phone number' ) : __( 'Booking link' )
+								)
+								.join( ', ' )
+						),
+						{ id: 'lead-matching-contact-warning', type: 'snackbar' }
+					);
+					recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_partial', {
+						agency_id: agencyId,
+						source: 'manual',
+						ignored_contact_fields: ignoredFields,
+					} );
+					return;
+				}
 			} catch {
 				trackResult( 'error' );
 				createErrorNotice( __( 'Failed to save lead matching preferences.' ), {
@@ -180,6 +211,7 @@ function LeadMatchingPreferencesForm( {
 			}
 		}
 
+		removeNotice( 'lead-matching-contact-warning' );
 		trackResult( 'success' );
 		createSuccessNotice( __( 'Lead matching preferences saved.' ), {
 			type: 'snackbar',

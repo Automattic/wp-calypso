@@ -39,4 +39,4 @@ export {
 	countries as phoneNumberCountries,
 	dialCodeMap as phoneNumberDialCodeMap,
 } from './phone-number-data';
-export { default as normalizePhoneNumber } from './normalize-phone-number';
+export { default as normalizePhoneNumber, getNationalPhoneNumber } from './normalize-phone-number';

@@ -75,13 +75,19 @@ describe( 'useLeadMatchingSaveState', () => {
 		} );
 	} );
 
-	it( 'runs a save on exit when there are unsaved changes', async () => {
+	it( 'runs a save on exit and keeps skipped contacts unsaved', async () => {
 		const formData = createDefaultLeadMatchingDetails();
 		const updatedFormData = {
 			...formData,
 			regions: [ 'americas' ],
+			phoneNumber: '+44abc1234',
 		};
-		const onSubmit = jest.fn().mockResolvedValue( createResponse( updatedFormData ) );
+		const response = createResponse( updatedFormData );
+		response.lead_matching_profile.contact = { booking_link: '' };
+		const onSubmit = jest.fn().mockResolvedValue( {
+			...response,
+			ignored_contact_fields: [ 'phone' ],
+		} );
 
 		const { result, rerender } = renderHook(
 			( currentFormData ) =>
@@ -105,6 +111,8 @@ describe( 'useLeadMatchingSaveState', () => {
 			profile: null,
 			source: 'exit',
 		} );
+		expect( result.current.saveStatus ).toBe( 'unsaved' );
+		expect( result.current.hasUnsavedChanges ).toBe( true );
 	} );
 
 	it( 'marks the save as error when sync fails', async () => {

@@ -8,6 +8,7 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import type { ClipboardEventHandler } from 'react';
 
 import './style.scss';
 
@@ -24,6 +25,8 @@ export default function PhoneNumberInput( {
 	customValidity,
 	label,
 	placeholder,
+	maxLength,
+	onPaste,
 }: {
 	data: SecuritySMSNumber;
 	onChange: ( value: Partial< SecuritySMSNumber > ) => void;
@@ -34,6 +37,8 @@ export default function PhoneNumberInput( {
 	};
 	label?: string;
 	placeholder?: string;
+	maxLength?: number;
+	onPaste?: ClipboardEventHandler< HTMLInputElement >;
 } ) {
 	const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 		'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -80,6 +85,8 @@ export default function PhoneNumberInput( {
 				type="tel"
 				label={ label ?? __( 'Phone number' ) }
 				placeholder={ placeholder }
+				maxLength={ maxLength }
+				onPaste={ onPaste }
 				value={ data.phoneNumber ?? '' }
 				onChange={ ( value: string | undefined ) => {
 					return onChange( {

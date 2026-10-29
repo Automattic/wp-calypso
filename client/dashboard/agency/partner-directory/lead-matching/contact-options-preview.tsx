@@ -1,4 +1,5 @@
 import { normalizeAgencyBookingLink } from '@automattic/api-core';
+import { getNationalPhoneNumber } from '@automattic/js-utils';
 import {
 	Notice,
 	Spinner,
@@ -24,6 +25,11 @@ export default function ContactOptionsPreview( {
 	onChange: ( fields: Partial< LeadMatchingFormData > ) => void;
 	errors: { phone?: string; bookingLink?: string };
 } ) {
+	const phone = getNationalPhoneNumber(
+		formData.phoneNumber,
+		formData.phoneCountryCode || countryCode
+	);
+
 	return (
 		<Card>
 			<CardBody>
@@ -48,18 +54,34 @@ export default function ContactOptionsPreview( {
 						<Suspense fallback={ <Spinner /> }>
 							<PhoneNumberInput
 								label={ __( 'Phone number (optional)' ) }
-								placeholder={ __( 'e.g. 123456789' ) }
+								placeholder={ __( 'e.g. 123456789 ext 6' ) }
+								maxLength={ 30 }
+								onPaste={ ( event ) => {
+									const value = event.clipboardData.getData( 'text' );
+									const nextPhone = getNationalPhoneNumber( value, phone.countryCode );
+									if ( ! value.trim().startsWith( '+' ) || nextPhone.phoneNumber === value ) {
+										return;
+									}
+									event.preventDefault();
+									onChange( {
+										phoneNumber: nextPhone.phoneNumber.slice( 0, event.currentTarget.maxLength ),
+										phoneCountryCode: nextPhone.countryCode,
+									} );
+								} }
 								data={ {
-									phoneNumber: formData.phoneNumber,
-									countryCode: formData.phoneCountryCode || countryCode,
+									...phone,
 									countryNumericCode: '',
 								} }
-								onChange={ ( value ) =>
+								onChange={ ( value ) => {
+									const nextPhone = getNationalPhoneNumber(
+										value.phoneNumber ?? phone.phoneNumber,
+										value.countryCode ?? phone.countryCode
+									);
 									onChange( {
-										phoneNumber: value.phoneNumber,
-										phoneCountryCode: value.countryCode,
-									} )
-								}
+										phoneNumber: nextPhone.phoneNumber,
+										phoneCountryCode: nextPhone.countryCode,
+									} );
+								} }
 								customValidity={
 									errors.phone ? { type: 'invalid', message: errors.phone } : undefined
 								}

@@ -122,7 +122,7 @@ export default function useLeadMatchingSaveState( {
 				lastSavedSnapshotRef.current = savedSnapshot;
 				if ( isMountedRef.current ) {
 					setLastSavedSnapshot( savedSnapshot );
-					setSaveStatus( 'saved' );
+					setSaveStatus( response.ignored_contact_fields?.length ? 'unsaved' : 'saved' );
 				}
 			} else if ( isMountedRef.current ) {
 				setSaveStatus( 'error' );
