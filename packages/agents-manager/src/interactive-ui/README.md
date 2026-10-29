@@ -277,10 +277,11 @@ return {
 
 ## Try it
 
-On production, use your Automattician account on the proxy. On your sandbox, any account works, so
-you can use a test account. Then ask the agent for a small form, such as "Use
-wpcom/render-interactive-ui for a feedback form with a TextField and a Submit Button." To see what
-everyone else sees, turn the proxy off.
+On production, use your Automattician account on the proxy, and turn the proxy off to see what
+everyone else sees. On your sandbox, any account gets it, so you can use a test account, and
+`add_filter( 'wpcom_interactive_ui_enabled', '__return_false' );` in `0-sandbox.php` shows the old
+UI. Then ask the agent for a small form, such as "Use wpcom/render-interactive-ui for a feedback
+form with a TextField and a Submit Button."
 
 If the old UI shows, check that you're on the proxy or your sandbox, that the chat has a site and
 that the chat request's `metadata.a2uiRendererCapabilities['v1.0'].supportedCatalogIds` lists
