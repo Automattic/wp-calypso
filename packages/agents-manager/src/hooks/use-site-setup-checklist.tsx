@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { subscribeToDispatchedPromptSources } from '../utils/prompt-source';
 import {
@@ -79,13 +79,13 @@ export default function useSiteSetupChecklist( {
 	const siteId = getSiteSetupSiteId();
 	const isEnabled = enabled && siteId !== null && isSiteSetupChecklistEnabled();
 
+	const queryClient = useQueryClient();
+	const queryKey = useMemo( () => [ ...SITE_SETUP_TASKS_QUERY_KEY, siteId ], [ siteId ] );
 	const { data, dataUpdatedAt, isLoading, refetch } = useQuery( {
-		queryKey: [ ...SITE_SETUP_TASKS_QUERY_KEY, siteId ],
+		queryKey,
 		queryFn: () => fetchSiteSetupTasks( siteId as number ),
 		enabled: isEnabled,
 	} );
-	const dataUpdatedAtRef = useRef( dataUpdatedAt );
-	dataUpdatedAtRef.current = dataUpdatedAt;
 
 	// Tasks picked (started or resumed) during the running turn, shown in
 	// progress whatever a read says meanwhile: the pinned list folds down to the
@@ -95,9 +95,9 @@ export default function useSiteSetupChecklist( {
 	const [ heldIds, setHeldIds ] = useState( NO_IDS );
 	const heldIdsRef = useRef( heldIds );
 	heldIdsRef.current = heldIds;
-	// Starts whose read is still owed, with the data timestamp their write saw once
-	// settled (undefined while the write runs). A refetch promise can resolve
-	// cancelled, so only newer data counts as the read.
+	// Starts whose read is still owed, with the cache's data timestamp when their
+	// write settled (undefined while the write runs). A refetch promise can resolve
+	// cancelled, so only data newer than that counts as the read.
 	const pendingStartsRef = useRef( new Map< string, number | undefined >() );
 	const isProcessingRef = useRef( isProcessing );
 	isProcessingRef.current = isProcessing;
@@ -147,10 +147,15 @@ export default function useSiteSetupChecklist( {
 				console.error( '[AgentsManager] Error recording the Site Setup task as started:', error );
 			}
 
-			pendingStartsRef.current.set( taskId, dataUpdatedAtRef.current );
+			// The cache, not the last render: a read that landed while the write ran
+			// may not have rendered yet, and must not count as the read after it.
+			pendingStartsRef.current.set(
+				taskId,
+				queryClient.getQueryState( queryKey )?.dataUpdatedAt ?? 0
+			);
 			refetch();
 		},
-		[ siteId, refetch ]
+		[ siteId, queryClient, queryKey, refetch ]
 	);
 
 	// Data newer than a settled write is the read it was owed.

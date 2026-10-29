@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+let mockCacheUpdatedAt = 1;
 jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
+	useQueryClient: () => ( { getQueryState: () => ( { dataUpdatedAt: mockCacheUpdatedAt } ) } ),
 } ) );
 
 const mockIsSiteSetupChecklistEnabled = jest.fn( () => true );
@@ -81,6 +83,7 @@ const NONE = {
 describe( 'useSiteSetupChecklist', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockCacheUpdatedAt = 1;
 		mockIsSiteSetupChecklistEnabled.mockReturnValue( true );
 		mockGetSiteSetupSiteId.mockReturnValue( 123 );
 		mockUseQuery.mockReturnValue( {
@@ -318,6 +321,42 @@ describe( 'useSiteSetupChecklist', () => {
 			isLoading: false,
 			refetch: mockRefetch,
 			dataUpdatedAt: 2,
+		} );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( DETAILS.tasks[ 0 ].status );
+	} );
+
+	it( 'does not count a read that reached the cache before the write settled, even if it renders after', async () => {
+		let settleStart: ( value: unknown ) => void = () => {};
+		mockStartSiteSetupTask.mockReturnValue(
+			new Promise( ( resolve ) => ( settleStart = resolve ) )
+		);
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+		dispatchPick( 'design' );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+
+		// A pre-write read is in the cache (2) but not rendered (1) when the write settles.
+		mockCacheUpdatedAt = 2;
+		await act( async () => {
+			settleStart( { task_id: 'design', status: 'done', summary: '' } );
+		} );
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 2,
+		} );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 3,
 		} );
 		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
 		expect( result.current.items[ 0 ].status ).toBe( DETAILS.tasks[ 0 ].status );
