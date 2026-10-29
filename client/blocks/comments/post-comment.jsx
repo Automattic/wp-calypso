@@ -229,13 +229,10 @@ class PostComment extends PureComponent {
 		}
 
 		if ( this.canCollapse() && this.state.isCollapsed ) {
-			const repliesCount = this.getAllChildrenIds( commentId ).length;
+			const count = this.getAllChildrenIds( commentId ).length;
 			return (
 				<p className="comments__collapsed-replies">
-					{ translate( '%(count)d reply', '%(count)d replies', {
-						count: repliesCount,
-						args: { count: repliesCount },
-					} ) }
+					{ translate( '%(count)d reply', '%(count)d replies', { count, args: { count } } ) }
 				</p>
 			);
 		}
@@ -477,7 +474,6 @@ class PostComment extends PureComponent {
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 			'is-highlighted': isHighlighted,
-			'is-collapsed': canCollapse && isCollapsed,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */

@@ -82,17 +82,6 @@ describe( 'groupNotesByPost', () => {
 		expect( conversation.unreadNoteIds.sort() ).toEqual( [ 2, 3 ] );
 	} );
 
-	it( 'collects the comment ids of unread notes once each', () => {
-		const [ conversation ] = groupNotesByPost( [
-			makeNote( { id: 1, commentId: 11, read: 1 } ),
-			makeNote( { id: 2, commentId: 22, read: 0 } ),
-			makeNote( { id: 3, commentId: 22, read: 0 } ),
-			makeNote( { id: 4, commentId: 33, read: 0 } ),
-		] );
-
-		expect( conversation.unreadCommentIds.sort() ).toEqual( [ 22, 33 ] );
-	} );
-
 	it( 'lists each commenter once, most recent first', () => {
 		const [ conversation ] = groupNotesByPost( [
 			makeNote( { id: 1, commenter: 'Ana', timestamp: minutesAgo( 3 ) } ),

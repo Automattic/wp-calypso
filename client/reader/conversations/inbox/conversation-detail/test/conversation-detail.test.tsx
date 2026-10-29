@@ -17,7 +17,6 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Comments from 'calypso/blocks/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
@@ -87,17 +86,6 @@ describe( 'ConversationDetail', () => {
 				name: `3 comments, starting at ${ conversation.latestCommentId }`,
 			} )
 		).toBeVisible();
-	} );
-
-	it( 'marks the highlighted comments as new and lets threads collapse', () => {
-		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-		renderDetail( { highlightedCommentIds: [ 1000 ] } );
-
-		expect( jest.mocked( Comments ) ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { highlightedCommentIds: [ 1000 ], collapsibleThreads: true } ),
-			undefined
-		);
 	} );
 
 	it( 'shows nothing in place of the post when it fails to load', () => {

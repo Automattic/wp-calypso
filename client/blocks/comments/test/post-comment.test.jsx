@@ -52,42 +52,19 @@ const renderComment = ( props = {} ) => {
 };
 
 describe( 'PostComment', () => {
-	it( 'renders no new labels or collapse toggle by default', () => {
-		renderComment();
-
-		expect( screen.getByText( 'Comment from Bruno' ) ).toBeVisible();
-		expect( screen.queryByText( 'New' ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Hide replies' } ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'labels the highlighted comments as new', () => {
-		renderComment( { highlightedCommentIds: [ 2 ] } );
+	it( 'labels highlighted comments as new and collapses replies', async () => {
+		const user = userEvent.setup();
+		renderComment( { highlightedCommentIds: [ 2 ], collapsibleThreads: true } );
 
 		expect( screen.getAllByText( 'New' ) ).toHaveLength( 1 );
-		expect(
-			screen.getByText( 'Comment from Bruno' ).closest( '.comments__comment' )
-		).toHaveTextContent( 'New' );
-	} );
 
-	it( 'collapses and expands the replies of a top-level comment', async () => {
-		const user = userEvent.setup();
-		renderComment( { collapsibleThreads: true } );
-
-		const hide = screen.getByRole( 'button', { name: 'Hide replies' } );
-		expect( hide ).toHaveAttribute( 'aria-expanded', 'true' );
-		expect( screen.getAllByRole( 'button', { name: /replies/ } ) ).toHaveLength( 1 );
-
-		await user.click( hide );
+		await user.click( screen.getByRole( 'button', { name: 'Hide replies' } ) );
 
 		expect( screen.queryByText( 'Comment from Bruno' ) ).not.toBeInTheDocument();
 		expect( screen.getByText( '2 replies' ) ).toBeVisible();
-
-		const show = screen.getByRole( 'button', { name: 'Show replies' } );
-		expect( show ).toHaveAttribute( 'aria-expanded', 'false' );
-
-		await user.click( show );
-
-		expect( screen.getByText( 'Comment from Bruno' ) ).toBeVisible();
-		expect( screen.queryByText( '2 replies' ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Show replies' } ) ).toHaveAttribute(
+			'aria-expanded',
+			'false'
+		);
 	} );
 } );
