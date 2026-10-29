@@ -67,6 +67,8 @@ export interface NewUserResponse {
 	success: boolean;
 	bearer_token?: string;
 	username?: string;
+	user_id?: number;
+	signup_sandbox_user_id?: number;
 	blog_details?: {
 		blogid?: string;
 	};

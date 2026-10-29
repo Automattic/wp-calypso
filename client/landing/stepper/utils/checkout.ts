@@ -1,6 +1,6 @@
 import { Visibility } from '@automattic/data-stores';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { translate } from 'i18n-calypso';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
@@ -27,7 +27,7 @@ export const goToUnifiedCheckout = ( {
 } ) => {
 	const siteParams = {
 		blog_name: '',
-		blog_title: translate( 'My Site' ),
+		blog_title: __( 'My Site' ),
 		public: Visibility.PublicNotIndexed,
 		options: {
 			site_creation_flow: flowName,

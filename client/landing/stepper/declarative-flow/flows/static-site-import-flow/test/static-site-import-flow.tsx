@@ -14,6 +14,7 @@ import {
 	renderFlow,
 	runFlowNavigation,
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -26,6 +27,7 @@ jest.mock( 'calypso/landing/stepper/utils/checkout' );
 jest.mock( '@automattic/data-stores/src/user/selectors' );
 jest.mock( 'calypso/state/current-user/selectors' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site' );
+jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale' );
 jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
@@ -71,6 +73,7 @@ describe( 'Static site import flow', () => {
 		jest.mocked( isCurrentUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( useSite ).mockReturnValue( undefined );
+		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
 		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: true, isFetching: false } );
 	} );
 
@@ -127,15 +130,21 @@ describe( 'Static site import flow', () => {
 			);
 		} );
 
-		it( 'sends old reading links without a destination to plans before authentication', () => {
-			window.location.pathname = readingPath;
-			window.location.search = '?from=example.com&platform=wix';
+		it.each( [
+			[ readingPath, plansPath ],
+			[ `${ readingPath }/es`, `${ plansPath }/es` ],
+		] )(
+			'sends reading links without a destination to plans before authentication (%s)',
+			( path, expectedPlansPath ) => {
+				window.location.pathname = path;
+				window.location.search = '?from=example.com&platform=wix';
 
-			expect( staticSiteImportFlow.initialize() ).toBe( false );
-			expect( window.location.replace ).toHaveBeenCalledWith(
-				`${ plansPath }?from=example.com&platform=wix`
-			);
-		} );
+				expect( staticSiteImportFlow.initialize() ).toBe( false );
+				expect( window.location.replace ).toHaveBeenCalledWith(
+					`${ expectedPlansPath }?from=example.com&platform=wix`
+				);
+			}
+		);
 	} );
 
 	describe( 'authentication', () => {
@@ -257,7 +266,12 @@ describe( 'Static site import flow', () => {
 						plan: 'business-bundle',
 						userIsLoggedIn,
 						siteIntent: 'site-migration',
-						extraQueryParams: { coupon: 'TEST', ref: 'move', source: 'landing-page' },
+						extraQueryParams: expect.objectContaining( {
+							coupon: 'TEST',
+							ref: 'move',
+							source: 'landing-page',
+							checkoutBackUrl: expect.stringContaining( `${ plansPath }?` ),
+						} ),
 					} )
 				);
 				const { destination, cancelDestination } =
@@ -270,6 +284,24 @@ describe( 'Static site import flow', () => {
 				expect( parseUrl( cancelDestination ) ).toEqual( { path: plansPath, query } );
 			}
 		);
+
+		it( 'preserves the selected locale in the checkout return paths', () => {
+			jest.mocked( useFlowLocale ).mockReturnValue( 'es' );
+			const query = { ...SOURCE, coupon: 'TEST' };
+			runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN, query } );
+
+			const { destination, cancelDestination, extraQueryParams } =
+				jest.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
+			expect( parseUrl( destination ).path ).toBe( `${ readingPath }/es` );
+			expect( parseUrl( cancelDestination ) ).toEqual( {
+				path: `${ plansPath }/es`,
+				query,
+			} );
+
+			const checkoutBackUrl = new URL( extraQueryParams?.checkoutBackUrl ?? '' );
+			expect( checkoutBackUrl.pathname ).toBe( `${ plansPath }/es` );
+			expect( Object.fromEntries( checkoutBackUrl.searchParams ) ).toEqual( query );
+		} );
 
 		it( 'uses site checkout for an existing free destination and returns to start the session', () => {
 			runNavigation( {

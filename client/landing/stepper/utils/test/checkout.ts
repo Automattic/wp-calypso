@@ -69,10 +69,17 @@ describe( 'goToUnifiedCheckout', () => {
 		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( options.flowName );
 	} );
 
-	it( 'preserves campaign and coupon parameters', () => {
+	it( 'preserves campaign, coupon, and back URL parameters', () => {
+		const checkoutBackUrl =
+			'https://wordpress.com/setup/static-site-import/plans?from=source.example.com&platform=wix';
 		goToUnifiedCheckout( {
 			...options,
-			extraQueryParams: { coupon: 'PROMO', ref: 'migration', source: 'campaign' },
+			extraQueryParams: {
+				coupon: 'PROMO',
+				ref: 'migration',
+				source: 'campaign',
+				checkoutBackUrl,
+			},
 		} );
 
 		const url = new URL( assign.mock.calls[ 0 ][ 0 ], 'https://example.com' );
@@ -80,6 +87,7 @@ describe( 'goToUnifiedCheckout', () => {
 			coupon: 'PROMO',
 			ref: 'migration',
 			source: 'campaign',
+			checkoutBackUrl,
 		} );
 	} );
 } );

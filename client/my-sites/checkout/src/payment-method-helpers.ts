@@ -7,6 +7,7 @@ import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
+import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import { stringifyBody } from 'calypso/state/login/utils';
 import type { NewUserResponse } from '@automattic/api-core';
 
@@ -111,6 +112,11 @@ export async function createAccount( {
 
 		if ( ! response?.success ) {
 			throw new Error( 'Failed to create account' );
+		}
+
+		const userId = response.signup_sandbox_user_id || response.user_id;
+		if ( userId ) {
+			setSignupIsNewUser( userId );
 		}
 
 		createAccountCallback( response );

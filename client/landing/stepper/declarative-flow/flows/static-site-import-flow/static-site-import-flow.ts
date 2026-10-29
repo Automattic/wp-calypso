@@ -2,6 +2,7 @@ import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
 import { useEffect } from 'react';
+import { matchPath } from 'react-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
@@ -9,15 +10,17 @@ import {
 	isPlatformImportable,
 } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/import/helper';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
+import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
-import { addQueryArgs } from 'calypso/lib/url';
+import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { withLocale } from '../../helpers/with-locale';
 import { siteSetupImportListPath } from '../site-migration-flow/paths';
 import { canUseStaticSiteImport } from './helpers';
 import type { OnboardActions } from '@automattic/data-stores';
@@ -48,8 +51,16 @@ function initialize() {
 		return stepsWithRequiredLogin( BASE_STEPS );
 	}
 
-	if ( window.location.pathname.endsWith( `/${ STEPS.STATIC_SITE_IMPORT_READING.slug }` ) ) {
-		window.location.replace( `/setup/${ STATIC_SITE_IMPORT_FLOW }/plans${ search }` );
+	const readingPath = matchPath(
+		`/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }/:lang?`,
+		window.location.pathname
+	);
+	if ( readingPath ) {
+		const plansPath = withLocale(
+			`/setup/${ STATIC_SITE_IMPORT_FLOW }/plans`,
+			readingPath.params.lang ?? ''
+		);
+		window.location.replace( `${ plansPath }${ search }` );
 		return false as const;
 	}
 
@@ -110,6 +121,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 	useStepNavigation( currentStep, navigate: NavigateV2< typeof BASE_STEPS > ) {
 		const flowPath = this.variantSlug ?? this.name;
+		const locale = useFlowLocale();
 		const siteData = useSiteData();
 		const urlQueryParams = useQuery();
 		const hasDestinationSite = Boolean(
@@ -185,7 +197,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					siteId: undefined,
 					siteSlug: undefined,
 				},
-				`/setup/${ flowPath }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`
+				withLocale( `/setup/${ flowPath }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`, locale )
 			);
 
 		useEffect( () => {
@@ -223,7 +235,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 					setPlanCartItem( planCartItem );
 					const cancelDestination = addQueryArgs(
 						Object.fromEntries( urlQueryParams ),
-						`/setup/${ flowPath }/plans`
+						withLocale( `/setup/${ flowPath }/plans`, locale )
 					);
 
 					if ( hasSite( siteId, siteSlug ) ) {
@@ -245,11 +257,14 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						destination: `${ getReadingUrl() }&siteId=:siteId`,
 						cancelDestination,
 						siteIntent: Onboard.SiteIntent.SiteMigration,
-						extraQueryParams: Object.fromEntries(
-							[ 'coupon', 'ref', 'source' ]
-								.filter( ( param ) => urlQueryParams.has( param ) )
-								.map( ( param ) => [ param, urlQueryParams.get( param )! ] )
-						),
+						extraQueryParams: {
+							...Object.fromEntries(
+								[ 'coupon', 'ref', 'source' ]
+									.filter( ( param ) => urlQueryParams.has( param ) )
+									.map( ( param ) => [ param, urlQueryParams.get( param )! ] )
+							),
+							checkoutBackUrl: pathToUrl( cancelDestination ),
+						},
 					} );
 				}
 			}

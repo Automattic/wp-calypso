@@ -6,6 +6,7 @@ import config from '@automattic/calypso-config';
 import nock from 'nock';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
+import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import { createAccount } from '../payment-method-helpers';
 
 jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
@@ -14,6 +15,10 @@ jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
 
 jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
+} ) );
+
+jest.mock( 'calypso/signup/storageUtils', () => ( {
+	setSignupIsNewUser: jest.fn(),
 } ) );
 
 function interceptUsersNew( status = 200, responseBody: object = { success: true } ) {
@@ -36,6 +41,7 @@ const createAccountArgs = {
 
 describe( 'createAccount', () => {
 	beforeEach( () => {
+		( setSignupIsNewUser as jest.Mock ).mockClear();
 		config.enable( 'blackbox' );
 		config.enable( 'blackbox-userless-checkout' );
 		( getBlackboxApiKey as jest.Mock ).mockReset();
@@ -44,6 +50,30 @@ describe( 'createAccount', () => {
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( undefined );
 		delete window.Blackbox;
 		nock.cleanAll();
+	} );
+
+	it( 'marks the newly created account for signup analytics', async () => {
+		interceptUsersNew( 200, { success: true, user_id: 123 } );
+
+		await createAccount( createAccountArgs );
+
+		expect( setSignupIsNewUser ).toHaveBeenCalledWith( 123 );
+	} );
+
+	it( 'uses the sandbox user ID when marking the newly created account', async () => {
+		interceptUsersNew( 200, { success: true, signup_sandbox_user_id: 456 } );
+
+		await createAccount( createAccountArgs );
+
+		expect( setSignupIsNewUser ).toHaveBeenCalledWith( 456 );
+	} );
+
+	it( 'does not mark an account without a user ID', async () => {
+		interceptUsersNew();
+
+		await createAccount( createAccountArgs );
+
+		expect( setSignupIsNewUser ).not.toHaveBeenCalled();
 	} );
 
 	it( 'attaches blackbox_session_id when available', async () => {
