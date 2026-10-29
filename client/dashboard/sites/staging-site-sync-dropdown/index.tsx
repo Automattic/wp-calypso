@@ -124,10 +124,9 @@ export default function StagingSiteSyncDropdown( {
 					iconPosition: 'right',
 					variant: 'secondary',
 					disabled: isSyncing,
-					isBusy: isSyncing,
 				} }
 				icon={ chevronDown }
-				text={ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
+				text={ __( 'Sync' ) }
 				/* DropdownMenu prop types are too strict here. We don't need a label because our button has visible text. */
 				/* We can't pass the button's text to `label` because it causes a tooltip to appear. */
 				label={ null as any } // eslint-disable-line @typescript-eslint/no-explicit-any
