@@ -29,6 +29,7 @@ export type WordPressMigrationSourceConnectionOption = WordPressMigrationSourceC
 	install_url?: string;
 	connect_url?: string;
 	manual_url?: string;
+	connected?: boolean;
 };
 
 export type WordPressMigrationConfiguration = {
