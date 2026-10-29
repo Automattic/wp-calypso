@@ -8,7 +8,8 @@ import {
 } from '@wordpress/components';
 import { Icon, cog, funnel } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
-import { type SortOrder } from './sort-conversations';
+
+export type SortOrder = 'newest_replies' | 'most_active';
 
 interface Props {
 	search: string;
@@ -22,7 +23,6 @@ export function ConversationListToolbar( { search, onSearchChange, sort, onSortC
 
 	const sortChoices: { value: SortOrder; label: string }[] = [
 		{ value: 'newest_replies', label: translate( 'Newest replies' ) },
-		{ value: 'your_last_reply', label: translate( 'Your last reply' ) },
 		{ value: 'most_active', label: translate( 'Most active' ) },
 	];
 

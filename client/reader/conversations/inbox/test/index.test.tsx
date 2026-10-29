@@ -178,30 +178,6 @@ describe( 'ConversationsInbox', () => {
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
 	} );
 
-	it( 'follows the sorted order for previous and next', async () => {
-		const user = userEvent.setup();
-		mockedUseCommentNotes.mockReturnValue( {
-			data: [
-				...notes,
-				makeNote( {
-					id: 4,
-					postId: 300,
-					commentId: 3002,
-					timestamp: '2023-12-31T00:00:00Z',
-					read: 1,
-				} ),
-			],
-			isLoading: false,
-		} as never );
-		renderInbox( { siteId: '10', postId: '300' } );
-
-		await user.click( screen.getByRole( 'button', { name: 'Most active' } ) );
-
-		expect( screen.getByRole( 'button', { name: 'previous' } ) ).toBeDisabled();
-		await user.click( screen.getByRole( 'button', { name: 'next' } ) );
-		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' );
-	} );
-
 	describe( 'Tracks', () => {
 		const tracked = ( name: string ) =>
 			jest

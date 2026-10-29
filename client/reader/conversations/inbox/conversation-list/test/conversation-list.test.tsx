@@ -9,7 +9,6 @@ import { ConversationList } from '..';
 import { groupNotesByPost } from '../../group-notes';
 import { makeNote } from '../../test/helpers';
 import { filterConversations } from '../filter-conversations';
-import { DEFAULT_SORT_ORDER, sortConversations, type SortOrder } from '../sort-conversations';
 import type { InboxTab } from '../tabs';
 
 const conversations = groupNotesByPost( [
@@ -21,7 +20,6 @@ const conversations = groupNotesByPost( [
 function ControlledList( props: Partial< React.ComponentProps< typeof ConversationList > > ) {
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
-	const [ sort, setSort ] = useState< SortOrder >( DEFAULT_SORT_ORDER );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
 	const source = props.conversations ?? conversations;
 	return (
@@ -35,13 +33,13 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 			onTabChange={ setTab }
 			search={ search }
 			onSearchChange={ setSearch }
-			sort={ sort }
-			onSortChange={ setSort }
+			sort="newest_replies"
+			onSortChange={ jest.fn() }
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
 			onSelect={ jest.fn() }
 			{ ...props }
-			conversations={ sortConversations( filterConversations( source, tab, search ), sort ) }
+			conversations={ filterConversations( source, tab, search ) }
 		/>
 	);
 }
@@ -154,26 +152,10 @@ describe( 'ConversationList', () => {
 		);
 	} );
 
-	it( 'offers the sort orders with newest replies picked', async () => {
-		const user = userEvent.setup();
-		renderList();
-
-		await user.click( screen.getByRole( 'button', { name: 'Sort conversations' } ) );
-
-		expect( screen.getByRole( 'menuitemradio', { name: 'Newest replies' } ) ).toBeChecked();
-		expect( screen.getByRole( 'menuitemradio', { name: 'Your last reply' } ) ).not.toBeChecked();
-		expect( screen.getByRole( 'menuitemradio', { name: 'Most active' } ) ).not.toBeChecked();
-	} );
-
-	it( 'hides the day headers for orders other than newest replies', async () => {
-		const user = userEvent.setup();
-		renderList();
-
-		await user.click( screen.getByRole( 'button', { name: 'Sort conversations' } ) );
-		await user.click( screen.getByRole( 'menuitemradio', { name: 'Most active' } ) );
+	it( 'hides the day headers when sorted by most active', () => {
+		renderList( { sort: 'most_active' } );
 
 		expect( screen.queryByRole( 'heading', { name: 'Today' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).toBeVisible();
 	} );
 

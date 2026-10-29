@@ -10,9 +10,8 @@ import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
 import { ConversationListItem, type OpenSource } from './list-item';
-import { type SortOrder } from './sort-conversations';
 import { ConversationListTabs, type InboxTab } from './tabs';
-import { ConversationListToolbar } from './toolbar';
+import { ConversationListToolbar, type SortOrder } from './toolbar';
 import type { Conversation } from '../group-notes';
 
 import './style.scss';

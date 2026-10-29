@@ -12,7 +12,6 @@ export interface Conversation {
 	title: string;
 	excerpt: string;
 	timestamp: number;
-	lastRepliedTimestamp?: number;
 	latestCommentId?: number;
 	commenters: Commenter[];
 	noteIds: number[];
@@ -87,9 +86,6 @@ export function groupNotesByPost( notes: Note[] ): Conversation[] {
 		group.noteIds.push( note.id );
 		if ( ! note.read ) {
 			group.unreadNoteIds.push( note.id );
-		}
-		if ( note.meta?.ids?.reply_comment && ! group.lastRepliedTimestamp ) {
-			group.lastRepliedTimestamp = Date.parse( note.timestamp );
 		}
 
 		const commenter = getCommenter( note );

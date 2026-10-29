@@ -136,31 +136,6 @@ describe( 'groupNotesByPost', () => {
 		expect( conversation.commenters ).toEqual( [] );
 	} );
 
-	it( 'records when the newest note on a comment you replied to arrived', () => {
-		const newest = minutesAgo( 5 );
-		const [ conversation ] = groupNotesByPost( [
-			makeNote( { id: 1, timestamp: minutesAgo( 1 ) } ),
-			makeNote( {
-				id: 2,
-				timestamp: newest,
-				meta: { ids: { site: 10, post: 100, comment: 2000, reply_comment: 2001 } },
-			} ),
-			makeNote( {
-				id: 3,
-				timestamp: minutesAgo( 10 ),
-				meta: { ids: { site: 10, post: 100, comment: 3000, reply_comment: 3001 } },
-			} ),
-		] );
-
-		expect( conversation.lastRepliedTimestamp ).toBe( Date.parse( newest ) );
-	} );
-
-	it( 'leaves the reply time empty when you replied to none of the comments', () => {
-		const [ conversation ] = groupNotesByPost( [ makeNote( { id: 1 } ) ] );
-
-		expect( conversation.lastRepliedTimestamp ).toBeUndefined();
-	} );
-
 	it( 'skips notes without site or post ids', () => {
 		expect( groupNotesByPost( [ makeNote( { id: 1, meta: { ids: { site: 10 } } } ) ] ) ).toEqual(
 			[]

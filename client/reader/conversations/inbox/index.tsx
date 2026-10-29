@@ -12,12 +12,8 @@ import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { filterConversations } from './conversation-list/filter-conversations';
 import { type OpenSource } from './conversation-list/list-item';
-import {
-	DEFAULT_SORT_ORDER,
-	sortConversations,
-	type SortOrder,
-} from './conversation-list/sort-conversations';
 import { INBOX_TABS, type InboxTab } from './conversation-list/tabs';
+import { type SortOrder } from './conversation-list/toolbar';
 import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
 import { useInboxKeyboardShortcuts } from './keyboard-shortcuts/use-inbox-keyboard-shortcuts';
 
@@ -39,14 +35,17 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
-	const [ sort, setSort ] = useState< SortOrder >( DEFAULT_SORT_ORDER );
+	const [ sort, setSort ] = useState< SortOrder >( 'newest_replies' );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
 
 	const conversations = useMemo( () => groupNotesByPost( notes ), [ notes ] );
-	const visible = useMemo(
-		() => sortConversations( filterConversations( conversations, tab, search ), sort ),
-		[ conversations, tab, search, sort ]
-	);
+	const visible = useMemo( () => {
+		const filtered = filterConversations( conversations, tab, search );
+		// The sort is stable, so ties keep the newest-first order.
+		return sort === 'most_active'
+			? [ ...filtered ].sort( ( a, b ) => b.noteIds.length - a.noteIds.length )
+			: filtered;
+	}, [ conversations, tab, search, sort ] );
 	const unreadCount = conversations.reduce(
 		( total, { unreadNoteIds } ) => total + unreadNoteIds.length,
 		0
