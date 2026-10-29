@@ -16,7 +16,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { differenceInCalendarDays } from 'date-fns';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
@@ -60,7 +60,17 @@ import { PurchaseExpiringNotice, shouldShowExpiringNotice } from './purchase-exp
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
-export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
+export function PurchaseNotice( {
+	purchase,
+	expiringNotice,
+}: {
+	purchase: Purchase;
+	/**
+	 * Replaces the default notice for a purchase that will expire because it is
+	 * not set to auto-renew.
+	 */
+	expiringNotice?: ReactNode;
+} ) {
 	const { user } = useAuth();
 	const locale = useLocale();
 	const { recordTracksEvent } = useAnalytics();
@@ -376,11 +386,13 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		return (
 			<>
 				{ cancellationOfferNotice && cancellationOfferNotice }
-				<PurchaseExpiringNotice
-					purchase={ purchase }
-					purchaseAttachedTo={ purchaseAttachedTo }
-					isDomainWithoutSite={ isDomainWithoutSite }
-				/>
+				{ expiringNotice ?? (
+					<PurchaseExpiringNotice
+						purchase={ purchase }
+						purchaseAttachedTo={ purchaseAttachedTo }
+						isDomainWithoutSite={ isDomainWithoutSite }
+					/>
+				) }
 			</>
 		);
 	}
