@@ -3,7 +3,9 @@ import { AKISMET_PRO_500_PRODUCTS, isWpComPlan } from '@automattic/calypso-produ
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
+	A4ALicensesLineItem,
 	canItemBeRemovedFromCart,
+	groupA4ALicenses,
 	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
 	groupBundleLineItems,
@@ -48,7 +50,7 @@ import type {
 	RemoveCouponFromCart,
 	AddProductsToCart,
 } from '@automattic/shopping-cart';
-import type { GroupedCartLineItem } from '@automattic/wpcom-checkout';
+import type { A4AGroupedCartLineItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, RefObject } from 'react';
 
 const WPOrderReviewList = styled.ul`
@@ -128,9 +130,11 @@ export function WPOrderReviewLineItems( {
 
 	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
 	// every product renders on its own line exactly as before.
-	const groupedLineItems: GroupedCartLineItem[] = config.isEnabled( 'domain-bundling' )
+	const bundledLineItems = config.isEnabled( 'domain-bundling' )
 		? groupBundleLineItems( responseCart.products )
 		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+	// An agency's licenses of one product show as one read-only line.
+	const groupedLineItems: A4AGroupedCartLineItem[] = groupA4ALicenses( bundledLineItems );
 
 	// Match the single-item path: the WooCommerce mobile app webview hides the
 	// remove action, so a bundle must not surface one either.
@@ -231,6 +235,34 @@ export function WPOrderReviewLineItems( {
 					);
 				}
 
+				if ( entry.type === 'a4a-licenses' ) {
+					const [ firstLicense ] = entry.products;
+					return (
+						<LineItemWrapper
+							key={ `licenses-${ entry.key }` }
+							product={ firstLicense }
+							licenseGroup={ entry.products }
+							isSummary={ isSummary }
+							removeProductFromCart={ removeProductFromCart }
+							onChangeSelection={ onChangeSelection }
+							createUserAndSiteBeforeTransaction={ createUserAndSiteBeforeTransaction }
+							responseCart={ responseCart }
+							isPwpoUser={ isPwpoUser }
+							hasPartnerCoupon={ hasPartnerCoupon }
+							isDisabled={ isDisabled }
+							initialVariantTerm={ undefined }
+							toggleVariantSelector={ handleVariantToggle }
+							variantOpenId={ variantOpenId }
+							isAkPro500Cart={ false }
+							setForceShowAkQuantityDropdown={ setForceShowAkQuantityDropdown }
+							onChangeAkProQuantity={ changeAkismetPro500CartQuantity }
+							toggleAkQuantityDropdown={ handleAkQuantityToggle }
+							akQuantityOpenId={ akQuantityOpenId }
+							isRenewalPricingExperiment={ false }
+						/>
+					);
+				}
+
 				const { product } = entry;
 				return (
 					<LineItemWrapper
@@ -325,8 +357,11 @@ function LineItemWrapper( {
 	toggleAkQuantityDropdown,
 	akQuantityOpenId,
 	isRenewalPricingExperiment,
+	licenseGroup,
 }: {
 	product: ResponseCartProduct;
+	/** An agency's licenses of this product, shown as this one line. */
+	licenseGroup?: ResponseCartProduct[];
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	onChangeSelection?: OnChangeItemVariant;
@@ -459,6 +494,35 @@ function LineItemWrapper( {
 
 	const firstVariant = variants[ 0 ];
 	const compareToPrice = firstVariant?.priceBeforeDiscounts / firstVariant?.termIntervalInMonths;
+
+	if ( licenseGroup ) {
+		return (
+			<WPOrderReviewListItem>
+				<A4ALicensesLineItem products={ licenseGroup }>
+					{ finalShouldShowVariantSelector && (
+						<DropdownWrapper>
+							<div ref={ variantDropdownRef }>
+								<ItemVariationPicker
+									id={ product.uuid }
+									selectedItem={ product }
+									// The term applies to every license on the line.
+									onChangeItemVariant={ ( _uuid, productSlug, productId, volume ) =>
+										licenseGroup.forEach( ( license ) =>
+											onChangeSelection?.( license.uuid, productSlug, productId, volume )
+										)
+									}
+									isDisabled={ isDisabled }
+									variants={ variants }
+									toggle={ toggleVariantSelector }
+									isOpen={ isVariantDropdownOpen }
+								/>
+							</div>
+						</DropdownWrapper>
+					) }
+				</A4ALicensesLineItem>
+			</WPOrderReviewListItem>
+		);
+	}
 
 	return (
 		<WPOrderReviewListItem key={ product.uuid }>
