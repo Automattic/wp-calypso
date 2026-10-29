@@ -11,6 +11,7 @@ import {
 	showUpsellIfNoScanSelfServeFeature,
 	showUnavailableForVaultPressSites,
 	showUnavailableForMultisites,
+	showProtectMovedNotice,
 	scan,
 	scanHistory,
 } from 'calypso/my-sites/scan/controller';
@@ -52,6 +53,7 @@ export default function () {
 		showJetpackIsDisconnected,
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
+		showProtectMovedNotice,
 		makeLayout,
 		clientRender
 	);
@@ -70,6 +72,7 @@ export default function () {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled( { allowOnAtomic: true } ),
+		showProtectMovedNotice,
 		makeLayout,
 		clientRender
 	);
@@ -88,6 +91,7 @@ export default function () {
 		showUnavailableForMultisites,
 		showNotAuthorizedForNonAdmins,
 		notFoundIfNotEnabled(),
+		showProtectMovedNotice,
 		makeLayout,
 		clientRender
 	);
