@@ -783,7 +783,6 @@ const PlansFeaturesMain = ( {
 		showDifferentiatorHeader,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		isExperimentVariant,
 	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
 	const {
@@ -1077,7 +1076,6 @@ const PlansFeaturesMain = ( {
 		isInSignup,
 		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
@@ -1110,7 +1108,6 @@ const PlansFeaturesMain = ( {
 		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,

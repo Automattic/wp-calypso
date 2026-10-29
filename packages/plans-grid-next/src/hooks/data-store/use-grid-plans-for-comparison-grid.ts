@@ -30,7 +30,6 @@ const useGridPlansForComparisonGrid = ( {
 	reflectStorageSelectionInPlanPrices,
 	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
-	useFocusedNewCopyTaglines,
 	usePlansGridRedesignNewDescription,
 	isExperimentVariant,
 	showBillingDescriptionForIncreasedRenewalPrice,
@@ -52,7 +51,6 @@ const useGridPlansForComparisonGrid = ( {
 		useFreeTrialPlanSlugs,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 	} );

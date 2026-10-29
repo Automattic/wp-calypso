@@ -58,10 +58,6 @@ export interface UseGridPlansParams {
 	 */
 	showPricingDifferentiationFeaturePills?: boolean;
 	/**
-	 * When true, use the focused_new_copy taglines for plan headers.
-	 */
-	useFocusedNewCopyTaglines?: boolean;
-	/**
 	 * When true, use the pricing grid redesign taglines for plan headers.
 	 */
 	usePlansGridRedesignNewDescription?: boolean;

@@ -332,7 +332,6 @@ const useGridPlans: UseGridPlansType = ( {
 	taglineOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useFocusedNewCopyTaglines,
 	usePlansGridRedesignNewDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
 } ) => {
@@ -459,7 +458,7 @@ const useGridPlans: UseGridPlansType = ( {
 		 * the wpcom group that overrides getPlanTagline -- P2 Free, which is TYPE_FREE but
 		 * GROUP_P2, is the live case.
 		 */
-		if ( useFocusedNewCopyTaglines && ! hasIntentSpecificTagline && isWpComPlan( planSlug ) ) {
+		if ( ! hasIntentSpecificTagline && isWpComPlan( planSlug ) ) {
 			const existingTagline = tagline;
 			if ( isFreePlan( planSlug ) ) {
 				tagline =

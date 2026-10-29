@@ -30,7 +30,6 @@ const useGridPlansForFeaturesGrid = ( {
 	useVar42NoAiFeatures,
 	usePlansGridRedesignFeatures,
 	showPricingDifferentiationFeaturePills,
-	useFocusedNewCopyTaglines,
 	usePlansGridRedesignNewDescription,
 	isExperimentVariant,
 	showBillingDescriptionForIncreasedRenewalPrice,
@@ -56,7 +55,6 @@ const useGridPlansForFeaturesGrid = ( {
 		taglineOverrides,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
