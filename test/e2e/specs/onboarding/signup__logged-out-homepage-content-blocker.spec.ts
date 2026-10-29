@@ -9,7 +9,7 @@ import {
 } from '@automattic/calypso-e2e';
 import { FiltersEngine, Request, fromPlaywrightDetails } from '@ghostery/adblocker-playwright';
 import { expect, tags, test } from '../../lib/pw-base';
-import { apiCloseAccount, apiDeleteSite, swapBaseUrl } from '../shared';
+import { apiCloseAccount, apiDeleteSite, recordAccountLeakMarker, swapBaseUrl } from '../shared';
 import type { APIRequestContext } from '@playwright/test';
 
 /**
@@ -48,9 +48,14 @@ const CALYPSO_STACK_FRAME = /\/calypso\/[^\s)]*\.js/;
  */
 const FAILED_SCRIPT_LOAD = /^Failed to load script "([^"]+)"/;
 
-function isBlockedScriptLoad( error: string, blockedUrls: string[], pageUrl: string ): boolean {
-	const src = FAILED_SCRIPT_LOAD.exec( error )?.[ 1 ];
-	return !! src && blockedUrls.includes( new URL( src, pageUrl ).href );
+interface PageError {
+	message: string;
+	pageUrl: string;
+}
+
+function isBlockedScriptLoad( error: PageError, blockedUrls: string[] ): boolean {
+	const src = FAILED_SCRIPT_LOAD.exec( error.message )?.[ 1 ];
+	return !! src && blockedUrls.includes( new URL( src, error.pageUrl ).href );
 }
 
 /**
@@ -130,11 +135,19 @@ test.describe(
 	() => {
 		const planName = 'Personal';
 		const testUser = DataHelper.getNewTestUser();
+		let signupAttempted = false;
 		let newUserDetails: NewUserResponse | undefined;
 		let newSiteDetails: NewSiteResponse | undefined;
 
 		test.afterAll( 'Close the account the test created', async function () {
 			if ( ! newUserDetails ) {
+				if ( signupAttempted ) {
+					recordAccountLeakMarker( {
+						username: testUser.username,
+						email: testUser.email,
+						error: 'Signup did not return account details; account creation status is unknown.',
+					} );
+				}
 				return;
 			}
 			const restAPIClient = new RestAPIClient(
@@ -170,7 +183,7 @@ test.describe(
 
 			const loggedOutHomePage = new LoggedOutHomePage( page );
 			const blockedUrls: string[] = [];
-			const pageErrors: string[] = [];
+			const pageErrors: PageError[] = [];
 
 			await test.step( 'Given my browser blocks requests the way Brave and uBlock Origin do', async function () {
 				const [ blocker, servedCommit ] = await Promise.all( [
@@ -227,8 +240,9 @@ test.describe(
 			await test.step( 'And I click the Get started button', async function () {
 				// Errors on the marketing homepage are not this check's concern; the signup journey's are.
 				page.on( 'pageerror', ( error ) => {
-					if ( SIGNUP_JOURNEY_PATH.test( page.url() ) ) {
-						pageErrors.push( `${ error.message }\n${ error.stack ?? '' }` );
+					const pageUrl = page.url();
+					if ( SIGNUP_JOURNEY_PATH.test( pageUrl ) ) {
+						pageErrors.push( { message: `${ error.message }\n${ error.stack ?? '' }`, pageUrl } );
 					}
 				} );
 
@@ -266,6 +280,7 @@ test.describe(
 			} );
 
 			await test.step( 'When I sign up with my email address', async function () {
+				signupAttempted = true;
 				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
 			} );
 
@@ -301,14 +316,20 @@ test.describe(
 			} );
 
 			await test.step( 'And Calypso raised no uncaught errors during signup', async function () {
-				await testInfo.attach( 'page-errors.txt', { body: pageErrors.join( '\n\n' ) } );
+				await testInfo.attach( 'page-errors.txt', {
+					body: pageErrors
+						.map( ( error ) => `${ error.pageUrl }\n${ error.message }` )
+						.join( '\n\n' ),
+				} );
 				// Third-party scripts throw on production for reasons unrelated to blocking.
 				expect(
-					pageErrors.filter(
-						( error ) =>
-							CALYPSO_STACK_FRAME.test( error ) &&
-							! isBlockedScriptLoad( error, blockedUrls, page.url() )
-					)
+					pageErrors
+						.filter(
+							( error ) =>
+								CALYPSO_STACK_FRAME.test( error.message ) &&
+								! isBlockedScriptLoad( error, blockedUrls )
+						)
+						.map( ( error ) => error.message )
 				).toEqual( [] );
 			} );
 		} );
