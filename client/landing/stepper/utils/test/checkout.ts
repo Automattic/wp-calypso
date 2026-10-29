@@ -27,7 +27,7 @@ describe( 'goToUnifiedCheckout', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
 			configurable: true,
-			value: { ...originalLocation, assign },
+			value: { ...originalLocation, assign, search: '' },
 		} );
 	} );
 
@@ -38,6 +38,7 @@ describe( 'goToUnifiedCheckout', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.localStorage.clear();
+		window.location.search = '';
 	} );
 
 	it.each( [ false, true ] )(
@@ -51,6 +52,10 @@ describe( 'goToUnifiedCheckout', () => {
 			expect( url.searchParams.get( 'flow' ) ).toBe( options.flowName );
 			expect( url.searchParams.get( 'redirect_to' ) ).toBe( options.destination );
 			expect( url.searchParams.get( 'cancel_to' ) ).toBe( options.cancelDestination );
+			expect( new URL( url.searchParams.get( 'checkoutBackUrl' ) ?? '' ) ).toMatchObject( {
+				pathname: '/setup/static-site-import/plans',
+				search: '?from=source.example.com&platform=wix',
+			} );
 			expect( clearSignupCompleteSiteID ).toHaveBeenCalledTimes( 1 );
 		}
 	);
@@ -74,27 +79,16 @@ describe( 'goToUnifiedCheckout', () => {
 		expect( setSignupCompleteFlowName ).toHaveBeenCalledWith( options.flowName );
 	} );
 
-	it( 'preserves campaign, coupon, and back URL parameters', () => {
-		const checkoutBackUrl =
-			'https://wordpress.com/setup/static-site-import/plans?from=source.example.com&platform=wix';
-		goToUnifiedCheckout( {
-			...options,
-			extraQueryParams: {
-				coupon: 'PROMO',
-				ref: 'migration',
-				source: 'campaign',
-				lang: 'es',
-				checkoutBackUrl,
-			},
-		} );
+	it( 'carries campaign and coupon parameters over from the current page', () => {
+		window.location.search = '?from=source.example.com&coupon=PROMO&ref=migration&source=campaign';
+		goToUnifiedCheckout( options );
 
 		const url = new URL( assign.mock.calls[ 0 ][ 0 ], 'https://example.com' );
 		expect( Object.fromEntries( url.searchParams ) ).toMatchObject( {
 			coupon: 'PROMO',
 			ref: 'migration',
 			source: 'campaign',
-			lang: 'es',
-			checkoutBackUrl,
 		} );
+		expect( url.searchParams.has( 'from' ) ).toBe( false );
 	} );
 } );

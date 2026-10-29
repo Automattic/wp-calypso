@@ -3,8 +3,7 @@ import { OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
 	ONBOARDING_FLOW,
-	SITE_MIGRATION_FLOW,
-	STATIC_SITE_IMPORT_FLOW,
+	isNewSiteMigrationFlow,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
@@ -104,8 +103,7 @@ const PlansStepAdaptor: StepType< {
 	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const query = useQuery();
-	const isMigrationFlow =
-		props.flow === SITE_MIGRATION_FLOW || props.flow === STATIC_SITE_IMPORT_FLOW;
+	const isMigrationFlow = isNewSiteMigrationFlow( props.flow );
 	const hasMigrationDestination = !! ( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
 	const resolvedSiteSlug = useSiteSlug();
 	const siteSlug = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSiteSlug;

@@ -1,18 +1,10 @@
-import { STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import debugFactory from 'debug';
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
-import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import {
 	mergeDomainMappingsIntoDomains,
 	removeFailedPurchases,
 } from 'calypso/lib/analytics/utils/receipt-item-details';
-import {
-	clearSignupCompleteSiteID,
-	getSignupCompleteFlowName,
-	getSignupCompleteSiteID,
-	getSignupIsNewUserAndClear,
-} from 'calypso/signup/storageUtils';
 import { recordCompositeCheckoutErrorDuringAnalytics } from './analytics';
 import type { Receipt } from '@automattic/api-core';
 
@@ -26,11 +18,6 @@ const MAX_RECORDED_RECEIPTS = 20;
  * the caller continue (eg: by redirecting away from the page).
  */
 const ANALYTICS_TIMEOUT_MS = 3000;
-
-interface SignupContext {
-	flow?: string;
-	userId?: number | null;
-}
 
 function getRecordedReceiptIds(): number[] {
 	try {
@@ -63,10 +50,7 @@ function markReceiptRecorded( receiptId: number ): void {
  * Resolves when the analytics have been sent or after a timeout, whichever
  * comes first. It never rejects.
  */
-export async function recordCompletedPurchaseAnalytics(
-	fullReceipt: Receipt,
-	signupContext: SignupContext = {}
-): Promise< void > {
+export async function recordCompletedPurchaseAnalytics( fullReceipt: Receipt ): Promise< void > {
 	const receipt = removeFailedPurchases( mergeDomainMappingsIntoDomains( fullReceipt ) );
 	if ( getRecordedReceiptIds().includes( receipt.id ) ) {
 		debug( 'receipt already recorded', receipt.id );
@@ -76,7 +60,6 @@ export async function recordCompletedPurchaseAnalytics(
 	debug( 'recording purchase for receipt', receipt.id );
 
 	recordDomainBundlePurchasedEvents( receipt );
-	recordStaticSiteImportSignup( receipt, signupContext );
 
 	const purchaseRecorded = recordPurchase( receipt ).catch( ( error ) => {
 		// eslint-disable-next-line no-console
@@ -88,46 +71,6 @@ export async function recordCompletedPurchaseAnalytics(
 	} );
 	const timeout = new Promise< void >( ( resolve ) => setTimeout( resolve, ANALYTICS_TIMEOUT_MS ) );
 	await Promise.race( [ purchaseRecorded, timeout ] );
-}
-
-function recordStaticSiteImportSignup( receipt: Receipt, { flow, userId }: SignupContext ) {
-	if ( flow !== STATIC_SITE_IMPORT_FLOW ) {
-		return;
-	}
-	const plan = receipt.items.find( ( item ) => item.is_plan && item.type === 'new purchase' );
-	if ( ! plan?.site_id ) {
-		return;
-	}
-	const isCreatedSite =
-		getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
-		Number( getSignupCompleteSiteID() ) === plan.site_id;
-	if ( receipt.checkout_type !== 'unified' && ! isCreatedSite ) {
-		return;
-	}
-
-	recordSignupComplete(
-		{
-			flow,
-			siteId: plan.site_id,
-			isNewUser: Boolean( getSignupIsNewUserAndClear( userId ) ),
-			isBlankCanvas: undefined,
-			hasCartItems: true,
-			planProductSlug: plan.wpcom_product_slug,
-			domainProductSlug: undefined,
-			theme: undefined,
-			intent: flow,
-			startingPoint: flow,
-			isTransfer: undefined,
-			isMapping: undefined,
-			signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
-			framework: 'stepper',
-			goals: undefined,
-		},
-		true
-	);
-	if ( isCreatedSite ) {
-		clearSignupCompleteSiteID();
-	}
 }
 
 /**

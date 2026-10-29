@@ -1,6 +1,7 @@
 import { Visibility } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { pathToUrl } from 'calypso/lib/url';
 import {
 	clearSignupCompleteSiteID,
 	setSignupCompleteSlug,
@@ -16,7 +17,6 @@ export const goToUnifiedCheckout = ( {
 	destination,
 	cancelDestination,
 	siteIntent,
-	extraQueryParams = {},
 }: {
 	flowName: string;
 	plan: string;
@@ -24,7 +24,6 @@ export const goToUnifiedCheckout = ( {
 	destination: string;
 	cancelDestination: string;
 	siteIntent?: string;
-	extraQueryParams?: Record< string, string >;
 } ) => {
 	const siteParams = {
 		blog_name: '',
@@ -49,12 +48,19 @@ export const goToUnifiedCheckout = ( {
 	setSignupCompleteFlowName( flowName );
 	persistSignupDestination( destination );
 
+	const currentQuery = new URLSearchParams( window.location.search );
 	window.location.assign(
 		addQueryArgs( `/checkout/unified/${ encodeURIComponent( plan ) }`, {
-			...extraQueryParams,
+			...Object.fromEntries(
+				[ 'coupon', 'ref', 'source' ]
+					.filter( ( param ) => currentQuery.has( param ) )
+					.map( ( param ) => [ param, currentQuery.get( param ) ] )
+			),
 			flow: flowName,
 			redirect_to: destination,
 			cancel_to: cancelDestination,
+			// Once checkout has created the account, cancelling ignores cancel_to.
+			checkoutBackUrl: pathToUrl( cancelDestination ),
 			...( ! userIsLoggedIn && { signup: 1 } ),
 		} )
 	);

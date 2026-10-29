@@ -60,56 +60,37 @@ describe( 'createAccount', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'marks the newly created account for signup analytics', async () => {
-		interceptUsersNew( 200, { success: true, user_id: 123 } );
+	it.each( [
+		{ response: { user_id: 123 }, newUserId: 123 },
+		{ response: { signup_sandbox_user_id: 456 }, newUserId: 456 },
+		{ response: {}, newUserId: undefined },
+	] )( 'marks the new account for signup analytics: %j', async ( { response, newUserId } ) => {
+		interceptUsersNew( 200, { success: true, ...response } );
 
 		await createAccount( createAccountArgs );
 
-		expect( setSignupIsNewUser ).toHaveBeenCalledWith( 123 );
+		expect( jest.mocked( setSignupIsNewUser ).mock.calls ).toEqual(
+			newUserId ? [ [ newUserId ] ] : []
+		);
 	} );
 
-	it( 'uses the sandbox user ID when marking the newly created account', async () => {
-		interceptUsersNew( 200, { success: true, signup_sandbox_user_id: 456 } );
+	it.each( [
+		{ flow: 'static-site-import', response: { blog_details: { blogid: '123' } }, siteId: '123' },
+		{ flow: 'static-site-import', response: {}, siteId: undefined },
+		{ flow: 'onboarding', response: { blog_details: { blogid: '123' } }, siteId: undefined },
+	] )(
+		'remembers the created site for the static site import flow: %j',
+		async ( { flow, response, siteId } ) => {
+			jest.mocked( getSignupCompleteFlowName ).mockReturnValue( flow );
+			interceptUsersNew( 200, { success: true, ...response } );
 
-		await createAccount( createAccountArgs );
+			await createAccount( createAccountArgs );
 
-		expect( setSignupIsNewUser ).toHaveBeenCalledWith( 456 );
-	} );
-
-	it( 'does not mark an account without a user ID', async () => {
-		interceptUsersNew();
-
-		await createAccount( createAccountArgs );
-
-		expect( setSignupIsNewUser ).not.toHaveBeenCalled();
-	} );
-
-	it( 'retains the migration destination before payment is attempted', async () => {
-		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'static-site-import' );
-		interceptUsersNew( 200, { success: true, blog_details: { blogid: '123' } } );
-
-		await createAccount( createAccountArgs );
-
-		expect( setSignupCompleteSiteID ).toHaveBeenCalledWith( '123' );
-	} );
-
-	it( 'does not replace the migration destination when an account-creation retry returns no site', async () => {
-		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'static-site-import' );
-		interceptUsersNew();
-
-		await createAccount( { ...createAccountArgs, siteId: 123 } );
-
-		expect( setSignupCompleteSiteID ).not.toHaveBeenCalled();
-	} );
-
-	it( 'does not persist a migration destination for other checkout flows', async () => {
-		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'onboarding' );
-		interceptUsersNew( 200, { success: true, blog_details: { blogid: '123' } } );
-
-		await createAccount( createAccountArgs );
-
-		expect( setSignupCompleteSiteID ).not.toHaveBeenCalled();
-	} );
+			expect( jest.mocked( setSignupCompleteSiteID ).mock.calls ).toEqual(
+				siteId ? [ [ siteId ] ] : []
+			);
+		}
+	);
 
 	it( 'attaches blackbox_session_id when available', async () => {
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );

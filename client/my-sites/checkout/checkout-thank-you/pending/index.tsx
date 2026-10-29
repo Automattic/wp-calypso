@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
-import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -15,22 +15,14 @@ import Main from 'calypso/components/main';
 import { CHECKOUT_SUCCESS_PLAN_PARAM } from 'calypso/dashboard/app/checkout-success-flash';
 import { CHECKOUT_SUCCESS_FLASH_ID } from 'calypso/dashboard/app/checkout-success-flash-message';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
-import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import {
-	getSignupCompleteFlowName,
-	getSignupCompleteSiteID,
-	persistSignupDestination,
-	retrieveSignupDestination,
-} from 'calypso/signup/storageUtils';
-import { useDispatch, useSelector } from 'calypso/state';
+import { useDispatch } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -248,7 +240,6 @@ function useRedirectOnTransactionSuccess( {
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
 
 	const reduxDispatch = useDispatch();
-	const userId = useSelector( getCurrentUserId );
 	const queryClient = useQueryClient();
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
@@ -286,24 +277,25 @@ function useRedirectOnTransactionSuccess( {
 	// the query string for receipts fetched before the field was available.
 	const isUnifiedCheckout =
 		( receipt?.checkout_type ?? searchParams.get( 'checkout_type' ) ) === 'unified';
-	const shouldRefreshUser =
-		isUnifiedCheckout ||
-		( getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
-			Number( getSignupCompleteSiteID() ) === blogId );
 
-	// A newly created site's count may still be stale in Redux. Refresh the
-	// user after the receipt loads so siteSelection sees the purchased site.
-	const didRefreshUser = useRef( false );
-	const [ isUserRefreshed, setIsUserRefreshed ] = useState( false );
+	// For unified checkout (logged-out flow where a new account + site are
+	// created before the transaction), we re-fetch the current user once the
+	// receipt is available. By the time the pending page has finished polling
+	// for the transaction, enough time has passed for the server to propagate
+	// the new site, so a fresh fetch reliably returns site_count >= 1. Without
+	// this, siteSelection receives a stale site_count = 0 and renders "You
+	// don't have any sites yet" instead of the thank-you page.
+	const didRefreshUserForUnified = useRef( false );
+	const [ isUserRefreshedForUnified, setIsUserRefreshedForUnified ] = useState( false );
 	useEffect( () => {
-		if ( ! shouldRefreshUser || ! blogId || didRefreshUser.current ) {
+		if ( ! isUnifiedCheckout || ! blogId || didRefreshUserForUnified.current ) {
 			return;
 		}
-		didRefreshUser.current = true;
+		didRefreshUserForUnified.current = true;
 		( reduxDispatch( fetchCurrentUser() ) as Promise< unknown > )
 			.catch( () => {} )
-			.finally( () => setIsUserRefreshed( true ) );
-	}, [ shouldRefreshUser, blogId, reduxDispatch ] );
+			.finally( () => setIsUserRefreshedForUnified( true ) );
+	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
 
 	const defaultPendingText = translate( 'Almost there—we’re currently finalizing your order.' );
 	const connectingJetpackText = translate(
@@ -372,11 +364,11 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
-		// When signup creates a site, wait for the current user to be re-fetched
+		// For unified checkout, wait for the current user to be re-fetched
 		// (triggered by the useEffect above) before proceeding. This ensures
 		// site_count is up-to-date in Redux so siteSelection doesn't incorrectly
 		// bail with "You don't have any sites yet" on the thank-you page.
-		if ( shouldRefreshUser && blogId && ! isUserRefreshed ) {
+		if ( isUnifiedCheckout && blogId && ! isUserRefreshedForUnified ) {
 			return;
 		}
 
@@ -425,19 +417,9 @@ function useRedirectOnTransactionSuccess( {
 		// This is the first point where we know the purchase is complete, so
 		// record it before leaving the page.
 		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
-			if (
-				getFlowFromURL( pathname ?? '', '' ) === STATIC_SITE_IMPORT_FLOW &&
-				getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
-				retrieveSignupDestination() === redirectTo &&
-				blogId &&
-				( receipt.checkout_type === 'unified' || Number( getSignupCompleteSiteID() ) === blogId )
-			) {
-				persistSignupDestination( effectiveRedirectTo );
-			}
-			recordCompletedPurchaseAnalytics( receipt, {
-				flow: getFlowFromURL( pathname ?? '', '' ),
-				userId,
-			} ).then( () => notifyAndPerformRedirect( siteSlug, finalRedirectInstructions ) );
+			recordCompletedPurchaseAnalytics( receipt ).then( () =>
+				notifyAndPerformRedirect( siteSlug, finalRedirectInstructions )
+			);
 			return;
 		}
 
@@ -446,8 +428,8 @@ function useRedirectOnTransactionSuccess( {
 		isLoadingOrder,
 		saasRedirectUrl,
 		isConnectAfterCheckoutFlow,
-		shouldRefreshUser,
-		isUserRefreshed,
+		isUnifiedCheckout,
+		isUserRefreshedForUnified,
 		connectingJetpackText,
 		finalReceiptId,
 		isReceiptLoaded,
@@ -459,7 +441,6 @@ function useRedirectOnTransactionSuccess( {
 		productName,
 		receipt,
 		receiptId,
-		userId,
 		redirectTo,
 		queryClient,
 		reduxDispatch,
