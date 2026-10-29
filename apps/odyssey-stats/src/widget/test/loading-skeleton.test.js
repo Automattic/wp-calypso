@@ -29,6 +29,17 @@ describe( 'renderLoadingSkeleton', () => {
 		);
 	} );
 
+	it( 'leaves an outline the server already drew alone', () => {
+		document.body.innerHTML =
+			'<div id="dashboard_stats"><div class="jp-stats-widget-skeleton" role="status" aria-label="Loading" data-origin="server"></div></div>';
+		const container = document.getElementById( 'dashboard_stats' );
+
+		renderLoadingSkeleton( container );
+
+		expect( container.querySelector( '[data-origin="server"]' ) ).toBeInTheDocument();
+		expect( container.querySelectorAll( '.jp-stats-widget-skeleton' ) ).toHaveLength( 1 );
+	} );
+
 	it( 'does nothing without the container', () => {
 		expect( () => renderLoadingSkeleton( null ) ).not.toThrow();
 	} );

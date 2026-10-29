@@ -73,7 +73,8 @@ const MARKUP =
  * @param container The element the widget mounts in.
  */
 export default function renderLoadingSkeleton( container: HTMLElement | null ) {
-	if ( ! container ) {
+	// A stats-admin release that draws the outline itself leaves nothing to replace.
+	if ( ! container || container.querySelector( '.jp-stats-widget-skeleton' ) ) {
 		return;
 	}
 
