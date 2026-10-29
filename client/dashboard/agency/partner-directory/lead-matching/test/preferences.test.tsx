@@ -73,6 +73,9 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		mockAgency();
 		mockSmsCountryCodes();
 		let savedProfile = getLeadMatchingProfile( getEmptyLeadMatchingFormData(), null, true );
+		// GET returns a nullable completion flag and can return unset boolean answers.
+		savedProfile.availability.profile_v2_complete = null;
+		savedProfile.geography_and_language.global_remote = null;
 		savedProfile.contact = {
 			phone: '+14256559999 ext 12',
 			booking_link: 'http://booking.example.com/?source=A4A',
@@ -103,6 +106,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		await waitForSaved();
 		expect( savedProfile.contact.phone ).toBe( '+14256551234 ext 9' );
 		expect( savedProfile.availability.profile_v2_complete ).toBe( false );
+		expect( savedProfile.geography_and_language.global_remote ).toBe( false );
 		view.unmount();
 
 		view = render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );

@@ -283,13 +283,6 @@ export function mapLeadMatchingDetailsToProfile(
 			formData.phoneNumber,
 		booking_link: normalizeAgencyBookingLink( formData.bookingLink ),
 	};
-	if ( previousProfile && ! hasLeadMatchingAnswerChanges( formData, previousProfile ) ) {
-		return {
-			...previousProfile,
-			contact,
-			availability: { ...previousProfile.availability },
-		};
-	}
 	const serviceLevel = formData.serviceLevels[ 0 ] ?? '';
 	const supportsEcommerceProjects =
 		formData.projectTypes.includes( 'new_woocommerce' ) || formData.storeComplexities.length > 0;

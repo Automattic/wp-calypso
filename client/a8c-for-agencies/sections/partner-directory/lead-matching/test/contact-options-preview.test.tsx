@@ -63,6 +63,9 @@ function renderForm( profile: AgencyLeadMatchingProfile ) {
 
 test( 'hydrates and saves contact-only changes on an incomplete profile, then clears them', async () => {
 	const profile = createDefaultLeadMatchingProfile();
+	// GET returns a nullable completion flag and can return unset boolean answers.
+	profile.availability.profile_v2_complete = null;
+	profile.geography_and_language.global_remote = null;
 	profile.contact = { phone: '+442012345678 ext 12', booking_link: 'http://book.example.com/?a=1' };
 	let savedProfile = profile;
 	const scope = nock( API )
@@ -86,6 +89,7 @@ test( 'hydrates and saves contact-only changes on an incomplete profile, then cl
 	await waitFor( () => expect( phone ).toHaveValue( '+442087654321 ext 9' ) );
 	expect( booking ).toHaveValue( 'https://booking.example.com/intro?source=A4A' );
 	expect( savedProfile.availability.profile_v2_complete ).toBe( false );
+	expect( savedProfile.geography_and_language.global_remote ).toBe( false );
 	expect( screen.getByText( 'Saved', { exact: true } ) ).toBeVisible();
 	await userEvent.clear( phone );
 	await userEvent.clear( booking );

@@ -117,13 +117,13 @@ export interface AgencyLeadMatchingProfile {
 		booking_link: string;
 	};
 	availability: {
-		accepting_work: boolean;
+		accepting_work: boolean | null;
 		lead_eligibility: string | null;
-		profile_v2_complete: boolean;
+		profile_v2_complete: boolean | null;
 	};
 	geography_and_language: {
 		supported_regions: string[];
-		global_remote: boolean;
+		global_remote: boolean | null;
 		supported_languages: string[];
 	};
 	business_fit: {
@@ -134,16 +134,16 @@ export interface AgencyLeadMatchingProfile {
 	platform_and_hosting: {
 		supported_hosting_environments: string[];
 		migration_platforms: string[];
-		can_recommend_better_hosting: boolean;
+		can_recommend_better_hosting: boolean | null;
 	};
 	ecommerce: {
 		supports_ecommerce_projects: boolean;
-		ecommerce_focus: boolean;
+		ecommerce_focus: boolean | null;
 		supported_complexity_flags: string[];
 	};
 	project_types: {
 		supported_project_types: string[];
-		accepts_small_fixes: boolean;
+		accepts_small_fixes: boolean | null;
 	};
 	service_and_budget: {
 		max_service_level: string;
@@ -152,14 +152,14 @@ export interface AgencyLeadMatchingProfile {
 	};
 	timing: {
 		supported_start_timings: string[];
-		supports_hard_deadlines: boolean;
+		supports_hard_deadlines: boolean | null;
 	};
 	delivery_model: {
 		supported_decision_processes: string[];
-		offers_care_plans: boolean;
-		trains_clients: boolean;
-		works_with_internal_technical_teams: boolean;
-		requires_maintenance_plan: boolean;
+		offers_care_plans: boolean | null;
+		trains_clients: boolean | null;
+		works_with_internal_technical_teams: boolean | null;
+		requires_maintenance_plan: boolean | null;
 	};
 }
 
