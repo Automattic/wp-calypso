@@ -15,7 +15,11 @@ export * from './use-running-staging-site-sync';
 
 const TAKING_LONG_AFTER_MS = 60 * 60 * 1000;
 
-function getTitle( syncState: StagingSiteSyncState ) {
+function getTitle( syncState: StagingSiteSyncState, isPastTimeout: boolean ) {
+	if ( isPastTimeout ) {
+		return __( 'Your sync seems to be stuck' );
+	}
+
 	if ( syncState.status === 'pending' ) {
 		return __( 'Sync starting…' );
 	}
@@ -113,7 +117,10 @@ export function StagingSiteSyncNotice( {
 	}, [ recordTracksEvent, site.ID, syncState.status, syncState.direction, isTakingLong ] );
 
 	return (
-		<Notice variant="info" title={ getTitle( syncState ) }>
+		<Notice
+			variant={ isPastTimeout ? 'warning' : 'info' }
+			title={ getTitle( syncState, isPastTimeout ) }
+		>
 			{ getDescription(
 				syncState,
 				formattedStartTime,
