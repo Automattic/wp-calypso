@@ -5,9 +5,9 @@ finish their request there. It's built on [A2UI v1.0](https://a2ui.org).
 
 - **Who follows it:** Agents Manager owns this architecture. Its providers, such as the Jetpack AI
   sidebar and WooCommerce AI, and other hosts, such as MCP apps, follow it.
-- **Where it runs:** in clients that render the surface's catalog, which each message lists.
-  Elsewhere, the chat keeps its older UI. The `a2ui-render-interactive-ui` blog sticker only adds
-  the interactive UI section to the orchestrator's prompt.
+- **Where it runs:** for proxied Automatticians, and every user on a sandbox, in clients that render
+  the surface's catalog, which each message lists. Everyone else keeps the older UI until the
+  rollout (AM-118).
 - **What's shared:** the [renderer](../../../ai-ui-renderer/README.md) is a shared library with the
   basic components. Custom components live in the project that owns them.
 
@@ -277,19 +277,21 @@ return {
 
 ## Try it
 
-Ask the agent for a small form, such as "Use wpcom/render-interactive-ui for a feedback form with a
-TextField and a Submit Button."
+On production, use your Automattician account on the proxy. On your sandbox, any account works, so
+you can use a test account. Then ask the agent for a small form, such as "Use
+wpcom/render-interactive-ui for a feedback form with a TextField and a Submit Button." To see what
+everyone else sees, turn the proxy off.
 
-If the old UI shows, check that the chat has a site and that the chat request's
-`metadata.a2uiRendererCapabilities['v1.0'].supportedCatalogIds` lists exactly the catalog ID your
-ability checks or your card hint names. If it's missing, look in the console for
-`[AgentsManager] Skipped an interactive UI catalog:`, or your provider doesn't export
+If the old UI shows, check that you're on the proxy or your sandbox, that the chat has a site and
+that the chat request's `metadata.a2uiRendererCapabilities['v1.0'].supportedCatalogIds` lists
+exactly the catalog ID your ability checks or your card hint names. If it's missing, look in the
+console for `[AgentsManager] Skipped an interactive UI catalog:`, or your provider doesn't export
 `interactiveUi` ([Jetpack AI sidebar](../../../../apps/agents-manager/AGENTS.md#pitfalls)).
 
 ## Migrating a chat UI
 
 This section is temporary: remove it once every chat UI has moved (AM-119). Rollout (AM-118)
-waits for Agents Manager, the Jetpack AI sidebar and WooCommerce AI.
+waits for the Jetpack AI sidebar and WooCommerce AI.
 
 - **A server ability returning `show-component`** (the Jetpack AI sidebar's components): the
   ability returns a surface with a catalog component wrapping the same React component, as
@@ -348,8 +350,8 @@ return them with `surface_result()`.
 3. **Test both paths.** When the gate passes, the surface renders (also for a request with a step
    after it), goes stale after a reply, a reload or, if it acts on a post, a post switch, can still
    be undone (through `restore-checkpoint` for a checkpoint in Agents Manager's store), and records
-   the shared response events under its component's name and surface ID. When it fails, outside
-   an agent's chat or in a client without the catalog, the old UI shows as before.
+   the shared response events under its component's name and surface ID. When it fails, off the
+   proxy, outside an agent's chat or in a client without the catalog, the old UI shows as before.
 
 ### Moving a browser ability's card
 
@@ -367,5 +369,5 @@ For a card a browser ability's result renders today, such as a fenced Markdown c
    result carries `card_shown`, and keep your fence renderer, so older clients and past chats still
    show the card.
 5. **Test both paths.** In a client with your catalog, the card shows under the reply, the reply has
-   no fenced block, and a reload shows the card again, stale, without recording its render. Without
-   it, the fenced card shows as before.
+   no fenced block, and a reload shows the card again, stale, without recording its render. Off the
+   proxy or without your catalog, the fenced card shows as before.
