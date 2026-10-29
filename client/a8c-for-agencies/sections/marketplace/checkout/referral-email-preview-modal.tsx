@@ -81,7 +81,8 @@ export default function ReferralEmailPreviewModal( {
 	const resizeObserverRef = useRef< ResizeObserver | null >( null );
 
 	const productIds = useMemo(
-		() => checkoutItems.map( ( item ) => item.product_id ),
+		() =>
+			checkoutItems.flatMap( ( item ) => Array< number >( item.quantity ).fill( item.product_id ) ),
 		[ checkoutItems ]
 	);
 

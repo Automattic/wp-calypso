@@ -9,6 +9,7 @@ import { getProductsList } from 'calypso/state/products-list/selectors';
 import CommissionsInfo from '../../commissions-info';
 import { MarketplaceTypeContext, TermPricingContext } from '../../context';
 import { useTotalInvoiceValue } from '../../hooks/use-marketplace';
+import { canHoldLicenses } from '../../lib/cart-licenses';
 import ShoppingCartMenuItem from './item';
 import type { ShoppingCartItem } from '../../types';
 
@@ -17,11 +18,18 @@ import './style.scss';
 type Props = {
 	onClose: () => void;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	onSetItemQuantity?: ( item: ShoppingCartItem, quantity: number ) => void;
 	onCheckout: () => void;
 	items: ShoppingCartItem[];
 };
 
-export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, items }: Props ) {
+export default function ShoppingCartMenu( {
+	onClose,
+	onCheckout,
+	onRemoveItem,
+	onSetItemQuantity,
+	items,
+}: Props ) {
 	const translate = useTranslate();
 
 	const isAgencyApproved = useSelector( hasApprovedAgencyStatus );
@@ -59,14 +67,21 @@ export default function ShoppingCartMenu( { onClose, onCheckout, onRemoveItem, i
 				</div>
 
 				<ul className="shopping-cart__menu-list">
-					{ items.map( ( item ) => (
-						<ShoppingCartMenuItem
-							key={ `shopping-cart-item-${ item.product_id }-${ item.quantity }` }
-							item={ item }
-							onRemoveItem={ onRemoveItem }
-							termPricing={ termPricing }
-						/>
-					) ) }
+					{ items.map( ( item ) => {
+						const showsCount = canHoldLicenses( item, marketplaceType === 'referral' );
+						return (
+							<ShoppingCartMenuItem
+								// A line with a counter keeps its key while the count changes.
+								key={ `shopping-cart-item-${ item.product_id }-${
+									showsCount ? ( item.site_domain ?? '' ) : item.quantity
+								}` }
+								item={ item }
+								onRemoveItem={ onRemoveItem }
+								termPricing={ termPricing }
+								onSetQuantity={ showsCount ? onSetItemQuantity : undefined }
+							/>
+						);
+					} ) }
 				</ul>
 
 				<div className="shopping-cart__menu-footer">

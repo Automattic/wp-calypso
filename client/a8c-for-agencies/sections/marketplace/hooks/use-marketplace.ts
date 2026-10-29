@@ -280,7 +280,7 @@ export const useGetProductPricingInfo = (
 				discountedCost = introductoryPrice * quantity;
 			} else {
 				actualCost = isDailyPricing ? productBundlePrice / 365 : productBundlePrice;
-				discountedCost = productPrice || 0;
+				discountedCost = ( productPrice || 0 ) * quantity;
 			}
 
 			const discountPercentage =
