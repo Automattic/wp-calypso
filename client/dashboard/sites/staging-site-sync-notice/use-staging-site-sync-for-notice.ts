@@ -2,6 +2,7 @@ import { stagingSiteSyncStateQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	getProductionSiteId,
+	hasStagingSite,
 	hasStagingSiteSyncFailed,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
@@ -16,7 +17,7 @@ export function useStagingSiteSyncForNotice( site: Site ): StagingSiteSyncState 
 	const productionSiteId = getProductionSiteId( site );
 	const { data: syncState } = useQuery( {
 		...stagingSiteSyncStateQuery( productionSiteId ?? 0 ),
-		enabled: !! productionSiteId,
+		enabled: !! productionSiteId && hasStagingSite( site ),
 		refetchInterval: ( query ) => ( isStagingSiteSyncing( query.state.data ) ? 5000 : false ),
 		refetchIntervalInBackground: true,
 	} );
