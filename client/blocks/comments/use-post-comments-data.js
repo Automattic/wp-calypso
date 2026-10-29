@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	buildCommentsTreeForDisplay,
 	mergeCommentLists,
@@ -27,10 +27,30 @@ const ensureInitialCommentVisible = ( commentsTree, initialComment ) => {
 	};
 };
 
+const omitCommentsFromTree = ( commentsTree, commentIds ) => {
+	if ( ! commentIds.length ) {
+		return commentsTree;
+	}
+
+	const omittedIds = new Set( commentIds.map( String ) );
+	const isVisible = ( commentId ) => ! omittedIds.has( String( commentId ) );
+
+	return Object.fromEntries(
+		Object.entries( commentsTree )
+			.filter( ( [ key ] ) => isVisible( key ) )
+			.map( ( [ key, node ] ) =>
+				key === 'children'
+					? [ key, node.filter( isVisible ) ]
+					: [ key, { ...node, children: node.children.filter( isVisible ) } ]
+			)
+	);
+};
+
 export const usePostCommentsData = ( props ) => {
 	const dispatch = useDispatch();
 	const [ activeReplyCommentId, setActiveReplyCommentId ] = useState( null );
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const [ pendingCommentIds, setPendingCommentIds ] = useState( [] );
 	const currentUserId = useSelector( getCurrentUserId );
 	const siteId = props.post?.site_ID;
 	const postId = props.post?.ID;
@@ -45,6 +65,7 @@ export const usePostCommentsData = ( props ) => {
 
 		setActiveReplyCommentId( null );
 		setIsExpanded( false );
+		setPendingCommentIds( [] );
 	}, [ siteId, postId, props.streamKey ] );
 
 	const {
@@ -61,6 +82,29 @@ export const usePostCommentsData = ( props ) => {
 		commentTotal: props.commentCount,
 		authorId: currentUserId,
 	} );
+	const loadedCommentsRef = useRef( loadedComments );
+	useEffect( () => {
+		loadedCommentsRef.current = loadedComments;
+	}, [ loadedComments ] );
+	const { deferNewComments } = props;
+
+	const pollForNewComments = useCallback( async () => {
+		if ( ! deferNewComments ) {
+			return fetchLaterComments();
+		}
+
+		const knownIds = new Set( loadedCommentsRef.current.map( ( comment ) => comment.ID ) );
+		const result = await fetchLaterComments();
+		const newIds = ( result?.data?.pages ?? [] )
+			.flatMap( ( page ) => page.comments )
+			.filter( ( comment ) => ! knownIds.has( comment.ID ) && comment.author?.ID !== currentUserId )
+			.map( ( comment ) => comment.ID );
+
+		if ( newIds.length ) {
+			setPendingCommentIds( ( current ) => [ ...new Set( [ ...current, ...newIds ] ) ] );
+		}
+	}, [ currentUserId, deferNewComments, fetchLaterComments ] );
+
 	const initialCommentFromList = props.startingCommentId
 		? loadedComments.find(
 				( comment ) => Number( comment.ID ) === Number( props.startingCommentId )
@@ -106,6 +150,10 @@ export const usePostCommentsData = ( props ) => {
 		() => ensureInitialCommentVisible( commentsTree, initialComment ),
 		[ commentsTree, initialComment ]
 	);
+	const visibleCommentsTree = useMemo(
+		() => omitCommentsFromTree( commentsTreeWithInitialComment, pendingCommentIds ),
+		[ commentsTreeWithInitialComment, pendingCommentIds ]
+	);
 
 	return {
 		siteId,
@@ -113,7 +161,7 @@ export const usePostCommentsData = ( props ) => {
 		currentUserId,
 		canUserModerateComments,
 		comments: commentsForDisplay,
-		commentsTree: commentsTreeWithInitialComment,
+		commentsTree: visibleCommentsTree,
 		commentsFetchingStatus,
 		initialComment,
 		isInitialCommentLoading: shouldFetchStartingComment && startingComment.isLoading,
@@ -121,6 +169,9 @@ export const usePostCommentsData = ( props ) => {
 		isExpanded,
 		fetchEarlierComments,
 		fetchLaterComments,
+		pollForNewComments,
+		pendingCommentIds,
+		revealPendingComments: () => setPendingCommentIds( [] ),
 		setActiveReply: ( { commentId } ) => setActiveReplyCommentId( commentId ),
 		toggleInlineCommentsExpanded: () => setIsExpanded( ( current ) => ! current ),
 		recordReaderTracksEvent: ( ...args ) => dispatch( recordReaderTracksEvent( ...args ) ),
