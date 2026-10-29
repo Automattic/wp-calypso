@@ -9,7 +9,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
-import { ConversationListItem } from './list-item';
+import { ConversationListItem, type OpenSource } from './list-item';
 import { ConversationListTabs, type InboxTab } from './tabs';
 import { ConversationListToolbar } from './toolbar';
 import type { Conversation } from '../group-notes';
@@ -27,7 +27,7 @@ interface Props {
 	isShortcutsOpen: boolean;
 	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
-	onSelect: ( conversation: Conversation ) => void;
+	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
 }
 
 export function ConversationList( {

@@ -68,29 +68,37 @@ describe( 'StaticSiteImportCard', () => {
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
 	} );
 
-	it( 'asks for feedback and offers to connect the source domain once the site is ready', async () => {
+	it( 'offers to connect the kept domain and preview the site once it is ready', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
 			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
 
-		const { recordTracksEvent } = render( <StaticSiteImport /> );
+		render( <StaticSiteImport /> );
 
 		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Connect busybearscleaning.com' } ) ).toHaveAttribute(
+		expect(
+			screen.getByText(
+				'busybearscleaning.com is copied and running on WordPress.com. It stays private until you launch it.'
+			)
+		).toBeVisible();
+
+		const connect = screen.getByRole( 'link', { name: 'Connect busybearscleaning.com' } );
+		expect( connect ).toHaveAttribute(
 			'href',
 			expect.stringContaining( 'initialQuery=busybearscleaning.com' )
 		);
+		expect( connect ).toHaveClass( 'is-primary' );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_feedback',
-			{ site_id: 42, source_platform: 'wix', rating: 'good' }
-		);
-		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
+		const preview = screen.getByRole( 'link', { name: /Preview site/ } );
+		expect( preview ).toHaveAttribute( 'href', 'https://busybears.wordpress.com' );
+		expect( preview ).toHaveClass( 'is-secondary' );
+
+		expect( screen.queryByText( 'Does it look right?' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'omits the domain connection link when the source hostname is missing', () => {
+	it( 'offers a generic Connect domain when the old address is missing', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
@@ -100,7 +108,87 @@ describe( 'StaticSiteImportCard', () => {
 		);
 
 		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: /^Connect / } ) ).not.toBeInTheDocument();
+		const connect = screen.getByRole( 'link', { name: 'Connect domain' } );
+		expect( connect ).toHaveClass( 'is-primary' );
+		expect( connect ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/setup/domain/use-my-domain' )
+		);
+		expect( connect ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
+	} );
+
+	it( 'does not ask for feedback after the site is previewed', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
+
+		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
+		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_static_site_import_feedback',
+			expect.anything()
+		);
+	} );
+
+	describe( 'Tracks', () => {
+		const finished = () =>
+			mockApi()
+				.get( '/wpcom/v2/static-site-import-session/abc123' )
+				.query( true )
+				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+		const props = { site_id: 42, source_platform: 'wix' };
+
+		it( 'records the ready notice being shown once', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			await screen.findByText( 'Your site is ready' );
+			const impressions = jest
+				.mocked( recordTracksEvent )
+				.mock.calls.filter(
+					( [ name ] ) => name === 'calypso_dashboard_static_site_import_ready_notice_impression'
+				);
+			expect( impressions ).toEqual( [
+				[ 'calypso_dashboard_static_site_import_ready_notice_impression', props ],
+			] );
+		} );
+
+		it( 'records which button in the ready notice was clicked', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			const connect = await screen.findByRole( 'link', { name: 'Connect busybearscleaning.com' } );
+			connect.addEventListener( 'click', ( event ) => event.preventDefault() );
+			await userEvent.click( connect );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_click',
+				{ ...props, action: 'connect_domain' }
+			);
+
+			await userEvent.click( screen.getByRole( 'link', { name: /Preview site/ } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_click',
+				{ ...props, action: 'preview_site' }
+			);
+		} );
+
+		it( 'records the ready notice being closed', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			await screen.findByText( 'Your site is ready' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_dismiss',
+				props
+			);
+		} );
 	} );
 
 	it( 'offers to read the site again when the preview has expired', async () => {

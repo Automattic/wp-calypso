@@ -12,8 +12,10 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
+	hasStagingSiteSyncTimedOut,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
+import StagingSiteHighLoadNotice from '../staging-site-high-load-notice';
 import StagingSiteSyncModal from '../staging-site-sync-modal';
 import type { StagingSiteSyncDirection } from '@automattic/api-core';
 
@@ -59,6 +61,7 @@ export default function StagingSiteSyncDropdown( {
 	} );
 
 	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
+	const canSync = ! isSyncing || hasStagingSiteSyncTimedOut( stagingSiteSyncState );
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
@@ -122,38 +125,44 @@ export default function StagingSiteSyncDropdown( {
 					__next40pxDefaultSize: true,
 					iconPosition: 'right',
 					variant: 'secondary',
-					disabled: isSyncing,
-					isBusy: isSyncing,
+					disabled: ! canSync,
 				} }
 				icon={ chevronDown }
-				text={ isSyncing ? __( 'Syncing…' ) : __( 'Sync' ) }
+				text={ __( 'Sync' ) }
 				/* DropdownMenu prop types are too strict here. We don't need a label because our button has visible text. */
 				/* We can't pass the button's text to `label` because it causes a tooltip to appear. */
 				label={ null as any } // eslint-disable-line @typescript-eslint/no-explicit-any
 			>
 				{ ( { onClose } ) => (
-					<MenuGroup className={ className }>
-						<MenuItem
-							onClick={ () => {
-								onClose();
-								handleOpenModal( 'pull' );
-							} }
-							icon={ cloudDownload }
-							iconPosition="left"
-						>
-							{ pullLabel }
-						</MenuItem>
-						<MenuItem
-							onClick={ () => {
-								onClose();
-								handleOpenModal( 'push' );
-							} }
-							icon={ cloudUpload }
-							iconPosition="left"
-						>
-							{ pushLabel }
-						</MenuItem>
-					</MenuGroup>
+					<>
+						<MenuGroup className={ className }>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									handleOpenModal( 'pull' );
+								} }
+								icon={ cloudDownload }
+								iconPosition="left"
+							>
+								{ pullLabel }
+							</MenuItem>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									handleOpenModal( 'push' );
+								} }
+								icon={ cloudUpload }
+								iconPosition="left"
+							>
+								{ pushLabel }
+							</MenuItem>
+						</MenuGroup>
+						<StagingSiteHighLoadNotice>
+							{ __(
+								'Staging sites are experiencing sync issues. Please wait until later to sync your sites.'
+							) }
+						</StagingSiteHighLoadNotice>
+					</>
 				) }
 			</DropdownMenu>
 			{ isModalOpen && renderModal() }

@@ -8,23 +8,56 @@ describe( 'parseWooTracksMessage', () => {
 	} );
 
 	it.each( [
-		[ 'wcadmin_page_view', { path: 'wc-admin' }, 'calypso_playground_woo_page_view' ],
-		[ 'wcadmin_task_view', { task_name: 'products' }, 'calypso_playground_woo_task_view' ],
-	] )( 'maps %s to its Calypso event', ( event, properties, name ) => {
-		expect( parseWooTracksMessage( message( event, properties ) ) ).toEqual( { name, properties } );
+		[
+			'wcadmin_page_view',
+			{ path: 'wc-admin' },
+			'calypso_playground_woo_page_view',
+			{ woo_path: 'wc-admin' },
+		],
+		[
+			'wcadmin_task_view',
+			{ task_name: 'products' },
+			'calypso_playground_woo_task_view',
+			{ task_name: 'products' },
+		],
+	] )( 'maps %s to its Calypso event', ( event, properties, name, recorded ) => {
+		expect( parseWooTracksMessage( message( event, properties ) ) ).toEqual( {
+			name,
+			properties: recorded,
+		} );
 	} );
 
 	it.each( [
 		[ 'a WooCommerce page', 'analytics_overview', 'analytics_overview' ],
 		[
 			'a classic page, without the Playground scope',
-			'/scope:5647dffc-7eec/wp-admin/admin.php?page=wc-settings&tab=checkout&from=WCADMIN_PAYMENT_TASK',
-			'/wp-admin/admin.php?page=wc-settings&tab=checkout&from=WCADMIN_PAYMENT_TASK',
+			'/scope:5647dffc-7eec/wp-admin/admin.php?page=wc-settings&tab=checkout',
+			'/wp-admin/admin.php?page=wc-settings&tab=checkout',
+		],
+		[
+			'a classic page, without its other query keys',
+			'/wp-admin/admin.php?page=wc-orders&s=jane%40example.com&from=WCADMIN_PAYMENT_TASK',
+			'/wp-admin/admin.php?page=wc-orders',
+		],
+		[
+			'a classic page, whatever characters its other query keys hold',
+			'/wp-admin/admin.php?page=wc-orders&s=jane@example.com',
+			'/wp-admin/admin.php?page=wc-orders',
+		],
+		[
+			'a classic page, without a query of only other keys',
+			'/wp-admin/edit.php?s=shirt+blue',
+			'/wp-admin/edit.php',
+		],
+		[
+			'a post type list',
+			'/wp-admin/edit.php?post_type=product&s=shirt',
+			'/wp-admin/edit.php?post_type=product',
 		],
 	] )( 'records the path of %s', ( _name, path, expected ) => {
 		expect( parseWooTracksMessage( message( 'wcadmin_page_view', { path } ) ) ).toEqual( {
 			name: 'calypso_playground_woo_page_view',
-			properties: { path: expected },
+			properties: { woo_path: expected },
 		} );
 	} );
 
@@ -35,7 +68,7 @@ describe( 'parseWooTracksMessage', () => {
 			)
 		).toEqual( {
 			name: 'calypso_playground_woo_page_view',
-			properties: { path: 'wc-admin' },
+			properties: { woo_path: 'wc-admin' },
 		} );
 	} );
 

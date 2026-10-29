@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -119,7 +119,7 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'button', { name: /^Read post/ } ) );
 
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
-		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
+		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ), 'click' );
 	} );
 
 	it( 'shows the new count only on conversations with unread notes', () => {
@@ -210,6 +210,52 @@ describe( 'ConversationList', () => {
 		await user.tab();
 
 		expect( onSelect ).toHaveBeenCalledTimes( 1 );
-		expect( onSelect ).toHaveBeenCalledWith( expect.objectContaining( { postId: 200 } ) );
+		expect( onSelect ).toHaveBeenCalledWith(
+			expect.objectContaining( { postId: 200 } ),
+			'tab_key'
+		);
+	} );
+
+	it( 'reports Tab, not click, after a click that did not focus the row', async () => {
+		const user = userEvent.setup();
+		const readPost = conversations.find( ( { postId } ) => postId === 200 );
+		const { onSelect } = renderList( { selectedKey: readPost?.key } );
+		const unreadRow = screen.getByRole( 'button', { name: /^Unread post/ } );
+
+		await user.click( screen.getByRole( 'button', { name: /^Read post/ } ) );
+		// Safari doesn't focus a button on click, and userEvent always does.
+		fireEvent.pointerDown( unreadRow );
+		fireEvent.click( unreadRow );
+		onSelect.mockClear();
+		await user.tab( { shift: true } );
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( onSelect ).toHaveBeenCalledWith(
+			expect.objectContaining( { postId: 100 } ),
+			'tab_key'
+		);
+	} );
+
+	it( 'reports Tab, not click, after a press dragged off the row that has focus', async () => {
+		const user = userEvent.setup();
+		const readPost = conversations.find( ( { postId } ) => postId === 200 );
+		const { onSelect } = renderList( { selectedKey: readPost?.key } );
+		const unreadRow = screen.getByRole( 'button', { name: /^Unread post/ } );
+
+		await user.click( unreadRow );
+		await user.pointer( [
+			{ keys: '[MouseLeft>]', target: unreadRow },
+			{ target: document.body },
+			{ keys: '[/MouseLeft]' },
+		] );
+		await user.tab();
+		onSelect.mockClear();
+		await user.tab( { shift: true } );
+
+		expect( onSelect ).toHaveBeenCalledTimes( 1 );
+		expect( onSelect ).toHaveBeenCalledWith(
+			expect.objectContaining( { postId: 100 } ),
+			'tab_key'
+		);
 	} );
 } );

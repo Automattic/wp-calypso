@@ -1,4 +1,5 @@
 import { __experimentalVStack as VStack, Button, ProgressBar } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useHelpCenter } from '../../../app/help-center';
 import Grid from '../../../components/grid';
@@ -9,8 +10,19 @@ import './style.scss';
 
 type Phase = WordPressMigrationStatus[ 'phase' ];
 
-export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: string } ) {
+export function Running( {
+	phase,
+	sourceHost,
+	notificationEmails,
+}: {
+	phase: Phase;
+	sourceHost: string;
+	notificationEmails: string[];
+} ) {
 	const { setShowHelpCenter } = useHelpCenter();
+
+	// Only the viewer's own address is listed when they're one of the recipients.
+	const [ email ] = notificationEmails;
 
 	const steps: { label: string; phases: Phase[] }[] = [
 		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
@@ -32,6 +44,24 @@ export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: stri
 					{ __( 'Something wrong? Contact us' ) }
 				</Button>
 			}
+			note={
+				<VStack spacing={ 1 }>
+					<Text variant="muted">
+						{ __(
+							'You can leave this page. The migration will continue running in the background.'
+						) }
+					</Text>
+					{ email && (
+						<Text variant="muted">
+							{ createInterpolateElement(
+								/* translators: <email /> is the address we notify when the migration is ready, e.g. a@example.com. */
+								__( 'We will email you at <email /> once the migration has completed.' ),
+								{ email: <strong>{ email }</strong> }
+							) }
+						</Text>
+					) }
+				</VStack>
+			}
 		>
 			<Grid columns={ steps.length } gap="sm">
 				{ steps.map( ( { label }, index ) => {
@@ -49,9 +79,6 @@ export function Running( { phase, sourceHost }: { phase: Phase; sourceHost: stri
 					);
 				} ) }
 			</Grid>
-			<Text variant="muted">
-				{ __( 'You can leave this page. The migration carries on in the background.' ) }
-			</Text>
 		</MigrationCard>
 	);
 }

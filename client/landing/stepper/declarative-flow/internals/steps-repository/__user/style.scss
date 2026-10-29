@@ -38,6 +38,8 @@ $breakpoint-mobile: 660px;
 		a {
 			color: var(--studio-gray-60, #646970);
 			text-decoration-line: underline;
+			// Step.LinkButton sets 500; links in these lines use the paragraph's 400.
+			font-weight: inherit;
 		}
 	}
 

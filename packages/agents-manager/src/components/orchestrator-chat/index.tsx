@@ -318,6 +318,7 @@ export default function OrchestratorChat( {
 			items={ siteSetupChecklist.items }
 			busy={ isProcessing }
 			focusHeaderOnMount={ siteSetupChecklist.focusHeaderOnMount }
+			activeItemId={ siteSetupChecklist.activeItemId }
 		/>
 	) : null;
 

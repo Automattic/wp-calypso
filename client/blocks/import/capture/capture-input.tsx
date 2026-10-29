@@ -7,11 +7,10 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import React, { ChangeEvent, FormEvent, useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import { CAPTURE_URL_RGX } from 'calypso/blocks/import/util';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormSettingExplanation from 'calypso/components/forms/form-setting-explanation';
 import FormTextInput from 'calypso/components/forms/form-text-input';
-import getValidationMessage from './url-validation-message-helper';
+import { getUrlValidationError, getValidationMessage } from './url-validation-message-helper';
 import type { OnInputChange, OnInputEnter } from './types';
 import type { FunctionComponent, ReactNode } from 'react';
 
@@ -65,7 +64,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 
 		if ( urlValue ) {
-			const isValid = CAPTURE_URL_RGX.test( urlValue );
+			const isValid = ! getUrlValidationError( urlValue );
 			if ( isValid && ! hasError ) {
 				onInputEnter( urlValue );
 				setSubmitted( true );
@@ -76,10 +75,9 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 	}
 
 	function validateUrl( url: string ) {
-		const isValid = CAPTURE_URL_RGX.test( url );
-		setIsValid( isValid );
-		const tempValidationMessage = isValid ? '' : getValidationMessage( url, translate );
-		setValidationMessage( tempValidationMessage );
+		const error = getUrlValidationError( url );
+		setIsValid( ! error );
+		setValidationMessage( error ? getValidationMessage( error, translate ) : '' );
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
@@ -100,11 +98,11 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		}
 		setSubmitted( true );
 
-		if ( ! isValid && urlValue?.length > 4 && urlValue !== lastInvalidValue.current ) {
+		const error = urlValue ? getUrlValidationError( urlValue ) : null;
+		if ( error && urlValue.length > 4 && urlValue !== lastInvalidValue.current ) {
 			lastInvalidValue.current = urlValue;
-			recordTracksEvent( 'calypso_importer_capture_input_invalid', {
-				url: urlValue,
-			} );
+			// Recorded on submit, once per distinct invalid value.
+			recordTracksEvent( 'calypso_importer_capture_input_invalid', { error_code: error } );
 		}
 	}
 
