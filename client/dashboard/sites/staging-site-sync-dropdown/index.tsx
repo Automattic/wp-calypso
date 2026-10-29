@@ -14,6 +14,7 @@ import {
 	getStagingSiteId,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
+import StagingSiteHighLoadNotice from '../staging-site-high-load-notice';
 import StagingSiteSyncModal from '../staging-site-sync-modal';
 import type { StagingSiteSyncDirection } from '@automattic/api-core';
 
@@ -132,28 +133,35 @@ export default function StagingSiteSyncDropdown( {
 				label={ null as any } // eslint-disable-line @typescript-eslint/no-explicit-any
 			>
 				{ ( { onClose } ) => (
-					<MenuGroup className={ className }>
-						<MenuItem
-							onClick={ () => {
-								onClose();
-								handleOpenModal( 'pull' );
-							} }
-							icon={ cloudDownload }
-							iconPosition="left"
-						>
-							{ pullLabel }
-						</MenuItem>
-						<MenuItem
-							onClick={ () => {
-								onClose();
-								handleOpenModal( 'push' );
-							} }
-							icon={ cloudUpload }
-							iconPosition="left"
-						>
-							{ pushLabel }
-						</MenuItem>
-					</MenuGroup>
+					<>
+						<MenuGroup className={ className }>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									handleOpenModal( 'pull' );
+								} }
+								icon={ cloudDownload }
+								iconPosition="left"
+							>
+								{ pullLabel }
+							</MenuItem>
+							<MenuItem
+								onClick={ () => {
+									onClose();
+									handleOpenModal( 'push' );
+								} }
+								icon={ cloudUpload }
+								iconPosition="left"
+							>
+								{ pushLabel }
+							</MenuItem>
+						</MenuGroup>
+						<StagingSiteHighLoadNotice>
+							{ __(
+								'Staging sites are experiencing sync issues. Please wait until later to sync your sites.'
+							) }
+						</StagingSiteHighLoadNotice>
+					</>
 				) }
 			</DropdownMenu>
 			{ isModalOpen && renderModal() }
