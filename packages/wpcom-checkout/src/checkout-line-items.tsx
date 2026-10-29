@@ -27,7 +27,7 @@ import {
 	Theme,
 } from '@automattic/composite-checkout';
 import { useLocale } from '@automattic/i18n-utils';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
 import {
@@ -644,12 +644,11 @@ export function BundleLineItem( {
 }
 
 /**
- * Several A4A licenses of one product, as one read-only line: the product, the
- * total for all of them, and the count with the price of one. The count is set
- * before checkout, in the agency's cart or referral; `children` holds the term
- * picker when the line keeps one.
+ * Identical lines of one product, as one read-only line: the product, the total
+ * for all of them, and the count with the price of one. The count is set before
+ * checkout; `children` holds the term picker when the line keeps one.
  */
-export function A4ALicensesLineItem( {
+export function MergedLineItem( {
 	products,
 	className = null,
 	children,
@@ -662,9 +661,9 @@ export function A4ALicensesLineItem( {
 	const { formStatus } = useFormStatus();
 	const isCartUpdating = formStatus === FormStatus.VALIDATING;
 
-	const [ firstLicense ] = products;
-	const label = getLabel( firstLicense );
-	const currency = firstLicense.currency;
+	const [ firstProduct ] = products;
+	const label = getLabel( firstProduct );
+	const currency = firstProduct.currency;
 	const format = ( amount: number ) =>
 		formatCurrency( amount, currency, { isSmallestUnit: true, stripZeros: true } );
 	const totalInteger = products.reduce(
@@ -681,8 +680,8 @@ export function A4ALicensesLineItem( {
 	return (
 		<BundleLineItemWrapper
 			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
-			data-e2e-product-slug={ firstLicense.product_slug }
-			data-product-type={ firstLicense.product_slug }
+			data-e2e-product-slug={ firstProduct.product_slug }
+			data-product-type={ firstProduct.product_slug }
 		>
 			<LineItemTitle className="checkout-line-item__title">{ label }</LineItemTitle>
 
@@ -701,18 +700,17 @@ export function A4ALicensesLineItem( {
 
 			<LineItemMeta>
 				<LineItemSublabelTitle>
-					{ translate(
-						'%(count)d license at %(price)s each',
-						'%(count)d licenses at %(price)s each',
-						{
-							count,
-							args: { count, price: format( firstLicense.item_subtotal_integer ) },
-						}
-					) }
+					{ translate( 'Quantity: %(count)s at %(price)s each', {
+						args: {
+							count: formatNumber( count ),
+							price: format( firstProduct.item_subtotal_integer ),
+						},
+						comment: '%(price)s is the price of one, such as "$149".',
+					} ) }
 				</LineItemSublabelTitle>
 			</LineItemMeta>
 			<LineItemMeta>
-				<LineItemSublabelAndPrice product={ firstLicense } isCartUpdating={ isCartUpdating } />
+				<LineItemSublabelAndPrice product={ firstProduct } isCartUpdating={ isCartUpdating } />
 			</LineItemMeta>
 
 			{ children }

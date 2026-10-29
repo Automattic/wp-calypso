@@ -3,9 +3,9 @@ import { AKISMET_PRO_500_PRODUCTS, isWpComPlan } from '@automattic/calypso-produ
 import { FormStatus, useFormStatus } from '@automattic/composite-checkout';
 import { isCopySiteFlow } from '@automattic/onboarding';
 import {
-	A4ALicensesLineItem,
 	canItemBeRemovedFromCart,
-	groupA4ALicenses,
+	MergedLineItem,
+	mergeIdenticalLineItems,
 	getCouponLineItemFromCart,
 	getCreditsLineItemFromCart,
 	groupBundleLineItems,
@@ -50,7 +50,7 @@ import type {
 	RemoveCouponFromCart,
 	AddProductsToCart,
 } from '@automattic/shopping-cart';
-import type { A4AGroupedCartLineItem } from '@automattic/wpcom-checkout';
+import type { MergedCartLineItem } from '@automattic/wpcom-checkout';
 import type { PropsWithChildren, RefObject } from 'react';
 
 const WPOrderReviewList = styled.ul`
@@ -133,8 +133,8 @@ export function WPOrderReviewLineItems( {
 	const bundledLineItems = config.isEnabled( 'domain-bundling' )
 		? groupBundleLineItems( responseCart.products )
 		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
-	// The A4A licenses of one product show as one read-only line.
-	const groupedLineItems: A4AGroupedCartLineItem[] = groupA4ALicenses( bundledLineItems );
+	// Identical lines that ask to be merged show as one read-only line.
+	const groupedLineItems: MergedCartLineItem[] = mergeIdenticalLineItems( bundledLineItems );
 
 	// Match the single-item path: the WooCommerce mobile app webview hides the
 	// remove action, so a bundle must not surface one either.
@@ -235,13 +235,13 @@ export function WPOrderReviewLineItems( {
 					);
 				}
 
-				if ( entry.type === 'a4a-licenses' ) {
-					const [ firstLicense ] = entry.products;
+				if ( entry.type === 'merged' ) {
+					const [ firstProduct ] = entry.products;
 					return (
 						<LineItemWrapper
-							key={ `licenses-${ entry.key }` }
-							product={ firstLicense }
-							licenseGroup={ entry.products }
+							key={ `merged-${ entry.key }` }
+							product={ firstProduct }
+							mergedProducts={ entry.products }
 							isSummary={ isSummary }
 							removeProductFromCart={ removeProductFromCart }
 							onChangeSelection={ onChangeSelection }
@@ -357,11 +357,11 @@ function LineItemWrapper( {
 	toggleAkQuantityDropdown,
 	akQuantityOpenId,
 	isRenewalPricingExperiment,
-	licenseGroup,
+	mergedProducts,
 }: {
 	product: ResponseCartProduct;
-	/** The A4A licenses of this product, shown as this one line. */
-	licenseGroup?: ResponseCartProduct[];
+	/** Identical lines of this product, shown as this one line. */
+	mergedProducts?: ResponseCartProduct[];
 	isSummary?: boolean;
 	removeProductFromCart?: RemoveProductFromCart;
 	onChangeSelection?: OnChangeItemVariant;
@@ -495,20 +495,20 @@ function LineItemWrapper( {
 	const firstVariant = variants[ 0 ];
 	const compareToPrice = firstVariant?.priceBeforeDiscounts / firstVariant?.termIntervalInMonths;
 
-	if ( licenseGroup ) {
+	if ( mergedProducts ) {
 		return (
 			<WPOrderReviewListItem>
-				<A4ALicensesLineItem products={ licenseGroup }>
+				<MergedLineItem products={ mergedProducts }>
 					{ finalShouldShowVariantSelector && (
 						<DropdownWrapper>
 							<div ref={ variantDropdownRef }>
 								<ItemVariationPicker
 									id={ product.uuid }
 									selectedItem={ product }
-									// The term applies to every license on the line.
+									// The term applies to every line merged into this one.
 									onChangeItemVariant={ ( _uuid, productSlug, productId, volume ) =>
-										licenseGroup.forEach( ( license ) =>
-											onChangeSelection?.( license.uuid, productSlug, productId, volume )
+										mergedProducts.forEach( ( merged ) =>
+											onChangeSelection?.( merged.uuid, productSlug, productId, volume )
 										)
 									}
 									isDisabled={ isDisabled }
@@ -519,7 +519,7 @@ function LineItemWrapper( {
 							</div>
 						</DropdownWrapper>
 					) }
-				</A4ALicensesLineItem>
+				</MergedLineItem>
 			</WPOrderReviewListItem>
 		);
 	}
