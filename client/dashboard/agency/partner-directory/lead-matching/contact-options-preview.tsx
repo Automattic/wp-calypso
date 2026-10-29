@@ -5,6 +5,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { prependHTTPS } from '@wordpress/url';
 import { Suspense, useState } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { ErrorBoundary } from '../../../components/error-boundary';
@@ -43,6 +44,7 @@ export default function ContactOptionsPreview( { countryCode = '' }: { countryCo
 						<Suspense fallback={ <Spinner /> }>
 							<PhoneNumberInput
 								label={ __( 'Phone number (optional)' ) }
+								placeholder={ __( 'e.g. 123456789' ) }
 								data={ phone }
 								onChange={ ( value ) => setPhone( ( state ) => ( { ...state, ...value } ) ) }
 							/>
@@ -57,6 +59,7 @@ export default function ContactOptionsPreview( { countryCode = '' }: { countryCo
 						autoComplete="off"
 						value={ bookingLink }
 						onChange={ setBookingLink }
+						onBlur={ () => setBookingLink( prependHTTPS( bookingLink.trim() ) ) }
 					/>
 				</VStack>
 			</CardBody>

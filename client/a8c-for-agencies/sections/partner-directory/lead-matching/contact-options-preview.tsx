@@ -1,5 +1,6 @@
 import { TextControl } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { prependHTTPS } from '@wordpress/url';
 import { useId, useState } from 'react';
 import FormField from 'calypso/a8c-for-agencies/components/form/field';
 import FormSection from 'calypso/a8c-for-agencies/components/form/section';
@@ -41,6 +42,7 @@ export default function ContactOptionsPreview( { countryCode }: { countryCode?: 
 				} }
 				phoneInputProps={ {
 					id: 'phone_number',
+					placeholder: __( 'e.g. 123456789' ),
 					autoComplete: 'off',
 					pattern: undefined,
 					onKeyDown: preventFormSubmit,
@@ -60,6 +62,7 @@ export default function ContactOptionsPreview( { countryCode }: { countryCode?: 
 					autoComplete="off"
 					value={ bookingLink }
 					onChange={ setBookingLink }
+					onBlur={ () => setBookingLink( prependHTTPS( bookingLink.trim() ) ) }
 					onKeyDown={ preventFormSubmit }
 				/>
 			</FormField>

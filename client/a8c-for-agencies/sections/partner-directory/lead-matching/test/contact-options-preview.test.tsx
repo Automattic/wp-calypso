@@ -36,6 +36,10 @@ test( 'keeps invalid contact drafts and Enter isolated from parent form submissi
 	expect( fireEvent.keyDown( country, { key: 'Enter', code: 'Enter' } ) ).toBe( false );
 	expect( onSubmit ).not.toHaveBeenCalled();
 	expect( form ).toBeValid();
+	await userEvent.clear( booking );
+	await userEvent.type( booking, 'booking.example.com/intro?source=A4A' );
+	await userEvent.tab();
+	expect( booking ).toHaveValue( 'https://booking.example.com/intro?source=A4A' );
 	await userEvent.click( saveButton );
 	expect( onSubmit ).toHaveBeenCalledTimes( 1 );
 } );

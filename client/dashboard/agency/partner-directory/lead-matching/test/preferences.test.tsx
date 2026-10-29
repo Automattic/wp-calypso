@@ -74,10 +74,10 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 			await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } ),
 			'not a phone'
 		);
-		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ),
-			'not a URL'
-		);
+		const booking = screen.getByRole( 'textbox', { name: 'Booking link (optional)' } );
+		await userEvent.type( booking, 'booking.example.com/intro?source=A4A' );
+		await userEvent.tab();
+		expect( booking ).toHaveValue( 'https://booking.example.com/intro?source=A4A' );
 
 		await userEvent.selectOptions(
 			await screen.findByRole( 'combobox', {

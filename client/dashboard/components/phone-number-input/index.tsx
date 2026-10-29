@@ -23,6 +23,7 @@ export default function PhoneNumberInput( {
 	isDisabled = false,
 	customValidity,
 	label,
+	placeholder,
 }: {
 	data: SecuritySMSNumber;
 	onChange: ( value: Partial< SecuritySMSNumber > ) => void;
@@ -32,6 +33,7 @@ export default function PhoneNumberInput( {
 		message: string;
 	};
 	label?: string;
+	placeholder?: string;
 } ) {
 	const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 		'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
@@ -77,6 +79,7 @@ export default function PhoneNumberInput( {
 				__next40pxDefaultSize
 				type="tel"
 				label={ label ?? __( 'Phone number' ) }
+				placeholder={ placeholder }
 				value={ data.phoneNumber ?? '' }
 				onChange={ ( value: string | undefined ) => {
 					return onChange( {
