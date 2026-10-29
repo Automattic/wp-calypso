@@ -65,6 +65,11 @@
 			.components-tab-panel__tabs-item {
 				padding-left: 0;
 				padding-right: 0;
+
+				// TabPanel insets the hover background and focus ring from its default padding, which these tabs remove.
+				&::before {
+					inset-inline: calc(-1 * var(--wpds-dimension-padding-xs, 4px));
+				}
 			}
 
 			@media (max-width: $break-small) {
@@ -95,6 +100,11 @@
 			.components-tab-panel__tabs-item {
 				padding-left: 0;
 				padding-right: 0;
+
+				// TabPanel insets the hover background and focus ring from its default padding, which these tabs remove.
+				&::before {
+					inset-inline: calc(-1 * var(--wpds-dimension-padding-xs, 4px));
+				}
 			}
 		}
 
