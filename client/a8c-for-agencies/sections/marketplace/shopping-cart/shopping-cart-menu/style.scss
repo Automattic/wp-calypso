@@ -113,3 +113,8 @@
 .shopping-cart__menu-list-item-actions.is-centered {
 	align-self: center;
 }
+
+.shopping-cart__menu-list-item-unit-price {
+	color: var(--color-neutral-50);
+	@include body-small;
+}
