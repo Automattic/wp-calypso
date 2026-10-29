@@ -206,6 +206,34 @@ describe( '<ReferralCheckout>', () => {
 		} );
 	} );
 
+	test( 'refers one license per count of a cart line', async () => {
+		const { result } = renderHook( () => useShoppingCart( 'referral' ) );
+		act( () => result.current.replaceItems( [ { slug: 'jetpack-backup-t1', quantity: 3 } ] ) );
+		mockApi();
+		let body: Record< string, unknown > | undefined;
+		nock( API )
+			.post( `/wpcom/v2/agency/${ AGENCY_ID }/referrals`, ( requestBody ) => {
+				body = requestBody;
+				return true;
+			} )
+			.reply( 200, {
+				id: 9,
+				client: { id: 1, email: 'client@example.com' },
+				products: [],
+				status: 'pending',
+				checkout_url: 'https://wordpress.com/checkout/agency/referral?x=1',
+			} );
+		const user = userEvent.setup();
+		render( <ReferralCheckout /> );
+		await screen.findByText( 'VaultPress Backup 10GB x 3' );
+
+		await user.type( screen.getByLabelText( 'Client’s email address' ), 'client@example.com' );
+		await user.click( screen.getByRole( 'button', { name: 'Send to client' } ) );
+
+		await waitFor( () => expect( body ).toBeDefined() );
+		expect( body ).toMatchObject( { product_ids: '2113,2113,2113' } );
+	} );
+
 	test( 'refers the plan of a development site with its license, leaving the cart alone', async () => {
 		mockSearch = { referral_blog_id: DEV_SITE_ID };
 		mockApi();

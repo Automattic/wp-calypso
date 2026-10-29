@@ -37,6 +37,8 @@ interface ProductDetailsModalProps {
 	inCart: boolean;
 	onToggleCart: () => void;
 	onClose: () => void;
+	/** Opens the cart, where a product's count is set. */
+	onOpenCart: () => void;
 }
 
 export default function ProductDetailsModal( {
@@ -46,6 +48,7 @@ export default function ProductDetailsModal( {
 	inCart,
 	onToggleCart,
 	onClose,
+	onOpenCart,
 }: ProductDetailsModalProps ) {
 	const isWooPayments = product.slug === WOOPAYMENTS_PRODUCT_SLUG;
 	const vendor = getVendorInfo( product.slug );
@@ -56,10 +59,11 @@ export default function ProductDetailsModal( {
 	const priceInfo = getProductPriceInfo( product, term );
 	const termNote = getTermAvailabilityNote( product, term );
 
-	let cta: string = inCart ? __( 'Remove from cart' ) : __( 'Add to cart' );
+	let cta: string = inCart ? __( 'View in cart' ) : __( 'Add to cart' );
 	if ( isReferralMode ) {
 		cta = inCart ? __( 'Remove from referral' ) : __( 'Add to referral' );
 	}
+	const opensCart = inCart && ! isReferralMode;
 
 	return (
 		<Modal
@@ -193,7 +197,8 @@ export default function ProductDetailsModal( {
 						className="dashboard-marketplace-products__modal-cta"
 						variant={ inCart ? 'secondary' : 'primary' }
 						__next40pxDefaultSize
-						onClick={ onToggleCart }
+						icon={ opensCart ? check : undefined }
+						onClick={ opensCart ? onOpenCart : onToggleCart }
 					>
 						{ cta }
 					</Button>

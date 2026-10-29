@@ -124,9 +124,12 @@ export function useRequestClientPayment( {
 	};
 
 	// A development site's license names its own product; the saved term does not apply.
+	// The referral takes one id per license, so a line's count repeats its id.
 	const productIds = license
 		? [ license.productId ]
-		: lines.map( ( { product } ) => getTermProductId( product, term ) );
+		: lines.flatMap( ( { product, item } ) =>
+				Array< number >( item.quantity ).fill( getTermProductId( product, term ) )
+			);
 
 	const validate = async (): Promise< boolean > => {
 		if ( ! emailValidator.validate( email ) ) {
