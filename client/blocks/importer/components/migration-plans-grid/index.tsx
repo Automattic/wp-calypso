@@ -101,7 +101,6 @@ export default function MigrationPlansGrid( {
 		reflectStorageSelectionInPlanPrices: true,
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 	} );
 
 	const gridPlansForPlanTypeSelector = useMemo(

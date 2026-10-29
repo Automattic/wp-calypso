@@ -54,10 +54,6 @@ export interface UseGridPlansParams {
 	 */
 	usePlansGridRedesignNewDescription?: boolean;
 	/**
-	 * When true, use cohort feature lists and comparison grid copy.
-	 */
-	isExperimentVariant?: boolean;
-	/**
 	 * Renewal-pricing experiment flag, threaded to the pricing hook so the current
 	 * plan's headline matches the renewal-vs-intro treatment.
 	 */

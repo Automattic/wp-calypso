@@ -57,7 +57,6 @@ function comparisonFor( intent?: PlansIntent ) {
 			gridPlans: GRID_PLANS,
 			allFeaturesList: ALL_FEATURES,
 			intent,
-			isExperimentVariant: true,
 		} )
 	);
 

@@ -29,7 +29,6 @@ const useGridPlansForComparisonGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	usePlansGridRedesignNewDescription,
-	isExperimentVariant,
 	showBillingDescriptionForIncreasedRenewalPrice,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
@@ -60,7 +59,6 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isExperimentVariant,
 	} );
 
 	return useMemo( () => {

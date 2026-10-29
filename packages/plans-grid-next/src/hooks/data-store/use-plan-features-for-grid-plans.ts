@@ -205,7 +205,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
-	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -215,7 +214,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
-	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -232,7 +230,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
-	isExperimentVariant,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -276,13 +273,13 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
-						isExperimentVariant ?? true
+						true
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true
+						true
 					);
 				} else if ( 'plans-newsletter' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -456,7 +453,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					if (
 						wpcomFeaturesTransformed.length > 0 &&
 						useDifferentiationFeatures &&
-						( isExperimentVariant || usePlansGridRedesignFeatures )
+						usePlansGridRedesignFeatures
 					) {
 						const lastIndex = wpcomFeaturesTransformed.length - 1;
 						wpcomFeaturesTransformed[ lastIndex ].isExperimentLastFeature = true;
@@ -490,7 +487,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		allFeaturesList,
 		hasRedeemedDomainCredit,
 		usePlansGridRedesignFeatures,
-		isExperimentVariant,
 		translate,
 	] );
 };

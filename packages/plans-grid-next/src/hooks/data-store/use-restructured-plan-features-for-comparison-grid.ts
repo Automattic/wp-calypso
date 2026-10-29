@@ -23,7 +23,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -31,7 +30,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesForComparisonGrid =
@@ -42,7 +40,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		isExperimentVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
 			gridPlans,
@@ -50,7 +47,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			isExperimentVariant,
 		} );
 
 		return useMemo( () => {
@@ -67,16 +63,15 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 
 				let wpcomFeatures;
 
-				// Plans differentiators (non-control): use experiment comparison override when present.
+				// Use the differentiation comparison override when present.
 				if (
-					isExperimentVariant &&
 					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment?.()?.length
 				) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PlanComparisonFeatureOverrideForExperiment().slice(),
-						isExperimentVariant
+						true
 					);
 				} else if (
 					// Check if there's a specific override for comparison
@@ -113,20 +108,18 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					);
 				}
 
-				// Plans Differentiators Experiment: For comparison grid, use dedicated experiment override function
-				// when in an experiment variant for Jetpack features.
+				// For Jetpack features, use the dedicated differentiation override function.
 				// Note: We check if the function exists, not if it returns a non-empty array, because an empty array
 				// is a valid return value (meaning "show no Jetpack features").
 				let jetpackFeatures;
 				if (
-					isExperimentVariant &&
 					useDifferentiationFeatures &&
 					planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment
 				) {
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PlanComparisonJetpackFeatureOverrideForExperiment().slice(),
-						isExperimentVariant
+						true
 					);
 				} else if ( planConstantObj.get2023PlanComparisonJetpackFeatureOverride?.().length ) {
 					jetpackFeatures = getPlanFeaturesObject(
@@ -209,7 +202,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 					// Labels follow the list: the experiment copy describes features the experiment
 					// override lists, so pairing it with a curated list mislabels the rows.
 					comparisonGridFeatureLabels: planConstantObj.getPlanComparisonFeatureLabels?.( {
-						isExperimentVariant: isExperimentVariant && useDifferentiationFeatures,
+						isExperimentVariant: useDifferentiationFeatures,
 					} ),
 				};
 
@@ -217,14 +210,7 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			}
 
 			return planFeatureMap;
-		}, [
-			gridPlans,
-			allFeaturesList,
-			planFeaturesForGridPlans,
-			intent,
-			hasRedeemedDomainCredit,
-			isExperimentVariant,
-		] );
+		}, [ gridPlans, allFeaturesList, planFeaturesForGridPlans, intent, hasRedeemedDomainCredit ] );
 	};
 
 export default useRestructuredPlanFeaturesForComparisonGrid;

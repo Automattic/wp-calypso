@@ -1073,7 +1073,6 @@ const PlansFeaturesMain = ( {
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
@@ -1103,7 +1102,6 @@ const PlansFeaturesMain = ( {
 		reflectStorageSelectionInPlanPrices: true,
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
