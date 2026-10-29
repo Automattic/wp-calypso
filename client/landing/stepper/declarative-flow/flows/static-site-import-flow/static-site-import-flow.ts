@@ -1,6 +1,7 @@
 import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
+import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import { matchPath } from 'react-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
@@ -18,6 +19,11 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { addQueryArgs, pathToUrl } from 'calypso/lib/url';
+import {
+	getSignupCompleteFlowName,
+	getSignupCompleteSiteID,
+	retrieveSignupDestination,
+} from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
@@ -134,6 +140,28 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
+		useEffect( () => {
+			const restoreDestination = () => {
+				const createdSiteId = getSignupCompleteSiteID();
+				const destination = retrieveSignupDestination();
+				if (
+					! hasDestinationSite &&
+					getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
+					createdSiteId &&
+					destination &&
+					getQueryArg( destination, 'from' ) === from &&
+					getQueryArg( destination, 'platform' ) === platform
+				) {
+					window.location.replace(
+						addQueryArgs( { siteId: createdSiteId }, window.location.href )
+					);
+				}
+			};
+			restoreDestination();
+			window.addEventListener( 'pageshow', restoreDestination );
+			return () => window.removeEventListener( 'pageshow', restoreDestination );
+		}, [ hasDestinationSite, from, platform ] );
+
 		const isSiteOnPaidPlan = Boolean( site?.plan ) && ! site?.plan?.is_free;
 
 		const exitFlow = ( to: string ) =>
@@ -200,7 +228,12 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 							...Object.fromEntries( urlQueryParams ),
 							siteId: hasSite ? siteId : undefined,
 							siteSlug: hasSite ? siteSlug : undefined,
-							applySiteSettings: hasSite ? undefined : '1',
+							applySiteSettings:
+								! hasSite ||
+								( getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
+									Number( getSignupCompleteSiteID() ) === siteId )
+									? '1'
+									: undefined,
 						},
 						withLocale( `/setup/${ flowPath }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`, locale )
 					);

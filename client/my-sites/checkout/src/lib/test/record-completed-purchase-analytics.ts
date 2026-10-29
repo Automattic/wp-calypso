@@ -4,7 +4,13 @@
 import { recordPurchase } from 'calypso/lib/analytics/record-purchase';
 import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
-import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
+import {
+	getSignupCompleteSiteID,
+	getSignupIsNewUser,
+	setSignupCompleteFlowName,
+	setSignupCompleteSiteID,
+	setSignupIsNewUser,
+} from 'calypso/signup/storageUtils';
 import { recordCompletedPurchaseAnalytics } from '../record-completed-purchase-analytics';
 import type { Receipt, ReceiptItem } from '@automattic/api-core';
 
@@ -33,6 +39,7 @@ const makeReceipt = ( id: number, items: Partial< ReceiptItem >[] = [ {} ] ): Re
 describe( 'recordCompletedPurchaseAnalytics', () => {
 	beforeEach( () => {
 		window.localStorage.clear();
+		window.sessionStorage.clear();
 		jest.clearAllMocks();
 		mockRecordPurchase.mockResolvedValue( undefined );
 	} );
@@ -85,7 +92,37 @@ describe( 'recordCompletedPurchaseAnalytics', () => {
 			}
 		);
 
-		it.each( [ undefined, 'wpcom' ] )(
+		it.each( [ undefined, 'default', 'unified' ] )(
+			'records signup for a site created before payment (checkout type: %s)',
+			async ( checkoutType ) => {
+				setSignupCompleteFlowName( context.flow );
+				setSignupCompleteSiteID( '42' );
+				setSignupIsNewUser( context.userId );
+				const completedReceipt = { ...receipt, checkout_type: checkoutType };
+				await recordCompletedPurchaseAnalytics( completedReceipt, context );
+				await recordCompletedPurchaseAnalytics( completedReceipt, context );
+				expect( recordSignupComplete ).toHaveBeenCalledTimes( 1 );
+				expect( recordSignupComplete ).toHaveBeenCalledWith(
+					expect.objectContaining( { siteId: 42, isNewUser: true } ),
+					true
+				);
+				expect( getSignupCompleteSiteID() ).toBeNull();
+				expect( getSignupIsNewUser( context.userId ) ).toBeNull();
+			}
+		);
+
+		it.each( [
+			{ flow: 'static-site-import', siteId: '99' },
+			{ flow: 'onboarding', siteId: '42' },
+		] )( 'ignores unrelated signup state (%j)', async ( { flow, siteId } ) => {
+			setSignupCompleteFlowName( flow );
+			setSignupCompleteSiteID( siteId );
+			await recordCompletedPurchaseAnalytics( { ...receipt, checkout_type: 'default' }, context );
+			expect( recordSignupComplete ).not.toHaveBeenCalled();
+			expect( getSignupCompleteSiteID() ).toBe( siteId );
+		} );
+
+		it.each( [ undefined, 'default', 'wpcom' ] )(
 			'does not record an existing-site upgrade (checkout type: %s)',
 			async ( checkoutType ) => {
 				await recordCompletedPurchaseAnalytics(
@@ -123,6 +160,8 @@ describe( 'recordCompletedPurchaseAnalytics', () => {
 		);
 
 		it( 'does not record signup when the plan failed to provision', async () => {
+			setSignupCompleteFlowName( context.flow );
+			setSignupCompleteSiteID( '42' );
 			await recordCompletedPurchaseAnalytics(
 				{
 					...receipt,
@@ -142,6 +181,7 @@ describe( 'recordCompletedPurchaseAnalytics', () => {
 			);
 
 			expect( recordSignupComplete ).not.toHaveBeenCalled();
+			expect( getSignupCompleteSiteID() ).toBe( '42' );
 		} );
 	} );
 

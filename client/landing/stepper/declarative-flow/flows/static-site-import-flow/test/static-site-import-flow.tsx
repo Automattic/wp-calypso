@@ -4,7 +4,7 @@
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import StepRoute from 'calypso/landing/stepper/declarative-flow/internals/components/step-route';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -18,6 +18,12 @@ import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
+import {
+	clearSignupDestinationCookie,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+	setSignupCompleteSiteID,
+} from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers/testing-library';
 import staticSiteImportFlow from '../static-site-import-flow';
@@ -66,6 +72,8 @@ describe( 'Static site import flow', () => {
 	} );
 
 	beforeEach( () => {
+		window.sessionStorage.clear();
+		clearSignupDestinationCookie();
 		config.enable( 'migration/non-wordpress-source' );
 		window.location.pathname = plansPath;
 		window.location.search = '';
@@ -75,6 +83,81 @@ describe( 'Static site import flow', () => {
 		jest.mocked( useSite ).mockReturnValue( undefined );
 		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
 		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: true, isFetching: false } );
+	} );
+
+	it.each( [ false, true ] )(
+		'restores the created destination after browser Back (cached page: %s)',
+		( cachedPage ) => {
+			const plansUrl = `${ plansPath }/es?${ new URLSearchParams( SOURCE ) }`;
+			window.location.href = `https://example.com${ plansUrl }`;
+			const saveCreatedSite = () => {
+				setSignupCompleteFlowName( 'static-site-import' );
+				setSignupCompleteSiteID( '42' );
+				persistSignupDestination(
+					`${ readingPath }?${ new URLSearchParams( SOURCE ) }&siteId=:siteId`
+				);
+			};
+			if ( ! cachedPage ) {
+				saveCreatedSite();
+			}
+			renderHookWithProvider(
+				() => staticSiteImportFlow.useStepNavigation( STEPS.UNIFIED_PLANS.slug, jest.fn() ),
+				{
+					wrapper: ( { children } ) => (
+						<MemoryRouter initialEntries={ [ plansUrl ] }>{ children }</MemoryRouter>
+					),
+				}
+			);
+			expect( window.location.replace ).toHaveBeenCalledTimes( cachedPage ? 0 : 1 );
+			if ( cachedPage ) {
+				saveCreatedSite();
+				act( () =>
+					window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) )
+				);
+			}
+			expect( window.location.replace ).toHaveBeenCalledWith(
+				`${ window.location.href }&siteId=42`
+			);
+		}
+	);
+
+	it.each( [
+		{ flow: 'onboarding', source: SOURCE, query: SOURCE },
+		{
+			flow: 'static-site-import',
+			source: { ...SOURCE, from: 'another.example.com' },
+			query: SOURCE,
+		},
+		{ flow: 'static-site-import', source: SOURCE, query: { ...SOURCE, siteId: 99 } },
+	] )(
+		'does not restore a destination from an unrelated checkout: %j',
+		( { flow, source, query } ) => {
+			setSignupCompleteFlowName( flow );
+			setSignupCompleteSiteID( '42' );
+			persistSignupDestination(
+				`${ readingPath }?${ new URLSearchParams( source ) }&siteId=:siteId`
+			);
+			runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN, query } );
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		}
+	);
+
+	it( 'retries payment for the recovered destination and still applies its signup settings', () => {
+		setSignupCompleteFlowName( 'static-site-import' );
+		setSignupCompleteSiteID( '42' );
+		jest.mocked( useSite ).mockReturnValue( { ...PAID_SITE, plan: { is_free: true } } );
+		runNavigation( {
+			from: STEPS.UNIFIED_PLANS,
+			dependencies: PLAN,
+			query: { ...SOURCE, siteId: 42 },
+		} );
+		expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
+		const { destination, siteSlug } = jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
+		expect( siteSlug ).toBe( SITE.siteSlug );
+		expect( parseUrl( destination ).query ).toMatchObject( {
+			siteId: '42',
+			applySiteSettings: '1',
+		} );
 	} );
 
 	it( 'sends users who cannot manage the destination site to the start page', () => {

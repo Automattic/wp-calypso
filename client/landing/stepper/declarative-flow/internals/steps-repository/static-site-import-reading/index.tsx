@@ -1,7 +1,7 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
 import { Onboard, Visibility } from '@automattic/data-stores';
-import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useEffectEvent, useRef } from 'react';
@@ -39,10 +39,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				return;
 			}
 			hasStarted.current = true;
-			if ( sessionId ) {
-				return submit( { action: 'continue', importSessionId: sessionId } );
-			}
-			if ( ! sourceUrl ) {
+			if ( ! sessionId && ! sourceUrl ) {
 				return submit( { action: 'unavailable' } );
 			}
 
@@ -60,7 +57,6 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 									blogname: __( 'My Site' ),
 									blog_public: Visibility.PublicNotIndexed,
 									wpcom_public_coming_soon: 1,
-									site_creation_flow: STATIC_SITE_IMPORT_FLOW,
 								}
 							),
 							wpcom.req.post(
@@ -75,6 +71,10 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 					}
 				} catch {
 					return submit( { action: 'unavailable' } );
+				}
+
+				if ( sessionId ) {
+					return submit( { action: 'continue', importSessionId: sessionId } );
 				}
 
 				createSession( sourceUrl, {

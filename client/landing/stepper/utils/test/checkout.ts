@@ -2,7 +2,11 @@
  * @jest-environment jsdom
  */
 import { Visibility } from '@automattic/data-stores';
-import { persistSignupDestination, setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import {
+	clearSignupCompleteSiteID,
+	persistSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
 import { goToUnifiedCheckout } from '../checkout';
 
 jest.mock( 'calypso/signup/storageUtils' );
@@ -47,6 +51,7 @@ describe( 'goToUnifiedCheckout', () => {
 			expect( url.searchParams.get( 'flow' ) ).toBe( options.flowName );
 			expect( url.searchParams.get( 'redirect_to' ) ).toBe( options.destination );
 			expect( url.searchParams.get( 'cancel_to' ) ).toBe( options.cancelDestination );
+			expect( clearSignupCompleteSiteID ).toHaveBeenCalledTimes( 1 );
 		}
 	);
 

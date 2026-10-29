@@ -6,7 +6,11 @@ import config from '@automattic/calypso-config';
 import nock from 'nock';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
-import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
+import {
+	getSignupCompleteFlowName,
+	setSignupCompleteSiteID,
+	setSignupIsNewUser,
+} from 'calypso/signup/storageUtils';
 import { createAccount } from '../payment-method-helpers';
 
 jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
@@ -18,6 +22,8 @@ jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 } ) );
 
 jest.mock( 'calypso/signup/storageUtils', () => ( {
+	getSignupCompleteFlowName: jest.fn(),
+	setSignupCompleteSiteID: jest.fn(),
 	setSignupIsNewUser: jest.fn(),
 } ) );
 
@@ -41,6 +47,8 @@ const createAccountArgs = {
 
 describe( 'createAccount', () => {
 	beforeEach( () => {
+		jest.mocked( getSignupCompleteFlowName ).mockReset();
+		jest.mocked( setSignupCompleteSiteID ).mockClear();
 		( setSignupIsNewUser as jest.Mock ).mockClear();
 		config.enable( 'blackbox' );
 		config.enable( 'blackbox-userless-checkout' );
@@ -74,6 +82,33 @@ describe( 'createAccount', () => {
 		await createAccount( createAccountArgs );
 
 		expect( setSignupIsNewUser ).not.toHaveBeenCalled();
+	} );
+
+	it( 'retains the migration destination before payment is attempted', async () => {
+		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'static-site-import' );
+		interceptUsersNew( 200, { success: true, blog_details: { blogid: '123' } } );
+
+		await createAccount( createAccountArgs );
+
+		expect( setSignupCompleteSiteID ).toHaveBeenCalledWith( '123' );
+	} );
+
+	it( 'does not replace the migration destination when an account-creation retry returns no site', async () => {
+		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'static-site-import' );
+		interceptUsersNew();
+
+		await createAccount( { ...createAccountArgs, siteId: 123 } );
+
+		expect( setSignupCompleteSiteID ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not persist a migration destination for other checkout flows', async () => {
+		jest.mocked( getSignupCompleteFlowName ).mockReturnValue( 'onboarding' );
+		interceptUsersNew( 200, { success: true, blog_details: { blogid: '123' } } );
+
+		await createAccount( createAccountArgs );
+
+		expect( setSignupCompleteSiteID ).not.toHaveBeenCalled();
 	} );
 
 	it( 'attaches blackbox_session_id when available', async () => {

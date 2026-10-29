@@ -2,6 +2,7 @@ import { Visibility } from '@automattic/data-stores';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import {
+	clearSignupCompleteSiteID,
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -44,6 +45,7 @@ export const goToUnifiedCheckout = ( {
 		// Checkout can use its default site settings when storage is unavailable.
 	}
 
+	clearSignupCompleteSiteID();
 	setSignupCompleteFlowName( flowName );
 	persistSignupDestination( destination );
 

@@ -3,7 +3,7 @@ import page from '@automattic/calypso-router';
 import { getUrlParts } from '@automattic/calypso-url';
 import { CheckoutErrorBoundary } from '@automattic/composite-checkout';
 import { SUPPORT_STATUS_QUERY_KEY } from '@automattic/help-center/src/data/use-support-status';
-import { Step } from '@automattic/onboarding';
+import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import { invokeSurvicateEvent } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -22,6 +22,7 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
+import { getSignupCompleteFlowName, getSignupCompleteSiteID } from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -280,25 +281,24 @@ function useRedirectOnTransactionSuccess( {
 	// the query string for receipts fetched before the field was available.
 	const isUnifiedCheckout =
 		( receipt?.checkout_type ?? searchParams.get( 'checkout_type' ) ) === 'unified';
+	const shouldRefreshUser =
+		isUnifiedCheckout ||
+		( getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
+			Number( getSignupCompleteSiteID() ) === blogId );
 
-	// For unified checkout (logged-out flow where a new account + site are
-	// created before the transaction), we re-fetch the current user once the
-	// receipt is available. By the time the pending page has finished polling
-	// for the transaction, enough time has passed for the server to propagate
-	// the new site, so a fresh fetch reliably returns site_count >= 1. Without
-	// this, siteSelection receives a stale site_count = 0 and renders "You
-	// don't have any sites yet" instead of the thank-you page.
-	const didRefreshUserForUnified = useRef( false );
-	const [ isUserRefreshedForUnified, setIsUserRefreshedForUnified ] = useState( false );
+	// A newly created site's count may still be stale in Redux. Refresh the
+	// user after the receipt loads so siteSelection sees the purchased site.
+	const didRefreshUser = useRef( false );
+	const [ isUserRefreshed, setIsUserRefreshed ] = useState( false );
 	useEffect( () => {
-		if ( ! isUnifiedCheckout || ! blogId || didRefreshUserForUnified.current ) {
+		if ( ! shouldRefreshUser || ! blogId || didRefreshUser.current ) {
 			return;
 		}
-		didRefreshUserForUnified.current = true;
+		didRefreshUser.current = true;
 		( reduxDispatch( fetchCurrentUser() ) as Promise< unknown > )
 			.catch( () => {} )
-			.finally( () => setIsUserRefreshedForUnified( true ) );
-	}, [ isUnifiedCheckout, blogId, reduxDispatch ] );
+			.finally( () => setIsUserRefreshed( true ) );
+	}, [ shouldRefreshUser, blogId, reduxDispatch ] );
 
 	const defaultPendingText = translate( 'Almost there—we’re currently finalizing your order.' );
 	const connectingJetpackText = translate(
@@ -367,11 +367,11 @@ function useRedirectOnTransactionSuccess( {
 			return;
 		}
 
-		// For unified checkout, wait for the current user to be re-fetched
+		// When signup creates a site, wait for the current user to be re-fetched
 		// (triggered by the useEffect above) before proceeding. This ensures
 		// site_count is up-to-date in Redux so siteSelection doesn't incorrectly
 		// bail with "You don't have any sites yet" on the thank-you page.
-		if ( isUnifiedCheckout && blogId && ! isUserRefreshedForUnified ) {
+		if ( shouldRefreshUser && blogId && ! isUserRefreshed ) {
 			return;
 		}
 
@@ -432,8 +432,8 @@ function useRedirectOnTransactionSuccess( {
 		isLoadingOrder,
 		saasRedirectUrl,
 		isConnectAfterCheckoutFlow,
-		isUnifiedCheckout,
-		isUserRefreshedForUnified,
+		shouldRefreshUser,
+		isUserRefreshed,
 		connectingJetpackText,
 		finalReceiptId,
 		isReceiptLoaded,

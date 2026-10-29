@@ -44,56 +44,61 @@ describe( 'StaticSiteImportReading', () => {
 		expect( postedBody ).toEqual( { source_url: 'https://busybearscleaning.com' } );
 	} );
 
-	it( 'applies checkout site settings before starting the session for a new destination', async () => {
-		const expectedSettings = {
-			blogname: 'My Site',
-			blog_public: 0,
-			wpcom_public_coming_soon: 1,
-			site_creation_flow: 'static-site-import',
-		};
-		mockApi()
-			.post( '/rest/v1.4/sites/123/settings', expectedSettings )
-			.reply( 200, { updated: expectedSettings } );
-		mockApi()
-			.post( '/wpcom/v2/sites/123/site-intent', { site_intent: 'site-migration' } )
-			.reply( 200, {} );
-		mockApi()
-			.post( '/wpcom/v2/static-site-import-session', {
-				source_url: 'https://busybearscleaning.com',
-			} )
-			.query( true )
-			.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
+	it.each( [ undefined, 'abc123' ] )(
+		'applies site settings before continuing session %s',
+		async ( sessionId ) => {
+			const expectedSettings = {
+				blogname: 'My Site',
+				blog_public: 0,
+				wpcom_public_coming_soon: 1,
+			};
+			mockApi()
+				.post( '/rest/v1.4/sites/123/settings', expectedSettings )
+				.reply( 200, { updated: expectedSettings } );
+			mockApi()
+				.post( '/wpcom/v2/sites/123/site-intent', { site_intent: 'site-migration' } )
+				.reply( 200, {} );
+			if ( ! sessionId ) {
+				mockApi()
+					.post( '/wpcom/v2/static-site-import-session', {
+						source_url: 'https://busybearscleaning.com',
+					} )
+					.query( true )
+					.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
+			}
 
-		const submit = render(
-			'/static-site-import-reading?applySiteSettings=1&siteId=123&from=busybearscleaning.com'
-		);
+			const submit = render(
+				`/static-site-import-reading?applySiteSettings=1&siteId=123&from=busybearscleaning.com${ sessionId ? `&importSessionId=${ sessionId }` : '' }`
+			);
 
-		await waitFor( () =>
-			expect( submit ).toHaveBeenCalledWith( { action: 'continue', importSessionId: 'abc123' } )
-		);
-		expect( nock.pendingMocks() ).toHaveLength( 0 );
-	} );
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( { action: 'continue', importSessionId: 'abc123' } )
+			);
+			expect( nock.pendingMocks() ).toHaveLength( 0 );
+		}
+	);
 
-	it( 'does not start the import when applying the site settings fails', async () => {
-		mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 500 );
-		mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 200, {} );
-		const sessionRequest = mockApi()
-			.post( '/wpcom/v2/static-site-import-session' )
-			.query( true )
-			.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
+	it.each( [ '', '&importSessionId=abc123' ] )(
+		'does not continue when applying site settings fails (%s)',
+		async ( sessionQuery ) => {
+			mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 500 );
+			mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 200, {} );
+			const sessionRequest = mockApi()
+				.post( '/wpcom/v2/static-site-import-session' )
+				.query( true )
+				.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
 
-		const submit = render(
-			'/static-site-import-reading?applySiteSettings=1&siteId=123&from=busybearscleaning.com'
-		);
+			const submit = render(
+				`/static-site-import-reading?applySiteSettings=1&siteId=123&from=busybearscleaning.com${ sessionQuery }`
+			);
 
-		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
-		expect( sessionRequest.isDone() ).toBe( false );
-	} );
+			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
+			expect( sessionRequest.isDone() ).toBe( false );
+		}
+	);
 
 	it( 'resumes the session in the URL without starting another one', () => {
-		const submit = render(
-			'/static-site-import-reading?from=busybearscleaning.com&importSessionId=abc123'
-		);
+		const submit = render( '/static-site-import-reading?importSessionId=abc123' );
 
 		expect( submit ).toHaveBeenCalledWith( { action: 'continue', importSessionId: 'abc123' } );
 		expect( nock.pendingMocks() ).toHaveLength( 0 );

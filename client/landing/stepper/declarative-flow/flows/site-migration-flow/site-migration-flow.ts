@@ -42,6 +42,7 @@ import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import { withLocale } from '../../helpers/with-locale';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import * as paths from './paths';
 import type { FlowStateManifest } from '../../internals/state-manager/stepper-state-manifest';
@@ -636,7 +637,10 @@ const siteMigration: FlowV2< typeof initialize > = {
 									siteId: hasDestinationSite ? siteId : undefined,
 									siteSlug: hasDestinationSite ? siteSlug : undefined,
 								},
-								`/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.UNIFIED_PLANS.slug }`
+								withLocale(
+									`/setup/${ STATIC_SITE_IMPORT_FLOW }/${ STEPS.UNIFIED_PLANS.slug }`,
+									locale
+								)
 							)
 						);
 					}

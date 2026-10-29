@@ -7,7 +7,12 @@ import {
 	mergeDomainMappingsIntoDomains,
 	removeFailedPurchases,
 } from 'calypso/lib/analytics/utils/receipt-item-details';
-import { getSignupIsNewUserAndClear } from 'calypso/signup/storageUtils';
+import {
+	clearSignupCompleteSiteID,
+	getSignupCompleteFlowName,
+	getSignupCompleteSiteID,
+	getSignupIsNewUserAndClear,
+} from 'calypso/signup/storageUtils';
 import { recordCompositeCheckoutErrorDuringAnalytics } from './analytics';
 import type { Receipt } from '@automattic/api-core';
 
@@ -86,11 +91,17 @@ export async function recordCompletedPurchaseAnalytics(
 }
 
 function recordStaticSiteImportSignup( receipt: Receipt, { flow, userId }: SignupContext ) {
-	if ( flow !== STATIC_SITE_IMPORT_FLOW || receipt.checkout_type !== 'unified' ) {
+	if ( flow !== STATIC_SITE_IMPORT_FLOW ) {
 		return;
 	}
 	const plan = receipt.items.find( ( item ) => item.is_plan && item.type === 'new purchase' );
 	if ( ! plan?.site_id ) {
+		return;
+	}
+	const isCreatedSite =
+		getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
+		Number( getSignupCompleteSiteID() ) === plan.site_id;
+	if ( receipt.checkout_type !== 'unified' && ! isCreatedSite ) {
 		return;
 	}
 
@@ -114,6 +125,9 @@ function recordStaticSiteImportSignup( receipt: Receipt, { flow, userId }: Signu
 		},
 		true
 	);
+	if ( isCreatedSite ) {
+		clearSignupCompleteSiteID();
+	}
 }
 
 /**
