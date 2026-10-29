@@ -79,21 +79,26 @@ export default function useSiteSetupChecklist( {
 	const siteId = getSiteSetupSiteId();
 	const isEnabled = enabled && siteId !== null && isSiteSetupChecklistEnabled();
 
-	const { data, isLoading, refetch } = useQuery( {
+	const { data, dataUpdatedAt, isLoading, refetch } = useQuery( {
 		queryKey: [ ...SITE_SETUP_TASKS_QUERY_KEY, siteId ],
 		queryFn: () => fetchSiteSetupTasks( siteId as number ),
 		enabled: isEnabled,
 	} );
+	const dataUpdatedAtRef = useRef( dataUpdatedAt );
+	dataUpdatedAtRef.current = dataUpdatedAt;
 
 	// Tasks picked (started or resumed) during the running turn, shown in
 	// progress whatever a read says meanwhile: the pinned list folds down to the
 	// in-progress rows, and a task that completes on click would otherwise settle
 	// and unfold the list mid-turn. Released when the turn ends, or, for a start
-	// still in flight then, once its write and the read after it settle.
+	// still pending then, once a read that finished after its write landed.
 	const [ heldIds, setHeldIds ] = useState( NO_IDS );
 	const heldIdsRef = useRef( heldIds );
 	heldIdsRef.current = heldIds;
-	const pendingStartsRef = useRef( new Set< string >() );
+	// Starts whose read is still owed, with the data timestamp their write saw once
+	// settled (undefined while the write runs). A refetch promise can resolve
+	// cancelled, so only newer data counts as the read.
+	const pendingStartsRef = useRef( new Map< string, number | undefined >() );
 	const isProcessingRef = useRef( isProcessing );
 	isProcessingRef.current = isProcessing;
 
@@ -133,7 +138,7 @@ export default function useSiteSetupChecklist( {
 			if ( siteId === null ) {
 				return;
 			}
-			pendingStartsRef.current.add( taskId );
+			pendingStartsRef.current.set( taskId, undefined );
 
 			try {
 				await startSiteSetupTask( siteId, taskId );
@@ -142,14 +147,22 @@ export default function useSiteSetupChecklist( {
 				console.error( '[AgentsManager] Error recording the Site Setup task as started:', error );
 			}
 
-			await refetch();
-			pendingStartsRef.current.delete( taskId );
-			if ( ! isProcessingRef.current ) {
-				release( [ taskId ] );
-			}
+			pendingStartsRef.current.set( taskId, dataUpdatedAtRef.current );
+			refetch();
 		},
-		[ siteId, refetch, release ]
+		[ siteId, refetch ]
 	);
+
+	// Data newer than a settled write is the read it was owed.
+	useEffect( () => {
+		const landed = [ ...pendingStartsRef.current ]
+			.filter( ( [ , writeSeenAt ] ) => writeSeenAt !== undefined && dataUpdatedAt > writeSeenAt )
+			.map( ( [ taskId ] ) => taskId );
+		landed.forEach( ( taskId ) => pendingStartsRef.current.delete( taskId ) );
+		if ( landed.length > 0 && ! isProcessing ) {
+			release( landed );
+		}
+	}, [ dataUpdatedAt, isProcessing, release ] );
 
 	// A pick is the user message of a prompt the composer dispatched from the
 	// checklist, once its turn runs: the composer consumes the prompt source as

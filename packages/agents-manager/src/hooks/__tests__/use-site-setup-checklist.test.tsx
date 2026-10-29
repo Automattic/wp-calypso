@@ -83,7 +83,12 @@ describe( 'useSiteSetupChecklist', () => {
 		jest.clearAllMocks();
 		mockIsSiteSetupChecklistEnabled.mockReturnValue( true );
 		mockGetSiteSetupSiteId.mockReturnValue( 123 );
-		mockUseQuery.mockReturnValue( { data: DETAILS, isLoading: false, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 	} );
 
 	it( 'shows the checklist in a new chat’s empty view', () => {
@@ -136,12 +141,23 @@ describe( 'useSiteSetupChecklist', () => {
 			},
 			isLoading: false,
 			refetch: mockRefetch,
+			dataUpdatedAt: 1,
 		} );
 		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
 		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
 
-		// The start settled during the turn, so the turn end releases the hold.
+		// The start settled during the turn and a read landed after it, so the turn end releases the hold.
 		await act( async () => {} );
+		mockUseQuery.mockReturnValue( {
+			data: {
+				...DETAILS,
+				tasks: [ { ...DETAILS.tasks[ 0 ], status: 'done' }, DETAILS.tasks[ 1 ] ],
+			},
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 2,
+		} );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
 		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
 		expect( result.current.items[ 0 ].status ).toBe( 'done' );
 	} );
@@ -234,7 +250,12 @@ describe( 'useSiteSetupChecklist', () => {
 
 	it( 'holds a resumed in-progress task for the turn without starting it again', () => {
 		const inProgress = { ...DETAILS, tasks: [ { ...DETAILS.tasks[ 0 ], status: 'in-progress' } ] };
-		mockUseQuery.mockReturnValue( { data: inProgress, isLoading: false, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data: inProgress,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: { ...config, messages: [ userMessage( 'u0', 'design' ) ] },
 		} );
@@ -252,6 +273,7 @@ describe( 'useSiteSetupChecklist', () => {
 			data: { ...DETAILS, tasks: [ { ...DETAILS.tasks[ 0 ], status: 'done' } ] },
 			isLoading: false,
 			refetch: mockRefetch,
+			dataUpdatedAt: 1,
 		} );
 		rerender( {
 			...config,
@@ -285,8 +307,19 @@ describe( 'useSiteSetupChecklist', () => {
 		await act( async () => {
 			settleStart( { task_id: 'design', status: 'done', summary: '' } );
 		} );
-
 		expect( mockRefetch ).toHaveBeenCalled();
+
+		// The refetch resolving is not enough (it may have been cancelled): data must be newer than the write.
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 2,
+		} );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
 		expect( result.current.items[ 0 ].status ).toBe( DETAILS.tasks[ 0 ].status );
 	} );
 
@@ -322,6 +355,7 @@ describe( 'useSiteSetupChecklist', () => {
 			data: withInProgress(),
 			isLoading: false,
 			refetch: mockRefetch,
+			dataUpdatedAt: 1,
 		} );
 		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: {
@@ -336,6 +370,7 @@ describe( 'useSiteSetupChecklist', () => {
 			data: withInProgress( 'domain' ),
 			isLoading: false,
 			refetch: mockRefetch,
+			dataUpdatedAt: 1,
 		} );
 		rerender( {
 			...config,
@@ -371,13 +406,23 @@ describe( 'useSiteSetupChecklist', () => {
 	} );
 
 	it( 'is loading while the list is read, and while the conversation is', () => {
-		mockUseQuery.mockReturnValue( { data: undefined, isLoading: true, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data: undefined,
+			isLoading: true,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: config,
 		} );
 		expect( result.current ).toEqual( { ...NONE, isLoading: true } );
 
-		mockUseQuery.mockReturnValue( { data: DETAILS, isLoading: false, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 		rerender( { ...config, isLoadingConversation: true } );
 		expect( result.current ).toEqual( { ...NONE, isLoading: true } );
 	} );
@@ -406,7 +451,12 @@ describe( 'useSiteSetupChecklist', () => {
 		[ 'the list is empty', [], { ...DETAILS, tasks: [] } ],
 		[ 'the ability failed', [], undefined ],
 	] )( 'shows nothing when %s', ( _label, messages, data ) => {
-		mockUseQuery.mockReturnValue( { data, isLoading: false, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 
 		const { result } = renderHook( () => useSiteSetupChecklist( { ...config, messages } ) );
 
