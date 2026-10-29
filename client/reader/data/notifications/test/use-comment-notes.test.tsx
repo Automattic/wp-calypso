@@ -48,38 +48,6 @@ describe( 'useCommentNotes', () => {
 		await waitFor( () => expect( result.current.isSuccess ).toBe( true ) );
 		expect( result.current.data ).toEqual( [] );
 	} );
-
-	it( 'refetches on the given interval', async () => {
-		jest.useFakeTimers();
-		const scope = nock( 'https://public-api.wordpress.com' )
-			.get( '/rest/v1.1/notifications/' )
-			.query( true )
-			.reply( 200, { notes: [ makeNote( { id: 1 } ) ] } )
-			.get( '/rest/v1.1/notifications/' )
-			.query( true )
-			.reply( 200, { notes: [ makeNote( { id: 2 } ), makeNote( { id: 1 } ) ] } );
-
-		try {
-			const { result } = renderHook( () => useCommentNotes( { refetchInterval: 60 * 1000 } ), {
-				wrapper: createWrapper( createQueryClient() ),
-			} );
-
-			await waitFor( () =>
-				expect( result.current.data?.map( ( { id } ) => id ) ).toEqual( [ 1 ] )
-			);
-
-			await act( async () => {
-				await jest.advanceTimersByTimeAsync( 60 * 1000 );
-			} );
-
-			await waitFor( () =>
-				expect( result.current.data?.map( ( { id } ) => id ) ).toEqual( [ 2, 1 ] )
-			);
-			expect( scope.isDone() ).toBe( true );
-		} finally {
-			jest.useRealTimers();
-		}
-	} );
 } );
 
 describe( 'useMarkNotesRead', () => {

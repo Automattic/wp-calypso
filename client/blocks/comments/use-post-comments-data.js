@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
 	buildCommentsTreeForDisplay,
 	mergeCommentLists,
@@ -82,10 +82,6 @@ export const usePostCommentsData = ( props ) => {
 		commentTotal: props.commentCount,
 		authorId: currentUserId,
 	} );
-	const loadedCommentsRef = useRef( loadedComments );
-	useEffect( () => {
-		loadedCommentsRef.current = loadedComments;
-	}, [ loadedComments ] );
 	const { deferNewComments } = props;
 
 	const pollForNewComments = useCallback( async () => {
@@ -93,17 +89,14 @@ export const usePostCommentsData = ( props ) => {
 			return fetchLaterComments();
 		}
 
-		const knownIds = new Set( loadedCommentsRef.current.map( ( comment ) => comment.ID ) );
-		const result = await fetchLaterComments();
-		const newIds = ( result?.data?.pages ?? [] )
-			.flatMap( ( page ) => page.comments )
-			.filter( ( comment ) => ! knownIds.has( comment.ID ) && comment.author?.ID !== currentUserId )
-			.map( ( comment ) => comment.ID );
+		const knownIds = new Set( loadedComments.map( ( comment ) => comment.ID ) );
+		const { data: polled } = await fetchLaterComments();
+		const newIds = ( polled?.pages ?? [] )
+			.flatMap( ( page ) => page.comments.map( ( comment ) => comment.ID ) )
+			.filter( ( id ) => ! knownIds.has( id ) );
 
-		if ( newIds.length ) {
-			setPendingCommentIds( ( current ) => [ ...new Set( [ ...current, ...newIds ] ) ] );
-		}
-	}, [ currentUserId, deferNewComments, fetchLaterComments ] );
+		setPendingCommentIds( ( current ) => [ ...new Set( [ ...current, ...newIds ] ) ] );
+	}, [ deferNewComments, fetchLaterComments, loadedComments ] );
 
 	const initialCommentFromList = props.startingCommentId
 		? loadedComments.find(

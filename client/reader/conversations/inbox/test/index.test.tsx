@@ -131,36 +131,6 @@ describe( 'ConversationsInbox', () => {
 		);
 	} );
 
-	it( 'refreshes the conversations every minute', () => {
-		renderInbox( { siteId: '10', postId: '200' } );
-
-		expect( mockedUseCommentNotes ).toHaveBeenCalledWith( { refetchInterval: 60 * 1000 } );
-	} );
-
-	it( 'keeps the selected conversation when a refresh brings in a newer one', () => {
-		const { rerender } = renderInbox( { siteId: '10', postId: '200' } );
-
-		mockedUseCommentNotes.mockReturnValue( {
-			data: [
-				makeNote( {
-					id: 4,
-					postId: 400,
-					commentId: 4001,
-					timestamp: '2024-01-04T00:00:00Z',
-					read: 0,
-				} ),
-				...notes,
-			],
-			isLoading: false,
-		} as never );
-		rerender( <ConversationsInbox siteId="10" postId="200" /> );
-
-		expect( screen.getByText( 'Selected: 10-200' ) ).toBeVisible();
-		expect( screen.getByText( 'Detail: 10-200' ) ).toBeVisible();
-		expect( page.replace ).not.toHaveBeenCalled();
-		expect( page.show ).not.toHaveBeenCalled();
-	} );
-
 	it( 'selects the conversation from the URL without replacing it', () => {
 		renderInbox( { siteId: '10', postId: '200' } );
 

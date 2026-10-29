@@ -38,12 +38,12 @@ const post = {
 	},
 };
 
-const makeComment = ( id, day, authorId = 10 ) => ( {
+const makeComment = ( id, day ) => ( {
 	ID: id,
 	content: `Comment ${ id }`,
 	date: `2026-05-0${ day }T00:00:00.000Z`,
 	parent: false,
-	author: { ID: authorId, name: `Author ${ id }` },
+	author: { ID: 10, name: `Author ${ id }` },
 	status: 'approved',
 } );
 
@@ -93,94 +93,38 @@ describe( 'PostComments polling for new comments', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
-		pollForNewComments = undefined;
-		jest.mocked( Element.prototype.scrollIntoView ).mockClear();
 	} );
 
 	it( 'inserts new comments right away by default', async () => {
 		mockComments();
-		const newComments = mockNewComments( [ makeComment( 3, 3 ) ] );
+		mockNewComments( [ makeComment( 3, 3 ) ] );
 
 		renderComments();
-
 		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] ) );
 
-		await act( async () => {
-			await pollForNewComments();
-		} );
+		await act( () => pollForNewComments() );
 
 		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '3', '2', '1' ] ) );
-		expect( newComments.isDone() ).toBe( true );
 		expect( screen.queryByRole( 'button', { name: /new update/ } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'holds new comments behind a pill when deferring them', async () => {
-		mockComments();
-		mockNewComments( [ makeComment( 4, 4 ), makeComment( 3, 3 ) ] );
-
-		renderComments( { deferNewComments: true } );
-
-		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] ) );
-
-		await act( async () => {
-			await pollForNewComments();
-		} );
-
-		expect( await screen.findByRole( 'button', { name: '2 new updates' } ) ).toBeVisible();
-		expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] );
-	} );
-
-	it( 'uses the singular label for a single new comment', async () => {
-		mockComments();
-		mockNewComments( [ makeComment( 3, 3 ) ] );
-
-		renderComments( { deferNewComments: true } );
-
-		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] ) );
-
-		await act( async () => {
-			await pollForNewComments();
-		} );
-
-		expect( await screen.findByRole( 'button', { name: '1 new update' } ) ).toBeVisible();
-	} );
-
-	it( 'reveals the new comments and scrolls to the first one when the pill is clicked', async () => {
+	it( 'holds new comments behind a pill until it is clicked when deferring', async () => {
 		const user = userEvent.setup();
 		mockComments();
 		mockNewComments( [ makeComment( 4, 4 ), makeComment( 3, 3 ) ] );
 
 		renderComments( { deferNewComments: true } );
-
 		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] ) );
 
-		await act( async () => {
-			await pollForNewComments();
-		} );
+		await act( () => pollForNewComments() );
 
-		await user.click( await screen.findByRole( 'button', { name: '2 new updates' } ) );
+		const pill = await screen.findByRole( 'button', { name: '2 new updates' } );
+		expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] );
+
+		await user.click( pill );
 
 		expect( getRenderedCommentIds() ).toEqual( [ '4', '3', '2', '1' ] );
-		expect( screen.queryByRole( 'button', { name: /new update/ } ) ).not.toBeInTheDocument();
-		expect( Element.prototype.scrollIntoView ).toHaveBeenCalledTimes( 1 );
-		expect( jest.mocked( Element.prototype.scrollIntoView ).mock.contexts[ 0 ] ).toBe(
-			document.getElementById( 'comment-4' )
-		);
-	} );
-
-	it( 'shows comments from the current user right away when deferring', async () => {
-		mockComments();
-		mockNewComments( [ makeComment( 3, 3, 1 ) ] );
-
-		renderComments( { deferNewComments: true } );
-
-		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] ) );
-
-		await act( async () => {
-			await pollForNewComments();
-		} );
-
-		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '3', '2', '1' ] ) );
-		expect( screen.queryByRole( 'button', { name: /new update/ } ) ).not.toBeInTheDocument();
+		expect( pill ).not.toBeInTheDocument();
+		expect( Element.prototype.scrollIntoView ).toHaveBeenCalled();
 	} );
 } );

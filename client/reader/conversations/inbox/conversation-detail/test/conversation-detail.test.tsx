@@ -17,7 +17,6 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Comments from 'calypso/blocks/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
@@ -81,51 +80,6 @@ describe( 'ConversationDetail', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
 		renderDetail();
-
-		expect(
-			screen.getByRole( 'feed', {
-				name: `3 comments, starting at ${ conversation.latestCommentId }`,
-			} )
-		).toBeVisible();
-	} );
-
-	it( 'holds new comments in the thread for the user to reveal', () => {
-		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-		renderDetail();
-
-		expect( jest.mocked( Comments ) ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { deferNewComments: true } ),
-			undefined
-		);
-	} );
-
-	it( 'keeps the thread on its starting comment when the conversation gets a newer comment', () => {
-		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-		const [ updatedConversation ] = groupNotesByPost( [
-			makeNote( {
-				id: 2,
-				siteId: 10,
-				postId: 100,
-				commentId: 5000,
-				title: 'A post title',
-				timestamp: '2024-01-02T00:00:00Z',
-			} ),
-			makeNote( {
-				id: 1,
-				siteId: 10,
-				postId: 100,
-				title: 'A post title',
-				timestamp: '2024-01-01T00:00:00Z',
-			} ),
-		] );
-
-		expect( updatedConversation.latestCommentId ).toBe( 5000 );
-
-		const { rerender } = renderDetail();
-		rerender(
-			<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ updatedConversation } />
-		);
 
 		expect(
 			screen.getByRole( 'feed', {

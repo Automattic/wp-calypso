@@ -4,14 +4,6 @@ import { flushSync } from 'react-dom';
 
 import './new-comments-pill.scss';
 
-const getFirstCommentElement = ( commentIds ) =>
-	commentIds
-		.map( ( commentId ) => window.document.getElementById( `comment-${ commentId }` ) )
-		.filter( Boolean )
-		.sort( ( a, b ) =>
-			a.compareDocumentPosition( b ) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1
-		)[ 0 ];
-
 export default function NewCommentsPill( { commentIds, onReveal } ) {
 	const translate = useTranslate();
 	const count = commentIds.length;
@@ -22,7 +14,9 @@ export default function NewCommentsPill( { commentIds, onReveal } ) {
 
 	const handleClick = () => {
 		flushSync( onReveal );
-		getFirstCommentElement( commentIds )?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
+		window.document
+			.getElementById( `comment-${ commentIds.at( -1 ) }` )
+			?.scrollIntoView( { behavior: 'smooth', block: 'start' } );
 	};
 
 	return (
