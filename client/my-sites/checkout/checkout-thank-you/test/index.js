@@ -3,10 +3,11 @@
  */
 
 import { PLAN_ECOMMERCE, PLAN_PREMIUM, PLAN_PERSONAL } from '@automattic/calypso-products';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import { Provider } from 'react-redux';
 import configureStore from 'redux-mock-store';
 import { thunk } from 'redux-thunk';
+import { completeAgentCheckout } from 'calypso/landing/stepper/utils/agent-site-handoff';
 import CheckoutThankYouHeader from '../header';
 import { CheckoutThankYou } from '../index';
 
@@ -24,6 +25,10 @@ jest.mock( '@automattic/help-center/src/hooks', () => ( {
 	useProductsWithPremiumSupport: jest.fn( () => false ),
 } ) );
 
+jest.mock( 'calypso/landing/stepper/utils/agent-site-handoff', () => ( {
+	...jest.requireActual( 'calypso/landing/stepper/utils/agent-site-handoff' ),
+	completeAgentCheckout: jest.fn(),
+} ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: () => null,
 } ) );
@@ -90,6 +95,44 @@ describe( 'CheckoutThankYou', () => {
 
 	afterAll( () => {
 		window.scrollTo = originalScrollTo;
+	} );
+
+	describe( 'agent handoff across thank-you routes', () => {
+		const id = 'sbh_0123456789abcdef01234567';
+		beforeEach( () => {
+			window.history.replaceState(
+				{},
+				'',
+				`/checkout/thank-you/example.com/12?agentHandoffId=${ id }`
+			);
+			completeAgentCheckout.mockResolvedValue( { safe_close: true } );
+		} );
+		afterEach( () => window.history.replaceState( {}, '', '/' ) );
+		it.each( [
+			[ 'legacy', [], true ],
+			[ 'redesign', [ { productSlug: PLAN_PERSONAL } ], true ],
+			[ 'transfer pending', [ { productSlug: PLAN_ECOMMERCE } ], false ],
+		] )( 'confirms the receipt on the %s route', async ( route, purchases, installed ) => {
+			render(
+				<Provider store={ store }>
+					<CheckoutThankYou
+						{ ...defaultProps }
+						receiptId={ 12 }
+						selectedSite={ { ID: 12 } }
+						sitePlans={ { hasLoadedFromServer: true } }
+						hasLoadedReceipts
+						receipt={ { purchases } }
+						transferComplete
+						isWooCommerceInstalled={ installed }
+						refreshSitePlans={ () => {} }
+					/>
+				</Provider>
+			);
+			await waitFor( () => expect( completeAgentCheckout ).toHaveBeenCalledWith( id, 12 ) );
+			await waitFor( () =>
+				expect( screen.getByRole( 'status' ) ).toHaveTextContent( 'You can close this page' )
+			);
+		} );
 	} );
 
 	describe( 'Basic tests', () => {

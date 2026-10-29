@@ -31,6 +31,12 @@ import useAddEcommerceTrialMutation from 'calypso/data/ecommerce/use-add-ecommer
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import {
+	beginAgentSiteCreation,
+	bindAgentSite,
+	getAgentSiteStatus,
+	getAgentHandoffId,
+} from 'calypso/landing/stepper/utils/agent-site-handoff';
+import {
 	getWowFunnelArgs,
 	getWowFunnelFromWfm,
 	getWowFunnelSlug,
@@ -187,6 +193,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const flowState = useFlowState();
 	const queryClient = useQueryClient();
 	const urlQueryParams = useQuery();
+	const agentHandoffId = isNewHostedSiteCreationFlow( flow )
+		? getAgentHandoffId( urlQueryParams )
+		: null;
 
 	// when it's empty, the default WordPress theme will be used.
 	let theme = '';
@@ -217,6 +226,10 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		siteVisibility = Site.Visibility.PublicNotIndexed;
 	}
 
+	if ( agentHandoffId ) {
+		siteVisibility = Site.Visibility.Private;
+	}
+
 	const signupDestinationCookieExists = retrieveSignupDestination();
 	const isReEnteringFlow = getSignupCompleteFlowName() === flow;
 	//User has already reached checkout and then hit the browser back button.
@@ -231,7 +244,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
 	async function createSiteAction() {
-		if ( isManageSiteFlow ) {
+		if ( isManageSiteFlow && ! agentHandoffId ) {
 			const slug = getSignupCompleteSlug();
 
 			if ( theme && slug ) {
@@ -258,7 +271,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// building in the background). Consume that site instead of creating a second one; if the
 		// background request has not finished — or failed — fall back to creating it here, sharing
 		// the same single-flight request.
-		const wowFunnelSlug = getWowFunnelSlug( urlQueryParams );
+		const wowFunnelSlug = agentHandoffId ? null : getWowFunnelSlug( urlQueryParams );
 		if ( wowFunnelSlug ) {
 			const funnelSite = await startWowFunnelSite( {
 				funnelSlug: wowFunnelSlug,
@@ -306,7 +319,9 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		const earlyCreatedSite = urlQueryParams.get( 'early_created_site' );
 		const earlyProvisionTarget =
 			urlQueryParams.get( 'provision_target' ) ?? urlQueryParams.get( 'early_provision_target' );
-		const earlyCreatedSiteId = getEarlyCreatedSiteId( flow, earlyCreatedSite );
+		const earlyCreatedSiteId = agentHandoffId
+			? null
+			: getEarlyCreatedSiteId( flow, earlyCreatedSite );
 
 		if ( earlyCreatedSiteId ) {
 			let siteSlug = String( earlyCreatedSiteId );
@@ -367,7 +382,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		// that the site on file is not the one it is asking for — and an unnamed request, which
 		// /sites/new answers with a name of its own choosing, matches nothing outside a migration session.
 		const requestedName = siteUrl || domainItem?.domain_name || '';
-		return runOnce( requestedName, async () => {
+		return runOnce( agentHandoffId ?? requestedName, async () => {
 			const canReuseUnnamedSite =
 				flow === SITE_MIGRATION_FLOW &&
 				config.isEnabled( 'migration/reprint-flow' ) &&
@@ -380,31 +395,64 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 					? recordedSite
 					: undefined;
 
-			const site = siteFromThisRun
-				? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
-				: await createSite(
-						flow,
-						theme,
-						siteVisibility,
-						urlData?.meta.title ?? selectedSiteTitle,
-						// We removed the color option during newsletter onboarding.
-						// But backend still expects/needs a value, so supplying the default.
-						// Ideally should remove this and update code downstream to handle this.
-						'#113AF5',
-						useThemeHeadstart,
-						partnerBundle,
-						siteUrl,
-						domainItem,
-						sourceSlug,
-						siteIntent,
-						undefined, // siteGoals
-						gardenName,
-						gardenPartnerName,
-						urlQueryParams.get( 'spec_id' ),
-						isPlaygroundPublish ? 'playground-publish' : undefined,
-						undefined, // provisionTarget
-						aiLaunchpadEnabled
-					);
+			let agentSite: { siteId: number; siteSlug: string } | undefined;
+			if ( agentHandoffId ) {
+				const status = await getAgentSiteStatus( agentHandoffId );
+				if (
+					! [
+						'awaiting_creation',
+						'creating_site',
+						'creation_uncertain',
+						'awaiting_checkout',
+					].includes( status.state )
+				) {
+					throw new Error( 'This handoff cannot start checkout. Return to your agent.' );
+				}
+				if ( recordedSite?.siteId ) {
+					await bindAgentSite( agentHandoffId, recordedSite.siteId );
+					agentSite = { siteId: recordedSite.siteId, siteSlug: recordedSite.siteSlug };
+				} else {
+					const claim = await beginAgentSiteCreation( agentHandoffId );
+					if ( ! claim.can_create ) {
+						if ( ! claim.site_id ) {
+							throw new Error( 'Site creation is uncertain' );
+						}
+						const boundSite = ( await wpcom.req.get( {
+							path: `/sites/${ claim.site_id }`,
+							apiVersion: '1.1',
+						} ) ) as { slug: string };
+						agentSite = { siteId: claim.site_id, siteSlug: boundSite.slug };
+					}
+				}
+			}
+
+			const site =
+				agentSite ??
+				( ! agentHandoffId && siteFromThisRun
+					? { siteId: siteFromThisRun.siteId, siteSlug: siteFromThisRun.siteSlug }
+					: await createSite(
+							flow,
+							theme,
+							siteVisibility,
+							urlData?.meta.title ?? selectedSiteTitle,
+							// We removed the color option during newsletter onboarding.
+							// But backend still expects/needs a value, so supplying the default.
+							// Ideally should remove this and update code downstream to handle this.
+							'#113AF5',
+							useThemeHeadstart,
+							partnerBundle,
+							siteUrl,
+							domainItem,
+							sourceSlug,
+							siteIntent,
+							undefined, // siteGoals
+							gardenName,
+							gardenPartnerName,
+							agentHandoffId ? undefined : urlQueryParams.get( 'spec_id' ),
+							isPlaygroundPublish ? 'playground-publish' : undefined,
+							undefined, // provisionTarget
+							aiLaunchpadEnabled
+						) );
 
 			if ( ! site ) {
 				throw new Error( 'Failed to create site' );
@@ -420,6 +468,10 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 					siteSlug: site.siteSlug,
 					requestedName,
 				} );
+			}
+
+			if ( agentHandoffId ) {
+				await bindAgentSite( agentHandoffId, site.siteId );
 			}
 
 			if ( earlyProvisionTarget === EARLY_PROVISION_TARGET_WPCOM_ATOMIC ) {

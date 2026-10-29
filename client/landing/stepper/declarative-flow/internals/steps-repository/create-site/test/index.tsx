@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
 import { createSite } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
+import wpcom from 'calypso/lib/wp';
 import { useFlowState } from '../../../state-manager/store';
 import CreateSite from '../index';
 
@@ -22,7 +23,7 @@ const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0
 jest.mock( '@automattic/calypso-products', () => ( { isEcommerce: () => false } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
-	Site: { Visibility: { PublicIndexed: 1, PublicNotIndexed: 0 } },
+	Site: { Visibility: { PublicIndexed: 1, PublicNotIndexed: 0, Private: -1 } },
 	Onboard: { SiteIntent: { Sell: 'sell', Build: 'build' } },
 } ) );
 
@@ -43,7 +44,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	isAIBuilderOnboardingFlow: () => false,
 	isCopySiteFlow: () => false,
 	isEntrepreneurFlow: () => false,
-	isNewHostedSiteCreationFlow: () => false,
+	isNewHostedSiteCreationFlow: ( flow: string ) => flow === 'new-hosted-site',
 	isNewsletterFlow: () => false,
 	isWriteOnFlow: () => false,
 	isOnboardingFlow: ( flow: string ) => flow === 'onboarding',
@@ -142,6 +143,10 @@ describe( 'create-site', () => {
 		mockQueryParams = new URLSearchParams( '' );
 		sessionStorage.clear();
 		jest.clearAllMocks();
+		( wpcom.req.get as jest.Mock ).mockResolvedValue( {
+			handoff_id: 'sbh_0123456789abcdef01234567',
+			state: 'awaiting_creation',
+		} );
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
 			get: ( key: string ) => flowStateStore[ key ],
 			sessionId: 'migration-session',
@@ -150,6 +155,41 @@ describe( 'create-site', () => {
 				flowStateStore[ key ] = value;
 			},
 		} ) );
+	} );
+
+	it( 'claims and binds the private site before returning it for checkout', async () => {
+		const id = 'sbh_0123456789abcdef01234567';
+		mockQueryParams = new URLSearchParams( { agentHandoffId: id } );
+		( wpcom.req.post as jest.Mock )
+			.mockResolvedValueOnce( { can_create: true, site_id: null } )
+			.mockResolvedValueOnce( { handoff_id: id, site_id: 111 } );
+		await runStep( { flow: 'new-hosted-site' } );
+		expect( wpcom.req.post ).toHaveBeenCalledTimes( 2 );
+		expect( ( wpcom.req.post as jest.Mock ).mock.calls[ 0 ][ 0 ].path ).toContain(
+			'/begin-creation'
+		);
+		expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ 2 ] ).toBe( -1 );
+		expect( ( wpcom.req.post as jest.Mock ).mock.calls[ 1 ][ 1 ] ).toEqual( { site_id: 111 } );
+	} );
+
+	it( 'does not create another site when the claim is uncertain', async () => {
+		mockQueryParams = new URLSearchParams( { agentHandoffId: 'sbh_0123456789abcdef01234567' } );
+		( wpcom.req.post as jest.Mock ).mockRejectedValueOnce( new Error( 'creation_uncertain' ) );
+		await expect( runStep( { flow: 'new-hosted-site' } ) ).rejects.toThrow( 'creation_uncertain' );
+		expect( createSite ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not restart checkout after payment begins', async () => {
+		mockQueryParams = new URLSearchParams( { agentHandoffId: 'sbh_0123456789abcdef01234567' } );
+		( wpcom.req.get as jest.Mock ).mockResolvedValueOnce( {
+			handoff_id: 'sbh_0123456789abcdef01234567',
+			state: 'payment_pending',
+		} );
+		await expect( runStep( { flow: 'new-hosted-site' } ) ).rejects.toThrow(
+			'cannot start checkout'
+		);
+		expect( createSite ).not.toHaveBeenCalled();
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
 	} );
 
 	it( 'creates the site and records it against the name it asked for', async () => {
