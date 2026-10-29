@@ -31,8 +31,8 @@ interface ProductStoreCardProps {
 	onToggleCart: ( product: AgencyProduct ) => void;
 	onViewDetails: ( product: AgencyProduct ) => void;
 	onSelectVariant?: ( product: AgencyProduct ) => void;
-	/** Opens the cart, where a product's count is set. */
-	onOpenCart: () => void;
+	/** Set when a product in the cart has its count set there. */
+	onOpenCart?: () => void;
 }
 
 // The products API returns a PHP memory add-on once per Pressable site, so its
@@ -134,11 +134,9 @@ export default function ProductStoreCard( {
 							variant="secondary"
 							size="compact"
 							icon={ inCart ? check : undefined }
-							onClick={ () =>
-								inCart && ! isReferralMode ? onOpenCart() : onToggleCart( product )
-							}
+							onClick={ () => ( inCart && onOpenCart ? onOpenCart() : onToggleCart( product ) ) }
 						>
-							{ getCartActionLabel( isReferralMode, inCart ) }
+							{ getCartActionLabel( isReferralMode, inCart, !! onOpenCart ) }
 						</Button>
 						{ canViewDetails && (
 							<Button variant="link" onClick={ () => onViewDetails( product ) }>

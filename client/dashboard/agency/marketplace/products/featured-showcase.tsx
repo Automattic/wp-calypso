@@ -71,8 +71,8 @@ interface FeaturedShowcaseProps {
 	isInCart: ( product: AgencyProduct ) => boolean;
 	onToggleCart: ( product: AgencyProduct ) => void;
 	onViewDetails: ( product: AgencyProduct ) => void;
-	/** Opens the cart, where a product's count is set. */
-	onOpenCart: () => void;
+	/** Set when a product in the cart has its count set there. */
+	onOpenCart?: () => void;
 }
 
 export default function FeaturedShowcase( {
@@ -124,9 +124,9 @@ export default function FeaturedShowcase( {
 					variant="secondary"
 					size="compact"
 					icon={ inCart ? check : undefined }
-					onClick={ () => ( inCart && ! isReferralMode ? onOpenCart() : onToggleCart( product ) ) }
+					onClick={ () => ( inCart && onOpenCart ? onOpenCart() : onToggleCart( product ) ) }
 				>
-					{ getCartActionLabel( isReferralMode, inCart ) }
+					{ getCartActionLabel( isReferralMode, inCart, !! onOpenCart ) }
 				</Button>
 			),
 			secondaryAction:
