@@ -77,7 +77,7 @@
 	border-block-end: 1px solid var( --color-border-subtle );
 }
 
-.conversations-inbox__state {
+.conversations-inbox__message {
 	flex: 1;
 	justify-content: center;
 	padding: 24px 16px;
@@ -86,10 +86,6 @@
 	p {
 		margin: 0;
 	}
-}
-
-.conversations-inbox__state-icon.is-error {
-	fill: var( --color-error );
 }
 
 .conversations-inbox__item {

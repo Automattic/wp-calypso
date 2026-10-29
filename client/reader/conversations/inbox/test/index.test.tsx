@@ -24,8 +24,6 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 jest.mock( '../conversation-list', () => ( {
 	ConversationList: ( props: {
 		conversations: { key: string }[];
-		isError?: boolean;
-		onRetry?: () => void;
 		selectedKey?: string;
 		onSelect: ( conversation: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
@@ -35,7 +33,6 @@ jest.mock( '../conversation-list', () => ( {
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
 			<button onClick={ props.onMarkAllRead }>Mark all as read</button>
-			{ props.isError && <button onClick={ props.onRetry }>Retry</button> }
 			{ props.conversations.map( ( conversation ) => (
 				<button key={ conversation.key } onClick={ () => props.onSelect( conversation, 'click' ) }>
 					{ conversation.key }
@@ -163,35 +160,6 @@ describe( 'ConversationsInbox', () => {
 		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
 
 		expect( errorNotice ).toHaveBeenCalledWith( 'Couldn’t mark as read. Try again.' );
-	} );
-
-	it( 'refetches the conversations when retrying after a failed load', async () => {
-		const user = userEvent.setup();
-		const refetch = jest.fn();
-		mockedUseCommentNotes.mockReturnValue( {
-			data: undefined,
-			isLoading: false,
-			isError: true,
-			refetch,
-		} as never );
-		renderInbox();
-
-		await user.click( screen.getByRole( 'button', { name: 'Retry' } ) );
-
-		expect( refetch ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'keeps showing the conversations when a background refetch fails', () => {
-		mockedUseCommentNotes.mockReturnValue( {
-			data: notes,
-			isLoading: false,
-			isError: true,
-			refetch: jest.fn(),
-		} as never );
-		renderInbox( { siteId: '10', postId: '100' } );
-
-		expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: '10-200' } ) ).toBeVisible();
 	} );
 
 	it( 'disables the previous button at the start of the list', () => {

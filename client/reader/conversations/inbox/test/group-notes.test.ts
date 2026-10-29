@@ -28,22 +28,6 @@ describe( 'groupNotesByPost', () => {
 		expect( conversations.map( ( { postId } ) => postId ) ).toEqual( [ 100, 200 ] );
 	} );
 
-	it( 'takes the post URL from the post range in the subject', () => {
-		const [ conversation ] = groupNotesByPost( [
-			makeNote( {
-				id: 1,
-				subject: [
-					{
-						text: 'Ana commented on A post',
-						ranges: [ { type: 'post', indices: [ 17, 23 ], url: 'https://example.com/a-post' } ],
-					},
-				],
-			} ),
-		] );
-
-		expect( conversation.url ).toBe( 'https://example.com/a-post' );
-	} );
-
 	it( 'takes the excerpt, timestamp and comment id from the latest note', () => {
 		const latest = minutesAgo( 1 );
 		const [ conversation ] = groupNotesByPost( [

@@ -113,28 +113,6 @@ describe( 'ConversationList', () => {
 		expect( screen.getByText( 'Comments you leave will appear here.' ) ).toBeVisible();
 	} );
 
-	it( 'shows an empty state on the Unread tab when everything is read', async () => {
-		const user = userEvent.setup();
-		renderList( { conversations: conversations.filter( ( { postId } ) => postId === 200 ) } );
-
-		await user.click( screen.getByRole( 'tab', { name: /Unread/ } ) );
-
-		expect( screen.getByRole( 'heading', { name: 'You’re all caught up' } ) ).toBeVisible();
-		expect( screen.getByText( 'There are no new conversations.' ) ).toBeVisible();
-	} );
-
-	it( 'shows a message when the search matches nothing', async () => {
-		const user = userEvent.setup();
-		renderList();
-
-		await user.type( screen.getByRole( 'searchbox' ), 'nothing like this' );
-
-		expect( screen.getByText( 'No conversations match your search.' ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'heading', { level: 2, name: /appear here/ } )
-		).not.toBeInTheDocument();
-	} );
-
 	it( 'filters conversations by search term', async () => {
 		const user = userEvent.setup();
 		renderList();
@@ -200,17 +178,6 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Retry' } ) );
 
 		expect( onRetry ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'shows only the spinner while loading', () => {
-		renderList( { conversations: [], isLoading: true, isError: true } );
-
-		expect(
-			screen.queryByRole( 'heading', { name: 'Couldn’t load conversations' } )
-		).not.toBeInTheDocument();
-		expect(
-			screen.queryByRole( 'heading', { name: 'Conversations will appear here' } )
-		).not.toBeInTheDocument();
 	} );
 
 	it( 'lists the keyboard shortcuts from the header button', async () => {

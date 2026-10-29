@@ -99,25 +99,13 @@ describe( 'ConversationDetail', () => {
 		} );
 
 		expect( container.querySelector( '.components-spinner' ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { name: 'This post can’t be loaded' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /Open on the site/ } ) ).toHaveAttribute(
+		expect( screen.getByText( /This post can’t be loaded/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /Open it on the site/ } ) ).toHaveAttribute(
 			'href',
 			'https://example.com/a-post'
 		);
 		expect( screen.queryByRole( 'heading', { name: 'A post title' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'feed' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'leaves out the link when the conversation has no post URL', () => {
-		mockedUsePost.mockReturnValue( {
-			data: { ...post, is_error: true },
-			isLoading: false,
-		} as never );
-
-		renderDetail();
-
-		expect( screen.getByRole( 'heading', { name: 'This post can’t be loaded' } ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: /Open on the site/ } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'disables the previous and next buttons when there is nowhere to go', () => {
