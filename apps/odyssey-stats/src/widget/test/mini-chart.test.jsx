@@ -99,7 +99,7 @@ describe( 'MiniChart', () => {
 		expect( recordWidgetEventThenFollow.mock.results.at( -1 ).value ).toHaveBeenCalled();
 	} );
 
-	it( 'draws the outline of the totals and the chart while the range loads', () => {
+	it( 'shows skeletons for the totals and the chart while the range loads', () => {
 		const { container } = render( renderMiniChart( pending() ) );
 
 		expect( screen.getByText( 'Loading…' ) ).toHaveClass( 'screen-reader-text' );

@@ -4,7 +4,7 @@
 import renderLoadingSkeleton from '../loading-skeleton';
 
 describe( 'renderLoadingSkeleton', () => {
-	it( 'replaces the spinner with the outline, keeping its translated label', () => {
+	it( 'replaces the spinner with the skeleton, keeping its translated label', () => {
 		document.body.innerHTML =
 			'<div id="dashboard_stats"><img class="jp-stats-widget-loading-spinner" alt="Chargement" src="loading.gif"></div>';
 		const container = document.getElementById( 'dashboard_stats' );
@@ -29,7 +29,7 @@ describe( 'renderLoadingSkeleton', () => {
 		);
 	} );
 
-	it( 'leaves an outline the server already drew alone', () => {
+	it( 'leaves a skeleton the server already rendered alone', () => {
 		document.body.innerHTML =
 			'<div id="dashboard_stats"><div class="jp-stats-widget-skeleton" role="status" aria-label="Loading" data-origin="server"></div></div>';
 		const container = document.getElementById( 'dashboard_stats' );

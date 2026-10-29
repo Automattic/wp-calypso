@@ -1,6 +1,6 @@
 /**
- * The outline of the widget, drawn while its chunk downloads: an Overview card with two
- * totals and a chart, a lists card, a card with two counts, and the footer. Plain markup and
+ * The widget's skeleton, drawn while its chunk downloads: an Overview card with two totals
+ * and a chart, a lists card, a card with two counts, and the footer. Plain markup and
  * inline styles, since this runs from the loader before any of the widget's code or CSS has
  * arrived. React replaces it when the widget mounts.
  */
@@ -69,11 +69,11 @@ const MARKUP =
 	`<div class="jp-stats-widget-skeleton__footer">${ bar( 'logo' ) }${ bar( 'footer-link' ) }</div>`;
 
 /**
- * Replaces the container's server-rendered spinner with the widget's outline.
+ * Replaces the container's server-rendered spinner with the widget's skeleton.
  * @param container The element the widget mounts in.
  */
 export default function renderLoadingSkeleton( container: HTMLElement | null ) {
-	// A stats-admin release that draws the outline itself leaves nothing to replace.
+	// A stats-admin release that renders the skeleton itself leaves nothing to replace.
 	if ( ! container || container.querySelector( '.jp-stats-widget-skeleton' ) ) {
 		return;
 	}
