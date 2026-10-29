@@ -46,6 +46,7 @@ import VisibilityCard from '../overview-visibility-card';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
 import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
+import { StagingSiteSyncNotice, useRunningStagingSiteSync } from './staging-site-sync-notice';
 import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
 import type { StaticSiteImportSearch } from '../overview-static-site-import';
 import type { Site } from '@automattic/api-core';
@@ -179,6 +180,7 @@ function SiteOverview( {
 	const { recordTracksEvent } = useAnalytics();
 	const wpAdminButtonRef = useRef( null );
 
+	const runningStagingSiteSync = useRunningStagingSiteSync( site );
 	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
@@ -225,6 +227,9 @@ function SiteOverview( {
 			}
 			notices={
 				<>
+					{ runningStagingSiteSync && (
+						<StagingSiteSyncNotice site={ site } syncState={ runningStagingSiteSync } />
+					) }
 					{ siteImport && siteImport.status !== 'moving' && (
 						<StaticSiteImportNotice
 							site={ site }
