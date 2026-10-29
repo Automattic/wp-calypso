@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { activateBlackboxSurface } from 'calypso/blocks/login/utils/blackbox-surface';
@@ -40,6 +40,8 @@ interface UseBlackboxProtectionOptions {
 
 const noopGetSessionId = () => Promise.resolve( undefined );
 
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
 /**
  * Wire Blackbox into a form.
  */
@@ -53,12 +55,20 @@ export function useBlackboxProtection( {
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
 
-	useEffect( () => {
+	// Register before paint so a submit can never see the previous surface.
+	const surfaceSignal = useRef< AbortSignal | undefined >( undefined );
+	useIsomorphicLayoutEffect( () => {
 		if ( ! enabled ) {
 			return;
 		}
-		const controller = activateBlackboxSurface( apiKey );
-		return () => controller.abort();
+		const { signal, deactivate } = activateBlackboxSurface( apiKey );
+		surfaceSignal.current = signal;
+		return () => {
+			deactivate();
+			if ( surfaceSignal.current === signal ) {
+				surfaceSignal.current = undefined;
+			}
+		};
 	}, [ enabled, apiKey ] );
 
 	// Re-block during render when a suspended surface re-enables: the challenge
@@ -75,7 +85,8 @@ export function useBlackboxProtection( {
 	}, [] );
 
 	const getSessionId = useCallback(
-		() => ( apiKey ? getBlackboxSessionId( apiKey ) : Promise.resolve( undefined ) ),
+		() =>
+			apiKey ? getBlackboxSessionId( apiKey, surfaceSignal.current ) : Promise.resolve( undefined ),
 		[ apiKey ]
 	);
 

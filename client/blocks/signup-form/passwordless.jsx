@@ -164,11 +164,6 @@ class PasswordlessSignupForm extends Component {
 			isSubmitting: true,
 		} );
 
-		this.props.saveSignupStep( {
-			stepName: this.props.stepName,
-			form,
-		} );
-
 		const { oauth2_client_id, oauth2_redirect } = queryArgs;
 
 		// I'm not sure why passwordless signup form stopped respecting flowName from variationName param,
@@ -183,6 +178,11 @@ class PasswordlessSignupForm extends Component {
 				this.setState( { isSubmitting: false } );
 				return;
 			}
+
+			this.props.saveSignupStep( {
+				stepName: this.props.stepName,
+				form,
+			} );
 
 			const body = {
 				email: this.getTrimmedEmail(),

@@ -92,6 +92,39 @@ describe( 'Blackbox form lifetime', () => {
 		}
 	);
 
+	test( 'does not cancel direct callers after the last form unmounts', async () => {
+		const { unmount } = render( <TestForm onResult={ onResult } onSubmit={ onSubmit } /> );
+		unmount();
+		sdk.api.flush.mockResolvedValue( { sessionId: 'sid', challengePending: false, outcome: 'ok' } );
+		sdk.setState( { status: 'ready', sessionId: 'sid' } );
+
+		await expect( getBlackboxSessionId( 'signup-key' ) ).resolves.toBe( 'sid' );
+	} );
+
+	test( 'keeps an earlier form usable while a later form is mounted and after it unmounts', async () => {
+		const first = { onResult, onSubmit };
+		const second = { onResult: jest.fn(), onSubmit: jest.fn() };
+		const { rerender } = render(
+			<>
+				<TestForm { ...first } />
+				<TestForm { ...second } />
+			</>
+		);
+		sdk.api.flush.mockResolvedValue( { sessionId: 'sid', challengePending: false, outcome: 'ok' } );
+		await act( async () => {} );
+		act( () => jest.advanceTimersByTime( 5000 ) );
+		act( () => sdk.setState( { status: 'ready', sessionId: 'sid' } ) );
+
+		fireEvent.click( screen.getAllByRole( 'button' )[ 0 ] );
+		await act( async () => {} );
+		expect( onSubmit ).toHaveBeenCalledWith( 'sid' );
+
+		rerender( <TestForm { ...first } direct /> );
+		fireEvent.click( screen.getByRole( 'button' ) );
+		await act( async () => {} );
+		expect( onSubmit ).toHaveBeenCalledTimes( 2 );
+	} );
+
 	test.each( [
 		[ 'unmount', 'flush' ],
 		[ 'suspend', 'flush' ],

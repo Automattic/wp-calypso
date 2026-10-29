@@ -92,7 +92,10 @@ export async function createAccount( {
 			: undefined;
 
 	if ( blackboxSessionId === null ) {
-		throw new DOMException( 'Checkout is no longer active.', 'AbortError' );
+		throw new DOMException(
+			String( i18n.translate( 'Checkout is no longer active. Please try again.' ) ),
+			'AbortError'
+		);
 	}
 
 	try {
