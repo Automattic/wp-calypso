@@ -124,6 +124,8 @@ if ( shouldCreateSentryRelease ) {
 	console.log(
 		"A sentry release is being created because the auth token exists and we're either on the trunk branch or the manual checkbox has been toggled."
 	);
+	// The plugin's `telemetry: false` doesn't reach the Sentry CLI it runs, which otherwise reports its own usage.
+	process.env.SENTRY_CLI_NO_TELEMETRY = '1';
 }
 
 function filterEntrypoints( entrypoints ) {

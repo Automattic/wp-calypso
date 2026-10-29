@@ -222,7 +222,7 @@
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
-		"@sentry/webpack-plugin": "^5.4.1",
+		"@sentry/webpack-plugin": "^11.10.0",
 		"@tanstack/query-sync-storage-persister": "^5.83.0",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
