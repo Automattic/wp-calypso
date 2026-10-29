@@ -483,16 +483,46 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		};
 	}, [ dispatch ] );
 
-	const store = ( next: Redesign ) => {
-		queryClient.setQueryData( redesignKey( siteId, next.id ), next );
-		if ( next.id !== redesignId ) {
-			page.replace( addQueryArgs( `/site-redesign/${ siteSlug }`, { redesign: next.id } ) );
+	// A response belongs to the site and session that asked for it. Without this, a slow one
+	// could be filed under another site's key or send the user back to a page they left.
+	const mounted = useRef( true );
+	useEffect( () => {
+		mounted.current = true;
+		return () => {
+			mounted.current = false;
+		};
+	}, [] );
+	const current = useRef( { siteId, siteSlug, redesignId } );
+	current.current = { siteId, siteSlug, redesignId };
+	const origin = () => ( { siteId, siteSlug, redesignId } );
+	type Origin = ReturnType< typeof origin >;
+	const isCurrent = ( from: Origin | undefined ) =>
+		!! from &&
+		mounted.current &&
+		from.siteId === current.current.siteId &&
+		from.siteSlug === current.current.siteSlug &&
+		from.redesignId === current.current.redesignId;
+
+	const store = ( next: Redesign, _variables: unknown, from: Origin | undefined ) => {
+		if ( ! from ) {
+			return;
+		}
+		queryClient.setQueryData( redesignKey( from.siteId, next.id ), next );
+		if ( isCurrent( from ) && next.id !== from.redesignId ) {
+			page.replace( addQueryArgs( `/site-redesign/${ from.siteSlug }`, { redesign: next.id } ) );
 		}
 	};
 
 	const noticeHandlers = {
-		onMutate: () => setNotice( null ),
-		onError: ( error: unknown ) => setNotice( messageOf( error ) ),
+		onMutate: () => {
+			setNotice( null );
+			return origin();
+		},
+		onError: ( error: unknown, _variables: unknown, from: Origin | undefined ) => {
+			if ( isCurrent( from ) ) {
+				setNotice( messageOf( error ) );
+			}
+		},
 	};
 
 	const start = useMutation( {
@@ -540,7 +570,10 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			applyRedesign( siteId, redesign?.id as string, generationId ),
 		onMutate: noticeHandlers.onMutate,
 		onSuccess: store,
-		onError: ( error ) => {
+		onError: ( error, _variables, from ) => {
+			if ( ! isCurrent( from ) ) {
+				return;
+			}
 			const checkoutUrl = getCheckoutUrl( error );
 			if ( checkoutUrl ) {
 				page( checkoutUrl );
@@ -557,7 +590,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 
 	const { mutate: chooseCandidate } = choose;
 
-	const activate = useMutation( {
+	const activate = useMutation< Redesign, unknown, void, Origin | undefined >( {
 		mutationFn: () => activateRedesign( siteId, redesign?.id as string ),
 		...noticeHandlers,
 		onSuccess: store,

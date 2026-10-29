@@ -212,6 +212,55 @@ describe( 'SiteRedesign', () => {
 		expect( generateRedesign ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps a late response from navigating after the page is left', async () => {
+		let resolveOpen: ( value: Redesign ) => void = () => {};
+		jest.mocked( openRedesign ).mockReturnValue(
+			new Promise< Redesign >( ( resolve ) => {
+				resolveOpen = resolve;
+			} )
+		);
+		const queryClient = new QueryClient();
+		const { unmount } = renderPage( false, null, queryClient );
+		await waitFor( () => expect( openRedesign ).toHaveBeenCalledTimes( 1 ) );
+
+		unmount();
+		await act( async () => resolveOpen( session() ) );
+
+		expect( page.replace ).not.toHaveBeenCalled();
+		expect( queryClient.getQueryData( [ 'site-redesign', 1, REDESIGN_ID ] ) ).toEqual( session() );
+	} );
+
+	it( 'keeps a late response for one site from reaching the next site on the same page', async () => {
+		const SITE_B_ID = 'rd_' + '2'.repeat( 32 );
+		let resolveA: ( value: Redesign ) => void = () => {};
+		jest.mocked( openRedesign ).mockImplementation( ( siteId ) =>
+			siteId === 1
+				? new Promise< Redesign >( ( resolve ) => {
+						resolveA = resolve;
+					} )
+				: new Promise( () => {} )
+		);
+		const queryClient = new QueryClient();
+		const { rerender } = renderPage( false, null, queryClient );
+		await waitFor( () => expect( openRedesign ).toHaveBeenCalledWith( 1 ) );
+
+		rerender(
+			<SiteRedesign
+				siteId={ 2 }
+				siteSlug="other.wordpress.com"
+				redesignId={ null }
+				resume={ false }
+			/>
+		);
+		await waitFor( () => expect( openRedesign ).toHaveBeenCalledWith( 2 ) );
+		await act( async () => resolveA( session() ) );
+
+		expect( page.replace ).not.toHaveBeenCalled();
+		expect( queryClient.getQueryData( [ 'site-redesign', 2, REDESIGN_ID ] ) ).toBeUndefined();
+		expect( queryClient.getQueryData( [ 'site-redesign', 2, SITE_B_ID ] ) ).toBeUndefined();
+		expect( queryClient.getQueryData( [ 'site-redesign', 1, REDESIGN_ID ] ) ).toEqual( session() );
+	} );
+
 	it.each( [
 		[ 'rolled_back', 'This redesign was rolled back.' ],
 		[ 'superseded', 'A newer redesign replaced this one.' ],
