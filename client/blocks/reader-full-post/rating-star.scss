@@ -1,0 +1,41 @@
+.wp-block-jetpack-rating-star {
+	line-height: 0;
+	stroke-width: 0;
+
+	> p {
+		display: none;
+	}
+
+	> span:not( .screen-reader-text ) {
+		display: inline-flex;
+		margin-inline-end: 0.3em;
+	}
+
+	> span span {
+		display: inline-flex;
+		flex-shrink: 0;
+		width: 12px;
+		overflow: hidden;
+	}
+
+	> span span:nth-child( even ) {
+		justify-content: flex-end;
+	}
+
+	svg {
+		flex-shrink: 0;
+		max-width: none;
+	}
+
+	.is-rating-unfilled {
+		fill-opacity: 0.33;
+	}
+
+	&.is-style-outlined {
+		stroke-width: 2px;
+
+		.is-rating-unfilled {
+			fill: transparent;
+		}
+	}
+}
