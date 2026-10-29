@@ -1,5 +1,6 @@
 import { getWpOrgImporterUrl } from 'calypso/blocks/import/util';
 import { buildCheckoutUrl } from 'calypso/blocks/importer/util';
+import { wpcomLink } from 'calypso/dashboard/utils/link';
 import { useSelectedPlanUpgradeQuery } from 'calypso/data/import-flow/use-selected-plan-upgrade';
 import { addQueryArgs } from 'calypso/lib/route';
 import { BASE_STEPPER_ROUTE } from '../../import/config';
@@ -61,7 +62,7 @@ export function useStepNavigator(
 	function goToDashboardPage() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: `/home/${ siteSlug || siteId || '' }`,
+			url: wpcomLink( `/home/${ siteSlug || siteId || '' }` ),
 		} );
 	}
 

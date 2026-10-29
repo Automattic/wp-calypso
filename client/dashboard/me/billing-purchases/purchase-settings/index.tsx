@@ -1026,7 +1026,7 @@ function getFields( {
 				if (
 					! purchase.is_rechargeable &&
 					! purchase.is_iap_purchase &&
-					( purchase.is_auto_renew_enabled || isAutoRenewToggleDisabled( purchase, user ) )
+					isAutoRenewToggleDisabled( purchase, user )
 				) {
 					if ( String( user.ID ) !== String( purchase.user_id ) ) {
 						return null;
@@ -1034,7 +1034,7 @@ function getFields( {
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
-								title={ __( 'Enable auto-renew' ) }
+								title={ field.label }
 								description={ __( 'Auto-renew needs a payment method.' ) }
 								actions={
 									<Button
@@ -1054,22 +1054,45 @@ function getFields( {
 						</div>
 					);
 				}
+				const showNoPaymentMethodNotice =
+					purchase.is_auto_renew_enabled &&
+					! purchase.is_rechargeable &&
+					! purchase.is_iap_purchase;
 				return (
-					<ToggleControl
-						__nextHasNoMarginBottom
-						className="purchase-settings__toggle-control"
-						label={
-							! purchase.is_auto_renew_enabled &&
-							isExpiredAndInGracePeriod( purchase ) &&
-							purchase.is_jetpack_plan_or_product
-								? __( 'Re-activate subscription' )
-								: field.label
-						}
-						checked={ getValue( { item: purchase } ) }
-						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
-						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
-						help={ help }
-					/>
+					<VStack spacing={ 3 }>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							label={
+								! purchase.is_auto_renew_enabled &&
+								isExpiredAndInGracePeriod( purchase ) &&
+								purchase.is_jetpack_plan_or_product
+									? __( 'Re-activate subscription' )
+									: field.label
+							}
+							checked={ getValue( { item: purchase } ) }
+							disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
+							onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
+							help={ help }
+						/>
+						{ showNoPaymentMethodNotice && (
+							<HStack justify="space-between" alignment="center" spacing={ 3 }>
+								<span>{ __( 'Will not auto-renew because there is no payment method' ) }</span>
+								<Button
+									variant="secondary"
+									size="compact"
+									__next40pxDefaultSize
+									onClick={ () =>
+										navigate( {
+											to: changePaymentMethodRoute.fullPath,
+											params: { purchaseId: purchase.ID },
+										} )
+									}
+								>
+									{ __( 'Add payment method' ) }
+								</Button>
+							</HStack>
+						) }
+					</VStack>
 				);
 			},
 		},

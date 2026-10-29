@@ -22,8 +22,6 @@ const { workerCount } = require( './webpack.common' );
 const isDevelopment = bundleEnv === 'development';
 const devTarget = process.env.DEV_TARGET || 'evergreen';
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
-const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
-const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const cacheDirectory = path.resolve( '.cache', 'babel-server' );
 
 const fileLoader = FileConfig.loader( {
@@ -99,7 +97,7 @@ const webpackConfig = {
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	optimization: {
-		concatenateModules: shouldConcatenateModules,
+		concatenateModules: true,
 		minimize: false,
 	},
 	module: {
@@ -170,7 +168,7 @@ const webpackConfig = {
 				statsFilename: path.join( __dirname, 'stats-server.json' ),
 				statsOptions: {
 					source: false,
-					reasons: shouldEmitStatsWithReasons,
+					reasons: false,
 					optimizationBailout: false,
 					chunkOrigins: false,
 					chunkGroups: true,

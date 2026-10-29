@@ -10,10 +10,12 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { usePost } from 'calypso/reader/data/post';
 import type { Conversation } from '../group-notes';
 
+export type OpenSource = 'click' | 'tab_key' | 'shortcut' | 'button';
+
 interface Props {
 	conversation: Conversation;
 	isSelected: boolean;
-	onSelect: ( conversation: Conversation ) => void;
+	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
 }
 
 const MAX_AVATARS = 3;
@@ -30,6 +32,7 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 	const itemRef = useRef< HTMLLIElement >( null );
 	const isMountedRef = useRef( false );
 	const openedOnFocusRef = useRef( false );
+	const pointerDownRef = useRef( false );
 
 	useEffect( () => {
 		const isFirstRun = ! isMountedRef.current;
@@ -60,18 +63,31 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 				} ) }
 				aria-current={ isSelected || undefined }
 				onClick={ () => {
+					// A press on an item that already has focus, or in Safari, fires no focus event.
+					pointerDownRef.current = false;
 					// A click focuses the item first, which has already opened it.
 					if ( openedOnFocusRef.current ) {
 						openedOnFocusRef.current = false;
 						return;
 					}
-					onSelect( conversation );
+					onSelect( conversation, 'click' );
+				} }
+				onPointerDown={ () => {
+					pointerDownRef.current = true;
+				} }
+				onPointerCancel={ () => {
+					pointerDownRef.current = false;
+				} }
+				onBlur={ () => {
+					pointerDownRef.current = false;
 				} }
 				// Tabbing onto a conversation opens it, like j/k.
 				onFocus={ () => {
+					const source = pointerDownRef.current ? 'click' : 'tab_key';
+					pointerDownRef.current = false;
 					if ( ! isSelected ) {
 						openedOnFocusRef.current = true;
-						onSelect( conversation );
+						onSelect( conversation, source );
 					}
 				} }
 			>

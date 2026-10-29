@@ -14,10 +14,12 @@ export const DomainNameField = ( {
 	domain,
 	site,
 	value,
+	showWwwPrefix,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
+	showWwwPrefix?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
@@ -33,7 +35,13 @@ export const DomainNameField = ( {
 
 	const content = (
 		<VStack spacing={ 0 }>
-			<span style={ textOverflowStyles }>{ value }</span>
+			<span style={ textOverflowStyles }>
+				{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
+				<Text variant="muted" weight="inherit">
+					{ showWwwPrefix ? 'www.' : '' }
+				</Text>
+				{ value }
+			</span>
 			{ domain.primary_domain ? (
 				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span

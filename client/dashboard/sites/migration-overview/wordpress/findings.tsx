@@ -70,7 +70,7 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			footer={ <AssistedHandoffLink /> }
+			secondaryAction={ <AssistedHandoffLink /> }
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice

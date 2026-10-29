@@ -6,16 +6,16 @@
  * subtitles, and the cards rendered in the connect-account features
  * section.
  */
-export type Family = 'a4a' | 'woo' | 'jetpack' | 'other';
+export type Family = 'migration' | 'a4a' | 'woo' | 'jetpack' | 'other';
 
 /**
  * Priority order for surfacing families in copy and feature cards.
- * A4A wins, then Woo, then Jetpack, then anything else.
+ * Migration leads only if migration was the entrypoint, then A4A, Woo, Jetpack, and others.
  *
  * Featured cards and subtitle slot picking iterate this array, so changing
  * the order changes the entire flow's hierarchy.
  */
-export const FAMILY_PRIORITY: readonly Family[] = [ 'a4a', 'woo', 'jetpack', 'other' ];
+export const FAMILY_PRIORITY: readonly Family[] = [ 'migration', 'a4a', 'woo', 'jetpack', 'other' ];
 
 /**
  * Determine the family for a given plugin slug.
@@ -30,6 +30,9 @@ export const FAMILY_PRIORITY: readonly Family[] = [ 'a4a', 'woo', 'jetpack', 'ot
  *             update before they can be classified.
  */
 export function getFamilyFromSlug( slug: string ): Family {
+	if ( slug === 'wpcom-migration' ) {
+		return 'migration';
+	}
 	if ( slug.startsWith( 'automattic' ) ) {
 		return 'a4a';
 	}

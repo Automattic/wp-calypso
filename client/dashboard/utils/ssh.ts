@@ -12,7 +12,8 @@ const sshKeyValidation = new RegExp( `^(?:${ Object.values( SSHKeyTypes ).join( 
 
 export const isSshKeyValid = ( key: string ) => sshKeyValidation.test( key );
 
-export const getSshKeyLabel = ( sshKey: UserSshKey ) => sshKey.label || sshKey.name;
+export const getSshKeyLabel = ( sshKey: Pick< UserSshKey, 'name' | 'label' > ) =>
+	sshKey.label || sshKey.name;
 
 /**
  * Returns the comment at the end of a public key (for example `user@host`), cut to the label
