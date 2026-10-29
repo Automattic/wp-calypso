@@ -22,7 +22,12 @@ import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopp
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { getSignupCompleteFlowName, getSignupCompleteSiteID } from 'calypso/signup/storageUtils';
+import {
+	getSignupCompleteFlowName,
+	getSignupCompleteSiteID,
+	persistSignupDestination,
+	retrieveSignupDestination,
+} from 'calypso/signup/storageUtils';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -420,6 +425,15 @@ function useRedirectOnTransactionSuccess( {
 		// This is the first point where we know the purchase is complete, so
 		// record it before leaving the page.
 		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
+			if (
+				getFlowFromURL( pathname ?? '', '' ) === STATIC_SITE_IMPORT_FLOW &&
+				getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
+				retrieveSignupDestination() === redirectTo &&
+				blogId &&
+				( receipt.checkout_type === 'unified' || Number( getSignupCompleteSiteID() ) === blogId )
+			) {
+				persistSignupDestination( effectiveRedirectTo );
+			}
 			recordCompletedPurchaseAnalytics( receipt, {
 				flow: getFlowFromURL( pathname ?? '', '' ),
 				userId,

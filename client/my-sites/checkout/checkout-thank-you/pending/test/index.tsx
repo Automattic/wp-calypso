@@ -3,7 +3,13 @@
  */
 import page from '@automattic/calypso-router';
 import { act, render, waitFor } from '@testing-library/react';
-import { setSignupCompleteFlowName, setSignupCompleteSiteID } from 'calypso/signup/storageUtils';
+import {
+	clearSignupDestinationCookie,
+	persistSignupDestination,
+	retrieveSignupDestination,
+	setSignupCompleteFlowName,
+	setSignupCompleteSiteID,
+} from 'calypso/signup/storageUtils';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
 import CheckoutPending from '..';
 import { recordCompletedPurchaseAnalytics } from '../../../src/lib/record-completed-purchase-analytics';
@@ -76,12 +82,17 @@ describe( 'static site signup after checkout', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		window.sessionStorage.clear();
+		clearSignupDestinationCookie();
+		mockReceipt.checkout_type = 'default';
 		mockUserId = null;
 	} );
 
 	it( 'refreshes the new user before tracking and redirecting a default checkout receipt', async () => {
 		setSignupCompleteFlowName( 'static-site-import' );
 		setSignupCompleteSiteID( '42' );
+		persistSignupDestination(
+			'/setup/static-site-import/static-site-import-reading?siteId=:siteId'
+		);
 		let finishUserRefresh!: () => void;
 		mockDispatch.mockReturnValue(
 			new Promise< void >( ( resolve ) => {
@@ -115,5 +126,35 @@ describe( 'static site signup after checkout', () => {
 			flow: 'static-site-import',
 			userId: 123,
 		} );
+		expect( retrieveSignupDestination() ).toBe(
+			'/setup/static-site-import/static-site-import-reading?siteId=42'
+		);
 	} );
+
+	it.each( [
+		{ checkoutType: 'unified', savedDestination: true, shouldResolve: true },
+		{ checkoutType: 'default', savedDestination: true, shouldResolve: false },
+		{ checkoutType: 'unified', savedDestination: false, shouldResolve: false },
+	] )(
+		'resolves only a saved return for a checkout-created site: %j',
+		async ( { checkoutType, savedDestination, shouldResolve } ) => {
+			mockReceipt.checkout_type = checkoutType;
+			mockUserId = 123;
+			mockDispatch.mockResolvedValue( undefined );
+			setSignupCompleteFlowName( 'static-site-import' );
+			const redirectTo =
+				'/setup/static-site-import/static-site-import-reading?siteId=:siteId&applySiteSettings=1';
+			if ( savedDestination ) {
+				persistSignupDestination( redirectTo );
+			}
+
+			render( <CheckoutPending orderId=":orderId" receiptId={ 1 } redirectTo={ redirectTo } /> );
+
+			await waitFor( () => expect( page ).toHaveBeenCalled() );
+			const unresolvedDestination = savedDestination ? redirectTo : undefined;
+			expect( retrieveSignupDestination() ).toBe(
+				shouldResolve ? redirectTo.replace( ':siteId', '42' ) : unresolvedDestination
+			);
+		}
+	);
 } );

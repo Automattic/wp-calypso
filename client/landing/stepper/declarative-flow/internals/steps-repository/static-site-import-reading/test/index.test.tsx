@@ -2,19 +2,40 @@
  * @jest-environment jsdom
  */
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { MemoryRouter } from 'react-router';
+import {
+	clearSignupDestinationCookie,
+	persistSignupDestination,
+	retrieveSignupDestination,
+	setSignupCompleteFlowName,
+} from 'calypso/signup/storageUtils';
+import documentHeadReducer from 'calypso/state/document-head/reducer';
+import uiReducer from 'calypso/state/ui/reducer';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import StaticSiteImportReading from '..';
-import { mockStepProps, renderStep } from '../../test/helpers';
+import { mockStepProps } from '../../test/helpers';
 
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 
-const render = ( initialEntry: string ) => {
+jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
+	useSiteData: () => ( { siteSlug: 'destination.example.com' } ),
+} ) );
+
+const render = ( initialEntry: string, afterCheckout = true ) => {
+	initialEntry = `/setup${ initialEntry }&siteId=123`;
+	if ( afterCheckout ) {
+		persistSignupDestination( initialEntry );
+	}
 	const submit = jest.fn();
-	renderStep(
-		<StaticSiteImportReading
-			{ ...mockStepProps( { navigation: { submit }, stepName: 'static-site-import-reading' } ) }
-		/>,
-		{ initialEntry }
+	renderWithProvider(
+		<MemoryRouter basename="/setup" initialEntries={ [ initialEntry ] }>
+			<StaticSiteImportReading
+				{ ...mockStepProps( { navigation: { submit }, stepName: 'static-site-import-reading' } ) }
+			/>
+		</MemoryRouter>,
+		{ reducers: { documentHead: documentHeadReducer, ui: uiReducer } }
 	);
 	return submit;
 };
@@ -24,7 +45,69 @@ describe( 'StaticSiteImportReading', () => {
 
 	beforeEach( () => {
 		nock.cleanAll();
+		clearSignupDestinationCookie();
+		setSignupCompleteFlowName( 'static-site-import' );
 	} );
+
+	it.each( [ '', '&applySiteSettings=1' ] )(
+		'waits for confirmation on an existing destination (%s)',
+		async ( settingsQuery ) => {
+			const createSession = mockApi()
+				.post( '/wpcom/v2/static-site-import-session' )
+				.query( true )
+				.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
+			const settings = mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 200 );
+			const intent = mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 200 );
+			const submit = render(
+				`/static-site-import-reading?from=busybearscleaning.com${ settingsQuery }`,
+				false
+			);
+
+			expect(
+				screen.getByRole( 'heading', { name: 'Import into destination.example.com?' } )
+			).toBeVisible();
+			expect( createSession.isDone() ).toBe( false );
+			expect( submit ).not.toHaveBeenCalled();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Import into this site' } ) );
+
+			await waitFor( () =>
+				expect( submit ).toHaveBeenCalledWith( { action: 'continue', importSessionId: 'abc123' } )
+			);
+			expect( createSession.isDone() ).toBe( true );
+			expect( settings.isDone() ).toBe( false );
+			expect( intent.isDone() ).toBe( false );
+		}
+	);
+
+	it( 'requires confirmation before resuming a session from a direct link', async () => {
+		const submit = render( '/static-site-import-reading?importSessionId=abc123', false );
+
+		expect( submit ).not.toHaveBeenCalled();
+		await userEvent.click( screen.getByRole( 'button', { name: 'Import into this site' } ) );
+		expect( submit ).toHaveBeenCalledWith( { action: 'continue', importSessionId: 'abc123' } );
+	} );
+
+	it.each( [
+		'siteId=456&from=busybearscleaning.com',
+		'siteId=123&from=another.example.com',
+		'siteId=:siteId&from=busybearscleaning.com',
+		'siteId=123&from=busybearscleaning.com&importSessionId=another-session',
+	] )(
+		'does not accept a checkout return for a different destination or source (%s)',
+		( query ) => {
+			persistSignupDestination(
+				`/setup/static-site-import-reading?${ query }&applySiteSettings=1`
+			);
+			const submit = render(
+				'/static-site-import-reading?from=busybearscleaning.com&applySiteSettings=1',
+				false
+			);
+
+			expect( screen.getByRole( 'button', { name: 'Import into this site' } ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		}
+	);
 
 	it( 'starts a session for the HTTPS source URL and moves on without waiting for the capture', async () => {
 		let postedBody: Record< string, unknown > = {};
@@ -42,6 +125,7 @@ describe( 'StaticSiteImportReading', () => {
 			expect( submit ).toHaveBeenCalledWith( { action: 'continue', importSessionId: 'abc123' } )
 		);
 		expect( postedBody ).toEqual( { source_url: 'https://busybearscleaning.com' } );
+		expect( retrieveSignupDestination() ).toBeUndefined();
 	} );
 
 	it.each( [ undefined, 'abc123' ] )(
@@ -68,7 +152,7 @@ describe( 'StaticSiteImportReading', () => {
 			}
 
 			const submit = render(
-				`/static-site-import-reading?applySiteSettings=1&siteId=123&from=busybearscleaning.com${ sessionId ? `&importSessionId=${ sessionId }` : '' }`
+				`/static-site-import-reading?applySiteSettings=1&from=busybearscleaning.com${ sessionId ? `&importSessionId=${ sessionId }` : '' }`
 			);
 
 			await waitFor( () =>
@@ -89,11 +173,12 @@ describe( 'StaticSiteImportReading', () => {
 				.reply( 200, { session_id: 'abc123', state: 'capture_queued' } );
 
 			const submit = render(
-				`/static-site-import-reading?applySiteSettings=1&siteId=123&from=busybearscleaning.com${ sessionQuery }`
+				`/static-site-import-reading?applySiteSettings=1&from=busybearscleaning.com${ sessionQuery }`
 			);
 
 			await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
 			expect( sessionRequest.isDone() ).toBe( false );
+			expect( retrieveSignupDestination() ).toBeDefined();
 		}
 	);
 

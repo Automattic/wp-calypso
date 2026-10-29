@@ -22,6 +22,8 @@ tracks capture and import in the background, then asks whether the finished site
 
 An existing destination requires authentication. Paid destinations skip plans and checkout;
 free destinations use site checkout to buy a plan before starting the import session.
+The reading step asks for confirmation before importing into an existing destination unless
+it matches the saved checkout return. Site settings come from that saved return, not URL flags.
 
 If the session API refuses the source, the reading step says so and stops there. Other failures
 to start fall back to the content importer for the destination site.
@@ -47,6 +49,8 @@ its previous behavior.
    the destination's Overview with **We're moving your site**. Reload and confirm it resumes.
 5. Once it's ready, try the thumbs up and thumbs down buttons; thumbs down opens the Help Center.
 6. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
+   Confirm that a direct reading link shows the destination and requires clicking **Import into
+   this site**, even with `applySiteSettings=1` or an existing `importSessionId` in the URL.
 
 ## Owned by
 

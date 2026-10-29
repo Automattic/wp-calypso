@@ -272,7 +272,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		};
 
 		const goBack = () => {
-			if ( currentStep === STEPS.UNIFIED_PLANS.slug ) {
+			if (
+				currentStep === STEPS.UNIFIED_PLANS.slug ||
+				currentStep === STEPS.STATIC_SITE_IMPORT_READING.slug
+			) {
 				return window.location.assign(
 					addQueryArgs(
 						{

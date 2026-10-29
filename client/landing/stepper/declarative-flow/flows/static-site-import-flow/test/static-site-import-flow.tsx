@@ -319,18 +319,21 @@ describe( 'Static site import flow', () => {
 		} );
 	} );
 
-	it( 'goes back from plans to source identification with the destination retained', () => {
-		runFlowNavigation(
-			staticSiteImportFlow,
-			{ from: STEPS.UNIFIED_PLANS, query: { ...SOURCE, ...SITE } },
-			'back'
-		);
+	it.each( [ STEPS.UNIFIED_PLANS, STEPS.STATIC_SITE_IMPORT_READING ] )(
+		'goes back from $slug to source identification with the destination retained',
+		( step ) => {
+			runFlowNavigation(
+				staticSiteImportFlow,
+				{ from: step, query: { ...SOURCE, ...SITE } },
+				'back'
+			);
 
-		expect( lastExit() ).toEqual( {
-			path: identifyPath,
-			query: { from: SOURCE.from, siteId: '42', siteSlug: SITE.siteSlug },
-		} );
-	} );
+			expect( lastExit() ).toEqual( {
+				path: identifyPath,
+				query: { from: SOURCE.from, siteId: '42', siteSlug: SITE.siteSlug },
+			} );
+		}
+	);
 
 	it( 'preserves the selected locale when going back to source identification', () => {
 		jest.mocked( useFlowLocale ).mockReturnValue( 'es' );

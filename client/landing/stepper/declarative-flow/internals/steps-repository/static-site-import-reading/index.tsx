@@ -1,14 +1,21 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
 import { Onboard, Visibility } from '@automattic/data-stores';
-import { Step } from '@automattic/onboarding';
+import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
+import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
-import { useEffect, useEffectEvent, useRef } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { useHref, useLocation, useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
+import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { addSchemeIfMissing } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
+import {
+	clearSignupDestinationCookie,
+	getSignupCompleteFlowName,
+	retrieveSignupDestination,
+} from 'calypso/signup/storageUtils';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
@@ -17,6 +24,9 @@ export type StaticSiteImportReadingSubmits =
 const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
 	function StaticSiteImportReading( { navigation } ) {
 		const { __ } = useI18n();
+		const { siteSlug } = useSiteData();
+		const { pathname } = useLocation();
+		const path = useHref( pathname );
 		const [ searchParams ] = useSearchParams();
 		const from = searchParams.get( 'from' )?.trim();
 		const sourceUrl = from
@@ -25,7 +35,25 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
 		const siteId = searchParams.get( 'siteId' );
-		const shouldApplySiteSettings = searchParams.get( 'applySiteSettings' ) === '1';
+		const [ checkoutDestination ] = useState( () => {
+			try {
+				return new URL( retrieveSignupDestination(), window.location.origin );
+			} catch {
+				return undefined;
+			}
+		} );
+		const isCheckoutReturn =
+			Boolean( siteId ) &&
+			getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
+			checkoutDestination?.origin === window.location.origin &&
+			checkoutDestination?.pathname === path &&
+			[ 'siteId', 'siteSlug', 'from', 'platform', 'importSessionId' ].every(
+				( key ) => checkoutDestination.searchParams.get( key ) === searchParams.get( key )
+			);
+		const shouldApplySiteSettings =
+			isCheckoutReturn && checkoutDestination?.searchParams.get( 'applySiteSettings' ) === '1';
+		const [ hasConfirmed, setHasConfirmed ] = useState( false );
+		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
 		const isRefused = getStaticSiteImportErrorCode( error ) === 'static_site_import_source_refused';
@@ -35,7 +63,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		);
 		const hasStarted = useRef( false );
 		useEffect( () => {
-			if ( hasStarted.current ) {
+			if ( needsConfirmation || hasStarted.current ) {
 				return;
 			}
 			hasStarted.current = true;
@@ -73,6 +101,9 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 					return submit( { action: 'unavailable' } );
 				}
 
+				if ( isCheckoutReturn ) {
+					clearSignupDestinationCookie();
+				}
 				if ( sessionId ) {
 					return submit( { action: 'continue', importSessionId: sessionId } );
 				}
@@ -91,7 +122,16 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			};
 
 			startSession();
-		}, [ __, createSession, sessionId, shouldApplySiteSettings, siteId, sourceUrl ] );
+		}, [
+			__,
+			createSession,
+			isCheckoutReturn,
+			needsConfirmation,
+			sessionId,
+			shouldApplySiteSettings,
+			siteId,
+			sourceUrl,
+		] );
 
 		if ( isRefused ) {
 			return (
@@ -107,6 +147,39 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 							/>
 						}
 					/>
+				</>
+			);
+		}
+
+		if ( needsConfirmation ) {
+			return (
+				<>
+					<DocumentHead title={ __( 'Import into this site' ) } />
+					<Step.CenteredColumnLayout
+						columnWidth={ 6 }
+						topBar={
+							<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
+						}
+						heading={
+							<Step.Heading
+								text={
+									siteSlug
+										? sprintf(
+												// translators: %s is the destination site's domain.
+												__( 'Import into %s?' ),
+												siteSlug
+											)
+										: __( 'Import into this site?' )
+								}
+								subText={ __( 'Importing will change this site’s content and design.' ) }
+							/>
+						}
+					>
+						{ sourceUrl && <p>{ sourceUrl }</p> }
+						<Step.PrimaryButton onClick={ () => setHasConfirmed( true ) }>
+							{ __( 'Import into this site' ) }
+						</Step.PrimaryButton>
+					</Step.CenteredColumnLayout>
 				</>
 			);
 		}
