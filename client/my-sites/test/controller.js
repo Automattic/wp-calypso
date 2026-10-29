@@ -368,6 +368,47 @@ describe( 'siteSelection', () => {
 		expect( context.store.getActions() ).toContainEqual( { type: 'REDIRECT_TO_LOGOUT_MOCK' } );
 	} );
 
+	it( 'should explain at checkout that only administrators can make purchases', async () => {
+		respondWithSite( { site_owner: USER_ID + 1 } );
+
+		const { context } = selectSite( () => unmanageableSiteState, {
+			path: CHECKOUT_PATH,
+			pathname: CHECKOUT_PATH,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( context.primary.props ).toEqual( {
+			title: "You don't have access to that site",
+			line: 'Only administrators on this site can make new purchases.',
+			action: 'Select a different site',
+			actionURL: '/sites',
+			secondaryAction: 'Log in with a different account',
+			secondaryActionCallback: expect.any( Function ),
+		} );
+	} );
+
+	it( 'should show the "might not have permission" line on renewals, since non-admins can renew', async () => {
+		respondWithSite( { site_owner: USER_ID + 1 } );
+		const renewalPath = `/checkout/jetpack_growth_yearly/renew/1234/${ SITE_SLUG }`;
+
+		const { context } = selectSite( () => unmanageableSiteState, {
+			path: renewalPath,
+			pathname: renewalPath,
+		} );
+
+		await jest.advanceTimersByTimeAsync( 0 );
+
+		expect( context.primary.props ).toEqual( {
+			title: "You don't have access to that site",
+			line: 'You might not have permission to view this site, or it may not exist. Select a different site to continue.',
+			action: 'Select a different site',
+			actionURL: '/sites',
+			secondaryAction: 'Log in with a different account',
+			secondaryActionCallback: expect.any( Function ),
+		} );
+	} );
+
 	it( 'should keep the standard page at checkout in a support session', async () => {
 		respondWithSite( { site_owner: USER_ID + 1 } );
 
