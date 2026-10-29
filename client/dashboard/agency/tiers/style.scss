@@ -1,5 +1,6 @@
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/variables";
 
 :root {
 	--color-gray-100: #{$gray-100};
@@ -13,11 +14,17 @@
 // which have equal specificity and would otherwise win or lose on injection order.
 .agency-tiers-influenced-revenue-bar.agency-tiers-influenced-revenue-bar {
 	width: 100%;
+	// The default 1.5px track all but disappears at $0; 4px matches the Stat bar.
+	height: $grid-unit-05;
 
 	// ProgressBar has no colour prop: its track and indicator both derive from
 	// `--wp-components-color-foreground`, so rebind it here to keep the override
 	// scoped to the bar.
 	--wp-components-color-foreground: var(--wp-admin-theme-color);
+}
+
+.agency-tiers-progress-text {
+	text-wrap: balance;
 }
 
 // Wrapper provides the gradient fade — must sit outside the scroll container
