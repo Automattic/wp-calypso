@@ -341,6 +341,20 @@ describe( 'Checklist', () => {
 		expect( action ).toHaveBeenCalled();
 	} );
 
+	it( 'collapses a two-task list after resuming the other in-progress task', async () => {
+		const pair: ChecklistItem[] = [
+			{ id: 'about', label: 'Publish the About page', prompt: 'About', status: 'in-progress' },
+			{ id: 'images', label: 'Replace images', prompt: 'Images', status: 'in-progress' },
+		];
+		render( { items: pair, onSubmit: vi.fn(), resumeInProgress: true, activeItemId: 'images' } );
+
+		await act( async () => {
+			rowFor( 'Publish the About page' ).querySelector( 'button' )?.click();
+		} );
+
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+	} );
+
 	it( 'keeps the active in-progress item inert: the conversation is already on it', () => {
 		const onSubmit = vi.fn();
 		render( { onSubmit, resumeInProgress: true, activeItemId: 'images' } );

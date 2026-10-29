@@ -288,9 +288,11 @@ export function Checklist( {
 			}
 			// Collapsing after the last open task was picked would fold every
 			// row (it is about to be in progress too), so the list stays open.
-			// With an active item, every other row folds, so the list collapses.
+			// With an active item the picked task is about to become it, so every
+			// other row folds, the current active one included.
 			const leavesSomethingToFold = items.some(
-				( other ) => other !== item && ! staysWhenCollapsed( other )
+				( other ) =>
+					other !== item && ( activeItemId !== undefined || ! staysWhenCollapsed( other ) )
 			);
 			if ( started && collapseOnSelect && ! isCollapsed && leavesSomethingToFold ) {
 				setCollapsed( true );
