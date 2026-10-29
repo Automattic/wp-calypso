@@ -17,7 +17,8 @@
 `CheckBox`, `ChoicePicker`, `DateTimeInput`, `Video`, `AudioPlayer`, `Tabs`, `Modal` and
 `Slider`.
 
-- Buttons send an `event` to the agent, or call a catalog function with `functionCall`. To submit
+- Buttons dispatch an `event` in the runtime's action mode, or call a catalog function with
+  `functionCall`. By default, events go to the agent. To submit
   edits, bind the inputs and the action's context to the same data paths. The agent gets the
   event's `name` and `context`, so name it for what it does, such as `save_title`, and put in its
   context what acting on it needs, such as the item's ID.
@@ -133,6 +134,8 @@ before loading the renderer:
 - `getInteractiveUiOperation( message )` returns an A2UI message's operation name and surface ID,
   or `undefined` for a malformed message, as the agent's messages aren't validated.
 - `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
+- `getInteractiveUiActionInstructions( actionMode )` returns guidance for the agent composing
+  actions. Include it in the host's rendering tool description. It defaults to `agent` mode.
 
 ## Rendering
 
@@ -175,6 +178,36 @@ Import `@automattic/ai-ui-renderer/style.scss` (Sass) with the renderer, in the 
 `import()` when you load it on demand, and give the modal overlay (`ai-ui-renderer__modal`) a
 `z-index` above your UI, since it renders outside the surface. WordPress UI components load their
 own styles.
+
+### Action modes
+
+Both modes pass events to `onAction`. In the default `agent` mode, Agents Manager sends hidden
+context messages. MCP Apps can use `tool-call` mode to execute tools directly:
+
+```ts
+const runtime = createInteractiveUiRuntime( {
+	catalogs,
+	actionMode: 'tool-call',
+	onAction: async ( { name, context } ) => {
+		const result = await executeTool( { name, arguments: context } );
+		if ( result.isError ) {
+			throw new Error( 'Tool call failed' );
+		}
+	},
+	onError,
+} );
+```
+
+An event's `name` is the tool name and its resolved `context` contains the complete arguments.
+The host maps the action's `context` to tool `arguments`, executes the tool, and handles its
+result, including any UI updates. `onAction` must reject on failure, including MCP results with
+`isError`; the runtime reports `TOOL_CALL_FAILED` through `onError`. Disable the surface while a
+call is pending. Catalog `functionCall` actions still run locally.
+
+Include `getInteractiveUiActionInstructions('tool-call')` from the `capabilities` entry in the
+rendering tool's description. Callers must name an available tool and bind editable values into
+its arguments. No LLM interprets a click or provides an assistant follow-up. The app sends no
+chat message, though the client may display tool activity.
 
 ## Theming
 

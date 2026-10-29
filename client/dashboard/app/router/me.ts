@@ -834,7 +834,7 @@ export const securitySshKeyRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'SSH key' ),
+				title: isEnabled( 'ssh-multiple-keys' ) ? __( 'SSH keys' ) : __( 'SSH key' ),
 			},
 		],
 	} ),

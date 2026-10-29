@@ -3,6 +3,7 @@ import {
 	BASIC_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
+import OpenHelpCenterButton from '../components/open-help-center-button';
 import { ButtonPicker, ColorPicker, FontPicker } from '../components/style-pickers';
 import { withChatResponseTracking } from './with-chat-response-tracking';
 import type {
@@ -39,14 +40,20 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 				},
 				required: [ 'buttonVariations' ],
 			},
+			AgentsManagerOpenHelpCenterButton: {
+				type: 'object',
+				properties: { message: { type: 'string' } },
+			},
 		},
 	},
-	// Its pickers need style variations that only the color, font and button abilities fill in.
+	// Its pickers need style variations that only the color, font and button abilities fill in, and
+	// the Help Center button shows only once the support workflow approves a hand-off.
 	agentComposable: false,
 	components: {
 		AgentsManagerColorPicker: ColorPicker,
 		AgentsManagerFontPicker: FontPicker,
 		AgentsManagerButtonPicker: ButtonPicker,
+		AgentsManagerOpenHelpCenterButton: OpenHelpCenterButton,
 	},
 };
 

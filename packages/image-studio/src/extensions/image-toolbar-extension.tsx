@@ -2,13 +2,56 @@ import { BlockControls, store as blockEditorStore } from '@wordpress/block-edito
 import { ToolbarButton, ToolbarGroup } from '@wordpress/components';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { store as coreStore } from '@wordpress/core-data';
-import { dispatch, useSelect } from '@wordpress/data';
-import { Component, useCallback } from '@wordpress/element';
+import { dispatch, resolveSelect, useDispatch, useSelect } from '@wordpress/data';
+import { Component, useCallback, useLayoutEffect, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { ImageStudioEntryPoint, store as imageStudioStore } from '../store/index';
 import { type BlockEditProps, IMAGE_STUDIO_SUPPORTED_MIME_TYPES, ImageStudioMode } from '../types';
 import { type ImageData } from '../utils/get-image-data';
 import { trackImageStudioOpened } from '../utils/tracking';
+
+type Attachment = {
+	source_url?: string;
+	mime_type?: string;
+	media_details?: { sizes?: Record< string, { source_url?: string } > };
+} | null;
+
+type NoticesActions = {
+	createNotice: (
+		status: string,
+		message: string,
+		options?: { type?: 'default' | 'snackbar'; isDismissible?: boolean }
+	) => void;
+};
+
+const stripParams = ( url: string ) => url.split( '?' )[ 0 ];
+
+/**
+ * Whether Image Studio can edit the attachment: a supported MIME type, and a URL (any size)
+ * matching the block's, which rules out a block pasted from another site with a stale ID.
+ */
+const canEditAttachment = ( attachment: Attachment | undefined, blockUrl: unknown ) => {
+	const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
+	if ( attachment?.mime_type && ! supportedMimeTypes.includes( attachment.mime_type ) ) {
+		return false;
+	}
+	if ( ! attachment ) {
+		return false;
+	}
+	if ( ! blockUrl ) {
+		return true;
+	}
+	const knownUrls = new Set< string >();
+	if ( attachment.source_url ) {
+		knownUrls.add( stripParams( attachment.source_url ) );
+	}
+	for ( const size of Object.values( attachment.media_details?.sizes ?? {} ) ) {
+		if ( size.source_url ) {
+			knownUrls.add( stripParams( size.source_url ) );
+		}
+	}
+	return knownUrls.has( stripParams( blockUrl as string ) );
+};
 
 /**
  * Add Image Studio button to image blocks toolbar
@@ -18,9 +61,23 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 		const ImageStudioToolbarButtonInner = ( props: BlockEditProps ) => {
 			const { openImageStudio } = dispatch( imageStudioStore );
 			const { attributes, setAttributes } = props;
-
-			// Get supported MIME types
-			const supportedMimeTypes: readonly string[] = IMAGE_STUDIO_SUPPORTED_MIME_TYPES;
+			const { createNotice } = useDispatch( 'core/notices' ) as NoticesActions;
+			const [ isCheckingAttachment, setIsCheckingAttachment ] = useState( false );
+			const currentBlock = useRef( {
+				id: attributes?.id,
+				url: attributes?.url,
+				isSelected: props.isSelected,
+			} );
+			useLayoutEffect( () => {
+				currentBlock.current = {
+					id: attributes?.id,
+					url: attributes?.url,
+					isSelected: props.isSelected,
+				};
+				return () => {
+					currentBlock.current = { id: undefined, url: undefined, isSelected: false };
+				};
+			} );
 
 			// Fetch the attachment from the media store
 			const { media, hasResolved, canUploadFiles } = useSelect(
@@ -29,7 +86,13 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						getSettings: () => { mediaUpload?: unknown };
 					};
 					const canUploadFiles = !! getSettings().mediaUpload;
-					if ( ! canUploadFiles || ! attributes?.id ) {
+					// This filter wraps every block, but only a selected Image block shows the button.
+					if (
+						props.name !== 'core/image' ||
+						! props.isSelected ||
+						! attributes?.id ||
+						! canUploadFiles
+					) {
 						return { media: null, hasResolved: true, canUploadFiles };
 					}
 					return {
@@ -46,7 +109,7 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						] ),
 					};
 				},
-				[ attributes?.id ]
+				[ attributes?.id, props.name, props.isSelected ]
 			);
 
 			const handleClose = useCallback(
@@ -76,48 +139,60 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 
 			const attachmentId = attributes.id as number | undefined;
 
-			const handleEditClick = useCallback( () => {
+			const handleEditClick = useCallback( async () => {
+				if ( isCheckingAttachment ) {
+					return;
+				}
+				// The button shows before the read resolves, so a stale ID must not open the wrong image.
+				if ( ! hasResolved ) {
+					setIsCheckingAttachment( true );
+					const record = ( await resolveSelect( coreStore )
+						.getEntityRecord( 'postType', 'attachment', attachmentId as number )
+						.catch( ( error ) => {
+							// eslint-disable-next-line no-console
+							console.error( `[Image Studio] Failed to load attachment ${ attachmentId }:`, error );
+							return null;
+						} ) ) as Attachment | undefined;
+					setIsCheckingAttachment( false );
+					// The image may have been replaced, deselected or removed while the read was pending.
+					if ( currentBlock.current.id !== attachmentId || ! currentBlock.current.isSelected ) {
+						return;
+					}
+					if ( ! canEditAttachment( record, currentBlock.current.url ) ) {
+						createNotice( 'error', __( 'Could not edit image with AI.', __i18n_text_domain__ ), {
+							type: 'snackbar',
+							isDismissible: true,
+						} );
+						return;
+					}
+				}
 				trackImageStudioOpened( {
 					mode: ImageStudioMode.Edit,
 					attachmentId,
 					entryPoint: ImageStudioEntryPoint.EditorBlock,
 				} );
 				openImageStudio( attachmentId, handleClose, ImageStudioEntryPoint.EditorBlock, props.name );
-			}, [ attachmentId, handleClose, openImageStudio, props.name ] );
+			}, [
+				isCheckingAttachment,
+				hasResolved,
+				attachmentId,
+				createNotice,
+				handleClose,
+				openImageStudio,
+				props.name,
+			] );
 
-			if ( props.name !== 'core/image' || ! attributes?.id || ! canUploadFiles ) {
+			if (
+				props.name !== 'core/image' ||
+				! props.isSelected ||
+				! attributes?.id ||
+				! canUploadFiles
+			) {
 				return <BlockEdit { ...props } />;
 			}
 
-			const attachment = media as {
-				source_url?: string;
-				mime_type?: string;
-				media_details?: { sizes?: Record< string, { source_url?: string } > };
-			} | null;
-
-			// Check if image MIME type is supported
-			if ( attachment?.mime_type && ! supportedMimeTypes.includes( attachment.mime_type ) ) {
-				return <BlockEdit { ...props } />;
-			}
-
-			// Don't show button if the attachment doesn't match the displayed image
-			// (e.g., image block pasted from another site with a stale ID).
-			// Collect all known URLs for this attachment (full size + all
-			// intermediate sizes) and check if the block URL matches any of them.
-			const stripParams = ( url: string ) => url.split( '?' )[ 0 ];
-			const knownUrls = new Set< string >();
-			if ( attachment?.source_url ) {
-				knownUrls.add( stripParams( attachment.source_url ) );
-			}
-			if ( attachment?.media_details?.sizes ) {
-				for ( const size of Object.values( attachment.media_details.sizes ) ) {
-					if ( size.source_url ) {
-						knownUrls.add( stripParams( size.source_url ) );
-					}
-				}
-			}
-			const attributeUrl = attributes?.url ? stripParams( attributes.url as string ) : null;
-			if ( hasResolved && attributeUrl && ( ! attachment || ! knownUrls.has( attributeUrl ) ) ) {
+			const attachment = media as Attachment;
+			if ( ( hasResolved || attachment ) && ! canEditAttachment( attachment, attributes?.url ) ) {
 				return <BlockEdit { ...props } />;
 			}
 
@@ -129,6 +204,8 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 							<ToolbarButton
 								label={ __( 'Edit image with AI', __i18n_text_domain__ ) }
 								onClick={ handleEditClick }
+								isBusy={ isCheckingAttachment }
+								disabled={ isCheckingAttachment }
 							>
 								{ __( 'Edit with AI', __i18n_text_domain__ ) }
 							</ToolbarButton>
