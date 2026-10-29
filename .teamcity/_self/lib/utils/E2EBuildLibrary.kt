@@ -1,43 +1,9 @@
 package _self.lib.utils
 
-import _self.bashNodeScript
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildFeatures
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildStep
-import jetbrains.buildServer.configs.kotlin.v2019_2.BuildSteps
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.XmlReport
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.xmlReport
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.v2019_2.ParametrizedWithType
 import jetbrains.buildServer.configs.kotlin.v2019_2.FailureConditions
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
-
-
-fun BuildSteps.prepareE2eEnvironment(): ScriptBuildStep {
-    return bashNodeScript {
-        name = "Prepare e2e environment"
-        scriptContent = """
-            # Install deps
-            yarn workspaces focus wp-e2e-tests @automattic/calypso-e2e
-
-            # Decrypt secrets
-            # Must do before build so the secrets are in the dist output
-            E2E_SECRETS_KEY="%E2E_SECRETS_ENCRYPTION_KEY_CURRENT%" yarn workspace @automattic/calypso-e2e decrypt-secrets
-
-            # Build packages
-            yarn workspace @automattic/calypso-e2e build
-        """.trimIndent()
-        dockerImage = "%docker_image_e2e%"
-    }
-}
-
-fun ParametrizedWithType.defaultE2eParams() {
-    param("env.NODE_CONFIG_ENV", "test")
-    param("env.PLAYWRIGHT_BROWSERS_PATH", "0")
-    param("env.LOCALE", "en")
-	param("env.DEBUG", "")
-	throttleActionParams()
-}
 
 fun ParametrizedWithType.throttleActionParams() {
 	select(
@@ -63,16 +29,6 @@ fun ParametrizedWithType.throttleActionParams() {
 	)
 }
 
-fun ParametrizedWithType.calypsoBaseUrlParam( defaultUrl: String = "https://wordpress.com" ) {
-	text(
-		name = "env.CALYPSO_BASE_URL",
-		value = defaultUrl,
-		label = "Test URL",
-		description = "URL to test against",
-		allowEmpty = false
-	)
-}
-
 fun FailureConditions.defaultE2eFailureConditions() {
 	executionTimeoutMin = 20
 	// Don't fail if the runner exists with a non zero code. This allows a build to pass if the failed tests have been muted previously.
@@ -89,75 +45,5 @@ fun FailureConditions.defaultE2eFailureConditions() {
 		compareTo = build {
 			buildRule = lastSuccessful()
 		}
-	}
-}
-
-fun defaultE2eArtifactRules(): String = "test/e2e/output => playwright-output"
-
-/**
- * For builds not yet repointed at [_self.CalypsoE2ETestsBuildTemplate]
- * (TESTOPS-20). Pair every use with the [playwrightJUnitReport] build feature:
- * that report is the only path by which failed tests reach TeamCity.
- */
-fun BuildSteps.runTaggedPlaywrightSpecs(
-	tag: String,
-	targetDevice: String,
-	additionalEnvVars: Map<String, String> = mapOf(),
-	stepName: String = "Run Playwright specs",
-	reportSuffix: String = ""
-): ScriptBuildStep {
-	val envVarExport = additionalEnvVars.map { ( key, value ) -> "export $key='$value'" }.joinToString( separator = "\n" )
-	val reportFile = if ( reportSuffix.isEmpty() ) "output/results.xml" else "output/results-$reportSuffix.xml"
-	val reportIdentitySuffix = reportSuffix.replace( Regex( "\\W" ), "_" )
-	// Playwright empties the output and HTML report directories as each run starts, so in a loop
-	// only the last run's traces, videos and screenshots would reach the artifact. Name each run's
-	// after its report. The traces go straight to their directory rather than moving afterwards:
-	// the JUnit report records each attachment where it was written.
-	val outputFlag = if ( reportSuffix.isEmpty() ) "" else " --output=output/test-results-$reportSuffix"
-	val keepArtifacts = if ( reportSuffix.isEmpty() ) "" else """
-rm -rf output/html-$reportSuffix
-if [[ -d output/html ]]; then mv output/html output/html-$reportSuffix; fi
-""".trim()
-
-	return bashNodeScript {
-		name = stepName
-		// The JUnit report marks the build failed as soon as a test fails, which would
-		// skip every later step in the Atomic variation loop. Run regardless.
-		executionMode = BuildStep.ExecutionMode.ALWAYS
-		scriptContent = """
-			# Export additional environment variables.
-			$envVarExport
-
-			# Enter testing directory.
-			cd test/e2e
-
-			# Clear any prior report so a runner crash can't be masked by a stale file.
-			# The import rule matches results*.xml, so clear the unsuffixed name too.
-			rm -f output/results.xml $reportFile
-
-			# Swallow the exit code so later steps still run; failed tests fail
-			# the build through the JUnit report.
-			PLAYWRIGHT_JUNIT_OUTPUT_FILE=$reportFile yarn test:pw:$targetDevice --grep=$tag$outputFlag || true
-
-			$keepArtifacts
-
-			# A runner crash that produced no report must not pass silently.
-			if [[ ! -f $reportFile ]]; then
-				echo "##teamcity[buildProblem description='Playwright step produced no JUnit report ($stepName)' identity='migrated_pw_no_report_$reportIdentitySuffix']"
-			fi
-		""".trimIndent()
-		dockerImage = "%docker_image_e2e%"
-	}
-}
-
-/**
- * Imports the Playwright Test JUnit report so failed tests from
- * [runTaggedPlaywrightSpecs] fail the build.
- */
-fun BuildFeatures.playwrightJUnitReport() {
-	xmlReport {
-		reportType = XmlReport.XmlReportType.JUNIT
-		rules = "+:test/e2e/output/results*.xml"
-		verbose = true
 	}
 }

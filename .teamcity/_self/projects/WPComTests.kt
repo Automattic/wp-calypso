@@ -1,6 +1,5 @@
 package _self.projects
 
-import Settings
 import _self.bashNodeScript
 import _self.lib.utils.*
 import _self.CalypsoE2ETestsBuildTemplate
@@ -10,7 +9,6 @@ import jetbrains.buildServer.configs.kotlin.v2019_2.Project
 import jetbrains.buildServer.configs.kotlin.v2019_2.Template
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.commitStatusPublisher
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.notifications
-import jetbrains.buildServer.configs.kotlin.v2019_2.buildFeatures.perfmon
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.BuildFailureOnMetric
 import jetbrains.buildServer.configs.kotlin.v2019_2.failureConditions.failOnMetricChange
 import jetbrains.buildServer.configs.kotlin.v2019_2.projectFeatures.buildReportTab
@@ -40,18 +38,6 @@ object WPComTests : Project({
 		}
 	}
 
-	// E2E Tests for Jetpack Simple Deployment
-	buildType(jetpackSimpleDeploymentE2eBuildType("desktop", "3007d7a1-5642-4dbf-9935-d93f3cdb4dcc"));
-	buildType(jetpackSimpleDeploymentE2eBuildType("mobile", "ccfe7d2c-8f04-406b-8b83-3db6c8475661"));
-
-	// E2E Tests for Jetpack Atomic Deployment
-	// Just desktop to start
-	buildType(jetpackAtomicDeploymentE2eBuildType("desktop", "81015cf6-27e7-40bd-a52d-df6bd19ffb01"));
-
-	// E2E Tests for smoke testing each new Jetpack build on Atomic
-	// Also just desktop to start
-	buildType(jetpackAtomicBuildSmokeE2eBuildType("desktop", "f39587ab-f526-42aa-a88b-814702135af3"));
-
 	buildType(I18NTests);
 	buildType(P2E2ETests);
 	buildType(GutenbergPlaywrightTests);
@@ -64,207 +50,6 @@ object WPComTests : Project({
 	buildType(JetpackAtomicE2ETests);
 	buildType(JetpackAtomicSmokeE2ETests);
 })
-
-fun jetpackSimpleDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	return BuildType({
-		id("WPComTests_jetpack_simple_deployment_e2e_$targetDevice")
-		uuid = buildUuid
-		name = "Jetpack Simple Deployment E2E Tests ($targetDevice)"
-		description = "Runs E2E tests validating the deployment of Jetpack on Simple sites on $targetDevice viewport"
-
-		artifactRules = defaultE2eArtifactRules();
-
-		vcs {
-			root(Settings.WpCalypso)
-			branchFilter = allBranchesExceptMergeQueue()
-			cleanCheckout = true
-		}
-
-		params {
-			defaultE2eParams()
-			calypsoBaseUrlParam()
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.JETPACK_TARGET", "wpcom-deployment")
-		}
-
-		steps {
-			prepareE2eEnvironment()
-
-			runTaggedPlaywrightSpecs(
-				tag = "@jetpack-wpcom-integration",
-				targetDevice = targetDevice,
-			)
-		}
-
-		features {
-			perfmon {}
-
-			playwrightJUnitReport()
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
-		}
-
-		failureConditions {
-			defaultE2eFailureConditions()
-		}
-	});
-}
-
-fun jetpackAtomicDeploymentE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	val atomicVariations = listOf("default", "php-old", "php-new", "wp-beta", "wp-previous", "private", "ecomm-plan")
-
-	return BuildType({
-		id("WPComTests_jetpack_atomic_deployment_e2e_$targetDevice")
-		uuid = buildUuid
-		name = "Jetpack Atomic Deployment E2E Tests ($targetDevice)"
-		description = "Runs E2E tests validating a Jetpack release candidate for full WPCOM Atomic deployment. Runs all tests on all Atomic environment variations."
-
-		artifactRules = defaultE2eArtifactRules();
-
-		vcs {
-			root(Settings.WpCalypso)
-			branchFilter = allBranchesExceptMergeQueue()
-			cleanCheckout = true
-		}
-
-		params {
-			defaultE2eParams()
-			calypsoBaseUrlParam()
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.JETPACK_TARGET", "wpcom-deployment")
-			param("env.TEST_ON_ATOMIC", "true")
-		}
-
-		steps {
-			prepareE2eEnvironment()
-
-			atomicVariations.forEach { variation ->
-				runTaggedPlaywrightSpecs(
-					tag = "@jetpack-wpcom-integration",
-					targetDevice = targetDevice,
-					additionalEnvVars = mapOf(
-						"ATOMIC_VARIATION" to variation,
-						"PW_WORKERS" to "5",
-					),
-					stepName = "Run Playwright specs: $variation",
-					// Per-variation report name so the loop's runs don't overwrite each other.
-					reportSuffix = variation,
-				)
-			}
-		}
-
-		features {
-			perfmon {}
-
-			playwrightJUnitReport()
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
-		}
-
-		failureConditions {
-			defaultE2eFailureConditions()
-			// These are long-running tests, and we have to scale back the parallelization too.
-			// Let's give them some more breathing room.
-			// This number is arbitrary, but tests in mid-2024 tend to run longer than 30 minutes.
-			executionTimeoutMin = 51
-		}
-	});
-}
-
-fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String ): BuildType {
-	return BuildType({
-		id("WPComTests_jetpack_atomic_build_smoke_e2e_$targetDevice")
-		uuid = buildUuid
-		name = "Jetpack Atomic Build Smoke E2E Tests ($targetDevice)"
-		description = "Runs E2E tests to smoke test the most recent Jetpack build on Atomic staging sites. Each spec file runs on one Atomic environment variation, picked from the spec file and the calypso revision under test, so builds on the same revision repeat it."
-
-		artifactRules = defaultE2eArtifactRules();
-
-		vcs {
-			root(Settings.WpCalypso)
-			branchFilter = allBranchesExceptMergeQueue()
-			cleanCheckout = true
-		}
-
-		params {
-			defaultE2eParams()
-			calypsoBaseUrlParam()
-			param("env.VIEWPORT_NAME", "$targetDevice")
-			param("env.JETPACK_TARGET", "wpcom-deployment")
-			param("env.TEST_ON_ATOMIC", "true")
-			param("env.ATOMIC_VARIATION", "mixed")
-			// What "mixed" resolves against, with each spec file's name. Keyed on the commit so a
-			// re-run of a failed build repeats the variations that failed. This build has no VCS
-			// trigger, so every build on an unchanged calypso revision repeats them too:
-			// reproducibility over coverage.
-			param("env.ATOMIC_VARIATION_KEY", "%build.vcs.number%")
-		}
-
-		steps {
-			prepareE2eEnvironment()
-
-			runTaggedPlaywrightSpecs(
-				tag = "@jetpack-wpcom-integration",
-				targetDevice = targetDevice,
-				// The spec files spread over the seven Atomic sites, but every worker can still
-				// land on one of them at once: the private site fails at 14 concurrent workers
-				// and holds at 4, so the count stays bounded by what a single site serves.
-				additionalEnvVars = mapOf( "PW_WORKERS" to "4" ),
-			)
-		}
-
-		features {
-			perfmon {}
-
-			playwrightJUnitReport()
-
-			notifications {
-				notifierSettings = slackNotifier {
-					connection = "PROJECT_EXT_11"
-					sendTo = "#jetpack-alerts"
-					messageFormat = verboseMessageFormat {
-						addStatusText = true
-					}
-				}
-				branchFilter = "+:<default>"
-				buildFailedToStart = true
-				buildFailed = true
-				buildFinishedSuccessfully = false
-				buildProbablyHanging = true
-			}
-		}
-
-		failureConditions {
-			defaultE2eFailureConditions()
-		}
-	});
-}
 
 private object I18NTests : BuildType({
 	templates(CalypsoE2ETestsBuildTemplate)
