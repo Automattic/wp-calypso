@@ -1,4 +1,4 @@
-import { getProductShortTitle, getProductTitle } from '../product-title';
+import { getProductListTitle, getProductShortTitle, getProductTitle } from '../product-title';
 import type { AgencyProduct } from '@automattic/api-core';
 
 const product = ( name: string, family_slug = 'jetpack-products' ): AgencyProduct => ( {
@@ -42,5 +42,24 @@ describe( 'getProductShortTitle', () => {
 				product( 'Jetpack VaultPress Backup Add-on Storage (100GB)', 'jetpack-backup-storage' )
 			)
 		).toBe( '100GB' );
+	} );
+} );
+
+describe( 'getProductListTitle', () => {
+	test( 'names backup storage add-ons in full', () => {
+		expect(
+			getProductListTitle(
+				product( 'Jetpack VaultPress Backup Add-on Storage (100GB)', 'jetpack-backup-storage' )
+			)
+		).toBe( 'VaultPress Backup Add-on Storage 100GB' );
+	} );
+
+	test( 'keeps the short title of other products', () => {
+		expect( getProductListTitle( product( 'WooCommerce Bookings', 'woocommerce-products' ) ) ).toBe(
+			'Bookings'
+		);
+		expect( getProductListTitle( product( 'Pressable 10 Sites', 'pressable-addon' ) ) ).toBe(
+			'10 Sites'
+		);
 	} );
 } );
