@@ -40,6 +40,8 @@ export default function useAgencyCart(
 							isA4ASitelessCheckout: true,
 							agency_id: agencyId,
 							cart_item_index: cartItemIndex,
+							// The dashboard set the term, so the checkout shows it without a picker.
+							hideProductVariants: true,
 							...( siteDomain ? { a4a_pressable_site_domain: siteDomain } : {} ),
 						},
 					} )
