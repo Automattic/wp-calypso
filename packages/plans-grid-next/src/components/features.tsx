@@ -105,8 +105,7 @@ const PlanFeatures2023GridFeatures: React.FC< {
 	setActiveTooltipId,
 } ) => {
 	const translate = useTranslate();
-	const { enableFeatureTooltips, gridPlans, isExperimentVariant, showFeatureCheckmarks } =
-		usePlansGridContext();
+	const { enableFeatureTooltips, gridPlans, showFeatureCheckmarks } = usePlansGridContext();
 
 	return (
 		<>
@@ -139,13 +138,11 @@ const PlanFeatures2023GridFeatures: React.FC< {
 					'upload-video',
 				];
 
-				// Apply green styling for domain feature in the rolled-out cohort.
-				const isCustomDomainFeatureWithPaidDomain =
+				// Apply green styling for domain feature.
+				const shouldHighlightDomainFeature =
 					currentFeature.getSlug() === FEATURE_CUSTOM_DOMAIN &&
 					paidDomainName &&
 					! isFreePlan( planSlug );
-				const shouldHighlightDomainFeature =
-					isCustomDomainFeatureWithPaidDomain && isExperimentVariant;
 				const isFeatureAvailable =
 					isFreePlanAndCustomDomainFeature || currentFeature.availableForCurrentPlan;
 				const placeholderBadgeText = featureBadgesBySlug?.get( featureSlug );

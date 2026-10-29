@@ -185,7 +185,6 @@ export default function MigrationPlansGrid( {
 				enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 				showSimplifiedBillingDescription
 				hideFeatureGroupTitles
-				isExperimentVariant={ isExperimentVariant }
 				showFeatureCheckmarks={ usePlansGridRedesign }
 			/>
 		</div>
