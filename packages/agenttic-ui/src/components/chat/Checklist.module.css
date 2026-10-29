@@ -176,13 +176,14 @@
 		color: inherit;
 	}
 
-	.item-in-progress {
+	/* The task the conversation is on. Other in-progress rows look like open ones
+	   (only the icon tells them apart), since they can be resumed the same way. */
+	.item-active {
 		color: var( --color-foreground );
-	}
 
-	/* The task the conversation is on; other in-progress rows read as resumable. */
-	.item-active .label {
-		font-weight: var( --font-weight-semibold );
+		.label {
+			font-weight: var( --font-weight-semibold );
+		}
 	}
 
 	.settled {
