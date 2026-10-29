@@ -1,4 +1,4 @@
-let activeSurface;
+const activeSurfaces = [];
 const configurations = new WeakMap();
 const configuredSurfaces = new WeakSet();
 
@@ -8,15 +8,30 @@ export function rememberBlackboxKey( api, apiKey ) {
 	}
 }
 
-/** Register the active form, including submissions made outside React. */
+/**
+ * Register a mounted form, including submissions made outside React. The most
+ * recently activated form that is still mounted is the active surface.
+ * @param {string} apiKey Public key for this surface.
+ * @returns {{ signal: AbortSignal, deactivate: Function }} The form's lifetime, and a
+ *   function that unregisters it and cancels its submissions.
+ */
 export function activateBlackboxSurface( apiKey ) {
-	activeSurface?.controller.abort();
-	const controller = new AbortController();
-	activeSurface = { apiKey, controller };
-	return controller;
+	const surface = { apiKey, controller: new AbortController() };
+	activeSurfaces.push( surface );
+	return {
+		signal: surface.controller.signal,
+		deactivate: () => {
+			surface.controller.abort();
+			const index = activeSurfaces.indexOf( surface );
+			if ( index !== -1 ) {
+				activeSurfaces.splice( index, 1 );
+			}
+		},
+	};
 }
 
 export function getBlackboxSignal( apiKey ) {
+	const activeSurface = activeSurfaces[ activeSurfaces.length - 1 ];
 	if ( activeSurface && activeSurface.apiKey !== apiKey ) {
 		return AbortSignal.abort();
 	}
