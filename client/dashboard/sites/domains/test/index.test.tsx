@@ -200,6 +200,12 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Rename address' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'labels the expiry column "Renews on"', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByRole( 'button', { name: 'Renews on' } ) ).toBeVisible();
+	} );
+
 	test( 'opens the change site address modal when deep linked', async () => {
 		mockSearchParams = { action: 'change-site-address' };
 

@@ -132,7 +132,7 @@ export const useFields = ( {
 			},
 			{
 				id: 'expiry',
-				label: __( 'Paid until' ),
+				label: __( 'Renews on' ),
 				enableHiding: false,
 				enableSorting: true,
 				sort: sortNullableStrings,
