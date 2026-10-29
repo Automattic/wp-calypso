@@ -3,12 +3,18 @@ import {
 	siteWordPressMigrationConfigureMutation,
 	siteWordPressMigrationRunMutation,
 } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button, ExternalLink } from '@wordpress/components';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+	ExternalLink,
+} from '@wordpress/components';
 import { useInstanceId } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import { chevronDown, chevronUp } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -18,6 +24,16 @@ import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card
 import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
 
 const MANUAL_INSTALL = 'manual-wpcom-install';
+
+// Temporary, can remove at/after launch.
+const IS_TESTING_BUILD = [
+	'dashboard-stage',
+	'dashboard-horizon',
+	'dashboard-development',
+	'development',
+].includes( config( 'env_id' ) );
+const TESTING_HINT =
+	'Note: The plugin will default to the BlogVault screen. Use the <link>new screen</link>.';
 
 function useManualInstall( site: Site ) {
 	const {
@@ -46,6 +62,7 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 	);
 	const run = useMutation( withSnackbar( siteWordPressMigrationRunMutation( site.ID ), snackbar ) );
 	const isStarting = configure.isPending || run.isPending;
+	const isConnected = manualInstall?.connected && ! failure;
 
 	const startMigration = () =>
 		configure.mutate(
@@ -79,7 +96,7 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 					</Button>
 				</>
 			}
-			footer={ <AssistedHandoffLink /> }
+			secondaryAction={ <AssistedHandoffLink /> }
 		>
 			{ failure && (
 				<Notice variant="error" title={ failure.label }>
@@ -98,7 +115,14 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 					{ __( 'We couldn’t load your site’s details.' ) }
 				</Notice>
 			) }
-			<VStack spacing={ 1 }>
+			{ isConnected && (
+				<Notice variant="success" title={ __( 'Plugin connected' ) }>
+					{ __(
+						'Your site is connected to WordPress.com. Start the migration when you’re ready.'
+					) }
+				</Notice>
+			) }
+			<VStack spacing={ 1 } hidden={ isConnected } className="wordpress-migration__steps">
 				<Text variant="muted">
 					{ __(
 						'1. Install and activate the Migrate to WordPress.com plugin on your existing site.'
@@ -107,6 +131,21 @@ export function Connect( { site, failure }: { site: Site; failure?: WordPressMig
 				<Text variant="muted">
 					{ __( '2. Connect to WordPress.com on the plugin’s settings page.' ) }
 				</Text>
+				{ IS_TESTING_BUILD && (
+					<HStack
+						spacing={ 1 }
+						alignment="flex-start"
+						justify="flex-start"
+						className="wordpress-migration__testing-hint"
+					>
+						<Icon icon={ info } size={ 18 } />
+						<Text variant="muted">
+							{ createInterpolateElement( TESTING_HINT, {
+								link: linkTo( manualInstall?.connect_url ),
+							} ) }
+						</Text>
+					</HStack>
+				) }
 				<Text variant="muted">{ __( '3. Come back here and start the migration.' ) }</Text>
 			</VStack>
 			<VStack spacing={ 4 }>

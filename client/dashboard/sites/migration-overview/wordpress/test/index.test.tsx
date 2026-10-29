@@ -38,7 +38,7 @@ const finding = ( code: string, severity: string ) => ( {
 
 const running = migration( 'running', {
 	phase: 'migration',
-	notification_emails: [ 'owner@example.com', 'admin@example.com' ],
+	notification_emails: [ 'owner@example.com' ],
 } );
 
 const configuration = {
@@ -86,6 +86,7 @@ describe( 'WordPressMigration', () => {
 				manualInstall.install_url
 			)
 		);
+		expect( screen.queryByText( 'Plugin connected' ) ).not.toBeInTheDocument();
 		expect(
 			screen.getByRole( 'button', { name: /Have our team handle this migration/ } )
 		).toBeDisabled();
@@ -119,12 +120,58 @@ describe( 'WordPressMigration', () => {
 		expect(
 			screen.getAllByRole( 'progressbar' ).map( ( bar ) => bar.getAttribute( 'aria-label' ) )
 		).toEqual( [ 'Verifying', 'Copying', 'Finishing' ] );
-		expect( screen.getAllByRole( 'strong' ).map( ( email ) => email.textContent ) ).toEqual( [
-			'owner@example.com',
-			'admin@example.com',
-		] );
+		expect( screen.getByRole( 'strong' ) ).toHaveTextContent( 'owner@example.com' );
 		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
+	} );
+
+	it( 'tells people who connected the plugin to start the migration', async () => {
+		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );
+		mockApi()
+			.get( configurePath )
+			.query( true )
+			.reply( 200, {
+				...configuration,
+				available_source_connections: [
+					{ ...configuration.available_source_connections[ 0 ], connected: true },
+				],
+			} );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByText( 'Plugin connected' ) ).toBeVisible();
+	} );
+
+	it( 'shows only the refusal when the source refused a connected plugin', async () => {
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply(
+				200,
+				migration( 'failed', {
+					phase: 'preflight',
+					findings: [
+						{ ...finding( 'source_connection_failed', 'failure' ), resolution: 'retry' },
+					],
+				} )
+			);
+		mockApi()
+			.get( configurePath )
+			.query( true )
+			.reply( 200, {
+				...configuration,
+				available_source_connections: [
+					{ ...configuration.available_source_connections[ 0 ], connected: true },
+				],
+			} );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByText( 'source_connection_failed label' ) ).toBeVisible();
+		await waitFor( () =>
+			expect( screen.getByRole( 'button', { name: 'Start the migration' } ) ).toBeEnabled()
+		);
+		expect( screen.queryByText( 'Plugin connected' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'continues a paused migration by accepting its warnings', async () => {
@@ -213,24 +260,6 @@ describe( 'WordPressMigration', () => {
 		expect( run.isDone() ).toBe( true );
 	} );
 
-	it( 'names only the viewer’s address when they’re one of the recipients', async () => {
-		mockApi()
-			.get( statusPath )
-			.query( true )
-			.reply( 200, {
-				...running,
-				notification_emails: [ 'owner@example.com', 'TEST@example.com' ],
-			} )
-			.persist();
-
-		render( <WordPressMigration site={ site } />, { queryClient } );
-
-		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
-		expect( screen.getAllByRole( 'strong' ).map( ( email ) => email.textContent ) ).toEqual( [
-			'TEST@example.com',
-		] );
-	} );
-
 	it( 'leaves out the email promise when no one will be notified', async () => {
 		mockApi()
 			.get( statusPath )
@@ -242,8 +271,11 @@ describe( 'WordPressMigration', () => {
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect(
-			screen.getByText( 'You can leave this page. The migration carries on in the background.' )
+			screen.getByText(
+				'You can leave this page. The migration will continue running in the background.'
+			)
 		).toBeVisible();
+		expect( screen.queryByText( /We will email you/ ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'catches up with the migration when a run is refused', async () => {

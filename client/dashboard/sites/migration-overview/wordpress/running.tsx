@@ -1,9 +1,7 @@
 import { __experimentalVStack as VStack, Button, ProgressBar } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useAuth } from '../../../app/auth';
 import { useHelpCenter } from '../../../app/help-center';
-import { useIntlLocale } from '../../../app/locale';
 import Grid from '../../../components/grid';
 import { Text } from '../../../components/text';
 import { MigrationCard, StatusIcon } from './migration-card';
@@ -21,19 +19,10 @@ export function Running( {
 	sourceHost: string;
 	notificationEmails: string[];
 } ) {
-	const { user } = useAuth();
-	const locale = useIntlLocale();
 	const { setShowHelpCenter } = useHelpCenter();
 
-	// Name only the viewer's own address when they're among the recipients.
-	const ownEmail = notificationEmails.find(
-		( email ) => email.toLowerCase() === user.email.toLowerCase()
-	);
-	const recipients = new Intl.ListFormat( locale, { type: 'conjunction' } )
-		.formatToParts( ownEmail ? [ ownEmail ] : notificationEmails )
-		.map( ( { type, value }, index ) =>
-			type === 'element' ? <strong key={ index }>{ value }</strong> : value
-		);
+	// Only the viewer's own address is listed when they're one of the recipients.
+	const [ email ] = notificationEmails;
 
 	const steps: { label: string; phases: Phase[] }[] = [
 		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
@@ -55,6 +44,24 @@ export function Running( {
 					{ __( 'Something wrong? Contact us' ) }
 				</Button>
 			}
+			note={
+				<VStack spacing={ 1 }>
+					<Text variant="muted">
+						{ __(
+							'You can leave this page. The migration will continue running in the background.'
+						) }
+					</Text>
+					{ email && (
+						<Text variant="muted">
+							{ createInterpolateElement(
+								/* translators: <email /> is the address we notify when the migration is ready, e.g. a@example.com. */
+								__( 'We will email you at <email /> once the migration has completed.' ),
+								{ email: <strong>{ email }</strong> }
+							) }
+						</Text>
+					) }
+				</VStack>
+			}
 		>
 			<Grid columns={ steps.length } gap="sm">
 				{ steps.map( ( { label }, index ) => {
@@ -72,17 +79,6 @@ export function Running( {
 					);
 				} ) }
 			</Grid>
-			<Text variant="muted">
-				{ notificationEmails.length
-					? createInterpolateElement(
-							/* translators: <emails /> is the email addresses we notify when the migration is ready, e.g. "a@example.com and b@example.com". */
-							__(
-								'You can leave this page. The migration carries on in the background. We will email you at <emails /> when the migration is ready.'
-							),
-							{ emails: <>{ recipients }</> }
-						)
-					: __( 'You can leave this page. The migration carries on in the background.' ) }
-			</Text>
 		</MigrationCard>
 	);
 }
