@@ -14,9 +14,9 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import LayoutBanner from 'calypso/a8c-for-agencies/components/layout/banner';
+import newDashboardDrawing from 'calypso/dashboard/agency/dashboard-preference/images/new-dashboard.svg';
 // eslint-disable-next-line no-restricted-imports -- reuses the new dashboard's tour glow as is.
 import glow from 'calypso/dashboard/agency/onboarding-tour/images/tour/glow.jpg';
-import overviewDrawing from 'calypso/dashboard/agency/onboarding-tour/images/tour/overview.svg';
 import {
 	OPT_IN_STEPS,
 	previewUrl,
@@ -69,7 +69,7 @@ export function DashboardOptInModal( {
 				className="a4a-dashboard-opt-in-intro-field"
 				style={ { backgroundImage: `url(${ glow })` } }
 			>
-				<img className="a4a-dashboard-opt-in-intro-drawing" src={ overviewDrawing } alt="" />
+				<img className="a4a-dashboard-opt-in-intro-drawing" src={ newDashboardDrawing } alt="" />
 			</div>
 			<VStack spacing={ 8 }>
 				<VStack spacing={ 2 }>
