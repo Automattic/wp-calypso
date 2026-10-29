@@ -174,6 +174,14 @@ describe( 'useSiteSetupChecklist', () => {
 			...config,
 			messages: [ userMessage( 'u1', 'about' ), userMessage( 'u2', 'design' ) ],
 		} );
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+
+		// A tool-call resume then starts a turn without a new message.
+		rerender( {
+			...config,
+			isProcessing: true,
+			messages: [ userMessage( 'u1', 'about' ), userMessage( 'u2', 'design' ) ],
+		} );
 
 		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
 	} );

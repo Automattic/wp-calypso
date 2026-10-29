@@ -59,10 +59,10 @@ const NONE: SiteSetupChecklistState = {
  *
  * Task status is the backend's alone, read by running the
  * `wpcom/get-site-setup-tasks` ability, so this list and the Site Setup page
- * never disagree. A pick is recorded there from that same message, once it is
- * in the conversation and its turn is running (so only a prompt the composer
- * actually dispatched, past any upload, starts anything, and restored history
- * never does), and the list is re-read after every agent turn (which may
+ * never disagree. A pick is recorded there from that same message, once it was
+ * appended to the conversation and its turn is running (so only a prompt the
+ * composer actually dispatched, past any upload, starts anything, and restored
+ * history never does), and the list is re-read after every agent turn (which may
  * complete a task), when the chat opens (the Site Setup page may have changed
  * it meanwhile) and, through the query's window-focus refetch, when the tab
  * comes back.
@@ -149,33 +149,40 @@ export default function useSiteSetupChecklist( {
 		[ siteId, refetch, release ]
 	);
 
-	// A pick is the newest user message when it carries a task id and its turn is
-	// running: the composer adds that message only once it dispatched the prompt,
-	// and a turn starts with it. Restored history arrives with no turn running
-	// (and a remount mid-turn keeps the live history instead), so it is never a
-	// pick; a user message that is no longer the newest is settled either way.
-	const seenMessageIdsRef = useRef( new Set< string >() );
+	// A pick is a user message appended on its own to the conversation, once its
+	// turn runs: the composer adds that message only after dispatching the
+	// prompt, and the dispatch starts the turn. Restored history arrives as a
+	// batch (and a remount mid-turn keeps the live history instead), so it never
+	// qualifies, even if a tool-call resume starts a turn without a new message.
+	const previousMessagesRef = useRef( messages );
+	const candidateIdRef = useRef< string | null >( null );
 
 	useEffect( () => {
-		const seen = seenMessageIdsRef.current;
+		const previous = previousMessagesRef.current;
+		previousMessagesRef.current = messages;
 		const newest = messages[ messages.length - 1 ];
-		messages.forEach( ( message ) => {
-			if ( message !== newest ) {
-				seen.add( message.id );
-			}
-		} );
-		if ( ! newest || seen.has( newest.id ) ) {
+
+		const sameIds =
+			previous.length === messages.length &&
+			previous.every( ( message, index ) => message.id === messages[ index ].id );
+		if ( ! sameIds ) {
+			const appendedOne =
+				messages.length === previous.length + 1 &&
+				previous.every( ( message, index ) => message.id === messages[ index ].id );
+			candidateIdRef.current = appendedOne && newest.role === 'user' ? newest.id : null;
+		}
+		if ( candidateIdRef.current === null || newest?.id !== candidateIdRef.current ) {
 			return;
 		}
-		if ( newest.role !== 'user' || ! isEnabled ) {
-			seen.add( newest.id );
+		if ( ! isEnabled ) {
+			candidateIdRef.current = null;
 			return;
 		}
 		// Wait for the turn (the message can render a tick before it) and for the list.
 		if ( ! isProcessing || ! data ) {
 			return;
 		}
-		seen.add( newest.id );
+		candidateIdRef.current = null;
 
 		const taskId = getPickedSiteSetupTask( newest );
 		const task = data.tasks.find( ( candidate ) => candidate.id === taskId );
