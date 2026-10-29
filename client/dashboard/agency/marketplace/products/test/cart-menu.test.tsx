@@ -41,7 +41,11 @@ jest.mock( '@tanstack/react-router', () => ( {
 	useLocation: () => ( { pathname: '/products', searchStr: '?category=jetpack' } ),
 } ) );
 
-function renderCart( isReferralMode: boolean, approvalStatus = 'approved' ) {
+function renderCart(
+	isReferralMode: boolean,
+	approvalStatus = 'approved',
+	onSetQuantity?: ( item: { slug: string }, quantity: number ) => void
+) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	queryClient.setQueryData( activeAgencyQuery().queryKey, {
 		id: 1,
@@ -58,6 +62,7 @@ function renderCart( isReferralMode: boolean, approvalStatus = 'approved' ) {
 			open
 			onToggle={ onToggle }
 			onRemove={ jest.fn() }
+			onSetQuantity={ onSetQuantity }
 		/>,
 		{ queryClient }
 	);
@@ -83,6 +88,22 @@ describe( 'CartMenu', () => {
 			( await screen.findByRole( 'link', { name: 'Checkout' } ) ).getAttribute( 'href' ) ?? ''
 		);
 		expect( url.pathname ).toBe( '/checkout/agency/purchase' );
+	} );
+
+	it( 'sets how many licenses a line holds from its counter', async () => {
+		const onSetQuantity = jest.fn();
+		renderCart( false, 'approved', onSetQuantity );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Increment' } ) );
+
+		expect( onSetQuantity ).toHaveBeenCalledWith( mockItem, 2 );
+	} );
+
+	it( 'keeps a referral cart to one of each, without a counter', async () => {
+		renderCart( true, 'approved', jest.fn() );
+
+		expect( await screen.findByRole( 'button', { name: /Remove/ } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Increment' } ) ).not.toBeInTheDocument();
 	} );
 
 	it.each( [ false, true ] )(

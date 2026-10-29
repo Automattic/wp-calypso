@@ -38,6 +38,22 @@ describe( 'useShoppingCart', () => {
 		);
 	} );
 
+	it( 'sets how many licenses a line holds, keeping its place and its site', () => {
+		const { result } = renderHook( () => useShoppingCart() );
+
+		act( () => {
+			result.current.addItem( { slug: 'jetpack-scan' } );
+			result.current.addItem( { slug: MEMORY_ADDON, siteDomain: 'one.example.com' } );
+		} );
+		act( () => result.current.setItemQuantity( { slug: 'jetpack-scan' }, 3 ) );
+		expect( sessionStorage.getItem( STORAGE_KEY ) ).toBe(
+			`jetpack-scan:3,${ MEMORY_ADDON }:1:::one.example.com`
+		);
+
+		act( () => result.current.setItemQuantity( { slug: 'jetpack-scan' }, 0 ) );
+		expect( result.current.items[ 0 ] ).toEqual( { slug: 'jetpack-scan', quantity: 1 } );
+	} );
+
 	it( 'reads the site from a stored cart entry with site targets', () => {
 		expect(
 			parseCartEntries( `${ MEMORY_ADDON }:1::site%2Ccom:three%2Eexample.com,jetpack-scan:1` )
