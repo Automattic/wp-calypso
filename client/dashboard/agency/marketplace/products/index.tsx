@@ -372,7 +372,11 @@ export default function MarketplaceProducts() {
 		[ hasItem ]
 	);
 
+	const isLegacyBilling = agency?.billing_system === 'legacy';
 	const openCart = useCallback( () => setIsCartOpen( true ), [ setIsCartOpen ] );
+	// Only a Billing Dragon purchase sets counts in the cart, so only then does a
+	// product in the cart open it.
+	const opensCart = ! isReferralMode && ! isLegacyBilling;
 
 	const openDetails = ( product: AgencyProduct ) => {
 		recordTracksEvent( 'calypso_marketplace_products_overview_product_view', {
@@ -392,7 +396,7 @@ export default function MarketplaceProducts() {
 					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
-					onOpenCart={ openCart }
+					onOpenCart={ opensCart ? openCart : undefined }
 					onSelectVariant={ ( product ) =>
 						recordTracksEvent( 'calypso_a4a_marketplace_products_overview_variant_option_click', {
 							product: product.slug,
@@ -424,7 +428,7 @@ export default function MarketplaceProducts() {
 									term={ termPricing }
 									isReferralMode={ isReferralMode }
 									isAgencyApproved={ isAgencyApproved( agency ) }
-									isLegacyBilling={ agency?.billing_system === 'legacy' }
+									isLegacyBilling={ isLegacyBilling }
 									open={ isCartOpen }
 									onToggle={ setIsCartOpen }
 									onRemove={ removeItem }
@@ -445,10 +449,14 @@ export default function MarketplaceProducts() {
 					inCart={ isProductInCart( detailsProduct ) }
 					onToggleCart={ () => toggleCart( detailsProduct ) }
 					onClose={ () => setDetailsProduct( null ) }
-					onOpenCart={ () => {
-						setDetailsProduct( null );
-						openCart();
-					} }
+					onOpenCart={
+						opensCart
+							? () => {
+									setDetailsProduct( null );
+									openCart();
+								}
+							: undefined
+					}
 				/>
 			) }
 			{ isLoading && <FeaturedShowcaseSkeleton /> }
@@ -460,7 +468,7 @@ export default function MarketplaceProducts() {
 					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
-					onOpenCart={ openCart }
+					onOpenCart={ opensCart ? openCart : undefined }
 				/>
 			) }
 			<div className="dashboard-marketplace-products__filters">
