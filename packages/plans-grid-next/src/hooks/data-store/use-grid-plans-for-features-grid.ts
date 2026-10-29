@@ -28,7 +28,6 @@ const useGridPlansForFeaturesGrid = ( {
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
 	usePlansGridRedesignNewDescription,
 	isExperimentVariant,
 	showBillingDescriptionForIncreasedRenewalPrice,
@@ -67,7 +66,6 @@ const useGridPlansForFeaturesGrid = ( {
 		selectedFeature,
 		showLegacyStorageFeature,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 	} );
 

@@ -50,10 +50,6 @@ export interface UseGridPlansParams {
 	 */
 	usePlansGridRedesignFeatures?: boolean;
 	/**
-	 * When true, show plan-scoped feature pills. AI-labeled pills are suppressed.
-	 */
-	showPricingDifferentiationFeaturePills?: boolean;
-	/**
 	 * When true, use the pricing grid redesign taglines for plan headers.
 	 */
 	usePlansGridRedesignNewDescription?: boolean;

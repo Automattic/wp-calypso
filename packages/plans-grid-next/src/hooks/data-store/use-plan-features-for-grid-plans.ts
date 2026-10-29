@@ -205,7 +205,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
@@ -216,7 +215,6 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
-	showPricingDifferentiationFeaturePills?: boolean;
 	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
@@ -234,7 +232,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
 } ) => {
 	const translate = useTranslate();
@@ -442,9 +439,11 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 						const featureSlug = feature.getSlug();
 
-						const badgeText = showPricingDifferentiationFeaturePills
-							? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate )
-							: undefined;
+						const badgeText = getPricingDifferentiationFeatureBadgeText(
+							planSlug,
+							featureSlug,
+							translate
+						);
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
@@ -491,7 +490,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		allFeaturesList,
 		hasRedeemedDomainCredit,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 		translate,
 	] );

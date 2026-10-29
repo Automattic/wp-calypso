@@ -48,8 +48,7 @@ export default function MigrationPlansGrid( {
 
 	const term = usePlanBillingPeriod( { intervalType } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
-	const { showPricingDifferentiationFeaturePills, isExperimentVariant } =
-		usePlanDifferentiatorsExperiment( { isInSignup: true, siteId } );
+	const { isExperimentVariant } = usePlanDifferentiatorsExperiment( { isInSignup: true, siteId } );
 	const { usePlansGridRedesign, usePlansGridRedesignFeatures, usePlansGridRedesignNewDescription } =
 		usePlansGridRedesignExperiment( { isInSignup: true, intent: 'plans-migration' } );
 
@@ -101,7 +100,6 @@ export default function MigrationPlansGrid( {
 		term,
 		reflectStorageSelectionInPlanPrices: true,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
 		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 	} );

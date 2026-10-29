@@ -779,8 +779,10 @@ const PlansFeaturesMain = ( {
 	 */
 	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
-	const { showDifferentiatorHeader, showPricingDifferentiationFeaturePills, isExperimentVariant } =
-		usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
+	const { showDifferentiatorHeader, isExperimentVariant } = usePlanDifferentiatorsExperiment( {
+		isInSignup,
+		siteId,
+	} );
 	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
@@ -1070,7 +1072,6 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		showPricingDifferentiationFeaturePills,
 		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
@@ -1101,7 +1102,6 @@ const PlansFeaturesMain = ( {
 		term,
 		reflectStorageSelectionInPlanPrices: true,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
 		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,

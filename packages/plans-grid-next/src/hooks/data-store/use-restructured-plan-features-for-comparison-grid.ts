@@ -23,7 +23,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent,
 	showLegacyStorageFeature,
 	selectedFeature,
-	showPricingDifferentiationFeaturePills,
 	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
@@ -32,7 +31,6 @@ export type UseRestructuredPlanFeaturesForComparisonGrid = ( {
 	intent?: PlansIntent;
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
-	showPricingDifferentiationFeaturePills?: boolean;
 	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
@@ -44,7 +42,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 	} ) => {
 		const planFeaturesForGridPlans = usePlanFeaturesForGridPlans( {
@@ -53,7 +50,6 @@ const useRestructuredPlanFeaturesForComparisonGrid: UseRestructuredPlanFeaturesF
 			intent,
 			selectedFeature,
 			showLegacyStorageFeature,
-			showPricingDifferentiationFeaturePills,
 			isExperimentVariant,
 		} );
 
