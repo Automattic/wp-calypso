@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
+import { subscribeToDispatchedPromptSources } from '../utils/prompt-source';
 import {
 	getLastPickedSiteSetupTask,
 	getPickedSiteSetupTask,
 	isChatStartedFromSiteSetup,
 	isSiteSetupChecklistEnabled,
+	SITE_SETUP_PROMPT_SOURCE,
 	toChecklistItems,
 } from '../utils/site-setup-checklist';
 import {
@@ -59,10 +61,10 @@ const NONE: SiteSetupChecklistState = {
  *
  * Task status is the backend's alone, read by running the
  * `wpcom/get-site-setup-tasks` ability, so this list and the Site Setup page
- * never disagree. A pick is recorded there from that same message, once it was
- * appended to the conversation and its turn is running (so only a prompt the
- * composer actually dispatched, past any upload, starts anything, and restored
- * history never does), and the list is re-read after every agent turn (which may
+ * never disagree. A pick is recorded there once the composer dispatched its
+ * prompt (past any upload) and its turn is running, so a blocked or dropped
+ * send and restored history never start anything, and the list is re-read
+ * after every agent turn (which may
  * complete a task), when the chat opens (the Site Setup page may have changed
  * it meanwhile) and, through the query's window-focus refetch, when the tab
  * comes back.
@@ -149,42 +151,38 @@ export default function useSiteSetupChecklist( {
 		[ siteId, refetch, release ]
 	);
 
-	// A pick is a user message appended on its own to the conversation, once its
-	// turn runs: the composer adds that message only after dispatching the
-	// prompt, and the dispatch starts the turn. Restored history arrives as a
-	// batch (and a remount mid-turn keeps the live history instead), so it never
-	// qualifies, even if a tool-call resume starts a turn without a new message.
-	const previousMessagesRef = useRef( messages );
-	const candidateIdRef = useRef< string | null >( null );
+	// A pick is the user message of a prompt the composer dispatched from the
+	// checklist, once its turn runs: the composer consumes the prompt source as
+	// it dispatches (past any upload), which nothing else does, so restored
+	// history never qualifies, even if a tool-call resume starts a turn on it.
+	const dispatchedPicksRef = useRef( new Set< string >() );
+
+	useEffect(
+		() =>
+			subscribeToDispatchedPromptSources( ( promptSource ) => {
+				if ( promptSource.source === SITE_SETUP_PROMPT_SOURCE && promptSource.id ) {
+					dispatchedPicksRef.current.add( promptSource.id );
+				}
+			} ),
+		[]
+	);
 
 	useEffect( () => {
-		const previous = previousMessagesRef.current;
-		previousMessagesRef.current = messages;
 		const newest = messages[ messages.length - 1 ];
-
-		const sameIds =
-			previous.length === messages.length &&
-			previous.every( ( message, index ) => message.id === messages[ index ].id );
-		if ( ! sameIds ) {
-			const appendedOne =
-				messages.length === previous.length + 1 &&
-				previous.every( ( message, index ) => message.id === messages[ index ].id );
-			candidateIdRef.current = appendedOne && newest.role === 'user' ? newest.id : null;
-		}
-		if ( candidateIdRef.current === null || newest?.id !== candidateIdRef.current ) {
+		const taskId = newest ? getPickedSiteSetupTask( newest ) : null;
+		if ( taskId === null || ! dispatchedPicksRef.current.has( taskId ) ) {
 			return;
 		}
 		if ( ! isEnabled ) {
-			candidateIdRef.current = null;
+			dispatchedPicksRef.current.delete( taskId );
 			return;
 		}
 		// Wait for the turn (the message can render a tick before it) and for the list.
 		if ( ! isProcessing || ! data ) {
 			return;
 		}
-		candidateIdRef.current = null;
+		dispatchedPicksRef.current.delete( taskId );
 
-		const taskId = getPickedSiteSetupTask( newest );
 		const task = data.tasks.find( ( candidate ) => candidate.id === taskId );
 		if ( ! task || ( task.status !== 'todo' && task.status !== 'in-progress' ) ) {
 			return;

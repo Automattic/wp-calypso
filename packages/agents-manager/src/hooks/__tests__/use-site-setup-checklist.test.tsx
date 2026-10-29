@@ -24,6 +24,7 @@ jest.mock( '../../utils/site-setup-tasks', () => ( {
 
 import { useQuery } from '@tanstack/react-query';
 import { act, renderHook } from '@testing-library/react';
+import { consumePromptSource, markNextPromptSource } from '../../utils/prompt-source';
 import useSiteSetupChecklist from '../use-site-setup-checklist';
 import type { UIMessage } from '@automattic/agenttic-client';
 
@@ -55,6 +56,12 @@ const userMessage = ( id: string, promptSourceId?: string ): UIMessage => ( {
 			: [] ),
 	],
 } );
+
+/** What the composer does as it dispatches a checklist prompt. */
+const dispatchPick = ( taskId: string ) => {
+	markNextPromptSource( { source: 'site-setup-checklist', id: taskId }, 'prompt' );
+	consumePromptSource( 'prompt' );
+};
 
 const config = {
 	enabled: true,
@@ -114,6 +121,7 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
 
+		dispatchPick( 'design' );
 		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
 
 		expect( mockStartSiteSetupTask ).toHaveBeenCalledWith( 123, 'design' );
@@ -148,6 +156,7 @@ describe( 'useSiteSetupChecklist', () => {
 			initialProps: config,
 		} );
 
+		dispatchPick( 'design' );
 		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
 		await act( async () => {} );
 
@@ -186,11 +195,23 @@ describe( 'useSiteSetupChecklist', () => {
 		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
 	} );
 
+	it( 'does not start a restored pick that is the only visible message when a tool resume runs', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+
+		rerender( { ...config, messages: [ userMessage( 'u1', 'design' ) ] } );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+	} );
+
 	it( 'starts a pick once its turn runs, even when the message renders a tick earlier', () => {
 		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: config,
 		} );
 
+		dispatchPick( 'design' );
 		rerender( { ...config, messages: [ userMessage( 'u1', 'design' ) ] } );
 		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
 
@@ -205,6 +226,7 @@ describe( 'useSiteSetupChecklist', () => {
 			initialProps: config,
 		} );
 
+		dispatchPick( 'about' );
 		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'about' ) ] } );
 
 		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
@@ -217,6 +239,7 @@ describe( 'useSiteSetupChecklist', () => {
 			initialProps: { ...config, messages: [ userMessage( 'u0', 'design' ) ] },
 		} );
 
+		dispatchPick( 'design' );
 		rerender( {
 			...config,
 			isProcessing: true,
@@ -254,6 +277,7 @@ describe( 'useSiteSetupChecklist', () => {
 			initialProps: config,
 		} );
 
+		dispatchPick( 'design' );
 		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
 		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
 		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
@@ -273,6 +297,7 @@ describe( 'useSiteSetupChecklist', () => {
 			initialProps: config,
 		} );
 
+		dispatchPick( 'design' );
 		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
 		await act( async () => {} );
 
