@@ -1679,7 +1679,6 @@ const PlansFeaturesMain = ( {
 										allFeaturesList={ getFeaturesList() }
 										bottomGridPlan={ bottomGridPlanForFeaturesGrid }
 										className={ clsx( 'plans-features-main__features-grid', {
-											'is-plan-differentiators-experiment': isExperimentVariant,
 											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
 										} ) }
 										coupon={ coupon }

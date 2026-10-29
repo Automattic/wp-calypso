@@ -19,7 +19,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import useCheckPlanAvailabilityForPurchase from 'calypso/my-sites/plans-features-main/hooks/use-check-plan-availability-for-purchase';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
 import useGenerateActionHook from 'calypso/my-sites/plans-features-main/hooks/use-generate-action-hook';
-import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import type { DataResponse, SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
 
@@ -48,7 +47,6 @@ export default function MigrationPlansGrid( {
 
 	const term = usePlanBillingPeriod( { intervalType } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
-	const { isExperimentVariant } = usePlanDifferentiatorsExperiment( { isInSignup: true, siteId } );
 	const { usePlansGridRedesign, usePlansGridRedesignFeatures, usePlansGridRedesignNewDescription } =
 		usePlansGridRedesignExperiment( { isInSignup: true, intent: 'plans-migration' } );
 
@@ -154,7 +152,6 @@ export default function MigrationPlansGrid( {
 			<FeaturesGrid
 				allFeaturesList={ getFeaturesList() }
 				className={ clsx( 'migration-plans-grid__features-grid', {
-					'is-plan-differentiators-experiment': isExperimentVariant,
 					'is-plans-grid-redesign-experiment': usePlansGridRedesign,
 				} ) }
 				coupon={ coupon }

@@ -38,14 +38,6 @@ jest.mock(
 	'calypso/my-sites/plans-features-main/hooks/use-generate-action-hook',
 	() => () => jest.fn()
 );
-jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment', () =>
-	jest.fn( () => ( {
-		useVar42NoAiFeatures: true,
-		showPricingDifferentiationFeaturePills: true,
-		useFocusedNewCopyTaglines: true,
-		isExperimentVariant: true,
-	} ) )
-);
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment', () =>
 	jest.fn()
 );
