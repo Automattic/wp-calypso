@@ -12,6 +12,11 @@ import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { filterConversations } from './conversation-list/filter-conversations';
 import { type OpenSource } from './conversation-list/list-item';
+import {
+	DEFAULT_SORT_ORDER,
+	sortConversations,
+	type SortOrder,
+} from './conversation-list/sort-conversations';
 import { INBOX_TABS, type InboxTab } from './conversation-list/tabs';
 import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
 import { useInboxKeyboardShortcuts } from './keyboard-shortcuts/use-inbox-keyboard-shortcuts';
@@ -34,12 +39,13 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
+	const [ sort, setSort ] = useState< SortOrder >( DEFAULT_SORT_ORDER );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
 
 	const conversations = useMemo( () => groupNotesByPost( notes ), [ notes ] );
 	const visible = useMemo(
-		() => filterConversations( conversations, tab, search ),
-		[ conversations, tab, search ]
+		() => sortConversations( filterConversations( conversations, tab, search ), sort ),
+		[ conversations, tab, search, sort ]
 	);
 	const unreadCount = conversations.reduce(
 		( total, { unreadNoteIds } ) => total + unreadNoteIds.length,
@@ -98,6 +104,13 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		);
 	};
 
+	const selectSort = ( next: SortOrder ) => {
+		setSort( next );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_sorted', { sort: next } )
+		);
+	};
+
 	const moveTab = ( offset: number ) => {
 		const next = INBOX_TABS[ INBOX_TABS.indexOf( tab ) + offset ];
 		if ( next ) {
@@ -127,6 +140,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					onTabChange={ ( next ) => selectTab( next, 'click' ) }
 					search={ search }
 					onSearchChange={ setSearch }
+					sort={ sort }
+					onSortChange={ selectSort }
 					isShortcutsOpen={ isShortcutsOpen }
 					onShortcutsToggle={ setIsShortcutsOpen }
 					selectedKey={ selectedKey }

@@ -31,6 +31,7 @@ export interface NotificationNote {
 			site?: number;
 			post?: number;
 			comment?: number;
+			reply_comment?: number;
 		};
 	};
 	subject: NotificationBlock[];

@@ -23,6 +23,7 @@ jest.mock( '../conversation-list', () => ( {
 		selectedKey?: string;
 		onSelect: ( conversation: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
+		onSortChange: ( sort: string ) => void;
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
@@ -32,6 +33,7 @@ jest.mock( '../conversation-list', () => ( {
 				</button>
 			) ) }
 			<button onClick={ () => props.onTabChange( 'yours' ) }>Your comments</button>
+			<button onClick={ () => props.onSortChange( 'most_active' ) }>Most active</button>
 		</div>
 	),
 } ) );
@@ -176,6 +178,30 @@ describe( 'ConversationsInbox', () => {
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
 	} );
 
+	it( 'follows the sorted order for previous and next', async () => {
+		const user = userEvent.setup();
+		mockedUseCommentNotes.mockReturnValue( {
+			data: [
+				...notes,
+				makeNote( {
+					id: 4,
+					postId: 300,
+					commentId: 3002,
+					timestamp: '2023-12-31T00:00:00Z',
+					read: 1,
+				} ),
+			],
+			isLoading: false,
+		} as never );
+		renderInbox( { siteId: '10', postId: '300' } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Most active' } ) );
+
+		expect( screen.getByRole( 'button', { name: 'previous' } ) ).toBeDisabled();
+		await user.click( screen.getByRole( 'button', { name: 'next' } ) );
+		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' );
+	} );
+
 	describe( 'Tracks', () => {
 		const tracked = ( name: string ) =>
 			jest
@@ -253,6 +279,17 @@ describe( 'ConversationsInbox', () => {
 				{ tab: 'yours', source: 'click' },
 				{ tab: 'unread', source: 'shortcut' },
 				{ tab: 'yours', source: 'shortcut' },
+			] );
+		} );
+
+		it( 'records the sort order picked', async () => {
+			const user = userEvent.setup();
+			renderInbox( { siteId: '10', postId: '100' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Most active' } ) );
+
+			expect( tracked( 'calypso_reader_conversations_inbox_sorted' ) ).toEqual( [
+				{ sort: 'most_active' },
 			] );
 		} );
 
