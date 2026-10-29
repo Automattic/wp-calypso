@@ -1,4 +1,5 @@
 import { isEnabled } from '@automattic/calypso-config';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
@@ -12,6 +13,7 @@ import {
 	useTermPricingText,
 } from '../../hooks/use-marketplace';
 import { getMaxLicenses } from '../../lib/cart-licenses';
+import { isWPCOMHostingProduct } from '../../lib/hosting';
 import type { ShoppingCartItem, TermPricingType } from '../../types';
 
 import './style.scss';
@@ -36,7 +38,7 @@ export default function ShoppingCartMenuItem( {
 	const isTermPricingEnabled = isEnabled( 'a4a-bd-term-pricing' ) && isEnabled( 'a4a-bd-checkout' );
 
 	const { getProductPricingInfo } = useGetProductPricingInfo( termPricing, item.currency );
-	const { showActualCost, discountedCostFormatted, actualCostFormatted, isFree } =
+	const { showActualCost, discountedCost, discountedCostFormatted, actualCostFormatted, isFree } =
 		getProductPricingInfo( userProducts, item, item.quantity );
 	const termPricingText = useTermPricingText( termPricing );
 	// TODO: We are removing Creator's product name in the frontend because we want to leave it in the backend for the time being,
@@ -49,6 +51,25 @@ export default function ShoppingCartMenuItem( {
 					args: { productName: productDisplayName, quantity: item.quantity },
 				} )
 			: productDisplayName;
+
+	// The price of one comes from the line's total, as WordPress.com's falls with the volume tier.
+	const unitPrice =
+		formatCurrency( discountedCost / item.quantity, item.currency ?? 'USD' ) + termPricingText;
+	const unitPriceText = isWPCOMHostingProduct( item.family_slug )
+		? translate( '%(quantity)s site at %(price)s each', '%(quantity)s sites at %(price)s each', {
+				count: item.quantity,
+				args: { quantity: formatNumber( item.quantity ), price: unitPrice },
+				comment: '%(price)s is the price of one site, such as "$25.00/mo".',
+			} )
+		: translate(
+				'%(quantity)s license at %(price)s each',
+				'%(quantity)s licenses at %(price)s each',
+				{
+					count: item.quantity,
+					args: { quantity: formatNumber( item.quantity ), price: unitPrice },
+					comment: '%(price)s is the price of one license, such as "$149.00/yr".',
+				}
+			);
 
 	const { isMissingMonthlyId, isMissingYearlyId } = checkProductTermAvailability(
 		item,
@@ -84,6 +105,9 @@ export default function ShoppingCartMenuItem( {
 						</>
 					) }
 				</div>
+				{ onSetQuantity && ! isFree && item.quantity > 1 && (
+					<div className="shopping-cart__menu-list-item-unit-price">{ unitPriceText }</div>
+				) }
 			</div>
 			<VStack
 				className={ clsx( 'shopping-cart__menu-list-item-actions', {
