@@ -28,7 +28,7 @@
 }
 
 // VStack's display: flex would otherwise override the hidden attribute.
-.wordpress-migration__steps[hidden] {
+.wordpress-migration__connect-help[hidden] {
 	display: none;
 }
 

@@ -60,11 +60,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			: undefined;
 	const isConnecting = migration?.status === 'not_started' || !! connectionFailure;
 
-	// Read alongside the migration and waited on with it, so the connect step comes in whole. It's read once a page load,
-	// and only the connect step uses it: read it only for that step if it ever gets slow (say, by asking the source).
-	const { isPending: isConfigurationPending } = useQuery(
-		siteWordPressMigrationConfigurationQuery( site.ID )
-	);
+	// The connect step shows how the source can be connected, so it waits for that before showing at all. It's read
+	// alongside the migration, before we know which step that is, and only kept up for the connect step after.
+	const { isPending: isConfigurationPending } = useQuery( {
+		...siteWordPressMigrationConfigurationQuery( site.ID ),
+		enabled: ! migration || isConnecting,
+	} );
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
@@ -135,61 +136,59 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			}
 			header={ <PageHeader title={ getSiteDisplayName( site ) } /> }
 		>
-			{ ! isConfigurationPending && (
-				<>
-					{ /* Only the site's administrators can read the migration. */ }
-					{ isForbidden && (
-						<MigrationCard
-							title={ __( 'A migration to this site is underway' ) }
-							description={ __( 'An administrator of this site can follow and manage it here.' ) }
-							decoration={ <StatusIcon status="pending" /> }
-							actions={ contactUs }
-						/>
-					) }
-					{ isConnecting && <Connect site={ site } failure={ connectionFailure } /> }
-					{ migration?.status === 'running' && (
-						<Running
-							phase={ migration.phase }
-							sourceHost={ sourceHost }
-							notificationEmails={ migration.notification_emails }
-						/>
-					) }
-					{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
-						! connectionFailure && <Findings site={ site } migration={ migration } /> }
-					{ isCompleted && (
-						<MigrationCard
-							title={ __( 'Your site has been migrated' ) }
-							decoration={ <StatusIcon status="success" /> }
-							description={
-								isUnlockOverdue
-									? __( 'Loading your site is taking longer than it should.' )
-									: __( 'One moment while we finish up and load your site.' )
-							}
-							actions={
-								isUnlockOverdue && (
-									<>
-										<Button
-											__next40pxDefaultSize
-											variant="primary"
-											onClick={ () => window.location.reload() }
-										>
-											{ __( 'Reload' ) }
-										</Button>
-										{ contactUs }
-									</>
-								)
-							}
-						/>
-					) }
-					{ /* A status this page doesn't know yet. */ }
-					{ migration && ! KNOWN_STATUSES.includes( migration.status ) && (
-						<MigrationCard
-							title={ __( 'Your site is being migrated' ) }
-							decoration={ <StatusIcon status="pending" /> }
-							actions={ contactUs }
-						/>
-					) }
-				</>
+			{ /* Only the site's administrators can read the migration. */ }
+			{ isForbidden && (
+				<MigrationCard
+					title={ __( 'A migration to this site is underway' ) }
+					description={ __( 'An administrator of this site can follow and manage it here.' ) }
+					decoration={ <StatusIcon status="pending" /> }
+					actions={ contactUs }
+				/>
+			) }
+			{ isConnecting && ! isConfigurationPending && (
+				<Connect site={ site } sourceHost={ sourceHost } failure={ connectionFailure } />
+			) }
+			{ migration?.status === 'running' && (
+				<Running
+					phase={ migration.phase }
+					sourceHost={ sourceHost }
+					notificationEmails={ migration.notification_emails }
+				/>
+			) }
+			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
+				! connectionFailure && <Findings site={ site } migration={ migration } /> }
+			{ isCompleted && (
+				<MigrationCard
+					title={ __( 'Your site has been migrated' ) }
+					decoration={ <StatusIcon status="success" /> }
+					description={
+						isUnlockOverdue
+							? __( 'Loading your site is taking longer than it should.' )
+							: __( 'One moment while we finish up and load your site.' )
+					}
+					actions={
+						isUnlockOverdue && (
+							<>
+								<Button
+									__next40pxDefaultSize
+									variant="primary"
+									onClick={ () => window.location.reload() }
+								>
+									{ __( 'Reload' ) }
+								</Button>
+								{ contactUs }
+							</>
+						)
+					}
+				/>
+			) }
+			{ /* A status this page doesn't know yet. */ }
+			{ migration && ! KNOWN_STATUSES.includes( migration.status ) && (
+				<MigrationCard
+					title={ __( 'Your site is being migrated' ) }
+					decoration={ <StatusIcon status="pending" /> }
+					actions={ contactUs }
+				/>
 			) }
 		</PageLayout>
 	);

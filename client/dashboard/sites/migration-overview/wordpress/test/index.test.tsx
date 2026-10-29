@@ -86,7 +86,7 @@ describe( 'WordPressMigration', () => {
 				manualInstall.install_url
 			)
 		);
-		expect( screen.queryByText( 'Plugin connected' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
 		expect(
 			screen.getByRole( 'button', { name: /Have our team handle this migration/ } )
 		).toBeDisabled();
@@ -139,7 +139,9 @@ describe( 'WordPressMigration', () => {
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'Plugin connected' ) ).toBeVisible();
+		expect( await screen.findByText( 'Plugin installed and connected' ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Ready to migrate example.com' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: /Install the plugin/ } ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'shows only the refusal when the source refused a connected plugin', async () => {
@@ -171,7 +173,7 @@ describe( 'WordPressMigration', () => {
 		await waitFor( () =>
 			expect( screen.getByRole( 'button', { name: 'Start the migration' } ) ).toBeEnabled()
 		);
-		expect( screen.queryByText( 'Plugin connected' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'continues a paused migration by accepting its warnings', async () => {
@@ -184,7 +186,6 @@ describe( 'WordPressMigration', () => {
 		} );
 		mockApi().get( statusPath ).query( true ).reply( 200, paused );
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect( await screen.findByText( 'destination_site_not_new label' ) ).toBeVisible();
@@ -212,7 +213,6 @@ describe( 'WordPressMigration', () => {
 		} );
 		mockApi().get( statusPath ).query( true ).reply( 200, failed );
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect( await screen.findByText( 'source_redirect_invalid label' ) ).toBeVisible();
@@ -269,7 +269,6 @@ describe( 'WordPressMigration', () => {
 			.reply( 200, { ...running, notification_emails: [] } )
 			.persist();
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
@@ -284,7 +283,6 @@ describe( 'WordPressMigration', () => {
 	it( 'catches up with the migration when a run is refused', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'paused' ) );
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		mockApi()
@@ -300,7 +298,6 @@ describe( 'WordPressMigration', () => {
 	it( 'says so when the migration can’t be loaded, and loads it on another try', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 404, { code: 'rest_no_route' } );
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect( await screen.findByText( /We couldn’t load your migration/ ) ).toBeVisible();
@@ -316,7 +313,6 @@ describe( 'WordPressMigration', () => {
 		jest.useFakeTimers( { advanceTimers: true } );
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect(
@@ -341,7 +337,6 @@ describe( 'WordPressMigration', () => {
 		} as unknown as Site;
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		const { router } = render( <WordPressMigration site={ unlockedSite } />, { queryClient } );
 
 		await waitFor( () =>
@@ -352,7 +347,6 @@ describe( 'WordPressMigration', () => {
 	it( 'still says a migration is underway for a status it doesn’t know', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'assisted' ) );
 
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect(
@@ -364,7 +358,6 @@ describe( 'WordPressMigration', () => {
 	it( 'tells people who can’t manage the migration that one is underway', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 403, { code: 'rest_forbidden' } );
 
-		mockApi().get( configurePath ).query( true ).reply( 403, { code: 'rest_forbidden' } );
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
 		expect(
