@@ -95,6 +95,17 @@ describe( 'Modules', () => {
 		expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
 	} );
 
+	it( 'stands a placeholder in for a figure that is still loading', () => {
+		moduleStates( { protect: pending(), akismet: ok( 9520 ) } );
+		const { container } = renderModules();
+
+		expect( container.querySelectorAll( '.stats-widget-metric__value-skeleton' ) ).toHaveLength(
+			1
+		);
+		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( '9.5K' ) ).toBeInTheDocument();
+	} );
+
 	describe( 'for a user who cannot manage modules', () => {
 		beforeEach( () => canCurrentUser.mockReturnValue( false ) );
 

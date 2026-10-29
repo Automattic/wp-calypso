@@ -84,10 +84,10 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 		>
 			<div className="stats-widget-metric__title">{ title }</div>
 			{ ( isLoading || ! isError ) && (
-				// Zero while loading, so it counts up once the figure lands, as in Overview.
 				<MetricValue
-					value={ ! isLoading && Number.isFinite( value ) ? value : 0 }
+					value={ Number.isFinite( value ) ? value : 0 }
 					describe={ describe }
+					isLoading={ isLoading }
 				/>
 			) }
 			{ ! isLoading && (

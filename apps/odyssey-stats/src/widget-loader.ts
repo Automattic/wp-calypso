@@ -4,9 +4,11 @@
 
 // `init-widget-config` has to be the first import, because there could be packages that reference it in their side effect.
 import './lib/init-widget-config';
+import renderLoadingSkeleton from './widget/loading-skeleton';
 
 // Initialize Stats widget when DOMContentLoaded is fired, or immediately if it already has been.
 function initStatsWidget() {
+	renderLoadingSkeleton( document.getElementById( 'dashboard_stats' ) );
 	return import( './widget' ).then( ( { init } ) => init() );
 }
 if ( document.readyState !== 'loading' ) {
