@@ -86,7 +86,7 @@ export default function ContactOptionsPreview( {
 				} }
 			/>
 			{ errors.phone && (
-				<p id={ `${ id }-phone-error` } role="alert">
+				<p className="a4a-form__error" id={ `${ id }-phone-error` } role="alert">
 					{ errors.phone }
 				</p>
 			) }
