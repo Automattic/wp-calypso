@@ -1,8 +1,6 @@
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useHelpCenter } from '../../app/help-center';
 import { useIntlLocale } from '../../app/locale';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
@@ -86,7 +84,6 @@ export function StagingSiteSyncNotice( {
 	syncState: StagingSiteSyncState;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { setOpenOdieWithContext } = useHelpCenter();
 	const hasRecordedImpression = useRef( false );
 	const locale = useIntlLocale();
 	const startedAtMs = syncState.started_at * 1000;
@@ -119,31 +116,8 @@ export function StagingSiteSyncNotice( {
 		} );
 	}, [ recordTracksEvent, site.ID, syncState.status, syncState.direction, isTakingLong ] );
 
-	const handleContactClick = () => {
-		recordTracksEvent( 'calypso_dashboard_staging_site_sync_notice_contact_click', {
-			site_id: site.ID,
-			status: syncState.status,
-		} );
-		setOpenOdieWithContext( {
-			initialMessage: __( 'My staging site sync hasn’t finished.' ),
-			section: 'site-overview',
-			siteUrl: site.URL,
-			siteId: site.ID,
-		} );
-	};
-
 	return (
-		<Notice
-			variant="info"
-			title={ getTitle( syncState ) }
-			actions={
-				isTakingLong && (
-					<Button variant="link" onClick={ handleContactClick }>
-						{ __( 'Contact support' ) }
-					</Button>
-				)
-			}
-		>
+		<Notice variant="info" title={ getTitle( syncState ) }>
 			{ getDescription(
 				syncState,
 				formattedStartTime,
