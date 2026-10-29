@@ -282,9 +282,11 @@ test.describe(
 				await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
 			} );
 
-			await test.step( 'And I can enter my card details', async function () {
-				// Fills the card form, Stripe's fields included, without paying.
-				await pageCartCheckout.enterPaymentDetails( helperData.getTestPaymentDetails() );
+			await test.step( 'And I can enter my billing and card details', async function () {
+				// Fills the contact and card forms, Stripe's fields included, without paying.
+				const paymentDetails = helperData.getTestPaymentDetails();
+				await pageCartCheckout.enterBillingDetails( paymentDetails );
+				await pageCartCheckout.enterPaymentDetails( paymentDetails );
 			} );
 
 			await test.step( 'And the content blocker was blocking requests', async function () {
