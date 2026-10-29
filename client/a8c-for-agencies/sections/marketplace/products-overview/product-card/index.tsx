@@ -35,6 +35,8 @@ type Props = WithProductLightboxProps &
 		hideDiscount?: boolean;
 		onVariantChange?: ( value: APIProductFamilyProduct ) => void;
 		withCustomCard?: boolean;
+		/** Set when the card's product, once in the cart, has its count set there. */
+		onOpenCart?: () => void;
 	};
 
 function ProductCard( props: Props ) {
@@ -53,6 +55,7 @@ function ProductCard( props: Props ) {
 		setCurrentProduct,
 		onShowLightbox,
 		withCustomCard,
+		onOpenCart,
 	} = props;
 	const translate = useTranslate();
 
@@ -75,8 +78,13 @@ function ProductCard( props: Props ) {
 			return;
 		}
 
+		if ( isSelected && onOpenCart ) {
+			onOpenCart();
+			return;
+		}
+
 		onSelectProduct?.( currentProduct );
-	}, [ isDisabled, onSelectProduct, currentProduct ] );
+	}, [ isDisabled, isSelected, onOpenCart, onSelectProduct, currentProduct ] );
 
 	const onKeyDown = useCallback(
 		( e: React.KeyboardEvent< HTMLDivElement > ) => {
@@ -136,6 +144,10 @@ function ProductCard( props: Props ) {
 			return isSelected ? translate( 'Added to referral' ) : translate( 'Add to referral' );
 		}
 
+		if ( isSelected && onOpenCart ) {
+			return translate( 'View in cart' );
+		}
+
 		if ( selectedQuantity > 1 ) {
 			return isSelected
 				? translate( 'Added %(quantity)s to cart', { args: { quantity: selectedQuantity } } )
@@ -143,7 +155,7 @@ function ProductCard( props: Props ) {
 		}
 
 		return isSelected ? translate( 'Added to cart' ) : translate( 'Add to cart' );
-	}, [ asReferral, isSelected, quantity, translate ] );
+	}, [ asReferral, isSelected, onOpenCart, quantity, translate ] );
 
 	const hasMultipleProducts = products.length > 1;
 

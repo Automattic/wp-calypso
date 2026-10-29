@@ -18,6 +18,7 @@ import './style.scss';
 type Props = {
 	onCheckout: () => void;
 	onRemoveItem: ( item: ShoppingCartItem ) => void;
+	onSetItemQuantity?: ( item: ShoppingCartItem, quantity: number ) => void;
 	items: ShoppingCartItem[];
 	showCart: boolean;
 	setShowCart: ( state: boolean ) => void;
@@ -29,6 +30,7 @@ export const CART_URL_HASH_FRAGMENT = '#cart';
 export default function ShoppingCart( {
 	onCheckout,
 	onRemoveItem,
+	onSetItemQuantity,
 	items,
 	showCart,
 	setShowCart,
@@ -70,6 +72,7 @@ export default function ShoppingCart( {
 					items={ items }
 					onCheckout={ handleOnCheckout }
 					onRemoveItem={ onRemoveItem }
+					onSetItemQuantity={ onSetItemQuantity }
 				/>
 			) }
 		</div>
