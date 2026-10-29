@@ -1,5 +1,5 @@
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useIntlLocale } from '../../app/locale';
 import { useFormattedTime } from '../../components/formatted-time';
@@ -7,11 +7,12 @@ import { Notice } from '../../components/notice';
 import { formatDate } from '../../utils/datetime';
 import {
 	STAGING_SITE_SYNC_TIMEOUT_MS,
+	hasStagingSiteSyncFailed,
 	hasStagingSiteSyncTimedOut,
 } from '../../utils/site-staging-site';
 import type { Site, StagingSiteSyncState } from '@automattic/api-core';
 
-export * from './use-running-staging-site-sync';
+export * from './use-staging-site-sync-for-notice';
 
 const TAKING_LONG_AFTER_MS = 60 * 60 * 1000;
 
@@ -74,7 +75,7 @@ function getDescription(
 }
 
 /**
- * Renders an info Notice describing the staging sync that is currently running.
+ * Renders a Notice describing the staging sync that is running or has just failed.
  */
 export function StagingSiteSyncNotice( {
 	site,
@@ -85,6 +86,7 @@ export function StagingSiteSyncNotice( {
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const hasRecordedImpression = useRef( false );
+	const [ dismissedSyncStartedAt, setDismissedSyncStartedAt ] = useState< number | null >( null );
 	const locale = useIntlLocale();
 	const startedAtMs = syncState.started_at * 1000;
 	const formattedStartTime = useFormattedTime(
@@ -115,6 +117,22 @@ export function StagingSiteSyncNotice( {
 			is_taking_long: isTakingLong,
 		} );
 	}, [ recordTracksEvent, site.ID, syncState.status, syncState.direction, isTakingLong ] );
+
+	if ( hasStagingSiteSyncFailed( syncState ) ) {
+		if ( dismissedSyncStartedAt === syncState.started_at ) {
+			return null;
+		}
+
+		return (
+			<Notice
+				variant="error"
+				title={ __( 'Your last sync didn’t finish' ) }
+				onClose={ () => setDismissedSyncStartedAt( syncState.started_at ) }
+			>
+				{ __( 'Please try syncing again.' ) }
+			</Notice>
+		);
+	}
 
 	return (
 		<Notice

@@ -17,6 +17,12 @@ export const isStagingSiteSyncing = ( stagingSiteSyncState?: StagingSiteSyncStat
 	);
 };
 
+export const hasStagingSiteSyncFailed = ( stagingSiteSyncState?: StagingSiteSyncState ) => {
+	return (
+		!! stagingSiteSyncState && [ 'failed', 'allow_retry' ].includes( stagingSiteSyncState.status )
+	);
+};
+
 export const STAGING_SITE_SYNC_TIMEOUT_MS = 2 * 60 * 60 * 1000;
 
 export const hasStagingSiteSyncTimedOut = ( stagingSiteSyncState?: StagingSiteSyncState ) => {

@@ -45,7 +45,7 @@ import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
-import { StagingSiteSyncNotice, useRunningStagingSiteSync } from '../staging-site-sync-notice';
+import { StagingSiteSyncNotice, useStagingSiteSyncForNotice } from '../staging-site-sync-notice';
 import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
 import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
 import type { StaticSiteImportSearch } from '../overview-static-site-import';
@@ -180,7 +180,7 @@ function SiteOverview( {
 	const { recordTracksEvent } = useAnalytics();
 	const wpAdminButtonRef = useRef( null );
 
-	const runningStagingSiteSync = useRunningStagingSiteSync( site );
+	const stagingSiteSyncForNotice = useStagingSiteSyncForNotice( site );
 	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
@@ -227,8 +227,8 @@ function SiteOverview( {
 			}
 			notices={
 				<>
-					{ runningStagingSiteSync && (
-						<StagingSiteSyncNotice site={ site } syncState={ runningStagingSiteSync } />
+					{ stagingSiteSyncForNotice && (
+						<StagingSiteSyncNotice site={ site } syncState={ stagingSiteSyncForNotice } />
 					) }
 					{ siteImport && siteImport.status !== 'moving' && (
 						<StaticSiteImportNotice
