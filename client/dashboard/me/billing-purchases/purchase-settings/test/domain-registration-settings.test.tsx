@@ -195,7 +195,7 @@ describe( '<DomainRegistrationSettings />', () => {
 			const site = { ID: 1, name: 'icecreamshop.com', options: { is_domain_only: true } } as Site;
 			render( <DetailsSection purchase={ makeDomain() } site={ site } /> );
 
-			expect( await screen.findByText( 'Not attached' ) ).toBeVisible();
+			expect( await screen.findByText( 'No site attached' ) ).toBeVisible();
 			expect( screen.queryByText( 'icecreamshop.com' ) ).not.toBeInTheDocument();
 		} );
 	} );

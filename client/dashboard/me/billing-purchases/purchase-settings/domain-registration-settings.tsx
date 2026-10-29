@@ -359,7 +359,7 @@ export function RenewalSection( {
 
 function SiteValue( { site }: { site: Site } ) {
 	if ( site.options?.is_domain_only ) {
-		return <Text variant="muted">{ __( 'Not attached' ) }</Text>;
+		return <Text variant="muted">{ __( 'No site attached' ) }</Text>;
 	}
 
 	return (
