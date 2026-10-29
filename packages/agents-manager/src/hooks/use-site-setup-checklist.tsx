@@ -1,7 +1,8 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
+import { useQuery } from '@tanstack/react-query';
+import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import {
 	getLastPickedSiteSetupTask,
+	getPickedSiteSetupTask,
 	isChatStartedFromSiteSetup,
 	isSiteSetupChecklistEnabled,
 	toChecklistItems,
@@ -10,9 +11,7 @@ import {
 	fetchSiteSetupTasks,
 	getSiteSetupSiteId,
 	startSiteSetupTask,
-	withSiteSetupTaskStatus,
-	type SiteSetupTask,
-	type SiteSetupTasks,
+	withSiteSetupTasksInProgress,
 } from '../utils/site-setup-tasks';
 import type { UIMessage } from '@automattic/agenttic-client';
 import type { ChecklistItem } from '@automattic/agenttic-ui';
@@ -37,14 +36,13 @@ export interface SiteSetupChecklistState {
 	focusHeaderOnMount: boolean;
 	/** The task the user is on, the only one a folded pinned list keeps in view. */
 	activeItemId?: string;
-	/** Records a picked to-do task as started, once the checklist has sent its prompt. */
-	onPick: ( item: ChecklistItem ) => Promise< void >;
 }
 
 export const SITE_SETUP_TASKS_QUERY_KEY = [ 'agents-manager-site-setup-tasks' ];
 
+const NO_IDS: ReadonlySet< string > = new Set();
 const NO_ITEMS: ChecklistItem[] = [];
-const NONE: Omit< SiteSetupChecklistState, 'onPick' > = {
+const NONE: SiteSetupChecklistState = {
 	isLoading: false,
 	variant: null,
 	items: NO_ITEMS,
@@ -61,11 +59,12 @@ const NONE: Omit< SiteSetupChecklistState, 'onPick' > = {
  *
  * Task status is the backend's alone, read by running the
  * `wpcom/get-site-setup-tasks` ability, so this list and the Site Setup page
- * never disagree: picking a task records it as started there before its prompt
- * is sent, and the list is re-read after that, after every agent turn (which
- * may complete a task), when the chat opens (the Site Setup page may have
- * changed it meanwhile) and, through the query's window-focus refetch, when
- * the tab comes back.
+ * never disagree. A pick is recorded there from that same message, once it is
+ * in the conversation (so only a prompt the composer actually dispatched, past
+ * any upload, starts anything), and the list is re-read after every agent turn
+ * (which may complete a task), when the chat opens (the Site Setup page may
+ * have changed it meanwhile) and, through the query's window-focus refetch,
+ * when the tab comes back.
  */
 export default function useSiteSetupChecklist( {
 	enabled,
@@ -77,13 +76,17 @@ export default function useSiteSetupChecklist( {
 	const siteId = getSiteSetupSiteId();
 	const isEnabled = enabled && siteId !== null && isSiteSetupChecklistEnabled();
 
-	const queryClient = useQueryClient();
-	const queryKey = useMemo( () => [ ...SITE_SETUP_TASKS_QUERY_KEY, siteId ], [ siteId ] );
 	const { data, isLoading, refetch } = useQuery( {
-		queryKey,
+		queryKey: [ ...SITE_SETUP_TASKS_QUERY_KEY, siteId ],
 		queryFn: () => fetchSiteSetupTasks( siteId as number ),
 		enabled: isEnabled,
 	} );
+
+	// Tasks picked during the running turn, shown in progress whatever a read
+	// says meanwhile: the pinned list folds down to the in-progress rows, and a
+	// task that completes on click would otherwise settle and unfold the list
+	// mid-turn. The turn-end read then settles them for real.
+	const [ heldIds, setHeldIds ] = useState( NO_IDS );
 
 	const wasProcessingRef = useRef( isProcessing );
 	const wasOpenRef = useRef( isOpen );
@@ -95,55 +98,74 @@ export default function useSiteSetupChecklist( {
 		wasProcessingRef.current = isProcessing;
 		wasOpenRef.current = isOpen;
 
+		if ( turnEnded ) {
+			setHeldIds( ( current ) => ( current.size > 0 ? NO_IDS : current ) );
+		}
+
 		if ( isEnabled && ( turnEnded || opened ) ) {
 			refetch();
 		}
 	}, [ isProcessing, isOpen, isEnabled, refetch ] );
 
-	// Runs once the prompt was accepted and sent, never from the row's `action`:
-	// a send the composer blocks (credits) must not start anything. The picked
-	// task goes in progress in the cache at once and stays so until the turn
-	// ends, whatever the server answers: the pinned list folds down to the
-	// in-progress rows and mounts right after the send, so a task that
-	// completes on click would otherwise arrive there already done and fold
-	// away unseen. The re-read at the end of the turn settles it, and the list
-	// then reveals the settled row. A failed start is logged and re-read, so
-	// the list shows whatever the server has.
+	// Re-read once the write settles, success or failure: landing after the
+	// turn-end read, it would otherwise go unseen until the next refetch.
 	const startTask = useCallback(
-		async ( task: SiteSetupTask ) => {
+		async ( taskId: string ) => {
 			if ( siteId === null ) {
 				return;
 			}
-			queryClient.setQueryData< SiteSetupTasks >( queryKey, ( current ) =>
-				current ? withSiteSetupTaskStatus( current, task.id, 'in-progress' ) : current
-			);
 
 			try {
-				await startSiteSetupTask( siteId, task.id );
+				await startSiteSetupTask( siteId, taskId );
 			} catch ( error ) {
 				// eslint-disable-next-line no-console
 				console.error( '[AgentsManager] Error recording the Site Setup task as started:', error );
-				refetch();
 			}
+
+			refetch();
 		},
-		[ siteId, queryClient, queryKey, refetch ]
+		[ siteId, refetch ]
 	);
 
-	const onPick = useCallback(
-		async ( item: ChecklistItem ) => {
-			const task = data?.tasks.find( ( candidate ) => candidate.id === item.id );
-			if ( task?.status === 'todo' ) {
-				await startTask( task );
-			}
-		},
-		[ data, startTask ]
-	);
+	// A pick is the user message that carries its task id, and that message exists
+	// only once the composer dispatched the prompt. Messages present when the
+	// conversation loads are history, not picks.
+	const seenMessageIdsRef = useRef< ReadonlySet< string > | null >( null );
+
+	useEffect( () => {
+		if ( isLoadingConversation ) {
+			seenMessageIdsRef.current = null;
+			return;
+		}
+
+		const seen = seenMessageIdsRef.current;
+		seenMessageIdsRef.current = new Set( messages.map( ( message ) => message.id ) );
+		if ( seen === null || ! isEnabled ) {
+			return;
+		}
+
+		const picked = messages
+			.filter( ( message ) => message.role === 'user' && ! seen.has( message.id ) )
+			.map( getPickedSiteSetupTask )
+			.filter(
+				( taskId ): taskId is string =>
+					taskId !== null &&
+					! heldIds.has( taskId ) &&
+					( data?.tasks.some( ( task ) => task.id === taskId && task.status === 'todo' ) ?? false )
+			);
+		if ( picked.length === 0 ) {
+			return;
+		}
+
+		setHeldIds( ( current ) => new Set( [ ...current, ...picked ] ) );
+		picked.forEach( startTask );
+	}, [ messages, isLoadingConversation, isEnabled, data, heldIds, startTask ] );
 
 	const isStartedFromList = useMemo( () => isChatStartedFromSiteSetup( messages ), [ messages ] );
 	const lastPickedId = useMemo( () => getLastPickedSiteSetupTask( messages ), [ messages ] );
 	const hasMessages = messages.length > 0;
 
-	const state = useMemo( (): Omit< SiteSetupChecklistState, 'onPick' > => {
+	const state = useMemo( (): SiteSetupChecklistState => {
 		if ( ! isEnabled ) {
 			return NONE;
 		}
@@ -156,7 +178,7 @@ export default function useSiteSetupChecklist( {
 			return NONE;
 		}
 
-		const items = toChecklistItems( data.tasks );
+		const items = toChecklistItems( withSiteSetupTasksInProgress( data, heldIds ).tasks );
 
 		if ( isStartedFromList ) {
 			// Several tasks can be in progress at once (the Site Setup page shows
@@ -173,18 +195,26 @@ export default function useSiteSetupChecklist( {
 		isLoading,
 		isLoadingConversation,
 		data,
+		heldIds,
 		isStartedFromList,
 		lastPickedId,
 		hasMessages,
 	] );
 
 	// The variant of the last committed render: only the empty → pinned move,
-	// which unmounts the list the user was on, hands the focus over.
+	// which unmounts the list the user was on, hands the focus over. The handover
+	// holds for the conversation it happened in (the pick's own state update
+	// re-renders right after it), and ends with the next message.
 	const previousVariantRef = useRef< SiteSetupChecklistVariant | null >( null );
-	const focusHeaderOnMount = previousVariantRef.current === 'empty' && state.variant === 'pinned';
+	const handoverMessagesRef = useRef< UIMessage[] | null >( null );
+	const isHandover = previousVariantRef.current === 'empty' && state.variant === 'pinned';
+	const focusHeaderOnMount = isHandover || handoverMessagesRef.current === messages;
 	useEffect( () => {
+		if ( isHandover ) {
+			handoverMessagesRef.current = messages;
+		}
 		previousVariantRef.current = state.variant;
 	} );
 
-	return { ...state, focusHeaderOnMount: state.focusHeaderOnMount || focusHeaderOnMount, onPick };
+	return focusHeaderOnMount ? { ...state, focusHeaderOnMount } : state;
 }

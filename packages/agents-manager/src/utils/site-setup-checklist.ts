@@ -35,10 +35,10 @@ export function siteSetupTaskPrompt( task: SiteSetupTask ): string {
 /**
  * Maps Site Setup tasks to checklist items. Status is the server's, so the
  * chat and the Site Setup page always agree. The item's `action` only declares
- * where the prompt comes from, which the sent message then carries; recording
- * the pick on the server waits until the prompt is accepted and sent (the
- * checklist's `onSelect`), so a blocked send changes nothing. A task in
- * progress sends the same prompt again, to resume it with the agent.
+ * where the prompt comes from, which the sent message then carries; the pick is
+ * recorded on the server from that message, once it is in the conversation, so
+ * a send the composer blocks or drops changes nothing. A task in progress
+ * sends the same prompt again, to resume it with the agent.
  */
 export function toChecklistItems( tasks: SiteSetupTask[] ): ChecklistItem[] {
 	return tasks.map( ( task ) => {
@@ -75,25 +75,33 @@ export function isChatStartedFromSiteSetup( messages: UIMessage[] ): boolean {
 	);
 }
 
+/** The task a user message picked from the checklist, or `null` when it did not come from it with a task id. */
+export function getPickedSiteSetupTask( message: UIMessage ): string | null {
+	if ( message.role !== 'user' ) {
+		return null;
+	}
+	for ( const content of message.content ) {
+		if (
+			content.type === 'data' &&
+			content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE &&
+			typeof content.data.promptSourceId === 'string' &&
+			content.data.promptSourceId
+		) {
+			return content.data.promptSourceId;
+		}
+	}
+	return null;
+}
+
 /**
  * The task the user picked last, from the newest user message that came from
  * the checklist with a task id; `null` when none did.
  */
 export function getLastPickedSiteSetupTask( messages: UIMessage[] ): string | null {
 	for ( let index = messages.length - 1; index >= 0; index-- ) {
-		const message = messages[ index ];
-		if ( message.role !== 'user' ) {
-			continue;
-		}
-		for ( const content of message.content ) {
-			if (
-				content.type === 'data' &&
-				content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE &&
-				typeof content.data.promptSourceId === 'string' &&
-				content.data.promptSourceId
-			) {
-				return content.data.promptSourceId;
-			}
+		const taskId = getPickedSiteSetupTask( messages[ index ] );
+		if ( taskId !== null ) {
+			return taskId;
 		}
 	}
 	return null;

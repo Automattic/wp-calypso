@@ -23,10 +23,7 @@ const nextFrame = () =>
 
 describe( 'SiteSetupChecklist', () => {
 	it( 'renders the bare checklist, open, in the empty view', () => {
-		const onPick = jest.fn();
-		const { container } = render(
-			<SiteSetupChecklist items={ [] } variant="empty" busy onPick={ onPick } />
-		);
+		const { container } = render( <SiteSetupChecklist items={ [] } variant="empty" busy /> );
 
 		expect( screen.getByTestId( 'checklist' ) ).toBeInTheDocument();
 		expect( container.querySelector( '.agents-manager-site-setup-checklist--pinned' ) ).toBeNull();
@@ -36,7 +33,6 @@ describe( 'SiteSetupChecklist', () => {
 				busy: true,
 				focusHeaderOnMount: false,
 				resumeInProgress: true,
-				onSelect: onPick,
 			} )
 		);
 	} );

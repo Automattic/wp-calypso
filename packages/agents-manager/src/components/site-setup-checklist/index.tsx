@@ -15,8 +15,6 @@ export interface SiteSetupChecklistProps {
 	focusHeaderOnMount?: boolean;
 	/** The task the user is on: the only row the folded pinned list keeps in view. */
 	activeItemId?: string;
-	/** Called once a picked task's prompt was sent, so the host records the start. */
-	onPick?: ( item: ChecklistItem ) => void;
 }
 
 /**
@@ -32,7 +30,6 @@ export default function SiteSetupChecklist( {
 	busy = false,
 	focusHeaderOnMount = false,
 	activeItemId,
-	onPick,
 }: SiteSetupChecklistProps ) {
 	const pinned = variant === 'pinned';
 	const [ isEntered, setIsEntered ] = useState( false );
@@ -56,7 +53,6 @@ export default function SiteSetupChecklist( {
 			resumeInProgress
 			busy={ busy }
 			focusHeaderOnMount={ focusHeaderOnMount }
-			onSelect={ onPick }
 		/>
 	);
 

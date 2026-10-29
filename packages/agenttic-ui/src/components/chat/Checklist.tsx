@@ -290,11 +290,22 @@ export function Checklist( {
 			items.map( ( item ) => [ item.id, getStatus( item ) ] )
 		);
 
+		// An open list (by hand, or by the timer) ends any pending reveal, so the
+		// next fold is about the next task, not the one that just settled.
+		if ( ! isCollapsed ) {
+			if ( revealTimerRef.current !== null ) {
+				window.clearTimeout( revealTimerRef.current );
+				revealTimerRef.current = null;
+			}
+			setRevealedIds( ( current ) => ( current.size > 0 ? new Set() : current ) );
+			return;
+		}
+
 		const settledNow = items
 			.filter( ( item ) => previous.get( item.id ) === 'in-progress' && isSettled( item ) )
 			.map( ( item ) => item.id );
 
-		if ( ! expandOnSettle || ! isCollapsed || settledNow.length === 0 ) {
+		if ( ! expandOnSettle || settledNow.length === 0 ) {
 			return;
 		}
 

@@ -11,7 +11,7 @@ import {
 	fetchSiteSetupTasks,
 	getSiteSetupSiteId,
 	startSiteSetupTask,
-	withSiteSetupTaskStatus,
+	withSiteSetupTasksInProgress,
 } from '../site-setup-tasks';
 
 type WindowWithInlineData = Window & { agentsManagerData?: { site?: { ID?: number } } };
@@ -47,8 +47,8 @@ describe( 'fetchSiteSetupTasks', () => {
 	} );
 } );
 
-describe( 'withSiteSetupTaskStatus', () => {
-	it( 'replaces one task’s status and leaves the rest alone', () => {
+describe( 'withSiteSetupTasksInProgress', () => {
+	it( 'puts the given tasks in progress and leaves the rest alone', () => {
 		const data = {
 			eligible: true,
 			tasks: [
@@ -59,11 +59,12 @@ describe( 'withSiteSetupTaskStatus', () => {
 			summary: '',
 		};
 
-		const next = withSiteSetupTaskStatus( data, 'design', 'in-progress' );
+		const next = withSiteSetupTasksInProgress( data, new Set( [ 'design' ] ) );
 
 		expect( next.tasks.map( ( task ) => task.status ) ).toEqual( [ 'in-progress', 'todo' ] );
 		expect( next.progress ).toBe( data.progress );
 		expect( data.tasks[ 0 ].status ).toBe( 'todo' );
+		expect( withSiteSetupTasksInProgress( data, new Set() ) ).toBe( data );
 	} );
 } );
 

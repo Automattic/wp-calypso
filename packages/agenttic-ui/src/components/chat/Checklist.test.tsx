@@ -403,6 +403,35 @@ describe( 'Checklist', () => {
 		}
 	} );
 
+	it( 'drops a pending reveal when the list is opened by hand', () => {
+		vi.useFakeTimers();
+		try {
+			render( { defaultCollapsed: true, expandOnSettle: true } );
+			const settled = items.map( ( item ) =>
+				item.id === 'images' ? { ...item, status: 'done' as const } : item
+			);
+			render( { defaultCollapsed: true, expandOnSettle: true, items: settled } );
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			act( () => {
+				header().click();
+			} );
+			act( () => {
+				header().click();
+			} );
+
+			expect( rowLabels() ).toEqual( [] );
+
+			act( () => {
+				vi.advanceTimersByTime( 1200 );
+			} );
+
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		} finally {
+			vi.useRealTimers();
+		}
+	} );
+
 	it( 'hides a settled task at once and stays collapsed without expandOnSettle', () => {
 		render( { defaultCollapsed: true } );
 		const settled = items.map( ( item ) =>

@@ -2,10 +2,8 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
-const mockSetQueryData = jest.fn();
 jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
-	useQueryClient: () => ( { setQueryData: mockSetQueryData } ),
 } ) );
 
 const mockIsSiteSetupChecklistEnabled = jest.fn( () => true );
@@ -25,7 +23,7 @@ jest.mock( '../../utils/site-setup-tasks', () => ( {
 } ) );
 
 import { useQuery } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import useSiteSetupChecklist from '../use-site-setup-checklist';
 import type { UIMessage } from '@automattic/agenttic-client';
 
@@ -71,7 +69,6 @@ const NONE = {
 	variant: null,
 	items: [],
 	focusHeaderOnMount: false,
-	onPick: expect.any( Function ),
 };
 
 describe( 'useSiteSetupChecklist', () => {
@@ -110,56 +107,93 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 	} );
 
-	it( 'records a picked task on the server once its prompt was sent, and leaves the re-read to the turn end', async () => {
+	it( 'records a task once its message is in the conversation, and holds it in progress until the turn ends', async () => {
+		mockStartSiteSetupTask.mockResolvedValue( { task_id: 'design', status: 'done', summary: '' } );
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+
+		expect( mockStartSiteSetupTask ).toHaveBeenCalledWith( 123, 'design' );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+		expect( result.current.activeItemId ).toBe( 'design' );
+
+		// A read that lands mid-turn (window focus, chat reopened) does not unsettle the hold.
+		mockUseQuery.mockReturnValue( {
+			data: {
+				...DETAILS,
+				tasks: [ { ...DETAILS.tasks[ 0 ], status: 'done' }, DETAILS.tasks[ 1 ] ],
+			},
+			isLoading: false,
+			refetch: mockRefetch,
+		} );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'done' );
+	} );
+
+	it( 're-reads the list once the start request settles, so a late write is not missed', async () => {
 		mockStartSiteSetupTask.mockResolvedValue( {
 			task_id: 'design',
 			status: 'in-progress',
 			summary: '',
 		} );
-		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
 
-		await result.current.onPick( result.current.items[ 0 ] );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		await act( async () => {} );
 
-		expect( mockStartSiteSetupTask ).toHaveBeenCalledWith( 123, 'design' );
-		expect( mockRefetch ).not.toHaveBeenCalled();
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'starts nothing from the row’s action, so a blocked send changes nothing', () => {
+	it( 'starts nothing from the row’s action, so a blocked or dropped send changes nothing', () => {
 		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
 
 		expect( result.current.items[ 0 ].action?.() ).toBe( true );
 
 		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
-		expect( mockSetQueryData ).not.toHaveBeenCalled();
+		expect( result.current.items[ 0 ].status ).toBe( 'todo' );
 	} );
 
-	it( 'does not start a task the server already settled or has in progress', async () => {
-		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+	it( 'does not start the tasks of a restored conversation', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: {
+				...config,
+				isLoadingConversation: true,
+				messages: [ userMessage( 'u1', 'design' ) ],
+			},
+		} );
 
-		await result.current.onPick( result.current.items[ 1 ] );
+		rerender( { ...config, messages: [ userMessage( 'u1', 'design' ) ] } );
 
 		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
 	} );
 
-	it( 'puts the picked task in progress in the cache at once, even when the server settles it', async () => {
-		mockStartSiteSetupTask.mockResolvedValue( { task_id: 'design', status: 'done', summary: '' } );
-		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+	it( 'does not start a task the server already settled or has in progress', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
 
-		await result.current.onPick( result.current.items[ 0 ] );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'about' ) ] } );
 
-		expect( mockSetQueryData ).toHaveBeenCalledTimes( 1 );
-		const [ key, update ] = mockSetQueryData.mock.calls[ 0 ];
-		expect( key ).toContain( 123 );
-		expect( update( DETAILS ).tasks[ 0 ].status ).toBe( 'in-progress' );
-		expect( update( undefined ) ).toBeUndefined();
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
 	} );
 
-	it( 'logs a failed start and re-reads the list to drop the guess', async () => {
+	it( 'logs a failed start and re-reads the list', async () => {
 		mockStartSiteSetupTask.mockRejectedValue( new Error( 'nope' ) );
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
 
-		await result.current.onPick( result.current.items[ 0 ] );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		await act( async () => {} );
 
 		expect( consoleError ).toHaveBeenCalledWith(
 			expect.stringContaining( '[AgentsManager]' ),

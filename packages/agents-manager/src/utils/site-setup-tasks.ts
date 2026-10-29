@@ -28,15 +28,19 @@ export interface SiteSetupTaskStart {
 	summary: string;
 }
 
-/** The list with one task's status replaced; the rest, and the progress, untouched. */
-export function withSiteSetupTaskStatus(
+/** The list with the given tasks shown in progress; the rest, and the progress, untouched. */
+export function withSiteSetupTasksInProgress(
 	data: SiteSetupTasks,
-	taskId: string,
-	status: SiteSetupTaskStatus
+	taskIds: ReadonlySet< string >
 ): SiteSetupTasks {
+	if ( taskIds.size === 0 ) {
+		return data;
+	}
 	return {
 		...data,
-		tasks: data.tasks.map( ( task ) => ( task.id === taskId ? { ...task, status } : task ) ),
+		tasks: data.tasks.map( ( task ) =>
+			taskIds.has( task.id ) ? { ...task, status: 'in-progress' } : task
+		),
 	};
 }
 
