@@ -94,10 +94,11 @@ describe( 'getLogoForFamilies', () => {
 		expect( getLogoForFamilies( [ 'a4a', 'jetpack' ] ) ).toMatch( /jetpack-connect-a8c\.svg$/ );
 	} );
 
-	test( 'returns the WordPress logo whenever migration is present', () => {
+	test( 'uses the standalone WordPress logo only for migration alone', () => {
 		expect( getLogoForFamilies( [ 'migration' ] ) ).toMatch( /jetpack-connect-migration\.svg$/ );
+		expect( getLogoForFamilies( [ 'migration', 'jetpack' ] ) ).toMatch( /jetpack-connect\.svg$/ );
 		expect( getLogoForFamilies( [ 'migration', 'a4a', 'woo', 'jetpack' ] ) ).toMatch(
-			/jetpack-connect-migration\.svg$/
+			/jetpack-connect-all\.svg$/
 		);
 	} );
 

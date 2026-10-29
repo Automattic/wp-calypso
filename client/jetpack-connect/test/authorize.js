@@ -112,7 +112,7 @@ describe( 'JetpackAuthorize', () => {
 			);
 			expect(
 				container.querySelector( '.connect-screen-brand-header__logo-image' )
-			).toHaveAttribute( 'src', 'jetpack-connect-migration.svg' );
+			).toHaveAttribute( 'src', 'jetpack-connect.svg' );
 			expect( screen.getByText( /connecting your account lets you migrate/ ) ).toBeVisible();
 			expect( screen.getByRole( 'article', { name: 'WordPress.com migration' } ) ).toBeVisible();
 		} );

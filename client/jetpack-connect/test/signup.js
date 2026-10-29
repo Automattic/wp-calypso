@@ -63,7 +63,7 @@ const DEFAULT_PROPS = deepFreeze( {
 } );
 
 describe( 'JetpackSignup', () => {
-	test( 'uses migration copy and WordPress branding on unified signup', () => {
+	test( 'uses migration copy and dynamic branding on mixed-plugin signup', () => {
 		const { container } = render(
 			<JetpackSignup
 				{ ...DEFAULT_PROPS }
@@ -83,7 +83,7 @@ describe( 'JetpackSignup', () => {
 		).toBeVisible();
 		expect( container.querySelector( '.connect-screen-brand-header__logo-image' ) ).toHaveAttribute(
 			'src',
-			'jetpack-connect-migration.svg'
+			'jetpack-connect.svg'
 		);
 	} );
 

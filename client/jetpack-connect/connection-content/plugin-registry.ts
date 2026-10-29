@@ -121,7 +121,7 @@ export function getPluginEntry( slug: string ): PluginEntry | undefined {
  * `class-jetpack-connector.php` so Calypso and Jetpack stay aligned.
  */
 export function getLogoForFamilies( families: readonly Family[] ): string {
-	if ( families.includes( 'migration' ) ) {
+	if ( families.length === 1 && families[ 0 ] === 'migration' ) {
 		return wordpressLogo;
 	}
 	const hasWoo = families.includes( 'woo' );

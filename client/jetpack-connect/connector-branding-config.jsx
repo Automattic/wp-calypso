@@ -48,7 +48,10 @@ export function getConnectorBranding( pluginSlugs = [] ) {
 
 	return {
 		logo,
-		logoAlt: families.includes( 'migration' ) ? 'WordPress.com' : 'Jetpack Connection logo',
+		logoAlt:
+			families.length === 1 && families[ 0 ] === 'migration'
+				? 'WordPress.com'
+				: 'Jetpack Connection logo',
 		permissionsTitle: DEFAULT_PERMISSIONS_TITLE,
 		permissions: DEFAULT_PERMISSIONS,
 	};

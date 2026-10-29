@@ -5,6 +5,17 @@
 import { getConnectorBranding } from '../connector-branding-config';
 
 describe( 'getConnectorBranding', () => {
+	test( 'labels migration-only and mixed connection logos correctly', () => {
+		expect( getConnectorBranding( [ 'wpcom-migration' ] ) ).toMatchObject( {
+			logo: 'jetpack-connect-migration.svg',
+			logoAlt: 'WordPress.com',
+		} );
+		expect( getConnectorBranding( [ 'wpcom-migration', 'jetpack' ] ) ).toMatchObject( {
+			logo: 'jetpack-connect.svg',
+			logoAlt: 'Jetpack Connection logo',
+		} );
+	} );
+
 	test( 'should return logo + permissions on every result', () => {
 		const branding = getConnectorBranding( [] );
 		expect( branding ).toHaveProperty( 'logo' );

@@ -93,15 +93,15 @@ describe( 'OneLoginLayout logo link', () => {
 		} );
 	} );
 
-	test( 'uses WordPress branding when switching into a migration account', () => {
+	test( 'uses dynamic branding when switching into a mixed-plugin migration account', () => {
 		renderLayout( {
 			isJetpack: true,
 			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
 		} );
-		expect( screen.getByRole( 'img', { name: 'WordPress.com' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'img', { name: 'Jetpack Connection logo' } ) ).toHaveAttribute(
 			'src',
-			'jetpack-connect-migration.svg'
+			'jetpack-connect.svg'
 		);
 	} );
 

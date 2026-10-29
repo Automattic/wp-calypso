@@ -43,8 +43,9 @@ signup screens, and `getConnectionFlowFromRedirectTo()` sets `connectorPlugins` 
 login. Pass `connectorPlugins`, never the raw `plugins`, to the helpers here, so
 other entry points never show migration content even when the plugin is active.
 
-Migration uses a WordPress header and a hero card, followed by one bullet per
-supporting family. Its hero does not consume one of the three supporting-card
+Migration alone uses a WordPress header; mixed-plugin connections use the existing
+dynamic connector logo. Its hero card is followed by one bullet per supporting
+family and does not consume one of the three supporting-card
 slots, so A4A, Woo, and Jetpack can all remain visible. The plugin list sent to
 authorization and the return URL are unchanged. Legacy hyphenated migration
 entries retain their existing routing.
