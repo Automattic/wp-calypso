@@ -30,6 +30,7 @@
 	"wpcom_url": "http://calypso.localhost:{{port}}",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
+		"a4a-dashboard-opt-in": true,
 		"calypso/ai-site-builder-flow": true,
 		"ciab/allow-domain-features": true,
 		"cookie-banner": false,

@@ -1,6 +1,8 @@
-import page, { type Callback } from '@automattic/calypso-router';
+import page, { type Callback, type Context } from '@automattic/calypso-router';
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
+import { isOnNewAgencyDashboard } from 'calypso/dashboard/agency/lib/dashboard-opt-in';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
+import { bumpStat } from 'calypso/lib/analytics/mc';
 import {
 	getActiveAgency,
 	getUserBillingType,
@@ -13,6 +15,7 @@ import {
 	A4A_LANDING_LINK,
 	A4A_OVERVIEW_LINK,
 } from './components/sidebar-menu/lib/constants';
+import { getDashboardUrl } from './lib/dashboard-opt-in';
 import { isPathAllowed, isPathAllowedForTier } from './lib/permission';
 import TierPermissionError from './sections/agency-tier/tier-permission-error';
 import type { Agency } from 'calypso/state/a8c-for-agencies/types';
@@ -37,6 +40,18 @@ const handleMultiUserSupport = ( agency: Agency, pathname: string, next: () => v
 	return;
 };
 
+// Sends agencies on the Multi-site Dashboard to the matching page there, when it has one
+const redirectToNewDashboard = ( agency: Agency, pathname: string, query: Context[ 'query' ] ) => {
+	const dashboardUrl = isOnNewAgencyDashboard( agency ) ? getDashboardUrl( pathname, query ) : null;
+	if ( ! dashboardUrl ) {
+		return false;
+	}
+	bumpStat( 'a4a-dashboard-redirect', 'opt-in' );
+	// `replace` keeps this page out of history, so Back doesn't bounce here again.
+	window.location.replace( dashboardUrl );
+	return true;
+};
+
 export const requireAccessContext: Callback = ( context, next ) => {
 	const state = context.store.getState();
 	const agency = getActiveAgency( state );
@@ -44,6 +59,10 @@ export const requireAccessContext: Callback = ( context, next ) => {
 	const pathname = context.pathname;
 
 	if ( agency ) {
+		if ( redirectToNewDashboard( agency, pathname, context.query ) ) {
+			return;
+		}
+
 		// If multi-user support is enabled, we need to check if the user has access to the current path
 		handleMultiUserSupport( agency, pathname, next );
 		return;

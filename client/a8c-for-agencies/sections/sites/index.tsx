@@ -29,6 +29,9 @@ export default function () {
 		clientRender
 	);
 
+	// The feature routes below don't run `requireAccessContext` themselves.
+	page( '/sites/:category/:siteUrl/*', requireAccessContext );
+
 	// Load specific feature route contexts
 	loadFeatureRoutes( '/sites/:category/:siteUrl' );
 

@@ -81,6 +81,7 @@ export interface UserPreferences {
 	/** The welcome tour section to pick back up at after leaving the tour to explore a page. */
 	'a4a-dashboard-onboarding-tour-section'?: string;
 	'a4a-overview-welcome-band-dismissed'?: boolean;
+	'a4a-dashboard-welcome-notice-dismissed'?: boolean;
 	/** Resources marked as read in the A4A Library, shared with the classic A4A dashboard. */
 	'a4a-library-read-resources'?: number[];
 	/** The `completed_at` of the migration whose completed notice the user dismissed for a site. */
