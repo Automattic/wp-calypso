@@ -1,16 +1,14 @@
 import { useEffect } from 'react';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { useSelector } from 'calypso/state';
-import { getSite } from 'calypso/state/sites/selectors';
 import { updateQueryParams } from '../../import/util';
+import type { SiteDetails } from '@automattic/data-stores';
 
 /**
  * Update site slug when destination site is in transition from simple to atomic
  */
-export function useAtomicTransferQueryParamUpdate( siteId: number | undefined ) {
+export function useAtomicTransferQueryParamUpdate( siteItem: SiteDetails | null | undefined ) {
 	const currentSearchParams = useQuery();
-	const siteItem = useSelector( ( state ) => getSite( state, siteId as number ) );
 	const siteSlug = useSiteSlugParam();
 
 	useEffect( checkSiteSlugUpdate, [ siteItem?.slug ] );

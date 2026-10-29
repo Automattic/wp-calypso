@@ -15,6 +15,8 @@ export type WordPressMigrationStatus = {
 	source_url: string | null;
 	started_at: string | null;
 	completed_at: string | null;
+	// Where the email announcing the finished migration is sent.
+	notification_emails: string[];
 };
 
 export type WordPressMigrationSourceConnection = {
@@ -27,6 +29,7 @@ export type WordPressMigrationSourceConnectionOption = WordPressMigrationSourceC
 	install_url?: string;
 	connect_url?: string;
 	manual_url?: string;
+	connected?: boolean;
 };
 
 export type WordPressMigrationConfiguration = {

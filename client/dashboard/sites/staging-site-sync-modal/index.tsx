@@ -403,6 +403,11 @@ function StagingSiteSyncModalInner( {
 	return (
 		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
 			<VStack spacing={ 5 }>
+				<Notice variant="warning">
+					{ __(
+						'Staging sites are experiencing sync issues. Please wait until later to sync your sites.'
+					) }
+				</Notice>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: (
@@ -433,10 +438,7 @@ function StagingSiteSyncModalInner( {
 				{ /* File selection and database controls */ }
 				<VStack spacing={ 5 }>
 					{ shouldDisableGranularSync ? (
-						<Notice
-							density="medium"
-							title={ __( 'All files, folders, and database will be synced' ) }
-						>
+						<Notice title={ __( 'All files, folders, and database will be synced' ) }>
 							<VStack spacing={ 2 }>
 								<Text as="p">
 									{ __(
@@ -546,11 +548,7 @@ function StagingSiteSyncModalInner( {
 								/>
 							</HStack>
 							{ hasWarning && (
-								<Notice
-									density="medium"
-									variant="warning"
-									title={ __( 'Warning! Database will be overwritten' ) }
-								>
+								<Notice variant="warning" title={ __( 'Warning! Database will be overwritten' ) }>
 									<VStack spacing={ 2 }>
 										<Text as="p">
 											{ __(

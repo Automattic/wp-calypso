@@ -55,7 +55,7 @@ describe( 'uploadAnnotation', () => {
 			const uploadCall = ( uploadMedia as jest.Mock ).mock.calls[ 0 ][ 0 ];
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
-			expect( uploadedFile.name ).toBe( `original-image-annotated-${ mockNow }.jpg` );
+			expect( uploadedFile.name ).toBe( `original-image-${ mockNow }.jpg` );
 		} );
 
 		it( 'should handle filename with multiple dots', async () => {
@@ -75,7 +75,7 @@ describe( 'uploadAnnotation', () => {
 			const uploadCall = ( uploadMedia as jest.Mock ).mock.calls[ 0 ][ 0 ];
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
-			expect( uploadedFile.name ).toBe( `my.image.file-annotated-${ mockNow }.png` );
+			expect( uploadedFile.name ).toBe( `my.image.file-${ mockNow }.png` );
 		} );
 
 		it( 'should handle filename without extension', async () => {
@@ -96,8 +96,8 @@ describe( 'uploadAnnotation', () => {
 			const uploadedFile = uploadCall.filesList[ 0 ];
 
 			// When no dots exist, the entire filename becomes the "extension"
-			// and baseName is empty, resulting in: -annotated-timestamp.noextension
-			expect( uploadedFile.name ).toBe( `-annotated-${ mockNow }.noextension` );
+			// and baseName is empty, resulting in: -timestamp.noextension
+			expect( uploadedFile.name ).toBe( `-${ mockNow }.noextension` );
 		} );
 	} );
 

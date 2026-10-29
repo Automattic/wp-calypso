@@ -1,5 +1,6 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { sshKeysQuery, userSettingsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,8 +13,13 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SshKey from './ssh-key';
 import SshKeyForm from './ssh-key-form';
+import SshKeys from './ssh-keys';
 
 export default function SecuritySshKey() {
+	return isEnabled( 'ssh-multiple-keys' ) ? <SshKeys /> : <SingleSshKey />;
+}
+
+function SingleSshKey() {
 	const { data: sshKeys } = useSuspenseQuery( sshKeysQuery() );
 	const sshKey = sshKeys[ 0 ] ?? null;
 
