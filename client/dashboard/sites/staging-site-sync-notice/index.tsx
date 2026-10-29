@@ -3,8 +3,10 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
+import { useIntlLocale } from '../../app/locale';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
+import { formatDate } from '../../utils/datetime';
 import {
 	STAGING_SITE_SYNC_TIMEOUT_MS,
 	hasStagingSiteSyncTimedOut,
@@ -52,11 +54,8 @@ function getDescription(
 
 	if ( isTakingLong ) {
 		return sprintf(
-			/* translators: %1$s and %2$s are dates, like "today at 10:00". */
-			__(
-				'This sync started %1$s and is taking longer than usual. If it hasn’t finished by %2$s, it will stop and you can try again.'
-			),
-			formattedStartTime,
+			/* translators: %s is a time, like "12:44 PM". */
+			__( 'This is taking longer than usual. If it hasn’t finished by %s, try syncing again.' ),
 			formattedTimeoutTime
 		);
 	}
@@ -89,6 +88,7 @@ export function StagingSiteSyncNotice( {
 	const { recordTracksEvent } = useAnalytics();
 	const { setOpenOdieWithContext } = useHelpCenter();
 	const hasRecordedImpression = useRef( false );
+	const locale = useIntlLocale();
 	const startedAtMs = syncState.started_at * 1000;
 	const formattedStartTime = useFormattedTime(
 		syncState.started_at ? new Date( startedAtMs ).toISOString() : '',
@@ -97,14 +97,10 @@ export function StagingSiteSyncNotice( {
 		undefined,
 		true
 	);
-	const formattedTimeoutTime = useFormattedTime(
-		syncState.started_at
-			? new Date( startedAtMs + STAGING_SITE_SYNC_TIMEOUT_MS ).toISOString()
-			: '',
-		{ timeStyle: 'short' },
-		undefined,
-		undefined,
-		true
+	const formattedTimeoutTime = formatDate(
+		new Date( startedAtMs + STAGING_SITE_SYNC_TIMEOUT_MS ),
+		locale,
+		{ timeStyle: 'short' }
 	);
 	const runningForMs = syncState.started_at ? Date.now() - startedAtMs : 0;
 	const isTakingLong = runningForMs > TAKING_LONG_AFTER_MS;
