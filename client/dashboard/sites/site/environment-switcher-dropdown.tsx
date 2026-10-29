@@ -11,7 +11,6 @@ import useBuildCurrentRouteLink from '../../app/hooks/use-build-current-route-li
 import Environment from '../../components/environment';
 import RouterLinkMenuItem from '../../components/router-link-menu-item';
 import { canManageSite, canCreateStagingSite } from '../features';
-import StagingSiteHighLoadNotice from '../staging-site-high-load-notice';
 import type { Site } from '@automattic/api-core';
 
 const StagingSiteActionButton = ( {
@@ -119,13 +118,6 @@ const EnvironmentSwitcherDropdown = ( {
 					</MenuItem>
 				) }
 			</MenuGroup>
-			{ showActionButton && ! isStagingSiteCreating && ! isStagingSiteDeleting && (
-				<StagingSiteHighLoadNotice>
-					{ __(
-						'Staging sites are experiencing sync issues. Please wait until later to create a Staging site.'
-					) }
-				</StagingSiteHighLoadNotice>
-			) }
 		</NavigableMenu>
 	);
 };

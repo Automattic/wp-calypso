@@ -403,11 +403,6 @@ function StagingSiteSyncModalInner( {
 	return (
 		<Modal title={ syncConfig[ environment ].title } onRequestClose={ handleClose } size="large">
 			<VStack spacing={ 5 }>
-				<Notice variant="warning">
-					{ __(
-						'Staging sites are experiencing sync issues. Please wait until later to sync your sites.'
-					) }
-				</Notice>
 				<Text>
 					{ createInterpolateElement( syncConfig[ environment ].description, {
 						a: (
