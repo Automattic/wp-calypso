@@ -15,14 +15,16 @@ import Main from 'calypso/components/main';
 import { CHECKOUT_SUCCESS_PLAN_PARAM } from 'calypso/dashboard/app/checkout-success-flash';
 import { CHECKOUT_SUCCESS_FLASH_ID } from 'calypso/dashboard/app/checkout-success-flash-message';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { getFlowFromURL } from 'calypso/landing/stepper/utils/get-flow-from-url';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import { getRedirectFromPendingPage } from 'calypso/my-sites/checkout/src/lib/pending-page';
 import { sendMessageToOpener } from 'calypso/my-sites/checkout/src/lib/popup';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { fetchCurrentUser } from 'calypso/state/current-user/actions';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { requestSite } from 'calypso/state/sites/actions';
@@ -240,6 +242,7 @@ function useRedirectOnTransactionSuccess( {
 	const isReceiptLoaded = isReceiptSuccess || isReceiptError;
 
 	const reduxDispatch = useDispatch();
+	const userId = useSelector( getCurrentUserId );
 	const queryClient = useQueryClient();
 	const cartKey = useCartKey();
 	const { reloadFromServer: reloadCart } = useShoppingCart( cartKey );
@@ -417,9 +420,10 @@ function useRedirectOnTransactionSuccess( {
 		// This is the first point where we know the purchase is complete, so
 		// record it before leaving the page.
 		if ( receipt && ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
-			recordCompletedPurchaseAnalytics( receipt ).then( () =>
-				notifyAndPerformRedirect( siteSlug, finalRedirectInstructions )
-			);
+			recordCompletedPurchaseAnalytics( receipt, {
+				flow: getFlowFromURL( pathname ?? '', '' ),
+				userId,
+			} ).then( () => notifyAndPerformRedirect( siteSlug, finalRedirectInstructions ) );
 			return;
 		}
 
@@ -441,6 +445,7 @@ function useRedirectOnTransactionSuccess( {
 		productName,
 		receipt,
 		receiptId,
+		userId,
 		redirectTo,
 		queryClient,
 		reduxDispatch,
