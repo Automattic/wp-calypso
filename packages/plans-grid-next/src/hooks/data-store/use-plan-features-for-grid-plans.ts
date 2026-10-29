@@ -1,16 +1,11 @@
 import {
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_ADVANCED_SEO_TOOLS,
-	FEATURE_AI_ASSISTANT,
-	FEATURE_AI_WEBSITE_BUILDER,
-	FEATURE_AI_WRITER_DESIGNER,
 	FEATURE_BLAZE_AD_CREDITS,
-	FEATURE_BUILT_IN_SITE_ASSISTANT,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_DEV_TOOLS,
 	FEATURE_EARLY_ONBOARDING_CALLS,
 	FEATURE_EMAIL_MARKETING,
-	FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS,
 	FEATURE_GUIDED_WEBSITE_BUILDER,
 	FEATURE_PRIORITY_24_7_SUPPORT,
 	FEATURE_SIMPLE_PAYMENTS,
@@ -47,50 +42,16 @@ import type {
 import type { Feature, FeatureObject, FeatureList } from '@automattic/calypso-products';
 import type { TranslateResult } from 'i18n-calypso';
 
-function isPremiumWebsiteBuilderPillFeature( featureSlug: string ): boolean {
-	return (
-		featureSlug === FEATURE_AI_WEBSITE_BUILDER ||
-		featureSlug === FEATURE_GUIDED_WEBSITE_BUILDER ||
-		featureSlug === FEATURE_AI_WRITER_DESIGNER
-	);
-}
-
-function isBusinessAssistantPillFeature( featureSlug: string ): boolean {
-	return (
-		featureSlug === FEATURE_ENHANCED_AI_ASSISTANT_AND_TOOLS ||
-		featureSlug === FEATURE_AI_ASSISTANT ||
-		featureSlug === FEATURE_BUILT_IN_SITE_ASSISTANT ||
-		featureSlug === FEATURE_AI_WRITER_DESIGNER
-	);
-}
-
 function getPricingDifferentiationFeatureBadgeText(
 	planSlug: string,
 	featureSlug: string,
-	translate: ( text: string ) => TranslateResult,
-	options?: { suppressAiPills?: boolean }
+	translate: ( text: string ) => TranslateResult
 ): TranslateResult | undefined {
-	const suppressAiPills = options?.suppressAiPills ?? false;
-
 	if ( isPersonalPlan( planSlug ) && featureSlug === FEATURE_CUSTOM_DOMAIN ) {
 		return translate( 'Free' );
 	}
-	if (
-		! suppressAiPills &&
-		isPremiumPlan( planSlug ) &&
-		isPremiumWebsiteBuilderPillFeature( featureSlug )
-	) {
-		return translate( 'AI' );
-	}
 	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
 		return translate( 'New' );
-	}
-	if (
-		! suppressAiPills &&
-		isBusinessPlan( planSlug ) &&
-		isBusinessAssistantPillFeature( featureSlug )
-	) {
-		return translate( 'AI' );
 	}
 	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ) {
 		return translate( 'Email' );
@@ -243,10 +204,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	selectedFeature,
 	isInSignup,
-	useVar42NoAiFeatures,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
-	isExperimentVariant,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -255,10 +213,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature?: string | null;
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
-	useVar42NoAiFeatures?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
-	showPricingDifferentiationFeaturePills?: boolean;
-	isExperimentVariant?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -274,10 +229,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	showLegacyStorageFeature,
 	isInSignup,
-	useVar42NoAiFeatures,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
-	isExperimentVariant,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -315,19 +267,19 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
 						true
 					);
-				} else if ( useVar42NoAiFeatures && useDifferentiationFeatures ) {
+				} else if ( useDifferentiationFeatures ) {
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
 							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
 							[],
-						isExperimentVariant ?? true
+						true
 					);
 
 					jetpackFeatures = getPlanFeaturesObject(
 						allFeaturesList,
 						planConstantObj.get2023PricingGridSignupJetpackFeatures?.() ?? [],
-						isExperimentVariant ?? true
+						true
 					);
 				} else if ( 'plans-newsletter' === intent ) {
 					wpcomFeatures = getPlanFeaturesObject(
@@ -484,11 +436,11 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 
 						const featureSlug = feature.getSlug();
 
-						const badgeText = showPricingDifferentiationFeaturePills
-							? getPricingDifferentiationFeatureBadgeText( planSlug, featureSlug, translate, {
-									suppressAiPills: useVar42NoAiFeatures,
-								} )
-							: undefined;
+						const badgeText = getPricingDifferentiationFeatureBadgeText(
+							planSlug,
+							featureSlug,
+							translate
+						);
 
 						wpcomFeaturesTransformed.push( {
 							...feature,
@@ -501,7 +453,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 					if (
 						wpcomFeaturesTransformed.length > 0 &&
 						useDifferentiationFeatures &&
-						( isExperimentVariant || usePlansGridRedesignFeatures )
+						usePlansGridRedesignFeatures
 					) {
 						const lastIndex = wpcomFeaturesTransformed.length - 1;
 						wpcomFeaturesTransformed[ lastIndex ].isExperimentLastFeature = true;
@@ -534,10 +486,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		showLegacyStorageFeature,
 		allFeaturesList,
 		hasRedeemedDomainCredit,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
-		isExperimentVariant,
 		translate,
 	] );
 };

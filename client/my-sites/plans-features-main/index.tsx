@@ -84,7 +84,6 @@ import {
 	ensureCompatibleIntervalType,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
-import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -780,13 +779,6 @@ const PlansFeaturesMain = ( {
 	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
 	const {
-		showDifferentiatorHeader,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
-		isExperimentVariant,
-	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
-	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
 		showEnterpriseBottomCard,
@@ -1075,11 +1067,7 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
@@ -1107,12 +1095,8 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
@@ -1458,7 +1442,7 @@ const PlansFeaturesMain = ( {
 			// The row set has to match the feature lists the comparison grid is built from, which a
 			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
 			// titles with a control list.
-			isExperimentVariant: isExperimentVariant && ! hasTailoredFeatureList( intent ),
+			isExperimentVariant: ! hasTailoredFeatureList( intent ),
 		} );
 	}
 
@@ -1469,10 +1453,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if (
-		( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) &&
-		! hasTailoredFeatureList( intent )
-	) {
+	} else if ( usePlansGridRedesignFeatures && ! hasTailoredFeatureList( intent ) ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		// Skipped for intents that curate their own feature list, whose grouping is theirs too.
@@ -1652,9 +1633,7 @@ const PlansFeaturesMain = ( {
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }
-					showDifferentiatorHeader={
-						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
-					}
+					showDifferentiatorHeader={ showPlansGridRedesignDifferentiatorHeader }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -1693,7 +1672,6 @@ const PlansFeaturesMain = ( {
 										allFeaturesList={ getFeaturesList() }
 										bottomGridPlan={ bottomGridPlanForFeaturesGrid }
 										className={ clsx( 'plans-features-main__features-grid', {
-											'is-plan-differentiators-experiment': isExperimentVariant,
 											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
 										} ) }
 										coupon={ coupon }
@@ -1733,7 +1711,6 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
-										isExperimentVariant={ isExperimentVariant }
 										showFeatureCheckmarks={ usePlansGridRedesign }
 									/>
 								) }
@@ -1803,7 +1780,6 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
-													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle
