@@ -173,7 +173,7 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		'is-plan-differentiators-experiment-badge': isExperimentVariant,
 	} );
 	const showPricingBadgeTooltip = isExperimentVariant && showFeatureCheckmarks;
-	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
+	const { isAnyPlanPriceDiscounted, setIsPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,
 		pricing: { currencyCode, originalPrice, discountedPrice, introOffer, billingPeriod },
@@ -259,24 +259,16 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		);
 	};
 
+	const isPriceDiscounted = !! (
+		isGridPlanOneTimeDiscounted ||
+		isGridPlanOnIntroOffer ||
+		( enableTermSavingsPriceDisplay && savings ) ||
+		( showBillingDescriptionForIncreasedRenewalPrice && !! termVariantPricing )
+	);
 	useEffect( () => {
-		if (
-			isGridPlanOneTimeDiscounted ||
-			isGridPlanOnIntroOffer ||
-			( enableTermSavingsPriceDisplay && savings ) ||
-			( showBillingDescriptionForIncreasedRenewalPrice && !! termVariantPricing )
-		) {
-			setIsAnyPlanPriceDiscounted( true );
-		}
-	}, [
-		enableTermSavingsPriceDisplay,
-		isGridPlanOnIntroOffer,
-		isGridPlanOneTimeDiscounted,
-		savings,
-		setIsAnyPlanPriceDiscounted,
-		showBillingDescriptionForIncreasedRenewalPrice,
-		termVariantPricing,
-	] );
+		setIsPlanPriceDiscounted( planSlug, isPriceDiscounted );
+		return () => setIsPlanPriceDiscounted( planSlug, false );
+	}, [ isPriceDiscounted, planSlug, setIsPlanPriceDiscounted ] );
 
 	if ( isWpcomEnterpriseGridPlan( planSlug ) ) {
 		const hasFreePlan = visibleGridPlans.some( ( { planSlug: slug } ) => isFreePlan( slug ) );
