@@ -9,7 +9,7 @@ steps:
   - label: ":desktop_computer: Build desktop (mac)"
     key: desktop-build-mac
     # FIXME: Not running on trunk at the moment because of recurring CI load issues.
-    # See https://linear.app/a8c/issue/AINFRA-3515 for the followup work to re-enable and improve.
+    # See AINFRA-3515 for the followup work to re-enable and improve.
     branches: release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
