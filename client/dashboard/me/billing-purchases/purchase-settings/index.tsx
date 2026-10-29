@@ -1026,7 +1026,7 @@ function getFields( {
 				if (
 					! purchase.is_rechargeable &&
 					! purchase.is_iap_purchase &&
-					( purchase.is_auto_renew_enabled || isAutoRenewToggleDisabled( purchase, user ) )
+					isAutoRenewToggleDisabled( purchase, user )
 				) {
 					if ( String( user.ID ) !== String( purchase.user_id ) ) {
 						return null;

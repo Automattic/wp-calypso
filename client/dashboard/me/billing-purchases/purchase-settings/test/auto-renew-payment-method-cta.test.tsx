@@ -39,7 +39,22 @@ describe( 'auto-renew without a payment method', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	test( 'auto-renew on without a rechargeable payment method keeps its existing CTA', () => {
+	test( 'auto-renew on without a payment method still shows the toggle', () => {
+		render(
+			<ManageSubscriptionCard
+				purchase={ makePurchase( {
+					is_auto_renew_enabled: true,
+					can_disable_auto_renew: true,
+					expiry_status: 'auto-renewing',
+				} ) }
+			/>
+		);
+
+		expect( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) ).toBeChecked();
+		expect( screen.queryByText( 'Auto-renew needs a payment method.' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'auto-renew on that cannot be disabled keeps the add payment method CTA', () => {
 		render(
 			<ManageSubscriptionCard
 				purchase={ makePurchase( {
