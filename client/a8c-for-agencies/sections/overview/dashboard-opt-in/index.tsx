@@ -103,12 +103,12 @@ function useOverlayNotice( preview: OptInPreviewState | null ) {
 	useEffect( () => {
 		let message: string | null = null;
 		if ( overlay === 'not-now' && isOwner ) {
-			message = translate( 'You can switch any time from the menu under your profile picture.' );
+			message = translate( 'You can switch any time from Helpful links on this page.' );
 		}
 		if ( overlay === 'back' ) {
 			message = isOwner
 				? translate(
-						'You’re back on the previous dashboard. You can try the new one again from the menu under your profile picture.'
+						'You’re back on the previous dashboard. You can try the new one again from Helpful links on this page.'
 					)
 				: translate( 'Your agency is back on the previous dashboard.' );
 		}
@@ -118,10 +118,26 @@ function useOverlayNotice( preview: OptInPreviewState | null ) {
 	}, [ dispatch, translate, overlay, isOwner ] );
 }
 
+const OPEN_EVENT = 'a4a-dashboard-opt-in-open';
+
+/**
+ * Opens the invitation from anywhere on Overview, like the Helpful links entry.
+ */
+export function openDashboardOptIn() {
+	window.dispatchEvent( new Event( OPEN_EVENT ) );
+}
+
 export default function DashboardOptIn() {
 	const { preview, canSwitch } = useDashboardOptIn();
 	const [ isClosed, setIsClosed ] = useState( false );
+	const [ isReopened, setIsReopened ] = useState( false );
 	useOverlayNotice( preview );
+
+	useEffect( () => {
+		const reopen = () => setIsReopened( true );
+		window.addEventListener( OPEN_EVENT, reopen );
+		return () => window.removeEventListener( OPEN_EVENT, reopen );
+	}, [] );
 
 	// Classic forwards an opted-in agency to the matching page in the new dashboard.
 	useEffect( () => {
@@ -130,7 +146,13 @@ export default function DashboardOptIn() {
 		}
 	}, [ preview ] );
 
-	if ( ! preview || ! canSwitch || ! preview.firstVisit || isClosed ) {
+	if ( ! preview || ! canSwitch ) {
+		return null;
+	}
+	if ( isReopened ) {
+		return <DashboardOptInModal preview={ preview } onClose={ () => setIsReopened( false ) } />;
+	}
+	if ( ! preview.firstVisit || isClosed ) {
 		return null;
 	}
 	return <DashboardOptInModal preview={ preview } onClose={ () => setIsClosed( true ) } />;

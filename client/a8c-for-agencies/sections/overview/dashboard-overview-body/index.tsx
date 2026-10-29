@@ -24,6 +24,7 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
+import { openDashboardOptIn, useDashboardOptIn } from '../dashboard-opt-in';
 
 function DashboardOverviewBodyContent( {
 	isEligibleForPressableExpansionOffer,
@@ -40,6 +41,7 @@ function DashboardOverviewBodyContent( {
 		);
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
+	const { canSwitch: canSwitchDashboard } = useDashboardOptIn();
 
 	const handleRecordTracksEvent = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -81,6 +83,15 @@ function DashboardOverviewBodyContent( {
 				aiMcp: A4A_AI_MCP_LINK,
 				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 				helpful: [
+					...( canSwitchDashboard
+						? [
+								{
+									id: 'switch-to-new-dashboard',
+									label: __( 'Switch to the new dashboard' ),
+									onClick: openDashboardOptIn,
+								},
+							]
+						: [] ),
 					{
 						id: 'contact-support',
 						label: __( 'Contact sales & support' ),

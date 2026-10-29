@@ -45,11 +45,11 @@ export const OPT_IN_STEPS: OptInStep[] = [
 		state: { agency: 'not-opted-in', firstVisit: false, overlay: 'not-now' },
 	},
 	{
-		id: 'menu',
-		label: 'Profile menu, any time later',
+		id: 'later',
+		label: 'Helpful links, any time later',
 		app: 'classic',
 		path: '/overview',
-		state: { agency: 'not-opted-in', firstVisit: false, overlay: 'menu' },
+		state: { agency: 'not-opted-in', firstVisit: false, overlay: null },
 	},
 	{
 		id: 'arrival',
