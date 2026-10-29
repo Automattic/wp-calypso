@@ -17,6 +17,8 @@ export type WordPressMigrationStatus = {
 	completed_at: string | null;
 	// Where the email announcing the finished migration is sent.
 	notification_emails: string[];
+	// Whether the source is connected through the plugin. Missing until the endpoint reports it.
+	source_connected?: boolean;
 };
 
 export type WordPressMigrationSourceConnection = {

@@ -60,6 +60,17 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			: undefined;
 	const isConnecting = migration?.status === 'not_started' || !! connectionFailure;
 
+	// Connecting the source after it was refused gets past the refusal, unless something else failed too. Once a retry
+	// is refused anyway, the connection isn't enough, so the refusal stands.
+	const [ hasRetried, setHasRetried ] = useState( false );
+	const isRefusalSuperseded =
+		!! connectionFailure &&
+		! hasRetried &&
+		migration?.source_connected === true &&
+		migration.findings.every(
+			( { code, severity } ) => severity !== 'failure' || code === 'source_connection_failed'
+		);
+
 	// The connect step shows how the source can be connected, so it waits for that before showing at all. It's read
 	// alongside the migration, before we know which step that is, and only kept up for the connect step after.
 	const { isPending: isConfigurationPending } = useQuery( {
@@ -146,7 +157,16 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				/>
 			) }
 			{ isConnecting && ! isConfigurationPending && (
-				<Connect site={ site } sourceHost={ sourceHost } failure={ connectionFailure } />
+				<Connect
+					site={ site }
+					sourceHost={ sourceHost }
+					sourceConnected={ migration?.source_connected }
+					failure={ connectionFailure }
+					retryFindings={
+						isRefusalSuperseded ? migration?.findings.map( ( { code } ) => code ) : undefined
+					}
+					onRetry={ () => setHasRetried( true ) }
+				/>
 			) }
 			{ migration?.status === 'running' && (
 				<Running

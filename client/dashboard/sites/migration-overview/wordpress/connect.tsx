@@ -18,6 +18,7 @@ import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
+import ConfirmModal from '../../../components/confirm-modal';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
@@ -55,28 +56,59 @@ function linkTo( url?: string ) {
 export function Connect( {
 	site,
 	sourceHost,
+	sourceConnected,
 	failure,
+	retryFindings,
+	onRetry,
 }: {
 	site: Site;
 	sourceHost: string;
+	// Read with the migration, so it's more up to date than the configuration's.
+	sourceConnected?: boolean;
 	failure?: WordPressMigrationFinding;
+	// Set once the source is connected after refusing: running again, accepting these, should get further.
+	retryFindings?: string[];
+	onRetry: () => void;
 } ) {
 	const snackbar = { error: __( 'Failed to start the migration.' ) };
 	const { manualInstall, isError, refetch } = useManualInstall( site );
 	const [ isShowingFallbacks, setIsShowingFallbacks ] = useState( false );
+	const [ hasSeenKey, setHasSeenKey ] = useState( false );
+	const [ isConfirming, setIsConfirming ] = useState( false );
 	const fallbacksId = useInstanceId( Connect, 'wordpress-migration-fallbacks' );
 	const configure = useMutation(
 		withSnackbar( siteWordPressMigrationConfigureMutation( site.ID ), snackbar )
 	);
 	const run = useMutation( withSnackbar( siteWordPressMigrationRunMutation( site.ID ), snackbar ) );
 	const isStarting = configure.isPending || run.isPending;
-	const isConnected = manualInstall?.connected && ! failure;
+	const isSourceConnected = !! ( sourceConnected ?? manualInstall?.connected );
+	const isRetry = !! retryFindings;
+	const isConnected = failure ? isRetry : isSourceConnected;
 
-	const startMigration = () =>
+	const startMigration = () => {
+		if ( retryFindings ) {
+			run.mutate( { accept_findings: retryFindings }, { onSuccess: onRetry } );
+			return;
+		}
 		configure.mutate(
 			{ source_connection: { method: MANUAL_INSTALL } },
 			{ onSuccess: () => run.mutate( {} ) }
 		);
+	};
+
+	// A run can't reach a source that isn't connected, so check before starting one that will only be refused.
+	const onStart = () => {
+		if ( ! isSourceConnected && ! hasSeenKey ) {
+			setIsConfirming( true );
+			return;
+		}
+		startMigration();
+	};
+
+	const toggleFallbacks = () => {
+		setIsShowingFallbacks( ! isShowingFallbacks );
+		setHasSeenKey( true );
+	};
 
 	return (
 		<MigrationCard
@@ -108,15 +140,15 @@ export function Connect( {
 						variant={ isConnected ? 'primary' : 'secondary' }
 						isBusy={ isStarting }
 						disabled={ ! manualInstall || isStarting }
-						onClick={ startMigration }
+						onClick={ onStart }
 					>
-						{ __( 'Start the migration' ) }
+						{ isRetry ? __( 'Try again' ) : __( 'Start the migration' ) }
 					</Button>
 				</>
 			}
 			secondaryAction={ <AssistedHandoffLink /> }
 		>
-			{ failure && (
+			{ failure && ! isConnected && (
 				<Notice variant="error" title={ failure.label }>
 					{ failure.message }
 				</Notice>
@@ -134,13 +166,22 @@ export function Connect( {
 				</Notice>
 			) }
 			{ isConnected && (
-				<Notice variant="success" title={ __( 'Plugin installed and connected' ) }>
-					{ __( 'Your site is connected to WordPress.com.' ) }
+				<Notice
+					variant="success"
+					title={
+						isRetry ? __( 'Plugin connected — try again' ) : __( 'Plugin installed and connected' )
+					}
+				>
+					{ isRetry
+						? __( 'Your site is now connected to WordPress.com. Try the migration again.' )
+						: __(
+								'Your site is connected to WordPress.com. Start the migration whenever you’re ready.'
+							) }
 				</Notice>
 			) }
-			{ /* Hidden, not removed: swapping it out under Google Translate can crash the page (react/react#11538). */ }
-			<VStack spacing={ 4 } hidden={ isConnected } className="wordpress-migration__connect-help">
-				<VStack spacing={ 1 }>
+			<VStack spacing={ 4 }>
+				{ /* Hidden, not removed: swapping it out under Google Translate can crash the page (react/react#11538). */ }
+				<VStack spacing={ 1 } hidden={ isConnected } className="wordpress-migration__connect-help">
 					<Text variant="muted">
 						{ __(
 							'1. Install and activate the Migrate to WordPress.com plugin on your existing site.'
@@ -177,7 +218,7 @@ export function Connect( {
 						aria-controls={ isShowingFallbacks ? fallbacksId : undefined }
 						// Its links and key come with the site's details, so it opens once they've loaded.
 						disabled={ ! manualInstall }
-						onClick={ () => setIsShowingFallbacks( ! isShowingFallbacks ) }
+						onClick={ toggleFallbacks }
 						className="wordpress-migration__fallbacks-toggle"
 					>
 						{ __( 'Having trouble? See other ways to set this up.' ) }
@@ -215,6 +256,20 @@ export function Connect( {
 					) }
 				</VStack>
 			</VStack>
+			<ConfirmModal
+				isOpen={ isConfirming }
+				cancelButtonText={ __( 'Go back' ) }
+				confirmButtonProps={ { label: __( 'Start anyway' ) } }
+				onCancel={ () => setIsConfirming( false ) }
+				onConfirm={ () => {
+					setIsConfirming( false );
+					startMigration();
+				} }
+			>
+				{ __(
+					'Start the migration anyway? Your site isn’t connected to WordPress.com yet, so the migration is unlikely to work. If you’re having trouble connecting the plugin, copy the migration key from “Having trouble?” onto the plugin’s migration key page instead.'
+				) }
+			</ConfirmModal>
 		</MigrationCard>
 	);
 }
