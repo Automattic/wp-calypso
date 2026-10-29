@@ -18,17 +18,6 @@ import './style.scss';
 
 export * from './store';
 
-// Captures set this in localStorage to leave the panel out.
-const HIDDEN_KEY = 'a4a-opt-in-preview-hidden';
-
-function isHiddenForCapture() {
-	try {
-		return window.localStorage.getItem( HIDDEN_KEY ) === '1';
-	} catch {
-		return false;
-	}
-}
-
 const ROLE_LABELS: Record< PreviewRole, string > = {
 	owner: 'Owner',
 	member: 'Team member',
@@ -44,7 +33,7 @@ export default function OptInPreviewPanel() {
 	const state = useOptInPreview();
 	const [ settings, setSettings, ready ] = usePreviewPanelSettings( isOptInPreviewEnabled );
 
-	if ( ! state || ! ready || isHiddenForCapture() ) {
+	if ( ! state || ! ready ) {
 		return null;
 	}
 

@@ -8,7 +8,7 @@ import {
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { Notice } from '../../components/notice';
@@ -33,12 +33,6 @@ export default function AgencyDashboardOptIn() {
 	const preview = useOptInPreview();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ reason, setReason ] = useState( '' );
-	// Lets review captures find the toggle once the page is on screen.
-	const [ isReady, setIsReady ] = useState( false );
-	useEffect( () => {
-		const timer = setTimeout( () => setIsReady( true ), 1500 );
-		return () => clearTimeout( timer );
-	}, [] );
 
 	if ( ! preview ) {
 		return null;
@@ -84,7 +78,6 @@ export default function AgencyDashboardOptIn() {
 							/>
 							<ToggleControl
 								__nextHasNoMarginBottom
-								className={ isReady ? 'a4a-dashboard-opt-in-ready' : undefined }
 								checked={ isEnabled }
 								disabled={ ! isOwner }
 								label={ __( 'Use the new dashboard' ) }

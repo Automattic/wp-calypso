@@ -11,7 +11,7 @@ export const isOptInPreviewEnabled = process.env.NODE_ENV === 'development';
 export type PreviewRole = 'owner' | 'member';
 export type PreviewAgency = 'not-opted-in' | 'opted-in' | 'new';
 export type PreviewApp = 'classic' | 'dashboard';
-export type PreviewOverlay = 'not-now' | 'menu' | 'switch-back' | 'back' | null;
+export type PreviewOverlay = 'not-now' | 'switch-back' | 'back' | null;
 
 export interface OptInPreviewState {
 	role: PreviewRole;
@@ -111,7 +111,7 @@ const DEFAULT_STATE: OptInPreviewState = {
 
 const ROLES: PreviewRole[] = [ 'owner', 'member' ];
 const AGENCIES: PreviewAgency[] = [ 'not-opted-in', 'opted-in', 'new' ];
-const OVERLAYS: PreviewOverlay[] = [ 'not-now', 'menu', 'switch-back', 'back' ];
+const OVERLAYS: PreviewOverlay[] = [ 'not-now', 'switch-back', 'back' ];
 
 function readState(): OptInPreviewState {
 	if ( typeof window === 'undefined' ) {
