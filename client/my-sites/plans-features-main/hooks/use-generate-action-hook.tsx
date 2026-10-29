@@ -491,7 +491,7 @@ function getLoggedInPlansAction( {
 	isScheduledOnlyTarget?: boolean;
 	/**
 	 * Whether this plan bills on a shorter term than the current one, such as
-	 * monthly from annual: a plan change rather than a downgrade.
+	 * monthly from annual.
 	 */
 	isScheduledTermChange?: boolean;
 	isDelayedDowngradePending?: boolean;
@@ -615,7 +615,7 @@ function getLoggedInPlansAction( {
 					'disabled'
 				);
 			}
-			if ( isScheduledTermChange ) {
+			if ( isScheduledTermChange && isScheduledOnlyTarget ) {
 				return createLoggedInPlansAction(
 					translate( 'Switch at renewal', { context: 'verb' } ),
 					'secondary',

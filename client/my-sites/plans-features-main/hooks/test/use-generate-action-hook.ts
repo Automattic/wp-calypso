@@ -581,6 +581,50 @@ describe( 'useGenerateActionHook', () => {
 			expect( action.primary.variant ).toBe( 'secondary' );
 		} );
 
+		it( 'labels the monthly plan as a downgrade inside the refund window', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{
+					productSlug: PLAN_PREMIUM_MONTHLY,
+					interval: 31,
+					...scheduledOnly,
+					isInstantDowngradeAvailable: true,
+				},
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+
+			expect( action.primary.text ).toBe( 'Downgrade' );
+		} );
+
+		it( 'labels the monthly plan as a downgrade when the current plan has expired', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_PREMIUM, interval: 365, currentPlan: true },
+				{
+					productSlug: PLAN_PREMIUM_MONTHLY,
+					interval: 31,
+					...scheduledOnly,
+					isDelayedDowngradeAvailable: false,
+				},
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( {
+				planSlug: PLAN_PREMIUM_MONTHLY,
+				availableForPurchase: false,
+			} );
+
+			expect( action.primary.text ).toBe( 'Downgrade' );
+		} );
+
 		it( 'labels a lower tier plan on the same billing term as a downgrade', () => {
 			mockSitePlans( [
 				{ productSlug: PLAN_BUSINESS, interval: 365, currentPlan: true },
