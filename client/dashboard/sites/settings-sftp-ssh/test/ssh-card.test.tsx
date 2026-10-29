@@ -128,6 +128,27 @@ describe( '<SshCard>', () => {
 		);
 	} );
 
+	test( 'offers the user’s key when only other users’ keys are attached', async () => {
+		nock.cleanAll();
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/wpcom/v2/sites/${ siteId }/hosting/ssh-keys` )
+			.reply( 200, {
+				ssh_keys: [
+					{ user_login: 'otheruser', name: 'default', sha256: 'abc', attached_at: '2026-10-02' },
+				],
+			} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/me/ssh-keys' )
+			.reply( 200, [ { name: 'default', key: 'ssh-rsa AAAA', sha256: 'def', created_at: '' } ] );
+
+		render( <SshCard siteId={ siteId } sftpUsers={ sftpUsers } sshEnabled /> );
+
+		expect( await screen.findByText( 'otheruser-default' ) ).toBeVisible();
+		expect( screen.getByRole( 'combobox', { name: 'Attach another SSH key' } ) ).toHaveValue(
+			'default'
+		);
+	} );
+
 	describe( 'with multiple SSH keys enabled', () => {
 		const userSshKey = ( name: string, label?: string ) => ( {
 			name,
@@ -220,6 +241,21 @@ describe( '<SshCard>', () => {
 			await user.click( screen.getByRole( 'button', { name: 'Attach SSH key to site' } ) );
 
 			await waitFor( () => expect( attachRequest.isDone() ).toBe( true ) );
+		} );
+
+		test( 'offers the user’s keys when only other users’ keys are attached', async () => {
+			renderCard( {
+				userSshKeys: [ userSshKey( 'laptop', 'Personal laptop' ) ],
+				siteSshKeys: [
+					siteSshKey( 'otheruser', 'ci', 'CI deploys' ),
+					siteSshKey( 'otheruser', 'desktop', 'Desktop' ),
+				],
+			} );
+
+			expect( await screen.findByText( 'CI deploys (otheruser)' ) ).toBeVisible();
+			expect( screen.getByRole( 'combobox', { name: 'Attach another SSH key' } ) ).toHaveValue(
+				'laptop'
+			);
 		} );
 
 		test( 'hides the attach form once every key of the user is attached', async () => {

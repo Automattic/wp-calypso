@@ -345,10 +345,6 @@ export default function SshCard( {
 					/>
 				);
 
-				if ( hasSiteSshKeys && ! isMultipleKeysEnabled ) {
-					return sshKeysControl;
-				}
-
 				const selectControl = (
 					<SelectControl
 						label={ hasSiteSshKeys ? __( 'Attach another SSH key' ) : __( 'SSH key' ) }
