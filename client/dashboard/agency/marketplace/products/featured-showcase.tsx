@@ -71,6 +71,8 @@ interface FeaturedShowcaseProps {
 	isInCart: ( product: AgencyProduct ) => boolean;
 	onToggleCart: ( product: AgencyProduct ) => void;
 	onViewDetails: ( product: AgencyProduct ) => void;
+	/** Opens the cart, where a product's count is set. */
+	onOpenCart: () => void;
 }
 
 export default function FeaturedShowcase( {
@@ -80,6 +82,7 @@ export default function FeaturedShowcase( {
 	isInCart,
 	onToggleCart,
 	onViewDetails,
+	onOpenCart,
 }: FeaturedShowcaseProps ) {
 	const wooPaymentsCopy = getWooPaymentsCardCopy();
 	const items: ShowcaseItem[] = products.map( ( product ) => {
@@ -121,7 +124,7 @@ export default function FeaturedShowcase( {
 					variant="secondary"
 					size="compact"
 					icon={ inCart ? check : undefined }
-					onClick={ () => onToggleCart( product ) }
+					onClick={ () => ( inCart && ! isReferralMode ? onOpenCart() : onToggleCart( product ) ) }
 				>
 					{ getCartActionLabel( isReferralMode, inCart ) }
 				</Button>
