@@ -428,17 +428,11 @@ const webpackConfig = {
 				project: 'calypso',
 				authToken: process.env.SENTRY_AUTH_TOKEN,
 				telemetry: false,
-				// Upload source maps by release and URL, without injecting debug IDs into every chunk.
-				sourcemaps: { disable: true },
 				release: {
 					name: sentryRelease,
 					// `__SENTRY_RELEASE__` covers this without prepending the release to every chunk.
 					inject: false,
 					setCommits: false,
-					uploadLegacySourcemaps: {
-						paths: [ filePaths.path ],
-						urlPrefix: `~${ filePaths.publicPath }`,
-					},
 				},
 				errorHandler: ( err ) => {
 					// Sentry should _never_ fail the webpack build, so only log here:
