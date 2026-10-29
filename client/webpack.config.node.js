@@ -22,8 +22,6 @@ const { workerCount } = require( './webpack.common' );
 const isDevelopment = bundleEnv === 'development';
 const devTarget = process.env.DEV_TARGET || 'evergreen';
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
-const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
-const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const cacheDirectory = path.resolve( '.cache', 'babel-server' );
 
 const fileLoader = FileConfig.loader( {
@@ -55,11 +53,6 @@ function getExternals() {
 				// Bundle the `@automattic/number-formatters` package as it comes from Jetpack and
 				// is also safe to bundle although it's not a monorepo package.
 				/^@automattic\/number-formatters(\/|$)/,
-
-				// bundle the core-js polyfills. We pick only a very small subset of the library
-				// to polyfill a few things that are not supported by the latest LTS Node.js,
-				// and this avoids shipping the entire library which is fairly big.
-				/^core-js\//,
 
 				// Ensure that file-loader files imported from packages in node_modules are
 				// _not_ externalized and can be processed by the fileLoader.
@@ -104,7 +97,7 @@ const webpackConfig = {
 	},
 	mode: isDevelopment ? 'development' : 'production',
 	optimization: {
-		concatenateModules: shouldConcatenateModules,
+		concatenateModules: true,
 		minimize: false,
 	},
 	module: {
@@ -175,7 +168,7 @@ const webpackConfig = {
 				statsFilename: path.join( __dirname, 'stats-server.json' ),
 				statsOptions: {
 					source: false,
-					reasons: shouldEmitStatsWithReasons,
+					reasons: false,
 					optimizationBailout: false,
 					chunkOrigins: false,
 					chunkGroups: true,

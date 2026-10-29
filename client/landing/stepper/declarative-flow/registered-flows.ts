@@ -17,7 +17,6 @@ import {
 	ONBOARDING_UNIFIED_FLOW,
 	DOMAIN_AND_PLAN_FLOW,
 	PLAN_UPGRADE_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
 	ART_PROMO_FLOW,
 	DIRECT_TO_CART_FLOW,
 	WRITE_ON_FLOW,
@@ -65,11 +64,6 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 	[ PLAN_UPGRADE_FLOW ]: () =>
 		import( /* webpackChunkName: "plan-upgrade-flow" */ './flows/plan-upgrade/plan-upgrade' ),
 
-	[ WOO_HOSTED_PLANS_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "woo-hosted-plans" */ './flows/woo-hosted-plans/woo-hosted-plans'
-		),
-
 	[ ART_PROMO_FLOW ]: () =>
 		import( /* webpackChunkName: "artpromo-flow" */ './flows/artpromo/artpromo' ),
 
@@ -110,8 +104,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 		),
 
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
-
-	write: () => import( /* webpackChunkName: "write-flow" */ './flows/write/write' ),
 
 	[ TRANSFERRING_HOSTED_SITE_FLOW ]: () =>
 		import(

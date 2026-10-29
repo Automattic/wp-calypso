@@ -28,19 +28,26 @@ describe( 'SiteSetupChecklist', () => {
 		expect( screen.getByTestId( 'checklist' ) ).toBeInTheDocument();
 		expect( container.querySelector( '.agents-manager-site-setup-checklist--pinned' ) ).toBeNull();
 		expect( mockAgentUIChecklist ).toHaveBeenLastCalledWith(
-			expect.objectContaining( { defaultCollapsed: false, busy: true, focusHeaderOnMount: false } )
+			expect.objectContaining( {
+				defaultCollapsed: false,
+				busy: true,
+				focusHeaderOnMount: false,
+				resumeInProgress: true,
+			} )
 		);
 	} );
 
 	it( 'unfolds the pinned block, folded and focused, on the frame after it mounts', async () => {
 		const { container } = render(
-			<SiteSetupChecklist items={ [] } variant="pinned" focusHeaderOnMount />
+			<SiteSetupChecklist items={ [] } variant="pinned" focusHeaderOnMount activeItemId="about" />
 		);
 		expect( mockAgentUIChecklist ).toHaveBeenLastCalledWith(
 			expect.objectContaining( {
 				defaultCollapsed: true,
 				expandOnSettle: true,
 				focusHeaderOnMount: true,
+				activeItemId: 'about',
+				resumeInProgress: true,
 			} )
 		);
 		const block = container.querySelector( '.agents-manager-site-setup-checklist--pinned' );

@@ -37,6 +37,7 @@ export function siteSetupTaskPrompt( task: SiteSetupTask ): string {
  * chat and the Site Setup page always agree: picking a task to do records it
  * there (`startTask`) before its prompt is sent. The item's `action` also
  * declares where the prompt comes from, which the sent message then carries.
+ * A task in progress sends the same prompt again, to resume it with the agent.
  */
 export function toChecklistItems(
 	tasks: SiteSetupTask[],
@@ -77,4 +78,28 @@ export function isChatStartedFromSiteSetup( messages: UIMessage[] ): boolean {
 					content.type === 'data' && content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE
 			)
 	);
+}
+
+/**
+ * The task the user picked last, from the newest user message that came from
+ * the checklist with a task id; `null` when none did.
+ */
+export function getLastPickedSiteSetupTask( messages: UIMessage[] ): string | null {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		const message = messages[ index ];
+		if ( message.role !== 'user' ) {
+			continue;
+		}
+		for ( const content of message.content ) {
+			if (
+				content.type === 'data' &&
+				content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE &&
+				typeof content.data.promptSourceId === 'string' &&
+				content.data.promptSourceId
+			) {
+				return content.data.promptSourceId;
+			}
+		}
+	}
+	return null;
 }

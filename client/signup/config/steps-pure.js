@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { PLAN_ECOMMERCE } from '@automattic/calypso-products';
 import i18n from 'i18n-calypso';
 
 const noop = () => {};
@@ -15,6 +14,7 @@ export function generateSteps( {
 	launchSiteApi = noop,
 	isPlanFulfilled = noop,
 	isDomainFulfilled = noop,
+	isMailboxFulfilled = noop,
 	createSiteAndAddDIFMToCart = noop,
 	submitWebsiteContent = noop,
 } = {} ) {
@@ -169,18 +169,6 @@ export function generateSteps( {
 			},
 		},
 
-		'plans-ecommerce-fulfilled': {
-			stepName: 'plans-ecommerce-fulfilled',
-			apiRequestFunction: addPlanToCart,
-			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			defaultDependencies: {
-				cartItem: PLAN_ECOMMERCE,
-				themeSlugWithRepo: 'pub/twentytwentytwo',
-			},
-		},
-
 		'plans-launch': {
 			stepName: 'plans-launch',
 			apiRequestFunction: addPlanToCart,
@@ -213,7 +201,7 @@ export function generateSteps( {
 			stepName: 'mailbox-plan',
 			apiRequestFunction: addPlanToCart,
 			fulfilledStepCallback: isPlanFulfilled,
-			dependencies: [ 'siteSlug', 'emailItem' ],
+			dependencies: [ 'siteSlug', 'emailItem', 'domainItem' ],
 			providesDependencies: [ 'themeSlugWithRepo', 'cartItems' ],
 			optionalDependencies: [ 'themeSlugWithRepo' ],
 			props: {
@@ -253,6 +241,9 @@ export function generateSteps( {
 		},
 		mailbox: {
 			stepName: 'mailbox',
+			fulfilledStepCallback: isMailboxFulfilled,
+			isReadyForFulfillmentCheck: ( stepName, defaultDependencies, props ) =>
+				!! props.signupDependencies?.domainItem?.meta,
 			dependencies: [ 'domainItem', 'siteSlug' ],
 			providesDependencies: [ 'domainItem', 'emailItem' ],
 			props: {

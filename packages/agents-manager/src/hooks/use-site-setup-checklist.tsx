@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from '@wordpress/element';
 import {
+	getLastPickedSiteSetupTask,
 	isChatStartedFromSiteSetup,
 	isSiteSetupChecklistEnabled,
 	toChecklistItems,
@@ -34,6 +35,8 @@ export interface SiteSetupChecklistState {
 	items: ChecklistItem[];
 	/** The pinned list just replaced the one the user picked from, so it takes the focus. */
 	focusHeaderOnMount: boolean;
+	/** The task the user is on, the only one a folded pinned list keeps in view. */
+	activeItemId?: string;
 }
 
 export const SITE_SETUP_TASKS_QUERY_KEY = [ 'agents-manager-site-setup-tasks' ];
@@ -124,6 +127,7 @@ export default function useSiteSetupChecklist( {
 	);
 
 	const isStartedFromList = useMemo( () => isChatStartedFromSiteSetup( messages ), [ messages ] );
+	const lastPickedId = useMemo( () => getLastPickedSiteSetupTask( messages ), [ messages ] );
 	const hasMessages = messages.length > 0;
 
 	const state = useMemo( (): SiteSetupChecklistState => {
@@ -142,7 +146,12 @@ export default function useSiteSetupChecklist( {
 		const items = toChecklistItems( data.tasks, startTask );
 
 		if ( isStartedFromList ) {
-			return { ...NONE, variant: 'pinned', items };
+			// Several tasks can be in progress at once (the Site Setup page shows
+			// them all); the folded list keeps the one picked last, or failing
+			// that the first still in progress.
+			const inProgress = items.filter( ( item ) => item.status === 'in-progress' );
+			const active = inProgress.find( ( item ) => item.id === lastPickedId ) ?? inProgress[ 0 ];
+			return { ...NONE, variant: 'pinned', items, activeItemId: active?.id };
 		}
 
 		return hasMessages ? NONE : { ...NONE, variant: 'empty', items };
@@ -153,6 +162,7 @@ export default function useSiteSetupChecklist( {
 		data,
 		startTask,
 		isStartedFromList,
+		lastPickedId,
 		hasMessages,
 	] );
 

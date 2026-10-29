@@ -1,11 +1,6 @@
 import { FreeDomainSuggestion, useMyDomainInputMode } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
-import {
-	isDomainForGravatarFlow,
-	isEcommerceFlow,
-	isFreeFlow,
-	isWithThemeFlow,
-} from '@automattic/onboarding';
+import { isDomainForGravatarFlow, isFreeFlow, isWithThemeFlow } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
@@ -326,7 +321,6 @@ const DomainSearchUI = (
 				flowName: flowName,
 			} ),
 			allowedTlds,
-			deemphasizedTlds: isEcommerceFlow( flowName ) ? [ 'blog' ] : [],
 			skippable:
 				! isDomainOnlyFlow && ! isDomainForGravatarFlow( flowName ) && ! isOnboardingWithEmailFlow,
 			includeOwnedDomainInSuggestions: ! isDomainOnlyFlow,
@@ -416,8 +410,6 @@ const DomainSearchUI = (
 		} else if ( isWithThemeFlow( flowName ) ) {
 			backUrl = '/themes';
 			backLabelText = __( 'Back to themes' );
-		} else if ( 'plans-first' === flowName ) {
-			backUrl = getStepUrl( flowName, previousStepName );
 		} else {
 			backUrl = defaultBackUrl;
 			backLabelText = sitesBackLabelText;

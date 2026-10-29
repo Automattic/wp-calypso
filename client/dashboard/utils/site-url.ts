@@ -397,11 +397,7 @@ function buildSitePlanUpgradeUrl( {
 		return wpcomLink( `/plans/${ siteSlug }` );
 	}
 
-	const link = isWooHosted
-		? wpcomLink( '/setup/woo-hosted-plans' )
-		: wpcomLink( '/setup/plan-upgrade' );
-
-	return addQueryArgs( link, {
+	return addQueryArgs( wpcomLink( '/setup/plan-upgrade' ), {
 		siteSlug: siteSlug,
 		cancel_to: cancelTo,
 		dashboard: getCurrentDashboard(),

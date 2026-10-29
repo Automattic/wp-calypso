@@ -16,7 +16,6 @@ export interface StaticSiteImportSearch {
 	importSessionId?: string;
 	from?: string;
 	platform?: string;
-	domainChoice?: string;
 }
 
 export interface StaticSiteImport {

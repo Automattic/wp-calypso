@@ -66,7 +66,7 @@
 		"@storybook/addon-a11y": "^10.6.2",
 		"msw": "^2.1.7",
 		"msw-storybook-addon": "2.0.7",
-		"postcss": "^8.5.15",
+		"postcss": "^8.5.30",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"storybook": "^10.6.2",

@@ -158,9 +158,7 @@ function UpgradeCreditsNotice( {
 
 	return (
 		<div className="site-plans__upgrade-credit-notice">
-			<Notice variant="success" density="high">
-				{ message }
-			</Notice>
+			<Notice variant="success">{ message }</Notice>
 		</div>
 	);
 }

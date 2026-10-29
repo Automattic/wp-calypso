@@ -21,6 +21,16 @@ export interface ChecklistProps {
 	 * view for a beat, then expand the list so the next task is at hand.
 	 */
 	expandOnSettle?: boolean;
+	/**
+	 * The one item a collapsed list keeps in view, instead of every in-progress
+	 * one: the task the user is on. Unset, every in-progress row stays.
+	 */
+	activeItemId?: string;
+	/**
+	 * Let an in-progress item be clicked to submit its prompt again, except the
+	 * active one, which the conversation is already on. Off, in-progress rows are inert.
+	 */
+	resumeInProgress?: boolean;
 	/** Return false when the prompt was not actually sent; the list then stays open. */
 	onSubmit?: ( selectedItem: ChecklistItem, items: ChecklistItem[] ) => boolean | void;
 	/** While true (e.g. a reply is streaming) open tasks look and act inert. */
@@ -38,11 +48,29 @@ const SETTLED_REVEAL_MS = 1200;
 export const isSettled = ( item: ChecklistItem ): boolean =>
 	[ 'done', 'skipped' ].includes( getStatus( item ) );
 
-// Only an open task can be started: in-progress ones were already sent, and
-// settled ones have nothing left to do. A task with neither a prompt nor an
-// action has nothing to trigger. All of those render as plain rows.
-const isActionable = ( item: ChecklistItem ): boolean =>
-	! item.disabled && getStatus( item ) === 'todo' && Boolean( item.prompt || item.action );
+interface ActionableOptions {
+	resumeInProgress: boolean;
+	activeItemId?: string;
+}
+
+// An open task can be started; with `resumeInProgress`, an in-progress one can
+// be resumed too (its prompt goes again), except the active one, which the
+// conversation is already on. Settled ones have nothing left to do, and a task
+// with neither a prompt nor an action has nothing to trigger. All of those
+// render as plain rows.
+const isActionable = (
+	item: ChecklistItem,
+	{ resumeInProgress, activeItemId }: ActionableOptions
+): boolean => {
+	if ( item.disabled || ! ( item.prompt || item.action ) ) {
+		return false;
+	}
+	const status = getStatus( item );
+	if ( status === 'todo' ) {
+		return true;
+	}
+	return status === 'in-progress' && resumeInProgress && item.id !== activeItemId;
+};
 
 // Eight arc segments: the dashed ring of an open task.
 const RING_DASHED =
@@ -88,8 +116,8 @@ function StatusIcon( { status }: { status: ChecklistItemStatus } ) {
 
 type RowKind = 'open' | 'disabled' | 'inert';
 
-const getRowKind = ( item: ChecklistItem ): RowKind => {
-	if ( isActionable( item ) ) {
+const getRowKind = ( item: ChecklistItem, options: ActionableOptions ): RowKind => {
+	if ( isActionable( item, options ) ) {
 		return 'open';
 	}
 	// Status wins over `disabled`: only an open task can be a disabled one.
@@ -102,13 +130,25 @@ interface ChecklistRowProps {
 	idPrefix: string;
 	statusLabel: string;
 	busy: boolean;
+	actionable: ActionableOptions;
 	onSelect: ( item: ChecklistItem ) => void;
 }
 
-function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: ChecklistRowProps ) {
+function ChecklistRow( {
+	item,
+	idPrefix,
+	statusLabel,
+	busy,
+	actionable,
+	onSelect,
+}: ChecklistRowProps ) {
 	const status = getStatus( item );
+	// Without an active item every in-progress row is emphasized; with one, only it is.
+	const isActive =
+		status === 'in-progress' &&
+		( actionable.activeItemId === undefined || item.id === actionable.activeItemId );
 	const className = cn( styles.item, {
-		[ styles[ 'item-in-progress' ] ]: status === 'in-progress',
+		[ styles[ 'item-active' ] ]: isActive,
 		[ styles.settled ]: isSettled( item ),
 	} );
 	const content = (
@@ -119,7 +159,7 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
 		</>
 	);
 
-	switch ( getRowKind( item ) ) {
+	switch ( getRowKind( item, actionable ) ) {
 		case 'open':
 			// Kept focusable while busy so keyboard position survives a stream.
 			return (
@@ -167,9 +207,12 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * A task list that lives in the chat: a header with progress and a
  * collapse toggle, and one row per task. Clicking an open task submits it
  * the way a suggestion would, then collapses the list down to whatever is
- * in progress. In-progress and settled (done / skipped) rows are inert. With
- * `expandOnSettle`, a task that settles while collapsed stays in view for a
- * beat and the list then opens on the next one.
+ * in progress, or to `activeItemId` alone when the host names the task the
+ * user is on. With `resumeInProgress`, clicking another in-progress task
+ * submits its prompt again, to resume it; the active one and the settled
+ * (done / skipped) rows are always inert. With `expandOnSettle`, a task that
+ * settles while collapsed stays in view for a beat and the list then opens on
+ * the next one.
  * @param props                   Component props.
  * @param props.title
  * @param props.items
@@ -178,6 +221,8 @@ function ChecklistRow( { item, idPrefix, statusLabel, busy, onSelect }: Checklis
  * @param props.onCollapsedChange
  * @param props.collapseOnSelect
  * @param props.expandOnSettle   Reveal a task that just settled, then open the list.
+ * @param props.activeItemId     The one item a collapsed list keeps in view.
+ * @param props.resumeInProgress Let an in-progress item be clicked to resume it.
  * @param props.onSubmit
  * @param props.busy
  * @param props.focusHeaderOnMount Move focus to the header on mount.
@@ -191,6 +236,8 @@ export function Checklist( {
 	onCollapsedChange,
 	collapseOnSelect = true,
 	expandOnSettle = false,
+	activeItemId,
+	resumeInProgress = false,
 	onSubmit,
 	busy = false,
 	focusHeaderOnMount = false,
@@ -199,9 +246,14 @@ export function Checklist( {
 	const [ internalCollapsed, setInternalCollapsed ] = useState( defaultCollapsed );
 	const isControlled = collapsed !== undefined;
 	const isCollapsed = isControlled ? collapsed : internalCollapsed;
-	// Collapsing keeps the in-progress rows; when every row is in progress
-	// that would hide nothing, so it folds them all instead.
+	// Collapsing keeps the active row, or the in-progress rows; when every row
+	// is in progress that would hide nothing, so it folds them all instead.
 	const foldEverything = items.every( ( item ) => getStatus( item ) === 'in-progress' );
+	const staysWhenCollapsed = ( item: ChecklistItem ): boolean =>
+		activeItemId !== undefined
+			? item.id === activeItemId
+			: ! foldEverything && getStatus( item ) === 'in-progress';
+	const actionable: ActionableOptions = { resumeInProgress, activeItemId };
 	const listId = useId();
 	const headerRef = useRef< HTMLButtonElement >( null );
 
@@ -281,7 +333,7 @@ export function Checklist( {
 	const busyRef = useRef( false );
 
 	const handleItemClick = async ( item: ChecklistItem ) => {
-		if ( busyRef.current || ! isActionable( item ) ) {
+		if ( busyRef.current || ! isActionable( item, actionable ) ) {
 			return;
 		}
 		busyRef.current = true;
@@ -295,8 +347,11 @@ export function Checklist( {
 			}
 			// Collapsing after the last open task was picked would fold every
 			// row (it is about to be in progress too), so the list stays open.
+			// With an active item the picked task is about to become it, so every
+			// other row folds, the current active one included.
 			const leavesSomethingToFold = items.some(
-				( other ) => other !== item && getStatus( other ) !== 'in-progress'
+				( other ) =>
+					other !== item && ( activeItemId !== undefined || ! staysWhenCollapsed( other ) )
 			);
 			if ( started && collapseOnSelect && ! isCollapsed && leavesSomethingToFold ) {
 				setCollapsed( true );
@@ -339,9 +394,7 @@ export function Checklist( {
 			<ul id={ listId } className={ styles.list }>
 				{ items.map( ( item ) => {
 					const hidden =
-						isCollapsed &&
-						! revealedIds.has( item.id ) &&
-						( foldEverything || getStatus( item ) !== 'in-progress' );
+						isCollapsed && ! revealedIds.has( item.id ) && ! staysWhenCollapsed( item );
 					return (
 						<li
 							key={ item.id }
@@ -354,6 +407,7 @@ export function Checklist( {
 										item={ item }
 										idPrefix={ listId }
 										busy={ busy }
+										actionable={ actionable }
 										statusLabel={ statusLabels[ getStatus( item ) ] }
 										onSelect={ handleItemClick }
 									/>

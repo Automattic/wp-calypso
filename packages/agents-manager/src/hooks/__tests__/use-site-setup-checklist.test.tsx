@@ -146,6 +146,45 @@ describe( 'useSiteSetupChecklist', () => {
 		consoleError.mockRestore();
 	} );
 
+	it( 'keeps the task picked last as the active one, or the first in progress', () => {
+		const withInProgress = ( ...ids: string[] ) => ( {
+			...DETAILS,
+			tasks: [
+				{ id: 'design', title: 'Customize the design', status: 'in-progress', disabled: false },
+				DETAILS.tasks[ 1 ],
+				...ids.map( ( id ) => ( { id, title: id, status: 'in-progress', disabled: false } ) ),
+			],
+		} );
+		mockUseQuery.mockReturnValue( {
+			data: withInProgress(),
+			isLoading: false,
+			refetch: mockRefetch,
+		} );
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: {
+				...config,
+				messages: [ userMessage( 'u1', 'design' ), userMessage( 'u2', 'about' ) ],
+			},
+		} );
+		// `about` is done on the server, so the picked-last fallback is the first in progress.
+		expect( result.current.activeItemId ).toBe( 'design' );
+
+		mockUseQuery.mockReturnValue( {
+			data: withInProgress( 'domain' ),
+			isLoading: false,
+			refetch: mockRefetch,
+		} );
+		rerender( {
+			...config,
+			messages: [ userMessage( 'u1', 'design' ), userMessage( 'u2', 'domain' ) ],
+		} );
+		expect( result.current.activeItemId ).toBe( 'domain' );
+
+		// A chat not started from the list has no pinned list, so no active task.
+		rerender( { ...config, messages: [ userMessage( 'u1' ) ] } );
+		expect( result.current.activeItemId ).toBeUndefined();
+	} );
+
 	it( 'hands the focus over only on the empty → pinned move of the same session', () => {
 		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: config,

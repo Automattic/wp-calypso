@@ -3,6 +3,7 @@
  */
 import { consumePromptSource } from '../prompt-source';
 import {
+	getLastPickedSiteSetupTask,
 	isChatStartedFromSiteSetup,
 	isSiteSetupChecklistEnabled,
 	toChecklistItems,
@@ -128,6 +129,19 @@ describe( 'isChatStartedFromSiteSetup', () => {
 
 	it( 'still marks the chat as started when the stored message has no task id', () => {
 		expect( isChatStartedFromSiteSetup( [ message( 'user', checklist() ) ] ) ).toBe( true );
+	} );
+
+	it( 'names the task picked last, skipping messages without a task id', () => {
+		expect(
+			getLastPickedSiteSetupTask( [
+				message( 'user', checklist( 'theme' ) ),
+				message( 'user', checklist( 'about' ) ),
+				message( 'user', checklist() ),
+				message( 'agent' ),
+			] )
+		).toBe( 'about' );
+		expect( getLastPickedSiteSetupTask( [ message( 'user', checklist() ) ] ) ).toBeNull();
+		expect( getLastPickedSiteSetupTask( [ message( 'agent', checklist( 'theme' ) ) ] ) ).toBeNull();
 	} );
 
 	it( 'is false for other sources, agent messages and plain chats', () => {

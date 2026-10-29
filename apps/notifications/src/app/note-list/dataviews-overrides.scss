@@ -80,23 +80,18 @@
 		line-height: var(--wpds-typography-line-height-sm, 20px);
 	}
 
+	// Tighten the title-to-excerpt gap and center short text in the column's
+	// two-line min-height. DataViews sets the gap inline, hence `!important`.
+	.dataviews-view-list__field-wrapper {
+		gap: calc(var(--wpds-dimension-base, 4px) / 2) !important;
+		justify-content: center;
+	}
+
 	// Notes without an excerpt render an empty description field, but DataViews
 	// still emits its cell as a flex item in the column, which doubles the row
 	// gap. Drop the empty cell so only one gap remains.
 	.dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty {
 		display: none;
-	}
-
-	// A note with no excerpt leaves its title at the top of the text column,
-	// which DataViews keeps at a two-line min-height. Center the title and the
-	// icon in the row instead.
-	.dataviews-view-list__field-wrapper:has(> .dataviews-view-list__field:empty) {
-		justify-content: center;
-	}
-
-	.dataviews-view-list__media-wrapper:has(+ .dataviews-view-list__field-wrapper > .dataviews-view-list__field:empty) {
-		align-self: center;
-		margin-block-start: 0;
 	}
 
 	// We override styles with the selected styles for unread items.
@@ -107,8 +102,10 @@
 		}
 	}
 
-	div[role="article"]:has(.is-unread) + div[role="article"]:has(.is-unread) {
-		border-top: 1px solid var(--wpds-color-stroke-surface-neutral, #dbdbdb);
+	div[role="article"]:has(.is-unread),
+	div[role="article"]:has(.is-unread) + div[role="article"],
+	> div:has(> div[role="article"]:last-child .is-unread) + div > .dataviews-view-list__group-header {
+		border-top-color: rgba(var(--wp-admin-theme-color--rgb), 0.18);
 	}
 
 	// We override hover styles for unread items.
@@ -119,20 +116,22 @@
 		}
 	}
 
-	// Open note: a left accent bar marks the row whose detail is showing. Driven
-	// by our own `is-active` marker (see getFields), not DataViews selection, so
-	// the unread tint still shows through on a selected unread row.
-	div[role="article"]:has(.wpnc__subject.is-active) {
-		.dataviews-view-list__item-wrapper {
-			box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
+	&:not(:has(.dataviews-view-list__item:focus-visible)) {
+		// Open note: a left accent bar marks the row whose detail is showing. Driven
+		// by our own `is-active` marker (see getFields), not DataViews selection, so
+		// the unread tint still shows through on a selected unread row.
+		div[role="article"]:has(.wpnc__subject.is-active) {
+			.dataviews-view-list__item-wrapper {
+				box-shadow: inset 3px 0 0 var(--wp-admin-theme-color);
+			}
 		}
-	}
 
-	// A pending comment keeps its warning color when open, so the bar matches its
-	// icon badge and its Pending badge rather than switching to the theme accent.
-	div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
-		.dataviews-view-list__item-wrapper {
-			box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+		// A pending comment keeps its warning color when open, so the bar matches its
+		// icon badge and its Pending badge rather than switching to the theme accent.
+		div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
+			.dataviews-view-list__item-wrapper {
+				box-shadow: inset 3px 0 0 var(--wpds-color-stroke-surface-warning, #e1bc7c);
+			}
 		}
 	}
 
@@ -157,7 +156,9 @@
 		width: 36px;
 		height: 36px;
 		margin-inline-end: $grid-unit-05;
-		margin-block-start: 4px;
+		// Half the difference between the text column's 48px min-height and the
+		// icon, so it centers on short rows and stays by the first line on tall ones.
+		margin-block-start: calc(var(--wpds-dimension-base, 4px) * 1.5);
 		border-radius: 50%;
 		overflow: visible;
 

@@ -64,7 +64,9 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 	}
 
 	function onTryAgainClick() {
-		job?.importerId && resetImport( siteId, job.importerId );
+		if ( job?.importerId ) {
+			resetImport( siteId, job.importerId );
+		}
 	}
 
 	function checkProgress() {
@@ -105,7 +107,13 @@ export const MediumImporter: React.FunctionComponent< ImporterBaseProps > = ( pr
 							/>
 						);
 					} else if ( checkIsFailed() ) {
-						return <ErrorMessage onPrimaryBtnClick={ onTryAgainClick } />;
+						return (
+							<ErrorMessage
+								onPrimaryBtnClick={ onTryAgainClick }
+								errorData={ job?.errorData }
+								importerFileType={ job?.importerFileType }
+							/>
+						);
 					} else if ( checkProgress() ) {
 						return <ProgressScreen job={ job } showHeading={ renderHeading } />;
 					}

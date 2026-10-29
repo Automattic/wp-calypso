@@ -3,6 +3,7 @@ import {
 	BASIC_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
+import OpenHelpCenterButton from '../components/open-help-center-button';
 import { ButtonPicker, ColorPicker, FontPicker } from '../components/style-pickers';
 import { withChatResponseTracking } from './with-chat-response-tracking';
 import type {
@@ -21,8 +22,6 @@ const STYLE_VARIATIONS = { type: 'array', items: { type: 'object', additionalPro
 const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 	catalog: {
 		catalogId: AGENTS_MANAGER_CATALOG_ID,
-		instructions:
-			'The style pickers come from the color, font and button abilities, which fill in their variations; never compose them yourself.',
 		components: {
 			AgentsManagerColorPicker: {
 				type: 'object',
@@ -41,12 +40,20 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 				},
 				required: [ 'buttonVariations' ],
 			},
+			AgentsManagerOpenHelpCenterButton: {
+				type: 'object',
+				properties: { message: { type: 'string' } },
+			},
 		},
 	},
+	// Its pickers need style variations that only the color, font and button abilities fill in, and
+	// the Help Center button shows only once the support workflow approves a hand-off.
+	agentComposable: false,
 	components: {
 		AgentsManagerColorPicker: ColorPicker,
 		AgentsManagerFontPicker: FontPicker,
 		AgentsManagerButtonPicker: ButtonPicker,
+		AgentsManagerOpenHelpCenterButton: OpenHelpCenterButton,
 	},
 };
 
@@ -81,9 +88,7 @@ export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefin
 export function getInteractiveUiCapabilities(
 	providerCatalogs: InteractiveUiCatalogDefinition[] = []
 ) {
-	return getInteractiveUiRendererCapabilities(
-		[ AGENTS_MANAGER_CATALOG, ...providerCatalogs ].map( ( { catalog } ) => catalog )
-	);
+	return getInteractiveUiRendererCapabilities( [ AGENTS_MANAGER_CATALOG, ...providerCatalogs ] );
 }
 
 /**

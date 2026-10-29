@@ -1,7 +1,8 @@
 import * as renderer from '@automattic/ai-ui-renderer';
 import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ButtonPicker, ColorPicker, FontPicker } from '../../components/style-pickers';
+import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import * as tracks from '../../utils/tracks';
 import {
 	AGENTS_MANAGER_CATALOG_ID,
@@ -16,6 +17,7 @@ jest.mock( '../../components/style-pickers', () => ( {
 	ColorPicker: jest.fn( () => null ),
 	FontPicker: jest.fn( () => null ),
 } ) );
+jest.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: jest.fn() } ) );
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';
 
@@ -149,6 +151,43 @@ it( 'renders the style pickers with the props their abilities send', async () =>
 	expect( onError ).not.toHaveBeenCalled();
 } );
 
+it( 'renders the Help Center button the support hand-off sends', async () => {
+	jest.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
+	const onError = jest.fn();
+	const runtime = renderer.createInteractiveUiRuntime( {
+		catalogs: createInteractiveUiCatalogs( renderer ),
+		onAction: jest.fn(),
+		onError,
+	} );
+
+	runtime.processMessages(
+		[
+			{
+				version: 'v1.0',
+				createSurface: {
+					surfaceId: 'help-center',
+					catalogId: AGENTS_MANAGER_CATALOG_ID,
+					components: [
+						{
+							id: 'root',
+							component: 'AgentsManagerOpenHelpCenterButton',
+							message: 'Summary for support.',
+						},
+					],
+				},
+			},
+		],
+		'message'
+	);
+
+	render( <renderer.InteractiveUiSurface surface={ runtime.getSurface( 'help-center' )! } /> );
+
+	fireEvent.click( await screen.findByRole( 'button', { name: 'Get help' } ) );
+
+	expect( openHelpCenterChat ).toHaveBeenCalledWith( 'Summary for support.' );
+	expect( onError ).not.toHaveBeenCalled();
+} );
+
 it( 'skips a catalog that fails to build, and keeps the others', () => {
 	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
@@ -189,7 +228,7 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 	);
 } );
 
-it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () => {
+it( 'describes the catalogs the chat renders as A2UI renderer capabilities, listing an ability-only catalog by ID only', () => {
 	const wooCatalog = {
 		catalog: {
 			catalogId: WOO_CATALOG_ID,
@@ -221,11 +260,6 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities', () 
 		'v1.0': {
 			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
 			inlineCatalogs: [
-				expect.objectContaining( {
-					$id: AGENTS_MANAGER_CATALOG_ID,
-					catalogId: AGENTS_MANAGER_CATALOG_ID,
-					protocolVersion: '1.0',
-				} ),
 				{
 					$id: WOO_CATALOG_ID,
 					catalogId: WOO_CATALOG_ID,

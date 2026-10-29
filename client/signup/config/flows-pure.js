@@ -116,17 +116,6 @@ export function generateFlows( {
 			hideProgressIndicator: true,
 		},
 		{
-			name: 'plans-first',
-			steps: [ 'plans', 'domains', userSocialStep ],
-			destination: getSignupDestination,
-			description: 'Plans first signup flow',
-			lastModified: '2024-05-24',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-pm',
 			steps: [ userSocialStep, 'domains', 'plans' ],
 			destination: getSignupDestination,
@@ -162,8 +151,11 @@ export function generateFlows( {
 			destination: getEmailSignupFlowDestination,
 			description:
 				'Copy of the onboarding flow that includes non-skippable domain and email steps; the flow is used by the Professional Email landing page',
-			lastModified: '2023-10-11',
+			lastModified: '2026-10-24',
 			showRecaptcha: true,
+			providesDependenciesInQuery: [ 'tier', 'billing' ],
+			optionalDependenciesInQuery: [ 'tier', 'billing' ],
+			clearsMissingDependenciesInQuery: true,
 			hideProgressIndicator: true,
 		},
 		{
@@ -183,17 +175,6 @@ export function generateFlows( {
 				'Allow users of sites that can auto-config to grant permission to server credentials',
 			lastModified: '2018-02-13',
 			disallowResume: true,
-		},
-		{
-			name: 'ecommerce',
-			steps: [ userSocialStep, 'domains', 'plans-ecommerce-fulfilled' ],
-			destination: getSignupDestination,
-			description: 'Signup flow for creating an online store with an Atomic site',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			hideProgressIndicator: true,
-			providesDependenciesInQuery: [ 'coupon' ],
-			optionalDependenciesInQuery: [ 'coupon' ],
 		},
 		{
 			name: 'wpcc',

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
+import { PLAN_ECOMMERCE_2_YEARS, PLAN_HOSTING_TRIAL_MONTHLY } from '@automattic/calypso-products';
 import { NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { shouldSkipPlansStep } from '../preselected-plan';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -33,9 +33,9 @@ describe( 'shouldSkipPlansStep', () => {
 		);
 	} );
 
-	it( 'skips a matching Commerce plan only in new-hosted-site', () => {
-		const query = new URLSearchParams( 'plan=ecommerce-bundle' );
-		const cart = inCart( 'ecommerce-bundle' );
+	it( 'skips a plan outside the preselectable list only in new-hosted-site', () => {
+		const query = new URLSearchParams( { plan: PLAN_ECOMMERCE_2_YEARS } );
+		const cart = inCart( PLAN_ECOMMERCE_2_YEARS );
 		expect( shouldSkipPlansStep( query, cart ) ).toBe( false );
 		expect( shouldSkipPlansStep( query, cart, NEW_HOSTED_SITE_FLOW ) ).toBe( true );
 	} );

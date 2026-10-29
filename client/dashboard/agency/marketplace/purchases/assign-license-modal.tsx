@@ -45,7 +45,7 @@ const DEFAULT_SITES_VIEW: View = {
 	layout: { density: 'compact' },
 };
 
-interface Props {
+interface AssignLicenseModalProps {
 	licenseKey: string;
 	productName: string;
 	issuedAt: string;
@@ -61,7 +61,7 @@ export default function AssignLicenseModal( {
 	clientEmail,
 	closeModal,
 	onAssigned,
-}: Props ) {
+}: AssignLicenseModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 	const locale = useLocale();

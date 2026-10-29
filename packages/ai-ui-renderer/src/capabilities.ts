@@ -3,8 +3,20 @@ import type {
 	InteractiveUiCatalogDocument,
 } from './utils/definitions';
 
-// This entry has no A2UI or React code, so hosts can check and describe their catalogs without
-// loading the renderer.
+// This entry has no A2UI or React code, so hosts can use it without loading the renderer.
+
+export { getInteractiveUiOperation } from './utils/operation';
+
+export type InteractiveUiActionMode = 'agent' | 'tool-call';
+
+/** Guidance for the agent composing actions, included in the host's rendering tool description. */
+export function getInteractiveUiActionInstructions( mode: InteractiveUiActionMode = 'agent' ) {
+	if ( mode === 'tool-call' ) {
+		return 'UI event actions call tools directly. Set action.event.name to an available tool name and action.event.context to its complete arguments, using data bindings for editable values. No LLM interprets the action or chooses another tool after a click. Do not use free-form action names or promise an assistant follow-up. The host handles tool results and any UI updates; tool calls may still be visible in the client.';
+	}
+
+	return 'UI event actions are sent to the agent for interpretation. Use action.event.name to describe the intent and action.event.context for the values the agent needs.';
+}
 
 /** The ID of A2UI's Basic catalog, which the basic components implement. */
 export const BASIC_CATALOG_ID = 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json';
@@ -153,14 +165,22 @@ function toInlineCatalog( {
 }
 
 /**
- * A2UI's `a2uiRendererCapabilities` for a host that renders the Basic catalog and these: their IDs,
- * and their documents for the agent.
+ * A2UI's `a2uiRendererCapabilities` for a host that renders the Basic catalog and these catalog
+ * definitions: their IDs, and, for the agent to compose with, the documents of those that aren't
+ * `agentComposable: false`.
  */
-export function getInteractiveUiRendererCapabilities( catalogs: InteractiveUiCatalogDocument[] ) {
+export function getInteractiveUiRendererCapabilities(
+	catalogs: Array< Pick< InteractiveUiCatalogDefinition, 'catalog' | 'agentComposable' > >
+) {
 	return {
 		'v1.0': {
-			supportedCatalogIds: [ BASIC_CATALOG_ID, ...catalogs.map( ( { catalogId } ) => catalogId ) ],
-			inlineCatalogs: catalogs.map( toInlineCatalog ),
+			supportedCatalogIds: [
+				BASIC_CATALOG_ID,
+				...catalogs.map( ( { catalog } ) => catalog.catalogId ),
+			],
+			inlineCatalogs: catalogs
+				.filter( ( { agentComposable } ) => agentComposable !== false )
+				.map( ( { catalog } ) => toInlineCatalog( catalog ) ),
 		},
 	};
 }
