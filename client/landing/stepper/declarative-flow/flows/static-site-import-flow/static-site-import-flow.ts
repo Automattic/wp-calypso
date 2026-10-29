@@ -71,8 +71,6 @@ function initialize() {
 	];
 }
 
-const hasSite = ( siteId?: number, siteSlug?: string ) => Boolean( siteId && siteSlug );
-
 const staticSiteImport: FlowV2< typeof initialize > = {
 	name: STATIC_SITE_IMPORT_FLOW,
 	get isSignupFlow() {
@@ -130,6 +128,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const siteId = hasDestinationSite ? siteData.siteId : 0;
 		const siteSlug = hasDestinationSite ? siteData.siteSlug : '';
 		const site = hasDestinationSite ? siteData.site : undefined;
+		const hasSite = Boolean( siteId && siteSlug );
 		const from = urlQueryParams.get( 'from' ) ?? '';
 		const platform = ( urlQueryParams.get( 'platform' ) || 'unknown' ) as ImporterPlatform;
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
@@ -137,68 +136,8 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 		const isSiteOnPaidPlan = Boolean( site?.plan ) && ! site?.plan?.is_free;
 
-		const exitFlow = ( to: string, replace = false ) => {
-			const url = addQueryArgs( { ref: STATIC_SITE_IMPORT_FLOW }, to );
-			return replace ? window.location.replace( url ) : window.location.assign( url );
-		};
-
-		const exitToMigrationFlow = ( source: string, sourcePlatform: ImporterPlatform ) => {
-			if ( ! hasSite( siteId, siteSlug ) ) {
-				return navigate( STEPS.UNIFIED_PLANS.slug );
-			}
-
-			if ( isPlatformImportable( sourcePlatform ) && source ) {
-				return exitFlow( getFullImporterUrl( sourcePlatform, siteSlug, source ), true );
-			}
-
-			return exitFlow(
-				siteSetupImportListPath( {
-					siteId,
-					siteSlug,
-					from: source,
-					origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
-					backToFlow: `/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
-				} ),
-				true
-			);
-		};
-
-		// The address form lives in the migration flow; `from` fills it in again.
-		const backToIdentify = () =>
-			window.location.assign(
-				addQueryArgs(
-					{
-						from,
-						siteId: hasSite( siteId, siteSlug ) ? siteId : undefined,
-						siteSlug: hasSite( siteId, siteSlug ) ? siteSlug : undefined,
-					},
-					`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`
-				)
-			);
-
-		// The site's Overview in the dashboard approves the move and follows it from here.
-		const getSiteOverviewUrl = (
-			destinationSiteSlug: string,
-			importSessionId = urlQueryParams.get( 'importSessionId' )
-		) =>
-			addQueryArgs(
-				{
-					importSessionId,
-					from,
-					platform,
-				},
-				dashboardLink( `/sites/${ destinationSiteSlug }` )
-			);
-
-		const getReadingUrl = () =>
-			addQueryArgs(
-				{
-					...Object.fromEntries( urlQueryParams ),
-					siteId: undefined,
-					siteSlug: undefined,
-				},
-				withLocale( `/setup/${ flowPath }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`, locale )
-			);
+		const exitFlow = ( to: string ) =>
+			window.location.replace( addQueryArgs( { ref: STATIC_SITE_IMPORT_FLOW }, to ) );
 
 		useEffect( () => {
 			if ( currentStep === STEPS.UNIFIED_PLANS.slug && isSiteOnPaidPlan ) {
@@ -212,12 +151,31 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			switch ( slug ) {
 				case STEPS.STATIC_SITE_IMPORT_READING.slug: {
 					if ( providedDependencies.action === 'unavailable' ) {
-						return exitToMigrationFlow( from, platform );
+						if ( ! hasSite ) {
+							return navigate( STEPS.UNIFIED_PLANS.slug );
+						}
+						if ( isPlatformImportable( platform ) && from ) {
+							return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
+						}
+						return exitFlow(
+							siteSetupImportListPath( {
+								siteId,
+								siteSlug,
+								from,
+								origin: STEPS.SITE_MIGRATION_IDENTIFY.slug,
+								backToFlow: `/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+							} )
+						);
 					}
 
 					const { importSessionId } = providedDependencies;
-					if ( hasSite( siteId, siteSlug ) && isSiteOnPaidPlan ) {
-						return exitFlow( getSiteOverviewUrl( siteSlug, importSessionId ), true );
+					if ( hasSite && isSiteOnPaidPlan ) {
+						return exitFlow(
+							addQueryArgs(
+								{ importSessionId, from, platform },
+								dashboardLink( `/sites/${ siteSlug }` )
+							)
+						);
 					}
 
 					return navigate(
@@ -237,14 +195,23 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						Object.fromEntries( urlQueryParams ),
 						withLocale( `/setup/${ flowPath }/plans`, locale )
 					);
+					const readingUrl = addQueryArgs(
+						{
+							...Object.fromEntries( urlQueryParams ),
+							siteId: hasSite ? siteId : undefined,
+							siteSlug: hasSite ? siteSlug : undefined,
+							applySiteSettings: hasSite ? undefined : '1',
+						},
+						withLocale( `/setup/${ flowPath }/${ STEPS.STATIC_SITE_IMPORT_READING.slug }`, locale )
+					);
 
-					if ( hasSite( siteId, siteSlug ) ) {
+					if ( hasSite ) {
 						return goToCheckout( {
 							flowName: flowPath,
 							stepName: STEPS.UNIFIED_PLANS.slug,
 							siteSlug,
 							plan: planCartItem.product_slug,
-							destination: addQueryArgs( { siteId, siteSlug }, getReadingUrl() ),
+							destination: readingUrl,
 							cancelDestination,
 						} );
 					}
@@ -254,10 +221,11 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						plan: planCartItem.product_slug,
 						userIsLoggedIn,
 						// The pending page resolves the literal placeholder from the purchase receipt.
-						destination: `${ getReadingUrl() }&siteId=:siteId`,
+						destination: `${ readingUrl }&siteId=:siteId`,
 						cancelDestination,
 						siteIntent: Onboard.SiteIntent.SiteMigration,
 						extraQueryParams: {
+							lang: locale,
 							...Object.fromEntries(
 								[ 'coupon', 'ref', 'source' ]
 									.filter( ( param ) => urlQueryParams.has( param ) )
@@ -272,7 +240,19 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 		const goBack = () => {
 			if ( currentStep === STEPS.UNIFIED_PLANS.slug ) {
-				return backToIdentify();
+				return window.location.assign(
+					addQueryArgs(
+						{
+							from,
+							siteId: hasSite ? siteId : undefined,
+							siteSlug: hasSite ? siteSlug : undefined,
+						},
+						withLocale(
+							`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_IDENTIFY.slug }`,
+							locale
+						)
+					)
+				);
 			}
 		};
 

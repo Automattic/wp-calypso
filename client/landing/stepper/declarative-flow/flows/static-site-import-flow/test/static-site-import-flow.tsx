@@ -249,9 +249,23 @@ describe( 'Static site import flow', () => {
 		} );
 	} );
 
+	it( 'preserves the selected locale when going back to source identification', () => {
+		jest.mocked( useFlowLocale ).mockReturnValue( 'es' );
+		runFlowNavigation(
+			staticSiteImportFlow,
+			{ from: STEPS.UNIFIED_PLANS, query: { ...SOURCE } },
+			'back'
+		);
+
+		expect( lastExit() ).toEqual( {
+			path: `${ identifyPath }/es`,
+			query: { from: SOURCE.from },
+		} );
+	} );
+
 	describe( 'choosing a plan', () => {
 		it.each( [ false, true ] )(
-			'uses unified checkout for a new destination (logged in: %s)',
+			'uses unified checkout and applies site settings for a new destination (logged in: %s)',
 			( userIsLoggedIn ) => {
 				jest.mocked( isUserLoggedIn ).mockReturnValue( userIsLoggedIn );
 				// A previous signup must not turn this into an upgrade of another site.
@@ -267,6 +281,7 @@ describe( 'Static site import flow', () => {
 						userIsLoggedIn,
 						siteIntent: 'site-migration',
 						extraQueryParams: expect.objectContaining( {
+							lang: 'en',
 							coupon: 'TEST',
 							ref: 'move',
 							source: 'landing-page',
@@ -278,7 +293,11 @@ describe( 'Static site import flow', () => {
 					jest.mocked( goToUnifiedCheckout ).mock.calls[ 0 ][ 0 ];
 				expect( parseUrl( destination ) ).toEqual( {
 					path: readingPath,
-					query: { ...query, siteId: ':siteId' },
+					query: {
+						...query,
+						applySiteSettings: '1',
+						siteId: ':siteId',
+					},
 				} );
 				expect( destination ).toContain( '&siteId=:siteId' );
 				expect( parseUrl( cancelDestination ) ).toEqual( { path: plansPath, query } );
@@ -299,6 +318,8 @@ describe( 'Static site import flow', () => {
 			} );
 
 			const checkoutBackUrl = new URL( extraQueryParams?.checkoutBackUrl ?? '' );
+			expect( extraQueryParams?.lang ).toBe( 'es' );
+			expect( parseUrl( destination ).query.applySiteSettings ).toBe( '1' );
 			expect( checkoutBackUrl.pathname ).toBe( `${ plansPath }/es` );
 			expect( Object.fromEntries( checkoutBackUrl.searchParams ) ).toEqual( query );
 		} );

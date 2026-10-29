@@ -78,6 +78,7 @@ describe( 'goToUnifiedCheckout', () => {
 				coupon: 'PROMO',
 				ref: 'migration',
 				source: 'campaign',
+				lang: 'es',
 				checkoutBackUrl,
 			},
 		} );
@@ -87,6 +88,7 @@ describe( 'goToUnifiedCheckout', () => {
 			coupon: 'PROMO',
 			ref: 'migration',
 			source: 'campaign',
+			lang: 'es',
 			checkoutBackUrl,
 		} );
 	} );

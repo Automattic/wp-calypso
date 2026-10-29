@@ -1,12 +1,14 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
-import { Step } from '@automattic/onboarding';
+import { Onboard, Visibility } from '@automattic/data-stores';
+import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useEffectEvent, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { useStaticSiteImportSource } from '../components/static-site-import';
+import { addSchemeIfMissing } from 'calypso/lib/url';
+import wpcom from 'calypso/lib/wp';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
@@ -16,9 +18,14 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 	function StaticSiteImportReading( { navigation } ) {
 		const { __ } = useI18n();
 		const [ searchParams ] = useSearchParams();
-		const { sourceUrl } = useStaticSiteImportSource();
+		const from = searchParams.get( 'from' )?.trim();
+		const sourceUrl = from
+			? addSchemeIfMissing( from, 'https' ).replace( /^http:/i, 'https:' )
+			: '';
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
+		const siteId = searchParams.get( 'siteId' );
+		const shouldApplySiteSettings = searchParams.get( 'applySiteSettings' ) === '1';
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
 		const isRefused = getStaticSiteImportErrorCode( error ) === 'static_site_import_source_refused';
@@ -38,18 +45,53 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			if ( ! sourceUrl ) {
 				return submit( { action: 'unavailable' } );
 			}
-			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
-				onError: ( createError ) => {
-					if (
-						getStaticSiteImportErrorCode( createError ) !== 'static_site_import_source_refused'
-					) {
-						submit( { action: 'unavailable' } );
+
+			const startSession = async () => {
+				try {
+					if ( shouldApplySiteSettings ) {
+						if ( ! siteId || ! Number.isSafeInteger( Number( siteId ) ) ) {
+							return submit( { action: 'unavailable' } );
+						}
+						await Promise.all( [
+							wpcom.req.post(
+								{ path: `/sites/${ encodeURIComponent( siteId ) }/settings`, apiVersion: '1.4' },
+								{},
+								{
+									blogname: __( 'My Site' ),
+									blog_public: Visibility.PublicNotIndexed,
+									wpcom_public_coming_soon: 1,
+									site_creation_flow: STATIC_SITE_IMPORT_FLOW,
+								}
+							),
+							wpcom.req.post(
+								{
+									path: `/sites/${ encodeURIComponent( siteId ) }/site-intent`,
+									apiNamespace: 'wpcom/v2',
+								},
+								{},
+								{ site_intent: Onboard.SiteIntent.SiteMigration }
+							),
+						] );
 					}
-				},
-			} );
-		}, [ createSession, sessionId, sourceUrl ] );
+				} catch {
+					return submit( { action: 'unavailable' } );
+				}
+
+				createSession( sourceUrl, {
+					onSuccess: ( session ) =>
+						submit( { action: 'continue', importSessionId: session.session_id } ),
+					onError: ( createError ) => {
+						if (
+							getStaticSiteImportErrorCode( createError ) !== 'static_site_import_source_refused'
+						) {
+							submit( { action: 'unavailable' } );
+						}
+					},
+				} );
+			};
+
+			startSession();
+		}, [ __, createSession, sessionId, shouldApplySiteSettings, siteId, sourceUrl ] );
 
 		if ( isRefused ) {
 			return (
