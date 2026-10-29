@@ -366,6 +366,43 @@ describe( 'Checklist', () => {
 		}
 	} );
 
+	it( 'shows only the settled task during the beat, even when another one becomes active', () => {
+		vi.useFakeTimers();
+		try {
+			const twoInProgress = items.map( ( item ) =>
+				item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+			);
+			render( {
+				items: twoInProgress,
+				defaultCollapsed: true,
+				expandOnSettle: true,
+				activeItemId: 'images',
+			} );
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			const settled = twoInProgress.map( ( item ) =>
+				item.id === 'images' ? { ...item, status: 'done' as const } : item
+			);
+			render( {
+				items: settled,
+				defaultCollapsed: true,
+				expandOnSettle: true,
+				activeItemId: 'about',
+			} );
+
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			act( () => {
+				vi.advanceTimersByTime( 1200 );
+			} );
+
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+			expect( rows() ).toHaveLength( items.length );
+		} finally {
+			vi.useRealTimers();
+		}
+	} );
+
 	it( 'hides a settled task at once and stays collapsed without expandOnSettle', () => {
 		render( { defaultCollapsed: true } );
 		const settled = items.map( ( item ) =>

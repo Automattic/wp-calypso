@@ -276,7 +276,8 @@ export function Checklist( {
 	);
 
 	// Items that settled while collapsed and are shown for a beat before the
-	// list opens. The timer outlives item updates that bring no new settle.
+	// list opens, alone: the next active task joins them only once the list
+	// opens. The timer outlives item updates that bring no new settle.
 	const [ revealedIds, setRevealedIds ] = useState< ReadonlySet< string > >( () => new Set() );
 	const previousStatusesRef = useRef(
 		new Map( items.map( ( item ) => [ item.id, getStatus( item ) ] ) )
@@ -394,7 +395,8 @@ export function Checklist( {
 			<ul id={ listId } className={ styles.list }>
 				{ items.map( ( item ) => {
 					const hidden =
-						isCollapsed && ! revealedIds.has( item.id ) && ! staysWhenCollapsed( item );
+						isCollapsed &&
+						( revealedIds.size > 0 ? ! revealedIds.has( item.id ) : ! staysWhenCollapsed( item ) );
 					return (
 						<li
 							key={ item.id }
