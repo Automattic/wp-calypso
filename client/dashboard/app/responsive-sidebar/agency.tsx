@@ -3,6 +3,7 @@ import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
+import { isOptInPreviewEnabled } from '../../agency/opt-in-preview/store';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
@@ -171,6 +172,9 @@ export default function AgencySidebar() {
 						<SidebarMenuItem href={ buildDashboardLink( 'dotcom', '/me/billing' ) }>
 							{ __( 'Billing' ) }
 						</SidebarMenuItem>
+					) }
+					{ isOptInPreviewEnabled && (
+						<SidebarMenuItem to="/agency/dashboard">{ __( 'Dashboard' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

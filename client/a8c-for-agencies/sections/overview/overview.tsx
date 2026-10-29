@@ -22,6 +22,7 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { MissingPaymentSettingsNotice } from '../referrals/common/missing-payment-settings-notice';
 import useHasCommissionActivity from '../referrals/common/missing-payment-settings-notice/use-has-commission-activity';
 import OverviewBody from './body';
+import DashboardOptIn from './dashboard-opt-in';
 import DashboardOverviewBody from './dashboard-overview-body';
 import OverviewHeaderActions from './header-actions';
 import PartnerDirectoryOnboardingCard from './partner-directory-onboarding-card';
@@ -46,6 +47,7 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
+				<DashboardOptIn />
 				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
 				{ showApprovalNotice && <A4AAgencyApprovalNotice /> }
 				<PressableUsageLimitNotice />
