@@ -41,7 +41,7 @@ import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step
 import { ImporterPlatform } from 'calypso/lib/importer/types';
 import { addQueryArgs } from 'calypso/lib/url';
 import { useSelector } from 'calypso/state';
-import { getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { canUseStaticSiteImport } from '../static-site-import-flow/helpers';
 import * as paths from './paths';
 import type { FlowStateManifest } from '../../internals/state-manager/stepper-state-manifest';
@@ -126,15 +126,19 @@ function initialize() {
 		return false as const;
 	}
 
-	return stepsWithRequiredLogin(
-		BASE_STEPS.filter(
-			( step ) =>
-				( step.slug !== STEPS.SITE_MIGRATION_CHECK.slug &&
-					step.slug !== STEPS.IMPORT_LIST.slug &&
-					step.slug !== STEPS.UNIFIED_PLANS.slug ) ||
-				config.isEnabled( 'migration/reprint-flow' )
-		)
-	);
+	return [
+		STEPS.SITE_MIGRATION_IDENTIFY,
+		...stepsWithRequiredLogin(
+			BASE_STEPS.filter(
+				( step ) =>
+					step.slug !== STEPS.SITE_MIGRATION_IDENTIFY.slug &&
+					( ( step.slug !== STEPS.SITE_MIGRATION_CHECK.slug &&
+						step.slug !== STEPS.IMPORT_LIST.slug &&
+						step.slug !== STEPS.UNIFIED_PLANS.slug ) ||
+						config.isEnabled( 'migration/reprint-flow' ) )
+			)
+		),
+	];
 }
 
 const hasSite = ( siteId: number, siteSlug: string ) => {
@@ -291,6 +295,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const variantSlug = this.variantSlug;
 		const flowPath = variantSlug ?? flowName;
 		const siteCount = useSelector( ( state ) => getCurrentUserSiteCount( state ) );
+		const isLoggedIn = useSelector( isUserLoggedIn );
 		const locale = useLocale();
 		const urlQueryParams = useQuery();
 		const fromQueryParam = urlQueryParams.get( 'from' );
@@ -311,6 +316,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const { get, sessionId, queryKey } = useFlowState();
 		const queryClient = useQueryClient();
 		const userHasOtherWPComSites = siteCount && siteCount > 1;
+		const shouldPickDestination = ! isLoggedIn || userHasOtherWPComSites;
 		const entryPoint = get( 'flow' )?.entryPoint;
 		const siteCanInstallPlugins = canInstallPlugins( site );
 		const isReprintSource =
@@ -611,7 +617,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							);
 						}
 
-						if ( userHasOtherWPComSites ) {
+						if ( shouldPickDestination ) {
 							return navigate( paths.sitePickerPath( { from, platform, ssh: 'true', host } ) );
 						}
 
@@ -655,7 +661,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return navigate( paths.howToMigratePath( { from, siteSlug, siteId, platform, host } ) );
 					}
 
-					if ( userHasOtherWPComSites ) {
+					if ( shouldPickDestination ) {
 						return navigate( paths.sitePickerPath( { from, platform, host } ) );
 					}
 
@@ -857,7 +863,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 								queryParams.ssh = 'true';
 							}
 
-							return navigate( paths.siteCreationPath( queryParams ) );
+							// The picker auto-submits when the user has no sites. Replace so Back doesn't return to it.
+							return navigate( paths.siteCreationPath( queryParams ), undefined, siteCount === 0 );
 						}
 					}
 				}

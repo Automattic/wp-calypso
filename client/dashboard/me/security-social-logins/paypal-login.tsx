@@ -1,9 +1,9 @@
 import { addQueryArgs } from '@wordpress/url';
 import OAuth2Login, { OAuth2LoginProps } from './oauth2-login';
 
-type Props = Omit< OAuth2LoginProps, 'service' | 'label' | 'onClick' >;
+type PayPalLoginProps = Omit< OAuth2LoginProps, 'service' | 'label' | 'onClick' >;
 
-export default function PayPalLogin( { ...rest }: Props ) {
+export default function PayPalLogin( { ...rest }: PayPalLoginProps ) {
 	return (
 		<OAuth2Login
 			service="paypal"

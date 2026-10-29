@@ -1,8 +1,10 @@
 import config from '@automattic/calypso-config';
 import { styled } from '@automattic/wpcom-checkout';
 import { FunctionComponent } from 'react';
+import { withoutHttp } from 'calypso/lib/url';
 import CartFreeUserPlanUpsell from 'calypso/my-sites/checkout/cart/cart-free-user-plan-upsell';
 import UpcomingRenewalsReminder from 'calypso/my-sites/checkout/cart/upcoming-renewals-reminder';
+import { useCheckoutSite } from 'calypso/my-sites/checkout/src/hooks/use-checkout-site';
 import { useSelector } from 'calypso/state';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import type { ResponseCart, MinimalRequestCartProduct } from '@automattic/shopping-cart';
@@ -68,16 +70,22 @@ const SecondaryCartPromotions: FunctionComponent< Props > = ( {
 	addItemToCart,
 	isPurchaseRenewal,
 } ) => {
-	const selectedSiteId = useSelector( ( state ) => getSelectedSiteId( state ) );
+	const selectedSiteId = useSelector( getSelectedSiteId );
+	// "Renew now" checkouts skip site selection, so fall back to the cart's site.
+	const { data: site } = useCheckoutSite( selectedSiteId || Number( responseCart.blog_id ) || 0 );
 
-	if (
-		config.isEnabled( 'upgrades/upcoming-renewals-notices' ) &&
-		isPurchaseRenewal &&
-		selectedSiteId
-	) {
+	if ( config.isEnabled( 'upgrades/upcoming-renewals-notices' ) && isPurchaseRenewal && site ) {
 		return (
 			<UpsellWrapper>
-				<UpcomingRenewalsReminder cart={ responseCart } addItemToCart={ addItemToCart } />
+				<UpcomingRenewalsReminder
+					cart={ responseCart }
+					addItemToCart={ addItemToCart }
+					site={ {
+						ID: site.ID,
+						slug: site.slug,
+						domain: site.options?.is_redirect ? site.slug : withoutHttp( site.URL ),
+					} }
+				/>
 			</UpsellWrapper>
 		);
 	}

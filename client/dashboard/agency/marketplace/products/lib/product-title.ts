@@ -31,3 +31,11 @@ export function getProductShortTitle( product: AgencyProduct, removeVariant = fa
 	}
 	return title.replaceAll( /(?:Woocommerce\s|Pressable\s|[)(])/gi, '' );
 }
+
+// Out of their own section, the backup storage add-ons need their full name:
+// their short title is only the size.
+export function getProductListTitle( product: AgencyProduct ): string {
+	return product.family_slug === BACKUP_STORAGE_FAMILY_SLUG
+		? getProductTitle( product.name )
+		: getProductShortTitle( product );
+}

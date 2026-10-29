@@ -13,6 +13,8 @@ export interface SiteSetupChecklistProps {
 	busy?: boolean;
 	/** The pinned list takes the focus the list it replaced had. */
 	focusHeaderOnMount?: boolean;
+	/** The task the user is on: the only row the folded pinned list keeps in view. */
+	activeItemId?: string;
 }
 
 /**
@@ -27,6 +29,7 @@ export default function SiteSetupChecklist( {
 	variant,
 	busy = false,
 	focusHeaderOnMount = false,
+	activeItemId,
 }: SiteSetupChecklistProps ) {
 	const pinned = variant === 'pinned';
 	const [ isEntered, setIsEntered ] = useState( false );
@@ -45,6 +48,8 @@ export default function SiteSetupChecklist( {
 			title={ __( 'Site Setup', __i18n_text_domain__ ) }
 			items={ items }
 			defaultCollapsed={ pinned }
+			activeItemId={ activeItemId }
+			resumeInProgress
 			busy={ busy }
 			focusHeaderOnMount={ focusHeaderOnMount }
 		/>

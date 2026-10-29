@@ -212,7 +212,7 @@ const PlansStepAdaptor: StepType< {
 
 	// The downgrade flow only lets users move between paid plans, so hide the free
 	// and enterprise plans (not valid downgrade targets) and default the billing
-	// term selector to the currently active plan's term.
+	// term selector to the URL's term, or the currently active plan's term.
 	const isDowngradeFlow = defaultPlansIntent === 'plans-upgrade-or-downgrade';
 
 	const themeHideProps: {
@@ -229,7 +229,7 @@ const PlansStepAdaptor: StepType< {
 
 	useEffect( () => {
 		if ( isDowngradeFlow && planInterval === undefined && currentPlanIntervalType ) {
-			setPlanInterval( currentPlanIntervalType );
+			setPlanInterval( getIntervalType( undefined, currentPlanIntervalType ) );
 		}
 	}, [ isDowngradeFlow, planInterval, currentPlanIntervalType ] );
 

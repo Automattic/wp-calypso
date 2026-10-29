@@ -4,6 +4,7 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import { wpcomLink } from '../../../utils/link';
 import { Visibility } from '../index';
@@ -18,6 +19,8 @@ function createQueryClientWithSite( site: Site ) {
 	queryClient.setQueryData( siteBySlugQuery( site.slug ).queryKey, site );
 	return queryClient;
 }
+
+const site = { ID: 1, slug: 'test.wordpress.com' } as Site;
 
 const aiLaunchpadSite = {
 	ID: 1,
@@ -36,13 +39,7 @@ describe( '<Visibility>', () => {
 
 	test( 'for unlaunched sites, it renders "Coming soon" with a "Finish setup" link', () => {
 		const { container, getByRole } = render(
-			<Visibility
-				siteId={ 1 }
-				siteSlug="test.wordpress.com"
-				visibility="private"
-				status={ null }
-				isLaunched={ false }
-			/>
+			<Visibility site={ site } visibility="private" status={ null } isLaunched={ false } />
 		);
 		expect( container ).toHaveTextContent( 'Finish setup↗' );
 		expect( getByRole( 'link', { name: /Finish setup/ } ) ).toHaveAttribute(
@@ -53,13 +50,7 @@ describe( '<Visibility>', () => {
 
 	test( 'for unlaunched sites with an active AI Launchpad, "Finish setup" links to the wp-admin site setup page', () => {
 		const { getByRole } = render(
-			<Visibility
-				siteId={ 1 }
-				siteSlug="test.wordpress.com"
-				visibility="private"
-				status={ null }
-				isLaunched={ false }
-			/>,
+			<Visibility site={ site } visibility="private" status={ null } isLaunched={ false } />,
 			{ queryClient: createQueryClientWithSite( aiLaunchpadSite ) }
 		);
 		expect( getByRole( 'link', { name: /Finish setup/ } ) ).toHaveAttribute(
@@ -74,13 +65,7 @@ describe( '<Visibility>', () => {
 			options: { ...aiLaunchpadSite.options, wpcom_ai_launchpad_completed: true },
 		} as Site;
 		const { queryByRole } = render(
-			<Visibility
-				siteId={ 1 }
-				siteSlug="test.wordpress.com"
-				visibility="private"
-				status={ null }
-				isLaunched={ false }
-			/>,
+			<Visibility site={ site } visibility="private" status={ null } isLaunched={ false } />,
 			{ queryClient: createQueryClientWithSite( completedSite ) }
 		);
 		expect( queryByRole( 'link', { name: /Finish setup/ } ) ).not.toBeInTheDocument();
@@ -92,13 +77,7 @@ describe( '<Visibility>', () => {
 			options: { ...aiLaunchpadSite.options, wpcom_ai_launchpad_no_guidance: true },
 		} as Site;
 		const { queryByRole } = render(
-			<Visibility
-				siteId={ 1 }
-				siteSlug="test.wordpress.com"
-				visibility="private"
-				status={ null }
-				isLaunched={ false }
-			/>,
+			<Visibility site={ site } visibility="private" status={ null } isLaunched={ false } />,
 			{ queryClient: createQueryClientWithSite( noGuidanceSite ) }
 		);
 		await waitFor( () =>
@@ -108,40 +87,42 @@ describe( '<Visibility>', () => {
 
 	test( 'for coming soon sites, it renders "Coming soon"', () => {
 		const { container } = render(
-			<Visibility
-				siteId={ 1 }
-				siteSlug="test.wordpress.com"
-				visibility="coming_soon"
-				status={ null }
-				isLaunched
-			/>
+			<Visibility site={ site } visibility="coming_soon" status={ null } isLaunched />
 		);
 		expect( container.textContent ).toBe( 'Coming soon' );
 	} );
 
 	test( 'for private sites, it renders "Private"', () => {
 		const { container } = render(
-			<Visibility
-				siteId={ 1 }
-				siteSlug="test.wordpress.com"
-				visibility="private"
-				status={ null }
-				isLaunched
-			/>
+			<Visibility site={ site } visibility="private" status={ null } isLaunched />
 		);
 		expect( container.textContent ).toBe( 'Private' );
 	} );
 
 	test( 'for public sites, it renders "Public"', () => {
 		const { container } = render(
-			<Visibility
-				siteId={ 1 }
-				siteSlug="test.wordpress.com"
-				visibility="public"
-				status={ null }
-				isLaunched
-			/>
+			<Visibility site={ site } visibility="public" status={ null } isLaunched />
 		);
 		expect( container.textContent ).toBe( 'Public' );
+	} );
+
+	test( 'for a preview site, it hides the "Finish setup" link', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.get( '/wpcom/v2/wow-funnel/pending' )
+			.query( true )
+			.reply( 200, {
+				pending: false,
+				preview_sites: [ { blog_id: 1, site_slug: 'test.wordpress.com' } ],
+			} );
+		const preview = { ...site, is_wpcom_atomic: true, plan: { is_free: true } } as Site;
+
+		const { queryByRole } = render(
+			<Visibility site={ preview } visibility="coming_soon" status={ null } isLaunched={ false } />
+		);
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect( queryByRole( 'link', { name: /Finish setup/ } ) ).not.toBeInTheDocument()
+		);
 	} );
 } );

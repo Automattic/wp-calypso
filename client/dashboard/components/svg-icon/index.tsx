@@ -1,16 +1,16 @@
 import { forwardRef, memo } from 'react';
 import type { SVGProps } from 'react';
 
-interface Props {
+interface SVGIconOwnProps {
 	icon: string;
 	name: string;
 	size?: number;
 }
 
-type AllProps = Omit< SVGProps< SVGSVGElement >, keyof Props > & Props;
+type SVGIconProps = Omit< SVGProps< SVGSVGElement >, keyof SVGIconOwnProps > & SVGIconOwnProps;
 
 const SVGIcon = memo(
-	forwardRef< SVGSVGElement, AllProps >( ( props: AllProps, ref ) => {
+	forwardRef< SVGSVGElement, SVGIconProps >( ( props: SVGIconProps, ref ) => {
 		const { icon, size = 24, name = 'icon', ...otherProps } = props;
 
 		return (

@@ -27,17 +27,6 @@ const DEFAULT_PERMISSIONS_TITLE = ( { siteURL } = {} ) =>
 		: __( 'This connection allows Jetpack to:' );
 
 /**
- * Determine the composite connector logo based on which plugin families are
- * present in the slugs list. Mirrors the PHP `get_connector_logo_url()` logic
- * in class-jetpack-connector.php.
- * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
- * @returns {string} Imported SVG URL for the matching connector logo.
- */
-export function getConnectorLogoUrl( pluginSlugs = [] ) {
-	return getLogoForFamilies( getPresentFamilies( pluginSlugs ) );
-}
-
-/**
  * Resolve branding (logo, permissionsTitle, permissions) for the connector
  * flow based on the plugin slugs passed via the `plugins` query parameter.
  *
@@ -51,7 +40,7 @@ export function getConnectorLogoUrl( pluginSlugs = [] ) {
  * remaining consumer is the legacy `isFromMyJetpack` path, which still
  * renders the static `<PermissionsList />`.
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
- * @returns {{ logo: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
+ * @returns {{ logo: string, logoAlt: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
  */
 export function getConnectorBranding( pluginSlugs = [] ) {
 	const families = getPresentFamilies( pluginSlugs );
@@ -59,6 +48,10 @@ export function getConnectorBranding( pluginSlugs = [] ) {
 
 	return {
 		logo,
+		logoAlt:
+			families.length === 1 && families[ 0 ] === 'migration'
+				? 'WordPress.com'
+				: 'Jetpack Connection logo',
 		permissionsTitle: DEFAULT_PERMISSIONS_TITLE,
 		permissions: DEFAULT_PERMISSIONS,
 	};

@@ -732,7 +732,7 @@ $redesign-table-cell-max-width: 280px;
 	.plan-features-2023-grid__content,
 	.plan-features-2023-grid__desktop-view,
 	.plan-features-2023-grid__tablet-view {
-		max-width: 1408px;
+		max-width: $redesign-table-max-width;
 		margin-inline: auto;
 	}
 
@@ -766,7 +766,7 @@ $redesign-table-cell-max-width: 280px;
 		}
 
 		&.has-6-cols {
-			max-width: 1408px;
+			max-width: $redesign-table-max-width;
 		}
 	}
 
@@ -1075,7 +1075,18 @@ $redesign-table-cell-max-width: 280px;
 			font-size: 12px;
 			line-height: 16px;
 			padding: 0 16px 20px;
+			// The enterprise cell spans this row and the price row. Without a savings badge the two
+			// rows are shorter than the logos, and the browser spreads the excess over both, pushing
+			// the billing copy above the logos. A declared height marks this row as fixed so the
+			// excess goes to the price row instead; the value is below the natural height.
+			height: 16px;
 		}
+	}
+
+	// In the table layouts the enterprise cell spans the price and billing rows; match the billing
+	// text padding so the logos and the billing copy share a bottom edge.
+	td.plan-price .plans-grid-next-header-price__enterprise-logos {
+		padding: 0 16px 20px;
 	}
 
 	thead tr:first-child .plan-features-2023-grid__table-item {
@@ -1220,6 +1231,12 @@ $redesign-table-cell-max-width: 280px;
 		}
 	}
 
+	// The redesigned titles fit on one line, so the two-line floor from the differentiators
+	// experiment would only add a gap.
+	.plan-features-2023-grid__table-item .has-min-height {
+		min-height: 0;
+	}
+
 	.plan-features-2023-grid__item {
 		padding: 0 16px 10px;
 
@@ -1242,7 +1259,8 @@ $redesign-table-cell-max-width: 280px;
 			color: var( --studio-gray-80 );
 			font-size: 12px;
 			line-height: 16px;
-			text-wrap: pretty;
+			// Chrome's `pretty` still leaves a lone last word in these narrow columns (e.g. "Deployments").
+			text-wrap: balance;
 		}
 	}
 

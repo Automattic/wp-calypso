@@ -27,7 +27,7 @@
 	"bugs": "https://github.com/Automattic/wp-calypso/issues",
 	"homepage": "https://github.com/Automattic/wp-calypso/tree/HEAD/packages/interpolate-components#readme",
 	"dependencies": {
-		"@babel/runtime": "^7.29.10"
+		"@babel/runtime": "^8.0.7"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",

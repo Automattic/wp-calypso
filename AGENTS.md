@@ -120,3 +120,4 @@ If it fails, fix the type errors at the source — do not silence them with `// 
   - Use Linear issue IDs (e.g., `LIN-123`) instead of full Linear URLs.
   - Avoid mentioning people's names.
   - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).
+  - For a change users can see (UI, or new or changed translatable strings), add before/after screenshots under Testing Instructions. Reviewers check the expected state against them, and the a8ci18n bot asks for a screenshot of the new strings for translators. Capture with a test account and keep internal hostnames and personal data out of the image. If you can't upload images, say so in the description. Never commit images to the repository to host them.
