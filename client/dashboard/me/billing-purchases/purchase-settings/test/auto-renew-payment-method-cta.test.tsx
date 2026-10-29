@@ -32,6 +32,7 @@ describe( 'auto-renew without a payment method', () => {
 	test( 'auto-renew off and un-reenableable offers an add payment method CTA instead of a dead toggle', () => {
 		render( <ManageSubscriptionCard purchase={ makePurchase() } /> );
 
+		expect( screen.getByText( 'Auto-renew off' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew needs a payment method.' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add payment method' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
@@ -62,6 +63,7 @@ describe( 'auto-renew without a payment method', () => {
 			/>
 		);
 
+		expect( screen.getByText( 'Auto-renew on' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew needs a payment method.' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add payment method' } ) ).toBeVisible();
 	} );

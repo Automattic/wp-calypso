@@ -1043,7 +1043,7 @@ function getFields( {
 					return (
 						<div className="purchase-settings__action-item-standalone">
 							<ActionList.ActionItem
-								title={ __( 'Enable auto-renew' ) }
+								title={ field.label }
 								description={ __( 'Auto-renew needs a payment method.' ) }
 								actions={
 									<Button
