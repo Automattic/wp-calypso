@@ -122,7 +122,7 @@ const EnvironmentSwitcherDropdown = ( {
 			{ showActionButton && ! isStagingSiteCreating && ! isStagingSiteDeleting && (
 				<StagingSiteHighLoadNotice>
 					{ __(
-						'Staging sites are experiencing high load at the moment. We recommend waiting until later to add a staging site.'
+						'Staging sites are experiencing sync issues. Please wait until later to create a Staging site.'
 					) }
 				</StagingSiteHighLoadNotice>
 			) }

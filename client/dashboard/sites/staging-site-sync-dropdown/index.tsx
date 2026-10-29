@@ -158,7 +158,7 @@ export default function StagingSiteSyncDropdown( {
 						</MenuGroup>
 						<StagingSiteHighLoadNotice>
 							{ __(
-								'Staging sites are experiencing high load at the moment. We recommend waiting until later to sync your sites.'
+								'Staging sites are experiencing sync issues. Please wait until later to sync your sites.'
 							) }
 						</StagingSiteHighLoadNotice>
 					</>
