@@ -32,7 +32,7 @@ describe( 'auto-renew without a payment method', () => {
 	test( 'auto-renew off and un-reenableable offers an add payment method CTA instead of a dead toggle', () => {
 		render( <ManageSubscriptionCard purchase={ makePurchase() } /> );
 
-		expect( screen.getByText( 'Auto-renew off' ) ).toBeVisible();
+		expect( screen.getByText( 'Enable auto-renew' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew needs a payment method.' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add payment method' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
@@ -49,8 +49,12 @@ describe( 'auto-renew without a payment method', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'checkbox', { name: 'Auto-renew on' } ) ).toBeChecked();
+		expect( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) ).toBeChecked();
 		expect( screen.queryByText( 'Auto-renew needs a payment method.' ) ).not.toBeInTheDocument();
+		expect(
+			screen.getByText( 'Will not auto-renew because there is no payment method' )
+		).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Add payment method' } ) ).toBeVisible();
 	} );
 
 	test( 'auto-renew on that cannot be disabled keeps the add payment method CTA', () => {
@@ -63,7 +67,7 @@ describe( 'auto-renew without a payment method', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'Auto-renew on' ) ).toBeVisible();
+		expect( screen.getByText( 'Enable auto-renew' ) ).toBeVisible();
 		expect( screen.getByText( 'Auto-renew needs a payment method.' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add payment method' } ) ).toBeVisible();
 	} );
@@ -88,7 +92,7 @@ describe( 'auto-renew without a payment method', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'checkbox', { name: 'Auto-renew off' } ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Auto-renew needs a payment method.' ) ).not.toBeInTheDocument();
 	} );
 } );
