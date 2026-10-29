@@ -1,4 +1,12 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
+import config from '@automattic/calypso-config';
+import {
+	isDomainProduct,
+	isDomainTransfer,
+	isGSuiteOrGoogleWorkspace,
+	isTitanMail,
+	isWpComPlan,
+} from '@automattic/calypso-products';
 import { HelpCenter, HelpCenterSelect } from '@automattic/data-stores';
 import {
 	useProductsCustomOptions,
@@ -12,12 +20,37 @@ import {
 } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import { useExperiment } from 'calypso/lib/explat';
 import useCartKey from 'calypso/my-sites/checkout/use-cart-key';
 import { useSelector } from 'calypso/state';
-import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
+import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
+import { isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSectionName, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
+import { loadCheckoutSupportVariation } from '../lib/checkout-support-routing';
 
 const HELP_CENTER_STORE = HelpCenter.register();
+
+// Agencies buy WordPress.com plans too, sometimes for a WordPress.com site, but have support of
+// their own.
+const isAgencyCheckoutPath = ( pathname: string ) =>
+	pathname === '/checkout/agency' || pathname.startsWith( '/checkout/agency/' );
+
+// Renewals and domain-only purchases have no site selected, so only the cart shows they're
+// WordPress.com purchases.
+const isWordPressComCart = (
+	products: { product_slug: string; is_domain_registration?: boolean }[]
+) =>
+	products.length > 0 &&
+	products.every(
+		( product ) =>
+			isWpComPlan( product.product_slug ) ||
+			isDomainProduct( product ) ||
+			isDomainTransfer( product ) ||
+			isGSuiteOrGoogleWorkspace( product ) ||
+			isTitanMail( product )
+	);
 
 // Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
 const GET_HELP_EXPERIMENT = 'calypso_help_center_get_help_chat_forward';
@@ -31,9 +64,20 @@ export const useCheckoutHelpCenter = (): {
 	const translate = useTranslate();
 	const siteId = useSelector( getSelectedSiteId );
 	const siteSlug = useSelector( getSelectedSiteSlug );
+	const isLoggedIn = useSelector( isUserLoggedIn );
+	const sectionName = useSelector( getSectionName );
+	// Atomic sites are Jetpack sites too, but hosted on WordPress.com.
+	const isWordPressComSite = useSelector(
+		( state ) =>
+			!! siteId && ( ! isJetpackSite( state, siteId ) || !! isAtomicSite( state, siteId ) )
+	);
 
 	const cartKey = useCartKey();
-	const { responseCart } = useShoppingCart( cartKey );
+	const {
+		responseCart,
+		isLoading: isCartLoading,
+		isPendingUpdate: isCartUpdating,
+	} = useShoppingCart( cartKey );
 
 	const {
 		hasPremiumSupport,
@@ -44,17 +88,61 @@ export const useCheckoutHelpCenter = (): {
 	} = useProductsWithPremiumSupport( responseCart.products, 'checkout' );
 	const helpCenterOptions = useProductsCustomOptions( responseCart.products );
 
+	// Only the WordPress.com checkout itself is in the checkout support experiment: not the pending
+	// and thank-you pages, which share this hook, not carts that already go straight to a human,
+	// and not any checkout that isn't recognizably WordPress.com, since its buyers shouldn't be sent
+	// to WordPress.com support. Both checks read the cart, so nobody joins until it's ready: a
+	// renewal's cart is empty until its product is added.
+	const isWordPressComCheckout =
+		! isAgencyCheckoutPath( window.location.pathname ) &&
+		( isWordPressComSite || ( ! siteId && isWordPressComCart( responseCart.products ) ) );
+	const canJoinCheckoutSupportExperiment =
+		config.isEnabled( 'checkout/support-routing' ) &&
+		sectionName === 'checkout' &&
+		isLoggedIn &&
+		! isCartLoading &&
+		! isCartUpdating &&
+		responseCart.products.length > 0 &&
+		isWordPressComCheckout &&
+		! hasPremiumSupport;
+
 	const [ , experimentAssignment ] = useExperiment( GET_HELP_EXPERIMENT );
 	const isGetHelpTreatment = experimentAssignment?.variationName === 'treatment';
 
-	const { setShowHelpCenter, setNavigateToRoute } = useDataStoreDispatch( HELP_CENTER_STORE );
+	const { setShowHelpCenter, setNavigateToRoute, setIsMinimized } =
+		useDataStoreDispatch( HELP_CENTER_STORE );
 
-	const isShowingHelpCenter = useDataStoreSelect(
-		( select ) => ( select( HELP_CENTER_STORE ) as HelpCenterSelect ).isHelpCenterShown(),
+	const { isShowingHelpCenter, isMinimized, currentCheckoutSupportVariation } = useDataStoreSelect(
+		( select ) => {
+			const helpCenterSelect = select( HELP_CENTER_STORE ) as HelpCenterSelect;
+			return {
+				isShowingHelpCenter: helpCenterSelect.isHelpCenterShown(),
+				isMinimized: helpCenterSelect.getIsMinimized(),
+				currentCheckoutSupportVariation: helpCenterSelect.getCheckoutSupportVariation(),
+			};
+		},
 		[]
 	);
-	const toggleHelpCenter = () => {
-		recordTracksEvent( `calypso_thank_you_inlinehelp_${ isShowingHelpCenter ? 'close' : 'show' }`, {
+
+	// Counts toggles, plus one when checkout unmounts. An open that waited for the assignment
+	// only goes ahead if nothing changed meanwhile: not another click, and not leaving checkout.
+	// The checkout top bar can stay mounted when paying moves on to the pending page, so the
+	// page path is checked too.
+	const toggleCountRef = useRef( 0 );
+	useEffect( () => {
+		const toggleCount = toggleCountRef;
+		return () => {
+			toggleCount.current++;
+		};
+	}, [] );
+
+	const toggleHelpCenter = async () => {
+		const toggle = ++toggleCountRef.current;
+		const pathname = window.location.pathname;
+		// A minimized Help Center still counts as shown, but clicking brings it back.
+		const isOpening = ! isShowingHelpCenter || isMinimized;
+
+		recordTracksEvent( `calypso_thank_you_inlinehelp_${ isOpening ? 'show' : 'close' }`, {
 			force_site_id: true,
 			location: 'thank-you-help-center',
 		} );
@@ -62,14 +150,35 @@ export const useCheckoutHelpCenter = (): {
 		// Unified onboarding help-adoption signal, tagged by step. Only in the
 		// onboarding-flow checkout and only when opening (matches the domains,
 		// use-my-domain and plans steps).
-		if ( ! isShowingHelpCenter ) {
+		if ( isOpening ) {
 			const flow = new URLSearchParams( window.location.search ).get( 'flow' );
 			if ( flow === ONBOARDING_FLOW ) {
 				recordTracksEvent( 'calypso_onboarding_help_center_click', { flow, step: 'checkout' } );
 			}
 		}
 
-		setShowHelpCenter( ! isShowingHelpCenter, { hasPremiumSupport, ...helpCenterOptions } );
+		// When checkout support minimized it, bring it back as it was, like the Help Center's own
+		// header does, so a human chat keeps its route. Otherwise, bringing it back is a new opening
+		// from checkout.
+		if ( isMinimized && currentCheckoutSupportVariation ) {
+			setIsMinimized( false );
+			return;
+		}
+
+		// Assign the variation only when opening, so only people who ask for help are in the experiment.
+		const checkoutSupportVariation =
+			isOpening && canJoinCheckoutSupportExperiment
+				? await loadCheckoutSupportVariation()
+				: undefined;
+		if ( toggle !== toggleCountRef.current || window.location.pathname !== pathname ) {
+			return;
+		}
+
+		setShowHelpCenter( isOpening, {
+			hasPremiumSupport,
+			...helpCenterOptions,
+			checkoutSupportVariation,
+		} );
 		if ( hasPremiumSupport ) {
 			const urlWithQueryArgs = addQueryArgs( '/odie?provider=zendesk', {
 				userFieldMessage,
@@ -78,6 +187,14 @@ export const useCheckoutHelpCenter = (): {
 				siteId,
 			} );
 			setNavigateToRoute( urlWithQueryArgs );
+		} else if ( checkoutSupportVariation === 'human_only' ) {
+			// The variation grants premium support, so users without a paid plan reach a human too.
+			setNavigateToRoute(
+				addQueryArgs( '/odie?provider=zendesk', {
+					siteUrl: siteSlug ?? undefined,
+					siteId: siteId ?? undefined,
+				} )
+			);
 		} else {
 			setNavigateToRoute( '/odie' );
 		}

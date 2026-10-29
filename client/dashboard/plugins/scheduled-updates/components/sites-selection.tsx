@@ -45,12 +45,15 @@ const defaultView: View = {
 	showMedia: true,
 };
 
-type Props = {
+type ScheduledUpdatesSitesSelectionProps = {
 	selection: string[];
 	onChangeSelection: ( ids: string[] ) => void;
 };
 
-function ScheduledUpdatesSitesSelection( { selection, onChangeSelection }: Props ) {
+function ScheduledUpdatesSitesSelection( {
+	selection,
+	onChangeSelection,
+}: ScheduledUpdatesSitesSelectionProps ) {
 	const { data: sites = [], isLoading } = useEligibleSites();
 	const [ view, setView ] = useState< View >( defaultView );
 	const { data: filtered, paginationInfo } = useMemo( () => {

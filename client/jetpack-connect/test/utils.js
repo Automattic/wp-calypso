@@ -166,6 +166,19 @@ describe( 'authQueryTransformer plugins param', () => {
 		expect( result.plugins ).toEqual( [ 'jetpack-social' ] );
 	} );
 
+	test.each( [
+		[ 'wpcom_migration', [ 'wpcom-migration', 'jetpack' ] ],
+		[ 'jetpack-connector', [ 'jetpack' ] ],
+	] )( 'keeps the raw plugins and filters connectorPlugins for from=%s', ( from, expected ) => {
+		const result = authQueryTransformer( {
+			...baseQuery,
+			from,
+			plugins: 'wpcom-migration,jetpack',
+		} );
+		expect( result.plugins ).toEqual( [ 'wpcom-migration', 'jetpack' ] );
+		expect( result.connectorPlugins ).toEqual( expected );
+	} );
+
 	test( 'should return an empty array when plugins is not provided', () => {
 		const result = authQueryTransformer( baseQuery );
 		expect( result.plugins ).toEqual( [] );

@@ -2,8 +2,8 @@ import { FAMILY_PRIORITY, getFamilyFromSlug } from '../families';
 import type { Family } from '../families';
 
 describe( 'FAMILY_PRIORITY', () => {
-	test( 'orders A4A → Woo → Jetpack → Other', () => {
-		expect( FAMILY_PRIORITY ).toEqual( [ 'a4a', 'woo', 'jetpack', 'other' ] );
+	test( 'orders Migration → A4A → Woo → Jetpack → Other', () => {
+		expect( FAMILY_PRIORITY ).toEqual( [ 'migration', 'a4a', 'woo', 'jetpack', 'other' ] );
 	} );
 } );
 
@@ -49,4 +49,9 @@ describe( 'getFamilyFromSlug', () => {
 	test( 'jetpacky is not jetpack family (requires exact slug or jetpack- prefix)', () => {
 		expect( getFamilyFromSlug( 'jetpacky' ) ).toBe( 'other' );
 	} );
+} );
+
+test( 'recognizes the exact migration plugin slug', () => {
+	expect( getFamilyFromSlug( 'wpcom-migration' ) ).toBe( 'migration' );
+	expect( getFamilyFromSlug( 'wpcom-migration-other' ) ).toBe( 'other' );
 } );

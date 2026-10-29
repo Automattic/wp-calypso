@@ -436,6 +436,18 @@ export interface AgencyResourceEventResponse {
 	status: 'success';
 }
 
+/**
+ * Response from GET /wpcom/v2/agency/<agency_id>/apwd-discount-code: the agency's
+ * active Advanced Professional WordPress Developer coupon from HubSpot, or null
+ * when it has none. HubSpot properties come through as strings, empty when unset.
+ */
+export interface AgencyApwdDiscountCode {
+	code: string;
+	discount_percent: string;
+	tier_at_issuance: string;
+	expiration_date: string;
+}
+
 export interface TipaltiIFrameUrl {
 	iframe_url: string;
 }

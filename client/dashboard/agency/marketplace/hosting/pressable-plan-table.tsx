@@ -33,7 +33,7 @@ interface TableRow {
 	isCurrent: boolean;
 }
 
-interface Props {
+interface PressablePlanTableProps {
 	rows: PlanRow[];
 	/** Adds a last row for a plan sized by Pressable, past the largest one. */
 	withCustom: boolean;
@@ -68,7 +68,7 @@ export default function PressablePlanTable( {
 	currentSlug,
 	isPremium,
 	onSelect,
-}: Props ) {
+}: PressablePlanTableProps ) {
 	const data: TableRow[] = [
 		...rows.map( ( { product, plan } ) => ( {
 			value: plan.slug,

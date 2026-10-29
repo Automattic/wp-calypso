@@ -61,7 +61,7 @@ export function useStepNavigator(
 	function goToDashboardPage() {
 		navigation.submit?.( {
 			type: 'redirect',
-			url: '/home',
+			url: `/home/${ siteSlug || siteId || '' }`,
 		} );
 	}
 
