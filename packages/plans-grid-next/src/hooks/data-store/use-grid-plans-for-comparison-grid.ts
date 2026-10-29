@@ -28,7 +28,6 @@ const useGridPlansForComparisonGrid = ( {
 	useFreeTrialPlanSlugs,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useVar42NoAiFeatures,
 	showPricingDifferentiationFeaturePills,
 	usePlansGridRedesignNewDescription,
 	isExperimentVariant,
@@ -62,7 +61,6 @@ const useGridPlansForComparisonGrid = ( {
 		intent,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		isExperimentVariant,
 	} );

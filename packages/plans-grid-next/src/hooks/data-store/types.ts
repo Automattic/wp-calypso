@@ -46,10 +46,6 @@ export interface UseGridPlansParams {
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
-	 * When true, use the no-AI feature set for the rolled-out pricing differentiation cohort.
-	 */
-	useVar42NoAiFeatures?: boolean;
-	/**
 	 * When true, use the pricing-grid redesign feature set for plan cards.
 	 */
 	usePlansGridRedesignFeatures?: boolean;

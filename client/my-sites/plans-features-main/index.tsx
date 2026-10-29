@@ -779,12 +779,8 @@ const PlansFeaturesMain = ( {
 	 */
 	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
-	const {
-		showDifferentiatorHeader,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		isExperimentVariant,
-	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
+	const { showDifferentiatorHeader, showPricingDifferentiationFeaturePills, isExperimentVariant } =
+		usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
 	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
@@ -1074,7 +1070,6 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useVar42NoAiFeatures,
 		showPricingDifferentiationFeaturePills,
 		usePlansGridRedesignNewDescription,
 		isExperimentVariant,
@@ -1105,7 +1100,6 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		usePlansGridRedesignNewDescription,
@@ -1466,10 +1460,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if (
-		( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) &&
-		! hasTailoredFeatureList( intent )
-	) {
+	} else if ( usePlansGridRedesignFeatures && ! hasTailoredFeatureList( intent ) ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		// Skipped for intents that curate their own feature list, whose grouping is theirs too.

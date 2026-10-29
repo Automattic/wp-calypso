@@ -48,7 +48,7 @@ export default function MigrationPlansGrid( {
 
 	const term = usePlanBillingPeriod( { intervalType } );
 	const currentPlan = Plans.useCurrentPlan( { siteId } );
-	const { useVar42NoAiFeatures, showPricingDifferentiationFeaturePills, isExperimentVariant } =
+	const { showPricingDifferentiationFeaturePills, isExperimentVariant } =
 		usePlanDifferentiatorsExperiment( { isInSignup: true, siteId } );
 	const { usePlansGridRedesign, usePlansGridRedesignFeatures, usePlansGridRedesignNewDescription } =
 		usePlansGridRedesignExperiment( { isInSignup: true, intent: 'plans-migration' } );
@@ -100,7 +100,6 @@ export default function MigrationPlansGrid( {
 		isDomainOnlySite: false,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
 		showPricingDifferentiationFeaturePills,
 		usePlansGridRedesignNewDescription,
@@ -115,10 +114,10 @@ export default function MigrationPlansGrid( {
 	// The pricing differentiation lists render storage before the rest of the features.
 	const featureGroupMap = useMemo( () => {
 		const featureGroups = getPlanFeaturesGroupedForFeaturesGrid();
-		return useVar42NoAiFeatures || usePlansGridRedesignFeatures
+		return usePlansGridRedesignFeatures
 			? Object.fromEntries( Object.entries( featureGroups ).reverse() )
 			: featureGroups;
-	}, [ useVar42NoAiFeatures, usePlansGridRedesignFeatures ] );
+	}, [ usePlansGridRedesignFeatures ] );
 
 	// Key behavior: Show term savings for yearly and 2-yearly plans (monthly is the base term)
 	const enableTermSavingsPriceDisplay = intervalType !== 'monthly';
