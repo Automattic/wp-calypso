@@ -3,6 +3,7 @@
  */
 
 import { sshKeysQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -11,6 +12,11 @@ import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import SshCard from '../ssh-card';
+
+jest.mock( '@automattic/calypso-config', () => {
+	const fn = jest.fn();
+	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+} );
 
 const siteId = 123;
 const sftpUsers = [ { username: 'example.wordpress.com', password: '' } ];
@@ -120,5 +126,119 @@ describe( '<SshCard>', () => {
 				} ),
 			] )
 		);
+	} );
+
+	describe( 'with multiple SSH keys enabled', () => {
+		const userSshKey = ( name: string, label?: string ) => ( {
+			name,
+			label,
+			key: 'ssh-ed25519 AAAA',
+			type: 'ssh-ed25519',
+			sha256: `SHA256:${ name }`,
+			created_at: '2026-10-01T00:00:00Z',
+			updated_at: '2026-10-01T00:00:00Z',
+			site_ids: [],
+		} );
+		const siteSshKey = ( user_login: string, name: string, label?: string ) => ( {
+			user_login,
+			name,
+			label,
+			sha256: `SHA256:${ user_login }-${ name }`,
+			attached_at: '2026-10-02T00:00:00Z',
+		} );
+
+		const renderCard = ( {
+			userSshKeys,
+			siteSshKeys,
+		}: {
+			userSshKeys: ReturnType< typeof userSshKey >[];
+			siteSshKeys: ReturnType< typeof siteSshKey >[];
+		} ) => {
+			nock.cleanAll();
+			nock( 'https://public-api.wordpress.com' )
+				.get( `/wpcom/v2/sites/${ siteId }/hosting/ssh-keys` )
+				.reply( 200, { ssh_keys: siteSshKeys } );
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/me/ssh-keys' )
+				.reply( 200, userSshKeys );
+
+			return render( <SshCard siteId={ siteId } sftpUsers={ sftpUsers } sshEnabled /> );
+		};
+
+		beforeEach( () => {
+			jest.mocked( isEnabled ).mockImplementation( ( flag ) => flag === 'ssh-multiple-keys' );
+		} );
+
+		afterEach( () => {
+			jest.mocked( isEnabled ).mockReset();
+			nock.cleanAll();
+		} );
+
+		test( 'shows labels of attached keys, with the owner for other users’ keys', async () => {
+			renderCard( {
+				userSshKeys: [ userSshKey( 'laptop', 'Personal laptop' ) ],
+				siteSshKeys: [
+					siteSshKey( 'testuser', 'laptop', 'Personal laptop' ),
+					siteSshKey( 'otheruser', 'ci', 'CI deploys' ),
+					siteSshKey( 'otheruser', 'default' ),
+				],
+			} );
+
+			expect( await screen.findByText( 'Personal laptop' ) ).toBeVisible();
+			expect( screen.getByText( 'CI deploys (otheruser)' ) ).toBeVisible();
+			expect( screen.getByText( 'default (otheruser)' ) ).toBeVisible();
+		} );
+
+		test( 'lets the user attach keys that are not attached yet', async () => {
+			const user = userEvent.setup();
+			renderCard( {
+				userSshKeys: [
+					userSshKey( 'laptop', 'Personal laptop' ),
+					userSshKey( 'ci', 'CI deploys' ),
+					userSshKey( 'desktop', 'Desktop' ),
+				],
+				siteSshKeys: [
+					siteSshKey( 'testuser', 'laptop', 'Personal laptop' ),
+					siteSshKey( 'otheruser', 'ci', 'CI deploys' ),
+				],
+			} );
+
+			const select = await screen.findByRole( 'combobox', { name: 'Attach another SSH key' } );
+			expect( screen.getAllByRole( 'option' ).map( ( option ) => option.textContent ) ).toEqual( [
+				'CI deploys',
+				'Desktop',
+			] );
+			expect( select ).toHaveValue( 'ci' );
+
+			await user.selectOptions( select, 'desktop' );
+			const attachRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/wpcom/v2/sites/${ siteId }/hosting/ssh-keys`, { name: 'desktop' } )
+				.reply( 200, {} );
+			nock( 'https://public-api.wordpress.com' )
+				.get( `/wpcom/v2/sites/${ siteId }/hosting/ssh-keys` )
+				.reply( 200, { ssh_keys: [] } );
+			await user.click( screen.getByRole( 'button', { name: 'Attach SSH key to site' } ) );
+
+			await waitFor( () => expect( attachRequest.isDone() ).toBe( true ) );
+		} );
+
+		test( 'hides the attach form once every key of the user is attached', async () => {
+			renderCard( {
+				userSshKeys: [
+					userSshKey( 'laptop', 'Personal laptop' ),
+					userSshKey( 'ci', 'CI deploys' ),
+				],
+				siteSshKeys: [
+					siteSshKey( 'testuser', 'laptop', 'Personal laptop' ),
+					siteSshKey( 'testuser', 'ci', 'CI deploys' ),
+				],
+			} );
+
+			expect( await screen.findByText( 'CI deploys' ) ).toBeVisible();
+			expect( screen.queryByRole( 'combobox' ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'button', { name: 'Attach SSH key to site' } )
+			).not.toBeInTheDocument();
+		} );
 	} );
 } );

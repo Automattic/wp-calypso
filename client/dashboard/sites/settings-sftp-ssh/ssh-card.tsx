@@ -7,6 +7,7 @@ import {
 	siteSshKeysDetachMutation,
 	sshKeysQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -38,6 +39,7 @@ import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import { reauthRequiredLink } from '../../utils/link';
+import { getSshKeyLabel, MAX_SSH_KEYS } from '../../utils/ssh';
 import type { SftpUser, SiteSshKey, UserSshKey } from '@automattic/api-core';
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 
@@ -46,13 +48,33 @@ type SshCardFormData = {
 	ssh_key: string;
 };
 
+const getSiteSshKeyTitle = ( siteSshKey: SiteSshKey, currentUserLogin: string ) => {
+	if ( ! isEnabled( 'ssh-multiple-keys' ) ) {
+		return `${ siteSshKey.user_login }-${ siteSshKey.name }`;
+	}
+
+	const label = getSshKeyLabel( siteSshKey );
+	if ( siteSshKey.user_login === currentUserLogin ) {
+		return label;
+	}
+
+	return sprintf(
+		/* translators: %1$s is the SSH key label, %2$s is the username of the key owner. */
+		__( '%1$s (%2$s)' ),
+		label,
+		siteSshKey.user_login
+	);
+};
+
 const SshKeyCard = ( {
 	siteSshKey,
+	title,
 	userLocale,
 	isBusy,
 	onDetach,
 }: {
 	siteSshKey: SiteSshKey;
+	title: string;
 	userLocale: string;
 	isBusy: boolean;
 	onDetach: ( siteSshKey: SiteSshKey ) => void;
@@ -63,7 +85,7 @@ const SshKeyCard = ( {
 				<HStack spacing={ 4 } justify="space-between" alignment="flex-start">
 					<VStack spacing={ 3 } alignment="flex-start">
 						<VStack spacing={ 1 }>
-							<Text>{ `${ siteSshKey.user_login }-${ siteSshKey.name }` }</Text>
+							<Text>{ title }</Text>
 							<Text variant="muted">{ siteSshKey.sha256 }</Text>
 						</VStack>
 						<Badge intent="informational" style={ { height: '24px' } }>
@@ -128,6 +150,7 @@ export default function SshCard( {
 	sshEnabled: boolean;
 } ) {
 	const { user } = useAuth();
+	const isMultipleKeysEnabled = isEnabled( 'ssh-multiple-keys' );
 	const queryClient = useQueryClient();
 	const { data: siteSshKeys } = useQuery( siteSshKeysQuery( siteId ) );
 	const {
@@ -160,6 +183,34 @@ export default function SshCard( {
 		}
 		return !! siteSshKeys.find( ( { user_login }: SiteSshKey ) => user_login === user.username );
 	}, [ siteSshKeys, user.username ] );
+
+	const unattachedUserSshKeys = useMemo(
+		() =>
+			( userSshKeys ?? [] ).filter(
+				( userSshKey: UserSshKey ) =>
+					! siteSshKeys?.some(
+						( siteSshKey: SiteSshKey ) =>
+							siteSshKey.user_login === user.username && siteSshKey.name === userSshKey.name
+					)
+			),
+		[ userSshKeys, siteSshKeys, user.username ]
+	);
+
+	// Fall back to the first key that can still be attached, for example after the selected key was attached.
+	const selectedSshKey =
+		! isMultipleKeysEnabled ||
+		unattachedUserSshKeys.some( ( { name } ) => name === formData.ssh_key )
+			? formData.ssh_key
+			: ( unattachedUserSshKeys[ 0 ]?.name ?? '' );
+	const showAttachSshKey = isMultipleKeysEnabled
+		? ! hasUserSshKeys || unattachedUserSshKeys.length > 0
+		: ! userKeyIsAttached;
+	const showAddSshKey = isMultipleKeysEnabled
+		? ( userSshKeys?.length ?? 0 ) < MAX_SSH_KEYS
+		: showAttachSshKey;
+	const attachableUserSshKeys = isMultipleKeysEnabled
+		? unattachedUserSshKeys
+		: ( userSshKeys ?? [] );
 
 	const handleCopy = ( label?: React.ReactNode ) => {
 		if ( ! label ) {
@@ -219,7 +270,7 @@ export default function SshCard( {
 	};
 
 	const handleAttachSshKey = () => {
-		attachSshKeyMutation.mutate( formData.ssh_key, {
+		attachSshKeyMutation.mutate( selectedSshKey, {
 			onError: () => {
 				createErrorNotice(
 					__(
@@ -253,8 +304,9 @@ export default function SshCard( {
 			<VStack>
 				{ siteSshKeys?.map( ( siteSshKey: SiteSshKey ) => (
 					<SshKeyCard
-						key={ siteSshKey.sha256 }
+						key={ `${ siteSshKey.user_login }-${ siteSshKey.name }` }
 						siteSshKey={ siteSshKey }
+						title={ getSiteSshKeyTitle( siteSshKey, user.username ) }
 						userLocale={ userLocale }
 						isBusy={ detachSshKeyMutation.isPending }
 						onDetach={ handleDetachSshKey }
@@ -281,22 +333,25 @@ export default function SshCard( {
 		},
 		{
 			id: 'ssh_key',
-			label: __( 'SSH key' ),
+			label: isMultipleKeysEnabled ? __( 'SSH keys' ) : __( 'SSH key' ),
 			Edit: ( { data, field, onChange, hideLabelFromVision } ) => {
-				if ( siteSshKeys && siteSshKeys.length > 0 ) {
-					return (
-						<SshKeysControl
-							data={ data }
-							field={ field }
-							onChange={ onChange }
-							hideLabelFromVision={ hideLabelFromVision }
-						/>
-					);
+				const hasSiteSshKeys = siteSshKeys && siteSshKeys.length > 0;
+				const sshKeysControl = (
+					<SshKeysControl
+						data={ data }
+						field={ field }
+						onChange={ onChange }
+						hideLabelFromVision={ hideLabelFromVision }
+					/>
+				);
+
+				if ( hasSiteSshKeys && ! isMultipleKeysEnabled ) {
+					return sshKeysControl;
 				}
 
-				return (
+				const selectControl = (
 					<SelectControl
-						label={ field.label }
+						label={ hasSiteSshKeys ? __( 'Attach another SSH key' ) : __( 'SSH key' ) }
 						value={ field.getValue( { item: data } ) ?? '' }
 						help={ field.description }
 						options={ field.elements }
@@ -309,10 +364,23 @@ export default function SshCard( {
 						hideLabelFromVision={ hideLabelFromVision }
 					/>
 				);
+
+				if ( ! hasSiteSshKeys ) {
+					return selectControl;
+				}
+
+				return (
+					<VStack spacing={ 4 }>
+						{ sshKeysControl }
+						{ showAttachSshKey && selectControl }
+					</VStack>
+				);
 			},
 			elements: hasUserSshKeys
-				? userSshKeys.map( ( userSshKey: UserSshKey ) => ( {
-						label: `${ user.username }-${ userSshKey.name }`,
+				? attachableUserSshKeys.map( ( userSshKey: UserSshKey ) => ( {
+						label: isMultipleKeysEnabled
+							? getSshKeyLabel( userSshKey )
+							: `${ user.username }-${ userSshKey.name }`,
 						value: userSshKey.name,
 					} ) )
 				: [
@@ -359,7 +427,7 @@ export default function SshCard( {
 					/>
 					{ showSshSettings && (
 						<DataForm< SshCardFormData >
-							data={ formData }
+							data={ { ...formData, ssh_key: selectedSshKey } }
 							fields={ fields }
 							form={ form }
 							onChange={ ( edits: Partial< SshCardFormData > ) => {
@@ -367,17 +435,19 @@ export default function SshCard( {
 							} }
 						/>
 					) }
-					{ showSshSettings && ! userKeyIsAttached && (
+					{ showSshSettings && ( showAttachSshKey || showAddSshKey ) && (
 						<ButtonStack justify="flex-start">
-							<Button
-								variant="primary"
-								isBusy={ attachSshKeyMutation.isPending }
-								disabled={ ! hasUserSshKeys }
-								onClick={ handleAttachSshKey }
-							>
-								{ __( 'Attach SSH key to site' ) }
-							</Button>
-							<AddSshKeyButton />
+							{ showAttachSshKey && (
+								<Button
+									variant="primary"
+									isBusy={ attachSshKeyMutation.isPending }
+									disabled={ ! hasUserSshKeys || attachSshKeyMutation.isPending }
+									onClick={ handleAttachSshKey }
+								>
+									{ __( 'Attach SSH key to site' ) }
+								</Button>
+							) }
+							{ showAddSshKey && <AddSshKeyButton /> }
 						</ButtonStack>
 					) }
 				</VStack>
