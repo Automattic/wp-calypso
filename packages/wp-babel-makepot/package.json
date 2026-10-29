@@ -26,11 +26,11 @@
 	},
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
-		"@babel/core": "^7.29.7",
-		"@babel/plugin-proposal-decorators": "^7.29.7",
-		"@babel/preset-env": "^7.29.7",
-		"@babel/preset-react": "^7.29.7",
-		"@babel/preset-typescript": "^7.29.7",
+		"@babel/core": "^8.0.7",
+		"@babel/plugin-proposal-decorators": "^8.0.2",
+		"@babel/preset-env": "^8.0.7",
+		"@babel/preset-react": "^8.0.1",
+		"@babel/preset-typescript": "^8.0.7",
 		"commander": "^5.1.0",
 		"gettext-parser": "^4.0.3",
 		"glob": "^7.2.3"
