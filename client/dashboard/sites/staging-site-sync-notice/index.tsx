@@ -118,17 +118,17 @@ export function StagingSiteSyncNotice( {
 		} );
 	}, [ recordTracksEvent, site.ID, syncState.status, syncState.direction, isTakingLong ] );
 
-	if ( hasStagingSiteSyncFailed( syncState ) ) {
-		if ( dismissedSyncStartedAt === syncState.started_at ) {
-			return null;
-		}
+	const hasFailed = hasStagingSiteSyncFailed( syncState );
 
+	if ( ( hasFailed || isPastTimeout ) && dismissedSyncStartedAt === syncState.started_at ) {
+		return null;
+	}
+
+	const dismiss = () => setDismissedSyncStartedAt( syncState.started_at );
+
+	if ( hasFailed ) {
 		return (
-			<Notice
-				variant="error"
-				title={ __( 'Your last sync didn’t finish' ) }
-				onClose={ () => setDismissedSyncStartedAt( syncState.started_at ) }
-			>
+			<Notice variant="error" title={ __( 'Your last sync didn’t finish' ) } onClose={ dismiss }>
 				{ __( 'Please try syncing again.' ) }
 			</Notice>
 		);
@@ -138,6 +138,7 @@ export function StagingSiteSyncNotice( {
 		<Notice
 			variant={ isPastTimeout ? 'warning' : 'info' }
 			title={ getTitle( syncState, isPastTimeout ) }
+			onClose={ isPastTimeout ? dismiss : undefined }
 		>
 			{ getDescription(
 				syncState,
