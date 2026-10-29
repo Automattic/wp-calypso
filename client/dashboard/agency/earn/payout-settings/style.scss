@@ -1,5 +1,3 @@
-@import '@wordpress/base-styles/variables';
-
 .earn-payout-settings-iframe-container {
 	display: flex;
 	justify-content: center;
@@ -8,10 +6,4 @@
 	iframe {
 		border: none;
 	}
-}
-
-.earn-payout-settings-status-reason {
-	inline-size: max-content;
-	max-inline-size: 280px;
-	padding: $grid-unit-10;
 }

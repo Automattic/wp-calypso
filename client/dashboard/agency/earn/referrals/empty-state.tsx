@@ -5,16 +5,17 @@ import { __experimentalHStack as HStack, Button, ExternalLink, Icon } from '@wor
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { reusableBlock } from '@wordpress/icons';
+import { Badge } from '@wordpress/ui';
 import { useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
+import { Text } from '../../../components/text';
 import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
 import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
 import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
-import AccountStatusBadge from '../payout-settings/account-status-badge';
 import { getAccountStatus } from '../payout-settings/get-account-status';
 import tipaltiLogo from './lib/tipalti-logo';
 
@@ -101,17 +102,19 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 									<HStack as="span" spacing={ 2 } justify="flex-start" expanded={ false }>
 										<span>{ __( 'Prepare to get paid' ) }</span>
 										{ accountStatus && (
-											<AccountStatusBadge
-												accountStatus={ accountStatus }
-												source="referrals_empty_state"
-											/>
+											<Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>
 										) }
 									</HStack>
 								}
-								description={ createInterpolateElement(
-									__( 'With <a>Tipalti</a>, our secure platform.' ),
-									{ a: <ExternalLink href="https://tipalti.com/" children={ null } /> }
-								) }
+								description={
+									// Keyed so React swaps the whole node, which avoids a Google Translate DOM crash (react/react#11538).
+									<Text key={ accountStatus?.statusReason ? 'reason' : 'tipalti' } variant="muted">
+										{ accountStatus?.statusReason ??
+											createInterpolateElement( __( 'With <a>Tipalti</a>, our secure platform.' ), {
+												a: <ExternalLink href="https://tipalti.com/" children={ null } />,
+											} ) }
+									</Text>
+								}
 								decoration={
 									<span style={ { display: 'flex', alignItems: 'center', height: 24 } }>
 										{ tipaltiLogo }

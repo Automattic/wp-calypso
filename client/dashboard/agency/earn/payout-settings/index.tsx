@@ -6,11 +6,13 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { Text } from '../../../components/text';
-import AccountStatusBadge from './account-status-badge';
+import { AgencyNotices } from '../../components/agency-notices';
 import { getAccountStatus } from './get-account-status';
+import PayoutStatusNotice, { usePayoutStatusNotice } from './payout-status-notice';
 import { TipaltiPayoutSettings } from './tipalti-payout-settings';
 
 function PaymentStatusBadge( { agencyId }: { agencyId: number } ) {
@@ -24,7 +26,7 @@ function PaymentStatusBadge( { agencyId }: { agencyId: number } ) {
 	return (
 		<HStack spacing={ 2 } justify="flex-start" expanded={ false }>
 			<Text>{ __( 'Payment status:' ) }</Text>
-			<AccountStatusBadge accountStatus={ accountStatus } source="payout_settings" />
+			<Badge intent={ accountStatus.badgeIntent }>{ accountStatus.status }</Badge>
 		</HStack>
 	);
 }
@@ -37,6 +39,7 @@ export default function EarnPayoutSettings() {
 		...tipaltiIFrameUrlQuery( agencyId ),
 		refetchOnWindowFocus: false,
 	} );
+	const payoutStatusNotice = usePayoutStatusNotice( { agencyId, isLoadingPage: ! agency } );
 
 	return (
 		<PageLayout
@@ -45,6 +48,17 @@ export default function EarnPayoutSettings() {
 					title={ __( 'Payout settings' ) }
 					description={ __( 'Manage where and how your agency gets paid.' ) }
 					actions={ agencyId ? <PaymentStatusBadge agencyId={ agencyId } /> : undefined }
+				/>
+			}
+			notices={
+				<AgencyNotices
+					candidates={ [
+						{
+							id: 'payout-status',
+							...payoutStatusNotice,
+							notice: <PayoutStatusNotice agencyId={ agencyId } source="payout_settings" />,
+						},
+					] }
 				/>
 			}
 		>
