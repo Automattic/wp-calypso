@@ -37,8 +37,8 @@ interface ProductDetailsModalProps {
 	inCart: boolean;
 	onToggleCart: () => void;
 	onClose: () => void;
-	/** Opens the cart, where a product's count is set. */
-	onOpenCart: () => void;
+	/** Set when a product in the cart has its count set there. */
+	onOpenCart?: () => void;
 }
 
 export default function ProductDetailsModal( {
@@ -59,11 +59,13 @@ export default function ProductDetailsModal( {
 	const priceInfo = getProductPriceInfo( product, term );
 	const termNote = getTermAvailabilityNote( product, term );
 
-	let cta: string = inCart ? __( 'View in cart' ) : __( 'Add to cart' );
-	if ( isReferralMode ) {
+	const opensCart = inCart && !! onOpenCart;
+	let cta: string = inCart ? __( 'Remove from cart' ) : __( 'Add to cart' );
+	if ( opensCart ) {
+		cta = __( 'View in cart' );
+	} else if ( isReferralMode ) {
 		cta = inCart ? __( 'Remove from referral' ) : __( 'Add to referral' );
 	}
-	const opensCart = inCart && ! isReferralMode;
 
 	return (
 		<Modal
