@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import { withPressablePlan } from '../plan-field';
@@ -34,7 +34,7 @@ const sharedPlanField: Field< AgencySite > = {
 	render: renderSharedPlan,
 };
 
-function mockAgency( licenses: unknown[], { productsDelay = 0 } = {} ) {
+function mockAgency( licenses: unknown[], { productsReady = Promise.resolve() } = {} ) {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
@@ -42,9 +42,11 @@ function mockAgency( licenses: unknown[], { productsDelay = 0 } = {} ) {
 	nock( API )
 		.get( '/wpcom/v2/agency/products' )
 		.query( true )
-		.delay( productsDelay )
-		.reply( 200, [ { slug: 'pressable-hosting', products: [ signature4 ] } ] );
-	nock( API )
+		.reply( async () => {
+			await productsReady;
+			return [ 200, [ { slug: 'pressable-hosting', products: [ signature4 ] } ] ];
+		} );
+	return nock( API )
 		.get( '/wpcom/v2/jetpack-licensing/licenses' )
 		.query( true )
 		.reply( 200, { items: licenses, total_pages: 1 } );
@@ -67,10 +69,18 @@ describe( 'withPressablePlan', () => {
 
 	test( 'does not show the site’s own plan while the plan catalog loads', async () => {
 		renderSharedPlan.mockClear();
-		mockAgency( [ signature4License ], { productsDelay: 200 } );
+		let releaseProducts = () => {};
+		const productsReady = new Promise< void >( ( resolve ) => {
+			releaseProducts = resolve;
+		} );
+		const licenses = mockAgency( [ signature4License ], { productsReady } );
 
 		renderPlanCell( { blog_id: 1, hosting_provider_guess: 'pressable' } as AgencySite );
 
+		await waitFor( () => expect( licenses.isDone() ).toBe( true ) );
+		expect( renderSharedPlan ).not.toHaveBeenCalled();
+
+		releaseProducts();
 		expect( await screen.findByText( 'Pressable Signature 4' ) ).toBeVisible();
 		expect( renderSharedPlan ).not.toHaveBeenCalled();
 	} );
