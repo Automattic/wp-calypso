@@ -25,6 +25,7 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 	 * - header: the page's main heading.
 	 * - description: the page's sub-heading and <meta> description.
 	 * - metaDescription: optional <meta> description override, when it should differ from the sub-heading.
+	 *   Required when the sub-heading contains markup (e.g. a link), since the <meta> needs plain text.
 	 */
 	const THEME_SHOWCASE_LOGGED_OUT_SEO_CONTENT = useMemo(
 		() => ( {
@@ -46,10 +47,14 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 							),
 				},
 				free: {
-					title: translate( 'Free WordPress Themes' ),
-					header: translate( 'Find the perfect free WordPress theme for your blog or website.' ),
-					description: translate(
+					title: translate( 'Free WordPress Themes and Templates' ),
+					header: translate( 'Free WordPress Themes and Templates' ),
+					metaDescription: translate(
 						'Browse all free themes for WordPress.com. Try one or try them all. Risk-free.'
+					),
+					description: translate(
+						'Browse all free themes for WordPress.com. Try one or {{link}}try them all{{/link}}. Risk-free.',
+						{ components: { link: <a href="/themes" /> } }
 					),
 				},
 				premium: {
@@ -78,10 +83,14 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			blog: {
 				all: {
-					title: translate( 'Blog WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your blog.' ),
-					description: translate(
+					title: translate( 'Blog Templates and Themes' ),
+					header: translate( 'Blog Templates and Themes' ),
+					metaDescription: translate(
 						"Start your blog with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+					),
+					description: translate(
+						"{{link}}Start your blog{{/link}} with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you.",
+						{ components: { link: <a href="/create-blog/" /> } }
 					),
 				},
 				free: {
@@ -117,10 +126,14 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			business: {
 				all: {
-					title: translate( 'Business WordPress Themes' ),
-					header: translate( 'Find the perfect theme for your business website.' ),
-					description: translate(
+					title: translate( 'Business Website Templates' ),
+					header: translate( 'Business Website Templates' ),
+					metaDescription: translate(
 						"Start your business website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
+					),
+					description: translate(
+						"Start your {{link}}business website{{/link}} with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you.",
+						{ components: { link: <a href="/business/" /> } }
 					),
 				},
 				free: {
