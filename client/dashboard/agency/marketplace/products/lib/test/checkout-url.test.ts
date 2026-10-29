@@ -115,10 +115,10 @@ describe( 'getCheckoutUrl', () => {
 		);
 	} );
 
-	test( 'comes back to the current page, without its hash, on Back', () => {
+	test( 'comes back to the current page with the cart open on Back', () => {
 		const url = new URL( getCheckoutUrl( lines, { term: 'yearly' } ) );
 		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
-			`${ window.location.origin }/products?category=jetpack`
+			`${ window.location.origin }/products?category=jetpack#cart`
 		);
 	} );
 } );

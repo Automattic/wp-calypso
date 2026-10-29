@@ -11,5 +11,6 @@ export function getCartActionLabel( isReferralMode: boolean, inCart: boolean ): 
 	if ( isReferralMode ) {
 		return inCart ? __( 'Added to referral' ) : __( 'Add to referral' );
 	}
-	return inCart ? __( 'Added to cart' ) : __( 'Add to cart' );
+	// The count of a product in the cart is set in the cart, so its button opens it.
+	return inCart ? __( 'View in cart' ) : __( 'Add to cart' );
 }
