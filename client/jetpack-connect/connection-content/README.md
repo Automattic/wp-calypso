@@ -8,22 +8,22 @@ Secondary-connection content (cards + subtitle shown when a non-owner admin conn
 
 ## How it works
 
-The plugin slug arrives in the URL as part of the `plugins` query parameter (comma-separated list). Calypso classifies each slug into a **family** (`a4a`, `woo`, `jetpack`, or `other`), then uses the family composition to select:
+The plugin slug arrives in the URL as part of the `plugins` query parameter (comma-separated list). Calypso classifies each slug into a **family** (`migration`, `a4a`, `woo`, `jetpack`, or `other`), then uses the family composition to select:
 
 1. **Composite logo** — the header logo shown on the authorize, login, and signup pages
-2. **Subtitle scenario** — one of 16 pre-composed subtitle strings per surface (auth, login, signup)
-3. **Feature cards** — up to 3 brand-keyed cards in the "what you'll get" section
+2. **Subtitle scenario** — one of the pre-composed subtitle strings per surface (auth, login, signup)
+3. **Feature cards** — up to 3 brand-keyed cards in the "what you'll get" section, plus the migration hero when applicable
 4. **Secondary connection copy** — simplified content for users connecting after the site owner
 
 ```
 plugins query param
     │
     ▼
-families.ts ── getFamilyFromSlug() ──► Family ('a4a' | 'woo' | 'jetpack' | 'other')
+families.ts ── getFamilyFromSlug() ──► Family ('migration' | 'a4a' | 'woo' | 'jetpack' | 'other')
     │
     ├── plugin-registry.ts ──► display name, isFullJetpack flag
     │
-    ├── scenarios.ts ──► SubtitleScenario (16 possibilities)
+    ├── scenarios.ts ──► SubtitleScenario
     │   └── copy.ts ──► subtitle strings for auth / login / signup / secondary
     │
     ├── selectors.ts ──► getFeatureSelection() ──► card keys
@@ -32,6 +32,23 @@ families.ts ── getFamilyFromSlug() ──► Family ('a4a' | 'woo' | 'jetpac
     │
     └── plugin-registry.ts ──► getLogoForFamilies() ──► composite header logo
 ```
+
+## Migration entry points
+
+`wpcom-migration` only counts as an active plugin when the connection starts from
+`wpcom_migration` or a standard `wpcom_migration_<surface>` entry. The query parsers
+apply `getPluginsForEntryPoint( plugins, from )` (in `entry-points.ts`) once:
+`authQueryTransformer()` sets `authQuery.connectorPlugins` for the authorize and
+signup screens, and `getConnectionFlowFromRedirectTo()` sets `connectorPlugins` for
+login. Pass `connectorPlugins`, never the raw `plugins`, to the helpers here, so
+other entry points never show migration content even when the plugin is active.
+
+Migration alone uses a WordPress header; mixed-plugin connections use the existing
+dynamic connector logo. Its hero card is followed by one bullet per supporting
+family and does not consume one of the three supporting-card
+slots, so A4A, Woo, and Jetpack can all remain visible. The plugin list sent to
+authorization and the return URL are unchanged. Legacy hyphenated migration
+entries retain their existing routing.
 
 ## Step-by-step: adding a plugin to an existing family
 
@@ -79,12 +96,12 @@ Add your slug to the `FeatureCardKey` type:
 
 ```typescript
 export type FeatureCardKey =
-    | 'a4a'
-    | 'woo'
-    | 'jetpack'
-    // ...existing keys...
-    | 'your-plugin-slug'  // ← add here
-    | 'other';
+	| 'a4a'
+	| 'woo'
+	| 'jetpack'
+	// ...existing keys...
+	| 'your-plugin-slug' // ← add here
+	| 'other';
 ```
 
 #### b. Add first-connection card data (`family-features.ts`)
@@ -153,9 +170,8 @@ Add to the `SubtitleScenario` type:
 
 ```typescript
 export type SubtitleScenario =
-    // ...existing scenarios...
-    | 'YOUR_PLUGIN'
-    | 'OTHER_ONLY';
+	// ...existing scenarios...
+	'YOUR_PLUGIN' | 'OTHER_ONLY';
 ```
 
 #### b. Add detection logic (`scenarios.ts`)
@@ -177,12 +193,12 @@ Add an entry to each of the three subtitle tables:
 
 ### 5. Secondary connection copy (`copy.ts`)
 
-`getSecondaryAuthCopy()` uses simplified family-level branching (not the full 16-scenario system). If your plugin falls into an existing family, the existing subtitle covers it. If you're adding a new family, add a branch:
+`getSecondaryAuthCopy()` uses simplified family-level branching (not the full scenario system). If your plugin falls into an existing family, the existing subtitle covers it. If you're adding a new family, add a branch:
 
 ```typescript
 const hasYourFamily = families.includes( 'your-family' );
 if ( hasYourFamily ) {
-    subtitle = __( 'Connect your account to access [your plugin benefits] for this site.' );
+	subtitle = __( 'Connect your account to access [your plugin benefits] for this site.' );
 }
 ```
 
