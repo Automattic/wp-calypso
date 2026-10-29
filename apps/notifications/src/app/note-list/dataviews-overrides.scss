@@ -126,6 +126,13 @@
 			}
 		}
 
+		// Unread rows keep their tint when open.
+		div[role="article"]:has(.wpnc__subject.is-active):not(:has(.is-unread)) {
+			.dataviews-view-list__item-wrapper {
+				background-color: var(--wpds-color-background-surface-neutral, #fcfcfc);
+			}
+		}
+
 		// A pending comment keeps its warning color when open, so the bar matches its
 		// icon badge and its Pending badge rather than switching to the theme accent.
 		div[role="article"]:has(.wpnc__subject.is-active):has(.wpnc__pending-badge) {
@@ -142,6 +149,10 @@
 		// default (#1e1e1e) is near-black and unreadable on the dark surface. Point
 		// it at a light foreground for dark mode.
 		--wpds-color-foreground-content-neutral: #f0f0f0;
+
+		div[role="article"]:has(.wpnc__subject.is-active):not(:has(.is-unread)) .dataviews-view-list__item-wrapper {
+			background-color: var(--color-surface);
+		}
 
 		// $gray-700 (#757575) is a light-mode literal — it fails WCAG AA on the
 		// dark surface and the accent tints (~1.8–2.7:1). Use a light muted that
