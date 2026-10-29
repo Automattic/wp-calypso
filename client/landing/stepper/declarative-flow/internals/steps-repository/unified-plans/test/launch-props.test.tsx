@@ -97,6 +97,12 @@ describe( 'PlansStepAdaptor downgrade term', () => {
 		mockSite = null;
 	} );
 
+	it( 'opens on the billing term in the link', () => {
+		renderAdaptor( { flow: 'plan-upgrade' }, '?allow_downgrade=true&intervalType=monthly' );
+
+		expect( mockReceivedProps.intervalType ).toBe( 'monthly' );
+	} );
+
 	it( "opens on the current plan's billing term when the link does not include one", () => {
 		mockSite = { plan: { product_slug: PLAN_PREMIUM_2_YEARS } };
 		renderAdaptor( { flow: 'plan-upgrade' }, '?allow_downgrade=true' );
