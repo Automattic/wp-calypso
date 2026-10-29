@@ -521,11 +521,10 @@ describe( 'withImageStudioToolbarButton', () => {
 				expect( mockOpenImageStudio ).not.toHaveBeenCalled();
 				expect( trackImageStudioOpened ).not.toHaveBeenCalled();
 				expect( mockCreateNotice ).toHaveBeenCalledTimes( 1 );
-				expect( mockCreateNotice ).toHaveBeenCalledWith(
-					'error',
-					"This image can't be edited with AI. Replace it with another image from your Media Library.",
-					{ type: 'snackbar', isDismissible: true }
-				);
+				expect( mockCreateNotice ).toHaveBeenCalledWith( 'error', 'Could not edit image with AI.', {
+					type: 'snackbar',
+					isDismissible: true,
+				} );
 			}
 		);
 	} );

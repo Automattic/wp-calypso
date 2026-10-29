@@ -159,14 +159,10 @@ export const withImageStudioToolbarButton = createHigherOrderComponent(
 						return;
 					}
 					if ( ! canEditAttachment( record, currentBlock.current.url ) ) {
-						createNotice(
-							'error',
-							__(
-								"This image can't be edited with AI. Replace it with another image from your Media Library.",
-								__i18n_text_domain__
-							),
-							{ type: 'snackbar', isDismissible: true }
-						);
+						createNotice( 'error', __( 'Could not edit image with AI.', __i18n_text_domain__ ), {
+							type: 'snackbar',
+							isDismissible: true,
+						} );
 						return;
 					}
 				}
