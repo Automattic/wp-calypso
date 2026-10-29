@@ -42,6 +42,8 @@ export default function useAgencyCart(
 							cart_item_index: cartItemIndex,
 							// The dashboard set the term, so the checkout shows it without a picker.
 							hideProductVariants: true,
+							// The checkout shows a product's licenses as one line.
+							mergeIdenticalItems: true,
 							...( siteDomain ? { a4a_pressable_site_domain: siteDomain } : {} ),
 						},
 					} )

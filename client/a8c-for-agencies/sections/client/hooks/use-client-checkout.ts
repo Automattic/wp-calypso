@@ -113,6 +113,8 @@ export default function useClientCheckout( {
 					referral_id: queryArgs.referralId,
 					agency_id: queryArgs.agencyId,
 					cart_item_index: cartItemIndex,
+					// The checkout shows a product's licenses as one line.
+					mergeIdenticalItems: true,
 				},
 			} );
 		} );

@@ -8,7 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import {
 	type ResponseCart,
 	type RemoveCouponFromCart,
@@ -17,7 +17,7 @@ import {
 } from '@automattic/shopping-cart';
 import {
 	A4ATitanInboxMeta,
-	groupA4ALicenses,
+	mergeIdenticalLineItems,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
@@ -699,10 +699,10 @@ export function BundleProductAndCostOverridesList( {
 }
 
 /**
- * The A4A licenses of one product as one row in the order summary: the
- * product with the total for all of them, and the count with the price of one.
+ * Identical lines of one product as one row in the order summary: the product
+ * with the total for all of them, and the count with the price of one.
  */
-function A4ALicensesAndCostOverridesList( {
+function MergedProductAndCostOverridesList( {
 	products,
 	isCartUpdating,
 }: {
@@ -710,9 +710,9 @@ function A4ALicensesAndCostOverridesList( {
 	isCartUpdating?: boolean;
 } ) {
 	const translate = useTranslate();
-	const [ firstLicense ] = products;
+	const [ firstProduct ] = products;
 	const format = ( amount: number ) =>
-		formatCurrency( amount, firstLicense.currency, { isSmallestUnit: true, stripZeros: true } );
+		formatCurrency( amount, firstProduct.currency, { isSmallestUnit: true, stripZeros: true } );
 	const totalInteger = products.reduce(
 		( total, product ) => total + getItemSubtotalExcludingCoupon( product ),
 		0
@@ -722,7 +722,7 @@ function A4ALicensesAndCostOverridesList( {
 		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
 			<WPCheckoutCheckIcon />
 			<ProductTitleAreaForCostOverridesList>
-				<span className="cost-overrides-list-product__title">{ getLabel( firstLicense ) }</span>
+				<span className="cost-overrides-list-product__title">{ getLabel( firstProduct ) }</span>
 				{ isCartUpdating ? (
 					<LoadingCopy width="60px" height="16px" noMargin />
 				) : (
@@ -731,17 +731,13 @@ function A4ALicensesAndCostOverridesList( {
 			</ProductTitleAreaForCostOverridesList>
 			<BundleMemberList>
 				<span>
-					{ translate(
-						'%(count)d license at %(price)s each',
-						'%(count)d licenses at %(price)s each',
-						{
-							count: products.length,
-							args: {
-								count: products.length,
-								price: format( getItemSubtotalExcludingCoupon( firstLicense ) ),
-							},
-						}
-					) }
+					{ translate( 'Quantity: %(count)s at %(price)s each', {
+						args: {
+							count: formatNumber( products.length ),
+							price: format( getItemSubtotalExcludingCoupon( firstProduct ) ),
+						},
+						comment: '%(price)s is the price of one, such as "$149".',
+					} ) }
 				</span>
 			</BundleMemberList>
 		</SimplifiedSingleProductAndCostOverridesListWrapper>
@@ -760,17 +756,17 @@ export function ProductsAndCostOverridesList( {
 	const bundledLineItems = config.isEnabled( 'domain-bundling' )
 		? groupBundleLineItems( responseCart.products )
 		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
-	// The A4A licenses of one product show as one row.
-	const groupedLineItems = groupA4ALicenses( bundledLineItems );
+	// Identical lines that ask to be merged show as one row.
+	const groupedLineItems = mergeIdenticalLineItems( bundledLineItems );
 
 	return (
 		<ProductsAndCostOverridesListWrapper className="wp-checkout-order-summary__products-list">
 			{ groupedLineItems.map( ( entry ) => {
-				if ( entry.type === 'a4a-licenses' ) {
+				if ( entry.type === 'merged' ) {
 					return (
-						<A4ALicensesAndCostOverridesList
+						<MergedProductAndCostOverridesList
 							products={ entry.products }
-							key={ `licenses-${ entry.key }` }
+							key={ `merged-${ entry.key }` }
 							isCartUpdating={ isCartUpdating }
 						/>
 					);
