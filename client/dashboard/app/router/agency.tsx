@@ -1068,10 +1068,14 @@ export const earnMigrationsRoute = createRoute( {
 	)
 );
 
-// `/payout-settings` – where and how the agency gets paid
+// `/payout-settings` – where and how the agency gets paid. Takes the whole screen around
+// the embedded Tipalti form, with a Back link in place of the sidebar.
 export const earnPayoutSettingsRoute = createRoute( {
-	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
-	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
+	staticData: {
+		// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
+		requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ],
+		isFullscreen: true,
+	},
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'payout-settings',
