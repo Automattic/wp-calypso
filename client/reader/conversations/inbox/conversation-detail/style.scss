@@ -51,14 +51,6 @@
 	margin-block-start: 0;
 }
 
-.conversations-inbox__welcome {
-	margin: 0;
-
-	p {
-		margin: 4px 0 0;
-	}
-}
-
 @mixin conversations-inbox-welcome-dark {
 	.conversations-inbox__welcome {
 		--wp-components-notice-background-color: color-mix(
@@ -92,8 +84,6 @@
 
 .conversations-inbox__post-image {
 	flex-shrink: 0;
-	width: 120px;
-	height: 120px;
 	border-radius: 4px;
 	object-fit: cover;
 }

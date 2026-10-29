@@ -12,7 +12,6 @@ import { useTranslate } from 'i18n-calypso';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import resizeImageUrl from 'calypso/lib/resize-image-url';
 import { usePost } from 'calypso/reader/data/post';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -65,7 +64,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 	let title = translate( 'You follow this' );
 	if ( currentUserId && author?.ID === currentUserId ) {
 		title = translate( 'Your post' );
-	} else if ( hasCommented || conversation?.hasUserReplied ) {
+	} else if ( hasCommented ) {
 		title = translate( 'You commented' );
 	}
 
@@ -102,12 +101,14 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 								dispatch( savePreference( WELCOME_DISMISSED_PREFERENCE_KEY, true ) )
 							}
 						>
-							<strong>{ translate( 'Welcome to Conversations' ) }</strong>
-							<p>
-								{ translate(
-									'Posts you’ve written, followed, or commented on appear here when they receive new comments, with the latest activity first.'
-								) }
-							</p>
+							<VStack spacing={ 1 }>
+								<strong>{ translate( 'Welcome to Conversations' ) }</strong>
+								<span>
+									{ translate(
+										'Posts you’ve written, followed, or commented on appear here when they receive new comments, with the latest activity first.'
+									) }
+								</span>
+							</VStack>
 						</Notice>
 					) }
 					{ isLoading && ! post && <Spinner /> }
@@ -163,7 +164,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 								{ image && (
 									<img
 										className="conversations-inbox__post-image"
-										src={ resizeImageUrl( image, { w: 240 }, null ) ?? image }
+										src={ image }
 										alt=""
 										width={ 120 }
 										height={ 120 }

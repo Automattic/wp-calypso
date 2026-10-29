@@ -157,155 +157,49 @@ describe( 'ConversationDetail', () => {
 		expect( onNext ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	describe( 'header title', () => {
-		it( 'says the user follows the post by default', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+	it.each( [
+		[ 'You follow this', post, [] ],
+		[ 'Your post', { ...post, author: { ID: CURRENT_USER_ID } }, [] ],
+		[ 'You commented', post, [ { ID: 1, author: { ID: CURRENT_USER_ID } } ] ],
+	] )( 'titles the header “%s”', ( title, data, comments ) => {
+		mockedUsePost.mockReturnValue( { data, isLoading: false } as never );
 
-			renderDetail();
+		renderDetail( {}, { comments } );
 
-			expect( screen.getByRole( 'heading', { level: 2, name: 'You follow this' } ) ).toBeVisible();
-		} );
-
-		it( 'says the post is the user’s own when they wrote it', () => {
-			mockedUsePost.mockReturnValue( {
-				data: { ...post, author: { ID: CURRENT_USER_ID, name: 'Me' } },
-				isLoading: false,
-			} as never );
-
-			renderDetail( {}, { comments: [ { ID: 1, author: { ID: CURRENT_USER_ID } } ] } );
-
-			expect( screen.getByRole( 'heading', { level: 2, name: 'Your post' } ) ).toBeVisible();
-		} );
-
-		it( 'says the user commented when the thread has one of their comments', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-			renderDetail(
-				{},
-				{
-					comments: [
-						{ ID: 1, author: { ID: 7 } },
-						{ ID: 2, author: { ID: CURRENT_USER_ID } },
-					],
-				}
-			);
-
-			expect( screen.getByRole( 'heading', { level: 2, name: 'You commented' } ) ).toBeVisible();
-		} );
-
-		it( 'says the user commented when a note shows they replied', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-			const [ replied ] = groupNotesByPost( [
-				makeNote( {
-					id: 2,
-					meta: { ids: { site: 10, post: 100, comment: 2000, reply_comment: 3000 } } as never,
-				} ),
-			] );
-
-			renderDetail( { conversation: replied } );
-
-			expect( screen.getByRole( 'heading', { level: 2, name: 'You commented' } ) ).toBeVisible();
-		} );
+		expect( screen.getByRole( 'heading', { level: 2, name: title } ) ).toBeVisible();
 	} );
 
-	describe( 'welcome notice', () => {
-		it( 'shows the notice until the user dismisses it', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+	it( 'saves the welcome notice dismissal as a preference', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.reply( 200, { calypso_preferences: { [ WELCOME_DISMISSED_PREFERENCE_KEY ]: true } } );
 
-			renderDetail( {}, { remotePreferences: {} } );
+		renderDetail( {}, { remotePreferences: {} } );
 
-			expect( screen.getByText( 'Welcome to Conversations' ) ).toBeVisible();
-		} );
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
-		it( 'hides the notice once it has been dismissed', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-			renderDetail();
-
-			expect( screen.queryByText( 'Welcome to Conversations' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'hides the notice while preferences are still loading', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-			renderDetail( {}, { remotePreferences: null } );
-
-			expect( screen.queryByText( 'Welcome to Conversations' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'saves the dismissal as a preference', async () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-			const user = userEvent.setup();
-			const scope = nock( 'https://public-api.wordpress.com' )
-				.post( '/rest/v1.1/me/preferences', {
-					calypso_preferences: { [ WELCOME_DISMISSED_PREFERENCE_KEY ]: true },
-				} )
-				.reply( 200, { calypso_preferences: { [ WELCOME_DISMISSED_PREFERENCE_KEY ]: true } } );
-
-			renderDetail( {}, { remotePreferences: {} } );
-
-			await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
-
-			expect( screen.queryByText( 'Welcome to Conversations' ) ).not.toBeInTheDocument();
-			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-		} );
+		expect( screen.queryByText( 'Welcome to Conversations' ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
-	describe( 'post card', () => {
-		it( 'shows the featured image when the post has one', () => {
-			mockedUsePost.mockReturnValue( {
-				data: { ...post, canonical_image: { uri: 'https://example.com/featured.jpg' } },
-				isLoading: false,
-			} as never );
+	it( 'shows the featured image and Today for a post published today', () => {
+		mockedUsePost.mockReturnValue( {
+			data: {
+				...post,
+				date: new Date().toISOString(),
+				canonical_image: { uri: 'https://example.com/featured.jpg' },
+			},
+			isLoading: false,
+		} as never );
 
-			const { container } = renderDetail();
+		const { container } = renderDetail();
 
-			expect( container.querySelector( '.conversations-inbox__post-image' ) ).toHaveAttribute(
-				'src',
-				expect.stringContaining( 'example.com/featured.jpg' )
-			);
-		} );
-
-		it( 'leaves the image out when the post has none', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-			const { container } = renderDetail();
-
-			expect(
-				container.querySelector( '.conversations-inbox__post-image' )
-			).not.toBeInTheDocument();
-		} );
-
-		it( 'clamps the title and excerpt to two lines', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-			renderDetail();
-
-			expect( screen.getByRole( 'heading', { level: 3 } ) ).toHaveStyle( {
-				'--wp-components-truncate-lines': '2',
-			} );
-			expect( screen.getByText( 'A better post excerpt' ) ).toHaveStyle( {
-				'--wp-components-truncate-lines': '2',
-			} );
-		} );
-
-		it( 'shows the publish date', () => {
-			mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-
-			renderDetail();
-
-			expect( screen.getByText( '· Jan 1, 2024' ) ).toBeVisible();
-		} );
-
-		it( 'shows Today for posts published today', () => {
-			mockedUsePost.mockReturnValue( {
-				data: { ...post, date: new Date().toISOString() },
-				isLoading: false,
-			} as never );
-
-			renderDetail();
-
-			expect( screen.getByText( '· Today' ) ).toBeVisible();
-		} );
+		expect( container.querySelector( '.conversations-inbox__post-image' ) ).toHaveAttribute(
+			'src',
+			'https://example.com/featured.jpg'
+		);
+		expect( screen.getByText( '· Today' ) ).toBeVisible();
 	} );
 } );

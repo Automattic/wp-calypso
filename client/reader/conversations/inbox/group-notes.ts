@@ -16,7 +16,6 @@ export interface Conversation {
 	commenters: Commenter[];
 	noteIds: number[];
 	unreadNoteIds: number[];
-	hasUserReplied: boolean;
 }
 
 const getPostTitle = ( note: Note ): string => {
@@ -80,7 +79,6 @@ export function groupNotesByPost( notes: Note[] ): Conversation[] {
 				commenters: [],
 				noteIds: [],
 				unreadNoteIds: [],
-				hasUserReplied: false,
 			};
 			groups.set( key, group );
 		}
@@ -88,11 +86,6 @@ export function groupNotesByPost( notes: Note[] ): Conversation[] {
 		group.noteIds.push( note.id );
 		if ( ! note.read ) {
 			group.unreadNoteIds.push( note.id );
-		}
-
-		// wpcom adds `reply_comment` when the recipient has already replied to the comment.
-		if ( ( note.meta?.ids as { reply_comment?: number } | undefined )?.reply_comment ) {
-			group.hasUserReplied = true;
 		}
 
 		const commenter = getCommenter( note );

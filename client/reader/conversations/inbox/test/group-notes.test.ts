@@ -82,21 +82,6 @@ describe( 'groupNotesByPost', () => {
 		expect( conversation.unreadNoteIds.sort() ).toEqual( [ 2, 3 ] );
 	} );
 
-	it( 'flags conversations where the user has replied to a comment', () => {
-		const [ replied, untouched ] = groupNotesByPost( [
-			makeNote( {
-				id: 1,
-				postId: 100,
-				timestamp: minutesAgo( 1 ),
-				meta: { ids: { site: 10, post: 100, comment: 1000, reply_comment: 5000 } } as never,
-			} ),
-			makeNote( { id: 2, postId: 200, timestamp: minutesAgo( 2 ) } ),
-		] );
-
-		expect( replied.hasUserReplied ).toBe( true );
-		expect( untouched.hasUserReplied ).toBe( false );
-	} );
-
 	it( 'lists each commenter once, most recent first', () => {
 		const [ conversation ] = groupNotesByPost( [
 			makeNote( { id: 1, commenter: 'Ana', timestamp: minutesAgo( 3 ) } ),
