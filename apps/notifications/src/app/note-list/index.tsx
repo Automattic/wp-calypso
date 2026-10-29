@@ -195,7 +195,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
-	useNoteListFocusOnNoteClose( { noteListRef, selectedNoteId } );
+	useNoteListFocusOnNoteClose( { noteListRef, notes: tab.notes, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( {
 		noteListRef,
 		visibleNotes,
