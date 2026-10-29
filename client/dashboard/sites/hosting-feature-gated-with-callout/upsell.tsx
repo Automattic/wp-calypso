@@ -1,5 +1,4 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
-import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
@@ -38,8 +37,6 @@ export default function UpsellCallout( {
 	upsellPlanRequirement = 'business-or-commerce',
 	feature,
 }: UpsellCalloutProps ) {
-	const hasEnTranslation = useHasEnTranslation();
-
 	const handleUpsellClick = () => {
 		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 
@@ -56,15 +53,9 @@ export default function UpsellCallout( {
 		icon: settings,
 		image: illustrationUrl,
 		title: __( 'Fine-tune your WordPress site' ),
-		description: hasEnTranslation(
+		description: __(
 			'Get under the hood—choose your PHP version, control security, and test out upcoming WordPress releases.'
-		)
-			? __(
-					'Get under the hood—choose your PHP version, control security, and test out upcoming WordPress releases.'
-				)
-			: __(
-					'Get under the hood—control caching, choose your PHP version, control security, and test out upcoming WordPress releases.'
-				),
+		),
 	};
 
 	return (
