@@ -10,7 +10,7 @@ export type Family = 'migration' | 'a4a' | 'woo' | 'jetpack' | 'other';
 
 /**
  * Priority order for surfacing families in copy and feature cards.
- * Migration leads only in migration entries, then A4A, Woo, Jetpack, and others.
+ * Migration leads only if migration was the entrypoint, then A4A, Woo, Jetpack, and others.
  *
  * Featured cards and subtitle slot picking iterate this array, so changing
  * the order changes the entire flow's hierarchy.

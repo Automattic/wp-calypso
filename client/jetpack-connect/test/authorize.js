@@ -104,6 +104,7 @@ describe( 'JetpackAuthorize', () => {
 			...DEFAULT_PROPS.authQuery,
 			from: 'wpcom_migration_dashboard',
 			plugins: [ 'wpcom-migration', 'jetpack' ],
+			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
 		};
 		test( 'passes migration context to branding, copy, and cards', () => {
 			const { container } = renderWithRedux(
@@ -178,6 +179,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'jetpack', 'woocommerce' ],
+					connectorPlugins: [ 'jetpack', 'woocommerce' ],
 				} }
 			/>
 		);
@@ -236,6 +238,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'automattic-for-agencies-client', 'woocommerce' ],
+					connectorPlugins: [ 'automattic-for-agencies-client', 'woocommerce' ],
 				} }
 			/>
 		);
@@ -265,6 +268,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'automattic-for-agencies-client', 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);
@@ -296,6 +300,7 @@ describe( 'JetpackAuthorize', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'jetpack-boost' ],
+					connectorPlugins: [ 'jetpack-boost' ],
 				} }
 			/>
 		);
@@ -316,7 +321,12 @@ describe( 'JetpackAuthorize', () => {
 			const { container } = renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
-					authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from,
+						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
+					} }
 				/>
 			);
 
@@ -336,7 +346,12 @@ describe( 'JetpackAuthorize', () => {
 				const { container } = renderWithRedux(
 					<JetpackAuthorize
 						{ ...DEFAULT_PROPS }
-						authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+						authQuery={ {
+							...DEFAULT_PROPS.authQuery,
+							from,
+							plugins: [ 'jetpack' ],
+							connectorPlugins: [ 'jetpack' ],
+						} }
 					/>
 				);
 
@@ -357,7 +372,12 @@ describe( 'JetpackAuthorize', () => {
 			renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
-					authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from,
+						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
+					} }
 				/>
 			);
 
@@ -368,7 +388,12 @@ describe( 'JetpackAuthorize', () => {
 			const { container } = renderWithRedux(
 				<JetpackAuthorize
 					{ ...DEFAULT_PROPS }
-					authQuery={ { ...DEFAULT_PROPS.authQuery, from: 'my-jetpack', plugins: [ 'jetpack' ] } }
+					authQuery={ {
+						...DEFAULT_PROPS.authQuery,
+						from: 'my-jetpack',
+						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
+					} }
 				/>
 			);
 
@@ -401,6 +426,7 @@ describe( 'JetpackAuthorize', () => {
 							from,
 							hasConnectedOwner: true,
 							plugins: [ 'jetpack' ],
+							connectorPlugins: [ 'jetpack' ],
 							scope: 'administrator:fooBarBaz',
 						} }
 					/>
@@ -432,6 +458,7 @@ describe( 'JetpackAuthorize', () => {
 						from: 'jetpack-connector',
 						hasConnectedOwner: true,
 						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
 						scope: 'editor:fooBarBaz',
 					} }
 				/>
@@ -458,6 +485,7 @@ describe( 'JetpackAuthorize', () => {
 						from: 'my-jetpack',
 						hasConnectedOwner: true,
 						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
 					} }
 				/>
 			);
@@ -479,6 +507,7 @@ describe( 'JetpackAuthorize', () => {
 						from: 'my-jetpack',
 						alreadyAuthorized: true,
 						plugins: [ 'jetpack' ],
+						connectorPlugins: [ 'jetpack' ],
 					} }
 				/>
 			);

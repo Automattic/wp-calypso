@@ -11,7 +11,7 @@ Secondary-connection content (cards + subtitle shown when a non-owner admin conn
 The plugin slug arrives in the URL as part of the `plugins` query parameter (comma-separated list). Calypso classifies each slug into a **family** (`migration`, `a4a`, `woo`, `jetpack`, or `other`), then uses the family composition to select:
 
 1. **Composite logo** — the header logo shown on the authorize, login, and signup pages
-2. **Subtitle scenario** — one of 18 pre-composed subtitle strings per surface (auth, login, signup)
+2. **Subtitle scenario** — one of the pre-composed subtitle strings per surface (auth, login, signup)
 3. **Feature cards** — up to 3 brand-keyed cards in the "what you'll get" section, plus the migration hero when applicable
 4. **Secondary connection copy** — simplified content for users connecting after the site owner
 
@@ -23,7 +23,7 @@ families.ts ── getFamilyFromSlug() ──► Family ('migration' | 'a4a' | '
     │
     ├── plugin-registry.ts ──► display name, isFullJetpack flag
     │
-    ├── scenarios.ts ──► SubtitleScenario (18 possibilities)
+    ├── scenarios.ts ──► SubtitleScenario
     │   └── copy.ts ──► subtitle strings for auth / login / signup / secondary
     │
     ├── selectors.ts ──► getFeatureSelection() ──► card keys
@@ -35,10 +35,13 @@ families.ts ── getFamilyFromSlug() ──► Family ('migration' | 'a4a' | '
 
 ## Migration entry points
 
-`wpcom_migration` and standard `wpcom_migration_<surface>` entries prioritize the
-`migration` family when `wpcom-migration` is in `plugins`. Other entry points hide
-migration content, even when the plugin remains active. Pass `from` alongside
-`plugins` to the shared copy, branding, and feature-card helpers on every surface.
+`wpcom-migration` only counts as an active plugin when the connection starts from
+`wpcom_migration` or a standard `wpcom_migration_<surface>` entry. The query parsers
+apply `getPluginsForEntryPoint( plugins, from )` (in `entry-points.ts`) once:
+`authQueryTransformer()` sets `authQuery.connectorPlugins` for the authorize and
+signup screens, and `getConnectionFlowFromRedirectTo()` sets `connectorPlugins` for
+login. Pass `connectorPlugins`, never the raw `plugins`, to the helpers here, so
+other entry points never show migration content even when the plugin is active.
 
 Migration uses a WordPress header and a hero card, followed by one bullet per
 supporting family. Its hero does not consume one of the three supporting-card
@@ -92,12 +95,12 @@ Add your slug to the `FeatureCardKey` type:
 
 ```typescript
 export type FeatureCardKey =
-    | 'a4a'
-    | 'woo'
-    | 'jetpack'
-    // ...existing keys...
-    | 'your-plugin-slug'  // ← add here
-    | 'other';
+	| 'a4a'
+	| 'woo'
+	| 'jetpack'
+	// ...existing keys...
+	| 'your-plugin-slug' // ← add here
+	| 'other';
 ```
 
 #### b. Add first-connection card data (`family-features.ts`)
@@ -166,9 +169,8 @@ Add to the `SubtitleScenario` type:
 
 ```typescript
 export type SubtitleScenario =
-    // ...existing scenarios...
-    | 'YOUR_PLUGIN'
-    | 'OTHER_ONLY';
+	// ...existing scenarios...
+	'YOUR_PLUGIN' | 'OTHER_ONLY';
 ```
 
 #### b. Add detection logic (`scenarios.ts`)
@@ -195,7 +197,7 @@ Add an entry to each of the three subtitle tables:
 ```typescript
 const hasYourFamily = families.includes( 'your-family' );
 if ( hasYourFamily ) {
-    subtitle = __( 'Connect your account to access [your plugin benefits] for this site.' );
+	subtitle = __( 'Connect your account to access [your plugin benefits] for this site.' );
 }
 ```
 

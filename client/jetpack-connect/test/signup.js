@@ -71,6 +71,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'wpcom_migration',
 					plugins: [ 'wpcom-migration', 'jetpack' ],
+					connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
 				} }
 			/>
 		);
@@ -127,6 +128,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'jetpack', 'woocommerce' ],
+					connectorPlugins: [ 'jetpack', 'woocommerce' ],
 				} }
 			/>
 		);
@@ -149,6 +151,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);
@@ -180,7 +183,12 @@ describe( 'JetpackSignup', () => {
 		const { container } = render(
 			<JetpackSignup
 				{ ...DEFAULT_PROPS }
-				authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from,
+					plugins: [ 'jetpack' ],
+					connectorPlugins: [ 'jetpack' ],
+				} }
 			/>
 		);
 
@@ -213,6 +221,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'banner-44-slide-1-dashboard',
 					plugins: [ 'woocommerce' ],
+					connectorPlugins: [ 'woocommerce' ],
 				} }
 			/>
 		);
@@ -236,6 +245,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);

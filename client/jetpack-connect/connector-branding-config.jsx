@@ -27,18 +27,6 @@ const DEFAULT_PERMISSIONS_TITLE = ( { siteURL } = {} ) =>
 		: __( 'This connection allows Jetpack to:' );
 
 /**
- * Determine the composite connector logo based on which plugin families are
- * present in the slugs list. Mirrors the PHP `get_connector_logo_url()` logic
- * in class-jetpack-connector.php.
- * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
- * @param {string|null} [from] Connection entry point.
- * @returns {string} Imported SVG URL for the matching connector logo.
- */
-export function getConnectorLogoUrl( pluginSlugs = [], from = undefined ) {
-	return getLogoForFamilies( getPresentFamilies( pluginSlugs, from ) );
-}
-
-/**
  * Resolve branding (logo, permissionsTitle, permissions) for the connector
  * flow based on the plugin slugs passed via the `plugins` query parameter.
  *
@@ -52,11 +40,10 @@ export function getConnectorLogoUrl( pluginSlugs = [], from = undefined ) {
  * remaining consumer is the legacy `isFromMyJetpack` path, which still
  * renders the static `<PermissionsList />`.
  * @param {string[]} pluginSlugs - Array of plugin slugs from the query parameter.
- * @param {string|null} [from] Connection entry point.
  * @returns {{ logo: string, logoAlt: string, permissionsTitle: ( ( ctx?: { siteURL?: string } ) => string ), permissions: Array }} Branding object.
  */
-export function getConnectorBranding( pluginSlugs = [], from = undefined ) {
-	const families = getPresentFamilies( pluginSlugs, from );
+export function getConnectorBranding( pluginSlugs = [] ) {
+	const families = getPresentFamilies( pluginSlugs );
 	const logo = getLogoForFamilies( families );
 
 	return {

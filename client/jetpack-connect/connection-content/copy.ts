@@ -239,17 +239,14 @@ function getSignupSubtitles(): Record< SubtitleScenario, string > {
  * Title + subtitle for the authorize page in the unified connection flow.
  *
  * The H1 is the static `Connect your account`. The subtitle switches
- * between 18 pre-composed sentences keyed by the active plugin set's
+ * between pre-composed sentences keyed by the active plugin set's
  * family/composition. See `scenarios.ts` for the decision order and
  * `getAuthSubtitles` above for the full string table.
  */
-export function getAuthCopy(
-	pluginSlugs: readonly string[] = [],
-	from?: string | null
-): SurfaceCopy {
+export function getAuthCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
 	return {
 		title: __( 'Connect your account' ),
-		subtitle: getAuthSubtitles()[ getSubtitleScenario( pluginSlugs, from ) ],
+		subtitle: getAuthSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
 	};
 }
 
@@ -259,13 +256,10 @@ export function getAuthCopy(
  * The H1 is the static `Create your account`. The subtitle is a
  * family-driven value-prop string from `getSignupSubtitles`.
  */
-export function getSignupCopy(
-	pluginSlugs: readonly string[] = [],
-	from?: string | null
-): SurfaceCopy {
+export function getSignupCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
 	return {
 		title: __( 'Create your account' ),
-		subtitle: getSignupSubtitles()[ getSubtitleScenario( pluginSlugs, from ) ],
+		subtitle: getSignupSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
 	};
 }
 
@@ -277,13 +271,10 @@ export function getSignupCopy(
  * Terms-of-Service line keeps its existing studio-gray-50 secondary slot
  * (rendered separately by `get-heading-subtext.tsx`).
  */
-export function getLoginCopy(
-	pluginSlugs: readonly string[] = [],
-	from?: string | null
-): SurfaceCopy {
+export function getLoginCopy( pluginSlugs: readonly string[] = [] ): SurfaceCopy {
 	return {
 		title: __( 'Log in to WordPress.com' ),
-		subtitle: getLoginSubtitles()[ getSubtitleScenario( pluginSlugs, from ) ],
+		subtitle: getLoginSubtitles()[ getSubtitleScenario( pluginSlugs ) ],
 	};
 }
 
@@ -298,8 +289,7 @@ export function getLoginCopy(
  */
 export function getSecondaryAuthCopy(
 	isAdmin: boolean,
-	pluginSlugs: readonly string[] = [],
-	from?: string | null
+	pluginSlugs: readonly string[] = []
 ): SurfaceCopy {
 	if ( ! isAdmin ) {
 		return {
@@ -308,7 +298,7 @@ export function getSecondaryAuthCopy(
 		};
 	}
 
-	const families = getPresentFamilies( pluginSlugs, from );
+	const families = getPresentFamilies( pluginSlugs );
 	if ( families.includes( 'migration' ) ) {
 		return {
 			title: __( 'Connect your account' ),
