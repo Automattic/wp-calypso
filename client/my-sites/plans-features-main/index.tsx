@@ -84,7 +84,6 @@ import {
 	ensureCompatibleIntervalType,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
-import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -779,10 +778,6 @@ const PlansFeaturesMain = ( {
 	 */
 	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
-	const { showDifferentiatorHeader, isExperimentVariant } = usePlanDifferentiatorsExperiment( {
-		isInSignup,
-		siteId,
-	} );
 	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
@@ -1447,7 +1442,7 @@ const PlansFeaturesMain = ( {
 			// The row set has to match the feature lists the comparison grid is built from, which a
 			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
 			// titles with a control list.
-			isExperimentVariant: isExperimentVariant && ! hasTailoredFeatureList( intent ),
+			isExperimentVariant: ! hasTailoredFeatureList( intent ),
 		} );
 	}
 
@@ -1638,9 +1633,7 @@ const PlansFeaturesMain = ( {
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }
-					showDifferentiatorHeader={
-						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
-					}
+					showDifferentiatorHeader={ showPlansGridRedesignDifferentiatorHeader }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
