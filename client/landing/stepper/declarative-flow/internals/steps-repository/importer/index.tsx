@@ -38,6 +38,7 @@ import { StepProps } from '../../types';
 import { useAtomicTransferQueryParamUpdate } from './hooks/use-atomic-transfer-query-param-update';
 import { useInitialQueryRun } from './hooks/use-initial-query-run';
 import { useStepNavigator } from './hooks/use-step-navigator';
+import { useTrackImporterState } from './hooks/use-track-importer-state';
 import type { ImporterCompType } from './types';
 import type { Importer, ImportJob } from 'calypso/blocks/importer/types';
 
@@ -98,6 +99,9 @@ export function withImporterWrapper( Importer: ImporterCompType ) {
 		useEffect( fetchImporters, [ siteId ] );
 		useEffect( checkFromSiteData, [ fromSiteData?.url ] );
 		useEffect( () => onComponentUnmount, [] );
+		useTrackImporterState(
+			! isLoading && site && hasPermission() ? getImportJob( importer ) : undefined
+		);
 
 		useEffect( () => {
 			if ( ! isLoading && ! site ) {
