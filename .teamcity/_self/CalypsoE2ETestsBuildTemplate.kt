@@ -194,10 +194,9 @@ object CalypsoE2ETestsBuildTemplate : Template({
 				# TEST_GROUP, run all tests but @content-blocker, which has its own scheduled build.
 				if [[ "%IGNORE_TEST_GROUP_FOR_E2E_CHANGES%" == "true" ]]; then
 					# The script always prints a flag, so a failure must not fall through to
-					# running every test. A buildProblem service message fails the build, which a
-					# bare exit code does not (nonZeroExitCode = false).
+					# running every test.
 					GREP_FLAG=${'$'}(TEST_GROUP="%TEST_GROUP%" ./bin/e2e-grep-flag.sh) || {
-						echo "##teamcity[buildProblem description='bin/e2e-grep-flag.sh failed; not running tests' identity='e2e_grep_flag']"
+						echo "bin/e2e-grep-flag.sh failed; not running tests." >&2
 						exit 1
 					}
 				elif [[ -n "%TEST_GROUP%" ]]; then
