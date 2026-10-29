@@ -122,5 +122,21 @@ describe( '<EarnReferrals>', () => {
 
 		expect( await screen.findByText( /You’ve successfully made a client referral/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Complete your details in Tipalti to get paid.' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows why a Not Payable agency with no referrals can’t be paid', async () => {
+		mockEndpoints( { referrals: [], isPayable: false } );
+		render( <EarnReferrals /> );
+
+		const reasons = await screen.findAllByText( 'Complete your details in Tipalti to get paid.' );
+		expect( reasons ).toHaveLength( 2 );
+		reasons.forEach( ( reason ) => expect( reason ).toBeVisible() );
+		expect( screen.getByRole( 'link', { name: 'Add my details' } ) ).toHaveAttribute(
+			'href',
+			'/payout-settings'
+		);
 	} );
 } );
