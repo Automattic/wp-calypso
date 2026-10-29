@@ -50,3 +50,50 @@
 .conversations-inbox__detail-content .comments__comment-list {
 	margin-block-start: 0;
 }
+
+.conversations-inbox__welcome {
+	margin: 0;
+
+	p {
+		margin: 4px 0 0;
+	}
+}
+
+@mixin conversations-inbox-welcome-dark {
+	.conversations-inbox__welcome {
+		--wp-components-notice-background-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 16%,
+			var( --color-surface )
+		);
+		--wp-components-notice-border-color: color-mix(
+			in srgb,
+			var( --wp-admin-theme-color ) 48%,
+			var( --color-surface )
+		);
+		--wp-components-notice-text-color: var( --color-text );
+	}
+}
+
+:root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
+	@include conversations-inbox-welcome-dark;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
+		@include conversations-inbox-welcome-dark;
+	}
+}
+
+.conversations-inbox__post-text {
+	flex: 1;
+	min-width: 0;
+}
+
+.conversations-inbox__post-image {
+	flex-shrink: 0;
+	width: 120px;
+	height: 120px;
+	border-radius: 4px;
+	object-fit: cover;
+}
