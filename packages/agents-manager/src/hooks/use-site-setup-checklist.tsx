@@ -60,11 +60,12 @@ const NONE: SiteSetupChecklistState = {
  * Task status is the backend's alone, read by running the
  * `wpcom/get-site-setup-tasks` ability, so this list and the Site Setup page
  * never disagree. A pick is recorded there from that same message, once it is
- * in the conversation (so only a prompt the composer actually dispatched, past
- * any upload, starts anything), and the list is re-read after every agent turn
- * (which may complete a task), when the chat opens (the Site Setup page may
- * have changed it meanwhile) and, through the query's window-focus refetch,
- * when the tab comes back.
+ * in the conversation and its turn is running (so only a prompt the composer
+ * actually dispatched, past any upload, starts anything, and restored history
+ * never does), and the list is re-read after every agent turn (which may
+ * complete a task), when the chat opens (the Site Setup page may have changed
+ * it meanwhile) and, through the query's window-focus refetch, when the tab
+ * comes back.
  */
 export default function useSiteSetupChecklist( {
 	enabled,
@@ -82,11 +83,27 @@ export default function useSiteSetupChecklist( {
 		enabled: isEnabled,
 	} );
 
-	// Tasks picked during the running turn, shown in progress whatever a read
-	// says meanwhile: the pinned list folds down to the in-progress rows, and a
-	// task that completes on click would otherwise settle and unfold the list
-	// mid-turn. The turn-end read then settles them for real.
+	// Tasks picked (started or resumed) during the running turn, shown in
+	// progress whatever a read says meanwhile: the pinned list folds down to the
+	// in-progress rows, and a task that completes on click would otherwise settle
+	// and unfold the list mid-turn. Released when the turn ends, or, for a start
+	// still in flight then, once its write and the read after it settle.
 	const [ heldIds, setHeldIds ] = useState( NO_IDS );
+	const heldIdsRef = useRef( heldIds );
+	heldIdsRef.current = heldIds;
+	const pendingStartsRef = useRef( new Set< string >() );
+	const isProcessingRef = useRef( isProcessing );
+	isProcessingRef.current = isProcessing;
+
+	const release = useCallback( ( ids: Iterable< string > ) => {
+		setHeldIds( ( current ) => {
+			const next = new Set( current );
+			for ( const id of ids ) {
+				next.delete( id );
+			}
+			return next.size === current.size ? current : next;
+		} );
+	}, [] );
 
 	const wasProcessingRef = useRef( isProcessing );
 	const wasOpenRef = useRef( isOpen );
@@ -99,13 +116,13 @@ export default function useSiteSetupChecklist( {
 		wasOpenRef.current = isOpen;
 
 		if ( turnEnded ) {
-			setHeldIds( ( current ) => ( current.size > 0 ? NO_IDS : current ) );
+			release( [ ...heldIdsRef.current ].filter( ( id ) => ! pendingStartsRef.current.has( id ) ) );
 		}
 
 		if ( isEnabled && ( turnEnded || opened ) ) {
 			refetch();
 		}
-	}, [ isProcessing, isOpen, isEnabled, refetch ] );
+	}, [ isProcessing, isOpen, isEnabled, refetch, release ] );
 
 	// Re-read once the write settles, success or failure: landing after the
 	// turn-end read, it would otherwise go unseen until the next refetch.
@@ -114,6 +131,7 @@ export default function useSiteSetupChecklist( {
 			if ( siteId === null ) {
 				return;
 			}
+			pendingStartsRef.current.add( taskId );
 
 			try {
 				await startSiteSetupTask( siteId, taskId );
@@ -122,44 +140,54 @@ export default function useSiteSetupChecklist( {
 				console.error( '[AgentsManager] Error recording the Site Setup task as started:', error );
 			}
 
-			refetch();
+			await refetch();
+			pendingStartsRef.current.delete( taskId );
+			if ( ! isProcessingRef.current ) {
+				release( [ taskId ] );
+			}
 		},
-		[ siteId, refetch ]
+		[ siteId, refetch, release ]
 	);
 
-	// A pick is the user message that carries its task id, and that message exists
-	// only once the composer dispatched the prompt. Messages present when the
-	// conversation loads are history, not picks.
-	const seenMessageIdsRef = useRef< ReadonlySet< string > | null >( null );
+	// A pick is the newest user message when it carries a task id and its turn is
+	// running: the composer adds that message only once it dispatched the prompt,
+	// and a turn starts with it. Restored history arrives with no turn running
+	// (and a remount mid-turn keeps the live history instead), so it is never a
+	// pick; a user message that is no longer the newest is settled either way.
+	const seenMessageIdsRef = useRef( new Set< string >() );
 
 	useEffect( () => {
-		if ( isLoadingConversation ) {
-			seenMessageIdsRef.current = null;
-			return;
-		}
-
 		const seen = seenMessageIdsRef.current;
-		seenMessageIdsRef.current = new Set( messages.map( ( message ) => message.id ) );
-		if ( seen === null || ! isEnabled ) {
+		const newest = messages[ messages.length - 1 ];
+		messages.forEach( ( message ) => {
+			if ( message !== newest ) {
+				seen.add( message.id );
+			}
+		} );
+		if ( ! newest || seen.has( newest.id ) ) {
+			return;
+		}
+		if ( newest.role !== 'user' || ! isEnabled ) {
+			seen.add( newest.id );
+			return;
+		}
+		// Wait for the turn (the message can render a tick before it) and for the list.
+		if ( ! isProcessing || ! data ) {
+			return;
+		}
+		seen.add( newest.id );
+
+		const taskId = getPickedSiteSetupTask( newest );
+		const task = data.tasks.find( ( candidate ) => candidate.id === taskId );
+		if ( ! task || ( task.status !== 'todo' && task.status !== 'in-progress' ) ) {
 			return;
 		}
 
-		const picked = messages
-			.filter( ( message ) => message.role === 'user' && ! seen.has( message.id ) )
-			.map( getPickedSiteSetupTask )
-			.filter(
-				( taskId ): taskId is string =>
-					taskId !== null &&
-					! heldIds.has( taskId ) &&
-					( data?.tasks.some( ( task ) => task.id === taskId && task.status === 'todo' ) ?? false )
-			);
-		if ( picked.length === 0 ) {
-			return;
+		setHeldIds( ( current ) => new Set( [ ...current, task.id ] ) );
+		if ( task.status === 'todo' ) {
+			startTask( task.id );
 		}
-
-		setHeldIds( ( current ) => new Set( [ ...current, ...picked ] ) );
-		picked.forEach( startTask );
-	}, [ messages, isLoadingConversation, isEnabled, data, heldIds, startTask ] );
+	}, [ messages, isProcessing, isEnabled, data, startTask ] );
 
 	const isStartedFromList = useMemo( () => isChatStartedFromSiteSetup( messages ), [ messages ] );
 	const lastPickedId = useMemo( () => getLastPickedSiteSetupTask( messages ), [ messages ] );
