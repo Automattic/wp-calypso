@@ -12,6 +12,7 @@ import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getProductionSiteId,
 	getStagingSiteId,
+	hasStagingSiteSyncTimedOut,
 	isStagingSiteSyncing,
 } from '../../utils/site-staging-site';
 import StagingSiteHighLoadNotice from '../staging-site-high-load-notice';
@@ -60,6 +61,7 @@ export default function StagingSiteSyncDropdown( {
 	} );
 
 	const isSyncing = isStagingSiteSyncing( stagingSiteSyncState );
+	const canSync = ! isSyncing || hasStagingSiteSyncTimedOut( stagingSiteSyncState );
 
 	const pullLabel =
 		environment === 'staging' ? __( 'Pull from Production' ) : __( 'Pull from Staging' );
@@ -123,7 +125,7 @@ export default function StagingSiteSyncDropdown( {
 					__next40pxDefaultSize: true,
 					iconPosition: 'right',
 					variant: 'secondary',
-					disabled: isSyncing,
+					disabled: ! canSync,
 				} }
 				icon={ chevronDown }
 				text={ __( 'Sync' ) }

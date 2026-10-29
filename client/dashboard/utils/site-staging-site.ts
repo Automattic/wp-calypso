@@ -16,3 +16,12 @@ export const isStagingSiteSyncing = ( stagingSiteSyncState?: StagingSiteSyncStat
 		[ 'pending', 'backing_up', 'restoring' ].includes( stagingSiteSyncState.status )
 	);
 };
+
+export const STAGING_SITE_SYNC_TIMEOUT_MS = 2 * 60 * 60 * 1000;
+
+export const hasStagingSiteSyncTimedOut = ( stagingSiteSyncState?: StagingSiteSyncState ) => {
+	return (
+		!! stagingSiteSyncState?.started_at &&
+		Date.now() - stagingSiteSyncState.started_at * 1000 > STAGING_SITE_SYNC_TIMEOUT_MS
+	);
+};

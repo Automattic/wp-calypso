@@ -5,12 +5,15 @@ import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { useFormattedTime } from '../../components/formatted-time';
 import { Notice } from '../../components/notice';
+import {
+	STAGING_SITE_SYNC_TIMEOUT_MS,
+	hasStagingSiteSyncTimedOut,
+} from '../../utils/site-staging-site';
 import type { Site, StagingSiteSyncState } from '@automattic/api-core';
 
 export * from './use-running-staging-site-sync';
 
 const TAKING_LONG_AFTER_MS = 60 * 60 * 1000;
-const TIMEOUT_AFTER_MS = 2 * 60 * 60 * 1000;
 
 function getTitle( syncState: StagingSiteSyncState ) {
 	if ( syncState.status === 'pending' ) {
@@ -42,9 +45,7 @@ function getDescription(
 	if ( isPastTimeout ) {
 		return sprintf(
 			/* translators: %s is a date, like "today at 10:00". */
-			__(
-				'This sync started %s and has run past its two hour limit, so it will stop shortly. You can try again once it does.'
-			),
+			__( 'This sync started %s and doesn’t seem to be working. Please try syncing again.' ),
 			formattedStartTime
 		);
 	}
@@ -97,7 +98,9 @@ export function StagingSiteSyncNotice( {
 		true
 	);
 	const formattedTimeoutTime = useFormattedTime(
-		syncState.started_at ? new Date( startedAtMs + TIMEOUT_AFTER_MS ).toISOString() : '',
+		syncState.started_at
+			? new Date( startedAtMs + STAGING_SITE_SYNC_TIMEOUT_MS ).toISOString()
+			: '',
 		{ timeStyle: 'short' },
 		undefined,
 		undefined,
@@ -105,7 +108,7 @@ export function StagingSiteSyncNotice( {
 	);
 	const runningForMs = syncState.started_at ? Date.now() - startedAtMs : 0;
 	const isTakingLong = runningForMs > TAKING_LONG_AFTER_MS;
-	const isPastTimeout = runningForMs > TIMEOUT_AFTER_MS;
+	const isPastTimeout = hasStagingSiteSyncTimedOut( syncState );
 
 	useEffect( () => {
 		if ( hasRecordedImpression.current ) {
