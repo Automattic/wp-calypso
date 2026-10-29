@@ -6,6 +6,7 @@ import { __ } from '@wordpress/i18n';
 import { useHelpCenter } from '../../../app/help-center';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
+import { ConnectionHelp, useManualInstall } from './connection-help';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type {
 	Site,
@@ -21,6 +22,7 @@ export function Findings( {
 	migration: WordPressMigrationStatus;
 } ) {
 	const { setShowHelpCenter } = useHelpCenter();
+	const { manualInstall } = useManualInstall( site );
 	const run = useMutation(
 		withSnackbar( siteWordPressMigrationRunMutation( site.ID ), {
 			error: __( 'Failed to continue the migration.' ),
@@ -32,10 +34,15 @@ export function Findings( {
 	const isFailed = migration.status === 'failed';
 	// Continuing past a `retry` finding only runs the same step again.
 	const isRetry = findings.some( ( { resolution } ) => resolution === 'retry' );
+	// Only warnings mean the migration could read the source. Anything worse may be its connection.
+	const hasError = isFailed || findings.some( ( { severity } ) => severity === 'failure' );
 
 	const getDescription = () => {
 		if ( isFailed ) {
-			return __( 'Something went wrong and the migration couldn’t finish.' );
+			// The findings say what went wrong themselves.
+			return findings.length > 0
+				? undefined
+				: __( 'Something went wrong and the migration couldn’t finish.' );
 		}
 		return findings.length > 0
 			? __( 'We checked your site and found a few things you should know about.' )
@@ -43,7 +50,7 @@ export function Findings( {
 	};
 
 	const getStatus = () => {
-		if ( isFailed || findings.some( ( { severity } ) => severity === 'failure' ) ) {
+		if ( hasError ) {
 			return 'error';
 		}
 		return findings.length > 0 ? 'warning' : 'pending';
@@ -81,6 +88,16 @@ export function Findings( {
 					{ getMessage( finding ) }
 				</Notice>
 			) ) }
+			{ hasError && (
+				<ConnectionHelp
+					manualInstall={ manualInstall }
+					lastStep={
+						isRetry
+							? __( '3. Come back here and try again.' )
+							: __( '3. Come back here and continue.' )
+					}
+				/>
+			) }
 		</MigrationCard>
 	);
 }

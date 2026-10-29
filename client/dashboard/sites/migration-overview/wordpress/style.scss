@@ -27,11 +27,6 @@
 	padding-block-end: 10px;
 }
 
-// VStack's display: flex would otherwise override the hidden attribute.
-.wordpress-migration__connect-help[hidden] {
-	display: none;
-}
-
 // The dashboard's lists have no bullets by default.
 .wordpress-migration__fallbacks {
 	margin: 0;
@@ -68,8 +63,9 @@
 	}
 }
 
-// SectionHeader greys out and enlarges its decoration's icon, this one is a small status.
-.dashboard-section-header__decoration svg.wordpress-migration__status-icon {
+// SectionHeader greys out and enlarges its decoration's icon, this one is a small status. In a modal's header too.
+.dashboard-section-header__decoration svg.wordpress-migration__status-icon,
+.components-modal__icon-container svg.wordpress-migration__status-icon {
 	width: 22px;
 	height: 22px;
 	fill: var( --wp-admin-theme-color );
