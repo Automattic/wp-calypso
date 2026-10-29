@@ -106,7 +106,9 @@ describe( 'CartMenu', () => {
 	it.each( [ false, true ] )(
 		'opens the approval gate instead of a checkout while the agency is in review (referral mode: %s)',
 		async ( isReferralMode ) => {
-			const { onToggle, recordTracksEvent } = renderCart( isReferralMode, { approvalStatus: 'pending' } );
+			const { onToggle, recordTracksEvent } = renderCart( isReferralMode, {
+				approvalStatus: 'pending',
+			} );
 
 			expect( screen.queryByRole( 'link', { name: 'Checkout' } ) ).not.toBeInTheDocument();
 			await userEvent.click( screen.getByRole( 'button', { name: 'Checkout' } ) );
@@ -134,7 +136,7 @@ describe( 'CartMenu', () => {
 	} );
 
 	it( 'keeps the vendor in a WooCommerce product name', async () => {
-		renderCart( false, mockWooProduct );
+		renderCart( false, { product: mockWooProduct } );
 
 		const name = await screen.findByText( 'WooCommerce Bookings' );
 		await waitFor( () => expect( name ).toBeVisible() );
