@@ -58,18 +58,14 @@ function getDescription(
 		);
 	}
 
-	if ( syncState.status === 'pending' || ! formattedStartTime ) {
+	if ( syncState.status === 'pending' ) {
 		return __(
 			'We’re syncing your site in the background. You can’t start another sync until this one finishes.'
 		);
 	}
 
-	return sprintf(
-		/* translators: %s is a date, like "today at 10:00". */
-		__(
-			'This sync started %s. Sit back and relax, we’ll take care of this in the background. You can’t start another sync until this one finishes.'
-		),
-		formattedStartTime
+	return __(
+		'Sit back and relax, we’ll take care of this in the background. You can’t start another sync until this one finishes.'
 	);
 }
 
