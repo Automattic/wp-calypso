@@ -58,7 +58,11 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		migration?.status === 'failed'
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
-	const isConnecting = migration?.status === 'not_started' || !! connectionFailure;
+	// A stopped migration can also be taken back to that step, until the next run starts.
+	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
+	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
+	const isConnecting =
+		migration?.status === 'not_started' || !! connectionFailure || ( isStopped && isBackToSetup );
 
 	// Connecting the source after it was refused gets past the refusal, unless something else failed too. Once a retry
 	// is refused anyway, the connection isn't enough, so the refusal stands.
@@ -166,6 +170,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 						isRefusalSuperseded ? migration?.findings.map( ( { code } ) => code ) : undefined
 					}
 					onRetry={ () => setHasRetried( true ) }
+					onStarted={ () => setIsBackToSetup( false ) }
 				/>
 			) }
 			{ migration?.status === 'running' && (
@@ -175,8 +180,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					notificationEmails={ migration.notification_emails }
 				/>
 			) }
-			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
-				! connectionFailure && <Findings site={ site } migration={ migration } /> }
+			{ migration && isStopped && ! isConnecting && (
+				<Findings
+					site={ site }
+					migration={ migration }
+					onBackToSetup={ () => setIsBackToSetup( true ) }
+				/>
+			) }
 			{ isCompleted && (
 				<MigrationCard
 					title={ __( 'Your site has been migrated' ) }

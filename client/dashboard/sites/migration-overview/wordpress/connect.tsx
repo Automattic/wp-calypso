@@ -1,17 +1,57 @@
 import {
+	siteWordPressMigrationConfigurationQuery,
 	siteWordPressMigrationConfigureMutation,
 	siteWordPressMigrationRunMutation,
 } from '@automattic/api-queries';
-import { useMutation } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
+import config from '@automattic/calypso-config';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	Button,
+	ExternalLink,
+} from '@wordpress/components';
+import { useInstanceId } from '@wordpress/compose';
+import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
+import ClipboardInputControl from '../../../components/clipboard-input-control';
 import ConfirmModal from '../../../components/confirm-modal';
 import Notice from '../../../components/notice';
-import { ConnectionHelp, MANUAL_INSTALL, useManualInstall } from './connection-help';
+import { Text } from '../../../components/text';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
+
+const MANUAL_INSTALL = 'manual-wpcom-install';
+
+// Temporary, can remove at/after launch.
+const IS_TESTING_BUILD = [
+	'dashboard-stage',
+	'dashboard-horizon',
+	'dashboard-development',
+	'development',
+].includes( config( 'env_id' ) );
+const TESTING_HINT =
+	'Note: The plugin will default to the BlogVault screen. Use the <link>new screen</link>.';
+
+function useManualInstall( site: Site ) {
+	const {
+		data: configuration,
+		isError,
+		refetch,
+	} = useQuery( siteWordPressMigrationConfigurationQuery( site.ID ) );
+	const manualInstall = configuration?.available_source_connections.find(
+		( { method } ) => method === MANUAL_INSTALL
+	);
+	return { manualInstall, isError, refetch };
+}
+
+function linkTo( url?: string ) {
+	// @ts-expect-error children prop is injected by createInterpolateElement
+	return <ExternalLink href={ url ?? '' } />;
+}
 
 export function Connect( {
 	site,
@@ -20,6 +60,7 @@ export function Connect( {
 	failure,
 	retryFindings,
 	onRetry,
+	onStarted,
 }: {
 	site: Site;
 	sourceHost: string;
@@ -29,11 +70,14 @@ export function Connect( {
 	// Set once the source is connected after refusing: running again, accepting these, should get further.
 	retryFindings?: string[];
 	onRetry: () => void;
+	onStarted: () => void;
 } ) {
 	const snackbar = { error: __( 'Failed to start the migration.' ) };
 	const { manualInstall, isError, refetch } = useManualInstall( site );
+	const [ isShowingFallbacks, setIsShowingFallbacks ] = useState( false );
 	const [ hasSeenKey, setHasSeenKey ] = useState( false );
 	const [ isConfirming, setIsConfirming ] = useState( false );
+	const fallbacksId = useInstanceId( Connect, 'wordpress-migration-fallbacks' );
 	const configure = useMutation(
 		withSnackbar( siteWordPressMigrationConfigureMutation( site.ID ), snackbar )
 	);
@@ -44,12 +88,20 @@ export function Connect( {
 
 	const startMigration = () => {
 		if ( retryFindings ) {
-			run.mutate( { accept_findings: retryFindings }, { onSuccess: onRetry } );
+			run.mutate(
+				{ accept_findings: retryFindings },
+				{
+					onSuccess: () => {
+						onRetry();
+						onStarted();
+					},
+				}
+			);
 			return;
 		}
 		configure.mutate(
 			{ source_connection: { method: MANUAL_INSTALL } },
-			{ onSuccess: () => run.mutate( {} ) }
+			{ onSuccess: () => run.mutate( {}, { onSuccess: onStarted } ) }
 		);
 	};
 
@@ -60,6 +112,11 @@ export function Connect( {
 			return;
 		}
 		startMigration();
+	};
+
+	const toggleFallbacks = () => {
+		setIsShowingFallbacks( ! isShowingFallbacks );
+		setHasSeenKey( true );
 	};
 
 	return (
@@ -122,11 +179,85 @@ export function Connect( {
 					{ __( 'Your site is connected to WordPress.com.' ) }
 				</Notice>
 			) }
-			<ConnectionHelp
-				manualInstall={ manualInstall }
-				lastStep={ __( '3. Come back here and start the migration.' ) }
-				onOpenFallbacks={ () => setHasSeenKey( true ) }
-			/>
+			<VStack spacing={ 4 }>
+				<VStack spacing={ 1 }>
+					<Text variant="muted">
+						{ createInterpolateElement(
+							__(
+								'1. <link>Install</link> and activate the Migrate to WordPress.com plugin on your existing site.'
+							),
+							{ link: linkTo( manualInstall?.install_url ) }
+						) }
+					</Text>
+					<Text variant="muted">
+						{ __( '2. Connect to WordPress.com on the plugin’s settings page.' ) }
+					</Text>
+					{ IS_TESTING_BUILD && (
+						<HStack
+							spacing={ 1 }
+							alignment="flex-start"
+							justify="flex-start"
+							className="wordpress-migration__testing-hint"
+						>
+							<Icon icon={ info } size={ 18 } />
+							<Text variant="muted">
+								{ createInterpolateElement( TESTING_HINT, {
+									link: linkTo( manualInstall?.connect_url ),
+								} ) }
+							</Text>
+						</HStack>
+					) }
+					<Text variant="muted">{ __( '3. Come back here and start the migration.' ) }</Text>
+				</VStack>
+				<VStack spacing={ 4 }>
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						size="compact"
+						icon={ isShowingFallbacks ? chevronUp : chevronDown }
+						iconPosition="right"
+						aria-expanded={ isShowingFallbacks }
+						aria-controls={ isShowingFallbacks ? fallbacksId : undefined }
+						// Its links and key come with the site's details, so it opens once they've loaded.
+						disabled={ ! manualInstall }
+						onClick={ toggleFallbacks }
+						className="wordpress-migration__fallbacks-toggle"
+					>
+						{ __( 'Having trouble? See other ways to set this up.' ) }
+					</Button>
+					{ isShowingFallbacks && manualInstall && (
+						<VStack spacing={ 4 } id={ fallbacksId }>
+							<VStack as="ul" spacing={ 1 } className="wordpress-migration__fallbacks">
+								<Text as="li" variant="muted">
+									{ createInterpolateElement(
+										__( 'Unable to find the plugin? Download it from <link>WordPress.org</link>' ),
+										{ link: linkTo( manualInstall.plugin_url ) }
+									) }
+								</Text>
+								<Text as="li" variant="muted">
+									{ createInterpolateElement(
+										__( 'Already have the plugin? Connect on its <link>settings page</link>' ),
+										{ link: linkTo( manualInstall.connect_url ) }
+									) }
+								</Text>
+								<Text as="li" variant="muted">
+									{ createInterpolateElement(
+										__(
+											'Can’t connect? Copy the migration key onto the plugin’s <link>migration key page</link>'
+										),
+										{ link: linkTo( manualInstall.manual_url ) }
+									) }
+								</Text>
+							</VStack>
+							<ClipboardInputControl
+								label={ __( 'Migration key' ) }
+								value={ manualInstall.key ?? '' }
+								readOnly
+							/>
+						</VStack>
+					) }
+				</VStack>
+			</VStack>
 			<ConfirmModal
 				__experimentalHideHeader={ false }
 				title={ __( 'Start the migration anyway?' ) }

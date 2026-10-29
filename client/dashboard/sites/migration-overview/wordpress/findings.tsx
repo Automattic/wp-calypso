@@ -6,7 +6,6 @@ import { __ } from '@wordpress/i18n';
 import { useHelpCenter } from '../../../app/help-center';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
-import { ConnectionHelp, useManualInstall } from './connection-help';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type {
 	Site,
@@ -17,12 +16,13 @@ import type {
 export function Findings( {
 	site,
 	migration,
+	onBackToSetup,
 }: {
 	site: Site;
 	migration: WordPressMigrationStatus;
+	onBackToSetup: () => void;
 } ) {
 	const { setShowHelpCenter } = useHelpCenter();
-	const { manualInstall } = useManualInstall( site );
 	const run = useMutation(
 		withSnackbar( siteWordPressMigrationRunMutation( site.ID ), {
 			error: __( 'Failed to continue the migration.' ),
@@ -72,6 +72,11 @@ export function Findings( {
 					>
 						{ isRetry ? __( 'Try again' ) : __( 'Continue' ) }
 					</Button>
+					{ hasError && (
+						<Button variant="link" onClick={ onBackToSetup }>
+							{ __( 'Back to setup' ) }
+						</Button>
+					) }
 					<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Contact us' ) }
 					</Button>
@@ -88,16 +93,6 @@ export function Findings( {
 					{ getMessage( finding ) }
 				</Notice>
 			) ) }
-			{ hasError && (
-				<ConnectionHelp
-					manualInstall={ manualInstall }
-					lastStep={
-						isRetry
-							? __( '3. Come back here and try again.' )
-							: __( '3. Come back here and continue.' )
-					}
-				/>
-			) }
 		</MigrationCard>
 	);
 }

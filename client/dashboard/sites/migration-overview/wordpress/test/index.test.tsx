@@ -337,10 +337,7 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByText( 'destination_site_not_new label' ) ).toBeVisible();
 		expect( screen.getByText( 'source_woocommerce_active label' ) ).toBeVisible();
 		// Warnings mean the migration read the source, so there's no need to set it up again.
-		expect(
-			screen.queryByText( /and activate the Migrate to WordPress.com plugin/ )
-		).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: /Having trouble/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Back to setup' } ) ).not.toBeInTheDocument();
 
 		mockApi()
 			.post( runPath, {
@@ -354,14 +351,14 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 	} );
 
-	it( 'lets a stopped migration get to the migration key', async () => {
+	it( 'takes a stopped migration back to setup, and leaves once it starts again', async () => {
 		mockApi()
 			.get( statusPath )
 			.query( true )
 			.reply(
 				200,
 				migration( 'failed', {
-					phase: 'migration',
+					phase: 'preflight',
 					findings: [ { ...finding( 'migration_failed', 'failure' ), resolution: 'retry' } ],
 				} )
 			);
@@ -375,15 +372,26 @@ describe( 'WordPressMigration', () => {
 		expect( screen.getByText( 'migration_failed label' ) ).toBeVisible();
 		// The finding says what went wrong, so the card doesn't say it again.
 		expect( screen.queryByText( /couldn’t finish/ ) ).not.toBeInTheDocument();
-		// It may have stopped because the plugin was deactivated, so the setup steps are there to go back to.
-		expect( screen.getByText( /and activate the Migrate to WordPress.com plugin/ ) ).toBeVisible();
-		expect( screen.getByText( '3. Come back here and try again.' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
 
+		await userEvent.click( screen.getByRole( 'button', { name: 'Back to setup' } ) );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
+		).toBeVisible();
 		await waitFor( () =>
 			expect( screen.getByRole( 'button', { name: /Having trouble/ } ) ).toBeEnabled()
 		);
 		await userEvent.click( screen.getByRole( 'button', { name: /Having trouble/ } ) );
 		expect( screen.getByRole( 'textbox', { name: 'Migration key' } ) ).toHaveValue( 'public-key' );
+
+		mockApi().post( configurePath ).reply( 200, configuration );
+		mockApi().post( runPath, {} ).reply( 202, running );
+		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
+
+		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 	} );
 
 	it( 'offers to try again when a finding says continuing is only a retry', async () => {
