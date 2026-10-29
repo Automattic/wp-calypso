@@ -2,6 +2,7 @@ import { AgentUI, cn } from '@automattic/agenttic-ui';
 import { useDispatch, useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { store as imageStudioStore } from '../../store';
+import { getDefaultAspectRatio } from '../../utils/default-aspect-ratio';
 import { AspectRatioIcon } from '../icons/AspectRatioIcon';
 
 interface AspectRatioPickerProps {
@@ -19,10 +20,10 @@ export const ASPECT_RATIO_OPTIONS = [
 export function AspectRatioPicker( { disabled = false }: AspectRatioPickerProps ) {
 	const { setSelectedAspectRatio } = useDispatch( imageStudioStore );
 
-	const selectedAspectRatio = useSelect(
-		( select ) => select( imageStudioStore ).getSelectedAspectRatio(),
-		[]
-	);
+	const selectedAspectRatio = useSelect( ( select ) => {
+		const studio = select( imageStudioStore );
+		return studio.getSelectedAspectRatio() ?? getDefaultAspectRatio( studio.getEntryPoint() );
+	}, [] );
 
 	const handleAspectRatioSelect = ( value: string ) => {
 		setSelectedAspectRatio( value );

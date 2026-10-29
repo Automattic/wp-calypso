@@ -265,6 +265,66 @@ describe( 'getClientContext', () => {
 		} );
 	} );
 
+	it( 'starts featured image sessions at 16:9 when no ratio is picked', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'jetpack_ai_featured_image',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => null,
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio ).toMatchObject( { aspect_ratio: '16:9' } );
+	} );
+
+	it( 'keeps a picked ratio in featured image sessions', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => '1:1',
+				getEntryPoint: () => 'jetpack_ai_featured_image',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => null,
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio ).toMatchObject( { aspect_ratio: '1:1' } );
+	} );
+
+	it( 'sends no ratio for other sessions when none is picked', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'media_library',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => null,
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio ).not.toHaveProperty( 'aspect_ratio' );
+	} );
+
 	it( 'falls back to wp-admin environment when studio is closed', () => {
 		setupSelect( {
 			imageStudio: {
