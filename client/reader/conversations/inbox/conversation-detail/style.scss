@@ -28,10 +28,26 @@
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 4px;
 	color: var( --color-text );
-	text-decoration: none;
 
 	&:hover {
 		border-color: var( --color-border );
+	}
+}
+
+.conversations-inbox__post-link {
+	color: var( --color-text );
+	text-decoration: none;
+
+	&:hover,
+	&:focus {
+		color: var( --color-text );
+	}
+}
+
+.conversations-inbox__post-menu {
+	margin-inline-start: auto;
+
+	.components-button {
 		color: var( --color-text );
 	}
 }
