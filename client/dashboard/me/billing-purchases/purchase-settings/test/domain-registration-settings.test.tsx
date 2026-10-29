@@ -137,10 +137,16 @@ describe( '<DomainRegistrationSettings />', () => {
 
 		test( 'moves the toggle as soon as it is clicked and shows that it is saving', async () => {
 			const user = userEvent.setup();
+			let respond = () => {};
+			const responded = new Promise< void >( ( resolve ) => {
+				respond = resolve;
+			} );
 			nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/upgrades/1/enable-auto-renew' )
-				.delay( 100 )
-				.reply( 200, { success: true, upgrade: {} } );
+				.reply( async () => {
+					await responded;
+					return [ 200, { success: true, upgrade: {} } ];
+				} );
 
 			render( <Renewal purchase={ makeDomain( autoRenewOff ) } /> );
 
@@ -150,6 +156,8 @@ describe( '<DomainRegistrationSettings />', () => {
 			expect( toggle ).toBeChecked();
 			expect( toggle ).toBeDisabled();
 			expect( screen.getByText( 'Saving…' ) ).toBeVisible();
+
+			respond();
 		} );
 
 		test( 'rolls the toggle back with a message when the save fails', async () => {

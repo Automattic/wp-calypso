@@ -1,6 +1,6 @@
-import { userPurchaseSetAutoRenewQuery, userPurchasesQuery } from '@automattic/api-queries';
+import { userPurchaseSetAutoRenewQuery } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
@@ -66,15 +66,11 @@ function formatRenewalPrice( purchase: Purchase ): string {
  * save fails, with `failedValue` set to what could not be saved.
  */
 export function useDomainAutoRenew( purchase: Purchase ) {
-	const queryClient = useQueryClient();
 	const navigate = useNavigate();
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
-	const { mutate, isPending, variables, error, reset } = useMutation( {
-		...userPurchaseSetAutoRenewQuery(),
-		// Keep the mutation pending until the purchase is refetched, otherwise the
-		// toggle snaps back to the old value between the save and the refetch.
-		onSuccess: () => queryClient.invalidateQueries( userPurchasesQuery() ),
-	} );
+	const { mutate, isPending, variables, error, reset } = useMutation(
+		userPurchaseSetAutoRenewQuery()
+	);
 
 	const setAutoRenew = ( autoRenew: boolean ) => {
 		if ( ! autoRenew && isSplitCancelRemoveEnabled ) {
@@ -185,17 +181,16 @@ export function AutoRenewOffNotice( {
 			}
 		>
 			{ createInterpolateElement(
-				sprintf(
-					// translators: %(domain)s is a domain name and %(date)s is a formatted date, like "4 September 2027"
-					__(
-						'<strong>%(domain)s</strong> expires on %(date)s. After that, anyone can register it.'
+				// translators: <domain /> is a domain name and <date /> is a formatted date, like "4 September 2027"
+				__( '<domain /> expires on <date />. After that, anyone can register it.' ),
+				{
+					domain: <strong>{ purchase.meta ?? '' }</strong>,
+					date: (
+						<span>
+							{ formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ) }
+						</span>
 					),
-					{
-						domain: purchase.meta ?? '',
-						date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
-					}
-				),
-				{ strong: <strong /> }
+				}
 			) }
 		</Notice>
 	);

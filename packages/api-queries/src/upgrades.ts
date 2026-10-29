@@ -84,9 +84,9 @@ export const userPurchaseSetAutoRenewQuery = () =>
 	mutationOptions( {
 		mutationFn: ( { purchaseId, autoRenew }: { purchaseId: number; autoRenew: boolean } ) =>
 			setPurchaseAutoRenew( purchaseId, autoRenew ),
-		onSuccess: () => {
-			queryClient.invalidateQueries( userPurchasesQuery() );
-		},
+		// Returning the promise keeps the mutation pending until the purchases are
+		// refetched, so callers never show the old auto-renew value in between.
+		onSuccess: () => queryClient.invalidateQueries( userPurchasesQuery() ),
 	} );
 
 export const assignPaymentMethodMutation = () =>
