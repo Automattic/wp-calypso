@@ -62,7 +62,7 @@ export const OPT_IN_STEPS: OptInStep[] = [
 		id: 'forwarded',
 		label: 'A classic link forwards',
 		app: 'dashboard',
-		path: '/marketplace/purchases',
+		path: '/purchases',
 		state: { agency: 'opted-in', firstVisit: true, overlay: null },
 	},
 	{
