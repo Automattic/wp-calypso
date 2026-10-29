@@ -12,7 +12,7 @@ import {
 } from '../../utils/site-staging-site';
 import type { Site, StagingSiteSyncState } from '@automattic/api-core';
 
-export * from './use-staging-site-sync-for-notice';
+export { useStagingSiteSyncForNotice } from './use-staging-site-sync-for-notice';
 
 const TAKING_LONG_AFTER_MS = 60 * 60 * 1000;
 
