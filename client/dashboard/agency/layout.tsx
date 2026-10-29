@@ -2,7 +2,7 @@ import { Outlet } from '@tanstack/react-router';
 import { PageNoticesProvider } from '../components/page-layout';
 import { AgencyNotices, SharedNoticesProvider } from './components/agency-notices';
 import EmailVerificationNotice, { useEmailToVerify } from './components/email-verification-notice';
-import WelcomeNotice, { useWelcomeNoticeEligibility } from './dashboard-preference/arrival';
+import WelcomeNotice, { useWelcomeNoticeEligibility } from './dashboard-opt-in/welcome-notice';
 import AgencyOnboardingTour from './onboarding-tour';
 import OptInPreviewPanel from './opt-in-preview';
 

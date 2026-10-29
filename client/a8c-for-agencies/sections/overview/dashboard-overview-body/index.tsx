@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import useIsEligibleForExpansionOffer from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-is-eligible-for-expansion-offer';
 import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-pressable-offer-eligibility';
+import { openDashboardOptIn } from 'calypso/a8c-for-agencies/components/dashboard-opt-in-invitation';
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import {
 	A4A_AGENCY_TIER_LINK,
@@ -14,6 +15,7 @@ import {
 	A4A_SITES_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import {
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
@@ -24,7 +26,6 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
-import { openDashboardOptIn, useDashboardOptIn } from '../dashboard-opt-in';
 
 function DashboardOverviewBodyContent( {
 	isEligibleForPressableExpansionOffer,
@@ -41,7 +42,7 @@ function DashboardOverviewBodyContent( {
 		);
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
-	const { canSwitch: canSwitchDashboard } = useDashboardOptIn();
+	const { canOptIn } = useDashboardOptIn();
 
 	const handleRecordTracksEvent = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -83,7 +84,7 @@ function DashboardOverviewBodyContent( {
 				aiMcp: A4A_AI_MCP_LINK,
 				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 				helpful: [
-					...( canSwitchDashboard
+					...( canOptIn
 						? [
 								{
 									id: 'switch-to-new-dashboard',

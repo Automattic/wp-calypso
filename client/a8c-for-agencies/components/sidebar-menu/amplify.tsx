@@ -13,8 +13,9 @@ type Props = {
 
 export default function AmplifySidebar( { path }: Props ) {
 	const menuItems = useAmplifyMenuItems( path );
-	// The back arrow leads to classic Overview, which forwards an opted-in agency away.
-	const isOptedIn = useOptInPreview()?.agency === 'opted-in';
+	// Agencies on the Multi-site Dashboard open Amplify from its sidebar, so a
+	// way back to this app's overview would only confuse them.
+	const hideBackButton = useOptInPreview()?.agency === 'opted-in';
 
 	return (
 		<Sidebar
@@ -26,7 +27,7 @@ export default function AmplifySidebar( { path }: Props ) {
 				</div>
 			}
 			backButtonProps={
-				isOptedIn
+				hideBackButton
 					? undefined
 					: {
 							label: __( 'Back to overview' ),

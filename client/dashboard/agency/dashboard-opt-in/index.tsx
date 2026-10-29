@@ -29,7 +29,7 @@ const BACK_IN_CLASSIC = OPT_IN_STEPS.find( ( step ) => step.id === 'back' )!;
  * Agency > Dashboard: which dashboard the whole agency uses. Only the owner can change it,
  * and switching back asks first, since it moves everyone on the team.
  */
-export default function AgencyDashboardPreference() {
+export default function AgencyDashboardOptIn() {
 	const preview = useOptInPreview();
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const [ reason, setReason ] = useState( '' );
@@ -84,7 +84,7 @@ export default function AgencyDashboardPreference() {
 							/>
 							<ToggleControl
 								__nextHasNoMarginBottom
-								className={ isReady ? 'a4a-dashboard-preference-ready' : undefined }
+								className={ isReady ? 'a4a-dashboard-opt-in-ready' : undefined }
 								checked={ isEnabled }
 								disabled={ ! isOwner }
 								label={ __( 'Use the new dashboard' ) }

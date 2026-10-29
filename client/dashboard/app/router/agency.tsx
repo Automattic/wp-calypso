@@ -911,16 +911,16 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
-// `/agency/dashboard` – which dashboard the agency uses (opt-in flow preview, development only).
-export const agencyDashboardPreferenceRoute = createRoute( {
+// `/agency/dashboard` – the owner switches the agency between the new and previous dashboards
+export const agencyDashboardOptInRoute = createRoute( {
 	head: () => ( {
 		meta: [ { title: __( 'Dashboard' ) } ],
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'agency/dashboard',
 } ).lazy( () =>
-	import( '../../agency/dashboard-preference' ).then( ( d ) =>
-		createLazyRoute( 'agency-dashboard-preference' )( {
+	import( '../../agency/dashboard-opt-in' ).then( ( d ) =>
+		createLazyRoute( 'agency-dashboard-opt-in' )( {
 			component: d.default,
 		} )
 	)
@@ -2322,7 +2322,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
-		agencyDashboardPreferenceRoute,
+		agencyDashboardOptInRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,

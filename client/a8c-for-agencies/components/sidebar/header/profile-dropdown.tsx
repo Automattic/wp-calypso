@@ -3,12 +3,8 @@ import { __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
-import {
-	DashboardOptInModal,
-	useDashboardOptIn,
-} from 'calypso/a8c-for-agencies/sections/overview/dashboard-opt-in';
+import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
 import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
-import OptInPreviewPanel from 'calypso/dashboard/agency/opt-in-preview';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
@@ -17,6 +13,7 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { CONTACT_URL_HASH_FRAGMENT } from '../../a4a-contact-support-widget';
 import { PROVIDE_FEEDBACK_URL_HASH_FRAGMENT } from '../../a4a-feedback/provide-feedback';
+import DashboardOptInModal from '../../dashboard-opt-in-modal';
 import {
 	EXTERNAL_A4A_KNOWLEDGE_BASE,
 	EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE,
@@ -29,13 +26,18 @@ import './style.scss';
 type DropdownMenuProps = {
 	isExpanded: boolean;
 	setMenuExpanded: ( isExpanded: boolean ) => void;
-	onSwitchDashboard?: () => void;
+	onOpenDashboardOptIn: () => void;
 };
-const DropdownMenu = ( { isExpanded, setMenuExpanded, onSwitchDashboard }: DropdownMenuProps ) => {
+const DropdownMenu = ( {
+	isExpanded,
+	setMenuExpanded,
+	onOpenDashboardOptIn,
+}: DropdownMenuProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
+	const { canOptIn } = useDashboardOptIn();
 
 	const onGetHelp = useCallback( () => {
 		setMenuExpanded( false );
@@ -51,6 +53,12 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded, onSwitchDashboard }: Dropd
 		setMenuExpanded( false );
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_platform_agreement' ) );
 	}, [ dispatch, setMenuExpanded ] );
+
+	const onDashboardOptIn = useCallback( () => {
+		setMenuExpanded( false );
+		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_dashboard_opt_in' ) );
+		onOpenDashboardOptIn();
+	}, [ dispatch, setMenuExpanded, onOpenDashboardOptIn ] );
 
 	const onSignOut = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_signout' ) );
@@ -94,22 +102,16 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded, onSwitchDashboard }: Dropd
 								{ translate( 'Contact support' ) }
 							</Button>
 						</li>
-						{ onSwitchDashboard && (
-							<li className="a4a-sidebar__profile-dropdown-menu-item">
-								<Button
-									borderless
-									onClick={ () => {
-										setMenuExpanded( false );
-										onSwitchDashboard();
-									} }
-								>
-									{ translate( 'Switch to the new dashboard' ) }
-								</Button>
-							</li>
-						) }
 					</>
 				)
 			}
+			{ canOptIn && (
+				<li className="a4a-sidebar__profile-dropdown-menu-item">
+					<Button borderless onClick={ onDashboardOptIn }>
+						{ translate( 'Switch to the new dashboard' ) }
+					</Button>
+				</li>
+			) }
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
 				<Button
 					borderless
@@ -159,11 +161,8 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser );
 
-	const dashboardOptIn = useDashboardOptIn();
-	const [ isMenuExpanded, setMenuExpanded ] = useState(
-		dashboardOptIn.preview?.overlay === 'menu'
-	);
-	const [ isOptInModalOpen, setIsOptInModalOpen ] = useState( false );
+	const [ isMenuExpanded, setMenuExpanded ] = useState( false );
+	const [ isDashboardOptInOpen, setIsDashboardOptInOpen ] = useState( false );
 	const onToggleMenu = useCallback( () => {
 		setMenuExpanded( ( current ) => ! current );
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_profile_toggle' ) );
@@ -178,6 +177,7 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 	}, [ dispatch, isMenuExpanded ] );
 
 	const dropdownRef = useRef( null );
+	const toggleButtonRef = useRef< HTMLButtonElement >( null );
 	useOutsideClickCallback( dropdownRef, onCloseMenu );
 
 	return (
@@ -192,6 +192,7 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 		>
 			<Button
 				borderless
+				ref={ toggleButtonRef }
 				className="a4a-sidebar__profile-dropdown-button"
 				onClick={ onToggleMenu }
 				aria-expanded={ isMenuExpanded }
@@ -209,17 +210,18 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 			<DropdownMenu
 				isExpanded={ isMenuExpanded }
 				setMenuExpanded={ setMenuExpanded }
-				onSwitchDashboard={
-					dashboardOptIn.canSwitch ? () => setIsOptInModalOpen( true ) : undefined
-				}
+				onOpenDashboardOptIn={ () => setIsDashboardOptInOpen( true ) }
 			/>
-			{ isOptInModalOpen && dashboardOptIn.preview && (
+			{ isDashboardOptInOpen && (
 				<DashboardOptInModal
-					preview={ dashboardOptIn.preview }
-					onClose={ () => setIsOptInModalOpen( false ) }
+					source="profile-menu"
+					onClose={ () => {
+						setIsDashboardOptInOpen( false );
+						// The menu item that opened the modal is hidden by now, so focus the menu toggle instead.
+						toggleButtonRef.current?.focus();
+					} }
 				/>
 			) }
-			<OptInPreviewPanel />
 		</nav>
 	);
 };

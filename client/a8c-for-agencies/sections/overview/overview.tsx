@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import A4AAgencyApprovalNotice from 'calypso/a8c-for-agencies/components/a4a-agency-approval-notice';
 import ContentSidebar from 'calypso/a8c-for-agencies/components/content-sidebar';
+import DashboardOptInInvitation from 'calypso/a8c-for-agencies/components/dashboard-opt-in-invitation';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import PaymentRiskNoticeBanner from 'calypso/a8c-for-agencies/components/payment-risk-notice-banner';
@@ -22,7 +23,6 @@ import { getCurrentUserLocale } from 'calypso/state/current-user/selectors';
 import { MissingPaymentSettingsNotice } from '../referrals/common/missing-payment-settings-notice';
 import useHasCommissionActivity from '../referrals/common/missing-payment-settings-notice/use-has-commission-activity';
 import OverviewBody from './body';
-import DashboardOptIn from './dashboard-opt-in';
 import DashboardOverviewBody from './dashboard-overview-body';
 import OverviewHeaderActions from './header-actions';
 import PartnerDirectoryOnboardingCard from './partner-directory-onboarding-card';
@@ -47,7 +47,7 @@ export default function Overview() {
 	return (
 		<Layout title={ title } wide>
 			<LayoutTop>
-				<DashboardOptIn />
+				<DashboardOptInInvitation />
 				{ ! isLoadingActivity && hasActivity && <MissingPaymentSettingsNotice /> }
 				{ showApprovalNotice && <A4AAgencyApprovalNotice /> }
 				<PressableUsageLimitNotice />
