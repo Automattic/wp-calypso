@@ -428,6 +428,10 @@ const webpackConfig = {
 				project: 'calypso',
 				authToken: process.env.SENTRY_AUTH_TOKEN,
 				telemetry: false,
+				sourcemaps: {
+					// Upload `app:///` source paths as built; the default rewrite strips the scheme.
+					rewriteSources: ( source ) => source,
+				},
 				release: {
 					name: sentryRelease,
 					// `__SENTRY_RELEASE__` covers this without prepending the release to every chunk.
