@@ -44,6 +44,14 @@ export default function ShoppingCartMenu( {
 	);
 	const { totalDiscountedCostFormattedText } = getTotalInvoiceValue( userProducts, items );
 
+	// Lines with a counter come first; the rest keep their order at the bottom.
+	const orderedItems = items
+		.map( ( item ) => ( {
+			item,
+			showsCount: canHoldLicenses( item, marketplaceType === 'referral' ),
+		} ) )
+		.sort( ( a, b ) => Number( b.showsCount ) - Number( a.showsCount ) );
+
 	return (
 		<Popover
 			isVisible
@@ -67,8 +75,7 @@ export default function ShoppingCartMenu( {
 				</div>
 
 				<ul className="shopping-cart__menu-list">
-					{ items.map( ( item ) => {
-						const showsCount = canHoldLicenses( item, marketplaceType === 'referral' );
+					{ orderedItems.map( ( { item, showsCount } ) => {
 						return (
 							<ShoppingCartMenuItem
 								// A line with a counter keeps its key while the count changes.

@@ -73,6 +73,15 @@ export default function CartMenu( {
 		term,
 		isReferralMode,
 	} );
+	// Lines with a counter come first; the rest keep their order at the bottom.
+	const orderedLines = lines
+		.map( ( line ) => ( {
+			...line,
+			showsCount:
+				!! onSetQuantity && canHoldLicenses( line.product, { isReferralMode, isLegacyBilling } ),
+		} ) )
+		.sort( ( a, b ) => Number( b.showsCount ) - Number( a.showsCount ) );
+
 	const checkoutLines = lines.map( ( { product, item } ) => ( {
 		product,
 		quantity: item.quantity,
@@ -164,10 +173,8 @@ export default function CartMenu( {
 							{ __( 'Your cart' ) }
 						</Heading>
 						{ lines.length === 0 && <Text variant="muted">{ __( 'Your cart is empty.' ) }</Text> }
-						{ lines.map( ( { item, product, priceInfo, subtotal }, index ) => {
+						{ orderedLines.map( ( { item, product, priceInfo, subtotal, showsCount }, index ) => {
 							const isWpcomPlan = product.family_slug === WPCOM_HOSTING_FAMILY_SLUG;
-							const showsCount =
-								!! onSetQuantity && canHoldLicenses( product, { isReferralMode, isLegacyBilling } );
 							const maxQuantity = getMaxLicenses( product );
 							return (
 								<Fragment key={ `${ item.slug }:${ item.siteDomain ?? '' }` }>
