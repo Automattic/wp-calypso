@@ -29,7 +29,10 @@ export default function useLeadMatchingForm( { agencyId, initialFormData }: Prop
 		[ initialFormData ]
 	);
 	const draftFormData = agency?.lead_matching?.draft ?? undefined;
-	const formData = draftFormData ?? fallbackFormData;
+	const formData = useMemo(
+		() => ( { ...fallbackFormData, ...draftFormData } ),
+		[ fallbackFormData, draftFormData ]
+	);
 
 	const setDraftFormData = useCallback(
 		( nextDraftFormData: LeadMatchingDetails ) => {

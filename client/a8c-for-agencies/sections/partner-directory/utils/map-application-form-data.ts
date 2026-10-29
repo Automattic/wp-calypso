@@ -1,3 +1,5 @@
+import { normalizeAgencyBookingLink } from '@automattic/api-core';
+import { normalizePhoneNumber } from '@automattic/js-utils';
 import { Agency } from 'calypso/state/a8c-for-agencies/types';
 import { AgencyDetails, AgencyLeadMatchingProfile, LeadMatchingDetails } from '../types';
 
@@ -73,6 +75,9 @@ const normalizeOptionalValue = ( value: string | undefined, allowedValues: Set< 
 
 export function createDefaultLeadMatchingDetails(): LeadMatchingDetails {
 	return {
+		phoneNumber: '',
+		phoneCountryCode: '',
+		bookingLink: '',
 		regions: [],
 		supportsGlobal: false,
 		languages: [],
@@ -183,6 +188,9 @@ export function mapLeadMatchingProfileToFormData(
 	}
 
 	return {
+		phoneNumber: profile.contact?.phone ?? '',
+		phoneCountryCode: '',
+		bookingLink: profile.contact?.booking_link ?? '',
 		regions: profile.geography_and_language?.supported_regions ?? [],
 		supportsGlobal: !! profile.geography_and_language?.global_remote,
 		languages: profile.geography_and_language?.supported_languages ?? [],
@@ -246,10 +254,42 @@ export function mapLeadMatchingProfileToFormData(
 	};
 }
 
+export function hasLeadMatchingAnswerChanges(
+	formData: LeadMatchingDetails,
+	profile?: AgencyLeadMatchingProfile | null
+): boolean {
+	const answers = ( data: LeadMatchingDetails ) =>
+		JSON.stringify(
+			Object.entries( data )
+				.filter(
+					( [ key ] ) => ! [ 'phoneNumber', 'phoneCountryCode', 'bookingLink' ].includes( key )
+				)
+				.sort( ( [ a ], [ b ] ) => a.localeCompare( b ) )
+				.map( ( [ key, value ] ) => [ key, Array.isArray( value ) ? [ ...value ].sort() : value ] )
+		);
+	return (
+		answers( formData ) !==
+		answers( mapLeadMatchingProfileToFormData( profile ) ?? createDefaultLeadMatchingDetails() )
+	);
+}
+
 export function mapLeadMatchingDetailsToProfile(
 	formData: LeadMatchingDetails,
 	previousProfile?: AgencyLeadMatchingProfile | null
 ): AgencyLeadMatchingProfile {
+	const contact = {
+		phone:
+			normalizePhoneNumber( formData.phoneNumber, formData.phoneCountryCode ) ??
+			formData.phoneNumber,
+		booking_link: normalizeAgencyBookingLink( formData.bookingLink ),
+	};
+	if ( previousProfile && ! hasLeadMatchingAnswerChanges( formData, previousProfile ) ) {
+		return {
+			...previousProfile,
+			contact,
+			availability: { ...previousProfile.availability },
+		};
+	}
 	const serviceLevel = formData.serviceLevels[ 0 ] ?? '';
 	const supportsEcommerceProjects =
 		formData.projectTypes.includes( 'new_woocommerce' ) || formData.storeComplexities.length > 0;
@@ -271,6 +311,7 @@ export function mapLeadMatchingDetailsToProfile(
 	}
 
 	return {
+		contact,
 		availability: {
 			accepting_work: previousProfile?.availability?.accepting_work ?? true,
 			lead_eligibility: leadEligibility,

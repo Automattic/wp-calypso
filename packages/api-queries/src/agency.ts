@@ -226,6 +226,7 @@ export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =
 export const agencyLeadMatchingQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'lead-matching' ] as const,
+		meta: { persist: false },
 		queryFn: () => fetchAgencyLeadMatching( agencyId ),
 		enabled: !! agencyId,
 	} );

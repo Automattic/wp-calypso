@@ -1,3 +1,4 @@
+import { validateAgencyLeadMatchingContact } from '@automattic/api-core';
 import {
 	activeAgencyQuery,
 	agencyLeadMatchingMutation,
@@ -90,6 +91,9 @@ function LeadMatchingPreferencesForm( {
 
 	const [ formData, setFormData ] = useState< LeadMatchingFormData >( savedFormData );
 	const [ isAvailable, setIsAvailable ] = useState( savedAvailability );
+	const [ contactErrors, setContactErrors ] = useState< { phone?: string; bookingLink?: string } >(
+		{}
+	);
 
 	const { mutateAsync: saveAvailability, isPending: isSavingAvailability } = useMutation(
 		agencyProfileMutation( agencyId )
@@ -138,6 +142,13 @@ function LeadMatchingPreferencesForm( {
 			return;
 		}
 
+		const payload = getLeadMatchingProfile( formData, profile, isAvailable );
+		const errors = validateAgencyLeadMatchingContact( payload.contact );
+		setContactErrors( errors );
+		if ( hasAnswerChanges && Object.keys( errors ).length ) {
+			return;
+		}
+
 		// The availability lives on the public profile, so it saves there
 		// first; the preferences are only sent when an answer changed.
 		if ( hasAvailabilityChange ) {
@@ -158,7 +169,8 @@ function LeadMatchingPreferencesForm( {
 
 		if ( hasAnswerChanges ) {
 			try {
-				await savePreferences( getLeadMatchingProfile( formData, profile, isAvailable ) );
+				const response = await savePreferences( payload );
+				setFormData( getLeadMatchingFormData( response.lead_matching_profile ) );
 			} catch {
 				trackResult( 'error' );
 				createErrorNotice( __( 'Failed to save lead matching preferences.' ), {
@@ -208,6 +220,9 @@ function LeadMatchingPreferencesForm( {
 						<ContactOptionsPreview
 							key={ agencyId }
 							countryCode={ agency.profile?.company_details?.country }
+							formData={ formData }
+							onChange={ onFieldsChange }
+							errors={ contactErrors }
 						/>
 					) }
 				</Fragment>

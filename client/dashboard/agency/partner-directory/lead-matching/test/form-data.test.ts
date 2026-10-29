@@ -119,7 +119,13 @@ describe( 'lead matching form data', () => {
 	} );
 
 	test( 'counts the answered required questions', () => {
-		expect( getAnsweredRequiredFieldCount( getEmptyLeadMatchingFormData() ) ).toBe( 0 );
+		expect(
+			getAnsweredRequiredFieldCount( {
+				...getEmptyLeadMatchingFormData(),
+				phoneNumber: '+1234',
+				bookingLink: 'https://book.example.com/',
+			} )
+		).toBe( 0 );
 		expect( getAnsweredRequiredFieldCount( makeFormData() ) ).toBe( 11 );
 		expect(
 			getAnsweredRequiredFieldCount( makeFormData( { serviceLevels: [], languages: [] } ) )

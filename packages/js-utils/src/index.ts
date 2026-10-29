@@ -35,3 +35,8 @@ export { default as times } from './times';
 export { default as truncate } from './truncate';
 export { default as uniqBy } from './uniq-by';
 export { default as uniqueBy } from './unique-by';
+export {
+	countries as phoneNumberCountries,
+	dialCodeMap as phoneNumberDialCodeMap,
+} from './phone-number-data';
+export { default as normalizePhoneNumber } from './normalize-phone-number';

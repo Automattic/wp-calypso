@@ -1,3 +1,4 @@
+import { validateAgencyLeadMatchingContact } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { Card, CardBody, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -32,7 +33,11 @@ import {
 	AgencyLeadMatchingResponse,
 	LeadMatchingDetails,
 } from '../types';
-import { mapAgencyDetailsFormData } from '../utils/map-application-form-data';
+import {
+	hasLeadMatchingAnswerChanges,
+	mapAgencyDetailsFormData,
+	mapLeadMatchingDetailsToProfile,
+} from '../utils/map-application-form-data';
 import ContactOptionsPreview from './contact-options-preview';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
 import useLeadMatchingFormValidation from './hooks/use-lead-matching-form-validation';
@@ -117,7 +122,11 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		availableBudgetLevels,
 	} = useFormSelectors();
 	const { validate, validationError, updateValidationError } = useLeadMatchingFormValidation();
-	const { formData, updateField: updateFormField } = useLeadMatchingForm( {
+	const {
+		formData,
+		setFormData,
+		updateField: updateFormField,
+	} = useLeadMatchingForm( {
 		agencyId: agency?.id,
 		initialFormData,
 	} );
@@ -212,6 +221,9 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	}, [ dispatch ] );
 
 	const [ hasSavedSuccessfully, setHasSavedSuccessfully ] = useState( false );
+	const [ contactErrors, setContactErrors ] = useState< { phone?: string; bookingLink?: string } >(
+		{}
+	);
 	const [ availabilityDraft, setAvailabilityDraft ] = useState< boolean | null >( null );
 	const currentAvailability = availabilityDraft ?? persistedAvailability;
 
@@ -305,6 +317,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	} );
 	const hasUnsavedAvailability = availabilityDraft !== null;
 	const hasUnsavedState = hasUnsavedChanges || hasUnsavedAvailability;
+	const hasMatchingAnswerChanges = hasLeadMatchingAnswerChanges( formData, profile );
 
 	const updateField = useCallback(
 		< K extends keyof LeadMatchingDetails >( field: K, value: LeadMatchingDetails[ K ] ) => {
@@ -350,6 +363,13 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 
 	const saveLeadMatchingPreferences = useCallback(
 		async ( source: 'manual' | 'exit' ) => {
+			const errors = validateAgencyLeadMatchingContact(
+				mapLeadMatchingDetailsToProfile( formData, profile ).contact
+			);
+			setContactErrors( errors );
+			if ( hasUnsavedChanges && Object.keys( errors ).length ) {
+				return undefined;
+			}
 			const didSaveAvailability = await saveAvailability( source );
 
 			if ( ! didSaveAvailability ) {
@@ -369,7 +389,16 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 
 			return response;
 		},
-		[ dispatch, hasUnsavedAvailability, hasUnsavedChanges, saveAvailability, saveNow, saveOnExit ]
+		[
+			dispatch,
+			formData,
+			profile,
+			hasUnsavedAvailability,
+			hasUnsavedChanges,
+			saveAvailability,
+			saveNow,
+			saveOnExit,
+		]
 	);
 
 	useEffect( () => {
@@ -398,7 +427,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			return 'not-accepting';
 		}
 
-		const hasSavedState = ( wasInitiallyComplete || hasSavedSuccessfully ) && ! hasUnsavedState;
+		const hasSavedState =
+			( wasInitiallyComplete || hasSavedSuccessfully ) &&
+			! hasMatchingAnswerChanges &&
+			! hasUnsavedAvailability;
 
 		if ( hasSavedState && completionStatus.isComplete ) {
 			return 'eligible';
@@ -411,7 +443,8 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		completionStatus.isComplete,
 		currentAvailability,
 		hasSavedSuccessfully,
-		hasUnsavedState,
+		hasMatchingAnswerChanges,
+		hasUnsavedAvailability,
 		wasInitiallyComplete,
 	] );
 
@@ -479,7 +512,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	} );
 
 	const submitForm = () => {
-		if ( hasUnsavedChanges ) {
+		if ( hasMatchingAnswerChanges ) {
 			const error = validate( formData );
 			if ( error ) {
 				const firstInvalidField = REQUIRED_FIELDS_IN_ORDER.find( ( field ) => error[ field ] );
@@ -589,6 +622,9 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				<ContactOptionsPreview
 					key={ agency?.id }
 					countryCode={ agency?.profile?.company_details?.country }
+					formData={ formData }
+					onChange={ ( fields ) => setFormData( { ...formData, ...fields } ) }
+					errors={ contactErrors }
 				/>
 
 				<FormSection

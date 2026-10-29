@@ -19,6 +19,9 @@ export interface AgencyDetails {
 }
 
 export interface LeadMatchingDetails {
+	phoneNumber: string;
+	phoneCountryCode: string;
+	bookingLink: string;
 	regions: string[];
 	supportsGlobal: boolean;
 	languages: string[];
@@ -46,6 +49,10 @@ export interface LeadMatchingDetails {
 }
 
 export interface AgencyLeadMatchingProfile {
+	contact?: {
+		phone: string;
+		booking_link: string;
+	};
 	availability: {
 		accepting_work: boolean;
 		lead_eligibility: string | null;

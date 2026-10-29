@@ -112,6 +112,10 @@ export interface AgencyProfileUpdate {
  * GET and PUT /wpcom/v2/agency/$agencyId/lead-matching exchange them.
  */
 export interface AgencyLeadMatchingProfile {
+	contact?: {
+		phone: string;
+		booking_link: string;
+	};
 	availability: {
 		accepting_work: boolean;
 		lead_eligibility: string | null;

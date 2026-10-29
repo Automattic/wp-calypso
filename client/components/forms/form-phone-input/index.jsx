@@ -21,6 +21,8 @@ export class FormPhoneInput extends Component {
 		phoneInputProps: PropTypes.object,
 		phoneNumberLabel: PropTypes.string,
 		onChange: PropTypes.func,
+		value: PropTypes.shape( { countryCode: PropTypes.string, phoneNumber: PropTypes.string } ),
+		onChangeRaw: PropTypes.func,
 		translate: PropTypes.func,
 	};
 
@@ -58,7 +60,7 @@ export class FormPhoneInput extends Component {
 						countriesList={ this.props.countriesList }
 						disabled={ this.props.isDisabled }
 						name="country_code"
-						value={ this.state.countryCode }
+						value={ this.props.value?.countryCode ?? this.state.countryCode }
 						onChange={ this.handleCountryChange }
 					/>
 				</FormFieldset>
@@ -71,7 +73,7 @@ export class FormPhoneInput extends Component {
 						{ ...this.props.phoneInputProps }
 						disabled={ this.props.isDisabled }
 						name="phone_number"
-						value={ this.state.phoneNumber }
+						value={ this.props.value?.phoneNumber ?? this.state.phoneNumber }
 						onChange={ this.handlePhoneChange }
 					/>
 				</FormFieldset>
@@ -85,10 +87,18 @@ export class FormPhoneInput extends Component {
 	}
 
 	handleCountryChange = ( event ) => {
+		if ( this.props.onChangeRaw ) {
+			this.props.onChangeRaw( { ...this.props.value, countryCode: event.target.value } );
+			return;
+		}
 		this.setState( { countryCode: event.target.value }, this.triggerOnChange );
 	};
 
 	handlePhoneChange = ( event ) => {
+		if ( this.props.onChangeRaw ) {
+			this.props.onChangeRaw( { ...this.props.value, phoneNumber: event.target.value } );
+			return;
+		}
 		this.setState( { phoneNumber: event.target.value }, this.triggerOnChange );
 	};
 

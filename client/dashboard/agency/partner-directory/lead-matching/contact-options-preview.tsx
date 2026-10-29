@@ -1,3 +1,4 @@
+import { normalizeAgencyBookingLink } from '@automattic/api-core';
 import {
 	Notice,
 	Spinner,
@@ -5,21 +6,24 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { prependHTTPS } from '@wordpress/url';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { ErrorBoundary } from '../../../components/error-boundary';
-import PhoneNumberInput, { type SecuritySMSNumber } from '../../../components/phone-number-input';
+import PhoneNumberInput from '../../../components/phone-number-input';
 import { SectionHeader } from '../../../components/section-header';
+import type { LeadMatchingFormData } from './form-data';
 
-export default function ContactOptionsPreview( { countryCode = '' }: { countryCode?: string } ) {
-	const [ phone, setPhone ] = useState< SecuritySMSNumber >( {
-		countryCode,
-		countryNumericCode: '',
-		phoneNumber: '',
-	} );
-	const [ bookingLink, setBookingLink ] = useState( '' );
-
+export default function ContactOptionsPreview( {
+	countryCode = '',
+	formData,
+	onChange,
+	errors,
+}: {
+	countryCode?: string;
+	formData: LeadMatchingFormData;
+	onChange: ( fields: Partial< LeadMatchingFormData > ) => void;
+	errors: { phone?: string; bookingLink?: string };
+} ) {
 	return (
 		<Card>
 			<CardBody>
@@ -45,8 +49,20 @@ export default function ContactOptionsPreview( { countryCode = '' }: { countryCo
 							<PhoneNumberInput
 								label={ __( 'Phone number (optional)' ) }
 								placeholder={ __( 'e.g. 123456789' ) }
-								data={ phone }
-								onChange={ ( value ) => setPhone( ( state ) => ( { ...state, ...value } ) ) }
+								data={ {
+									phoneNumber: formData.phoneNumber,
+									countryCode: formData.phoneCountryCode || countryCode,
+									countryNumericCode: '',
+								} }
+								onChange={ ( value ) =>
+									onChange( {
+										phoneNumber: value.phoneNumber,
+										phoneCountryCode: value.countryCode,
+									} )
+								}
+								customValidity={
+									errors.phone ? { type: 'invalid', message: errors.phone } : undefined
+								}
 							/>
 						</Suspense>
 					</ErrorBoundary>
@@ -57,10 +73,18 @@ export default function ContactOptionsPreview( { countryCode = '' }: { countryCo
 						help={ __( 'Where clients can book a call with you.' ) }
 						inputMode="url"
 						autoComplete="off"
-						value={ bookingLink }
-						onChange={ setBookingLink }
-						onBlur={ () => setBookingLink( prependHTTPS( bookingLink.trim() ) ) }
+						value={ formData.bookingLink }
+						onChange={ ( bookingLink ) => onChange( { bookingLink } ) }
+						onBlur={ () =>
+							onChange( { bookingLink: normalizeAgencyBookingLink( formData.bookingLink ) } )
+						}
+						aria-invalid={ !! errors.bookingLink }
 					/>
+					{ errors.bookingLink && (
+						<Notice status="error" isDismissible={ false }>
+							{ errors.bookingLink }
+						</Notice>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>
