@@ -31,7 +31,11 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
-import { getCurrentUserId, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserId,
+	getCurrentUserSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useRecordSignupComplete } from '../../../../hooks/use-record-signup-complete';
@@ -136,6 +140,7 @@ describe( 'Site Migration Flow', () => {
 		} );
 		( getSiteOption as jest.Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( useSiteQuery ).mockReturnValue( {
 			data: null,
 			isLoading: false,
@@ -415,6 +420,30 @@ describe( 'Site Migration Flow', () => {
 		afterEach( () => {
 			Object.assign( window.location, { pathname: '/', search: '', hash: '' } );
 		} );
+
+		it.each( [
+			{ reprint: false, staticSiteImport: false },
+			{ reprint: true, staticSiteImport: false },
+			{ reprint: false, staticSiteImport: true },
+			{ reprint: true, staticSiteImport: true },
+		] )(
+			'only identification is public (Reprint: $reprint, static-site import: $staticSiteImport)',
+			( { reprint, staticSiteImport } ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation(
+						( flag ) =>
+							( reprint && flag === 'migration/reprint-flow' ) ||
+							( staticSiteImport && flag === 'migration/non-wordpress-source' )
+					);
+
+				const steps = siteMigrationFlow.initialize();
+
+				expect(
+					steps.filter( ( step ) => ! step.requiresLoggedInUser ).map( ( step ) => step.slug )
+				).toEqual( [ STEPS.SITE_MIGRATION_IDENTIFY.slug ] );
+			}
+		);
 
 		it( 'redirects direct plans entry without the flag, preserving context', () => {
 			jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
@@ -1192,6 +1221,31 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			describe.each( [ false, true ] )( 'signed out with SSH available: %s', ( ssh ) => {
+				it( 'defers the destination to PICK_SITE, as the account’s sites are unknown', () => {
+					jest
+						.spyOn( config, 'isEnabled' )
+						.mockImplementation( ( flag ) => ssh && flag === 'migration/ssh-migration' );
+					jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( null );
+					const source = {
+						from: 'https://example-to-be-migrated.com',
+						platform: 'wordpress',
+						host: 'bluehost',
+					};
+
+					const destination = runNavigation( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: { action: 'continue', ...source },
+					} );
+
+					expect( destination ).toMatchDestination( {
+						step: STEPS.PICK_SITE,
+						query: { ...source, ...( ssh && { ssh: 'true' } ) },
+					} );
+				} );
+			} );
+
 			it( 'redirects to HOW_TO_MIGRATE when there is a destination site (siteSlug/siteId) and platform is wordpress', async () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -1829,6 +1883,25 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PICK_SITE', () => {
+			it( 'replaces itself with CREATE_SITE when it forwards an account without sites', () => {
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+				const search = new URLSearchParams( {
+					from: 'https://example-to-be-migrated.com',
+					platform: 'wordpress',
+					host: 'bluehost',
+				} );
+				const { result } = renderNavigation( [ `/setup/site-migration/sitePicker?${ search }` ] );
+
+				act( () => result.current.navigation.submit( { action: 'create-site' } ) );
+
+				expect( result.current.location.pathname ).toBe( '/site-migration/create-site' );
+				expect( result.current.navigationType ).toBe( 'REPLACE' );
+				const query = new URLSearchParams( result.current.location.search );
+				for ( const [ key, value ] of search ) {
+					expect( query.get( key ) ).toBe( value );
+				}
+			} );
+
 			describe.each( [ true, false ] )( 'query updates with Reprint enabled: %s', ( enabled ) => {
 				afterEach( () => {
 					window.location.search = '';
