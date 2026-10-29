@@ -10,6 +10,7 @@ import type { Site, StagingSiteSyncState } from '@automattic/api-core';
 export * from './use-running-staging-site-sync';
 
 const TAKING_LONG_AFTER_MS = 60 * 60 * 1000;
+const TIMEOUT_AFTER_MS = 2 * 60 * 60 * 1000;
 
 function getTitle( syncState: StagingSiteSyncState ) {
 	if ( syncState.status === 'pending' ) {
@@ -34,15 +35,28 @@ function getTitle( syncState: StagingSiteSyncState ) {
 function getDescription(
 	syncState: StagingSiteSyncState,
 	formattedStartTime: string,
-	isTakingLong: boolean
+	formattedTimeoutTime: string,
+	isTakingLong: boolean,
+	isPastTimeout: boolean
 ) {
-	if ( isTakingLong ) {
+	if ( isPastTimeout ) {
 		return sprintf(
 			/* translators: %s is a date, like "today at 10:00". */
 			__(
-				'This sync started %s and is taking longer than usual. You can’t start another sync until this one finishes.'
+				'This sync started %s and has run past its two hour limit, so it will stop shortly. You can try again once it does.'
 			),
 			formattedStartTime
+		);
+	}
+
+	if ( isTakingLong ) {
+		return sprintf(
+			/* translators: %1$s and %2$s are dates, like "today at 10:00". */
+			__(
+				'This sync started %1$s and is taking longer than usual. If it hasn’t finished by %2$s, it will stop and you can try again.'
+			),
+			formattedStartTime,
+			formattedTimeoutTime
 		);
 	}
 
@@ -74,15 +88,24 @@ export function StagingSiteSyncNotice( {
 	const { recordTracksEvent } = useAnalytics();
 	const { setOpenOdieWithContext } = useHelpCenter();
 	const hasRecordedImpression = useRef( false );
+	const startedAtMs = syncState.started_at * 1000;
 	const formattedStartTime = useFormattedTime(
-		syncState.started_at ? new Date( syncState.started_at * 1000 ).toISOString() : '',
+		syncState.started_at ? new Date( startedAtMs ).toISOString() : '',
 		{ timeStyle: 'short' },
 		undefined,
 		undefined,
 		true
 	);
-	const isTakingLong =
-		!! syncState.started_at && Date.now() - syncState.started_at * 1000 > TAKING_LONG_AFTER_MS;
+	const formattedTimeoutTime = useFormattedTime(
+		syncState.started_at ? new Date( startedAtMs + TIMEOUT_AFTER_MS ).toISOString() : '',
+		{ timeStyle: 'short' },
+		undefined,
+		undefined,
+		true
+	);
+	const runningForMs = syncState.started_at ? Date.now() - startedAtMs : 0;
+	const isTakingLong = runningForMs > TAKING_LONG_AFTER_MS;
+	const isPastTimeout = runningForMs > TIMEOUT_AFTER_MS;
 
 	useEffect( () => {
 		if ( hasRecordedImpression.current ) {
@@ -122,7 +145,13 @@ export function StagingSiteSyncNotice( {
 				)
 			}
 		>
-			{ getDescription( syncState, formattedStartTime, isTakingLong ) }
+			{ getDescription(
+				syncState,
+				formattedStartTime,
+				formattedTimeoutTime,
+				isTakingLong,
+				isPastTimeout
+			) }
 		</Notice>
 	);
 }
