@@ -581,6 +581,20 @@ describe( 'useGenerateActionHook', () => {
 			expect( action.primary.variant ).toBe( 'secondary' );
 		} );
 
+		it( 'labels a lower tier plan on the same billing term as a downgrade', () => {
+			mockSitePlans( [
+				{ productSlug: PLAN_BUSINESS, interval: 365, currentPlan: true },
+				{ productSlug: PLAN_PREMIUM, interval: 365, ...scheduledOnly },
+			] );
+
+			const { result } = renderHook( () =>
+				useGenerateActionHook( { siteId: mockSiteId, isInSignup: false, isLaunchPage: false } )
+			);
+			const action = result.current( { planSlug: PLAN_PREMIUM, availableForPurchase: false } );
+
+			expect( action.primary.text ).toBe( 'Downgrade' );
+		} );
+
 		it( 'keeps the downgrade label without the feature flag', () => {
 			( isScheduledTermChangeEnabled as jest.Mock ).mockReturnValue( false );
 			mockSitePlans( [
