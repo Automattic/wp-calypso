@@ -176,8 +176,9 @@
 		color: inherit;
 	}
 
-	/* The task the conversation is on. Other in-progress rows look like open ones
-	   (only the icon tells them apart), since they can be resumed the same way. */
+	/* The task the conversation is on (every in-progress row, without an active
+	   item). Other in-progress rows look like open ones, only the icon tells them
+	   apart, since they can be resumed the same way. */
 	.item-active {
 		color: var( --color-foreground );
 

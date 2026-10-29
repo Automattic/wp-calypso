@@ -373,18 +373,21 @@ describe( 'Checklist', () => {
 		expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
 	} );
 
-	it( 'marks only the active in-progress row as active', () => {
+	it( 'emphasizes every in-progress row, or only the active one when there is one', () => {
 		const twoInProgress = items.map( ( item ) =>
 			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
 		);
-		render( { items: twoInProgress, activeItemId: 'images' } );
+		const isEmphasized = ( label: string ) =>
+			rowFor( label ).querySelector( '[class*="item-active"]' ) !== null;
 
-		expect(
-			rowFor( 'Replace placeholder images' ).querySelector( '[class*="item-active"]' )
-		).not.toBeNull();
-		expect(
-			rowFor( 'Publish the About page' ).querySelector( '[class*="item-active"]' )
-		).toBeNull();
+		render( { items: twoInProgress } );
+		expect( isEmphasized( 'Replace placeholder images' ) ).toBe( true );
+		expect( isEmphasized( 'Publish the About page' ) ).toBe( true );
+		expect( isEmphasized( 'Launch site' ) ).toBe( false );
+
+		render( { items: twoInProgress, activeItemId: 'images' } );
+		expect( isEmphasized( 'Replace placeholder images' ) ).toBe( true );
+		expect( isEmphasized( 'Publish the About page' ) ).toBe( false );
 	} );
 
 	it( 'keeps only the active item in view while collapsed', () => {

@@ -135,8 +135,12 @@ function ChecklistRow( {
 	onSelect,
 }: ChecklistRowProps ) {
 	const status = getStatus( item );
+	// Without an active item every in-progress row is emphasized; with one, only it is.
+	const isActive =
+		status === 'in-progress' &&
+		( actionable.activeItemId === undefined || item.id === actionable.activeItemId );
 	const className = cn( styles.item, {
-		[ styles[ 'item-active' ] ]: status === 'in-progress' && item.id === actionable.activeItemId,
+		[ styles[ 'item-active' ] ]: isActive,
 		[ styles.settled ]: isSettled( item ),
 	} );
 	const content = (
