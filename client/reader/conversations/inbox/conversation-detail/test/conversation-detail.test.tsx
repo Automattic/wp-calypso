@@ -30,7 +30,7 @@ jest.mock( 'calypso/state/reader/conversations/actions', () => ( {
 } ) );
 
 import page from '@automattic/calypso-router';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { usePost } from 'calypso/reader/data/post';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -86,6 +86,7 @@ const renderMenu = async ( followStatus?: 'F' | 'M' ) => {
 		{ store }
 	);
 	await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+	await waitFor( () => expect( screen.getByRole( 'menu' ) ).toBeVisible() );
 
 	return { store, user };
 };
