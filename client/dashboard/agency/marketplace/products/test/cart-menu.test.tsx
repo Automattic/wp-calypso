@@ -3,7 +3,7 @@
  */
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../../test-utils';
 import CartMenu from '../cart-menu';
@@ -16,14 +16,28 @@ const mockBackup = {
 	family_slug: 'jetpack-backup',
 } as AgencyProduct;
 
-const mockItem = { slug: mockBackup.slug, quantity: 1 };
+const mockStorage = {
+	name: 'Jetpack VaultPress Backup Add-on Storage (10GB)',
+	slug: 'jetpack-backup-addon-storage-10gb-monthly',
+	product_id: 2117,
+	family_slug: 'jetpack-backup-storage',
+} as AgencyProduct;
+
+const mockWooProduct = {
+	name: 'WooCommerce Bookings',
+	slug: 'woocommerce-bookings',
+	product_id: 3001,
+	family_slug: 'woocommerce-products',
+} as AgencyProduct;
+
+let mockProduct = mockBackup;
 
 jest.mock( '../use-cart-lines', () => ( {
 	useCartLines: () => ( {
 		lines: [
 			{
-				item: mockItem,
-				product: mockBackup,
+				item: { slug: mockProduct.slug, quantity: 1 },
+				product: mockProduct,
 				priceInfo: { isFree: false, billingTerm: 'yearly' },
 				subtotal: 47.4,
 			},
@@ -41,7 +55,11 @@ jest.mock( '@tanstack/react-router', () => ( {
 	useLocation: () => ( { pathname: '/products', searchStr: '?category=jetpack' } ),
 } ) );
 
-function renderCart( isReferralMode: boolean, approvalStatus = 'approved' ) {
+function renderCart(
+	isReferralMode: boolean,
+	{ approvalStatus = 'approved', product = mockBackup } = {}
+) {
+	mockProduct = product;
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	queryClient.setQueryData( activeAgencyQuery().queryKey, {
 		id: 1,
@@ -50,8 +68,8 @@ function renderCart( isReferralMode: boolean, approvalStatus = 'approved' ) {
 	const onToggle = jest.fn();
 	const { recordTracksEvent } = render(
 		<CartMenu
-			items={ [ mockItem ] }
-			products={ [ mockBackup ] }
+			items={ [ { slug: product.slug, quantity: 1 } ] }
+			products={ [ product ] }
 			term="yearly"
 			isReferralMode={ isReferralMode }
 			isAgencyApproved={ approvalStatus === 'approved' }
@@ -88,7 +106,9 @@ describe( 'CartMenu', () => {
 	it.each( [ false, true ] )(
 		'opens the approval gate instead of a checkout while the agency is in review (referral mode: %s)',
 		async ( isReferralMode ) => {
-			const { onToggle, recordTracksEvent } = renderCart( isReferralMode, 'pending' );
+			const { onToggle, recordTracksEvent } = renderCart( isReferralMode, {
+				approvalStatus: 'pending',
+			} );
 
 			expect( screen.queryByRole( 'link', { name: 'Checkout' } ) ).not.toBeInTheDocument();
 			await userEvent.click( screen.getByRole( 'button', { name: 'Checkout' } ) );
@@ -107,4 +127,18 @@ describe( 'CartMenu', () => {
 			);
 		}
 	);
+
+	it( 'names a backup storage add-on, not just its size', async () => {
+		renderCart( false, { product: mockStorage } );
+
+		const name = await screen.findByText( 'VaultPress Backup Add-on Storage 10GB' );
+		await waitFor( () => expect( name ).toBeVisible() );
+	} );
+
+	it( 'keeps the vendor in a WooCommerce product name', async () => {
+		renderCart( false, { product: mockWooProduct } );
+
+		const name = await screen.findByText( 'WooCommerce Bookings' );
+		await waitFor( () => expect( name ).toBeVisible() );
+	} );
 } );

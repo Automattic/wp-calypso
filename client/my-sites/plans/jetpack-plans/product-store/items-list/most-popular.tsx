@@ -66,7 +66,7 @@ export const MostPopular: React.FC< MostPopularProps > = ( {
 					const price = (
 						<ItemPrice
 							isMultiSiteIncompatible={ isMultiSiteIncompatible }
-							isIncludedInPlan={ isIncludedInPlan }
+							isIncludedInPlan={ isIncludedInPlanOrSuperseded }
 							isOwned={ isOwned }
 							isExpired={ isExpired }
 							item={ item }
