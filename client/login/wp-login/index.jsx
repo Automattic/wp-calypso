@@ -124,7 +124,6 @@ export class Login extends Component {
 			'isFromAutomatticForAgenciesPlugin',
 			'isUnifiedConnectionFlow',
 			'connectorPlugins',
-			'connectorFrom',
 			'partnerConfig',
 			'isGravPoweredClient',
 			'currentQuery',
@@ -445,7 +444,6 @@ export class Login extends Component {
 						isJetpack={ isJetpack }
 						isUnifiedConnectionFlow={ this.props.isUnifiedConnectionFlow }
 						connectorPlugins={ this.props.connectorPlugins }
-						connectorFrom={ this.props.connectorFrom }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
 						columnWidth={ isLoginFormView ? 6 : undefined }
@@ -483,7 +481,6 @@ function getInitialHeadingState( props, translate ) {
 		isFromAutomatticForAgenciesPlugin,
 		isUnifiedConnectionFlow,
 		connectorPlugins,
-		connectorFrom,
 		partnerConfig,
 		isGravPoweredClient,
 		currentQuery,
@@ -526,7 +523,6 @@ function getInitialHeadingState( props, translate ) {
 		partnerConfig,
 		isUnifiedConnectionFlow,
 		connectorPlugins,
-		connectorFrom,
 	} );
 
 	return {
@@ -569,8 +565,10 @@ export default connect(
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
 
-		const { isUnifiedConnectionFlow, connectorPlugins, connectorFrom } =
-			getConnectionFlowFromRedirectTo( getRedirectToOriginal( state ), currentQuery );
+		const { isUnifiedConnectionFlow, connectorPlugins } = getConnectionFlowFromRedirectTo(
+			getRedirectToOriginal( state ),
+			currentQuery
+		);
 
 		return {
 			locale: getCurrentLocaleSlug( state ),
@@ -613,7 +611,6 @@ export default connect(
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
 			isUnifiedConnectionFlow,
 			connectorPlugins,
-			connectorFrom,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),

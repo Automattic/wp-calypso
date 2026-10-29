@@ -1,6 +1,5 @@
 import { getFamilyFromSlug } from './families';
 import { getPluginEntry } from './plugin-registry';
-import { getPresentFamilies } from './selectors';
 
 /**
  * Identifier for the subtitle scenario that drives copy selection on every
@@ -19,7 +18,7 @@ import { getPresentFamilies } from './selectors';
  * handles the impossible-but-still-possible case where the plugin list
  * arrives malformed (URL truncation, etc.) — see the Woo branch below.
  *
- * The 18 keys are the canonical scenario set, and each surface's
+ * These keys are the canonical scenario set, and each surface's
  * pre-composed subtitle table is keyed by exactly these values — see
  * `copy.ts`.
  */
@@ -73,7 +72,7 @@ function getJetpackSingleScenario( slug: string ): SubtitleScenario | null {
  *
  * Decision order, top-down:
  *
- * Migration entries with the migration plugin lead; otherwise:
+ * The migration plugin leads; otherwise:
  *
  * 1. Multi-family combinations (A4A + Woo + Jetpack), in priority order.
  * 2. Single-family combinations:
@@ -92,11 +91,8 @@ function getJetpackSingleScenario( slug: string ): SubtitleScenario | null {
  * Unknown ("other"-family) plugins are silently ignored once a known family
  * is present — they don't influence subtitle copy.
  */
-export function getSubtitleScenario(
-	pluginSlugs: readonly string[] = [],
-	from?: string | null
-): SubtitleScenario {
-	const families = new Set( getPresentFamilies( pluginSlugs, from ) );
+export function getSubtitleScenario( pluginSlugs: readonly string[] = [] ): SubtitleScenario {
+	const families = new Set( pluginSlugs.map( getFamilyFromSlug ) );
 	if ( families.has( 'migration' ) ) {
 		return families.size > 1 ? 'MIGRATION_WITH_PLUGINS' : 'MIGRATION';
 	}

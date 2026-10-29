@@ -97,7 +97,6 @@ describe( 'OneLoginLayout logo link', () => {
 		renderLayout( {
 			isJetpack: true,
 			isUnifiedConnectionFlow: true,
-			connectorFrom: 'wpcom_migration',
 			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
 		} );
 		expect( screen.getByRole( 'img', { name: 'WordPress.com' } ) ).toHaveAttribute(

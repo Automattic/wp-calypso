@@ -36,7 +36,6 @@ interface OneLoginLayoutProps {
 	 */
 	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
-	connectorFrom?: string | null;
 	children: React.ReactNode;
 	/**
 	 * `signupUrl` prop should merge with `getSignupLinkComponent` logic in `/client/block/login/index.js`, so we have a single source for this logic.
@@ -82,7 +81,6 @@ const OneLoginLayout = ( {
 	isJetpack,
 	isUnifiedConnectionFlow,
 	connectorPlugins,
-	connectorFrom,
 	children,
 	signupUrl: signupUrlProp,
 	isSectionSignup,
@@ -109,12 +107,7 @@ const OneLoginLayout = ( {
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
-	const headingLogo = useHeadingLogo( {
-		isJetpack,
-		isUnifiedConnectionFlow,
-		connectorPlugins,
-		connectorFrom,
-	} );
+	const headingLogo = useHeadingLogo( { isJetpack, isUnifiedConnectionFlow, connectorPlugins } );
 
 	// Product and partner logins with a logo above the title (Woo, Jetpack, Crowdsignal,
 	// Akismet...) are designed around it, so they stay centered. A logo in the top bar
@@ -235,7 +228,6 @@ const OneLoginLayout = ( {
 							isJetpack={ isJetpack }
 							isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 							connectorPlugins={ connectorPlugins }
-							connectorFrom={ connectorFrom }
 						/>
 					) }
 					<Step.Heading

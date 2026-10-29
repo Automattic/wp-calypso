@@ -56,16 +56,15 @@ export interface FeatureCardData {
  * voice — they only render when A4A is absent.
  */
 export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
-	if ( key === 'migration' ) {
-		return {
-			title: __( 'WordPress.com migration' ),
-			bullets: [
-				__( "Copy the site's posts, pages, and media to WordPress.com." ),
-				__( 'Bring over your themes, plugins, and settings too.' ),
-			],
-		};
-	}
 	switch ( key ) {
+		case 'migration':
+			return {
+				title: __( 'WordPress.com migration' ),
+				bullets: [
+					__( "Copy the site's posts, pages, and media to WordPress.com." ),
+					__( 'Bring over your themes, plugins, and settings too.' ),
+				],
+			};
 		case 'a4a':
 			return {
 				title: __( 'Automattic for Agencies' ),
@@ -187,13 +186,12 @@ export function getFeatureCardData( key: FeatureCardKey ): FeatureCardData {
  * teammate or a site co-owner who happens to care about the feature.
  */
 export function getSecondaryFeatureCardData( key: FeatureCardKey ): FeatureCardData {
-	if ( key === 'migration' ) {
-		return {
-			title: __( 'WordPress.com migration' ),
-			bullets: [ __( 'Help migrate this site to WordPress.com.' ) ],
-		};
-	}
 	switch ( key ) {
+		case 'migration':
+			return {
+				title: __( 'WordPress.com migration' ),
+				bullets: [ __( 'Help migrate this site to WordPress.com.' ) ],
+			};
 		case 'a4a':
 			return {
 				title: __( 'Automattic for Agencies' ),

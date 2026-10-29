@@ -54,7 +54,6 @@ interface Props {
 	isJetpack?: boolean;
 	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
-	connectorFrom?: string | null;
 }
 
 /**
@@ -65,7 +64,6 @@ export const useHeadingLogo = ( {
 	isJetpack,
 	isUnifiedConnectionFlow,
 	connectorPlugins,
-	connectorFrom,
 }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
 	const isWoo = useSelector( getIsWoo );
@@ -112,10 +110,7 @@ export const useHeadingLogo = ( {
 			/>
 		);
 	} else if ( isUnifiedConnectionFlow ) {
-		const { logo: connectorLogo, logoAlt } = getConnectorBranding(
-			connectorPlugins,
-			connectorFrom
-		);
+		const { logo: connectorLogo, logoAlt } = getConnectorBranding( connectorPlugins );
 		logo = <img src={ connectorLogo } alt={ logoAlt } className="wp-login__connector-logo" />;
 	} else if ( isJetpackApp ) {
 		logo = (

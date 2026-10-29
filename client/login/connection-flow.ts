@@ -1,4 +1,4 @@
-import { isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
+import { getPluginsForEntryPoint, isUnifiedFlow } from 'calypso/jetpack-connect/entry-points';
 
 interface ConnectionFlowQuery {
 	from?: string | null;
@@ -23,9 +23,12 @@ export function getConnectionFlowFromRedirectTo(
 	return {
 		isUnifiedConnectionFlow,
 		connectorFrom: from,
-		connectorPlugins: rawPlugins
-			.split( ',' )
-			.map( ( s ) => s.trim() )
-			.filter( Boolean ),
+		connectorPlugins: getPluginsForEntryPoint(
+			rawPlugins
+				.split( ',' )
+				.map( ( s ) => s.trim() )
+				.filter( Boolean ),
+			from
+		),
 	};
 }

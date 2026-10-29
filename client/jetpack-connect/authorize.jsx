@@ -1087,9 +1087,9 @@ export class JetpackAuthorize extends Component {
 			if ( isSecondary && ! isAdmin ) {
 				featureCardsResult = { cards: [], heroFirstCard: false };
 			} else if ( isSecondary ) {
-				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins, authQuery.from );
+				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.connectorPlugins );
 			} else {
-				featureCardsResult = getConnectorFeatureCards( authQuery.plugins, authQuery.from );
+				featureCardsResult = getConnectorFeatureCards( authQuery.connectorPlugins );
 			}
 			const { cards, heroFirstCard } = featureCardsResult;
 
@@ -1115,7 +1115,7 @@ export class JetpackAuthorize extends Component {
 		}
 
 		if ( this.isFromMyJetpack() ) {
-			const branding = getConnectorBranding( authQuery.plugins );
+			const branding = getConnectorBranding( authQuery.connectorPlugins );
 			const siteURL = decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
 			const permissionsTitle = branding.permissionsTitle( { siteURL } );
 
@@ -1402,19 +1402,14 @@ export class JetpackAuthorize extends Component {
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const isUnifiedConnection = this.isUnifiedConnectionFlow();
 		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
-		const connectorBranding = isUnifiedConnection
-			? getConnectorBranding( this.props.authQuery.plugins, this.props.authQuery.from )
-			: null;
+		const { connectorPlugins } = this.props.authQuery;
+		const connectorBranding = isUnifiedConnection ? getConnectorBranding( connectorPlugins ) : null;
 		const isSecondary = this.isSecondaryConnection();
 		let authCopy = null;
 		if ( isSecondary ) {
-			authCopy = getSecondaryAuthCopy(
-				this.isAdminConnection(),
-				this.props.authQuery.plugins,
-				this.props.authQuery.from
-			);
+			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), connectorPlugins );
 		} else if ( isUnifiedConnection ) {
-			authCopy = getAuthCopy( this.props.authQuery.plugins, this.props.authQuery.from );
+			authCopy = getAuthCopy( connectorPlugins );
 		}
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {

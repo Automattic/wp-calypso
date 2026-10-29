@@ -26,6 +26,21 @@ export function isMigrationEntryPoint( from?: string | null ): boolean {
 }
 
 /**
+ * The plugins the connection screens present for this entry point.
+ */
+export function getPluginsForEntryPoint(
+	pluginSlugs: readonly string[] = [],
+	from?: string | null
+) {
+	// Remove the migration plugin unless we came from the migration entry point.
+	if ( ! isMigrationEntryPoint( from ) ) {
+		return pluginSlugs.filter( ( slug ) => slug !== 'wpcom-migration' );
+	}
+
+	return [ ...pluginSlugs ];
+}
+
+/**
  * Whether `from` gets the unified connection flow: the plugin-aware logo,
  * title, subtitle and feature cards on the authorize, signup and login
  * screens. `jetpack-connector` (the Connectors card) and `jetpack-onboarding`

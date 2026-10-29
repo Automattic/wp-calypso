@@ -76,6 +76,17 @@ describe( 'getConnectionFlowFromRedirectTo', () => {
 		expect( params.connectorFrom ).toBe( 'jetpack-connector' );
 	} );
 
+	it.each( [
+		[ 'wpcom_migration', [ 'wpcom-migration', 'jetpack' ] ],
+		[ 'jetpack-connector', [ 'jetpack' ] ],
+	] )( 'counts the migration plugin only for its own entry (from=%s)', ( from, expected ) => {
+		const params = getConnectionFlowFromRedirectTo(
+			`/jetpack/connect/authorize?from=${ from }&plugins=wpcom-migration,jetpack`
+		);
+
+		expect( params.connectorPlugins ).toEqual( expected );
+	} );
+
 	it( 'trims whitespace inside the plugins list', () => {
 		const params = getConnectionFlowFromRedirectTo(
 			'/jetpack/connect/authorize?from=jetpack-connector&plugins=jetpack,%20woocommerce'

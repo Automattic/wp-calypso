@@ -94,6 +94,13 @@ describe( 'getLogoForFamilies', () => {
 		expect( getLogoForFamilies( [ 'a4a', 'jetpack' ] ) ).toMatch( /jetpack-connect-a8c\.svg$/ );
 	} );
 
+	test( 'returns the WordPress logo whenever migration is present', () => {
+		expect( getLogoForFamilies( [ 'migration' ] ) ).toMatch( /jetpack-connect-migration\.svg$/ );
+		expect( getLogoForFamilies( [ 'migration', 'a4a', 'woo', 'jetpack' ] ) ).toMatch(
+			/jetpack-connect-migration\.svg$/
+		);
+	} );
+
 	test( 'returns the all-families composite when both Woo and A4A are present', () => {
 		expect( getLogoForFamilies( [ 'woo', 'a4a' ] ) ).toMatch( /jetpack-connect-all\.svg$/ );
 		expect( getLogoForFamilies( [ 'a4a', 'woo', 'jetpack' ] ) ).toMatch(

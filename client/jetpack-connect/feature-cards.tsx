@@ -54,22 +54,21 @@ export interface ConnectorFeatureCards {
 	/**
 	 * Hint for `<FeaturesSection />` that the first card should be rendered
 	 * as a full-width hero on its own row, with the remaining card(s)
-	 * stacked beneath it. Set whenever migration or A4A is the primary card so the
-	 * agency-context card is visually anchored regardless of how many
-	 * supporting cards accompany it (1 or 2). Always `false` when neither
-	 * family is present.
+	 * stacked beneath it. Set whenever migration or A4A leads, so the lead
+	 * card is anchored however many supporting cards follow it. Always
+	 * `false` when neither is present.
 	 */
 	heroFirstCard: boolean;
 }
 
 /**
  * Build the FeaturesSection props for the connector authorize page from
- * the `plugins` query parameter — picks up to three supporting cards plus a migration hero (per the
- * family-priority rules in `getFeatureSelection`) and resolves each one's
- * logo, title, and bullet copy.
+ * the `plugins` query parameter — picks up to three cards, plus the
+ * migration hero (per the family-priority rules in `getFeatureSelection`),
+ * and resolves each one's logo, title, and bullet copy.
  *
- * When migration or A4A leads the selected cards, every supporting card collapses
- * to just its first bullet. Users connecting via A4A are agencies or
+ * When migration or A4A leads, every supporting card collapses to just its
+ * first bullet. Users connecting via A4A are agencies or
  * freelancers, not end-users of the site — surfacing the full
  * end-user-focused bullet list (e.g. "Run your store on the go with the
  * Woo mobile app") would drown out the agency context. The first bullet
@@ -80,15 +79,13 @@ export interface ConnectorFeatureCards {
  *
  * The result also exposes `heroFirstCard` so the consumer can opt the
  * `<FeaturesSection />` layout into the full-width hero treatment for the
- * A4A card whenever it's present — even in the 2-card scenarios where
- * the default 2-up grid would otherwise put A4A side-by-side with a
- * supporting card.
+ * migration or A4A card — even in the 2-card scenarios where the default
+ * 2-up grid would otherwise put it side-by-side with a supporting card.
  */
 export function getConnectorFeatureCards(
-	pluginSlugs: readonly string[] = [],
-	from?: string | null
+	pluginSlugs: readonly string[] = []
 ): ConnectorFeatureCards {
-	const { cardKeys } = getFeatureSelection( pluginSlugs, undefined, from );
+	const { cardKeys } = getFeatureSelection( pluginSlugs );
 	const heroKey = cardKeys.find( ( key ) => key === 'migration' || key === 'a4a' );
 
 	// `logoAlt` is intentionally omitted: every Jetpack-family card and A4A
@@ -120,15 +117,14 @@ export function getConnectorFeatureCards(
  * family/priority system as first connections, but the bullet copy
  * reflects the narrower scope (cloud management, activity log access).
  *
- * `heroFirstCard` mirrors the primary-owner behavior — when A4A is
- * present in the secondary row, it claims its own row on top so the
- * supporting cards don't compete with it for layout space.
+ * `heroFirstCard` mirrors the primary-owner behavior — when migration or
+ * A4A leads, it claims its own row on top so the supporting cards don't
+ * compete with it for layout space.
  */
 export function getSecondaryAdminFeatureCards(
-	pluginSlugs: readonly string[] = [],
-	from?: string | null
+	pluginSlugs: readonly string[] = []
 ): ConnectorFeatureCards {
-	const { cardKeys } = getFeatureSelection( pluginSlugs, undefined, from );
+	const { cardKeys } = getFeatureSelection( pluginSlugs );
 	const heroKey = cardKeys.find( ( key ) => key === 'migration' || key === 'a4a' );
 
 	const cards: FeatureCard[] = cardKeys.map( ( key ) => {

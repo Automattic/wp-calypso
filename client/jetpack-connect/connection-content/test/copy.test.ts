@@ -335,20 +335,20 @@ describe( 'migration copy across surfaces', () => {
 	test.each( [ getAuthCopy, getLoginCopy, getSignupCopy ] )(
 		'provides migration copy and acknowledges supporting plugins',
 		( getCopy ) => {
-			expect( getCopy( [ 'wpcom-migration' ], 'wpcom_migration' ).subtitle ).toMatch( /migrat/ );
-			expect( getCopy( [ 'wpcom-migration', 'jetpack' ], 'wpcom_migration' ).subtitle ).toMatch(
+			expect( getCopy( [ 'wpcom-migration' ] ).subtitle ).toMatch( /migrat/ );
+			expect( getCopy( [ 'wpcom-migration', 'jetpack' ] ).subtitle ).toMatch(
 				/other active plugins/i
 			);
 		}
 	);
 	test( 'uses migration copy for secondary admins but retains member copy', () => {
-		expect( getSecondaryAuthCopy( true, [ 'wpcom-migration' ], 'wpcom_migration' ).subtitle ).toBe(
+		expect( getSecondaryAuthCopy( true, [ 'wpcom-migration' ] ).subtitle ).toBe(
 			'Connect your account to help migrate this site to WordPress.com.'
 		);
-		expect(
-			getSecondaryAuthCopy( true, [ 'wpcom-migration', 'jetpack' ], 'wpcom_migration' ).subtitle
-		).toContain( 'Other active plugins' );
-		expect( getSecondaryAuthCopy( false, [ 'wpcom-migration' ], 'wpcom_migration' ) ).toEqual(
+		expect( getSecondaryAuthCopy( true, [ 'wpcom-migration', 'jetpack' ] ).subtitle ).toContain(
+			'Other active plugins'
+		);
+		expect( getSecondaryAuthCopy( false, [ 'wpcom-migration' ] ) ).toEqual(
 			getSecondaryAuthCopy( false )
 		);
 	} );
