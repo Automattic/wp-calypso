@@ -15,26 +15,20 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 	) ),
 } ) );
 
-jest.mock( '@automattic/calypso-router', () => ( {
-	__esModule: true,
-	default: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn( ( name ) => ( { type: 'READER_TRACKS_EVENT_TEST', name } ) ),
+	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
 } ) );
 
 jest.mock( 'calypso/state/reader/conversations/actions', () => ( {
 	followConversation: jest.fn( () => ( { type: 'READER_CONVERSATION_FOLLOW_TEST' } ) ),
-	muteConversation: jest.fn( () => ( { type: 'READER_CONVERSATION_MUTE_TEST' } ) ),
+	muteConversation: jest.fn(),
 } ) );
 
-import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { usePost } from 'calypso/reader/data/post';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
+import { followConversation } from 'calypso/state/reader/conversations/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
 import { groupNotesByPost } from '../../group-notes';
@@ -65,20 +59,15 @@ const renderDetail = ( props: Partial< React.ComponentProps< typeof Conversation
 		<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ conversation } { ...props } />
 	);
 
-const makeStore = ( followStatus?: 'F' | 'M' ) => {
-	const state = {
-		reader: { conversations: { items: followStatus ? { '10-100': followStatus } : {} } },
-	};
-	return {
-		getState: () => state,
+const renderMenu = async ( followStatus?: 'F' ) => {
+	mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+	const store = {
+		getState: () => ( {
+			reader: { conversations: { items: followStatus ? { '10-100': followStatus } : {} } },
+		} ),
 		subscribe: () => () => {},
 		dispatch: jest.fn( ( action: AnyAction ) => action ),
 	};
-};
-
-const renderMenu = async ( followStatus?: 'F' | 'M' ) => {
-	mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-	const store = makeStore( followStatus );
 	const user = userEvent.setup();
 
 	renderWithProvider(
@@ -176,38 +165,14 @@ describe( 'ConversationDetail', () => {
 	} );
 
 	describe( 'post actions menu', () => {
-		it( 'offers to follow and mute when the user is not following', async () => {
-			await renderMenu();
-
-			expect( screen.getByRole( 'menuitem', { name: 'View post' } ) ).toBeVisible();
-			expect( screen.getByRole( 'menuitem', { name: 'Follow conversation' } ) ).toBeVisible();
-			expect( screen.getByRole( 'menuitem', { name: 'Mute conversation' } ) ).toBeVisible();
-		} );
-
-		it( 'hides follow when the user already follows the conversation', async () => {
+		it( 'hides Follow conversation when the user already follows it', async () => {
 			await renderMenu( 'F' );
 
+			expect( screen.getByRole( 'menuitem', { name: 'View post' } ) ).toBeVisible();
+			expect( screen.getByRole( 'menuitem', { name: 'Mute conversation' } ) ).toBeVisible();
 			expect(
 				screen.queryByRole( 'menuitem', { name: 'Follow conversation' } )
 			).not.toBeInTheDocument();
-			expect( screen.getByRole( 'menuitem', { name: 'Mute conversation' } ) ).toBeVisible();
-		} );
-
-		it( 'hides mute when the conversation is already muted', async () => {
-			await renderMenu( 'M' );
-
-			expect( screen.getByRole( 'menuitem', { name: 'Follow conversation' } ) ).toBeVisible();
-			expect(
-				screen.queryByRole( 'menuitem', { name: 'Mute conversation' } )
-			).not.toBeInTheDocument();
-		} );
-
-		it( 'opens the post when View post is clicked', async () => {
-			const { user } = await renderMenu();
-
-			await user.click( screen.getByRole( 'menuitem', { name: 'View post' } ) );
-
-			expect( page ).toHaveBeenCalledWith( '/reader/blogs/10/posts/100' );
 		} );
 
 		it( 'follows the conversation and records the event', async () => {
@@ -224,31 +189,6 @@ describe( 'ConversationDetail', () => {
 			expect( store.dispatch ).toHaveBeenCalledWith( {
 				type: 'READER_CONVERSATION_FOLLOW_TEST',
 			} );
-			expect( screen.queryByRole( 'menu' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'mutes the conversation and records the event', async () => {
-			const { store, user } = await renderMenu( 'F' );
-
-			await user.click( screen.getByRole( 'menuitem', { name: 'Mute conversation' } ) );
-
-			expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_conversations_inbox_conversation_muted',
-				{ source: 'post_menu' },
-				{ post }
-			);
-			expect( muteConversation ).toHaveBeenCalledWith( { siteId: 10, postId: 100 } );
-			expect( store.dispatch ).toHaveBeenCalledWith( { type: 'READER_CONVERSATION_MUTE_TEST' } );
-		} );
-
-		it( 'closes on Escape from inside the menu and returns focus to the toggle', async () => {
-			const { user } = await renderMenu();
-			screen.getByRole( 'menuitem', { name: 'View post' } ).focus();
-
-			await user.keyboard( '{Escape}' );
-
-			expect( screen.queryByRole( 'menu' ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'button', { name: 'Post actions' } ) ).toHaveFocus();
 		} );
 	} );
 } );

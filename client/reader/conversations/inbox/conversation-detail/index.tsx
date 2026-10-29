@@ -2,8 +2,6 @@ import page from '@automattic/calypso-router';
 import {
 	Button,
 	DropdownMenu,
-	MenuGroup,
-	MenuItem,
 	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -52,27 +50,25 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 	const author = post?.author as { name?: string } | undefined;
 	const postUrl = post ? getPostUrl( post ) : '';
 
-	const follow = () => {
-		dispatch(
-			recordReaderTracksEvent(
-				'calypso_reader_conversations_inbox_conversation_followed',
-				{ source: 'post_menu' },
-				{ post }
-			)
-		);
-		dispatch( followConversation( { siteId, postId } ) );
+	const act = ( event: string, action: typeof followConversation ) => () => {
+		dispatch( recordReaderTracksEvent( event, { source: 'post_menu' }, { post } ) );
+		dispatch( action( { siteId, postId } ) );
 	};
 
-	const mute = () => {
-		dispatch(
-			recordReaderTracksEvent(
-				'calypso_reader_conversations_inbox_conversation_muted',
-				{ source: 'post_menu' },
-				{ post }
-			)
-		);
-		dispatch( muteConversation( { siteId, postId } ) );
-	};
+	const controls = [
+		{ title: translate( 'View post' ) as string, onClick: () => page( postUrl ) },
+		! isFollowing && {
+			title: translate( 'Follow conversation' ) as string,
+			onClick: act(
+				'calypso_reader_conversations_inbox_conversation_followed',
+				followConversation
+			),
+		},
+		! isMuted && {
+			title: translate( 'Mute conversation' ) as string,
+			onClick: act( 'calypso_reader_conversations_inbox_conversation_muted', muteConversation ),
+		},
+	].filter( ( control ) => control !== false );
 
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__detail-pane">
@@ -123,40 +119,8 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 										className="conversations-inbox__post-menu"
 										toggleProps={ { __next40pxDefaultSize: true } }
 										popoverProps={ { placement: 'bottom-end' } }
-									>
-										{ ( { onClose } ) => (
-											<MenuGroup>
-												<MenuItem
-													onClick={ () => {
-														onClose();
-														page( postUrl );
-													} }
-												>
-													{ translate( 'View post' ) }
-												</MenuItem>
-												{ ! isFollowing && (
-													<MenuItem
-														onClick={ () => {
-															onClose();
-															follow();
-														} }
-													>
-														{ translate( 'Follow conversation' ) }
-													</MenuItem>
-												) }
-												{ ! isMuted && (
-													<MenuItem
-														onClick={ () => {
-															onClose();
-															mute();
-														} }
-													>
-														{ translate( 'Mute conversation' ) }
-													</MenuItem>
-												) }
-											</MenuGroup>
-										) }
-									</DropdownMenu>
+										controls={ controls }
+									/>
 								</HStack>
 								<VStack
 									as="a"
