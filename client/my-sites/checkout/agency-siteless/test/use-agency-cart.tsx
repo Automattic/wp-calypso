@@ -78,7 +78,8 @@ describe( 'useAgencyCart', () => {
 
 		expect( result.current.error ).toBeNull();
 		expect( replaceProductsInCart ).toHaveBeenCalledTimes( 1 );
-		const extra = { isA4ASitelessCheckout: true, agency_id: AGENCY_ID };
+		// The dashboard set the term, so the checkout shows no term picker.
+		const extra = { isA4ASitelessCheckout: true, agency_id: AGENCY_ID, hideProductVariants: true };
 		expect( addedLines() ).toEqual( [
 			{
 				product_id: 1010,

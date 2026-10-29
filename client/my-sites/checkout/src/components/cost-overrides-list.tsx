@@ -17,6 +17,7 @@ import {
 } from '@automattic/shopping-cart';
 import {
 	A4ATitanInboxMeta,
+	groupA4ALicenses,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
@@ -697,6 +698,56 @@ export function BundleProductAndCostOverridesList( {
 	);
 }
 
+/**
+ * The A4A licenses of one product as one row in the order summary: the
+ * product with the total for all of them, and the count with the price of one.
+ */
+function A4ALicensesAndCostOverridesList( {
+	products,
+	isCartUpdating,
+}: {
+	products: ResponseCartProduct[];
+	isCartUpdating?: boolean;
+} ) {
+	const translate = useTranslate();
+	const [ firstLicense ] = products;
+	const format = ( amount: number ) =>
+		formatCurrency( amount, firstLicense.currency, { isSmallestUnit: true, stripZeros: true } );
+	const totalInteger = products.reduce(
+		( total, product ) => total + getItemSubtotalExcludingCoupon( product ),
+		0
+	);
+
+	return (
+		<SimplifiedSingleProductAndCostOverridesListWrapper className="cost-overrides-list-product-wrapper">
+			<WPCheckoutCheckIcon />
+			<ProductTitleAreaForCostOverridesList>
+				<span className="cost-overrides-list-product__title">{ getLabel( firstLicense ) }</span>
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<SimplifiedLineItemPrice actualAmount={ format( totalInteger ) } />
+				) }
+			</ProductTitleAreaForCostOverridesList>
+			<BundleMemberList>
+				<span>
+					{ translate(
+						'%(count)d license at %(price)s each',
+						'%(count)d licenses at %(price)s each',
+						{
+							count: products.length,
+							args: {
+								count: products.length,
+								price: format( getItemSubtotalExcludingCoupon( firstLicense ) ),
+							},
+						}
+					) }
+				</span>
+			</BundleMemberList>
+		</SimplifiedSingleProductAndCostOverridesListWrapper>
+	);
+}
+
 export function ProductsAndCostOverridesList( {
 	responseCart,
 	isCartUpdating,
@@ -706,13 +757,24 @@ export function ProductsAndCostOverridesList( {
 } ) {
 	// Bundle grouping is gated behind the `domain-bundling` feature flag. When off,
 	// every product renders on its own line exactly as before.
-	const groupedLineItems = config.isEnabled( 'domain-bundling' )
+	const bundledLineItems = config.isEnabled( 'domain-bundling' )
 		? groupBundleLineItems( responseCart.products )
 		: responseCart.products.map( ( product ) => ( { type: 'product' as const, product } ) );
+	// The A4A licenses of one product show as one row.
+	const groupedLineItems = groupA4ALicenses( bundledLineItems );
 
 	return (
 		<ProductsAndCostOverridesListWrapper className="wp-checkout-order-summary__products-list">
 			{ groupedLineItems.map( ( entry ) => {
+				if ( entry.type === 'a4a-licenses' ) {
+					return (
+						<A4ALicensesAndCostOverridesList
+							products={ entry.products }
+							key={ `licenses-${ entry.key }` }
+							isCartUpdating={ isCartUpdating }
+						/>
+					);
+				}
 				if ( entry.type === 'bundle' ) {
 					return (
 						<BundleProductAndCostOverridesList
