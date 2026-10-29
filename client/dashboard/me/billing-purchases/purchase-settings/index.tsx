@@ -923,6 +923,15 @@ function WPComResourceMeters( {
 	);
 }
 
+function getAutoRenewToggleLabel( purchase: Purchase ): string {
+	if ( purchase.is_auto_renew_enabled ) {
+		return __( 'Auto-renew on' );
+	}
+	return isExpiredAndInGracePeriod( purchase ) && purchase.is_jetpack_plan_or_product
+		? __( 'Re-activate subscription' )
+		: __( 'Auto-renew off' );
+}
+
 function getFields( {
 	isMutationPending,
 	user,
@@ -948,7 +957,7 @@ function getFields( {
 	return [
 		{
 			id: 'is_auto_renew_enabled',
-			label: __( 'Enable auto-renew' ),
+			label: getAutoRenewToggleLabel( purchase ),
 			Edit: ( { field, data: purchase, onChange } ) => {
 				const locale = useLocale();
 				const navigate = useNavigate();
@@ -1058,14 +1067,7 @@ function getFields( {
 					<ToggleControl
 						__nextHasNoMarginBottom
 						className="purchase-settings__toggle-control"
-						label={ ( () => {
-							if ( getValue( { item: purchase } ) ) {
-								return __( 'Auto-renew on' );
-							}
-							return isExpiredAndInGracePeriod( purchase ) && purchase.is_jetpack_plan_or_product
-								? __( 'Re-activate subscription' )
-								: __( 'Auto-renew off' );
-						} )() }
+						label={ field.label }
 						checked={ getValue( { item: purchase } ) }
 						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
