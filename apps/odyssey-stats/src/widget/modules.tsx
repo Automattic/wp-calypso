@@ -188,6 +188,11 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 			icon={ shield }
 			className="stats-widget-modules"
 		>
+			{ /* The placeholders are decorative, so this is the one word a screen reader gets
+			     while the counts load. */ }
+			{ ( protect.isPending || akismet.isPending ) && (
+				<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+			) }
 			<div className="stats-widget-metrics">
 				<ModuleCard
 					title={ translate( 'Blocked login attempts' ) }
