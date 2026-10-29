@@ -1,6 +1,7 @@
 import { formatNumber } from '@automattic/number-formatters';
 import {
 	Button,
+	Icon,
 	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -8,6 +9,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import clsx from 'clsx';
+import { error as errorIcon } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -23,6 +25,8 @@ interface Props {
 	conversations: Conversation[];
 	unreadCount: number;
 	isLoading: boolean;
+	isError?: boolean;
+	onRetry?: () => void;
 	tab: InboxTab;
 	onTabChange: ( tab: InboxTab ) => void;
 	search: string;
@@ -42,6 +46,8 @@ export function ConversationList( {
 	conversations,
 	unreadCount,
 	isLoading,
+	isError,
+	onRetry,
 	tab,
 	onTabChange,
 	search,
@@ -124,12 +130,22 @@ export function ConversationList( {
 			) }
 			<div className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }>
 				{ isLoading && <Spinner /> }
-				{ ! isLoading && conversations.length === 0 && (
-					<Text as="p" color="var(--color-text-subtle)" className="conversations-inbox__empty">
-						{ tab === 'yours'
-							? translate( 'Conversations you commented on will show up here.' )
-							: translate( 'No conversations yet.' ) }
-					</Text>
+				{ ! isLoading && isError && (
+					<VStack spacing={ 3 } alignment="center" className="conversations-inbox__state">
+						<Icon icon={ errorIcon } className="conversations-inbox__state-icon is-error" />
+						<Heading level={ 2 } size={ 15 } weight={ 600 } color="inherit">
+							{ translate( 'Couldn’t load conversations' ) }
+						</Heading>
+						<Text as="p" color="var(--color-text-subtle)">
+							{ translate( 'Something went wrong while loading your conversations.' ) }
+						</Text>
+						<Button __next40pxDefaultSize variant="secondary" onClick={ onRetry }>
+							{ translate( 'Retry' ) }
+						</Button>
+					</VStack>
+				) }
+				{ ! isLoading && ! isError && conversations.length === 0 && (
+					<EmptyState tab={ tab } isSearching={ !! search.trim() } />
 				) }
 				{ sections.map( ( { label, items } ) => (
 					<section key={ label }>
@@ -158,6 +174,48 @@ export function ConversationList( {
 					</section>
 				) ) }
 			</div>
+		</VStack>
+	);
+}
+
+function EmptyState( { tab, isSearching }: { tab: InboxTab; isSearching: boolean } ) {
+	const translate = useTranslate();
+
+	if ( isSearching ) {
+		return (
+			<VStack alignment="center" className="conversations-inbox__state">
+				<Text as="p" color="var(--color-text-subtle)">
+					{ translate( 'No conversations match your search.' ) }
+				</Text>
+			</VStack>
+		);
+	}
+
+	const { title, description } = {
+		all: {
+			title: translate( 'Conversations will appear here' ),
+			description: translate(
+				'Conversations on your posts and posts you follow or comment on appear here.'
+			),
+		},
+		unread: {
+			title: translate( 'You’re all caught up' ),
+			description: translate( 'There are no new conversations.' ),
+		},
+		yours: {
+			title: translate( 'You haven’t commented anywhere yet' ),
+			description: translate( 'Comments you leave will appear here.' ),
+		},
+	}[ tab ];
+
+	return (
+		<VStack spacing={ 2 } alignment="center" className="conversations-inbox__state">
+			<Heading level={ 2 } size={ 15 } weight={ 600 } color="inherit">
+				{ title }
+			</Heading>
+			<Text as="p" color="var(--color-text-subtle)">
+				{ description }
+			</Text>
 		</VStack>
 	);
 }

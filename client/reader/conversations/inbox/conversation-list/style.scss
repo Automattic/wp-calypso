@@ -60,6 +60,8 @@
 }
 
 .conversations-inbox__list {
+	display: flex;
+	flex-direction: column;
 	flex: 1;
 	overflow-y: auto;
 	border-block-start: 1px solid var( --color-border-subtle );
@@ -75,8 +77,19 @@
 	border-block-end: 1px solid var( --color-border-subtle );
 }
 
-.conversations-inbox__empty {
+.conversations-inbox__state {
+	flex: 1;
+	justify-content: center;
 	padding: 24px 16px;
+	text-align: center;
+
+	p {
+		margin: 0;
+	}
+}
+
+.conversations-inbox__state-icon.is-error {
+	fill: var( --color-error );
 }
 
 .conversations-inbox__item {

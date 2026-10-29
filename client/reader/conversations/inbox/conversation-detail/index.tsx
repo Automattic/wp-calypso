@@ -1,5 +1,6 @@
 import {
 	Button,
+	ExternalLink,
 	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -61,6 +62,21 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 			<div className="conversations-inbox__detail-body">
 				<VStack spacing={ 10 } className="conversations-inbox__detail-content">
 					{ isLoading && ! post && <Spinner /> }
+					{ !! post?.is_error && (
+						<VStack spacing={ 3 } alignment="center" className="conversations-inbox__detail-error">
+							<Heading level={ 3 } size={ 15 } weight={ 600 } color="inherit">
+								{ translate( 'This post can’t be loaded' ) }
+							</Heading>
+							<Text as="p" color="var(--color-text-subtle)">
+								{ translate( 'It may have been deleted or made private.' ) }
+							</Text>
+							{ conversation?.url && (
+								<ExternalLink href={ conversation.url }>
+									{ translate( 'Open on the site' ) }
+								</ExternalLink>
+							) }
+						</VStack>
+					) }
 					{ post && ! post.is_error && (
 						<>
 							<VStack

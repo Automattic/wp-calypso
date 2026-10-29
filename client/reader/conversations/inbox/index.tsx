@@ -7,6 +7,7 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -35,7 +36,7 @@ const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' |
 export function ConversationsInbox( { siteId, postId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data: notes = [], isLoading } = useCommentNotes();
+	const { data: notes = [], isLoading, isError, refetch } = useCommentNotes();
 	const { mutate: markRead } = useMarkNotesRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const currentUserId = useSelector( getCurrentUserId );
@@ -79,7 +80,9 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
 		const unreadCount = conversation.unreadNoteIds.length;
 		if ( unreadCount ) {
-			markRead( conversation.unreadNoteIds );
+			markRead( conversation.unreadNoteIds, {
+				onError: () => dispatch( errorNotice( translate( 'Couldn’t mark as read. Try again.' ) ) ),
+			} );
 		}
 		if ( conversation.key === selectedKey ) {
 			return;
@@ -168,6 +171,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					conversations={ visible }
 					unreadCount={ unreadCount }
 					isLoading={ isLoading }
+					isError={ isError && ! notes.length }
+					onRetry={ () => refetch() }
 					tab={ tab }
 					onTabChange={ ( next ) => selectTab( next, 'click' ) }
 					search={ search }
