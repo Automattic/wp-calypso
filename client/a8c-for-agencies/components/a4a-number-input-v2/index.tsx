@@ -1,4 +1,5 @@
 import { __experimentalNumberControl as NumberControl } from '@wordpress/components';
+import type { ReactNode } from 'react';
 
 import './style.scss';
 
@@ -9,7 +10,7 @@ type Props = {
 	maximum?: number;
 	increment?: number;
 	/** Read out by screen readers; the field shows no label. */
-	label?: string;
+	label?: ReactNode;
 };
 
 export default function A4ANumberInputV2( {
