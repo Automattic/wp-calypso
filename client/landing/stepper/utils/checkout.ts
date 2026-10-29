@@ -3,7 +3,6 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { pathToUrl } from 'calypso/lib/url';
 import {
-	clearSignupCompleteSiteID,
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
@@ -44,7 +43,6 @@ export const goToUnifiedCheckout = ( {
 		// Checkout can use its default site settings when storage is unavailable.
 	}
 
-	clearSignupCompleteSiteID();
 	setSignupCompleteFlowName( flowName );
 	persistSignupDestination( destination );
 

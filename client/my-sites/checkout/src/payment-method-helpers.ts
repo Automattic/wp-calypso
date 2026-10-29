@@ -1,6 +1,5 @@
 import { createUser } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
-import { STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import i18n from 'i18n-calypso';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
@@ -8,11 +7,6 @@ import { recordGoogleRecaptchaAction } from 'calypso/lib/analytics/recaptcha';
 import { getLocaleSlug } from 'calypso/lib/i18n-utils';
 import getToSAcceptancePayload from 'calypso/lib/tos-acceptance-tracking';
 import wp from 'calypso/lib/wp';
-import {
-	getSignupCompleteFlowName,
-	setSignupCompleteSiteID,
-	setSignupIsNewUser,
-} from 'calypso/signup/storageUtils';
 import { stringifyBody } from 'calypso/state/login/utils';
 import type { NewUserResponse } from '@automattic/api-core';
 
@@ -117,17 +111,6 @@ export async function createAccount( {
 
 		if ( ! response?.success ) {
 			throw new Error( 'Failed to create account' );
-		}
-
-		const userId = response.signup_sandbox_user_id || response.user_id;
-		if ( userId ) {
-			setSignupIsNewUser( userId );
-		}
-		if (
-			getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW &&
-			response.blog_details?.blogid
-		) {
-			setSignupCompleteSiteID( response.blog_details.blogid );
 		}
 
 		createAccountCallback( response );

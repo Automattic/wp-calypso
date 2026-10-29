@@ -70,7 +70,7 @@ export interface StaticSiteImportSession {
 	preview_summary: StaticSiteImportPreviewSummary | [];
 	/** Empty until approval binds a destination. */
 	site_url: string;
-	/** Present from `preview_ready`; echoed back to `/approve`. */
+	/** Present from `preview_ready`. */
 	archive_hash?: string;
 	/** A short-lived link to the preview's Playground archive, only while `preview_ready`. */
 	archive_url?: string;

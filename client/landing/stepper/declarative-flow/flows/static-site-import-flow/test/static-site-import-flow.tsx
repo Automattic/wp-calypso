@@ -4,7 +4,7 @@
 // @ts-nocheck - the flow test helpers are untyped
 import config from '@automattic/calypso-config';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
-import { act, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import StepRoute from 'calypso/landing/stepper/declarative-flow/internals/components/step-route';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -18,12 +18,7 @@ import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
-import {
-	clearSignupDestinationCookie,
-	persistSignupDestination,
-	setSignupCompleteFlowName,
-	setSignupCompleteSiteID,
-} from 'calypso/signup/storageUtils';
+import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { renderHookWithProvider, renderWithProvider } from 'calypso/test-helpers/testing-library';
 import staticSiteImportFlow from '../static-site-import-flow';
@@ -58,12 +53,6 @@ const lastExit = () => {
 		...( window.location.replace as jest.Mock ).mock.calls,
 	];
 	return parseUrl( String( calls.at( -1 )?.[ 0 ] ?? '' ) );
-};
-
-const saveCreatedSite = () => {
-	setSignupCompleteFlowName( 'static-site-import' );
-	setSignupCompleteSiteID( '42' );
-	persistSignupDestination( `${ readingPath }?${ new URLSearchParams( SOURCE ) }&siteId=:siteId` );
 };
 
 const renderPlansNavigation = ( url: string ) => {
@@ -250,33 +239,24 @@ describe( 'Static site import flow', () => {
 			}
 		);
 
-		it.each( [
-			{ createdSite: false, newSite: undefined },
-			{ createdSite: true, newSite: '1' },
-		] )(
-			'uses site checkout for an existing free destination (created by this flow: $createdSite)',
-			( { createdSite, newSite } ) => {
-				if ( createdSite ) {
-					saveCreatedSite();
-				}
-				const query = { ...SOURCE, ...SITE };
-				runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN, query } );
+		it( 'uses site checkout for an existing free destination', () => {
+			const query = { ...SOURCE, ...SITE };
+			runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN, query } );
 
-				expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
-				const { destination, cancelDestination, siteSlug, plan } =
-					jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
-				expect( siteSlug ).toBe( SITE.siteSlug );
-				expect( plan ).toBe( 'business-bundle' );
-				expect( parseUrl( destination ) ).toEqual( {
-					path: readingPath,
-					query: { ...query, siteId: '42', ...( newSite && { newSite } ) },
-				} );
-				expect( parseUrl( cancelDestination ) ).toEqual( {
-					path: plansPath,
-					query: { ...query, siteId: '42' },
-				} );
-			}
-		);
+			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
+			const { destination, cancelDestination, siteSlug, plan } =
+				jest.mocked( goToCheckout ).mock.calls[ 0 ][ 0 ];
+			expect( siteSlug ).toBe( SITE.siteSlug );
+			expect( plan ).toBe( 'business-bundle' );
+			expect( parseUrl( destination ) ).toEqual( {
+				path: readingPath,
+				query: { ...query, siteId: '42' },
+			} );
+			expect( parseUrl( cancelDestination ) ).toEqual( {
+				path: plansPath,
+				query: { ...query, siteId: '42' },
+			} );
+		} );
 
 		it( 'skips plans and checkout for an existing paid destination', () => {
 			jest.mocked( useSite ).mockReturnValue( PAID_SITE );
@@ -298,54 +278,6 @@ describe( 'Static site import flow', () => {
 			expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
 			expect( getFlowLocation().state ).toEqual( { errorReason: 'no_plan_selected' } );
 			expect( goToUnifiedCheckout ).not.toHaveBeenCalled();
-		} );
-	} );
-
-	describe( 'back on plans after leaving checkout', () => {
-		const plansUrl = `${ plansPath }/es?${ new URLSearchParams( SOURCE ) }`;
-
-		it( 'retries against the site unified checkout created', () => {
-			window.location.href = `https://example.com${ plansUrl }`;
-			saveCreatedSite();
-
-			renderPlansNavigation( plansUrl );
-
-			expect( window.location.replace ).toHaveBeenCalledWith(
-				`${ window.location.href }&siteId=42`
-			);
-		} );
-
-		it( 'also does so when the browser restores the page from its cache', () => {
-			window.location.href = `https://example.com${ plansUrl }`;
-			renderPlansNavigation( plansUrl );
-			expect( window.location.replace ).not.toHaveBeenCalled();
-
-			saveCreatedSite();
-			act( () =>
-				window.dispatchEvent( new PageTransitionEvent( 'pageshow', { persisted: true } ) )
-			);
-
-			expect( window.location.replace ).toHaveBeenCalledWith(
-				`${ window.location.href }&siteId=42`
-			);
-		} );
-
-		it.each( [
-			{ flow: 'onboarding', source: SOURCE, query: SOURCE },
-			{
-				flow: 'static-site-import',
-				source: { ...SOURCE, from: 'another.example.com' },
-				query: SOURCE,
-			},
-			{ flow: 'static-site-import', source: SOURCE, query: { ...SOURCE, siteId: 99 } },
-		] )( 'ignores a site created for an unrelated checkout: %j', ( { flow, source, query } ) => {
-			setSignupCompleteFlowName( flow );
-			setSignupCompleteSiteID( '42' );
-			persistSignupDestination(
-				`${ readingPath }?${ new URLSearchParams( source ) }&siteId=:siteId`
-			);
-			runNavigation( { from: STEPS.UNIFIED_PLANS, dependencies: PLAN, query } );
-			expect( window.location.replace ).not.toHaveBeenCalled();
 		} );
 	} );
 

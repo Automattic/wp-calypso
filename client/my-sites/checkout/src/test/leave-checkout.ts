@@ -120,20 +120,6 @@ describe( 'leaveCheckout', () => {
 		} );
 	} );
 
-	it( 'uses checkoutBackUrl before the account-creation fallback when the cart is emptied', () => {
-		const checkoutBackUrl = 'https://wordpress.com/setup/static-site-import/plans?from=source';
-		window.location.search = '?signup=1&cancel_to=%2Fstart';
-
-		leaveCheckout( {
-			forceCheckoutBackUrl: checkoutBackUrl,
-			createUserAndSiteBeforeTransaction: true,
-			tracksEvent: 'checkout_cancel',
-		} );
-
-		expect( window.location.href ).toBe( checkoutBackUrl );
-		expect( navigate ).not.toHaveBeenCalled();
-	} );
-
 	describe( 'history_back parameter handling', () => {
 		it( 'should use history back to return to previous page when the flag is present', () => {
 			window.location.search = '?history_back=1';

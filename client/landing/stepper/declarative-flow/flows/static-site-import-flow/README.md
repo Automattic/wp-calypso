@@ -16,27 +16,27 @@ sends the user to that identify step.
 
 There is no preview or address/domain selection step. Unified checkout creates the destination
 site and returns its ID to the authenticated reading step. That step starts the import session
-and immediately opens the site's Overview in the dashboard
+and immediately opens the site’s Overview in the dashboard
 (`client/dashboard/sites/overview-static-site-import`). Overview records delivery intent and
 tracks capture and import in the background, then asks whether the finished site looks right.
 
 An existing destination requires authentication. Paid destinations skip plans and checkout;
 free destinations use site checkout to buy a plan before starting the import session.
 The reading step asks for confirmation before importing into an existing destination unless
-it matches the return URL saved for checkout. That URL also says whether checkout created the
-site (`newSite=1`), in which case the step records the signup and applies the flow's site settings.
+this tab just came back from checkout in this flow. When unified checkout created the site
+(`newSite=1`), the step also records the signup and applies the flow’s site settings.
 
 If the session API refuses the source, the reading step says so and stops there. Other failures
 to start fall back to the content importer for the destination site.
 
 The source, platform, and entry parameters survive checkout in the return URL. The receipt
-resolves the new destination's `siteId`. Cancelling checkout returns to plans with the source
+resolves the new destination’s `siteId`. Cancelling checkout returns to plans with the source
 and any existing destination retained. Once the session starts, Overview receives its
 `importSessionId` so it can resume tracking after a reload.
 
 ## Feature flag
 
-`migration/non-wordpress-source`. With it off, the flow isn't registered and `site-migration` keeps
+`migration/non-wordpress-source`. With it off, the flow isn’t registered and `site-migration` keeps
 its previous behavior.
 
 ## Testing instructions
@@ -47,8 +47,8 @@ its previous behavior.
 3. Pick a plan. Confirm unified checkout includes account creation, and no import-session request
    has run. Cancel checkout and confirm the source is retained on plans.
 4. In a test account, complete checkout. Confirm the reading step starts a session, then opens
-   the destination's Overview with **We're moving your site**. Reload and confirm it resumes.
-5. Once it's ready, try the thumbs up and thumbs down buttons; thumbs down opens the Help Center.
+   the destination’s Overview with **We’re moving your site**. Reload and confirm it resumes.
+5. Once it’s ready, try the thumbs up and thumbs down buttons; thumbs down opens the Help Center.
 6. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
    Confirm that a direct reading link shows the destination and requires clicking **Import into
    this site**, even with `newSite=1` or an existing `importSessionId` in the URL.

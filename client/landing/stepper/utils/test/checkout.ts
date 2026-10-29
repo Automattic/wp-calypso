@@ -2,11 +2,7 @@
  * @jest-environment jsdom
  */
 import { Visibility } from '@automattic/data-stores';
-import {
-	clearSignupCompleteSiteID,
-	persistSignupDestination,
-	setSignupCompleteFlowName,
-} from 'calypso/signup/storageUtils';
+import { persistSignupDestination, setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
 import { goToUnifiedCheckout } from '../checkout';
 
 jest.mock( 'calypso/signup/storageUtils' );
@@ -56,7 +52,6 @@ describe( 'goToUnifiedCheckout', () => {
 				pathname: '/setup/static-site-import/plans',
 				search: '?from=source.example.com&platform=wix',
 			} );
-			expect( clearSignupCompleteSiteID ).toHaveBeenCalledTimes( 1 );
 		}
 	);
 

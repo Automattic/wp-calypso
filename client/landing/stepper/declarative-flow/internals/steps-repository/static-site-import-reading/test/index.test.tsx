@@ -7,9 +7,8 @@ import nock from 'nock';
 import { MemoryRouter } from 'react-router';
 import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import {
-	clearSignupDestinationCookie,
-	persistSignupDestination,
-	retrieveSignupDestination,
+	getSignupCompleteFlowName,
+	setSignupCompleteFlowName,
 	setSignupIsNewUser,
 } from 'calypso/signup/storageUtils';
 import documentHeadReducer from 'calypso/state/document-head/reducer';
@@ -36,7 +35,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 const render = ( query: string, { afterCheckout = true, siteId = '123' } = {} ) => {
 	const url = `/setup/static-site-import-reading?${ query }&siteId=${ siteId }`;
 	if ( afterCheckout ) {
-		persistSignupDestination( url );
+		setSignupCompleteFlowName( 'static-site-import' );
 	}
 	const submit = jest.fn();
 	renderWithProvider(
@@ -60,7 +59,7 @@ describe( 'StaticSiteImportReading', () => {
 		nock.cleanAll();
 		jest.clearAllMocks();
 		window.localStorage.clear();
-		clearSignupDestinationCookie();
+		window.sessionStorage.clear();
 	} );
 
 	it.each( [
@@ -89,12 +88,8 @@ describe( 'StaticSiteImportReading', () => {
 		}
 	);
 
-	it.each( [
-		'siteId=456&from=busybearscleaning.com',
-		'siteId=123&from=another.example.com',
-		'siteId=123&from=busybearscleaning.com&importSessionId=another-session',
-	] )( 'does not treat a return for another destination or source as this one (%s)', ( query ) => {
-		persistSignupDestination( `/setup/static-site-import-reading?${ query }&newSite=1` );
+	it( 'does not treat a checkout from another flow as this one', () => {
+		setSignupCompleteFlowName( 'onboarding' );
 		const submit = render( 'from=busybearscleaning.com&newSite=1', { afterCheckout: false } );
 
 		expect( screen.getByRole( 'button', { name: 'Import into this site' } ) ).toBeVisible();
@@ -115,7 +110,7 @@ describe( 'StaticSiteImportReading', () => {
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
 		expect( postedBody ).toEqual( { source_url: 'https://busybearscleaning.com' } );
-		expect( retrieveSignupDestination() ).toBeUndefined();
+		expect( getSignupCompleteFlowName() ).toBeNull();
 		expect( recordSignupComplete ).not.toHaveBeenCalled();
 	} );
 
@@ -146,19 +141,26 @@ describe( 'StaticSiteImportReading', () => {
 		);
 	} );
 
-	it( 'does not continue when applying site settings fails', async () => {
-		mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 500 );
+	it( 'records the signup only once for a site checkout created', async () => {
+		mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 200, {} );
 		mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 200, {} );
-		const sessionRequest = mockApi()
-			.post( '/wpcom/v2/static-site-import-session' )
-			.query( true )
-			.reply( 200, sessionResponse );
+
+		const submit = render( 'newSite=1&importSessionId=abc123' );
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		render( 'newSite=1&importSessionId=abc123', { afterCheckout: false } );
+
+		expect( screen.getByRole( 'button', { name: 'Import into this site' } ) ).toBeVisible();
+		expect( recordSignupComplete ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'continues the import when applying site settings fails', async () => {
+		mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 500 );
+		mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 500 );
 
 		const submit = render( 'newSite=1&from=busybearscleaning.com&importSessionId=abc123' );
 
-		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
-		expect( sessionRequest.isDone() ).toBe( false );
-		expect( retrieveSignupDestination() ).toBeDefined();
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( getSignupCompleteFlowName() ).toBeNull();
 	} );
 
 	it( 'reports the flow as unavailable when the API can’t start a session', async () => {
@@ -181,6 +183,11 @@ describe( 'StaticSiteImportReading', () => {
 		const submit = render( 'from=busybearscleaning.com' );
 
 		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Get help' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/sites/destination.example.com' )
+		);
 		expect( submit ).not.toHaveBeenCalled();
 	} );
 } );

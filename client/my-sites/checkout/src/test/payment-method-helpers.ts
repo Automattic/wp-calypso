@@ -6,11 +6,6 @@ import config from '@automattic/calypso-config';
 import nock from 'nock';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
-import {
-	getSignupCompleteFlowName,
-	setSignupCompleteSiteID,
-	setSignupIsNewUser,
-} from 'calypso/signup/storageUtils';
 import { createAccount } from '../payment-method-helpers';
 
 jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
@@ -19,12 +14,6 @@ jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
 
 jest.mock( 'calypso/blocks/login/utils/get-blackbox-session-id', () => ( {
 	getBlackboxSessionId: jest.fn().mockResolvedValue( undefined ),
-} ) );
-
-jest.mock( 'calypso/signup/storageUtils', () => ( {
-	getSignupCompleteFlowName: jest.fn(),
-	setSignupCompleteSiteID: jest.fn(),
-	setSignupIsNewUser: jest.fn(),
 } ) );
 
 function interceptUsersNew( status = 200, responseBody: object = { success: true } ) {
@@ -47,9 +36,6 @@ const createAccountArgs = {
 
 describe( 'createAccount', () => {
 	beforeEach( () => {
-		jest.mocked( getSignupCompleteFlowName ).mockReset();
-		jest.mocked( setSignupCompleteSiteID ).mockClear();
-		( setSignupIsNewUser as jest.Mock ).mockClear();
 		config.enable( 'blackbox' );
 		config.enable( 'blackbox-userless-checkout' );
 		( getBlackboxApiKey as jest.Mock ).mockReset();
@@ -59,38 +45,6 @@ describe( 'createAccount', () => {
 		delete window.Blackbox;
 		nock.cleanAll();
 	} );
-
-	it.each( [
-		{ response: { user_id: 123 }, newUserId: 123 },
-		{ response: { signup_sandbox_user_id: 456 }, newUserId: 456 },
-		{ response: {}, newUserId: undefined },
-	] )( 'marks the new account for signup analytics: %j', async ( { response, newUserId } ) => {
-		interceptUsersNew( 200, { success: true, ...response } );
-
-		await createAccount( createAccountArgs );
-
-		expect( jest.mocked( setSignupIsNewUser ).mock.calls ).toEqual(
-			newUserId ? [ [ newUserId ] ] : []
-		);
-	} );
-
-	it.each( [
-		{ flow: 'static-site-import', response: { blog_details: { blogid: '123' } }, siteId: '123' },
-		{ flow: 'static-site-import', response: {}, siteId: undefined },
-		{ flow: 'onboarding', response: { blog_details: { blogid: '123' } }, siteId: undefined },
-	] )(
-		'remembers the created site for the static site import flow: %j',
-		async ( { flow, response, siteId } ) => {
-			jest.mocked( getSignupCompleteFlowName ).mockReturnValue( flow );
-			interceptUsersNew( 200, { success: true, ...response } );
-
-			await createAccount( createAccountArgs );
-
-			expect( jest.mocked( setSignupCompleteSiteID ).mock.calls ).toEqual(
-				siteId ? [ [ siteId ] ] : []
-			);
-		}
-	);
 
 	it( 'attaches blackbox_session_id when available', async () => {
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );

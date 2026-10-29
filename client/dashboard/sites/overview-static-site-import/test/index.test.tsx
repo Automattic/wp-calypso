@@ -68,6 +68,41 @@ describe( 'StaticSiteImportCard', () => {
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
 	} );
 
+	it( 'does not approve again once delivery is bound to this site', async () => {
+		const sessionRequest = mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'queued', { site_url: 'https://busybears.wordpress.com' } ) );
+		const approve = mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 200, session( 'queued' ) );
+
+		render( <StaticSiteImport /> );
+
+		await waitFor( () => expect( sessionRequest.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
+		expect( approve.isDone() ).toBe( false );
+	} );
+
+	it( 'keeps moving while another approval holds the delivery', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.times( 2 )
+			.query( true )
+			.reply( 200, session( 'building' ) );
+		const approve = mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 409, {
+				code: 'static_site_import_session_approval_in_progress',
+				message: 'Another approval is in progress.',
+			} );
+
+		render( <StaticSiteImport /> );
+
+		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
+	} );
+
 	it( 'offers to connect the kept domain and preview the site once it is ready', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
@@ -191,11 +226,11 @@ describe( 'StaticSiteImportCard', () => {
 		} );
 	} );
 
-	it( 'offers to read the site again when the preview has expired', async () => {
+	it( 'offers to read the site again when the session is gone', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
-			.reply( 404, { code: 'static_site_import_preview_expired', message: 'Expired' } );
+			.reply( 404, { code: 'static_site_import_session_not_found', message: 'Not found' } );
 
 		render( <StaticSiteImport /> );
 

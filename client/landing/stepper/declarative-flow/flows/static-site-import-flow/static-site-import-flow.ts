@@ -1,7 +1,6 @@
 import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
-import { getQueryArg } from '@wordpress/url';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -18,11 +17,6 @@ import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { addQueryArgs } from 'calypso/lib/url';
-import {
-	getSignupCompleteFlowName,
-	getSignupCompleteSiteID,
-	retrieveSignupDestination,
-} from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
@@ -41,11 +35,6 @@ const BASE_STEPS = [ STEPS.UNIFIED_PLANS, STEPS.STATIC_SITE_IMPORT_READING, STEP
 
 const hasDestinationSite = ( query: URLSearchParams ) =>
 	Boolean( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
-
-// Unified checkout creates the account and site before payment, so a user who leaves
-// checkout still owns a site waiting for its plan.
-const getCreatedSiteId = () =>
-	getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW ? Number( getSignupCompleteSiteID() ) : 0;
 
 // Sources are identified by site-migration, which hands eligible ones here with `from` and `platform`.
 function initialize() {
@@ -135,29 +124,6 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
-		// Back on plans after leaving checkout, retry against the created site instead of making another.
-		useEffect( () => {
-			const restoreCreatedSite = () => {
-				const createdSiteId = getCreatedSiteId();
-				const destination = retrieveSignupDestination();
-				if (
-					! hasDestination &&
-					createdSiteId &&
-					destination &&
-					getQueryArg( destination, 'from' ) === from &&
-					getQueryArg( destination, 'platform' ) === platform
-				) {
-					window.location.replace(
-						addQueryArgs( { siteId: createdSiteId }, window.location.href )
-					);
-				}
-			};
-			restoreCreatedSite();
-			// Browser Back can restore the page from the cache without re-running effects.
-			window.addEventListener( 'pageshow', restoreCreatedSite );
-			return () => window.removeEventListener( 'pageshow', restoreCreatedSite );
-		}, [ hasDestination, from, platform ] );
-
 		useEffect( () => {
 			if ( currentStep === STEPS.UNIFIED_PLANS.slug && isSiteOnPaidPlan ) {
 				navigate( STEPS.STATIC_SITE_IMPORT_READING.slug, undefined, true );
@@ -227,9 +193,7 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 							stepName: STEPS.UNIFIED_PLANS.slug,
 							siteSlug,
 							plan: planCartItem.product_slug,
-							destination: stepUrl( STEPS.STATIC_SITE_IMPORT_READING.slug, {
-								newSite: getCreatedSiteId() === siteId ? '1' : undefined,
-							} ),
+							destination: stepUrl( STEPS.STATIC_SITE_IMPORT_READING.slug ),
 							cancelDestination,
 						} );
 					}
