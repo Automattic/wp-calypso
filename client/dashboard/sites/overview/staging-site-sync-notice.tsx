@@ -10,6 +10,8 @@ import { Notice } from '../../components/notice';
 import { getProductionSiteId, isStagingSiteSyncing } from '../../utils/site-staging-site';
 import type { Site, StagingSiteSyncState } from '@automattic/api-core';
 
+const TAKING_LONG_AFTER_MS = 60 * 60 * 1000;
+
 /**
  * The site's staging sync state while a sync is running, or `null` otherwise.
  */
@@ -45,6 +47,36 @@ function getTitle( syncState: StagingSiteSyncState ) {
 			);
 }
 
+function getDescription(
+	syncState: StagingSiteSyncState,
+	formattedStartTime: string,
+	isTakingLong: boolean
+) {
+	if ( isTakingLong ) {
+		return sprintf(
+			/* translators: %s is a date, like "today at 10:00". */
+			__(
+				'This sync started %s and is taking longer than usual. You can’t start another sync until this one finishes.'
+			),
+			formattedStartTime
+		);
+	}
+
+	if ( syncState.status === 'pending' || ! formattedStartTime ) {
+		return __(
+			'We’re syncing your site in the background. You can’t start another sync until this one finishes.'
+		);
+	}
+
+	return sprintf(
+		/* translators: %s is a date, like "today at 10:00". */
+		__(
+			'This sync started %s. Sit back and relax, we’ll take care of this in the background. You can’t start another sync until this one finishes.'
+		),
+		formattedStartTime
+	);
+}
+
 /**
  * Renders an info Notice describing the staging sync that is currently running.
  */
@@ -65,6 +97,8 @@ export function StagingSiteSyncNotice( {
 		undefined,
 		true
 	);
+	const isTakingLong =
+		!! syncState.started_at && Date.now() - syncState.started_at * 1000 > TAKING_LONG_AFTER_MS;
 
 	useEffect( () => {
 		if ( hasRecordedImpression.current ) {
@@ -75,8 +109,9 @@ export function StagingSiteSyncNotice( {
 			site_id: site.ID,
 			status: syncState.status,
 			direction: syncState.direction,
+			is_taking_long: isTakingLong,
 		} );
-	}, [ recordTracksEvent, site.ID, syncState.status, syncState.direction ] );
+	}, [ recordTracksEvent, site.ID, syncState.status, syncState.direction, isTakingLong ] );
 
 	const handleContactClick = () => {
 		recordTracksEvent( 'calypso_dashboard_staging_site_sync_notice_contact_click', {
@@ -96,22 +131,14 @@ export function StagingSiteSyncNotice( {
 			variant="info"
 			title={ getTitle( syncState ) }
 			actions={
-				<Button variant="secondary" onClick={ handleContactClick }>
-					{ __( 'Contact support' ) }
-				</Button>
+				isTakingLong && (
+					<Button variant="link" onClick={ handleContactClick }>
+						{ __( 'Contact support' ) }
+					</Button>
+				)
 			}
 		>
-			{ syncState.status === 'pending' || ! formattedStartTime
-				? __(
-						'We’re syncing your site in the background. You can’t start another sync until this one finishes.'
-					)
-				: sprintf(
-						/* translators: %s is a date, like "today at 10:00". */
-						__(
-							'This sync started %s. Sit back and relax—we’ll take care of this in the background. You can’t start another sync until this one finishes.'
-						),
-						formattedStartTime
-					) }
+			{ getDescription( syncState, formattedStartTime, isTakingLong ) }
 		</Notice>
 	);
 }
