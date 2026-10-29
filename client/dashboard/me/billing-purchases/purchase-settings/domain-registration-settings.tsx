@@ -10,7 +10,7 @@ import {
 	ToggleControl,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, _x, sprintf } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { Notice as UINotice } from '@wordpress/ui';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
@@ -24,16 +24,18 @@ import SiteIcon from '../../../components/site-icon';
 import { formatDate } from '../../../utils/datetime';
 import {
 	getRenewalUrlFromPurchase,
+	isAutoRenewToggleDisabled,
 	isCentennialPurchase,
 	isExpiredWithNoAutoRenewAttemptsLeft,
 	isManageableByUser,
+	isPurchaseOwner,
 	isRemoved,
 	isRenewingBeforeExpiration,
 } from '../../../utils/purchase';
 import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { PurchasePaymentMethod } from '../purchase-payment-method';
 import { PurchaseNotice } from './purchase-notice';
-import type { Purchase, Site, User } from '@automattic/api-core';
+import type { Purchase, Site } from '@automattic/api-core';
 
 /**
  * Whether the purchase gets the domain registration layout (Renewal, Details,
@@ -48,20 +50,6 @@ export function isDomainRegistrationLayout( purchase: Purchase ): boolean {
 		! purchase.is_iap_purchase &&
 		! isRemoved( purchase )
 	);
-}
-
-export function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
-	if ( String( user.ID ) !== String( purchase.user_id ) ) {
-		return true;
-	}
-
-	return purchase.is_auto_renew_enabled
-		? ! purchase.can_disable_auto_renew
-		: ! purchase.can_reenable_auto_renewal;
-}
-
-function isOwner( purchase: Purchase, user: User ): boolean {
-	return String( user.ID ) === String( purchase.user_id );
 }
 
 function formatRenewalPrice( purchase: Purchase ): string {
@@ -168,7 +156,7 @@ export function AutoRenewOffNotice( {
 				{ __( 'Turn on auto-renew' ) }
 			</UINotice.ActionButton>
 		);
-	} else if ( ! purchase.is_rechargeable && isOwner( purchase, user ) ) {
+	} else if ( ! purchase.is_rechargeable && isPurchaseOwner( purchase, user ) ) {
 		primaryAction = (
 			<UINotice.ActionButton
 				onClick={ () =>
@@ -299,11 +287,10 @@ export function RenewalSection( {
 	autoRenew: DomainAutoRenew;
 } ) {
 	const { user } = useAuth();
-	const navigate = useNavigate();
 
 	// Past expiry with no renewal attempts left, auto-renew and the payment
 	// method no longer have any effect.
-	if ( ! isOwner( purchase, user ) || isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ) {
+	if ( ! isPurchaseOwner( purchase, user ) || isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ) {
 		return null;
 	}
 
@@ -333,23 +320,8 @@ export function RenewalSection( {
 				{ purchase.is_rechargeable && purchase.is_auto_renew_enabled && (
 					<ActionList.ActionItem
 						title={ __( 'Payment method' ) }
-						description={ <PurchasePaymentMethod purchase={ purchase } /> }
-						actions={
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
-								size="compact"
-								aria-label={ __( 'Update payment method' ) }
-								onClick={ () =>
-									navigate( {
-										to: changePaymentMethodRoute.fullPath,
-										params: { purchaseId: purchase.ID },
-									} )
-								}
-							>
-								{ _x( 'Update', 'Change the payment method used for this purchase' ) }
-							</Button>
-						}
+						description={ <PurchasePaymentMethod purchase={ purchase } showUpdateButton /> }
+						actions={ null }
 					/>
 				) }
 			</ActionList>
@@ -384,7 +356,9 @@ export function DetailsSection( { purchase, site }: { purchase: Purchase; site?:
 					title={ __( 'Owner' ) }
 					actions={
 						<Text variant="muted">
-							{ isOwner( purchase, user ) ? user.display_name : __( 'Owned by a different user' ) }
+							{ isPurchaseOwner( purchase, user )
+								? user.display_name
+								: __( 'Owned by a different user' ) }
 						</Text>
 					}
 				/>
@@ -398,7 +372,7 @@ export function DangerZoneSection( { purchase }: { purchase: Purchase } ) {
 	const navigate = useNavigate();
 
 	if (
-		! isOwner( purchase, user ) ||
+		! isPurchaseOwner( purchase, user ) ||
 		purchase.is_host_managed ||
 		! isManageableByUser( purchase )
 	) {

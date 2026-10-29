@@ -21,7 +21,7 @@ import { isWithinLast, isWithinNext, getDateFromCreditCardExpiry } from './datet
 import { isGSuiteProductSlug } from './gsuite';
 import { redirectToDashboardLink, wpcomLink } from './link';
 import { getPurchaseSettingsRedirectBase } from './site-url';
-import type { MonetizeSubscription, Product, Purchase } from '@automattic/api-core';
+import type { MonetizeSubscription, Product, Purchase, User } from '@automattic/api-core';
 
 export const CANCEL_FLOW_TYPE = {
 	REMOVE: 'remove',
@@ -131,6 +131,28 @@ export function hasRenewableMonetizeSubscriptions(
  */
 export function isManageableByUser( purchase: Purchase ): boolean {
 	return purchase.is_manageable_by_user !== false;
+}
+
+/**
+ * Returns true if the user owns the purchase.
+ */
+export function isPurchaseOwner( purchase: Purchase, user: User ): boolean {
+	return String( user.ID ) === String( purchase.user_id );
+}
+
+/**
+ * Returns true if the user cannot change the purchase's auto-renew setting,
+ * either because they do not own it or because the server does not allow the
+ * change.
+ */
+export function isAutoRenewToggleDisabled( purchase: Purchase, user: User ): boolean {
+	if ( ! isPurchaseOwner( purchase, user ) ) {
+		return true;
+	}
+
+	return purchase.is_auto_renew_enabled
+		? ! purchase.can_disable_auto_renew
+		: ! purchase.can_reenable_auto_renewal;
 }
 
 /**

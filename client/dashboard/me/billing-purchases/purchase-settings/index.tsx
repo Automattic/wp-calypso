@@ -109,6 +109,7 @@ import {
 	isCentennialPurchase,
 	hasAmountAvailableToRefund,
 	getDelayedDowngradeRenewalPriceText,
+	isAutoRenewToggleDisabled,
 } from '../../../utils/purchase';
 import {
 	getPlanChangeReturnUrls,
@@ -124,7 +125,6 @@ import AkismetApiKeyCard from './akismet-api-key-card';
 import { classifyPurchaseForCopy } from './classify-purchase-for-copy';
 import {
 	DomainRegistrationSettings,
-	isAutoRenewToggleDisabled,
 	isDomainRegistrationLayout,
 } from './domain-registration-settings';
 import {
@@ -1649,6 +1649,9 @@ export default function PurchaseSettings() {
 	const formattedRenewal = useFormattedTime( purchase.renew_date ?? '' );
 	const formattedParentExpiry = useFormattedTime( parentPurchase?.expiry_date ?? '' );
 	const formattedParentRenewal = useFormattedTime( parentPurchase?.renew_date ?? '' );
+	const formattedRegistration = useFormattedTime( purchase.subscribed_date, {
+		dateStyle: 'long',
+	} );
 	// During the expiration grace period, we don't want to display the
 	// purchase.renew_date from the server even if there is an upcoming
 	// auto-renewal attempt (since we want to communicate the urgency of the
@@ -1698,15 +1701,12 @@ export default function PurchaseSettings() {
 	const expiryUrgency = mightStillAutoRenew( purchase ) ? null : getPlanExpiryUrgency( purchase );
 	const planExpiryNoticeShowing = hasPlanExpiryNotice( purchase );
 
-	const isDomainLayout = isDomainRegistrationLayout( purchase );
-	const locale = useLocale();
-
 	const isSmallViewport = useViewportMatch( 'medium', '<' );
 	const columns = isSmallViewport ? 1 : 2;
 	const spacing = isSmallViewport ? SPACING.SMALL : SPACING.DEFAULT;
 	const hasHeaderActions = usePurchaseHeaderActions( purchase ).length > 0;
 	const shouldShowHeaderActions = Boolean(
-		site?.options?.admin_url && ! isCentennial && ! isDomainLayout && hasHeaderActions
+		site?.options?.admin_url && ! isCentennial && hasHeaderActions
 	);
 
 	// Email plans order the overview cards as Renews, Renewal price, Mailbox, Site;
@@ -1751,6 +1751,27 @@ export default function PurchaseSettings() {
 		/>
 	);
 
+	if ( isDomainRegistrationLayout( purchase ) ) {
+		return (
+			<PageLayout
+				size="small"
+				header={
+					<PageHeader
+						prefix={ <Breadcrumbs length={ 3 } /> }
+						title={ getTitleForDisplay( purchase ) }
+						description={ sprintf(
+							// translators: %(date)s is a formatted date, like "4 September 2026"
+							__( 'Registered on %(date)s' ),
+							{ date: formattedRegistration }
+						) }
+					/>
+				}
+			>
+				<DomainRegistrationSettings purchase={ purchase } site={ site } />
+			</PageLayout>
+		);
+	}
+
 	return (
 		<PageLayout
 			size="small"
@@ -1772,29 +1793,15 @@ export default function PurchaseSettings() {
 							)
 						}
 						description={
-							isDomainLayout ? (
-								sprintf(
-									// translators: %(date)s is a formatted date, like "4 September 2026"
-									__( 'Registered on %(date)s' ),
-									{
-										date: formatDate( new Date( purchase.subscribed_date ), locale, {
-											dateStyle: 'long',
-										} ),
-									}
-								)
-							) : (
-								<MetadataList>
-									<PurchaseSubtitle purchase={ purchase } />
-									<ProductLink purchase={ purchase } />
-									<DomainRegistrationAgreement purchase={ purchase } />
-								</MetadataList>
-							)
+							<MetadataList>
+								<PurchaseSubtitle purchase={ purchase } />
+								<ProductLink purchase={ purchase } />
+								<DomainRegistrationAgreement purchase={ purchase } />
+							</MetadataList>
 						}
 					/>
 
-					{ ! isDomainLayout && (
-						<PurchaseSecondSubtitle purchase={ purchase } site={ site } features={ features } />
-					) }
+					<PurchaseSecondSubtitle purchase={ purchase } site={ site } features={ features } />
 
 					{ purchase.product_slug === DomainProductSlugs.TRANSFER_IN && (
 						<DomainTransferInfo purchase={ purchase } />
@@ -1803,111 +1810,104 @@ export default function PurchaseSettings() {
 				</VStack>
 			}
 		>
-			{ isDomainLayout ? (
-				<DomainRegistrationSettings purchase={ purchase } site={ site } />
-			) : (
-				<VStack spacing={ 6 }>
-					<PurchaseNotice purchase={ purchase } />
-					<Grid
-						columns={ columns }
-						gap={ spacing }
-						className={ isEmailPlan ? 'purchase-settings__email-overview-cards' : undefined }
-					>
-						{ ! isEmailPlan && siteCard }
-						{ ! isEmailPlan && ownerOrMailboxCard }
-						{ hasExpiryInfo &&
-							( isRemoved( purchase ) ? (
-								<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
-							) : (
-								<OverviewCard
-									icon={ calendar }
-									title={ expiryDateTitle }
-									intent={ expiryUrgency === 'info' ? undefined : ( expiryUrgency ?? undefined ) }
-									heading={ ( () => {
-										if ( isIncluded && parentPurchase ) {
-											return parentWillRenew ? formattedParentRenewal : formattedParentExpiry;
-										}
-										// Past-expiry purchases show their expiry date, keeping the heading
-										// consistent with the "Expired" title above.
-										if ( isExpiredAndInGracePeriod( purchase ) ) {
-											return formattedExpiry;
-										}
-										if ( isOneTimePurchase( purchase ) ) {
-											return __( 'One-time purchase' );
-										}
-										if ( isAkismetFreeProduct( purchase ) ) {
-											return __( 'Never expires' );
-										}
-										if ( displayRenewDate ) {
-											return formattedRenewal;
-										}
-										if ( isRemoved( purchase ) ) {
-											return __( 'Inactive' );
-										}
+			<VStack spacing={ 6 }>
+				<PurchaseNotice purchase={ purchase } />
+				<Grid
+					columns={ columns }
+					gap={ spacing }
+					className={ isEmailPlan ? 'purchase-settings__email-overview-cards' : undefined }
+				>
+					{ ! isEmailPlan && siteCard }
+					{ ! isEmailPlan && ownerOrMailboxCard }
+					{ hasExpiryInfo &&
+						( isRemoved( purchase ) ? (
+							<OverviewCard icon={ info } title={ __( 'Status' ) } heading={ __( 'Removed' ) } />
+						) : (
+							<OverviewCard
+								icon={ calendar }
+								title={ expiryDateTitle }
+								intent={ expiryUrgency === 'info' ? undefined : ( expiryUrgency ?? undefined ) }
+								heading={ ( () => {
+									if ( isIncluded && parentPurchase ) {
+										return parentWillRenew ? formattedParentRenewal : formattedParentExpiry;
+									}
+									// Past-expiry purchases show their expiry date, keeping the heading
+									// consistent with the "Expired" title above.
+									if ( isExpiredAndInGracePeriod( purchase ) ) {
 										return formattedExpiry;
-									} )() }
-									description={ ( () => {
-										if ( isCentennial ) {
-											return undefined;
-										}
-										if ( purchase.is_auto_renew_enabled && isExpiredAndInGracePeriod( purchase ) ) {
-											// Only "pending" while an auto-renew attempt may still be coming;
-											// past the last attempt, nothing is pending (and the toggle is hidden).
-											return mightStillAutoRenew( purchase ) ? __( 'Pending renewal' ) : undefined;
-										}
-										if (
-											purchase.is_auto_renew_enabled &&
-											isRenewingBeforeExpiration( purchase )
-										) {
-											return __( 'Auto-renew is enabled' );
-										}
-										if ( isIncluded && purchase.attached_to_purchase_id ) {
-											return (
-												<Link
-													to={ purchaseSettingsRoute.fullPath }
-													params={ { purchaseId: purchase.attached_to_purchase_id } }
-												>
-													{ parentPurchase && ! parentWillRenew
-														? __( 'Expires with plan' )
-														: __( 'Renews with plan' ) }
-												</Link>
-											);
-										}
-										if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
-											return undefined;
-										}
-										if ( isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ) {
-											return undefined;
-										}
-										if ( purchase.is_auto_renew_enabled ) {
-											return __( 'Will not auto-renew because there is no payment method' );
-										}
-										if ( isOneTimePurchase( purchase ) ) {
-											return __( 'Does not renew' );
-										}
-										return __( 'Auto-renew is disabled' );
-									} )() }
-								/>
-							) ) }
-						<PurchasePriceCard purchase={ purchase } />
-						{ isEmailPlan && ownerOrMailboxCard }
-						{ isEmailPlan && siteCard }
-						{ purchase.is_jetpack_plan_or_product && (
-							<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
-						) }
-						{ isAkismetProduct( purchase ) && purchase.is_attached_to_holding_site && (
-							<AkismetApiKeyCard />
-						) }
-					</Grid>
-					{ ! purchase.is_trial_plan && ! isCentennial && ! isRemoved( purchase ) && (
-						<ManageSubscriptionCard purchase={ purchase } />
+									}
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'One-time purchase' );
+									}
+									if ( isAkismetFreeProduct( purchase ) ) {
+										return __( 'Never expires' );
+									}
+									if ( displayRenewDate ) {
+										return formattedRenewal;
+									}
+									if ( isRemoved( purchase ) ) {
+										return __( 'Inactive' );
+									}
+									return formattedExpiry;
+								} )() }
+								description={ ( () => {
+									if ( isCentennial ) {
+										return undefined;
+									}
+									if ( purchase.is_auto_renew_enabled && isExpiredAndInGracePeriod( purchase ) ) {
+										// Only "pending" while an auto-renew attempt may still be coming;
+										// past the last attempt, nothing is pending (and the toggle is hidden).
+										return mightStillAutoRenew( purchase ) ? __( 'Pending renewal' ) : undefined;
+									}
+									if ( purchase.is_auto_renew_enabled && isRenewingBeforeExpiration( purchase ) ) {
+										return __( 'Auto-renew is enabled' );
+									}
+									if ( isIncluded && purchase.attached_to_purchase_id ) {
+										return (
+											<Link
+												to={ purchaseSettingsRoute.fullPath }
+												params={ { purchaseId: purchase.attached_to_purchase_id } }
+											>
+												{ parentPurchase && ! parentWillRenew
+													? __( 'Expires with plan' )
+													: __( 'Renews with plan' ) }
+											</Link>
+										);
+									}
+									if ( purchase.is_trial_plan || isAkismetFreeProduct( purchase ) ) {
+										return undefined;
+									}
+									if ( isExpiredWithNoAutoRenewAttemptsLeft( purchase ) ) {
+										return undefined;
+									}
+									if ( purchase.is_auto_renew_enabled ) {
+										return __( 'Will not auto-renew because there is no payment method' );
+									}
+									if ( isOneTimePurchase( purchase ) ) {
+										return __( 'Does not renew' );
+									}
+									return __( 'Auto-renew is disabled' );
+								} )() }
+							/>
+						) ) }
+					<PurchasePriceCard purchase={ purchase } />
+					{ isEmailPlan && ownerOrMailboxCard }
+					{ isEmailPlan && siteCard }
+					{ purchase.is_jetpack_plan_or_product && (
+						<JetpackLicenseKeyCard purchaseId={ purchase.ID } />
 					) }
-					{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
-						<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
+					{ isAkismetProduct( purchase ) && purchase.is_attached_to_holding_site && (
+						<AkismetApiKeyCard />
 					) }
-					<PurchaseSettingsActions purchase={ purchase } />
-				</VStack>
-			) }
+				</Grid>
+				{ ! purchase.is_trial_plan && ! isCentennial && ! isRemoved( purchase ) && (
+					<ManageSubscriptionCard purchase={ purchase } />
+				) }
+				{ ( ( site && ! isRemoved( purchase ) ) || ( features && features.length > 0 ) ) && (
+					<WPComResourceMeters purchase={ purchase } site={ site } features={ features } />
+				) }
+				<PurchaseSettingsActions purchase={ purchase } />
+			</VStack>
 		</PageLayout>
 	);
 }
