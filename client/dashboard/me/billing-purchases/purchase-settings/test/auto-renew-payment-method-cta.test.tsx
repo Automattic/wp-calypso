@@ -34,9 +34,7 @@ describe( 'auto-renew without a payment method', () => {
 
 		expect( screen.getByText( 'Auto-renew needs a payment method.' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add payment method' } ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'checkbox', { name: 'Enable auto-renew' } )
-		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'auto-renew on without a payment method still shows the toggle', () => {
@@ -50,7 +48,7 @@ describe( 'auto-renew without a payment method', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) ).toBeChecked();
+		expect( screen.getByRole( 'checkbox', { name: 'Auto-renew on' } ) ).toBeChecked();
 		expect( screen.queryByText( 'Auto-renew needs a payment method.' ) ).not.toBeInTheDocument();
 	} );
 
@@ -88,7 +86,7 @@ describe( 'auto-renew without a payment method', () => {
 			/>
 		);
 
-		expect( screen.getByRole( 'checkbox', { name: 'Enable auto-renew' } ) ).toBeVisible();
+		expect( screen.getByRole( 'checkbox', { name: 'Auto-renew off' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Auto-renew needs a payment method.' ) ).not.toBeInTheDocument();
 	} );
 } );

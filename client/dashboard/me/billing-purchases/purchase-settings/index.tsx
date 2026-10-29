@@ -1058,13 +1058,14 @@ function getFields( {
 					<ToggleControl
 						__nextHasNoMarginBottom
 						className="purchase-settings__toggle-control"
-						label={
-							! purchase.is_auto_renew_enabled &&
-							isExpiredAndInGracePeriod( purchase ) &&
-							purchase.is_jetpack_plan_or_product
+						label={ ( () => {
+							if ( getValue( { item: purchase } ) ) {
+								return __( 'Auto-renew on' );
+							}
+							return isExpiredAndInGracePeriod( purchase ) && purchase.is_jetpack_plan_or_product
 								? __( 'Re-activate subscription' )
-								: field.label
-						}
+								: __( 'Auto-renew off' );
+						} )() }
 						checked={ getValue( { item: purchase } ) }
 						disabled={ isMutationPending || isAutoRenewToggleDisabled( purchase, user ) }
 						onChange={ ( value: boolean ) => onChange( { is_auto_renew_enabled: value } ) }
