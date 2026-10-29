@@ -377,11 +377,14 @@ export function MediaStorage( { site }: { site?: Site } ) {
 	);
 }
 
-function SiteLaunchNag( { siteId, siteSlug }: { siteId: number; siteSlug: string } ) {
+function SiteLaunchNag( { site }: { site: Site } ) {
+	const { ID: siteId, slug: siteSlug } = site;
 	const { recordTracksEvent } = useAnalytics();
 	const { isCompleted, isNoGuidance, setupUrl } = useAiLaunchpad( siteSlug );
+	// A preview has nothing to set up: it is finished by buying it (see the plan column).
+	const { isPreview } = useSiteIsPreview( site );
 
-	if ( isCompleted || isNoGuidance ) {
+	if ( isCompleted || isNoGuidance || isPreview ) {
 		return null;
 	}
 
@@ -410,14 +413,12 @@ function SiteLaunchNag( { siteId, siteSlug }: { siteId: number; siteSlug: string
 }
 
 export function Visibility( {
-	siteId,
-	siteSlug,
+	site,
 	visibility,
 	status,
 	isLaunched,
 }: {
-	siteId: number;
-	siteSlug: string;
+	site: Site;
 	visibility: SiteVisibility;
 	status: SiteBlockingStatus;
 	isLaunched?: boolean;
@@ -427,7 +428,7 @@ export function Visibility( {
 		<VStack spacing={ 1 }>
 			<span>{ visibilityLabels[ visibility ] }</span>
 			{ /* We don't want to show LaunchNag if there is any pending status. */ }
-			{ ! status && ! isLaunched && <SiteLaunchNag siteId={ siteId } siteSlug={ siteSlug } /> }
+			{ ! status && ! isLaunched && <SiteLaunchNag site={ site } /> }
 		</VStack>
 	);
 }
