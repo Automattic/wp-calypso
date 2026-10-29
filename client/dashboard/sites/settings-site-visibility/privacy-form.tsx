@@ -226,7 +226,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 							{ formData.visibility === 'public' &&
 								isPrimaryDomainStaging &&
 								( site.is_wpcom_staging_site ? (
-									<Notice variant="warning" density="medium">
+									<Notice variant="warning">
 										{ __(
 											'Staging sites are intended for testing purposes and will not be indexed by search engines.'
 										) }
@@ -234,7 +234,6 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 								) : (
 									<Notice
 										variant="warning"
-										density="medium"
 										actions={
 											hasNonWpcomDomain ? (
 												manageDomainsButton

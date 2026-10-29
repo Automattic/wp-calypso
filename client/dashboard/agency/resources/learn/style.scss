@@ -82,8 +82,15 @@ $resource-brands: (
 		isolation: isolate;
 		background: var( --resource-brand );
 
-		&:is( [data-product='pressable'], [data-product='wordpress-vip'] ) {
+		// The gold is too light for white text.
+		&[data-product='wordpress-vip'] {
 			--resource-card-ink: #{$studio-gray-100};
+		}
+
+		// Neither white nor dark text reaches 4.5:1 on Pressable's red-orange, so
+		// the tile takes a shade darker, for white text at 4.65:1.
+		&[data-product='pressable'] {
+			--resource-brand: #d93802;
 		}
 
 		// A faint pattern for the content type, drifting behind the content.
@@ -166,9 +173,19 @@ $resource-brands: (
 			padding: 0;
 		}
 
+		// Fills its row, so useFitTitle() fits it to the room left by the rest,
+		// in as many lines as that takes.
 		.dashboard-resources-learn__card-title {
+			// 31px across a tile's 400px-wide header, as designed.
+			/* stylelint-disable-next-line unit-allowed-list -- sized to the header, its query container */
+			--resource-title-fluid: 7.75cqi;
+			--resource-title-max-lines: none;
+
 			grid-area: 2 / 1;
-			align-self: end;
+			display: flex;
+			flex-direction: column;
+			justify-content: flex-end;
+			margin-block-start: 0;
 		}
 	}
 

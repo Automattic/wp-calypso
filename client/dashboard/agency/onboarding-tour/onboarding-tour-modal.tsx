@@ -249,11 +249,7 @@ export default function OnboardingTourModal( {
 														</Text>
 													) ) }
 												</VStack>
-												{ section.hint && (
-													<Notice variant="info" density="high">
-														{ section.hint }
-													</Notice>
-												) }
+												{ section.hint && <Notice variant="info">{ section.hint }</Notice> }
 											</VStack>
 										</div>
 									) ) }
