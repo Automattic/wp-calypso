@@ -192,7 +192,6 @@ describe( '<SshCard>', () => {
 
 		afterEach( () => {
 			jest.mocked( isEnabled ).mockReset();
-			nock.cleanAll();
 		} );
 
 		test( 'shows labels of attached keys, with the owner for other users’ keys', async () => {
