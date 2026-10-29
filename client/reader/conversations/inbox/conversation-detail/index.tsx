@@ -23,9 +23,17 @@ interface Props {
 	conversation?: Conversation;
 	onPrevious?: () => void;
 	onNext?: () => void;
+	highlightedCommentIds?: number[];
 }
 
-export function ConversationDetail( { siteId, postId, conversation, onPrevious, onNext }: Props ) {
+export function ConversationDetail( {
+	siteId,
+	postId,
+	conversation,
+	onPrevious,
+	onNext,
+	highlightedCommentIds,
+}: Props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const { data: post, isLoading } = usePost( { blogId: siteId, postId } );
@@ -109,6 +117,8 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 								maxDepth={ 1 }
 								commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 								shouldHighlightNew
+								highlightedCommentIds={ highlightedCommentIds }
+								collapsibleThreads
 							/>
 						</>
 					) }

@@ -54,6 +54,17 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedKey );
 	const selected = conversations.find( ( { key } ) => key === selectedKey );
 
+	// Marking a conversation read clears its unread comments, so keep the ones it had when it opened.
+	// `routeKey` is the route the snapshot was taken on, so a list click isn't undone before the route changes.
+	const [ newComments, setNewComments ] = useState< {
+		key?: string;
+		routeKey?: string;
+		ids: number[];
+	} >( { ids: [] } );
+	if ( selected && selected.key !== newComments.key && selectedKey !== newComments.routeKey ) {
+		setNewComments( { key: selected.key, routeKey: selectedKey, ids: selected.unreadCommentIds } );
+	}
+
 	useEffect( () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
 	}, [ dispatch ] );
@@ -66,6 +77,13 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 
 	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
 		const unreadCount = conversation.unreadNoteIds.length;
+		if ( conversation.key !== newComments.key ) {
+			setNewComments( {
+				key: conversation.key,
+				routeKey: selectedKey,
+				ids: conversation.unreadCommentIds,
+			} );
+		}
 		if ( unreadCount ) {
 			markRead( conversation.unreadNoteIds );
 		}
@@ -151,6 +169,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 						siteId={ Number( siteId ) }
 						postId={ Number( postId ) }
 						conversation={ selected }
+						highlightedCommentIds={ newComments.ids }
 						onPrevious={ goTo( previousIndex, 'button' ) }
 						onNext={ goTo( nextIndex, 'button' ) }
 					/>

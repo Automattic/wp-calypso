@@ -42,9 +42,11 @@ jest.mock( '../conversation-detail', () => ( {
 		postId: number;
 		onPrevious?: () => void;
 		onNext?: () => void;
+		highlightedCommentIds?: number[];
 	} ) => (
 		<div>
 			<p>Detail: { `${ props.siteId }-${ props.postId }` }</p>
+			<p>New: { props.highlightedCommentIds?.join( ',' ) || 'none' }</p>
 			<button disabled={ ! props.onPrevious } onClick={ props.onPrevious }>
 				previous
 			</button>
@@ -174,6 +176,44 @@ describe( 'ConversationsInbox', () => {
 
 		expect( markRead ).not.toHaveBeenCalled();
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+	} );
+
+	describe( 'New comments', () => {
+		const markAllRead = () =>
+			mockedUseCommentNotes.mockReturnValue( {
+				data: notes.map( ( note ) => ( { ...note, read: 1 } ) ),
+				isLoading: false,
+			} as never );
+
+		it( 'keeps the unread comments of the open conversation after they are marked read', () => {
+			const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
+
+			expect( screen.getByText( 'New: 1001' ) ).toBeVisible();
+
+			markAllRead();
+			rerender( <ConversationsInbox siteId="10" postId="100" /> );
+
+			expect( screen.getByText( 'New: 1001' ) ).toBeVisible();
+		} );
+
+		it( 'takes the unread comments of a conversation opened from the list before marking it read', async () => {
+			const user = userEvent.setup();
+			const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
+
+			await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+			markAllRead();
+			rerender( <ConversationsInbox siteId="10" postId="200" /> );
+
+			expect( screen.getByText( 'New: 2001' ) ).toBeVisible();
+		} );
+
+		it( 'resets the new comments when another conversation opens', () => {
+			const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
+
+			rerender( <ConversationsInbox siteId="10" postId="300" /> );
+
+			expect( screen.getByText( 'New: none' ) ).toBeVisible();
+		} );
 	} );
 
 	describe( 'Tracks', () => {

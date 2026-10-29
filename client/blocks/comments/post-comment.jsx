@@ -2,7 +2,8 @@ import './post-comment.scss';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
-import { Icon, external } from '@wordpress/icons';
+import { Button } from '@wordpress/components';
+import { Icon, chevronDown, chevronUp, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
 import clsx from 'clsx';
 import { translate } from 'i18n-calypso';
@@ -84,6 +85,8 @@ class PostComment extends PureComponent {
 		// connect()ed props:
 		currentUser: PropTypes.object,
 		shouldHighlightNew: PropTypes.bool,
+		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
+		collapsibleThreads: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -97,6 +100,8 @@ class PostComment extends PureComponent {
 		showReadMoreInActions: false,
 		hidePingbacksAndTrackbacks: false,
 		shouldHighlightNew: false,
+		highlightedCommentIds: [],
+		collapsibleThreads: false,
 		expandComments: noop,
 		comments: [],
 	};
@@ -104,11 +109,21 @@ class PostComment extends PureComponent {
 	state = {
 		showReplies: false,
 		showFull: false,
+		isCollapsed: false,
 	};
 
 	handleToggleRepliesClick = () => {
 		this.setState( { showReplies: ! this.state.showReplies } );
 	};
+
+	handleToggleCollapsedClick = () => {
+		this.setState( { isCollapsed: ! this.state.isCollapsed } );
+	};
+
+	canCollapse = () =>
+		this.props.collapsibleThreads &&
+		this.props.depth === 0 &&
+		this.getAllChildrenIds( this.props.commentId ).length > 0;
 
 	onLikeToggle = () => {
 		if ( ! this.props.isLoggedIn ) {
@@ -213,6 +228,18 @@ class PostComment extends PureComponent {
 			return null;
 		}
 
+		if ( this.canCollapse() && this.state.isCollapsed ) {
+			const repliesCount = this.getAllChildrenIds( commentId ).length;
+			return (
+				<p className="comments__collapsed-replies">
+					{ translate( '%(count)d reply', '%(count)d replies', {
+						count: repliesCount,
+						args: { count: repliesCount },
+					} ) }
+				</p>
+			);
+		}
+
 		const showRepliesText = translate(
 			'show %(numOfReplies)d reply',
 			'show %(numOfReplies)d replies',
@@ -265,6 +292,8 @@ class PostComment extends PureComponent {
 								onUpdateCommentText={ this.props.onUpdateCommentText }
 								onCommentSubmit={ this.props.onCommentSubmit }
 								shouldHighlightNew={ this.props.shouldHighlightNew }
+								highlightedCommentIds={ this.props.highlightedCommentIds }
+								collapsibleThreads={ this.props.collapsibleThreads }
 								isInlineComment={ this.props.isInlineComment }
 								expandComments={ this.props.expandComments }
 								comments={ this.props.comments }
@@ -390,6 +419,7 @@ class PostComment extends PureComponent {
 			showReadMoreInActions,
 			hidePingbacksAndTrackbacks,
 			shouldHighlightNew,
+			highlightedCommentIds,
 		} = this.props;
 
 		const comment = commentsTree?.[ commentId ]?.data;
@@ -440,9 +470,14 @@ class PostComment extends PureComponent {
 		const isHighlighted =
 			shouldHighlightNew && new Date().getTime() - new Date( comment.date ).getTime() < 10000;
 
+		const isNew = highlightedCommentIds.includes( commentId );
+		const canCollapse = this.canCollapse();
+		const { isCollapsed } = this.state;
+
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
 			'is-highlighted': isHighlighted,
+			'is-collapsed': canCollapse && isCollapsed,
 		} );
 
 		/* eslint-disable wpcalypso/jsx-gridicon-size */
@@ -478,6 +513,22 @@ class PostComment extends PureComponent {
 							<TimeSince date={ comment.date } />
 						</a>
 					</div>
+					{ isNew && (
+						<span className="comments__comment-new-label">
+							{ translate( 'New', { context: 'label on a comment the reader has not seen yet' } ) }
+						</span>
+					) }
+					{ canCollapse && (
+						<Button
+							__next40pxDefaultSize
+							size="small"
+							className="comments__comment-collapse-toggle"
+							icon={ isCollapsed ? chevronDown : chevronUp }
+							label={ isCollapsed ? translate( 'Show replies' ) : translate( 'Hide replies' ) }
+							aria-expanded={ ! isCollapsed }
+							onClick={ this.handleToggleCollapsedClick }
+						/>
+					) }
 				</div>
 
 				{ comment.status && comment.status === 'unapproved' ? (

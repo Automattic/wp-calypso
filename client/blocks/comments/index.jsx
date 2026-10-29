@@ -9,6 +9,8 @@ import { usePostCommentsData } from './use-post-comments-data';
 class PostComments extends Component {
 	static propTypes = {
 		shouldHighlightNew: PropTypes.bool,
+		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
+		collapsibleThreads: PropTypes.bool,
 		useBlockEditor: PropTypes.bool,
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -18,6 +20,8 @@ class PostComments extends Component {
 
 	static defaultProps = {
 		shouldHighlightNew: false,
+		highlightedCommentIds: [],
+		collapsibleThreads: false,
 		shouldPollForNewComments: false,
 		useBlockEditor: false,
 	};

@@ -70,10 +70,16 @@ class PostCommentList extends Component {
 		fetchLaterComments: PropTypes.func.isRequired,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
+		// Comments with these ids get a "New" label after their timestamp.
+		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
+		// Lets each top-level comment collapse its replies.
+		collapsibleThreads: PropTypes.bool,
 	};
 
 	static defaultProps = {
 		shouldHighlightNew: false,
+		highlightedCommentIds: [],
+		collapsibleThreads: false,
 		pageSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		initialSize: NUMBER_OF_COMMENTS_PER_FETCH,
 		showCommentCount: true,
@@ -239,6 +245,8 @@ class PostCommentList extends Component {
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 				shouldHighlightNew={ this.props.shouldHighlightNew }
+				highlightedCommentIds={ this.props.highlightedCommentIds }
+				collapsibleThreads={ this.props.collapsibleThreads }
 				isInlineComment={ this.props.expandableView }
 				expandComments={ this.props.expandComments }
 				comments={ this.props.comments }
