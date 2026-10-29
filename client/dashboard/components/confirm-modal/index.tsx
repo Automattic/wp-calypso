@@ -7,7 +7,6 @@ import { ButtonStack } from '../button-stack';
 interface ConfirmModalProps {
 	__experimentalHideHeader?: boolean;
 	title?: string;
-	icon?: ComponentProps< typeof Modal >[ 'icon' ];
 	size?: 'small' | 'medium' | 'large';
 	cancelButtonText?: string;
 	confirmButtonProps: ComponentProps< typeof Button >;
@@ -21,7 +20,6 @@ interface ConfirmModalProps {
 export default function ConfirmModal( {
 	__experimentalHideHeader = true,
 	title,
-	icon,
 	size = 'small',
 	cancelButtonText,
 	confirmButtonProps,
@@ -59,7 +57,6 @@ export default function ConfirmModal( {
 		<Modal
 			__experimentalHideHeader={ __experimentalHideHeader }
 			title={ title }
-			icon={ icon }
 			size={ size }
 			closeButtonLabel={ closeButtonLabel }
 			isDismissible={ isDismissible }

@@ -449,7 +449,9 @@ describe( 'WordPressMigration', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
 
 		// The source isn't connected and the key was never looked at, so it checks first.
-		expect( screen.getByRole( 'dialog', { name: 'Start the migration anyway?' } ) ).toBeVisible();
+		expect( screen.getByRole( 'dialog' ) ).toHaveTextContent(
+			/isn’t connected to WordPress.com yet/
+		);
 		await userEvent.click( screen.getByRole( 'button', { name: 'Start anyway' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();

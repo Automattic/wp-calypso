@@ -259,11 +259,6 @@ export function Connect( {
 				</VStack>
 			</VStack>
 			<ConfirmModal
-				__experimentalHideHeader={ false }
-				title={ __( 'Start the migration anyway?' ) }
-				icon={ <StatusIcon status="warning" /> }
-				// The header's close button would repeat "Go back"; Escape still closes it.
-				isDismissible={ false }
 				isOpen={ isConfirming }
 				cancelButtonText={ __( 'Go back' ) }
 				confirmButtonProps={ { label: __( 'Start anyway' ) } }
@@ -274,7 +269,7 @@ export function Connect( {
 				} }
 			>
 				{ __(
-					'Your site isn’t connected to WordPress.com, and you haven’t viewed or copied the migration key. The migration needs one of the two to reach your site, so it’s likely to stop right away.'
+					'Your site isn’t connected to WordPress.com yet, so unless you’ve already pasted the migration key into the plugin, the migration might not work. Start it anyway?'
 				) }
 			</ConfirmModal>
 		</MigrationCard>
