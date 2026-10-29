@@ -37,12 +37,14 @@ export interface SiteSetupChecklistState {
 	focusHeaderOnMount: boolean;
 	/** The task the user is on, the only one a folded pinned list keeps in view. */
 	activeItemId?: string;
+	/** Records a picked to-do task as started, once the checklist has sent its prompt. */
+	onPick: ( item: ChecklistItem ) => Promise< void >;
 }
 
 export const SITE_SETUP_TASKS_QUERY_KEY = [ 'agents-manager-site-setup-tasks' ];
 
 const NO_ITEMS: ChecklistItem[] = [];
-const NONE: SiteSetupChecklistState = {
+const NONE: Omit< SiteSetupChecklistState, 'onPick' > = {
 	isLoading: false,
 	variant: null,
 	items: NO_ITEMS,
@@ -98,14 +100,15 @@ export default function useSiteSetupChecklist( {
 		}
 	}, [ isProcessing, isOpen, isEnabled, refetch ] );
 
-	// The picked task goes in progress in the cache at once and stays so until
-	// the turn ends, whatever the server answers: the pinned list folds down to
-	// the in-progress rows and mounts only once the prompt is sent, so a task
-	// that completes on click would otherwise arrive there already done and
-	// fold away unseen. The re-read at the end of the turn settles it, and the
-	// list then reveals the settled row. A failed start must not hold the
-	// prompt back: the task still reaches the agent, and the re-read shows
-	// whatever the server has.
+	// Runs once the prompt was accepted and sent, never from the row's `action`:
+	// a send the composer blocks (credits) must not start anything. The picked
+	// task goes in progress in the cache at once and stays so until the turn
+	// ends, whatever the server answers: the pinned list folds down to the
+	// in-progress rows and mounts right after the send, so a task that
+	// completes on click would otherwise arrive there already done and fold
+	// away unseen. The re-read at the end of the turn settles it, and the list
+	// then reveals the settled row. A failed start is logged and re-read, so
+	// the list shows whatever the server has.
 	const startTask = useCallback(
 		async ( task: SiteSetupTask ) => {
 			if ( siteId === null ) {
@@ -126,11 +129,21 @@ export default function useSiteSetupChecklist( {
 		[ siteId, queryClient, queryKey, refetch ]
 	);
 
+	const onPick = useCallback(
+		async ( item: ChecklistItem ) => {
+			const task = data?.tasks.find( ( candidate ) => candidate.id === item.id );
+			if ( task?.status === 'todo' ) {
+				await startTask( task );
+			}
+		},
+		[ data, startTask ]
+	);
+
 	const isStartedFromList = useMemo( () => isChatStartedFromSiteSetup( messages ), [ messages ] );
 	const lastPickedId = useMemo( () => getLastPickedSiteSetupTask( messages ), [ messages ] );
 	const hasMessages = messages.length > 0;
 
-	const state = useMemo( (): SiteSetupChecklistState => {
+	const state = useMemo( (): Omit< SiteSetupChecklistState, 'onPick' > => {
 		if ( ! isEnabled ) {
 			return NONE;
 		}
@@ -143,7 +156,7 @@ export default function useSiteSetupChecklist( {
 			return NONE;
 		}
 
-		const items = toChecklistItems( data.tasks, startTask );
+		const items = toChecklistItems( data.tasks );
 
 		if ( isStartedFromList ) {
 			// Several tasks can be in progress at once (the Site Setup page shows
@@ -160,7 +173,6 @@ export default function useSiteSetupChecklist( {
 		isLoading,
 		isLoadingConversation,
 		data,
-		startTask,
 		isStartedFromList,
 		lastPickedId,
 		hasMessages,
@@ -174,5 +186,5 @@ export default function useSiteSetupChecklist( {
 		previousVariantRef.current = state.variant;
 	} );
 
-	return focusHeaderOnMount ? { ...state, focusHeaderOnMount } : state;
+	return { ...state, focusHeaderOnMount: state.focusHeaderOnMount || focusHeaderOnMount, onPick };
 }

@@ -44,14 +44,8 @@ describe( 'isSiteSetupChecklistEnabled', () => {
 } );
 
 describe( 'toChecklistItems', () => {
-	const startTask = jest.fn( async () => {} );
-
-	beforeEach( () => {
-		startTask.mockClear();
-	} );
-
 	it( 'maps tasks to auto-submitting items with the server’s status', () => {
-		const items = toChecklistItems( TASKS, startTask );
+		const items = toChecklistItems( TASKS );
 
 		expect( items ).toEqual( [
 			expect.objectContaining( {
@@ -68,32 +62,14 @@ describe( 'toChecklistItems', () => {
 		] );
 	} );
 
-	it( 'declares where the task prompt comes from before it is sent', async () => {
-		const [ item ] = toChecklistItems( TASKS, startTask );
+	it( 'declares where the task prompt comes from, synchronously, right before it is sent', () => {
+		const [ item ] = toChecklistItems( TASKS );
 
-		expect( await item.action?.() ).toBe( true );
+		expect( item.action?.() ).toBe( true );
 		expect( consumePromptSource( item.prompt as string ) ).toEqual( {
 			source: 'site-setup-checklist',
 			id: 'design',
 		} );
-	} );
-
-	it( 'records a picked to-do task as started before its prompt is sent', async () => {
-		const [ item ] = toChecklistItems( TASKS, startTask );
-
-		await item.action?.();
-
-		expect( startTask ).toHaveBeenCalledWith( TASKS[ 0 ] );
-	} );
-
-	it.each( [
-		[ 'done', 1 ],
-		[ 'in-progress', 3 ],
-	] )( 'does not start a task the server already has as %s', async ( _status, index ) => {
-		const items = toChecklistItems( TASKS, startTask );
-
-		expect( await items[ index ].action?.() ).toBe( true );
-		expect( startTask ).not.toHaveBeenCalled();
 	} );
 } );
 

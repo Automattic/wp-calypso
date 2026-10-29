@@ -66,7 +66,13 @@ const config = {
 	messages: [] as UIMessage[],
 };
 
-const NONE = { isLoading: false, variant: null, items: [], focusHeaderOnMount: false };
+const NONE = {
+	isLoading: false,
+	variant: null,
+	items: [],
+	focusHeaderOnMount: false,
+	onPick: expect.any( Function ),
+};
 
 describe( 'useSiteSetupChecklist', () => {
 	beforeEach( () => {
@@ -104,7 +110,7 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 	} );
 
-	it( 'records a picked task on the server and leaves the re-read to the turn end', async () => {
+	it( 'records a picked task on the server once its prompt was sent, and leaves the re-read to the turn end', async () => {
 		mockStartSiteSetupTask.mockResolvedValue( {
 			task_id: 'design',
 			status: 'in-progress',
@@ -112,17 +118,34 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
 
-		await expect( result.current.items[ 0 ].action?.() ).resolves.toBe( true );
+		await result.current.onPick( result.current.items[ 0 ] );
 
 		expect( mockStartSiteSetupTask ).toHaveBeenCalledWith( 123, 'design' );
 		expect( mockRefetch ).not.toHaveBeenCalled();
+	} );
+
+	it( 'starts nothing from the row’s action, so a blocked send changes nothing', () => {
+		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+
+		expect( result.current.items[ 0 ].action?.() ).toBe( true );
+
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+		expect( mockSetQueryData ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not start a task the server already settled or has in progress', async () => {
+		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+
+		await result.current.onPick( result.current.items[ 1 ] );
+
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
 	} );
 
 	it( 'puts the picked task in progress in the cache at once, even when the server settles it', async () => {
 		mockStartSiteSetupTask.mockResolvedValue( { task_id: 'design', status: 'done', summary: '' } );
 		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
 
-		await result.current.items[ 0 ].action?.();
+		await result.current.onPick( result.current.items[ 0 ] );
 
 		expect( mockSetQueryData ).toHaveBeenCalledTimes( 1 );
 		const [ key, update ] = mockSetQueryData.mock.calls[ 0 ];
@@ -131,12 +154,12 @@ describe( 'useSiteSetupChecklist', () => {
 		expect( update( undefined ) ).toBeUndefined();
 	} );
 
-	it( 'lets the prompt go when the start fails, and re-reads the list to drop the guess', async () => {
+	it( 'logs a failed start and re-reads the list to drop the guess', async () => {
 		mockStartSiteSetupTask.mockRejectedValue( new Error( 'nope' ) );
 		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
 
-		await expect( result.current.items[ 0 ].action?.() ).resolves.toBe( true );
+		await result.current.onPick( result.current.items[ 0 ] );
 
 		expect( consoleError ).toHaveBeenCalledWith(
 			expect.stringContaining( '[AgentsManager]' ),

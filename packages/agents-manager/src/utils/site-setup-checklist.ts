@@ -34,15 +34,13 @@ export function siteSetupTaskPrompt( task: SiteSetupTask ): string {
 
 /**
  * Maps Site Setup tasks to checklist items. Status is the server's, so the
- * chat and the Site Setup page always agree: picking a task to do records it
- * there (`startTask`) before its prompt is sent. The item's `action` also
- * declares where the prompt comes from, which the sent message then carries.
- * A task in progress sends the same prompt again, to resume it with the agent.
+ * chat and the Site Setup page always agree. The item's `action` only declares
+ * where the prompt comes from, which the sent message then carries; recording
+ * the pick on the server waits until the prompt is accepted and sent (the
+ * checklist's `onSelect`), so a blocked send changes nothing. A task in
+ * progress sends the same prompt again, to resume it with the agent.
  */
-export function toChecklistItems(
-	tasks: SiteSetupTask[],
-	startTask: ( task: SiteSetupTask ) => Promise< void >
-): ChecklistItem[] {
+export function toChecklistItems( tasks: SiteSetupTask[] ): ChecklistItem[] {
 	return tasks.map( ( task ) => {
 		const prompt = siteSetupTaskPrompt( task );
 
@@ -53,11 +51,8 @@ export function toChecklistItems(
 			prompt,
 			autoSubmit: true,
 			disabled: task.disabled,
-			action: async () => {
+			action: () => {
 				markNextPromptSource( { source: SITE_SETUP_PROMPT_SOURCE, id: task.id }, prompt );
-				if ( task.status === 'todo' ) {
-					await startTask( task );
-				}
 				return true;
 			},
 		};
