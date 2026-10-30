@@ -48,15 +48,19 @@ describe( 'renderLoadingSkeleton', () => {
 		);
 	} );
 
-	it( 'leaves a skeleton the server already rendered alone', () => {
+	it( 'swaps its own copy in for a skeleton the server rendered, keeping its label', () => {
 		document.body.innerHTML =
-			'<div id="dashboard_stats"><div class="jp-stats-widget-skeleton" role="status" aria-label="Loading" data-origin="server"></div></div>';
+			'<div id="dashboard_stats"><div class="jp-stats-widget-skeleton" role="status" aria-label="Wird geladen" data-origin="server"></div></div>';
 		const container = document.getElementById( 'dashboard_stats' );
 
 		renderLoadingSkeleton( container, { hasSiteProtection: true } );
 
-		expect( container.querySelector( '[data-origin="server"]' ) ).toBeInTheDocument();
+		expect( container.querySelector( '[data-origin="server"]' ) ).toBeNull();
 		expect( container.querySelectorAll( '.jp-stats-widget-skeleton' ) ).toHaveLength( 1 );
+		expect( container.querySelector( '[role="status"]' ) ).toHaveAttribute(
+			'aria-label',
+			'Wird geladen'
+		);
 	} );
 
 	it( 'does nothing without the container', () => {

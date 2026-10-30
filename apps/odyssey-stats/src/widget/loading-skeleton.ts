@@ -4,13 +4,17 @@
  * markup and inline styles, since this runs from the loader before any of the widget's code
  * or CSS has arrived. React replaces it when the widget mounts.
  *
+ * A stats-admin release that renders the same skeleton from PHP puts it on the page before
+ * this runs; it is swapped for this copy all the same, since this one ships with the widget
+ * and a change to the layout reaches every site at once, not only after a Jetpack release.
+ *
  * Its own container, so the totals stack at the width the widget stacks them, from the first
  * paint. The widget's stylesheet zeroes the margin once it arrives (index.scss).
  */
 
 const STYLE = `
 .jp-stats-widget-skeleton{container-type:inline-size;margin:-11px -12px -12px;padding:8px;display:flex;flex-direction:column;gap:8px;border-radius:0 0 8px 8px;background:#f6f7f7;font-size:0}
-.jp-stats-widget-skeleton__card{border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.1);background:#fff}
+.jp-stats-widget-skeleton__card{border-radius:7px;box-shadow:0 0 0 1px rgba(0,0,0,.1);background:#fff}
 .jp-stats-widget-skeleton__header{display:flex;justify-content:space-between;align-items:center;min-height:32px;padding:8px}
 .jp-stats-widget-skeleton__body{padding:8px 12px 12px}
 .jp-stats-widget-skeleton__body.is-tabbed{padding-top:0}
@@ -37,7 +41,7 @@ const STYLE = `
 .jp-stats-widget-skeleton__bar.is-footer-link{width:80px}
 @container (max-width:360px){.jp-stats-widget-skeleton__metrics{flex-direction:column}.jp-stats-widget-skeleton__metric{flex:none}}
 @media not (prefers-reduced-motion){.jp-stats-widget-skeleton__bar{animation:jp-stats-widget-skeleton-pulse 1.5s ease-in-out infinite}}
-@media (forced-colors:active){.jp-stats-widget-skeleton__bar{border:1px solid CanvasText}}
+@media (forced-colors:active){.jp-stats-widget-skeleton__bar{outline:1px solid CanvasText;outline-offset:-1px}}
 @keyframes jp-stats-widget-skeleton-pulse{0%,100%{opacity:1}50%{opacity:.4}}
 `;
 
@@ -98,7 +102,7 @@ const markup = ( { hasSiteProtection }: SkeletonOptions ) =>
 	FOOTER;
 
 /**
- * Replaces the container's server-rendered spinner with the widget's skeleton.
+ * Replaces the container's server-rendered spinner, or skeleton, with the widget's skeleton.
  * @param container The element the widget mounts in.
  * @param options   Which parts of the widget this site gets.
  */
@@ -106,13 +110,17 @@ export default function renderLoadingSkeleton(
 	container: HTMLElement | null,
 	options: SkeletonOptions
 ) {
-	// A stats-admin release that renders the skeleton itself leaves nothing to replace.
-	if ( ! container || container.querySelector( '.jp-stats-widget-skeleton' ) ) {
+	if ( ! container ) {
 		return;
 	}
 
-	// The spinner's alt text is the one translated "Loading" on the page this early.
-	const label = container.querySelector( 'img' )?.alt || 'Loading';
+	// A server-rendered skeleton carries the translated label whole. The spinner's `alt` is
+	// the only other translation on the page this early, though older stats-admin releases
+	// print it unquoted, which cuts a multi-word translation to its first word.
+	const label =
+		container.querySelector( '.jp-stats-widget-skeleton' )?.getAttribute( 'aria-label' ) ||
+		container.querySelector( 'img' )?.alt ||
+		'Loading';
 
 	const skeleton = document.createElement( 'div' );
 	skeleton.className = 'jp-stats-widget-skeleton';
