@@ -373,3 +373,21 @@ it( 'treats purchase progress without the domain step as a plain visit', async (
 	);
 	expect( checkout.searchParams.has( 'showPurchaseSteps' ) ).toBe( false );
 } );
+
+it.each( [ ProcessingResult.FAILURE, ProcessingResult.NO_ACTION ] )(
+	'routes an agent processing %s to the error step',
+	( processingResult ) => {
+		mockQuery.set( 'agentHandoffId', 'sbh_0123456789abcdef01234567' );
+		const navigate = jest.fn();
+		const nav = navigation( 'processing', navigate );
+		act( () =>
+			nav.submit( {
+				slug: 'processing',
+				providedDependencies: { processingResult },
+			} as never )
+		);
+		expect( navigate ).toHaveBeenCalledWith( STEPS.ERROR.slug );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+		expect( window.location.replace ).not.toHaveBeenCalled();
+	}
+);

@@ -63,6 +63,7 @@ import { requestThenActivate } from 'calypso/state/themes/actions';
 import { IAppState } from 'calypso/state/types';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { logStashEvent } from '../src/lib/analytics';
+import AgentHandoff from './agent-handoff';
 import CheckoutThankYouHeader from './header';
 import HundredYearThankYou from './hundred-year-thank-you';
 import { useCheckoutReceipt } from './receipt';
@@ -483,7 +484,7 @@ export class CheckoutThankYou extends Component<
 		);
 	};
 
-	render() {
+	renderContent() {
 		const { translate, email, selectedFeature } = this.props;
 		const purchases = getPurchases( this.props ).filter( ( purchase ) => ! isCredits( purchase ) );
 		let wasJetpackPlanPurchased = false;
@@ -703,6 +704,15 @@ export class CheckoutThankYou extends Component<
 					</Card>
 				) }
 			</Main>
+		);
+	}
+
+	render() {
+		return (
+			<>
+				{ this.isDataLoaded() && <AgentHandoff receiptId={ this.props.receiptId } /> }
+				{ this.renderContent() }
+			</>
 		);
 	}
 

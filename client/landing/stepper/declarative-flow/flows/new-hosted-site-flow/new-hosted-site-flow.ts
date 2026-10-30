@@ -27,6 +27,7 @@ import { setSelectedSiteId } from 'calypso/state/ui/actions';
 import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE } from '../../../stores';
+import { bindAgentSite, getAgentHandoffId } from '../../../utils/agent-site-handoff';
 import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { shouldSkipPlansStep } from '../../../utils/preselected-plan';
 import { stepsWithRequiredLogin } from '../../../utils/steps-with-required-login';
@@ -58,7 +59,7 @@ function initializeSignupState(
 		clearSignupCompleteSiteID();
 	}
 
-	const productSlug = queryParams.get( 'plan' );
+	const productSlug = getAgentHandoffId( queryParams ) ? null : queryParams.get( 'plan' );
 	const utmSource = queryParams.get( 'utm_source' );
 	if (
 		productSlug &&
@@ -82,7 +83,7 @@ async function initialize( reduxStore: Store ) {
 		initializeSignupState( reduxStore.dispatch, queryParams, eligibleForFreeHostingTrial, true );
 	}
 
-	const productSlug = queryParams.get( 'plan' );
+	const productSlug = getAgentHandoffId( queryParams ) ? null : queryParams.get( 'plan' );
 	const steps = [];
 	if ( queryParams.has( 'showDomainStep' ) ) {
 		steps.push( STEPS.DOMAIN_SEARCH );
@@ -97,6 +98,9 @@ async function initialize( reduxStore: Store ) {
 		}
 	}
 	steps.push( STEPS.SITE_CREATION_STEP, STEPS.PROCESSING );
+	if ( getAgentHandoffId( queryParams ) ) {
+		steps.push( STEPS.ERROR );
+	}
 
 	return stepsWithRequiredLogin( steps );
 }
@@ -106,6 +110,10 @@ const hosting: FlowV2< typeof initialize > = {
 	__experimentalUseBuiltinAuth: true,
 	isSignupFlow: true,
 	initialize,
+	useStepsProps() {
+		const query = useQuery();
+		return getAgentHandoffId( query ) ? { plans: { defaultInterval: 'monthly' } } : {};
+	},
 	useStepNavigation( _currentStepSlug, navigate ) {
 		const {
 			setDomain,
@@ -131,12 +139,15 @@ const hosting: FlowV2< typeof initialize > = {
 		const locale = useFlowLocale();
 		const utmSource = query.get( 'utm_source' );
 		const studioSiteId = query.get( 'studioSiteId' );
+		const agentHandoffId = getAgentHandoffId( query );
 		const autoOpenPush = query.get( 'autoOpenPush' );
 
 		const flowName = this.name;
 		const showPurchaseSteps = hasPurchaseStepsParameter( query );
 		const showDomainStep = query.has( 'showDomainStep' );
-		const shouldSkipPlans = shouldSkipPlansStep( query, planCartItem, NEW_HOSTED_SITE_FLOW );
+		const shouldSkipPlans =
+			! getAgentHandoffId( query ) &&
+			shouldSkipPlansStep( query, planCartItem, NEW_HOSTED_SITE_FLOW );
 		const isWooPartner = useIsValidWooPartner();
 
 		const getGoBack = () => {
@@ -210,73 +221,96 @@ const hosting: FlowV2< typeof initialize > = {
 					return navigate( STEPS.PROCESSING.slug, undefined, showPurchaseSteps );
 
 				case STEPS.PROCESSING.slug: {
+					if (
+						agentHandoffId &&
+						providedDependencies.processingResult !== ProcessingResult.SUCCESS
+					) {
+						return navigate( STEPS.ERROR.slug );
+					}
 					if ( providedDependencies.processingResult === ProcessingResult.SUCCESS ) {
 						const siteId = providedDependencies.siteId || getSignupCompleteSiteID();
-						setSignupCompleteSiteID( showPurchaseSteps ? siteId : providedDependencies.siteId );
-						const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
-						const destinationParams: Record< string, string > = {
-							siteId,
-							...( siteSlug ? { siteSlug } : {} ),
-						};
-						if ( studioSiteId ) {
-							destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
-								studioSiteId,
-								...( autoOpenPush === 'true' && { autoOpenPush: 'true' } ),
-							} );
-						} else if ( isWooPartner ) {
-							// For partners, we'll redirect to the WooCommerce admin page
-							destinationParams[ 'redirect_to' ] =
-								`https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
-						}
-						// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
-						const destination = addQueryArgs(
-							'/setup/transferring-hosted-site',
-							destinationParams
-						);
-
-						// If the product is a free trial, record the trial start event for ad tracking.
-						if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
-							recordFreeHostingTrialStarted( flowName );
-						}
-
-						if ( providedDependencies.goToCheckout ) {
-							persistSignupDestination( destination );
-							setSignupCompleteSlug( providedDependencies?.siteSlug );
-							setSignupCompleteFlowName( flowName );
-
-							if ( couponCode ) {
-								resetCouponCode();
+						const continueAfterBind = () => {
+							setSignupCompleteSiteID( showPurchaseSteps ? siteId : providedDependencies.siteId );
+							const siteSlug = providedDependencies.siteSlug || getSignupCompleteSlug();
+							const destinationParams: Record< string, string > = {
+								siteId,
+								...( siteSlug ? { siteSlug } : {} ),
+							};
+							if ( studioSiteId ) {
+								destinationParams[ 'redirect_to' ] = addQueryArgs( `/home/${ siteId }`, {
+									studioSiteId,
+									...( autoOpenPush === 'true' && { autoOpenPush: 'true' } ),
+								} );
+							} else if ( isWooPartner ) {
+								// For partners, we'll redirect to the WooCommerce admin page
+								destinationParams[ 'redirect_to' ] =
+									`https://${ siteSlug }/wp-admin/admin.php?page=wc-admin`;
 							}
-							const checkoutBackUrl = ( step: 'domains' | 'plans' ) =>
-								pathToUrl(
-									addQueryArgs( withLocale( `/setup/${ flowName }/${ step }`, locale ), {
-										...Object.fromEntries( query ),
-										plan: undefined,
-										siteSlug,
-									} )
-								);
-							const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
-							const checkoutUrl = addQueryArgs(
-								`/checkout/${ encodeURIComponent( ( providedDependencies?.siteSlug as string ) ?? '' ) }`,
-								{
-									redirect_to: destination,
-									coupon: couponCode,
-									...( showPurchaseSteps && {
-										showDomainStep: '',
-										showPurchaseSteps: 'true',
-										checkoutBackUrl: checkoutBackUrl( shouldSkipPlans ? 'domains' : 'plans' ),
-										checkoutBackUrlDomains: checkoutBackUrl( 'domains' ),
-										steps_current: stepPosition.current,
-										steps_total: stepPosition.total,
-									} ),
-								}
-							);
-							return showPurchaseSteps
-								? window.location.replace( checkoutUrl )
-								: window.location.assign( checkoutUrl );
-						}
+							// Purchasing Business or Commerce plans will trigger an atomic transfer, so go to stepper flow where we wait for it to complete.
+							const destination = agentHandoffId
+								? addQueryArgs(
+										`/checkout/thank-you/${ encodeURIComponent( siteSlug || 'no-site' ) }/:receiptId`,
+										{ agentHandoffId }
+									)
+								: addQueryArgs( '/setup/transferring-hosted-site', destinationParams );
 
-						return navigate( STEPS.UNIFIED_PLANS.slug );
+							// If the product is a free trial, record the trial start event for ad tracking.
+							if ( planCartItem && isFreeHostingTrial( planCartItem?.product_slug ) ) {
+								recordFreeHostingTrialStarted( flowName );
+							}
+
+							if ( providedDependencies.goToCheckout ) {
+								persistSignupDestination( destination );
+								setSignupCompleteSlug( providedDependencies?.siteSlug );
+								setSignupCompleteFlowName( flowName );
+
+								if ( couponCode ) {
+									resetCouponCode();
+								}
+								const checkoutBackUrl = ( step: 'domains' | 'plans' ) =>
+									pathToUrl(
+										addQueryArgs( withLocale( `/setup/${ flowName }/${ step }`, locale ), {
+											...Object.fromEntries( query ),
+											plan: undefined,
+											siteSlug,
+										} )
+									);
+								const stepPosition = getOnboardingStepperPosition( 'checkout', shouldSkipPlans );
+								const checkoutUrl = addQueryArgs(
+									`/checkout/${ encodeURIComponent( ( providedDependencies?.siteSlug as string ) ?? '' ) }`,
+									{
+										redirect_to: destination,
+										...( agentHandoffId && {
+											cancel_to: addQueryArgs( '/setup/new-hosted-site/plans', { agentHandoffId } ),
+										} ),
+										coupon: couponCode,
+										...( showPurchaseSteps && {
+											showDomainStep: '',
+											showPurchaseSteps: 'true',
+											checkoutBackUrl: checkoutBackUrl( shouldSkipPlans ? 'domains' : 'plans' ),
+											checkoutBackUrlDomains: checkoutBackUrl( 'domains' ),
+											steps_current: stepPosition.current,
+											steps_total: stepPosition.total,
+										} ),
+									}
+								);
+								return showPurchaseSteps
+									? window.location.replace( checkoutUrl )
+									: window.location.assign( checkoutUrl );
+							}
+
+							return navigate( STEPS.UNIFIED_PLANS.slug );
+						};
+						if ( agentHandoffId ) {
+							const numericSiteId = Number( siteId );
+							if ( ! Number.isSafeInteger( numericSiteId ) || numericSiteId <= 0 ) {
+								throw new Error( 'Site handoff could not be confirmed' );
+							}
+							return bindAgentSite( agentHandoffId, numericSiteId )
+								.then( continueAfterBind )
+								.catch( () => navigate( STEPS.ERROR.slug ) );
+						}
+						return continueAfterBind();
 					}
 				}
 			}
