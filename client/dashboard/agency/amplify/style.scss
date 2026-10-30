@@ -43,12 +43,6 @@
 	text-align: center;
 }
 
-.dashboard-amplify-overview__intro h2,
-.dashboard-amplify-story h2,
-.dashboard-amplify-story h3 {
-	text-wrap: balance;
-}
-
 .dashboard-amplify-overview__hero-preview {
 	position: relative;
 	width: calc( 100% + var( --amplify-overview-inset ) + var( --amplify-overview-inset ) );
