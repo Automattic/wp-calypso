@@ -24,15 +24,16 @@ import SiteVerification from 'calypso/my-sites/site-settings/seo-settings/site-v
 import Shortlinks from 'calypso/my-sites/site-settings/shortlinks';
 import Sitemaps from 'calypso/my-sites/site-settings/sitemaps';
 import wrapSettingsForm from 'calypso/my-sites/site-settings/wrap-settings-form';
-import { getAdminMenu } from 'calypso/state/admin-menu/selectors';
 import { canCurrentUser } from 'calypso/state/selectors/can-current-user';
 import isBlazeEnabled from 'calypso/state/selectors/is-blaze-enabled';
 import isHiddenSite from 'calypso/state/selectors/is-hidden-site';
+import isJetpackSeoPageAvailable from 'calypso/state/selectors/is-jetpack-seo-page-available';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
+import SeoOptInBanner from './seo-opt-in-banner';
 
 import './style.scss';
 
@@ -45,15 +46,6 @@ const loadVisibilityNotice = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-my-sites-site-settings-seo-settings-visibility-notice" */ 'calypso/my-sites/site-settings/seo-settings/visibility-notice'
 	);
-
-// Temporary: detects the new Jetpack › SEO page from the site's admin menu, which lists it
-// only once the page is live there. The page covers SEO, Sitemaps and Site verification, so
-// once a rollback is unlikely, remove this check and the legacy cards it hides.
-export const isJetpackSeoPageAvailable = ( state, siteId ) => {
-	const menu = getAdminMenu( state, siteId ) ?? [];
-
-	return menu.some( ( item ) => item.children?.some( ( child ) => child.slug === 'jetpack-seo' ) );
-};
 
 export const shouldShowBlazeAdvertisingOption = ( state, siteId ) => {
 	return isBlazeEnabled( state, siteId ) || isSiteComingSoon( state, siteId );
@@ -81,6 +73,7 @@ const SiteSettingsTraffic = ( {
 	siteSlug,
 	shouldShowAdvertisingOption,
 	showSeoSettings,
+	seoSettingsUrl,
 	showSeoVisibilityNotice,
 	translate,
 } ) => {
@@ -123,6 +116,9 @@ const SiteSettingsTraffic = ( {
 						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 					) }
 					<JetpackDevModeNotice />
+					{ isJetpackAdmin && showSeoSettings && (
+						<SeoOptInBanner siteId={ siteId } settingsUrl={ seoSettingsUrl } />
+					) }
 					{ isAdmin && showSeoSettings && showSeoVisibilityNotice && (
 						<AsyncLoad require={ loadVisibilityNotice } placeholder={ null } />
 					) }
@@ -189,6 +185,7 @@ const connectComponent = connect( ( state ) => {
 	const isJetpackAdmin = isJetpack && isAdmin;
 	const siteSlug = getSiteSlug( state, siteId );
 	const showAdvertisingOption = shouldShowBlazeAdvertisingOption( state, siteId );
+	const jetpackSettingsUrl = getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack' );
 
 	return {
 		siteId,
@@ -198,6 +195,7 @@ const connectComponent = connect( ( state ) => {
 		siteSlug,
 		shouldShowAdvertisingOption: showAdvertisingOption,
 		showSeoSettings: ! isJetpackSeoPageAvailable( state, siteId ),
+		seoSettingsUrl: jetpackSettingsUrl ? `${ jetpackSettingsUrl }#/traffic` : null,
 		showSeoVisibilityNotice:
 			siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 			( isPrivateSite( state, siteId ) || isHiddenSite( state, siteId ) ),
