@@ -11,7 +11,7 @@ const domainName = 'example.com';
 
 function renderPrivacy( domain: Partial< Domain > ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.get( `/rest/v1.2/domain-details/${ domainName }/` )
 		.reply( 200, { domain: domainName, ...domain } as Domain );
 
 	return render(
