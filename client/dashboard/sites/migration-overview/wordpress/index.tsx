@@ -156,6 +156,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			{ migration?.status === 'running' && (
 				<Running
 					phase={ migration.phase }
+					progress={ migration.progress }
 					sourceHost={ sourceHost }
 					notificationEmails={ migration.notification_emails }
 				/>
