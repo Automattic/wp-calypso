@@ -126,12 +126,13 @@ class PostComment extends PureComponent {
 		this.props.depth === 0 &&
 		this.getAllChildrenIds( this.props.commentId ).length > 0;
 
-	// Pending and failed replies stay in view.
-	isCollapsed = () =>
-		this.state.isCollapsed &&
-		! this.getAllChildrenIds( this.props.commentId ).some(
+	hasPendingReply = () =>
+		this.getAllChildrenIds( this.props.commentId ).some(
 			( id ) => this.props.commentsTree?.[ id ]?.data?.isPlaceholder
 		);
+
+	// Pending and failed replies stay in view.
+	isCollapsed = () => this.state.isCollapsed && ! this.hasPendingReply();
 
 	onLikeToggle = () => {
 		if ( ! this.props.isLoggedIn ) {
@@ -535,6 +536,8 @@ class PostComment extends PureComponent {
 							icon={ isCollapsed ? chevronDown : chevronUp }
 							label={ isCollapsed ? translate( 'Show replies' ) : translate( 'Hide replies' ) }
 							aria-expanded={ ! isCollapsed }
+							disabled={ this.hasPendingReply() }
+							accessibleWhenDisabled
 							onClick={ this.handleToggleCollapsedClick }
 						/>
 					) }
