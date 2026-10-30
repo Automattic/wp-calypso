@@ -22,6 +22,7 @@ import { siteRoute, sitePlansRoute } from '../../app/router/sites';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Notice } from '../../components/notice';
+import { OfferBadge } from '../../components/offer-badge';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { dashboardLink, wpcomLink } from '../../utils/link';
@@ -528,7 +529,7 @@ function PlanCard( {
 
 					<VStack spacing={ 1 } className="site-plans__price-area">
 						{ sitePlan.introductory_offer_formatted_price && (
-							<span className="site-plans__special-offer-badge">{ __( 'Special Offer' ) }</span>
+							<OfferBadge>{ __( 'Special Offer' ) }</OfferBadge>
 						) }
 						<PlanPrice
 							sitePlan={ sitePlan }

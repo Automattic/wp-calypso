@@ -5,9 +5,8 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Badge } from '@wordpress/ui';
-import clsx from 'clsx';
 import { addMailboxRoute } from '../../../app/router/emails';
+import { OfferBadge } from '../../../components/offer-badge';
 import { PriceDisplay } from '../../../components/price-display';
 import { Text } from '../../../components/text';
 import { useEmailProduct } from '../../hooks/use-email-product';
@@ -292,19 +291,13 @@ export function TitanPlanGrid( {
 						</VStack>
 						<VStack spacing={ 2 } justify="flex-start" className="email-titan-plan-pricing">
 							{ hasAnyFreeTrial && (
-								<Badge
-									intent="stable"
-									className={ clsx( 'email-titan-plan-trial', {
-										'is-hidden': ! plan.hasFreeTrial,
-									} ) }
-									aria-hidden={ ! plan.hasFreeTrial }
-								>
+								<OfferBadge isHidden={ ! plan.hasFreeTrial }>
 									{ sprintf(
 										/* translators: %d is the number of free trial months. */
 										__( '%d month free trial' ),
 										plan.trialMonths
 									) }
-								</Badge>
+								</OfferBadge>
 							) }
 							<HStack
 								alignment="topLeft"

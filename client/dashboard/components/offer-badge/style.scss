@@ -1,0 +1,19 @@
+@import '@automattic/color-studio/dist/color-variables';
+
+.offer-badge {
+	align-self: flex-start;
+	padding-block: 0;
+	padding-inline: 12px;
+	border-radius: 4px;
+	background-color: rgba( $studio-green-5, 0.64 );
+	color: $studio-green-80;
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.2px;
+	line-height: 20px;
+	white-space: nowrap;
+
+	&.is-hidden {
+		visibility: hidden;
+	}
+}
