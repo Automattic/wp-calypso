@@ -20,6 +20,7 @@ import {
 	siteUsersWpcomQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { translationExists } from '@automattic/i18n-utils';
 import {
 	createRoute,
 	createLazyRoute,
@@ -390,7 +391,9 @@ export const domainContactInfoRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Contact details & privacy' ),
+				title: translationExists( 'Contact details & privacy' )
+					? __( 'Contact details & privacy' )
+					: __( 'Contact details' ),
 			},
 		],
 	} ),
