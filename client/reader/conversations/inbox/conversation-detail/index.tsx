@@ -1,5 +1,6 @@
 import {
 	Button,
+	ExternalLink,
 	Notice,
 	Spinner,
 	__experimentalHeading as Heading,
@@ -106,6 +107,16 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 						</Notice>
 					) }
 					{ isLoading && ! post && <Spinner /> }
+					{ !! post?.is_error && (
+						<Text as="p" color="var(--color-text-subtle)">
+							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
+							{ conversation?.url && (
+								<ExternalLink href={ conversation.url }>
+									{ translate( 'Open it on the site' ) }
+								</ExternalLink>
+							) }
+						</Text>
+					) }
 					{ post && ! post.is_error && (
 						<>
 							<HStack

@@ -29,6 +29,8 @@ export const makeNote = ( {
 	excerpt = 'A comment excerpt',
 	timestamp = DEFAULT_TIMESTAMP,
 	read = 0,
+	parentCommentId,
+	headerUserId,
 	...overrides
 }: Partial< Note > & {
 	id: number;
@@ -38,6 +40,8 @@ export const makeNote = ( {
 	commenter?: string;
 	avatar?: string;
 	excerpt?: string;
+	parentCommentId?: number;
+	headerUserId?: number;
 } ): Note => ( {
 	id,
 	type: 'comment',
@@ -45,8 +49,19 @@ export const makeNote = ( {
 	timestamp,
 	icon: avatar,
 	title: 'Comment',
-	meta: { ids: { site: siteId, post: postId, comment: commentId } },
+	noticon: '\uf300',
+	meta: {
+		ids: { site: siteId, post: postId, comment: commentId, parent_comment: parentCommentId },
+	},
 	subject: [ POST_TITLE_SUBJECT( commenter, title ), { text: excerpt } ],
+	...( headerUserId && {
+		header: [
+			{
+				text: 'Author',
+				ranges: [ { type: 'user', indices: [ 0, 6 ] as [ number, number ], id: headerUserId } ],
+			},
+		],
+	} ),
 	body: [
 		{ type: 'user', text: commenter, media: [ { type: 'image', indices: [ 0, 0 ], url: avatar } ] },
 	],
