@@ -8,6 +8,7 @@ import {
 } from '@automattic/calypso-products';
 import colorStudio from '@automattic/color-studio';
 import { FormStatus, useFormStatus, Button } from '@automattic/composite-checkout';
+import { useLocale } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
 	type ResponseCart,
@@ -39,6 +40,7 @@ import {
 } from 'calypso/state/signup/flow/selectors';
 import useCartKey from '../../use-cart-key';
 import { getAffiliateCouponLabel } from '../../utils';
+import { formatDate } from './additional-terms-of-service-in-cart';
 import { CheckIcon } from './check-icon';
 import type { Theme } from '@automattic/composite-checkout';
 import type {
@@ -142,6 +144,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 	const cartKey = useCartKey();
 	const { responseCart } = useShoppingCart( cartKey );
 	const translate = useTranslate();
+	const locale = useLocale();
 	if ( ! product.introductory_offer_terms?.enabled ) {
 		return null;
 	}
@@ -198,9 +201,7 @@ function LineItemIntroOfferCostOverrideDetail( {
 				{ shouldShowDueDate &&
 					translate( 'Billed %(dueDate)s: %(price)s', {
 						args: {
-							dueDate: new Date( dueDate ).toLocaleDateString( undefined, {
-								dateStyle: 'long',
-							} ),
+							dueDate: formatDate( dueDate, locale ),
 							price: formatCurrency( dueAmount, product.currency, {
 								isSmallestUnit: true,
 								stripZeros: true,
