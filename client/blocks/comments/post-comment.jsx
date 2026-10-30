@@ -2,6 +2,7 @@ import './post-comment.scss';
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
 import { Gridicon, TimeSince } from '@automattic/components';
+import { formatNumber } from '@automattic/number-formatters';
 import { Button } from '@wordpress/components';
 import { Icon, chevronDown, chevronUp, external } from '@wordpress/icons';
 import { isURL, getAuthority, getProtocol } from '@wordpress/url';
@@ -146,7 +147,7 @@ class PostComment extends PureComponent {
 			} );
 		}
 		this.props.onReplyClick( this.props.commentId );
-		this.setState( { showReplies: true } ); // show the comments when replying
+		this.setState( { showReplies: true, isCollapsed: false } ); // show the comments when replying
 	};
 
 	handleAuthorClick = ( event ) => {
@@ -220,7 +221,9 @@ class PostComment extends PureComponent {
 		// Hide children if more than maxChildrenToShow, but not if replying
 		const exceedsMaxChildrenToShow =
 			commentChildrenIds && commentChildrenIds.length < maxChildrenToShow;
-		const showReplies = this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar;
+		const canCollapse = this.canCollapse();
+		const showReplies =
+			this.state.showReplies || exceedsMaxChildrenToShow || enableCaterpillar || canCollapse;
 		const childDepth = ! commentsToShow || commentsToShow[ commentId ] ? depth + 1 : depth;
 
 		// No children to show
@@ -228,11 +231,14 @@ class PostComment extends PureComponent {
 			return null;
 		}
 
-		if ( this.canCollapse() && this.state.isCollapsed ) {
+		if ( canCollapse && this.state.isCollapsed ) {
 			const count = this.getAllChildrenIds( commentId ).length;
 			return (
 				<p className="comments__collapsed-replies">
-					{ translate( '%(count)d reply', '%(count)d replies', { count, args: { count } } ) }
+					{ translate( '%(count)s reply', '%(count)s replies', {
+						count,
+						args: { count: formatNumber( count ) },
+					} ) }
 				</p>
 			);
 		}
@@ -256,7 +262,7 @@ class PostComment extends PureComponent {
 		);
 
 		let replyVisibilityText = null;
-		if ( ! exceedsMaxChildrenToShow && ! enableCaterpillar ) {
+		if ( ! exceedsMaxChildrenToShow && ! enableCaterpillar && ! canCollapse ) {
 			replyVisibilityText = this.state.showReplies ? hideRepliesText : showRepliesText;
 		}
 

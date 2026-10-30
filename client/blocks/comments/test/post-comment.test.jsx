@@ -54,9 +54,14 @@ const renderComment = ( props = {} ) => {
 describe( 'PostComment', () => {
 	it( 'labels highlighted comments as new and collapses replies', async () => {
 		const user = userEvent.setup();
-		renderComment( { highlightedCommentIds: [ 2 ], collapsibleThreads: true } );
+		renderComment( {
+			highlightedCommentIds: [ 2 ],
+			collapsibleThreads: true,
+			maxChildrenToShow: 1,
+		} );
 
 		expect( screen.getAllByText( 'New' ) ).toHaveLength( 1 );
+		expect( screen.getByText( 'Comment from Bruno' ) ).toBeVisible();
 
 		await user.click( screen.getByRole( 'button', { name: 'Hide replies' } ) );
 

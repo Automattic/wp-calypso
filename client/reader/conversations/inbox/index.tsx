@@ -71,7 +71,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 
 	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
 		const unreadCount = conversation.unreadNoteIds.length;
-		if ( conversation.key !== opened?.key ) {
+		if ( conversation.key !== selectedKey || conversation.key !== opened?.key ) {
 			setOpened( { key: conversation.key, commentIds: conversation.unreadCommentIds } );
 		}
 		if ( unreadCount ) {
