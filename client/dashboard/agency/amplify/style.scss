@@ -1604,7 +1604,8 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	margin-block-end: 16px;
 }
 
-.dashboard-amplify-story__sample-link.components-button {
+.dashboard-amplify-story__sample-link {
+	display: inline-block;
 	margin-block-start: 12px;
 }
 
@@ -1626,49 +1627,260 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	background: none;
 	font: inherit;
 	appearance: none;
+	container-type: inline-size;
 }
 
-button.dashboard-amplify-story__pages {
-	cursor: zoom-in;
-}
-
-.dashboard-amplify-story__pages img {
+.dashboard-amplify-story__page {
 	position: absolute;
 	z-index: 3;
 	inset-block-start: 56px;
 	inset-inline-start: 17%;
+	box-sizing: border-box;
 	width: 58%;
-	height: auto;
+	aspect-ratio: 1000 / 1413;
+	overflow: hidden;
+	/* stylelint-disable-next-line unit-allowed-list -- 1% of the page, its query container */
+	--page-u: 1cqi;
+
+	/* On the page itself, --page-u measures the fan, which is 100 / 58 times wider. */
+	padding: calc( 5 * 0.58 * var( --page-u ) ) calc( 6 * 0.58 * var( --page-u ) );
 	border-radius: 2px;
+	background: var( --color-surface );
 	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 14%, transparent );
+	color: var( --color-text );
+	font-size: calc( 1.8 * 0.58 * var( --page-u ) );
+	line-height: 1.3;
+	text-align: start;
+	container-type: inline-size;
 	transform: rotate( -3deg );
 	transition: transform 0.35s cubic-bezier( 0.2, 0.7, 0.2, 1 );
 }
 
-.dashboard-amplify-story__pages img:nth-child( 2 ) {
+.dashboard-amplify-story__page:nth-child( 2 ) {
 	z-index: 2;
 	inset-block-start: 68px;
 	inset-inline-start: 24%;
 	transform: rotate( 2deg );
 }
 
-.dashboard-amplify-story__pages img:nth-child( 3 ) {
+.dashboard-amplify-story__page:nth-child( 3 ) {
 	z-index: 1;
 	inset-block-start: 80px;
 	inset-inline-start: 30%;
 	transform: rotate( 6deg );
 }
 
-.dashboard-amplify-story__pages:hover img:first-child {
+.dashboard-amplify-story__pages:hover .dashboard-amplify-story__page:first-child {
 	transform: translateX( -6% ) rotate( -5deg );
 }
 
-.dashboard-amplify-story__pages:hover img:nth-child( 2 ) {
+.dashboard-amplify-story__pages:hover .dashboard-amplify-story__page:nth-child( 2 ) {
 	transform: translateX( 6% ) rotate( 3deg );
 }
 
-.dashboard-amplify-story__pages:hover img:nth-child( 3 ) {
+.dashboard-amplify-story__pages:hover .dashboard-amplify-story__page:nth-child( 3 ) {
 	transform: translateX( 12% ) rotate( 8deg );
+}
+
+/* Sizes are in --page-u, 1% of the page, so 1 is 10px of the 1000px-wide report page. */
+.dashboard-amplify-story__page-header,
+.dashboard-amplify-story__page-logo {
+	letter-spacing: 0.25em;
+	font-size: calc( 1.6 * var( --page-u ) );
+	line-height: 1.4;
+}
+
+.dashboard-amplify-story__page-header {
+	display: flex;
+	justify-content: space-between;
+	margin-block-end: calc( 5 * var( --page-u ) );
+}
+
+.dashboard-amplify-story__page-header span:last-child {
+	color: var( --color-text-subtle );
+	letter-spacing: 0;
+}
+
+.dashboard-amplify-story__page-eyebrow {
+	display: block;
+	color: var( --color-primary );
+	font-size: calc( 1.5 * var( --page-u ) );
+	font-weight: 700;
+	text-transform: uppercase;
+}
+
+.dashboard-amplify-story__page-title {
+	display: block;
+	margin-block: calc( 0.6 * var( --page-u ) ) calc( 4 * var( --page-u ) );
+	font-size: calc( 6.4 * var( --page-u ) );
+	font-weight: 700;
+	line-height: 0.95;
+	letter-spacing: -0.04em;
+	text-transform: uppercase;
+	font-stretch: condensed;
+}
+
+.dashboard-amplify-story__page[data-page='cover'] {
+	padding: 0;
+	background: color-mix( in srgb, var( --color-primary ) 55%, var( --color-surface ) );
+}
+
+.dashboard-amplify-story__page-cover {
+	display: flex;
+	flex-direction: column;
+	height: 61%;
+	padding: calc( 5 * var( --page-u ) ) calc( 6 * var( --page-u ) );
+	box-sizing: border-box;
+	background: var( --color-primary );
+	color: var( --color-text-inverted );
+}
+
+.dashboard-amplify-story__page-site {
+	margin-block-start: calc( 5 * var( --page-u ) );
+	font-family: Georgia, serif;
+	font-size: calc( 5.4 * var( --page-u ) );
+}
+
+.dashboard-amplify-story__page-cover .dashboard-amplify-story__page-title {
+	margin-block: auto calc( 3 * var( --page-u ) );
+	font-size: calc( 11 * var( --page-u ) );
+}
+
+.dashboard-amplify-story__page-lede {
+	font-family: Georgia, serif;
+	font-size: calc( 3.6 * var( --page-u ) );
+	line-height: 1.35;
+}
+
+.dashboard-amplify-story__page-art {
+	display: block;
+	width: 100%;
+	height: 39%;
+}
+
+.dashboard-amplify-story__page-art path,
+.dashboard-amplify-story__page-art rect:nth-of-type( n + 2 ) {
+	fill: var( --color-text-inverted );
+}
+
+.dashboard-amplify-story__page-art circle,
+.dashboard-amplify-story__page-art rect {
+	fill: var( --color-primary );
+}
+
+.dashboard-amplify-story__page-art rect:nth-of-type( n + 2 ) {
+	fill: none;
+	stroke: var( --color-text-inverted );
+	stroke-width: 4;
+}
+
+.dashboard-amplify-story__page-perspective {
+	display: flex;
+	align-items: center;
+	gap: calc( 3 * var( --page-u ) );
+	margin-block-end: calc( 3 * var( --page-u ) );
+	padding-inline-start: calc( 7 * var( --page-u ) );
+}
+
+.dashboard-amplify-story__page-perspective b,
+.dashboard-amplify-story__page-heading {
+	display: block;
+	font-size: calc( 2.2 * var( --page-u ) );
+	font-weight: 700;
+}
+
+.dashboard-amplify-story__page-perspective i {
+	color: var( --studio-orange-30 );
+	font-size: calc( 1.6 * var( --page-u ) );
+	font-style: normal;
+	font-weight: 700;
+}
+
+.dashboard-amplify-story__page-ring {
+	flex: none;
+	width: calc( 15 * var( --page-u ) );
+	height: calc( 15 * var( --page-u ) );
+	transform: rotate( -90deg ) scaleY( -1 );
+}
+
+.dashboard-amplify-story__page-ring circle {
+	fill: none;
+	stroke: var( --color-border-subtle );
+	stroke-width: 3;
+}
+
+.dashboard-amplify-story__page-ring circle + circle {
+	stroke: var( --studio-orange-30 );
+	stroke-linecap: round;
+}
+
+.dashboard-amplify-story__page-ring text {
+	fill: var( --studio-orange-30 );
+	font-size: 10px;
+	font-weight: 700;
+	transform: rotate( 90deg ) scaleX( -1 );
+	transform-origin: center;
+}
+
+.dashboard-amplify-story__page-ring tspan {
+	font-size: 5px;
+}
+
+.dashboard-amplify-story__page-heading {
+	margin-block-start: calc( 3 * var( --page-u ) );
+}
+
+/* Body copy is too small to read at this size, so it's drawn as grey lines. */
+.dashboard-amplify-story__page-lines {
+	display: block;
+	height: calc( 4 * var( --page-u ) );
+	margin-block-start: calc( 1.2 * var( --page-u ) );
+	background:
+		linear-gradient( var( --color-border-subtle ) 0 0 ) 0 0 / 92% calc( 1.2 * var( --page-u ) )
+			no-repeat,
+		linear-gradient( var( --color-border-subtle ) 0 0 ) 0 100% / 60% calc( 1.2 * var( --page-u ) )
+			no-repeat;
+}
+
+.dashboard-amplify-story__page-scores {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: calc( 4 * var( --page-u ) );
+}
+
+.dashboard-amplify-story__page-score {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	margin-block-end: calc( 2.6 * var( --page-u ) );
+	font-size: calc( 1.8 * var( --page-u ) );
+	color: var( --studio-orange-30 );
+}
+
+.dashboard-amplify-story__page-score[data-severity='good'] {
+	color: var( --color-success );
+}
+
+.dashboard-amplify-story__page-score[data-severity='danger'] {
+	color: var( --color-error );
+}
+
+.dashboard-amplify-story__page-score span {
+	color: var( --color-text );
+}
+
+.dashboard-amplify-story__page-score em {
+	display: block;
+	flex-basis: 100%;
+	height: calc( 0.4 * var( --page-u ) );
+	margin-block-start: calc( 0.8 * var( --page-u ) );
+	background: var( --color-border-subtle );
+}
+
+.dashboard-amplify-story__page-score i {
+	display: block;
+	height: 100%;
+	background: currentColor;
 }
 
 .dashboard-amplify-story__pages:focus-visible {
@@ -1678,34 +1890,9 @@ button.dashboard-amplify-story__pages {
 }
 
 @media ( prefers-reduced-motion: reduce ) {
-	.dashboard-amplify-story__pages img {
+	.dashboard-amplify-story__page {
 		transition: none;
 	}
-}
-
-.dashboard-amplify-sample-report .components-modal__content {
-	background: var( --color-surface-subtle, var( --color-border-subtle ) );
-}
-
-.dashboard-amplify-sample-report__pages {
-	display: grid;
-	gap: 24px;
-	justify-items: center;
-	padding-block: 8px 24px;
-}
-
-.dashboard-amplify-sample-report__pages img {
-	display: block;
-	width: min( 100%, 720px );
-	height: auto;
-	box-shadow: 0 4px 16px color-mix( in srgb, var( --color-text ) 12%, transparent );
-}
-
-.dashboard-amplify-sample-report__note {
-	margin: 0;
-	color: var( --color-text-subtle );
-	font-size: 12px;
-	text-align: center;
 }
 
 /* A category from the sample report, rebuilt so it can tilt and animate. */
