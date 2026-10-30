@@ -250,11 +250,7 @@ function ScoreCard( {
 				{ perspective.metrics.map( ( metric ) => (
 					<div className="dashboard-amplify-score-preview__metric" key={ metric.label }>
 						{ isExpanded && ! isHidden ? (
-							<Tooltip
-								className="dashboard-amplify-score-preview__metric-tooltip"
-								text={ metric.description }
-								delay={ 200 }
-							>
+							<Tooltip text={ metric.description } delay={ 200 }>
 								<button type="button" onPointerUp={ ( event ) => event.stopPropagation() }>
 									{ metric.label }
 								</button>
