@@ -10,6 +10,13 @@ import type { PromptSource } from '@automattic/agenttic-client';
  */
 let pending: { promptSource: PromptSource; prompt: string } | null = null;
 
+type DispatchListener = ( promptSource: PromptSource ) => void;
+
+// Told of every source a send consumed: the host records a pick from the prompt
+// the composer dispatched, not from the click. Lives as long as `pending` (the
+// page); each subscriber unsubscribes on unmount.
+const dispatchListeners = new Set< DispatchListener >();
+
 export function markNextPromptSource( promptSource: PromptSource, prompt: string ): void {
 	pending = { promptSource, prompt: prompt.trim() };
 }
@@ -18,5 +25,16 @@ export function markNextPromptSource( promptSource: PromptSource, prompt: string
 export function consumePromptSource( message: string ): PromptSource | undefined {
 	const match = pending && pending.prompt === message.trim() ? pending.promptSource : undefined;
 	pending = null;
+	if ( match ) {
+		dispatchListeners.forEach( ( listener ) => listener( match ) );
+	}
 	return match;
+}
+
+/** Hears the source of every dispatched send; returns the unsubscribe. */
+export function subscribeToDispatchedPromptSources( listener: DispatchListener ): () => void {
+	dispatchListeners.add( listener );
+	return () => {
+		dispatchListeners.delete( listener );
+	};
 }

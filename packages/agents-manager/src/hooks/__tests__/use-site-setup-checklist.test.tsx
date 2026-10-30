@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
+let mockCacheUpdatedAt = 1;
 jest.mock( '@tanstack/react-query', () => ( {
 	useQuery: jest.fn(),
+	useQueryClient: () => ( { getQueryState: () => ( { dataUpdatedAt: mockCacheUpdatedAt } ) } ),
 } ) );
 
 const mockIsSiteSetupChecklistEnabled = jest.fn( () => true );
@@ -13,14 +15,18 @@ jest.mock( '../../utils/site-setup-checklist', () => ( {
 } ) );
 
 const mockFetchSiteSetupTasks = jest.fn();
+const mockStartSiteSetupTask = jest.fn();
 const mockGetSiteSetupSiteId = jest.fn( (): number | null => 123 );
 jest.mock( '../../utils/site-setup-tasks', () => ( {
+	...jest.requireActual( '../../utils/site-setup-tasks' ),
 	fetchSiteSetupTasks: ( ...args: unknown[] ) => mockFetchSiteSetupTasks( ...args ),
+	startSiteSetupTask: ( ...args: unknown[] ) => mockStartSiteSetupTask( ...args ),
 	getSiteSetupSiteId: () => mockGetSiteSetupSiteId(),
 } ) );
 
 import { useQuery } from '@tanstack/react-query';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
+import { consumePromptSource, markNextPromptSource } from '../../utils/prompt-source';
 import useSiteSetupChecklist from '../use-site-setup-checklist';
 import type { UIMessage } from '@automattic/agenttic-client';
 
@@ -53,21 +59,39 @@ const userMessage = ( id: string, promptSourceId?: string ): UIMessage => ( {
 	],
 } );
 
+/** What the composer does as it dispatches a checklist prompt. */
+const dispatchPick = ( taskId: string ) => {
+	markNextPromptSource( { source: 'site-setup-checklist', id: taskId }, 'prompt' );
+	consumePromptSource( 'prompt' );
+};
+
 const config = {
 	enabled: true,
+	isOpen: true,
 	isProcessing: false,
 	isLoadingConversation: false,
 	messages: [] as UIMessage[],
 };
 
-const NONE = { isLoading: false, variant: null, items: [], focusHeaderOnMount: false };
+const NONE = {
+	isLoading: false,
+	variant: null,
+	items: [],
+	focusHeaderOnMount: false,
+};
 
 describe( 'useSiteSetupChecklist', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockCacheUpdatedAt = 1;
 		mockIsSiteSetupChecklistEnabled.mockReturnValue( true );
 		mockGetSiteSetupSiteId.mockReturnValue( 123 );
-		mockUseQuery.mockReturnValue( { data: DETAILS, isLoading: false, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 	} );
 
 	it( 'shows the checklist in a new chat’s empty view', () => {
@@ -84,7 +108,7 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 	} );
 
-	it( 'pins the checklist, with the picked tasks in progress, once a message came from it', () => {
+	it( 'pins the checklist, with the server’s statuses, once a message came from it', () => {
 		const { result } = renderHook( () =>
 			useSiteSetupChecklist( { ...config, messages: [ userMessage( 'u1', 'design' ) ] } )
 		);
@@ -92,13 +116,286 @@ describe( 'useSiteSetupChecklist', () => {
 		expect( result.current ).toMatchObject( {
 			variant: 'pinned',
 			items: [
-				expect.objectContaining( { id: 'design', status: 'in-progress' } ),
+				expect.objectContaining( { id: 'design', status: 'todo' } ),
 				expect.objectContaining( { id: 'about', status: 'done' } ),
 			],
 		} );
 	} );
 
+	it( 'records a task once its message is in the conversation, and holds it in progress until the turn ends', async () => {
+		mockStartSiteSetupTask.mockResolvedValue( { task_id: 'design', status: 'done', summary: '' } );
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+
+		dispatchPick( 'design' );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+
+		expect( mockStartSiteSetupTask ).toHaveBeenCalledWith( 123, 'design' );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+		expect( result.current.activeItemId ).toBe( 'design' );
+
+		// A read that lands mid-turn (window focus, chat reopened) does not unsettle the hold.
+		mockUseQuery.mockReturnValue( {
+			data: {
+				...DETAILS,
+				tasks: [ { ...DETAILS.tasks[ 0 ], status: 'done' }, DETAILS.tasks[ 1 ] ],
+			},
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		// The start settled during the turn and a read landed after it, so the turn end releases the hold.
+		await act( async () => {} );
+		mockUseQuery.mockReturnValue( {
+			data: {
+				...DETAILS,
+				tasks: [ { ...DETAILS.tasks[ 0 ], status: 'done' }, DETAILS.tasks[ 1 ] ],
+			},
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 2,
+		} );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'done' );
+	} );
+
+	it( 're-reads the list once the start request settles, so a late write is not missed', async () => {
+		mockStartSiteSetupTask.mockResolvedValue( {
+			task_id: 'design',
+			status: 'in-progress',
+			summary: '',
+		} );
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+
+		dispatchPick( 'design' );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		await act( async () => {} );
+
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'starts nothing from the row’s action, so a blocked or dropped send changes nothing', () => {
+		const { result } = renderHook( () => useSiteSetupChecklist( config ) );
+
+		expect( result.current.items[ 0 ].action?.() ).toBe( true );
+
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+		expect( result.current.items[ 0 ].status ).toBe( 'todo' );
+	} );
+
+	it( 'does not start the tasks of a restored conversation, however its history arrives', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: { ...config, isLoadingConversation: true },
+		} );
+
+		// Loading ends before the transcript lands, then the history shows up, newest message a pick.
+		rerender( { ...config, messages: [] } );
+		rerender( {
+			...config,
+			messages: [ userMessage( 'u1', 'about' ), userMessage( 'u2', 'design' ) ],
+		} );
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+
+		// A tool-call resume then starts a turn without a new message.
+		rerender( {
+			...config,
+			isProcessing: true,
+			messages: [ userMessage( 'u1', 'about' ), userMessage( 'u2', 'design' ) ],
+		} );
+
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not start a restored pick that is the only visible message when a tool resume runs', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+
+		rerender( { ...config, messages: [ userMessage( 'u1', 'design' ) ] } );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+	} );
+
+	it( 'starts a pick once its turn runs, even when the message renders a tick earlier', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+
+		dispatchPick( 'design' );
+		rerender( { ...config, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+
+		expect( mockStartSiteSetupTask ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'does not start a task the server already settled', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+
+		dispatchPick( 'about' );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'about' ) ] } );
+
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+	} );
+
+	it( 'holds a resumed in-progress task for the turn without starting it again', () => {
+		const inProgress = { ...DETAILS, tasks: [ { ...DETAILS.tasks[ 0 ], status: 'in-progress' } ] };
+		mockUseQuery.mockReturnValue( {
+			data: inProgress,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: { ...config, messages: [ userMessage( 'u0', 'design' ) ] },
+		} );
+
+		dispatchPick( 'design' );
+		rerender( {
+			...config,
+			isProcessing: true,
+			messages: [ userMessage( 'u0', 'design' ), userMessage( 'u1', 'design' ) ],
+		} );
+		expect( mockStartSiteSetupTask ).not.toHaveBeenCalled();
+
+		// The agent finished the task and a mid-turn read says so: still in progress until the turn ends.
+		mockUseQuery.mockReturnValue( {
+			data: { ...DETAILS, tasks: [ { ...DETAILS.tasks[ 0 ], status: 'done' } ] },
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
+		rerender( {
+			...config,
+			isProcessing: true,
+			messages: [ userMessage( 'u0', 'design' ), userMessage( 'u1', 'design' ) ],
+		} );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		rerender( {
+			...config,
+			isProcessing: false,
+			messages: [ userMessage( 'u0', 'design' ), userMessage( 'u1', 'design' ) ],
+		} );
+		expect( result.current.items[ 0 ].status ).toBe( 'done' );
+	} );
+
+	it( 'keeps the hold past the turn end while the start is in flight, until its read settles', async () => {
+		let settleStart: ( value: unknown ) => void = () => {};
+		mockStartSiteSetupTask.mockReturnValue(
+			new Promise( ( resolve ) => ( settleStart = resolve ) )
+		);
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+
+		dispatchPick( 'design' );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		await act( async () => {
+			settleStart( { task_id: 'design', status: 'done', summary: '' } );
+		} );
+		expect( mockRefetch ).toHaveBeenCalled();
+
+		// The refetch resolving is not enough (it may have been cancelled): data must be newer than the write.
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 2,
+		} );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( DETAILS.tasks[ 0 ].status );
+	} );
+
+	it( 'does not count a read that reached the cache before the write settled, even if it renders after', async () => {
+		let settleStart: ( value: unknown ) => void = () => {};
+		mockStartSiteSetupTask.mockReturnValue(
+			new Promise( ( resolve ) => ( settleStart = resolve ) )
+		);
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+		dispatchPick( 'design' );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+
+		// A pre-write read is in the cache (2) but not rendered (1) when the write settles.
+		mockCacheUpdatedAt = 2;
+		await act( async () => {
+			settleStart( { task_id: 'design', status: 'done', summary: '' } );
+		} );
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 2,
+		} );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( 'in-progress' );
+
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 3,
+		} );
+		rerender( { ...config, isProcessing: false, messages: [ userMessage( 'u1', 'design' ) ] } );
+		expect( result.current.items[ 0 ].status ).toBe( DETAILS.tasks[ 0 ].status );
+	} );
+
+	it( 'logs a failed start and re-reads the list', async () => {
+		mockStartSiteSetupTask.mockRejectedValue( new Error( 'nope' ) );
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: config,
+		} );
+
+		dispatchPick( 'design' );
+		rerender( { ...config, isProcessing: true, messages: [ userMessage( 'u1', 'design' ) ] } );
+		await act( async () => {} );
+
+		expect( consoleError ).toHaveBeenCalledWith(
+			expect.stringContaining( '[AgentsManager]' ),
+			expect.any( Error )
+		);
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+		consoleError.mockRestore();
+	} );
+
 	it( 'keeps the task picked last as the active one, or the first in progress', () => {
+		const withInProgress = ( ...ids: string[] ) => ( {
+			...DETAILS,
+			tasks: [
+				{ id: 'design', title: 'Customize the design', status: 'in-progress', disabled: false },
+				DETAILS.tasks[ 1 ],
+				...ids.map( ( id ) => ( { id, title: id, status: 'in-progress', disabled: false } ) ),
+			],
+		} );
+		mockUseQuery.mockReturnValue( {
+			data: withInProgress(),
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: {
 				...config,
@@ -109,15 +406,10 @@ describe( 'useSiteSetupChecklist', () => {
 		expect( result.current.activeItemId ).toBe( 'design' );
 
 		mockUseQuery.mockReturnValue( {
-			data: {
-				...DETAILS,
-				tasks: [
-					...DETAILS.tasks,
-					{ id: 'domain', title: 'Add a domain', status: 'in-progress', disabled: false },
-				],
-			},
+			data: withInProgress( 'domain' ),
 			isLoading: false,
 			refetch: mockRefetch,
+			dataUpdatedAt: 1,
 		} );
 		rerender( {
 			...config,
@@ -125,6 +417,7 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 		expect( result.current.activeItemId ).toBe( 'domain' );
 
+		// A chat not started from the list has no pinned list, so no active task.
 		rerender( { ...config, messages: [ userMessage( 'u1' ) ] } );
 		expect( result.current.activeItemId ).toBeUndefined();
 	} );
@@ -152,13 +445,23 @@ describe( 'useSiteSetupChecklist', () => {
 	} );
 
 	it( 'is loading while the list is read, and while the conversation is', () => {
-		mockUseQuery.mockReturnValue( { data: undefined, isLoading: true, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data: undefined,
+			isLoading: true,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: config,
 		} );
 		expect( result.current ).toEqual( { ...NONE, isLoading: true } );
 
-		mockUseQuery.mockReturnValue( { data: DETAILS, isLoading: false, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data: DETAILS,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 		rerender( { ...config, isLoadingConversation: true } );
 		expect( result.current ).toEqual( { ...NONE, isLoading: true } );
 	} );
@@ -187,7 +490,12 @@ describe( 'useSiteSetupChecklist', () => {
 		[ 'the list is empty', [], { ...DETAILS, tasks: [] } ],
 		[ 'the ability failed', [], undefined ],
 	] )( 'shows nothing when %s', ( _label, messages, data ) => {
-		mockUseQuery.mockReturnValue( { data, isLoading: false, refetch: mockRefetch } );
+		mockUseQuery.mockReturnValue( {
+			data,
+			isLoading: false,
+			refetch: mockRefetch,
+			dataUpdatedAt: 1,
+		} );
 
 		const { result } = renderHook( () => useSiteSetupChecklist( { ...config, messages } ) );
 
@@ -213,6 +521,19 @@ describe( 'useSiteSetupChecklist', () => {
 		expect( mockRefetch ).not.toHaveBeenCalled();
 
 		rerender( { ...config, isProcessing: false } );
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 're-reads the list when the chat opens, not when it is already open', () => {
+		const { rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: { ...config, isOpen: false },
+		} );
+		expect( mockRefetch ).not.toHaveBeenCalled();
+
+		rerender( { ...config, isOpen: true } );
+		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
+
+		rerender( { ...config, isOpen: true, messages: [ userMessage( 'u1' ) ] } );
 		expect( mockRefetch ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

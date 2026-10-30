@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import React, { useEffect, useId, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { cn } from '../../utils/classNames';
 import { ChevronDownIcon } from '../icons/ChevronDownIcon';
 import { ChevronUpIcon } from '../icons/ChevronUpIcon';
@@ -16,6 +16,11 @@ export interface ChecklistProps {
 	onCollapsedChange?: ( collapsed: boolean ) => void;
 	/** Collapse the list once an item is selected. Defaults to true. */
 	collapseOnSelect?: boolean;
+	/**
+	 * When an in-progress item settles while the list is collapsed, keep it in
+	 * view for a beat, then expand the list so the next task is at hand.
+	 */
+	expandOnSettle?: boolean;
 	/**
 	 * The one item a collapsed list keeps in view, instead of every in-progress
 	 * one: the task the user is on. Unset, every in-progress row stays.
@@ -36,6 +41,9 @@ export interface ChecklistProps {
 }
 
 const getStatus = ( item: ChecklistItem ): ChecklistItemStatus => item.status ?? 'todo';
+
+// Long enough to read the check on a task that just settled, before the list opens.
+const SETTLED_REVEAL_MS = 1200;
 
 export const isSettled = ( item: ChecklistItem ): boolean =>
 	[ 'done', 'skipped' ].includes( getStatus( item ) );
@@ -202,7 +210,9 @@ function ChecklistRow( {
  * in progress, or to `activeItemId` alone when the host names the task the
  * user is on. With `resumeInProgress`, clicking another in-progress task
  * submits its prompt again, to resume it; the active one and the settled
- * (done / skipped) rows are always inert.
+ * (done / skipped) rows are always inert. With `expandOnSettle`, a task that
+ * settles while collapsed stays in view for a beat and the list then opens on
+ * the next one.
  * @param props                   Component props.
  * @param props.title
  * @param props.items
@@ -210,6 +220,7 @@ function ChecklistRow( {
  * @param props.defaultCollapsed
  * @param props.onCollapsedChange
  * @param props.collapseOnSelect
+ * @param props.expandOnSettle   Reveal a task that just settled, then open the list.
  * @param props.activeItemId     The one item a collapsed list keeps in view.
  * @param props.resumeInProgress Let an in-progress item be clicked to resume it.
  * @param props.onSubmit
@@ -224,6 +235,7 @@ export function Checklist( {
 	defaultCollapsed = false,
 	onCollapsedChange,
 	collapseOnSelect = true,
+	expandOnSettle = false,
 	activeItemId,
 	resumeInProgress = false,
 	onSubmit,
@@ -253,12 +265,71 @@ export function Checklist( {
 		}
 	}, [] );
 
-	const setCollapsed = ( next: boolean ) => {
-		if ( ! isControlled ) {
-			setInternalCollapsed( next );
+	const setCollapsed = useCallback(
+		( next: boolean ) => {
+			if ( ! isControlled ) {
+				setInternalCollapsed( next );
+			}
+			onCollapsedChange?.( next );
+		},
+		[ isControlled, onCollapsedChange ]
+	);
+
+	// Items that settled while collapsed and are shown for a beat before the
+	// list opens, alone: the next active task joins them only once the list
+	// opens. The timer outlives item updates that bring no new settle.
+	const [ revealedIds, setRevealedIds ] = useState< ReadonlySet< string > >( () => new Set() );
+	const previousStatusesRef = useRef(
+		new Map( items.map( ( item ) => [ item.id, getStatus( item ) ] ) )
+	);
+	const revealTimerRef = useRef< number | null >( null );
+
+	useEffect( () => {
+		const previous = previousStatusesRef.current;
+		previousStatusesRef.current = new Map(
+			items.map( ( item ) => [ item.id, getStatus( item ) ] )
+		);
+
+		// An open list (by hand, or by the timer) ends any pending reveal, so the
+		// next fold is about the next task, not the one that just settled.
+		if ( ! isCollapsed ) {
+			if ( revealTimerRef.current !== null ) {
+				window.clearTimeout( revealTimerRef.current );
+				revealTimerRef.current = null;
+			}
+			setRevealedIds( ( current ) => ( current.size > 0 ? new Set() : current ) );
+			return;
 		}
-		onCollapsedChange?.( next );
-	};
+
+		const settledNow = items
+			.filter( ( item ) => previous.get( item.id ) === 'in-progress' && isSettled( item ) )
+			.map( ( item ) => item.id );
+
+		if ( ! expandOnSettle || settledNow.length === 0 ) {
+			return;
+		}
+
+		setRevealedIds( ( current ) => new Set( [ ...current, ...settledNow ] ) );
+
+		if ( revealTimerRef.current !== null ) {
+			window.clearTimeout( revealTimerRef.current );
+		}
+
+		revealTimerRef.current = window.setTimeout( () => {
+			revealTimerRef.current = null;
+			setRevealedIds( new Set() );
+			setCollapsed( false );
+		}, SETTLED_REVEAL_MS );
+	}, [ items, expandOnSettle, isCollapsed, setCollapsed ] );
+
+	useEffect(
+		() => () => {
+			if ( revealTimerRef.current !== null ) {
+				window.clearTimeout( revealTimerRef.current );
+			}
+		},
+		[]
+	);
 
 	const settledCount = items.filter( isSettled ).length;
 
@@ -334,7 +405,9 @@ export function Checklist( {
 			   to zero height and out of the accessibility tree. */ }
 			<ul id={ listId } className={ styles.list }>
 				{ items.map( ( item ) => {
-					const hidden = isCollapsed && ! staysWhenCollapsed( item );
+					const hidden =
+						isCollapsed &&
+						( revealedIds.size > 0 ? ! revealedIds.has( item.id ) : ! staysWhenCollapsed( item ) );
 					return (
 						<li
 							key={ item.id }
