@@ -134,6 +134,36 @@ describe( '<ContactForm>', () => {
 		).toBeVisible();
 	} );
 
+	test( 'shows the ICANN verification notice below the email field', async () => {
+		render(
+			<ContactForm
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.com' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		expect( await screen.findByRole( 'textbox', { name: 'Email' } ) ).toBeVisible();
+		expect( screen.getByText( /sends a verification to this email address/ ) ).toBeVisible();
+	} );
+
+	test( 'shows the section title above the form when given', async () => {
+		render(
+			<ContactForm
+				title="Contact details"
+				initialData={ frIndividualContact }
+				domainNames={ [ 'example.com' ] }
+				isSubmitting={ false }
+				onSubmit={ jest.fn() }
+				validate={ alwaysValid }
+			/>
+		);
+
+		expect( await screen.findByRole( 'heading', { name: 'Contact details' } ) ).toBeVisible();
+	} );
+
 	test( 'lifts the .fr individual organization error once the registrant becomes an organization', async () => {
 		const user = userEvent.setup();
 
