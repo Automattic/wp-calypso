@@ -1,4 +1,5 @@
 import { domainForwardingQuery, domainQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
 import { DataViews, filterSortAndPaginate } from '@wordpress/dataviews';
@@ -49,6 +50,7 @@ const DEFAULT_LAYOUTS = {
 
 function DomainForwarding() {
 	const router = useRouter();
+	const hasEnTranslation = useHasEnTranslation();
 
 	const { domainName } = domainRoute.useParams();
 	const { data: domainData } = useSuspenseQuery( domainQuery( domainName ) );
@@ -156,7 +158,11 @@ function DomainForwarding() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					description={ createInterpolateElement(
-						__( 'Forward your domain or subdomain to another address. <learnMoreLink />' ),
+						hasEnTranslation(
+							'Forward your domain name or subdomain to another address. <learnMoreLink />'
+						)
+							? __( 'Forward your domain name or subdomain to another address. <learnMoreLink />' )
+							: __( 'Forward your domain or subdomain to another address. <learnMoreLink />' ),
 						{
 							learnMoreLink: <InlineSupportLink supportContext="domain-forwarding" />,
 						}
@@ -168,7 +174,9 @@ function DomainForwarding() {
 							variant="primary"
 							__next40pxDefaultSize
 						>
-							{ __( 'Add Domain Forwarding' ) }
+							{ hasEnTranslation( 'Add forwarding' )
+								? __( 'Add forwarding' )
+								: __( 'Add Domain Forwarding' ) }
 						</RouterLinkButton>
 					}
 				/>
