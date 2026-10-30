@@ -36,6 +36,14 @@ const purchase = {
 	bill_period_days: 365,
 } as Purchase;
 
+const premiumAnnual = {
+	...purchase,
+	product_slug: 'value_bundle',
+	is_plan: true,
+	is_upgradable: true,
+	is_plan_type_downgradable: true,
+} as Purchase;
+
 describe( '<SolutionsCardsUpsellStep />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -213,5 +221,69 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			'href',
 			expect.stringContaining( 'coupon=CANRENEW25OFF' )
 		);
+	} );
+
+	test.each( [
+		{
+			card: 'Switch to a different plan',
+			solutionId: 'change-plan',
+			ref: 'cancel-flow-change-plan',
+		},
+	] )( '$card opens the plans page and records the click', async ( { card, solutionId, ref } ) => {
+		const user = userEvent.setup();
+		const recordEvent = jest.fn();
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ premiumAnnual }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+				recordEvent={ recordEvent }
+			/>
+		);
+
+		const link = await screen.findByRole( 'link', { name: new RegExp( card ) } );
+		const href = link.getAttribute( 'href' ) as string;
+		expect( new URL( href ).searchParams.get( 'ref' ) ).toBe( ref );
+
+		// jsdom ignores navigation, so swap in a plain object to read the href the click sets.
+		const originalLocation = window.location;
+		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
+		try {
+			await user.click( link );
+
+			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+				solution_id: solutionId,
+				cancellation_reason: 'tooExpensive',
+			} );
+			expect( window.location.href ).toBe( href );
+		} finally {
+			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+		}
+	} );
+
+	test( 'Switch to a different plan still opens the plans page when the plan has no change link', async () => {
+		const p2PlusMonthly = {
+			...purchase,
+			product_slug: 'wp_p2_plus_monthly',
+			is_plan: true,
+			is_upgradable: false,
+			is_plan_type_downgradable: false,
+			bill_period_days: 31,
+		} as Purchase;
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ p2PlusMonthly }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+			/>
+		);
+
+		expect(
+			await screen.findByRole( 'link', { name: /Switch to a different plan/ } )
+		).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
 	} );
 } );

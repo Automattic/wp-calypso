@@ -14,7 +14,7 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from '../steps';
-import type { Purchase } from '@automattic/api-core';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const mockNavigate = jest.fn();
 jest.mock( '@tanstack/react-router', () => ( {
@@ -346,5 +346,29 @@ describe( '<CancelPurchaseForm />', () => {
 			).toBeVisible();
 			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
 		} );
+	} );
+
+	test.each( [
+		{
+			upsell: 'downgrade-personal',
+			accept: 'Switch to the Personal plan',
+			ref: 'cancel-flow-downgrade-personal',
+		},
+	] )( '$accept opens the plans page', ( { upsell, accept, ref } ) => {
+		render(
+			<CancelPurchaseForm
+				{ ...defaultProps }
+				surveyStep={ UPSELL_STEP }
+				allSteps={ [ UPSELL_STEP ] }
+				plans={ [ { product_slug: 'personal-bundle', product_name: 'Personal' } as PlanProduct ] }
+				purchase={ makePurchase( { is_plan_type_downgradable: true } ) }
+				upsell={ upsell }
+			/>
+		);
+
+		const url = new URL(
+			screen.getByRole( 'link', { name: accept } ).getAttribute( 'href' ) as string
+		);
+		expect( url.searchParams.get( 'ref' ) ).toBe( ref );
 	} );
 } );

@@ -34,6 +34,7 @@ import DashboardSummaryButton from '../../../../../components/summary-button';
 import { SummaryButtonList } from '../../../../../components/summary-button-list';
 import { dashboardLink, wpcomLink } from '../../../../../utils/link';
 import { getPurchaseSettingsUrl, getPurchasesListUrl } from '../../../../../utils/site-url';
+import { getCancelFlowPlanChangeUrl } from '../../get-cancel-flow-plan-change-url';
 import { getSolutionsForReason, PRICE_MOTIVATED_REASONS } from '../../get-solutions-for-reason';
 import UpsellStep from './upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
@@ -82,12 +83,16 @@ const DOMAIN_GUIDE_URL = localizeUrl( wpcomLink( '/support/domains/' ) );
 function getCardHref(
 	cardId: string,
 	changePlanUrl: string,
+	changePlanCardUrl: string,
 	renewNowUrl: string,
 	subscriptionsUrl: string | undefined,
 	siteSlug: string,
 	yearlyPlanUrl?: string
 ): string | undefined {
-	if ( cardId === 'change-plan' || cardId === 'upgrade-for-full-access' ) {
+	if ( cardId === 'change-plan' ) {
+		return changePlanCardUrl;
+	}
+	if ( cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
 	}
 	if ( cardId === 'renew-now-pay-less' ) {
@@ -314,6 +319,7 @@ export default function SolutionsCardsUpsellStep( {
 	}
 
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
+	const changePlanCardUrl = getCancelFlowPlanChangeUrl( purchase, 'change-plan' );
 	const purchaseSettingsUrl = getPurchaseSettingsUrl( purchase );
 	const renewNowUrl = addQueryArgs(
 		wpcomLink(
@@ -339,6 +345,8 @@ export default function SolutionsCardsUpsellStep( {
 
 		switch ( solutionId ) {
 			case 'change-plan':
+				window.location.href = changePlanCardUrl;
+				break;
 			case 'upgrade-for-full-access':
 				window.location.href = changePlanUrl;
 				break;
@@ -446,6 +454,7 @@ export default function SolutionsCardsUpsellStep( {
 					const href = getCardHref(
 						card.id,
 						changePlanUrl,
+						changePlanCardUrl,
 						renewNowUrl,
 						subscriptionsUrl,
 						purchase.site_slug,

@@ -9,6 +9,7 @@ import { useHelpCenter } from '../../../../../app/help-center';
 import { ButtonStack } from '../../../../../components/button-stack';
 import { SectionHeader } from '../../../../../components/section-header';
 import { redirectToDashboardLink, wpcomLink } from '../../../../../utils/link';
+import { getCancelFlowPlanChangeUrl } from '../../get-cancel-flow-plan-change-url';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 type UpsellProps = {
@@ -289,7 +290,7 @@ export default function UpsellStep( {
 					acceptButtonText={ sprintf( __( 'Switch to the %(plan)s plan' ), {
 						plan: personalPlanName,
 					} ) }
-					onAccept={ () => props.onClickDowngrade?.( upsell ) }
+					acceptButtonUrl={ getCancelFlowPlanChangeUrl( purchase, 'downgrade-personal' ) }
 					intent={ props.intent }
 					declineButtonText={ props.declineButtonText }
 					onDecline={ props.onDeclineUpsell }
