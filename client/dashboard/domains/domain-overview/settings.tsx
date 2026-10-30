@@ -6,18 +6,20 @@ import {
 	type DomainMappingStatus,
 } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { useState } from 'react';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
-import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
 import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
+import DomainEmailsSettingsSummary from './emails-summary';
+import DomainSiteSettingsSummary from './site-summary';
 
 export default function DomainOverviewSettings( {
 	domain,
@@ -30,7 +32,12 @@ export default function DomainOverviewSettings( {
 	domainMappingStatus?: DomainMappingStatus;
 	isDisabled?: boolean;
 } ) {
-	const buttonListItems = [];
+	const [ showAdvanced, setShowAdvanced ] = useState( false );
+	const buttonListItems = [
+		<DomainSiteSettingsSummary key="site" domain={ domain } />,
+		<DomainEmailsSettingsSummary key="emails" domain={ domain } />,
+	];
+	const advancedButtonListItems = [];
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 		buttonListItems.push(
@@ -40,6 +47,16 @@ export default function DomainOverviewSettings( {
 				domainMappingStatus={ domainMappingStatus }
 			/>
 		);
+	}
+
+	if (
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
+		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
+		domain.can_manage_dns_records
+	) {
+		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
 	}
 
 	if (
@@ -75,37 +92,6 @@ export default function DomainOverviewSettings( {
 		);
 	}
 
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-		domain.can_manage_dns_records
-	) {
-		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
-	}
-
-	/**
-	 * I simplified the condition heere because the original code seemed to have a logical redundancy.
-	 * see: https://github.com/Automattic/wp-calypso/blob/b1c63880294fcf63f95518a3c42779236f56f5b2/client/my-sites/domains/domain-management/settings/index.tsx#L515
-	 */
-	// `current_user_can_manage` is always false in a support session. The link is still shown so
-	// that support can copy its URL for the user; the route itself blocks editing in that case.
-	if (
-		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		( domain.current_user_can_manage || isSupportSession() ) &&
-		! domain.pending_transfer &&
-		! domain.expired
-	) {
-		buttonListItems.push(
-			<DomainContactDetailsSettingsSummary
-				key="contact-details"
-				domain={ domain }
-				isDisabled={ isDisabled }
-			/>
-		);
-	}
-
 	/**
 	 * TODO: review this one - we need to show the security for transfers but only if there is
 	 * mapping. Right now I copied the code from the original code but it seems wrong
@@ -116,7 +102,7 @@ export default function DomainOverviewSettings( {
 			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
 		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
 	) {
-		buttonListItems.push(
+		advancedButtonListItems.push(
 			<DomainSecuritySettingsSummary key="security" domain={ domain } isDisabled={ isDisabled } />
 		);
 	}
@@ -129,7 +115,7 @@ export default function DomainOverviewSettings( {
 		domain.can_manage_dns_records
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
-		buttonListItems.push(
+		advancedButtonListItems.push(
 			<DomainGlueRecordsSettingsSummary
 				key="glue-records"
 				domainName={ domain.domain }
@@ -139,11 +125,25 @@ export default function DomainOverviewSettings( {
 	}
 
 	return (
-		buttonListItems.length > 0 && (
-			<VStack spacing={ 3 }>
-				<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
-				<SummaryButtonList>{ buttonListItems }</SummaryButtonList>
-			</VStack>
-		)
+		<VStack spacing={ 3 }>
+			<SectionHeader
+				title={ __( 'Settings' ) }
+				level={ 3 }
+				actions={
+					advancedButtonListItems.length > 0 && (
+						<Button
+							variant="link"
+							aria-expanded={ showAdvanced }
+							onClick={ () => setShowAdvanced( ! showAdvanced ) }
+						>
+							{ showAdvanced ? __( 'Hide advanced settings' ) : __( 'Show advanced settings' ) }
+						</Button>
+					)
+				}
+			/>
+			<SummaryButtonList>
+				{ showAdvanced ? [ ...buttonListItems, ...advancedButtonListItems ] : buttonListItems }
+			</SummaryButtonList>
+		</VStack>
 	);
 }

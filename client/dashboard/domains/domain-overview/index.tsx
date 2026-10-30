@@ -24,10 +24,10 @@ import { isTldInMaintenance } from '../../utils/domain';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
-import FeaturedCards from './featured-cards';
 import IcannSuspensionNotice from './icann-suspension-notice';
 import PendingRegistrationNotice from './pending-registration-notice';
 import PointToWpcomNotice from './point-to-wpcom-notice';
+import DomainOverviewRegistration from './registration';
 import DomainOverviewSettings from './settings';
 import TransferredDomainDetails from './transferred-domain-details';
 
@@ -136,7 +136,10 @@ export default function DomainOverview() {
 				<PendingPrimaryDomainNotice domainName={ domain.domain } />
 				{ domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER && (
 					<>
-						<FeaturedCards isDisabled={ isTldInMaintenance( domain ) } />
+						<DomainOverviewRegistration
+							domain={ domain }
+							isDisabled={ isTldInMaintenance( domain ) }
+						/>
 						<DomainOverviewSettings
 							isDisabled={ isTldInMaintenance( domain ) }
 							domain={ domain }

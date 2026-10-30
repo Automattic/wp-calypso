@@ -28,7 +28,6 @@ import RemoveDomainDialog from '../../components/purchase-dialogs/remove-domain-
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
-import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import {
 	shouldShowTransferAction,
 	shouldShowTransferInAction,
@@ -95,7 +94,6 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 	);
 
 	const availableActions = {
-		renew: !! purchase?.is_renewable && domain.current_user_is_owner,
 		transfer: shouldShowTransferAction( domain ),
 		transferIn: shouldShowTransferInAction( domain ),
 		disconnect: shouldShowDisconnectAction( domain ),
@@ -110,24 +108,8 @@ export default function Actions( { isDisabled }: { isDisabled?: boolean } ) {
 
 	return (
 		<VStack spacing={ 4 }>
-			<SectionHeader level={ 3 } title={ __( 'Actions' ) } />
+			<SectionHeader level={ 3 } title={ __( 'Danger zone' ) } />
 			<ActionList>
-				{ availableActions.renew && purchase && (
-					<ActionList.ActionItem
-						title={ __( 'Renew' ) }
-						description={ __( 'Renew domain registration.' ) }
-						actions={
-							<Button
-								size="compact"
-								variant="secondary"
-								href={ getRenewalUrlFromPurchase( purchase ) }
-								disabled={ isDisabled }
-							>
-								{ __( 'Renew' ) }
-							</Button>
-						}
-					/>
-				) }
 				{ availableActions.transfer && (
 					<ActionList.ActionItem
 						title={ __( 'Transfer' ) }

@@ -1,9 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { DomainSubtype, type Domain } from '@automattic/api-core';
+import { DomainSubtype, DomainTransferStatus, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
@@ -70,177 +71,80 @@ function renderDomainSettings( domainProps: Partial< Domain > = {} ) {
 	return render( <DomainOverviewSettings domain={ mockDomain } domainDiagnostics={ undefined } /> );
 }
 
+async function showAdvancedSettings() {
+	await userEvent.click( await screen.findByRole( 'button', { name: 'Show advanced settings' } ) );
+}
+
 describe( 'DomainOverviewSettings', () => {
 	describe( 'Registered Domain Tests', () => {
-		test( 'shows all settings for fully manageable registered domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-				transfer_status: null,
-			} );
+		test( 'shows everyday settings and hides technical settings by default', async () => {
+			renderDomainSettings();
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
+			expect( await screen.findByText( 'Settings' ) ).toBeVisible();
+			expect( screen.getByText( 'Site' ) ).toBeVisible();
+			expect( screen.getByText( 'Professional email' ) ).toBeVisible();
+			expect( screen.getByText( 'Domain forwarding' ) ).toBeVisible();
+			expect( screen.getByText( 'Name servers' ) ).toBeVisible();
+			expect( screen.getByText( 'DNS records' ) ).toBeVisible();
 
-			// Should show all 5 settings buttons
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Domain security' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
+			// Lives in the Registration section.
+			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'toggles the technical settings', async () => {
+			renderDomainSettings();
+
+			await showAdvancedSettings();
+
+			expect( screen.getByText( 'Domain security' ) ).toBeVisible();
+			expect( screen.getByText( 'Glue records' ) ).toBeVisible();
+
+			const hideButton = screen.getByRole( 'button', { name: 'Hide advanced settings' } );
+			expect( hideButton ).toHaveAttribute( 'aria-expanded', 'true' );
+
+			await userEvent.click( hideButton );
+
+			expect( screen.queryByText( 'Domain security' ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
 		} );
 
 		test( 'hides name servers setting for gravatar restricted domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				is_gravatar_restricted_domain: true,
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-			} );
+			renderDomainSettings( { is_gravatar_restricted_domain: true } );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should not show name servers
+			expect( await screen.findByText( 'DNS records' ) ).toBeVisible();
 			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-
-			// Should show other settings
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
 		} );
 
 		test( 'hides DNS-related settings when cannot manage DNS records', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				can_manage_dns_records: false,
-				current_user_can_manage: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
+			renderDomainSettings( { can_manage_dns_records: false } );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
+			await showAdvancedSettings();
 
-			// Should show name servers (not affected by can_manage_dns_records)
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-
-			// Should not show DNS records, email forwarding, or glue records
+			expect( screen.getByText( 'Name servers' ) ).toBeVisible();
+			expect( screen.getByText( 'Domain security' ) ).toBeVisible();
 			expect( screen.queryByText( 'DNS records' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Domain forwarding' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
-
-			// Should show contact information and security
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
 		} );
 
-		test( 'hides contact details when user cannot manage', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: false,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
+		test( 'hides glue records when user cannot manage', async () => {
+			renderDomainSettings( { current_user_can_manage: false } );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
+			await showAdvancedSettings();
 
-			// Should show DNS-related settings
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-
-			// Should not show contact details or glue records
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
+			expect( screen.getByText( 'Domain security' ) ).toBeVisible();
 			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'shows contact details and glue records in a support session even when user cannot manage', async () => {
+		test( 'shows glue records in a support session even when user cannot manage', async () => {
 			( isSupportSession as jest.Mock ).mockReturnValue( true );
+			renderDomainSettings( { current_user_can_manage: false } );
 
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: false,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
+			await showAdvancedSettings();
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			expect( screen.getByText( 'Contact details & privacy' ) ).toBeVisible();
 			expect( screen.getByText( 'Glue records' ) ).toBeVisible();
-		} );
-
-		test( 'hides contact details for expired domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: true,
-				pending_transfer: false,
-				is_gravatar_restricted_domain: false,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show other settings
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
-
-			// Should not show contact details for expired domain
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-		} );
-
-		test( 'hides contact details for pending transfer domain', async () => {
-			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				expired: false,
-				pending_transfer: true,
-				is_gravatar_restricted_domain: false,
-			} );
-
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should show other settings
-			expect( screen.getByText( 'Name servers' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Glue records' ) ).toBeInTheDocument();
-
-			// Should not show contact details for pending transfer
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
@@ -248,23 +152,14 @@ describe( 'DomainOverviewSettings', () => {
 		test( 'shows limited settings for basic connected domain', async () => {
 			renderDomainSettings( {
 				subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
-				current_user_can_manage: true,
-				can_manage_dns_records: true,
-				transfer_status: null,
 			} );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
+			await showAdvancedSettings();
 
-			// Should show DNS records, email forwarding, and security
-			expect( screen.getByText( 'DNS records' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain forwarding' ) ).toBeInTheDocument();
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-
-			// Should not show name servers, contact details, or glue records
+			expect( screen.getByText( 'DNS records' ) ).toBeVisible();
+			expect( screen.getByText( 'Domain forwarding' ) ).toBeVisible();
+			expect( screen.getByText( 'Domain security' ) ).toBeVisible();
 			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
 		} );
 
@@ -272,53 +167,27 @@ describe( 'DomainOverviewSettings', () => {
 			renderDomainSettings( {
 				subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
 				can_manage_dns_records: false,
-				transfer_status: null,
 			} );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
+			await showAdvancedSettings();
 
-			// Should show only security
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-
-			// Should not show DNS records or email forwarding
+			expect( screen.getByText( 'Domain security' ) ).toBeVisible();
 			expect( screen.queryByText( 'DNS records' ) ).not.toBeInTheDocument();
 			expect( screen.queryByText( 'Domain forwarding' ) ).not.toBeInTheDocument();
-
-			// Should not show registration-only settings
-			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
 		} );
 	} );
 
 	describe( 'Edge Cases', () => {
-		test( 'shows correct number of settings for partially restricted registered domain', async () => {
+		test( 'does not offer advanced settings when there are none', async () => {
 			renderDomainSettings( {
-				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },
-				current_user_can_manage: false, // Restricts contact details and glue records
-				can_manage_dns_records: false, // Restricts DNS records, email forwarding, and glue records
-				is_gravatar_restricted_domain: true, // Restricts name servers
+				subtype: { id: DomainSubtype.DOMAIN_TRANSFER, label: 'Domain Transfer' },
+				transfer_status: DomainTransferStatus.PENDING_ASYNC,
 			} );
 
-			await waitFor( () => {
-				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
-			} );
-
-			// Should only show security setting
-			expect( screen.getByText( 'Domain security' ) ).toBeInTheDocument();
-
-			// Should not show any other settings
-			expect( screen.queryByText( 'Name servers' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'DNS records' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Domain forwarding' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Contact details & privacy' ) ).not.toBeInTheDocument();
-			expect( screen.queryByText( 'Glue records' ) ).not.toBeInTheDocument();
-
-			// Verify only 1 setting button exists
-			const settingsButtons = screen.getAllByRole( 'link' );
-			expect( settingsButtons ).toHaveLength( 1 );
+			expect( await screen.findByText( 'Site' ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'Show advanced settings' } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );
