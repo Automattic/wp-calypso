@@ -108,7 +108,7 @@ function NewsRow( {
 } & AnnouncementActionProps ) {
 	const summary = (
 		<HStack spacing={ 3 } justify="flex-start" alignment="flex-start" className="a4a-news-summary">
-			<AnnouncementLogo announcement={ announcement } size={ 32 } />
+			<AnnouncementLogo announcement={ announcement } size={ 40 } />
 			<VStack spacing={ 1 } className="a4a-news-text">
 				<AnnouncementEyebrow>{ announcement.eyebrow }</AnnouncementEyebrow>
 				<Text size={ 13 } weight={ 500 } lineHeight="20px">
