@@ -154,7 +154,7 @@ export interface DomainSearchEvents {
 	 */
 	onBundleShown: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
 	onBundleAddToCart: ( bundle: BundleSuggestion, placement: BundlePlacement ) => void;
-	/** Name Pulse only. Records `calypso_domain_search` once per settled search. */
+	/** Name Pulse only. Records `calypso_domain_search` once per search that gets results. */
 	onNamePulseSearch: (
 		query: string,
 		trigger: SearchTrigger,

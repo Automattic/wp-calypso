@@ -8,13 +8,22 @@ jest.mock( 'calypso/signup/step-wrapper', () =>
 jest.mock( 'calypso/components/domains/wpcom-domain-search', () => ( {
 	WPCOMDomainSearch: jest.fn().mockReturnValue( null ),
 } ) );
+jest.mock( 'calypso/components/domains/wpcom-domain-search/analytics', () => ( {
+	...jest.requireActual( 'calypso/components/domains/wpcom-domain-search/analytics' ),
+	recordUseYourDomainButtonClick: jest.fn( () => ( { type: 'TEST_USE_YOUR_DOMAIN_CLICK' } ) ),
+} ) );
+jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( 'calypso/components/domains/wpcom-domain-search/use-query-handler', () => {
 	const handler = { query: '', setQuery: jest.fn(), clearQuery: jest.fn(), resetQuery: jest.fn() };
 	return { useQueryHandler: jest.fn( () => handler ) };
 } );
 
+import page from '@automattic/calypso-router';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import React from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/wpcom-domain-search/analytics';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -22,7 +31,11 @@ import DomainSearchStep from '../';
 
 const mockWPCOMDomainSearch = WPCOMDomainSearch as jest.Mock;
 const mockUseQueryHandler = useQueryHandler as jest.Mock;
-const mockQueryHandler = mockUseQueryHandler() as { clearQuery: jest.Mock; resetQuery: jest.Mock };
+const mockQueryHandler = mockUseQueryHandler() as {
+	query: string;
+	clearQuery: jest.Mock;
+	resetQuery: jest.Mock;
+};
 const mockStepWrapper = StepWrapper as unknown as jest.Mock;
 
 const domainItem = { meta: 'example.com', product_slug: 'domain_reg' };
@@ -187,6 +200,43 @@ describe( 'DomainSearchStep — Name Pulse search', () => {
 		renderStep();
 
 		expect( mockWPCOMDomainSearch.mock.calls[ 0 ][ 0 ].slots.BeforeResults() ).not.toBeNull();
+	} );
+} );
+
+describe( 'DomainSearchStep — "Use a domain I already own" header link', () => {
+	const clickHeaderLink = async ( flowName: string ) => {
+		mockQueryHandler.query = 'coffeeshop';
+		renderStep( { ...baseProps, flowName } );
+		mockQueryHandler.query = '';
+
+		const [ [ { customizedActionButtons } ] ] = mockStepWrapper.mock.calls.slice( -1 );
+		render( customizedActionButtons );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Use a domain I already own' } ) );
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockWPCOMDomainSearch.mockReturnValue( null );
+	} );
+
+	it( 'records the click in the domain-only flow', async () => {
+		await clickHeaderLink( 'domain' );
+
+		expect( recordUseYourDomainButtonClick ).toHaveBeenCalledWith(
+			'domain-first',
+			'header',
+			'domain'
+		);
+		expect( page ).toHaveBeenCalledWith(
+			expect.stringContaining( '/setup/domain-transfer/intro' )
+		);
+	} );
+
+	it( 'records nothing new in other flows', async () => {
+		await clickHeaderLink( 'onboarding' );
+
+		expect( recordUseYourDomainButtonClick ).not.toHaveBeenCalled();
+		expect( page ).toHaveBeenCalled();
 	} );
 } );
 
