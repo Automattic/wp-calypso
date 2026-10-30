@@ -401,6 +401,8 @@
 }
 
 .wpnc__action-link.components-button.is-tertiary.has-text {
+	// Minimal actions have short labels that don't wrap, so keep the compact height.
+	height: $button-size-compact;
 	gap: 2px;
 	padding-inline-start: 0;
 	font-size: $font-size-medium;
