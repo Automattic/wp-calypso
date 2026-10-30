@@ -230,6 +230,20 @@ describe( '<PluginsList> empty states', () => {
 		expect(
 			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
 		).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Plugin not found' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'tab', { name: /Available on/ } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows no plugin details when plugins fail to load', async () => {
+		mockApiEndpoints( { sites: [ pluginSite ], plugins: {}, pluginsStatus: 500 } );
+
+		render( <PluginsList /> );
+
+		expect(
+			await screen.findByText( 'Couldn’t load your plugins. Please try again later.' )
+		).toBeVisible();
+		expect( screen.queryByText( 'Plugin not found' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'tab', { name: /Available on/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows the no-site empty state without waiting for plugins', async () => {

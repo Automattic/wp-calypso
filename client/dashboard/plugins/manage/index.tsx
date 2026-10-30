@@ -73,6 +73,9 @@ export default function PluginsList() {
 	const showEmptyState =
 		emptyReason === 'no-sites' || ( emptyReason === 'no-plugins' && ! pluginSlug );
 	const selectedPluginSlug = pluginSlug || plugins[ 0 ]?.slug;
+	// While the list loads, the details pane shows its loading placeholder. Once loaded, a search
+	// or filter with no matches leaves no plugin to show.
+	const showPluginDetails = !! selectedPluginSlug || sitesPluginsLoading;
 	const { data: marketplacePlugins } = useQuery( marketplacePluginsQuery() );
 
 	// Batch plugin slugs into chunks of BATCH_SIZE to comply with API limit
@@ -211,7 +214,7 @@ export default function PluginsList() {
 					isError={ pluginsQueryError }
 				/>
 
-				<PluginSites selectedPluginSlug={ selectedPluginSlug } />
+				{ showPluginDetails && <PluginSites selectedPluginSlug={ selectedPluginSlug } /> }
 			</Grid>
 			{ ! sitesPluginsLoading && ! isPluginLoading && <PerformanceTrackerStop /> }
 		</PageLayout>
