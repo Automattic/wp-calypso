@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { act, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -63,10 +63,6 @@ function mockAccountRecovery( {
 }
 
 describe( '<PersonalDetailsSection>', () => {
-	afterEach( () => {
-		jest.useRealTimers();
-	} );
-
 	test( 'renders the form and saves the form', async () => {
 		const user = userEvent.setup();
 		mockUserSettings( settings );
@@ -78,8 +74,16 @@ describe( '<PersonalDetailsSection>', () => {
 		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
 		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );
 		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
+		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveAttribute(
+			'autocomplete',
+			'username'
+		);
 		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
 			'john@example.com'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveAttribute(
+			'autocomplete',
+			'email'
 		);
 		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
 		await user.clear( firstNameInput );
@@ -165,9 +169,17 @@ describe( '<PersonalDetailsSection>', () => {
 
 			expect( confirmInput ).toHaveValue( 'newusername' );
 			expect( confirmInput ).toHaveFocus();
+
+			await waitFor(
+				() => {
+					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+				},
+				{ timeout: 2000 }
+			);
 		} );
 
-		test( 'shows validation feedback once the debounced username check resolves', async () => {
+		test( 'confirms an available username once the field is left', async () => {
+			const user = userEvent.setup();
 			mockUserSettings( settings );
 			mockIsAutomattician( false );
 			mockValidateUsername( 'newusername' );
@@ -175,24 +187,64 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+			await user.tab();
 
-			jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
-			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			expect(
+				await screen.findByText( 'Nice username!', undefined, { timeout: 2000 } )
+			).toBeVisible();
+		} );
 
+		test( 'shows why a username is not allowed', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'abc' );
+			await user.tab();
+
+			expect(
+				await screen.findByText( 'Usernames must be at least 4 characters.', undefined, {
+					timeout: 2000,
+				} )
+			).toBeVisible();
+			expect( usernameInput ).toBeInvalid();
+		} );
+
+		test( 'flags a confirmation that does not match the new username', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
 
 			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
+			await user.type( confirmInput, 'otherusername' );
+			await user.tab();
+
+			expect( screen.getByText( 'Usernames do not match.' ) ).toBeVisible();
+			expect( confirmInput ).toBeInvalid();
+
+			await user.clear( confirmInput );
 			await user.type( confirmInput, 'newusername' );
 
-			expect( screen.queryByText( 'Nice username!' ) ).not.toBeInTheDocument();
-
-			await act( async () => {
-				jest.advanceTimersByTime( 600 );
-			} );
-
-			expect( await screen.findByText( 'Nice username!' ) ).toBeVisible();
 			expect( screen.getByText( 'Thanks for confirming your new username!' ) ).toBeVisible();
+			await waitFor(
+				() => {
+					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+				},
+				{ timeout: 2000 }
+			);
 		} );
 
 		test( 'shows username update form and submits username change', async () => {
