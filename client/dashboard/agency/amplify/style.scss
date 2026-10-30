@@ -3,33 +3,6 @@
 	text-wrap: pretty;
 }
 
-.dashboard-amplify-view > .dashboard-empty-state__wrapper {
-	overflow: clip;
-}
-
-.dashboard-amplify-view > .dashboard-empty-state__wrapper > div:first-child,
-.dashboard-amplify-view
-	.dashboard-empty-state__wrapper
-	.components-card__body:not( .dashboard-notice__body ),
-.dashboard-amplify-view .dashboard-empty-state__wrapper-content,
-.dashboard-amplify-view .dashboard-empty-state {
-	display: flex;
-	flex: 1;
-	width: 100%;
-	min-height: 0;
-}
-
-.dashboard-amplify-view .dashboard-empty-state__wrapper-content {
-	padding-block: 0;
-}
-
-/* Only the empty state's own card, so notices inside it keep their padding. */
-.dashboard-amplify-view
-	.dashboard-empty-state__wrapper
-	.components-card__body:not( .dashboard-notice__body ) {
-	padding: 0;
-}
-
 .dashboard-amplify-results {
 	margin-block-start: 0;
 }
@@ -586,10 +559,6 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 }
 
 @media ( max-width: 950px ) {
-	.dashboard-amplify-view > .dashboard-empty-state__wrapper {
-		overflow: visible;
-	}
-
 	.dashboard-amplify-overview {
 		padding-block-start: 20px;
 	}
