@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { useConstrainedTabbing } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
@@ -96,9 +97,11 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 	};
 
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
+	const constrainedTabbingRef = useConstrainedTabbing();
 
 	return (
 		<HStack
+			ref={ constrainedTabbingRef }
 			className="wpnc-app"
 			spacing={ 0 }
 			alignment="stretch"
