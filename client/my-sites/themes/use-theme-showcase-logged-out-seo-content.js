@@ -47,8 +47,8 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 							),
 				},
 				free: {
-					title: translate( 'Free WordPress Themes and Templates' ),
-					header: translate( 'Free WordPress Themes and Templates' ),
+					title: translate( 'Free WordPress themes and templates' ),
+					header: translate( 'Free WordPress themes and templates' ),
 					metaDescription: translate(
 						'Browse all free themes for WordPress.com. Try one or try them all. Risk-free.'
 					),
@@ -83,8 +83,8 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			blog: {
 				all: {
-					title: translate( 'Blog Templates and Themes' ),
-					header: translate( 'Blog Templates and Themes' ),
+					title: translate( 'Blog templates and themes' ),
+					header: translate( 'Blog templates and themes' ),
 					metaDescription: translate(
 						"Start your blog with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
@@ -126,8 +126,8 @@ export default function useThemeShowcaseLoggedOutSeoContent( filter, tier ) {
 			},
 			business: {
 				all: {
-					title: translate( 'Business Website Templates' ),
-					header: translate( 'Business Website Templates' ),
+					title: translate( 'Business website templates' ),
+					header: translate( 'Business website templates' ),
 					metaDescription: translate(
 						"Start your business website with the perfect theme. Browse high-quality, professionally-designed options. Then, activate the one that's right for you."
 					),
