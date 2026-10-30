@@ -79,6 +79,15 @@
 	min-height: 3rem;
 }
 
+.email-titan-plan-trial {
+	align-self: flex-start;
+
+	// Keeps prices aligned across cards when only some tiers have a trial.
+	&.is-hidden {
+		visibility: hidden;
+	}
+}
+
 // Match the price to the plan header typeface.
 .email-titan-plan-price {
 	font-family: inherit;
