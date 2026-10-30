@@ -139,7 +139,7 @@
 		"reader/full-errors": false,
 		"reader/four-for-four": true,
 		"reader/msd-enabled": true,
-		"reader/saved-posts": false,
+		"reader/saved-posts": true,
 		"redirect-fallback-browsers": true,
 		"rum-tracking/logstash": true,
 		"safari-idb-mitigation": true,
