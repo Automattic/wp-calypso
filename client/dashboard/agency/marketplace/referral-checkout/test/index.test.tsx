@@ -225,7 +225,7 @@ describe( '<ReferralCheckout>', () => {
 			} );
 		const user = userEvent.setup();
 		render( <ReferralCheckout /> );
-		await screen.findByText( 'VaultPress Backup 10GB x 3' );
+		await screen.findByText( /^3 licenses at .+ each$/ );
 
 		await user.type( screen.getByLabelText( 'Client’s email address' ), 'client@example.com' );
 		await user.click( screen.getByRole( 'button', { name: 'Send to client' } ) );
