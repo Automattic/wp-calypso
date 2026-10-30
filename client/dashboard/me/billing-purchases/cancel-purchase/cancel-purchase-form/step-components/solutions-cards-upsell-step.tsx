@@ -39,7 +39,7 @@ import UpsellStep from './upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
-const RENEW_COUPON = 'DONTGO25';
+const RENEW_COUPON = 'CANRENEW25OFF';
 
 const CARD_ICONS: Record< string, IconType > = {
 	'change-plan': reusableBlock,
