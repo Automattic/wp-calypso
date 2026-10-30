@@ -4,7 +4,6 @@ import {
 	purchaseQuery,
 	domainDiagnosticsQuery,
 	domainMappingStatusQuery,
-	siteByIdQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -15,7 +14,7 @@ import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
-import SnackbarBackButton from '../../app/snackbar-back-button';
+import { usePersistBackTo } from '../../app/snackbar-back-button';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
@@ -35,13 +34,12 @@ export default function DomainOverview() {
 	const locale = useLocale();
 	const { domainName } = domainRoute.useParams();
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	usePersistBackTo();
 
 	const { data: purchase } = useQuery( {
 		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
 		enabled: !! domain.subscription_id,
 	} );
-
-	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	const { data: domainMappingStatus } = useQuery( {
 		...domainMappingStatusQuery( domain.domain ),
@@ -150,7 +148,6 @@ export default function DomainOverview() {
 				) }
 				<Actions isDisabled={ isTldInMaintenance( domain ) } />
 			</PageLayout>
-			<SnackbarBackButton backToParams={ { siteSlug: site?.slug ?? domain.site_slug } } />
 			<PerformanceTrackerStop />
 		</>
 	);

@@ -16,33 +16,30 @@ export default function DomainEmailsSettingsSummary( { domain }: { domain: Domai
 		0
 	);
 
-	if ( mailboxCount === 0 ) {
-		return (
-			<RouterLinkSummaryButton
-				to={ chooseEmailSolutionRoute.fullPath }
-				params={ { domain: domain.domain } }
-				title={ __( 'Professional email' ) }
-				badges={ [] }
-				density="medium"
-			/>
-		);
-	}
+	const linkProps =
+		mailboxCount > 0
+			? { to: emailsRoute.fullPath, search: { domainName: domain.domain } }
+			: { to: chooseEmailSolutionRoute.fullPath, params: { domain: domain.domain } };
+
+	const badges =
+		mailboxCount > 0
+			? [
+					{
+						text: sprintf(
+							// translators: %d is the number of mailboxes on the domain.
+							_n( '%d mailbox', '%d mailboxes', mailboxCount ),
+							mailboxCount
+						),
+						intent: 'stable' as const,
+					},
+				]
+			: [];
 
 	return (
 		<RouterLinkSummaryButton
-			to={ emailsRoute.fullPath }
-			search={ { domainName: domain.domain } }
+			{ ...linkProps }
 			title={ __( 'Professional email' ) }
-			badges={ [
-				{
-					text: sprintf(
-						// translators: %d is the number of mailboxes on the domain.
-						_n( '%d mailbox', '%d mailboxes', mailboxCount ),
-						mailboxCount
-					),
-					intent: 'stable',
-				},
-			] }
+			badges={ badges }
 			density="medium"
 		/>
 	);

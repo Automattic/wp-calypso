@@ -39,6 +39,13 @@ export default function DomainOverviewSettings( {
 	];
 	const advancedButtonListItems = [];
 
+	const isManageable =
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
+		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC;
+	const canManageDns = isManageable && domain.can_manage_dns_records;
+
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 		buttonListItems.push(
 			<DomainConnectionSetupSummary
@@ -49,13 +56,7 @@ export default function DomainOverviewSettings( {
 		);
 	}
 
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-		domain.can_manage_dns_records
-	) {
+	if ( canManageDns ) {
 		buttonListItems.push( <DomainForwardingSettingsSummary key="forwarding" domain={ domain } /> );
 	}
 
@@ -68,13 +69,7 @@ export default function DomainOverviewSettings( {
 		);
 	}
 
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-		domain.can_manage_dns_records
-	) {
+	if ( canManageDns ) {
 		buttonListItems.push( <DnsSettingsSummary key="dns" domain={ domain } /> );
 	}
 
@@ -96,12 +91,7 @@ export default function DomainOverviewSettings( {
 	 * TODO: review this one - we need to show the security for transfers but only if there is
 	 * mapping. Right now I copied the code from the original code but it seems wrong
 	 */
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
-	) {
+	if ( isManageable ) {
 		advancedButtonListItems.push(
 			<DomainSecuritySettingsSummary key="security" domain={ domain } isDisabled={ isDisabled } />
 		);

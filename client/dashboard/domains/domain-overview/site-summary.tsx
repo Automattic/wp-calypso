@@ -2,6 +2,8 @@ import { Domain, DomainSubtype } from '@automattic/api-core';
 import { siteByIdQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
+import { domainTransferToOtherSiteRoute } from '../../app/router/domains';
+import { siteRoute } from '../../app/router/sites';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 
 export default function DomainSiteSettingsSummary( { domain }: { domain: Domain } ) {
@@ -13,22 +15,22 @@ export default function DomainSiteSettingsSummary( { domain }: { domain: Domain 
 		domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER &&
 		domain.can_transfer_to_other_site;
 
+	const linkProps = shouldShowAttachSite
+		? { to: domainTransferToOtherSiteRoute.fullPath, params: { domainName: domain.domain } }
+		: { to: siteRoute.fullPath, params: { siteSlug: site?.slug ?? domain.site_slug } };
+
+	let badges: { text: string }[] = [];
 	if ( shouldShowAttachSite ) {
-		return (
-			<RouterLinkSummaryButton
-				to={ `/domains/${ domain.domain }/transfer/other-site` }
-				title={ __( 'Site' ) }
-				badges={ [ { text: __( 'No site attached' ) } ] }
-				density="medium"
-			/>
-		);
+		badges = [ { text: __( 'No site attached' ) } ];
+	} else if ( site ) {
+		badges = [ { text: site.name } ];
 	}
 
 	return (
 		<RouterLinkSummaryButton
-			to={ `/sites/${ site?.slug ?? domain.site_slug }` }
+			{ ...linkProps }
 			title={ __( 'Site' ) }
-			badges={ site ? [ { text: site.name } ] : [] }
+			badges={ badges }
 			density="medium"
 		/>
 	);
