@@ -4,7 +4,7 @@ import {
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
@@ -47,6 +47,7 @@ export default function PersonalDetailsSection() {
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
 	const [ emailSaveError, setEmailSaveError ] = useState< string | null >( null );
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const queryClient = useQueryClient();
 
 	const success = __( 'Settings saved.' );
 	const mutation = useMutation(
@@ -60,6 +61,8 @@ export default function PersonalDetailsSection() {
 		onError: ( error ) => {
 			if ( isEmailFieldError( error ) ) {
 				setEmailSaveError( error.message );
+				// Rejecting the address also cancels any email change that was pending.
+				queryClient.invalidateQueries( userSettingsQuery() );
 			} else {
 				createErrorNotice( error.message, { type: 'snackbar' } );
 			}
@@ -202,7 +205,7 @@ export default function PersonalDetailsSection() {
 								variant="primary"
 								type="submit"
 								isBusy={ isSaving }
-								disabled={ isSaving || ! isDirty || ! isEmailValid }
+								disabled={ isSaving || ! isDirty || ! isEmailValid || !! emailSaveError }
 							>
 								{ __( 'Save' ) }
 							</Button>

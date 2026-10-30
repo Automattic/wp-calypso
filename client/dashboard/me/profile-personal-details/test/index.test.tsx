@@ -507,6 +507,7 @@ describe( '<PersonalDetailsSection>', () => {
 			);
 
 			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			const refetch = mockUserSettings( settings );
 			await user.clear( emailInput );
 			await user.type( emailInput, 'taken@example.com' );
 			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
@@ -514,10 +515,13 @@ describe( '<PersonalDetailsSection>', () => {
 			expect(
 				await screen.findByText( 'That e-mail address is already being used.' )
 			).toBeVisible();
+			// The server cancels any pending email change when it rejects the address.
+			await waitFor( () => expect( refetch.isDone() ).toBe( true ) );
 			expect(
 				screen.queryByRole( 'button', { name: 'Dismiss this notice' } )
 			).not.toBeInTheDocument();
 			expect( emailInput ).toBeInvalid();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 
 			await user.clear( emailInput );
 			await user.type( emailInput, 'free@example.com' );
@@ -526,6 +530,7 @@ describe( '<PersonalDetailsSection>', () => {
 				screen.queryByText( 'That e-mail address is already being used.' )
 			).not.toBeInTheDocument();
 			expect( emailInput ).toBeValid();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled();
 		} );
 
 		test( 'shows an error that does not concern the email address in a snackbar', async () => {
@@ -569,6 +574,7 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			mockUserSettings( settings );
 			await user.clear( emailInput );
 			await user.type( emailInput, 'taken@example.com{Enter}' );
 
