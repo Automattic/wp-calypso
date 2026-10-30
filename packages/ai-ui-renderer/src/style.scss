@@ -225,8 +225,7 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 	// Long URLs and IDs wrap instead of overflowing, also in the modal, outside the host's text rules.
 	overflow-wrap: anywhere;
 
-	// Full width in a `Row` too, whose items keep their content's width, so the chart measures the
-	// space it has.
+	// Full width, also in a `Row`, whose items keep their content's width.
 	.ai-ui-renderer__chart {
 		width: 100%;
 		margin: 0;
@@ -242,8 +241,8 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 		font-weight: 600;
 	}
 
-	// The library draws the grid and axes in fixed colors, the grid's as an inline style, so they take
-	// the surface's text color, faintly.
+	// The library colors the grid and axes itself, the grid with an inline style, so these take over
+	// with the surface's text color, faintly.
 	.ai-ui-renderer__chart :is( .visx-rows, .visx-columns, .visx-axis ) line {
 		stroke: currentColor !important;
 		stroke-opacity: 0.2;
@@ -548,8 +547,8 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 	}
 }
 
-// Charts render their tooltips in a portal on the page, outside the surface, so each tooltip copies
-// its surface's theme (`copyTheme()`), and the portal's own box and text styles are cleared.
+// Chart tooltips render in a portal on the page, so each copies its surface's theme (`copyTheme()`),
+// and the portal's own box is cleared.
 .visx-tooltip:has( .ai-ui-renderer__chart-tooltip ) {
 	max-width: none !important;
 	padding: 0 !important;

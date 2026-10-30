@@ -14,10 +14,9 @@ const CHART_HEIGHT = 240;
 // A horizontal bar chart grows with its categories, so each keeps room for its label.
 const CATEGORY_ROW_HEIGHT = 24;
 
-// The library resolves the SVG's tokens against the page, not the surface, so the axis labels and
-// legend use the surface's text color instead, as `style.scss` does for the axes and grid. The
-// series colors are plain colors, as the library reads them, each with at least 3:1 contrast on
-// white and on #1e1e1e.
+// The library resolves the SVG's color tokens against the page, not the surface, so the labels and
+// legend take the surface's text color. The series colors must be plain colors, and each has at
+// least 3:1 contrast on white and on #1e1e1e.
 const CHART_THEME: Partial< Charts.ChartTheme > = {
 	// The library outlines the points a tooltip marks with this color, resolved against the page.
 	backgroundColor: 'transparent',
@@ -29,8 +28,8 @@ const CHART_THEME: Partial< Charts.ChartTheme > = {
 // Bars and lines start from zero, so they don't exaggerate differences.
 const FROM_ZERO = { zero: true };
 
-// A long category name would squeeze a horizontal chart's bars, so the axis shortens it, and the
-// tooltip shows it in full. Vertical bars cut theirs to fit their width.
+// A long category name would squeeze a horizontal chart's bars, so the axis shortens it. The tooltip
+// shows it in full.
 const MAX_CATEGORY_LENGTH = 20;
 
 function shortenCategory( value: unknown ) {
@@ -41,8 +40,8 @@ function shortenCategory( value: unknown ) {
 		: label;
 }
 
-// Dates follow the page's language, as the chat's text does, rather than the browser's. A page
-// language that isn't a valid locale, such as `de_formal`, falls back to the browser's.
+// Dates follow the page's language, not the browser's, unless it isn't a valid locale, such as
+// `de_formal`.
 function getPageLocale() {
 	try {
 		return Intl.getCanonicalLocales( document.documentElement.lang )[ 0 ];
@@ -55,7 +54,7 @@ function formatDate( date: Date ) {
 	return date.toLocaleDateString( getPageLocale(), { dateStyle: 'medium' } );
 }
 
-// As the library's own ticks do, these name days, or years once the data spans two years or more.
+// Like the library's own ticks: days, or years once the data spans two years.
 const TWO_YEARS_MS = 2 * 365 * 24 * 60 * 60 * 1000;
 
 function getDateTickFormat( dates: Date[] ) {
@@ -83,8 +82,8 @@ const getLabel = ( { label }: { label: string } ) => label;
 
 const getDateKey = ( { date }: { date: Date } ) => formatDate( date );
 
-// The library draws data it can't chart as its own English error, or draws it wrong, so a chart
-// throws instead: the surface then shows its fallback and reports the error.
+// The library shows data it can't chart as an English error, or draws it wrong, so a chart throws
+// instead, and the surface shows its fallback and reports it.
 function assertUnique( values: string[], name: string ) {
 	const duplicate = values.find( ( value, index ) => values.indexOf( value ) !== index );
 
@@ -130,9 +129,9 @@ interface ChartFigureProps {
 	children: ReactNode;
 }
 
-// The library moves keyboard focus onto its tooltip, in a portal at the end of the page, and doesn't
-// bring it back: Tab would leave the chat, and closing the tooltip drops focus. So focus returns to
-// the chart first, and Tab moves on from there.
+// The library focuses its tooltip, in a portal at the end of the page, and never refocuses the
+// chart, so Tab would leave the chat and closing the tooltip would drop focus. Focus returns to the
+// chart first.
 function returnFocusToChart( event: KeyboardEvent< HTMLElement > ) {
 	const figure = event.currentTarget;
 	const chart = figure.querySelector< HTMLElement >( '[role="grid"]' );
@@ -152,7 +151,7 @@ function returnFocusToChart( event: KeyboardEvent< HTMLElement > ) {
 // The library's SVG doesn't expose the data, so screen readers get it as a table instead.
 function ChartFigure( { className, title, table, children }: ChartFigureProps ) {
 	return (
-		// The keys come from the chart and its tooltip, whose portal's events bubble here.
+		// Key events from the tooltip's portal bubble here.
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<figure
 			className={ clsx( 'ai-ui-renderer__chart', className ) }
@@ -194,8 +193,7 @@ interface ChartTooltipProps {
 	rows: { label?: string; value: number }[];
 }
 
-// The library renders tooltips in a portal on the page, so a tooltip copies its surface's theme, as
-// the modal does, and its font, since the portal's own box sets one.
+// Tooltips render in a portal on the page, so a tooltip copies its surface's theme and font.
 function ChartTooltip( { heading, rows }: ChartTooltipProps ) {
 	const { rootRef } = useInteractiveUiSurface();
 	const ref = useRef< HTMLDivElement >( null );
@@ -207,8 +205,8 @@ function ChartTooltip( { heading, rows }: ChartTooltipProps ) {
 		}
 	}, [ rootRef ] );
 
-	// The library keeps a tooltip within the window, but the surface, such as a chat, can be narrower,
-	// so once the library has placed it, it moves back within the surface's edges.
+	// The library positions a tooltip against the window, not the surface, so once placed, it moves
+	// back within the surface.
 	useLayoutEffect( () => {
 		const root = rootRef?.current;
 		const tooltip = ref.current;
@@ -244,9 +242,9 @@ function ChartTooltip( { heading, rows }: ChartTooltipProps ) {
 	);
 }
 
-// A bar's tooltip names its category, and a line's its date, then each series' value there. The
-// values come from the chart's data, as the library's tooltip data keeps points from earlier hovers
-// and, from the keyboard, only one series'.
+// A bar's tooltip names its category and a line's its date, with each series' value there. The
+// values come from the chart's data: the library's keeps earlier points and, from the keyboard,
+// only one series'.
 function getSeriesTooltip< Point extends { value: number } >(
 	series: Series< Point >[],
 	getKey: ( point: Point ) => string
@@ -282,7 +280,7 @@ interface LineChartProps {
 }
 
 export function LineChart( { title, series }: LineChartProps ) {
-	// In date order, as the library draws them, so the table and tooltips follow it.
+	// Sorted by date, as the library draws them, so the table and tooltips match.
 	const data = useMemo( () => {
 		assertSeries( series, ( { date } ) => date );
 
@@ -353,8 +351,8 @@ export function BarChart( { title, series, orientation }: BarChartProps ) {
 	}, [ series ] );
 	const renderTooltip = useMemo( () => getSeriesTooltip( series, getLabel ), [ series ] );
 
-	// The library draws the first category at the bottom of a horizontal chart, so it gets them in
-	// reverse, and a ranking reads from the top.
+	// The library draws a horizontal chart's first category at the bottom, so the categories go in
+	// reverse, to read from the top.
 	const data = useMemo(
 		() =>
 			isHorizontal
