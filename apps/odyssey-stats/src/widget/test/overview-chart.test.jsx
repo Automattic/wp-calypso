@@ -87,6 +87,17 @@ describe( 'OverviewChart tooltip', () => {
 		expect( screen.getByText( '1. Juli 2026' ) ).toBeInTheDocument();
 	} );
 
+	it( 'ignores the PHP date format wp-admin writes over the long date format', () => {
+		const LL = moment.localeData().longDateFormat( 'LL' );
+		moment.updateLocale( 'en', { longDateFormat: { LL: 'F j, Y' } } );
+		try {
+			renderTooltip( 'day', { Views: 1200 } );
+		} finally {
+			moment.updateLocale( 'en', { longDateFormat: { LL } } );
+		}
+		expect( screen.getByText( 'July 1, 2026' ) ).toBeInTheDocument();
+	} );
+
 	it( 'lists every series in full, largest first', () => {
 		const { container } = renderTooltip( 'day', { Visitors: 620, Views: 1204 } );
 

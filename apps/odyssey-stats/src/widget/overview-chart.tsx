@@ -4,7 +4,6 @@ import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
-import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { Unit } from '../typings';
 import type { DataPointDate, RenderTooltipParams, SeriesData } from '@automattic/charts';
 
@@ -12,6 +11,19 @@ import type { DataPointDate, RenderTooltipParams, SeriesData } from '@automattic
 // outside the roots our stylesheets are scoped to — so these few rules travel with it.
 const TOOLTIP_DATE_STYLE = { fontWeight: 600, marginBlockEnd: '4px' };
 const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', gap: '12px' };
+
+/**
+ * Names the date a hovered point covers, in the site locale's order. Not moment's `LL`: in
+ * wp-admin, core rewrites it to the site's PHP date format, so moment prints "F j, 2026".
+ * @param date The hovered point's date.
+ * @param unit The range's bucket.
+ * @returns The formatted date.
+ */
+function formatTooltipDate( date: Date, unit: Unit ) {
+	const options: Intl.DateTimeFormatOptions =
+		'month' === unit ? { month: 'long', year: 'numeric' } : { dateStyle: 'long' };
+	return new Intl.DateTimeFormat( moment.locale(), options ).format( date );
+}
 
 /**
  * Tooltip for a hovered point. The package's own prints `toLocaleDateString()`, which names
@@ -31,7 +43,7 @@ function renderTooltip( unit: Unit, { tooltipData }: RenderTooltipParams< DataPo
 
 	return (
 		<div>
-			<div style={ TOOLTIP_DATE_STYLE }>{ formatDate( hoveredDate, unit ) }</div>
+			<div style={ TOOLTIP_DATE_STYLE }>{ formatTooltipDate( hoveredDate, unit ) }</div>
 			{ points.map( ( point ) => (
 				<div key={ point.label } style={ TOOLTIP_ROW_STYLE }>
 					<span>{ point.label }</span>
