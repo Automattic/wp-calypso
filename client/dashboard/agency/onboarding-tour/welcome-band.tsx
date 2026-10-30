@@ -16,8 +16,8 @@ import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import NewTabLabel from '../components/new-tab-label';
 import callArt from './images/welcome/call.svg';
-import productArt from './images/welcome/product.svg';
-import siteArt from './images/welcome/site.svg';
+import referralsArt from './images/welcome/referrals.svg';
+import wooPaymentsArt from './images/welcome/woopayments.svg';
 import type { AgencyTierType, RecordTracksEvent } from '../tiers/types';
 import type { AgencyApprovalStatus } from '@automattic/api-core';
 import type { ReactNode } from 'react';
@@ -56,16 +56,16 @@ export function useWelcomeBandVisibility(
 	};
 }
 
-type StepId = 'call' | 'site' | 'product';
+type StepId = 'call' | 'referrals' | 'woopayments';
 
 // The muted grey that still reads on the blue field; the components' muted grey is under AA there.
 const MUTED_ON_FIELD = 'var( --a4a-welcome-band-muted )';
 
 interface WelcomeBandProps {
-	/** Under review, buying and referring unlock on activation. */
+	/** Under review, referring and WooPayments unlock on activation. */
 	isPending: boolean;
-	sitesHref: string;
-	marketplaceHref: string;
+	referralsHref: string;
+	wooPaymentsHref: string;
 	onScheduleCall: () => void;
 	isSchedulingCall?: boolean;
 	onTakeTour: () => void;
@@ -78,8 +78,8 @@ interface WelcomeBandProps {
  */
 export default function WelcomeBand( {
 	isPending,
-	sitesHref,
-	marketplaceHref,
+	referralsHref,
+	wooPaymentsHref,
 	onScheduleCall,
 	isSchedulingCall,
 	onTakeTour,
@@ -113,7 +113,9 @@ export default function WelcomeBand( {
 			id: 'call',
 			art: callArt,
 			title: __( 'Plan your growth with an advisor' ),
-			description: __( 'A free 30-minute call about your goals and new ways to win clients.' ),
+			description: __(
+				'A free 30-minute call to identify your business challenges and ways to grow your agency.'
+			),
 			action: (
 				<Button
 					variant="primary"
@@ -132,35 +134,38 @@ export default function WelcomeBand( {
 			),
 		},
 		{
-			id: 'site',
-			art: siteArt,
-			title: __( 'Manage every site in one place' ),
-			description: __( 'Wherever they’re hosted. Our plugin connects a site in seconds.' ),
+			id: 'referrals',
+			art: referralsArt,
+			isLocked: isPending,
+			title: __( 'Earn commission on referrals' ),
+			description: __( 'Generate passive income when your clients purchase hosting and products.' ),
 			action: (
 				<RouterLinkButton
-					to={ sitesHref }
+					to={ referralsHref }
 					variant="secondary"
 					size="compact"
-					onClick={ () => recordStep( 'site' ) }
+					onClick={ () => recordStep( 'referrals' ) }
 				>
-					<span className="a4a-welcome-band-cta-label">{ __( 'Connect your first site' ) }</span>
+					<span className="a4a-welcome-band-cta-label">{ __( 'Explore referrals' ) }</span>
 				</RouterLinkButton>
 			),
 		},
 		{
-			id: 'product',
-			art: productArt,
+			id: 'woopayments',
+			art: wooPaymentsArt,
 			isLocked: isPending,
-			title: __( 'Earn on every plugin and plan' ),
-			description: __( 'Buy at agency prices, or let your client pay and earn on each renewal.' ),
+			title: __( 'Enjoy revenue share with WooPayments' ),
+			description: __(
+				'Enable WooPayments on your client sites and earn revenue on the payment volume.'
+			),
 			action: (
 				<RouterLinkButton
-					to={ marketplaceHref }
+					to={ wooPaymentsHref }
 					variant="secondary"
 					size="compact"
-					onClick={ () => recordStep( 'product' ) }
+					onClick={ () => recordStep( 'woopayments' ) }
 				>
-					<span className="a4a-welcome-band-cta-label">{ __( 'Explore products & hosting' ) }</span>
+					<span className="a4a-welcome-band-cta-label">{ __( 'Set up WooPayments' ) }</span>
 				</RouterLinkButton>
 			),
 		},

@@ -96,8 +96,8 @@ export default function AgencyOverview() {
 			{ isWelcomeBandVisible && (
 				<WelcomeBand
 					isPending={ isPending }
-					sitesHref="/sites"
-					marketplaceHref="/marketplace"
+					referralsHref="/referrals"
+					wooPaymentsHref="/woopayments"
 					onScheduleCall={ scheduleCall }
 					isSchedulingCall={ isSchedulingCall }
 					onTakeTour={ openTour }
