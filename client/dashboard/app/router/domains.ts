@@ -342,7 +342,7 @@ export const domainForwardingAddRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add domain forwarding' ),
+				title: __( 'Add forwarding' ),
 			},
 		],
 	} ),

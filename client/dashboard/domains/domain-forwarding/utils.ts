@@ -138,3 +138,14 @@ export function formDataToSubmitData(
 
 	return submitData;
 }
+
+export function getForwardingSummary( isPermanent: boolean, forwardPaths: boolean ): string {
+	if ( isPermanent ) {
+		return forwardPaths
+			? __( 'Permanent forward. Visitors land on the matching page.' )
+			: __( 'Permanent forward. Everyone lands on the same address.' );
+	}
+	return forwardPaths
+		? __( 'Temporary forward. Visitors land on the matching page.' )
+		: __( 'Temporary forward. Everyone lands on the same address.' );
+}
