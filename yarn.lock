@@ -485,6 +485,8 @@ __metadata:
     "@a2ui/react": "npm:0.14.0"
     "@a2ui/web_core": "npm:0.14.0"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/charts": "npm:^1.10.0"
+    "@automattic/number-formatters": "npm:^1.2.10"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@types/react": "npm:^18.3.1"

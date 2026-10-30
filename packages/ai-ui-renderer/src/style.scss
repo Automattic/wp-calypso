@@ -31,6 +31,8 @@ $wp-components-colors: (
 // WordPress's divider color, mirrored for dark mode.
 $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( $white, 0.1 ) ) );
 
+$surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) );
+
 // An unset token keeps the host's WordPress components color, or else the default. A custom
 // property can't read the value it inherits, so the root resolves the host colors for its children.
 .ai-ui-renderer,
@@ -187,8 +189,9 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 }
 
 .ai-ui-renderer .ai-ui-renderer__card,
-.ai-ui-renderer__modal .ai-ui-renderer__dialog {
-	background-color: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) );
+.ai-ui-renderer__modal .ai-ui-renderer__dialog,
+.ai-ui-renderer__chart-tooltip {
+	background-color: $surface-background;
 	color: var( --a2ui-color-on-surface, light-dark( $gray-900, $gray-100 ) );
 }
 
@@ -221,6 +224,56 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 .ai-ui-renderer {
 	// Long URLs and IDs wrap instead of overflowing, also in the modal, outside the host's text rules.
 	overflow-wrap: anywhere;
+
+	// Full width, also in a `Row`, whose items keep their content's width.
+	.ai-ui-renderer__chart {
+		width: 100%;
+		margin: 0;
+
+		// The axes don't mirror on a right-to-left page, so neither do their labels. The legend does.
+		svg {
+			direction: ltr;
+		}
+	}
+
+	.ai-ui-renderer__chart-title {
+		margin-block-end: 8px;
+		font-weight: 600;
+	}
+
+	// The library colors the grid and axes itself, the grid with an inline style, so these take over
+	// with the surface's text color, faintly.
+	.ai-ui-renderer__chart :is( .visx-rows, .visx-columns, .visx-axis ) line {
+		stroke: currentColor !important;
+		stroke-opacity: 0.2;
+	}
+
+	// The library keeps a legend label at its full width, so long ones would overflow a narrow chat.
+	.ai-ui-renderer__chart :is( .visx-legend-item, .visx-legend-label ) {
+		min-width: 0;
+	}
+
+	.ai-ui-renderer__chart .visx-legend-label {
+		flex-shrink: 1 !important;
+	}
+
+	// The library marks the bar the keyboard selects in a fixed blue, so it takes the text color.
+	.ai-ui-renderer__chart .visx-bar {
+		stroke: currentColor !important;
+		stroke-width: 0;
+	}
+
+	// Even separators between slices, in the surface's color.
+	.ai-ui-renderer__chart--pie path {
+		stroke: $surface-background;
+		stroke-width: 1px;
+	}
+
+	// The chart's keyboard focus, which moves its tooltip between points.
+	.ai-ui-renderer__chart [role='grid']:focus-visible {
+		outline: 2px solid var( --ai-ui-renderer-accent-line );
+		outline-offset: 2px;
+	}
 
 	.ai-ui-renderer__audio-player {
 		display: flex;
@@ -491,5 +544,44 @@ $border-color: var( --a2ui-color-border, light-dark( rgba( $black, 0.1 ), rgba( 
 		max-width: 100%;
 		height: auto;
 		align-self: flex-start;
+	}
+}
+
+// Chart tooltips render in a portal on the page, so each copies its surface's theme (`copyTheme()`),
+// and the portal's own box is cleared.
+.visx-tooltip:has( .ai-ui-renderer__chart-tooltip ) {
+	padding: 0 !important;
+	background: none !important;
+	box-shadow: none !important;
+}
+
+.ai-ui-renderer__chart-tooltip {
+	box-sizing: border-box;
+	padding: 8px;
+
+	// Narrow enough to fit within a chat, with long headings wrapping.
+	max-width: 240px;
+	border: 1px solid $border-color;
+	border-radius: var( --wpds-border-radius-sm, 2px );
+	box-shadow: 0 2px 6px rgba( $black, 0.15 );
+	font-size: 13px;
+	font-weight: 400;
+	line-height: 1.5;
+	letter-spacing: normal;
+	overflow-wrap: anywhere;
+}
+
+.ai-ui-renderer__chart-tooltip-heading,
+.ai-ui-renderer__chart-tooltip-row strong {
+	font-weight: 600;
+}
+
+.ai-ui-renderer__chart-tooltip-row {
+	display: flex;
+	justify-content: space-between;
+	gap: 16px;
+
+	strong {
+		white-space: nowrap;
 	}
 }

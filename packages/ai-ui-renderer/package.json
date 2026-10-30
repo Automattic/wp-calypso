@@ -51,6 +51,8 @@
 		"@a2ui/markdown-it": "0.2.2",
 		"@a2ui/react": "0.14.0",
 		"@a2ui/web_core": "0.14.0",
+		"@automattic/charts": "^1.10.0",
+		"@automattic/number-formatters": "^1.2.10",
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/icons": "^13.3.0",

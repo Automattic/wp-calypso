@@ -1,5 +1,5 @@
-// What the modal copies from its surface: A2UI's tokens and the host colors the surface resolved,
-// both as `style.scss` names them (keep the two in sync), and the color scheme.
+// What the modal and chart tooltips copy from their surface: A2UI's tokens and the host colors the
+// surface resolved, both as `style.scss` names them (keep the two in sync), and the color scheme.
 const THEME_PROPERTIES = [
 	'--a2ui-color-primary',
 	'--a2ui-color-primary-hover',
