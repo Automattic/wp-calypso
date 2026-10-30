@@ -258,7 +258,7 @@ const webpackConfig = {
 		moduleIds: 'named',
 		chunkIds: isDevelopment || shouldEmitStats ? 'named' : 'deterministic',
 		minimize: shouldMinify,
-		minimizer: Minify(),
+		minimizer: Minify( { parallel: workerCount } ),
 	},
 	module: {
 		strictExportPresence: true,
