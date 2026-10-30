@@ -57,6 +57,11 @@
 		overflow: hidden;
 	}
 
+	.stats-widget-chart__skeleton {
+		block-size: 100%;
+		border-radius: var(--wpds-border-radius-lg, 8px);
+	}
+
 	// Spaced as the other sections' closing links, such as "Anti-spam insights".
 	.stats-widget-minichart__footer {
 		margin-block-start: var(--wpds-dimension-gap-lg, 16px);

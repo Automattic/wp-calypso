@@ -30,3 +30,11 @@
 	// Only as wide as the figure, so its tooltip opens over the number.
 	inline-size: fit-content;
 }
+
+// Stands in for the figure. Its margins make up the difference to the figure's line box,
+// so the card keeps its height when the figure lands.
+.stats-widget-metric__value-skeleton {
+	block-size: 28px;
+	inline-size: 64px;
+	margin-block: var(--wpds-dimension-gap-sm, 8px) var(--wpds-dimension-gap-xs, 4px);
+}
