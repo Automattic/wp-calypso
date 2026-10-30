@@ -10,16 +10,22 @@ import {
 	A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 	A4A_MARKETPLACE_PRODUCTS_LINK,
 	A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+	A4A_PARTNER_DIRECTORY_LINK,
 	A4A_REFERRALS_DASHBOARD,
 	A4A_SITES_LINK,
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import useLeadMatchingProfile from 'calypso/a8c-for-agencies/data/partner-directory/use-lead-matching-profile';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
+import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 	PROGRAM_INCENTIVES_URL,
 } from 'calypso/dashboard/agency/overview/constants';
+import { getAnsweredMatchingProfileCount } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
 import AgencyOverviewContent from 'calypso/dashboard/agency/overview/overview-content';
+import { REQUIRED_LEAD_MATCHING_FIELDS } from 'calypso/dashboard/agency/partner-directory/lead-matching/form-data';
+import { isProPartnerOrHigher } from 'calypso/dashboard/agency/tiers/get-current-agency-tier';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -32,12 +38,25 @@ function DashboardOverviewBodyContent( {
 } ) {
 	const dispatch = useDispatch();
 	const agency = useSelector( getActiveAgency );
+	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
 	const { isEligibleForIntroductoryOffer } = usePressableOfferEligibility();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
 		);
+	const canAccessLeadMatching =
+		isProPartnerOrHigher( agency?.tier?.id ) &&
+		!! agencyId &&
+		!! agency?.partner_directory?.allowed &&
+		!! agency?.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
+		hasPartnerDirectoryListing;
+	const { data: leadMatching, isSuccess: isLeadMatchingSuccess } =
+		useLeadMatchingProfile( canAccessLeadMatching );
+	const answeredRequiredFieldCount = isLeadMatchingSuccess
+		? getAnsweredMatchingProfileCount( agencyId, leadMatching )
+		: undefined;
+	const contact = leadMatching?.lead_matching_profile?.contact;
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
 
@@ -68,6 +87,11 @@ function DashboardOverviewBodyContent( {
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+			showContactOptionsAnnouncement={
+				canAccessLeadMatching &&
+				answeredRequiredFieldCount === REQUIRED_LEAD_MATCHING_FIELDS.length &&
+				( ! contact?.phone?.trim() || ! contact?.booking_link?.trim() )
+			}
 			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
 			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {
@@ -77,6 +101,7 @@ function DashboardOverviewBodyContent( {
 				woopayments: A4A_WOOPAYMENTS_LINK,
 				marketplace: A4A_MARKETPLACE_PRODUCTS_LINK,
 				partnerDirectory: A4A_PARTNER_DIRECTORY_DASHBOARD_LINK,
+				leadMatching: `${ A4A_PARTNER_DIRECTORY_LINK }/${ PARTNER_DIRECTORY_LEAD_MATCHING_SLUG }`,
 				contactSupport: CONTACT_URL_HASH_FRAGMENT,
 				aiMcp: A4A_AI_MCP_LINK,
 				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,

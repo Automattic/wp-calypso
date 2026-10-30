@@ -7,6 +7,7 @@ import {
 	fetchAgencyScheduleCallLink,
 	fetchAgencyApwdDiscountCode,
 	fetchAgencyMcpSettings,
+	preserveIgnoredAgencyContacts,
 	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
 	updateAgencyPartnerDirectoryApplication,
@@ -226,11 +227,15 @@ export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =
 export const agencyLeadMatchingQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'lead-matching' ] as const,
+		meta: { persist: false },
 		queryFn: () => fetchAgencyLeadMatching( agencyId ),
 		enabled: !! agencyId,
 	} );
 
-export const agencyLeadMatchingMutation = ( agencyId: number ) =>
+export const agencyLeadMatchingMutation = (
+	agencyId: number,
+	previousProfile?: AgencyLeadMatchingProfile | null
+) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-lead-matching-update' },
 		mutationFn: async ( profile: AgencyLeadMatchingProfile ) => {
@@ -240,7 +245,14 @@ export const agencyLeadMatchingMutation = ( agencyId: number ) =>
 			if ( ! response?.lead_matching_profile || response.sync?.status === 'failed' ) {
 				throw new Error( 'The lead matching preferences were not saved.' );
 			}
-			return response;
+			return {
+				...response,
+				lead_matching_profile: preserveIgnoredAgencyContacts(
+					response.lead_matching_profile,
+					previousProfile,
+					response.ignored_contact_fields
+				),
+			};
 		},
 		onSuccess: ( response ) => {
 			queryClient.setQueryData( agencyLeadMatchingQuery( agencyId ).queryKey, response );

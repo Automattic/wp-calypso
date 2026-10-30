@@ -65,6 +65,9 @@ describe( 'mapLeadMatchingFormData', () => {
 		} as Agency;
 
 		expect( mapLeadMatchingFormData( agency ) ).toEqual( {
+			phoneNumber: '',
+			phoneCountryCode: '',
+			bookingLink: '',
 			regions: [ 'emea' ],
 			supportsGlobal: true,
 			languages: [ 'en', 'es' ],
@@ -146,6 +149,9 @@ describe( 'mapLeadMatchingProfileToFormData', () => {
 		} as Agency;
 
 		expect( mapLeadMatchingProfileToFormData( agency.lead_matching?.profile ) ).toEqual( {
+			phoneNumber: '',
+			phoneCountryCode: '',
+			bookingLink: '',
 			regions: [ 'emea' ],
 			supportsGlobal: true,
 			languages: [ 'en', 'es' ],
@@ -245,6 +251,7 @@ describe( 'mapLeadMatchingDetailsToProfile', () => {
 				},
 			} )
 		).toEqual( {
+			contact: { phone: '', booking_link: '' },
 			availability: {
 				accepting_work: false,
 				lead_eligibility: 'ready',
