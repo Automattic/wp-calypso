@@ -38,7 +38,7 @@
 .dashboard-amplify-overview__intro {
 	position: relative;
 	z-index: 3;
-	max-width: 720px;
+	max-width: 828px;
 	margin-block-start: -35px;
 	text-align: center;
 }
@@ -137,7 +137,7 @@
 }
 
 .dashboard-amplify-overview__summary {
-	max-width: 560px;
+	max-width: 644px;
 	margin-inline: auto;
 	margin-block-start: 8px;
 	text-wrap: pretty;
@@ -146,7 +146,7 @@
 .dashboard-amplify-overview__url-form {
 	position: relative;
 	z-index: 3;
-	width: min( 100%, 680px );
+	width: min( 100%, 782px );
 	text-align: start;
 }
 
@@ -169,7 +169,7 @@
 .dashboard-amplify-overview__mode-options {
 	position: relative;
 	z-index: 1;
-	width: min( 100%, 680px );
+	width: min( 100%, 782px );
 }
 
 .dashboard-amplify-score-preview__anchor {
