@@ -93,6 +93,15 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		page.show( getConversationPath( conversation ) );
 	};
 
+	const markAllRead = () => {
+		markRead( conversations.flatMap( ( { unreadNoteIds } ) => unreadNoteIds ) );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_marked_all_read', {
+				count: unreadCount,
+			} )
+		);
+	};
+
 	const goTo = ( index: number, source: OpenSource ) => {
 		const target = visible[ index ];
 		return target ? () => openConversation( target, source ) : undefined;
@@ -167,6 +176,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					onDensityChange={ changeDensity }
 					sort={ sort }
 					onSortChange={ selectSort }
+					onMarkAllRead={ markAllRead }
 					isShortcutsOpen={ isShortcutsOpen }
 					onShortcutsToggle={ setIsShortcutsOpen }
 					selectedKey={ selectedKey }

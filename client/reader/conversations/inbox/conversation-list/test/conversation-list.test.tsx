@@ -42,6 +42,7 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 			onSortChange={ jest.fn() }
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
+			onMarkAllRead={ jest.fn() }
 			onSelect={ jest.fn() }
 			{ ...props }
 			conversations={ filterConversations( source, tab, search ) }

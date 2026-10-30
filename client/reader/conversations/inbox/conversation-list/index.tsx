@@ -1,4 +1,6 @@
+import { formatNumber } from '@automattic/number-formatters';
 import {
+	Button,
 	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -29,6 +31,7 @@ interface Props {
 	onDensityChange: ( density: Density ) => void;
 	sort: SortOrder;
 	onSortChange: ( sort: SortOrder ) => void;
+	onMarkAllRead: () => void;
 	isShortcutsOpen: boolean;
 	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
@@ -47,6 +50,7 @@ export function ConversationList( {
 	onDensityChange,
 	sort,
 	onSortChange,
+	onMarkAllRead,
 	isShortcutsOpen,
 	onShortcutsToggle,
 	selectedKey,
@@ -98,6 +102,26 @@ export function ConversationList( {
 				density={ density }
 				onDensityChange={ onDensityChange }
 			/>
+			{ unreadCount > 0 && tab !== 'yours' && (
+				<Button
+					__next40pxDefaultSize
+					variant="link"
+					className="conversations-inbox__mark-read"
+					onClick={ onMarkAllRead }
+				>
+					<span>
+						{ translate(
+							'Mark {{count}}%(count)s{{/count}} as read',
+							'Mark {{count}}%(count)s{{/count}} as read',
+							{
+								count: unreadCount,
+								args: { count: formatNumber( unreadCount ) },
+								components: { count: <strong /> },
+							}
+						) }
+					</span>
+				</Button>
+			) }
 			<div className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }>
 				{ isLoading && <Spinner /> }
 				{ ! isLoading && conversations.length === 0 && (
