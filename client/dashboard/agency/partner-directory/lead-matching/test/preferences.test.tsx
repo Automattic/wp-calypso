@@ -36,6 +36,7 @@ beforeEach( () => {
 
 describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 	test( 'keeps real preferences saveable when the optional phone lookup fails', async () => {
+		const user = userEvent.setup();
 		mockAgency();
 		mockLeadMatching( {
 			...completeProfile,
@@ -51,15 +52,13 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		expect(
 			await screen.findByText( /phone number field is temporarily unavailable/ )
 		).toBeVisible();
-		await userEvent.type(
-			screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ),
-			'booking.example.com/intro?source=A4A'
-		);
+		await user.click( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) );
+		await user.paste( 'booking.example.com/intro?source=A4A' );
 		const serviceLevel = await screen.findByRole( 'combobox', {
 			name: 'Which max service level are you most comfortable with right now?',
 		} );
-		await userEvent.selectOptions( serviceLevel, 'premium' );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+		await user.selectOptions( serviceLevel, 'premium' );
+		await user.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 		await waitForSaved();
 		expect( savedProfile ).toEqual( {
 			...completeProfile,
@@ -105,9 +104,9 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		);
 		await user.clear( phone );
 		await user.paste( '+34 911 234 567 ext 9' );
-		expect( phone ).toHaveValue( '911234567 ext 9' );
+		await waitFor( () => expect( phone ).toHaveValue( '911234567 ext 9' ) );
 		expect( screen.getByRole( 'combobox', { name: 'Country code' } ) ).toHaveValue( 'Spain (+34)' );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 		await waitForSaved();
 		expect( savedProfile.contact?.phone ).toBe( '+34911234567 ext 9' );
 		expect( savedProfile.availability.profile_v2_complete ).toBe( false );
@@ -117,9 +116,9 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		view = render( <AgencyPartnerDirectoryLeadMatchingPreferences /> );
 		phone = await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } );
 		expect( phone ).toHaveValue( '911234567 ext 9' );
-		await userEvent.clear( phone );
-		await userEvent.clear( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+		await user.clear( phone );
+		await user.clear( screen.getByRole( 'textbox', { name: 'Booking link (optional)' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		expect( savedProfile.contact ).toEqual( { phone: '', booking_link: '' } );
 		view.unmount();
