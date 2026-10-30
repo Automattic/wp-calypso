@@ -37,6 +37,11 @@ describe( 'getUsageStatus', () => {
 		expect( getUsageStatus( { used: 15, limit: 15, resets_at } ) ).toBe( 'cap' );
 	} );
 
+	it( 'treats a null limit as unlimited', () => {
+		expect( getUsageStatus( { used: 80, limit: null, resets_at } ) ).toBe( 'unlimited' );
+		expect( canStartScan( 'unlimited' ) ).toBe( true );
+	} );
+
 	it( 'flags running low', () => {
 		expect( getUsageStatus( { used: 4, limit: 5, resets_at } ) ).toBe( 'low' );
 		expect( getUsageStatus( { used: 12, limit: 15, resets_at } ) ).toBe( 'low' );

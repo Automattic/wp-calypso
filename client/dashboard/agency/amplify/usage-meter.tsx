@@ -153,14 +153,6 @@ function LimitsExplainer( {
 									);
 								} ) }
 						</ol>
-						{ /*
-						 * BACKEND REQUIRED: the API must exclude failed and timed-out audits
-						 * from `usage.used`. This copy only describes that rule; the
-						 * dashboard can't enforce it.
-						 */ }
-						<Text size={ 12 } lineHeight="16px" variant="muted">
-							{ __( 'Reports that fail or time out don’t count.' ) }
-						</Text>
 						<Text size={ 13 } lineHeight="20px">
 							<Link
 								to="/tiers"
@@ -212,7 +204,7 @@ export function AmplifyScansLeft( {
 			</div>
 		);
 	}
-	if ( ! usage || ! hasAllowance( status ) ) {
+	if ( ! usage || usage.limit === null || ! hasAllowance( status ) ) {
 		return null;
 	}
 	const left = Math.max( 0, usage.limit - usage.used );
@@ -243,7 +235,7 @@ export function AmplifyUsageMeter( {
 	tierId?: AgencyTierId;
 } ) {
 	const resetDate = useResetDate( usage, 'short' );
-	if ( ! usage || ! hasAllowance( status ) ) {
+	if ( ! usage || usage.limit === null || ! hasAllowance( status ) ) {
 		return null;
 	}
 	const tierName = ALL_TIERS.find( ( tier ) => tier.id === tierId )?.name;
@@ -342,7 +334,7 @@ function useLimitMessage( {
 		};
 	}
 
-	if ( status !== 'cap' || ! usage ) {
+	if ( status !== 'cap' || ! usage || usage.limit === null ) {
 		return null;
 	}
 

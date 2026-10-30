@@ -28,6 +28,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { Text } from '../../components/text';
 import SitePreview from '../../sites/site-preview';
 import SiteScreenshot from '../components/site-screenshot';
+import { useDownloadReportPdf } from './use-download-report-pdf';
 import type { AgencySite, AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
@@ -251,24 +252,40 @@ export default function AmplifyReportsList( {
 		variables: retryVariables,
 	} = useMutation( retryAmplifyReportMutation( agencyId ) );
 	const retryingId = isRetryPending ? retryVariables : null;
+	const { downloadReportPdf, downloadingId } = useDownloadReportPdf( agencyId );
+	const onDownload = useCallback(
+		( item: AmplifyReport ) => {
+			recordTracksEvent( 'calypso_a4a_amplify_report_download_click', {
+				report_id: item.id,
+				mode: item.mode,
+			} );
+			downloadReportPdf( item.id ).catch( () =>
+				createErrorNotice( __( 'We couldn’t download the report. Try again.' ), {
+					type: 'snackbar',
+				} )
+			);
+		},
+		[ createErrorNotice, downloadReportPdf, recordTracksEvent ]
+	);
 	const onRetry = useCallback(
 		( item: AmplifyReport ) => {
 			recordTracksEvent( 'calypso_a4a_amplify_report_retry_click', {
 				report_id: item.id,
 				mode: item.mode,
 			} );
-			// BACKEND REQUIRED: the retry endpoint must not count failed or
-			// timed-out runs toward `usage.used`. The success notice promises it.
 			retryReport( item.id, {
 				onSuccess: () =>
 					createSuccessNotice(
-						__( 'Report restarted. Failed reports don’t count toward your allowance.' ),
+						__( 'Report restarted. Retries don’t count toward your allowance.' ),
 						{ type: 'snackbar' }
 					),
-				onError: () =>
-					createErrorNotice( __( 'Could not restart the report. Please try again.' ), {
-						type: 'snackbar',
-					} ),
+				onError: ( error ) =>
+					createErrorNotice(
+						( error as { code?: string } )?.code === 'amplify_report_retry_limit_reached'
+							? __( 'This report was already retried. Start a new report instead.' )
+							: __( 'Could not restart the report. Please try again.' ),
+						{ type: 'snackbar' }
+					),
 			} );
 		},
 		[ createErrorNotice, createSuccessNotice, recordTracksEvent, retryReport ]
@@ -427,17 +444,10 @@ export default function AmplifyReportsList( {
 								__next40pxDefaultSize
 								variant="secondary"
 								size="compact"
-								href={ item.pdf_url ?? undefined }
-								target="_blank"
-								rel="noopener noreferrer"
-								disabled={ ! item.pdf_url }
+								isBusy={ downloadingId === item.id }
+								disabled={ ! item.has_pdf || downloadingId === item.id }
 								accessibleWhenDisabled
-								onClick={ () =>
-									recordTracksEvent( 'calypso_a4a_amplify_report_download_click', {
-										report_id: item.id,
-										mode: item.mode,
-									} )
-								}
+								onClick={ () => onDownload( item ) }
 							>
 								{ __( 'Download PDF' ) }
 							</Button>
@@ -479,7 +489,17 @@ export default function AmplifyReportsList( {
 				filterBy: false,
 			},
 		],
-		[ locale, onRetry, recordTracksEvent, retryingId, siteFor, titleFor, view.type ]
+		[
+			downloadingId,
+			locale,
+			onDownload,
+			onRetry,
+			recordTracksEvent,
+			retryingId,
+			siteFor,
+			titleFor,
+			view.type,
+		]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
