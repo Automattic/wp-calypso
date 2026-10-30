@@ -6,7 +6,6 @@ import {
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
 	DOMAIN_FOR_GRAVATAR_FLOW,
-	WEBSITE_DESIGN_SERVICES,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
@@ -294,25 +293,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
-		{
-			name: WEBSITE_DESIGN_SERVICES,
-			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
-			destination: getDIFMSignupDestination,
-			description: 'A flow for DIFM onboarding',
-			excludeFromManageSiteFlows: true,
-			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			optionalDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			lastModified: '2025-03-04',
-			enabledHelpCenterGeos: [ 'US' ],
-			hideProgressIndicator: true,
-			get helpCenterButtonCopy() {
-				return translate( 'Questions?' );
-			},
-			get helpCenterButtonLink() {
-				return translate( 'Contact our site-building team' );
-			},
-		},
-
 		{
 			name: 'site-content-collection',
 			steps: [ userSocialStep, 'website-content' ],
