@@ -192,16 +192,6 @@ const navigateToRoute: Reducer<
 	return state;
 };
 
-const odieInitialPromptText: Reducer< string | undefined, HelpCenterAction > = (
-	state,
-	action
-) => {
-	if ( action.type === 'HELP_CENTER_SET_ODIE_INITIAL_PROMPT_TEXT' ) {
-		return action.text;
-	}
-	return state;
-};
-
 const odieBotNameSlug: Reducer< string | undefined, HelpCenterAction > = ( state, action ) => {
 	if ( action.type === 'HELP_CENTER_SET_ODIE_BOT_NAME_SLUG' ) {
 		return action.odieBotNameSlug;
@@ -267,7 +257,6 @@ const reducer = combineReducers( {
 	zendeskClientId,
 	unreadCount,
 	navigateToRoute,
-	odieInitialPromptText,
 	odieBotNameSlug,
 	helpCenterRouterHistory,
 	loggedOutOdieChat,
