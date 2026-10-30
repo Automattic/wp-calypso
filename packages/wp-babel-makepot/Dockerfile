@@ -1,4 +1,4 @@
-FROM node:24.22.1
+FROM node:26.13.0
 
 # /src is where we expect source javascript to run our babel config over
 RUN mkdir /src
