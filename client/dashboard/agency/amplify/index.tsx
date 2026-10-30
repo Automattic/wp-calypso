@@ -1,6 +1,11 @@
 import { activeAgencyQuery, amplifyReportsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, Tooltip, __experimentalHStack as HStack } from '@wordpress/components';
+import {
+	Button,
+	Tooltip,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -104,11 +109,7 @@ export default function AgencyAmplify() {
 						state !== 'empty' ? (
 							<HStack spacing={ 2 } alignment="center" expanded={ false }>
 								{ state === 'reports' && (
-									<Button
-										variant="tertiary"
-										className="dashboard-amplify-learn-more-button"
-										onClick={ openLearnMore }
-									>
+									<Button variant="tertiary" onClick={ openLearnMore }>
 										{ __( 'Learn more' ) }
 									</Button>
 								) }
@@ -149,12 +150,17 @@ export default function AgencyAmplify() {
 					<AmplifyReportsList agencyId={ agencyId } reports={ [] } isLoading />
 				) }
 				{ state === 'error' && (
-					<div className="dashboard-amplify-results__error" role="alert">
+					<VStack
+						className="dashboard-amplify-results__error"
+						role="alert"
+						spacing={ 4 }
+						alignment="flex-start"
+					>
 						<Text>{ __( 'Unable to load reports. Please try again.' ) }</Text>
 						<Button variant="secondary" onClick={ () => reportsQuery.refetch() }>
 							{ __( 'Retry' ) }
 						</Button>
-					</div>
+					</VStack>
 				) }
 			</div>
 			{ isNewReportOpen && (

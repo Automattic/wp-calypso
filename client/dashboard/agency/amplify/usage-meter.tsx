@@ -12,6 +12,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useIntlLocale } from '../../app/locale';
 import { Card, CardBody } from '../../components/card';
+import Grid from '../../components/grid';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { a4aLink } from '../../utils/link';
@@ -38,16 +39,22 @@ function useResetDate( usage?: AmplifyUsage, month: 'long' | 'short' = 'long' ) 
 	} ).format( date );
 }
 
-/**
- * Info button + popover explaining monthly limits. Same pattern as the
- * "Influenced revenue" info button on the Tiers and Overview pages.
- */
 /** Rising bars, filled up to the tier's rank: more filled means a higher tier. */
-function TierLevel( { level, levels }: { level: number; levels: number } ) {
+function TierBars( {
+	level,
+	levels,
+	isCurrent,
+}: {
+	level: number;
+	levels: number;
+	isCurrent: boolean;
+} ) {
 	return (
 		<svg
-			className="dashboard-amplify-usage__tier-level"
+			width={ 16 }
+			height={ 12 }
 			viewBox={ `0 0 ${ levels * 4 - 1 } 12` }
+			fill={ isCurrent ? 'var( --color-primary )' : 'var( --color-text-subtle )' }
 			aria-hidden="true"
 			focusable="false"
 		>
@@ -61,7 +68,7 @@ function TierLevel( { level, levels }: { level: number; levels: number } ) {
 						width={ 3 }
 						height={ height }
 						rx={ 1 }
-						data-filled={ index < level }
+						opacity={ index < level ? 1 : 0.25 }
 					/>
 				);
 			} ) }
@@ -69,6 +76,10 @@ function TierLevel( { level, levels }: { level: number; levels: number } ) {
 	);
 }
 
+/**
+ * Info button + popover explaining monthly limits. Same pattern as the
+ * "Influenced revenue" info button on the Tiers and Overview pages.
+ */
 function LimitsExplainer( {
 	label,
 	text,
@@ -80,6 +91,7 @@ function LimitsExplainer( {
 	tierId?: AgencyTierId;
 } ) {
 	const [ openedBy, setOpenedBy ] = useState< 'hover' | 'click' | null >( null );
+	const [ anchor, setAnchor ] = useState< HTMLButtonElement | null >( null );
 	const closeTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
 	const { recordTracksEvent } = useAnalytics();
 	const allowances = getTierAllowances();
@@ -99,25 +111,29 @@ function LimitsExplainer( {
 		);
 	};
 	useEffect( () => () => clearTimeout( closeTimer.current ), [] );
-	// One wrapper, so the popover's anchor never becomes another spaced item in the parent row.
 	return (
-		<span className="dashboard-amplify-usage__info-wrap">
+		<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
+			{ text && (
+				<Text size={ 13 } variant="muted">
+					{ text }
+				</Text>
+			) }
 			<Button
-				className="dashboard-amplify-usage__info"
+				ref={ setAnchor }
 				size="small"
 				icon={ info }
 				iconSize={ 16 }
-				iconPosition="right"
-				label={ text ? undefined : ( label ?? __( 'More information about monthly reports' ) ) }
+				label={ label ?? __( 'More information about monthly reports' ) }
+				// The popover opens on hover, so a tooltip would only collide with it.
+				showTooltip={ false }
 				aria-expanded={ !! openedBy }
 				onMouseEnter={ () => open( 'hover' ) }
 				onMouseLeave={ closeSoon }
 				onClick={ () => ( openedBy === 'click' ? setOpenedBy( null ) : open( 'click' ) ) }
-			>
-				{ text }
-			</Button>
+			/>
 			{ openedBy && (
 				<Popover
+					anchor={ anchor }
 					offset={ 8 }
 					placement="bottom-end"
 					focusOnMount={ openedBy === 'click' ? 'firstElement' : false }
@@ -129,30 +145,59 @@ function LimitsExplainer( {
 						<Text size={ 13 } weight={ 600 }>
 							{ __( 'Monthly reports by tier' ) }
 						</Text>
-						<ol className="dashboard-amplify-usage__tiers">
+						<VStack spacing={ 0.5 }>
 							{ allowances
 								.map( ( tier, index ) => ( { ...tier, level: index + 1 } ) )
 								.reverse()
 								.map( ( tier ) => {
 									const isCurrent = !! tierId && tier.tiers.includes( tierId );
+									const variant = isCurrent ? undefined : 'muted';
+									const weight = isCurrent ? 600 : undefined;
 									return (
-										<li key={ tier.label } data-current={ isCurrent }>
-											<TierLevel level={ tier.level } levels={ allowances.length } />
-											<span className="dashboard-amplify-usage__tier-name">
-												{ tier.label }
-												{ isCurrent && <small>{ __( 'Your tier' ) }</small> }
-											</span>
-											<span className="dashboard-amplify-usage__tier-count">
+										<Grid
+											key={ tier.label }
+											templateColumns="16px minmax( 0, 1fr ) auto"
+											gap="sm"
+											align="center"
+											style={ {
+												padding: '6px 8px',
+												borderRadius: '4px',
+												background: isCurrent
+													? 'color-mix( in srgb, var( --color-primary ) 8%, transparent )'
+													: undefined,
+											} }
+										>
+											<TierBars
+												level={ tier.level }
+												levels={ allowances.length }
+												isCurrent={ isCurrent }
+											/>
+											<VStack spacing={ 0 }>
+												<Text size={ 13 } lineHeight="17px" weight={ weight } variant={ variant }>
+													{ tier.label }
+												</Text>
+												{ isCurrent && (
+													<Text
+														size={ 11 }
+														lineHeight="14px"
+														weight={ 500 }
+														color="var( --color-primary )"
+													>
+														{ __( 'Your tier' ) }
+													</Text>
+												) }
+											</VStack>
+											<Text size={ 13 } weight={ weight } variant={ variant }>
 												{ sprintf(
 													/* translators: %d: number of reports a month */
 													__( '%d/mo' ),
 													tier.scans
 												) }
-											</span>
-										</li>
+											</Text>
+										</Grid>
 									);
 								} ) }
-						</ol>
+						</VStack>
 						<Text size={ 13 } lineHeight="20px">
 							<Link
 								to="/tiers"
@@ -164,7 +209,7 @@ function LimitsExplainer( {
 					</VStack>
 				</Popover>
 			) }
-		</span>
+		</HStack>
 	);
 }
 
