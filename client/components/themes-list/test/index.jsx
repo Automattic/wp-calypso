@@ -10,6 +10,12 @@ import { ThemesList } from '../';
 
 const noop = () => {};
 
+let mockRedesignEligible = false;
+jest.mock( 'calypso/my-sites/site-redesign/design-your-own-card', () => ( {
+	DesignYourOwnCard: () =>
+		mockRedesignEligible ? <a href="/site-redesign/example">Design Your Own</a> : null,
+} ) );
+
 jest.mock( 'calypso/components/theme', () => ( { theme } ) => (
 	<div data-testid={ `theme-${ theme.id }` } />
 ) );
@@ -45,6 +51,27 @@ const defaultProps = deepFreeze( {
 const render = ( el, options ) => renderWithProvider( el, { ...options, reducers: { themes } } );
 
 describe( 'ThemesList', () => {
+	beforeEach( () => {
+		mockRedesignEligible = false;
+	} );
+
+	test( 'offers redesign before the first theme', () => {
+		mockRedesignEligible = true;
+		const { container } = render( <ThemesList { ...defaultProps } /> );
+		expect( container.firstChild.firstChild ).toBe(
+			screen.getByRole( 'link', { name: 'Design Your Own' } )
+		);
+	} );
+
+	test.each( [ { searchTerm: 'blog' }, { tabFilter: 'my-themes' } ] )(
+		'leaves redesign out of filtered views: %o',
+		( props ) => {
+			mockRedesignEligible = true;
+			render( <ThemesList { ...defaultProps } { ...props } /> );
+			expect( screen.queryByRole( 'link', { name: 'Design Your Own' } ) ).toBeNull();
+		}
+	);
+
 	test( 'should render a div with a className of "themes-list"', () => {
 		const { container } = render( <ThemesList { ...defaultProps } /> );
 		expect( container ).toMatchSnapshot();

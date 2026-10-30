@@ -5,14 +5,22 @@ export interface Commenter {
 	avatar: string;
 }
 
+/**
+ * Why the latest note reached the current user: a comment on their post, a reply to
+ * their comment, a mention, or something the note doesn't say.
+ */
+export type ConversationContext = 'post' | 'reply' | 'mention' | 'other';
+
 export interface Conversation {
 	key: string;
 	siteId: number;
 	postId: number;
 	title: string;
+	url?: string;
 	excerpt: string;
 	timestamp: number;
 	latestCommentId?: number;
+	context: ConversationContext;
 	commenters: Commenter[];
 	noteIds: number[];
 	unreadNoteIds: number[];
@@ -28,6 +36,10 @@ const getPostTitle = ( note: Note ): string => {
 	}
 	return '';
 };
+
+const getPostUrl = ( note: Note ): string | undefined =>
+	note.subject?.flatMap( ( { ranges } ) => ranges ?? [] ).find( ( { type } ) => type === 'post' )
+		?.url;
 
 const getCommenter = ( note: Note ): Commenter | null => {
 	const userBlock = note.body?.find( ( block ) => block.type === 'user' );
@@ -48,10 +60,30 @@ const getCommenter = ( note: Note ): Commenter | null => {
 	return null;
 };
 
+// The API sends noticons as icon font glyphs.
+const MENTION_NOTICON = '\uf814';
+const COMMENT_NOTICON = '\uf300';
+
+// The header names the post author on a comment and the parent comment author on a reply.
+const getContext = ( note: Note, currentUserId?: number | null ): ConversationContext => {
+	if ( note.noticon === MENTION_NOTICON ) {
+		return 'mention';
+	}
+	const headerUser = note.header?.[ 0 ]?.ranges?.find( ( { type } ) => type === 'user' );
+	if (
+		note.noticon !== COMMENT_NOTICON ||
+		! currentUserId ||
+		Number( headerUser?.id ) !== currentUserId
+	) {
+		return 'other';
+	}
+	return note.meta?.ids?.parent_comment ? 'reply' : 'post';
+};
+
 export const getConversationKey = ( siteId: number | string, postId: number | string ) =>
 	`${ siteId }-${ postId }`;
 
-export function groupNotesByPost( notes: Note[] ): Conversation[] {
+export function groupNotesByPost( notes: Note[], currentUserId?: number | null ): Conversation[] {
 	const groups = new Map< string, Conversation >();
 
 	const sorted = [ ...notes ].sort(
@@ -73,9 +105,11 @@ export function groupNotesByPost( notes: Note[] ): Conversation[] {
 				siteId,
 				postId,
 				title: getPostTitle( note ),
+				url: getPostUrl( note ),
 				excerpt: note.subject?.[ 1 ]?.text ?? '',
 				timestamp: Date.parse( note.timestamp ),
 				latestCommentId: note.meta?.ids?.comment,
+				context: getContext( note, currentUserId ),
 				commenters: [],
 				noteIds: [],
 				unreadNoteIds: [],

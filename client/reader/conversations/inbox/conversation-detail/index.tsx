@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import {
 	Button,
 	DropdownMenu,
+	ExternalLink,
 	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -96,6 +97,16 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 			<div className="conversations-inbox__detail-body">
 				<VStack spacing={ 10 } className="conversations-inbox__detail-content">
 					{ isLoading && ! post && <Spinner /> }
+					{ !! post?.is_error && (
+						<Text as="p" color="var(--color-text-subtle)">
+							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
+							{ conversation?.url && (
+								<ExternalLink href={ conversation.url }>
+									{ translate( 'Open it on the site' ) }
+								</ExternalLink>
+							) }
+						</Text>
+					) }
 					{ post && ! post.is_error && (
 						<>
 							<VStack spacing={ 3 } className="conversations-inbox__post-card">
