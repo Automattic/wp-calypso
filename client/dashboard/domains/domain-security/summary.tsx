@@ -12,11 +12,10 @@ export default function NameServersSettingsSummary( {
 	isDisabled?: boolean;
 } ) {
 	const badges: SummaryButtonBadgeProps[] = [];
-	if ( domain.ssl_status === 'active' ) {
-		badges.push( { text: __( 'SSL active' ), intent: 'stable' as const } );
-	} else if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
+	// An active certificate is shown in the domain overview header instead.
+	if ( domain.ssl_status === 'newly_registered' || domain.ssl_status === 'pending' ) {
 		badges.push( { text: __( 'SSL Pending' ), intent: 'low' as const } );
-	} else {
+	} else if ( domain.ssl_status !== 'active' ) {
 		badges.push( { text: __( 'SSL Disabled' ), intent: 'high' as const } );
 	}
 

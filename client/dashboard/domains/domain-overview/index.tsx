@@ -80,6 +80,9 @@ export default function DomainOverview() {
 							<HStack spacing={ 2 } alignment="center" justify="flex-start">
 								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION &&
 									domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
+								{ domain.ssl_status === 'active' && (
+									<Badge intent="stable">{ __( 'SSL active' ) }</Badge>
+								) }
 								<span>
 									{ ( () => {
 										switch ( domain.subtype.id ) {
