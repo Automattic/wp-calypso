@@ -3,8 +3,8 @@
 `@automattic/ai-ui-renderer` is a shared component library that renders
 [A2UI v1.0](https://a2ui.org) surfaces with WordPress components.
 
-- **What's here:** the Basic catalog's components, the runtime, `InteractiveUiSurface` and the
-  styles, which every host shares.
+- **What's here:** the Basic catalog's components, the [charts catalog](#charts), the runtime,
+  `InteractiveUiSurface` and the styles, which every host shares.
 - **What isn't:** custom components. Put one in your own project, in your own catalog
   ([Catalogs](#catalogs)), not here. Chat, session, transport and error handling stay in the host.
 - **How hosts use it:** see [Capabilities](#capabilities), [Rendering](#rendering) and
@@ -51,6 +51,32 @@
 - Components ignore A2UI v1.0 properties they don't support, such as `weight`, a `Text`'s
   `variant` and the `accessibility` of components other than `Modal`, instead of rejecting the
   surface.
+
+## Charts
+
+The charts catalog (`CHARTS_CATALOG_ID`) has `LineChart` (values over time), `BarChart` (values by
+category, vertical or `horizontal`) and `PieChart` (each part's share of a whole), built on
+`@automattic/charts`. Each takes a `title`, which also names it for screen readers, and up to six
+series or slices.
+
+- **Adding it:** list `{ catalog: CHARTS_CATALOG_DOCUMENT }` in your
+  [capabilities](#capabilities), and build `createInteractiveUiCatalog( CHARTS_CATALOG )` for the
+  runtime beside the Basic catalog. A chart names the charts catalog as its `catalogId`, so it sits
+  in a surface on any catalog, laid out with the basic components.
+- **Loading:** the charts load when a surface first shows one, so other surfaces don't fetch the
+  chart library. A load that fails twice shows the surface's `fallback` until the page reloads.
+- **Theming:** the axes, grid, legend and tooltips follow the surface's colors in light and dark
+  mode. The series colors are fixed, each with at least 3:1 contrast on white and on #1e1e1e.
+  Tooltips render in a portal on the page, outside the surface, so they copy its theme, stay within
+  its edges, and need a `z-index` above your UI ([Rendering](#rendering)).
+- **Language:** dates follow the page's language (`<html lang>`), and numbers
+  `@automattic/number-formatters`' locale: the one the host sets, else WordPress's user locale,
+  else the browser's.
+- **Accessibility:** screen readers get each chart's data as a visually hidden table. The keyboard
+  moves its tooltip between points, and Tab and Escape return focus to the chart. On a
+  right-to-left page, the axes keep their place.
+- **Bad data:** an impossible date, a repeated series or point, or a pie of zeros shows the
+  surface's `fallback` and is reported through `onError` as `RENDER_FAILED`.
 
 ## Catalogs
 
@@ -133,7 +159,8 @@ before loading the renderer:
   message's metadata, as A2UI's A2A binding does, so the agent shows only UI the host can render.
 - `getInteractiveUiOperation( message )` returns an A2UI message's operation name and surface ID,
   or `undefined` for a malformed message, as the agent's messages aren't validated.
-- `BASIC_CATALOG_ID` is A2UI's Basic catalog ID.
+- `BASIC_CATALOG_ID` is A2UI's Basic catalog ID, and `CHARTS_CATALOG_ID` and
+  `CHARTS_CATALOG_DOCUMENT` are the [charts catalog's](#charts).
 - `getInteractiveUiActionInstructions( actionMode )` returns guidance for the agent composing
   actions. Include it in the host's rendering tool description. It defaults to `agent` mode.
 
@@ -175,9 +202,10 @@ content. Its second argument is the owner of the rejected message's batch or of 
 - `className` adds classes to the surface and its modal overlay ([Theming](#theming)).
 
 Import `@automattic/ai-ui-renderer/style.scss` (Sass) with the renderer, in the same lazy
-`import()` when you load it on demand, and give the modal overlay (`ai-ui-renderer__modal`) a
-`z-index` above your UI, since it renders outside the surface. WordPress UI components load their
-own styles.
+`import()` when you load it on demand, and give the modal overlay (`ai-ui-renderer__modal`), chart
+tooltips (`.visx-tooltip:has( .ai-ui-renderer__chart-tooltip )`) and the points they mark
+(`.visx-tooltip-glyph`) a `z-index` above your UI, since they render outside the surface.
+WordPress UI components load their own styles.
 
 ### Action modes
 
@@ -212,15 +240,16 @@ chat message, though the client may display tool activity.
 ## Theming
 
 Surfaces follow [A2UI's theming](https://a2ui.org/guides/theming/): a host sets A2UI's color tokens,
-and the renderer applies them to the basic components and the WordPress components they use.
+and the renderer applies them to the basic components, the charts and the WordPress components they
+use.
 
 | Token                                                                             | Colors                                                   |
 | --------------------------------------------------------------------------------- | -------------------------------------------------------- |
 | `--a2ui-color-primary`, `--a2ui-color-primary-hover`, `--a2ui-color-primary-dark` | Buttons, checked controls, sliders, tabs and focus rings |
 | `--a2ui-color-on-primary`                                                         | Text and marks on the primary color                      |
-| `--a2ui-color-surface`, `--a2ui-color-on-surface`                                 | Cards and the modal                                      |
+| `--a2ui-color-surface`, `--a2ui-color-on-surface`                                 | Cards, the modal and chart tooltips                      |
 | `--a2ui-color-input`, `--a2ui-color-on-input`                                     | Inputs, and the text and labels of controls              |
-| `--a2ui-color-border`                                                             | Card and modal outlines, and dividers                    |
+| `--a2ui-color-border`                                                             | Card, modal and chart tooltip outlines, and dividers     |
 
 Set them on the class you pass as `className`, or on an ancestor. Pick light or dark with the
 page's `color-scheme`, or A2UI's `a2ui-dark` or `a2ui-light` class:
@@ -242,7 +271,8 @@ An unset primary or input token, or its `on-` pair, keeps the host's WordPress c
 token gets that palette default directly. The input, surface and border defaults follow the light
 or dark mode. A custom `--a2ui-color-primary` without its own `-hover` and `-dark` gets them derived
 from it, as A2UI does.
-The modal renders outside the host, so it copies its surface's theme when it opens.
+The modal and chart tooltips render outside the host, so they copy their surface's theme when they
+open.
 
 The renderer derives its own colors from those, which follow the light or dark mode:
 
@@ -280,18 +310,19 @@ handle most of this:
   is translated and still fits when longer. Show the agent's text as given, so a custom prop's
   `description` asks for text ready to show, such as a date formatted in the person's language.
 - Take colors from A2UI's tokens, the renderer's accent and disabled colors ([Theming](#theming))
-  or `@wordpress/ui` components, never a chat's own variables or fixed colors. Keep WCAG AA
+  or `@wordpress/ui` components, never a chat's own variables or fixed colors (the charts' series
+  colors are the exception, as the chart library reads only plain colors). Keep WCAG AA
   contrast: 4.5:1 for text and 3:1 for other parts. `@wordpress/components` follow only A2UI's
   tokens, so give them the accent and disabled colors yourself. If a WordPress component hard-codes
   a light color or leaves a state uncolored, fix it in `style.scss` for a basic component, or in the
   custom component's own stylesheet.
 - Check it in light and dark mode, in every state, with the keyboard and a screen reader. Agents
-  Manager can render every basic component and those in its own and its providers' catalogs, so
-  check them in its chat's dark mode too
+  Manager can render every basic component, the charts and those in its own and its providers'
+  catalogs, so check them in its chat's dark mode too
   ([Try it](../agents-manager/src/interactive-ui/README.md#try-it)).
 - Test it: a basic component gets cases for its value, checks and disabled state in
-  `src/components/__tests__/interactive-ui-surface.test.tsx`, and a custom one gets tests in its own
-  project.
+  `src/components/__tests__/interactive-ui-surface.test.tsx`, the charts in
+  `src/components/__tests__/charts.test.tsx`, and a custom one gets tests in its own project.
 
 ## Development
 
