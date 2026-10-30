@@ -10,25 +10,29 @@
 
 const STYLE = `
 .jp-stats-widget-skeleton{container-type:inline-size;margin:-11px -12px -12px;padding:8px;display:flex;flex-direction:column;gap:8px;border-radius:0 0 8px 8px;background:#f6f7f7;font-size:0}
-.jp-stats-widget-skeleton__card{padding:8px 12px 12px;border:1px solid #e0e0e0;border-radius:4px;background:#fff}
-.jp-stats-widget-skeleton__header{display:flex;justify-content:space-between;align-items:center;min-height:32px;margin-bottom:8px}
+.jp-stats-widget-skeleton__card{border-radius:4px;box-shadow:0 0 0 1px rgba(0,0,0,.1);background:#fff}
+.jp-stats-widget-skeleton__header{display:flex;justify-content:space-between;align-items:center;min-height:32px;padding:8px}
+.jp-stats-widget-skeleton__body{padding:8px 12px 12px}
+.jp-stats-widget-skeleton__body.is-tabbed{padding-top:0}
 .jp-stats-widget-skeleton__metrics{display:flex;gap:16px}
-.jp-stats-widget-skeleton__metric{flex:1 1 0}
-.jp-stats-widget-skeleton__rows{display:flex;flex-direction:column;gap:8px;padding:8px 0}
-.jp-stats-widget-skeleton__row{display:flex;justify-content:space-between;gap:16px;min-height:20px;align-items:center}
+.jp-stats-widget-skeleton__metric{display:flex;flex-direction:column;flex:1 1 0}
+.jp-stats-widget-skeleton__tabs{display:flex;margin:0 -12px;border-bottom:1px solid #dbdbdb}
+.jp-stats-widget-skeleton__tab{flex:1;display:flex;justify-content:center;padding:18px 0}
+.jp-stats-widget-skeleton__rows{display:flex;flex-direction:column;margin-top:8px}
+.jp-stats-widget-skeleton__row{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:32px}
+.jp-stats-widget-skeleton__link{display:flex;align-items:center;height:18.2px;margin-top:16px}
+.jp-stats-widget-skeleton__link.is-view-all{margin-top:8px}
+.jp-stats-widget-skeleton__footer{display:flex;justify-content:space-between;align-items:center;padding:8px}
 .jp-stats-widget-skeleton__bar{display:block;height:12px;border-radius:4px;background:#f4f4f4}
 .jp-stats-widget-skeleton__bar.is-title{width:140px;height:16px}
 .jp-stats-widget-skeleton__bar.is-control{width:112px;height:32px}
 .jp-stats-widget-skeleton__bar.is-label{width:72px;height:14px;margin:3px 0}
 .jp-stats-widget-skeleton__bar.is-value{width:64px;height:28px;margin:8px 0 4px}
 .jp-stats-widget-skeleton__bar.is-chart{height:160px;border-radius:8px;margin-top:16px}
-.jp-stats-widget-skeleton__tabs{display:flex;margin:0 -12px;border-bottom:1px solid #dbdbdb}
-.jp-stats-widget-skeleton__tab{flex:1;display:flex;justify-content:center;padding:14px 0}
-.jp-stats-widget-skeleton__footer{display:flex;justify-content:space-between;align-items:center;padding:8px}
+.jp-stats-widget-skeleton__bar.is-tab{width:96px}
 .jp-stats-widget-skeleton__bar.is-row-title{width:60%}
 .jp-stats-widget-skeleton__bar.is-row-value{width:46px}
-.jp-stats-widget-skeleton__bar.is-link{width:72px;margin-top:16px}
-.jp-stats-widget-skeleton__bar.is-tab{width:96px}
+.jp-stats-widget-skeleton__bar.is-link{width:72px}
 .jp-stats-widget-skeleton__bar.is-logo{width:88px;height:20px}
 .jp-stats-widget-skeleton__bar.is-footer-link{width:80px}
 @container (max-width:360px){.jp-stats-widget-skeleton__metrics{flex-direction:column}.jp-stats-widget-skeleton__metric{flex:none}}
@@ -53,10 +57,19 @@ const tab = () => `<div class="jp-stats-widget-skeleton__tab">${ bar( 'tab' ) }<
 
 const tabs = () => `<div class="jp-stats-widget-skeleton__tabs">${ tab() }${ tab() }</div>`;
 
+// A line of link text, sized to the line box the widget's link takes.
+const link = ( isViewAll = false ) =>
+	`<div class="jp-stats-widget-skeleton__link${ isViewAll ? ' is-view-all' : '' }">${ bar(
+		'link'
+	) }</div>`;
+
 const header = ( withControl: boolean ) =>
 	`<div class="jp-stats-widget-skeleton__header">${ bar( 'title' ) }${
 		withControl ? bar( 'control' ) : ''
 	}</div>`;
+
+const body = ( content: string, isTabbed = false ) =>
+	`<div class="jp-stats-widget-skeleton__body${ isTabbed ? ' is-tabbed' : '' }">${ content }</div>`;
 
 const card = ( content: string ) =>
 	`<div class="jp-stats-widget-skeleton__card">${ content }</div>`;
@@ -68,16 +81,20 @@ interface SkeletonOptions {
 	hasSiteProtection: boolean;
 }
 
-// One list row, as the widget draws while its lists load: how many items come back is unknown.
+// Each card is laid out as the widget's section is (a 48px header, then a padded body), so the
+// box is the height the widget takes when it mounts: see the sizes in the widget's own
+// stylesheets. One list row, as the widget draws while its lists load: how many items come
+// back is unknown.
 const markup = ( { hasSiteProtection }: SkeletonOptions ) =>
-	card( header( true ) + metrics() + bar( 'chart' ) + bar( 'link' ) ) +
+	card( header( true ) + body( metrics() + bar( 'chart' ) + link() ) ) +
 	card(
 		header( false ) +
-			tabs() +
-			`<div class="jp-stats-widget-skeleton__rows">${ row() }</div>` +
-			bar( 'link' )
+			body(
+				tabs() + `<div class="jp-stats-widget-skeleton__rows">${ row() }</div>` + link( true ),
+				true
+			)
 	) +
-	( hasSiteProtection ? card( header( false ) + metrics() ) : '' ) +
+	( hasSiteProtection ? card( header( false ) + body( metrics() ) ) : '' ) +
 	FOOTER;
 
 /**
