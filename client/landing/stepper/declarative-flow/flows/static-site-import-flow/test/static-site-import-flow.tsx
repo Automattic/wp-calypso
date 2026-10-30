@@ -34,7 +34,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 const runNavigation = ( options: Parameters< typeof runFlowNavigation >[ 1 ] ) =>
 	runFlowNavigation( staticSiteImportFlow, options, 'forward' );
 
-const SOURCE = { from: 'source.example.com', platform: 'wix' };
+const SOURCE = { from: 'source.example.com', platform: 'unknown' };
 const SITE = { siteId: 42, siteSlug: 'destination.example.com' };
 const PAID_SITE = { ID: SITE.siteId, URL: `https://${ SITE.siteSlug }`, plan: { is_free: false } };
 const PLAN = { cartItems: [ { product_slug: 'business-bundle' } ] };
@@ -105,11 +105,11 @@ describe( 'Static site import flow', () => {
 
 		it( 'sends every source there when the flag is off', () => {
 			config.disable( 'migration/non-wordpress-source' );
-			window.location.search = '?from=example.com&platform=wix';
+			window.location.search = '?from=example.com&platform=unknown';
 
 			expect( staticSiteImportFlow.initialize() ).toBe( false );
 			expect( window.location.replace ).toHaveBeenCalledWith(
-				`${ identifyPath }?from=example.com&platform=wix`
+				`${ identifyPath }?from=example.com&platform=unknown`
 			);
 		} );
 
@@ -120,11 +120,11 @@ describe( 'Static site import flow', () => {
 			'sends reading links without a destination to plans before authentication (%s)',
 			( path, expectedPlansPath ) => {
 				window.location.pathname = path;
-				window.location.search = '?from=example.com&platform=wix';
+				window.location.search = '?from=example.com&platform=unknown';
 
 				expect( staticSiteImportFlow.initialize() ).toBe( false );
 				expect( window.location.replace ).toHaveBeenCalledWith(
-					`${ expectedPlansPath }?from=example.com&platform=wix`
+					`${ expectedPlansPath }?from=example.com&platform=unknown`
 				);
 			}
 		);
@@ -314,7 +314,7 @@ describe( 'Static site import flow', () => {
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,
 				dependencies: { action: 'unavailable' },
-				query: { ...SOURCE, ...SITE },
+				query: { ...SOURCE, platform: 'wix', ...SITE },
 			} );
 
 			expect( lastExit() ).toMatchObject( {

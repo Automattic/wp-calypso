@@ -1358,14 +1358,14 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'wix',
+								platform: 'unknown',
 								from: 'https://site-to-be-migrated.com',
 							},
 						} );
 
 						expect( window.location.assign ).toMatchURL( {
 							path: '/setup/static-site-import/plans',
-							query: { from: 'https://site-to-be-migrated.com', platform: 'wix' },
+							query: { from: 'https://site-to-be-migrated.com', platform: 'unknown' },
 						} );
 					} );
 
@@ -1376,13 +1376,13 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'wix',
+								platform: 'unknown',
 								from: 'https://source.example.com',
 							},
 						} );
 						expect( window.location.assign ).toMatchURL( {
 							path: '/setup/static-site-import/plans/es',
-							query: { from: 'https://source.example.com', platform: 'wix' },
+							query: { from: 'https://source.example.com', platform: 'unknown' },
 						} );
 					} );
 
@@ -1391,7 +1391,7 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'squarespace',
+								platform: 'unknown',
 								from: 'https://site-to-be-migrated.com',
 							},
 							query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -1401,10 +1401,31 @@ describe( 'Site Migration Flow', () => {
 							path: '/setup/static-site-import/plans',
 							query: {
 								from: 'https://site-to-be-migrated.com',
-								platform: 'squarespace',
+								platform: 'unknown',
 								siteId: '123',
 								siteSlug: 'example.wordpress.com',
 							},
+						} );
+					} );
+
+					it.each( [
+						[ 'medium', 'importerMedium' ],
+						[ 'squarespace', 'importerSquarespace' ],
+						[ 'wix', 'importerWix' ],
+					] )( 'keeps %s sources on their importer', ( platform, importerStep ) => {
+						runNavigation( {
+							from: STEPS.SITE_MIGRATION_IDENTIFY,
+							dependencies: {
+								action: 'continue',
+								platform,
+								from: 'https://site-to-be-migrated.com',
+							},
+							query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+						} );
+
+						expect( window.location.assign ).toMatchURL( {
+							path: `/setup/site-setup/${ importerStep }`,
+							query: { from: 'https://site-to-be-migrated.com' },
 						} );
 					} );
 
