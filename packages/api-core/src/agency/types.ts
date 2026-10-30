@@ -198,6 +198,22 @@ export interface AgencyPartnerDirectoryApplicationUpdate {
 	is_published?: boolean;
 }
 
+export type AgencyDashboardOptInValue =
+	'unset' | 'opt-in' | 'opt-out' | 'forced-opt-in' | 'forced-opt-out';
+
+/** The values an agency owner can set themselves. */
+export type AgencyDashboardOptInChoice = Extract< AgencyDashboardOptInValue, 'opt-in' | 'opt-out' >;
+
+/**
+ * Whether the agency has moved to the Multi-site Dashboard. `forced-*` values
+ * are set by support only.
+ */
+export interface AgencyDashboardOptIn {
+	value: AgencyDashboardOptInValue;
+	/** ISO date of the last change; empty when never set. */
+	updated_at: string;
+}
+
 /**
  * A single agency, as returned by GET /wpcom/v2/agency. Only the fields
  * consumed by the dashboard are modeled here.
@@ -244,6 +260,7 @@ export interface Agency {
 	payment_notice?: AgencyPaymentNotice | null;
 	/** The partner manager the agency's HubSpot record assigns; null when none is assigned. */
 	partner_manager?: AgencyPartnerManager | null;
+	dashboard_opt_in?: AgencyDashboardOptIn;
 }
 
 export interface AgencyPaymentNotice {

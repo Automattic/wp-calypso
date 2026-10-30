@@ -1,6 +1,9 @@
 import page from '@automattic/calypso-router';
 import { A4A_SITES_LINK_NEEDS_SETUP } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { requireAccessContext } from 'calypso/a8c-for-agencies/controller';
+import {
+	redirectToNewDashboardContext,
+	requireAccessContext,
+} from 'calypso/a8c-for-agencies/controller';
 import { makeLayout, render as clientRender } from 'calypso/controller';
 import {
 	addSitesContext,
@@ -28,6 +31,9 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
+
+	// The feature routes below don't run `requireAccessContext`, which forwards every other page.
+	page( '/sites/:category/:siteUrl/*', redirectToNewDashboardContext );
 
 	// Load specific feature route contexts
 	loadFeatureRoutes( '/sites/:category/:siteUrl' );

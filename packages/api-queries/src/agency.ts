@@ -10,6 +10,7 @@ import {
 	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
 	updateAgencyPartnerDirectoryApplication,
+	updateAgencyDashboardOptIn,
 	updateAgencyProfile,
 	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
@@ -21,6 +22,7 @@ import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type {
 	Agency,
+	AgencyDashboardOptInChoice,
 	AgencyHostingReferral,
 	AgencyLeadMatchingProfile,
 	AgencyPartnerDirectoryApplicationUpdate,
@@ -199,6 +201,18 @@ export const agencyProfileMutation = ( agencyId: number ) =>
 				throw new Error( 'The response did not include the saved profile.' );
 			}
 			return agency;
+		},
+		onSuccess: mergeIntoActiveAgency,
+	} );
+
+export const agencyDashboardOptInMutation = ( agencyId: number | undefined ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-dashboard-opt-in-update' },
+		mutationFn: ( value: AgencyDashboardOptInChoice ) => {
+			if ( ! agencyId ) {
+				throw new Error( 'No active agency found for the current user.' );
+			}
+			return updateAgencyDashboardOptIn( agencyId, value );
 		},
 		onSuccess: mergeIntoActiveAgency,
 	} );

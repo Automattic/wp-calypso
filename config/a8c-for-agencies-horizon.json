@@ -29,6 +29,7 @@
 		"a4a-benchmarks": false,
 		"a4a-bd-checkout": false,
 		"a4a-bd-term-pricing": true,
+		"a4a-dashboard-opt-in": true,
 		"a4a-overview-revamp": true,
 		"a4a-partner-directory": false,
 		"a4a-signup-v2": true,
