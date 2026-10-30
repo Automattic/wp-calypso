@@ -42,6 +42,7 @@ export type PluginSite = {
 	autoupdate: boolean;
 	update?: PluginUpdate;
 	version: string;
+	is_managed?: boolean;
 };
 
 export type PluginSites = {

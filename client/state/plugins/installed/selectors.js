@@ -97,7 +97,13 @@ function getPluginsSelector( state, siteIds, pluginFilter ) {
 
 		const list = state.plugins.installed.plugins[ siteId ] || [];
 		list.forEach( ( item ) => {
-			const sitePluginInfo = pick( item, [ 'active', 'autoupdate', 'update', 'version' ] );
+			const sitePluginInfo = pick( item, [
+				'active',
+				'autoupdate',
+				'update',
+				'version',
+				'is_managed',
+			] );
 
 			memo[ item.slug ] = {
 				...memo[ item.slug ],

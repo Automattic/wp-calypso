@@ -59,6 +59,25 @@ describe( 'getAllowedPluginActions', () => {
 		} );
 	} );
 
+	describe( 'isManagedPlugin', () => {
+		// The API decides per hosting platform (e.g. Pressable), so the flag is trusted on any site.
+		test( 'trusts the API managed flag on a non-Atomic Jetpack site', () => {
+			const site = makeSite( { jetpack: true, managed: true } );
+			const { isManagedPlugin, autoupdate } = getAllowedPluginActions( site, 'some-plugin' );
+
+			expect( isManagedPlugin ).toBe( true );
+			expect( autoupdate ).toBe( false );
+		} );
+
+		test( 'leaves an unmanaged plugin on a non-Atomic Jetpack site updatable', () => {
+			const site = makeSite( { jetpack: true, managed: false } );
+			const { isManagedPlugin, autoupdate } = getAllowedPluginActions( site, 'some-plugin' );
+
+			expect( isManagedPlugin ).toBe( false );
+			expect( autoupdate ).toBe( true );
+		} );
+	} );
+
 	// DOTMSD-1304: flags the core plugins that WordPress.com manages so the UI can
 	// explain why they can't be deleted.
 	describe( 'isAutoManagedPlugin', () => {
