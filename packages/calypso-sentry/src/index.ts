@@ -209,7 +209,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 			const Sentry = await import( '@sentry/react' );
 			// We don't set a release outside of production builds because we don't
 			// really "release" anything other than new deploys from trunk builds.
-			// wpcalypso (calypso.live) runs on PRs, which doesn't really map to a
+			// calypso.live runs on PRs, which doesn't really map to a
 			// release we need to track. Horizon is just a different flavor of trunk,
 			// so it can be mapped to a trunk release.
 			const environment = config< string >( 'env_id' );
