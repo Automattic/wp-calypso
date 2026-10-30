@@ -508,11 +508,13 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		from.siteSlug === current.current.siteSlug &&
 		from.redesignId === current.current.redesignId;
 
-	const store = ( next: Redesign, _variables: unknown, from: Origin | undefined ) => {
+	const store = async ( next: Redesign, _variables: unknown, from: Origin | undefined ) => {
 		if ( ! from ) {
 			return;
 		}
-		queryClient.setQueryData( redesignKey( from.siteId, next.id ), next );
+		const queryKey = redesignKey( from.siteId, next.id );
+		await queryClient.cancelQueries( { queryKey, exact: true } );
+		queryClient.setQueryData( queryKey, next );
 		if ( isCurrent( from ) && next.id !== from.redesignId ) {
 			page.replace( addQueryArgs( `/site-redesign/${ from.siteSlug }`, { redesign: next.id } ) );
 		}

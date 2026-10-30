@@ -1012,6 +1012,54 @@ describe( 'SiteRedesign', () => {
 			...overrides,
 		} );
 
+	it( 'keeps polling after apply when an older session read finishes later', async () => {
+		const ready = session( {
+			eligibility: { ...session().eligibility, can_apply: true, reason: null },
+		} );
+		const applying = session( {
+			status: 'applying',
+			apply: { status: 'queued', error: null },
+		} );
+		const queryClient = new QueryClient();
+		const queryKey = [ 'site-redesign', 1, REDESIGN_ID ];
+		jest.mocked( fetchRedesign ).mockResolvedValue( ready );
+		jest.mocked( applyRedesign ).mockResolvedValue( applying );
+		const { unmount } = renderPage( false, REDESIGN_ID, queryClient );
+		await selectDesign( 'Design 2 of 4', 'Preview of design 2' );
+
+		let finishRead: ( value: Redesign ) => void = () => {};
+		jest.mocked( fetchRedesign ).mockReturnValueOnce(
+			new Promise( ( resolve ) => {
+				finishRead = resolve;
+			} )
+		);
+		act( () => {
+			void queryClient.refetchQueries( { queryKey, exact: true } );
+		} );
+		expect( queryClient.getQueryState( queryKey )?.fetchStatus ).toBe( 'fetching' );
+
+		jest.useFakeTimers();
+		try {
+			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+			await user.click( chooseButton() );
+			await screen.findByText( 'Getting your new design ready…' );
+			await act( async () => finishRead( ready ) );
+
+			expect( queryClient.getQueryData( queryKey ) ).toEqual( applying );
+			expect( screen.getByText( 'Getting your new design ready…' ) ).toBeVisible();
+
+			jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
+			await act( async () => {
+				await jest.advanceTimersByTimeAsync( 3000 );
+			} );
+			expect( screen.getByRole( 'heading', { name: 'Your new design is ready' } ) ).toBeVisible();
+		} finally {
+			unmount();
+			queryClient.clear();
+			jest.useRealTimers();
+		}
+	} );
+
 	it( 'reviews the installed theme on the site itself before it goes live', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
 		const { container } = renderPage( true );
