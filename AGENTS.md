@@ -95,6 +95,10 @@ yarn reformat-files   # Fix formatting with Prettier
 yarn typecheck-client # Type-check client
 ```
 
+### Verifying UI changes in a browser
+
+To check a change in the running dev server (open a page as a logged-in user, read what it shows, take a screenshot, catch console and API errors), read and follow [.agents/skills/dashboard-browser/SKILL.md](.agents/skills/dashboard-browser/SKILL.md).
+
 ## Conventions
 
 - Do NOT add any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
