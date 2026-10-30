@@ -184,11 +184,14 @@ function SurveyContent( {
 					includedDomainPurchase={ includedDomainPurchase }
 					intent={ intent ?? undefined }
 					onClickDowngrade={ downgradeClick }
+					onClickFreeMonthOffer={ freeMonthOfferClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 					onSwitchToMonthly={ onSwitchToMonthly }
+					plans={ plans }
 					purchase={ purchase }
 					recordEvent={ recordEvent }
 					refundAmount={ refundAmount }
+					showFreeMonthOffer={ upsell === 'free-month-offer' }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);

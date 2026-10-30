@@ -35,7 +35,7 @@ import { SummaryButtonList } from '../../../../../components/summary-button-list
 import { dashboardLink, wpcomLink } from '../../../../../utils/link';
 import { getPurchaseSettingsUrl, getPurchasesListUrl } from '../../../../../utils/site-url';
 import { getSolutionsForReason, PRICE_MOTIVATED_REASONS } from '../../get-solutions-for-reason';
-import UpsellStep from './upsell-step';
+import UpsellStep, { getFreeMonthOfferText, getFreeMonthOfferTitle } from './upsell-step';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
@@ -56,6 +56,7 @@ const CARD_ICONS: Record< string, IconType > = {
 	'use-migration-tools': shipping,
 	'use-domain-guide': globe,
 	'explore-domain-options': search,
+	'free-month-offer': calendar,
 };
 
 function getDecorationForCard( cardId: string ) {
@@ -180,12 +181,14 @@ function getCardTitle( cardId: string ): string {
 			return __( 'Use our domain guide' );
 		case 'explore-domain-options':
 			return __( 'Explore more domain options' );
+		case 'free-month-offer':
+			return getFreeMonthOfferTitle();
 		default:
 			return '';
 	}
 }
 
-function getCardDescription( cardId: string ): string {
+function getCardDescription( cardId: string, planName: string ): string {
 	switch ( cardId ) {
 		case 'change-plan':
 			return __( 'You can change to a plan with the features and pricing that work for you.' );
@@ -216,6 +219,8 @@ function getCardDescription( cardId: string ): string {
 			return __( 'Follow our simple guide to get connected quickly.' );
 		case 'explore-domain-options':
 			return __( "Our search tool finds great alternatives you'll love." );
+		case 'free-month-offer':
+			return getFreeMonthOfferText( planName );
 		default:
 			return '';
 	}
@@ -230,11 +235,14 @@ type SolutionsCardsUpsellStepProps = {
 	includedDomainPurchase?: Purchase;
 	intent?: string;
 	onClickDowngrade?: ( upsell: string ) => void;
+	onClickFreeMonthOffer?: () => void;
 	onDeclineUpsell?: () => void;
 	onSwitchToMonthly?: () => void;
+	plans?: PlanProduct[];
 	purchase: Purchase;
 	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
 	refundAmount?: number;
+	showFreeMonthOffer?: boolean;
 	yearlyPlanSlug?: string;
 };
 
@@ -247,15 +255,24 @@ export default function SolutionsCardsUpsellStep( {
 	includedDomainPurchase,
 	intent,
 	onClickDowngrade,
+	onClickFreeMonthOffer,
 	onDeclineUpsell,
 	onSwitchToMonthly,
+	plans,
 	purchase,
 	recordEvent,
 	refundAmount,
+	showFreeMonthOffer,
 	yearlyPlanSlug,
 }: SolutionsCardsUpsellStepProps ) {
 	const [ showDowngradeStep, setShowDowngradeStep ] = React.useState( false );
-	const solutions = getSolutionsForReason( cancellationReason );
+	const reasonSolutions = getSolutionsForReason( cancellationReason );
+	const solutions =
+		showFreeMonthOffer && reasonSolutions
+			? [ { id: 'free-month-offer' }, ...reasonSolutions ]
+			: reasonSolutions;
+	const planName =
+		plans?.find( ( plan ) => purchase.product_slug === plan.product_slug )?.product_name ?? '';
 	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
 
@@ -398,6 +415,9 @@ export default function SolutionsCardsUpsellStep( {
 			case 'explore-domain-options':
 				window.location.href = dashboardLink( `/sites/${ purchase.site_slug }/domains` );
 				break;
+			case 'free-month-offer':
+				onClickFreeMonthOffer?.();
+				break;
 			case 'ask-ai-assistant': {
 				const initialMessage =
 					"User is contacting from pre-cancellation form. Cancellation reason they've given: " +
@@ -441,7 +461,8 @@ export default function SolutionsCardsUpsellStep( {
 						card.id === 'make-site-faster' ||
 						card.id === 'use-migration-tools' ||
 						card.id === 'use-domain-guide' ||
-						card.id === 'explore-domain-options'
+						card.id === 'explore-domain-options' ||
+						card.id === 'free-month-offer'
 					);
 					const href = getCardHref(
 						card.id,
@@ -459,7 +480,7 @@ export default function SolutionsCardsUpsellStep( {
 							key={ card.id }
 							className="cancel-purchase-form__solution-card"
 							title={ title }
-							description={ getCardDescription( card.id ) }
+							description={ getCardDescription( card.id, planName ) }
 							decoration={ getDecorationForCard( card.id ) }
 							href={ href }
 							onClick={ onClick }
