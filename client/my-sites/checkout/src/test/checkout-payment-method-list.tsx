@@ -18,6 +18,7 @@ import {
 	mockGetVatInfoEndpoint,
 	mockGetSiteDomainsEndpoint,
 	mockGetSupportedCountriesEndpoint,
+	mockCachedContactDetailsEndpoint,
 } from './util';
 import { MockCheckout } from './util/mock-checkout';
 
@@ -28,6 +29,9 @@ jest.mock( 'calypso/my-sites/checkout/use-cart-key' );
 jest.mock( 'calypso/lib/analytics/utils/refresh-country-code-cookie-gdpr' );
 jest.mock( 'calypso/state/products-list/selectors/is-marketplace-product' );
 jest.mock( 'calypso/lib/navigate' );
+jest.mock( '@stripe/stripe-js', () => ( {
+	loadStripe: jest.fn().mockResolvedValue( null ),
+} ) );
 
 describe( 'Checkout payment methods list', () => {
 	const initialCart = getBasicCart();
@@ -53,6 +57,17 @@ describe( 'Checkout payment methods list', () => {
 		mockGetVatInfoEndpoint( {} );
 		mockGetSupportedCountriesEndpoint( countryList );
 		mockMatchMediaOnWindow();
+	} );
+
+	it( 'shows accepted cards in the collapsed payment heading before contact details are complete', async () => {
+		mockCachedContactDetailsEndpoint( {} );
+		render( <MockCheckout initialCart={ initialCart } setCart={ mockSetCartEndpoint } /> );
+		expect( await screen.findByText( 'Credit or debit card' ) ).toBeInTheDocument();
+
+		await waitFor( () => {
+			const heading = screen.getByRole( 'heading', { name: /Pick a payment method/ } );
+			expect( heading.querySelector( '.credit-card__logos' ) ).toBeVisible();
+		} );
 	} );
 
 	it( 'renders the paypal payment method option', async () => {
