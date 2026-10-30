@@ -45,8 +45,11 @@ export default function ShoppingCartMenuItem( {
 	//       We have to refactor this once we have updates. Context: p1714663834375719-slack-C06JY8QL0TU
 	const productDisplayName =
 		item.slug === 'wpcom-hosting-business' ? translate( 'WordPress.com Site' ) : item.name;
+	// Billing Dragon lines show their count with the price of one; a count on the
+	// previous billing system is a bundle size, so it stays in the name.
+	const showsUnitPrice = isEnabled( 'a4a-bd-checkout' ) && item.quantity > 1 && ! isFree;
 	const itemDisplayName =
-		item.quantity > 1 && ! onSetQuantity
+		item.quantity > 1 && ! onSetQuantity && ! showsUnitPrice
 			? translate( '%(productName)s x %(quantity)s', {
 					args: { productName: productDisplayName, quantity: item.quantity },
 				} )
@@ -105,7 +108,7 @@ export default function ShoppingCartMenuItem( {
 						</>
 					) }
 				</div>
-				{ onSetQuantity && ! isFree && item.quantity > 1 && (
+				{ showsUnitPrice && (
 					<div className="shopping-cart__menu-list-item-unit-price">{ unitPriceText }</div>
 				) }
 			</div>
