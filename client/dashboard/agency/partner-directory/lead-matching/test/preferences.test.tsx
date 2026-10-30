@@ -213,6 +213,7 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 	} );
 
 	test( 'saves preferences while retaining skipped contacts and failed sync edits without reporting full success', async () => {
+		const user = userEvent.setup();
 		mockAgency();
 		const profile = {
 			...completeProfile,
@@ -249,15 +250,15 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 
 		const phone = await screen.findByRole( 'textbox', { name: 'Phone number (optional)' } );
 		const booking = screen.getByRole( 'textbox', { name: 'Booking link (optional)' } );
-		await userEvent.clear( phone );
-		await userEvent.type( phone, '+44abc1234' );
-		await userEvent.clear( booking );
-		await userEvent.type( booking, 'not a URL' );
+		await user.clear( phone );
+		await user.paste( '+44abc1234' );
+		await user.clear( booking );
+		await user.paste( 'not a URL' );
 		const serviceLevel = screen.getByRole( 'combobox', {
 			name: 'Which max service level are you most comfortable with right now?',
 		} );
-		await userEvent.selectOptions( serviceLevel, 'premium' );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+		await user.selectOptions( serviceLevel, 'premium' );
+		await user.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 		await waitFor( () =>
 			expect( noticeContents() ).toContain(
 				'Preferences saved, but these contact fields were not saved: Phone number, Booking link. Check them and try again.'
@@ -275,11 +276,11 @@ describe( '<AgencyPartnerDirectoryLeadMatchingPreferences>', () => {
 		expect( saved?.lead_matching_profile?.contact ).toEqual( profile.contact );
 		expect( saved?.lead_matching_profile?.service_and_budget.max_service_level ).toBe( 'premium' );
 		expect( noticeContents() ).not.toContain( 'Lead matching preferences saved.' );
-		await userEvent.clear( phone );
-		await userEvent.type( phone, '+1234' );
-		await userEvent.clear( booking );
-		await userEvent.type( booking, 'book.example.com/?a=1' );
-		await userEvent.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
+		await user.clear( phone );
+		await user.paste( '+1234' );
+		await user.clear( booking );
+		await user.paste( 'book.example.com/?a=1' );
+		await user.click( screen.getByRole( 'button', { name: 'Save preferences' } ) );
 
 		await waitFor( () =>
 			expect( noticeContents() ).toContain( 'Failed to save lead matching preferences.' )
