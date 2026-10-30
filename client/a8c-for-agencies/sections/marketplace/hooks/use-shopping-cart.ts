@@ -165,13 +165,19 @@ export default function useShoppingCart() {
 
 	const onSetCartItemQuantity = useCallback(
 		( item: ShoppingCartItem, quantity: number ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_checkout_set_item_quantity', {
+					product: item.slug,
+					quantity,
+				} )
+			);
 			setAndCacheSelectedItems(
 				updatedSelectedCartItems.map( ( selectedCartItem ) =>
 					selectedCartItem === item ? { ...selectedCartItem, quantity } : selectedCartItem
 				)
 			);
 		},
-		[ updatedSelectedCartItems, setAndCacheSelectedItems ]
+		[ dispatch, updatedSelectedCartItems, setAndCacheSelectedItems ]
 	);
 
 	const onClearCart = useCallback( () => {
