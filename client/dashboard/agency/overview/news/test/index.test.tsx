@@ -52,6 +52,20 @@ describe( '<NewsCard>', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	test( 'closes the item that opens by default', async () => {
+		const user = userEvent.setup();
+		mockAnnouncements( [ event, announcement ] );
+		render( <NewsCard agencyId={ AGENCY_ID } /> );
+
+		const [ row ] = await screen.findAllByRole( 'button', { name: /Run an AI visibility\saudit/ } );
+		await user.click( row );
+
+		expect( screen.queryByText( 'Watch an audit run start to finish.' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Choose annual billing for 6 months free.' )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'filters the list by type', async () => {
 		const user = userEvent.setup();
 		const recordTracksEvent = jest.fn();

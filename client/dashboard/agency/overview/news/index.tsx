@@ -222,9 +222,11 @@ export default function NewsCard( { agencyId, ...actionProps }: NewsCardProps ) 
 		} );
 		setOpenId( undefined );
 	};
-	// The first item on each page or filter opens until someone picks another.
+	// The first item on each page or filter opens until someone picks another or closes it.
 	const openItemId =
-		openId === undefined || ! data.some( ( { id } ) => id === openId ) ? data[ 0 ]?.id : openId;
+		openId === undefined || ( openId !== null && ! data.some( ( { id } ) => id === openId ) )
+			? data[ 0 ]?.id
+			: openId;
 
 	return (
 		<Card className="a4a-news">
