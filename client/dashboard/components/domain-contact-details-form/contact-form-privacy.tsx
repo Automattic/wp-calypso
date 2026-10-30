@@ -1,4 +1,5 @@
 import { domainQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
@@ -23,6 +24,17 @@ export default function ContactFormPrivacy( {
 	onTogglePrivacyDisclosure,
 }: ContactFormPrivacyProps ) {
 	const { data: domain } = useSuspenseQuery( domainQuery( domainName ) );
+	const hasEnTranslation = useHasEnTranslation();
+
+	const hasNewPrivacyCopy =
+		hasEnTranslation( 'Privacy protection on' ) &&
+		hasEnTranslation( 'Privacy protection off' ) &&
+		hasEnTranslation(
+			'Your name, address, email and phone stay private. Anyone who looks the domain up in the public WHOIS record sees the registrar’s details instead. <learnMoreLink />'
+		) &&
+		hasEnTranslation(
+			'Your name, address, email and phone are public. Anyone who looks the domain up in the WHOIS record sees them. Turn on to keep them private. <learnMoreLink />'
+		);
 
 	const getPrivacyProtectionHelp = () => {
 		if ( ! domain.privacy_available ) {
@@ -35,6 +47,10 @@ export default function ContactFormPrivacy( {
 					);
 		}
 
+		if ( ! hasNewPrivacyCopy ) {
+			return __( 'We recommend keeping privacy protection on. <learnMoreLink />' );
+		}
+
 		return domain.private_domain
 			? __(
 					'Your name, address, email and phone stay private. Anyone who looks the domain up in the public WHOIS record sees the registrar’s details instead. <learnMoreLink />'
@@ -44,6 +60,14 @@ export default function ContactFormPrivacy( {
 				);
 	};
 
+	const getPrivacyProtectionLabel = () => {
+		if ( ! hasNewPrivacyCopy ) {
+			return __( 'Privacy protection' );
+		}
+
+		return domain.private_domain ? __( 'Privacy protection on' ) : __( 'Privacy protection off' );
+	};
+
 	const renderPrivacyProtection = () => {
 		return (
 			<ToggleControl
@@ -51,9 +75,7 @@ export default function ContactFormPrivacy( {
 				checked={ domain.private_domain }
 				disabled={ isSubmitting || ! domain.privacy_available }
 				onChange={ onTogglePrivacyProtection }
-				label={
-					domain.private_domain ? __( 'Privacy protection on' ) : __( 'Privacy protection off' )
-				}
+				label={ getPrivacyProtectionLabel() }
 				help={ createInterpolateElement( getPrivacyProtectionHelp(), {
 					learnMoreLink: <InlineSupportLink supportContext="domain-registrations-and-privacy" />,
 				} ) }

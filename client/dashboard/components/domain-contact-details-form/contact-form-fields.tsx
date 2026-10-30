@@ -1,4 +1,5 @@
 import { smsCountryCodesQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	CheckboxControl,
@@ -141,20 +142,34 @@ function OrganizationNotice() {
 }
 
 function EmailNotice() {
+	const hasEnTranslation = useHasEnTranslation();
+	const icannLink = (
+		<ExternalLink href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en">
+			ICANN
+		</ExternalLink>
+	);
+
 	return (
 		<Notice variant="warning">
-			{ createInterpolateElement(
-				__(
-					'<icannLink>ICANN</icannLink> sends a verification to this email address. If it bounces or goes unanswered, the domain is suspended until it is confirmed.'
-				),
-				{
-					icannLink: (
-						<ExternalLink href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en">
-							ICANN
-						</ExternalLink>
-					),
-				}
-			) }
+			{ hasEnTranslation(
+				'<icannLink>ICANN</icannLink> sends a verification to this email address. If it bounces or goes unanswered, the domain is suspended until it is confirmed.'
+			)
+				? createInterpolateElement(
+						__(
+							'<icannLink>ICANN</icannLink> sends a verification to this email address. If it bounces or goes unanswered, the domain is suspended until it is confirmed.'
+						),
+						{ icannLink }
+					)
+				: createInterpolateElement(
+						sprintf(
+							/* translators: %s: ICANN acronym */
+							__(
+								'<external>%s</external> requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.'
+							),
+							'ICANN'
+						),
+						{ external: icannLink }
+					) }
 		</Notice>
 	);
 }
