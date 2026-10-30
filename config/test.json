@@ -95,6 +95,7 @@
 		"purchases/site-transfer": true,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
+		"reader/comment-polling": true,
 		"reader/shelves": true,
 		"reader/full-errors": true,
 		"reader/four-for-four": true,

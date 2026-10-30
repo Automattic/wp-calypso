@@ -174,6 +174,7 @@
 		"push-notifications": true,
 		"resurrected-users/90-day-eligibility": true,
 		"reader/social": true,
+		"reader/comment-polling": true,
 		"reader/shelves": true,
 		"reader/discover-new-blogs": true,
 		"reader/full-errors": true,
