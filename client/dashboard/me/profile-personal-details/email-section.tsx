@@ -44,7 +44,6 @@ const EmailFieldContext = createContext< {
 	disabled: boolean;
 } >( { help: null, className: '', disabled: false } );
 
-// Defined at module level so DataForm gets a stable component and the input keeps focus while typing.
 function EmailEdit( { data, field, onChange }: DataFormControlProps< EmailFormData > ) {
 	const { help, className, disabled } = useContext( EmailFieldContext );
 	return (

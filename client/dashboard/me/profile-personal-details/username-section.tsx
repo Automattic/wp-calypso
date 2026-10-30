@@ -40,7 +40,6 @@ const UsernameFieldContext = createContext< {
 	disabled: boolean;
 } >( { help: null, className: '', isInvalid: false, disabled: false } );
 
-// Defined at module level so DataForm gets a stable component and the input keeps focus while typing.
 function UsernameEdit( { data, field, onChange }: DataFormControlProps< UsernameFormData > ) {
 	const { help, className, isInvalid, disabled } = useContext( UsernameFieldContext );
 	return (
