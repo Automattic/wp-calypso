@@ -54,6 +54,7 @@
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
 		"plans/migration-trial": true,
+		"plans/scheduled-term-change": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
 		"posthog-tracking": true,

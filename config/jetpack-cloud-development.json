@@ -62,6 +62,7 @@
 		"marketplace-test": false,
 		"newsletter-categories": true,
 		"oauth": true,
+		"plans/scheduled-term-change": true,
 		"purchases/new-payment-methods": true,
 		"realtime-site-count": true,
 		"site-indicator": false,
