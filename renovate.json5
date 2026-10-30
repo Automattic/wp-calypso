@@ -70,6 +70,11 @@
 			matchManagers: [ 'maven' ],
 			enabled: false,
 		},
+		{
+			// No longer a workspace, so its dependencies aren't installed here.
+			matchFileNames: [ 'packages/wp-babel-makepot/**' ],
+			enabled: false,
+		},
 	],
 	ignoreDeps: [
 		'electron-builder',
