@@ -1,4 +1,4 @@
-import { useViewportMatch } from '@wordpress/compose';
+import { useConstrainedTabbing, useViewportMatch } from '@wordpress/compose';
 import { setLocaleData } from '@wordpress/i18n';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
@@ -100,6 +100,7 @@ const NotesWrapper = ( { wpcom } ) => {
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 	const [ preferences, setPreferences ] = useState();
 	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const constrainedTabbingRef = useConstrainedTabbing();
 
 	if ( locale && 'en' !== locale ) {
 		fetchLocale( locale );
@@ -227,16 +228,18 @@ const NotesWrapper = ( { wpcom } ) => {
 	}
 
 	return (
-		<NotificationApp
-			actionHandlers={ ACTION_HANDLERS }
-			locale={ locale }
-			wpcom={ wpcom }
-			isDismissible={ isMobileViewport }
-			isViewSettingsEnabled={ isViewSettingsEnabled }
-			isSimplifiedNoteEnabled={ isViewSettingsEnabled }
-			preferences={ preferences }
-			onPreferenceChange={ handlePreferenceChange }
-		/>
+		<div className="wpnc__tab-boundary" ref={ constrainedTabbingRef }>
+			<NotificationApp
+				actionHandlers={ ACTION_HANDLERS }
+				locale={ locale }
+				wpcom={ wpcom }
+				isDismissible={ isMobileViewport }
+				isViewSettingsEnabled={ isViewSettingsEnabled }
+				isSimplifiedNoteEnabled={ isViewSettingsEnabled }
+				preferences={ preferences }
+				onPreferenceChange={ handlePreferenceChange }
+			/>
+		</div>
 	);
 };
 
