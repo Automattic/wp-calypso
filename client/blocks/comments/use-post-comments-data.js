@@ -91,18 +91,13 @@ export const usePostCommentsData = ( props ) => {
 
 		const knownIds = new Set( loadedComments.map( ( comment ) => comment.ID ) );
 		const { data: polled } = await fetchLaterComments();
-		const polledComments = ( polled?.pages ?? [] )
+		const newIds = ( polled?.pages ?? [] )
 			.flatMap( ( page ) => page.comments )
-			.filter( ( comment ) => ! knownIds.has( comment.ID ) );
-		const polledIds = new Set( polledComments.map( ( comment ) => comment.ID ) );
-		const newIds = polledComments
 			.filter(
 				( comment ) =>
+					! knownIds.has( comment.ID ) &&
 					! comment.isPlaceholder &&
-					comment.author?.ID !== currentUserId &&
-					( ! comment.parent ||
-						knownIds.has( comment.parent.ID ) ||
-						polledIds.has( comment.parent.ID ) )
+					comment.author?.ID !== currentUserId
 			)
 			.map( ( comment ) => comment.ID );
 
@@ -154,6 +149,22 @@ export const usePostCommentsData = ( props ) => {
 		() => ensureInitialCommentVisible( commentsTree, initialComment ),
 		[ commentsTree, initialComment ]
 	);
+	// Replies whose parent isn't loaded never render, so they aren't counted as updates.
+	const reachablePendingIds = useMemo( () => {
+		if ( ! pendingCommentIds.length ) {
+			return pendingCommentIds;
+		}
+
+		const reachableIds = new Set();
+		const visit = ( commentIds ) =>
+			commentIds.forEach( ( commentId ) => {
+				reachableIds.add( String( commentId ) );
+				visit( commentsTreeWithInitialComment[ commentId ]?.children ?? [] );
+			} );
+		visit( commentsTreeWithInitialComment.children );
+
+		return pendingCommentIds.filter( ( commentId ) => reachableIds.has( String( commentId ) ) );
+	}, [ commentsTreeWithInitialComment, pendingCommentIds ] );
 	const visibleCommentsTree = useMemo(
 		() => omitCommentsFromTree( commentsTreeWithInitialComment, pendingCommentIds ),
 		[ commentsTreeWithInitialComment, pendingCommentIds ]
@@ -174,7 +185,7 @@ export const usePostCommentsData = ( props ) => {
 		fetchEarlierComments,
 		fetchLaterComments,
 		pollForNewComments,
-		pendingCommentIds,
+		pendingCommentIds: reachablePendingIds,
 		revealPendingComments: () => setPendingCommentIds( [] ),
 		setActiveReply: ( { commentId } ) => setActiveReplyCommentId( commentId ),
 		toggleInlineCommentsExpanded: () => setIsExpanded( ( current ) => ! current ),

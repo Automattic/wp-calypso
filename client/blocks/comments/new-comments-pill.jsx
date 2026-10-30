@@ -30,7 +30,9 @@ export default function NewCommentsPill( { commentIds, onReveal } ) {
 
 		// A comment can stay hidden after reveal, e.g. inside a collapsed reply list.
 		const target = commentIds
-			.map( ( commentId ) => window.document.getElementById( `comment-${ commentId }` ) )
+			.map( ( commentId ) =>
+				window.document.getElementById( `comment-${ commentId }` )?.closest( '.comments__comment' )
+			)
 			.filter( Boolean )
 			.at( -1 );
 

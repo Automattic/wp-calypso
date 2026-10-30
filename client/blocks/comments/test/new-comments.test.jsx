@@ -22,8 +22,8 @@ jest.mock( 'calypso/lib/interval', () => ( {
 jest.mock( '../form-root', () => () => null );
 
 jest.mock( '../post-comment', () => ( props ) => (
-	<li id={ `comment-${ props.commentId }` } data-testid="post-comment">
-		{ props.commentId }
+	<li className="comments__comment" data-testid="post-comment">
+		<strong id={ `comment-${ props.commentId }` }>{ props.commentId }</strong>
 	</li>
 ) );
 
@@ -125,6 +125,6 @@ describe( 'PostComments polling for new comments', () => {
 
 		expect( getRenderedCommentIds() ).toEqual( [ '4', '3', '2', '1' ] );
 		expect( pill ).not.toBeInTheDocument();
-		expect( document.getElementById( 'comment-4' ) ).toHaveFocus();
+		expect( document.getElementById( 'comment-4' ).closest( 'li' ) ).toHaveFocus();
 	} );
 } );
