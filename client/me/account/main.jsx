@@ -46,7 +46,6 @@ import {
 	getCurrentUserName,
 	getCurrentUserVisibleSiteCount,
 } from 'calypso/state/current-user/selectors';
-import { isDashboardToggleEnabled } from 'calypso/state/dashboard/selectors';
 import { errorNotice, removeNotice, successNotice } from 'calypso/state/notices/actions';
 import canDisplayCommunityTranslator from 'calypso/state/selectors/can-display-community-translator';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
@@ -60,7 +59,6 @@ import {
 import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import { saveUnsavedUserSettings } from 'calypso/state/user-settings/thunks';
 import AccountSettingsCloseLink from './close-link';
-import HostingDashboardOptInForm from './hosting-dashboard-opt-in-form';
 import ToggleLandingPageSettings from './toggle-landing-page';
 import ToggleUseCommunityTranslator from './toggle-use-community-translator';
 
@@ -1034,8 +1032,6 @@ class Account extends Component {
 					</form>
 				</Card>
 
-				{ this.props.isDashboardToggleEnabled && <HostingDashboardOptInForm /> }
-
 				{ config.isEnabled( 'me/account-close' ) && <AccountSettingsCloseLink /> }
 			</Main>
 		);
@@ -1062,7 +1058,6 @@ export default compose(
 			visibleSiteCount: getCurrentUserVisibleSiteCount( state ),
 			isEmailVerified: isCurrentUserEmailVerified( state ),
 			isAutomattician: isAutomatticTeamMember( ownProps.teams ),
-			isDashboardToggleEnabled: isDashboardToggleEnabled( state ),
 		} ),
 		{
 			clearUnsavedUserSettings,
