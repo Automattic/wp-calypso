@@ -235,7 +235,7 @@ export function WebsiteAddressPicker( {
 				onClick={ () => chooseSite( site ) }
 			>
 				<span className="dashboard-amplify-scan-form__suggestion-thumbnail">
-					<SiteScreenshot url={ site.url } alt="" compact decorative />
+					<SiteScreenshot url={ site.url } alt="" compact decorative fill />
 				</span>
 				<span className="dashboard-amplify-scan-form__suggestion-details">
 					<strong>{ site.label }</strong>

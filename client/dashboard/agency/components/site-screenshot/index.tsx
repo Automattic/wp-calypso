@@ -7,11 +7,14 @@ export default function SiteScreenshot( {
 	alt,
 	compact = false,
 	decorative = false,
+	fill = false,
 }: {
 	url: string;
 	alt: string;
 	compact?: boolean;
 	decorative?: boolean;
+	/** Fill the parent's box instead of keeping a 16:9 ratio. */
+	fill?: boolean;
 } ) {
 	const [ attempt, setAttempt ] = useState( 0 );
 	const [ ready, setReady ] = useState( false );
@@ -59,7 +62,11 @@ export default function SiteScreenshot( {
 	const placeholder = decorative ? null : <span>{ statusText }</span>;
 
 	return (
-		<div className="agency-site-screenshot" aria-hidden={ decorative || undefined }>
+		<div
+			className="agency-site-screenshot"
+			data-fill={ fill || undefined }
+			aria-hidden={ decorative || undefined }
+		>
 			{ ready && ! failed ? (
 				<img src={ src } alt={ alt } loading="lazy" onError={ () => setFailed( true ) } />
 			) : (
