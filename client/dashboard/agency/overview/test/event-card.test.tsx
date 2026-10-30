@@ -2,8 +2,10 @@
  * @jest-environment jsdom
  */
 import '@testing-library/jest-dom';
-import { fireEvent, render, screen } from '@testing-library/react';
-import EventCard from '../event-card';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import EventCard, { SingleEventCard } from '../event-card';
+import { getLeadMatchingContactAnnouncement } from '../events';
 
 describe( '<EventCard>', () => {
 	beforeEach( () => {
@@ -14,17 +16,24 @@ describe( '<EventCard>', () => {
 		jest.useRealTimers();
 	} );
 
-	test( 'keeps internal announcement CTAs and tracking after dated events expire', () => {
+	test( 'keeps internal announcement CTAs and tracking after dated events expire', async () => {
+		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 		const recordTracksEvent = jest.fn();
 		const events = () => (
-			<EventCard
-				isEligibleForPressableIntroOffer
-				aiMcpHref="/resources-and-tools/ai-mcp"
-				pressableHostingHref="/marketplace/hosting/pressable"
-				shouldUseRouterLink={ false }
-				leadMatchingHref="/partner-directory/lead-matching"
-				recordTracksEvent={ recordTracksEvent }
-			/>
+			<>
+				<SingleEventCard
+					event={ getLeadMatchingContactAnnouncement( '/partner-directory/lead-matching' ) }
+					shouldUseRouterLink={ false }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+				<EventCard
+					isEligibleForPressableIntroOffer
+					aiMcpHref="/resources-and-tools/ai-mcp"
+					pressableHostingHref="/marketplace/hosting/pressable"
+					shouldUseRouterLink={ false }
+					recordTracksEvent={ recordTracksEvent }
+				/>
+			</>
 		);
 		const view = render( events() );
 
@@ -38,7 +47,7 @@ describe( '<EventCard>', () => {
 		);
 		const link = screen.getByRole( 'link', { name: 'Update your details' } );
 		link.addEventListener( 'click', ( event ) => event.preventDefault(), { once: true } );
-		fireEvent.click( link );
+		await user.click( link );
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_a4a_overview_event_cta_click', {
 			event_id: 'a4a-lead-matching-contact-options',
 			cta_id: 'update-details',

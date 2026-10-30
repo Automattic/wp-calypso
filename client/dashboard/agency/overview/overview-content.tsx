@@ -4,7 +4,8 @@ import { __ } from '@wordpress/i18n';
 import Grid from '../../components/grid';
 import { useCertification } from '../certification/use-certification';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
-import EventCard from './event-card';
+import EventCard, { SingleEventCard } from './event-card';
+import { getLeadMatchingContactAnnouncement } from './events';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
 import ReferralEarningsCard from './referral-earnings-card';
@@ -127,6 +128,13 @@ export default function AgencyOverviewContent( {
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }
+				{ showContactOptionsAnnouncement && links.leadMatching && (
+					<SingleEventCard
+						event={ getLeadMatchingContactAnnouncement( links.leadMatching ) }
+						shouldUseRouterLink={ shouldUseRouterLink ?? true }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
 				{ ! isRejected && (
 					<GrowthCard
 						isPending={ isPending }
@@ -169,7 +177,6 @@ export default function AgencyOverviewContent( {
 					aiMcpHref={ links.aiMcp }
 					tiersHref={ links.tiers }
 					pressableHostingHref={ links.pressableHosting }
-					leadMatchingHref={ showContactOptionsAnnouncement ? links.leadMatching : undefined }
 					shouldUseRouterLink={ shouldUseRouterLink }
 					recordTracksEvent={ recordTracksEvent }
 				/>

@@ -18,7 +18,6 @@ import {
 	FEATURED_EVENT,
 	getAiMcpAnnouncement,
 	getCertificationPromoEvent,
-	getLeadMatchingContactAnnouncement,
 	getPressableExpansionOfferEvent,
 	getPressableIntroOfferEvent,
 } from './events';
@@ -39,12 +38,11 @@ interface EventCardProps {
 	aiMcpHref: string;
 	tiersHref?: string;
 	pressableHostingHref: string;
-	leadMatchingHref?: string;
 	shouldUseRouterLink?: boolean;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
-function SingleEventCard( {
+export function SingleEventCard( {
 	event,
 	shouldUseRouterLink,
 	recordTracksEvent,
@@ -167,7 +165,6 @@ export default function EventCard( {
 	aiMcpHref,
 	tiersHref,
 	pressableHostingHref,
-	leadMatchingHref,
 	shouldUseRouterLink = true,
 	recordTracksEvent,
 }: EventCardProps ) {
@@ -194,7 +191,6 @@ export default function EventCard( {
 			? getPressableExpansionOfferEvent( pressableHostingHref )
 			: null,
 		getAiMcpAnnouncement( aiMcpHref ),
-		leadMatchingHref ? getLeadMatchingContactAnnouncement( leadMatchingHref ) : null,
 	].filter(
 		( event ): event is FeaturedEvent =>
 			!! event && ( event.endsAt === undefined || now < new Date( event.endsAt ) )
