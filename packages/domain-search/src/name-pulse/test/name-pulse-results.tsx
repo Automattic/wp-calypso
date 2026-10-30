@@ -1271,6 +1271,21 @@ describe( 'NamePulseResults', () => {
 			expect( properties.result_count ).toBeGreaterThan( properties.result_count_related );
 		} );
 
+		it( 'records nothing for a query too short to register', async () => {
+			const events = buildEvents();
+
+			const { rerender } = render( <NamePulseTestSearch query="b" events={ events } /> );
+
+			// Longer than the settle delay, so the query has settled.
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 500 ) ) );
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
+			expect( events.onSuggestionsReceive ).not.toHaveBeenCalled();
+
+			rerender( <NamePulseTestSearch query="icecream" events={ events } /> );
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 ) );
+			expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 1 );
+		} );
+
 		it( 'records neither the search nor its cards when the query changes before it has results', async () => {
 			const events = buildEvents();
 			// The first query's suggestions never arrive, so its result set is never complete.
@@ -1595,10 +1610,11 @@ describe( 'NamePulseResults', () => {
 
 			await waitFor( () =>
 				expect( namePulseEvent( events, 'results_error' ) ).toEqual( {
-					search_id: events.onNamePulseSearch.mock.calls[ 0 ][ 2 ].search_id,
+					search_id: expect.any( String ),
 					error_type: 'tlds_failed',
 				} )
 			);
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
 			expect( events.onSuggestionsReceive ).not.toHaveBeenCalled();
 		} );
 

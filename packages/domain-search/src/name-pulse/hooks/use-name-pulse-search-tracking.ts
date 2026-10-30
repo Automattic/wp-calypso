@@ -31,8 +31,9 @@ interface NamePulseSearchTrackingState {
 
 /**
  * Records one search per query or filter change that gets results, along with
- * the result set it shows. A query the user types past before it has results is
- * not recorded. Returns the result set, with its id once it is recorded.
+ * the result set it shows. A query the user types past before it has results, or
+ * one that ends in an error, is not recorded as a search. Returns the result
+ * set, with its id once it is recorded.
  */
 export const useNamePulseSearchTracking = (
 	search: ReturnType< typeof useNamePulseSearch >
@@ -80,11 +81,6 @@ export const useNamePulseSearchTracking = (
 
 		current.hasReportedResults = true;
 
-		events.onNamePulseSearch( current.query, current.trigger, {
-			search_id: ids.searchId,
-			query_shape: settledLayout.mode,
-		} );
-
 		const counts = {
 			result_count_exact: exactMatch?.availability ? 1 : 0,
 			result_count_top: settledLayout.top.show ? topResults.length : 0,
@@ -112,6 +108,10 @@ export const useNamePulseSearchTracking = (
 			return;
 		}
 
+		events.onNamePulseSearch( current.query, current.trigger, {
+			search_id: ids.searchId,
+			query_shape: settledLayout.mode,
+		} );
 		events.onSuggestionsReceive(
 			current.query,
 			[ ...keywordResults, ...creativeResults ].map( ( result ) => result.domain_name ),
@@ -123,7 +123,13 @@ export const useNamePulseSearchTracking = (
 
 	// `force` records a search whose TLD list never arrived.
 	const track = useEvent( ( force = false ) => {
-		if ( ! settledQuery || ! isSettled || ( ! hasTlds && ! force ) ) {
+		// A query too short to register is not a search.
+		if (
+			! settledQuery ||
+			! isSettled ||
+			settledLayout.mode === 'empty' ||
+			( ! hasTlds && ! force )
+		) {
 			return;
 		}
 
