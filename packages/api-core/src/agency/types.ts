@@ -33,7 +33,6 @@ export type AgencyCapability =
 	| 'a4a_read_learn'
 	| 'a4a_read_amplify'
 	| 'a4a_read_exclusive_offers'
-	| 'a4a_edit_agency'
 	| 'a4a_jetpack_licensing'
 	| 'a4a_edit_user_invites'
 	| 'a4a_remove_users'
