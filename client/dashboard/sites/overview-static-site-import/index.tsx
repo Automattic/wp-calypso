@@ -179,7 +179,7 @@ export function StaticSiteImportNotice( {
 				variant="error"
 				title={ __( 'We can’t import this site' ) }
 				actions={
-				<Button __next40pxDefaultSize variant="link" onClick={ () => setShowHelpCenter( true ) }>
+					<Button __next40pxDefaultSize variant="link" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Get help' ) }
 					</Button>
 				}
