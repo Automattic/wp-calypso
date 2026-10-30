@@ -14,7 +14,7 @@ import {
 	REMOVE_PLAN_STEP,
 	UPSELL_STEP,
 } from '../steps';
-import type { Purchase } from '@automattic/api-core';
+import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const mockNavigate = jest.fn();
 jest.mock( '@tanstack/react-router', () => ( {
@@ -345,6 +345,96 @@ describe( '<CancelPurchaseForm />', () => {
 				screen.getByRole( 'heading', { name: 'Switch to a more affordable plan' } )
 			).toBeVisible();
 			expect( screen.queryByRole( 'list', { name: cardsListName } ) ).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'free month offer', () => {
+		const freeMonthOfferText =
+			'We get it – building a site takes time. But we’d love to see you stick around to build on what you started. How about a free month of your WordPress.com Business plan subscription to continue building your site?';
+
+		function renderFreeMonthOffer( upsell = 'free-month-offer' ) {
+			const freeMonthOfferClick = jest.fn();
+			const recordEvent = jest.fn();
+
+			render(
+				<CancelPurchaseForm
+					{ ...defaultProps }
+					surveyStep={ UPSELL_STEP }
+					allSteps={ [ FEEDBACK_STEP, UPSELL_STEP ] }
+					purchase={ makePurchase( {
+						product_name: 'Business',
+						product_slug: 'business-bundle-monthly',
+						bill_period_days: 31,
+					} ) }
+					plans={ [
+						{
+							product_slug: 'business-bundle-monthly',
+							product_name: 'WordPress.com Business',
+						} as PlanProduct,
+					] }
+					questionOneText="foundBetterValue"
+					solutionsReason="foundBetterValue"
+					upsell={ upsell }
+					freeMonthOfferClick={ freeMonthOfferClick }
+					recordEvent={ recordEvent }
+				/>
+			);
+
+			return { freeMonthOfferClick, recordEvent };
+		}
+
+		afterEach( () => {
+			disable( 'purchases/cancel-options-cards' );
+			disable( 'purchases/split-cancel-remove' );
+		} );
+
+		test( 'offers a free month on its own screen when the cards flag is off', async () => {
+			const user = userEvent.setup();
+			disable( 'purchases/cancel-options-cards' );
+			const { freeMonthOfferClick } = renderFreeMonthOffer();
+
+			expect( screen.getByRole( 'heading', { name: 'How about a free month?' } ) ).toBeVisible();
+			expect( screen.getByText( freeMonthOfferText ) ).toBeVisible();
+
+			await user.click( screen.getByRole( 'button', { name: 'Get a free month' } ) );
+
+			expect( freeMonthOfferClick ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		test( 'offers a free month as the first card when the cards flag is on', async () => {
+			const user = userEvent.setup();
+			enable( 'purchases/cancel-options-cards' );
+			const { freeMonthOfferClick, recordEvent } = renderFreeMonthOffer();
+
+			const list = screen.getByRole( 'list', {
+				name: 'Before canceling, you can consider these options:',
+			} );
+			const firstCard = within( within( list ).getAllByRole( 'listitem' )[ 0 ] );
+			expect( firstCard.getByText( freeMonthOfferText ) ).toBeVisible();
+			expect( recordEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_solution_cards_view',
+				expect.objectContaining( { solution_ids: expect.stringMatching( /^free-month-offer,/ ) } )
+			);
+
+			await user.click( firstCard.getByRole( 'button', { name: /^How about a free month\?/ } ) );
+
+			expect( freeMonthOfferClick ).toHaveBeenCalledTimes( 1 );
+			expect( recordEvent ).toHaveBeenCalledWith(
+				'calypso_cancellation_solution_card_click',
+				expect.objectContaining( { solution_id: 'free-month-offer' } )
+			);
+		} );
+
+		test( 'leaves out the free month card for another upsell when the cards flag is on', () => {
+			enable( 'purchases/cancel-options-cards' );
+			renderFreeMonthOffer( 'built-by' );
+
+			expect(
+				screen.getByRole( 'list', { name: 'Before canceling, you can consider these options:' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: /^How about a free month\?/ } )
+			).not.toBeInTheDocument();
 		} );
 	} );
 } );
