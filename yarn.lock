@@ -347,8 +347,8 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@testing-library/user-event": "npm:^14.6.8"
-    "@types/react": "npm:^18.3.1"
-    "@types/react-dom": "npm:^18.3.1"
+    "@types/react": "npm:^18.3.31"
+    "@types/react-dom": "npm:^18.3.7"
     "@wordpress/abilities": "npm:^0.14.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
@@ -487,7 +487,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
-    "@types/react": "npm:^18.3.1"
+    "@types/react": "npm:^18.3.31"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/icons": "npm:^13.3.0"
@@ -1596,7 +1596,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
-    "@types/react": "npm:^18.3.23"
+    "@types/react": "npm:^18.3.31"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/i18n": "npm:^6.21.0"
     react: "npm:^18.3.1"
@@ -1620,8 +1620,8 @@ __metadata:
     "@automattic/oauth-token": "workspace:^"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
-    "@types/react": "npm:^18.3.1"
-    "@types/react-dom": "npm:^18.3.1"
+    "@types/react": "npm:^18.3.31"
+    "@types/react-dom": "npm:^18.3.7"
     "@wordpress/abilities": "npm:^0.14.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
     "@wordpress/base-styles": "npm:^9.1.0"
@@ -1655,7 +1655,7 @@ __metadata:
     "@babel/runtime": "npm:^8.0.7"
     react-dom: "npm:^18.3.1"
   peerDependencies:
-    "@types/react": ">=16.14.65"
+    "@types/react": ">=16.14.70"
     react: ">=16.2.0"
   peerDependenciesMeta:
     "@types/react":
@@ -1705,8 +1705,8 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@automattic/calypso-url": "workspace:^"
     "@automattic/components": "workspace:^"
-    "@types/react": "npm:^18.3.1"
-    "@types/react-dom": "npm:^18.3.1"
+    "@types/react": "npm:^18.3.31"
+    "@types/react-dom": "npm:^18.3.7"
     "@wordpress/abilities": "npm:^0.14.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
     "@wordpress/blocks": "npm:^15.21.0"
@@ -1989,7 +1989,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@types/autosize": "npm:^4.0.3"
     "@types/jest": "npm:^30.0.0"
-    "@types/react": "npm:^18.3.23"
+    "@types/react": "npm:^18.3.31"
     "@types/smooch": "npm:^5.6.0"
     "@wordpress/api-fetch": "npm:7.48.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -12206,12 +12206,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:19.2.3":
-  version: 19.2.3
-  resolution: "@types/react-dom@npm:19.2.3"
+"@types/react-dom@npm:19.3.0":
+  version: 19.3.0
+  resolution: "@types/react-dom@npm:19.3.0"
   peerDependencies:
-    "@types/react": ^19.2.0
-  checksum: b486ebe0f4e2fb35e2e108df1d8fc0927ca5d6002d5771e8a739de11239fe62d0e207c50886185253c99eb9dedfeeb956ea7429e5ba17f6693c7acb4c02f8cd1
+    "@types/react": ^19.3.0
+  checksum: ce0066d28b62bc6afdd17ca84756b8fbe0f6ffc0c8b1e60739abc30e81510da2edbc1007e6ab3d974d30f5a8c25bb0f7de8d7ce09736c909fe84c0f9aed0b946
   languageName: node
   linkType: hard
 
@@ -12242,12 +12242,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:19.2.16":
-  version: 19.2.16
-  resolution: "@types/react@npm:19.2.16"
+"@types/react@npm:19.3.0":
+  version: 19.3.0
+  resolution: "@types/react@npm:19.3.0"
   dependencies:
     csstype: "npm:^3.2.2"
-  checksum: 96f2850b67c5aa4a695bc32eb06c7609acdda1c0c597ace21ad24a5b9e2ccbccd97c0643253579fd629789a422a3694b4bbcb26e5fc6aec5f0357820bf0ee81c
+  checksum: fbcabf303f935ca9f36ed2dcf81751cf84744098c5a683c8a62a0fa7edd31714b48d5c46b12fd0014f7f2dfe4d9ec6de428a850748eec719a70294e51029551b
   languageName: node
   linkType: hard
 
@@ -17006,7 +17006,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.8"
     "@types/express": "npm:^4.17.22"
     "@types/prismjs": "npm:^1.26.6"
-    "@types/react": "npm:19.2.16"
+    "@types/react": "npm:19.3.0"
     "@types/react-slider": "npm:^1.3.6"
     "@types/redux-mock-store": "npm:1.5.0"
     "@visx/glyph": "npm:^4.0.0"
@@ -23027,7 +23027,7 @@ __metadata:
     "@testing-library/jest-dom": "npm:^7.0.1"
     "@testing-library/react": "npm:^16.3.3"
     "@types/jest": "npm:^30.0.0"
-    "@types/react": "npm:^18.3.23"
+    "@types/react": "npm:^18.3.31"
     "@wordpress/compose": "npm:^8.2.0"
     debug: "npm:^4.4.1"
     hash.js: "npm:^1.1.7"
@@ -35617,7 +35617,7 @@ __metadata:
     "@types/jest": "npm:^30.0.0"
     "@types/node": "npm:^24.12.2"
     "@types/qs": "npm:^6.9.7"
-    "@types/react": "npm:19.2.16"
+    "@types/react": "npm:19.3.0"
     "@types/react-modal": "npm:^3.16.3"
     "@types/react-transition-group": "npm:^4.4.4"
     "@types/store": "npm:^2.0.5"
