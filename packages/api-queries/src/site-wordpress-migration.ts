@@ -24,7 +24,7 @@ export const siteWordPressMigrationConfigurationQuery = ( siteId: number ) =>
 		queryKey: [ 'site', siteId, 'wordpress-migration', 'configuration' ],
 		queryFn: () => fetchWordPressMigrationConfiguration( siteId ),
 		meta: { persist: false },
-		// The endpoint probes the source site, so it's never refetched on its own.
+		// The migration status reports whether the source is connected, so this is only read once.
 		staleTime: Infinity,
 	} );
 

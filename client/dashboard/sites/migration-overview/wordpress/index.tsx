@@ -58,7 +58,22 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		migration?.status === 'failed'
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
-	const isConnecting = migration?.status === 'not_started' || !! connectionFailure;
+	// A stopped migration can also be taken back to that step, until the next run starts.
+	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
+	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
+	const isConnecting =
+		migration?.status === 'not_started' || !! connectionFailure || ( isStopped && isBackToSetup );
+
+	// Connecting the source after it was refused gets past the refusal, unless something else failed too. Once a retry
+	// is refused anyway, the connection isn't enough, so the refusal stands.
+	const [ hasRetried, setHasRetried ] = useState( false );
+	const isRefusalSuperseded =
+		!! connectionFailure &&
+		! hasRetried &&
+		migration?.source_connected === true &&
+		migration.findings.every(
+			( { code, severity } ) => severity !== 'failure' || code === 'source_connection_failed'
+		);
 
 	// The connect step shows how the source can be connected, so it waits for that before showing at all. It's read
 	// alongside the migration, before we know which step that is, and only kept up for the connect step after.
@@ -151,7 +166,17 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				/>
 			) }
 			{ isConnecting && ! isConfigurationPending && (
-				<Connect site={ site } sourceHost={ sourceHost } failure={ connectionFailure } />
+				<Connect
+					site={ site }
+					sourceHost={ sourceHost }
+					sourceConnected={ migration?.source_connected }
+					failure={ connectionFailure }
+					retryFindings={
+						isRefusalSuperseded ? migration?.findings.map( ( { code } ) => code ) : undefined
+					}
+					onRetry={ () => setHasRetried( true ) }
+					onStarted={ () => setIsBackToSetup( false ) }
+				/>
 			) }
 			{ migration?.status === 'running' && (
 				<Running
@@ -161,8 +186,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					notificationEmails={ migration.notification_emails }
 				/>
 			) }
-			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
-				! connectionFailure && <Findings site={ site } migration={ migration } /> }
+			{ migration && isStopped && ! isConnecting && (
+				<Findings
+					site={ site }
+					migration={ migration }
+					onBackToSetup={ () => setIsBackToSetup( true ) }
+				/>
+			) }
 			{ isCompleted && (
 				<MigrationCard
 					title={ __( 'Your site has been migrated' ) }
