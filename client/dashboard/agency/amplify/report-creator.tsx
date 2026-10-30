@@ -93,7 +93,7 @@ export default function AmplifyReportCreator( {
 	initialUrl?: string;
 	initialMode?: AmplifyMode;
 	isModal?: boolean;
-	onCreated: () => void;
+	onCreated?: () => void;
 	/** Called when the API rejects an audit for usage reasons, so the page can refresh usage. */
 	onUsageError?: ( code: string ) => void;
 } ) {
@@ -134,7 +134,7 @@ export default function AmplifyReportCreator( {
 						),
 						{ type: 'snackbar' }
 					);
-					onCreated();
+					onCreated?.();
 				},
 				onError: ( error ) => {
 					const code = ( error as { code?: string } )?.code;
