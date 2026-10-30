@@ -56,9 +56,11 @@ jest.mock( '../conversation-detail', () => ( {
 		postId: number;
 		onPrevious?: () => void;
 		onNext?: () => void;
+		highlightedCommentIds?: number[];
 	} ) => (
 		<div>
 			<p>Detail: { `${ props.siteId }-${ props.postId }` }</p>
+			<p>New: { props.highlightedCommentIds?.join( ',' ) || 'none' }</p>
 			<button disabled={ ! props.onPrevious } onClick={ props.onPrevious }>
 				previous
 			</button>
@@ -201,6 +203,25 @@ describe( 'ConversationsInbox', () => {
 
 		expect( markRead ).not.toHaveBeenCalled();
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+	} );
+
+	it( 'keeps the new comments of an opened conversation after it is marked read', async () => {
+		const user = userEvent.setup();
+		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
+
+		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+		mockedUseCommentNotes.mockReturnValue( {
+			data: notes.map( ( note ) => ( { ...note, read: 1 } ) ),
+			isLoading: false,
+		} as never );
+		rerender( <ConversationsInbox siteId="10" postId="200" /> );
+
+		expect( screen.getByText( 'New: 2001' ) ).toBeVisible();
+
+		rerender( <ConversationsInbox siteId="10" postId="100" /> );
+		rerender( <ConversationsInbox siteId="10" postId="200" /> );
+
+		expect( screen.getByText( 'New: none' ) ).toBeVisible();
 	} );
 
 	describe( 'on narrow screens', () => {

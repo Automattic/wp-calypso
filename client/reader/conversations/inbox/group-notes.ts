@@ -24,6 +24,7 @@ export interface Conversation {
 	commenters: Commenter[];
 	noteIds: number[];
 	unreadNoteIds: number[];
+	unreadCommentIds: number[];
 }
 
 const getPostTitle = ( note: Note ): string => {
@@ -113,6 +114,7 @@ export function groupNotesByPost( notes: Note[], currentUserId?: number | null )
 				commenters: [],
 				noteIds: [],
 				unreadNoteIds: [],
+				unreadCommentIds: [],
 			};
 			groups.set( key, group );
 		}
@@ -120,6 +122,10 @@ export function groupNotesByPost( notes: Note[], currentUserId?: number | null )
 		group.noteIds.push( note.id );
 		if ( ! note.read ) {
 			group.unreadNoteIds.push( note.id );
+			const commentId = note.meta?.ids?.comment;
+			if ( commentId && ! group.unreadCommentIds.includes( commentId ) ) {
+				group.unreadCommentIds.push( commentId );
+			}
 		}
 
 		const commenter = getCommenter( note );

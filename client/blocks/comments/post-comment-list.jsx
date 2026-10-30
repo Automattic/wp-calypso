@@ -70,6 +70,8 @@ class PostCommentList extends Component {
 		fetchLaterComments: PropTypes.func.isRequired,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
+		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
+		collapsibleThreads: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -239,6 +241,8 @@ class PostCommentList extends Component {
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 				shouldHighlightNew={ this.props.shouldHighlightNew }
+				highlightedCommentIds={ this.props.highlightedCommentIds }
+				collapsibleThreads={ this.props.collapsibleThreads }
 				isInlineComment={ this.props.expandableView }
 				expandComments={ this.props.expandComments }
 				comments={ this.props.comments }
