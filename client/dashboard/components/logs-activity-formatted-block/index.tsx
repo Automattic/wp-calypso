@@ -125,15 +125,16 @@ const Person: BlockRenderer = ( { content, children, onClick, meta } ) => {
 		return <strong>{ children }</strong>;
 	}
 
-	const { siteId, name, activity, intent, section } = content;
+	const { siteId, userId, name, activity, intent, section } = content;
 
 	if ( ! siteId || ! name ) {
 		return <strong>{ children }</strong>;
 	}
+	const userPath = userId ? `user/${ userId }` : name;
 
 	return (
 		<a
-			href={ wpcomLink( `/people/edit/${ siteId }/${ name }` ) }
+			href={ wpcomLink( `/people/edit/${ siteId }/${ userPath }` ) }
 			onClick={ onClick }
 			data-activity={ activity ?? meta.activity }
 			data-section={ section ?? meta.section ?? 'users' }
