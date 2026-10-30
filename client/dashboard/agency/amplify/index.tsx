@@ -136,7 +136,7 @@ export default function AgencyAmplify() {
 					</EmptyState.Wrapper>
 				) }
 				{ state === 'reports' && (
-					<div className="dashboard-amplify-results">
+					<VStack className="dashboard-amplify-results" spacing={ 4 }>
 						<AmplifyUsageCard
 							agencyId={ agencyId }
 							usage={ usage }
@@ -144,7 +144,7 @@ export default function AgencyAmplify() {
 							tierId={ tierId }
 						/>
 						<AmplifyReportsList agencyId={ agencyId } reports={ reports } />
-					</div>
+					</VStack>
 				) }
 				{ state === 'loading' && (
 					<AmplifyReportsList agencyId={ agencyId } reports={ [] } isLoading />
