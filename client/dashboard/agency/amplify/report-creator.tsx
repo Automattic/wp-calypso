@@ -113,21 +113,10 @@ function ReportTypeCards( {
 	);
 }
 
-export function AmplifyOverviewIntro( {
-	mode,
-	heroTitle,
-}: {
-	mode: AmplifyMode;
-	heroTitle?: string;
-} ) {
+export function AmplifyOverviewIntro( { mode }: { mode: AmplifyMode } ) {
 	return (
 		<>
 			<div className="dashboard-amplify-overview__hero-preview">
-				{ heroTitle && (
-					<Heading className="dashboard-amplify-overview__hero-title" level={ 1 }>
-						{ heroTitle }
-					</Heading>
-				) }
 				<AmplifyScorePreview mode={ mode } />
 			</div>
 			<div className="dashboard-amplify-overview__intro">

@@ -28,12 +28,7 @@ export default function AmplifyNewReportModal( {
 	onUsageError?: ( code: string ) => void;
 } ) {
 	return (
-		<Modal
-			title={ __( 'New report' ) }
-			size="large"
-			className="dashboard-amplify-new-report-modal"
-			onRequestClose={ onClose }
-		>
+		<Modal title={ __( 'New report' ) } size="medium" onRequestClose={ onClose }>
 			<AmplifyReportCreator
 				agencyId={ agencyId }
 				initialUrl={ initialUrl }
