@@ -16,11 +16,20 @@ jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn(),
 } ) );
 
+jest.mock( '@automattic/data-stores', () => {
+	const actual = jest.requireActual( '@automattic/data-stores' );
+	return {
+		...actual,
+		Plans: { ...actual.Plans, usePlans: jest.fn() },
+	};
+} );
+
 jest.mock( 'calypso/lib/explat', () => {
 	const actual = jest.requireActual( 'calypso/lib/explat' );
 	return { ...actual, useExperiment: jest.fn( actual.useExperiment ) };
 } );
 
+import { Plans } from '@automattic/data-stores';
 import { fireEvent, screen } from '@testing-library/dom';
 import { useViewportMatch } from '@wordpress/compose';
 import { MemoryRouter } from 'react-router-dom';
@@ -34,6 +43,7 @@ import UserStep, { type UserStepAccepts } from '..';
 
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
+const mockUsePlans = Plans.usePlans as jest.Mock;
 const mockUseExperiment = useExperiment as unknown as jest.Mock;
 
 const ENTRY_CLARITY_EXPERIMENT = 'calypso_account_step_entry_clarity_202609';
@@ -86,6 +96,27 @@ describe( 'User email signup step', () => {
 	beforeEach( () => {
 		setViewport( { isMobile: false } );
 		mockUsePartnerBranding.mockReturnValue( noPartnerBranding );
+		mockUsePlans.mockReturnValue( {
+			data: {
+				'business-bundle-monthly': {
+					pricing: {
+						billPeriod: 31,
+						currencyCode: 'USD',
+						originalPrice: { monthly: 4000, full: 4000 },
+						discountedPrice: { monthly: null, full: null },
+					},
+				},
+				'business-bundle': {
+					pricing: {
+						billPeriod: 365,
+						currencyCode: 'USD',
+						originalPrice: { monthly: 2500, full: 30000 },
+						discountedPrice: { monthly: null, full: null },
+					},
+				},
+			},
+			isLoading: false,
+		} );
 		mockUseExperiment.mockClear();
 		setEntryClarityArm( 'treatment' );
 	} );
@@ -298,6 +329,31 @@ describe( 'User email signup step', () => {
 				hideLoginLink: true,
 				allowedSocialServices: [ 'google', 'apple' ],
 			} );
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		} );
+	} );
+
+	describe( 'selected plan card', () => {
+		it( 'shows the selected plan above the heading when the URL asks for it', () => {
+			renderUserStep( '/onboarding/user?plan=business-bundle&showSelectedPlan=true' );
+
+			expect( screen.getByText( 'Business Plan' ) ).toBeVisible();
+			expect( screen.getByText( '$25/mo, billed yearly' ) ).toBeVisible();
+			expect( screen.getByText( 'Save 37%' ) ).toBeVisible();
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		} );
+
+		it( 'shows no card for a preselected plan without showSelectedPlan', () => {
+			renderUserStep( '/onboarding/user?plan=business-bundle' );
+
+			expect( screen.queryByText( 'Business Plan' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		} );
+
+		it( 'shows no card without a plan in the URL', () => {
+			renderUserStep( '/onboarding/user?showSelectedPlan=true' );
+
+			expect( screen.queryByText( 'Business Plan' ) ).not.toBeInTheDocument();
 			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
 		} );
 	} );
