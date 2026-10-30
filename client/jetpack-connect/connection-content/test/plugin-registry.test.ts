@@ -44,6 +44,7 @@ describe( 'PLUGIN_REGISTRY', () => {
 describe( 'getPluginEntry', () => {
 	test( 'returns the entry for known slugs', () => {
 		expect( getPluginEntry( 'jetpack' )?.family ).toBe( 'jetpack' );
+		expect( getPluginEntry( 'jetpack-premium-analytics' )?.family ).toBe( 'jetpack' );
 		expect( getPluginEntry( 'woocommerce' )?.family ).toBe( 'woo' );
 		expect( getPluginEntry( 'automattic-for-agencies-client' )?.family ).toBe( 'a4a' );
 	} );
@@ -91,6 +92,14 @@ describe( 'getLogoForFamilies', () => {
 	test( 'returns the A8C composite when only A4A is present', () => {
 		expect( getLogoForFamilies( [ 'a4a' ] ) ).toMatch( /jetpack-connect-a8c\.svg$/ );
 		expect( getLogoForFamilies( [ 'a4a', 'jetpack' ] ) ).toMatch( /jetpack-connect-a8c\.svg$/ );
+	} );
+
+	test( 'uses the standalone WordPress logo only for migration alone', () => {
+		expect( getLogoForFamilies( [ 'migration' ] ) ).toMatch( /jetpack-connect-migration\.svg$/ );
+		expect( getLogoForFamilies( [ 'migration', 'jetpack' ] ) ).toMatch( /jetpack-connect\.svg$/ );
+		expect( getLogoForFamilies( [ 'migration', 'a4a', 'woo', 'jetpack' ] ) ).toMatch(
+			/jetpack-connect-all\.svg$/
+		);
 	} );
 
 	test( 'returns the all-families composite when both Woo and A4A are present', () => {

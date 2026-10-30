@@ -1,9 +1,7 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
 import { Notice, VisuallyHidden } from '@wordpress/components';
-import { next, published, shield } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback, useRef } from 'react';
@@ -15,7 +13,6 @@ import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-q
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { urlToDomain } from 'calypso/lib/url';
-import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
@@ -164,33 +161,6 @@ export const Analyzer: FC< Props > = ( {
 			? convertPlatformName( siteInfo.platform )
 			: undefined;
 
-	const hostingDetailItems = [
-		{
-			icon: next,
-			text: translate(
-				'Blazing fast speeds with lightning-fast load times for a seamless experience.'
-			),
-		},
-		{
-			icon: published,
-			text: translate(
-				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
-				{
-					args: {
-						uptimePercent: formatNumber( 0.99999, {
-							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
-						} ),
-					},
-					comment: '99.999% uptime',
-				}
-			),
-		},
-		{
-			icon: shield,
-			text: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
-		},
-	];
-
 	return (
 		<>
 			{ isReprintFlow && (
@@ -268,12 +238,6 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			{ ! isFormHidden && (
-				<ChecklistCard
-					title={ translate( 'Why should you host with us?' ) }
-					items={ hostingDetailItems }
-				/>
-			) }
 		</>
 	);
 };

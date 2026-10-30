@@ -58,6 +58,14 @@ yarn start-dashboard
 
 If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
 
+### Checking a change in a browser
+
+- Use the Node version in `.nvmrc`. The first webpack build takes several minutes after "wp-calypso booted"; until it finishes the page shows only the W logo.
+- Sign in on `wordpress.com/log-in` first, then open `calypso.localhost:3000/read?flags=oauth` once. Signing in on the calypso.localhost form doesn't stick, because the login cookie is refused as a cross-site cookie.
+- With `?flags=oauth`, loading or reloading a signed-in URL directly (for example `/tags`) redirects to `/discover`, because the server can't see the sign-in. Load `/read?flags=oauth`, wait for the Reader, then navigate inside the app.
+- A headless or automated Chrome profile blocks third-party cookies by default; allow them (see `docs/install.md`) or the app never sees the sign-in.
+- Test with an account made for testing, never a personal one, and don't save network requests from the login: they hold the password and session cookies.
+
 ## Testing instructions
 
 > **Note**: E2E tests require a local Calypso development instance to be running.
@@ -100,6 +108,8 @@ yarn               # Install dependencies first if you haven't already
 yarn typecheck-client
 ```
 
+If it runs out of memory, give it a bigger heap: `NODE_OPTIONS=--max-old-space-size=12288 yarn typecheck-client`. If it fails on a workspace package that has no `dist/` yet, build that package first (`cd packages/<name> && yarn build`).
+
 If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
 
 ## Creating Pull Requests
@@ -110,3 +120,4 @@ If it fails, fix the type errors at the source — do not silence them with `// 
   - Use Linear issue IDs (e.g., `LIN-123`) instead of full Linear URLs.
   - Avoid mentioning people's names.
   - Include all checklist items from .github/PULL_REQUEST_TEMPLATE.md. Only mark items as completed (`[x]`) if they actually apply; leave inapplicable items unchecked (`[ ]`).
+  - For a change users can see (UI, or new or changed translatable strings), add before/after screenshots under Testing Instructions. Reviewers check the expected state against them, and the a8ci18n bot asks for a screenshot of the new strings for translators. Capture with a test account and keep internal hostnames and personal data out of the image. If you can't upload images, say so in the description. Never commit images to the repository to host them.

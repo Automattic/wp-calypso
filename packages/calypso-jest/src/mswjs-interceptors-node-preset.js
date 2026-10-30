@@ -8,6 +8,7 @@
  * `nock` accesses the interceptors by index, so the order must match the original preset.
  */
 const http = require( 'node:http' );
+const { setImmediate } = require( 'node:timers/promises' );
 const { ClientRequestInterceptor } = require( '@mswjs/interceptors/ClientRequest' );
 const { XMLHttpRequestInterceptor } = require( '@mswjs/interceptors/XMLHttpRequest' );
 const { FetchInterceptor } = require( '@mswjs/interceptors/fetch' );
@@ -47,7 +48,13 @@ const active = ( http[ kActive ] = {
 
 if ( typeof afterAll === 'function' ) {
 	try {
-		afterAll( () => dispose( active ) );
+		afterAll( async () => {
+			// Requests a test left in flight reach the interceptors on a later tick. Disposing first
+			// leaves them with no listener, so they pass through to the real network. `node:timers`
+			// because tests may fake the global timers.
+			await setImmediate();
+			dispose( active );
+		} );
 	} catch {
 		// `nock` was first loaded from inside a test or hook, where hooks can't be registered.
 	}

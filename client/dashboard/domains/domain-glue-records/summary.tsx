@@ -1,12 +1,15 @@
 import { __ } from '@wordpress/i18n';
 import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 
-interface Props {
+interface DomainGlueRecordsSettingsSummaryProps {
 	domainName: string;
 	isDisabled?: boolean;
 }
 
-export default function DomainGlueRecordsSettingsSummary( { domainName, isDisabled }: Props ) {
+export default function DomainGlueRecordsSettingsSummary( {
+	domainName,
+	isDisabled,
+}: DomainGlueRecordsSettingsSummaryProps ) {
 	return (
 		<RouterLinkSummaryButton
 			to={ `/domains/${ domainName }/glue-records` }

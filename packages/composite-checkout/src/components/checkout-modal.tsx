@@ -163,7 +163,6 @@ const CheckoutModalContent = styled.div`
 		cursor: pointer;
 		padding: 0;
 	}
-	}
 `;
 
 const CheckoutModalTitle = styled.h1`

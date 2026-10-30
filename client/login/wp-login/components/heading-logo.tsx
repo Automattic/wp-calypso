@@ -11,7 +11,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import SVGIcon from 'calypso/components/svg-icon';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
-import { getConnectorLogoUrl } from 'calypso/jetpack-connect/connector-branding-config';
+import { getConnectorBranding } from 'calypso/jetpack-connect/connector-branding-config';
 import {
 	isCrowdsignalOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -52,7 +52,7 @@ const JETPACK_PUSH_LOGO_URL =
 
 interface Props {
 	isJetpack?: boolean;
-	isFromJetpackConnector?: boolean;
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 }
 
@@ -62,7 +62,7 @@ interface Props {
  */
 export const useHeadingLogo = ( {
 	isJetpack,
-	isFromJetpackConnector,
+	isUnifiedConnectionFlow,
 	connectorPlugins,
 }: Props ) => {
 	const oauth2Client = useSelector( getCurrentOAuth2Client );
@@ -109,15 +109,9 @@ export const useHeadingLogo = ( {
 				viewBox="0 0 60 24"
 			/>
 		);
-	} else if ( isFromJetpackConnector ) {
-		const connectorLogo = getConnectorLogoUrl( connectorPlugins );
-		logo = (
-			<img
-				src={ connectorLogo }
-				alt="Jetpack Connection logo"
-				className="wp-login__connector-logo"
-			/>
-		);
+	} else if ( isUnifiedConnectionFlow ) {
+		const { logo: connectorLogo, logoAlt } = getConnectorBranding( connectorPlugins );
+		logo = <img src={ connectorLogo } alt={ logoAlt } className="wp-login__connector-logo" />;
 	} else if ( isJetpackApp ) {
 		logo = (
 			<img

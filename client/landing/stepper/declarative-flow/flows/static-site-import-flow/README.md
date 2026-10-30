@@ -13,8 +13,6 @@ take is sent back to `site-migration`.
 | `static-site-import-reading` | Checking your site                                       |
 | `static-site-import-results` | We can move your site (or almost all / some parts can’t) |
 | `static-site-import-expert`  | A migration expert will be in touch                      |
-| `static-site-import-address` | Keep or change your address                              |
-| `domains`                    | Domain search                                            |
 | `plans`                      | Plans                                                    |
 | `create-site` → `processing` | Site creation, then checkout                             |
 
@@ -27,8 +25,7 @@ After checkout the user lands on the site’s Overview in the dashboard
 (`client/dashboard/sites/overview-static-site-import`), which approves the move, follows it until
 it finishes, and then asks whether the site looks right.
 
-State that has to survive checkout is kept in the URL: `from`, `platform`, `importSessionId` and
-`domainChoice`.
+State that has to survive checkout is kept in the URL: `from`, `platform` and `importSessionId`.
 
 ## Feature flag
 
@@ -40,7 +37,8 @@ its previous behavior.
 1. `yarn start` and go to `/setup/site-migration`.
 2. Enter a Wix or Squarespace URL and confirm you land on
    `/setup/static-site-import/static-site-import-reading`.
-3. On the results screen, click **Move my site**, pick an address and a plan, and check out.
+3. On the results screen, click **Move my site**, pick a plan, and check out. Back from Plans returns
+   to the results screen.
 4. After checkout, confirm you land on the site’s Overview with **We’re moving your site**. Reload
    it and confirm it resumes.
 5. Once it’s ready, try the thumbs up and thumbs down buttons; thumbs down opens the Help Center.

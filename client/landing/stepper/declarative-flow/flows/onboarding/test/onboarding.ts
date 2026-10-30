@@ -4,9 +4,12 @@
 import { renderHook } from '@testing-library/react';
 import { resolveSelect, useSelect } from '@wordpress/data';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { useStepNavigationWithTracking } from '../../../internals/hooks/use-step-navigation-with-tracking';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
@@ -52,6 +55,10 @@ jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
 	useDispatch: () => jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/survicate', () => ( {
@@ -497,6 +504,17 @@ describe( 'onboarding flow tracks event props', () => {
 			coupon: 'WC_ABC',
 		} );
 	} );
+
+	// Without this, signups from a folded legacy flow count as plain onboarding.
+	it( 'reports the legacy flow a link came from', () => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'flow=import' ) );
+
+		const { result } = renderHook( () => onboarding.useTracksEventProps?.call( onboarding ) );
+
+		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
+			from_flow: 'import',
+		} );
+	} );
 } );
 
 describe( 'onboarding flow plans-page experiment enrolment', () => {
@@ -532,5 +550,97 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 		expect( loadExperimentAssignment ).toHaveBeenCalledWith(
 			'calypso_plans_page_visual_separation_2025_09_v2'
 		);
+	} );
+} );
+
+describe( 'onboarding flow playground navigation', () => {
+	const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
+	const assign = jest.fn();
+
+	const mockLocation = ( search: string ) => {
+		window.history.replaceState( null, '', `/setup/onboarding/playground${ search }` );
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { ...window.location, assign },
+		} );
+	};
+
+	const submitPlayground = ( search: string ) => {
+		mockLocation( search );
+
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'playground' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		result.current.submit?.( {
+			slug: 'playground',
+			providedDependencies: {},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		return { navigate };
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+		Object.defineProperty( window, 'location', locationDescriptor as PropertyDescriptor );
+		window.history.replaceState( null, '', '/' );
+	} );
+
+	it( 'leaves for the entrepreneur flow only once Tracks has had time to send the submit events', () => {
+		const { navigate } = submitPlayground( '?intent=woocommerce&playground=abc' );
+
+		expect( assign ).not.toHaveBeenCalled();
+		jest.advanceTimersByTime( 249 );
+		expect( assign ).not.toHaveBeenCalled();
+
+		jest.advanceTimersByTime( 1 );
+		expect( assign ).toHaveBeenCalledTimes( 1 );
+		expect( assign ).toHaveBeenCalledWith(
+			'/setup/entrepreneur?from=playground-publish&playground=abc'
+		);
+		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'records the Stepper submit event before leaving for the entrepreneur flow', () => {
+		mockLocation( '?intent=woocommerce&playground=abc' );
+
+		const { result } = renderHook( () =>
+			useStepNavigationWithTracking( {
+				flow: onboarding,
+				currentStepRoute: 'playground',
+				navigate: jest.fn(),
+			} )
+		);
+		result.current.submit?.();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+			expect.objectContaining( { flow: 'onboarding', step: 'playground' } )
+		);
+		expect( assign ).not.toHaveBeenCalled();
+
+		jest.advanceTimersByTime( 250 );
+		expect( assign ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'stays in Stepper and goes to the domains step straight away without the WooCommerce intent', () => {
+		const { navigate } = submitPlayground( '?playground=abc' );
+
+		expect( navigate ).toHaveBeenCalledWith(
+			'domains?back_to=%2Fsetup%2Fonboarding%2Fplayground%3Fplayground%3Dabc'
+		);
+		jest.runAllTimers();
+		expect( assign ).not.toHaveBeenCalled();
 	} );
 } );

@@ -83,4 +83,6 @@ export interface UserPreferences {
 	'a4a-overview-welcome-band-dismissed'?: boolean;
 	/** Resources marked as read in the A4A Library, shared with the classic A4A dashboard. */
 	'a4a-library-read-resources'?: number[];
+	/** The `completed_at` of the migration whose completed notice the user dismissed for a site. */
+	[ key: `site-migration-completed-notice-dismissed-${ number }` ]: number | undefined;
 }

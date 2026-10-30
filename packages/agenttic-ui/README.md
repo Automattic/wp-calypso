@@ -555,8 +555,9 @@ import '@automattic/agenttic-ui/index.css';
 
 All styles are scoped to `.agenttic` class to prevent conflicts.
 
-Add `data-agenttic-isolated` to an embedded UI wrapper to skip the base message
-typography reset for its descendants. Element-specific Markdown styles still apply.
+Add `data-agenttic-isolated` to the wrapper of an embedded UI that styles itself, such as
+interactive UI, to skip the base reset and the message typography for its descendants.
+Element-specific Markdown styles still apply.
 
 ### Customization
 

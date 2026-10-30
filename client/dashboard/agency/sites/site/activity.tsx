@@ -68,10 +68,6 @@ export default function AgencySiteActivity() {
 		>
 			<Card className="site-logs-card site-logs-card--activity">
 				<CardBody>
-					{ /* TODO(A4A-2917): the reused activity DataViews shows a primary "Manage backup"
-					     row action on rewindable entries that navigates to the dotcom
-					     siteBackupDetailRoute, which A4A doesn't register — it dead-ends until
-					     agency backups routes exist. Hide or re-point it once backups land. */ }
 					<SiteActivityLogsDataViews
 						logType={ LogType.ACTIVITY }
 						dateRange={ dateRange }

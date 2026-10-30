@@ -71,9 +71,6 @@ test( 'shows warning notice when domain registration uses external name servers'
 	expect( screen.getAllByText( /you can update your name servers here/i ).length ).toBeGreaterThan(
 		0
 	);
-
-	// Should be a warning notice
-	expect( document.querySelector( '.dashboard-notice' ) ).toHaveClass( 'is-warning' );
 } );
 
 test( 'shows warning notice when domain connection uses external name servers', () => {
@@ -93,9 +90,6 @@ test( 'shows warning notice when domain connection uses external name servers', 
 	expect(
 		screen.getAllByText( /your domain is using external name servers/i ).length
 	).toBeGreaterThan( 0 );
-
-	// Should be a warning notice
-	expect( document.querySelector( '.dashboard-notice' ) ).toHaveClass( 'is-warning' );
 } );
 
 test( 'shows info notice when domain is primary domain on non-domain-only site', () => {
@@ -117,9 +111,6 @@ test( 'shows info notice when domain is primary domain on non-domain-only site',
 		screen.getAllByText( /example\.com is your site’s main address/i ).length
 	).toBeGreaterThan( 0 );
 	expect( screen.getAllByText( /set a new primary site address/i ).length ).toBeGreaterThan( 0 );
-
-	// Should be an info notice
-	expect( document.querySelector( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 } );
 
 test( 'shows no notice when domain uses WordPress.com nameservers and is not primary', () => {

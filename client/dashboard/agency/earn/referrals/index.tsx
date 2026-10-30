@@ -21,6 +21,7 @@ import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
 import MissingPaymentSettingsNotice, {
 	useMissingPaymentSettings,
 } from '../missing-payment-settings-notice';
+import PayoutStatusNotice, { usePayoutStatusNotice } from '../payout-settings/payout-status-notice';
 import BankDetailsNotice from './bank-details-notice';
 import ConsolidatedViews from './consolidated-views';
 import { DEFAULT_VIEW } from './dataviews/views';
@@ -53,6 +54,12 @@ export default function EarnReferrals() {
 	const missingPaymentSettings = useMissingPaymentSettings( {
 		hasCommissionActivity: hasReferrals,
 		isLoadingActivity: isLoading,
+	} );
+	// After the first referral, the missing payment settings notice takes over.
+	const payoutStatusNotice = usePayoutStatusNotice( {
+		agencyId,
+		enabled: ! hasReferrals && isAgencyApproved( agency ),
+		isLoadingPage: isLoading,
 	} );
 
 	return (
@@ -92,6 +99,11 @@ export default function EarnReferrals() {
 										commissionType="referrals"
 									/>
 								),
+							},
+							{
+								id: 'payout-status',
+								...payoutStatusNotice,
+								notice: <PayoutStatusNotice agencyId={ agencyId } source="referrals" />,
 							},
 						] }
 					/>
