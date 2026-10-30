@@ -9,4 +9,5 @@ export {
 } from './invoke-event';
 export { isModalOpen, isSurveyVisible, observeModals, MODAL_SELECTOR } from './modal-detection';
 export { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
+export { registerSurveySuppressor, type SurveySuppressor } from './suppressors';
 export { getAccountAgeInDays, setSurvicateVisitorTraits } from './visitor-traits';
