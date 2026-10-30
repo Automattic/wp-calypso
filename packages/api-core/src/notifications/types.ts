@@ -26,11 +26,13 @@ export interface NotificationNote {
 	timestamp: string;
 	icon: string;
 	title: string;
+	noticon?: string;
 	meta?: {
 		ids?: {
 			site?: number;
 			post?: number;
 			comment?: number;
+			parent_comment?: number;
 		};
 	};
 	subject: NotificationBlock[];
