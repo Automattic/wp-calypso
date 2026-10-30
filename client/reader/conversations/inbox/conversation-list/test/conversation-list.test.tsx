@@ -10,6 +10,7 @@ import { groupNotesByPost } from '../../group-notes';
 import { makeNote } from '../../test/helpers';
 import { filterConversations } from '../filter-conversations';
 import type { InboxTab } from '../tabs';
+import type { Density } from '../toolbar';
 
 const timestamp = new Date().toISOString();
 const conversations = groupNotesByPost( [
@@ -22,6 +23,7 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
+	const [ density, setDensity ] = useState< Density >( 'comfortable' );
 	const source = props.conversations ?? conversations;
 	return (
 		<ConversationList
@@ -34,6 +36,8 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 			onTabChange={ setTab }
 			search={ search }
 			onSearchChange={ setSearch }
+			density={ density }
+			onDensityChange={ setDensity }
 			sort="newest_replies"
 			onSortChange={ jest.fn() }
 			isShortcutsOpen={ isShortcutsOpen }
@@ -141,15 +145,6 @@ describe( 'ConversationList', () => {
 		);
 		expect( screen.getByRole( 'button', { name: /^Unread post/ } ) ).not.toHaveAttribute(
 			'aria-current'
-		);
-	} );
-
-	it( 'shows settings as disabled until it is built', () => {
-		renderList();
-
-		expect( screen.getByRole( 'button', { name: 'Settings are coming soon' } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
 		);
 	} );
 

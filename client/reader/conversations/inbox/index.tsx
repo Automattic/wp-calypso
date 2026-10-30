@@ -7,6 +7,8 @@ import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ConversationDetail } from './conversation-detail';
@@ -14,11 +16,13 @@ import { ConversationList } from './conversation-list';
 import { filterConversations } from './conversation-list/filter-conversations';
 import { type OpenSource } from './conversation-list/list-item';
 import { INBOX_TABS, type InboxTab } from './conversation-list/tabs';
-import { type SortOrder } from './conversation-list/toolbar';
+import { type Density, type SortOrder } from './conversation-list/toolbar';
 import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
 import { useInboxKeyboardShortcuts } from './keyboard-shortcuts/use-inbox-keyboard-shortcuts';
 
 import './style.scss';
+
+const DENSITY_PREFERENCE = 'reader_conversations_inbox_density';
 
 interface Props {
 	siteId?: string;
@@ -39,6 +43,9 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const [ search, setSearch ] = useState( '' );
 	const [ sort, setSort ] = useState< SortOrder >( 'newest_replies' );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
+	const density: Density = useSelector(
+		( state ) => getPreference( state, DENSITY_PREFERENCE ) ?? 'comfortable'
+	);
 
 	const conversations = useMemo(
 		() => groupNotesByPost( notes, currentUserId ),
@@ -115,6 +122,18 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		);
 	};
 
+	const changeDensity = ( next: Density ) => {
+		if ( next === density ) {
+			return;
+		}
+		dispatch( savePreference( DENSITY_PREFERENCE, next ) );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_density_changed', {
+				density: next,
+			} )
+		);
+	};
+
 	const moveTab = ( offset: number ) => {
 		const next = INBOX_TABS[ INBOX_TABS.indexOf( tab ) + offset ];
 		if ( next ) {
@@ -144,6 +163,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					onTabChange={ ( next ) => selectTab( next, 'click' ) }
 					search={ search }
 					onSearchChange={ setSearch }
+					density={ density }
+					onDensityChange={ changeDensity }
 					sort={ sort }
 					onSortChange={ selectSort }
 					isShortcutsOpen={ isShortcutsOpen }
