@@ -230,6 +230,7 @@ describe( '<PluginsList> empty states', () => {
 		expect(
 			screen.queryByRole( 'heading', { name: 'No plugins installed yet' } )
 		).not.toBeInTheDocument();
+		expect( screen.getByRole( 'heading', { name: 'No plugin selected' } ) ).toBeVisible();
 		expect( screen.queryByText( 'Plugin not found' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'tab', { name: /Available on/ } ) ).not.toBeInTheDocument();
 	} );

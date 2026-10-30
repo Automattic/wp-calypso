@@ -12,6 +12,7 @@ import { __ } from '@wordpress/i18n';
 import { useMemo, useState } from 'react';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
+import { DataViewsEmptyStateLayout } from '../../components/dataviews';
 import Grid from '../../components/grid';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
@@ -214,7 +215,14 @@ export default function PluginsList() {
 					isError={ pluginsQueryError }
 				/>
 
-				{ showPluginDetails && <PluginSites selectedPluginSlug={ selectedPluginSlug } /> }
+				{ showPluginDetails ? (
+					<PluginSites selectedPluginSlug={ selectedPluginSlug } />
+				) : (
+					<DataViewsEmptyStateLayout
+						title={ __( 'No plugin selected' ) }
+						description={ __( 'Select a plugin from the list to see its details.' ) }
+					/>
+				) }
 			</Grid>
 			{ ! sitesPluginsLoading && ! isPluginLoading && <PerformanceTrackerStop /> }
 		</PageLayout>
