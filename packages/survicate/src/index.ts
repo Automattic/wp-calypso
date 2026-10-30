@@ -10,3 +10,4 @@ export {
 export { isModalOpen, isSurveyVisible, observeModals, MODAL_SELECTOR } from './modal-detection';
 export { pauseSurvicateTargeting, resumeSurvicateTargeting } from './targeting';
 export { getAccountAgeInDays, setSurvicateVisitorTraits } from './visitor-traits';
+export { observeWpAdminPluginEvents } from './wp-admin-plugin-events';

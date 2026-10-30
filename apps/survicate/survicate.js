@@ -1,5 +1,6 @@
 import {
 	loadSurvicateScript,
+	observeWpAdminPluginEvents,
 	setSurvicateVisitorTraits,
 	shouldLoadSurvicate,
 	SURVICATE_WORKSPACE_ID,
@@ -27,6 +28,8 @@ function init() {
 		.catch( () => {
 			// Surveys are optional; a blocked or failed SDK load is not an error.
 		} );
+
+	observeWpAdminPluginEvents();
 }
 
 init();
