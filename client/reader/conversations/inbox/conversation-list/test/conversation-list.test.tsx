@@ -152,13 +152,6 @@ describe( 'ConversationList', () => {
 		);
 	} );
 
-	it( 'hides the day headers when sorted by most active', () => {
-		renderList( { sort: 'most_active' } );
-
-		expect( screen.queryByRole( 'heading', { name: 'Today' } ) ).not.toBeInTheDocument();
-		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).toBeVisible();
-	} );
-
 	it( 'shows an empty state when there are no conversations', () => {
 		renderList( { conversations: [] } );
 

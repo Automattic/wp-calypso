@@ -23,7 +23,6 @@ jest.mock( '../conversation-list', () => ( {
 		selectedKey?: string;
 		onSelect: ( conversation: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
-		onSortChange: ( sort: string ) => void;
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
@@ -33,7 +32,6 @@ jest.mock( '../conversation-list', () => ( {
 				</button>
 			) ) }
 			<button onClick={ () => props.onTabChange( 'yours' ) }>Your comments</button>
-			<button onClick={ () => props.onSortChange( 'most_active' ) }>Most active</button>
 		</div>
 	),
 } ) );
@@ -255,17 +253,6 @@ describe( 'ConversationsInbox', () => {
 				{ tab: 'yours', source: 'click' },
 				{ tab: 'unread', source: 'shortcut' },
 				{ tab: 'yours', source: 'shortcut' },
-			] );
-		} );
-
-		it( 'records the sort order picked', async () => {
-			const user = userEvent.setup();
-			renderInbox( { siteId: '10', postId: '100' } );
-
-			await user.click( screen.getByRole( 'button', { name: 'Most active' } ) );
-
-			expect( tracked( 'calypso_reader_conversations_inbox_sorted' ) ).toEqual( [
-				{ sort: 'most_active' },
 			] );
 		} );
 
