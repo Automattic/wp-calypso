@@ -46,6 +46,26 @@ describe( 'mergeIdenticalLineItems', () => {
 		);
 	} );
 
+	test( 'keeps each term of a product on its own line', () => {
+		const monthly = { slug: 'jetpack_wc_composite_products_monthly', productId: 2714 };
+		const [ yearlyLine, monthlyLine ] = mergeIdenticalLineItems(
+			asEntries( [
+				buildLine( 'a' ),
+				buildLine( 'b', monthly ),
+				buildLine( 'c' ),
+				buildLine( 'd', monthly ),
+			] )
+		);
+		expect( yearlyLine ).toMatchObject( {
+			type: 'merged',
+			products: [ { uuid: 'a' }, { uuid: 'c' } ],
+		} );
+		expect( monthlyLine ).toMatchObject( {
+			type: 'merged',
+			products: [ { uuid: 'b' }, { uuid: 'd' } ],
+		} );
+	} );
+
 	test( 'leaves identical lines apart unless they ask to be merged', () => {
 		const plan = { ...getEmptyResponseCartProduct(), uuid: 'a', product_slug: 'business-bundle' };
 		const planAgain = { ...plan, uuid: 'b' };
