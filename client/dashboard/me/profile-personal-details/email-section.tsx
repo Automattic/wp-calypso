@@ -44,7 +44,6 @@ const EmailFieldContext = createContext< {
 	disabled: boolean;
 } >( { help: null, className: '', disabled: false } );
 
-// Defined at module level so DataForm gets a stable component and the input keeps focus while typing.
 function EmailEdit( { data, field, onChange }: DataFormControlProps< EmailFormData > ) {
 	const { help, className, disabled } = useContext( EmailFieldContext );
 	return (
@@ -285,10 +284,7 @@ export default function EmailSection( {
 	const formData = useMemo( () => ( { user_email: value } ), [ value ] );
 	const help = getHelpText();
 	const className = getValidationClass();
-	const fieldContext = useMemo(
-		() => ( { help, className, disabled: disabled || !! isEmailPending } ),
-		[ help, className, disabled, isEmailPending ]
-	);
+	const fieldContext = { help, className, disabled: disabled || !! isEmailPending };
 
 	return (
 		<VStack spacing={ 4 }>
