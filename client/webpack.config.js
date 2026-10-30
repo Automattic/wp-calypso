@@ -148,6 +148,8 @@ function filterEntrypoints( entrypoints ) {
 		console.warn( '[entrylimit] No matches found!' );
 		throw new Error( 'No valid entrypoints' );
 	}
+	// Standalone documents need their styles even when application entries are limited.
+	validEntrypoints.push( 'entry-public-error' );
 
 	const allowed = {};
 	Object.entries( entrypoints ).forEach( ( [ key, val ] ) => {
@@ -226,6 +228,7 @@ const webpackConfig = {
 	context: __dirname,
 	entry: filterEntrypoints( {
 		'entry-main': [ path.join( __dirname, 'boot', 'app' ) ],
+		'entry-public-error': [ path.join( __dirname, 'document', 'error', 'style.scss' ) ],
 		'entry-domains-landing': [ path.join( __dirname, 'landing', 'domains' ) ],
 		'entry-login': [ path.join( __dirname, 'landing', 'login' ) ],
 		'entry-stepper': [ path.join( __dirname, 'landing', 'stepper' ) ],
