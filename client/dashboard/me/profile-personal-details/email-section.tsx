@@ -284,10 +284,7 @@ export default function EmailSection( {
 	const formData = useMemo( () => ( { user_email: value } ), [ value ] );
 	const help = getHelpText();
 	const className = getValidationClass();
-	const fieldContext = useMemo(
-		() => ( { help, className, disabled: disabled || !! isEmailPending } ),
-		[ help, className, disabled, isEmailPending ]
-	);
+	const fieldContext = { help, className, disabled: disabled || !! isEmailPending };
 
 	return (
 		<VStack spacing={ 4 }>

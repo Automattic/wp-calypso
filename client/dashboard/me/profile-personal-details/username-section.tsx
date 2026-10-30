@@ -31,7 +31,7 @@ interface UsernameSectionProps {
 	onCancel: () => void;
 }
 
-type UsernameFormData = { user_login: string };
+type UsernameFormData = { user_login?: string };
 
 const UsernameFieldContext = createContext< {
 	help: ReactNode;
@@ -47,8 +47,8 @@ function UsernameEdit( { data, field, onChange }: DataFormControlProps< Username
 			__next40pxDefaultSize
 			id="username-input"
 			label={ field.label }
-			value={ data.user_login }
-			onChange={ ( newValue?: string ) => onChange( { user_login: newValue ?? '' } ) }
+			value={ data.user_login ?? '' }
+			onChange={ ( newValue?: string ) => onChange( { user_login: newValue } ) }
 			disabled={ disabled }
 			autoCapitalize="off"
 			autoComplete="username"
@@ -200,10 +200,7 @@ export default function UsernameSection( {
 	const help = getHelpText();
 	const className = getValidationClass();
 	const disabled = isAutomattician || ! isEmailVerified || ! canChangeUsername;
-	const fieldContext = useMemo(
-		() => ( { help, className, isInvalid, disabled } ),
-		[ help, className, isInvalid, disabled ]
-	);
+	const fieldContext = { help, className, isInvalid, disabled };
 
 	return (
 		<>

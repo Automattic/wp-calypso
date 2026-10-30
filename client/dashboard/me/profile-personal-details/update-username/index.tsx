@@ -9,7 +9,7 @@ import {
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
-import { createContext, useContext } from 'react';
+import { createContext, useContext, useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import {
 	isUsernameValid,
@@ -105,6 +105,11 @@ export default function UsernameUpdateForm( {
 		onCancel();
 	};
 
+	const formData = useMemo(
+		() => ( { username_confirm: userLoginConfirm } ),
+		[ userLoginConfirm ]
+	);
+
 	const actions = getAllowedActions( validationResult );
 	const showRadioOptions = Object.keys( actions ).length > 1;
 
@@ -160,7 +165,7 @@ export default function UsernameUpdateForm( {
 				value={ { help: helpText, className, isInvalid: !! isError } }
 			>
 				<DataForm< UsernameConfirmFormData >
-					data={ { username_confirm: userLoginConfirm } }
+					data={ formData }
 					fields={ usernameConfirmFields }
 					form={ usernameConfirmForm }
 					onChange={ ( edits ) => onConfirmChange( edits.username_confirm ?? '' ) }
