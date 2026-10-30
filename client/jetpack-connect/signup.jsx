@@ -158,13 +158,8 @@ export class JetpackSignup extends Component {
 		return 'automattic-for-agencies-client' === this.props.authQuery.from;
 	}
 
-	isFromJetpackOnboarding( props = this.props ) {
-		return 'jetpack-onboarding' === props.authQuery.from;
-	}
-
 	isUnifiedConnectionFlow( props = this.props ) {
-		// Onboarding uses the unified layout but still shows its static content.
-		return isUnifiedFlow( props.authQuery.from ) || this.isFromJetpackOnboarding( props );
+		return isUnifiedFlow( props.authQuery.from );
 	}
 
 	handleExistingAccountClick = () => {
@@ -312,11 +307,10 @@ export class JetpackSignup extends Component {
 	render() {
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
 		const isWooJPC = this.isWooJPC();
-		const showsUnifiedContent = isUnifiedFlow( this.props.authQuery.from );
-		const connectorBranding = showsUnifiedContent
-			? getConnectorBranding( this.props.authQuery.plugins )
-			: null;
-		const signupCopy = showsUnifiedContent ? getSignupCopy( this.props.authQuery.plugins ) : null;
+		const isUnifiedConnection = this.isUnifiedConnectionFlow();
+		const { connectorPlugins } = this.props.authQuery;
+		const connectorBranding = isUnifiedConnection ? getConnectorBranding( connectorPlugins ) : null;
+		const signupCopy = isUnifiedConnection ? getSignupCopy( connectorPlugins ) : null;
 
 		const isLogging = newUsername && bearerToken;
 		if ( isWooJPC && ( isCreatingAccount || isLogging ) ) {
@@ -340,14 +334,14 @@ export class JetpackSignup extends Component {
 		return (
 			<MainWrapper
 				className={ clsx( {
-					'jetpack-connect__authorize-form-wrapper--connector': showsUnifiedContent,
+					'jetpack-connect__authorize-form-wrapper--connector': isUnifiedConnection,
 				} ) }
 				isWooJPC={ isWooJPC }
-				isJetpackConnector={ showsUnifiedContent }
+				isJetpackConnector={ isUnifiedConnection }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
 			>
 				<div className="jetpack-connect__authorize-form">
-					{ showsUnifiedContent && connectorBranding && signupCopy ? (
+					{ isUnifiedConnection ? (
 						<BrandHeader
 							logo={ connectorBranding.logo }
 							logoAlt=""

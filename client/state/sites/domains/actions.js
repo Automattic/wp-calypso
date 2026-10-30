@@ -309,8 +309,9 @@ export function fetchDomainDetails( domain ) {
 	return ( dispatch ) => {
 		dispatch( domainDetailsRequestAction( domain ) );
 
+		// The trailing slash stops nginx from rejecting `.md` domains as file requests.
 		return wpcom.req
-			.get( `/domain-details/${ domain }`, { apiVersion: '1.2', include_status: false } )
+			.get( `/domain-details/${ domain }/`, { apiVersion: '1.2', include_status: false } )
 			.then( ( data ) => {
 				const { error, message } = data;
 

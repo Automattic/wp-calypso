@@ -14,7 +14,6 @@
 	"editor.codeActionsOnSave": {
 		"source.fixAll": "explicit",
 		"source.fixAll.eslint": "explicit",
-		"source.fixAll.tslint": "explicit",
 		"source.fixAll.stylelint": "explicit"
 	},
 	// Use prettier for formatting JS/TS

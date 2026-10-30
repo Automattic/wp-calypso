@@ -16,7 +16,7 @@ export function useNonOwnerHandler( {
 	siteId?: number | null;
 	currentPlan: Plans.SitePlan | undefined;
 } ) {
-	const { setShowHelpCenter, setNavigateToRoute, setOdieBotNameSlug, setOdieInitialPromptText } =
+	const { setShowHelpCenter, setNavigateToRoute, setOdieInitialPromptText } =
 		useDispatch( HELP_CENTER_STORE );
 	const translate = useTranslate();
 
@@ -47,7 +47,6 @@ export function useNonOwnerHandler( {
 				return;
 			}
 
-			setOdieBotNameSlug( 'wpcom-plan-support' );
 			setOdieInitialPromptText(
 				getOdieInitialPromptForPlan( {
 					translate,
@@ -64,7 +63,6 @@ export function useNonOwnerHandler( {
 			purchasesQueryKeys,
 			queryClient,
 			setNavigateToRoute,
-			setOdieBotNameSlug,
 			setOdieInitialPromptText,
 			setShowHelpCenter,
 			siteId,

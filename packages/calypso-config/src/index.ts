@@ -78,6 +78,9 @@ function applyFlags( flagsString: string, modificationMethod: string ) {
 const flagEnvironments = [
 	'wpcalypso',
 	'horizon',
+	'dashboard-horizon',
+	'jetpack-cloud-horizon',
+	'a8c-for-agencies-horizon',
 	'stage',
 	'jetpack-cloud-stage',
 	'a8c-for-agencies-stage',

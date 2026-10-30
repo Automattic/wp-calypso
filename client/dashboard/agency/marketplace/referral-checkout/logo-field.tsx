@@ -15,7 +15,7 @@ import { LOGO_ACCEPT, validateLogoFile } from '../../lib/logo-file';
 import { getReferralLogoOption } from './lib/logo';
 import type { ReferralLogo } from './lib/logo';
 
-interface Props {
+interface ReferralLogoFieldProps {
 	value: ReferralLogo;
 	onChange: ( logo: ReferralLogo ) => void;
 	profileLogoUrl: string | null;
@@ -31,7 +31,7 @@ export default function ReferralLogoField( {
 	onChange,
 	profileLogoUrl,
 	lastReferralLogoUrl,
-}: Props ) {
+}: ReferralLogoFieldProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const [ error, setError ] = useState< string | null >( null );
 

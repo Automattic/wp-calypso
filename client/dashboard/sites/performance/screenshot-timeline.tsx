@@ -14,7 +14,7 @@ export type ScreenShotsTimeLine = {
 	timing: number;
 };
 
-type Props = { screenshots: ScreenShotsTimeLine[] };
+type ScreenshotTimelineProps = { screenshots: ScreenShotsTimeLine[] };
 
 type OverlayState = {
 	isOpen: boolean;
@@ -22,7 +22,7 @@ type OverlayState = {
 	timing?: string;
 };
 
-export default function ScreenshotTimeline( { screenshots }: Props ) {
+export default function ScreenshotTimeline( { screenshots }: ScreenshotTimelineProps ) {
 	const [ selectedScreenshot, setSelectedScreenshot ] = useState< OverlayState >( {
 		isOpen: false,
 	} );

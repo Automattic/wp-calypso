@@ -1,5 +1,6 @@
 /**
  * @jest-environment jsdom
+ * @jest-environment-options {"url": "https://my.wordpress.com/setup/site-setup/importerSquarespace"}
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, renderHook, waitFor } from '@testing-library/react';
@@ -24,6 +25,40 @@ describe( 'useStepNavigator', () => {
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
 		);
 	} );
+
+	it.each( [
+		{
+			siteId: 123,
+			siteSlug: 'import-target.wordpress.com',
+			url: '/home/import-target.wordpress.com',
+		},
+		{
+			siteId: null,
+			siteSlug: 'import-target.wordpress.com',
+			url: '/home/import-target.wordpress.com',
+		},
+		{ siteId: 123, siteSlug: null, url: '/home/123' },
+		{ siteId: null, siteSlug: null, url: '/home/' },
+	] )(
+		'should leave MSD for $url with site ID $siteId and slug $siteSlug',
+		( { siteId, siteSlug, url } ) => {
+			const navigation = { submit: jest.fn() };
+			const { result } = renderHook(
+				() => useStepNavigator( flow, navigation, siteId, siteSlug, null, null ),
+				{ wrapper }
+			);
+
+			act( () => {
+				result.current.goToDashboardPage?.();
+			} );
+
+			const redirect = navigation.submit.mock.calls[ 0 ][ 0 ];
+			expect( redirect.type ).toBe( 'redirect' );
+			expect( new URL( redirect.url, window.location.href ).href ).toBe(
+				`https://wordpress.com${ url }`
+			);
+		}
+	);
 
 	it( 'should return default checkout url', async () => {
 		const navigation = {

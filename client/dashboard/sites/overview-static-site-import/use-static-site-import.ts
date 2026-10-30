@@ -22,17 +22,13 @@ export interface StaticSiteImport {
 	status: 'moving' | 'finished' | 'failed';
 	session?: StaticSiteImportSession;
 	errorCode?: string;
-	/** The preview expired or is gone, so the source has to be read again. */
+	/** A site check refused the built site, so no other route applies. */
+	isRefused?: boolean;
+	/** The session is gone, so the source has to be read again. */
 	needsRestart: boolean;
 	/** Set when starting the move failed and it's worth asking again. */
 	retry?: () => void;
 }
-
-const RESTART_CODES = [
-	'static_site_import_session_not_found',
-	'static_site_import_preview_expired',
-	'static_site_import_archive_mismatch',
-];
 
 export const getSourceHost = ( url = '' ) => {
 	try {
@@ -59,22 +55,22 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		reset: resetApprove,
 	} = useMutation( approveStaticSiteImportSessionMutation() );
 
-	// The user asked for the move before checkout; now the site has a plan, start it.
+	// Checkout was the consent, so name this site as the destination right away.
+	// The server delivers as soon as the build lands, even if the user has left.
+	// `site_url` is set once delivery is bound, after which there's nothing to approve.
 	const hasRequestedApproval = useRef( false );
 	useEffect( () => {
 		if (
 			! sessionId ||
 			hasRequestedApproval.current ||
-			session?.state !== 'preview_ready' ||
-			! session.archive_hash
+			! session ||
+			session.site_url ||
+			STATIC_SITE_IMPORT_TERMINAL_STATES.includes( session.state )
 		) {
 			return;
 		}
 		hasRequestedApproval.current = true;
-		approve(
-			{ sessionId, archiveHash: session.archive_hash, destinationBlogId: site.ID },
-			{ onSettled: () => refetch() }
-		);
+		approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
 	}, [ approve, refetch, session, sessionId, site.ID ] );
 
 	if ( ! sessionId ) {
@@ -83,11 +79,15 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 
 	const errorCode =
 		getStaticSiteImportErrorCode( approveError ) ?? getStaticSiteImportErrorCode( sessionError );
+	const isRefused = session?.receipt?.code === 'static_site_capture_blocked';
 	const needsRestart =
-		RESTART_CODES.includes( errorCode ?? '' ) ||
-		( session?.state === 'failed' && ! session.site_url );
+		! isRefused &&
+		( errorCode === 'static_site_import_session_not_found' ||
+			( session?.state === 'failed' && ! session.site_url ) );
 	const approveFailed =
-		Boolean( approveError ) && errorCode !== 'static_site_import_session_already_approved';
+		Boolean( approveError ) &&
+		errorCode !== 'static_site_import_session_already_approved' &&
+		errorCode !== 'static_site_import_session_approval_in_progress';
 	const hasFailed =
 		needsRestart ||
 		approveFailed ||
@@ -99,6 +99,7 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 			status: 'failed',
 			session,
 			errorCode,
+			isRefused,
 			needsRestart,
 			retry:
 				approveFailed && ! needsRestart

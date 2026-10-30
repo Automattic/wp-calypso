@@ -2,12 +2,14 @@
  * @jest-environment jsdom
  */
 
+import { setLocale } from '@automattic/number-formatters';
 import { getAiCreditsTitle } from '../ai-credits';
 import {
 	CANCEL_FLOW_TYPE,
 	getCancelIntentFromSearch,
 	getDelayedDowngradeRenewalPriceText,
 	getDisplayVariant,
+	getDowngradeRefundAmount,
 	getMutationFlowType,
 	getPurchaseCancellationFlowType,
 	hasQueryableSite,
@@ -677,6 +679,46 @@ describe( 'isWithinRefundWindowDowngradeEligible', () => {
 	} );
 } );
 
+describe( 'getDowngradeRefundAmount', () => {
+	test( 'matches the target by product ID in any order', () => {
+		const businessAnnual = makePurchase( {
+			total_refund_amount: 104.84,
+			refund_options: [
+				{ to_product_id: 1018, refund_amount: 40, refund_currency_symbol: '$' },
+				{ to_product_id: 1009, refund_amount: 52.42, refund_currency_symbol: '$' },
+			],
+		} );
+
+		expect( getDowngradeRefundAmount( businessAnnual, 1018 ) ).toBe( 40 );
+		expect( getDowngradeRefundAmount( businessAnnual, 1009 ) ).toBe( 52.42 );
+	} );
+
+	test( 'returns 0 for an empty or null list, an unlisted product, or an undefined product ID', () => {
+		const premiumAnnual = makePurchase( {
+			total_refund_amount: 104.84,
+			refund_options: [
+				{ to_product_id: 1009, refund_amount: 52.42, refund_currency_symbol: '$' },
+				{ to_product_id: 1013, refund_amount: 82.42, refund_currency_symbol: '$' },
+			],
+		} );
+
+		expect(
+			getDowngradeRefundAmount(
+				makePurchase( { total_refund_amount: 104.84, refund_options: [] } ),
+				1009
+			)
+		).toBe( 0 );
+		expect(
+			getDowngradeRefundAmount(
+				makePurchase( { total_refund_amount: 104.84, refund_options: null } ),
+				1009
+			)
+		).toBe( 0 );
+		expect( getDowngradeRefundAmount( premiumAnnual, 1019 ) ).toBe( 0 );
+		expect( getDowngradeRefundAmount( premiumAnnual, undefined ) ).toBe( 0 );
+	} );
+} );
+
 describe( 'getAiCreditsTitle', () => {
 	const PRODUCT_NAME = 'Studio Code AI Credits';
 
@@ -692,6 +734,9 @@ describe( 'getAiCreditsTitle', () => {
 } );
 
 describe( 'getTitleForDisplay', () => {
+	beforeEach( () => setLocale( 'en' ) );
+	afterEach( () => setLocale( 'en' ) );
+
 	const priceTier = {
 		minimum_units: 1,
 		minimum_price: 0,
@@ -738,7 +783,11 @@ describe( 'getTitleForDisplay', () => {
 		}
 	);
 
-	test( 'shows request count for Akismet Pro', () => {
+	test.each( [
+		[ 'en', '1,000' ],
+		[ 'de', '1.000' ],
+	] )( 'formats the Akismet Pro request count in %s', ( locale, requests ) => {
+		setLocale( locale );
 		expect(
 			getTitleForDisplay(
 				makePurchase( {
@@ -747,7 +796,7 @@ describe( 'getTitleForDisplay', () => {
 					renewal_price_tier_usage_quantity: 2,
 				} )
 			)
-		).toBe( 'Akismet Pro (1000 requests/month)' );
+		).toBe( `Akismet Pro (${ requests } requests/month)` );
 	} );
 
 	test( 'shows request count for Jetpack AI', () => {

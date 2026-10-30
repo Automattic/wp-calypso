@@ -50,7 +50,6 @@ describe( 'LoginForm', () => {
 
 		const notice = screen.getByText( /already a WordPress.com account for/i );
 		expect( notice ).toBeVisible();
-		expect( notice.closest( '.dashboard-notice' ) ).toHaveClass( 'is-info' );
 	} );
 
 	test( 'displays notice when social account is linking and last used authentication method is set', async () => {

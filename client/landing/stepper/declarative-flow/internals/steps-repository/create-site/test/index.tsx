@@ -15,6 +15,7 @@ const mockReadFlowState = () => flowStateStore;
 let mockBlueprint: string | null = null;
 let mockSiteUrl = 'my-site.wordpress.com';
 let mockQueryParams = new URLSearchParams( '' );
+let mockIsSimplifiedOnboarding = false;
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
 const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
@@ -108,7 +109,7 @@ jest.mock( 'calypso/signup/storageUtils', () => ( {
 jest.mock( 'calypso/state', () => ( { useSelector: () => undefined } ) );
 jest.mock( 'calypso/state/imports/url-analyzer/selectors', () => ( { getUrlData: jest.fn() } ) );
 jest.mock( '../../../../../hooks/use-simplified-onboarding', () => ( {
-	useSimplifiedOnboarding: () => [ false, false ],
+	useSimplifiedOnboarding: () => [ false, mockIsSimplifiedOnboarding ],
 } ) );
 jest.mock( '../../../../helpers/should-use-step-container-v2', () => ( {
 	shouldUseStepContainerV2: () => true,
@@ -140,6 +141,7 @@ describe( 'create-site', () => {
 		mockBlueprint = null;
 		mockSiteUrl = 'my-site.wordpress.com';
 		mockQueryParams = new URLSearchParams( '' );
+		mockIsSimplifiedOnboarding = false;
 		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
@@ -291,6 +293,19 @@ describe( 'create-site', () => {
 		expect( ( createSite as jest.Mock ).mock.calls[ 0 ][ 2 ] ).toBe(
 			Site.Visibility.PublicIndexed
 		);
+	} );
+
+	// Without this, imported posts land next to the theme's demo content and a "build" checklist.
+	it( 'creates an empty site with no intent or AI Launchpad for an import', async () => {
+		mockQueryParams = new URLSearchParams( 'flow=import' );
+		mockIsSimplifiedOnboarding = true;
+		await runStep();
+		await waitFor( () => expect( createSite ).toHaveBeenCalled() );
+
+		const args = ( createSite as jest.Mock ).mock.calls[ 0 ];
+		expect( args[ 5 ] ).toBe( false ); // useThemeHeadstart
+		expect( args[ 10 ] ).toBe( '' ); // siteIntent
+		expect( getAiLaunchpadEnabledArg() ).toBe( false );
 	} );
 
 	describe( 'AI Launchpad enablement', () => {

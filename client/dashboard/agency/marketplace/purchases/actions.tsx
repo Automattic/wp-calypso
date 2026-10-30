@@ -9,7 +9,7 @@ import { useCallback, useMemo } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
-import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
+import { leaveDashboard } from '../../crossover/store';
 import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
@@ -130,7 +130,7 @@ export function getLicenseActions( {
 			label: __( 'Manage in Pressable' ),
 			isEligible: ( item ) =>
 				canAct( item ) && isPressableLicense( item ) && getLicenseStatus( item ) !== 'revoked',
-			callback: () => openExternal( PRESSABLE_AGENCY_URL ),
+			callback: () => leaveDashboard( 'pressable' ),
 		},
 		{
 			id: 'upgrade',
