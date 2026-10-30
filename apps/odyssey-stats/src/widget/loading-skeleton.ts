@@ -9,37 +9,40 @@
  * and a change to the layout reaches every site at once, not only after a Jetpack release.
  *
  * Its own container, so the totals stack at the width the widget stacks them, from the first
- * paint. The widget's stylesheet zeroes the margin once it arrives (index.scss).
+ * paint. The padding sits on an inner wrapper, since a container query measures the content
+ * box and the widget's container has none. The widget's stylesheet zeroes the margin once it
+ * arrives (index.scss).
  */
 
 const STYLE = `
-.jp-stats-widget-skeleton{container-type:inline-size;margin:-11px -12px -12px;padding:8px;display:flex;flex-direction:column;gap:8px;border-radius:0 0 8px 8px;background:#f6f7f7;font-size:0}
+.jp-stats-widget-skeleton{container-type:inline-size;margin:-11px -12px -12px;border-radius:0 0 8px 8px;background:#f6f7f7;font-size:0}
+.jp-stats-widget-skeleton__inner{display:flex;flex-direction:column;gap:8px;padding:8px}
 .jp-stats-widget-skeleton__card{border-radius:7px;box-shadow:0 0 0 1px rgba(0,0,0,.1);background:#fff}
-.jp-stats-widget-skeleton__header{display:flex;justify-content:space-between;align-items:center;min-height:32px;padding:8px}
+.jp-stats-widget-skeleton__header{display:flex;justify-content:space-between;align-items:center;min-block-size:32px;padding:8px}
 .jp-stats-widget-skeleton__body{padding:8px 12px 12px}
-.jp-stats-widget-skeleton__body.is-tabbed{padding-top:0}
+.jp-stats-widget-skeleton__body.is-tabbed{padding-block-start:0}
 .jp-stats-widget-skeleton__metrics{display:flex;gap:16px}
 .jp-stats-widget-skeleton__metric{display:flex;flex-direction:column;flex:1 1 0}
-.jp-stats-widget-skeleton__tabs{display:flex;margin:0 -12px;border-bottom:1px solid #dbdbdb}
-.jp-stats-widget-skeleton__tab{flex:1;display:flex;justify-content:center;padding:18px 0}
-.jp-stats-widget-skeleton__rows{display:flex;flex-direction:column;margin-top:8px}
-.jp-stats-widget-skeleton__row{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:32px}
-.jp-stats-widget-skeleton__link{display:flex;align-items:center;height:18.2px;margin-top:16px}
-.jp-stats-widget-skeleton__link.is-view-all{margin-top:8px}
+.jp-stats-widget-skeleton__tabs{display:flex;margin-inline:-12px;border-block-end:1px solid #dbdbdb}
+.jp-stats-widget-skeleton__tab{flex:1;display:flex;justify-content:center;padding-block:18px}
+.jp-stats-widget-skeleton__rows{display:flex;flex-direction:column;margin-block-start:8px}
+.jp-stats-widget-skeleton__row{display:flex;justify-content:space-between;align-items:center;gap:16px;min-block-size:32px}
+.jp-stats-widget-skeleton__link{display:flex;align-items:center;block-size:18.2px;margin-block-start:16px}
+.jp-stats-widget-skeleton__link.is-view-all{margin-block-start:8px}
 .jp-stats-widget-skeleton__footer{display:flex;justify-content:space-between;align-items:center;padding:8px}
-.jp-stats-widget-skeleton__bar{display:block;height:12px;border-radius:4px;background:#f4f4f4}
-.jp-stats-widget-skeleton__bar.is-title{width:140px;height:16px}
-.jp-stats-widget-skeleton__bar.is-control{width:112px;height:32px}
-.jp-stats-widget-skeleton__bar.is-label{width:72px;height:14px;margin:3px 0}
-.jp-stats-widget-skeleton__bar.is-value{width:64px;height:28px;margin:8px 0 4px}
-.jp-stats-widget-skeleton__bar.is-chart{height:160px;border-radius:8px;margin-top:16px}
-.jp-stats-widget-skeleton__bar.is-tab{width:96px}
-.jp-stats-widget-skeleton__bar.is-row-title{width:60%}
-.jp-stats-widget-skeleton__bar.is-row-value{width:46px}
-.jp-stats-widget-skeleton__bar.is-link{width:72px}
-.jp-stats-widget-skeleton__bar.is-logo{width:88px;height:20px}
-.jp-stats-widget-skeleton__bar.is-footer-link{width:80px}
-@container (max-width:360px){.jp-stats-widget-skeleton__metrics{flex-direction:column}.jp-stats-widget-skeleton__metric{flex:none}}
+.jp-stats-widget-skeleton__bar{display:block;block-size:12px;border-radius:4px;background:#f4f4f4}
+.jp-stats-widget-skeleton__bar.is-title{inline-size:140px;block-size:16px}
+.jp-stats-widget-skeleton__bar.is-control{inline-size:112px;block-size:32px}
+.jp-stats-widget-skeleton__bar.is-label{inline-size:72px;block-size:14px;margin-block:3px}
+.jp-stats-widget-skeleton__bar.is-value{inline-size:64px;block-size:28px;margin-block:8px 4px}
+.jp-stats-widget-skeleton__bar.is-chart{block-size:160px;border-radius:8px;margin-block-start:16px}
+.jp-stats-widget-skeleton__bar.is-tab{inline-size:96px}
+.jp-stats-widget-skeleton__bar.is-row-title{inline-size:60%}
+.jp-stats-widget-skeleton__bar.is-row-value{inline-size:46px}
+.jp-stats-widget-skeleton__bar.is-link{inline-size:72px}
+.jp-stats-widget-skeleton__bar.is-logo{inline-size:88px;block-size:20px}
+.jp-stats-widget-skeleton__bar.is-footer-link{inline-size:80px}
+@container (max-inline-size:360px){.jp-stats-widget-skeleton__metrics{flex-direction:column}.jp-stats-widget-skeleton__metric{flex:none}}
 @media not (prefers-reduced-motion){.jp-stats-widget-skeleton__bar{animation:jp-stats-widget-skeleton-pulse 1.5s ease-in-out infinite}}
 @media (forced-colors:active){.jp-stats-widget-skeleton__bar{outline:1px solid CanvasText;outline-offset:-1px}}
 @keyframes jp-stats-widget-skeleton-pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -126,7 +129,9 @@ export default function renderLoadingSkeleton(
 	skeleton.className = 'jp-stats-widget-skeleton';
 	skeleton.setAttribute( 'role', 'status' );
 	skeleton.setAttribute( 'aria-label', label );
-	skeleton.innerHTML = `<style>${ STYLE }</style>${ markup( options ) }`;
+	skeleton.innerHTML = `<style>${ STYLE }</style><div class="jp-stats-widget-skeleton__inner">${ markup(
+		options
+	) }</div>`;
 
 	container.replaceChildren( skeleton );
 }
