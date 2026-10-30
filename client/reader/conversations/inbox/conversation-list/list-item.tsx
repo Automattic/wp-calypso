@@ -18,6 +18,7 @@ export type OpenSource = 'click' | 'tab_key' | 'shortcut' | 'button';
 interface Props {
 	conversation: Conversation;
 	isSelected: boolean;
+	openOnFocus: boolean;
 	density: Density;
 	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
 }
@@ -50,7 +51,13 @@ function getContextLine(
 	}
 }
 
-export function ConversationListItem( { conversation, isSelected, density, onSelect }: Props ) {
+export function ConversationListItem( {
+	conversation,
+	isSelected,
+	openOnFocus,
+	density,
+	onSelect,
+}: Props ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const { siteId, postId, excerpt, timestamp, commenters, unreadNoteIds } = conversation;
@@ -118,7 +125,7 @@ export function ConversationListItem( { conversation, isSelected, density, onSel
 				onFocus={ () => {
 					const source = pointerDownRef.current ? 'click' : 'tab_key';
 					pointerDownRef.current = false;
-					if ( ! isSelected ) {
+					if ( openOnFocus && ! isSelected ) {
 						openedOnFocusRef.current = true;
 						onSelect( conversation, source );
 					}

@@ -8,8 +8,9 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { chevronDown, chevronUp } from '@wordpress/icons';
-import { useTranslate } from 'i18n-calypso';
+import { chevronDown, chevronLeft, chevronRight, chevronUp } from '@wordpress/icons';
+import { useRtl, useTranslate } from 'i18n-calypso';
+import { useEffect, useRef } from 'react';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -30,12 +31,22 @@ interface Props {
 	siteId: number;
 	postId: number;
 	conversation?: Conversation;
+	onBack?: () => void;
 	onPrevious?: () => void;
 	onNext?: () => void;
 }
 
-export function ConversationDetail( { siteId, postId, conversation, onPrevious, onNext }: Props ) {
+export function ConversationDetail( {
+	siteId,
+	postId,
+	conversation,
+	onBack,
+	onPrevious,
+	onNext,
+}: Props ) {
 	const translate = useTranslate();
+	const isRtl = useRtl();
+	const backRef = useRef< HTMLButtonElement >( null );
 	const moment = useLocalizedMoment();
 	const dispatch = useDispatch();
 	const { data: post, isLoading } = usePost( { blogId: siteId, postId } );
@@ -63,12 +74,28 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 		title = translate( 'You commented' );
 	}
 
+	useEffect( () => {
+		backRef.current?.focus();
+	}, [] );
+
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__detail-pane">
 			<HStack as="header" expanded={ false } className="conversations-inbox__detail-header">
-				<Heading level={ 2 } size={ 20 } weight={ 500 } color="inherit">
-					{ title }
-				</Heading>
+				<HStack justify="flex-start" spacing={ 2 }>
+					{ onBack && (
+						<Button
+							ref={ backRef }
+							__next40pxDefaultSize
+							icon={ isRtl ? chevronRight : chevronLeft }
+							onClick={ onBack }
+						>
+							{ translate( 'Conversations' ) }
+						</Button>
+					) }
+					<Heading level={ 2 } size={ 20 } weight={ 500 } color="inherit">
+						{ title }
+					</Heading>
+				</HStack>
 				<HStack spacing={ 0 } expanded={ false }>
 					<Button
 						__next40pxDefaultSize

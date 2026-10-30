@@ -6,6 +6,12 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: { show: jest.fn(), replace: jest.fn() },
 } ) );
 
+let mockIsNarrow = false;
+
+jest.mock( '@automattic/viewport-react', () => ( {
+	useBreakpoint: () => mockIsNarrow,
+} ) );
+
 jest.mock( 'calypso/reader/data/notifications', () => ( {
 	useCommentNotes: jest.fn(),
 	useMarkNotesRead: jest.fn(),
@@ -107,6 +113,7 @@ const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
 let markRead: jest.Mock;
 
 beforeEach( () => {
+	mockIsNarrow = false;
 	jest.mocked( page.show ).mockReset();
 	jest.mocked( page.replace ).mockReset();
 	jest.mocked( recordReaderTracksEvent ).mockClear();
@@ -194,6 +201,19 @@ describe( 'ConversationsInbox', () => {
 
 		expect( markRead ).not.toHaveBeenCalled();
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+	} );
+
+	describe( 'on narrow screens', () => {
+		beforeEach( () => {
+			mockIsNarrow = true;
+		} );
+
+		it( 'shows only the list and does not pick a conversation when the URL has none', () => {
+			renderInbox();
+
+			expect( screen.queryByText( /^Detail:/ ) ).not.toBeInTheDocument();
+			expect( page.replace ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'Tracks', () => {

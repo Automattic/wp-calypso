@@ -42,6 +42,7 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 			onSortChange={ jest.fn() }
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
+			openOnFocus
 			onMarkAllRead={ jest.fn() }
 			onSelect={ jest.fn() }
 			{ ...props }
@@ -209,6 +210,17 @@ describe( 'ConversationList', () => {
 			expect.objectContaining( { postId: 200 } ),
 			'tab_key'
 		);
+	} );
+
+	it( 'leaves Tab alone when rows do not open on focus', async () => {
+		const user = userEvent.setup();
+		const { onSelect } = renderList( { openOnFocus: false } );
+
+		await user.click( screen.getByRole( 'button', { name: /^Unread post/ } ) );
+		onSelect.mockClear();
+		await user.tab();
+
+		expect( onSelect ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reports Tab, not click, after a click that did not focus the row', async () => {

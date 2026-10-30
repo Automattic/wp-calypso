@@ -58,6 +58,7 @@
 		"plans/migration-trial": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
+		"purchases/cancel-options-cards": false,
 		"purchases/split-cancel-remove": false,
 		"purchases/site-transfer": true,
 		"resurrected-users/90-day-eligibility": true,
