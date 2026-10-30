@@ -106,7 +106,7 @@ describe( 'RestClient', () => {
 			// Fixed page size, anchored on the oldest loaded note's timestamp expressed
 			// as the UNIX epoch seconds the endpoint's `before` cursor expects.
 			expect( getCalls[ 0 ].query ).toMatchObject( {
-				number: 10,
+				number: 11,
 				before: Math.floor( Date.parse( oldest.timestamp ) / 1000 ),
 			} );
 
@@ -268,7 +268,7 @@ describe( 'RestClient', () => {
 			);
 
 			// A full older page keeps the catch-up going instead of latching.
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 90 ), last_seen_time: 0 } );
+			getCalls[ 0 ].callback( null, { notes: fullPage( 11, 91 ), last_seen_time: 0 } );
 			expect( client.hasMoreNotes() ).toBe( true );
 		} );
 
@@ -287,7 +287,7 @@ describe( 'RestClient', () => {
 			// Anchored on the view's oldest (91) and sized off its own count (10 left
 			// under the cap), not 0 from the full store.
 			expect( getCalls[ 0 ].query ).toMatchObject( {
-				number: 10,
+				number: 11,
 				before: Math.floor( Date.parse( makeNote( 91 ).timestamp ) / 1000 ),
 			} );
 		} );
@@ -308,11 +308,11 @@ describe( 'RestClient', () => {
 
 			client.loadMore();
 			expect( trackedEvents() ).toEqual( [] );
-			// The inclusive `before` echoes the anchor (91) back with nine older
-			// notes, so the total grows to 19, not 20.
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 91 ), last_seen_time: 0 } );
+			// The inclusive `before` echoes the anchor (91) back with ten older
+			// notes, so the total grows to 20, not 21.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 11, 91 ), last_seen_time: 0 } );
 
-			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 19, reached_end: false } ] );
+			expect( trackedEvents() ).toEqual( [ { filter: 'all', total: 20, reached_end: false } ] );
 		} );
 
 		it( 'flags reached_end when a short page exhausts the server', () => {
@@ -357,10 +357,10 @@ describe( 'RestClient', () => {
 			getCalls.length = 0;
 
 			client.loadMore();
-			// Echoed anchor (200) plus nine older notes.
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 200 ), last_seen_time: 0 } );
+			// Echoed anchor (200) plus ten older notes.
+			getCalls[ 0 ].callback( null, { notes: fullPage( 11, 200 ), last_seen_time: 0 } );
 
-			expect( trackedEvents() ).toEqual( [ { filter: 'unread', total: 19, reached_end: false } ] );
+			expect( trackedEvents() ).toEqual( [ { filter: 'unread', total: 20, reached_end: false } ] );
 		} );
 
 		it( 'flags reached_end when a filtered tab gets a short page', () => {
@@ -464,7 +464,7 @@ describe( 'RestClient', () => {
 			// not a re-request of the whole grown window.
 			expect( getCalls[ 0 ].query ).toMatchObject( {
 				unread: 1,
-				number: 10,
+				number: 11,
 				before: Math.floor( Date.parse( makeNote( 200 ).timestamp ) / 1000 ),
 			} );
 		} );
@@ -553,10 +553,10 @@ describe( 'RestClient', () => {
 			client.loadMore();
 			expect( getCalls[ 0 ].query ).toMatchObject( {
 				unread: 1,
-				number: 10,
+				number: 11,
 				before: Math.floor( Date.parse( makeNote( 200 ).timestamp ) / 1000 ),
 			} );
-			getCalls[ 0 ].callback( null, { notes: fullPage( 10, 199 ), last_seen_time: 0 } ); // 199..190
+			getCalls[ 0 ].callback( null, { notes: fullPage( 11, 200 ), last_seen_time: 0 } ); // 200..190
 			expect( getFilteredNoteIds( store.getState(), UNREAD_KEY ) ).toHaveLength( 20 );
 			expect( client.filteredHasMore[ UNREAD_KEY ] ).toBe( true );
 
@@ -565,7 +565,7 @@ describe( 'RestClient', () => {
 			client.loadMore();
 			expect( getCalls[ 0 ].query ).toMatchObject( {
 				unread: 1,
-				number: 10,
+				number: 11,
 				before: Math.floor( Date.parse( makeNote( 190 ).timestamp ) / 1000 ),
 			} );
 			getCalls[ 0 ].callback( null, { notes: fullPage( 5, 189 ), last_seen_time: 0 } ); // 189..185
@@ -586,12 +586,13 @@ describe( 'RestClient', () => {
 			client.setFilter( 'unread' );
 			getCalls[ 0 ].callback( null, { notes: fullPage( 10, TOP_ID ), last_seen_time: 0 } );
 
-			// Page in full older pages (10 at a time) until the list reaches max_limit.
+			// Page in full older pages (the echoed anchor plus 10 older notes) until the
+			// list reaches max_limit.
 			for ( let loaded = 10; loaded < MAX_LIMIT; loaded += 10 ) {
 				getCalls.length = 0;
 				client.loadMore();
 				getCalls[ 0 ].callback( null, {
-					notes: fullPage( 10, TOP_ID - loaded ),
+					notes: fullPage( 11, TOP_ID - loaded + 1 ),
 					last_seen_time: 0,
 				} );
 			}

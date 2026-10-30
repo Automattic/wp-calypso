@@ -181,7 +181,8 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// still re-run this to retry a `loadMore` the client's in-flight lock had
 	// blocked — else a switch back to a short cached tab strands it with no scrollbar.
 	useEffect( () => {
-		if ( startPosition + NOTES_PER_PAGE > visibleNotes.length && ! isLoading && hasMoreNotes ) {
+		const lastPositionInWindow = startPosition + NOTES_PER_PAGE - 1;
+		if ( lastPositionInWindow > visibleNotes.length && ! isLoading && hasMoreNotes ) {
 			infiniteScrollHandler();
 		}
 	}, [

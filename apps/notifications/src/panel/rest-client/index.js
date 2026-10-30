@@ -216,12 +216,7 @@ function getNotes( before, livePushMessages = [] ) {
 
 	const parameters = {
 		fields: getNoteFields.call( this ),
-		// Older pages request what's left under the cap, plus one for the anchor an
-		// inclusive `before` echoes back (de-duped below); the no-`before` refresh
-		// requests a small fixed head window.
-		number: before
-			? Math.min( settings.increment_limit, settings.max_limit - loaded + 1 )
-			: settings.initial_limit,
+		number: before ? getOlderPageSize( loaded ) : settings.initial_limit,
 		locale: this.locale,
 	};
 	if ( before ) {
@@ -475,12 +470,7 @@ function getFilteredNotes( before ) {
 
 	const parameters = {
 		fields: getNoteFields.call( this ),
-		// No `before`: re-request a small fixed head window. With it: page an older
-		// slice, capped to what's left under max_limit plus one for the anchor an
-		// inclusive `before` echoes back (de-duped below).
-		number: before
-			? Math.min( settings.increment_limit, settings.max_limit - filteredIds.length + 1 )
-			: settings.initial_limit,
+		number: before ? getOlderPageSize( filteredIds.length ) : settings.initial_limit,
 		locale: this.locale,
 		...filter,
 	};
@@ -881,6 +871,16 @@ function setVisibility( { isShowing, isVisible } ) {
 
 function setLocale( locale ) {
 	this.locale = locale;
+}
+
+/**
+ * Returns how many notes to request for a page older than the loaded ones.
+ */
+function getOlderPageSize( loadedCount ) {
+	const notesLeftUnderCap = settings.max_limit - loadedCount;
+	const olderNoteCount = Math.min( settings.increment_limit, notesLeftUnderCap );
+	const echoedAnchorCount = 1;
+	return olderNoteCount + echoedAnchorCount;
 }
 
 function getNoteFields() {
