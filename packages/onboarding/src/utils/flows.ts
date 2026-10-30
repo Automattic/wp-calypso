@@ -163,7 +163,9 @@ export const isHundredYearDomainFlow = ( flowName: string | null | undefined ) =
 };
 
 export const isDIFMFlow = ( flowName: string | null ) => {
-	return Boolean( flowName && [ DIFM_FLOW, DIFM_FLOW_STORE ].includes( flowName ) );
+	return Boolean(
+		flowName && [ DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES ].includes( flowName )
+	);
 };
 
 export const isAIBuilderFlow = ( flowName: string | null ) => {
