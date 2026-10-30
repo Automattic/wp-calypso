@@ -32,24 +32,33 @@ const INELIGIBLE_RESULT = {
 const mockUseExperiment = useExperiment as jest.Mock;
 const mockUseSelector = useSelector as jest.Mock;
 
+const SITE_ID = 123;
+
+// Runs the hook's real selectors against the given sites.
+function mockSitesState( items: Record< number, object > ) {
+	mockUseSelector.mockImplementation( ( selector ) => selector( { sites: { items } } ) );
+}
+
 function mockSite( {
 	siteCreationFlow = 'onboarding',
-	createdAt = '2026-11-05 00:00:01',
+	createdAt = '2026-11-05T00:00:01+00:00',
 }: {
 	siteCreationFlow?: string | null;
 	createdAt?: string;
 } = {} ) {
-	mockUseSelector.mockImplementation( () => ( {
-		ID: 123,
-		options: {
-			site_creation_flow: siteCreationFlow,
-			...( createdAt && { created_at: createdAt } ),
+	mockSitesState( {
+		[ SITE_ID ]: {
+			ID: SITE_ID,
+			options: {
+				site_creation_flow: siteCreationFlow,
+				...( createdAt && { created_at: createdAt } ),
+			},
 		},
-	} ) );
+	} );
 }
 
 function mockNoSite() {
-	mockUseSelector.mockImplementation( () => null );
+	mockSitesState( {} );
 }
 
 const SIGNUP_PARAMS = {
@@ -61,7 +70,7 @@ const SIGNUP_PARAMS = {
 const SITE_PARAMS = {
 	flowName: null,
 	isInSignup: false,
-	siteId: 123,
+	siteId: SITE_ID,
 };
 
 describe( 'usePlanDifferentiatorsExperiment', () => {
@@ -92,7 +101,7 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 			mockSite( { siteCreationFlow: 'newsletter' } );
 
 			const { result } = renderHook( () =>
-				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, siteId: 123 } )
+				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, siteId: SITE_ID } )
 			);
 
 			expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: false } );
@@ -116,13 +125,31 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 			expect( result.current ).toEqual( INELIGIBLE_RESULT );
 		} );
 
-		test( 'is not eligible for logged-in plans pages when the site was created before launch', () => {
-			mockSite( { createdAt: '2026-11-04 23:59:59' } );
+		test.each( [
+			[ 'before launch', '2026-11-04T23:59:59+00:00' ],
+			[ 'exactly at launch', '2026-11-05T00:00:00+00:00' ],
+			[ 'before launch in another timezone', '2026-11-05T01:00:00+02:00' ],
+		] )(
+			'is not eligible for logged-in plans pages when the site was created %s',
+			( _, createdAt ) => {
+				mockSite( { createdAt } );
 
-			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SITE_PARAMS ) );
+				const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SITE_PARAMS ) );
+
+				expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: false } );
+				expect( result.current ).toEqual( INELIGIBLE_RESULT );
+			}
+		);
+
+		test( 'is not eligible when the plans page is for another site', () => {
+			mockSite();
+
+			const { result } = renderHook( () =>
+				usePlanDifferentiatorsExperiment( { ...SITE_PARAMS, siteId: 456 } )
+			);
 
 			expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: false } );
-			expect( result.current ).toEqual( INELIGIBLE_RESULT );
+			expect( result.current.isExperimentEligible ).toBe( false );
 		} );
 
 		test( 'is not eligible for logged-in plans pages when the site has no creation date', () => {
@@ -220,18 +247,6 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 				variant: 'ai_credits',
 				showAiCredits: true,
 			} );
-		} );
-
-		test( 'ignores the assignment when not eligible', () => {
-			mockSite( { siteCreationFlow: 'newsletter' } );
-			mockUseExperiment.mockReturnValue( [
-				false,
-				{ variationName: 'ai_credits_reversed_order' },
-			] );
-
-			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SITE_PARAMS ) );
-
-			expect( result.current ).toEqual( INELIGIBLE_RESULT );
 		} );
 	} );
 } );

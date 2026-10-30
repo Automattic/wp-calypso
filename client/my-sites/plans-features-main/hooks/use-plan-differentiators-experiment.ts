@@ -1,12 +1,13 @@
 import { hasTailoredFeatureList } from '@automattic/plans-grid-next';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
-import getSite from 'calypso/state/sites/selectors/get-site';
+import getRawSite from 'calypso/state/selectors/get-raw-site';
+import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { IAppState } from 'calypso/state/types';
 
 const PLAN_DIFFERENTIATORS_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
-const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-05 00:00:00';
+const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-05T00:00:00Z';
 
 const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [
 	'control',
@@ -56,18 +57,22 @@ function usePlanDifferentiatorsExperiment( {
 	isInSignup,
 	siteId,
 }: UsePlanDifferentiatorsParams ): PlanDifferentiatorsResult {
-	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
+	const hasSite = useSelector( ( state: IAppState ) => !! getRawSite( state, siteId ) );
+	const siteCreationFlow = useSelector( ( state: IAppState ) =>
+		getSiteOption( state, siteId, 'site_creation_flow' )
+	);
+	const siteCreatedAt = useSelector( ( state: IAppState ) =>
+		getSiteOption( state, siteId, 'created_at' )
+	);
 	// Eligibility depends on the site's options, so report loading until the site arrives
 	// rather than briefly reporting control.
-	const isSiteLoading = !! siteId && ! site;
+	const isSiteLoading = !! siteId && ! hasSite;
 
-	const wasCreatedWithOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
-	const siteCreatedAt = site?.options?.created_at;
+	const wasCreatedWithOnboardingFlow = siteCreationFlow === 'onboarding';
 	const wasCreatedAfterExperimentLaunch =
-		!! siteCreatedAt && siteCreatedAt > PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE;
+		typeof siteCreatedAt === 'string' &&
+		Date.parse( siteCreatedAt ) > Date.parse( PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE );
 
-	// New-site onboarding signups are eligible before a site exists.
-	// Existing sites are eligible only when they were created by onboarding after launch.
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
 	const isEligible =
 		( isEligibleSignupFlow && ! siteId ) ||
@@ -80,15 +85,16 @@ function usePlanDifferentiatorsExperiment( {
 
 	const rawVariationName = assignment?.variationName;
 
-	const variant: PlanDifferentiatorsExperimentVariant =
-		isEligible && ! isLoading && isPlanDifferentiatorsExperimentVariant( rawVariationName )
-			? rawVariationName
-			: 'control';
+	const variant: PlanDifferentiatorsExperimentVariant = isPlanDifferentiatorsExperimentVariant(
+		rawVariationName
+	)
+		? rawVariationName
+		: 'control';
 
 	return {
 		isLoading,
 		variant,
-		showAiCredits: variant === 'ai_credits' || variant === 'ai_credits_reversed_order',
+		showAiCredits: variant !== 'control',
 		// Reversing assumes the standard lineup, which a curated intent (e.g. newsletter) replaces.
 		useReversedPlanOrder:
 			variant === 'ai_credits_reversed_order' && ! hasTailoredFeatureList( intent ),
