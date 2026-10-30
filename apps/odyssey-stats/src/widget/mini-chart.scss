@@ -12,12 +12,18 @@
 		margin-block-end: var(--wpds-dimension-gap-lg, 16px);
 	}
 
-	// The totals double as the chart's legend; the swatch is as thick as its lines.
+	// The totals double as the chart's legend; the swatch is as thick as its lines, or a
+	// square beside bars.
 	.stats-widget-metric__swatch {
 		display: inline-block;
 		inline-size: var(--wpds-dimension-size-2xs, 16px);
 		block-size: 2px;
 		border-radius: var(--wpds-border-radius-sm, 2px);
+
+		&.is-bar {
+			inline-size: var(--wpds-dimension-gap-sm, 8px);
+			block-size: var(--wpds-dimension-gap-sm, 8px);
+		}
 
 		&.is-views {
 			background-color: var(--chart-series-views);

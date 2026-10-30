@@ -1,11 +1,17 @@
-import { LineChart } from '@automattic/charts';
+import { BarChart, LineChart } from '@automattic/charts';
 // Without the package's own styles the chart collapses to zero width.
 import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
+import type { ChartType } from './chart-type';
 import type { DateRange } from '../lib/date-ranges';
-import type { DataPointDate, RenderTooltipParams, SeriesData } from '@automattic/charts';
+import type {
+	DataPointDate,
+	LineChartProps,
+	RenderTooltipParams,
+	SeriesData,
+} from '@automattic/charts';
 
 // The tooltip renders through @visx/tooltip's portal, which appends to `document.body` —
 // outside the roots our stylesheets are scoped to — so these few rules travel with it.
@@ -65,45 +71,80 @@ interface OverviewChartProps {
 	height: number;
 	/** The range's bucket, so monthly points are labelled by month rather than by date. */
 	unit: DateRange[ 'unit' ];
+	/** Bars or lines, as the viewer draws the Stats page's chart. */
+	chartType: ChartType;
 }
 
+// Room on the right for half a date label ("Sep 30"), since the last tick can fall on the
+// last point and centre its label on the edge.
+const MARGIN = { left: 32, top: 8, bottom: 20, right: 24 };
+
 /**
- * The Overview line chart, loaded as its own chunk so the rest of the widget paints first.
- * @param props        Component props.
- * @param props.series The series to plot.
- * @param props.height Chart height in pixels.
- * @param props.unit   The range's bucket.
+ * The Overview chart, loaded as its own chunk so the rest of the widget paints first. Bars or
+ * lines over the same series, axes and tooltip.
+ * @param props           Component props.
+ * @param props.series    The series to plot.
+ * @param props.height    Chart height in pixels.
+ * @param props.unit      The range's bucket.
+ * @param props.chartType Bars or lines.
  */
-const OverviewChart: FunctionComponent< OverviewChartProps > = ( { series, height, unit } ) => (
-	<LineChart
-		data={ series }
-		withTooltips
-		withGradientFill
-		animation
-		height={ height }
-		curveType="monotone"
-		renderTooltip={ ( params ) => renderTooltip( unit, params ) }
-		// Room on the right for half a date label ("Sep 30"), since the last tick can fall on
-		// the last point and centre its label on the edge.
-		margin={ { left: 32, top: 8, bottom: 20, right: 24 } }
-		options={ {
-			// From zero, so a range that never approaches it doesn't look more dramatic than it is.
-			yScale: { type: 'linear', zero: true },
-			axis: {
-				x: {
-					tickFormat: ( value: number ) =>
-						moment( value ).format( 'month' === unit ? 'MMM' : 'MMM D' ),
-				},
-				// Compact, like the totals. Zero is left to the grid line, and a quiet site's
-				// fractional ticks are blanked since views are whole (`hideZero` isn't typed).
-				y: {
-					orientation: 'left',
-					tickFormat: ( value: number ) =>
-						0 === value || ! Number.isInteger( value ) ? '' : formatNumberCompact( value ),
-				},
+const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
+	series,
+	height,
+	unit,
+	chartType,
+} ) => {
+	const options: LineChartProps[ 'options' ] = {
+		// From zero, so a range that never approaches it doesn't look more dramatic than it is.
+		yScale: { type: 'linear', zero: true },
+		axis: {
+			x: {
+				// A timestamp from the line chart's time scale, a `Date` from the bar chart's bands.
+				tickFormat: ( value: number | Date ) =>
+					moment( value ).format( 'month' === unit ? 'MMM' : 'MMM D' ),
 			},
-		} }
-	/>
-);
+			// Compact, like the totals. Zero is left to the grid line, and a quiet site's
+			// fractional ticks are blanked since views are whole (`hideZero` isn't typed).
+			y: {
+				orientation: 'left',
+				tickFormat: ( value: number ) =>
+					0 === value || ! Number.isInteger( value ) ? '' : formatNumberCompact( value ),
+			},
+		},
+	};
+	const renderTooltipForUnit = ( params: RenderTooltipParams< DataPointDate > ) =>
+		renderTooltip( unit, params );
+
+	if ( 'bar' === chartType ) {
+		return (
+			<BarChart
+				data={ series }
+				withTooltips
+				animation
+				// A zero-value bar has no height, so a quiet day would otherwise read as missing
+				// data. This draws it as a hairline stub instead.
+				showZeroValues
+				height={ height }
+				renderTooltip={ renderTooltipForUnit }
+				margin={ MARGIN }
+				options={ options }
+			/>
+		);
+	}
+
+	return (
+		<LineChart
+			data={ series }
+			withTooltips
+			withGradientFill
+			animation
+			height={ height }
+			curveType="monotone"
+			renderTooltip={ renderTooltipForUnit }
+			margin={ MARGIN }
+			options={ options }
+		/>
+	);
+};
 
 export default OverviewChart;

@@ -14,6 +14,7 @@ import { recordWidgetEventThenFollow } from '../record-widget-event';
 
 let mockChartFails = false;
 let mockChartLoading = false;
+let mockChartProps = null;
 
 jest.mock( '../../hooks/use-visits-query' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => () => '#3858e9' );
@@ -25,7 +26,8 @@ jest.mock( '../record-widget-event', () => ( {
 } ) );
 jest.mock( '../overview-chart', () => ( {
 	__esModule: true,
-	default: () => {
+	default: ( props ) => {
+		mockChartProps = props;
 		if ( mockChartFails ) {
 			throw new Error( 'Loading chunk 9542 failed' );
 		}
@@ -67,6 +69,8 @@ describe( 'MiniChart', () => {
 		jest.clearAllMocks();
 		mockChartFails = false;
 		mockChartLoading = false;
+		mockChartProps = null;
+		localStorage.clear();
 		// Reduced motion lands the totals on their value without counting up.
 		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
@@ -75,6 +79,27 @@ describe( 'MiniChart', () => {
 	afterEach( () => {
 		// eslint-disable-next-line no-console
 		console.error.mockRestore();
+	} );
+
+	it.each( [
+		[ 'bars, as the Stats page does', null, 'bar' ],
+		[ 'lines when the viewer chose them on the Stats page', 'line', 'line' ],
+		[ 'bars when the viewer chose them on the Stats page', 'bar', 'bar' ],
+		[ 'bars over a value the Stats page never writes', 'pie', 'bar' ],
+	] )( 'draws %s', async ( _, stored, expected ) => {
+		if ( stored ) {
+			localStorage.setItem( 'jetpack_stats_chart_type_1', stored );
+		}
+		const { container } = render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
+		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
+
+		expect( mockChartProps.chartType ).toBe( expected );
+		// The legend swatches match: a square beside bars, a line beside lines.
+		const swatches = container.querySelectorAll( '.stats-widget-metric__swatch' );
+		expect( swatches ).toHaveLength( 2 );
+		swatches.forEach( ( swatch ) =>
+			expect( swatch.classList.contains( 'is-bar' ) ).toBe( 'bar' === expected )
+		);
 	} );
 
 	it( 'opens "More stats" on the days the chart shows', async () => {

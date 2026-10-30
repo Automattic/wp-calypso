@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { LineChart } from '@automattic/charts';
+import { BarChart, LineChart } from '@automattic/charts';
 import { render, screen } from '@testing-library/react';
 import moment from 'moment';
 import 'moment/locale/de';
@@ -12,12 +12,17 @@ import OverviewChart from '../overview-chart';
 moment.locale( 'en' );
 
 jest.mock( '@automattic/charts', () => ( {
+	BarChart: jest.fn( () => null ),
 	LineChart: jest.fn( () => null ),
 } ) );
 
-const renderChart = ( unit = 'day' ) => {
-	render( <OverviewChart series={ [] } height={ 160 } unit={ unit } /> );
-	return LineChart.mock.calls[ 0 ][ 0 ];
+const series = [ { label: 'Views', data: [] } ];
+
+const renderChart = ( unit = 'day', chartType = 'line' ) => {
+	render(
+		<OverviewChart series={ series } height={ 160 } unit={ unit } chartType={ chartType } />
+	);
+	return ( 'bar' === chartType ? BarChart : LineChart ).mock.calls[ 0 ][ 0 ];
 };
 
 const renderAxes = ( unit = 'day' ) => renderChart( unit ).options.axis;
@@ -40,9 +45,43 @@ const renderTooltip = ( unit, datums, date = new Date( 2026, 6, 1 ) ) => {
 	return render( <div>{ tooltip }</div> );
 };
 
+describe( 'OverviewChart', () => {
+	beforeEach( () => {
+		BarChart.mockClear();
+		LineChart.mockClear();
+	} );
+
+	it.each( [
+		[ 'line', LineChart, BarChart ],
+		[ 'bar', BarChart, LineChart ],
+	] )( 'draws the series as a %s chart', ( chartType, drawn, other ) => {
+		const props = renderChart( 'day', chartType );
+
+		expect( props.data ).toBe( series );
+		expect( props.height ).toBe( 160 );
+		expect( other ).not.toHaveBeenCalled();
+		expect( drawn ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'gives both charts the same scale, axis labels and margin', () => {
+		const line = renderChart( 'day', 'line' );
+		const bar = renderChart( 'day', 'bar' );
+
+		expect( bar.options.yScale ).toEqual( line.options.yScale );
+		expect( bar.options.axis.y.tickFormat( 1200 ) ).toBe( line.options.axis.y.tickFormat( 1200 ) );
+		expect( bar.margin ).toEqual( line.margin );
+	} );
+} );
+
 describe( 'OverviewChart axes', () => {
 	beforeEach( () => {
+		BarChart.mockClear();
 		LineChart.mockClear();
+	} );
+
+	it( "labels a bar chart's band, a date rather than a timestamp", () => {
+		const { x } = renderChart( 'day', 'bar' ).options.axis;
+		expect( x.tickFormat( new Date( 2026, 8, 20 ) ) ).toBe( 'Sep 20' );
 	} );
 
 	it.each( [
@@ -67,6 +106,7 @@ describe( 'OverviewChart axes', () => {
 
 describe( 'OverviewChart tooltip', () => {
 	beforeEach( () => {
+		BarChart.mockClear();
 		LineChart.mockClear();
 	} );
 
