@@ -18,14 +18,16 @@ export default function EmailSetup() {
 				<EmailSetupForm
 					label="Google Workspace"
 					key="google-workspace"
-					description={ createInterpolateElement(
-						__(
-							'Paste the verification token provided by Google Workspace for the TXT record. <learnMoreLink />'
+					steps={ [
+						__( 'In Google Workspace, choose to verify your domain with a TXT record.' ),
+						__( 'Copy the value it shows. It starts with google-site-verification=.' ),
+						createInterpolateElement(
+							__( 'Paste it below and we add the records for you. <learnMoreLink />' ),
+							{
+								learnMoreLink: <InlineSupportLink supportContext="domain-email-google" />,
+							}
 						),
-						{
-							learnMoreLink: <InlineSupportLink supportContext="domain-email-google" />,
-						}
-					) }
+					] }
 					pattern={ /^google-site-verification=[A-Za-z0-9_-]{43}$/ }
 					placeholder="google-site-verification=…"
 					provider={ DnsTemplates.G_SUITE.PROVIDER }
@@ -39,9 +41,11 @@ export default function EmailSetup() {
 			content: (
 				<EmailSetupForm
 					key="icloud-mail"
-					description={ __(
-						'Paste the verification token provided by iCloud Mail for the TXT record.'
-					) }
+					steps={ [
+						__( 'In iCloud Mail, start the custom domain setup.' ),
+						__( 'Copy the verification value it shows. It starts with apple-domain=.' ),
+						__( 'Paste it below and we add the records for you.' ),
+					] }
 					label="iCloud Mail"
 					pattern={ /^apple-domain=[A-Za-z0-9]{16}$/ }
 					placeholder="apple-domain=…"
@@ -56,14 +60,16 @@ export default function EmailSetup() {
 			content: (
 				<EmailSetupForm
 					key="office-365"
-					description={ createInterpolateElement(
-						__(
-							'Paste the verification token provided by Office 365 for the TXT record. <learnMoreLink />'
+					steps={ [
+						__( 'In the Microsoft 365 admin center, add your domain.' ),
+						__( 'Copy the TXT value it gives you. It starts with MS=ms.' ),
+						createInterpolateElement(
+							__( 'Paste it below and we add the records for you. <learnMoreLink />' ),
+							{
+								learnMoreLink: <InlineSupportLink supportContext="domain-email-o365" />,
+							}
 						),
-						{
-							learnMoreLink: <InlineSupportLink supportContext="domain-email-o365" />,
-						}
-					) }
+					] }
 					label="Office 365"
 					transformVariables={ ( variables ) =>
 						Object.assign( {}, variables, {
@@ -83,14 +89,16 @@ export default function EmailSetup() {
 			content: (
 				<EmailSetupForm
 					key="zoho-mail"
-					description={ createInterpolateElement(
-						__(
-							'Paste the verification token provided by Zoho Mail for the TXT record. <learnMoreLink />'
+					steps={ [
+						__( 'In Zoho Mail, choose the TXT method at the domain verification step.' ),
+						__( 'Copy the value it shows. It starts with zb.' ),
+						createInterpolateElement(
+							__( 'Paste it below and we add the records for you. <learnMoreLink />' ),
+							{
+								learnMoreLink: <InlineSupportLink supportContext="domain-email-zoho" />,
+							}
 						),
-						{
-							learnMoreLink: <InlineSupportLink supportContext="domain-email-zoho" />,
-						}
-					) }
+					] }
 					label="Zoho Mail"
 					pattern={ /^zb\w{1,100}$/ }
 					placeholder="zb…"
