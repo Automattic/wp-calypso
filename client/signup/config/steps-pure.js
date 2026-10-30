@@ -144,18 +144,6 @@ export function generateSteps( {
 			providesDependencies: [ 'stepperHostingFlow' ],
 		},
 
-		'plans-import': {
-			stepName: 'plans-import',
-			apiRequestFunction: addPlanToCart,
-			dependencies: [ 'siteSlug' ],
-			providesDependencies: [ 'cartItems', 'themeSlugWithRepo' ],
-			optionalDependencies: [ 'themeSlugWithRepo' ],
-			fulfilledStepCallback: isPlanFulfilled,
-			props: {
-				intent: 'plans-import',
-			},
-		},
-
 		'plans-with-plugin': {
 			stepName: 'plans-with-plugin',
 			apiRequestFunction: addWithPluginPlanToCart,

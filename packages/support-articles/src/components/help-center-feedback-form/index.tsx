@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { GetSupport } from '@automattic/odie-client';
+import { GetSupport, useCheckoutSupportVariation } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
 import { useState } from '@wordpress/element';
 import { useI18n } from '@wordpress/react-i18n';
@@ -35,6 +35,7 @@ const HelpCenterFeedbackForm = ( {
 	const { mutate: rateArticle } = useRateArticle();
 
 	const { data: canConnectToZendesk } = useCanConnectToZendeskMessaging();
+	const checkoutSupportVariation = useCheckoutSupportVariation();
 
 	const handleFeedbackClick = ( value: ArticleRating ) => {
 		setRating( value );
@@ -80,6 +81,8 @@ const HelpCenterFeedbackForm = ( {
 			location: 'article-feedback',
 			destination,
 			is_user_eligible: isEligibleForChat,
+			// Only set when support was opened from checkout in the checkout support experiment.
+			...( checkoutSupportVariation && { checkout_support_variation: checkoutSupportVariation } ),
 		} );
 	};
 

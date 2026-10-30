@@ -519,6 +519,11 @@ export const marketplaceProductsRoute = createRoute( {
 	)
 );
 
+// A full-screen page's `from` search param: the page its Back link returns to.
+function parseFromSearch( search: Record< string, unknown > ) {
+	return typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined;
+}
+
 // `/referral-checkout` – request a client's payment for the referral
 // cart, or for the plan of one development site when `referral_blog_id`
 // names it. Takes the whole screen, like the WordPress.com checkout the paid
@@ -540,8 +545,7 @@ export const marketplaceReferralCheckoutRoute = createRoute( {
 	): { from?: string; referral_blog_id?: number } => {
 		const referralBlogId = Number( search.referral_blog_id );
 		return {
-			from:
-				typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
+			from: parseFromSearch( search ),
 			referral_blog_id:
 				Number.isInteger( referralBlogId ) && referralBlogId > 0 ? referralBlogId : undefined,
 		};
@@ -1066,13 +1070,20 @@ export const earnMigrationsRoute = createRoute( {
 	)
 );
 
-// `/payout-settings` – where and how the agency gets paid
+// `/payout-settings` – where and how the agency gets paid. Takes the whole screen around
+// the embedded Tipalti form; `from` is the page the Back link returns to.
 export const earnPayoutSettingsRoute = createRoute( {
-	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
-	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
+	staticData: {
+		// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
+		requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ],
+		isFullscreen: true,
+	},
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'payout-settings',
+	validateSearch: ( search: Record< string, unknown > ): { from?: string } => ( {
+		from: parseFromSearch( search ),
+	} ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;

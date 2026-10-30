@@ -1,4 +1,4 @@
-import { DIFM_FLOW, DIFM_FLOW_STORE, WEBSITE_DESIGN_SERVICES } from '@automattic/onboarding';
+import { DIFM_FLOW, DIFM_FLOW_STORE } from '@automattic/onboarding';
 /* eslint-disable no-restricted-imports */
 import { useGeoLocationQuery } from 'calypso/data/geo/use-geolocation-query';
 import { useSupportStatus } from '../data/use-support-status';
@@ -8,11 +8,7 @@ export function useFlowCustomOptions( flowName: string ) {
 	const { data: supportStatus } = useSupportStatus();
 	const { data: geoData } = useGeoLocationQuery();
 
-	if (
-		flowName === DIFM_FLOW ||
-		flowName === DIFM_FLOW_STORE ||
-		flowName === WEBSITE_DESIGN_SERVICES
-	) {
+	if ( flowName === DIFM_FLOW || flowName === DIFM_FLOW_STORE ) {
 		return {
 			hideBackButton: true,
 			hasPremiumSupport:

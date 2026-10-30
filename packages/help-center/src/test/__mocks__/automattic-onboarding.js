@@ -6,5 +6,4 @@ module.exports = {
 	DIFM_FLOW_STORE: 'do-it-for-me-store',
 	HUNDRED_YEAR_DOMAIN_FLOW: 'hundred-year-domain',
 	HUNDRED_YEAR_PLAN_FLOW: 'hundred-year-plan',
-	WEBSITE_DESIGN_SERVICES: 'website-design-services',
 };

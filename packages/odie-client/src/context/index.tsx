@@ -143,14 +143,19 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 					{
 						...properties,
 						chat_id: mainChatState?.odieId,
-						bot_name_slug: newInteractionsBotSlug,
+						// The bot in use, which the Help Center store can override.
+						bot_name_slug: dynamicNewInteractionsBotSlug,
+						// Only set when support was opened from checkout in the checkout support experiment.
+						...( checkoutSupportVariation && {
+							checkout_support_variation: checkoutSupportVariation,
+						} ),
 					},
 					'selected_site',
 					selectedSiteId
 				)
 			);
 		},
-		[ newInteractionsBotSlug, mainChatState, selectedSiteId ]
+		[ dynamicNewInteractionsBotSlug, checkoutSupportVariation, mainChatState, selectedSiteId ]
 	);
 
 	// A pending request for a human belongs to the chat it was made in.

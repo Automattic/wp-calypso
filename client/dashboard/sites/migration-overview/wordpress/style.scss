@@ -6,6 +6,48 @@
 	--wp-components-color-foreground: var( --wp-admin-theme-color );
 }
 
+// Each new message rolls up into view as the last rolls out, so it's clear the text moves on with the migration.
+.wordpress-migration__progress-message {
+	position: relative;
+	overflow: hidden;
+}
+
+.wordpress-migration__progress-message-line {
+	display: block;
+
+	// Without motion there's nothing to roll out, so the old message goes at once.
+	&.is-leaving {
+		display: none;
+	}
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.wordpress-migration__progress-message-line.is-entering {
+		animation: wordpress-migration__message-in 0.45s cubic-bezier( 0.2, 0.7, 0.2, 1 );
+	}
+
+	.wordpress-migration__progress-message-line.is-leaving {
+		display: block;
+		position: absolute;
+		inset: 0 0 auto;
+		animation: wordpress-migration__message-out 0.45s cubic-bezier( 0.2, 0.7, 0.2, 1 ) forwards;
+	}
+}
+
+@keyframes wordpress-migration__message-in {
+	from {
+		opacity: 0;
+		transform: translateY( 100% );
+	}
+}
+
+@keyframes wordpress-migration__message-out {
+	to {
+		opacity: 0;
+		transform: translateY( -100% );
+	}
+}
+
 // A link button in a vertical stack stretches to the card's width otherwise.
 .wordpress-migration__align-start {
 	align-self: flex-start;

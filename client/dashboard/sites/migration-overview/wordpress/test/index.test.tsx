@@ -22,6 +22,7 @@ const migration = ( status: string, extra = {} ) => ( {
 	status,
 	phase: null,
 	findings: [],
+	progress: null,
 	source_url: 'https://www.example.com',
 	started_at: null,
 	completed_at: null,
@@ -342,6 +343,7 @@ describe( 'WordPressMigration', () => {
 		await waitFor( () =>
 			expect( router.state.location.pathname ).toBe( '/sites/example.wordpress.com' )
 		);
+		expect( router.state.location.search ).toEqual( { migration: 'completed' } );
 	} );
 
 	it( 'still says a migration is underway for a status it doesn’t know', async () => {

@@ -1550,6 +1550,20 @@ describe( 'main app', () => {
 		} );
 	} );
 
+	describe( 'Retired website-design-services flow', () => {
+		it.each( [
+			[
+				'/start/website-design-services',
+				{ siteSlug: 'example.com', back_to: '/home/example.com' },
+				'/start/do-it-for-me?siteSlug=example.com&back_to=%2Fhome%2Fexample.com',
+			],
+			[ '/start/website-design-services/difm-options/es/', {}, '/start/do-it-for-me/es' ],
+		] )( 'redirects %s to the DIFM flow', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
+		} );
+	} );
+
 	describe( 'Route /cspreport', () => {
 		let customApp;
 
