@@ -15,6 +15,7 @@ The WordPress journey is gated by `migration/reprint-flow`, which defaults to fa
 - New destination: choose a plan → create site → configure → checkout → site migration page.
 - Eligible existing destination: confirm replacement → configure → site migration page.
 - Existing destination needing an upgrade: choose a plan → configure → checkout → site migration page.
+- “Talk to a migration expert” on the WordPress result: select or create a destination → existing assisted-migration offer → upgrade if needed → credentials. This preserves `how=difm`, including for supported SSH hosts, and does not configure a Reprint migration.
 
 Configure saves only `source_url`. It resets migration state, so it runs after an explicit continuation, never merely opening a result or plans page. MSD owns choosing the source connection and starting the migration; this router does not call the run endpoint. Configure failures use the shared Stepper error screen.
 
@@ -31,6 +32,7 @@ Checkout returns to the destination's migration page in MSD. Cancelling checkout
 7. Cancel checkout and verify plans retains the created destination. Verify Back through picker, plans, result, and address entry.
 8. With and without the flag, verify non-WordPress sources retain their existing routes. With the flag off, WordPress migration retains the legacy workflow.
 9. Open `/setup/site-migration/sitePicker?from=<url>&platform=wordpress&start=true&ref=move-lp&flags=migration/reprint-flow` (what `/move` sends). Verify a single page load straight into "Checking your site", then Back shows the address form. Without the flag, verify the site picker.
+10. On the WordPress result without a destination, choose “Talk to a migration expert”. Verify destination selection or creation retains the source and entry context, then opens “Let us migrate your site”. Check a supported SSH host with `/move` attribution too. Back should return to the result with DIY Continue still available. Stop before purchasing a plan, submitting credentials, or requesting a migration.
 
 ## Owned by
 

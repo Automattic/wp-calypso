@@ -39,7 +39,12 @@ const SiteMigrationCheck: StepType< {
 		| { action: 'back' }
 		| {
 				action:
-					'continue' | 'select-existing-site' | 'copy-site' | 'transfer-domain' | 'get-access';
+					| 'continue'
+					| 'assisted-migration'
+					| 'select-existing-site'
+					| 'copy-site'
+					| 'transfer-domain'
+					| 'get-access';
 				from: string;
 				platform: 'wordpress';
 				host?: string;
@@ -367,7 +372,16 @@ const SiteMigrationCheck: StepType< {
 									) }
 								</div>
 								{ ! hasDestination && (
-									<Step.LinkButton disabled>
+									<Step.LinkButton
+										onClick={ () =>
+											navigation.submit?.( {
+												action: 'assisted-migration',
+												from,
+												platform: 'wordpress',
+												host,
+											} )
+										}
+									>
 										{ translate( 'Rather have us do it? Talk to a migration expert' ) }
 									</Step.LinkButton>
 								) }

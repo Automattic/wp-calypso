@@ -324,6 +324,89 @@ describe( 'Site Migration Flow', () => {
 			expect( window.location.assign ).not.toHaveBeenCalled();
 		} );
 
+		it.each( [ 0, 2 ] )(
+			'keeps the expert choice through destination selection and Back with %s sites',
+			( siteCount ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( siteCount );
+				jest
+					.mocked( useFlowState().get )
+					.mockImplementation( ( key ) =>
+						key === 'flow' ? { entryPoint: 'move-lp' } : undefined
+					);
+				const source = {
+					from: 'https://wordpress.org/news/',
+					platform: 'wordpress',
+					host: 'bluehost',
+				};
+				const context = new URLSearchParams( {
+					...source,
+					ref: 'move-lp',
+					source: 'migration-test',
+					sessionId: 'expert',
+					flags: 'migration/reprint-flow,migration/ssh-migration',
+					ssh: 'true',
+				} );
+				const configure = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
+					.reply( 200, {} );
+				const { result } = renderNavigation( [
+					`/setup/site-migration/site-migration-check?${ context }`,
+				] );
+				const chooseExpert = () =>
+					act( () =>
+						result.current.navigation.submit( { action: 'assisted-migration', ...source } )
+					);
+				chooseExpert();
+				expect( result.current.location.pathname ).toBe(
+					siteCount ? '/site-migration/sitePicker' : '/site-migration/create-site'
+				);
+				const query = new URLSearchParams( result.current.location.search );
+				expect( query.get( 'how' ) ).toBe( HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME );
+				expect( query.get( 'action' ) ).toBe( 'migrate' );
+				expect( query.get( 'ssh' ) ).toBe( '' );
+				act( () => result.current.navigation.goBack() );
+				expect( result.current.location.pathname ).toBe( '/site-migration/site-migration-check' );
+				act( () => result.current.navigation.submit( { action: 'continue', ...source } ) );
+				expect( result.current.location.pathname ).toBe( '/site-migration/plans' );
+				expect( new URLSearchParams( result.current.location.search ).has( 'how' ) ).toBe( false );
+				act( () => result.current.navigation.goBack() );
+				chooseExpert();
+				if ( siteCount ) {
+					act( () =>
+						result.current.navigation.submit( {
+							action: 'select-site',
+							site: { ID: 123, slug: 'destination.wordpress.com' },
+						} )
+					);
+				} else {
+					act( () => result.current.navigation.submit( {} ) );
+					act( () =>
+						result.current.navigation.submit( {
+							siteCreated: true,
+							siteId: 123,
+							siteSlug: 'destination.wordpress.com',
+						} )
+					);
+				}
+				expect( result.current.location.pathname ).toBe(
+					'/site-migration/site-migration-how-to-migrate'
+				);
+				const destinationQuery = new URLSearchParams( result.current.location.search );
+				for ( const key of [ 'from', 'platform', 'host', 'source', 'ref', 'sessionId', 'flags' ] ) {
+					expect( destinationQuery.get( key ) ).toBe( context.get( key ) );
+				}
+				expect( destinationQuery.get( 'how' ) ).toBe( HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME );
+				expect( destinationQuery.get( 'ssh' ) ).toBe( '' );
+				expect( configure.isDone() ).toBe( false );
+				nock.removeInterceptor( configure.interceptors[ 0 ] );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+				expect( window.location.replace ).not.toHaveBeenCalled();
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			}
+		);
+
 		it( 'returns through picker, plans, result, address and the entry page without a loop', () => {
 			jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 			jest
@@ -1927,6 +2010,34 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PICK_SITE', () => {
+			it( 'retains legacy SSH routing for assisted links with Reprint disabled', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/ssh-migration' );
+				jest
+					.mocked( useFlowState().get )
+					.mockImplementation( ( key ) =>
+						key === 'flow' ? { entryPoint: 'move-lp' } : undefined
+					);
+				const destination = runNavigation( {
+					from: STEPS.PICK_SITE,
+					query: {
+						from: 'https://wordpress.org/news/',
+						platform: 'wordpress',
+						host: 'bluehost',
+						how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+					},
+					dependencies: {
+						action: 'select-site',
+						site: { ID: 123, slug: 'destination.wordpress.com' },
+					},
+				} );
+				expect( destination ).toMatchDestination( {
+					step: STEPS.SITE_MIGRATION_UPGRADE_PLAN,
+					query: { ssh: 'true' },
+				} );
+			} );
+
 			it( 'replaces itself with CREATE_SITE when it forwards an account without sites', () => {
 				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
 				const search = new URLSearchParams( {

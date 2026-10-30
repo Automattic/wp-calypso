@@ -70,6 +70,9 @@ describe( 'SiteMigrationCheck', () => {
 		);
 		expect( screen.getByText( /All of the content on this site will be replaced/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'WordPress site ↗' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: /Talk to a migration expert/ } )
+		).not.toBeInTheDocument();
 	};
 
 	it( 'offers an upgrade for an ineligible destination', async () => {
@@ -165,7 +168,7 @@ describe( 'SiteMigrationCheck', () => {
 		).not.toBeInTheDocument();
 	} );
 
-	it( 'shows the supplied site and waits for Continue, with the expert link disabled', async () => {
+	it( 'shows the supplied site and offers DIY or assisted migration', async () => {
 		const submit = jest.fn();
 		renderStep( <SiteMigrationCheck { ...mockStepProps( { navigation: { submit } } ) } />, {
 			initialEntry:
@@ -183,8 +186,14 @@ describe( 'SiteMigrationCheck', () => {
 			'href',
 			'https://example.com'
 		);
-		expect( screen.getByRole( 'button', { name: /Talk to a migration expert/ } ) ).toBeDisabled();
 		expect( submit ).not.toHaveBeenCalled();
+		await userEvent.click( screen.getByRole( 'button', { name: /Talk to a migration expert/ } ) );
+		expect( submit ).toHaveBeenCalledWith( {
+			action: 'assisted-migration',
+			from: 'https://example.com',
+			platform: 'wordpress',
+			host: 'bluehost',
+		} );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
 		expect( submit ).toHaveBeenCalledWith( {

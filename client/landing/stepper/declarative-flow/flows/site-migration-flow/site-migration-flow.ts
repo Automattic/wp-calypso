@@ -333,6 +333,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 				( ! fromQueryParam &&
 					platformQueryParam !== 'unknown' &&
 					platformQueryParam !== 'wordpress' ) );
+		const isAssistedMigration =
+			config.isEnabled( 'migration/reprint-flow' ) &&
+			urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME;
 		const handoff = get( 'migrationHandoff' );
 		const savedHandoff =
 			isReprintSource &&
@@ -499,6 +502,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						action:
 							| SiteMigrationIdentifyAction
 							| 'back'
+							| 'assisted-migration'
 							| 'select-existing-site'
 							| 'copy-site'
 							| 'transfer-domain'
@@ -546,6 +550,24 @@ const siteMigration: FlowV2< typeof initialize > = {
 						return replace( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
 					const hasDestinationSite = hasSite( siteId, siteSlug );
+					if ( slug === STEPS.SITE_MIGRATION_CHECK.slug && action === 'assisted-migration' ) {
+						const context = {
+							from,
+							platform,
+							host,
+							action: 'migrate',
+							how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+							ssh: '',
+						};
+						if ( hasDestinationSite ) {
+							return navigate( paths.howToMigratePath( { ...context, siteId, siteSlug } ) );
+						}
+						return navigate(
+							shouldPickDestination
+								? paths.sitePickerPath( context )
+								: paths.siteCreationPath( context )
+						);
+					}
 					if (
 						config.isEnabled( 'migration/reprint-flow' ) &&
 						action === 'skip_platform_identification'
@@ -770,11 +792,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 							const isHostingSupported = isHostingSupportedForSSHMigration( host );
 							const shouldUseSSH =
-								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' &&
-									isSSHMigrationAvailable &&
-									isHostingSupported &&
-									locale === 'en' );
+								! isAssistedMigration &&
+								( urlQueryParams.get( 'ssh' ) === 'true' ||
+									( entryPoint === 'move-lp' &&
+										isSSHMigrationAvailable &&
+										isHostingSupported &&
+										locale === 'en' ) );
 
 							if ( shouldUseSSH ) {
 								if ( selectedSiteCanInstallPlugins ) {
@@ -845,11 +868,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 							const isSSHMigrationAvailable = config.isEnabled( 'migration/ssh-migration' );
 							const isHostingSupported = isHostingSupportedForSSHMigration( host );
 							const shouldUseSSH =
-								urlQueryParams.get( 'ssh' ) === 'true' ||
-								( entryPoint === 'move-lp' &&
-									isSSHMigrationAvailable &&
-									isHostingSupported &&
-									locale === 'en' );
+								! isAssistedMigration &&
+								( urlQueryParams.get( 'ssh' ) === 'true' ||
+									( entryPoint === 'move-lp' &&
+										isSSHMigrationAvailable &&
+										isHostingSupported &&
+										locale === 'en' ) );
 
 							const queryParams: {
 								from: string | null;
@@ -1026,8 +1050,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 						);
 					}
 					if (
-						config.isEnabled( 'migration/reprint-flow' ) &&
-						urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
+						isAssistedMigration &&
 						providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF
 					) {
 						return navigate( paths.identifyPath( { from: fromQueryParam, how: '' } ) );
