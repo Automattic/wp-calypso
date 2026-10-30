@@ -4,6 +4,7 @@ import {
 	BaseControl,
 	Button,
 	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
@@ -46,6 +47,32 @@ const REPORT_MODES: {
 		description: __( 'How ChatGPT, Perplexity, and others read and rank the site.' ),
 	},
 ];
+
+/**
+ * A radio button's circle, drawn for a card that acts as the radio. Sized to the
+ * 20px label line so it sits level with the option name.
+ */
+function RadioIndicator( { isSelected }: { isSelected: boolean } ) {
+	return (
+		<svg width={ 16 } height={ 20 } viewBox="0 -2 16 20" aria-hidden="true" focusable="false">
+			{ isSelected ? (
+				<>
+					<circle cx={ 8 } cy={ 8 } r={ 8 } fill="var( --color-primary )" />
+					<circle cx={ 8 } cy={ 8 } r={ 5 } fill="var( --color-surface )" />
+				</>
+			) : (
+				<circle
+					cx={ 8 }
+					cy={ 8 }
+					r={ 7.25 }
+					fill="var( --color-surface )"
+					stroke="var( --color-text )"
+					strokeWidth={ 1.5 }
+				/>
+			) }
+		</svg>
+	);
+}
 
 /** The report types as selectable cards, one per column. */
 function ReportTypeCards( {
@@ -96,14 +123,17 @@ function ReportTypeCards( {
 									inlineEnd: 'small',
 								} }
 							>
-								<VStack spacing={ 1 }>
-									<Text size={ 13 } weight={ 600 }>
-										{ option.label }
-									</Text>
-									<Text size={ 12 } variant="muted">
-										{ option.description }
-									</Text>
-								</VStack>
+								<HStack spacing={ 3 } alignment="flex-start" justify="flex-start">
+									<RadioIndicator isSelected={ isSelected } />
+									<VStack spacing={ 1 }>
+										<Text size={ 13 } lineHeight="20px" weight={ 600 }>
+											{ option.label }
+										</Text>
+										<Text size={ 12 } variant="muted">
+											{ option.description }
+										</Text>
+									</VStack>
+								</HStack>
 							</CardBody>
 						</Card>
 					);
