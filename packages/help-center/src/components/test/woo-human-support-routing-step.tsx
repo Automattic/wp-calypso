@@ -96,7 +96,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 
 		expect( lastDecision() ).toMatchObject( {
 			route: 'chat',
-			row_id: 10,
+			row_id: 12,
 			question: 'account',
 			has_merchant_data: true,
 			created_from: 'automatic_escalation',
@@ -146,7 +146,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 
 		expect( lastDecision() ).toMatchObject( {
 			route: 'chat',
-			row_id: 10,
+			row_id: 12,
 			product: 'woocommerce-subscriptions',
 			has_store: true,
 		} );
@@ -205,7 +205,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 
 		expect( screen.queryByLabelText( 'Store' ) ).not.toBeInTheDocument();
 		await userEvent.click( continueButton() );
-		expect( lastDecision() ).toMatchObject( { route: 'link-out', row_id: 6 } );
+		expect( lastDecision() ).toMatchObject( { route: 'link-out', row_id: 7 } );
 	} );
 
 	it( 'offers vendor questions to vendors only', () => {
@@ -220,7 +220,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		expect( screen.getByRole( 'option', { name: 'Marketplace Vendors' } ) ).toBeInTheDocument();
 	} );
 
-	it( "routes like a merchant who isn't paying without merchant data", async () => {
+	it( 'sends the request to a ticket without merchant data', async () => {
 		mockWooHandoff = null;
 		renderStep();
 
@@ -231,8 +231,8 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		await userEvent.click( continueButton() );
 
 		expect( lastDecision() ).toMatchObject( {
-			route: 'forums',
-			row_id: 14,
+			route: 'ticket',
+			row_id: 5,
 			has_merchant_data: false,
 		} );
 	} );
@@ -247,7 +247,7 @@ describe( 'WooHumanSupportRoutingStep', () => {
 		await userEvent.selectOptions( question(), 'account' );
 		await userEvent.click( continueButton() );
 
-		expect( lastDecision() ).toMatchObject( { route: 'ticket', row_id: 3, is_emergency: true } );
+		expect( lastDecision() ).toMatchObject( { route: 'ticket', row_id: 4, is_emergency: true } );
 	} );
 
 	it( 'drops the request on cancel', async () => {
