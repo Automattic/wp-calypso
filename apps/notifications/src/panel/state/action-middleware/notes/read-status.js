@@ -47,6 +47,10 @@ export const markAsRead = ( { getState }, { noteId } ) => {
 			} catch ( e ) {}
 		}
 
+		if ( ! getIsNoteRead( getState(), note ) ) {
+			return;
+		}
+
 		try {
 			localStorage.setItem( `note_read_status_${ noteId }`, '1' );
 		} catch ( e ) {}
