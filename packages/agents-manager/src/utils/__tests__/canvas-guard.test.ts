@@ -73,7 +73,7 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		const result = await guarded!.executeAbility( 'big_sky__apply_block_edits', {} );
+		const result = await guarded.executeAbility( 'big_sky__apply_block_edits', {} );
 
 		expect( executeAbility ).not.toHaveBeenCalled();
 		expect( result ).toMatchObject( {
@@ -97,7 +97,7 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big-sky/stream-page-design', {} );
+		await guarded.executeAbility( 'big-sky/stream-page-design', {} );
 
 		expect( executeAbility ).not.toHaveBeenCalled();
 	} );
@@ -112,7 +112,7 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		const result = await guarded!.executeAbility( 'big_sky__stream_page_design', {} );
+		const result = await guarded.executeAbility( 'big_sky__stream_page_design', {} );
 
 		expect( executeAbility ).not.toHaveBeenCalled();
 		expect( result.result.error ).toBe( 'editor_canvas_closed' );
@@ -131,9 +131,9 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__editor_navigate', {} );
+		await guarded.executeAbility( 'big_sky__editor_navigate', {} );
 		setOpenPost( null );
-		await guarded!.executeAbility( 'big_sky__stream_page_design', {} );
+		await guarded.executeAbility( 'big_sky__stream_page_design', {} );
 
 		expect( executeAbility ).toHaveBeenCalledWith( 'big_sky__stream_page_design', {} );
 	} );
@@ -146,7 +146,7 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__restore_checkpoint', {} );
+		await guarded.executeAbility( 'big_sky__restore_checkpoint', {} );
 
 		expect( executeAbility ).not.toHaveBeenCalled();
 	} );
@@ -159,11 +159,11 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn();
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__apply_block_edits', {} );
+		await guarded.executeAbility( 'big_sky__apply_block_edits', {} );
 		// The refused call's continuation rebinds to the page now open, so the live
 		// reading agrees again — but the request stays refused.
 		bindToOpenCanvas();
-		const result = await guarded!.executeAbility( 'big_sky__apply_block_edits', {} );
+		const result = await guarded.executeAbility( 'big_sky__apply_block_edits', {} );
 
 		expect( executeAbility ).not.toHaveBeenCalled();
 		expect( result.result.message ).toContain( 'About' );
@@ -177,7 +177,7 @@ describe( 'withCanvasGuard', () => {
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		await expect(
-			guarded!.executeAbility( 'big_sky__apply_block_edits', { edits: [] } )
+			guarded.executeAbility( 'big_sky__apply_block_edits', { edits: [] } )
 		).resolves.toEqual( { ok: true } );
 		expect( executeAbility ).toHaveBeenCalledWith( 'big_sky__apply_block_edits', { edits: [] } );
 	} );
@@ -194,7 +194,7 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__edit_entity_record', {} );
+		await guarded.executeAbility( 'big_sky__edit_entity_record', {} );
 
 		expect( executeAbility ).toHaveBeenCalled();
 	} );
@@ -209,7 +209,7 @@ describe( 'withCanvasGuard', () => {
 		} );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__editor_navigate', {} );
+		await guarded.executeAbility( 'big_sky__editor_navigate', {} );
 
 		// The agent's own navigation must not read as a move on the next write.
 		expect( getCanvasMove() ).toBeNull();
@@ -228,7 +228,7 @@ describe( 'withCanvasGuard', () => {
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
 		// `add-page` created page 34 server-side and asked the client to open it.
-		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		await guarded.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
 
 		// The tool result goes out while the editor is still showing About.
 		bindToOpenCanvas();
@@ -248,7 +248,7 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		await guarded.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
 		setOpenPost( CONTACT_PAGE );
 		bindToOpenCanvas();
 
@@ -270,7 +270,7 @@ describe( 'withCanvasGuard', () => {
 			.mockResolvedValue( { result: { success: false, message: 'Could not open that page.' } } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		await guarded.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
 
 		// The editor never left About, and then the user does.
 		setOpenPost( CONTACT_PAGE );
@@ -305,7 +305,7 @@ describe( 'withCanvasGuard', () => {
 		// The failure still reaches the caller: the guard restores the binding, it
 		// does not swallow the error.
 		await expect(
-			guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } )
+			guarded.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } )
 		).rejects.toThrow( 'Network error' );
 
 		setOpenPost( CONTACT_PAGE );
@@ -322,9 +322,9 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn().mockResolvedValue( { result: { success: false } } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		await guarded.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
 		setOpenPost( CONTACT_PAGE );
-		const result = await guarded!.executeAbility( 'big_sky__apply_block_edits', {} );
+		const result = await guarded.executeAbility( 'big_sky__apply_block_edits', {} );
 
 		expect( executeAbility ).toHaveBeenCalledTimes( 1 );
 		expect( result.result.error ).toBe( 'editor_canvas_moved' );
@@ -342,7 +342,7 @@ describe( 'withCanvasGuard', () => {
 		} );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
+		await guarded.executeAbility( 'big_sky__editor_navigate', { path: '/page/34' } );
 
 		expect( getCanvasMove() ).toBeNull();
 	} );
@@ -357,7 +357,7 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn().mockResolvedValue( { result: { success: false } } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
+		await guarded.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
 		setOpenPost( CONTACT_PAGE );
 
 		expect( getCanvasMove() ).toEqual( { from: 'About', to: 'Contact' } );
@@ -373,14 +373,10 @@ describe( 'withCanvasGuard', () => {
 		const executeAbility = jest.fn().mockResolvedValue( { ok: true } );
 		const guarded = withCanvasGuard( createToolProvider( executeAbility ) );
 
-		await guarded!.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
+		await guarded.executeAbility( 'wp_admin__navigate', { path: '/wp-admin/plugins.php' } );
 		setOpenPost( CONTACT_PAGE );
 
 		expect( getCanvasMove() ).toBeNull();
-	} );
-
-	it( 'is a no-op without a tool provider', () => {
-		expect( withCanvasGuard( undefined ) ).toBeUndefined();
 	} );
 } );
 
@@ -569,7 +565,7 @@ describe( 'withCanvasGuard, dispatched through ability callbacks', () => {
 			executeAbility: jest.fn(),
 		} as unknown as ToolProvider;
 
-		const abilities = await withCanvasGuard( provider )!.getAbilities();
+		const abilities = await withCanvasGuard( provider ).getAbilities();
 
 		expect( abilities[ 0 ].callback ).toBeUndefined();
 	} );

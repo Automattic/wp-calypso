@@ -33,14 +33,10 @@ function createToolProvider(
 }
 
 describe( 'withAbilityCompletionBroadcast', () => {
-	it( 'hands back nothing when there is no provider to wrap', () => {
-		expect( withAbilityCompletionBroadcast( undefined ) ).toBeUndefined();
-	} );
-
 	describe( 'the executeAbility path', () => {
 		it( 'broadcasts after the ability resolves', async () => {
 			const { events, cleanup } = listen();
-			const wrapped = withAbilityCompletionBroadcast( createToolProvider() )!;
+			const wrapped = withAbilityCompletionBroadcast( createToolProvider() );
 
 			await wrapped.executeAbility( 'big-sky/apply-block-edits', {} );
 
@@ -55,7 +51,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 					[],
 					jest.fn( () => Promise.resolve( { success: true, data: 42 } ) )
 				)
-			)!;
+			);
 
 			await expect( wrapped.executeAbility( 'x', {} ) ).resolves.toEqual( {
 				success: true,
@@ -74,7 +70,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 					[],
 					jest.fn( () => new Promise( ( resolve ) => ( finish = () => resolve( {} ) ) ) )
 				)
-			)!;
+			);
 
 			const pending = wrapped.executeAbility( 'x', {} );
 			expect( events ).toEqual( [] );
@@ -93,7 +89,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 					[],
 					jest.fn( () => Promise.resolve( { success: false } ) )
 				)
-			)!;
+			);
 
 			await wrapped.executeAbility( 'x', {} );
 
@@ -108,7 +104,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 					[],
 					jest.fn( () => Promise.reject( new Error( 'boom' ) ) )
 				)
-			)!;
+			);
 
 			await expect( wrapped.executeAbility( 'x', {} ) ).rejects.toThrow( 'boom' );
 
@@ -145,7 +141,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 			const callback = jest.fn( () => Promise.resolve( { success: true } ) );
 			const wrapped = withAbilityCompletionBroadcast(
 				createToolProvider( [ { name: 'big-sky/add-pages', callback } as unknown as Ability ] )
-			)!;
+			);
 
 			const [ ability ] = await wrapped.getAbilities();
 			await ability.callback!( { foo: 'bar' } );
@@ -158,7 +154,7 @@ describe( 'withAbilityCompletionBroadcast', () => {
 		it( 'leaves an ability without a callback untouched', async () => {
 			const { cleanup } = listen();
 			const ability = { name: 'no-callback' } as unknown as Ability;
-			const wrapped = withAbilityCompletionBroadcast( createToolProvider( [ ability ] ) )!;
+			const wrapped = withAbilityCompletionBroadcast( createToolProvider( [ ability ] ) );
 
 			const [ result ] = await wrapped.getAbilities();
 

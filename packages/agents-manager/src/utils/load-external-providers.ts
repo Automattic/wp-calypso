@@ -636,7 +636,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// AM's editor suggestions, loaded alongside the providers; `null` off editor pages.
 	const editorSuggestionsPromise = isBigSkySite ? loadAmEditorSuggestions() : null;
 
-	let mergedToolProvider: ToolProvider | undefined;
+	let mergedToolProvider: ToolProvider;
 	let mergedGetEmptyViewSuggestions: ( () => Suggestion[] | undefined ) | undefined;
 	let mergedAbilitiesSetup: AbilitiesSetupHook | undefined;
 	let mergedGetChatComponent: GetChatComponent | undefined;
@@ -781,7 +781,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	// in the order they were registered; earlier providers win on collisions.
 	if ( allToolProviders.length === 1 ) {
 		mergedToolProvider = allToolProviders[ 0 ];
-	} else if ( allToolProviders.length > 1 ) {
+	} else {
 		// Query providers live on each call rather than snapshotting at load.
 		// agenttic-client calls getAbilities()/executeAbility() fresh every turn,
 		// so abilities registered later stay visible. A provider may register its

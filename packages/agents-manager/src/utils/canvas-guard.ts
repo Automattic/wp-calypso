@@ -299,16 +299,10 @@ function guardAbilityCallback( ability: Ability ): Ability {
  *
  * Applied to the merged tool provider, so it is indifferent to which provider owns
  * a given ability.
- * @param toolProvider The merged tool provider, if any.
- * @returns The wrapped provider, or undefined when there is nothing to wrap.
+ * @param toolProvider The tool provider to guard.
+ * @returns The wrapped provider.
  */
-export function withCanvasGuard(
-	toolProvider: ToolProvider | undefined
-): ToolProvider | undefined {
-	if ( ! toolProvider ) {
-		return undefined;
-	}
-
+export function withCanvasGuard( toolProvider: ToolProvider ): ToolProvider {
 	return {
 		getAbilities: async () => ( await toolProvider.getAbilities() ).map( guardAbilityCallback ),
 		executeAbility: ( name: string, args: unknown ) =>
