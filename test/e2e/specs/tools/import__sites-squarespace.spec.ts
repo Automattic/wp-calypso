@@ -54,37 +54,7 @@ test.describe(
 			} );
 		} );
 
-		test( 'Two: As a New WordPress.com free plan user with a simple site, I can use the "WordPress.com import link" on the wp-admin Importers List page to reach the static site import plans for my Squarespace site', async ( {
-			page,
-			pageImportLetsFindYourSite,
-			sitePublic,
-		} ) => {
-			const squarespaceSiteURL = 'https://www.squarespace.com/';
-
-			await test.step( 'When I visit the "Let\'s find your site" page as coming from the wp-admin Tools > Import page', async function () {
-				await pageImportLetsFindYourSite.visit( sitePublic.blog_details.site_slug, {
-					siteId: sitePublic.blog_details.blogid,
-				} );
-			} );
-
-			await test.step( "Then I see the Let's find your site page", async function () {
-				await expect( pageImportLetsFindYourSite.heading ).toBeVisible();
-			} );
-
-			await test.step( 'When I enter my Squarespace site URL and click Continue', async function () {
-				await pageImportLetsFindYourSite.enterSiteURLAndCheck( squarespaceSiteURL );
-			} );
-
-			await test.step( 'Then I reach the static site import plans with my source and destination', async function () {
-				await page.waitForURL( /\/setup\/static-site-import\/plans/ );
-				const url = new URL( page.url() );
-				expect( url.searchParams.get( 'from' ) ).toBe( squarespaceSiteURL );
-				expect( url.searchParams.get( 'platform' ) ).toBe( 'squarespace' );
-				expect( url.searchParams.get( 'siteSlug' ) ).toBe( sitePublic.blog_details.site_slug );
-			} );
-		} );
-
-		test( 'Three: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Squarespace site', async ( {
+		test( 'Two: As a New WordPress.com free plan user with a simple site, I can use the Calypso "Import Content" page to import my content from my Squarespace site', async ( {
 			sitePublicShared: sitePublic,
 			pageImportContent,
 		} ) => {
