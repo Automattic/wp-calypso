@@ -4,6 +4,11 @@
 		margin: 0;
 	}
 
+	.static-site-import-reading__percentage {
+		flex-shrink: 0;
+		font-variant-numeric: tabular-nums;
+	}
+
 	.static-site-import-reading__progress {
 		display: grid;
 		grid-template-columns: repeat( 4, minmax( 0, 1fr ) );
