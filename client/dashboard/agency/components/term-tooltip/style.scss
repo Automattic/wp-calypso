@@ -1,8 +1,8 @@
-.components-popover.agency-term-tooltip {
+.agency-term-tooltip {
 	pointer-events: none;
 }
 
-.components-popover.agency-term-tooltip .components-popover__content {
+.agency-term-tooltip__content {
 	box-sizing: border-box;
 	inline-size: min( 300px, calc( 100vw - 24px ) );
 	padding: 14px 16px;
@@ -28,7 +28,7 @@
 	}
 }
 
-.components-popover.agency-term-tooltip.is-handoff .components-popover__content {
+.agency-term-tooltip__content[data-handoff] {
 	animation-name: agency-term-tooltip-swap;
 	animation-duration: 140ms;
 }
@@ -44,11 +44,7 @@
 }
 
 @media ( prefers-reduced-motion: reduce ) {
-	.components-popover.agency-term-tooltip .components-popover__content {
-		animation: none;
-	}
-
-	.components-popover.agency-term-tooltip.is-handoff .components-popover__content {
+	.agency-term-tooltip__content {
 		animation: none;
 	}
 }
