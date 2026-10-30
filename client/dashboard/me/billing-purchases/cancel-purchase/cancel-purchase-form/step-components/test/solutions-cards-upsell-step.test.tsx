@@ -71,25 +71,50 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		expect( closeDialog ).not.toHaveBeenCalled();
 	} );
 
-	test( 'fires view event on mount with visible card IDs', () => {
-		const recordEvent = jest.fn();
+	test.each( [
+		[ 'noLongerNeedSite', 'business-bundle', 365, 'change-plan,speak-with-support' ],
+		[
+			'lackOfCustomization',
+			'value_bundle',
+			365,
+			'change-plan,renew-now-pay-less,switch-to-monthly,speak-with-support',
+		],
+		[
+			'lackOfCustomization',
+			'business-bundle-monthly',
+			30,
+			'change-plan,renew-now-pay-less,speak-with-support',
+		],
+		[
+			'coreFeaturesMissing',
+			'personal-bundle',
+			365,
+			'change-plan,find-guides,ask-ai-assistant,speak-with-support',
+		],
+	] )(
+		'fires view event on mount with visible card IDs %s %s',
+		( cancellationReason, productSlug, billPeriodDays, solutionIds ) => {
+			const recordEvent = jest.fn();
 
-		render(
-			<SolutionsCardsUpsellStep
-				cancellationReason="noLongerNeedSite"
-				purchase={ purchase }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
-				recordEvent={ recordEvent }
-			/>
-		);
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason={ cancellationReason }
+					purchase={
+						{ ...purchase, product_slug: productSlug, bill_period_days: billPeriodDays } as Purchase
+					}
+					closeDialog={ jest.fn() }
+					onDeclineUpsell={ jest.fn() }
+					recordEvent={ recordEvent }
+				/>
+			);
 
-		expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
-			solution_ids: 'change-plan,speak-with-support',
-			cancellation_reason: 'noLongerNeedSite',
-		} );
-		expect( recordEvent ).toHaveBeenCalledTimes( 1 );
-	} );
+			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
+				solution_ids: solutionIds,
+				cancellation_reason: cancellationReason,
+			} );
+			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
+		}
+	);
 
 	test( 'fires click event when a solution card is clicked', async () => {
 		const user = userEvent.setup();
