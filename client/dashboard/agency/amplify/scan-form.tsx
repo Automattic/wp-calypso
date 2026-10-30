@@ -1,6 +1,10 @@
 import { paginatedAgencySitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button, TextControl } from '@wordpress/components';
+import {
+	__experimentalInputControl as InputControl,
+	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
+	Button,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
@@ -48,12 +52,11 @@ function WebsiteAddressInput( {
 } ) {
 	return (
 		<div className="dashboard-amplify-scan-form__url-input">
-			<TextControl
+			<InputControl
 				__next40pxDefaultSize
-				__nextHasNoMarginBottom
 				label={ label }
 				value={ value }
-				onChange={ onChange }
+				onChange={ ( next ) => onChange( next ?? '' ) }
 				placeholder={ placeholder }
 				inputMode="url"
 				autoComplete="off"
@@ -68,16 +71,19 @@ function WebsiteAddressInput( {
 				aria-controls={ combobox?.expanded ? combobox.listId : undefined }
 				aria-activedescendant={ combobox?.activeId }
 				aria-invalid={ invalid }
+				suffix={
+					value ? (
+						<InputControlSuffixWrapper variant="control">
+							<Button
+								size="small"
+								icon={ closeSmall }
+								label={ __( 'Clear website address' ) }
+								onClick={ onClear }
+							/>
+						</InputControlSuffixWrapper>
+					) : undefined
+				}
 			/>
-			{ value && (
-				<Button
-					type="button"
-					variant="tertiary"
-					icon={ closeSmall }
-					label={ __( 'Clear website address' ) }
-					onClick={ onClear }
-				/>
-			) }
 		</div>
 	);
 }
