@@ -13,6 +13,7 @@ import type { Message } from '../../types';
 let mockIsChatLoaded = true;
 let mockConnectionStatus: string | undefined;
 let mockZendeskClientId: string | undefined;
+let mockCheckoutSupportVariation: string | undefined;
 let mockZendeskJwt: string | undefined;
 let mockCurrentSupportInteraction: Record< string, unknown > | undefined;
 let mockConversation: { id: string; messages: Message[] } | null;
@@ -27,6 +28,7 @@ jest.mock( '@wordpress/data', () => ( {
 		isChatLoaded: mockIsChatLoaded,
 		connectionStatus: mockConnectionStatus,
 		zendeskClientId: mockZendeskClientId,
+		checkoutSupportVariation: mockCheckoutSupportVariation,
 	} ),
 } ) );
 
@@ -117,6 +119,7 @@ beforeEach( () => {
 	mockIsChatLoaded = true;
 	mockConnectionStatus = undefined;
 	mockZendeskClientId = 'client-1';
+	mockCheckoutSupportVariation = undefined;
 	mockZendeskJwt = 'messenger-jwt';
 	mockCurrentSupportInteraction = undefined;
 	mockConversation = null;
@@ -418,6 +421,31 @@ describe( 'useGetCombinedChat — when the conversation cannot be fetched', () =
 
 		expect( mockGetZendeskConversation ).toHaveBeenCalledTimes( 1 );
 	} );
+
+	it( 'adds the checkout support variation to its event', async () => {
+		mockCheckoutSupportVariation = 'human_only';
+		mockGetZendeskConversation.mockImplementation( () =>
+			Promise.reject( new Error( 'conversation not found' ) )
+		);
+		mockCurrentSupportInteraction = {
+			uuid: 'int-1',
+			conversationId: 'conv-1',
+			odieId: 42,
+			status: 'open',
+		};
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_not_found',
+				expect.objectContaining( {
+					conversation_id: 'conv-1',
+					checkout_support_variation: 'human_only',
+				} )
+			);
+		} );
+	} );
 } );
 
 describe( 'useGetCombinedChat — older Zendesk messages', () => {
@@ -618,5 +646,42 @@ describe( 'useGetCombinedChat — older Zendesk messages', () => {
 				error: 'unauthorized',
 			}
 		);
+	} );
+
+	it( 'adds the checkout support variation to the history events', async () => {
+		mockCheckoutSupportVariation = 'human_only';
+		mockGetZendeskConversationHistory.mockResolvedValue( {
+			messages: [ receivedMessage( 1, 'first', 100 ) ],
+			truncated: false,
+		} );
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_history_loaded',
+				expect.objectContaining( { checkout_support_variation: 'human_only' } )
+			);
+		} );
+	} );
+
+	it( 'adds the checkout support variation when the history cannot be loaded', async () => {
+		mockCheckoutSupportVariation = 'hybrid';
+		mockGetZendeskConversationHistory.mockImplementation( () =>
+			Promise.reject( new Error( 'unauthorized' ) )
+		);
+
+		renderCombinedChat();
+
+		await waitFor( () => {
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_odie_zendesk_conversation_history_failed',
+				{
+					conversation_id: 'conv-1',
+					error: 'unauthorized',
+					checkout_support_variation: 'hybrid',
+				}
+			);
+		} );
 	} );
 } );
