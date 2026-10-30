@@ -1,6 +1,9 @@
 /**
  * @jest-environment jsdom
  */
+let mockIsCurrentPlanPaid = false;
+let mockIsCurrentPlanOwner = true;
+
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( '@automattic/calypso-analytics', () => ( { recordTracksEvent: jest.fn() } ) );
 jest.mock( '@automattic/help-center/src/stores', () => ( { HELP_CENTER_STORE: 'help-center' } ) );
@@ -28,20 +31,20 @@ jest.mock( 'calypso/state', () => ( {
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'example.wordpress.com',
 	getSiteUrl: () => 'https://example.wordpress.com',
-	isCurrentPlanPaid: () => false,
+	isCurrentPlanPaid: () => mockIsCurrentPlanPaid,
 } ) );
 jest.mock( 'calypso/state/sites/plans/selectors', () => ( {
-	isCurrentUserCurrentPlanOwner: () => true,
+	isCurrentUserCurrentPlanOwner: () => mockIsCurrentPlanOwner,
 } ) );
 jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs', () => ( {
 	useFreeTrialPlanSlugs: () => ( {} ),
 } ) );
 jest.mock( '../use-current-plan-manage-href', () => () => '/manage' );
-jest.mock( '../use-non-owner-handler', () => ( { useNonOwnerHandler: () => jest.fn() } ) );
 
 import {
 	PLAN_FREE,
 	PLAN_PERSONAL,
+	PLAN_PREMIUM,
 	PLAN_WOO_HOSTED_BASIC,
 	PLAN_WOO_HOSTED_PRO,
 } from '@automattic/calypso-products';
@@ -133,6 +136,38 @@ describe( 'useGenerateActionCallback downgrades', () => {
 			planSlug: PLAN_WOO_HOSTED_BASIC,
 			cartItemForPlan: { product_slug: PLAN_WOO_HOSTED_BASIC },
 			availableForPurchase: false,
+		} as never )();
+
+		expect( page ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( "useGenerateActionCallback for someone who isn't the plan owner", () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockIsCurrentPlanPaid = true;
+		mockIsCurrentPlanOwner = false;
+	} );
+
+	afterEach( () => {
+		mockIsCurrentPlanPaid = false;
+		mockIsCurrentPlanOwner = true;
+	} );
+
+	it( 'does nothing, since only the owner can change the plan', async () => {
+		const { result } = renderHook( () =>
+			useGenerateActionCallback( {
+				currentPlan: { productSlug: PLAN_PERSONAL } as never,
+				eligibleForFreeHostingTrial: false,
+				sitePlanSlug: PLAN_PERSONAL,
+				siteId: 1,
+			} )
+		);
+
+		await result.current( {
+			planSlug: PLAN_PREMIUM,
+			cartItemForPlan: { product_slug: PLAN_PREMIUM },
+			availableForPurchase: true,
 		} as never )();
 
 		expect( page ).not.toHaveBeenCalled();
