@@ -11,7 +11,7 @@ import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
 import { ConversationListItem, type OpenSource } from './list-item';
 import { ConversationListTabs, type InboxTab } from './tabs';
-import { ConversationListToolbar } from './toolbar';
+import { ConversationListToolbar, type SortOrder } from './toolbar';
 import type { Conversation } from '../group-notes';
 
 import './style.scss';
@@ -24,6 +24,8 @@ interface Props {
 	onTabChange: ( tab: InboxTab ) => void;
 	search: string;
 	onSearchChange: ( search: string ) => void;
+	sort: SortOrder;
+	onSortChange: ( sort: SortOrder ) => void;
 	isShortcutsOpen: boolean;
 	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
@@ -38,6 +40,8 @@ export function ConversationList( {
 	onTabChange,
 	search,
 	onSearchChange,
+	sort,
+	onSortChange,
 	isShortcutsOpen,
 	onShortcutsToggle,
 	selectedKey,
@@ -48,6 +52,9 @@ export function ConversationList( {
 
 	const sections = useMemo( () => {
 		const result: { label: string; items: Conversation[] }[] = [];
+		if ( sort !== 'newest_replies' ) {
+			return conversations.length ? [ { label: '', items: conversations } ] : result;
+		}
 		for ( const conversation of conversations ) {
 			const day = moment( conversation.timestamp );
 			let label = day.format( 'LL' );
@@ -64,7 +71,7 @@ export function ConversationList( {
 			}
 		}
 		return result;
-	}, [ conversations, moment, translate ] );
+	}, [ conversations, sort, moment, translate ] );
 
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
@@ -75,7 +82,12 @@ export function ConversationList( {
 				<KeyboardShortcuts isOpen={ isShortcutsOpen } onToggle={ onShortcutsToggle } />
 			</HStack>
 			<ConversationListTabs tab={ tab } unreadCount={ unreadCount } onChange={ onTabChange } />
-			<ConversationListToolbar search={ search } onSearchChange={ onSearchChange } />
+			<ConversationListToolbar
+				search={ search }
+				onSearchChange={ onSearchChange }
+				sort={ sort }
+				onSortChange={ onSortChange }
+			/>
 			<div className="conversations-inbox__list">
 				{ isLoading && <Spinner /> }
 				{ ! isLoading && conversations.length === 0 && (
@@ -87,15 +99,17 @@ export function ConversationList( {
 				) }
 				{ sections.map( ( { label, items } ) => (
 					<section key={ label }>
-						<Heading
-							level={ 2 }
-							size={ 14 }
-							weight={ 500 }
-							color="inherit"
-							className="conversations-inbox__day"
-						>
-							{ label }
-						</Heading>
+						{ label && (
+							<Heading
+								level={ 2 }
+								size={ 14 }
+								weight={ 500 }
+								color="inherit"
+								className="conversations-inbox__day"
+							>
+								{ label }
+							</Heading>
+						) }
 						<ul>
 							{ items.map( ( conversation ) => (
 								<ConversationListItem
