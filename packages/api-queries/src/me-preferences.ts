@@ -90,6 +90,7 @@ const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
 	'cancel-purchase-survey-completed': 'cncsvy',
 	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
+	'site-migration-completed-notice-dismissed': 'migdone',
 };
 
 function getUserPreferenceMutationStatId(

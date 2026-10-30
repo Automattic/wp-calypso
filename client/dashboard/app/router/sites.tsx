@@ -82,6 +82,7 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
+import type { MigrationCompletedSearch } from '../../sites/overview/migration-completed-notice';
 import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
 import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
@@ -229,7 +230,9 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
-	validateSearch: ( search ): StaticSiteImportSearch & DifmOfferSearch => {
+	validateSearch: (
+		search
+	): StaticSiteImportSearch & DifmOfferSearch & MigrationCompletedSearch => {
 		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
 		return {
 			importSessionId: asString( search.importSessionId ),
@@ -240,6 +243,7 @@ export const siteOverviewRoute = createRoute( {
 					? search.difmOffer
 					: undefined,
 			source: asString( search.source ),
+			migration: search.migration === 'completed' ? 'completed' : undefined,
 		};
 	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
