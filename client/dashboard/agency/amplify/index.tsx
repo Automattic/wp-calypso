@@ -9,7 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import EmptyState from '../../components/empty-state';
+import { Card } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { Text } from '../../components/text';
@@ -122,18 +122,16 @@ export default function AgencyAmplify() {
 		>
 			<div className="dashboard-amplify-view">
 				{ state === 'empty' && (
-					<EmptyState.Wrapper>
-						<EmptyState>
-							<AmplifyReportCreator
-								agencyId={ agencyId }
-								canScan={ canScan }
-								usage={ usage }
-								usageStatus={ usageStatus }
-								tierId={ tierId }
-								onUsageError={ handleUsageError }
-							/>
-						</EmptyState>
-					</EmptyState.Wrapper>
+					<Card>
+						<AmplifyReportCreator
+							agencyId={ agencyId }
+							canScan={ canScan }
+							usage={ usage }
+							usageStatus={ usageStatus }
+							tierId={ tierId }
+							onUsageError={ handleUsageError }
+						/>
+					</Card>
 				) }
 				{ state === 'reports' && (
 					<VStack className="dashboard-amplify-results" spacing={ 4 }>
