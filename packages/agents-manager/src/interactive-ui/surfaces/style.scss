@@ -54,10 +54,11 @@
 }
 
 // Chart tooltips, and the points they mark, render in portals on the page too. `!important`
-// outranks Agenttic's z-index for its own chart tooltips.
+// outranks the z-index and 150px width Agenttic gives its own chart tooltips.
 .visx-tooltip:has( .ai-ui-renderer__chart-tooltip ),
 body:has( .ai-ui-renderer__chart-tooltip ) .visx-tooltip-glyph {
 	z-index: $agents-manager-z-index-focused + 1 !important;
+	max-width: none !important;
 }
 
 // Muted, as it's not the agent's reply. `.agenttic` outranks Agenttic's message text styles.

@@ -550,7 +550,6 @@ $surface-background: var( --a2ui-color-surface, light-dark( $white, $gray-900 ) 
 // Chart tooltips render in a portal on the page, so each copies its surface's theme (`copyTheme()`),
 // and the portal's own box is cleared.
 .visx-tooltip:has( .ai-ui-renderer__chart-tooltip ) {
-	max-width: none !important;
 	padding: 0 !important;
 	background: none !important;
 	box-shadow: none !important;
