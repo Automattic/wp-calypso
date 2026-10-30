@@ -1504,10 +1504,6 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	font-weight: 500;
 }
 
-.dashboard-amplify-scans-left[data-status='low'] .components-text {
-	color: var( --color-warning-50 );
-}
-
 .dashboard-amplify-results > .dashboard-notice,
 .dashboard-amplify-results__usage {
 	margin-block-end: 16px;
