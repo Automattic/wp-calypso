@@ -134,13 +134,13 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 	} );
 
 	it( 'records the bot in use when the Help Center overrides it', () => {
-		mockOdieBotNameSlug = 'wpcom-plan-support';
+		mockOdieBotNameSlug = 'automattic-chat-support_a4a';
 
 		renderAndSendEvent();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_odie_test_event',
-			expect.objectContaining( { bot_name_slug: 'wpcom-plan-support' } )
+			expect.objectContaining( { bot_name_slug: 'automattic-chat-support_a4a' } )
 		);
 	} );
 } );
