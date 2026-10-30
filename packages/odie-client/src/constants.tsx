@@ -2,7 +2,7 @@ import { HelpCenter } from '@automattic/data-stores';
 import { isTestModeEnvironment } from '@automattic/zendesk-client';
 import { __, sprintf } from '@wordpress/i18n';
 import { PLANS_PRESALES_INTRO_MESSAGE } from './presales-constants';
-import type { Context, Message, OdieAllowedBots } from './types';
+import type { Message } from './types';
 declare const __i18n_text_domain__: string;
 
 type HasEnTranslation = ( single: string, context?: string, domain?: string ) => boolean;
@@ -264,20 +264,6 @@ export const getConversationLimitReachedMessage = (): Message => ( {
 	},
 } );
 
-const getOdieInitialPromptContext = ( botNameSlug: OdieAllowedBots ): Context | undefined => {
-	switch ( botNameSlug ) {
-		case 'wpcom-plan-support':
-			return {
-				flags: {
-					forward_to_human_support: true,
-				},
-				site_id: null,
-			};
-		default:
-			return undefined;
-	}
-};
-
 const getOdieIntroMessage = (
 	launcherContext?: string,
 	hasEnTranslation?: HasEnTranslation
@@ -305,7 +291,6 @@ const getOdieIntroMessage = (
 };
 
 export const getOdieInitialMessage = (
-	botNameSlug: OdieAllowedBots,
 	displayName: string,
 	hasEnTranslation?: ( single: string, context?: string, domain?: string ) => boolean,
 	launcherContext?: string
@@ -323,7 +308,6 @@ export const getOdieInitialMessage = (
 		).trim() } 👋** \n\n ${ introMessage }`,
 		role: 'bot',
 		type: 'introduction',
-		context: getOdieInitialPromptContext( botNameSlug ),
 	};
 };
 
@@ -434,6 +418,5 @@ export { ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG } from './presales-constants'
 export const ODIE_ALLOWED_BOTS = [
 	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 	ODIE_NEW_INTERACTIONS_BOT_SLUG,
-	'wpcom-plan-support',
 	'automattic-chat-support_a4a',
 ];
