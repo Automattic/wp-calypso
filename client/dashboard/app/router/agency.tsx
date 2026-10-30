@@ -81,11 +81,11 @@ import { isPressableSite } from '../../agency/sites/lib';
 import { isTeamMemberWithoutSiteAccess } from '../../agency/sites/site/access';
 import { TEAM_ACCEPT_INVITE_ROUTE } from '../../agency/team/paths';
 import {
-	canOptOutOfWordPressBeta,
 	canSwitchWordPressVersion,
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import { ensureWordPressPrereleaseData } from '../../sites/settings-wordpress/use-wordpress-prerelease';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
@@ -1923,7 +1923,8 @@ const agencySiteSettingsWordPressRoute = createRoute( {
 	path: 'wordpress',
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
-		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
+		const prerelease = await ensureWordPressPrereleaseData( site );
+		if ( canSwitchWordPressVersion( site, prerelease ) ) {
 			// Fire-and-forget the track versions so a slow site or wp.org
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
