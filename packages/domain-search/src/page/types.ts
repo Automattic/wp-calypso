@@ -98,6 +98,12 @@ export interface DomainSearchEvents {
 	 * default events so flows without a migration entry point don't render the card.
 	 */
 	onMigrateSiteClick?: () => void;
+	/**
+	 * Adds a "skip the domain for now" link to the notice shown when the searched domain is
+	 * already connected to a site owned by another account. Called on click, before `onSkip`.
+	 * Left out of the default events so other flows keep the plain notice.
+	 */
+	onSearchNoticeSkipClick?: ( domainName: string, status: DomainAvailabilityStatus ) => void;
 	onMakePrimaryAddressClick: ( domainName: string ) => void;
 	onMoveDomainToSiteClick: ( otherSiteDomain: string, domainName: string ) => void;
 	onRegisterDomainClick: ( otherSiteDomain: string, domainName: string ) => void;
