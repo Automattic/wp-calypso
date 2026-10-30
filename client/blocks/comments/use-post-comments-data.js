@@ -91,12 +91,23 @@ export const usePostCommentsData = ( props ) => {
 
 		const knownIds = new Set( loadedComments.map( ( comment ) => comment.ID ) );
 		const { data: polled } = await fetchLaterComments();
-		const newIds = ( polled?.pages ?? [] )
-			.flatMap( ( page ) => page.comments.map( ( comment ) => comment.ID ) )
-			.filter( ( id ) => ! knownIds.has( id ) );
+		const polledComments = ( polled?.pages ?? [] )
+			.flatMap( ( page ) => page.comments )
+			.filter( ( comment ) => ! knownIds.has( comment.ID ) );
+		const polledIds = new Set( polledComments.map( ( comment ) => comment.ID ) );
+		const newIds = polledComments
+			.filter(
+				( comment ) =>
+					! comment.isPlaceholder &&
+					comment.author?.ID !== currentUserId &&
+					( ! comment.parent ||
+						knownIds.has( comment.parent.ID ) ||
+						polledIds.has( comment.parent.ID ) )
+			)
+			.map( ( comment ) => comment.ID );
 
 		setPendingCommentIds( ( current ) => [ ...new Set( [ ...current, ...newIds ] ) ] );
-	}, [ deferNewComments, fetchLaterComments, loadedComments ] );
+	}, [ currentUserId, deferNewComments, fetchLaterComments, loadedComments ] );
 
 	const initialCommentFromList = props.startingCommentId
 		? loadedComments.find(

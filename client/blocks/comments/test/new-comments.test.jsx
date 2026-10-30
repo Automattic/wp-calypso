@@ -111,7 +111,7 @@ describe( 'PostComments polling for new comments', () => {
 	it( 'holds new comments behind a pill until it is clicked when deferring', async () => {
 		const user = userEvent.setup();
 		mockComments();
-		mockNewComments( [ makeComment( 4, 4 ), makeComment( 3, 3 ) ] );
+		mockNewComments( [ makeComment( 3, 3 ), makeComment( 4, 4 ) ] );
 
 		renderComments( { deferNewComments: true } );
 		await waitFor( () => expect( getRenderedCommentIds() ).toEqual( [ '2', '1' ] ) );
@@ -125,6 +125,6 @@ describe( 'PostComments polling for new comments', () => {
 
 		expect( getRenderedCommentIds() ).toEqual( [ '4', '3', '2', '1' ] );
 		expect( pill ).not.toBeInTheDocument();
-		expect( Element.prototype.scrollIntoView ).toHaveBeenCalled();
+		expect( document.getElementById( 'comment-4' ) ).toHaveFocus();
 	} );
 } );
