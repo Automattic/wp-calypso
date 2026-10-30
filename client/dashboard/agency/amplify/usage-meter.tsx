@@ -255,7 +255,12 @@ export function AmplifyScansLeft( {
 	const left = Math.max( 0, usage.limit - usage.used );
 	return (
 		<div className="dashboard-amplify-scans-left" data-status={ status }>
-			<Text size={ 12 } lineHeight="16px" variant="muted">
+			<Text
+				size={ 12 }
+				lineHeight="16px"
+				variant={ status === 'low' ? undefined : 'muted' }
+				intent={ status === 'low' ? 'warning' : undefined }
+			>
 				{ sprintf(
 					/* translators: %d: number of reports left this month */
 					_n( '%d report left this month', '%d reports left this month', left ),
