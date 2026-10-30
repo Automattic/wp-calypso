@@ -102,6 +102,8 @@ export function installedPreviewUrl( url: string | undefined ): string | undefin
 	return home.toString();
 }
 
+const NOT_PERMITTED = 'site_redesign_not_permitted';
+
 function messageOf( error: unknown ): string {
 	if ( errorCode( error ) === 'site_redesign_batch_limit' ) {
 		return __( 'You’ve used all the tries for this redesign.' );
@@ -522,7 +524,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			return origin();
 		},
 		onError: ( error: unknown, _variables: unknown, from: Origin | undefined ) => {
-			if ( isCurrent( from ) ) {
+			if ( isCurrent( from ) && errorCode( error ) !== NOT_PERMITTED ) {
 				setNotice( messageOf( error ) );
 			}
 		},
@@ -675,6 +677,9 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		}
 	}, [ redesign?.status, siteSlug ] );
 
+	const notPermitted = [ start.error, redesignQuery.error ].some(
+		( error ) => errorCode( error ) === NOT_PERMITTED
+	);
 	const retryButton = errorCode( start.error ) !== 'site_redesign_batch_limit' && (
 		<Button
 			__next40pxDefaultSize
@@ -694,6 +699,9 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 	);
 
 	const renderBody = () => {
+		if ( notPermitted ) {
+			return <Text>{ __( 'This isn’t available for your account.' ) }</Text>;
+		}
 		if ( ! redesignId ) {
 			return start.isError ? retryButton : opening;
 		}

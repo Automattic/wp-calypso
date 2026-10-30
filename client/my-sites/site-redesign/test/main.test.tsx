@@ -224,6 +224,32 @@ describe( 'SiteRedesign', () => {
 		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, false );
 	} );
 
+	it( 'says it is not available, without Retry, when opening is refused', async () => {
+		jest
+			.mocked( openRedesign )
+			.mockRejectedValue( { code: 'site_redesign_not_permitted', message: 'Server words.' } );
+		renderPage( false, null );
+
+		expect( await screen.findByText( 'This isn’t available for your account.' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).toBeNull();
+		expect( screen.queryByText( 'Server words.' ) ).toBeNull();
+		expect( openRedesign ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'says it is not available when loading a redesign is refused', async () => {
+		jest
+			.mocked( fetchRedesign )
+			.mockRejectedValue( { code: 'site_redesign_not_permitted', message: 'Server words.' } );
+		renderPage(
+			false,
+			REDESIGN_ID,
+			new QueryClient( { defaultOptions: { queries: { retry: false } } } )
+		);
+
+		expect( await screen.findByText( 'This isn’t available for your account.' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).toBeNull();
+	} );
+
 	it( 'stops offering Retry once the batch limit is reached', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'failed' } ) );
 		jest

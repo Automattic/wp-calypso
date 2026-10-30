@@ -51,14 +51,13 @@ describe( 'site redesign route', () => {
 		expect( handlers.indexOf( renderSiteRedesign ) ).toBe( guards.length );
 	} );
 
-	it( 'does not register the route when the flag is off', () => {
+	it( 'registers the route whatever the flag says', () => {
 		jest.mocked( isEnabled ).mockReturnValue( false );
 		registerSiteRedesign();
-		expect( page ).not.toHaveBeenCalled();
+		const calls = jest.mocked( page ).mock.calls as unknown[][];
+		expect( calls.some( ( [ path ] ) => path === '/site-redesign/:site' ) ).toBe( true );
 	} );
-} );
 
-describe( 'renderSiteRedesign', () => {
 	it( 'passes the redesign id and the checkout return on', () => {
 		const id = 'rd_' + 'a'.repeat( 32 );
 		const context = contextFor( { redesign: id, resume: 'apply' } );

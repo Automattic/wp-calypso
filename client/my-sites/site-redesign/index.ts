@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import {
 	makeLayout,
@@ -10,9 +9,6 @@ import { sites, siteSelection } from 'calypso/my-sites/controller';
 import { renderSiteRedesign } from './controller';
 
 export default function () {
-	if ( ! isEnabled( 'themes/site-redesign' ) ) {
-		return;
-	}
 	page( '/site-redesign', redirectLoggedOut, siteSelection, sites, makeLayout, render );
 	page(
 		'/site-redesign/:site',
