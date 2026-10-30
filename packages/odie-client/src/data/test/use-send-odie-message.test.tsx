@@ -157,6 +157,61 @@ describe( 'useSendOdieMessage – checkout support variation', () => {
 	} );
 } );
 
+describe( 'useSendOdieMessage – the reply event', () => {
+	const replyWithFlags = ( flags: Record< string, unknown > | null ) =>
+		( wpcomRequest as jest.Mock ).mockResolvedValue( {
+			chat_id: 5,
+			messages: [
+				{
+					message_id: 1,
+					content: 'Yes, PayPal works.',
+					role: 'bot',
+					type: 'message',
+					context: { site_id: null, flags },
+				},
+			],
+		} );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+	} );
+
+	it( 'records that the bot handed the chat to a human', async () => {
+		const trackEvent = jest.fn();
+		replyWithFlags( { forward_to_human_support: true } );
+		mockContext( { trackEvent } );
+
+		await sendMessage();
+
+		expect( trackEvent ).toHaveBeenCalledWith( 'bot_reply_received', {
+			forward_to_human_support: true,
+		} );
+	} );
+
+	// Most replies come back with `flags: null`.
+	it( 'records a reply without flags as not handing off', async () => {
+		const trackEvent = jest.fn();
+		replyWithFlags( null );
+		mockContext( { trackEvent } );
+
+		await sendMessage();
+
+		expect( trackEvent ).toHaveBeenCalledWith( 'bot_reply_received', {
+			forward_to_human_support: false,
+		} );
+	} );
+
+	it( "doesn't record an empty reply", async () => {
+		const trackEvent = jest.fn();
+		( wpcomRequest as jest.Mock ).mockResolvedValue( { chat_id: 5, messages: [] } );
+		mockContext( { trackEvent } );
+
+		await sendMessage();
+
+		expect( trackEvent ).not.toHaveBeenCalledWith( 'bot_reply_received', expect.anything() );
+	} );
+} );
+
 describe( 'useSendOdieMessage – asking for a human', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();

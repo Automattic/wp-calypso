@@ -415,6 +415,9 @@ export const useSendOdieMessage = ( signal: AbortSignal ) => {
 				type: 'message',
 				context: returnedChat.messages[ 0 ].context,
 			};
+			trackEvent( 'bot_reply_received', {
+				forward_to_human_support: !! botMessage.context?.flags?.forward_to_human_support,
+			} );
 			setExperimentVariationName( returnedChat.experiment_name );
 			addMessage( {
 				message: botMessage,

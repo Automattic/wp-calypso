@@ -133,6 +133,12 @@ export const UserMessage = ( {
 				<>
 					{ showGetSupport && (
 						<GetSupport
+							onShow={ ( destinations ) => {
+								trackEvent( 'chat_get_support_shown', {
+									location: 'user-message',
+									destinations: destinations.join( ',' ),
+								} );
+							} }
 							onClickAdditionalEvent={ ( destination, props ) => {
 								trackEvent( 'chat_get_support', {
 									location: 'user-message',

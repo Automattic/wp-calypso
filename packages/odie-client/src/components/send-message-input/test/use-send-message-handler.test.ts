@@ -81,8 +81,31 @@ describe( 'useSendMessageHandler conversation start tracking', () => {
 		expect( startEvents( trackEvent ) ).toHaveLength( 0 );
 	} );
 
-	it( 'does not record a start for a Zendesk conversation', async () => {
-		const { send, trackEvent } = setup( makeChat( { provider: 'zendesk' } ) );
+	it( 'records a start on the first message to a human, after the AI chat', async () => {
+		const { send, trackEvent } = setup(
+			makeChat( {
+				provider: 'zendesk',
+				messages: [ userMessage( 'Can I talk to a human?' ), botMessage( 'Sure' ) ],
+			} )
+		);
+
+		await act( async () => {
+			await send();
+		} );
+
+		expect( trackEvent ).toHaveBeenCalledWith( 'chat_conversation_start', {
+			message_length: 'How do I add a domain?'.length,
+			provider: 'zendesk',
+		} );
+	} );
+
+	it( 'does not record a start on a follow-up message to a human', async () => {
+		const { send, trackEvent } = setup(
+			makeChat( {
+				provider: 'zendesk',
+				messages: [ { ...userMessage( 'My card was declined' ), id: 'smooch-1' } ],
+			} )
+		);
 
 		await act( async () => {
 			await send();
