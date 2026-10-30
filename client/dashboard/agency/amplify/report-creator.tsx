@@ -58,7 +58,7 @@ function RadioIndicator( { isSelected }: { isSelected: boolean } ) {
 			{ isSelected ? (
 				<>
 					<circle cx={ 8 } cy={ 8 } r={ 8 } fill="var( --color-primary )" />
-					<circle cx={ 8 } cy={ 8 } r={ 5 } fill="var( --color-surface )" />
+					<circle cx={ 8 } cy={ 8 } r={ 4 } fill="var( --color-surface )" />
 				</>
 			) : (
 				<circle
