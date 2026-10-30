@@ -22,6 +22,7 @@ import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../compo
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { DEFAULT_PER_PAGE, DEFAULT_CONFIG, recordViewChanges } from '../../sites/dataviews/views';
+import { isSiteIssue } from '../../sites/site-fields/site-health';
 import { AgencyNotices } from '../components/agency-notices';
 import { DevSiteConfigurationModal } from '../marketplace/purchases/site-configuration-modal';
 import AddNewSite from './add-new-site';
@@ -58,7 +59,7 @@ const DEFAULT_VIEW = {
 	mediaField: 'site_icon',
 	titleField: 'name',
 	descriptionField: 'URL',
-	fields: [ 'visibility', 'plan' ],
+	fields: [ 'issues', 'visibility', 'plan' ],
 	sort: { field: 'URL', direction: 'asc' },
 } as View;
 
@@ -71,12 +72,14 @@ const removeLegacyFields = ( fields: View[ 'fields' ] ) =>
 const SORT_FIELD_MAP: Record< string, 'url' > = { URL: 'url' };
 
 function toAgencyFetchOptions( view: View ): FetchAgencySitesOptions {
+	const issue = view.filters?.find( ( filter ) => filter.field === 'issues' )?.value;
 	return {
 		search: view.search,
 		sort_field: view.sort?.field ? SORT_FIELD_MAP[ view.sort.field ] : undefined,
 		sort_direction: view.sort?.direction,
 		page: view.page,
 		per_page: view.perPage,
+		issue: isSiteIssue( issue ) ? issue : undefined,
 	};
 }
 

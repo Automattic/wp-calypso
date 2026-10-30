@@ -120,6 +120,32 @@ describe( '<AgencySites>', () => {
 		);
 	} );
 
+	test( 'asks the endpoint for sites with the chosen status', async () => {
+		nock( BASE )
+			.persist()
+			.get( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.reply( 200, {
+				calypso_preferences: {
+					'hosting-dashboard-dataviews-view-agency-sites': {
+						type: 'table',
+						titleField: 'name',
+						filters: [ { field: 'issues', operator: 'is', value: 'site_down' } ],
+					},
+				},
+			} );
+		const filteredSites = nock( BASE )
+			.get( '/wpcom/v2/jetpack-agency/sites' )
+			.query( ( query ) => query.site_down === 'true' )
+			.reply( 200, { sites: [ mockSites[ 0 ] ], total: 1 } );
+		mockEndpoints();
+
+		render( <AgencySites /> );
+
+		await waitFor( () => expect( filteredSites.isDone() ).toBe( true ) );
+		expect( await screen.findByRole( 'row', { name: /First/ } ) ).toBeVisible();
+	} );
+
 	test( 'marks a development site in the list', async () => {
 		mockEndpoints();
 
