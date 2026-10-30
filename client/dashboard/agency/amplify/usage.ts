@@ -5,8 +5,10 @@ import type { AgencyApprovalStatus, AmplifyUsage } from '@automattic/api-core';
  * - rejected: application not approved.
  * - available / low / cap: approved, with the tier's monthly allowance
  *   (Account activated starts at 5 scans).
+ * - unlimited: approved and exempt from the monthly allowance.
  */
-export type AmplifyUsageStatus = 'unknown' | 'pending' | 'rejected' | 'available' | 'low' | 'cap';
+export type AmplifyUsageStatus =
+	'unknown' | 'pending' | 'rejected' | 'available' | 'low' | 'cap' | 'unlimited';
 
 export function getUsageStatus(
 	usage?: AmplifyUsage,
@@ -24,6 +26,9 @@ export function getUsageStatus(
 	}
 	if ( ! usage ) {
 		return 'unknown';
+	}
+	if ( usage.limit === null ) {
+		return 'unlimited';
 	}
 	if ( usage.limit <= 0 ) {
 		return 'pending';
