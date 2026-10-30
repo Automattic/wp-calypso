@@ -3,15 +3,12 @@ import { useMutation } from '@tanstack/react-query';
 import {
 	BaseControl,
 	Button,
-	Icon,
 	__experimentalHeading as Heading,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
-import { check } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -100,12 +97,9 @@ function ReportTypeCards( {
 								} }
 							>
 								<VStack spacing={ 1 }>
-									<HStack justify="space-between" alignment="center">
-										<Text size={ 13 } weight={ 600 }>
-											{ option.label }
-										</Text>
-										{ isSelected && <Icon icon={ check } size={ 20 } /> }
-									</HStack>
+									<Text size={ 13 } weight={ 600 }>
+										{ option.label }
+									</Text>
 									<Text size={ 12 } variant="muted">
 										{ option.description }
 									</Text>
