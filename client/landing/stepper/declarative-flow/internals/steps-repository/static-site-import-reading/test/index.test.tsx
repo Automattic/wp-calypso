@@ -4,6 +4,7 @@
 import { staticSiteImportSessionQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { act, cleanup, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
@@ -427,5 +428,30 @@ describe( 'StaticSiteImportReading', () => {
 		for ( const bar of screen.getAllByRole( 'progressbar' ) ) {
 			expect( bar ).toHaveAttribute( 'value', '0' );
 		}
+	} );
+
+	it( 'offers a Back button that hands control to the flow', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'capturing' ) );
+		const goBack = jest.fn();
+		renderStep(
+			<StaticSiteImportReading
+				{ ...mockStepProps( {
+					navigation: { submit: jest.fn(), goBack },
+					stepName: 'static-site-import-reading',
+				} ) }
+			/>,
+			{
+				initialEntry:
+					'/static-site-import-reading?from=busybearscleaning.com&importSessionId=abc123',
+				queryClient: new QueryClient(),
+			}
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( goBack ).toHaveBeenCalled();
 	} );
 } );
