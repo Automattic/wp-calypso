@@ -45,8 +45,8 @@ function McpSetupComponent() {
 		{ label: __( 'Other MCP client' ), value: 'default' },
 	];
 
-	const clientDocumentation: Record< Exclude< McpClient, 'chatgpt' >, string > = {
-		claude: 'https://docs.claude.com/en/docs/mcp',
+	// Claude and ChatGPT have no manual setup card, so no documentation link either.
+	const clientDocumentation: Record< Exclude< McpClient, 'chatgpt' | 'claude' >, string > = {
 		'claude-code': 'https://code.claude.com/docs/en/mcp',
 		vscode: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		cursor: 'https://docs.cursor.com/en/context/mcp',
@@ -54,8 +54,7 @@ function McpSetupComponent() {
 		default: 'https://modelcontextprotocol.io/docs/develop/connect-local-servers',
 	};
 
-	const clientDocumentationLabels: Record< Exclude< McpClient, 'chatgpt' >, string > = {
-		claude: __( 'Claude documentation' ),
+	const clientDocumentationLabels: Record< Exclude< McpClient, 'chatgpt' | 'claude' >, string > = {
 		'claude-code': __( 'Claude Code documentation' ),
 		vscode: __( 'VS Code documentation' ),
 		cursor: __( 'Cursor documentation' ),
@@ -70,9 +69,10 @@ function McpSetupComponent() {
 			url: 'https://public-api.wordpress.com/wpcom/v2/mcp/v1',
 		};
 
+		// Claude (claude.ai and Claude Desktop) has no manual config: remote servers
+		// connect through Settings → Connectors only, and claude_desktop_config.json
+		// rejects a url-only server entry (MCP-538).
 		switch ( client ) {
-			case 'claude':
-				return { mcpServers: { [ serverName ]: baseConfig } };
 			case 'claude-code':
 				return { mcpServers: { [ serverName ]: { type: 'http', url: baseConfig.url } } };
 			case 'vscode':
@@ -185,33 +185,42 @@ function McpSetupComponent() {
 								<SectionHeader level={ 3 } title={ __( 'Quick setup' ) } />
 								{ /* Quick Setup for Claude */ }
 								{ selectedMcpClient === 'claude' && (
-									<ol className="mcp-setup__steps">
-										<li>
-											<Text as="p" variant="muted">
-												{ createInterpolateElement(
-													/* translators: <ClaudeSettings/> is a link to the Claude settings page */
-													__( 'Open <ClaudeSettings/>.' ),
-													{
-														ClaudeSettings: (
-															<ExternalLink href="https://claude.ai/settings/connectors">
-																{ __( 'Claude settings' ) }
-															</ExternalLink>
+									<VStack spacing={ 4 }>
+										<Text as="p" variant="muted">
+											{ __(
+												'Claude connects to WordPress.com through Connectors. The same steps work on claude.ai and in the Claude Desktop app.'
+											) }
+										</Text>
+										<ol className="mcp-setup__steps">
+											<li>
+												<Text as="p" variant="muted">
+													{ createInterpolateElement(
+														/* translators: <ClaudeSettings/> is a link to the Claude connectors settings page */
+														__(
+															'Open Settings → Connectors: <ClaudeSettings/> on the web, or from the Claude Desktop settings.'
 														),
-													}
-												) }
-											</Text>
-										</li>
-										<li>
-											<Text as="p" variant="muted">
-												{ __( 'Click “Browse connectors” and search for WordPress.com.' ) }
-											</Text>
-										</li>
-										<li>
-											<Text as="p" variant="muted">
-												{ __( 'Select WordPress.com and follow the prompts.' ) }
-											</Text>
-										</li>
-									</ol>
+														{
+															ClaudeSettings: (
+																<ExternalLink href="https://claude.ai/new#customize/connectors/verified">
+																	{ __( 'Claude settings' ) }
+																</ExternalLink>
+															),
+														}
+													) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" variant="muted">
+													{ __( 'Search for WordPress.com.' ) }
+												</Text>
+											</li>
+											<li>
+												<Text as="p" variant="muted">
+													{ __( 'Select WordPress.com and follow the prompts.' ) }
+												</Text>
+											</li>
+										</ol>
+									</VStack>
 								) }
 
 								{ /* Quick Setup for Claude Code */ }
@@ -337,7 +346,7 @@ function McpSetupComponent() {
 					</Card>
 				) }
 
-				{ selectedMcpClient !== 'chatgpt' && (
+				{ selectedMcpClient !== 'chatgpt' && selectedMcpClient !== 'claude' && (
 					<Card>
 						<CardBody>
 							<VStack spacing={ 2 }>
