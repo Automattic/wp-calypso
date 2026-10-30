@@ -1,7 +1,7 @@
 import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
@@ -55,8 +55,16 @@ export const DomainExpiryField = ( {
 
 	return (
 		<VStack justify="flex-start" alignment="left" spacing={ 0 }>
-			<Text intent={ domain.expired ? 'error' : undefined }>{ value }</Text>
-			{ renewLabel && <Text variant="muted">{ renewLabel }</Text> }
+			<Text intent={ domain.expired ? 'error' : undefined }>
+				{ domain.expired
+					? sprintf(
+							/* translators: %s is the date the domain expired, e.g. September 4, 2026. */
+							__( 'Expired on %s' ),
+							value
+						)
+					: value }
+			</Text>
+			{ ! domain.expired && renewLabel && <Text variant="muted">{ renewLabel }</Text> }
 		</VStack>
 	);
 };

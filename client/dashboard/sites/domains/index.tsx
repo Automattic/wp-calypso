@@ -31,11 +31,13 @@ import {
 } from '../../domains/dataviews';
 import {
 	canUserSetPrimaryDomain,
+	isDomainRenewable,
 	isPendingPrimaryDomain,
 	isPrimaryDomainCandidate,
 } from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 import ChangePrimaryDomainModal from './change-primary-domain-modal';
+import ExpiredDomainNotice from './expired-domain-notice';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
 import '../../domains/dataviews/style.scss';
@@ -58,6 +60,9 @@ function SiteDomains() {
 	} );
 
 	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
+	const expiredDomain = siteDomains.find(
+		( domain ) => domain.expired && isDomainRenewable( domain )
+	);
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
@@ -120,6 +125,7 @@ function SiteDomains() {
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
 					<SitesNoticeArbiter>
+						{ expiredDomain && <ExpiredDomainNotice domain={ expiredDomain } /> }
 						{ ! hasRedirect && pendingDomain && (
 							<PendingPrimaryDomainNotice
 								domainName={ pendingDomain.domain }

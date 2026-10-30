@@ -1,8 +1,8 @@
 import { DomainSubtype, DomainStatus } from '@automattic/api-core';
-import { setWwwPrimaryDomainMutation } from '@automattic/api-queries';
+import { purchaseQuery, setWwwPrimaryDomainMutation } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useHasEnTranslation } from '@automattic/i18n-utils';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
@@ -16,6 +16,8 @@ import {
 } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
+import { isDomainRenewable } from '../../utils/domain';
+import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
 import type { DomainSummary, Site } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -31,8 +33,8 @@ const noop = () => {};
 
 /**
  * Row actions for the domains lists. Every action is a primary action, so they render as inline
- * links and DataViews never shows the "more actions" menu. Everything else (renewal, DNS, contact
- * information, auto-renew, email, transfers) lives on the domain's Settings page.
+ * links and DataViews never shows the "more actions" menu. Everything else (renewal before expiry,
+ * DNS, contact information, auto-renew, email, transfers) lives on the domain's Settings page.
  */
 export const useActions = ( {
 	site,
@@ -44,6 +46,7 @@ export const useActions = ( {
 	onChangePrimaryDomain?: () => void;
 } ) => {
 	const router = useRouter();
+	const queryClient = useQueryClient();
 	const { recordTracksEvent } = useAnalytics();
 	const hasEnTranslation = useHasEnTranslation();
 	const { createSuccessNotice, createInfoNotice, removeNotice } = useDispatch( noticesStore );
@@ -100,6 +103,26 @@ export const useActions = ( {
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
+			},
+			{
+				id: 'renew',
+				isPrimary: true,
+				label: __( 'Renew domain' ),
+				callback: async ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'renew',
+						domain: domain.domain,
+					} );
+
+					const purchase = await queryClient.fetchQuery(
+						purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) )
+					);
+
+					window.location.href = getRenewalUrlFromPurchase( purchase );
+				},
+				isEligible: ( item: DomainSummary ) => item.expired && isDomainRenewable( item ),
 			},
 			{
 				id: 'change-primary-domain',
@@ -241,6 +264,7 @@ export const useActions = ( {
 		],
 		[
 			router,
+			queryClient,
 			sitesByBlogId,
 			recordTracksEvent,
 			hasEnTranslation,
