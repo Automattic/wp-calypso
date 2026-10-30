@@ -33,7 +33,6 @@ Use the `render()` function from `client/dashboard/test-utils.tsx`, which will r
 
 - It only reads a param or search value: pass the value in as a prop and test the component with `render()`.
 - It reads or writes route search, or builds links from route objects: build the real route tree and a test router, as `domains/dataviews/test/field-domain-name.test.tsx` does. Prefer this over mocking `app/router/*` modules, whose mocks break whenever the code reads a route object they don't define.
-- It navigates between pages: unit tests mount too little of the app to catch problems here, so use an E2E test.
 
 ### Mocking Network Requests
 
