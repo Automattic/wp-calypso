@@ -207,6 +207,9 @@ export function fixtureRequest< T >(
 				'A design is installed on this site. Use it, undo it or start over.'
 			);
 		}
+		if ( redesign.candidates.length > 0 && ! body?.new_batch ) {
+			return respond( stored );
+		}
 		const batch = Math.max( 0, ...redesign.candidates.map( ( c ) => c.batch ) ) + 1;
 		redesign.status = 'generating';
 		redesign.candidates = CANDIDATE_MS.map( () => ( {

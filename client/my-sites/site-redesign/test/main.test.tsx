@@ -133,7 +133,7 @@ describe( 'SiteRedesign', () => {
 		await waitFor( () => expect( page.replace ).toHaveBeenCalled() );
 		expect( openRedesign ).toHaveBeenCalledTimes( 1 );
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
-		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID );
+		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, false );
 		expect( screen.queryByRole( 'button', { name: 'Show me four designs' } ) ).toBeNull();
 	} );
 
@@ -182,9 +182,22 @@ describe( 'SiteRedesign', () => {
 		expect( generateRedesign ).not.toHaveBeenCalled();
 	} );
 
-	it( 'retries a failed session only after an explicit click', async () => {
-		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'failed' } ) );
-		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+	it( 'retries a failed batch only after an explicit click, asking for a new batch', async () => {
+		const failed = session( {
+			status: 'failed',
+			candidates: [ 1, 2, 3, 4 ].map( ( n ) => ( {
+				...candidate( n ),
+				status: 'failed' as const,
+				routes: null,
+			} ) ),
+		} );
+		jest.mocked( fetchRedesign ).mockResolvedValue( failed );
+		// Like the API: without `new_batch`, a session that has a batch is answered as it is.
+		jest
+			.mocked( generateRedesign )
+			.mockImplementation( ( _site, _id, newBatch ) =>
+				Promise.resolve( newBatch ? session( { status: 'generating' } ) : failed )
+			);
 		renderPage();
 
 		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
@@ -194,6 +207,37 @@ describe( 'SiteRedesign', () => {
 			'components-visually-hidden'
 		);
 		expect( generateRedesign ).toHaveBeenCalledTimes( 1 );
+		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, true );
+	} );
+
+	it( 'offers generate without an error for a failed session from before candidates', async () => {
+		jest
+			.mocked( fetchRedesign )
+			.mockResolvedValue( session( { status: 'failed', candidates: [] } ) );
+		jest.mocked( generateRedesign ).mockResolvedValue( session( { status: 'generating' } ) );
+		renderPage();
+
+		const retry = await screen.findByRole( 'button', { name: 'Retry' } );
+		expect( screen.queryByText( /couldn’t make designs/ ) ).toBeNull();
+		await userEvent.click( retry );
+		await screen.findByText( 'Making new designs from your content…' );
+		expect( generateRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, false );
+	} );
+
+	it( 'stops offering Retry once the batch limit is reached', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( session( { status: 'failed' } ) );
+		jest
+			.mocked( generateRedesign )
+			.mockRejectedValue( { code: 'site_redesign_batch_limit', message: 'Server words.' } );
+		renderPage();
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Retry' } ) );
+		expect(
+			await screen.findByText( 'You’ve used all the tries for this redesign.', {
+				selector: '.components-notice__content',
+			} )
+		).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Retry' } ) ).toBeNull();
 	} );
 
 	it( 'offers Retry after an opening error instead of looping', async () => {

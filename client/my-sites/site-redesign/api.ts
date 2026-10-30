@@ -97,11 +97,12 @@ export const openRedesign = ( siteId: number ) =>
 export const fetchRedesign = ( siteId: number, id: string ) =>
 	request< Redesign >( siteId, { method: 'GET', path: run( id ) } );
 
-export const generateRedesign = ( siteId: number, id: string ) =>
+// Without `new_batch`, a session that already has a batch is answered as it is, even a failed one.
+export const generateRedesign = ( siteId: number, id: string, newBatch = false ) =>
 	request< Redesign >( siteId, {
 		method: 'POST',
 		path: run( id, '/generate' ),
-		body: { brief_confirmed: true },
+		body: newBatch ? { brief_confirmed: true, new_batch: true } : { brief_confirmed: true },
 	} );
 
 export const fetchPreview = ( siteId: number, id: string, generationId: string ) =>

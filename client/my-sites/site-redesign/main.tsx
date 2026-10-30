@@ -103,6 +103,9 @@ export function installedPreviewUrl( url: string | undefined ): string | undefin
 }
 
 function messageOf( error: unknown ): string {
+	if ( errorCode( error ) === 'site_redesign_batch_limit' ) {
+		return __( 'You’ve used all the tries for this redesign.' );
+	}
 	const message = ( error as { message?: unknown } | null )?.message;
 	return typeof message === 'string' && message
 		? message
@@ -537,7 +540,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 				return open;
 			}
 			try {
-				return await generateRedesign( siteId, open.id );
+				return await generateRedesign( siteId, open.id, open.candidates.length > 0 );
 			} catch ( error ) {
 				if ( errorCode( error ) === 'site_redesign_busy' ) {
 					return fetchRedesign( siteId, open.id );
@@ -672,7 +675,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		}
 	}, [ redesign?.status, siteSlug ] );
 
-	const retryButton = (
+	const retryButton = errorCode( start.error ) !== 'site_redesign_batch_limit' && (
 		<Button
 			__next40pxDefaultSize
 			variant="primary"
@@ -738,7 +741,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			case 'failed':
 				return (
 					<VStack alignment="topLeft" spacing={ 4 }>
-						{ redesign.status === 'failed' && (
+						{ redesign.candidates.length > 0 && (
 							<Text>{ __( 'We couldn’t make designs for your site this time.' ) }</Text>
 						) }
 						{ retryButton }

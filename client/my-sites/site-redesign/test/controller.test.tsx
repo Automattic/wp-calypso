@@ -82,4 +82,17 @@ describe( 'renderSiteRedesign', () => {
 		renderSiteRedesign( context, jest.fn() );
 		expect( context.secondary ).toBeNull();
 	} );
+
+	it( 'treats resume without a redesign id as a fresh start', () => {
+		const next = jest.fn();
+		const context = contextFor( { resume: 'apply' } ) as unknown as {
+			primary: { props: { resume: boolean; redesignId: string | null } };
+		};
+		renderSiteRedesign( context as never, next );
+		expect( context.primary.props ).toMatchObject( { resume: false, redesignId: null } );
+
+		const withId = contextFor( { resume: 'apply', redesign: 'rd_1' } ) as unknown as typeof context;
+		renderSiteRedesign( withId as never, next );
+		expect( withId.primary.props ).toMatchObject( { resume: true, redesignId: 'rd_1' } );
+	} );
 } );
