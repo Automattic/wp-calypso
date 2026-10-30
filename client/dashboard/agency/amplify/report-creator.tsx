@@ -1,11 +1,21 @@
 import { startAmplifyReportMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, RadioControl, __experimentalHeading as Heading } from '@wordpress/components';
+import {
+	Button,
+	Icon,
+	__experimentalHeading as Heading,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
+import { check } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { Card, CardBody } from '../../components/card';
+import Grid from '../../components/grid';
 import { Text } from '../../components/text';
 import { getReportTiming } from './constants';
 import AmplifyOverviewStory from './overview-story';
@@ -38,6 +48,70 @@ const REPORT_MODES: {
 		description: __( 'How ChatGPT, Perplexity, and others read and rank the site.' ),
 	},
 ];
+
+/** The report types as selectable cards, one per column. */
+function ReportTypeCards( {
+	selected,
+	isSingleColumn,
+	onSelect,
+}: {
+	selected: AmplifyMode;
+	isSingleColumn: boolean;
+	onSelect: ( mode: AmplifyMode ) => void;
+} ) {
+	const labelId = useId();
+	const isWide = useViewportMatch( 'large' );
+	return (
+		<VStack className="dashboard-amplify-overview__mode-options" spacing={ 2 }>
+			<Text id={ labelId } size={ 13 } weight={ 500 }>
+				{ __( 'Report type' ) }
+			</Text>
+			<Grid
+				role="radiogroup"
+				aria-labelledby={ labelId }
+				columns={ isSingleColumn || ! isWide ? 1 : REPORT_MODES.length }
+				gap="sm"
+			>
+				{ REPORT_MODES.map( ( option ) => {
+					const isSelected = option.value === selected;
+					return (
+						<Card
+							key={ option.value }
+							role="radio"
+							aria-checked={ isSelected }
+							tabIndex={ 0 }
+							onClick={ () => onSelect( option.value ) }
+							onKeyDown={ ( event: React.KeyboardEvent ) => {
+								if ( event.key === 'Enter' || event.key === ' ' ) {
+									event.preventDefault();
+									onSelect( option.value );
+								}
+							} }
+							style={ {
+								cursor: 'pointer',
+								boxShadow: isSelected ? 'inset 0 0 0 2px var( --color-primary )' : undefined,
+							} }
+						>
+							<CardBody size="small">
+								<VStack spacing={ 1 }>
+									<HStack alignment="center">
+										<Text size={ 13 } weight={ 600 }>
+											{ option.label }
+										</Text>
+										{ isSelected && <Icon icon={ check } size={ 20 } /> }
+									</HStack>
+									<Text size={ 12 } variant="muted">
+										{ option.description }
+									</Text>
+								</VStack>
+							</CardBody>
+						</Card>
+					);
+				} ) }
+			</Grid>
+		</VStack>
+	);
+}
 
 export function AmplifyOverviewIntro( { mode }: { mode: AmplifyMode } ) {
 	return (
@@ -210,20 +284,16 @@ export default function AmplifyReportCreator( {
 							tierId={ tierId }
 						/>
 					</form>
-					<div className="dashboard-amplify-overview__mode-options">
-						<RadioControl
-							label={ __( 'Report type' ) }
-							selected={ mode }
-							options={ REPORT_MODES }
-							onChange={ ( selectedMode ) => {
-								const nextMode = selectedMode as AmplifyMode;
-								setMode( nextMode );
-								recordTracksEvent( 'calypso_a4a_amplify_report_type_select', {
-									mode: nextMode,
-								} );
-							} }
-						/>
-					</div>
+					<ReportTypeCards
+						selected={ mode }
+						isSingleColumn={ isModal }
+						onSelect={ ( nextMode ) => {
+							setMode( nextMode );
+							recordTracksEvent( 'calypso_a4a_amplify_report_type_select', {
+								mode: nextMode,
+							} );
+						} }
+					/>
 				</>
 			) }
 			{ ! isModal && <AmplifyOverviewStory /> }
