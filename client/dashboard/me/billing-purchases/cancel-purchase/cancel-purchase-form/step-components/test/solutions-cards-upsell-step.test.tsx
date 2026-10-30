@@ -209,6 +209,9 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 				'Get an exclusive 25% discount automatically applied at checkout.'
 			)
 		).toBeVisible();
-		expect( renewCard ).toHaveAttribute( 'href', expect.stringContaining( 'coupon=DONTGO25' ) );
+		expect( renewCard ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'coupon=CANRENEW25OFF' )
+		);
 	} );
 } );
