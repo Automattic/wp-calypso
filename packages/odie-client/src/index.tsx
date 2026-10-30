@@ -64,6 +64,7 @@ export const OdieAssistant: React.FC = () => {
 	);
 };
 export { GetSupport } from './components/message/get-support';
+export { useCheckoutSupportVariation } from './hooks/use-checkout-support-variation';
 
 export default OdieAssistantProvider;
 export { useOdieAssistantContext } from './context';

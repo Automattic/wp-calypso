@@ -10,10 +10,11 @@ import { __, _n, sprintf } from '@wordpress/i18n';
 import { useIntlLocale } from '../../../app/locale';
 import { Card, CardBody, CardDivider, CardHeader } from '../../../components/card';
 import { SectionHeader } from '../../../components/section-header';
+import { crossoverLinkProps } from '../../crossover/store';
 import { OWNER_ROLE } from '../../team/constants';
 import { useAgencyPressablePlan } from '../use-agency-pressable-plan';
 import { calculateEffectiveCapacity } from './lib/pressable-capacity';
-import { PRESSABLE_AGENCY_URL, getPressablePlanInfo } from './lib/pressable-plans';
+import { getPressablePlanInfo } from './lib/pressable-plans';
 import PressableUsageStats from './pressable-usage-stats';
 import type { AgencyProduct } from '@automattic/api-core';
 
@@ -109,7 +110,7 @@ export default function PressableUsageCard( { existingPlan }: { existingPlan: Ag
 						<>
 							<CardDivider />
 							<div>
-								<ExternalLink href={ PRESSABLE_AGENCY_URL }>
+								<ExternalLink { ...crossoverLinkProps( 'pressable' ) }>
 									{ __( 'Manage in Pressable' ) }
 								</ExternalLink>
 							</div>

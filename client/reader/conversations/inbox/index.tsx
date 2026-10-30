@@ -2,14 +2,16 @@ import page from '@automattic/calypso-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useMemo, useState } from 'react';
-import { useSelector } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
+import { useDispatch, useSelector } from 'calypso/state';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { filterConversations } from './conversation-list/filter-conversations';
+import { type OpenSource } from './conversation-list/list-item';
 import { INBOX_TABS, type InboxTab } from './conversation-list/tabs';
 import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
 import { useInboxKeyboardShortcuts } from './keyboard-shortcuts/use-inbox-keyboard-shortcuts';
@@ -26,6 +28,7 @@ const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' |
 
 export function ConversationsInbox( { siteId, postId }: Props ) {
 	const translate = useTranslate();
+	const dispatch = useDispatch();
 	const { data: notes = [], isLoading } = useCommentNotes();
 	const { mutate: markRead } = useMarkNotesRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
@@ -47,41 +50,68 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const selected = conversations.find( ( { key } ) => key === selectedKey );
 
 	useEffect( () => {
+		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
+	}, [ dispatch ] );
+
+	useEffect( () => {
 		if ( ! selectedKey && conversations.length ) {
 			page.replace( getConversationPath( conversations[ 0 ] ) );
 		}
 	}, [ selectedKey, conversations ] );
 
-	const openConversation = ( conversation: Conversation ) => {
-		if ( conversation.unreadNoteIds.length ) {
+	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
+		const unreadCount = conversation.unreadNoteIds.length;
+		if ( unreadCount ) {
 			markRead( conversation.unreadNoteIds );
 		}
+		if ( conversation.key === selectedKey ) {
+			return;
+		}
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_conversation_opened', {
+				source,
+				unread_count: unreadCount,
+			} )
+		);
 		page.show( getConversationPath( conversation ) );
 	};
 
-	const goTo = ( index: number ) => {
+	const goTo = ( index: number, source: OpenSource ) => {
 		const target = visible[ index ];
-		return target ? () => openConversation( target ) : undefined;
+		return target ? () => openConversation( target, source ) : undefined;
 	};
 
-	const onPrevious = selectedIndex > 0 ? goTo( selectedIndex - 1 ) : undefined;
+	const previousIndex = selectedIndex > 0 ? selectedIndex - 1 : -1;
 	// With the open conversation filtered out of the list, next starts from the top.
-	const onNext = goTo( selectedIndex + 1 );
+	const nextIndex = selectedIndex + 1;
+
+	const selectTab = ( next: InboxTab, source: 'click' | 'shortcut' ) => {
+		if ( next === tab ) {
+			return;
+		}
+		setTab( next );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_tab_selected', {
+				tab: next,
+				source,
+			} )
+		);
+	};
 
 	const moveTab = ( offset: number ) => {
 		const next = INBOX_TABS[ INBOX_TABS.indexOf( tab ) + offset ];
 		if ( next ) {
-			setTab( next );
+			selectTab( next, 'shortcut' );
 		}
 	};
 
 	useInboxKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
-		onNext: () => onNext?.(),
-		onPrevious: () => onPrevious?.(),
+		onNext: () => goTo( nextIndex, 'shortcut' )?.(),
+		onPrevious: () => goTo( previousIndex, 'shortcut' )?.(),
 		onNextTab: () => moveTab( 1 ),
 		onPreviousTab: () => moveTab( -1 ),
-		onSelectTab: setTab,
+		onSelectTab: ( next ) => selectTab( next, 'shortcut' ),
 		onToggleShortcuts: () => setIsShortcutsOpen( ( isOpen ) => ! isOpen ),
 	} );
 
@@ -94,7 +124,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					unreadCount={ unreadCount }
 					isLoading={ isLoading }
 					tab={ tab }
-					onTabChange={ setTab }
+					onTabChange={ ( next ) => selectTab( next, 'click' ) }
 					search={ search }
 					onSearchChange={ setSearch }
 					isShortcutsOpen={ isShortcutsOpen }
@@ -107,8 +137,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 						siteId={ Number( siteId ) }
 						postId={ Number( postId ) }
 						conversation={ selected }
-						onPrevious={ onPrevious }
-						onNext={ onNext }
+						onPrevious={ goTo( previousIndex, 'button' ) }
+						onNext={ goTo( nextIndex, 'button' ) }
 					/>
 				) }
 			</HStack>

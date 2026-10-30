@@ -165,14 +165,11 @@ const HeaderPrice = ( { planSlug, visibleGridPlans }: HeaderPriceProps ) => {
 		coupon,
 		helpers,
 		showBillingDescriptionForIncreasedRenewalPrice,
-		isExperimentVariant,
 		showFeatureCheckmarks,
 	} = usePlansGridContext();
 
-	const pricingBadgeClassName = clsx( 'plans-grid-next-header-price__badge', {
-		'is-plan-differentiators-experiment-badge': isExperimentVariant,
-	} );
-	const showPricingBadgeTooltip = isExperimentVariant && showFeatureCheckmarks;
+	const pricingBadgeClassName = 'plans-grid-next-header-price__badge';
+	const showPricingBadgeTooltip = showFeatureCheckmarks;
 	const { isAnyPlanPriceDiscounted, setIsAnyPlanPriceDiscounted } = useHeaderPriceContext();
 	const {
 		current,

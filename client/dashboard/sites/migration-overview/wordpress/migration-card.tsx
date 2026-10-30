@@ -2,7 +2,7 @@ import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, error, pending, published } from '@wordpress/icons';
 import { ButtonStack } from '../../../components/button-stack';
-import { Card, CardBody } from '../../../components/card';
+import { Card, CardBody, CardFooter } from '../../../components/card';
 import { caution } from '../../../components/notice/icons';
 import { SectionHeader } from '../../../components/section-header';
 import './style.scss';
@@ -12,20 +12,22 @@ export function MigrationCard( {
 	description,
 	decoration,
 	actions,
-	footer,
+	secondaryAction,
+	note,
 	children,
 }: {
 	title: React.ReactNode;
 	description?: React.ReactNode;
 	decoration?: React.ReactNode;
 	actions?: React.ReactNode;
-	footer?: React.ReactNode;
+	secondaryAction?: React.ReactNode;
+	note?: React.ReactNode;
 	children?: React.ReactNode;
 } ) {
 	return (
 		<Card>
 			<CardBody>
-				<VStack spacing={ 6 }>
+				<VStack spacing={ 6 } className={ note ? 'wordpress-migration__above-note' : undefined }>
 					<VStack spacing={ 4 }>
 						<SectionHeader
 							title={ title }
@@ -41,9 +43,10 @@ export function MigrationCard( {
 							{ actions }
 						</ButtonStack>
 					) }
-					{ footer }
+					{ secondaryAction }
 				</VStack>
 			</CardBody>
+			{ note && <CardFooter className="wordpress-migration__note">{ note }</CardFooter> }
 		</Card>
 	);
 }
