@@ -85,7 +85,7 @@ export interface ImageData {
 
 // Extra options for submitting a message
 export interface SubmitOptions {
-	type?: ContentType | 'tool_result' | 'tool_results'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI)
+	type?: ContentType | 'tool_result' | 'tool_results' | 'command'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI), `command` for text the server acts on, such as `/approve 123` (hidden from UI and left out of later turns' history)
 	archived?: boolean;
 	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
@@ -654,6 +654,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			const isToolResults = options?.type === 'tool_results';
 			const isToolResult = options?.type === 'tool_result' || isToolResults;
+			const isCommand = options?.type === 'command';
+			const isHidden = isToolResult || isCommand;
 
 			// Validate before claiming the send lock — only the `finally` at
 			// the end of the send releases it, so a throw above that point
@@ -707,8 +709,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Capture timestamp once for consistency
 			const messageTimestamp = Date.now();
 
-			// Create user message immediately for UI (skipped for tool results)
-			if ( ! isToolResult ) {
+			// Create user message immediately for UI (skipped for hidden messages)
+			if ( ! isHidden ) {
 				const contentType = ( options?.type || 'text' ) as ContentType;
 				const promptSourcePart = options?.promptSource
 					? promptSourceDataPart( options.promptSource )
@@ -764,7 +766,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
-				const hasContentType = !! options?.type && ! isToolResult;
+				const hasContentType = !! options?.type && ! isHidden;
 				if ( options?.archived || hasContentType || options?.promptSource ) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
@@ -796,6 +798,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						options?.turnToolCalls,
 						messageOptions
 					);
+				} else if ( isCommand ) {
+					stream = agentManager.sendMessageStream( agentKey, message, {
+						...messageOptions,
+						excludeFromHistory: true,
+					} );
 				} else if ( isToolResult ) {
 					stream = agentManager.sendToolResult(
 						agentKey,

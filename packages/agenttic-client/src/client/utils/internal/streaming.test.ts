@@ -994,6 +994,37 @@ describe( 'parseSSEStream', () => {
 		expect( thrown ).toEqual( new Error( 'Streaming error: Terminal failure' ) );
 	} );
 
+	it( 'keeps the JSON-RPC error data on the thrown error', async () => {
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				id: 1,
+				error: {
+					code: -32000,
+					message: 'Already decided',
+					data: { code: 'approval_already_decided', state: 'declined' },
+				},
+				result: { id: 'task-1', status: { state: 'failed' }, final: true },
+			},
+		] );
+		let thrown: unknown;
+
+		try {
+			for await ( const update of parseSSEStream( stream ) ) {
+				void update;
+			}
+		} catch ( error ) {
+			thrown = error;
+		}
+
+		expect( thrown ).toBeInstanceOf( Error );
+		expect( ( thrown as Error ).message ).toBe( 'Streaming error: Already decided' );
+		expect( ( thrown as { data?: unknown } ).data ).toEqual( {
+			code: 'approval_already_decided',
+			state: 'declined',
+		} );
+	} );
+
 	describe( 'delta pacing', () => {
 		afterEach( () => {
 			vi.unstubAllGlobals();
