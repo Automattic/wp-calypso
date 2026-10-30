@@ -96,6 +96,13 @@ const testBuildTools = withUnitTestInfo(
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
+// wp-oxc-makepot's tests run on Vitest, outside the shared Jest projects.
+const testWpOxcMakepot = {
+	name: 'yarn',
+	args: 'workspace @automattic/wp-oxc-makepot test',
+	testId: 'test_wp_oxc_makepot',
+};
+
 const testWorkspaces = {
 	name: 'yarn',
 	args: 'workspaces foreach -A --verbose --parallel run storybook:start --ci --smoke-test',
@@ -129,6 +136,7 @@ try {
 		await runTask( testPackages );
 		await runTask( testServer );
 		await runTask( testBuildTools );
+		await runTask( testWpOxcMakepot );
 		await runTask( testWorkspaces );
 		await runTask( testApps );
 	} )();
