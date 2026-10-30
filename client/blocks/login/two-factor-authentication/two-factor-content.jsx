@@ -1,8 +1,7 @@
-import { Card } from '@automattic/components';
 import { localize } from 'i18n-calypso';
 import PushNotificationApprovalPoller from './push-notification-approval-poller';
 import SecurityKeyForm from './security-key-form';
-import TwoFactorActions from './two-factor-actions';
+import SecurityKeyUnsupported from './security-key-unsupported';
 import VerificationCodeForm from './verification-code-form';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
 
@@ -16,34 +15,16 @@ function TwoFactorContent( {
 	isGravPoweredClient,
 	translate,
 } ) {
-	if ( twoFactorAuthType === 'webauthn' && isBrowserSupported ) {
-		return (
+	if ( twoFactorAuthType === 'webauthn' ) {
+		return isBrowserSupported ? (
 			<div>
 				<SecurityKeyForm
 					onSuccess={ handleValid2FACode }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
 				/>
 			</div>
-		);
-	}
-
-	if ( twoFactorAuthType === 'webauthn' ) {
-		return (
-			<div className="two-factor-authentication__verification-code-form-wrapper">
-				<Card className="two-factor-authentication__verification-code-form">
-					<div className="security-key-form__help-text">
-						<p>
-							{ translate(
-								'This browser doesn’t support passkeys or security keys. Try a different browser to log in with one.'
-							) }
-						</p>
-					</div>
-				</Card>
-				<TwoFactorActions
-					twoFactorAuthType="webauthn"
-					switchTwoFactorAuthType={ switchTwoFactorAuthType }
-				/>
-			</div>
+		) : (
+			<SecurityKeyUnsupported switchTwoFactorAuthType={ switchTwoFactorAuthType } />
 		);
 	}
 
