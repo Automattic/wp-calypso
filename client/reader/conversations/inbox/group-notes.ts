@@ -16,6 +16,7 @@ export interface Conversation {
 	siteId: number;
 	postId: number;
 	title: string;
+	url?: string;
 	excerpt: string;
 	timestamp: number;
 	latestCommentId?: number;
@@ -35,6 +36,10 @@ const getPostTitle = ( note: Note ): string => {
 	}
 	return '';
 };
+
+const getPostUrl = ( note: Note ): string | undefined =>
+	note.subject?.flatMap( ( { ranges } ) => ranges ?? [] ).find( ( { type } ) => type === 'post' )
+		?.url;
 
 const getCommenter = ( note: Note ): Commenter | null => {
 	const userBlock = note.body?.find( ( block ) => block.type === 'user' );
@@ -100,6 +105,7 @@ export function groupNotesByPost( notes: Note[], currentUserId?: number | null )
 				siteId,
 				postId,
 				title: getPostTitle( note ),
+				url: getPostUrl( note ),
 				excerpt: note.subject?.[ 1 ]?.text ?? '',
 				timestamp: Date.parse( note.timestamp ),
 				latestCommentId: note.meta?.ids?.comment,

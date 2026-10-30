@@ -17,6 +17,10 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
 } ) );
 
+jest.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: jest.fn( () => ( { type: 'NOTICE_TEST' } ) ),
+} ) );
+
 jest.mock( '../conversation-list', () => ( {
 	ConversationList: ( props: {
 		conversations: { key: string }[];
@@ -64,6 +68,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationsInbox } from '..';
@@ -133,7 +138,7 @@ describe( 'ConversationsInbox', () => {
 
 		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
 
-		expect( markRead ).toHaveBeenCalledWith( [ 2 ] );
+		expect( markRead ).toHaveBeenCalledWith( [ 2 ], expect.anything() );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/200' );
 	} );
 
@@ -145,6 +150,16 @@ describe( 'ConversationsInbox', () => {
 
 		expect( markRead ).not.toHaveBeenCalled();
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+	} );
+
+	it( 'shows an error notice when marking as read fails', async () => {
+		const user = userEvent.setup();
+		markRead.mockImplementation( ( _ids, options ) => options.onError() );
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+
+		expect( errorNotice ).toHaveBeenCalledWith( 'Couldn’t mark as read. Try again.' );
 	} );
 
 	it( 'disables the previous button at the start of the list', () => {
@@ -167,7 +182,7 @@ describe( 'ConversationsInbox', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'previous' } ) );
 
-		expect( markRead ).toHaveBeenCalledWith( [ 1 ] );
+		expect( markRead ).toHaveBeenCalledWith( [ 1 ], expect.anything() );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' );
 	} );
 
@@ -201,7 +216,7 @@ describe( 'ConversationsInbox', () => {
 
 			await user.click( screen.getByRole( 'button', { name: '10-100' } ) );
 
-			expect( markRead ).toHaveBeenCalledWith( [ 1 ] );
+			expect( markRead ).toHaveBeenCalledWith( [ 1 ], expect.anything() );
 			expect( page.show ).not.toHaveBeenCalled();
 			expect( tracked( 'calypso_reader_conversations_inbox_conversation_opened' ) ).toEqual( [] );
 		} );

@@ -107,7 +107,7 @@ describe( 'ConversationList', () => {
 
 		await user.click( screen.getByRole( 'tab', { name: 'Your comments' } ) );
 
-		expect( screen.getByText( 'Conversations you commented on will show up here.' ) ).toBeVisible();
+		expect( screen.getByText( 'You haven’t commented anywhere yet' ) ).toBeVisible();
 	} );
 
 	it( 'filters conversations by search term', async () => {
@@ -152,7 +152,7 @@ describe( 'ConversationList', () => {
 	it( 'shows an empty state when there are no conversations', () => {
 		renderList( { conversations: [] } );
 
-		expect( screen.getByText( 'No conversations yet.' ) ).toBeVisible();
+		expect( screen.getByText( 'Conversations will appear here' ) ).toBeVisible();
 	} );
 
 	it( 'lists the keyboard shortcuts from the header button', async () => {

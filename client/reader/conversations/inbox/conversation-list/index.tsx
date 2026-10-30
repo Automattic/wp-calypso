@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo } from 'react';
+import { useMemo, type ReactNode } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
 import { ConversationListItem, type OpenSource } from './list-item';
@@ -23,6 +23,8 @@ interface Props {
 	conversations: Conversation[];
 	unreadCount: number;
 	isLoading: boolean;
+	isError?: boolean;
+	onRetry?: () => void;
 	tab: InboxTab;
 	onTabChange: ( tab: InboxTab ) => void;
 	search: string;
@@ -42,6 +44,8 @@ export function ConversationList( {
 	conversations,
 	unreadCount,
 	isLoading,
+	isError,
+	onRetry,
 	tab,
 	onTabChange,
 	search,
@@ -58,6 +62,23 @@ export function ConversationList( {
 }: Props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+
+	const emptyStates = {
+		all: {
+			title: translate( 'Conversations will appear here' ),
+			description: translate(
+				'Conversations on your posts and posts you follow or comment on appear here.'
+			),
+		},
+		unread: {
+			title: translate( 'You’re all caught up' ),
+			description: translate( 'There are no new conversations.' ),
+		},
+		yours: {
+			title: translate( 'You haven’t commented anywhere yet' ),
+			description: translate( 'Comments you leave will appear here.' ),
+		},
+	};
 
 	const sections = useMemo( () => {
 		const today = moment().startOf( 'day' );
@@ -124,12 +145,22 @@ export function ConversationList( {
 			) }
 			<div className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }>
 				{ isLoading && <Spinner /> }
-				{ ! isLoading && conversations.length === 0 && (
-					<Text as="p" color="var(--color-text-subtle)" className="conversations-inbox__empty">
-						{ tab === 'yours'
-							? translate( 'Conversations you commented on will show up here.' )
-							: translate( 'No conversations yet.' ) }
-					</Text>
+				{ ! isLoading && isError && (
+					<ListMessage
+						title={ translate( 'Couldn’t load conversations' ) }
+						description={ translate( 'Something went wrong while loading your conversations.' ) }
+					>
+						<Button __next40pxDefaultSize variant="secondary" onClick={ onRetry }>
+							{ translate( 'Retry' ) }
+						</Button>
+					</ListMessage>
+				) }
+				{ ! isLoading && ! isError && conversations.length === 0 && (
+					<ListMessage
+						{ ...( search.trim()
+							? { description: translate( 'No conversations match your search.' ) }
+							: emptyStates[ tab ] ) }
+					/>
 				) }
 				{ sections.map( ( { label, items } ) => (
 					<section key={ label }>
@@ -158,6 +189,30 @@ export function ConversationList( {
 					</section>
 				) ) }
 			</div>
+		</VStack>
+	);
+}
+
+function ListMessage( {
+	title,
+	description,
+	children,
+}: {
+	title?: string;
+	description: string;
+	children?: ReactNode;
+} ) {
+	return (
+		<VStack spacing={ 3 } alignment="center" className="conversations-inbox__message">
+			{ title && (
+				<Heading level={ 2 } size={ 15 } weight={ 600 } color="inherit">
+					{ title }
+				</Heading>
+			) }
+			<Text as="p" color="var(--color-text-subtle)">
+				{ description }
+			</Text>
+			{ children }
 		</VStack>
 	);
 }
