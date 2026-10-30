@@ -11,6 +11,15 @@
 			color: var( --color-text );
 		}
 	}
+
+	.conversations-inbox.is-narrow > & {
+		flex: 1;
+		border-inline-end: 0;
+	}
+
+	.conversations-inbox.is-showing-detail > & {
+		display: none;
+	}
 }
 
 .conversations-inbox__tabs {
