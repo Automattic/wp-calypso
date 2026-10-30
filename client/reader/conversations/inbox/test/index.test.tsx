@@ -190,6 +190,11 @@ describe( 'ConversationsInbox', () => {
 		rerender( <ConversationsInbox siteId="10" postId="200" /> );
 
 		expect( screen.getByText( 'New: 2001' ) ).toBeVisible();
+
+		rerender( <ConversationsInbox siteId="10" postId="100" /> );
+		rerender( <ConversationsInbox siteId="10" postId="200" /> );
+
+		expect( screen.getByText( 'New: none' ) ).toBeVisible();
 	} );
 
 	describe( 'Tracks', () => {

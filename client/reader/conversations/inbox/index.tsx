@@ -56,6 +56,13 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 
 	// Marking a conversation read clears its unread comments, so keep the ones it had when it was opened.
 	const [ opened, setOpened ] = useState< { key: string; commentIds: number[] } >();
+	const [ previousKey, setPreviousKey ] = useState( selectedKey );
+	if ( selectedKey !== previousKey ) {
+		setPreviousKey( selectedKey );
+		if ( opened && opened.key !== selectedKey ) {
+			setOpened( undefined );
+		}
+	}
 	const newCommentIds =
 		opened && opened.key === selectedKey ? opened.commentIds : selected?.unreadCommentIds;
 
@@ -71,7 +78,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 
 	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
 		const unreadCount = conversation.unreadNoteIds.length;
-		if ( conversation.key !== selectedKey || conversation.key !== opened?.key ) {
+		if ( conversation.key !== opened?.key ) {
 			setOpened( { key: conversation.key, commentIds: conversation.unreadCommentIds } );
 		}
 		if ( unreadCount ) {
