@@ -1,23 +1,43 @@
-.wpnc__keyboard-shortcuts-popover {
-	width: min-content;
+@use "calypso/assets/stylesheets/shared/mixins/dark-theme" as ui-mixins;
 
-	// The panel is focused on mount to anchor the popover's focus trap, but
-	// it's just an informational list — don't show a focus outline on it.
-	&:focus {
-		outline: none;
+.wpnc__keyboard-shortcuts {
+	--wp-ui-popover-z-index: 1;
+	display: flex;
+
+	@include ui-mixins.when-dark-theme {
+		--wpds-color-background-surface-neutral-strong: var(--dashboard-surface__background-color);
+		--wpds-color-foreground-content-neutral: var(--dashboard__text-color);
+		--wpds-color-stroke-surface-neutral: var(--dashboard-surface__border-color);
 	}
 
-	.shortcut {
+	.wpnc__keyboard-shortcuts-title {
+		margin: 0 0 8px;
+		font-size: var(--wpds-typography-font-size-md);
+	}
+}
+
+.wpnc__keyboard-shortcuts-list {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	li {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		min-height: 32px;
+		white-space: nowrap;
+	}
+
+	kbd {
+		box-sizing: border-box;
 		border: 1px solid #ccc;
 		border-radius: 4px;
 		min-width: 25px;
-		min-height: 25px;
+		line-height: 23px;
 		text-align: center;
-		margin-right: 5px;
-	}
-
-	.shortcut.letter {
+		font-family: inherit;
 		font-weight: 600;
-		line-height: 25px;
+		background: none;
 	}
 }
