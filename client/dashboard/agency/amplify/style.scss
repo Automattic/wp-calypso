@@ -34,20 +34,6 @@
 	margin-block-start: 0;
 }
 
-.dashboard-amplify-results
-	.dataviews-view-table
-	tbody
-	tr:not( .is-selected ):is( :hover, :focus-within ) {
-	background-color: color-mix( in srgb, var( --color-text ) 3%, var( --color-surface ) );
-}
-
-// Two-line report rows need a taller preview than the 32px DataViews default.
-.dashboard-amplify-reports
-	.dataviews-view-table.has-media-aspect-ratio
-	.dataviews-column-primary__media {
-	height: 48px;
-}
-
 /* Runs across the empty score cells of a failed row instead of wrapping in the site column. */
 .dashboard-amplify-report-failure {
 	width: 0;
