@@ -5,6 +5,8 @@ import {
 	Button,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Badge } from '@wordpress/ui';
+import clsx from 'clsx';
 import { addMailboxRoute } from '../../../app/router/emails';
 import { PriceDisplay } from '../../../components/price-display';
 import { Text } from '../../../components/text';
@@ -186,6 +188,8 @@ export function TitanPlanGrid( {
 		},
 	];
 
+	const hasAnyFreeTrial = plans.some( ( plan ) => plan.hasFreeTrial );
+
 	// All tiers stay visible when changing plan; lower tiers offer a downgrade.
 	const isLowerTier = ( tier: TitanPlanTier ) => isLowerTitanTier( tier, currentTier );
 
@@ -287,6 +291,21 @@ export function TitanPlanGrid( {
 							<Text className="email-titan-plan-description">{ details.description }</Text>
 						</VStack>
 						<VStack spacing={ 2 } justify="flex-start" className="email-titan-plan-pricing">
+							{ hasAnyFreeTrial && (
+								<Badge
+									intent="stable"
+									className={ clsx( 'email-titan-plan-trial', {
+										'is-hidden': ! plan.hasFreeTrial,
+									} ) }
+									aria-hidden={ ! plan.hasFreeTrial }
+								>
+									{ sprintf(
+										/* translators: %d is the number of free trial months. */
+										__( '%d month free trial' ),
+										plan.trialMonths
+									) }
+								</Badge>
+							) }
 							<HStack
 								alignment="topLeft"
 								spacing={ 1 }
@@ -313,15 +332,6 @@ export function TitanPlanGrid( {
 									? __( 'per month, per mailbox, billed every 12 months.' )
 									: __( 'per month, per mailbox, billed monthly.' ) }
 							</Text>
-							{ plan.hasFreeTrial && (
-								<div className="email-provider-trial">
-									{ sprintf(
-										/* translators: %d is the number of free trial months. */
-										__( '%d month free trial' ),
-										plan.trialMonths
-									) }
-								</div>
-							) }
 							{ ! available && (
 								<Text variant="muted">{ __( 'Not available for this domain name.' ) }</Text>
 							) }
