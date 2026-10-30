@@ -1,0 +1,41 @@
+// DataViews paints its own surface; its public theming variable lets the card be the
+// surface instead, so the card's rounded border shows at the bottom.
+.a4a-news {
+	--wp-dataviews-color-background: transparent;
+}
+
+.a4a-news-logo {
+	flex-shrink: 0;
+	display: block;
+	border-radius: 4px;
+}
+
+// Text columns beside a logo take the remaining width, so long words wrap.
+.a4a-news-text {
+	flex: 1;
+	min-width: 0;
+	text-wrap: balance;
+}
+
+// The summary fills the row, beside the card's own toggle.
+.a4a-news-summary {
+	flex: 1;
+	min-width: 0;
+}
+
+// The date column: right-aligned, so dates scan down the list without competing with the logo.
+.a4a-news-date {
+	display: flex;
+	flex-direction: column;
+	flex-shrink: 0;
+	align-items: flex-end;
+	min-width: 72px;
+	text-align: end;
+}
+
+// The open row's description and actions line up with its text, past the logo.
+.a4a-news-row-panel {
+	margin-block-start: 16px;
+	padding-inline-start: 52px;
+	text-wrap: pretty;
+}
