@@ -242,7 +242,7 @@ describe( 'getCreditsBackNotice', () => {
 describe( 'getCreditsRefusalNotice', () => {
 	it( 'titles the refused message and offers the credits pack as its link', () => {
 		const action = { label: 'Add credits', href: TOP_UP_URL };
-		expect( getCreditsRefusalNotice( 'top_up', action ) ).toEqual( {
+		expect( getCreditsRefusalNotice( 'top_up', action, false ) ).toEqual( {
 			icon: false,
 			title: 'Your message wasn’t sent',
 			message: 'Add credits to keep working.',
@@ -253,18 +253,26 @@ describe( 'getCreditsRefusalNotice', () => {
 
 	it( 'offers the upgrade with matching words', () => {
 		const action = { label: 'Upgrade', href: UPGRADE_URL };
-		expect( getCreditsRefusalNotice( 'upgrade', action ).message ).toBe(
+		expect( getCreditsRefusalNotice( 'upgrade', action, false ).message ).toBe(
 			'Upgrade to keep working.'
 		);
 	} );
 
 	it( 'gives someone who can’t buy the title alone', () => {
-		expect( getCreditsRefusalNotice( 'top_up', undefined ) ).toEqual( {
+		expect( getCreditsRefusalNotice( 'top_up', undefined, false ) ).toEqual( {
 			icon: false,
 			title: 'Your message wasn’t sent',
 			message: '',
 			action: undefined,
 			dismissible: false,
+		} );
+	} );
+
+	it( 'titles a turn that showed output as not completed, with the same words and link', () => {
+		const action = { label: 'Add credits', href: TOP_UP_URL };
+		expect( getCreditsRefusalNotice( 'top_up', action, true ) ).toEqual( {
+			...getCreditsRefusalNotice( 'top_up', action, false ),
+			title: 'Your request didn’t complete',
 		} );
 	} );
 } );

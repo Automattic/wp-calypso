@@ -2732,6 +2732,16 @@ describe( 'refusal code', () => {
 			await refuse( { ...exhausted( true ), plan_tier } );
 			return view;
 		};
+		const typedQuestion = {
+			id: 'q',
+			role: 'user',
+			content: [ { type: 'text', text: 'Make it shorter' } ],
+		};
+		const agentReply = {
+			id: 'r',
+			role: 'agent',
+			content: [ { type: 'text', text: 'Shortening the intro.' } ],
+		};
 
 		it.each( [
 			[ 'business', 'Add credits', ADD_CREDITS_URL, 'Add credits to keep working.' ],
@@ -2755,6 +2765,55 @@ describe( 'refusal code', () => {
 				} );
 			}
 		);
+
+		it.each( [
+			[ 'a reply', agentReply ],
+			[
+				'a tool’s chat message',
+				{
+					id: 't',
+					role: 'agent',
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify( {
+								tool_id: 'big_sky__apply_block_edits',
+								data: { summary: 'Shortened the intro.' },
+							} ),
+						},
+					],
+				},
+			],
+		] )( 'says the request didn’t complete after %s in the same turn', async ( _, output ) => {
+			mockMessages = [ typedQuestion, output ];
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.refusalNotice?.title ).toBe( 'Your request didn’t complete' );
+		} );
+
+		it.each( [
+			[
+				'no reply after the latest question',
+				[ { ...typedQuestion, id: 'q0' }, agentReply, typedQuestion ],
+			],
+			[ 'no typed question', [ agentReply ] ],
+		] )( 'says the message wasn’t sent with %s', async ( _, messages ) => {
+			mockMessages = messages;
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+		} );
+
+		it( 'doesn’t count a context-only agent message as the turn’s output', async () => {
+			mockMessages = [
+				typedQuestion,
+				{
+					id: 'c',
+					role: 'agent',
+					content: [ { type: 'context', text: 'Context for the model.' } ],
+				},
+			];
+			const { result } = await openThenRefuse( 'business' );
+			expect( result.current.refusalNotice?.title ).toBe( 'Your message wasn’t sent' );
+		} );
 
 		it( 'keeps the composer’s zero notice and its button while the card shows', async () => {
 			const { result } = await openThenRefuse( 'business' );
@@ -2965,12 +3024,14 @@ describe( 'refusal code', () => {
 				}
 			);
 
-			it( 'keeps the card, and its link, while a read fails', async () => {
+			it( 'keeps the card, its title and its link, while a read fails', async () => {
+				mockMessages = [ typedQuestion, agentReply ];
 				const { result } = await openThenRefuse( 'business' );
 				const card = result.current.refusalNotice;
 				await read( { ok: false, json: async () => ( {} ) } );
 				expect( result.current.trailingActions ).toBeUndefined();
 				expect( result.current.refusalNotice ).toBe( card );
+				expect( card?.title ).toBe( 'Your request didn’t complete' );
 				expect( card?.action?.label ).toBe( 'Add credits' );
 			} );
 

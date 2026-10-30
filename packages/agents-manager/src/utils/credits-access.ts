@@ -193,13 +193,14 @@ export function getCreditsOutNotice(
 }
 
 /**
- * The card in the thread for a reply refused for no credits, with the purchase as its link
- * and words that match it. Someone who can't buy gets the title alone; the composer's
- * notice says who may buy.
+ * The card in the thread for a reply refused for no credits, with the purchase as its link and
+ * words that match it. Output in the turn means it isn't called unsent: an edit may have landed.
+ * Someone who can't buy gets the title alone; the composer's notice says who may buy.
  */
 export function getCreditsRefusalNotice(
 	purchaseKind: CreditsPurchaseKind | undefined,
-	action: CreditsPurchaseAction | undefined
+	action: CreditsPurchaseAction | undefined,
+	hasTurnOutput: boolean
 ): NoticeConfig {
 	let message = '';
 	if ( action ) {
@@ -210,7 +211,9 @@ export function getCreditsRefusalNotice(
 	}
 	return {
 		icon: false,
-		title: __( 'Your message wasn’t sent', __i18n_text_domain__ ),
+		title: hasTurnOutput
+			? __( 'Your request didn’t complete', __i18n_text_domain__ )
+			: __( 'Your message wasn’t sent', __i18n_text_domain__ ),
 		message,
 		action,
 		dismissible: false,
