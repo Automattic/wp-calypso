@@ -23,10 +23,12 @@ jest.mock( '../conversation-list', () => ( {
 		selectedKey?: string;
 		onSelect: ( conversation: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
+		onMarkAllRead: () => void;
 		onDensityChange: ( density: string ) => void;
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
+			<button onClick={ props.onMarkAllRead }>Mark all as read</button>
 			{ props.conversations.map( ( conversation ) => (
 				<button key={ conversation.key } onClick={ () => props.onSelect( conversation, 'click' ) }>
 					{ conversation.key }
@@ -241,6 +243,19 @@ describe( 'ConversationsInbox', () => {
 
 			expect( tracked( 'calypso_reader_conversations_inbox_conversation_opened' ) ).toEqual( [
 				{ source: 'shortcut', unread_count: 1 },
+			] );
+		} );
+
+		it( 'marks every unread note as read in one call and records the count', async () => {
+			const user = userEvent.setup();
+			renderInbox( { siteId: '10', postId: '100' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Mark all as read' } ) );
+
+			expect( markRead ).toHaveBeenCalledTimes( 1 );
+			expect( markRead ).toHaveBeenCalledWith( [ 1, 2 ] );
+			expect( tracked( 'calypso_reader_conversations_inbox_marked_all_read' ) ).toEqual( [
+				{ count: 2 },
 			] );
 		} );
 

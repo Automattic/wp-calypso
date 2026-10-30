@@ -52,6 +52,13 @@
 	}
 }
 
+.conversations-inbox__mark-read.components-button.is-link {
+	align-self: flex-start;
+	margin: 0 16px 12px;
+	font-size: 0.875rem;
+	color: var( --color-text );
+}
+
 .conversations-inbox__list {
 	flex: 1;
 	overflow-y: auto;
