@@ -1,5 +1,9 @@
 import type { NotificationNote as Note } from '@automattic/api-core';
 
+// One timestamp per module load, so notes built in the same fixture never differ by a
+// millisecond and the stable sort in groupNotesByPost keeps them in fixture order.
+const DEFAULT_TIMESTAMP = new Date().toISOString();
+
 const POST_TITLE_SUBJECT = ( name: string, title: string ) => {
 	const text = `${ name } commented on ${ title }`;
 	return {
@@ -23,7 +27,7 @@ export const makeNote = ( {
 	commenter = 'Ana',
 	avatar = `https://example.com/${ commenter }.png`,
 	excerpt = 'A comment excerpt',
-	timestamp = new Date().toISOString(),
+	timestamp = DEFAULT_TIMESTAMP,
 	read = 0,
 	...overrides
 }: Partial< Note > & {
