@@ -1,7 +1,8 @@
 import { DomainSubtype, Domain } from '@automattic/api-core';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { Link } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { domainNameServersRoute } from '../../app/router/domains';
 import { siteDomainsRoute } from '../../app/router/sites';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -16,6 +17,8 @@ export const DomainForwardingNotice = ( {
 	domainName,
 	domainData,
 }: DomainForwardingNoticeProps ) => {
+	const hasEnTranslation = useHasEnTranslation();
+
 	if ( ! domainData?.has_wpcom_nameservers ) {
 		if ( domainData.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 			return (
@@ -46,23 +49,36 @@ export const DomainForwardingNotice = ( {
 	} else if ( domainData?.primary_domain && ! domainData?.is_domain_only_site ) {
 		return (
 			<Notice variant="info">
-				{ createInterpolateElement(
-					sprintf(
-						/* translators: %s is the domain name */
-						__(
-							'%s is your site’s main address, so only a subdomain can be forwarded. <link>Set a new primary site address</link> to forward the whole name.'
-						),
-						domainName
-					),
-					{
-						link: (
-							<Link
-								to={ siteDomainsRoute.fullPath }
-								params={ { siteSlug: domainData?.site_slug } }
-							/>
-						),
-					}
-				) }
+				{ hasEnTranslation(
+					'<domainName/> is your site’s main address, so only a subdomain can be forwarded. <link>Set a new primary site address</link> to forward the whole name.'
+				)
+					? createInterpolateElement(
+							__(
+								'<domainName/> is your site’s main address, so only a subdomain can be forwarded. <link>Set a new primary site address</link> to forward the whole name.'
+							),
+							{
+								domainName: <>{ domainName }</>,
+								link: (
+									<Link
+										to={ siteDomainsRoute.fullPath }
+										params={ { siteSlug: domainData?.site_slug } }
+									/>
+								),
+							}
+						)
+					: createInterpolateElement(
+							__(
+								'This domain is your site’s main address. You can forward subdomains or <link>set a new primary site address</link> to forward the root domain.'
+							),
+							{
+								link: (
+									<Link
+										to={ siteDomainsRoute.fullPath }
+										params={ { siteSlug: domainData?.site_slug } }
+									/>
+								),
+							}
+						) }
 			</Notice>
 		);
 	}
