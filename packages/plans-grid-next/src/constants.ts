@@ -17,12 +17,11 @@ export const EFFECTIVE_TERMS_LIST = < const >[
  * Intents whose feature list is curated for one product surface: a newsletter site, a P2 workspace,
  * a Woo Express trial, the hosting funnel.
  *
- * The pricing-differentiation feature lists (`useVar42NoAiFeatures`,
- * `usePlansGridRedesignFeatures`) are the default presentation for a site, so they are checked
- * before every intent branch in usePlanFeaturesForGridPlans. Without this list they would shadow
- * the curated lists entirely, leaving the choice of grid up to how old the site is -- a site with
- * the gating flag would see the differentiation list on the P2 plans page while an older workspace
- * saw the P2 one. An intent is a deliberate statement about the surface, so it wins.
+ * The pricing-differentiation feature lists (including the `usePlansGridRedesignFeatures` one) are
+ * the default presentation for a site, so they are checked before every intent branch in
+ * usePlanFeaturesForGridPlans. Without this list they would shadow the curated lists entirely, and
+ * the P2 plans page would show the differentiation list instead of the P2 one. An intent is a
+ * deliberate statement about the surface, so it wins.
  *
  * `plans-blog-onboarding` is included for completeness: no flow produces it today (see the note on
  * PlansIntent), but its branch is still wired up.
