@@ -1,4 +1,5 @@
 import { legacyContactsQuery } from '@automattic/api-queries';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -6,6 +7,7 @@ import {
 	Button,
 	Icon,
 } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { people } from '@wordpress/icons';
 import { useState } from 'react';
@@ -33,8 +35,14 @@ export default function SecurityLegacyContact() {
 				<PageHeader
 					prefix={ <Breadcrumbs length={ 2 } /> }
 					title={ __( 'Legacy contact' ) }
-					description={ __(
-						'A legacy contact is someone you trust to have access to your account after your death.'
+					description={ createInterpolateElement(
+						__(
+							'A legacy contact is someone you trust to have access to your account after your death. <link>Learn more</link>.'
+						),
+						{
+							// TODO: Replace with the docs link once available.
+							link: <a href={ localizeUrl( 'https://wordpress.com/support/legacy-contact/' ) } />,
+						}
 					) }
 				/>
 			}
