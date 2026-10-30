@@ -11,7 +11,6 @@ import {
 	isRemoved,
 	mightStillAutoRenew,
 } from '../../utils/purchase';
-import { getPlanStorageInGb } from './plan-storage';
 import type { Purchase } from '@automattic/api-core';
 
 export type PlanExpiryUrgency = 'info' | 'warning' | 'error';
@@ -93,18 +92,14 @@ interface ResolvedNotice extends PlanExpiryNoticeContent {
  * not a gap to fill with a closely-related message.
  *
  * This function is also where the set of products the notice covers is
- * decided: in practice the first two checks below narrow it to Personal,
- * Premium, Business and Commerce, in every billing term. Trials, Jetpack, Woo,
- * Akismet, domains and the free plan are all excluded because they appear in
- * neither lookup. Adding a new plan tier means adding it to both.
+ * decided: in practice the first check below narrows it to Personal, Premium,
+ * Business and Commerce, in every billing term, because only those have a name
+ * in `getPlanNames()`. A new plan tier gets the notice once it is added there.
  */
 export function isEligibleForPlanExpiryNotice( purchase: Purchase ): boolean {
 	return Boolean(
 		// Names the plan for the copy, and covers exactly the four paid tiers.
 		getPlanName( purchase ) &&
-		// The copy always quotes a storage figure, so a plan we have no number
-		// for cannot be described. Doubles as the same allowlist.
-		getPlanStorageInGb( purchase.product_slug ) !== null &&
 		// The copy is all about a site losing plan features, so require the
 		// purchase to actually be a WordPress.com plan and not merely carry a
 		// plan-shaped product slug.
@@ -212,7 +207,8 @@ function resolveNotice(
 ): ResolvedNotice | null {
 	const { locale, renewReturnUrl } = options;
 	const planName = getPlanName( purchase ) as string;
-	const storageGb = getPlanStorageInGb( purchase.product_slug ) as number;
+	// The server sends storage for every WordPress.com plan.
+	const storageGb = purchase.advertised_total_upload_space_in_gb as number;
 	const canAutoRenew = mightStillAutoRenew( purchase );
 	const daysUntilExpiry = getCalendarDaysUntil( new Date( purchase.expiry_date ) );
 	const expiryDate = formatDate( new Date( purchase.expiry_date ), locale ?? 'en', {
@@ -391,7 +387,7 @@ function graceNotice(
 	{ viewOtherPlansUrl, renewReturnUrl, scope }: PlanExpiryNoticeOptions
 ): ResolvedNotice {
 	const planName = getPlanName( purchase ) as string;
-	const storageGb = getPlanStorageInGb( purchase.product_slug ) as number;
+	const storageGb = purchase.advertised_total_upload_space_in_gb as number;
 	// Note that `mightStillAutoRenew` is already false once the final
 	// auto-renewal attempt has passed, so those purchases get the "can't
 	// auto-renew" wording on their own.
