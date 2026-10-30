@@ -15,7 +15,8 @@ import { Text } from '../../../components/text';
 import { TextBlur } from '../../../components/text-blur';
 import { TextSkeleton } from '../../../components/text-skeleton';
 import { wpcomLink } from '../../../utils/link';
-import { WPCOM_CREATOR_PLAN_SLUG } from '../lib/wpcom-hosting';
+import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
+import { getLicenseCountText } from '../products/lib/cart-licenses';
 import { getTermSuffix } from '../products/lib/product-pricing';
 import { getProductTitle } from '../products/lib/product-title';
 import type { CartLine } from '../products/use-cart-lines';
@@ -150,9 +151,23 @@ export default function ReferralSummary( {
 								justify="space-between"
 								spacing={ 3 }
 							>
-								<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
+								<HStack spacing={ 1 } justify="flex-start" alignment="top" expanded={ false }>
 									<Icon icon={ check } size={ 16 } className="referral-checkout__line-check" />
-									<Text>{ getLineName( product, item.quantity ) }</Text>
+									<VStack spacing={ 0 }>
+										<Text>{ getLineName( product, priceInfo.isFree ? item.quantity : 1 ) }</Text>
+										{ ! priceInfo.isFree && item.quantity > 1 && (
+											<Text variant="muted" size={ 12 }>
+												<TextBlur isBlurred={ ! isTotalReady }>
+													{ getLicenseCountText( {
+														quantity: item.quantity,
+														unitPrice:
+															formatCurrency( subtotal / item.quantity, currency ) + suffix,
+														isSite: product.family_slug === WPCOM_HOSTING_FAMILY_SLUG,
+													} ) }
+												</TextBlur>
+											</Text>
+										) }
+									</VStack>
 								</HStack>
 								<Text>
 									<TextBlur isBlurred={ ! isTotalReady }>
