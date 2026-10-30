@@ -134,18 +134,6 @@ export function generateFlows( {
 			},
 		},
 		{
-			name: 'import',
-			steps: [ userSocialStep, 'domains', 'plans-import' ],
-			destination: ( dependencies ) => `/setup/site-migration?siteSlug=${ dependencies.siteSlug }`,
-			description: 'Beginning of the flow to import content',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			get pageTitle() {
-				return translate( 'Import' );
-			},
-			hideProgressIndicator: true,
-		},
-		{
 			name: 'onboarding-with-email',
 			steps: [ userSocialStep, 'mailbox-domain', 'mailbox', 'mailbox-plan' ],
 			destination: getEmailSignupFlowDestination,

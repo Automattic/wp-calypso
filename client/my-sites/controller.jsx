@@ -132,7 +132,7 @@ export function renderRebloggingEmptySites( context ) {
 		{
 			blog_post: context.query?.url,
 			// Keeps reblog signups separable from the rest of onboarding in its Tracks events.
-			ref: 'reblog',
+			flow: 'reblogging',
 		},
 		'/setup/onboarding'
 	);
