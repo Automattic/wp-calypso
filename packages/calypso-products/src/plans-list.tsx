@@ -943,6 +943,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
+		FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_SUPPORT,
 		FEATURE_ISOLATED_INFRA,
@@ -955,6 +956,7 @@ const getPlanPersonalDetails = (): IncompleteWPcomPlan => ( {
 		FEATURE_AD_FREE_EXPERIENCE,
 		FEATURE_FAST_DNS,
 		FEATURE_PAYMENT_TRANSACTION_FEES_8,
+		FEATURE_COMMISSION_FEE_WOO_FEATURES,
 		FEATURE_PREMIUM_THEMES,
 		FEATURE_SUPPORT_FROM_EXPERTS, // Shows "Free support" in experiment variant
 		FEATURE_ISOLATED_INFRA,
@@ -1270,9 +1272,6 @@ const getPlanEcommerceDetails = (): IncompleteWPcomPlan => ( {
 				: i18n.translate( 'All premium themes' ),
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0, {
-				numberFormatOptions: { style: 'percent' },
-			} ),
-			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
 			[ FEATURE_SUPPORT ]: isExperimentVariant
@@ -1768,6 +1767,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_CONNECT_ANALYTICS,
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			FEATURE_SUPPORT,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_PLUGINS_THEMES,
@@ -1788,6 +1788,7 @@ const getPlanPremiumDetails = (): IncompleteWPcomPlan => ( {
 			FEATURE_STYLE_CUSTOMIZATION,
 			FEATURE_GUIDED_WEBSITE_BUILDER,
 			FEATURE_PAYMENT_TRANSACTION_FEES_4,
+			FEATURE_COMMISSION_FEE_WOO_FEATURES,
 			FEATURE_ISOLATED_INFRA,
 			FEATURE_AI_ASSISTANT,
 			FEATURE_BUILT_IN_SITE_ASSISTANT,
@@ -2146,9 +2147,6 @@ const getPlanBusinessDetails = (): IncompleteWPcomPlan => ( {
 			[ FEATURE_SHARES_SOCIAL_MEDIA_JP ]: i18n.translate( 'Unlimited shares' ),
 			[ FEATURE_STORE_DESIGN ]: i18n.translate( 'Available with plugins' ),
 			[ FEATURE_COMMISSION_FEE_STANDARD_FEATURES ]: formatNumber( 0.02, {
-				numberFormatOptions: { style: 'percent' },
-			} ),
-			[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: formatNumber( 0, {
 				numberFormatOptions: { style: 'percent' },
 			} ),
 			[ FEATURE_SUPPORT ]: isExperimentVariant

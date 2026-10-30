@@ -1791,9 +1791,10 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_COMMISSION_FEE_WOO_FEATURES ]: {
 		getSlug: () => FEATURE_COMMISSION_FEE_WOO_FEATURES,
-		getTitle: () =>
+		getTitle: () => i18n.translate( 'WooCommerce payment features (fees vary by provider)' ),
+		getDescription: () =>
 			i18n.translate(
-				'Transaction fee for standard WooCommerce payments (+ standard processing\u00A0fee)'
+				'Sell and take payments with WooCommerce on any paid plan. Your payment provider, like WooPayments, Stripe or PayPal, charges its own fees, which vary by country, currency and payment method.'
 			),
 	},
 	[ FEATURE_PAYMENT_TRANSACTION_FEES_10 ]: {
