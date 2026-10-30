@@ -384,7 +384,7 @@ function ScoreCategories() {
 						key={ type }
 						aria-labelledby={ `amplify-rubric-${ type }` }
 					>
-						<Heading id={ `amplify-rubric-${ type }` } level={ 3 }>
+						<Heading id={ `amplify-rubric-${ type }` } level={ 3 } size={ 20 } lineHeight="27px">
 							{ PERSPECTIVES[ type ].title }
 						</Heading>
 						<p>
@@ -525,7 +525,9 @@ export default function AmplifyOverviewStory() {
 				<div className="dashboard-amplify-story__faq-list">
 					{ FAQS.map( ( faq ) => (
 						<div className="dashboard-amplify-story__faq-item" key={ faq.id }>
-							<Heading level={ 3 }>{ faq.question }</Heading>
+							<Heading level={ 3 } size={ 18 } weight={ 600 } lineHeight="25px">
+								{ faq.question }
+							</Heading>
 							<p>{ faq.answer }</p>
 						</div>
 					) ) }
