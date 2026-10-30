@@ -282,10 +282,12 @@ export default function CartMenu( {
 															const quantity = parseInt( String( value ), 10 );
 															// An emptied field is still being typed in; Remove takes the line out.
 															if ( ! Number.isNaN( quantity ) ) {
-																onSetQuantity?.(
-																	item,
-																	Math.min( maxQuantity, Math.max( 1, quantity ) )
+																const licenses = Math.min( maxQuantity, Math.max( 1, quantity ) );
+																recordTracksEvent(
+																	'calypso_a4a_marketplace_checkout_set_item_quantity',
+																	{ product: item.slug, quantity: licenses }
 																);
+																onSetQuantity?.( item, licenses );
 															}
 														} }
 													/>
