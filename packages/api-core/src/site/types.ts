@@ -123,6 +123,8 @@ export interface Site {
 	site_migration: {
 		type?: 'wordpress' | 'blogvault' | 'assisted';
 		status_v2?: 'pending' | 'started' | 'in_progress' | 'completed';
+		source_domain?: string;
+		completed_at?: number | null; // Unix timestamp (seconds)
 		migration_status?: string;
 		in_progress: boolean;
 		is_complete: boolean;

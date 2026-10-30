@@ -342,6 +342,7 @@ describe( 'WordPressMigration', () => {
 		await waitFor( () =>
 			expect( router.state.location.pathname ).toBe( '/sites/example.wordpress.com' )
 		);
+		expect( router.state.location.search ).toEqual( { migration: 'completed' } );
 	} );
 
 	it( 'still says a migration is underway for a status it doesn’t know', async () => {

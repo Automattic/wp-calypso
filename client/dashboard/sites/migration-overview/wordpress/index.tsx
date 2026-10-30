@@ -93,7 +93,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		}
 
 		if ( isSiteUnlocked ) {
-			navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug }, replace: true } );
+			navigate( {
+				to: '/sites/$siteSlug',
+				params: { siteSlug: site.slug },
+				search: { migration: 'completed' },
+				replace: true,
+			} );
 			return;
 		}
 
