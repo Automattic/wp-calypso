@@ -1,8 +1,8 @@
 import { startAmplifyReportMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
+	Button,
 	Icon,
-	Spinner,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -261,14 +261,16 @@ export default function AmplifyReportCreator( {
 								invalid={ !! urlError }
 								portalSuggestions={ isModal }
 							/>
-							<button
+							<Button
+								__next40pxDefaultSize
 								type="submit"
-								className="components-button is-primary dashboard-amplify-overview__submit"
-								aria-busy={ start.isPending }
+								variant="primary"
+								isBusy={ start.isPending }
 								disabled={ start.isPending || ! agencyId || ! canScan }
+								accessibleWhenDisabled
 							>
-								{ start.isPending ? <Spinner /> : __( 'Create report' ) }
-							</button>
+								{ __( 'Create report' ) }
+							</Button>
 						</div>
 						{ urlError && (
 							<p className="dashboard-amplify-overview__url-error" role="alert">
