@@ -4,6 +4,8 @@
 export interface WowFunnelPreviewSite {
 	blog_id: number;
 	site_slug: string;
+	/** The address that lets visitors past Coming Soon; empty until the preview's first build is done. */
+	share_url?: string;
 }
 
 /**

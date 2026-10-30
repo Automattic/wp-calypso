@@ -10,7 +10,9 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { isStaticSiteImportPreview } from 'calypso/landing/stepper/declarative-flow/flows/static-site-import-flow/helpers';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSchemeIfMissing } from 'calypso/lib/url';
 import wpcom from 'calypso/lib/wp';
@@ -25,7 +27,12 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
-	{ action: 'continue'; importSessionId: string } | { action: 'unavailable' };
+	| { action: 'continue'; importSessionId: string; previewSiteSlug?: string }
+	| { action: 'unavailable' }
+	| { action: 'preview_failed'; message: string };
+
+/** The WoW funnel that builds a preview site for an import. */
+const PREVIEW_FUNNEL = 'preview';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -52,10 +59,35 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			() => siteId > 0 && getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW
 		);
 		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
+		// No destination yet: the import gets a preview site of its own, so there is nothing to confirm.
+		const isPreview = isStaticSiteImportPreview( searchParams );
 		const [ hasConfirmed, setHasConfirmed ] = useState( false );
-		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
+		const needsConfirmation = ! isPreview && ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
+
+		// Signing up for a preview creates the site without checkout, so it is recorded here.
+		const recordPreviewSignup = ( previewSiteId: number ) =>
+			recordSignupComplete(
+				{
+					flow: STATIC_SITE_IMPORT_FLOW,
+					siteId: previewSiteId,
+					isNewUser: Boolean( getSignupIsNewUserAndClear( userId ) ),
+					hasCartItems: false,
+					planProductSlug: undefined,
+					domainProductSlug: undefined,
+					intent: STATIC_SITE_IMPORT_FLOW,
+					startingPoint: STATIC_SITE_IMPORT_FLOW,
+					signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
+					framework: 'stepper',
+					theme: undefined,
+					isBlankCanvas: undefined,
+					isTransfer: undefined,
+					isMapping: undefined,
+					goals: undefined,
+				},
+				true
+			);
 
 		const start = useEffectEvent( async () => {
 			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
@@ -109,12 +141,35 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				] );
 			}
 
+			// The server delivers the import onto the preview as soon as its build lands.
+			const continueWith = async ( importSessionId: string ) => {
+				if ( ! isPreview ) {
+					return submit( { action: 'continue', importSessionId } );
+				}
+				try {
+					const preview = await startWowFunnelSite( {
+						funnelSlug: PREVIEW_FUNNEL,
+						funnelArgs: { import_session_id: importSessionId },
+					} );
+					recordPreviewSignup( preview.blogId );
+					return submit( {
+						action: 'continue',
+						importSessionId,
+						previewSiteSlug: preview.siteSlug,
+					} );
+				} catch ( previewError ) {
+					return submit( {
+						action: 'preview_failed',
+						message: previewError instanceof Error ? previewError.message : String( previewError ),
+					} );
+				}
+			};
+
 			if ( sessionId ) {
-				return submit( { action: 'continue', importSessionId: sessionId } );
+				return continueWith( sessionId );
 			}
 			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
+				onSuccess: ( session ) => continueWith( session.session_id ),
 				onError: ( createError ) =>
 					! isRefusedError( createError ) && submit( { action: 'unavailable' } ),
 			} );

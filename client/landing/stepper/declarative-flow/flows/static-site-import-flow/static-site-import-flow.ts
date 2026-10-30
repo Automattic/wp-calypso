@@ -21,7 +21,7 @@ import { useSelector } from 'calypso/state';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { withLocale } from '../../helpers/with-locale';
 import { siteSetupImportListPath } from '../site-migration-flow/paths';
-import { canUseStaticSiteImport } from './helpers';
+import { canUseStaticSiteImport, isStaticSiteImportPreview } from './helpers';
 import type { OnboardActions } from '@automattic/data-stores';
 import type {
 	AssertConditionResult,
@@ -51,6 +51,17 @@ function initialize() {
 
 	if ( hasDestinationSite( query ) ) {
 		return stepsWithRequiredLogin( BASE_STEPS );
+	}
+
+	// A preview needs an account, not a plan: sign in, then read the site straight onto it.
+	if ( isStaticSiteImportPreview( query ) ) {
+		if ( pathname.includes( `/${ STEPS.UNIFIED_PLANS.slug }` ) ) {
+			window.location.replace(
+				pathname.replace( STEPS.UNIFIED_PLANS.slug, STEPS.STATIC_SITE_IMPORT_READING.slug ) + search
+			);
+			return false as const;
+		}
+		return [ ...stepsWithRequiredLogin( [ STEPS.STATIC_SITE_IMPORT_READING ] ), STEPS.ERROR ];
 	}
 
 	// A new destination comes from checkout, so reading starts at the public plans step.
@@ -144,9 +155,16 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 			switch ( slug ) {
 				case STEPS.STATIC_SITE_IMPORT_READING.slug: {
+					if ( providedDependencies.action === 'preview_failed' ) {
+						return navigate( STEPS.ERROR.slug, { errorReason: providedDependencies.message } );
+					}
+
 					if ( providedDependencies.action === 'unavailable' ) {
 						if ( ! hasSite ) {
-							return navigate( STEPS.UNIFIED_PLANS.slug );
+							// A preview run has no plans step to fall back to.
+							return isStaticSiteImportPreview( urlQueryParams )
+								? navigate( STEPS.ERROR.slug, { errorReason: 'static_site_import_unavailable' } )
+								: navigate( STEPS.UNIFIED_PLANS.slug );
 						}
 						if ( isPlatformImportable( platform ) && from ) {
 							return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
@@ -162,12 +180,14 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 						);
 					}
 
-					const { importSessionId } = providedDependencies;
-					if ( isSiteOnPaidPlan ) {
+					const { importSessionId, previewSiteSlug } = providedDependencies;
+					// A preview is already built to take the import, so its Overview tracks it from here.
+					const overviewSlug = previewSiteSlug || ( isSiteOnPaidPlan ? siteSlug : '' );
+					if ( overviewSlug ) {
 						return exitFlow(
 							addQueryArgs(
 								{ importSessionId, from, platform },
-								dashboardLink( `/sites/${ siteSlug }` )
+								dashboardLink( `/sites/${ overviewSlug }` )
 							)
 						);
 					}

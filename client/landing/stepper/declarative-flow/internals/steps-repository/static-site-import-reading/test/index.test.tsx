@@ -1,10 +1,12 @@
 /**
  * @jest-environment jsdom
  */
+import config from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
+import { startWowFunnelSite } from 'calypso/landing/stepper/utils/wow-funnel-site';
 import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import {
 	getSignupCompleteFlowName,
@@ -25,6 +27,9 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/signup' ),
 	recordSignupComplete: jest.fn(),
 } ) );
+jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
+	startWowFunnelSite: jest.fn(),
+} ) );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		siteSlug: 'destination.example.com',
@@ -33,7 +38,7 @@ jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 } ) );
 
 const render = ( query: string, { afterCheckout = true, siteId = '123' } = {} ) => {
-	const url = `/setup/static-site-import-reading?${ query }&siteId=${ siteId }`;
+	const url = `/setup/static-site-import-reading?${ query }${ siteId ? `&siteId=${ siteId }` : '' }`;
 	if ( afterCheckout ) {
 		setSignupCompleteFlowName( 'static-site-import' );
 	}
@@ -172,6 +177,53 @@ describe( 'StaticSiteImportReading', () => {
 		const submit = render( 'from=busybearscleaning.com' );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
+	} );
+
+	describe( 'preview', () => {
+		beforeEach( () => config.enable( 'migration/static-site-preview' ) );
+		afterEach( () => config.disable( 'migration/static-site-preview' ) );
+
+		it.each( [
+			{
+				name: 'builds a preview site for the session and continues to it',
+				preview: () =>
+					Promise.resolve( {
+						funnelSlug: 'preview',
+						funnelKey: 'preview',
+						blogId: 456,
+						siteSlug: 'preview.wpcomstaging.com',
+					} ),
+				expected: { ...continueWithSession, previewSiteSlug: 'preview.wpcomstaging.com' },
+			},
+			{
+				name: 'reports a preview the server would not build',
+				preview: (): Promise< never > =>
+					Promise.reject( new Error( 'Preview sites are not open yet.' ) ),
+				expected: { action: 'preview_failed', message: 'Preview sites are not open yet.' },
+			},
+		] )( '$name', async ( { preview, expected } ) => {
+			jest.mocked( startWowFunnelSite ).mockImplementation( preview );
+			mockApi()
+				.post( '/wpcom/v2/static-site-import-session' )
+				.query( true )
+				.reply( 200, sessionResponse );
+
+			const submit = render( 'from=busybearscleaning.com', { afterCheckout: false, siteId: '' } );
+
+			await waitFor( () => expect( submit ).toHaveBeenCalledWith( expected ) );
+			expect( startWowFunnelSite ).toHaveBeenCalledWith( {
+				funnelSlug: 'preview',
+				funnelArgs: { import_session_id: 'abc123' },
+			} );
+			expect( screen.queryByText( 'Import into this site' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'imports into a destination the URL names, not a preview', () => {
+			render( 'from=busybearscleaning.com', { afterCheckout: false } );
+
+			expect( screen.getByRole( 'button', { name: 'Import into this site' } ) ).toBeVisible();
+			expect( startWowFunnelSite ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'stops at a refused source instead of offering another route', async () => {

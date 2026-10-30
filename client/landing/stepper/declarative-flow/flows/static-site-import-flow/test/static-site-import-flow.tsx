@@ -324,6 +324,63 @@ describe( 'Static site import flow', () => {
 		} );
 	} );
 
+	describe( 'preview', () => {
+		beforeEach( () => config.enable( 'migration/static-site-preview' ) );
+		afterEach( () => config.disable( 'migration/static-site-preview' ) );
+
+		it( 'asks for an account instead of a plan for a new destination', () => {
+			window.location.pathname = readingPath;
+			window.location.search = `?${ new URLSearchParams( SOURCE ) }`;
+
+			const steps = staticSiteImportFlow.initialize();
+
+			expect( steps && steps.map( ( step ) => step.slug ) ).toEqual( [
+				STEPS.STATIC_SITE_IMPORT_READING.slug,
+				STEPS.ERROR.slug,
+			] );
+			expect( steps && steps[ 0 ].requiresLoggedInUser ).toBe( true );
+		} );
+
+		it( 'sends plans links to reading', () => {
+			window.location.search = `?${ new URLSearchParams( SOURCE ) }`;
+
+			expect( staticSiteImportFlow.initialize() ).toBe( false );
+			expect( window.location.replace ).toHaveBeenCalledWith(
+				`${ readingPath }?${ new URLSearchParams( SOURCE ) }`
+			);
+		} );
+
+		it( 'sends the session to the preview site’s overview', () => {
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: {
+					action: 'continue',
+					importSessionId: 'abc123',
+					previewSiteSlug: 'preview.wpcomstaging.com',
+				},
+				query: SOURCE,
+			} );
+
+			expect( lastExit() ).toMatchObject( {
+				path: expect.stringMatching( /\/sites\/preview\.wpcomstaging\.com$/ ),
+				query: { ...SOURCE, importSessionId: 'abc123', ref: 'static-site-import' },
+			} );
+		} );
+
+		it.each( [
+			{ action: 'preview_failed', message: 'Preview sites are not open yet.' },
+			{ action: 'unavailable' },
+		] )( 'shows an error when the preview cannot start ($action)', ( dependencies ) => {
+			const destination = runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies,
+				query: SOURCE,
+			} );
+
+			expect( destination ).toMatchDestination( { step: STEPS.ERROR, query: null } );
+		} );
+	} );
+
 	it.each( [
 		{ step: STEPS.UNIFIED_PLANS, locale: 'en', query: { ...SOURCE, ...SITE } },
 		{ step: STEPS.STATIC_SITE_IMPORT_READING, locale: 'es', query: SOURCE },

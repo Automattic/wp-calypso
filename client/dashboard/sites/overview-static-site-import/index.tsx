@@ -17,6 +17,7 @@ import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getPreviewPlansUrl } from '../site-fields/plan-awaiting-checkout';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
@@ -95,6 +96,27 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
+/**
+ * Open a preview site once its move finishes while the customer watches it here. Only after the
+ * move was seen in progress, so coming back to a finished preview's Overview stays on it.
+ * @param siteImport The site's import, from useStaticSiteImport().
+ */
+export function useOpenPreviewWhenReady( siteImport: StaticSiteImport | null ) {
+	const hasSeenMoving = useRef( false );
+	const status = siteImport?.status;
+	const previewUrl = siteImport?.previewUrl;
+	useEffect( () => {
+		if ( status === 'moving' ) {
+			hasSeenMoving.current = true;
+			return;
+		}
+		if ( hasSeenMoving.current && status === 'finished' && previewUrl ) {
+			hasSeenMoving.current = false;
+			window.location.assign( previewUrl );
+		}
+	}, [ status, previewUrl ] );
+}
+
 /** Takes the place of the overview cards while the site is being moved. */
 export function StaticSiteImportProgress( {
 	siteImport,
@@ -167,7 +189,7 @@ export function StaticSiteImportNotice( {
 		} );
 	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
-	const recordClick = ( action: 'connect_domain' | 'preview_site' ) =>
+	const recordClick = ( action: 'connect_domain' | 'preview_site' | 'choose_plan' ) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
 			...trackingProps,
 			action,
@@ -224,6 +246,44 @@ export function StaticSiteImportNotice( {
 					: __(
 							'Nothing has changed on your current site. You can try again or ask us for help.'
 						) }
+			</Notice>
+		);
+	}
+
+	// A preview has no plan to connect a domain with: keeping it is the next step.
+	if ( isReady && siteImport.isPreview ) {
+		return (
+			<Notice
+				variant="success"
+				title={ __( 'Your preview is ready' ) }
+				actions={
+					<>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							href={ siteImport.previewUrl || site.URL }
+							onClick={ () => recordClick( 'preview_site' ) }
+						>
+							{ __( 'View site' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							href={ getPreviewPlansUrl( site ) }
+							onClick={ () => recordClick( 'choose_plan' ) }
+						>
+							{ __( 'Choose a plan' ) }
+						</Button>
+					</>
+				}
+			>
+				{ sourceHost
+					? sprintf(
+							/* translators: %s: the domain of the site that was copied, e.g. example.com. */
+							__( '%s is copied onto a preview site. Choose a plan to keep it.' ),
+							sourceHost
+						)
+					: __( 'Your site is copied onto a preview site. Choose a plan to keep it.' ) }
 			</Notice>
 		);
 	}
