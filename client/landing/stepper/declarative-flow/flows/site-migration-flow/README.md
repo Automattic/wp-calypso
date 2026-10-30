@@ -6,7 +6,7 @@ The WordPress journey is gated by `migration/reprint-flow`, which defaults to fa
 
 ## Entry points
 
-- `/setup/site-migration`: the user enters their site address.
+- `/setup/site-migration`: the user enters their site address and runs URL/platform analysis before signup or login. WordPress migration requires authentication on the next step. Static-site import continues to public plan selection, with account creation handled by unified checkout.
 - `/setup/site-migration/site-migration-identify?from=<url>&start=true`: hands over an address the user already submitted elsewhere, such as a landing page. With the flag on, identify checks it once on arrival; going back to identify shows the address form.
 - Landing pages built with landpack's `url-analyzer` block (e.g. `/move`) currently run their own analysis and link WordPress sources to `sitePicker?from=<url>&platform=wordpress&start=true`. With the flag on, `initialize` rewrites those to identify. Once the flag ships, point the block at identify and drop its routing and this rewrite.
 
@@ -22,7 +22,7 @@ Checkout returns to the destination's migration page in MSD. Cancelling checkout
 
 ## Testing instructions
 
-1. Open `/setup/site-migration?flags=migration/reprint-flow` while signed out and verify login returns to this flow.
+1. Open `/setup/site-migration?flags=migration/reprint-flow` while signed out. Verify the address form and URL/platform analysis run before signup or login, then authentication resumes the next step with the source and hosting details retained. Without the flag, verify that signing in to an account without sites goes straight to site creation, with Back returning to identify, and that any other account sees the site picker.
 2. Enter a WordPress source. Verify the loading, unreachable, HTTP, and already-on-WordPress.com states as appropriate.
 3. Without a destination, continue to plans. Select a plan to create a site, or choose an existing site.
 4. For an eligible destination, verify the before/after comparison. For an ineligible destination, verify the upgrade action opens plans.

@@ -9,6 +9,7 @@ import {
 	A4A_MARKETPLACE_HOSTING_WPCOM_LINK,
 	A4A_SITES_LINK_NEEDS_SETUP,
 	EXTERNAL_PRESSABLE_AUTH_URL,
+	EXTERNAL_PRESSABLE_USAGE_URL,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import {
 	isPressableAddonProduct,
@@ -182,6 +183,21 @@ export default function LicenseDetailsActions( {
 				! isAutoRenewDisabled && (
 					<Button compact onClick={ openRevokeDialog } scary>
 						{ translate( 'Revoke' ) }
+					</Button>
+				) }
+
+			{ isPressableLicense &&
+				! isPressableAddonLicense &&
+				! isClientLicense &&
+				licenseState !== LicenseState.Revoked && (
+					<Button
+						borderless
+						compact
+						href={ EXTERNAL_PRESSABLE_USAGE_URL }
+						target="_blank"
+						rel="noopener noreferrer"
+					>
+						{ translate( 'View plan usage details in Pressable ↗' ) }
 					</Button>
 				) }
 

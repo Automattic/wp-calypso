@@ -17,6 +17,8 @@ export interface Flow {
 	pageTitle?: string;
 	providesDependenciesInQuery?: string[];
 	optionalDependenciesInQuery?: string[];
+	// Clears optional query dependencies left in the store by a previous visit when the entry URL omits them.
+	clearsMissingDependenciesInQuery?: boolean;
 	disallowResume?: boolean;
 	showRecaptcha?: boolean;
 	enableBranchSteps?: boolean;

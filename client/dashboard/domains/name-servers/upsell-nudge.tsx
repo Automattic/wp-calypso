@@ -8,12 +8,12 @@ import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wpcomLink } from '../../utils/link';
 import illustrationUrl from './upsell-nudge-illustration.svg';
 
-interface Props {
+interface UpsellNudgeProps {
 	domainName: string;
 	domainSiteSlug: string;
 }
 
-export default function UpsellNudge( { domainName, domainSiteSlug }: Props ) {
+export default function UpsellNudge( { domainName, domainSiteSlug }: UpsellNudgeProps ) {
 	return (
 		<Callout
 			title={ sprintf(

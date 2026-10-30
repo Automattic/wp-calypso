@@ -5,6 +5,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { useLocale } from '@automattic/i18n-utils';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { act, waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
@@ -31,7 +32,11 @@ import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { leaveCheckout } from 'calypso/my-sites/checkout/src/lib/leave-checkout';
-import { getCurrentUserId, getCurrentUserSiteCount } from 'calypso/state/current-user/selectors';
+import {
+	getCurrentUserId,
+	getCurrentUserSiteCount,
+	isUserLoggedIn,
+} from 'calypso/state/current-user/selectors';
 import getSiteOption from 'calypso/state/sites/selectors/get-site-option';
 import { renderHookWithProvider } from 'calypso/test-helpers/testing-library';
 import { useRecordSignupComplete } from '../../../../hooks/use-record-signup-complete';
@@ -45,6 +50,10 @@ jest.mock( '@tanstack/react-query', () => ( {
 	useQueryClient: jest.fn( jest.requireActual( '@tanstack/react-query' ).useQueryClient ),
 } ) );
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useLocale: jest.fn( () => 'en' ),
+} ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
 	recordTracksEvent: jest.fn(),
@@ -131,6 +140,8 @@ describe( 'Site Migration Flow', () => {
 		( window.location.assign as jest.Mock ).mockClear();
 		( window.location.replace as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
+		jest.mocked( useLocale ).mockReturnValue( 'en' );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
 			isAdmin: true,
 		} );
@@ -415,6 +426,30 @@ describe( 'Site Migration Flow', () => {
 		afterEach( () => {
 			Object.assign( window.location, { pathname: '/', search: '', hash: '' } );
 		} );
+
+		it.each( [
+			{ reprint: false, staticSiteImport: false },
+			{ reprint: true, staticSiteImport: false },
+			{ reprint: false, staticSiteImport: true },
+			{ reprint: true, staticSiteImport: true },
+		] )(
+			'only identification is public (Reprint: $reprint, static-site import: $staticSiteImport)',
+			( { reprint, staticSiteImport } ) => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation(
+						( flag ) =>
+							( reprint && flag === 'migration/reprint-flow' ) ||
+							( staticSiteImport && flag === 'migration/non-wordpress-source' )
+					);
+
+				const steps = siteMigrationFlow.initialize();
+
+				expect(
+					steps.filter( ( step ) => ! step.requiresLoggedInUser ).map( ( step ) => step.slug )
+				).toEqual( [ STEPS.SITE_MIGRATION_IDENTIFY.slug ] );
+			}
+		);
 
 		it( 'redirects direct plans entry without the flag, preserving context', () => {
 			jest.spyOn( config, 'isEnabled' ).mockReturnValue( false );
@@ -1192,6 +1227,31 @@ describe( 'Site Migration Flow', () => {
 				} );
 			} );
 
+			describe.each( [ false, true ] )( 'signed out with SSH available: %s', ( ssh ) => {
+				it( 'defers the destination to PICK_SITE, as the account’s sites are unknown', () => {
+					jest
+						.spyOn( config, 'isEnabled' )
+						.mockImplementation( ( flag ) => ssh && flag === 'migration/ssh-migration' );
+					jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( null );
+					const source = {
+						from: 'https://example-to-be-migrated.com',
+						platform: 'wordpress',
+						host: 'bluehost',
+					};
+
+					const destination = runNavigation( {
+						from: STEPS.SITE_MIGRATION_IDENTIFY,
+						dependencies: { action: 'continue', ...source },
+					} );
+
+					expect( destination ).toMatchDestination( {
+						step: STEPS.PICK_SITE,
+						query: { ...source, ...( ssh && { ssh: 'true' } ) },
+					} );
+				} );
+			} );
+
 			it( 'redirects to HOW_TO_MIGRATE when there is a destination site (siteSlug/siteId) and platform is wordpress', async () => {
 				const destination = runNavigation( {
 					from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -1298,14 +1358,31 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'wix',
+								platform: 'unknown',
 								from: 'https://site-to-be-migrated.com',
 							},
 						} );
 
 						expect( window.location.assign ).toMatchURL( {
-							path: '/setup/static-site-import/static-site-import-reading',
-							query: { from: 'https://site-to-be-migrated.com', platform: 'wix' },
+							path: '/setup/static-site-import/plans',
+							query: { from: 'https://site-to-be-migrated.com', platform: 'unknown' },
+						} );
+					} );
+
+					it( 'preserves the signed-out visitor’s language at the handoff', () => {
+						jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+						jest.mocked( useLocale ).mockReturnValue( 'es' );
+						runNavigation( {
+							from: STEPS.SITE_MIGRATION_IDENTIFY,
+							dependencies: {
+								action: 'continue',
+								platform: 'unknown',
+								from: 'https://source.example.com',
+							},
+						} );
+						expect( window.location.assign ).toMatchURL( {
+							path: '/setup/static-site-import/plans/es',
+							query: { from: 'https://source.example.com', platform: 'unknown' },
 						} );
 					} );
 
@@ -1314,20 +1391,41 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'squarespace',
+								platform: 'unknown',
 								from: 'https://site-to-be-migrated.com',
 							},
 							query: { siteId: 123, siteSlug: 'example.wordpress.com' },
 						} );
 
 						expect( window.location.assign ).toMatchURL( {
-							path: '/setup/static-site-import/static-site-import-reading',
+							path: '/setup/static-site-import/plans',
 							query: {
 								from: 'https://site-to-be-migrated.com',
-								platform: 'squarespace',
+								platform: 'unknown',
 								siteId: '123',
 								siteSlug: 'example.wordpress.com',
 							},
+						} );
+					} );
+
+					it.each( [
+						[ 'medium', 'importerMedium' ],
+						[ 'squarespace', 'importerSquarespace' ],
+						[ 'wix', 'importerWix' ],
+					] )( 'keeps %s sources on their importer', ( platform, importerStep ) => {
+						runNavigation( {
+							from: STEPS.SITE_MIGRATION_IDENTIFY,
+							dependencies: {
+								action: 'continue',
+								platform,
+								from: 'https://site-to-be-migrated.com',
+							},
+							query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+						} );
+
+						expect( window.location.assign ).toMatchURL( {
+							path: `/setup/site-setup/${ importerStep }`,
+							query: { from: 'https://site-to-be-migrated.com' },
 						} );
 					} );
 
@@ -1829,6 +1927,25 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'PICK_SITE', () => {
+			it( 'replaces itself with CREATE_SITE when it forwards an account without sites', () => {
+				jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
+				const search = new URLSearchParams( {
+					from: 'https://example-to-be-migrated.com',
+					platform: 'wordpress',
+					host: 'bluehost',
+				} );
+				const { result } = renderNavigation( [ `/setup/site-migration/sitePicker?${ search }` ] );
+
+				act( () => result.current.navigation.submit( { action: 'create-site' } ) );
+
+				expect( result.current.location.pathname ).toBe( '/site-migration/create-site' );
+				expect( result.current.navigationType ).toBe( 'REPLACE' );
+				const query = new URLSearchParams( result.current.location.search );
+				for ( const [ key, value ] of search ) {
+					expect( query.get( key ) ).toBe( value );
+				}
+			} );
+
 			describe.each( [ true, false ] )( 'query updates with Reprint enabled: %s', ( enabled ) => {
 				afterEach( () => {
 					window.location.search = '';

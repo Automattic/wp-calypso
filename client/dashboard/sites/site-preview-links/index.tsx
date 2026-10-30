@@ -18,13 +18,13 @@ import { hasPlanFeature } from '../../utils/site-features';
 import type { Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
-interface SitePreviewLinkProps {
+interface SitePreviewLinksProps {
 	site: Site;
 	title?: string;
 	description?: string;
 }
 
-export default function SitePreviewLinks( { site, title, description }: SitePreviewLinkProps ) {
+export default function SitePreviewLinks( { site, title, description }: SitePreviewLinksProps ) {
 	const linksPermitted = hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS );
 
 	const { data: links = [] } = useQuery( {

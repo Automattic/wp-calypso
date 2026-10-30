@@ -19,7 +19,6 @@ const search = {
 	importSessionId: 'abc123',
 	from: 'busybearscleaning.com',
 	platform: 'wix',
-	domainChoice: 'keep',
 };
 
 const session = ( state: string, extra = {} ) => ( {
@@ -47,14 +46,14 @@ function StaticSiteImport() {
 }
 
 describe( 'StaticSiteImportCard', () => {
-	it( 'starts the move the user asked for before checkout', async () => {
+	it( 'names this site as the destination while the site is still being read', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
-			.reply( 200, session( 'preview_ready', { archive_hash: 'hash' } ) );
+			.reply( 200, session( 'capturing' ) );
 		const approve = mockApi()
 			.post( '/wpcom/v2/static-site-import-session/abc123/approve', ( body ) => {
-				expect( body ).toEqual( { archive_hash: 'hash', destination_blog_id: 42 } );
+				expect( body ).toEqual( { destination_blog_id: 42 } );
 				return true;
 			} )
 			.reply( 200, session( 'queued' ) );
@@ -69,7 +68,91 @@ describe( 'StaticSiteImportCard', () => {
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
 	} );
 
-	it( 'asks for feedback and offers the kept domain once the site is ready', async () => {
+	it( 'does not approve again once delivery is bound to this site', async () => {
+		const sessionRequest = mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'queued', { site_url: 'https://busybears.wordpress.com' } ) );
+		const approve = mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 200, session( 'queued' ) );
+
+		render( <StaticSiteImport /> );
+
+		await waitFor( () => expect( sessionRequest.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
+		expect( approve.isDone() ).toBe( false );
+	} );
+
+	it( 'keeps moving while another approval holds the delivery', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.times( 2 )
+			.query( true )
+			.reply( 200, session( 'building' ) );
+		const approve = mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 409, {
+				code: 'static_site_import_session_approval_in_progress',
+				message: 'Another approval is in progress.',
+			} );
+
+		render( <StaticSiteImport /> );
+
+		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
+	} );
+
+	it( 'offers to connect the kept domain and preview the site once it is ready', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		render( <StaticSiteImport /> );
+
+		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				'busybearscleaning.com is copied and running on WordPress.com. It stays private until you launch it.'
+			)
+		).toBeVisible();
+
+		const connect = screen.getByRole( 'link', { name: 'Connect busybearscleaning.com' } );
+		expect( connect ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'initialQuery=busybearscleaning.com' )
+		);
+		expect( connect ).toHaveClass( 'is-primary' );
+
+		const preview = screen.getByRole( 'link', { name: /Preview site/ } );
+		expect( preview ).toHaveAttribute( 'href', 'https://busybears.wordpress.com' );
+		expect( preview ).toHaveClass( 'is-secondary' );
+
+		expect( screen.queryByText( 'Does it look right?' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'offers a generic Connect domain when the old address is missing', () => {
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished', needsRestart: false } }
+				search={ { ...search, from: undefined } }
+			/>
+		);
+
+		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
+		const connect = screen.getByRole( 'link', { name: 'Connect domain' } );
+		expect( connect ).toHaveClass( 'is-primary' );
+		expect( connect ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/setup/domain/use-my-domain' )
+		);
+		expect( connect ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
+	} );
+
+	it( 'does not ask for feedback after the site is previewed', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
@@ -77,25 +160,77 @@ describe( 'StaticSiteImportCard', () => {
 
 		const { recordTracksEvent } = render( <StaticSiteImport /> );
 
-		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Connect busybearscleaning.com' } ) ).toHaveAttribute(
-			'href',
-			expect.stringContaining( 'initialQuery=busybearscleaning.com' )
-		);
+		await userEvent.click( await screen.findByRole( 'link', { name: /Preview site/ } ) );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Looks right' } ) );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
+		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
+		expect( screen.queryByText( 'Does your site look right?' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_dashboard_static_site_import_feedback',
-			{ site_id: 42, source_platform: 'wix', rating: 'good' }
+			expect.anything()
 		);
-		expect( screen.getByText( 'Thanks for the feedback!' ) ).toBeVisible();
 	} );
 
-	it( 'offers to read the site again when the preview has expired', async () => {
+	describe( 'Tracks', () => {
+		const finished = () =>
+			mockApi()
+				.get( '/wpcom/v2/static-site-import-session/abc123' )
+				.query( true )
+				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+		const props = { site_id: 42, source_platform: 'wix' };
+
+		it( 'records the ready notice being shown once', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			await screen.findByText( 'Your site is ready' );
+			const impressions = jest
+				.mocked( recordTracksEvent )
+				.mock.calls.filter(
+					( [ name ] ) => name === 'calypso_dashboard_static_site_import_ready_notice_impression'
+				);
+			expect( impressions ).toEqual( [
+				[ 'calypso_dashboard_static_site_import_ready_notice_impression', props ],
+			] );
+		} );
+
+		it( 'records which button in the ready notice was clicked', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			const connect = await screen.findByRole( 'link', { name: 'Connect busybearscleaning.com' } );
+			connect.addEventListener( 'click', ( event ) => event.preventDefault() );
+			await userEvent.click( connect );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_click',
+				{ ...props, action: 'connect_domain' }
+			);
+
+			await userEvent.click( screen.getByRole( 'link', { name: /Preview site/ } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_click',
+				{ ...props, action: 'preview_site' }
+			);
+		} );
+
+		it( 'records the ready notice being closed', async () => {
+			finished();
+			const { recordTracksEvent } = render( <StaticSiteImport /> );
+
+			await screen.findByText( 'Your site is ready' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_static_site_import_ready_notice_dismiss',
+				props
+			);
+		} );
+	} );
+
+	it( 'offers to read the site again when the session is gone', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
-			.reply( 404, { code: 'static_site_import_preview_expired', message: 'Expired' } );
+			.reply( 404, { code: 'static_site_import_session_not_found', message: 'Not found' } );
 
 		render( <StaticSiteImport /> );
 
@@ -103,5 +238,20 @@ describe( 'StaticSiteImportCard', () => {
 			'href',
 			expect.stringContaining( '/setup/static-site-import/static-site-import-reading' )
 		);
+	} );
+
+	it( 'stops at a refused site instead of offering to read it again', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply(
+				200,
+				session( 'failed', { receipt: { success: false, code: 'static_site_capture_blocked' } } )
+			);
+
+		render( <StaticSiteImport /> );
+
+		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Read my site again' } ) ).not.toBeInTheDocument();
 	} );
 } );

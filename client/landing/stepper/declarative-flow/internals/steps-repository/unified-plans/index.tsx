@@ -3,7 +3,7 @@ import { OnboardSelect } from '@automattic/data-stores';
 import {
 	DOMAIN_FLOW,
 	ONBOARDING_FLOW,
-	SITE_MIGRATION_FLOW,
+	isNewSiteMigrationFlow,
 	Step,
 	useStepPersistedState,
 } from '@automattic/onboarding';
@@ -67,6 +67,7 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage?: boolean;
 		isCustomDomainAllowedOnFreePlan?: boolean;
 		deemphasizeFreePlan?: boolean;
+		intent?: PlansIntent;
 		wrapperProps?: {
 			hideBack?: boolean;
 			goBack?: () => void;
@@ -97,11 +98,12 @@ const PlansStepAdaptor: StepType< {
 		isLaunchPage,
 		isCustomDomainAllowedOnFreePlan,
 		deemphasizeFreePlan,
+		intent: intentOverride,
 	} = props;
 	const translate = useTranslate();
 	const [ stepState, setStepState ] = useStepPersistedState< ProvidedDependencies >( 'plans-step' );
 	const query = useQuery();
-	const isMigrationFlow = props.flow === SITE_MIGRATION_FLOW;
+	const isMigrationFlow = isNewSiteMigrationFlow( props.flow );
 	const hasMigrationDestination = !! ( query.get( 'siteId' ) || query.get( 'siteSlug' ) );
 	const resolvedSiteSlug = useSiteSlug();
 	const siteSlug = isMigrationFlow && ! hasMigrationDestination ? null : resolvedSiteSlug;
@@ -210,7 +212,7 @@ const PlansStepAdaptor: StepType< {
 
 	// The downgrade flow only lets users move between paid plans, so hide the free
 	// and enterprise plans (not valid downgrade targets) and default the billing
-	// term selector to the currently active plan's term.
+	// term selector to the URL's term, or the currently active plan's term.
 	const isDowngradeFlow = defaultPlansIntent === 'plans-upgrade-or-downgrade';
 
 	const themeHideProps: {
@@ -227,7 +229,7 @@ const PlansStepAdaptor: StepType< {
 
 	useEffect( () => {
 		if ( isDowngradeFlow && planInterval === undefined && currentPlanIntervalType ) {
-			setPlanInterval( currentPlanIntervalType );
+			setPlanInterval( getIntervalType( undefined, currentPlanIntervalType ) );
 		}
 	}, [ isDowngradeFlow, planInterval, currentPlanIntervalType ] );
 
@@ -311,7 +313,7 @@ const PlansStepAdaptor: StepType< {
 			signupDependencies={ signupDependencies }
 			stepName="plans"
 			flowName={ props.flow }
-			intent={ plansIntent ?? undefined }
+			intent={ intentOverride ?? plansIntent ?? undefined }
 			onIntentChange={ handleIntentChange }
 			onPlanIntervalUpdate={ onPlanIntervalUpdate }
 			intervalType={ planInterval }

@@ -1,5 +1,9 @@
 import { isWpError } from '@automattic/api-core';
-import { siteQueryFilter, siteWordPressMigrationStatusQuery } from '@automattic/api-queries';
+import {
+	siteQueryFilter,
+	siteWordPressMigrationConfigurationQuery,
+	siteWordPressMigrationStatusQuery,
+} from '@automattic/api-queries';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -54,6 +58,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		migration?.status === 'failed'
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
+	const isConnecting = migration?.status === 'not_started' || !! connectionFailure;
+
+	// The connect step shows how the source can be connected, so it waits for that before showing at all. It's read
+	// alongside the migration, before we know which step that is, and only kept up for the connect step after.
+	const { isPending: isConfigurationPending } = useQuery( {
+		...siteWordPressMigrationConfigurationQuery( site.ID ),
+		enabled: ! migration || isConnecting,
+	} );
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
@@ -81,7 +93,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		}
 
 		if ( isSiteUnlocked ) {
-			navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug }, replace: true } );
+			navigate( {
+				to: '/sites/$siteSlug',
+				params: { siteSlug: site.slug },
+				search: { migration: 'completed' },
+				replace: true,
+			} );
 			return;
 		}
 
@@ -133,11 +150,16 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					actions={ contactUs }
 				/>
 			) }
-			{ ( migration?.status === 'not_started' || connectionFailure ) && (
-				<Connect site={ site } failure={ connectionFailure } />
+			{ isConnecting && ! isConfigurationPending && (
+				<Connect site={ site } sourceHost={ sourceHost } failure={ connectionFailure } />
 			) }
 			{ migration?.status === 'running' && (
-				<Running phase={ migration.phase } sourceHost={ sourceHost } />
+				<Running
+					phase={ migration.phase }
+					progress={ migration.progress }
+					sourceHost={ sourceHost }
+					notificationEmails={ migration.notification_emails }
+				/>
 			) }
 			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
 				! connectionFailure && <Findings site={ site } migration={ migration } /> }

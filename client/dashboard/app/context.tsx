@@ -78,7 +78,6 @@ export type AppConfig = {
 		apiKey: string;
 		overrides?: PostHogOverrides;
 	};
-	optIn: boolean;
 	components: {
 		sites?: () => Promise< { default: React.FC } >;
 		// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -123,7 +122,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		colorScheme: false,
 		darkMode: false,
 	},
-	optIn: false,
 	components: {
 		sites: () => Promise.resolve( { default: () => null } ),
 		siteSwitcher: () => Promise.resolve( { default: () => null } ),

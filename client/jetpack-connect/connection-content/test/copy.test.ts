@@ -9,7 +9,10 @@ import type { SubtitleScenario } from '../scenarios';
  * and verify that the right pre-composed string lands on the right
  * surface.
  */
-const SCENARIO_SLUGS: Record< SubtitleScenario, readonly string[] > = {
+const SCENARIO_SLUGS: Record<
+	Exclude< SubtitleScenario, 'MIGRATION' | 'MIGRATION_WITH_PLUGINS' >,
+	readonly string[]
+> = {
 	A4A_ONLY: [ 'automattic-for-agencies-client' ],
 	A4A_WOO: [ 'automattic-for-agencies-client', 'woocommerce' ],
 	A4A_JETPACK: [ 'automattic-for-agencies-client', 'jetpack-boost' ],
@@ -324,6 +327,29 @@ describe( 'secondary auth copy', () => {
 	test( 'admin and non-admin subtitles are different', () => {
 		expect( getSecondaryAuthCopy( true, [ 'jetpack' ] ).subtitle ).not.toBe(
 			getSecondaryAuthCopy( false, [ 'jetpack' ] ).subtitle
+		);
+	} );
+} );
+
+describe( 'migration copy across surfaces', () => {
+	test.each( [ getAuthCopy, getLoginCopy, getSignupCopy ] )(
+		'provides migration copy and acknowledges supporting plugins',
+		( getCopy ) => {
+			expect( getCopy( [ 'wpcom-migration' ] ).subtitle ).toMatch( /migrat/ );
+			expect( getCopy( [ 'wpcom-migration', 'jetpack' ] ).subtitle ).toMatch(
+				/other active plugins/i
+			);
+		}
+	);
+	test( 'uses migration copy for secondary admins but retains member copy', () => {
+		expect( getSecondaryAuthCopy( true, [ 'wpcom-migration' ] ).subtitle ).toBe(
+			'Connect your account to help migrate this site to WordPress.com.'
+		);
+		expect( getSecondaryAuthCopy( true, [ 'wpcom-migration', 'jetpack' ] ).subtitle ).toContain(
+			'Other active plugins'
+		);
+		expect( getSecondaryAuthCopy( false, [ 'wpcom-migration' ] ) ).toEqual(
+			getSecondaryAuthCopy( false )
 		);
 	} );
 } );

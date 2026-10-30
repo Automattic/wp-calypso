@@ -36,7 +36,6 @@ packages/calypso-color-schemes/root-only
 /client/chart.json
 /client/style.json
 /client/server/bundler/assets.json
-/cached-requests.json
 /yarn-json-output.json
 
 # Agenttic downloaded translation files

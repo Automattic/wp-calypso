@@ -38,7 +38,7 @@ const getDefaultDomainData = ( customProps: Partial< Domain > = {} ): Domain =>
 
 const mockDomainApiRequest = ( domainData: Domain ) =>
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.get( `/rest/v1.2/domain-details/${ domainName }/` )
 		.reply( 200, domainData );
 
 const mockDnsApiRequest = ( records: DnsRecord[] ) =>

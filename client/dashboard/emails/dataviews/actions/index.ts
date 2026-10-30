@@ -6,6 +6,7 @@ import { useManageGoogleWorkspaceAction } from './manage-google-workspace';
 import { useManageTitanMailboxesAction } from './manage-titan-mailboxes';
 import { usePaymentDetailsAction } from './payment-details';
 import { useResendVerificationAction } from './resend-verification';
+import { useUpgradeMailboxAction } from './upgrade-mailbox';
 import { useViewMailboxAction } from './view-mailbox';
 import { useViewTitanDnsRecordsAction } from './view-titan-dns-records';
 import type { Email } from '../../types';
@@ -18,6 +19,7 @@ export function useActions(): Action< Email >[] {
 		useManageGoogleWorkspaceAction(),
 		useManageTitanMailboxesAction(),
 		useViewTitanDnsRecordsAction(),
+		useUpgradeMailboxAction(),
 		usePaymentDetailsAction(),
 		useResendVerificationAction(),
 		useEditEmailForwardAction(),

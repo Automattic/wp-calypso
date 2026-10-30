@@ -18,11 +18,50 @@
 	font-weight: 600;
 }
 
+.wpnc-simplified__meta {
+	display: flex;
+	flex-wrap: wrap;
+	column-gap: $grid-unit-05;
+
+	> :not(:last-child)::after {
+		content: '·';
+	}
+}
+
 .wpnc-simplified__thread {
 	margin: 0;
 	padding: 0;
 	list-style: none;
 	overflow-wrap: anywhere;
+
+	&.is-reply > li > :last-child {
+		padding-inline-start: 48px;
+	}
+
+	&.is-reply .wpnc-simplified__thread-parent {
+		position: relative;
+
+		&::before {
+			content: "";
+			position: absolute;
+			inset-block: 48px -4px;
+			inset-inline-start: 17px;
+			width: 2px;
+			border-radius: 2px;
+			background: var(--wp-components-color-gray-300, #{$gray-300});
+		}
+
+		.wpnc-simplified__author,
+		.wpnc-simplified__parent-text {
+			font-size: 13px;
+			line-height: 20px;
+		}
+
+		.wpnc-simplified__parent-text {
+			@extend .wpnc-simplified__quiet-links;
+			color: var(--wp-components-color-gray-700, #{$gray-700});
+		}
+	}
 }
 
 .wpnc-simplified__card + .wpnc-simplified__thread,
@@ -61,15 +100,29 @@
 	}
 }
 
-.wpnc-simplified__parent-text {
-	white-space: pre-line;
+.wpnc-simplified__parent-text p {
+	&:first-child {
+		margin-top: 0;
+	}
 
-	&.is-truncated {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
-		overflow: hidden;
-		white-space: normal;
+	&:last-child {
+		margin-bottom: 0;
+	}
+}
+
+.wpnc-simplified__parent-text.is-truncated {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	white-space: normal;
+
+	p {
+		margin-bottom: 0;
+	}
+
+	img:not(.emoji) {
+		display: none;
 	}
 }
 
@@ -110,7 +163,8 @@
 	}
 }
 
-.wpnc-simplified .wpnc__body .wpnc__body-content > :last-child > .wpnc__paragraph:last-child {
+.wpnc-simplified .wpnc__body .wpnc__body-content > :last-child > .wpnc__paragraph:last-child,
+.wpnc-simplified .wpnc-simplified__parent-text > .wpnc__paragraph:last-child {
 	padding-bottom: 0;
 }
 
@@ -126,7 +180,7 @@
 
 .wpnc-simplified .wpnc__body-content .wpnc__comment,
 .wpnc-simplified .wpnc__new_post .wpnc__body .wpnc__body-content,
-.wpnc-simplified__parent-text {
+.wpnc-simplified .wpnc-simplified__parent-text {
 	font-size: 15px;
 	line-height: 24px;
 }

@@ -78,7 +78,8 @@
 }
 
 .plans-grid-next-header-price__badge {
-	background-color: var(--studio-green-5);
+	// Same colors as Badge type="info-green" (@automattic/components).
+	background-color: rgba(184, 230, 191, 0.64);
 	border-radius: 4px;
 	color: var(--studio-green-80);
 	display: inline-block;
@@ -94,12 +95,6 @@
 	text-transform: none;
 	white-space: nowrap;
 	width: fit-content;
-
-	// Same colors as Badge type="info-green" (@automattic/components); only for pricing differentiators experiment (non-control).
-	&.is-plan-differentiators-experiment-badge {
-		background-color: rgba(184, 230, 191, 0.64);
-		color: var(--studio-green-80);
-	}
 
 	&.is-hidden {
 		visibility: hidden;

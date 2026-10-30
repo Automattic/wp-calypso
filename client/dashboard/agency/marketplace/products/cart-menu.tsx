@@ -19,7 +19,7 @@ import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
 import { getTermSuffix } from './lib/product-pricing';
-import { getProductShortTitle } from './lib/product-title';
+import { getProductTitle } from './lib/product-title';
 import { useCartLines } from './use-cart-lines';
 import type { TermPricing } from '../use-term-pricing';
 import type { CartItemRef, ShoppingCartItem } from './use-shopping-cart';
@@ -27,7 +27,7 @@ import type { AgencyProduct } from '@automattic/api-core';
 
 import './cart-menu.scss';
 
-interface Props {
+interface CartMenuProps {
 	items: ShoppingCartItem[];
 	products: AgencyProduct[];
 	term: TermPricing;
@@ -45,7 +45,7 @@ interface Props {
 const getCartProductName = ( product: AgencyProduct ) =>
 	product.slug === WPCOM_CREATOR_PLAN_SLUG
 		? __( 'WordPress.com Site' )
-		: getProductShortTitle( product );
+		: getProductTitle( product.name );
 
 export default function CartMenu( {
 	items,
@@ -58,7 +58,7 @@ export default function CartMenu( {
 	onToggle,
 	onRemove,
 	onCheckout,
-}: Props ) {
+}: CartMenuProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const location = useLocation();
 	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {
@@ -122,6 +122,7 @@ export default function CartMenu( {
 		<>
 			{ isGateOpen && <ApprovalGate kind="purchase" onClose={ () => setIsGateOpen( false ) } /> }
 			<Dropdown
+				className="dashboard-marketplace-products__cart-menu"
 				open={ open }
 				onToggle={ onToggle }
 				popoverProps={ { placement: 'bottom-end' } }

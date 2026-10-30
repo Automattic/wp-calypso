@@ -37,10 +37,8 @@ const shouldMinify =
 	process.env.MINIFY_JS === 'true' ||
 	( process.env.MINIFY_JS !== 'false' && bundleEnv === 'production' );
 const shouldEmitStats = process.env.EMIT_STATS && process.env.EMIT_STATS !== 'false';
-const shouldEmitStatsWithReasons = process.env.EMIT_STATS === 'withreasons';
 const shouldCheckForDuplicatePackages = process.env.CHECK_DUPLICATE_PACKAGES === 'true';
 const shouldCheckForCycles = process.env.CHECK_CYCLES === 'true';
-const shouldConcatenateModules = process.env.CONCATENATE_MODULES !== 'false';
 const shouldBuildChunksMap =
 	process.env.BUILD_TRANSLATION_CHUNKS === 'true' ||
 	process.env.ENABLE_FEATURES === 'use-translation-chunks';
@@ -118,7 +116,6 @@ const webpackCacheVersion = JSON.stringify( {
 	entryLimit: process.env.ENTRY_LIMIT || null,
 	sectionLimit: process.env.SECTION_LIMIT || null,
 	emitStats: shouldEmitStats,
-	concatenateModules: shouldConcatenateModules,
 	hotReload: shouldHotReload,
 	profile: shouldProfile,
 } );
@@ -248,7 +245,7 @@ const webpackConfig = {
 		devtoolModuleFilenameTemplate: 'app:///[resource-path]',
 	},
 	optimization: {
-		concatenateModules: ! isDevelopment && shouldConcatenateModules,
+		concatenateModules: ! isDevelopment,
 		removeAvailableModules: true,
 		removeEmptyChunks: true,
 		splitChunks: {
@@ -344,8 +341,6 @@ const webpackConfig = {
 			'typeof window': JSON.stringify( 'object' ),
 			'process.env.NODE_ENV': JSON.stringify( bundleEnv ),
 			'process.env.NODE_DEBUG': JSON.stringify( process.env.NODE_DEBUG || false ),
-			'process.env.GUTENBERG_PHASE': JSON.stringify( 1 ),
-			'process.env.COMPONENT_SYSTEM_PHASE': JSON.stringify( 0 ),
 			'process.env.FORCE_REDUCED_MOTION': JSON.stringify(
 				!! process.env.FORCE_REDUCED_MOTION || false
 			),
@@ -384,7 +379,7 @@ const webpackConfig = {
 				statsFilename: path.join( __dirname, 'stats.json' ),
 				statsOptions: {
 					source: false,
-					reasons: shouldEmitStatsWithReasons,
+					reasons: false,
 					optimizationBailout: false,
 					chunkOrigins: false,
 					chunkGroups: true,

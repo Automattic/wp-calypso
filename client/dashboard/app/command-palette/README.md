@@ -38,7 +38,7 @@ function Root() {
 This command palette:
 
 1. **Uses WordPress Commands API**: Leverages the WordPress commands system for UI and keyboard shortcuts
-2. **Integrates with TanStack Router**: Routes defined in commands.tsx use absolute paths (/path) for consistent navigation
+2. **Integrates with TanStack Router**: Routes defined in commands.ts use absolute paths (/path) for consistent navigation
 3. **Auto-registers Navigation Commands**: Registers dashboard navigation commands on component mount
 4. **Self-cleans on Unmount**: Unregisters all dashboard commands when the component unmounts
 

@@ -3,7 +3,8 @@ import type { Domain } from './types';
 
 export function fetchDomain( domainName: string ): Promise< Domain > {
 	return wpcom.req.get( {
-		path: `/domain-details/${ domainName }`,
+		// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+		path: `/domain-details/${ domainName }/`,
 		apiVersion: '1.2',
 	} );
 }
