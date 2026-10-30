@@ -4,15 +4,17 @@ import {
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, Form } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { NavigationBlocker } from '../../app/navigation-blocker';
@@ -26,6 +28,15 @@ import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
+function isEmailFieldError( error: Error ) {
+	return (
+		'data' in error &&
+		typeof error.data === 'object' &&
+		error.data !== null &&
+		( error.data as Record< string, unknown > )[ 'form-field' ] === 'email'
+	);
+}
+
 export default function PersonalDetailsSection() {
 	const { user } = useAuth();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -34,12 +45,29 @@ export default function PersonalDetailsSection() {
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
+	const [ emailSaveError, setEmailSaveError ] = useState< string | null >( null );
+	const { createErrorNotice } = useDispatch( noticesStore );
+	const queryClient = useQueryClient();
 
-	const snackbar = { success: __( 'Settings saved.' ), error: { source: 'server' as const } };
-	const mutation = useMutation( withSnackbar( userSettingsMutation(), snackbar ) );
+	const success = __( 'Settings saved.' );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), { success, error: { source: 'server' } } )
+	);
 	// Two instances rather than one whose options change with the payload, which a save already
-	// in flight would pick up.
-	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), snackbar ) );
+	// in flight would pick up. Errors that concern the email address are shown on the field
+	// instead of in a snackbar, so this one reports its own errors.
+	const emailMutation = useMutation( {
+		...withSnackbar( userEmailSettingsMutation(), { success } ),
+		onError: ( error ) => {
+			if ( isEmailFieldError( error ) ) {
+				setEmailSaveError( error.message );
+				// Rejecting the address also cancels any email change that was pending.
+				queryClient.invalidateQueries( userSettingsQuery() );
+			} else {
+				createErrorNotice( error.message, { type: 'snackbar' } );
+			}
+		},
+	} );
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
 
@@ -50,6 +78,9 @@ export default function PersonalDetailsSection() {
 	// Form event handlers
 	const handleFieldChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
+		if ( 'user_email' in partial ) {
+			setEmailSaveError( null );
+		}
 	};
 
 	const handleSubmit = async ( e: React.FormEvent ) => {
@@ -62,8 +93,17 @@ export default function PersonalDetailsSection() {
 			return;
 		}
 
-		const save = 'user_email' in submissionEdits ? emailMutation : mutation;
-		save.mutate( submissionEdits, {
+		if ( 'user_email' in submissionEdits ) {
+			emailMutation.mutate( submissionEdits, {
+				onSuccess: () => {
+					setEdits( {} );
+					setEmailSaveError( null );
+				},
+			} );
+			return;
+		}
+
+		mutation.mutate( submissionEdits, {
 			onSuccess: () => {
 				setEdits( {} );
 			},
@@ -157,6 +197,7 @@ export default function PersonalDetailsSection() {
 							userSettings={ userSettings }
 							isEmailVerified={ isEmailVerified }
 							onValidationChange={ setIsEmailValid }
+							serverError={ emailSaveError }
 						/>
 
 						<HStack justify="flex-start">
@@ -164,7 +205,7 @@ export default function PersonalDetailsSection() {
 								variant="primary"
 								type="submit"
 								isBusy={ isSaving }
-								disabled={ isSaving || ! isDirty || ! isEmailValid }
+								disabled={ isSaving || ! isDirty || ! isEmailValid || !! emailSaveError }
 							>
 								{ __( 'Save' ) }
 							</Button>
