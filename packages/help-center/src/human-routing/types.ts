@@ -51,7 +51,7 @@ export type HumanRoutingFlags = {
 
 export type HumanRoutingInput = {
 	flags: HumanRoutingFlags;
-	/** Null without merchant data; routed like a Tier 2 or 3 merchant who isn't paying. */
+	/** Null without merchant data, which leaves the tier unknown. */
 	customer: HumanRoutingCustomer | null;
 	question: HumanSupportQuestionType;
 	/** Null when no product was picked. */
@@ -62,6 +62,8 @@ export type HumanRoutingInput = {
 export type HumanRoutingFacts = HumanRoutingInput & {
 	isPaying: boolean;
 	isTier1: boolean;
+	/** False without merchant data, or when WooCommerce.com couldn't work out the tier. */
+	isTierKnown: boolean;
 	isCore: boolean;
 	isWooProduct: boolean;
 };
