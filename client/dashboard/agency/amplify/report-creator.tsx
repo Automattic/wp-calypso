@@ -1,6 +1,7 @@
 import { startAmplifyReportMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
+	BaseControl,
 	Button,
 	Icon,
 	__experimentalHeading as Heading,
@@ -63,9 +64,7 @@ function ReportTypeCards( {
 	const isWide = useViewportMatch( 'large' );
 	return (
 		<VStack className="dashboard-amplify-overview__mode-options" spacing={ 2 }>
-			<Text id={ labelId } size={ 13 } weight={ 500 }>
-				{ __( 'Report type' ) }
-			</Text>
+			<BaseControl.VisualLabel id={ labelId }>{ __( 'Report type' ) }</BaseControl.VisualLabel>
 			<Grid
 				role="radiogroup"
 				aria-labelledby={ labelId }
@@ -92,9 +91,16 @@ function ReportTypeCards( {
 								boxShadow: isSelected ? 'inset 0 0 0 2px var( --color-primary )' : undefined,
 							} }
 						>
-							<CardBody size="small">
+							<CardBody
+								size={ {
+									blockStart: 'xSmall',
+									blockEnd: 'xSmall',
+									inlineStart: 'small',
+									inlineEnd: 'small',
+								} }
+							>
 								<VStack spacing={ 1 }>
-									<HStack alignment="center">
+									<HStack justify="space-between" alignment="center">
 										<Text size={ 13 } weight={ 600 }>
 											{ option.label }
 										</Text>
