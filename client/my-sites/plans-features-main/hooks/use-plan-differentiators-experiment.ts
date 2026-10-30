@@ -57,6 +57,9 @@ function usePlanDifferentiatorsExperiment( {
 	siteId,
 }: UsePlanDifferentiatorsParams ): PlanDifferentiatorsResult {
 	const site = useSelector( ( state: IAppState ) => getSite( state, siteId ) );
+	// Eligibility depends on the site's options, so report loading until the site arrives
+	// rather than briefly reporting control.
+	const isSiteLoading = !! siteId && ! site;
 
 	const wasCreatedWithOnboardingFlow = site?.options?.site_creation_flow === 'onboarding';
 	const siteCreatedAt = site?.options?.created_at;
@@ -70,9 +73,10 @@ function usePlanDifferentiatorsExperiment( {
 		( isEligibleSignupFlow && ! siteId ) ||
 		( wasCreatedWithOnboardingFlow && wasCreatedAfterExperimentLaunch );
 
-	const [ isLoading, assignment ] = useExperiment( PLAN_DIFFERENTIATORS_EXPERIMENT_NAME, {
+	const [ isExperimentLoading, assignment ] = useExperiment( PLAN_DIFFERENTIATORS_EXPERIMENT_NAME, {
 		isEligible,
 	} );
+	const isLoading = isSiteLoading || isExperimentLoading;
 
 	const rawVariationName = assignment?.variationName;
 

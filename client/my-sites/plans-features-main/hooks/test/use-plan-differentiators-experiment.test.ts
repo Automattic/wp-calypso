@@ -194,6 +194,34 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 			expect( result.current ).toEqual( { ...CONTROL_RESULT, isLoading: true } );
 		} );
 
+		test( 'reports loading instead of control while the site loads', () => {
+			mockUseExperiment.mockReturnValue( [ false, null ] );
+
+			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SITE_PARAMS ) );
+
+			expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: false } );
+			expect( result.current ).toEqual( { ...INELIGIBLE_RESULT, isLoading: true } );
+		} );
+
+		test( 'reports the assigned variant once the site loads', () => {
+			mockUseExperiment.mockReturnValue( [ false, null ] );
+
+			const { result, rerender } = renderHook( () =>
+				usePlanDifferentiatorsExperiment( SITE_PARAMS )
+			);
+			expect( result.current.isLoading ).toBe( true );
+
+			mockSite();
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'ai_credits' } ] );
+			rerender();
+
+			expect( result.current ).toEqual( {
+				...CONTROL_RESULT,
+				variant: 'ai_credits',
+				showAiCredits: true,
+			} );
+		} );
+
 		test( 'ignores the assignment when not eligible', () => {
 			mockSite( { siteCreationFlow: 'newsletter' } );
 			mockUseExperiment.mockReturnValue( [
