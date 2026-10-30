@@ -41,7 +41,6 @@ const UsernameConfirmFieldContext = createContext< {
 	isInvalid: boolean;
 } >( { help: null, className: '', isInvalid: false } );
 
-// Defined at module level so DataForm gets a stable component and the input keeps focus while typing.
 function UsernameConfirmEdit( {
 	data,
 	field,

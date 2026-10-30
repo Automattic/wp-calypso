@@ -167,6 +167,9 @@ describe( '<PersonalDetailsSection>', () => {
 					timeout: 2000,
 				} )
 			).toBeVisible();
+			expect(
+				await screen.findByText( 'Nice username!', undefined, { timeout: 2000 } )
+			).toBeVisible();
 		} );
 
 		test( 'shows username update form and submits username change', async () => {
