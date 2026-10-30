@@ -5,6 +5,7 @@
 import config from '@automattic/calypso-config';
 import { PLAN_BUSINESS_MONTHLY } from '@automattic/calypso-products';
 import { isCurrentUserLoggedIn } from '@automattic/data-stores/src/user/selectors';
+import { useLocale } from '@automattic/i18n-utils';
 import { QueryClient, useQueryClient } from '@tanstack/react-query';
 import { act, waitFor } from '@testing-library/react';
 import { dispatch, select } from '@wordpress/data';
@@ -49,6 +50,10 @@ jest.mock( '@tanstack/react-query', () => ( {
 	useQueryClient: jest.fn( jest.requireActual( '@tanstack/react-query' ).useQueryClient ),
 } ) );
 jest.mock( 'calypso/landing/stepper/utils/checkout' );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useLocale: jest.fn( () => 'en' ),
+} ) );
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/tracks' ),
 	recordTracksEvent: jest.fn(),
@@ -135,12 +140,13 @@ describe( 'Site Migration Flow', () => {
 		( window.location.assign as jest.Mock ).mockClear();
 		( window.location.replace as jest.Mock ).mockClear();
 		( isCurrentUserLoggedIn as jest.Mock ).mockReturnValue( true );
+		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
+		jest.mocked( useLocale ).mockReturnValue( 'en' );
 		( useIsSiteAdmin as jest.Mock ).mockReturnValue( {
 			isAdmin: true,
 		} );
 		( getSiteOption as jest.Mock ).mockReturnValue( 'https://example.wpcomstaging.com/wp-admin/' );
 		jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 0 );
-		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( useSiteQuery ).mockReturnValue( {
 			data: null,
 			isLoading: false,
@@ -1358,8 +1364,25 @@ describe( 'Site Migration Flow', () => {
 						} );
 
 						expect( window.location.assign ).toMatchURL( {
-							path: '/setup/static-site-import/static-site-import-reading',
+							path: '/setup/static-site-import/plans',
 							query: { from: 'https://site-to-be-migrated.com', platform: 'wix' },
+						} );
+					} );
+
+					it( 'preserves the signed-out visitor’s language at the handoff', () => {
+						jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+						jest.mocked( useLocale ).mockReturnValue( 'es' );
+						runNavigation( {
+							from: STEPS.SITE_MIGRATION_IDENTIFY,
+							dependencies: {
+								action: 'continue',
+								platform: 'wix',
+								from: 'https://source.example.com',
+							},
+						} );
+						expect( window.location.assign ).toMatchURL( {
+							path: '/setup/static-site-import/plans/es',
+							query: { from: 'https://source.example.com', platform: 'wix' },
 						} );
 					} );
 
@@ -1375,7 +1398,7 @@ describe( 'Site Migration Flow', () => {
 						} );
 
 						expect( window.location.assign ).toMatchURL( {
-							path: '/setup/static-site-import/static-site-import-reading',
+							path: '/setup/static-site-import/plans',
 							query: {
 								from: 'https://site-to-be-migrated.com',
 								platform: 'squarespace',

@@ -25,8 +25,7 @@ import './style.scss';
 
 export * from './use-static-site-import';
 
-// The session only reports queued → finished, so the list moves on a timer and never finishes
-// its last item before the session does.
+// The list moves on a timer and never finishes its last item before the session does.
 const STEP_DURATION = 20000;
 
 function useTimedStep( stepCount: number ) {
@@ -173,6 +172,22 @@ export function StaticSiteImportNotice( {
 			...trackingProps,
 			action,
 		} );
+
+	if ( siteImport.isRefused ) {
+		return (
+			<Notice
+				variant="error"
+				title={ __( 'We can’t import this site' ) }
+				actions={
+					<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
+						{ __( 'Get help' ) }
+					</Button>
+				}
+			>
+				{ __( 'Its content isn’t allowed on WordPress.com.' ) }
+			</Notice>
+		);
+	}
 
 	if ( siteImport.status === 'failed' ) {
 		const restartUrl = addQueryArgs(
