@@ -235,12 +235,10 @@ export default function AmplifyReportsList( {
 	agencyId,
 	reports,
 	isLoading = false,
-	isPreview = false,
 }: {
 	agencyId: number;
 	reports: AmplifyReport[];
 	isLoading?: boolean;
-	isPreview?: boolean;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useIntlLocale();
@@ -277,12 +275,12 @@ export default function AmplifyReportsList( {
 	);
 	const firstSites = useQuery( {
 		...paginatedAgencySitesQuery( { page: 1, per_page: 20 }, agencyId ),
-		enabled: !! agencyId && reports.length > 0 && ! isPreview,
+		enabled: !! agencyId && reports.length > 0,
 	} );
 	const siteCount = firstSites.data?.total ?? 0;
 	const allSites = useQuery( {
 		...paginatedAgencySitesQuery( { page: 1, per_page: siteCount || 20 }, agencyId ),
-		enabled: !! agencyId && reports.length > 0 && ! isPreview && siteCount > 20,
+		enabled: !! agencyId && reports.length > 0 && siteCount > 20,
 	} );
 	const agencySites = useMemo( () => {
 		const sites = new Map< string, AgencySite >();
@@ -450,7 +448,7 @@ export default function AmplifyReportsList( {
 								variant="secondary"
 								size="compact"
 								isBusy={ retryingId === item.id }
-								disabled={ isPreview || !! retryingId }
+								disabled={ !! retryingId }
 								accessibleWhenDisabled
 								onClick={ () => onRetry( item ) }
 							>
@@ -466,8 +464,6 @@ export default function AmplifyReportsList( {
 							icon={ archiveBoxIcon }
 							label={ __( 'Archive report' ) }
 							showTooltip
-							disabled={ isPreview }
-							accessibleWhenDisabled
 							onClick={ () => {
 								recordTracksEvent( 'calypso_a4a_amplify_report_archive_click', {
 									report_id: item.id,
@@ -483,7 +479,7 @@ export default function AmplifyReportsList( {
 				filterBy: false,
 			},
 		],
-		[ isPreview, locale, onRetry, recordTracksEvent, retryingId, siteFor, titleFor, view.type ]
+		[ locale, onRetry, recordTracksEvent, retryingId, siteFor, titleFor, view.type ]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
