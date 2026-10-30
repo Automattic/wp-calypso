@@ -6,7 +6,7 @@ export const getAllowedPluginActions = ( site: SiteWithPluginData, pluginSlug: s
 	const siteIsJetpack = site.jetpack;
 	const hasManagePlugins = site.plan?.features.active.includes( 'manage-plugins' ) ?? false;
 	const isAutoManagedPlugin = siteIsAtomic && autoManagedPlugins.includes( pluginSlug );
-	const isManagedPlugin = isAutoManagedPlugin || ( siteIsAtomic && site.isPluginManaged );
+	const isManagedPlugin = isAutoManagedPlugin || site.isPluginManaged;
 	const canManagePlugins =
 		( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
 
