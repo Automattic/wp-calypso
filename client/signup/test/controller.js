@@ -99,6 +99,22 @@ describe( 'redirectLegacyFlow', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
+	it( 'sends the retired website-design-services flow to DIFM with its query and locale', () => {
+		const next = jest.fn();
+		controller.redirectLegacyFlow(
+			{
+				params: { flowName: 'website-design-services', stepName: 'difm-options', lang: 'es' },
+				querystring: 'siteSlug=example.wordpress.com',
+			},
+			next
+		);
+
+		expect( window.location.replace ).toHaveBeenCalledWith(
+			'/start/do-it-for-me/es?siteSlug=example.wordpress.com'
+		);
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
 	it( 'still redirects legacy plan flows', () => {
 		run( { flowName: 'business' } );
 

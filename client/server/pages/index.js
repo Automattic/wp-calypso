@@ -46,6 +46,7 @@ import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import { getWebsiteDesignServicesRedirect } from 'calypso/lib/signup/legacy-website-design-services-flow';
 import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
@@ -1399,15 +1400,12 @@ export default function pages() {
 		res.redirect( 302, getWooCommercePluginPage( req.params.site ) );
 	} );
 
-	// The retired DIFM flow for an existing site. DIFM asks for the site itself.
 	app.get(
 		[ '/start/website-design-services', '/start/website-design-services/*' ],
 		( req, res ) => {
-			const locale = getLegacyFlowLocale( req.path );
-			const search = stringify( req.query );
 			res.redirect(
 				302,
-				`/start/do-it-for-me${ locale ? `/${ locale }` : '' }${ search ? `?${ search }` : '' }`
+				getWebsiteDesignServicesRedirect( getLegacyFlowLocale( req.path ), stringify( req.query ) )
 			);
 		}
 	);
