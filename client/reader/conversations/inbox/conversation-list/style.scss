@@ -108,6 +108,10 @@
 	}
 }
 
+.conversations-inbox__list.is-density-compact .conversations-inbox__item {
+	padding-block: 10px;
+}
+
 .conversations-inbox__item-title,
 .conversations-inbox__item-excerpt {
 	flex: 1;
@@ -140,4 +144,9 @@
 
 .conversations-inbox__item-new {
 	white-space: nowrap;
+}
+
+.conversations-inbox__settings {
+	min-width: 280px;
+	padding: 16px;
 }

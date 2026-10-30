@@ -23,6 +23,7 @@ jest.mock( '../conversation-list', () => ( {
 		selectedKey?: string;
 		onSelect: ( conversation: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
+		onDensityChange: ( density: string ) => void;
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
@@ -32,6 +33,7 @@ jest.mock( '../conversation-list', () => ( {
 				</button>
 			) ) }
 			<button onClick={ () => props.onTabChange( 'yours' ) }>Your comments</button>
+			<button onClick={ () => props.onDensityChange( 'compact' ) }>Compact</button>
 		</div>
 	),
 } ) );
@@ -58,6 +60,7 @@ jest.mock( '../conversation-detail', () => ( {
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -254,6 +257,23 @@ describe( 'ConversationsInbox', () => {
 				{ tab: 'unread', source: 'shortcut' },
 				{ tab: 'yours', source: 'shortcut' },
 			] );
+		} );
+
+		it( 'saves and records the density picked', async () => {
+			const user = userEvent.setup();
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/preferences', {
+					calypso_preferences: { reader_conversations_inbox_density: 'compact' },
+				} )
+				.reply( 200, { calypso_preferences: {} } );
+			renderInbox( { siteId: '10', postId: '100' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Compact' } ) );
+
+			expect( tracked( 'calypso_reader_conversations_inbox_density_changed' ) ).toEqual( [
+				{ density: 'compact' },
+			] );
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		} );
 
 		it( 'does not record picking the tab that is already open', async () => {

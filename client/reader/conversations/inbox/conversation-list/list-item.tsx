@@ -10,6 +10,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
 import { usePost } from 'calypso/reader/data/post';
 import { formatCompactTime } from './format-compact-time';
+import type { Density } from './toolbar';
 import type { Conversation } from '../group-notes';
 
 export type OpenSource = 'click' | 'tab_key' | 'shortcut' | 'button';
@@ -17,6 +18,7 @@ export type OpenSource = 'click' | 'tab_key' | 'shortcut' | 'button';
 interface Props {
 	conversation: Conversation;
 	isSelected: boolean;
+	density: Density;
 	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
 }
 
@@ -48,13 +50,18 @@ function getContextLine(
 	}
 }
 
-export function ConversationListItem( { conversation, isSelected, onSelect }: Props ) {
+export function ConversationListItem( { conversation, isSelected, density, onSelect }: Props ) {
 	const translate = useTranslate();
 	const locale = useLocale();
 	const { siteId, postId, excerpt, timestamp, commenters, unreadNoteIds } = conversation;
 	const { data: post } = usePost( conversation.title ? null : { blogId: siteId, postId } );
 	const title = conversation.title || String( post?.title ?? '' );
 	const unreadCount = unreadNoteIds.length;
+	const newCount = unreadCount > 0 && (
+		<Text color="var(--color-primary)" className="conversations-inbox__item-new">
+			{ translate( '%(count)d new', { args: { count: unreadCount } } ) }
+		</Text>
+	);
 	const itemRef = useRef< HTMLLIElement >( null );
 	const isMountedRef = useRef( false );
 	const openedOnFocusRef = useRef( false );
@@ -123,8 +130,9 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 						<span aria-hidden="true">{ formatCompactTime( timestamp, locale ) }</span>
 						<VisuallyHidden>{ formatCompactTime( timestamp, locale, 'long' ) }</VisuallyHidden>
 					</Text>
+					{ density !== 'comfortable' && newCount }
 				</HStack>
-				{ commenters.length > 0 && (
+				{ density !== 'compact' && commenters.length > 0 && (
 					<HStack as="span" justify="flex-start">
 						<HStack
 							as="span"
@@ -139,14 +147,12 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 						<span>{ getContextLine( translate, conversation ) }</span>
 					</HStack>
 				) }
-				<HStack as="span">
-					<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
-					{ unreadCount > 0 && (
-						<Text color="var(--color-primary)" className="conversations-inbox__item-new">
-							{ translate( '%(count)d new', { args: { count: unreadCount } } ) }
-						</Text>
-					) }
-				</HStack>
+				{ density === 'comfortable' && (
+					<HStack as="span">
+						<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
+						{ newCount }
+					</HStack>
+				) }
 			</VStack>
 		</li>
 	);

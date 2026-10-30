@@ -5,13 +5,14 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
 import { ConversationListItem, type OpenSource } from './list-item';
 import { ConversationListTabs, type InboxTab } from './tabs';
-import { ConversationListToolbar, type SortOrder } from './toolbar';
+import { ConversationListToolbar, type Density, type SortOrder } from './toolbar';
 import type { Conversation } from '../group-notes';
 
 import './style.scss';
@@ -24,6 +25,8 @@ interface Props {
 	onTabChange: ( tab: InboxTab ) => void;
 	search: string;
 	onSearchChange: ( search: string ) => void;
+	density: Density;
+	onDensityChange: ( density: Density ) => void;
 	sort: SortOrder;
 	onSortChange: ( sort: SortOrder ) => void;
 	isShortcutsOpen: boolean;
@@ -40,6 +43,8 @@ export function ConversationList( {
 	onTabChange,
 	search,
 	onSearchChange,
+	density,
+	onDensityChange,
 	sort,
 	onSortChange,
 	isShortcutsOpen,
@@ -90,8 +95,10 @@ export function ConversationList( {
 				onSearchChange={ onSearchChange }
 				sort={ sort }
 				onSortChange={ onSortChange }
+				density={ density }
+				onDensityChange={ onDensityChange }
 			/>
-			<div className="conversations-inbox__list">
+			<div className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }>
 				{ isLoading && <Spinner /> }
 				{ ! isLoading && conversations.length === 0 && (
 					<Text as="p" color="var(--color-text-subtle)" className="conversations-inbox__empty">
@@ -119,6 +126,7 @@ export function ConversationList( {
 									key={ conversation.key }
 									conversation={ conversation }
 									isSelected={ conversation.key === selectedKey }
+									density={ density }
 									onSelect={ onSelect }
 								/>
 							) ) }
