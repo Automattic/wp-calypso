@@ -37,6 +37,7 @@ interface Props {
 	isShortcutsOpen: boolean;
 	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
+	openOnFocus: boolean;
 	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
 }
 
@@ -58,6 +59,7 @@ export function ConversationList( {
 	isShortcutsOpen,
 	onShortcutsToggle,
 	selectedKey,
+	openOnFocus,
 	onSelect,
 }: Props ) {
 	const translate = useTranslate();
@@ -181,6 +183,7 @@ export function ConversationList( {
 									key={ conversation.key }
 									conversation={ conversation }
 									isSelected={ conversation.key === selectedKey }
+									openOnFocus={ openOnFocus }
 									density={ density }
 									onSelect={ onSelect }
 								/>
