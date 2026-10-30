@@ -46,14 +46,14 @@ function StaticSiteImport() {
 }
 
 describe( 'StaticSiteImportCard', () => {
-	it( 'names this site as the destination while the site is still being read', async () => {
+	it( 'starts the move the user asked for before checkout', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
-			.reply( 200, session( 'capturing' ) );
+			.reply( 200, session( 'preview_ready', { archive_hash: 'hash' } ) );
 		const approve = mockApi()
 			.post( '/wpcom/v2/static-site-import-session/abc123/approve', ( body ) => {
-				expect( body ).toEqual( { destination_blog_id: 42 } );
+				expect( body ).toEqual( { archive_hash: 'hash', destination_blog_id: 42 } );
 				return true;
 			} )
 			.reply( 200, session( 'queued' ) );
@@ -66,41 +66,6 @@ describe( 'StaticSiteImportCard', () => {
 
 		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
-	} );
-
-	it( 'does not approve again once delivery is bound to this site', async () => {
-		const sessionRequest = mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply( 200, session( 'queued', { site_url: 'https://busybears.wordpress.com' } ) );
-		const approve = mockApi()
-			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
-			.reply( 200, session( 'queued' ) );
-
-		render( <StaticSiteImport /> );
-
-		await waitFor( () => expect( sessionRequest.isDone() ).toBe( true ) );
-		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
-		expect( approve.isDone() ).toBe( false );
-	} );
-
-	it( 'keeps moving while another approval holds the delivery', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.times( 2 )
-			.query( true )
-			.reply( 200, session( 'building' ) );
-		const approve = mockApi()
-			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
-			.reply( 409, {
-				code: 'static_site_import_session_approval_in_progress',
-				message: 'Another approval is in progress.',
-			} );
-
-		render( <StaticSiteImport /> );
-
-		await waitFor( () => expect( approve.isDone() ).toBe( true ) );
-		expect( screen.getByRole( 'heading', { name: 'We’re moving your site' } ) ).toBeVisible();
 	} );
 
 	it( 'offers to connect the kept domain and preview the site once it is ready', async () => {
@@ -226,11 +191,11 @@ describe( 'StaticSiteImportCard', () => {
 		} );
 	} );
 
-	it( 'offers to read the site again when the session is gone', async () => {
+	it( 'offers to read the site again when the preview has expired', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
-			.reply( 404, { code: 'static_site_import_session_not_found', message: 'Not found' } );
+			.reply( 404, { code: 'static_site_import_preview_expired', message: 'Expired' } );
 
 		render( <StaticSiteImport /> );
 
@@ -238,20 +203,5 @@ describe( 'StaticSiteImportCard', () => {
 			'href',
 			expect.stringContaining( '/setup/static-site-import/static-site-import-reading' )
 		);
-	} );
-
-	it( 'stops at a refused site instead of offering to read it again', async () => {
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.reply(
-				200,
-				session( 'failed', { receipt: { success: false, code: 'static_site_capture_blocked' } } )
-			);
-
-		render( <StaticSiteImport /> );
-
-		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
-		expect( screen.queryByRole( 'link', { name: 'Read my site again' } ) ).not.toBeInTheDocument();
 	} );
 } );

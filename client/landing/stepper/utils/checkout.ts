@@ -1,68 +1,10 @@
-import { Visibility } from '@automattic/data-stores';
-import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
-import { pathToUrl } from 'calypso/lib/url';
 import {
 	setSignupCompleteSlug,
 	persistSignupDestination,
 	setSignupCompleteFlowName,
 	setSignupCompleteStepName,
 } from 'calypso/signup/storageUtils';
-
-export const goToUnifiedCheckout = ( {
-	flowName,
-	plan,
-	userIsLoggedIn,
-	destination,
-	cancelDestination,
-	siteIntent,
-}: {
-	flowName: string;
-	plan: string;
-	userIsLoggedIn: boolean;
-	destination: string;
-	cancelDestination: string;
-	siteIntent?: string;
-} ) => {
-	const siteParams = {
-		blog_name: '',
-		blog_title: __( 'My Site' ),
-		public: Visibility.PublicNotIndexed,
-		options: {
-			site_creation_flow: flowName,
-			wpcom_public_coming_soon: 1,
-			...( siteIntent && { site_intent: siteIntent } ),
-		},
-		find_available_url: true,
-		validate: false,
-	};
-
-	try {
-		window.localStorage.setItem( 'siteParams', JSON.stringify( siteParams ) );
-	} catch {
-		// Checkout can use its default site settings when storage is unavailable.
-	}
-
-	setSignupCompleteFlowName( flowName );
-	persistSignupDestination( destination );
-
-	const currentQuery = new URLSearchParams( window.location.search );
-	window.location.assign(
-		addQueryArgs( `/checkout/unified/${ encodeURIComponent( plan ) }`, {
-			...Object.fromEntries(
-				[ 'coupon', 'ref', 'source' ]
-					.filter( ( param ) => currentQuery.has( param ) )
-					.map( ( param ) => [ param, currentQuery.get( param ) ] )
-			),
-			flow: flowName,
-			redirect_to: destination,
-			cancel_to: cancelDestination,
-			// Once checkout has created the account, cancelling ignores cancel_to.
-			checkoutBackUrl: pathToUrl( cancelDestination ),
-			...( ! userIsLoggedIn && { signup: 1 } ),
-		} )
-	);
-};
 
 interface GoToCheckoutProps {
 	flowName: string;

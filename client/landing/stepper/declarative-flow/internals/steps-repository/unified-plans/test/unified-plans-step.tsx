@@ -12,11 +12,7 @@ jest.mock( 'calypso/components/marketing-message', () => 'marketing-message' );
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: () => {} } } ) );
 
 import { PLAN_BUSINESS } from '@automattic/calypso-products';
-import {
-	EDUCATION_FLOW,
-	SITE_MIGRATION_FLOW,
-	STATIC_SITE_IMPORT_FLOW,
-} from '@automattic/onboarding';
+import { EDUCATION_FLOW, SITE_MIGRATION_FLOW } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
@@ -208,13 +204,6 @@ describe( 'Plans site context', () => {
 			'destination.wordpress.com',
 		],
 		[ SITE_MIGRATION_FLOW, '', undefined, null ],
-		[ STATIC_SITE_IMPORT_FLOW, '', undefined, null ],
-		[
-			STATIC_SITE_IMPORT_FLOW,
-			`siteId=${ destination.ID }&siteSlug=${ new URL( destination.URL ).host }`,
-			destination,
-			new URL( destination.URL ).host,
-		],
 		[ 'onboarding', '', previousSite, 'previous.wordpress.com' ],
 	] )(
 		'resolves %s plans with destination "%s" despite saved signup state',
