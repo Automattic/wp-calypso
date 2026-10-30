@@ -51,7 +51,7 @@
 	justify-content: space-between;
 	align-items: flex-start;
 	gap: 4px;
-	margin-block-end: 8px;
+	margin-block-end: 12px;
 }
 
 .shopping-cart__menu-list-item-details {
@@ -101,4 +101,20 @@
 		min-height: 40px;
 		width: 100%;
 	}
+}
+
+// Fits the counter's number and its two buttons.
+.shopping-cart__menu-list-item-count {
+	flex-shrink: 0;
+	inline-size: 120px;
+}
+
+// Without a counter, Remove lines up with the middle of the product's details.
+.shopping-cart__menu-list-item-actions.is-centered {
+	align-self: center;
+}
+
+.shopping-cart__menu-list-item-unit-price {
+	color: var(--color-neutral-50);
+	@include body-small;
 }

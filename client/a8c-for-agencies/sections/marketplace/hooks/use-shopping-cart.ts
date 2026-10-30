@@ -96,8 +96,9 @@ export default function useShoppingCart() {
 
 			selectedItemsCache.forEach( ( { slug, quantity, licenseId, siteUrls, site_domain } ) => {
 				const cachedPressableMemoryTarget = getPressableMemoryTarget( { site_domain } );
+				// Billing Dragon counts licenses one by one rather than in bundles.
 				const match =
-					quantity === 1 || slug.startsWith( 'wpcom-hosting' )
+					quantity === 1 || slug.startsWith( 'wpcom-hosting' ) || isEnabled( 'a4a-bd-checkout' )
 						? data.find(
 								( product ) =>
 									product.slug === slug &&
@@ -162,6 +163,23 @@ export default function useShoppingCart() {
 		[ updatedSelectedCartItems, setAndCacheSelectedItems ]
 	);
 
+	const onSetCartItemQuantity = useCallback(
+		( item: ShoppingCartItem, quantity: number ) => {
+			dispatch(
+				recordTracksEvent( 'calypso_a4a_marketplace_checkout_set_item_quantity', {
+					product: item.slug,
+					quantity,
+				} )
+			);
+			setAndCacheSelectedItems(
+				updatedSelectedCartItems.map( ( selectedCartItem ) =>
+					selectedCartItem === item ? { ...selectedCartItem, quantity } : selectedCartItem
+				)
+			);
+		},
+		[ dispatch, updatedSelectedCartItems, setAndCacheSelectedItems ]
+	);
+
 	const onClearCart = useCallback( () => {
 		setAndCacheSelectedItems( [] );
 	}, [ setAndCacheSelectedItems ] );
@@ -170,6 +188,7 @@ export default function useShoppingCart() {
 		selectedCartItems: updatedSelectedCartItems,
 		setSelectedCartItems: setAndCacheSelectedItems,
 		onRemoveCartItem,
+		onSetCartItemQuantity,
 		onClearCart,
 		showCart,
 		setShowCart,

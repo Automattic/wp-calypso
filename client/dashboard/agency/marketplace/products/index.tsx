@@ -129,7 +129,14 @@ export default function MarketplaceProducts() {
 	}, [ allProducts, showPressableAddons ] );
 
 	const searchParams = marketplaceProductsRoute.useSearch() as ProductsSearchParams;
-	const { items: cartItems, hasItem, addItem, removeItem, replaceItems } = useShoppingCart();
+	const {
+		items: cartItems,
+		hasItem,
+		addItem,
+		removeItem,
+		setItemQuantity,
+		replaceItems,
+	} = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 	const [ view, setView ] = useState< View >( () => ( {
 		...DEFAULT_VIEW,
@@ -365,6 +372,12 @@ export default function MarketplaceProducts() {
 		[ hasItem ]
 	);
 
+	const isLegacyBilling = agency?.billing_system === 'legacy';
+	const openCart = useCallback( () => setIsCartOpen( true ), [ setIsCartOpen ] );
+	// Only a Billing Dragon purchase sets counts in the cart, so only then does a
+	// product in the cart open it.
+	const opensCart = ! isReferralMode && ! isLegacyBilling;
+
 	const openDetails = ( product: AgencyProduct ) => {
 		recordTracksEvent( 'calypso_marketplace_products_overview_product_view', {
 			product: product.slug,
@@ -383,6 +396,7 @@ export default function MarketplaceProducts() {
 					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
+					onOpenCart={ opensCart ? openCart : undefined }
 					onSelectVariant={ ( product ) =>
 						recordTracksEvent( 'calypso_a4a_marketplace_products_overview_variant_option_click', {
 							product: product.slug,
@@ -414,10 +428,11 @@ export default function MarketplaceProducts() {
 									term={ termPricing }
 									isReferralMode={ isReferralMode }
 									isAgencyApproved={ isAgencyApproved( agency ) }
-									isLegacyBilling={ agency?.billing_system === 'legacy' }
+									isLegacyBilling={ isLegacyBilling }
 									open={ isCartOpen }
 									onToggle={ setIsCartOpen }
 									onRemove={ removeItem }
+									onSetQuantity={ setItemQuantity }
 								/>
 							</HStack>
 						</HStack>
@@ -434,6 +449,14 @@ export default function MarketplaceProducts() {
 					inCart={ isProductInCart( detailsProduct ) }
 					onToggleCart={ () => toggleCart( detailsProduct ) }
 					onClose={ () => setDetailsProduct( null ) }
+					onOpenCart={
+						opensCart
+							? () => {
+									setDetailsProduct( null );
+									openCart();
+								}
+							: undefined
+					}
 				/>
 			) }
 			{ isLoading && <FeaturedShowcaseSkeleton /> }
@@ -445,6 +468,7 @@ export default function MarketplaceProducts() {
 					isInCart={ isProductInCart }
 					onToggleCart={ toggleCart }
 					onViewDetails={ openDetails }
+					onOpenCart={ opensCart ? openCart : undefined }
 				/>
 			) }
 			<div className="dashboard-marketplace-products__filters">

@@ -61,6 +61,7 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 		selectedCartItems,
 		setSelectedCartItems,
 		onRemoveCartItem,
+		onSetCartItemQuantity,
 		showCart,
 		setShowCart,
 		toggleCart,
@@ -178,6 +179,7 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 									toggleCart={ toggleCart }
 									items={ selectedCartItems }
 									onRemoveItem={ onRemoveCartItem }
+									onSetItemQuantity={ onSetCartItemQuantity }
 									onCheckout={ () => {
 										page( A4A_MARKETPLACE_CHECKOUT_LINK );
 									} }
@@ -233,6 +235,7 @@ export function ProductsOverview( { siteId, suggestedProduct, productBrand, sear
 						selectedBundleSize={ selectedBundleSize }
 						selectedFilters={ selectedFilters }
 						termPricing={ termPricing }
+						onOpenCart={ () => setShowCart( true ) }
 					/>
 				}
 			</ShoppingCartContext.Provider>
