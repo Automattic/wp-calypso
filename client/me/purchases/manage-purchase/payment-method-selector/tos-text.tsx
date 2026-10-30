@@ -22,7 +22,7 @@ export default function TosText( {
 		const components = {
 			tosLink: (
 				<a
-					href={ localizeUrl( 'https://wordpress.com/tos/' ) }
+					href={ localizeUrl( 'https://automattic.com/tos/' ) }
 					target="_blank"
 					rel="noopener noreferrer"
 				/>
@@ -60,7 +60,7 @@ export default function TosText( {
 				href={
 					isAkismetPurchase
 						? localizeUrl( 'https://akismet.com/tos/' )
-						: localizeUrl( 'https://wordpress.com/tos/' )
+						: localizeUrl( 'https://automattic.com/tos/' )
 				}
 				target="_blank"
 				rel="noopener noreferrer"
