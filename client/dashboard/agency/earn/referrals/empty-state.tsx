@@ -13,6 +13,7 @@ import InlineSupportLink from '../../../components/inline-support-link';
 import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
+import { useBackHereSearch } from '../../components/fullscreen-page';
 import { isAgencyApproved } from '../../marketplace/is-agency-approved';
 import { MARKETPLACE_HOSTING_ROUTE } from '../../marketplace/paths';
 import { useMarketplaceType } from '../../marketplace/use-marketplace-type';
@@ -31,6 +32,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const isGated = useIsApprovalGated();
 	const [ isGateOpen, setIsGateOpen ] = useState( false );
+	const backHereSearch = useBackHereSearch();
 
 	return (
 		<EmptyState.Wrapper>
@@ -126,6 +128,7 @@ export default function ReferralsEmptyState( { agencyId }: { agencyId: number } 
 										size="compact"
 										__next40pxDefaultSize
 										to="/payout-settings"
+										search={ backHereSearch }
 										onClick={ () =>
 											recordTracksEvent( 'calypso_a4a_referrals_add_bank_details_button_click' )
 										}

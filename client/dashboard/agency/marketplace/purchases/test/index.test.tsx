@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
+import CrossoverModalHost from '../../../crossover';
 import MarketplacePurchases from '../index';
 
 const API = 'https://public-api.wordpress.com';
@@ -326,10 +327,23 @@ describe( '<MarketplacePurchases>', () => {
 			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
 			mockPendingSites( 'pending' );
 
-			render( <MarketplacePurchases /> );
+			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			render(
+				<>
+					<MarketplacePurchases />
+					<CrossoverModalHost />
+				</>
+			);
 			await userEvent.click( await screen.findByRole( 'link', { name: /Manage in Pressable/ } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: /Continue to Pressable/ } ) );
 
+			expect( open ).toHaveBeenCalledWith(
+				'https://my.pressable.com/agency/auth',
+				'_blank',
+				'noopener,noreferrer'
+			);
 			expect( await screen.findByRole( 'dialog', { name: 'Purchase complete!' } ) ).toBeVisible();
+			open.mockRestore();
 		} );
 	} );
 } );

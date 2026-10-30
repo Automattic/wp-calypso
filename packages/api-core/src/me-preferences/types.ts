@@ -85,4 +85,6 @@ export interface UserPreferences {
 	'a4a-library-read-resources'?: number[];
 	/** The `completed_at` of the migration whose completed notice the user dismissed for a site. */
 	[ key: `site-migration-completed-notice-dismissed-${ number }` ]: number | undefined;
+	/** The places outside the agency dashboard the agency asked not to be warned about again. */
+	'a4a-crossover-dismissed'?: string[];
 }
