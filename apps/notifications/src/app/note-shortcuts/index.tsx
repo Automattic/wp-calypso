@@ -36,6 +36,7 @@ export default function NoteShortcuts() {
 			<Shortcut letter="↑" title={ __( 'Previous' ) } />
 			<Shortcut letter="←" title={ __( 'Left' ) } />
 			<Shortcut letter="→" title={ __( 'Right' ) } />
+			<Shortcut letter="↵" title={ __( 'Toggle notification' ) } />
 			<Shortcut letter="a" title={ __( 'View all' ) } />
 			<Shortcut letter="u" title={ __( 'View unread' ) } />
 			<Shortcut letter="c" title={ __( 'View comments' ) } />
