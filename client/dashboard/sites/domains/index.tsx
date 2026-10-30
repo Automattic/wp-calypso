@@ -17,7 +17,7 @@ import {
 import { Notice } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
+import { usePendingPrimaryDomain } from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	filterSortAndPaginateDomains,
@@ -50,6 +50,9 @@ function SiteDomains() {
 	} );
 
 	const pendingDomain = siteDomains.find( isPendingPrimaryDomain );
+	usePendingPrimaryDomain( pendingDomain?.domain, () =>
+		queryClient.invalidateQueries( queries.domainsQuery() )
+	);
 
 	const { data: redirect } = useSuspenseQuery( siteRedirectQuery( site.ID ) );
 	const hasRedirect = redirect && Object.keys( redirect ).length > 0;
@@ -97,13 +100,7 @@ function SiteDomains() {
 					{ /* Action feedback, not an on-load banner: rendered outside the arbiter. */ }
 					{ bulkActionsNotice }
 					<SitesNoticeArbiter>
-						{ ! hasRedirect && pendingDomain && (
-							<PendingPrimaryDomainNotice
-								domainName={ pendingDomain.domain }
-								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
-							/>
-						) }
-						{ ! hasRedirect && ! pendingDomain && (
+						{ ! hasRedirect && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
 						{ hasRedirect && (
