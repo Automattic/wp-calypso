@@ -2,6 +2,7 @@ import { referralCommissionPayoutQuery, referralsQuery } from '@automattic/api-q
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
+import { addQueryArgs, getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState, useMemo } from 'react';
@@ -13,6 +14,7 @@ import {
 	NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_CHECKOUT_URL_QUERY_PARAM_KEY,
 	NEW_REFERRAL_ORDER_FLOW_TYPE_QUERY_PARAM_KEY,
+	REFERRAL_ID_QUERY_PARAM_KEY,
 } from 'calypso/a8c-for-agencies/constants';
 import useUrlQueryParam from 'calypso/a8c-for-agencies/hooks/use-url-query-param';
 import {
@@ -50,7 +52,22 @@ export default function ReferralsOverview() {
 	const agencyId = useSelector( getActiveAgencyId ) ?? 0;
 
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
-	const [ selectedReferralId, setSelectedReferralId ] = useState< number | null >( null );
+	const [ selectedReferralId, setSelectedReferralId ] = useState< number | null >( () => {
+		const referralId = Number( getQueryArg( window.location.href, REFERRAL_ID_QUERY_PARAM_KEY ) );
+		return referralId > 0 ? referralId : null;
+	} );
+
+	// Mirrored to the URL so pages like assign-license can link back to the open referral.
+	const selectReferral = useCallback( ( referralId: number | null ) => {
+		setSelectedReferralId( referralId );
+		window.history.replaceState(
+			null,
+			'',
+			referralId
+				? addQueryArgs( window.location.href, { [ REFERRAL_ID_QUERY_PARAM_KEY ]: referralId } )
+				: removeQueryArgs( window.location.href, REFERRAL_ID_QUERY_PARAM_KEY )
+		);
+	}, [] );
 
 	const { value: newReferralOrderEmail, setValue: setNewReferralOrderEmail } = useUrlQueryParam(
 		NEW_REFERRAL_ORDER_EMAIL_QUERY_PARAM_KEY
@@ -181,7 +198,7 @@ export default function ReferralsOverview() {
 						view={ listView }
 						onChangeView={ handleChangeView }
 						selectedReferral={ selectedItem ?? undefined }
-						onSelectReferral={ setSelectedReferralId }
+						onSelectReferral={ selectReferral }
 					/>
 				</LayoutBody>
 			</LayoutColumn>
@@ -190,7 +207,7 @@ export default function ReferralsOverview() {
 					<ReferralDetails
 						referral={ selectedItem }
 						referralCommissionPayout={ referralCommissionPayout }
-						closeSitePreviewPane={ () => setSelectedReferralId( null ) }
+						closeSitePreviewPane={ () => selectReferral( null ) }
 					/>
 				</LayoutColumn>
 			) }

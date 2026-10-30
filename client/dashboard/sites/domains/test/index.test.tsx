@@ -210,6 +210,12 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Rename address' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'labels the expiry column "Renews on"', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByRole( 'button', { name: 'Renews on' } ) ).toBeVisible();
+	} );
+
 	test( 'opens the change site address modal when deep linked', async () => {
 		mockSearchParams = { action: 'change-site-address' };
 
@@ -351,6 +357,38 @@ describe( '<SiteDomains>', () => {
 
 		await screen.findByRole( 'table' );
 		expect( screen.queryByRole( 'button', { name: 'Change primary' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows "Set www as primary" as a link on the primary domain row of an Atomic site', async () => {
+		nock.cleanAll();
+		mockApis( { siteResponse: { ...site, is_wpcom_atomic: true } as Site } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		const setWwwButton = await within( table ).findByRole( 'button', {
+			name: 'Set www as primary',
+		} );
+		expect( setWwwButton.closest( 'tr' ) ).toHaveTextContent( 'test-site.com' );
+		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows "Unset www as primary" when the www address is already primary', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ { ...domain, primary_is_www: true }, defaultAddressDomain ],
+			siteResponse: { ...site, is_wpcom_atomic: true } as Site,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect(
+			await within( table ).findByRole( 'button', { name: 'Unset www as primary' } )
+		).toBeVisible();
+		expect(
+			within( table ).queryByRole( 'button', { name: 'Set www as primary' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'sorts domains by whether they are primary', async () => {

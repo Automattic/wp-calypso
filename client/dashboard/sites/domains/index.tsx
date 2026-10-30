@@ -84,6 +84,7 @@ function SiteDomains() {
 
 	const sites = useMemo( () => [ site ], [ site ] );
 	const actions = useActions( {
+		site,
 		sites,
 		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
 	} );

@@ -45,6 +45,16 @@
 				grid-column: 1 / -1;
 			}
 		}
+
+		// Four cards only happen behind the migration hero, which leaves all
+		// three supporting families (A4A, Woo, Jetpack) to share the row below.
+		.connect-screen-features-section.has-4-card & {
+			grid-template-columns: repeat( 3, 1fr );
+
+			.connect-screen-features-section__card:first-child {
+				grid-column: 1 / -1;
+			}
+		}
 	}
 }
 
@@ -108,12 +118,18 @@
 //
 // Applied to the surfaces that read as a deliberate hero block: the solo
 // card in `has-1-card`, both full-width rows in `has-2-card.has-hero-card`,
-// and the full-width A4A hero in `has-3-card`. The `38ch` cap keeps long
+// and the full-width hero in `has-3-card` and `has-4-card`. The `38ch` cap keeps long
 // or translated copy in a comfortable reading column rather than
 // stretching across the full hero width.
 .connect-screen-features-section.has-1-card .connect-screen-features-section__card-bullets,
-.connect-screen-features-section.has-2-card.has-hero-card .connect-screen-features-section__card-bullets,
-.connect-screen-features-section.has-3-card .connect-screen-features-section__card:first-child .connect-screen-features-section__card-bullets {
+.connect-screen-features-section.has-2-card.has-hero-card
+	.connect-screen-features-section__card-bullets,
+.connect-screen-features-section.has-3-card
+	.connect-screen-features-section__card:first-child
+	.connect-screen-features-section__card-bullets,
+.connect-screen-features-section.has-4-card
+	.connect-screen-features-section__card:first-child
+	.connect-screen-features-section__card-bullets {
 	width: fit-content;
 
 	// `ch` is the right unit semantically (character-count cap, not a

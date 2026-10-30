@@ -23,7 +23,8 @@ export function getSitePlanTermMonths( sitePlan: SitePlanData | null | undefined
 /**
  * Whether the target plan bills on a shorter term than the current one, such as
  * Premium monthly from Premium annual, or Business monthly from Premium annual.
- * The server only allows these as changes scheduled for the current plan's renewal.
+ * This checks the term only: whether the change is made now or at renewal is the
+ * server's call (see isScheduledOnlyPlanChange).
  */
 export function isShorterTermPlanChange(
 	currentSitePlan: SitePlanData | null | undefined,

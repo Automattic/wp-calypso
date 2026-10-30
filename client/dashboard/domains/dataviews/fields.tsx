@@ -53,7 +53,12 @@ export const useFields = ( {
 				enableGlobalSearch: true,
 				getValue: ( { item }: { item: DomainSummary } ) => item.domain,
 				render: ( { field, item } ) => (
-					<DomainNameField domain={ item } site={ site } value={ field.getValue( { item } ) } />
+					<DomainNameField
+						domain={ item }
+						site={ site }
+						value={ field.getValue( { item } ) }
+						showWwwPrefix={ !! site && item.primary_domain && !! item.primary_is_www }
+					/>
 				),
 			},
 			{
@@ -132,7 +137,7 @@ export const useFields = ( {
 			},
 			{
 				id: 'expiry',
-				label: __( 'Paid until' ),
+				label: __( 'Renews on' ),
 				enableHiding: false,
 				enableSorting: true,
 				sort: sortNullableStrings,

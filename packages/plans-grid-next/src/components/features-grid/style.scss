@@ -1075,6 +1075,11 @@ $redesign-table-cell-max-width: 280px;
 			font-size: 12px;
 			line-height: 16px;
 			padding: 0 16px 20px;
+			// The enterprise cell spans this row and the price row. Without a savings badge the two
+			// rows are shorter than the logos, and the browser spreads the excess over both, pushing
+			// the billing copy above the logos. A declared height marks this row as fixed so the
+			// excess goes to the price row instead; the value is below the natural height.
+			height: 16px;
 		}
 	}
 
