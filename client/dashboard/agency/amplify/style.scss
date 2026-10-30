@@ -477,18 +477,6 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 	cursor: help;
 }
 
-.dashboard-amplify-score-preview__metric-tooltip.components-tooltip {
-	max-width: 320px;
-	padding: 12px 16px;
-	border-radius: 8px;
-	background: var( --color-neutral-100 );
-	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-neutral-100 ) 16%, transparent );
-	color: var( --color-text-inverted );
-	font-size: 14px;
-	line-height: 1.5;
-	text-align: start;
-}
-
 .dashboard-amplify-score-preview__metric > strong {
 	font-size: 12px;
 	text-align: end;
