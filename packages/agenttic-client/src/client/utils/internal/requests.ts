@@ -3,6 +3,7 @@ import { formatObject, logger } from '../logger';
 import {
 	createTimeoutHandler,
 	handleRequestError,
+	markTimeoutError,
 	validateHttpResponse,
 	validateJsonRpcResponse,
 	validateStreamingResponse,
@@ -262,7 +263,7 @@ export async function executeRequest(
 		clearTimeout( timeoutId );
 
 		// Validate HTTP response
-		validateHttpResponse( response );
+		await validateHttpResponse( response );
 
 		const data = ( await response.json() ) as JsonRpcResponse< Task >;
 
@@ -279,7 +280,11 @@ export async function executeRequest(
 			throw error;
 		}
 	} catch ( error ) {
-		handleRequestError( error, timeoutId, 'request' );
+		handleRequestError(
+			markTimeoutError( error, timeoutController.signal, externalSignal ),
+			timeoutId,
+			'request'
+		);
 	}
 }
 
@@ -320,7 +325,7 @@ export async function* executeStreamingRequest(
 		clearTimeout( timeoutId );
 
 		// Validate streaming response
-		validateStreamingResponse( response, 'streaming request' );
+		await validateStreamingResponse( response, 'streaming request' );
 
 		// Check if response.body exists
 		if ( ! response.body ) {
@@ -331,8 +336,14 @@ export async function* executeStreamingRequest(
 
 		yield* parseSSEStream( response.body as ReadableStream< Uint8Array >, {
 			supportDeltas,
+			// The request timer stops at the headers; a stream that then goes quiet is cut off the same way.
+			idleTimeout: { ms: streamingTimeout, onIdle: () => controller.abort() },
 		} );
 	} catch ( error ) {
-		handleRequestError( error, timeoutId, 'streaming request' );
+		handleRequestError(
+			markTimeoutError( error, controller.signal, externalSignal ),
+			timeoutId,
+			'streaming request'
+		);
 	}
 }

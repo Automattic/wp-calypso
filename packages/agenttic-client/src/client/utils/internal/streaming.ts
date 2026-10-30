@@ -1,5 +1,6 @@
 import { extractProgressDataFromMessage, extractTextFromMessage, generateMessageId } from '../core';
 import { logger } from '../logger';
+import { AgentRequestError, getJsonRpcErrorCode } from './errors';
 import type {
 	Message,
 	StreamDelta,
@@ -104,6 +105,11 @@ export function parseStreamChunk(
 export interface ParseSSEStreamOptions {
 	/** Whether to process delta messages for token streaming. Default: false */
 	supportDeltas?: boolean;
+	/**
+	 * Calls `onIdle` when a read waits `ms` for the next chunk, until a final update arrives.
+	 * Time spent on a yielded update doesn't count.
+	 */
+	idleTimeout?: { ms: number; onIdle: () => void };
 }
 
 function getResultTaskId( result: { id?: string; taskId?: string } ): string | undefined {
@@ -176,7 +182,7 @@ export async function* parseSSEStream(
 	stream: ReadableStream< Uint8Array >,
 	options: ParseSSEStreamOptions = {}
 ): AsyncIterable< TaskUpdate > {
-	const { supportDeltas = false } = options;
+	const { supportDeltas = false, idleTimeout } = options;
 	const reader = stream.getReader();
 	const decoder = new TextDecoder();
 	let buffer = '';
@@ -206,7 +212,9 @@ export async function* parseSSEStream(
 			}
 
 			const streamError = event.error
-				? new Error( `Streaming error: ${ event.error.message }` )
+				? new AgentRequestError( `Streaming error: ${ event.error.message }`, {
+						code: getJsonRpcErrorCode( event.error ),
+					} )
 				: null;
 			if ( streamError && ! event.result?.status ) {
 				throw streamError;
@@ -320,8 +328,11 @@ export async function* parseSSEStream(
 	};
 
 	try {
+		let sawFinal = false;
 		while ( true ) {
-			const { done, value } = await reader.read();
+			const idleTimer =
+				idleTimeout && ! sawFinal ? setTimeout( idleTimeout.onIdle, idleTimeout.ms ) : undefined;
+			const { done, value } = await reader.read().finally( () => clearTimeout( idleTimer ) );
 			if ( done ) {
 				break;
 			}
@@ -330,7 +341,10 @@ export async function* parseSSEStream(
 			const { events, nextBuffer } = parseStreamChunk( chunk, buffer );
 
 			if ( events && Array.isArray( events ) ) {
-				yield* processEvents( events );
+				for await ( const update of processEvents( events ) ) {
+					sawFinal ||= !! update.final;
+					yield update;
+				}
 			}
 
 			buffer = nextBuffer;

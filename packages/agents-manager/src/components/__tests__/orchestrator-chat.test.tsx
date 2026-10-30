@@ -3,7 +3,12 @@
  */
 /* eslint-disable import/order -- jest.mock calls must precede imports */
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import type { DataPart, TaskState, TaskUpdate } from '@automattic/agenttic-client';
+import type {
+	AgentErrorDetails,
+	DataPart,
+	TaskState,
+	TaskUpdate,
+} from '@automattic/agenttic-client';
 import type { Suggestion } from '@automattic/agenttic-ui';
 import type { InteractiveUiPresentation } from '../../interactive-ui/use-interactive-ui';
 import type { ComponentProps } from 'react';
@@ -17,7 +22,12 @@ let mockConversationHistory: Array< {
 	messageId?: string;
 	parts: Array< Record< string, unknown > >;
 } > = [];
-let mockAgentChatConfig: { onTaskUpdate?: ( update: TaskUpdate ) => Promise< void > } | undefined;
+let mockAgentChatConfig:
+	| {
+			onTaskUpdate?: ( update: TaskUpdate ) => Promise< void >;
+			onSilentError?: ( details: AgentErrorDetails ) => void;
+	  }
+	| undefined;
 let mockConversationConfig:
 	| {
 			onSuccess?: (
@@ -572,6 +582,7 @@ const agentChatReturn = ( overrides: Record< string, unknown > = {} ) => ( {
 	suggestions: [],
 	isProcessing: false,
 	error: null,
+	errorDetails: null,
 	loadMessages: jest.fn(),
 	onSubmit: jest.fn(),
 	abortCurrentRequest: jest.fn(),
@@ -2242,6 +2253,12 @@ describe( 'OrchestratorChat', () => {
 					( [ eventName ] ) => eventName === 'calypso_agents_manager_chat_error'
 				);
 
+		const errorProps = ( errorType: string, errorClass: string = errorType ) => ( {
+			error_type: errorType,
+			error_class: errorClass,
+			navigating: false,
+		} );
+
 		it( 'records one event per error shown, with its type', () => {
 			mockUseAgentChat.mockReturnValue(
 				agentChatReturn( { error: 'ai_editorial_review_over_limit' } )
@@ -2251,7 +2268,7 @@ describe( 'OrchestratorChat', () => {
 			rerender( chat() );
 
 			expect( chatErrorCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_error', { error_type: 'usage_limit' } ],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'usage_limit' ) ],
 			] );
 		} );
 
@@ -2266,8 +2283,8 @@ describe( 'OrchestratorChat', () => {
 			rerender( chat() );
 
 			expect( chatErrorCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
-				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other' ) ],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other' ) ],
 			] );
 		} );
 
@@ -2292,8 +2309,129 @@ describe( 'OrchestratorChat', () => {
 
 			expect( mockTakeRefusalCode ).toHaveBeenCalledTimes( 2 );
 			expect( chatErrorCalls() ).toEqual( [
-				[ 'calypso_agents_manager_chat_error', { error_type: 'credits' } ],
-				[ 'calypso_agents_manager_chat_error', { error_type: 'other' } ],
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'credits' ), error_code: 'ai_credit_allowance_exhausted' },
+				],
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other' ) ],
+			] );
+		} );
+
+		it( 'records the status and code behind an error, but not its text', () => {
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( {
+					error: 'HTTP error! status: 503',
+					errorDetails: { name: 'AgentRequestError', status: 503, code: 'upstream_down' },
+				} )
+			);
+
+			render( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', '5xx' ), http_status: 503, error_code: 'upstream_down' },
+				],
+			] );
+		} );
+
+		it.each( [
+			[ 'a timed-out request', { name: 'AbortError', timedOut: true as const }, 'timeout' ],
+			[ 'a stream that ended mid-turn', { name: 'StreamIncompleteError' }, 'stream_incomplete' ],
+		] )( 'records %s, which the chat doesn’t show', ( _case, details, errorClass ) => {
+			render( chat() );
+
+			act( () => mockAgentChatConfig?.onSilentError?.( details ) );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other', errorClass ) ],
+			] );
+			expect( mockTakeRefusalCode ).not.toHaveBeenCalled();
+		} );
+
+		it( 'flags an error that lands after the page started to unload', () => {
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', 'network' ), navigating: true },
+				],
+			] );
+		} );
+
+		it( 'stops flagging errors once the page is restored from the back/forward cache', () => {
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other', 'network' ) ],
+			] );
+		} );
+
+		it( 'flags the send that was in flight when the page was hidden, after restore', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', 'network' ), navigating: true },
+				],
+			] );
+		} );
+
+		it( 'does not flag a later error when the hidden send finished with none', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			const { rerender } = render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: false } ) );
+			rerender( chat() );
+
+			mockUseAgentChat.mockReturnValue(
+				agentChatReturn( { error: 'Load failed', errorDetails: { name: 'TypeError' } } )
+			);
+			rerender( chat() );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[ 'calypso_agents_manager_chat_error', errorProps( 'other', 'network' ) ],
+			] );
+		} );
+
+		it( 'flags a silent failure of the send that was in flight when the page was hidden', () => {
+			mockUseAgentChat.mockReturnValue( agentChatReturn( { isProcessing: true } ) );
+			render( chat() );
+
+			window.dispatchEvent( new Event( 'pagehide' ) );
+			window.dispatchEvent( new Event( 'pageshow' ) );
+			act( () => mockAgentChatConfig?.onSilentError?.( { name: 'AbortError', timedOut: true } ) );
+
+			expect( chatErrorCalls() ).toEqual( [
+				[
+					'calypso_agents_manager_chat_error',
+					{ ...errorProps( 'other', 'timeout' ), navigating: true },
+				],
 			] );
 		} );
 	} );

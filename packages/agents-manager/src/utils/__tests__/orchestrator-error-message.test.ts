@@ -1,4 +1,6 @@
 import {
+	getOrchestratorErrorClass,
+	getOrchestratorErrorCode,
 	getOrchestratorErrorMessage,
 	getOrchestratorErrorType,
 } from '../orchestrator-error-message';
@@ -65,4 +67,84 @@ describe( 'getOrchestratorErrorType', () => {
 			);
 		}
 	);
+} );
+
+describe( 'getOrchestratorErrorClass', () => {
+	it.each( [
+		[ 'HTTP error! status: 502', { name: 'AgentRequestError', status: 502 }, '5xx' ],
+		[ 'HTTP error! status: 403', { name: 'AgentRequestError', status: 403 }, '4xx' ],
+		[ 'HTTP error! status: 429', { name: 'AgentRequestError', status: 429 }, 'rate_limit' ],
+		[ 'The operation was aborted.', { name: 'AbortError', timedOut: true as const }, 'timeout' ],
+		[ 'The operation was aborted.', { name: 'AbortError' }, 'abort' ],
+		[
+			'Continue task stream ended without final result',
+			{ name: 'StreamIncompleteError' },
+			'stream_incomplete',
+		],
+		[ 'Load failed', { name: 'TypeError' }, 'network' ],
+		[ 'Failed to fetch', { name: 'TypeError' }, 'network' ],
+		[ 'NetworkError when attempting to fetch resource.', { name: 'TypeError' }, 'network' ],
+		[
+			'Streaming error: Agent request failed',
+			{ name: 'AgentRequestError', code: -32603 },
+			'agent_error',
+		],
+		[ 'Cannot read properties of undefined', { name: 'TypeError' }, 'other' ],
+		[ 'Something broke', { name: 'Error' }, 'other' ],
+	] )( 'classifies "%s" with %o as %s', ( error, details, errorClass ) => {
+		expect( getOrchestratorErrorClass( error, details ) ).toBe( errorClass );
+	} );
+
+	it( 'classifies by the status, not a number in the message', () => {
+		expect( getOrchestratorErrorClass( 'Order 500 failed', { name: 'Error' } ) ).toBe( 'other' );
+	} );
+
+	it( 'keeps the class the error type already finds', () => {
+		expect(
+			getOrchestratorErrorClass( 'HTTP 429: Jetpack AI usage limit reached.', {
+				name: 'AgentRequestError',
+				status: 429,
+			} )
+		).toBe( 'usage_limit' );
+		expect(
+			getOrchestratorErrorClass(
+				'Streaming error: You’ve used all your site credits.',
+				{ name: 'AgentRequestError', code: -32000 },
+				'ai_credit_allowance_exhausted'
+			)
+		).toBe( 'credits' );
+	} );
+
+	it( 'falls back to other without details', () => {
+		expect( getOrchestratorErrorClass( 'Some other error.', null ) ).toBe( 'other' );
+	} );
+} );
+
+describe( 'getOrchestratorErrorCode', () => {
+	it( 'prefers the refusal code to the server’s', () => {
+		expect(
+			getOrchestratorErrorCode(
+				{ name: 'AgentRequestError', code: -32000 },
+				'ai_credit_allowance_exhausted'
+			)
+		).toBe( 'ai_credit_allowance_exhausted' );
+	} );
+
+	it.each( [
+		[ -32603, '-32603' ],
+		[ 'rest_forbidden', 'rest_forbidden' ],
+	] )( 'sends the server code %p as %p', ( code, expected ) => {
+		expect( getOrchestratorErrorCode( { name: 'AgentRequestError', code } ) ).toBe( expected );
+	} );
+
+	it.each( [ 'not an identifier, maybe text', 'x'.repeat( 65 ) ] )(
+		'leaves out a code that could be text: %p',
+		( code ) => {
+			expect( getOrchestratorErrorCode( { name: 'AgentRequestError', code } ) ).toBeUndefined();
+		}
+	);
+
+	it( 'returns nothing without a code', () => {
+		expect( getOrchestratorErrorCode( null ) ).toBeUndefined();
+	} );
 } );
