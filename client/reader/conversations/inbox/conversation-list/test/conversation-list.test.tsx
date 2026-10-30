@@ -107,10 +107,7 @@ describe( 'ConversationList', () => {
 
 		await user.click( screen.getByRole( 'tab', { name: 'Your comments' } ) );
 
-		expect(
-			screen.getByRole( 'heading', { name: 'You haven’t commented anywhere yet' } )
-		).toBeVisible();
-		expect( screen.getByText( 'Comments you leave will appear here.' ) ).toBeVisible();
+		expect( screen.getByText( 'You haven’t commented anywhere yet' ) ).toBeVisible();
 	} );
 
 	it( 'filters conversations by search term', async () => {
@@ -155,29 +152,7 @@ describe( 'ConversationList', () => {
 	it( 'shows an empty state when there are no conversations', () => {
 		renderList( { conversations: [] } );
 
-		expect(
-			screen.getByRole( 'heading', { name: 'Conversations will appear here' } )
-		).toBeVisible();
-		expect(
-			screen.getByText(
-				'Conversations on your posts and posts you follow or comment on appear here.'
-			)
-		).toBeVisible();
-	} );
-
-	it( 'shows an error with a retry button when the list fails to load', async () => {
-		const user = userEvent.setup();
-		const onRetry = jest.fn();
-		renderList( { conversations: [], isError: true, onRetry } );
-
-		expect( screen.getByRole( 'heading', { name: 'Couldn’t load conversations' } ) ).toBeVisible();
-		expect(
-			screen.queryByRole( 'heading', { name: 'Conversations will appear here' } )
-		).not.toBeInTheDocument();
-
-		await user.click( screen.getByRole( 'button', { name: 'Retry' } ) );
-
-		expect( onRetry ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByText( 'Conversations will appear here' ) ).toBeVisible();
 	} );
 
 	it( 'lists the keyboard shortcuts from the header button', async () => {

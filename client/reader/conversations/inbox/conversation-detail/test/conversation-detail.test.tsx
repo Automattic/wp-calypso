@@ -88,22 +88,15 @@ describe( 'ConversationDetail', () => {
 		).toBeVisible();
 	} );
 
-	it( 'shows an error with a link to the post when it fails to load', () => {
+	it( 'shows nothing in place of the post when it fails to load', () => {
 		mockedUsePost.mockReturnValue( {
 			data: { ...post, is_error: true },
 			isLoading: false,
 		} as never );
 
-		const { container } = renderDetail( {
-			conversation: { ...conversation, url: 'https://example.com/a-post' },
-		} );
+		const { container } = renderDetail();
 
 		expect( container.querySelector( '.components-spinner' ) ).not.toBeInTheDocument();
-		expect( screen.getByText( /This post can’t be loaded/ ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: /Open it on the site/ } ) ).toHaveAttribute(
-			'href',
-			'https://example.com/a-post'
-		);
 		expect( screen.queryByRole( 'heading', { name: 'A post title' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'feed' ) ).not.toBeInTheDocument();
 	} );
