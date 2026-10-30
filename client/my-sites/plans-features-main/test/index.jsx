@@ -35,6 +35,9 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-e
 		isExperimentEligible: false,
 	} ) )
 );
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment', () =>
+	jest.fn()
+);
 jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
@@ -76,6 +79,7 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
+import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -120,6 +124,13 @@ describe( 'PlansFeaturesMain', () => {
 			showWooCommerceBottomCard: false,
 			isExperimentEligible: false,
 		} ) );
+		usePlanDifferentiatorsExperiment.mockImplementation( () => ( {
+			isLoading: false,
+			variant: 'control',
+			showAiCredits: false,
+			useReversedPlanOrder: false,
+			isExperimentEligible: false,
+		} ) );
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
@@ -132,6 +143,28 @@ describe( 'PlansFeaturesMain', () => {
 					PLAN_PREMIUM,
 					PLAN_BUSINESS,
 					PLAN_ECOMMERCE,
+					PLAN_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		} );
+
+		test( 'Should render <PlanFeatures /> with default WPCOM plans most expensive first in the reversed order variant', () => {
+			usePlanDifferentiatorsExperiment.mockImplementation( () => ( {
+				isLoading: false,
+				variant: 'ai_credits_reversed_order',
+				showAiCredits: true,
+				useReversedPlanOrder: true,
+				isExperimentEligible: true,
+			} ) );
+
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-default-wpcom" /> );
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [
+					PLAN_ECOMMERCE,
+					PLAN_BUSINESS,
+					PLAN_PREMIUM,
+					PLAN_PERSONAL,
+					PLAN_FREE,
 					PLAN_ENTERPRISE_GRID_WPCOM,
 				] )
 			);
