@@ -1,0 +1,126 @@
+.agency-design-preview-panel .components-input-control__container {
+	background: var( --color-neutral-90 );
+}
+.agency-design-preview-panel .components-input-control__backdrop {
+	border-color: var( --color-neutral-50 );
+}
+.agency-design-preview-panel .components-select-control__input {
+	color: var( --color-neutral-0 );
+}
+.agency-design-preview-panel details {
+	margin-block-start: 12px;
+}
+.agency-design-preview-panel summary {
+	cursor: pointer;
+	margin-block-end: 8px;
+}
+.dashboard-amplify-dev-controls__show {
+	width: auto;
+	cursor: pointer;
+}
+
+.agency-design-preview-panel {
+	--wp-components-color-foreground: var( --color-neutral-0 );
+	width: 264px;
+}
+
+.agency-design-preview-panel__header-actions {
+	display: flex;
+	gap: 2px;
+}
+
+.agency-design-preview-panel__header-actions button {
+	display: flex;
+	padding: 4px;
+	border: 0;
+	border-radius: 4px;
+	color: var( --color-neutral-0 );
+	background: transparent;
+	cursor: pointer;
+}
+
+.agency-design-preview-panel__header-actions svg {
+	fill: currentColor;
+}
+
+.agency-design-preview-panel button:hover {
+	background: var( --color-neutral-80 );
+}
+
+.agency-design-preview-panel button:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 1px;
+}
+
+.agency-design-preview-panel__state {
+	display: grid;
+	gap: 6px;
+	padding-block-end: 12px;
+	border-block-end: 1px solid var( --color-neutral-70 );
+}
+
+.agency-design-preview-panel__state span {
+	display: flex;
+	justify-content: space-between;
+}
+
+.agency-design-preview-panel__state input {
+	inline-size: 100%;
+	accent-color: var( --color-primary );
+	margin: 0;
+}
+
+
+.agency-design-preview-panel__flows {
+	padding-block-start: 12px;
+}
+
+.agency-design-preview-panel__flows > ul {
+	max-block-size: min( 420px, 55dvh );
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.agency-design-preview-panel__flows ul {
+	list-style: none;
+	padding: 0;
+	margin: 6px 0 0;
+}
+
+.agency-design-preview-panel__flows ul ul {
+	margin-inline-start: 7px;
+	padding-inline-start: 12px;
+	border-inline-start: 1px solid var( --color-neutral-60 );
+}
+
+.agency-design-preview-panel__flows li {
+	margin: 0;
+}
+
+.agency-design-preview-panel__flows details {
+	margin-block: 6px;
+}
+
+.agency-design-preview-panel__flows summary {
+	font-weight: 600;
+	margin: 0;
+	padding-block: 3px;
+}
+
+.agency-design-preview-panel__flows button {
+	display: block;
+	inline-size: 100%;
+	border: 0;
+	border-radius: 3px;
+	background: transparent;
+	color: var( --color-neutral-10 );
+	padding: 4px;
+	font: inherit;
+	text-align: start;
+	cursor: pointer;
+}
+
+.agency-design-preview-panel__flows button[aria-current='step'] {
+	background: var( --color-primary );
+	color: var( --color-neutral-0 );
+}

@@ -5,6 +5,7 @@ import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress
 import CrossoverModalHost from '../../agency/crossover';
 import { crossoverLinkProps } from '../../agency/crossover/store';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
+import { isOptInPreviewEnabled } from '../../agency/opt-in-preview/store';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
 import { useAppContext } from '../context';
@@ -172,6 +173,9 @@ export default function AgencySidebar() {
 						<SidebarMenuItem { ...crossoverLinkProps( 'wpcom-billing' ) }>
 							{ __( 'Billing' ) }
 						</SidebarMenuItem>
+					) }
+					{ isOptInPreviewEnabled && (
+						<SidebarMenuItem to="/agency/dashboard">{ __( 'Dashboard' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

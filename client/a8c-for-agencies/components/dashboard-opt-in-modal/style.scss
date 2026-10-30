@@ -1,0 +1,25 @@
+@import "@wordpress/base-styles/breakpoints";
+@import "@wordpress/base-styles/colors";
+@import "@wordpress/base-styles/mixins";
+@import "@wordpress/base-styles/variables";
+
+// The new dashboard's own tour drawing on its glow, edge to edge at the top of the modal.
+.a4a-dashboard-opt-in-intro-field {
+	position: relative;
+	overflow: hidden;
+	block-size: 240px;
+	margin: -$grid-unit-30 (-$grid-unit-30) $grid-unit-30;
+	background-color: var(--color-primary-0);
+	background-position: center;
+	background-size: cover;
+}
+
+.a4a-dashboard-opt-in-intro-drawing {
+	position: absolute;
+	inset: 0;
+	inline-size: 100%;
+	block-size: 100%;
+	object-fit: contain;
+	filter: drop-shadow(0 10px 24px rgba($black, 0.1)) drop-shadow(0 1px 3px rgba($black, 0.06));
+}
+

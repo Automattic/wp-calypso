@@ -915,6 +915,21 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
+// `/agency/dashboard` – the owner switches the agency between the new and previous dashboards
+export const agencyDashboardOptInRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: __( 'Dashboard' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/dashboard',
+} ).lazy( () =>
+	import( '../../agency/dashboard-opt-in' ).then( ( d ) =>
+		createLazyRoute( 'agency-dashboard-opt-in' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/team/invite/accept` – accept an invitation to join an agency team. Sits
 // outside the agency routes: the invited user has no agency until it succeeds.
 export const agencyTeamAcceptInviteRoute = createRoute( {
@@ -2318,6 +2333,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
+		agencyDashboardOptInRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,

@@ -18,6 +18,7 @@ import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
 import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
+import { useOptInPreview } from '../opt-in-preview/store';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import { useScheduleCall } from '../tiers/use-schedule-call';
@@ -34,8 +35,14 @@ export default function AgencyOverview() {
 	const agencyId = agency?.id ?? 0;
 	const approvalStatus = agency?.approval_status;
 	const isPending = approvalStatus === 'pending';
-	const { isVisible: isWelcomeBandVisible, isLoading: isWelcomeBandLoading } =
-		useWelcomeBandVisibility( approvalStatus, agency?.tier?.id, agency?.created_at );
+	const preview = useOptInPreview();
+	const welcomeBand = useWelcomeBandVisibility(
+		approvalStatus,
+		agency?.tier?.id,
+		agency?.created_at
+	);
+	const isWelcomeBandLoading = welcomeBand.isLoading;
+	const isWelcomeBandVisible = welcomeBand.isVisible || preview?.agency === 'new';
 	const { openTour } = useOnboardingTour();
 	const hasPartnerDirectoryListing =
 		!! agency?.profile?.partner_directory_application?.directories.some(
