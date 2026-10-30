@@ -567,14 +567,15 @@ const onboarding: FlowV2< typeof initialize > = {
 		 * goes straight to site creation. The free-plan and email-verification branches in the
 		 * plans handler below only apply when no plan was picked, so nothing is skipped here.
 		 */
-		const navigateAfterDomain = ( { requiresPaidPlan = false } = {} ) => {
-			// A Simple blueprint build is a free-plan run by definition, so the plans grid has
-			// nothing to ask either. Same bookkeeping as the free branch of the plans handler
-			// below, including its email-verification gate: a fully free order never reaches
-			// checkout, so this is where the gate is met. A connected or transferred domain is
-			// the exception: it needs a paid plan, so that run still picks one on the grid and
-			// reaches the same destination through checkout's redirect.
-			if ( blueprintSimpleSlug && ! requiresPaidPlan ) {
+		const navigateAfterDomain = ( { paidDomain = false } = {} ) => {
+			// A Simple blueprint build on a free subdomain (or with the domain skipped) is a
+			// free-plan run by definition, so the plans grid has nothing to ask. Same bookkeeping
+			// as the free branch of the plans handler below, including its email-verification
+			// gate: a fully free order never reaches checkout, so this is where the gate is met.
+			// A domain that costs money, bought here or connected on use-my-domain, is the
+			// exception: that run picks a plan on the grid and pays, and reaches the same
+			// destination through checkout's redirect.
+			if ( blueprintSimpleSlug && ! paidDomain ) {
 				setPlanCartItem( null );
 				setProductCartItems( [] );
 				setSignupDomainOrigin(
@@ -627,7 +628,7 @@ const onboarding: FlowV2< typeof initialize > = {
 					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
 					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
 
-					return navigateAfterDomain();
+					return navigateAfterDomain( { paidDomain: !! providedDependencies.domainItem } );
 				case 'use-my-domain': {
 					if (
 						providedDependencies &&
@@ -648,10 +649,18 @@ const onboarding: FlowV2< typeof initialize > = {
 						setHideFreePlan( true );
 						setDomainCartItem( providedDependencies.domainCartItem );
 
-						return navigateAfterDomain( { requiresPaidPlan: true } );
+						return navigateAfterDomain( { paidDomain: true } );
 					}
 
-					return navigateAfterDomain();
+					// "Purchase a plan" on a domain that needs one before it can be connected:
+					// the customer asked for the grid, so the free shortcut does not apply.
+					return navigateAfterDomain( {
+						paidDomain: Boolean(
+							providedDependencies &&
+							'skipToPlan' in providedDependencies &&
+							providedDependencies.skipToPlan
+						),
+					} );
 				}
 				case 'plans': {
 					const cartItems = providedDependencies.cartItems;
