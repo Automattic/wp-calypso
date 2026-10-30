@@ -3,6 +3,7 @@ export { closeSurvicateSurvey } from './close-survey';
 export { isSurvicateScriptLoaded, loadSurvicateScript } from './load-script';
 export {
 	invokeSurvicateEvent,
+	invokeSurvicateEventAfterModalsClose,
 	shouldSuppressSurvey,
 	getSuppressionReason,
 	observeHelpCenter,
