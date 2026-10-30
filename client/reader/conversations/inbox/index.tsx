@@ -32,13 +32,22 @@ interface Props {
 	postId?: string;
 }
 
+const REFRESH_INTERVAL = 60 * 1000;
+
 const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' | 'postId' > ) =>
 	`/reader/conversations/inbox/${ siteId }/${ postId }`;
 
 export function ConversationsInbox( { siteId, postId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data: notes = [], isLoading, isError, refetch } = useCommentNotes();
+	const {
+		data: notes = [],
+		isLoading,
+		isError,
+		refetch,
+	} = useCommentNotes( {
+		refetchInterval: REFRESH_INTERVAL,
+	} );
 	const { mutate: markRead } = useMarkNotesRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const isNarrow = useBreakpoint( '<782px' );

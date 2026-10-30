@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import {
 	Button,
 	ExternalLink,
@@ -9,7 +10,7 @@ import {
 } from '@wordpress/components';
 import { chevronDown, chevronLeft, chevronRight, chevronUp } from '@wordpress/icons';
 import { useRtl, useTranslate } from 'i18n-calypso';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
@@ -43,6 +44,16 @@ export function ConversationDetail( {
 	const backRef = useRef< HTMLButtonElement >( null );
 	const moment = useLocalizedMoment();
 	const { data: post, isLoading } = usePost( { blogId: siteId, postId } );
+	const conversationKey = `${ siteId }-${ postId }`;
+	const latestCommentId = conversation?.latestCommentId;
+	// Keeps the thread anchored when a list refresh brings in a newer latest comment.
+	const [ startingComment, setStartingComment ] = useState( {
+		key: conversationKey,
+		id: latestCommentId,
+	} );
+	if ( startingComment.key !== conversationKey || ( ! startingComment.id && latestCommentId ) ) {
+		setStartingComment( { key: conversationKey, id: latestCommentId } );
+	}
 
 	const commentCount = Number(
 		( post?.discussion as { comment_count?: number } )?.comment_count ?? 0
@@ -138,17 +149,19 @@ export function ConversationDetail( {
 							</VStack>
 
 							<Comments
-								key={ `${ siteId }-${ postId }` }
+								key={ conversationKey }
 								useBlockEditor
 								showNestingReplyArrow
 								post={ post }
 								initialSize={ commentCount || 10 }
 								pageSize={ 25 }
-								startingCommentId={ conversation?.latestCommentId }
+								startingCommentId={ startingComment.id }
 								commentCount={ commentCount }
 								maxDepth={ 1 }
 								commentsFilterDisplay={ COMMENTS_FILTER_ALL }
 								shouldHighlightNew
+								shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+								deferNewComments
 								highlightedCommentIds={ highlightedCommentIds }
 								collapsibleThreads
 							/>
