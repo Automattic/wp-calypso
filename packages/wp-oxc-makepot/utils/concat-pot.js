@@ -1,7 +1,7 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const { po } = require( 'gettext-parser' );
-const glob = require( 'glob' );
+const { globSync } = require( 'glob' );
 const mergeWith = require( './merge-with' );
 
 const mergeDeep = ( left, right, key ) => {
@@ -86,7 +86,7 @@ const addWarningComments = ( fileContent ) =>
 
 module.exports = ( dir, output, linesFilter ) => {
 	const potGlob = path.resolve( dir, '*.pot' );
-	const potFiles = glob.sync( potGlob, { nodir: true, absolute: true } ).sort();
+	const potFiles = globSync( potGlob, { nodir: true, absolute: true } ).sort();
 
 	const concatPOT = potFiles.reduce( ( acc, filePath ) => {
 		return mergeDeep( acc, po.parse( fs.readFileSync( filePath, 'utf8' ) ) );

@@ -3,7 +3,7 @@
 const os = require( 'os' );
 const process = require( 'process' );
 const program = require( 'commander' );
-const glob = require( 'glob' );
+const { globSync } = require( 'glob' );
 const version = require( './package.json' ).version;
 const processFiles = require( './process-files' );
 const concatPot = require( './utils/concat-pot' );
@@ -17,7 +17,7 @@ const getMatchingFiles = ( patterns, ignore ) =>
 	Array.from(
 		new Set(
 			patterns.flatMap( ( pattern ) =>
-				glob.sync( pattern, { nodir: true, absolute: true, ignore } )
+				globSync( pattern, { nodir: true, absolute: true, ignore } )
 			)
 		)
 	).sort();

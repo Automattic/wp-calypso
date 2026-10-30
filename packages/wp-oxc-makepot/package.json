@@ -41,7 +41,7 @@
 	"dependencies": {
 		"commander": "^5.1.0",
 		"gettext-parser": "^4.0.3",
-		"glob": "^7.2.3",
+		"glob": "^13.0.6",
 		"oxc-parser": "^0.152.0"
 	},
 	"devDependencies": {
@@ -49,7 +49,6 @@
 		"@automattic/calypso-typescript-config": "workspace:^",
 		"i18n-calypso": "workspace:^",
 		"react": "^18.3.1",
-		"rimraf": "^3.0.2",
 		"vitest": "^4.0.0"
 	}
 }

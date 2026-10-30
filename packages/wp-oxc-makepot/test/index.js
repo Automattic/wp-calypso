@@ -1,7 +1,6 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
-const glob = require( 'glob' );
-const rimraf = require( 'rimraf' );
+const { globSync } = require( 'glob' );
 const processFiles = require( '../process-files' );
 const concatPot = require( '../utils/concat-pot' );
 
@@ -25,7 +24,7 @@ describe( 'makePot', () => {
 
 	beforeAll( async () => {
 		const examplesGlob = path.join( __dirname, 'examples', '*.{js,jsx,ts,tsx}' );
-		const examplesPaths = glob.sync( examplesGlob ).sort();
+		const examplesPaths = globSync( examplesGlob ).sort();
 
 		fs.mkdirSync( path.join( potOutputDir, 'payload' ), { recursive: true } );
 		fs.mkdirSync( path.join( parallelPotOutputDir, 'payload' ), { recursive: true } );
@@ -38,16 +37,16 @@ describe( 'makePot', () => {
 	} );
 
 	afterAll( () => {
-		rimraf.sync( potOutputDir );
-		rimraf.sync( parallelPotOutputDir );
+		fs.rmSync( potOutputDir, { recursive: true, force: true } );
+		fs.rmSync( parallelPotOutputDir, { recursive: true, force: true } );
 	} );
 
 	test( 'pot files should match their snapshots', () => {
 		const potGlob = path.join( potOutputDir, '**', '*.pot' );
-		const potPaths = glob
-			.sync( potGlob )
+		const potPaths = globSync( potGlob )
 			.filter( ( filepath ) => filepath !== concatenatedPotOutputPath )
-			.map( ( filepath ) => path.relative( __dirname, filepath ) );
+			.map( ( filepath ) => path.relative( __dirname, filepath ) )
+			.sort();
 
 		// Test if the array of POT file paths has changed.
 		expect( potPaths ).toMatchSnapshot();

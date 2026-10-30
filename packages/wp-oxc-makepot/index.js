@@ -30,6 +30,12 @@ const DEFAULT_FUNCTIONS_ARGUMENTS_ORDER = {
 
 const REGEXP_TRANSLATOR_COMMENT = /^\s*translators:\s*([\s\S]+)/im;
 
+// A file can only have strings if it names a translate function; an aliased `translate` import
+// still names `translate`.
+const REGEXP_FUNCTION_NAME = new RegExp(
+	`\\b(?:${ Object.keys( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).join( '|' ) })\\b`
+);
+
 const isValidFunctionName = ( name ) =>
 	Object.keys( DEFAULT_FUNCTIONS_ARGUMENTS_ORDER ).includes( name );
 
@@ -168,6 +174,10 @@ function getFunctionName( callee ) {
  */
 function extractStrings( filepath, options ) {
 	const source = readFileSync( filepath, 'utf8' );
+	if ( ! REGEXP_FUNCTION_NAME.test( source ) ) {
+		return;
+	}
+
 	const extension = extname( filepath );
 	const lang = { '.ts': 'ts', '.mts': 'ts', '.cts': 'ts', '.tsx': 'tsx' }[ extension ] ?? 'jsx';
 	const { program, comments, errors } = parseSync( filepath, source, {
@@ -197,7 +207,10 @@ function extractStrings( filepath, options ) {
 		return low + 1;
 	};
 
-	const leadingComments = getLeadingComments( program, comments );
+	const leadingComments = getLeadingComments(
+		program,
+		comments.filter( ( comment ) => REGEXP_TRANSLATOR_COMMENT.test( comment.value ) )
+	);
 	const headers = options.headers || DEFAULT_HEADERS;
 	const nplurals = ( headers[ 'plural-forms' ] || '' ).match( /nplurals\s*=\s*(\d+);/ )?.[ 1 ] ?? 2;
 	const functions = { ...DEFAULT_FUNCTIONS_ARGUMENTS_ORDER };
