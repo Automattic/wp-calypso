@@ -1,196 +1,240 @@
-import { getStaticSiteImportErrorCode } from '@automattic/api-core';
-import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
-import { HelpCenter, Onboard, Visibility } from '@automattic/data-stores';
-import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
-import { useMutation } from '@tanstack/react-query';
-import { useDispatch } from '@wordpress/data';
+import { STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES } from '@automattic/api-core';
+import {
+	createStaticSiteImportSessionMutation,
+	pollStaticSiteImportSessionUntil,
+	staticSiteImportSessionQuery,
+} from '@automattic/api-queries';
+import { Step } from '@automattic/onboarding';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import {
+	Card,
+	CardBody,
+	ExternalLink,
+	ProgressBar,
+	Spinner,
+	__experimentalHStack as HStack,
+	__experimentalText as Text,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
-import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
-import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
-import { addSchemeIfMissing } from 'calypso/lib/url';
-import wpcom from 'calypso/lib/wp';
-import {
-	clearSignupCompleteFlowName,
-	clearSignupDestinationCookie,
-	getSignupCompleteFlowName,
-	getSignupIsNewUserAndClear,
-} from 'calypso/signup/storageUtils';
-import { useSelector } from 'calypso/state';
-import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { ImportCard, useStaticSiteImportSource } from '../components/static-site-import';
 import type { Step as StepType } from '../../types';
 
+import './style.scss';
+
+const COMPLETION_DELAY_MS = 1500;
+
 export type StaticSiteImportReadingSubmits =
-	{ action: 'continue'; importSessionId: string } | { action: 'unavailable' };
-
-const HELP_CENTER_STORE = HelpCenter.register();
-
-const isRefusedError = ( error: unknown ) =>
-	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_refused';
+	| { action: 'session-created'; importSessionId: string }
+	| { action: 'continue'; importSessionId: string }
+	| { action: 'unavailable' };
 
 const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
 	function StaticSiteImportReading( { navigation } ) {
 		const { __ } = useI18n();
-		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-		const { site, siteSlug } = useSiteData();
-		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
-		const from = searchParams.get( 'from' )?.trim();
-		const sourceUrl = from
-			? addSchemeIfMissing( from, 'https' ).replace( /^http:/i, 'https:' )
-			: '';
+		const { sourceUrl, host, platformName } = useStaticSiteImportSource();
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
-		const siteId = Number( searchParams.get( 'siteId' ) );
-		// The flow records itself for this tab before sending the user to checkout, where
-		// they already chose this destination.
-		const [ isCheckoutReturn ] = useState(
-			() => siteId > 0 && getSignupCompleteFlowName() === STATIC_SITE_IMPORT_FLOW
+
+		const { mutate: createSession, error: createError } = useMutation(
+			createStaticSiteImportSessionMutation()
 		);
-		const isNewSite = isCheckoutReturn && searchParams.get( 'newSite' ) === '1';
-		const [ hasConfirmed, setHasConfirmed ] = useState( false );
-		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
+		const hasRequestedSession = useRef( false );
 
-		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
-
-		const start = useEffectEvent( async () => {
-			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
-			if ( ! sessionId && ! sourceUrl ) {
-				return submit( { action: 'unavailable' } );
+		useEffect( () => {
+			if ( sessionId || ! sourceUrl || hasRequestedSession.current ) {
+				return;
 			}
-
-			if ( isCheckoutReturn ) {
-				clearSignupCompleteFlowName();
-				clearSignupDestinationCookie();
-			}
-
-			if ( isNewSite ) {
-				recordSignupComplete(
-					{
-						flow: STATIC_SITE_IMPORT_FLOW,
-						siteId,
-						isNewUser: Boolean( getSignupIsNewUserAndClear( userId ) ),
-						hasCartItems: true,
-						planProductSlug: site?.plan?.product_slug,
-						domainProductSlug: undefined,
-						intent: STATIC_SITE_IMPORT_FLOW,
-						startingPoint: STATIC_SITE_IMPORT_FLOW,
-						signupDomainOrigin: SIGNUP_DOMAIN_ORIGIN.NOT_SET,
-						framework: 'stepper',
-						theme: undefined,
-						isBlankCanvas: undefined,
-						isTransfer: undefined,
-						isMapping: undefined,
-						goals: undefined,
-					},
-					true
-				);
-				// Logged-in checkout creates the site during the transaction without the
-				// flow's site params, so apply them here. They don't block the import.
-				await Promise.allSettled( [
-					wpcom.req.post(
-						{ path: `/sites/${ siteId }/settings`, apiVersion: '1.4' },
-						{},
-						{
-							blogname: __( 'My Site' ),
-							blog_public: Visibility.PublicNotIndexed,
-							wpcom_public_coming_soon: 1,
-						}
-					),
-					wpcom.req.post(
-						{ path: `/sites/${ siteId }/site-intent`, apiNamespace: 'wpcom/v2' },
-						{},
-						{ site_intent: Onboard.SiteIntent.SiteMigration }
-					),
-				] );
-			}
-
-			if ( sessionId ) {
-				return submit( { action: 'continue', importSessionId: sessionId } );
-			}
+			hasRequestedSession.current = true;
 			createSession( sourceUrl, {
 				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
-				onError: ( createError ) =>
-					! isRefusedError( createError ) && submit( { action: 'unavailable' } ),
+					navigation.submit?.( { action: 'session-created', importSessionId: session.session_id } ),
 			} );
+		}, [ createSession, navigation, sessionId, sourceUrl ] );
+
+		const { data: session, error: pollError } = useQuery( {
+			...staticSiteImportSessionQuery( sessionId ?? '' ),
+			enabled: Boolean( sessionId ),
+			refetchInterval: pollStaticSiteImportSessionUntil(
+				STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES
+			),
 		} );
-		const hasStarted = useRef( false );
+		const state = createError || pollError ? 'failed' : ( session?.state ?? 'capture_queued' );
+		const isFailed = state === 'failed';
+		const isReady = ! isFailed && STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES.includes( state );
+
+		const hasSubmitted = useRef( false );
+		const submitResult = useEffectEvent( ( result: StaticSiteImportReadingSubmits ) => {
+			hasSubmitted.current = true;
+			navigation.submit?.( result );
+		} );
 		useEffect( () => {
-			if ( ! needsConfirmation && ! hasStarted.current ) {
-				hasStarted.current = true;
-				start();
+			if ( hasSubmitted.current ) {
+				return;
 			}
-		}, [ needsConfirmation ] );
+			if ( ! sourceUrl || isFailed ) {
+				submitResult( { action: 'unavailable' } );
+			} else if ( sessionId && isReady ) {
+				const timeout = setTimeout( () => {
+					submitResult( { action: 'continue', importSessionId: sessionId } );
+				}, COMPLETION_DELAY_MS );
+				return () => clearTimeout( timeout );
+			}
+		}, [ isFailed, isReady, sessionId, sourceUrl ] );
 
-		if ( isRefusedError( error ) ) {
-			return (
-				<>
-					<DocumentHead title={ __( 'We can’t import this site' ) } />
-					<Step.CenteredColumnLayout
-						columnWidth={ 8 }
-						topBar={ <Step.TopBar /> }
-						heading={
-							<Step.Heading
-								text={ __( 'We can’t import this site' ) }
-								subText={ __( 'Its content isn’t allowed on WordPress.com.' ) }
-							/>
-						}
-					>
-						<Step.PrimaryButton onClick={ () => setShowHelpCenter( true ) }>
-							{ __( 'Get help' ) }
-						</Step.PrimaryButton>
-						{ siteSlug && (
-							<Step.SecondaryButton href={ dashboardLink( `/sites/${ siteSlug }` ) }>
-								{ __( 'Go to your site' ) }
-							</Step.SecondaryButton>
-						) }
-					</Step.CenteredColumnLayout>
-				</>
-			);
+		const { phase, finding_pages: findingPages } = session?.progress ?? {};
+		const [ lastPageCounts, setLastPageCounts ] = useState( {
+			sessionId,
+			captured: 0,
+			total: 0,
+		} );
+		const pagesCaptured =
+			session?.progress?.pages_captured ??
+			( lastPageCounts.sessionId === sessionId ? lastPageCounts.captured : 0 );
+		const pagesTotal =
+			session?.progress?.pages_total ??
+			( lastPageCounts.sessionId === sessionId ? lastPageCounts.total : 0 );
+		if (
+			lastPageCounts.sessionId !== sessionId ||
+			lastPageCounts.captured !== pagesCaptured ||
+			lastPageCounts.total !== pagesTotal
+		) {
+			setLastPageCounts( { sessionId, captured: pagesCaptured, total: pagesTotal } );
+		}
+		const pagesProgress =
+			pagesTotal > 0 ? Math.min( 100, ( pagesCaptured / pagesTotal ) * 100 ) : 0;
+
+		let activeStage: 'finding' | 'pages' | 'images' | 'design' | undefined;
+		if ( ! isReady && ! isFailed ) {
+			if ( state === 'building' || phase === 'building' || phase === 'exporting' ) {
+				activeStage = 'design';
+			} else if (
+				state === 'capture_queued' ||
+				phase === 'installing' ||
+				phase === 'inspecting' ||
+				findingPages
+			) {
+				activeStage = 'finding';
+			} else {
+				activeStage = pagesTotal > 0 && pagesCaptured === pagesTotal ? 'images' : 'pages';
+			}
 		}
 
-		if ( needsConfirmation ) {
-			return (
-				<>
-					<DocumentHead title={ __( 'Import into this site' ) } />
-					<Step.CenteredColumnLayout
-						columnWidth={ 6 }
-						topBar={
-							<Step.TopBar leftElement={ <Step.BackButton onClick={ navigation.goBack } /> } />
-						}
-						heading={
-							<Step.Heading
-								text={
-									siteSlug
-										? sprintf(
-												// translators: %s is the destination site's domain.
-												__( 'Import into %s?' ),
-												siteSlug
-											)
-										: __( 'Import into this site?' )
-								}
-								subText={ __( 'Importing will change this site’s content and design.' ) }
-							/>
-						}
-					>
-						{ sourceUrl && <p>{ sourceUrl }</p> }
-						<Step.PrimaryButton onClick={ () => setHasConfirmed( true ) }>
-							{ __( 'Import into this site' ) }
-						</Step.PrimaryButton>
-					</Step.CenteredColumnLayout>
-				</>
-			);
-		}
+		const stages = [
+			{
+				id: 'finding',
+				label: __( 'Finding your site' ),
+				message: __( 'Finding your site' ),
+			},
+			{
+				id: 'pages',
+				label: __( 'Pages' ),
+				message: __( 'Reading your pages' ),
+				progress: pagesProgress,
+			},
+			{
+				id: 'images',
+				label: __( 'Images' ),
+				message: __( 'Reading your images' ),
+			},
+			{
+				id: 'design',
+				label: __( 'Design' ),
+				message: __( 'Checking your fonts, colors, and layout' ),
+			},
+		];
+		const activeStageIndex = stages.findIndex( ( stage ) => stage.id === activeStage );
+		const progressLabel =
+			stages[ activeStageIndex ]?.message ??
+			( isReady ? __( 'Your site is ready' ) : __( 'We couldn’t read your site' ) );
 
 		return (
 			<>
-				<DocumentHead title={ __( 'Checking your site' ) } />
-				<Step.Loading title={ __( 'Checking your site' ) } />
+				<DocumentHead title={ __( 'Reading your site' ) } />
+				<Step.CenteredColumnLayout
+					className="step-container-v2--static-site-import-reading"
+					columnWidth={ 8 }
+					topBar={ <Step.TopBar /> }
+					heading={
+						<Step.Heading
+							text={ __( 'Reading your site' ) }
+							subText={
+								platformName
+									? sprintf(
+											/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
+											__( 'This can take a few minutes. Your %s site stays live and unchanged.' ),
+											platformName
+										)
+									: __( 'This can take a few minutes. Your current site stays live and unchanged.' )
+							}
+						/>
+					}
+				>
+					<VStack spacing={ 6 }>
+						{ host && (
+							<Card>
+								<CardBody>
+									<HStack wrap>
+										<span>{ host }</span>
+										<ExternalLink href={ sourceUrl }>
+											{ platformName
+												? sprintf(
+														/* translators: %s: the platform the site is hosted on today, e.g. Wix. */
+														__( '%s site' ),
+														platformName
+													)
+												: __( 'Current site' ) }
+										</ExternalLink>
+									</HStack>
+								</CardBody>
+							</Card>
+						) }
+						<ImportCard>
+							<HStack justify="flex-start" spacing={ 2 } role="status">
+								{ ! isReady && ! isFailed && (
+									<Spinner className="static-site-import-reading__spinner" />
+								) }
+								<Text size={ 16 } weight={ 500 }>
+									{ progressLabel }
+								</Text>
+							</HStack>
+							<div className="static-site-import-reading__progress">
+								{ stages.map( ( stage, index ) => {
+									let value = index === activeStageIndex ? stage.progress : 0;
+									if ( isReady || index < activeStageIndex ) {
+										value = 100;
+									}
+									return (
+										<VStack key={ stage.id } spacing={ 2 }>
+											<ProgressBar
+												className="static-site-import-reading__bar"
+												value={ value }
+												aria-label={ stage.label }
+											/>
+											<Text variant="muted" size={ 14 }>
+												{ stage.label }
+											</Text>
+										</VStack>
+									);
+								} ) }
+							</div>
+							<Text variant="muted" size={ 14 }>
+								{ host
+									? sprintf(
+											/* translators: %s: the site's domain, e.g. example.com. */
+											__( 'We’re looking at %s to see what we can move.' ),
+											host
+										)
+									: __( 'We’re looking at your site to see what we can move.' ) }
+							</Text>
+						</ImportCard>
+					</VStack>
+				</Step.CenteredColumnLayout>
 			</>
 		);
 	};
