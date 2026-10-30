@@ -24,6 +24,7 @@
 }
 
 .conversations-inbox__post-card {
+	box-sizing: border-box;
 	padding: 24px;
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 4px;
@@ -42,6 +43,9 @@
 	color: var( --color-text-subtle );
 
 	strong {
+		max-width: 100%;
+		overflow: hidden;
+		text-overflow: ellipsis;
 		color: var( --color-text );
 		font-weight: 500;
 	}
@@ -84,6 +88,8 @@
 
 .conversations-inbox__post-image {
 	flex-shrink: 0;
+	width: 120px;
+	height: 120px;
 	border-radius: 4px;
 	object-fit: cover;
 }

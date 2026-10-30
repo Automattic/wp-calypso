@@ -39,7 +39,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 	const dispatch = useDispatch();
 	const { data: post, isLoading } = usePost( { blogId: siteId, postId } );
 	const currentUserId = useSelector( getCurrentUserId );
-	const { comments } = useComments( { siteId, postId } );
+	const { comments } = useComments( { siteId, postId }, { enabled: !! post && ! post.is_error } );
 	const hasCommented =
 		!! currentUserId && comments.some( ( comment ) => comment.author?.ID === currentUserId );
 	const showWelcome = useSelector(
@@ -148,6 +148,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 										size={ 20 }
 										weight={ 500 }
 										color="inherit"
+										isBlock={ false }
 										truncate
 										numberOfLines={ 2 }
 									>
