@@ -1,7 +1,9 @@
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
@@ -39,11 +41,14 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const { data: notes = [], isLoading, isError, refetch } = useCommentNotes();
 	const { mutate: markRead } = useMarkNotesRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
+	const isNarrow = useBreakpoint( '<782px' );
 	const currentUserId = useSelector( getCurrentUserId );
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 	const [ sort, setSort ] = useState< SortOrder >( 'newest_replies' );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
+	const inboxRef = useRef< HTMLDivElement >( null );
+	const wasShowingDetailRef = useRef( false );
 	const density: Density = useSelector(
 		( state ) => getPreference( state, DENSITY_PREFERENCE ) ?? 'comfortable'
 	);
@@ -72,10 +77,10 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	}, [ dispatch ] );
 
 	useEffect( () => {
-		if ( ! selectedKey && conversations.length ) {
+		if ( ! isNarrow && ! selectedKey && conversations.length ) {
 			page.replace( getConversationPath( conversations[ 0 ] ) );
 		}
-	}, [ selectedKey, conversations ] );
+	}, [ isNarrow, selectedKey, conversations ] );
 
 	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
 		const unreadCount = conversation.unreadNoteIds.length;
@@ -163,10 +168,31 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		onToggleShortcuts: () => setIsShortcutsOpen( ( isOpen ) => ! isOpen ),
 	} );
 
+	const hasConversation = Boolean( siteId && postId );
+	const isShowingDetail = isNarrow && hasConversation;
+
+	useEffect( () => {
+		// The back button unmounts with the detail, which would drop focus to the body.
+		if ( wasShowingDetailRef.current && isNarrow && ! hasConversation ) {
+			inboxRef.current
+				?.querySelector< HTMLElement >( '[role="tab"][aria-selected="true"]' )
+				?.focus();
+		}
+		wasShowingDetailRef.current = isNarrow && hasConversation;
+	}, [ isNarrow, hasConversation ] );
+
 	return (
 		<ReaderMain className="conversations-inbox-main no-padding" wideLayout>
 			<DocumentHead title={ translate( 'Conversations' ) } />
-			<HStack spacing={ 0 } alignment="stretch" className="conversations-inbox">
+			<HStack
+				ref={ inboxRef }
+				spacing={ 0 }
+				alignment="stretch"
+				className={ clsx( 'conversations-inbox', {
+					'is-narrow': isNarrow,
+					'is-showing-detail': isShowingDetail,
+				} ) }
+			>
 				<ConversationList
 					conversations={ visible }
 					unreadCount={ unreadCount }
@@ -185,13 +211,15 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					isShortcutsOpen={ isShortcutsOpen }
 					onShortcutsToggle={ setIsShortcutsOpen }
 					selectedKey={ selectedKey }
+					openOnFocus={ ! isNarrow }
 					onSelect={ openConversation }
 				/>
-				{ siteId && postId && (
+				{ hasConversation && (
 					<ConversationDetail
 						siteId={ Number( siteId ) }
 						postId={ Number( postId ) }
 						conversation={ selected }
+						onBack={ isNarrow ? () => page.show( '/reader/conversations/inbox' ) : undefined }
 						onPrevious={ goTo( previousIndex, 'button' ) }
 						onNext={ goTo( nextIndex, 'button' ) }
 					/>
