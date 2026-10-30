@@ -118,13 +118,20 @@ class PostComment extends PureComponent {
 	};
 
 	handleToggleCollapsedClick = () => {
-		this.setState( { isCollapsed: ! this.state.isCollapsed } );
+		this.setState( { isCollapsed: ! this.isCollapsed() } );
 	};
 
 	canCollapse = () =>
 		this.props.collapsibleThreads &&
 		this.props.depth === 0 &&
 		this.getAllChildrenIds( this.props.commentId ).length > 0;
+
+	// Pending and failed replies stay in view.
+	isCollapsed = () =>
+		this.state.isCollapsed &&
+		! this.getAllChildrenIds( this.props.commentId ).some(
+			( id ) => this.props.commentsTree?.[ id ]?.data?.isPlaceholder
+		);
 
 	onLikeToggle = () => {
 		if ( ! this.props.isLoggedIn ) {
@@ -231,7 +238,7 @@ class PostComment extends PureComponent {
 			return null;
 		}
 
-		if ( canCollapse && this.state.isCollapsed ) {
+		if ( canCollapse && this.isCollapsed() ) {
 			const count = this.getAllChildrenIds( commentId ).length;
 			return (
 				<p className="comments__collapsed-replies">
@@ -475,7 +482,7 @@ class PostComment extends PureComponent {
 
 		const isNew = highlightedCommentIds.includes( commentId );
 		const canCollapse = this.canCollapse();
-		const { isCollapsed } = this.state;
+		const isCollapsed = this.isCollapsed();
 
 		const postCommentClassnames = clsx( 'comments__comment', {
 			[ 'depth-' + depth ]: depth <= maxDepth && depth <= 3, // only indent up to 3
