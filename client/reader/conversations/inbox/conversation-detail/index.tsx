@@ -1,6 +1,8 @@
 import config from '@automattic/calypso-config';
+import page from '@automattic/calypso-router';
 import {
 	Button,
+	DropdownMenu,
 	ExternalLink,
 	Notice,
 	Spinner,
@@ -9,7 +11,13 @@ import {
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { chevronDown, chevronLeft, chevronRight, chevronUp } from '@wordpress/icons';
+import {
+	chevronDown,
+	chevronLeft,
+	chevronRight,
+	chevronUp,
+	moreHorizontal,
+} from '@wordpress/icons';
 import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
@@ -22,7 +30,12 @@ import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
+import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
+import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
+import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
+import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
 import type { Conversation } from '../group-notes';
+import type { AppState } from 'calypso/types';
 
 import './style.scss';
 
@@ -60,6 +73,11 @@ export function ConversationDetail( {
 			hasReceivedRemotePreferences( state ) &&
 			! getPreference( state, WELCOME_DISMISSED_PREFERENCE_KEY )
 	);
+	const followStatus = useSelector( ( state: AppState ) =>
+		getReaderConversationFollowStatus( state, { siteId, postId } )
+	);
+	const isFollowing = followStatus === CONVERSATION_FOLLOW_STATUS.following;
+	const isMuted = followStatus === CONVERSATION_FOLLOW_STATUS.muting;
 	const conversationKey = `${ siteId }-${ postId }`;
 	const latestCommentId = conversation?.latestCommentId;
 	// Keeps the thread anchored when a list refresh brings in a newer latest comment.
@@ -77,6 +95,7 @@ export function ConversationDetail( {
 	const author = post?.author as { ID?: number; name?: string } | undefined;
 	const image = ( post?.canonical_image as { uri?: string } | undefined )?.uri;
 	const date = post?.date ? moment( String( post.date ) ) : null;
+	const postUrl = post ? getPostUrl( post ) : '';
 
 	let title = translate( 'You follow this' );
 	if ( currentUserId && author?.ID === currentUserId ) {
@@ -84,6 +103,26 @@ export function ConversationDetail( {
 	} else if ( hasCommented ) {
 		title = translate( 'You commented' );
 	}
+
+	const act = ( event: string, action: typeof followConversation ) => () => {
+		dispatch( recordReaderTracksEvent( event, { source: 'post_menu' }, { post } ) );
+		dispatch( action( { siteId, postId } ) );
+	};
+
+	const controls = [
+		{ title: translate( 'View post' ) as string, onClick: () => page( postUrl ) },
+		! isFollowing && {
+			title: translate( 'Follow conversation' ) as string,
+			onClick: act(
+				'calypso_reader_conversations_inbox_conversation_followed',
+				followConversation
+			),
+		},
+		! isMuted && {
+			title: translate( 'Mute conversation' ) as string,
+			onClick: act( 'calypso_reader_conversations_inbox_conversation_muted', muteConversation ),
+		},
+	].filter( ( control ) => control !== false );
 
 	useEffect( () => {
 		backRef.current?.focus();
@@ -157,20 +196,9 @@ export function ConversationDetail( {
 					) }
 					{ post && ! post.is_error && (
 						<>
-							<HStack
-								as="a"
-								spacing={ 6 }
-								alignment="top"
-								className="conversations-inbox__post-card"
-								href={ getPostUrl( post ) }
-							>
+							<HStack spacing={ 6 } alignment="top" className="conversations-inbox__post-card">
 								<VStack spacing={ 3 } className="conversations-inbox__post-text">
-									<HStack
-										as="span"
-										justify="flex-start"
-										wrap
-										className="conversations-inbox__post-meta"
-									>
+									<HStack justify="flex-start" wrap className="conversations-inbox__post-meta">
 										{ !! post.site_icon && (
 											<img
 												src={ ( post.site_icon as { img?: string } )?.img }
@@ -189,21 +217,37 @@ export function ConversationDetail( {
 													: date.format( 'll' ) }
 											</span>
 										) }
+										<DropdownMenu
+											icon={ moreHorizontal }
+											label={ translate( 'Post actions' ) }
+											className="conversations-inbox__post-menu"
+											toggleProps={ { __next40pxDefaultSize: true } }
+											disableOpenOnArrowDown
+											popoverProps={ { placement: 'bottom-end' } }
+											controls={ controls }
+										/>
 									</HStack>
-									<Heading
-										level={ 3 }
-										size={ 20 }
-										weight={ 500 }
-										color="inherit"
-										isBlock={ false }
-										truncate
-										numberOfLines={ 2 }
+									<VStack
+										as="a"
+										spacing={ 3 }
+										className="conversations-inbox__post-link"
+										href={ postUrl }
 									>
-										{ String( post.title ?? conversation?.title ?? '' ) }
-									</Heading>
-									<Text truncate numberOfLines={ 2 } color="var(--color-text-subtle)">
-										{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
-									</Text>
+										<Heading
+											level={ 3 }
+											size={ 20 }
+											weight={ 500 }
+											color="inherit"
+											isBlock={ false }
+											truncate
+											numberOfLines={ 2 }
+										>
+											{ String( post.title ?? conversation?.title ?? '' ) }
+										</Heading>
+										<Text truncate numberOfLines={ 2 } color="var(--color-text-subtle)">
+											{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
+										</Text>
+									</VStack>
 								</VStack>
 								{ image && (
 									<img
