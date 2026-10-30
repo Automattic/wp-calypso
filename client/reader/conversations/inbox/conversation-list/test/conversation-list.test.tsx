@@ -10,6 +10,7 @@ import { groupNotesByPost } from '../../group-notes';
 import { makeNote } from '../../test/helpers';
 import { filterConversations } from '../filter-conversations';
 import type { InboxTab } from '../tabs';
+import type { Density } from '../toolbar';
 
 const timestamp = new Date().toISOString();
 const conversations = groupNotesByPost( [
@@ -22,6 +23,7 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
+	const [ density, setDensity ] = useState< Density >( 'comfortable' );
 	const source = props.conversations ?? conversations;
 	return (
 		<ConversationList
@@ -34,10 +36,14 @@ function ControlledList( props: Partial< React.ComponentProps< typeof Conversati
 			onTabChange={ setTab }
 			search={ search }
 			onSearchChange={ setSearch }
+			density={ density }
+			onDensityChange={ setDensity }
 			sort="newest_replies"
 			onSortChange={ jest.fn() }
 			isShortcutsOpen={ isShortcutsOpen }
 			onShortcutsToggle={ setIsShortcutsOpen }
+			openOnFocus
+			onMarkAllRead={ jest.fn() }
 			onSelect={ jest.fn() }
 			{ ...props }
 			conversations={ filterConversations( source, tab, search ) }
@@ -102,7 +108,7 @@ describe( 'ConversationList', () => {
 
 		await user.click( screen.getByRole( 'tab', { name: 'Your comments' } ) );
 
-		expect( screen.getByText( 'Conversations you commented on will show up here.' ) ).toBeVisible();
+		expect( screen.getByText( 'You haven’t commented anywhere yet' ) ).toBeVisible();
 	} );
 
 	it( 'filters conversations by search term', async () => {
@@ -144,19 +150,10 @@ describe( 'ConversationList', () => {
 		);
 	} );
 
-	it( 'shows settings as disabled until it is built', () => {
-		renderList();
-
-		expect( screen.getByRole( 'button', { name: 'Settings are coming soon' } ) ).toHaveAttribute(
-			'aria-disabled',
-			'true'
-		);
-	} );
-
 	it( 'shows an empty state when there are no conversations', () => {
 		renderList( { conversations: [] } );
 
-		expect( screen.getByText( 'No conversations yet.' ) ).toBeVisible();
+		expect( screen.getByText( 'Conversations will appear here' ) ).toBeVisible();
 	} );
 
 	it( 'lists the keyboard shortcuts from the header button', async () => {
@@ -213,6 +210,17 @@ describe( 'ConversationList', () => {
 			expect.objectContaining( { postId: 200 } ),
 			'tab_key'
 		);
+	} );
+
+	it( 'leaves Tab alone when rows do not open on focus', async () => {
+		const user = userEvent.setup();
+		const { onSelect } = renderList( { openOnFocus: false } );
+
+		await user.click( screen.getByRole( 'button', { name: /^Unread post/ } ) );
+		onSelect.mockClear();
+		await user.tab();
+
+		expect( onSelect ).not.toHaveBeenCalled();
 	} );
 
 	it( 'reports Tab, not click, after a click that did not focus the row', async () => {
