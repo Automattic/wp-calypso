@@ -64,11 +64,6 @@ export function isOptInToggleVisible(
 	preference: HostingDashboardOptIn | undefined,
 	userId: number | undefined
 ): boolean {
-	// Ensures the toggle is visible in development for easier testing/dev.
-	if ( config.isEnabled( 'dashboard/force-opt-in-visibility' ) ) {
-		return true;
-	}
-
 	if ( isInRolloutCohort( userId ) || preference?.value === 'forced-opt-out' ) {
 		return false;
 	}

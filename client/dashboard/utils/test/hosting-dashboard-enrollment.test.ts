@@ -103,14 +103,6 @@ describe( 'isOptInToggleVisible', () => {
 			expect( isOptInToggleVisible( preference( 'opt-out' ), HIGH_USER_ID ) ).toBe( false );
 		} );
 	} );
-
-	describe( 'with force-opt-in-visibility on', () => {
-		it( 'overrides the cohort and the escape hatch', () => {
-			enableFlags( 'dashboard/force-opt-in-visibility', 'dashboard/enable-percentage-rollout' );
-			expect( isOptInToggleVisible( undefined, LOW_USER_ID ) ).toBe( true );
-			expect( isOptInToggleVisible( preference( 'forced-opt-out' ), HIGH_USER_ID ) ).toBe( true );
-		} );
-	} );
 } );
 
 describe( 'isAdvancedNoticeVisible', () => {
