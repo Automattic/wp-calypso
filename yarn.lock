@@ -303,7 +303,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/image-studio": "workspace:^"
     "@automattic/jetpack-ai-sidebar": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wp-oxc-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/components": "npm:^28.23.0"
     "@wordpress/compose": "npm:^8.2.0"
@@ -589,7 +589,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/number-formatters": "npm:^1.2.10"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wp-oxc-makepot": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/admin-ui": "npm:^2.3.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -1508,7 +1508,7 @@ __metadata:
     "@automattic/help-center": "workspace:^"
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/odie-client": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wp-oxc-makepot": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@wordpress/api-fetch": "npm:^7.48.0"
@@ -1889,7 +1889,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wp-oxc-makepot": "workspace:^"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/data": "npm:^10.48.0"
@@ -2037,7 +2037,7 @@ __metadata:
     "@automattic/js-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wp-oxc-makepot": "workspace:^"
     "@size-limit/file": "npm:^8.2.6"
     "@tanstack/react-query": "npm:^5.83.0"
     "@testing-library/dom": "npm:^10.4.2"
@@ -2658,7 +2658,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/wp-babel-makepot@workspace:^, @automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot":
+"@automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot":
   version: 0.0.0-use.local
   resolution: "@automattic/wp-babel-makepot@workspace:packages/wp-babel-makepot"
   dependencies:
@@ -2682,7 +2682,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@automattic/wp-oxc-makepot@workspace:packages/wp-oxc-makepot":
+"@automattic/wp-oxc-makepot@workspace:^, @automattic/wp-oxc-makepot@workspace:packages/wp-oxc-makepot":
   version: 0.0.0-use.local
   resolution: "@automattic/wp-oxc-makepot@workspace:packages/wp-oxc-makepot"
   dependencies:
@@ -22545,7 +22545,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@automattic/number-formatters": "npm:^1.2.10"
     "@automattic/typography": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wp-oxc-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
     "@emotion/react": "npm:^11.11.1"
     "@emotion/styled": "npm:^11.11.0"
@@ -35812,7 +35812,7 @@ __metadata:
     "@automattic/urls": "workspace:^"
     "@automattic/verbum-block-editor": "workspace:^"
     "@automattic/viewport": "workspace:^"
-    "@automattic/wp-babel-makepot": "workspace:^"
+    "@automattic/wp-oxc-makepot": "workspace:^"
     "@automattic/wpcom-template-parts": "workspace:^"
     "@automattic/zendesk-client": "workspace:^"
     "@babel/code-frame": "npm:^8.0.6"
