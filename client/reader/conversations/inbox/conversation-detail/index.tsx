@@ -27,6 +27,7 @@ interface Props {
 	onBack?: () => void;
 	onPrevious?: () => void;
 	onNext?: () => void;
+	highlightedCommentIds?: number[];
 }
 
 export function ConversationDetail( {
@@ -36,6 +37,7 @@ export function ConversationDetail( {
 	onBack,
 	onPrevious,
 	onNext,
+	highlightedCommentIds,
 }: Props ) {
 	const translate = useTranslate();
 	const isRtl = useRtl();
@@ -160,6 +162,8 @@ export function ConversationDetail( {
 								shouldHighlightNew
 								shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
 								deferNewComments
+								highlightedCommentIds={ highlightedCommentIds }
+								collapsibleThreads
 							/>
 						</>
 					) }

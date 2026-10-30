@@ -81,6 +81,18 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedKey );
 	const selected = conversations.find( ( { key } ) => key === selectedKey );
 
+	// Marking a conversation read clears its unread comments, so keep the ones it had when it was opened.
+	const [ opened, setOpened ] = useState< { key: string; commentIds: number[] } >();
+	const [ previousKey, setPreviousKey ] = useState( selectedKey );
+	if ( selectedKey !== previousKey ) {
+		setPreviousKey( selectedKey );
+		if ( opened && opened.key !== selectedKey ) {
+			setOpened( undefined );
+		}
+	}
+	const newCommentIds =
+		opened && opened.key === selectedKey ? opened.commentIds : selected?.unreadCommentIds;
+
 	useEffect( () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
 	}, [ dispatch ] );
@@ -93,6 +105,9 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 
 	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
 		const unreadCount = conversation.unreadNoteIds.length;
+		if ( conversation.key !== opened?.key ) {
+			setOpened( { key: conversation.key, commentIds: conversation.unreadCommentIds } );
+		}
 		if ( unreadCount ) {
 			markRead( conversation.unreadNoteIds, {
 				onError: () => dispatch( errorNotice( translate( 'Couldn’t mark as read. Try again.' ) ) ),
@@ -228,6 +243,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 						siteId={ Number( siteId ) }
 						postId={ Number( postId ) }
 						conversation={ selected }
+						highlightedCommentIds={ newCommentIds }
 						onBack={ isNarrow ? () => page.show( '/reader/conversations/inbox' ) : undefined }
 						onPrevious={ goTo( previousIndex, 'button' ) }
 						onNext={ goTo( nextIndex, 'button' ) }
