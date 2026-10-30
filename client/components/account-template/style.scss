@@ -138,6 +138,19 @@
 			}
 		}
 
+		.two-factor-authentication__verification-code-form.card,
+		.two-factor-authentication__actions.card {
+			padding-inline: 0;
+		}
+
+		.security-key-form__add-wait-for-key {
+			text-align: start;
+
+			.spinner__outer {
+				margin-inline-start: 0;
+			}
+		}
+
 		// The link under the CTA ("Enter a password instead") is the template's secondary
 		// button: 8px below the CTA, centered in a 40px row.
 		.magic-login__form + .one-login__footer {
