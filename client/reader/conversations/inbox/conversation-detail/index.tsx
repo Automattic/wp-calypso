@@ -12,10 +12,10 @@ import { useTranslate } from 'i18n-calypso';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
+import { useComments } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
-import { getPostCommentItems } from 'calypso/state/comments/selectors';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
@@ -39,13 +39,9 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 	const dispatch = useDispatch();
 	const { data: post, isLoading } = usePost( { blogId: siteId, postId } );
 	const currentUserId = useSelector( getCurrentUserId );
-	const hasCommented = useSelector(
-		( state ) =>
-			!! currentUserId &&
-			( getPostCommentItems( state, siteId, postId ) ?? [] ).some(
-				( comment: { author?: { ID?: number } } ) => comment.author?.ID === currentUserId
-			)
-	);
+	const { comments } = useComments( { siteId, postId } );
+	const hasCommented =
+		!! currentUserId && comments.some( ( comment ) => comment.author?.ID === currentUserId );
 	const showWelcome = useSelector(
 		( state ) =>
 			hasReceivedRemotePreferences( state ) &&

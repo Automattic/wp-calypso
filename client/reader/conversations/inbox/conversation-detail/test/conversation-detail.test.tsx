@@ -5,6 +5,10 @@ jest.mock( 'calypso/reader/data/post', () => ( {
 	usePost: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/data/comments', () => ( {
+	useComments: jest.fn(),
+} ) );
+
 jest.mock( 'calypso/blocks/comments', () => ( {
 	__esModule: true,
 	default: jest.fn( ( props ) => (
@@ -18,8 +22,8 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { useComments } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
-import commentsReducer from 'calypso/state/comments/reducer';
 import preferences from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
@@ -27,6 +31,7 @@ import { groupNotesByPost } from '../../group-notes';
 import { makeNote } from '../../test/helpers';
 
 const mockedUsePost = jest.mocked( usePost );
+const mockedUseComments = jest.mocked( useComments );
 
 const [ conversation ] = groupNotesByPost( [
 	makeNote( { id: 1, siteId: 10, postId: 100, title: 'A post title', commenter: 'Ana' } ),
@@ -57,18 +62,19 @@ const renderDetail = (
 		comments?: { ID: number; author: { ID: number } }[];
 		remotePreferences?: Record< string, unknown > | null;
 	} = {}
-) =>
-	renderWithProvider(
+) => {
+	mockedUseComments.mockReturnValue( { comments } as never );
+	return renderWithProvider(
 		<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ conversation } { ...props } />,
 		{
-			reducers: { comments: commentsReducer, preferences },
+			reducers: { preferences },
 			initialState: {
 				currentUser: { id: CURRENT_USER_ID },
 				preferences: { localValues: {}, remoteValues: remotePreferences },
-				comments: { items: { '10-100': comments } },
 			},
 		}
 	);
+};
 
 beforeEach( () => {
 	mockedUsePost.mockReset();
