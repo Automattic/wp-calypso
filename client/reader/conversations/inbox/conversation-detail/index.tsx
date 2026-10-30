@@ -52,9 +52,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 		( post?.discussion as { comment_count?: number } )?.comment_count ?? 0
 	);
 	const author = post?.author as { ID?: number; name?: string } | undefined;
-	const image =
-		( post?.canonical_image as { uri?: string } | undefined )?.uri ??
-		( post?.featured_image as string | undefined );
+	const image = ( post?.canonical_image as { uri?: string } | undefined )?.uri;
 	const date = post?.date ? moment( String( post.date ) ) : null;
 
 	let title = translate( 'You follow this' );
