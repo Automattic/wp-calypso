@@ -87,6 +87,7 @@
 		"onboarding/import-from-wordpress": true,
 		"onboarding/woo-hosting-post-purchase-setup-choice": false,
 		"plans/migration-trial": true,
+		"plans/scheduled-term-change": true,
 		"plugins/stepper-plans": true,
 		"press-this": true,
 		"purchases/cancel-options-cards": false,

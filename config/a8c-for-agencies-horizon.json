@@ -46,6 +46,7 @@
 		"dev/store-sandbox-helper": true,
 		"jetpack/crm-downloads": true,
 		"oauth": false,
+		"plans/scheduled-term-change": true,
 		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,
