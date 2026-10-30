@@ -2,7 +2,7 @@ import { markNotificationsReadMutation, notificationsQuery } from '@automattic/a
 import { useLocale } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-const COMMENT_NOTE_FIELDS = 'id,type,read,body,subject,timestamp,meta,icon,title';
+const COMMENT_NOTE_FIELDS = 'id,type,read,body,subject,header,timestamp,meta,icon,title,noticon';
 
 export function useCommentNotes() {
 	const locale = useLocale();

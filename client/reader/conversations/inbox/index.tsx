@@ -6,6 +6,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
 import { useDispatch, useSelector } from 'calypso/state';
+import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
 import { ConversationDetail } from './conversation-detail';
@@ -33,12 +34,16 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const { data: notes = [], isLoading } = useCommentNotes();
 	const { mutate: markRead } = useMarkNotesRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
+	const currentUserId = useSelector( getCurrentUserId );
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
 	const [ sort, setSort ] = useState< SortOrder >( 'newest_replies' );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
 
-	const conversations = useMemo( () => groupNotesByPost( notes ), [ notes ] );
+	const conversations = useMemo(
+		() => groupNotesByPost( notes, currentUserId ),
+		[ notes, currentUserId ]
+	);
 	const visible = useMemo( () => {
 		const filtered = filterConversations( conversations, tab, search );
 		// The sort is stable, so ties keep the newest-first order.

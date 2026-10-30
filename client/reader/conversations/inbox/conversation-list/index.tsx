@@ -51,18 +51,21 @@ export function ConversationList( {
 	const moment = useLocalizedMoment();
 
 	const sections = useMemo( () => {
+		const today = moment().startOf( 'day' );
+		const groups = [
+			{ start: today, label: translate( 'Today' ) },
+			{ start: today.clone().subtract( 1, 'day' ), label: translate( 'Yesterday' ) },
+			{ start: today.clone().subtract( 6, 'days' ), label: translate( 'Older than 2 days' ) },
+			{ start: today.clone().subtract( 30, 'days' ), label: translate( 'Older than a week' ) },
+			{ start: moment( 0 ), label: translate( 'Older than a month' ) },
+		];
 		const result: { label: string; items: Conversation[] }[] = [];
 		if ( sort !== 'newest_replies' ) {
 			return conversations.length ? [ { label: '', items: conversations } ] : result;
 		}
 		for ( const conversation of conversations ) {
-			const day = moment( conversation.timestamp );
-			let label = day.format( 'LL' );
-			if ( day.isSame( moment(), 'day' ) ) {
-				label = translate( 'Today' );
-			} else if ( day.isSame( moment().subtract( 1, 'day' ), 'day' ) ) {
-				label = translate( 'Yesterday' );
-			}
+			const { label } =
+				groups.find( ( { start } ) => conversation.timestamp >= start.valueOf() ) ?? groups[ 4 ];
 			const last = result[ result.length - 1 ];
 			if ( last?.label === label ) {
 				last.items.push( conversation );
