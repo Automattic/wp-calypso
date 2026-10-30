@@ -5,7 +5,9 @@ import { useMemo, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import {
 	BUILD_WOW_STREAMING_FLAG,
+	DESIGN_CANDIDATES_FLAG,
 	getBuildWowGraph,
+	getDesignCandidate,
 } from 'calypso/landing/stepper/utils/build-wow';
 import { useBuildWowStream } from './stream/use-build-wow-stream';
 import { useSiteGeneration } from './use-site-generation';
@@ -21,6 +23,10 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const source = query.get( 'source' );
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
+	// A retry sends the pick again only while the flag is on, as the first request did.
+	const designCandidate = config.isEnabled( DESIGN_CANDIDATES_FLAG )
+		? getDesignCandidate( query.get( 'designCandidate' ) )
+		: undefined;
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
@@ -44,6 +50,7 @@ const SiteGeneration: StepType = function SiteGeneration() {
 		source,
 		specId,
 		graph,
+		designCandidate,
 		steps,
 		completionDelayMs: previewReady && ! shouldReduceMotion ? 2600 : 0,
 	} );

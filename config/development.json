@@ -194,6 +194,7 @@
 		"site-profiler/metrics": true,
 		"site-spec": true,
 		"site-spec/build-wow-blocks-first": true,
+		"site-spec/design-candidates": true,
 		"site-spec/build-wow-streaming": true,
 		"ssh-multiple-keys": true,
 		"ssr/prefetch-timebox": false,

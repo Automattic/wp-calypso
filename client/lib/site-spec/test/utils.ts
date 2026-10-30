@@ -230,6 +230,18 @@ describe( 'SiteSpec Utils', () => {
 			expect( result.features?.siteBrief ).toBe( 'next' );
 		} );
 
+		it( 'shows the design picker only when asked', () => {
+			expect(
+				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } ).features?.designPicker
+			).toBeUndefined();
+			const config = getBuildWowSiteSpecConfig( {
+				siteSlug: 'example.wordpress.com',
+				designPicker: true,
+			} );
+			expect( config.features?.designPicker ).toBe( true );
+			expect( config.features?.sitePlan ).toBeUndefined();
+		} );
+
 		it( 'should offer social links only', () => {
 			// `links` is a sub-feature of the next brief, so it only means
 			// anything alongside the siteBrief assertion above.

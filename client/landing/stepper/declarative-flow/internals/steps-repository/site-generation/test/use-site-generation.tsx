@@ -682,6 +682,36 @@ describe( 'useSiteGeneration', () => {
 		expect( withoutRetry.current.retryBuild ).toBeNull();
 	} );
 
+	it( 'continues the picked design candidate when retryBuild is called', async () => {
+		const { result } = renderHook( () =>
+			useSiteGeneration( {
+				siteIdentifier: '123',
+				specId: 'spec-1',
+				graph: 'dsl',
+				designCandidate: '2',
+				steps: STEPS,
+			} )
+		);
+
+		act( () => {
+			statusPollMock.mock.calls[ 0 ][ 0 ].onFailed( 'failed:generation_failed', {
+				state: 'failed',
+				can_retry: true,
+			} );
+		} );
+		await act( async () => {
+			result.current.retryBuild?.();
+		} );
+
+		expect( requestBuildWowSiteMock ).toHaveBeenCalledWith(
+			'123',
+			'spec-1',
+			'dsl',
+			undefined,
+			'2'
+		);
+	} );
+
 	it( 're-queues the build and resumes polling when retryBuild is called', async () => {
 		const { result } = renderHook( () =>
 			useSiteGeneration( {
@@ -709,7 +739,13 @@ describe( 'useSiteGeneration', () => {
 			result.current.retryBuild?.();
 		} );
 
-		expect( requestBuildWowSiteMock ).toHaveBeenCalledWith( '123', 'spec-1', undefined );
+		expect( requestBuildWowSiteMock ).toHaveBeenCalledWith(
+			'123',
+			'spec-1',
+			undefined,
+			undefined,
+			undefined
+		);
 		expect( logMock ).toHaveBeenCalledWith( 'site_generation_retry_requested', {
 			site_identifier: '123',
 			spec_id: 'spec-1',

@@ -29,6 +29,8 @@ import {
 	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
 	logBuildWowEvent,
+	DESIGN_CANDIDATES_FLAG,
+	getDesignCandidate,
 	requestBuildWowSite,
 } from 'calypso/landing/stepper/utils/build-wow';
 import {
@@ -338,15 +340,32 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			const specConfirmStartTime = Date.now();
 			const elapsedMs = () => Date.now() - specConfirmStartTime;
 			let responseBlogId: number | undefined;
+			// The design the user picked in the site-spec widget, only while the flag is on. The
+			// server builds a picked design on the DSL graph when it can continue it, and designs
+			// the site again when it cannot (for example after the design expired), so the graph
+			// stays the one asked for and a retry can send the same pick.
+			const designCandidate = config.isEnabled( DESIGN_CANDIDATES_FLAG )
+				? getDesignCandidate(
+						( specData as { designCandidateId?: unknown } | null )?.designCandidateId
+					)
+				: undefined;
 			const graph = getBuildWowGraph( queryParams );
 
 			try {
 				logBuildWowEvent( 'spec_confirm_request_start', {
 					spec_id: specId,
 					site_identifier: buildWowSiteIdentifier,
+					graph: graph ?? null,
+					design_candidate: designCandidate ?? null,
 				} );
 
-				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId, graph );
+				const response = await requestBuildWowSite(
+					buildWowSiteIdentifier,
+					specId,
+					graph,
+					undefined,
+					designCandidate
+				);
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -384,6 +403,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					...( ref ? { ref } : {} ),
 					...( source ? { source } : {} ),
 					...( graph ? { graph } : {} ),
+					...( designCandidate ? { designCandidate } : {} ),
 				} );
 			} catch ( error ) {
 				const message = error instanceof Error ? error.message : String( error );
@@ -446,7 +466,11 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 
 	useEffect( () => {
 		if ( activeFlow === 'build-wow' && buildWowSpecId && buildWowSiteIdentifier ) {
-			handleBuildWowSpecConfirm( { spec_id: buildWowSpecId } );
+			// The widget's build URL carries the design the user picked.
+			handleBuildWowSpecConfirm( {
+				spec_id: buildWowSpecId,
+				designCandidateId: queryParams.get( 'design_candidate' ) ?? undefined,
+			} );
 		} else if ( activeFlow === 'early-provision' && atomicProvisionSpecId ) {
 			handleEarlyProvisionSpecConfirm( { spec_id: atomicProvisionSpecId } );
 		}
@@ -457,6 +481,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		atomicProvisionSpecId,
 		handleBuildWowSpecConfirm,
 		handleEarlyProvisionSpecConfirm,
+		queryParams,
 	] );
 
 	// Blueprint archive import: the transfer-to-Atomic + archive restore runs in
@@ -745,6 +770,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					ref: queryParams.get( 'ref' ),
 					source: querySource,
 					graph: getBuildWowGraph( queryParams ),
+					designPicker: config.isEnabled( DESIGN_CANDIDATES_FLAG ),
 				} ) }
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>
