@@ -753,12 +753,6 @@ const sections = [
 		group: 'jetpack-cloud',
 	},
 	{
-		name: 'jetpack-cloud-agency-signup',
-		paths: [ '/manage/signup', '/agency/signup' ],
-		module: 'calypso/jetpack-cloud/sections/agency-signup',
-		group: 'jetpack-cloud',
-	},
-	{
 		name: 'jetpack-cloud-golden-token',
 		paths: [ '/golden-token' ],
 		module: 'calypso/jetpack-cloud/sections/golden-token',
