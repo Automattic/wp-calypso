@@ -38,7 +38,6 @@ const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {
 			density: 'balanced',
-			aspectRatio: '16/9',
 			styles: { actions: { align: 'end' } },
 		},
 		showMedia: true,
@@ -63,7 +62,7 @@ const DEFAULT_VIEW: View = {
 	mediaField: 'icon',
 	titleField: 'site',
 	descriptionField: 'url',
-	layout: { density: 'balanced', aspectRatio: '16/9', styles: { actions: { align: 'end' } } },
+	layout: { density: 'balanced', styles: { actions: { align: 'end' } } },
 	fields: [ 'humanScore', 'aiScore', 'actions' ],
 	filters: [],
 	sort: { field: 'created', direction: 'desc' },
@@ -328,7 +327,15 @@ export default function AmplifyReportsList( {
 					view.type === 'grid' ? (
 						<ReportSiteIcon title={ titleFor( item ) } site={ siteFor( item ) } size={ 64 } />
 					) : (
-						<SiteScreenshot key={ item.url } url={ item.url } alt="" compact decorative />
+						<SiteScreenshot
+							key={ item.url }
+							url={ item.url }
+							alt=""
+							compact
+							decorative
+							width={ 60 }
+							height={ 48 }
+						/>
 					),
 				enableSorting: false,
 			},
