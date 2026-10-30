@@ -83,13 +83,10 @@ TeamCity build ID. Renaming or removing one breaks its caller, so update the cal
 - **Jetpack Simple E2E Tests** (`calypso_WPComTests_JetpackSimpleE2ETests`): `bin/jetpack-sun-moon`
   in the WPCOM repository, on each continuous Jetpack deploy to Simple sites, and the
   `DotCom_GithubA8cCom_Wpcom_JetpackRecentPassingSimpleDeployE2eTests` TeamCity check,
-  which Gherald starts on sun-moon PRs. Both still use the legacy
-  `calypso_WPComTests_jetpack_simple_deployment_e2e_desktop` and `_mobile` builds.
+  which Gherald starts on sun-moon PRs.
 - **Jetpack Atomic E2E Tests** (`calypso_WPComTests_JetpackAtomicE2ETests`): the Jetpack
   scenario of the ReleasesV2 release tool in the WPCOM repository, and manual runs during
-  the Jetpack release. Both still use the legacy
-  `calypso_WPComTests_jetpack_atomic_deployment_e2e_desktop` build.
+  the Jetpack release.
 - **Jetpack Atomic E2E Tests - Mixed Variations** (`calypso_WPComTests_JetpackAtomicSmokeE2ETests`):
   a Mission Control webhook, called after each Jetpack build by the workflow that updates
-  the Jetpack staging sites. It still uses the legacy
-  `calypso_WPComTests_jetpack_atomic_build_smoke_e2e_desktop` build.
+  the Jetpack staging sites.
