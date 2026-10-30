@@ -114,7 +114,7 @@ export function Connect( {
 					</Button>
 				</>
 			}
-			secondaryAction={ <AssistedHandoffLink /> }
+			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
 			{ failure && (
 				<Notice variant="error" title={ failure.label }>
