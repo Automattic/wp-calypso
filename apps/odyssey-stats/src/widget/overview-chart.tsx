@@ -4,7 +4,7 @@ import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
-import { Unit } from '../typings';
+import type { DateRange } from '../lib/date-ranges';
 import type { DataPointDate, RenderTooltipParams, SeriesData } from '@automattic/charts';
 
 // The tooltip renders through @visx/tooltip's portal, which appends to `document.body` —
@@ -15,13 +15,16 @@ const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', ga
 /**
  * Names the date a hovered point covers, in the site locale's order. Not moment's `LL`: in
  * wp-admin, core rewrites it to the site's PHP date format, so moment prints "F j, 2026".
+ * Gregorian like the axis, since a locale's default calendar can differ (Persian, Thai).
  * @param date The hovered point's date.
  * @param unit The range's bucket.
  * @returns The formatted date.
  */
-function formatTooltipDate( date: Date, unit: Unit ) {
+function formatTooltipDate( date: Date, unit: DateRange[ 'unit' ] ) {
 	const options: Intl.DateTimeFormatOptions =
-		'month' === unit ? { month: 'long', year: 'numeric' } : { dateStyle: 'long' };
+		'month' === unit
+			? { month: 'long', year: 'numeric', calendar: 'gregory' }
+			: { dateStyle: 'long', calendar: 'gregory' };
 	return new Intl.DateTimeFormat( moment.locale(), options ).format( date );
 }
 
@@ -31,7 +34,10 @@ function formatTooltipDate( date: Date, unit: Unit ) {
  * @param unit The range's bucket.
  * @returns The `renderTooltip` handler.
  */
-function renderTooltip( unit: Unit, { tooltipData }: RenderTooltipParams< DataPointDate > ) {
+function renderTooltip(
+	unit: DateRange[ 'unit' ],
+	{ tooltipData }: RenderTooltipParams< DataPointDate >
+) {
 	const hoveredDate = tooltipData?.nearestDatum?.datum?.date;
 	if ( ! hoveredDate ) {
 		return null;
@@ -58,7 +64,7 @@ interface OverviewChartProps {
 	series: SeriesData[];
 	height: number;
 	/** The range's bucket, so monthly points are labelled by month rather than by date. */
-	unit: Unit;
+	unit: DateRange[ 'unit' ];
 }
 
 /**
