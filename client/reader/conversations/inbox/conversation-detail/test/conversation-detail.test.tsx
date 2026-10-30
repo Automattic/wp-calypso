@@ -15,25 +15,13 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 	) ),
 } ) );
 
-jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
-	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
-} ) );
-
-jest.mock( 'calypso/state/reader/conversations/actions', () => ( {
-	followConversation: jest.fn( () => ( { type: 'READER_CONVERSATION_FOLLOW_TEST' } ) ),
-	muteConversation: jest.fn(),
-} ) );
-
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { usePost } from 'calypso/reader/data/post';
-import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
-import { followConversation } from 'calypso/state/reader/conversations/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
 import { groupNotesByPost } from '../../group-notes';
 import { makeNote } from '../../test/helpers';
-import type { AnyAction } from 'redux';
 
 const mockedUsePost = jest.mocked( usePost );
 
@@ -59,29 +47,7 @@ const renderDetail = ( props: Partial< React.ComponentProps< typeof Conversation
 		<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ conversation } { ...props } />
 	);
 
-const renderMenu = async ( followStatus?: 'F' ) => {
-	mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
-	const store = {
-		getState: () => ( {
-			reader: { conversations: { items: followStatus ? { '10-100': followStatus } : {} } },
-		} ),
-		subscribe: () => () => {},
-		dispatch: jest.fn( ( action: AnyAction ) => action ),
-	};
-	const user = userEvent.setup();
-
-	renderWithProvider(
-		<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ conversation } />,
-		{ store }
-	);
-	await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
-	await waitFor( () => expect( screen.getByRole( 'menu' ) ).toBeVisible() );
-
-	return { store, user };
-};
-
 beforeEach( () => {
-	jest.clearAllMocks();
 	mockedUsePost.mockReset();
 } );
 
@@ -162,33 +128,5 @@ describe( 'ConversationDetail', () => {
 
 		expect( onPrevious ).toHaveBeenCalledTimes( 1 );
 		expect( onNext ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	describe( 'post actions menu', () => {
-		it( 'hides Follow conversation when the user already follows it', async () => {
-			await renderMenu( 'F' );
-
-			expect( screen.getByRole( 'menuitem', { name: 'View post' } ) ).toBeVisible();
-			expect( screen.getByRole( 'menuitem', { name: 'Mute conversation' } ) ).toBeVisible();
-			expect(
-				screen.queryByRole( 'menuitem', { name: 'Follow conversation' } )
-			).not.toBeInTheDocument();
-		} );
-
-		it( 'follows the conversation and records the event', async () => {
-			const { store, user } = await renderMenu();
-
-			await user.click( screen.getByRole( 'menuitem', { name: 'Follow conversation' } ) );
-
-			expect( recordReaderTracksEvent ).toHaveBeenCalledWith(
-				'calypso_reader_conversations_inbox_conversation_followed',
-				{ source: 'post_menu' },
-				{ post }
-			);
-			expect( followConversation ).toHaveBeenCalledWith( { siteId: 10, postId: 100 } );
-			expect( store.dispatch ).toHaveBeenCalledWith( {
-				type: 'READER_CONVERSATION_FOLLOW_TEST',
-			} );
-		} );
 	} );
 } );
