@@ -63,6 +63,7 @@
 		"resurrected-users/90-day-eligibility": true,
 		"rum-tracking/logstash": true,
 		"site-spec": true,
+		"ssh-multiple-keys": true,
 		"two-factor/enhanced-security": true,
 		"webauthn/related-origin-requests": true,
 		"wordpress-agent-slack": true,
