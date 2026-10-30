@@ -11,10 +11,11 @@ import { makeNote } from '../../test/helpers';
 import { filterConversations } from '../filter-conversations';
 import type { InboxTab } from '../tabs';
 
+const timestamp = new Date().toISOString();
 const conversations = groupNotesByPost( [
-	makeNote( { id: 1, postId: 100, title: 'Unread post', commenter: 'Ana', read: 0 } ),
-	makeNote( { id: 2, postId: 100, title: 'Unread post', commenter: 'Bruno', read: 0 } ),
-	makeNote( { id: 3, postId: 200, title: 'Read post', commenter: 'Carla', read: 1 } ),
+	makeNote( { id: 1, postId: 100, title: 'Unread post', commenter: 'Ana', read: 0, timestamp } ),
+	makeNote( { id: 2, postId: 100, title: 'Unread post', commenter: 'Bruno', read: 0, timestamp } ),
+	makeNote( { id: 3, postId: 200, title: 'Read post', commenter: 'Carla', read: 1, timestamp } ),
 ] );
 
 function ControlledList( props: Partial< React.ComponentProps< typeof ConversationList > > ) {
