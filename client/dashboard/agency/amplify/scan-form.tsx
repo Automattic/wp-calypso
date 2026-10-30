@@ -59,6 +59,7 @@ function WebsiteAddressInput( {
 				onChange={ ( next ) => onChange( next ?? '' ) }
 				placeholder={ placeholder }
 				inputMode="url"
+				dir="ltr"
 				autoComplete="off"
 				autoCorrect="off"
 				autoCapitalize="none"
