@@ -14,9 +14,9 @@ import { setTransientQueryParamsAtPathname } from '../transient-query-params';
 
 import './style.scss';
 
-type SnackbarBackTo = 'site-overview' | 'site-domains' | 'site-settings-sftp-ssh';
+export type SnackbarBackTo = 'site-overview' | 'site-domains' | 'site-settings-sftp-ssh';
 
-function getSnackbarBackButtonText( to: SnackbarBackTo | undefined ) {
+export function getSnackbarBackButtonText( to: SnackbarBackTo | undefined ) {
 	switch ( to ) {
 		case 'site-overview':
 		case 'site-domains':
@@ -28,7 +28,7 @@ function getSnackbarBackButtonText( to: SnackbarBackTo | undefined ) {
 	}
 }
 
-function getSnackbarBackButtonNavigateOptions< Params >(
+export function getSnackbarBackButtonNavigateOptions< Params >(
 	to: SnackbarBackTo | undefined,
 	params: Params | undefined
 ) {
@@ -53,21 +53,29 @@ export interface SnackbarBackButtonProps {
 	backToParams?: Record< string, string >;
 }
 
-export default function SnackbarBackButton( { backToParams }: SnackbarBackButtonProps = {} ) {
-	const router = useRouter();
-	const navigate = useNavigate();
-	const canGoBack = useCanGoBack();
+/**
+ * Persists `back_to` as a transient query param on the current pathname,
+ * which will append the param to the current page's breadcrumb item.
+ */
+export function usePersistBackTo() {
 	const { back_to: backTo } = useSearch( { strict: false } ) as { back_to?: SnackbarBackTo };
 	const pathname = useRouterState( { select: ( state ) => state.location.pathname } );
 
-	// Persist `back_to` as a transient query param on the current pathname,
-	// which will append the param to the current page's breadcrumb item.
 	useEffect( () => {
 		setTransientQueryParamsAtPathname(
 			pathname.replace( /\/$/, '' ),
 			backTo ? { back_to: backTo } : {}
 		);
 	}, [ pathname, backTo ] );
+
+	return backTo;
+}
+
+export default function SnackbarBackButton( { backToParams }: SnackbarBackButtonProps = {} ) {
+	const router = useRouter();
+	const navigate = useNavigate();
+	const canGoBack = useCanGoBack();
+	const backTo = usePersistBackTo();
 
 	const text = getSnackbarBackButtonText( backTo );
 
