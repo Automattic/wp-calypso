@@ -1,3 +1,4 @@
+import { isEnabled } from '@automattic/calypso-config';
 import page, { type Callback, type Context } from '@automattic/calypso-router';
 import { getQueryArgs, addQueryArgs } from '@wordpress/url';
 import { isOnNewAgencyDashboard } from 'calypso/dashboard/agency/lib/dashboard-opt-in';
@@ -70,6 +71,28 @@ export const requireAccessContext: Callback = ( context, next ) => {
 
 	const args = getQueryArgs( window.location.href );
 	page.redirect( addQueryArgs( A4A_LANDING_LINK, { ...args, return: pathname + search + hash } ) );
+};
+
+/**
+ * Forwards agencies on the Multi-site Dashboard from routes that don't run `requireAccessContext`,
+ * without adding its path check. The agency may not be loaded yet on a direct visit, so that case
+ * goes through `requireAccessContext`, which loads it first.
+ */
+export const redirectToNewDashboardContext: Callback = ( context, next ) => {
+	if ( ! isEnabled( 'a4a-dashboard-opt-in' ) ) {
+		next();
+		return;
+	}
+
+	const agency = getActiveAgency( context.store.getState() );
+	if ( ! agency ) {
+		requireAccessContext( context, next );
+		return;
+	}
+
+	if ( ! redirectToNewDashboard( agency, context.pathname, context.query ) ) {
+		next();
+	}
 };
 
 export const requireClientAccessContext: Callback = ( context, next ) => {
