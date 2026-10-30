@@ -13,7 +13,6 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
-const { sentryWebpackPlugin } = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -423,7 +422,8 @@ const webpackConfig = {
 
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
-			sentryWebpackPlugin( {
+			// Required here so builds without a release don't load the Sentry CLI it bundles.
+			require( '@sentry/webpack-plugin' ).sentryWebpackPlugin( {
 				org: 'a8c',
 				project: 'calypso',
 				authToken: process.env.SENTRY_AUTH_TOKEN,
