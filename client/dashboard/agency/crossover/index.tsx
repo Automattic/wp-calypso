@@ -47,11 +47,16 @@ function ProductMark( { src }: { src: string } ) {
 	);
 }
 
-function CrossoverModal( { request }: { request: CrossoverRequest } ) {
+function CrossoverModal( {
+	request,
+	dismissed,
+}: {
+	request: CrossoverRequest;
+	dismissed: string[];
+} ) {
 	const destination = getCrossoverDestination( request.destination );
 	const { recordTracksEvent } = useAnalytics();
 	const [ dontShowAgain, setDontShowAgain ] = useState( false );
-	const { data: dismissed } = useQuery( userPreferenceQuery( CROSSOVER_DISMISSED_PREFERENCE ) );
 	const { mutate: saveDismissed } = useMutation(
 		userPreferenceOptimisticMutation( CROSSOVER_DISMISSED_PREFERENCE )
 	);
@@ -75,7 +80,7 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
 			dont_show_again: dontShowAgain,
 		} );
 		if ( dontShowAgain ) {
-			saveDismissed( [ ...new Set( [ ...( dismissed ?? [] ), request.destination ] ) ] );
+			saveDismissed( [ ...new Set( [ ...dismissed, request.destination ] ) ] );
 		}
 		openDestination( request );
 	};
@@ -174,15 +179,17 @@ function CrossoverModal( { request }: { request: CrossoverRequest } ) {
 
 /**
  * Shows the crossover modal for whichever link asked to leave the agency dashboard through
- * `leaveDashboard`. Mounted once, in the agency layout.
+ * `leaveDashboard`. Mounted once, next to the agency sidebar.
  */
 export default function CrossoverModalHost() {
 	const request = useCrossoverRequest();
-	// Keeps the preferences `leaveDashboard` reads within the click in the cache.
-	useQuery( userPreferenceQuery( CROSSOVER_DISMISSED_PREFERENCE ) );
+	// Also keeps the preferences `leaveDashboard` reads within the click in the cache.
+	const { data: dismissed = [] } = useQuery(
+		userPreferenceQuery( CROSSOVER_DISMISSED_PREFERENCE )
+	);
 
 	if ( ! request ) {
 		return null;
 	}
-	return <CrossoverModal key={ request.destination } request={ request } />;
+	return <CrossoverModal key={ request.destination } request={ request } dismissed={ dismissed } />;
 }

@@ -20,9 +20,6 @@ import type { AgencySite, Site } from '@automattic/api-core';
 
 const RemoveSiteModal = lazy( () => import( '../remove-site-modal' ) );
 
-// Pressable has no per-site link yet, so this opens the agency's dashboard.
-const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
-
 export default function AgencySiteHeaderActions( {
 	site,
 	fullSite,
@@ -96,9 +93,7 @@ export default function AgencySiteHeaderActions( {
 									<MenuItem
 										onClick={ () => {
 											onClose();
-											leaveDashboard( 'pressable', PRESSABLE_AGENCY_URL, () =>
-												track( 'manage-in-pressable' )
-											);
+											leaveDashboard( 'pressable', () => track( 'manage-in-pressable' ) );
 										} }
 									>
 										{ __( 'Manage in Pressable ↗' ) }

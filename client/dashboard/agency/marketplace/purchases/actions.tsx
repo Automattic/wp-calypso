@@ -10,7 +10,6 @@ import { useAnalytics } from '../../../app/analytics';
 import { wpcomLink } from '../../../utils/link';
 import { urlToSlug } from '../../../utils/url';
 import { leaveDashboard } from '../../crossover/store';
-import { PRESSABLE_AGENCY_URL } from '../hosting/lib/pressable-plans';
 import { getCrmDownloadsRoute, getMarketplaceHostingSectionRoute } from '../paths';
 import AssignLicenseModal from './assign-license-modal';
 import {
@@ -131,7 +130,7 @@ export function getLicenseActions( {
 			label: __( 'Manage in Pressable' ),
 			isEligible: ( item ) =>
 				canAct( item ) && isPressableLicense( item ) && getLicenseStatus( item ) !== 'revoked',
-			callback: () => leaveDashboard( 'pressable', PRESSABLE_AGENCY_URL ),
+			callback: () => leaveDashboard( 'pressable' ),
 		},
 		{
 			id: 'upgrade',

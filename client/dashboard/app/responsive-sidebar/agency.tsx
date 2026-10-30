@@ -2,7 +2,8 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
-import { onLeaveClick } from '../../agency/crossover/store';
+import CrossoverModalHost from '../../agency/crossover';
+import { crossoverLinkProps } from '../../agency/crossover/store';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
@@ -25,7 +26,6 @@ import {
 	marketplaceSections,
 	mcpRoute,
 } from '../router/agency';
-import { buildDashboardLink } from '../routing';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export default function AgencySidebar() {
@@ -79,9 +79,6 @@ export default function AgencySidebar() {
 	const canAccessGrow = canAccessLibrary || canAccessPartnerDirectory || canAccessTiers;
 	const canAccessAgency = canAccessTeam || canAccessMcp || canAccessBilling;
 
-	const pluginsUrl = buildDashboardLink( 'dotcom', '/plugins' );
-	const billingUrl = buildDashboardLink( 'dotcom', '/me/billing' );
-
 	return (
 		<>
 			<SidebarMenuItem icon={ home } to="/overview">
@@ -97,10 +94,7 @@ export default function AgencySidebar() {
 					{ canAccessSites && <SidebarMenuItem to="/sites">{ __( 'Sites' ) }</SidebarMenuItem> }
 					{ /* Plugins lives in the WP.com dashboard; the gate mirrors the classic app's. */ }
 					{ canAccessPlugins && (
-						<SidebarMenuItem
-							href={ pluginsUrl }
-							onClick={ onLeaveClick( 'wpcom-plugins', pluginsUrl ) }
-						>
+						<SidebarMenuItem { ...crossoverLinkProps( 'wpcom-plugins' ) }>
 							{ __( 'Plugins' ) }
 						</SidebarMenuItem>
 					) }
@@ -154,7 +148,7 @@ export default function AgencySidebar() {
 					label={ __( 'Earn' ) }
 					icon={ currencyDollar }
 					to="/referrals"
-					activePaths={ [ '/woopayments', '/payout-settings' ] }
+					activePaths={ [ '/woopayments' ] }
 				>
 					{ canAccess( earnReferralsRoute ) && (
 						<SidebarMenuItem to="/referrals">{ __( 'Referrals' ) }</SidebarMenuItem>
@@ -175,15 +169,13 @@ export default function AgencySidebar() {
 					) }
 					{ /* Billing lives in the WP.com dashboard. */ }
 					{ canAccessBilling && (
-						<SidebarMenuItem
-							href={ billingUrl }
-							onClick={ onLeaveClick( 'wpcom-billing', billingUrl ) }
-						>
+						<SidebarMenuItem { ...crossoverLinkProps( 'wpcom-billing' ) }>
 							{ __( 'Billing' ) }
 						</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }
+			<CrossoverModalHost />
 		</>
 	);
 }

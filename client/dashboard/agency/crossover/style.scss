@@ -1,4 +1,3 @@
-@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
 // The modal's own content padding with its header hidden; the field pulls into it.
@@ -38,9 +37,9 @@ $modal-padding: $grid-unit-30;
 .a4a-crossover-ring {
 	inline-size: 72px;
 	block-size: 72px;
-	border: 1px solid $gray-200;
+	border: 1px solid var( --wpds-color-stroke-surface-neutral );
 	border-radius: 50%;
-	background-color: $white;
+	background-color: var( --wpds-color-background-surface-neutral-strong );
 }
 
 // The product marks share one size.
@@ -59,7 +58,7 @@ $modal-padding: $grid-unit-30;
 	margin-inline: -28px;
 	overflow: visible;
 	fill: none;
-	stroke: $gray-700;
+	stroke: var( --wpds-color-foreground-content-neutral-weak );
 	stroke-linecap: round;
 	stroke-linejoin: round;
 	stroke-width: 2;
@@ -95,12 +94,12 @@ $modal-padding: $grid-unit-30;
 
 .a4a-crossover-row-icon {
 	flex-shrink: 0;
-	fill: $gray-700;
+	fill: var( --wpds-color-foreground-content-neutral-weak );
 }
 
 .a4a-crossover-actions {
 	margin-block-start: $modal-padding;
 	padding-block: $grid-unit-20 $modal-padding;
 	padding-inline: $modal-padding;
-	border-block-start: 1px solid $gray-100;
+	border-block-start: 1px solid var( --wpds-color-stroke-surface-neutral-weak );
 }

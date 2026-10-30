@@ -7,11 +7,11 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import CrossoverModalHost from '../';
 import { render } from '../../../test-utils';
+import { getCrossoverDestination } from '../destinations';
 import { leaveDashboard } from '../store';
 
 const API = 'https://public-api.wordpress.com';
 const PREFERENCE = 'a4a-crossover-dismissed';
-const PLUGINS_URL = 'https://my.wordpress.com/plugins';
 
 function mockDismissed( dismissed: string[] = [] ) {
 	nock( API )
@@ -23,7 +23,7 @@ function mockDismissed( dismissed: string[] = [] ) {
 function renderHost() {
 	render(
 		<>
-			<button onClick={ () => leaveDashboard( 'wpcom-plugins', PLUGINS_URL ) }>Plugins</button>
+			<button onClick={ () => leaveDashboard( 'wpcom-plugins' ) }>Plugins</button>
 			<CrossoverModalHost />
 		</>,
 		{ queryClient }
@@ -31,6 +31,7 @@ function renderHost() {
 }
 
 describe( '<CrossoverModalHost>', () => {
+	const pluginsUrl = getCrossoverDestination( 'wpcom-plugins' ).url;
 	let open: jest.SpyInstance;
 
 	beforeEach( () => {
@@ -63,7 +64,7 @@ describe( '<CrossoverModalHost>', () => {
 		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Don’t show this again' } ) );
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue to WordPress.com/ } ) );
 
-		expect( open ).toHaveBeenCalledWith( PLUGINS_URL, '_blank', 'noopener,noreferrer' );
+		expect( open ).toHaveBeenCalledWith( pluginsUrl, '_blank', 'noopener,noreferrer' );
 		await saved;
 	} );
 
@@ -76,7 +77,7 @@ describe( '<CrossoverModalHost>', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Plugins' } ) );
 
-		expect( open ).toHaveBeenCalledWith( PLUGINS_URL, '_blank', 'noopener,noreferrer' );
+		expect( open ).toHaveBeenCalledWith( pluginsUrl, '_blank', 'noopener,noreferrer' );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 } );

@@ -3,19 +3,16 @@ import {
 	tipaltiIFrameUrlQuery,
 	tipaltiPayeeQuery,
 } from '@automattic/api-queries';
-import { AutomatticLogo } from '@automattic/components/src/logos/automattic-logo';
 import { useQuery } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import { __, isRTL } from '@wordpress/i18n';
-import { chevronLeft, chevronRight } from '@wordpress/icons';
+import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
-import { useState } from 'react';
+import { earnPayoutSettingsRoute } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
-import RouterLinkButton from '../../../components/router-link-button';
 import { Text } from '../../../components/text';
 import { AgencyNotices } from '../../components/agency-notices';
+import FullscreenPage from '../../components/fullscreen-page';
 import { getAccountStatus } from './get-account-status';
 import PayoutStatusNotice, { usePayoutStatusNotice } from './payout-status-notice';
 import { TipaltiPayoutSettings } from './tipalti-payout-settings';
@@ -36,23 +33,11 @@ function PaymentStatusBadge( { agencyId }: { agencyId: number } ) {
 	);
 }
 
-// The embedded Tipalti form adds entries to the browser history, so Back links to
-// the page this one was opened from instead of stepping back through them.
-function BackButton() {
-	const router = useRouter();
-	const [ backTo ] = useState( () => {
-		const from = router.state.resolvedLocation;
-		return from && from.pathname !== '/payout-settings' ? from.href : '/overview';
-	} );
-
-	return (
-		<RouterLinkButton to={ backTo } variant="link" icon={ isRTL() ? chevronRight : chevronLeft }>
-			{ __( 'Back' ) }
-		</RouterLinkButton>
-	);
-}
-
 export default function EarnPayoutSettings() {
+	// The embedded Tipalti form adds entries to the browser history, so Back links to the
+	// page this one was opened from instead of stepping back through them. Without one (the
+	// sidebar link), it goes to Referrals, where the sidebar's Earn item lands.
+	const { from } = earnPayoutSettingsRoute.useSearch();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
@@ -63,16 +48,7 @@ export default function EarnPayoutSettings() {
 	const payoutStatusNotice = usePayoutStatusNotice( { agencyId, isLoadingPage: ! agency } );
 
 	return (
-		<div className="earn-payout-settings">
-			<HStack
-				className="earn-payout-settings-top-bar"
-				justify="flex-start"
-				spacing={ 6 }
-				expanded={ false }
-			>
-				<AutomatticLogo width={ 183 } height={ 40 } />
-				<BackButton />
-			</HStack>
+		<FullscreenPage backTo={ from ?? '/referrals' }>
 			<PageLayout
 				header={
 					<PageHeader
@@ -95,6 +71,6 @@ export default function EarnPayoutSettings() {
 			>
 				<TipaltiPayoutSettings iframeUrl={ iframeData?.iframe_url } isLoading={ isLoading } />
 			</PageLayout>
-		</div>
+		</FullscreenPage>
 	);
 }
