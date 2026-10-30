@@ -12,7 +12,6 @@ const stepNameToModuleName = {
 	'mailbox-plan': 'plans',
 	plans: 'plans',
 	'plans-with-plugin': 'plans',
-	'plans-import': 'plans',
 	'plans-launch': 'plans',
 	'plans-site-selected': 'plans',
 	'plans-site-selected-legacy': 'plans',

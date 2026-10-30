@@ -288,7 +288,6 @@ describe( 'HeaderPrice', () => {
 						pricing,
 					},
 				},
-				isExperimentVariant: true,
 				showFeatureCheckmarks: true,
 				enableTermSavingsPriceDisplay: true,
 			} ) );
@@ -300,7 +299,7 @@ describe( 'HeaderPrice', () => {
 				}
 			);
 			const badge = container.querySelector(
-				'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
+				'.plans-grid-next-header-price__badge:not(.is-hidden)'
 			);
 			const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
 
@@ -355,15 +354,12 @@ describe( 'HeaderPrice', () => {
 					pricing,
 				},
 			},
-			isExperimentVariant: true,
 			showFeatureCheckmarks: true,
 			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
 		} ) );
 
 		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
-		const badge = container.querySelector(
-			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
-		);
+		const badge = container.querySelector( '.plans-grid-next-header-price__badge:not(.is-hidden)' );
 		const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
 
 		expect( badge ).toHaveTextContent( 'Save 76%' );
@@ -390,15 +386,12 @@ describe( 'HeaderPrice', () => {
 					pricing,
 				},
 			},
-			isExperimentVariant: true,
 			showFeatureCheckmarks: true,
 			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
 		} ) );
 
 		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
-		const badge = container.querySelector(
-			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
-		);
+		const badge = container.querySelector( '.plans-grid-next-header-price__badge:not(.is-hidden)' );
 		const hoverArea = container.querySelector( '.plans-2023-tooltip__hover-area-container' );
 
 		expect( badge ).toHaveTextContent( 'One time discount' );
@@ -433,15 +426,12 @@ describe( 'HeaderPrice', () => {
 					pricing,
 				},
 			},
-			isExperimentVariant: true,
 			showFeatureCheckmarks: false,
 			showBillingDescriptionForIncreasedRenewalPrice: 'crossed_price',
 		} ) );
 
 		const { container } = render( <HeaderPrice { ...defaultProps } />, { wrapper: Wrapper } );
-		const badge = container.querySelector(
-			'.plans-grid-next-header-price__badge.is-plan-differentiators-experiment-badge:not(.is-hidden)'
-		);
+		const badge = container.querySelector( '.plans-grid-next-header-price__badge:not(.is-hidden)' );
 
 		expect( badge ).toHaveTextContent( 'Save 50%' );
 		expect( container.querySelector( '.plans-2023-tooltip__hover-area-container' ) ).toBeNull();

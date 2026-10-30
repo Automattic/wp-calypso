@@ -93,7 +93,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		}
 
 		if ( isSiteUnlocked ) {
-			navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug }, replace: true } );
+			navigate( {
+				to: '/sites/$siteSlug',
+				params: { siteSlug: site.slug },
+				search: { migration: 'completed' },
+				replace: true,
+			} );
 			return;
 		}
 
@@ -151,6 +156,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			{ migration?.status === 'running' && (
 				<Running
 					phase={ migration.phase }
+					progress={ migration.progress }
 					sourceHost={ sourceHost }
 					notificationEmails={ migration.notification_emails }
 				/>

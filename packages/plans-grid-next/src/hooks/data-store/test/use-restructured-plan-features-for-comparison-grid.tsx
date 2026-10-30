@@ -57,8 +57,6 @@ function comparisonFor( intent?: PlansIntent ) {
 			gridPlans: GRID_PLANS,
 			allFeaturesList: ALL_FEATURES,
 			intent,
-			useVar42NoAiFeatures: true,
-			isExperimentVariant: true,
 		} )
 	);
 

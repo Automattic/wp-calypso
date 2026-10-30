@@ -12,15 +12,13 @@ import {
 	hasAnyCapability,
 } from '../../../app/router/agency';
 import { PageHeader } from '../../../components/page-header';
+import { leaveDashboard } from '../../crossover/store';
 import { OWNER_ROLE } from '../../team/constants';
 import { canActOnSite, getAdminUrl, isDevSite, isUrlOnlySite } from '../dataviews/site-data';
 import { isPressableSite } from '../lib';
 import type { AgencySite, Site } from '@automattic/api-core';
 
 const RemoveSiteModal = lazy( () => import( '../remove-site-modal' ) );
-
-// Pressable has no per-site link yet, so this opens the agency's dashboard.
-const PRESSABLE_AGENCY_URL = 'https://my.pressable.com/agency/auth';
 
 export default function AgencySiteHeaderActions( {
 	site,
@@ -94,8 +92,8 @@ export default function AgencySiteHeaderActions( {
 								{ isPressableSite( site ) && isAgencyOwner && (
 									<MenuItem
 										onClick={ () => {
-											track( 'manage-in-pressable' );
-											window.open( PRESSABLE_AGENCY_URL, '_blank', 'noreferrer,noopener' );
+											onClose();
+											leaveDashboard( 'pressable', () => track( 'manage-in-pressable' ) );
 										} }
 									>
 										{ __( 'Manage in Pressable ↗' ) }

@@ -5,6 +5,7 @@ import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
 import { Notice } from '../../../components/notice';
 import RouterLinkButton from '../../../components/router-link-button';
+import { useBackHereSearch } from '../../components/fullscreen-page';
 import { useContactSupport } from '../../support/use-contact-support';
 import { getAccountStatus } from './get-account-status';
 
@@ -44,6 +45,7 @@ export default function PayoutStatusNotice( {
 	const { data: payee } = useQuery( tipaltiPayeeQuery( agencyId ) );
 	const { recordTracksEvent } = useAnalytics();
 	const { openContactForm } = useContactSupport();
+	const backHereSearch = useBackHereSearch();
 	const accountStatus = getAccountStatus( payee );
 
 	if ( ! accountStatus?.statusReason ) {
@@ -75,6 +77,7 @@ export default function PayoutStatusNotice( {
 				variant="primary"
 				__next40pxDefaultSize
 				to="/payout-settings"
+				search={ backHereSearch }
 				onClick={ () =>
 					recordTracksEvent( 'calypso_a4a_payout_status_notice_add_details_click', eventProperties )
 				}
