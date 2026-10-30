@@ -9,7 +9,7 @@ finish their request there. It's built on [A2UI v1.0](https://a2ui.org).
   the surface's catalog, which each message lists. Everyone else keeps the older UI until the
   rollout (AM-118).
 - **What's shared:** the [renderer](../../../ai-ui-renderer/README.md) is a shared library with the
-  basic components. Custom components live in the project that owns them.
+  basic components and the charts. Custom components live in the project that owns them.
 
 Ticket numbers mark parts still to come.
 
@@ -38,15 +38,15 @@ Ticket numbers mark parts still to come.
 
 ## Where the code lives
 
-- **`@automattic/ai-ui-renderer`** renders surfaces for any host, with the basic components and
-  their styles, and has no chat, session or transport code. See its
+- **`@automattic/ai-ui-renderer`** renders surfaces for any host, with the basic components, the
+  charts and their styles, and has no chat, session or transport code. See its
   [README](../../../ai-ui-renderer/README.md).
 - **Agents Manager** hosts them in the chat, from this folder:
   - `use-interactive-ui.ts` keeps a runtime per conversation, loads the renderer and its styles on
     demand and sends actions to the agent.
   - `surfaces/` renders a message's surfaces in the chat's colors and mode (its `style.scss` sets
     A2UI's tokens from Agenttic's), disables one while it's stale or the chat is busy, shows a
-    notice for one that can't be shown, and stacks the modal above the chat.
+    notice for one that can't be shown, and stacks the modal and chart tooltips above the chat.
     Surfaces sit in a `data-agenttic-isolated` wrapper, so their components keep their own styles
     while replies keep the chat's reset and typography.
   - `action-note/` shows an action's `userMessage` in the transcript.
@@ -58,8 +58,8 @@ Ticket numbers mark parts still to come.
     surfaces' data each message sends.
   - `catalogs.ts` builds the catalogs, and the renderer capabilities each message sends.
   - `tracks.ts` records surfaces and their actions in Tracks, and reports the renderer's errors.
-  - `with-chat-response-tracking.tsx` records the shared response events for each catalog
-    component.
+  - `with-chat-response-tracking.tsx` records the shared response events for each component of
+    Agents Manager's and its providers' catalogs.
 - **Custom components and functions** live in the project that owns them: Agents Manager's in this
   package, such as its color, font and button pickers and its Help Center button (declared in
   `AGENTS_MANAGER_CATALOG` in `catalogs.ts`), and its providers' in theirs: WooCommerce AI's repo,
@@ -80,7 +80,7 @@ Ticket numbers mark parts still to come.
   A surface's default catalog is the ability's when an ability builds it with wpcom's helpers
   (Agents Manager's, `AGENTS_MANAGER_CATALOG_ID`, unless it passes its own), the hinted component's
   for a browser ability's card, and A2UI's Basic catalog when the agent composes it, where a
-  provider's component names its own catalog as its `catalogId`.
+  provider's component or a chart names its own catalog as its `catalogId`.
 - **Only add to a catalog.** Conversations store surfaces, and wpcom and each client deploy
   separately, so treat a catalog as an API. Add components, functions and optional props, and keep
   its ID. Never remove, rename or retype a component, function or prop, make a prop required, or
@@ -92,7 +92,8 @@ Ticket numbers mark parts still to come.
 - **Owner-prefixed names.** Prefix your component and function names with your owner, such as
   `ExampleCard` and `exampleOpenItem` for an owner named Example. The agent's tool lists every
   composable catalog's components together, so wpcom leaves out one named like a basic component or
-  an earlier catalog's.
+  an earlier catalog's. The renderer's shared charts (`LineChart`, `BarChart` and `PieChart`) have
+  no prefix, like the basic components.
 - **Ability-only catalogs aren't sent to the agent.** Set `agentComposable: false`
   ([catalogs](../../../ai-ui-renderer/README.md#catalogs)) on a catalog definition whose components
   only your abilities build, such as Agents Manager's pickers, whose style variations the agent
@@ -216,8 +217,9 @@ Ticket numbers mark parts still to come.
   action. An error's message and an action's name and context can carry the agent's content or the
   user's input, so they aren't recorded. Each surface is recorded once per conversation and each
   error once per message, neither for a message restored from history. A surface built only from
-  basic components records only these. As with `show-component` messages, Agents Manager also
-  records the shared response events for each catalog component on a current surface:
+  basic components and charts records only these. As with `show-component` messages, Agents
+  Manager also records the shared response events for each component of its own and its providers'
+  catalogs on a current surface:
   `jetpack_big_sky_chat_response_rendered`, and `jetpack_big_sky_chat_response_action` for each
   action it reports through `onResponseAction`, with its name as `component_type` and its surface
   ID as `tool_call_id`.

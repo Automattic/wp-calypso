@@ -3,6 +3,7 @@ import {
 	BASIC_FUNCTIONS as A2UI_BASIC_FUNCTIONS,
 	V10_VALIDATION_FUNCTION_IMPLEMENTATIONS,
 } from '@a2ui/web_core/v1_0';
+import { lazy } from '@wordpress/element';
 import { z } from 'zod';
 import { assertInteractiveUiCatalogDefinition, BASIC_CATALOG_ID } from '../capabilities';
 import { AudioPlayer } from '../components/audio-player';
@@ -23,6 +24,7 @@ import { Tabs } from '../components/tabs';
 import { Text } from '../components/text';
 import { TextField } from '../components/text-field';
 import { Video } from '../components/video';
+import { CHARTS_CATALOG_DOCUMENT } from './charts-catalog';
 import { toComponentImplementation, toFunctionImplementation } from './definitions';
 import type { InteractiveUiCatalogDefinition } from './definitions';
 import type { ReactComponentImplementation } from '@a2ui/react';
@@ -78,6 +80,33 @@ const BASIC_FUNCTIONS: readonly FunctionImplementation[] = A2UI_BASIC_FUNCTIONS.
 );
 
 export type InteractiveUiCatalog = Catalog< ReactComponentImplementation >;
+
+const CHART_RETRY_DELAY_MS = 500;
+
+// The chart library is large, so the charts load when a surface first shows one. `lazy()` caches a
+// rejected import, so a failed fetch retries once, after a pause, before the surface falls back.
+function lazyChart( name: 'LineChart' | 'BarChart' | 'PieChart' ) {
+	const load = () =>
+		import( /* webpackChunkName: "ai-ui-renderer-charts" */ '../components/charts' ).then(
+			( charts ) => ( { default: charts[ name ] } )
+		);
+
+	return lazy( () =>
+		load().catch( () =>
+			new Promise( ( resolve ) => setTimeout( resolve, CHART_RETRY_DELAY_MS ) ).then( load )
+		)
+	);
+}
+
+/** The charts catalog, for `createInteractiveUiCatalog()`: its document and its components. */
+export const CHARTS_CATALOG: InteractiveUiCatalogDefinition = {
+	catalog: CHARTS_CATALOG_DOCUMENT,
+	components: {
+		LineChart: lazyChart( 'LineChart' ),
+		BarChart: lazyChart( 'BarChart' ),
+		PieChart: lazyChart( 'PieChart' ),
+	},
+};
 
 /**
  * Builds A2UI's Basic catalog, or a definition's catalog: the basic components and functions plus
