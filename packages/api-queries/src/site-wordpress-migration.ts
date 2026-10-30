@@ -58,14 +58,14 @@ export const siteWordPressMigrationConfigureMutation = ( siteId: number ) =>
 // Both change who has the migration, which the site reports, so the site is read again either way.
 export const siteWordPressMigrationHandoffMutation = ( siteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'site-wp-migration-assisted-handoff' },
+		meta: { statId: 'site-wp-mig-handoff' },
 		mutationFn: () => handOffWordPressMigration( siteId ),
 		onSettled: () => invalidateMigration( siteId ),
 	} );
 
 export const siteWordPressMigrationCancelHandoffMutation = ( siteId: number ) =>
 	mutationOptions( {
-		meta: { statId: 'site-wp-migration-cancel-assisted-handoff' },
+		meta: { statId: 'site-wp-mig-handoff-cancel' },
 		mutationFn: () => cancelWordPressMigrationHandoff( siteId ),
 		onSettled: () => invalidateMigration( siteId ),
 	} );
