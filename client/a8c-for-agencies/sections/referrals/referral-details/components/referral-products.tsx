@@ -1,4 +1,6 @@
+import { useTranslate } from 'i18n-calypso';
 import TextPlaceholder from 'calypso/a8c-for-agencies/components/text-placeholder';
+import getTitanReferralDetails from '../../lib/get-titan-referral-details';
 import ReferralTitanDetails from './referral-titan-details';
 import type { ReferralPurchase } from '../../types';
 import type { APIProductFamilyProduct } from 'calypso/a8c-for-agencies/types/products';
@@ -18,6 +20,31 @@ const getProductName = ( purchase: ReferralPurchase, data: APIProductFamilyProdu
 	return productName;
 };
 
+/**
+ * A referral holds one product per license, so repeats of a product share one
+ * row with their count. A Titan purchase keeps its own row for its domain.
+ */
+const groupProducts = (
+	products: ReferralPurchase[],
+	productsData: APIProductFamilyProduct[]
+): ReferralPurchase[][] => {
+	const groups = new Map< number, ReferralPurchase[] >();
+	const rows: ReferralPurchase[][] = [];
+	products.forEach( ( product ) => {
+		const group = groups.get( product.product_id );
+		if ( getTitanReferralDetails( product, productsData ) ) {
+			rows.push( [ product ] );
+		} else if ( group ) {
+			group.push( product );
+		} else {
+			const newGroup = [ product ];
+			groups.set( product.product_id, newGroup );
+			rows.push( newGroup );
+		}
+	} );
+	return rows;
+};
+
 export default function ReferralProducts( {
 	products,
 	isFetchingProducts,
@@ -27,17 +54,28 @@ export default function ReferralProducts( {
 	isFetchingProducts: boolean;
 	productsData: APIProductFamilyProduct[] | undefined;
 } ) {
+	const translate = useTranslate();
+
 	if ( isFetchingProducts || ! productsData ) {
 		return <TextPlaceholder />;
 	}
 	return (
 		<div className="referral-products">
-			{ products.map( ( product, index ) => (
-				<div key={ index } className="referral-products__product">
-					<div className="referral-products__name">{ getProductName( product, productsData ) }</div>
-					<ReferralTitanDetails product={ product } productsData={ productsData } />
-				</div>
-			) ) }
+			{ groupProducts( products, productsData ).map( ( [ product, ...repeats ], index ) => {
+				const productName = getProductName( product, productsData );
+				return (
+					<div key={ index } className="referral-products__product">
+						<div className="referral-products__name">
+							{ repeats.length && productName
+								? translate( '%(productName)s x %(quantity)s', {
+										args: { productName, quantity: repeats.length + 1 },
+									} )
+								: productName }
+						</div>
+						<ReferralTitanDetails product={ product } productsData={ productsData } />
+					</div>
+				);
+			} ) }
 		</div>
 	);
 }

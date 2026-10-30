@@ -4,11 +4,29 @@ import type { AgencyProduct, ReferralApiResponse } from '@automattic/api-core';
 
 export const MAX_SUMMARY_PRODUCT_NAMES = 3;
 
+/**
+ * A referral holds one product per license, so repeats of a product fold into
+ * one name with their count, such as "Jetpack Complete x 2".
+ */
 export function getOrderProductNames(
 	order: ReferralApiResponse,
 	products?: AgencyProduct[]
 ): string[] {
-	return order.products.map( ( product ) => getProductName( product, products ) );
+	const counts = new Map< string, number >();
+	order.products.forEach( ( product ) => {
+		const name = getProductName( product, products );
+		counts.set( name, ( counts.get( name ) ?? 0 ) + 1 );
+	} );
+	return Array.from( counts, ( [ name, count ] ) =>
+		count > 1
+			? sprintf(
+					/* translators: %1$s is the product name, %2$d the quantity. */
+					__( '%1$s x %2$d' ),
+					name,
+					count
+				)
+			: name
+	);
 }
 
 export function getOrderSummary( order: ReferralApiResponse, products?: AgencyProduct[] ) {
