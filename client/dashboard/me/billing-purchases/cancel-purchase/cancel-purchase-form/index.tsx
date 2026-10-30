@@ -176,9 +176,12 @@ function SurveyContent( {
 					cancellationReason={ solutionsReason }
 					closeDialog={ closeDialog }
 					intent={ intent ?? undefined }
+					onClickFreeMonthOffer={ freeMonthOfferClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
+					plans={ plans }
 					purchase={ purchase }
 					recordEvent={ recordEvent }
+					showFreeMonthOffer={ upsell === 'free-month-offer' }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);
