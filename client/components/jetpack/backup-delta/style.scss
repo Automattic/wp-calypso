@@ -62,3 +62,11 @@
 		}
 	}
 }
+
+.backup-delta__known-threats {
+	margin-block-start: 1.5rem;
+
+	.backup-known-threats__region {
+		align-self: stretch;
+	}
+}

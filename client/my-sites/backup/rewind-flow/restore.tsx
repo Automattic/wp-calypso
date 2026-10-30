@@ -3,8 +3,9 @@ import { Button, Card, Gridicon } from '@automattic/components';
 import { ExternalLink } from '@wordpress/components';
 import { usePrevious } from '@wordpress/compose';
 import { useEffect } from '@wordpress/element';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { FunctionComponent, useCallback, useState } from 'react';
+import { FunctionComponent, useCallback, useId, useState } from 'react';
 import restoreSuccessImage from 'calypso/assets/images/illustrations/jetpack-restore-success.svg';
 import JetpackReviewPrompt from 'calypso/blocks/jetpack-review-prompt';
 import QueryJetpackCredentialsStatus from 'calypso/components/data/query-jetpack-credentials-status';
@@ -40,6 +41,10 @@ import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-t
 import { getSiteSlug } from 'calypso/state/sites/selectors';
 import { backupMainPath } from '../paths';
 import Error from './error';
+import KnownThreatsNotice, {
+	getKnownThreatsTracksProps,
+	isRestoreDisabled,
+} from './known-threats-notice';
 import Loading from './loading';
 import ProgressBar from './progress-bar';
 import RewindConfigEditor from './rewind-config-editor';
@@ -91,6 +96,13 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const [ restoreFailed, setRestoreFailed ] = useState( false );
 	const [ showConfirm, setShowConfirm ] = useState( false );
 	const [ showFinishedScreen, setShowFinishedScreen ] = useState( false );
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const [ acknowledgedRewindId, setAcknowledgedRewindId ] = useState< string | null >( null );
+	const acknowledged = acknowledgedRewindId === rewindId;
+	const onAcknowledgedChange = useCallback(
+		( value: boolean ) => setAcknowledgedRewindId( value ? rewindId : null ),
+		[ rewindId ]
+	);
 
 	const rewindState = useSelector( ( state ) => getRewindState( state, siteId ) ) as RewindState;
 	const inProgressRewindStatus = useSelector( ( state ) =>
@@ -166,9 +178,12 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 		dispatch(
 			recordTracksEvent( 'calypso_jetpack_backup_restore_confirm', {
 				has_credentials: hasCredentials,
+				...getKnownThreatsTracksProps( hasKnownThreats, acknowledged ),
 			} )
 		);
 	}, [
+		acknowledged,
+		hasKnownThreats,
 		isPreflightEnabled,
 		credentialsAreValid,
 		dispatch,
@@ -232,7 +247,16 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 	const loading = rewindState.state === 'uninitialized';
 	const { restoreId } = rewindState.rewind || {};
 
-	const disableRestore = Object.values( rewindConfig ).every( ( setting ) => ! setting );
+	const disableRestore = isRestoreDisabled(
+		Object.values( rewindConfig ).every( ( setting ) => ! setting ),
+		hasKnownThreats,
+		acknowledged
+	);
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const acknowledgementHintId = useId();
+	const acknowledgementHint = translate(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	) as string;
 
 	const selectedDate = moment( rewindId, 'X' );
 	const baseBackupDate = backup.baseRewindId ? moment.unix( backup.baseRewindId ) : null;
@@ -303,6 +327,18 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					rewindId={ rewindId }
 					includesDatabase={ !! rewindConfig.sqls }
 				/>
+				<KnownThreatsNotice
+					siteId={ siteId }
+					rewindId={ rewindId }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ onAcknowledgedChange }
+					onKnownThreatsChange={ setHasKnownThreats }
+					// "Go back" comes between the checkbox and the restore button.
+					acknowledgedMessage={
+						translate( 'You can now restore this backup with "Restore now", below.' ) as string
+					}
+				/>
 				<>
 					{ backupCurrentlyInProgress && (
 						<RewindFlowNotice
@@ -322,14 +358,24 @@ const BackupRestoreFlow: FunctionComponent< Props > = ( {
 					>
 						{ translate( 'Go back' ) }
 					</Button>
+					{ /* The reason shows beside the button, which also takes it as its description. */ }
 					<Button
-						className="rewind-flow__primary-button"
+						className={ clsx( 'rewind-flow__primary-button', {
+							disabled: awaitingAcknowledgement,
+						} ) }
 						primary
-						onClick={ onConfirm }
-						disabled={ disableRestore }
+						onClick={ disableRestore ? undefined : onConfirm }
+						disabled={ disableRestore && ! awaitingAcknowledgement }
+						aria-disabled={ awaitingAcknowledgement || undefined }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
 					>
 						{ translate( 'Restore now' ) }
 					</Button>
+					{ awaitingAcknowledgement && (
+						<p className="rewind-flow__acknowledgement-hint" id={ acknowledgementHintId }>
+							{ acknowledgementHint }
+						</p>
+					) }
 				</div>
 				<Interval onTick={ refreshBackups } period={ EVERY_FIVE_SECONDS } />
 			</>

@@ -20,6 +20,7 @@ import type { ReactNode } from 'react';
 export interface BackupsNavigation {
 	selectBackup: ( rewindId: string | null ) => void;
 	requestRestore: ( rewindId: string ) => void;
+	restoreLinkTo?: string;
 	requestDownload: ( rewindId: string, downloadId?: number ) => void;
 }
 
@@ -126,6 +127,7 @@ export function BackupsPage( {
 					timezoneString={ timezoneString }
 					gmtOffset={ gmtOffset }
 					searchParams={ searchParams }
+					restoreLinkTo={ navigation.restoreLinkTo }
 					onSelectBackup={ ( selected ) => navigation.selectBackup( selected?.rewind_id ?? null ) }
 					onRequestRestore={ ( selected ) => navigation.requestRestore( selected.rewind_id ) }
 					onRequestDownload={ ( selected ) => navigation.requestDownload( selected.rewind_id ) }

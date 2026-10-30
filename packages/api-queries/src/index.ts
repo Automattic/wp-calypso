@@ -127,6 +127,7 @@ export * from './site-atomic-transfers';
 export * from './site-automated-transfers-eligibility';
 export * from './site-backup-download';
 export * from './site-backup-restore';
+export * from './site-backup-known-threats';
 export * from './site-backups';
 export * from './site-cache';
 export * from './site-crontab';

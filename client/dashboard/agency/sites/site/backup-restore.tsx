@@ -18,7 +18,11 @@ export default function AgencySiteBackupRestore() {
 				<PageHeader prefix={ <Breadcrumbs length={ 2 } /> } title={ __( 'Site restore' ) } />
 			}
 		>
-			<BackupRestoreFlow site={ site } rewindId={ rewindId } />
+			<BackupRestoreFlow
+				site={ site }
+				rewindId={ rewindId }
+				restoreLinkTo={ agencySiteBackupRestoreRoute.fullPath }
+			/>
 		</PageLayout>
 	);
 }

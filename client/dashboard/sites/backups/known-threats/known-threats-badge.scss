@@ -1,0 +1,21 @@
+// Mirrors the @wordpress/ui Badge `medium` intent (same tokens), but allows an
+// icon inside the pill, which the Badge component does not support.
+.dashboard-known-threats-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: var( --wpds-dimension-gap-xs, 4px );
+	padding-block: var( --wpds-dimension-padding-xs, 4px );
+	padding-inline: var( --wpds-dimension-padding-sm, 8px );
+	border-radius: var( --wpds-border-radius-lg, 8px );
+	background-color: var( --wpds-color-background-surface-warning );
+	color: var( --wpds-color-foreground-content-warning );
+	font-family: var( --wpds-typography-font-family-body, inherit );
+	font-size: var( --wpds-typography-font-size-sm, 12px );
+	font-weight: var( --wpds-typography-font-weight-default, 400 );
+	line-height: var( --wpds-typography-line-height-xs, 16px );
+
+	svg {
+		flex-shrink: 0;
+		fill: currentColor;
+	}
+}
