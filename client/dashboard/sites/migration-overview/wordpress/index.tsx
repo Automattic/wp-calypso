@@ -151,7 +151,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				/>
 			) }
 			{ isConnecting && ! isConfigurationPending && (
-				<Connect site={ site } sourceHost={ sourceHost } failure={ connectionFailure } />
+				<Connect
+					site={ site }
+					sourceHost={ sourceHost }
+					sourceUrl={ migration?.source_url }
+					failure={ connectionFailure }
+				/>
 			) }
 			{ migration?.status === 'running' && (
 				<Running

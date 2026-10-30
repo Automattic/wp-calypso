@@ -55,10 +55,12 @@ function linkTo( url?: string ) {
 export function Connect( {
 	site,
 	sourceHost,
+	sourceUrl,
 	failure,
 }: {
 	site: Site;
 	sourceHost: string;
+	sourceUrl?: string | null;
 	failure?: WordPressMigrationFinding;
 } ) {
 	const snackbar = { error: __( 'Failed to start the migration.' ) };
@@ -114,7 +116,14 @@ export function Connect( {
 					</Button>
 				</>
 			}
-			secondaryAction={ <AssistedHandoffLink /> }
+			secondaryAction={
+				<AssistedHandoffLink
+					site={ site }
+					sourceUrl={ sourceUrl }
+					step="connect"
+					disabled={ isStarting }
+				/>
+			}
 		>
 			{ failure && (
 				<Notice variant="error" title={ failure.label }>

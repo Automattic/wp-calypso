@@ -102,6 +102,14 @@ describe( 'SiteMigrationHowToMigrate', () => {
 		expect( recordMigrationStartFacebookEvent ).toHaveBeenCalledWith( 'SiteMigrationHowToMigrate' );
 	} );
 
+	it( 'preserves an existing migration when the flow supplies a return path', async () => {
+		render( { navigation, preserveMigrationOnBack: true } );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Back' } ) );
+		expect( navigation.goBack ).toHaveBeenCalledTimes( 1 );
+		expect( mockCancelMigration ).not.toHaveBeenCalled();
+		expect( mockDeleteMigrationSticker ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [
 		[ '/some-path?siteId=123&siteSlug=destination.wordpress.com', '123' ],
 		[ '/some-path?siteSlug=destination.wordpress.com', 'destination.wordpress.com' ],

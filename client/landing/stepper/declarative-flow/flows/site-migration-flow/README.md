@@ -16,6 +16,7 @@ The WordPress journey is gated by `migration/reprint-flow`, which defaults to fa
 - Eligible existing destination: confirm replacement → configure → site migration page.
 - Existing destination needing an upgrade: choose a plan → configure → checkout → site migration page.
 - “Talk to a migration expert” on the WordPress result: select or create a destination → existing assisted-migration offer → upgrade if needed → credentials. This preserves `how=difm`, including for supported SSH hosts, and does not configure a Reprint migration.
+- The assisted links on the migration dashboard open the same offer with the saved source URL and destination already selected. `ref=reprint-migration-overview` makes Back and “I’ll do it myself” return to that dashboard without clearing the Reprint setup. `reprintStep` retains the screen where help was requested; it is entry context, not ticket content. Opening the offer does not request a ticket or change the migration status. Continuing uses the existing DIFM steps.
 
 Configure saves only `source_url`. It resets migration state, so it runs after an explicit continuation, never merely opening a result or plans page. MSD owns choosing the source connection and starting the migration; this router does not call the run endpoint. Configure failures use the shared Stepper error screen.
 
@@ -33,6 +34,7 @@ Checkout returns to the destination's migration page in MSD. Cancelling checkout
 8. With and without the flag, verify non-WordPress sources retain their existing routes. With the flag off, WordPress migration retains the legacy workflow.
 9. Open `/setup/site-migration/sitePicker?from=<url>&platform=wordpress&start=true&ref=move-lp&flags=migration/reprint-flow` (what `/move` sends). Verify a single page load straight into "Checking your site", then Back shows the address form. Without the flag, verify the site picker.
 10. On the WordPress result without a destination, choose “Talk to a migration expert”. Verify destination selection or creation retains the source and entry context, then opens “Let us migrate your site”. Check a supported SSH host with `/move` attribution too. Back should return to the result with DIY Continue still available. Stop before purchasing a plan, submitting credentials, or requesting a migration.
+11. On a test destination’s Reprint dashboard, choose the team-assisted link from connection, paused, or failed screens. Verify it opens the existing offer directly with the full source URL, destination, and entry context. Back and “I’ll do it myself” should return to the same migration dashboard without clearing its setup. Stop at the offer; its later DIFM steps retain their existing status and ticket behavior.
 
 ## Owned by
 

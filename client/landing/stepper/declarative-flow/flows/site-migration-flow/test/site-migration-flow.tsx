@@ -2225,6 +2225,68 @@ describe( 'Site Migration Flow', () => {
 		} );
 
 		describe( 'SITE_MIGRATION_HOW_TO_MIGRATE', () => {
+			const dashboardContext = {
+				from: 'https://source.example.com/news/',
+				platform: 'wordpress',
+				siteId: '123',
+				siteSlug: 'example.wordpress.com',
+				how: HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME,
+				ref: 'reprint-migration-overview',
+				reprintStep: 'paused',
+				flags: 'migration/reprint-flow',
+				sessionId: 'existing-session',
+			};
+			const dashboardEntry = `/setup/site-migration/site-migration-how-to-migrate?${ new URLSearchParams( dashboardContext ) }`;
+
+			it.each( [ 'back', 'myself' ] )(
+				'keeps the existing migration when choosing %s after arriving from its dashboard',
+				( action ) => {
+					jest
+						.spyOn( config, 'isEnabled' )
+						.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+					const { result: props } = renderHookWithProvider(
+						() => siteMigrationFlow.useStepsProps(),
+						{
+							wrapper: ( { children } ) => (
+								<MemoryRouter initialEntries={ [ dashboardEntry ] }>{ children }</MemoryRouter>
+							),
+						}
+					);
+					expect(
+						props.current[ STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug ].preserveMigrationOnBack
+					).toBe( true );
+					const { result } = renderNavigation( [ dashboardEntry ] );
+					if ( action === 'back' ) {
+						act( () => result.current.navigation.goBack() );
+					} else {
+						act( () =>
+							result.current.navigation.submit( { how: action, destination: 'migrate' } )
+						);
+					}
+					expect( window.location.assign ).toMatchURL( {
+						path: dashboardLink( '/sites/example.wordpress.com/migration-overview' ),
+						query: { flags: 'migration/reprint-flow', sessionId: '123', ref: 'site-migration' },
+					} );
+					expect( goToCheckout ).not.toHaveBeenCalled();
+				}
+			);
+
+			it( 'continues through existing DIFM steps with the dashboard source and destination retained', () => {
+				jest
+					.spyOn( config, 'isEnabled' )
+					.mockImplementation( ( flag ) => flag === 'migration/reprint-flow' );
+				const { result } = renderNavigation( [ dashboardEntry ] );
+				act( () => result.current.navigation.submit( { how: 'difm', destination: 'migrate' } ) );
+				expect( result.current.location.pathname ).toBe(
+					'/site-migration/site-migration-credentials'
+				);
+				expect(
+					Object.fromEntries( new URLSearchParams( result.current.location.search ) )
+				).toMatchObject( dashboardContext );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+
 			it( 'requires a fresh source check when switching from assisted migration to DIY', () => {
 				jest
 					.spyOn( config, 'isEnabled' )

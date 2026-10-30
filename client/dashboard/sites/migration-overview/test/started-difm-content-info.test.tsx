@@ -73,6 +73,26 @@ it( 'keeps the existing cancellation message when a ticket exists', async () => 
 	).toBeVisible();
 } );
 
+it( 'looks up the ticket and offers cancellation when an older transfer is complete', async () => {
+	const ticket = mockTicket( null );
+	render(
+		<StartedDIFMContentInfo
+			site={ {
+				...site,
+				site_migration: {
+					...site.site_migration,
+					type: 'assisted',
+					status_v2: 'started',
+					is_complete: true,
+				},
+			} }
+		/>
+	);
+
+	await waitFor( () => expect( ticket.isDone() ).toBe( true ) );
+	expect( screen.getByRole( 'button', { name: 'Cancel migration' } ) ).toBeVisible();
+} );
+
 it( 'waits for fresh site data before navigating after cancelling a ticketless migration', async () => {
 	mockTicket( null );
 	const cancellation = nock( 'https://public-api.wordpress.com' )
@@ -195,7 +215,14 @@ it( 'does not offer cancellation for an active transfer without a ticket', async
 it( 'does not offer cancellation for a completed migration', async () => {
 	render(
 		<StartedDIFMContentInfo
-			site={ { ...site, site_migration: { ...site.site_migration, is_complete: true } } }
+			site={ {
+				...site,
+				site_migration: {
+					...site.site_migration,
+					migration_status: 'migration-completed-difm',
+					is_complete: true,
+				},
+			} }
 		/>
 	);
 

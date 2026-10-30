@@ -70,7 +70,14 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			secondaryAction={ <AssistedHandoffLink /> }
+			secondaryAction={
+				<AssistedHandoffLink
+					site={ site }
+					sourceUrl={ migration.source_url }
+					step={ isFailed ? 'failed' : 'paused' }
+					disabled={ run.isPending }
+				/>
+			}
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice

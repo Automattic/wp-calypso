@@ -1,10 +1,13 @@
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Icon, error, pending, published } from '@wordpress/icons';
+import { addQueryArgs } from '@wordpress/url';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardFooter } from '../../../components/card';
 import { caution } from '../../../components/notice/icons';
 import { SectionHeader } from '../../../components/section-header';
+import { wpcomLink } from '../../../utils/link';
+import type { Site } from '@automattic/api-core';
 import './style.scss';
 
 export function MigrationCard( {
@@ -51,16 +54,37 @@ export function MigrationCard( {
 	);
 }
 
-/**
- * The way out to an assisted migration, the same wherever the customer may want it.
- * Disabled until the handoff is built.
- */
-export function AssistedHandoffLink() {
+export function AssistedHandoffLink( {
+	site,
+	sourceUrl,
+	step,
+	disabled,
+}: {
+	site: Site;
+	sourceUrl?: string | null;
+	step: 'connect' | 'paused' | 'failed';
+	disabled?: boolean;
+} ) {
+	const query = new URLSearchParams( window.location.search );
+	const href = addQueryArgs( wpcomLink( '/setup/site-migration/site-migration-how-to-migrate' ), {
+		from: sourceUrl ?? undefined,
+		siteId: site.ID,
+		siteSlug: site.slug,
+		platform: 'wordpress',
+		action: 'migrate',
+		how: 'difm',
+		ref: 'reprint-migration-overview',
+		reprintStep: step,
+		flags: query.get( 'flags' ) ?? undefined,
+		sessionId: query.get( 'sessionId' ) ?? undefined,
+		source: query.get( 'source' ) ?? undefined,
+	} );
 	return (
 		<Button
 			__next40pxDefaultSize
 			variant="link"
-			disabled
+			href={ href }
+			disabled={ disabled }
 			className="wordpress-migration__align-start"
 		>
 			{ __( 'Have our team handle this migration for you, included in your plan.' ) }

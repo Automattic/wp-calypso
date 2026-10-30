@@ -272,6 +272,12 @@ const siteMigration: FlowV2< typeof initialize > = {
 				destinationFailed: hasDestination && hasSiteError,
 				onRetryDestination: refetchSite,
 			},
+			'site-migration-how-to-migrate': {
+				preserveMigrationOnBack:
+					config.isEnabled( 'migration/reprint-flow' ) &&
+					query.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
+					query.get( 'ref' ) === 'reprint-migration-overview',
+			},
 			plans: {
 				headerText: __( 'Ready to migrate' ),
 				subHeaderText: hasDestination
@@ -336,6 +342,15 @@ const siteMigration: FlowV2< typeof initialize > = {
 		const isAssistedMigration =
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			urlQueryParams.get( 'how' ) === HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME;
+		const reprintDashboardReturnUrl =
+			isAssistedMigration &&
+			urlQueryParams.get( 'ref' ) === 'reprint-migration-overview' &&
+			siteSlug
+				? addQueryArgs(
+						{ flags: urlQueryParams.get( 'flags' ) },
+						dashboardLink( `/sites/${ siteSlug }/migration-overview` )
+					)
+				: undefined;
 		const handoff = get( 'migrationHandoff' );
 		const savedHandoff =
 			isReprintSource &&
@@ -1053,6 +1068,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 						isAssistedMigration &&
 						providedDependencies?.how === HOW_TO_MIGRATE_OPTIONS.DO_IT_MYSELF
 					) {
+						if ( reprintDashboardReturnUrl ) {
+							return exitFlow( reprintDashboardReturnUrl );
+						}
 						return navigate( paths.identifyPath( { from: fromQueryParam, how: '' } ) );
 					}
 
@@ -1406,7 +1424,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 		};
 
 		let goBack;
-		if (
+		if ( currentStep === STEPS.SITE_MIGRATION_HOW_TO_MIGRATE.slug && reprintDashboardReturnUrl ) {
+			goBack = () => exitFlow( reprintDashboardReturnUrl );
+		} else if (
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			window.history.length > 1 &&
 			( currentStep === STEPS.SITE_MIGRATION_IDENTIFY.slug ||

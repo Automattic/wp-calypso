@@ -21,13 +21,14 @@ const SiteMigrationHowToMigrate: StepType< {
 	accepts: {
 		headerText?: string;
 		subHeaderText?: string;
+		preserveMigrationOnBack?: boolean;
 	};
 	submits: {
 		how?: string;
 		destination: string;
 	};
 } > = ( props ) => {
-	const { navigation, headerText, subHeaderText } = props;
+	const { navigation, headerText, subHeaderText, preserveMigrationOnBack = false } = props;
 	const translate = useTranslate();
 	const { data: site, isLoading, isError, refetch } = useSiteQuery();
 	const { mutate: cancelMigration } = useMigrationCancellation( site?.ID );
@@ -65,7 +66,7 @@ const SiteMigrationHowToMigrate: StepType< {
 	};
 
 	const goBack = useCallback( () => {
-		if ( site?.ID ) {
+		if ( site?.ID && ! preserveMigrationOnBack ) {
 			cancelMigration();
 		}
 		if ( navigation?.goBack ) {
@@ -73,7 +74,7 @@ const SiteMigrationHowToMigrate: StepType< {
 		} else {
 			history.back();
 		}
-	}, [ cancelMigration, navigation, site?.ID ] );
+	}, [ cancelMigration, navigation, preserveMigrationOnBack, site?.ID ] );
 
 	const handleImport = () => {
 		if ( site?.ID ) {

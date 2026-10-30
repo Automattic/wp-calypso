@@ -89,8 +89,8 @@ describe( 'WordPressMigration', () => {
 		);
 		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
 		expect(
-			screen.getByRole( 'button', { name: /Have our team handle this migration/ } )
-		).toBeDisabled();
+			screen.getByRole( 'link', { name: /Have our team handle this migration/ } )
+		).toBeVisible();
 
 		// The install button comes first: the other ways in are only there for people who have trouble with it.
 		expect( screen.queryByRole( 'link', { name: /WordPress.org/ } ) ).not.toBeInTheDocument();
@@ -125,6 +125,55 @@ describe( 'WordPressMigration', () => {
 		expect( configure.isDone() ).toBe( true );
 		expect( run.isDone() ).toBe( true );
 	} );
+
+	it.each( [
+		{ status: 'not_started', step: 'connect', findings: [] },
+		{ status: 'paused', step: 'paused', findings: [] },
+		{ status: 'failed', step: 'failed', findings: [] },
+		{
+			status: 'failed',
+			step: 'connect',
+			findings: [ finding( 'source_connection_failed', 'failure' ) ],
+		},
+	] )(
+		'opens the existing DIFM offer from $status ($step) with both sites retained',
+		async ( state ) => {
+			const sourceUrl = 'https://www.example.com/news/?category=wordpress';
+			window.history.replaceState(
+				{},
+				'',
+				'/?flags=oauth,migration/reprint-flow&sessionId=existing-session&source=sites-dashboard'
+			);
+			mockApi()
+				.get( statusPath )
+				.query( true )
+				.reply(
+					200,
+					migration( state.status, { source_url: sourceUrl, findings: state.findings } )
+				);
+			mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+			render( <WordPressMigration site={ site } />, { queryClient } );
+
+			const link = await screen.findByRole( 'link', {
+				name: /Have our team handle this migration/,
+			} );
+			const url = new URL( link.getAttribute( 'href' )! );
+			expect( url.pathname ).toBe( '/setup/site-migration/site-migration-how-to-migrate' );
+			expect( Object.fromEntries( url.searchParams ) ).toMatchObject( {
+				from: sourceUrl,
+				siteId: String( site.ID ),
+				siteSlug: site.slug,
+				platform: 'wordpress',
+				action: 'migrate',
+				how: 'difm',
+				ref: 'reprint-migration-overview',
+				reprintStep: state.step,
+				flags: 'oauth,migration/reprint-flow',
+				sessionId: 'existing-session',
+				source: 'sites-dashboard',
+			} );
+		}
+	);
 
 	it( 'tells people who connected the plugin to start the migration', async () => {
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'not_started' ) );

@@ -23,6 +23,7 @@ import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody, CardDivider } from '../../components/card';
 import { PageHeader } from '../../components/page-header';
 import { Text } from '../../components/text';
+import { getSiteMigrationState } from '../../utils/site-status';
 import type { Site } from '@automattic/api-core';
 
 const GUIDE_LIST = [
@@ -137,12 +138,13 @@ export function StartedDIFMContentInfo( { site }: { site: Site } ) {
 	useEffect( () => invokeSurvicateEvent( 'migrationStarted' ), [] );
 
 	const [ isCancellationModalOpen, setIsCancellationModalOpen ] = useState( false );
+	const isMigrationComplete = getSiteMigrationState( site )?.status === 'completed';
 	const { data: ticketId } = useQuery( {
 		...siteMigrationZendeskTicketQuery( site.ID ),
-		enabled: ! site.site_migration?.is_complete,
+		enabled: ! isMigrationComplete,
 	} );
 	const canCancelMigration =
-		! site.site_migration?.is_complete && ( ! site.site_migration?.in_progress || !! ticketId );
+		! isMigrationComplete && ( ! site.site_migration?.in_progress || !! ticketId );
 
 	return (
 		<>
