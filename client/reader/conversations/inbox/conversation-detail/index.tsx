@@ -118,6 +118,7 @@ export function ConversationDetail( { siteId, postId, conversation, onPrevious, 
 										label={ translate( 'Post actions' ) }
 										className="conversations-inbox__post-menu"
 										toggleProps={ { __next40pxDefaultSize: true } }
+										disableOpenOnArrowDown
 										popoverProps={ { placement: 'bottom-end' } }
 										controls={ controls }
 									/>
