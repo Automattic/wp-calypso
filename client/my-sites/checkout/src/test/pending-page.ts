@@ -339,6 +339,19 @@ describe( 'getRedirectFromPendingPage', () => {
 		} );
 	} );
 
+	it.each( [
+		'https://horizon.my.wordpress.com/sites',
+		'https://horizon.cloud.jetpack.com/purchases',
+		'https://horizon.agencies.automattic.com/purchases',
+	] )( 'returns the horizon url %p if there is also a receipt', ( redirectTo ) => {
+		const actual = getRedirectFromPendingPage( {
+			isLoadingOrder: false,
+			redirectTo,
+			receiptId: 12345,
+		} );
+		expect( actual ).toEqual( { url: redirectTo } );
+	} );
+
 	it( 'returns a generic no-site url for an absolute url if it is not allowed and there is also a receipt', () => {
 		const actual = getRedirectFromPendingPage( {
 			isLoadingOrder: false,

@@ -18,6 +18,7 @@ function isExternalUrl( url ) {
 			'wordpress.com',
 			'subscribe.wordpress.com',
 			'agencies.automattic.com',
+			'horizon.agencies.automattic.com',
 		];
 
 		if ( allowedHostname.includes( urlObject.hostname ) && urlObject.protocol === 'https:' ) {

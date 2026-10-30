@@ -619,6 +619,15 @@ describe( 'getThankYouPageUrl', () => {
 		expect( url ).toBe( redirectTo );
 	} );
 
+	it.each( [
+		'https://horizon.cloud.jetpack.com/backup/foo.bar',
+		'https://horizon.my.wordpress.com/sites/foo.bar',
+	] )( 'redirects to the external horizon redirectTo url %p', ( redirectTo ) => {
+		const adminUrl = 'https://my.site/wp-admin/';
+		const url = getThankYouPageUrl( { ...defaultArgs, siteSlug: 'foo.bar', adminUrl, redirectTo } );
+		expect( url ).toBe( redirectTo );
+	} );
+
 	it( 'redirects to external redirectTo url if the hostame is jetpack.cloud.localhost', () => {
 		const adminUrl = 'https://my.site/wp-admin/';
 		const redirectTo = 'http://jetpack.cloud.localhost:3000/backup/foo.bar';
