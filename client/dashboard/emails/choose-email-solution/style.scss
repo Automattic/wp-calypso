@@ -79,8 +79,20 @@
 	min-height: 3rem;
 }
 
+// Matches the savings badge in the WordPress.com plans grid
+// (`.plans-grid-next-header-price__badge`).
 .email-titan-plan-trial {
 	align-self: flex-start;
+	padding-block: 0;
+	padding-inline: 12px;
+	border-radius: 4px;
+	background-color: rgba($studio-green-5, 0.64);
+	color: $studio-green-80;
+	font-size: 0.75rem;
+	font-weight: 500;
+	letter-spacing: 0.2px;
+	line-height: 20px;
+	white-space: nowrap;
 
 	// Keeps prices aligned across cards when only some tiers have a trial.
 	&.is-hidden {
