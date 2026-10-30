@@ -8,6 +8,7 @@ import { act, screen, waitFor } from '@testing-library/react';
 import { dispatch, select, useSelect } from '@wordpress/data';
 import { MemoryRouter } from 'react-router';
 import AutomatedCopySite from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/automated-copy-site';
+import { ProcessingResult } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/processing-step/constants';
 import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
@@ -70,7 +71,7 @@ const destination = { ID: 2, URL: `https://${ destinationSlug }` };
 const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' )!;
 const navigate = jest.fn();
 
-function renderAssertions( source = sourceSlug ) {
+function renderAssertions( source = sourceSlug, step = 'domains' ) {
 	return renderHookWithProvider(
 		() => {
 			useSelect( ( select ) => select( SITE_STORE ).getSite( destinationSlug ), [] );
@@ -79,8 +80,9 @@ function renderAssertions( source = sourceSlug ) {
 		{
 			wrapper: ( { children }: { children: React.ReactNode } ) => (
 				<MemoryRouter
+					basename="/setup"
 					initialEntries={ [
-						`/setup/copy-site/automated-copy?sourceSlug=${ source }&siteSlug=${ destinationSlug }`,
+						`/setup/copy-site/${ step }?sourceSlug=${ source }&siteSlug=${ destinationSlug }`,
 					] }
 				>
 					{ children }
@@ -113,8 +115,9 @@ function renderEntry( features = {}, mountCopyStep = false ) {
 	}
 	const ui = (
 		<MemoryRouter
+			basename="/setup"
 			initialEntries={ [
-				`/setup/copy-site/automated-copy?sourceSlug=${ sourceSlug }&siteSlug=${ destinationSlug }`,
+				`/setup/copy-site/${ mountCopyStep ? 'automated-copy' : 'domains' }?sourceSlug=${ sourceSlug }&siteSlug=${ destinationSlug }`,
 			] }
 		>
 			<Entry />
@@ -244,12 +247,14 @@ describe( 'copy site source validation', () => {
 } );
 
 describe( 'copy site failure handling', () => {
-	it( 'waits for the destination lookup and starts the copy when it succeeds', async () => {
+	it( 'waits for the destination lookup without needing source access after checkout', async () => {
 		const request = Promise.withResolvers< typeof destination >();
 		jest
 			.mocked( wpcomRequest )
 			.mockImplementation( ( { path } ) =>
-				path === `/sites/${ destinationSlug }` ? request.promise : Promise.resolve( source )
+				path === `/sites/${ destinationSlug }`
+					? request.promise
+					: Promise.reject( new Error( 'Source unavailable' ) )
 			);
 		jest.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
 		renderEntry( {}, true );
@@ -258,17 +263,14 @@ describe( 'copy site failure handling', () => {
 		);
 		expect( window.location.assign ).not.toHaveBeenCalled();
 		expect( wpcom.req.post ).not.toHaveBeenCalled();
+		expect( navigate ).not.toHaveBeenCalled();
 		await act( async () => request.resolve( destination ) );
-		await waitFor( () =>
-			expect( wpcom.req.post ).toHaveBeenCalledWith( {
-				path: '/sites/2/copy-from-site',
-				apiNamespace: 'wpcom/v2',
-				body: { source_blog_id: source.ID },
-			} )
-		);
-		expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
-		expect( navigate ).toHaveBeenCalledWith( 'processing-copy' );
+		await waitFor( () => expect( navigate ).toHaveBeenCalledWith( 'processing-copy' ) );
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
 		expect( window.location.assign ).not.toHaveBeenCalled();
+		expect( wpcomRequest ).not.toHaveBeenCalledWith(
+			expect.objectContaining( { path: `/sites/${ sourceSlug }` } )
+		);
 	} );
 
 	it( 'ignores completion of an older feature request after switching sites', async () => {
@@ -354,5 +356,156 @@ describe( 'copy site failure handling', () => {
 				.mocked( wpcomRequest )
 				.mock.calls.filter( ( [ request ] ) => request.path === `/sites/${ destinationSlug }` )
 		).toHaveLength( 1 );
+	} );
+
+	it( 'routes a processing failure to the error screen instead of home', async () => {
+		const { result } = renderHookWithProvider(
+			() => copySite.useStepNavigation( 'processing-copy', navigate ),
+			{
+				wrapper: ( { children }: { children: React.ReactNode } ) => (
+					<MemoryRouter>{ children }</MemoryRouter>
+				),
+			}
+		);
+		await act( async () => {
+			await result.current.submit( { processingResult: ProcessingResult.FAILURE } );
+		} );
+		expect( navigate ).toHaveBeenCalledWith( 'error' );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the error screen accessible without source information', async () => {
+		jest.mocked( wpcomRequest ).mockResolvedValue( destination );
+		const { result } = renderAssertions( '', 'error' );
+		await waitFor( () => expect( result.current?.state ).toBe( AssertConditionState.SUCCESS ) );
+		expect( window.location.assign ).not.toHaveBeenCalled();
+		expect( wpcom.req.get ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'backend copy progress', () => {
+	const transferPath = '/sites/2/atomic/transfers/latest';
+	const initializationPath = '/sites/2/copy-from-site';
+	const started = { status: 'started', transfer_id: 42, error_code: null };
+
+	beforeEach( () => {
+		jest.mocked( wpcom.req.get ).mockResolvedValue( started );
+		jest
+			.mocked( wpcomRequest )
+			.mockImplementation( ( { path } ) =>
+				Promise.resolve(
+					path === transferPath ? { atomic_transfer_id: 42, status: 'completed' } : destination
+				)
+			);
+	} );
+
+	afterEach( () => jest.useRealTimers() );
+
+	const renderProgress = async () => {
+		renderWithProvider(
+			<MemoryRouter
+				basename="/setup"
+				initialEntries={ [ `/setup/copy-site/automated-copy?siteSlug=${ destinationSlug }` ] }
+			>
+				<AutomatedCopySite
+					flow="copy-site"
+					stepName="automated-copy"
+					navigation={ { submit: jest.fn(), exitFlow: jest.fn() } }
+				/>
+			</MemoryRouter>
+		);
+		await waitFor( () => expect( select( ONBOARD_STORE ).getPendingAction() ).toBeDefined() );
+		jest.useFakeTimers();
+		return select( ONBOARD_STORE ).getPendingAction()!;
+	};
+
+	it( 'waits for backend initialization and completes only the matching transfer without a POST', async () => {
+		jest
+			.mocked( wpcom.req.get )
+			.mockResolvedValueOnce( { ...started, status: 'not_started', transfer_id: null } )
+			.mockResolvedValueOnce( { ...started, status: 'initializing', transfer_id: null } );
+		let transferRequests = 0;
+		jest.mocked( wpcomRequest ).mockImplementation( ( { path } ) => {
+			if ( path === transferPath ) {
+				return Promise.resolve( {
+					atomic_transfer_id: ++transferRequests === 1 ? '41' : '42',
+					status: 'completed',
+				} );
+			}
+			return Promise.resolve( destination );
+		} );
+		const action = await renderProgress();
+		const outcome = expect( action() ).resolves.toEqual( {
+			finishedWaitingForCopy: true,
+			siteSlug: destinationSlug,
+		} );
+		await act( async () => jest.advanceTimersByTimeAsync( 6000 ) );
+		expect( transferRequests ).toBe( 0 );
+		await act( async () => jest.advanceTimersByTimeAsync( 3000 ) );
+		expect( transferRequests ).toBe( 1 );
+		expect( select( ONBOARD_STORE ).getProgress() ).toBe( 0 );
+		await act( async () => jest.advanceTimersByTimeAsync( 3000 ) );
+		expect( select( ONBOARD_STORE ).getProgress() ).toBe( 100 );
+		await outcome;
+		expect( wpcom.req.get ).toHaveBeenCalledTimes( 3 );
+		expect( wpcom.req.get ).toHaveBeenCalledWith( {
+			path: initializationPath,
+			apiNamespace: 'wpcom/v2',
+		} );
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [ 'initialization failed', 'status request failed' ] )(
+		'propagates %s through the pending action',
+		async ( scenario ) => {
+			if ( scenario === 'initialization failed' ) {
+				jest.mocked( wpcom.req.get ).mockResolvedValue( {
+					status: 'failed',
+					transfer_id: null,
+					error_code: 'rest_cannot_view',
+				} );
+			} else {
+				jest.mocked( wpcom.req.get ).mockRejectedValue( new Error( 'Status unavailable' ) );
+			}
+			const action = await renderProgress();
+			const outcome = expect( action() ).rejects.toThrow( 'Error copying site' );
+			await act( async () => jest.advanceTimersByTimeAsync( 3000 ) );
+			await outcome;
+			expect( wpcom.req.post ).not.toHaveBeenCalled();
+			expect( wpcomRequest ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { path: transferPath } )
+			);
+		}
+	);
+
+	it( 'times out while initialization has not started', async () => {
+		jest.mocked( wpcom.req.get ).mockResolvedValue( {
+			...started,
+			status: 'not_started',
+			transfer_id: null,
+		} );
+		const action = await renderProgress();
+		const outcome = expect( action() ).rejects.toThrow(
+			'Setting up your site is taking longer than expected.'
+		);
+		await act( async () => jest.advanceTimersByTimeAsync( 303000 ) );
+		await outcome;
+		expect( wpcom.req.post ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reports a matching transfer that reverted before the first poll', async () => {
+		jest
+			.mocked( wpcomRequest )
+			.mockImplementation( ( { path } ) =>
+				Promise.resolve(
+					path === transferPath ? { atomic_transfer_id: 42, status: 'reverted' } : destination
+				)
+			);
+		const action = await renderProgress();
+		const outcome = expect( action() ).rejects.toThrow(
+			"We stopped setting up your site because the upgrade didn't go through."
+		);
+		await act( async () => jest.advanceTimersByTimeAsync( 3000 ) );
+		await outcome;
 	} );
 } );
