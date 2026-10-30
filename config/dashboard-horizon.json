@@ -33,6 +33,7 @@
 		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"me/email-tracking-consent": true,
 		"me/legacy-contact": false,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
