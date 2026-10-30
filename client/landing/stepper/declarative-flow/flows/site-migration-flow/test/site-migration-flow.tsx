@@ -1408,10 +1408,28 @@ describe( 'Site Migration Flow', () => {
 						} );
 					} );
 
+					it.each( [ 'wix', 'squarespace' ] )(
+						'sends %s sources to static site import plans',
+						( platform ) => {
+							runNavigation( {
+								from: STEPS.SITE_MIGRATION_IDENTIFY,
+								dependencies: {
+									action: 'continue',
+									platform,
+									from: 'https://site-to-be-migrated.com',
+								},
+							} );
+
+							expect( window.location.assign ).toMatchURL( {
+								path: '/setup/static-site-import/plans',
+								query: { from: 'https://site-to-be-migrated.com', platform },
+							} );
+						}
+					);
+
 					it.each( [
 						[ 'medium', 'importerMedium' ],
-						[ 'squarespace', 'importerSquarespace' ],
-						[ 'wix', 'importerWix' ],
+						[ 'substack', 'importerSubstack' ],
 					] )( 'keeps %s sources on their importer', ( platform, importerStep ) => {
 						runNavigation( {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
