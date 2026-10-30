@@ -97,15 +97,24 @@ export default function useClientCheckout( {
 		debug( '[A4A Checkout] Referral', referral );
 		debug( '[A4A Checkout] Referred products', referredProducts );
 
+		// A referral repeats a product once per license. The cart merges identical
+		// lines, so each repeat gets its own index.
+		const repeats = new Map< number, number >();
 		const productsToAdd = referredProducts.map( ( product ) => {
+			// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
+			const productId = product.alternative_product_id || product.product_id;
+			const cartItemIndex = repeats.get( productId ) ?? 0;
+			repeats.set( productId, cartItemIndex + 1 );
 			return createRequestCartProduct( {
-				// When using the wpcom checkout we use alternative a4a-specific billing product ids for wpcom and jetpack products.
-				product_id: product.alternative_product_id || product.product_id,
+				product_id: productId,
 				product_slug: product.slug,
 				extra: {
 					isA4ASitelessCheckout: true,
 					referral_id: queryArgs.referralId,
 					agency_id: queryArgs.agencyId,
+					cart_item_index: cartItemIndex,
+					// The checkout shows a product's licenses as one line.
+					mergeIdenticalItems: true,
 				},
 			} );
 		} );

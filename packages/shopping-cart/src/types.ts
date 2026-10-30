@@ -970,6 +970,11 @@ export interface ResponseCartProductExtra {
 	cart_item_index?: number;
 
 	/**
+	 * Order in which the line was added, set by the cart endpoint on every line.
+	 */
+	add_sequence?: number;
+
+	/**
 	 * A4A Pressable PHP Memory add-on target domain.
 	 * Sent with checkout cart items so WPCOM can provision the add-on for the selected Pressable site.
 	 */
@@ -1001,6 +1006,13 @@ export interface ResponseCartProductExtra {
 	 * This will hide product variant UI elements in checkout ( line item variant dropdown or variant upsells )
 	 */
 	hideProductVariants?: boolean;
+
+	/**
+	 * True when the cart holds one line per unit of a product (kept apart by
+	 * `cart_item_index`) and checkout should show identical lines as one, with
+	 * their count and the price of one.
+	 */
+	mergeIdenticalItems?: boolean;
 }
 
 export interface ResponseCartGiftDetails {
