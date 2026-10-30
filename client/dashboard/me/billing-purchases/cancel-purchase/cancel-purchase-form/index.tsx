@@ -51,7 +51,6 @@ interface CancelPurchaseFormProps {
 	clickNext?: () => void;
 	closeDialog?: () => void;
 	disableButtons?: boolean;
-	downgradeClick?: ( upsell: string ) => void;
 	downgradePlan?: PlanProduct;
 	downgradePlanToMonthlyPrice?: number;
 	downgradePlanToPersonalPrice?: number;
@@ -79,7 +78,6 @@ interface CancelPurchaseFormProps {
 	onRadioTwoChange?: ( eventOrValue: React.ChangeEvent< HTMLInputElement > | string ) => void;
 	onSubmit?: () => void;
 	onSurveyComplete?: () => void;
-	onSwitchToMonthly?: () => void;
 	onTextOneChange: (
 		eventOrValue: React.ChangeEvent< HTMLInputElement > | string,
 		detailsValue?: string
@@ -114,7 +112,6 @@ function SurveyContent( {
 	cancellationOffer,
 	clickNext,
 	closeDialog,
-	downgradeClick,
 	downgradePlan,
 	flowType,
 	freeMonthOfferClick,
@@ -146,7 +143,6 @@ function SurveyContent( {
 	includedDomainPurchase,
 	isAkismet,
 	intent,
-	onSwitchToMonthly,
 	recordEvent,
 	yearlyPlanSlug,
 }: CancelPurchaseFormProps ) {
@@ -178,17 +174,11 @@ function SurveyContent( {
 				<SolutionsCardsUpsellStep
 					cancellationInProgress={ cancellationInProgress }
 					cancellationReason={ solutionsReason }
-					cancelBundledDomain={ cancelBundledDomain }
 					closeDialog={ closeDialog }
-					downgradePlan={ downgradePlan }
-					includedDomainPurchase={ includedDomainPurchase }
 					intent={ intent ?? undefined }
-					onClickDowngrade={ downgradeClick }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
-					onSwitchToMonthly={ onSwitchToMonthly }
 					purchase={ purchase }
 					recordEvent={ recordEvent }
-					refundAmount={ refundAmount }
 					yearlyPlanSlug={ yearlyPlanSlug }
 				/>
 			);
@@ -216,7 +206,6 @@ function SurveyContent( {
 				downgradePlan={ downgradePlan }
 				includedDomainPurchase={ includedDomainPurchase }
 				intent={ intent ?? undefined }
-				onClickDowngrade={ downgradeClick }
 				onClickFreeMonthOffer={ freeMonthOfferClick }
 				onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
 				plans={ plans }

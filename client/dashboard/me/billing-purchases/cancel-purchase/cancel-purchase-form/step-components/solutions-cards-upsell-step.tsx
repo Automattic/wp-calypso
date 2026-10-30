@@ -36,8 +36,7 @@ import { dashboardLink, wpcomLink } from '../../../../../utils/link';
 import { getPurchaseSettingsUrl, getPurchasesListUrl } from '../../../../../utils/site-url';
 import { getCancelFlowPlanChangeUrl } from '../../get-cancel-flow-plan-change-url';
 import { getSolutionsForReason, PRICE_MOTIVATED_REASONS } from '../../get-solutions-for-reason';
-import UpsellStep from './upsell-step';
-import type { PlanProduct, Purchase } from '@automattic/api-core';
+import type { Purchase } from '@automattic/api-core';
 
 const BUILT_BY_URL = wpcomLink( '/website-design-service/?ref=wpcom-cancel-flow' );
 const RENEW_COUPON = 'CANRENEW25OFF';
@@ -84,6 +83,7 @@ function getCardHref(
 	cardId: string,
 	changePlanUrl: string,
 	changePlanCardUrl: string,
+	switchToMonthlyUrl: string,
 	renewNowUrl: string,
 	subscriptionsUrl: string | undefined,
 	siteSlug: string,
@@ -91,6 +91,9 @@ function getCardHref(
 ): string | undefined {
 	if ( cardId === 'change-plan' ) {
 		return changePlanCardUrl;
+	}
+	if ( cardId === 'switch-to-monthly' ) {
+		return switchToMonthlyUrl;
 	}
 	if ( cardId === 'upgrade-for-full-access' ) {
 		return changePlanUrl;
@@ -134,6 +137,7 @@ function getCardOnClick(
 		'built-by',
 		'change-plan',
 		'renew-now-pay-less',
+		'switch-to-monthly',
 		'switch-to-yearly',
 		'upgrade-for-full-access',
 		'get-theme-addon',
@@ -229,37 +233,24 @@ function getCardDescription( cardId: string ): string {
 type SolutionsCardsUpsellStepProps = {
 	cancellationReason?: string;
 	cancellationInProgress?: boolean;
-	cancelBundledDomain?: boolean;
 	closeDialog?: () => void;
-	downgradePlan?: PlanProduct | null;
-	includedDomainPurchase?: Purchase;
 	intent?: string;
-	onClickDowngrade?: ( upsell: string ) => void;
 	onDeclineUpsell?: () => void;
-	onSwitchToMonthly?: () => void;
 	purchase: Purchase;
 	recordEvent?: ( name: string, properties?: Record< string, unknown > ) => void;
-	refundAmount?: number;
 	yearlyPlanSlug?: string;
 };
 
 export default function SolutionsCardsUpsellStep( {
 	cancellationReason = '',
 	cancellationInProgress,
-	cancelBundledDomain,
 	closeDialog,
-	downgradePlan,
-	includedDomainPurchase,
 	intent,
-	onClickDowngrade,
 	onDeclineUpsell,
-	onSwitchToMonthly,
 	purchase,
 	recordEvent,
-	refundAmount,
 	yearlyPlanSlug,
 }: SolutionsCardsUpsellStepProps ) {
-	const [ showDowngradeStep, setShowDowngradeStep ] = React.useState( false );
 	const solutions = getSolutionsForReason( cancellationReason );
 	const { setNewMessagingChat, setOpenOdieWithContext } = useHelpCenter();
 	const { data: canConnectToZendeskMessaging } = useCanConnectToZendeskMessaging();
@@ -299,27 +290,9 @@ export default function SolutionsCardsUpsellStep( {
 		return null;
 	}
 
-	if ( showDowngradeStep ) {
-		return (
-			<UpsellStep
-				upsell="downgrade-monthly"
-				cancellationReason={ cancellationReason }
-				cancellationInProgress={ cancellationInProgress }
-				cancelBundledDomain={ cancelBundledDomain }
-				currencyCode={ purchase.currency_code }
-				downgradePlan={ downgradePlan }
-				includedDomainPurchase={ includedDomainPurchase }
-				onClickDowngrade={ onClickDowngrade }
-				onDeclineUpsell={ () => setShowDowngradeStep( false ) }
-				plans={ [] }
-				purchase={ purchase }
-				refundAmount={ refundAmount }
-			/>
-		);
-	}
-
 	const changePlanUrl = wpcomLink( `/plans/${ purchase.site_slug }` );
 	const changePlanCardUrl = getCancelFlowPlanChangeUrl( purchase, 'change-plan' );
+	const switchToMonthlyUrl = getCancelFlowPlanChangeUrl( purchase, 'switch-to-monthly' );
 	const purchaseSettingsUrl = getPurchaseSettingsUrl( purchase );
 	const renewNowUrl = addQueryArgs(
 		wpcomLink(
@@ -354,12 +327,7 @@ export default function SolutionsCardsUpsellStep( {
 				window.location.href = renewNowUrl;
 				break;
 			case 'switch-to-monthly':
-				( document.activeElement as HTMLElement )?.blur();
-				if ( onSwitchToMonthly ) {
-					onSwitchToMonthly();
-				} else {
-					setShowDowngradeStep( true );
-				}
+				window.location.href = switchToMonthlyUrl;
 				break;
 			case 'switch-to-yearly':
 				if ( yearlyPlanUrl ) {
@@ -455,6 +423,7 @@ export default function SolutionsCardsUpsellStep( {
 						card.id,
 						changePlanUrl,
 						changePlanCardUrl,
+						switchToMonthlyUrl,
 						renewNowUrl,
 						subscriptionsUrl,
 						purchase.site_slug,

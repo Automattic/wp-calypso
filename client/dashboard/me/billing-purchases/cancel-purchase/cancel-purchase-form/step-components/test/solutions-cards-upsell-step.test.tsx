@@ -228,40 +228,52 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 			card: 'Switch to a different plan',
 			solutionId: 'change-plan',
 			ref: 'cancel-flow-change-plan',
+			intervalType: 'yearly',
 		},
-	] )( '$card opens the plans page and records the click', async ( { card, solutionId, ref } ) => {
-		const user = userEvent.setup();
-		const recordEvent = jest.fn();
+		{
+			card: 'Switch to monthly payments',
+			solutionId: 'switch-to-monthly',
+			ref: 'cancel-flow-switch-to-monthly',
+			intervalType: 'monthly',
+		},
+	] )(
+		'$card opens the plans page and records the click',
+		async ( { card, solutionId, ref, intervalType } ) => {
+			const user = userEvent.setup();
+			const recordEvent = jest.fn();
 
-		render(
-			<SolutionsCardsUpsellStep
-				cancellationReason="tooExpensive"
-				purchase={ premiumAnnual }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
-				recordEvent={ recordEvent }
-			/>
-		);
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="tooExpensive"
+					purchase={ premiumAnnual }
+					closeDialog={ jest.fn() }
+					onDeclineUpsell={ jest.fn() }
+					recordEvent={ recordEvent }
+				/>
+			);
 
-		const link = await screen.findByRole( 'link', { name: new RegExp( card ) } );
-		const href = link.getAttribute( 'href' ) as string;
-		expect( new URL( href ).searchParams.get( 'ref' ) ).toBe( ref );
+			const link = await screen.findByRole( 'link', { name: new RegExp( card ) } );
+			const href = link.getAttribute( 'href' ) as string;
+			const { searchParams } = new URL( href );
+			expect( searchParams.get( 'ref' ) ).toBe( ref );
+			expect( searchParams.getAll( 'intervalType' ) ).toEqual( [ intervalType ] );
 
-		// jsdom ignores navigation, so swap in a plain object to read the href the click sets.
-		const originalLocation = window.location;
-		Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
-		try {
-			await user.click( link );
+			// jsdom ignores navigation, so swap in a plain object to read the href the click sets.
+			const originalLocation = window.location;
+			Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
+			try {
+				await user.click( link );
 
-			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
-				solution_id: solutionId,
-				cancellation_reason: 'tooExpensive',
-			} );
-			expect( window.location.href ).toBe( href );
-		} finally {
-			Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+				expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+					solution_id: solutionId,
+					cancellation_reason: 'tooExpensive',
+				} );
+				expect( window.location.href ).toBe( href );
+			} finally {
+				Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+			}
 		}
-	} );
+	);
 
 	test( 'Switch to a different plan still opens the plans page when the plan has no change link', async () => {
 		const p2PlusMonthly = {
