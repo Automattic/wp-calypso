@@ -1,9 +1,9 @@
 import { Button, Spinner } from '@automattic/components';
-import { getQueryArg } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import CardHeading from 'calypso/components/card-heading';
 import QueryJetpackPartnerPortalPartner from 'calypso/components/data/query-jetpack-partner-portal-partner';
 import Main from 'calypso/components/main';
+import { A4A_SIGNUP_URL } from 'calypso/jetpack-cloud/constants';
 import { useReturnUrl } from 'calypso/jetpack-cloud/sections/partner-portal/hooks';
 import { useSelector, useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -39,17 +39,6 @@ export default function PartnerAccess() {
 
 	useReturnUrl( hasPartner );
 
-	const manageSignUpLink = () => {
-		const returnString = String( getQueryArg( window.location.href, 'return' ) );
-		let signUpLink = '/manage/signup';
-		if ( returnString.includes( 'source=manage-pricing-page' ) ) {
-			const newString = returnString.replace( '/partner-portal/issue-license', '' );
-			signUpLink = `/manage/signup${ newString }`;
-		}
-
-		return signUpLink;
-	};
-
 	return (
 		<Main className="partner-access">
 			<QueryJetpackPartnerPortalPartner />
@@ -69,15 +58,15 @@ export default function PartnerAccess() {
 					</div>
 					<div className="partner-access__signup">
 						<p>
-							{ translate( '{{link}}Learn more{{/link}} about Jetpack Manage.', {
+							{ translate( '{{link}}Learn more{{/link}} about Automattic for Agencies.', {
 								components: {
-									link: <a href="https://jetpack.com/manage/" />,
+									link: <a href="https://automattic.com/for/agencies" />,
 								},
 							} ) }
 						</p>
 
-						<Button href={ manageSignUpLink() } onClick={ onManageSignUpClick } primary>
-							{ translate( 'Sign up for Jetpack Manage' ) }
+						<Button href={ A4A_SIGNUP_URL } onClick={ onManageSignUpClick } primary>
+							{ translate( 'Sign up for Automattic for Agencies' ) }
 						</Button>
 					</div>
 				</>
