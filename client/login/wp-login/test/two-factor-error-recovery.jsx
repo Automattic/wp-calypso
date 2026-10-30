@@ -20,7 +20,11 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 jest.mock( 'calypso/components/async-load', () => () => null );
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 jest.mock( 'calypso/components/locale-suggestions', () => () => null );
-jest.mock( 'calypso/lib/signup/use-entry-clarity-experiment', () => () => false );
+jest.mock( 'calypso/lib/signup/use-entry-clarity-experiment', () => ( {
+	__esModule: true,
+	default: () => false,
+	useEntryClarityLoginTreatment: () => false,
+} ) );
 
 const WOOCOMMERCE_PRODUCTION_CLIENT_ID = 50916;
 const OTHER_CLIENT_ID = 12345;
