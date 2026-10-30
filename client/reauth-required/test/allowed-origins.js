@@ -7,11 +7,16 @@ import path from 'path';
 import { ALLOWED_ORIGINS } from '../component';
 
 describe( 'reauth-required ALLOWED_ORIGINS', () => {
-	test( 'matches the dashboard-production hostname_allowlist', () => {
-		const { hostname_allowlist: allowlist } = JSON.parse(
-			fs.readFileSync(
-				path.resolve( __dirname, '..', '..', '..', 'config', 'dashboard-production.json' ),
-				'utf8'
+	test( 'matches the dashboard-production and dashboard-horizon hostname_allowlists', () => {
+		const allowlist = new Set(
+			[ 'dashboard-production', 'dashboard-horizon' ].flatMap(
+				( env ) =>
+					JSON.parse(
+						fs.readFileSync(
+							path.resolve( __dirname, '..', '..', '..', 'config', `${ env }.json` ),
+							'utf8'
+						)
+					).hostname_allowlist
 			)
 		);
 
