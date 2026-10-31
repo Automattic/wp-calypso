@@ -34,7 +34,7 @@
 		"@types/node": "^24.12.2",
 		"@wordpress/base-styles": "^9.1.0",
 		"chroma-js": "^2.6.0",
-		"postcss": "^8.5.30",
+		"postcss": "^8.5.31",
 		"postcss-custom-properties": "^12.1.11",
 		"sass": "1.77.8"
 	}
