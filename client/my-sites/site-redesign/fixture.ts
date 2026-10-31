@@ -133,6 +133,14 @@ export function fixtureRequest< T >(
 	siteId: number,
 	{ method, path, query, body }: ApiRequest
 ): Promise< T > {
+	if ( method === 'GET' && path === '/eligibility' ) {
+		return Promise.resolve( {
+			can_preview: true,
+			can_apply: false,
+			reason: 'upgrade_required',
+			required_plan: 'personal',
+		} as T );
+	}
 	const sessions = load();
 	const now = Date.now();
 	const respond = ( stored: StoredSession ) => {
