@@ -18,40 +18,6 @@ export const PRICE_MOTIVATED_REASONS: ReadonlySet< string > = new Set( [
 	'budgetConstraints',
 ] );
 
-/**
- * "Another reason…" and the "Something else…" answers that keep offering cards
- * once text is typed. The typed text replaces the answer, so their cards are
- * looked up by answer.
- */
-const OTHER_REASONS: ReadonlySet< string > = new Set( [
-	'anotherReasonOne',
-	'otherPriceValue',
-	'otherTooHardToUse',
-	'otherMissingFeatures',
-	'otherTechnicalIssues',
-	'otherDomain',
-	'otherWrongPlanOrSite',
-	'otherBadSupport',
-] );
-
-/**
- * Returns the reason to look up solution cards for. For the answers in OTHER_REASONS
- * that is the answer, not the typed text in `value`.
- */
-export function getSolutionsReason(
-	value: string,
-	details: string | undefined,
-	selectedReason: string | undefined
-): string {
-	if ( details && OTHER_REASONS.has( details ) ) {
-		return details;
-	}
-	if ( selectedReason && OTHER_REASONS.has( selectedReason ) ) {
-		return selectedReason;
-	}
-	return value;
-}
-
 const SOLUTION_IDS = {
 	CHANGE_PLAN: 'change-plan',
 	RENEW_NOW_PAY_LESS: 'renew-now-pay-less',
@@ -244,12 +210,6 @@ const SOLUTIONS_PROJECT_CHANGED: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
 ];
 
-/** Another reason / Something else */
-const SOLUTIONS_OTHER: SolutionCardConfig[] = [
-	{ id: SOLUTION_IDS.ASK_AI_ASSISTANT },
-	{ id: SOLUTION_IDS.SPEAK_WITH_SUPPORT },
-];
-
 /** Just exploring */
 const SOLUTIONS_JUST_EXPLORING: SolutionCardConfig[] = [
 	{ id: SOLUTION_IDS.CHANGE_PLAN },
@@ -275,10 +235,6 @@ const SOLUTIONS_NO_LONGER_NEED: SolutionCardConfig[] = [
  * or null when this reason has no solutions step.
  */
 export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | null {
-	if ( OTHER_REASONS.has( reason ) ) {
-		return [ ...SOLUTIONS_OTHER ];
-	}
-
 	switch ( reason ) {
 		// Too expensive
 		case 'tooExpensive':
@@ -290,6 +246,8 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 			return [ ...SOLUTIONS_FOUND_BETTER_OR_FREE ];
 		case 'budgetConstraints':
 			return [ ...SOLUTIONS_BUDGET_CONSTRAINTS ];
+		case 'otherPriceValue':
+			return null;
 
 		// Too hard to use
 		case 'complicatedDashboard':
@@ -298,6 +256,8 @@ export function getSolutionsForReason( reason: string ): SolutionCardConfig[] | 
 		case 'tooMuchTimeToLearn':
 		case 'inadequateOnboarding':
 			return [ ...SOLUTIONS_HARD_TO_USE_SUPPORT_ONLY ];
+		case 'otherTooHardToUse':
+			return null;
 
 		// Missing features / limitations
 		case 'cannotInstallPlugins':
