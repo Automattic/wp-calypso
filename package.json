@@ -307,7 +307,7 @@
 		"stylelint": "^17.16.0",
 		"stylelint-scss": "^7.3.0",
 		"tslib": "^2.8.1",
-		"typescript": "6.0.3",
+		"typescript": "7.0.2",
 		"webpack": "^5.111.1",
 		"webpack-bundle-analyzer": "^5.4.0",
 		"webpack-cli": "^7.2.3",
