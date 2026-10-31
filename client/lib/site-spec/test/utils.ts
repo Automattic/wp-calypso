@@ -245,6 +245,28 @@ describe( 'SiteSpec Utils', () => {
 			expect( getDefaultSiteSpecConfig().features ).toBeUndefined();
 			expect( getEarlyProvisionSiteSpecConfig().features ).toBeUndefined();
 		} );
+
+		it( 'should name the site to the widget as spec meta', () => {
+			// The agent reads this site's plan to run the store interview after a
+			// Commerce checkout. A number is sent as a string: the meta is a string map.
+			const result = getBuildWowSiteSpecConfig( {
+				siteSlug: 'example.wordpress.com',
+				siteId: 123,
+			} );
+
+			expect( result.collector ).toBeInstanceOf( Function );
+			expect( result.collector?.() ).toEqual( { meta: { site_id: '123' } } );
+		} );
+
+		it( 'should attach no collector without a site', () => {
+			// useSiteData returns 0 before the site hydrates; an unknown site is no site.
+			expect(
+				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com' } )
+			).not.toHaveProperty( 'collector' );
+			expect(
+				getBuildWowSiteSpecConfig( { siteSlug: 'example.wordpress.com', siteId: 0 } )
+			).not.toHaveProperty( 'collector' );
+		} );
 	} );
 
 	describe( 'getBlueprintSiteSpecConfig', () => {

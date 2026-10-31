@@ -411,6 +411,12 @@ export function getEarlyProvisionSiteSpecConfig(): SiteSpecConfig {
  * The widget may either call `onSpecConfirm` or navigate to `buildSiteUrl`
  * with the spec id appended. Keep that navigation inside the Site Spec route
  * so Calypso can attach the confirmed spec to the existing post-checkout site.
+ *
+ * The site the build will land on is also handed to the widget as spec meta
+ * (`site_id`), through a collector like the blueprint flow's. The agent reads
+ * that site's plan to decide whether it is interviewing for a store: a Commerce
+ * checkout lands here, and without the site the agent has nothing to tell it
+ * apart from any other brief-flow site, so it never asks for the store address.
  * @returns {SiteSpecConfig} Configuration object for build-wow provisioning.
  */
 export function getBuildWowSiteSpecConfig( {
@@ -426,10 +432,11 @@ export function getBuildWowSiteSpecConfig( {
 	source?: string | null;
 	graph?: string | null;
 } = {} ): SiteSpecConfig {
+	const hasSiteId = !! siteId && String( siteId ) !== '0';
 	const buildSiteUrl = addQueryArgs( '/setup/ai-site-builder-spec/site-spec', {
 		build_wow: '1',
 		...( siteSlug ? { siteSlug } : {} ),
-		...( siteId && String( siteId ) !== '0' ? { siteId } : {} ),
+		...( hasSiteId ? { siteId } : {} ),
 		...( ref ? { ref } : {} ),
 		...( source ? { source } : {} ),
 		...( graph ? { graph } : {} ),
@@ -440,6 +447,7 @@ export function getBuildWowSiteSpecConfig( {
 	return {
 		...defaultConfig,
 		buildSiteUrl: `${ buildSiteUrl }${ buildSiteUrl.includes( '?' ) ? '&' : '?' }spec_id=`,
+		...( hasSiteId ? { collector: () => ( { meta: { site_id: String( siteId ) } } ) } : {} ),
 		features: {
 			...defaultConfig.features,
 			siteBrief: 'next',
