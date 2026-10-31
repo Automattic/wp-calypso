@@ -16,8 +16,10 @@ export const AutoRenewDiolog = ( {
 }: RenderModalProps< PartialDomainData > ) => {
 	const { handleAutoRenew } = useDomainsDataViewsContext();
 	const translate = useTranslate();
+	const singleDomainStatus = items[ 0 ]?.auto_renewing ? 'enable' : 'disable';
+	const initialValue = items.length === 1 ? singleDomainStatus : undefined;
 	const [ controlKey, setControlKey ] = useState( 1 );
-	const [ value, setValue ] = useState< string | undefined >( undefined );
+	const [ value, setValue ] = useState< string | undefined >( initialValue );
 
 	const enableLabel = translate( 'Turn {{strong}}on{{/strong}} auto-renew', {
 		components: { strong: <strong /> },
@@ -34,16 +36,14 @@ export const AutoRenewDiolog = ( {
 			handleAutoRenew( items, false );
 		}
 
-		// By default the SelectDropdown will "select" the item that was clicked. We don't
-		// want this so we force the components internal state to be reset, which keeps
-		// the selection set to `initialSelected="button-label"`.
+		// Reset the uncontrolled dropdown after the action completes.
 		setControlKey( ( oldKey ) => oldKey + 1 );
 
 		onActionPerformed?.( items );
 		closeModal?.();
 	};
 
-	const updateButtonDisbled = [ undefined, 'button-label' ].includes( value );
+	const updateButtonDisbled = [ undefined, 'button-label', initialValue ].includes( value );
 
 	return (
 		<div className="domains-dataviews-bulk-actions-dialog">
@@ -63,23 +63,27 @@ export const AutoRenewDiolog = ( {
 			<SelectDropdown
 				key={ controlKey }
 				className="domains-dataviews-bulk-actions-dialog__select"
-				initialSelected="button-label"
-				showSelectedOption={ false }
+				initialSelected={ initialValue ?? 'button-label' }
+				showSelectedOption={ !! initialValue }
 				onSelect={ ( { value: v }: { value: string } ) => setValue( v ) }
 				options={ [
-					{
-						value: 'button-label',
-						label: translate( 'Choose new status…' ),
-						icon: (
-							<img
-								className="domains-dataviews-bulk-actions-dialog__icon"
-								src={ transformIcon }
-								width={ 18 }
-								height={ 18 }
-								alt=""
-							/>
-						),
-					},
+					...( initialValue
+						? []
+						: [
+								{
+									value: 'button-label',
+									label: translate( 'Choose new status…' ),
+									icon: (
+										<img
+											className="domains-dataviews-bulk-actions-dialog__icon"
+											src={ transformIcon }
+											width={ 18 }
+											height={ 18 }
+											alt=""
+										/>
+									),
+								},
+							] ),
 					{ value: 'enable', label: enableLabel },
 					{ value: 'disable', label: disableLabel },
 				] }
