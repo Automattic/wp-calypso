@@ -1,6 +1,7 @@
 import { localize } from 'i18n-calypso';
 import PushNotificationApprovalPoller from './push-notification-approval-poller';
 import SecurityKeyForm from './security-key-form';
+import SecurityKeyUnsupported from './security-key-unsupported';
 import VerificationCodeForm from './verification-code-form';
 import WaitingTwoFactorNotificationApproval from './waiting-notification-approval';
 
@@ -14,14 +15,16 @@ function TwoFactorContent( {
 	isGravPoweredClient,
 	translate,
 } ) {
-	if ( twoFactorAuthType === 'webauthn' && isBrowserSupported ) {
-		return (
+	if ( twoFactorAuthType === 'webauthn' ) {
+		return isBrowserSupported ? (
 			<div>
 				<SecurityKeyForm
 					onSuccess={ handleValid2FACode }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
 				/>
 			</div>
+		) : (
+			<SecurityKeyUnsupported switchTwoFactorAuthType={ switchTwoFactorAuthType } />
 		);
 	}
 
