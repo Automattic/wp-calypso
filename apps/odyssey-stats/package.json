@@ -74,7 +74,7 @@
 		"jest": "^30.5.2",
 		"moment-timezone-data-webpack-plugin": "^1.5.1",
 		"path-browserify": "^1.0.1",
-		"postcss": "^8.5.30",
+		"postcss": "^8.5.31",
 		"postcss-prefix-selector": "^1.16.1",
 		"postcss-selector-parser": "^7.1.7",
 		"size-limit": "^8.2.6",

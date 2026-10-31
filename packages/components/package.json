@@ -107,7 +107,7 @@
 		"@testing-library/user-event": "^14.6.8",
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^24.12.2",
-		"postcss": "^8.5.30",
+		"postcss": "^8.5.31",
 		"storybook": "^10.6.3",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"
