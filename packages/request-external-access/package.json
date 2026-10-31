@@ -44,7 +44,7 @@
 	"dependencies": {
 		"@automattic/popup-monitor": "workspace:^",
 		"@babel/runtime": "^8.0.7",
-		"debug": "^4.4.1"
+		"debug": "^4.4.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^"

@@ -31,7 +31,7 @@
 	},
 	"dependencies": {
 		"@babel/runtime": "^8.0.7",
-		"debug": "^4.4.1"
+		"debug": "^4.4.3"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",

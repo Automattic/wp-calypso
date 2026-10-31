@@ -46,7 +46,7 @@
 		"@automattic/api-core": "workspace:^",
 		"@stripe/react-stripe-js": "^6.6.0",
 		"@stripe/stripe-js": "^9.8.0",
-		"debug": "^4.4.1"
+		"debug": "^4.4.3"
 	},
 	"devDependencies": {
 		"@automattic/calypso-typescript-config": "workspace:^",
