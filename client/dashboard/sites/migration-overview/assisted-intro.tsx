@@ -1,13 +1,16 @@
 import { siteBySlugQuery, siteWordPressMigrationHandoffMutation } from '@automattic/api-queries';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { check, copy, shield } from '@wordpress/icons';
+import { useEffect } from 'react';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import RouterLinkButton from '../../components/router-link-button';
 import { getSiteDisplayName } from '../../utils/site-name';
+import { isWordPressMigration } from '../../utils/site-status';
 import { getShareAccessUrl } from './assisted-wordpress';
 import { IconList, MigrationCard, StatusIcon } from './wordpress/migration-card';
 
@@ -31,17 +34,30 @@ const WHAT_OUR_TEAM_DOES = [
  */
 export default function AssistedIntro( { siteSlug }: { siteSlug: string } ) {
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
+	const navigate = useNavigate();
 	const handOff = useMutation(
 		withSnackbar( siteWordPressMigrationHandoffMutation( site.ID ), {
 			error: __( 'We couldn’t send your migration to our team. Please try again.' ),
 		} )
 	);
 
+	// Once the site reads as handed off (like after coming back from sharing access), this page has nothing to offer.
+	const isOfferable = isWordPressMigration( site ) && site.site_migration.status_v2 !== 'completed';
+	useEffect( () => {
+		if ( ! isOfferable ) {
+			navigate( {
+				to: '/sites/$siteSlug/migration-overview',
+				params: { siteSlug },
+				replace: true,
+			} );
+		}
+	}, [ isOfferable, navigate, siteSlug ] );
+
 	// Straight on to sharing access, so getting our team started takes one click.
 	const handOffToOurTeam = () =>
 		handOff.mutate( undefined, {
 			onSuccess: ( migration ) =>
-				window.location.assign( getShareAccessUrl( site, migration.source_url ) ),
+				window.location.replace( getShareAccessUrl( site, migration.source_url ) ),
 		} );
 
 	return (
