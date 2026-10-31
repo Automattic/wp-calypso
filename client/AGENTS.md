@@ -45,6 +45,7 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 - Prefer `VStack`, `HStack` over `Flex` components.
 - Use the `Heading` component for headings, not `Text` (or raw elements) styled with heading mixins.
 - Minimize custom CSS; rely on the design system first.
+- When adding a state or variant to an existing component, structure it like its siblings. For example, if each screen state is its own component, add a new component rather than inline markup in the parent.
 
 ### CSS/SCSS
 
@@ -53,6 +54,7 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 - Do not use hardcoded color values (`#fff`, `rgb()`, `hsl()`, named colors) in CSS/SCSS.
 - Use predefined color variables instead, preferably semantic CSS custom properties like `var(--color-text)`, `var(--color-surface)`, `var(--color-border-subtle)`, or `var(--color-primary)`.
 - Dialog buttons on mobile: `.dialog__action-buttons` flips to `flex-direction: column-reverse` below `$break-mobile`. Flex labels inside buttons need `width: 100%` for `justify-content: center` to work.
+- Import the stylesheet for every class a component renders. Don't rely on another component having imported it.
 
 ### Internationalization
 
