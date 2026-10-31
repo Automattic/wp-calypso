@@ -10,9 +10,6 @@ const concatPot = require( './utils/concat-pot' );
 
 const DEFAULT_JOBS = '1';
 
-const getAvailableParallelism = () =>
-	typeof os.availableParallelism === 'function' ? os.availableParallelism() : os.cpus().length;
-
 const getMatchingFiles = ( patterns, ignore ) =>
 	Array.from(
 		new Set(
@@ -24,7 +21,7 @@ const getMatchingFiles = ( patterns, ignore ) =>
 
 const resolveJobs = ( jobsOption, fileCount ) => {
 	if ( jobsOption === 'auto' ) {
-		return Math.min( 16, fileCount || 1, Math.max( 1, getAvailableParallelism() - 1 ) );
+		return Math.min( 16, fileCount || 1, Math.max( 1, os.availableParallelism() - 1 ) );
 	}
 
 	const jobs = Number.parseInt( jobsOption, 10 );

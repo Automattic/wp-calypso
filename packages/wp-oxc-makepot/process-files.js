@@ -18,41 +18,13 @@ const runWorker = ( filepaths, options ) =>
 			workerData: { filepaths, options },
 		} );
 
-		let isSettled = false;
-
-		worker.on( 'message', ( message ) => {
-			if ( ! message || typeof message !== 'object' ) {
-				return;
-			}
-
-			if ( message.type === 'error' && ! isSettled ) {
-				isSettled = true;
-				reject( new Error( message.error ) );
-			}
-		} );
-
-		worker.on( 'error', ( error ) => {
-			if ( isSettled ) {
-				return;
-			}
-
-			isSettled = true;
-			reject( error );
-		} );
-
+		worker.on( 'error', reject );
 		worker.on( 'exit', ( code ) => {
-			if ( isSettled ) {
-				return;
-			}
-
-			if ( code !== 0 ) {
-				isSettled = true;
+			if ( code === 0 ) {
+				resolve();
+			} else {
 				reject( new Error( `wp-oxc-makepot worker exited with code ${ code }` ) );
-				return;
 			}
-
-			isSettled = true;
-			resolve();
 		} );
 	} );
 

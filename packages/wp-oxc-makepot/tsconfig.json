@@ -1,6 +1,7 @@
 {
 	"extends": "@automattic/calypso-typescript-config/js-package.json",
 	"compilerOptions": {
+		// glob's bundled .d.ts (via minipass) reference Node types.
 		"types": [ "node" ]
 	},
 	"include": [ "**/*.js", "package.json" ]
