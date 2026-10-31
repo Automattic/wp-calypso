@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
+import route from 'calypso/state/route/reducer';
 import ui from 'calypso/state/ui/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { fetchEligibility } from '../api';
@@ -23,19 +24,22 @@ function renderCard( {
 	queryClient = new QueryClient(),
 	site = freeSite,
 	selectedSiteId = 1,
+	query = { 'site-redesign': '1' } as Record< string, string >,
 	capabilities = { manage_options: true, edit_theme_options: true },
 }: {
 	queryClient?: QueryClient;
 	site?: Omit< typeof freeSite, 'plan' > & { plan?: typeof freeSite.plan };
 	selectedSiteId?: number | null;
+	query?: Record< string, string >;
 	capabilities?: { manage_options: boolean; edit_theme_options: boolean };
 } = {} ) {
 	return renderWithProvider( <DesignYourOwnCard />, {
 		queryClient,
-		reducers: { ui },
+		reducers: { ui, route },
 		initialState: {
 			sites: { items: { 1: site } },
 			ui: { selectedSiteId },
+			route: { query: { current: query } },
 			currentUser: { capabilities: { 1: capabilities } },
 		},
 	} );
@@ -94,6 +98,16 @@ test( 'hides the card when a refresh of an allowed answer fails', async () => {
 	jest.mocked( fetchEligibility ).mockRejectedValue( { code: 'site_redesign_not_permitted' } );
 	await queryClient.refetchQueries( { queryKey: [ 'site-redesign', 'eligibility' ] } );
 	await waitFor( () => expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument() );
+} );
+
+test.each( [
+	[ 'missing', {} ],
+	[ 'not 1', { 'site-redesign': '0' } ],
+] )( 'hides the card and makes no request when the site-redesign arg is %s', async ( _, query ) => {
+	renderCard( { query } );
+	await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+	expect( screen.queryByRole( 'article' ) ).not.toBeInTheDocument();
+	expect( fetchEligibility ).not.toHaveBeenCalled();
 } );
 
 test.each( [
