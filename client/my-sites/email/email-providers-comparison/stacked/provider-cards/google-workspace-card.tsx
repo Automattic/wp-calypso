@@ -61,6 +61,7 @@ const googleWorkspaceCardInformation: ProviderCardProps = {
 
 const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 	const {
+		canSkip = true,
 		detailsExpanded,
 		intervalLength,
 		isDomainInCart = false,
@@ -142,7 +143,7 @@ const GoogleWorkspaceCard = ( props: EmailProvidersStackedCardProps ) => {
 			selectedDomainName={ selectedDomainName }
 			showAddNewMailboxButton
 			submitActionText={ translate( 'Purchase' ) }
-			{ ...getUpsellProps( { isDomainInCart, siteSlug } ) }
+			{ ...getUpsellProps( { isDomainInCart, siteSlug, canSkip } ) }
 		>
 			{ hiddenFieldNames.includes( FIELD_PASSWORD_RESET_EMAIL ) && (
 				<PasswordResetTipField tipClickHandler={ showPasswordResetEmailField } />

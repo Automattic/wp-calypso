@@ -80,6 +80,8 @@ const EmailProvidersStackedComparison = ( {
 	const translate = useTranslate();
 
 	const currentRoute = useSelector( getCurrentRoute );
+	const queryArgs = getQueryArgs( window.location.href );
+	const canSkip = queryArgs.emailIntent !== 'true';
 
 	const selectedSite = useSelector( getSelectedSite );
 
@@ -188,6 +190,7 @@ const EmailProvidersStackedComparison = ( {
 		);
 
 		const queryString = stringify( {
+			emailIntent: queryArgs.emailIntent,
 			interval: newIntervalLength,
 			provider: selectedEmailProviderSlug,
 			source,
@@ -205,8 +208,6 @@ const EmailProvidersStackedComparison = ( {
 		);
 	};
 
-	const queryArgs = getQueryArgs( window.location.href );
-
 	if ( hasLoadedDomains && ! domain && ! isDomainInCart ) {
 		return null;
 	}
@@ -215,6 +216,7 @@ const EmailProvidersStackedComparison = ( {
 
 	const emailProviderCards = [
 		<ProfessionalEmailCard
+			canSkip={ canSkip }
 			comparisonContext={ comparisonContext }
 			detailsExpanded={ detailsExpanded.titan }
 			intervalLength={ selectedIntervalLength }
@@ -225,6 +227,7 @@ const EmailProvidersStackedComparison = ( {
 			source={ source }
 		/>,
 		<GoogleWorkspaceCard
+			canSkip={ canSkip }
 			comparisonContext={ comparisonContext }
 			detailsExpanded={ detailsExpanded.google }
 			intervalLength={ selectedIntervalLength }
@@ -239,12 +242,15 @@ const EmailProvidersStackedComparison = ( {
 	const comparisonComponents = {
 		a: (
 			<a
-				href={ getEmailInDepthComparisonPath(
-					selectedSite?.slug ?? '',
-					selectedDomainName,
-					currentRoute,
-					source,
-					selectedIntervalLength
+				href={ addQueryArgs(
+					getEmailInDepthComparisonPath(
+						selectedSite?.slug ?? '',
+						selectedDomainName,
+						currentRoute,
+						source,
+						selectedIntervalLength
+					),
+					{ emailIntent: queryArgs.emailIntent }
 				) }
 				onClick={ handleCompareClick }
 			/>
@@ -282,7 +288,9 @@ const EmailProvidersStackedComparison = ( {
 			{ ! hideNavigation && isDomainInCart && (
 				<EmailUpsellNavigation
 					backUrl={ addQueryArgs( domainAddNew( selectedSite?.slug ), queryArgs ) }
-					skipUrl={ addQueryArgs( `/checkout/${ selectedSite?.slug }`, queryArgs ) }
+					skipUrl={
+						canSkip ? addQueryArgs( `/checkout/${ selectedSite?.slug }`, queryArgs ) : undefined
+					}
 				/>
 			) }
 
