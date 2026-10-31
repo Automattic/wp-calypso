@@ -8,8 +8,10 @@ import './security-key-form.scss';
 export default function SecurityKeyUnsupported( { switchTwoFactorAuthType } ) {
 	const translate = useTranslate();
 
+	// A form like the other two-step screens, so client login styles that target
+	// `form` (Gravatar, Woo) apply to this one too.
 	return (
-		<div className="two-factor-authentication__verification-code-form-wrapper">
+		<form className="two-factor-authentication__verification-code-form-wrapper">
 			<Card className="two-factor-authentication__verification-code-form">
 				<div className="security-key-form__help-text">
 					<p>
@@ -23,6 +25,6 @@ export default function SecurityKeyUnsupported( { switchTwoFactorAuthType } ) {
 				twoFactorAuthType="webauthn"
 				switchTwoFactorAuthType={ switchTwoFactorAuthType }
 			/>
-		</div>
+		</form>
 	);
 }
