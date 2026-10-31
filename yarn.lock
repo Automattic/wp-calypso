@@ -2694,7 +2694,7 @@ __metadata:
     i18n-calypso: "workspace:^"
     oxc-parser: "npm:^0.152.0"
     react: "npm:^18.3.1"
-    vitest: "npm:^4.0.0"
+    vitest: "npm:^4.1.12"
   bin:
     wp-oxc-makepot: ./cli.js
   languageName: unknown
