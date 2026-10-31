@@ -51,7 +51,7 @@
 		"@automattic/composite-checkout": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.2.10",
+		"@automattic/number-formatters": "^1.2.12",
 		"@automattic/shopping-cart": "workspace:^",
 		"@emotion/styled": "^11.11.0",
 		"@fnando/cnpj": "2.0.0",

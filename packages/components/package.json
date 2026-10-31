@@ -56,7 +56,7 @@
 		"@automattic/js-utils": "workspace:^",
 		"@automattic/load-script": "workspace:^",
 		"@automattic/material-design-icons": "workspace:^",
-		"@automattic/number-formatters": "^1.2.10",
+		"@automattic/number-formatters": "^1.2.12",
 		"@automattic/typography": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@automattic/viewport-react": "workspace:^",
