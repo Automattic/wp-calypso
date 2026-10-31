@@ -8,13 +8,16 @@ import type {
 export function getHumanRoutingFacts( input: HumanRoutingInput ): HumanRoutingFacts {
 	const { customer, product } = input;
 	const isCore = !! product?.isCore;
+	// Zendesk gives target customers Tier 1 too.
+	const isTier1 = customer?.supportTier === 'tier_1' || !! customer?.isTargetCustomer;
 
 	return {
 		...input,
 		// A rev-share product counts as paying.
 		isPaying: !! customer?.isPaying || !! product?.isRevShare,
-		// Zendesk gives target customers Tier 1 too.
-		isTier1: customer?.supportTier === 'tier_1' || !! customer?.isTargetCustomer,
+		isTier1,
+		// A target customer is Tier 1 even when WooCommerce.com couldn't work out the tier.
+		isTierKnown: isTier1 || !! customer?.supportTier,
 		isCore,
 		isWooProduct: product?.supportType === 'woo' && ! isCore,
 	};
