@@ -117,6 +117,18 @@
 	}
 
 	&:not(:has(.dataviews-view-list__item:focus-visible)) {
+		// Reopening the panel restores focus to the last opened row (see hooks.ts).
+		// Without a visible focus ring, keep its text off DataViews' brand color.
+		div[role="article"]:not(.is-selected):not(:hover):not(.is-hovered):focus-within {
+			.dataviews-title-field {
+				color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+			}
+
+			.dataviews-view-list__field {
+				color: var(--wpds-color-foreground-interactive-neutral-weak, #707070);
+			}
+		}
+
 		// Open note: a left accent bar marks the row whose detail is showing. Driven
 		// by our own `is-active` marker (see getFields), not DataViews selection, so
 		// the unread tint still shows through on a selected unread row.
