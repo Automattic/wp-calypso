@@ -1,3 +1,4 @@
+import { isSavedSnapshotPost } from 'calypso/reader/post-key';
 import type { ReadSavedKey } from '@automattic/api-core';
 import type { Post } from 'calypso/reader/data/post';
 
@@ -6,11 +7,22 @@ import type { Post } from 'calypso/reader/data/post';
  * post, `blog_id` + `post_id` for everything else. Returns `null` when the post
  * is missing the IDs it needs.
  *
+ * A saved snapshot is a deleted feed item, keyed by its feed item ID, or a page
+ * saved by URL, keyed by its URL. A URL save's `ID` is the save's own ID, not a
+ * feed item ID.
+ *
  * Don't use `keyForPost()` here: it returns a feed key for any post with a
  * `feed_ID` and `feed_item_ID`, including WordPress.com posts read through
  * Following, so the same post would be saved two ways.
  */
 export function savedKeyForPost( post: Post ): ReadSavedKey | null {
+	if ( isSavedSnapshotPost( post ) ) {
+		if ( post.feed_item_ID ) {
+			return { feed_item_id: post.feed_item_ID };
+		}
+		return post.URL ? { url: post.URL } : null;
+	}
+
 	if ( post.is_external ) {
 		const feedItemId = post.feed_item_ID || post.ID;
 		return feedItemId ? { feed_item_id: feedItemId } : null;

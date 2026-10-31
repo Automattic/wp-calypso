@@ -20,11 +20,17 @@ export const readSavedKeysQuery = () =>
 
 /**
  * A string that identifies a saved key, for comparing keys and building lookups.
+ * Any entry can carry a `url`, so it only identifies a save that has no IDs.
  */
-export const getReadSavedKeyId = ( key: ReadSavedKey ): string =>
-	'feed_item_id' in key
-		? `feed-item-${ key.feed_item_id }`
-		: `blog-${ key.blog_id }-post-${ key.post_id }`;
+export const getReadSavedKeyId = ( key: ReadSavedKey ): string => {
+	if ( 'feed_item_id' in key && key.feed_item_id ) {
+		return `feed-item-${ key.feed_item_id }`;
+	}
+	if ( 'blog_id' in key && key.blog_id ) {
+		return `blog-${ key.blog_id }-post-${ key.post_id }`;
+	}
+	return `url-${ 'url' in key ? key.url : '' }`;
+};
 
 const savedKeysQueryKey = readSavedKeysQuery().queryKey;
 

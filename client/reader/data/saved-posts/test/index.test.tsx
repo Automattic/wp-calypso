@@ -7,6 +7,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { canSavePost, savedKeyForPost, savedKeysForPost, useIsPostSaved, useSavePost } from '..';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
+import type { Post } from 'calypso/reader/data/post';
 import type { ReactNode } from 'react';
 
 const BASE = 'https://public-api.wordpress.com';
@@ -21,6 +22,36 @@ const JETPACK_POST = { ID: 45, site_ID: 123, feed_ID: 70, feed_item_ID: 6000, is
 const JETPACK_SAVED_KEYS = [
 	{ blog_id: 123, post_id: 45, date_saved: '2026-10-02T00:00:00+00:00' },
 	{ feed_item_id: 6000, date_saved: '2026-10-01T00:00:00+00:00' },
+];
+
+// Saves `/read/saved` returns as snapshots, with no site or feed: a page saved
+// by URL, whose `ID` is the save's own ID, and a feed item that's been deleted.
+const URL_SAVE = {
+	ID: 64089,
+	site_ID: 0,
+	feed_ID: 0,
+	is_external: true,
+	URL: 'https://example.com/a-saved-page',
+};
+const PRUNED_FEED_ITEM = {
+	ID: 7000,
+	feed_item_ID: 7000,
+	site_ID: 0,
+	feed_ID: 0,
+	is_external: true,
+	URL: 'https://example.com/a-deleted-feed-item',
+};
+// `/read/saved/keys` entries: a URL save has only its URL; any other save may
+// carry its URL alongside its IDs.
+const SNAPSHOT_SAVED_KEYS: ReadSavedKeysResponse[ 'keys' ] = [
+	{ url: URL_SAVE.URL, id: 3, date_saved: '2026-10-03T00:00:00+00:00' },
+	{ url: 'https://example.com/another-page', id: 2, date_saved: '2026-10-02T00:00:00+00:00' },
+	{
+		feed_item_id: 7000,
+		url: PRUNED_FEED_ITEM.URL,
+		id: 1,
+		date_saved: '2026-10-01T00:00:00+00:00',
+	},
 ];
 
 function makeClient() {
@@ -55,6 +86,18 @@ describe( 'savedKeyForPost', () => {
 		expect( savedKeyForPost( { ID: 9000, is_external: true } ) ).toEqual( { feed_item_id: 9000 } );
 	} );
 
+	it( 'keys a page saved by URL by its URL, not its ID', () => {
+		expect( savedKeyForPost( URL_SAVE ) ).toEqual( { url: URL_SAVE.URL } );
+	} );
+
+	it( 'keys a deleted feed item by its feed item ID', () => {
+		expect( savedKeyForPost( PRUNED_FEED_ITEM ) ).toEqual( { feed_item_id: 7000 } );
+	} );
+
+	it( 'returns null for a page saved by URL without a URL', () => {
+		expect( savedKeyForPost( { ...URL_SAVE, URL: '' } ) ).toBeNull();
+	} );
+
 	it( 'returns null for a post without the IDs the API needs', () => {
 		expect( savedKeyForPost( { ID: 1 } ) ).toBeNull();
 		expect( savedKeyForPost( { site_ID: 100 } ) ).toBeNull();
@@ -82,6 +125,11 @@ describe( 'savedKeysForPost', () => {
 
 	it( 'returns no keys for a post without the IDs the API needs', () => {
 		expect( savedKeysForPost( { ID: 1, feed_item_ID: 9001 } ) ).toEqual( [] );
+	} );
+
+	it( 'returns only the snapshot key for a saved snapshot', () => {
+		expect( savedKeysForPost( URL_SAVE ) ).toEqual( [ { url: URL_SAVE.URL } ] );
+		expect( savedKeysForPost( PRUNED_FEED_ITEM ) ).toEqual( [ { feed_item_id: 7000 } ] );
 	} );
 } );
 
@@ -137,6 +185,31 @@ describe( 'useIsPostSaved', () => {
 		expect( result.current ).toBe( true );
 	} );
 
+	it( 'reports saved snapshots from keys that only have a URL', () => {
+		const client = makeClient();
+		setKeys( client, SNAPSHOT_SAVED_KEYS );
+
+		const { result } = renderHook(
+			() => ( {
+				urlSave: useIsPostSaved( URL_SAVE, { enabled: false } ),
+				prunedFeedItem: useIsPostSaved( PRUNED_FEED_ITEM, { enabled: false } ),
+				otherUrl: useIsPostSaved(
+					{ ...URL_SAVE, URL: 'https://example.com/not-saved' },
+					{ enabled: false }
+				),
+				wpcom: useIsPostSaved( WPCOM_POST, { enabled: false } ),
+			} ),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		expect( result.current ).toEqual( {
+			urlSave: true,
+			prunedFeedItem: true,
+			otherUrl: false,
+			wpcom: false,
+		} );
+	} );
+
 	it( 'does not fetch when disabled or when the post has no key', () => {
 		const client = makeClient();
 
@@ -179,7 +252,7 @@ describe( 'useIsPostSaved', () => {
 } );
 
 describe( 'useSavePost', () => {
-	function renderSavePost( client: QueryClient, post = WPCOM_POST ) {
+	function renderSavePost( client: QueryClient, post: Post = WPCOM_POST ) {
 		return renderHook(
 			() => ( {
 				isSaved: useIsPostSaved( post, { enabled: false } ),
@@ -273,6 +346,39 @@ describe( 'useSavePost', () => {
 			expect( result.current.isSaved ).toBe( true );
 		}
 	);
+
+	it( 'unsaves a page saved by URL by its URL', async () => {
+		const client = makeClient();
+		setKeys( client, SNAPSHOT_SAVED_KEYS );
+		const request = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { url: URL_SAVE.URL, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { url: URL_SAVE.URL }, total: 2 } );
+		const result = renderSavePost( client, URL_SAVE );
+		expect( result.current.isSaved ).toBe( true );
+
+		act( () => result.current.unsavePost( URL_SAVE ) );
+
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		expect( result.current.isSaved ).toBe( false );
+		expect( client.getQueryData< ReadSavedKeysResponse >( readSavedKeysQuery().queryKey ) ).toEqual(
+			{ keys: SNAPSHOT_SAVED_KEYS.slice( 1 ), total: 2 }
+		);
+	} );
+
+	it( 'unsaves a deleted feed item by its feed item ID', async () => {
+		const client = makeClient();
+		setKeys( client, SNAPSHOT_SAVED_KEYS );
+		const request = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 7000, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: { feed_item_id: 7000 }, total: 2 } );
+		const result = renderSavePost( client, PRUNED_FEED_ITEM );
+		expect( result.current.isSaved ).toBe( true );
+
+		act( () => result.current.unsavePost( PRUNED_FEED_ITEM ) );
+
+		await waitFor( () => expect( request.isDone() ).toBe( true ) );
+		expect( result.current.isSaved ).toBe( false );
+	} );
 
 	it( 'shows the post as unsaved and calls onError when the save fails', async () => {
 		const client = makeClient();

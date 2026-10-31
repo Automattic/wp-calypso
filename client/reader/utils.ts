@@ -11,8 +11,10 @@ import { getCalypsoQueryClient } from 'calypso/state/query-client';
 interface ShowSelectedPostArgs {
 	postKey?: {
 		blogId?: number;
-		postId: number;
+		postId?: number;
 		feedId?: number;
+		snapshotId?: string;
+		url?: string;
 		isRecommendationBlock?: boolean;
 	};
 	comments?: boolean;
@@ -27,6 +29,11 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 		// rec block
 		if ( postKey.isRecommendationBlock ) {
 			return;
+		}
+
+		// A saved snapshot has no full post to show, only the page it was saved from.
+		if ( postKey.snapshotId ) {
+			return postKey.url ? window.open( postKey.url, '_blank', 'noopener,noreferrer' ) : undefined;
 		}
 
 		const queryClient = getCalypsoQueryClient();

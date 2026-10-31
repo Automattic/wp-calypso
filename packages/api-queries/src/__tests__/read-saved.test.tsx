@@ -91,6 +91,24 @@ describe( 'getReadSavedKeyId', () => {
 	it( 'ignores date_saved', () => {
 		expect( getReadSavedKeyId( entry( POST_KEY ) ) ).toBe( getReadSavedKeyId( POST_KEY ) );
 	} );
+
+	it( 'identifies a save that only has a URL by its URL', () => {
+		expect( getReadSavedKeyId( { url: 'https://example.com/a' } ) ).toBe(
+			'url-https://example.com/a'
+		);
+		expect( getReadSavedKeyId( { url: 'https://example.com/a' } ) ).not.toBe(
+			getReadSavedKeyId( { url: 'https://example.com/b' } )
+		);
+	} );
+
+	it( 'identifies an entry that has IDs and a URL by its IDs', () => {
+		const url = 'https://example.com/a';
+
+		expect( getReadSavedKeyId( { ...entry( POST_KEY ), id: 1, url } ) ).toBe( 'blog-100-post-1' );
+		expect( getReadSavedKeyId( { ...entry( FEED_ITEM_KEY ), id: 2, url } ) ).toBe(
+			'feed-item-9000'
+		);
+	} );
 } );
 
 describe( 'readSavedKeysQuery', () => {
@@ -130,6 +148,19 @@ describe( 'saveReadPostMutation', () => {
 		expect( request.isDone() ).toBe( true );
 		expect( idsDuringRequest ).toEqual( [ 'blog-100-post-1', 'feed-item-9000' ] );
 		expect( getKeys( client )?.total ).toBe( 2 );
+	} );
+
+	it( 'posts a URL key as url', async () => {
+		const client = newClient();
+		const key = { url: 'https://example.com/a' };
+		const request = nock( BASE )
+			.post( '/wpcom/v2/read/saved/new', { url: key.url, source: SOURCE } )
+			.reply( 200, { saved: true, key, total: 1 } );
+		const result = renderMutation( client, saveReadPostMutation );
+
+		await act( () => result.current.mutateAsync( params( key ) ) );
+
+		expect( request.isDone() ).toBe( true );
 	} );
 
 	it( 'posts a feed item key as feed_item_id', async () => {

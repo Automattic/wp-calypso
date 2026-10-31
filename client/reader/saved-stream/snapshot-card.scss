@@ -1,0 +1,29 @@
+.saved-snapshot-card {
+	cursor: pointer;
+
+	.reader-post-card__post {
+		display: flex;
+		gap: 24px;
+		align-items: flex-start;
+	}
+
+	.reader-post-card__post-details {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.saved-snapshot-card__excerpt {
+		display: -webkit-box;
+		-webkit-box-orient: vertical;
+		-webkit-line-clamp: 3;
+		overflow: hidden;
+	}
+
+	.saved-snapshot-card__image {
+		flex: none;
+		width: 160px;
+		max-height: 160px;
+		object-fit: cover;
+		border-radius: 4px;
+	}
+}
