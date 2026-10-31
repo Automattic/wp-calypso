@@ -135,7 +135,7 @@
 		"cookie-parser": "^1.4.7",
 		"creditcards": "^3.1.0",
 		"cronstrue": "^3.11.0",
-		"d3-array": "^2.4.0",
+		"d3-array": "^2.12.1",
 		"d3-axis": "^1.0.12",
 		"d3-scale": "^4.0.2",
 		"d3-selection": "^1.4.2",
