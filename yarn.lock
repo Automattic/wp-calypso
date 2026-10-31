@@ -12391,12 +12391,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-transition-group@npm:^4.4.4":
-  version: 4.4.4
-  resolution: "@types/react-transition-group@npm:4.4.4"
-  dependencies:
-    "@types/react": "npm:*"
-  checksum: 0e593863c60550002bb7a5bf60dad719de78580017f87eadf32661d1870345a4ef22e2e37902e05d05955494f2c0cae5ef46510032005e8e969273eee0ae8519
+"@types/react-transition-group@npm:^4.4.12":
+  version: 4.4.12
+  resolution: "@types/react-transition-group@npm:4.4.12"
+  peerDependencies:
+    "@types/react": "*"
+  checksum: 0441b8b47c69312c89ec0760ba477ba1a0808a10ceef8dc1c64b1013ed78517332c30f18681b0ec0b53542731f1ed015169fed1d127cc91222638ed955478ec7
   languageName: node
   linkType: hard
 
@@ -35844,7 +35844,7 @@ __metadata:
     "@types/qs": "npm:^6.9.7"
     "@types/react": "npm:19.2.16"
     "@types/react-modal": "npm:^3.16.3"
-    "@types/react-transition-group": "npm:^4.4.4"
+    "@types/react-transition-group": "npm:^4.4.12"
     "@types/store": "npm:^2.0.5"
     "@types/superagent": "npm:^4.1.24"
     "@types/webpack-env": "npm:^1.18.8"
