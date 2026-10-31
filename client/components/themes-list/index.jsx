@@ -9,6 +9,7 @@ import { connect, useSelector } from 'react-redux';
 import InfiniteScroll from 'calypso/components/infinite-scroll';
 import Theme from 'calypso/components/theme';
 import withIsFSEActive from 'calypso/data/themes/with-is-fse-active';
+import { DesignYourOwnCard } from 'calypso/my-sites/site-redesign/design-your-own-card';
 import SearchMoreOptions from 'calypso/my-sites/themes/search-results-modern/search-more-options';
 import { getWooMyCustomThemeOptions } from 'calypso/my-sites/themes/theme-options';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -196,6 +197,7 @@ export const ThemesList = ( {
 
 	return (
 		<div className="themes-list" ref={ themesListRef }>
+			{ ! searchTerm && tabFilter !== 'my-themes' && <DesignYourOwnCard /> }
 			{ _themes.map( ( theme, index ) => (
 				<ThemeBlock
 					key={ 'theme-block' + index }

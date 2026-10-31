@@ -28,6 +28,16 @@ describe( 'MetricValue', () => {
 		expect( container.querySelector( '.screen-reader-text' ) ).toHaveTextContent( '118,492 views' );
 	} );
 
+	it( 'stands a placeholder in for the figure while it loads', () => {
+		const { container } = render( <MetricValue value={ 617 } describe={ describe_ } isLoading /> );
+
+		expect( container.querySelector( '.stats-widget-skeleton' ) ).toHaveAttribute(
+			'aria-hidden',
+			'true'
+		);
+		expect( screen.queryByText( '617' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'skips the tooltip when the figure is already exact', () => {
 		render( <MetricValue value={ 617 } describe={ describe_ } /> );
 		expect( screen.getByText( '617' ) ).toBeInTheDocument();

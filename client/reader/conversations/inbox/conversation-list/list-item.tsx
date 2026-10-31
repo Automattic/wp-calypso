@@ -1,4 +1,6 @@
+import { useLocale } from '@automattic/i18n-utils';
 import {
+	VisuallyHidden,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	__experimentalVStack as VStack,
@@ -6,8 +8,9 @@ import {
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef } from 'react';
-import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { usePost } from 'calypso/reader/data/post';
+import { formatCompactTime } from './format-compact-time';
+import type { Density } from './toolbar';
 import type { Conversation } from '../group-notes';
 
 export type OpenSource = 'click' | 'tab_key' | 'shortcut' | 'button';
@@ -15,20 +18,57 @@ export type OpenSource = 'click' | 'tab_key' | 'shortcut' | 'button';
 interface Props {
 	conversation: Conversation;
 	isSelected: boolean;
+	openOnFocus: boolean;
+	density: Density;
 	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
 }
 
-const MAX_AVATARS = 3;
+const MAX_AVATARS = 5;
 
-export function ConversationListItem( { conversation, isSelected, onSelect }: Props ) {
+function getContextLine(
+	translate: ReturnType< typeof useTranslate >,
+	{ context, commenters }: Conversation
+) {
+	const [ { name } ] = commenters;
+	const othersCount = commenters.length - 1;
+	const options = { args: { name, count: othersCount }, components: { b: <strong /> } };
+	if ( othersCount > 0 ) {
+		return translate(
+			'{{b}}%(name)s{{/b}} and %(count)d other',
+			'{{b}}%(name)s{{/b}} and %(count)d others',
+			{ ...options, count: othersCount }
+		);
+	}
+	switch ( context ) {
+		case 'post':
+			return translate( '{{b}}%(name)s{{/b}} commented on your post', options );
+		case 'reply':
+			return translate( '{{b}}%(name)s{{/b}} replied to you', options );
+		case 'mention':
+			return translate( '{{b}}%(name)s{{/b}} mentioned you', options );
+		default:
+			return <strong>{ name }</strong>;
+	}
+}
+
+export function ConversationListItem( {
+	conversation,
+	isSelected,
+	openOnFocus,
+	density,
+	onSelect,
+}: Props ) {
 	const translate = useTranslate();
-	const moment = useLocalizedMoment();
+	const locale = useLocale();
 	const { siteId, postId, excerpt, timestamp, commenters, unreadNoteIds } = conversation;
 	const { data: post } = usePost( conversation.title ? null : { blogId: siteId, postId } );
 	const title = conversation.title || String( post?.title ?? '' );
-	const [ firstCommenter ] = commenters;
-	const othersCount = commenters.length - 1;
 	const unreadCount = unreadNoteIds.length;
+	const newCount = unreadCount > 0 && (
+		<Text color="var(--color-primary)" className="conversations-inbox__item-new">
+			{ translate( '%(count)d new', { args: { count: unreadCount } } ) }
+		</Text>
+	);
 	const itemRef = useRef< HTMLLIElement >( null );
 	const isMountedRef = useRef( false );
 	const openedOnFocusRef = useRef( false );
@@ -85,7 +125,7 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 				onFocus={ () => {
 					const source = pointerDownRef.current ? 'click' : 'tab_key';
 					pointerDownRef.current = false;
-					if ( ! isSelected ) {
+					if ( openOnFocus && ! isSelected ) {
 						openedOnFocusRef.current = true;
 						onSelect( conversation, source );
 					}
@@ -94,10 +134,12 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 				<HStack as="span">
 					<span className="conversations-inbox__item-title">{ title }</span>
 					<Text size={ 14 } color="var(--color-text-subtle)">
-						{ moment( timestamp ).fromNow( true ) }
+						<span aria-hidden="true">{ formatCompactTime( timestamp, locale ) }</span>
+						<VisuallyHidden>{ formatCompactTime( timestamp, locale, 'long' ) }</VisuallyHidden>
 					</Text>
+					{ density !== 'comfortable' && newCount }
 				</HStack>
-				{ firstCommenter && (
+				{ density !== 'compact' && commenters.length > 0 && (
 					<HStack as="span" justify="flex-start">
 						<HStack
 							as="span"
@@ -109,31 +151,15 @@ export function ConversationListItem( { conversation, isSelected, onSelect }: Pr
 								<img key={ name } src={ avatar } alt="" width={ 24 } height={ 24 } />
 							) ) }
 						</HStack>
-						<span>
-							{ othersCount > 0 ? (
-								translate(
-									'{{b}}%(name)s{{/b}} and %(count)d other',
-									'{{b}}%(name)s{{/b}} and %(count)d others',
-									{
-										count: othersCount,
-										args: { name: firstCommenter.name, count: othersCount },
-										components: { b: <strong /> },
-									}
-								)
-							) : (
-								<strong>{ firstCommenter.name }</strong>
-							) }
-						</span>
+						<span>{ getContextLine( translate, conversation ) }</span>
 					</HStack>
 				) }
-				<HStack as="span">
-					<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
-					{ unreadCount > 0 && (
-						<Text color="var(--color-primary)" className="conversations-inbox__item-new">
-							{ translate( '%(count)d new', { args: { count: unreadCount } } ) }
-						</Text>
-					) }
-				</HStack>
+				{ density === 'comfortable' && (
+					<HStack as="span">
+						<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
+						{ newCount }
+					</HStack>
+				) }
 			</VStack>
 		</li>
 	);

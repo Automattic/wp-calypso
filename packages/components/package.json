@@ -100,7 +100,7 @@
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/react": "^10.6.2",
+		"@storybook/react": "^10.6.3",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
@@ -108,7 +108,7 @@
 		"@types/canvas-confetti": "^1.6.0",
 		"@types/node": "^24.12.2",
 		"postcss": "^8.5.30",
-		"storybook": "^10.6.2",
+		"storybook": "^10.6.3",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"
 	},

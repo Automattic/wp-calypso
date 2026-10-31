@@ -11,7 +11,9 @@
 	}
 
 	.a4a-form__content-wrapper {
-		transition: border-color 0.15s ease-out, background-color 0.15s ease-out,
+		transition:
+			border-color 0.15s ease-out,
+			background-color 0.15s ease-out,
 			box-shadow 0.15s ease-out;
 
 		&.is-error {
@@ -44,6 +46,18 @@
 
 	@include break-medium {
 		margin-block-end: 24px;
+	}
+}
+
+.partner-directory-lead-matching__phone-input {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 16px;
+
+	> fieldset {
+		flex: 1 1 200px;
+		min-inline-size: 0;
+		margin-block-end: 0;
 	}
 }
 
@@ -135,7 +149,9 @@
 }
 
 .partner-directory-lead-matching__form-section {
-	transition: border-color 0.15s ease-out, background-color 0.15s ease-out;
+	transition:
+		border-color 0.15s ease-out,
+		background-color 0.15s ease-out;
 
 	&.is-error {
 		border: 1px solid color-mix( in srgb, var( --color-error ) 14%, transparent );

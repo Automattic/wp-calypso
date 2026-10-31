@@ -6,6 +6,12 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	default: { show: jest.fn(), replace: jest.fn() },
 } ) );
 
+let mockIsNarrow = false;
+
+jest.mock( '@automattic/viewport-react', () => ( {
+	useBreakpoint: () => mockIsNarrow,
+} ) );
+
 jest.mock( 'calypso/reader/data/notifications', () => ( {
 	useCommentNotes: jest.fn(),
 	useMarkNotesRead: jest.fn(),
@@ -17,21 +23,29 @@ jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
 } ) );
 
+jest.mock( 'calypso/state/notices/actions', () => ( {
+	errorNotice: jest.fn( () => ( { type: 'NOTICE_TEST' } ) ),
+} ) );
+
 jest.mock( '../conversation-list', () => ( {
 	ConversationList: ( props: {
 		conversations: { key: string }[];
 		selectedKey?: string;
 		onSelect: ( conversation: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
+		onMarkAllRead: () => void;
+		onDensityChange: ( density: string ) => void;
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
+			<button onClick={ props.onMarkAllRead }>Mark all as read</button>
 			{ props.conversations.map( ( conversation ) => (
 				<button key={ conversation.key } onClick={ () => props.onSelect( conversation, 'click' ) }>
 					{ conversation.key }
 				</button>
 			) ) }
 			<button onClick={ () => props.onTabChange( 'yours' ) }>Your comments</button>
+			<button onClick={ () => props.onDensityChange( 'compact' ) }>Compact</button>
 		</div>
 	),
 } ) );
@@ -42,9 +56,11 @@ jest.mock( '../conversation-detail', () => ( {
 		postId: number;
 		onPrevious?: () => void;
 		onNext?: () => void;
+		highlightedCommentIds?: number[];
 	} ) => (
 		<div>
 			<p>Detail: { `${ props.siteId }-${ props.postId }` }</p>
+			<p>New: { props.highlightedCommentIds?.join( ',' ) || 'none' }</p>
 			<button disabled={ ! props.onPrevious } onClick={ props.onPrevious }>
 				previous
 			</button>
@@ -58,7 +74,9 @@ jest.mock( '../conversation-detail', () => ( {
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
+import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationsInbox } from '..';
@@ -97,6 +115,7 @@ const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
 let markRead: jest.Mock;
 
 beforeEach( () => {
+	mockIsNarrow = false;
 	jest.mocked( page.show ).mockReset();
 	jest.mocked( page.replace ).mockReset();
 	jest.mocked( recordReaderTracksEvent ).mockClear();
@@ -128,7 +147,7 @@ describe( 'ConversationsInbox', () => {
 
 		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
 
-		expect( markRead ).toHaveBeenCalledWith( [ 2 ] );
+		expect( markRead ).toHaveBeenCalledWith( [ 2 ], expect.anything() );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/200' );
 	} );
 
@@ -140,6 +159,16 @@ describe( 'ConversationsInbox', () => {
 
 		expect( markRead ).not.toHaveBeenCalled();
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+	} );
+
+	it( 'shows an error notice when marking as read fails', async () => {
+		const user = userEvent.setup();
+		markRead.mockImplementation( ( _ids, options ) => options.onError() );
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+
+		expect( errorNotice ).toHaveBeenCalledWith( 'Couldn’t mark as read. Try again.' );
 	} );
 
 	it( 'disables the previous button at the start of the list', () => {
@@ -162,7 +191,7 @@ describe( 'ConversationsInbox', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'previous' } ) );
 
-		expect( markRead ).toHaveBeenCalledWith( [ 1 ] );
+		expect( markRead ).toHaveBeenCalledWith( [ 1 ], expect.anything() );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' );
 	} );
 
@@ -174,6 +203,38 @@ describe( 'ConversationsInbox', () => {
 
 		expect( markRead ).not.toHaveBeenCalled();
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+	} );
+
+	it( 'keeps the new comments of an opened conversation after it is marked read', async () => {
+		const user = userEvent.setup();
+		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
+
+		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+		mockedUseCommentNotes.mockReturnValue( {
+			data: notes.map( ( note ) => ( { ...note, read: 1 } ) ),
+			isLoading: false,
+		} as never );
+		rerender( <ConversationsInbox siteId="10" postId="200" /> );
+
+		expect( screen.getByText( 'New: 2001' ) ).toBeVisible();
+
+		rerender( <ConversationsInbox siteId="10" postId="100" /> );
+		rerender( <ConversationsInbox siteId="10" postId="200" /> );
+
+		expect( screen.getByText( 'New: none' ) ).toBeVisible();
+	} );
+
+	describe( 'on narrow screens', () => {
+		beforeEach( () => {
+			mockIsNarrow = true;
+		} );
+
+		it( 'shows only the list and does not pick a conversation when the URL has none', () => {
+			renderInbox();
+
+			expect( screen.queryByText( /^Detail:/ ) ).not.toBeInTheDocument();
+			expect( page.replace ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'Tracks', () => {
@@ -196,7 +257,7 @@ describe( 'ConversationsInbox', () => {
 
 			await user.click( screen.getByRole( 'button', { name: '10-100' } ) );
 
-			expect( markRead ).toHaveBeenCalledWith( [ 1 ] );
+			expect( markRead ).toHaveBeenCalledWith( [ 1 ], expect.anything() );
 			expect( page.show ).not.toHaveBeenCalled();
 			expect( tracked( 'calypso_reader_conversations_inbox_conversation_opened' ) ).toEqual( [] );
 		} );
@@ -241,6 +302,19 @@ describe( 'ConversationsInbox', () => {
 			] );
 		} );
 
+		it( 'marks every unread note as read in one call and records the count', async () => {
+			const user = userEvent.setup();
+			renderInbox( { siteId: '10', postId: '100' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Mark all as read' } ) );
+
+			expect( markRead ).toHaveBeenCalledTimes( 1 );
+			expect( markRead ).toHaveBeenCalledWith( [ 1, 2 ] );
+			expect( tracked( 'calypso_reader_conversations_inbox_marked_all_read' ) ).toEqual( [
+				{ count: 2 },
+			] );
+		} );
+
 		it( 'records the tab picked and how', async () => {
 			const user = userEvent.setup();
 			renderInbox( { siteId: '10', postId: '100' } );
@@ -254,6 +328,23 @@ describe( 'ConversationsInbox', () => {
 				{ tab: 'unread', source: 'shortcut' },
 				{ tab: 'yours', source: 'shortcut' },
 			] );
+		} );
+
+		it( 'saves and records the density picked', async () => {
+			const user = userEvent.setup();
+			const scope = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/preferences', {
+					calypso_preferences: { reader_conversations_inbox_density: 'compact' },
+				} )
+				.reply( 200, { calypso_preferences: {} } );
+			renderInbox( { siteId: '10', postId: '100' } );
+
+			await user.click( screen.getByRole( 'button', { name: 'Compact' } ) );
+
+			expect( tracked( 'calypso_reader_conversations_inbox_density_changed' ) ).toEqual( [
+				{ density: 'compact' },
+			] );
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		} );
 
 		it( 'does not record picking the tab that is already open', async () => {

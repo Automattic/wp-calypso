@@ -4,13 +4,13 @@ import { useTranslate } from 'i18n-calypso';
 import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
-import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { ResolvedDateRange } from '../lib/date-ranges';
 import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
 import { recordWidgetEventThenFollow } from './record-widget-event';
+import Skeleton from './skeleton';
 import useStatsLink from './use-stats-link';
 
 const OverviewChart = lazy( () => import( './overview-chart' ) );
@@ -105,7 +105,8 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	// One placeholder for both waits: for the data, and for the chart's chunk.
 	const chartPlaceholder = (
 		<div className="stats-widget-chart" style={ chartBoxStyle }>
-			<StatsModulePlaceholder isLoading />
+			<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+			<Skeleton className="stats-widget-chart__skeleton" />
 		</div>
 	);
 	const noData = (
@@ -123,6 +124,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 						</div>
 						<MetricValue
 							value={ totals.views }
+							isLoading={ isPending }
 							describe={ ( count ) =>
 								translate( '%(count)s view', '%(count)s views', {
 									count: totals.views,
@@ -138,6 +140,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 						</div>
 						<MetricValue
 							value={ totals.visitors }
+							isLoading={ isPending }
 							describe={ ( count ) =>
 								translate( '%(count)s visitor', '%(count)s visitors', {
 									count: totals.visitors,

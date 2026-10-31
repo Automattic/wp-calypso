@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import {
-	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
@@ -31,25 +30,15 @@ export function generateFlows( {
 
 	const flows = [
 		{
-			name: 'hosting', // This flow is to be removed once the Landpack changes are completed.
+			name: 'hosting',
 			steps: [ userSocialStep, 'hosting-decider' ],
 			destination: getHostingFlowDestination,
-			description: 'To be deleted.',
-			lastModified: '2024-03-22',
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
+			lastModified: '2026-10-30',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
-		},
-		{
-			name: HOSTING_LP_FLOW,
-			steps: [ userSocialStep, 'hosting-decider' ],
-			destination: getHostingFlowDestination,
-			description: 'Create an account and redirect the user to the hosted site flow forking step.',
-			lastModified: '2024-03-22',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'account',

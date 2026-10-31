@@ -1,3 +1,5 @@
+import { normalizeAgencyBookingLink } from '@automattic/api-core';
+import { normalizePhoneNumber } from '@automattic/js-utils';
 import {
 	getBudgetLevelOptions,
 	getBusinessTypeOptions,
@@ -12,6 +14,9 @@ import {
 import type { AgencyLeadMatchingProfile } from '@automattic/api-core';
 
 export interface LeadMatchingFormData {
+	phoneNumber: string;
+	phoneCountryCode: string;
+	bookingLink: string;
 	regions: string[];
 	supportsGlobal: boolean;
 	languages: string[];
@@ -65,6 +70,9 @@ const normalizeOptionalValue = ( value: string | undefined, allowedValues: Set< 
 
 export function getEmptyLeadMatchingFormData(): LeadMatchingFormData {
 	return {
+		phoneNumber: '',
+		phoneCountryCode: '',
+		bookingLink: '',
 		regions: [],
 		supportsGlobal: false,
 		languages: [],
@@ -101,6 +109,9 @@ export function getLeadMatchingFormData(
 	}
 
 	return {
+		phoneNumber: profile.contact?.phone ?? '',
+		phoneCountryCode: '',
+		bookingLink: profile.contact?.booking_link ?? '',
 		regions: profile.geography_and_language?.supported_regions ?? [],
 		supportsGlobal: !! profile.geography_and_language?.global_remote,
 		languages: profile.geography_and_language?.supported_languages ?? [],
@@ -175,12 +186,19 @@ export function getLeadMatchingProfile(
 	previousProfile: AgencyLeadMatchingProfile | null | undefined,
 	acceptingWork: boolean
 ): AgencyLeadMatchingProfile {
+	const contact = {
+		phone:
+			normalizePhoneNumber( formData.phoneNumber, formData.phoneCountryCode ) ??
+			formData.phoneNumber,
+		booking_link: normalizeAgencyBookingLink( formData.bookingLink ),
+	};
 	const supportsEcommerceProjects =
 		formData.projectTypes.includes( 'new_woocommerce' ) || formData.storeComplexities.length > 0;
 	const isComplete =
 		getAnsweredRequiredFieldCount( formData ) === REQUIRED_LEAD_MATCHING_FIELDS.length;
 
 	return {
+		contact,
 		availability: {
 			accepting_work: acceptingWork,
 			lead_eligibility:

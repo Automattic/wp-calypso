@@ -9,6 +9,9 @@ import type {
 const createLeadMatchingDraft = (
 	overrides: Partial< LeadMatchingDetails > = {}
 ): LeadMatchingDetails => ( {
+	phoneNumber: '',
+	phoneCountryCode: '',
+	bookingLink: '',
 	regions: [],
 	supportsGlobal: false,
 	languages: [],

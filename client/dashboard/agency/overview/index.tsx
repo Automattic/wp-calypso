@@ -1,4 +1,4 @@
-import { activeAgencyQuery } from '@automattic/api-queries';
+import { activeAgencyQuery, agencyLeadMatchingQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
@@ -18,10 +18,16 @@ import { useHasCommissionActivity } from '../earn/use-has-commission-activity';
 import { getMarketplaceHostingSectionRoute } from '../marketplace/paths';
 import { useOnboardingTour } from '../onboarding-tour';
 import WelcomeBand, { useWelcomeBandVisibility } from '../onboarding-tour/welcome-band';
-import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
+import { REQUIRED_LEAD_MATCHING_FIELDS } from '../partner-directory/lead-matching/form-data';
+import {
+	PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_ROUTE,
+	PARTNER_DIRECTORY_ROUTE,
+} from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
+import { isProPartnerOrHigher } from '../tiers/get-current-agency-tier';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { PROGRAM_INCENTIVES_URL } from './constants';
+import { getAnsweredMatchingProfileCount } from './matching-profile-visibility';
 import AgencyOverviewContent from './overview-content';
 import AgencyOverviewHeader from './overview-header';
 import usePressableOfferEligibility from './use-pressable-offer-eligibility';
@@ -41,6 +47,20 @@ export default function AgencyOverview() {
 		!! agency?.profile?.partner_directory_application?.directories.some(
 			( { status } ) => status === 'approved'
 		);
+	const canAccessLeadMatching =
+		isProPartnerOrHigher( agency?.tier?.id ) &&
+		!! agencyId &&
+		!! agency?.partner_directory?.allowed &&
+		!! agency?.user?.capabilities?.includes( 'a4a_read_partner_directory' ) &&
+		hasPartnerDirectoryListing;
+	const { data: leadMatching, isSuccess: isLeadMatchingSuccess } = useQuery( {
+		...agencyLeadMatchingQuery( agencyId ),
+		enabled: canAccessLeadMatching,
+	} );
+	const answeredRequiredFieldCount = isLeadMatchingSuccess
+		? getAnsweredMatchingProfileCount( agencyId, leadMatching )
+		: undefined;
+	const contact = leadMatching?.lead_matching_profile?.contact;
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
@@ -111,6 +131,18 @@ export default function AgencyOverview() {
 				approvalStatus={ approvalStatus }
 				capabilities={ agency.user?.capabilities }
 				hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+				showMatchingProfileCard={
+					canAccessLeadMatching &&
+					agency.profile?.listing_details?.is_available === true &&
+					answeredRequiredFieldCount !== undefined &&
+					answeredRequiredFieldCount < REQUIRED_LEAD_MATCHING_FIELDS.length
+				}
+				showContactOptionsAnnouncement={
+					canAccessLeadMatching &&
+					answeredRequiredFieldCount === REQUIRED_LEAD_MATCHING_FIELDS.length &&
+					( ! contact?.phone?.trim() || ! contact?.booking_link?.trim() )
+				}
+				matchingProfileAnswered={ answeredRequiredFieldCount }
 				isEligibleForPressableIntroOffer={ isEligibleForPressableIntroOffer }
 				isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 				links={ {
@@ -120,6 +152,7 @@ export default function AgencyOverview() {
 					woopayments: '/woopayments',
 					marketplace: '/marketplace',
 					partnerDirectory: PARTNER_DIRECTORY_ROUTE,
+					leadMatching: PARTNER_DIRECTORY_LEAD_MATCHING_PREFERENCES_ROUTE,
 					contactSupport: () => openContactForm(),
 					aiMcp: '/agency/ai',
 					pressableHosting: getMarketplaceHostingSectionRoute( 'pressable' ),

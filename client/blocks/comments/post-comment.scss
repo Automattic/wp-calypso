@@ -182,6 +182,29 @@ a.comments__comment-username {
 	}
 }
 
+.comments__comment-new-label {
+	color: var(--color-primary);
+	font-size: $font-body-extra-small;
+	font-weight: 500;
+	margin-inline-start: 8px;
+}
+
+.comments__comment-author .comments__comment-collapse-toggle {
+	align-self: center;
+	color: var(--color-text-subtle);
+	margin-inline-start: auto;
+
+	&:hover {
+		color: var(--color-text);
+	}
+}
+
+.comments__collapsed-replies {
+	color: var(--color-text-subtle);
+	font-size: $font-body-extra-small;
+	margin-block: 4px 0;
+}
+
 .comments__comment-moderation {
 	color: var(--color-text-subtle);
 	margin-top: 0.5em;

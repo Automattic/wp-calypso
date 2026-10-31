@@ -68,7 +68,7 @@
 		"postcss": "^8.5.30",
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
-		"storybook": "^10.6.2",
+		"storybook": "^10.6.3",
 		"stylelint": "^17.16.0",
 		"stylelint-plugin-logical-css": "^2.1.0",
 		"tsup": "^8.5.1",
