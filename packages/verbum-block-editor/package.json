@@ -44,16 +44,16 @@
 	"dependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
-		"@wordpress/block-library": "^9.48.0",
-		"@wordpress/blocks": "^15.21.0",
-		"@wordpress/components": "^37.0.0",
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/element": "^8.0.0",
-		"@wordpress/format-library": "^5.48.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/keycodes": "^4.48.0",
-		"@wordpress/rich-text": "^7.48.0",
-		"@wordpress/url": "^4.48.0"
+		"@wordpress/block-library": "^12.0.0",
+		"@wordpress/blocks": "^17.0.0",
+		"@wordpress/components": "^43.0.0",
+		"@wordpress/data": "^11.0.0",
+		"@wordpress/element": "^10.0.0",
+		"@wordpress/format-library": "^6.0.0",
+		"@wordpress/i18n": "^7.0.0",
+		"@wordpress/keycodes": "^5.0.0",
+		"@wordpress/rich-text": "^8.0.0",
+		"@wordpress/url": "^5.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
@@ -65,7 +65,7 @@
 		"@typescript-eslint/eslint-plugin": "^8.72.0",
 		"@typescript-eslint/parser": "^8.72.0",
 		"@wordpress/eslint-plugin": "^28.0.0",
-		"@wordpress/stylelint-config": "^26.1.0",
+		"@wordpress/stylelint-config": "^27.0.0",
 		"css-loader": "^7.1.5",
 		"sass-embedded": "^1.89.0",
 		"sass-loader": "^16.0.8",
@@ -74,9 +74,9 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.48.0",
-		"@wordpress/element": "^8.0.0",
-		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/data": "^11.0.0",
+		"@wordpress/element": "^10.0.0",
+		"@wordpress/i18n": "^7.0.0",
 		"debug": "^4.4.1",
 		"eslint": "*",
 		"postcss": "*",
