@@ -57,12 +57,17 @@ class OrderDependentRedirectPlugin {
 								continue;
 							}
 
+							const barrel = module.readableIdentifier( requestShortener );
+							const fix = /[\\/]node_modules[\\/]/.test( originModule.resource || '' )
+								? 'The importing file is a dependency, so instead mark the barrel as having side ' +
+									'effects, which stops webpack skipping it: add a module rule ' +
+									`\`{ test: <path of ${ barrel }>, sideEffects: true }\`.`
+								: 'Destructure the namespace once (`const { member } = namespace;`) and use the ' +
+									'local binding instead.';
 							const error = new compiler.webpack.WebpackError(
 								`${ PLUGIN_NAME }: ${ originModule.readableIdentifier( requestShortener ) } reads ` +
-									`\`${ ids.join( '.' ) }\` through ${ module.readableIdentifier( requestShortener ) }, ` +
-									'which webpack skips in some builds and not others, so chunk hashes change between ' +
-									'identical builds. Destructure the namespace once (`const { member } = namespace;`) ' +
-									'and use the local binding instead.'
+									`\`${ ids.join( '.' ) }\` through ${ barrel }, which webpack skips in some ` +
+									`builds and not others, so chunk hashes change between identical builds. ${ fix }`
 							);
 							error.module = originModule;
 							compilation.errors.push( error );
