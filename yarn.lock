@@ -17215,7 +17215,7 @@ __metadata:
     debug: "npm:^4.4.1"
     deep-freeze: "npm:^0.0.1"
     deepmerge: "npm:^4.3.1"
-    diff: "npm:^4.0.2"
+    diff: "npm:^4.0.4"
     dompurify: "npm:3.4.17"
     draft-js: "patch:draft-js@npm%3A0.11.7#~/.yarn/patches/draft-js-npm-0.11.7-ea66f83002.patch"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
@@ -19392,7 +19392,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"diff@npm:^4.0.2":
+"diff@npm:^4.0.2, diff@npm:^4.0.4":
   version: 4.0.4
   resolution: "diff@npm:4.0.4"
   checksum: 855fb70b093d1d9643ddc12ea76dca90dc9d9cdd7f82c08ee8b9325c0dc5748faf3c82e2047ced5dcaa8b26e58f7903900be2628d0380a222c02d79d8de385df
