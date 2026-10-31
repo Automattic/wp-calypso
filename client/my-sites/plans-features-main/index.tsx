@@ -82,8 +82,10 @@ import {
 	shouldForceDefaultPlansBasedOnIntent,
 	hideEscapeHatchForIntent,
 	ensureCompatibleIntervalType,
+	reverseGridPlanOrder,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
+import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -788,6 +790,9 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignNewDescription,
 	} = usePlansGridRedesignExperiment( { isInSignup, intent } );
 
+	const { isLoading: isPlanDifferentiatorsExperimentLoading, useReversedPlanOrder } =
+		usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup, siteId } );
+
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
 	// Prefetch the list of features lost in the downgrade before opening the
@@ -1047,7 +1052,7 @@ const PlansFeaturesMain = ( {
 	] );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
-	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
+	const gridPlansForComparisonGridRaw = useGridPlansForComparisonGrid( {
 		allFeaturesList: getFeaturesList(),
 		coupon,
 		eligibleForFreeHostingTrial,
@@ -1070,6 +1075,14 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
+
+	const gridPlansForComparisonGrid = useMemo(
+		() =>
+			useReversedPlanOrder && gridPlansForComparisonGridRaw
+				? reverseGridPlanOrder( gridPlansForComparisonGridRaw )
+				: gridPlansForComparisonGridRaw,
+		[ gridPlansForComparisonGridRaw, useReversedPlanOrder ]
+	);
 
 	// we need only the visible ones for features grid (these should extend into plans-ui data store selectors)
 	const gridPlansForFeaturesGridRaw = useGridPlansForFeaturesGrid( {
@@ -1149,7 +1162,7 @@ const PlansFeaturesMain = ( {
 	const gridPlansForFeaturesGrid = useMemo( () => {
 		const bottomGridPlanSlug = bottomGridPlanForFeaturesGrid?.planSlug;
 
-		return (
+		const gridPlans =
 			gridPlansForFeaturesGridRaw?.filter( ( { planSlug } ) => {
 				if ( planSlug === bottomGridPlanSlug ) {
 					return false;
@@ -1164,13 +1177,15 @@ const PlansFeaturesMain = ( {
 				}
 
 				return true;
-			} ) ?? null
-		);
+			} ) ?? null;
+
+		return useReversedPlanOrder && gridPlans ? reverseGridPlanOrder( gridPlans ) : gridPlans;
 	}, [
 		bottomGridPlanForFeaturesGrid,
 		gridPlansForFeaturesGridRaw,
 		deemphasizeFreePlan,
 		showWooCommerceBottomCard,
+		useReversedPlanOrder,
 	] );
 
 	const isVisualSplitEnabled =
@@ -1396,7 +1411,8 @@ const PlansFeaturesMain = ( {
 		! isLoadingGridPlans &&
 		! resolvedSubdomainName.isLoading &&
 		! isRenewalPricingExperimentLoading &&
-		! isPlansGridRedesignExperimentLoading;
+		! isPlansGridRedesignExperimentLoading &&
+		! isPlanDifferentiatorsExperimentLoading;
 
 	useEffect( () => {
 		if ( isPlansGridReady ) {
