@@ -26,6 +26,7 @@ type ImageStudioTrackingData = {
 	siteType?: string;
 	isA11n?: boolean;
 	isDevMode?: boolean;
+	isMetered?: boolean;
 	version?: string;
 };
 
@@ -73,10 +74,10 @@ export function getImageStudioBlogId(): number | null {
 	return Number.isFinite( parsedBlogId ) && parsedBlogId > 0 ? parsedBlogId : null;
 }
 
-/** Whether the page says it's in dev mode, or undefined when it doesn't say. */
-export function getImageStudioIsDevMode(): boolean | undefined {
-	const isDevMode = getImageStudioWindowData()?.isDevMode;
-	return typeof isDevMode === 'boolean' ? isDevMode : undefined;
+/** Whether the page says the site is on AI credits, or undefined when it doesn't say. */
+export function getImageStudioIsMetered(): boolean | undefined {
+	const isMetered = getImageStudioWindowData()?.isMetered;
+	return typeof isMetered === 'boolean' ? isMetered : undefined;
 }
 
 export function getImageStudioSiteType(): ImageStudioSiteType {

@@ -15,7 +15,7 @@ import { useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { getSessionId } from '../utils/session';
 import {
 	getImageStudioBlogId,
-	getImageStudioIsDevMode,
+	getImageStudioIsMetered,
 	getImageStudioSiteType,
 	trackImageStudioCreditsMeterOpened,
 	trackImageStudioUpgradeNoticeShown,
@@ -38,6 +38,9 @@ import type { NoticeConfig } from '@automattic/agenttic-ui';
 
 /** Suggestions wait on the first balance, so a slow endpoint must not hold them back. */
 const SITE_CREDITS_TIMEOUT_MS = 5000;
+
+/** A failed check is tried again after each of these, so a metered site doesn't look unmetered. */
+const RETRY_DELAYS_MS = [ 2000, 5000, 15000 ];
 
 const WPCOM_SITES_API = 'https://public-api.wordpress.com/wpcom/v2/sites';
 
@@ -96,12 +99,15 @@ function getSitePurchaseLink( status: PaidCreditsStatus, blogId: number ) {
 	);
 }
 
-/** Resolves to undefined when the site is not on AI credits or the request fails or is aborted. */
+/**
+ * Resolves to undefined when the site is not on AI credits or the request is aborted, and to
+ * null when the request fails in a way that may pass, as a 5xx or a network error does.
+ */
 async function fetchSiteCredits(
 	blogId: number,
 	authProvider: AuthProvider,
 	signal: AbortSignal
-): Promise< { aiCredits: unknown; access: CreditsAccess } | undefined > {
+): Promise< { aiCredits: unknown; access: CreditsAccess } | null | undefined > {
 	try {
 		const headers = await authProvider();
 		const response = await window.fetch( `${ WPCOM_SITES_API }/${ blogId }/ai/credits`, {
@@ -112,7 +118,7 @@ async function fetchSiteCredits(
 		} );
 		// A site that is not on AI credits answers 404.
 		if ( ! response.ok ) {
-			return undefined;
+			return response.status >= 500 ? null : undefined;
 		}
 		const data = await response.json();
 		return { aiCredits: data?.ai_credits, access: parseCreditsAccess( data ) };
@@ -120,6 +126,7 @@ async function fetchSiteCredits(
 		// An abort means the modal closed or its credentials changed, not that the request failed.
 		if ( ! signal.aborted ) {
 			window.console?.error?.( '[Image Studio] Failed to fetch site AI credits:', error );
+			return null;
 		}
 		return undefined;
 	}
@@ -150,9 +157,9 @@ export interface AiCreditsState {
 /**
  * Reads the site's AI credit balance when the modal opens, and again when the page regains
  * focus or comes back online, as after buying credits in checkout's tab; each turn's final
- * update brings the next one. Only one read runs at a time. While credits are only on
- * internal test sites, pages outside dev mode don't ask, since nearly every site answers 404;
- * a turn's balance still shows.
+ * update brings the next one. Only one read runs at a time. Pages the host says aren't
+ * metered don't ask; a turn's balance still shows. A 404 means the site isn't on AI credits.
+ * A 5xx or a network error is tried again a few times.
  * @param options              - Hook options
  * @param options.mode         - Image Studio mode ('edit' or 'generate') for tracking
  * @param options.authProvider - The agent's credentials, once its config has loaded
@@ -165,8 +172,8 @@ export function useAiCredits( {
 	authProvider?: AuthProvider;
 } ): AiCreditsState {
 	const [ blogId ] = useState( getSiteCreditsBlogId );
-	// TODO: Remove the dev mode check before AI credits reach customers (FORNO-538).
-	const [ isRequestSkipped ] = useState( () => getImageStudioIsDevMode() === false );
+	// An absent value asks the endpoint, since an Atomic site's PHP can't tell.
+	const [ isRequestSkipped ] = useState( () => getImageStudioIsMetered() === false );
 	const [ status, setStatus ] = useState< PaidCreditsStatus | null >( null );
 	const [ isLoading, setIsLoading ] = useState( blogId !== null && ! isRequestSkipped );
 	const [ isLowNoticeDismissed, setIsLowNoticeDismissed ] = useState( false );
@@ -177,6 +184,9 @@ export function useAiCredits( {
 	const canCheck = blogId !== null && ! isRequestSkipped && !! authProvider;
 	// Cancelled when the credentials change or the modal closes, so an older check's answer is dropped.
 	const checkToken = useRef( { isCancelled: false } );
+	const retry = useRef< { attempt: number; timer?: ReturnType< typeof setTimeout > } >( {
+		attempt: 0,
+	} );
 	// The check in flight, aborted when its token is cancelled. Returning to the page fires focus
 	// and visibilitychange together, so another check doesn't start while one runs.
 	const runningCheck = useRef< AbortController | undefined >( undefined );
@@ -283,6 +293,7 @@ export function useAiCredits( {
 		if ( runningCheck.current ) {
 			return Promise.resolve();
 		}
+		clearTimeout( retry.current.timer );
 		const token = checkToken.current;
 		const turnBalancesBefore = turnBalanceCount.current;
 		const request = new AbortController();
@@ -302,6 +313,14 @@ export function useAiCredits( {
 				setAccess( result.access );
 			}
 			settleAccess();
+			if ( result === null ) {
+				const delay = RETRY_DELAYS_MS[ retry.current.attempt++ ];
+				if ( delay !== undefined ) {
+					retry.current.timer = setTimeout( () => checkCredits( trigger ), delay );
+				}
+				return;
+			}
+			retry.current.attempt = 0;
 			// A turn that finished while this check ran already reported a newer balance.
 			if ( turnBalanceCount.current === turnBalancesBefore ) {
 				applyCredits( result?.aiCredits, trigger );
@@ -330,6 +349,8 @@ export function useAiCredits( {
 
 		return () => {
 			token.isCancelled = true;
+			clearTimeout( retry.current.timer );
+			retry.current.attempt = 0;
 			runningCheck.current?.abort();
 			runningCheck.current = undefined;
 			clearTimeout( timeout );

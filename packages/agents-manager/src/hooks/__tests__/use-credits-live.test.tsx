@@ -597,7 +597,7 @@ describe( 'purchase access', () => {
 		fetchMock.mockImplementationOnce( read );
 		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 		await flush();
-		expect( result.current.trailingActions ).toBeUndefined();
+		expect( props( result.current ).status.remaining ).toBe( 2450 );
 		await receive( { ...exhausted(), plan_tier: 'personal' } );
 		expect( props( result.current ).action?.href ).toBe( UPGRADE_URL );
 		expect( purchaseHint( result.current ) ).toBeUndefined();
@@ -915,13 +915,13 @@ it( 'keeps dismissal within the current visit and ignores previous-site dismiss 
 	expect( view.result.current.notice?.message ).toBe( `${ localNumber( 500 ) } credits left.` );
 } );
 
-describe( 'while the host says the page isn’t in dev mode', () => {
+describe( 'while the host says the site isn’t metered', () => {
 	const purchaseHint = ( value: ReturnType< typeof useCredits > ) =>
 		( value.trailingActions as ReactElement< { purchaseHint?: string } > | undefined )?.props
 			.purchaseHint;
 
 	beforeEach( () => {
-		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isMetered: false };
 	} );
 	afterEach( () => {
 		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -1003,24 +1003,21 @@ describe( 'while the host says the page isn’t in dev mode', () => {
 		expect( fetchMock ).not.toHaveBeenCalled();
 	} );
 } );
-describe( 'the dev mode gate', () => {
+describe( 'the metered flag', () => {
 	afterEach( () => {
 		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 
 	it.each( [
-		[ 'never reads outside dev mode', { isDevMode: false }, 0 ],
+		[ 'never reads when the host says the site isn’t metered', { isMetered: false }, 0 ],
 		[
-			'never reads outside dev mode, even for an Automattician',
-			{ isDevMode: false, isA11n: true },
+			'never reads when the site isn’t metered, even for an Automattician',
+			{ isMetered: false, isA11n: true },
 			0,
 		],
+		[ 'reads when the host says the site is metered', { isMetered: true }, 1 ],
+		[ 'reads outside dev mode', { isDevMode: false }, 1 ],
 		[ 'reads in dev mode', { isDevMode: true }, 1 ],
-		[
-			'reads in dev mode for someone who isn’t an Automattician',
-			{ isDevMode: true, isA11n: false },
-			1,
-		],
 		[ 'reads when the host leaves the flag out', {}, 1 ],
 		[ 'reads with no host data, like Calypso', undefined, 1 ],
 	] )( '%s', async ( _name, inlineData, reads ) => {
@@ -1176,8 +1173,8 @@ it( 'does not carry a paid tier across sites or reuse a prior visit callback', a
 	expect( props( view.result.current ).status ).not.toHaveProperty( 'planTier' );
 	expect( props( view.result.current ).status.remaining ).toBe( 2450 );
 } );
-it.each( [ 401, 403, 404, 503 ] )(
-	'treats a %i read as unknown rather than zero',
+it.each( [ 401, 403, 404 ] )(
+	'treats a %i read as unknown rather than zero, and hides the balance',
 	async ( status ) => {
 		fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
 		const { result } = renderCredits();
@@ -1202,6 +1199,69 @@ it.each( [
 	await flush();
 	expect( result.current.trailingActions ).toBeUndefined();
 	expect( result.current.beforeSubmit() ).toBe( true );
+} );
+it.each( [
+	[ 'a 503', () => Promise.resolve( { ok: false, status: 503 } ) ],
+	[ 'a network error', () => Promise.reject( new Error( 'Offline' ) ) ],
+] )( 'keeps the last balance through %s, and tries again', async ( _case, failure ) => {
+	fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const { result } = renderCredits();
+	await flush();
+	fetchMock.mockImplementationOnce( failure );
+	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+	await flush();
+	expect( props( result.current ).status.remaining ).toBe( 2450 );
+	fetchMock.mockResolvedValueOnce(
+		response( creditSnapshot( { credits_used: 500, credits_remaining: 2000 } ) )
+	);
+	await act( async () => {
+		jest.advanceTimersByTime( 2000 );
+	} );
+	expect( props( result.current ).status.remaining ).toBe( 2000 );
+} );
+it( 'shows the meter when a retry works after a failed first read', async () => {
+	fetchMock
+		.mockResolvedValueOnce( { ok: false, status: 503 } )
+		.mockResolvedValueOnce( response( creditSnapshot() ) );
+	const { result } = renderCredits();
+	await flush();
+	expect( result.current.trailingActions ).toBeUndefined();
+	await act( async () => {
+		jest.advanceTimersByTime( 2000 );
+	} );
+	expect( props( result.current ).status.remaining ).toBe( 2450 );
+} );
+it( 'stops retrying a failed read after a few tries', async () => {
+	fetchMock.mockResolvedValue( { ok: false, status: 503 } );
+	renderCredits();
+	await flush();
+	for ( const delay of [ 2000, 5000, 15000, 60000 ] ) {
+		await act( async () => {
+			jest.advanceTimersByTime( delay );
+		} );
+	}
+	expect( fetchMock ).toHaveBeenCalledTimes( 4 );
+} );
+it( 'drops a pending retry when the chat unmounts', async () => {
+	fetchMock.mockResolvedValue( { ok: false, status: 503 } );
+	const { unmount } = renderCredits();
+	await flush();
+	unmount();
+	await act( async () => {
+		jest.advanceTimersByTime( 60000 );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+} );
+it( 'stays silent and doesn’t retry a 404', async () => {
+	fetchMock.mockResolvedValue( { ok: false, status: 404 } );
+	const { result } = renderCredits();
+	await flush();
+	await act( async () => {
+		jest.advanceTimersByTime( 60000 );
+	} );
+	expect( fetchMock ).toHaveBeenCalledTimes( 1 );
+	expect( result.current.trailingActions ).toBeUndefined();
+	expect( result.current.notice ).toBeUndefined();
 } );
 it( 'keeps auth and network failures unknown and recovers on a later refresh', async () => {
 	authProvider.mockRejectedValueOnce( new Error( 'Expired credentials' ) );
@@ -1908,9 +1968,9 @@ describe( 'credits Tracks events', () => {
 		expect( creditsEvents() ).toHaveLength( 2 );
 	} );
 
-	describe( 'outside dev mode', () => {
+	describe( 'while the host says the site isn’t metered', () => {
 		beforeEach( () => {
-			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isMetered: false };
 		} );
 		afterEach( () => {
 			delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
@@ -2007,7 +2067,7 @@ describe( 'credits Tracks events', () => {
 			[ 'a failed read', () => Promise.resolve( failedRead ) ],
 			[ 'a network error', () => Promise.reject( new Error( 'Offline' ) ) ],
 		] )(
-			'records nothing when the read after the turn ends in %s, since the notice hides',
+			'records nothing while the read after the turn ends in %s, keeping the turn’s notice',
 			async ( _case, read ) => {
 				const scope = freshScope();
 				fetchMock.mockResolvedValueOnce( failedRead );
@@ -2016,7 +2076,7 @@ describe( 'credits Tracks events', () => {
 				fetchMock.mockImplementationOnce( read );
 
 				await runTurn( view, scope, low() );
-				expect( view.result.current.notice ).toBeUndefined();
+				expect( view.result.current.notice ).toBeDefined();
 				expect( creditsEvents() ).toEqual( [] );
 			}
 		);
