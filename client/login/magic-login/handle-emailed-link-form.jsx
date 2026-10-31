@@ -6,6 +6,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { getDefaultTwoFactorAuthType } from 'calypso/blocks/login/two-factor-authentication/get-default-two-factor-auth-type';
 import EmptyContent from 'calypso/components/empty-content';
 import { LoadingEllipsis } from 'calypso/components/loading-ellipsis';
 import WooCommerceLogo from 'calypso/components/woocommerce-logo';
@@ -18,6 +19,7 @@ import {
 	isWooOAuth2Client,
 } from 'calypso/lib/oauth2-clients';
 import { login } from 'calypso/lib/paths';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import {
@@ -34,6 +36,7 @@ import {
 	getRedirectToOriginal,
 	getRedirectToSanitized,
 	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
 import { getOAuth2Client } from 'calypso/state/oauth2-clients/selectors';
@@ -66,6 +69,7 @@ export class HandleEmailedLinkForm extends Component {
 		redirectToSanitized: PropTypes.string,
 		twoFactorEnabled: PropTypes.bool,
 		twoFactorNotificationSent: PropTypes.string,
+		twoFactorSupportedAuthTypes: PropTypes.arrayOf( PropTypes.string ),
 		initialQuery: PropTypes.object,
 		oauth2Client: PropTypes.object.isRequired,
 
@@ -121,9 +125,6 @@ export class HandleEmailedLinkForm extends Component {
 		this.props.fetchMagicLoginAuthenticate( this.props.token, this.props.redirectToOriginal, flow );
 	};
 
-	// Lifted from `blocks/login`
-	// @TODO move to `state/login/actions` & use both places
-	//
 	// Accepts `props` because `this.props` is not yet updated when called from
 	// `UNSAFE_componentWillUpdate`, which left `twoFactorEnabled` with a stale value.
 	// Users with 2FA enabled who tried to login with a magic link would be
@@ -134,6 +135,7 @@ export class HandleEmailedLinkForm extends Component {
 			redirectToSanitized,
 			twoFactorEnabled,
 			twoFactorNotificationSent,
+			twoFactorSupportedAuthTypes,
 			oauth2Client,
 			wccomFrom,
 		} = props;
@@ -143,8 +145,11 @@ export class HandleEmailedLinkForm extends Component {
 		} else {
 			page(
 				login( {
-					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: twoFactorNotificationSent.replace( 'none', 'authenticator' ),
+					twoFactorAuthType: getDefaultTwoFactorAuthType( {
+						supportedAuthTypes: twoFactorSupportedAuthTypes,
+						notificationSent: twoFactorNotificationSent,
+						isBrowserSupported: isWebAuthnSupported(),
+					} ),
 					redirectTo: redirectToSanitized,
 					oauth2ClientId: oauth2Client.id,
 					wccomFrom,
@@ -333,6 +338,7 @@ const mapState = ( state ) => {
 		isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 		twoFactorEnabled: isTwoFactorEnabled( state ),
 		twoFactorNotificationSent: getTwoFactorNotificationSent( state ),
+		twoFactorSupportedAuthTypes: getTwoFactorSupportedAuthTypes( state ),
 		initialQuery: getInitialQueryArguments( state ),
 		isWCCOM: isWooOAuth2Client( oauth2Client ),
 		isA4A: isA4AOAuth2Client( oauth2Client ),
