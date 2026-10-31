@@ -91,6 +91,9 @@ async function request< T >( siteId: number, req: ApiRequest ): Promise< T > {
 
 const run = ( id: string, action = '' ) => `/${ encodeURIComponent( id ) }${ action }`;
 
+export const fetchEligibility = ( siteId: number ) =>
+	request< Eligibility >( siteId, { method: 'GET', path: '/eligibility' } );
+
 export const openRedesign = ( siteId: number ) =>
 	request< Redesign >( siteId, { method: 'POST', path: '' } );
 

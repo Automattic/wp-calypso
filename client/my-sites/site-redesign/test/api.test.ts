@@ -1,5 +1,5 @@
 import wpcom from 'calypso/lib/wp';
-import { generateRedesign } from '../api';
+import { fetchEligibility, generateRedesign } from '../api';
 
 jest.mock( '@automattic/calypso-config', () => ( { isEnabled: () => false } ) );
 jest.mock( 'calypso/lib/wp', () => ( { req: { get: jest.fn(), post: jest.fn() } } ) );
@@ -16,5 +16,15 @@ describe( 'generateRedesign', () => {
 			{ brief_confirmed: true },
 			{ brief_confirmed: true, new_batch: true },
 		] );
+	} );
+} );
+
+describe( 'fetchEligibility', () => {
+	it( 'reads the eligibility route of the site', async () => {
+		await fetchEligibility( 7 );
+		expect( wpcom.req.get ).toHaveBeenCalledWith(
+			{ apiNamespace: 'wpcom/v2', path: '/sites/7/site-redesign/eligibility' },
+			{}
+		);
 	} );
 } );
