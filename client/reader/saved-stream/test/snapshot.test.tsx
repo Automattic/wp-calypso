@@ -250,6 +250,33 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		expect( titleClick ).not.toHaveBeenCalled();
 	} );
 
+	it( 'leaves Enter to a focused Save button on a selected snapshot', async () => {
+		mockSavedEndpoint( [ URL_SAVE ] );
+		renderSavedStream();
+		await waitFor( () =>
+			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toBeVisible()
+		);
+		const user = userEvent.setup();
+		await user.keyboard( 'j' );
+		await waitFor( () =>
+			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toHaveFocus()
+		);
+		const saveButton = getCard( URL_SAVE.title ).querySelector(
+			'.reader-save-button'
+		) as HTMLElement;
+		await waitFor( () => expect( saveButton ).not.toBeDisabled() );
+		const unsave = nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete', { url: URL_SAVE.URL, source: SOURCE } )
+			.reply( 200, { saved: false, key: { url: URL_SAVE.URL }, total: 0 } );
+		mockSavedEndpoint( [] );
+		saveButton.focus();
+
+		await user.keyboard( '{Enter}' );
+
+		await waitFor( () => expect( unsave.isDone() ).toBe( true ) );
+		expect( windowOpen ).not.toHaveBeenCalled();
+	} );
+
 	it.each( [
 		{ kind: 'URL save', post: URL_SAVE, body: { url: URL_SAVE.URL } },
 		{ kind: 'deleted feed item', post: PRUNED_FEED_ITEM, body: { feed_item_id: 64089 } },
