@@ -390,6 +390,10 @@ class ReaderStream extends Component {
 
 			// Open selection.
 			case 'Enter': {
+				// A snapshot opens in a new tab, and so does its focused title link.
+				if ( this.props.selectedPostKey?.snapshotId ) {
+					event.preventDefault();
+				}
 				return this.handleOpenSelection();
 			}
 

@@ -21,19 +21,36 @@ jest.mock(
 		}
 );
 jest.mock( 'calypso/lib/with-dimensions', () => ( Component: React.ComponentType ) => Component );
-jest.mock(
-	'calypso/components/infinite-list',
-	() =>
-		function InfiniteList( {
+jest.mock( 'calypso/components/infinite-list', () => {
+	const { forwardRef, useImperativeHandle, useRef } = jest.requireActual( 'react' );
+	return forwardRef( function InfiniteList(
+		{
 			items,
 			renderItem,
 		}: {
 			items: unknown[];
 			renderItem: ( item: unknown, idx: number ) => ReactNode;
-		} ) {
-			return <div>{ items.map( ( item, idx ) => renderItem( item, idx ) ) }</div>;
-		}
-);
+		},
+		ref: React.Ref< unknown >
+	) {
+		const node = useRef( null );
+		const itemsRef = useRef( items );
+		itemsRef.current = items;
+		useImperativeHandle(
+			ref,
+			() => ( {
+				getDOMNode: () => node.current,
+				getVisibleItemIndexes: () =>
+					itemsRef.current.map( ( _item: unknown, index: number ) => ( {
+						index,
+						bounds: { top: 1 + index },
+					} ) ),
+			} ),
+			[]
+		);
+		return <div ref={ node }>{ items.map( ( item, idx ) => renderItem( item, idx ) ) }</div>;
+	} );
+} );
 jest.mock( '@automattic/calypso-router', () => {
 	const fn = jest.fn() as jest.Mock & { replace: jest.Mock; show: jest.Mock };
 	fn.replace = jest.fn();
@@ -210,6 +227,27 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		await userEvent.setup().click( screen.getByText( URL_SAVE.excerpt ) );
 
 		expect( windowOpen ).toHaveBeenCalledWith( URL_SAVE.URL, '_blank', 'noopener,noreferrer' );
+	} );
+
+	it( 'opens a selected snapshot once when Enter is pressed', async () => {
+		mockSavedEndpoint( [ URL_SAVE ] );
+		renderSavedStream();
+		await waitFor( () =>
+			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toBeVisible()
+		);
+		const user = userEvent.setup();
+		await user.keyboard( 'j' );
+		await waitFor( () => expect( getCard( URL_SAVE.title ) ).toHaveClass( 'is-selected' ) );
+		const title = screen.getByRole( 'link', { name: URL_SAVE.title } );
+		await waitFor( () => expect( title ).toHaveFocus() );
+		const titleClick = jest.fn();
+		title.addEventListener( 'click', titleClick );
+
+		await user.keyboard( '{Enter}' );
+
+		expect( windowOpen ).toHaveBeenCalledTimes( 1 );
+		expect( windowOpen ).toHaveBeenCalledWith( URL_SAVE.URL, '_blank', 'noopener,noreferrer' );
+		expect( titleClick ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [

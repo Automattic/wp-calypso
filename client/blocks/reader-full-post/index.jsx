@@ -1077,6 +1077,9 @@ function navigationUrlFor( post, postKey ) {
 			return xMeta.postURL;
 		}
 	}
+	if ( postKey.snapshotId ) {
+		return postKey.url;
+	}
 	if ( postKey.feedId ) {
 		return `/reader/feeds/${ postKey.feedId }/posts/${ postKey.postId }`;
 	}
