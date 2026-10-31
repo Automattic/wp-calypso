@@ -18,6 +18,7 @@ import type { ReactNode } from 'react';
 // The route-specific navigation each variant (dotcom, A4A) wires to its own route tree,
 // so the page shell below stays route-agnostic. Passing `null` clears back to the index route.
 export interface BackupsNavigation {
+	listPath: string;
 	selectBackup: ( rewindId: string | null ) => void;
 	requestRestore: ( rewindId: string ) => void;
 	requestDownload: ( rewindId: string, downloadId?: number ) => void;
@@ -51,6 +52,8 @@ export function BackupsPage( {
 		timezoneString,
 		gmtOffset,
 		defaultDays: 30,
+		selectionPath: navigation.listPath,
+		resetPageOnChange: true,
 	} );
 
 	const { activityLog, isLoadingActivityLog, selectedBackup, isSmallViewport } =
@@ -58,17 +61,10 @@ export function BackupsPage( {
 			site,
 			rewindId,
 			dateRange,
-			timezoneString,
-			gmtOffset,
 			enabled: hasBackups,
 		} );
 	const isMobileDetailsView = isSmallViewport && !! selectedBackup;
 	const shouldShowActions = hasBackups && ! isMobileDetailsView;
-
-	const handleDateRangeChangeWrapper = ( next: { start: Date; end: Date } ) => {
-		handleDateRangeChange( next );
-		navigation.selectBackup( null );
-	};
 
 	const actions = (
 		<>
@@ -81,7 +77,7 @@ export function BackupsPage( {
 					timezoneString={ timezoneString }
 					locale={ locale }
 					defaultFallbackPreset="last-30-days"
-					onChange={ handleDateRangeChangeWrapper }
+					onChange={ handleDateRangeChange }
 				/>
 			</div>
 			<BackupNowButton site={ site } backupState={ backupState } />
