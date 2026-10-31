@@ -78,7 +78,7 @@
 		"postcss-prefix-selector": "^1.16.1",
 		"postcss-selector-parser": "^7.1.7",
 		"size-limit": "^8.2.6",
-		"webpack": "^5.111.1",
+		"webpack": "^5.112.0",
 		"webpack-bundle-analyzer": "^5.4.0"
 	}
 }
