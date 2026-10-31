@@ -1,3 +1,4 @@
+import { localizeUrl } from '@automattic/i18n-utils';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -9,6 +10,7 @@ import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-t
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 
 class Shortlinks extends Component {
@@ -30,8 +32,15 @@ class Shortlinks extends Component {
 	isFormPending = () => this.props.isRequestingSettings || this.props.isSavingSettings;
 
 	render() {
-		const { selectedSiteId, translate } = this.props;
+		const { selectedSiteId, siteIsWpcom, translate } = this.props;
 		const formPending = this.isFormPending();
+		const supportProps = siteIsWpcom
+			? {
+					link: localizeUrl( 'https://wordpress.com/support/shortlinks/' ),
+					supportPostId: 4603,
+					privacyLink: false,
+				}
+			: { link: 'https://jetpack.com/support/wp-me-shortlinks/' };
 
 		/* eslint-disable wpcalypso/jsx-classname-namespace */
 		return (
@@ -43,7 +52,7 @@ class Shortlinks extends Component {
 							text={ translate(
 								'Generates shorter links so you can have more space to write on social media sites.'
 							) }
-							link="https://jetpack.com/support/wp-me-shortlinks/"
+							{ ...supportProps }
 						/>
 					</PanelCardHeading>
 					<FormFieldset>
@@ -73,6 +82,7 @@ export default connect( ( state ) => {
 	return {
 		selectedSiteId,
 		shortlinksModuleActive: !! isJetpackModuleActive( state, selectedSiteId, 'shortlinks' ),
+		siteIsWpcom: isSiteWpcom( state, selectedSiteId ),
 		moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 	};
 } )( localize( Shortlinks ) );
