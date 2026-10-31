@@ -2,18 +2,18 @@ import { plugins, use as registerDataPlugin } from '@wordpress/data';
 import persistOptions from './one-week-persistence-config';
 import type { DataPlugin } from '@wordpress/data';
 
-// Destructured so webpack sees `plugins` used whole. With `plugins.persistence` it can skip the
-// plugins barrel in some builds and not others, which changes chunk hashes between identical builds.
-const { persistence } = plugins;
-
 let isRegistered = false;
 // Data stores can be bundled independently while sharing the same wp.data registry.
 const pluginRegistry = registerDataPlugin as typeof registerDataPlugin & {
 	__automatticDataStoresPersistencePluginRegistered?: boolean;
 };
 
-const persistencePlugin: DataPlugin = ( registry, options ) =>
-	persistence(
+const persistencePlugin: DataPlugin = ( registry, options ) => {
+	// Destructured so webpack sees `plugins` used whole: with `plugins.persistence` it can skip the
+	// plugins barrel in some builds and not others, changing chunk hashes between identical builds.
+	// Read here rather than at module load, as tests mock @wordpress/data without `plugins`.
+	const { persistence } = plugins;
+	return persistence(
 		{
 			...registry,
 			registerStore( storeName, storeOptions ) {
@@ -29,6 +29,7 @@ const persistencePlugin: DataPlugin = ( registry, options ) =>
 		},
 		options as Parameters< typeof persistence >[ 1 ]
 	);
+};
 
 export const registerPlugins = () => {
 	if ( isRegistered || pluginRegistry.__automatticDataStoresPersistencePluginRegistered ) {

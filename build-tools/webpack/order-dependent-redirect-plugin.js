@@ -63,8 +63,8 @@ class OrderDependentRedirectPlugin {
 								? 'The importing file is a dependency, so instead mark the barrel as having side ' +
 									'effects, which stops webpack skipping it: add a module rule ' +
 									`\`{ test: <path of ${ barrel }>, sideEffects: true }\`.`
-								: 'Destructure the namespace once (`const { member } = namespace;`) and use the ' +
-									'local binding instead.';
+								: 'Destructure the member where it is used (`const { member } = namespace;`) and ' +
+									'call the local binding instead.';
 							const error = new compiler.webpack.WebpackError(
 								`${ PLUGIN_NAME }: ${ originModule.readableIdentifier( requestShortener ) } reads ` +
 									`\`${ ids.join( '.' ) }\` through ${ barrel }, which webpack skips in some ` +

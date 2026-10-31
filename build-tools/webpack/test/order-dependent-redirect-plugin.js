@@ -27,7 +27,7 @@ const FILES = {
 	'src/member-read.mjs':
 		"import { plugins } from 'data';\nexport const read = () => plugins.persistence();\n",
 	'src/destructured.mjs':
-		"import { plugins, helper } from 'data';\nconst { persistence } = plugins;\nexport const destructured = () => persistence() + helper();\n",
+		"import { plugins, helper } from 'data';\nexport const destructured = () => {\n\tconst { persistence } = plugins;\n\treturn persistence() + helper();\n};\n",
 };
 
 const build = ( mode ) =>
