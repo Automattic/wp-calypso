@@ -40,7 +40,7 @@
 	"dependencies": {
 		"@automattic/load-script": "workspace:^",
 		"cookie": "^0.7.2",
-		"debug": "^4.4.1",
+		"debug": "^4.4.3",
 		"hash.js": "^1.1.7",
 		"tslib": "^2.8.1"
 	},
