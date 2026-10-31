@@ -42,7 +42,7 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@jest/globals": "^30.5.2",
 		"@types/node": "^24.12.2",
-		"nock": "^14.0.17",
+		"nock": "^15.0.5",
 		"typescript": "^6.0.3"
 	},
 	"scripts": {
