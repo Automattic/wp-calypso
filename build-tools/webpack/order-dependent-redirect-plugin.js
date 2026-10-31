@@ -37,7 +37,8 @@ class OrderDependentRedirectPlugin {
 							if (
 								! originModule ||
 								! dependency ||
-								dependency.type !== 'harmony import specifier' ||
+								// Also matches its `evaluated X … harmony import specifier` subclass, as webpack does.
+								! dependency.type.endsWith( 'harmony import specifier' ) ||
 								dependency.namespaceObjectAsContext ||
 								// A redirect clones the connection onto the new target and leaves this one behind.
 								moduleGraph.getConnection( dependency ) !== connection
