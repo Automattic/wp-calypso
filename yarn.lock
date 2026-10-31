@@ -399,7 +399,7 @@ __metadata:
     unified: "npm:^11.0.5"
     vite: "npm:^6.4.4"
     vite-plugin-lib-inject-css: "npm:^2.2.2"
-    vitest: "npm:^4.0.0"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     "@wordpress/api-fetch": ^6.0.0 || ^7.0.0
     react: ^18.0.0 || ^19.0.0
@@ -467,7 +467,7 @@ __metadata:
     use-debounce: "npm:^10.0.6"
     vite: "npm:^6.4.4"
     vite-plugin-lib-inject-css: "npm:^2.2.2"
-    vitest: "npm:^4.0.0"
+    vitest: "npm:^4.1.12"
   peerDependencies:
     react: ^18.0.0 || ^19.0.0
     react-dom: ^18.0.0 || ^19.0.0
@@ -34959,7 +34959,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vitest@npm:^4.0.0":
+"vitest@npm:^4.1.12":
   version: 4.1.12
   resolution: "vitest@npm:4.1.12"
   dependencies:
