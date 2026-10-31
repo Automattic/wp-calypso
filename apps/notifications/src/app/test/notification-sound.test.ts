@@ -45,7 +45,10 @@ describe( 'createNotificationSound', () => {
 			state: 'suspended',
 			createOscillator: jest.fn( () => oscillator ),
 			createGain: jest.fn( () => gain ),
-			resume: jest.fn().mockResolvedValue( undefined ),
+			resume: jest.fn( () => {
+				audioContext.state = 'running';
+				return Promise.resolve();
+			} ),
 			close: jest.fn().mockResolvedValue( undefined ),
 		};
 		audioContextConstructor = jest.fn( () => audioContext );
@@ -66,6 +69,132 @@ describe( 'createNotificationSound', () => {
 			delete ( document as { hidden?: boolean } ).hidden;
 		}
 		delete ( window as { AudioContext?: typeof AudioContext } ).AudioContext;
+		delete ( navigator as { userActivation?: UserActivation } ).userActivation;
+	} );
+
+	const setHasBeenActive = ( hasBeenActive: boolean ) =>
+		Object.defineProperty( navigator, 'userActivation', {
+			configurable: true,
+			value: { hasBeenActive, isActive: false },
+		} );
+
+	it( 'starts audio right away when the page was clicked before it loaded', () => {
+		setHasBeenActive( true );
+		const sound = createNotificationSound();
+
+		expect( audioContextConstructor ).toHaveBeenCalledTimes( 1 );
+		expect( audioContext.resume ).toHaveBeenCalledTimes( 1 );
+		expect( sound.play() ).toBe( 'played' );
+		sound.dispose();
+	} );
+
+	it( 'starts audio when an alert arrives after a click it did not see', () => {
+		const sound = createNotificationSound();
+		setHasBeenActive( true );
+
+		expect( sound.play() ).toBe( 'played' );
+		expect( audioContextConstructor ).toHaveBeenCalledTimes( 1 );
+		sound.dispose();
+	} );
+
+	it( 'resumes audio that a tap created before the page counted as clicked', () => {
+		setHasBeenActive( false );
+		audioContext.resume.mockImplementationOnce( () => Promise.resolve() );
+		const sound = createNotificationSound();
+		document.dispatchEvent( new Event( 'pointerdown' ) );
+		expect( audioContext.resume ).toHaveBeenCalledTimes( 1 );
+
+		setHasBeenActive( true );
+		expect( sound.play() ).toBe( 'played' );
+		expect( audioContext.resume ).toHaveBeenCalledTimes( 2 );
+		expect( audioContextConstructor ).toHaveBeenCalledTimes( 1 );
+		sound.dispose();
+	} );
+
+	it( 'does not resume audio that is already running', () => {
+		setHasBeenActive( true );
+		const sound = createNotificationSound();
+
+		expect( sound.play() ).toBe( 'played' );
+		expect( audioContext.resume ).toHaveBeenCalledTimes( 1 );
+		sound.dispose();
+	} );
+
+	it( 'keeps listening for clicks when the browser refuses to start audio', async () => {
+		setHasBeenActive( true );
+		audioContext.resume.mockImplementation( () => Promise.resolve() );
+		const sound = createNotificationSound();
+		const result = sound.play();
+		jest.advanceTimersByTime( 1000 );
+		await expect( result ).resolves.toBe( 'not_activated' );
+		const resumeCalls = audioContext.resume.mock.calls.length;
+
+		document.dispatchEvent( new Event( 'pointerdown' ) );
+		expect( audioContext.resume ).toHaveBeenCalledTimes( resumeCalls + 1 );
+		sound.dispose();
+	} );
+
+	it( 'does not report a sound as played while the audio is suspended', () => {
+		audioContext.resume.mockImplementation( () => Promise.resolve() );
+		const sound = createNotificationSound();
+		document.dispatchEvent( new Event( 'pointerdown' ) );
+
+		expect( sound.play() ).toBe( 'not_activated' );
+		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
+		sound.dispose();
+	} );
+
+	it( 'waits for audio that is still starting before playing', async () => {
+		setHasBeenActive( true );
+		audioContext.resume.mockImplementation( () =>
+			Promise.resolve().then( () => {
+				audioContext.state = 'running';
+			} )
+		);
+		const sound = createNotificationSound();
+		const result = sound.play();
+
+		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
+		await expect( result ).resolves.toBe( 'played' );
+		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 1 );
+		sound.dispose();
+	} );
+
+	it( 'does not play if the tab is hidden while audio is starting', async () => {
+		setHasBeenActive( true );
+		audioContext.resume.mockImplementation( () =>
+			Promise.resolve().then( () => {
+				audioContext.state = 'running';
+			} )
+		);
+		const sound = createNotificationSound();
+		const result = sound.play();
+		Object.defineProperty( document, 'hidden', { configurable: true, value: true } );
+
+		await expect( result ).resolves.toBe( 'hidden' );
+		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
+		sound.dispose();
+	} );
+
+	it( 'gives up on an alert when audio does not start in time', async () => {
+		setHasBeenActive( true );
+		audioContext.resume.mockImplementation( () => new Promise( () => {} ) );
+		const sound = createNotificationSound();
+		const result = sound.play();
+
+		jest.advanceTimersByTime( 1000 );
+		await expect( result ).resolves.toBe( 'not_activated' );
+		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
+		sound.dispose();
+	} );
+
+	it( 'still waits when the page has never been clicked', () => {
+		setHasBeenActive( false );
+		const sound = createNotificationSound();
+
+		expect( sound.play() ).toBe( 'not_activated' );
+		expect( audioContextConstructor ).not.toHaveBeenCalled();
+		sound.dispose();
 	} );
 
 	it( 'waits for a user gesture and does not replay an alert that arrived before it', () => {
@@ -139,7 +268,7 @@ describe( 'createNotificationSound', () => {
 		document.dispatchEvent( new Event( 'pointerdown' ) );
 
 		expect( onError ).toHaveBeenCalledWith( error, 'resume' );
-		expect( sound.play() ).toBe( 'played' );
+		expect( sound.play() ).toBe( 'not_activated' );
 		sound.dispose();
 	} );
 
