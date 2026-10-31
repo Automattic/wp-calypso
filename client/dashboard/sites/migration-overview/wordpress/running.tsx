@@ -12,6 +12,13 @@ import './style.scss';
 
 type Phase = WordPressMigrationStatus[ 'phase' ];
 
+// The steps a customer sees, each covering one or more of the run's phases.
+export const MIGRATION_STEPS: { label: string; phases: Phase[] }[] = [
+	{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
+	{ label: __( 'Copying' ), phases: [ 'migration' ] },
+	{ label: __( 'Finishing' ), phases: [ 'cleanup' ] },
+];
+
 export function Running( {
 	phase,
 	progress,
@@ -28,12 +35,7 @@ export function Running( {
 	// Only the viewer's own address is listed when they're one of the recipients.
 	const [ email ] = notificationEmails;
 
-	const steps: { label: string; phases: Phase[] }[] = [
-		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
-		{ label: __( 'Copying' ), phases: [ 'migration' ] },
-		{ label: __( 'Finishing' ), phases: [ 'cleanup' ] },
-	];
-	const currentStep = steps.findIndex( ( { phases } ) => phases.includes( phase ) );
+	const currentStep = MIGRATION_STEPS.findIndex( ( { phases } ) => phases.includes( phase ) );
 
 	return (
 		<MigrationCard
@@ -63,8 +65,8 @@ export function Running( {
 				</Text>
 			}
 		>
-			<Grid columns={ steps.length } gap="sm">
-				{ steps.map( ( { label }, index ) => {
+			<Grid columns={ MIGRATION_STEPS.length } gap="sm">
+				{ MIGRATION_STEPS.map( ( { label }, index ) => {
 					const settledValue = index < currentStep ? 100 : 0;
 					return (
 						<VStack key={ label } spacing={ 2 }>

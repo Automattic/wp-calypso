@@ -48,11 +48,6 @@
 	}
 }
 
-// A link button in a vertical stack stretches to the card's width otherwise.
-.wordpress-migration__align-start {
-	align-self: flex-start;
-}
-
 // Lines its text up with the steps above, past the compact button's own padding.
 .wordpress-migration__fallbacks-toggle.components-button {
 	align-self: flex-start;
@@ -93,9 +88,8 @@
 	}
 }
 
-// SectionHeader sets its decoration in a fixed 32px box, too far from the title for a small status icon, and centers it
-// on the title and description together. Keep it beside the title instead: one line of the title tall, at the top.
-// Its 32px minimum row height would then leave a title without a description sitting above a gap.
+// SectionHeader sets its decoration in a fixed 32px box, too far from the title for a small status icon. Keep it beside
+// the title instead: one line of the title tall, at the top. Its 32px minimum row height would then leave a gap below.
 .wordpress-migration__card-header {
 	--dashboard-section-header__heading-row-min-height: 0;
 
@@ -115,6 +109,66 @@
 	width: 22px;
 	height: 22px;
 	fill: var( --wp-admin-theme-color );
+}
+
+// The dashboard's lists come with no bullets.
+.wordpress-migration__icon-list {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	// A line between points, from the text over: halfway across the list's 12px gap, past the 24px icon and its 12px gap.
+	> li {
+		position: relative;
+	}
+
+	> li + li::before {
+		content: "";
+		position: absolute;
+		inset-block-start: -6px;
+		inset-inline: 36px 0;
+		height: 1px;
+		background: var( --dashboard-surface__border-color );
+	}
+}
+
+// Each point leads with its icon in a soft circle of the accent color, kept its size beside a long line.
+// Smaller than the card's status icon, so it doesn't compete with the title.
+.wordpress-migration__icon-list-icon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: color-mix( in srgb, var( --wp-admin-theme-color ) 10%, transparent );
+
+	svg {
+		fill: var( --wp-admin-theme-color );
+	}
+}
+
+// A quiet panel for the details behind a card's status, like what stopped a migration.
+.wordpress-migration__details {
+	padding: 16px;
+	border: 1px solid var( --dashboard-surface__border-color );
+	border-radius: 8px;
+	background: color-mix( in srgb, var( --dashboard-surface__background-color ) 96%, #000 );
+
+	@include ui-mixins.when-dark-theme {
+		background: color-mix( in srgb, var( --dashboard-surface__background-color ) 96%, #fff );
+	}
+}
+
+// A link in the note reads as part of it, so it only turns blue on hover.
+.wordpress-migration__note-link.components-button.is-link {
+	color: inherit;
+
+	&:hover:not( :disabled ),
+	&:focus-visible {
+		color: var( --wp-admin-theme-color );
+	}
 }
 
 // A tinted strip under the card for a side note, like the AI tools' features footer.

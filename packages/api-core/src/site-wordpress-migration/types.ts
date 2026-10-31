@@ -1,8 +1,8 @@
 export type WordPressMigrationFinding = {
 	code: string;
 	severity: 'warning' | 'failure';
-	// What gets past the finding: continuing accepts it, or continuing only runs the same step again.
-	resolution: 'accept' | 'retry';
+	// How the finding will be resolved: user accepts it (continue), retry, or an assisted handoff.
+	resolution: 'accept' | 'retry' | 'assisted_handoff';
 	label: string;
 	message: string;
 	data?: Record< string, unknown >;

@@ -30,8 +30,9 @@ export function Findings( {
 	const { findings } = migration;
 	const codes = findings.map( ( { code } ) => code );
 	const isFailed = migration.status === 'failed';
-	// Continuing past a `retry` finding only runs the same step again.
-	const isRetry = findings.some( ( { resolution } ) => resolution === 'retry' );
+	const isRetry = findings.some( ( { resolution } ) =>
+		[ 'retry', 'assisted_handoff' ].includes( resolution )
+	);
 
 	const getDescription = () => {
 		if ( isFailed ) {
@@ -70,7 +71,7 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			secondaryAction={ <AssistedHandoffLink /> }
+			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice
