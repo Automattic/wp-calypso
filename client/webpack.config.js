@@ -25,6 +25,7 @@ const { BundleAnalyzerPlugin } = require( 'webpack-bundle-analyzer' );
 const cacheIdentifier = require( '../build-tools/babel/babel-loader-cache-identifier' );
 const AssetsWriter = require( '../build-tools/webpack/assets-writer-plugin.js' );
 const GenerateChunksMapPlugin = require( '../build-tools/webpack/generate-chunks-map-plugin' );
+const OrderDependentRedirectPlugin = require( '../build-tools/webpack/order-dependent-redirect-plugin' );
 const RequireChunkCallbackPlugin = require( '../build-tools/webpack/require-chunk-callback-plugin' );
 const config = require( './server/config' );
 const { workerCount } = require( './webpack.common' );
@@ -395,6 +396,7 @@ const webpackConfig = {
 				output: path.resolve( './public/chunks-map.json' ),
 			} ),
 		new RequireChunkCallbackPlugin(),
+		new OrderDependentRedirectPlugin(),
 		/*
 		 * ExPlat: Don't import the server logger when we are in the browser
 		 */
