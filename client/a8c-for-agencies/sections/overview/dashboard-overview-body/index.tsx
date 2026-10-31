@@ -87,11 +87,18 @@ function DashboardOverviewBodyContent( {
 			approvalStatus={ approvalStatus }
 			capabilities={ agency.user?.capabilities }
 			hasPartnerDirectoryListing={ hasPartnerDirectoryListing }
+			showMatchingProfileCard={
+				canAccessLeadMatching &&
+				agency.profile?.listing_details?.is_available === true &&
+				answeredRequiredFieldCount !== undefined &&
+				answeredRequiredFieldCount < REQUIRED_LEAD_MATCHING_FIELDS.length
+			}
 			showContactOptionsAnnouncement={
 				canAccessLeadMatching &&
 				answeredRequiredFieldCount === REQUIRED_LEAD_MATCHING_FIELDS.length &&
 				( ! contact?.phone?.trim() || ! contact?.booking_link?.trim() )
 			}
+			matchingProfileAnswered={ answeredRequiredFieldCount }
 			isEligibleForPressableIntroOffer={ isEligibleForIntroductoryOffer }
 			isEligibleForPressableExpansionOffer={ isEligibleForPressableExpansionOffer }
 			links={ {
