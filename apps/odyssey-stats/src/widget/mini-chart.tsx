@@ -8,6 +8,7 @@ import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { ResolvedDateRange } from '../lib/date-ranges';
 import ChartBoundary from './chart-boundary';
+import readStatsChartType from './chart-type';
 import MetricValue from './metric-value';
 import { recordWidgetEventThenFollow } from './record-widget-event';
 import Skeleton from './skeleton';
@@ -54,6 +55,10 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const [ rootElement, setRootElement ] = useState< HTMLDivElement | null >( null );
 	const viewsColor = useCssVariable( '--chart-series-views', rootElement );
 	const visitorsColor = useCssVariable( '--chart-series-visitors', rootElement );
+
+	// Read once: the choice is made on the Stats page, so a change there shows on the next
+	// load of the dashboard.
+	const chartType = useMemo( () => readStatsChartType( siteId ), [ siteId ] );
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
@@ -120,7 +125,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Views', { context: 'noun' } ) }
-							<span className="stats-widget-metric__swatch is-views" aria-hidden="true" />
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-views', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
 						</div>
 						<MetricValue
 							value={ totals.views }
@@ -136,7 +146,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Visitors', { context: 'noun' } ) }
-							<span className="stats-widget-metric__swatch is-visitors" aria-hidden="true" />
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-visitors', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
 						</div>
 						<MetricValue
 							value={ totals.visitors }
@@ -171,7 +186,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 				<ChartBoundary fallback={ noData }>
 					<Suspense fallback={ chartPlaceholder }>
 						<div className="stats-widget-chart" style={ chartBoxStyle }>
-							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
+							<OverviewChart
+								series={ series }
+								height={ CHART_HEIGHT }
+								unit={ unit }
+								chartType={ chartType }
+							/>
 						</div>
 					</Suspense>
 				</ChartBoundary>
