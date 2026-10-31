@@ -170,7 +170,6 @@
 		"themes/discovery": true,
 		"themes/premium": true,
 		"themes/showcase-modern": true,
-		"themes/site-redesign": false,
 		"themes/site-redesign-fixtures": false,
 		"themes/universal-header": true,
 		"two-factor/enhanced-security": true,
