@@ -45,10 +45,10 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-docs": "^10.6.2",
-		"@storybook/react-webpack5": "^10.6.2",
+		"@storybook/addon-docs": "^10.6.3",
+		"@storybook/react-webpack5": "^10.6.3",
 		"postcss": "^8.5.30",
-		"storybook": "^10.6.2",
+		"storybook": "^10.6.3",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"
 	}
