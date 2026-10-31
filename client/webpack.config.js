@@ -13,7 +13,6 @@ const {
 } = require( '@automattic/calypso-build/webpack/util' );
 const ExtensiveLodashReplacementPlugin = require( '@automattic/webpack-extensive-lodash-replacement-plugin' );
 const ReactRefreshWebpackPlugin = require( '@pmmmwh/react-refresh-webpack-plugin' );
-const { sentryWebpackPlugin } = require( '@sentry/webpack-plugin' );
 const autoprefixerPlugin = require( 'autoprefixer' );
 const CircularDependencyPlugin = require( 'circular-dependency-plugin' );
 const Dotenv = require( 'dotenv-webpack' );
@@ -124,6 +123,8 @@ if ( shouldCreateSentryRelease ) {
 	console.log(
 		"A sentry release is being created because the auth token exists and we're either on the trunk branch or the manual checkbox has been toggled."
 	);
+	// The plugin's `telemetry: false` doesn't reach the Sentry CLI it runs, which otherwise reports its own usage.
+	process.env.SENTRY_CLI_NO_TELEMETRY = '1';
 }
 
 function filterEntrypoints( entrypoints ) {
@@ -421,22 +422,21 @@ const webpackConfig = {
 
 		// NOTE: Sentry should be the last webpack plugin in the array.
 		shouldCreateSentryRelease &&
-			sentryWebpackPlugin( {
+			// Required here so builds without a release don't load the Sentry CLI it bundles.
+			require( '@sentry/webpack-plugin' ).sentryWebpackPlugin( {
 				org: 'a8c',
 				project: 'calypso',
 				authToken: process.env.SENTRY_AUTH_TOKEN,
 				telemetry: false,
-				// Upload source maps by release and URL, without injecting debug IDs into every chunk.
-				sourcemaps: { disable: true },
+				sourcemaps: {
+					// Upload `app:///` source paths as built; the default rewrite strips the scheme.
+					rewriteSources: ( source ) => source,
+				},
 				release: {
 					name: sentryRelease,
 					// `__SENTRY_RELEASE__` covers this without prepending the release to every chunk.
 					inject: false,
 					setCommits: false,
-					uploadLegacySourcemaps: {
-						paths: [ filePaths.path ],
-						urlPrefix: `~${ filePaths.publicPath }`,
-					},
 				},
 				errorHandler: ( err ) => {
 					// Sentry should _never_ fail the webpack build, so only log here:
