@@ -33,7 +33,7 @@
 	"dependencies": {
 		"@automattic/calypso-babel-config": "workspace:^",
 		"sass-loader": "^16.0.8",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.0"
 	},
 	"peerDependencies": {
 		"react": "^18.3.1 || ^19.0.0",
