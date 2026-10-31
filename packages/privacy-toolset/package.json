@@ -61,7 +61,7 @@
 		"postcss": "^8.5.31",
 		"require-from-string": "^2.0.2",
 		"storybook": "^10.6.3",
-		"typescript": "^6.0.3",
+		"typescript": "^7.0.2",
 		"webpack": "^5.111.1"
 	}
 }

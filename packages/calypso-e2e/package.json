@@ -43,7 +43,7 @@
 		"@jest/globals": "^30.5.2",
 		"@types/node": "^24.12.2",
 		"nock": "^14.0.17",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	},
 	"scripts": {
 		"capture-google-session": "node scripts/capture-google-session.cjs",
