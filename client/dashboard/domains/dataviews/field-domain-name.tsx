@@ -14,13 +14,11 @@ export const DomainNameField = ( {
 	domain,
 	site,
 	value,
-	showPrimaryDomainBadge,
 	showWwwPrefix,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
-	showPrimaryDomainBadge?: boolean;
 	showWwwPrefix?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
@@ -36,7 +34,7 @@ export const DomainNameField = ( {
 			: domainOverviewRoute.fullPath;
 
 	const content = (
-		<VStack spacing={ 1 }>
+		<VStack spacing={ 0 }>
 			<span style={ textOverflowStyles }>
 				{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
 				<Text variant="muted" weight="inherit">
@@ -44,7 +42,7 @@ export const DomainNameField = ( {
 				</Text>
 				{ value }
 			</span>
-			{ showPrimaryDomainBadge && domain.primary_domain && (
+			{ domain.primary_domain ? (
 				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
 						style={ {
@@ -58,11 +56,12 @@ export const DomainNameField = ( {
 						{ __( 'Primary site address' ) }
 					</span>
 				</Tooltip>
-			) }
-			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
-				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
-					{ domain.subtype.label }
-				</Text>
+			) : (
+				domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+					<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
+						{ domain.subtype.label }
+					</Text>
+				)
 			) }
 		</VStack>
 	);

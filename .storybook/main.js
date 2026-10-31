@@ -1,6 +1,7 @@
 import { createRequire } from 'node:module';
 import path from 'node:path';
 import storybookDefaultConfig from '@automattic/calypso-storybook';
+import webpack from 'webpack';
 
 const require = createRequire( import.meta.url );
 const sharedConfig = require( '../config/_shared.json' );
@@ -20,6 +21,13 @@ const storybookConfig = storybookDefaultConfig( {
 	],
 	webpackAliases: { calypso: path.join( import.meta.dirname, '../client' ) },
 	sassPrelude: `@use 'calypso/assets/stylesheets/shared/_utils.scss' as *;`,
+	plugins: [
+		// Same swap as client/webpack.config.js: ExPlat's server logger (bunyan) can't bundle for the browser.
+		new webpack.NormalModuleReplacementPlugin(
+			/^calypso\/server\/lib\/logger$/,
+			'calypso/lib/explat/internals/logger-browser-replacement'
+		),
+	],
 } );
 
 const configData = { ...sharedConfig, ...devConfig };

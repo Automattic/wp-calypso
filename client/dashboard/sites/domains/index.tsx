@@ -3,6 +3,7 @@ import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { useCallback, useMemo, useState } from 'react';
 import { useAuth } from '../../app/auth';
 import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
@@ -21,16 +22,23 @@ import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-
 import AddDomainButton from '../../domains/add-domain-button';
 import {
 	filterSortAndPaginateDomains,
+	getSiteDomainPinnedRank,
 	useActions,
 	useFields,
 	DEFAULT_LAYOUTS,
 	SITE_CONTEXT_VIEW,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
-import { isPendingPrimaryDomain } from '../../utils/domain';
+import {
+	canUserSetPrimaryDomain,
+	isPendingPrimaryDomain,
+	isPrimaryDomainCandidate,
+} from '../../utils/domain';
 import { SitesNoticeArbiter } from '../notice-arbiter';
+import ChangePrimaryDomainModal from './change-primary-domain-modal';
 import PrimaryDomainSelectorNotice from './primary-domain-selector-notice';
 import type { DomainSummary } from '@automattic/api-core';
+import '../../domains/dataviews/style.scss';
 
 function getDomainId( domain: DomainSummary ) {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -60,7 +68,21 @@ function SiteDomains() {
 		site,
 	} );
 
-	const actions = useActions( { user, site, sites: [ site ], domains: siteDomains } );
+	const [ isChangePrimaryDomainOpen, setIsChangePrimaryDomainOpen ] = useState( false );
+	const showPrimaryDomainControls = ! hasRedirect && ! pendingDomain;
+	const canChangePrimaryDomain =
+		showPrimaryDomainControls &&
+		canUserSetPrimaryDomain( site, user ) &&
+		siteDomains.some( isPrimaryDomainCandidate );
+
+	const openChangePrimaryDomain = useCallback( () => setIsChangePrimaryDomainOpen( true ), [] );
+
+	const sites = useMemo( () => [ site ], [ site ] );
+	const actions = useActions( {
+		site,
+		sites,
+		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
+	} );
 
 	const searchParams = siteDomainsRoute.useSearch();
 	const navigate = useNavigate();
@@ -81,7 +103,8 @@ function SiteDomains() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		siteDomains,
 		view,
-		fields
+		fields,
+		{ getPinnedRank: getSiteDomainPinnedRank }
 	);
 
 	// Hide actions column when no domain has eligible actions.
@@ -103,7 +126,7 @@ function SiteDomains() {
 								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
 							/>
 						) }
-						{ ! hasRedirect && ! pendingDomain && (
+						{ showPrimaryDomainControls && (
 							<PrimaryDomainSelectorNotice domains={ siteDomains } site={ site } user={ user } />
 						) }
 						{ hasRedirect && (
@@ -129,7 +152,7 @@ function SiteDomains() {
 				</>
 			}
 		>
-			<DataViewsCard>
+			<DataViewsCard className="domains-dataviews">
 				<DataViews< DomainSummary >
 					data={ filteredData || [] }
 					fields={ fields }
@@ -144,6 +167,14 @@ function SiteDomains() {
 				/>
 			</DataViewsCard>
 			{ deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
+			{ isChangePrimaryDomainOpen && (
+				<ChangePrimaryDomainModal
+					site={ site }
+					currentPrimaryDomain={ siteDomains.find( ( domain ) => domain.primary_domain )?.domain }
+					eligibleDomains={ siteDomains.filter( isPrimaryDomainCandidate ) }
+					onClose={ () => setIsChangePrimaryDomainOpen( false ) }
+				/>
+			) }
 			<PerformanceTrackerStop />
 		</PageLayout>
 	);

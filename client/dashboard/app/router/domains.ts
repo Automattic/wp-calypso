@@ -39,7 +39,6 @@ import {
 	checkDomainContactVerificationPermissions,
 	checkDomainNotPendingRegistration,
 } from '../../utils/domain-permissions';
-import { queryParamToArray } from '../../utils/url';
 import { dashboardRedirect } from './redirect';
 import { rootRoute } from './root';
 
@@ -69,48 +68,6 @@ export const domainsIndexRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../domains' ).then( ( d ) =>
 		createLazyRoute( 'domains' )( {
-			component: d.default,
-		} )
-	)
-);
-
-export const domainsContactInfoRoute = createRoute( {
-	getParentRoute: () => domainsRoute,
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Domain contact details' ),
-			},
-		],
-	} ),
-	path: 'contact-info',
-	beforeLoad: async ( { search } ) => {
-		const selected = queryParamToArray( ( search as { selected: unknown } ).selected );
-
-		if ( selected.length === 0 ) {
-			throw dashboardRedirect( { to: '/domains' } );
-		}
-	},
-	loaderDeps: ( { search } ) => {
-		return {
-			selectedDomains: queryParamToArray( ( search as { selected: unknown } ).selected ),
-		};
-	},
-	loader: async ( { deps: { selectedDomains } } ) => {
-		return {
-			domainDetails: await Promise.all(
-				selectedDomains.map( ( domain ) => queryClient.ensureQueryData( domainQuery( domain ) ) )
-			),
-			whoisData: await Promise.all(
-				selectedDomains.map( ( domain ) =>
-					queryClient.ensureQueryData( domainWhoisQuery( domain ) )
-				)
-			),
-		};
-	},
-} ).lazy( () =>
-	import( '../../domains/domains-contact-details' ).then( ( d ) =>
-		createLazyRoute( 'domains-contact-info' )( {
 			component: d.default,
 		} )
 	)
@@ -735,7 +692,7 @@ export const domainConnectionSetupRoute = createRoute( {
 
 export const createDomainsRoutes = () => {
 	return [
-		domainsRoute.addChildren( [ domainsIndexRoute, domainsContactInfoRoute ] ),
+		domainsRoute.addChildren( [ domainsIndexRoute ] ),
 		domainRoute.addChildren( [
 			domainOverviewRoute,
 			domainDnsRoute.addChildren( [ domainDnsIndexRoute, domainDnsAddRoute, domainDnsEditRoute ] ),
