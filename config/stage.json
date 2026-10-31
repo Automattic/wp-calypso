@@ -105,6 +105,7 @@
 		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": true,
+		"migration/static-site-preview": true,
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,

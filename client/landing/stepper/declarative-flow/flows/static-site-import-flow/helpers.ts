@@ -13,3 +13,12 @@ export const canUseStaticSiteImport = (
 	// Sources with an importer keep using it for now.
 	( STATIC_SITE_IMPORT_PLATFORMS.includes( platform ) || ! isPlatformImportable( platform ) ) &&
 	Boolean( from );
+
+/**
+ * Whether this run builds a preview site instead of asking for a plan first: the customer signs in,
+ * their site is imported onto a free preview, and they pay to keep it. Only for a new destination.
+ */
+export const isStaticSiteImportPreview = ( query: URLSearchParams ) =>
+	config.isEnabled( 'migration/static-site-preview' ) &&
+	! query.get( 'siteId' ) &&
+	! query.get( 'siteSlug' );

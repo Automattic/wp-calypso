@@ -110,6 +110,7 @@
 		"me/legacy-contact": false,
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": false,
+		"migration/static-site-preview": false,
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": false,
 		"notifications/subscriber-alerts": true,

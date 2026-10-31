@@ -7,6 +7,7 @@ import {
 	isPermanentStaticSiteImportError,
 	pollStaticSiteImportSessionUntil,
 	staticSiteImportSessionQuery,
+	wowFunnelPendingQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
@@ -28,7 +29,15 @@ export interface StaticSiteImport {
 	needsRestart: boolean;
 	/** Set when starting the move failed and it's worth asking again. */
 	retry?: () => void;
+	/** The site is an unpaid preview site, known once the move has finished. */
+	isPreview?: boolean;
+	/** Where a finished preview opens past Coming Soon, once the server has made its share link. */
+	previewUrl?: string;
 }
+
+// The share link is made when the build lands, so a finished preview can briefly read without one.
+const PREVIEW_URL_POLL_INTERVAL = 3000;
+const PREVIEW_URL_MAX_POLLS = 10;
 
 export const getSourceHost = ( url = '' ) => {
 	try {
@@ -73,6 +82,23 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
 	}, [ approve, refetch, session, sessionId, site.ID ] );
 
+	// Only a finished move can be a preview with a share link, and the lookup is per user, not per site.
+	const isFinished = Boolean( sessionId ) && session?.state === 'finished';
+	const { data: pending } = useQuery( {
+		...wowFunnelPendingQuery(),
+		enabled: isFinished,
+		staleTime: 0,
+		refetchInterval: ( query ) => {
+			const preview = query.state.data?.preview_sites?.find( ( p ) => p.blog_id === site.ID );
+			return preview && ! preview.share_url && query.state.dataUpdateCount < PREVIEW_URL_MAX_POLLS
+				? PREVIEW_URL_POLL_INTERVAL
+				: false;
+		},
+	} );
+	const preview = isFinished
+		? pending?.preview_sites?.find( ( p ) => p.blog_id === site.ID )
+		: undefined;
+
 	if ( ! sessionId ) {
 		return null;
 	}
@@ -113,8 +139,10 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 	}
 
 	return {
-		status: session?.state === 'finished' ? 'finished' : 'moving',
+		status: isFinished ? 'finished' : 'moving',
 		session,
 		needsRestart: false,
+		isPreview: Boolean( preview ),
+		previewUrl: preview?.share_url || undefined,
 	};
 }

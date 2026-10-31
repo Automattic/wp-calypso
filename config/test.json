@@ -76,6 +76,7 @@
 		"me/account-close": true,
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": true,
+		"migration/static-site-preview": false,
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": false,
 		"onboarding/create-course": false,
