@@ -107,9 +107,9 @@
 		content: "";
 		position: absolute;
 		inset-block-start: 50%;
-		inset-inline-start: calc(-1 * #{$grid-unit-15});
-		width: $grid-unit-10;
-		height: $grid-unit-10;
+		inset-inline-start: calc(-1 * 11px);
+		width: 6px;
+		height: 6px;
 		border-radius: 50%;
 		background-color: var(--wp-admin-theme-color);
 		transform: translateY(-50%);
