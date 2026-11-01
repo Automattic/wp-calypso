@@ -5,7 +5,12 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { StaticSiteImportNotice, StaticSiteImportProgress, useStaticSiteImport } from '../index';
+import {
+	StaticSiteImportFailed,
+	StaticSiteImportNotice,
+	StaticSiteImportProgress,
+	useStaticSiteImport,
+} from '../index';
 import type { Site } from '@automattic/api-core';
 
 const site = {
@@ -38,11 +43,14 @@ function StaticSiteImport() {
 	if ( ! siteImport ) {
 		return null;
 	}
-	return siteImport.status === 'moving' ? (
-		<StaticSiteImportProgress siteImport={ siteImport } search={ search } />
-	) : (
-		<StaticSiteImportNotice site={ site } siteImport={ siteImport } search={ search } />
-	);
+	// Mirrors the site Overview: a failed move (unless refused) replaces the progress card.
+	if ( siteImport.status === 'moving' ) {
+		return <StaticSiteImportProgress siteImport={ siteImport } search={ search } />;
+	}
+	if ( siteImport.status === 'failed' && ! siteImport.isRefused ) {
+		return <StaticSiteImportFailed site={ site } search={ search } />;
+	}
+	return <StaticSiteImportNotice site={ site } siteImport={ siteImport } search={ search } />;
 }
 
 describe( 'StaticSiteImportCard', () => {
@@ -265,18 +273,19 @@ describe( 'StaticSiteImportCard', () => {
 		} );
 	} );
 
-	it( 'offers to read the site again when the session is gone', async () => {
+	it( 'shows the failed move with the team and refund options when the session is gone', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
 			.reply( 404, { code: 'static_site_import_session_not_found', message: 'Not found' } );
+		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
 
 		render( <StaticSiteImport /> );
 
-		expect( await screen.findByRole( 'link', { name: 'Read my site again' } ) ).toHaveAttribute(
-			'href',
-			expect.stringContaining( '/setup/static-site-import/static-site-import-reading' )
-		);
+		expect( await screen.findByRole( 'heading', { name: 'Your move stopped' } ) ).toBeVisible();
+		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'button', { name: 'Let our team move it' } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Get a refund' } ) ).toBeVisible();
 	} );
 
 	it( 'stops at a refused site instead of offering to read it again', async () => {
@@ -371,8 +380,8 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		);
 	} );
 
-	it( 'still offers help when a move fails', () => {
-		render(
+	it( 'leaves a failed move to the failure card', () => {
+		const { container } = render(
 			<StaticSiteImportNotice
 				site={ site }
 				siteImport={ { status: 'failed', needsRestart: false } }
@@ -380,7 +389,53 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 			/>
 		);
 
-		expect( screen.getByText( 'We couldn’t finish your move' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Get help' } ) ).toBeVisible();
+		expect( container ).toBeEmptyDOMElement();
+	} );
+} );
+
+describe( 'StaticSiteImportFailed', () => {
+	beforeEach( () => nock.cleanAll() );
+	afterEach( () => nock.cleanAll() );
+
+	it( 'says nothing is lost and names the old site', async () => {
+		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+		render( <StaticSiteImportFailed site={ site } search={ search } /> );
+		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
+
+		expect( screen.getByRole( 'heading', { name: 'Your move stopped' } ) ).toBeVisible();
+		expect(
+			screen.getByText( 'Nothing is lost, and busybearscleaning.com is still online.' )
+		).toBeVisible();
+	} );
+
+	it( 'sends Get a refund to cancelling the site’s plan', async () => {
+		mockApi()
+			.get( '/rest/v1.2/upgrades' )
+			.query( true )
+			.reply( 200, [
+				{ ID: 777, is_plan: false, product_slug: 'domain_map' },
+				{ ID: 991, is_plan: true, product_slug: 'personal-bundle-monthly' },
+			] );
+		// Its own site, so an earlier test's cached purchases don't answer for it.
+		const paidSite = { ...site, ID: 77, slug: 'paid.wordpress.com' } as unknown as Site;
+		render( <StaticSiteImportFailed site={ paidSite } search={ search } /> );
+
+		await waitFor( () =>
+			expect( screen.getByRole( 'link', { name: 'Get a refund' } ) ).toHaveAttribute(
+				'href',
+				expect.stringContaining( '/me/purchases/paid.wordpress.com/991/cancel' )
+			)
+		);
+	} );
+
+	it( 'falls back to Purchases when the plan purchase can’t be found', async () => {
+		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+		render( <StaticSiteImportFailed site={ site } search={ search } /> );
+		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
+
+		expect( screen.getByRole( 'link', { name: 'Get a refund' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/me/purchases' )
+		);
 	} );
 } );

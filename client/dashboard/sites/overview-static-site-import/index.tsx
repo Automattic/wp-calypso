@@ -1,4 +1,8 @@
-import { sitePreviewLinkCreateMutation, sitePreviewLinksQuery } from '@automattic/api-queries';
+import {
+	sitePreviewLinkCreateMutation,
+	sitePreviewLinksQuery,
+	sitePurchasesQuery,
+} from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
@@ -10,7 +14,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, external, published } from '@wordpress/icons';
+import { Icon, border, caution, external, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
@@ -98,6 +102,90 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
+/**
+ * Opens a chat with our team (not the AI assistant), with a message naming where the site
+ * came from. Anyone the move didn't work for can have our team finish it for free, or a refund.
+ */
+function useAskForMoveHelp( site: Site ) {
+	const { setNewMessagingChat } = useHelpCenter();
+	return ( initialMessage: string ) =>
+		setNewMessagingChat( {
+			initialMessage,
+			section: 'static-site-import',
+			siteUrl: site.URL,
+			siteId: String( site.ID ),
+		} );
+}
+
+/** Takes the place of the progress card when a move fails. */
+export function StaticSiteImportFailed( {
+	site,
+	search,
+}: {
+	site: Site;
+	search: StaticSiteImportSearch;
+} ) {
+	const askForMoveHelp = useAskForMoveHelp( site );
+	const sourceHost = getSourceHost( search.from );
+	const { data: planPurchase } = useQuery( {
+		...sitePurchasesQuery( site.ID ),
+		select: ( purchases ) => purchases.find( ( purchase ) => purchase.is_plan ),
+	} );
+	// Cancelling the plan is where the refund happens. The classic path forwards to whichever
+	// dashboard the customer uses; without the purchase, Purchases lists it.
+	const refundUrl = planPurchase
+		? wpcomLink( `/me/purchases/${ site.slug }/${ planPurchase.ID }/cancel` )
+		: wpcomLink( '/me/purchases' );
+
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 6 }>
+					<HStack justify="flex-start" spacing={ 2 }>
+						<Icon
+							icon={ caution }
+							size={ 24 }
+							style={ { fill: 'var(--dashboard__foreground-color-error)' } }
+						/>
+						<Heading level={ 2 } size={ 20 } weight={ 600 }>
+							{ __( 'Your move stopped' ) }
+						</Heading>
+					</HStack>
+					<Text>
+						{ sourceHost
+							? sprintf(
+									/* translators: %s: the address of the site being moved, e.g. example.com. */
+									__( 'Nothing is lost, and %s is still online.' ),
+									sourceHost
+								)
+							: __( 'Nothing is lost, and your current site is still online.' ) }
+					</Text>
+					<HStack justify="flex-start" spacing={ 4 } wrap>
+						<Button
+							__next40pxDefaultSize
+							variant="primary"
+							onClick={ () =>
+								askForMoveHelp(
+									sprintf(
+										/* translators: %s: the address of the site being moved, e.g. example.com. */
+										__( 'My site move from %s stopped. Can your team move it for me?' ),
+										sourceHost || __( 'my old platform' )
+									)
+								)
+							}
+						>
+							{ __( 'Let our team move it' ) }
+						</Button>
+						<Button variant="link" href={ refundUrl }>
+							{ __( 'Get a refund' ) }
+						</Button>
+					</HStack>
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 /** Takes the place of the overview cards while the site is being moved. */
 export function StaticSiteImportProgress( {
 	siteImport,
@@ -147,7 +235,8 @@ export function StaticSiteImportNotice( {
 	search: StaticSiteImportSearch;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { setShowHelpCenter, setNewMessagingChat } = useHelpCenter();
+	const { setShowHelpCenter } = useHelpCenter();
+	const askForMoveHelp = useAskForMoveHelp( site );
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
 	const sourceHost = getSourceHost( from );
@@ -209,15 +298,6 @@ export function StaticSiteImportNotice( {
 		: undefined;
 	const previewUrl = shareCode ? addQueryArgs( site.URL, { share: shareCode } ) : site.URL;
 
-	// Anyone the move didn't work for gets a person, not the AI assistant: our team can finish
-	// the move for them or refund it. The message tells them where the site came from.
-	const askForMoveHelp = ( initialMessage: string ) =>
-		setNewMessagingChat( {
-			initialMessage,
-			section: 'static-site-import',
-			siteUrl: site.URL,
-			siteId: String( site.ID ),
-		} );
 	const sourceName = sourceHost || __( 'my old platform' );
 
 	if ( siteImport.isRefused ) {
@@ -236,54 +316,9 @@ export function StaticSiteImportNotice( {
 		);
 	}
 
+	// A failed move shows StaticSiteImportFailed in place of the progress card instead.
 	if ( siteImport.status === 'failed' ) {
-		const restartUrl = addQueryArgs(
-			wpcomLink( '/setup/static-site-import/static-site-import-reading' ),
-			{ from, platform, siteId: site.ID, siteSlug: site.slug }
-		);
-
-		return (
-			<Notice
-				variant="error"
-				title={ __( 'We couldn’t finish your move' ) }
-				actions={
-					<HStack justify="flex-start" wrap>
-						{ siteImport.needsRestart && (
-							<Button variant="link" href={ restartUrl }>
-								{ __( 'Read my site again' ) }
-							</Button>
-						) }
-						{ siteImport.retry && (
-							<Button variant="link" onClick={ siteImport.retry }>
-								{ __( 'Try again' ) }
-							</Button>
-						) }
-						<Button
-							variant="link"
-							onClick={ () =>
-								askForMoveHelp(
-									sprintf(
-										/* translators: %s: the address of the site being moved, e.g. example.com. */
-										__( 'My site move from %s didn’t finish. Can you help me move it?' ),
-										sourceName
-									)
-								)
-							}
-						>
-							{ __( 'Get help' ) }
-						</Button>
-					</HStack>
-				}
-			>
-				{ siteImport.errorCode === 'static_site_import_atomic_unavailable'
-					? __(
-							'Your plan can’t host an imported site yet. Nothing has changed on your current site.'
-						)
-					: __(
-							'Nothing has changed on your current site. You can try again or ask us for help.'
-						) }
-			</Notice>
-		);
+		return null;
 	}
 
 	// A builder's free address (e.g. name.wixsite.com) isn't the customer's to connect,
