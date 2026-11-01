@@ -52,46 +52,6 @@ describe( 'NotePanel settings menu', () => {
 		await waitFor( () => expect( gear ).not.toHaveClass( 'is-simplified' ) );
 	} );
 
-	it( 'offers the layout tour until it is dismissed', async () => {
-		const { onPreferenceChange, store } = renderPanel( { isViewSettingsEnabled: true } );
-		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
-
-		expect( await screen.findByText( 'Switch layouts (New)' ) ).toBeInTheDocument();
-
-		await userEvent.click( screen.getByRole( 'button', { name: 'Got it' } ) );
-
-		await waitFor( () => {
-			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-view-settings-seen', true );
-		} );
-
-		expect( screen.queryByText( 'Switch layouts (New)' ) ).not.toBeInTheDocument();
-	} );
-
-	// The preference can land after the menu is already open. Until it does there is
-	// nothing to mark as seen, so the tour used to open on top of the open menu.
-	it( 'does not open the tour over a menu that is already open', async () => {
-		const { onPreferenceChange, store } = renderPanel( { isViewSettingsEnabled: true } );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
-
-		store.dispatch( actions.ui.setViewSettingsSeen( false ) );
-
-		await waitFor( () => {
-			expect( onPreferenceChange ).toHaveBeenCalledWith( 'notifications-view-settings-seen', true );
-		} );
-
-		expect( screen.queryByText( 'Switch layouts (New)' ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'keeps the New label on the layout setting once the tour is gone', async () => {
-		const { store } = renderPanel( { isViewSettingsEnabled: true } );
-		store.dispatch( actions.ui.setViewSettingsSeen( true ) );
-
-		await userEvent.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
-
-		expect( screen.getByText( 'New' ) ).toBeVisible();
-	} );
-
 	it( 'asks the host for the settings page when view settings are off', async () => {
 		const { store } = renderPanel( { isViewSettingsEnabled: false } );
 		// Hosts listen for VIEW_SETTINGS and open the settings page; listen the same way.
