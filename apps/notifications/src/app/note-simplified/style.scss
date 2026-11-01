@@ -178,8 +178,8 @@
 	}
 }
 
-.wpnc-simplified .wpnc__body-content .wpnc__comment,
-.wpnc-simplified .wpnc__new_post .wpnc__body .wpnc__body-content,
+.wpnc-simplified .wpnc__body-content > .wpnc__comment,
+.wpnc-simplified .wpnc__body-content > .wpnc__post,
 .wpnc-simplified .wpnc-simplified__parent-text {
 	font-size: 15px;
 	line-height: 24px;
