@@ -294,3 +294,60 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByRole( 'link', { name: 'Read my site again' } ) ).not.toBeInTheDocument();
 	} );
 } );
+
+describe( 'StaticSiteImportNotice preview link', () => {
+	const comingSoonSite = { ...site, is_coming_soon: true } as unknown as Site;
+	const finished = { status: 'finished' as const, needsRestart: false };
+
+	it( 'previews a Coming Soon site through a new share link', async () => {
+		mockApi().get( '/wpcom/v2/sites/42/preview-links' ).reply( 200, [] );
+		const create = mockApi()
+			.post( '/wpcom/v2/sites/42/preview-links' )
+			.reply( 200, { code: 'newcode', created_at: '2026-11-02T00:00:00Z' } );
+
+		render(
+			<StaticSiteImportNotice site={ comingSoonSite } siteImport={ finished } search={ search } />
+		);
+
+		await waitFor( () => expect( create.isDone() ).toBe( true ) );
+		await waitFor( () =>
+			expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute(
+				'href',
+				'https://busybears.wordpress.com?share=newcode'
+			)
+		);
+	} );
+
+	it( 'reuses an existing share link instead of creating another', async () => {
+		mockApi()
+			.get( '/wpcom/v2/sites/42/preview-links' )
+			.reply( 200, [ { code: 'existing', created_at: '2026-11-01T00:00:00Z' } ] );
+		const create = mockApi().post( '/wpcom/v2/sites/42/preview-links' ).reply( 200, {} );
+
+		render(
+			<StaticSiteImportNotice site={ comingSoonSite } siteImport={ finished } search={ search } />
+		);
+
+		await waitFor( () =>
+			expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute(
+				'href',
+				'https://busybears.wordpress.com?share=existing'
+			)
+		);
+		expect( create.isDone() ).toBe( false );
+		nock.cleanAll();
+	} );
+
+	it( 'links a launched site directly, without a share link', () => {
+		const create = mockApi().post( '/wpcom/v2/sites/42/preview-links' ).reply( 200, {} );
+
+		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
+
+		expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute(
+			'href',
+			'https://busybears.wordpress.com'
+		);
+		expect( create.isDone() ).toBe( false );
+		nock.cleanAll();
+	} );
+} );

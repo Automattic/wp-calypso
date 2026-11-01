@@ -1,4 +1,6 @@
+import { sitePreviewLinkCreateMutation, sitePreviewLinksQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Spinner,
@@ -174,6 +176,39 @@ export function StaticSiteImportNotice( {
 			action,
 		} );
 
+	// A moved site stays Coming Soon, and the owner isn't signed in to it until they visit
+	// WP Admin, so its plain address shows the Coming Soon page. Preview through a share link.
+	const needsShareLink = isReady && site.is_coming_soon;
+	const { data: previewLinks, isSuccess: hasLoadedPreviewLinks } = useQuery( {
+		...sitePreviewLinksQuery( site.ID ),
+		enabled: needsShareLink,
+	} );
+	const {
+		mutate: createPreviewLink,
+		data: createdPreviewLink,
+		isIdle: hasNotCreatedPreviewLink,
+	} = useMutation( sitePreviewLinkCreateMutation( site.ID ) );
+	useEffect( () => {
+		if (
+			needsShareLink &&
+			hasLoadedPreviewLinks &&
+			! previewLinks?.length &&
+			hasNotCreatedPreviewLink
+		) {
+			createPreviewLink();
+		}
+	}, [
+		needsShareLink,
+		hasLoadedPreviewLinks,
+		previewLinks,
+		hasNotCreatedPreviewLink,
+		createPreviewLink,
+	] );
+	const shareCode = needsShareLink
+		? ( previewLinks?.[ 0 ]?.code ?? createdPreviewLink?.code )
+		: undefined;
+	const previewUrl = shareCode ? addQueryArgs( site.URL, { share: shareCode } ) : site.URL;
+
 	if ( siteImport.isRefused ) {
 		return (
 			<Notice
@@ -274,7 +309,7 @@ export function StaticSiteImportNotice( {
 							<Button
 								__next40pxDefaultSize
 								variant="secondary"
-								href={ site.URL }
+								href={ previewUrl }
 								target="_blank"
 								rel="noopener noreferrer"
 								icon={ external }
