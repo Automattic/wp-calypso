@@ -18,6 +18,30 @@ export const readSavedKeysQuery = () =>
 		staleTime: 1000 * 60 * 5,
 	} );
 
+const TRACKING_PARAM = /^(utm_.*|fbclid|gclid)$/;
+
+/**
+ * A saved URL as the saved posts API stores and matches it: the scheme and host
+ * lowercased, without the fragment, a default port, tracking params, or
+ * trailing slashes except on the root path. A post's `URL` can differ from the
+ * stored one in any of these.
+ */
+export const normalizeReadSavedUrl = ( url: string ): string => {
+	let parsed: URL;
+	try {
+		parsed = new URL( url );
+	} catch {
+		return url;
+	}
+	const query = parsed.search
+		.slice( 1 )
+		.split( '&' )
+		.filter( ( pair ) => pair && ! TRACKING_PARAM.test( pair.split( '=' )[ 0 ] ) )
+		.join( '&' );
+	const path = parsed.pathname.replace( /\/+$/, '' ) || '/';
+	return `${ parsed.protocol }//${ parsed.host }${ path }${ query ? `?${ query }` : '' }`;
+};
+
 /**
  * A string that identifies a saved key, for comparing keys and building lookups.
  * Any entry can carry a `url`, so it only identifies a save that has no IDs.
@@ -29,7 +53,7 @@ export const getReadSavedKeyId = ( key: ReadSavedKey ): string => {
 	if ( 'blog_id' in key && key.blog_id ) {
 		return `blog-${ key.blog_id }-post-${ key.post_id }`;
 	}
-	return `url-${ 'url' in key ? key.url : '' }`;
+	return `url-${ 'url' in key ? normalizeReadSavedUrl( key.url ) : '' }`;
 };
 
 const savedKeysQueryKey = readSavedKeysQuery().queryKey;

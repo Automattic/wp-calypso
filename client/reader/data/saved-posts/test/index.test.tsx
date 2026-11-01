@@ -210,6 +210,24 @@ describe( 'useIsPostSaved', () => {
 		} );
 	} );
 
+	it( 'matches a page saved by URL when its URL differs from the stored one', () => {
+		const client = makeClient();
+		setKeys( client, [
+			{ url: 'https://example.com/recipes/tailgating', id: 4, date_saved: '2026-10-31T00:00:00Z' },
+		] );
+
+		const { result } = renderHook(
+			() =>
+				useIsPostSaved(
+					{ ...URL_SAVE, URL: 'https://example.com/recipes/tailgating/?utm_source=chrome' },
+					{ enabled: false }
+				),
+			{ wrapper: makeWrapper( client ) }
+		);
+
+		expect( result.current ).toBe( true );
+	} );
+
 	it( 'does not fetch when disabled or when the post has no key', () => {
 		const client = makeClient();
 

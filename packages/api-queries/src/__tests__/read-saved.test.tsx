@@ -98,6 +98,18 @@ describe( 'getReadSavedKeyId', () => {
 		);
 	} );
 
+	it( 'matches a URL the way the API stores it', () => {
+		expect(
+			getReadSavedKeyId( {
+				url: 'HTTPS://Example.com:443/a/?utm_source=x&page=2&fbclid=y#section',
+			} )
+		).toBe( getReadSavedKeyId( { url: 'https://example.com/a?page=2' } ) );
+		expect( getReadSavedKeyId( { url: 'https://example.com/' } ) ).toBe(
+			'url-https://example.com/'
+		);
+		expect( getReadSavedKeyId( { url: 'not a url' } ) ).toBe( 'url-not a url' );
+	} );
+
 	it( 'identifies an entry that has IDs and a URL by its IDs', () => {
 		const url = 'https://example.com/a';
 

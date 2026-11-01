@@ -212,12 +212,12 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 
 		const urlCard = getCard( URL_SAVE.title );
 		expect( urlCard ).toHaveTextContent( URL_SAVE.excerpt );
-		expect( urlCard ).toHaveTextContent( 'Harvard Law Review · Saved Oct 30, 2026' );
+		expect( urlCard ).toHaveTextContent( 'Harvard Law Review·Saved Oct 30, 2026' );
 		// No site URL, so the site name isn't a link.
 		expect( screen.queryByRole( 'link', { name: URL_SAVE.site_name } ) ).not.toBeInTheDocument();
 
 		const prunedCard = getCard( PRUNED_FEED_ITEM.title );
-		expect( prunedCard ).toHaveTextContent( 'Jane Writer · Saved Oct 29, 2026' );
+		expect( prunedCard ).toHaveTextContent( 'Jane Writer·Saved Oct 29, 2026' );
 		expect( screen.getByRole( 'link', { name: 'Example Blog' } ) ).toHaveAttribute(
 			'href',
 			'https://example.com'

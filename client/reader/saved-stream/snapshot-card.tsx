@@ -1,6 +1,8 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
+import { Fragment } from 'react';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
+import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
@@ -78,6 +80,7 @@ export function SavedSnapshotCard( {
 			onClick={ openPage }
 		>
 			<div className="reader-post-card__byline">
+				<SiteIcon size={ 40 } />
 				<div className="reader-post-card__byline-details">
 					{ post.site_name && (
 						<div className="reader-post-card__byline-site">
@@ -91,14 +94,25 @@ export function SavedSnapshotCard( {
 									{ post.site_name }
 								</a>
 							) : (
-								<span className="reader-post-card__site">{ post.site_name }</span>
+								<span className="reader-post-card__site reader-post-card__link">
+									{ post.site_name }
+								</span>
 							) }
 						</div>
 					) }
 					{ bylineItems.length > 0 && (
 						<div className="reader-post-card__author-and-timestamp">
 							<span className="reader-post-card__byline-secondary">
-								{ bylineItems.join( ' · ' ) }
+								{ bylineItems.map( ( item, index ) => (
+									<Fragment key={ index }>
+										{ index > 0 && (
+											<span className="reader-post-card__byline-secondary-bullet-wrapper">
+												<span className="reader-post-card__byline-secondary-bullet">·</span>
+											</span>
+										) }
+										<span className="reader-post-card__byline-secondary-item">{ item }</span>
+									</Fragment>
+								) ) }
 							</span>
 						</div>
 					) }
@@ -127,16 +141,16 @@ export function SavedSnapshotCard( {
 							<p className="reader-excerpt">{ post.excerpt }</p>
 						</AutoDirection>
 					) }
+					<ul className="reader-post-actions ignore-click">
+						<li className="reader-post-actions__item">
+							<ReaderSaveButton post={ post } iconSize={ 20 } />
+						</li>
+					</ul>
 				</div>
 				{ featuredImage && (
 					<img className="saved-snapshot-card__image" src={ featuredImage } alt="" />
 				) }
 			</div>
-			<ul className="reader-post-actions ignore-click">
-				<li className="reader-post-actions__item">
-					<ReaderSaveButton post={ post } iconSize={ 20 } />
-				</li>
-			</ul>
 		</article>
 	);
 }

@@ -1,8 +1,10 @@
+@import "calypso/assets/stylesheets/shared/mixins/breakpoints";
+
 .saved-snapshot-card {
 	cursor: pointer;
 
 	.reader-post-card__post {
-		display: flex;
+		flex-direction: row;
 		gap: 24px;
 		align-items: flex-start;
 	}
@@ -16,7 +18,13 @@
 		flex: none;
 		width: 160px;
 		max-height: 160px;
+		margin-block-start: 24px;
 		object-fit: cover;
 		border-radius: 4px;
+
+		@include breakpoint-deprecated( "<660px" ) {
+			width: 96px;
+			max-height: 96px;
+		}
 	}
 }
