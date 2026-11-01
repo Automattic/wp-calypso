@@ -351,3 +351,36 @@ describe( 'StaticSiteImportNotice preview link', () => {
 		nock.cleanAll();
 	} );
 } );
+
+describe( 'StaticSiteImportNotice help with the move', () => {
+	it( 'offers a person to talk to when the moved site isn’t right', async () => {
+		const { recordTracksEvent } = render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished', needsRestart: false } }
+				search={ search }
+			/>
+		);
+
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Something not right? Get help with your move' } )
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_static_site_import_ready_notice_click',
+			{ site_id: 42, source_platform: 'wix', action: 'get_help' }
+		);
+	} );
+
+	it( 'still offers help when a move fails', () => {
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'failed', needsRestart: false } }
+				search={ search }
+			/>
+		);
+
+		expect( screen.getByText( 'We couldn’t finish your move' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Get help' } ) ).toBeVisible();
+	} );
+} );

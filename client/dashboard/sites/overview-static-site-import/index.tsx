@@ -147,7 +147,7 @@ export function StaticSiteImportNotice( {
 	search: StaticSiteImportSearch;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { setShowHelpCenter } = useHelpCenter();
+	const { setShowHelpCenter, setNewMessagingChat } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
 	const sourceHost = getSourceHost( from );
@@ -170,7 +170,7 @@ export function StaticSiteImportNotice( {
 		} );
 	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
-	const recordClick = ( action: 'connect_domain' | 'get_domain' | 'preview_site' ) =>
+	const recordClick = ( action: 'connect_domain' | 'get_domain' | 'preview_site' | 'get_help' ) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
 			...trackingProps,
 			action,
@@ -208,6 +208,17 @@ export function StaticSiteImportNotice( {
 		? ( previewLinks?.[ 0 ]?.code ?? createdPreviewLink?.code )
 		: undefined;
 	const previewUrl = shareCode ? addQueryArgs( site.URL, { share: shareCode } ) : site.URL;
+
+	// Anyone the move didn't work for gets a person, not the AI assistant: our team can finish
+	// the move for them or refund it. The message tells them where the site came from.
+	const askForMoveHelp = ( initialMessage: string ) =>
+		setNewMessagingChat( {
+			initialMessage,
+			section: 'static-site-import',
+			siteUrl: site.URL,
+			siteId: String( site.ID ),
+		} );
+	const sourceName = sourceHost || __( 'my old platform' );
 
 	if ( siteImport.isRefused ) {
 		return (
@@ -247,7 +258,18 @@ export function StaticSiteImportNotice( {
 								{ __( 'Try again' ) }
 							</Button>
 						) }
-						<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
+						<Button
+							variant="link"
+							onClick={ () =>
+								askForMoveHelp(
+									sprintf(
+										/* translators: %s: the address of the site being moved, e.g. example.com. */
+										__( 'My site move from %s didn’t finish. Can you help me move it?' ),
+										sourceName
+									)
+								)
+							}
+						>
 							{ __( 'Get help' ) }
 						</Button>
 					</HStack>
@@ -317,6 +339,24 @@ export function StaticSiteImportNotice( {
 								onClick={ () => recordClick( 'preview_site' ) }
 							>
 								{ __( 'Preview site' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="link"
+								onClick={ () => {
+									recordClick( 'get_help' );
+									askForMoveHelp(
+										sprintf(
+											/* translators: %s: the address of the site that was moved, e.g. example.com. */
+											__(
+												'My site moved from %s, but some things didn’t come across right. Can you help me with my move?'
+											),
+											sourceName
+										)
+									);
+								} }
+							>
+								{ __( 'Something not right? Get help with your move' ) }
 							</Button>
 						</>
 					}
