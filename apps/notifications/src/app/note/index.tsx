@@ -9,59 +9,17 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL } from '@wordpress/i18n';
 import { chevronLeft, chevronRight, arrowUp, arrowDown } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getActions } from '../../panel/helpers/notes';
 import actions from '../../panel/state/actions';
 import getAllNotes from '../../panel/state/selectors/get-all-notes';
-import getIsNotePendingApproval from '../../panel/state/selectors/get-is-note-pending-approval';
-import getIsNoteRead from '../../panel/state/selectors/get-is-note-read';
-import SimplifiedNote, { hasNoteContext } from '../note-simplified';
+import SimplifiedNote from '../note-simplified';
 import { getTemporaryNoteTitle } from '../note-simplified/labels';
-import { NoteBody, ActionBlock, ReplyFooter, SimplifiedActionBlock } from '../templates/body';
+import { ReplyFooter, SimplifiedActionBlock } from '../templates/body';
 import CloseButton from '../templates/close-button';
-import NoteSummary from '../templates/note-summary';
-import { useIsSimplifiedNote } from '../use-is-simplified-note';
 import './style.scss';
 import type { NoteNavigation } from './hooks';
-import type { Note as NoteObject, Block } from '../types';
-
-const hasBadge = ( body: NoteObject[ 'body' ] ) =>
-	body.some(
-		( { media }: Block ) =>
-			media && media.some( ( { type }: { type: string } ) => 'badge' === type )
-	);
-
-const getClasses = ( {
-	note,
-	isPendingApproval,
-	isRead,
-}: {
-	note: NoteObject;
-	isPendingApproval: boolean;
-	isRead: boolean;
-} ) => {
-	let hasCommentReply = false;
-	if ( 'comment' === note.type ) {
-		const noteBody = note.body;
-		const noteActions = getActions( note );
-		if ( noteBody.length > 1 && noteActions ) {
-			/* Check if note has a reply to another comment */
-			if ( noteBody[ 1 ] && noteBody[ 1 ].nest_level && noteBody[ 1 ].nest_level > 0 ) {
-				hasCommentReply = true;
-			}
-		}
-	}
-
-	return clsx( 'wpnc__note', `wpnc__${ note.type }`, {
-		'comment-reply': hasCommentReply,
-		read: isRead,
-		unread: ! isRead,
-		wpnc__badge: hasBadge( note.body ),
-		'wpnc__comment-unapproved': isPendingApproval,
-	} );
-};
+import type { Note as NoteObject } from '../types';
 
 type NoteProps = {
 	isDismissible?: boolean;
@@ -80,12 +38,6 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	const notes = useSelector( ( state ) => ( getAllNotes( state ) || [] ) as NoteObject[] );
 	const note = notes.find( ( note ) => String( note.id ) === noteId );
 
-	const isPendingApproval = useSelector(
-		( state ) => !! note && getIsNotePendingApproval( state, note )
-	);
-	const isRead = useSelector( ( state ) => note && getIsNoteRead( state, note ) );
-	const isSimplified = useIsSimplifiedNote();
-
 	useEffect( () => {
 		if ( note?.id ) {
 			dispatch( actions.ui.selectNote( note.id ) );
@@ -95,8 +47,6 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 	if ( ! note ) {
 		return null;
 	}
-
-	const isSimplifiedNote = isSimplified && hasNoteContext( note );
 
 	return (
 		<>
@@ -120,7 +70,7 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 							/>
 						) }
 						<Heading level={ 3 } size={ 15 } weight={ 500 }>
-							{ isSimplifiedNote ? getTemporaryNoteTitle( note ) : note.title }
+							{ getTemporaryNoteTitle( note ) }
 						</Heading>
 					</HStack>
 					<HStack justify="flex-end" style={ { width: 'auto', flexShrink: 0 } }>
@@ -149,36 +99,12 @@ const Note = ( { isDismissible, noteId, setSelectedNoteId, noteNavigation }: Not
 				</HStack>
 			</CardHeader>
 			<CardBody size="small" style={ { maxHeight: 'unset' } }>
-				<VStack justify="flex-start" spacing={ isSimplifiedNote ? 6 : 4 }>
-					{ isSimplifiedNote && <SimplifiedNote note={ note } /> }
-					{ ! isSimplifiedNote && !! note.header?.length && (
-						<>
-							<NoteSummary header={ note.header } url={ note.url } />
-							<hr
-								style={ {
-									border: 0,
-									borderBlockEnd: '1px solid var( --color-border-subtle, #f0f0f0 )',
-									blockSize: 0,
-									margin: 0,
-								} }
-							/>
-						</>
-					) }
-					{ ! isSimplifiedNote && (
-						<div className={ getClasses( { note, isPendingApproval, isRead } ) }>
-							<NoteBody note={ note } />
-						</div>
-					) }
+				<VStack justify="flex-start" spacing={ 6 }>
+					<SimplifiedNote note={ note } />
 				</VStack>
 			</CardBody>
-			{ isSimplifiedNote ? (
-				<>
-					<SimplifiedActionBlock note={ note } goBack={ goBack } />
-					<ReplyFooter note={ note } />
-				</>
-			) : (
-				<ActionBlock note={ note } goBack={ goBack } />
-			) }
+			<SimplifiedActionBlock note={ note } goBack={ goBack } />
+			<ReplyFooter note={ note } />
 		</>
 	);
 };

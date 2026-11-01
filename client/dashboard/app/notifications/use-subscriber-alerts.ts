@@ -56,10 +56,7 @@ function logSoundError( error: unknown, stage: string ) {
 // would only multiply the event count.
 const untrackedSoundResults = new Set( [ 'hidden', 'cooldown', 'disposed' ] );
 
-export default function useSubscriberAlerts(
-	onCount: ( count: number ) => void,
-	includeNoteContext: boolean
-) {
+export default function useSubscriberAlerts( onCount: ( count: number ) => void ) {
 	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
 	const recordTracksEventRef = useRef( recordTracksEvent );
@@ -136,7 +133,6 @@ export default function useSubscriberAlerts(
 								return true;
 							},
 							{
-								includeNoteContext,
 								onSound: ( result ) => {
 									if ( ! isCurrent() ) {
 										return;
@@ -164,9 +160,7 @@ export default function useSubscriberAlerts(
 			import( '@automattic/notifications/src/app/client' )
 				.then( ( { subscribeUnseenCount } ) => {
 					if ( isCurrent() ) {
-						unsubscribe = subscribeUnseenCount( wpcom, onCount, undefined, {
-							includeNoteContext,
-						} );
+						unsubscribe = subscribeUnseenCount( wpcom, onCount );
 					}
 				} )
 				.catch( ( error ) => reportSubscribeError( error, 'unseen_count' ) );
@@ -176,5 +170,5 @@ export default function useSubscriberAlerts(
 			epoch++;
 			unsubscribe?.();
 		};
-	}, [ subscriberAlertsEnabled, user.ID, onCount, includeNoteContext ] );
+	}, [ subscriberAlertsEnabled, user.ID, onCount ] );
 }
