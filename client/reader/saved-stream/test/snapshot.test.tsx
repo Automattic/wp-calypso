@@ -153,8 +153,32 @@ function renderSavedStream() {
 	);
 }
 
+/**
+ * Renders the Saved stream with these posts and resolves with the title link
+ * of the first one once its card is on screen.
+ */
+function renderSnapshots( posts: Array< { title: string } > ) {
+	mockSavedEndpoint( posts );
+	renderSavedStream();
+	return screen.findByRole( 'link', { name: posts[ 0 ].title } );
+}
+
 const getCard = ( title: string ) =>
 	screen.getByRole( 'link', { name: title } ).closest( 'article' ) as HTMLElement;
+
+async function getEnabledSaveButton( title: string ) {
+	const saveButton = getCard( title ).querySelector( '.reader-save-button' ) as HTMLElement;
+	await waitFor( () => expect( saveButton ).not.toBeDisabled() );
+	return saveButton;
+}
+
+/**
+ * Selects the first card with `j` and resolves once its title link has focus.
+ */
+async function selectFirstCard( user: ReturnType< typeof userEvent.setup >, title: HTMLElement ) {
+	await user.keyboard( 'j' );
+	await waitFor( () => expect( title ).toHaveFocus() );
+}
 
 const unmatchedPaths: string[] = [];
 const recordUnmatched = ( request: { path: string } ) => unmatchedPaths.push( request.path );
@@ -184,13 +208,8 @@ afterEach( () => {
 
 describe( 'SavedPostsStream with saved snapshots', () => {
 	it( 'renders a URL save and a deleted feed item from the stream data', async () => {
-		mockSavedEndpoint( [ URL_SAVE, PRUNED_FEED_ITEM ] );
+		await renderSnapshots( [ URL_SAVE, PRUNED_FEED_ITEM ] );
 
-		renderSavedStream();
-
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toBeVisible()
-		);
 		const urlCard = getCard( URL_SAVE.title );
 		expect( urlCard ).toHaveTextContent( URL_SAVE.excerpt );
 		expect( urlCard ).toHaveTextContent( 'Harvard Law Review · Saved Oct 30, 2026' );
@@ -214,13 +233,7 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 	} );
 
 	it( 'opens the saved page in a new tab when the card is clicked', async () => {
-		mockSavedEndpoint( [ URL_SAVE ] );
-		renderSavedStream();
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toBeVisible()
-		);
-
-		const title = screen.getByRole( 'link', { name: URL_SAVE.title } );
+		const title = await renderSnapshots( [ URL_SAVE ] );
 		expect( title ).toHaveAttribute( 'href', URL_SAVE.URL );
 		expect( title ).toHaveAttribute( 'target', '_blank' );
 
@@ -230,16 +243,9 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 	} );
 
 	it( 'opens a selected snapshot once when Enter is pressed', async () => {
-		mockSavedEndpoint( [ URL_SAVE ] );
-		renderSavedStream();
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toBeVisible()
-		);
+		const title = await renderSnapshots( [ URL_SAVE ] );
 		const user = userEvent.setup();
-		await user.keyboard( 'j' );
-		await waitFor( () => expect( getCard( URL_SAVE.title ) ).toHaveClass( 'is-selected' ) );
-		const title = screen.getByRole( 'link', { name: URL_SAVE.title } );
-		await waitFor( () => expect( title ).toHaveFocus() );
+		await selectFirstCard( user, title );
 		const titleClick = jest.fn();
 		title.addEventListener( 'click', titleClick );
 
@@ -251,20 +257,10 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 	} );
 
 	it( 'leaves Enter to a focused Save button on a selected snapshot', async () => {
-		mockSavedEndpoint( [ URL_SAVE ] );
-		renderSavedStream();
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toBeVisible()
-		);
+		const title = await renderSnapshots( [ URL_SAVE ] );
 		const user = userEvent.setup();
-		await user.keyboard( 'j' );
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: URL_SAVE.title } ) ).toHaveFocus()
-		);
-		const saveButton = getCard( URL_SAVE.title ).querySelector(
-			'.reader-save-button'
-		) as HTMLElement;
-		await waitFor( () => expect( saveButton ).not.toBeDisabled() );
+		await selectFirstCard( user, title );
+		const saveButton = await getEnabledSaveButton( URL_SAVE.title );
 		const unsave = nock( BASE )
 			.post( '/wpcom/v2/read/saved/delete', { url: URL_SAVE.URL, source: SOURCE } )
 			.reply( 200, { saved: false, key: { url: URL_SAVE.URL }, total: 0 } );
@@ -281,18 +277,14 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		{ kind: 'URL save', post: URL_SAVE, body: { url: URL_SAVE.URL } },
 		{ kind: 'deleted feed item', post: PRUNED_FEED_ITEM, body: { feed_item_id: 64089 } },
 	] )( 'unsaves a $kind by its saved key', async ( { post, body } ) => {
-		mockSavedEndpoint( [ URL_SAVE, PRUNED_FEED_ITEM ] );
-		renderSavedStream();
-		await waitFor( () => expect( screen.getByRole( 'link', { name: post.title } ) ).toBeVisible() );
-		const card = getCard( post.title );
+		await renderSnapshots( [ URL_SAVE, PRUNED_FEED_ITEM ] );
+		const saveButton = await getEnabledSaveButton( post.title );
 		const unsave = nock( BASE )
 			.post( '/wpcom/v2/read/saved/delete', { ...body, source: SOURCE } )
 			.reply( 200, { saved: false, key: body, total: 1 } );
 		const refetch = mockSavedEndpoint(
 			[ URL_SAVE, PRUNED_FEED_ITEM ].filter( ( saved ) => saved !== post )
 		);
-		const saveButton = card.querySelector( '.reader-save-button' ) as HTMLElement;
-		await waitFor( () => expect( saveButton ).not.toBeDisabled() );
 
 		await userEvent.setup().click( saveButton );
 

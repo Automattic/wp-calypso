@@ -347,37 +347,25 @@ describe( 'useSavePost', () => {
 		}
 	);
 
-	it( 'unsaves a page saved by URL by its URL', async () => {
+	it.each( [
+		{ kind: 'a page saved by URL', post: URL_SAVE, body: { url: URL_SAVE.URL }, entry: 0 },
+		{ kind: 'a deleted feed item', post: PRUNED_FEED_ITEM, body: { feed_item_id: 7000 }, entry: 2 },
+	] )( 'unsaves $kind by its saved key', async ( { post, body, entry } ) => {
 		const client = makeClient();
 		setKeys( client, SNAPSHOT_SAVED_KEYS );
 		const request = nock( BASE )
-			.post( '/wpcom/v2/read/saved/delete', { url: URL_SAVE.URL, source: 'reader-web' } )
-			.reply( 200, { saved: false, key: { url: URL_SAVE.URL }, total: 2 } );
-		const result = renderSavePost( client, URL_SAVE );
+			.post( '/wpcom/v2/read/saved/delete', { ...body, source: 'reader-web' } )
+			.reply( 200, { saved: false, key: body, total: 2 } );
+		const result = renderSavePost( client, post );
 		expect( result.current.isSaved ).toBe( true );
 
-		act( () => result.current.unsavePost( URL_SAVE ) );
+		act( () => result.current.unsavePost( post ) );
 
 		await waitFor( () => expect( request.isDone() ).toBe( true ) );
 		expect( result.current.isSaved ).toBe( false );
 		expect( client.getQueryData< ReadSavedKeysResponse >( readSavedKeysQuery().queryKey ) ).toEqual(
-			{ keys: SNAPSHOT_SAVED_KEYS.slice( 1 ), total: 2 }
+			{ keys: SNAPSHOT_SAVED_KEYS.filter( ( _key, index ) => index !== entry ), total: 2 }
 		);
-	} );
-
-	it( 'unsaves a deleted feed item by its feed item ID', async () => {
-		const client = makeClient();
-		setKeys( client, SNAPSHOT_SAVED_KEYS );
-		const request = nock( BASE )
-			.post( '/wpcom/v2/read/saved/delete', { feed_item_id: 7000, source: 'reader-web' } )
-			.reply( 200, { saved: false, key: { feed_item_id: 7000 }, total: 2 } );
-		const result = renderSavePost( client, PRUNED_FEED_ITEM );
-		expect( result.current.isSaved ).toBe( true );
-
-		act( () => result.current.unsavePost( PRUNED_FEED_ITEM ) );
-
-		await waitFor( () => expect( request.isDone() ).toBe( true ) );
-		expect( result.current.isSaved ).toBe( false );
 	} );
 
 	it( 'shows the post as unsaved and calls onError when the save fails', async () => {

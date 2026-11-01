@@ -2,6 +2,8 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import AutoDirection from 'calypso/components/auto-direction';
+import { safeLink } from 'calypso/lib/post-normalizer/utils';
+import resizeImageUrl from 'calypso/lib/resize-image-url';
 import type { Post } from 'calypso/reader/data/post';
 import type { MouseEvent, Ref } from 'react';
 
@@ -11,10 +13,10 @@ interface SavedSnapshotCardProps {
 	post: Post;
 	isSelected?: boolean;
 	itemRef?: Ref< HTMLElement >;
+	handleClick?: () => void;
 }
 
-const isWebUrl = ( url: unknown ): url is string =>
-	typeof url === 'string' && /^https?:\/\//i.test( url );
+const IMAGE_WIDTH = 160;
 
 function useSavedDate( dateSaved: unknown ) {
 	const translate = useTranslate();
@@ -40,21 +42,28 @@ function useSavedDate( dateSaved: unknown ) {
  * been deleted. There's no Reader post or site behind it, so it only shows the
  * snapshot and opens the page in a new tab.
  */
-export function SavedSnapshotCard( { post, isSelected, itemRef }: SavedSnapshotCardProps ) {
+export function SavedSnapshotCard( {
+	post,
+	isSelected,
+	itemRef,
+	handleClick,
+}: SavedSnapshotCardProps ) {
 	const savedDate = useSavedDate( post.date_saved );
-	const url = isWebUrl( post.URL ) ? post.URL : undefined;
-	const siteUrl = isWebUrl( post.site_URL ) ? post.site_URL : undefined;
-	const excerpt = typeof post.excerpt === 'string' ? post.excerpt : '';
-	const featuredImage = typeof post.featured_image === 'string' ? post.featured_image : '';
+	const url = post.URL ? safeLink( post.URL ) : undefined;
+	const siteUrl = typeof post.site_URL === 'string' ? safeLink( post.site_URL ) : undefined;
+	const featuredImage =
+		typeof post.featured_image === 'string' && post.featured_image
+			? resizeImageUrl( post.featured_image, { w: IMAGE_WIDTH }, null )
+			: null;
 	const authorName = post.author?.name;
 	const bylineItems = [ authorName, savedDate ].filter( Boolean );
 
 	const openPage = ( event: MouseEvent< HTMLElement > ) => {
 		const target = event.target as HTMLElement;
-		if ( ! url || target.closest( 'a, button' ) || window.getSelection?.()?.toString() ) {
+		if ( target.closest( 'a, button' ) || window.getSelection?.()?.toString() ) {
 			return;
 		}
-		window.open( url, '_blank', 'noopener,noreferrer' );
+		handleClick?.();
 	};
 
 	return (
@@ -113,9 +122,9 @@ export function SavedSnapshotCard( { post, isSelected, itemRef }: SavedSnapshotC
 							) }
 						</h2>
 					</AutoDirection>
-					{ excerpt && (
+					{ post.excerpt && (
 						<AutoDirection>
-							<p className="reader-excerpt saved-snapshot-card__excerpt">{ excerpt }</p>
+							<p className="reader-excerpt">{ post.excerpt }</p>
 						</AutoDirection>
 					) }
 				</div>

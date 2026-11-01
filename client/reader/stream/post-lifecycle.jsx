@@ -139,6 +139,7 @@ class PostLifecycle extends Component {
 					post={ post }
 					isSelected={ this.props.isSelected }
 					itemRef={ this.props.itemRef }
+					handleClick={ this.props.handleClick }
 				/>
 			);
 		} else if (

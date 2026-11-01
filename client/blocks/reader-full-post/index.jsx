@@ -25,7 +25,7 @@ import {
 	RelatedPostsFromSameSite,
 	RelatedPostsFromOtherSites,
 } from 'calypso/components/related-posts';
-import { isFeaturedImageInContent } from 'calypso/lib/post-normalizer/utils';
+import { isFeaturedImageInContent, safeLink } from 'calypso/lib/post-normalizer/utils';
 import ReaderBackButton from 'calypso/reader/components/back-button';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { usePostCommentsApiDisabled } from 'calypso/reader/data/comments';
@@ -1078,7 +1078,7 @@ function navigationUrlFor( post, postKey ) {
 		}
 	}
 	if ( postKey.snapshotId ) {
-		return postKey.url;
+		return ( postKey.url && safeLink( postKey.url ) ) || '#';
 	}
 	if ( postKey.feedId ) {
 		return `/reader/feeds/${ postKey.feedId }/posts/${ postKey.postId }`;

@@ -16,10 +16,7 @@ import type { Post } from 'calypso/reader/data/post';
  * Following, so the same post would be saved two ways.
  */
 export function savedKeyForPost( post: Post ): ReadSavedKey | null {
-	if ( isSavedSnapshotPost( post ) ) {
-		if ( post.feed_item_ID ) {
-			return { feed_item_id: post.feed_item_ID };
-		}
+	if ( isSavedSnapshotPost( post ) && ! post.feed_item_ID ) {
 		return post.URL ? { url: post.URL } : null;
 	}
 

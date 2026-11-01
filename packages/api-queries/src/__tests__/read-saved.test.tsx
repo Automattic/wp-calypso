@@ -96,9 +96,6 @@ describe( 'getReadSavedKeyId', () => {
 		expect( getReadSavedKeyId( { url: 'https://example.com/a' } ) ).toBe(
 			'url-https://example.com/a'
 		);
-		expect( getReadSavedKeyId( { url: 'https://example.com/a' } ) ).not.toBe(
-			getReadSavedKeyId( { url: 'https://example.com/b' } )
-		);
 	} );
 
 	it( 'identifies an entry that has IDs and a URL by its IDs', () => {

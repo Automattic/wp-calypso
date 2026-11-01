@@ -12,13 +12,6 @@
 		min-width: 0;
 	}
 
-	.saved-snapshot-card__excerpt {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 3;
-		overflow: hidden;
-	}
-
 	.saved-snapshot-card__image {
 		flex: none;
 		width: 160px;
