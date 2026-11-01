@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Provider } from 'react-redux';
@@ -230,6 +230,22 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		expect( unmatchedPaths.filter( ( path ) => /\/read\/(feed|sites)\//.test( path ) ) ).toEqual(
 			[]
 		);
+	} );
+
+	it( 'shows a save as saved before the saved keys include it', async () => {
+		nock.cleanAll();
+		nock( BASE )
+			.get( '/wpcom/v2/read/saved/keys' )
+			.query( true )
+			.reply( 200, { keys: [], total: 0 } );
+
+		await renderSnapshots( [ URL_SAVE, PRUNED_FEED_ITEM ] );
+
+		for ( const { title } of [ URL_SAVE, PRUNED_FEED_ITEM ] ) {
+			expect(
+				await within( getCard( title ) ).findByRole( 'button', { name: 'Saved' } )
+			).toBeVisible();
+		}
 	} );
 
 	it( 'opens the saved page in a new tab when the card is clicked', async () => {

@@ -12,6 +12,7 @@ import {
 } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache';
+import { addSavedStreamPostsToKeys, useSavedPostKeys } from 'calypso/reader/data/saved-posts';
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from '../../build-query-params';
@@ -178,6 +179,27 @@ export const useInfiniteStream = ( {
 			syncStreamPage( queryClient, dispatch, page, resolvedStreamKey );
 		}
 	}, [ resolvedStreamKey, streamType, query.data, queryClient, dispatch ] );
+
+	// Every post in the Saved stream is saved, whatever the keys query says.
+	// Waits for the keys to load, so a page that arrives first isn't skipped.
+	const isSavedStream = streamType === 'saved';
+	const { data: savedKeys } = useSavedPostKeys( { enabled: isSavedStream } );
+	const savedPagesAddedToKeys = useRef< WeakSet< ReadStreamResponse > >( new WeakSet() );
+
+	useEffect( () => {
+		if ( ! isSavedStream || ! savedKeys ) {
+			return;
+		}
+		for ( const page of ( query.data?.pages ?? [] ) as ReadStreamResponse[] ) {
+			if ( ! savedPagesAddedToKeys.current.has( page ) ) {
+				savedPagesAddedToKeys.current.add( page );
+				addSavedStreamPostsToKeys(
+					queryClient,
+					normalizeStreamPage( page, streamType ).streamPosts
+				);
+			}
+		}
+	}, [ isSavedStream, savedKeys, streamType, query.data, queryClient ] );
 
 	const items: StreamItem[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];

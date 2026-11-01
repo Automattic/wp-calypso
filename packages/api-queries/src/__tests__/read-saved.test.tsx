@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider, useMutation, useQuery } from '@tansta
 import { act, renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import {
+	addMissingReadSavedKeys,
 	getReadSavedKeyId,
 	readSavedKeysQuery,
 	saveReadPostMutation,
@@ -399,5 +400,58 @@ describe( 'overlapping saves and unsaves', () => {
 
 		save.resolve();
 		await save.done;
+	} );
+
+	it( 'does not add stream saves while a write is in flight', async () => {
+		const client = newClient();
+		setKeys( client, [ entry( POST_KEY ) ] );
+		const unsave = start( client, unsaveReadPostMutation, POST_KEY );
+		await flush();
+
+		addMissingReadSavedKeys( client, [ { keys: [ POST_KEY ], date_saved: '' } ] );
+
+		expect( getKeyIds( client ) ).toEqual( [] );
+		unsave.resolve();
+		await unsave.done;
+	} );
+} );
+
+describe( 'addMissingReadSavedKeys', () => {
+	const URL_KEY = { url: 'https://example.com/recipes/tailgating' };
+
+	it( 'adds saves the keys are missing ahead of the others', () => {
+		const client = newClient();
+		setKeys( client, [ entry( POST_KEY ) ] );
+
+		addMissingReadSavedKeys( client, [
+			{ keys: [ URL_KEY ], date_saved: '2026-11-01T00:00:00+00:00' },
+			{ keys: [ POST_KEY ], date_saved: '2026-10-01T00:00:00+00:00' },
+		] );
+
+		expect( getKeys( client ) ).toEqual( {
+			keys: [ entry( URL_KEY, '2026-11-01T00:00:00+00:00' ), entry( POST_KEY ) ],
+			total: 2,
+		} );
+	} );
+
+	it( 'skips a save stored under another of its keys or under a different form of its URL', () => {
+		const client = newClient();
+		setKeys( client, [ entry( FEED_ITEM_KEY ), entry( URL_KEY ) ] );
+
+		addMissingReadSavedKeys( client, [
+			{ keys: [ POST_KEY, FEED_ITEM_KEY ], date_saved: '' },
+			{ keys: [ { url: `${ URL_KEY.url }/?utm_source=chrome` } ], date_saved: '' },
+			{ keys: [], date_saved: '' },
+		] );
+
+		expect( getKeys( client )?.total ).toBe( 2 );
+	} );
+
+	it( 'leaves the keys query alone until it has loaded', () => {
+		const client = newClient();
+
+		addMissingReadSavedKeys( client, [ { keys: [ POST_KEY ], date_saved: '' } ] );
+
+		expect( getKeys( client ) ).toBeUndefined();
 	} );
 } );

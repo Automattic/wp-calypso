@@ -143,6 +143,43 @@ function getSavedWrites( queryClient: QueryClient ): SavedWrites {
 	return writes;
 }
 
+/**
+ * Adds saves the keys query is missing, newest first. The saved posts stream
+ * can list a save made elsewhere, such as in the browser extension, before the
+ * keys query refetches. Each save lists every key it may be stored under, and
+ * is added under the first unless one of them is already there.
+ *
+ * Does nothing while a save or unsave is in flight, so a stream page fetched
+ * before an unsave can't put the key back.
+ */
+export function addMissingReadSavedKeys(
+	queryClient: QueryClient,
+	saves: Array< { keys: ReadSavedKey[]; date_saved: string } >
+) {
+	const data = queryClient.getQueryData( savedKeysQueryKey );
+	if ( ! data || getSavedWrites( queryClient ).pending > 0 ) {
+		return;
+	}
+
+	const ids = new Set( data.keys.map( getReadSavedKeyId ) );
+	const missing: ReadSavedKeyEntry[] = [];
+	for ( const { keys, date_saved } of saves ) {
+		const keyIds = keys.map( getReadSavedKeyId );
+		if ( keys.length === 0 || keyIds.some( ( id ) => ids.has( id ) ) ) {
+			continue;
+		}
+		ids.add( keyIds[ 0 ] );
+		missing.push( { ...keys[ 0 ], date_saved } );
+	}
+
+	if ( missing.length > 0 ) {
+		queryClient.setQueryData( savedKeysQueryKey, {
+			keys: [ ...missing, ...data.keys ],
+			total: data.total + missing.length,
+		} );
+	}
+}
+
 interface SavedWriteContext {
 	write: symbol;
 	undo?: () => void;
