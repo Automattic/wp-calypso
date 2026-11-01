@@ -1,7 +1,11 @@
 import config from '@automattic/calypso-config';
 import { calypsoLiveRedirectorLink } from '../utils/link';
 
-const DOTCOM_DASHBOARD_ALLOWED_HOSTNAMES = [ 'my.localhost', 'my.wordpress.com' ];
+const DOTCOM_DASHBOARD_ALLOWED_HOSTNAMES = [
+	'my.localhost',
+	'my.wordpress.com',
+	'horizon.my.wordpress.com',
+];
 
 export function isAllowedDotcomDashboardHostname( hostname?: string ): boolean {
 	// Calypso Live links
