@@ -39,6 +39,50 @@ export const getSourceHost = ( url = '' ) => {
 	}
 };
 
+/**
+ * Free addresses that site builders give out on their own domains. The customer
+ * doesn't own them, so they can't be connected or transferred to WordPress.com.
+ */
+const PLATFORM_HOST_SUFFIXES = [
+	'base44.app',
+	'blogspot.com',
+	'carrd.co',
+	'editorx.io',
+	'framer.app',
+	'framer.website',
+	'github.io',
+	'godaddysites.com',
+	'hostingersite.com',
+	'jimdofree.com',
+	'jimdosite.com',
+	'lovable.app',
+	'mystrikingly.com',
+	'myshopify.com',
+	'netlify.app',
+	'pages.dev',
+	'replit.app',
+	'site123.me',
+	'square.site',
+	'squarespace.com',
+	'vercel.app',
+	'webflow.io',
+	'weebly.com',
+	'weeblysite.com',
+	'wixsite.com',
+	'wixstudio.com',
+	'wixstudio.io',
+	'wordpress.com',
+	'wpcomstaging.com',
+];
+
+/** Whether the host is a builder's free address rather than a domain the customer owns. */
+export const isPlatformHost = ( host = '' ) => {
+	const normalized = host.toLowerCase().replace( /\.$/, '' );
+	return PLATFORM_HOST_SUFFIXES.some(
+		( suffix ) => normalized === suffix || normalized.endsWith( `.${ suffix }` )
+	);
+};
+
 export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSiteImport | null {
 	const {
 		data: session,

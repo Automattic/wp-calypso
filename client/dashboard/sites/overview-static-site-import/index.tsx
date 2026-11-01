@@ -16,8 +16,9 @@ import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
-import { getSourceHost } from './use-static-site-import';
+import { getSourceHost, isPlatformHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
@@ -167,7 +168,7 @@ export function StaticSiteImportNotice( {
 		} );
 	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
-	const recordClick = ( action: 'connect_domain' | 'preview_site' ) =>
+	const recordClick = ( action: 'connect_domain' | 'get_domain' | 'preview_site' ) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
 			...trackingProps,
 			action,
@@ -228,12 +229,24 @@ export function StaticSiteImportNotice( {
 		);
 	}
 
-	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: sourceHost || undefined,
-		siteSlug: site.slug,
-		dashboard: getCurrentDashboard(),
-		back_to: redirectToDashboardLink(),
-	} );
+	// A builder's free address (e.g. name.wixsite.com) isn't the customer's to connect,
+	// so send them to find a domain instead of prefilling one they can't use.
+	const ownedDomain = sourceHost && ! isPlatformHost( sourceHost ) ? sourceHost : '';
+	const domainUrl = ownedDomain
+		? addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+				initialQuery: ownedDomain,
+				siteSlug: site.slug,
+				dashboard: getCurrentDashboard(),
+				back_to: redirectToDashboardLink(),
+			} )
+		: getAddSiteDomainUrl( site.slug );
+	const domainLabel = ownedDomain
+		? sprintf(
+				/* translators: %s: the site's domain, e.g. example.com. */
+				__( 'Connect %s' ),
+				ownedDomain
+			)
+		: __( 'Get a domain' );
 
 	return (
 		<>
@@ -253,16 +266,10 @@ export function StaticSiteImportNotice( {
 							<Button
 								__next40pxDefaultSize
 								variant="primary"
-								href={ connectDomainUrl }
-								onClick={ () => recordClick( 'connect_domain' ) }
+								href={ domainUrl }
+								onClick={ () => recordClick( ownedDomain ? 'connect_domain' : 'get_domain' ) }
 							>
-								{ sourceHost
-									? sprintf(
-											/* translators: %s: the site's domain, e.g. example.com. */
-											__( 'Connect %s' ),
-											sourceHost
-										)
-									: __( 'Connect domain' ) }
+								{ domainLabel }
 							</Button>
 							<Button
 								__next40pxDefaultSize

@@ -133,7 +133,7 @@ describe( 'StaticSiteImportCard', () => {
 		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'offers a generic Connect domain when the old address is missing', () => {
+	it( 'offers to get a domain when the old address is missing', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
@@ -143,13 +143,52 @@ describe( 'StaticSiteImportCard', () => {
 		);
 
 		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
-		const connect = screen.getByRole( 'link', { name: 'Connect domain' } );
-		expect( connect ).toHaveClass( 'is-primary' );
-		expect( connect ).toHaveAttribute(
+		const getDomain = screen.getByRole( 'link', { name: 'Get a domain' } );
+		expect( getDomain ).toHaveClass( 'is-primary' );
+		// Domain search: /setup/domain, or /domains/add/<site> in the backported dashboard.
+		expect( getDomain ).toHaveAttribute(
 			'href',
-			expect.stringContaining( '/setup/domain/use-my-domain' )
+			expect.stringMatching( /\/setup\/domain|\/domains\/add\/busybears\.wordpress\.com/ )
 		);
-		expect( connect ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
+		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'use-my-domain' ) );
+		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
+	} );
+
+	it.each( [
+		'https://ellenbauer37.wixsite.com/my-site-2',
+		'https://portland-paw-parlor.lovable.app/',
+		'anna-captured-moments.base44.app',
+		'https://example.squarespace.com',
+	] )( 'offers to get a domain instead of connecting the free address %s', ( from ) => {
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished', needsRestart: false } }
+				search={ { ...search, from } }
+			/>
+		);
+
+		expect( screen.queryByRole( 'link', { name: /^Connect / } ) ).not.toBeInTheDocument();
+		const getDomain = screen.getByRole( 'link', { name: 'Get a domain' } );
+		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'use-my-domain' ) );
+		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
+		// The notice still names where the site came from.
+		expect( screen.getByText( /is copied and running on WordPress\.com/ ) ).toBeVisible();
+	} );
+
+	it( 'treats a custom domain on a lookalike host as the customer’s own', () => {
+		render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished', needsRestart: false } }
+				search={ { ...search, from: 'https://notwixsite.com' } }
+			/>
+		);
+
+		expect( screen.getByRole( 'link', { name: 'Connect notwixsite.com' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'initialQuery=notwixsite.com' )
+		);
 	} );
 
 	it( 'does not ask for feedback after the site is previewed', async () => {
