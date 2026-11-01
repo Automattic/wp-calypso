@@ -2,18 +2,14 @@ import { Button, DropdownMenu, Icon, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { cog, keyboard, settings } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
-import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import actions from '../../panel/state/actions';
 import getIsShortcutsPopoverOpen from '../../panel/state/selectors/get-is-shortcuts-popover-open';
 import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
-import getViewSettingsSeen from '../../panel/state/selectors/get-view-settings-seen';
 import { useAppContext } from '../context';
 import NoteShortcuts from '../note-shortcuts';
-import LayoutTour from './layout-tour';
 import { useSavePreference } from './use-save-preference';
 import type { LayoutStyle } from '../types';
 
@@ -36,36 +32,12 @@ export default function NotePanelActions() {
 	const isShortcutsPopoverOpen = useSelector( getIsShortcutsPopoverOpen );
 	const layoutStyle = useSelector( getLayoutStyle );
 	const { isViewSettingsEnabled } = useAppContext();
-	const viewSettingsSeen = useSelector( getViewSettingsSeen );
 	const savePreference = useSavePreference();
 
-	// Nudge people towards settings they have never opened, once.
-	const isNew = isViewSettingsEnabled && viewSettingsSeen === false;
 	// The dot reports that the simplified layout is the one in use. Unlike the DataViews
 	// marker it resembles, it is not a "differs from default" signal: unset accounts start
 	// on simplified, so most people carry the dot until they pick the detailed rows.
 	const isSimplified = isViewSettingsEnabled && layoutStyle === 'simplified';
-	const [ isMenuOpen, setIsMenuOpen ] = useState( false );
-
-	const markSeen = useCallback(
-		() =>
-			savePreference( {
-				key: 'notifications-view-settings-seen',
-				value: true,
-				apply: () => actions.ui.setViewSettingsSeen( true ),
-				revert: () => actions.ui.setViewSettingsSeen( false ),
-			} ),
-		[ savePreference ]
-	);
-
-	// Finding the menu unaided answers the tour. The preference can arrive after the menu
-	// is already open, though, and until it does there is nothing to mark as seen — so
-	// settle it here rather than only on the click that opened it.
-	useEffect( () => {
-		if ( isMenuOpen && isNew ) {
-			markSeen();
-		}
-	}, [ isMenuOpen, isNew, markSeen ] );
 
 	const setLayoutStyle = ( value: LayoutStyle ) => {
 		recordTracksEvent( 'calypso_notification_layout_style_change', {
@@ -118,7 +90,6 @@ export default function NotePanelActions() {
 				<Menu
 					placement="bottom-end"
 					onOpenChange={ ( isOpen: boolean ) => {
-						setIsMenuOpen( isOpen );
 						if ( isOpen ) {
 							recordTracksEvent( 'calypso_notification_settings_menu_open' );
 						}
@@ -141,12 +112,7 @@ export default function NotePanelActions() {
 						onKeyDown={ ( event: React.KeyboardEvent ) => event.stopPropagation() }
 					>
 						<Menu.Group>
-							<Menu.GroupLabel>
-								{ __( 'Layout' ) }
-								<Badge className="wpnc-app__new-badge" intent="informational">
-									{ __( 'New' ) }
-								</Badge>
-							</Menu.GroupLabel>
+							<Menu.GroupLabel>{ __( 'Layout' ) }</Menu.GroupLabel>
 							{ LAYOUTS.map( ( { value, label } ) => (
 								<Menu.RadioItem
 									key={ value }
@@ -174,14 +140,6 @@ export default function NotePanelActions() {
 						</Menu.Group>
 					</Menu.Popover>
 				</Menu>
-			) }
-			{ isNew && ! isMenuOpen && (
-				<LayoutTour
-					onDismiss={ () => {
-						recordTracksEvent( 'calypso_notification_layout_tour_dismiss' );
-						markSeen();
-					} }
-				/>
 			) }
 		</>
 	);

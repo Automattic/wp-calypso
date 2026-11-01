@@ -58,14 +58,9 @@ export default function Notifications( {
 	}, [] );
 	useSubscriberAlerts( onNotificationCount );
 
-	// Both share one query key, so this is a single request — and it is skipped entirely
-	// without the picker, where nothing reads either value.
+	// Skipped entirely without the picker, where nothing reads it.
 	const { data: layoutStyle } = useQuery( {
 		...userPreferenceQuery( 'notifications-layout-style' ),
-		enabled: isViewSettingsEnabled,
-	} );
-	const { data: viewSettingsSeen } = useQuery( {
-		...userPreferenceQuery( 'notifications-view-settings-seen' ),
 		enabled: isViewSettingsEnabled,
 	} );
 	const { mutateAsync: savePreferences } = useMutation( userPreferencesMutation() );
@@ -77,8 +72,8 @@ export default function Notifications( {
 	);
 
 	const notificationPreferences = useMemo(
-		() => ( layoutStyle === undefined ? undefined : { layoutStyle, viewSettingsSeen } ),
-		[ layoutStyle, viewSettingsSeen ]
+		() => ( layoutStyle === undefined ? undefined : { layoutStyle } ),
+		[ layoutStyle ]
 	);
 
 	const handleToggle = ( willOpen: boolean ) => {

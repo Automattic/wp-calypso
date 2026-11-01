@@ -26,18 +26,15 @@ repliesCache.cleanup();
 
 export type NotificationPreferences = {
 	layoutStyle?: LayoutStyle | null;
-	viewSettingsSeen?: boolean | null;
 };
 
 let hasResolvedPreferences = false;
 
-const applyPreferences = ( { layoutStyle, viewSettingsSeen }: NotificationPreferences ) => {
+const applyPreferences = ( { layoutStyle }: NotificationPreferences ) => {
 	// Unset means never chosen, and those people get the simplified rows. Where the picker
 	// is missing the note list renders the detailed ones whatever this says, so there is
 	// nothing here to ask about the flag.
 	store.dispatch( actions.ui.setLayoutStyle( layoutStyle ?? 'simplified' ) );
-
-	store.dispatch( actions.ui.setViewSettingsSeen( !! viewSettingsSeen ) );
 };
 
 /**
