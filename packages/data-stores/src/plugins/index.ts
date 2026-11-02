@@ -9,9 +9,6 @@ const pluginRegistry = registerDataPlugin as typeof registerDataPlugin & {
 };
 
 const persistencePlugin: DataPlugin = ( registry, options ) => {
-	// Destructured so webpack sees `plugins` used whole: with `plugins.persistence` it can skip the
-	// plugins barrel in some builds and not others, changing chunk hashes between identical builds.
-	// Read here rather than at module load, as tests mock @wordpress/data without `plugins`.
 	const { persistence } = plugins;
 	return persistence(
 		{
