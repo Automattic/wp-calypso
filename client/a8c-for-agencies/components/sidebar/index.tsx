@@ -13,7 +13,10 @@ import Sidebar, {
 	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
 import { useDispatch, useSelector } from 'calypso/state';
-import { isAgencyClientUser } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import {
+	hasFetchedAgency,
+	isAgencyClientUser,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
@@ -64,7 +67,10 @@ const A4ASidebar = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const isClientUser = useSelector( isAgencyClientUser );
+	// Until the agency loads, a client can't be told apart from an agency user.
+	const showPromo = useSelector(
+		( state ) => hasFetchedAgency( state ) && ! isAgencyClientUser( state )
+	);
 
 	const isNarrowView = useBreakpoint( '<660px' );
 
@@ -113,7 +119,7 @@ const A4ASidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			{ ! isClientUser && <SidebarPromo recordTracksEvent={ handleRecordTracksEvent } /> }
+			{ showPromo && <SidebarPromo tone="dark" recordTracksEvent={ handleRecordTracksEvent } /> }
 
 			<SidebarFooter className="a4a-sidebar__footer">
 				<ul>
