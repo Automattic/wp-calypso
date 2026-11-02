@@ -5,6 +5,7 @@ import { LineChart } from '@automattic/charts';
 import { render, screen } from '@testing-library/react';
 import moment from 'moment';
 import 'moment/locale/de';
+import 'moment/locale/th';
 import OverviewChart from '../overview-chart';
 
 // Loading a locale also switches to it.
@@ -85,6 +86,27 @@ describe( 'OverviewChart tooltip', () => {
 			moment.locale( 'en' );
 		}
 		expect( screen.getByText( '1. Juli 2026' ) ).toBeInTheDocument();
+	} );
+
+	it( 'keeps the Gregorian calendar in a locale whose default is another', () => {
+		moment.locale( 'th' );
+		try {
+			renderTooltip( 'month', { Views: 1200 } );
+		} finally {
+			moment.locale( 'en' );
+		}
+		expect( screen.getByText( 'กรกฎาคม 2026' ) ).toBeInTheDocument();
+	} );
+
+	it( 'ignores the PHP date format wp-admin writes over the long date format', () => {
+		const LL = moment.localeData().longDateFormat( 'LL' );
+		moment.updateLocale( 'en', { longDateFormat: { LL: 'F j, Y' } } );
+		try {
+			renderTooltip( 'day', { Views: 1200 } );
+		} finally {
+			moment.updateLocale( 'en', { longDateFormat: { LL } } );
+		}
+		expect( screen.getByText( 'July 1, 2026' ) ).toBeInTheDocument();
 	} );
 
 	it( 'lists every series in full, largest first', () => {

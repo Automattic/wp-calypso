@@ -32,8 +32,9 @@ export function Findings( {
 	const { findings } = migration;
 	const codes = findings.map( ( { code } ) => code );
 	const isFailed = migration.status === 'failed';
-	// Continuing past a `retry` finding only runs the same step again.
-	const isRetry = findings.some( ( { resolution } ) => resolution === 'retry' );
+	const isRetry = findings.some( ( { resolution } ) =>
+		[ 'retry', 'assisted_handoff' ].includes( resolution )
+	);
 	// Only warnings mean the migration could read the source. Anything worse may be its connection.
 	const hasError = isFailed || findings.some( ( { severity } ) => severity === 'failure' );
 
@@ -82,7 +83,7 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			secondaryAction={ <AssistedHandoffLink /> }
+			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice

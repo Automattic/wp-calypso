@@ -544,11 +544,15 @@ function getPlanName( purchase: Purchase ): string | undefined {
  * one, so a purchase with no method has to add one either way.
  */
 function getTurnOnAutoRenewAction( purchase: Purchase ): PlanExpiryNoticeAction {
-	const label = __( 'Turn on auto-renew' );
+	if ( purchase.is_rechargeable ) {
+		return { type: 'enable-auto-renew', label: __( 'Turn on auto-renew' ) };
+	}
 
-	return purchase.is_rechargeable
-		? { type: 'enable-auto-renew', label }
-		: { type: 'add-payment-method', label };
+	// Auto-renew is already on, so "Turn on auto-renew" would be misleading.
+	return {
+		type: 'add-payment-method',
+		label: purchase.is_auto_renew_enabled ? __( 'Add payment method' ) : __( 'Turn on auto-renew' ),
+	};
 }
 
 /**

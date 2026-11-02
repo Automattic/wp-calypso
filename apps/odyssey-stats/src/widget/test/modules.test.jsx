@@ -95,6 +95,27 @@ describe( 'Modules', () => {
 		expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
 	} );
 
+	it( 'stands a placeholder in for a figure that is still loading', () => {
+		moduleStates( { protect: pending(), akismet: ok( 9520 ) } );
+		const { container } = renderModules();
+
+		expect( container.querySelectorAll( '.stats-widget-metric__value-skeleton' ) ).toHaveLength(
+			1
+		);
+		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( '9.5K' ) ).toBeInTheDocument();
+	} );
+
+	it( 'tells a screen reader the counts are loading, once, until both have landed', () => {
+		moduleStates( { protect: pending(), akismet: pending() } );
+		const { rerender } = renderModules();
+		expect( screen.getByText( 'Loading…' ) ).toHaveClass( 'screen-reader-text' );
+
+		moduleStates( { protect: ok( 12345 ), akismet: ok( 9520 ) } );
+		rerender( <Modules siteId={ SITE_ID } adminBaseUrl="https://example.com/wp-admin/" /> );
+		expect( screen.queryByText( 'Loading…' ) ).not.toBeInTheDocument();
+	} );
+
 	describe( 'for a user who cannot manage modules', () => {
 		beforeEach( () => canCurrentUser.mockReturnValue( false ) );
 

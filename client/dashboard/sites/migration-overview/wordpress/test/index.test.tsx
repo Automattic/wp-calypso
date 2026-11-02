@@ -23,6 +23,7 @@ const migration = ( status: string, extra = {} ) => ( {
 	status,
 	phase: null,
 	findings: [],
+	progress: null,
 	source_url: 'https://www.example.com',
 	started_at: null,
 	completed_at: null,
@@ -106,8 +107,8 @@ describe( 'WordPressMigration', () => {
 		);
 		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
 		expect(
-			screen.getByRole( 'button', { name: /Have our team handle this migration/ } )
-		).toBeDisabled();
+			screen.getByRole( 'link', { name: /Have our team handle this migration/ } )
+		).toHaveAttribute( 'href', `/sites/${ site.slug }/migration-overview/assisted` );
 
 		// The install button comes first: the other ways in are only there for people who have trouble with it.
 		expect( screen.queryByRole( 'link', { name: /WordPress.org/ } ) ).not.toBeInTheDocument();
@@ -394,32 +395,36 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 	} );
 
-	it( 'offers to try again when a finding says continuing is only a retry', async () => {
-		const failed = migration( 'failed', {
-			phase: 'preflight',
-			findings: [
-				finding( 'source_woocommerce_active', 'warning' ),
-				{ ...finding( 'source_redirect_invalid', 'failure' ), resolution: 'retry' },
-			],
-		} );
-		mockApi().get( statusPath ).query( true ).reply( 200, failed );
+	// A finding our team takes over too: a customer who took their migration back can still try again.
+	it.each( [ 'retry', 'assisted_handoff' ] as const )(
+		'offers to try again when a finding resolves by %s',
+		async ( resolution ) => {
+			const failed = migration( 'failed', {
+				phase: 'preflight',
+				findings: [
+					finding( 'source_woocommerce_active', 'warning' ),
+					{ ...finding( 'source_redirect_invalid', 'failure' ), resolution },
+				],
+			} );
+			mockApi().get( statusPath ).query( true ).reply( 200, failed );
 
-		render( <WordPressMigration site={ site } />, { queryClient } );
+			render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'source_redirect_invalid label' ) ).toBeVisible();
-		expect( screen.getByText( 'source_woocommerce_active label' ) ).toBeVisible();
+			expect( await screen.findByText( 'source_redirect_invalid label' ) ).toBeVisible();
+			expect( screen.getByText( 'source_woocommerce_active label' ) ).toBeVisible();
 
-		const run = mockApi()
-			.post( runPath, {
-				accept_findings: [ 'source_woocommerce_active', 'source_redirect_invalid' ],
-			} )
-			.reply( 202, running );
-		mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
+			const run = mockApi()
+				.post( runPath, {
+					accept_findings: [ 'source_woocommerce_active', 'source_redirect_invalid' ],
+				} )
+				.reply( 202, running );
+			mockApi().get( statusPath ).query( true ).reply( 200, running ).persist();
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 
-		await waitFor( () => expect( run.isDone() ).toBe( true ) );
-	} );
+			await waitFor( () => expect( run.isDone() ).toBe( true ) );
+		}
+	);
 
 	it( 'sends a refused connection straight back to the connect step', async () => {
 		const failed = migration( 'failed', {
@@ -558,6 +563,7 @@ describe( 'WordPressMigration', () => {
 		await waitFor( () =>
 			expect( router.state.location.pathname ).toBe( '/sites/example.wordpress.com' )
 		);
+		expect( router.state.location.search ).toEqual( { migration: 'completed' } );
 	} );
 
 	it( 'still says a migration is underway for a status it doesn’t know', async () => {

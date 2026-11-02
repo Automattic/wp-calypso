@@ -55,6 +55,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
+import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
 import {
 	getPressableOwnershipType,
 	pressableLicensesQuery,
@@ -519,6 +520,11 @@ export const marketplaceProductsRoute = createRoute( {
 	)
 );
 
+// A full-screen page's `from` search param: the page its Back link returns to.
+function parseFromSearch( search: Record< string, unknown > ) {
+	return typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined;
+}
+
 // `/referral-checkout` – request a client's payment for the referral
 // cart, or for the plan of one development site when `referral_blog_id`
 // names it. Takes the whole screen, like the WordPress.com checkout the paid
@@ -540,8 +546,7 @@ export const marketplaceReferralCheckoutRoute = createRoute( {
 	): { from?: string; referral_blog_id?: number } => {
 		const referralBlogId = Number( search.referral_blog_id );
 		return {
-			from:
-				typeof search.from === 'string' && search.from.startsWith( '/' ) ? search.from : undefined,
+			from: parseFromSearch( search ),
 			referral_blog_id:
 				Number.isInteger( referralBlogId ) && referralBlogId > 0 ? referralBlogId : undefined,
 		};
@@ -911,6 +916,31 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
+// `/agency/dashboard` – which dashboard the agency uses; only the owner can change it
+export const agencyDashboardOptInRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: __( 'Dashboard' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/dashboard',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! canSwitchAgencyDashboard( agency ) ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/dashboard-opt-in' ).then( ( d ) =>
+		createLazyRoute( 'agency-dashboard-opt-in' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/team/invite/accept` – accept an invitation to join an agency team. Sits
 // outside the agency routes: the invited user has no agency until it succeeds.
 export const agencyTeamAcceptInviteRoute = createRoute( {
@@ -1066,13 +1096,20 @@ export const earnMigrationsRoute = createRoute( {
 	)
 );
 
-// `/payout-settings` – where and how the agency gets paid
+// `/payout-settings` – where and how the agency gets paid. Takes the whole screen around
+// the embedded Tipalti form; `from` is the page the Back link returns to.
 export const earnPayoutSettingsRoute = createRoute( {
-	// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
-	staticData: { requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ] },
+	staticData: {
+		// TODO: replace with a top-level `a4a_read_earnings` capability when one exists.
+		requiresAgencyCapability: [ 'a4a_read_referrals', 'a4a_read_migrations' ],
+		isFullscreen: true,
+	},
 	head: () => ( { meta: [ { title: __( 'Payout settings' ) } ] } ),
 	getParentRoute: () => agencyRoute,
 	path: 'payout-settings',
+	validateSearch: ( search: Record< string, unknown > ): { from?: string } => ( {
+		from: parseFromSearch( search ),
+	} ),
 	beforeLoad: async ( { cause } ) => {
 		if ( cause === 'preload' ) {
 			return;
@@ -2307,6 +2344,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
+		agencyDashboardOptInRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,

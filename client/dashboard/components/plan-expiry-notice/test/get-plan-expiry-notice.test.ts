@@ -136,13 +136,28 @@ describe( 'more than 60 days before expiration', () => {
 		} );
 	} );
 
-	test( 'sends the reader to add a payment method when that is what is missing', () => {
+	test( 'sends the reader to add a payment method when auto-renew is on but no method is saved', () => {
 		const notice = getPlanExpiryNotice(
 			makePurchase( {
 				expiry_date: expiryInDays( 120 ),
 				is_auto_renew_enabled: true,
 				is_rechargeable: false,
 				might_still_auto_renew: false,
+			} )
+		);
+
+		expect( notice?.primaryAction ).toEqual( {
+			type: 'add-payment-method',
+			label: 'Add payment method',
+		} );
+	} );
+
+	test( 'offers to turn auto-renew on via a payment method when it is off and none is saved', () => {
+		const notice = getPlanExpiryNotice(
+			makePurchase( {
+				expiry_date: expiryInDays( 120 ),
+				is_auto_renew_enabled: false,
+				is_rechargeable: false,
 			} )
 		);
 

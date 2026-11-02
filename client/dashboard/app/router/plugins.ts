@@ -48,9 +48,10 @@ export const pluginsManageRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
-	loader: async () => {
+	loader: async ( { context } ) => {
 		queryClient.prefetchQuery( marketplacePluginsQuery() );
 		queryClient.prefetchQuery( pluginsQuery() );
+		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } );

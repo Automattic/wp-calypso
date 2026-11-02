@@ -11,9 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
 import Notice from '../../../components/notice';
-import { PageHeader } from '../../../components/page-header';
-import PageLayout from '../../../components/page-layout';
-import { getSiteDisplayName } from '../../../utils/site-name';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
 import { Connect } from './connect';
 import { Findings } from './findings';
@@ -108,7 +105,12 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		}
 
 		if ( isSiteUnlocked ) {
-			navigate( { to: '/sites/$siteSlug', params: { siteSlug: site.slug }, replace: true } );
+			navigate( {
+				to: '/sites/$siteSlug',
+				params: { siteSlug: site.slug },
+				search: { migration: 'completed' },
+				replace: true,
+			} );
 			return;
 		}
 
@@ -122,6 +124,17 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		return () => clearInterval( interval );
 	}, [ isCompleted, isSiteUnlocked, isUnlockOverdue, queryClient, navigate, site.ID, site.slug ] );
 
+	// An "assisted_handoff" failure automatically switches to the assisted flow,
+	// so read the state again in case a redirect is needed.
+	const hasHandoffFinding =
+		migration?.status === 'failed' &&
+		migration.findings.some( ( { resolution } ) => resolution === 'assisted_handoff' );
+	useEffect( () => {
+		if ( hasHandoffFinding ) {
+			queryClient.invalidateQueries( siteQueryFilter( site.ID ) );
+		}
+	}, [ hasHandoffFinding, queryClient, site.ID ] );
+
 	const contactUs = (
 		<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 			{ __( 'Contact us' ) }
@@ -129,28 +142,22 @@ export function WordPressMigration( { site }: { site: Site } ) {
 	);
 
 	return (
-		<PageLayout
-			size="small"
-			notices={
-				isUnreadable &&
-				! isForbidden && (
-					<Notice
-						variant="error"
-						actions={
-							<>
-								<Button __next40pxDefaultSize variant="primary" onClick={ () => refetch() }>
-									{ __( 'Try again' ) }
-								</Button>
-								{ contactUs }
-							</>
-						}
-					>
-						{ __( 'We couldn’t load your migration. We’ll keep trying.' ) }
-					</Notice>
-				)
-			}
-			header={ <PageHeader title={ getSiteDisplayName( site ) } /> }
-		>
+		<>
+			{ isUnreadable && ! isForbidden && (
+				<Notice
+					variant="error"
+					actions={
+						<>
+							<Button __next40pxDefaultSize variant="primary" onClick={ () => refetch() }>
+								{ __( 'Try again' ) }
+							</Button>
+							{ contactUs }
+						</>
+					}
+				>
+					{ __( 'We couldn’t load your migration. We’ll keep trying.' ) }
+				</Notice>
+			) }
 			{ /* Only the site's administrators can read the migration. */ }
 			{ isForbidden && (
 				<MigrationCard
@@ -176,6 +183,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			{ migration?.status === 'running' && (
 				<Running
 					phase={ migration.phase }
+					progress={ migration.progress }
 					sourceHost={ sourceHost }
 					notificationEmails={ migration.notification_emails }
 				/>
@@ -220,7 +228,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					actions={ contactUs }
 				/>
 			) }
-		</PageLayout>
+		</>
 	);
 }
 

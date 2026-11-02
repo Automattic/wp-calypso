@@ -428,7 +428,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 		enableTermSavingsPriceDisplay,
 		showSimplifiedBillingDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
-		isExperimentVariant,
 		showFeatureCheckmarks,
 	} = props;
 
@@ -502,7 +501,6 @@ const WrappedFeaturesGrid = ( props: FeaturesGridExternalProps ) => {
 				showBillingDescriptionForIncreasedRenewalPrice={
 					showBillingDescriptionForIncreasedRenewalPrice
 				}
-				isExperimentVariant={ isExperimentVariant }
 				showFeatureCheckmarks={ showFeatureCheckmarks }
 			>
 				<FeaturesGrid { ...props } gridSize={ gridSize ?? undefined } />

@@ -3,11 +3,13 @@ import PropTypes from 'prop-types';
 import { Component, Fragment } from 'react';
 import { Interval, EVERY_MINUTE } from 'calypso/lib/interval';
 import { CommentEditorContext } from './comment-editor-context';
+import NewCommentsPill from './new-comments-pill';
 import PostCommentsList from './post-comment-list';
 import { usePostCommentsData } from './use-post-comments-data';
 
 class PostComments extends Component {
 	static propTypes = {
+		deferNewComments: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
 		useBlockEditor: PropTypes.bool,
 		post: PropTypes.shape( {
@@ -17,17 +19,26 @@ class PostComments extends Component {
 	};
 
 	static defaultProps = {
+		deferNewComments: false,
 		shouldHighlightNew: false,
 		shouldPollForNewComments: false,
 		useBlockEditor: false,
 	};
 
 	pollForNewComments = () => {
-		this.props.fetchLaterComments();
+		this.props.pollForNewComments();
 	};
 
 	render() {
-		const { siteId, postId, shouldPollForNewComments, useBlockEditor } = this.props;
+		const {
+			siteId,
+			postId,
+			deferNewComments,
+			pendingCommentIds,
+			revealPendingComments,
+			shouldPollForNewComments,
+			useBlockEditor,
+		} = this.props;
 
 		if ( ! siteId || ! postId ) {
 			return null;
@@ -41,6 +52,9 @@ class PostComments extends Component {
 				<CommentEditorContext.Provider value={ useBlockEditor }>
 					<PostCommentsList { ...this.props } />
 				</CommentEditorContext.Provider>
+				{ deferNewComments && (
+					<NewCommentsPill commentIds={ pendingCommentIds } onReveal={ revealPendingComments } />
+				) }
 			</Fragment>
 		);
 	}

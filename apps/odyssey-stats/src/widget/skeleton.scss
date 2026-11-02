@@ -1,0 +1,28 @@
+// Matches `Skeleton` from `@wordpress/ui` (fill, pulse, forced-colours outline) without
+// bundling it. Each use sizes the bar to the content it stands in for.
+.stats-widget-skeleton {
+	display: block;
+	border-radius: var(--wpds-border-radius-md, 4px);
+	background-color: var(--wpds-color-background-surface-neutral-weak, #f4f4f4);
+
+	@media not (prefers-reduced-motion) {
+		animation: stats-widget-skeleton-pulse 1.5s ease-in-out infinite;
+	}
+
+	// An outline, not a border, so the bar keeps its size.
+	@media (forced-colors: active) {
+		outline: var(--wpds-border-width-xs, 1px) solid CanvasText;
+		outline-offset: calc(-1 * var(--wpds-border-width-xs, 1px));
+	}
+}
+
+@keyframes stats-widget-skeleton-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+
+	50% {
+		opacity: 0.4;
+	}
+}

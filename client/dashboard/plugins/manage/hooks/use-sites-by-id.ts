@@ -24,5 +24,5 @@ export const useSitesById = () => {
 			}, new Map< number, Site >() );
 	}, [ isLoadingSites, sites ] );
 
-	return { isLoadingSites, sitesById };
+	return { isLoadingSites, sitesById, hasSites: !! sites?.length };
 };

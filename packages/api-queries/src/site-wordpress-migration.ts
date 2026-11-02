@@ -1,7 +1,9 @@
 import {
+	cancelWordPressMigrationHandoff,
 	configureWordPressMigration,
 	fetchWordPressMigrationConfiguration,
 	fetchWordPressMigrationStatus,
+	handOffWordPressMigration,
 	runWordPressMigration,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions } from '@tanstack/react-query';
@@ -51,6 +53,21 @@ export const siteWordPressMigrationConfigureMutation = ( siteId: number ) =>
 		},
 		// A refused request means what we have is out of date: it's already running, or our team has taken it over.
 		onError: () => invalidateMigration( siteId ),
+	} );
+
+// Both change who has the migration, which the site reports, so the site is read again either way.
+export const siteWordPressMigrationHandoffMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'site-wp-mig-handoff' },
+		mutationFn: () => handOffWordPressMigration( siteId ),
+		onSettled: () => invalidateMigration( siteId ),
+	} );
+
+export const siteWordPressMigrationCancelHandoffMutation = ( siteId: number ) =>
+	mutationOptions( {
+		meta: { statId: 'site-wp-mig-handoff-cancel' },
+		mutationFn: () => cancelWordPressMigrationHandoff( siteId ),
+		onSettled: () => invalidateMigration( siteId ),
 	} );
 
 export const siteWordPressMigrationRunMutation = ( siteId: number ) =>

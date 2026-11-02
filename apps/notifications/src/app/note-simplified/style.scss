@@ -169,8 +169,20 @@
 }
 
 .wpnc-simplified .wpnc__reply {
+	// Adds to the body stack's 8px gap for 12px above the line.
+	margin-block-start: $grid-unit-05;
+	font-size: 15px;
+	line-height: 24px;
+
 	.wpnc__gridicon {
 		margin-inline-end: 2px;
+	}
+
+	// Same optical alignment as the note list's reply icon, at the glyph's native 18px.
+	.wpnc__gridicon .gridicons-reply {
+		margin-inline-start: -2px;
+		vertical-align: middle;
+		transform: translateY(-1px);
 	}
 
 	a {
@@ -178,8 +190,8 @@
 	}
 }
 
-.wpnc-simplified .wpnc__body-content .wpnc__comment,
-.wpnc-simplified .wpnc__new_post .wpnc__body .wpnc__body-content,
+.wpnc-simplified .wpnc__body-content > .wpnc__comment,
+.wpnc-simplified .wpnc__body-content > .wpnc__post,
 .wpnc-simplified .wpnc-simplified__parent-text {
 	font-size: 15px;
 	line-height: 24px;

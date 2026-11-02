@@ -15,6 +15,10 @@ import {
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
 import {
+	LEGACY_WEBSITE_DESIGN_SERVICES_FLOW,
+	getWebsiteDesignServicesRedirect,
+} from 'calypso/lib/signup/legacy-website-design-services-flow';
+import {
 	LEGACY_WOOCOMMERCE_INSTALL_FLOW,
 	getWooCommercePluginPage,
 } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
@@ -142,6 +146,11 @@ export default {
 
 		if ( flowName === LEGACY_WOOCOMMERCE_INSTALL_FLOW ) {
 			window.location.replace( getWooCommercePluginPage( context.query?.siteSlug ) );
+			return;
+		}
+
+		if ( flowName === LEGACY_WEBSITE_DESIGN_SERVICES_FLOW ) {
+			window.location.replace( getWebsiteDesignServicesRedirect( lang, context.querystring ) );
 			return;
 		}
 
