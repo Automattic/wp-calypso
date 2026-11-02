@@ -143,10 +143,6 @@ export function mcpAddSite( context, next ) {
 	next();
 }
 
-export function mcpSetupLegacyRedirect() {
-	page.redirect( '/me/mcp/setup' );
-}
-
 // Helper thunk that ensures that the user preferences has been fetched into Redux state before we
 // continue working with it.
 const waitForPrefs = () => async ( dispatch, getState ) => {

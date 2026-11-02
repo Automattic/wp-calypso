@@ -1,13 +1,9 @@
+@import '@wordpress/base-styles/breakpoints';
+
 // The card already has its own border-block-end, so drop the last row's divider.
 // The Bypass row keeps it while open, since its select follows the button.
 .mcp-preferences__access-card .summary-button.components-button:last-child {
 	border-block-end: none;
-}
-
-.mcp-connect {
-	display: flex;
-	flex-direction: column;
-	gap: 16px;
 }
 
 .mcp-connect__grid {
@@ -18,7 +14,7 @@
 	padding: 0;
 	list-style: none;
 
-	@media ( max-width: 600px ) {
+	@media ( max-width: $break-small ) {
 		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 	}
 }
@@ -42,17 +38,9 @@
 	cursor: pointer;
 
 	&:hover {
-		border-color: color-mix(
-			in srgb,
-			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) ) 12%,
-			transparent
-		);
-		background: color-mix(
-			in srgb,
-			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) ) 2%,
-			transparent
-		);
-		color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
+		border-color: color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 12%, transparent );
+		background: color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 2%, transparent );
+		color: var( --wp-admin-theme-color, #3858e9 );
 	}
 
 	&:focus-visible {
@@ -115,4 +103,10 @@
 	justify-content: space-between;
 	gap: 16px;
 	background: color-mix( in srgb, var( --dashboard__text-color ) 3%, transparent );
+}
+
+.mcp-connect__helper-button.components-button {
+	flex: none;
+	font-size: 12px;
+	font-weight: 600;
 }

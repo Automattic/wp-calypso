@@ -3,7 +3,7 @@ import { isAutomatticianQuery, queryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
-import { MCP_SERVER_URL, getHelperPrompt } from '../connect-agents';
+import { MCP_SERVER_URL, HELPER_PROMPT } from '../connect-agents';
 import McpConnectCard from '../connect-card';
 
 let writeText: jest.Mock;
@@ -57,7 +57,7 @@ describe( '<McpConnectCard />', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Copy prompt' } ) );
 
-		expect( writeText ).toHaveBeenCalledWith( getHelperPrompt() );
+		expect( writeText ).toHaveBeenCalledWith( HELPER_PROMPT );
 	} );
 
 	test( 'offers to turn MCP access on while it is off', async () => {

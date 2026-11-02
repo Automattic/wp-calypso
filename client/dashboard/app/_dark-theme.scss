@@ -98,11 +98,7 @@
 			var( --dashboard-surface__background-color ) 82%,
 			var( --wp-admin-theme-color )
 		);
-		color: var( --dashboard__text-color );
-
-		.mcp-connect__name {
-			color: var( --dashboard-menu-item-active__color );
-		}
+		color: var( --dashboard-menu-item-active__color );
 	}
 }
 

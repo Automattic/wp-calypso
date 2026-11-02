@@ -4,19 +4,18 @@ export const MCP_SERVER_URL = 'https://public-api.wordpress.com/wpcom/v2/mcp/v1'
 
 const LOGO_BASE_URL = 'https://s2.wp.com/wp-content/themes/a8c/jetpack-2026/assets/home/agents/';
 
-export interface ConnectAgent {
+interface ConnectAgentBase {
 	key: string;
 	name: string;
 	description: string;
 	logo: string;
 	actionLabel: string;
-	href?: string;
-	code?: string;
 }
 
-export function getHelperPrompt() {
-	return `Connect yourself to my WordPress.com account over MCP. The server is ${ MCP_SERVER_URL }. Tell me what to click or run for this app, wait while I sign in and approve the connection, then list my sites to confirm it works.`;
-}
+export type ConnectAgent = ConnectAgentBase &
+	( { href: string; code?: never } | { code: string; href?: never } );
+
+export const HELPER_PROMPT = `Connect yourself to my WordPress.com account over MCP. The server is ${ MCP_SERVER_URL }. Tell me what to click or run for this app, wait while I sign in and approve the connection, then list my sites to confirm it works.`;
 
 export function getConnectAgents(): ConnectAgent[] {
 	return [

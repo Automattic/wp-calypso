@@ -1,4 +1,4 @@
-import { Button, Icon } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { arrowUpRight, copy } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
@@ -7,7 +7,7 @@ import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody, CardFooter } from '../../components/card';
 import { Notice } from '../../components/notice';
 import { SectionHeader } from '../../components/section-header';
-import { getConnectAgents, getHelperPrompt } from './connect-agents';
+import { getConnectAgents, HELPER_PROMPT } from './connect-agents';
 import type { ConnectAgent } from './connect-agents';
 
 const COPIED_DURATION_MS = 1600;
@@ -79,7 +79,7 @@ export default function McpConnectCard( {
 	return (
 		<Card>
 			<CardBody>
-				<div className="mcp-connect">
+				<VStack spacing={ 4 }>
 					<SectionHeader
 						level={ 3 }
 						title={ __( 'Connect an AI assistant' ) }
@@ -111,7 +111,7 @@ export default function McpConnectCard( {
 					<ul className="mcp-connect__grid">
 						{ getConnectAgents().map( ( agent ) => (
 							<li key={ agent.key }>
-								{ agent.href ? (
+								{ agent.href !== undefined ? (
 									<a
 										className="mcp-connect__tile"
 										href={ agent.href }
@@ -127,7 +127,7 @@ export default function McpConnectCard( {
 										className="mcp-connect__tile"
 										onClick={ () => {
 											trackAgentClick( agent );
-											copyText( agent.key, agent.code ?? '' );
+											copyText( agent.key, agent.code );
 										} }
 									>
 										{ renderTileContent( agent ) }
@@ -136,7 +136,7 @@ export default function McpConnectCard( {
 							</li>
 						) ) }
 					</ul>
-				</div>
+				</VStack>
 			</CardBody>
 			<CardFooter className="mcp-connect__footer">
 				<span>{ __( 'Not sure where to start? Have the agent connect itself.' ) }</span>
@@ -148,7 +148,7 @@ export default function McpConnectCard( {
 					iconSize={ 16 }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_dashboard_mcp_connect_helper_copy', tracksAudienceProps );
-						copyText( 'helper', getHelperPrompt() );
+						copyText( 'helper', HELPER_PROMPT );
 					} }
 				>
 					{ copiedKey === 'helper' ? __( 'Copied' ) : __( 'Copy prompt' ) }

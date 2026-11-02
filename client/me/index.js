@@ -56,9 +56,13 @@ export default function () {
 		clientRender
 	);
 
-	// Connecting an agent now happens on the dashboard's main AI and MCP screen.
+	// Old setup URLs; agents connect from the dashboard's main AI and MCP screen.
 	page(
 		'/me/mcp/setup',
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp', () => true )
+	);
+	page(
+		'/me/mcp-setup',
 		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp', () => true )
 	);
 	page(
@@ -106,5 +110,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/me/mcp-setup', controller.mcpSetupLegacyRedirect, makeLayout, clientRender );
 }

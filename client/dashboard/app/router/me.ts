@@ -1350,7 +1350,7 @@ export const mcpIndexRoute = createRoute( {
 	)
 );
 
-// Connecting an agent moved onto the main AI and MCP screen; keep old setup links working.
+// Keeps old setup links working; agents connect from the main AI and MCP screen.
 export const mcpSetupRoute = createRoute( {
 	getParentRoute: () => mcpRoute,
 	path: 'setup',
