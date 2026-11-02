@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { queryClient, userSettingsQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { dispatch } from '@wordpress/data';
+import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
 import Snackbars from '../../../../app/snackbars';
@@ -26,13 +26,8 @@ const pendingSettings = {
 	new_user_email: 'pending@example.com',
 } as unknown as UserSettings;
 
-const originalLocation = window.location;
-
 const setSearch = ( search: string ) => {
-	Object.defineProperty( window, 'location', {
-		value: { ...originalLocation, search, pathname: '/test' },
-		writable: true,
-	} );
+	window.history.replaceState( null, '', `/me/account${ search }` );
 };
 
 const notificationSnackBar = () => {
@@ -49,7 +44,7 @@ describe( '<EmailVerificationBanner>', () => {
 	} );
 
 	afterEach( () => {
-		Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+		setSearch( '' );
 		// Snackbars are their own notice type, so the default clear leaves them behind for the
 		// next case to find.
 		dispatch( noticesStore ).removeAllNotices( 'snackbar' );
@@ -334,6 +329,8 @@ describe( '<EmailVerificationBanner>', () => {
 
 		expect( await screen.findByText( 'Email address updated' ) ).toBeVisible();
 		expect( screen.getByText( 'Update domain contacts' ) ).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( screen.getByText( 'Email address updated' ) ).toBeVisible();
 	} );
 
 	// The reason is optional so this can ship before the server sends one; without the fallback a
@@ -351,6 +348,7 @@ describe( '<EmailVerificationBanner>', () => {
 		await waitFor( () =>
 			expect( notificationSnackBar() ).toHaveTextContent( 'invalid or has expired' )
 		);
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	// Blaming the link would send the user back to Resend, which re-sends to the address that is
@@ -380,5 +378,25 @@ describe( '<EmailVerificationBanner>', () => {
 
 		expect( await screen.findByText( 'Email verified' ) ).toBeVisible();
 		expect( screen.queryByText( 'Update domain contacts' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'removes only its own params from the URL, once', async () => {
+		setSearch( '?verified=0&new_email_error=email_in_use&tab=email' );
+
+		render(
+			<>
+				<EmailVerificationBanner userSettings={ settings } isEmailVerified />
+				<Snackbars />
+			</>
+		);
+
+		await waitFor( () => expect( window.location.search ).toBe( '?tab=email' ) );
+		expect(
+			select( noticesStore )
+				.getNotices()
+				.map( ( { content } ) => content )
+		).toEqual( [
+			'That email address is already used by another WordPress.com account. Try a different address.',
+		] );
 	} );
 } );
