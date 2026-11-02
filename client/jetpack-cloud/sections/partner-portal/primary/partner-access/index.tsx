@@ -60,7 +60,7 @@ export default function PartnerAccess() {
 						<p>
 							{ translate( '{{link}}Learn more{{/link}} about Automattic for Agencies.', {
 								components: {
-									link: <a href="https://automattic.com/for/agencies" />,
+									link: <a href="https://automattic.com/for-agencies" />,
 								},
 							} ) }
 						</p>
