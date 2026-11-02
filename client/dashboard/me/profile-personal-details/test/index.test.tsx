@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -174,8 +174,10 @@ describe( '<PersonalDetailsSection>', () => {
 
 			render( <PersonalDetailsSection /> );
 
-			const user = userEvent.setup();
 			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+
+			jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
+			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
 
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
@@ -185,18 +187,15 @@ describe( '<PersonalDetailsSection>', () => {
 
 			expect( screen.queryByText( 'Nice username!' ) ).not.toBeInTheDocument();
 
-			expect(
-				await screen.findByText( 'Thanks for confirming your new username!', undefined, {
-					timeout: 2000,
-				} )
-			).toBeVisible();
-			expect(
-				await screen.findByText( 'Nice username!', undefined, { timeout: 2000 } )
-			).toBeVisible();
+			await act( async () => {
+				jest.advanceTimersByTime( 600 );
+			} );
+
+			expect( await screen.findByText( 'Nice username!' ) ).toBeVisible();
+			expect( screen.getByText( 'Thanks for confirming your new username!' ) ).toBeVisible();
 		} );
 
 		test( 'shows username update form and submits username change', async () => {
-			const user = userEvent.setup();
 			mockUserSettings( settings );
 			mockIsAutomattician( false );
 			mockValidateUsername( 'newusername' );
@@ -208,19 +207,23 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 
 			const usernameInput = screen.getByRole( 'textbox', { name: 'Username' } );
+
+			jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
+			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
 
 			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
 			await user.type( confirmInput, 'newusername' );
 
-			// Wait for debounced validation to complete
-			await waitFor(
-				() => {
-					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
-				},
-				{ timeout: 2000 }
-			);
+			await act( async () => {
+				jest.advanceTimersByTime( 600 );
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+			} );
 
 			const scope = nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/me/username', ( body ) => {
