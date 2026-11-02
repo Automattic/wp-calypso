@@ -626,6 +626,58 @@ describe( 'SiteRedesign', () => {
 		expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
 	} );
 
+	describe( 'while other designs are still being made', () => {
+		const stillMaking = ( canApply: boolean ) =>
+			session( {
+				status: 'generating',
+				candidates: [
+					candidate( 1 ),
+					{ ...candidate( 2 ), status: 'running', routes: null },
+					{ ...candidate( 3 ), status: 'queued', routes: null },
+				],
+				eligibility: {
+					can_preview: true,
+					can_apply: canApply,
+					reason: canApply ? null : 'upgrade_required',
+					required_plan: 'personal',
+				},
+			} );
+
+		it( 'lets a site that can apply choose the one that is ready', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			jest.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
+			expect( chooseButton() ).toBeEnabled();
+			expect( screen.getByText( 'Ready to choose' ) ).toBeVisible();
+			await userEvent.click( chooseButton() );
+
+			expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 1 ).id );
+		} );
+
+		it( 'keeps the unfinished ones from being chosen', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
+			[ 2, 3 ].forEach( ( n ) =>
+				expect(
+					screen.getByRole( 'button', { name: new RegExp( `^Design ${ n } of 3` ) } )
+				).toBeDisabled()
+			);
+		} );
+
+		it( 'waits for the whole batch when the site cannot apply yet', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( false ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1', { withBar: false } );
+			expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
+			expect( applyRedesign ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	it( 'keeps the bar away until every design is made and its preview is on screen', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const resolvers: Array< () => void > = [];
