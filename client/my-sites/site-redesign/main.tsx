@@ -301,11 +301,29 @@ function CandidateSlots( { device }: { device: PreviewDevice } ) {
 	);
 }
 
-// The installed theme on the site itself, through the Live Preview URL the API hands back.
-function InstalledPreview( { url, device }: { url: string | undefined; device: PreviewDevice } ) {
+// The design the user chose, from the preview the server already stored for it. The site itself
+// can't be framed: a site just moved to Atomic has no session for the frame, so it answers with
+// the old theme (or a login wall) instead of the installed one.
+function InstalledPreview( {
+	siteId,
+	redesignId,
+	generationId,
+	device,
+}: {
+	siteId: number;
+	redesignId: string;
+	generationId: string | null;
+	device: PreviewDevice;
+} ) {
 	const observeThumbnail = useFrameScale();
 	const [ loaded, setLoaded ] = useState( false );
-	if ( ! url ) {
+	const preview = useQuery( {
+		queryKey: [ 'site-redesign-preview', siteId, redesignId, generationId ],
+		queryFn: () => fetchPreview( siteId, redesignId, generationId as string ),
+		enabled: !! generationId,
+		staleTime: Infinity,
+	} );
+	if ( ! generationId || preview.isError ) {
 		return (
 			<Text>
 				{ __( 'The preview isn’t available right now. You can still switch to your new design.' ) }
@@ -320,12 +338,16 @@ function InstalledPreview( { url, device }: { url: string | undefined; device: P
 			>
 				<div className="site-redesign__thumbnail" ref={ observeThumbnail }>
 					{ ! loaded && <SiteSkeleton className="site-redesign__skeleton" /> }
-					<iframe
-						className={ clsx( 'site-redesign__frame', 'is-live', { 'is-loaded': loaded } ) }
-						title={ __( 'Preview of your new design' ) }
-						src={ url }
-						onLoad={ () => setLoaded( true ) }
-					/>
+					{ preview.data && (
+						<iframe
+							className={ clsx( 'site-redesign__frame', 'is-live', { 'is-loaded': loaded } ) }
+							title={ __( 'Preview of your new design' ) }
+							// Opaque origin, as in the picker: nothing in it can reach Calypso or navigate it.
+							sandbox="allow-scripts"
+							srcDoc={ preview.data.html }
+							onLoad={ () => setLoaded( true ) }
+						/>
+					) }
 				</div>
 			</div>
 		</VStack>
@@ -772,7 +794,14 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 					</HStack>
 				);
 			case 'installed':
-				return <InstalledPreview url={ installedUrl } device={ device } />;
+				return (
+					<InstalledPreview
+						siteId={ siteId }
+						redesignId={ redesign.id }
+						generationId={ redesign.selected }
+						device={ device }
+					/>
+				);
 			case 'applied':
 				// On its way to the theme list.
 				return null;
