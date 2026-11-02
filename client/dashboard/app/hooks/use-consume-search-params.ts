@@ -23,9 +23,12 @@ export interface ConsumeSearchParamsOptions< K extends string > {
 	onConsume?: ( params: ConsumedSearchParams< K > ) => void;
 }
 
-const pendingRemovals = new WeakMap< AnyRouter, Set< string > >();
+// Each key to remove, with the value it must still have, or `undefined` for any value.
+type Removals = Map< string, string | undefined >;
 
-function flushRemovals( router: AnyRouter, removals: Set< string > ) {
+const pendingRemovals = new WeakMap< AnyRouter, Removals >();
+
+function flushRemovals( router: AnyRouter, removals: Removals ) {
 	// Until a navigation resolves, a navigation without `to` takes its path params from the page
 	// still on screen, and would send the user back there.
 	if ( router.state.status === 'pending' ) {
@@ -38,15 +41,21 @@ function flushRemovals( router: AnyRouter, removals: Set< string > ) {
 	}
 
 	pendingRemovals.delete( router );
-	// A navigation that leaves the URL unchanged still re-runs every `beforeLoad`.
 	const current = new URLSearchParams( router.history.location.search );
-	if ( ! [ ...removals ].some( ( key ) => current.has( key ) ) ) {
+	const keys = [ ...removals ]
+		.filter( ( [ key, value ] ) =>
+			value === undefined ? current.has( key ) : current.get( key ) === value
+		)
+		.map( ( [ key ] ) => key );
+	// A navigation that leaves the URL unchanged still re-runs every `beforeLoad`.
+	if ( ! keys.length ) {
 		return;
 	}
 
 	const options: NavigateOptions = {
 		search: ( prev: Record< string, unknown > ) =>
-			Object.fromEntries( Object.entries( prev ).filter( ( [ key ] ) => ! removals.has( key ) ) ),
+			Object.fromEntries( Object.entries( prev ).filter( ( [ key ] ) => ! keys.includes( key ) ) ),
+		state: true,
 		replace: true,
 		hash: true,
 		resetScroll: false,
@@ -59,23 +68,35 @@ function flushRemovals( router: AnyRouter, removals: Set< string > ) {
 	router.navigate( options );
 }
 
+function scheduleRemovals( router: AnyRouter, removals: Removals ) {
+	const pending = pendingRemovals.get( router );
+	if ( pending ) {
+		removals.forEach( ( value, key ) => {
+			if ( ! pending.has( key ) || pending.get( key ) !== undefined ) {
+				pending.set( key, value );
+			}
+		} );
+		return;
+	}
+
+	pendingRemovals.set( router, removals );
+	// A navigation started in this task waits for the blocker before it writes a location built
+	// from the search as it is now, which would put these keys back. Waiting a task lets it write
+	// first, so the removal starts from its result.
+	setTimeout( () => flushRemovals( router, removals ) );
+}
+
 /**
  * Removes search params from the current URL with the router, without adding a history entry,
  * scrolling, running a view transition or asking the navigation blocker. Removals requested in
- * the same task share one navigation, which waits for a navigation in progress to resolve.
+ * the same task share one navigation, which runs in the next task, once a navigation in progress
+ * has resolved. The params that stay are written back by the router, which rewrites values that
+ * parse as JSON (`1e3` becomes `1000`), as every navigation that keeps the search does.
  * @param router The app's router.
  * @param keys   The params to remove.
  */
 export function removeSearchParams( router: AnyRouter, keys: readonly string[] ) {
-	const pending = pendingRemovals.get( router );
-	if ( pending ) {
-		keys.forEach( ( key ) => pending.add( key ) );
-		return;
-	}
-
-	const removals = new Set( keys );
-	pendingRemovals.set( router, removals );
-	queueMicrotask( () => flushRemovals( router, removals ) );
+	scheduleRemovals( router, new Map( keys.map( ( key ) => [ key, undefined ] ) ) );
 }
 
 // The router quotes a string that would otherwise parse as JSON, so `{ id: '123' }` is
@@ -112,8 +133,8 @@ function readSearchParams< K extends string >(
  * Reads one-shot search params, like a flash message id or a connection callback, and removes
  * them from the URL so that a reload or Back doesn't act on them again.
  *
- * When any of `keys` is in the URL and `when` returns true, `onConsume` runs once and all of
- * `keys` leave the URL together. Params that arrive while the component stays mounted, like an
+ * When any of `keys` is in the URL and `when` returns true, `onConsume` runs once and the keys
+ * found leave the URL together. Params that arrive while the component stays mounted, like an
  * in-app redirect into a layout, are consumed too. Never consume a key that a matched route reads
  * in `loaderDeps`: removing it puts that page back into its pending state.
  * @param keys    The params to read and remove.
@@ -142,22 +163,34 @@ export function useConsumeSearchParams< K extends string >(
 	const shouldConsume = isPresent && ( when?.( params ) ?? true );
 
 	const [ consumed, setConsumed ] = useState( () => ( shouldConsume ? params : {} ) );
-	// Whether the params now in the URL were handled. Cleared once they're gone, so that a later
-	// arrival is consumed again. Also stops StrictMode's second effect run from acting twice.
-	const isHandled = useRef( false );
+	// The params last consumed, while they stay in the URL. Different values are a new arrival;
+	// the same values are one only after they've left the URL. Also stops StrictMode's second
+	// effect run from acting twice.
+	const handled = useRef< string | null >( null );
 
 	const sync = useEvent( () => {
 		if ( ! isPresent ) {
-			isHandled.current = false;
+			handled.current = null;
 			return;
 		}
-		if ( ! shouldConsume || isHandled.current || ! isRouterIdle ) {
+		const id = JSON.stringify( params );
+		if ( ! shouldConsume || handled.current === id || ! isRouterIdle ) {
 			return;
 		}
-		isHandled.current = true;
+		handled.current = id;
 		setConsumed( params );
 		onConsume?.( params );
-		removeSearchParams( router, keys );
+		// Only while they keep these values: values that arrive before the removal runs are left
+		// for whoever consumes them next.
+		const current = new URLSearchParams( search );
+		const removals: Removals = new Map();
+		for ( const key of keys ) {
+			const value = current.get( key );
+			if ( value !== null ) {
+				removals.set( key, value );
+			}
+		}
+		scheduleRemovals( router, removals );
 	} );
 
 	useEffect( () => {
