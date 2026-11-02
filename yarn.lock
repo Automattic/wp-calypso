@@ -1373,7 +1373,7 @@ __metadata:
     "@automattic/calypso-typescript-config": "workspace:^"
     "@wordpress/npm-package-json-lint-config": "npm:^5.48.0"
     eslint-plugin-json-es: "npm:^1.6.0"
-    esquery: "npm:^1.4.0"
+    esquery: "npm:^1.7.0"
     npm-package-json-lint: "npm:^8.0.0"
   peerDependencies:
     eslint: ^10.13.0
@@ -21001,7 +21001,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"esquery@npm:^1.4.0, esquery@npm:^1.6.0, esquery@npm:^1.7.0":
+"esquery@npm:^1.6.0, esquery@npm:^1.7.0":
   version: 1.7.0
   resolution: "esquery@npm:1.7.0"
   dependencies:
