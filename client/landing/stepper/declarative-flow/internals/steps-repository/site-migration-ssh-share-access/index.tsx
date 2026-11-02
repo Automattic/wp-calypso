@@ -1,4 +1,4 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -76,7 +76,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow, stepName } ) {
 	const site = useSite();
 	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
@@ -356,6 +356,10 @@ const SiteMigrationSshShareAccess: StepType< {
 			);
 	const topBar = (
 		<Step.TopBar
+			logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+			onLogoClick={ () =>
+				recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+			}
 			rightElement={
 				<div className="account-template__top-bar-links">
 					<SupportNudge

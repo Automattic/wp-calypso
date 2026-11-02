@@ -225,9 +225,13 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'has no Back button, since the account template keeps the top bar to its help link', () => {
+	it( 'links the logo to the homepage as its way out, without a Back button', () => {
 		render( { navigation: { goBack: jest.fn(), submit: jest.fn() } } );
 
+		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/'
+		);
 		expect( screen.queryByRole( 'button', { name: /Back/ } ) ).not.toBeInTheDocument();
 		expect( skipButton() ).toBeVisible();
 	} );

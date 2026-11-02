@@ -240,7 +240,7 @@ describe( 'SiteMigrationIdentify', () => {
 		}
 	);
 
-	it( 'shows the back link when the "ref" param is set', () => {
+	it( 'links the logo to the homepage as its way out, without a Back button', () => {
 		render(
 			{
 				navigation: {
@@ -251,16 +251,12 @@ describe( 'SiteMigrationIdentify', () => {
 			{ initialEntry: '/some-path?ref=goals' }
 		);
 
-		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
-	} );
-
-	it( 'goes to the previous step from Back under the form', async () => {
-		const goBack = jest.fn();
-		render( { navigation: { goBack, submit: jest.fn() } } );
-
-		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
-
-		expect( goBack ).toHaveBeenCalledTimes( 1 );
+		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/'
+		);
+		expect( screen.queryByRole( 'button', { name: /Back/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Change address' } ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'with migration/reprint-flow enabled', () => {
@@ -286,7 +282,7 @@ describe( 'SiteMigrationIdentify', () => {
 				);
 		} );
 
-		it( 'cancels a check with Back without leaving the step', async () => {
+		it( 'changes the address during a check without leaving the step', async () => {
 			const goBack = jest.fn();
 			const submit = jest.fn();
 			render( { navigation: { goBack, submit } } );
@@ -297,7 +293,7 @@ describe( 'SiteMigrationIdentify', () => {
 			await checkSite();
 			await waitFor( () => expect( analysis.isDone() ).toBe( true ) );
 
-			await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Change address' } ) );
 
 			expect( getInput() ).not.toHaveAttribute( 'readonly' );
 			expect( getInput() ).toHaveValue( 'https://example.com' );
@@ -580,7 +576,7 @@ describe( 'SiteMigrationIdentify', () => {
 			} );
 		} );
 
-		it( 'does not complete or reopen an outcome when Back cancels a retry', async () => {
+		it( 'does not complete or reopen an outcome when Change address cancels a retry', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			mockAnalysis( { code: 'http_request_failed' }, 500 );
@@ -596,7 +592,7 @@ describe( 'SiteMigrationIdentify', () => {
 			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			await waitFor( () => expect( completeRetry ).toEqual( expect.any( Function ) ) );
-			await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Change address' } ) );
 			await act( async () => completeRetry?.() );
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );

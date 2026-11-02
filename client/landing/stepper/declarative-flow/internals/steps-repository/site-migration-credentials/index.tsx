@@ -1,5 +1,5 @@
 import config from '@automattic/calypso-config';
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -68,7 +68,7 @@ const SiteMigrationCredentials: StepType< {
 		hasError?: 'ticket-creation';
 		host?: string;
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow, stepName } ) {
 	const translate = useTranslate();
 	const siteId = parseInt( useSiteIdParam() ?? '' );
 	const dispatch = useDispatch();
@@ -181,7 +181,15 @@ const SiteMigrationCredentials: StepType< {
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
-				topBar={ <Step.TopBar rightElement={ skipButton } /> }
+				topBar={
+					<Step.TopBar
+						logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+						onLogoClick={ () =>
+							recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+						}
+						rightElement={ skipButton }
+					/>
+				}
 				className="site-migration-credentials-v2"
 			>
 				<div className="account-template">

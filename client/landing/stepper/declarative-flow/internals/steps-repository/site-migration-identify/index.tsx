@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { Notice, VisuallyHidden } from '@wordpress/components';
 import clsx from 'clsx';
@@ -12,6 +13,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
@@ -256,8 +258,9 @@ const SiteMigrationIdentify: StepType< {
 				isWpcom?: boolean;
 		  }
 		| undefined;
-} > = function ( { navigation, flow, checkOnArrival = false } ) {
+} > = function ( { navigation, flow, stepName, checkOnArrival = false } ) {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
@@ -298,7 +301,7 @@ const SiteMigrationIdentify: StepType< {
 	}, [] );
 
 	const isChecking = isReprintFlow && ! isVisible;
-	const goBack = isChecking || connectionIssue ? () => setSiteURL( '' ) : navigation?.goBack;
+	const changeAddress = isChecking || connectionIssue ? () => setSiteURL( '' ) : undefined;
 	let title = translate( "Let's find your site" );
 	let subTitle = translate( 'Enter your current site address below to get started.' );
 	if ( connectionIssue === 'unreachable' ) {
@@ -345,14 +348,23 @@ const SiteMigrationIdentify: StepType< {
 					'site-migration-identify--connection-issue': !! connectionIssue,
 				} ) }
 				columnWidth={ 4 }
-				topBar={ <Step.TopBar /> }
+				topBar={
+					<Step.TopBar
+						logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+						onLogoClick={ () =>
+							recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+						}
+					/>
+				}
 			>
 				<div className="account-template">
 					{ ( isReprintFlow || isVisible ) && <Step.Heading text={ title } subText={ subTitle } /> }
 					{ stepContent }
-					{ goBack && (
+					{ changeAddress && (
 						<div className="account-template__secondary-actions">
-							<Step.LinkButton onClick={ goBack }>{ translate( 'Back' ) }</Step.LinkButton>
+							<Step.LinkButton onClick={ changeAddress }>
+								{ translate( 'Change address' ) }
+							</Step.LinkButton>
 						</div>
 					) }
 				</div>
