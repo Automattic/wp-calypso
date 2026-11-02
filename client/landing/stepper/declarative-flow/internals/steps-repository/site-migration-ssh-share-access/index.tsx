@@ -357,12 +357,12 @@ const SiteMigrationSshShareAccess: StepType< {
 	const topBar = (
 		<Step.TopBar
 			rightElement={
-				<nav className="account-template__top-bar-links">
+				<div className="account-template__top-bar-links">
 					<SupportNudge
 						onAskForHelp={ navigateToDoItForMe }
 						isLoading={ isSubmittingTicket || isProcessingNoSSH }
 					/>
-				</nav>
+				</div>
 			}
 		/>
 	);

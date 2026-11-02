@@ -171,9 +171,9 @@ const SiteMigrationCredentials: StepType< {
 	const subHeaderText = translate( 'Provide the following details to get your migration started.' );
 	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
 	const skipButton = (
-		<nav className="account-template__top-bar-links">
+		<div className="account-template__top-bar-links">
 			<NeedHelpLink onHelpLinkClicked={ handleSkip } />
-		</nav>
+		</div>
 	);
 
 	return (

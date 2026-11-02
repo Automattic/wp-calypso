@@ -254,6 +254,15 @@ describe( 'SiteMigrationIdentify', () => {
 		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
 	} );
 
+	it( 'goes to the previous step from Back under the form', async () => {
+		const goBack = jest.fn();
+		render( { navigation: { goBack, submit: jest.fn() } } );
+
+		await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+		expect( goBack ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	describe( 'with migration/reprint-flow enabled', () => {
 		const mockAnalysis = ( body: object, status = 200, url = 'https://example.com' ) =>
 			mockApi()
@@ -275,6 +284,25 @@ describe( 'SiteMigrationIdentify', () => {
 				.mockImplementation(
 					( flag ) => flag === 'migration/reprint-flow' || originalIsEnabled( flag )
 				);
+		} );
+
+		it( 'cancels a check with Back without leaving the step', async () => {
+			const goBack = jest.fn();
+			const submit = jest.fn();
+			render( { navigation: { goBack, submit } } );
+			mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, () => new Promise( () => {} ) );
+			await checkSite();
+			await waitFor( () => expect( getInput() ).toHaveAttribute( 'readonly' ) );
+
+			await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( goBack ).not.toHaveBeenCalled();
+			expect( submit ).not.toHaveBeenCalled();
 		} );
 
 		it( 'keeps the platform list available on the simplified address screen', async () => {

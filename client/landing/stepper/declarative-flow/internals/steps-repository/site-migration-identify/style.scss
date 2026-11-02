@@ -90,25 +90,11 @@
 		max-width: 100%;
 		margin: unset;
 	}
-}
 
-.step-container-v2:has( .site-migration-identify--reprint ) {
-	.step-container-v2__content-wrapper {
-		gap: 32px;
-
-		@media ( min-width: $break-large ) {
-			padding-top: 48px;
-		}
-	}
-
-	.step-container-v2__top-bar-wordpress-logo--wordmark {
-		height: 18px;
-	}
-
+	// The account template's form: Calypso's default label and input, then 16px to the CTA.
 	.import__capture {
-		// The account template's form: Calypso's default label and input, then 16px to the CTA.
 		.form-label {
-			margin-bottom: 5px;
+			margin-block-end: 5px;
 			font-size: $font-body-small;
 			font-weight: 600;
 			line-height: 1.5;
@@ -116,7 +102,7 @@
 		}
 
 		.form-fieldset {
-			margin-bottom: 1rem;
+			margin-block-end: 1rem;
 		}
 
 		input[type='text'].form-text-input {
@@ -132,19 +118,15 @@
 			}
 		}
 
-		.form-setting-explanation:not( :has( .is-error ) ) {
-			display: none;
-		}
-
 		button[type='submit'] {
 			height: 40px;
 			border-radius: 2px;
 			font-size: $font-size-medium;
 		}
 
-		// The account template's secondary link: 8px below the CTA, centered in a 40px row.
+		// Mirrors .account-template__secondary-actions: capture-input is shared with the importer.
 		.action-buttons__importer-list {
-			margin-top: 8px;
+			margin-block-start: 8px;
 			padding-block: 10px;
 			text-align: center;
 			font-size: $font-body-small;
@@ -158,6 +140,24 @@
 				color: var( --studio-gray-90 );
 			}
 		}
+	}
+}
+
+.step-container-v2:has( .site-migration-identify--reprint ) {
+	.step-container-v2__content-wrapper {
+		gap: 32px;
+
+		@media ( min-width: $break-large ) {
+			padding-top: 48px;
+		}
+	}
+
+	.step-container-v2__top-bar-wordpress-logo--wordmark {
+		height: 18px;
+	}
+
+	.import__capture .form-setting-explanation:not( :has( .is-error ) ) {
+		display: none;
 	}
 
 	.site-migration-identify__analysis-error {
