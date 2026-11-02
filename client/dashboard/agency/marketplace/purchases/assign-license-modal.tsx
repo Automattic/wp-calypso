@@ -26,6 +26,7 @@ import { DataViews, DataViewsCard } from '../../../components/dataviews';
 import InlineSupportLink from '../../../components/inline-support-link';
 import Notice from '../../../components/notice';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
+import { openWooDownload } from './woo-download/store';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -154,6 +155,16 @@ export default function AssignLicenseModal( {
 			{ licenseKey, siteId: selectedSite.blog_id },
 			{
 				onSuccess: () => {
+					if ( isWooExtension ) {
+						closeModal?.();
+						openWooDownload( {
+							licenseKey,
+							productName,
+							siteUrl: selectedSite.url,
+							onClose: onAssigned,
+						} );
+						return;
+					}
 					createSuccessNotice(
 						sprintf(
 							/* translators: %1$s is the product name, %2$s is the site URL. */
