@@ -30,8 +30,6 @@ export interface AgencyOverviewLinks {
 	leadMatching: string;
 	/** A URL, or a callback that opens contact support in-app. */
 	contactSupport: string | ( () => void );
-	aiMcp: string;
-	pressableHosting: string;
 	helpful: HelpfulLink[];
 }
 
@@ -48,10 +46,6 @@ export interface AgencyOverviewContentProps {
 	showMatchingProfileCard?: boolean;
 	matchingProfileAnswered?: number;
 	showContactOptionsAnnouncement?: boolean;
-	/** Shows the Pressable introductory offer in the news column. */
-	isEligibleForPressableIntroOffer?: boolean;
-	/** Shows the Pressable expansion offer in the news column. */
-	isEligibleForPressableExpansionOffer?: boolean;
 	links: AgencyOverviewLinks;
 	shouldUseRouterLink?: boolean;
 	onScheduleCall?: () => void;
@@ -62,8 +56,6 @@ export interface AgencyOverviewContentProps {
 	tourLabel?: string;
 	/** The welcome band is showing and already says what the Pending card would. */
 	hidesPendingCard?: boolean;
-	/** Replaces the snackbar after the certification share message is copied, for hosts that don't render `@wordpress/notices`. */
-	onCertificationShareCopy?: () => void;
 	recordTracksEvent?: RecordTracksEvent;
 }
 
