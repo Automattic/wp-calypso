@@ -106,7 +106,7 @@ export function useReferralActions( agencyId: number ) {
 						<VStack spacing={ 4 }>
 							<Text>
 								{ __(
-									"Your client won't be able to complete the purchases. If removed, you must create a new referral for any future purchases."
+									'Your client won’t be able to complete the purchases. If removed, you must create a new referral for any future purchases.'
 								) }
 							</Text>
 							<HStack justify="right">

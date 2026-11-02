@@ -3,12 +3,7 @@ import {
 	jetpackAgencyLicenseDownloadUrlMutation,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import {
-	Button,
-	Modal,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { Button, Modal, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
@@ -16,6 +11,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../../app/analytics';
 import { ButtonStack } from '../../../../components/button-stack';
 import ClipboardInputControl from '../../../../components/clipboard-input-control';
+import { Text } from '../../../../components/text';
 import { closeWooDownload, useWooDownloadRequest, type WooDownloadRequest } from './store';
 
 /**
@@ -47,7 +43,7 @@ function WooDownloadStep( { licenseKey, productName, siteUrl }: WooDownloadReque
 					__(
 						'<product /> has been assigned to <site />, but more action is required. Download the extension, then upload and activate it on the site.'
 					),
-					{ product: <>{ productName }</>, site: <strong>{ siteUrl }</strong> }
+					{ product: <>{ productName }</>, site: <Text weight={ 600 }>{ siteUrl }</Text> }
 				) }
 			</Text>
 			<ClipboardInputControl
@@ -55,7 +51,7 @@ function WooDownloadStep( { licenseKey, productName, siteUrl }: WooDownloadReque
 				value={ licenseKey }
 				readOnly
 				onCopy={ () => {
-					recordTracksEvent( 'calypso_a4a_license_assign_copy_license_key' );
+					recordTracksEvent( 'calypso_a4a_license_assign_copy_license_key_click' );
 					createSuccessNotice( __( 'License key copied to clipboard.' ), { type: 'snackbar' } );
 				} }
 			/>
