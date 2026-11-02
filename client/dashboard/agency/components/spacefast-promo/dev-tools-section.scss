@@ -1,0 +1,39 @@
+@import './brand';
+
+// Matches the page's dev tool cards, with the media beside the body instead of
+// above it so the card spans the page.
+.a4a-spacefast-dev-tools {
+	overflow: hidden;
+	container: a4a-spacefast-dev-tools / inline-size;
+}
+
+.a4a-spacefast-dev-tools__layout {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr );
+
+	@container a4a-spacefast-dev-tools ( max-width: 719px ) {
+		grid-template-columns: minmax( 0, 1fr );
+	}
+}
+
+// Spacefast's green and ink in place of the other cards' screenshots.
+.a4a-spacefast-dev-tools__media {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-block-size: 240px;
+	background-color: $spacefast-green;
+
+	@container a4a-spacefast-dev-tools ( max-width: 719px ) {
+		aspect-ratio: 8 / 5;
+		min-block-size: 0;
+	}
+}
+
+.a4a-spacefast-dev-tools__logo {
+	display: block;
+	inline-size: 60%;
+	max-inline-size: 280px;
+	block-size: auto;
+	color: $spacefast-ink;
+}

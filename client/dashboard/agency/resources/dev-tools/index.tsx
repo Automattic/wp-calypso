@@ -3,6 +3,7 @@ import { useAnalytics } from '../../../app/analytics';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import CertificationDevToolsSection from '../../certification/dev-tools-section';
+import SpacefastDevToolsSection from '../../components/spacefast-promo/dev-tools-section';
 import DevToolsContent from './dev-tools-content';
 
 export default function DevTools() {
@@ -19,6 +20,7 @@ export default function DevTools() {
 				/>
 			}
 		>
+			<SpacefastDevToolsSection recordTracksEvent={ recordTracksEvent } />
 			<CertificationDevToolsSection recordTracksEvent={ recordTracksEvent } />
 			<DevToolsContent recordTracksEvent={ recordTracksEvent } />
 		</PageLayout>
