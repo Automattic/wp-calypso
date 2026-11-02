@@ -141,40 +141,6 @@ export default function EmailSection( {
 		isAccountRecoveryReady &&
 		! hasRecoveryMethod;
 
-	const description = useMemo( () => {
-		if ( isEmailPending ) {
-			return (
-				<>
-					{ createInterpolateElement( __( '<em>Your email has not been verified yet.</em>' ), {
-						em: <em />,
-					} ) }{ ' ' }
-					<Button
-						variant="link"
-						onClick={ handleCancelPendingEmail }
-						disabled={ isEmailWritePending }
-						style={ {
-							padding: 0,
-							height: 'auto',
-							textDecoration: 'underline',
-							fontSize: 'inherit',
-						} }
-					>
-						{ createInterpolateElement( __( '<em>Cancel the pending email change.</em>' ), {
-							em: <em />,
-						} ) }
-					</Button>
-				</>
-			);
-		}
-
-		// The saved email address has never been verified (and no change is pending).
-		if ( ! isEmailVerified ) {
-			return __( 'Your email has not been verified yet.' );
-		}
-
-		return undefined;
-	}, [ isEmailPending, isEmailVerified, handleCancelPendingEmail, isEmailWritePending ] );
-
 	const validity = useMemo( (): FormValidity => {
 		if ( isEmailPending ) {
 			return undefined;
@@ -230,6 +196,48 @@ export default function EmailSection( {
 
 		return undefined;
 	}, [ isEmailPending, showBouncingEmailError, value, currentEmail, emailValidationState ] );
+
+	const hasEmailError = validity?.user_email?.custom?.type === 'invalid';
+
+	const description = useMemo( () => {
+		if ( isEmailPending ) {
+			return (
+				<>
+					{ createInterpolateElement( __( '<em>Your email has not been verified yet.</em>' ), {
+						em: <em />,
+					} ) }{ ' ' }
+					<Button
+						variant="link"
+						onClick={ handleCancelPendingEmail }
+						disabled={ isEmailWritePending }
+						style={ {
+							padding: 0,
+							height: 'auto',
+							textDecoration: 'underline',
+							fontSize: 'inherit',
+						} }
+					>
+						{ createInterpolateElement( __( '<em>Cancel the pending email change.</em>' ), {
+							em: <em />,
+						} ) }
+					</Button>
+				</>
+			);
+		}
+
+		// The saved email address has never been verified (and no change is pending).
+		if ( ! isEmailVerified && ! hasEmailError ) {
+			return __( 'Your email has not been verified yet.' );
+		}
+
+		return undefined;
+	}, [
+		isEmailPending,
+		isEmailVerified,
+		hasEmailError,
+		handleCancelPendingEmail,
+		isEmailWritePending,
+	] );
 
 	const fields = useMemo(
 		(): Field< EmailFormData >[] => [
