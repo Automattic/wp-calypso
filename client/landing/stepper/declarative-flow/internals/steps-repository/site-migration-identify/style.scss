@@ -106,24 +106,26 @@
 	}
 
 	.import__capture {
+		// The account template's form: Calypso's default label and input, then 16px to the CTA.
 		.form-label {
-			margin-bottom: 12px;
-			font-size: $font-size-medium;
-			line-height: 1.54;
-			color: var( --color-neutral-100 );
+			margin-bottom: 5px;
+			font-size: $font-body-small;
+			font-weight: 600;
+			line-height: 1.5;
+			color: var( --studio-gray-80 );
 		}
 
 		.form-fieldset {
-			margin-bottom: 12px;
+			margin-bottom: 1rem;
 		}
 
 		input[type='text'].form-text-input {
 			box-sizing: border-box;
 			height: 40px;
-			padding: 0 12px;
+			padding: 0 14px;
 			border-radius: 2px;
-			font-size: $font-size-medium;
-			border-color: var( --color-neutral-40 );
+			font-size: $font-body;
+			border-color: var( --studio-gray-10 );
 
 			&.is-error {
 				border-color: var( --color-error );

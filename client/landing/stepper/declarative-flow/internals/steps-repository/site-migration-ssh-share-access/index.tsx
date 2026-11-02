@@ -387,6 +387,7 @@ const SiteMigrationSshShareAccess: StepType< {
 									isProcessingNoSSH
 								}
 								isBusy={ isBusy }
+								__next40pxDefaultSize
 							>
 								{ buttonText }
 							</Button>

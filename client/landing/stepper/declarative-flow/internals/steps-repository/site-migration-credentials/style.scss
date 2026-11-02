@@ -57,10 +57,13 @@ $blueberry-color: #3858e9;
 			margin-top: 1em;
 			background: var(--color-border-subtle);
 		}
-		.action-buttons__next {
-			width: 100%;
-			height: 40px;
-			margin-top: 1em;
+		.site-migration-credentials__submit {
+			margin-top: 1rem;
+
+			.components-button {
+				justify-content: center;
+				width: 100%;
+			}
 		}
 		.site-migration-credentials__form-fields-row {
 			display: flex;
