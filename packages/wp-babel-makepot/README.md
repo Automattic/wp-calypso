@@ -2,7 +2,7 @@
 
 A utility for extracting translatable strings from JavaScript source.
 
-This package is no longer developed or installed in this repository; 1.2.0 remains on npm. [`@automattic/wp-oxc-makepot`](../wp-oxc-makepot) extracts the same strings without Babel.
+This package isn't installed with the rest of the repository, which uses [`@automattic/wp-oxc-makepot`](../wp-oxc-makepot) to extract the same strings without Babel. To work on it, remove `!packages/wp-babel-makepot` from `workspaces` in the root `package.json` and run `yarn install`.
 
 ## Using the CLI
 
