@@ -12,7 +12,15 @@ const redirect = ( { path } ) => {
 	return page.redirect( '/comments/all' );
 };
 
-const redirectToCommentIfDuplicatedView = ( url ) => ( context, next ) => {
+// wp-admin shows a confirmation screen for these, so an email link can't act on its own.
+const COMMENT_ACTIONS = [ 'approve', 'trash', 'spam', 'delete' ];
+
+export const getCommentAdminPath = ( { query } ) =>
+	`comment.php?action=${ COMMENT_ACTIONS.includes( query?.action ) ? query.action : 'editcomment' }`;
+
+const redirectToCommentIfDuplicatedView = ( wpAdminPath ) => ( context, next ) => {
+	let url = typeof wpAdminPath === 'function' ? wpAdminPath( context ) : wpAdminPath;
+
 	if ( context.params.commentStatus !== 'all' ) {
 		url = addQueryArgs( url, {
 			comment_status:
@@ -50,7 +58,7 @@ export default function () {
 	page(
 		'/comment/:site/:comment',
 		siteSelection,
-		redirectToCommentIfDuplicatedView( 'comment.php?action=editcomment' )
+		redirectToCommentIfDuplicatedView( getCommentAdminPath )
 	);
 
 	// Redirect
