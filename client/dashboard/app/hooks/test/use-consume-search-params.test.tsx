@@ -8,6 +8,7 @@ import {
 	createRoute,
 	createRouter,
 	useBlocker,
+	useRouter,
 } from '@tanstack/react-router';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
@@ -45,17 +46,24 @@ function renderRouter( url: string, routeTree: AnyRoute, { strict = false } = {}
 	return router;
 }
 
-function renderPage( url: string, options?: { strict?: boolean } ) {
+function DefaultPage() {
+	return (
+		<>
+			<Flash id="saved" />
+			<Callback />
+		</>
+	);
+}
+
+function renderPage(
+	url: string,
+	options?: { strict?: boolean; component?: () => React.ReactElement | null }
+) {
 	const root = createRootRoute( { component: Root } );
 	const page = createRoute( {
 		getParentRoute: () => root,
 		path: '/page',
-		component: () => (
-			<>
-				<Flash id="saved" />
-				<Callback />
-			</>
-		),
+		component: options?.component ?? DefaultPage,
 	} );
 	return renderRouter( url, root.addChildren( [ page ] ), options );
 }
@@ -108,6 +116,47 @@ describe( 'useConsumeSearchParams', () => {
 		expect( await screen.findByText( 'code=123 state=undefined' ) ).toBeVisible();
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 		expect( onConsume ).toHaveBeenLastCalledWith( { code: '123' } );
+	} );
+
+	test( 'consumes different values that arrive before the removal runs', async () => {
+		function Relay() {
+			const router = useRouter();
+			useConsumeSearchParams( [ 'code' ], {
+				onConsume: ( { code } ) => {
+					onConsume( code );
+					if ( code === 'first' ) {
+						router.navigate( { to: '/page', search: { code: 'second' }, ignoreBlocker: true } );
+					}
+				},
+			} );
+			return null;
+		}
+		renderPage( '/page?code=first', { component: Relay } );
+
+		await waitFor( () => expect( onConsume ).toHaveBeenCalledTimes( 2 ) );
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( onConsume.mock.calls ).toEqual( [ [ 'first' ], [ 'second' ] ] );
+	} );
+
+	test( 'removes only the values it consumed', async () => {
+		function Relay() {
+			const router = useRouter();
+			useConsumeSearchParams( [ 'flash' ], {
+				when: ( params ) => params.flash === 'saved',
+				onConsume: () => {
+					onConsume( 'saved' );
+					router.navigate( { to: '/page', search: { flash: 'other' }, ignoreBlocker: true } );
+				},
+			} );
+			return null;
+		}
+		const router = renderPage( '/page?flash=saved', { component: Relay } );
+
+		await waitFor( () => expect( window.location.search ).toBe( '?flash=other' ) );
+		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+		await act( () => wait( 20 ) );
+		expect( window.location.search ).toBe( '?flash=other' );
+		expect( onConsume ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	test( 'waits for a redirect that adds the params to resolve before removing them', async () => {
@@ -180,8 +229,55 @@ describe( 'removeSearchParams', () => {
 		expect( navigate ).toHaveBeenCalledTimes( 1 );
 
 		act( () => removeSearchParams( router, [ 'a' ] ) );
-		await act( () => Promise.resolve() );
+		await act( () => wait( 0 ) );
 		expect( navigate ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test.each( [ 'before', 'after' ] )(
+		'starts from a navigation requested in the same task, %s it',
+		async ( order ) => {
+			const router = renderPage( '/page?a=1' );
+			await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+
+			const nextPage = () =>
+				router.navigate( {
+					to: '/page',
+					search: ( prev: Record< string, unknown > ) => ( { ...prev, page: 2 } ),
+				} );
+			act( () => {
+				if ( order === 'after' ) {
+					nextPage();
+				}
+				removeSearchParams( router, [ 'a' ] );
+				if ( order === 'before' ) {
+					nextPage();
+				}
+			} );
+
+			await waitFor( () => expect( window.location.search ).toBe( '?page=2' ) );
+			await act( () => wait( 20 ) );
+			expect( window.location.search ).toBe( '?page=2' );
+		}
+	);
+
+	test( 'keeps the history entry and its state', async () => {
+		const router = renderPage( '/page' );
+		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+		await act( () =>
+			router.navigate( {
+				to: '/page',
+				search: { a: 1 },
+				state: ( prev ) => Object.assign( {}, prev, { saved: 'valuable' } ),
+			} )
+		);
+		const { length } = window.history;
+		const index = window.history.state.__TSR_index;
+
+		act( () => removeSearchParams( router, [ 'a' ] ) );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( window.history.length ).toBe( length );
+		expect( window.history.state ).toMatchObject( { saved: 'valuable', __TSR_index: index } );
 	} );
 
 	test( 'waits for a navigation in progress to resolve', async () => {
