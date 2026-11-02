@@ -22,6 +22,7 @@ let mockQueryParams = new URLSearchParams();
 // Streaming is on in every environment, so builds ask for the live feed.
 const STREAMING_ONLY = [ 'site-spec/build-wow-streaming' ];
 let mockFlags = new Set( STREAMING_ONLY );
+let mockIsAutomattician = false;
 
 jest.mock( '@automattic/calypso-config', () => {
 	return {
@@ -39,6 +40,15 @@ jest.mock( '@automattic/calypso-config', () => {
 		),
 	};
 } );
+
+jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
+	DESIGN_PICKER_QUERY_ARG: 'design_picker',
+	useDesignCandidatesEnabled: ( requested: boolean ) => ( {
+		isEnabled:
+			mockFlags.has( 'site-spec/design-candidates' ) || ( requested && mockIsAutomattician ),
+		isLoading: false,
+	} ),
+} ) );
 
 jest.mock( '@automattic/onboarding', () => ( {
 	Step: { Loading: () => null },
@@ -152,6 +162,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		jest.clearAllMocks();
 		window.sessionStorage.clear();
 		mockFlags = new Set( STREAMING_ONLY );
+		mockIsAutomattician = false;
 		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
 		Object.defineProperty( window, 'location', {
 			value: { href: '' },
@@ -343,6 +354,48 @@ describe( 'SiteSpec early provisioning step', () => {
 		} );
 		expect( wpcomPostMock ).toHaveBeenLastCalledWith( expect.anything(), {
 			spec_id: 'spec-off',
+			stream_events: true,
+		} );
+	} );
+
+	it( 'turns on the picker for an Automattician who asks for it with the flag off', async () => {
+		mockIsAutomattician = true;
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&design_picker=1'
+		);
+		wpcomPostMock.mockResolvedValue( { blog_id: 123 } );
+
+		renderSiteSpec();
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( getBuildWowSiteSpecConfig ).toHaveBeenCalledWith(
+			expect.objectContaining( { designPicker: true } )
+		);
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-a8c', designCandidateId: '2' } );
+		} );
+		expect( wpcomPostMock ).toHaveBeenLastCalledWith( expect.anything(), {
+			spec_id: 'spec-a8c',
+			stream_events: true,
+			design_candidate: 2,
+		} );
+	} );
+
+	it( 'keeps the picker off for a user who is not an Automattician', async () => {
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&design_picker=1'
+		);
+		wpcomPostMock.mockResolvedValue( { blog_id: 123 } );
+
+		renderSiteSpec();
+		const siteSpecOptions = mockUseSiteSpec.mock.calls[ 0 ][ 0 ];
+		expect( getBuildWowSiteSpecConfig ).toHaveBeenCalledWith(
+			expect.objectContaining( { designPicker: false } )
+		);
+		await act( async () => {
+			await siteSpecOptions.onSpecConfirm( { spec_id: 'spec-user', designCandidateId: '2' } );
+		} );
+		expect( wpcomPostMock ).toHaveBeenLastCalledWith( expect.anything(), {
+			spec_id: 'spec-user',
 			stream_events: true,
 		} );
 	} );
