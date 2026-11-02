@@ -106,7 +106,9 @@ describe( '<WelcomeBand>', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: 'Welcome to Automattic for Agencies' } )
 		).toBeVisible();
-		expect( screen.getAllByText( 'Unlocks when your account is activated' ) ).toHaveLength( 2 );
+		const lockedLabels = screen.getAllByText( 'Unlocks when your account is activated' );
+		expect( lockedLabels ).toHaveLength( 2 );
+		lockedLabels.forEach( ( label ) => expect( label ).toBeVisible() );
 		expect( screen.queryByRole( 'link', { name: 'Explore referrals' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link', { name: 'Set up WooPayments' } ) ).not.toBeInTheDocument();
 	} );
