@@ -1,6 +1,6 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { keepPreviousData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter, useSearch } from '@tanstack/react-router';
 import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -134,16 +134,26 @@ function SiteLogsDataViews( {
 	const datasetKey = `${ startSec }|${ endSec }|${ sortOrder }|${ JSON.stringify( filter ) }`;
 	useEffect( () => {
 		setStartPosition( 1 );
+		const scrollContainer = dataviewsRef.current?.querySelector( '.dataviews-layout__container' );
+		if ( scrollContainer ) {
+			scrollContainer.scrollTop = 0;
+		}
 	}, [ datasetKey ] );
 
 	const {
 		data,
 		isFetching,
 		isFetchingNextPage,
+		isPlaceholderData,
 		fetchNextPage,
 		hasNextPage,
 		isLoading: isLoadingLogQuery,
-	} = useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
+	} = useInfiniteQuery( {
+		...siteLogsInfiniteQuery( site.ID, params ),
+		placeholderData: keepPreviousData,
+	} );
+
+	const pages = isPlaceholderData ? undefined : data?.pages;
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -199,15 +209,15 @@ function SiteLogsDataViews( {
 		if ( logType !== LogType.PHP ) {
 			return [];
 		}
-		return buildPhpLogsWithId( ( data?.pages as Array< { logs?: PHPLog[] } > ) ?? [] );
-	}, [ data?.pages, logType ] );
+		return buildPhpLogsWithId( ( pages as Array< { logs?: PHPLog[] } > ) ?? [] );
+	}, [ pages, logType ] );
 
 	const serverLogs = useMemo< ServerLogWithId[] >( () => {
 		if ( logType !== LogType.SERVER ) {
 			return [];
 		}
-		return buildServerLogsWithId( ( data?.pages as Array< { logs?: ServerLog[] } > ) ?? [] );
-	}, [ data?.pages, logType ] );
+		return buildServerLogsWithId( ( pages as Array< { logs?: ServerLog[] } > ) ?? [] );
+	}, [ pages, logType ] );
 
 	const logs = logType === LogType.PHP ? phpLogs : serverLogs;
 	const perPage = view.perPage ?? DEFAULT_PER_PAGE;
@@ -338,6 +348,9 @@ function SiteLogsDataViews( {
 		totalPages: 1,
 	};
 
+	const dataViewsView = isPlaceholderData ? { ...view, infiniteScrollEnabled: false } : view;
+	const isLoadingDataViews = isFetchingNextPage || ( isPlaceholderData && isFetching );
+
 	const emptyState = (
 		<DataViewsEmptyStateLayout
 			isBorderless
@@ -375,11 +388,12 @@ function SiteLogsDataViews( {
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ visiblePhpLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingDataViews }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
-					view={ view }
+					view={ dataViewsView }
+					config={ { perPageSizes: [ DEFAULT_PER_PAGE ] } }
 					actions={ actions as Action< PHPLog >[] }
 					search={ false }
 					defaultLayouts={ { table: {} } }
@@ -391,11 +405,12 @@ function SiteLogsDataViews( {
 			) : (
 				<DataViews< ServerLog >
 					data={ visibleServerLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingDataViews }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
-					view={ view }
+					view={ dataViewsView }
+					config={ { perPageSizes: [ DEFAULT_PER_PAGE ] } }
 					actions={ actions as Action< ServerLog >[] }
 					search={ false }
 					defaultLayouts={ { table: {} } }
