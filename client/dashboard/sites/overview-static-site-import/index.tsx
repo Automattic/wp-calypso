@@ -1,10 +1,6 @@
-import {
-	sitePreviewLinkCreateMutation,
-	sitePreviewLinksQuery,
-	sitePurchasesQuery,
-} from '@automattic/api-queries';
+import { sitePurchasesQuery } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Spinner,
@@ -24,6 +20,7 @@ import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { withJetpackSso } from '../../utils/site-sso';
 import { getSourceHost, isPlatformHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
@@ -265,38 +262,10 @@ export function StaticSiteImportNotice( {
 			action,
 		} );
 
-	// A moved site stays Coming Soon, and the owner isn't signed in to it until they visit
-	// WP Admin, so its plain address shows the Coming Soon page. Preview through a share link.
-	const needsShareLink = isReady && site.is_coming_soon;
-	const { data: previewLinks, isSuccess: hasLoadedPreviewLinks } = useQuery( {
-		...sitePreviewLinksQuery( site.ID ),
-		enabled: needsShareLink,
-	} );
-	const {
-		mutate: createPreviewLink,
-		data: createdPreviewLink,
-		isIdle: hasNotCreatedPreviewLink,
-	} = useMutation( sitePreviewLinkCreateMutation( site.ID ) );
-	useEffect( () => {
-		if (
-			needsShareLink &&
-			hasLoadedPreviewLinks &&
-			! previewLinks?.length &&
-			hasNotCreatedPreviewLink
-		) {
-			createPreviewLink();
-		}
-	}, [
-		needsShareLink,
-		hasLoadedPreviewLinks,
-		previewLinks,
-		hasNotCreatedPreviewLink,
-		createPreviewLink,
-	] );
-	const shareCode = needsShareLink
-		? ( previewLinks?.[ 0 ]?.code ?? createdPreviewLink?.code )
-		: undefined;
-	const previewUrl = shareCode ? addQueryArgs( site.URL, { share: shareCode } ) : site.URL;
+	// A moved site stays Coming Soon, which lets in visitors logged in to the site itself. The owner
+	// isn't until they first visit WP Admin, so open the site through SSO to log them in on the way.
+	const previewUrl =
+		site.is_coming_soon && site.is_wpcom_atomic ? withJetpackSso( site.URL ) : site.URL;
 
 	const sourceName = sourceHost || __( 'my old platform' );
 
@@ -368,7 +337,8 @@ export function StaticSiteImportNotice( {
 								variant="secondary"
 								href={ previewUrl }
 								target="_blank"
-								rel="noopener noreferrer"
+								// Keep the referrer: wpcomsh forwards logins referred by WordPress.com straight to SSO.
+								rel="noopener"
 								icon={ external }
 								iconPosition="right"
 								onClick={ () => recordClick( 'preview_site' ) }

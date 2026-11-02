@@ -305,59 +305,25 @@ describe( 'StaticSiteImportCard', () => {
 } );
 
 describe( 'StaticSiteImportNotice preview link', () => {
-	const comingSoonSite = { ...site, is_coming_soon: true } as unknown as Site;
 	const finished = { status: 'finished' as const, needsRestart: false };
 
-	it( 'previews a Coming Soon site through a new share link', async () => {
-		mockApi().get( '/wpcom/v2/sites/42/preview-links' ).reply( 200, [] );
-		const create = mockApi()
-			.post( '/wpcom/v2/sites/42/preview-links' )
-			.reply( 200, { code: 'newcode', created_at: '2026-11-02T00:00:00Z' } );
+	it.each( [
+		[
+			'logs the owner in to a Coming Soon Atomic site on the way',
+			{ is_coming_soon: true, is_wpcom_atomic: true },
+			'https://busybears.wpcomstaging.com/wp-login.php?redirect_to=%2F',
+		],
+		[
+			'links a launched site directly',
+			{ is_coming_soon: false },
+			'https://busybears.wordpress.com',
+		],
+	] )( '%s', ( _, props, href ) => {
+		const target = { ...site, ...props } as unknown as Site;
 
-		render(
-			<StaticSiteImportNotice site={ comingSoonSite } siteImport={ finished } search={ search } />
-		);
+		render( <StaticSiteImportNotice site={ target } siteImport={ finished } search={ search } /> );
 
-		await waitFor( () => expect( create.isDone() ).toBe( true ) );
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute(
-				'href',
-				'https://busybears.wordpress.com?share=newcode'
-			)
-		);
-	} );
-
-	it( 'reuses an existing share link instead of creating another', async () => {
-		mockApi()
-			.get( '/wpcom/v2/sites/42/preview-links' )
-			.reply( 200, [ { code: 'existing', created_at: '2026-11-01T00:00:00Z' } ] );
-		const create = mockApi().post( '/wpcom/v2/sites/42/preview-links' ).reply( 200, {} );
-
-		render(
-			<StaticSiteImportNotice site={ comingSoonSite } siteImport={ finished } search={ search } />
-		);
-
-		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute(
-				'href',
-				'https://busybears.wordpress.com?share=existing'
-			)
-		);
-		expect( create.isDone() ).toBe( false );
-		nock.cleanAll();
-	} );
-
-	it( 'links a launched site directly, without a share link', () => {
-		const create = mockApi().post( '/wpcom/v2/sites/42/preview-links' ).reply( 200, {} );
-
-		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
-
-		expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute(
-			'href',
-			'https://busybears.wordpress.com'
-		);
-		expect( create.isDone() ).toBe( false );
-		nock.cleanAll();
+		expect( screen.getByRole( 'link', { name: /Preview site/ } ) ).toHaveAttribute( 'href', href );
 	} );
 } );
 
