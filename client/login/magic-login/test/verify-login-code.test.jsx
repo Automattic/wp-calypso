@@ -2,6 +2,7 @@
 import page from '@automattic/calypso-router';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { I18N, I18NContext } from 'i18n-calypso';
 import { navigate } from 'calypso/lib/navigate';
 import { LoginContext } from 'calypso/login/login-context';
 import loginReducer from 'calypso/state/login/reducer';
@@ -36,11 +37,16 @@ const respondWithTwoStepChallenge = ( twoStepData ) =>
 		...twoStepData,
 	} );
 
-const submitCode = async () => {
+const submitCode = async ( { localeSlug = 'en' } = {} ) => {
+	const i18n = new I18N();
+	i18n.setLocale( { '': { localeSlug } } );
+
 	renderWithProvider(
-		<LoginContext.Provider value={ { setHeaders: jest.fn() } }>
-			<VerifyLoginCode publicToken="public-token" usernameOrEmail="user@example.com" />
-		</LoginContext.Provider>,
+		<I18NContext.Provider value={ i18n }>
+			<LoginContext.Provider value={ { setHeaders: jest.fn() } }>
+				<VerifyLoginCode publicToken="public-token" usernameOrEmail="user@example.com" />
+			</LoginContext.Provider>
+		</I18NContext.Provider>,
 		{ reducers: { login: loginReducer } }
 	);
 
@@ -100,5 +106,19 @@ describe( 'VerifyLoginCode', () => {
 			)
 		);
 		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'keeps the active locale in the second-factor URL', async () => {
+		respondWithTwoStepChallenge( {
+			two_step_supported_auth_types: [ 'webauthn', 'backup' ],
+		} );
+
+		await submitCode( { localeSlug: 'fr' } );
+
+		await waitFor( () =>
+			expect( page ).toHaveBeenCalledWith(
+				`/log-in/jetpack/backup/fr?redirect_to=${ encodeURIComponent( REDIRECT_TO ) }`
+			)
+		);
 	} );
 } );
