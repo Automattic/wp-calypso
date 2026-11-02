@@ -408,7 +408,7 @@ Note that when generating the jed file, all possible strings need to be taken in
 
 ## Extracting Translatable Strings From JavaScript Sources
 
-There is a companion [i18n-calypso-cli](https://npmjs.com/package/i18n-calypso-cli) package that provides a tool to extract `translate()`-d strings from your JavaScript code and generate a POT or PHP translation file.
+[`wp-oxc-makepot`](https://github.com/Automattic/wp-calypso/tree/trunk/packages/wp-oxc-makepot) extracts `translate()`-d strings from your JavaScript and TypeScript code into a POT file.
 
 ## Number Formatters (including currencies, percentages, etc.)
 

@@ -96,7 +96,6 @@
 /client/state/i18n @Automattic/i18n
 /packages/babel-plugin-i18n-calypso @Automattic/i18n
 /packages/i18n-calypso @Automattic/i18n
-/packages/i18n-calypso-cli @Automattic/i18n
 /packages/i18n-utils @Automattic/i18n
 /packages/language-picker @Automattic/i18n
 /packages/languages @Automattic/i18n

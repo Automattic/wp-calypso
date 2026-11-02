@@ -210,7 +210,6 @@
 		"enhanced-resolve": "5.9.3",
 		"http-proxy-middleware": "^3.0.7",
 		"i18n-calypso": "workspace:^",
-		"i18n-calypso-cli": "workspace:^",
 		"jsdom": "^20.0.3",
 		"lodash": "^4.18.1",
 		"lottie-web": "^5.9.6",

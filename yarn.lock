@@ -3222,7 +3222,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.4, @babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8, @babel/parser@npm:^7.29.9, @babel/parser@npm:^7.5.5":
+"@babel/parser@npm:^7.1.0, @babel/parser@npm:^7.20.7, @babel/parser@npm:^7.23.9, @babel/parser@npm:^7.24.4, @babel/parser@npm:^7.29.7, @babel/parser@npm:^7.29.8, @babel/parser@npm:^7.29.9":
   version: 7.29.9
   resolution: "@babel/parser@npm:7.29.9"
   dependencies:
@@ -19943,13 +19943,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"estree-walker@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "estree-walker@npm:0.6.1"
-  checksum: 6dabc855faa04a1ffb17b6a9121b6008ba75ab5a163ad9dc3d7fca05cfda374c5f5e91418d783496620ca75e99a73c40874d8b75f23b4117508cc8bde78e7b41
-  languageName: node
-  linkType: hard
-
 "estree-walker@npm:^2.0.2":
   version: 2.0.2
   resolution: "estree-walker@npm:2.0.2"
@@ -22077,21 +22070,6 @@ __metadata:
   checksum: 885ba3177c7181d315a856ee9c0005ff8eb5dcb1ce9e9d61be70987895d934d84686c37c981cceeb53216d4c9c15c1cc25f1804e84cc6a74a16993c5d7fd0893
   languageName: node
   linkType: hard
-
-"i18n-calypso-cli@workspace:^, i18n-calypso-cli@workspace:packages/i18n-calypso-cli":
-  version: 0.0.0-use.local
-  resolution: "i18n-calypso-cli@workspace:packages/i18n-calypso-cli"
-  dependencies:
-    "@automattic/calypso-eslint-config": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    commander: "npm:^5.1.0"
-    debug: "npm:^4.4.3"
-    globby: "npm:^10.0.2"
-    xgettext-js: "npm:^3.0.0"
-  bin:
-    i18n-calypso: cli.js
-  languageName: unknown
-  linkType: soft
 
 "i18n-calypso@workspace:^, i18n-calypso@workspace:packages/i18n-calypso":
   version: 0.0.0-use.local
@@ -34844,7 +34822,6 @@ __metadata:
     http-proxy-middleware: "npm:^3.0.7"
     husky: "npm:^7.0.4"
     i18n-calypso: "workspace:^"
-    i18n-calypso-cli: "workspace:^"
     jest: "npm:^30.5.2"
     jest-canvas-mock: "npm:^2.5.8"
     jest-environment-jsdom: "npm:^30.5.2"
@@ -35076,17 +35053,6 @@ __metadata:
   dependencies:
     is-wsl: "npm:^3.1.0"
   checksum: 44318f3585eb97be994fc21a20ddab2649feaf1fbe893f1f866d936eea3d5f8c743bec6dc02e49fbdd3c0e69e9b36f449d90a0b165a4f47dd089747af4cf2377
-  languageName: node
-  linkType: hard
-
-"xgettext-js@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "xgettext-js@npm:3.0.0"
-  dependencies:
-    "@babel/parser": "npm:^7.5.5"
-    estree-walker: "npm:^0.6.1"
-    lodash: "npm:^4.17.15"
-  checksum: 233f8c39eeeb4f70ecd4251b9ce1af76462822cf74987ca475888c050196945f5eb99162bf069a599de762b5b33db99eff6b8a85a2edca7a8d2c981c4bc75d4a
   languageName: node
   linkType: hard
 

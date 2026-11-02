@@ -550,7 +550,6 @@ function build( rootDir ) {
 				'packages/wpcom-xhr-request/package.json',
 				'packages/wpcom.js/package.json',
 				'packages/eslint-plugin-wpcalypso/package.json',
-				'packages/i18n-calypso-cli/package.json',
 				'packages/i18n-calypso/package.json',
 				'packages/i18n-utils/package.json',
 				'packages/photon/package.json',
