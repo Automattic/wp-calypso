@@ -16,6 +16,7 @@ import {
 } from '../utils/credits';
 import {
 	type CreditsAccess,
+	type CreditsPurchaseAction,
 	getCreditsBackNotice,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
@@ -39,15 +40,31 @@ import { getLatestUserMessageIndex } from '../utils/latest-message';
 import {
 	CREDITS_UPGRADE_SOURCE,
 	buildLiveCreditsStatus,
+	formatCreditsResetDate,
 	getLiveCreditSiteId,
 	getLiveCreditsPurchaseLink,
+	getLiveCreditsTopUpLink,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
 import type { AgentConfig } from '../utils/create-agent-config';
-import type { CreditSnapshot } from '../utils/live-credits';
+import type { CreditSnapshot, CreditsPurchaseKind } from '../utils/live-credits';
 import type { AuthProvider, TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
 import type { AgentsManagerSite } from '@automattic/data-stores';
+
+export interface CreditsAnswerAction extends CreditsPurchaseAction {
+	kind: CreditsPurchaseKind;
+}
+
+export interface CreditsAnswerContent {
+	status: CreditsStatus;
+	/** When the monthly plan credits reset, already formatted for display. */
+	resetDate: string;
+	/** What the popover offers, and on the lower plans a credits pack too, which any admin may buy. */
+	actions: CreditsAnswerAction[];
+	/** Who to ask, when nothing can be bought. */
+	purchaseHint?: string;
+}
 
 interface LiveCredits {
 	status: CreditsStatus;
@@ -134,6 +151,11 @@ export interface UseCreditsResult {
 	 * a credits-back notice once it is above 0, and the last of these while it is unknown.
 	 */
 	refusalNotice?: NoticeConfig;
+	/**
+	 * What `/credits` answers with: the live balance, and the purchase button or hint the popover
+	 * shows. Absent when no balance is known, so the command isn't handled.
+	 */
+	creditsAnswer?: CreditsAnswerContent;
 }
 
 /**
@@ -791,8 +813,58 @@ export function useCredits( {
 		recordCreditsEvent,
 	] );
 
+	// Personal and Premium upgrade first, though a credits pack is cheaper than a plan.
+	const addCreditsAction = useMemo< CreditsAnswerAction | undefined >( () => {
+		if ( planPurchaseLink?.kind !== 'upgrade' || access?.canBuyCredits !== true ) {
+			return undefined;
+		}
+		const link = getLiveCreditsTopUpLink( siteId, site );
+		const action =
+			link && getCreditsPurchaseAction( { purchaseUrl: link.url, purchaseKind: 'top_up' } );
+		return (
+			action && {
+				...action,
+				kind: 'top_up' as const,
+				onClick: () =>
+					recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
+						cta_type: 'top_up',
+						ref: CREDITS_UPGRADE_SOURCE,
+						placement: 'none',
+					} ),
+			}
+		);
+	}, [ planPurchaseLink, access, siteId, site, recordCreditsEvent ] );
+
+	// Live balances only: a mock or an unknown balance has nothing true to say.
+	const creditsAnswer = useMemo< CreditsAnswerContent | undefined >( () => {
+		if ( ! siteId || ! status || ! snapshot ) {
+			return undefined;
+		}
+		const actions: CreditsAnswerAction[] = [];
+		if ( purchaseAction && purchaseKind ) {
+			actions.push( { ...purchaseAction, kind: purchaseKind } );
+		}
+		if ( addCreditsAction ) {
+			actions.push( addCreditsAction );
+		}
+		return {
+			status,
+			resetDate: formatCreditsResetDate( snapshot.resets_at ),
+			actions,
+			purchaseHint: actions.length ? undefined : purchaseHint,
+		};
+	}, [ siteId, status, snapshot, purchaseKind, purchaseAction, addCreditsAction, purchaseHint ] );
+
 	return useMemo(
-		() => ( { chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice } ),
-		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice ]
+		() => ( {
+			chat,
+			trailingActions,
+			notice,
+			beforeSubmit,
+			takeRefusalCode,
+			refusalNotice,
+			creditsAnswer,
+		} ),
+		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice, creditsAnswer ]
 	);
 }

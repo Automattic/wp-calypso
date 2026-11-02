@@ -1,5 +1,6 @@
 import { useCallback } from '@wordpress/element';
 import CopyActionButton from '../components/copy-action-button';
+import { isCreditsCommandMessageId } from '../utils/credits-command';
 import { COPY_ACTION_ID } from '../utils/message-actions';
 import {
 	getDisplayMessageFromToolData,
@@ -57,7 +58,8 @@ function getCopyableText( message: UIMessage ): string {
  */
 export default function useCopyAction(): ( message: UIMessage ) => MessageAction[] {
 	return useCallback( ( message: UIMessage ) => {
-		if ( message.role !== 'agent' ) {
+		// The browser's own `/credits` answer has only its intro line to copy.
+		if ( message.role !== 'agent' || isCreditsCommandMessageId( message.id ) ) {
 			return [];
 		}
 

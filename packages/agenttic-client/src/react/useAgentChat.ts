@@ -37,7 +37,9 @@ export const filterUiOnlyMessages = (
 	uiMessages: UIMessage[],
 	clientMessageIds: Set< string >
 ): UIMessage[] => {
-	return uiMessages.filter( ( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user' );
+	return uiMessages.filter(
+		( msg ) => ! clientMessageIds.has( msg.id ) && ( msg.role !== 'user' || msg.isUiOnly )
+	);
 };
 
 /**
@@ -157,6 +159,8 @@ export interface UIMessage {
 	icon?: string;
 	actions?: UIMessageAction[];
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
+	/** A user message that never goes to the server, so a rebuilt history keeps it as it does an agent's. */
+	isUiOnly?: boolean;
 }
 
 // Mirrors `MessageAction.visibility` in agenttic-ui.

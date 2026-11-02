@@ -11,10 +11,17 @@ export function getLatestAgentMessageId( messages: UIMessage[] ): string | null 
 	return null;
 }
 
-/** Index of the latest message the user typed, skipping context-only messages. */
+/**
+ * Index of the latest message the user typed, skipping context-only messages and the UI-only
+ * ones the browser adds itself, such as the `/credits` question, which no turn answers.
+ */
 export function getLatestUserMessageIndex( messages: UIMessage[] ): number {
 	for ( let index = messages.length - 1; index >= 0; index-- ) {
-		if ( messages[ index ].role === 'user' && ! isContextOnlyMessage( messages[ index ] ) ) {
+		if (
+			messages[ index ].role === 'user' &&
+			! messages[ index ].isUiOnly &&
+			! isContextOnlyMessage( messages[ index ] )
+		) {
 			return index;
 		}
 	}

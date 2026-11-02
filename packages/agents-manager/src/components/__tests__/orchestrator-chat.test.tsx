@@ -295,6 +295,7 @@ const mockAgentChat = jest.fn(
 				Type padded message
 			</button>
 			<button onClick={ () => onSubmit( 'Describe these images' ) }>Submit message</button>
+			<button onClick={ () => onSubmit( ' /credits ' ) }>Submit credits command</button>
 			<button
 				onClick={ () =>
 					onContextCardAction?.(
@@ -468,6 +469,7 @@ const mockCreditsVisibility = jest.fn();
 const mockCreditsNoticeVisibility = jest.fn();
 const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 const mockCreditsNotice = jest.fn( (): unknown => undefined );
+let mockCreditsAnswer: unknown;
 const mockRefusalNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 jest.mock( '../../hooks/use-credits', () => ( {
@@ -490,6 +492,7 @@ jest.mock( '../../hooks/use-credits', () => ( {
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
 			takeRefusalCode: mockTakeRefusalCode,
 			notice: mockCreditsNotice(),
+			creditsAnswer: mockCreditsAnswer,
 			refusalNotice: mockRefusalNotice(),
 		};
 	},
@@ -799,6 +802,7 @@ describe( 'OrchestratorChat', () => {
 		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockCreditsNotice.mockReturnValue( undefined );
+		mockCreditsAnswer = undefined;
 		mockRefusalNotice.mockReturnValue( undefined );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
@@ -1600,6 +1604,38 @@ describe( 'OrchestratorChat', () => {
 		await waitFor( () => {
 			expect( onSubmit ).toHaveBeenCalledWith( 'Describe these images' );
 		} );
+	} );
+
+	it( 'answers /credits in the thread without sending it to the model', () => {
+		const { onSubmit, addMessage } = mockUseAgentChat();
+		mockCreditsAnswer = { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } };
+
+		render( chat() );
+		fireEvent.click( screen.getByText( 'Submit credits command' ) );
+
+		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( addMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: expect.stringMatching( /^credits-command-/ ), role: 'agent' } )
+		);
+		expect( addMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { role: 'user', content: [ { type: 'text', text: '/credits' } ] } )
+		);
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_chat_input_send_message',
+			expect.anything()
+		);
+	} );
+
+	it( 'sends /credits as any other message when no site balance is known', async () => {
+		const { onSubmit, addMessage } = mockUseAgentChat();
+
+		render( chat() );
+		fireEvent.click( screen.getByText( 'Submit credits command' ) );
+
+		await waitFor( () => {
+			expect( onSubmit ).toHaveBeenCalledWith( ' /credits ' );
+		} );
+		expect( addMessage ).not.toHaveBeenCalled();
 	} );
 
 	it( 'labels a send from the composer', () => {

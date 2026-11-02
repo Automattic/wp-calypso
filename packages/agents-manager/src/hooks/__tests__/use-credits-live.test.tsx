@@ -3172,3 +3172,131 @@ describe( 'refusal code', () => {
 		} );
 	} );
 } );
+
+describe( 'credits answer', () => {
+	it.each( [ 'personal', 'premium' ] as const )(
+		'offers Upgrade and Add credits on %s, each click recording its own cta_type',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce(
+				response(
+					creditSnapshot( {
+						plan_tier,
+						credits_available: 62450,
+						top_up_credits_purchased: 100000,
+						top_up_credits_remaining: 60000,
+					} )
+				)
+			);
+			const { result } = renderCredits();
+			await flush();
+
+			const { status, resetDate, actions } = result.current.creditsAnswer ?? {};
+			expect( status?.remaining ).toBe( 62450 );
+			expect( resetDate ).toBe( 'Oct 1' );
+			expect( actions?.map( ( { kind, label, href } ) => ( { kind, label, href } ) ) ).toEqual( [
+				{ kind: 'upgrade', label: 'Upgrade', href: UPGRADE_URL },
+				{ kind: 'top_up', label: 'Add credits', href: ADD_CREDITS_URL },
+			] );
+			expect( actions?.[ 0 ] ).toMatchObject( { href: props( result.current ).action?.href } );
+
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			act( () => actions?.[ 0 ].onClick?.() );
+			act( () => actions?.[ 1 ].onClick?.() );
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				1,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'upgrade', placement: 'none' } )
+			);
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				2,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'top_up', ref: 'wp_ai_credits', placement: 'none' } )
+			);
+		}
+	);
+
+	it.each( [ 'business', 'commerce' ] as const )(
+		'offers only Add credits on %s',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ) ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect(
+				result.current.creditsAnswer?.actions.map( ( { kind, href } ) => ( { kind, href } ) )
+			).toEqual( [ { kind: 'top_up', href: ADD_CREDITS_URL } ] );
+		}
+	);
+
+	it( 'offers only Add credits to an admin who can’t upgrade the plan', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { plan_tier: 'personal' } ), true, false )
+		);
+		const { result } = renderCredits();
+		await flush();
+
+		expect( result.current.creditsAnswer?.actions.map( ( { kind } ) => kind ) ).toEqual( [
+			'top_up',
+		] );
+		expect( result.current.creditsAnswer?.purchaseHint ).toBeUndefined();
+	} );
+
+	it.each( [ 'personal', 'business' ] as const )(
+		'names who to ask, with no button, for someone who can’t buy on %s',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ), false ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsAnswer?.actions ).toEqual( [] );
+			expect( result.current.creditsAnswer?.purchaseHint ).toBe( 'Ask a site admin to add more.' );
+		}
+	);
+
+	it( 'offers nothing while it isn’t known who may buy', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { plan_tier: 'personal' } ), null )
+		);
+		const { result } = renderCredits();
+		await flush();
+
+		expect( result.current.creditsAnswer?.actions ).toEqual( [] );
+		expect( result.current.creditsAnswer?.purchaseHint ).toBeUndefined();
+	} );
+
+	it.each( [
+		[ 'a site with no allowance (404)', { ok: false, json: async () => ( {} ) } ],
+		[ 'a snapshot that isn’t valid', { ok: true, json: async () => ( { ai_credits: { a: 1 } } ) } ],
+	] )( 'is absent for %s', async ( _name, reply ) => {
+		fetchMock.mockResolvedValueOnce( reply );
+		const { result } = renderCredits();
+		await flush();
+
+		expect( result.current.creditsAnswer ).toBeUndefined();
+	} );
+
+	it( 'is absent when the read fails', async () => {
+		fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+		const { result } = renderCredits();
+		await flush();
+
+		expect( result.current.creditsAnswer ).toBeUndefined();
+	} );
+
+	it( 'is absent on a chat with no site, even in demo mode', () => {
+		window.history.replaceState( {}, '', '/?am_credits=55&am_plan=paid' );
+		const { result } = renderCredits( { siteKey: NO_SITE } );
+
+		expect( result.current.creditsAnswer ).toBeUndefined();
+	} );
+
+	it( 'is absent where the host says the page isn’t in dev mode, which reads nothing', async () => {
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+		const { result } = renderCredits();
+		await flush();
+
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( result.current.creditsAnswer ).toBeUndefined();
+		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+} );

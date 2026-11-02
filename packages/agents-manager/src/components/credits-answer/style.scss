@@ -1,0 +1,103 @@
+.agents-manager-credits-answer {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-top: 12px;
+}
+
+.agents-manager-credits-answer__card {
+	padding: 16px;
+	border: 1px solid var( --color-input-border );
+	border-radius: 16px;
+}
+
+// Doubled class: wp-admin and the editor style bare `table`, `th` and `td`.
+.agents-manager-credits-answer__table.agents-manager-credits-answer__table {
+	width: 100%;
+	margin: 0;
+	border: 0;
+	border-collapse: collapse;
+	background: transparent;
+
+	caption {
+		padding: 0 0 12px;
+		color: var( --color-muted-foreground );
+		font-size: 12px;
+		letter-spacing: 0.04em;
+		text-align: start;
+		text-transform: uppercase;
+	}
+
+	th,
+	td {
+		padding: 10px 8px 10px 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font-weight: 400;
+		text-align: start;
+	}
+
+	thead tr,
+	tbody tr {
+		border-top: 1px solid var( --color-input-border );
+	}
+}
+
+.agents-manager-credits-answer__need-more {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	align-items: flex-start;
+
+	p {
+		margin: 0;
+	}
+}
+
+.agents-manager-credits-answer__heading {
+	margin: 0;
+	color: var( --color-muted-foreground );
+	font-size: 12px;
+	font-weight: 400;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.agents-manager-credits-answer__actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+// The buttons as the credits popover draws them: wp's blue and outlined defaults read badly on
+// the chat's dark panel.
+.agents-manager-credits-answer__actions .components-button {
+	border-radius: 4px;
+	&.is-primary {
+		background-color: var( --color-primary );
+		color: var( --color-primary-foreground );
+
+		&:hover:not( :disabled ) {
+			background-color: color-mix( in srgb, var( --color-primary ) 85%, #000 );
+		}
+	}
+
+	&.is-secondary {
+		border: none;
+		background-color: var( --color-muted );
+		box-shadow: none;
+		color: var( --color-foreground );
+
+		&:hover:not( :disabled ),
+		&:focus:not( :disabled ) {
+			background-color: color-mix( in srgb, var( --color-muted ) 85%, var( --color-foreground ) );
+			box-shadow: none;
+			color: var( --color-foreground );
+		}
+
+		&:focus-visible {
+			box-shadow: 0 0 0 2px var( --color-primary );
+		}
+	}
+}

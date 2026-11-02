@@ -23,6 +23,7 @@ import { useContextCardActions } from '../../hooks/use-context-card-actions';
 import { useConversationHydration } from '../../hooks/use-conversation-hydration';
 import useCopyAction from '../../hooks/use-copy-action';
 import { useCredits } from '../../hooks/use-credits';
+import { useCreditsCommand } from '../../hooks/use-credits-command';
 import { useDynamicSuggestions } from '../../hooks/use-dynamic-suggestions';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
 import useFeedbackAction from '../../hooks/use-feedback-action';
@@ -216,6 +217,11 @@ export default function OrchestratorChat( {
 		progressMessage,
 		isReplying,
 	} = credits.chat;
+	const creditsCommand = useCreditsCommand( {
+		creditsAnswer: credits.creditsAnswer,
+		beforeSubmit: credits.beforeSubmit,
+		addMessage,
+	} );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 
 	useCanvasMoveAbort( { isProcessing, abortCurrentRequest, addMessage } );
@@ -276,6 +282,7 @@ export default function OrchestratorChat( {
 		abortCurrentRequest,
 		beforeSubmit: credits.beforeSubmit,
 		flushPendingNavigation,
+		handleCommand: creditsCommand.handleCommand,
 		suggestionPromptsRef,
 	} );
 
@@ -592,7 +599,7 @@ export default function OrchestratorChat( {
 			imageUpload={ imageUpload }
 			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
-			beforeSubmit={ credits.beforeSubmit }
+			beforeSubmit={ creditsCommand.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }

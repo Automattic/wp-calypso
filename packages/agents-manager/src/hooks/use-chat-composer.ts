@@ -20,6 +20,8 @@ interface UseChatComposerOptions {
 	beforeSubmit: UseCreditsResult[ 'beforeSubmit' ];
 	/** Answers a parked `wp-admin-navigate` call before the next message goes out. */
 	flushPendingNavigation: () => Promise< void >;
+	/** Answers a typed slash command in the browser; true means it did, so nothing is sent. */
+	handleCommand?: ( message: string ) => boolean;
 	/**
 	 * The suggestion prompts on screen, so a send can be told apart from a typed
 	 * one: Agenttic submits a clicked suggestion before the click handler runs.
@@ -40,6 +42,7 @@ export function useChatComposer( {
 	abortCurrentRequest,
 	beforeSubmit,
 	flushPendingNavigation,
+	handleCommand,
 	suggestionPromptsRef,
 }: UseChatComposerOptions ) {
 	const [ inputValue, setInputValue ] = useState( '' );
@@ -221,8 +224,14 @@ export function useChatComposer( {
 	// Agenttic types the second `onSubmit` argument as the composer's files; images
 	// come from `pendingImages`, so `sendMessage`'s options stay out of reach.
 	const submitComposerMessage = useCallback(
-		( message: string ) => sendMessage( message ),
-		[ sendMessage ]
+		( message: string ) => {
+			// Agenttic has already cleared the input, and nothing else of a send applies.
+			if ( handleCommand?.( message ) ) {
+				return;
+			}
+			return sendMessage( message );
+		},
+		[ handleCommand, sendMessage ]
 	);
 
 	const stopResponse = useCallback( () => {
