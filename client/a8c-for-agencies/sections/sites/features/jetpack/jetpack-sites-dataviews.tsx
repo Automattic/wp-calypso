@@ -440,18 +440,15 @@ export const JetpackSitesDataViews = ( {
 	const useExampleDataForTour =
 		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
 
-	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteData > >( {
+	const [ itemsData, setItemsData ] = useState<
+		Omit< ItemsDataViewsType< SiteData >, 'pagination' | 'dataViewsState' >
+	>( {
 		items: ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE,
-		pagination: {
-			totalItems: totalSites,
-			totalPages: totalPages,
-		},
 		itemFieldId: 'ref',
 		searchLabel: translate( 'Search for sites' ),
 		fields: [],
 		actions: [],
 		setDataViewsState: setDataViewsState,
-		dataViewsState: dataViewsState,
 		selection,
 		onSelectionChange,
 		defaultLayouts: { table: {}, list: {} },
@@ -497,25 +494,24 @@ export const JetpackSitesDataViews = ( {
 
 	// Update the data packet
 	useEffect( () => {
-		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
+		setItemsData( ( prevState ) => ( {
 			...prevState,
 			items: sites,
 			fields: fields,
 			actions: actions as Action< SiteData >[],
-			pagination: {
-				totalItems: totalSites,
-				totalPages: totalPages,
-			},
 			setDataViewsState: setDataViewsState,
-			dataViewsState: dataViewsState,
 			selection,
 			onSelectionChange,
 		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, data, actions, selection, onSelectionChange ] );
+	}, [ fields, setDataViewsState, data, actions, selection, onSelectionChange ] );
 
 	return (
 		<ItemsDataViews
-			data={ itemsData }
+			data={ {
+				...itemsData,
+				dataViewsState,
+				pagination: { totalItems: totalSites, totalPages },
+			} }
 			isLoading={ isLoading }
 			className={ className }
 			empty={
