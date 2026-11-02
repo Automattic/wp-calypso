@@ -109,8 +109,9 @@ export default function PersonalDetailsSection() {
 	};
 
 	return (
-		// noValidate: the username is saved separately and a bouncing email can still be kept, so an
-		// invalid input in either shouldn't block saving the rest of the card.
+		// noValidate: a bouncing email is flagged invalid so DataForm shows its message, but it can
+		// still be kept, so it must not block saving. The username is saved separately, so an invalid
+		// username input shouldn't block saving the rest of the card either.
 		<form noValidate onSubmit={ handleSubmit } aria-labelledby="personal-details-heading">
 			<FlashMessage id="username" message={ __( 'Username saved.' ) } />
 			<Card>

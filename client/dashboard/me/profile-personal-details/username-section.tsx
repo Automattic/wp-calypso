@@ -64,7 +64,6 @@ export default function UsernameSection( {
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
-	const [ isValidatingUsername, setIsValidatingUsername ] = useState( false );
 	const validateUsernameDebounced = useDebounce( validateUsernameInternal, 600 );
 	// The username most recently sent for validation, so a slow response for an older value
 	// can't overwrite the result for the current one.
@@ -103,12 +102,6 @@ export default function UsernameSection( {
 			return undefined;
 		}
 
-		if ( isValidatingUsername ) {
-			return {
-				user_login: { custom: { type: 'validating', message: __( 'Checking username…' ) } },
-			};
-		}
-
 		if ( isUsernameValid( validationResult ) ) {
 			return { user_login: { custom: { type: 'valid', message: __( 'Nice username!' ) } } };
 		}
@@ -119,7 +112,7 @@ export default function UsernameSection( {
 		}
 
 		return undefined;
-	}, [ hasUsernameChange, isValidatingUsername, validationResult ] );
+	}, [ hasUsernameChange, validationResult ] );
 
 	const fields = useMemo(
 		(): Field< UsernameFormData >[] => [
@@ -137,7 +130,6 @@ export default function UsernameSection( {
 
 	const clearValidation = useCallback( () => {
 		latestValidatedUsername.current = null;
-		setIsValidatingUsername( false );
 		setValidationResult( null );
 	}, [] );
 
@@ -158,13 +150,12 @@ export default function UsernameSection( {
 		if ( lowerCaseValue !== currentUsername ) {
 			setUsernameAction( 'none' );
 			latestValidatedUsername.current = lowerCaseValue;
-			setIsValidatingUsername( true );
+			setValidationResult( null );
 			validateUsernameDebounced( lowerCaseValue, currentUsername, ( result ) => {
 				if ( latestValidatedUsername.current !== lowerCaseValue ) {
 					return;
 				}
 				setValidationResult( result );
-				setIsValidatingUsername( false );
 			} );
 		} else {
 			// Just clear validation when username matches current, don't fully cancel
