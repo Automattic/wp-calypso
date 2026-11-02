@@ -5,8 +5,9 @@
 jest.mock( 'calypso/components/marketing-message', () => () => null );
 jest.mock( '@automattic/plans-grid-next', () => ( {
 	...jest.requireActual( '@automattic/plans-grid-next' ),
-	FeaturesGrid: ( { gridPlans } ) => (
+	FeaturesGrid: ( { gridPlans, allFeaturesList, paidDomainName } ) => (
 		<div data-testid="plan-features">
+			<div>{ allFeaturesList[ 'custom-domain' ].getTitle( { domainName: paidDomainName } ) }</div>
 			<div data-testid="visible-plans">
 				{ JSON.stringify( gridPlans.map( ( { planSlug } ) => planSlug ) ) }
 			</div>
@@ -121,6 +122,27 @@ describe( 'PlansFeaturesMain', () => {
 			isExperimentEligible: false,
 		} ) );
 	} );
+
+	test.each( [
+		[ true, 'example.com', 'Free domain for one year' ],
+		[ false, 'example.com', 'example.com is included' ],
+		[ undefined, undefined, 'Free domain for one year' ],
+	] )(
+		'uses the correct domain feature copy with connection=%s and domain=%s',
+		( isDomainConnection, paidDomainName, expectedTitle ) => {
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					flowName="domain"
+					isInSignup
+					isDomainConnection={ isDomainConnection }
+					paidDomainName={ paidDomainName }
+				/>
+			);
+
+			expect( screen.getByText( expectedTitle ) ).toBeVisible();
+		}
+	);
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
 		test( 'Should render <PlanFeatures /> with default WPCOM plans', () => {

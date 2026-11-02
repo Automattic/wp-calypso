@@ -166,6 +166,7 @@ export interface PlansFeaturesMainProps {
 	removePaidDomain?: () => void;
 	setSiteUrlAsFreeDomainSuggestion?: ( freeDomainSuggestion: { domain_name: string } ) => void;
 	isDomainTransfer?: boolean;
+	isDomainConnection?: boolean;
 	intervalType?: Extract< UrlFriendlyTermType, 'monthly' | 'yearly' | '2yearly' | '3yearly' >;
 	/**
 	 * An array of intervals to be displayed in the plan type selector. Defaults to [ 'yearly', '2yearly', '3yearly', 'monthly' ]
@@ -249,6 +250,7 @@ const PlansFeaturesMain = ( {
 	removePaidDomain,
 	setSiteUrlAsFreeDomainSuggestion,
 	isDomainTransfer,
+	isDomainConnection,
 	onUpgradeClick,
 	hidePlanTypeSelector,
 	redirectTo,
@@ -1686,7 +1688,7 @@ const PlansFeaturesMain = ( {
 										isInSiteDashboard={ isInSiteDashboard }
 										isInSignup={ isInSignup }
 										onStorageAddOnClick={ handleStorageAddOnClick }
-										paidDomainName={ paidDomainName }
+										paidDomainName={ isDomainConnection ? undefined : paidDomainName }
 										recordTracksEvent={ recordTracksEvent }
 										reflectStorageSelectionInPlanPrices
 										selectedFeature={ selectedFeature }

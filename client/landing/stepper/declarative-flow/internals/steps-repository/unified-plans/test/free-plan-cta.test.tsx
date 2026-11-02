@@ -1,8 +1,11 @@
 /**
  * @jest-environment jsdom
  */
+import { type OnboardActions } from '@automattic/data-stores';
 import { DOMAIN_FLOW, LAUNCH_SITE_FLOW, ONBOARDING_FLOW } from '@automattic/onboarding';
 import { screen, waitFor } from '@testing-library/react';
+import { dispatch } from '@wordpress/data';
+import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { renderStep } from '../../test/helpers';
 import UnifiedPlansStep, { type UnifiedPlansStepProps } from '../unified-plans-step';
 
@@ -56,6 +59,30 @@ describe( 'UnifiedPlansStep free plan CTA', () => {
 	beforeEach( () => {
 		mockPlansFeaturesMainProps = {};
 	} );
+
+	afterEach( () => {
+		( dispatch( ONBOARD_STORE ) as OnboardActions ).setDomainCartItem( undefined );
+	} );
+
+	it.each( [
+		[ 'domain_map', true ],
+		[ 'domain_reg', false ],
+		[ 'domain_transfer', false ],
+	] )(
+		'identifies a domain connection for %s while retaining the domain name',
+		( product_slug, isDomainConnection ) => {
+			( dispatch( ONBOARD_STORE ) as OnboardActions ).setDomainCartItem( {
+				product_slug,
+				meta: 'example.com',
+			} );
+
+			renderV2Step( { flowName: DOMAIN_FLOW, paidDomainName: 'example.com' } );
+
+			expect( mockPlansFeaturesMainProps.isDomainConnection ).toBe( isDomainConnection );
+			expect( mockPlansFeaturesMainProps.paidDomainName ).toBe( 'example.com' );
+			expect( mockPlansFeaturesMainProps.renderFreePlanCtaInStepContainerV2 ).toBe( true );
+		}
+	);
 
 	describe( 'launch-site flow', () => {
 		it( 'offers the free plan in the heading without a paid domain', () => {
