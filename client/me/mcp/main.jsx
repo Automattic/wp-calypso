@@ -17,6 +17,7 @@ import { useDispatch } from 'react-redux';
 import DocumentHead from 'calypso/components/data/document-head';
 import Main from 'calypso/components/main';
 import NavigationHeader from 'calypso/components/navigation-header';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import twoStepAuthorization from 'calypso/lib/two-step-authorization';
 import ReauthRequired from 'calypso/me/reauth-required';
@@ -242,7 +243,7 @@ function McpComponent( { path } ) {
 			{ hasTools && anyToolsEnabled && (
 				<SummaryButton
 					className="mcp-hub__panel"
-					href="/me/mcp/setup"
+					href={ dashboardLink( '/me/preferences/mcp' ) }
 					title={ translate( 'Connect external AI assistant' ) }
 					description={ translate( 'Get instructions for connecting your external AI assistant.' ) }
 					decoration={ <Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } /> }

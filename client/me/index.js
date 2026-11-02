@@ -56,14 +56,10 @@ export default function () {
 		clientRender
 	);
 
+	// Connecting an agent now happens on the dashboard's main AI and MCP screen.
 	page(
 		'/me/mcp/setup',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
-		controller.sidebar,
-		controller.mcpSetup,
-		makeLayout,
-		clientRender
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp', () => true )
 	);
 	page(
 		'/me/mcp/read',

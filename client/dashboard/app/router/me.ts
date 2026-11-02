@@ -1241,6 +1241,23 @@ export const mcpLegacyRedirectRoute = createRoute( {
 	},
 } );
 
+export const mcpLegacySubpageRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'mcp/$',
+	beforeLoad: ( { params } ) => {
+		switch ( params._splat ) {
+			case 'read':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/read' } );
+			case 'write':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/write' } );
+			case 'mcp-sites':
+				throw dashboardRedirect( { to: '/me/preferences/mcp/mcp-sites' } );
+			default:
+				throw dashboardRedirect( { to: '/me/preferences/mcp' } );
+		}
+	},
+} );
+
 export const privacyLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'privacy',
@@ -1333,23 +1350,14 @@ export const mcpIndexRoute = createRoute( {
 	)
 );
 
+// Connecting an agent moved onto the main AI and MCP screen; keep old setup links working.
 export const mcpSetupRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'MCP Client Setup' ),
-			},
-		],
-	} ),
 	getParentRoute: () => mcpRoute,
 	path: 'setup',
-} ).lazy( () =>
-	import( '../../me/mcp/setup' ).then( ( d ) =>
-		createLazyRoute( 'mcp-setup' )( {
-			component: d.default,
-		} )
-	)
-);
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/me/preferences/mcp' } );
+	},
+} );
 
 export const mcpMcpSitesRoute = createRoute( {
 	head: () => ( {
@@ -1453,6 +1461,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 			? preferencesRoute.addChildren( preferencesChildren )
 			: preferencesRoute,
 		mcpLegacyRedirectRoute,
+		mcpLegacySubpageRedirectRoute,
 		privacyLegacyRedirectRoute,
 		blockedSitesLegacyRedirectRoute,
 		profileLegacyRedirectRoute,

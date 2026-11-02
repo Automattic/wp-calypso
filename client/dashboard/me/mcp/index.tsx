@@ -4,7 +4,7 @@ import { formatNumber } from '@automattic/number-formatters';
 import { useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Icon, __experimentalVStack as VStack, ToggleControl } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
-import { seen, pencil, notAllowed, connection, globe } from '@wordpress/icons';
+import { seen, pencil, notAllowed, globe } from '@wordpress/icons';
 import { getOverridesToMatch, groupIntentKey } from '../../../me/mcp/group-intents';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import {
@@ -24,6 +24,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { SectionHeader } from '../../components/section-header';
 import McpApprovalBypassControl from './approval-bypass';
 import { isWriteTool } from './categories';
+import McpConnectCard from './connect-card';
 
 import './style.scss';
 
@@ -179,6 +180,11 @@ function McpComponent() {
 				properties={ tracksAudienceProps }
 			/>
 			<VStack spacing={ 4 }>
+				<McpConnectCard
+					mcpEnabled={ mcpEnabled }
+					onTurnOn={ () => handleMcpToggle( true ) }
+					isTurningOn={ mutation.isPending }
+				/>
 				<Card className="mcp-preferences__access-card">
 					<CardBody>
 						<VStack spacing={ 4 }>
@@ -241,15 +247,6 @@ function McpComponent() {
 						</>
 					) }
 				</Card>
-
-				{ mcpEnabled && (
-					<RouterLinkSummaryButton
-						to="/me/preferences/mcp/setup"
-						title={ __( 'Connect external AI assistant' ) }
-						description={ __( 'Get instructions for connecting your external AI assistant.' ) }
-						decoration={ <Icon icon={ connection } size={ 24 } /> }
-					/>
-				) }
 			</VStack>
 		</PageLayout>
 	);
