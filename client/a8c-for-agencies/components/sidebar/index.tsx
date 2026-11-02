@@ -2,8 +2,9 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, type JSX } from 'react';
+import { useCallback, useEffect, type JSX } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
+import SpacefastSidebarCard from 'calypso/dashboard/agency/components/spacefast-promo';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,
@@ -65,6 +66,13 @@ const A4ASidebar = ( {
 
 	const isNarrowView = useBreakpoint( '<660px' );
 
+	const handleRecordTracksEvent = useCallback(
+		( eventName: string, properties?: Record< string, unknown > ) => {
+			dispatch( recordTracksEvent( eventName, properties ) );
+		},
+		[ dispatch ]
+	);
+
 	// When the sidebar is not displayed (narrow view), we need to set the layout focus to the preview.
 	// This is because, on a narrow view, we want to display the sidebar to navigate to all available pages
 	// rather than showing the default page of the nested sidebar directly.
@@ -102,6 +110,8 @@ const A4ASidebar = ( {
 					</SidebarNavigatorMenu>
 				</SidebarNavigator>
 			</SidebarMain>
+
+			<SpacefastSidebarCard recordTracksEvent={ handleRecordTracksEvent } />
 
 			<SidebarFooter className="a4a-sidebar__footer">
 				<ul>
