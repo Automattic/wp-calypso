@@ -27,11 +27,11 @@ describe( '<McpConnectCard />', () => {
 		renderCard();
 
 		const claude = screen.getByRole( 'link', { name: /^Claude App and desktop/ } );
-		expect( claude ).toHaveAttribute( 'href', 'https://claude.ai/directory/wordpress-com' );
+		expect( claude ).toHaveAttribute( 'href', 'https://wp.me/claude' );
 		expect( claude ).toHaveAttribute( 'target', '_blank' );
 		expect( screen.getByRole( 'link', { name: /^ChatGPT/ } ) ).toHaveAttribute(
 			'href',
-			'https://chatgpt.com/plugins/wordpress-com?open_in_app'
+			'https://wp.me/chatgpt'
 		);
 	} );
 
