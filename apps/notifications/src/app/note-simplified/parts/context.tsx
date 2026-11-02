@@ -10,7 +10,7 @@ export default function Context( { note }: { note: Note } ) {
 			{ post && <PostCard post={ post } site={ site } url={ comment?.url } /> }
 			{ comment && (
 				<Thread>
-					<ThreadParent comment={ comment } />
+					<ThreadParent comment={ comment } maxLength={ 200 } />
 				</Thread>
 			) }
 		</>

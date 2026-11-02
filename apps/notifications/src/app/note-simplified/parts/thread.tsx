@@ -18,6 +18,33 @@ function toPreview( block: Block ): Block {
 	return { ...block, text: block.text.replace( /\n/g, ' ' ) };
 }
 
+/**
+ * Shortens a block to at most `maxLength` characters at a word boundary, ending it with an ellipsis.
+ */
+function truncateBlock( block: Block, maxLength: number ): Block {
+	if ( block.text.length <= maxLength ) {
+		return block;
+	}
+
+	const lastSpace = block.text.lastIndexOf( ' ', maxLength );
+	const cutAtSpace = lastSpace > maxLength * 0.7;
+	const keptLength = block.text.slice( 0, cutAtSpace ? lastSpace : maxLength ).trimEnd().length;
+	const clampIndices = < T extends { indices: [ number, number ] } >( items?: T[] ) =>
+		items
+			?.filter( ( item ) => item.indices[ 0 ] < keptLength )
+			.map( ( item ): T => ( {
+				...item,
+				indices: [ item.indices[ 0 ], Math.min( item.indices[ 1 ], keptLength ) ],
+			} ) );
+
+	return {
+		...block,
+		text: block.text.slice( 0, keptLength ) + '…',
+		ranges: clampIndices( block.ranges ),
+		media: clampIndices( block.media ),
+	};
+}
+
 const ThreadItem = ( {
 	avatar,
 	author,
@@ -82,11 +109,14 @@ const ThreadItem = ( {
 export function ThreadParent( {
 	comment,
 	truncate = false,
+	maxLength,
 }: {
 	comment: NoteParentComment;
 	truncate?: boolean;
+	maxLength?: number;
 } ) {
-	const content = comment.content ?? { text: comment.text };
+	const fullContent = comment.content ?? { text: comment.text };
+	const content = maxLength ? truncateBlock( fullContent, maxLength ) : fullContent;
 
 	return (
 		<ThreadItem
