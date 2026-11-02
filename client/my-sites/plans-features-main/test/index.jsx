@@ -127,7 +127,6 @@ describe( 'PlansFeaturesMain', () => {
 		usePlanDifferentiatorsExperiment.mockImplementation( () => ( {
 			isLoading: false,
 			variant: 'control',
-			showAiCredits: false,
 			useReversedPlanOrder: false,
 			isExperimentEligible: false,
 		} ) );
@@ -151,8 +150,7 @@ describe( 'PlansFeaturesMain', () => {
 		test( 'Should render <PlanFeatures /> with default WPCOM plans most expensive first in the reversed order variant', () => {
 			usePlanDifferentiatorsExperiment.mockImplementation( () => ( {
 				isLoading: false,
-				variant: 'ai_credits_reversed_order',
-				showAiCredits: true,
+				variant: 'reversed_order',
 				useReversedPlanOrder: true,
 				isExperimentEligible: true,
 			} ) );

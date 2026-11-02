@@ -19,7 +19,6 @@ const EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
 const CONTROL_RESULT = {
 	isLoading: false,
 	variant: 'control',
-	showAiCredits: false,
 	useReversedPlanOrder: false,
 	isExperimentEligible: true,
 };
@@ -163,45 +162,26 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 	} );
 
 	describe( 'variants', () => {
-		test( 'shows AI credits in the normal order for the ai_credits variant', () => {
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'ai_credits' } ] );
+		test( 'reverses the plan order for the reversed_order variant', () => {
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'reversed_order' } ] );
 
 			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SIGNUP_PARAMS ) );
 
 			expect( result.current ).toEqual( {
 				...CONTROL_RESULT,
-				variant: 'ai_credits',
-				showAiCredits: true,
-			} );
-		} );
-
-		test( 'shows AI credits in the reversed order for the ai_credits_reversed_order variant', () => {
-			mockUseExperiment.mockReturnValue( [
-				false,
-				{ variationName: 'ai_credits_reversed_order' },
-			] );
-
-			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SIGNUP_PARAMS ) );
-
-			expect( result.current ).toEqual( {
-				...CONTROL_RESULT,
-				variant: 'ai_credits_reversed_order',
-				showAiCredits: true,
+				variant: 'reversed_order',
 				useReversedPlanOrder: true,
 			} );
 		} );
 
 		test( 'keeps the normal order for intents that curate their own plan mix', () => {
-			mockUseExperiment.mockReturnValue( [
-				false,
-				{ variationName: 'ai_credits_reversed_order' },
-			] );
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'reversed_order' } ] );
 
 			const { result } = renderHook( () =>
 				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
 			);
 
-			expect( result.current.showAiCredits ).toBe( true );
+			expect( result.current.variant ).toBe( 'reversed_order' );
 			expect( result.current.useReversedPlanOrder ).toBe( false );
 		} );
 
@@ -239,13 +219,13 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 			expect( result.current.isLoading ).toBe( true );
 
 			mockSite();
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'ai_credits' } ] );
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'reversed_order' } ] );
 			rerender();
 
 			expect( result.current ).toEqual( {
 				...CONTROL_RESULT,
-				variant: 'ai_credits',
-				showAiCredits: true,
+				variant: 'reversed_order',
+				useReversedPlanOrder: true,
 			} );
 		} );
 	} );
