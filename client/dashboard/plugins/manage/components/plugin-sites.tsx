@@ -1,4 +1,4 @@
-import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { decodeEntities } from '@wordpress/html-entities';
 import { __, sprintf } from '@wordpress/i18n';
@@ -90,23 +90,23 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					inlineStart: 'medium',
 					inlineEnd: 'medium',
 				} }
-				style={ { flexDirection: 'column', alignItems: 'stretch' } }
+				direction="column"
+				expanded={ false }
+				gap={ 4 }
 			>
-				<VStack spacing={ 4 }>
-					<SectionHeader
-						decoration={ decoration() }
-						level={ 2 }
-						title={ title() }
-						description={ description() }
-					/>
-					{ isCoreManagedPlugin && (
-						<Notice variant="info">
-							{ __(
-								'This plugin is managed by WordPress.com and is required for your site to work properly, so it can’t be removed.'
-							) }
-						</Notice>
-					) }
-				</VStack>
+				<SectionHeader
+					decoration={ decoration() }
+					level={ 2 }
+					title={ title() }
+					description={ description() }
+				/>
+				{ isCoreManagedPlugin && (
+					<Notice variant="info">
+						{ __(
+							'This plugin is managed by WordPress.com and is required for your site to work properly, so it can’t be removed.'
+						) }
+					</Notice>
+				) }
 			</CardHeader>
 			<CardBody className="plugin-sites-card-body" size="none">
 				<PluginTabs
