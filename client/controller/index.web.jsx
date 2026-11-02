@@ -8,6 +8,7 @@ import {
 	removeLocaleFromPathLocaleInFront,
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { removeQueryArgs } from '@wordpress/url';
 import { translate, fixMe } from 'i18n-calypso';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -65,6 +66,7 @@ export const ProviderWrappedLayout = ( {
 	renderHeaderSection,
 	redirectUri,
 } ) => {
+	useEnableWpCompatOverlaySlot();
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
