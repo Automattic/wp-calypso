@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../app/locale';
@@ -44,10 +44,12 @@ export default function EarnWooPayments() {
 	const locale = useLocale();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
 	const router = useRouter();
-	const { 'add-woopayments-to-site': addToSite } = useConsumeSearchParams( ADD_TO_SITE_PARAMS, {
+	const [ isAddSiteRequested, setIsAddSiteRequested ] = useState( false );
+	useConsumeSearchParams( ADD_TO_SITE_PARAMS, {
 		when: ( params ) => params[ 'add-woopayments-to-site' ] === 'true',
+		onConsume: () => setIsAddSiteRequested( true ),
 	} );
-	const autoOpenAddSite = addToSite === 'true';
+	const handleAddSiteAutoOpen = useCallback( () => setIsAddSiteRequested( false ), [] );
 
 	const navigateToSiteSetup = useCallback(
 		( siteId: number ) =>
@@ -75,7 +77,8 @@ export default function EarnWooPayments() {
 						recordTracksEvent={ recordTracksEvent }
 						onSelectSite={ navigateToSiteSetup }
 						shouldUseRouterLink
-						autoOpen={ autoOpenAddSite }
+						autoOpen={ isAddSiteRequested }
+						onAutoOpen={ handleAddSiteAutoOpen }
 					/>
 				) : undefined
 			}
@@ -107,7 +110,10 @@ export default function EarnWooPayments() {
 			}
 		>
 			{ showEmptyState ? (
-				<WooPaymentsDashboardEmptyState autoOpenAddSite={ autoOpenAddSite } />
+				<WooPaymentsDashboardEmptyState
+					autoOpenAddSite={ isAddSiteRequested }
+					onAddSiteAutoOpen={ handleAddSiteAutoOpen }
+				/>
 			) : (
 				<VStack spacing={ 6 }>
 					<ConsolidatedViews

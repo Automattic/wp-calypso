@@ -1,10 +1,15 @@
 import { useAnalytics } from '../../../app/analytics';
+import { CHECKOUT_SUCCESS_PLAN_PARAM } from '../../../app/checkout-success-flash';
 import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { CHECKOUT_CART_PARAM, RECEIPT_ID_PARAM } from '../products/lib/checkout-url';
 import { clearStoredCart } from '../products/use-shopping-cart';
 import { useMarketplaceType } from '../use-marketplace-type';
 
-const CHECKOUT_RETURN_PARAMS = [ RECEIPT_ID_PARAM, CHECKOUT_CART_PARAM ] as const;
+const CHECKOUT_RETURN_PARAMS = [
+	RECEIPT_ID_PARAM,
+	CHECKOUT_CART_PARAM,
+	CHECKOUT_SUCCESS_PLAN_PARAM,
+] as const;
 
 /**
  * Finishes a purchase returning from the WordPress.com checkout. Its pending

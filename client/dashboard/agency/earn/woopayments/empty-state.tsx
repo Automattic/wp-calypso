@@ -19,8 +19,10 @@ const EXCLUDED_SITE_IDS: number[] = [];
 
 export default function WooPaymentsDashboardEmptyState( {
 	autoOpenAddSite,
+	onAddSiteAutoOpen,
 }: {
 	autoOpenAddSite?: boolean;
+	onAddSiteAutoOpen?: () => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -56,6 +58,7 @@ export default function WooPaymentsDashboardEmptyState( {
 									recordTracksEvent={ recordTracksEvent }
 									shouldUseRouterLink
 									autoOpen={ autoOpenAddSite }
+									onAutoOpen={ onAddSiteAutoOpen }
 									onSelectSite={ ( siteId ) =>
 										router.navigate( {
 											to: earnWooPaymentsSetupRoute.fullPath,

@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { CheckoutSuccessFlashMessage } from '../../../../app/checkout-success-flash-message';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import CrossoverModalHost from '../../../crossover';
@@ -144,15 +145,18 @@ describe( '<MarketplacePurchases>', () => {
 		window.history.replaceState(
 			{},
 			'',
-			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success'
+			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
 		);
 
-		const { recordTracksEvent } = render( <MarketplacePurchases /> );
-
-		// The app shell's checkout success message owns `flash`.
-		await waitFor( () =>
-			expect( window.location.search ).toBe( '?status=unassigned&flash=checkout-success' )
+		// The app shell renders the checkout success message, which removes `flash`.
+		const { recordTracksEvent } = render(
+			<>
+				<CheckoutSuccessFlashMessage />
+				<MarketplacePurchases />
+			</>
 		);
+
+		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_a4a_marketplace_cart_cleared_on_checkout_success',

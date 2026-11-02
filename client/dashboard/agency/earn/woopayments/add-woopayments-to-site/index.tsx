@@ -10,8 +10,9 @@ interface AddWooPaymentsToSiteProps {
 	recordTracksEvent: RecordTracksEvent;
 	onSelectSite: ( siteId: number ) => void;
 	shouldUseRouterLink?: boolean;
-	/** Opens the modal once, as when a link asks for it. */
+	/** Opens the modal, as when a link asks for it. Set it back to false in `onAutoOpen`. */
 	autoOpen?: boolean;
+	onAutoOpen?: () => void;
 }
 
 export default function AddWooPaymentsToSite( {
@@ -21,6 +22,7 @@ export default function AddWooPaymentsToSite( {
 	onSelectSite,
 	shouldUseRouterLink,
 	autoOpen,
+	onAutoOpen,
 }: AddWooPaymentsToSiteProps ) {
 	const [ isOpen, setIsOpen ] = useState( false );
 	const hasAutoOpened = useRef( false );
@@ -31,11 +33,16 @@ export default function AddWooPaymentsToSite( {
 	}, [ recordTracksEvent ] );
 
 	useEffect( () => {
-		if ( autoOpen && ! hasAutoOpened.current ) {
+		if ( ! autoOpen ) {
+			hasAutoOpened.current = false;
+			return;
+		}
+		if ( ! hasAutoOpened.current ) {
 			hasAutoOpened.current = true;
 			handleOpenModal();
+			onAutoOpen?.();
 		}
-	}, [ autoOpen, handleOpenModal ] );
+	}, [ autoOpen, onAutoOpen, handleOpenModal ] );
 
 	return (
 		<>
