@@ -17,19 +17,29 @@ const FILES = {
 		"export { default as persistence } from './persistence.mjs';\nexport const local = () => 3;\n",
 	'node_modules/data/plugins/persistence.mjs':
 		"import { combine } from '../index.mjs';\nexport default () => combine();\n",
+	// The same cycle, with the barrel marked as having side effects by a module rule.
+	'node_modules/kept/package.json': JSON.stringify( { sideEffects: false, module: 'index.mjs' } ),
+	'node_modules/kept/index.mjs':
+		"import * as plugins from './plugins/index.mjs';\nexport { plugins };\nexport const combine = () => 1;\n",
+	'node_modules/kept/plugins/index.mjs':
+		"export { default as persistence } from './persistence.mjs';\n",
+	'node_modules/kept/plugins/persistence.mjs':
+		"import { combine } from '../index.mjs';\nexport default () => combine();\n",
 	// The same shape without the cycle, which webpack resolves the same way in every build.
 	'node_modules/flat/package.json': JSON.stringify( { sideEffects: false, module: 'index.mjs' } ),
 	'node_modules/flat/index.mjs': "import * as tools from './tools/index.mjs';\nexport { tools };\n",
 	'node_modules/flat/tools/index.mjs': "export { default as format } from './format.mjs';\n",
 	'node_modules/flat/tools/format.mjs': 'export default () => 2;\n',
 	'src/entry.mjs':
-		"import { read } from './member-read.mjs';\nimport { destructured } from './destructured.mjs';\nimport { flat } from './flat-read.mjs';\nimport { local } from './local-read.mjs';\nconsole.log( read(), destructured(), flat(), local() );\n",
+		"import { read } from './member-read.mjs';\nimport { destructured } from './destructured.mjs';\nimport { flat } from './flat-read.mjs';\nimport { local } from './local-read.mjs';\nimport { kept } from './kept-read.mjs';\nconsole.log( read(), destructured(), flat(), local(), kept() );\n",
 	'src/member-read.mjs':
 		"import { plugins } from 'data';\nexport const read = () => plugins.persistence();\n",
 	'src/destructured.mjs':
 		"import { plugins } from 'data';\nexport const destructured = () => {\n\tconst { persistence } = plugins;\n\treturn persistence();\n};\n",
 	'src/local-read.mjs':
 		"import { plugins } from 'data';\nexport const local = () => plugins.local();\n",
+	'src/kept-read.mjs':
+		"import { plugins } from 'kept';\nexport const kept = () => plugins.persistence();\n",
 	'src/flat-read.mjs': "import { tools } from 'flat';\nexport const flat = () => tools.format();\n",
 };
 
@@ -47,6 +57,7 @@ const build = ( mode ) =>
 				entry: './src/entry.mjs',
 				output: { path: path.join( dir, 'dist' ) },
 				optimization: { minimize: false },
+				module: { rules: [ { test: /kept\/plugins\/index\.mjs$/, sideEffects: true } ] },
 				plugins: [ new OrderDependentRedirectPlugin() ],
 			},
 			( error, stats ) => {
@@ -61,7 +72,7 @@ const build = ( mode ) =>
 describe( 'OrderDependentRedirectPlugin', () => {
 	test( 'fails only a member read through a barrel in an import cycle', async () => {
 		expect( await build( 'production' ) ).toEqual( [
-			expect.stringMatching( /member-read\.mjs reads `plugins\.persistence` through/ ),
+			expect.stringMatching( /member-read\.mjs reads `plugins\.persistence` from 'data'/ ),
 		] );
 	} );
 
