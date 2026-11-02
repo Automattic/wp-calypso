@@ -10,7 +10,12 @@ export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
 	isPlaceholderData?: boolean;
 };
 
-export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataViewsProps< Item > ) {
+export function DataViews< Item >( {
+	view,
+	isPlaceholderData,
+	paginationInfo,
+	...props
+}: DataViewsProps< Item > ) {
 	const previousPage = useRef( view.page );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 
@@ -38,8 +43,20 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 	}, [ view.page, isPlaceholderData ] );
 
 	const sanitizedView = sanitizeView( view, props.fields );
+	const paginationInfoCoveringCurrentPage = isPlaceholderData
+		? {
+				...paginationInfo,
+				totalPages: Math.max( paginationInfo.totalPages, view.page ?? 1 ),
+			}
+		: paginationInfo;
 
-	return <WPDataViews< Item > view={ sanitizedView } { ...( props as any ) } />;
+	return (
+		<WPDataViews< Item >
+			view={ sanitizedView }
+			paginationInfo={ paginationInfoCoveringCurrentPage }
+			{ ...( props as any ) }
+		/>
+	);
 }
 
 DataViews.Layout = WPDataViews.Layout;
