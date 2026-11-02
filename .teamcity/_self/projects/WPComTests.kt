@@ -440,7 +440,20 @@ private object JetpackE2ETestsBuildTemplate : Template({
 	}
 
 	features {
-		notifyAllFailuresAndFirstSuccess("#jetpack-alerts")
+		notifications {
+			notifierSettings = slackNotifier {
+				connection = "PROJECT_EXT_11"
+				sendTo = "#jetpack-alerts"
+				messageFormat = verboseMessageFormat {
+					addStatusText = true
+				}
+			}
+			branchFilter = "+:<default>"
+			buildFailedToStart = true
+			buildFailed = true
+			buildFinishedSuccessfully = false
+			buildProbablyHanging = true
+		}
 	}
 })
 
