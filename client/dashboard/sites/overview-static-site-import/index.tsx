@@ -128,11 +128,11 @@ export function StaticSiteImportFailed( {
 		...sitePurchasesQuery( site.ID ),
 		select: ( purchases ) => purchases.find( ( purchase ) => purchase.is_plan ),
 	} );
-	// Cancelling the plan is where the refund happens. The classic path forwards to whichever
-	// dashboard the customer uses; without the purchase, Purchases lists it.
+	// Cancelling the plan is where the refund happens; the classic path forwards to
+	// whichever dashboard the customer uses. Without a plan there's nothing to refund.
 	const refundUrl = planPurchase
 		? wpcomLink( `/me/purchases/${ site.slug }/${ planPurchase.ID }/cancel` )
-		: wpcomLink( '/me/purchases' );
+		: undefined;
 
 	return (
 		<Card>
@@ -173,9 +173,11 @@ export function StaticSiteImportFailed( {
 						>
 							{ __( 'Let our team move it' ) }
 						</Button>
-						<Button variant="link" href={ refundUrl }>
-							{ __( 'Get a refund' ) }
-						</Button>
+						{ refundUrl && (
+							<Button variant="link" href={ refundUrl }>
+								{ __( 'Get a refund' ) }
+							</Button>
+						) }
 					</HStack>
 				</VStack>
 			</CardBody>
@@ -288,6 +290,32 @@ export function StaticSiteImportNotice( {
 	// A failed move shows StaticSiteImportFailed in place of the progress card instead.
 	if ( siteImport.status === 'failed' ) {
 		return null;
+	}
+
+	if ( siteImport.status === 'stalled' ) {
+		return (
+			<Notice
+				variant="warning"
+				title={ __( 'Your move hasn’t started yet' ) }
+				actions={
+					<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
+						{ __( 'Try again' ) }
+					</Button>
+				}
+			>
+				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }
+			</Notice>
+		);
+	}
+
+	if ( siteImport.status === 'unavailable' ) {
+		return (
+			<Notice variant="info" title={ __( 'We can’t show this move' ) }>
+				{ __(
+					'It may belong to another account, or the link may be out of date. If you started it, open the link in the email we sent you.'
+				) }
+			</Notice>
+		);
 	}
 
 	// A builder's free address (e.g. name.wixsite.com) isn't the customer's to connect,

@@ -145,7 +145,7 @@ describe( 'StaticSiteImportCard', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
-				siteImport={ { status: 'finished', needsRestart: false } }
+				siteImport={ { status: 'finished' } }
 				search={ { ...search, from: undefined } }
 			/>
 		);
@@ -171,7 +171,7 @@ describe( 'StaticSiteImportCard', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
-				siteImport={ { status: 'finished', needsRestart: false } }
+				siteImport={ { status: 'finished' } }
 				search={ { ...search, from } }
 			/>
 		);
@@ -188,7 +188,7 @@ describe( 'StaticSiteImportCard', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
-				siteImport={ { status: 'finished', needsRestart: false } }
+				siteImport={ { status: 'finished' } }
 				search={ { ...search, from: 'https://notwixsite.com' } }
 			/>
 		);
@@ -273,19 +273,77 @@ describe( 'StaticSiteImportCard', () => {
 		} );
 	} );
 
-	it( 'shows the failed move with the team and refund options when the session is gone', async () => {
+	it( 'shows the failed move with the team and refund options when the move failed', async () => {
 		mockApi()
 			.get( '/wpcom/v2/static-site-import-session/abc123' )
 			.query( true )
-			.reply( 404, { code: 'static_site_import_session_not_found', message: 'Not found' } );
-		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+			.reply( 200, session( 'failed' ) );
+		const purchases = mockApi()
+			.get( '/rest/v1.2/upgrades' )
+			.query( true )
+			.reply( 200, [ { ID: 991, is_plan: true, product_slug: 'personal-bundle' } ] );
 
 		render( <StaticSiteImport /> );
 
 		expect( await screen.findByRole( 'heading', { name: 'Your move stopped' } ) ).toBeVisible();
 		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
 		expect( screen.getByRole( 'button', { name: 'Let our team move it' } ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Get a refund' } ) ).toBeVisible();
+		expect( await screen.findByRole( 'link', { name: 'Get a refund' } ) ).toBeVisible();
+	} );
+
+	it( 'shows a neutral notice, not a failed move, when the move can’t be read', async () => {
+		// Another account's move, or a wrong or expired link.
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 404, { code: 'static_site_import_session_not_found', message: 'Not found' } );
+
+		render( <StaticSiteImport /> );
+
+		expect( await screen.findByText( 'We can’t show this move' ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'Your move stopped' } )
+		).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: 'Get a refund' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'offers to try again, not a refund, when naming the destination fails', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.times( 2 )
+			.reply( 200, session( 'queued' ) );
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 500, { code: 'internal_error', message: 'Something went wrong' } );
+
+		render( <StaticSiteImport /> );
+
+		expect( await screen.findByText( 'Your move hasn’t started yet' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'heading', { name: 'Your move stopped' } )
+		).not.toBeInTheDocument();
+		nock.cleanAll();
+	} );
+
+	it( 'trusts the move over a stale approval error once it finishes', async () => {
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'queued' ) );
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 500, { code: 'internal_error', message: 'Something went wrong' } );
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+
+		render( <StaticSiteImport /> );
+
+		expect( await screen.findByText( 'Your site is ready' ) ).toBeVisible();
+		expect( screen.queryByText( 'Your move hasn’t started yet' ) ).not.toBeInTheDocument();
 	} );
 
 	it( 'stops at a refused site instead of offering to read it again', async () => {
@@ -305,7 +363,7 @@ describe( 'StaticSiteImportCard', () => {
 } );
 
 describe( 'StaticSiteImportNotice preview link', () => {
-	const finished = { status: 'finished' as const, needsRestart: false };
+	const finished = { status: 'finished' as const };
 
 	it.each( [
 		[
@@ -332,7 +390,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		const { recordTracksEvent } = render(
 			<StaticSiteImportNotice
 				site={ site }
-				siteImport={ { status: 'finished', needsRestart: false } }
+				siteImport={ { status: 'finished' } }
 				search={ search }
 			/>
 		);
@@ -348,11 +406,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 
 	it( 'leaves a failed move to the failure card', () => {
 		const { container } = render(
-			<StaticSiteImportNotice
-				site={ site }
-				siteImport={ { status: 'failed', needsRestart: false } }
-				search={ search }
-			/>
+			<StaticSiteImportNotice site={ site } siteImport={ { status: 'failed' } } search={ search } />
 		);
 
 		expect( container ).toBeEmptyDOMElement();
@@ -394,14 +448,12 @@ describe( 'StaticSiteImportFailed', () => {
 		);
 	} );
 
-	it( 'falls back to Purchases when the plan purchase can’t be found', async () => {
+	it( 'offers no refund when the site has no plan to refund', async () => {
 		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
 		render( <StaticSiteImportFailed site={ site } search={ search } /> );
 		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
 
-		expect( screen.getByRole( 'link', { name: 'Get a refund' } ) ).toHaveAttribute(
-			'href',
-			expect.stringContaining( '/me/purchases' )
-		);
+		expect( screen.queryByRole( 'link', { name: 'Get a refund' } ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Let our team move it' } ) ).toBeVisible();
 	} );
 } );
