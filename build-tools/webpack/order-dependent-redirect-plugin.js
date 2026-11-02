@@ -55,65 +55,28 @@ const describe = ( item ) => {
 };
 
 /**
- * Returns the strongly connected components of the module graph, as a map from each module to a
- * representative of its component (iterative Tarjan).
- * @param {Iterable<import('webpack').Module>} modules all modules of the compilation
+ * Returns whether `to` can be reached from `from` by following imports.
  * @param {import('webpack').ModuleGraph} moduleGraph the module graph
- * @returns {Map<import('webpack').Module, import('webpack').Module>} module to component
+ * @param {import('webpack').Module} from the starting module
+ * @param {import('webpack').Module} to the module to look for
+ * @returns {boolean} true when `from` imports `to`, directly or through other modules
  */
-const getComponents = ( modules, moduleGraph ) => {
-	const component = new Map();
-	const index = new Map();
-	const low = new Map();
-	const stack = [];
-	const onStack = new Set();
-	let next = 0;
-	const visit = ( module ) => {
-		index.set( module, next );
-		low.set( module, next++ );
-		stack.push( module );
-		onStack.add( module );
-		const targets = [];
-		for ( const connection of moduleGraph.getOutgoingConnections( module ) ) {
-			if ( connection.module && connection.module !== module ) {
-				targets.push( connection.module );
-			}
+const reaches = ( moduleGraph, from, to ) => {
+	const seen = new Set( [ from ] );
+	const stack = [ from ];
+	while ( stack.length ) {
+		const module = stack.pop();
+		if ( module === to ) {
+			return true;
 		}
-		return [ module, targets, 0 ];
-	};
-	for ( const start of modules ) {
-		if ( index.has( start ) ) {
-			continue;
-		}
-		const work = [ visit( start ) ];
-		while ( work.length ) {
-			const frame = work[ work.length - 1 ];
-			const [ module, targets ] = frame;
-			if ( frame[ 2 ] < targets.length ) {
-				const target = targets[ frame[ 2 ]++ ];
-				if ( ! index.has( target ) ) {
-					work.push( visit( target ) );
-				} else if ( onStack.has( target ) ) {
-					low.set( module, Math.min( low.get( module ), index.get( target ) ) );
-				}
-				continue;
-			}
-			work.pop();
-			if ( work.length ) {
-				const parent = work[ work.length - 1 ][ 0 ];
-				low.set( parent, Math.min( low.get( parent ), low.get( module ) ) );
-			}
-			if ( low.get( module ) === index.get( module ) ) {
-				let member;
-				do {
-					member = stack.pop();
-					onStack.delete( member );
-					component.set( member, module );
-				} while ( member !== module );
+		for ( const { module: next } of moduleGraph.getOutgoingConnections( module ) ) {
+			if ( next && ! seen.has( next ) ) {
+				seen.add( next );
+				stack.push( next );
 			}
 		}
 	}
-	return component;
+	return false;
 };
 
 /**
@@ -180,9 +143,14 @@ class OrderDependentRedirectPlugin {
 						return;
 					}
 
-					const component = getComponents( modules, moduleGraph );
+					// The root re-exports the barrel, so they import each other when the barrel reaches the root.
+					const cycles = new Map();
 					for ( const item of candidates ) {
-						if ( component.get( item.root ) !== component.get( item.barrel ) ) {
+						const key = `${ item.barrel.identifier() } ${ item.root.identifier() }`;
+						if ( ! cycles.has( key ) ) {
+							cycles.set( key, reaches( moduleGraph, item.barrel, item.root ) );
+						}
+						if ( ! cycles.get( key ) ) {
 							continue;
 						}
 						const error = new compiler.webpack.WebpackError( describe( item ) );
