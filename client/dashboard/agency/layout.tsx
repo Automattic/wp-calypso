@@ -2,6 +2,7 @@ import { Outlet } from '@tanstack/react-router';
 import { PageNoticesProvider } from '../components/page-layout';
 import { AgencyNotices, SharedNoticesProvider } from './components/agency-notices';
 import EmailVerificationNotice, { useEmailToVerify } from './components/email-verification-notice';
+import CrossoverModalHost from './crossover';
 import WelcomeNotice, { useWelcomeNoticeEligibility } from './dashboard-opt-in/welcome-notice';
 import AgencyOnboardingTour from './onboarding-tour';
 
@@ -31,6 +32,7 @@ export default function AgencyLayout() {
 				<AgencyOnboardingTour>
 					<Outlet />
 				</AgencyOnboardingTour>
+				<CrossoverModalHost />
 			</PageNoticesProvider>
 		</SharedNoticesProvider>
 	);
