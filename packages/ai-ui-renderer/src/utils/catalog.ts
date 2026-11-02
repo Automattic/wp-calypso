@@ -29,6 +29,7 @@ import { toComponentImplementation, toFunctionImplementation } from './definitio
 import type { InteractiveUiCatalogDefinition } from './definitions';
 import type { ReactComponentImplementation } from '@a2ui/react';
 import type { FunctionImplementation } from '@a2ui/web_core';
+import type { ComponentType } from 'react';
 
 // The basic components define their own schemas: values take a literal or a data binding, never a
 // function call, and only the variants they render.
@@ -83,17 +84,14 @@ export type InteractiveUiCatalog = Catalog< ReactComponentImplementation >;
 
 const CHART_RETRY_DELAY_MS = 500;
 
-// The chart library is large, so the charts load when a surface first shows one. `lazy()` caches a
-// rejected import, so a failed fetch retries once, after a pause, before the surface falls back.
-function lazyChart( name: 'LineChart' | 'BarChart' | 'PieChart' ) {
-	const load = () =>
-		import( /* webpackChunkName: "ai-ui-renderer-charts" */ '../components/charts' ).then(
-			( charts ) => ( { default: charts[ name ] } )
-		);
+// The chart library is large, so the charts load in one chunk when a surface first shows one.
+// `lazy()` caches a failed import, so it retries once, after a pause, before falling back.
+function lazyChart< Props extends object >( load: () => Promise< ComponentType< Props > > ) {
+	const loadModule = () => load().then( ( component ) => ( { default: component } ) );
 
 	return lazy( () =>
-		load().catch( () =>
-			new Promise( ( resolve ) => setTimeout( resolve, CHART_RETRY_DELAY_MS ) ).then( load )
+		loadModule().catch( () =>
+			new Promise( ( resolve ) => setTimeout( resolve, CHART_RETRY_DELAY_MS ) ).then( loadModule )
 		)
 	);
 }
@@ -102,9 +100,21 @@ function lazyChart( name: 'LineChart' | 'BarChart' | 'PieChart' ) {
 export const CHARTS_CATALOG: InteractiveUiCatalogDefinition = {
 	catalog: CHARTS_CATALOG_DOCUMENT,
 	components: {
-		LineChart: lazyChart( 'LineChart' ),
-		BarChart: lazyChart( 'BarChart' ),
-		PieChart: lazyChart( 'PieChart' ),
+		LineChart: lazyChart( () =>
+			import( /* webpackChunkName: "ai-ui-renderer-charts" */ '../components/line-chart' ).then(
+				( module ) => module.LineChart
+			)
+		),
+		BarChart: lazyChart( () =>
+			import( /* webpackChunkName: "ai-ui-renderer-charts" */ '../components/bar-chart' ).then(
+				( module ) => module.BarChart
+			)
+		),
+		PieChart: lazyChart( () =>
+			import( /* webpackChunkName: "ai-ui-renderer-charts" */ '../components/pie-chart' ).then(
+				( module ) => module.PieChart
+			)
+		),
 	},
 };
 

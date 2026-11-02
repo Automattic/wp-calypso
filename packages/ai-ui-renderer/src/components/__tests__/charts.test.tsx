@@ -64,7 +64,7 @@ it.each( [
 		},
 		'Home 12 20',
 	],
-	[ 'PieChart', { data: [ { label: 'Search', value: 12 } ] }, 'Search 12' ],
+	[ 'PieChart', { data: [ { label: 'Search', value: 12.5 } ] }, 'Search 12.5' ],
 ] )(
 	'renders a %s from the charts catalog on a Basic surface, with its data as a table',
 	async ( component, props, row ) => {
