@@ -19,7 +19,7 @@ describe( 'agencyOverviewRoute loader', () => {
 		queryClient.clear();
 	} );
 
-	it( 'resolves when the announcements request fails', async () => {
+	test( 'resolves when the announcements request fails', async () => {
 		nock( API_ROOT )
 			.get( '/wpcom/v2/agency' )
 			.query( true )
