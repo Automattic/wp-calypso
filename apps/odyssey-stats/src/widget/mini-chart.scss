@@ -21,8 +21,8 @@
 		border-radius: var(--wpds-border-radius-sm, 2px);
 
 		&.is-bar {
-			inline-size: var(--wpds-dimension-gap-sm, 8px);
-			block-size: var(--wpds-dimension-gap-sm, 8px);
+			inline-size: var(--wpds-dimension-size-4xs, 8px);
+			block-size: var(--wpds-dimension-size-4xs, 8px);
 		}
 
 		&.is-views {
