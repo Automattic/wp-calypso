@@ -290,12 +290,12 @@ describe( 'SiteMigrationIdentify', () => {
 			const goBack = jest.fn();
 			const submit = jest.fn();
 			render( { navigation: { goBack, submit } } );
-			mockApi()
+			const analysis = mockApi()
 				.get( '/wpcom/v2/imports/analyze-url' )
 				.query( { site_url: 'https://example.com' } )
 				.reply( 200, () => new Promise( () => {} ) );
 			await checkSite();
-			await waitFor( () => expect( getInput() ).toHaveAttribute( 'readonly' ) );
+			await waitFor( () => expect( analysis.isDone() ).toBe( true ) );
 
 			await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
 
