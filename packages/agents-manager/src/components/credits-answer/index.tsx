@@ -24,13 +24,7 @@ interface Props {
  * The thread's answer to `/credits`: a table of where the site's credits stand, as of the ask, and
  * a card with the purchase the composer's credits popover offers, or who to ask.
  */
-export default function CreditsAnswer( {
-	status,
-	resetDate,
-	actions,
-	purchaseHint,
-	createdAt,
-}: Props ) {
+export function CreditsAnswer( { status, resetDate, actions, purchaseHint, createdAt }: Props ) {
 	const plan = status.pools.find( ( pool ) => pool.id === 'plan' );
 	const topUps = getTopUpCreditsRemaining( status );
 	const canUpgrade = actions.some( ( action ) => action.kind === 'upgrade' );

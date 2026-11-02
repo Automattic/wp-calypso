@@ -1,4 +1,4 @@
-import { getLatestUserMessageIndex } from '../latest-message';
+import { getLatestAgentMessageId, getLatestUserMessageIndex } from '../latest-message';
 import type { UIMessage } from '@automattic/agenttic-client';
 
 const createMessage = ( id: string, role: 'user' | 'agent', extra = {} ): UIMessage => ( {
@@ -31,5 +31,27 @@ describe( 'getLatestUserMessageIndex', () => {
 
 	it( 'gives -1 when there is none', () => {
 		expect( getLatestUserMessageIndex( [ createMessage( 'a', 'agent' ) ] ) ).toBe( -1 );
+	} );
+} );
+
+describe( 'getLatestAgentMessageId', () => {
+	it( 'finds the latest agent reply', () => {
+		const messages = [ createMessage( 'a', 'agent' ), createMessage( 'b', 'user' ) ];
+
+		expect( getLatestAgentMessageId( messages ) ).toBe( 'a' );
+	} );
+
+	it( 'skips the browser’s own /credits answer, so the real reply stays the latest', () => {
+		const messages = [
+			createMessage( 'reply', 'agent' ),
+			createMessage( 'credits-command-question-1', 'user', { isUiOnly: true } ),
+			createMessage( 'credits-command-1', 'agent' ),
+		];
+
+		expect( getLatestAgentMessageId( messages ) ).toBe( 'reply' );
+	} );
+
+	it( 'gives null when there is none', () => {
+		expect( getLatestAgentMessageId( [ createMessage( 'a', 'user' ) ] ) ).toBeNull();
 	} );
 } );

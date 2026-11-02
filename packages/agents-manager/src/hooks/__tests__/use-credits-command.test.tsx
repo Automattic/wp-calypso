@@ -2,14 +2,14 @@
  * @jest-environment jsdom
  */
 import { renderHook } from '@testing-library/react';
-import CreditsAnswer from '../../components/credits-answer';
+import { CreditsAnswer } from '../../components/credits-answer';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { buildLiveCreditsStatus } from '../../utils/live-credits';
 import { useCreditsCommand } from '../use-credits-command';
 
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
-jest.mock( '../../components/credits-answer', () => () => null );
+jest.mock( '../../components/credits-answer', () => ( { CreditsAnswer: () => null } ) );
 jest.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_n: ( single: string, plural: string ) => plural || single,

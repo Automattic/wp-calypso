@@ -1,9 +1,17 @@
 import { isContextOnlyMessage } from './context-only-message';
+import { isCreditsCommandMessageId } from './credits-command';
 import type { UIMessage } from '@automattic/agenttic-client';
 
+/**
+ * The latest reply a turn produced, which skips the browser's own `/credits` answer: it has no
+ * turn behind it, so counting it would stop the real reply from being regenerated.
+ */
 export function getLatestAgentMessageId( messages: UIMessage[] ): string | null {
 	for ( let index = messages.length - 1; index >= 0; index-- ) {
-		if ( messages[ index ].role === 'agent' ) {
+		if (
+			messages[ index ].role === 'agent' &&
+			! isCreditsCommandMessageId( messages[ index ].id )
+		) {
 			return messages[ index ].id;
 		}
 	}

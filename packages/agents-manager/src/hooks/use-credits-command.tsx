@@ -1,6 +1,6 @@
 import { useCallback } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
-import CreditsAnswer from '../components/credits-answer';
+import { CreditsAnswer } from '../components/credits-answer';
 import { CREDITS_COMMAND_MESSAGE_ID_PREFIX, isCreditsCommand } from '../utils/credits-command';
 import { generateUUID } from '../utils/generate-uuid';
 import type { UseCreditsResult } from './use-credits';

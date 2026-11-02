@@ -1091,11 +1091,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const updatedUIMessages = transformMessages( prev.clientMessages );
 
 			// Find UI-only messages (messages not in client history, e.g. injected by tools)
-			// Exclude user messages since they'll come back from server with different IDs
 			const clientMessageIds = new Set( prev.clientMessages.map( ( msg ) => msg.messageId ) );
-			const uiOnlyMessages = prev.uiMessages.filter(
-				( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
-			);
+			const uiOnlyMessages = filterUiOnlyMessages( prev.uiMessages, clientMessageIds );
 
 			return {
 				...prev,

@@ -4,7 +4,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { buildLiveCreditsStatus } from '../../utils/live-credits';
-import CreditsAnswer from '../credits-answer';
+import { CreditsAnswer } from '../credits-answer';
 
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 
