@@ -18,12 +18,13 @@ jest.mock( '@automattic/calypso-config', () =>
 );
 
 let mockIsAutomattician = false;
+let mockIsAutomatticianLoading = false;
 jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
 	useDesignCandidatesEnabled: ( requested: boolean ) => ( {
 		isEnabled:
 			jest.requireMock( '@automattic/calypso-config' ).isEnabled( 'site-spec/design-candidates' ) ||
 			( requested && mockIsAutomattician ),
-		isLoading: false,
+		isLoading: requested && mockIsAutomatticianLoading,
 	} ),
 } ) );
 
@@ -59,6 +60,7 @@ describe( 'SiteGeneration recovery', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockIsAutomattician = false;
+		mockIsAutomatticianLoading = false;
 		jest
 			.mocked( config.isEnabled )
 			.mockImplementation( ( flag ) => flag === 'site-spec/build-wow-streaming' );
@@ -157,6 +159,16 @@ describe( 'SiteGeneration recovery', () => {
 
 	it( 'gives the picked design to the retry of an Automattician with the flag off', () => {
 		mockIsAutomattician = true;
+		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
+		renderStep();
+
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { specId: 'spec-1', designCandidate: '3' } )
+		);
+	} );
+
+	it( 'keeps the picked design for the retry while the Automattician check runs', () => {
+		mockIsAutomatticianLoading = true;
 		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
 		renderStep();
 

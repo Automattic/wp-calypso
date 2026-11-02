@@ -21,8 +21,8 @@ jest.mock( '@automattic/api-queries', () => ( {
 	} ),
 } ) );
 
-const render = ( requested: boolean ) => {
-	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+const render = ( requested: boolean, retry: number | false = false ) => {
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry } } } );
 	return renderHook( () => useDesignCandidatesEnabled( requested ), {
 		wrapper: ( { children }: { children: ReactNode } ) => (
 			<QueryClientProvider client={ queryClient }>{ children }</QueryClientProvider>
@@ -67,6 +67,15 @@ describe( 'useDesignCandidatesEnabled', () => {
 
 		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
 		expect( result.current.isEnabled ).toBe( false );
+	} );
+
+	it( 'does not retry a failed check, so the step does not wait for retries', async () => {
+		mockIsAutomattician.mockRejectedValue( new Error( 'offline' ) );
+		const { result } = render( true, 3 );
+
+		await waitFor( () => expect( result.current.isLoading ).toBe( false ) );
+		expect( result.current.isEnabled ).toBe( false );
+		expect( mockIsAutomattician ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'stays off when the check fails', async () => {

@@ -24,6 +24,8 @@ export function useDesignCandidatesEnabled( requested: boolean ): {
 	const { data: isAutomattician = false, isLoading } = useQuery( {
 		...isAutomatticianQuery(),
 		enabled: checksAutomattician,
+		// The step waits on this check, so a failure turns the picker off at once.
+		retry: false,
 	} );
 
 	return {

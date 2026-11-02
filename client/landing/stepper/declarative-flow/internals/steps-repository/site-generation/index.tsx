@@ -24,9 +24,11 @@ const SiteGeneration: StepType = function SiteGeneration() {
 	const specId = query.get( 'specId' );
 	const graph = getBuildWowGraph( query );
 	// A retry sends the pick again only while the picker is on, as the first request did.
+	// The pick is kept while the check runs: the site-spec step added it only for a picker that was on.
 	const pickedCandidate = getDesignCandidate( query.get( 'designCandidate' ) );
 	const designCandidates = useDesignCandidatesEnabled( !! pickedCandidate );
-	const designCandidate = designCandidates.isEnabled ? pickedCandidate : undefined;
+	const designCandidate =
+		designCandidates.isEnabled || designCandidates.isLoading ? pickedCandidate : undefined;
 	// Fallback checklist only: the server-computed ui.steps from the status
 	// endpoint is authoritative (labels included, already localized). This
 	// list covers the moments before the first response arrives, and backends
