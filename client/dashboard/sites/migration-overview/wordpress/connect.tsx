@@ -5,6 +5,7 @@ import {
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -56,20 +57,12 @@ function linkTo( url?: string ) {
 export function Connect( {
 	site,
 	sourceHost,
-	sourceConnected,
 	failure,
-	retryFindings,
-	onRetry,
 	onStarted,
 }: {
 	site: Site;
 	sourceHost: string;
-	// Read with the migration, so it's more up to date than the configuration's.
-	sourceConnected?: boolean;
 	failure?: WordPressMigrationFinding;
-	// Set once the source is connected after refusing: running again, accepting these, should get further.
-	retryFindings?: string[];
-	onRetry: () => void;
 	onStarted: () => void;
 } ) {
 	const snackbar = { error: __( 'Failed to start the migration.' ) };
@@ -83,31 +76,17 @@ export function Connect( {
 	);
 	const run = useMutation( withSnackbar( siteWordPressMigrationRunMutation( site.ID ), snackbar ) );
 	const isStarting = configure.isPending || run.isPending;
-	const isSourceConnected = !! ( sourceConnected ?? manualInstall?.connected );
-	const isConnected = failure ? !! retryFindings : isSourceConnected;
+	const isConnected = !! manualInstall?.connected;
 
-	const startMigration = () => {
-		if ( retryFindings ) {
-			run.mutate(
-				{ accept_findings: retryFindings },
-				{
-					onSuccess: () => {
-						onRetry();
-						onStarted();
-					},
-				}
-			);
-			return;
-		}
+	const startMigration = () =>
 		configure.mutate(
 			{ source_connection: { method: MANUAL_INSTALL } },
 			{ onSuccess: () => run.mutate( {}, { onSuccess: onStarted } ) }
 		);
-	};
 
 	// A run can't reach a source that isn't connected, so check before starting one that will only be refused.
 	const onStart = () => {
-		if ( ! isSourceConnected && ! hasSeenKey ) {
+		if ( ! isConnected && ! hasSeenKey ) {
 			setIsConfirming( true );
 			return;
 		}
@@ -157,9 +136,20 @@ export function Connect( {
 			}
 			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
-			{ failure && ! isConnected && (
+			{ /* A refusal stands alone until the next run, even once the source reads as connected: it may still refuse. */ }
+			{ failure && (
 				<Notice variant="error" title={ failure.label }>
-					{ failure.message }
+					<VStack spacing={ 2 }>
+						<Text as="p">{ failure.message }</Text>
+						<Text as="p">
+							{ createInterpolateElement(
+								__(
+									'You can also choose to have our team <link>handle the migration for you</link>, included in your plan.'
+								),
+								{ link: <Link to={ `/sites/${ site.slug }/migration-overview/assisted` } /> }
+							) }
+						</Text>
+					</VStack>
 				</Notice>
 			) }
 			{ isError && (
@@ -174,19 +164,21 @@ export function Connect( {
 					{ __( 'We couldn’t load your site’s details.' ) }
 				</Notice>
 			) }
-			{ isConnected && (
+			{ isConnected && ! failure && (
 				<Notice variant="success" title={ __( 'Plugin installed and connected' ) }>
 					{ __( 'Your site is connected to WordPress.com.' ) }
 				</Notice>
 			) }
 			<VStack spacing={ 4 }>
-				<VStack spacing={ 1 }>
+				{ /* Hidden, not removed: swapping it out under Google Translate can crash the page (react/react#11538). */ }
+				<VStack
+					spacing={ 1 }
+					hidden={ isConnected && ! failure }
+					className="wordpress-migration__connect-help"
+				>
 					<Text variant="muted">
-						{ createInterpolateElement(
-							__(
-								'1. <link>Install</link> and activate the Migrate to WordPress.com plugin on your existing site.'
-							),
-							{ link: linkTo( manualInstall?.install_url ) }
+						{ __(
+							'1. Install and activate the Migrate to WordPress.com plugin on your existing site.'
 						) }
 					</Text>
 					<Text variant="muted">

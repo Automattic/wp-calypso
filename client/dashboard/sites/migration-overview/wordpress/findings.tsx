@@ -62,6 +62,7 @@ export function Findings( {
 			title={ isFailed ? __( 'Your migration stopped' ) : __( 'Before we migrate your site' ) }
 			description={ getDescription() }
 			decoration={ <StatusIcon status={ getStatus() } /> }
+			back={ hasError ? { label: __( 'Back to setup' ), onClick: onBackToSetup } : undefined }
 			actions={
 				<>
 					<Button
@@ -73,11 +74,6 @@ export function Findings( {
 					>
 						{ isRetry ? __( 'Try again' ) : __( 'Continue' ) }
 					</Button>
-					{ hasError && (
-						<Button variant="link" onClick={ onBackToSetup }>
-							{ __( 'Back to setup' ) }
-						</Button>
-					) }
 					<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Contact us' ) }
 					</Button>
