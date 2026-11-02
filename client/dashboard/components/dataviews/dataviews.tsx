@@ -6,11 +6,10 @@ import type { ComponentProps } from 'react';
 
 type WPDataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
 
-export type DataViewsProps< Item > = WPDataViewsProps< Item > & {
-	isPlaceholderData?: boolean;
-};
+export type DataViewsProps< Item > = WPDataViewsProps< Item >;
 
-export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataViewsProps< Item > ) {
+export function DataViews< Item >( { view, ...props }: DataViewsProps< Item > ) {
+	const { isLoading } = props;
 	const previousPage = useRef( view.page );
 	const dataviewsRef = useRef< HTMLDivElement | null >( null );
 
@@ -22,7 +21,7 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 
 	// Scroll to top only after pagination data loads.
 	useEffect( () => {
-		if ( isPlaceholderData ) {
+		if ( isLoading ) {
 			return;
 		}
 		if ( previousPage.current !== view.page ) {
@@ -35,7 +34,7 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 			}
 			previousPage.current = view.page;
 		}
-	}, [ view.page, isPlaceholderData ] );
+	}, [ view.page, isLoading ] );
 
 	const sanitizedView = sanitizeView( view, props.fields );
 
