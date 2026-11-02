@@ -53,14 +53,16 @@ export default function PurchasesList() {
 	);
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
+
+	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const [ isRemovedNoticeHidden, setIsRemovedNoticeHidden ] = useState( false );
 	const removedNotice = useConsumeSearchParams( REMOVED_NOTICE_PARAMS, {
 		when: ( params ) => Boolean( params.removed ),
-		onConsume: () => setIsRemovedNoticeHidden( false ),
+		// The removal may have rolled back already, before the page was ready to consume.
+		onConsume: ( { removedId } ) =>
+			setIsRemovedNoticeHidden( purchases.some( ( p ) => p.ID === Number( removedId ) ) ),
 	} );
 	const removedPurchaseId = removedNotice.removedId ? Number( removedNotice.removedId ) : null;
-
-	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
