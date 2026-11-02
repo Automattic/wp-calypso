@@ -101,19 +101,13 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 
 /**
  * Zendesk tags for a chat about a move, so Happiness can route it: a failed move goes to the
- * Migrations view, a finished one stays in normal routing. The `wpcom_wix_import` pair is the
- * one agreed with Happiness for Wix; the `wpcom_static_site_import` set covers every platform.
+ * Migrations view. Wix moves also carry the `wpcom_wix_import` pair agreed with Happiness.
  */
 export function getMoveHelpZendeskTags( outcome: 'success' | 'failed', platform?: string ) {
 	const tags = [ 'wpcom_static_site_import', `wpcom_static_site_import_${ outcome }` ];
-	const platformSlug = ( platform ?? '' ).toLowerCase();
-	if ( /^[a-z0-9]{1,30}$/.test( platformSlug ) ) {
-		tags.push( `wpcom_static_site_import_${ platformSlug }` );
-	}
-	if ( platformSlug === 'wix' ) {
-		tags.push( 'wpcom_wix_import', `wpcom_wix_import_${ outcome }` );
-	}
-	return tags;
+	return platform === 'wix'
+		? [ ...tags, 'wpcom_wix_import', `wpcom_wix_import_${ outcome }` ]
+		: tags;
 }
 
 /**

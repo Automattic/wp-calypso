@@ -460,28 +460,23 @@ describe( 'StaticSiteImportFailed', () => {
 } );
 
 describe( 'getMoveHelpZendeskTags', () => {
-	it( 'tags a failed Wix move with the tags agreed with Happiness', () => {
-		expect( getMoveHelpZendeskTags( 'failed', 'wix' ) ).toEqual( [
-			'wpcom_static_site_import',
-			'wpcom_static_site_import_failed',
-			'wpcom_static_site_import_wix',
-			'wpcom_wix_import',
-			'wpcom_wix_import_failed',
-		] );
-	} );
-
-	it( 'tags other platforms without the Wix pair', () => {
-		expect( getMoveHelpZendeskTags( 'success', 'squarespace' ) ).toEqual( [
-			'wpcom_static_site_import',
-			'wpcom_static_site_import_success',
-			'wpcom_static_site_import_squarespace',
-		] );
-	} );
-
-	it( 'leaves out a platform that isn’t a plain slug', () => {
-		expect( getMoveHelpZendeskTags( 'failed', 'not a slug!' ) ).toEqual( [
-			'wpcom_static_site_import',
-			'wpcom_static_site_import_failed',
-		] );
+	it.each( [
+		[
+			'failed',
+			'wix',
+			[
+				'wpcom_static_site_import',
+				'wpcom_static_site_import_failed',
+				'wpcom_wix_import',
+				'wpcom_wix_import_failed',
+			],
+		],
+		[
+			'success',
+			'squarespace',
+			[ 'wpcom_static_site_import', 'wpcom_static_site_import_success' ],
+		],
+	] as const )( 'tags a %s %s move', ( outcome, platform, tags ) => {
+		expect( getMoveHelpZendeskTags( outcome, platform ) ).toEqual( tags );
 	} );
 } );

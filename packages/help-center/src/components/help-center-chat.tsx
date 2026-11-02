@@ -15,7 +15,7 @@ import type { JSX } from 'react';
 import './help-center-chat.scss';
 
 /** Reads a comma-separated tag list, keeping only tags Zendesk accepts as they are. */
-export function parseZendeskTags( value: string | null ): string[] {
+function parseZendeskTags( value: string | null ): string[] {
 	return ( value ?? '' )
 		.split( ',' )
 		.map( ( tag ) => tag.trim().toLowerCase() )

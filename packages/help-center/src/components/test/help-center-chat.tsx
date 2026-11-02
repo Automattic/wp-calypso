@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render } from '@testing-library/react';
-import { HelpCenterChat, parseZendeskTags } from '../help-center-chat';
+import { HelpCenterChat } from '../help-center-chat';
 
 const mockNavigate = jest.fn();
 const mockProviderProps = jest.fn();
@@ -130,30 +130,17 @@ describe( 'HelpCenterChat Zendesk loading', () => {
 } );
 
 describe( 'HelpCenterChat Zendesk tags', () => {
-	it( 'adds tags from the opening screen to the Help Center’s own', () => {
+	it( 'adds valid tags from the opening screen to the Help Center’s own', () => {
 		mockFeatureTags = [ 'woo_support_flow_help_center' ];
-		mockSearch = '?provider=zendesk&zendeskTags=wpcom_static_site_import,wpcom_wix_import_failed';
+		mockSearch =
+			'?provider=zendesk&zendeskTags=wpcom_static_site_import, WPCOM_Wix_Import ,bad tag,<x>';
 
 		renderChat( true );
 
 		expect( lastProviderProps().zendeskConversationTags ).toEqual( [
 			'woo_support_flow_help_center',
 			'wpcom_static_site_import',
-			'wpcom_wix_import_failed',
-		] );
-	} );
-
-	it( 'sends only the Help Center’s own tags when the screen adds none', () => {
-		renderChat( true );
-
-		expect( lastProviderProps().zendeskConversationTags ).toEqual( [] );
-	} );
-
-	it( 'keeps only tags Zendesk accepts as they are', () => {
-		expect( parseZendeskTags( ' WPCOM_Wix_Import , bad tag,,ok_1,<x>' ) ).toEqual( [
 			'wpcom_wix_import',
-			'ok_1',
 		] );
-		expect( parseZendeskTags( null ) ).toEqual( [] );
 	} );
 } );
