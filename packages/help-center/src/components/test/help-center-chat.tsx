@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { render } from '@testing-library/react';
-import { HelpCenterChat } from '../help-center-chat';
+import { HelpCenterChat, parseZendeskTags } from '../help-center-chat';
 
 const mockNavigate = jest.fn();
 const mockProviderProps = jest.fn();
@@ -10,6 +10,8 @@ const mockProviderProps = jest.fn();
 // Changed by each test.
 let mockShouldUseWapuu = false;
 let mockOpenZendeskChat = { hasOpenZendeskChat: false, isLoading: false };
+let mockSearch = '';
+let mockFeatureTags: string[] | undefined;
 
 jest.mock( '@automattic/odie-client', () => ( {
 	__esModule: true,
@@ -25,12 +27,12 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 } ) );
 
 jest.mock( 'react-router-dom', () => ( {
-	useLocation: () => ( { search: '' } ),
+	useLocation: () => ( { search: mockSearch } ),
 	useNavigate: () => mockNavigate,
 } ) );
 
 jest.mock( '../../contexts/HelpCenterContext', () => ( {
-	useFeatureConfig: () => ( { chat: {} } ),
+	useFeatureConfig: () => ( { chat: { zendeskConversationTags: mockFeatureTags } } ),
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
@@ -66,6 +68,8 @@ beforeEach( () => {
 	jest.clearAllMocks();
 	mockShouldUseWapuu = false;
 	mockOpenZendeskChat = { hasOpenZendeskChat: false, isLoading: false };
+	mockSearch = '';
+	mockFeatureTags = undefined;
 } );
 
 describe( 'HelpCenterChat access without Wapuu', () => {
@@ -122,5 +126,34 @@ describe( 'HelpCenterChat Zendesk loading', () => {
 			hasOpenZendeskChat: true,
 			isLoadingCanConnectToZendesk: false,
 		} );
+	} );
+} );
+
+describe( 'HelpCenterChat Zendesk tags', () => {
+	it( 'adds tags from the opening screen to the Help Center’s own', () => {
+		mockFeatureTags = [ 'woo_support_flow_help_center' ];
+		mockSearch = '?provider=zendesk&zendeskTags=wpcom_static_site_import,wpcom_wix_import_failed';
+
+		renderChat( true );
+
+		expect( lastProviderProps().zendeskConversationTags ).toEqual( [
+			'woo_support_flow_help_center',
+			'wpcom_static_site_import',
+			'wpcom_wix_import_failed',
+		] );
+	} );
+
+	it( 'sends only the Help Center’s own tags when the screen adds none', () => {
+		renderChat( true );
+
+		expect( lastProviderProps().zendeskConversationTags ).toEqual( [] );
+	} );
+
+	it( 'keeps only tags Zendesk accepts as they are', () => {
+		expect( parseZendeskTags( ' WPCOM_Wix_Import , bad tag,,ok_1,<x>' ) ).toEqual( [
+			'wpcom_wix_import',
+			'ok_1',
+		] );
+		expect( parseZendeskTags( null ) ).toEqual( [] );
 	} );
 } );

@@ -100,10 +100,28 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 }
 
 /**
- * Opens a chat with our team (not the AI assistant), with a message naming where the site
- * came from. Anyone the move didn't work for can have our team finish it for free, or a refund.
+ * Zendesk tags for a chat about a move, so Happiness can route it: a failed move goes to the
+ * Migrations view, a finished one stays in normal routing. The `wpcom_wix_import` pair is the
+ * one agreed with Happiness for Wix; the `wpcom_static_site_import` set covers every platform.
  */
-function useAskForMoveHelp( site: Site ) {
+export function getMoveHelpZendeskTags( outcome: 'success' | 'failed', platform?: string ) {
+	const tags = [ 'wpcom_static_site_import', `wpcom_static_site_import_${ outcome }` ];
+	const platformSlug = ( platform ?? '' ).toLowerCase();
+	if ( /^[a-z0-9]{1,30}$/.test( platformSlug ) ) {
+		tags.push( `wpcom_static_site_import_${ platformSlug }` );
+	}
+	if ( platformSlug === 'wix' ) {
+		tags.push( 'wpcom_wix_import', `wpcom_wix_import_${ outcome }` );
+	}
+	return tags;
+}
+
+/**
+ * Opens a chat with our team (not the AI assistant), with a message naming where the site
+ * came from and tags that route it. Anyone the move didn't work for can have our team finish
+ * it for free, or a refund.
+ */
+function useAskForMoveHelp( site: Site, outcome: 'success' | 'failed', platform?: string ) {
 	const { setNewMessagingChat } = useHelpCenter();
 	return ( initialMessage: string ) =>
 		setNewMessagingChat( {
@@ -111,6 +129,7 @@ function useAskForMoveHelp( site: Site ) {
 			section: 'static-site-import',
 			siteUrl: site.URL,
 			siteId: String( site.ID ),
+			zendeskTags: getMoveHelpZendeskTags( outcome, platform ),
 		} );
 }
 
@@ -122,7 +141,7 @@ export function StaticSiteImportFailed( {
 	site: Site;
 	search: StaticSiteImportSearch;
 } ) {
-	const askForMoveHelp = useAskForMoveHelp( site );
+	const askForMoveHelp = useAskForMoveHelp( site, 'failed', search.platform );
 	const sourceHost = getSourceHost( search.from );
 	const { data: planPurchase } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
@@ -235,9 +254,9 @@ export function StaticSiteImportNotice( {
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { setShowHelpCenter } = useHelpCenter();
-	const askForMoveHelp = useAskForMoveHelp( site );
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
+	const askForMoveHelp = useAskForMoveHelp( site, 'success', platform );
 	const sourceHost = getSourceHost( from );
 	const isReady = siteImport.status === 'finished';
 	const trackingProps = {

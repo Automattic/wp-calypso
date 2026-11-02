@@ -9,6 +9,7 @@ import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
+	getMoveHelpZendeskTags,
 	useStaticSiteImport,
 } from '../index';
 import type { Site } from '@automattic/api-core';
@@ -455,5 +456,32 @@ describe( 'StaticSiteImportFailed', () => {
 
 		expect( screen.queryByRole( 'link', { name: 'Get a refund' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Let our team move it' } ) ).toBeVisible();
+	} );
+} );
+
+describe( 'getMoveHelpZendeskTags', () => {
+	it( 'tags a failed Wix move with the tags agreed with Happiness', () => {
+		expect( getMoveHelpZendeskTags( 'failed', 'wix' ) ).toEqual( [
+			'wpcom_static_site_import',
+			'wpcom_static_site_import_failed',
+			'wpcom_static_site_import_wix',
+			'wpcom_wix_import',
+			'wpcom_wix_import_failed',
+		] );
+	} );
+
+	it( 'tags other platforms without the Wix pair', () => {
+		expect( getMoveHelpZendeskTags( 'success', 'squarespace' ) ).toEqual( [
+			'wpcom_static_site_import',
+			'wpcom_static_site_import_success',
+			'wpcom_static_site_import_squarespace',
+		] );
+	} );
+
+	it( 'leaves out a platform that isn’t a plain slug', () => {
+		expect( getMoveHelpZendeskTags( 'failed', 'not a slug!' ) ).toEqual( [
+			'wpcom_static_site_import',
+			'wpcom_static_site_import_failed',
+		] );
 	} );
 } );
