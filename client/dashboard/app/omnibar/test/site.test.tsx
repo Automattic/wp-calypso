@@ -10,7 +10,7 @@ import {
 	createRouter,
 } from '@tanstack/react-router';
 import { render, screen, waitFor } from '@testing-library/react';
-import { useSyncOmnibarSite } from '../site';
+import { removeOriginSiteIdParam, useSyncOmnibarSite } from '../site';
 import type { Site } from '@automattic/api-core';
 
 function renderRouterWithSiteRoute( site: Site ) {
@@ -64,18 +64,23 @@ describe( 'useSyncOmnibarSite', () => {
 			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull()
 		);
 	} );
+} );
 
-	test( 'removes the origin_site_id param a wp-admin link adds, and keeps the history entry', async () => {
-		window.history.replaceState( null, '', '/sites/foo?origin_site_id=123&keep=1' );
+describe( 'removeOriginSiteIdParam', () => {
+	afterEach( () => {
+		window.history.replaceState( null, '', '/' );
+	} );
+
+	test( 'removes the origin_site_id param a wp-admin link adds, and keeps the rest of the URL', () => {
+		window.history.replaceState( { key: 'abc' }, '', '/sites/foo?origin_site_id=123&keep=1#top' );
 		const { length } = window.history;
 
-		const router = renderRouterWithSiteRoute( { ID: 456, capabilities: {} } as Site );
-		await screen.findByText( 'site' );
+		removeOriginSiteIdParam();
 
-		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
-		expect( router.state.location.search ).toEqual( { keep: 1 } );
+		expect( window.location.pathname + window.location.search + window.location.hash ).toBe(
+			'/sites/foo?keep=1#top'
+		);
 		expect( window.history.length ).toBe( length );
-		expect( window.history.state ).toMatchObject( { __TSR_index: 0 } );
-		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 456 );
+		expect( window.history.state ).toEqual( { key: 'abc' } );
 	} );
 } );
