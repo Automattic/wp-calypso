@@ -4,30 +4,33 @@ import path from 'path';
 import webpack from 'webpack';
 import OrderDependentRedirectPlugin from '../order-dependent-redirect-plugin';
 
-// Mirrors @wordpress/data: a side-effect-free package whose plugins barrel re-exports a module
-// that imports the package root back.
+// Builds with the installed webpack, so a webpack upgrade that changes the internals the plugin
+// relies on fails here instead of leaving the plugin silently blind.
 const FILES = {
+	// Mirrors @wordpress/data: a side-effect-free package whose plugins barrel re-exports a module
+	// that imports the package root back.
 	'node_modules/data/package.json': JSON.stringify( { sideEffects: false, module: 'index.mjs' } ),
 	'node_modules/data/index.mjs':
-		"import * as plugins from './plugins/index.mjs';\nexport { plugins };\nexport { helper } from './helper.mjs';\nexport const combine = () => 1;\n",
-	'node_modules/data/helper.mjs': 'export const helper = () => 2;\n',
+		"import * as plugins from './plugins/index.mjs';\nexport { plugins };\nexport const combine = () => 1;\n",
+	// `local` is defined in the barrel itself, so there is nothing to skip to.
 	'node_modules/data/plugins/index.mjs':
-		"export { default as persistence } from './persistence.mjs';\n",
+		"export { default as persistence } from './persistence.mjs';\nexport const local = () => 3;\n",
 	'node_modules/data/plugins/persistence.mjs':
 		"import { combine } from '../index.mjs';\nexport default () => combine();\n",
-	// Builds the barrel and persistence well before the consumers, which sit six imports deep, so
-	// their imports reach the barrel after webpack has already processed it.
+	// The same shape without the cycle, which webpack resolves the same way in every build.
+	'node_modules/flat/package.json': JSON.stringify( { sideEffects: false, module: 'index.mjs' } ),
+	'node_modules/flat/index.mjs': "import * as tools from './tools/index.mjs';\nexport { tools };\n",
+	'node_modules/flat/tools/index.mjs': "export { default as format } from './format.mjs';\n",
+	'node_modules/flat/tools/format.mjs': 'export default () => 2;\n',
 	'src/entry.mjs':
-		"import { plugins } from 'data';\nimport { run } from './1.mjs';\nconsole.log( plugins, run() );\n",
-	...Object.fromEntries(
-		[ 1, 2, 3, 4 ].map( ( n ) => [ `src/${ n }.mjs`, `export { run } from './${ n + 1 }.mjs';\n` ] )
-	),
-	'src/5.mjs':
-		"import { read } from './member-read.mjs';\nimport { destructured } from './destructured.mjs';\nexport const run = () => read() + destructured();\n",
+		"import { read } from './member-read.mjs';\nimport { destructured } from './destructured.mjs';\nimport { flat } from './flat-read.mjs';\nimport { local } from './local-read.mjs';\nconsole.log( read(), destructured(), flat(), local() );\n",
 	'src/member-read.mjs':
 		"import { plugins } from 'data';\nexport const read = () => plugins.persistence();\n",
 	'src/destructured.mjs':
-		"import { plugins, helper } from 'data';\nexport const destructured = () => {\n\tconst { persistence } = plugins;\n\treturn persistence() + helper();\n};\n",
+		"import { plugins } from 'data';\nexport const destructured = () => {\n\tconst { persistence } = plugins;\n\treturn persistence();\n};\n",
+	'src/local-read.mjs':
+		"import { plugins } from 'data';\nexport const local = () => plugins.local();\n",
+	'src/flat-read.mjs': "import { tools } from 'flat';\nexport const flat = () => tools.format();\n",
 };
 
 const build = ( mode ) =>
@@ -56,13 +59,13 @@ const build = ( mode ) =>
 	} );
 
 describe( 'OrderDependentRedirectPlugin', () => {
-	test( 'fails only the member read through a barrel in an import cycle', async () => {
+	test( 'fails only a member read through a barrel in an import cycle', async () => {
 		expect( await build( 'production' ) ).toEqual( [
-			expect.stringMatching( /member-read\.mjs reads `persistence` through/ ),
+			expect.stringMatching( /member-read\.mjs reads `plugins\.persistence` through/ ),
 		] );
 	} );
 
-	test( 'stays off in development, where no import is redirected', async () => {
+	test( 'stays off in development, where no import is moved', async () => {
 		expect( await build( 'development' ) ).toEqual( [] );
 	} );
 } );
