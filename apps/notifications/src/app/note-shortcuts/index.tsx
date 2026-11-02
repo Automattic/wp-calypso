@@ -32,7 +32,19 @@ export default function NoteShortcuts() {
 	const containerRef = useRef< HTMLDivElement >( null );
 
 	return (
-		<div ref={ containerRef } className="wpnc__keyboard-shortcuts">
+		<div
+			ref={ containerRef }
+			className="wpnc__keyboard-shortcuts"
+			onBlur={ ( event ) => {
+				if (
+					isOpen &&
+					event.relatedTarget &&
+					! event.currentTarget.contains( event.relatedTarget )
+				) {
+					dispatch( actions.ui.closeShortcutsPopover() );
+				}
+			} }
+		>
 			<Popover.Root
 				open={ isOpen }
 				onOpenChange={ ( willOpen: boolean ) => {
