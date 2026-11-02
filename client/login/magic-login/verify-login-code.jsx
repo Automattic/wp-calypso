@@ -67,7 +67,8 @@ const VerifyLoginCode = ( {
 	const inputRefs = useRef( Array.from( { length: CODE_LENGTH }, () => createRef() ) );
 
 	useEffect( () => {
-		if ( isAuthenticated && authSuccessData ) {
+		// A login without a valid redirect URL comes back with no `authSuccessData`.
+		if ( isAuthenticated ) {
 			setIsRedirecting( true );
 
 			// The code only proves the email address; a two-step account still needs its second factor.
@@ -86,16 +87,17 @@ const VerifyLoginCode = ( {
 				return;
 			}
 
-			const redirectUrl = authSuccessData.redirect_to;
+			const redirectUrl = authSuccessData?.redirect_to;
 
 			if ( redirectUrl ) {
 				navigate( redirectUrl );
 			} else {
 				// Fall back to rebootAfterLogin which handles the default redirect to '/' and other edge cases
-				rebootAfterLogin( { magic_login: 1 } );
+				dispatch( rebootAfterLogin( { magic_login: 1 } ) );
 			}
 		}
 	}, [
+		dispatch,
 		isAuthenticated,
 		authSuccessData,
 		redirectToSanitized,

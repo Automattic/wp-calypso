@@ -9,12 +9,17 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import VerifyLoginCode from '../verify-login-code';
 
 const mockIsWebAuthnSupported = jest.fn();
+const mockReboot = jest.fn();
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 jest.mock( 'calypso/lib/navigate', () => ( { navigate: jest.fn() } ) );
 jest.mock( 'calypso/lib/webauthn', () => ( {
 	...jest.requireActual( 'calypso/lib/webauthn' ),
 	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
+} ) );
+// The thunk only runs when it is dispatched, so a bare call never reaches `mockReboot`.
+jest.mock( 'calypso/state/login/actions/reboot-after-login', () => ( {
+	rebootAfterLogin: ( tracksEventArgs ) => () => mockReboot( tracksEventArgs ),
 } ) );
 
 const REDIRECT_TO = 'https://wordpress.com/jetpack/connect/authorize?client_id=123';
@@ -68,6 +73,18 @@ describe( 'VerifyLoginCode', () => {
 		await submitCode();
 
 		await waitFor( () => expect( navigate ).toHaveBeenCalledWith( REDIRECT_TO ) );
+		expect( page ).not.toHaveBeenCalled();
+		expect( mockReboot ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reboots an account without two-step authentication when there is no redirect URL', async () => {
+		// The endpoint leaves out `data` when the login has no valid redirect URL.
+		respondWith( undefined );
+
+		await submitCode();
+
+		await waitFor( () => expect( mockReboot ).toHaveBeenCalledWith( { magic_login: 1 } ) );
+		expect( navigate ).not.toHaveBeenCalled();
 		expect( page ).not.toHaveBeenCalled();
 	} );
 
