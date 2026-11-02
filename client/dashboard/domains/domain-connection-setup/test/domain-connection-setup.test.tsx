@@ -287,7 +287,7 @@ describe( 'DomainConnectionSetup', () => {
 
 			expect(
 				screen.getByText(
-					'It’s rare, but things can go sideways. Keep a record of your DNS entries, either by taking a screenshot or copying the text into a document, just in case.'
+					'It’s rare, but things can go sideways. Keep a record of your DNS entries, either by taking a screenshot or copying the text into a document.'
 				)
 			).toBeVisible();
 		} );
