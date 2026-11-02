@@ -177,6 +177,21 @@
 	}
 }
 
+// Secondary links under the CTA, like the way back to the previous step: 8px below
+// the CTA, each centered in a 40px row.
+.account-template__secondary-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	// Takes back the template's 2rem gap, leaving 8px above the first link.
+	margin-block-start: -1.5rem;
+	font-size: $font-body-small;
+
+	> .components-button {
+		min-height: 40px;
+	}
+}
+
 // Top bar links. Up to two, separated by a divider, e.g. "Use my own domain | Help Center".
 .account-template__top-bar-links {
 	display: flex;

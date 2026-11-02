@@ -345,13 +345,16 @@ const SiteMigrationIdentify: StepType< {
 					'site-migration-identify--connection-issue': !! connectionIssue,
 				} ) }
 				columnWidth={ connectionIssue ? 6 : 4 }
-				topBar={
-					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
-				}
+				topBar={ <Step.TopBar /> }
 			>
 				<div className="account-template">
 					{ ( isReprintFlow || isVisible ) && <Step.Heading text={ title } subText={ subTitle } /> }
 					{ stepContent }
+					{ goBack && (
+						<div className="account-template__secondary-actions">
+							<Step.LinkButton onClick={ goBack }>{ translate( 'Back' ) }</Step.LinkButton>
+						</div>
+					) }
 				</div>
 			</Step.CenteredColumnLayout>
 		</>

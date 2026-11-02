@@ -1,3 +1,4 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/variables';
 @import '@automattic/onboarding/styles/mixins';
@@ -100,21 +101,12 @@
 		}
 	}
 
-	.site-migration-identify--reprint {
-		max-width: 464px;
-
-		&.site-migration-identify--connection-issue {
-			max-width: 660px;
-		}
+	.site-migration-identify--reprint.site-migration-identify--connection-issue {
+		max-width: 660px;
 	}
 
 	.step-container-v2__top-bar-wordpress-logo--wordmark {
 		height: 18px;
-	}
-
-	.step-container-v2__back-button {
-		text-decoration: none;
-		font-weight: 400;
 	}
 
 	.import__capture {
@@ -152,11 +144,13 @@
 			font-size: $font-size-medium;
 		}
 
+		// The account template's secondary link: 8px below the CTA, centered in a 40px row.
 		.action-buttons__importer-list {
-			margin-top: 12px;
-			text-align: start;
-			font-size: $font-size-medium;
-			line-height: 1.54;
+			margin-top: 8px;
+			padding-block: 10px;
+			text-align: center;
+			font-size: $font-body-small;
+			line-height: 20px;
 			color: var( --color-neutral-100 );
 
 			button {

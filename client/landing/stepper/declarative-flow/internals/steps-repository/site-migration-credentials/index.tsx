@@ -181,14 +181,7 @@ const SiteMigrationCredentials: StepType< {
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
 				columnWidth={ 4 }
-				topBar={
-					<Step.TopBar
-						leftElement={
-							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
-						}
-						rightElement={ skipButton }
-					/>
-				}
+				topBar={ <Step.TopBar rightElement={ skipButton } /> }
 				className="site-migration-credentials-v2"
 			>
 				<div className="account-template">
