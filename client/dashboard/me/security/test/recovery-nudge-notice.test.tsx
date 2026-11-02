@@ -1,13 +1,13 @@
 /**
  * @vitest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { render } from '../../../test-utils';
 import RecoveryNudgeNotice from '../recovery-nudge-notice';
 
 function setUrl( search: string ) {
-	window.history.replaceState( {}, '', `/me/security${ search }` );
+	window.history.replaceState( null, '', `/me/security${ search }` );
 }
 
 describe( '<RecoveryNudgeNotice>', () => {
@@ -15,16 +15,30 @@ describe( '<RecoveryNudgeNotice>', () => {
 		setUrl( '' );
 	} );
 
-	test( 'shows the notice, records an impression, and strips the verified param when verified=1', () => {
-		setUrl( '?verified=1' );
+	test( 'shows the notice, records an impression, and strips the verified param when verified=1', async () => {
+		setUrl( '?verified=1&tab=1' );
 
 		const { recordTracksEvent } = render( <RecoveryNudgeNotice /> );
 
 		expect( screen.getByText( /Set up at least one recovery option/ ) ).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '?tab=1' ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_security_recovery_notice_impression'
 		);
-		expect( window.location.search ).toBe( '' );
+		expect( screen.getByText( /Set up at least one recovery option/ ) ).toBeVisible();
+	} );
+
+	test( 'leaves a verified param that is not 1', async () => {
+		setUrl( '?verified=0' );
+
+		const { recordTracksEvent, router } = render( <RecoveryNudgeNotice /> );
+
+		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+		await act( () => Promise.resolve() );
+		expect( screen.queryByText( /Set up at least one recovery option/ ) ).not.toBeInTheDocument();
+		expect( window.location.search ).toBe( '?verified=0' );
+		expect( recordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
 	test( 'renders nothing and records no impression without the verified param', () => {

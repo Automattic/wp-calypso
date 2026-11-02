@@ -4,7 +4,8 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice, { NoticeActionButton, RouterNoticeActionLink } from '../../../components/notice';
 import { formatCooldown } from '../../../utils/email-verification-resend';
@@ -12,39 +13,7 @@ import { useEmailVerificationResend } from '../../../utils/use-email-verificatio
 import { useIsEmailWritePending } from '../use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
 
-// Get email verification params from URL
-function getEmailVerificationParams() {
-	if ( typeof window === 'undefined' ) {
-		return {
-			isEmailChangeComplete: false,
-			isEmailVerificationComplete: false,
-			emailChangeFailed: false,
-			emailVerificationFailed: false,
-			emailChangeError: null,
-		};
-	}
-	const params = new URLSearchParams( window.location.search );
-	const newEmailResult = params.get( 'new_email_result' );
-	const verified = params.get( 'verified' );
-
-	return {
-		isEmailChangeComplete: newEmailResult === '1',
-		isEmailVerificationComplete: verified === '1',
-		emailChangeFailed: newEmailResult === '0',
-		emailVerificationFailed: verified === '0',
-		emailChangeError: params.get( 'new_email_error' ),
-	};
-}
-
-// Clean up email verification params from URL
-function cleanUpEmailVerificationParams() {
-	const params = new URLSearchParams( window.location.search );
-	params.delete( 'new_email_result' );
-	params.delete( 'new_email_error' );
-	params.delete( 'verified' );
-	const newUrl = window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
-	window.history.replaceState( {}, '', newUrl );
-}
+const EMAIL_VERIFICATION_PARAMS = [ 'new_email_result', 'verified', 'new_email_error' ] as const;
 
 // An unrecognised or absent reason falls back to the generic message, so the server can start
 // sending one without waiting on this.
@@ -67,30 +36,28 @@ export default function EmailVerificationBanner( {
 	isEmailVerified,
 }: EmailVerificationBannerProps ) {
 	const { createErrorNotice } = useDispatch( noticesStore );
-
-	// Extract verification params to avoid multiple URL parsing calls
-	const {
-		isEmailChangeComplete,
-		isEmailVerificationComplete,
-		emailChangeFailed,
-		emailVerificationFailed,
-		emailChangeError,
-	} = getEmailVerificationParams();
-
-	const [ showSuccessNotice, setShowSuccessNotice ] = useState( () => {
-		return isEmailChangeComplete || isEmailVerificationComplete;
-	} );
-
-	const [ verificationType ] = useState< 'email_change' | 'verification' | null >( () => {
-		if ( isEmailChangeComplete ) {
-			return 'email_change';
+	const [ isSuccessNoticeDismissed, setIsSuccessNoticeDismissed ] = useState( false );
+	const { new_email_result: newEmailResult, verified } = useConsumeSearchParams(
+		EMAIL_VERIFICATION_PARAMS,
+		{
+			onConsume: ( params ) => {
+				setIsSuccessNoticeDismissed( false );
+				if ( params.new_email_result === '0' || params.verified === '0' ) {
+					createErrorNotice( emailChangeFailureMessage( params.new_email_error ?? null ), {
+						type: 'snackbar',
+					} );
+				}
+			},
 		}
-		if ( isEmailVerificationComplete ) {
-			return 'verification';
-		}
+	);
 
-		return null;
-	} );
+	let verificationType: 'email_change' | 'verification' | null = null;
+	if ( newEmailResult === '1' ) {
+		verificationType = 'email_change';
+	} else if ( verified === '1' ) {
+		verificationType = 'verification';
+	}
+	const showSuccessNotice = verificationType !== null && ! isSuccessNoticeDismissed;
 
 	const pendingEmail = userSettings.new_user_email;
 	const isEmailChangePending = !! userSettings.user_email_change_pending && !! pendingEmail;
@@ -108,30 +75,6 @@ export default function EmailVerificationBanner( {
 	const isAwaitingResend = secondsUntilResend > 0;
 	const shouldShowVerifyNotice = isEmailChangePending || ! isEmailVerified;
 	const unverifiedEmail = isEmailChangePending ? pendingEmail : userSettings.user_email;
-
-	useEffect( () => {
-		// Handle error cases
-		if ( emailChangeFailed || emailVerificationFailed ) {
-			createErrorNotice( emailChangeFailureMessage( emailChangeError ), { type: 'snackbar' } );
-		}
-
-		// Clean up URL params if any verification params were present
-		if (
-			isEmailChangeComplete ||
-			isEmailVerificationComplete ||
-			emailChangeFailed ||
-			emailVerificationFailed
-		) {
-			cleanUpEmailVerificationParams();
-		}
-	}, [
-		createErrorNotice,
-		isEmailChangeComplete,
-		isEmailVerificationComplete,
-		emailChangeFailed,
-		emailVerificationFailed,
-		emailChangeError,
-	] );
 
 	const isEmailWritePending = useIsEmailWritePending();
 
@@ -157,7 +100,7 @@ export default function EmailVerificationBanner( {
 			<Notice
 				variant="success"
 				title={ title }
-				onClose={ () => setShowSuccessNotice( false ) }
+				onClose={ () => setIsSuccessNoticeDismissed( true ) }
 				actions={
 					wasEmailChange ? (
 						<RouterNoticeActionLink to="/domains/">

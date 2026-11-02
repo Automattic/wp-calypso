@@ -14,12 +14,12 @@ import { useEffect, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
 import { useAppContext } from '../../app/context';
+import { useConsumeSearchParams } from '../../app/hooks/use-consume-search-params';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import {
 	billingHistoryRoute,
 	monetizeSubscriptionsRoute,
-	purchasesIndexRoute,
 	purchasesRoute,
 } from '../../app/router/me';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
@@ -41,6 +41,8 @@ import {
 import { PurchaseRemovedNotice } from './purchase-removed-notice';
 import { useOtherUsersSitePurchases } from './use-other-users-site-purchases';
 
+const REMOVED_NOTICE_PARAMS = [ 'removed', 'removedDomain', 'removedId' ] as const;
+
 export default function PurchasesList() {
 	const { supports } = useAppContext();
 	// Hosts without a `me` section embed these screens already scoped to a site,
@@ -51,27 +53,12 @@ export default function PurchasesList() {
 	);
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const currentSearchParams = purchasesRoute.useSearch();
-	const { removed, removedDomain, removedId } = purchasesIndexRoute.useSearch();
-	// Capture notice data on first render — useSearch() may lose the values
-	// after replaceState strips the URL params.
-	const [ removedNoticeData ] = useState( () =>
-		removed
-			? { productNoun: removed, atomicDomain: removedDomain, purchaseId: removedId ?? null }
-			: null
-	);
-	const [ showRemovedNotice, setShowRemovedNotice ] = useState( Boolean( removedNoticeData ) );
-
-	useEffect( () => {
-		if ( removed ) {
-			// Strip notice params from the URL without triggering a TanStack Router
-			// re-navigation — avoids a route loader re-run and layout shift.
-			const url = new URL( window.location.href );
-			url.searchParams.delete( 'removed' );
-			url.searchParams.delete( 'removedDomain' );
-			url.searchParams.delete( 'removedId' );
-			window.history.replaceState( window.history.state, '', url.toString() );
-		}
-	}, [ removed ] );
+	const [ isRemovedNoticeHidden, setIsRemovedNoticeHidden ] = useState( false );
+	const removedNotice = useConsumeSearchParams( REMOVED_NOTICE_PARAMS, {
+		when: ( params ) => Boolean( params.removed ),
+		onConsume: () => setIsRemovedNoticeHidden( false ),
+	} );
+	const removedPurchaseId = removedNotice.removedId ? Number( removedNotice.removedId ) : null;
 
 	const { data: purchases = [], isLoading: isLoadingPurchases } = useQuery( userPurchasesQuery() );
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
@@ -85,13 +72,13 @@ export default function PurchasesList() {
 	// refetches synchronously inside the QueryCache notify callback, so this
 	// effect never observes transient success-path reappearances.
 	useEffect( () => {
-		if ( ! removedNoticeData?.purchaseId ) {
+		if ( ! removedPurchaseId ) {
 			return;
 		}
-		if ( purchases.some( ( p ) => p.ID === removedNoticeData.purchaseId ) ) {
-			setShowRemovedNotice( false );
+		if ( purchases.some( ( p ) => p.ID === removedPurchaseId ) ) {
+			setIsRemovedNoticeHidden( true );
 		}
-	}, [ purchases, removedNoticeData ] );
+	}, [ purchases, removedPurchaseId ] );
 
 	const [ defaultView, setDefaultView ] = useState( DEFAULT_VIEW );
 	const { view, updateView, resetView } = usePersistentView( {
@@ -199,11 +186,11 @@ export default function PurchasesList() {
 				/>
 			}
 		>
-			{ isSplitCancelRemoveEnabled && showRemovedNotice && (
+			{ isSplitCancelRemoveEnabled && removedNotice.removed && ! isRemovedNoticeHidden && (
 				<PurchaseRemovedNotice
-					productNoun={ removedNoticeData?.productNoun ?? '' }
-					atomicDomain={ removedNoticeData?.atomicDomain }
-					onClose={ () => setShowRemovedNotice( false ) }
+					productNoun={ removedNotice.removed ?? '' }
+					atomicDomain={ removedNotice.removedDomain }
+					onClose={ () => setIsRemovedNoticeHidden( true ) }
 				/>
 			) }
 			{ ! isLoading && extraOtherUsersPurchases.length > 0 && (

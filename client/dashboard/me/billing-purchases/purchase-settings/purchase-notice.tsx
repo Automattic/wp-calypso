@@ -18,6 +18,7 @@ import { differenceInCalendarDays } from 'date-fns';
 import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
+import { removeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
 import Notice, {
@@ -75,7 +76,6 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 		delayed_downgrade_scheduled,
 		intent,
 	} = purchaseSettingsRoute.useSearch();
-	const navigate = purchaseSettingsRoute.useNavigate();
 	const router = useRouter();
 	// Show the transient cancelled success notice once after a cancel redirects
 	// here. The URL search param is cleared immediately so that a refresh / back
@@ -84,27 +84,15 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const [ cancelledIntent ] = useState( () => ( cancelled ? intent : undefined ) );
 	useEffect( () => {
 		if ( cancelled ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { cancelled: _cancelled, intent: _intent, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
+			removeSearchParams( router, [ 'cancelled', 'intent' ] );
 		}
-	}, [ cancelled, navigate ] );
+	}, [ cancelled, router ] );
 	const [ showDowngradedNotice, setShowDowngradedNotice ] = useState( Boolean( downgraded ) );
 	useEffect( () => {
 		if ( downgraded ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { downgraded: _downgraded, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
+			removeSearchParams( router, [ 'downgraded' ] );
 		}
-	}, [ downgraded, navigate ] );
+	}, [ downgraded, router ] );
 	// Transient success notice shown after a change-plan checkout (upgrade or
 	// downgrade) redirects back here with `?plan_changed=true`. The param is
 	// stripped immediately so it doesn't survive a refresh or back navigation.
@@ -116,28 +104,16 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	);
 	useEffect( () => {
 		if ( plan_changed ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { plan_changed: _plan_changed, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
+			removeSearchParams( router, [ 'plan_changed' ] );
 		}
-	}, [ plan_changed, navigate ] );
+	}, [ plan_changed, router ] );
 	// Strip ?delayed_downgrade_scheduled from the URL on mount so refresh
 	// doesn't re-trigger anything; the persistent warning notice handles display.
 	useEffect( () => {
 		if ( delayed_downgrade_scheduled ) {
-			navigate( {
-				search: ( prev: Record< string, unknown > ) => {
-					const { delayed_downgrade_scheduled: _delayed_downgrade_scheduled, ...rest } = prev;
-					return rest;
-				},
-				replace: true,
-			} );
+			removeSearchParams( router, [ 'delayed_downgrade_scheduled' ] );
 		}
-	}, [ delayed_downgrade_scheduled, navigate ] );
+	}, [ delayed_downgrade_scheduled, router ] );
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { mutate: cancelDelayedDowngrade, isPending: isCancellingDelayedDowngrade } = useMutation(
 		setDelayedDowngradeMutation()
@@ -178,12 +154,9 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	useEffect( () => {
 		if ( upgraded ) {
 			// Strip ?upgraded from the URL so the notice doesn't survive refresh.
-			navigate( {
-				search: { refunded },
-				replace: true,
-			} );
+			removeSearchParams( router, [ 'upgraded' ] );
 		}
-	}, [ upgraded, refunded, navigate ] );
+	}, [ upgraded, router ] );
 
 	// Transient cancelled success notice — suppresses every other notice until
 	// dismissed, refreshed, or navigated-away-and-back. Gated on the

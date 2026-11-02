@@ -1,51 +1,42 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { PurchaseNotice } from '../purchase-notice';
 import type { Purchase } from '@automattic/api-core';
 
-vi.mock( '@automattic/calypso-config', () => {
-	const fn = vi.fn( () => '' );
-	return {
-		...Object.assign( fn, {
-			__esModule: true,
-			default: fn,
-			isEnabled: vi.fn( () => false ),
-		} ),
-	};
+jest.mock( '@automattic/calypso-config', () => {
+	const fn = jest.fn( () => '' );
+	return Object.assign( fn, {
+		__esModule: true,
+		default: fn,
+		isEnabled: jest.fn( () => false ),
+	} );
 } );
 
-type Search = Record< string, unknown >;
-
-let mockSearch: Search = {};
-
-vi.mock( '../../../../app/router/me', async () => {
-	const { useReducer } = await vi.importActual< typeof import( 'react' ) >( 'react' );
-	const actual = await vi.importActual< typeof import( '../../../../app/router/me' ) >(
-		'../../../../app/router/me'
-	);
+jest.mock( '../../../../app/router/me', () => {
+	const { useRouterState } = jest.requireActual( '@tanstack/react-router' );
+	const actual = jest.requireActual( '../../../../app/router/me' );
 	return {
 		...actual,
 		purchaseSettingsRoute: {
 			...actual.purchaseSettingsRoute,
-			useSearch: () => mockSearch,
-			// Updates the search and re-renders, like the real router.
-			useNavigate: () => {
-				const [ , rerender ] = useReducer( ( count: number ) => count + 1, 0 );
-				return ( { search }: { search: ( prev: Search ) => Search } ) => {
-					mockSearch = search( mockSearch );
-					rerender();
-				};
-			},
+			// The test router has only a root route, so read its parsed search directly.
+			useSearch: () =>
+				useRouterState( {
+					select: ( state: { location: { search: unknown } } ) => state.location.search,
+				} ),
 		},
 	};
 } );
+
+function setSearch( search: string ) {
+	window.history.replaceState( null, '', `/me/billing/purchases/1245242${ search }` );
+}
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {
@@ -74,12 +65,12 @@ function mockRequests() {
 
 describe( '<PurchaseNotice />', () => {
 	beforeEach( () => {
-		mockSearch = {};
+		setSearch( '' );
 		mockRequests();
 	} );
 
 	test( 'shows the cancelled notice with the expiry date after a cancel', async () => {
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 
 		expect(
@@ -90,7 +81,7 @@ describe( '<PurchaseNotice />', () => {
 	} );
 
 	test( 'shows the backup link in the cancelled notice for an Atomic site', async () => {
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render(
 			<PurchaseNotice purchase={ makePurchase( { will_atomic_revert_after_removal: true } ) } />
 		);
@@ -111,23 +102,30 @@ describe( '<PurchaseNotice />', () => {
 	} );
 
 	test( 'shows the cancelled notice after the param is cleared from the URL', async () => {
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 
 		await screen.findByText( /Your subscription is cancelled/ );
-		await waitFor( () => expect( mockSearch ).toEqual( {} ) );
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 
 		expect( screen.getByText( /Your subscription is cancelled/ ) ).toBeVisible();
 	} );
 
 	test( 'hides the cancelled notice when it is dismissed', async () => {
 		const user = userEvent.setup();
-		mockSearch = { cancelled: true };
+		setSearch( '?cancelled=true' );
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 
 		await screen.findByText( /Your subscription is cancelled/ );
 		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
 		expect( screen.queryByText( /Your subscription is cancelled/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'removes the notice params it shows, together, and keeps the rest', async () => {
+		setSearch( '?plan_changed=true&delayed_downgrade_scheduled=true&upgraded=true&keep=1' );
+		render( <PurchaseNotice purchase={ makePurchase() } /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
 	} );
 } );
