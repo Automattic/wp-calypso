@@ -82,6 +82,9 @@ const getLabel = ( { label }: { label: string } ) => label;
 
 const getDateKey = ( { date }: { date: Date } ) => formatDate( date );
 
+const formatChartNumber = ( value: number ) =>
+	formatNumber( value, { numberFormatOptions: { maximumFractionDigits: 6 } } );
+
 // The library shows data it can't chart as an English error, or draws it wrong, so a chart throws
 // instead, and the surface shows its fallback and reports it.
 function assertUnique( values: string[], name: string ) {
@@ -116,7 +119,7 @@ function getChartTable< Point extends { value: number } >(
 			...series.map( ( { data } ) => {
 				const point = findPoint( data, getKey, key );
 
-				return point ? formatNumber( point.value ) : '';
+				return point ? formatChartNumber( point.value ) : '';
 			} ),
 		] ),
 	};
@@ -235,7 +238,7 @@ function ChartTooltip( { heading, rows }: ChartTooltipProps ) {
 			{ rows.map( ( { label, value } ) => (
 				<div key={ label ?? heading } className="ai-ui-renderer__chart-tooltip-row">
 					{ label && <span>{ label }</span> }
-					<strong>{ formatNumber( value ) }</strong>
+					<strong>{ formatChartNumber( value ) }</strong>
 				</div>
 			) ) }
 		</div>
