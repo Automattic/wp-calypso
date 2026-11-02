@@ -5,7 +5,6 @@ import {
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Link } from '@tanstack/react-router';
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -58,12 +57,10 @@ export function Connect( {
 	site,
 	sourceHost,
 	failure,
-	onStarted,
 }: {
 	site: Site;
 	sourceHost: string;
 	failure?: WordPressMigrationFinding;
-	onStarted: () => void;
 } ) {
 	const snackbar = { error: __( 'Failed to start the migration.' ) };
 	const { manualInstall, isError, refetch } = useManualInstall( site );
@@ -81,7 +78,7 @@ export function Connect( {
 	const startMigration = () =>
 		configure.mutate(
 			{ source_connection: { method: MANUAL_INSTALL } },
-			{ onSuccess: () => run.mutate( {}, { onSuccess: onStarted } ) }
+			{ onSuccess: () => run.mutate( {} ) }
 		);
 
 	// A key copied in by hand doesn't read as connected, so check rather than assume the source can't be reached.
@@ -146,18 +143,11 @@ export function Connect( {
 						failure.label
 					) }
 				>
-					<VStack spacing={ 2 }>
-						<Text as="p">{ failure.message }</Text>
-						<Text as="p">
-							{ createInterpolateElement(
-								__( 'Alternatively, have our team <link>handle the migration for you</link>.' ),
-								{ link: <Link to={ `/sites/${ site.slug }/migration-overview/assisted` } /> }
-							) }
-						</Text>
-					</VStack>
+					{ failure.message }
 				</Notice>
 			) }
-			{ isError && (
+			{ /* Only when there's nothing to show: a failed refresh leaves what was last read on screen. */ }
+			{ isError && ! manualInstall && (
 				<Notice
 					variant="error"
 					actions={

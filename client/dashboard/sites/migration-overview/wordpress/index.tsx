@@ -56,9 +56,14 @@ export function WordPressMigration( { site }: { site: Site } ) {
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
 
-	// A stopped migration can also be taken back to that step, until the next run starts.
+	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
 	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
 	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
+	useEffect( () => {
+		if ( ! isStopped ) {
+			setIsBackToSetup( false );
+		}
+	}, [ isStopped ] );
 	const isConnecting =
 		migration?.status === 'not_started' || !! connectionFailure || ( isStopped && isBackToSetup );
 
@@ -170,7 +175,6 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					site={ site }
 					sourceHost={ sourceHost }
 					failure={ connectionFailure ?? backToSetupFailure }
-					onStarted={ () => setIsBackToSetup( false ) }
 				/>
 			) }
 			{ migration?.status === 'running' && (
@@ -185,7 +189,13 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				<Findings
 					site={ site }
 					migration={ migration }
-					onBackToSetup={ () => setIsBackToSetup( true ) }
+					onBackToSetup={ () => {
+						// It isn't kept up while the run is going, and the source may have changed since.
+						queryClient.invalidateQueries( {
+							queryKey: siteWordPressMigrationConfigurationQuery( site.ID ).queryKey,
+						} );
+						setIsBackToSetup( true );
+					} }
 				/>
 			) }
 			{ isCompleted && (

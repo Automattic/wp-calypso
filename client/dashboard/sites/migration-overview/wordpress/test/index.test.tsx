@@ -1,7 +1,11 @@
 /**
  * @jest-environment jsdom
  */
-import { queryClient } from '@automattic/api-queries';
+import {
+	queryClient,
+	siteWordPressMigrationConfigurationQuery,
+	siteWordPressMigrationStatusQuery,
+} from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor, within } from '@testing-library/react';
@@ -287,17 +291,12 @@ describe( 'WordPressMigration', () => {
 	} );
 
 	it( 'takes a stopped migration back to setup, and leaves once it starts again', async () => {
-		mockApi()
-			.get( statusPath )
-			.query( true )
-			.reply(
-				200,
-				migration( 'failed', {
-					phase: 'preflight',
-					findings: [ { ...finding( 'migration_failed', 'failure' ), resolution: 'retry' } ],
-				} )
-			);
-		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
+		const stopped = migration( 'failed', {
+			phase: 'preflight',
+			findings: [ { ...finding( 'migration_failed', 'failure' ), resolution: 'retry' } ],
+		} );
+		mockApi().get( statusPath ).query( true ).reply( 200, stopped );
+		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
@@ -305,6 +304,14 @@ describe( 'WordPressMigration', () => {
 			await screen.findByRole( 'heading', { name: 'Your migration stopped' } )
 		).toBeVisible();
 		expect( screen.getByText( 'migration_failed label' ) ).toBeVisible();
+		await waitFor( () =>
+			expect(
+				queryClient.getQueryData( siteWordPressMigrationConfigurationQuery( site.ID ).queryKey )
+			).toBeDefined()
+		);
+
+		// The source was disconnected while the run was going, so going back reads it again.
+		mockApi().get( configurePath ).query( true ).reply( 200, configuration );
 		// The finding says what went wrong, so the card doesn't say it again.
 		expect( screen.queryByText( /couldn’t finish/ ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
@@ -328,6 +335,15 @@ describe( 'WordPressMigration', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+
+		// When that run stops too, it shows what stopped it instead of going back to setup.
+		act( () => {
+			queryClient.setQueryData( siteWordPressMigrationStatusQuery( site.ID ).queryKey, stopped );
+		} );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Your migration stopped' } )
+		).toBeVisible();
 	} );
 
 	it( 'keeps what stopped the run on screen when going back to a connected source', async () => {
@@ -341,7 +357,7 @@ describe( 'WordPressMigration', () => {
 					findings: [ { ...finding( 'generic_failure', 'failure' ), resolution: 'retry' } ],
 				} )
 			);
-		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
+		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() ).persist();
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
@@ -403,10 +419,9 @@ describe( 'WordPressMigration', () => {
 		expect( screen.getByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 		// Our team can take it from here instead.
-		expect( screen.getByRole( 'link', { name: 'handle the migration for you' } ) ).toHaveAttribute(
-			'href',
-			'/sites/example.wordpress.com/migration-overview/assisted'
-		);
+		expect(
+			screen.getByRole( 'link', { name: /Have our team handle this migration/ } )
+		).toHaveAttribute( 'href', '/sites/example.wordpress.com/migration-overview/assisted' );
 
 		const configure = mockApi()
 			.post( configurePath, { source_connection: { method: 'manual-wpcom-install' } } )

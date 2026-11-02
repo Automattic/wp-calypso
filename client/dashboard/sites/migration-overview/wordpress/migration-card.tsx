@@ -27,7 +27,7 @@ export function MigrationCard( {
 	description?: React.ReactNode;
 	decoration?: React.ReactNode;
 	// A way back to the step before, ahead of the title.
-	back?: { label: string; onClick: () => void };
+	back?: { label: string; onClick: () => void; disabled?: boolean };
 	actions?: React.ReactNode;
 	note?: React.ReactNode;
 	children?: React.ReactNode;
@@ -45,10 +45,10 @@ export function MigrationCard( {
 									back ? (
 										<HStack spacing={ 2 } expanded={ false }>
 											<Button
-												__next40pxDefaultSize
 												size="small"
 												icon={ isRTL() ? arrowRight : arrowLeft }
 												label={ back.label }
+												disabled={ back.disabled }
 												onClick={ back.onClick }
 											/>
 											{ decoration }

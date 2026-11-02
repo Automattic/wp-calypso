@@ -62,7 +62,11 @@ export function Findings( {
 			title={ isFailed ? __( 'Your migration stopped' ) : __( 'Before we migrate your site' ) }
 			description={ getDescription() }
 			decoration={ <StatusIcon status={ getStatus() } /> }
-			back={ hasError ? { label: __( 'Back to setup' ), onClick: onBackToSetup } : undefined }
+			back={
+				hasError
+					? { label: __( 'Back to setup' ), onClick: onBackToSetup, disabled: run.isPending }
+					: undefined
+			}
 			actions={
 				<>
 					<Button
