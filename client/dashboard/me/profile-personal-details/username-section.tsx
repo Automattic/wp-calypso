@@ -33,7 +33,7 @@ interface UsernameSectionProps {
 	canChangeUsername: boolean;
 	onCancel: () => void;
 	/** Rendered beside the username input on wide screens, below it on narrow ones. */
-	inlineField?: React.ReactNode;
+	inlineField: React.ReactNode;
 }
 
 type UsernameFormData = { user_login?: string };
@@ -234,37 +234,41 @@ export default function UsernameSection( {
 		/>
 	);
 
+	const hiddenUntilChanged = hasUsernameChange ? {} : { display: 'none' };
+
+	const updateFormRegion = (
+		<VStack
+			role="region"
+			aria-label={ __( 'Username confirmation' ) }
+			aria-live="polite"
+			style={ hiddenUntilChanged }
+			spacing={ 0 }
+		>
+			{ updateForm }
+		</VStack>
+	);
+
 	return (
 		<>
-			{ isMobile || ! inlineField ? (
+			{ isMobile ? (
 				<VStack spacing={ 4 }>
 					{ usernameInput }
+					{ updateFormRegion }
 					{ inlineField }
 				</VStack>
 			) : (
-				<HStack alignment="top" spacing={ 4 }>
-					<FlexBlock>{ usernameInput }</FlexBlock>
-					<FlexBlock>{ inlineField }</FlexBlock>
-				</HStack>
-			) }
-
-			{ /* Update username form, kept to the username column on wide screens */ }
-			<VStack
-				role="region"
-				aria-label={ __( 'Username confirmation' ) }
-				aria-live="polite"
-				style={ hasUsernameChange ? {} : { display: 'none' } }
-				spacing={ 0 }
-			>
-				{ isMobile || ! inlineField ? (
-					updateForm
-				) : (
+				<VStack spacing={ 4 }>
 					<HStack alignment="top" spacing={ 4 }>
-						<FlexBlock>{ updateForm }</FlexBlock>
+						<FlexBlock>{ usernameInput }</FlexBlock>
+						<FlexBlock>{ inlineField }</FlexBlock>
+					</HStack>
+					{ /* Kept to the username column so it lines up with the input above */ }
+					<HStack alignment="top" spacing={ 4 } style={ hiddenUntilChanged }>
+						<FlexBlock>{ updateFormRegion }</FlexBlock>
 						<FlexBlock />
 					</HStack>
-				) }
-			</VStack>
+				</VStack>
+			) }
 
 			{ /* Confirmation modal to update username */ }
 			<UsernameUpdateConfirmationModal
