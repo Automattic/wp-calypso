@@ -107,10 +107,11 @@ it( 'lists a line chart’s data in date order', async () => {
 			{
 				label: 'Visits',
 				data: [
-					{ date: '2026-10-30', value: 12 },
+					{ date: '2026-10-31', value: 12 },
 					{ date: '2026-10-29', value: 8 },
 				],
 			},
+			{ label: 'Views', data: [ { date: '2026-10-30', value: 20 } ] },
 		],
 	} );
 
@@ -119,9 +120,10 @@ it( 'lists a line chart’s data in date order', async () => {
 	const rows = await screen.findAllByRole( 'row' );
 
 	expect( rows.map( ( row ) => row.textContent ) ).toEqual( [
-		'DateVisits',
+		'DateVisitsViews',
 		'Oct 29, 20268',
-		'Oct 30, 202612',
+		'Oct 30, 202620',
+		'Oct 31, 202612',
 	] );
 } );
 

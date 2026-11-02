@@ -58,14 +58,21 @@ export function indexSeries< Point >(
 	} ) );
 }
 
-// A row per key, with each series' value.
+// A row per key, with each series' value, in the order `compare` sorts the points, if given.
 export function getChartTable< Point extends { value: number } >(
 	keyHeading: string,
 	series: Series< Point >[],
-	getKey: ( point: Point ) => string
+	getKey: ( point: Point ) => string,
+	compare?: ( a: Point, b: Point ) => number
 ): ChartTable {
 	const indexedSeries = indexSeries( series, getKey );
-	const keys = [ ...new Set( indexedSeries.flatMap( ( { points } ) => [ ...points.keys() ] ) ) ];
+	const keyedPoints = [ ...new Map( indexedSeries.flatMap( ( { points } ) => [ ...points ] ) ) ];
+
+	if ( compare ) {
+		keyedPoints.sort( ( [ , a ], [ , b ] ) => compare( a, b ) );
+	}
+
+	const keys = keyedPoints.map( ( [ key ] ) => key );
 
 	return {
 		headings: [ keyHeading, ...series.map( getLabel ) ],

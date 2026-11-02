@@ -8,6 +8,8 @@ import type { Series } from '../utils/chart-data';
 
 const getDateKey = ( { date }: { date: Date } ) => formatDate( date );
 
+const byDate = ( a: { date: Date }, b: { date: Date } ) => a.date.getTime() - b.date.getTime();
+
 // Like the library's own ticks: days, or years once the data spans two years.
 const TWO_YEARS_MS = 2 * 365 * 24 * 60 * 60 * 1000;
 
@@ -45,12 +47,12 @@ export function LineChart( { title, series }: LineChartProps ) {
 
 					return { date: parsed, value };
 				} )
-				.sort( ( a, b ) => a.date.getTime() - b.date.getTime() ),
+				.sort( byDate ),
 		} ) );
 	}, [ series ] );
 
 	const table = useMemo(
-		() => getChartTable( __( 'Date', 'default' ), chartSeries, getDateKey ),
+		() => getChartTable( __( 'Date', 'default' ), chartSeries, getDateKey, byDate ),
 		[ chartSeries ]
 	);
 	const renderTooltip = useMemo(
