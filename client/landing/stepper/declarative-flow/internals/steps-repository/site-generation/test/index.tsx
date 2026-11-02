@@ -122,6 +122,28 @@ describe( 'SiteGeneration recovery', () => {
 		);
 	} );
 
+	it.each( [
+		[ true, '2' ],
+		[ false, undefined ],
+	] )(
+		'gives the picked design from the URL to the retry while the flag is %s',
+		( flagOn, expected ) => {
+			jest
+				.mocked( config.isEnabled )
+				.mockImplementation(
+					( flag ) =>
+						flag === 'site-spec/build-wow-streaming' ||
+						( flagOn && flag === 'site-spec/design-candidates' )
+				);
+			window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=2';
+			renderStep();
+
+			expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+				expect.objectContaining( { specId: 'spec-1', designCandidate: expected } )
+			);
+		}
+	);
+
 	it( 'reloads when a failed build has no server retry', () => {
 		renderStep();
 		fireEvent.click( screen.getByRole( 'button', { name: 'Recover' } ) );
