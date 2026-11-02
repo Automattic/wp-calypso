@@ -12,35 +12,9 @@ import { Card, CardBody } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import { isDashboardPath } from '../../utils/link';
-import CertificationShareButton from '../certification/share-button';
 import NewTabLabel from '../components/new-tab-label';
-import {
-	FEATURED_EVENT,
-	getAiMcpAnnouncement,
-	getCertificationPromoEvent,
-	getPressableExpansionOfferEvent,
-	getPressableIntroOfferEvent,
-} from './events';
-import type { FeaturedEvent, FeaturedEventActionCta } from './events';
+import type { FeaturedEvent } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
-
-interface EventCardProps {
-	isEligibleForPressableIntroOffer?: boolean;
-	isEligibleForPressableExpansionOffer?: boolean;
-	isEligibleForCertificationOffer?: boolean;
-	certificationOffer?: {
-		/** The agency's own discount, already doubled while the offer runs. */
-		discount: number;
-		/** What "Share with your team" puts on the clipboard. */
-		shareMessage: string;
-	};
-	onCertificationShareCopy?: () => void;
-	aiMcpHref: string;
-	tiersHref?: string;
-	pressableHostingHref: string;
-	shouldUseRouterLink?: boolean;
-	recordTracksEvent?: RecordTracksEvent;
-}
 
 export function SingleEventCard( {
 	event,
@@ -153,63 +127,5 @@ export function SingleEventCard( {
 				</VStack>
 			</CardBody>
 		</Card>
-	);
-}
-
-export default function EventCard( {
-	isEligibleForPressableIntroOffer,
-	isEligibleForPressableExpansionOffer,
-	isEligibleForCertificationOffer,
-	certificationOffer,
-	onCertificationShareCopy,
-	aiMcpHref,
-	tiersHref,
-	pressableHostingHref,
-	shouldUseRouterLink = true,
-	recordTracksEvent,
-}: EventCardProps ) {
-	const now = new Date();
-	const certificationShareCta: FeaturedEventActionCta | undefined = certificationOffer && {
-		id: 'share-with-your-team',
-		render: ( buttonProps ) => (
-			<CertificationShareButton
-				{ ...buttonProps }
-				message={ certificationOffer.shareMessage }
-				source="overview"
-				onCopy={ onCertificationShareCopy }
-				recordTracksEvent={ recordTracksEvent }
-			/>
-		),
-	};
-	const events = [
-		FEATURED_EVENT,
-		isEligibleForCertificationOffer && tiersHref && certificationOffer
-			? getCertificationPromoEvent( tiersHref, certificationOffer.discount, certificationShareCta )
-			: null,
-		isEligibleForPressableIntroOffer ? getPressableIntroOfferEvent( pressableHostingHref ) : null,
-		isEligibleForPressableExpansionOffer
-			? getPressableExpansionOfferEvent( pressableHostingHref )
-			: null,
-		getAiMcpAnnouncement( aiMcpHref ),
-	].filter(
-		( event ): event is FeaturedEvent =>
-			!! event && ( event.endsAt === undefined || now < new Date( event.endsAt ) )
-	);
-
-	if ( ! events.length ) {
-		return null;
-	}
-
-	return (
-		<>
-			{ events.map( ( event ) => (
-				<SingleEventCard
-					key={ event.id }
-					event={ event }
-					shouldUseRouterLink={ shouldUseRouterLink }
-					recordTracksEvent={ recordTracksEvent }
-				/>
-			) ) }
-		</>
 	);
 }
