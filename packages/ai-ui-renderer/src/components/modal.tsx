@@ -1,12 +1,16 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { ComponentIdSchema } from '@a2ui/web_core/v1_0';
-import { useCallback, useRef, useState } from '@wordpress/element';
+import { useCallback, useMemo, useRef, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
 import { Dialog } from '@wordpress/ui';
 import clsx from 'clsx';
 import { z } from 'zod';
-import { ModalTriggerContext, useInteractiveUiSurface } from '../contexts/surface';
+import {
+	InteractiveUiSurfaceContext,
+	ModalTriggerContext,
+	useInteractiveUiSurface,
+} from '../contexts/surface';
 import { StringValueSchema } from '../utils/schemas';
 import { copyTheme } from '../utils/theme';
 
@@ -23,7 +27,10 @@ export const Modal = createComponentImplementation(
 		const [ isOpen, setIsOpen ] = useState( false );
 		const triggerRef = useRef< HTMLElement | null >( null );
 		const popupRef = useRef< HTMLDivElement | null >( null );
-		const { className, rootRef } = useInteractiveUiSurface();
+		const contentRef = useRef< HTMLDivElement | null >( null );
+		const surface = useInteractiveUiSurface();
+		const { className, rootRef } = surface;
+		const contentSurface = useMemo( () => ( { ...surface, rootRef: contentRef } ), [ surface ] );
 
 		// The modal renders outside the host, so it takes the theme its surface resolved.
 		const copySurfaceTheme = useCallback(
@@ -74,7 +81,11 @@ export const Modal = createComponentImplementation(
 						</Dialog.Action>
 					</Dialog.Header>
 					<Dialog.Content>
-						<div className="ai-ui-renderer">{ buildChild( props.content ) }</div>
+						<InteractiveUiSurfaceContext.Provider value={ contentSurface }>
+							<div ref={ contentRef } className="ai-ui-renderer">
+								{ buildChild( props.content ) }
+							</div>
+						</InteractiveUiSurfaceContext.Provider>
 					</Dialog.Content>
 				</Dialog.Popup>
 			</Dialog.Root>

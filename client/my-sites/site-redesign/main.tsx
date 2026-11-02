@@ -63,6 +63,12 @@ type Props = {
 
 const redesignKey = ( siteId: number, id: string | null ) => [ 'site-redesign', siteId, id ];
 
+// A finished design can be chosen while others are still being made, but only when the site can
+// already apply: without the plan the choice goes to checkout, which waits for the whole batch.
+const canChooseNow = ( redesign: Redesign | undefined ) =>
+	redesign?.status === 'preview_ready' ||
+	( redesign?.status === 'generating' && redesign.eligibility.can_apply );
+
 const isWaitingForPurchase = ( redesign: Redesign | undefined, resume: boolean ) =>
 	resume &&
 	redesign?.status === 'preview_ready' &&
@@ -655,7 +661,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 	// The bar arrives once there is something to choose from: every design made, and every
 	// preview that could load on screen. A preview that failed stays failed and doesn't hold it back.
 	const isSelectionReady =
-		redesign?.status === 'preview_ready' &&
+		canChooseNow( redesign ) &&
 		batch.some( ( candidate ) => previewStates[ candidate.id ] === 'ready' ) &&
 		batch.every(
 			( candidate ) =>
@@ -674,7 +680,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		return () => clearTimeout( timer );
 	}, [ isSelectionBarDue ] );
 	const canChooseSelected =
-		redesign?.status === 'preview_ready' &&
+		canChooseNow( redesign ) &&
 		selected?.status === 'succeeded' &&
 		previewStates[ selected.id ] === 'ready' &&
 		! choose.isPending;
@@ -810,7 +816,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 							// The bar names the design being chosen; it can't move mid-request.
 							isLocked={ choose.isPending }
 							hasOtherReady={
-								redesign.status === 'preview_ready' &&
+								canChooseNow( redesign ) &&
 								batch.some(
 									( other ) => other.id !== candidate.id && previewStates[ other.id ] === 'ready'
 								)
@@ -836,7 +842,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		barStatus = readiness(
 			selected,
 			previewStates[ selected.id ],
-			redesign?.status === 'preview_ready',
+			canChooseNow( redesign ),
 			choose.isPending
 		);
 	}

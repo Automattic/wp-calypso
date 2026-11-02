@@ -5,6 +5,7 @@ import type {
 
 // This entry has no A2UI or React code, so hosts can use it without loading the renderer.
 
+export { CHARTS_CATALOG_DOCUMENT, CHARTS_CATALOG_ID } from './utils/charts-catalog';
 export { getInteractiveUiOperation } from './utils/operation';
 
 export type InteractiveUiActionMode = 'agent' | 'tool-call';
