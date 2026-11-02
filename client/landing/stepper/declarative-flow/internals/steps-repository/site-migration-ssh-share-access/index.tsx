@@ -32,6 +32,7 @@ import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
+import 'calypso/components/account-template/style.scss';
 import './styles.scss';
 
 /**
@@ -356,10 +357,12 @@ const SiteMigrationSshShareAccess: StepType< {
 	const topBar = (
 		<Step.TopBar
 			rightElement={
-				<SupportNudge
-					onAskForHelp={ navigateToDoItForMe }
-					isLoading={ isSubmittingTicket || isProcessingNoSSH }
-				/>
+				<nav className="account-template__top-bar-links">
+					<SupportNudge
+						onAskForHelp={ navigateToDoItForMe }
+						isLoading={ isSubmittingTicket || isProcessingNoSSH }
+					/>
+				</nav>
 			}
 		/>
 	);
@@ -367,30 +370,29 @@ const SiteMigrationSshShareAccess: StepType< {
 	return (
 		<>
 			<DocumentHead title={ title } />
-			<Step.CenteredColumnLayout
-				columnWidth={ 4 }
-				topBar={ topBar }
-				heading={ <Step.Heading text={ title } subText={ subtitle } /> }
-			>
-				<SshMigrationContainer>
-					<Accordion steps={ steps } />
-					<div className="migration-site-ssh__continue-button">
-						<Button
-							variant="primary"
-							onClick={ handleContinue }
-							disabled={
-								! canStartMigration ||
-								isStartingMigration ||
-								migrationStarted ||
-								shouldStartMigration ||
-								isProcessingNoSSH
-							}
-							isBusy={ isBusy }
-						>
-							{ buttonText }
-						</Button>
-					</div>
-				</SshMigrationContainer>
+			<Step.CenteredColumnLayout columnWidth={ 4 } topBar={ topBar }>
+				<div className="account-template">
+					<Step.Heading text={ title } subText={ subtitle } />
+					<SshMigrationContainer>
+						<Accordion steps={ steps } />
+						<div className="migration-site-ssh__continue-button">
+							<Button
+								variant="primary"
+								onClick={ handleContinue }
+								disabled={
+									! canStartMigration ||
+									isStartingMigration ||
+									migrationStarted ||
+									shouldStartMigration ||
+									isProcessingNoSSH
+								}
+								isBusy={ isBusy }
+							>
+								{ buttonText }
+							</Button>
+						</div>
+					</SshMigrationContainer>
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

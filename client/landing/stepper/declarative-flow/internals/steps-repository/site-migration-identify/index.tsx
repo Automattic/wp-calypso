@@ -18,6 +18,7 @@ import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 type ConnectionIssue = 'unreachable';
@@ -347,13 +348,11 @@ const SiteMigrationIdentify: StepType< {
 				topBar={
 					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
 				}
-				heading={
-					isReprintFlow || isVisible ? (
-						<Step.Heading text={ title } subText={ subTitle } />
-					) : undefined
-				}
 			>
-				{ stepContent }
+				<div className="account-template">
+					{ ( isReprintFlow || isVisible ) && <Step.Heading text={ title } subText={ subTitle } /> }
+					{ stepContent }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

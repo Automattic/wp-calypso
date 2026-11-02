@@ -24,6 +24,8 @@ import { NeedHelpLink } from './components/need-help-link';
 import { ApplicationPasswordsInfo } from './types';
 import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
+
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 const getAction = ( siteInfo?: UrlData, applicationPasswordsInfo?: ApplicationPasswordsInfo ) => {
@@ -168,7 +170,11 @@ const SiteMigrationCredentials: StepType< {
 	const title = translate( 'Tell us about your WordPress site' );
 	const subHeaderText = translate( 'Provide the following details to get your migration started.' );
 	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
-	const skipButton = <NeedHelpLink onHelpLinkClicked={ handleSkip } />;
+	const skipButton = (
+		<nav className="account-template__top-bar-links">
+			<NeedHelpLink onHelpLinkClicked={ handleSkip } />
+		</nav>
+	);
 
 	return (
 		<>
@@ -183,10 +189,12 @@ const SiteMigrationCredentials: StepType< {
 						rightElement={ skipButton }
 					/>
 				}
-				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 				className="site-migration-credentials-v2"
 			>
-				{ mainForm }
+				<div className="account-template">
+					<Step.Heading text={ title } subText={ subHeaderText } />
+					{ mainForm }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);
