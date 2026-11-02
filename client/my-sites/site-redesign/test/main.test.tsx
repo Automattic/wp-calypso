@@ -613,7 +613,9 @@ describe( 'SiteRedesign', () => {
 
 		expect( await screen.findByText( 'This one broke.' ) ).toBeVisible();
 		[ 2, 3, 4 ].forEach( ( n ) =>
-			expect( screen.getByRole( 'button', { name: `Design ${ n } of 4` } ) ).toBeDisabled()
+			expect(
+				screen.getByRole( 'button', { name: new RegExp( `^Design ${ n } of 4` ) } )
+			).toBeDisabled()
 		);
 
 		await selectDesign( 'Design 1 of 4', 'Preview of design 1', { withBar: false } );
@@ -622,6 +624,58 @@ describe( 'SiteRedesign', () => {
 			'true'
 		);
 		expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
+	} );
+
+	describe( 'while other designs are still being made', () => {
+		const stillMaking = ( canApply: boolean ) =>
+			session( {
+				status: 'generating',
+				candidates: [
+					candidate( 1 ),
+					{ ...candidate( 2 ), status: 'running', routes: null },
+					{ ...candidate( 3 ), status: 'queued', routes: null },
+				],
+				eligibility: {
+					can_preview: true,
+					can_apply: canApply,
+					reason: canApply ? null : 'upgrade_required',
+					required_plan: 'personal',
+				},
+			} );
+
+		it( 'lets a site that can apply choose the one that is ready', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			jest.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
+			expect( chooseButton() ).toBeEnabled();
+			expect( screen.getByText( 'Ready to choose' ) ).toBeVisible();
+			await userEvent.click( chooseButton() );
+
+			expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 1 ).id );
+		} );
+
+		it( 'keeps the unfinished ones from being chosen', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
+			[ 2, 3 ].forEach( ( n ) =>
+				expect(
+					screen.getByRole( 'button', { name: new RegExp( `^Design ${ n } of 3` ) } )
+				).toBeDisabled()
+			);
+		} );
+
+		it( 'waits for the whole batch when the site cannot apply yet', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( false ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1', { withBar: false } );
+			expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
+			expect( applyRedesign ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'keeps the bar away until every design is made and its preview is on screen', async () => {
@@ -721,8 +775,63 @@ describe( 'SiteRedesign', () => {
 		expect( await screen.findByRole( 'button', { name: 'Choose this one' } ) ).toBeDisabled();
 		expect( screen.getByText( 'This one broke.' ) ).toBeVisible();
 		expect( screen.getByText( 'The preview took too long.' ) ).toBeVisible();
-		expect( screen.getAllByRole( 'button', { name: /^Design \d of 3$/ } ) ).toHaveLength( 3 );
-		expect( screen.getByRole( 'button', { name: 'Design 3 of 3' } ) ).toBeDisabled();
+		expect( screen.getAllByRole( 'button', { name: /^Design \d of 3/ } ) ).toHaveLength( 3 );
+		expect(
+			screen.getByRole( 'button', { name: 'Design 3 of 3, couldn’t be made' } )
+		).toBeDisabled();
+		expect( screen.getByText( 'You can still choose one of the other designs.' ) ).toBeVisible();
+	} );
+
+	it( 'names each design by its state', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				status: 'generating',
+				candidates: [
+					candidate( 1 ),
+					{ ...candidate( 2 ), status: 'running', routes: null },
+					{ ...candidate( 3 ), status: 'queued', routes: null },
+					{
+						...candidate( 4 ),
+						status: 'failed',
+						routes: null,
+						error: { code: 'x', message: 'Broke.', retryable: true },
+					},
+				],
+			} )
+		);
+		renderPage();
+
+		expect( await screen.findByRole( 'button', { name: 'Design 1 of 4' } ) ).toBeEnabled();
+		expect( screen.getByText( 'Broke.' ) ).toBeVisible();
+		expect( screen.queryByText( 'You can still choose one of the other designs.' ) ).toBeNull();
+		expect(
+			screen.getByRole( 'button', { name: 'Design 2 of 4, still being made' } )
+		).toBeDisabled();
+		expect(
+			screen.getByRole( 'button', { name: 'Design 3 of 4, still being made' } )
+		).toBeDisabled();
+		expect(
+			screen.getByRole( 'button', { name: 'Design 4 of 4, couldn’t be made' } )
+		).toBeDisabled();
+	} );
+
+	it( 'does not point to other designs when none of them is ready', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue(
+			session( {
+				candidates: [
+					{
+						...candidate( 1 ),
+						status: 'failed',
+						routes: null,
+						error: { code: 'x', message: 'Broke.', retryable: true },
+					},
+				],
+			} )
+		);
+		renderPage();
+
+		expect( await screen.findByText( 'Broke.' ) ).toBeVisible();
+		expect( screen.queryByText( 'You can still choose one of the other designs.' ) ).toBeNull();
 	} );
 
 	it( 'holds four placeholder slots behind a single status while the session opens', () => {
