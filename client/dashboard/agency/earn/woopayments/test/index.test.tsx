@@ -1,6 +1,8 @@
 /**
  * @jest-environment jsdom
  */
+import { activeAgencyQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -147,6 +149,31 @@ describe( 'EarnWooPayments', () => {
 		expect( screen.getByRole( 'button', { name: 'Add WooPayments to site' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'dialog', PICKER ) ).not.toBeInTheDocument();
 		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'opens the site picker from the header button for an agency with WooPayments sites', async () => {
+		const user = userEvent.setup();
+		mockAgency();
+		mockLicenses( [] );
+		mockWooPaymentsSite();
+		// The route loads the agency before the page renders, so the empty state never shows.
+		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+		queryClient.setQueryData( activeAgencyQuery().queryKey, { id: AGENCY_ID } as never );
+		window.history.replaceState( null, '', '/woopayments?add-woopayments-to-site=true' );
+
+		const { recordTracksEvent, router } = render( <EarnWooPayments />, { queryClient } );
+
+		expect( await screen.findByRole( 'dialog', PICKER ) ).toBeVisible();
+		expect( screen.getByText( 'store.example.com' ) ).toBeInTheDocument();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog', PICKER ) ).not.toBeInTheDocument() );
+
+		await act( async () => router.history.push( '/woopayments?add-woopayments-to-site=true' ) );
+
+		expect( await screen.findByRole( 'dialog', PICKER ) ).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	test( 'renders the commissions table and stat cards for a site with WooPayments', async () => {

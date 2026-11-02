@@ -70,7 +70,8 @@ describe( 'DifmOfferDeepLink', () => {
 		window.history.replaceState( null, '', '/?difmOffer=open&source=site-setup' );
 
 		render( <DifmOfferDeepLink site={ mockSite } /> );
-		await act( () => Promise.resolve() );
+		// A removal would run a task later.
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 20 ) ) );
 
 		expect( window.location.search ).toBe( '?difmOffer=open&source=site-setup' );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
@@ -97,6 +98,17 @@ describe( 'DifmOfferDeepLink', () => {
 		render( <DifmOfferDeepLink site={ mockSite } /> );
 
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'leaves the purchased param to the thank-you modal', async () => {
+		assignExperiment( 'no_time_to_build' );
+		window.history.replaceState( null, '', '/?difmOffer=purchased' );
+
+		render( <DifmOfferDeepLink site={ mockSite } /> );
+		await act( () => new Promise( ( resolve ) => setTimeout( resolve, 20 ) ) );
+
+		expect( window.location.search ).toBe( '?difmOffer=purchased' );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
