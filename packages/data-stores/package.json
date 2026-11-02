@@ -69,7 +69,7 @@
 		"@wordpress/i18n": "^6.21.0",
 		"@wordpress/primitives": "^4.48.0",
 		"@wordpress/url": "^4.48.0",
-		"debug": "^4.4.1",
+		"debug": "^4.4.3",
 		"i18n-calypso": "workspace:^",
 		"qs": "^6.15.2",
 		"redux": "^5.0.1",

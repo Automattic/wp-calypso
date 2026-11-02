@@ -77,7 +77,7 @@
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
-		"debug": "^4.4.1",
+		"debug": "^4.4.3",
 		"eslint": "*",
 		"postcss": "*",
 		"react": "^18.3.1 || ^19.0.0",
