@@ -1,7 +1,7 @@
 import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
 import { useRouter } from '@tanstack/react-router';
-import { removeQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { removeSearchParams } from '../hooks/use-consume-search-params';
 import type { Site } from '@automattic/api-core';
 
 function isMemberOfSite( site: Site ) {
@@ -33,11 +33,7 @@ export function useSyncOmnibarSite() {
 
 			// Remove the `origin_site_id` query param from the URL.
 			if ( originSiteId ) {
-				window.history.replaceState(
-					null,
-					'',
-					removeQueryArgs( window.location.pathname + window.location.search, 'origin_site_id' )
-				);
+				removeSearchParams( router, [ 'origin_site_id' ] );
 			}
 		}
 

@@ -41,6 +41,7 @@ function renderRouterWithSiteRoute( site: Site ) {
 describe( 'useSyncOmnibarSite', () => {
 	afterEach( () => {
 		queryClient.clear();
+		window.history.replaceState( null, '', '/' );
 	} );
 
 	test( 'publishes the route site, and clears it on pages that are not site-specific', async () => {
@@ -62,5 +63,19 @@ describe( 'useSyncOmnibarSite', () => {
 		await waitFor( () =>
 			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull()
 		);
+	} );
+
+	test( 'removes the origin_site_id param a wp-admin link adds, and keeps the history entry', async () => {
+		window.history.replaceState( null, '', '/sites/foo?origin_site_id=123&keep=1' );
+		const { length } = window.history;
+
+		const router = renderRouterWithSiteRoute( { ID: 456, capabilities: {} } as Site );
+		await screen.findByText( 'site' );
+
+		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
+		expect( router.state.location.search ).toEqual( { keep: 1 } );
+		expect( window.history.length ).toBe( length );
+		expect( window.history.state ).toMatchObject( { __TSR_index: 0 } );
+		expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBe( 456 );
 	} );
 } );
