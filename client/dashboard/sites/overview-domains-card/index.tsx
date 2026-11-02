@@ -55,12 +55,7 @@ const SiteDomainDataViews = ( { site, domains }: { site: Site; domains: DomainSu
 
 	return (
 		<Card>
-			<CardHeader
-				style={ {
-					flexDirection: 'column',
-					alignItems: 'stretch',
-				} }
-			>
+			<CardHeader direction="column" expanded={ false }>
 				<SectionHeader
 					title={ __( 'Domain names' ) }
 					level={ 3 }
