@@ -71,6 +71,12 @@ export function canOptOutOfWordPressBeta( site: Site, versionTag: string | undef
 	return versionTag === 'beta';
 }
 
+// Settings -> PHP
+
+export function canViewPHPVersion( site: Site ) {
+	return hasHostingFeature( site, HostingFeatures.PHP ) || !! site.options?.php_version;
+}
+
 // Settings -> Actions & danger zone
 
 export function canViewSiteActions( site: Site ) {

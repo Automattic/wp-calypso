@@ -64,6 +64,7 @@ export interface SiteOptions {
 	jetpack_version?: string;
 	migration_source_site_domain?: string;
 	p2_hub_blog_id?: number;
+	php_version?: string;
 	site_creation_flow?: string;
 	site_intent?: string;
 	software_version: string;

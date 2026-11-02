@@ -62,6 +62,7 @@ export const SITE_OPTIONS = [
 	'jetpack_version',
 	'migration_source_site_domain',
 	'p2_hub_blog_id',
+	'php_version',
 	'site_creation_flow',
 	'site_intent',
 	'software_version',

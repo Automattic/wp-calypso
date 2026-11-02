@@ -31,7 +31,7 @@ import { getSiteBadge } from '../../utils/site-badge';
 import { hasHostingFeature, hasJetpackModule } from '../../utils/site-features';
 import { getStorageUsagePercent } from '../../utils/site-storage';
 import { getVisibilityLabels } from '../../utils/site-visibility';
-import { canManageSite } from '../features';
+import { canManageSite, canViewPHPVersion } from '../features';
 import { useAiLaunchpad } from '../hooks/use-ai-launchpad';
 import SitePreview from '../site-preview';
 import {
@@ -324,7 +324,6 @@ export function Uptime( { site }: { site?: Site } ) {
 }
 
 export function PHPVersion( { site }: { site: Site } ) {
-	const isEligible = hasHostingFeature( site, HostingFeatures.PHP );
 	const { ref, inView } = useInView( {
 		triggerOnce: true,
 		fallbackInView: true,
@@ -332,16 +331,18 @@ export function PHPVersion( { site }: { site: Site } ) {
 
 	const { data, isLoading } = useQuery( {
 		...sitePHPVersionQuery( site.ID ),
-		enabled: isEligible && inView,
+		enabled: hasHostingFeature( site, HostingFeatures.PHP ) && inView,
 	} );
 
-	if ( ! isEligible ) {
+	if ( ! canViewPHPVersion( site ) ) {
 		return <IneligibleIndicator />;
 	}
 
 	return (
 		<span ref={ ref }>
-			<TextBlur isBlurred={ isLoading }>{ isLoading ? 'X.Y' : data }</TextBlur>
+			<TextBlur isBlurred={ isLoading }>
+				{ isLoading ? 'X.Y' : ( site.options?.php_version ?? data ) }
+			</TextBlur>
 		</span>
 	);
 }
