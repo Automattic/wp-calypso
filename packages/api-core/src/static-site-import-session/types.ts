@@ -81,3 +81,9 @@ export interface ApproveStaticSiteImportSessionParams {
 	sessionId: string;
 	destinationBlogId: number;
 }
+
+export interface StaticSiteImportHandoffParams {
+	blogUrl: string;
+	fromUrl: string;
+	locale: string;
+}

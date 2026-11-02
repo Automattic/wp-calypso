@@ -4,7 +4,7 @@
  */
 import OdieAssistantProvider, { OdieAssistant } from '@automattic/odie-client';
 import { useCanConnectToZendeskMessaging } from '@automattic/zendesk-client';
-import { useEffect, useMemo } from '@wordpress/element';
+import { useEffect } from '@wordpress/element';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useFeatureConfig, useHelpCenterContext } from '../contexts/HelpCenterContext';
 import { useSupportStatus } from '../data/use-support-status';
@@ -13,14 +13,6 @@ import { useHasOpenZendeskChat } from '../hooks/use-has-open-zendesk-chat';
 import { useHelpCenterTracksEvent } from '../hooks/use-help-center-tracks-event';
 import type { JSX } from 'react';
 import './help-center-chat.scss';
-
-/** Reads a comma-separated tag list, keeping only tags Zendesk accepts as they are. */
-function parseZendeskTags( value: string | null ): string[] {
-	return ( value ?? '' )
-		.split( ',' )
-		.map( ( tag ) => tag.trim().toLowerCase() )
-		.filter( ( tag ) => /^[a-z0-9_]{1,80}$/.test( tag ) );
-}
 
 export function HelpCenterChat( {
 	isLoadingStatus,
@@ -64,16 +56,6 @@ export function HelpCenterChat( {
 	);
 	const recordTracksEvent = useHelpCenterTracksEvent( { explicitSiteId: selectedSiteId } );
 	const externalChatProvider = params.get( 'externalChatProvider' );
-	// A screen that opens the chat can add Zendesk tags so the conversation is routed for it,
-	// e.g. a failed site move. They add to the tags the Help Center always sends.
-	const routeZendeskTags = params.get( 'zendeskTags' );
-	const featureZendeskTags = featureConfig.chat.zendeskConversationTags;
-	const zendeskConversationTags = useMemo(
-		() => [
-			...new Set( [ ...( featureZendeskTags ?? [] ), ...parseZendeskTags( routeZendeskTags ) ] ),
-		],
-		[ featureZendeskTags, routeZendeskTags ]
-	);
 	const externalChatId = params.get( 'externalChatId' );
 
 	const userFieldFlowName = data?.eligibility?.user_field_flow_name;
@@ -106,7 +88,7 @@ export function HelpCenterChat( {
 			selectedSiteURL={ siteUrl || ( site?.URL as string ) }
 			userFieldMessage={ userFieldMessage }
 			userFieldFlowName={ userFieldFlowName ?? params.get( 'userFieldFlowName' ) }
-			zendeskConversationTags={ zendeskConversationTags }
+			zendeskConversationTags={ featureConfig.chat.zendeskConversationTags }
 			zendeskIntegrationKey={ featureConfig.chat.zendeskIntegrationKey }
 			externalChatProvider={ externalChatProvider }
 			externalChatId={ externalChatId }

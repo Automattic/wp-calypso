@@ -9,7 +9,6 @@ import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
-	getMoveHelpZendeskTags,
 	useStaticSiteImport,
 } from '../index';
 import type { Site } from '@automattic/api-core';
@@ -288,8 +287,25 @@ describe( 'StaticSiteImportCard', () => {
 
 		expect( await screen.findByRole( 'heading', { name: 'Your move stopped' } ) ).toBeVisible();
 		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
-		expect( screen.getByRole( 'button', { name: 'Let our team move it' } ) ).toBeVisible();
 		expect( await screen.findByRole( 'link', { name: 'Get a refund' } ) ).toBeVisible();
+	} );
+
+	it( 'hands the move to our migrations team as a non-WordPress migration ticket', async () => {
+		mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+		const ticket = mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new', {
+				blog_url: 'busybears.wordpress.com',
+				from_url: 'busybearscleaning.com',
+				locale: 'en',
+				context: 'site_is_not_wordpress',
+			} )
+			.reply( 200, { success: true } );
+
+		render( <StaticSiteImportFailed site={ site } search={ search } /> );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Let our team move it' } ) );
+
+		expect( await screen.findByText( 'Our team has your move' ) ).toBeVisible();
+		expect( ticket.isDone() ).toBe( true );
 	} );
 
 	it( 'shows a neutral notice, not a failed move, when the move can’t be read', async () => {
@@ -456,27 +472,5 @@ describe( 'StaticSiteImportFailed', () => {
 
 		expect( screen.queryByRole( 'link', { name: 'Get a refund' } ) ).not.toBeInTheDocument();
 		expect( screen.getByRole( 'button', { name: 'Let our team move it' } ) ).toBeVisible();
-	} );
-} );
-
-describe( 'getMoveHelpZendeskTags', () => {
-	it.each( [
-		[
-			'failed',
-			'wix',
-			[
-				'wpcom_static_site_import',
-				'wpcom_static_site_import_failed',
-				'wpcom_wix_import',
-				'wpcom_wix_import_failed',
-			],
-		],
-		[
-			'success',
-			'squarespace',
-			[ 'wpcom_static_site_import', 'wpcom_static_site_import_success' ],
-		],
-	] as const )( 'tags a %s %s move', ( outcome, platform, tags ) => {
-		expect( getMoveHelpZendeskTags( outcome, platform ) ).toEqual( tags );
 	} );
 } );

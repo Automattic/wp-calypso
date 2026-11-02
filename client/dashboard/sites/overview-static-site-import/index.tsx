@@ -1,6 +1,7 @@
-import { sitePurchasesQuery } from '@automattic/api-queries';
+import { sitePurchasesQuery, staticSiteImportHandoffMutation } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Spinner,
@@ -99,23 +100,8 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-/**
- * Zendesk tags for a chat about a move, so Happiness can route it: a failed move goes to the
- * Migrations view. Wix moves also carry the `wpcom_wix_import` pair agreed with Happiness.
- */
-export function getMoveHelpZendeskTags( outcome: 'success' | 'failed', platform?: string ) {
-	const tags = [ 'wpcom_static_site_import', `wpcom_static_site_import_${ outcome }` ];
-	return platform === 'wix'
-		? [ ...tags, 'wpcom_wix_import', `wpcom_wix_import_${ outcome }` ]
-		: tags;
-}
-
-/**
- * Opens a chat with our team (not the AI assistant), with a message naming where the site
- * came from and tags that route it. Anyone the move didn't work for can have our team finish
- * it for free, or a refund.
- */
-function useAskForMoveHelp( site: Site, outcome: 'success' | 'failed', platform?: string ) {
+/** Opens a chat with our team (not the AI assistant), with a message naming where the site came from. */
+function useAskForMoveHelp( site: Site ) {
 	const { setNewMessagingChat } = useHelpCenter();
 	return ( initialMessage: string ) =>
 		setNewMessagingChat( {
@@ -123,7 +109,6 @@ function useAskForMoveHelp( site: Site, outcome: 'success' | 'failed', platform?
 			section: 'static-site-import',
 			siteUrl: site.URL,
 			siteId: String( site.ID ),
-			zendeskTags: getMoveHelpZendeskTags( outcome, platform ),
 		} );
 }
 
@@ -135,7 +120,8 @@ export function StaticSiteImportFailed( {
 	site: Site;
 	search: StaticSiteImportSearch;
 } ) {
-	const askForMoveHelp = useAskForMoveHelp( site, 'failed', search.platform );
+	const locale = useLocale();
+	const handoff = useMutation( staticSiteImportHandoffMutation() );
 	const sourceHost = getSourceHost( search.from );
 	const { data: planPurchase } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
@@ -170,28 +156,39 @@ export function StaticSiteImportFailed( {
 								)
 							: __( 'Nothing is lost, and your current site is still online.' ) }
 					</Text>
-					<HStack justify="flex-start" spacing={ 4 } wrap>
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
-							onClick={ () =>
-								askForMoveHelp(
-									sprintf(
-										/* translators: %s: the address of the site being moved, e.g. example.com. */
-										__( 'My site move from %s stopped. Can your team move it for me?' ),
-										sourceHost || __( 'my old platform' )
-									)
-								)
-							}
-						>
-							{ __( 'Let our team move it' ) }
-						</Button>
-						{ refundUrl && (
-							<Button variant="link" href={ refundUrl }>
-								{ __( 'Get a refund' ) }
+					{ handoff.isError && (
+						<Notice variant="error">
+							{ __( 'We couldn’t reach our team. Please try again.' ) }
+						</Notice>
+					) }
+					{ handoff.isSuccess ? (
+						<Notice variant="success" title={ __( 'Our team has your move' ) }>
+							{ __( 'We’ll email you to finish moving your site.' ) }
+						</Notice>
+					) : (
+						<HStack justify="flex-start" spacing={ 4 } wrap>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								isBusy={ handoff.isPending }
+								disabled={ handoff.isPending }
+								onClick={ () =>
+									handoff.mutate( {
+										blogUrl: site.slug,
+										fromUrl: search.from ?? '',
+										locale,
+									} )
+								}
+							>
+								{ __( 'Let our team move it' ) }
 							</Button>
-						) }
-					</HStack>
+							{ refundUrl && (
+								<Button variant="link" href={ refundUrl }>
+									{ __( 'Get a refund' ) }
+								</Button>
+							) }
+						</HStack>
+					) }
 				</VStack>
 			</CardBody>
 		</Card>
@@ -250,7 +247,7 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
-	const askForMoveHelp = useAskForMoveHelp( site, 'success', platform );
+	const askForMoveHelp = useAskForMoveHelp( site );
 	const sourceHost = getSourceHost( from );
 	const isReady = siteImport.status === 'finished';
 	const trackingProps = {

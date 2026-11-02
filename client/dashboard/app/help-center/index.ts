@@ -73,14 +73,11 @@ export function useHelpCenter() {
 			section,
 			siteUrl,
 			siteId,
-			zendeskTags,
 		}: {
 			initialMessage: string;
 			section?: string;
 			siteUrl?: string;
 			siteId?: string;
-			/** Added to the Zendesk conversation so it can be routed, e.g. a failed site move. */
-			zendeskTags?: string[];
 		} ) => {
 			const url = addQueryArgs( '/odie', {
 				provider: 'zendesk',
@@ -88,7 +85,6 @@ export function useHelpCenter() {
 				section,
 				siteUrl,
 				siteId,
-				zendeskTags: zendeskTags?.length ? zendeskTags.join( ',' ) : undefined,
 			} );
 			await setNavigateToRoute( url );
 			await setShowHelpCenter( true );

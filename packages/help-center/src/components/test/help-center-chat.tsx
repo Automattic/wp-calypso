@@ -10,8 +10,6 @@ const mockProviderProps = jest.fn();
 // Changed by each test.
 let mockShouldUseWapuu = false;
 let mockOpenZendeskChat = { hasOpenZendeskChat: false, isLoading: false };
-let mockSearch = '';
-let mockFeatureTags: string[] | undefined;
 
 jest.mock( '@automattic/odie-client', () => ( {
 	__esModule: true,
@@ -27,12 +25,12 @@ jest.mock( '@automattic/zendesk-client', () => ( {
 } ) );
 
 jest.mock( 'react-router-dom', () => ( {
-	useLocation: () => ( { search: mockSearch } ),
+	useLocation: () => ( { search: '' } ),
 	useNavigate: () => mockNavigate,
 } ) );
 
 jest.mock( '../../contexts/HelpCenterContext', () => ( {
-	useFeatureConfig: () => ( { chat: { zendeskConversationTags: mockFeatureTags } } ),
+	useFeatureConfig: () => ( { chat: {} } ),
 	useHelpCenterContext: () => ( { currentUser: { ID: 1 } } ),
 } ) );
 
@@ -68,8 +66,6 @@ beforeEach( () => {
 	jest.clearAllMocks();
 	mockShouldUseWapuu = false;
 	mockOpenZendeskChat = { hasOpenZendeskChat: false, isLoading: false };
-	mockSearch = '';
-	mockFeatureTags = undefined;
 } );
 
 describe( 'HelpCenterChat access without Wapuu', () => {
@@ -126,21 +122,5 @@ describe( 'HelpCenterChat Zendesk loading', () => {
 			hasOpenZendeskChat: true,
 			isLoadingCanConnectToZendesk: false,
 		} );
-	} );
-} );
-
-describe( 'HelpCenterChat Zendesk tags', () => {
-	it( 'adds valid tags from the opening screen to the Help Center’s own', () => {
-		mockFeatureTags = [ 'woo_support_flow_help_center' ];
-		mockSearch =
-			'?provider=zendesk&zendeskTags=wpcom_static_site_import, WPCOM_Wix_Import ,bad tag,<x>';
-
-		renderChat( true );
-
-		expect( lastProviderProps().zendeskConversationTags ).toEqual( [
-			'woo_support_flow_help_center',
-			'wpcom_static_site_import',
-			'wpcom_wix_import',
-		] );
 	} );
 } );
