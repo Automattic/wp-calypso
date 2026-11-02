@@ -186,13 +186,15 @@ export class PlansPage {
 	 * subdomain the free plan is selected directly.
 	 */
 	async clickStartWithFreePlan(): Promise< void > {
-		await this.page
+		const button = this.page
 			.getByRole( 'button', {
 				name: 'start with a free plan',
 				exact: true,
 			} )
-			.first()
-			.click( { noWaitAfter: true } );
+			.first();
+
+		await button.waitFor( { state: 'visible', timeout: 30_000 } );
+		await button.click( { noWaitAfter: true } );
 	}
 
 	/**

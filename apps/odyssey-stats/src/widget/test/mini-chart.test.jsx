@@ -99,6 +99,17 @@ describe( 'MiniChart', () => {
 		expect( recordWidgetEventThenFollow.mock.results.at( -1 ).value ).toHaveBeenCalled();
 	} );
 
+	it( 'shows skeletons for the totals and the chart while the range loads', () => {
+		const { container } = render( renderMiniChart( pending() ) );
+
+		expect( screen.getByText( 'Loading…' ) ).toHaveClass( 'screen-reader-text' );
+		expect( container.querySelectorAll( '.stats-widget-metric__value-skeleton' ) ).toHaveLength(
+			2
+		);
+		expect( container.querySelector( '.stats-widget-chart__skeleton' ) ).toBeInTheDocument();
+		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps the place of "More stats" while loading, without showing it', () => {
 		render( renderMiniChart( pending() ) );
 

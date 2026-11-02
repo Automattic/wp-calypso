@@ -27,34 +27,14 @@ Some notes:
 
 ## Bundle Analysis
 
+To see what makes up the client bundle and how much each module weighs, run `yarn analyze-bundles` (`yarn analyze-bundles:server` for the server bundle). It builds for production and opens [webpack-bundle-analyzer](https://github.com/webpack/webpack-bundle-analyzer) at http://127.0.0.1:9898.
+
 ### Why is X bundled?
 
-If you want to know why a certain module is bundled you can use `whybundled` to find out. See the following for an example on usage:
+For an npm package, `yarn why <package>` lists the dependencies that pull it in. To find which of our own files import it, including `require()` calls and subpath imports, search the source:
 
 ```sh
-yarn run preanalyze-bundles
-yarn run whybundled -- [module]
-
-npn run whybundled -- is-my-json-valid
+git grep -n -e "'<package>'" -e "'<package>/" -- client packages
 ```
 
-This should give you an overview on where this module got bundled and which file are requiring it:
-
-```
-MODULE  is-my-json-valid
-├─ imported: 13 times
-├─ deps count: 5
-├─ size: 19 KiB [for all included files]
-├─ type: [direct]
-├─ chunks: vendors~build
-├─ locations:
-│  └─ ./node_modules/is-my-json-valid/
-│
-├─ files:
-│  ├─ ./node_modules/is-my-json-valid/formats.js
-│  └─ ./node_modules/is-my-json-valid/index.js
-│
-└─ reasons:
-  ├─ ./client/extensions/woocommerce/index.js + 439 modules  7:0-41  [harmony side effect evaluation]
-  ├─ [...]
-```
+Both only show direct dependents. For the full chain of imports that pulls a module into a chunk, set `reasons: true` in the `statsOptions` of `client/webpack.config.js` and run `yarn build-client-stats`; each module in `client/stats.json` then lists the modules that import it. The file runs to several gigabytes, too large for `JSON.parse`; read it with a streaming parser such as `stream-json`, as `bin/icfy-compare.js` does.

@@ -84,11 +84,7 @@ project {
 		// Define the currently used encryption key here. This allows easy swapping between previously used keys.
 		password("E2E_SECRETS_ENCRYPTION_KEY_CURRENT", "%E2E_SECRETS_ENCRYPTION_KEY_OCT_21_26%", display = ParameterDisplay.HIDDEN)
 
-		// Calypso dashboard AWS secrets for S3 bucket.
-		password("CALYPSO_E2E_DASHBOARD_AWS_S3_ACCESS_KEY_ID", "credentialsJSON:1f324549-3795-43e5-a8c2-fb81d6e7c15d", display = ParameterDisplay.HIDDEN)
-		password("CALYPSO_E2E_DASHBOARD_AWS_S3_SECRET_ACCESS_KEY", "credentialsJSON:782b4bde-b73d-4326-9970-5a79251bdf07", display = ParameterDisplay.HIDDEN)
 		password("MATTICBOT_GITHUB_BEARER_TOKEN", "credentialsJSON:34cb38a5-9124-41c4-8497-74ed6289d751", display = ParameterDisplay.HIDDEN, label = "Matticbot GitHub Bearer Token")
-		text("CALYPSO_E2E_DASHBOARD_AWS_S3_ROOT", "s3://a8c-calypso-e2e-reports", label = "Calypso E2E Dashboard S3 bucket root")
 
 		// AWS secrets for the test reports S3 bucket.
 		password("A8C_TEST_REPORTS_S3_ACCESS_KEY", "credentialsJSON:1dc49412-c3f0-44ab-b45b-7a882d19d268", display = ParameterDisplay.HIDDEN)

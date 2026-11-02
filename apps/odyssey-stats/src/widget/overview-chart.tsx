@@ -4,8 +4,7 @@ import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
-import { formatDate } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
-import { Unit } from '../typings';
+import type { DateRange } from '../lib/date-ranges';
 import type { DataPointDate, RenderTooltipParams, SeriesData } from '@automattic/charts';
 
 // The tooltip renders through @visx/tooltip's portal, which appends to `document.body` —
@@ -14,12 +13,31 @@ const TOOLTIP_DATE_STYLE = { fontWeight: 600, marginBlockEnd: '4px' };
 const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', gap: '12px' };
 
 /**
+ * Names the date a hovered point covers, in the site locale's order. Not moment's `LL`: in
+ * wp-admin, core rewrites it to the site's PHP date format, so moment prints "F j, 2026".
+ * Gregorian like the axis, since a locale's default calendar can differ (Persian, Thai).
+ * @param date The hovered point's date.
+ * @param unit The range's bucket.
+ * @returns The formatted date.
+ */
+function formatTooltipDate( date: Date, unit: DateRange[ 'unit' ] ) {
+	const options: Intl.DateTimeFormatOptions =
+		'month' === unit
+			? { month: 'long', year: 'numeric', calendar: 'gregory' }
+			: { dateStyle: 'long', calendar: 'gregory' };
+	return new Intl.DateTimeFormat( moment.locale(), options ).format( date );
+}
+
+/**
  * Tooltip for a hovered point. The package's own prints `toLocaleDateString()`, which names
  * a month's total by its first day and ignores the site's locale.
  * @param unit The range's bucket.
  * @returns The `renderTooltip` handler.
  */
-function renderTooltip( unit: Unit, { tooltipData }: RenderTooltipParams< DataPointDate > ) {
+function renderTooltip(
+	unit: DateRange[ 'unit' ],
+	{ tooltipData }: RenderTooltipParams< DataPointDate >
+) {
 	const hoveredDate = tooltipData?.nearestDatum?.datum?.date;
 	if ( ! hoveredDate ) {
 		return null;
@@ -31,7 +49,7 @@ function renderTooltip( unit: Unit, { tooltipData }: RenderTooltipParams< DataPo
 
 	return (
 		<div>
-			<div style={ TOOLTIP_DATE_STYLE }>{ formatDate( hoveredDate, unit ) }</div>
+			<div style={ TOOLTIP_DATE_STYLE }>{ formatTooltipDate( hoveredDate, unit ) }</div>
 			{ points.map( ( point ) => (
 				<div key={ point.label } style={ TOOLTIP_ROW_STYLE }>
 					<span>{ point.label }</span>
@@ -46,7 +64,7 @@ interface OverviewChartProps {
 	series: SeriesData[];
 	height: number;
 	/** The range's bucket, so monthly points are labelled by month rather than by date. */
-	unit: Unit;
+	unit: DateRange[ 'unit' ];
 }
 
 /**

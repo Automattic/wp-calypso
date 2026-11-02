@@ -504,6 +504,17 @@ describe( 'onboarding flow tracks event props', () => {
 			coupon: 'WC_ABC',
 		} );
 	} );
+
+	// Without this, signups from a folded legacy flow count as plain onboarding.
+	it( 'reports the legacy flow a link came from', () => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'flow=import' ) );
+
+		const { result } = renderHook( () => onboarding.useTracksEventProps?.call( onboarding ) );
+
+		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
+			from_flow: 'import',
+		} );
+	} );
 } );
 
 describe( 'onboarding flow plans-page experiment enrolment', () => {

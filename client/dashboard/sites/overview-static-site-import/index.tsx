@@ -8,9 +8,9 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, published, thumbsDown, thumbsUp } from '@wordpress/icons';
+import { Icon, border, external, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
@@ -25,8 +25,7 @@ import './style.scss';
 
 export * from './use-static-site-import';
 
-// The session only reports queued → finished, so the list moves on a timer and never finishes
-// its last item before the session does.
+// The list moves on a timer and never finishes its last item before the session does.
 const STEP_DURATION = 20000;
 
 function useTimedStep( stepCount: number ) {
@@ -96,52 +95,6 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-function Feedback( { siteId, platform }: { siteId: number; platform?: string } ) {
-	const { recordTracksEvent } = useAnalytics();
-	const { setShowHelpCenter } = useHelpCenter();
-	const [ vote, setVote ] = useState< 'good' | 'bad' | null >( null );
-
-	const onVote = ( rating: 'good' | 'bad' ) => {
-		setVote( rating );
-		recordTracksEvent( 'calypso_dashboard_static_site_import_feedback', {
-			site_id: siteId,
-			source_platform: platform,
-			rating,
-		} );
-		if ( rating === 'bad' ) {
-			setShowHelpCenter( true );
-		}
-	};
-
-	if ( vote === 'good' ) {
-		return <Text>{ __( 'Thanks for the feedback!' ) }</Text>;
-	}
-
-	return (
-		<HStack justify="flex-start" expanded={ false } wrap>
-			<Text>{ __( 'Does it look right?' ) }</Text>
-			<Button
-				icon={ thumbsUp }
-				iconSize={ 16 }
-				size="compact"
-				style={ { color: 'var(--dashboard__foreground-color-success)' } }
-				onClick={ () => onVote( 'good' ) }
-			>
-				{ __( 'Looks right' ) }
-			</Button>
-			<Button
-				icon={ thumbsDown }
-				iconSize={ 16 }
-				size="compact"
-				style={ { color: 'var(--dashboard__foreground-color-error)' } }
-				onClick={ () => onVote( 'bad' ) }
-			>
-				{ __( 'Something’s off' ) }
-			</Button>
-		</HStack>
-	);
-}
-
 /** Takes the place of the overview cards while the site is being moved. */
 export function StaticSiteImportProgress( {
 	siteImport,
@@ -190,13 +143,50 @@ export function StaticSiteImportNotice( {
 	siteImport: StaticSiteImport;
 	search: StaticSiteImportSearch;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
 	const sourceHost = getSourceHost( from );
+	const isReady = siteImport.status === 'finished';
+	const trackingProps = {
+		site_id: site.ID,
+		source_platform: platform,
+	};
 
-	if ( isDismissed ) {
-		return null;
+	// Counts notices shown, so clicks on its buttons can be read as a rate.
+	const hasRecordedImpression = useRef( false );
+	useEffect( () => {
+		if ( ! isReady || hasRecordedImpression.current ) {
+			return;
+		}
+		hasRecordedImpression.current = true;
+		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_impression', {
+			site_id: site.ID,
+			source_platform: platform,
+		} );
+	}, [ isReady, recordTracksEvent, site.ID, platform ] );
+
+	const recordClick = ( action: 'connect_domain' | 'preview_site' ) =>
+		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
+			...trackingProps,
+			action,
+		} );
+
+	if ( siteImport.isRefused ) {
+		return (
+			<Notice
+				variant="error"
+				title={ __( 'We can’t import this site' ) }
+				actions={
+					<Button __next40pxDefaultSize variant="link" onClick={ () => setShowHelpCenter( true ) }>
+						{ __( 'Get help' ) }
+					</Button>
+				}
+			>
+				{ __( 'Its content isn’t allowed on WordPress.com.' ) }
+			</Notice>
+		);
 	}
 
 	if ( siteImport.status === 'failed' ) {
@@ -239,43 +229,69 @@ export function StaticSiteImportNotice( {
 	}
 
 	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: sourceHost,
+		initialQuery: sourceHost || undefined,
 		siteSlug: site.slug,
 		dashboard: getCurrentDashboard(),
 		back_to: redirectToDashboardLink(),
 	} );
 
 	return (
-		<Notice
-			variant="success"
-			title={ __( 'Your site is ready' ) }
-			onClose={ () => setIsDismissed( true ) }
-			actions={
-				<HStack justify="space-between" wrap>
-					{ sourceHost && (
-						<Button variant="link" href={ connectDomainUrl }>
-							{ sprintf(
-								/* translators: %s: the site's domain, e.g. example.com. */
-								__( 'Connect %s' ),
+		<>
+			{ ! isDismissed && (
+				<Notice
+					variant="success"
+					title={ __( 'Your site is ready' ) }
+					onClose={ () => {
+						recordTracksEvent(
+							'calypso_dashboard_static_site_import_ready_notice_dismiss',
+							trackingProps
+						);
+						setIsDismissed( true );
+					} }
+					actions={
+						<>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ connectDomainUrl }
+								onClick={ () => recordClick( 'connect_domain' ) }
+							>
+								{ sourceHost
+									? sprintf(
+											/* translators: %s: the site's domain, e.g. example.com. */
+											__( 'Connect %s' ),
+											sourceHost
+										)
+									: __( 'Connect domain' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								href={ site.URL }
+								target="_blank"
+								rel="noopener noreferrer"
+								icon={ external }
+								iconPosition="right"
+								onClick={ () => recordClick( 'preview_site' ) }
+							>
+								{ __( 'Preview site' ) }
+							</Button>
+						</>
+					}
+				>
+					{ sourceHost
+						? sprintf(
+								/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+								__(
+									'%s is copied and running on WordPress.com. It stays private until you launch it.'
+								),
 								sourceHost
+							)
+						: __(
+								'Your site is copied and running on WordPress.com. It stays private until you launch it.'
 							) }
-						</Button>
-					) }
-					<Feedback siteId={ site.ID } platform={ platform } />
-				</HStack>
-			}
-		>
-			{ sourceHost
-				? sprintf(
-						/* translators: %s: the domain of the site that was moved, e.g. example.com. */
-						__(
-							'%s has been rebuilt on WordPress.com. It stays private until you switch your address over.'
-						),
-						sourceHost
-					)
-				: __(
-						'Your site has been rebuilt on WordPress.com. It stays private until you launch it.'
-					) }
-		</Notice>
+				</Notice>
+			) }
+		</>
 	);
 }

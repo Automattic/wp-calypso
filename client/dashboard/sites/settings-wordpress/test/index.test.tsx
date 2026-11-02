@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import { wpOrgCoreVersionQuery } from '@automattic/api-queries';
 import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
@@ -37,15 +36,12 @@ function mockSite( mockedSite: Site ) {
 		.reply( 200, mockedSite );
 }
 
-// Seed the wp.org core version queries — production primes these via the route
-// loader's ensureQueryData, so doing the same in tests mirrors the real flow
-// rather than going through native fetch (which jsdom doesn't expose).
-function seedWpOrgCoreVersions(
-	queryClient: QueryClient,
-	{ latest = '6.8.1', beta = '7.0-RC2' }: { latest?: string; beta?: string } = {}
-) {
-	queryClient.setQueryData( wpOrgCoreVersionQuery().queryKey, latest );
-	queryClient.setQueryData( wpOrgCoreVersionQuery( 'beta' ).queryKey, beta );
+function mockTrackVersions() {
+	nock( 'https://public-api.wordpress.com' )
+		.persist()
+		.get( `/rest/v1.1/jetpack-blogs/${ site.ID }/rest-api/` )
+		.query( ( query ) => query.path === '/wpcomsh/v1/wordpress-versions' )
+		.reply( 200, { data: { latest: '6.8.1', beta: '7.0-RC2' } } );
 }
 
 function mockApi( versionTag: string = 'latest', mockedSite: Site = site ) {
@@ -92,7 +88,7 @@ describe( '<WordPressSettings>', () => {
 
 		mockApi();
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		seedWpOrgCoreVersions( queryClient );
+		mockTrackVersions();
 
 		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
@@ -161,7 +157,7 @@ describe( '<WordPressSettings>', () => {
 
 		mockApi( 'beta', autoEnrolledSite );
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		seedWpOrgCoreVersions( queryClient );
+		mockTrackVersions();
 
 		render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 		await screen.findByRole( 'heading', { name: 'WordPress' } );
@@ -220,7 +216,7 @@ describe( '<WordPressSettings>', () => {
 		test( 'renders the form for a staging site', async () => {
 			mockApi();
 			const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-			seedWpOrgCoreVersions( queryClient );
+			mockTrackVersions();
 
 			render( <WordPressSettings siteSlug={ site.slug } />, { queryClient } );
 			await screen.findByRole( 'heading', { name: 'WordPress' } );

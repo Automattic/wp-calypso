@@ -68,6 +68,9 @@ const initialState = {
 		fetching: false,
 		remoteValues: {},
 	},
+	ui: {
+		section: { name: 'checkout-thank-you' },
+	},
 };
 
 describe( 'CheckoutThankYou', () => {

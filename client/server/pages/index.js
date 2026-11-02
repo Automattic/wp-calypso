@@ -46,6 +46,7 @@ import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import { getWebsiteDesignServicesRedirect } from 'calypso/lib/signup/legacy-website-design-services-flow';
 import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
@@ -976,6 +977,19 @@ function validateRedirect( req, url ) {
 }
 
 /**
+ * The locale of a legacy `/start` URL, or '' for the default one. It's the last non-empty path
+ * segment, so a trailing slash doesn't hide it.
+ * @param {string} requestPath Request path
+ * @returns {string} Locale slug
+ */
+function getLegacyFlowLocale( requestPath ) {
+	const lastPathSegment = requestPath.split( '/' ).filter( Boolean ).pop() ?? '';
+	return getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+		? lastPathSegment
+		: '';
+}
+
+/**
  * Defines wordpress.com (Calypso blue) routes only
  * @param {express.Application} app Express application
  */
@@ -1325,14 +1339,10 @@ export default function pages() {
 			return next( 'route' );
 		}
 
-		// Last non-empty segment, so a trailing slash doesn't hide the locale.
-		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
-		const locale =
-			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
-				? lastPathSegment
-				: '';
-
-		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
+		res.redirect(
+			302,
+			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
+		);
 	} );
 
 	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
@@ -1389,6 +1399,16 @@ export default function pages() {
 	app.get( [ '/woocommerce-installation', '/woocommerce-installation/:site' ], ( req, res ) => {
 		res.redirect( 302, getWooCommercePluginPage( req.params.site ) );
 	} );
+
+	app.get(
+		[ '/start/website-design-services', '/start/website-design-services/*' ],
+		( req, res ) => {
+			res.redirect(
+				302,
+				getWebsiteDesignServicesRedirect( getLegacyFlowLocale( req.path ), stringify( req.query ) )
+			);
+		}
+	);
 
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {

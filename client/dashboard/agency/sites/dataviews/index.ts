@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useFields } from '../../../sites/dataviews';
 import { getHostField, getPhpVersionField, getWpVersionField } from './endpoint-fields';
 import { toAgencyField } from './hydrate';
+import { withPressablePlan } from './plan-field';
 import {
 	getPreviewField,
 	getSiteIconField,
@@ -36,7 +37,7 @@ export function useAgencyFields( {
 			getSiteIconField( viewType ),
 			shared( 'subscribers_count' ),
 			shared( 'backup' ),
-			shared( 'plan' ),
+			withPressablePlan( shared( 'plan' ) ),
 			shared( 'visibility', withoutLaunchNag ),
 			getWpVersionField(),
 			getPreviewField(),

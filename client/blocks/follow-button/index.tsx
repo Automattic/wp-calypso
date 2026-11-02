@@ -30,6 +30,7 @@ interface FollowButtonContainerProps {
 	isButtonOnly?: boolean;
 	followApiSource?: string;
 	onFollowToggle: ( following: boolean ) => void;
+	onFollowSuccess?: ( following: boolean ) => void;
 }
 
 function FollowButtonContainer( {
@@ -48,6 +49,7 @@ function FollowButtonContainer( {
 	isButtonOnly,
 	followApiSource,
 	onFollowToggle,
+	onFollowSuccess,
 }: FollowButtonContainerProps ): JSX.Element {
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const isEmailVerified = useSelector( isCurrentUserEmailVerified );
@@ -58,8 +60,12 @@ function FollowButtonContainer( {
 		feedId,
 		blogId: siteId,
 	} );
-	const { mutate: followSite, isPending: isFollowingPending } = useFollowSite();
-	const { mutate: unfollowSite, isPending: isUnfollowingPending } = useUnfollowSite();
+	const {
+		mutate: followSite,
+		mutateAsync: followSiteAsync,
+		isPending: isFollowingPending,
+	} = useFollowSite();
+	const { mutateAsync: unfollowSiteAsync, isPending: isUnfollowingPending } = useUnfollowSite();
 
 	const dispatch = useDispatch();
 
@@ -100,15 +106,17 @@ function FollowButtonContainer( {
 				)
 			);
 			followSite( { feedUrl: siteUrl, source: followSource } );
-			// onFollowToggle reports a completed follow to the caller.
+			// The follow waits on email verification, so neither onFollowToggle nor onFollowSuccess fires.
 			return;
 		}
 
-		if ( followingSite ) {
-			followSite( { feedUrl: siteUrl, source: followSource } );
-		} else {
-			unfollowSite( { feedUrl: siteUrl, source: followSource } );
-		}
+		const toggleSite = followingSite ? followSiteAsync : unfollowSiteAsync;
+		// The promise settles even if this button unmounts first. Request errors are already shown by the
+		// mutation hooks, so only those are swallowed; an error thrown by onFollowSuccess still surfaces.
+		toggleSite( { feedUrl: siteUrl, source: followSource } ).then(
+			() => onFollowSuccess?.( followingSite ),
+			() => {}
+		);
 
 		onFollowToggle( followingSite );
 	};

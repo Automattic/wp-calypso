@@ -46,29 +46,13 @@ export interface UseGridPlansParams {
 	 */
 	reflectStorageSelectionInPlanPrices?: boolean;
 	/**
-	 * When true, use the no-AI feature set for the rolled-out pricing differentiation cohort.
-	 */
-	useVar42NoAiFeatures?: boolean;
-	/**
 	 * When true, use the pricing-grid redesign feature set for plan cards.
 	 */
 	usePlansGridRedesignFeatures?: boolean;
 	/**
-	 * When true, show plan-scoped feature pills. AI-labeled pills are suppressed.
-	 */
-	showPricingDifferentiationFeaturePills?: boolean;
-	/**
-	 * When true, use the focused_new_copy taglines for plan headers.
-	 */
-	useFocusedNewCopyTaglines?: boolean;
-	/**
 	 * When true, use the pricing grid redesign taglines for plan headers.
 	 */
 	usePlansGridRedesignNewDescription?: boolean;
-	/**
-	 * When true, use cohort feature lists and comparison grid copy.
-	 */
-	isExperimentVariant?: boolean;
 	/**
 	 * Renewal-pricing experiment flag, threaded to the pricing hook so the current
 	 * plan's headline matches the renewal-vs-intro treatment.

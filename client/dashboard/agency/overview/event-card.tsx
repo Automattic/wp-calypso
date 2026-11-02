@@ -42,7 +42,7 @@ interface EventCardProps {
 	recordTracksEvent?: RecordTracksEvent;
 }
 
-function SingleEventCard( {
+export function SingleEventCard( {
 	event,
 	shouldUseRouterLink,
 	recordTracksEvent,
@@ -61,15 +61,19 @@ function SingleEventCard( {
 					<HStack spacing={ 3 } justify="flex-start" alignment="center">
 						{ logo && <img src={ logo } alt={ logoAlt ?? '' } width={ 64 } height={ 64 } /> }
 						<VStack spacing={ 1 }>
-							<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
-								{ when }
-							</Text>
+							{ when && (
+								<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
+									{ when }
+								</Text>
+							) }
 							<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 								{ title }
 							</Heading>
-							<Text variant="muted" size={ 12 } lineHeight="16px">
-								{ subtitle }
-							</Text>
+							{ subtitle && (
+								<Text variant="muted" size={ 12 } lineHeight="16px">
+									{ subtitle }
+								</Text>
+							) }
 						</VStack>
 					</HStack>
 					<VStack spacing={ 4 }>
@@ -187,7 +191,10 @@ export default function EventCard( {
 			? getPressableExpansionOfferEvent( pressableHostingHref )
 			: null,
 		getAiMcpAnnouncement( aiMcpHref ),
-	].filter( ( event ): event is FeaturedEvent => !! event && now < new Date( event.endsAt ) );
+	].filter(
+		( event ): event is FeaturedEvent =>
+			!! event && ( event.endsAt === undefined || now < new Date( event.endsAt ) )
+	);
 
 	if ( ! events.length ) {
 		return null;

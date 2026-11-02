@@ -11,7 +11,7 @@ import JetpackLogo from 'calypso/components/jetpack-logo';
 import JetpackPlusWpComLogo from 'calypso/components/jetpack-plus-wpcom-logo';
 import SVGIcon from 'calypso/components/svg-icon';
 import WPCloudLogo from 'calypso/components/wp-cloud-logo';
-import { getConnectorLogoUrl } from 'calypso/jetpack-connect/connector-branding-config';
+import { getConnectorBranding } from 'calypso/jetpack-connect/connector-branding-config';
 import {
 	isCrowdsignalOAuth2Client,
 	isGravPoweredOAuth2Client,
@@ -110,14 +110,8 @@ export const useHeadingLogo = ( {
 			/>
 		);
 	} else if ( isUnifiedConnectionFlow ) {
-		const connectorLogo = getConnectorLogoUrl( connectorPlugins );
-		logo = (
-			<img
-				src={ connectorLogo }
-				alt="Jetpack Connection logo"
-				className="wp-login__connector-logo"
-			/>
-		);
+		const { logo: connectorLogo, logoAlt } = getConnectorBranding( connectorPlugins );
+		logo = <img src={ connectorLogo } alt={ logoAlt } className="wp-login__connector-logo" />;
 	} else if ( isJetpackApp ) {
 		logo = (
 			<img

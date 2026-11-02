@@ -946,7 +946,7 @@ const FeatureGroup = ( {
 	};
 	plansLength: number;
 } ) => {
-	const { allFeaturesList, intent, isExperimentVariant } = usePlansGridContext();
+	const { allFeaturesList, intent } = usePlansGridContext();
 	const [ firstSetOfFeatures ] = Object.keys( featureGroupMap );
 	const [ visibleFeatureGroups, setVisibleFeatureGroups ] = useState< string[] >( [
 		firstSetOfFeatures,
@@ -957,11 +957,7 @@ const FeatureGroup = ( {
 	// lists, so pairing it with a curated list mistitles the rows.
 	const featureObjects = filterUnusedFeaturesObject(
 		visibleGridPlans,
-		getPlanFeaturesObject(
-			allFeaturesList,
-			features,
-			isExperimentVariant && ! hasTailoredFeatureList( intent )
-		)
+		getPlanFeaturesObject( allFeaturesList, features, ! hasTailoredFeatureList( intent ) )
 	);
 
 	const isHiddenInMobile = ! visibleFeatureGroups.includes( featureGroup.slug );
@@ -1238,7 +1234,6 @@ const WrappedComparisonGrid = ( {
 	reflectStorageSelectionInPlanPrices,
 	showSimplifiedBillingDescription,
 	showBillingDescriptionForIncreasedRenewalPrice,
-	isExperimentVariant,
 	...otherProps
 }: ComparisonGridExternalProps ) => {
 	const gridContainerRef = useRef< HTMLDivElement >( null );
@@ -1291,7 +1286,6 @@ const WrappedComparisonGrid = ( {
 				showBillingDescriptionForIncreasedRenewalPrice={
 					showBillingDescriptionForIncreasedRenewalPrice
 				}
-				isExperimentVariant={ isExperimentVariant }
 			>
 				<ComparisonGrid
 					intervalType={ intervalType }

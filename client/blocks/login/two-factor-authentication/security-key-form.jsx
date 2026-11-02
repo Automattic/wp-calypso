@@ -29,6 +29,7 @@ class SecurityKeyForm extends Component {
 
 	state = {
 		isAuthenticating: false,
+		isDisabled: false,
 	};
 
 	componentDidMount() {
@@ -41,7 +42,15 @@ class SecurityKeyForm extends Component {
 		this.props
 			.loginUserWithSecurityKey()
 			.then( () => onSuccess() )
-			.catch( () => this.setState( { isAuthenticating: false } ) );
+			.catch( ( error ) =>
+				// Retrying would resend the same stale nonce and fail the same way. The
+				// page-level notice shows the server message and the login footer links
+				// back to /log-in, so stop offering a retry that cannot work.
+				this.setState( {
+					isAuthenticating: false,
+					isDisabled: error?.code === 'invalid_two_step_nonce',
+				} )
+			);
 	};
 
 	render() {
@@ -91,7 +100,7 @@ class SecurityKeyForm extends Component {
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
 						variant="primary"
-						disabled={ this.state.isAuthenticating }
+						disabled={ this.state.isAuthenticating || this.state.isDisabled }
 						type="submit"
 						accessibleWhenDisabled
 						__next40pxDefaultSize
