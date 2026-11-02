@@ -78,6 +78,7 @@ describe( '<PurchaseNotice />', () => {
 				'Your subscription is cancelled and you won’t be billed again. You’ll continue to have access to the plan until April 6, 2027.'
 			)
 		).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'shows the backup link in the cancelled notice for an Atomic site', async () => {
@@ -99,6 +100,7 @@ describe( '<PurchaseNotice />', () => {
 			'target',
 			'_blank'
 		);
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'shows the cancelled notice after the param is cleared from the URL', async () => {
@@ -120,6 +122,7 @@ describe( '<PurchaseNotice />', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
 
 		expect( screen.queryByText( /Your subscription is cancelled/ ) ).not.toBeInTheDocument();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'removes the notice params it shows, together, and keeps the rest', async () => {
