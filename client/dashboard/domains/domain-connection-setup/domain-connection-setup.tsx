@@ -17,7 +17,6 @@ import { __, sprintf } from '@wordpress/i18n';
 import { globe } from '@wordpress/icons';
 import { useState } from 'react';
 import { Card, CardBody } from '../../components/card';
-import InlineSupportLink from '../../components/inline-support-link';
 import ConnectionModeCard from './connection-mode-card';
 import DNSRecordsDataView from './dns-records-dataview';
 import DomainConnectCard from './domain-connect-card';
@@ -101,13 +100,8 @@ export default function DomainConnectionSetup( {
 			label: __( 'I have a copy of my DNS records' ),
 			content: (
 				<Text>
-					{ createInterpolateElement(
-						__(
-							'It’s rare, but things can go sideways. Keep a record of your DNS entries, either by copying them or exporting a <bindLink>BIND file</bindLink>, just in case.'
-						),
-						{
-							bindLink: <InlineSupportLink supportContext="import-dns-records" />,
-						}
+					{ __(
+						'It’s rare, but things can go sideways. Keep a record of your DNS entries, either by taking a screenshot or copying the text into a document, just in case.'
 					) }
 				</Text>
 			),

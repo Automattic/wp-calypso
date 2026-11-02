@@ -14,13 +14,7 @@ import DomainConnectionSetup from '../domain-connection-setup';
 // Mock InlineSupportLink to avoid async state update warnings
 jest.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
-	default: ( {
-		children,
-		supportContext,
-	}: {
-		children: React.ReactNode;
-		supportContext?: string;
-	} ) => <button data-support-context={ supportContext }>{ children }</button>,
+	default: ( { children }: { children: React.ReactNode } ) => <button>{ children }</button>,
 } ) );
 
 const createMockDomainMappingStatus = (
@@ -288,14 +282,14 @@ describe( 'DomainConnectionSetup', () => {
 			expect( screen.queryByText( /Download your DNS records/ ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'links "BIND file" to the Import DNS records support doc', async () => {
+		test( 'suggests a screenshot or a text copy of the records', async () => {
 			await renderAndExpandBackupStep();
 
-			const bindLink = screen.getByRole( 'button', { name: 'BIND file' } );
-			expect( bindLink ).toHaveAttribute( 'data-support-context', 'import-dns-records' );
-			expect( bindLink.parentElement ).toHaveTextContent(
-				'It’s rare, but things can go sideways. Keep a record of your DNS entries, either by copying them or exporting a BIND file, just in case.'
-			);
+			expect(
+				screen.getByText(
+					'It’s rare, but things can go sideways. Keep a record of your DNS entries, either by taking a screenshot or copying the text into a document, just in case.'
+				)
+			).toBeVisible();
 		} );
 	} );
 
