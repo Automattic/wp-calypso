@@ -683,28 +683,52 @@
 	line-height: 1.6;
 }
 
-.agency-site-wizard[data-step='start'] .agency-site-wizard__frame,
-.agency-site-wizard[data-step='start'] .agency-site-wizard__step-content {
+.agency-site-wizard:is( [data-step='start'], [data-step='choose'] ) .agency-site-wizard__frame,
+.agency-site-wizard:is( [data-step='start'], [data-step='choose'] )
+	.agency-site-wizard__step-content {
 	max-inline-size: 1080px;
 	padding-block: 0;
 }
 
-.agency-site-wizard:is( [data-step='new'], [data-step='host'], [data-step='authorize'] )
+.agency-site-wizard:is(
+		[data-step='new'],
+		[data-step='path'],
+		[data-step='host'],
+		[data-step='authorize']
+	)
 	.agency-site-wizard__frame,
-.agency-site-wizard:is( [data-step='new'], [data-step='host'], [data-step='authorize'] )
+.agency-site-wizard:is(
+		[data-step='new'],
+		[data-step='path'],
+		[data-step='host'],
+		[data-step='authorize']
+	)
 	.agency-site-wizard__step-content {
 	max-inline-size: 760px;
 }
 
-.agency-site-wizard:is( [data-step='start'], [data-step='new'], [data-step='host'] )
+.agency-site-wizard:is(
+		[data-step='start'],
+		[data-step='choose'],
+		[data-step='path'],
+		[data-step='new'],
+		[data-step='host']
+	)
 	.agency-site-wizard__intro {
 	text-align: center;
 	margin-inline: auto;
 	margin-block-end: 40px;
 }
 
-.agency-site-wizard[data-step='start'] .agency-site-wizard__choices {
+.agency-site-wizard:is( [data-step='start'], [data-step='choose'] ) .agency-site-wizard__choices {
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
+}
+
+.agency-site-wizard__intake-links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 8px 24px;
 }
 
 .agency-site-wizard__entry-options {
@@ -859,7 +883,7 @@
 	}
 
 	.agency-site-wizard__choices,
-	.agency-site-wizard[data-step='start'] .agency-site-wizard__choices,
+	.agency-site-wizard:is( [data-step='start'], [data-step='choose'] ) .agency-site-wizard__choices,
 	.agency-site-wizard__help {
 		grid-template-columns: minmax( 0, 1fr );
 	}
@@ -1014,4 +1038,44 @@
 	line-height: 1.6;
 	color: inherit;
 	max-inline-size: 400px;
+}
+
+// First-site entry B: one call to action, the three choices one step in.
+.agency-site-wizard__hero {
+	display: grid;
+	justify-items: center;
+	padding: 8px 32px 24px;
+	text-align: center;
+}
+
+.agency-site-wizard__hero-drawings {
+	display: flex;
+	justify-content: center;
+	gap: 48px;
+	margin-block-end: 32px;
+}
+
+.agency-site-wizard__hero-drawings .agency-site-wizard__illustration {
+	fill: none;
+	inline-size: 96px;
+	block-size: auto;
+}
+
+.agency-site-wizard__hero .agency-site-wizard__intro {
+	margin-block-end: 28px;
+}
+
+.agency-site-wizard__hero .agency-site-wizard__intro h2 {
+	font-size: 32px;
+	line-height: 1.25;
+}
+
+.agency-site-wizard .agency-site-wizard__hero .agency-site-wizard__hero-cta {
+	block-size: 48px;
+	padding-inline: 28px;
+	font-size: 15px;
+}
+
+.agency-site-wizard[data-entry='button'] .agency-sites-story {
+	margin-block-start: 48px;
 }
