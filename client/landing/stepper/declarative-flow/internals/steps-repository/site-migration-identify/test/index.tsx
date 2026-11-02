@@ -297,6 +297,7 @@ describe( 'SiteMigrationIdentify', () => {
 
 			expect( getInput() ).not.toHaveAttribute( 'readonly' );
 			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).toHaveFocus();
 			expect( goBack ).not.toHaveBeenCalled();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
@@ -597,6 +598,7 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
 			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( getInput() ).toHaveFocus();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 

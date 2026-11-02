@@ -301,7 +301,28 @@ const SiteMigrationIdentify: StepType< {
 	}, [] );
 
 	const isChecking = isReprintFlow && ! isVisible;
-	const changeAddress = isChecking || connectionIssue ? () => setSiteURL( '' ) : undefined;
+	const contentRef = useRef< HTMLDivElement >( null );
+	const [ isReturningToAddress, setIsReturningToAddress ] = useState( false );
+	const changeAddress =
+		isChecking || connectionIssue
+			? () => {
+					setSiteURL( '' );
+					setIsReturningToAddress( true );
+				}
+			: undefined;
+
+	// Change address unmounts itself, so focus would drop to the page. Once the field is
+	// editable again, it takes the focus instead.
+	useEffect( () => {
+		if ( ! isReturningToAddress ) {
+			return;
+		}
+		const input = contentRef.current?.querySelector< HTMLInputElement >( 'input[type="text"]' );
+		if ( input && ! input.readOnly ) {
+			input.focus();
+			setIsReturningToAddress( false );
+		}
+	}, [ isReturningToAddress, siteURL, isVisible, connectionIssue ] );
 	let title = translate( "Let's find your site" );
 	let subTitle = translate( 'Enter your current site address below to get started.' );
 	if ( connectionIssue === 'unreachable' ) {
@@ -357,7 +378,7 @@ const SiteMigrationIdentify: StepType< {
 					/>
 				}
 			>
-				<div className="account-template">
+				<div className="account-template" ref={ contentRef }>
 					{ ( isReprintFlow || isVisible ) && <Step.Heading text={ title } subText={ subTitle } /> }
 					{ stepContent }
 					{ changeAddress && (
