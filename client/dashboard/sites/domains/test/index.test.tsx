@@ -188,7 +188,7 @@ describe( '<SiteDomains>', () => {
 
 		await user.click( await screen.findByLabelText( 'Actions' ) );
 
-		expect( screen.getByText( 'Change site address' ) ).toBeVisible();
+		expect( await screen.findByText( 'Change site address' ) ).toBeVisible();
 	} );
 
 	test( 'hides "Change site address" action when the site is suspended', async () => {
@@ -265,6 +265,6 @@ describe( '<SiteDomains>', () => {
 		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
 		await user.click( actionsButtons[ 0 ] );
 
-		expect( screen.getByText( 'Make primary site address' ) ).toBeVisible();
+		expect( await screen.findByText( 'Make primary site address' ) ).toBeVisible();
 	} );
 } );
