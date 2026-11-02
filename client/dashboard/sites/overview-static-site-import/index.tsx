@@ -337,8 +337,7 @@ export function StaticSiteImportNotice( {
 								variant="secondary"
 								href={ previewUrl }
 								target="_blank"
-								// Keep the referrer: wpcomsh forwards logins referred by WordPress.com straight to SSO.
-								rel="noopener"
+								rel="noopener noreferrer"
 								icon={ external }
 								iconPosition="right"
 								onClick={ () => recordClick( 'preview_site' ) }
