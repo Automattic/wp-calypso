@@ -12,7 +12,8 @@ import Sidebar, {
 	SidebarNavigatorMenu,
 	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { isAgencyClientUser } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
@@ -63,6 +64,7 @@ const A4ASidebar = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	const isClientUser = useSelector( isAgencyClientUser );
 
 	const isNarrowView = useBreakpoint( '<660px' );
 
@@ -111,7 +113,7 @@ const A4ASidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			<SpacefastSidebarCard recordTracksEvent={ handleRecordTracksEvent } />
+			{ ! isClientUser && <SpacefastSidebarCard recordTracksEvent={ handleRecordTracksEvent } /> }
 
 			<SidebarFooter className="a4a-sidebar__footer">
 				<ul>
