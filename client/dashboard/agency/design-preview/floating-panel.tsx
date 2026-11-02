@@ -2,7 +2,7 @@ import { __ } from '@wordpress/i18n';
 import { Icon, chevronDown, chevronUp, closeSmall, reset } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import '../amplify/dev-state-controls.scss';
+import './floating-panel.scss';
 
 type Settings = { x: number; y: number; collapsed: boolean; hidden: boolean; advanced: boolean };
 const STORAGE_KEY = 'a4a-sites-migrations-panel-v2';
@@ -102,13 +102,13 @@ export default function FloatingPreviewPanel( {
 	}
 	return createPortal(
 		<aside
-			className="dashboard-amplify-dev-controls agency-design-preview-panel"
+			className="agency-design-preview-panel"
 			data-collapsed={ settings.collapsed }
 			style={ { left: settings.x, top: settings.y } }
 			aria-label={ title }
 		>
 			<div
-				className="dashboard-amplify-dev-controls__handle"
+				className="agency-design-preview-panel__handle"
 				onPointerDown={ ( event ) => {
 					if ( event.button !== 0 || ( event.target as HTMLElement ).closest( 'button' ) ) {
 						return;
@@ -154,7 +154,7 @@ export default function FloatingPreviewPanel( {
 						title={ settings.collapsed ? __( 'Expand' ) : __( 'Collapse' ) }
 						aria-label={ settings.collapsed ? __( 'Expand' ) : __( 'Collapse' ) }
 						aria-expanded={ ! settings.collapsed }
-						aria-controls="dashboard-amplify-dev-controls-body"
+						aria-controls="agency-design-preview-panel-body"
 						onClick={ () =>
 							onChange( ( previous ) => ( { ...previous, collapsed: ! previous.collapsed } ) )
 						}
@@ -174,7 +174,7 @@ export default function FloatingPreviewPanel( {
 					</button>
 				</div>
 			</div>
-			<div id="dashboard-amplify-dev-controls-body" hidden={ settings.collapsed }>
+			<div id="agency-design-preview-panel-body" hidden={ settings.collapsed }>
 				{ children }
 			</div>
 		</aside>,

@@ -139,7 +139,7 @@ export function useTermTooltip< T extends HTMLElement >( content: ReactNode ) {
 		<Popover
 			id={ id }
 			role="tooltip"
-			className={ isHandoff ? 'agency-term-tooltip is-handoff' : 'agency-term-tooltip' }
+			className="agency-term-tooltip"
 			anchor={ mode === 'cursor' ? cursorAnchor.current : ref.current }
 			placement={ mode === 'cursor' ? 'bottom-start' : 'bottom' }
 			offset={ 14 }
@@ -150,7 +150,9 @@ export function useTermTooltip< T extends HTMLElement >( content: ReactNode ) {
 			shift
 			onClose={ close }
 		>
-			{ content }
+			<div className="agency-term-tooltip__content" data-handoff={ isHandoff || undefined }>
+				{ content }
+			</div>
 		</Popover>
 	);
 

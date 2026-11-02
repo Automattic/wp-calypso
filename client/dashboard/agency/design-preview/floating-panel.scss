@@ -1,0 +1,63 @@
+.agency-design-preview-panel {
+	position: fixed;
+	z-index: 100000;
+	box-sizing: border-box;
+	padding: 10px;
+	border: 1px solid var( --color-neutral-70 );
+	border-radius: 8px;
+	background: color-mix( in srgb, var( --color-neutral-100 ) 92%, transparent );
+	backdrop-filter: blur( 12px );
+	box-shadow: 0 12px 32px var( --color-neutral-70 );
+	color: var( --color-neutral-0 );
+	font-size: 12px;
+}
+
+.agency-design-preview-panel[data-collapsed='true'] {
+	width: auto;
+}
+
+#agency-design-preview-panel-body {
+	max-height: calc( 100dvh - 80px );
+	overflow-y: auto;
+	scrollbar-width: thin;
+}
+
+.agency-design-preview-panel__handle {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 8px;
+	margin: -10px -10px 10px;
+	padding: 10px;
+	border-block-end: 1px solid var( --color-neutral-70 );
+	cursor: grab;
+	touch-action: none;
+	user-select: none;
+}
+
+.agency-design-preview-panel__handle:active {
+	cursor: grabbing;
+}
+
+.agency-design-preview-panel[data-collapsed='true'] .agency-design-preview-panel__handle {
+	margin-block-end: -10px;
+	border-block-end: 0;
+}
+
+.agency-design-preview-panel__reset {
+	width: 100%;
+	margin-block: 10px;
+	padding: 2px;
+	border: 0;
+	background: transparent;
+	color: var( --color-neutral-20 );
+	text-align: start;
+	text-decoration: underline;
+	cursor: pointer;
+}
+
+.agency-design-preview-panel__reset:focus-visible,
+.agency-design-preview-panel input:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}

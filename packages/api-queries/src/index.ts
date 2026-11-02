@@ -1,7 +1,6 @@
 export * from './query-client';
 
 export * from './agency';
-export * from './agency-amplify';
 export * from './agency-products';
 export * from './agency-referrals';
 export * from './agency-team';

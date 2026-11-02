@@ -265,7 +265,7 @@ export default function DesignPreviewControls( { surface }: { surface: 'sites' |
 				<>
 					<button
 						type="button"
-						className="dashboard-amplify-dev-controls__reset"
+						className="agency-design-preview-panel__reset"
 						onClick={ () =>
 							jumpToWizardStep(
 								state.wizardPosition?.journey === 'migrate'
