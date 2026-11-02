@@ -11,11 +11,11 @@ import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useEffect, useRef } from 'react';
 import { Card, CardBody } from '../../../components/card';
-import { getSpacefastUrl } from './constants';
-import SpacefastLogo from './spacefast-logo';
+import { getSpacefastUrl } from '../../components/spacefast/constants';
+import SpacefastLogo from '../../components/spacefast/spacefast-logo';
 import type { RecordTracksEvent } from '../../tiers/types';
 
-import './dev-tools-section.scss';
+import './spacefast-section.scss';
 
 /**
  * Leads the Dev tools page during the Spacefast launch, in both the dashboard

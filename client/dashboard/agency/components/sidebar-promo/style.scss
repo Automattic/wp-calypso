@@ -1,11 +1,13 @@
 @import '@wordpress/base-styles/variables';
-@import './brand';
 
 // Sits at the bottom of the sidebar column. a8c-for-agencies restyles it to
-// match its own sidebar.
-.a4a-spacefast-sidebar-card {
-	--a4a-spacefast-ink: #{$spacefast-ink};
-	--a4a-spacefast-green: #{$spacefast-green};
+// match its own sidebar. A promo themes its icon tile and badge through the
+// custom properties below.
+.a4a-sidebar-promo-card {
+	--a4a-sidebar-promo-icon-color: var( --dashboard__text-color );
+	--a4a-sidebar-promo-icon-background: var( --dashboard-header__border-color );
+	--a4a-sidebar-promo-badge-color: var( --dashboard__text-color );
+	--a4a-sidebar-promo-badge-background: var( --dashboard-header__border-color );
 	display: flex;
 	align-items: flex-start;
 	gap: $grid-unit-15;
@@ -22,7 +24,7 @@
 	}
 
 	// The label only, so the new-tab arrow beside it stays clean.
-	&:hover .a4a-spacefast-sidebar-card__link-label {
+	&:hover .a4a-sidebar-promo-card__link-label {
 		text-decoration: underline;
 	}
 
@@ -32,7 +34,7 @@
 	}
 }
 
-.a4a-spacefast-sidebar-card__logo {
+.a4a-sidebar-promo-card__icon {
 	display: flex;
 	flex-shrink: 0;
 	align-items: center;
@@ -40,8 +42,8 @@
 	inline-size: 32px;
 	block-size: 32px;
 	border-radius: $radius-small;
-	color: var( --a4a-spacefast-green );
-	background-color: var( --a4a-spacefast-ink );
+	color: var( --a4a-sidebar-promo-icon-color );
+	background-color: var( --a4a-sidebar-promo-icon-background );
 
 	svg {
 		inline-size: 20px;
@@ -49,7 +51,7 @@
 	}
 }
 
-.a4a-spacefast-sidebar-card__text {
+.a4a-sidebar-promo-card__text {
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
@@ -58,7 +60,7 @@
 	line-height: 16px;
 }
 
-.a4a-spacefast-sidebar-card__title {
+.a4a-sidebar-promo-card__title {
 	display: flex;
 	align-items: center;
 	gap: $grid-unit-10;
@@ -67,21 +69,21 @@
 	line-height: 20px;
 }
 
-.a4a-spacefast-sidebar-card__badge {
+.a4a-sidebar-promo-card__badge {
 	padding: 0 6px;
 	border-radius: 2px;
 	font-size: 11px;
 	line-height: 16px;
-	color: var( --a4a-spacefast-ink );
-	background-color: var( --a4a-spacefast-green );
+	color: var( --a4a-sidebar-promo-badge-color );
+	background-color: var( --a4a-sidebar-promo-badge-background );
 }
 
 // The A4A dashboard defines no muted text color, so this falls back to full contrast.
-.a4a-spacefast-sidebar-card__description {
+.a4a-sidebar-promo-card__description {
 	color: var( --dashboard__text-muted-color, var( --dashboard__text-color ) );
 }
 
-.a4a-spacefast-sidebar-card__link {
+.a4a-sidebar-promo-card__link {
 	margin-block-start: $grid-unit-05;
 	font-weight: 500;
 }

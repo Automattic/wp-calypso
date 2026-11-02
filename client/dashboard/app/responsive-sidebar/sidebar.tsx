@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
-import SpacefastSidebarCard from '../../agency/components/spacefast-promo';
+import SidebarPromo from '../../agency/components/sidebar-promo';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
@@ -76,7 +76,7 @@ function AgencySidebarPromo() {
 	if ( ! supports.agency || ! agency || agency.isClientUser ) {
 		return null;
 	}
-	return <SpacefastSidebarCard recordTracksEvent={ recordTracksEvent } />;
+	return <SidebarPromo recordTracksEvent={ recordTracksEvent } />;
 }
 
 function PrimaryMenuSidebar() {
