@@ -14,6 +14,19 @@
 		min-width: 0;
 	}
 
+	.saved-snapshot-card__video {
+		margin-block-start: 24px;
+		aspect-ratio: 16 / 9;
+
+		iframe {
+			display: block;
+			width: 100%;
+			height: 100%;
+			border: 0;
+			border-radius: 4px;
+		}
+	}
+
 	.saved-snapshot-card__image {
 		flex: none;
 		width: 160px;

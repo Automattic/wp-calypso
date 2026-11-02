@@ -271,24 +271,18 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		expect( windowOpen ).toHaveBeenCalledWith( URL_SAVE.URL, '_blank', 'noopener,noreferrer' );
 	} );
 
-	it( 'plays a saved YouTube video in the card', async () => {
+	it( 'embeds a saved YouTube video in the card in place of its image', async () => {
 		await renderSnapshots( [ YOUTUBE_SAVE, URL_SAVE ] );
 		const card = getCard( YOUTUBE_SAVE.title );
-		const play = await within( card ).findByRole( 'link', { name: 'Play button' } );
+
+		expect( within( card ).getByTitle( YOUTUBE_SAVE.title ) ).toHaveAttribute(
+			'src',
+			'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ'
+		);
 		expect( card.querySelector( '.saved-snapshot-card__image' ) ).toBeNull();
 		expect(
 			getCard( URL_SAVE.title ).querySelector( '.saved-snapshot-card__image' )
 		).toBeVisible();
-
-		await userEvent.setup().click( play );
-
-		const player = card.querySelector( 'iframe' );
-		expect( player ).toHaveAttribute(
-			'src',
-			'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1'
-		);
-		expect( player ).toHaveAttribute( 'title', YOUTUBE_SAVE.title );
-		expect( windowOpen ).not.toHaveBeenCalled();
 	} );
 
 	it( 'shows a YouTube link without a well-formed video ID as a page', async () => {
@@ -296,7 +290,7 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		await renderSnapshots( [ badId ] );
 		const card = getCard( badId.title );
 
-		expect( within( card ).queryByRole( 'link', { name: 'Play button' } ) ).toBeNull();
+		expect( card.querySelector( 'iframe' ) ).toBeNull();
 		expect( card.querySelector( '.saved-snapshot-card__image' ) ).toBeVisible();
 	} );
 
