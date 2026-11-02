@@ -10,6 +10,14 @@ import AccountDeletionSection from '../profile-deletion';
 import PersonalDetailsSection from '../profile-personal-details';
 import GravatarLogo from './gravatar-logo';
 
+function GravatarProfileLink( { children }: { children?: React.ReactNode } ) {
+	return (
+		<span style={ { whiteSpace: 'nowrap' } }>
+			<GravatarLogo /> <ExternalLink href="https://gravatar.com/profile">{ children }</ExternalLink>
+		</span>
+	);
+}
+
 export default function Account() {
 	const { user } = useAuth();
 
@@ -24,15 +32,13 @@ export default function Account() {
 								sprintf(
 									/* translators: %s: the user's email address */
 									__(
-										'Set the name, avatar, and details that identify you on WordPress.com. Most of them are also your <logo/><gravatar>Gravatar profile</gravatar>, shown on other sites when you comment with <strong>%s</strong>.'
+										'Set the name, avatar, and details that identify you on WordPress.com. Most of them are also your <gravatar>Gravatar profile</gravatar>, shown on other sites when you comment with <strong>%s</strong>.'
 									),
 									user.email
 								),
 								{
 									strong: <strong />,
-									logo: <GravatarLogo />,
-									// @ts-expect-error children prop is injected by createInterpolateElement
-									gravatar: <ExternalLink href="https://gravatar.com/profile" />,
+									gravatar: <GravatarProfileLink />,
 								}
 							) }{ ' ' }
 							<InlineSupportLink supportContext="manage-profile" />
