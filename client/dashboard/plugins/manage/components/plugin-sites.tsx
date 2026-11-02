@@ -90,6 +90,7 @@ export const PluginSites = ( { selectedPluginSlug }: { selectedPluginSlug: strin
 					inlineStart: 'medium',
 					inlineEnd: 'medium',
 				} }
+				style={ { flexDirection: 'column', alignItems: 'stretch' } }
 			>
 				<VStack spacing={ 4 }>
 					<SectionHeader
