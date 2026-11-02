@@ -362,6 +362,26 @@ function designLabel( index: number, count: number ): string {
 	);
 }
 
+function candidateLabel( candidate: Candidate, index: number, count: number ): string {
+	const label = designLabel( index, count );
+	switch ( candidate.status ) {
+		case 'failed':
+			return sprintf(
+				/* translators: %s is the design's label, such as "Design 2 of 4". */
+				__( '%s, couldn’t be made' ),
+				label
+			);
+		case 'queued':
+		case 'running':
+			return sprintf(
+				/* translators: %s is the design's label, such as "Design 2 of 4". */
+				__( '%s, still being made' ),
+				label
+			);
+	}
+	return label;
+}
+
 function CandidateCard( {
 	siteId,
 	redesignId,
@@ -370,6 +390,7 @@ function CandidateCard( {
 	count,
 	isSelected,
 	isLocked,
+	hasOtherReady,
 	onSelect,
 	onPreviewStateChange,
 }: {
@@ -380,6 +401,7 @@ function CandidateCard( {
 	count: number;
 	isSelected: boolean;
 	isLocked: boolean;
+	hasOtherReady: boolean;
 	onSelect: () => void;
 	onPreviewStateChange: ( generationId: string, state: PreviewState ) => void;
 } ) {
@@ -403,7 +425,12 @@ function CandidateCard( {
 					<SiteSkeleton className="site-redesign__skeleton" />
 				) }
 				{ candidate.status === 'failed' && (
-					<Text>{ candidate.error?.message ?? __( 'This design could not be made.' ) }</Text>
+					<VStack className="site-redesign__failed" spacing={ 1 }>
+						<Text>{ candidate.error?.message ?? __( 'This design could not be made.' ) }</Text>
+						{ hasOtherReady && (
+							<Text>{ __( 'You can still choose one of the other designs.' ) }</Text>
+						) }
+					</VStack>
 				) }
 			</div>
 			<Text weight={ 500 }>
@@ -417,7 +444,7 @@ function CandidateCard( {
 			<button
 				type="button"
 				className="site-redesign__select"
-				aria-label={ designLabel( index, count ) }
+				aria-label={ candidateLabel( candidate, index, count ) }
 				aria-pressed={ isSelected }
 				disabled={ isLocked || candidate.status !== 'succeeded' }
 				onClick={ onSelect }
@@ -782,6 +809,12 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 							isSelected={ candidate.id === selected?.id }
 							// The bar names the design being chosen; it can't move mid-request.
 							isLocked={ choose.isPending }
+							hasOtherReady={
+								redesign.status === 'preview_ready' &&
+								batch.some(
+									( other ) => other.id !== candidate.id && previewStates[ other.id ] === 'ready'
+								)
+							}
 							onSelect={ () => setSelectedId( candidate.id ) }
 							onPreviewStateChange={ onPreviewStateChange }
 						/>
