@@ -88,6 +88,7 @@ describe( 'DifmOfferDeepLink', () => {
 			'calypso_dashboard_upsell_impression',
 			expect.objectContaining( { source: 'site-overview' } )
 		);
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
 	test( 'does not open the offer for a user in control, and clears the params', async () => {

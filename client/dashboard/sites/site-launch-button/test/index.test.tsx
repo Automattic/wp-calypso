@@ -1,11 +1,10 @@
 /**
- * @vitest-environment jsdom
+ * @jest-environment jsdom
  */
 
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { vi } from 'vitest';
 import { SiteLaunchButton } from '..';
 import { render } from '../../../test-utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -39,6 +38,22 @@ const mockDomainsApi = ( domains: DomainSummary[] = [] ) => {
 		.query( true )
 		.reply( 200, { domains } );
 };
+
+const mockPendingFunnelApi = ( response: object ) =>
+	nock( 'https://public-api.wordpress.com' )
+		.get( '/wpcom/v2/wow-funnel/pending' )
+		.query( true )
+		.reply( 200, response );
+
+const createAtomicFreeSite = (): Site =>
+	createMockSite( {
+		is_wpcom_atomic: true,
+		plan: {
+			product_slug: 'free_plan',
+			product_name: 'Free',
+			is_free: true,
+		},
+	} as Partial< Site > );
 
 const mockLaunchApi = () =>
 	nock( 'https://public-api.wordpress.com' )
@@ -215,7 +230,7 @@ describe( '<SiteLaunchButton>', () => {
 		const launchScope = mockLaunchApi();
 
 		const originalLocation = window.location;
-		const assign = vi.fn();
+		const assign = jest.fn();
 		Object.defineProperty( window, 'location', {
 			writable: true,
 			value: {
@@ -226,8 +241,6 @@ describe( '<SiteLaunchButton>', () => {
 				assign,
 			},
 		} );
-		const replaceState = vi.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
-
 		try {
 			render(
 				<SiteLaunchButton
@@ -244,17 +257,40 @@ describe( '<SiteLaunchButton>', () => {
 			);
 
 			const launchButton = await screen.findByRole( 'button', { name: 'Launch your site' } );
-			replaceState.mockClear();
-
 			await user.click( launchButton );
 
 			await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
-			await waitFor( () => expect( replaceState ).toHaveBeenCalled() );
+			await waitFor( () => expect( launchButton ).not.toHaveClass( 'is-busy' ) );
 			expect( assign ).not.toHaveBeenCalled();
 		} finally {
-			replaceState.mockRestore();
 			Object.defineProperty( window, 'location', { writable: true, value: originalLocation } );
 		}
+	} );
+
+	test( 'sends a preview site to plans instead of launching it', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		mockPendingFunnelApi( {
+			pending: false,
+			preview_sites: [ { blog_id: 1, site_slug: 'kaonashi.wordpress.com' } ],
+		} );
+
+		render( <SiteLaunchButton site={ createAtomicFreeSite() } tracksContext="test" /> );
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		expect( launchLink ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/plans/kaonashi.wordpress.com' )
+		);
+	} );
+
+	test( 'an Atomic Free site that is not a preview site keeps the launch flow', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+		mockPendingFunnelApi( { pending: false } );
+
+		render( <SiteLaunchButton site={ createAtomicFreeSite() } tracksContext="test" /> );
+
+		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
+		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
 	} );
 
 	test( 'renders a link to the launch flow for a free site without an immediate launch', async () => {

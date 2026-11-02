@@ -9,6 +9,7 @@ import {
 import { __ } from '@wordpress/i18n';
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../app/locale';
 import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { DataViewsCard } from '../../../components/dataviews';
@@ -37,6 +38,8 @@ const WooPaymentsLearnMoreModal = lazy(
 		)
 );
 
+const ADD_TO_SITE_PARAMS = [ 'add-woopayments-to-site' ] as const;
+
 export default function EarnWooPayments() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
@@ -59,6 +62,12 @@ export default function EarnWooPayments() {
 	const router = useRouter();
 	const isApprovalGated = useIsApprovalGated();
 	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
+	const [ isAddSiteRequested, setIsAddSiteRequested ] = useState( false );
+	useConsumeSearchParams( ADD_TO_SITE_PARAMS, {
+		when: ( params ) => params[ 'add-woopayments-to-site' ] === 'true',
+		onConsume: () => setIsAddSiteRequested( true ),
+	} );
+	const handleAddSiteAutoOpen = useCallback( () => setIsAddSiteRequested( false ), [] );
 
 	const navigateToSiteSetup = useCallback(
 		( siteId: number ) =>
@@ -82,6 +91,8 @@ export default function EarnWooPayments() {
 			onSelectSite={ navigateToSiteSetup }
 			shouldUseRouterLink
 			isApprovalGated={ isApprovalGated }
+			autoOpen={ isAddSiteRequested }
+			onAutoOpen={ handleAddSiteAutoOpen }
 		/>
 	);
 
