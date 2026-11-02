@@ -24,6 +24,13 @@
 		"start": "./cli.js",
 		"test": "rm -rf test/output && jest"
 	},
+	"jest": {
+		"preset": "../../test/packages/jest-preset.js",
+		"testMatch": [
+			"<rootDir>/**/test/*.[jt]s?(x)",
+			"!**/examples/**"
+		]
+	},
 	"dependencies": {
 		"@automattic/babel-plugin-i18n-calypso": "workspace:^",
 		"@babel/core": "^7.29.7",
