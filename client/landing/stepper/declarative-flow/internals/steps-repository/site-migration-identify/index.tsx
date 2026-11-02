@@ -253,6 +253,7 @@ const SiteMigrationIdentify: StepType< {
 				from?: string;
 				host?: string;
 				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
 		  }
 		| undefined;
 } > = function ( { navigation, flow, checkOnArrival = false } ) {
@@ -263,7 +264,13 @@ const SiteMigrationIdentify: StepType< {
 	const handleSubmit = useCallback(
 		async (
 			action: SiteMigrationIdentifyAction,
-			data?: { platform: string; from: string; host?: string; isWpcom?: boolean }
+			data?: {
+				platform: string;
+				from: string;
+				host?: string;
+				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
+			}
 		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
@@ -309,12 +316,16 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url, platform_data }, hostingProviderSlug ) =>
+			onComplete={ (
+				{ platform, url, platform_data, static_site_importable },
+				hostingProviderSlug
+			) =>
 				handleSubmit( 'continue', {
 					platform,
 					from: url,
 					host: hostingProviderSlug,
 					...( isReprintFlow && platform_data?.is_wpcom ? { isWpcom: true } : {} ),
+					...( static_site_importable ? { staticSiteImportable: true } : {} ),
 				} ).catch( () => setSiteURL( '' ) )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }

@@ -11,6 +11,8 @@ export type UrlData = {
 	url: string;
 	platform: ImporterPlatform;
 	site_health?: 'ok' | 'unreachable' | 'server_error' | 'blocked' | 'auth_required' | 'not_found';
+	// A working site on a known platform other than WordPress.
+	static_site_importable?: boolean;
 	platform_data?: {
 		is_wpcom: boolean;
 		is_wpengine: boolean;
