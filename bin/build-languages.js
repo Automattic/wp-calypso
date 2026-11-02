@@ -36,6 +36,18 @@ function pick( object, keys ) {
 	return result;
 }
 
+// Bounded so a language's ~2,600 files aren't all open at once.
+async function writeFiles( files, concurrency = 64 ) {
+	let next = 0;
+	const worker = async () => {
+		while ( next < files.length ) {
+			const [ filepath, data ] = files[ next++ ];
+			await writeFile( filepath, data );
+		}
+	};
+	await Promise.all( Array.from( { length: concurrency }, worker ) );
+}
+
 // Create languages directory
 function createLanguagesDir() {
 	return fs.mkdirSync( OUTPUT_PATH, { recursive: true } );
@@ -105,7 +117,7 @@ async function downloadLanguages( languageRevisions ) {
 }
 
 // Split language translations into chunks
-function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
+async function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 	console.log( 'Building language chunks...' );
 
 	const successfullyDownloadedLanguages = downloadedLanguages.filter( ( { failed } ) => ! failed );
@@ -182,7 +194,8 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 			chunks[ chunkName ] = [ ...strings ];
 		}
 
-		successfullyDownloadedLanguages.forEach( ( { langSlug, languageTranslations } ) => {
+		for ( const { langSlug, languageTranslations } of successfullyDownloadedLanguages ) {
+			const files = [];
 			const languageChunks = {};
 			for ( const [ chunkName, stringIds ] of Object.entries( chunks ) ) {
 				const chunkTranslations = pick( languageTranslations, stringIds );
@@ -219,7 +232,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				OUTPUT_PATH,
 				`${ langSlug }-${ LANGUAGE_MANIFEST_FILENAME }`
 			);
-			fs.writeFileSync( manifestFilepathJson, manifestJsonData );
+			files.push( [ manifestFilepathJson, manifestJsonData ] );
 
 			const manifestJsData = `var i18nLanguageManifest = ${ manifestJsonData }`;
 			const manifestFilepathJs = path.format( {
@@ -227,7 +240,7 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 				base: null,
 				ext: '.js',
 			} );
-			fs.writeFileSync( manifestFilepathJs, manifestJsData );
+			files.push( [ manifestFilepathJs, manifestJsData ] );
 
 			// Write language translation chunks
 			Object.entries( languageChunks ).forEach( ( [ chunkFilename, chunkTranslations ] ) => {
@@ -239,16 +252,18 @@ function buildLanguageChunks( downloadedLanguages, languageRevisions ) {
 
 				const chunkFilenameJson = chunkId + '.json';
 				const chunkFilepathJson = path.join( OUTPUT_PATH, `${ langSlug }-${ chunkFilenameJson }` );
-				fs.writeFileSync( chunkFilepathJson, chunkJsonData );
+				files.push( [ chunkFilepathJson, chunkJsonData ] );
 
 				const chunkFilepathJs = path.format( {
 					...path.parse( chunkFilepathJson ),
 					base: null,
 					ext: '.js',
 				} );
-				fs.writeFileSync( chunkFilepathJs, chunkJsData );
+				files.push( [ chunkFilepathJs, chunkJsData ] );
 			} );
-		} );
+
+			await writeFiles( files );
+		}
 
 		console.log( 'Updating language revisions...' );
 
@@ -273,7 +288,7 @@ async function run() {
 	createLanguagesDir();
 	const languageRevisions = await downloadLanguagesRevions();
 	const downloadedLanguages = await downloadLanguages( languageRevisions );
-	buildLanguageChunks( downloadedLanguages, languageRevisions );
+	await buildLanguageChunks( downloadedLanguages, languageRevisions );
 }
 
 run();
