@@ -1,19 +1,13 @@
-import SiteCard from '../parts/site-card';
+import SiteCard, { getHeaderSite } from '../parts/site-card';
 import ReactionsNote from './reactions';
 import type { Note } from '../../types';
 
 export default function FollowNote( { note }: { note: Note } ) {
-	const siteBlock = note.header?.[ 0 ];
-	const siteUrl = siteBlock?.ranges?.[ 0 ]?.url;
+	const headerSite = getHeaderSite( note.header );
 
 	return (
 		<>
-			{ siteBlock?.text && siteUrl && (
-				<SiteCard
-					site={ { name: siteBlock.text, icon: siteBlock.media?.[ 0 ]?.url ?? '' } }
-					url={ siteUrl }
-				/>
-			) }
+			{ headerSite && <SiteCard { ...headerSite } /> }
 			<ReactionsNote note={ note } />
 		</>
 	);
