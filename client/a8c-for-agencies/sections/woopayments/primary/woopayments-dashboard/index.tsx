@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
@@ -49,19 +49,15 @@ const WooPaymentsDashboard = () => {
 		[ dispatch ]
 	);
 
-	const [ autoOpenAddSite ] = useState(
-		() => getQueryArg( window.location.href, ADD_TO_SITE_PARAM ) === 'true'
-	);
-
-	useEffect( () => {
-		if ( autoOpenAddSite ) {
-			window.history.replaceState(
-				null,
-				'',
-				removeQueryArgs( window.location.pathname + window.location.search, ADD_TO_SITE_PARAM )
-			);
-		}
-	}, [ autoOpenAddSite ] );
+	// Read on every render: a page.js navigation to this page with the param keeps this instance.
+	const isAddSiteRequested = getQueryArg( window.location.href, ADD_TO_SITE_PARAM ) === 'true';
+	const removeAddSiteParam = useCallback( () => {
+		window.history.replaceState(
+			null,
+			'',
+			removeQueryArgs( window.location.pathname + window.location.search, ADD_TO_SITE_PARAM )
+		);
+	}, [] );
 
 	const navigateToSiteSetup = useCallback( ( siteId: number ) => {
 		page.redirect( addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } ) );
@@ -122,7 +118,8 @@ const WooPaymentsDashboard = () => {
 									excludedSiteIds={ excludedSiteIds }
 									recordTracksEvent={ recordTracks }
 									onSelectSite={ navigateToSiteSetup }
-									autoOpen={ autoOpenAddSite }
+									autoOpen={ isAddSiteRequested }
+									onAutoOpen={ removeAddSiteParam }
 								/>
 							) }
 						</div>
