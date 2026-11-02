@@ -12,15 +12,7 @@ const redirect = ( { path } ) => {
 	return page.redirect( '/comments/all' );
 };
 
-// wp-admin shows a confirmation screen for these, so an email link can't act on its own.
-const COMMENT_ACTIONS = [ 'approve', 'trash', 'spam', 'delete' ];
-
-export const getCommentAdminPath = ( { query } ) =>
-	`comment.php?action=${ COMMENT_ACTIONS.includes( query?.action ) ? query.action : 'editcomment' }`;
-
-const redirectToCommentIfDuplicatedView = ( wpAdminPath ) => ( context, next ) => {
-	let url = typeof wpAdminPath === 'function' ? wpAdminPath( context ) : wpAdminPath;
-
+const redirectToCommentIfDuplicatedView = ( url ) => ( context, next ) => {
 	if ( context.params.commentStatus !== 'all' ) {
 		url = addQueryArgs( url, {
 			comment_status:
@@ -55,11 +47,14 @@ export default function () {
 	);
 
 	// Comment View
-	page(
-		'/comment/:site/:comment',
-		siteSelection,
-		redirectToCommentIfDuplicatedView( getCommentAdminPath )
-	);
+	page( '/comment/:site/:comment', siteSelection, ( context, next ) => {
+		// wp-admin asks for confirmation on these, so email action links stay safe.
+		const { action } = context.query;
+		const adminAction = [ 'approve', 'trash', 'spam', 'delete' ].includes( action )
+			? action
+			: 'editcomment';
+		redirectToCommentIfDuplicatedView( `comment.php?action=${ adminAction }` )( context, next );
+	} );
 
 	// Redirect
 	page(
