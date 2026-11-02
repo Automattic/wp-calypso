@@ -73,5 +73,5 @@ export function useRenewalPricingExperiment(
 }
 
 export function isRenewalPricingTreatment( variationName?: string | null ) {
-	return Boolean( variationName );
+	return variationName === 'crossed_price';
 }
