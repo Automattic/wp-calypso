@@ -1,7 +1,10 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { rawUserPreferencesQuery, userPurchasesQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
+import { useRouterState } from '@tanstack/react-router';
+import { act, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import PurchasesList from '../index';
@@ -33,6 +36,21 @@ jest.mock( '../../../app/router/me', () => {
 } );
 
 const API = 'https://public-api.wordpress.com';
+
+const PURCHASE = {
+	product_name: 'Personal',
+	product_slug: 'personal-bundle',
+	product_type: 'bundle',
+};
+
+// Mounts the page with the navigation that brings its params, as a route change does, so the
+// page first renders while the router is still pending.
+function PurchasesListAfterNavigation() {
+	const hasArrived = useRouterState( {
+		select: ( state ) => state.location.pathname !== '/',
+	} );
+	return hasArrived ? <PurchasesList /> : null;
+}
 
 function mockRequests( purchases: Partial< Purchase >[] = [], purchasesDelay = 0 ) {
 	nock( API )
@@ -75,10 +93,7 @@ describe( 'removed purchase notice', () => {
 	} );
 
 	test( 'hides the notice when the removed purchase comes back', async () => {
-		mockRequests(
-			[ { ID: '5', product_name: 'Personal', blog_id: '1', user_id: '1' } as never ],
-			200
-		);
+		mockRequests( [ { ...PURCHASE, ID: '5', blog_id: '1', user_id: '1' } as never ], 200 );
 		window.history.replaceState( null, '', '/me/billing/purchases?removed=plan&removedId=5' );
 
 		render( <PurchasesList /> );
@@ -88,5 +103,24 @@ describe( 'removed purchase notice', () => {
 		await waitFor( () =>
 			expect( screen.queryByText( /Your plan has been removed/ ) ).not.toBeInTheDocument()
 		);
+		expect( screen.getByText( 'Personal' ) ).toBeVisible();
+	} );
+
+	test( 'keeps the notice hidden when the removed purchase came back before the page loaded', async () => {
+		mockRequests();
+		const queryClient = new QueryClient( {
+			defaultOptions: { queries: { retry: false, staleTime: Infinity } },
+		} );
+		queryClient.setQueryData( rawUserPreferencesQuery().queryKey, {} );
+		queryClient.setQueryData( userPurchasesQuery().queryKey, [
+			{ ...PURCHASE, ID: 5, blog_id: 1, user_id: 1 } as never,
+		] );
+
+		const { router } = render( <PurchasesListAfterNavigation />, { queryClient } );
+		act( () => router.history.push( '/me/billing/purchases?removed=plan&removedId=5' ) );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( await screen.findByText( 'Personal' ) ).toBeVisible();
+		expect( screen.queryByText( /Your plan has been removed/ ) ).not.toBeInTheDocument();
 	} );
 } );

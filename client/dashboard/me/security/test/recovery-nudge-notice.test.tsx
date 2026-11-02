@@ -62,6 +62,24 @@ describe( '<RecoveryNudgeNotice>', () => {
 		);
 	} );
 
+	test( 'shows the dismissed notice again when a later link brings the param', async () => {
+		setUrl( '?verified=1' );
+		const user = userEvent.setup();
+
+		const { recordTracksEvent, router } = render( <RecoveryNudgeNotice /> );
+
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+		act( () => router.history.push( '/me/security?verified=1' ) );
+
+		expect( await screen.findByText( /Set up at least one recovery option/ ) ).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 3 );
+		expect( recordTracksEvent ).toHaveBeenLastCalledWith(
+			'calypso_dashboard_security_recovery_notice_impression'
+		);
+	} );
+
 	test( 'records a click event when the recovery CTA is followed', async () => {
 		setUrl( '?verified=1' );
 		const user = userEvent.setup();

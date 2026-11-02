@@ -125,8 +125,10 @@ describe( '<PurchaseNotice />', () => {
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 	} );
 
-	test( 'removes the notice params it shows, together, and keeps the rest', async () => {
-		setSearch( '?plan_changed=true&delayed_downgrade_scheduled=true&upgraded=true&keep=1' );
+	test( 'removes the notice params it shows and keeps the rest', async () => {
+		setSearch(
+			'?cancelled=true&intent=auto-renew&downgraded=true&plan_changed=true&delayed_downgrade_scheduled=true&upgraded=true&keep=1'
+		);
 		render( <PurchaseNotice purchase={ makePurchase() } /> );
 
 		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
