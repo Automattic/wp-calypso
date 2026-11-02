@@ -4,7 +4,7 @@
 import { queryClient } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { focusManager } from '@tanstack/react-query';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
@@ -64,6 +64,8 @@ const refused = ( extra = {} ) =>
 		findings: [ { ...finding( 'source_connection_failed', 'failure' ), resolution: 'retry' } ],
 		...extra,
 	} );
+
+const lastAttempt = ( code: string ) => `The last attempt ran into a problem: ${ code } label`;
 
 const connectedConfiguration = () => ( {
 	...configuration,
@@ -190,11 +192,11 @@ describe( 'WordPressMigration', () => {
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'source_connection_failed label' ) ).toBeVisible();
+		expect( await screen.findByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
 		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
 
 		// Connected in another tab, then back to this one. The source may still refuse a run, so the refusal stays,
-		// without a success notice beside it, but starting is all that's left to do.
+		// without a success notice beside it, and the steps give way to how the source reads now.
 		mockApi().get( statusPath ).query( true ).reply( 200, refused() );
 		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
 		act( () => focusManager.setFocused( true ) );
@@ -202,10 +204,11 @@ describe( 'WordPressMigration', () => {
 		await waitFor( () =>
 			expect( screen.queryByRole( 'link', { name: /Install the plugin/ } ) ).not.toBeInTheDocument()
 		);
-		expect( screen.getByText( 'source_connection_failed label' ) ).toBeVisible();
+		expect( screen.getByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
 		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
-		// After a refusal, the steps stay up to check against.
-		expect( screen.getByText( /Install and activate/ ) ).toBeVisible();
+		expect( screen.getByText( /appears to have the plugin installed/ ) ).toBeVisible();
+		expect( screen.queryByText( /Install and activate/ ) ).not.toBeVisible();
+		expect( screen.getByRole( 'button', { name: /Having trouble/ } ) ).toBeVisible();
 
 		const configure = mockApi()
 			.post( configurePath, { source_connection: { method: 'manual-wpcom-install' } } )
@@ -237,7 +240,7 @@ describe( 'WordPressMigration', () => {
 
 		render( <WordPressMigration site={ site } />, { queryClient } );
 
-		expect( await screen.findByText( 'source_connection_failed label' ) ).toBeVisible();
+		expect( await screen.findByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
 
 		// The source is connected, so starting over doesn't need checking first.
 		const configure = mockApi().post( configurePath ).reply( 200, configuration );
@@ -311,6 +314,7 @@ describe( 'WordPressMigration', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
 		).toBeVisible();
+		expect( screen.getByText( lastAttempt( 'migration_failed' ) ) ).toBeVisible();
 		await waitFor( () =>
 			expect( screen.getByRole( 'button', { name: /Having trouble/ } ) ).toBeEnabled()
 		);
@@ -324,6 +328,32 @@ describe( 'WordPressMigration', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+	} );
+
+	it( 'keeps what stopped the run on screen when going back to a connected source', async () => {
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply(
+				200,
+				migration( 'failed', {
+					phase: 'migration',
+					findings: [ { ...finding( 'generic_failure', 'failure' ), resolution: 'retry' } ],
+				} )
+			);
+		mockApi().get( configurePath ).query( true ).reply( 200, connectedConfiguration() );
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Back to setup' } ) );
+
+		expect(
+			await screen.findByRole( 'heading', { name: 'Ready to migrate example.com' } )
+		).toBeVisible();
+		expect( screen.getByText( lastAttempt( 'generic_failure' ) ) ).toBeVisible();
+		expect( screen.queryByText( 'Plugin installed and connected' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( /appears to have the plugin installed/ ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /Having trouble/ } ) ).toBeVisible();
 	} );
 
 	// A finding our team takes over too: a customer who took their migration back can still try again.
@@ -370,7 +400,7 @@ describe( 'WordPressMigration', () => {
 		expect(
 			await screen.findByRole( 'heading', { name: 'Install our plugin to start the migration' } )
 		).toBeVisible();
-		expect( screen.getByText( 'source_connection_failed label' ) ).toBeVisible();
+		expect( screen.getByText( lastAttempt( 'source_connection_failed' ) ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 		// Our team can take it from here instead.
 		expect( screen.getByRole( 'link', { name: 'handle the migration for you' } ) ).toHaveAttribute(
@@ -390,10 +420,11 @@ describe( 'WordPressMigration', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Start the migration' } ) );
 
 		// The source isn't connected and the key was never looked at, so it checks first.
-		expect( screen.getByRole( 'dialog' ) ).toHaveTextContent(
-			/isn’t connected to WordPress.com yet/
+		const dialog = screen.getByRole( 'dialog', { name: 'Have you connected your site?' } );
+		expect( dialog ).toHaveTextContent( /haven’t been able to confirm/ );
+		await userEvent.click(
+			within( dialog ).getByRole( 'button', { name: 'Start the migration' } )
 		);
-		await userEvent.click( screen.getByRole( 'button', { name: 'Start anyway' } ) );
 
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 		expect( configure.isDone() ).toBe( true );

@@ -88,6 +88,13 @@
 	}
 }
 
+// Centered on the first line of text, as above.
+.wordpress-migration__connected-hint svg {
+	flex-shrink: 0;
+	margin-block-start: 1px;
+	fill: var( --wpds-color-foreground-content-success-weak );
+}
+
 // SectionHeader sets its decoration in a fixed 32px box, too far from the title for a small status icon. Keep it beside
 // the title instead: one line of the title tall, at the top. Its 32px minimum row height would then leave a gap below.
 .wordpress-migration__card-header {

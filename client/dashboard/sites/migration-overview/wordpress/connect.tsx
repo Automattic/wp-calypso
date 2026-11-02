@@ -15,7 +15,7 @@ import {
 import { useInstanceId } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp, info, published } from '@wordpress/icons';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -84,7 +84,7 @@ export function Connect( {
 			{ onSuccess: () => run.mutate( {}, { onSuccess: onStarted } ) }
 		);
 
-	// A run can't reach a source that isn't connected, so check before starting one that will only be refused.
+	// A key copied in by hand doesn't read as connected, so check rather than assume the source can't be reached.
 	const onStart = () => {
 		if ( ! isConnected && ! hasSeenKey ) {
 			setIsConfirming( true );
@@ -136,16 +136,21 @@ export function Connect( {
 			}
 			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
-			{ /* A refusal stands alone until the next run, even once the source reads as connected: it may still refuse. */ }
+			{ /* What stopped the last run stays until the next one, even once the source reads as connected: it may still refuse. */ }
 			{ failure && (
-				<Notice variant="error" title={ failure.label }>
+				<Notice
+					variant="error"
+					title={ sprintf(
+						/* translators: %s: what stopped the migration, e.g. "Your site refused the connection". */
+						__( 'The last attempt ran into a problem: %s' ),
+						failure.label
+					) }
+				>
 					<VStack spacing={ 2 }>
 						<Text as="p">{ failure.message }</Text>
 						<Text as="p">
 							{ createInterpolateElement(
-								__(
-									'You can also choose to have our team <link>handle the migration for you</link>, included in your plan.'
-								),
+								__( 'Alternatively, have our team <link>handle the migration for you</link>.' ),
 								{ link: <Link to={ `/sites/${ site.slug }/migration-overview/assisted` } /> }
 							) }
 						</Text>
@@ -175,7 +180,22 @@ export function Connect( {
 				hidden={ isConnected && ! failure }
 				className="wordpress-migration__connect-help"
 			>
-				<VStack spacing={ 1 }>
+				{ isConnected && (
+					<HStack
+						spacing={ 1 }
+						alignment="flex-start"
+						justify="flex-start"
+						className="wordpress-migration__connected-hint"
+					>
+						<Icon icon={ published } size={ 18 } />
+						<Text>
+							{ __(
+								'Your site appears to have the plugin installed and connected to WordPress.com.'
+							) }
+						</Text>
+					</HStack>
+				) }
+				<VStack spacing={ 1 } hidden={ isConnected } className="wordpress-migration__connect-help">
 					<Text variant="muted">
 						{ __(
 							'1. Install and activate the Migrate to WordPress.com plugin on your existing site.'
@@ -251,9 +271,12 @@ export function Connect( {
 				</VStack>
 			</VStack>
 			<ConfirmModal
+				__experimentalHideHeader={ false }
+				title={ __( 'Have you connected your site?' ) }
+				isDismissible={ false }
 				isOpen={ isConfirming }
 				cancelButtonText={ __( 'Go back' ) }
-				confirmButtonProps={ { label: __( 'Start anyway' ) } }
+				confirmButtonProps={ { label: __( 'Start the migration' ) } }
 				onCancel={ () => setIsConfirming( false ) }
 				onConfirm={ () => {
 					setIsConfirming( false );
@@ -261,7 +284,7 @@ export function Connect( {
 				} }
 			>
 				{ __(
-					'Your site isn’t connected to WordPress.com yet, so unless you’ve already pasted the migration key into the plugin, the migration might not work. Start it anyway?'
+					'We haven’t been able to confirm that your site is connected to WordPress.com. Only continue if you have connected the plugin or copied over the migration key manually.'
 				) }
 			</ConfirmModal>
 		</MigrationCard>

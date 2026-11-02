@@ -55,11 +55,18 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		migration?.status === 'failed'
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
+
 	// A stopped migration can also be taken back to that step, until the next run starts.
 	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
 	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
 	const isConnecting =
 		migration?.status === 'not_started' || !! connectionFailure || ( isStopped && isBackToSetup );
+
+	// What stopped the run stays on screen there too, so a connected source doesn't read as nothing having gone wrong.
+	const backToSetupFailure =
+		isStopped && isBackToSetup
+			? migration?.findings.find( ( { severity } ) => severity === 'failure' )
+			: undefined;
 
 	// The connect step shows how the source can be connected, so it waits for that before showing at all. It's read
 	// alongside the migration, before we know which step that is, and only kept up for the connect step after.
@@ -162,7 +169,7 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				<Connect
 					site={ site }
 					sourceHost={ sourceHost }
-					failure={ connectionFailure }
+					failure={ connectionFailure ?? backToSetupFailure }
 					onStarted={ () => setIsBackToSetup( false ) }
 				/>
 			) }
