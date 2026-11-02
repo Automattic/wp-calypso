@@ -47,28 +47,32 @@ export function assertUniqueSeries< Point >(
 	series.forEach( ( { data } ) => assertUnique( data.map( getKey ), 'point' ) );
 }
 
-export function findPoint< Point >(
-	data: Point[],
-	getKey: ( point: Point ) => string,
-	key: string
+// Each series' points by key, such as a date or a category.
+export function indexSeries< Point >(
+	series: Series< Point >[],
+	getKey: ( point: Point ) => string
 ) {
-	return data.find( ( point ) => getKey( point ) === key );
+	return series.map( ( { label, data } ) => ( {
+		label,
+		points: new Map( data.map( ( point ) => [ getKey( point ), point ] as const ) ),
+	} ) );
 }
 
-// A row per key, such as a date or a category, with each series' value.
+// A row per key, with each series' value.
 export function getChartTable< Point extends { value: number } >(
 	keyHeading: string,
 	series: Series< Point >[],
 	getKey: ( point: Point ) => string
 ): ChartTable {
-	const keys = [ ...new Set( series.flatMap( ( { data } ) => data.map( getKey ) ) ) ];
+	const indexedSeries = indexSeries( series, getKey );
+	const keys = [ ...new Set( indexedSeries.flatMap( ( { points } ) => [ ...points.keys() ] ) ) ];
 
 	return {
 		headings: [ keyHeading, ...series.map( getLabel ) ],
 		rows: keys.map( ( key ) => [
 			key,
-			...series.map( ( { data } ) => {
-				const point = findPoint( data, getKey, key );
+			...indexedSeries.map( ( { points } ) => {
+				const point = points.get( key );
 
 				return point ? formatChartNumber( point.value ) : '';
 			} ),

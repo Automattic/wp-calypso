@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from '@wordpress/element';
 import { useInteractiveUiSurface } from '../contexts/surface';
-import { findPoint, formatChartNumber } from '../utils/chart-data';
+import { formatChartNumber, indexSeries } from '../utils/chart-data';
 import { copyTheme } from '../utils/theme';
 import type { Series } from '../utils/chart-data';
 import type * as Charts from '@automattic/charts';
@@ -64,6 +64,8 @@ export function getSeriesTooltipRenderer< Point extends { value: number } >(
 	series: Series< Point >[],
 	getKey: ( point: Point ) => string
 ) {
+	const indexedSeries = indexSeries( series, getKey );
+
 	return function renderTooltip( {
 		tooltipData,
 	}: Charts.RenderTooltipParams< Charts.DataPointDate > ) {
@@ -74,8 +76,8 @@ export function getSeriesTooltipRenderer< Point extends { value: number } >(
 		}
 
 		const key = getKey( datum as unknown as Point );
-		const rows = series.flatMap( ( { label, data } ) => {
-			const point = findPoint( data, getKey, key );
+		const rows = indexedSeries.flatMap( ( { label, points } ) => {
+			const point = points.get( key );
 
 			return point ? [ { label, value: point.value } ] : [];
 		} );

@@ -68,7 +68,8 @@ series or slices.
 - **Theming:** the axes, grid, legend and tooltips follow the surface's colors in light and dark
   mode. The series colors are fixed, each with at least 3:1 contrast on white and on #1e1e1e.
   Tooltips render in a portal on the page, outside the surface, so they copy its theme, stay within
-  its edges, and need a `z-index` above your UI ([Rendering](#rendering)).
+  its edges, or a modal's for a chart in one, and need a `z-index` above your UI
+  ([Rendering](#rendering)).
 - **Language:** dates follow the page's language (`<html lang>`), and numbers
   `@automattic/number-formatters`' locale: the one the host sets, else WordPress's user locale,
   else the browser's.
