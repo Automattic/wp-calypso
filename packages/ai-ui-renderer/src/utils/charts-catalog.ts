@@ -9,7 +9,7 @@ const MAX_COLORS = 6;
 const TITLE = {
 	type: 'string',
 	description:
-		'What the chart shows, in the user’s language. It also names the chart for screen readers.',
+		'What the chart shows, in the user’s language. The chart shows it as its heading, so don’t repeat it in a Text. It also names the chart for screen readers.',
 };
 
 // A component rejects props it doesn't declare, and a chart can sit in a `Row` or `Column`.

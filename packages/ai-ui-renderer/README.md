@@ -56,8 +56,8 @@
 
 The charts catalog (`CHARTS_CATALOG_ID`) has `LineChart` (values over time), `BarChart` (values by
 category, vertical or `horizontal`) and `PieChart` (each part's share of a whole), built on
-`@automattic/charts`. Each takes a `title`, which also names it for screen readers, and up to six
-series or slices.
+`@automattic/charts`. Each takes a `title`, its heading, which also names it for screen readers, and
+up to six series or slices.
 
 - **Adding it:** list `{ catalog: CHARTS_CATALOG_DOCUMENT }` in your
   [capabilities](#capabilities), and build `createInteractiveUiCatalog( CHARTS_CATALOG )` for the
