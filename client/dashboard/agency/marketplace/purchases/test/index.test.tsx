@@ -144,12 +144,20 @@ describe( '<MarketplacePurchases>', () => {
 		window.history.replaceState(
 			{},
 			'',
-			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success'
 		);
 
-		render( <MarketplacePurchases /> );
+		const { recordTracksEvent } = render( <MarketplacePurchases /> );
 
-		await waitFor( () => expect( window.location.search ).toBe( '?status=unassigned' ) );
+		// The app shell's checkout success message owns `flash`.
+		await waitFor( () =>
+			expect( window.location.search ).toBe( '?status=unassigned&flash=checkout-success' )
+		);
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_marketplace_cart_cleared_on_checkout_success',
+			{ receipt_id: '123' }
+		);
 		expect( sessionStorage.getItem( 'shopping-card-selected-items' ) ).toBeNull();
 	} );
 

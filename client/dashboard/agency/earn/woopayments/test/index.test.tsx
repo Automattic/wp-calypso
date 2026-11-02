@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
 import EarnWooPayments from '../index';
@@ -45,6 +45,27 @@ describe( 'EarnWooPayments', () => {
 			await screen.findByText( 'Earn Revenue Share when clients use WooPayments' )
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Add WooPayments to site' } ) ).toBeVisible();
+	} );
+
+	test( 'opens the site picker once when a link asks for it, and removes the param', async () => {
+		mockAgency();
+		mockLicenses( [] );
+		mockSitesWithPlugins( [] );
+		window.history.replaceState( null, '', '/woopayments?add-woopayments-to-site=true&keep=1' );
+
+		const { recordTracksEvent } = render( <EarnWooPayments /> );
+
+		expect(
+			await screen.findByRole( 'dialog', {
+				name: 'Which site would you like to add WooPayments to?',
+			} )
+		).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
+		expect( recordTracksEvent ).toHaveBeenCalledTimes( 1 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_a4a_woopayments_add_site_button_click'
+		);
+		window.history.replaceState( null, '', '/' );
 	} );
 
 	test( 'renders the commissions table and stat cards for a site with WooPayments', async () => {

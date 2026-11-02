@@ -1,7 +1,6 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { getQueryArg, removeQueryArgs } from '@wordpress/url';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import AddWooPaymentsToSiteModal from './modal';
 import type { RecordTracksEvent } from '../types';
 
@@ -11,6 +10,8 @@ interface AddWooPaymentsToSiteProps {
 	recordTracksEvent: RecordTracksEvent;
 	onSelectSite: ( siteId: number ) => void;
 	shouldUseRouterLink?: boolean;
+	/** Opens the modal once, as when a link asks for it. */
+	autoOpen?: boolean;
 }
 
 export default function AddWooPaymentsToSite( {
@@ -19,9 +20,10 @@ export default function AddWooPaymentsToSite( {
 	recordTracksEvent,
 	onSelectSite,
 	shouldUseRouterLink,
+	autoOpen,
 }: AddWooPaymentsToSiteProps ) {
-	const showModal = getQueryArg( window.location.href, 'add-woopayments-to-site' ) === 'true';
 	const [ isOpen, setIsOpen ] = useState( false );
+	const hasAutoOpened = useRef( false );
 
 	const handleOpenModal = useCallback( () => {
 		setIsOpen( true );
@@ -29,18 +31,11 @@ export default function AddWooPaymentsToSite( {
 	}, [ recordTracksEvent ] );
 
 	useEffect( () => {
-		if ( showModal ) {
+		if ( autoOpen && ! hasAutoOpened.current ) {
+			hasAutoOpened.current = true;
 			handleOpenModal();
-			window.history.replaceState(
-				null,
-				'',
-				removeQueryArgs(
-					window.location.pathname + window.location.search,
-					'add-woopayments-to-site'
-				)
-			);
 		}
-	}, [ handleOpenModal, showModal ] );
+	}, [ autoOpen, handleOpenModal ] );
 
 	return (
 		<>

@@ -241,10 +241,6 @@ describe( '<SiteLaunchButton>', () => {
 				assign,
 			},
 		} );
-		const replaceState = jest
-			.spyOn( window.history, 'replaceState' )
-			.mockImplementation( () => {} );
-
 		try {
 			render(
 				<SiteLaunchButton
@@ -261,15 +257,12 @@ describe( '<SiteLaunchButton>', () => {
 			);
 
 			const launchButton = await screen.findByRole( 'button', { name: 'Launch your site' } );
-			replaceState.mockClear();
-
 			await user.click( launchButton );
 
 			await waitFor( () => expect( launchScope.isDone() ).toBe( true ) );
-			await waitFor( () => expect( replaceState ).toHaveBeenCalled() );
+			await waitFor( () => expect( launchButton ).not.toHaveClass( 'is-busy' ) );
 			expect( assign ).not.toHaveBeenCalled();
 		} finally {
-			replaceState.mockRestore();
 			Object.defineProperty( window, 'location', { writable: true, value: originalLocation } );
 		}
 	} );

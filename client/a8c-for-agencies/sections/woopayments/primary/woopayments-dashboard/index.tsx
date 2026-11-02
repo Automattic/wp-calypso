@@ -1,8 +1,8 @@
 import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
-import { addQueryArgs } from '@wordpress/url';
+import { addQueryArgs, getQueryArg, removeQueryArgs } from '@wordpress/url';
 import clsx from 'clsx';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
@@ -23,6 +23,9 @@ import WooPaymentsDashboardContent from '../../dashboard-content';
 import WooPaymentsDashboardEmptyState from './empty-state';
 
 import './style.scss';
+
+// The overview links here with this param to open the site picker.
+const ADD_TO_SITE_PARAM = 'add-woopayments-to-site';
 
 const WooPaymentsDashboard = () => {
 	const title = __( 'WooPayments commissions' );
@@ -45,6 +48,20 @@ const WooPaymentsDashboard = () => {
 		},
 		[ dispatch ]
 	);
+
+	const [ autoOpenAddSite ] = useState(
+		() => getQueryArg( window.location.href, ADD_TO_SITE_PARAM ) === 'true'
+	);
+
+	useEffect( () => {
+		if ( autoOpenAddSite ) {
+			window.history.replaceState(
+				null,
+				'',
+				removeQueryArgs( window.location.pathname + window.location.search, ADD_TO_SITE_PARAM )
+			);
+		}
+	}, [ autoOpenAddSite ] );
 
 	const navigateToSiteSetup = useCallback( ( siteId: number ) => {
 		page.redirect( addQueryArgs( A4A_WOOPAYMENTS_SITE_SETUP_LINK, { site_id: siteId } ) );
@@ -105,6 +122,7 @@ const WooPaymentsDashboard = () => {
 									excludedSiteIds={ excludedSiteIds }
 									recordTracksEvent={ recordTracks }
 									onSelectSite={ navigateToSiteSetup }
+									autoOpen={ autoOpenAddSite }
 								/>
 							) }
 						</div>
