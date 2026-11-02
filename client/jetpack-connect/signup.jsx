@@ -308,10 +308,9 @@ export class JetpackSignup extends Component {
 		const { isCreatingAccount, newUsername, bearerToken } = this.state;
 		const isWooJPC = this.isWooJPC();
 		const isUnifiedConnection = this.isUnifiedConnectionFlow();
-		const connectorBranding = isUnifiedConnection
-			? getConnectorBranding( this.props.authQuery.plugins )
-			: null;
-		const signupCopy = isUnifiedConnection ? getSignupCopy( this.props.authQuery.plugins ) : null;
+		const { connectorPlugins } = this.props.authQuery;
+		const connectorBranding = isUnifiedConnection ? getConnectorBranding( connectorPlugins ) : null;
+		const signupCopy = isUnifiedConnection ? getSignupCopy( connectorPlugins ) : null;
 
 		const isLogging = newUsername && bearerToken;
 		if ( isWooJPC && ( isCreatingAccount || isLogging ) ) {

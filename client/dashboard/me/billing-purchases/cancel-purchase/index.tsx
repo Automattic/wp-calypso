@@ -84,7 +84,7 @@ import enrichedSurveyData from './enriched-survey-data';
 import { getAllSurveySteps } from './get-all-survey-steps';
 import { getDowngradePlanForPurchase } from './get-downgrade-plan-for-purchase';
 import { getOfferDiscountBasedOnPurchasePrice } from './get-offer-discount-based-on-purchase-price';
-import { getSolutionsForReason } from './get-solutions-for-reason';
+import { getSolutionsForReason, getSolutionsReason } from './get-solutions-for-reason';
 import { getUpsellType } from './get-upsell-type';
 import initialSurveyState from './initial-survey-state';
 import MarketPlaceSubscriptionsDialog from './marketplace-subscriptions-dialog';
@@ -92,6 +92,7 @@ import nextStep from './next-step';
 import RefundEligibilityNotice from './refund-eligibility-notice';
 import TimeRemainingNotice from './time-remaining-notice';
 import { useCancelMutationOnConfirm } from './use-cancel-mutation-on-confirm';
+import { useCancelOptionsExperiment } from './use-cancel-options-experiment';
 import { useIsSplitCancelRemoveEnabled } from './use-is-split-cancel-remove-enabled';
 import { usePostRemovalNavigation } from './use-post-removal-navigation';
 import type { CancelPurchaseState } from './types';
@@ -269,6 +270,7 @@ function CancelPurchaseInner() {
 	} );
 	const { data: plans } = useSuspenseQuery( plansQuery() );
 	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
+	const { showCards: showCancelOptionsCards } = useCancelOptionsExperiment();
 	const { data: purchaseCancelFeatures } = useQuery(
 		purchaseCancelFeaturesQuery( parseInt( purchaseId, 10 ) )
 	);
@@ -465,6 +467,7 @@ function CancelPurchaseInner() {
 			showDomainOptionsStep: false,
 			siteId: undefined,
 			solution: '',
+			solutionsReason: '',
 			surveyShown: surveyShownInitial,
 			surveyStep: firstStep,
 			upsell: '',
@@ -605,91 +608,9 @@ function CancelPurchaseInner() {
 			...state,
 			questionOneRadio: value,
 			questionOneText: '',
+			solutionsReason: '',
 			upsell: '',
 		} ) );
-	};
-
-	const downgradeClick = () => {
-		if ( ! state.isSubmitting ) {
-			if ( ! downgradePlan ) {
-				createErrorNotice( __( 'Cannot find a plan to downgrade to.' ), { type: 'snackbar' } );
-				return;
-			}
-
-			setState( ( state ) => ( { ...state, isLoading: true } ) );
-
-			cancelAndRefundMutation.mutate(
-				{
-					purchaseId: purchase.ID,
-					options: {
-						type: 'downgrade',
-						to_product_id: downgradePlan.product_id,
-					},
-				},
-				{
-					onSuccess: ( response ) => {
-						setState( ( state ) => ( { ...state, isLoading: false } ) );
-						createSuccessNotice( response.message, { type: 'snackbar' } );
-						navigate( { to: purchasesRoute.to } );
-					},
-					onError: ( error ) => {
-						setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
-						createErrorNotice( error.message, { type: 'snackbar' } );
-					},
-				}
-			);
-			recordEvent( 'calypso_purchases_downgrade_form_submit' );
-			setState( ( state ) => ( { ...state, solution: 'downgrade', isSubmitting: true } ) );
-		}
-	};
-
-	const onSwitchToMonthly = async () => {
-		if ( state.isSubmitting ) {
-			return;
-		}
-
-		const monthlyPlan = getDowngradePlanForPurchase( plans, purchase, 'downgrade-monthly' );
-		if ( ! monthlyPlan ) {
-			createErrorNotice( __( 'Failed to switch to monthly billing.' ), { type: 'snackbar' } );
-			return;
-		}
-
-		setState( ( state ) => ( { ...state, isLoading: true, isSubmitting: true } ) );
-		recordEvent( 'calypso_purchases_downgrade_form_submit' );
-
-		try {
-			await cancelAndRefundMutation.mutateAsync( {
-				purchaseId: purchase.ID,
-				options: {
-					type: 'downgrade',
-					to_product_id: monthlyPlan.product_id,
-				},
-			} );
-
-			// Fetch the refreshed purchases list to find the new monthly purchase.
-			const freshPurchases = await queryClient.fetchQuery( userPurchasesQuery() );
-			const newPurchase = freshPurchases?.find( ( p: Purchase ) => {
-				return p.product_id === monthlyPlan.product_id && p.blog_id === purchase.blog_id;
-			} );
-
-			if ( newPurchase ) {
-				navigate( {
-					to: purchaseSettingsRoute.fullPath,
-					params: { purchaseId: newPurchase.ID },
-					search: { downgraded: true },
-				} );
-			} else {
-				// Fallback: new purchase not found (eventual consistency edge case).
-				createSuccessNotice( __( 'Your plan has been switched to monthly billing.' ), {
-					type: 'snackbar',
-				} );
-				navigate( { to: purchasesRoute.to } );
-			}
-		} catch ( error ) {
-			createErrorNotice( ( error as Error ).message, { type: 'snackbar' } );
-		} finally {
-			setState( ( state ) => ( { ...state, isLoading: false, isSubmitting: false } ) );
-		}
 	};
 
 	const freeMonthOfferClick = async () => {
@@ -943,16 +864,17 @@ function CancelPurchaseInner() {
 		}
 
 		const upsellType = getUpsellType( value, purchase, {
-			canDowngrade: !! downgradeClick,
 			canOfferFreeMonth: !! freeMonthOfferClick && ! hasBeenExtended && ! purchase.is_refundable,
 		} );
+		const solutionsReason = getSolutionsReason( value, detailsValue, state.questionOneRadio );
 		const hasSolutionsCards =
-			isSplitCancelRemoveEnabled && ( getSolutionsForReason( value )?.length ?? 0 ) > 0;
+			showCancelOptionsCards && ( getSolutionsForReason( solutionsReason )?.length ?? 0 ) > 0;
 
 		setState( ( state ) => ( {
 			...state,
 			questionOneText: value,
 			questionOneDetails: detailsValue || questionOneDetails,
+			solutionsReason,
 			upsell: upsellType || ( hasSolutionsCards ? 'solutions-cards' : '' ),
 		} ) );
 	};
@@ -1550,8 +1472,8 @@ function CancelPurchaseInner() {
 		state.surveyStep === CANCELLATION_OFFER_STEP ? cancellationOfferDescription : null;
 	const isSolutionsStep =
 		state.surveyStep === UPSELL_STEP &&
-		isSplitCancelRemoveEnabled &&
-		( getSolutionsForReason( state.questionOneText ?? '' )?.length ?? 0 ) > 0;
+		showCancelOptionsCards &&
+		( getSolutionsForReason( state.solutionsReason ?? '' )?.length ?? 0 ) > 0;
 	// Under the split cancel/remove experiment the pre-survey confirmation screen
 	// gates the survey on `confirmationPassed`. Flag-off keeps the legacy
 	// `surveyShown` gate.
@@ -1570,11 +1492,9 @@ function CancelPurchaseInner() {
 			clickNext={ clickNext }
 			closeDialog={ closeDialog }
 			disableButtons={ state.isLoading || isMutationPending }
-			downgradeClick={ downgradeClick }
 			downgradePlan={ downgradePlan }
 			flowType={ flowType }
 			freeMonthOfferClick={ freeMonthOfferClick }
-			onSwitchToMonthly={ onSwitchToMonthly }
 			hasBackupsFeature={ hasBackupsFeature }
 			importQuestionRadio={ state.importQuestionRadio }
 			includedDomainPurchase={ includedDomainPurchase }
@@ -1610,6 +1530,7 @@ function CancelPurchaseInner() {
 			refundAmount={ getDowngradeRefundAmount( purchase, downgradePlan?.product_id ) }
 			siteSlug={ siteSlug }
 			solution={ state.solution }
+			solutionsReason={ state.solutionsReason }
 			surveyStep={ state.surveyStep }
 			allSteps={ allSteps }
 			upsell={ state.upsell }

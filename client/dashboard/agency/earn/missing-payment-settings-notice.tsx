@@ -2,6 +2,7 @@ import { activeAgencyQuery, tipaltiPayeeQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
+import { useBackHereSearch } from '../components/fullscreen-page';
 import { isAgencyApproved } from '../marketplace/is-agency-approved';
 
 type CommissionType = 'referrals' | 'migrations' | 'woopayments';
@@ -60,6 +61,7 @@ export default function MissingPaymentSettingsNotice( {
 	commissionType,
 }: MissingPaymentSettingsNoticeProps ) {
 	const { isEligible } = useMissingPaymentSettings( { hasCommissionActivity } );
+	const backHereSearch = useBackHereSearch();
 
 	if ( ! isEligible ) {
 		return null;
@@ -70,7 +72,11 @@ export default function MissingPaymentSettingsNotice( {
 			variant="warning"
 			title={ __( 'Add your payout information to get paid.' ) }
 			actions={
-				<RouterNoticeActionLinkButton variant="solid" to="/payout-settings">
+				<RouterNoticeActionLinkButton
+					variant="solid"
+					to="/payout-settings"
+					search={ backHereSearch }
+				>
 					{ __( 'Add payout information now' ) }
 				</RouterNoticeActionLinkButton>
 			}

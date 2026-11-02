@@ -45,8 +45,14 @@ import SubscribersCard from '../overview-subscribers-card';
 import VisibilityCard from '../overview-visibility-card';
 import { InaccessibleJetpackNotice } from '../site/notices';
 import StagingSiteSyncDropdown from '../staging-site-sync-dropdown';
+import { StagingSiteSyncNotice, useStagingSiteSyncForNotice } from '../staging-site-sync-notice';
 import { EmailBlockNotice, getEmailBlock } from './email-block-notice';
+import {
+	MigrationCompletedNotice,
+	useShouldShowMigrationCompletedNotice,
+} from './migration-completed-notice';
 import { StorageWarningBanner, useShouldShowStorageWarningBanner } from './storage-warning-banner';
+import type { MigrationCompletedSearch } from './migration-completed-notice';
 import type { StaticSiteImportSearch } from '../overview-static-site-import';
 import type { Site } from '@automattic/api-core';
 import './style.scss';
@@ -179,11 +185,19 @@ function SiteOverview( {
 	const { recordTracksEvent } = useAnalytics();
 	const wpAdminButtonRef = useRef( null );
 
+	const stagingSiteSyncForNotice = useStagingSiteSyncForNotice( site );
 	const isStorageWarningVisible = useShouldShowStorageWarningBanner( site );
+	const isMigrationCompletedNoticeVisible = useShouldShowMigrationCompletedNotice( site );
 	const siteRequiresTwoStep = useSiteRequiresTwoStep( site );
 	const showTwoStepRequiredNotice = supports.me && siteRequiresTwoStep;
 	const importSearch: StaticSiteImportSearch = useSearch( { strict: false } );
 	const siteImport = useStaticSiteImport( site, importSearch.importSessionId );
+	const { migration: migrationCompletedSearch }: MigrationCompletedSearch = useSearch( {
+		strict: false,
+	} );
+	const migrationCompletedNotice = isMigrationCompletedNoticeVisible && (
+		<MigrationCompletedNotice key={ site.ID } site={ site } />
+	);
 
 	const renderActions = () => {
 		if ( ! site.options?.admin_url ) {
@@ -225,6 +239,9 @@ function SiteOverview( {
 			}
 			notices={
 				<>
+					{ stagingSiteSyncForNotice && (
+						<StagingSiteSyncNotice site={ site } syncState={ stagingSiteSyncForNotice } />
+					) }
 					{ siteImport && siteImport.status !== 'moving' && (
 						<StaticSiteImportNotice
 							site={ site }
@@ -232,6 +249,8 @@ function SiteOverview( {
 							search={ importSearch }
 						/>
 					) }
+					{ /* With the query string, show the notice even when the arbiter picks another. */ }
+					{ migrationCompletedSearch === 'completed' && migrationCompletedNotice }
 					<SitesNoticeArbiter>
 						{ site.__inaccessible_jetpack_error && (
 							<InaccessibleJetpackNotice
@@ -242,6 +261,7 @@ function SiteOverview( {
 						{ showTwoStepRequiredNotice && <TwoStepRequiredNotice site={ site } /> }
 						{ !! getEmailBlock( site ) && <EmailBlockNotice site={ site } /> }
 						{ isStorageWarningVisible && <StorageWarningBanner site={ site } /> }
+						{ migrationCompletedSearch !== 'completed' && migrationCompletedNotice }
 					</SitesNoticeArbiter>
 				</>
 			}

@@ -166,4 +166,44 @@ describe( '<TitanPlanGrid>', () => {
 
 		expect( onSelect ).toHaveBeenCalledWith( TitanPlanTier.Premium );
 	} );
+
+	test( 'shows the free trial badge above the price, only on tiers with a trial', async () => {
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/products/' )
+			.query( true )
+			.reply( 200, {
+				[ TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG ]: {
+					...product( TitanMailSlugs.TITAN_MAIL_MONTHLY_SLUG, 400 ),
+					introductory_offer: { cost_per_interval: 0, interval_count: 3, interval_unit: 'month' },
+				},
+				[ TitanMailSlugs.TITAN_MAIL_PREMIUM_MONTHLY_SLUG ]: product(
+					TitanMailSlugs.TITAN_MAIL_PREMIUM_MONTHLY_SLUG,
+					402
+				),
+				[ TitanMailSlugs.TITAN_MAIL_ULTRA_MONTHLY_SLUG ]: product(
+					TitanMailSlugs.TITAN_MAIL_ULTRA_MONTHLY_SLUG,
+					404
+				),
+			} );
+		renderGrid( {
+			domain: {
+				domain: DOMAIN_NAME,
+				titan_mail_subscription: { is_eligible_for_introductory_offer: true },
+			} as Domain,
+			currentTier: undefined,
+		} );
+		await waitForProducts();
+
+		const badges = await screen.findAllByText( '3 month free trial' );
+		const visibleBadges = badges.filter(
+			( badge ) => badge.getAttribute( 'aria-hidden' ) !== 'true'
+		);
+		expect( visibleBadges ).toHaveLength( 1 );
+
+		// The Pro card lists its struck-through full price first.
+		const proPrice = screen.getAllByText( '60' )[ 0 ];
+		expect(
+			visibleBadges[ 0 ].compareDocumentPosition( proPrice ) & Node.DOCUMENT_POSITION_FOLLOWING
+		).toBeTruthy();
+	} );
 } );

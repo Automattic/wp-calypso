@@ -14,6 +14,13 @@ export const BLUEPRINT_ARCHIVE_IMPORT_QUERY_VALUE = '1';
 export const BLUEPRINT_SIMPLE_IMPORT_QUERY_PARAM = 'blueprint_simple_import';
 export const BLUEPRINT_BUILD_DEST_SIMPLE = 'simple';
 
+/**
+ * The library blueprint `/setup/onboarding/zoom`, the Zoom partner link, builds when the link
+ * names none of its own; on a Simple site unless it names a `build_dest` too (the link's own
+ * `blueprint` and `build_dest` win). The entry link's spec meta is carried along either way.
+ */
+export const ZOOM_BLUEPRINT_SLUG = 'zoom-test';
+
 // Reuse the flow that already hosts the AI site-spec step.
 const BLUEPRINT_ARCHIVE_SITE_SPEC_PATH = '/setup/ai-site-builder-spec/site-spec';
 

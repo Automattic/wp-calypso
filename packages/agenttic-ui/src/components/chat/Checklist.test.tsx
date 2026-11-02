@@ -144,6 +144,20 @@ describe( 'Checklist', () => {
 		expect( rowFor( 'Publish the About page' ).querySelector( 'button' ) ).not.toBeNull();
 	} );
 
+	it( 'resumes an in-progress item by submitting its prompt again when asked to', async () => {
+		const onSubmit = vi.fn();
+		render( { onSubmit, resumeInProgress: true } );
+
+		await act( async () => {
+			rowFor( 'Replace placeholder images' ).querySelector( 'button' )?.click();
+		} );
+
+		expect( onSubmit ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: 'images', status: 'in-progress' } ),
+			items
+		);
+	} );
+
 	it( 'keeps a disabled item focusable and describes it by its reason', () => {
 		const onSubmit = vi.fn();
 		render( {
@@ -325,6 +339,81 @@ describe( 'Checklist', () => {
 		await flush();
 
 		expect( action ).toHaveBeenCalled();
+	} );
+
+	it( 'collapses a two-task list after resuming the other in-progress task', async () => {
+		const pair: ChecklistItem[] = [
+			{ id: 'about', label: 'Publish the About page', prompt: 'About', status: 'in-progress' },
+			{ id: 'images', label: 'Replace images', prompt: 'Images', status: 'in-progress' },
+		];
+		render( { items: pair, onSubmit: vi.fn(), resumeInProgress: true, activeItemId: 'images' } );
+
+		await act( async () => {
+			rowFor( 'Publish the About page' ).querySelector( 'button' )?.click();
+		} );
+
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+	} );
+
+	it( 'keeps the active in-progress item inert: the conversation is already on it', () => {
+		const onSubmit = vi.fn();
+		render( { onSubmit, resumeInProgress: true, activeItemId: 'images' } );
+
+		expect( rowFor( 'Replace placeholder images' ).querySelector( 'button' ) ).toBeNull();
+		expect( rowFor( 'Publish the About page' ).querySelector( 'button' ) ).not.toBeNull();
+	} );
+
+	it.each( [
+		[ 'resuming another in-progress item', 'Publish the About page' ],
+		[ 'picking the last open item', 'Launch site' ],
+	] )( 'collapses down to the active item after %s', async ( _label, label ) => {
+		// Everything but `launch` is in progress or settled; `images` is the active one.
+		const busyList = items.map( ( item ) =>
+			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+		);
+		render( {
+			items: busyList,
+			onSubmit: vi.fn(),
+			resumeInProgress: true,
+			activeItemId: 'images',
+		} );
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+
+		await act( async () => {
+			rowFor( label ).querySelector( 'button' )?.click();
+		} );
+
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+	} );
+
+	it( 'emphasizes every in-progress row, or only the active one when there is one', () => {
+		const twoInProgress = items.map( ( item ) =>
+			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+		);
+		const isEmphasized = ( label: string ) =>
+			rowFor( label ).querySelector( '[class*="item-active"]' ) !== null;
+
+		render( { items: twoInProgress } );
+		expect( isEmphasized( 'Replace placeholder images' ) ).toBe( true );
+		expect( isEmphasized( 'Publish the About page' ) ).toBe( true );
+		expect( isEmphasized( 'Launch site' ) ).toBe( false );
+
+		render( { items: twoInProgress, activeItemId: 'images' } );
+		expect( isEmphasized( 'Replace placeholder images' ) ).toBe( true );
+		expect( isEmphasized( 'Publish the About page' ) ).toBe( false );
+	} );
+
+	it( 'keeps only the active item in view while collapsed', () => {
+		const twoInProgress = items.map( ( item ) =>
+			item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+		);
+		render( { items: twoInProgress, defaultCollapsed: true } );
+		expect( rowLabels() ).toEqual( [ 'Publish the About page', 'Replace placeholder images' ] );
+
+		render( { items: twoInProgress, defaultCollapsed: true, activeItemId: 'about' } );
+
+		expect( rowLabels() ).toEqual( [ 'Publish the About page' ] );
 	} );
 
 	it( 'follows a controlled collapsed prop', () => {

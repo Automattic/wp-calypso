@@ -7,9 +7,11 @@ import {
 	fetchAgencyScheduleCallLink,
 	fetchAgencyApwdDiscountCode,
 	fetchAgencyMcpSettings,
+	preserveIgnoredAgencyContacts,
 	updateAgencyLeadMatching,
 	updateAgencyMcpSettings,
 	updateAgencyPartnerDirectoryApplication,
+	updateAgencyDashboardOptIn,
 	updateAgencyProfile,
 	uploadAgencyPartnerDirectoryLogo,
 	fetchTipaltiIFrameUrl,
@@ -21,6 +23,7 @@ import { queryOptions, mutationOptions } from '@tanstack/react-query';
 import { queryClient } from './query-client';
 import type {
 	Agency,
+	AgencyDashboardOptInChoice,
 	AgencyHostingReferral,
 	AgencyLeadMatchingProfile,
 	AgencyPartnerDirectoryApplicationUpdate,
@@ -203,6 +206,18 @@ export const agencyProfileMutation = ( agencyId: number ) =>
 		onSuccess: mergeIntoActiveAgency,
 	} );
 
+export const agencyDashboardOptInMutation = ( agencyId: number | undefined ) =>
+	mutationOptions( {
+		meta: { statId: 'agcy-dashboard-opt-in-update' },
+		mutationFn: ( value: AgencyDashboardOptInChoice ) => {
+			if ( ! agencyId ) {
+				throw new Error( 'No active agency found for the current user.' );
+			}
+			return updateAgencyDashboardOptIn( agencyId, value );
+		},
+		onSuccess: mergeIntoActiveAgency,
+	} );
+
 export const agencyPartnerDirectoryLogoMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-pd-logo-upload' },
@@ -226,11 +241,15 @@ export const agencyPressablePremiumPlanReferralMutation = ( agencyId: number ) =
 export const agencyLeadMatchingQuery = ( agencyId: number ) =>
 	queryOptions( {
 		queryKey: [ 'agency', agencyId, 'lead-matching' ] as const,
+		meta: { persist: false },
 		queryFn: () => fetchAgencyLeadMatching( agencyId ),
 		enabled: !! agencyId,
 	} );
 
-export const agencyLeadMatchingMutation = ( agencyId: number ) =>
+export const agencyLeadMatchingMutation = (
+	agencyId: number,
+	previousProfile?: AgencyLeadMatchingProfile | null
+) =>
 	mutationOptions( {
 		meta: { statId: 'agcy-lead-matching-update' },
 		mutationFn: async ( profile: AgencyLeadMatchingProfile ) => {
@@ -240,7 +259,14 @@ export const agencyLeadMatchingMutation = ( agencyId: number ) =>
 			if ( ! response?.lead_matching_profile || response.sync?.status === 'failed' ) {
 				throw new Error( 'The lead matching preferences were not saved.' );
 			}
-			return response;
+			return {
+				...response,
+				lead_matching_profile: preserveIgnoredAgencyContacts(
+					response.lead_matching_profile,
+					previousProfile,
+					response.ignored_contact_fields
+				),
+			};
 		},
 		onSuccess: ( response ) => {
 			queryClient.setQueryData( agencyLeadMatchingQuery( agencyId ).queryKey, response );

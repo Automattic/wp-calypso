@@ -15,7 +15,6 @@ export async function createStaticSiteImportSession(
 
 export async function approveStaticSiteImportSession( {
 	sessionId,
-	archiveHash,
 	destinationBlogId,
 }: ApproveStaticSiteImportSessionParams ): Promise< StaticSiteImportSession > {
 	return wpcom.req.post(
@@ -23,6 +22,6 @@ export async function approveStaticSiteImportSession( {
 			path: `/static-site-import-session/${ encodeURIComponent( sessionId ) }/approve`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{ archive_hash: archiveHash, destination_blog_id: destinationBlogId }
+		{ destination_blog_id: destinationBlogId }
 	);
 }
