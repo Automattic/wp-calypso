@@ -268,7 +268,16 @@ export const sshInProgressPath = buildPathHelper<
 
 export const identifyPath = buildPathHelper<
 	{
-		queryParams: { from: string | null; how?: string };
+		queryParams: {
+			from: string | null;
+			platform?: ImporterPlatform;
+			host?: string;
+			isWpcom?: '';
+			ssh?: string;
+			action?: string;
+			how?: string;
+			start?: string;
+		};
 	},
 	typeof STEPS.SITE_MIGRATION_IDENTIFY.slug
 >( STEPS.SITE_MIGRATION_IDENTIFY.slug );

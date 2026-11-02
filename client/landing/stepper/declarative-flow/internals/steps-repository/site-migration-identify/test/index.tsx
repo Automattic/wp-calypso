@@ -289,6 +289,37 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
 		} );
 
+		it.each( [ '', 'https://example.com' ] )(
+			'leaves the address "%s" editable without analyzing until Continue',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
+				const host = mockHost();
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&start=&platform=unknown`,
+					}
+				);
+				await act( async () => {
+					jest.advanceTimersByTime( 3000 );
+					await realTick();
+				} );
+				expect( getInput() ).toHaveValue( from );
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				expect( analysis.isDone() ).toBe( false );
+				expect( host.isDone() ).toBe( false );
+				expect( submit ).not.toHaveBeenCalled();
+				await user.clear( getInput() );
+				await checkSite();
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith(
+						expect.objectContaining( { action: 'continue', platform: 'wordpress' } )
+					)
+				);
+			}
+		);
+
 		it( 'preserves the current address when opening the platform list before checking', async () => {
 			const submit = jest.fn();
 			render(

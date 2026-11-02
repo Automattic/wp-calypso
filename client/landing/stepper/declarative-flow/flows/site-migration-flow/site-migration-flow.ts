@@ -678,17 +678,28 @@ const siteMigration: FlowV2< typeof initialize > = {
 					}
 					const { platform } = providedDependencies;
 					const from = fromQueryParam || '';
-					const isAssistedMigration = platform === 'wordpress';
+					if ( platform === 'wordpress' ) {
+						return navigate(
+							paths.identifyPath( {
+								from,
+								platform: 'unknown',
+								host: '',
+								isWpcom: '',
+								ssh: '',
+								action: '',
+								how: '',
+								start: '',
+							} )
+						);
+					}
 					const context = {
 						from,
 						platform,
-						action: isAssistedMigration ? 'migrate' : 'import',
-						how: isAssistedMigration ? HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME : '',
+						action: 'import',
+						how: '',
 					};
 					if ( hasSite( siteId, siteSlug ) ) {
-						return isAssistedMigration
-							? navigate( paths.howToMigratePath( { ...context, siteId, siteSlug } ) )
-							: exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
+						return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
 					}
 					return navigate(
 						userHasOtherWPComSites
