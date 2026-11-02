@@ -166,11 +166,10 @@
 }
 
 .migration-site-ssh__continue-button {
-	margin-left: 2.5rem;
 	button {
+		justify-content: center;
 		width: 100%;
-		font-size: 1rem;
-		padding: 1.5rem;
+		height: 40px;
 	}
 }
 

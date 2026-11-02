@@ -101,10 +101,6 @@
 		}
 	}
 
-	.site-migration-identify--reprint.site-migration-identify--connection-issue {
-		max-width: 660px;
-	}
-
 	.step-container-v2__top-bar-wordpress-logo--wordmark {
 		height: 18px;
 	}
@@ -155,8 +151,9 @@
 
 			button {
 				font-size: inherit;
+				font-weight: 500;
 				line-height: inherit;
-				color: var( --color-link );
+				color: var( --studio-gray-90 );
 			}
 		}
 	}

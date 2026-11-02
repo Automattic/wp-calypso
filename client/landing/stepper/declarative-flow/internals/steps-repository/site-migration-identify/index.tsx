@@ -344,7 +344,7 @@ const SiteMigrationIdentify: StepType< {
 					'site-migration-identify--reprint': isReprintFlow,
 					'site-migration-identify--connection-issue': !! connectionIssue,
 				} ) }
-				columnWidth={ connectionIssue ? 6 : 4 }
+				columnWidth={ 4 }
 				topBar={ <Step.TopBar /> }
 			>
 				<div className="account-template">
