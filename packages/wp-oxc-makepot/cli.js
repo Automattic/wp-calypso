@@ -3,21 +3,12 @@
 const os = require( 'os' );
 const process = require( 'process' );
 const program = require( 'commander' );
-const { globSync } = require( 'glob' );
 const version = require( './package.json' ).version;
 const processFiles = require( './process-files' );
 const concatPot = require( './utils/concat-pot' );
+const getMatchingFiles = require( './utils/get-matching-files' );
 
 const DEFAULT_JOBS = '1';
-
-const getMatchingFiles = ( patterns, ignore ) =>
-	Array.from(
-		new Set(
-			patterns.flatMap( ( pattern ) =>
-				globSync( pattern, { nodir: true, absolute: true, ignore } )
-			)
-		)
-	).sort();
 
 const resolveJobs = ( jobsOption, fileCount ) => {
 	if ( jobsOption === 'auto' ) {
