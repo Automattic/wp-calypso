@@ -1,18 +1,20 @@
 import {
 	getStreamType,
+	readSavedKeysQuery,
 	readStreamInfiniteQuery,
 	type PageHandle,
 	type ReadStreamInfiniteQueryHelpers,
 } from '@automattic/api-queries';
 import {
 	useInfiniteQuery,
+	useQuery,
 	useQueryClient,
 	type InfiniteData,
 	type QueryClient,
 } from '@tanstack/react-query';
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { syncConversationFollowStatus, syncPostCache } from 'calypso/reader/data/post/cache';
-import { addSavedStreamPostsToKeys, useSavedPostKeys } from 'calypso/reader/data/saved-posts';
+import { addSavedStreamPostsToKeys } from 'calypso/reader/data/saved-posts';
 import { keyToString } from 'calypso/reader/post-key';
 import { useDispatch } from 'calypso/state';
 import { buildStreamQueryParams } from '../../build-query-params';
@@ -181,13 +183,18 @@ export const useInfiniteStream = ( {
 	}, [ resolvedStreamKey, streamType, query.data, queryClient, dispatch ] );
 
 	// Every post in the Saved stream is saved, whatever the keys query says.
-	// Waits for the keys to load, so a page that arrives first isn't skipped.
+	// Waits for the keys to load, so a page that arrives first isn't skipped, and
+	// selects only whether they have, so a save doesn't re-render every stream.
 	const isSavedStream = streamType === 'saved';
-	const { data: savedKeys } = useSavedPostKeys( { enabled: isSavedStream } );
+	const { data: hasSavedKeys = false } = useQuery( {
+		...readSavedKeysQuery(),
+		enabled: isSavedStream,
+		select: () => true,
+	} );
 	const savedPagesAddedToKeys = useRef< WeakSet< ReadStreamResponse > >( new WeakSet() );
 
 	useEffect( () => {
-		if ( ! isSavedStream || ! savedKeys ) {
+		if ( ! isSavedStream || ! hasSavedKeys ) {
 			return;
 		}
 		for ( const page of ( query.data?.pages ?? [] ) as ReadStreamResponse[] ) {
@@ -199,7 +206,7 @@ export const useInfiniteStream = ( {
 				);
 			}
 		}
-	}, [ isSavedStream, savedKeys, streamType, query.data, queryClient ] );
+	}, [ isSavedStream, hasSavedKeys, streamType, query.data, queryClient ] );
 
 	const items: StreamItem[] = useMemo( () => {
 		const pages = query.data?.pages ?? [];

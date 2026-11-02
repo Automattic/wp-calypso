@@ -172,8 +172,8 @@ export function SavedSnapshotCard( {
 							<p className="reader-excerpt">{ post.excerpt }</p>
 						</AutoDirection>
 					) }
-					{ url && youTubeVideoId && (
-						<SavedYouTubeVideo videoId={ youTubeVideoId } title={ post.title || url } />
+					{ youTubeVideoId && (
+						<SavedYouTubeVideo videoId={ youTubeVideoId } title={ post.title || url || '' } />
 					) }
 					<ul className="reader-post-actions ignore-click">
 						<li className="reader-post-actions__item">

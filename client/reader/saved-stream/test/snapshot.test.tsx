@@ -114,22 +114,19 @@ const PRUNED_FEED_ITEM = {
 	date_saved: '2026-10-29T12:00:00+00:00',
 };
 
-// A YouTube video saved by URL, with the page's details as the extension read them.
+// A YouTube video saved by URL.
 const YOUTUBE_SAVE = {
 	...URL_SAVE,
 	ID: 64090,
 	global_ID: 'url-save-64090',
 	URL: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
 	title: 'A saved video',
-	excerpt: 'A video worth watching later.',
 	featured_image: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
-	site_name: 'YouTube',
 };
 
 const SAVED_KEYS = {
 	keys: [
 		{ url: URL_SAVE.URL, id: 2, date_saved: URL_SAVE.date_saved },
-		{ url: YOUTUBE_SAVE.URL, id: 3, date_saved: YOUTUBE_SAVE.date_saved },
 		{
 			feed_item_id: 64089,
 			url: PRUNED_FEED_ITEM.URL,
@@ -137,7 +134,7 @@ const SAVED_KEYS = {
 			date_saved: PRUNED_FEED_ITEM.date_saved,
 		},
 	],
-	total: 3,
+	total: 2,
 };
 
 function mockSavedEndpoint( posts: object[] ) {

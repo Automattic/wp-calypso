@@ -26,7 +26,7 @@ const TRACKING_PARAM = /^(utm_.*|fbclid|gclid)$/;
  * trailing slashes except on the root path. A post's `URL` can differ from the
  * stored one in any of these.
  */
-export const normalizeReadSavedUrl = ( url: string ): string => {
+const normalizeReadSavedUrl = ( url: string ): string => {
 	let parsed: URL;
 	try {
 		parsed = new URL( url );
