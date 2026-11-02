@@ -169,13 +169,13 @@ export function Connect( {
 					{ __( 'Your site is connected to WordPress.com.' ) }
 				</Notice>
 			) }
-			<VStack spacing={ 4 }>
-				{ /* Hidden, not removed: swapping it out under Google Translate can crash the page (react/react#11538). */ }
-				<VStack
-					spacing={ 1 }
-					hidden={ isConnected && ! failure }
-					className="wordpress-migration__connect-help"
-				>
+			{ /* Hidden, not removed: swapping it out under Google Translate can crash the page (react/react#11538). */ }
+			<VStack
+				spacing={ 4 }
+				hidden={ isConnected && ! failure }
+				className="wordpress-migration__connect-help"
+			>
+				<VStack spacing={ 1 }>
 					<Text variant="muted">
 						{ __(
 							'1. Install and activate the Migrate to WordPress.com plugin on your existing site.'

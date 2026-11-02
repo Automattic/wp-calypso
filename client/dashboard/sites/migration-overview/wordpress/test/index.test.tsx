@@ -162,13 +162,9 @@ describe( 'WordPressMigration', () => {
 		expect( screen.getByRole( 'heading', { name: 'Ready to migrate example.com' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: /Install the plugin/ } ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( /Install and activate/ ) ).not.toBeVisible();
-
-		// Still there for anyone whose migration doesn't start.
-		await waitFor( () =>
-			expect( screen.getByRole( 'button', { name: /Having trouble/ } ) ).toBeEnabled()
-		);
-		await userEvent.click( screen.getByRole( 'button', { name: /Having trouble/ } ) );
-		expect( screen.getByRole( 'textbox', { name: 'Migration key' } ) ).toHaveValue( 'public-key' );
+		expect(
+			screen.getByRole( 'button', { name: /Having trouble/, hidden: true } )
+		).not.toBeVisible();
 	} );
 
 	it( 'notices the plugin being connected in another tab', async () => {
