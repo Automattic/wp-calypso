@@ -29,6 +29,7 @@ export interface ImageStudioData {
 	metadata: ImageStudioMetadata;
 	entryPoint: ImageStudioEntryPoint | null;
 	blockType: string | null;
+	postId?: number;
 }
 
 export interface VideoStudioData {
@@ -313,6 +314,16 @@ function detectImageEntity(): DetectedEntity | null {
 
 		if ( selectedAspectRatio ) {
 			imageStudio.aspect_ratio = selectedAspectRatio;
+		}
+
+		// Like core's mediaUpload: templates have slug IDs, so their numeric ID is `wp_id`.
+		const editorSelect = select( 'core/editor' ) as unknown as {
+			getCurrentPost?: () => { id?: unknown; wp_id?: unknown } | undefined;
+		};
+		const currentPost = editorSelect?.getCurrentPost?.();
+		const postId = typeof currentPost?.id === 'number' ? currentPost.id : currentPost?.wp_id;
+		if ( typeof postId === 'number' && postId > 0 ) {
+			imageStudio.postId = postId;
 		}
 
 		return { imageStudio, isOpen, isVideo: false };

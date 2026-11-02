@@ -51,6 +51,15 @@ interface VideoStoreSelectors {
 
 interface EditorStoreSelectors {
 	getEditedPostAttribute?: ( name: string ) => unknown;
+	getCurrentPostId?: () => unknown;
+	getCurrentPost?: () => unknown;
+}
+
+function editorWithPost( post: { id: unknown; wp_id?: unknown } ): EditorStoreSelectors {
+	return {
+		getCurrentPostId: () => post.id,
+		getCurrentPost: () => post,
+	};
 }
 
 function setupSelect( {
@@ -118,6 +127,38 @@ describe( 'getClientContext', () => {
 		} );
 		expect( ctx.videoStudio ).toBeUndefined();
 	} );
+
+	it.each( [
+		[ 'the post editor', editorWithPost( { id: 7 } ), 7 ],
+		[
+			'a customised Site Editor template',
+			editorWithPost( { id: 'twentytwentyfive//single', wp_id: 88 } ),
+			88,
+		],
+		[
+			'a Site Editor template never saved to the database',
+			editorWithPost( { id: 'twentytwentyfive//single', wp_id: 0 } ),
+			undefined,
+		],
+		[ 'the Media Library', undefined, undefined ],
+	] )(
+		'sends the attachment parent like core when the editor shows %s',
+		( _screen, editor, expectedPostId ) => {
+			setupSelect( {
+				imageStudio: {
+					getImageStudioAttachmentId: () => null,
+					getIsImageStudioOpen: () => true,
+					getEntryPoint: () => 'jetpack_external_media_featured_image',
+				},
+				editor,
+			} );
+
+			const ctx = getClientContext();
+
+			expect( ctx.imageStudio ).toBeDefined();
+			expect( ctx.imageStudio?.postId ).toBe( expectedPostId );
+		}
+	);
 
 	it( 'emits a videoStudio payload (and no imageStudio) when entryPoint is PostEditorFeatureClip', () => {
 		setupSelect( {
