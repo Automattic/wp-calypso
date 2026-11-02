@@ -5,6 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { speak } from '@wordpress/a11y';
 import {
 	Button,
 	RadioControl,
@@ -46,6 +47,13 @@ const WOOCOMMERCE_CONNECT_PATH = '/wp-admin/admin.php?page=wc-addons&section=hel
 const WOOCOMMERCE_INSTALL_PATH = '/wp-admin/plugin-install.php?s=woocommerce&tab=search&type=term';
 
 type AssignError = 'user-not-connected' | 'woocommerce-not-installed' | 'woocommerce-not-connected';
+
+const getAssignErrorTitle = ( error: AssignError ) =>
+	( {
+		'user-not-connected': __( 'You’re not connected to this site' ),
+		'woocommerce-not-installed': __( 'WooCommerce isn’t installed' ),
+		'woocommerce-not-connected': __( 'Store isn’t connected to WooCommerce.com' ),
+	} )[ error ];
 
 const getSiteUrl = ( site: AgencySite ) =>
 	( site.url_with_scheme ?? `https://${ site.url }` ).replace( /\/$/, '' );
@@ -93,6 +101,8 @@ export default function AssignLicenseModal( {
 	useEffect( () => {
 		if ( assignError ) {
 			errorRef.current?.scrollIntoView( { block: 'start', behavior: 'smooth' } );
+			// The notice itself isn't announced, unlike the snackbars it replaces.
+			speak( getAssignErrorTitle( assignError ), 'assertive' );
 		}
 	}, [ assignError ] );
 	// Jetpack Backup and Scan can't be assigned to a multisite.
@@ -191,7 +201,7 @@ export default function AssignLicenseModal( {
 						// The API only says why in the message: the store isn't connected to
 						// WooCommerce.com, or (otherwise) WooCommerce isn't there to provision on.
 						setAssignError(
-							/connect/i.test( error.message )
+							/woocommerce\.com/i.test( error.message )
 								? 'woocommerce-not-connected'
 								: 'woocommerce-not-installed'
 						);
@@ -244,7 +254,7 @@ export default function AssignLicenseModal( {
 				<Notice
 					ref={ errorRef }
 					variant="error"
-					title={ __( 'WooCommerce isn’t installed' ) }
+					title={ getAssignErrorTitle( 'woocommerce-not-installed' ) }
 					actions={
 						<Button
 							variant="secondary"
@@ -273,11 +283,11 @@ export default function AssignLicenseModal( {
 				<Notice
 					ref={ errorRef }
 					variant="error"
-					title={ __( 'You’re not connected to this site' ) }
+					title={ getAssignErrorTitle( 'user-not-connected' ) }
 				>
 					{ createInterpolateElement(
 						__(
-							'Connect your WordPress.com user (<username />) as an admin on <site />, then try again. <a>How to connect</a>'
+							'Connect your WordPress.com user (<username/>) as an admin on <site/>, then try again. <a>How to connect</a>'
 						),
 						{
 							username: <>{ user?.display_name }</>,
@@ -288,6 +298,9 @@ export default function AssignLicenseModal( {
 										isWooExtension ? ASSIGN_WOOCOMMERCE_HELP_URL : ASSIGN_JETPACK_HELP_URL
 									}
 									forceOpenInHelpCenter
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_license_assign_connect_help_click' )
+									}
 								/>
 							),
 						}
@@ -298,7 +311,7 @@ export default function AssignLicenseModal( {
 				<Notice
 					ref={ errorRef }
 					variant="error"
-					title={ __( 'Store isn’t connected to WooCommerce.com' ) }
+					title={ getAssignErrorTitle( 'woocommerce-not-connected' ) }
 					actions={
 						<Button
 							variant="secondary"
