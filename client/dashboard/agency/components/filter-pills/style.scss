@@ -1,0 +1,45 @@
+.a4a-filter-pill {
+	--a4a-filter-pill-accent: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
+
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin: 0;
+	padding: 6px 12px;
+	border: 0;
+	border-radius: 16px;
+	background: var( --wpds-color-background-surface-neutral-strong );
+	box-shadow: 0 0 0 var( --wpds-border-width-xs, 1px ) var( --wpds-color-stroke-surface-neutral ) inset;
+	color: var( --wpds-color-foreground-content-neutral );
+	font-family: inherit;
+	font-size: 13px;
+	line-height: 16px;
+	white-space: nowrap;
+	cursor: pointer;
+
+	&:hover:not( .is-selected ) {
+		box-shadow: 0 0 0 var( --wpds-border-width-xs, 1px ) var( --a4a-filter-pill-accent ) inset;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var( --a4a-filter-pill-accent );
+		outline-offset: 2px;
+	}
+
+	&.is-selected {
+		box-shadow: 0 0 0 var( --wpds-border-width-xs, 1px ) var( --a4a-filter-pill-accent ) inset;
+		color: var( --a4a-filter-pill-accent );
+	}
+}
+
+.a4a-filter-pill__label {
+	font-weight: 500;
+}
+
+.a4a-filter-pill__count {
+	color: var( --wpds-color-foreground-content-neutral-weak );
+
+	.a4a-filter-pill.is-selected & {
+		color: inherit;
+	}
+}
