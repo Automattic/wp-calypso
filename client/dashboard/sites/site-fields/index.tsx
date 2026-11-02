@@ -342,7 +342,7 @@ export function PHPVersion( { site }: { site: Site } ) {
 		<span ref={ ref }>
 			<TextBlur isBlurred={ isLoading }>
 				{ isLoading ? 'X.Y' : ( site.options?.php_version ?? data ) }
-			</TextBlur>
+			{ isLoading ? 'X.Y' : ( data ?? site.options?.php_version ) }
 		</span>
 	);
 }
