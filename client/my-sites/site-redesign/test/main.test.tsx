@@ -1179,6 +1179,8 @@ describe( 'SiteRedesign', () => {
 		expect( fetchPreview ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 2 ).id );
 		expect( frame ).toHaveAttribute( 'srcdoc', '<p>preview</p>' );
 		expect( frame ).not.toHaveAttribute( 'src' );
+		// A click on a link inside the stored page would navigate the frame itself.
+		expect( frame ).not.toHaveClass( 'is-live' );
 		expect( frame ).toHaveAttribute( 'sandbox', 'allow-scripts' );
 		expect( screen.getByRole( 'heading', { name: 'Your new design is ready' } ) ).toBeVisible();
 		expect(
@@ -1246,18 +1248,16 @@ describe( 'SiteRedesign', () => {
 
 	it( 'says so when the chosen design’s preview cannot be loaded, and still offers the live tab', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
-		jest.mocked( fetchPreview ).mockRejectedValue( new Error( 'nope' ) );
+		jest
+			.mocked( fetchPreview )
+			.mockRejectedValue( new Error( 'This design is no longer available.' ) );
 		renderPage(
 			false,
 			REDESIGN_ID,
 			new QueryClient( { defaultOptions: { queries: { retry: false } } } )
 		);
 
-		expect(
-			await screen.findByText(
-				'The preview isn’t available right now. You can still switch to your new design.'
-			)
-		).toBeVisible();
+		expect( await screen.findByText( 'This design is no longer available.' ) ).toBeVisible();
 		expect( screen.queryByTitle( 'Preview of your new design' ) ).toBeNull();
 		expect( screen.getByRole( 'link', { name: 'Open preview in a new tab' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();

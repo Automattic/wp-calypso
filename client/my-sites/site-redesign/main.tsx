@@ -326,7 +326,11 @@ function InstalledPreview( {
 	if ( ! generationId || preview.isError ) {
 		return (
 			<Text>
-				{ __( 'The preview isn’t available right now. You can still switch to your new design.' ) }
+				{ preview.isError
+					? messageOf( preview.error )
+					: __(
+							'The preview isn’t available right now. You can still switch to your new design.'
+						) }
 			</Text>
 		);
 	}
@@ -340,11 +344,12 @@ function InstalledPreview( {
 					{ ! loaded && <SiteSkeleton className="site-redesign__skeleton" /> }
 					{ preview.data && (
 						<iframe
-							className={ clsx( 'site-redesign__frame', 'is-live', { 'is-loaded': loaded } ) }
+							className={ clsx( 'site-redesign__frame', { 'is-loaded': loaded } ) }
 							title={ __( 'Preview of your new design' ) }
 							// Opaque origin, as in the picker: nothing in it can reach Calypso or navigate it.
 							sandbox="allow-scripts"
 							srcDoc={ preview.data.html }
+							tabIndex={ -1 }
 							onLoad={ () => setLoaded( true ) }
 						/>
 					) }
@@ -903,7 +908,7 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			rightElement={
 				<HStack spacing={ 4 } expanded={ false }>
 					<HStack spacing={ 1 } expanded={ false }>
-						{ /* The block editor's view-site button: the same theme preview, on its own. */ }
+						{ /* Opens the live site with the new theme, for a look beyond the stored front page. */ }
 						{ installedUrl && (
 							<Button
 								__next40pxDefaultSize
