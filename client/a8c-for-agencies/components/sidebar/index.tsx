@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, type JSX } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
-import SpacefastSidebarCard from 'calypso/dashboard/agency/components/spacefast-promo';
+import SidebarPromo from 'calypso/dashboard/agency/components/sidebar-promo';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,
@@ -113,7 +113,7 @@ const A4ASidebar = ( {
 				</SidebarNavigator>
 			</SidebarMain>
 
-			{ ! isClientUser && <SpacefastSidebarCard recordTracksEvent={ handleRecordTracksEvent } /> }
+			{ ! isClientUser && <SidebarPromo recordTracksEvent={ handleRecordTracksEvent } /> }
 
 			<SidebarFooter className="a4a-sidebar__footer">
 				<ul>

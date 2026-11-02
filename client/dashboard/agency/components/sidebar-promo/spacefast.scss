@@ -1,0 +1,14 @@
+@import '../spacefast/brand';
+
+.a4a-sidebar-promo-card.is-spacefast {
+	--a4a-sidebar-promo-icon-color: #{$spacefast-green};
+	--a4a-sidebar-promo-icon-background: #{$spacefast-ink};
+	--a4a-sidebar-promo-badge-color: #{$spacefast-ink};
+	--a4a-sidebar-promo-badge-background: #{$spacefast-green};
+}
+
+// An ink tile disappears on a8c-for-agencies' dark sidebar, so the tile is reversed there.
+.a4a-sidebar .a4a-sidebar-promo-card.is-spacefast {
+	--a4a-sidebar-promo-icon-color: #{$spacefast-ink};
+	--a4a-sidebar-promo-icon-background: #{$spacefast-green};
+}
