@@ -1,5 +1,6 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
+import clsx from 'clsx';
 import { Button, Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { lock } from '@wordpress/icons';
@@ -17,9 +18,9 @@ import referralImage from './images/gate-referral.jpg';
 import './style.scss';
 
 /** The actions an agency can only take once it is approved. */
-export type ApprovalGateKind = 'purchase' | 'referral' | 'dev-site';
+export type ApprovalGateKind = 'purchase' | 'referral' | 'dev-site' | 'team' | 'woopayments';
 
-const IMAGES: Record< ApprovalGateKind, string > = {
+const IMAGES: Partial< Record< ApprovalGateKind, string > > = {
 	purchase: purchaseImage,
 	referral: referralImage,
 	'dev-site': devSiteImage,
@@ -31,6 +32,10 @@ function getTitle( kind: ApprovalGateKind ) {
 			return __( 'Referrals unlock once you’re approved' );
 		case 'dev-site':
 			return __( 'Development sites unlock once you’re approved' );
+		case 'team':
+			return __( 'Team invites unlock once you’re approved' );
+		case 'woopayments':
+			return __( 'WooPayments unlocks once you’re approved' );
 		default:
 			return __( 'Purchases unlock once you’re approved' );
 	}
@@ -46,8 +51,31 @@ function getBenefit( kind: ApprovalGateKind ) {
 			return __(
 				'Then you can build client sites on free development sites and only pay when you launch.'
 			);
+		case 'team':
+			return __( 'Then you can invite your team to manage sites and clients with you.' );
+		case 'woopayments':
+			return __(
+				'Then you can add WooPayments to your clients’ stores and earn a revenue share on their payments.'
+			);
 		default:
 			return __( 'Then you can check out and buy products and hosting for your clients’ sites.' );
+	}
+}
+
+function getRejectedDescription( kind: ApprovalGateKind ) {
+	switch ( kind ) {
+		case 'team':
+			return __(
+				'Team invites are open to approved agencies only. If you think this was done in error, contact support to discuss it.'
+			);
+		case 'woopayments':
+			return __(
+				'WooPayments revenue share is open to approved agencies only. If you think this was done in error, contact support to discuss it.'
+			);
+		default:
+			return __(
+				'Purchases, referrals, and development sites are open to approved agencies only. If you think this was done in error, contact support to discuss it.'
+			);
 	}
 }
 
@@ -94,7 +122,7 @@ export function ApprovalGate( { kind, onClose }: { kind: ApprovalGateKind; onClo
 			onRequestClose={ close }
 			__experimentalHideHeader
 		>
-			<div className="a4a-approval-gate">
+			<div className={ clsx( 'a4a-approval-gate', { 'is-without-image': ! IMAGES[ kind ] } ) }>
 				<Callout
 					icon={ lock }
 					image={ IMAGES[ kind ] }
@@ -103,11 +131,7 @@ export function ApprovalGate( { kind, onClose }: { kind: ApprovalGateKind; onClo
 					titleAs="h2"
 					description={
 						isRejected ? (
-							<Text variant="muted">
-								{ __(
-									'Purchases, referrals, and development sites are open to approved agencies only. If you think this was done in error, contact support to discuss it.'
-								) }
-							</Text>
+							<Text variant="muted">{ getRejectedDescription( kind ) }</Text>
 						) : (
 							<>
 								<Text variant="muted">{ getBenefit( kind ) }</Text>
