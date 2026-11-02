@@ -241,6 +241,7 @@
  * heavier design-system weight. */
 :root {
 	--wpds-typography-font-weight-emphasis: 499;
+	--wp-ui-menu-z-index: 1000000;
 }
 
 /* @wordpress/components button focus ring offset ------------------------------------ *
