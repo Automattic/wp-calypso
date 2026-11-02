@@ -6,6 +6,10 @@ import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
+import {
+	DESIGN_PICKER_QUERY_ARG,
+	useDesignCandidatesEnabled,
+} from 'calypso/landing/stepper/hooks/use-design-candidates-enabled';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import {
@@ -29,6 +33,7 @@ import {
 	getBuildWowGraph,
 	getBuildWowSiteIdentifier,
 	logBuildWowEvent,
+	getDesignCandidate,
 	requestBuildWowSite,
 } from 'calypso/landing/stepper/utils/build-wow';
 import {
@@ -155,6 +160,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		siteSlug: queryParams.get( 'siteSlug' ),
 		siteId: queryParams.get( 'siteId' ),
 	} );
+	const designCandidates = useDesignCandidatesEnabled(
+		shouldBuildWow && queryParams.get( DESIGN_PICKER_QUERY_ARG ) === '1'
+	);
 
 	const ciabSiteCreationPromiseRef = useRef< Promise< number | null > | null >( null );
 	// A Simple-site blueprint build: the Playground import on the site itself, no Atomic
@@ -338,15 +346,32 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			const specConfirmStartTime = Date.now();
 			const elapsedMs = () => Date.now() - specConfirmStartTime;
 			let responseBlogId: number | undefined;
+			// The design the user picked in the site-spec widget, only while the picker is on. The
+			// server builds a picked design on the DSL graph when it can continue it, and designs
+			// the site again when it cannot (for example after the design expired), so the graph
+			// stays the one asked for and a retry can send the same pick.
+			const designCandidate = designCandidates.isEnabled
+				? getDesignCandidate(
+						( specData as { designCandidateId?: unknown } | null )?.designCandidateId
+					)
+				: undefined;
 			const graph = getBuildWowGraph( queryParams );
 
 			try {
 				logBuildWowEvent( 'spec_confirm_request_start', {
 					spec_id: specId,
 					site_identifier: buildWowSiteIdentifier,
+					graph: graph ?? null,
+					design_candidate: designCandidate ?? null,
 				} );
 
-				const response = await requestBuildWowSite( buildWowSiteIdentifier, specId, graph );
+				const response = await requestBuildWowSite(
+					buildWowSiteIdentifier,
+					specId,
+					graph,
+					undefined,
+					designCandidate
+				);
 				responseBlogId = response.blog_id;
 
 				logBuildWowEvent(
@@ -384,6 +409,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					...( ref ? { ref } : {} ),
 					...( source ? { source } : {} ),
 					...( graph ? { graph } : {} ),
+					...( designCandidate ? { designCandidate } : {} ),
 				} );
 			} catch ( error ) {
 				const message = error instanceof Error ? error.message : String( error );
@@ -400,7 +426,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 				failBuildWow( 'build_wow_request_failed', message );
 			}
 		},
-		[ buildWowSiteIdentifier, failBuildWow, queryParams ]
+		[ buildWowSiteIdentifier, failBuildWow, queryParams, designCandidates.isEnabled ]
 	);
 
 	// Without a target site nothing can be built, so there is no point loading the widget
@@ -445,8 +471,17 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 	}, [ activeFlow, buildWowSpecId, buildWowSiteIdentifier ] );
 
 	useEffect( () => {
-		if ( activeFlow === 'build-wow' && buildWowSpecId && buildWowSiteIdentifier ) {
-			handleBuildWowSpecConfirm( { spec_id: buildWowSpecId } );
+		if (
+			activeFlow === 'build-wow' &&
+			buildWowSpecId &&
+			buildWowSiteIdentifier &&
+			! designCandidates.isLoading
+		) {
+			// The widget's build URL carries the design the user picked.
+			handleBuildWowSpecConfirm( {
+				spec_id: buildWowSpecId,
+				designCandidateId: queryParams.get( 'design_candidate' ) ?? undefined,
+			} );
 		} else if ( activeFlow === 'early-provision' && atomicProvisionSpecId ) {
 			handleEarlyProvisionSpecConfirm( { spec_id: atomicProvisionSpecId } );
 		}
@@ -457,6 +492,8 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		atomicProvisionSpecId,
 		handleBuildWowSpecConfirm,
 		handleEarlyProvisionSpecConfirm,
+		queryParams,
+		designCandidates.isLoading,
 	] );
 
 	// Blueprint archive import: the transfer-to-Atomic + archive restore runs in
@@ -736,6 +773,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 		// so the interview widget would only flash (and open a fresh spec session) before
 		// the redirect.
 		siteSpecStep = <Step.Loading />;
+	} else if ( activeFlow === 'build-wow' && designCandidates.isLoading ) {
+		// The widget reads its config once, so it waits for the Automattician check.
+		siteSpecStep = <Step.Loading />;
 	} else if ( activeFlow === 'build-wow' ) {
 		siteSpecStep = (
 			<SiteSpecContainer
@@ -745,6 +785,7 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 					ref: queryParams.get( 'ref' ),
 					source: querySource,
 					graph: getBuildWowGraph( queryParams ),
+					designPicker: designCandidates.isEnabled,
 				} ) }
 				onSpecConfirm={ handleBuildWowSpecConfirm }
 			/>

@@ -31,7 +31,7 @@ import {
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
-import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
+import { A4A_SIGNUP_URL, JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -1260,6 +1260,34 @@ function jetpackCloudPages( app ) {
 	// Query args are intentionally dropped rather than forwarded to a third-party domain.
 	app.get( [ '/manage/pricing', `/${ anyLangParam }/manage/pricing` ], function ( _req, res ) {
 		res.redirect( 302, JETPACK_COM_A4A_LANDING_PAGE );
+	} );
+
+	// Jetpack Manage no longer accepts agency signups; every signup goes through Automattic for
+	// Agencies. Registered here so it runs before the client-side OAuth login gate in
+	// client/boot/common.js, which would otherwise bounce logged-out visitors through login first.
+	// A 302 rather than a 301 so the route can be restored without waiting out caches.
+	// Only the acquisition params A4A signup reads are forwarded (see
+	// client/a8c-for-agencies/sections/signup/hooks/use-acquisition-props.ts).
+	const A4A_SIGNUP_FORWARDED_PARAMS = [
+		'ref',
+		'utm_source',
+		'utm_medium',
+		'utm_campaign',
+		'utm_term',
+		'utm_content',
+	];
+	app.get( [ '/manage/signup', '/agency/signup' ], function ( req, res ) {
+		const target = new URL( A4A_SIGNUP_URL );
+		for ( const key of A4A_SIGNUP_FORWARDED_PARAMS ) {
+			const value = req.query[ key ];
+			if ( typeof value === 'string' && value !== '' ) {
+				target.searchParams.set( key, value );
+			}
+		}
+		if ( ! target.searchParams.has( 'ref' ) ) {
+			target.searchParams.set( 'ref', 'jetpack-manage' );
+		}
+		res.redirect( 302, target.toString() );
 	} );
 }
 
