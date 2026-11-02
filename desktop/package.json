@@ -53,7 +53,7 @@
 		"cross-env": "^7.0.3",
 		"electron-fetch": "^1.7.4",
 		"electron-store": "^8.1.0",
-		"electron-updater": "6.8.9",
+		"electron-updater": "6.8.11",
 		"js-yaml": "5.4.1",
 		"semver": "^7.7.2",
 		"superagent": "^3.8.3",
