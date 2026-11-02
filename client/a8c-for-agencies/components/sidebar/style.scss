@@ -155,11 +155,11 @@
 // The sidebar promo card reads as part of the footer here: edge to edge, with the
 // profile row's top border, and no gap before the footer.
 .a4a-sidebar .a4a-sidebar-promo-card {
-	// Cancels the sidebar's 16px flex gaps above and below, so the card meets the
-	// menu and the footer, as the profile row cancels the sidebar's padding. The top
-	// is 1px less because the menu's -1px margin would otherwise cover this border.
-	margin: -15px -16px -16px;
-	padding: 16px;
+	// Cancels the sidebar's flex gaps above and below, so the card meets the menu
+	// and the footer, and spans its padding. The top is 1px less because the menu's
+	// -1px margin would otherwise cover this border.
+	margin: calc(1px - var(--sidebar-v2-gap)) calc(-1 * var(--sidebar-v2-padding)) calc(-1 * var(--sidebar-v2-gap));
+	padding: var(--sidebar-v2-padding);
 	border: 0;
 	border-block-start: 1px solid var(--color-neutral-70);
 	border-radius: 0;

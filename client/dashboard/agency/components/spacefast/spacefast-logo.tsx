@@ -1,6 +1,7 @@
 /**
  * The Spacefast logo (Spaces symbol and wordmark), from the Spacefast Brand Book.
- * Filled with `currentColor` so callers pick the color.
+ * Filled with `currentColor` so callers pick the color. Decorative: callers name
+ * Spacefast in text alongside it.
  */
 export default function SpacefastLogo( { className }: { className?: string } ) {
 	return (
@@ -8,8 +9,8 @@ export default function SpacefastLogo( { className }: { className?: string } ) {
 			className={ className }
 			viewBox="0 0 1379 200"
 			xmlns="http://www.w3.org/2000/svg"
-			role="img"
-			aria-label="Spacefast"
+			aria-hidden="true"
+			focusable="false"
 		>
 			<path
 				fill="currentColor"

@@ -9,10 +9,11 @@ import {
 import { __ } from '@wordpress/i18n';
 import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { Card, CardBody } from '../../../components/card';
 import { getSpacefastUrl } from '../../components/spacefast/constants';
 import SpacefastLogo from '../../components/spacefast/spacefast-logo';
+import { useRecordViewOnce } from '../../lib/use-record-view-once';
 import type { RecordTracksEvent } from '../../tiers/types';
 
 import './spacefast-section.scss';
@@ -26,13 +27,13 @@ export default function SpacefastDevToolsSection( {
 }: {
 	recordTracksEvent: RecordTracksEvent;
 } ) {
-	const hasRecordedView = useRef( false );
-	useEffect( () => {
-		if ( ! hasRecordedView.current ) {
-			hasRecordedView.current = true;
-			recordTracksEvent( 'calypso_a4a_spacefast_promo_view', { placement: 'dev_tools' } );
-		}
-	}, [ recordTracksEvent ] );
+	useRecordViewOnce(
+		'spacefast-dev-tools',
+		useCallback(
+			() => recordTracksEvent( 'calypso_a4a_spacefast_promo_view', { placement: 'dev_tools' } ),
+			[ recordTracksEvent ]
+		)
+	);
 
 	const features = [
 		__( 'Publish a prototype, report, or app in seconds' ),
@@ -83,6 +84,7 @@ export default function SpacefastDevToolsSection( {
 							) ) }
 						</VStack>
 						<Button
+							__next40pxDefaultSize
 							variant="primary"
 							size="compact"
 							href={ getSpacefastUrl( 'dev_tools' ) }

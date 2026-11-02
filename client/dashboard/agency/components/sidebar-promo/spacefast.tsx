@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { getSpacefastUrl } from '../spacefast/constants';
 import SpacefastSymbol from '../spacefast/spacefast-symbol';
 import SidebarPromoCard from './sidebar-promo-card';
+import type { SidebarPromoTone } from './sidebar-promo-card';
 import type { RecordTracksEvent } from '../../tiers/types';
 
 import './spacefast.scss';
@@ -12,8 +13,10 @@ import './spacefast.scss';
  * its stylesheet, and drop it from `SidebarPromo`.
  */
 export default function SpacefastSidebarPromo( {
+	tone,
 	recordTracksEvent,
 }: {
+	tone?: SidebarPromoTone;
 	recordTracksEvent: RecordTracksEvent;
 } ) {
 	const onView = useCallback(
@@ -23,7 +26,9 @@ export default function SpacefastSidebarPromo( {
 
 	return (
 		<SidebarPromoCard
+			id="spacefast"
 			className="is-spacefast"
+			tone={ tone }
 			icon={ <SpacefastSymbol /> }
 			title={ __( 'Spacefast' ) }
 			badge={ __( 'New' ) }
