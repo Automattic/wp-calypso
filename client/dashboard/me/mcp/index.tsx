@@ -179,75 +179,73 @@ function McpComponent() {
 				eventName="calypso_dashboard_mcp_view"
 				properties={ tracksAudienceProps }
 			/>
-			<VStack spacing={ 4 }>
-				<McpConnectCard
-					mcpEnabled={ mcpEnabled }
-					onTurnOn={ () => handleMcpToggle( true ) }
-					isTurningOn={ mutation.isPending }
-				/>
-				<Card className="mcp-preferences__access-card">
-					<CardBody>
-						<VStack spacing={ 4 }>
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'External AI agent access' ) }
-								description={ __(
-									'Allow external AI agents to access your WordPress.com account and sites via MCP.'
-								) }
-							/>
-							<ToggleControl
-								__nextHasNoMarginBottom
-								checked={ mcpEnabled }
-								disabled={ mutation.isPending }
-								label={ __( 'Enable MCP access' ) }
-								onChange={ handleMcpToggle }
-							/>
-						</VStack>
-					</CardBody>
-
-					{ mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/read"
-								density="medium"
-								title={ __( 'Read' ) }
-								decoration={ <Icon icon={ seen } size={ 24 } /> }
-								badges={ [ readBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/write"
-								density="medium"
-								title={ __( 'Write' ) }
-								decoration={ <Icon icon={ pencil } size={ 24 } /> }
-								badges={ [ writeBadge ] }
-							/>
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Site exceptions' ) }
-								decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
-								badges={ [ exceptionBadge ] }
-							/>
-							{ userSettings?.mcp_approval_bypass && (
-								<McpApprovalBypassControl approvalBypass={ userSettings.mcp_approval_bypass } />
+			<McpConnectCard
+				mcpEnabled={ mcpEnabled }
+				onTurnOn={ () => handleMcpToggle( true ) }
+				isTurningOn={ mutation.isPending }
+			/>
+			<Card className="mcp-preferences__access-card">
+				<CardBody>
+					<VStack spacing={ 4 }>
+						<SectionHeader
+							level={ 3 }
+							title={ __( 'External AI agent access' ) }
+							description={ __(
+								'Allow external AI agents to access your WordPress.com account and sites via MCP.'
 							) }
-						</>
-					) }
-					{ ! mcpEnabled && (
-						<>
-							<CardDivider />
-							<RouterLinkSummaryButton
-								to="/me/preferences/mcp/mcp-sites"
-								density="medium"
-								title={ __( 'Add to specific sites' ) }
-								decoration={ <Icon icon={ globe } size={ 24 } /> }
-								badges={ [ addSiteBadge ] }
-							/>
-						</>
-					) }
-				</Card>
-			</VStack>
+						/>
+						<ToggleControl
+							__nextHasNoMarginBottom
+							checked={ mcpEnabled }
+							disabled={ mutation.isPending }
+							label={ __( 'Enable MCP access' ) }
+							onChange={ handleMcpToggle }
+						/>
+					</VStack>
+				</CardBody>
+
+				{ mcpEnabled && (
+					<>
+						<CardDivider />
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/read"
+							density="medium"
+							title={ __( 'Read' ) }
+							decoration={ <Icon icon={ seen } size={ 24 } /> }
+							badges={ [ readBadge ] }
+						/>
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/write"
+							density="medium"
+							title={ __( 'Write' ) }
+							decoration={ <Icon icon={ pencil } size={ 24 } /> }
+							badges={ [ writeBadge ] }
+						/>
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/mcp-sites"
+							density="medium"
+							title={ __( 'Site exceptions' ) }
+							decoration={ <Icon icon={ notAllowed } size={ 24 } /> }
+							badges={ [ exceptionBadge ] }
+						/>
+						{ userSettings?.mcp_approval_bypass && (
+							<McpApprovalBypassControl approvalBypass={ userSettings.mcp_approval_bypass } />
+						) }
+					</>
+				) }
+				{ ! mcpEnabled && (
+					<>
+						<CardDivider />
+						<RouterLinkSummaryButton
+							to="/me/preferences/mcp/mcp-sites"
+							density="medium"
+							title={ __( 'Add to specific sites' ) }
+							decoration={ <Icon icon={ globe } size={ 24 } /> }
+							badges={ [ addSiteBadge ] }
+						/>
+					</>
+				) }
+			</Card>
 		</PageLayout>
 	);
 }

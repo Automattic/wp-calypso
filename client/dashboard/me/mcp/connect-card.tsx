@@ -1,6 +1,6 @@
 import { Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { copy, external } from '@wordpress/icons';
+import { arrowUpRight, copy } from '@wordpress/icons';
 import { useEffect, useRef, useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
 import { useAnalytics } from '../../app/analytics';
@@ -71,7 +71,7 @@ export default function McpConnectCard( {
 			</span>
 			<span className="mcp-connect__action">
 				<span>{ copiedKey === agent.key ? __( 'Copied' ) : agent.actionLabel }</span>
-				<Icon icon={ agent.href ? external : copy } size={ 16 } />
+				<Icon icon={ agent.href ? arrowUpRight : copy } size={ 12 } />
 			</span>
 		</>
 	);
@@ -141,9 +141,11 @@ export default function McpConnectCard( {
 			<CardFooter className="mcp-connect__footer">
 				<span>{ __( 'Not sure where to start? Have the agent connect itself.' ) }</span>
 				<Button
+					className="mcp-connect__helper-button"
 					variant="tertiary"
-					size="compact"
+					size="small"
 					icon={ copy }
+					iconSize={ 16 }
 					onClick={ () => {
 						recordTracksEvent( 'calypso_dashboard_mcp_connect_helper_copy', tracksAudienceProps );
 						copyText( 'helper', getHelperPrompt() );

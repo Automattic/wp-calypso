@@ -42,8 +42,17 @@
 	cursor: pointer;
 
 	&:hover {
-		background: color-mix( in srgb, var( --dashboard__text-color ) 5%, transparent );
-		color: inherit;
+		border-color: color-mix(
+			in srgb,
+			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) ) 12%,
+			transparent
+		);
+		background: color-mix(
+			in srgb,
+			var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) ) 2%,
+			transparent
+		);
+		color: var( --wp-components-color-accent, var( --wp-admin-theme-color, #3858e9 ) );
 	}
 
 	&:focus-visible {

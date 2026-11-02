@@ -89,6 +89,23 @@
 	@include color-scheme-dark-theme-card;
 }
 
+/* MCP connect card */
+@mixin dashboard-dark-theme-mcp-connect {
+	.mcp-connect__tile:hover {
+		border-color: var( --dashboard-surface__border-color );
+		background: color-mix(
+			in srgb,
+			var( --dashboard-surface__background-color ) 82%,
+			var( --wp-admin-theme-color )
+		);
+		color: var( --dashboard__text-color );
+
+		.mcp-connect__name {
+			color: var( --dashboard-menu-item-active__color );
+		}
+	}
+}
+
 /* Notice */
 @mixin dashboard-dark-theme-notice {
 	// `@wordpress/ui` Notice colors come from the `--wpds-*` intent tokens, which
@@ -482,6 +499,7 @@
 	@include dashboard-dark-theme-form-controls;
 	@include dashboard-dark-theme-item-group;
 	@include dashboard-dark-theme-links;
+	@include dashboard-dark-theme-mcp-connect;
 	@include color-scheme-dark-theme-modal;
 	@include dashboard-dark-theme-modal;
 	@include dashboard-dark-theme-notice;
