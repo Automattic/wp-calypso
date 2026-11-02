@@ -23,6 +23,7 @@ let mockQueryParams = new URLSearchParams();
 const STREAMING_ONLY = [ 'site-spec/build-wow-streaming' ];
 let mockFlags = new Set( STREAMING_ONLY );
 let mockIsAutomattician = false;
+let mockIsAutomatticianLoading = false;
 
 jest.mock( '@automattic/calypso-config', () => {
 	return {
@@ -43,11 +44,14 @@ jest.mock( '@automattic/calypso-config', () => {
 
 jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
 	DESIGN_PICKER_QUERY_ARG: 'design_picker',
-	useDesignCandidatesEnabled: ( requested: boolean ) => ( {
-		isEnabled:
-			mockFlags.has( 'site-spec/design-candidates' ) || ( requested && mockIsAutomattician ),
-		isLoading: false,
-	} ),
+	useDesignCandidatesEnabled: ( requested: boolean ) => {
+		const isFlagEnabled = mockFlags.has( 'site-spec/design-candidates' );
+		const isLoading = requested && ! isFlagEnabled && mockIsAutomatticianLoading;
+		return {
+			isEnabled: isFlagEnabled || ( requested && ! isLoading && mockIsAutomattician ),
+			isLoading,
+		};
+	},
 } ) );
 
 jest.mock( '@automattic/onboarding', () => ( {
@@ -163,6 +167,7 @@ describe( 'SiteSpec early provisioning step', () => {
 		window.sessionStorage.clear();
 		mockFlags = new Set( STREAMING_ONLY );
 		mockIsAutomattician = false;
+		mockIsAutomatticianLoading = false;
 		mockQueryParams = new URLSearchParams( 'early_provision_site=1&source=vega' );
 		Object.defineProperty( window, 'location', {
 			value: { href: '' },
@@ -378,6 +383,54 @@ describe( 'SiteSpec early provisioning step', () => {
 			stream_events: true,
 			design_candidate: 2,
 		} );
+	} );
+
+	it( 'waits for the Automattician check before it starts the widget', () => {
+		mockIsAutomatticianLoading = true;
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&design_picker=1'
+		);
+
+		const { rerender } = renderSiteSpec();
+		expect( mockUseSiteSpec ).not.toHaveBeenCalled();
+
+		mockIsAutomatticianLoading = false;
+		mockIsAutomattician = true;
+		rerender(
+			<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+		);
+		expect( mockUseSiteSpec ).toHaveBeenCalled();
+		expect( getBuildWowSiteSpecConfig ).toHaveBeenCalledTimes( 1 );
+		expect( getBuildWowSiteSpecConfig ).toHaveBeenCalledWith(
+			expect.objectContaining( { designPicker: true } )
+		);
+	} );
+
+	it( 'waits for the Automattician check before it confirms a carried spec', async () => {
+		mockIsAutomatticianLoading = true;
+		mockQueryParams = new URLSearchParams(
+			'build_wow=1&siteSlug=example.wordpress.com&spec_id=spec-url&design_candidate=3&design_picker=1'
+		);
+		wpcomPostMock.mockResolvedValue( { blog_id: 123 } );
+
+		let view: ReturnType< typeof renderSiteSpec > | undefined;
+		await act( async () => {
+			view = renderSiteSpec();
+		} );
+		expect( wpcomPostMock ).not.toHaveBeenCalled();
+
+		mockIsAutomatticianLoading = false;
+		mockIsAutomattician = true;
+		await act( async () => {
+			view?.rerender(
+				<SiteSpec navigation={ navigation } stepName="site-spec" flow="ai-site-builder-spec" />
+			);
+		} );
+		expect( wpcomPostMock ).toHaveBeenCalledTimes( 1 );
+		expect( wpcomPostMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { path: '/sites/example.wordpress.com/big-sky/build-wow' } ),
+			{ spec_id: 'spec-url', stream_events: true, design_candidate: 3 }
+		);
 	} );
 
 	it( 'keeps the picker off for a user who is not an Automattician', async () => {
