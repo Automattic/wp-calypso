@@ -55,6 +55,7 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
+import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
 import {
 	getPressableOwnershipType,
 	pressableLicensesQuery,
@@ -910,6 +911,31 @@ export const agencyTeamRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../agency/team' ).then( ( d ) =>
 		createLazyRoute( 'agency-team' )( {
+			component: d.default,
+		} )
+	)
+);
+
+// `/agency/dashboard` – which dashboard the agency uses; only the owner can change it
+export const agencyDashboardOptInRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: __( 'Dashboard' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/dashboard',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! canSwitchAgencyDashboard( agency ) ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/dashboard-opt-in' ).then( ( d ) =>
+		createLazyRoute( 'agency-dashboard-opt-in' )( {
 			component: d.default,
 		} )
 	)
@@ -2318,6 +2344,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
+		agencyDashboardOptInRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,

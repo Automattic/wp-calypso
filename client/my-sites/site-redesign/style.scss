@@ -114,6 +114,12 @@ body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
 	}
 }
 
+// The bar's buttons keep a visible ring for keyboard users, whatever the step's own button styles do.
+body.is-section-site-redesign .step-container-v2__sticky-bottom-bar button:focus-visible {
+	outline: 2px solid var( --wp-admin-theme-color );
+	outline-offset: 2px;
+}
+
 // Fits the menu to its three short labels; MenuItem otherwise holds every label at 160px.
 .site-redesign__device-menu .components-menu-item__item {
 	min-width: 0;
@@ -213,6 +219,30 @@ body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
 	animation: site-redesign-breathe 2800ms ease-in-out infinite;
 }
 
+// A light band sweeping across the card, on top of the pulse, so it reads as loading and not as empty.
+.site-redesign__skeleton {
+	overflow: hidden;
+
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		background: linear-gradient(
+			100deg,
+			transparent 30%,
+			rgba( 255, 255, 255, 0.6 ) 50%,
+			transparent 70%
+		);
+		transform: translateX( -100% );
+		animation: site-redesign-shimmer 1800ms ease-in-out infinite;
+	}
+}
+
+.site-redesign__failed {
+	padding: 16px;
+	text-align: center;
+}
+
 .site-redesign__candidate:nth-child( even ) .site-redesign__skeleton > div,
 .site-redesign__candidate:nth-child( even ) .site-redesign__caption-skeleton {
 	animation-delay: -1200ms;
@@ -228,6 +258,12 @@ body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
 @keyframes site-redesign-bar-in {
 	from {
 		transform: translateY( 100% );
+	}
+}
+
+@keyframes site-redesign-shimmer {
+	to {
+		transform: translateX( 100% );
 	}
 }
 
@@ -248,6 +284,10 @@ body.is-section-site-redesign .step-container-v2__sticky-bottom-bar {
 
 	.site-redesign__skeleton > div,
 	.site-redesign__caption-skeleton {
+		animation: none;
+	}
+
+	.site-redesign__skeleton::after {
 		animation: none;
 	}
 }

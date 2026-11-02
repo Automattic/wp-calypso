@@ -51,7 +51,7 @@
 		"@automattic/explat-client": "workspace:^",
 		"@automattic/explat-client-react-helpers": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
-		"@automattic/number-formatters": "^1.2.10",
+		"@automattic/number-formatters": "^1.2.12",
 		"@automattic/urls": "workspace:^",
 		"@tanstack/query-core": "^5.83.0",
 		"@tanstack/react-query": "^5.83.0",
