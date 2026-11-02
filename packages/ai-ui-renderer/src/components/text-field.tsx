@@ -1,9 +1,10 @@
 import { createComponentImplementation } from '@a2ui/react';
 import { DataBindingSchema } from '@a2ui/web_core/v1_0';
-import { TextControl, TextareaControl } from '@wordpress/components';
 import { useEffect, useRef, useState } from '@wordpress/element';
+import { InputControl, TextareaControl } from '@wordpress/ui';
 import { z } from 'zod';
-import { StringValueSchema } from '../utils/schemas';
+import { useFieldProps } from '../hooks/use-field-props';
+import { ChecksSchema, StringValueSchema } from '../utils/schemas';
 
 export const TextField = createComponentImplementation(
 	{
@@ -12,11 +13,13 @@ export const TextField = createComponentImplementation(
 			label: StringValueSchema,
 			value: StringValueSchema.optional(),
 			variant: z.enum( [ 'shortText', 'longText', 'number', 'obscured' ] ).optional(),
+			checks: ChecksSchema,
 		} ),
 	},
 	( { props, context } ) => {
 		const [ localValue, setLocalValue ] = useState( props.value ?? '' );
 		const previousValue = useRef( context.componentModel.properties.value );
+		const { fieldProps, touch } = useFieldProps( props.validationErrors );
 
 		useEffect( () => {
 			const subscription = context.componentModel.onUpdated.subscribe( () => {
@@ -44,9 +47,11 @@ export const TextField = createComponentImplementation(
 		};
 
 		const inputProps = {
+			...fieldProps,
 			label: props.label,
 			value,
-			onChange,
+			onValueChange: onChange,
+			onBlur: touch,
 		};
 
 		let type: 'number' | 'text' | 'password' = props.variant === 'number' ? 'number' : 'text';
@@ -58,7 +63,7 @@ export const TextField = createComponentImplementation(
 		return props.variant === 'longText' ? (
 			<TextareaControl { ...inputProps } />
 		) : (
-			<TextControl { ...inputProps } type={ type } />
+			<InputControl { ...inputProps } type={ type } />
 		);
 	}
 );

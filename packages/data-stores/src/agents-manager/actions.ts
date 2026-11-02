@@ -1,6 +1,4 @@
-import { GeneratorReturnType } from '../mapped-types';
 import { persistAgentsManagerState } from './persist-state';
-import { PerSiteLastActivity, PerSiteRouterHistory } from './types';
 
 /**
  * Partial state object for saving agents manager preferences
@@ -10,26 +8,17 @@ type AgentsManagerState = {
 	isDocked?: boolean;
 	isMinimized?: boolean;
 	floatingPosition?: 'left' | 'right';
-	routerHistory?: null; // Only used to clear history
 };
 
 /**
  * Save the agents manager state to the remote user preferences.
  * @param state - Partial state object with the properties to save
- * @yields {Object} Action to set router history if closing
  */
-export function* saveAgentsManagerState( state: AgentsManagerState ) {
-	const saveState: Record< string, boolean | string | null > = {};
+function saveAgentsManagerState( state: AgentsManagerState ) {
+	const saveState: Record< string, boolean | string > = {};
 
 	if ( typeof state.isOpen === 'boolean' ) {
 		saveState.agents_manager_open = state.isOpen;
-
-		//TODO: Figure out the trigger to reset the chat on agents manager
-		// Help center resets when closing. But the agents manager might be different.
-		if ( ! state.isOpen ) {
-			saveState.agents_manager_router_history = null;
-			yield setRouterHistory( undefined );
-		}
 	}
 
 	if ( typeof state.isDocked === 'boolean' ) {
@@ -52,16 +41,9 @@ export function* saveAgentsManagerState( state: AgentsManagerState ) {
 	persistAgentsManagerState( saveState );
 }
 
-export function setRouterHistory( history: PerSiteRouterHistory | undefined ) {
-	return {
-		type: 'AGENTS_MANAGER_SET_ROUTER_HISTORY',
-		history,
-	} as const;
-}
-
-export function* setIsOpen( isOpen: boolean, shouldSave: boolean = true ) {
+export function setIsOpen( isOpen: boolean, shouldSave: boolean = true ) {
 	if ( shouldSave ) {
-		yield saveAgentsManagerState( { isOpen } );
+		saveAgentsManagerState( { isOpen } );
 	}
 
 	return {
@@ -70,9 +52,9 @@ export function* setIsOpen( isOpen: boolean, shouldSave: boolean = true ) {
 	} as const;
 }
 
-export function* setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
+export function setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
 	if ( shouldSave ) {
-		yield saveAgentsManagerState( { isDocked } );
+		saveAgentsManagerState( { isDocked } );
 	}
 
 	return {
@@ -81,9 +63,9 @@ export function* setIsDocked( isDocked: boolean, shouldSave: boolean = true ) {
 	} as const;
 }
 
-export function* setIsMinimized( isMinimized: boolean, shouldSave: boolean = true ) {
+export function setIsMinimized( isMinimized: boolean, shouldSave: boolean = true ) {
 	if ( shouldSave ) {
-		yield saveAgentsManagerState( { isMinimized } );
+		saveAgentsManagerState( { isMinimized } );
 	}
 
 	return {
@@ -92,12 +74,12 @@ export function* setIsMinimized( isMinimized: boolean, shouldSave: boolean = tru
 	} as const;
 }
 
-export function* setFloatingPosition(
+export function setFloatingPosition(
 	floatingPosition: 'left' | 'right',
 	shouldSave: boolean = true
 ) {
 	if ( shouldSave ) {
-		yield saveAgentsManagerState( { floatingPosition } );
+		saveAgentsManagerState( { floatingPosition } );
 	}
 
 	return {
@@ -130,13 +112,6 @@ export function setFloatingSize( floatingSize: { width: number; height: number }
 	} as const;
 }
 
-export function setLastActivity( lastActivity: PerSiteLastActivity | undefined ) {
-	return {
-		type: 'AGENTS_MANAGER_SET_LAST_ACTIVITY',
-		lastActivity,
-	} as const;
-}
-
 export function setIsLoading( isLoading: boolean ) {
 	return {
 		type: 'AGENTS_MANAGER_SET_LOADING',
@@ -164,14 +139,12 @@ export function setHasLoaded( hasLoaded: boolean ) {
 }
 
 export type AgentsManagerAction =
-	| ReturnType< typeof setRouterHistory >
-	| ReturnType< typeof setLastActivity >
 	| ReturnType< typeof setIsLoading >
 	| ReturnType< typeof setHasLoaded >
 	| ReturnType< typeof setIsSplitScreen >
 	| ReturnType< typeof setFreeDragPosition >
 	| ReturnType< typeof setFloatingSize >
-	| GeneratorReturnType< typeof setIsOpen >
-	| GeneratorReturnType< typeof setIsDocked >
-	| GeneratorReturnType< typeof setIsMinimized >
-	| GeneratorReturnType< typeof setFloatingPosition >;
+	| ReturnType< typeof setIsOpen >
+	| ReturnType< typeof setIsDocked >
+	| ReturnType< typeof setIsMinimized >
+	| ReturnType< typeof setFloatingPosition >;

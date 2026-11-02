@@ -1,74 +1,50 @@
-import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
+import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
 import {
 	applyInteractiveUiBatch,
+	getRejectedInteractiveUiMessageIds,
+	getUsableInteractiveUiSurfaceIds,
 	getInteractiveUiBatches,
 	getStaleInteractiveUiSurfaceIds,
-	parseInteractiveUiText,
+	keepInteractiveUiSurfacesInTranscript,
+	readInteractiveUiActionMessage,
+	readInteractiveUiPart,
 } from '../messages';
+import {
+	createBatch,
+	createRuntime,
+	formOperations,
+	operations,
+	surfaceContent,
+	surfacePart,
+} from './fixtures/surface';
 import type { InteractiveUiBatch } from '../messages';
 import type { UIMessage } from '@automattic/agenttic-client';
 
-const operations = [
-	{
-		version: 'v1.0' as const,
-		createSurface: {
-			surfaceId: 'test-surface',
-			catalogId: 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json',
-		},
-	},
-	{
-		version: 'v1.0' as const,
-		updateComponents: {
-			surfaceId: 'test-surface',
-			components: [ { id: 'root', component: 'Text', text: 'Test surface' } ],
-		},
-	},
-];
-
-const envelope = JSON.stringify( {
-	tool_id: 'wpcom__render_interactive_ui',
-	data: operations,
-} );
-
 describe( 'interactive UI response messages', () => {
-	it( 'extracts ordered surface operations from the tool envelope', () => {
-		expect( parseInteractiveUiText( envelope ) ).toEqual( { operations } );
-	} );
+	it( 'reads the A2UI messages, and the page they were built for, from the A2UI data part', () => {
+		const pagePart = { ...surfacePart, metadata: { ...surfacePart.metadata, postId: 7 } };
 
-	it( 'reads the page the envelope was built for', () => {
-		const pageEnvelope = JSON.stringify( {
-			tool_id: 'wpcom__render_interactive_ui',
-			post_id: 7,
-			data: operations,
+		expect( readInteractiveUiPart( surfaceContent ) ).toEqual( { operations } );
+		expect( readInteractiveUiPart( { type: 'data', data: { a2ui: pagePart } } ) ).toEqual( {
+			operations,
+			postId: 7,
 		} );
-
-		expect( parseInteractiveUiText( pageEnvelope ) ).toEqual( { operations, postId: 7 } );
-	} );
-
-	it( 'accepts stringified envelope data', () => {
-		expect(
-			parseInteractiveUiText(
-				JSON.stringify( {
-					tool_id: 'wpcom__render_interactive_ui',
-					data: JSON.stringify( operations ),
-				} )
-			)
-		).toEqual( { operations } );
-	} );
-
-	it( 'accepts raw protocol message arrays', () => {
-		expect( parseInteractiveUiText( JSON.stringify( operations ) ) ).toEqual( { operations } );
 	} );
 
 	it.each( [
-		[ 'plain text', 'Here you go.' ],
 		[
-			'an unrelated tool response',
-			JSON.stringify( { tool_id: 'wpcom__other_tool', data: operations } ),
+			'the old text envelope',
+			{
+				type: 'text' as const,
+				text: JSON.stringify( { tool_id: 'wpcom__render_interactive_ui', data: operations } ),
+			},
 		],
-		[ 'another protocol version', JSON.stringify( [ { ...operations[ 0 ], version: 'v0.8' } ] ) ],
-	] )( 'ignores %s', ( _description, text ) => {
-		expect( parseInteractiveUiText( text ) ).toBeUndefined();
+		[
+			'another data part',
+			{ type: 'data' as const, data: { sources: [ 'https://example.com' ] } },
+		],
+	] )( 'ignores %s', ( _description, content ) => {
+		expect( readInteractiveUiPart( content ) ).toBeUndefined();
 	} );
 
 	it( 'associates only agent response operations with their message', () => {
@@ -76,7 +52,7 @@ describe( 'interactive UI response messages', () => {
 			{
 				id: 'user',
 				role: 'user',
-				content: [ { type: 'text', text: envelope } ],
+				content: [ surfaceContent ],
 				timestamp: 0,
 				archived: false,
 				showIcon: false,
@@ -84,10 +60,7 @@ describe( 'interactive UI response messages', () => {
 			{
 				id: 'agent',
 				role: 'agent',
-				content: [
-					{ type: 'text', text: 'Here you go.' },
-					{ type: 'text', text: envelope },
-				],
+				content: [ { type: 'text', text: 'Here you go.' }, surfaceContent ],
 				timestamp: 1,
 				archived: false,
 				showIcon: true,
@@ -98,105 +71,179 @@ describe( 'interactive UI response messages', () => {
 			{
 				operations,
 				messageId: 'agent',
-				messageIndex: 1,
-				signature: JSON.stringify( [ 'agent', 1, envelope ] ),
+				signature: JSON.stringify( [ 'agent', { operations } ] ),
 			},
 		] );
 	} );
 } );
 
-describe( 'getStaleInteractiveUiSurfaceIds', () => {
-	function createBatch( messageIndex: number, postId?: number ): InteractiveUiBatch {
+describe( 'readInteractiveUiActionMessage', () => {
+	function createContextMessage( text: string ): UIMessage {
 		return {
-			operations,
-			messageId: `agent-${ messageIndex }`,
-			messageIndex,
-			signature: String( messageIndex ),
-			...( postId && { postId } ),
+			id: 'context',
+			role: 'user',
+			content: [ { type: 'context', text } ],
+			timestamp: 0,
+			archived: false,
+			showIcon: false,
 		};
 	}
 
 	it.each( [
-		[
-			'the user has replied past it',
-			createBatch( 1 ),
-			{ latestUserMessageIndex: 2, restoredSignatures: new Set< string >() },
-		],
+		[ 'no `userMessage`', { name: 'greet' } ],
+		[ 'a blank `userMessage`', { name: 'greet', userMessage: '  ' } ],
+	] )( 'reads an action with %s as one without a note', ( _description, action ) => {
+		const message = createContextMessage( JSON.stringify( { version: 'v1.0', action } ) );
+
+		expect( readInteractiveUiActionMessage( message ) ).toEqual( {} );
+	} );
+
+	it( 'ignores other hidden context', () => {
+		const message = createContextMessage( 'Navigated to the About page.' );
+
+		expect( readInteractiveUiActionMessage( message ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'getStaleInteractiveUiSurfaceIds', () => {
+	const batch = createBatch( operations, 'agent' );
+	const update = createBatch( [ operations[ 1 ] ], 'update' );
+
+	const options = {
+		messageIndexes: new Map( [ [ 'agent', 1 ] ] ),
+		latestUserMessageIndex: 0,
+		restoredMessageIds: new Set< string >(),
+	};
+
+	it.each( [
+		[ 'the user has replied past it', batch, { ...options, latestUserMessageIndex: 2 } ],
 		[
 			'the editor has another page open',
-			createBatch( 1, 7 ),
-			{ latestUserMessageIndex: 0, restoredSignatures: new Set< string >(), currentPostId: 8 },
+			{ ...batch, postId: 7 },
+			{ ...options, currentPostId: 8 },
 		],
 		[
 			'it was restored from history',
-			createBatch( 1 ),
-			{ latestUserMessageIndex: 0, restoredSignatures: new Set( [ '1' ] ) },
+			batch,
+			{ ...options, restoredMessageIds: new Set( [ 'agent' ] ) },
 		],
-	] )( 'marks a surface stale when %s', ( _description, batch, options ) => {
-		expect( getStaleInteractiveUiSurfaceIds( [ batch ], options ) ).toEqual(
+		[ 'its message has left the transcript', batch, { ...options, messageIndexes: new Map() } ],
+	] )( 'marks a surface stale when %s', ( _description, staleBatch, staleOptions ) => {
+		expect( getStaleInteractiveUiSurfaceIds( [ staleBatch ], staleOptions ) ).toEqual(
 			new Set( [ 'test-surface' ] )
 		);
 	} );
 
 	it( 'skips malformed operations', () => {
-		const batch = {
-			...createBatch( 1 ),
+		const malformed = {
+			...batch,
 			operations: [ ...operations, null ] as unknown as InteractiveUiBatch[ 'operations' ],
 		};
 
 		expect(
-			getStaleInteractiveUiSurfaceIds( [ batch ], {
-				latestUserMessageIndex: 2,
-				restoredSignatures: new Set< string >(),
-			} )
+			getStaleInteractiveUiSurfaceIds( [ malformed ], { ...options, latestUserMessageIndex: 2 } )
 		).toEqual( new Set( [ 'test-surface' ] ) );
 	} );
 
 	it( 'keeps a surface’s page when a later update doesn’t name one', () => {
-		const update = { ...createBatch( 2 ), operations: [ operations[ 1 ] ] };
-
 		expect(
-			getStaleInteractiveUiSurfaceIds( [ createBatch( 1, 7 ), update ], {
-				latestUserMessageIndex: 0,
-				restoredSignatures: new Set< string >(),
+			getStaleInteractiveUiSurfaceIds( [ { ...batch, postId: 7 }, update ], {
+				...options,
+				messageIndexes: new Map( [
+					[ 'agent', 1 ],
+					[ 'update', 2 ],
+				] ),
 				currentPostId: 8,
 			} )
 		).toEqual( new Set( [ 'test-surface' ] ) );
 	} );
 
 	it( 'judges a surface by the last batch that changed it', () => {
-		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds(
-			[ createBatch( 1 ), createBatch( 3 ) ],
-			{ latestUserMessageIndex: 2, restoredSignatures: new Set< string >() }
-		);
+		const staleSurfaceIds = getStaleInteractiveUiSurfaceIds( [ batch, update ], {
+			...options,
+			messageIndexes: new Map( [
+				[ 'agent', 1 ],
+				[ 'update', 3 ],
+			] ),
+			latestUserMessageIndex: 2,
+		} );
 
-		expect( staleSurfaceIds.size ).toBe( 0 );
+		expect( staleSurfaceIds ).toEqual( new Set() );
 	} );
 } );
 
 describe( 'applyInteractiveUiBatch', () => {
-	it( 'keeps only the messages the runtime accepts', () => {
-		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
-		const runtime = createInteractiveUiRuntime( {
-			catalogs: [ createInteractiveUiCatalog() ],
-			onAction: jest.fn(),
-			onError: jest.fn(),
-		} );
-		const rejected = {
+	const rejected = {
+		version: 'v1.0' as const,
+		updateComponents: { surfaceId: 'missing-surface', components: [ { id: 'root' } ] },
+	};
+
+	it.each( [
+		[ 'marks a batch with a rejected message', [ rejected, ...operations ], true ],
+		[ 'leaves a fully applied batch unmarked', operations, false ],
+	] )( '%s and keeps only its applied messages', ( _, batchOperations, hasRejections ) => {
+		expect(
+			applyInteractiveUiBatch( createRuntime(), createBatch( batchOperations, 'agent' ) )
+		).toMatchObject( { operations, hasRejections } );
+	} );
+} );
+
+describe( 'getRejectedInteractiveUiMessageIds', () => {
+	it( 'gives the live messages with rejected A2UI messages, not restored ones', () => {
+		const batches = [
+			{ ...createBatch( operations, 'live' ), hasRejections: true },
+			{ ...createBatch( operations, 'applied' ), hasRejections: false },
+			{ ...createBatch( operations, 'restored' ), hasRejections: true },
+		];
+
+		expect( getRejectedInteractiveUiMessageIds( batches, new Set( [ 'restored' ] ) ) ).toEqual(
+			new Set( [ 'live' ] )
+		);
+	} );
+} );
+
+describe( 'getUsableInteractiveUiSurfaceIds', () => {
+	const surfaceOperations = ( surfaceId: string, text: unknown ) => [
+		{ version: 'v1.0' as const, createSurface: { surfaceId, catalogId: BASIC_CATALOG_ID } },
+		{
 			version: 'v1.0' as const,
-			updateComponents: { surfaceId: 'missing-surface', components: [ { id: 'root' } ] },
-		};
+			updateComponents: { surfaceId, components: [ { id: 'root', component: 'Text', text } ] },
+		},
+	];
 
-		const applied = applyInteractiveUiBatch( runtime, {
-			operations: [ rejected, ...operations ],
-			messageId: 'agent',
-			messageIndex: 1,
-			signature: '1',
-		} );
+	it( 'gives each surface of the batches once, leaving out stale ones', () => {
+		const runtime = createRuntime();
+		const batches = [ createBatch( operations, 'agent' ), createBatch( [], 'agent' ) ];
 
-		expect( applied.operations ).toEqual( operations );
-		expect( consoleError ).toHaveBeenCalledTimes( 1 );
+		runtime.processMessages(
+			[ ...surfaceOperations( 'form', 'Form' ), ...surfaceOperations( 'picker', 'Picker' ) ],
+			'agent'
+		);
 
-		consoleError.mockRestore();
+		expect( getUsableInteractiveUiSurfaceIds( runtime, batches, new Set( [ 'picker' ] ) ) ).toEqual(
+			[ 'form' ]
+		);
+	} );
+
+	it( 'leaves out a surface whose components were rejected, as it never shows', () => {
+		const runtime = createRuntime();
+
+		runtime.processMessages( surfaceOperations( 'form', 5 ), 'agent' );
+
+		expect( runtime.getSurfaceIds( 'agent' ) ).toEqual( [ 'form' ] );
+		expect(
+			getUsableInteractiveUiSurfaceIds( runtime, [ createBatch( [], 'agent' ) ], new Set() )
+		).toEqual( [] );
+	} );
+} );
+
+describe( 'keepInteractiveUiSurfacesInTranscript', () => {
+	it( 'leaves out a surface that a message which left the transcript changed', () => {
+		const [ create, update ] = formOperations;
+		const batches = [ createBatch( [ create ], 'agent-1' ), createBatch( [ update ], 'agent-2' ) ];
+
+		expect(
+			keepInteractiveUiSurfacesInTranscript( [ 'form' ], batches, new Map( [ [ 'agent-1', 0 ] ] ) )
+		).toEqual( [] );
 	} );
 } );

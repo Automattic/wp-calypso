@@ -186,7 +186,11 @@ export default function OrchestratorChat( {
 	] );
 
 	// The chat runtime, behind the credits gate.
+	// The composer's retry send is created after credits, so the notice reaches it through a ref.
+	const retrySendRef = useRef< ( message: string ) => void >( () => {} );
+	const tryAgain = useCallback( ( message: string ) => retrySendRef.current( message ), [] );
 	const credits = useCredits( {
+		onTryAgain: tryAgain,
 		enabled: ! isReaderChat,
 		agentConfig: agentChatConfig!,
 		siteKey,
@@ -218,10 +222,11 @@ export default function OrchestratorChat( {
 
 	// Keeps pickers on screen while a stream drops them. A regeneration rewinds
 	// them along with the turn's streamed checkpoints.
-	const { pauseRetentionForRegeneration, withRetainedShowComponents } = useShowComponentRetention( {
-		messages,
-		isProcessing,
-	} );
+	const { pauseRetentionForRegeneration, withRetainedShowComponents, expectHistoryLoad } =
+		useShowComponentRetention( {
+			messages,
+			isProcessing,
+		} );
 
 	const handleRegenerationStart = useCallback(
 		( messageId: string | undefined ) => {
@@ -274,6 +279,11 @@ export default function OrchestratorChat( {
 		suggestionPromptsRef,
 	} );
 
+	// What's in the box wins, as it sits right under the notice; the refused question is the fallback.
+	// The draft goes as typed, so the composer recognises and clears it.
+	retrySendRef.current = ( message ) =>
+		submitRetryMessage( inputValue.trim() ? inputValue : message );
+
 	// Marks the session as sent whichever path started the turn.
 	useEffect( () => {
 		if ( isProcessing && agentConfig?.sessionId ) {
@@ -289,6 +299,7 @@ export default function OrchestratorChat( {
 		hadParkedNavigation,
 		loadMessages,
 		onFetch: invalidateLoadedCheckpoints,
+		onHistoryLoad: expectHistoryLoad,
 		isProcessing,
 		onRetry: submitRetryMessage,
 		onSubmit,
@@ -307,6 +318,7 @@ export default function OrchestratorChat( {
 			items={ siteSetupChecklist.items }
 			busy={ isProcessing }
 			focusHeaderOnMount={ siteSetupChecklist.focusHeaderOnMount }
+			activeItemId={ siteSetupChecklist.activeItemId }
 		/>
 	) : null;
 
@@ -314,6 +326,7 @@ export default function OrchestratorChat( {
 		error: hasFailedResume ? null : error,
 		isReaderChat,
 		takeRefusalCode: credits.takeRefusalCode,
+		refusalNotice: credits.refusalNotice,
 	} );
 
 	// Registered before the providers' ability setup below, whose effects may
@@ -484,7 +497,6 @@ export default function OrchestratorChat( {
 		sessionId,
 		isProcessing,
 		isUploadingImages,
-		agentConfig,
 		submitContextMessage,
 		interactiveUiCatalogs,
 		currentPostId,
@@ -556,7 +568,8 @@ export default function OrchestratorChat( {
 			thinkingMessage={
 				isUploadingImages ? __( 'Uploading images…', __i18n_text_domain__ ) : progressMessage
 			}
-			error={ chatError || uploadError }
+			error={ chatError.message || uploadError }
+			errorNotice={ chatError.notice }
 			onSubmit={ submitComposerMessage }
 			onAbort={ stopResponse }
 			isLoadingConversation={ isPreparingConversation }

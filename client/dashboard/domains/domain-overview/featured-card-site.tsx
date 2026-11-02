@@ -8,11 +8,11 @@ import OverviewCard from '../../components/overview-card';
 import SiteIcon from '../../components/site-icon';
 import { Truncate } from '../../components/truncate';
 
-interface Props {
+interface FeaturedCardSiteProps {
 	domain: Domain;
 }
 
-export default function FeaturedCardSite( { domain }: Props ) {
+export default function FeaturedCardSite( { domain }: FeaturedCardSiteProps ) {
 	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	if ( ! site ) {

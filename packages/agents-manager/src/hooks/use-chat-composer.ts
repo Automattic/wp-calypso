@@ -287,14 +287,17 @@ export function useChatComposer( {
 
 	// Sends a hidden context message, such as an interactive UI action, behind
 	// the same upload lock and credits gate as a typed message, so it is safe
-	// for any caller.
+	// for any caller. `onDispatch` runs once the message passes them, in the
+	// turn it starts, so the caller can record the send before the reply, which
+	// can navigate away.
 	const submitContextMessage = useCallback(
-		async ( message: string, options: SubmitOptions ) => {
+		async ( message: string, options: SubmitOptions, onDispatch?: () => void ) => {
 			if ( isUploadingRef.current || isUploadingImages || ! beforeSubmit() ) {
 				return;
 			}
 
 			startTurn();
+			onDispatch?.();
 			startNewUserRequest();
 			await flushPendingNavigation();
 			await onSubmit( message, options );

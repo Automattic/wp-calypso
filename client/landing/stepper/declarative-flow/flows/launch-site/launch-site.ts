@@ -1,4 +1,4 @@
-import { launchSite } from '@automattic/api-core';
+import { DomainProductSlugs, fetchShoppingCart, launchSite } from '@automattic/api-core';
 import {
 	addProductsToCart,
 	clearStepPersistedState,
@@ -10,9 +10,11 @@ import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
 import { useQueryProductsList } from 'calypso/components/data/query-products-list';
 import { useMyDomainInputMode } from 'calypso/components/domains/connect-domain-step/constants';
+import { buildDashboardLink } from 'calypso/dashboard/app/routing';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { getCurrentQueryParams } from 'calypso/landing/stepper/utils/get-current-query-params';
+import { getSingleMappingDomain } from 'calypso/landing/stepper/utils/get-single-mapping-domain';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
@@ -43,8 +45,51 @@ import { ProcessingResult } from '../../internals/steps-repository/processing-st
 import { getLaunchSiteSteps } from './get-launch-site-steps';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { OnboardActions, OnboardSelect, SiteSelect } from '@automattic/data-stores';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { Store } from 'redux';
+
+// The cart endpoint occasionally leaves a request unanswered while asking again succeeds at once,
+// so `findCartKeyFromSiteSlug` makes short attempts. The user waits on the processing screen.
+const CART_READ_ATTEMPTS = 3;
+const CART_READ_ATTEMPT_TIMEOUT_MS = 1000;
+
+// The site's cart, or null when it doesn't answer in time.
+function readCart( siteId: number ): Promise< ResponseCart | null > {
+	let timer: ReturnType< typeof setTimeout > | undefined;
+	const timeout = new Promise< null >( ( resolve ) => {
+		timer = setTimeout( () => resolve( null ), CART_READ_ATTEMPT_TIMEOUT_MS );
+	} );
+
+	return Promise.race( [ fetchShoppingCart( siteId ), timeout ] ).finally( () =>
+		clearTimeout( timer )
+	);
+}
+
+/**
+ * The connection for `domain` as the site's cart holds it, or null. Adding to the cart swallows its
+ * own failures, so this reads back the cart checkout will open, which is keyed by site ID.
+ */
+async function findMappingInCart( siteId: number, domain: string ): Promise< string | null > {
+	try {
+		for ( let attempt = 1; attempt <= CART_READ_ATTEMPTS; attempt++ ) {
+			const cart = await readCart( siteId );
+
+			if ( cart ) {
+				const mapping = cart.products.find(
+					( product ) =>
+						product.product_slug === DomainProductSlugs.DOMAIN_MAPPING &&
+						product.meta.toLowerCase() === domain.toLowerCase()
+				);
+
+				return mapping?.meta ?? null;
+			}
+		}
+	} catch {
+		// An error answer, unlike silence, won't change by asking again.
+	}
+
+	return null;
+}
 
 // Mirrors the event legacy signup records when it auto-skips a step, keyed by the legacy step names.
 function recordExcludedStep( step: 'domains-launch' | 'plans-launch', value: string ) {
@@ -267,8 +312,11 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 		// The onboarding store is shared with other flows and survives a visit that skips this flow's
 		// root, so only pick up what this flow's own steps could have chosen.
+		const getLaunchDomainItems = () =>
+			stepSlugs.includes( STEPS.DOMAIN_SEARCH.slug ) ? getDomainItems() : [];
+
 		const getLaunchCartItems = () => {
-			const domainItems = stepSlugs.includes( STEPS.DOMAIN_SEARCH.slug ) ? getDomainItems() : [];
+			const domainItems = getLaunchDomainItems();
 			const hasPlansStep = stepSlugs.includes( STEPS.UNIFIED_PLANS.slug );
 			const planCartItem = hasPlansStep ? getPlanCartItem() : null;
 			const productCartItems = hasPlansStep ? ( getProductCartItems() ?? [] ) : [];
@@ -282,18 +330,20 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 
 		// The site is already live, so nothing here may keep the user from moving on.
 		const finishLaunch = async () => {
-			const destination = getLaunchDestination( launchParams );
+			const launchDestination = getLaunchDestination( launchParams );
 			let cartItems: MinimalRequestCartProduct[] | null;
+			let mappingDomain: string | null = null;
 
 			try {
 				cartItems = getLaunchCartItems();
+				mappingDomain = getSingleMappingDomain( getLaunchDomainItems() );
 			} catch {
 				// Unknown contents: let checkout show whatever the cart already holds.
 				cartItems = null;
 			}
 
 			if ( cartItems?.length === 0 ) {
-				return window.location.replace( destination );
+				return window.location.replace( launchDestination );
 			}
 
 			try {
@@ -304,12 +354,27 @@ const launchSiteFlow: FlowV2< typeof initialize > = {
 				// Checkout opens on whatever made it into the cart.
 			}
 
-			// Checkout reads these to send the user on once they have paid.
-			persistSignupDestination( destination );
+			// A connected domain still has to be pointed at the site once it is paid for, but only
+			// send the user to its setup when the connection really is in the cart.
+			const connectedDomain =
+				mappingDomain && siteId ? await findMappingInCart( siteId, mappingDomain ) : null;
+			const destination = connectedDomain
+				? buildDashboardLink( 'dotcom', `/domains/${ connectedDomain }/domain-connection-setup` )
+				: launchDestination;
+
+			// Checkout reads these to send the user on once they have paid. A later checkout without a
+			// `redirect_to` falls back to the cookie, and paying clears it only when it matches the
+			// destination. The connection setup needs no fallback, so drop the cookie rather than leave
+			// one behind for a later purchase to land on.
+			if ( connectedDomain ) {
+				clearSignupDestinationCookie();
+			} else {
+				persistSignupDestination( launchDestination );
+			}
 			setSignupCompleteSlug( launchParams.siteSlug );
 			setSignupCompleteFlowName( LAUNCH_SITE_FLOW );
 
-			return window.location.replace( getLaunchCheckoutUrl( launchParams ) );
+			return window.location.replace( getLaunchCheckoutUrl( launchParams, destination ) );
 		};
 
 		const submit: SubmitHandler< typeof initialize > = ( submittedStep ) => {

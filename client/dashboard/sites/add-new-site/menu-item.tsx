@@ -7,7 +7,7 @@ import {
 import { Icon } from '@wordpress/icons';
 import type { ComponentProps, JSX } from 'react';
 
-type Props = {
+type MenuItemProps = {
 	children?: JSX.Element;
 	description: string;
 	title: string;
@@ -20,7 +20,7 @@ function MenuItem( {
 	title,
 	icon,
 	...buttonProps
-}: Props & ComponentProps< typeof Button > ) {
+}: MenuItemProps & ComponentProps< typeof Button > ) {
 	return (
 		<Button
 			className="dashboard-add-new-site__menu-item"

@@ -1,3 +1,5 @@
+import { formatNumber } from '@automattic/number-formatters';
+
 import './style.scss';
 
 const CHART_HEIGHT = 20;
@@ -50,7 +52,7 @@ export function StatsSparkline( { hourlyViews }: { hourlyViews: number[] } ) {
 					},${ peakY }` }
 				/>
 				<text className="wpcom-stats-sparkline-label" x={ chartWidth + 12 } y={ peakY + 3 }>
-					{ highestViews }
+					{ formatNumber( highestViews ) }
 				</text>
 			</g>
 		</svg>

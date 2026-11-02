@@ -755,6 +755,65 @@ const assertDefaultContext = ( { url, entry } ) => {
 			expect( request.context.commitChecksum ).toEqual( 'abcd0123' );
 		} );
 	} );
+
+	describe( 'with environment jetpack-cloud-production', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'jetpack-cloud-production' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
+		} );
+
+		describe( 'Route /manage/signup', () => {
+			it( 'redirects logged-out visitors to A4A signup before login', async () => {
+				const { response } = await customApp.run( { request: { url: '/manage/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects logged-in visitors too', async () => {
+				const { response } = await customApp.run( {
+					request: { url: '/manage/signup', cookies: { wordpress_logged_in: true } },
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects the legacy /agency/signup path', async () => {
+				const { response } = await customApp.run( { request: { url: '/agency/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'forwards acquisition params and drops everything else', async () => {
+				const { response } = await customApp.run( {
+					request: {
+						url: '/manage/signup',
+						query: { ref: 'agencies-lp', utm_source: 'newsletter', foo: 'bar' },
+					},
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=agencies-lp&utm_source=newsletter'
+				);
+			} );
+		} );
+	} );
 };
 
 const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {
@@ -1412,7 +1471,60 @@ describe( 'main app', () => {
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
-				{ path: '/start/launch-site/plans-launch', ref: 'admin-bar', query_source: undefined },
+				{
+					path: '/start/launch-site/plans-launch',
+					ref: 'admin-bar',
+					query_source: undefined,
+					referer: undefined,
+					site_slug: 'example.wordpress.com',
+					retry: undefined,
+					fetch_site: undefined,
+					fetch_mode: undefined,
+					fetch_user: undefined,
+				},
+				request
+			);
+		} );
+
+		it( 'records how the browser navigated to the hit', async () => {
+			const headers = {
+				Referer: 'https://example.wordpress.com/wp-admin/options-reading.php?settings-updated=1#x',
+				'Sec-Fetch-Site': 'cross-site',
+				'Sec-Fetch-Mode': 'navigate',
+				'Sec-Fetch-User': '?1',
+			};
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site/domains-launch',
+					query: { ...query, retry: '1' },
+					get: jest.fn( ( header ) => headers[ header ] ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( {
+					referer: 'https://example.wordpress.com/wp-admin/options-reading.php',
+					site_slug: 'example.wordpress.com',
+					retry: '1',
+					fetch_site: 'cross-site',
+					fetch_mode: 'navigate',
+					fetch_user: '?1',
+				} ),
+				request
+			);
+		} );
+
+		it( 'drops a Referer that is not a URL', async () => {
+			const { request } = await app.run( {
+				request: {
+					url: '/start/launch-site',
+					query,
+					get: jest.fn( ( header ) => ( header === 'Referer' ? 'not a url' : undefined ) ),
+				},
+			} );
+			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
+				'calypso_legacy_launch_site_redirect',
+				expect.objectContaining( { referer: undefined } ),
 				request
 			);
 		} );
@@ -1434,7 +1546,11 @@ describe( 'main app', () => {
 			} );
 			expect( app.getMocks().analytics.tracks.recordEvent ).toHaveBeenCalledWith(
 				'calypso_legacy_launch_site_redirect',
-				{ path: '/start/launch-site', ref: undefined, query_source: undefined },
+				expect.objectContaining( {
+					path: '/start/launch-site',
+					ref: undefined,
+					query_source: undefined,
+				} ),
 				request
 			);
 		} );
@@ -1470,6 +1586,40 @@ describe( 'main app', () => {
 		it( 'leaves flows that only share the prefix alone', async () => {
 			const { response } = await app.run( { request: { url: '/start/launch-site-foo' } } );
 			expect( response.redirect ).not.toHaveBeenCalledWith( 302, expect.anything() );
+		} );
+	} );
+
+	describe( 'Retired WooCommerce installer routes', () => {
+		it.each( [
+			[
+				'/start/woocommerce-install',
+				{ siteSlug: 'example.com' },
+				'/plugins/woocommerce/example.com',
+			],
+			[ '/start/woocommerce-install/store-address/fr', {}, '/plugins/woocommerce' ],
+			[
+				'/woocommerce-installation/example.com::shop',
+				{},
+				'/plugins/woocommerce/example.com::shop',
+			],
+			[ '/woocommerce-installation', {}, '/plugins/woocommerce' ],
+		] )( 'redirects %s to the WooCommerce plugin page', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
+		} );
+	} );
+
+	describe( 'Retired website-design-services flow', () => {
+		it.each( [
+			[
+				'/start/website-design-services',
+				{ siteSlug: 'example.com', back_to: '/home/example.com' },
+				'/start/do-it-for-me?siteSlug=example.com&back_to=%2Fhome%2Fexample.com',
+			],
+			[ '/start/website-design-services/difm-options/es/', {}, '/start/do-it-for-me/es' ],
+		] )( 'redirects %s to the DIFM flow', async ( url, query, destination ) => {
+			const { response } = await app.run( { request: { url, query } } );
+			expect( response.redirect ).toHaveBeenCalledWith( 302, destination );
 		} );
 	} );
 

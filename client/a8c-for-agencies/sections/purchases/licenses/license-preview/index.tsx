@@ -197,21 +197,24 @@ export default function LicensePreview( {
 	const trialEnd = license.subscription?.trialEnd;
 	const isActiveTrial = Boolean( license.subscription?.isActiveTrial );
 
-	const bundleCountContent = quantity && (
+	// The API omits a quantity of one, so a single-inbox Titan license still shows its count.
+	const badgeCount = isTitanLicense ? quantity || 1 : quantity;
+
+	const bundleCountContent = badgeCount && (
 		<Badge className="license-preview__license-count" intent="draft">
 			{ isTitanLicense
 				? translate( '%(quantity)d Inbox', '%(quantity)d Inboxes', {
 						context: 'Titan inbox count',
-						count: quantity,
+						count: badgeCount,
 						args: {
-							quantity,
+							quantity: badgeCount,
 						},
 						textOnly: true,
 					} )
 				: translate( '%(quantity)d License Bundle', {
 						context: 'bundle license count',
 						args: {
-							quantity,
+							quantity: badgeCount,
 						},
 						textOnly: true,
 					} ) }
@@ -418,6 +421,9 @@ export default function LicensePreview( {
 					<div className="license-preview__badge-container">
 						{ ( !! isParentLicense || isTitanLicense ) && bundleCountContent }
 						{ isDevelopmentSite && <Badge intent="draft">{ translate( 'Development' ) }</Badge> }
+						{ licenseType === LicenseType.Standard && (
+							<Badge intent="stable">{ translate( 'Standard license' ) }</Badge>
+						) }
 						{ shouldShowTransferredBadge() && <TransferredBadge /> }
 					</div>
 				</div>

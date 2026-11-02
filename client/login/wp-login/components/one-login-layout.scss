@@ -20,6 +20,15 @@
 		width: 64px;
 		height: 64px;
 	}
+
+	// The site's own icon (e.g. a newsletter's login link page) sits centered above the title.
+	&.is-site-icon {
+		text-align: center;
+
+		> img {
+			border-radius: 4px;
+		}
+	}
 }
 
 // Hidden in CSS rather than by a viewport hook: the page is server-rendered, so a hook would

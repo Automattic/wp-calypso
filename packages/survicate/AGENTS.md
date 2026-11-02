@@ -64,7 +64,7 @@ msd_visits_b >= 3`) need no code change.
   `hosting-dashboard-visit-count-<slug>` user preference. Gated on
   `survicate_enabled`.
 - **Publishing**: `useSurvicateVisitTraits()` in
-  `client/dashboard/app/survicate/index.tsx` (mounted in the layout) reads those
+  `client/dashboard/app/survicate/index.ts` (mounted in the layout) reads those
   preferences and pushes `{ msd_visits_<slug>: count }` via
   `setSurvicateVisitorTraits`, re-pushing when counts change. Incrementing and
   publishing are deliberately decoupled — they share only the preference store.
@@ -277,7 +277,7 @@ race where a survey is already mid-display as a modal or the Help Center appears
 
 Three consumers, all funnelled through `shouldLoadSurvicate()`:
 
-- **Multi-site Dashboard** — `client/dashboard/app/survicate/index.tsx` (`useSurvicate`),
+- **Multi-site Dashboard** — `client/dashboard/app/survicate/index.ts` (`useSurvicate`),
   gated behind the `survicate_enabled` config flag. Pushes identity and visit-count traits.
 - **Classic Calypso** — `client/lib/analytics/survicate.js` (`addSurvicate`), and
   `invokeSurvicateEvent` from purchase/cancel and checkout flows.

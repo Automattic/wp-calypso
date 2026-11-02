@@ -569,7 +569,10 @@ export function trackImageStudioError( {
 	recordImageStudioEvent( 'image_studio_error', properties );
 }
 
-/** What showed the notice: the credits check on open, a re-check after a turn, or a failed request. */
+/**
+ * What showed the notice: the credits check on open, a re-check after a turn or on returning
+ * to the page, or a failed request.
+ */
 export type UpgradeNoticeTrigger = 'open' | 'refresh' | 'error';
 
 /** What opened the credits meter's popover, as the Agent's `credits_meter_opened` event names it. */

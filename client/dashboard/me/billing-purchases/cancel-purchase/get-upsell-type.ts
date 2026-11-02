@@ -8,7 +8,6 @@ import config from '@automattic/calypso-config';
 import type { Purchase } from '@automattic/api-core';
 
 type UpsellOptions = {
-	canDowngrade: boolean;
 	canOfferFreeMonth: boolean;
 };
 
@@ -35,17 +34,13 @@ export function getUpsellType(
 	purchase: Purchase,
 	opts: UpsellOptions
 ): UpsellType {
-	const { canDowngrade, canOfferFreeMonth } = opts;
+	const { canOfferFreeMonth } = opts;
 	const liveChatSupported = config.isEnabled( 'livechat_solution' );
 	const productSlug = purchase.product_slug;
 
 	switch ( reason ) {
 		case 'tooExpensive':
 		case 'budgetConstraints':
-			if ( ! canDowngrade ) {
-				return '';
-			}
-
 			if ( productSlug === DotcomPlans.PREMIUM ) {
 				return 'downgrade-personal';
 			}

@@ -1,96 +1,124 @@
+import { getInteractiveUiOperation } from '@automattic/ai-ui-renderer/capabilities';
 import { isChatUiStale } from '../utils/stale-chat-ui';
-import type { UIMessage } from '@automattic/agenttic-client';
+import type { A2uiDataPart, UIMessage } from '@automattic/agenttic-client';
 import type { InteractiveUiMessage, InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 /** The A2UI protocol version the interactive UI speaks. */
 export const INTERACTIVE_UI_VERSION = 'v1.0';
 
-/** The tool ID wpcom's interactive UI envelope carries. */
+/** The tool ID a surface's shared response events record. */
 export const INTERACTIVE_UI_TOOL_ID = 'wpcom__render_interactive_ui';
 
-interface ParsedInteractiveUiText {
+interface InteractiveUiPart {
 	operations: InteractiveUiMessage[];
-	/** The page the envelope's surfaces were built for, if any. */
+	/** The page the part's surfaces were built for, if any. */
 	postId?: number | string;
 }
 
-/** The A2UI messages in one text part of an agent message. */
-export interface InteractiveUiBatch extends ParsedInteractiveUiText {
+/** The A2UI messages in one part of an agent message. */
+export interface InteractiveUiBatch extends InteractiveUiPart {
 	messageId: string;
-	messageIndex: number;
-	/** Changes when the text part does, so the host can tell an earlier batch changed. */
+	/** Changes when the part does, so the host can tell an earlier batch changed. */
 	signature: string;
 }
 
+/** A batch with only the messages the runtime applied. */
+export interface AppliedInteractiveUiBatch extends InteractiveUiBatch {
+	/** The runtime rejected some of the part's messages, so a live message shows a notice. */
+	hasRejections: boolean;
+}
+
 /**
- * Reads the A2UI messages in a text part: wpcom's `wpcom__render_interactive_ui` envelope, with
- * the page it was built for, or a raw message array. Returns `undefined` for any other text.
+ * Reads the A2UI messages, and the page they were built for, from a message's content part.
+ * Agenttic checks A2UI's A2A data part and keeps it under `a2ui`. Returns `undefined` for any
+ * other part.
  */
-export function parseInteractiveUiText( text?: string ): ParsedInteractiveUiText | undefined {
-	if ( ! text ) {
+export function readInteractiveUiPart(
+	content: UIMessage[ 'content' ][ number ]
+): InteractiveUiPart | undefined {
+	const part =
+		content.type === 'data' ? ( content.data?.a2ui as A2uiDataPart | undefined ) : undefined;
+
+	if ( ! part ) {
 		return undefined;
 	}
 
-	try {
-		const parsed = JSON.parse( text );
-		const isEnvelope = parsed?.tool_id === INTERACTIVE_UI_TOOL_ID;
-		const payload = isEnvelope ? parsed.data : parsed;
-		const operations = typeof payload === 'string' ? JSON.parse( payload ) : payload;
+	const { postId } = part.metadata;
 
-		if ( ! Array.isArray( operations ) || operations[ 0 ]?.version !== INTERACTIVE_UI_VERSION ) {
-			return undefined;
+	return {
+		operations: part.data as InteractiveUiMessage[],
+		...( ( typeof postId === 'number' || typeof postId === 'string' ) && { postId } ),
+	};
+}
+
+/**
+ * Reads the hidden context message an interactive UI action sends the agent, with the action's
+ * trimmed `userMessage` if it has one. Returns `undefined` for any other message.
+ */
+export function readInteractiveUiActionMessage(
+	message: UIMessage
+): { userMessage?: string } | undefined {
+	if ( message.role !== 'user' ) {
+		return undefined;
+	}
+
+	for ( const content of message.content ) {
+		if ( content.type !== 'context' || ! content.text ) {
+			continue;
 		}
 
-		const postId = isEnvelope ? parsed.post_id : undefined;
+		let parsed: unknown;
 
-		return {
-			operations,
-			...( ( typeof postId === 'number' || typeof postId === 'string' ) && { postId } ),
-		};
-	} catch {
-		// Text that isn't JSON is an ordinary reply, not interactive UI.
-		return undefined;
+		try {
+			parsed = JSON.parse( content.text );
+		} catch {
+			// Other context, such as a note of where the user navigated.
+			continue;
+		}
+
+		const action =
+			typeof parsed === 'object' &&
+			parsed !== null &&
+			'version' in parsed &&
+			parsed.version === INTERACTIVE_UI_VERSION &&
+			'action' in parsed
+				? parsed.action
+				: undefined;
+
+		if ( typeof action !== 'object' || action === null ) {
+			continue;
+		}
+
+		const userMessage =
+			'userMessage' in action && typeof action.userMessage === 'string'
+				? action.userMessage.trim()
+				: '';
+
+		return userMessage ? { userMessage } : {};
 	}
+
+	return undefined;
 }
 
-/** Whether a message is the hidden context message an interactive UI action sends to the agent. */
-export function isInteractiveUiActionMessage( message: UIMessage ): boolean {
-	return (
-		message.role === 'user' &&
-		message.content.some( ( content ) => {
-			if ( content.type !== 'context' || ! content.text ) {
-				return false;
-			}
-
-			try {
-				const parsed = JSON.parse( content.text );
-				return parsed?.version === INTERACTIVE_UI_VERSION && typeof parsed.action === 'object';
-			} catch {
-				return false;
-			}
-		} )
-	);
-}
-
-/** Collects the interactive UI batches in agent messages, one per text part that carries them. */
+/** Collects the interactive UI batches in agent messages, one per part that carries them. */
 export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiBatch[] {
-	return messages.flatMap( ( message, messageIndex ) => {
+	return messages.flatMap( ( message ) => {
 		if ( message.role !== 'agent' ) {
 			return [];
 		}
 
-		return message.content.flatMap( ( content, contentIndex ) => {
-			const parsedText = parseInteractiveUiText( content.text );
-			if ( ! parsedText ) {
+		return message.content.flatMap( ( content ) => {
+			const part = readInteractiveUiPart( content );
+
+			if ( ! part ) {
 				return [];
 			}
 
 			return [
 				{
-					...parsedText,
+					...part,
 					messageId: message.id,
-					messageIndex,
-					signature: JSON.stringify( [ message.id, contentIndex, content.text ] ),
+					signature: JSON.stringify( [ message.id, part ] ),
 				},
 			];
 		} );
@@ -98,69 +126,48 @@ export function getInteractiveUiBatches( messages: UIMessage[] ): InteractiveUiB
 }
 
 /**
- * Applies a batch's messages one by one and returns the batch with only those the runtime
- * accepted, so a rejected message can't count as a change to its surface.
+ * Applies a batch and returns it with only the messages the runtime applied, so a rejected
+ * message can't count as a change to its surface. The runtime reports each rejected one.
  */
 export function applyInteractiveUiBatch(
 	runtime: InteractiveUiRuntime,
 	batch: InteractiveUiBatch
-): InteractiveUiBatch {
-	return {
-		...batch,
-		operations: batch.operations.filter( ( message ) => {
-			try {
-				runtime.processMessages( [ message ], batch.messageId );
-				return true;
-			} catch ( error ) {
-				// eslint-disable-next-line no-console
-				console.error( '[AgentsManager] Failed to apply an interactive UI message:', error );
-				return false;
-			}
-		} ),
-	};
-}
+): AppliedInteractiveUiBatch {
+	const applied = runtime.processMessages( batch.operations, batch.messageId );
 
-// Every A2UI message holds one operation, keyed by its name, on one surface. The agent's messages
-// aren't validated, so any entry may be malformed.
-function getOperation( message: unknown ): { name: string; surfaceId: string } | undefined {
-	if ( typeof message !== 'object' || message === null ) {
-		return undefined;
-	}
-
-	const [ name, operation ] =
-		Object.entries( message ).find( ( [ key ] ) => key !== 'version' ) ?? [];
-	const surfaceId =
-		typeof operation === 'object' && operation !== null && 'surfaceId' in operation
-			? operation.surfaceId
-			: undefined;
-
-	return name && typeof surfaceId === 'string' ? { name, surfaceId } : undefined;
+	return { ...batch, operations: applied, hasRejections: applied.length < batch.operations.length };
 }
 
 interface StaleInteractiveUiSurfaceOptions {
+	/** Each message's current index in the transcript, which a regenerate can shift. */
+	messageIndexes: ReadonlyMap< string, number >;
 	latestUserMessageIndex: number;
-	/** The signatures of batches restored from history, such as a past chat's. */
-	restoredSignatures: ReadonlySet< string >;
+	/** The messages restored from history, such as a past chat's. */
+	restoredMessageIds: ReadonlySet< string >;
 	currentPostId?: number | string;
 }
 
 /**
  * The surfaces that are stale, by the rule `show-component` uses, and those restored from history,
- * as restored pickers are. Each one is judged by the last batch that changed it, so a surface the
- * agent updates in a later turn stays current, and keeps the page it was built for.
+ * as restored pickers are. Each one is judged by the current position of the message whose batch
+ * last changed it, so a surface the agent updates in a later turn stays current, and keeps the page
+ * it was built for. A surface whose message has left the transcript, as a regenerated reply does,
+ * is stale too.
  */
 export function getStaleInteractiveUiSurfaceIds(
 	batches: InteractiveUiBatch[],
-	{ latestUserMessageIndex, restoredSignatures, currentPostId }: StaleInteractiveUiSurfaceOptions
+	{
+		messageIndexes,
+		latestUserMessageIndex,
+		restoredMessageIds,
+		currentPostId,
+	}: StaleInteractiveUiSurfaceOptions
 ): Set< string > {
-	const surfaces = new Map<
-		string,
-		{ messageIndex: number; postId?: number | string; isRestored: boolean }
-	>();
+	const surfaces = new Map< string, { messageId: string; postId?: number | string } >();
 
 	for ( const batch of batches ) {
 		for ( const message of batch.operations ) {
-			const operation = getOperation( message );
+			const operation = getInteractiveUiOperation( message );
 
 			if ( operation?.name === 'deleteSurface' ) {
 				surfaces.delete( operation.surfaceId );
@@ -169,9 +176,8 @@ export function getStaleInteractiveUiSurfaceIds(
 					operation.name === 'createSurface' ? undefined : surfaces.get( operation.surfaceId );
 
 				surfaces.set( operation.surfaceId, {
-					messageIndex: batch.messageIndex,
+					messageId: batch.messageId,
 					postId: batch.postId ?? previous?.postId,
-					isRestored: restoredSignatures.has( batch.signature ),
 				} );
 			}
 		}
@@ -179,9 +185,12 @@ export function getStaleInteractiveUiSurfaceIds(
 
 	const staleSurfaceIds = new Set< string >();
 
-	for ( const [ surfaceId, { messageIndex, postId, isRestored } ] of surfaces ) {
+	for ( const [ surfaceId, { messageId, postId } ] of surfaces ) {
+		const messageIndex = messageIndexes.get( messageId );
+
 		if (
-			isRestored ||
+			restoredMessageIds.has( messageId ) ||
+			messageIndex === undefined ||
 			isChatUiStale( { messageIndex, latestUserMessageIndex, postId, currentPostId } )
 		) {
 			staleSurfaceIds.add( surfaceId );
@@ -189,4 +198,54 @@ export function getStaleInteractiveUiSurfaceIds(
 	}
 
 	return staleSurfaceIds;
+}
+
+/** The live messages whose A2UI messages the runtime rejected some of. */
+export function getRejectedInteractiveUiMessageIds(
+	batches: AppliedInteractiveUiBatch[],
+	restoredMessageIds: ReadonlySet< string >
+): Set< string > {
+	return new Set(
+		batches
+			.filter( ( batch ) => batch.hasRejections && ! restoredMessageIds.has( batch.messageId ) )
+			.map( ( batch ) => batch.messageId )
+	);
+}
+
+/**
+ * The surfaces of the applied batches the user can use: each once, and none that's stale or hasn't
+ * shown, as its root never arrived.
+ */
+export function getUsableInteractiveUiSurfaceIds(
+	runtime: InteractiveUiRuntime,
+	batches: InteractiveUiBatch[],
+	staleSurfaceIds: ReadonlySet< string >
+): string[] {
+	const surfaceIds = batches.flatMap( ( batch ) => runtime.getSurfaceIds( batch.messageId ) );
+
+	return [ ...new Set( surfaceIds ) ].filter( ( surfaceId ) => {
+		const surface = runtime.getSurface( surfaceId );
+
+		return !! surface?.componentsModel.has( surface.rootId ) && ! staleSurfaceIds.has( surfaceId );
+	} );
+}
+
+/**
+ * Leaves out the surfaces created or changed by a message that has left the transcript, such as a
+ * reply being regenerated. The runtime keeps their data until it rebuilds once the agent is idle.
+ */
+export function keepInteractiveUiSurfacesInTranscript(
+	surfaceIds: string[],
+	batches: InteractiveUiBatch[],
+	messageIndexes: ReadonlyMap< string, number >
+): string[] {
+	const removedSurfaceIds = new Set(
+		batches
+			.filter( ( batch ) => ! messageIndexes.has( batch.messageId ) )
+			.flatMap( ( batch ) =>
+				batch.operations.map( ( message ) => getInteractiveUiOperation( message )?.surfaceId )
+			)
+	);
+
+	return surfaceIds.filter( ( surfaceId ) => ! removedSurfaceIds.has( surfaceId ) );
 }

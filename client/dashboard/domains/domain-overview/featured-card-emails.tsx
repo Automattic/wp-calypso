@@ -48,11 +48,11 @@ const getDescription = ( mailboxes: DomainMailbox[] ) => {
 		: getAccountTypeLabel( mailboxes[ 0 ].accountType );
 };
 
-interface Props {
+interface FeaturedCardEmailsProps {
 	domain: Domain;
 }
 
-export default function FeaturedCardEmails( { domain }: Props ) {
+export default function FeaturedCardEmails( { domain }: FeaturedCardEmailsProps ) {
 	const router = useRouter();
 
 	const { data: accounts } = useQuery( mailboxAccountsQuery( domain.blog_id, domain.domain ) );

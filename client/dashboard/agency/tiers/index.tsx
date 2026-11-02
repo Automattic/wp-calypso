@@ -6,6 +6,7 @@ import { Card, CardBody } from '../../components/card';
 import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import CertificationTierPageCard from '../certification/tier-page-card';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
 import DownloadBadges from './download-badges';
@@ -62,6 +63,7 @@ export default function AgencyTiers() {
 				recordTracksEvent={ recordTracksEvent }
 			/>
 			<Divider style={ { color: 'var(--color-gray-100)' } } />
+			<CertificationTierPageCard recordTracksEvent={ recordTracksEvent } />
 			<TierBenefits
 				currentAgencyTierId={ currentAgencyTierId }
 				recordTracksEvent={ recordTracksEvent }

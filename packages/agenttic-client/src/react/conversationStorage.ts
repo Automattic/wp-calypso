@@ -1,8 +1,9 @@
-import { generateMessageId } from '../client/utils/core';
+import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { DEFAULT_API_BASE_URL, loadChatFromServer, type OdieServiceConfig } from './odieService';
 import type { PaginationMeta } from './serverTypes';
 import type {
+	A2uiDataPart,
 	AuthProvider,
 	ContentType,
 	DataPart,
@@ -33,6 +34,8 @@ export interface ConversationLoadResult {
  * Simplified stored message format for efficient serialization
  */
 interface StoredMessage {
+	/** Restored as is, so a message keeps its ID. Older entries have none. */
+	messageId?: string;
 	role: 'user' | 'agent';
 	content: string;
 	contentType?: ContentType;
@@ -64,6 +67,8 @@ interface StoredMessage {
 	/** Where the prompt came from (see `SubmitOptions.promptSource`), kept as message metadata. */
 	promptSource?: string;
 	promptSourceId?: string;
+	/** An interactive UI surface, as A2UI's A2A data part. */
+	a2ui?: A2uiDataPart;
 }
 
 /**
@@ -176,6 +181,8 @@ function extractStorableContent( message: Message ): StoredMessage {
 		}
 	}
 
+	const a2ui = message.parts.find( isA2uiDataPart );
+
 	// Determine the role - if this message contains tool interactions, store as "agent"
 	// regardless of the original message role
 	const hasToolInteractions = toolCalls.length > 0 || toolResults.length > 0;
@@ -188,6 +195,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 	const archived = ( message.metadata?.archived as boolean ) ?? undefined;
 
 	return {
+		messageId: message.messageId,
 		role: storageRole,
 		content: textParts || '(No text content)',
 		timestamp,
@@ -199,6 +207,7 @@ function extractStorableContent( message: Message ): StoredMessage {
 		...( agentMessageData && { agentMessageData } ),
 		...( promptSource && { promptSource } ),
 		...( promptSourceId && { promptSourceId } ),
+		...( a2ui && { a2ui } ),
 	};
 }
 
@@ -234,6 +243,11 @@ function restoreMessage( stored: StoredMessage ): Message {
 				},
 			} );
 		}
+	}
+
+	// Add the interactive UI surface
+	if ( isA2uiDataPart( stored.a2ui ) ) {
+		parts.push( stored.a2ui );
 	}
 
 	// Add tool call parts
@@ -282,7 +296,7 @@ function restoreMessage( stored: StoredMessage ): Message {
 		role: stored.role,
 		kind: 'message',
 		parts,
-		messageId: generateMessageId(),
+		messageId: stored.messageId ?? generateMessageId(),
 		metadata: {
 			timestamp: stored.timestamp,
 			// only store archived if it was already present.

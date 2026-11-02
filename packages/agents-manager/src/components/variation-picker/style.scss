@@ -34,6 +34,12 @@
 				outline-color: var( --color-muted-foreground );
 			}
 		}
+
+		// The preview sets an inline pointer cursor, so ignore the pointer instead of overriding it.
+		&[aria-disabled='true'] {
+			opacity: 0.6;
+			pointer-events: none;
+		}
 	}
 
 	&__preview {

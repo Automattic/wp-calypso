@@ -8,6 +8,7 @@
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
 import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
 import { getInteractiveUiCapabilities } from '../interactive-ui/catalogs';
+import { getShownInteractiveUiDataModel } from '../interactive-ui/session';
 import { saveSessionId } from './agent-session';
 import { canConnectToZendesk } from './can-connect-to-zendesk';
 import { getExternalContextEntries } from './external-context';
@@ -36,7 +37,7 @@ export interface CreateAgentConfigOptions {
 	toolProvider?: ToolProvider;
 	contextProvider?: ContextProvider;
 	providerIds?: string[];
-	/** The providers' interactive UI catalogs, which the client context lists with the chat's own. */
+	/** The providers' interactive UI catalogs, which each message lists with the chat's own. */
 	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	environment?: string;
 	/** Override the agent ID (e.g., from query string). Defaults to ORCHESTRATOR_AGENT_ID. */
@@ -124,18 +125,9 @@ function normalizeSiteId( siteId: unknown ): number | undefined {
 	return Number.isFinite( numericSiteId ) && numericSiteId > 0 ? numericSiteId : undefined;
 }
 
-/**
- * The client context's provider IDs, and A2UI's renderer capabilities for the interactive UI
- * catalogs the chat renders.
- */
-function getProviderContext(
-	providerIds?: string[],
-	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[]
-) {
-	return {
-		...( providerIds?.length ? { loadedProviderIds: providerIds } : {} ),
-		a2uiRendererCapabilities: getInteractiveUiCapabilities( interactiveUiCatalogs ),
-	};
+/** The client context's provider IDs. */
+function getProviderContext( providerIds?: string[] ) {
+	return providerIds?.length ? { loadedProviderIds: providerIds } : {};
 }
 
 type ProviderContext = ReturnType< typeof getProviderContext >;
@@ -174,7 +166,7 @@ async function createWrappedContextProvider(
 	environment?: string,
 	currentRoute?: string,
 	providerContext?: ProviderContext
-): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+): Promise< NonNullable< UseAgentChatConfig[ 'contextProvider' ] > > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
@@ -237,7 +229,7 @@ async function createDefaultContextProvider(
 	agentId?: string,
 	version?: string,
 	providerContext?: ProviderContext
-): Promise< UseAgentChatConfig[ 'contextProvider' ] > {
+): Promise< NonNullable< UseAgentChatConfig[ 'contextProvider' ] > > {
 	const canAccessZendesk = await canAccessZendeskForAgent( agentId );
 	return {
 		getClientContext: () => {
@@ -332,28 +324,41 @@ export async function createAgentConfig(
 		config.toolProvider = wrapToolProvider( toolProvider );
 	}
 
-	const providerContext = getProviderContext( providerIds, interactiveUiCatalogs );
+	const providerContext = getProviderContext( providerIds );
+	const clientContextProvider = contextProvider
+		? await createWrappedContextProvider(
+				contextProvider,
+				siteId,
+				agentId,
+				version,
+				environment,
+				currentRoute,
+				providerContext
+			)
+		: await createDefaultContextProvider(
+				currentRoute,
+				environment,
+				siteId,
+				agentId,
+				version,
+				providerContext
+			);
 
-	if ( contextProvider ) {
-		config.contextProvider = await createWrappedContextProvider(
-			contextProvider,
-			siteId,
-			agentId,
-			version,
-			environment,
-			currentRoute,
-			providerContext
-		);
-	} else {
-		config.contextProvider = await createDefaultContextProvider(
-			currentRoute,
-			environment,
-			siteId,
-			agentId,
-			version,
-			providerContext
-		);
-	}
+	// A2UI's A2A binding: the agent reads the renderer's capabilities from each message, and the data
+	// of the surfaces that ask for it.
+	const a2uiRendererCapabilities = getInteractiveUiCapabilities( interactiveUiCatalogs );
+
+	config.contextProvider = {
+		...clientContextProvider,
+		getMessageMetadata: () => {
+			const a2uiRendererDataModel = getShownInteractiveUiDataModel();
+
+			return {
+				a2uiRendererCapabilities,
+				...( a2uiRendererDataModel && { a2uiRendererDataModel } ),
+			};
+		},
+	};
 
 	return config;
 }

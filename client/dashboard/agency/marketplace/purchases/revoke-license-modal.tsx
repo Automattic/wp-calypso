@@ -36,12 +36,12 @@ import {
 } from './license-status';
 import type { JetpackLicense } from '@automattic/api-core';
 
-interface Props {
+interface RevokeLicenseModalProps {
 	license: JetpackLicense;
 	closeModal?: () => void;
 }
 
-export default function RevokeLicenseModal( { license, closeModal }: Props ) {
+export default function RevokeLicenseModal( { license, closeModal }: RevokeLicenseModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { data: agency } = useQuery( activeAgencyQuery() );

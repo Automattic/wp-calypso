@@ -37,4 +37,17 @@ describe( 'OpenHelpCenterButton', () => {
 
 		expect( openHelpCenterChat ).toHaveBeenCalledWith( 'Summary.' );
 	} );
+
+	it( 'stays focusable but opens nothing while its surface is disabled', () => {
+		render( <OpenHelpCenterButton message="Summary." disabled /> );
+
+		const button = screen.getByRole( 'button', { name: 'Get help' } );
+		fireEvent.click( button );
+
+		expect( button ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( recordBigSkyTracksEvent ).not.toHaveBeenCalledWith(
+			'jetpack_big_sky_open_help_center_button_click'
+		);
+		expect( openHelpCenterChat ).not.toHaveBeenCalled();
+	} );
 } );

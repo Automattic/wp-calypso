@@ -2,6 +2,7 @@ import { memo } from '@wordpress/element';
 import { BASIC_CATALOG_ID } from '../../capabilities';
 import { createInteractiveUiCatalog } from '../catalog';
 import type { InteractiveUiCatalogDefinition } from '../definitions';
+import type { DataContext } from '@a2ui/web_core';
 
 const hostCatalog: InteractiveUiCatalogDefinition = {
 	catalog: {
@@ -28,6 +29,12 @@ it( 'builds A2UI’s Basic catalog by default', () => {
 	expect( catalog.id ).toBe( BASIC_CATALOG_ID );
 	expect( catalog.components.has( 'Text' ) ).toBe( true );
 	expect( catalog.functions.has( 'formatString' ) ).toBe( true );
+} );
+
+it( 'keeps A2UI’s validation results without their English messages in a host catalog', () => {
+	const required = createInteractiveUiCatalog( hostCatalog ).functions.get( 'required' );
+
+	expect( required?.execute( { value: '' }, {} as DataContext ) ).toEqual( { valid: false } );
 } );
 
 it( 'adds a catalog’s own components and functions to the basic ones', () => {
@@ -100,6 +107,22 @@ it.each< { problem: string; definition: InteractiveUiCatalogDefinition; error: s
 		problem: 'a catalog with an empty ID',
 		definition: { ...hostCatalog, catalog: { ...hostCatalog.catalog, catalogId: '' } },
 		error: 'An interactive UI catalog needs a `catalogId`.',
+	},
+	{
+		problem: 'a component without an object schema',
+		definition: {
+			...hostCatalog,
+			catalog: { ...hostCatalog.catalog, components: { HostColorPicker: { required: 'color' } } },
+		},
+		error: 'The interactive UI component HostColorPicker needs an object schema.',
+	},
+	{
+		problem: 'a component of another type',
+		definition: {
+			...hostCatalog,
+			catalog: { ...hostCatalog.catalog, components: { HostColorPicker: { type: 'string' } } },
+		},
+		error: 'The interactive UI component HostColorPicker needs an object schema.',
 	},
 ] )( 'rejects $problem', ( { definition, error } ) => {
 	expect( () => createInteractiveUiCatalog( definition ) ).toThrow( error );

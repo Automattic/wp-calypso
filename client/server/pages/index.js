@@ -31,7 +31,7 @@ import {
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
-import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
+import { A4A_SIGNUP_URL, JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -42,10 +42,12 @@ import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { login } from 'calypso/lib/paths';
 import { getLegacyLaunchSiteRedirect } from 'calypso/lib/signup/legacy-launch-site-flow';
 import {
-	REDIRECTED_PLAN_FLOWS,
+	REDIRECTED_FLOWS,
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import { getWebsiteDesignServicesRedirect } from 'calypso/lib/signup/legacy-website-design-services-flow';
+import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
 import isSectionEnabled from 'calypso/sections-filter';
@@ -975,6 +977,19 @@ function validateRedirect( req, url ) {
 }
 
 /**
+ * The locale of a legacy `/start` URL, or '' for the default one. It's the last non-empty path
+ * segment, so a trailing slash doesn't hide it.
+ * @param {string} requestPath Request path
+ * @returns {string} Locale slug
+ */
+function getLegacyFlowLocale( requestPath ) {
+	const lastPathSegment = requestPath.split( '/' ).filter( Boolean ).pop() ?? '';
+	return getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+		? lastPathSegment
+		: '';
+}
+
+/**
  * Defines wordpress.com (Calypso blue) routes only
  * @param {express.Application} app Express application
  */
@@ -1246,6 +1261,34 @@ function jetpackCloudPages( app ) {
 	app.get( [ '/manage/pricing', `/${ anyLangParam }/manage/pricing` ], function ( _req, res ) {
 		res.redirect( 302, JETPACK_COM_A4A_LANDING_PAGE );
 	} );
+
+	// Jetpack Manage no longer accepts agency signups; every signup goes through Automattic for
+	// Agencies. Registered here so it runs before the client-side OAuth login gate in
+	// client/boot/common.js, which would otherwise bounce logged-out visitors through login first.
+	// A 302 rather than a 301 so the route can be restored without waiting out caches.
+	// Only the acquisition params A4A signup reads are forwarded (see
+	// client/a8c-for-agencies/sections/signup/hooks/use-acquisition-props.ts).
+	const A4A_SIGNUP_FORWARDED_PARAMS = [
+		'ref',
+		'utm_source',
+		'utm_medium',
+		'utm_campaign',
+		'utm_term',
+		'utm_content',
+	];
+	app.get( [ '/manage/signup', '/agency/signup' ], function ( req, res ) {
+		const target = new URL( A4A_SIGNUP_URL );
+		for ( const key of A4A_SIGNUP_FORWARDED_PARAMS ) {
+			const value = req.query[ key ];
+			if ( typeof value === 'string' && value !== '' ) {
+				target.searchParams.set( key, value );
+			}
+		}
+		if ( ! target.searchParams.has( 'ref' ) ) {
+			target.searchParams.set( 'ref', 'jetpack-manage' );
+		}
+		res.redirect( 302, target.toString() );
+	} );
 }
 
 export default function pages() {
@@ -1313,33 +1356,40 @@ export default function pages() {
 	}
 
 	// Legacy `/start/<plan>` flows are now served by Stepper's onboarding flow with the plan
-	// preselected. This has to be registered ahead of the dashboard `/start` route and the section
-	// loop below, which bind `/start` for the signup section and would otherwise match first. The
+	// preselected, and `/start/plans-first` by onboarding as is. This has to be registered ahead
+	// of the dashboard `/start` route and the section loop below, which bind `/start` for the
+	// signup section and would otherwise match first. The
 	// `/*` variant covers step segments — `/start/personal/domains` is a shape real `redirect_to`
 	// values use.
-	const legacyPlanFlowRoute = `/start/:flow(${ Object.keys( REDIRECTED_PLAN_FLOWS ).join( '|' ) })`;
+	const legacyPlanFlowRoute = `/start/:flow(${ REDIRECTED_FLOWS.join( '|' ) })`;
 	app.get( [ legacyPlanFlowRoute, `${ legacyPlanFlowRoute }/*` ], ( req, res, next ) => {
 		if ( ! shouldRedirectLegacyPlanFlow( req.params.flow ) ) {
 			return next( 'route' );
 		}
 
-		// Last non-empty segment, so a trailing slash doesn't hide the locale.
-		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
-		const locale =
-			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
-				? lastPathSegment
-				: '';
-
-		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
+		res.redirect(
+			302,
+			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
+		);
 	} );
 
 	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
 	app.get( [ '/start/launch-site', '/start/launch-site/*' ], ( req, res, next ) => {
 		// Shows who still links to the old path (the Referer is sent with the event), so we know
-		// when it can go. Only the path and caller hints are sent: the query can carry coupons and
-		// redirect URLs.
+		// when it can go. The Sec-Fetch headers tell a followed link from a typed, scripted or
+		// restored navigation, and `retry` marks the chunk-retry reload in `layout/error.jsx`.
+		// Only these and the site are sent: the query can carry coupons and redirect URLs, and the
+		// Referer is cut down to its origin and path for the same reason.
 		if ( calypsoEnv === 'production' && req.method === 'GET' ) {
 			const stringArg = ( value ) => ( typeof value === 'string' ? value : undefined );
+			const refererPage = ( referer ) => {
+				try {
+					const { origin, pathname } = new URL( referer );
+					return origin + pathname;
+				} catch {
+					return undefined;
+				}
+			};
 
 			try {
 				analytics.tracks.recordEvent(
@@ -1348,6 +1398,12 @@ export default function pages() {
 						path: req.path,
 						ref: stringArg( req.query.ref ),
 						query_source: stringArg( req.query.source ),
+						referer: refererPage( req.get( 'Referer' ) ),
+						site_slug: stringArg( req.query.siteSlug ),
+						retry: stringArg( req.query.retry ),
+						fetch_site: req.get( 'Sec-Fetch-Site' ),
+						fetch_mode: req.get( 'Sec-Fetch-Mode' ),
+						fetch_user: req.get( 'Sec-Fetch-User' ),
 					},
 					req
 				);
@@ -1364,6 +1420,23 @@ export default function pages() {
 
 		res.redirect( 302, getLegacyLaunchSiteRedirect( req.query ) );
 	} );
+
+	app.get( [ '/start/woocommerce-install', '/start/woocommerce-install/*' ], ( req, res ) => {
+		res.redirect( 302, getWooCommercePluginPage( req.query.siteSlug ) );
+	} );
+	app.get( [ '/woocommerce-installation', '/woocommerce-installation/:site' ], ( req, res ) => {
+		res.redirect( 302, getWooCommercePluginPage( req.params.site ) );
+	} );
+
+	app.get(
+		[ '/start/website-design-services', '/start/website-design-services/*' ],
+		( req, res ) => {
+			res.redirect(
+				302,
+				getWebsiteDesignServicesRedirect( getLegacyFlowLocale( req.path ), stringify( req.query ) )
+			);
+		}
+	);
 
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {

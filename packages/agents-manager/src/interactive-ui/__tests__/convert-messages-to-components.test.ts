@@ -1,32 +1,14 @@
-import { createInteractiveUiCatalog, createInteractiveUiRuntime } from '@automattic/ai-ui-renderer';
+import { InteractiveUiActionNote } from '../action-note';
 import {
 	attachInteractiveUiPresentation,
 	convertInteractiveUiMessagesToComponents,
-	markInteractiveUiActionReplies,
+	presentInteractiveUiActions,
 } from '../convert-messages-to-components';
 import { InteractiveUiSurfaces } from '../surfaces';
+import { createRuntime, operations, surfaceContent } from './fixtures/surface';
 import type { AgentsManagerUIMessage } from '../../utils/convert-tool-messages-to-components';
 import type { InteractiveUiPresentation } from '../use-interactive-ui';
 import type { ComponentType } from 'react';
-
-const operations = [
-	{
-		version: 'v1.0' as const,
-		createSurface: {
-			surfaceId: 'surface',
-			catalogId: 'https://a2ui.org/specification/v1_0/catalogs/basic/catalog.json',
-		},
-	},
-	{
-		version: 'v1.0' as const,
-		updateComponents: {
-			surfaceId: 'surface',
-			components: [ { id: 'root', component: 'Text', text: 'Surface' } ],
-		},
-	},
-];
-
-const envelope = JSON.stringify( { tool_id: 'wpcom__render_interactive_ui', data: operations } );
 
 function createMessage(
 	id: string,
@@ -46,16 +28,14 @@ function createPresentation( {
 	surfaceOwnerId,
 	hasLoadError = false,
 	staleSurfaceIds = [],
+	rejectedMessageIds = [],
 }: {
 	surfaceOwnerId?: string;
 	hasLoadError?: boolean;
 	staleSurfaceIds?: string[];
+	rejectedMessageIds?: string[];
 } ): InteractiveUiPresentation {
-	const runtime = createInteractiveUiRuntime( {
-		catalogs: [ createInteractiveUiCatalog() ],
-		onAction: jest.fn(),
-		onError: jest.fn(),
-	} );
+	const runtime = createRuntime();
 
 	if ( surfaceOwnerId ) {
 		runtime.processMessages( operations, surfaceOwnerId );
@@ -68,8 +48,10 @@ function createPresentation( {
 		isRetryingLoad: false,
 		retryLoad: jest.fn(),
 		revision: 0,
-		isDisabled: false,
+		isBusy: false,
 		staleSurfaceIds: new Set( staleSurfaceIds ),
+		rejectedMessageIds: new Set( rejectedMessageIds ),
+		restoredMessageIds: new Set(),
 	};
 }
 
@@ -77,8 +59,8 @@ describe( 'convertInteractiveUiMessagesToComponents', () => {
 	it( 'replaces an agent message’s interactive UI parts with one surfaces part', () => {
 		const message = createMessage( 'agent', 'agent', [
 			{ type: 'text', text: 'Here you go.' },
-			{ type: 'text', text: envelope },
-			{ type: 'text', text: envelope },
+			surfaceContent,
+			surfaceContent,
 		] );
 
 		const [ converted ] = convertInteractiveUiMessagesToComponents( [ message ] );
@@ -87,7 +69,7 @@ describe( 'convertInteractiveUiMessagesToComponents', () => {
 	} );
 
 	it( 'leaves user messages unchanged', () => {
-		const message = createMessage( 'user', 'user', [ { type: 'text', text: envelope } ] );
+		const message = createMessage( 'user', 'user', [ surfaceContent ] );
 
 		expect( convertInteractiveUiMessagesToComponents( [ message ] )[ 0 ] ).toBe( message );
 	} );
@@ -99,6 +81,7 @@ describe( 'attachInteractiveUiPresentation', () => {
 	it.each( [
 		[ 'its message has surfaces', { surfaceOwnerId: 'agent' } ],
 		[ 'the renderer failed to load', { hasLoadError: true } ],
+		[ 'the runtime rejected some of its A2UI messages', { rejectedMessageIds: [ 'agent' ] } ],
 	] )( 'hands the surfaces part the presentation when %s', ( _description, options ) => {
 		const presentation = createPresentation( options );
 
@@ -115,7 +98,7 @@ describe( 'attachInteractiveUiPresentation', () => {
 	it( 'disables the actions of a message whose surfaces are all stale', () => {
 		const presentation = createPresentation( {
 			surfaceOwnerId: 'agent',
-			staleSurfaceIds: [ 'surface' ],
+			staleSurfaceIds: [ 'test-surface' ],
 		} );
 		const feedback = { id: 'feedback-up', label: 'Good response', onClick: jest.fn() };
 
@@ -148,22 +131,26 @@ describe( 'attachInteractiveUiPresentation', () => {
 	} );
 } );
 
-describe( 'markInteractiveUiActionReplies', () => {
+describe( 'presentInteractiveUiActions', () => {
 	const reply = createMessage( 'reply', 'agent', [ { type: 'text', text: 'Hello, Ada!' } ] );
+	const toolCall = createMessage( 'tool-call', 'agent', [ { type: 'text', text: '{}' } ] );
+	const dataOnly = createMessage( 'data-only', 'agent', [ { type: 'data', data: {} } ] );
 
-	it( 'starts a turn at the shown reply to an action', () => {
-		const action = createMessage( 'action', 'user', [
-			{ type: 'context', text: JSON.stringify( { version: 'v1.0', action: { name: 'greet' } } ) },
+	function createActionMessage( action: Record< string, unknown > ) {
+		return createMessage( 'action', 'user', [
+			{ type: 'context', text: JSON.stringify( { version: 'v1.0', action } ) },
 		] );
-		const toolCall = createMessage( 'tool-call', 'agent', [ { type: 'text', text: '{}' } ] );
-		const dataOnly = createMessage( 'data-only', 'agent', [ { type: 'data', data: {} } ] );
+	}
 
-		const [ , marked ] = markInteractiveUiActionReplies(
+	it( 'starts a turn at the shown reply to an action without a `userMessage`', () => {
+		const action = createActionMessage( { name: 'greet' } );
+
+		const presented = presentInteractiveUiActions(
 			[ dataOnly, reply ],
 			[ action, toolCall, dataOnly, reply ]
 		);
 
-		expect( marked.startsTurn ).toBe( true );
+		expect( presented ).toEqual( [ dataOnly, { ...reply, startsTurn: true } ] );
 	} );
 
 	it( 'leaves a reply to other hidden context in its turn', () => {
@@ -171,8 +158,54 @@ describe( 'markInteractiveUiActionReplies', () => {
 			{ type: 'context', text: 'Navigated to the About page.' },
 		] );
 
-		const [ marked ] = markInteractiveUiActionReplies( [ reply ], [ navigation, reply ] );
+		const [ marked ] = presentInteractiveUiActions( [ reply ], [ navigation, reply ] );
 
 		expect( marked ).toBe( reply );
+	} );
+
+	it( 'shows an action’s `userMessage` as a note on the user’s side before its reply', () => {
+		const action = createActionMessage( { name: 'save', userMessage: 'Save the title' } );
+
+		const [ note, shownDataOnly, shownReply ] = presentInteractiveUiActions(
+			[ dataOnly, reply ],
+			[ action, toolCall, dataOnly, reply ]
+		);
+
+		expect( shownDataOnly ).toBe( dataOnly );
+		expect( note ).toMatchObject( {
+			id: 'action-note',
+			role: 'user',
+			content: [
+				{
+					type: 'component',
+					component: InteractiveUiActionNote,
+					componentProps: { userMessage: 'Save the title' },
+				},
+			],
+		} );
+		expect( shownReply ).toBe( reply );
+	} );
+
+	it( 'shows an action’s note before a reply that’s still hidden, so the reply stays last', () => {
+		const action = createActionMessage( { name: 'save', userMessage: 'Save the title' } );
+		const hiddenReply = createMessage( 'hidden-reply', 'agent', [] );
+
+		const presented = presentInteractiveUiActions( [ hiddenReply ], [ action, hiddenReply ] );
+
+		expect( presented ).toEqual( [
+			expect.objectContaining( { id: 'action-note', role: 'user' } ),
+			hiddenReply,
+		] );
+	} );
+
+	it( 'shows an action’s note last until its reply arrives', () => {
+		const action = createActionMessage( { name: 'save', userMessage: 'Save the title' } );
+
+		const presented = presentInteractiveUiActions( [ reply ], [ reply, action ] );
+
+		expect( presented ).toEqual( [
+			reply,
+			expect.objectContaining( { id: 'action-note', role: 'user' } ),
+		] );
 	} );
 } );

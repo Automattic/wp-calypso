@@ -102,11 +102,41 @@ describe( '<EarnReferrals>', () => {
 		await waitFor( () => expect( newReferralButton() ).not.toBeInTheDocument() );
 	} );
 
+	test( 'opens the approval gate from Get started and leaves out payout details while in review', async () => {
+		sessionStorage.clear();
+		mockEndpoints( { referrals: [], approvalStatus: 'pending' } );
+		render( <EarnReferrals /> );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Get started' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Referrals unlock once you’re approved' } )
+		).toBeVisible();
+		expect( sessionStorage.getItem( 'marketplace-type' ) ).toBeNull();
+		expect( screen.queryByRole( 'link', { name: 'Add my details' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'asks for payout details with referral-specific copy, and keeps it on screen', async () => {
 		mockEndpoints( { isPayable: false } );
 		render( <EarnReferrals /> );
 
 		expect( await screen.findByText( /You’ve successfully made a client referral/ ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: 'Dismiss' } ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByText( 'Complete your details in Tipalti to get paid.' )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'shows why a Not Payable agency with no referrals can’t be paid', async () => {
+		mockEndpoints( { referrals: [], isPayable: false } );
+		render( <EarnReferrals /> );
+
+		const reasons = await screen.findAllByText( 'Complete your details in Tipalti to get paid.' );
+		expect( reasons ).toHaveLength( 2 );
+		reasons.forEach( ( reason ) => expect( reason ).toBeVisible() );
+		expect( screen.getByRole( 'link', { name: 'Add my details' } ) ).toHaveAttribute(
+			'href',
+			expect.stringMatching( /^\/payout-settings\?from=/ )
+		);
 	} );
 } );

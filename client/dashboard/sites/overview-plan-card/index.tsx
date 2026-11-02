@@ -1,6 +1,7 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import { siteCurrentPlanQuery, siteByIdQuery, sitePurchasesQuery } from '@automattic/api-queries';
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
@@ -125,6 +126,7 @@ function JetpackPlanCard( {
 	isLoading: boolean;
 } ) {
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 	const products = getJetpackProductsForSite( site );
 	const productsToDisplay = products.length > 0 ? products : JETPACK_PRODUCTS;
 
@@ -133,7 +135,7 @@ function JetpackPlanCard( {
 			title={ __( 'Subscriptions' ) }
 			icon={ <JetpackLogo /> }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, locale, purchase ) }
+			description={ getCardDescription( site, locale, hasEnTranslation, purchase ) }
 			link={ getSitePlanUrl( site ) }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
@@ -174,6 +176,7 @@ function WpcomPlanCard( {
 	isLoading: boolean;
 } ) {
 	const locale = useLocale();
+	const hasEnTranslation = useHasEnTranslation();
 	const planLinkProps = usePlanLinkProps( site, purchase );
 
 	return (
@@ -181,7 +184,7 @@ function WpcomPlanCard( {
 			title={ __( 'Plan' ) }
 			icon={ wordpress }
 			heading={ getSitePlanDisplayName( site ) }
-			description={ getCardDescription( site, locale, purchase ) }
+			description={ getCardDescription( site, locale, hasEnTranslation, purchase ) }
 			{ ...planLinkProps }
 			tracksId="site-overview-plan"
 			isLoading={ isLoading }
@@ -269,7 +272,12 @@ export default function PlanCard( { site }: { site: Site } ) {
 	);
 }
 
-function getCardDescription( site: Site, locale: string, purchase?: Purchase ) {
+function getCardDescription(
+	site: Site,
+	locale: string,
+	hasEnTranslation: ( single: string ) => boolean,
+	purchase?: Purchase
+) {
 	switch ( site.plan?.product_slug ) {
 		case DotcomPlans.FREE_PLAN:
 			return __( 'Upgrade to access all hosting features.' );
@@ -282,7 +290,7 @@ function getCardDescription( site: Site, locale: string, purchase?: Purchase ) {
 	}
 
 	if ( purchase ) {
-		return getPurchaseExpiryStatusText( purchase, locale );
+		return getPurchaseExpiryStatusText( purchase, locale, hasEnTranslation );
 	}
 
 	return undefined;

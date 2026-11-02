@@ -1,9 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { lazy } from '@wordpress/element';
 import { InteractiveUiSurface } from '../../components/interactive-ui-surface';
 import { createInteractiveUiCatalog } from '../catalog';
 import { createInteractiveUiRuntime } from '../runtime';
 import type { InteractiveUiMessage } from '../../index';
 import type { InteractiveUiCatalogDefinition } from '../definitions';
+import type { ComponentType } from 'react';
 
 const HOST_CATALOG_ID = 'urn:host:catalog:v1';
 
@@ -12,25 +14,34 @@ interface GreetingProps {
 	onGreet: () => void;
 	surfaceId: string;
 	disabled: boolean;
+	isShowingErrors: boolean;
+	isValid?: boolean;
+	validationErrors?: string[];
 }
 
-function HostGreeting( { name, onGreet, surfaceId, disabled }: GreetingProps ) {
+function HostGreeting( { name, onGreet, surfaceId, disabled, isShowingErrors }: GreetingProps ) {
 	return (
 		<button
 			type="button"
 			onClick={ onGreet }
 			data-surface-id={ surfaceId }
 			data-disabled={ disabled }
+			data-showing-errors={ isShowingErrors }
 		>
 			{ `Hi ${ name }` }
 		</button>
 	);
 }
 
-function createHostCatalog(
+function createHostCatalog( {
 	runHost = jest.fn(),
-	hostRunDocument: object = {}
-): InteractiveUiCatalogDefinition {
+	hostRunDocument = {},
+	greeting = HostGreeting,
+}: {
+	runHost?: jest.Mock;
+	hostRunDocument?: object;
+	greeting?: ComponentType< GreetingProps >;
+} ): InteractiveUiCatalogDefinition {
 	return {
 		catalog: {
 			catalogId: HOST_CATALOG_ID,
@@ -40,6 +51,7 @@ function createHostCatalog(
 					properties: {
 						name: { $ref: 'common_types.json#/$defs/DynamicString' },
 						onGreet: { $ref: 'common_types.json#/$defs/Action' },
+						checks: { type: 'array', items: { $ref: 'common_types.json#/$defs/CheckRule' } },
 					},
 					required: [ 'name', 'onGreet' ],
 				},
@@ -53,7 +65,7 @@ function createHostCatalog(
 				},
 			},
 		},
-		components: { HostGreeting },
+		components: { HostGreeting: greeting },
 		functions: { hostRun: runHost },
 	};
 }
@@ -63,11 +75,13 @@ function renderSurface(
 	{
 		runHost,
 		hostRunDocument,
+		greeting,
 		hostProps,
 		disabled,
 	}: {
 		runHost?: jest.Mock;
 		hostRunDocument?: object;
+		greeting?: ComponentType< GreetingProps >;
 		hostProps?: Record< string, unknown >;
 		disabled?: boolean;
 	} = {}
@@ -75,7 +89,9 @@ function renderSurface(
 	const onAction = jest.fn();
 	const onError = jest.fn();
 	const runtime = createInteractiveUiRuntime( {
-		catalogs: [ createInteractiveUiCatalog( createHostCatalog( runHost, hostRunDocument ) ) ],
+		catalogs: [
+			createInteractiveUiCatalog( createHostCatalog( { runHost, hostRunDocument, greeting } ) ),
+		],
 		onAction,
 		onError,
 	} );
@@ -133,7 +149,28 @@ it( 'renders a host component with its bound values resolved and its action call
 	);
 } );
 
-it( 'gives a host component its surface ID and the surface’s disabled state', async () => {
+function CheckedGreeting( { isValid, validationErrors = [] }: GreetingProps ) {
+	return <p data-valid={ String( isValid ) }>{ validationErrors.join( ' ' ) }</p>;
+}
+
+it( 'gives a host component its checks’ result', async () => {
+	const { onError } = renderSurface(
+		[
+			updateComponents( {
+				component: 'HostGreeting',
+				name: 'Ada',
+				onGreet: { event: { name: 'greet' } },
+				checks: [ { condition: { '@path': '/ok' }, message: 'Not ok.' } ],
+			} ),
+		],
+		{ greeting: CheckedGreeting }
+	);
+
+	expect( await screen.findByText( 'Not ok.' ) ).toHaveAttribute( 'data-valid', 'false' );
+	expect( onError ).not.toHaveBeenCalled();
+} );
+
+it( 'gives a host component its surface ID and the surface’s disabled and error state', async () => {
 	renderSurface(
 		[
 			updateComponents( {
@@ -149,6 +186,7 @@ it( 'gives a host component its surface ID and the surface’s disabled state', 
 
 	expect( button ).toHaveAttribute( 'data-surface-id', 'surface' );
 	expect( button ).toHaveAttribute( 'data-disabled', 'true' );
+	expect( button ).toHaveAttribute( 'data-showing-errors', 'false' );
 } );
 
 it( 'gives a host component the host’s props over the surface’s', async () => {
@@ -166,12 +204,42 @@ it( 'gives a host component the host’s props over the surface’s', async () =
 	expect( await screen.findByRole( 'button' ) ).toHaveTextContent( 'Hi Host' );
 } );
 
+it( 'shows the rest of its surface while a lazy host component loads', async () => {
+	type GreetingModule = { default: typeof HostGreeting };
+	let load: ( module: GreetingModule ) => void = () => {};
+
+	const { onError } = renderSurface(
+		[
+			updateComponents(
+				{ component: 'Column', children: [ 'title', 'greeting' ] },
+				{ id: 'title', component: 'Text', text: 'Welcome' },
+				{
+					id: 'greeting',
+					component: 'HostGreeting',
+					name: 'Ada',
+					onGreet: { event: { name: 'greet' } },
+				}
+			),
+		],
+		{ greeting: lazy( () => new Promise< GreetingModule >( ( resolve ) => ( load = resolve ) ) ) }
+	);
+
+	await screen.findByText( 'Welcome' );
+	expect( screen.queryByRole( 'button' ) ).toBeNull();
+
+	load( { default: HostGreeting } );
+
+	expect( await screen.findByRole( 'button', { name: 'Hi Ada' } ) ).toBeVisible();
+	expect( onError ).not.toHaveBeenCalled();
+} );
+
 it( 'hides a surface with a component its catalog lacks, and reports it', async () => {
 	const { onError } = renderSurface( [ updateComponents( { component: 'HostMissing' } ) ] );
 
 	await waitFor( () =>
 		expect( onError ).toHaveBeenCalledWith(
-			expect.objectContaining( { code: 'UNKNOWN_COMPONENT_TYPE', surfaceId: 'surface' } )
+			expect.objectContaining( { code: 'UNKNOWN_COMPONENT_TYPE', surfaceId: 'surface' } ),
+			'message'
 		)
 	);
 
@@ -209,7 +277,8 @@ describe( 'host functions', () => {
 
 		await waitFor( () =>
 			expect( onError ).toHaveBeenCalledWith(
-				expect.objectContaining( { surfaceId: 'surface', message: 'Failed' } )
+				expect.objectContaining( { surfaceId: 'surface', message: 'Failed' } ),
+				'message'
 			)
 		);
 	} );
@@ -229,7 +298,8 @@ describe( 'host functions', () => {
 
 		await waitFor( () =>
 			expect( onError ).toHaveBeenCalledWith(
-				expect.objectContaining( { code: 'EXPRESSION_ERROR', surfaceId: 'surface' } )
+				expect.objectContaining( { code: 'EXPRESSION_ERROR', surfaceId: 'surface' } ),
+				'message'
 			)
 		);
 

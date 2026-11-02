@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -268,6 +269,14 @@ export const transformClientMessageToUI = (
 				}
 			}
 			if ( part.type === 'data' ) {
+				// Keep an interactive UI surface under `a2ui` for the host to render
+				if ( isA2uiDataPart( part ) ) {
+					return {
+						type: 'data' as const,
+						data: { a2ui: part },
+					};
+				}
+
 				// Handle `data` parts that might contain `component` information
 				const data = part.data as any;
 				if ( data.component && data.componentProps ) {
@@ -912,10 +921,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 											msg.content[ 0 ]?.text &&
 											finalMessage.content[ 0 ].text.length > msg.content[ 0 ].text.length;
 
+										// The streamed bubble has only text, so add the final message's surfaces
+										const surfaceContent = finalMessage.content.filter(
+											( content ) => content.type === 'data' && isA2uiDataPart( content.data?.a2ui )
+										);
+
 										return {
 											...finalMessage,
 											reactKey: msg.reactKey || currentStreamingId, // Keep stable reactKey
-											content: useServerContent ? finalMessage.content : msg.content,
+											content: useServerContent
+												? finalMessage.content
+												: [ ...msg.content, ...surfaceContent ],
 										};
 									}
 									return msg;

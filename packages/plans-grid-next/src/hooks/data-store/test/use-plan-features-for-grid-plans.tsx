@@ -41,13 +41,12 @@ const ALL_FEATURES = {
 
 const GRID_PLANS = [ { planSlug: PREMIUM } ] as Omit< GridPlan, 'features' >[];
 
-function slugsFor( intent?: PlansIntent, useVar42NoAiFeatures = true ) {
+function slugsFor( intent?: PlansIntent ) {
 	const { result } = renderHook( () =>
 		usePlanFeaturesForGridPlans( {
 			gridPlans: GRID_PLANS,
 			allFeaturesList: ALL_FEATURES,
 			intent,
-			useVar42NoAiFeatures,
 		} )
 	);
 
@@ -59,10 +58,9 @@ describe( 'usePlanFeaturesForGridPlans feature-list precedence', () => {
 		expect( slugsFor( undefined ) ).toEqual( [ 'differentiation-feature' ] );
 	} );
 
-	it( 'keeps a curated intent list even when the differentiation list is enabled', () => {
+	it( 'keeps a curated intent list over the differentiation list', () => {
 		// The regression this guards: the differentiation branch is checked first, so before
-		// TAILORED_FEATURE_LIST_INTENTS it shadowed every intent branch, and which grid a
-		// newsletter site saw depended on whether it carried the gating flag.
+		// TAILORED_FEATURE_LIST_INTENTS it shadowed every intent branch.
 		expect( slugsFor( 'plans-newsletter' ) ).toEqual( [ 'newsletter-feature' ] );
 	} );
 

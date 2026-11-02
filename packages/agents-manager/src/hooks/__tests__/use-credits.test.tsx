@@ -10,7 +10,7 @@ let mockIsProcessing = false;
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
-		useAgentChat: () => ( { isProcessing: mockIsProcessing } ),
+		useAgentChat: () => ( { isProcessing: mockIsProcessing, messages: [] } ),
 	} ),
 	{ virtual: true }
 );

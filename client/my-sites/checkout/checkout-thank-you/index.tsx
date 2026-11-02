@@ -165,8 +165,6 @@ export class CheckoutThankYou extends Component<
 	CheckoutThankYouCombinedProps,
 	CheckoutThankYouState
 > {
-	static propTypes = {};
-
 	constructor( props: CheckoutThankYouCombinedProps ) {
 		super( props );
 		this.state = {

@@ -160,7 +160,7 @@ function WaitingCanvas( {
 					'This can take up to 4 minutes. No worries, you’ll receive an email when the site is ready.'
 				)
 			: translate(
-					'This can take up to 10 minutes. No worries, you’ll receive an email when the site is ready.'
+					'This usually takes a few minutes. No worries, you’ll receive an email when the site is ready.'
 				);
 
 	if ( streamRequested || stream ) {

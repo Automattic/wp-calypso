@@ -4,6 +4,7 @@ import { removeLocaleFromPathLocaleInFront } from '@automattic/i18n-utils';
 import { truncate } from '@automattic/js-utils';
 import { addQueryArgs, getQueryArgs, removeQueryArgs } from '@wordpress/url';
 import { stripHTML } from 'calypso/lib/formatting/strip-html';
+import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import { getCachedPost } from 'calypso/reader/data/post/cache';
 import XPostHelper, { isXPost } from 'calypso/reader/xpost-helper';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
@@ -11,8 +12,10 @@ import { getCalypsoQueryClient } from 'calypso/state/query-client';
 interface ShowSelectedPostArgs {
 	postKey?: {
 		blogId?: number;
-		postId: number;
+		postId?: number;
 		feedId?: number;
+		snapshotId?: string;
+		url?: string;
 		isRecommendationBlock?: boolean;
 	};
 	comments?: boolean;
@@ -27,6 +30,12 @@ export function showSelectedPost( { postKey, comments }: ShowSelectedPostArgs ) 
 		// rec block
 		if ( postKey.isRecommendationBlock ) {
 			return;
+		}
+
+		// A saved snapshot has no full post to show, only the page it was saved from.
+		if ( postKey.snapshotId ) {
+			const url = postKey.url && safeLink( postKey.url );
+			return url ? window.open( url, '_blank', 'noopener,noreferrer' ) : undefined;
 		}
 
 		const queryClient = getCalypsoQueryClient();

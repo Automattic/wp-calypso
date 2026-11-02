@@ -168,6 +168,56 @@ describe( 'withFullPostNavigation', () => {
 		);
 	} );
 
+	it( 'links a saved snapshot neighbor to the page it was saved from', () => {
+		const snapshotUrl = 'https://example.com/saved-page';
+		useStreamPostKeySelection.mockReturnValue( {
+			previousPostKey: { snapshotId: 'url-save-1', url: snapshotUrl },
+			nextPostKey: { blogId: 100, postId: 3 },
+		} );
+		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
+		const store = createStore( ( state = {} ) => state, {
+			readerUi: { currentStream: 'saved' },
+			ui: { language: { localeSlug: 'en' } },
+		} );
+
+		render(
+			<Provider store={ store }>
+				<FullPostNavigation blogId="100" postId="2" />
+			</Provider>
+		);
+
+		expect( WrappedComponent.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( {
+				previousPostUrl: snapshotUrl,
+				nextPostUrl: '/reader/blogs/100/posts/3',
+			} )
+		);
+	} );
+
+	it( 'does not link a saved snapshot neighbor to a URL that is not http or https', () => {
+		useStreamPostKeySelection.mockReturnValue( {
+			previousPostKey: { snapshotId: 'url-save-1', url: 'javascript:alert(1)' },
+			nextPostKey: null,
+		} );
+		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
+		const store = createStore( ( state = {} ) => state, {
+			readerUi: { currentStream: 'saved' },
+			ui: { language: { localeSlug: 'en' } },
+		} );
+
+		render(
+			<Provider store={ store }>
+				<FullPostNavigation blogId="100" postId="2" />
+			</Provider>
+		);
+
+		expect( WrappedComponent.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { previousPostUrl: '#' } )
+		);
+	} );
+
 	it( 'passes the comments API disabled state from Reader comment queries', () => {
 		usePostCommentsApiDisabled.mockReturnValue( true );
 		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
@@ -442,5 +492,56 @@ describe( 'FullPostView automatic mark-as-seen on view', () => {
 		instance.componentDidUpdate( initialProps );
 
 		expect( requestMarkAsSeen ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'FullPostView subscribe notice', () => {
+	const createInstance = () => {
+		const successNotice = jest.fn();
+		const instance = new FullPostView( {
+			post: { ID: 1, site_ID: 100, site_name: 'Example Blog' },
+			successNotice,
+		} );
+		instance.setState = jest.fn();
+		return { instance, successNotice };
+	};
+
+	it( 'confirms a completed subscription', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.showFollowSuccessNotice( true, 'Example Blog' );
+
+		expect( successNotice ).toHaveBeenCalledWith(
+			'Success! You are now subscribed to "Example Blog".',
+			{ duration: 3000 }
+		);
+	} );
+
+	it( 'confirms a completed unsubscription', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.showFollowSuccessNotice( false, 'Example Blog' );
+
+		expect( successNotice ).toHaveBeenCalledWith(
+			'Success! You are now unsubscribed from "Example Blog".',
+			{ duration: 3000 }
+		);
+	} );
+
+	it( 'skips the notice when there is no site name to show', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.showFollowSuccessNotice( true, null );
+
+		expect( successNotice ).not.toHaveBeenCalled();
+	} );
+
+	it( 'opens the suggested follows dialog on click without confirming yet', () => {
+		const { instance, successNotice } = createInstance();
+
+		instance.openSuggestedFollowsModal( true );
+
+		expect( instance.setState ).toHaveBeenCalledWith( { isSuggestedFollowsModalOpen: true } );
+		expect( successNotice ).not.toHaveBeenCalled();
 	} );
 } );

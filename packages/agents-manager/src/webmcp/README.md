@@ -13,7 +13,7 @@ classes) in a browser that implements
 ## Execution and exposure
 
 The adapter wraps the live merged `ToolProvider` from `loadExternalProviders()` in
-`createWebMcpToolProvider()` (`webmcp/server-ability-provider.ts`). Client abilities run through
+`createWebMcpToolProvider()` (`server-ability-provider.ts`). Client abilities run through
 the merged provider, which applies the established precedence and the canvas guard. The
 allowlisted server abilities are fetched by the wrapper from `/wp-abilities/v1/abilities`
 (`webmcp=1`), replace any same-named merged ability, and run directly against
@@ -112,7 +112,7 @@ The edit tool should be preceded by a fresh block-tree read. This keeps its targ
 current editor and refreshes the identity map the callback resolves through.
 
 To add another tool, verify its complete implementation, permissions, annotations, and execution
-path. Add client tools to `WEBMCP_EDITOR_ABILITY_ALLOWLIST` (`webmcp/adapter.ts`) or REST-backed tools to
-`WEBMCP_SERVER_ABILITY_NAMES` (`webmcp/contracts.ts`), and mutating ones also to
+path. Add client tools to `WEBMCP_EDITOR_ABILITY_ALLOWLIST` (`adapter.ts`) or REST-backed tools to
+`WEBMCP_SERVER_ABILITY_NAMES` (`contracts.ts`), and mutating ones also to
 `WEBMCP_MUTATING_SERVER_ABILITY_NAMES`, with tests proving the opposite provenance and unlisted abilities
 remain excluded.

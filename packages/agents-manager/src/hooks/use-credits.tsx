@@ -15,13 +15,17 @@ import {
 } from '../utils/credits';
 import {
 	type CreditsAccess,
+	getCreditsBackNotice,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
+	getCreditsOutNotice,
+	getCreditsRefusalNotice,
 	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
 	parseCreditsAccess,
 } from '../utils/credits-access';
 import {
+	CREDITS_EXHAUSTED_REFUSAL,
 	type CreditsState,
 	type CreditsTracksEventName,
 	getCreditsState,
@@ -30,6 +34,7 @@ import {
 	recordCreditsTracksEvent,
 } from '../utils/credits-tracks';
 import { getAgentsManagerInlineData } from '../utils/get-agents-manager-inline-data';
+import { getLatestUserMessageIndex } from '../utils/latest-message';
 import {
 	CREDITS_UPGRADE_SOURCE,
 	buildLiveCreditsStatus,
@@ -42,6 +47,12 @@ import type { CreditSnapshot } from '../utils/live-credits';
 import type { AuthProvider, TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
 import type { AgentsManagerSite } from '@automattic/data-stores';
+
+interface LiveCredits {
+	status: CreditsStatus;
+	siteId: number;
+	agentConfig: AgentConfig;
+}
 
 interface MockCreditsSeed {
 	plan: CreditsPlan;
@@ -103,6 +114,8 @@ interface UseCreditsOptions {
 	isOpen: boolean;
 	/** Whether the chat draws the notice; the compact composer never does. */
 	isNoticeVisible: boolean;
+	/** Sends again once credits are back, given the refused question's text; the notice then offers Continue. */
+	onTryAgain?: ( message: string ) => void;
 }
 
 export interface UseCreditsResult {
@@ -115,6 +128,11 @@ export interface UseCreditsResult {
 	beforeSubmit: () => boolean;
 	/** The last failed reply's refusal code, cleared once read so it labels one error only. */
 	takeRefusalCode: () => string | undefined;
+	/**
+	 * While a reply refused for no credits shows its error: the exhausted notice at a 0 balance,
+	 * a credits-back notice once it is above 0, and the last of these while it is unknown.
+	 */
+	refusalNotice?: NoticeConfig;
 }
 
 /**
@@ -122,9 +140,14 @@ export interface UseCreditsResult {
  * scoped to the current site visit. The chat is composed here so refreshes can
  * avoid reading usage while a task is still running. Live balances also record
  * the credits Tracks events, and failed replies keep their refusal code, since
- * the chat's error only carries the reply's text. While AI credits are only
- * on internal test sites, pages the host says aren't in dev mode don't ask,
- * since nearly every site answers 404; a balance a turn reports still shows.
+ * the chat's error only carries the reply's text. The code labels one Tracks
+ * error; the refusal notice keeps it until the next turn. A zero last shown while
+ * the chat was hidden isn't drawn again until the opening read, or a turn that
+ * ends while it shows, confirms it, since credits bought in another tab would
+ * otherwise greet the user as a stale zero.
+ * While AI credits are only on internal test sites, pages the host says aren't
+ * in dev mode don't ask, since nearly every site answers 404; a balance a turn
+ * reports still shows.
  */
 export function useCredits( {
 	enabled,
@@ -134,6 +157,7 @@ export function useCredits( {
 	userId,
 	isOpen,
 	isNoticeVisible,
+	onTryAgain,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
 	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
@@ -160,6 +184,11 @@ export function useCredits( {
 		scope: typeof scope;
 		snapshot: CreditSnapshot;
 		isFromTurn: boolean;
+		/**
+		 * A zero last shown while the chat was hidden, kept off screen while the chat
+		 * shows until a read or a turn settles it.
+		 */
+		isUnconfirmed?: boolean;
 	} >();
 	// Who may buy, from the balance read. Terminal updates don't carry it.
 	const [ upgradeAccess, setUpgradeAccess ] = useState< { scope: typeof scope } & CreditsAccess >();
@@ -168,15 +197,19 @@ export function useCredits( {
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
 	// The live balance the credits events describe, set once it is known below.
-	const liveCredits = useRef<
-		{ status: CreditsStatus; siteId: number; agentConfig: AgentConfig } | undefined
-	>( undefined );
+	const liveCredits = useRef< LiveCredits | undefined >( undefined );
+	// `shown` stands in while the balance is unknown, for a notice that still shows an earlier one.
 	const recordCreditsEvent = useCallback(
-		( eventName: CreditsTracksEventName, props?: Record< string, string > ) => {
-			if ( currentScope.current !== scope || ! scope.active || ! liveCredits.current ) {
+		(
+			eventName: CreditsTracksEventName,
+			props?: Record< string, string >,
+			shown?: LiveCredits
+		) => {
+			const credits = liveCredits.current ?? shown;
+			if ( currentScope.current !== scope || ! scope.active || ! credits ) {
 				return;
 			}
-			const { status, siteId, agentConfig: config } = liveCredits.current;
+			const { status, siteId, agentConfig: config } = credits;
 			recordCreditsTracksEvent(
 				eventName,
 				{ status, siteId, contextProvider: config.contextProvider },
@@ -210,6 +243,13 @@ export function useCredits( {
 		},
 		[ scope ]
 	);
+	const confirmBalance = useCallback( () => {
+		setBalance( ( current ) =>
+			current?.scope === scope && current.isUnconfirmed
+				? { ...current, isUnconfirmed: false }
+				: current
+		);
+	}, [ scope ] );
 	const invalidateBalance = useCallback( () => {
 		if ( currentScope.current === scope && scope.active ) {
 			setBalance( undefined );
@@ -245,32 +285,40 @@ export function useCredits( {
 		refusalCode.current = undefined;
 		return code;
 	}, [] );
+	// The same code for the refusal notice, which stays however often the code is read.
+	const [ refusal, setRefusal ] = useState< { scope: typeof scope; code: string } >();
 	const chatConfig = useMemo(
 		() => ( {
 			...agentConfig,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				if ( isTerminalUpdate( update ) ) {
-					refusalCode.current = getTaskRefusalCode( update );
+					const code = getTaskRefusalCode( update );
+					refusalCode.current = code;
+					// A late reply from an earlier visit must not clear this visit's notice.
+					if ( currentScope.current === scope ) {
+						setRefusal( code ? { scope, code } : undefined );
+					}
 				}
 				observeTaskUpdate( update );
 				await agentConfig.onTaskUpdate?.( update );
 			},
 		} ),
-		[ agentConfig, observeTaskUpdate ]
+		[ agentConfig, scope, observeTaskUpdate ]
 	);
 	const chat = useAgentChat( chatConfig );
 	const { isProcessing } = chat;
 	const processingRef = useRef( isProcessing );
 	processingRef.current = isProcessing;
 	const refreshBalance = useCallback( async () => {
-		if (
-			! isOpen ||
-			! canReadBalance( scope ) ||
-			! scope.active ||
-			currentScope.current !== scope ||
-			processingRef.current ||
-			balanceRequest.current
-		) {
+		if ( ! isOpen || ! scope.active || currentScope.current !== scope ) {
+			return;
+		}
+		if ( ! canReadBalance( scope ) ) {
+			// Nothing can confirm the zero, so draw it.
+			confirmBalance();
+			return;
+		}
+		if ( processingRef.current || balanceRequest.current ) {
 			return;
 		}
 		const { authProvider } = scope;
@@ -315,7 +363,7 @@ export function useCredits( {
 				balanceRequest.current = undefined;
 			}
 		}
-	}, [ scope, isOpen, invalidateBalance ] );
+	}, [ scope, isOpen, confirmBalance, invalidateBalance ] );
 	useEffect( () => {
 		scope.active = true;
 		return () => {
@@ -349,9 +397,12 @@ export function useCredits( {
 			balanceRequest.current = undefined;
 			// A new turn's error must not take an earlier reply's code.
 			refusalCode.current = undefined;
+			setRefusal( undefined );
 		}
 	}, [ isProcessing ] );
-	const snapshot = balance?.scope === scope ? balance.snapshot : undefined;
+	const isAwaitingConfirmation = isOpen && balance?.scope === scope && !! balance.isUnconfirmed;
+	const snapshot =
+		balance?.scope === scope && ! isAwaitingConfirmation ? balance.snapshot : undefined;
 	useEffect( () => {
 		if ( ! snapshot ) {
 			return;
@@ -379,6 +430,10 @@ export function useCredits( {
 		const previous = wasProcessingRef.current;
 		if ( previous.scope === scope && previous.isProcessing && ! isProcessing && enabled ) {
 			if ( scope.siteId ) {
+				// A turn that ends while the chat shows is the latest word on the balance.
+				if ( isOpen ) {
+					confirmBalance();
+				}
 				if ( previous.validTerminalRevision === scope.validTerminalRevision ) {
 					invalidateBalance();
 					void refreshBalance();
@@ -398,7 +453,17 @@ export function useCredits( {
 					? previous.validTerminalRevision
 					: scope.validTerminalRevision,
 		};
-	}, [ isProcessing, enabled, isMockEnabled, seed, scope, invalidateBalance, refreshBalance ] );
+	}, [
+		isProcessing,
+		enabled,
+		isMockEnabled,
+		seed,
+		scope,
+		isOpen,
+		confirmBalance,
+		invalidateBalance,
+		refreshBalance,
+	] );
 
 	const status = useMemo( () => {
 		if ( ! enabled ) {
@@ -412,6 +477,15 @@ export function useCredits( {
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
+	// Only an earlier render knows a zero was shown while hidden, so it's state, marked while rendering.
+	if ( ! isOpen && isExhausted && balance?.scope === scope && ! balance.isUnconfirmed ) {
+		setBalance( { ...balance, isUnconfirmed: true } );
+	}
+	// Big Sky's clearMessages empties the thread but keeps the chat's error, which then draws nowhere.
+	const isRefusedForCredits =
+		refusal?.scope === scope &&
+		refusal.code === CREDITS_EXHAUSTED_REFUSAL &&
+		chat.messages.length > 0;
 	const planPurchaseLink = status ? getLiveCreditsPurchaseLink( status, siteId, site ) : undefined;
 	const access = upgradeAccess?.scope === scope ? upgradeAccess : undefined;
 	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
@@ -422,7 +496,8 @@ export function useCredits( {
 	// Mock and free balances send no events.
 	liveCredits.current = siteId && status ? { status, siteId, agentConfig } : undefined;
 
-	// A known balance draining to zero opens once; initial reads and new visits stay quiet.
+	// A known balance draining to zero opens once; initial reads and new visits stay
+	// quiet, as does a refused reply, whose notice offers the purchase instead.
 	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
 	useEffect( () => {
 		const previous = wasExhaustedRef.current;
@@ -430,25 +505,32 @@ export function useCredits( {
 			previous.scope === scope &&
 			previous.hasBalance &&
 			isExhausted &&
-			! previous.isExhausted
+			! previous.isExhausted &&
+			! isRefusedForCredits
 		) {
 			setIsPopoverOpen( true, { byItself: true } );
 		}
+		// A popover the zero opened would announce, and record, a balance that's gone.
+		if ( status && ! isExhausted ) {
+			setPopover( ( current ) =>
+				current?.scope === scope && current.byItself ? undefined : current
+			);
+		}
 		wasExhaustedRef.current = { scope, hasBalance: !! status, isExhausted };
-	}, [ scope, status, isExhausted, setIsPopoverOpen ] );
+	}, [ scope, status, isExhausted, isRefusedForCredits, setIsPopoverOpen ] );
 
 	// That opening records once, when the chat first draws it, since a reply can
 	// drain the balance while the chat is collapsed or minimised.
 	const recordedOpeningRef = useRef< typeof popover >( undefined );
 	useEffect( () => {
-		if ( ! isOpen || ! isPopoverOpen || ! popover?.byItself ) {
+		if ( ! isOpen || ! isPopoverOpen || ! popover?.byItself || ! isExhausted ) {
 			return;
 		}
 		if ( recordedOpeningRef.current !== popover ) {
 			recordedOpeningRef.current = popover;
 			recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', { trigger: 'exhausted' } );
 		}
-	}, [ isOpen, isPopoverOpen, popover, recordCreditsEvent ] );
+	}, [ isOpen, isPopoverOpen, popover, isExhausted, recordCreditsEvent ] );
 
 	const handleAction = useCallback( () => {
 		setIsPopoverOpen( false );
@@ -465,21 +547,22 @@ export function useCredits( {
 		[ isPopoverOpen, recordCreditsEvent, setIsPopoverOpen ]
 	);
 
-	// One action for the notice and the popover. Every click counts; the link opens
-	// in a new tab without waiting for the event.
+	// Every click counts; the link opens in a new tab without waiting for the event.
+	const recordPurchaseClick = useCallback(
+		( placement: 'refusal' | 'none' = 'none', shown?: LiveCredits ) =>
+			recordCreditsEvent(
+				'calypso_agents_manager_credits_cta_clicked',
+				{ cta_type: ctaType, ref: CREDITS_UPGRADE_SOURCE, placement },
+				shown
+			),
+		[ ctaType, recordCreditsEvent ]
+	);
+
+	// One action for the notice and the popover.
 	const purchaseAction = useMemo( () => {
 		const action = getCreditsPurchaseAction( { purchaseUrl, purchaseKind } );
-		return (
-			action && {
-				...action,
-				onClick: () =>
-					recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
-						cta_type: ctaType,
-						ref: CREDITS_UPGRADE_SOURCE,
-					} ),
-			}
-		);
-	}, [ purchaseUrl, purchaseKind, ctaType, recordCreditsEvent ] );
+		return action && { ...action, onClick: () => recordPurchaseClick() };
+	}, [ purchaseUrl, purchaseKind, recordPurchaseClick ] );
 
 	const trailingActions = useMemo< TrailingActions | undefined >( () => {
 		if ( ! status ) {
@@ -497,16 +580,38 @@ export function useCredits( {
 		);
 	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, purchaseAction, purchaseHint ] );
 
+	// Continue resends text only, as the conversation's Retry does, so a question with
+	// images is asked again by hand.
+	const refusedQuestion = useMemo( () => {
+		const question = chat.messages[ getLatestUserMessageIndex( chat.messages ) ];
+		if ( ! question || question.content.some( ( part ) => part.type !== 'text' ) ) {
+			return undefined;
+		}
+		const text = question.content
+			.map( ( part ) => part.text ?? '' )
+			.join( ' ' )
+			.trim();
+		return text || undefined;
+	}, [ chat.messages ] );
+	const tryAgainAction = useMemo< NoticeConfig[ 'action' ] >(
+		() =>
+			onTryAgain && refusedQuestion
+				? {
+						label: __( 'Continue', __i18n_text_domain__ ),
+						onClick: () => onTryAgain( refusedQuestion ),
+					}
+				: undefined,
+		[ onTryAgain, refusedQuestion ]
+	);
+
 	const notice = useMemo< NoticeConfig | undefined >( () => {
 		if ( siteId && status?.plan === 'paid' ) {
 			// A dismissed low notice must not hide the exhausted state.
 			if ( isExhausted ) {
-				return {
-					icon: false,
-					message: getCreditsNoticeMessage( 'out', status.remaining, askToUpgrade ),
-					action: purchaseAction,
-					dismissible: false,
-				};
+				return getCreditsOutNotice( status.remaining, askToUpgrade, purchaseAction );
+			}
+			if ( isRefusedForCredits ) {
+				return getCreditsBackNotice( tryAgainAction );
 			}
 			if ( isLow && ! isLowNoticeDismissed ) {
 				return {
@@ -552,21 +657,67 @@ export function useCredits( {
 		purchaseAction,
 		askToUpgrade,
 		isExhausted,
+		isRefusedForCredits,
+		tryAgainAction,
 		isLow,
 		isLowNoticeDismissed,
 		handleAction,
 		dismissLowNotice,
 	] );
 
+	// The card stays in the thread as a record once credits are back; the composer says so.
+	const liveRefusalNotice = useMemo< NoticeConfig | undefined >( () => {
+		if ( ! isRefusedForCredits || ! siteId || status?.plan !== 'paid' ) {
+			return undefined;
+		}
+		const shown = { status, siteId, agentConfig };
+		return getCreditsRefusalNotice(
+			purchaseKind,
+			purchaseAction && {
+				...purchaseAction,
+				onClick: () => recordPurchaseClick( 'refusal', shown ),
+			}
+		);
+	}, [
+		isRefusedForCredits,
+		siteId,
+		status,
+		agentConfig,
+		purchaseKind,
+		purchaseAction,
+		recordPurchaseClick,
+	] );
+	// An unknown balance keeps this refusal's last notice, as a failed read keeps the last answer.
+	// Only an earlier render knows that notice, so it's state, updated while rendering.
+	const [ shownRefusal, setShownRefusal ] = useState< {
+		refusal: typeof refusal;
+		notice: NoticeConfig;
+	} >();
+	if (
+		liveRefusalNotice &&
+		( shownRefusal?.refusal !== refusal || shownRefusal?.notice !== liveRefusalNotice )
+	) {
+		setShownRefusal( { refusal, notice: liveRefusalNotice } );
+	}
+	const heldRefusalNotice =
+		refusal && shownRefusal?.refusal === refusal ? shownRefusal.notice : undefined;
+	const refusalNotice = isRefusedForCredits
+		? ( liveRefusalNotice ?? heldRefusalNotice )
+		: undefined;
+
 	// A turn's balance doesn't say who may buy. A read that finishes sets who may buy or drops the
 	// balance, so it ends the wait; a cancelled read changes neither.
 	const isAwaitingAccess =
 		balance?.scope === scope && balance.isFromTurn && ! access && canReadBalance( scope );
 
+	// A low notice behind the credits-back one waits until it shows.
+	const isLowNoticeBehindCreditsBack = !! refusalNotice && ! isExhausted;
 	// Once per state for this site, user and agent, and only while the notice is drawn. After a
 	// turn's balance it waits for the read of who may buy, so it names the button the notice shows.
 	const shownNoticeState: CreditsState | undefined =
-		siteId && status && notice && isNoticeVisible ? getCreditsState( status ) : undefined;
+		siteId && status && notice && isNoticeVisible && ! isLowNoticeBehindCreditsBack
+			? getCreditsState( status )
+			: undefined;
 	const userRole = getCreditsUserRole( access?.canBuyCredits );
 	useEffect( () => {
 		if ( ! shownNoticeState || isAwaitingAccess ) {
@@ -600,7 +751,8 @@ export function useCredits( {
 			return true;
 		}
 		if ( ! status ) {
-			return true;
+			// An unconfirmed zero still blocks; the opening read settles it in a moment.
+			return ! isAwaitingConfirmation;
 		}
 
 		if ( isExhausted ) {
@@ -617,6 +769,7 @@ export function useCredits( {
 		status,
 		isExhausted,
 		snapshot,
+		isAwaitingConfirmation,
 		invalidateBalance,
 		refreshBalance,
 		setIsPopoverOpen,
@@ -624,7 +777,7 @@ export function useCredits( {
 	] );
 
 	return useMemo(
-		() => ( { chat, trailingActions, notice, beforeSubmit, takeRefusalCode } ),
-		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode ]
+		() => ( { chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice } ),
+		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice ]
 	);
 }

@@ -64,7 +64,7 @@ function getPriceLine( product: AgencyProduct, term: TermPricing ) {
 			);
 }
 
-interface Props {
+interface FeaturedShowcaseProps {
 	products: AgencyProduct[];
 	term: TermPricing;
 	isReferralMode: boolean;
@@ -80,7 +80,7 @@ export default function FeaturedShowcase( {
 	isInCart,
 	onToggleCart,
 	onViewDetails,
-}: Props ) {
+}: FeaturedShowcaseProps ) {
 	const wooPaymentsCopy = getWooPaymentsCardCopy();
 	const items: ShowcaseItem[] = products.map( ( product ) => {
 		const drawing = getProductDrawing( product );

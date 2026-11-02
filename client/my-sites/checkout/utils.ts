@@ -119,8 +119,12 @@ export function isContextJetpackSitelessCheckout( context: Context ): boolean {
 	return true;
 }
 
-export function isContextSourceMyJetpack( context: Context ): boolean {
-	return context.query?.source === 'my-jetpack';
+/**
+ * Whether the checkout `source` sends a logged-out buyer of a Jetpack product to
+ * siteless checkout instead of the login page. See `redirectMyJetpack()`.
+ */
+export function isSitelessCheckoutSource( context: Context ): boolean {
+	return [ 'my-jetpack', 'jetpack_premium_analytics_upsell' ].includes( context.query?.source );
 }
 
 export function getAffiliateCouponLabel(): string {

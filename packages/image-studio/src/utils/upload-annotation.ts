@@ -36,11 +36,11 @@ export function uploadAnnotation( {
 	const timestamp = Date.now();
 	let filename = `annotated-image-${ timestamp }.png`;
 	if ( originalFilename ) {
-		// Remove extension and add -annotated suffix with timestamp
+		// Keep the original name so edits made from this copy are named after the image
 		const nameParts = originalFilename.split( '.' );
 		const extension = nameParts.pop() || 'png';
 		const baseName = nameParts.join( '.' );
-		filename = `${ baseName }-annotated-${ timestamp }.${ extension }`;
+		filename = `${ baseName }-${ timestamp }.${ extension }`;
 	}
 
 	// Convert blob to File

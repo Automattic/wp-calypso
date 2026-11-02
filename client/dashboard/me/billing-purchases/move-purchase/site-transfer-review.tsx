@@ -42,7 +42,7 @@ import type {
 	SiteTransferPreview,
 } from '@automattic/api-core';
 
-interface Props {
+interface SiteTransferReviewProps {
 	purchase: Purchase;
 	targetSite: Site;
 	onChangeSite: () => void;
@@ -118,7 +118,11 @@ function getMoveDescription( purchase: Purchase, preview: SiteTransferPreview ):
 	return __( 'The renewal date and price stay the same.' );
 }
 
-export function SiteTransferReview( { purchase, targetSite, onChangeSite }: Props ) {
+export function SiteTransferReview( {
+	purchase,
+	targetSite,
+	onChangeSite,
+}: SiteTransferReviewProps ) {
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
