@@ -331,7 +331,7 @@ export function StaticSiteImportNotice( {
 		return (
 			<Notice variant="info" title={ __( 'We can’t show this move' ) }>
 				{ __(
-					'It may belong to another account, or the link may be out of date. If you started it, open the link in the email we sent you.'
+					'It may belong to another account. If you started it, make sure you’re logged in to that account.'
 				) }
 			</Notice>
 		);
