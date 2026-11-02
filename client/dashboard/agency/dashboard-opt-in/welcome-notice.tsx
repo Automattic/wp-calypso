@@ -4,11 +4,10 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionButton } from '../../components/notice';
 import { isOnNewAgencyDashboard } from '../lib/dashboard-opt-in';
 import { useOnboardingTour } from '../onboarding-tour';
 import { OWNER_ROLE } from '../team/constants';
@@ -67,9 +66,9 @@ export default function WelcomeNotice() {
 			title={ __( 'Welcome to the new dashboard' ) }
 			onClose={ handleDismiss }
 			actions={
-				<Button variant="primary" onClick={ handleTakeTour } __next40pxDefaultSize>
+				<NoticeActionButton variant="solid" onClick={ handleTakeTour }>
 					{ __( 'Take the tour' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		>
 			{ isOwner

@@ -98,7 +98,11 @@ const PerformanceInsightTip = () => {
 			<Notice
 				title={ __( 'Did you know' ) }
 				actions={
-					<NoticeActionLink href="https://wordpress.com/plugins/jetpack-boost" openInNewTab>
+					<NoticeActionLink
+						href="https://wordpress.com/plugins/jetpack-boost"
+						openInNewTab
+						rel="noopener noreferrer"
+					>
 						{ __( 'Get Jetpack Boost' ) }
 					</NoticeActionLink>
 				}

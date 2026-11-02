@@ -22,6 +22,7 @@ export const BrowserNotificationNotice = () => {
 						'https://wordpress.com/support/notifications/browser-notifications/#troubleshooting'
 					) }
 					openInNewTab
+					rel="noopener noreferrer"
 				>
 					{ __( 'View instructions to enable' ) }
 				</NoticeActionLink>

@@ -1,6 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { Notice, NoticeActionButton } from '../../components/notice';
+import { Notice, NoticeActionLinkButton } from '../../components/notice';
 import type { Site } from '@automattic/api-core';
 
 const SiteBackupRestoreSuccess = ( {
@@ -12,19 +12,20 @@ const SiteBackupRestoreSuccess = ( {
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 
-	const handleViewWebsiteClick = () => {
-		recordTracksEvent( 'calypso_dashboard_backups_restore_view_website' );
-		window.open( site.URL, '_blank' );
-	};
-
 	return (
 		<Notice
 			variant="success"
 			title={ __( 'Site successfully restored' ) }
 			actions={
-				<NoticeActionButton variant="solid" onClick={ handleViewWebsiteClick }>
-					{ __( 'View website ↗' ) }
-				</NoticeActionButton>
+				<NoticeActionLinkButton
+					variant="solid"
+					href={ site.URL }
+					openInNewTab
+					rel="noopener noreferrer"
+					onClick={ () => recordTracksEvent( 'calypso_dashboard_backups_restore_view_website' ) }
+				>
+					{ __( 'View website' ) }
+				</NoticeActionLinkButton>
 			}
 		>
 			{ sprintf(

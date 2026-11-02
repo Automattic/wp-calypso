@@ -1,11 +1,14 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { Link, useRouter } from '@tanstack/react-router';
+import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { purchaseSettingsRoute, changePaymentMethodRoute } from '../../../app/router/me';
-import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../../components/notice';
+import Notice, {
+	NoticeActionButton,
+	RouterNoticeActionLinkButton,
+} from '../../../components/notice';
 import { getRelativeDayString, isWithinNext } from '../../../utils/datetime';
 import {
 	isExpiring,
@@ -96,7 +99,7 @@ function NoticeContent( {
 	setUpcomingRenewalsDialogVisible,
 	noticeStatus,
 	noticeText,
-	noticeActionHref,
+	noticeActionChangesPaymentMethod,
 	noticeActionOnClick,
 	noticeActionText,
 }: {
@@ -106,7 +109,7 @@ function NoticeContent( {
 	setUpcomingRenewalsDialogVisible: ( visible: boolean ) => void;
 	noticeStatus: NoticeVariant;
 	noticeText: React.ReactNode;
-	noticeActionHref?: string;
+	noticeActionChangesPaymentMethod?: boolean;
 	noticeActionOnClick?: () => void;
 	noticeActionText?: string;
 } ) {
@@ -129,14 +132,14 @@ function NoticeContent( {
 			<Notice
 				variant={ noticeStatus }
 				actions={
-					noticeActionHref ? (
-						<NoticeActionLinkButton
+					noticeActionChangesPaymentMethod ? (
+						<RouterNoticeActionLinkButton
 							variant="solid"
-							href={ noticeActionHref }
-							onClick={ noticeActionOnClick ?? undefined }
+							to={ changePaymentMethodRoute.fullPath }
+							params={ { purchaseId: purchase.ID } }
 						>
 							{ noticeActionText }
-						</NoticeActionLinkButton>
+						</RouterNoticeActionLinkButton>
 					) : (
 						noticeActionOnClick && (
 							<NoticeActionButton variant="solid" onClick={ noticeActionOnClick }>
@@ -161,7 +164,6 @@ export function OtherRenewablePurchasesNotice( {
 	purchaseAttachedTo: Purchase | undefined;
 	renewableSitePurchases: Purchase[];
 } ) {
-	const router = useRouter();
 	const [ isUpcomingRenewalsDialogVisible, setUpcomingRenewalsDialogVisible ] =
 		useState< boolean >( false );
 
@@ -715,12 +717,7 @@ export function OtherRenewablePurchasesNotice( {
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus={ shouldShowCardExpiringWarning( currentPurchase ) ? 'error' : 'info' }
 					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
-					noticeActionHref={
-						router.buildLocation( {
-							to: changePaymentMethodRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-						} ).href
-					}
+					noticeActionChangesPaymentMethod
 					noticeActionText={ __( 'Update all' ) }
 				/>
 			);
@@ -959,12 +956,7 @@ export function OtherRenewablePurchasesNotice( {
 					setUpcomingRenewalsDialogVisible={ setUpcomingRenewalsDialogVisible }
 					noticeStatus="info"
 					noticeText={ createInterpolateElement( translatedMessage, { link } ) }
-					noticeActionHref={
-						router.buildLocation( {
-							to: changePaymentMethodRoute.fullPath,
-							params: { purchaseId: purchase.ID },
-						} ).href
-					}
+					noticeActionChangesPaymentMethod
 					noticeActionText={ __( 'Update all' ) }
 				/>
 			);

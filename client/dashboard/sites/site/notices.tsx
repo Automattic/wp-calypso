@@ -28,7 +28,11 @@ export function InaccessibleJetpackNotice( { error, site }: { error: Error; site
 			title={ __( 'Your Jetpack site cannot be reached at this time.' ) }
 			actions={
 				<>
-					<NoticeActionLink href={ JETPACK_SUPPORT_CONNECTION_ISSUES } openInNewTab>
+					<NoticeActionLink
+						href={ JETPACK_SUPPORT_CONNECTION_ISSUES }
+						openInNewTab
+						rel="noopener noreferrer"
+					>
 						{ __( 'Troubleshoot your Jetpack connection' ) }
 					</NoticeActionLink>
 					{ site && canViewSftpSshSettingsRoute && (

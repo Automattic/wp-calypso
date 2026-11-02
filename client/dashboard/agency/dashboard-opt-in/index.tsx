@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionLinkButton } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -139,14 +139,13 @@ export default function AgencyDashboardOptIn() {
 						title={ __( 'Prefer the previous dashboard?' ) }
 						variant="info"
 						actions={
-							<Button
-								variant="primary"
-								__next40pxDefaultSize
+							<NoticeActionLinkButton
+								variant="solid"
 								href={ previousDashboardUrl }
 								onClick={ () => recordTracksEvent( 'calypso_a4a_dashboard_opt_in_return_click' ) }
 							>
 								{ __( 'Go to the previous dashboard' ) }
-							</Button>
+							</NoticeActionLinkButton>
 						}
 					>
 						{ __(

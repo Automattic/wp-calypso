@@ -20,7 +20,10 @@ import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
-import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../../components/notice';
+import Notice, {
+	NoticeActionButton,
+	RouterNoticeActionLinkButton,
+} from '../../../components/notice';
 import {
 	PlanExpiryNotice,
 	hasPlanExpiryNotice,
@@ -223,14 +226,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 				actions={
 					<>
 						{ delayedDowngradeNotice.isRetryingRenewal && (
-							<NoticeActionLinkButton
+							<RouterNoticeActionLinkButton
 								variant="solid"
-								href={
-									router.buildLocation( {
-										to: changePaymentMethodRoute.fullPath,
-										params: { purchaseId: purchase.ID },
-									} ).href
-								}
+								to={ changePaymentMethodRoute.fullPath }
+								params={ { purchaseId: purchase.ID } }
 								onClick={ () =>
 									recordTracksEvent(
 										'calypso_purchases_delayed_downgrade_update_payment_method_click',
@@ -239,7 +238,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 								}
 							>
 								{ __( 'Update payment method' ) }
-							</NoticeActionLinkButton>
+							</RouterNoticeActionLinkButton>
 						) }
 						<NoticeActionButton
 							variant="outline"

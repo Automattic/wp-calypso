@@ -97,7 +97,7 @@ function PermissionError() {
 				<Notice
 					variant="error"
 					actions={
-						<NoticeActionLink href={ wpcomLink( '/help' ) } openInNewTab>
+						<NoticeActionLink href={ wpcomLink( '/help' ) } openInNewTab rel="noopener noreferrer">
 							{ __( 'Contact support' ) }
 						</NoticeActionLink>
 					}
@@ -137,7 +137,11 @@ function SessionError() {
 									{ __( 'Log in again' ) }
 								</NoticeActionLinkButton>
 							) }
-							<NoticeActionLink href={ wpcomLink( '/help' ) } openInNewTab>
+							<NoticeActionLink
+								href={ wpcomLink( '/help' ) }
+								openInNewTab
+								rel="noopener noreferrer"
+							>
 								{ __( 'Contact support' ) }
 							</NoticeActionLink>
 						</>
@@ -162,7 +166,7 @@ function GenericError( { error }: { error: Error } ) {
 				<Notice
 					variant="error"
 					actions={
-						<NoticeActionLink href={ wpcomLink( '/help' ) } openInNewTab>
+						<NoticeActionLink href={ wpcomLink( '/help' ) } openInNewTab rel="noopener noreferrer">
 							{ __( 'Contact support' ) }
 						</NoticeActionLink>
 					}
