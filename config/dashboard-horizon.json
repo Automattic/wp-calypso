@@ -12,6 +12,7 @@
 	"wpcom_url": "https://wpcalypso.wordpress.com",
 	"wpcom_login_url": "https://wordpress.com/log-in",
 	"features": {
+		"a4a-dashboard-opt-in": true,
 		"calypso/agents-manager-internal": true,
 		"calypso/ai-site-builder-flow": true,
 		"catch-js-errors": true,
