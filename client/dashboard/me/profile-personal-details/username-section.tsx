@@ -4,6 +4,7 @@ import {
 	__experimentalVStack as VStack,
 	__experimentalInputControl as InputControl,
 } from '@wordpress/components';
+import { useDebounce } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
@@ -13,7 +14,7 @@ import { reloadWithFlashMessage } from '../../components/flash-message';
 import UsernameUpdateForm from './update-username';
 import UsernameUpdateConfirmationModal from './update-username/confirmation-modal';
 import {
-	validateUsernameDebounced,
+	validateUsernameInternal,
 	isUsernameValid,
 	getUsernameValidationMessage,
 	type ValidationResult,
@@ -93,6 +94,7 @@ export default function UsernameSection( {
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
 	const [ validationResult, setValidationResult ] = useState< ValidationResult | null >( null );
+	const validateUsernameDebounced = useDebounce( validateUsernameInternal, 600 );
 
 	const { mutate: updateUsername, isPending } = useMutation( {
 		...withSnackbar( updateUsernameMutation(), {
@@ -147,12 +149,13 @@ export default function UsernameSection( {
 
 	// Event handlers to update the username
 	const cancelUsernameChange = useCallback( () => {
+		validateUsernameDebounced.cancel();
 		onChange( currentUsername );
 		setValidationResult( null );
 		setUserLoginConfirm( '' );
 		setUsernameAction( 'none' );
 		onCancel();
-	}, [ onChange, currentUsername, onCancel ] );
+	}, [ validateUsernameDebounced, onChange, currentUsername, onCancel ] );
 
 	const handleUsernameChange = ( newValue: string | undefined ) => {
 		onChange( newValue );
@@ -163,6 +166,7 @@ export default function UsernameSection( {
 			validateUsernameDebounced( lowerCaseValue, currentUsername, setValidationResult );
 		} else {
 			// Just clear validation when username matches current, don't fully cancel
+			validateUsernameDebounced.cancel();
 			setValidationResult( null );
 			setUserLoginConfirm( '' );
 			setUsernameAction( 'none' );
