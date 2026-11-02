@@ -18,27 +18,36 @@ jest.mock( '@automattic/charts', () => ( {
 
 const series = [ { label: 'Views', data: [] } ];
 
-const renderChart = ( unit = 'day', chartType = 'line' ) => {
-	render(
-		<OverviewChart series={ series } height={ 160 } unit={ unit } chartType={ chartType } />
-	);
+const renderChart = ( unit = 'day', chartType = 'line', data = series ) => {
+	render( <OverviewChart series={ data } height={ 160 } unit={ unit } chartType={ chartType } /> );
 	return ( 'bar' === chartType ? BarChart : LineChart ).mock.calls[ 0 ][ 0 ];
 };
 
 const renderAxes = ( unit = 'day' ) => renderChart( unit ).options.axis;
 
+const HOVERED = new Date( 2026, 6, 1 );
+const EARLIER = new Date( 2026, 5, 1 );
+
 /**
  * Renders the chart's tooltip for a hovered point.
- * @param {string} unit   The range's bucket.
- * @param {Object} datums Each series' value, keyed by its label.
- * @param {Date}   date   The hovered point's date.
+ * @param {string} unit      The range's bucket.
+ * @param {Object} values    Each series' value at the hovered date, keyed by its label.
+ * @param {string} chartType Bars or lines.
  */
-const renderTooltip = ( unit, datums, date = new Date( 2026, 6, 1 ) ) => {
-	const tooltip = renderChart( unit ).renderTooltip( {
+const renderTooltip = ( unit, values, chartType = 'line' ) => {
+	const data = Object.entries( values ).map( ( [ label, value ] ) => ( {
+		label,
+		data: [
+			{ date: EARLIER, value: value * 10 },
+			{ date: HOVERED, value },
+		],
+	} ) );
+	const tooltip = renderChart( unit, chartType, data ).renderTooltip( {
 		tooltipData: {
-			nearestDatum: { datum: { date } },
+			nearestDatum: { datum: { date: HOVERED } },
+			// What each series last reported; on bars this lags for every series but the focused one.
 			datumByKey: Object.fromEntries(
-				Object.entries( datums ).map( ( [ label, value ] ) => [ label, { datum: { value } } ] )
+				data.map( ( { label, data: points } ) => [ label, { datum: points[ 0 ] } ] )
 			),
 		},
 	} );
@@ -155,5 +164,24 @@ describe( 'OverviewChart tooltip', () => {
 		expect( screen.getByText( '1,204' ) ).toBeInTheDocument();
 		expect( screen.getByText( '620' ) ).toBeInTheDocument();
 		expect( container.textContent ).toMatch( /Views.*Visitors/ );
+	} );
+
+	it( 'reads each series at the hovered date, not where its focus last was', () => {
+		renderTooltip( 'month', { Views: 12, Visitors: 1 }, 'bar' );
+
+		expect( screen.getByText( '12' ) ).toBeInTheDocument();
+		expect( screen.getByText( '1' ) ).toBeInTheDocument();
+		expect( screen.queryByText( '10' ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'shows a series without a point at the hovered date as zero', () => {
+		const tooltip = renderChart( 'day', 'bar', [
+			{ label: 'Views', data: [ { date: HOVERED, value: 3 } ] },
+			{ label: 'Visitors', data: [ { date: EARLIER, value: 2 } ] },
+		] ).renderTooltip( { tooltipData: { nearestDatum: { datum: { date: HOVERED } } } } );
+		render( <div>{ tooltip }</div> );
+
+		expect( screen.getByText( '3' ) ).toBeInTheDocument();
+		expect( screen.getByText( '0' ) ).toBeInTheDocument();
 	} );
 } );

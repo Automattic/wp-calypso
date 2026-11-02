@@ -3,12 +3,12 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
+import { readChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { ResolvedDateRange } from '../lib/date-ranges';
 import ChartBoundary from './chart-boundary';
-import readStatsChartType from './chart-type';
 import MetricValue from './metric-value';
 import { recordWidgetEventThenFollow } from './record-widget-event';
 import Skeleton from './skeleton';
@@ -58,7 +58,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 
 	// Read once: the choice is made on the Stats page, so a change there shows on the next
 	// load of the dashboard.
-	const chartType = useMemo( () => readStatsChartType( siteId ), [ siteId ] );
+	const chartType = useMemo( () => readChartType( siteId ), [ siteId ] );
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.

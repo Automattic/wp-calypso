@@ -4,14 +4,15 @@ import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
 import { FunctionComponent } from 'react';
-import type { ChartType } from './chart-type';
 import type { DateRange } from '../lib/date-ranges';
 import type {
+	DataPoint,
 	DataPointDate,
 	LineChartProps,
 	RenderTooltipParams,
 	SeriesData,
 } from '@automattic/charts';
+import type { ChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
 
 // The tooltip renders through @visx/tooltip's portal, which appends to `document.body` —
 // outside the roots our stylesheets are scoped to — so these few rules travel with it.
@@ -37,11 +38,15 @@ function formatTooltipDate( date: Date, unit: DateRange[ 'unit' ] ) {
 /**
  * Tooltip for a hovered point. The package's own prints `toLocaleDateString()`, which names
  * a month's total by its first day and ignores the site's locale.
- * @param unit The range's bucket.
- * @returns The `renderTooltip` handler.
+ * @param unit               The range's bucket.
+ * @param series             The series drawn, read at the hovered date.
+ * @param params             The chart's tooltip state.
+ * @param params.tooltipData The hovered point.
+ * @returns The tooltip, or nothing when no point is hovered.
  */
 function renderTooltip(
 	unit: DateRange[ 'unit' ],
+	series: SeriesData[],
 	{ tooltipData }: RenderTooltipParams< DataPointDate >
 ) {
 	const hoveredDate = tooltipData?.nearestDatum?.datum?.date;
@@ -49,8 +54,18 @@ function renderTooltip(
 		return null;
 	}
 
-	const points = Object.entries( tooltipData?.datumByKey ?? {} )
-		.map( ( [ label, { datum } ] ) => ( { label, value: datum.value ?? 0 } ) )
+	// Each series at the hovered date, not `tooltipData.datumByKey`: on bars, an arrow key
+	// moves one series' focus and leaves the other's entry on the bucket it last reported.
+	const hoveredTime = hoveredDate.getTime();
+	const points = series
+		.map( ( { label, data } ) => ( {
+			label,
+			value:
+				data.find(
+					( point: DataPoint | DataPointDate ) =>
+						'date' in point && point.date?.getTime() === hoveredTime
+				)?.value ?? 0,
+		} ) )
 		.sort( ( a, b ) => b.value - a.value );
 
 	return (
@@ -113,7 +128,7 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 		},
 	};
 	const renderTooltipForUnit = ( params: RenderTooltipParams< DataPointDate > ) =>
-		renderTooltip( unit, params );
+		renderTooltip( unit, series, params );
 
 	if ( 'bar' === chartType ) {
 		return (

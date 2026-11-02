@@ -64,6 +64,12 @@ function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
 
 const moreStats = () => screen.queryByRole( 'link', { name: 'More stats' } );
 
+const mockViewport = ( { reducedMotion, mobile } ) => {
+	window.matchMedia = jest.fn( ( query ) => ( {
+		matches: query.includes( 'reduced-motion' ) ? reducedMotion : mobile,
+	} ) );
+};
+
 describe( 'MiniChart', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -71,8 +77,9 @@ describe( 'MiniChart', () => {
 		mockChartLoading = false;
 		mockChartProps = null;
 		localStorage.clear();
-		// Reduced motion lands the totals on their value without counting up.
-		window.matchMedia = jest.fn().mockReturnValue( { matches: true } );
+		// Reduced motion lands the totals on their value without counting up; the viewport
+		// is a desktop's unless a test says otherwise.
+		mockViewport( { reducedMotion: true, mobile: false } );
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
@@ -82,14 +89,16 @@ describe( 'MiniChart', () => {
 	} );
 
 	it.each( [
-		[ 'bars, as the Stats page does', null, 'bar' ],
-		[ 'lines when the viewer chose them on the Stats page', 'line', 'line' ],
-		[ 'bars when the viewer chose them on the Stats page', 'bar', 'bar' ],
-		[ 'bars over a value the Stats page never writes', 'pie', 'bar' ],
-	] )( 'draws %s', async ( _, stored, expected ) => {
+		[ 'bars, as the Stats page does', null, false, 'bar' ],
+		[ 'lines on a phone, as the Stats page does', null, true, 'line' ],
+		[ 'lines when the viewer chose them on the Stats page', 'line', false, 'line' ],
+		[ 'bars when the viewer chose them on the Stats page', 'bar', true, 'bar' ],
+		[ 'bars over a value the Stats page never writes', 'pie', false, 'bar' ],
+	] )( 'draws %s', async ( _, stored, mobile, expected ) => {
 		if ( stored ) {
 			localStorage.setItem( 'jetpack_stats_chart_type_1', stored );
 		}
+		mockViewport( { reducedMotion: true, mobile } );
 		const { container } = render( renderMiniChart( success( days( [ 20, 8 ] ) ) ) );
 		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
 
