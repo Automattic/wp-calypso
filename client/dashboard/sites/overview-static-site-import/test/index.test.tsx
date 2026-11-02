@@ -11,7 +11,7 @@ import {
 	StaticSiteImportProgress,
 	useStaticSiteImport,
 } from '../index';
-import type { Site } from '@automattic/api-core';
+import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
 const site = {
 	ID: 42,
@@ -33,6 +33,7 @@ const session = ( state: string, extra = {} ) => ( {
 	source_digest: 'digest',
 	preview_summary: { pages: 12 },
 	site_url: '',
+	connectable_domain: 'busybearscleaning.com',
 	...extra,
 } );
 
@@ -162,40 +163,22 @@ describe( 'StaticSiteImportCard', () => {
 		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
 	} );
 
-	it.each( [
-		'https://ellenbauer37.wixsite.com/my-site-2',
-		'https://portland-paw-parlor.lovable.app/',
-		'anna-captured-moments.base44.app',
-		'https://example.squarespace.com',
-	] )( 'offers to get a domain instead of connecting the free address %s', ( from ) => {
+	it( 'offers to get a domain when the server names none the customer can connect', () => {
 		render(
 			<StaticSiteImportNotice
 				site={ site }
-				siteImport={ { status: 'finished' } }
-				search={ { ...search, from } }
+				siteImport={ {
+					status: 'finished',
+					session: session( 'finished', { connectable_domain: '' } ) as StaticSiteImportSession,
+				} }
+				search={ { ...search, from: 'https://ellenbauer37.wixsite.com/my-site-2' } }
 			/>
 		);
 
 		expect( screen.queryByRole( 'link', { name: /^Connect / } ) ).not.toBeInTheDocument();
-		const getDomain = screen.getByRole( 'link', { name: 'Get a domain' } );
-		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'use-my-domain' ) );
-		expect( getDomain ).not.toHaveAttribute( 'href', expect.stringContaining( 'initialQuery' ) );
-		// The notice still names where the site came from.
-		expect( screen.getByText( /is copied and running on WordPress\.com/ ) ).toBeVisible();
-	} );
-
-	it( 'treats a custom domain on a lookalike host as the customer’s own', () => {
-		render(
-			<StaticSiteImportNotice
-				site={ site }
-				siteImport={ { status: 'finished' } }
-				search={ { ...search, from: 'https://notwixsite.com' } }
-			/>
-		);
-
-		expect( screen.getByRole( 'link', { name: 'Connect notwixsite.com' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: 'Get a domain' } ) ).not.toHaveAttribute(
 			'href',
-			expect.stringContaining( 'initialQuery=notwixsite.com' )
+			expect.stringContaining( 'initialQuery' )
 		);
 	} );
 

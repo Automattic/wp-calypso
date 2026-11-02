@@ -70,6 +70,8 @@ export interface StaticSiteImportSession {
 	preview_summary: StaticSiteImportPreviewSummary | [];
 	/** Empty until approval binds a destination. */
 	site_url: string;
+	/** The source domain the customer can connect, or '' for a builder's free address or an upload. */
+	connectable_domain: string;
 	/** Present from `preview_ready`. */
 	archive_hash?: string;
 	/** A short-lived link to the preview's Playground archive, only while `preview_ready`. */
