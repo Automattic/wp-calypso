@@ -1,9 +1,11 @@
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { Fragment } from 'react';
+import { Fragment, useMemo, useState } from 'react';
+import ReaderFeaturedVideo from 'calypso/blocks/reader-featured-video';
 import ReaderSaveButton from 'calypso/blocks/reader-save-button';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import AutoDirection from 'calypso/components/auto-direction';
+import getEmbedMetadata from 'calypso/lib/get-video-id';
 import { safeLink } from 'calypso/lib/post-normalizer/utils';
 import resizeImageUrl from 'calypso/lib/resize-image-url';
 import type { Post } from 'calypso/reader/data/post';
@@ -19,6 +21,65 @@ interface SavedSnapshotCardProps {
 }
 
 const IMAGE_WIDTH = 160;
+
+const YOUTUBE_VIDEO_ID = /^[\w-]{11}$/;
+
+const YOUTUBE_EMBED = { type: 'youtube', mediaType: 'video', width: 640, height: 360 };
+
+/**
+ * The ID of the YouTube video at `url`, or `null` if it isn't one. The ID goes
+ * into the player's markup, so anything but a well-formed ID is refused.
+ */
+function getYouTubeVideoId( url: string | undefined ) {
+	const { service, id } = ( url && getEmbedMetadata( url ) ) || {};
+	return service === 'youtube' && typeof id === 'string' && YOUTUBE_VIDEO_ID.test( id ) ? id : null;
+}
+
+function getYouTubePlayer( videoId: string, title: string ) {
+	const iframe = document.createElement( 'iframe' );
+	iframe.src = `https://www.youtube-nocookie.com/embed/${ videoId }?autoplay=1`;
+	iframe.width = String( YOUTUBE_EMBED.width );
+	iframe.height = String( YOUTUBE_EMBED.height );
+	iframe.title = title;
+	iframe.allow = 'autoplay; encrypted-media; picture-in-picture';
+	iframe.allowFullscreen = true;
+	return iframe.outerHTML;
+}
+
+/**
+ * Plays a saved YouTube video in the card: its thumbnail first, then the player
+ * once the thumbnail is clicked.
+ */
+function SavedYouTubeVideo( {
+	videoId,
+	url,
+	title,
+	hasExcerpt,
+}: {
+	videoId: string;
+	url: string;
+	title: string;
+	hasExcerpt: boolean;
+} ) {
+	const [ isPlaying, setIsPlaying ] = useState( false );
+	const videoEmbed = useMemo( () => ( { ...YOUTUBE_EMBED, src: url } ), [ url ] );
+	const player = useMemo(
+		() => ( isPlaying ? getYouTubePlayer( videoId, title ) : undefined ),
+		[ isPlaying, videoId, title ]
+	);
+
+	return (
+		<ReaderFeaturedVideo
+			videoEmbed={ videoEmbed }
+			iframe={ player }
+			autoplayIframe={ player }
+			href={ url }
+			isExpanded={ isPlaying }
+			onThumbnailClick={ () => setIsPlaying( true ) }
+			hasExcerpt={ hasExcerpt }
+		/>
+	);
+}
 
 function useSavedDate( dateSaved: unknown ) {
 	const translate = useTranslate();
@@ -53,8 +114,9 @@ export function SavedSnapshotCard( {
 	const savedDate = useSavedDate( post.date_saved );
 	const url = post.URL ? safeLink( post.URL ) : undefined;
 	const siteUrl = typeof post.site_URL === 'string' ? safeLink( post.site_URL ) : undefined;
+	const youTubeVideoId = getYouTubeVideoId( url );
 	const featuredImage =
-		typeof post.featured_image === 'string' && post.featured_image
+		! youTubeVideoId && typeof post.featured_image === 'string' && post.featured_image
 			? resizeImageUrl( post.featured_image, { w: IMAGE_WIDTH }, null )
 			: null;
 	const authorName = post.author?.name;
@@ -140,6 +202,14 @@ export function SavedSnapshotCard( {
 						<AutoDirection>
 							<p className="reader-excerpt">{ post.excerpt }</p>
 						</AutoDirection>
+					) }
+					{ url && youTubeVideoId && (
+						<SavedYouTubeVideo
+							videoId={ youTubeVideoId }
+							url={ url }
+							title={ post.title || url }
+							hasExcerpt={ !! post.excerpt }
+						/>
 					) }
 					<ul className="reader-post-actions ignore-click">
 						<li className="reader-post-actions__item">

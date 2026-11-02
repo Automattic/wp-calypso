@@ -114,9 +114,22 @@ const PRUNED_FEED_ITEM = {
 	date_saved: '2026-10-29T12:00:00+00:00',
 };
 
+// A YouTube video saved by URL, with the page's details as the extension read them.
+const YOUTUBE_SAVE = {
+	...URL_SAVE,
+	ID: 64090,
+	global_ID: 'url-save-64090',
+	URL: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ',
+	title: 'A saved video',
+	excerpt: 'A video worth watching later.',
+	featured_image: 'https://i.ytimg.com/vi/dQw4w9WgXcQ/maxresdefault.jpg',
+	site_name: 'YouTube',
+};
+
 const SAVED_KEYS = {
 	keys: [
 		{ url: URL_SAVE.URL, id: 2, date_saved: URL_SAVE.date_saved },
+		{ url: YOUTUBE_SAVE.URL, id: 3, date_saved: YOUTUBE_SAVE.date_saved },
 		{
 			feed_item_id: 64089,
 			url: PRUNED_FEED_ITEM.URL,
@@ -124,7 +137,7 @@ const SAVED_KEYS = {
 			date_saved: PRUNED_FEED_ITEM.date_saved,
 		},
 	],
-	total: 2,
+	total: 3,
 };
 
 function mockSavedEndpoint( posts: object[] ) {
@@ -256,6 +269,35 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		await userEvent.setup().click( screen.getByText( URL_SAVE.excerpt ) );
 
 		expect( windowOpen ).toHaveBeenCalledWith( URL_SAVE.URL, '_blank', 'noopener,noreferrer' );
+	} );
+
+	it( 'plays a saved YouTube video in the card', async () => {
+		await renderSnapshots( [ YOUTUBE_SAVE, URL_SAVE ] );
+		const card = getCard( YOUTUBE_SAVE.title );
+		const play = await within( card ).findByRole( 'link', { name: 'Play button' } );
+		expect( card.querySelector( '.saved-snapshot-card__image' ) ).toBeNull();
+		expect(
+			getCard( URL_SAVE.title ).querySelector( '.saved-snapshot-card__image' )
+		).toBeVisible();
+
+		await userEvent.setup().click( play );
+
+		const player = card.querySelector( 'iframe' );
+		expect( player ).toHaveAttribute(
+			'src',
+			'https://www.youtube-nocookie.com/embed/dQw4w9WgXcQ?autoplay=1'
+		);
+		expect( player ).toHaveAttribute( 'title', YOUTUBE_SAVE.title );
+		expect( windowOpen ).not.toHaveBeenCalled();
+	} );
+
+	it( 'shows a YouTube link without a well-formed video ID as a page', async () => {
+		const badId = { ...YOUTUBE_SAVE, URL: 'https://www.youtube.com/watch?v=x%22%3E%3Cb%3E' };
+		await renderSnapshots( [ badId ] );
+		const card = getCard( badId.title );
+
+		expect( within( card ).queryByRole( 'link', { name: 'Play button' } ) ).toBeNull();
+		expect( card.querySelector( '.saved-snapshot-card__image' ) ).toBeVisible();
 	} );
 
 	it( 'opens a selected snapshot once when Enter is pressed', async () => {
