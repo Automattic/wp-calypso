@@ -628,6 +628,10 @@ const contextLinks = {
 		link: 'https://wordpress.com/support/domains/custom-dns/edit-or-delete-dns-records/',
 		post_id: 386584,
 	},
+	'import-dns-records': {
+		link: 'https://wordpress.com/support/domains/custom-dns/import-dns-records/',
+		post_id: 386586,
+	},
 	'domain-forwarding': {
 		link: 'https://wordpress.com/support/domains/domain-forwarding/',
 		post_id: 258498,
