@@ -60,7 +60,7 @@ test.describe( 'Authentication: Blackbox login block', { tag: [ tags.AUTHENTICAT
 		} );
 
 		await test.step( 'Then I see a login error', async function () {
-			await expect( page.locator( '.calypso-notice.is-error' ) ).toBeVisible();
+			await expect( page.locator( '.login__error-notice' ) ).toBeVisible();
 		} );
 
 		await test.step( 'And I remain on the login page', async function () {

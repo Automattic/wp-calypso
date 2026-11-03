@@ -1,10 +1,10 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { Notice } from '@wordpress/ui';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Notice from 'calypso/components/notice';
 import { getSignupUrl } from 'calypso/lib/login';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
@@ -128,9 +128,9 @@ class ErrorNotice extends Component {
 		}
 
 		return (
-			<Notice status="is-error" showDismiss={ false }>
-				{ message }
-			</Notice>
+			<Notice.Root className="login__error-notice" intent="error">
+				<Notice.Description render={ <div /> }>{ message }</Notice.Description>
+			</Notice.Root>
 		);
 	}
 }
