@@ -23,6 +23,7 @@ import AmplifyScorePreview from './score-preview';
 import { normalizeAmplifyUrl } from './url';
 import { AmplifyLimitReached, AmplifyScansLeft } from './usage-meter';
 import type { SiteOption } from './scan-form';
+import type { AmplifyTiersLink } from './types';
 import type { AmplifyUsageStatus } from './usage';
 import type { AgencyTierId, AmplifyMode, AmplifyUsage } from '@automattic/api-core';
 
@@ -200,6 +201,7 @@ export default function AmplifyReportCreator( {
 	usage,
 	usageStatus = 'unknown',
 	tierId,
+	tiersLink,
 	initialUrl = '',
 	initialMode = 'full',
 	isModal = false,
@@ -212,6 +214,7 @@ export default function AmplifyReportCreator( {
 	usage?: AmplifyUsage;
 	usageStatus?: AmplifyUsageStatus;
 	tierId?: AgencyTierId;
+	tiersLink?: AmplifyTiersLink;
 	initialUrl?: string;
 	initialMode?: AmplifyMode;
 	isModal?: boolean;
@@ -290,7 +293,12 @@ export default function AmplifyReportCreator( {
 				</div>
 			) }
 			{ usageStatus === 'cap' ? (
-				<AmplifyLimitReached agencyId={ agencyId } usage={ usage } tierId={ tierId } />
+				<AmplifyLimitReached
+					agencyId={ agencyId }
+					usage={ usage }
+					tierId={ tierId }
+					tiersLink={ tiersLink }
+				/>
 			) : (
 				<>
 					<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
@@ -341,6 +349,7 @@ export default function AmplifyReportCreator( {
 							usage={ usage }
 							status={ usageStatus }
 							tierId={ tierId }
+							tiersLink={ tiersLink }
 						/>
 					</form>
 					<ReportTypeCards

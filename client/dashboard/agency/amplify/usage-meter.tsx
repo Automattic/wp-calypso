@@ -1,4 +1,3 @@
-import { Link } from '@tanstack/react-router';
 import {
 	Button,
 	Popover,
@@ -20,8 +19,10 @@ import { ALL_TIERS } from '../tiers/constants';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { canContactForMoreScans, getTierAllowances } from './constants';
 import { hasAllowance } from './usage';
+import type { AmplifyTiersLink } from './types';
 import type { AmplifyUsageStatus } from './usage';
 import type { AgencyTierId, AmplifyUsage } from '@automattic/api-core';
+import type { MouseEvent } from 'react';
 
 function useResetDate( usage?: AmplifyUsage, month: 'long' | 'short' = 'long' ) {
 	const locale = useIntlLocale();
@@ -84,12 +85,15 @@ function LimitsExplainer( {
 	label,
 	text,
 	tierId,
+	tiersLink,
 }: {
 	label?: string;
 	/** Shown before the info icon, e.g. the agency's tier. */
 	text?: string;
 	tierId?: AgencyTierId;
+	tiersLink?: AmplifyTiersLink;
 } ) {
+	const tiersPath = tiersLink?.tiersPath ?? '/tiers';
 	const [ openedBy, setOpenedBy ] = useState< 'hover' | 'click' | null >( null );
 	const [ anchor, setAnchor ] = useState< HTMLButtonElement | null >( null );
 	const closeTimer = useRef< ReturnType< typeof setTimeout > | undefined >( undefined );
@@ -199,12 +203,19 @@ function LimitsExplainer( {
 								} ) }
 						</VStack>
 						<Text size={ 13 } lineHeight="20px">
-							<Link
-								to="/tiers"
-								onClick={ () => recordTracksEvent( 'calypso_a4a_amplify_usage_info_tiers_click' ) }
+							<Button
+								variant="link"
+								href={ tiersPath }
+								onClick={ ( event: MouseEvent ) => {
+									recordTracksEvent( 'calypso_a4a_amplify_usage_info_tiers_click' );
+									if ( tiersLink?.onNavigate ) {
+										event.preventDefault();
+										tiersLink.onNavigate( tiersPath );
+									}
+								} }
 							>
 								{ __( 'Learn about tier benefits' ) }
-							</Link>
+							</Button>
 						</Text>
 					</VStack>
 				</Popover>
@@ -221,11 +232,13 @@ export function AmplifyScansLeft( {
 	usage,
 	status,
 	tierId,
+	tiersLink,
 }: {
 	agencyId: number;
 	usage?: AmplifyUsage;
 	status: AmplifyUsageStatus;
 	tierId?: AgencyTierId;
+	tiersLink?: AmplifyTiersLink;
 } ) {
 	const resetDate = useResetDate( usage, 'short' );
 	const limitMessage = useLimitMessage( {
@@ -245,7 +258,7 @@ export function AmplifyScansLeft( {
 					{ message.body }
 				</Text>
 				{ message.action }
-				<LimitsExplainer tierId={ tierId } />
+				<LimitsExplainer tierId={ tierId } tiersLink={ tiersLink } />
 			</div>
 		);
 	}
@@ -267,7 +280,7 @@ export function AmplifyScansLeft( {
 					left
 				) }
 			</Text>
-			<LimitsExplainer tierId={ tierId } />
+			<LimitsExplainer tierId={ tierId } tiersLink={ tiersLink } />
 		</div>
 	);
 }
@@ -279,10 +292,12 @@ export function AmplifyUsageMeter( {
 	usage,
 	status,
 	tierId,
+	tiersLink,
 }: {
 	usage?: AmplifyUsage;
 	status: AmplifyUsageStatus;
 	tierId?: AgencyTierId;
+	tiersLink?: AmplifyTiersLink;
 } ) {
 	const resetDate = useResetDate( usage, 'short' );
 	if ( ! usage || usage.limit === null || ! hasAllowance( status ) ) {
@@ -314,7 +329,7 @@ export function AmplifyUsageMeter( {
 						</Text>
 					) }
 				</HStack>
-				<LimitsExplainer tierId={ tierId } text={ tierName } />
+				<LimitsExplainer tierId={ tierId } text={ tierName } tiersLink={ tiersLink } />
 			</HStack>
 			<div
 				className="dashboard-amplify-usage__bar"
@@ -430,11 +445,13 @@ export function AmplifyUsageCard( {
 	usage,
 	status,
 	tierId,
+	tiersLink,
 }: {
 	agencyId: number;
 	usage?: AmplifyUsage;
 	status: AmplifyUsageStatus;
 	tierId?: AgencyTierId;
+	tiersLink?: AmplifyTiersLink;
 } ) {
 	// The meter already shows the reset date, so the cap message leaves it out. Approval
 	// messages are page notices, not part of the allowance.
@@ -448,7 +465,14 @@ export function AmplifyUsageCard( {
 		<Card className="dashboard-amplify-results__usage">
 			<CardBody size="small">
 				<VStack spacing={ 4 }>
-					{ showMeter && <AmplifyUsageMeter usage={ usage } status={ status } tierId={ tierId } /> }
+					{ showMeter && (
+						<AmplifyUsageMeter
+							usage={ usage }
+							status={ status }
+							tierId={ tierId }
+							tiersLink={ tiersLink }
+						/>
+					) }
 					{ message && (
 						<HStack alignment="center" spacing={ 4 } wrap>
 							<VStack spacing={ 1 } style={ { flex: '1 1 320px' } }>
@@ -492,10 +516,12 @@ export function AmplifyLimitReached( {
 	agencyId,
 	usage,
 	tierId,
+	tiersLink,
 }: {
 	agencyId: number;
 	usage?: AmplifyUsage;
 	tierId?: AgencyTierId;
+	tiersLink?: AmplifyTiersLink;
 } ) {
 	const resetDate = useResetDate( usage );
 	const message = useLimitMessage( { agencyId, usage, status: 'cap', tierId, resetDate } );
@@ -513,7 +539,7 @@ export function AmplifyLimitReached( {
 			</VStack>
 			<HStack spacing={ 3 } justify="center" expanded={ false } wrap>
 				{ message.action }
-				<LimitsExplainer tierId={ tierId } text={ tierName } />
+				<LimitsExplainer tierId={ tierId } text={ tierName } tiersLink={ tiersLink } />
 			</HStack>
 		</VStack>
 	);

@@ -3,6 +3,7 @@ import { useIsMutating } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import AmplifyReportCreator from './report-creator';
+import type { AmplifyTiersLink } from './types';
 import type { AmplifyUsageStatus } from './usage';
 import type { AgencyTierId, AmplifyMode, AmplifyUsage } from '@automattic/api-core';
 
@@ -14,6 +15,7 @@ export default function AmplifyNewReportModal( {
 	usage,
 	usageStatus,
 	tierId,
+	tiersLink,
 	onClose,
 	onCreated,
 	onUsageError,
@@ -25,6 +27,7 @@ export default function AmplifyNewReportModal( {
 	usage?: AmplifyUsage;
 	usageStatus?: AmplifyUsageStatus;
 	tierId?: AgencyTierId;
+	tiersLink?: AmplifyTiersLink;
 	onClose: () => void;
 	onCreated: () => void;
 	onUsageError?: ( code: string ) => void;
@@ -47,6 +50,7 @@ export default function AmplifyNewReportModal( {
 				usage={ usage }
 				usageStatus={ usageStatus }
 				tierId={ tierId }
+				tiersLink={ tiersLink }
 				isModal
 				onCreated={ onCreated }
 				onUsageError={ onUsageError }
