@@ -11,6 +11,7 @@ jest.mock( '../editor-blocks', () => ( {
 	getSectionRootClientId: jest.fn(),
 	getSelectedBlockClientId: jest.fn(),
 	getTemplatePartClientIds: jest.fn(),
+	isTemplatePartLoaded: jest.fn(),
 } ) );
 jest.mock( '../navigation-menu', () => ( {
 	NAVIGATION_BLOCK: 'core/navigation',
@@ -40,15 +41,18 @@ const templatePart = ( clientId: string, slug: string ) =>
 /**
  * Serves `blocks` as the editor's tree. `controlled` holds what the editor
  * keeps apart from it: the blocks of each template part, by its clientId.
+ * `loading` names the parts whose entity has not resolved yet.
  */
 function withEditor( {
 	blocks,
 	controlled = {},
+	loading = [],
 	sectionRoot,
 	selected,
 }: {
 	blocks: EditorBlock[];
 	controlled?: Record< string, EditorBlock[] >;
+	loading?: string[];
 	sectionRoot?: string;
 	selected?: string;
 } ) {
@@ -74,6 +78,7 @@ function withEditor( {
 			.filter( ( item ) => item.name === 'core/template-part' )
 			.map( ( item ) => ( { slug: String( item.attributes.slug ), clientId: item.clientId } ) )
 	);
+	editor.isTemplatePartLoaded.mockImplementation( ( clientId ) => ! loading.includes( clientId ) );
 	editor.getSectionRootClientId.mockReturnValue( sectionRoot );
 	editor.getCurrentPost.mockReturnValue( { id: 1, type: 'page' } );
 	editor.getSelectedBlockClientId.mockReturnValue( selected );
@@ -143,13 +148,12 @@ it( 'splits a templated page into header, content and footer, under short ids', 
 	} );
 } );
 
-it( 'takes the hero header over the plain one, and leaves out a part with no blocks', () => {
+it( 'takes the hero header over the plain one', () => {
 	withEditor( {
 		blocks: [
 			templatePart( 'header', 'header' ),
 			templatePart( 'header-hero', 'header-hero' ),
 			block( 'main', 'core/group' ),
-			templatePart( 'footer', 'footer' ),
 		],
 		controlled: {
 			header: [ block( 'logo', 'core/site-logo' ) ],
@@ -162,6 +166,62 @@ it( 'takes the hero header over the plain one, and leaves out a part with no blo
 		[ 'header', 's:header-hero', [ 's:headline' ] ],
 		[ 'content', 's:main' ],
 	] );
+} );
+
+// The agent can only fill a part it sees, and the backend names the part by its attributes.
+it( 'sends a part with no blocks, wherever it is', () => {
+	withEditor( {
+		blocks: [
+			block( 'header', 'core/template-part', { slug: 'header', theme: 'assembler' } ),
+			block( 'main', 'core/group', {}, [ templatePart( 'sidebar', 'sidebar' ) ] ),
+			block( 'footer', 'core/template-part', { slug: 'footer', theme: 'assembler' } ),
+		],
+		sectionRoot: 'main',
+	} );
+
+	const { currentPageContent } = getPageStructure()!;
+
+	expect( outline( currentPageContent ) ).toEqual( [
+		[ 'header', 's:header' ],
+		[ 'content', 's:main', [ 's:sidebar' ] ],
+		[ 'footer', 's:footer' ],
+	] );
+	expect( currentPageContent[ 2 ] ).toEqual( {
+		name: 'core/template-part',
+		type: 'footer',
+		clientId: 's:footer',
+		attributes: { slug: 'footer', theme: 'assembler' },
+		innerBlocks: [],
+	} );
+} );
+
+// Its saved blocks are on their way: shown empty, it would pass for a part to
+// fill. A wrapper has children of its own, so it is the part that is asked.
+it.each( [
+	{ case: 'on its own', blocks: [ templatePart( 'footer', 'footer' ) ] },
+	{
+		case: 'inside a wrapper',
+		blocks: [
+			block( 'cover', 'core/cover', {}, [
+				templatePart( 'footer', 'footer' ),
+				block( 'tagline', 'core/paragraph' ),
+			] ),
+		],
+	},
+] )( 'sends no region for a part still loading $case', ( { blocks } ) => {
+	withEditor( {
+		blocks: [ block( 'main', 'core/group' ), ...blocks ],
+		loading: [ 'footer' ],
+		sectionRoot: 'main',
+	} );
+
+	expect( pageOutline() ).toEqual( [ [ 'content', 's:main' ] ] );
+} );
+
+it( 'sends no region for a part the template does not have', () => {
+	withEditor( { blocks: [ block( 'main', 'core/group' ) ], sectionRoot: 'main' } );
+
+	expect( pageOutline() ).toEqual( [ [ 'content', 's:main' ] ] );
 } );
 
 // No section root, as in the post editor: no regions, whatever the page holds.

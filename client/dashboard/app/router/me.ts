@@ -45,7 +45,6 @@ import {
 	type SiteAction,
 } from '../../me/billing-purchases/site-level-actions/constants';
 import { getAppSetupTitle, getSMSSetupTitle } from '../../me/security-two-step-auth/title';
-import { isOptInToggleVisible } from '../../utils/hosting-dashboard-enrollment';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
 import {
 	getTitleForDisplay,
@@ -57,11 +56,10 @@ import {
 	CANCEL_FLOW_TYPE,
 	type CancelIntent,
 } from '../../utils/purchase';
-import { AUTH_QUERY_KEY } from '../auth';
 import { dashboardRedirect, redirectIfTwoStepReauthRequired } from './redirect';
 import { rootRoute } from './root';
 import type { AppConfig } from '../context';
-import type { Purchase, User } from '@automattic/api-core';
+import type { Purchase } from '@automattic/api-core';
 import type { AnyRoute } from '@tanstack/react-router';
 
 export const meRoute = createRoute( {
@@ -834,7 +832,7 @@ export const securitySshKeyRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'SSH key' ),
+				title: isEnabled( 'ssh-multiple-keys' ) ? __( 'SSH keys' ) : __( 'SSH key' ),
 			},
 		],
 	} ),
@@ -1103,37 +1101,6 @@ export const preferencesReaderRoute = createRoute( {
 } ).lazy( () =>
 	import( '../../me/reader' ).then( ( d ) =>
 		createLazyRoute( 'preferences-reader' )( {
-			component: d.default,
-		} )
-	)
-);
-
-export const hostingDashboardRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'New hosting dashboard' ),
-			},
-		],
-	} ),
-	getParentRoute: () => preferencesRoute,
-	path: 'hosting-dashboard',
-	beforeLoad: async () => {
-		const user = queryClient.getQueryData< User >( AUTH_QUERY_KEY );
-		const preferences = await queryClient.ensureQueryData( rawUserPreferencesQuery() );
-		if ( ! isOptInToggleVisible( preferences[ 'hosting-dashboard-opt-in' ], user?.ID ) ) {
-			throw dashboardRedirect( { to: '/me/preferences', replace: true } );
-		}
-	},
-	loader: async () => {
-		await Promise.all( [
-			queryClient.ensureQueryData( userSettingsQuery() ),
-			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-		] );
-	},
-} ).lazy( () =>
-	import( '../../me/hosting-dashboard' ).then( ( d ) =>
-		createLazyRoute( 'hosting-dashboard' )( {
 			component: d.default,
 		} )
 	)
@@ -1461,9 +1428,6 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	if ( config.supports.reader ) {
 		preferencesChildren.push( blockedSitesRoute );
 		preferencesChildren.push( preferencesReaderRoute );
-	}
-	if ( config.optIn ) {
-		preferencesChildren.push( hostingDashboardRoute );
 	}
 	if ( isEnabled( 'wordpress-labs' ) ) {
 		preferencesChildren.push( wordpressLabsRoute );

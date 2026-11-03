@@ -32,6 +32,7 @@
 		"a4a-benchmarks": true,
 		"a4a-bd-checkout": false,
 		"a4a-bd-term-pricing": true,
+		"a4a-dashboard-opt-in": true,
 		"a4a-overview-revamp": true,
 		"a4a-partner-directory": false,
 		"a4a-signup-v2": true,
@@ -50,6 +51,7 @@
 		"dev/store-sandbox-helper": true,
 		"jetpack/crm-downloads": true,
 		"oauth": true,
+		"plans/scheduled-term-change": true,
 		"upgrades/redirect-payments": true
 	},
 	"enable_all_sections": false,

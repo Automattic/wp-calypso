@@ -252,6 +252,8 @@ export const startUpload =
 					type: IMPORTS_UPLOAD_FAILED,
 					importerId,
 					error: error.message,
+					errorCode: error.error,
+					file,
 				};
 
 				dispatch( failUploadAction );

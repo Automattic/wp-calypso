@@ -34,7 +34,8 @@ export function deleteDomainGlueRecord(
 ): Promise< void > {
 	return wpcom.req.post(
 		{
-			path: `/domains/glue-records/${ domainName }`,
+			// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+			path: `/domains/glue-records/${ domainName }/`,
 			apiNamespace: 'wpcom/v2',
 			method: 'DELETE',
 		},

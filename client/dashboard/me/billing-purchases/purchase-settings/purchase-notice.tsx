@@ -47,7 +47,6 @@ import {
 	getUpgradedPurchaseRedirectUrl,
 	getWpcomPlanChangeUrl,
 } from '../../../utils/site-url';
-import { useIsSplitCancelRemoveEnabled } from '../cancel-purchase/use-is-split-cancel-remove-enabled';
 import { CancellationOfferNotice } from './cancellation-offer-notice';
 import { getDelayedDowngradeNotice } from './get-delayed-downgrade-notice';
 import {
@@ -65,7 +64,6 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	const locale = useLocale();
 	const { recordTracksEvent } = useAnalytics();
 	const hasEnTranslation = useHasEnTranslation();
-	const isSplitCancelRemoveEnabled = useIsSplitCancelRemoveEnabled();
 	const {
 		refunded,
 		upgraded,
@@ -188,7 +186,7 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 	// Transient cancelled success notice — suppresses every other notice until
 	// dismissed, refreshed, or navigated-away-and-back. Gated on the
 	// `?cancelled=true` search param set by the cancel redirect.
-	if ( isSplitCancelRemoveEnabled && showCancelledNotice ) {
+	if ( showCancelledNotice ) {
 		return (
 			<PurchaseCancelledNotice
 				purchase={ purchase }

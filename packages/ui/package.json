@@ -48,7 +48,7 @@
 		"@wordpress/primitives": "^4.56.0",
 		"@wordpress/ui": "^0.18.0",
 		"clsx": "^2.1.1",
-		"date-fns": "^4.1.0",
+		"date-fns": "^4.4.0",
 		"react-day-picker": "^9.7.0"
 	},
 	"peerDependencies": {
@@ -65,10 +65,10 @@
 		"@testing-library/user-event": "^14.6.8",
 		"esbuild": "^0.25.5",
 		"esbuild-sass-plugin": "^3.1.0",
-		"postcss": "^8.5.30",
+		"postcss": "^8.5.31",
 		"postcss-modules": "^6.0.1",
 		"sass-embedded": "^1.89.0",
-		"storybook": "^10.6.2",
+		"storybook": "^10.6.3",
 		"stylelint": "^17.16.0",
 		"stylelint-plugin-logical-css": "^2.1.0",
 		"tsup": "^8.5.1",

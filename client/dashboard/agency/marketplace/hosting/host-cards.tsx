@@ -16,7 +16,7 @@ import { HOST_ORDER, getHosts } from './hosts';
 import type { HostingSection } from '../paths';
 import type { Host } from './hosts';
 
-interface Props {
+interface HostCardsProps {
 	/** What the agency owns of each host, shown as a badge on its card. */
 	owned: Partial< Record< HostingSection, string > >;
 	isReferralMode: boolean;
@@ -49,7 +49,7 @@ export default function HostCards( {
 	isReferralMode,
 	isOnTopPressablePlan = false,
 	onPick,
-}: Props ) {
+}: HostCardsProps ) {
 	// Every brand block keeps room for a badge once one card has it, so the rows line up.
 	const hasBadge = Object.values( owned ).some( Boolean );
 	const hosts = getHosts();

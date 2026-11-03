@@ -351,7 +351,7 @@ function insertCountryAliases( data ) {
 }
 
 /**
- * Wraps and saves data to '../client/components/phone-input/data.js'
+ * Wraps and saves data to '../packages/js-utils/src/phone-number-data.ts'
  * @param {Object} data
  */
 function saveToFile( data ) {
@@ -365,10 +365,10 @@ function saveToFile( data ) {
 	const filePath = path.resolve(
 		__dirname,
 		'..',
-		'client',
-		'components',
-		'phone-input',
-		'data.js'
+		'packages',
+		'js-utils',
+		'src',
+		'phone-number-data.ts'
 	);
 	fs.writeFileSync( filePath, scriptStr );
 }

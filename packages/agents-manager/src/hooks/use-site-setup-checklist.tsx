@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useRef } from '@wordpress/element';
 import {
+	getLastPickedSiteSetupTask,
 	getSiteSetupStartedTasks,
 	isSiteSetupChecklistEnabled,
 	toChecklistItems,
@@ -26,6 +27,8 @@ export interface SiteSetupChecklistState {
 	items: ChecklistItem[];
 	/** The pinned list just replaced the one the user picked from, so it takes the focus. */
 	focusHeaderOnMount: boolean;
+	/** The task the user is on, the only one a folded pinned list keeps in view. */
+	activeItemId?: string;
 }
 
 export const SITE_SETUP_TASKS_QUERY_KEY = [ 'agents-manager-site-setup-tasks' ];
@@ -73,6 +76,7 @@ export default function useSiteSetupChecklist( {
 	}, [ isProcessing, isEnabled, refetch ] );
 
 	const startedTasks = useMemo( () => getSiteSetupStartedTasks( messages ), [ messages ] );
+	const lastPickedId = useMemo( () => getLastPickedSiteSetupTask( messages ), [ messages ] );
 	const hasMessages = messages.length > 0;
 
 	const state = useMemo( (): SiteSetupChecklistState => {
@@ -87,12 +91,26 @@ export default function useSiteSetupChecklist( {
 		}
 
 		if ( startedTasks ) {
-			return { ...NONE, variant: 'pinned', items: toChecklistItems( data.tasks, startedTasks ) };
+			// Several tasks can be in progress at once (the Site Setup page shows
+			// them all); the folded list keeps the one picked last, or failing
+			// that the first still in progress.
+			const items = toChecklistItems( data.tasks, startedTasks );
+			const inProgress = items.filter( ( item ) => item.status === 'in-progress' );
+			const active = inProgress.find( ( item ) => item.id === lastPickedId ) ?? inProgress[ 0 ];
+			return { ...NONE, variant: 'pinned', items, activeItemId: active?.id };
 		}
 		return hasMessages
 			? NONE
 			: { ...NONE, variant: 'empty', items: toChecklistItems( data.tasks, new Set() ) };
-	}, [ isEnabled, isLoading, isLoadingConversation, data, startedTasks, hasMessages ] );
+	}, [
+		isEnabled,
+		isLoading,
+		isLoadingConversation,
+		data,
+		startedTasks,
+		lastPickedId,
+		hasMessages,
+	] );
 
 	// The variant of the last committed render: only the empty → pinned move,
 	// which unmounts the list the user was on, hands the focus over.

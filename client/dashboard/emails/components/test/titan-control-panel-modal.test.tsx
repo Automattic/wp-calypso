@@ -13,7 +13,7 @@ const AUTO_LOGIN_URL = 'https://manage.titan.email/auto-login?token=abc';
 
 function mockDomain( titanOrderId: number | null ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.2/domain-details/${ DOMAIN }` )
+		.get( `/rest/v1.2/domain-details/${ DOMAIN }/` )
 		.query( true )
 		.reply( 200, {
 			domain: DOMAIN,

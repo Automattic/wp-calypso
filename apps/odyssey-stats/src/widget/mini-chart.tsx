@@ -3,14 +3,15 @@ import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
+import { readChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
-import StatsModulePlaceholder from 'calypso/my-sites/stats/stats-module/placeholder';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
 import { ResolvedDateRange } from '../lib/date-ranges';
 import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
 import { recordWidgetEventThenFollow } from './record-widget-event';
+import Skeleton from './skeleton';
 import useStatsLink from './use-stats-link';
 
 const OverviewChart = lazy( () => import( './overview-chart' ) );
@@ -54,6 +55,10 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const [ rootElement, setRootElement ] = useState< HTMLDivElement | null >( null );
 	const viewsColor = useCssVariable( '--chart-series-views', rootElement );
 	const visitorsColor = useCssVariable( '--chart-series-visitors', rootElement );
+
+	// Read once: the choice is made on the Stats page, so a change there shows on the next
+	// load of the dashboard.
+	const chartType = useMemo( () => readChartType( siteId ), [ siteId ] );
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
@@ -105,7 +110,8 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	// One placeholder for both waits: for the data, and for the chart's chunk.
 	const chartPlaceholder = (
 		<div className="stats-widget-chart" style={ chartBoxStyle }>
-			<StatsModulePlaceholder isLoading />
+			<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+			<Skeleton className="stats-widget-chart__skeleton" />
 		</div>
 	);
 	const noData = (
@@ -119,10 +125,16 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Views', { context: 'noun' } ) }
-							<span className="stats-widget-metric__swatch is-views" aria-hidden="true" />
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-views', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
 						</div>
 						<MetricValue
 							value={ totals.views }
+							isLoading={ isPending }
 							describe={ ( count ) =>
 								translate( '%(count)s view', '%(count)s views', {
 									count: totals.views,
@@ -134,10 +146,16 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Visitors', { context: 'noun' } ) }
-							<span className="stats-widget-metric__swatch is-visitors" aria-hidden="true" />
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-visitors', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
 						</div>
 						<MetricValue
 							value={ totals.visitors }
+							isLoading={ isPending }
 							describe={ ( count ) =>
 								translate( '%(count)s visitor', '%(count)s visitors', {
 									count: totals.visitors,
@@ -168,7 +186,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 				<ChartBoundary fallback={ noData }>
 					<Suspense fallback={ chartPlaceholder }>
 						<div className="stats-widget-chart" style={ chartBoxStyle }>
-							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
+							<OverviewChart
+								series={ series }
+								height={ CHART_HEIGHT }
+								unit={ unit }
+								chartType={ chartType }
+							/>
 						</div>
 					</Suspense>
 				</ChartBoundary>

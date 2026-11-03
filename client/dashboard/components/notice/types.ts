@@ -1,7 +1,5 @@
 import React from 'react';
-import type { IconType } from '@wordpress/components';
-
-type NoticeDensity = 'low' | 'medium' | 'high';
+import type { Notice as UINotice } from '@wordpress/ui';
 
 export type NoticeVariant = 'warning' | 'success' | 'error' | 'info';
 
@@ -28,16 +26,9 @@ export interface NoticeProps {
 	actions?: React.ReactNode;
 
 	/**
-	 * Adjusts internal spacings according to the section where the component is placed.
-	 * High density reduces padding.
-	 * @default 'low'
+	 * Custom icon to use instead of the default one for each variant, or `null` to hide it.
 	 */
-	density?: NoticeDensity;
-
-	/**
-	 * Custom icon to use instead of the default one for each variant.
-	 */
-	icon?: IconType;
+	icon?: React.ComponentProps< typeof UINotice.Root >[ 'icon' ];
 
 	/**
 	 * An optional action to close the component.

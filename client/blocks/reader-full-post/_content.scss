@@ -19,6 +19,7 @@
 // Import styles for the Jetpack Podcast Episode block. The block's own
 // stylesheet is not loaded in the Reader, so its styles are ported here.
 @import "podcast-episode";
+@import "rating-star";
 
 .reader-full-post__story-content {
 	@extend %rendered-block-content;

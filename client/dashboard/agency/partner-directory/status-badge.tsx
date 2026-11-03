@@ -2,7 +2,7 @@ import { Badge } from '@wordpress/ui';
 import NotApprovedPopover from './not-approved-popover';
 import type { DirectoryStatusBadge } from './lib';
 
-interface Props {
+interface StatusBadgeProps {
 	badge: DirectoryStatusBadge;
 	showPopoverOnLoad: boolean;
 	expertiseUrl: string;
@@ -20,7 +20,7 @@ export default function StatusBadge( {
 	expertiseUrl,
 	recordTracksEvent,
 	shouldUseRouterLink,
-}: Props ) {
+}: StatusBadgeProps ) {
 	if ( badge.key !== 'rejected' ) {
 		return <Badge intent={ badge.intent }>{ badge.label }</Badge>;
 	}

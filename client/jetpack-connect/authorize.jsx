@@ -538,12 +538,11 @@ export class JetpackAuthorize extends Component {
 	}
 
 	isUnifiedConnectionFlow( props = this.props ) {
-		// Onboarding uses the unified layout but still shows its static content.
-		return isUnifiedFlow( props.authQuery.from ) || this.isFromJetpackOnboarding( props );
+		return isUnifiedFlow( props.authQuery.from );
 	}
 
 	isSecondaryConnection( props = this.props ) {
-		return isUnifiedFlow( props.authQuery.from ) && props.authQuery.hasConnectedOwner;
+		return this.isUnifiedConnectionFlow( props ) && props.authQuery.hasConnectedOwner;
 	}
 
 	isAdminConnection( props = this.props ) {
@@ -1078,7 +1077,7 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( isUnifiedFlow( authQuery.from ) ) {
+		if ( this.isUnifiedConnectionFlow() ) {
 			const isSecondary = this.isSecondaryConnection();
 			const isAdmin = this.isAdminConnection();
 
@@ -1088,9 +1087,9 @@ export class JetpackAuthorize extends Component {
 			if ( isSecondary && ! isAdmin ) {
 				featureCardsResult = { cards: [], heroFirstCard: false };
 			} else if ( isSecondary ) {
-				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.plugins );
+				featureCardsResult = getSecondaryAdminFeatureCards( authQuery.connectorPlugins );
 			} else {
-				featureCardsResult = getConnectorFeatureCards( authQuery.plugins );
+				featureCardsResult = getConnectorFeatureCards( authQuery.connectorPlugins );
 			}
 			const { cards, heroFirstCard } = featureCardsResult;
 
@@ -1115,8 +1114,8 @@ export class JetpackAuthorize extends Component {
 			);
 		}
 
-		if ( this.isUnifiedConnectionFlow() || this.isFromMyJetpack() ) {
-			const branding = getConnectorBranding( authQuery.plugins );
+		if ( this.isFromMyJetpack() ) {
+			const branding = getConnectorBranding( authQuery.connectorPlugins );
 			const siteURL = decodeEntities( authQuery.siteUrl.replace( /^https?:\/\//, '' ) );
 			const permissionsTitle = branding.permissionsTitle( { siteURL } );
 
@@ -1402,17 +1401,15 @@ export class JetpackAuthorize extends Component {
 		);
 		const { authorizeSuccess, isAuthorizing } = this.props.authorizationData;
 		const isUnifiedConnection = this.isUnifiedConnectionFlow();
-		const showsUnifiedContent = isUnifiedFlow( this.props.authQuery.from );
 		const isFromMyJetpack = this.isFromMyJetpack(); // in case users reconnect.
-		const connectorBranding = showsUnifiedContent
-			? getConnectorBranding( this.props.authQuery.plugins )
-			: null;
+		const { connectorPlugins } = this.props.authQuery;
+		const connectorBranding = isUnifiedConnection ? getConnectorBranding( connectorPlugins ) : null;
 		const isSecondary = this.isSecondaryConnection();
 		let authCopy = null;
-		if ( showsUnifiedContent && isSecondary ) {
-			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), this.props.authQuery.plugins );
-		} else if ( showsUnifiedContent ) {
-			authCopy = getAuthCopy( this.props.authQuery.plugins );
+		if ( isSecondary ) {
+			authCopy = getSecondaryAuthCopy( this.isAdminConnection(), connectorPlugins );
+		} else if ( isUnifiedConnection ) {
+			authCopy = getAuthCopy( connectorPlugins );
 		}
 
 		if ( this.isWooJPC() && ( isAuthorizing || authorizeSuccess ) ) {
@@ -1437,12 +1434,12 @@ export class JetpackAuthorize extends Component {
 				className={ clsx( {
 					'jetpack-connect__authorize-form-wrapper--onboarding':
 						isUnifiedConnection || isFromMyJetpack,
-					'jetpack-connect__authorize-form-wrapper--connector': showsUnifiedContent,
+					'jetpack-connect__authorize-form-wrapper--connector': isUnifiedConnection,
 				} ) }
 				isWooJPC={ this.isWooJPC() }
-				isJetpackConnector={ showsUnifiedContent }
+				isJetpackConnector={ isUnifiedConnection }
 				isFromAutomatticForAgenciesPlugin={ this.isFromAutomatticForAgenciesPlugin() }
-				useCompactLogo={ ( isUnifiedConnection || isFromMyJetpack ) && ! showsUnifiedContent }
+				useCompactLogo={ isFromMyJetpack }
 				pageTitle={
 					wooDna.isWooDnaFlow() ? wooDna.getServiceName() + ' — ' + translate( 'Connect' ) : ''
 				}
@@ -1459,7 +1456,7 @@ export class JetpackAuthorize extends Component {
 							siteId={ authSiteId }
 							siteIsOnSitesList={ this.props.isAlreadyOnSitesList }
 						/>
-						{ showsUnifiedContent && connectorBranding && authCopy && (
+						{ isUnifiedConnection && (
 							<BrandHeader
 								logo={ connectorBranding.logo }
 								logoAlt=""
@@ -1467,7 +1464,7 @@ export class JetpackAuthorize extends Component {
 								description={ authCopy.subtitle }
 							/>
 						) }
-						{ ( isUnifiedConnection || isFromMyJetpack ) && ! showsUnifiedContent && (
+						{ isFromMyJetpack && (
 							<div className="jetpack-connect__authorize-form-header--left-aligned">
 								<h1>{ translate( 'Now let’s connect your account' ) }</h1>
 								<p>

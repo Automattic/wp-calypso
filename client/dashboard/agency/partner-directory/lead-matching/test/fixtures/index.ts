@@ -4,6 +4,16 @@ import type { AgencyLeadMatchingProfile, AgencyProfile } from '@automattic/api-c
 
 export const API = 'https://public-api.wordpress.com';
 
+export function mockSmsCountryCodes() {
+	return nock( API )
+		.get( '/rest/v1.1/meta/sms-country-codes/' )
+		.reply( 200, [
+			{ code: 'US', country_name: 'United States', name: 'United States (+1)', numeric_code: '+1' },
+			{ code: 'ES', country_name: 'Spain', name: 'Spain (+34)', numeric_code: '+34' },
+		] )
+		.persist();
+}
+
 export function makeAgencyProfile( isAvailable = true ): AgencyProfile {
 	return {
 		company_details: {
@@ -55,6 +65,12 @@ export const completeProfile = getLeadMatchingProfile(
 	null,
 	true
 );
+
+export const incompleteProfile = {
+	...completeProfile,
+	availability: { ...completeProfile.availability, accepting_work: false },
+	service_and_budget: { ...completeProfile.service_and_budget, max_service_level: '' },
+};
 
 export function mockAgency( isAvailable = true ) {
 	nock( API )

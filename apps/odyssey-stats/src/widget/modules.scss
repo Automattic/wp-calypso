@@ -17,6 +17,12 @@ $jp-gray: #dcdcde;
 		font-size: var(--wpds-typography-font-size-md, 13px);
 		line-height: 0.5;
 	}
+
+	.stats-widget-module__error {
+		margin: var(--wpds-dimension-gap-sm, 8px) 0 0;
+		color: var(--wpds-color-foreground-content-error, var(--color-error));
+		font-size: var(--wpds-typography-font-size-sm, 12px);
+	}
 }
 
 // Colours stated rather than left to `wp-components`, so the buttons stay filled even if its

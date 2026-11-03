@@ -4,8 +4,8 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useAppContext } from '../app/context';
 import { omnibarEvents } from '../app/omnibar/events';
-import { useHelpCenterNodeBuilder } from '../app/omnibar/node-help-center';
-import { createLogoutNodeBuilder } from '../app/omnibar/node-logout';
+import { useHelpCenterNodeBuilder } from '../app/omnibar/help-center-node';
+import { createLogoutNodeBuilder } from '../app/omnibar/logout-node';
 import { InitialOmnibar } from '../app/omnibar/omnibar';
 import {
 	RESPONSIVE_MENU_NODE_ID,

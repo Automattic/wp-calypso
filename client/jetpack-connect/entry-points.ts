@@ -18,12 +18,37 @@ export function isStandardEntryPoint( from?: string | null ): boolean {
 	);
 }
 
+export function isMigrationEntryPoint( from?: string | null ): boolean {
+	return (
+		isStandardEntryPoint( from ) &&
+		( from === 'wpcom_migration' || from?.startsWith( 'wpcom_migration_' ) === true )
+	);
+}
+
+/**
+ * The plugins the connection screens present for this entry point.
+ */
+export function getPluginsForEntryPoint(
+	pluginSlugs: readonly string[] = [],
+	from?: string | null
+) {
+	// Remove the migration plugin unless we came from the migration entry point.
+	if ( ! isMigrationEntryPoint( from ) ) {
+		return pluginSlugs.filter( ( slug ) => slug !== 'wpcom-migration' );
+	}
+
+	return [ ...pluginSlugs ];
+}
+
 /**
  * Whether `from` gets the unified connection flow: the plugin-aware logo,
  * title, subtitle and feature cards on the authorize, signup and login
- * screens, first built for the Connectors card (`jetpack-connector`). New
- * entry points get it by using a standard name.
+ * screens. `jetpack-connector` (the Connectors card) and `jetpack-onboarding`
+ * (My Jetpack's onboarding takeover) are matched exactly because they have
+ * already shipped. New entry points get it by using a standard name.
  */
 export function isUnifiedFlow( from?: string | null ): boolean {
-	return from === 'jetpack-connector' || isStandardEntryPoint( from );
+	return (
+		from === 'jetpack-connector' || from === 'jetpack-onboarding' || isStandardEntryPoint( from )
+	);
 }

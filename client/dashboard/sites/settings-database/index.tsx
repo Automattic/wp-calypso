@@ -118,7 +118,7 @@ export default function SiteDatabaseSettings( { siteSlug }: { siteSlug: string }
 								</Text>
 							</VStack>
 							<VStack>
-								<Notice density="medium">
+								<Notice>
 									{ __(
 										'Managing a database can be tricky and it’s not necessary for your site to function.'
 									) }

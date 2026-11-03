@@ -9,6 +9,7 @@ import { ResolvedDateRange } from '../lib/date-ranges';
 import { HighLightItem } from '../typings';
 import GrowHeight from './grow-height';
 import recordWidgetEvent, { recordWidgetEventThenFollow } from './record-widget-event';
+import Skeleton from './skeleton';
 import useStatsLink from './use-stats-link';
 import WidgetSection from './widget-section';
 import type { MouseEvent } from 'react';
@@ -104,8 +105,8 @@ const TopColumn: FunctionComponent< TopColumnProps > = ( {
 					<div className="stats-widget-highlights-card__list stats-widget-highlights-card__skeleton">
 						<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
 						<div className="stats-widget-highlights-card__item" aria-hidden="true">
-							<span className="stats-widget-highlights-card__skeleton-bar is-title" />
-							<span className="stats-widget-highlights-card__skeleton-bar is-value" />
+							<Skeleton className="stats-widget-highlights-card__skeleton-bar is-title" />
+							<Skeleton className="stats-widget-highlights-card__skeleton-bar is-value" />
 						</div>
 					</div>
 				) }

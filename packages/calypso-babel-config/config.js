@@ -1,5 +1,5 @@
 module.exports = ( { importSource } = {} ) => ( {
-	presets: [ [ require.resolve( './presets/default' ), { bugfixes: true, importSource } ] ],
+	presets: [ [ require.resolve( './presets/default' ), { importSource } ] ],
 	env: {
 		production: {
 			plugins: [ 'babel-plugin-transform-react-remove-prop-types' ],

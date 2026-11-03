@@ -6,13 +6,14 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
 import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
+import { ALL_TIERS, TARGET_INFLUENCED_REVENUE } from './constants';
 import getCurrentAgencyTier from './get-current-agency-tier';
-import type { AgencyTierType, RecordTracksEvent } from './types';
+import type { AgencyTierType, RecordTracksEvent, TierItem } from './types';
 
 import './style.scss';
 
@@ -79,6 +80,77 @@ function InfluencedRevenueStrapline( {
 	);
 }
 
+const formatAmount = ( value: number ) => formatCurrency( value, 'USD', { stripZeros: true } );
+
+const TOP_TIER_LEVEL = Math.max( ...ALL_TIERS.map( ( tier ) => tier.level ) );
+const PRO_TIER_LEVEL = 2;
+
+/**
+ * Pro and VIP Pro both grow toward Premier, as the Overview growth card says.
+ */
+function getNextTier( currentTier: TierItem ) {
+	if ( currentTier.level >= TOP_TIER_LEVEL ) {
+		return undefined;
+	}
+	const nextLevel = currentTier.level >= PRO_TIER_LEVEL ? TOP_TIER_LEVEL : currentTier.level + 1;
+	return ALL_TIERS.find( ( tier ) => tier.level === nextLevel );
+}
+
+function getProgress( currentTier: TierItem, total: number ) {
+	const nextTier = getNextTier( currentTier );
+
+	if ( ! nextTier ) {
+		return {
+			headline: formatAmount( total ),
+			caption: sprintf(
+				/* translators: %s is the tier name, e.g. Premier Partner */
+				__( '%s is the top tier' ),
+				currentTier.name
+			),
+			label: sprintf(
+				/* translators: 1: influenced revenue, e.g. $268,500, 2: tier name, e.g. Premier Partner */
+				__( '%1$s influenced revenue. %2$s is the top tier.' ),
+				formatAmount( total ),
+				currentTier.name
+			),
+			value: 100,
+		};
+	}
+
+	const target = TARGET_INFLUENCED_REVENUE[ nextTier.id ];
+	const remaining = target - total;
+
+	return {
+		headline:
+			remaining > 0
+				? sprintf(
+						/* translators: 1: amount left, e.g. $1,200, 2: next tier name, e.g. Agency Partner */
+						__( '%1$s more to reach %2$s' ),
+						formatAmount( remaining ),
+						nextTier.name
+					)
+				: sprintf(
+						/* translators: %s is the next tier name, e.g. Agency Partner */
+						__( 'You’ve reached the target for %s' ),
+						nextTier.name
+					),
+		caption: sprintf(
+			/* translators: 1: influenced revenue so far, 2: next tier target. Example: $0 of $1,200 */
+			__( '%1$s of %2$s' ),
+			formatAmount( total ),
+			formatAmount( target )
+		),
+		label: sprintf(
+			/* translators: 1: influenced revenue so far, 2: next tier target, 3: next tier name */
+			__( '%1$s of %2$s influenced revenue for %3$s.' ),
+			formatAmount( total ),
+			formatAmount( target ),
+			nextTier.name
+		),
+		value: Math.min( 100, Math.max( 0, Math.floor( ( total / target ) * 100 ) ) ),
+	};
+}
+
 export default function InfluencedRevenue( {
 	currentAgencyTierId,
 	totalInfluencedRevenue,
@@ -94,18 +166,22 @@ export default function InfluencedRevenue( {
 		return null;
 	}
 
-	const target = currentTier.influencedRevenue;
-	const progressValue =
-		target > 0 ? Math.min( 100, Math.round( ( totalInfluencedRevenue / target ) * 100 ) ) : 0;
+	const { headline, caption, label, value } = getProgress( currentTier, totalInfluencedRevenue );
 
 	return (
 		<VStack spacing={ 2 }>
 			<InfluencedRevenueStrapline recordTracksEvent={ recordTracksEvent } />
-			<ProgressBar className="agency-tiers-influenced-revenue-bar" value={ progressValue } />
-			<HStack justify="space-between">
-				<Text weight={ 500 }>{ formatCurrency( totalInfluencedRevenue, 'USD' ) }</Text>
-				<Text variant="muted">{ formatCurrency( target, 'USD' ) }</Text>
-			</HStack>
+			<Text size={ 15 } weight={ 500 } lineHeight="20px" style={ { textWrap: 'balance' } }>
+				{ headline }
+			</Text>
+			<ProgressBar
+				className="agency-tiers-influenced-revenue-bar"
+				value={ value }
+				aria-label={ label }
+			/>
+			<Text variant="muted" size={ 12 } lineHeight="20px" style={ { textWrap: 'balance' } }>
+				{ caption }
+			</Text>
 		</VStack>
 	);
 }

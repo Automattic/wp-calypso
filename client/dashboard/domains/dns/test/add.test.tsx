@@ -24,7 +24,7 @@ const rootMxRecords: DnsRecord[] = [
 
 function mockApi( records: DnsRecord[] = rootMxRecords ) {
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/rest/v1.2/domain-details/${ domainName }` )
+		.get( `/rest/v1.2/domain-details/${ domainName }/` )
 		.reply( 200, { domain: domainName, has_wpcom_nameservers: true } as Domain )
 		.get( `/rest/v1.1/domains/${ domainName }/dns` )
 		.reply( 200, { records } );

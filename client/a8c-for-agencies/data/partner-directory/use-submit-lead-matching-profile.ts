@@ -1,3 +1,4 @@
+import { preserveIgnoredAgencyContacts } from '@automattic/api-core';
 import {
 	useMutation,
 	UseMutationOptions,
@@ -10,7 +11,7 @@ import {
 } from 'calypso/a8c-for-agencies/sections/partner-directory/types';
 import wpcom from 'calypso/lib/wp';
 import { useSelector } from 'calypso/state';
-import { getActiveAgencyId } from 'calypso/state/a8c-for-agencies/agency/selectors';
+import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { APIError } from 'calypso/state/a8c-for-agencies/types';
 import { getLeadMatchingProfileQueryKey } from './use-lead-matching-profile';
 
@@ -39,11 +40,27 @@ export default function useSubmitLeadMatchingProfileMutation< TContext = unknown
 	>
 ): UseMutationResult< AgencyLeadMatchingResponse, APIError, AgencyLeadMatchingProfile, TContext > {
 	const queryClient = useQueryClient();
-	const agencyId = useSelector( getActiveAgencyId );
+	const agency = useSelector( getActiveAgency );
+	const agencyId = agency?.id;
 
 	return useMutation< AgencyLeadMatchingResponse, APIError, AgencyLeadMatchingProfile, TContext >( {
 		...options,
-		mutationFn: ( profile ) => mutationSubmitLeadMatchingProfile( agencyId, profile ),
+		mutationFn: async ( profile ) => {
+			const response = await mutationSubmitLeadMatchingProfile( agencyId, profile );
+			const previous = queryClient.getQueryData< AgencyLeadMatchingResponse >(
+				getLeadMatchingProfileQueryKey( agencyId )
+			);
+			return {
+				...response,
+				lead_matching_profile: response.lead_matching_profile
+					? preserveIgnoredAgencyContacts(
+							response.lead_matching_profile,
+							previous?.lead_matching_profile ?? agency?.lead_matching?.profile,
+							response.ignored_contact_fields
+						)
+					: response.lead_matching_profile,
+			};
+		},
 		onSuccess: ( data, variables, context ) => {
 			queryClient.setQueryData( getLeadMatchingProfileQueryKey( agencyId ), data );
 			options?.onSuccess?.( data, variables, context );

@@ -2,10 +2,16 @@ import { isEnabled } from '@automattic/calypso-config';
 import { isDomainMapping, isDomainTransfer } from '@automattic/calypso-products';
 import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { getLanguageSlugs } from '@automattic/i18n-utils';
-import { clearStepPersistedState, ONBOARDING_FLOW, SITE_SETUP_FLOW } from '@automattic/onboarding';
+import {
+	clearStepPersistedState,
+	ONBOARDING_FLOW,
+	SITE_MIGRATION_FLOW,
+	SITE_SETUP_FLOW,
+} from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -39,11 +45,13 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
+	BLUEPRINT_BUILD_DEST_SIMPLE,
 	getBlueprintArchiveSiteSpecUrl,
 	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
 	getStandaloneBlueprintSimpleSlug,
 	isBlueprintCustomThemeBuild,
+	ZOOM_BLUEPRINT_SLUG,
 } from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
@@ -313,7 +321,13 @@ async function initialize( reduxStore: Store ) {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT, STEPS.ERROR ];
+	return [
+		...stepsWithRequiredLogin( steps ),
+		STEPS.PLAYGROUND,
+		STEPS.BLUEPRINT,
+		STEPS.ZOOM_BLUEPRINT,
+		STEPS.ERROR,
+	];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -328,6 +342,8 @@ const onboarding: FlowV2< typeof initialize > = {
 		// coupon stands alone too: WordCamp coupon links name no plan.
 		const couponParam = query.get( 'coupon' );
 		const storageParam = preselectedPlan ? query.get( 'storage' ) : null;
+		// The legacy flow a link came from, such as `import` or `reblogging`.
+		const fromFlow = query.get( 'flow' );
 
 		// A new object each render would record a new signup start, so this has to be memoised.
 		return useMemo( () => {
@@ -337,16 +353,17 @@ const onboarding: FlowV2< typeof initialize > = {
 				...( preselectedPlan ? { preselected_plan: preselectedPlan } : {} ),
 				...( couponParam ? { coupon: couponParam } : {} ),
 				...( storageParam ? { storage: storageParam } : {} ),
+				...( fromFlow ? { from_flow: fromFlow } : {} ),
 			};
 
 			return {
 				isLoading: false,
 				eventsProperties:
-					preselectedPlan || couponParam
+					preselectedPlan || couponParam || fromFlow
 						? { [ STEPPER_TRACKS_EVENT_SIGNUP_START ]: signupStartProperties }
 						: {},
 			};
-		}, [ preselectedPlan, couponParam, storageParam ] );
+		}, [ preselectedPlan, couponParam, storageParam, fromFlow ] );
 	},
 	useStepsProps() {
 		// The site-selected signup flow records its own completion before checkout, so the
@@ -413,6 +430,16 @@ const onboarding: FlowV2< typeof initialize > = {
 		const wowFunnelDest = getWowFunnelDest( queryParams, wowFunnelSlug );
 		// From the Reader's "Create a site to reblog": the run ends in the new site's editor.
 		const blogPostToReblog = queryParams.get( 'blog_post' );
+		// The legacy flow a link came from, which signup start reports.
+		const fromFlow = queryParams.get( 'flow' );
+		// From `/start/import`: onboarding ends in site migration, which brings the content over.
+		const isImport = fromFlow === 'import';
+		// Every URL that re-enters onboarding must keep these, or it forgets where to land.
+		const persistedQueryArgs = {
+			...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+			...( fromFlow ? { flow: fromFlow } : {} ),
+		};
+		const hasCustomDestination = !! blogPostToReblog || isImport;
 
 		/**
 		 * Returns where to land after checkout, or `defaultDestination` when nothing overrides it.
@@ -456,6 +483,12 @@ const onboarding: FlowV2< typeof initialize > = {
 			if ( blogPostToReblog && providedDependencies.siteSlug ) {
 				return addQueryArgs( `/post/${ providedDependencies.siteSlug }`, {
 					url: blogPostToReblog,
+				} );
+			}
+
+			if ( isImport && providedDependencies.siteSlug ) {
+				return addQueryArgs( `/setup/${ SITE_MIGRATION_FLOW }`, {
+					siteSlug: providedDependencies.siteSlug,
 				} );
 			}
 
@@ -801,7 +834,7 @@ const onboarding: FlowV2< typeof initialize > = {
 								siteSlug: siteSlugParam,
 								...( siteIdParam ? { siteId: siteIdParam } : {} ),
 								...( refParameter ? { ref: refParameter } : {} ),
-								...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+								...persistedQueryArgs,
 							} )
 						);
 						return;
@@ -863,20 +896,16 @@ const onboarding: FlowV2< typeof initialize > = {
 										siteSlug,
 										siteId: providedDependencies.siteId,
 										...( refParameter ? { ref: refParameter } : {} ),
-										...( blogPostToReblog ? { blog_post: blogPostToReblog } : {} ),
+										...persistedQueryArgs,
 									}
 								);
 							}
 
-							// Leaving checkout must not turn a reblog into plain onboarding.
+							// Leaving checkout must not turn a reblog or an import into plain onboarding.
 							// The plans grid prices a coupon only from the URL.
 							const checkoutBackQueryArgs = {
-								...( blogPostToReblog
-									? {
-											blog_post: blogPostToReblog,
-											...( refParameter ? { ref: refParameter } : {} ),
-										}
-									: {} ),
+								...persistedQueryArgs,
+								...( hasCustomDestination && refParameter ? { ref: refParameter } : {} ),
 								...( coupon ? { coupon } : {} ),
 							};
 
@@ -888,15 +917,15 @@ const onboarding: FlowV2< typeof initialize > = {
 							// replace the location to delete processing step from history.
 							window.location.replace(
 								addQueryArgs( `/checkout/${ encodeURIComponent( siteSlug ) }`, {
-									// build_dest=wow, the WoW funnel (dest=editor) and a reblog go
-									// straight from checkout to their destination — no
-									// post-checkout-onboarding hop, no chooser. A reblog meets the
-									// email-verification gate first.
+									// build_dest=wow, the WoW funnel (dest=editor), a reblog and an import
+									// go straight from checkout to their destination — no
+									// post-checkout-onboarding hop, no chooser. A reblog or an import
+									// meets the email-verification gate first.
 									redirect_to:
 										blueprintArchiveSlug ||
 										blueprintSimpleSlug ||
 										isKnownWowFunnel( wowFunnelSlug ) ||
-										( blogPostToReblog && ! returnsThroughVerification )
+										( hasCustomDestination && ! returnsThroughVerification )
 											? destination
 											: redirectTo,
 									signup: 1,
@@ -921,10 +950,10 @@ const onboarding: FlowV2< typeof initialize > = {
 							blueprintArchiveSlug ||
 							blueprintSimpleSlug ||
 							isKnownWowFunnel( wowFunnelSlug ) ||
-							blogPostToReblog
+							hasCustomDestination
 						) {
-							// build_dest=wow, build_dest=simple, the WoW funnel and a reblog never
-							// show the setup-your-site-ai chooser; go straight to their destination.
+							// build_dest=wow, build_dest=simple, the WoW funnel, a reblog and an import
+							// never show the setup-your-site-ai chooser; go straight to their destination.
 							// This can stay ahead of the domain branches below: a connected or
 							// transferred domain forces a paid plan (use-my-domain hides the free
 							// plan), and a paid funnel order's checkout redirect_to is the funnel
@@ -978,6 +1007,28 @@ const onboarding: FlowV2< typeof initialize > = {
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
+					);
+				}
+				case 'zoom': {
+					// The Zoom partner link: from here the run is the blueprint entry it stands for. What the
+					// link leaves out is filled in here; what it names (these, the spec meta, ref) rides along
+					// as given. This step is replaced in history, since Back onto it would only forward again.
+					const linkParams = new URLSearchParams( window.location.search );
+					const defaults: Record< string, string > = {
+						blueprint: ZOOM_BLUEPRINT_SLUG,
+						build_dest: BLUEPRINT_BUILD_DEST_SIMPLE,
+						// The title is the only thing the blueprint's interview would open to ask for.
+						site_title: String( translate( 'My Booking Site' ) ),
+					};
+					return navigate(
+						addQueryArgs(
+							'blueprint',
+							Object.fromEntries(
+								Object.entries( defaults ).filter( ( [ key ] ) => ! linkParams.get( key ) )
+							)
+						) as typeof currentStepSlug,
+						undefined,
+						true
 					);
 				}
 				default:

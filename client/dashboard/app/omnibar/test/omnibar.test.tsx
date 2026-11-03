@@ -2,14 +2,14 @@
  * @jest-environment jsdom
  */
 
-import { omnibarSiteIdQuery } from '@automattic/api-queries';
+import { omnibarAgentsManagerEnabledQuery, omnibarSiteIdQuery } from '@automattic/api-queries';
 import { getEmptyResponseCart, getEmptyResponseCartProduct } from '@automattic/shopping-cart';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import { dashboardLink } from '../../../utils/link';
+import { dashboardLink, wpcomLink } from '../../../utils/link';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import { shoppingCartManagerClient } from '../../shopping-cart';
 import OmnibarContainer from '../omnibar';
@@ -18,7 +18,9 @@ import type { AppConfig } from '../../context';
 const site = {
 	ID: 1,
 	name: 'Test Site',
+	launch_status: 'unlaunched',
 	site_migration: {},
+	capabilities: { manage_options: true },
 	options: {
 		admin_url: 'https://test-site.wordpress.com/wp-admin/',
 		wpcom_admin_interface: 'wp-admin',
@@ -326,6 +328,35 @@ const siteAdminBarNodes = [
 		group: false,
 	},
 	{
+		id: 'stats',
+		title:
+			"<div><img src='/wp-includes/charts/admin-bar-hours-scale.php?blog=1' alt='Stats' title='Views over 48 hours. Click for more Stats.'></div>",
+		parent: false,
+		href: 'https://test-site.wordpress.com/wp-admin/admin.php?page=stats#!/stats/day/1',
+		group: false,
+		meta: {
+			menu_title: 'Stats',
+		},
+	},
+	{
+		id: 'free-domain-upsell',
+		title:
+			'<span class="ab-icon" aria-hidden="true"><svg></svg></span><span class="ab-label">Free domain</span>',
+		parent: false,
+		href: 'https://wordpress.com/setup/domain-and-plan?siteSlug=test-site.wordpress.com&ref=omnibar-free-domain',
+		group: false,
+		meta: {
+			menu_title: 'Free domain',
+		},
+	},
+	{
+		id: 'launch-site',
+		title: '<span class="ab-icon"><svg></svg></span><span class="ab-label">Launch site</span>',
+		parent: false,
+		href: 'https://wordpress.com/setup/launch-site?siteSlug=test-site.wordpress.com&ref=wp-admin',
+		group: false,
+	},
+	{
 		id: 'updates',
 		title:
 			'<span class="ab-icon" aria-hidden="true"></span><span class="ab-label" aria-hidden="true">1</span><span class="screen-reader-text updates-available-text">1 update available</span>',
@@ -428,6 +459,7 @@ function mockAdminBar( path: string, nodes: unknown[] ) {
 function renderOmnibar( { siteId = null }: { siteId?: number | null } = {} ) {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	queryClient.setQueryData( omnibarSiteIdQuery().queryKey, siteId );
+	queryClient.setQueryData( omnibarAgentsManagerEnabledQuery().queryKey, true );
 
 	return render(
 		<OmnibarContainer cartManagerClient={ shoppingCartManagerClient } preferDashboardAdminBar />,
@@ -460,6 +492,7 @@ describe( '<Omnibar>', () => {
 			await within( toolbar ).findByRole( 'button', { name: 'WordPress.com' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Reader' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Help Center' } ),
+			within( toolbar ).getByRole( 'button', { name: 'Agent' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Manage your notifications' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Howdy, Test User' } ),
 		] );
@@ -496,6 +529,14 @@ describe( '<Omnibar>', () => {
 					},
 				],
 			} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/rest/v1.1/sites/${ site.ID }/stats/visits` )
+			.query( true )
+			.reply( 200, { data: [ [ '2026-10-01 00:00:00', 7 ] ] } );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.2/all-domains' )
+			.query( true )
+			.reply( 200, { domains: [] } );
 
 		renderOmnibar( { siteId: site.ID } );
 
@@ -505,16 +546,26 @@ describe( '<Omnibar>', () => {
 		expectInOrder( [
 			await within( toolbar ).findByRole( 'button', { name: 'WordPress.com' } ),
 			siteNode,
-			await within( toolbar ).findByRole( 'button', { name: '1 update available' } ),
+			await within( toolbar ).findByRole( 'button', {
+				name: 'Views over 48 hours. Click for more Stats.',
+			} ),
+			within( toolbar ).getByRole( 'button', { name: 'Free domain' } ),
+			within( toolbar ).getByRole( 'button', { name: 'Launch site' } ),
+			within( toolbar ).getByRole( 'button', { name: '1 update available' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Open command palette' } ),
 			within( toolbar ).getByRole( 'button', { name: '0 Comments in moderation' } ),
 			within( toolbar ).getByRole( 'button', { name: 'New' } ),
 			await within( toolbar ).findByRole( 'button', { name: 'My shopping cart' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Reader' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Help Center' } ),
+			within( toolbar ).getByRole( 'button', { name: 'Agent' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Manage your notifications' } ),
 			within( toolbar ).getByRole( 'button', { name: 'Howdy, Test User' } ),
 		] );
+		expect( within( toolbar ).getByRole( 'button', { name: 'Free domain' } ) ).toHaveAttribute(
+			'href',
+			wpcomLink( '/setup/domain-and-plan?siteSlug=test-site.wordpress.com&ref=omnibar-free-domain' )
+		);
 		expect( within( toolbar ).getByRole( 'button', { name: 'New' } ) ).toHaveAttribute(
 			'href',
 			'https://test-site.wordpress.com/wp-admin/post-new.php?post_type=post'
