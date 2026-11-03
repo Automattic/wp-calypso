@@ -257,6 +257,7 @@ export default function AssignLicenseModal( {
 					title={ getAssignErrorTitle( 'woocommerce-not-installed' ) }
 					actions={
 						<Button
+							__next40pxDefaultSize
 							variant="secondary"
 							href={ errorSiteUrl + WOOCOMMERCE_INSTALL_PATH }
 							target="_blank"
@@ -314,6 +315,7 @@ export default function AssignLicenseModal( {
 					title={ getAssignErrorTitle( 'woocommerce-not-connected' ) }
 					actions={
 						<Button
+							__next40pxDefaultSize
 							variant="secondary"
 							href={ errorSiteUrl + WOOCOMMERCE_CONNECT_PATH }
 							target="_blank"
