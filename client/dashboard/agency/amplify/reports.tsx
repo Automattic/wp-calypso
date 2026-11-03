@@ -546,7 +546,6 @@ export default function AmplifyReportsList( {
 			{ reportToArchive && (
 				<Modal
 					title={ __( 'Archive report?' ) }
-					size="small"
 					isDismissible={ ! isArchiving }
 					shouldCloseOnEsc={ ! isArchiving }
 					shouldCloseOnClickOutside={ ! isArchiving }

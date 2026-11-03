@@ -34,7 +34,6 @@ export default function AmplifyNewReportModal( {
 	return (
 		<Modal
 			title={ __( 'New report' ) }
-			size="medium"
 			isDismissible={ ! isStarting }
 			shouldCloseOnEsc={ ! isStarting }
 			shouldCloseOnClickOutside={ ! isStarting }
