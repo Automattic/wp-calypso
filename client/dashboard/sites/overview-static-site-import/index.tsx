@@ -24,11 +24,7 @@ import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { withJetpackSso } from '../../utils/site-sso';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
-import type {
-	Site,
-	StaticSiteImportCapability,
-	StaticSiteImportSession,
-} from '@automattic/api-core';
+import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
 import './style.scss';
 
@@ -114,35 +110,6 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 	const requestHandoff = () =>
 		handoff.mutate( { blogUrl: site.slug, fromUrl: search.from ?? '', locale } );
 	return { handoff, requestHandoff };
-}
-
-/**
- * What each feature the move found on the old site is called. Only features backed by a service
- * the move doesn't copy are named; menus, pop-ups, video and embeds come across as blocks.
- */
-const FOUND_FEATURE_LABELS: Partial< Record< StaticSiteImportCapability, () => string > > = {
-	commerce: () => __( 'a store' ),
-	events: () => __( 'event tickets' ),
-	booking: () => __( 'bookings' ),
-	membership: () => __( 'memberships' ),
-	forms: () => __( 'forms' ),
-};
-
-function getInspection( session?: StaticSiteImportSession ) {
-	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
-	return summary?.inspection;
-}
-
-/** Names the features the move found on the old site, as a list in the reader's language. */
-function getFoundFeatures( session: StaticSiteImportSession | undefined, locale: string ) {
-	const found = getInspection( session )?.capabilities ?? {};
-	const labels = Object.entries( FOUND_FEATURE_LABELS )
-		.filter( ( [ capability ] ) => ( found[ capability as StaticSiteImportCapability ] ?? 0 ) > 0 )
-		.map( ( [ , label ] ) => label() );
-	if ( ! labels.length ) {
-		return '';
-	}
-	return new Intl.ListFormat( locale, { type: 'conjunction' } ).format( labels );
 }
 
 /** Takes the place of the progress card when a move fails. */
@@ -273,13 +240,10 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
-	const locale = useLocale();
 	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
-	const foundFeatures = getFoundFeatures( siteImport.session, locale );
-	// Inspection's own rating of the old site; `band` withholds it whenever only some pages were sampled.
-	const observedBand = getInspection( siteImport.session )?.observed_band;
-	const isDemanding = observedBand === 'moderate' || observedBand === 'complex';
+	// What the move found that may need our team, already in the reader's language.
+	const reviewNote = siteImport.session?.review_note;
 	const isReady = siteImport.status === 'finished';
 	const trackingProps = {
 		site_id: site.ID,
@@ -443,23 +407,7 @@ export function StaticSiteImportNotice( {
 										'Your site is copied and running on WordPress.com. It stays private until you launch it.'
 									) }
 						</span>
-						{ foundFeatures && (
-							<span>
-								{ sprintf(
-									/* translators: 1: features found on the old site, e.g. "a store, forms, and pop-ups". 2: the address of the site that was moved, or "your old site". */
-									__( 'We found %1$s on %2$s. If any of it isn’t working, our team can fix it.' ),
-									foundFeatures,
-									sourceHost || __( 'your old site' )
-								) }
-							</span>
-						) }
-						{ ! foundFeatures && isDemanding && (
-							<span>
-								{ __(
-									'Larger or more interactive sites like this one sometimes need a hand. If anything looks off, our team can fix it.'
-								) }
-							</span>
-						) }
+						{ reviewNote && <span>{ reviewNote }</span> }
 						{ handoff.isError && (
 							<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
 						) }
