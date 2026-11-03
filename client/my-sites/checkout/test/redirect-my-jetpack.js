@@ -150,6 +150,7 @@ describe( 'redirectMyJetpack', () => {
 		[ 'https://example.com/wp-admin/', 'https://example.com/wp-admin/' ],
 		[ 'https://example.com/some-page/', undefined ],
 		[ 'https://example.com/?next=/wp-admin/', undefined ],
+		[ '/wp-admin/admin.php', undefined ],
 	] )( 'sends redirect_to %s to siteless checkout with admin_url %s', ( redirectTo, adminUrl ) => {
 		const redirectQuery = { ...query, redirect_to: redirectTo };
 		const redirectContext = {

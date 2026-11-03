@@ -488,16 +488,16 @@ export function checkout( context, next ) {
 
 /**
  * The site's wp-admin URL (e.g. `https://example.com/wp-admin/`), taken from a
- * `redirect_to` that points into wp-admin. Checkout appends wp-admin paths to it.
+ * `redirect_to` that is an absolute URL into wp-admin. Checkout appends wp-admin paths to it.
  * @param   {string|undefined} redirectTo The `redirect_to` the site sent to checkout
- * @returns {string|undefined}            The wp-admin URL, or undefined when `redirectTo` isn't in wp-admin
+ * @returns {string|undefined}            The wp-admin URL, or undefined when `redirectTo` isn't an absolute wp-admin URL
  */
 function getAdminUrlFromRedirectTo( redirectTo ) {
 	if ( typeof redirectTo !== 'string' ) {
 		return undefined;
 	}
 
-	return redirectTo.match( /^[^?#]*?\/wp-admin\// )?.[ 0 ];
+	return redirectTo.match( /^https?:\/\/[^?#]*?\/wp-admin\// )?.[ 0 ];
 }
 
 /**
