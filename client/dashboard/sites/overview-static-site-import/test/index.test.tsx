@@ -439,11 +439,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		};
 		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
 
-		if ( message ) {
-			expect( screen.getByText( message ) ).toBeVisible();
-		} else {
-			expect( screen.queryByText( /We found|need a hand/ ) ).not.toBeInTheDocument();
-		}
+		expect( screen.queryByText( /We found|need a hand/ )?.textContent ?? null ).toBe( message );
 	} );
 
 	it( 'leaves a failed move to the failure card', () => {
