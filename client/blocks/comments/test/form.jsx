@@ -127,6 +127,7 @@ describe( 'PostCommentForm', () => {
 			assetsUrl: 'https://s0.wp.com/build/',
 			loaderUrl: 'https://s0.wp.com/build/editor-loader.js',
 			maxLength: 65525,
+			blocks: true,
 			editorLocale: {},
 			editor: { blockTools: 'Block tools', addBlock: 'Add block', embedUrl: '', images: false },
 		};
@@ -152,20 +153,19 @@ describe( 'PostCommentForm', () => {
 			return request.isDone();
 		};
 
-		it( 'saves block markup for a site with block comments', async () => {
-			mockEditorSettings( 200, { ...editorSettings, blocks: true } );
+		it.each( [
+			[ 'block markup for a site with block comments', true, markup ],
+			[
+				'plain HTML for a site without block comments',
+				false,
+				'Hello <strong>there</strong>\n\n- One',
+			],
+		] )( 'saves %s', async ( _, blocks, content ) => {
+			mockEditorSettings( 200, { ...editorSettings, blocks } );
 			renderForm( { commentText: markup }, { composer: true } );
 
 			await screen.findByRole( 'textbox', { name: 'Comment' } );
-			expect( await postReply( markup ) ).toBe( true );
-		} );
-
-		it( 'saves plain HTML for a site without block comments', async () => {
-			mockEditorSettings( 200, { ...editorSettings, blocks: false } );
-			renderForm( { commentText: markup }, { composer: true } );
-
-			await screen.findByRole( 'textbox', { name: 'Comment' } );
-			expect( await postReply( 'Hello <strong>there</strong>\n\n- One' ) ).toBe( true );
+			expect( await postReply( content ) ).toBe( true );
 		} );
 
 		it( 'keeps the textarea where the site has no editor settings', async () => {
@@ -177,14 +177,17 @@ describe( 'PostCommentForm', () => {
 			expect( await postReply( 'Plain words' ) ).toBe( true );
 		} );
 
-		it( 'offers Cancel on a reply only', async () => {
+		it( 'leaves Cancel off the top-level composer', () => {
 			mockEditorSettings( 404, {} );
-			const { unmount } = renderForm( {}, { composer: true } );
-			expect( screen.queryByRole( 'button', { name: 'Cancel' } ) ).not.toBeInTheDocument();
-			unmount();
+			renderForm( {}, { composer: true } );
 
+			expect( screen.queryByRole( 'button', { name: 'Cancel' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'offers Cancel on a reply', () => {
 			mockEditorSettings( 404, {} );
 			renderForm( { parentCommentId: 99, onReplyCancel: jest.fn() }, { composer: true } );
+
 			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 		} );
 	} );

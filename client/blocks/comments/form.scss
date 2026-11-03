@@ -45,11 +45,6 @@
 		color: var(--color-link);
 	}
 
-	.comments__cancel-reply {
-		font-size: $font-body-extra-small;
-		cursor: pointer;
-	}
-
 	@include ui-mixins.when-dark-theme {
 		.form-textarea {
 			background: var( --color-surface );

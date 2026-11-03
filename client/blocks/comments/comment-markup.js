@@ -1,8 +1,34 @@
-// The inline tags a site's comment kses keeps, so a site without block comments stores them as written.
-const INLINE_TAGS = [ 'a', 'b', 'code', 'del', 'em', 'i', 's', 'strong' ];
+export const isBlockMarkup = ( content ) => content.includes( '<!-- wp:' );
+
+// An inert document, so nothing in the markup runs or loads.
+const parse = ( markup ) => new DOMParser().parseFromString( markup, 'text/html' ).body;
+
+// The words of the editor's block markup, for the textarea it falls back to.
+export const blocksToText = ( markup ) =>
+	parse(
+		markup
+			.replace( /<\/(p|pre|blockquote|figcaption|ul|ol)>/gi, '$&\n\n' )
+			.replace( /<\/li>/gi, '$&\n' )
+	)
+		.textContent.replace( /\n{3,}/g, '\n\n' )
+		.trim();
+
+// Whether the editor's markup holds anything to post. The editor reports an empty paragraph as
+// empty, but not an emptied list, quote, or code block.
+export const hasBlockContent = ( markup ) => {
+	const body = parse( markup );
+	return !! body.textContent.trim() || !! body.querySelector( 'img' );
+};
 
 const escape = ( text ) =>
-	text.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
+	text
+		.replace( /&/g, '&amp;' )
+		.replace( /</g, '&lt;' )
+		.replace( />/g, '&gt;' )
+		.replace( /"/g, '&quot;' );
+
+// The inline tags a site's comment kses keeps, so a site without block comments stores them as written.
+const INLINE_TAGS = [ 'a', 'b', 'code', 'del', 'em', 'i', 's', 'strong' ];
 
 const inline = ( node ) =>
 	Array.from( node.childNodes )
@@ -28,7 +54,7 @@ const inline = ( node ) =>
 			if ( tag === 'a' ) {
 				const href = child.getAttribute( 'href' ) ?? '';
 				return /^(https?:|mailto:)/i.test( href )
-					? `<a href="${ escape( href ).replace( /"/g, '&quot;' ) }">${ inline( child ) }</a>`
+					? `<a href="${ escape( href ) }">${ inline( child ) }</a>`
 					: inline( child );
 			}
 			return `<${ tag }>${ inline( child ) }</${ tag }>`;
@@ -70,8 +96,6 @@ function blocks( parent ) {
 /**
  * The editor's block markup as HTML a site without block comments keeps: the inline tags core's
  * comment kses allows, with blank lines between paragraphs and lists as lines, which wpautop turns
- * back into paragraphs and line breaks when the comment is shown. Parsed in an inert document, so
- * nothing in the markup runs or loads.
+ * back into paragraphs and line breaks when the comment is shown.
  */
-export const blocksToHtml = ( markup ) =>
-	blocks( new DOMParser().parseFromString( markup, 'text/html' ).body );
+export const blocksToHtml = ( markup ) => blocks( parse( markup ) );

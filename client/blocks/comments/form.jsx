@@ -20,31 +20,11 @@ import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
-import { blocksToHtml } from './blocks-to-html';
 import CommentBlockEditor from './comment-block-editor';
 import { CommentEditorContext } from './comment-editor-context';
+import { blocksToHtml, blocksToText, hasBlockContent, isBlockMarkup } from './comment-markup';
 
 const noop = () => {};
-
-// The words of the editor's block markup, for the textarea it falls back to. An inert document,
-// so nothing in the markup runs or loads.
-const blocksToText = ( markup ) =>
-	new DOMParser()
-		.parseFromString(
-			markup
-				.replace( /<\/(p|pre|blockquote|figcaption|ul|ol)>/gi, '$&\n\n' )
-				.replace( /<\/li>/gi, '$&\n' ),
-			'text/html'
-		)
-		.body.textContent.replace( /\n{3,}/g, '\n\n' )
-		.trim();
-
-// Whether the editor's markup holds anything to post. The editor reports an empty paragraph as
-// empty, but not an emptied list, quote, or code block.
-const hasBlockContent = ( markup ) => {
-	const body = new DOMParser().parseFromString( markup, 'text/html' ).body;
-	return !! body.textContent.trim() || !! body.querySelector( 'img' );
-};
 
 function PostCommentFormError( { type } ) {
 	const translate = useTranslate();
@@ -93,7 +73,7 @@ class PostCommentForm extends Component {
 		this.setState( { editorFailed: true } );
 		// The textarea cannot show block markup, so it gets the words instead.
 		const text = this.getCommentText();
-		if ( text.includes( '<!-- wp:' ) ) {
+		if ( isBlockMarkup( text ) ) {
 			this.props.onUpdateCommentText( blocksToText( text ) );
 		}
 	};
@@ -123,11 +103,7 @@ class PostCommentForm extends Component {
 		event.preventDefault();
 
 		const post = this.props.post;
-		let commentText = this.getCommentText().trim();
-		// A site without block comments doesn't render block markup, so it gets plain HTML.
-		if ( this.props.editorSettings?.blocks === false && commentText.includes( '<!-- wp:' ) ) {
-			commentText = blocksToHtml( commentText );
-		}
+		const commentText = this.getCommentText().trim();
 
 		if ( ! this.hasCommentText() ) {
 			this.resetCommentText(); // Clean up any newlines
@@ -149,10 +125,16 @@ class PostCommentForm extends Component {
 			this.props.deleteComment( post.site_ID, post.ID, this.props.placeholderId );
 		}
 
+		// A site without block comments doesn't render block markup, so it gets plain HTML.
+		const content =
+			this.props.editorSettings?.blocks === false && isBlockMarkup( commentText )
+				? blocksToHtml( commentText )
+				: commentText;
+
 		if ( this.props.parentCommentId ) {
-			this.props.replyComment( commentText, post.site_ID, post.ID, this.props.parentCommentId );
+			this.props.replyComment( content, post.site_ID, post.ID, this.props.parentCommentId );
 		} else {
-			this.props.writeComment( commentText, post.site_ID, post.ID );
+			this.props.writeComment( content, post.site_ID, post.ID );
 		}
 
 		recordAction( 'posted_comment' );
@@ -195,7 +177,7 @@ class PostCommentForm extends Component {
 
 	hasCommentText() {
 		const text = this.getCommentText();
-		return text.includes( '<!-- wp:' ) ? hasBlockContent( text ) : text.trim().length > 0;
+		return isBlockMarkup( text ) ? hasBlockContent( text ) : text.trim().length > 0;
 	}
 
 	render() {
@@ -285,7 +267,6 @@ class PostCommentForm extends Component {
 						<AutoresizingFormTextarea
 							value={ this.getCommentText() }
 							placeholder={ placeholder }
-							onKeyUp={ this.handleKeyUp }
 							onKeyDown={ this.handleKeyDown }
 							onFocus={ this.handleFocus }
 							onBlur={ this.handleBlur }

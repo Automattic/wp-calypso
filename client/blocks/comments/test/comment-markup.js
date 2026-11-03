@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { blocksToHtml } from '../blocks-to-html';
+import { blocksToHtml } from '../comment-markup';
 
 describe( 'blocksToHtml', () => {
 	it( 'writes paragraphs as text that wpautop splits again', () => {
