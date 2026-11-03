@@ -415,7 +415,11 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 	} );
 
 	it.each( [
-		[ 'names nothing when the move found nothing to name', { navigation: 3 }, null ],
+		[
+			'names nothing that comes across as blocks',
+			{ navigation: 3, dialogs: 2, media: 1, embeds: 1 },
+			null,
+		],
 		[
 			'names what the move found on the old site',
 			{ commerce: 4, forms: 1, navigation: 3 },

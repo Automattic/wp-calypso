@@ -116,15 +116,15 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 	return { handoff, requestHandoff };
 }
 
-/** What each feature the move found on the old site is called. Navigation is on nearly every site. */
+/**
+ * What each feature the move found on the old site is called. Only features backed by a service
+ * the move doesn't copy are named; menus, pop-ups, video and embeds come across as blocks.
+ */
 const FOUND_FEATURE_LABELS: Partial< Record< StaticSiteImportCapability, () => string > > = {
 	commerce: () => __( 'a store or ticket sales' ),
 	booking: () => __( 'bookings' ),
 	membership: () => __( 'memberships' ),
 	forms: () => __( 'forms' ),
-	dialogs: () => __( 'pop-ups or expanding menus' ),
-	embeds: () => __( 'embedded content' ),
-	media: () => __( 'video or animation' ),
 };
 
 /** Names the features the move found on the old site, as a list in the reader's language. */
