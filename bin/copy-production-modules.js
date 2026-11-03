@@ -74,19 +74,21 @@ function processPackage( pkgName, context ) {
 	// read package's package.json
 	const pkgJson = JSON.parse( fs.readFileSync( pkgFolder + '/package.json' ) );
 
-	// collect dependencies from various fields
-	const depFields = [ 'dependencies', 'peerDependencies', 'optionalDependencies' ];
-	const pkgDeps = depFields.flatMap( ( type ) => Object.keys( pkgJson[ type ] || {} ) );
-	// Anything the package itself marks as optional may legitimately be missing.
-	// `optionalDependencies` matters for packages that list one prebuilt binary per
-	// platform, such as esbuild: only the current platform's is ever installed, so
-	// treating them as required fails everywhere.
-	const optionalPkgDeps = [
-		...Object.keys( pkgJson.optionalDependencies || {} ),
-		...Object.keys( pkgJson.peerDependenciesMeta || {} ).filter(
-			( dep ) => pkgJson.peerDependenciesMeta[ dep ].optional === true
+	// Optional peers are skipped: they're only installed here because the repo uses them for
+	// development, e.g. @wordpress/theme's vite and stylelint integrations, not by the server.
+	const optionalPeers = Object.keys( pkgJson.peerDependenciesMeta || {} ).filter(
+		( dep ) => pkgJson.peerDependenciesMeta[ dep ].optional === true
+	);
+	const pkgDeps = [
+		...Object.keys( pkgJson.dependencies || {} ),
+		...Object.keys( pkgJson.peerDependencies || {} ).filter(
+			( dep ) => ! optionalPeers.includes( dep )
 		),
+		...Object.keys( pkgJson.optionalDependencies || {} ),
 	];
+	// `optionalDependencies` may legitimately be missing: packages such as esbuild list one
+	// prebuilt binary per platform, and only the current platform's is ever installed.
+	const optionalPkgDeps = Object.keys( pkgJson.optionalDependencies || {} );
 
 	// bail out if package has no dependencies
 	if ( ! pkgDeps.length ) {
