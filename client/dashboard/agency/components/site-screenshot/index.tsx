@@ -1,5 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
+
 import './style.scss';
 
 // Tables remount their cells whenever their columns change, so remember the previews that
