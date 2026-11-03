@@ -37,7 +37,7 @@ function pick( object, keys ) {
 }
 
 // Bounded so a language's ~2,600 files aren't all open at once.
-async function writeFiles( files, concurrency = 64 ) {
+async function writeFiles( files, concurrency = 8 ) {
 	let next = 0;
 	const worker = async () => {
 		while ( next < files.length ) {
