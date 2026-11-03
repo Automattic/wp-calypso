@@ -109,6 +109,7 @@
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
+		"notifications/subscriber-alerts-default-on": true,
 		"notifications/view-settings": true,
 		"oauth/unified-experience": true,
 		"onboarding/create-course": false,

@@ -51,6 +51,7 @@
 		"me/legacy-contact": false,
 		"migration/reprint-flow": false,
 		"notifications/subscriber-alerts": true,
+		"notifications/subscriber-alerts-default-on": false,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": false,
 		"plans/migration-trial": true,

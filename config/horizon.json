@@ -95,6 +95,7 @@
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
+		"notifications/subscriber-alerts-default-on": false,
 		"notifications/view-settings": true,
 		"oauth/unified-experience": false,
 		"onboarding/create-course": false,
