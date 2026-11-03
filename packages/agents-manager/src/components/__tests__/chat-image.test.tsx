@@ -52,10 +52,17 @@ describe( 'ChatImage', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'closes the lightbox on a click, such as on the close button', () => {
-		openLightbox();
+	it.each( [
+		[ 'the backdrop', ( dialog: HTMLElement ) => dialog ],
+		[ 'the image', ( dialog: HTMLElement ) => within( dialog ).getByRole( 'img' ) ],
+		[
+			'the close button',
+			( dialog: HTMLElement ) => within( dialog ).getByRole( 'button', { name: 'Close' } ),
+		],
+	] )( 'closes the lightbox on a click on %s', ( _, getTarget ) => {
+		const dialog = openLightbox();
 
-		fireEvent.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		fireEvent.click( getTarget( dialog ) );
 
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
