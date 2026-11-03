@@ -42,16 +42,16 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 );
 const { ValidatedInputControl } = unlock( privateApis );
 
-const RevealEmailErrorContext = createContext( false );
+const HasEmailSaveErrorContext = createContext( false );
 
 /**
  * A validity message only shows once the field has been blurred. An error that appears without the
  * user typing, like a bouncing email, needs to show straight away, so mark the field blurred then.
  * A synthetic `focusout` does that without moving focus, unlike an `invalid` event. A save error
- * arrives while the input may still have focus, so reveal that even then.
+ * moves focus to the field, since disabling the input during the save drops focus in browsers.
  */
 function EmailEdit( { data, field, onChange, validity }: DataFormControlProps< EmailFormData > ) {
-	const revealError = useContext( RevealEmailErrorContext );
+	const hasSaveError = useContext( HasEmailSaveErrorContext );
 	const inputRef = useRef< HTMLInputElement >( null );
 	const isInvalid = validity?.custom?.type === 'invalid';
 
@@ -60,11 +60,13 @@ function EmailEdit( { data, field, onChange, validity }: DataFormControlProps< E
 		if ( ! isInvalid || ! input ) {
 			return;
 		}
-		if ( ! revealError && input.ownerDocument.activeElement === input ) {
+		if ( hasSaveError ) {
+			input.focus();
+		} else if ( input.ownerDocument.activeElement === input ) {
 			return;
 		}
 		input.dispatchEvent( new FocusEvent( 'focusout', { bubbles: true } ) );
-	}, [ isInvalid, revealError ] );
+	}, [ isInvalid, hasSaveError ] );
 
 	return (
 		<ValidatedInputControl
@@ -297,7 +299,7 @@ export default function EmailSection( {
 
 	return (
 		<VStack spacing={ 4 }>
-			<RevealEmailErrorContext.Provider value={ showBouncingEmailError || !! serverError }>
+			<HasEmailSaveErrorContext.Provider value={ !! serverError }>
 				<DataForm< EmailFormData >
 					data={ formData }
 					fields={ fields }
@@ -305,7 +307,7 @@ export default function EmailSection( {
 					validity={ validity }
 					onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
 				/>
-			</RevealEmailErrorContext.Provider>
+			</HasEmailSaveErrorContext.Provider>
 			{ showCustomDomainWarning && (
 				<Notice
 					variant="warning"

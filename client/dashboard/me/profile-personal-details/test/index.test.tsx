@@ -524,6 +524,8 @@ describe( '<PersonalDetailsSection>', () => {
 			expect(
 				screen.queryByRole( 'button', { name: 'Dismiss this notice' } )
 			).not.toBeInTheDocument();
+			// Before `toBeInvalid()`, whose `invalid` event focuses the field.
+			expect( emailInput ).toHaveFocus();
 			expect( emailInput ).toBeInvalid();
 			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 
