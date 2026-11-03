@@ -18,7 +18,8 @@ let mockChartProps = null;
 
 jest.mock( '../../hooks/use-visits-query' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => () => '#3858e9' );
-jest.mock( '../use-stats-link', () => () => ( url ) => url );
+const mockStatsLink = jest.fn( ( url ) => url );
+jest.mock( '../use-stats-link', () => () => mockStatsLink );
 jest.mock( '../record-widget-event', () => ( {
 	__esModule: true,
 	default: jest.fn(),
@@ -146,6 +147,12 @@ describe( 'MiniChart', () => {
 			'href',
 			'https://example.com/wp-admin/admin.php?page=stats/stats/day/1?chartStart=2026-10-01&chartEnd=2026-10-07'
 		);
+		// On Premium Analytics, the Traffic section: the bare dashboard opens a store's WooCommerce section first.
+		expect( mockStatsLink ).toHaveBeenCalledWith( expect.any( String ), '/?section=traffic', {
+			from: '2026-10-01',
+			to: '2026-10-07',
+			gmtOffset: 0,
+		} );
 		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'more_stats_clicked', {
 			range: DATE_RANGE_LAST_7_DAYS,
 		} );

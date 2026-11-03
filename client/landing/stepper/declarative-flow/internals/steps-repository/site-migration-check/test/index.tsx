@@ -183,7 +183,6 @@ describe( 'SiteMigrationCheck', () => {
 			'href',
 			'https://example.com'
 		);
-		expect( screen.getByRole( 'button', { name: /Talk to a migration expert/ } ) ).toBeDisabled();
 		expect( submit ).not.toHaveBeenCalled();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );

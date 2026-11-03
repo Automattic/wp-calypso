@@ -1,17 +1,15 @@
 import { type DnsTemplateVariables } from '@automattic/api-core';
 import { domainDnsApplyTemplateMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import {
-	__experimentalVStack as VStack,
-	Button,
-	__experimentalText as Text,
-} from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { DataForm, Field, useFormValidity } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
 import { domainRoute } from '../../app/router/domains';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
+
+import './email-setup-form.scss';
 
 export type EmailSetupFormData = {
 	record: string;
@@ -27,7 +25,7 @@ const defaultFormData: EmailSetupFormData = {
 };
 
 interface EmailSetupFormProps {
-	description: React.ReactNode;
+	steps: React.ReactNode[];
 	label: string;
 	transformVariables?: ( variables: DnsTemplateVariables ) => DnsTemplateVariables;
 	pattern: RegExp;
@@ -37,7 +35,7 @@ interface EmailSetupFormProps {
 }
 
 export default function EmailSetupForm( {
-	description,
+	steps,
 	label,
 	transformVariables,
 	pattern,
@@ -112,6 +110,11 @@ export default function EmailSetupForm( {
 		<div>
 			<form onSubmit={ handleSubmit }>
 				<VStack spacing={ 5 }>
+					<ol className="dashboard-domain-dns-email-setup-form__steps">
+						{ steps.map( ( step, index ) => (
+							<li key={ index }>{ step }</li>
+						) ) }
+					</ol>
 					<DataForm< EmailSetupFormData >
 						data={ formData }
 						fields={ fields }
@@ -120,7 +123,6 @@ export default function EmailSetupForm( {
 							setFormData( ( data ) => ( { ...data, ...edits } ) );
 						} }
 					/>
-					<Text variant="muted">{ description }</Text>
 					<ButtonStack justify="flex-start">
 						<Button
 							type="submit"
