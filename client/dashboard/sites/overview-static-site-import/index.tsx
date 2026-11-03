@@ -122,7 +122,7 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
  */
 const FOUND_FEATURE_LABELS: Partial< Record< StaticSiteImportCapability, () => string > > = {
 	commerce: () => __( 'a store' ),
-	events: () => __( 'event tickets' ),
+	events: () => __( 'events' ),
 	booking: () => __( 'bookings' ),
 	membership: () => __( 'memberships' ),
 	forms: () => __( 'forms' ),

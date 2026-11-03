@@ -423,7 +423,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		[
 			'names what the move found that it doesn’t carry over',
 			{ observed_band: 'complex', capabilities: { commerce: 4, events: 2, forms: 1, dialogs: 2 } },
-			'We found a store, event tickets, and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
+			'We found a store, events, and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
 		],
 		[
 			'warns when inspection rated the site demanding without naming a feature',
