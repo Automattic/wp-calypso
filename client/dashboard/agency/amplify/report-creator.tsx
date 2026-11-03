@@ -8,11 +8,10 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
-import { useDispatch } from '@wordpress/data';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useId, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody } from '../../components/card';
 import Grid from '../../components/grid';
 import { Text } from '../../components/text';
@@ -225,8 +224,15 @@ export default function AmplifyReportCreator( {
 	onUsageError?: ( code: string ) => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice } = useDispatch( noticesStore );
-	const start = useMutation( startAmplifyReportMutation( agencyId ) );
+	const start = useMutation(
+		withSnackbar( startAmplifyReportMutation( agencyId ), {
+			success: sprintf(
+				/* translators: %s: how long a report takes, e.g. "10 to 20 minutes" */
+				__( 'Report started. It will be ready in %s.' ),
+				getReportTiming()
+			),
+		} )
+	);
 	const [ urlInput, setUrlInput ] = useState( initialUrl );
 	const [ urlError, setUrlError ] = useState( '' );
 	const [ selectedSite, setSelectedSite ] = useState< string | null >( null );
@@ -252,17 +258,7 @@ export default function AmplifyReportCreator( {
 		start.mutate(
 			{ url, mode },
 			{
-				onSuccess: () => {
-					createSuccessNotice(
-						sprintf(
-							/* translators: %s: how long a report takes, e.g. "10 to 20 minutes" */
-							__( 'Report started. It will be ready in %s.' ),
-							getReportTiming()
-						),
-						{ type: 'snackbar' }
-					);
-					onCreated?.();
-				},
+				onSuccess: () => onCreated?.(),
 				onError: ( error ) => {
 					const code = ( error as { code?: string } )?.code;
 					if (
