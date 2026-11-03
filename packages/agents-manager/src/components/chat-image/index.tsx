@@ -28,13 +28,12 @@ function ChatImageLightbox( { src, alt, onClose }: ChatImageLightboxProps ) {
 		}
 	};
 
-	// Any click closes it. `data-slot="chat-dialog"` keeps the floating chat from starting a drag here.
+	// Any click closes it: on the backdrop, the image or the close button.
 	return createPortal(
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<dialog
 			ref={ showModalRef }
 			className="agents-manager-chat-image__lightbox"
-			data-slot="chat-dialog"
 			aria-label={ alt || __( 'Image', __i18n_text_domain__ ) }
 			onClose={ onClose }
 			onClick={ ( event ) => event.currentTarget.close() }
