@@ -8,8 +8,8 @@ import './comment-block-editor.scss';
 type Props = {
 	settings: CommentsEditorSettings;
 	siteId: number;
-	/** False where the site saves the comment as HTML, which carries no images or embeds. */
-	blocks?: boolean;
+	/** Where the site saves the comment as HTML, which carries no images or embeds. */
+	html?: boolean;
 	value: string;
 	placeholder: string;
 	label: string;
@@ -29,7 +29,7 @@ type Props = {
 export default function CommentBlockEditor( {
 	settings,
 	siteId,
-	blocks,
+	html,
 	value,
 	placeholder,
 	label,
@@ -70,8 +70,8 @@ export default function CommentBlockEditor( {
 					initialContent: latest.current.value,
 					labels: {
 						...settings.editor,
-						images: blocks !== false && settings.editor.images,
-						embedUrl: blocks === false ? '' : commentEmbedUrl( siteId ),
+						images: ! html && settings.editor.images,
+						embedUrl: html ? '' : commentEmbedUrl( siteId ),
 					},
 					placeholder,
 					focus: focus

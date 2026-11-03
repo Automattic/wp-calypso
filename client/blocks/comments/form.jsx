@@ -127,9 +127,7 @@ class PostCommentForm extends Component {
 
 		// A site without block comments doesn't render block markup, so it gets plain HTML.
 		const content =
-			this.props.blocks === false && isBlockMarkup( commentText )
-				? blocksToHtml( commentText )
-				: commentText;
+			this.props.html && isBlockMarkup( commentText ) ? blocksToHtml( commentText ) : commentText;
 
 		if ( this.props.parentCommentId ) {
 			this.props.replyComment( content, post.site_ID, post.ID, this.props.parentCommentId );
@@ -253,7 +251,7 @@ class PostCommentForm extends Component {
 						<CommentBlockEditor
 							settings={ this.props.editorSettings }
 							siteId={ post.site_ID }
-							blocks={ this.props.blocks }
+							html={ this.props.html }
 							value={ this.getCommentText() }
 							placeholder={ placeholder }
 							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }
@@ -325,10 +323,10 @@ PostCommentForm.propTypes = {
 	onReplyCancel: PropTypes.func,
 
 	// From withCommentsEditorSettings: the inbox's composer layout, the editor's settings, and
-	// whether the site's comments take blocks.
+	// whether the site saves comments as HTML rather than blocks.
 	composer: PropTypes.bool,
 	editorSettings: PropTypes.object,
-	blocks: PropTypes.bool,
+	html: PropTypes.bool,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
@@ -371,7 +369,7 @@ const withCommentsEditorSettings = ( WrappedComponent ) => {
 				{ ...props }
 				composer={ blockEditor }
 				editorSettings={ data }
-				blocks={ site?.blocks }
+				html={ site?.blocks === false }
 			/>
 		);
 	};
