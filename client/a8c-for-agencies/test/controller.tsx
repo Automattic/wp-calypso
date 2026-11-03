@@ -66,13 +66,13 @@ describe( 'requireAccessContext', () => {
 		expect( next ).not.toHaveBeenCalled();
 	} );
 
-	it( 'keeps an opted-in agency on Amplify', () => {
+	it( 'sends an opted-in agency to Prospect reports on the Multi-site Dashboard', () => {
 		const next = jest.fn();
 
 		requireAccessContext( buildContext( '/amplify', 'opt-in' ), next );
 
-		expect( replace ).not.toHaveBeenCalled();
-		expect( next ).toHaveBeenCalled();
+		expect( replace ).toHaveBeenCalledWith( 'https://msd.test/amplify' );
+		expect( next ).not.toHaveBeenCalled();
 	} );
 
 	it.each( [ 'opt-out', 'forced-opt-out', 'unset' ] as const )(

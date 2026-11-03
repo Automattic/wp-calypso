@@ -58,9 +58,10 @@ const SITE_FEATURE_PATHS: Record< string, string > = {
  * matches wins, so more specific prefixes come first.
  */
 const DASHBOARD_PATHS: [ string, Target ][] = [
-	// The Multi-site Dashboard has no home for these yet.
-	[ A4A_AMPLIFY_LINK, null ],
+	// The Multi-site Dashboard has no home for this yet.
 	[ A4A_REPORTS_LINK, null ],
+
+	[ A4A_AMPLIFY_LINK, '/amplify' ],
 
 	[ A4A_OVERVIEW_LINK, '/overview' ],
 	[ A4A_EXCLUSIVE_OFFERS_LINK, '/exclusive-offers' ],

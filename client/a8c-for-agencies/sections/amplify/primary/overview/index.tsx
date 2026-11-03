@@ -1,7 +1,6 @@
 import { __ } from '@wordpress/i18n';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
-import NewDashboardNote from 'calypso/a8c-for-agencies/components/new-dashboard-note';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
@@ -24,7 +23,6 @@ const AmplifyOverview = () => {
 	return (
 		<Layout className="amplify-overview" title={ title } wide>
 			<LayoutTop>
-				<NewDashboardNote />
 				<LayoutHeader>
 					<Title>{ title }</Title>
 					<Actions>
