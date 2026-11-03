@@ -134,10 +134,6 @@ function SiteLogsDataViews( {
 	const datasetKey = `${ startSec }|${ endSec }|${ sortOrder }|${ JSON.stringify( filter ) }`;
 	useEffect( () => {
 		setStartPosition( 1 );
-		const scrollContainer = dataviewsRef.current?.querySelector( '.dataviews-layout__container' );
-		if ( scrollContainer ) {
-			scrollContainer.scrollTop = 0;
-		}
 	}, [ datasetKey ] );
 
 	const {
