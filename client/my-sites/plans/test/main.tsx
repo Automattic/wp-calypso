@@ -8,6 +8,7 @@ jest.mock( 'calypso/components/data/query-products-list', () => jest.fn() );
 jest.mock( '@automattic/data-stores/src/plans/hooks/use-current-plan', () => jest.fn() );
 jest.mock( 'calypso/my-sites/plans-features-main', () => jest.fn( () => null ) );
 
+import { wowFunnelPendingQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_FREE, PLAN_STUDENT } from '@automattic/calypso-products';
 import { useCurrentPlan } from '@automattic/data-stores/src/plans';
@@ -34,7 +35,7 @@ const initialState = {
 	currentUser: { capabilities: { [ SITE_ID ]: { manage_options: true } } },
 };
 
-describe( 'Plans page on a student-plan site', () => {
+describe( 'Plans page', () => {
 	beforeAll( () => {
 		window.scrollTo = jest.fn();
 	} );
@@ -60,25 +61,14 @@ describe( 'Plans page on a student-plan site', () => {
 			checkoutAttribution: { source: 'wp_ai_credits', aiSessionId: 'abc123' },
 		} );
 	} );
-} );
-
-describe( 'Plans page on a preview site', () => {
-	beforeAll( () => {
-		window.scrollTo = jest.fn();
-	} );
-
-	beforeEach( () => {
-		jest.clearAllMocks();
-		jest.mocked( isEnabled ).mockReturnValue( false );
-		jest.mocked( useCurrentPlan ).mockReturnValue( { productSlug: PLAN_FREE } as never );
-	} );
 
 	it.each( [
 		[ 'a standing preview', [ { blog_id: SITE_ID, site_slug: 'example.wordpress.com' } ], true ],
 		[ 'an ordinary Atomic site on Free', [], undefined ],
 	] )( 'adjusts checkout only for a preview (%s)', ( _, previewSites, isPreview ) => {
+		jest.mocked( useCurrentPlan ).mockReturnValue( { productSlug: PLAN_FREE } as never );
 		const queryClient = new QueryClient();
-		queryClient.setQueryData( [ 'wow-funnel', 'pending' ], {
+		queryClient.setQueryData( wowFunnelPendingQuery().queryKey, {
 			pending: false,
 			preview_sites: previewSites,
 		} );

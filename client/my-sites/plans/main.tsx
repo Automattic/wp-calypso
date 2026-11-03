@@ -521,17 +521,13 @@ export default function PlansWrapper( props: Omit< OwnProps, 'currentPlan' | 'se
 	const intervalType = intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm;
 
 	/**
-	 * A preview site reads as Free, but it is already built and buying any paid plan keeps it.
-	 * So it is offered only paid plans, and checkout returns the buyer to the site itself rather
-	 * than a setup screen. Only Atomic sites on Free can be previews, so only they ask.
+	 * A preview site reads as Free, but it is already built and any paid plan keeps it. So it is
+	 * offered only paid plans, and checkout returns the buyer to the site rather than the generic
+	 * thank-you page. Only an Atomic site on Free can be a preview, so only one asks.
 	 */
 	const site = useSelector( getSelectedSite );
-	const couldBePreview = useSelector(
-		( state ) =>
-			!! isSiteWpcomAtomic( state, selectedSiteId ) &&
-			!! currentPlan &&
-			isFreePlanProduct( currentPlan )
-	);
+	const isAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, selectedSiteId ) );
+	const couldBePreview = isAtomic && !! currentPlan && isFreePlanProduct( currentPlan );
 	const { data: wowFunnelPending } = useQuery( {
 		...wowFunnelPendingQuery(),
 		enabled: couldBePreview,
