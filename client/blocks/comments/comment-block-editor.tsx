@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { loadCommentEditor } from './load-comment-editor';
+import { commentEmbedUrl, loadCommentEditor } from './load-comment-editor';
 import type { CommentsEditorSettings } from '@automattic/api-core';
 
 import './comment-block-editor.scss';
 
 type Props = {
 	settings: CommentsEditorSettings;
+	siteId: number;
 	value: string;
 	placeholder: string;
 	label: string;
@@ -25,6 +26,7 @@ type Props = {
  */
 export default function CommentBlockEditor( {
 	settings,
+	siteId,
 	value,
 	placeholder,
 	label,
@@ -63,7 +65,10 @@ export default function CommentBlockEditor( {
 				flushSync( () => setEditor( 'ready' ) );
 				unmount.current = mountEditor( container.current!, {
 					initialContent: latest.current.value,
-					labels: settings.editor,
+					labels: {
+						...settings.editor,
+						embedUrl: commentEmbedUrl( siteId ),
+					},
 					placeholder,
 					focus: focus
 						? () => ( clicked.current ? ( textarea.current?.selectionStart ?? -1 ) : -1 )

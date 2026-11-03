@@ -3,7 +3,7 @@ import type { CommentsEditorLabels, CommentsEditorSettings } from '@automattic/a
 
 export type CommentEditorProps = {
 	initialContent: string;
-	labels: CommentsEditorLabels;
+	labels: CommentsEditorLabels & { embedUrl: string };
 	/** The caret's offset into the text, or -1 for the end. Left out, the editor takes no focus. */
 	focus?: () => number;
 	placeholder: string;
@@ -27,6 +27,10 @@ declare global {
 		};
 	}
 }
+
+// The embed preview route belongs to the site the comment goes to, so the settings leave it out.
+export const commentEmbedUrl = ( siteId: number ) =>
+	`https://public-api.wordpress.com/wpcom/v2/sites/${ siteId }/comments/embed`;
 
 // Shared by every form on the page, keyed on the loader's URL, which a deploy changes.
 // A failure clears it, so the next focus tries again.
