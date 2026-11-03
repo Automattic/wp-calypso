@@ -110,7 +110,9 @@ const SiteMigrationCredentials: StepType< {
 
 		// If SSH migration is available and hosting is supported and locale is English, redirect to SSH flow
 		if ( isSSHMigrationAvailable && isHostingSupported && locale === 'en' ) {
-			siteId && dispatch( resetSite( siteId ) );
+			if ( siteId ) {
+				dispatch( resetSite( siteId ) );
+			}
 			return navigation.submit?.( {
 				action: 'redirect-to-ssh',
 				from: siteInfo?.url || fromUrl,
@@ -124,7 +126,9 @@ const SiteMigrationCredentials: StepType< {
 		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
 		recordMigrationRequestSubmittedFacebookEvent( 'SiteMigrationCredentials' );
 
-		siteId && dispatch( resetSite( siteId ) );
+		if ( siteId ) {
+			dispatch( resetSite( siteId ) );
+		}
 		return navigation.submit?.( {
 			action,
 			from: siteInfo?.url,
@@ -150,7 +154,9 @@ const SiteMigrationCredentials: StepType< {
 			} );
 
 			// Reset the site in the state to ensure the correct overview screen is shown.
-			siteId && dispatch( resetSite( siteId ) );
+			if ( siteId ) {
+				dispatch( resetSite( siteId ) );
+			}
 
 			return navigation.submit?.( {
 				action: 'skip',
