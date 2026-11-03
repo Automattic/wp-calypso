@@ -97,15 +97,15 @@ export function useFloatingPanelPosition( {
 		( event: React.PointerEvent< HTMLDivElement > ) => {
 			const target = event.target as HTMLElement;
 
-			// React also bubbles events here from what the chat renders through a portal, such as
-			// a dialog or a menu on the page or in an iframe. Only the panel itself starts a drag.
-			if ( ! event.currentTarget.contains( target ) ) {
+			// Resize handles run their own pointer loop — never start a move-drag
+			// from one, or the two gestures fight. This must come first.
+			if ( target.closest( '[data-slot="resize-handle"]' ) ) {
 				return;
 			}
 
-			// Resize handles run their own pointer loop — never start a move-drag
-			// from one, or the two gestures fight.
-			if ( target.closest( '[data-slot="resize-handle"]' ) ) {
+			// React also bubbles events here from what the chat renders through a portal, such as
+			// a dialog or a menu on the page or in an iframe. Only the panel itself starts a drag.
+			if ( ! event.currentTarget.contains( target ) ) {
 				return;
 			}
 
