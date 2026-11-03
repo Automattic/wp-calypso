@@ -464,6 +464,26 @@
 	}
 }
 
+@mixin dashboard-dark-theme-illustrations {
+	.dashboard-themed-illustration--light {
+		display: none;
+	}
+
+	.dashboard-themed-illustration--dark {
+		display: block;
+	}
+}
+
+// The domain upsell card's illustration is inline SVG that reads these, falling back to its light
+// colors. Hex values match the dark illustration assets.
+@mixin dashboard-dark-theme-domain-upsell-illustration {
+	--dashboard-domain-upsell-canvas: transparent;
+	--dashboard-domain-upsell-grid-opacity: 0;
+	--dashboard-domain-upsell-window: #1e2735;
+	--dashboard-domain-upsell-chrome: #2a3345;
+	--dashboard-domain-upsell-dot-stroke: #50575e;
+}
+
 // :root variables overridden for dark theme
 @mixin dashboard-dark-theme {
 	@include color-scheme-dark-theme-tokens;
@@ -480,6 +500,8 @@
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
+	@include dashboard-dark-theme-domain-upsell-illustration;
+	@include dashboard-dark-theme-illustrations;
 	@include dashboard-dark-theme-item-group;
 	@include dashboard-dark-theme-links;
 	@include color-scheme-dark-theme-modal;
