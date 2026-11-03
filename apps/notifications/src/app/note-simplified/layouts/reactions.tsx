@@ -3,13 +3,13 @@ import {
 	__experimentalHeading as Heading,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { getReactionsHeading, getTemporaryNoteTitle } from '../labels';
+import { getTemporaryNoteTitle } from '../labels';
 import Body from '../parts/body';
 import Context from '../parts/context';
 import type { Note } from '../../types';
 
 export default function ReactionsNote( { note }: { note: Note } ) {
-	const heading = getReactionsHeading( note );
+	const heading = note.meta?.heading ?? note.title;
 
 	return (
 		<>
