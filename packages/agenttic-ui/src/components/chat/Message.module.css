@@ -116,7 +116,7 @@
 	margin-bottom: var( --spacing-3 );
 }
 
-/* Images fit the bubble. `:where()` keeps it a default, so an image's own styles still win. */
+/* Images fit the bubble; `:where()` lets an image's own styles win. */
 .message :where( img:not( [data-agenttic-isolated] * ) ) {
 	max-width: 100%;
 	height: auto;

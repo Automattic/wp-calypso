@@ -103,8 +103,8 @@ export function useFloatingPanelPosition( {
 				return;
 			}
 
-			// React also bubbles events here from what the chat renders through a portal, such as
-			// a dialog or a menu on the page or in an iframe. Only the panel itself starts a drag.
+			// React also bubbles events here from the chat's portals, such as a dialog or a menu on
+			// the page or in an iframe. Only the panel itself starts a drag.
 			if ( ! event.currentTarget.contains( target ) ) {
 				return;
 			}
