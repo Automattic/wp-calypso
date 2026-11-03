@@ -31,6 +31,7 @@ import { loadExternalProviders, type LoadedProviders } from '../utils/load-exter
 import { isHandoffAgent, type SessionHandoff } from '../utils/session-handoff';
 import AgentDock from './agent-dock';
 import { PersistentRouter } from './persistent-router';
+import type { MarkdownComponents } from '@automattic/agenttic-ui';
 import type { JSX } from 'react';
 
 export interface AgentsManagerProps {
@@ -62,6 +63,9 @@ const queryClient = new QueryClient();
 
 // A stable default, so it doesn't retrigger conversation effects on every render.
 const EMPTY_ARRAY: string[] = [];
+
+// A stable default, so the chat doesn't rebuild its message renderer and remount every message.
+const EMPTY_MARKDOWN_COMPONENTS: MarkdownComponents = {};
 
 // The scope the live agent was initialized for. Module-level, like the agent
 // manager, so a remount on a different scope (Calypso remounts on some routes)
@@ -347,7 +351,7 @@ function AgentSetup( {
 	return (
 		<AgentDock
 			emptyViewSuggestions={ emptyViewSuggestions }
-			markdownComponents={ loadedProviders.markdownComponents || {} }
+			markdownComponents={ loadedProviders.markdownComponents ?? EMPTY_MARKDOWN_COMPONENTS }
 			markdownExtensions={ loadedProviders.markdownExtensions || {} }
 			useProviderAbilitiesSetup={ loadedProviders.useAbilitiesSetup }
 			useSuggestions={ loadedProviders.useSuggestions }
