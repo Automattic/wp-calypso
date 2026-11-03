@@ -1656,6 +1656,24 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
+	it.each( [
+		[ 'expands a compact chat first', { isOpen: false, isCompactMode: true }, 1 ],
+		[ 'leaves an open chat as it is', { isOpen: true }, 0 ],
+	] as const )( 'asking for /credits from the popover %s', ( _name, options, expands ) => {
+		const onExpand = jest.fn();
+		mockCreditsCommand = {
+			state: 'balance',
+			answer: { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } },
+		};
+
+		render( chat( { ...options, onExpand } ) );
+		act( () => {
+			mockCreditsOnShowCredits!();
+		} );
+
+		expect( onExpand ).toHaveBeenCalledTimes( expands );
+	} );
+
 	it( 'offers no credits popover button in the Reader chat', () => {
 		mockIsReaderChatAgent.mockReturnValue( true );
 		render( chat() );

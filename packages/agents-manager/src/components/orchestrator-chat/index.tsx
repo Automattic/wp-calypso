@@ -297,7 +297,13 @@ export default function OrchestratorChat( {
 	retrySendRef.current = ( message ) =>
 		submitRetryMessage( inputValue.trim() ? inputValue : message );
 
-	showCreditsRef.current = () => submitComposerMessage( '/credits' );
+	showCreditsRef.current = () => {
+		// The compact composer expands the chat as it sends; this send skips that step.
+		if ( ! isOpen ) {
+			onExpand();
+		}
+		submitComposerMessage( '/credits' );
+	};
 
 	// Marks the session as sent whichever path started the turn.
 	useEffect( () => {
