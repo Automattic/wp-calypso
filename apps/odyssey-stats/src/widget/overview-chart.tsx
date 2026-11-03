@@ -2,13 +2,18 @@ import { BarChart, LineChart } from '@automattic/charts';
 // Without the package's own styles the chart collapses to zero width.
 import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
+import {
+	EventEmitterProvider,
+	TooltipContext,
+	TooltipProvider,
+	useEventEmitter,
+} from '@visx/xychart';
 import moment from 'moment';
-import { FunctionComponent, useCallback, useRef } from 'react';
+import { FunctionComponent, useCallback, useContext, useRef } from 'react';
 import { getBucketDays, type ChartRange } from '../lib/date-ranges';
 import type {
 	DataPoint,
 	DataPointDate,
-	EventHandlerParams,
 	LineChartProps,
 	RenderTooltipParams,
 	SeriesData,
@@ -106,7 +111,11 @@ interface OverviewChartProps {
 	onBucketClick?: ( date: Date ) => void;
 }
 
-type PointerParams = EventHandlerParams< DataPoint | DataPointDate >;
+/** What a press or release reports: the point under it, if any, and where it was. */
+interface PointerParams {
+	datum?: unknown;
+	svgPoint?: { x: number; y: number } | null;
+}
 
 /**
  * Pointer handlers that report a click on a point, and leave a drag or a release that began
@@ -135,14 +144,55 @@ function useBucketClick( onBucketClick?: ( date: Date ) => void ) {
 			) {
 				return;
 			}
-			if ( datum && 'date' in datum && datum.date instanceof Date ) {
-				onBucketClick( datum.date );
+			const date = ( datum as { date?: unknown } | undefined )?.date;
+			if ( date instanceof Date ) {
+				onBucketClick( date );
 			}
 		},
 		[ onBucketClick ]
 	);
 
 	return onBucketClick ? { onPointerDown, onPointerUp } : {};
+}
+
+/**
+ * Reports a press and a release on the bar chart. The bar chart forwards no pointer events
+ * (its package does from 3.2.0; this build is on 1.x), so this listens on the chart's own
+ * event emitter, and reads the bar from its tooltip, which snaps to the nearest one. Both
+ * come from the providers around the chart, which it adopts in place of its own.
+ * @param props               Component props.
+ * @param props.onPointerDown The press handler.
+ * @param props.onPointerUp   The release handler.
+ */
+function BarClickListener( {
+	onPointerDown,
+	onPointerUp,
+}: {
+	onPointerDown: ( params: PointerParams ) => void;
+	onPointerUp: ( params: PointerParams ) => void;
+} ) {
+	// Read at the release, not when the handler was made: the tooltip moves between the two.
+	const tooltip = useContext( TooltipContext );
+	const tooltipRef = useRef( tooltip );
+	tooltipRef.current = tooltip;
+
+	useEventEmitter(
+		'pointerdown',
+		useCallback( ( params ) => onPointerDown( { svgPoint: params?.svgPoint } ), [ onPointerDown ] )
+	);
+	useEventEmitter(
+		'pointerup',
+		useCallback(
+			( params ) =>
+				onPointerUp( {
+					datum: tooltipRef.current?.tooltipData?.nearestDatum?.datum,
+					svgPoint: params?.svgPoint,
+				} ),
+			[ onPointerUp ]
+		)
+	);
+
+	return null;
 }
 
 /**
@@ -212,19 +262,28 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 
 	if ( 'bar' === chartType ) {
 		return (
-			<BarChart
-				data={ nestSeries( series ) }
-				withTooltips
-				animation
-				// A zero-value bar has no height, so a quiet day would otherwise read as missing
-				// data. This draws it as a hairline stub instead.
-				showZeroValues
-				height={ height }
-				renderTooltip={ renderTooltipForRange }
-				margin={ MARGIN }
-				options={ options }
-				{ ...clickHandlers }
-			/>
+			<EventEmitterProvider>
+				<TooltipProvider>
+					{ clickHandlers.onPointerDown && clickHandlers.onPointerUp && (
+						<BarClickListener
+							onPointerDown={ clickHandlers.onPointerDown }
+							onPointerUp={ clickHandlers.onPointerUp }
+						/>
+					) }
+					<BarChart
+						data={ nestSeries( series ) }
+						withTooltips
+						animation
+						// A zero-value bar has no height, so a quiet day would otherwise read as
+						// missing data. This draws it as a hairline stub instead.
+						showZeroValues
+						height={ height }
+						renderTooltip={ renderTooltipForRange }
+						margin={ MARGIN }
+						options={ options }
+					/>
+				</TooltipProvider>
+			</EventEmitterProvider>
 		);
 	}
 

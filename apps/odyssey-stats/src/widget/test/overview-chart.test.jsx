@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { BarChart, LineChart } from '@automattic/charts';
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import moment from 'moment';
 import 'moment/locale/de';
 import 'moment/locale/th';
@@ -11,10 +11,22 @@ import OverviewChart from '../overview-chart';
 // Loading a locale also switches to it.
 moment.locale( 'en' );
 
-jest.mock( '@automattic/charts', () => ( {
-	BarChart: jest.fn( () => null ),
-	LineChart: jest.fn( () => null ),
-} ) );
+// The bar chart's emitter and tooltip, from the providers the chart renders under.
+let mockBarChartEmit = null;
+let mockBarChartTooltip = null;
+
+jest.mock( '@automattic/charts', () => {
+	const { useContext } = require( 'react' );
+	const { TooltipContext, useEventEmitter } = require( '@visx/xychart' );
+	return {
+		BarChart: jest.fn( () => {
+			mockBarChartEmit = useEventEmitter();
+			mockBarChartTooltip = useContext( TooltipContext );
+			return null;
+		} ),
+		LineChart: jest.fn( () => null ),
+	};
+} );
 
 const series = [ { label: 'Views', data: [] } ];
 
@@ -118,63 +130,139 @@ describe( 'OverviewChart', () => {
 
 describe( 'OverviewChart click', () => {
 	const CLICKED = new Date( 2026, 6, 1 );
-	const press = ( props, x = 10, y = 10 ) => props.onPointerDown( { svgPoint: { x, y } } );
-	const release = ( props, x = 10, y = 10, datum = { date: CLICKED, value: 3 } ) =>
+	const point = { date: CLICKED, value: 3 };
+
+	// The line chart reports its own presses and releases, with the point under them.
+	const pressLine = ( props, x = 10, y = 10 ) => props.onPointerDown( { svgPoint: { x, y } } );
+	const releaseLine = ( props, x = 10, y = 10, datum = point ) =>
 		props.onPointerUp( { datum, svgPoint: { x, y } } );
+
+	// The bar chart's come through its emitter, as events on an element, and its tooltip
+	// names the bar under the pointer.
+	const pointerEvent = ( type, x, y ) => {
+		const event = new MouseEvent( type, { clientX: x, clientY: y } );
+		document.createElement( 'div' ).dispatchEvent( event );
+		return event;
+	};
+	const hoverBar = ( datum = point ) =>
+		act( () =>
+			mockBarChartTooltip.showTooltip( {
+				key: 'Views',
+				index: 0,
+				datum,
+				distanceX: 1,
+				distanceY: 1,
+			} )
+		);
+	const pressBar = ( x = 10, y = 10 ) =>
+		act( () => mockBarChartEmit( 'pointerdown', pointerEvent( 'pointerdown', x, y ) ) );
+	const releaseBar = ( x = 10, y = 10 ) =>
+		act( () => mockBarChartEmit( 'pointerup', pointerEvent( 'pointerup', x, y ) ) );
 
 	beforeEach( () => {
 		BarChart.mockClear();
 		LineChart.mockClear();
+		mockBarChartEmit = null;
+		mockBarChartTooltip = null;
 	} );
 
-	it.each( [ [ 'line' ], [ 'bar' ] ] )(
-		'reports the point a %s chart was clicked on',
-		( chartType ) => {
-			const onBucketClick = jest.fn();
-			const props = renderChart( 'day', chartType, series, '2026-07-31', onBucketClick );
-
-			press( props );
-			release( props );
-
-			expect( onBucketClick ).toHaveBeenCalledTimes( 1 );
-			expect( onBucketClick ).toHaveBeenCalledWith( CLICKED );
-		}
-	);
-
-	it( 'reads a drag as no click', () => {
+	it( 'reports the point a line chart was clicked on', () => {
 		const onBucketClick = jest.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
-		press( props, 10, 10 );
-		release( props, 30, 10 );
+		pressLine( props );
+		releaseLine( props );
+
+		expect( onBucketClick ).toHaveBeenCalledTimes( 1 );
+		expect( onBucketClick ).toHaveBeenCalledWith( CLICKED );
+	} );
+
+	it( 'reads a drag across a line chart as no click', () => {
+		const onBucketClick = jest.fn();
+		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
+
+		pressLine( props, 10, 10 );
+		releaseLine( props, 30, 10 );
 
 		expect( onBucketClick ).not.toHaveBeenCalled();
 	} );
 
-	it( 'ignores a release whose press began off the chart', () => {
+	it( 'ignores a release on a line chart whose press began off the chart', () => {
 		const onBucketClick = jest.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
-		release( props );
+		releaseLine( props );
 
 		expect( onBucketClick ).not.toHaveBeenCalled();
 	} );
 
-	it( 'ignores a click that lands on no point', () => {
+	it( 'ignores a click on a line chart that lands on no point', () => {
 		const onBucketClick = jest.fn();
 		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
 
-		press( props );
-		release( props, 10, 10, null );
+		pressLine( props );
+		releaseLine( props, 10, 10, null );
+
+		expect( onBucketClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'reports the bar its tooltip names when a bar chart is clicked', () => {
+		const onBucketClick = jest.fn();
+		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
+
+		hoverBar();
+		pressBar();
+		releaseBar();
+
+		expect( onBucketClick ).toHaveBeenCalledTimes( 1 );
+		expect( onBucketClick ).toHaveBeenCalledWith( CLICKED );
+	} );
+
+	it( 'reads the bar at the release, not the one hovered when the chart was drawn', () => {
+		const onBucketClick = jest.fn();
+		const later = new Date( 2026, 6, 2 );
+		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
+
+		hoverBar();
+		hoverBar( { date: later, value: 5 } );
+		pressBar();
+		releaseBar();
+
+		expect( onBucketClick ).toHaveBeenCalledWith( later );
+	} );
+
+	it( 'reads a drag across a bar chart as no click', () => {
+		const onBucketClick = jest.fn();
+		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
+
+		hoverBar();
+		pressBar( 10, 10 );
+		releaseBar( 30, 10 );
+
+		expect( onBucketClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'ignores a click on a bar chart with no bar under the tooltip', () => {
+		const onBucketClick = jest.fn();
+		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );
+
+		pressBar();
+		releaseBar();
 
 		expect( onBucketClick ).not.toHaveBeenCalled();
 	} );
 
 	it( 'listens for nothing without a click to report to', () => {
-		const props = renderChart( 'day', 'bar' );
+		const line = renderChart( 'day', 'line' );
+		expect( line.onPointerDown ).toBeUndefined();
+		expect( line.onPointerUp ).toBeUndefined();
 
-		expect( props.onPointerDown ).toBeUndefined();
-		expect( props.onPointerUp ).toBeUndefined();
+		const onBucketClick = jest.fn();
+		renderChart( 'day', 'bar' );
+		hoverBar();
+		pressBar();
+		releaseBar();
+		expect( onBucketClick ).not.toHaveBeenCalled();
 	} );
 } );
 
