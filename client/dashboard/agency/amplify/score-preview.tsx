@@ -1,4 +1,4 @@
-import { Tooltip } from '@wordpress/components';
+import { Tooltip, __experimentalHeading as Heading } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { severityFor } from './score-severity';
@@ -238,7 +238,15 @@ function ScoreCard( {
 			<div className="dashboard-amplify-score-preview__card-header">
 				<ScoreIllustration type={ perspective.type } />
 				<div className="dashboard-amplify-score-preview__card-title">
-					<h4 className="dashboard-amplify-score-preview__heading">{ perspective.label }</h4>
+					<Heading
+						level={ 4 }
+						size={ 14 }
+						weight={ 600 }
+						lineHeight="1.2"
+						className="dashboard-amplify-score-preview__heading"
+					>
+						{ perspective.label }
+					</Heading>
 					<p>{ perspective.description }</p>
 				</div>
 				<strong
