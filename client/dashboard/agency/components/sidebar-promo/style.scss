@@ -11,10 +11,12 @@
 	display: flex;
 	align-items: flex-start;
 	gap: $grid-unit-15;
-	margin: auto $grid-unit-20 $grid-unit-20;
-	padding: $grid-unit-15;
-	border: $border-width solid var( --dashboard-header__border-color );
-	border-radius: $radius-medium;
+	// Pinned to the bottom of the sidebar, with a divider above it.
+	margin: auto 0 $grid-unit-20;
+	padding: $grid-unit-20 $grid-unit-20 0;
+	border: 0;
+	border-block-start: $border-width solid var( --dashboard-header__border-color );
+	border-radius: 0;
 	color: var( --dashboard__text-color );
 	text-decoration: none;
 

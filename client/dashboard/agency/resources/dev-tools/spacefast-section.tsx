@@ -43,9 +43,19 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 	);
 
 	const features = [
-		__( 'Publish a prototype, report, or app in seconds' ),
-		__( 'Keep each space private, shared, or public' ),
-		__( 'Connect a custom domain when it’s ready to go live' ),
+		__(
+			'Build client sites, prototypes, and internal agency tooling with database support, file uploads, and versioning included'
+		),
+		__(
+			'Integrates seamlessly with the AI your team already uses, like Claude, ChatGPT, or Gemini'
+		),
+		__(
+			'Keep client work safe in private spaces you invite people to, or make a space public and share it with the world'
+		),
+		__( 'Get feedback in real time from clients and colleagues with built-in comments' ),
+		__(
+			'Made by Automattic and built on the infrastructure that runs Pressable, WordPress.com, and more'
+		),
 	];
 
 	return (
@@ -62,13 +72,12 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 									{ __( 'Spacefast' ) }
 								</Heading>
 								<Badge intent="stable">{ __( 'New' ) }</Badge>
-								<Badge intent="draft">{ __( 'Publish & share' ) }</Badge>
+								<Badge intent="draft">{ __( 'Build with AI' ) }</Badge>
 							</HStack>
-							<Text weight={ 500 }>{ __( 'A home for everything your agents make' ) }</Text>
 						</VStack>
 						<Text size={ 15 }>
 							{ __(
-								'Publish the pages, prototypes, reports, and apps your team makes with AI agents, straight from the agent, and share one link with clients for feedback.'
+								'Your team already uses AI to make websites, apps, prototypes, proposals, and more. Spacefast gives your team one shared place to ship them in seconds, right from your agent and ready for clients to see.'
 							) }
 						</Text>
 						<VStack
