@@ -366,11 +366,6 @@ const SiteMigrationCheck: StepType< {
 										</Step.LinkButton>
 									) }
 								</div>
-								{ ! hasDestination && (
-									<Step.LinkButton disabled>
-										{ translate( 'Rather have us do it? Talk to a migration expert' ) }
-									</Step.LinkButton>
-								) }
 							</div>
 						</>
 					) ) }
