@@ -386,40 +386,55 @@ describe( 'StaticSiteImportNotice preview link', () => {
 } );
 
 describe( 'StaticSiteImportNotice help with the move', () => {
+	it( 'hands the move to our migrations team when the moved site isn’t right', async () => {
+		const ticket = mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new', {
+				blog_url: 'busybears.wordpress.com',
+				from_url: 'busybearscleaning.com',
+				locale: 'en',
+				context: 'site_is_not_wordpress',
+			} )
+			.reply( 200, { success: true } );
+		const { recordTracksEvent } = render(
+			<StaticSiteImportNotice
+				site={ site }
+				siteImport={ { status: 'finished' } }
+				search={ search }
+			/>
+		);
+
+		await userEvent.click(
+			screen.getByRole( 'button', { name: 'Something not right? Let our team fix it' } )
+		);
+		expect( await screen.findByText( /Our team has your move/ ) ).toBeVisible();
+		expect( ticket.isDone() ).toBe( true );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_static_site_import_ready_notice_click',
+			{ site_id: 42, source_platform: 'wix', action: 'request_handoff' }
+		);
+	} );
+
 	it.each( [
+		[ 'names nothing when the move found nothing to name', { navigation: 3 }, null ],
 		[
-			'offers our team when the moved site isn’t right',
-			{},
-			'Something not right? Let our team fix it',
-			undefined,
+			'names what the move found on the old site',
+			{ commerce: 4, forms: 1, navigation: 3 },
+			'We found a store and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
 		],
-		[
-			'names a store the move found and offers our team to finish it',
-			{ commerce: 4 },
-			'Let our team finish your move',
-			'We found a store on busybearscleaning.com. Our team can set up your products and checkout.',
-		],
-	] )( '%s', async ( _, capabilities, button, finding ) => {
-		mockApi().post( '/wpcom/v2/help/migration-ticket/new' ).reply( 200, { success: true } );
+	] )( '%s', ( _, capabilities, message ) => {
 		const finished = {
 			status: 'finished' as const,
 			session: session( 'finished', {
 				preview_summary: { pages: 12, inspection: { measured: true, capabilities } },
 			} ) as StaticSiteImportSession,
 		};
-		const { recordTracksEvent } = render(
-			<StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } />
-		);
+		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
 
-		if ( finding ) {
-			expect( screen.getByText( finding ) ).toBeVisible();
+		if ( message ) {
+			expect( screen.getByText( message ) ).toBeVisible();
+		} else {
+			expect( screen.queryByText( /We found/ ) ).not.toBeInTheDocument();
 		}
-		await userEvent.click( screen.getByRole( 'button', { name: button } ) );
-		expect( await screen.findByText( /Our team has your move/ ) ).toBeVisible();
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_static_site_import_ready_notice_click',
-			expect.objectContaining( { action: 'request_handoff' } )
-		);
 	} );
 
 	it( 'leaves a failed move to the failure card', () => {

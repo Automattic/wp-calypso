@@ -24,7 +24,11 @@ import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { withJetpackSso } from '../../utils/site-sso';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
-import type { Site, StaticSiteImportSession } from '@automattic/api-core';
+import type {
+	Site,
+	StaticSiteImportCapability,
+	StaticSiteImportSession,
+} from '@automattic/api-core';
 
 import './style.scss';
 
@@ -112,40 +116,28 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 	return { handoff, requestHandoff };
 }
 
-/** Features a move can show but only our team can make work: they need a backend we don't import. */
-const TEAM_CAPABILITIES = [ 'commerce', 'booking', 'membership' ] as const;
+/** What each feature the move found on the old site is called. Navigation is on nearly every site. */
+const FOUND_FEATURE_LABELS: Partial< Record< StaticSiteImportCapability, () => string > > = {
+	commerce: () => __( 'a store' ),
+	booking: () => __( 'bookings' ),
+	membership: () => __( 'memberships' ),
+	forms: () => __( 'forms' ),
+	dialogs: () => __( 'pop-ups' ),
+	embeds: () => __( 'embedded content' ),
+	media: () => __( 'video and audio' ),
+};
 
-/** The first such feature the move found on the old site, if any. */
-function getTeamCapability( session?: StaticSiteImportSession ) {
+/** Names the features the move found on the old site, as a list in the reader's language. */
+function getFoundFeatures( session: StaticSiteImportSession | undefined, locale: string ) {
 	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
 	const found = summary?.inspection?.capabilities ?? {};
-	return TEAM_CAPABILITIES.find( ( capability ) => ( found[ capability ] ?? 0 ) > 0 );
-}
-
-function teamCapabilityMessage(
-	capability: ( typeof TEAM_CAPABILITIES )[ number ],
-	sourceName: string
-) {
-	switch ( capability ) {
-		case 'commerce':
-			return sprintf(
-				/* translators: %s: the address of the site that was moved, e.g. example.com. */
-				__( 'We found a store on %s. Our team can set up your products and checkout.' ),
-				sourceName
-			);
-		case 'booking':
-			return sprintf(
-				/* translators: %s: the address of the site that was moved, e.g. example.com. */
-				__( 'We found bookings on %s. Our team can set up your scheduling.' ),
-				sourceName
-			);
-		case 'membership':
-			return sprintf(
-				/* translators: %s: the address of the site that was moved, e.g. example.com. */
-				__( 'We found memberships on %s. Our team can set up your members area.' ),
-				sourceName
-			);
+	const labels = Object.entries( FOUND_FEATURE_LABELS )
+		.filter( ( [ capability ] ) => ( found[ capability as StaticSiteImportCapability ] ?? 0 ) > 0 )
+		.map( ( [ , label ] ) => label() );
+	if ( ! labels.length ) {
+		return '';
 	}
+	return new Intl.ListFormat( locale, { type: 'conjunction' } ).format( labels );
 }
 
 /** Takes the place of the progress card when a move fails. */
@@ -276,14 +268,14 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
+	const locale = useLocale();
 	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
+	const foundFeatures = getFoundFeatures( siteImport.session, locale );
 	const isReady = siteImport.status === 'finished';
-	const teamCapability = getTeamCapability( siteImport.session );
 	const trackingProps = {
 		site_id: site.ID,
 		source_platform: platform,
-		...( teamCapability && { team_capability: teamCapability } ),
 	};
 
 	// Counts notices shown, so clicks on its buttons can be read as a rate.
@@ -296,9 +288,8 @@ export function StaticSiteImportNotice( {
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_impression', {
 			site_id: site.ID,
 			source_platform: platform,
-			...( teamCapability && { team_capability: teamCapability } ),
 		} );
-	}, [ isReady, recordTracksEvent, site.ID, platform, teamCapability ] );
+	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
 	const recordClick = (
 		action: 'connect_domain' | 'get_domain' | 'preview_site' | 'request_handoff'
@@ -416,7 +407,7 @@ export function StaticSiteImportNotice( {
 							{ ! handoff.isSuccess && (
 								<Button
 									__next40pxDefaultSize
-									variant={ teamCapability ? 'secondary' : 'link' }
+									variant="link"
 									isBusy={ handoff.isPending }
 									disabled={ handoff.isPending }
 									onClick={ () => {
@@ -424,9 +415,7 @@ export function StaticSiteImportNotice( {
 										requestHandoff();
 									} }
 								>
-									{ teamCapability
-										? __( 'Let our team finish your move' )
-										: __( 'Something not right? Let our team fix it' ) }
+									{ __( 'Something not right? Let our team fix it' ) }
 								</Button>
 							) }
 						</>
@@ -446,9 +435,14 @@ export function StaticSiteImportNotice( {
 										'Your site is copied and running on WordPress.com. It stays private until you launch it.'
 									) }
 						</span>
-						{ teamCapability && (
+						{ foundFeatures && (
 							<span>
-								{ teamCapabilityMessage( teamCapability, sourceHost || __( 'your old site' ) ) }
+								{ sprintf(
+									/* translators: 1: features found on the old site, e.g. "a store, forms, and pop-ups". 2: the address of the site that was moved, or "your old site". */
+									__( 'We found %1$s on %2$s. If any of it isn’t working, our team can fix it.' ),
+									foundFeatures,
+									sourceHost || __( 'your old site' )
+								) }
 							</span>
 						) }
 						{ handoff.isError && (
