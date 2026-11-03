@@ -131,7 +131,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			{
 				label: __( 'E-E-A-T Signals' ),
 				description: __(
-					"Experience, Expertise, Authoritativeness, Trustworthiness. Google's quality framework and the backbone of how AI tools evaluate whether a source is worth citing."
+					'Experience, Expertise, Authoritativeness, Trustworthiness. Google’s quality framework and the backbone of how AI tools evaluate whether a source is worth citing.'
 				),
 				score: 9,
 				max: 14,
