@@ -15,6 +15,7 @@ import {
 	WPCOM_FEATURES_VIDEOPRESS,
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
+import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import { translate, TranslateResult } from 'i18n-calypso';
 import SecurityIcon from './icons/jetpack-icon-lock.svg';
 import BackupIcon from './icons/jetpack-product-icon-backup.svg';
@@ -43,7 +44,7 @@ export function getAvailableUpsells() {
 	);
 	const securityFeatures = [ WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN, WPCOM_FEATURES_ANTISPAM ];
 
-	// Only one of these is on sale at a time; the section drops the other.
+	// Security until Pro goes on sale, then Pro; the section drops whichever is off sale.
 	return [
 		{
 			description: securityDescription,
@@ -57,7 +58,7 @@ export function getAvailableUpsells() {
 		},
 		{
 			description: securityDescription,
-			href: 'https://jetpack.com/features/security/',
+			href: JETPACK_PRICING_PAGE,
 			iconUrl: SecurityIcon,
 			isFree: false,
 			slug: 'pro',
@@ -135,12 +136,15 @@ export function getUpsellFeatureSlugs(): string[] {
 	return [ ...new Set( upsells.flatMap( ( upsell ) => upsell.ownedFeatures ) ) ];
 }
 
+/**
+ * Drops bundles that are off sale, and every bundle while the catalog is unknown.
+ */
 export function filterUpsellsOnSale(
 	upsells: Product[],
-	isOnSale: ( productSlug: string ) => boolean
+	isOnSale?: ( productSlug: string ) => boolean
 ): Product[] {
 	return upsells.filter(
-		( { checkoutSlug } ) => ! isJetpackPlanSlug( checkoutSlug ) || isOnSale( checkoutSlug )
+		( { checkoutSlug } ) => ! isJetpackPlanSlug( checkoutSlug ) || !! isOnSale?.( checkoutSlug )
 	);
 }
 

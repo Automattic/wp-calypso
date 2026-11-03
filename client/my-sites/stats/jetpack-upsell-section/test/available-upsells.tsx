@@ -69,4 +69,10 @@ describe( 'filterUpsellsOnSale', () => {
 
 		expect( slugs ).toEqual( [ expectedBundle, 'backup', 'search', 'video', 'boost', 'social' ] );
 	} );
+
+	it( 'offers no bundle until the catalog is known', () => {
+		const slugs = filterUpsellsOnSale( getAvailableUpsells() ).map( ( upsell ) => upsell.slug );
+
+		expect( slugs ).toEqual( [ 'backup', 'search', 'video', 'boost', 'social' ] );
+	} );
 } );
