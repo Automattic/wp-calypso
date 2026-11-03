@@ -7,8 +7,14 @@ import moment from 'moment';
  */
 export interface DateRange {
 	id: DateRangeId;
-	unit: 'day' | 'month';
+	unit: 'day' | 'week' | 'month';
+	/**
+	 * How many buckets the chart asks for. A range of weeks is bounded by its days instead:
+	 * the API counts the weeks they touch, and the first and last can be partial.
+	 */
 	quantity: number;
+	/** The days a range of weeks covers. A range of days covers `quantity` of them. */
+	days?: number;
 }
 
 export const DATE_RANGE_LAST_7_DAYS = 'last_7_days';
@@ -24,10 +30,12 @@ export type DateRangeId =
 
 export const DEFAULT_DATE_RANGE_ID: DateRangeId = DATE_RANGE_LAST_7_DAYS;
 
-const DATE_RANGE_BUCKETS: Record< DateRangeId, Pick< DateRange, 'unit' | 'quantity' > > = {
+// Last 90 days is drawn by week, as the Stats v2 traffic chart draws it: 90 daily bars are
+// too thin to read or to hover in the widget's column.
+const DATE_RANGE_BUCKETS: Record< DateRangeId, Omit< DateRange, 'id' > > = {
 	[ DATE_RANGE_LAST_7_DAYS ]: { unit: 'day', quantity: 7 },
 	[ DATE_RANGE_LAST_30_DAYS ]: { unit: 'day', quantity: 30 },
-	[ DATE_RANGE_LAST_90_DAYS ]: { unit: 'day', quantity: 90 },
+	[ DATE_RANGE_LAST_90_DAYS ]: { unit: 'week', quantity: 13, days: 90 },
 	[ DATE_RANGE_LAST_12_MONTHS ]: { unit: 'month', quantity: 12 },
 };
 
@@ -70,11 +78,12 @@ export function getSiteToday( gmtOffset: number ): string {
 export function getRangeStartDate( range: DateRange, endDate: string ): string {
 	const end = moment( endDate, 'YYYY-MM-DD' );
 
-	// From the first of the earliest month, matching the chart's monthly buckets.
+	// From the first of the earliest month, matching the chart's monthly buckets. A range of
+	// weeks keeps to its days; its chart starts mid-week.
 	const start =
 		'month' === range.unit
 			? end.startOf( 'month' ).subtract( range.quantity - 1, 'months' )
-			: end.subtract( range.quantity - 1, 'days' );
+			: end.subtract( ( range.days ?? range.quantity ) - 1, 'days' );
 
 	return start.format( 'YYYY-MM-DD' );
 }

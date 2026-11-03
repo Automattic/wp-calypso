@@ -64,4 +64,16 @@ describe( 'resolveDateRange', () => {
 			endDate: '2026-10-06',
 		} );
 	} );
+
+	it( 'should bucket the last 90 days by week, as Stats v2 does', () => {
+		jest.useFakeTimers().setSystemTime( new Date( '2026-10-05T23:00:00Z' ) );
+		expect( resolveDateRange( DATE_RANGE_LAST_90_DAYS, 2 ) ).toEqual( {
+			id: DATE_RANGE_LAST_90_DAYS,
+			unit: 'week',
+			quantity: 13,
+			days: 90,
+			startDate: '2026-07-09',
+			endDate: '2026-10-06',
+		} );
+	} );
 } );

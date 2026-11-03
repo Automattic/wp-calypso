@@ -57,12 +57,13 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const visitorsColor = useCssVariable( '--chart-series-visitors', rootElement );
 
 	// Read once: the choice is made on the Stats page, so a change there shows on the next
-	// load of the dashboard.
-	const chartType = useMemo( () => readChartType( siteId ), [ siteId ] );
+	// load of the dashboard. Bars on a phone too, as Stats v2 draws them, rather than the Stats
+	// page's lines.
+	const chartType = useMemo( () => readChartType( siteId, false ), [ siteId ] );
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
-	const { status, data } = useVisitsQuery( siteId, unit, quantity, endDate );
+	const { status, data } = useVisitsQuery( siteId, unit, quantity, endDate, startDate );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -77,14 +78,20 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 
 	const series = useMemo( () => {
 		const chartData = buildChartData( [ 'visitors' ], 'views', data, unit, endDate );
+		// A week is keyed by its Monday, which for the first one can fall before the range.
+		// That bucket is drawn from the range's first day, where its count starts.
+		const firstDay = parseLocalDate( startDate );
 		const toPoints = ( attribute: 'views' | 'visitors' ) =>
 			chartData
-				.map( ( record: { data: VisitRecord } ) => ( {
+				.map( ( record: { data: VisitRecord } ) => {
 					// Periods are bare dates ("2026-09-20"), which `new Date()` reads as UTC
 					// midnight: behind UTC that lands each point on the previous evening.
-					date: parseLocalDate( record.data.period ),
-					value: record.data[ attribute ] ?? 0,
-				} ) )
+					const date = parseLocalDate( record.data.period );
+					return {
+						date: date < firstDay ? firstDay : date,
+						value: record.data[ attribute ] ?? 0,
+					};
+				} )
 				.filter( ( point: { date: Date } ) => ! isNaN( point.date.getTime() ) );
 
 		return [
@@ -99,7 +106,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 				options: { stroke: visitorsColor },
 			},
 		];
-	}, [ data, unit, endDate, viewsColor, visitorsColor, translate ] );
+	}, [ data, unit, startDate, endDate, viewsColor, visitorsColor, translate ] );
 
 	const isPending = status === 'pending';
 	const isEmpty = status === 'success' && totals.views === 0 && totals.visitors === 0;
@@ -189,7 +196,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 							<OverviewChart
 								series={ series }
 								height={ CHART_HEIGHT }
-								unit={ unit }
+								range={ range }
 								chartType={ chartType }
 							/>
 						</div>
