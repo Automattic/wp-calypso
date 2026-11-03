@@ -35,6 +35,11 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 		return null;
 	}
 
+	const columnCount = Math.max(
+		1,
+		Math.min( data.propagation_status.length, isSmallViewport ? 2 : 4 )
+	);
+
 	return (
 		<VStack spacing={ 4 }>
 			<Text size="medium" weight={ 500 }>
@@ -43,10 +48,7 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			<Card>
 				<CardBody>
 					<Grid
-						templateColumns={ `repeat( ${ Math.max(
-							1,
-							Math.min( data.propagation_status.length, isSmallViewport ? 2 : 4 )
-						) }, auto )` }
+						templateColumns={ `repeat( ${ columnCount }, auto )` }
 						gap="lg"
 						style={ { justifyContent: 'space-between' } }
 					>
