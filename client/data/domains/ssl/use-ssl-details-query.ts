@@ -37,7 +37,8 @@ export default function useSslDetailsQuery( domainName: string ): UseQueryResult
 		queryKey: sslDetailsQueryKey( domainName ),
 		queryFn: () =>
 			wp.req.get( {
-				path: `/domains/ssl/${ domainName }`,
+				// The trailing slash stops nginx from rejecting `.md` domains as file requests.
+				path: `/domains/ssl/${ domainName }/`,
 				apiNamespace: 'wpcom/v2',
 			} ),
 		refetchOnWindowFocus: false,

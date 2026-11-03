@@ -6,7 +6,7 @@ import type { APIFetchOptions } from '../shared-types';
  * The Agents Manager stores all its preferences in a single blob that the
  * server read-modify-writes on every save. Two concurrent requests race on that
  * blob (last writer wins), so one partial save can revert another — e.g. a
- * trailing `router_history` write reverting `minimized`.
+ * trailing `docked` write reverting `minimized`.
  *
  * To prevent that, we keep at most one request in flight and merge any saves
  * that arrive meanwhile into a single follow-up request. Saves are

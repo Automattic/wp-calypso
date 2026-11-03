@@ -19,6 +19,10 @@ Consider a lighter, less abstracted way of writing tests, without page objects. 
 
 ## Unit Testing
 
+### File Naming
+
+A file in a `test/` folder that contains `describe`/`it`/`test` blocks must be named `*.test.ts` or `*.test.tsx`. Unsuffixed files in `test/` are reserved for fixtures and helpers.
+
 ### Integration Tests
 
 Use `@testing-library/react` to test whole slices of the front-end dashboard and to allow more user-focused assertions.

@@ -2,7 +2,7 @@ import { omnibarAgentsManagerEnabledQuery, queryClient } from '@automattic/api-q
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import AsyncLoad from 'calypso/components/async-load';
-import { useCanShowAiChatNode } from 'calypso/dashboard/app/omnibar/node-ai-chat-can-show';
+import { useCanShowAiChatNode } from 'calypso/dashboard/app/omnibar/ai-chat-node/can-show';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { isSiteSection } from 'calypso/state/ui/selectors';
 import { useHelpCenterSite } from './use-help-center-site';

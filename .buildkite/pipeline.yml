@@ -8,7 +8,9 @@ steps:
   # so keep it scoped to the same branch families the CircleCI workflow used.
   - label: ":desktop_computer: Build desktop (mac)"
     key: desktop-build-mac
-    branches: trunk release/* desktop/* desktop-v*
+    # FIXME: Not running on trunk at the moment because of recurring CI load issues.
+    # See AINFRA-3515 for the followup work to re-enable and improve.
+    branches: release/* desktop/* desktop-v*
     notify:
       - github_commit_status:
           context: Desktop / Build (mac)

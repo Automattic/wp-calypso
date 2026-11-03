@@ -142,8 +142,7 @@ function getDefaultFields( {
 			},
 			render: ( { item, field } ) => (
 				<Visibility
-					siteId={ item.ID }
-					siteSlug={ item.slug }
+					site={ item }
 					visibility={ field.getValue( { item } ) }
 					status={ getSiteBlockingStatus( item ) }
 					isLaunched={ item.launch_status === 'launched' || item.launch_status === false }

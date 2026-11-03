@@ -1,3 +1,4 @@
+import config from '@automattic/calypso-config';
 import { speak } from '@wordpress/a11y';
 import { ProgressBar } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -8,9 +9,11 @@ import { useSearchParams } from 'react-router-dom';
 import { getPHPVersions } from 'calypso/data/php-versions';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { getBlueprintID, getBlueprintLabelForTracking } from '../../lib/blueprint';
 import { BlueprintLoadError } from '../../lib/blueprint-load-error';
 import { INITIAL_BOOT_PROGRESS } from '../../lib/boot-progress';
+import { PLAYGROUND_ORIGINS } from '../../lib/constants';
 import { initializeWordPressPlayground } from '../../lib/initialize-playground';
 import { PlaygroundError } from '../playground-error';
 import { PlaygroundIntro } from '../playground-intro';
@@ -23,19 +26,46 @@ import './style.scss';
 const isNewBlueprintBoot = ( params: URLSearchParams ) =>
 	! params.has( 'playground' ) && ( params.has( 'blueprint' ) || params.has( 'blueprint-url' ) );
 
+// The store loads behind the intro, so the messages it posts then are held until
+// the visitor can see it. Only the first few are kept.
+const MAX_HELD_MESSAGES = 20;
+
+// WordPress runs in a frame nested inside the Playground iframe, so walk up from the sender.
+const isWithinFrame = ( source: MessageEventSource | null, frame: Window | null | undefined ) => {
+	if ( ! source || ! frame || ! ( 'parent' in source ) ) {
+		return false;
+	}
+
+	// `parent` is null once a frame is removed, and the top window is its own parent.
+	for (
+		let current: Window | null = source;
+		current;
+		current = current.parent === current ? null : current.parent
+	) {
+		if ( current === frame ) {
+			return true;
+		}
+	}
+	return false;
+};
+
 export function PlaygroundIframe( {
 	className,
 	hasPlaygroundClient,
 	setPlaygroundClient,
 	withIntro = false,
 	onIntroChange,
+	onPlaygroundMessage,
 }: {
 	className?: string;
 	hasPlaygroundClient: boolean;
-	setPlaygroundClient: ( client: PlaygroundClient ) => void;
+	setPlaygroundClient: ( client: PlaygroundClient, details: { isNewPlayground: boolean } ) => void;
 	// Covers the page with the Woo intro, instead of the loader, while a new Playground boots.
 	withIntro?: boolean;
 	onIntroChange?: ( isShown: boolean ) => void;
+	// Receives the data of each message posted from inside this Playground. Messages
+	// posted while the intro covers it arrive once it's ready, or never if the boot fails.
+	onPlaygroundMessage?: ( data: unknown ) => void;
 } ) {
 	const { __ } = useI18n();
 	const iframeRef = useRef< HTMLIFrameElement >( null );
@@ -57,6 +87,51 @@ export function PlaygroundIframe( {
 	useEffect( () => {
 		onIntroChange?.( isIntroShown );
 	}, [ isIntroShown, onIntroChange ] );
+
+	// Read through a ref, so a new callback doesn't re-register the window listener.
+	const onPlaygroundMessageRef = useRef( onPlaygroundMessage );
+	useEffect( () => {
+		onPlaygroundMessageRef.current = onPlaygroundMessage;
+	} );
+
+	// Null unless the intro covers the Playground.
+	const heldMessagesRef = useRef< unknown[] | null >( null );
+	const hasLoggedUnknownOriginRef = useRef( false );
+	const hasMessageListener = Boolean( onPlaygroundMessage );
+	useEffect( () => {
+		if ( ! hasMessageListener ) {
+			return;
+		}
+
+		const handleMessage = ( event: MessageEvent ) => {
+			if ( ! isWithinFrame( event.source, iframeRef.current?.contentWindow ) ) {
+				return;
+			}
+
+			if ( ! PLAYGROUND_ORIGINS.includes( event.origin ) ) {
+				if ( ! hasLoggedUnknownOriginRef.current ) {
+					// Otherwise a change to Playground's origins would only show as missing messages.
+					hasLoggedUnknownOriginRef.current = true;
+					void logToLogstash( {
+						feature: 'calypso_client',
+						tags: [ 'playground-unknown-origin' ],
+						message: 'Message from an unknown origin inside the Playground',
+						properties: { env: config( 'env_id' ), origin: event.origin },
+					} ).catch( () => {} );
+				}
+				return;
+			}
+
+			const heldMessages = heldMessagesRef.current;
+			if ( ! heldMessages ) {
+				onPlaygroundMessageRef.current?.( event.data );
+			} else if ( heldMessages.length < MAX_HELD_MESSAGES ) {
+				heldMessages.push( event.data );
+			}
+		};
+		window.addEventListener( 'message', handleMessage );
+		return () => window.removeEventListener( 'message', handleMessage );
+	}, [ hasMessageListener ] );
 
 	const retry = () => {
 		// A failed dynamic import can remain cached for the lifetime of the document.
@@ -90,6 +165,7 @@ export function PlaygroundIframe( {
 		const durationSeconds = () => Math.round( ( Date.now() - introShownAt ) / 1000 );
 		setIsLoading( true );
 		setBootProgress( showIntro ? INITIAL_BOOT_PROGRESS : null );
+		heldMessagesRef.current = showIntro ? [] : null;
 		if ( showIntro ) {
 			recordTracksEvent( 'calypso_playground_woo_intro_show', { blueprint } );
 		}
@@ -102,7 +178,7 @@ export function PlaygroundIframe( {
 			showIntro ? setBootProgress : undefined
 		)
 			.then( ( result ) => {
-				setPlaygroundClient( result.client );
+				setPlaygroundClient( result.client, { isNewPlayground: result.isNewPlayground } );
 				if ( showIntro ) {
 					setBootProgress( null );
 					speak( __( 'Your store is ready.' ) );
@@ -110,6 +186,10 @@ export function PlaygroundIframe( {
 						blueprint,
 						duration_seconds: durationSeconds(),
 					} );
+
+					const heldMessages = heldMessagesRef.current ?? [];
+					heldMessagesRef.current = null;
+					heldMessages.forEach( ( data ) => onPlaygroundMessageRef.current?.( data ) );
 				}
 
 				const id = getBlueprintID( query );
@@ -122,6 +202,7 @@ export function PlaygroundIframe( {
 			.catch( ( error ) => {
 				setIsLoading( false );
 				setBootProgress( null );
+				heldMessagesRef.current = null;
 				if ( showIntro ) {
 					recordTracksEvent( 'calypso_playground_woo_intro_failed', {
 						blueprint,

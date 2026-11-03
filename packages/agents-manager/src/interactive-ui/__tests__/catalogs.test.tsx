@@ -1,7 +1,8 @@
 import * as renderer from '@automattic/ai-ui-renderer';
-import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
-import { render, screen, waitFor } from '@testing-library/react';
+import { BASIC_CATALOG_ID, CHARTS_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ButtonPicker, ColorPicker, FontPicker } from '../../components/style-pickers';
+import { openHelpCenterChat } from '../../utils/open-help-center-chat';
 import * as tracks from '../../utils/tracks';
 import {
 	AGENTS_MANAGER_CATALOG_ID,
@@ -16,6 +17,7 @@ jest.mock( '../../components/style-pickers', () => ( {
 	ColorPicker: jest.fn( () => null ),
 	FontPicker: jest.fn( () => null ),
 } ) );
+jest.mock( '../../utils/open-help-center-chat', () => ( { openHelpCenterChat: jest.fn() } ) );
 
 const WOO_CATALOG_ID = 'urn:automattic:woocommerce-ai:interactive-ui:v1';
 
@@ -36,11 +38,12 @@ afterAll( () => {
 	jest.resetModules();
 } );
 
-it( 'builds the Basic catalog, Agents Manager’s and each provider’s', () => {
+it( 'builds the Basic catalog, the charts catalog, Agents Manager’s and each provider’s', () => {
 	const catalogs = createInteractiveUiCatalogs( renderer, [ createCatalog( WOO_CATALOG_ID ) ] );
 
 	expect( catalogs.map( ( { id } ) => id ) ).toEqual( [
 		BASIC_CATALOG_ID,
+		CHARTS_CATALOG_ID,
 		AGENTS_MANAGER_CATALOG_ID,
 		WOO_CATALOG_ID,
 	] );
@@ -149,6 +152,43 @@ it( 'renders the style pickers with the props their abilities send', async () =>
 	expect( onError ).not.toHaveBeenCalled();
 } );
 
+it( 'renders the Help Center button the support hand-off sends', async () => {
+	jest.spyOn( tracks, 'recordBigSkyTracksEvent' ).mockImplementation( () => undefined );
+	const onError = jest.fn();
+	const runtime = renderer.createInteractiveUiRuntime( {
+		catalogs: createInteractiveUiCatalogs( renderer ),
+		onAction: jest.fn(),
+		onError,
+	} );
+
+	runtime.processMessages(
+		[
+			{
+				version: 'v1.0',
+				createSurface: {
+					surfaceId: 'help-center',
+					catalogId: AGENTS_MANAGER_CATALOG_ID,
+					components: [
+						{
+							id: 'root',
+							component: 'AgentsManagerOpenHelpCenterButton',
+							message: 'Summary for support.',
+						},
+					],
+				},
+			},
+		],
+		'message'
+	);
+
+	render( <renderer.InteractiveUiSurface surface={ runtime.getSurface( 'help-center' )! } /> );
+
+	fireEvent.click( await screen.findByRole( 'button', { name: 'Get help' } ) );
+
+	expect( openHelpCenterChat ).toHaveBeenCalledWith( 'Summary for support.' );
+	expect( onError ).not.toHaveBeenCalled();
+} );
+
 it( 'skips a catalog that fails to build, and keeps the others', () => {
 	const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 
@@ -159,6 +199,7 @@ it( 'skips a catalog that fails to build, and keeps the others', () => {
 
 	expect( catalogs.map( ( { id } ) => id ) ).toEqual( [
 		BASIC_CATALOG_ID,
+		CHARTS_CATALOG_ID,
 		AGENTS_MANAGER_CATALOG_ID,
 		WOO_CATALOG_ID,
 	] );
@@ -177,12 +218,13 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 		createCatalog( WOO_CATALOG_ID ),
 		createCatalog( AGENTS_MANAGER_CATALOG_ID ),
 		createCatalog( BASIC_CATALOG_ID ),
+		createCatalog( CHARTS_CATALOG_ID ),
 		createCatalog( 'urn:broken:v1', {} ),
 		{} as InteractiveUiCatalogDefinition,
 	] );
 
 	expect( catalogs ).toEqual( [ first ] );
-	expect( consoleError ).toHaveBeenCalledTimes( 5 );
+	expect( consoleError ).toHaveBeenCalledTimes( 6 );
 	expect( consoleError ).toHaveBeenCalledWith(
 		'[AgentsManager] Skipped an interactive UI catalog:',
 		new Error( 'The interactive UI component WooAiProductCard has no implementation.' )
@@ -219,8 +261,14 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities, list
 
 	expect( getInteractiveUiCapabilities( [ wooCatalog ] ) ).toEqual( {
 		'v1.0': {
-			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
+			supportedCatalogIds: [
+				BASIC_CATALOG_ID,
+				CHARTS_CATALOG_ID,
+				AGENTS_MANAGER_CATALOG_ID,
+				WOO_CATALOG_ID,
+			],
 			inlineCatalogs: [
+				expect.objectContaining( { catalogId: CHARTS_CATALOG_ID } ),
 				{
 					$id: WOO_CATALOG_ID,
 					catalogId: WOO_CATALOG_ID,

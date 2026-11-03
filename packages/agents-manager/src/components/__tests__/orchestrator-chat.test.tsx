@@ -4414,11 +4414,12 @@ describe( 'OrchestratorChat', () => {
 
 		expect( countShowComponentMessages() ).toBe( 1 );
 	} );
+
 	it( 'does not retain the live show-component message when the history is replaced', () => {
 		// The same picker serializes differently live (no tool_call_id) and in
 		// loaded history (with tool_call_id), so their identities never match.
-		// Server hydration replaces the whole history with freshly-id'd messages;
-		// that swap must not resurrect the live copy as a retained duplicate.
+		// A history that shares no message IDs, such as another chat's, replaces
+		// this one; that swap must not resurrect the live copy as a retained duplicate.
 		const livePicker = showComponentMessage(
 			'agent-live',
 			JSON.stringify( {
@@ -4433,8 +4434,7 @@ describe( 'OrchestratorChat', () => {
 		);
 		const { rerender } = render( chat() );
 
-		// Server hydration replaces the whole history; every loaded message gets
-		// a fresh id, including the echoed user message.
+		// The whole history is replaced, user message included.
 		mockUseAgentChat.mockReturnValue(
 			agentChatReturn( {
 				messages: [ { ...userMessage, id: 'user-loaded' }, showComponentMessage( 'agent-loaded' ) ],
@@ -4444,6 +4444,54 @@ describe( 'OrchestratorChat', () => {
 
 		expect( countShowComponentMessages() ).toBe( 1 );
 	} );
+
+	it( 'does not retain the live show-component message when a history load keeps message IDs', () => {
+		// Loaded messages keep their IDs, so only the history load marks the replacement.
+		const livePicker = showComponentMessage(
+			'agent-live',
+			JSON.stringify( {
+				tool_id: 'big_sky__show_component',
+				data: { type: 'titlePicker', summary: 'Optimize title' },
+			} )
+		);
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, livePicker ] } )
+		);
+		const { rerender } = render( chat() );
+
+		act( () => {
+			mockConversationConfig?.onSuccess?.( [], 'history-session' );
+		} );
+
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, showComponentMessage( 'agent-loaded' ) ] } )
+		);
+		rerender( chat() );
+
+		expect( countShowComponentMessages() ).toBe( 1 );
+	} );
+
+	it( 'keeps retaining the live show-component message when a fetch mid-turn keeps the live history', () => {
+		// A fetch during a turn doesn't load the transcript, so it mustn't reset retention.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage, showComponentMessage( 'agent-live' ) ] } )
+		);
+		const { rerender } = render( chat() );
+
+		mockManagerTurnInFlight = true;
+		act( () => {
+			mockConversationConfig?.onSuccess?.( [], 'history-session' );
+		} );
+
+		// The stream drops the picker for a moment.
+		mockUseAgentChat.mockReturnValue(
+			agentChatReturn( { messages: [ userMessage ], isProcessing: true } )
+		);
+		rerender( chat() );
+
+		expect( countShowComponentMessages() ).toBe( 1 );
+	} );
+
 	it( 'hides the previous component while a regeneration is processing', async () => {
 		// Steady state: the picker is showing for the completed turn.
 		mockUseAgentChat.mockReturnValue(
@@ -4470,6 +4518,7 @@ describe( 'OrchestratorChat', () => {
 
 		expect( countShowComponentMessages() ).toBe( 0 );
 	} );
+
 	it( 'restores component retention after a regeneration finishes', async () => {
 		// Steady state, then a full regeneration cycle.
 		mockUseAgentChat.mockReturnValue(

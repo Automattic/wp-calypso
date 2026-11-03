@@ -39,6 +39,15 @@ describe( 'serverMessageToMessage', () => {
 		expect( reply( { ...surface, data: 'not messages' } ).parts ).toEqual( [] );
 	} );
 
+	it.each( [
+		[ 'the ID it had live', { a2a_message_id: 'a2a-1' }, 'a2a-1' ],
+		[ 'its row ID when it has no live ID', {}, '1' ],
+	] )( 'names a loaded message by %s', ( _description, fields, messageId ) => {
+		const message = serverMessageToMessage( { ...buildServerMessage( undefined ), ...fields } );
+
+		expect( message.messageId ).toBe( messageId );
+	} );
+
 	it( 'adds no data part for a context without flags, sources or prompt source', () => {
 		const message = serverMessageToMessage( buildServerMessage( { url: 'https://example.com' } ) );
 

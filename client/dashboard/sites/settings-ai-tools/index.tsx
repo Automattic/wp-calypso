@@ -217,7 +217,7 @@ function EmailAssistantCard( {
 						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
-					<Notice density="medium">
+					<Notice>
 						{ __(
 							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
 						) }

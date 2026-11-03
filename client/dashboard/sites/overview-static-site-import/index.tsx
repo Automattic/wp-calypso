@@ -1,4 +1,7 @@
+import { sitePurchasesQuery, staticSiteImportHandoffMutation } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Spinner,
@@ -8,15 +11,17 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, published, thumbsDown, thumbsUp } from '@wordpress/icons';
+import { Icon, border, caution, external, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
 import Notice from '../../components/notice';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { withJetpackSso } from '../../utils/site-sso';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
@@ -25,8 +30,7 @@ import './style.scss';
 
 export * from './use-static-site-import';
 
-// The session only reports queued → finished, so the list moves on a timer and never finishes
-// its last item before the session does.
+// The list moves on a timer and never finishes its last item before the session does.
 const STEP_DURATION = 20000;
 
 function useTimedStep( stepCount: number ) {
@@ -96,49 +100,98 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-function Feedback( { siteId, platform }: { siteId: number; platform?: string } ) {
-	const { recordTracksEvent } = useAnalytics();
-	const { setShowHelpCenter } = useHelpCenter();
-	const [ vote, setVote ] = useState< 'good' | 'bad' | null >( null );
-
-	const onVote = ( rating: 'good' | 'bad' ) => {
-		setVote( rating );
-		recordTracksEvent( 'calypso_dashboard_static_site_import_feedback', {
-			site_id: siteId,
-			source_platform: platform,
-			rating,
+/** Opens a chat with our team (not the AI assistant), with a message naming where the site came from. */
+function useAskForMoveHelp( site: Site ) {
+	const { setNewMessagingChat } = useHelpCenter();
+	return ( initialMessage: string ) =>
+		setNewMessagingChat( {
+			initialMessage,
+			section: 'static-site-import',
+			siteUrl: site.URL,
+			siteId: String( site.ID ),
 		} );
-		if ( rating === 'bad' ) {
-			setShowHelpCenter( true );
-		}
-	};
+}
 
-	if ( vote === 'good' ) {
-		return <Text>{ __( 'Thanks for the feedback!' ) }</Text>;
-	}
+/** Takes the place of the progress card when a move fails. */
+export function StaticSiteImportFailed( {
+	site,
+	search,
+}: {
+	site: Site;
+	search: StaticSiteImportSearch;
+} ) {
+	const locale = useLocale();
+	const handoff = useMutation( staticSiteImportHandoffMutation() );
+	const sourceHost = getSourceHost( search.from );
+	const { data: planPurchase } = useQuery( {
+		...sitePurchasesQuery( site.ID ),
+		select: ( purchases ) => purchases.find( ( purchase ) => purchase.is_plan ),
+	} );
+	// Cancelling the plan is where the refund happens; the classic path forwards to
+	// whichever dashboard the customer uses. Without a plan there's nothing to refund.
+	const refundUrl = planPurchase
+		? wpcomLink( `/me/purchases/${ site.slug }/${ planPurchase.ID }/cancel` )
+		: undefined;
 
 	return (
-		<HStack justify="flex-start" expanded={ false } wrap>
-			<Text>{ __( 'Does it look right?' ) }</Text>
-			<Button
-				icon={ thumbsUp }
-				iconSize={ 16 }
-				size="compact"
-				style={ { color: 'var(--dashboard__foreground-color-success)' } }
-				onClick={ () => onVote( 'good' ) }
-			>
-				{ __( 'Looks right' ) }
-			</Button>
-			<Button
-				icon={ thumbsDown }
-				iconSize={ 16 }
-				size="compact"
-				style={ { color: 'var(--dashboard__foreground-color-error)' } }
-				onClick={ () => onVote( 'bad' ) }
-			>
-				{ __( 'Something’s off' ) }
-			</Button>
-		</HStack>
+		<Card>
+			<CardBody>
+				<VStack spacing={ 6 }>
+					<HStack justify="flex-start" spacing={ 2 }>
+						<Icon
+							icon={ caution }
+							size={ 24 }
+							style={ { fill: 'var(--dashboard__foreground-color-error)' } }
+						/>
+						<Heading level={ 2 } size={ 20 } weight={ 600 }>
+							{ __( 'Your move stopped' ) }
+						</Heading>
+					</HStack>
+					<Text>
+						{ sourceHost
+							? sprintf(
+									/* translators: %s: the address of the site being moved, e.g. example.com. */
+									__( 'Nothing is lost, and %s is still online.' ),
+									sourceHost
+								)
+							: __( 'Nothing is lost, and your current site is still online.' ) }
+					</Text>
+					{ handoff.isError && (
+						<Notice variant="error">
+							{ __( 'We couldn’t reach our team. Please try again.' ) }
+						</Notice>
+					) }
+					{ handoff.isSuccess ? (
+						<Notice variant="success" title={ __( 'Our team has your move' ) }>
+							{ __( 'We’ll email you to finish moving your site.' ) }
+						</Notice>
+					) : (
+						<HStack justify="flex-start" spacing={ 4 } wrap>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								isBusy={ handoff.isPending }
+								disabled={ handoff.isPending }
+								onClick={ () =>
+									handoff.mutate( {
+										blogUrl: site.slug,
+										fromUrl: search.from ?? '',
+										locale,
+									} )
+								}
+							>
+								{ __( 'Let our team move it' ) }
+							</Button>
+							{ refundUrl && (
+								<Button variant="link" href={ refundUrl }>
+									{ __( 'Get a refund' ) }
+								</Button>
+							) }
+						</HStack>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
 	);
 }
 
@@ -190,93 +243,178 @@ export function StaticSiteImportNotice( {
 	siteImport: StaticSiteImport;
 	search: StaticSiteImportSearch;
 } ) {
+	const { recordTracksEvent } = useAnalytics();
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
-	const { from, platform, domainChoice } = search;
+	const { from, platform } = search;
+	const askForMoveHelp = useAskForMoveHelp( site );
 	const sourceHost = getSourceHost( from );
+	const isReady = siteImport.status === 'finished';
+	const trackingProps = {
+		site_id: site.ID,
+		source_platform: platform,
+	};
 
-	if ( isDismissed ) {
-		return null;
-	}
+	// Counts notices shown, so clicks on its buttons can be read as a rate.
+	const hasRecordedImpression = useRef( false );
+	useEffect( () => {
+		if ( ! isReady || hasRecordedImpression.current ) {
+			return;
+		}
+		hasRecordedImpression.current = true;
+		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_impression', {
+			site_id: site.ID,
+			source_platform: platform,
+		} );
+	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
-	if ( siteImport.status === 'failed' ) {
-		const restartUrl = addQueryArgs(
-			wpcomLink( '/setup/static-site-import/static-site-import-reading' ),
-			{ from, platform, siteId: site.ID, siteSlug: site.slug }
-		);
+	const recordClick = ( action: 'connect_domain' | 'get_domain' | 'preview_site' | 'get_help' ) =>
+		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
+			...trackingProps,
+			action,
+		} );
 
+	// A moved site stays Coming Soon, which lets in visitors logged in to the site itself. The owner
+	// isn't until they first visit WP Admin, so open the site through SSO to log them in on the way.
+	const previewUrl =
+		site.is_coming_soon && site.is_wpcom_atomic ? withJetpackSso( site.URL ) : site.URL;
+
+	const sourceName = sourceHost || __( 'my old platform' );
+
+	if ( siteImport.isRefused ) {
 		return (
 			<Notice
 				variant="error"
-				title={ __( 'We couldn’t finish your move' ) }
+				title={ __( 'We can’t import this site' ) }
 				actions={
-					<HStack justify="flex-start" wrap>
-						{ siteImport.needsRestart && (
-							<Button variant="link" href={ restartUrl }>
-								{ __( 'Read my site again' ) }
-							</Button>
-						) }
-						{ siteImport.retry && (
-							<Button variant="link" onClick={ siteImport.retry }>
-								{ __( 'Try again' ) }
-							</Button>
-						) }
-						<Button variant="link" onClick={ () => setShowHelpCenter( true ) }>
-							{ __( 'Get help' ) }
-						</Button>
-					</HStack>
+					<Button __next40pxDefaultSize variant="link" onClick={ () => setShowHelpCenter( true ) }>
+						{ __( 'Get help' ) }
+					</Button>
 				}
 			>
-				{ siteImport.errorCode === 'static_site_import_atomic_unavailable'
-					? __(
-							'Your plan can’t host an imported site yet. Nothing has changed on your current site.'
-						)
-					: __(
-							'Nothing has changed on your current site. You can try again or ask us for help.'
-						) }
+				{ __( 'Its content isn’t allowed on WordPress.com.' ) }
 			</Notice>
 		);
 	}
 
-	const keepsDomain = domainChoice === 'keep' && Boolean( sourceHost );
-	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: sourceHost,
-		siteSlug: site.slug,
-		dashboard: getCurrentDashboard(),
-		back_to: redirectToDashboardLink(),
-	} );
+	// A failed move shows StaticSiteImportFailed in place of the progress card instead.
+	if ( siteImport.status === 'failed' ) {
+		return null;
+	}
+
+	if ( siteImport.status === 'stalled' ) {
+		return (
+			<Notice
+				variant="warning"
+				title={ __( 'Your move hasn’t started yet' ) }
+				actions={
+					<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
+						{ __( 'Try again' ) }
+					</Button>
+				}
+			>
+				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }
+			</Notice>
+		);
+	}
+
+	if ( siteImport.status === 'unavailable' ) {
+		return (
+			<Notice variant="info" title={ __( 'We can’t show this move' ) }>
+				{ __(
+					'It may belong to another account. If you started it, make sure you’re logged in to that account.'
+				) }
+			</Notice>
+		);
+	}
+
+	// The server names a domain only when the customer owns it; otherwise they get one.
+	const ownedDomain = siteImport.session?.connectable_domain ?? '';
+	const domainUrl = ownedDomain
+		? addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+				initialQuery: ownedDomain,
+				siteSlug: site.slug,
+				dashboard: getCurrentDashboard(),
+				back_to: redirectToDashboardLink(),
+			} )
+		: getAddSiteDomainUrl( site.slug );
+	const domainLabel = ownedDomain
+		? sprintf(
+				/* translators: %s: the site's domain, e.g. example.com. */
+				__( 'Connect %s' ),
+				ownedDomain
+			)
+		: __( 'Get a domain' );
 
 	return (
-		<Notice
-			variant="success"
-			title={ __( 'Your site is ready' ) }
-			onClose={ () => setIsDismissed( true ) }
-			actions={
-				<HStack justify="space-between" wrap>
-					{ keepsDomain && (
-						<Button variant="link" href={ connectDomainUrl }>
-							{ sprintf(
-								/* translators: %s: the site's domain, e.g. example.com. */
-								__( 'Connect %s' ),
+		<>
+			{ ! isDismissed && (
+				<Notice
+					variant="success"
+					title={ __( 'Your site is ready' ) }
+					onClose={ () => {
+						recordTracksEvent(
+							'calypso_dashboard_static_site_import_ready_notice_dismiss',
+							trackingProps
+						);
+						setIsDismissed( true );
+					} }
+					actions={
+						<>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								href={ domainUrl }
+								onClick={ () => recordClick( ownedDomain ? 'connect_domain' : 'get_domain' ) }
+							>
+								{ domainLabel }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								href={ previewUrl }
+								target="_blank"
+								rel="noopener noreferrer"
+								icon={ external }
+								iconPosition="right"
+								onClick={ () => recordClick( 'preview_site' ) }
+							>
+								{ __( 'Preview site' ) }
+							</Button>
+							<Button
+								__next40pxDefaultSize
+								variant="link"
+								onClick={ () => {
+									recordClick( 'get_help' );
+									askForMoveHelp(
+										sprintf(
+											/* translators: %s: the address of the site that was moved, e.g. example.com. */
+											__(
+												'My site moved from %s, but some things didn’t come across right. Can you help me with my move?'
+											),
+											sourceName
+										)
+									);
+								} }
+							>
+								{ __( 'Something not right? Get help with your move' ) }
+							</Button>
+						</>
+					}
+				>
+					{ sourceHost
+						? sprintf(
+								/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+								__(
+									'%s is copied and running on WordPress.com. It stays private until you launch it.'
+								),
 								sourceHost
+							)
+						: __(
+								'Your site is copied and running on WordPress.com. It stays private until you launch it.'
 							) }
-						</Button>
-					) }
-					<Feedback siteId={ site.ID } platform={ platform } />
-				</HStack>
-			}
-		>
-			{ sourceHost
-				? sprintf(
-						/* translators: %s: the domain of the site that was moved, e.g. example.com. */
-						__(
-							'%s has been rebuilt on WordPress.com. It stays private until you switch your address over.'
-						),
-						sourceHost
-					)
-				: __(
-						'Your site has been rebuilt on WordPress.com. It stays private until you launch it.'
-					) }
-		</Notice>
+				</Notice>
+			) }
+		</>
 	);
 }

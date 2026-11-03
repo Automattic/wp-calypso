@@ -9,7 +9,7 @@ interface Props {
 	action?: string;
 	isWooJPC?: boolean;
 	partnerConfig?: PartnerConfig | null;
-	showsUnifiedContent?: boolean;
+	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
 	translate: LocalizeProps[ 'translate' ];
 }
@@ -24,7 +24,7 @@ const getHeadingSubText = ( {
 	translate,
 	isWooJPC,
 	partnerConfig,
-	showsUnifiedContent,
+	isUnifiedConnectionFlow,
 	connectorPlugins,
 }: Props ) => {
 	if ( ! isSocialFirst || twoFactorAuthType ) {
@@ -85,7 +85,7 @@ const getHeadingSubText = ( {
 	// clause for the active plugin set; the ToS keeps its established
 	// subtle styling underneath. Lostpassword keeps the standard
 	// reset-instructions copy.
-	if ( showsUnifiedContent && 'lostpassword' !== action ) {
+	if ( isUnifiedConnectionFlow && 'lostpassword' !== action ) {
 		return {
 			primary: getLoginCopy( connectorPlugins ).subtitle,
 			secondary: tos,

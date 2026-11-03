@@ -167,7 +167,7 @@ const NewSiteAddressForm = ( {
 	return (
 		<VStack spacing={ 4 }>
 			{ !! siteDomains && ! hasCustomDomain && (
-				<Notice variant="warning" density="medium">
+				<Notice variant="warning">
 					<Text>
 						{ createInterpolateElement(
 							__(

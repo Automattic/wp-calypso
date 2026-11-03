@@ -45,7 +45,9 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-agency-approval-notice-dismissed': false,
 	'a4a-dashboard-onboarding-tour-section': '',
 	'a4a-overview-welcome-band-dismissed': false,
+	'a4a-dashboard-welcome-notice-seen': '',
 	'a4a-library-read-resources': [],
+	'a4a-crossover-dismissed': [],
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
@@ -78,6 +80,8 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-agency-approval-notice-dismissed': 'a4aappr',
 	'a4a-dashboard-onboarding-tour-section': 'a4adtour',
 	'a4a-overview-welcome-band-dismissed': 'a4awelc',
+	'a4a-crossover-dismissed': 'a4across',
+	'a4a-dashboard-welcome-notice-seen': 'a4adwel',
 	'hosting-dashboard-difm-offer-dismissed': 'difmofr',
 	'a4a-library-read-resources': 'a4aread',
 };
@@ -91,6 +95,7 @@ const dynamicPreferenceStatPrefixes: Record< string, string > = {
 	'hosting-dashboard-wp-beta-notice-dismissed': 'wpbeta',
 	'cancel-purchase-survey-completed': 'cncsvy',
 	'cancellation-offer-accepted-notice-dismissed': 'cncofr',
+	'site-migration-completed-notice-dismissed': 'migdone',
 };
 
 function getUserPreferenceMutationStatId(

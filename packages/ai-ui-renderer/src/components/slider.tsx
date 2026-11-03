@@ -31,7 +31,7 @@ export const Slider = createComponentImplementation(
 		const { fieldProps, touch } = useFieldProps( props.validationErrors );
 		const { className, description, ...controlProps } = fieldProps;
 		const min = props.min ?? 0;
-		const step = props.steps && props.max > min ? ( props.max - min ) / props.steps : 'any';
+		const step = props.steps && props.max > min ? ( props.max - min ) / props.steps : 1;
 		const inputProps = {
 			...controlProps,
 			min,

@@ -9,7 +9,6 @@ import {
 	PLAN_UPGRADE_FLOW,
 	SITE_MIGRATION_FLOW,
 	STATIC_SITE_IMPORT_FLOW,
-	WOO_HOSTED_PLANS_FLOW,
 } from '@automattic/onboarding';
 import { WOO_HOSTING_SOLUTIONS_REF } from 'calypso/landing/stepper/constants';
 import { playgroundPlansIntent } from '../../playground/lib/plans';
@@ -58,6 +57,10 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			if ( search.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF ) {
 				return 'plans-woo-hosting-solutions';
 			}
+			// No Commerce: its site would still be moving to Atomic when the import hands it to site migration.
+			if ( search.get( 'flow' ) === 'import' ) {
+				return 'plans-import';
+			}
 			if ( search.has( 'intent' ) ) {
 				return getVisualSplitPlansIntent( search.get( 'intent' )! );
 			}
@@ -68,8 +71,6 @@ export function getPlansIntent( flowName: string | null ): PlansIntent | null {
 			return search.get( 'allow_downgrade' ) === 'true'
 				? 'plans-upgrade-or-downgrade'
 				: 'plans-upgrade';
-		case WOO_HOSTED_PLANS_FLOW:
-			return 'plans-woo-hosted';
 		// Paid plans only: the import is delivered through an Atomic transfer.
 		case SITE_MIGRATION_FLOW:
 		case STATIC_SITE_IMPORT_FLOW:

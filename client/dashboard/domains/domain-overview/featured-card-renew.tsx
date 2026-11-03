@@ -8,11 +8,11 @@ import { purchaseSettingsRoute } from '../../app/router/me';
 import OverviewCard from '../../components/overview-card';
 import { formatDate } from '../../utils/datetime';
 
-interface Props {
+interface FeaturedCardRenewProps {
 	domain: Domain;
 }
 
-export default function FeaturedCardRenew( { domain }: Props ) {
+export default function FeaturedCardRenew( { domain }: FeaturedCardRenewProps ) {
 	const router = useRouter();
 	const locale = useLocale();
 	const date = domain.auto_renewing ? domain.auto_renewal_date : domain.expiry;

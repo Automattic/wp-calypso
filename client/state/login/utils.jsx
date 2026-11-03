@@ -85,7 +85,7 @@ export function getErrorFromHTTPError( httpError ) {
 						<p>
 							{ translate(
 								'If you were trying to access your self hosted {{a}}WordPress.org{{/a}} site, ' +
-									'try {{strong}}yourdomain.com/wp-admin/{{/strong}} instead.',
+									'try {{strong}}yourgroovydomain.com/wp-admin/{{/strong}} instead.',
 								{
 									components: {
 										a: <a href="http://wordpress.org" target="_blank" rel="noopener noreferrer" />,

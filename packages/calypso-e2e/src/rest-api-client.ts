@@ -45,6 +45,7 @@ import type {
 	JetpackSearchParams,
 	SiteSettingsParams,
 	SiteSettingsResponse,
+	AdminMenuResponse,
 	Subscriber,
 	SitePostState,
 	AllPurchasesResponse,
@@ -1347,6 +1348,36 @@ export class RestAPIClient {
 		}
 
 		return response.updated;
+	}
+
+	/**
+	 * Gets the wp-admin menu of a site, as its sidebar lists it.
+	 *
+	 * @param {number|string} siteID Site ID or slug.
+	 * @returns {Promise<AdminMenuResponse>} Top-level menu items with their submenus.
+	 * @throws {Error} If API responded with an error.
+	 */
+	async getAdminMenu( siteID: number | string ): Promise< AdminMenuResponse > {
+		const params: RequestParams = {
+			method: 'get',
+			headers: {
+				Authorization: await this.getAuthorizationHeader( 'bearer' ),
+			},
+		};
+
+		const response = await this.sendRequest(
+			this.getRequestURL( '2', `/sites/${ siteID }/admin-menu`, 'wpcom' ),
+			params
+		);
+
+		// Sites on the redesigned sidebar wrap the menu in `{ menu, groups, layoutDelta }`.
+		const menu = Array.isArray( response ) ? response : response?.menu;
+
+		if ( ! Array.isArray( menu ) ) {
+			throw new Error( `Unexpected admin menu response: ${ JSON.stringify( response ) }` );
+		}
+
+		return menu;
 	}
 
 	/* Shopping Cart */

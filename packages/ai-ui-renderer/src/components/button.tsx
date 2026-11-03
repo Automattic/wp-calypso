@@ -5,7 +5,7 @@ import { Button as WordPressButton, VisuallyHidden } from '@wordpress/ui';
 import { z } from 'zod';
 import { useInteractiveUiSurface, useModalTrigger } from '../contexts/surface';
 import { ChecksSchema } from '../utils/schemas';
-import type { SyntheticEvent } from 'react';
+import type { KeyboardEvent, SyntheticEvent } from 'react';
 
 const VARIANTS = { default: 'outline', primary: 'solid', borderless: 'minimal' } as const;
 
@@ -24,6 +24,7 @@ export const Button = createComponentImplementation(
 		const openModal = useModalTrigger();
 		const { disabled, showErrors } = useInteractiveUiSurface();
 		const isInvalid = props.isValid === false;
+		const canShowErrors = isInvalid && ! disabled;
 		// Opening a modal changes nothing, so its trigger stays usable on a disabled surface.
 		const isDisabled = isInvalid || ( disabled && ! openModal );
 
@@ -38,6 +39,15 @@ export const Button = createComponentImplementation(
 				?.focus();
 		};
 
+		// Like a native button, Enter acts on keydown and Space on keyup, so Space's keyup can't
+		// toggle the check box or radio it focuses.
+		const showFirstErrorOnKey = ( key: string ) => ( event: KeyboardEvent< HTMLElement > ) => {
+			if ( event.key === key ) {
+				event.preventDefault();
+				showFirstError( event );
+			}
+		};
+
 		return (
 			<>
 				<WordPressButton
@@ -46,17 +56,9 @@ export const Button = createComponentImplementation(
 					disabled={ isDisabled }
 					focusableWhenDisabled
 					// Disabled buttons suppress activation, so validation runs during capture.
-					onClickCapture={ isInvalid && ! disabled ? showFirstError : undefined }
-					onKeyDownCapture={
-						isInvalid && ! disabled
-							? ( event ) => {
-									if ( event.key === 'Enter' || event.key === ' ' ) {
-										event.preventDefault();
-										showFirstError( event );
-									}
-								}
-							: undefined
-					}
+					onClickCapture={ canShowErrors ? showFirstError : undefined }
+					onKeyDownCapture={ canShowErrors ? showFirstErrorOnKey( 'Enter' ) : undefined }
+					onKeyUpCapture={ canShowErrors ? showFirstErrorOnKey( ' ' ) : undefined }
 					aria-describedby={ isInvalid ? descriptionId : undefined }
 					onClick={ ( event ) => ( openModal ? openModal( event.currentTarget ) : props.action() ) }
 				>

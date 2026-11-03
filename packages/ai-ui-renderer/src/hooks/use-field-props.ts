@@ -4,7 +4,7 @@ import { useInteractiveUiSurface } from '../contexts/surface';
 
 /**
  * The props every input shares: its surface's disabled state, and the message of its first failed
- * check (in the agent's order), once the field is touched or the person clicks a Button whose
+ * check (in the agent's order), once the field is touched or the person activates a Button whose
  * checks fail, so a new form doesn't open with errors. Call `touch` when the person leaves a
  * text or date field, or changes a check box, a choice or a slider: Safari doesn't focus
  * checkboxes, radios and sliders on click, so they may never blur.

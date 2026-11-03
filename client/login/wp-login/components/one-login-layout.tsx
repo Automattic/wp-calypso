@@ -30,10 +30,9 @@ export const ensureHeadingProvided = (
 
 interface OneLoginLayoutProps {
 	isJetpack: boolean;
-	showsUnifiedContent?: boolean;
 	/**
-	 * Jetpack onboarding or connector flow, which the user is completing from a
-	 * Jetpack site.
+	 * The unified connection flow (`isUnifiedFlow()`), which the user is
+	 * completing from a Jetpack site.
 	 */
 	isUnifiedConnectionFlow?: boolean;
 	connectorPlugins?: string[];
@@ -80,7 +79,6 @@ interface OneLoginLayoutProps {
 
 const OneLoginLayout = ( {
 	isJetpack,
-	showsUnifiedContent,
 	isUnifiedConnectionFlow,
 	connectorPlugins,
 	children,
@@ -109,7 +107,7 @@ const OneLoginLayout = ( {
 	const validatedHeadingText = ensureHeadingProvided( headingText );
 	const { topBarLogo, hasCustomBranding } = usePartnerBranding();
 	const signupLink = useSignupLink( { signupUrl: signupUrlProp, origin: 'login-layout' } );
-	const headingLogo = useHeadingLogo( { isJetpack, showsUnifiedContent, connectorPlugins } );
+	const headingLogo = useHeadingLogo( { isJetpack, isUnifiedConnectionFlow, connectorPlugins } );
 
 	// Product and partner logins with a logo above the title (Woo, Jetpack, Crowdsignal,
 	// Akismet...) are designed around it, so they stay centered. A logo in the top bar
@@ -170,7 +168,6 @@ const OneLoginLayout = ( {
 	const shouldLinkLogo =
 		linkLogoToHome &&
 		! isJetpack &&
-		! showsUnifiedContent &&
 		! isUnifiedConnectionFlow &&
 		! isWooJPC &&
 		! oauth2Client &&
@@ -229,7 +226,7 @@ const OneLoginLayout = ( {
 					{ showLogo && (
 						<HeadingLogo
 							isJetpack={ isJetpack }
-							showsUnifiedContent={ showsUnifiedContent }
+							isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 							connectorPlugins={ connectorPlugins }
 						/>
 					) }

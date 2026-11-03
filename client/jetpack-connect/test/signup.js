@@ -63,6 +63,30 @@ const DEFAULT_PROPS = deepFreeze( {
 } );
 
 describe( 'JetpackSignup', () => {
+	test( 'uses migration copy and dynamic branding on mixed-plugin signup', () => {
+		const { container } = render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from: 'wpcom_migration',
+					plugins: [ 'wpcom-migration', 'jetpack' ],
+					connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+				} }
+			/>
+		);
+		expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+		expect(
+			screen.getByText(
+				"You'll use it to migrate your site to WordPress.com and connect its other active plugins."
+			)
+		).toBeVisible();
+		expect( container.querySelector( '.connect-screen-brand-header__logo-image' ) ).toHaveAttribute(
+			'src',
+			'jetpack-connect.svg'
+		);
+	} );
+
 	let originalScrollTo;
 
 	beforeAll( () => {
@@ -104,6 +128,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'jetpack', 'woocommerce' ],
+					connectorPlugins: [ 'jetpack', 'woocommerce' ],
 				} }
 			/>
 		);
@@ -112,8 +137,8 @@ describe( 'JetpackSignup', () => {
 	} );
 
 	// Unified-flow signup surface contract:
-	//  - The existing-account escape hatch renders for both unified flows
-	//    (jetpack-connector and jetpack-onboarding).
+	//  - The existing-account escape hatch renders for every unified flow
+	//    (`isUnifiedFlow()`).
 	//  - The features section is intentionally NOT rendered on signup —
 	//    it lives on the authorize surface only. The signup page already
 	//    carries the brand context via BrandHeader, so duplicating the
@@ -126,6 +151,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);
@@ -149,25 +175,31 @@ describe( 'JetpackSignup', () => {
 		expect( container.querySelector( '.connect-screen-features-section' ) ).not.toBeInTheDocument();
 	} );
 
-	test.each( [ 'jetpack_premium_analytics_onboarding', 'delete_connection_owner_notice' ] )(
-		'from=%s renders the connector header and the existing-account link',
-		( from ) => {
-			const { container } = render(
-				<JetpackSignup
-					{ ...DEFAULT_PROPS }
-					authQuery={ { ...DEFAULT_PROPS.authQuery, from, plugins: [ 'jetpack' ] } }
-				/>
-			);
+	test.each( [
+		'jetpack-onboarding',
+		'jetpack_premium_analytics_onboarding',
+		'delete_connection_owner_notice',
+	] )( 'from=%s renders the connector header and the existing-account link', ( from ) => {
+		const { container } = render(
+			<JetpackSignup
+				{ ...DEFAULT_PROPS }
+				authQuery={ {
+					...DEFAULT_PROPS.authQuery,
+					from,
+					plugins: [ 'jetpack' ],
+					connectorPlugins: [ 'jetpack' ],
+				} }
+			/>
+		);
 
-			expect(
-				container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
-			).toBeInTheDocument();
-			expect( container.querySelector( '.connect-screen-brand-header' ) ).toBeInTheDocument();
-			expect( screen.getByText( /Already have a WordPress.com account\?/ ) ).toBeInTheDocument();
-		}
-	);
+		expect(
+			container.querySelector( '.jetpack-connect__authorize-form-wrapper--connector' )
+		).toBeInTheDocument();
+		expect( container.querySelector( '.connect-screen-brand-header' ) ).toBeInTheDocument();
+		expect( screen.getByText( /Already have a WordPress.com account\?/ ) ).toBeInTheDocument();
+	} );
 
-	test.each( [ 'jetpack-newsletter', 'jetpack-x_y' ] )(
+	test.each( [ 'jetpack-onboarding-wizard', 'my-jetpack', 'jetpack-newsletter', 'jetpack-x_y' ] )(
 		'from=%s keeps the legacy signup header',
 		( from ) => {
 			const { container } = render(
@@ -189,6 +221,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'banner-44-slide-1-dashboard',
 					plugins: [ 'woocommerce' ],
+					connectorPlugins: [ 'woocommerce' ],
 				} }
 			/>
 		);
@@ -212,6 +245,7 @@ describe( 'JetpackSignup', () => {
 					...DEFAULT_PROPS.authQuery,
 					from: 'jetpack-connector',
 					plugins: [ 'woocommerce', 'jetpack' ],
+					connectorPlugins: [ 'woocommerce', 'jetpack' ],
 				} }
 			/>
 		);
@@ -230,30 +264,6 @@ describe( 'JetpackSignup', () => {
 		);
 	} );
 
-	describe( 'isFromJetpackOnboarding', () => {
-		const isFromJetpackOnboarding = new JetpackSignup().isFromJetpackOnboarding;
-
-		test( 'is from jetpack onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-onboarding',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( true );
-		} );
-
-		test( 'is not from jetpack onboarding', () => {
-			const props = {
-				authQuery: {
-					from: 'jetpack-connector',
-				},
-			};
-
-			expect( isFromJetpackOnboarding( props ) ).toBe( false );
-		} );
-	} );
-
 	describe( 'isUnifiedConnectionFlow', () => {
 		const instance = new JetpackSignup();
 
@@ -261,7 +271,9 @@ describe( 'JetpackSignup', () => {
 			[ 'jetpack-onboarding', true ],
 			[ 'jetpack-connector', true ],
 			[ 'jetpack_premium_analytics_onboarding', true ],
+			[ 'jetpack-onboarding-wizard', false ],
 			[ 'woocommerce-onboarding', false ],
+			[ 'my-jetpack', false ],
 			[ 'jetpack-newsletter', false ],
 			[ 'jetpack-x_y', false ],
 		] )( 'from=%s → %s', ( from, expected ) => {

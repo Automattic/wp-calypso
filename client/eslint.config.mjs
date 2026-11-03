@@ -60,7 +60,7 @@ export default defineConfig(
 			},
 		},
 		{
-			files: [ '**/*.stories.tsx' ],
+			files: [ '**/*.stories.{ts,tsx}' ],
 			rules: {
 				'import/no-extraneous-dependencies': 'off',
 			},

@@ -125,6 +125,13 @@ describe( 'LicensePreview', () => {
 		expect( screen.queryByText( 'Bundle details panel' ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'shows a single inbox when the API omits the Titan quantity', () => {
+		renderPreview( { ...titanLicense, quantity: null } );
+
+		expect( screen.getByText( '1 Inbox' ) ).toBeVisible();
+		expect( screen.queryByText( 'Bundle dropdown' ) ).not.toBeInTheDocument();
+	} );
+
 	it( 'keeps rendering a non-Titan quantity as a bundle', async () => {
 		const user = userEvent.setup();
 		renderPreview( { ...baseLicense, quantity: 3 } );

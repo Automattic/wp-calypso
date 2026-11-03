@@ -31,7 +31,7 @@ import {
 } from 'calypso/dashboard/app-dotcom/section';
 import { A4A_SIGNUP_PATHS } from 'calypso/dashboard/section';
 import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
-import { JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
+import { A4A_SIGNUP_URL, JETPACK_COM_A4A_LANDING_PAGE } from 'calypso/jetpack-cloud/constants';
 import wooDnaConfig from 'calypso/jetpack-connect/woo-dna-config';
 import { STEPPER_SECTION_DEFINITION } from 'calypso/landing/stepper/section';
 import { SUBSCRIPTIONS_SECTION_DEFINITION } from 'calypso/landing/subscriptions/section';
@@ -46,6 +46,7 @@ import {
 	getLegacyPlanFlowRedirect,
 	shouldRedirectLegacyPlanFlow,
 } from 'calypso/lib/signup/legacy-plan-flows';
+import { getWebsiteDesignServicesRedirect } from 'calypso/lib/signup/legacy-website-design-services-flow';
 import { getWooCommercePluginPage } from 'calypso/lib/signup/legacy-woocommerce-install-flow';
 import loginRouter, { LOGIN_SECTION_DEFINITION } from 'calypso/login';
 import sections from 'calypso/sections';
@@ -976,6 +977,19 @@ function validateRedirect( req, url ) {
 }
 
 /**
+ * The locale of a legacy `/start` URL, or '' for the default one. It's the last non-empty path
+ * segment, so a trailing slash doesn't hide it.
+ * @param {string} requestPath Request path
+ * @returns {string} Locale slug
+ */
+function getLegacyFlowLocale( requestPath ) {
+	const lastPathSegment = requestPath.split( '/' ).filter( Boolean ).pop() ?? '';
+	return getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
+		? lastPathSegment
+		: '';
+}
+
+/**
  * Defines wordpress.com (Calypso blue) routes only
  * @param {express.Application} app Express application
  */
@@ -1247,6 +1261,34 @@ function jetpackCloudPages( app ) {
 	app.get( [ '/manage/pricing', `/${ anyLangParam }/manage/pricing` ], function ( _req, res ) {
 		res.redirect( 302, JETPACK_COM_A4A_LANDING_PAGE );
 	} );
+
+	// Jetpack Manage no longer accepts agency signups; every signup goes through Automattic for
+	// Agencies. Registered here so it runs before the client-side OAuth login gate in
+	// client/boot/common.js, which would otherwise bounce logged-out visitors through login first.
+	// A 302 rather than a 301 so the route can be restored without waiting out caches.
+	// Only the acquisition params A4A signup reads are forwarded (see
+	// client/a8c-for-agencies/sections/signup/hooks/use-acquisition-props.ts).
+	const A4A_SIGNUP_FORWARDED_PARAMS = [
+		'ref',
+		'utm_source',
+		'utm_medium',
+		'utm_campaign',
+		'utm_term',
+		'utm_content',
+	];
+	app.get( [ '/manage/signup', '/agency/signup' ], function ( req, res ) {
+		const target = new URL( A4A_SIGNUP_URL );
+		for ( const key of A4A_SIGNUP_FORWARDED_PARAMS ) {
+			const value = req.query[ key ];
+			if ( typeof value === 'string' && value !== '' ) {
+				target.searchParams.set( key, value );
+			}
+		}
+		if ( ! target.searchParams.has( 'ref' ) ) {
+			target.searchParams.set( 'ref', 'jetpack-manage' );
+		}
+		res.redirect( 302, target.toString() );
+	} );
 }
 
 export default function pages() {
@@ -1325,14 +1367,10 @@ export default function pages() {
 			return next( 'route' );
 		}
 
-		// Last non-empty segment, so a trailing slash doesn't hide the locale.
-		const lastPathSegment = req.path.split( '/' ).filter( Boolean ).pop() ?? '';
-		const locale =
-			getLanguageSlugs().includes( lastPathSegment ) && ! isDefaultLocale( lastPathSegment )
-				? lastPathSegment
-				: '';
-
-		res.redirect( 302, getLegacyPlanFlowRedirect( req.params.flow, req.query, locale ) );
+		res.redirect(
+			302,
+			getLegacyPlanFlowRedirect( req.params.flow, req.query, getLegacyFlowLocale( req.path ) )
+		);
 	} );
 
 	// Legacy `/start/launch-site` is now served by Stepper; see `legacy-launch-site-flow.ts`.
@@ -1389,6 +1427,16 @@ export default function pages() {
 	app.get( [ '/woocommerce-installation', '/woocommerce-installation/:site' ], ( req, res ) => {
 		res.redirect( 302, getWooCommercePluginPage( req.params.site ) );
 	} );
+
+	app.get(
+		[ '/start/website-design-services', '/start/website-design-services/*' ],
+		( req, res ) => {
+			res.redirect(
+				302,
+				getWebsiteDesignServicesRedirect( getLegacyFlowLocale( req.path ), stringify( req.query ) )
+			);
+		}
+	);
 
 	// Special Calypso routes which also appear on `my.wordpress.com`
 	if ( isDashboardEnv() || calypsoEnv === 'development' ) {

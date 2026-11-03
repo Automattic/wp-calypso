@@ -41,7 +41,7 @@ const renderWithSharedClient = ( domain: Domain ) => {
 };
 
 const interceptDomainDetails = () =>
-	nock( 'https://public-api.wordpress.com' ).get( `/rest/v1.2/domain-details/${ domainName }` );
+	nock( 'https://public-api.wordpress.com' ).get( `/rest/v1.2/domain-details/${ domainName }/` );
 
 // Mirrors how DomainOverview feeds the notice: the domain comes from the query,
 // so a successful mutation is only visible once the refetch lands.
