@@ -51,9 +51,10 @@ export const getTransferRestrictionMessage = ( inboundTransferStatus ) => {
  */
 export const getConnectedDomainTransferRestrictionMessage = ( domain, inboundTransferStatus ) => {
 	const { transferEligibleDate, transferRestrictionStatus } = inboundTransferStatus ?? {};
+	const hasEligibleDate = !! transferEligibleDate && moment( transferEligibleDate ).isValid();
 
 	if ( 'initial_registration_period' === transferRestrictionStatus ) {
-		if ( transferEligibleDate ) {
+		if ( hasEligibleDate ) {
 			return createInterpolateElement(
 				sprintf(
 					/* translators: %(domain)s: a domain name, %(transferEligibleDate)s: a date formatted according to the user's locale (e.g: September 28, 2021) */
@@ -81,7 +82,7 @@ export const getConnectedDomainTransferRestrictionMessage = ( domain, inboundTra
 		);
 	}
 
-	if ( 'max_term' === transferRestrictionStatus && transferEligibleDate ) {
+	if ( 'max_term' === transferRestrictionStatus && hasEligibleDate ) {
 		return getTransferRestrictionMessage( inboundTransferStatus );
 	}
 

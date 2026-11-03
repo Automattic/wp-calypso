@@ -70,7 +70,7 @@ describe( 'getOptionInfo() for a domain already connected to the site', () => {
 	} );
 
 	test( 'falls back to the generic message for max term without a date', () => {
-		const { transfer } = getCards( status, {
+		const { transfer, connect } = getCards( status, {
 			transferRestrictionStatus: 'max_term',
 			transferEligibleDate: null,
 		} );
@@ -79,6 +79,32 @@ describe( 'getOptionInfo() for a domain already connected to the site', () => {
 		expect( renderTopText( transfer ) ).toHaveTextContent(
 			'This domain name cannot be transferred.'
 		);
+		render( <div>{ connect.topText }</div> );
+		expect( screen.getByText( 'This domain is already connected to your site.' ) ).toBeVisible();
+	} );
+
+	test( 'treats an invalid eligible date as missing', () => {
+		const { transfer } = getCards( status, {
+			transferRestrictionStatus: 'initial_registration_period',
+			transferEligibleDate: 'not a date',
+		} );
+
+		const transferText = renderTopText( transfer );
+		expect( transferText ).toHaveTextContent( `so ${ DOMAIN } can’t be transferred yet.` );
+		expect( transferText ).not.toHaveTextContent( 'Invalid date' );
+	} );
+
+	test( 'keeps the premium price-limit message ahead of the lock', () => {
+		const [ transfer ] = getOptionInfo( {
+			availability: { status, mappable: 'not_mappable', is_price_limit_exceeded: true },
+			domain: DOMAIN,
+			domainInboundTransferStatusInfo: {
+				transferRestrictionStatus: 'initial_registration_period',
+				transferEligibleDate: ELIGIBLE_DATE,
+			},
+		} );
+
+		expect( renderTopText( transfer ) ).toHaveTextContent( 'high tier premium name' );
 	} );
 
 	test.each( [
