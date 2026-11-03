@@ -4,6 +4,7 @@
 // Otherwise, we'd add a fair amount to the bundle size when we don't really need
 // it for every single request.
 import config from '@automattic/calypso-config';
+import { makeLogstashMirrorTransport } from './logstash-transport';
 import type * as SentryApi from '@sentry/react';
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
@@ -162,7 +163,11 @@ export async function initSentry( parameters?: SentryOptions ) {
 	try {
 		// No Sentry loading on the server.
 		// No double-loading.
-		if ( typeof document === 'undefined' || ! [ 'initial', 'disabled' ].includes( state.state ) ) {
+		if (
+			typeof window === 'undefined' ||
+			typeof document === 'undefined' ||
+			! [ 'initial', 'disabled' ].includes( state.state )
+		) {
 			return;
 		}
 
@@ -231,6 +236,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 				release,
 				beforeBreadcrumb,
 				beforeSend,
+				transport: makeLogstashMirrorTransport( Sentry.makeFetchTransport ),
 			} );
 			state = { state: 'loaded', params, sentry: Sentry };
 		} catch ( err ) {
