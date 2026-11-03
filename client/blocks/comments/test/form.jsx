@@ -127,15 +127,19 @@ describe( 'PostCommentForm', () => {
 			assetsUrl: 'https://s0.wp.com/build/',
 			loaderUrl: 'https://s0.wp.com/build/editor-loader.js',
 			maxLength: 65525,
-			blocks: true,
 			editorLocale: {},
 			editor: { blockTools: 'Block tools', addBlock: 'Add block', embedUrl: '', images: false },
 		};
 		const mockEditorSettings = ( status, body ) =>
 			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/sites/456/comments/editor' )
+				.get( '/wpcom/v2/comments/editor' )
 				.query( true )
 				.reply( status, body );
+		const mockSiteBlocks = ( blocks ) =>
+			nock( 'https://public-api.wordpress.com' )
+				.get( '/wpcom/v2/sites/456/comments/blocks' )
+				.query( true )
+				.reply( 200, { blocks } );
 		const postReply = async ( content ) => {
 			const request = nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/sites/456/posts/123/replies/new', { content } )
@@ -161,14 +165,16 @@ describe( 'PostCommentForm', () => {
 				'Hello <strong>there</strong>\n\n- One',
 			],
 		] )( 'saves %s', async ( _, blocks, content ) => {
-			mockEditorSettings( 200, { ...editorSettings, blocks } );
+			mockEditorSettings( 200, editorSettings );
+			const site = mockSiteBlocks( blocks );
 			renderForm( { commentText: markup }, { composer: true } );
 
 			await screen.findByRole( 'textbox', { name: 'Comment' } );
+			await waitFor( () => expect( site.isDone() ).toBe( true ) );
 			expect( await postReply( content ) ).toBe( true );
 		} );
 
-		it( 'keeps the textarea where the site has no editor settings', async () => {
+		it( 'keeps the textarea when the editor settings fail to load', async () => {
 			const settings = mockEditorSettings( 404, { code: 'editor_not_available' } );
 			renderForm( { commentText: 'Plain words' }, { composer: true } );
 

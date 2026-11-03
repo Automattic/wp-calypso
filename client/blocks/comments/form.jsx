@@ -1,5 +1,5 @@
 import './form.scss';
-import { commentsEditorQuery } from '@automattic/api-queries';
+import { commentsEditorQuery, siteCommentsBlocksQuery } from '@automattic/api-queries';
 import { Button, FormInputValidation } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Button as WPButton } from '@wordpress/components';
@@ -127,7 +127,7 @@ class PostCommentForm extends Component {
 
 		// A site without block comments doesn't render block markup, so it gets plain HTML.
 		const content =
-			this.props.editorSettings?.blocks === false && isBlockMarkup( commentText )
+			this.props.blocks === false && isBlockMarkup( commentText )
 				? blocksToHtml( commentText )
 				: commentText;
 
@@ -253,6 +253,7 @@ class PostCommentForm extends Component {
 						<CommentBlockEditor
 							settings={ this.props.editorSettings }
 							siteId={ post.site_ID }
+							blocks={ this.props.blocks }
 							value={ this.getCommentText() }
 							placeholder={ placeholder }
 							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }
@@ -323,9 +324,11 @@ PostCommentForm.propTypes = {
 
 	onReplyCancel: PropTypes.func,
 
-	// From withCommentsEditorSettings: the inbox's composer layout, and the editor's settings.
+	// From withCommentsEditorSettings: the inbox's composer layout, the editor's settings, and
+	// whether the site's comments take blocks.
 	composer: PropTypes.bool,
 	editorSettings: PropTypes.object,
+	blocks: PropTypes.bool,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
@@ -356,9 +359,21 @@ const withPostCommentActions = ( WrappedComponent ) => {
 const withCommentsEditorSettings = ( WrappedComponent ) => {
 	const WithCommentsEditorSettings = ( props ) => {
 		const blockEditor = useContext( CommentEditorContext );
+		const siteId = props.post?.site_ID;
 		const { data } = useQuery( { ...commentsEditorQuery(), enabled: blockEditor } );
+		const { data: site } = useQuery( {
+			...siteCommentsBlocksQuery( siteId ),
+			enabled: blockEditor && siteId > 0,
+		} );
 
-		return <WrappedComponent { ...props } composer={ blockEditor } editorSettings={ data } />;
+		return (
+			<WrappedComponent
+				{ ...props }
+				composer={ blockEditor }
+				editorSettings={ data }
+				blocks={ site?.blocks }
+			/>
+		);
 	};
 
 	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${
