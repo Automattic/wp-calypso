@@ -232,7 +232,13 @@ export default function WelcomeBand( {
 								</span>
 								<div className="a4a-welcome-band-text">
 									<VStack spacing={ 0.5 }>
-										<Heading level={ 3 } size={ 13 } weight={ 600 } lineHeight="18px">
+										<Heading
+											className="a4a-welcome-band-title"
+											level={ 3 }
+											size={ 13 }
+											weight={ 600 }
+											lineHeight="18px"
+										>
 											{ step.title }
 										</Heading>
 										<Text size={ 13 } lineHeight="18px" color={ MUTED_ON_FIELD }>
