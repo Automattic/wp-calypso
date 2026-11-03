@@ -1,80 +1,89 @@
 import { MaterialIcon } from '@automattic/components';
-import { StepContainer, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { Step, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { WIDE_BREAKPOINT } from '../hundred-year-plan-step-wrapper/constants';
 import TransferDomains from './domains';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation, flow, variantSlug } ) {
+const Domains: StepType = function Domains( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
+	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const handleSubmit = () => {
 		submit?.();
 	};
 
-	const isHundredYearDomainsTransferFlow = HUNDRED_YEAR_DOMAIN_TRANSFER === variantSlug;
+	const stepContent = (
+		<CalypsoShoppingCartProvider>
+			<TransferDomains onSubmit={ handleSubmit } variantSlug={ variantSlug } />
+		</CalypsoShoppingCartProvider>
+	);
 
-	const Container = isHundredYearDomainsTransferFlow ? HundredYearPlanStepWrapper : StepContainer;
-
-	const headerText = isHundredYearDomainsTransferFlow
-		? __( 'Transfer your Domain' )
-		: __( 'Add your domains' );
-
-	const subHeaderText = isHundredYearDomainsTransferFlow
-		? __( 'Start building your legacy. Secure your domain for the next 100 years.' )
-		: __( 'Enter your domain names and authorization codes below.' );
+	if ( HUNDRED_YEAR_DOMAIN_TRANSFER === variantSlug ) {
+		return (
+			<HundredYearPlanStepWrapper
+				flowName={ flow }
+				variantSlug={ variantSlug }
+				mobileBreakpoint={ WIDE_BREAKPOINT }
+				stepName="domains"
+				formattedHeader={
+					<FormattedHeader
+						id="domain-transfer-header"
+						headerText={ __( 'Transfer your Domain' ) }
+						subHeaderText={
+							<>
+								<span>
+									{ __( 'Start building your legacy. Secure your domain for the next 100 years.' ) }
+								</span>
+							</>
+						}
+						align="center"
+					/>
+				}
+				stepContent={ stepContent }
+			/>
+		);
+	}
 
 	return (
-		<Container
-			flowName={ flow }
-			variantSlug={ variantSlug }
-			mobileBreakpoint={ WIDE_BREAKPOINT }
-			stepName="domains"
-			goBack={ goBack }
-			isHorizontalLayout={ false }
-			isLargeSkipLayout={ false }
-			formattedHeader={
-				<FormattedHeader
-					id="domain-transfer-header"
-					headerText={ headerText }
-					subHeaderText={
-						<>
-							<span>{ subHeaderText }</span>
-						</>
+		<Step.CenteredColumnLayout
+			columnWidth={ 8 }
+			className="step-container-v2--domain-transfer-domains"
+			topBar={
+				<Step.TopBar
+					leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null }
+					rightElement={
+						<ChatButton
+							chatIntent="SUPPORT"
+							initialMessage="User is contacting us from the domains-transfer flow"
+							className="domains-transfer-chat-button"
+							withHelpCenter={ false }
+							section="domains-transfer"
+						>
+							<MaterialIcon icon="chat_bubble" />
+							{ isMobileViewport ? __( 'Help' ) : __( 'Need help?' ) }
+						</ChatButton>
 					}
-					align="center"
 				/>
 			}
-			stepContent={
-				<CalypsoShoppingCartProvider>
-					<TransferDomains onSubmit={ handleSubmit } variantSlug={ variantSlug } />
-				</CalypsoShoppingCartProvider>
+			heading={
+				<Step.Heading
+					text={ __( 'Add your domains' ) }
+					subText={ __( 'Enter your domain names and authorization codes below.' ) }
+				/>
 			}
-			recordTracksEvent={ recordTracksEvent }
-			showHeaderJetpackPowered={ false }
-			showJetpackPowered={ false }
-			customizedActionButtons={
-				<ChatButton
-					chatIntent="SUPPORT"
-					initialMessage="User is contacting us from the domains-transfer flow"
-					className="domains-transfer-chat-button"
-					withHelpCenter={ false }
-					section="domains-transfer"
-				>
-					<MaterialIcon icon="chat_bubble" />
-					{ __( 'Need help?' ) }
-				</ChatButton>
-			}
-		/>
+		>
+			{ stepContent }
+		</Step.CenteredColumnLayout>
 	);
 };
 
-export default Intro;
+export default Domains;

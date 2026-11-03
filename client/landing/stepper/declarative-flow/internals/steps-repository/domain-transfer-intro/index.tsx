@@ -1,53 +1,57 @@
 import { MaterialIcon } from '@automattic/components';
-import { StepContainer } from '@automattic/onboarding';
+import { Step } from '@automattic/onboarding';
+import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
 import ChatButton from 'calypso/components/chat-button';
-import FormattedHeader from 'calypso/components/formatted-header';
-import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
+import { useQuery } from '../../../../hooks/use-query';
 import IntroStep from './intro';
-import type { Step } from '../../types';
+import type { Step as StepType } from '../../types';
 
 import './styles.scss';
 
-const Intro: Step = function Intro( { navigation } ) {
+const Intro: StepType = function Intro( { navigation } ) {
 	const { submit } = navigation;
 	const { __ } = useI18n();
+	const isMobileViewport = useViewportMatch( 'small', '<' );
+	const backTo = getSafeUrl( useQuery().get( 'back_to' ) );
 
 	const handleSubmit = () => {
 		submit?.();
 	};
 
 	return (
-		<StepContainer
-			hideBack
-			stepName="intro"
-			isLargeSkipLayout={ false }
-			formattedHeader={
-				<FormattedHeader
-					id="domain-transfer-header"
-					headerText={ __( 'Transfer Your Domains' ) }
-					subHeaderText={ __(
+		<Step.CenteredColumnLayout
+			columnWidth={ 6 }
+			className="step-container-v2--domain-transfer-intro"
+			topBar={
+				<Step.TopBar
+					leftElement={ backTo ? <Step.BackButton href={ backTo } /> : null }
+					rightElement={
+						<ChatButton
+							chatIntent="SUPPORT"
+							initialMessage="User is contacting us from the domains-transfer flow"
+							className="domains-transfer-chat-button"
+							withHelpCenter={ false }
+							section="domains-transfer"
+						>
+							<MaterialIcon icon="chat_bubble" />
+							{ isMobileViewport ? __( 'Help' ) : __( 'Need help?' ) }
+						</ChatButton>
+					}
+				/>
+			}
+			heading={
+				<Step.Heading
+					text={ __( 'Transfer Your Domains' ) }
+					subText={ __(
 						'Follow these three simple steps to transfer your domains to WordPress.com.'
 					) }
 				/>
 			}
-			stepContent={ <IntroStep onSubmit={ handleSubmit } /> }
-			recordTracksEvent={ recordTracksEvent }
-			showHeaderJetpackPowered={ false }
-			showJetpackPowered={ false }
-			customizedActionButtons={
-				<ChatButton
-					chatIntent="SUPPORT"
-					initialMessage="User is contacting us from the domains-transfer flow"
-					className="domains-transfer-chat-button"
-					withHelpCenter={ false }
-					section="domains-transfer"
-				>
-					<MaterialIcon icon="chat_bubble" />
-					{ __( 'Need help?' ) }
-				</ChatButton>
-			}
-		/>
+		>
+			<IntroStep onSubmit={ handleSubmit } />
+		</Step.CenteredColumnLayout>
 	);
 };
 
