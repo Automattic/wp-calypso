@@ -1,5 +1,5 @@
 /** The strings and routes the Jetpack Comments block editor takes from PHP. */
-export interface SiteCommentsEditorLabels {
+export interface CommentsEditorLabels {
 	blockTools: string;
 	addBlock: string;
 	/** The embed preview route, or empty where embeds are off. */
@@ -8,8 +8,8 @@ export interface SiteCommentsEditorLabels {
 	imageError: string;
 }
 
-/** What `/sites/{siteId}/comments/editor` returns for a site that offers block comments. */
-export interface SiteCommentsEditorSettings {
+/** What `/wpcom/v2/comments/editor` returns. */
+export interface CommentsEditorSettings {
 	/** The build directory the editor loads its chunks from. */
 	assetsUrl: string;
 	/** The versioned loader script, which sets `window.JetpackCommentsEditor`. */
@@ -17,5 +17,5 @@ export interface SiteCommentsEditorSettings {
 	maxLength: number;
 	/** Core's translations of the editor's strings, keyed as its script translations are. */
 	editorLocale: Record< string, unknown >;
-	editor: SiteCommentsEditorLabels;
+	editor: CommentsEditorLabels;
 }

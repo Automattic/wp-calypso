@@ -1,12 +1,12 @@
 import './form.scss';
-import { siteCommentsEditorQuery } from '@automattic/api-queries';
+import { commentsEditorQuery } from '@automattic/api-queries';
 import { Button, FormInputValidation } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Button as WPButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, useContext } from 'react';
+import { Component, useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
@@ -22,6 +22,8 @@ import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 import CommentBlockEditor from './comment-block-editor';
 import { CommentEditorContext } from './comment-editor-context';
+import { loadCommentEditor } from './load-comment-editor';
+import { usePageSettled } from './use-page-settled';
 
 const noop = () => {};
 
@@ -59,6 +61,8 @@ function PostCommentFormError( { type } ) {
 class PostCommentForm extends Component {
 	state = {
 		haveFocus: false,
+		// Outside the inbox the plain textarea stands in until the first focus.
+		editorOpen: false,
 		editorFailed: false,
 		// Bumped to start the editor over, since it keeps its own content once mounted.
 		editorKey: 0,
@@ -97,7 +101,7 @@ class PostCommentForm extends Component {
 	};
 
 	handleFocus = () => {
-		this.setState( { haveFocus: true } );
+		this.setState( { haveFocus: true, editorOpen: true } );
 	};
 
 	handleEditorError = () => {
@@ -184,6 +188,11 @@ class PostCommentForm extends Component {
 		);
 
 		this.resetCommentText();
+		this.setState( ( { editorKey } ) => ( {
+			haveFocus: false,
+			editorOpen: false,
+			editorKey: editorKey + 1,
+		} ) );
 
 		// Resets the active reply comment in PostCommentList
 		this.props.onCommentSubmit();
@@ -241,6 +250,13 @@ class PostCommentForm extends Component {
 
 		const isReply = !! this.props.parentCommentId;
 		const { composer } = this.props;
+		const showEditor =
+			this.props.editorSettings &&
+			! this.state.editorFailed &&
+			( composer ||
+				isReply ||
+				this.state.editorOpen ||
+				this.getCommentText().includes( '<!-- wp:' ) );
 		let submitLabel = translate( 'Send' );
 		if ( this.props.error ) {
 			submitLabel = translate( 'Resend' );
@@ -274,7 +290,7 @@ class PostCommentForm extends Component {
 					) : (
 						avatar
 					) }
-					{ this.props.editorSettings && ! this.state.editorFailed ? (
+					{ showEditor ? (
 						<CommentBlockEditor
 							key={ this.state.editorKey }
 							settings={ this.props.editorSettings }
@@ -351,7 +367,7 @@ PostCommentForm.propTypes = {
 
 	onReplyCancel: PropTypes.func,
 
-	// From withCommentsEditorSettings: the inbox's composer layout, and the editor where its site has one.
+	// From withCommentsEditorSettings: the inbox's composer layout, and the editor's settings.
 	composer: PropTypes.bool,
 	editorSettings: PropTypes.object,
 
@@ -384,8 +400,15 @@ const withPostCommentActions = ( WrappedComponent ) => {
 const withCommentsEditorSettings = ( WrappedComponent ) => {
 	const WithCommentsEditorSettings = ( props ) => {
 		const blockEditor = useContext( CommentEditorContext );
-		const query = siteCommentsEditorQuery( props.post?.site_ID );
-		const { data } = useQuery( { ...query, enabled: blockEditor && query.enabled } );
+		const settled = usePageSettled();
+		const { data } = useQuery( { ...commentsEditorQuery(), enabled: settled } );
+
+		// Fetched ahead of the first focus, so the editor is ready when someone clicks in.
+		useEffect( () => {
+			if ( data ) {
+				loadCommentEditor( data ).catch( noop );
+			}
+		}, [ data ] );
 
 		return <WrappedComponent { ...props } composer={ blockEditor } editorSettings={ data } />;
 	};
