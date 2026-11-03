@@ -208,18 +208,17 @@ describe( '<AgencySites>', () => {
 			expect( screen.getAllByText( 'client.example.com' ) ).toHaveLength( 1 );
 			expect( screen.queryByRole( 'radio' ) ).not.toBeInTheDocument();
 			for ( const title of [ 'Automattic for Agencies', 'Jetpack' ] ) {
-				const features = within( screen.getByRole( 'list', { name: `${ title } features` } ) );
+				const facts = within( screen.getByRole( 'list', { name: `About ${ title }` } ) );
 				expect( screen.getByRole( 'button', { name: new RegExp( `^${ title }` ) } ) ).toBeVisible();
 				expect(
-					features.getByRole( 'button', { name: 'Approve your agency account : Included' } )
+					facts.getByText( 'Approve with your agency’s WordPress.com account' )
 				).toBeVisible();
 				expect(
-					features.getByRole( 'button', {
-						name:
-							title === 'Jetpack'
-								? 'Install through Jetpack : Included'
-								: 'Install and activate in WordPress : Included',
-					} )
+					facts.getByText(
+						title === 'Jetpack'
+							? 'Install with the Jetpack installer'
+							: 'Install and activate in WordPress'
+					)
 				).toBeVisible();
 			}
 			expect(

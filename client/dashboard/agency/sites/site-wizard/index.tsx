@@ -23,7 +23,6 @@ import ConnectionWaiting from './connection-waiting';
 import CreateChoices from './create-choices';
 import EntryChoices from './entry-choices';
 import EntryIllustration from './entry-illustration';
-import HostedShowcase from './hosted-showcase';
 import HostingChoice from './hosting-choice';
 import SitesOverviewStory from './overview-story';
 import { parseSiteList, SITE_REVIEW_BULK_THRESHOLD } from './site-intake';
@@ -961,9 +960,6 @@ export default function SiteWizard( {
 		<div className="agency-site-wizard" data-step={ step } data-entry={ entry }>
 			<Card className="agency-site-wizard__workspace">
 				<AmplifyBackdrop />
-				{ isFirstSite && step === 'start' && ( entry === 'cards' || entry === 'address' ) && (
-					<HostedShowcase />
-				) }
 				<div className="agency-site-wizard__navigation">
 					{ canGoBack && (
 						<Button

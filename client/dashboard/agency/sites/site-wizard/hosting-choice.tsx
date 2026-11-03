@@ -1,9 +1,10 @@
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { chartBar, code, currencyDollar } from '@wordpress/icons';
 import { useId } from 'react';
 import pressableWordmark from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/pressable.svg';
 import wpcomWordmark from 'calypso/assets/images/a8c-for-agencies/product-wordmarks/wpcom.svg';
-import FeatureChecklist from './feature-checklist';
+import ChoiceFacts from './choice-facts';
 import type { Host } from './use-site-wizard';
 import type { CSSProperties } from 'react';
 
@@ -41,50 +42,26 @@ export default function HostingChoice( { host, onClick }: { host: Host; onClick:
 						: __( 'Host one or many sites, with traffic and storage shared across your plan.' ) }
 				</span>
 			</Button>
-			<FeatureChecklist
+			<ChoiceFacts
 				title={ brand.name }
-				features={ [
+				facts={ [
 					{
-						label: __( 'Multiple sites on one plan' ),
-						included: host === 'pressable',
-						detail:
-							host === 'pressable'
-								? __(
-										'Choose a plan with room for your client portfolio. Sites share the plan’s traffic and storage allowances.'
-									)
-								: __(
-										'Each site has its own hosting plan. Volume discounts reduce the per-site price as you add more sites.'
-									),
-					},
-					{
-						label: __( 'No traffic overage fees' ),
-						included: host === 'wpcom',
-						detail:
+						icon: currencyDollar,
+						label:
 							host === 'wpcom'
-								? __(
-										'WordPress.com hosting includes unlimited traffic and bandwidth, so a busy month won’t bring traffic overage charges.'
-									)
-								: __(
-										'Pressable includes a traffic allowance shared across your plan. Usage above that allowance may incur overage fees.'
-									),
+								? __( 'Volume discounts as you add sites' )
+								: __( 'Many sites share one plan' ),
 					},
 					{
-						label: __( 'Staging sites' ),
-						detail: __(
-							'Test design changes, plugin updates, and new features on a staging copy before applying them to the live site.'
-						),
+						icon: chartBar,
+						label:
+							host === 'wpcom'
+								? __( 'Unlimited traffic, no overage fees' )
+								: __( 'Shared traffic allowance, overages may apply' ),
 					},
 					{
-						label: __( 'Managed migrations' ),
-						detail: __(
-							'Get help moving an existing WordPress site to your new hosting. The migration team guides you through the transfer and launch.'
-						),
-					},
-					{
-						label: __( 'SSH & WP-CLI access' ),
-						detail: __(
-							'Connect over SSH and use WP-CLI to manage WordPress from the command line, automate tasks, and work with your own development tools.'
-						),
+						icon: code,
+						label: __( 'Staging, SSH, and WP-CLI' ),
 					},
 				] }
 			/>

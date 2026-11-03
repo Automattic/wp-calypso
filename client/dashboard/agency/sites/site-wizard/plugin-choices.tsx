@@ -1,9 +1,10 @@
 import { JetpackLogo } from '@automattic/components/src/logos/jetpack-logo';
 import { __ } from '@wordpress/i18n';
+import { plugins, people } from '@wordpress/icons';
 import A4ALogo from '../add-new-site/a4a-logo';
 import { getA4APluginInstallUrl, getJetpackConnectUrl } from '../add-new-site/lib';
+import ChoiceFacts from './choice-facts';
 import { Choice } from './choices';
-import FeatureChecklist from './feature-checklist';
 
 export default function PluginChoices( {
 	onSelect,
@@ -43,33 +44,19 @@ export default function PluginChoices( {
 							</span>
 						}
 					/>
-					<FeatureChecklist
+					<ChoiceFacts
 						title={ option.title }
-						features={ [
+						facts={ [
 							{
+								icon: plugins,
 								label:
 									option.value === 'a4a'
 										? __( 'Install and activate in WordPress' )
-										: __( 'Install through Jetpack' ),
-								detail:
-									option.value === 'jetpack'
-										? __(
-												'Enter your site’s administrator credentials in the Jetpack installer to install the plugin.'
-											)
-										: __(
-												'Sign in to your site’s WordPress admin, then choose Install Now and Activate for Automattic for Agencies.'
-											),
+										: __( 'Install with the Jetpack installer' ),
 							},
 							{
-								label: __( 'Approve your agency account' ),
-								detail:
-									option.value === 'jetpack'
-										? __(
-												'Approve the connection with the WordPress.com account you use for your agency.'
-											)
-										: __(
-												'Choose “Connect this site”, then approve the WordPress.com account you use for your agency.'
-											),
+								icon: people,
+								label: __( 'Approve with your agency’s WordPress.com account' ),
 							},
 						] }
 					/>
