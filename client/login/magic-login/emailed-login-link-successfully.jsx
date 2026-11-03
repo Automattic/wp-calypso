@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import RedirectWhenLoggedIn from 'calypso/components/redirect-when-logged-in';
 import { login } from 'calypso/lib/paths';
+import { useHeadingLogo } from 'calypso/login/wp-login/components/heading-logo';
 import OneLoginFooter from 'calypso/login/wp-login/components/one-login-footer';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -19,7 +20,38 @@ import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import { withEnhancers } from 'calypso/state/utils';
 import { LoginContext } from '../login-context';
-import { MagicLoginEmailWrapper } from './magic-login-email/magic-login-email-wrapper';
+import {
+	MagicLoginEmailButton,
+	MagicLoginEmailWrapper,
+} from './magic-login-email/magic-login-email-wrapper';
+
+// Product logins with a logo above the title (WooCommerce, Studio, Akismet...) keep their
+// own centered layout; the rest follow the account template.
+function CheckYourEmailActions( { emailAddress, renderHelpText } ) {
+	const headingLogo = useHeadingLogo( {} );
+
+	if ( headingLogo ) {
+		return (
+			<>
+				<Card className="magic-login__form">
+					<div className="magic-login__emails-list">
+						<MagicLoginEmailWrapper emailAddress={ emailAddress } />
+					</div>
+				</Card>
+				<OneLoginFooter>
+					<p className="one-login__footer-text">{ renderHelpText( 'one-login__footer-link' ) }</p>
+				</OneLoginFooter>
+			</>
+		);
+	}
+
+	return (
+		<div className="magic-login__check-email-actions">
+			<MagicLoginEmailButton emailAddress={ emailAddress } />
+			<p className="magic-login__check-email-help">{ renderHelpText() }</p>
+		</div>
+	);
+}
 
 class EmailedLoginLinkSuccessfully extends Component {
 	static propTypes = {
@@ -56,8 +88,26 @@ class EmailedLoginLinkSuccessfully extends Component {
 		);
 	};
 
+	renderHelpText( className ) {
+		return this.props.translate(
+			"Didn't get the email? You might want to double check if the email address is associated with your account, {{a}}or reset your password.{{/a}}",
+			{
+				components: {
+					a: (
+						<a
+							className={ className }
+							href="/"
+							onClick={ this.onLostPasswordClick }
+							rel="noopener noreferrer"
+						/>
+					),
+				},
+			}
+		);
+	}
+
 	render() {
-		const { translate, emailAddress } = this.props;
+		const { emailAddress } = this.props;
 
 		return (
 			<>
@@ -67,30 +117,10 @@ class EmailedLoginLinkSuccessfully extends Component {
 					waitForEmailAddress={ emailAddress }
 				/>
 
-				<Card className="magic-login__form">
-					<div className="magic-login__emails-list">
-						<MagicLoginEmailWrapper emailAddress={ emailAddress } />
-					</div>
-				</Card>
-				<OneLoginFooter>
-					<p className="one-login__footer-text">
-						{ translate(
-							"Didn't get the email? You might want to double check if the email address is associated with your account, {{a}}or reset your password.{{/a}}",
-							{
-								components: {
-									a: (
-										<a
-											className="one-login__footer-link"
-											href="/"
-											onClick={ this.onLostPasswordClick }
-											rel="noopener noreferrer"
-										/>
-									),
-								},
-							}
-						) }
-					</p>
-				</OneLoginFooter>
+				<CheckYourEmailActions
+					emailAddress={ emailAddress }
+					renderHelpText={ ( className ) => this.renderHelpText( className ) }
+				/>
 			</>
 		);
 	}
