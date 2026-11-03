@@ -1,30 +1,26 @@
 @use '@wordpress/base-styles/animations' as *;
 @use '../../styles/variables' as *;
 
-// Lets a preview size to the visible chat.
-.agents-manager-chat [data-slot='messages'] {
-	container-type: size;
-}
+// The most a preview grows to in a large chat.
+$chat-image-preview-max-size: 600px;
 
-// Agenttic fits the image to the message; this makes it a button that keeps that size.
 .agents-manager-chat-image {
 	display: block;
-	max-width: 100%;
+	max-width: min( 100%, $chat-image-preview-max-size );
+	// A tall image shows its top.
+	max-height: $chat-image-preview-max-size;
+	overflow: hidden;
 	padding: 0;
 	border: 0;
 	border-radius: var( --radius-sm );
 	background: none;
+	// A hairline, so a white screenshot stands out.
+	outline: $border-width solid var( --color-input-border );
+	outline-offset: -$border-width;
 	cursor: zoom-in;
 
 	img {
 		display: block;
-		// Grows with the chat, but leaves room for the conversation.
-		/* stylelint-disable-next-line unit-allowed-list -- The allow-list predates container units. */
-		max-height: min( 75cqh, 50dvh );
-		border-radius: inherit;
-		// A hairline edge, so a white screenshot doesn't blend into the message.
-		outline: $border-width solid var( --color-input-border );
-		outline-offset: -$border-width;
 	}
 
 	&:focus-visible {
@@ -33,7 +29,7 @@
 	}
 }
 
-// A modal `<dialog>` doesn't stop the page scrolling behind it; the gutter keeps the layout still.
+// Stops the page scrolling behind the lightbox, without shifting it.
 html:has( .agents-manager-chat-image__lightbox[open] ) {
 	overflow: hidden;
 	scrollbar-gutter: stable;
@@ -57,9 +53,14 @@ html:has( .agents-manager-chat-image__lightbox[open] ) {
 	img {
 		display: block;
 		max-width: 90vw;
-		// `dvh`, so the image stays clear of mobile browser toolbars.
+		// `dvh` keeps it clear of mobile toolbars.
 		max-height: 90dvh;
 		border-radius: $radius-large;
+	}
+
+	// A tall image keeps a readable width and scrolls.
+	&--tall img {
+		max-height: none;
 	}
 }
 
@@ -75,7 +76,7 @@ html:has( .agents-manager-chat-image__lightbox[open] ) {
 	padding: 0;
 	border: 0;
 	border-radius: $radius-full;
-	// Dark, so it shows over a light image as well as over the backdrop.
+	// Dark, so it shows over a light image too.
 	background: rgba( $black, 0.6 );
 	color: $white;
 	cursor: pointer;

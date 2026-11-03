@@ -43,6 +43,24 @@ describe( 'ChatImage', () => {
 		);
 	} );
 
+	it.each( [
+		[ 'scrolls a tall image', 390, 844, true ],
+		[ 'fits a wide image', 1200, 900, false ],
+	] )( '%s in the lightbox', ( _, naturalWidth, naturalHeight, isTall ) => {
+		const dialog = openLightbox();
+		const image = within( dialog ).getByRole( 'img' );
+		Object.defineProperties( image, {
+			naturalWidth: { value: naturalWidth },
+			naturalHeight: { value: naturalHeight },
+		} );
+
+		fireEvent.load( image );
+
+		expect( dialog.classList.contains( 'agents-manager-chat-image__lightbox--tall' ) ).toBe(
+			isTall
+		);
+	} );
+
 	it( 'closes the lightbox on Escape without letting the chat close too', () => {
 		const dialog = openLightbox();
 
