@@ -27,7 +27,11 @@ import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { getCurrentDashboard } from '../../app/routing';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
+import {
+	isDomainRenewable,
+	canSetAsPrimaryIgnoringSsl,
+	canToggleWwwPrimaryDomain,
+} from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
@@ -125,11 +129,7 @@ export const useActions = ( {
 	}, [ primaryCandidateDomainNames, sslActiveKey ] );
 
 	const canToggleWwwPrimary = useCallback(
-		( item: DomainSummary ) =>
-			!! site?.is_wpcom_atomic &&
-			item.blog_id === site.ID &&
-			item.primary_domain &&
-			item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS,
+		( item: DomainSummary ) => !! site && canToggleWwwPrimaryDomain( item, site ),
 		[ site ]
 	);
 

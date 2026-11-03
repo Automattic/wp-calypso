@@ -163,6 +163,15 @@ export function canSetAsPrimaryIgnoringSsl( {
 	return canSetAsPrimary( { domain, site, user } ) && ! ( site.options?.is_redirect ?? false );
 }
 
+export function canToggleWwwPrimaryDomain( domain: DomainSummary, site: Site ): boolean {
+	return (
+		site.is_wpcom_atomic &&
+		domain.blog_id === site.ID &&
+		domain.primary_domain &&
+		domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
+}
+
 export function hasGSuiteWithUs( domain: Domain ) {
 	const status = domain.google_apps_subscription?.status;
 	return !! status && ! [ 'no_subscription', 'other_provider' ].includes( status );

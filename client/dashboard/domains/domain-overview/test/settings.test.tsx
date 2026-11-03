@@ -1,9 +1,13 @@
 /**
  * @jest-environment jsdom
  */
-import { DomainSubtype, type Domain } from '@automattic/api-core';
+import { DomainSubtype, type Domain, type Site } from '@automattic/api-core';
+import { siteByIdQuery } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
@@ -65,9 +69,27 @@ const getMockedDomainData = ( customProps: Partial< Domain > = {} ): Domain => {
 	} as Domain;
 };
 
-function renderDomainSettings( domainProps: Partial< Domain > = {} ) {
+const getMockedSiteData = ( customProps: Partial< Site > = {} ): Site =>
+	( {
+		ID: 123,
+		URL: `https://${ domainName }`,
+		is_wpcom_atomic: false,
+		...customProps,
+	} ) as Site;
+
+function renderDomainSettings(
+	domainProps: Partial< Domain > = {},
+	siteProps: Partial< Site > = {}
+) {
 	const mockDomain = getMockedDomainData( domainProps );
-	return render( <DomainOverviewSettings domain={ mockDomain } domainDiagnostics={ undefined } /> );
+	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
+	queryClient.setQueryData(
+		siteByIdQuery( mockDomain.blog_id ).queryKey,
+		getMockedSiteData( siteProps )
+	);
+	return render( <DomainOverviewSettings domain={ mockDomain } domainDiagnostics={ undefined } />, {
+		queryClient,
+	} );
 }
 
 describe( 'DomainOverviewSettings', () => {
@@ -319,6 +341,102 @@ describe( 'DomainOverviewSettings', () => {
 			// Verify only 1 setting button exists
 			const settingsButtons = screen.getAllByRole( 'link' );
 			expect( settingsButtons ).toHaveLength( 1 );
+		} );
+	} );
+
+	describe( 'Web address', () => {
+		const eligibleDomain: Partial< Domain > = {
+			primary_domain: true,
+			primary_is_www: false,
+		};
+		const atomicSite: Partial< Site > = { is_wpcom_atomic: true };
+
+		const interceptWwwPrimary = ( enabled: boolean ) =>
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/wpcom/v2/domains/www-primary/${ domainName }`, { enabled } )
+				.reply( 200, { enabled, primary_domain: domainName } );
+
+		test( 'is hidden for a Simple site', async () => {
+			renderDomainSettings( eligibleDomain );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'Web address' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'is hidden for a domain that is not the primary domain', async () => {
+			renderDomainSettings( { ...eligibleDomain, primary_domain: false }, atomicSite );
+
+			await waitFor( () => {
+				expect( screen.getByText( 'Settings' ) ).toBeInTheDocument();
+			} );
+			expect( screen.queryByText( 'Web address' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'is hidden for the default site address', async () => {
+			renderDomainSettings(
+				{
+					...eligibleDomain,
+					subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default address' },
+				},
+				atomicSite
+			);
+
+			expect( screen.queryByText( 'Web address' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'is shown for the primary domain of an Atomic site', async () => {
+			renderDomainSettings( eligibleDomain, atomicSite );
+
+			expect( await screen.findByText( 'Web address' ) ).toBeInTheDocument();
+			expect( screen.getByRole( 'radio', { name: domainName } ) ).toBeChecked();
+			expect( screen.getByRole( 'radio', { name: `www.${ domainName }` } ) ).not.toBeChecked();
+			expect(
+				screen.getByText(
+					'Pick this if people already know your site at the www address, for example after moving it here from another host.'
+				)
+			).toBeInTheDocument();
+		} );
+
+		test( 'falls back to the site address when the domain does not report the www state', async () => {
+			renderDomainSettings(
+				{ ...eligibleDomain, primary_is_www: undefined },
+				{ ...atomicSite, URL: `https://www.${ domainName }` }
+			);
+
+			expect( await screen.findByRole( 'radio', { name: `www.${ domainName }` } ) ).toBeChecked();
+		} );
+
+		test( 'switches to the www address and records a Tracks event', async () => {
+			const user = userEvent.setup();
+			const scope = interceptWwwPrimary( true );
+			const { recordTracksEvent } = renderDomainSettings( eligibleDomain, atomicSite );
+
+			await user.click( await screen.findByRole( 'radio', { name: `www.${ domainName }` } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_domain_settings_web_address_change',
+				{ domain: domainName, www: true }
+			);
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
+		} );
+
+		test( 'switches back to the root domain', async () => {
+			const user = userEvent.setup();
+			const scope = interceptWwwPrimary( false );
+			const { recordTracksEvent } = renderDomainSettings(
+				{ ...eligibleDomain, primary_is_www: true },
+				atomicSite
+			);
+
+			await user.click( await screen.findByRole( 'radio', { name: domainName } ) );
+
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_domain_settings_web_address_change',
+				{ domain: domainName, www: false }
+			);
+			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		} );
 	} );
 } );

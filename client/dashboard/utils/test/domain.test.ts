@@ -2,6 +2,7 @@ import { DomainStatus, DomainSubtype, WhoisType } from '@automattic/api-core';
 import {
 	canEnableAutoRenew,
 	canSetAsPrimaryIgnoringSsl,
+	canToggleWwwPrimaryDomain,
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
 	isPendingPrimaryDomain,
@@ -93,6 +94,47 @@ describe( 'utils', () => {
 					site,
 					user,
 				} )
+			).toBe( false );
+		} );
+	} );
+
+	describe( 'canToggleWwwPrimaryDomain', () => {
+		const site = { ID: 123, is_wpcom_atomic: true } as Site;
+		const baseDomain = {
+			blog_id: 123,
+			primary_domain: true,
+			subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Registration' },
+		} as DomainSummary;
+
+		test( 'returns true for the primary custom domain of an Atomic site', () => {
+			expect( canToggleWwwPrimaryDomain( baseDomain, site ) ).toBe( true );
+		} );
+
+		test( 'returns false for a Simple site', () => {
+			expect(
+				canToggleWwwPrimaryDomain( baseDomain, { ...site, is_wpcom_atomic: false } as Site )
+			).toBe( false );
+		} );
+
+		test( 'returns false when the domain is attached to another site', () => {
+			expect( canToggleWwwPrimaryDomain( { ...baseDomain, blog_id: 456 }, site ) ).toBe( false );
+		} );
+
+		test( 'returns false for a non-primary domain', () => {
+			expect( canToggleWwwPrimaryDomain( { ...baseDomain, primary_domain: false }, site ) ).toBe(
+				false
+			);
+		} );
+
+		test( 'returns false for the default site address', () => {
+			expect(
+				canToggleWwwPrimaryDomain(
+					{
+						...baseDomain,
+						subtype: { id: DomainSubtype.DEFAULT_ADDRESS, label: 'Default address' },
+					},
+					site
+				)
 			).toBe( false );
 		} );
 	} );

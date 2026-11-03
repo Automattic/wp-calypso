@@ -5,11 +5,14 @@ import {
 	DomainDiagnostics,
 	type DomainMappingStatus,
 } from '@automattic/api-core';
+import { siteByIdQuery } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
+import { useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { SectionHeader } from '../../components/section-header';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { canToggleWwwPrimaryDomain } from '../../utils/domain';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
 import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
@@ -18,6 +21,7 @@ import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
 import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
+import DomainWebAddressSetting from './web-address-setting';
 
 export default function DomainOverviewSettings( {
 	domain,
@@ -30,6 +34,9 @@ export default function DomainOverviewSettings( {
 	domainMappingStatus?: DomainMappingStatus;
 	isDisabled?: boolean;
 } ) {
+	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
+	const showWebAddress = !! site && canToggleWwwPrimaryDomain( domain, site );
+
 	const buttonListItems = [];
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
@@ -139,10 +146,13 @@ export default function DomainOverviewSettings( {
 	}
 
 	return (
-		buttonListItems.length > 0 && (
+		( showWebAddress || buttonListItems.length > 0 ) && (
 			<VStack spacing={ 3 }>
 				<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
-				<SummaryButtonList>{ buttonListItems }</SummaryButtonList>
+				{ showWebAddress && site && (
+					<DomainWebAddressSetting domain={ domain } site={ site } isDisabled={ isDisabled } />
+				) }
+				{ buttonListItems.length > 0 && <SummaryButtonList>{ buttonListItems }</SummaryButtonList> }
 			</VStack>
 		)
 	);
