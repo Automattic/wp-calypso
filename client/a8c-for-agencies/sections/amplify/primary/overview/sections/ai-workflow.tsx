@@ -162,7 +162,7 @@ export default function AmplifyAiWorkflow() {
 					<Text isBlock variant="muted" size={ 16 }>
 						{ preventWidows(
 							__(
-								'Amplify generates a precise, agent-ready prompt for every issue it finds. Send any or all of them to your AI tool of choice: Claude, Codex, Gemini, whatever fits your workflow. Then, through WordPress Studio, those changes can be applied at lightning speed directly to your sites in staging or production.'
+								'Prospect reports generate a precise, agent-ready prompt for every issue they find. Send any or all of them to your AI tool of choice: Claude, Codex, Gemini, whatever fits your workflow. Then, through WordPress Studio, those changes can be applied at lightning speed directly to your sites in staging or production.'
 							)
 						) }
 					</Text>

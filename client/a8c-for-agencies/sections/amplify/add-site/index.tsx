@@ -22,7 +22,7 @@ export default function AmplifyAddSite( { className }: { className?: string } = 
 				className={ className }
 				onClick={ handleOpen }
 			>
-				{ __( 'Amplify a site' ) }
+				{ __( 'New report' ) }
 			</Button>
 			{ isOpen && <AmplifyAddSiteModal onClose={ () => setIsOpen( false ) } /> }
 		</>

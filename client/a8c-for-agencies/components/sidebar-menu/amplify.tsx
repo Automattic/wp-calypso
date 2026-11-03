@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
 import { chevronLeft } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
+import { getFeatureName } from 'calypso/dashboard/agency/amplify/constants';
 import Sidebar from '../sidebar';
 import useAmplifyMenuItems from './hooks/use-amplify-menu-items';
 import { A4A_AMPLIFY_LINK, A4A_OVERVIEW_LINK } from './lib/constants';
@@ -18,7 +19,7 @@ export default function AmplifySidebar( { path }: Props ) {
 			path={ A4A_AMPLIFY_LINK }
 			title={
 				<div className="sidebar-menu-item__title-with-badge">
-					<span>{ __( 'Amplify' ) }</span>
+					<span>{ getFeatureName() }</span>
 					<Badge intent="draft">{ __( 'Beta' ) }</Badge>
 				</div>
 			}

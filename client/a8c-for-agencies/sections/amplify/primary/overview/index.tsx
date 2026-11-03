@@ -1,7 +1,7 @@
-import { __ } from '@wordpress/i18n';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
+import { getFeatureName } from 'calypso/dashboard/agency/amplify/constants';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -18,7 +18,7 @@ import AmplifyHumanSection from './sections/human-section';
 import './style.scss';
 
 const AmplifyOverview = () => {
-	const title = __( 'Amplify by Automattic for Agencies' );
+	const title = getFeatureName();
 
 	return (
 		<Layout className="amplify-overview" title={ title } wide>

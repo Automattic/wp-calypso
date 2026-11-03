@@ -3,6 +3,7 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_AMPLIFY_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { getFeatureName } from 'calypso/dashboard/agency/amplify/constants';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderBreadcrumb as Breadcrumb,
@@ -20,7 +21,7 @@ const AmplifyReports = () => {
 				<LayoutHeader>
 					<Breadcrumb
 						items={ [
-							{ label: __( 'Amplify' ), href: A4A_AMPLIFY_LINK },
+							{ label: getFeatureName(), href: A4A_AMPLIFY_LINK },
 							{ label: __( 'Reports' ) },
 						] }
 					/>

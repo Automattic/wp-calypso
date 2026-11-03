@@ -63,7 +63,7 @@ const CRITERIA: Criterion[] = [
 		num: '07',
 		title: __( 'Accessibility' ),
 		summary: __(
-			'Does the site work for everyone? Amplify measures against WCAG AA, the standard referenced by courts and regulators globally.'
+			'Does the site work for everyone? Prospect reports measure against WCAG AA, the standard referenced by courts and regulators globally.'
 		),
 	},
 	{
@@ -84,7 +84,7 @@ export default function AmplifyHumanSection() {
 					eyebrow={ __( 'Human-centric analysis' ) }
 					title={ __( 'See what prospective customers see' ) }
 					intro={ __(
-						'When someone lands on your client’s site, they form an impression in under a second. They scan for trust. They look for contact information. They decide, in 3 to 5 seconds, whether this business is worth their time. Amplify measures all of it across eight criteria, then tells you exactly what to fix and why. This is the analysis that separates agencies who deliver beautiful sites from agencies who deliver sites that actually win business.'
+						'When someone lands on your client’s site, they form an impression in under a second. They scan for trust. They look for contact information. They decide, in 3 to 5 seconds, whether this business is worth their time. Prospect reports measure all of it across eight criteria, then tell you exactly what to fix and why. This is the analysis that separates agencies who deliver beautiful sites from agencies who deliver sites that actually win business.'
 					) }
 					stats={ STATS }
 					criteria={ CRITERIA }

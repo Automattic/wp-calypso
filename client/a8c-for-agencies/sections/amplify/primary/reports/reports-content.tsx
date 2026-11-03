@@ -303,7 +303,7 @@ export default function AmplifyReportsContent() {
 						<EmptyState.Description>
 							{ error
 								? __( 'Something went wrong. Please refresh to try again.' )
-								: __( 'Amplify analyses you run will appear here.' ) }
+								: __( 'Prospect reports you run will appear here.' ) }
 						</EmptyState.Description>
 					</EmptyState.Header>
 				</EmptyState>

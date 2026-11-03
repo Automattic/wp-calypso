@@ -18,23 +18,23 @@ import './faq.scss';
 const FAQS = [
 	{
 		id: 'what-does-amplify-analyze',
-		question: __( 'What does Amplify actually analyze?' ),
+		question: __( 'What does a prospect report actually analyze?' ),
 		answer: __(
-			'Amplify evaluates your homepage through two lenses. Human Mode scores how a potential client perceives the site, covering trust signals, mobile experience, content quality, SEO, conversion paths, and more. AI Mode scores how AI tools like ChatGPT, Perplexity, and Gemini read and rank it, covering structured data, entity clarity, AEO readiness, E-E-A-T signals, and technical accessibility. Each lens produces a score out of 100 with a prioritized list of findings.'
+			'A prospect report evaluates your homepage through two lenses. Human Mode scores how a potential client perceives the site, covering trust signals, mobile experience, content quality, SEO, conversion paths, and more. AI Mode scores how AI tools like ChatGPT, Perplexity, and Gemini read and rank it, covering structured data, entity clarity, AEO readiness, E-E-A-T signals, and technical accessibility. Each lens produces a score out of 100 with a prioritized list of findings.'
 		),
 	},
 	{
 		id: 'how-is-the-score-calculated',
 		question: __( 'How is the score calculated?' ),
 		answer: __(
-			'Every score Amplify by Automattic for Agencies produces is grounded in established research, published standards, and established resources. Each score combines programmatic checks with AI analysis. Programmatic checks cover signals with one right answer, such as element presence, character counts, contrast ratios, HTTP status, and page speed measurements. AI analysis covers signals that require judgment, including visual polish, content clarity, trust signal quality, and audience resonance. Each criterion is weighted by its real-world impact on conversion or discoverability, and the total adds up to 100 points per mode.'
+			'Every score in a prospect report is grounded in established research, published standards, and established resources. Each score combines programmatic checks with AI analysis. Programmatic checks cover signals with one right answer, such as element presence, character counts, contrast ratios, HTTP status, and page speed measurements. AI analysis covers signals that require judgment, including visual polish, content clarity, trust signal quality, and audience resonance. Each criterion is weighted by its real-world impact on conversion or discoverability, and the total adds up to 100 points per mode.'
 		),
 	},
 	{
 		id: 'how-to-read-your-score',
 		question: __( 'How do I read my score?' ),
 		answer: __(
-			'Amplify scores are directional indicators grounded in established research and the expertise of Automattic. They are not definitive verdicts. A score reflects a point-in-time audit of your homepage and may not account for all site-specific context, audience nuances, or intentional design decisions.'
+			'Prospect report scores are directional indicators grounded in established research and the expertise of Automattic. They are not definitive verdicts. A score reflects a point-in-time audit of your homepage and may not account for all site-specific context, audience nuances, or intentional design decisions.'
 		),
 	},
 	{
@@ -46,9 +46,9 @@ const FAQS = [
 	},
 	{
 		id: 'homepage-only',
-		question: __( 'Does Amplify analyze my entire site or just the homepage?' ),
+		question: __( 'Does a prospect report analyze my entire site or just the homepage?' ),
 		answer: __(
-			'Right now, Amplify focuses on the homepage. This is where first impressions are made for both humans and AI tools, and where the highest-impact improvements tend to live. Full site analysis, covering interior pages, service pages, and blog content, is planned for a future release.'
+			'Right now, prospect reports focus on the homepage. This is where first impressions are made for both humans and AI tools, and where the highest-impact improvements tend to live. Full site analysis, covering interior pages, service pages, and blog content, is planned for a future release.'
 		),
 	},
 	{
@@ -62,21 +62,21 @@ const FAQS = [
 		id: 'how-often-should-i-run-it',
 		question: __( 'How often should I run an analysis?' ),
 		answer: __(
-			'Amplify produces a point-in-time snapshot of your site. Run it after making significant changes to your homepage copy, design, or structure, and then again a few weeks later to see how the score has moved. For client sites, running it before a quarterly review gives you concrete, data-backed talking points about what has improved and what is still worth addressing.'
+			'A prospect report is a point-in-time snapshot of your site. Run one after making significant changes to your homepage copy, design, or structure, and then again a few weeks later to see how the score has moved. For client sites, running it before a quarterly review gives you concrete, data-backed talking points about what has improved and what is still worth addressing.'
 		),
 	},
 	{
 		id: 'can-i-run-it-on-a-client-site',
-		question: __( 'Can I run Amplify on a client’s site?' ),
+		question: __( 'Can I run a prospect report on a client’s site?' ),
 		answer: __(
-			'Yes. Amplify works on any site connected to your Automattic for Agencies account. Running it on a client site before a pitch lets you walk in with a report in hand and show them exactly what you would fix and why. It is a compelling way to demonstrate your expertise and win the contract. For existing clients, it is a strong addition to quarterly business reviews.'
+			'Yes. Prospect reports work on any site connected to your Automattic for Agencies account. Running it on a client site before a pitch lets you walk in with a report in hand and show them exactly what you would fix and why. It is a compelling way to demonstrate your expertise and win the contract. For existing clients, it is a strong addition to quarterly business reviews.'
 		),
 	},
 	{
 		id: 'score-accuracy',
 		question: __( 'My score seems off. How accurate is it?' ),
 		answer: __(
-			'Amplify scores are directional indicators grounded in established research, including WCAG, Google Search Central, the Laws of UX, and Automattic expertise. They are not definitive verdicts. Programmatic signals are precise. Signals based on AI analysis carry a higher degree of interpretive variance and may not account for every site-specific context or intentional design decision. If something does not look right, treat it as a prompt for a conversation rather than a final ruling, and factor in your own knowledge of the site and its audience.'
+			'Prospect report scores are directional indicators grounded in established research, including WCAG, Google Search Central, the Laws of UX, and Automattic expertise. They are not definitive verdicts. Programmatic signals are precise. Signals based on AI analysis carry a higher degree of interpretive variance and may not account for every site-specific context or intentional design decision. If something does not look right, treat it as a prompt for a conversation rather than a final ruling, and factor in your own knowledge of the site and its audience.'
 		),
 	},
 ];

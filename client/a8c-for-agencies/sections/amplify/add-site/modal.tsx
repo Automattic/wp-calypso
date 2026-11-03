@@ -40,7 +40,7 @@ function getErrorMessage( error: AmplifyApiError | null ) {
 			);
 		case 'amplify_report_rate_limited':
 			return __(
-				'You’ve reached the limit of 10 Amplify reports in a 24-hour period. Try again after one of your earlier reports is more than 24 hours old.'
+				'You’ve reached the limit of 10 prospect reports in a 24-hour period. Try again after one of your earlier reports is more than 24 hours old.'
 			);
 		default:
 			return __( 'Could not start the analysis. Please try again.' );
@@ -109,7 +109,7 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 
 	return (
 		<A4AModal
-			title={ __( 'Amplify a site' ) }
+			title={ __( 'New report' ) }
 			subtile={ __( 'Enter a URL or pick a connected site, then choose the analysis to run.' ) }
 			onClose={ onClose }
 			extraActions={
@@ -119,7 +119,7 @@ export default function AmplifyAddSiteModal( { onClose }: { onClose: () => void 
 					disabled={ ! targetUrl || ! mode || mutation.isPending }
 					isBusy={ mutation.isPending }
 				>
-					{ __( 'Amplify it' ) }
+					{ __( 'Create report' ) }
 				</Button>
 			}
 		>
