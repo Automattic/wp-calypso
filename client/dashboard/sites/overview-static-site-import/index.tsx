@@ -334,17 +334,45 @@ export function StaticSiteImportNotice( {
 	}
 
 	if ( siteImport.status === 'stalled' ) {
+		if ( handoff.isSuccess ) {
+			return (
+				<Notice variant="success" title={ __( 'Our team has your move' ) }>
+					{ __( 'We’ll email you to finish moving your site.' ) }
+				</Notice>
+			);
+		}
+
 		return (
 			<Notice
 				variant="warning"
 				title={ __( 'Your move hasn’t started yet' ) }
 				actions={
-					<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
-						{ __( 'Try again' ) }
-					</Button>
+					<>
+						<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
+							{ __( 'Try again' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="link"
+							isBusy={ handoff.isPending }
+							disabled={ handoff.isPending }
+							onClick={ requestHandoff }
+						>
+							{ __( 'Let our team move it' ) }
+						</Button>
+					</>
 				}
 			>
-				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }
+				<VStack spacing={ 2 }>
+					<span>
+						{ __(
+							'Something stopped it from starting. Nothing has changed on your current site.'
+						) }
+					</span>
+					{ handoff.isError && (
+						<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
+					) }
+				</VStack>
 			</Notice>
 		);
 	}
