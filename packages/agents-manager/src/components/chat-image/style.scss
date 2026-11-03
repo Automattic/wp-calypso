@@ -2,7 +2,7 @@
 @use '../../styles/variables' as *;
 
 // The most a preview grows to in a large chat.
-$chat-image-preview-max-size: 600px;
+$chat-image-preview-max-size: 400px;
 
 .agents-manager-chat-image {
 	display: block;
