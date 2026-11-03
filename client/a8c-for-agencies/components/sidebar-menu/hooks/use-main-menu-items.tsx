@@ -235,7 +235,6 @@ const useMainMenuItems = ( path: string ) => {
 							path: A4A_AMPLIFY_LINK,
 							link: A4A_AMPLIFY_LINK,
 							title: getFeatureName(),
-							badge: translate( 'Beta' ),
 							trackEventProps: {
 								menu_item: 'Automattic for Agencies / Amplify',
 							},
