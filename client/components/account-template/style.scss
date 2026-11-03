@@ -144,10 +144,22 @@
 		}
 
 		.security-key-form__add-wait-for-key {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			align-items: center;
+			column-gap: 0.5rem;
 			text-align: start;
+
+			.spinner {
+				margin-bottom: 0.5em;
+			}
 
 			.spinner__outer {
 				margin-inline-start: 0;
+			}
+
+			p:not(.security-key-form__add-wait-for-key-heading) {
+				grid-column: 1 / -1;
 			}
 		}
 
