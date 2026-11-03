@@ -1,3 +1,4 @@
+import { wowFunnelPendingQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import {
 	FEATURE_LEGACY_STORAGE_200GB,
@@ -23,6 +24,7 @@ import {
 import page from '@automattic/calypso-router';
 import { Plans } from '@automattic/data-stores';
 import { withShoppingCart } from '@automattic/shopping-cart';
+import { useQuery } from '@tanstack/react-query';
 import { addQueryArgs } from '@wordpress/url';
 import { localize } from 'i18n-calypso';
 import { Component, type ComponentProps } from 'react';
@@ -50,6 +52,7 @@ import getCurrentPlanTerm from 'calypso/state/selectors/get-current-plan-term';
 import getDomainFromHomeUpsellInQuery from 'calypso/state/selectors/get-domain-from-home-upsell-in-query';
 import isEligibleForWpComMonthlyPlan from 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan';
 import isSiteWPForTeams from 'calypso/state/selectors/is-site-wpforteams';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { fetchSitePlans } from 'calypso/state/sites/plans/actions';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
@@ -95,6 +98,7 @@ interface OwnProps {
 	customerType?: string;
 	discountEndDate?: Date;
 	intervalType?: IntervalType;
+	isPreviewSite?: boolean;
 	jetpackAppPlans?: boolean;
 	pluginSlug?: string;
 	redirectTo?: string;
@@ -238,7 +242,9 @@ class PlansComponent extends Component< Props > {
 				showLegacyStorageFeature={ this.props.siteHasLegacyStorage }
 				intent={ plansIntent }
 				highlightLabelOverrides={ highlightLabelOverrides }
-				hideFreePlan={ ! visiblePlanTiers.includes( TYPE_FREE ) || undefined }
+				hideFreePlan={
+					this.props.isPreviewSite || ! visiblePlanTiers.includes( TYPE_FREE ) || undefined
+				}
 				hidePersonalPlan={ ! visiblePlanTiers.includes( TYPE_PERSONAL ) || undefined }
 				hidePremiumPlan={ ! visiblePlanTiers.includes( TYPE_PREMIUM ) || undefined }
 				hideBusinessPlan={ ! visiblePlanTiers.includes( TYPE_BUSINESS ) || undefined }
@@ -514,11 +520,33 @@ export default function PlansWrapper( props: Omit< OwnProps, 'currentPlan' | 'se
 	);
 	const intervalType = intervalTypeFromProps ?? intervalTypeForCurrentPlanTerm;
 
+	/**
+	 * A preview site reads as Free, but it is already built and buying any paid plan keeps it.
+	 * So it is offered only paid plans, and checkout returns the buyer to the site itself rather
+	 * than a setup screen. Only Atomic sites on Free can be previews, so only they ask.
+	 */
+	const site = useSelector( getSelectedSite );
+	const couldBePreview = useSelector(
+		( state ) =>
+			!! isSiteWpcomAtomic( state, selectedSiteId ) &&
+			!! currentPlan &&
+			isFreePlanProduct( currentPlan )
+	);
+	const { data: wowFunnelPending } = useQuery( {
+		...wowFunnelPendingQuery(),
+		enabled: couldBePreview,
+	} );
+	const isPreviewSite =
+		couldBePreview &&
+		!! wowFunnelPending?.preview_sites?.some( ( preview ) => preview.blog_id === selectedSiteId );
+
 	return (
 		<CalypsoShoppingCartProvider>
 			<ConnectedPlans
 				{ ...props }
 				currentPlan={ currentPlan }
+				isPreviewSite={ isPreviewSite }
+				redirectTo={ props.redirectTo ?? ( isPreviewSite ? site?.URL : undefined ) }
 				selectedSiteId={ selectedSiteId }
 				intervalType={ isSupportedIntervalType( intervalType ) ? intervalType : undefined }
 			/>

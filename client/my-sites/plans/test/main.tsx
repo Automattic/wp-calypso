@@ -9,8 +9,9 @@ jest.mock( '@automattic/data-stores/src/plans/hooks/use-current-plan', () => jes
 jest.mock( 'calypso/my-sites/plans-features-main', () => jest.fn( () => null ) );
 
 import { isEnabled } from '@automattic/calypso-config';
-import { PLAN_STUDENT } from '@automattic/calypso-products';
+import { PLAN_FREE, PLAN_STUDENT } from '@automattic/calypso-products';
 import { useCurrentPlan } from '@automattic/data-stores/src/plans';
+import { QueryClient } from '@tanstack/react-query';
 import PlansFeaturesMain from 'calypso/my-sites/plans-features-main';
 import purchasesReducer from 'calypso/state/purchases/reducer';
 import uiReducer from 'calypso/state/ui/reducer';
@@ -57,6 +58,55 @@ describe( 'Plans page on a student-plan site', () => {
 		expect( jest.mocked( PlansFeaturesMain ).mock.lastCall?.[ 0 ] ).toMatchObject( {
 			intent: 'plans-student',
 			checkoutAttribution: { source: 'wp_ai_credits', aiSessionId: 'abc123' },
+		} );
+	} );
+} );
+
+describe( 'Plans page on a preview site', () => {
+	beforeAll( () => {
+		window.scrollTo = jest.fn();
+	} );
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.mocked( isEnabled ).mockReturnValue( false );
+		jest.mocked( useCurrentPlan ).mockReturnValue( { productSlug: PLAN_FREE } as never );
+	} );
+
+	it.each( [
+		[ 'a standing preview', [ { blog_id: SITE_ID, site_slug: 'example.wordpress.com' } ], true ],
+		[ 'an ordinary Atomic site on Free', [], undefined ],
+	] )( 'adjusts checkout only for a preview (%s)', ( _, previewSites, isPreview ) => {
+		const queryClient = new QueryClient();
+		queryClient.setQueryData( [ 'wow-funnel', 'pending' ], {
+			pending: false,
+			preview_sites: previewSites,
+		} );
+
+		renderWithProvider(
+			<PlansWrapper context={ { path: '/plans/example.wordpress.com' } as never } />,
+			{
+				initialState: {
+					...initialState,
+					sites: {
+						items: {
+							[ SITE_ID ]: {
+								...initialState.sites.items[ SITE_ID ],
+								URL: 'https://example.wordpress.com',
+								plan: { product_slug: PLAN_FREE, user_is_owner: true },
+								options: { is_wpcom_atomic: true },
+							},
+						},
+					},
+				},
+				reducers: { ui: uiReducer, purchases: purchasesReducer },
+				queryClient,
+			}
+		);
+
+		expect( jest.mocked( PlansFeaturesMain ).mock.lastCall?.[ 0 ] ).toMatchObject( {
+			hideFreePlan: isPreview,
+			redirectTo: isPreview ? 'https://example.wordpress.com' : undefined,
 		} );
 	} );
 } );
