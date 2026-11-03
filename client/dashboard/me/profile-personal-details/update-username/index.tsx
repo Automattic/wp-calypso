@@ -4,12 +4,12 @@ import {
 	Button,
 	RadioControl,
 	__experimentalVStack as VStack,
-	__experimentalInputControl as InputControl,
+	privateApis,
 } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
-import { Icon, info, check } from '@wordpress/icons';
-import { createContext, useContext, useMemo } from 'react';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
 import {
 	isUsernameValid,
@@ -17,8 +17,7 @@ import {
 	getAllowedActions,
 	type ValidationResult,
 } from './username-validation-utils';
-import type { DataFormControlProps, Field, Form } from '@wordpress/dataviews';
-import type { ReactNode } from 'react';
+import type { DataFormControlProps, Field, Form, FormValidity } from '@wordpress/dataviews';
 
 interface UsernameUpdateFormProps {
 	hasUsernameChange: boolean;
@@ -35,45 +34,35 @@ interface UsernameUpdateFormProps {
 
 type UsernameConfirmFormData = { username_confirm: string };
 
-const UsernameConfirmFieldContext = createContext< {
-	help: ReactNode;
-	className: string;
-	isInvalid: boolean;
-} >( { help: null, className: '', isInvalid: false } );
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+const { ValidatedInputControl } = unlock( privateApis );
 
-function UsernameConfirmEdit( {
+const UsernameConfirmEdit = ( {
 	data,
 	field,
 	onChange,
-}: DataFormControlProps< UsernameConfirmFormData > ) {
-	const { help, className, isInvalid } = useContext( UsernameConfirmFieldContext );
-	return (
-		<InputControl
-			__next40pxDefaultSize
-			label={ field.label }
-			id="username_confirm"
-			name="username_confirm"
-			value={ data.username_confirm }
-			onChange={ ( value?: string ) => onChange( { username_confirm: value ?? '' } ) }
-			autoCapitalize="off"
-			autoComplete="off"
-			autoCorrect="off"
-			aria-invalid={ isInvalid ? 'true' : 'false' }
-			aria-describedby="username-confirm-help"
-			className={ className }
-			help={ help }
-		/>
-	);
-}
-
-const usernameConfirmFields: Field< UsernameConfirmFormData >[] = [
-	{
-		id: 'username_confirm',
-		label: __( 'Confirm new username' ),
-		type: 'text',
-		Edit: UsernameConfirmEdit,
-	},
-];
+	validity,
+}: DataFormControlProps< UsernameConfirmFormData > ) => (
+	<ValidatedInputControl
+		__next40pxDefaultSize
+		id="username_confirm"
+		name="username_confirm"
+		autoCapitalize="off"
+		autoComplete="off"
+		autoCorrect="off"
+		customValidity={ validity?.custom }
+		label={ field.label }
+		help={ field.description }
+		value={ field.getValue( { item: data } ) ?? '' }
+		onChange={ ( value?: string ) =>
+			onChange( field.setValue( { item: data, value: value ?? '' } ) )
+		}
+		disabled={ field.isDisabled( { item: data, field } ) }
+	/>
+);
 
 const usernameConfirmForm: Form = {
 	layout: { type: 'regular' },
@@ -110,6 +99,22 @@ export default function UsernameUpdateForm( {
 		[ userLoginConfirm ]
 	);
 
+	const isConfirmEmpty = userLoginConfirm.length === 0;
+	const fields = useMemo(
+		(): Field< UsernameConfirmFormData >[] => [
+			{
+				id: 'username_confirm',
+				label: __( 'Confirm new username' ),
+				type: 'text',
+				description: isConfirmEmpty
+					? __( 'Please re-enter your new username to confirm it.' )
+					: undefined,
+				Edit: UsernameConfirmEdit,
+			},
+		],
+		[ isConfirmEmpty ]
+	);
+
 	const actions = getAllowedActions( validationResult );
 	const showRadioOptions = Object.keys( actions ).length > 1;
 
@@ -117,60 +122,42 @@ export default function UsernameUpdateForm( {
 		return null;
 	}
 
+	// The last result is kept while a new one is fetched, so it may be for an older username.
+	const isValidationCurrent =
+		validationResult?.validatedUsername === usernameToConfirm.toLowerCase();
 	const isSaveDisabled =
-		userLoginConfirm !== usernameToConfirm || ! isUsernameValid( validationResult ) || isPending;
+		userLoginConfirm !== usernameToConfirm ||
+		! isUsernameValid( validationResult ) ||
+		! isValidationCurrent ||
+		isPending;
 
 	const usernameMatch = userLoginConfirm === usernameToConfirm && userLoginConfirm.length > 0;
 	const message = getUsernameValidationMessage( validationResult );
-	const hasValidationError = message && usernameMatch;
-	const hasConfirmError = userLoginConfirm.length > 0 && ! usernameMatch;
-	const isError = hasConfirmError || hasValidationError;
 
-	let helpText = null;
-	if ( userLoginConfirm.length === 0 ) {
-		helpText = __( 'Please re-enter your new username to confirm it.' );
-	} else if ( hasConfirmError ) {
-		helpText = (
-			<>
-				<Icon icon={ info } size={ 16 } />
-				{ __( 'Usernames do not match.' ) }
-			</>
-		);
-	} else if ( hasValidationError ) {
-		helpText = message ? (
-			<>
-				<Icon icon={ info } size={ 16 } />
-				{ message }
-			</>
-		) : null;
+	let validity: FormValidity;
+	if ( userLoginConfirm.length > 0 && ! usernameMatch ) {
+		validity = {
+			username_confirm: { custom: { type: 'invalid', message: __( 'Usernames do not match.' ) } },
+		};
+	} else if ( usernameMatch && message ) {
+		validity = { username_confirm: { custom: { type: 'invalid', message } } };
 	} else if ( usernameMatch ) {
-		helpText = (
-			<>
-				<Icon icon={ check } size={ 16 } />
-				{ __( 'Thanks for confirming your new username!' ) }
-			</>
-		);
-	}
-
-	let className = '';
-	if ( isError ) {
-		className = 'has-error';
-	} else if ( usernameMatch && ! hasValidationError ) {
-		className = 'has-success';
+		validity = {
+			username_confirm: {
+				custom: { type: 'valid', message: __( 'Thanks for confirming your new username!' ) },
+			},
+		};
 	}
 
 	return (
 		<VStack spacing={ 6 }>
-			<UsernameConfirmFieldContext.Provider
-				value={ { help: helpText, className, isInvalid: !! isError } }
-			>
-				<DataForm< UsernameConfirmFormData >
-					data={ formData }
-					fields={ usernameConfirmFields }
-					form={ usernameConfirmForm }
-					onChange={ ( edits ) => onConfirmChange( edits.username_confirm ?? '' ) }
-				/>
-			</UsernameConfirmFieldContext.Provider>
+			<DataForm< UsernameConfirmFormData >
+				data={ formData }
+				fields={ fields }
+				form={ usernameConfirmForm }
+				validity={ validity }
+				onChange={ ( edits ) => onConfirmChange( edits.username_confirm ?? '' ) }
+			/>
 
 			{ showRadioOptions && (
 				<VStack spacing={ 3 }>
