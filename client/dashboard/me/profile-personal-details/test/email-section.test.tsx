@@ -96,6 +96,33 @@ describe( '<EmailSection>', () => {
 		expect( screen.getByRole( 'textbox', { name: /email address/i } ) ).not.toHaveFocus();
 	} );
 
+	test( 'flags the field when the value returns to a bouncing account email', async () => {
+		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
+
+		function ResettableEmailSection() {
+			const [ value, setValue ] = useState( 'new@example.com' );
+			return (
+				<>
+					<EmailSection
+						value={ value }
+						onChange={ setValue }
+						userSettings={ userSettings }
+						isEmailVerified
+					/>
+					<button onClick={ () => setValue( ACCOUNT_EMAIL ) }>Reset</button>
+				</>
+			);
+		}
+
+		render( <ResettableEmailSection />, { user: bouncingUser } );
+		expect( screen.queryByText( BOUNCING_ERROR ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Reset' } ) );
+
+		expect( await screen.findByText( BOUNCING_ERROR ) ).toBeVisible();
+		expect( screen.getByRole( 'textbox', { name: /email address/i } ) ).not.toHaveFocus();
+	} );
+
 	test( 'drops the bouncing message once a different address is typed', async () => {
 		mockAccountRecovery( { email: 'recovery@othersite.com', email_validated: true } );
 

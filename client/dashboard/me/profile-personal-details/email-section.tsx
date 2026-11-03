@@ -39,28 +39,21 @@ const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
 const { ValidatedInputControl } = unlock( privateApis );
 
 /**
- * A validity message only shows once the input has been blurred or fired an `invalid` event. A
- * bouncing email is already invalid on mount, so reveal it then.
+ * A validity message only shows once the field has been blurred. An error that appears without the
+ * user typing, like a bouncing email, needs to show straight away, so mark the field blurred then.
+ * A synthetic `focusout` does that without moving focus, unlike an `invalid` event.
  */
 function EmailEdit( { data, field, onChange, validity }: DataFormControlProps< EmailFormData > ) {
 	const inputRef = useRef< HTMLInputElement >( null );
+	const isInvalid = validity?.custom?.type === 'invalid';
 
 	useEffect( () => {
 		const input = inputRef.current;
-		if ( validity?.custom?.type !== 'invalid' || ! input ) {
+		if ( ! isInvalid || ! input || input.ownerDocument.activeElement === input ) {
 			return;
 		}
-		// The control focuses the input in response to `invalid`, so hand focus back.
-		const previouslyFocused = input.ownerDocument.activeElement;
-		input.dispatchEvent( new Event( 'invalid', { cancelable: true } ) );
-		if ( previouslyFocused instanceof HTMLElement && previouslyFocused !== document.body ) {
-			previouslyFocused.focus();
-		} else {
-			input.blur();
-		}
-		// Only on mount
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [] );
+		input.dispatchEvent( new FocusEvent( 'focusout', { bubbles: true } ) );
+	}, [ isInvalid ] );
 
 	return (
 		<ValidatedInputControl

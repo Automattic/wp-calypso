@@ -169,7 +169,6 @@ export default function UsernameSection( {
 		if ( lowerCaseValue !== currentUsername ) {
 			setUsernameAction( 'none' );
 			latestValidatedUsername.current = lowerCaseValue;
-			setValidationResult( null );
 			validateUsernameDebounced( lowerCaseValue, currentUsername, ( result ) => {
 				if ( latestValidatedUsername.current !== lowerCaseValue ) {
 					return;

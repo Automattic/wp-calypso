@@ -99,6 +99,22 @@ export default function UsernameUpdateForm( {
 		[ userLoginConfirm ]
 	);
 
+	const isConfirmEmpty = userLoginConfirm.length === 0;
+	const fields = useMemo(
+		(): Field< UsernameConfirmFormData >[] => [
+			{
+				id: 'username_confirm',
+				label: __( 'Confirm new username' ),
+				type: 'text',
+				description: isConfirmEmpty
+					? __( 'Please re-enter your new username to confirm it.' )
+					: undefined,
+				Edit: UsernameConfirmEdit,
+			},
+		],
+		[ isConfirmEmpty ]
+	);
+
 	const actions = getAllowedActions( validationResult );
 	const showRadioOptions = Object.keys( actions ).length > 1;
 
@@ -106,8 +122,14 @@ export default function UsernameUpdateForm( {
 		return null;
 	}
 
+	// The last result is kept while a new one is fetched, so it may be for an older username.
+	const isValidationCurrent =
+		validationResult?.validatedUsername === usernameToConfirm.toLowerCase();
 	const isSaveDisabled =
-		userLoginConfirm !== usernameToConfirm || ! isUsernameValid( validationResult ) || isPending;
+		userLoginConfirm !== usernameToConfirm ||
+		! isUsernameValid( validationResult ) ||
+		! isValidationCurrent ||
+		isPending;
 
 	const usernameMatch = userLoginConfirm === usernameToConfirm && userLoginConfirm.length > 0;
 	const message = getUsernameValidationMessage( validationResult );
@@ -126,19 +148,6 @@ export default function UsernameUpdateForm( {
 			},
 		};
 	}
-
-	const fields: Field< UsernameConfirmFormData >[] = [
-		{
-			id: 'username_confirm',
-			label: __( 'Confirm new username' ),
-			type: 'text',
-			description:
-				userLoginConfirm.length === 0
-					? __( 'Please re-enter your new username to confirm it.' )
-					: undefined,
-			Edit: UsernameConfirmEdit,
-		},
-	];
 
 	return (
 		<VStack spacing={ 6 }>
