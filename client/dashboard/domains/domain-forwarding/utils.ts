@@ -85,6 +85,10 @@ export function isTargetUrlValid( targetUrl: string, sourceDomain: string ): str
 	if ( ! isSubdomain( domainParts, targetHostParts, domainLevel, targetHostLevel ) ) {
 		return null;
 	}
+	// The backend allows this forward when `www` has a custom CNAME, which this form can't see.
+	if ( url.hostname === `www.${ sourceDomain }` ) {
+		return null;
+	}
 	return __( 'Forwarding to a further nested domain is not allowed.' );
 }
 
