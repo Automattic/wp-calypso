@@ -43,6 +43,12 @@ describe( 'ChatImage', () => {
 		);
 	} );
 
+	it( 'marks the lightbox so the floating chat does not drag from it', () => {
+		const dialog = openLightbox();
+
+		expect( dialog ).toHaveAttribute( 'data-slot', 'chat-dialog' );
+	} );
+
 	it( 'closes the lightbox on Escape without letting the chat close too', () => {
 		const dialog = openLightbox();
 
