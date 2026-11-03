@@ -28,9 +28,7 @@ function ChatImageLightbox( { src, alt, onClose }: ChatImageLightboxProps ) {
 		}
 	};
 
-	// Any click closes it: on the backdrop, the image or the close button. React still bubbles
-	// the portal's events to the floating chat, and `data-slot="chat-dialog"` keeps it from
-	// starting a drag here.
+	// Any click closes it. `data-slot="chat-dialog"` keeps the floating chat from starting a drag here.
 	return createPortal(
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<dialog
@@ -67,8 +65,10 @@ export function ChatImage( { src, alt = '' }: ImgHTMLAttributes< HTMLImageElemen
 		return null;
 	}
 
+	const image = <img src={ src } alt={ alt } />;
+
 	if ( isInsideLink ) {
-		return <img src={ src } alt={ alt } />;
+		return image;
 	}
 
 	return (
@@ -80,7 +80,7 @@ export function ChatImage( { src, alt = '' }: ImgHTMLAttributes< HTMLImageElemen
 				aria-haspopup="dialog"
 				onClick={ () => setIsLightboxOpen( true ) }
 			>
-				<img src={ src } alt={ alt } />
+				{ image }
 			</button>
 			{ isLightboxOpen && (
 				<ChatImageLightbox src={ src } alt={ alt } onClose={ () => setIsLightboxOpen( false ) } />
