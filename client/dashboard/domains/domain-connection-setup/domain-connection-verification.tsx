@@ -100,46 +100,42 @@ export default function DomainConnectionVerification( {
 						</Notice>
 					) }
 
-					<VStack spacing={ 4 }>
-						{ ! hasCloudflareIpAddresses && (
-							<Text size="medium" weight={ 500 }>
-								{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
-									? __( 'Name server verification' )
-									: __( 'DNS record verification' ) }
-							</Text>
-						) }
+					{ ( ! hasCloudflareIpAddresses || domainMappingStatus.resolves_to_wpcom ) && (
+						<VStack spacing={ 4 }>
+							{ ! hasCloudflareIpAddresses && (
+								<Text size="medium" weight={ 500 }>
+									{ domainMappingStatus.mode === DomainConnectionSetupMode.SUGGESTED
+										? __( 'Name server verification' )
+										: __( 'DNS record verification' ) }
+								</Text>
+							) }
 
-						{ ! hasCloudflareIpAddresses && (
-							<DnsRecordsTable
-								domainName={ domainName }
-								domainConnectionStatus={ domainMappingStatus }
-								domainConnectionSetupInfo={ domainConnectionSetupInfo }
-							/>
-						) }
-						{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
-							<Notice variant="info">
-								{ createInterpolateElement(
-									__(
-										'<domainName/> appears to be set up with Cloudflare and it resolves to <appName/>.'
-									),
-									{
-										domainName: <>{ domainName }</>,
-										appName: <>{ appName }</>,
-									}
-								) }
-							</Notice>
-						) }
-					</VStack>
+							{ ! hasCloudflareIpAddresses && (
+								<DnsRecordsTable
+									domainName={ domainName }
+									domainConnectionStatus={ domainMappingStatus }
+									domainConnectionSetupInfo={ domainConnectionSetupInfo }
+								/>
+							) }
+							{ hasCloudflareIpAddresses && domainMappingStatus.resolves_to_wpcom && (
+								<Notice variant="info">
+									{ createInterpolateElement(
+										__(
+											'<domainName/> appears to be set up with Cloudflare and it resolves to <appName/>.'
+										),
+										{
+											domainName: <>{ domainName }</>,
+											appName: <>{ appName }</>,
+										}
+									) }
+								</Notice>
+							) }
+						</VStack>
+					) }
 
 					<DomainPropagationStatus domainName={ domainName } />
 
 					<VStack spacing={ 4 }>
-						{ status === 'verifying' && (
-							<Text size="medium" weight={ 500 }>
-								{ __( 'While you wait' ) }
-							</Text>
-						) }
-
 						{ connectedAndCanBeSetAsPrimary && (
 							<>
 								<Text size="medium" weight={ 500 }>

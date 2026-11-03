@@ -410,7 +410,7 @@ describe( 'DomainConnectionVerification', () => {
 	} );
 
 	describe( 'While You Wait Section', () => {
-		test( 'displays "While you wait" section when domain is verifying', () => {
+		test( 'shows "Customize your site" without a "While you wait" heading when domain is verifying', () => {
 			const domainMappingStatus = createMockDomainMappingStatus( {
 				has_wpcom_ip_addresses: false,
 				resolves_to_wpcom: false,
@@ -423,23 +423,7 @@ describe( 'DomainConnectionVerification', () => {
 				/>
 			);
 
-			expect( screen.getByText( 'While you wait' ) ).toBeVisible();
 			expect( screen.getByText( 'Customize your site' ) ).toBeVisible();
-		} );
-
-		test( 'does not display "While you wait" heading when domain is connected', () => {
-			const domainMappingStatus = createMockDomainMappingStatus( {
-				has_wpcom_ip_addresses: true,
-				resolves_to_wpcom: true,
-			} );
-
-			render(
-				<DomainConnectionVerification
-					{ ...defaultProps }
-					domainMappingStatus={ domainMappingStatus }
-				/>
-			);
-
 			expect( screen.queryByText( 'While you wait' ) ).not.toBeInTheDocument();
 		} );
 
