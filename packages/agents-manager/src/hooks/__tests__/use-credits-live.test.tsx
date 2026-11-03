@@ -2778,7 +2778,51 @@ describe( 'refusal code', () => {
 							type: 'text',
 							text: JSON.stringify( {
 								tool_id: 'big_sky__apply_block_edits',
-								data: { summary: 'Shortened the intro.' },
+								tool_call_id: 'call-1',
+								data: {
+									result: { success: true, message: 'Shortened the intro.', outcome: 'updated' },
+									followUpTasks: false,
+								},
+							} ),
+						},
+					],
+				},
+			],
+			[
+				'a failed block edit the chat hides',
+				{
+					id: 't',
+					role: 'agent',
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify( {
+								tool_id: 'big_sky__apply_block_edits',
+								tool_call_id: 'call-1',
+								data: {
+									result: {
+										success: false,
+										message: 'Something went wrong. Please try again.',
+										error: 'Custom CSS could not be updated because global styles are unavailable.',
+									},
+									followUpTasks: false,
+								},
+							} ),
+						},
+					],
+				},
+			],
+			[
+				'a failed tool summary the chat hides',
+				{
+					id: 't',
+					role: 'agent',
+					content: [
+						{
+							type: 'text',
+							text: JSON.stringify( {
+								tool_id: 'big_sky__set_site_logo',
+								data: { success: false, summary: 'Could not set the site logo.' },
 							} ),
 						},
 					],

@@ -594,8 +594,9 @@ export function useCredits( {
 			.trim();
 		return text || undefined;
 	}, [ chat.messages ] );
-	// The refusal brings only its code, so the thread says whether the turn showed anything first.
-	// A tool's chat message, such as a block edit's summary, is an agent message too, so it counts.
+	// The refusal brings only its code, so the thread tells whether the server took the question.
+	// Any agent message after it that isn't context-only says it did, even one the transcript
+	// hides, such as a failed block edit's: it follows a model call.
 	const hasTurnOutput = useMemo( () => {
 		const questionIndex = getLatestUserMessageIndex( chat.messages );
 		return (

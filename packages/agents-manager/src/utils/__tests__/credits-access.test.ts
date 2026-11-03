@@ -268,7 +268,7 @@ describe( 'getCreditsRefusalNotice', () => {
 		} );
 	} );
 
-	it( 'titles a turn that showed output as not completed, with the same words and link', () => {
+	it( 'titles a turn with output as not completed, with the same words and link', () => {
 		const action = { label: 'Add credits', href: TOP_UP_URL };
 		expect( getCreditsRefusalNotice( 'top_up', action, true ) ).toEqual( {
 			...getCreditsRefusalNotice( 'top_up', action, false ),
