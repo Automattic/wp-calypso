@@ -1,0 +1,87 @@
+@use '@wordpress/base-styles/animations' as *;
+@use '../../styles/variables' as *;
+
+// Agenttic fits the image to the message; this makes it a button that keeps that size.
+.agents-manager-chat-image {
+	display: block;
+	max-width: 100%;
+	padding: 0;
+	border: 0;
+	border-radius: var( --radius-sm );
+	background: none;
+	cursor: zoom-in;
+
+	img {
+		display: block;
+		border-radius: inherit;
+		// A hairline edge, so a white screenshot doesn't blend into the message.
+		outline: $border-width solid var( --color-input-border );
+		outline-offset: -$border-width;
+	}
+
+	&:focus-visible {
+		outline: $border-width-focus-fallback solid var( --wp-admin-theme-color, #3858e9 );
+		outline-offset: $border-width-focus-fallback;
+	}
+}
+
+// A modal `<dialog>` doesn't stop the page scrolling behind it; the gutter keeps the layout still.
+html:has( .agents-manager-chat-image__lightbox[open] ) {
+	overflow: hidden;
+	scrollbar-gutter: stable;
+}
+
+.agents-manager-chat-image__lightbox {
+	padding: 0;
+	border: 0;
+	background: none;
+	cursor: zoom-out;
+
+	&,
+	&::backdrop {
+		@include animation__fade-in;
+	}
+
+	&::backdrop {
+		background: rgba( $black, 0.8 );
+	}
+
+	img {
+		display: block;
+		max-width: 90vw;
+		// `dvh`, so the image stays clear of mobile browser toolbars.
+		max-height: 90dvh;
+		border-radius: $radius-large;
+	}
+}
+
+.agents-manager-chat-image__close {
+	position: fixed;
+	inset-block-start: $grid-unit-20;
+	inset-inline-end: $grid-unit-20;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: $grid-unit-50;
+	height: $grid-unit-50;
+	padding: 0;
+	border: 0;
+	border-radius: $radius-full;
+	// Dark, so it shows over a light image as well as over the backdrop.
+	background: rgba( $black, 0.6 );
+	color: $white;
+	cursor: pointer;
+
+	svg {
+		fill: currentColor;
+	}
+
+	&:hover {
+		background: $black;
+	}
+
+	&:focus-visible {
+		outline: $border-width-focus-fallback solid $white;
+		outline-offset: $border-width-focus-fallback;
+	}
+}
