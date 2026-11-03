@@ -1,6 +1,5 @@
 import {
 	PLAN_PREMIUM,
-	PLAN_JETPACK_SECURITY_DAILY,
 	WPCOM_FEATURES_WORDADS,
 	FEATURE_WORDADS_INSTANT,
 	getPlan,
@@ -317,10 +316,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			body: translate(
 				'Make money each time someone visits your site by displaying ads on all your posts and pages.'
 			),
-			href: addQueryArgs(
-				`/checkout/${ siteSlug }/${ PLAN_JETPACK_SECURITY_DAILY }`,
-				getUpsellCheckoutQueryArgs()
-			),
+			href: addQueryArgs( `/plans/${ siteSlug }`, getUpsellCheckoutQueryArgs() ),
 			tracksClickName: 'calypso_upgrade_nudge_click',
 			ctaName: 'calypso_upgrade_nudge_impression',
 		} );

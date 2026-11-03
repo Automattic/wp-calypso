@@ -1174,10 +1174,14 @@ describe( 'SiteRedesign', () => {
 		const { container } = renderPage( true );
 
 		const frame = await screen.findByTitle( 'Preview of your new design' );
-		expect( frame ).toHaveAttribute(
-			'src',
-			'https://example.wordpress.com/?wp_theme_preview=pub%2Fnew'
-		);
+		// The stored preview of the chosen design, not the site: a site just moved to Atomic has no
+		// session for a frame, so framing it showed the old theme.
+		expect( fetchPreview ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 2 ).id );
+		expect( frame ).toHaveAttribute( 'srcdoc', '<p>preview</p>' );
+		expect( frame ).not.toHaveAttribute( 'src' );
+		// A click on a link inside the stored page would navigate the frame itself.
+		expect( frame ).not.toHaveClass( 'is-live' );
+		expect( frame ).toHaveAttribute( 'sandbox', 'allow-scripts' );
 		expect( screen.getByRole( 'heading', { name: 'Your new design is ready' } ) ).toBeVisible();
 		expect(
 			screen.getByText(
@@ -1222,7 +1226,7 @@ describe( 'SiteRedesign', () => {
 		expect( screen.getByTitle( 'Preview of your new design' ) ).toBe( frame );
 	} );
 
-	it( 'says so when the installed theme has no preview to show', async () => {
+	it( 'shows the stored preview even when the API gives no live link, and offers no link', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue(
 			installed( {
 				applied: {
@@ -1234,14 +1238,42 @@ describe( 'SiteRedesign', () => {
 		);
 		renderPage();
 
+		expect( await screen.findByTitle( 'Preview of your new design' ) ).toHaveAttribute(
+			'srcdoc',
+			'<p>preview</p>'
+		);
+		expect( screen.queryByRole( 'link', { name: 'Open preview in a new tab' } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();
+	} );
+
+	it( 'says so when the chosen design’s preview cannot be loaded, and still offers the live tab', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
+		jest
+			.mocked( fetchPreview )
+			.mockRejectedValue( new Error( 'This design is no longer available.' ) );
+		renderPage(
+			false,
+			REDESIGN_ID,
+			new QueryClient( { defaultOptions: { queries: { retry: false } } } )
+		);
+
+		expect( await screen.findByText( 'This design is no longer available.' ) ).toBeVisible();
+		expect( screen.queryByTitle( 'Preview of your new design' ) ).toBeNull();
+		expect( screen.getByRole( 'link', { name: 'Open preview in a new tab' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();
+	} );
+
+	it( 'does not frame the site when no design is recorded as chosen', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( installed( { selected: null } ) );
+		renderPage();
+
 		expect(
 			await screen.findByText(
 				'The preview isn’t available right now. You can still switch to your new design.'
 			)
 		).toBeVisible();
+		expect( fetchPreview ).not.toHaveBeenCalled();
 		expect( screen.queryByTitle( 'Preview of your new design' ) ).toBeNull();
-		expect( screen.queryByRole( 'link', { name: 'Open preview in a new tab' } ) ).toBeNull();
-		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();
 	} );
 
 	it( 'takes the site to its theme list once the new design is live', async () => {
