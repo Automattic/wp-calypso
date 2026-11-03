@@ -6,7 +6,7 @@ import { Button as WPButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, createRef, useContext, useEffect } from 'react';
+import { Component, createRef, useContext, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
@@ -26,6 +26,15 @@ import { loadCommentEditor } from './load-comment-editor';
 import { usePageSettled } from './use-page-settled';
 
 const noop = () => {};
+
+// Past the Reader's own first page of posts and images, for a writer who never points at a box.
+const FALLBACK_PRELOAD_DELAY = 5000;
+
+// A writer who asked for less data, or can't spare half a megabyte, loads the editor on focus.
+const isConstrainedConnection = () => {
+	const connection = typeof navigator !== 'undefined' ? navigator.connection : undefined;
+	return !! connection?.saveData || /2g$/.test( connection?.effectiveType ?? '' );
+};
 
 // The words of the editor's block markup, for the textarea it falls back to. An inert document,
 // so nothing in the markup runs or loads.
@@ -352,7 +361,12 @@ class PostCommentForm extends Component {
 		);
 
 		return (
-			<form ref={ this.form } className={ clsx( 'comments__form', { 'is-composer': composer } ) }>
+			<form
+				ref={ this.form }
+				className={ clsx( 'comments__form', { 'is-composer': composer } ) }
+				onPointerEnter={ this.props.onIntent }
+				onFocus={ this.props.onIntent }
+			>
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
 					{ composer ? (
@@ -450,6 +464,7 @@ PostCommentForm.propTypes = {
 	// From withCommentsEditorSettings: the inbox's composer layout, and the editor's settings.
 	composer: PropTypes.bool,
 	editorSettings: PropTypes.object,
+	onIntent: PropTypes.func,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
@@ -481,16 +496,27 @@ const withCommentsEditorSettings = ( WrappedComponent ) => {
 	const WithCommentsEditorSettings = ( props ) => {
 		const blockEditor = useContext( CommentEditorContext );
 		const settled = usePageSettled();
-		const { data } = useQuery( { ...commentsEditorQuery(), enabled: settled } );
+		const quiet = usePageSettled( FALLBACK_PRELOAD_DELAY );
+		// A pointer over the form, or focus in it: a writer on their way in.
+		const [ wanted, setWanted ] = useState( false );
+		const { data } = useQuery( { ...commentsEditorQuery(), enabled: settled || wanted } );
 
-		// Fetched ahead of the first focus, so the editor is ready when someone clicks in.
+		// The editor downloads ahead of the first focus, so it's ready when someone clicks in.
+		const preload = !! data && ( wanted || ( quiet && ! isConstrainedConnection() ) );
 		useEffect( () => {
-			if ( data ) {
+			if ( preload ) {
 				loadCommentEditor( data ).catch( noop );
 			}
-		}, [ data ] );
+		}, [ preload, data ] );
 
-		return <WrappedComponent { ...props } composer={ blockEditor } editorSettings={ data } />;
+		return (
+			<WrappedComponent
+				{ ...props }
+				composer={ blockEditor }
+				editorSettings={ data }
+				onIntent={ wanted ? undefined : () => setWanted( true ) }
+			/>
+		);
 	};
 
 	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${

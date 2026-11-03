@@ -18,16 +18,21 @@ const whenSettled = () =>
 		}
 	} ) );
 
-export function usePageSettled() {
+/** Whether the page has settled, and then `delay` more milliseconds have passed. */
+export function usePageSettled( delay = 0 ) {
 	const [ isSettled, setSettled ] = useState( false );
 
 	useEffect( () => {
 		let live = true;
-		whenSettled().then( () => live && setSettled( true ) );
+		let timer: ReturnType< typeof setTimeout > | undefined;
+		whenSettled().then( () => {
+			timer = setTimeout( () => live && setSettled( true ), delay );
+		} );
 		return () => {
 			live = false;
+			clearTimeout( timer );
 		};
-	}, [] );
+	}, [ delay ] );
 
 	return isSettled;
 }
