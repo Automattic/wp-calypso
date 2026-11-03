@@ -7,6 +7,19 @@ import { useTranslate } from 'i18n-calypso';
 import getHeadingSubText from '../get-heading-subtext';
 
 describe( 'getHeadingSubText', () => {
+	test( 'uses migration login copy when the migration plugin counts', () => {
+		const subtext = getHeadingSubText( {
+			isSocialFirst: true,
+			twoFactorAuthType: '',
+			translate: ( ( text ) => text ) as ReturnType< typeof useTranslate >,
+			isUnifiedConnectionFlow: true,
+			connectorPlugins: [ 'wpcom-migration', 'jetpack' ],
+		} );
+		expect( subtext?.primary ).toContain( 'start your migration' );
+		expect( subtext?.primary ).toContain( 'Other active plugins' );
+		expect( subtext?.secondary ).toBeTruthy();
+	} );
+
 	const translate = ( ( text ) => text ) as ReturnType< typeof useTranslate >;
 
 	test( 'appends partner consent copy when ToS is primary', () => {
@@ -57,7 +70,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'login',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack' ],
 		} );
 
@@ -77,7 +90,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'login',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'woocommerce', 'jetpack' ],
 		} );
 
@@ -93,7 +106,7 @@ describe( 'getHeadingSubText', () => {
 			twoFactorAuthType: '',
 			action: 'lostpassword',
 			translate,
-			isFromJetpackConnector: true,
+			isUnifiedConnectionFlow: true,
 			connectorPlugins: [ 'jetpack' ],
 		} );
 

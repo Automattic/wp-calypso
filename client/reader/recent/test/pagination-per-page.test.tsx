@@ -70,6 +70,7 @@ jest.mock( '@wordpress/dataviews', () => {
 					<button data-testid="go-to-page-3" onClick={ () => onChangeView( { ...view, page: 3 } ) }>
 						page 3
 					</button>
+					<button onClick={ () => onChangeView( { ...view, page: 2 } ) }>page 2</button>
 					<button
 						data-testid="change-per-page"
 						onClick={ () => onChangeView( { ...view, perPage: TARGET_PER_PAGE, page: 1 } ) }
@@ -210,6 +211,58 @@ describe( 'Recent per-page pagination', () => {
 	afterEach( () => {
 		jest.clearAllMocks();
 		mockIsWide = false;
+	} );
+
+	it( 'does not show a loading row when returning to a cached short page', async () => {
+		const user = userEvent.setup();
+		mockIsWide = true;
+		const items = buildStreamItems();
+		items[ 29 ] = { isPadding: true, postId: 'padding-29' };
+		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			items,
+			pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
+			isRequesting: false,
+			error: null,
+		} );
+		renderRecent();
+
+		await user.click( screen.getByRole( 'button', { name: 'page 3' } ) );
+		expect( screen.getAllByRole( 'button', { name: /^select \d+$/ } ) ).toHaveLength( 15 );
+		expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-330' );
+
+		await user.click( screen.getByRole( 'button', { name: 'page 2' } ) );
+		expect( screen.getAllByRole( 'button', { name: /^select \d+$/ } ) ).toHaveLength( 14 );
+		expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-315' );
+
+		await user.click( screen.getByRole( 'button', { name: 'page 3' } ) );
+		expect( screen.getAllByRole( 'button', { name: /^select \d+$/ } ) ).toHaveLength( 15 );
+		expect( screen.getByTestId( 'view-state' ) ).toHaveAttribute( 'data-selection', 'f200-330' );
+	} );
+
+	it( 'removes padding rows when a page finishes loading', async () => {
+		const user = userEvent.setup();
+		const items = buildStreamItems();
+		items[ 29 ] = { isPadding: true, postId: 'padding-29' };
+		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			items,
+			pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
+			isRequesting: true,
+			error: null,
+		} );
+		renderRecent();
+
+		await user.click( screen.getByRole( 'button', { name: 'page 2' } ) );
+		expect( screen.getAllByRole( 'button', { name: /^select \d+$/ } ) ).toHaveLength( 15 );
+
+		( usePaginatedStream as jest.Mock ).mockReturnValue( {
+			items,
+			pagination: { totalItems: TOTAL_ITEMS, totalPages: 3 },
+			isRequesting: false,
+			error: null,
+		} );
+		await user.click( screen.getByRole( 'button', { name: 'page 2' } ) );
+
+		expect( screen.getAllByRole( 'button', { name: /^select \d+$/ } ) ).toHaveLength( 14 );
 	} );
 
 	it( 'recomputes the page from the selected post when the per-page size changes', async () => {

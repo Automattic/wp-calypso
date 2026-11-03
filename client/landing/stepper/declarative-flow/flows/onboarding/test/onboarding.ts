@@ -4,9 +4,12 @@
 import { renderHook } from '@testing-library/react';
 import { resolveSelect, useSelect } from '@wordpress/data';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import { STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT } from 'calypso/landing/stepper/constants';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { loadExperimentAssignment } from 'calypso/lib/explat';
 import { setSignupCompleteFlowName } from 'calypso/signup/storageUtils';
+import { useStepNavigationWithTracking } from '../../../internals/hooks/use-step-navigation-with-tracking';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
 import onboarding from '../onboarding';
 
@@ -52,6 +55,10 @@ jest.mock( 'calypso/landing/stepper/hooks/use-flow-locale', () => ( {
 jest.mock( 'calypso/state', () => ( {
 	useSelector: jest.fn(),
 	useDispatch: () => jest.fn(),
+} ) );
+
+jest.mock( 'calypso/lib/analytics/tracks', () => ( {
+	recordTracksEvent: jest.fn(),
 } ) );
 
 jest.mock( 'calypso/lib/analytics/survicate', () => ( {
@@ -497,6 +504,17 @@ describe( 'onboarding flow tracks event props', () => {
 			coupon: 'WC_ABC',
 		} );
 	} );
+
+	// Without this, signups from a folded legacy flow count as plain onboarding.
+	it( 'reports the legacy flow a link came from', () => {
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( 'flow=import' ) );
+
+		const { result } = renderHook( () => onboarding.useTracksEventProps?.call( onboarding ) );
+
+		expect( result.current?.eventsProperties.calypso_signup_start ).toEqual( {
+			from_flow: 'import',
+		} );
+	} );
 } );
 
 describe( 'onboarding flow plans-page experiment enrolment', () => {
@@ -532,5 +550,165 @@ describe( 'onboarding flow plans-page experiment enrolment', () => {
 		expect( loadExperimentAssignment ).toHaveBeenCalledWith(
 			'calypso_plans_page_visual_separation_2025_09_v2'
 		);
+	} );
+} );
+
+describe( 'onboarding flow playground navigation', () => {
+	const locationDescriptor = Object.getOwnPropertyDescriptor( window, 'location' );
+	const assign = jest.fn();
+
+	const mockLocation = ( search: string ) => {
+		window.history.replaceState( null, '', `/setup/onboarding/playground${ search }` );
+		Object.defineProperty( window, 'location', {
+			configurable: true,
+			value: { ...window.location, assign },
+		} );
+	};
+
+	const submitPlayground = ( search: string ) => {
+		mockLocation( search );
+
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'playground' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		result.current.submit?.( {
+			slug: 'playground',
+			providedDependencies: {},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		return { navigate };
+	};
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		jest.useFakeTimers();
+	} );
+
+	afterEach( () => {
+		jest.useRealTimers();
+		Object.defineProperty( window, 'location', locationDescriptor as PropertyDescriptor );
+		window.history.replaceState( null, '', '/' );
+	} );
+
+	it( 'leaves for the entrepreneur flow only once Tracks has had time to send the submit events', () => {
+		const { navigate } = submitPlayground( '?intent=woocommerce&playground=abc' );
+
+		expect( assign ).not.toHaveBeenCalled();
+		jest.advanceTimersByTime( 249 );
+		expect( assign ).not.toHaveBeenCalled();
+
+		jest.advanceTimersByTime( 1 );
+		expect( assign ).toHaveBeenCalledTimes( 1 );
+		expect( assign ).toHaveBeenCalledWith(
+			'/setup/entrepreneur?from=playground-publish&playground=abc'
+		);
+		expect( navigate ).not.toHaveBeenCalled();
+	} );
+
+	it( 'records the Stepper submit event before leaving for the entrepreneur flow', () => {
+		mockLocation( '?intent=woocommerce&playground=abc' );
+
+		const { result } = renderHook( () =>
+			useStepNavigationWithTracking( {
+				flow: onboarding,
+				currentStepRoute: 'playground',
+				navigate: jest.fn(),
+			} )
+		);
+		result.current.submit?.();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			STEPPER_TRACKS_EVENT_STEP_NAV_SUBMIT,
+			expect.objectContaining( { flow: 'onboarding', step: 'playground' } )
+		);
+		expect( assign ).not.toHaveBeenCalled();
+
+		jest.advanceTimersByTime( 250 );
+		expect( assign ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'stays in Stepper and goes to the domains step straight away without the WooCommerce intent', () => {
+		const { navigate } = submitPlayground( '?playground=abc' );
+
+		expect( navigate ).toHaveBeenCalledWith(
+			'domains?back_to=%2Fsetup%2Fonboarding%2Fplayground%3Fplayground%3Dabc'
+		);
+		jest.runAllTimers();
+		expect( assign ).not.toHaveBeenCalled();
+	} );
+} );
+
+describe( 'onboarding flow zoom navigation', () => {
+	afterEach( () => {
+		window.history.replaceState( null, '', '/' );
+	} );
+
+	const submitZoom = ( search: string ) => {
+		window.history.replaceState( null, '', `/setup/onboarding/zoom${ search }` );
+		( useQuery as jest.Mock ).mockReturnValue( new URLSearchParams( search ) );
+		( useSelect as jest.Mock ).mockReturnValue( {} );
+
+		const navigate = jest.fn();
+		const { result } = renderHook( () =>
+			// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
+			onboarding.useStepNavigation.call(
+				onboarding,
+				'zoom' as Parameters< typeof onboarding.useStepNavigation >[ 0 ],
+				navigate
+			)
+		);
+
+		result.current.submit?.( {
+			slug: 'zoom',
+			providedDependencies: {},
+		} as Parameters< NonNullable< typeof result.current.submit > >[ 0 ] );
+
+		return navigate;
+	};
+
+	const stepQuery = ( navigate: jest.Mock ) =>
+		Object.fromEntries( new URLSearchParams( navigate.mock.calls[ 0 ][ 0 ].split( '?' )[ 1 ] ) );
+
+	// The partner link usually names only the booking URL; the step then stands for a Simple build
+	// of the Zoom blueprint with a title the interview need not ask for. Replaced in history: Back
+	// from the blueprint step onto it would only forward again.
+	it( 'forwards to the blueprint step with the Zoom defaults, in place', () => {
+		const navigate = submitZoom( '?zoom_booking_url=https%3A%2F%2Fscheduler.zoom.us%2Fjane' );
+
+		expect( navigate ).toHaveBeenCalledWith(
+			expect.stringMatching( /^blueprint\?/ ),
+			undefined,
+			true
+		);
+		// The stepper's navigate merges the current query in, so only what it adds is here.
+		expect( stepQuery( navigate ) ).toEqual( {
+			blueprint: 'zoom-test',
+			build_dest: 'simple',
+			site_title: 'My Booking Site',
+		} );
+	} );
+
+	// The step query wins the stepper's merge, so whatever the link names must not be overwritten
+	// with the defaults here. An empty value counts as not named.
+	it( 'keeps the blueprint, build destination and title the link names', () => {
+		const navigate = submitZoom( '?blueprint=zoom&build_dest=wow&site_title=Jane+Coaching' );
+
+		expect( stepQuery( navigate ) ).toEqual( {} );
+	} );
+
+	it( 'fills in a param the link names but leaves empty', () => {
+		const navigate = submitZoom( '?blueprint=zoom&site_title=' );
+
+		expect( stepQuery( navigate ) ).toEqual( {
+			build_dest: 'simple',
+			site_title: 'My Booking Site',
+		} );
 	} );
 } );

@@ -3,7 +3,6 @@ import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/pri
 import { Button } from '@wordpress/ui';
 import { useEffect, useRef, useState } from 'react';
 import { OmnibarNodeContent } from './omnibar-node';
-import { OmnibarNodeBoundary } from './omnibar-node-boundary';
 import type { OmnibarNode } from '../types';
 
 import './omnibar-menu.scss';
@@ -105,15 +104,7 @@ function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
 	);
 }
 
-export function OmnibarMenu( props: { node: OmnibarNode; className?: string } ) {
-	return (
-		<OmnibarNodeBoundary>
-			<OmnibarMenuNode { ...props } />
-		</OmnibarNodeBoundary>
-	);
-}
-
-function OmnibarMenuNode( { node, className }: { node: OmnibarNode; className?: string } ) {
+export function OmnibarMenu( { node, className }: { node: OmnibarNode; className?: string } ) {
 	useOnView( node.onView );
 
 	const label = node.label || node.title || '';

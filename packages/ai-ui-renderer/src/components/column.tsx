@@ -1,5 +1,5 @@
 import { createComponentImplementation } from '@a2ui/react';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Stack } from '@wordpress/ui';
 import { z } from 'zod';
 import { ChildIdsSchema } from '../utils/schemas';
 
@@ -9,10 +9,10 @@ export const Column = createComponentImplementation(
 		schema: z.object( { children: ChildIdsSchema } ),
 	},
 	( { props, buildChild } ) => (
-		<VStack spacing={ 2 }>
+		<Stack direction="column" gap="sm" align="stretch">
 			{ props.children.map( ( child ) =>
 				typeof child === 'string' ? buildChild( child ) : buildChild( child.id, child.basePath )
 			) }
-		</VStack>
+		</Stack>
 	)
 );

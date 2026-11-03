@@ -1,7 +1,7 @@
 import { createComponentImplementation } from '@a2ui/react';
-import { TextControl } from '@wordpress/components';
 import { useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { InputControl } from '@wordpress/ui';
 import { z } from 'zod';
 import { useFieldProps } from '../hooks/use-field-props';
 import { useInputValue } from '../hooks/use-input-value';
@@ -58,7 +58,7 @@ export const DateTimeInput = createComponentImplementation(
 		};
 
 		return (
-			<TextControl
+			<InputControl
 				{ ...fieldProps }
 				type={ type }
 				label={ props.label ?? __( 'Date and time', 'default' ) }
@@ -75,7 +75,7 @@ export const DateTimeInput = createComponentImplementation(
 						setValidationMessage( event.currentTarget.validationMessage );
 					}
 				} }
-				onChange={ onChange }
+				onValueChange={ onChange }
 			/>
 		);
 	}

@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { omit, isEmpty } from '@automattic/js-utils';
-import { isHostingSignupFlow, isNewsletterFlow } from '@automattic/onboarding';
+import { isNewsletterFlow } from '@automattic/onboarding';
 import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, fixMe } from 'i18n-calypso';
@@ -224,13 +224,6 @@ export class UserStep extends Component {
 					subHeaderText = translate( 'Already have a WordPress.com account? {{a}}Log in{{/a}}', {
 						components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
 					} );
-				} else if ( isHostingSignupFlow( flowName ) ) {
-					subHeaderText = translate(
-						'The most reliable WordPress platform awaits you. Have an account? {{a}}Log in{{/a}}',
-						{
-							components: { a: <a href={ loginUrl } rel="noopener noreferrer" /> },
-						}
-					);
 				} else if ( isBlazeProOAuth2Client( oauth2Client ) ) {
 					subHeaderText = translate( 'First, create your WordPress.com account.' );
 				} else {
@@ -523,7 +516,7 @@ export class UserStep extends Component {
 		}
 
 		const params = new URLSearchParams( window.location.search );
-		if ( isNewsletterFlow( params.get( 'variationName' ) ) || isHostingSignupFlow( flowName ) ) {
+		if ( isNewsletterFlow( params.get( 'variationName' ) ) ) {
 			return translate( 'Let’s get you signed up.' );
 		}
 

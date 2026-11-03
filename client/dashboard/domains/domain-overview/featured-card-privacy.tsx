@@ -5,12 +5,12 @@ import { __ } from '@wordpress/i18n';
 import { seen, unseen } from '@wordpress/icons';
 import OverviewCard from '../../components/overview-card';
 
-interface Props {
+interface FeaturedCardPrivacyProps {
 	domain: Domain;
 	isDisabled?: boolean;
 }
 
-export default function FeaturedCardPrivacy( { domain, isDisabled }: Props ) {
+export default function FeaturedCardPrivacy( { domain, isDisabled }: FeaturedCardPrivacyProps ) {
 	const privacyWarning = __(
 		'Privacy protection is not available due to the registry’s policies.'
 	);

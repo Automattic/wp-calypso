@@ -1,5 +1,5 @@
 import { createComponentImplementation } from '@a2ui/react';
-import { CheckboxControl } from '@wordpress/components';
+import { CheckboxControl } from '@wordpress/ui';
 import { z } from 'zod';
 import { useFieldProps } from '../hooks/use-field-props';
 import { useInputValue } from '../hooks/use-input-value';
@@ -23,7 +23,7 @@ export const CheckBox = createComponentImplementation(
 				{ ...fieldProps }
 				label={ props.label }
 				checked={ value }
-				onChange={ ( checked ) => {
+				onCheckedChange={ ( checked ) => {
 					setValue( checked );
 					touch();
 				} }

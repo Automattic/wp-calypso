@@ -6,12 +6,6 @@ export const STATIC_SITE_IMPORT_TERMINAL_STATES: readonly StaticSiteImportState[
 	'failed',
 ];
 
-export const STATIC_SITE_IMPORT_CAPTURE_SETTLED_STATES: readonly StaticSiteImportState[] = [
-	'preview_ready',
-	'queued',
-	...STATIC_SITE_IMPORT_TERMINAL_STATES,
-];
-
 export type StaticSiteImportCapability =
 	'booking' | 'commerce' | 'dialogs' | 'embeds' | 'forms' | 'media' | 'membership' | 'navigation';
 
@@ -76,7 +70,9 @@ export interface StaticSiteImportSession {
 	preview_summary: StaticSiteImportPreviewSummary | [];
 	/** Empty until approval binds a destination. */
 	site_url: string;
-	/** Present from `preview_ready`; echoed back to `/approve`. */
+	/** The source domain the customer can connect, or '' for a builder's free address or an upload. */
+	connectable_domain: string;
+	/** Present from `preview_ready`. */
 	archive_hash?: string;
 	/** A short-lived link to the preview's Playground archive, only while `preview_ready`. */
 	archive_url?: string;
@@ -85,6 +81,11 @@ export interface StaticSiteImportSession {
 
 export interface ApproveStaticSiteImportSessionParams {
 	sessionId: string;
-	archiveHash: string;
 	destinationBlogId: number;
+}
+
+export interface StaticSiteImportHandoffParams {
+	blogUrl: string;
+	fromUrl: string;
+	locale: string;
 }

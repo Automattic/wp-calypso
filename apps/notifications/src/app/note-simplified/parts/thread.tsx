@@ -4,10 +4,49 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import clsx from 'clsx';
+import { html } from '../../../panel/indices-to-html';
+import { p } from '../../../panel/templates/functions';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
-import type { NoteActor, NoteParentComment } from '../../types';
+import type { Block, NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
+
+/**
+ * Flattens a block onto one line, for a clamped preview.
+ */
+function toPreview( block: Block ): Block {
+	return { ...block, text: block.text.replace( /\n/g, ' ' ) };
+}
+
+/**
+ * Shortens a block to at most `maxLength` characters at a word boundary, ending it with an ellipsis.
+ */
+function truncateBlock( block: Block, maxLength: number ): Block {
+	if ( block.text.length <= maxLength ) {
+		return block;
+	}
+
+	const lastSpace = block.text.lastIndexOf( ' ', maxLength );
+	const cutAtSpace = lastSpace > maxLength * 0.7;
+	const keptLength = block.text.slice( 0, cutAtSpace ? lastSpace : maxLength ).trimEnd().length;
+	const clampIndices = < T extends { indices: [ number, number ] } >( items?: T[] ) =>
+		items
+			?.filter( ( item ) => item.indices[ 0 ] < keptLength )
+			.map( ( item ): T => ( {
+				...item,
+				indices: [
+					item.indices[ 0 ],
+					item.indices[ 1 ] > keptLength ? keptLength + 1 : item.indices[ 1 ],
+				],
+			} ) );
+
+	return {
+		...block,
+		text: block.text.slice( 0, keptLength ) + '…',
+		ranges: clampIndices( block.ranges ),
+		media: clampIndices( block.media ),
+	};
+}
 
 const ThreadItem = ( {
 	avatar,
@@ -15,6 +54,7 @@ const ThreadItem = ( {
 	authorUrl,
 	meta,
 	status,
+	className,
 	children,
 }: {
 	avatar?: string | null;
@@ -22,13 +62,14 @@ const ThreadItem = ( {
 	authorUrl?: string | null;
 	meta?: ReactNode;
 	status?: ReactNode;
+	className?: string;
 	children: ReactNode;
 } ) => {
 	const photo = (
 		<NoteIcon className="wpnc-simplified__photo" icon={ avatar ?? undefined } size={ 36 } />
 	);
 	const name = author && (
-		<Text size={ 15 } weight={ 600 }>
+		<Text className="wpnc-simplified__author" size={ 15 } weight={ 600 }>
 			{ authorUrl ? (
 				<a href={ authorUrl } target="_blank" rel="noreferrer">
 					{ author }
@@ -40,7 +81,7 @@ const ThreadItem = ( {
 	);
 
 	return (
-		<VStack as="li" spacing={ 3 }>
+		<VStack as="li" className={ className } spacing={ 3 }>
 			<HStack alignment="top" justify="flex-start" spacing={ 3 }>
 				{ authorUrl ? (
 					// The name beside it links to the same profile, so the photo stays out of the tab order.
@@ -71,12 +112,18 @@ const ThreadItem = ( {
 export function ThreadParent( {
 	comment,
 	truncate = false,
+	maxLength,
 }: {
 	comment: NoteParentComment;
 	truncate?: boolean;
+	maxLength?: number;
 } ) {
+	const fullContent = comment.content ?? { text: comment.text };
+	const content = maxLength ? truncateBlock( fullContent, maxLength ) : fullContent;
+
 	return (
 		<ThreadItem
+			className="wpnc-simplified__thread-parent"
 			avatar={ comment.author_avatar }
 			author={ comment.author_name }
 			authorUrl={ comment.author_url }
@@ -91,9 +138,10 @@ export function ThreadParent( {
 			<div
 				className={ clsx( 'wpnc-simplified__parent-text', {
 					'is-truncated': truncate,
+					'is-excerpt': maxLength,
 				} ) }
 			>
-				{ comment.text }
+				{ p( html( truncate ? toPreview( content ) : content ) ) }
 			</div>
 		</ThreadItem>
 	);
@@ -125,13 +173,19 @@ export function ThreadReply( {
 
 export default function Thread( {
 	spacing = 4,
+	isReply = false,
 	children,
 }: {
 	spacing?: number;
+	isReply?: boolean;
 	children: ReactNode;
 } ) {
 	return (
-		<VStack as="ol" className="wpnc-simplified__thread" spacing={ spacing }>
+		<VStack
+			as="ol"
+			className={ clsx( 'wpnc-simplified__thread', { 'is-reply': isReply } ) }
+			spacing={ spacing }
+		>
 			{ children }
 		</VStack>
 	);

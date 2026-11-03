@@ -121,6 +121,7 @@ export {
 	loadChatFromServer,
 	loadAllMessagesFromServer,
 } from './react/odieService';
+export { withUniqueMessageIds } from './react/serverTypes';
 
 export type { OdieServiceConfig } from './react/odieService';
 export type {

@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Replace `@babel/plugin-proposal-class-properties` with `@babel/plugin-transform-class-properties` in the loose-mode Babel plugins
+- Remove the loose-mode class-properties, private-methods and private-property-in-object Babel plugins, a Storybook 6 workaround. Class fields now compile as in the app's Babel config.
 
 ### Added
 

@@ -7,6 +7,7 @@ export default {
 		return flows[ flowName ];
 	},
 
+	excludedSteps: [],
 	excludeStep: jest.fn(),
 	resetExcludedStep: jest.fn(),
 	resetExcludedSteps: jest.fn(),

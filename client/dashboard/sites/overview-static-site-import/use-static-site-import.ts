@@ -16,24 +16,23 @@ export interface StaticSiteImportSearch {
 	importSessionId?: string;
 	from?: string;
 	platform?: string;
-	domainChoice?: string;
 }
 
 export interface StaticSiteImport {
-	status: 'moving' | 'finished' | 'failed';
+	/**
+	 * - moving: the move is running.
+	 * - finished / failed: the move itself reported that state.
+	 * - stalled: naming this site as the destination failed; asking again may work.
+	 * - unavailable: this move can't be read for this viewer (another account's move,
+	 *   a wrong or expired link). It isn't a failed move.
+	 */
+	status: 'moving' | 'finished' | 'failed' | 'stalled' | 'unavailable';
 	session?: StaticSiteImportSession;
-	errorCode?: string;
-	/** The preview expired or is gone, so the source has to be read again. */
-	needsRestart: boolean;
-	/** Set when starting the move failed and it's worth asking again. */
+	/** A site check refused the built site, so no other route applies. */
+	isRefused?: boolean;
+	/** Set when the move is stalled: asks again to name this site as the destination. */
 	retry?: () => void;
 }
-
-const RESTART_CODES = [
-	'static_site_import_session_not_found',
-	'static_site_import_preview_expired',
-	'static_site_import_archive_mismatch',
-];
 
 export const getSourceHost = ( url = '' ) => {
 	try {
@@ -60,61 +59,61 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		reset: resetApprove,
 	} = useMutation( approveStaticSiteImportSessionMutation() );
 
-	// The user asked for the move before checkout; now the site has a plan, start it.
+	// Checkout was the consent, so name this site as the destination right away.
+	// The server delivers as soon as the build lands, even if the user has left.
+	// `site_url` is set once delivery is bound, after which there's nothing to approve.
 	const hasRequestedApproval = useRef( false );
 	useEffect( () => {
 		if (
 			! sessionId ||
 			hasRequestedApproval.current ||
-			session?.state !== 'preview_ready' ||
-			! session.archive_hash
+			! session ||
+			session.site_url ||
+			STATIC_SITE_IMPORT_TERMINAL_STATES.includes( session.state )
 		) {
 			return;
 		}
 		hasRequestedApproval.current = true;
-		approve(
-			{ sessionId, archiveHash: session.archive_hash, destinationBlogId: site.ID },
-			{ onSettled: () => refetch() }
-		);
+		approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
 	}, [ approve, refetch, session, sessionId, site.ID ] );
 
 	if ( ! sessionId ) {
 		return null;
 	}
 
-	const errorCode =
-		getStaticSiteImportErrorCode( approveError ) ?? getStaticSiteImportErrorCode( sessionError );
-	const needsRestart =
-		RESTART_CODES.includes( errorCode ?? '' ) ||
-		( session?.state === 'failed' && ! session.site_url );
-	const approveFailed =
-		Boolean( approveError ) && errorCode !== 'static_site_import_session_already_approved';
-	const hasFailed =
-		needsRestart ||
-		approveFailed ||
-		session?.state === 'failed' ||
-		isPermanentStaticSiteImportError( sessionError );
-
-	if ( hasFailed ) {
+	// Only the move's own state decides finished or failed, so a passing error can't
+	// make a move that's still running look final.
+	if ( session?.state === 'failed' ) {
 		return {
 			status: 'failed',
 			session,
-			errorCode,
-			needsRestart,
-			retry:
-				approveFailed && ! needsRestart
-					? () => {
-							resetApprove();
-							hasRequestedApproval.current = false;
-							refetch();
-						}
-					: undefined,
+			isRefused: session.receipt?.code === 'static_site_capture_blocked',
+		};
+	}
+	if ( session?.state === 'finished' ) {
+		return { status: 'finished', session };
+	}
+	if ( ! session && isPermanentStaticSiteImportError( sessionError ) ) {
+		return { status: 'unavailable' };
+	}
+
+	const approveErrorCode = getStaticSiteImportErrorCode( approveError );
+	const isStalled =
+		Boolean( approveError ) &&
+		! session?.site_url &&
+		approveErrorCode !== 'static_site_import_session_already_approved' &&
+		approveErrorCode !== 'static_site_import_session_approval_in_progress';
+	if ( isStalled ) {
+		return {
+			status: 'stalled',
+			session,
+			retry: () => {
+				resetApprove();
+				hasRequestedApproval.current = false;
+				refetch();
+			},
 		};
 	}
 
-	return {
-		status: session?.state === 'finished' ? 'finished' : 'moving',
-		session,
-		needsRestart: false,
-	};
+	return { status: 'moving', session };
 }

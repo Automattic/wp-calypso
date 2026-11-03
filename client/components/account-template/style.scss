@@ -4,10 +4,11 @@
 @import '@wordpress/base-styles/variables';
 
 // The template every account screen follows: log in, sign up, lost password,
-// magic link, two-step authentication. A 432px column (`columnWidth={ 4 }`)
-// with the heading left-aligned above the form. The main login screen is the
-// exception: its form and social buttons sit side by side, so it opts into
-// `.is-centered` and keeps its wider column.
+// magic link, two-step authentication, and the site migration steps that ask
+// for an address or access. A 432px column (`columnWidth={ 4 }`) with the
+// heading left-aligned above the form. The main login screen is the exception:
+// its form and social buttons sit side by side, so it opts into `.is-centered`
+// and keeps its wider column.
 .account-template {
 	display: flex;
 	flex-direction: column;
@@ -243,6 +244,22 @@
 
 	.signup-form .card.auth-form__social {
 		padding-inline: 0;
+	}
+}
+
+// Secondary links after the form, like the way back to the previous step: 8px below
+// the element before them (the CTA, as a rule), each centered in a 40px row.
+.account-template__secondary-actions {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	// Takes back the template's 2rem gap, leaving 8px above the first link.
+	margin-block-start: -1.5rem;
+	font-size: $font-body-small;
+
+	> .components-button {
+		min-height: 40px;
+		color: var( --studio-gray-90 );
 	}
 }
 

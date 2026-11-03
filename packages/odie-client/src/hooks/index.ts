@@ -2,6 +2,7 @@ export { useAutoScroll } from './use-auto-scroll';
 export { useSendChatMessage } from './use-send-chat-message';
 export { useZendeskMessageListener } from './use-zendesk-message-listener';
 export { useCreateZendeskConversation } from './use-create-zendesk-conversation';
+export { useRequestHumanSupport } from './use-request-human-support';
 export { useGetCombinedChat } from './use-get-combined-chat';
 export { useRefreshChatOnFocus } from './use-refresh-chat-on-focus';
 export { useOdieUserTracking } from './use-odie-user-tracking';

@@ -5,6 +5,10 @@ jest.mock( 'calypso/reader/data/post', () => ( {
 	usePost: jest.fn(),
 } ) );
 
+jest.mock( 'calypso/reader/data/comments', () => ( {
+	useComments: jest.fn(),
+} ) );
+
 jest.mock( 'calypso/blocks/comments', () => ( {
 	__esModule: true,
 	default: jest.fn( ( props ) => (
@@ -17,13 +21,16 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useComments } from 'calypso/reader/data/comments';
 import { usePost } from 'calypso/reader/data/post';
+import preferences from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
 import { groupNotesByPost } from '../../group-notes';
 import { makeNote } from '../../test/helpers';
 
 const mockedUsePost = jest.mocked( usePost );
+const mockedUseComments = jest.mocked( useComments );
 
 const [ conversation ] = groupNotesByPost( [
 	makeNote( { id: 1, siteId: 10, postId: 100, title: 'A post title', commenter: 'Ana' } ),
@@ -42,10 +49,18 @@ const post = {
 	discussion: { comment_count: 3 },
 };
 
-const renderDetail = ( props: Partial< React.ComponentProps< typeof ConversationDetail > > = {} ) =>
-	renderWithProvider(
-		<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ conversation } { ...props } />
+const CURRENT_USER_ID = 42;
+
+const renderDetail = (
+	props: Partial< React.ComponentProps< typeof ConversationDetail > > = {},
+	comments: { author: { ID: number } }[] = []
+) => {
+	mockedUseComments.mockReturnValue( { comments } as never );
+	return renderWithProvider(
+		<ConversationDetail siteId={ 10 } postId={ 100 } conversation={ conversation } { ...props } />,
+		{ reducers: { preferences }, initialState: { currentUser: { id: CURRENT_USER_ID } } }
 	);
+};
 
 beforeEach( () => {
 	mockedUsePost.mockReset();
@@ -128,5 +143,17 @@ describe( 'ConversationDetail', () => {
 
 		expect( onPrevious ).toHaveBeenCalledTimes( 1 );
 		expect( onNext ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it.each( [
+		[ 'You follow this', post, [] ],
+		[ 'Your post', { ...post, author: { ID: CURRENT_USER_ID } }, [] ],
+		[ 'You commented', post, [ { author: { ID: CURRENT_USER_ID } } ] ],
+	] )( 'titles the header “%s”', ( title, data, comments ) => {
+		mockedUsePost.mockReturnValue( { data, isLoading: false } as never );
+
+		renderDetail( {}, comments );
+
+		expect( screen.getByRole( 'heading', { level: 2, name: title } ) ).toBeVisible();
 	} );
 } );

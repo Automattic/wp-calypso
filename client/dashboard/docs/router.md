@@ -25,7 +25,7 @@ loader: () =>
 later the component can use the `useQuery` hook to access the data:
 
 ```typescript
-const { data: profile } = useQuery(userSettingsQuery());
+const { data: profile } = useQuery( userSettingsQuery() );
 ```
 
 ## Adding New Routes
@@ -34,7 +34,7 @@ To add a new route to the dashboard:
 
 1. Create a new component for the route in an appropriate directory.
 2. Export a named `Route` component from the module (using `createLazyRoute`).
-3. Import the new route in the router configuration file and complete the route configuration (e.g., `router.tsx`).
+3. Import the new route in the router configuration file and complete the route configuration (e.g., `app/router/index.ts`).
 4. Define loaders for any data requirements.
 
 ## Authorization and Protection
