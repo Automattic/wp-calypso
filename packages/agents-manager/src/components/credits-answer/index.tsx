@@ -21,6 +21,21 @@ interface Props {
 }
 
 /**
+ * Announces a `/credits` reply that has no card (still loading, failed, no AI credits) to screen
+ * readers. The text itself is the message's own text part, so this draws nothing.
+ */
+export function CreditsMessage( { text, createdAt }: { text: string; createdAt: number } ) {
+	const [ announcement, setAnnouncement ] = useState( '' );
+	useEffect( () => {
+		if ( Date.now() - createdAt < ANNOUNCE_WINDOW_MS ) {
+			setAnnouncement( text );
+		}
+	}, [ createdAt, text ] );
+
+	return <VisuallyHidden role="status">{ announcement }</VisuallyHidden>;
+}
+
+/**
  * The thread's answer to `/credits`: a table of where the site's credits stand, as of the ask, and
  * a card with the purchase the composer's credits popover offers, or who to ask.
  */

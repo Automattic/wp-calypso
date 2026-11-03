@@ -3173,6 +3173,11 @@ describe( 'refusal code', () => {
 	} );
 } );
 
+const answerOf = ( credits: ReturnType< typeof useCredits > ) =>
+	credits.creditsCommand && 'answer' in credits.creditsCommand
+		? credits.creditsCommand.answer
+		: undefined;
+
 describe( 'credits answer', () => {
 	it.each( [ 'personal', 'premium' ] as const )(
 		'offers Upgrade and Add credits on %s, each click recording its own cta_type',
@@ -3190,7 +3195,7 @@ describe( 'credits answer', () => {
 			const { result } = renderCredits();
 			await flush();
 
-			const { status, resetDate, actions } = result.current.creditsAnswer ?? {};
+			const { status, resetDate, actions } = answerOf( result.current ) ?? {};
 			expect( status?.remaining ).toBe( 62450 );
 			expect( resetDate ).toBe( 'Oct 1' );
 			expect( actions?.map( ( { kind, label, href } ) => ( { kind, label, href } ) ) ).toEqual( [
@@ -3223,7 +3228,7 @@ describe( 'credits answer', () => {
 			await flush();
 
 			expect(
-				result.current.creditsAnswer?.actions.map( ( { kind, href } ) => ( { kind, href } ) )
+				answerOf( result.current )?.actions.map( ( { kind, href } ) => ( { kind, href } ) )
 			).toEqual( [ { kind: 'top_up', href: ADD_CREDITS_URL } ] );
 		}
 	);
@@ -3235,10 +3240,10 @@ describe( 'credits answer', () => {
 		const { result } = renderCredits();
 		await flush();
 
-		expect( result.current.creditsAnswer?.actions.map( ( { kind } ) => kind ) ).toEqual( [
+		expect( answerOf( result.current )?.actions.map( ( { kind } ) => kind ) ).toEqual( [
 			'top_up',
 		] );
-		expect( result.current.creditsAnswer?.purchaseHint ).toBeUndefined();
+		expect( answerOf( result.current )?.purchaseHint ).toBeUndefined();
 	} );
 
 	it.each( [ 'personal', 'business' ] as const )(
@@ -3248,8 +3253,8 @@ describe( 'credits answer', () => {
 			const { result } = renderCredits();
 			await flush();
 
-			expect( result.current.creditsAnswer?.actions ).toEqual( [] );
-			expect( result.current.creditsAnswer?.purchaseHint ).toBe( 'Ask a site admin to add more.' );
+			expect( answerOf( result.current )?.actions ).toEqual( [] );
+			expect( answerOf( result.current )?.purchaseHint ).toBe( 'Ask a site admin to add more.' );
 		}
 	);
 
@@ -3260,34 +3265,104 @@ describe( 'credits answer', () => {
 		const { result } = renderCredits();
 		await flush();
 
-		expect( result.current.creditsAnswer?.actions ).toEqual( [] );
-		expect( result.current.creditsAnswer?.purchaseHint ).toBeUndefined();
+		expect( answerOf( result.current )?.actions ).toEqual( [] );
+		expect( answerOf( result.current )?.purchaseHint ).toBeUndefined();
 	} );
 
-	it.each( [
-		[ 'a site with no allowance (404)', { ok: false, json: async () => ( {} ) } ],
-		[ 'a snapshot that isn’t valid', { ok: true, json: async () => ( { ai_credits: { a: 1 } } ) } ],
-	] )( 'is absent for %s', async ( _name, reply ) => {
-		fetchMock.mockResolvedValueOnce( reply );
-		const { result } = renderCredits();
-		await flush();
+	describe( '/credits reply states', () => {
+		afterEach( () => {
+			delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+		} );
 
-		expect( result.current.creditsAnswer ).toBeUndefined();
-	} );
+		it( 'answers with the balance on a metered site', async () => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+			const { result } = renderCredits();
+			await flush();
 
-	it( 'is absent when the read fails', async () => {
-		fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
-		const { result } = renderCredits();
-		await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+		} );
 
-		expect( result.current.creditsAnswer ).toBeUndefined();
+		it.each( [
+			[ 'a 404', { ok: false, status: 404, json: async () => ( {} ) } ],
+			[ 'an answer with no credits data', { ok: true, status: 200, json: async () => ( {} ) } ],
+		] )( 'says the site has no credits after %s, never failed', async ( _name, reply ) => {
+			fetchMock.mockResolvedValueOnce( reply );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'unmetered' } );
+		} );
+
+		it( 'says the site has no credits when the host says it isn’t metered, without waiting for a read', () => {
+			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isMetered: false };
+			fetchMock.mockReturnValue( new Promise( () => {} ) );
+			const { result } = renderCredits();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'unmetered' } );
+		} );
+
+		it( 'says it is loading until the read settles', async () => {
+			let settle: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValueOnce( new Promise( ( resolve ) => ( settle = resolve ) ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'loading' } );
+
+			await act( async () => settle( response( creditSnapshot() ) ) );
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+		} );
+
+		it.each( [
+			[ 'a 5xx', { ok: false, status: 503, json: async () => ( {} ) } ],
+			[
+				'a snapshot that isn’t valid',
+				{ ok: true, status: 200, json: async () => ( { ai_credits: { a: 1 } } ) },
+			],
+		] )(
+			'says it couldn’t check after %s, never that the site has no credits',
+			async ( _name, reply ) => {
+				fetchMock.mockResolvedValueOnce( reply );
+				const { result } = renderCredits();
+				await flush();
+
+				expect( result.current.creditsCommand ).toEqual( { state: 'failed' } );
+			}
+		);
+
+		it( 'says it couldn’t check when the read fails on the network', async () => {
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'failed' } );
+		} );
+
+		it( 'keeps the last known balance when a later read fails', async () => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { credits_available: 12500 } ) ) );
+			const { result } = renderCredits();
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			act( () => {
+				window.dispatchEvent( new Event( 'online' ) );
+			} );
+			await flush();
+
+			const reply = result.current.creditsCommand;
+			expect( reply?.state ).toBe( 'stale' );
+			expect( reply && 'answer' in reply && reply.answer.status.remaining ).toBe( 12500 );
+			expect( reply && 'answer' in reply && reply.answer.actions ).toEqual( [] );
+		} );
 	} );
 
 	it( 'is absent on a chat with no site, even in demo mode', () => {
 		window.history.replaceState( {}, '', '/?am_credits=55&am_plan=paid' );
 		const { result } = renderCredits( { siteKey: NO_SITE } );
 
-		expect( result.current.creditsAnswer ).toBeUndefined();
+		expect( result.current.creditsCommand ).toBeUndefined();
 	} );
 
 	it( 'is absent where the host says the page isn’t in dev mode, which reads nothing', async () => {
@@ -3296,7 +3371,7 @@ describe( 'credits answer', () => {
 		await flush();
 
 		expect( fetchMock ).not.toHaveBeenCalled();
-		expect( result.current.creditsAnswer ).toBeUndefined();
+		expect( result.current.creditsCommand ).toBeUndefined();
 		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
 	} );
 } );

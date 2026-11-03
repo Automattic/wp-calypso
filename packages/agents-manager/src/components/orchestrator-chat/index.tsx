@@ -219,7 +219,7 @@ export default function OrchestratorChat( {
 		isReplying,
 	} = credits.chat;
 	const creditsCommand = useCreditsCommand( {
-		creditsAnswer: credits.creditsAnswer,
+		reply: credits.creditsCommand,
 		beforeSubmit: credits.beforeSubmit,
 		addMessage,
 		clearError,

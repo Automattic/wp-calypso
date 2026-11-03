@@ -16,17 +16,18 @@ jest.mock( '@wordpress/i18n', () => ( {
 	sprintf: ( format: string ) => format,
 } ) );
 
-const creditsAnswer = {
+const answerContent = {
 	status: buildLiveCreditsStatus( creditSnapshot() ),
 	resetDate: 'Oct 1',
 	actions: [],
 };
+const reply = { state: 'balance' as const, answer: answerContent };
 const setup = ( overrides: Partial< Parameters< typeof useCreditsCommand >[ 0 ] > = {} ) => {
 	const addMessage = jest.fn();
 	const beforeSubmit = jest.fn( () => false );
 	const clearError = jest.fn();
 	const { result } = renderHook( () =>
-		useCreditsCommand( { creditsAnswer, beforeSubmit, addMessage, clearError, ...overrides } )
+		useCreditsCommand( { reply, beforeSubmit, addMessage, clearError, ...overrides } )
 	);
 	return { result, addMessage, beforeSubmit, clearError };
 };
@@ -53,7 +54,7 @@ describe( 'useCreditsCommand', () => {
 				{
 					type: 'component',
 					component: CreditsAnswer,
-					componentProps: { ...creditsAnswer, createdAt: question.timestamp },
+					componentProps: { ...answerContent, createdAt: question.timestamp },
 				},
 			],
 		} );
@@ -84,6 +85,36 @@ describe( 'useCreditsCommand', () => {
 		expect( clearError ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it.each( [
+		[ 'loading', 'I’m still loading your site credits. Try again in a moment.' ],
+		[ 'failed', 'I couldn’t check your site credits right now. Try again in a moment.' ],
+		[ 'unmetered', 'This site has no AI credits, so there’s no balance to show.' ],
+	] as const )( 'answers a %s read locally with text only, never sending it', ( state, text ) => {
+		const { result, addMessage } = setup( { reply: { state } } );
+
+		expect( result.current.handleCommand( '/credits' ) ).toBe( true );
+
+		const [ , [ reply ] ] = addMessage.mock.calls;
+		expect( reply.content[ 0 ] ).toEqual( { type: 'text', text } );
+		expect( reply.content[ 1 ] ).toMatchObject( {
+			type: 'component',
+			componentProps: { text, createdAt: expect.any( Number ) },
+		} );
+		expect( reply.content[ 1 ].componentProps ).not.toHaveProperty( 'status' );
+	} );
+
+	it( 'shows the last known balance with a note when a read failed', () => {
+		const { result, addMessage } = setup( { reply: { state: 'stale', answer: answerContent } } );
+
+		result.current.handleCommand( '/credits' );
+
+		const [ , [ reply ] ] = addMessage.mock.calls;
+		expect( reply.content[ 0 ].text ).toBe(
+			'I couldn’t refresh your credits just now. This is the last balance I have.'
+		);
+		expect( reply.content[ 1 ].componentProps ).toMatchObject( answerContent );
+	} );
+
 	it( 'does not handle other messages', () => {
 		const { result, addMessage } = setup();
 
@@ -93,7 +124,7 @@ describe( 'useCreditsCommand', () => {
 	} );
 
 	it( 'does not handle /credits without a live balance, so it goes out as any text and the gate stays', () => {
-		const { result, addMessage, beforeSubmit } = setup( { creditsAnswer: undefined } );
+		const { result, addMessage, beforeSubmit } = setup( { reply: undefined } );
 
 		expect( result.current.handleCommand( '/credits' ) ).toBe( false );
 		expect( addMessage ).not.toHaveBeenCalled();

@@ -48,7 +48,15 @@ Typing exactly `/credits` (trimmed, lowercase) in the WordPress Agent's composer
 
 The credits gate lets `/credits` through at a zero balance, since that is when it is most wanted.
 
-With no known live balance (a 404, a site without metering, a read that failed or hasn't landed, a mock balance, or a host not in dev mode) the command isn't handled: it goes out as any other message. Only a known balance can be answered truthfully, and a 404 reads the same as a site with no metering.
+Every state of the balance read gets a local reply, so `/credits` never goes to the model on a site that has credits to read:
+
+- **Balance known:** the table and purchase card above.
+- **A read failed after a balance was known:** the last known balance, with "I couldn’t refresh your credits just now. This is the last balance I have." and no purchase card.
+- **Still loading:** "I’m still loading your site credits. Try again in a moment."
+- **A read failed with no balance known (5xx, network, an invalid answer):** "I couldn’t check your site credits right now. Try again in a moment." This never says the site has no credits.
+- **No AI credits (the read answers 404 or has no credits data, or the host sets `isMetered: false`):** "This site has no AI credits, so there’s no balance to show." No numbers, no upgrade.
+
+Only when credits are off (Reader chat), the balance is a mock, or the read can't run (a host not in dev mode, no site) is the command not handled; it then goes out as any other message.
 
 Only the composer handles it: the host bridge and Retry send the text as it is. Like any message, it waits while a turn runs, and images attached to the draft stay attached.
 

@@ -122,6 +122,11 @@ function canReadBalance< Scope extends { siteId?: number; authProvider?: AuthPro
 	);
 }
 
+/** Whether the host says the site has no AI credits. Absent means the balance read decides. */
+function isKnownUnmetered(): boolean {
+	return getAgentsManagerInlineData()?.isMetered === false;
+}
+
 interface UseCreditsOptions {
 	/** Surfaces without metering (Reader chat) pass false and get nothing. */
 	enabled: boolean;
@@ -152,11 +157,20 @@ export interface UseCreditsResult {
 	 */
 	refusalNotice?: NoticeConfig;
 	/**
-	 * What `/credits` answers with: the live balance, and the purchase button or hint the popover
-	 * shows. Absent when no balance is known, so the command isn't handled.
+	 * How `/credits` answers. Absent when nothing can be said (credits off, a mock balance, no
+	 * live read), so the command isn't handled and goes out as any text does.
 	 */
-	creditsAnswer?: CreditsAnswerContent;
+	creditsCommand?: CreditsCommandReply;
 }
+
+/**
+ * `balance` is the live balance with the purchase button or hint the popover shows, `stale` the
+ * last known balance after a failed read, `loading` a read not yet settled, `failed` a read that
+ * failed with no balance known, and `unmetered` a site that has no AI credits.
+ */
+export type CreditsCommandReply =
+	| { state: 'balance' | 'stale'; answer: CreditsAnswerContent }
+	| { state: 'loading' | 'failed' | 'unmetered' };
 
 /**
  * Loads balances independently of prompts and keeps reads and terminal updates
@@ -213,6 +227,15 @@ export function useCredits( {
 		 */
 		isUnconfirmed?: boolean;
 	} >();
+	// How the last balance read ended when it left no balance: no credits on the site, or a failure.
+	const [ readOutcome, setReadOutcome ] = useState< {
+		scope: typeof scope;
+		outcome: 'unmetered' | 'failed';
+	} >();
+	// The last valid balance, kept past a failed read for `/credits` to show as the last known.
+	const lastKnownSnapshot = useRef< { scope: typeof scope; snapshot: CreditSnapshot } | undefined >(
+		undefined
+	);
 	// Who may buy, from the balance read. Terminal updates don't carry it.
 	const [ upgradeAccess, setUpgradeAccess ] = useState< { scope: typeof scope } & CreditsAccess >();
 	const upgradeAccessRef = useRef( upgradeAccess );
@@ -294,6 +317,8 @@ export function useCredits( {
 			const snapshot = parseCreditSnapshot( update.aiCredits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
 				scope.validTerminalRevision++;
+				lastKnownSnapshot.current = { scope, snapshot };
+				setReadOutcome( undefined );
 				setBalance( { scope, snapshot, isFromTurn: true } );
 			} else {
 				invalidateBalance();
@@ -373,12 +398,18 @@ export function useCredits( {
 			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
+				lastKnownSnapshot.current = { scope, snapshot };
+				setReadOutcome( undefined );
 				setBalance( { scope, snapshot, isFromTurn: false } );
 			} else {
+				// A 404 or an answer with no credits data means no metering; any other miss is a failure.
+				const isUnmetered = response.status === 404 || ( response.ok && ! data?.ai_credits );
+				setReadOutcome( { scope, outcome: isUnmetered ? 'unmetered' : 'failed' } );
 				invalidateBalance();
 			}
 		} catch {
 			if ( isCurrent() ) {
+				setReadOutcome( { scope, outcome: 'failed' } );
 				invalidateBalance();
 			}
 		} finally {
@@ -855,6 +886,41 @@ export function useCredits( {
 		};
 	}, [ siteId, status, snapshot, purchaseKind, purchaseAction, addCreditsAction, purchaseHint ] );
 
+	const lastKnown =
+		lastKnownSnapshot.current?.scope === scope &&
+		Date.parse( lastKnownSnapshot.current.snapshot.resets_at ) > Date.now()
+			? lastKnownSnapshot.current.snapshot
+			: undefined;
+	const failedOutcome = readOutcome?.scope === scope ? readOutcome.outcome : undefined;
+	// Live balances only: a mock balance, or a read that can't run, has nothing true to say.
+	const creditsCommand = useMemo< CreditsCommandReply | undefined >( () => {
+		if ( ! enabled || ! siteId || ! canReadBalance( scope ) ) {
+			return undefined;
+		}
+		if ( isKnownUnmetered() ) {
+			return { state: 'unmetered' };
+		}
+		if ( creditsAnswer ) {
+			return { state: 'balance', answer: creditsAnswer };
+		}
+		if ( failedOutcome === 'unmetered' ) {
+			return { state: 'unmetered' };
+		}
+		if ( failedOutcome === 'failed' ) {
+			return lastKnown
+				? {
+						state: 'stale',
+						answer: {
+							status: buildLiveCreditsStatus( lastKnown ),
+							resetDate: formatCreditsResetDate( lastKnown.resets_at ),
+							actions: [],
+						},
+					}
+				: { state: 'failed' };
+		}
+		return { state: 'loading' };
+	}, [ enabled, siteId, scope, creditsAnswer, failedOutcome, lastKnown ] );
+
 	return useMemo(
 		() => ( {
 			chat,
@@ -863,8 +929,8 @@ export function useCredits( {
 			beforeSubmit,
 			takeRefusalCode,
 			refusalNotice,
-			creditsAnswer,
+			creditsCommand,
 		} ),
-		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice, creditsAnswer ]
+		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice, creditsCommand ]
 	);
 }

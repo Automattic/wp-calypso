@@ -469,7 +469,7 @@ const mockCreditsVisibility = jest.fn();
 const mockCreditsNoticeVisibility = jest.fn();
 const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 const mockCreditsNotice = jest.fn( (): unknown => undefined );
-let mockCreditsAnswer: unknown;
+let mockCreditsCommand: unknown;
 const mockRefusalNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 jest.mock( '../../hooks/use-credits', () => ( {
@@ -492,7 +492,7 @@ jest.mock( '../../hooks/use-credits', () => ( {
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
 			takeRefusalCode: mockTakeRefusalCode,
 			notice: mockCreditsNotice(),
-			creditsAnswer: mockCreditsAnswer,
+			creditsCommand: mockCreditsCommand,
 			refusalNotice: mockRefusalNotice(),
 		};
 	},
@@ -803,7 +803,7 @@ describe( 'OrchestratorChat', () => {
 		mockUseConversation.mockReturnValue( { isLoading: false } );
 		mockUseAgentChat.mockReturnValue( agentChatReturn() );
 		mockCreditsNotice.mockReturnValue( undefined );
-		mockCreditsAnswer = undefined;
+		mockCreditsCommand = undefined;
 		mockRefusalNotice.mockReturnValue( undefined );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
@@ -1609,7 +1609,10 @@ describe( 'OrchestratorChat', () => {
 
 	it( 'answers /credits in the thread without sending it to the model', () => {
 		const { onSubmit, addMessage, clearError } = mockUseAgentChat();
-		mockCreditsAnswer = { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } };
+		mockCreditsCommand = {
+			state: 'balance',
+			answer: { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } },
+		};
 
 		render( chat() );
 		fireEvent.click( screen.getByText( 'Submit credits command' ) );

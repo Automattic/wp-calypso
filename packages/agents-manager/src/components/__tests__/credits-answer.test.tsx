@@ -4,7 +4,7 @@
 import { act, render, screen } from '@testing-library/react';
 import { creditSnapshot } from '../../utils/__tests__/fixtures/credit-snapshot';
 import { buildLiveCreditsStatus } from '../../utils/live-credits';
-import { CreditsAnswer } from '../credits-answer';
+import { CreditsAnswer, CreditsMessage } from '../credits-answer';
 
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 
@@ -113,5 +113,22 @@ describe( 'CreditsAnswer', () => {
 		render( <CreditsAnswer { ...answer } createdAt={ Date.now() - 60000 } /> );
 
 		expect( screen.getByRole( 'status' ) ).toBeEmptyDOMElement();
+	} );
+} );
+
+describe( 'CreditsMessage', () => {
+	it( 'announces a fresh reply, and draws nothing else', () => {
+		const { container } = render(
+			<CreditsMessage text="Still loading." createdAt={ Date.now() } />
+		);
+
+		expect( screen.getByRole( 'status' ).textContent ).toBe( 'Still loading.' );
+		expect( container.textContent ).toBe( 'Still loading.' );
+	} );
+
+	it( 'does not announce an old reply again when the chat remounts', () => {
+		render( <CreditsMessage text="Still loading." createdAt={ Date.now() - 60000 } /> );
+
+		expect( screen.getByRole( 'status' ).textContent ).toBe( '' );
 	} );
 } );
