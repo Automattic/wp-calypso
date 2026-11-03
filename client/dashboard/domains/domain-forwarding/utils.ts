@@ -85,7 +85,7 @@ export function isTargetUrlValid( targetUrl: string, sourceDomain: string ): str
 	if ( ! isSubdomain( domainParts, targetHostParts, domainLevel, targetHostLevel ) ) {
 		return null;
 	}
-	// The backend allows this forward when `www` has a custom CNAME, which this form can't see.
+	// A `www` forward is valid if the domain has a custom CNAME pointing elsewhere. Let the backend validate that
 	if ( url.hostname === `www.${ sourceDomain }` ) {
 		return null;
 	}
