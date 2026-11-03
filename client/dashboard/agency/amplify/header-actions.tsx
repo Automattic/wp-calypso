@@ -25,6 +25,7 @@ export default function AmplifyHeaderActions( {
 
 	let newReportButton = (
 		<Button
+			__next40pxDefaultSize
 			variant="primary"
 			onClick={ () => {
 				recordTracksEvent( 'calypso_a4a_amplify_new_report_click' );
@@ -54,6 +55,7 @@ export default function AmplifyHeaderActions( {
 		<HStack spacing={ 2 } alignment="center" expanded={ false }>
 			{ page.state === 'reports' && (
 				<Button
+					__next40pxDefaultSize
 					variant="tertiary"
 					onClick={ () => {
 						recordTracksEvent( 'calypso_a4a_amplify_learn_more_click' );

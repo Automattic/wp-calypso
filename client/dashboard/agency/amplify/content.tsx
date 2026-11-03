@@ -57,7 +57,7 @@ export default function AmplifyContent( {
 					alignment="flex-start"
 				>
 					<Text>{ __( 'Unable to load reports. Please try again.' ) }</Text>
-					<Button variant="secondary" onClick={ page.refetch }>
+					<Button __next40pxDefaultSize variant="secondary" onClick={ page.refetch }>
 						{ __( 'Retry' ) }
 					</Button>
 				</VStack>
