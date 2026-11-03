@@ -50,21 +50,27 @@
 				<div style="display: none" id="showme">
 					<h2>How to bypass your proxy for this app</h2>
 					<p>
-						If you are using a system proxy, you will need to add an exclusion for
-						<code>127.0.0.1</code> to your proxy settings.
+						The app only uses your Mac’s proxy when <code>Proxy</code> is set to
+						<code>Use system proxy</code> in <code>WordPress.com › Preferences...</code>. If you
+						don’t need a proxy to reach WordPress.com, choose <code>No proxy</code> there and
+						restart the app.
+					</p>
+					<p>
+						If you do use a system proxy, make sure it is running, then exclude WordPress.com from
+						it:
 					</p>
 					<ol>
-						<li>Open <code>System Preferences...</code></li>
-						<li>Pick <code>Network</code></li>
-						<li>Pick whichever connection is being proxied (probably Wi-fi)</li>
-						<li>Click on <code>Advanced</code></li>
-						<li>Click on <code>Proxies</code></li>
+						<li>Open the Apple menu and choose <code>System Settings</code></li>
+						<li>Click <code>Network</code> in the sidebar</li>
+						<li>Click the connection you’re using (probably Wi-Fi)</li>
+						<li>Click <code>Details...</code></li>
+						<li>Click <code>Proxies</code> (you may need to scroll down)</li>
 						<li>
-							Add <code>, 127.0.0.1</code> to the
-							<code>Bypass proxy settings for these hosts</code> - the leading comma is important
+							Add <code>, wordpress.com, *.wordpress.com, *.wp.com</code> to the end of
+							<code>Bypass proxy settings for these hosts &amp; domains</code> - the leading comma
+							is important
 						</li>
-						<li>Press <code>OK</code></li>
-						<li>Press <code>Apply</code> - this last step is also important!</li>
+						<li>Click <code>OK</code>, then click <code>Try again</code></li>
 					</ol>
 
 					<p><img class="instructions" src="unproxy.jpg" alt="Instructions" /></p>
