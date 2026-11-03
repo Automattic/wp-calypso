@@ -17,6 +17,8 @@ type Props = {
 	/** Native, not synthetic: the editor renders in its own React root, which React's events never leave. */
 	onKeyDown?: ( event: KeyboardEvent ) => void;
 	onFocus?: () => void;
+	/** When focus leaves the box, not when it moves around inside it. */
+	onBlur?: () => void;
 };
 
 /**
@@ -35,6 +37,7 @@ export default function CommentBlockEditor( {
 	onError,
 	onKeyDown,
 	onFocus,
+	onBlur,
 }: Props ) {
 	const box = useRef< HTMLDivElement >( null );
 	const textarea = useRef< HTMLTextAreaElement >( null );
@@ -46,8 +49,8 @@ export default function CommentBlockEditor( {
 	// Set by a click, so the editor's caret lands where it did; a keyboard arrival goes to the end.
 	const clicked = useRef( false );
 	// The editor keeps the callbacks it was mounted with, so it reads the latest through a ref.
-	const latest = useRef( { value, onChange, onError, onKeyDown, onFocus } );
-	latest.current = { value, onChange, onError, onKeyDown, onFocus };
+	const latest = useRef( { value, onChange, onError, onKeyDown, onFocus, onBlur } );
+	latest.current = { value, onChange, onError, onKeyDown, onFocus, onBlur };
 
 	const openEditor = ( focus: boolean ) => {
 		if ( opened.current ) {
@@ -89,8 +92,19 @@ export default function CommentBlockEditor( {
 		gone.current = false;
 		const keydown = ( event: KeyboardEvent ) => latest.current.onKeyDown?.( event );
 		const focusin = () => latest.current.onFocus?.();
+		// The editor's popovers render inside the box, so they don't count as leaving it. Nor
+		// does the stand-in losing focus as it hides for the editor.
+		const focusout = ( event: FocusEvent ) => {
+			if (
+				event.target !== textarea.current &&
+				! element.contains( event.relatedTarget as Node | null )
+			) {
+				latest.current.onBlur?.();
+			}
+		};
 		element.addEventListener( 'keydown', keydown );
 		element.addEventListener( 'focusin', focusin );
+		element.addEventListener( 'focusout', focusout );
 
 		// A draft from the editor is block markup, which only the editor shows.
 		if ( latest.current.value.includes( '<!-- wp:' ) ) {
@@ -101,6 +115,7 @@ export default function CommentBlockEditor( {
 			gone.current = true;
 			element.removeEventListener( 'keydown', keydown );
 			element.removeEventListener( 'focusin', focusin );
+			element.removeEventListener( 'focusout', focusout );
 			unmount.current?.();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- set up once, with the draft of that moment.

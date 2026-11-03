@@ -117,6 +117,19 @@ class PostCommentForm extends Component {
 		this.setState( { haveFocus: false } );
 	};
 
+	// An empty editor outside the inbox shrinks back to the textarea once focus leaves it.
+	handleEditorBlur = () => {
+		if ( this.props.composer || this.props.parentCommentId || this.hasCommentText() ) {
+			return;
+		}
+
+		this.setState( ( { editorKey } ) => ( {
+			haveFocus: false,
+			editorOpen: false,
+			editorKey: editorKey + 1,
+		} ) );
+	};
+
 	handleTextChange = ( event ) => {
 		this.updateCommentText( event.target.value );
 	};
@@ -304,6 +317,7 @@ class PostCommentForm extends Component {
 							onError={ this.handleEditorError }
 							onKeyDown={ this.handleKeyDown }
 							onFocus={ this.handleFocus }
+							onBlur={ this.handleEditorBlur }
 						/>
 					) : (
 						<AutoresizingFormTextarea
