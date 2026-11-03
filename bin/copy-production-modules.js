@@ -76,13 +76,12 @@ function processPackage( pkgName, context ) {
 
 	// Optional peers are skipped: they're only installed here because the repo uses them for
 	// development, e.g. @wordpress/theme's vite and stylelint integrations, not by the server.
-	const optionalPeers = Object.keys( pkgJson.peerDependenciesMeta || {} ).filter(
-		( dep ) => pkgJson.peerDependenciesMeta[ dep ].optional === true
-	);
+	// Limit: if a package loads an optional peer at runtime that the bundle doesn't request itself,
+	// it fails only in the production image; exempt that peer from this filter to ship it.
 	const pkgDeps = [
 		...Object.keys( pkgJson.dependencies || {} ),
 		...Object.keys( pkgJson.peerDependencies || {} ).filter(
-			( dep ) => ! optionalPeers.includes( dep )
+			( dep ) => pkgJson.peerDependenciesMeta?.[ dep ]?.optional !== true
 		),
 		...Object.keys( pkgJson.optionalDependencies || {} ),
 	];
