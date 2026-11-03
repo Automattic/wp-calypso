@@ -12,11 +12,12 @@ import {
 	isTailoredSignupFlow,
 	HUNDRED_YEAR_PLAN_FLOW,
 	AI_SITE_BUILDER_FLOW,
+	COPY_SITE_FLOW,
 } from '../';
 import wpcomRequest from '../wpcom-request';
 import cartManagerClient from './create-cart-manager-client';
 import type { DomainSuggestion } from '@automattic/api-core';
-import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
+import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 
 const debug = debugFactory( 'calypso:signup:step-actions' );
 
@@ -327,10 +328,20 @@ export async function addProductsToCart(
 				.actions.addProductsToCart( cartItemsToAdd );
 
 			debug( 'product add request complete', updatedCart );
+			return updatedCart;
 		} catch ( error ) {
 			debug( 'product add request had an error', error );
 		}
 	}
+}
+
+export function hasCopySitePlan( cart: ResponseCart | undefined, planSlug: string | undefined ) {
+	return (
+		!! planSlug &&
+		!! cart?.products.some(
+			( item ) => item.product_slug === planSlug && item.extra?.signup_flow === COPY_SITE_FLOW
+		)
+	);
 }
 
 export async function setThemeOnSite(

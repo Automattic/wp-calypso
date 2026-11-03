@@ -3,7 +3,7 @@
  */
 import config from '@automattic/calypso-config';
 import { Site } from '@automattic/data-stores';
-import { createSite } from '@automattic/onboarding';
+import { addProductsToCart, createSite, hasCopySitePlan } from '@automattic/onboarding';
 import { render, waitFor } from '@testing-library/react';
 import { useFlowState } from '../../../state-manager/store';
 import CreateSite from '../index';
@@ -15,6 +15,7 @@ const mockReadFlowState = () => flowStateStore;
 let mockBlueprint: string | null = null;
 let mockSiteUrl = 'my-site.wordpress.com';
 let mockQueryParams = new URLSearchParams( '' );
+let mockPlanCartItem: { product_slug: string } | null = null;
 
 // The step passes createSite's aiLaunchpadEnabled parameter last (see its call in ../index.tsx).
 const getAiLaunchpadEnabledArg = () => ( createSite as jest.Mock ).mock.calls[ 0 ].at( -1 );
@@ -34,6 +35,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	StepContainer: () => null,
 	Step: { Loading: () => null },
 	addProductsToCart: jest.fn(),
+	hasCopySitePlan: jest.fn(),
 	createSite: jest.fn( async () => ( {
 		siteId: 111,
 		siteSlug: 'brand-new.wordpress.com',
@@ -41,7 +43,7 @@ jest.mock( '@automattic/onboarding', () => ( {
 	} ) ),
 	setThemeOnSite: jest.fn(),
 	isAIBuilderOnboardingFlow: () => false,
-	isCopySiteFlow: () => false,
+	isCopySiteFlow: ( flow: string ) => flow === 'copy-site',
 	isEntrepreneurFlow: () => false,
 	isNewHostedSiteCreationFlow: () => false,
 	isNewsletterFlow: () => false,
@@ -64,7 +66,7 @@ jest.mock( '@wordpress/data', () => ( {
 		domainItem: undefined,
 		domainCartItem: undefined,
 		domainCartItems: [],
-		planCartItem: null,
+		planCartItem: mockPlanCartItem,
 		productCartItems: [],
 		selectedSiteTitle: 'My site',
 		siteUrl: mockSiteUrl,
@@ -140,6 +142,7 @@ describe( 'create-site', () => {
 		mockBlueprint = null;
 		mockSiteUrl = 'my-site.wordpress.com';
 		mockQueryParams = new URLSearchParams( '' );
+		mockPlanCartItem = null;
 		sessionStorage.clear();
 		jest.clearAllMocks();
 		( useFlowState as jest.Mock ).mockImplementation( () => ( {
@@ -150,6 +153,15 @@ describe( 'create-site', () => {
 				flowStateStore[ key ] = value;
 			},
 		} ) );
+	} );
+
+	it( 'keeps the destination but rejects Copy Site processing when the cart write fails', async () => {
+		mockPlanCartItem = { product_slug: 'business-bundle' };
+		jest.mocked( addProductsToCart ).mockResolvedValueOnce( undefined );
+		jest.mocked( hasCopySitePlan ).mockReturnValueOnce( false );
+		await expect( runStep( { flow: 'copy-site' } ) ).rejects.toThrow( 'prepare your cart' );
+		expect( hasCopySitePlan ).toHaveBeenCalledWith( undefined, 'business-bundle' );
+		expect( flowStateStore.createdSite ).toMatchObject( { siteId: 111 } );
 	} );
 
 	it( 'creates the site and records it against the name it asked for', async () => {

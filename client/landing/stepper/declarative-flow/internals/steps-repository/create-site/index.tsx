@@ -10,6 +10,7 @@ import {
 	StepContainer,
 	addProductsToCart,
 	createSite,
+	hasCopySitePlan,
 	isAIBuilderOnboardingFlow,
 	isCopySiteFlow,
 	isEntrepreneurFlow,
@@ -231,6 +232,13 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 	const [ , isSimplifiedOnboarding ] = useSimplifiedOnboarding();
 
 	async function createSiteAction() {
+		const saveCart = async ( slug: string, items: Parameters< typeof addProductsToCart >[ 2 ] ) => {
+			const cart = items?.length ? await addProductsToCart( slug, flow, items ) : undefined;
+			if ( isCopySiteFlow( flow ) && ! hasCopySitePlan( cart, planCartItem?.product_slug ) ) {
+				throw new Error( __( 'We couldn’t prepare your cart. Please try again.' ) );
+			}
+		};
+
 		if ( isManageSiteFlow ) {
 			const slug = getSignupCompleteSlug();
 
@@ -243,8 +251,8 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...( productCartItems ?? [] ),
 				...mergedDomainCartItems,
 			];
-			if ( manageFlowCartItems.length > 0 && slug ) {
-				await addProductsToCart( slug, flow, manageFlowCartItems );
+			if ( slug ) {
+				await saveCart( slug, manageFlowCartItems );
 			}
 
 			return {
@@ -433,9 +441,7 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 				...mergedDomainCartItems,
 			];
 
-			if ( additionalCartItems.length > 0 ) {
-				await addProductsToCart( site.siteSlug, flow, additionalCartItems );
-			}
+			await saveCart( site.siteSlug, additionalCartItems );
 
 			// Poll for garden provisioning status if this is a garden site
 			if ( gardenName ) {
