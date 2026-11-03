@@ -81,17 +81,40 @@ $composer-max-height: 400px;
 	position: relative;
 }
 
-// Outside the inbox, the box stays close to the textarea it replaces: its type, two lines to
-// write on, and a slimmer toolbar that keeps to the background until it's used.
+// Outside the inbox, the box stays close to the textarea it replaces: its border and type, two
+// lines to write on, and a slimmer toolbar that keeps to the background until it's used.
 .comments__block-editor:not(.has-pinned-toolbar) {
 	--jetpack-comments-pad: 12px;
 	--jetpack-comments-font-size: #{$font-body-small};
 	--jetpack-comments-line-height: 21px;
 
+	&:not(:focus-within) {
+		border-color: var(--color-neutral-10);
+	}
+
 	.comments__block-editor-textarea,
 	.jetpack-comments__editor .editor-styles-wrapper {
 		min-block-size: calc(2lh + 2 * var(--jetpack-comments-pad));
 		max-block-size: $composer-max-height - $compact-toolbar-height - 1px;
+		transition: padding-block 0.25s ease-in-out;
+	}
+
+	// Closing, the words slide up to the textarea's padding as the row shrinks around them, with
+	// nothing left of the folded toolbar above them.
+	&.is-closing .comments__block-editor-textarea,
+	&.is-closing .jetpack-comments__editor .editor-styles-wrapper {
+		padding-block: 5px;
+	}
+
+	&.is-closing.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
+		border-block-end-width: 0;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.comments__block-editor-textarea,
+		.jetpack-comments__editor .editor-styles-wrapper {
+			transition: none;
+		}
 	}
 }
 

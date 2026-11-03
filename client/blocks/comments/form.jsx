@@ -185,7 +185,16 @@ class PostCommentForm extends Component {
 			} ),
 			() => {
 				if ( this.escaped ) {
-					this.form.current?.querySelector( 'textarea' )?.focus();
+					// Straight to its focused border, not a fade in from the unfocused one.
+					const textarea = this.form.current?.querySelector( 'textarea' );
+					if ( textarea ) {
+						textarea.style.transition = 'none';
+						textarea.focus();
+						// Two frames: the focused border has been drawn by the second.
+						requestAnimationFrame( () =>
+							requestAnimationFrame( () => ( textarea.style.transition = '' ) )
+						);
+					}
 					this.escaped = false;
 				}
 			}

@@ -194,7 +194,9 @@ export default function CommentBlockEditor( {
 		<div
 			ref={ box }
 			className={ clsx( 'comments__block-editor jetpack-comments jetpack-comments__box', {
-				'is-open': pinToolbar || active,
+				// Closing folds the toolbar too, so the words slide up to where the textarea shows them.
+				'is-open': ( pinToolbar || active ) && ! closing,
+				'is-closing': closing,
 				'has-pinned-toolbar': pinToolbar,
 			} ) }
 		>
