@@ -419,7 +419,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		[
 			'names what the move found on the old site',
 			{ commerce: 4, forms: 1, navigation: 3 },
-			'We found a store and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
+			'We found a store or ticket sales and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
 		],
 	] )( '%s', ( _, capabilities, message ) => {
 		const finished = {
