@@ -154,6 +154,61 @@ beforeEach( () => {
 	jest.mocked( wpcom.req.post ).mockResolvedValue( undefined );
 } );
 
+it.each( [ 'domains', 'use-my-domain' ] as const )(
+	'prepares the selected plan for site creation when entering directly through %s',
+	async ( step ) => {
+		jest.mocked( wpcomRequest ).mockResolvedValue( source );
+		jest.mocked( wpcom.req.get ).mockResolvedValue( { active: [ WPCOM_FEATURES_COPY_SITE ] } );
+		const queryClient = new QueryClient();
+		queryClient.setQueryData( [ 'purchases' ], [] );
+		const { result } = renderHookWithProvider(
+			() => ( {
+				site: useSite( sourceSlug ),
+				navigation: copySite.useStepNavigation( step, navigate ),
+			} ),
+			{
+				queryClient,
+				wrapper: ( { children }: { children: React.ReactNode } ) => (
+					<MemoryRouter
+						initialEntries={ [ `/?sourceSlug=${ sourceSlug }&plan=business-bundle-monthly` ] }
+					>
+						{ children }
+					</MemoryRouter>
+				),
+				initialState: { currentUser: { id: 123 } },
+			}
+		);
+		await waitFor( () => expect( result.current.site?.ID ).toBe( source.ID ) );
+		await act( async () => {
+			await result.current.navigation.submit( {} );
+		} );
+		expect( select( ONBOARD_STORE ).getPlanCartItem() ).toEqual( {
+			product_slug: 'business-bundle-monthly',
+		} );
+		expect( navigate ).toHaveBeenCalledWith( 'create-site', { sourceSlug } );
+	}
+);
+
+it( 'opens checkout with the prepared cart instead of adding a plan from the URL', async () => {
+	const { result } = renderHookWithProvider(
+		() => copySite.useStepNavigation( 'processing', navigate ),
+		{
+			wrapper: ( { children }: { children: React.ReactNode } ) => (
+				<MemoryRouter initialEntries={ [ `/?sourceSlug=${ sourceSlug }` ] }>
+					{ children }
+				</MemoryRouter>
+			),
+		}
+	);
+	await act( async () => {
+		await result.current.submit( { siteSlug: destinationSlug } );
+	} );
+	const redirect = jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ];
+	expect( new URL( redirect, 'https://wordpress.com' ).pathname ).toBe(
+		`/checkout/${ destinationSlug }`
+	);
+} );
+
 describe( 'copy site source validation', () => {
 	it( 'rejects a missing source without validating the destination as the source', async () => {
 		jest.mocked( wpcomRequest ).mockResolvedValue( destination );
@@ -358,7 +413,10 @@ describe( 'copy site failure handling', () => {
 		).toHaveLength( 1 );
 	} );
 
-	it( 'routes a processing failure to the error screen instead of home', async () => {
+	it.each( [
+		[ ProcessingResult.FAILURE, 'error' ],
+		[ ProcessingResult.NO_ACTION, 'automated-copy' ],
+	] )( 'routes processing result %s to %s instead of home', async ( processingResult, step ) => {
 		const { result } = renderHookWithProvider(
 			() => copySite.useStepNavigation( 'processing-copy', navigate ),
 			{
@@ -368,9 +426,9 @@ describe( 'copy site failure handling', () => {
 			}
 		);
 		await act( async () => {
-			await result.current.submit( { processingResult: ProcessingResult.FAILURE } );
+			await result.current.submit( { processingResult } );
 		} );
-		expect( navigate ).toHaveBeenCalledWith( 'error' );
+		expect( navigate ).toHaveBeenCalledWith( step );
 		expect( window.location.assign ).not.toHaveBeenCalled();
 	} );
 

@@ -78,6 +78,10 @@ const copySite: Flow = {
 		const { data: sourceSite } = useSiteQuery( sourceSiteSlug, {
 			enabled: ! isPostCheckoutStep && !! sourceSiteSlug,
 		} );
+		const { prepareCopyCart } = useSiteCopy( sourceSite ?? undefined, {
+			enabled: _currentStepSlug === 'domains' || _currentStepSlug === 'use-my-domain',
+		} );
+		const plan = urlQueryParams.get( 'plan' ) || sourceSite?.plan?.product_slug || PLAN_BUSINESS;
 		const {
 			setHideFreePlan,
 			setSignupDomainOrigin,
@@ -101,6 +105,9 @@ const copySite: Flow = {
 						return navigate( useMyDomainURL );
 					}
 
+					if ( ! prepareCopyCart( plan ) ) {
+						return navigate( 'error' );
+					}
 					setSiteUrl( providedDependencies.siteUrl as string );
 					setDomain( providedDependencies.suggestion as DomainSuggestion );
 					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
@@ -127,6 +134,9 @@ const copySite: Flow = {
 						return navigate( destination as typeof _currentStepSlug );
 					}
 
+					if ( ! prepareCopyCart( plan ) ) {
+						return navigate( 'error' );
+					}
 					if ( providedDependencies && 'domainCartItem' in providedDependencies ) {
 						setHideFreePlan( true );
 						setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
@@ -145,6 +155,13 @@ const copySite: Flow = {
 				case 'resuming' as StepperStep[ 'slug' ]:
 				case 'processing': {
 					const siteSlug = providedDependencies?.siteSlug || urlQueryParams.get( 'siteSlug' );
+					if (
+						typeof siteSlug !== 'string' ||
+						! siteSlug ||
+						providedDependencies.processingResult === ProcessingResult.FAILURE
+					) {
+						return navigate( 'error' );
+					}
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {
 						sourceSlug: sourceSiteSlug,
 						siteSlug: siteSlug,
@@ -153,12 +170,8 @@ const copySite: Flow = {
 					setSignupCompleteSlug( siteSlug );
 					setSignupCompleteFlowName( flowName );
 					const returnUrl = encodeURIComponent( destination );
-					const plan =
-						urlQueryParams.get( 'plan' ) ?? sourceSite?.plan?.product_slug ?? PLAN_BUSINESS;
 					return window.location.assign(
-						`/checkout/${ plan }/${ encodeURIComponent(
-							( siteSlug as string ) ?? ''
-						) }?redirect_to=${ returnUrl }&signup=1`
+						`/checkout/${ encodeURIComponent( siteSlug ) }?redirect_to=${ returnUrl }&signup=1`
 					);
 				}
 
@@ -167,6 +180,9 @@ const copySite: Flow = {
 				}
 
 				case 'processing-copy': {
+					if ( providedDependencies.processingResult === ProcessingResult.NO_ACTION ) {
+						return navigate( 'automated-copy' );
+					}
 					if ( providedDependencies.processingResult === ProcessingResult.FAILURE ) {
 						return navigate( 'error' );
 					}
