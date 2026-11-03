@@ -8,7 +8,6 @@ import {
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
-import Grid from '../../../components/grid';
 import { useTimeSince } from '../../../components/time-since';
 
 function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
@@ -35,10 +34,12 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 		return null;
 	}
 
-	const columnCount = Math.max(
-		1,
-		Math.min( data.propagation_status.length, isSmallViewport ? 2 : 4 )
-	);
+	// Lay out each row on its own so every row has equal gaps and reaches both edges.
+	const columnCount = isSmallViewport ? 2 : 4;
+	const rows: ( typeof data.propagation_status )[] = [];
+	for ( let i = 0; i < data.propagation_status.length; i += columnCount ) {
+		rows.push( data.propagation_status.slice( i, i + columnCount ) );
+	}
 
 	return (
 		<VStack spacing={ 4 }>
@@ -47,18 +48,23 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			</Text>
 			<Card>
 				<CardBody>
-					<Grid
-						templateColumns={ `repeat( ${ columnCount }, auto )` }
-						gap="lg"
-						style={ { justifyContent: 'space-between' } }
-					>
-						{ data.propagation_status.map( ( area ) => (
-							<HStack key={ area.area_code } spacing={ 2 } justify="flex-start" expanded={ false }>
-								<PropagationStatusIndicator propagated={ area.propagated } />
-								<Text>{ area.area_name }</Text>
+					<VStack spacing={ 4 }>
+						{ rows.map( ( row ) => (
+							<HStack key={ row[ 0 ].area_code } spacing={ 4 } justify="space-between">
+								{ row.map( ( area ) => (
+									<HStack
+										key={ area.area_code }
+										spacing={ 2 }
+										justify="flex-start"
+										expanded={ false }
+									>
+										<PropagationStatusIndicator propagated={ area.propagated } />
+										<Text>{ area.area_name }</Text>
+									</HStack>
+								) ) }
 							</HStack>
 						) ) }
-					</Grid>
+					</VStack>
 				</CardBody>
 			</Card>
 			<Text variant="muted" size={ 12 }>
