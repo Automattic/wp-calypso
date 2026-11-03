@@ -3,7 +3,7 @@
  */
 
 import '@testing-library/jest-dom';
-import { act, screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
@@ -343,8 +343,15 @@ describe( '<PersonalDetailsSection>', () => {
 
 			await user.click( screen.getByRole( 'button', { name: 'Change username' } ) );
 
-			// Confirm in the modal
-			await user.click( await screen.findByRole( 'button', { name: 'OK' } ) );
+			const dialog = await screen.findByRole( 'dialog', { name: 'Change your username?' } );
+			expect( dialog ).toHaveTextContent(
+				'Your username will change from johndoe to newusername. This can’t be undone.'
+			);
+			expect( dialog ).toHaveTextContent(
+				'Links to your old author page and Reader profile stop working.'
+			);
+			expect( dialog ).not.toHaveTextContent( 'IntenseDebate' );
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change username' } ) );
 
 			await waitFor( () => {
 				expect( scope.isDone() ).toBe( true );
