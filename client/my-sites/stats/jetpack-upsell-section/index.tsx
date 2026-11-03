@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
+import QueryProductsList from 'calypso/components/data/query-products-list';
 import { buildCheckoutURL } from 'calypso/my-sites/plans/jetpack-plans/get-purchase-url-callback';
+import useIsOnSale from 'calypso/my-sites/plans/jetpack-plans/use-is-on-sale';
 import { useSelector } from 'calypso/state';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
 import { getSiteTitle } from 'calypso/state/sites/selectors';
@@ -7,6 +9,7 @@ import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import UpsellCard from './upsell-card';
 import {
 	filterUpsellsBySiteFeatures,
+	filterUpsellsOnSale,
 	getAvailableUpsells,
 	getUpsellFeatureSlugs,
 	Product,
@@ -38,14 +41,21 @@ function checkoutUrlForUpsell( siteId: number, upsell: Product ) {
 	);
 }
 
-function getVisibleUpsells( siteId: number | null, siteFeatures: string[] ): Product[] {
+function getVisibleUpsells(
+	siteId: number | null,
+	siteFeatures: string[],
+	isOnSale: ( productSlug: string ) => boolean
+): Product[] {
 	if ( ! siteId ) {
 		return [];
 	}
 
 	// Hide upsells for products the site already owns, either directly or through
 	// a bundling plan (e.g. don't upsell Backup to a site on Jetpack Security).
-	const filteredUpsells = filterUpsellsBySiteFeatures( getAvailableUpsells(), siteFeatures );
+	const filteredUpsells = filterUpsellsOnSale(
+		filterUpsellsBySiteFeatures( getAvailableUpsells(), siteFeatures ),
+		isOnSale
+	);
 
 	// Add the checkout URL to the results.
 	const finalUpsells = filteredUpsells.map( ( upsell ) => {
@@ -61,6 +71,7 @@ export default function JetpackUpsellSection() {
 
 	// New check for active site features.
 	const siteFeatures = useSiteFeatures( siteId );
+	const isOnSale = useIsOnSale();
 
 	// Early exit if we're not in the Odyssey Stats environment.
 	if ( ! isOdysseyStats ) {
@@ -69,10 +80,11 @@ export default function JetpackUpsellSection() {
 
 	// TODO: Memoize derived data setup.
 	// Initial tests show the component rendering multiple times per page load.
-	const upsells = getVisibleUpsells( siteId, siteFeatures );
+	const upsells = getVisibleUpsells( siteId, siteFeatures, isOnSale );
 
 	return (
 		<div className="jetpack-upsell-section">
+			<QueryProductsList type="jetpack" />
 			<UpsellCard siteTitle={ siteTitle } upsells={ upsells } />
 		</div>
 	);

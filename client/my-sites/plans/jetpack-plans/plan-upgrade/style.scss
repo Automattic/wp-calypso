@@ -9,20 +9,6 @@
 	}
 }
 
-.plan-upgrade__description {
-	max-width: 400px;
-	margin: 2rem auto;
-
-	font-size: 1rem;
-	text-align: center;
-
-	@include break-medium {
-		max-width: 650px;
-
-		font-size: 1.25rem;
-	}
-}
-
 .plan-upgrade__list {
 	display: flex;
 	flex-direction: column;

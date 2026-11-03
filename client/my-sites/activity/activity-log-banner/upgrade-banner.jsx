@@ -1,6 +1,5 @@
 import {
 	FEATURE_JETPACK_ESSENTIAL,
-	FEATURE_ACTIVITY_LOG,
 	PLAN_PERSONAL,
 	WPCOM_FEATURES_FULL_ACTIVITY_LOG,
 } from '@automattic/calypso-products';
@@ -9,7 +8,6 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
 import { preventWidows } from 'calypso/lib/formatting';
-import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
 import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 
@@ -25,7 +23,7 @@ class UpgradeBanner extends Component {
 						callToAction={ translate( 'Upgrade now' ) }
 						event="activity_log_upgrade_click_jetpack"
 						feature={ WPCOM_FEATURES_FULL_ACTIVITY_LOG }
-						href={ `/checkout/${ siteSlug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_ACTIVITY_LOG ] }` }
+						href={ `/plans/${ siteSlug }` }
 						title={ translate( 'Unlock more activities now' ) }
 						description={ preventWidows(
 							translate(

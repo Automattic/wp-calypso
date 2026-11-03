@@ -4,7 +4,6 @@ import { useTranslate } from 'i18n-calypso';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserCurrencyCode } from 'calypso/state/currency-code/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import { INTRO_PRICING_DISCOUNT_PERCENTAGE } from '../constants';
 import ProductCard from '../product-card';
 import ProductGridSection from '../product-grid/section';
 import slugToSelectorProduct from '../slug-to-selector-product';
@@ -76,19 +75,6 @@ const PlanUpgradeSection: FC< Props > = ( {
 			} ) }
 			className={ clsx( { 'with-single-reco': newItemCount === 1 } ) }
 		>
-			<p className="plan-upgrade__description">
-				{ translate(
-					"Jetpack has introduced new flexible plans and pricing options. As an added bonus, we're offering {{b}}%(percentage)s% off{{/b}} your first term.",
-					{
-						args: {
-							percentage: INTRO_PRICING_DISCOUNT_PERCENTAGE,
-						},
-						components: {
-							b: <strong />,
-						},
-					}
-				) }
-			</p>
 			{ filterBar }
 			<ul className="plan-upgrade__list">
 				<li className="plan-upgrade__legacy-item">
