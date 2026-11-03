@@ -1,6 +1,7 @@
 import { Popover } from '@wordpress/components';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { ComponentProps, PointerEvent, ReactNode } from 'react';
+
 import './style.scss';
 
 type Mode = 'closed' | 'cursor' | 'element';
