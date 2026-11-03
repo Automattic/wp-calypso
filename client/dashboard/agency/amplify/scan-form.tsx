@@ -223,16 +223,21 @@ export function WebsiteAddressPicker( {
 		);
 	} else if ( suggestions.length ) {
 		suggestionContent = suggestions.map( ( site, index ) => (
-			<button
-				type="button"
+			// The field keeps focus and moves through the options with aria-activedescendant.
+			<div
 				id={ `${ idPrefix }-${ index }` }
 				key={ site.url }
 				role="option"
+				tabIndex={ -1 }
 				aria-selected={ activeIndex === index }
 				className="dashboard-amplify-scan-form__suggestion"
 				data-active={ activeIndex === index }
 				onMouseEnter={ () => setActiveIndex( index ) }
-				onClick={ () => chooseSite( site ) }
+				// Choosing on mousedown keeps focus in the field, so the list doesn't blur closed first.
+				onMouseDown={ ( event ) => {
+					event.preventDefault();
+					chooseSite( site );
+				} }
 			>
 				<span className="dashboard-amplify-scan-form__suggestion-thumbnail">
 					<SiteScreenshot url={ site.url } alt="" compact decorative fill />
@@ -241,7 +246,7 @@ export function WebsiteAddressPicker( {
 					<strong>{ site.label }</strong>
 					<span className="dashboard-amplify-url">{ site.hostname }</span>
 				</span>
-			</button>
+			</div>
 		) );
 	} else {
 		suggestionContent = (
