@@ -279,6 +279,7 @@ const siteSetupFlow: Flow = {
 									from,
 									ref: entryPoint,
 									...( useReprint && {
+										manualPlatform: 'wordpress',
 										ref: entryPoint || urlQueryParams.get( 'ref' ),
 										sessionId: urlQueryParams.get( 'sessionId' ),
 										source: urlQueryParams.get( 'source' ),

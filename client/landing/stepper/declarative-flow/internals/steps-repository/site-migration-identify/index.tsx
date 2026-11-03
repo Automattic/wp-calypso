@@ -279,9 +279,11 @@ const SiteMigrationIdentify: StepType< {
 
 	const urlQueryParams = useQuery();
 
+	const isManualWordPress = isReprintFlow && urlQueryParams.get( 'manualPlatform' ) === 'wordpress';
+
 	const [ siteURL, setSiteURL ] = useState( () => {
 		const from = urlQueryParams.get( 'from' ) || '';
-		return checkOnArrival && CAPTURE_URL_RGX.test( from ) ? from : '';
+		return checkOnArrival && ! isManualWordPress && CAPTURE_URL_RGX.test( from ) ? from : '';
 	} );
 	const [ isVisible, setIsVisible ] = useState( ! siteURL );
 	const [ connectionIssue, setConnectionIssue ] = useState< ConnectionIssue >();
@@ -326,7 +328,16 @@ const SiteMigrationIdentify: StepType< {
 			}
 			isReprintFlow={ isReprintFlow }
 			siteURL={ siteURL }
-			onSiteURLChange={ setSiteURL }
+			onSiteURLChange={ ( url ) => {
+				if ( url && isManualWordPress ) {
+					const from = /^https?:\/\//i.test( url ) ? url : `https://${ url }`;
+					handleSubmit( 'continue', { from, platform: 'wordpress' } ).catch( () =>
+						setSiteURL( '' )
+					);
+					return;
+				}
+				setSiteURL( url );
+			} }
 			flowName={ flow }
 			onVisibilityChange={ ( isVisible, issue ) => {
 				setIsVisible( isVisible );

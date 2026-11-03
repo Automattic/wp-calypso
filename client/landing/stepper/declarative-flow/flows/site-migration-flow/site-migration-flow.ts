@@ -557,6 +557,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							paths.importListPath( {
 								from: from || '',
 								platform: 'unknown',
+								manualPlatform: '',
 								host: '',
 								isWpcom: '',
 								ssh: '',
@@ -683,6 +684,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 							paths.identifyPath( {
 								from,
 								platform: 'unknown',
+								manualPlatform: 'wordpress',
 								host: '',
 								isWpcom: '',
 								ssh: '',

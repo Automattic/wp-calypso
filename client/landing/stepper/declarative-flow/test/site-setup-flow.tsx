@@ -65,8 +65,10 @@ describe( 'Site Setup Flow', () => {
 					sessionId: 'fallback-selection',
 					source: 'sites-dashboard',
 					flags: 'migration/reprint-flow',
+					manualPlatform: 'wordpress',
 				};
 				const stale = {
+					manualPlatform: '',
 					platform: 'unknown',
 					host: 'bluehost',
 					isWpcom: 'true',

@@ -271,6 +271,7 @@ export const identifyPath = buildPathHelper<
 		queryParams: {
 			from: string | null;
 			platform?: ImporterPlatform;
+			manualPlatform?: 'wordpress';
 			host?: string;
 			isWpcom?: '';
 			ssh?: string;
@@ -287,6 +288,7 @@ export const importListPath = buildPathHelper<
 		queryParams: {
 			from: string;
 			platform: ImporterPlatform;
+			manualPlatform?: '';
 			host: string;
 			isWpcom: '';
 			ssh: string;

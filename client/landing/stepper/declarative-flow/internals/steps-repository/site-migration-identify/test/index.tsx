@@ -320,6 +320,34 @@ describe( 'SiteMigrationIdentify', () => {
 			}
 		);
 
+		it.each( [ '', 'https://manual.example.com' ] )(
+			'uses the selected WordPress platform without analyzing "%s"',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( { platform: 'unknown' }, 200, from || 'manual.example.com' );
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&manualPlatform=wordpress`,
+					}
+				);
+
+				expect( getInput() ).toHaveValue( from );
+				expect( submit ).not.toHaveBeenCalled();
+				if ( ! from ) {
+					await user.type( getInput(), 'manual.example.com' );
+				}
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					platform: 'wordpress',
+					from: 'https://manual.example.com',
+				} );
+				expect( analysis.isDone() ).toBe( false );
+			}
+		);
+
 		it( 'preserves the current address when opening the platform list before checking', async () => {
 			const submit = jest.fn();
 			render(

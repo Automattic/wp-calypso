@@ -655,6 +655,7 @@ describe( 'Site Migration Flow', () => {
 						expect( query.get( key ) ).toBe( value );
 					}
 					expect( query.get( 'platform' ) ).toBe( 'unknown' );
+					expect( query.get( 'manualPlatform' ) ).toBe( 'wordpress' );
 					for ( const key of Object.keys( stale ).filter( ( key ) => key !== 'platform' ) ) {
 						expect( query.get( key ) ).toBe( '' );
 					}
@@ -692,12 +693,8 @@ describe( 'Site Migration Flow', () => {
 						);
 					jest.mocked( getCurrentUserSiteCount ).mockReturnValue( 2 );
 					const { result } = renderNavigation( [
-						'/setup/site-migration/importList?from=https://example.com&action=import&how=do-it-for-me&start=true',
+						'/setup/site-migration/site-migration-identify',
 					] );
-					act( () => result.current.navigation.submit( { platform: 'wordpress' } ) );
-					expect( result.current.location.pathname ).toBe(
-						'/site-migration/site-migration-identify'
-					);
 					act( () =>
 						result.current.navigation.submit( {
 							action: 'continue',
