@@ -5,6 +5,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Card, CardBody } from '../../../components/card';
 import Grid from '../../../components/grid';
@@ -28,6 +29,7 @@ function PropagationStatusIndicator( { propagated }: { propagated: boolean } ) {
 export default function DomainPropagationStatus( { domainName }: { domainName: string } ) {
 	const { data, isLoading, isError } = useQuery( domainPropagationStatusQuery( domainName ) );
 	const lastChecked = useTimeSince( data?.last_updated ?? '' );
+	const isSmallViewport = useViewportMatch( 'medium', '<' );
 
 	if ( isError || isLoading || ! data ) {
 		return null;
@@ -40,9 +42,16 @@ export default function DomainPropagationStatus( { domainName }: { domainName: s
 			</Text>
 			<Card>
 				<CardBody>
-					<Grid columns={ 4 } gap="lg">
+					<Grid
+						templateColumns={ `repeat( ${ Math.max(
+							1,
+							Math.min( data.propagation_status.length, isSmallViewport ? 2 : 4 )
+						) }, auto )` }
+						gap="lg"
+						style={ { justifyContent: 'space-between' } }
+					>
 						{ data.propagation_status.map( ( area ) => (
-							<HStack key={ area.area_code } spacing={ 2 } justify="flex-start">
+							<HStack key={ area.area_code } spacing={ 2 } justify="flex-start" expanded={ false }>
 								<PropagationStatusIndicator propagated={ area.propagated } />
 								<Text>{ area.area_name }</Text>
 							</HStack>
