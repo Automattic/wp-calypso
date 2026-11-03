@@ -1,0 +1,10 @@
+@import "@wordpress/base-styles/variables";
+
+// The notice takes its colors from the WPDS tokens, and not every login screen loads them.
+@import "@wordpress/theme/design-tokens.css";
+
+.login__error-notice {
+	// Some screens center their children, and the notice would otherwise collapse.
+	width: 100%;
+	margin-block-end: $grid-unit-30;
+}

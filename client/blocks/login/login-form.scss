@@ -78,7 +78,8 @@ form {
 
 		// A notice carries its own bottom margin, which does not collapse with
 		// the flex gap. Zero it so the gap alone sets the spacing.
-		> .calypso-notice {
+		> .calypso-notice,
+		> .login__error-notice {
 			margin-bottom: 0;
 		}
 	}

@@ -4,6 +4,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import { connect } from 'react-redux';
+import LoginErrorNotice from 'calypso/blocks/login/login-error-notice';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import LoggedOutForm from 'calypso/components/logged-out-form';
@@ -148,12 +149,7 @@ const RequestLoginCode = ( {
 					{ tosComponent }
 
 					{ requestError && (
-						<Notice
-							onDismissClick={ onNoticeDismiss }
-							className="magic-login__request-login-email-form-notice"
-							status="is-error"
-							text={ errorText }
-						/>
+						<LoginErrorNotice onClose={ onNoticeDismiss }>{ errorText }</LoginErrorNotice>
 					) }
 
 					<div className="magic-login__form-action">

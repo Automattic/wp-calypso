@@ -29,8 +29,6 @@ jest.mock( 'calypso/lib/signup/use-entry-clarity-experiment', () => ( {
 const WOOCOMMERCE_PRODUCTION_CLIENT_ID = 50916;
 const OTHER_CLIENT_ID = 12345;
 const MESSAGE = 'Your session has expired, please go back to the login screen.';
-// The notice also announces its message through a visually hidden live region.
-const VISIBLE_TEXT_ONLY = { ignore: '.a11y-speak-region' };
 
 /**
  * Renders the login page on `path`, then reports `failure` the way a failed request
@@ -98,8 +96,8 @@ describe( 'WPLogin two-factor error recovery', () => {
 		( _, clientId ) => {
 			renderLogin( { clientId, twoFactorAuthType: 'webauthn', failure: twoFactorFailure } );
 
-			expect( screen.getAllByText( MESSAGE, VISIBLE_TEXT_ONLY ) ).toHaveLength( 1 );
-			expect( screen.getByText( MESSAGE, VISIBLE_TEXT_ONLY ) ).toBeVisible();
+			expect( screen.getAllByText( MESSAGE ) ).toHaveLength( 1 );
+			expect( screen.getByText( MESSAGE ) ).toBeVisible();
 			expect( screen.getByRole( 'link', { name: 'Back to Login' } ) ).toBeVisible();
 		}
 	);
@@ -113,6 +111,6 @@ describe( 'WPLogin two-factor error recovery', () => {
 			},
 		} );
 
-		expect( screen.getAllByText( MESSAGE, VISIBLE_TEXT_ONLY ) ).toHaveLength( 1 );
+		expect( screen.getAllByText( MESSAGE ) ).toHaveLength( 1 );
 	} );
 } );

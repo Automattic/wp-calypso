@@ -4,6 +4,7 @@ import { localizeUrl } from '@automattic/i18n-utils';
 import { Button, Spinner, ExternalLink } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState, useRef, useEffect } from 'react';
+import LoginErrorNotice from 'calypso/blocks/login/login-error-notice';
 import { useBlackboxProtection } from 'calypso/blocks/login/use-blackbox-protection';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { login } from 'calypso/lib/paths';
@@ -22,6 +23,7 @@ const LostPasswordForm = ( {
 	const translate = useTranslate();
 	const [ userLogin, setUserLogin ] = useState( '' );
 	const [ error, setError ] = useState( null );
+	const [ requestError, setRequestError ] = useState( null );
 	const [ isBusy, setBusy ] = useState( false );
 	const dispatch = useDispatch();
 	const blackbox = useBlackboxProtection( { feature: 'blackbox-lost-password' } );
@@ -118,12 +120,13 @@ const LostPasswordForm = ( {
 		}
 
 		try {
+			setRequestError( null );
 			setBusy( true );
 			const result = await lostPasswordRequest();
 			setBusy( false );
 			if ( result.includes( 'Unable to reset password' ) ) {
 				blackbox.reset();
-				return setError(
+				return setRequestError(
 					translate( "I'm sorry, but we weren't able to find a user with that login information." )
 				);
 			}
@@ -152,7 +155,7 @@ const LostPasswordForm = ( {
 			 * Response.text() on it.
 			 */
 			if ( ! response?.text ) {
-				return setError( defaultError );
+				return setRequestError( defaultError );
 			}
 
 			const result = await response.text();
@@ -162,7 +165,7 @@ const LostPasswordForm = ( {
 			 * server-side rendering context.
 			 */
 			if ( typeof DOMParser === 'undefined' ) {
-				return setError( defaultError );
+				return setRequestError( defaultError );
 			}
 
 			const parser = new DOMParser();
@@ -170,10 +173,10 @@ const LostPasswordForm = ( {
 
 			const wpDieMessage = resultHTML.querySelector( '.wp-die-message' );
 			if ( wpDieMessage ) {
-				return setError( wpDieMessage.textContent.trim() );
+				return setRequestError( wpDieMessage.textContent.trim() );
 			}
 
-			return setError( defaultError );
+			return setRequestError( defaultError );
 		}
 	};
 
@@ -188,6 +191,7 @@ const LostPasswordForm = ( {
 			method="post"
 			onSubmit={ onSubmit }
 		>
+			{ requestError && <LoginErrorNotice>{ requestError }</LoginErrorNotice> }
 			<div className="login__form-userdata">
 				<FormLabel htmlFor="userLogin">{ translate( 'Email address or username' ) }</FormLabel>
 				<FormTextInput
@@ -207,6 +211,9 @@ const LostPasswordForm = ( {
 						// Clear error immediately when user starts typing to fix input
 						if ( error ) {
 							setError( null );
+						}
+						if ( requestError ) {
+							setRequestError( null );
 						}
 					} }
 					ref={ inputRef }

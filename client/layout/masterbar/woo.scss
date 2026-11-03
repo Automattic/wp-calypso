@@ -1201,7 +1201,9 @@ $breakpoint-mobile: 660px;
 	}
 
 	.calypso-notice__text a,
-	.calypso-notice__text a:visited {
+	.calypso-notice__text a:visited,
+	.login__error-notice a,
+	.login__error-notice a:visited {
 		@include link-woo;
 	}
 

@@ -1,9 +1,9 @@
 import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useState } from 'react';
+import LoginErrorNotice from 'calypso/blocks/login/login-error-notice';
 import FormattedHeader from 'calypso/components/formatted-header';
 import Main from 'calypso/components/main';
-import Notice from 'calypso/components/notice';
 
 // The desktop app will intercept this URL and start the login in the user's external browser.
 const loginUrl = '/desktop-start-login';
@@ -26,9 +26,9 @@ export default function DesktopLoginStart( props: Props ) {
 		<Main className="desktop-login">
 			<div className="desktop-login__content">
 				{ error ? (
-					<Notice status="is-error" onDismissClick={ () => setError( undefined ) }>
+					<LoginErrorNotice onClose={ () => setError( undefined ) }>
 						{ translate( 'We were not able to log you in. Please try again.' ) }
-					</Notice>
+					</LoginErrorNotice>
 				) : undefined }
 				<FormattedHeader
 					headerText={ translate( 'Log in' ) }

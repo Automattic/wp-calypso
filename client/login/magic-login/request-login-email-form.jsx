@@ -3,6 +3,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { createRef, Component } from 'react';
 import { connect } from 'react-redux';
+import LoginErrorNotice from 'calypso/blocks/login/login-error-notice';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { ConsentText } from 'calypso/components/connect-screen/consent-text';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
@@ -309,24 +310,10 @@ export class RequestLoginEmailForm extends Component {
 							</ConsentText>
 						) }
 						{ requestError && (
-							<Notice
-								duration={ 10000 }
-								text={ errorText }
-								className="magic-login__request-login-email-form-notice"
-								showDismiss={ false }
-								onDismissClick={ this.onNoticeDismiss }
-								status="is-transparent-info"
-							/>
+							<LoginErrorNotice onClose={ this.onNoticeDismiss }>{ errorText }</LoginErrorNotice>
 						) }
 						{ errorMessage && (
-							<Notice
-								duration={ 10000 }
-								text={ errorMessage }
-								className="magic-login__request-login-email-form-notice"
-								showDismiss={ false }
-								onDismissClick={ onErrorDismiss }
-								status="is-transparent-info"
-							/>
+							<LoginErrorNotice onClose={ onErrorDismiss }>{ errorMessage }</LoginErrorNotice>
 						) }
 						<div className="magic-login__form-action">
 							<ActionButtons
