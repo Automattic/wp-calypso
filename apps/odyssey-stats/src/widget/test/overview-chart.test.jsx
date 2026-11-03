@@ -18,10 +18,22 @@ jest.mock( '@automattic/charts', () => ( {
 
 const series = [ { label: 'Views', data: [] } ];
 
-const renderChart = ( unit = 'day', chartType = 'line', data = series, endDate = '2026-07-31' ) => {
+const renderChart = (
+	unit = 'day',
+	chartType = 'line',
+	data = series,
+	endDate = '2026-07-31',
+	onBucketClick = undefined
+) => {
 	const range = { unit, startDate: '2026-06-01', endDate };
 	render(
-		<OverviewChart series={ data } height={ 160 } range={ range } chartType={ chartType } />
+		<OverviewChart
+			series={ data }
+			height={ 160 }
+			range={ range }
+			chartType={ chartType }
+			onBucketClick={ onBucketClick }
+		/>
 	);
 	return ( 'bar' === chartType ? BarChart : LineChart ).mock.calls[ 0 ][ 0 ];
 };
@@ -101,6 +113,68 @@ describe( 'OverviewChart', () => {
 		expect( bar.options.yScale ).toEqual( line.options.yScale );
 		expect( bar.options.axis.y.tickFormat( 1200 ) ).toBe( line.options.axis.y.tickFormat( 1200 ) );
 		expect( bar.margin ).toEqual( line.margin );
+	} );
+} );
+
+describe( 'OverviewChart click', () => {
+	const CLICKED = new Date( 2026, 6, 1 );
+	const press = ( props, x = 10, y = 10 ) => props.onPointerDown( { svgPoint: { x, y } } );
+	const release = ( props, x = 10, y = 10, datum = { date: CLICKED, value: 3 } ) =>
+		props.onPointerUp( { datum, svgPoint: { x, y } } );
+
+	beforeEach( () => {
+		BarChart.mockClear();
+		LineChart.mockClear();
+	} );
+
+	it.each( [ [ 'line' ], [ 'bar' ] ] )(
+		'reports the point a %s chart was clicked on',
+		( chartType ) => {
+			const onBucketClick = jest.fn();
+			const props = renderChart( 'day', chartType, series, '2026-07-31', onBucketClick );
+
+			press( props );
+			release( props );
+
+			expect( onBucketClick ).toHaveBeenCalledTimes( 1 );
+			expect( onBucketClick ).toHaveBeenCalledWith( CLICKED );
+		}
+	);
+
+	it( 'reads a drag as no click', () => {
+		const onBucketClick = jest.fn();
+		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
+
+		press( props, 10, 10 );
+		release( props, 30, 10 );
+
+		expect( onBucketClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'ignores a release whose press began off the chart', () => {
+		const onBucketClick = jest.fn();
+		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
+
+		release( props );
+
+		expect( onBucketClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'ignores a click that lands on no point', () => {
+		const onBucketClick = jest.fn();
+		const props = renderChart( 'day', 'line', series, '2026-07-31', onBucketClick );
+
+		press( props );
+		release( props, 10, 10, null );
+
+		expect( onBucketClick ).not.toHaveBeenCalled();
+	} );
+
+	it( 'listens for nothing without a click to report to', () => {
+		const props = renderChart( 'day', 'bar' );
+
+		expect( props.onPointerDown ).toBeUndefined();
+		expect( props.onPointerUp ).toBeUndefined();
 	} );
 } );
 

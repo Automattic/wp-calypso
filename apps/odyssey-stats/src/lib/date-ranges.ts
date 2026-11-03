@@ -88,6 +88,37 @@ export function getRangeStartDate( range: DateRange, endDate: string ): string {
 	return start.format( 'YYYY-MM-DD' );
 }
 
+/** The days a chart draws: its bucket, and the first and last day it covers. */
+export type ChartRange = Pick< ResolvedDateRange, 'unit' | 'startDate' | 'endDate' >;
+
+/**
+ * The days of the bucket a chart point falls in, cut to the range: a week or month at either
+ * end can be partial.
+ * @param date  The point's date: a day, a week's first day, or a month's.
+ * @param range The chart's range.
+ * @returns The bucket's first and last day, as `YYYY-MM-DD`.
+ */
+export function getBucketDays(
+	date: Date,
+	range: ChartRange
+): Pick< ResolvedDateRange, 'startDate' | 'endDate' > {
+	const day = moment( date );
+	if ( 'day' === range.unit ) {
+		const formatted = day.format( 'YYYY-MM-DD' );
+		return { startDate: formatted, endDate: formatted };
+	}
+
+	const bucket = 'week' === range.unit ? 'isoWeek' : 'month';
+	return {
+		startDate: moment
+			.max( day.clone().startOf( bucket ), moment( range.startDate, 'YYYY-MM-DD' ) )
+			.format( 'YYYY-MM-DD' ),
+		endDate: moment
+			.min( day.clone().endOf( bucket ), moment( range.endDate, 'YYYY-MM-DD' ) )
+			.format( 'YYYY-MM-DD' ),
+	};
+}
+
 /**
  * The range for an id.
  * @param id The range id.

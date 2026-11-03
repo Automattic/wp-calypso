@@ -8,10 +8,10 @@ import { readChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-typ
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
-import { ResolvedDateRange } from '../lib/date-ranges';
+import { getBucketDays, ResolvedDateRange } from '../lib/date-ranges';
 import ChartBoundary from './chart-boundary';
 import MetricValue from './metric-value';
-import { recordWidgetEventThenFollow } from './record-widget-event';
+import { recordWidgetEventThenFollow, recordWidgetEventThenOpen } from './record-widget-event';
 import Skeleton from './skeleton';
 import useStatsLink from './use-stats-link';
 
@@ -50,6 +50,21 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 		PREMIUM_ANALYTICS_TRAFFIC_ROUTE,
 		{ from: startDate, to: endDate, gmtOffset }
 	);
+
+	// A click on a point opens its bucket, as the old widget and the Stats v2 chart do: a day
+	// by the hour, a week or month by the day. On Premium Analytics the dashboard picks the
+	// interval for the days.
+	const openBucket = ( date: Date ) => {
+		const bucket = getBucketDays( date, range );
+		const url = statsLink(
+			`${ statsBaseUrl }/stats/${ 'day' === unit ? 'hour' : 'day' }/${ siteId }?chartStart=${
+				bucket.startDate
+			}&chartEnd=${ bucket.endDate }`,
+			PREMIUM_ANALYTICS_TRAFFIC_ROUTE,
+			{ from: bucket.startDate, to: bucket.endDate, gmtOffset }
+		);
+		recordWidgetEventThenOpen( url, 'chart_bucket_clicked', { range: rangeId, unit } );
+	};
 
 	// The admin colour scheme's series colours, as on the Stats page's line chart. Read from the
 	// widget's own element, since the scheme class that sets them is on the widget root.
@@ -193,12 +208,13 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 				// Around the chart alone, so a failed chart takes only its own box with it.
 				<ChartBoundary fallback={ noData }>
 					<Suspense fallback={ chartPlaceholder }>
-						<div className="stats-widget-chart" style={ chartBoxStyle }>
+						<div className="stats-widget-chart is-clickable" style={ chartBoxStyle }>
 							<OverviewChart
 								series={ series }
 								height={ CHART_HEIGHT }
 								range={ range }
 								chartType={ chartType }
+								onBucketClick={ openBucket }
 							/>
 						</div>
 					</Suspense>

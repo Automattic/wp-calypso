@@ -3,11 +3,12 @@ import { BarChart, LineChart } from '@automattic/charts';
 import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
-import { FunctionComponent } from 'react';
-import type { ResolvedDateRange } from '../lib/date-ranges';
+import { FunctionComponent, useCallback, useRef } from 'react';
+import { getBucketDays, type ChartRange } from '../lib/date-ranges';
 import type {
 	DataPoint,
 	DataPointDate,
+	EventHandlerParams,
 	LineChartProps,
 	RenderTooltipParams,
 	SeriesData,
@@ -19,8 +20,8 @@ import type { ChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-ty
 const TOOLTIP_DATE_STYLE = { fontWeight: 600, marginBlockEnd: '4px' };
 const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', gap: '12px' };
 
-/** The days a chart draws: its bucket, and the first and last day it covers. */
-type ChartRange = Pick< ResolvedDateRange, 'unit' | 'startDate' | 'endDate' >;
+// A press that travels further than this before its release is a drag, not a click.
+const CLICK_DRAG_TOLERANCE_PX = 4;
 
 /**
  * Names the days a hovered point covers, in the site locale's order. Not moment's `LL`: in
@@ -43,9 +44,7 @@ function formatTooltipDate( date: Date, range: ChartRange ) {
 
 	// A week runs to its Sunday, or to the range's last day in its last week. The point
 	// already sits on the range's first day when its week starts earlier.
-	const weekEnd = moment
-		.min( moment( date ).endOf( 'isoWeek' ), moment( range.endDate, 'YYYY-MM-DD' ) )
-		.toDate();
+	const weekEnd = moment( getBucketDays( date, range ).endDate, 'YYYY-MM-DD' ).toDate();
 	return format.formatRange( date, weekEnd );
 }
 
@@ -103,6 +102,47 @@ interface OverviewChartProps {
 	range: ChartRange;
 	/** Bars or lines, as the viewer draws the Stats page's chart. */
 	chartType: ChartType;
+	/** Called with a clicked point's date. Without it the chart takes no clicks. */
+	onBucketClick?: ( date: Date ) => void;
+}
+
+type PointerParams = EventHandlerParams< DataPoint | DataPointDate >;
+
+/**
+ * Pointer handlers that report a click on a point, and leave a drag or a release that began
+ * off the chart alone. Neither chart has a click of its own; the line chart's drag is a zoom
+ * only when asked for.
+ * @param onBucketClick Called with the clicked point's date.
+ * @returns The handlers, or none without a callback, so an unclickable chart listens for nothing.
+ */
+function useBucketClick( onBucketClick?: ( date: Date ) => void ) {
+	const pressedAt = useRef< { x: number; y: number } | null >( null );
+
+	const onPointerDown = useCallback( ( { svgPoint }: PointerParams ) => {
+		pressedAt.current = svgPoint ? { x: svgPoint.x, y: svgPoint.y } : null;
+	}, [] );
+
+	const onPointerUp = useCallback(
+		( { datum, svgPoint }: PointerParams ) => {
+			const start = pressedAt.current;
+			pressedAt.current = null;
+			if ( ! start || ! onBucketClick ) {
+				return;
+			}
+			if (
+				svgPoint &&
+				Math.hypot( svgPoint.x - start.x, svgPoint.y - start.y ) > CLICK_DRAG_TOLERANCE_PX
+			) {
+				return;
+			}
+			if ( datum && 'date' in datum && datum.date instanceof Date ) {
+				onBucketClick( datum.date );
+			}
+		},
+		[ onBucketClick ]
+	);
+
+	return onBucketClick ? { onPointerDown, onPointerUp } : {};
 }
 
 /**
@@ -134,18 +174,21 @@ const MARGIN = { left: 32, top: 8, bottom: 20, right: 24 };
  * The Overview chart, loaded as its own chunk so the rest of the widget paints first. Bars or
  * lines over the same series, axes and tooltip.
  * @param props           Component props.
- * @param props.series    The series to plot.
- * @param props.height    Chart height in pixels.
- * @param props.range     The chart's range.
- * @param props.chartType Bars or lines.
+ * @param props.series        The series to plot.
+ * @param props.height        Chart height in pixels.
+ * @param props.range         The chart's range.
+ * @param props.chartType     Bars or lines.
+ * @param props.onBucketClick Called with a clicked point's date.
  */
 const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 	series,
 	height,
 	range,
 	chartType,
+	onBucketClick,
 } ) => {
 	const { unit } = range;
+	const clickHandlers = useBucketClick( onBucketClick );
 	const options: LineChartProps[ 'options' ] = {
 		// From zero, so a range that never approaches it doesn't look more dramatic than it is.
 		yScale: { type: 'linear', zero: true },
@@ -180,6 +223,7 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 				renderTooltip={ renderTooltipForRange }
 				margin={ MARGIN }
 				options={ options }
+				{ ...clickHandlers }
 			/>
 		);
 	}
@@ -195,6 +239,7 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 			renderTooltip={ renderTooltipForRange }
 			margin={ MARGIN }
 			options={ options }
+			{ ...clickHandlers }
 		/>
 	);
 };
