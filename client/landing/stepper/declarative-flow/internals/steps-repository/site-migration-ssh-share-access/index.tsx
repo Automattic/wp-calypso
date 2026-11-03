@@ -1,4 +1,4 @@
-import { useLocale } from '@automattic/i18n-utils';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
@@ -32,6 +32,7 @@ import { useSteps } from './steps/use-steps';
 import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
 
+import 'calypso/components/account-template/style.scss';
 import './styles.scss';
 
 /**
@@ -75,7 +76,7 @@ const SiteMigrationSshShareAccess: StepType< {
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
 	};
-} > = function ( { navigation } ) {
+} > = function ( { navigation, flow, stepName } ) {
 	const site = useSite();
 	const siteId = site?.ID ?? 0;
 	const queryParams = useQuery();
@@ -355,11 +356,17 @@ const SiteMigrationSshShareAccess: StepType< {
 			);
 	const topBar = (
 		<Step.TopBar
+			logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+			onLogoClick={ () =>
+				recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+			}
 			rightElement={
-				<SupportNudge
-					onAskForHelp={ navigateToDoItForMe }
-					isLoading={ isSubmittingTicket || isProcessingNoSSH }
-				/>
+				<div className="account-template__top-bar-links">
+					<SupportNudge
+						onAskForHelp={ navigateToDoItForMe }
+						isLoading={ isSubmittingTicket || isProcessingNoSSH }
+					/>
+				</div>
 			}
 		/>
 	);
@@ -367,30 +374,30 @@ const SiteMigrationSshShareAccess: StepType< {
 	return (
 		<>
 			<DocumentHead title={ title } />
-			<Step.CenteredColumnLayout
-				columnWidth={ 4 }
-				topBar={ topBar }
-				heading={ <Step.Heading text={ title } subText={ subtitle } /> }
-			>
-				<SshMigrationContainer>
-					<Accordion steps={ steps } />
-					<div className="migration-site-ssh__continue-button">
-						<Button
-							variant="primary"
-							onClick={ handleContinue }
-							disabled={
-								! canStartMigration ||
-								isStartingMigration ||
-								migrationStarted ||
-								shouldStartMigration ||
-								isProcessingNoSSH
-							}
-							isBusy={ isBusy }
-						>
-							{ buttonText }
-						</Button>
-					</div>
-				</SshMigrationContainer>
+			<Step.CenteredColumnLayout columnWidth={ 4 } topBar={ topBar }>
+				<div className="account-template">
+					<Step.Heading text={ title } subText={ subtitle } />
+					<SshMigrationContainer>
+						<Accordion steps={ steps } />
+						<div className="migration-site-ssh__continue-button">
+							<Button
+								variant="primary"
+								onClick={ handleContinue }
+								disabled={
+									! canStartMigration ||
+									isStartingMigration ||
+									migrationStarted ||
+									shouldStartMigration ||
+									isProcessingNoSSH
+								}
+								isBusy={ isBusy }
+								__next40pxDefaultSize
+							>
+								{ buttonText }
+							</Button>
+						</div>
+					</SshMigrationContainer>
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

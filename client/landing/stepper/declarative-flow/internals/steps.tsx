@@ -375,6 +375,11 @@ export const STEPS = {
 		slug: 'playground',
 		asyncComponent: () => import( './steps-repository/playground' ),
 	},
+
+	ZOOM_BLUEPRINT: {
+		slug: 'zoom',
+		asyncComponent: () => import( './steps-repository/zoom-blueprint' ),
+	},
 } as const;
 
 /**

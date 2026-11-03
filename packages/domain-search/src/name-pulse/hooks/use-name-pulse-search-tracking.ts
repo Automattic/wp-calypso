@@ -4,6 +4,7 @@ import { useDomainSearch } from '../../page/context';
 import { NAME_PULSE_SKELETON_TIMEOUT_MS, NamePulseDomainStatus } from '../helpers';
 import type { NamePulseRenderReport, NamePulseResultSet } from './use-name-pulse-result-set';
 import type { useNamePulseSearch } from './use-name-pulse-search';
+import type { SearchTrigger } from '../../page/types';
 
 interface NamePulseSearchIds {
 	key: string;
@@ -22,14 +23,17 @@ const createSearchIds = ( key: string ): NamePulseSearchIds => ( {
 interface NamePulseSearchTrackingState {
 	ids: NamePulseSearchIds;
 	query: string;
+	trigger: SearchTrigger;
 	settledAt: number;
 	hasReportedResults: boolean;
 	hasReportedAvailability: boolean;
 }
 
 /**
- * Records one search per settled query or filter change, and the result set
- * it shows. Returns the result set, with its id once its search is recorded.
+ * Records one search per query or filter change that gets results, along with
+ * the result set it shows. A query the user types past before it has results, or
+ * one that ends in an error, is not recorded as a search. Returns the result
+ * set, with its id once it is recorded.
  */
 export const useNamePulseSearchTracking = (
 	search: ReturnType< typeof useNamePulseSearch >
@@ -65,8 +69,8 @@ export const useNamePulseSearchTracking = (
 	if ( ids.key !== searchKey ) {
 		setIds( createSearchIds( searchKey ) );
 	}
-	// Rows report their render only once the search they belong to is recorded.
-	const [ searchedIds, setSearchedIds ] = useState< typeof ids >();
+	// Rows report their render only once the result set they belong to is recorded.
+	const [ committedIds, setCommittedIds ] = useState< typeof ids >();
 
 	const reportResults = useEvent( ( timedOut: boolean ) => {
 		const current = state.current;
@@ -104,17 +108,28 @@ export const useNamePulseSearchTracking = (
 			return;
 		}
 
+		events.onNamePulseSearch( current.query, current.trigger, {
+			search_id: ids.searchId,
+			query_shape: settledLayout.mode,
+		} );
 		events.onSuggestionsReceive(
 			current.query,
 			[ ...keywordResults, ...creativeResults ].map( ( result ) => result.domain_name ),
 			Date.now() - current.settledAt,
-			{ search_id: ids.searchId, result_set_id: ids.resultSetId, ...counts }
+			{ search_id: ids.searchId, result_set_id: ids.resultSetId, result_count: total, ...counts }
 		);
+		setCommittedIds( ids );
 	} );
 
 	// `force` records a search whose TLD list never arrived.
 	const track = useEvent( ( force = false ) => {
-		if ( ! settledQuery || ! isSettled || ( ! hasTlds && ! force ) ) {
+		// A query too short to register is not a search.
+		if (
+			! settledQuery ||
+			! isSettled ||
+			settledLayout.mode === 'empty' ||
+			( ! hasTlds && ! force )
+		) {
 			return;
 		}
 
@@ -124,16 +139,12 @@ export const useNamePulseSearchTracking = (
 			current = {
 				ids,
 				query: settledQuery,
+				trigger: lastSearchTrigger.current ?? 'prefilled',
 				settledAt: Date.now(),
 				hasReportedResults: false,
 				hasReportedAvailability: false,
 			};
 			state.current = current;
-			events.onNamePulseSearch( settledQuery, lastSearchTrigger.current ?? 'prefilled', {
-				search_id: ids.searchId,
-				query_shape: settledLayout.mode,
-			} );
-			setSearchedIds( ids );
 		}
 
 		const typedDomain = settledLayout.fqdn?.fullDomain;
@@ -178,7 +189,7 @@ export const useNamePulseSearchTracking = (
 		return () => clearTimeout( timer );
 	}, [ settledQuery, filterKey, isSettled, track, reportResults ] );
 
-	const id = isSettled && searchedIds === ids ? ids.resultSetId : undefined;
+	const id = isSettled && committedIds === ids ? ids.resultSetId : undefined;
 
 	return useMemo( () => ( { id, rendered: ids.rendered } ), [ id, ids ] );
 };

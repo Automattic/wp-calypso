@@ -24,6 +24,20 @@ import {
 import type { FeaturedEvent, FeaturedEventActionCta } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
 
+const DESCRIPTION_TAGS = {
+	strong: <strong />,
+	coupon: (
+		<span
+			style={ {
+				fontWeight: 600,
+				background: 'var(--color-gray-100)',
+				borderRadius: '2px',
+				padding: '0 4px',
+			} }
+		/>
+	),
+};
+
 interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
@@ -42,7 +56,7 @@ interface EventCardProps {
 	recordTracksEvent?: RecordTracksEvent;
 }
 
-function SingleEventCard( {
+export function SingleEventCard( {
 	event,
 	shouldUseRouterLink,
 	recordTracksEvent,
@@ -61,33 +75,25 @@ function SingleEventCard( {
 					<HStack spacing={ 3 } justify="flex-start" alignment="center">
 						{ logo && <img src={ logo } alt={ logoAlt ?? '' } width={ 64 } height={ 64 } /> }
 						<VStack spacing={ 1 }>
-							<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
-								{ when }
-							</Text>
+							{ when && (
+								<Text variant="muted" size={ 11 } weight={ 500 } lineHeight="16px" upperCase>
+									{ when }
+								</Text>
+							) }
 							<Heading level={ 2 } size={ 15 } weight={ 500 } lineHeight="20px">
 								{ title }
 							</Heading>
-							<Text variant="muted" size={ 12 } lineHeight="16px">
-								{ subtitle }
-							</Text>
+							{ subtitle && (
+								<Text variant="muted" size={ 12 } lineHeight="16px">
+									{ subtitle }
+								</Text>
+							) }
 						</VStack>
 					</HStack>
 					<VStack spacing={ 4 }>
 						{ description.map( ( paragraph ) => (
 							<Text key={ paragraph } size={ 13 } lineHeight="20px">
-								{ createInterpolateElement( paragraph, {
-									strong: <strong />,
-									// Calypso's global `code` rule sets its own size and weight.
-									code: (
-										<code
-											style={ {
-												fontSize: 'inherit',
-												fontWeight: 'inherit',
-												lineHeight: 'inherit',
-											} }
-										/>
-									),
-								} ) }
+								{ createInterpolateElement( paragraph, DESCRIPTION_TAGS ) }
 							</Text>
 						) ) }
 					</VStack>
@@ -187,7 +193,10 @@ export default function EventCard( {
 			? getPressableExpansionOfferEvent( pressableHostingHref )
 			: null,
 		getAiMcpAnnouncement( aiMcpHref ),
-	].filter( ( event ): event is FeaturedEvent => !! event && now < new Date( event.endsAt ) );
+	].filter(
+		( event ): event is FeaturedEvent =>
+			!! event && ( event.endsAt === undefined || now < new Date( event.endsAt ) )
+	);
 
 	if ( ! events.length ) {
 		return null;

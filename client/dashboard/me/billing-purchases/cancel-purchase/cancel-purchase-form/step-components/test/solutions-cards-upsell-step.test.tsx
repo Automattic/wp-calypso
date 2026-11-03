@@ -36,6 +36,14 @@ const purchase = {
 	bill_period_days: 365,
 } as Purchase;
 
+const premiumAnnual = {
+	...purchase,
+	product_slug: 'value_bundle',
+	is_plan: true,
+	is_upgradable: true,
+	is_plan_type_downgradable: true,
+} as Purchase;
+
 describe( '<SolutionsCardsUpsellStep />', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
@@ -71,25 +79,50 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 		expect( closeDialog ).not.toHaveBeenCalled();
 	} );
 
-	test( 'fires view event on mount with visible card IDs', () => {
-		const recordEvent = jest.fn();
+	test.each( [
+		[ 'noLongerNeedSite', 'business-bundle', 365, 'change-plan,speak-with-support' ],
+		[
+			'lackOfCustomization',
+			'value_bundle',
+			365,
+			'change-plan,renew-now-pay-less,switch-to-monthly,speak-with-support',
+		],
+		[
+			'lackOfCustomization',
+			'business-bundle-monthly',
+			30,
+			'change-plan,renew-now-pay-less,speak-with-support',
+		],
+		[
+			'coreFeaturesMissing',
+			'personal-bundle',
+			365,
+			'change-plan,find-guides,ask-ai-assistant,speak-with-support',
+		],
+	] )(
+		'fires view event on mount with visible card IDs %s %s',
+		( cancellationReason, productSlug, billPeriodDays, solutionIds ) => {
+			const recordEvent = jest.fn();
 
-		render(
-			<SolutionsCardsUpsellStep
-				cancellationReason="noLongerNeedSite"
-				purchase={ purchase }
-				closeDialog={ jest.fn() }
-				onDeclineUpsell={ jest.fn() }
-				recordEvent={ recordEvent }
-			/>
-		);
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason={ cancellationReason }
+					purchase={
+						{ ...purchase, product_slug: productSlug, bill_period_days: billPeriodDays } as Purchase
+					}
+					closeDialog={ jest.fn() }
+					onDeclineUpsell={ jest.fn() }
+					recordEvent={ recordEvent }
+				/>
+			);
 
-		expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
-			solution_ids: 'change-plan,speak-with-support',
-			cancellation_reason: 'noLongerNeedSite',
-		} );
-		expect( recordEvent ).toHaveBeenCalledTimes( 1 );
-	} );
+			expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_cards_view', {
+				solution_ids: solutionIds,
+				cancellation_reason: cancellationReason,
+			} );
+			expect( recordEvent ).toHaveBeenCalledTimes( 1 );
+		}
+	);
 
 	test( 'fires click event when a solution card is clicked', async () => {
 		const user = userEvent.setup();
@@ -184,6 +217,85 @@ describe( '<SolutionsCardsUpsellStep />', () => {
 				'Get an exclusive 25% discount automatically applied at checkout.'
 			)
 		).toBeVisible();
-		expect( renewCard ).toHaveAttribute( 'href', expect.stringContaining( 'coupon=DONTGO25' ) );
+		expect( renewCard ).toHaveAttribute(
+			'href',
+			expect.stringContaining( 'coupon=CANRENEW25OFF' )
+		);
+	} );
+
+	test.each( [
+		{
+			card: 'Switch to a different plan',
+			solutionId: 'change-plan',
+			ref: 'cancel-flow-change-plan',
+			intervalType: 'yearly',
+		},
+		{
+			card: 'Switch to monthly payments',
+			solutionId: 'switch-to-monthly',
+			ref: 'cancel-flow-switch-to-monthly',
+			intervalType: 'monthly',
+		},
+	] )(
+		'$card opens the plans page and records the click',
+		async ( { card, solutionId, ref, intervalType } ) => {
+			const user = userEvent.setup();
+			const recordEvent = jest.fn();
+
+			render(
+				<SolutionsCardsUpsellStep
+					cancellationReason="tooExpensive"
+					purchase={ premiumAnnual }
+					closeDialog={ jest.fn() }
+					onDeclineUpsell={ jest.fn() }
+					recordEvent={ recordEvent }
+				/>
+			);
+
+			const link = await screen.findByRole( 'link', { name: new RegExp( card ) } );
+			const href = link.getAttribute( 'href' ) as string;
+			const { searchParams } = new URL( href );
+			expect( searchParams.get( 'ref' ) ).toBe( ref );
+			expect( searchParams.getAll( 'intervalType' ) ).toEqual( [ intervalType ] );
+
+			// jsdom ignores navigation, so swap in a plain object to read the href the click sets.
+			const originalLocation = window.location;
+			Object.defineProperty( window, 'location', { value: { href: '' }, writable: true } );
+			try {
+				await user.click( link );
+
+				expect( recordEvent ).toHaveBeenCalledWith( 'calypso_cancellation_solution_card_click', {
+					solution_id: solutionId,
+					cancellation_reason: 'tooExpensive',
+				} );
+				expect( window.location.href ).toBe( href );
+			} finally {
+				Object.defineProperty( window, 'location', { value: originalLocation, writable: true } );
+			}
+		}
+	);
+
+	test( 'Switch to a different plan still opens the plans page when the plan has no change link', async () => {
+		const p2PlusMonthly = {
+			...purchase,
+			product_slug: 'wp_p2_plus_monthly',
+			is_plan: true,
+			is_upgradable: false,
+			is_plan_type_downgradable: false,
+			bill_period_days: 31,
+		} as Purchase;
+
+		render(
+			<SolutionsCardsUpsellStep
+				cancellationReason="tooExpensive"
+				purchase={ p2PlusMonthly }
+				closeDialog={ jest.fn() }
+				onDeclineUpsell={ jest.fn() }
+			/>
+		);
+
+		expect(
+			await screen.findByRole( 'link', { name: /Switch to a different plan/ } )
+		).toHaveAttribute( 'href', 'https://wordpress.com/plans/example.wordpress.com' );
 	} );
 } );

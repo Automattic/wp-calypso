@@ -2,9 +2,11 @@
 
 Moves a site built on another platform (Wix, Squarespace, and similar) to WordPress.com.
 
-The `site-migration` flow identifies the source without requiring an account and hands eligible
-non-WordPress sources here with `from` and `platform`. For now, sources with a content importer
-(Wix, Squarespace, Medium, Substack, and others) keep using it; see `canUseStaticSiteImport`.
+The `site-migration` flow identifies the source without requiring an account and hands
+non-WordPress sources here with `from` and `platform` when the URL analyzer reports
+`static_site_importable`: a working site that is neither WordPress nor a parked domain. Parked
+and unhealthy sites keep the previous behavior. Landing pages such as `/move` link to
+the plans step directly using the same analyzer field.
 Opening this flow without a supported source sends the user to that identify step.
 
 ## Steps
@@ -60,7 +62,7 @@ Existing destinations behave as described above whether the flag is on or off.
 ## Testing instructions
 
 1. Run `yarn start` and open `/setup/site-migration` while signed out.
-2. Enter the URL of a site on a platform without an importer. Confirm analysis finishes and opens
+2. Enter a Wix or Squarespace URL. Confirm analysis finishes and opens
    `/setup/static-site-import/plans` without signup or login.
 3. Pick a plan. Confirm unified checkout includes account creation, and no import-session request
    has run. Cancel checkout and confirm the source is retained on plans.

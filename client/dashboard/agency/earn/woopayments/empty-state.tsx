@@ -8,6 +8,7 @@ import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { ActionList } from '../../../components/action-list';
 import EmptyState from '../../../components/empty-state';
 import InlineSupportLink from '../../../components/inline-support-link';
+import { useIsApprovalGated } from '../../approval-gate';
 import AddWooPaymentsToSite from './add-woopayments-to-site';
 
 import './empty-state.scss';
@@ -22,6 +23,7 @@ export default function WooPaymentsDashboardEmptyState() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 	const router = useRouter();
+	const isApprovalGated = useIsApprovalGated();
 
 	return (
 		<EmptyState.Wrapper>
@@ -51,6 +53,7 @@ export default function WooPaymentsDashboardEmptyState() {
 									excludedSiteIds={ EXCLUDED_SITE_IDS }
 									recordTracksEvent={ recordTracksEvent }
 									shouldUseRouterLink
+									isApprovalGated={ isApprovalGated }
 									onSelectSite={ ( siteId ) =>
 										router.navigate( {
 											to: earnWooPaymentsSetupRoute.fullPath,

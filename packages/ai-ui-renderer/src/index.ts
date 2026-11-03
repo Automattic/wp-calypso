@@ -1,4 +1,4 @@
-export { createInteractiveUiCatalog } from './utils/catalog';
+export { CHARTS_CATALOG, createInteractiveUiCatalog } from './utils/catalog';
 export type { InteractiveUiCatalog } from './utils/catalog';
 export type { InteractiveUiCatalogDefinition } from './utils/definitions';
 export { createInteractiveUiRuntime } from './utils/runtime';

@@ -386,8 +386,9 @@
 	}
 }
 
-// Outweigh WP Button's `.components-button.has-text` rule.
-.wpnc__action-link.components-button.has-text {
+// Outweigh WP Button's `.components-button.has-text` rule. Minimal (tertiary)
+// actions keep the compact Button's height and single line.
+.wpnc__action-link.components-button.has-text:not(.is-tertiary) {
 	// Keep every action on a single row. Buttons sit at their natural width when
 	// they fit, but may shrink and let their label wrap onto a new line when the
 	// row runs out of width — instead of wrapping a whole button below.

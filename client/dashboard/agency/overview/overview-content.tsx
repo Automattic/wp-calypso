@@ -4,9 +4,11 @@ import { __ } from '@wordpress/i18n';
 import Grid from '../../components/grid';
 import { useCertification } from '../certification/use-certification';
 import { PendingTierCard, RejectedTierCard } from './application-status-cards';
-import EventCard from './event-card';
+import EventCard, { SingleEventCard } from './event-card';
+import { getLeadMatchingContactAnnouncement } from './events';
 import GrowthCard from './growth-card';
 import HelpfulLinksCard from './helpful-links-card';
+import MatchingProfileCard from './matching-profile-card';
 import ReferralEarningsCard from './referral-earnings-card';
 import TierOverviewCard from './tier-overview-card';
 import WooPaymentsRevenueCard from './woopayments-revenue-card';
@@ -25,6 +27,7 @@ export interface AgencyOverviewLinks {
 	woopayments: string;
 	marketplace: string;
 	partnerDirectory: string;
+	leadMatching: string;
 	/** A URL, or a callback that opens contact support in-app. */
 	contactSupport: string | ( () => void );
 	aiMcp: string;
@@ -42,6 +45,9 @@ export interface AgencyOverviewContentProps {
 	capabilities?: string[];
 	/** Whether the agency already has an approved Partner Directory listing. */
 	hasPartnerDirectoryListing?: boolean;
+	showMatchingProfileCard?: boolean;
+	matchingProfileAnswered?: number;
+	showContactOptionsAnnouncement?: boolean;
 	/** Shows the Pressable introductory offer in the news column. */
 	isEligibleForPressableIntroOffer?: boolean;
 	/** Shows the Pressable expansion offer in the news column. */
@@ -73,6 +79,9 @@ export default function AgencyOverviewContent( {
 	approvalStatus,
 	capabilities,
 	hasPartnerDirectoryListing,
+	showMatchingProfileCard = false,
+	matchingProfileAnswered = 0,
+	showContactOptionsAnnouncement = false,
 	isEligibleForPressableIntroOffer,
 	isEligibleForPressableExpansionOffer,
 	links,
@@ -121,6 +130,21 @@ export default function AgencyOverviewContent( {
 						onScheduleCall={ onScheduleCall }
 						isSchedulingCall={ isSchedulingCall }
 						partnerManager={ partnerManager }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ showMatchingProfileCard && (
+					<MatchingProfileCard
+						href={ links.leadMatching }
+						answered={ matchingProfileAnswered }
+						agencyId={ agencyId }
+						recordTracksEvent={ recordTracksEvent }
+					/>
+				) }
+				{ showContactOptionsAnnouncement && links.leadMatching && (
+					<SingleEventCard
+						event={ getLeadMatchingContactAnnouncement( links.leadMatching ) }
+						shouldUseRouterLink={ shouldUseRouterLink ?? true }
 						recordTracksEvent={ recordTracksEvent }
 					/>
 				) }

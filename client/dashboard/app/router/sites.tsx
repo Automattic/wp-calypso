@@ -1790,6 +1790,36 @@ export const siteMigrationOverviewRoute = createRoute( {
 	)
 );
 
+export const siteMigrationAssistedIntroRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Let our team migrate your site' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	// Under the migration's own path, so the migration lock lets it through.
+	path: 'migration-overview/assisted',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		// Only a WordPress migration the customer is still running themselves can be handed to our team.
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isWordPressMigration( site ) || site.site_migration.status_v2 === 'completed' ) {
+			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-overview/assisted-intro' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview-assisted' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSSHMigrationFailedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1868,6 +1898,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
+		siteMigrationAssistedIntroRoute,
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
