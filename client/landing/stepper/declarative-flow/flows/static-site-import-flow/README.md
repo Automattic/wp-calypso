@@ -53,8 +53,9 @@ its previous behavior.
 4. In a test account, complete checkout. Confirm the reading step starts a session, then opens
    the destination’s Overview with **We’re moving your site**. Reload and confirm it resumes.
 5. Once it’s ready, click **Something not right? Let our team fix it** and confirm it files a migration
-   ticket. The notice names services on the old site that the move doesn't carry over: a store or
-   ticket sales, bookings, memberships, or forms.
+   ticket. The notice names services on the old site that the move doesn't carry over: a store, event
+   tickets, bookings, memberships, or forms. A site inspection rated moderate or complex gets a
+   general note instead.
 6. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
    Confirm that a direct reading link shows the destination and requires clicking **Import into
    this site**, even with `newSite=1` or an existing `importSessionId` in the URL.

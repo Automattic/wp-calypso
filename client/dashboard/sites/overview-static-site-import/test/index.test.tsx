@@ -416,20 +416,25 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 
 	it.each( [
 		[
-			'names nothing that comes across as blocks',
-			{ navigation: 3, dialogs: 2, media: 1, embeds: 1 },
+			'says nothing extra for a simple site',
+			{ observed_band: 'simple', capabilities: { navigation: 3 } },
 			null,
 		],
 		[
-			'names what the move found on the old site',
-			{ commerce: 4, forms: 1, navigation: 3 },
-			'We found a store or ticket sales and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
+			'names what the move found that it doesn’t carry over',
+			{ observed_band: 'complex', capabilities: { commerce: 4, events: 2, forms: 1, dialogs: 2 } },
+			'We found a store, event tickets, and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
 		],
-	] )( '%s', ( _, capabilities, message ) => {
+		[
+			'warns when inspection rated the site demanding without naming a feature',
+			{ observed_band: 'moderate', capabilities: { dialogs: 2, media: 1 } },
+			'Larger or more interactive sites like this one sometimes need a hand. If anything looks off, our team can fix it.',
+		],
+	] as const )( '%s', ( _, inspection, message ) => {
 		const finished = {
 			status: 'finished' as const,
 			session: session( 'finished', {
-				preview_summary: { pages: 12, inspection: { measured: true, capabilities } },
+				preview_summary: { pages: 12, inspection: { measured: true, ...inspection } },
 			} ) as StaticSiteImportSession,
 		};
 		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
@@ -437,7 +442,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		if ( message ) {
 			expect( screen.getByText( message ) ).toBeVisible();
 		} else {
-			expect( screen.queryByText( /We found/ ) ).not.toBeInTheDocument();
+			expect( screen.queryByText( /We found|need a hand/ ) ).not.toBeInTheDocument();
 		}
 	} );
 

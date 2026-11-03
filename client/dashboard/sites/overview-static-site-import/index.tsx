@@ -121,16 +121,21 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
  * the move doesn't copy are named; menus, pop-ups, video and embeds come across as blocks.
  */
 const FOUND_FEATURE_LABELS: Partial< Record< StaticSiteImportCapability, () => string > > = {
-	commerce: () => __( 'a store or ticket sales' ),
+	commerce: () => __( 'a store' ),
+	events: () => __( 'event tickets' ),
 	booking: () => __( 'bookings' ),
 	membership: () => __( 'memberships' ),
 	forms: () => __( 'forms' ),
 };
 
+function getInspection( session?: StaticSiteImportSession ) {
+	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
+	return summary?.inspection;
+}
+
 /** Names the features the move found on the old site, as a list in the reader's language. */
 function getFoundFeatures( session: StaticSiteImportSession | undefined, locale: string ) {
-	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
-	const found = summary?.inspection?.capabilities ?? {};
+	const found = getInspection( session )?.capabilities ?? {};
 	const labels = Object.entries( FOUND_FEATURE_LABELS )
 		.filter( ( [ capability ] ) => ( found[ capability as StaticSiteImportCapability ] ?? 0 ) > 0 )
 		.map( ( [ , label ] ) => label() );
@@ -272,6 +277,9 @@ export function StaticSiteImportNotice( {
 	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
 	const foundFeatures = getFoundFeatures( siteImport.session, locale );
+	// Inspection's own rating of the old site; `band` withholds it whenever only some pages were sampled.
+	const observedBand = getInspection( siteImport.session )?.observed_band;
+	const isDemanding = observedBand === 'moderate' || observedBand === 'complex';
 	const isReady = siteImport.status === 'finished';
 	const trackingProps = {
 		site_id: site.ID,
@@ -442,6 +450,13 @@ export function StaticSiteImportNotice( {
 									__( 'We found %1$s on %2$s. If any of it isn’t working, our team can fix it.' ),
 									foundFeatures,
 									sourceHost || __( 'your old site' )
+								) }
+							</span>
+						) }
+						{ ! foundFeatures && isDemanding && (
+							<span>
+								{ __(
+									'Larger or more interactive sites like this one sometimes need a hand. If anything looks off, our team can fix it.'
 								) }
 							</span>
 						) }
