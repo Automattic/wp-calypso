@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
+import { useSelectedPostCommands } from 'calypso/reader/stream/use-selected-post-commands';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -14,6 +15,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { filterConversations } from './conversation-list/filter-conversations';
@@ -182,6 +184,12 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	};
 
+	const selectedPostKey = useMemo(
+		() => ( siteId && postId ? { blogId: Number( siteId ), postId: Number( postId ) } : null ),
+		[ siteId, postId ]
+	);
+	const { toggleSelectedLike } = useSelectedPostCommands( selectedPostKey );
+
 	useInboxKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
 		onNext: () => goTo( nextIndex, 'shortcut' )?.(),
@@ -190,6 +198,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		onPreviousTab: () => moveTab( -1 ),
 		onSelectTab: ( next ) => selectTab( next, 'shortcut' ),
 		onToggleShortcuts: () => setIsShortcutsOpen( ( isOpen ) => ! isOpen ),
+		onToggleLike: toggleSelectedLike,
+		onOpenNotifications: () => dispatch( toggleNotificationsPanel() ),
 	} );
 
 	const hasConversation = Boolean( siteId && postId );

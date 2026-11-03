@@ -16,6 +16,8 @@ function makeHandlers() {
 		onPreviousTab: jest.fn(),
 		onSelectTab: jest.fn(),
 		onToggleShortcuts: jest.fn(),
+		onToggleLike: jest.fn(),
+		onOpenNotifications: jest.fn(),
 	};
 }
 
@@ -65,6 +67,19 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		expect( handlers.onSelectTab.mock.calls ).toEqual( [ [ 'all' ], [ 'unread' ], [ 'yours' ] ] );
 	} );
 
+	it( 'likes the open post with l and opens notifications with n from a focused button', async () => {
+		const user = userEvent.setup();
+		const handlers = makeHandlers();
+		document.body.innerHTML = '<button type="button">Conversation</button>';
+		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
+
+		document.querySelector< HTMLButtonElement >( 'button' )?.focus();
+		await user.keyboard( 'ln' );
+
+		expect( handlers.onToggleLike ).toHaveBeenCalledTimes( 1 );
+		expect( handlers.onOpenNotifications ).toHaveBeenCalledTimes( 1 );
+	} );
+
 	it( 'toggles the shortcuts menu with i, including from inside the shortcuts popover', async () => {
 		const user = userEvent.setup();
 		const handlers = makeHandlers();
@@ -89,7 +104,7 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
 
 		document.querySelector< HTMLButtonElement >( 'button' )?.focus();
-		await user.keyboard( 'i{ArrowDown}{ArrowUp}{ArrowRight}{ArrowLeft}jkauc' );
+		await user.keyboard( 'i{ArrowDown}{ArrowUp}{ArrowRight}{ArrowLeft}jkaucln' );
 
 		expect( handlers.onToggleShortcuts ).not.toHaveBeenCalled();
 		expect( handlers.onNext ).not.toHaveBeenCalled();
@@ -97,6 +112,8 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		expect( handlers.onNextTab ).not.toHaveBeenCalled();
 		expect( handlers.onPreviousTab ).not.toHaveBeenCalled();
 		expect( handlers.onSelectTab ).not.toHaveBeenCalled();
+		expect( handlers.onToggleLike ).not.toHaveBeenCalled();
+		expect( handlers.onOpenNotifications ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores keys typed into a field', async () => {
