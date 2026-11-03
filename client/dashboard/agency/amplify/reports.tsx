@@ -23,6 +23,7 @@ import clsx from 'clsx';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useIntlLocale } from '../../app/locale';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { Text } from '../../components/text';
@@ -188,8 +189,12 @@ function ArchiveReportModal( {
 	closeModal?: () => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
-	const archive = useMutation( archiveAmplifyReportMutation( agencyId ) );
+	const archive = useMutation(
+		withSnackbar( archiveAmplifyReportMutation( agencyId ), {
+			success: __( 'The report has been archived.' ),
+			error: __( 'Failed to archive the report.' ),
+		} )
+	);
 	return (
 		<VStack spacing={ 6 }>
 			<Text>
@@ -220,16 +225,7 @@ function ArchiveReportModal( {
 							report_id: report.id,
 							mode: report.mode,
 						} );
-						archive.mutate( report.id, {
-							onSuccess: () => {
-								createSuccessNotice( __( 'The report has been archived.' ), { type: 'snackbar' } );
-								closeModal?.();
-							},
-							onError: () =>
-								createErrorNotice( __( 'Failed to archive the report.' ), {
-									type: 'snackbar',
-								} ),
-						} );
+						archive.mutate( report.id, { onSuccess: () => closeModal?.() } );
 					} }
 				>
 					{ __( 'Archive' ) }
