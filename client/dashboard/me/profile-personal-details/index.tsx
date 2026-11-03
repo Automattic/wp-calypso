@@ -1,18 +1,21 @@
+import { isWpError } from '@automattic/api-core';
 import {
 	isAutomatticianQuery,
 	userEmailSettingsMutation,
 	userSettingsMutation,
 	userSettingsQuery,
 } from '@automattic/api-queries';
-import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
+import { useDispatch } from '@wordpress/data';
 import { DataForm, Field, Form } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { store as noticesStore } from '@wordpress/notices';
 import { useState, useMemo, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { NavigationBlocker } from '../../app/navigation-blocker';
@@ -26,6 +29,13 @@ import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
+function isEmailFieldError( error: unknown ) {
+	return (
+		isWpError( error ) &&
+		( error.data as Record< string, unknown > | undefined )?.[ 'form-field' ] === 'email'
+	);
+}
+
 export default function PersonalDetailsSection() {
 	const { user } = useAuth();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -34,14 +44,26 @@ export default function PersonalDetailsSection() {
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
+	const { createErrorNotice } = useDispatch( noticesStore );
+	const queryClient = useQueryClient();
 
-	const snackbar = { success: __( 'Settings saved.' ), error: { source: 'server' as const } };
-	const mutation = useMutation( withSnackbar( userSettingsMutation(), snackbar ) );
+	const success = __( 'Settings saved.' );
+	const mutation = useMutation(
+		withSnackbar( userSettingsMutation(), { success, error: { source: 'server' } } )
+	);
 	// Two instances rather than one whose options change with the payload, which a save already
-	// in flight would pick up.
-	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), snackbar ) );
+	// in flight would pick up. This one reports its own errors, since those that concern the email
+	// address are shown on the field instead of in a snackbar.
+	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), { success } ) );
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
+
+	// Shown on the field until the rejected address is changed.
+	const emailSaveError =
+		isEmailFieldError( emailMutation.error ) &&
+		emailMutation.variables?.user_email === data.user_email
+			? emailMutation.error?.message
+			: undefined;
 
 	const currentUsername = userSettings.user_login || '';
 	const isEmailVerified = user.email_verified;
@@ -62,8 +84,24 @@ export default function PersonalDetailsSection() {
 			return;
 		}
 
-		const save = 'user_email' in submissionEdits ? emailMutation : mutation;
-		save.mutate( submissionEdits, {
+		if ( 'user_email' in submissionEdits ) {
+			emailMutation.mutate( submissionEdits, {
+				onSuccess: () => {
+					setEdits( {} );
+				},
+				onError: ( error ) => {
+					if ( isEmailFieldError( error ) ) {
+						// Rejecting the address also cancels any email change that was pending.
+						queryClient.invalidateQueries( userSettingsQuery() );
+					} else {
+						createErrorNotice( error.message, { type: 'snackbar' } );
+					}
+				},
+			} );
+			return;
+		}
+
+		mutation.mutate( submissionEdits, {
 			onSuccess: () => {
 				setEdits( {} );
 			},
@@ -158,6 +196,7 @@ export default function PersonalDetailsSection() {
 							userSettings={ userSettings }
 							isEmailVerified={ isEmailVerified }
 							onValidationChange={ setIsEmailValid }
+							serverError={ emailSaveError }
 						/>
 
 						<HStack justify="flex-start">
