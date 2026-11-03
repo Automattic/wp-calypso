@@ -1,6 +1,7 @@
 @import "@automattic/typography/styles/variables";
 
 $toolbar-height: 48px;
+$compact-toolbar-height: 32px;
 // The whole composer, toolbar included; past it the writing area scrolls.
 $composer-max-height: 400px;
 
@@ -78,6 +79,58 @@ $composer-max-height: 400px;
 
 .comments__block-editor-content {
 	position: relative;
+}
+
+// Outside the inbox, the box stays close to the textarea it replaces: its type, two lines to
+// write on, and a slimmer toolbar that keeps to the background until it's used.
+.comments__block-editor:not(.has-pinned-toolbar) {
+	--jetpack-comments-pad: 12px;
+	--jetpack-comments-font-size: #{$font-body-small};
+	--jetpack-comments-line-height: 21px;
+
+	.comments__block-editor-textarea,
+	.jetpack-comments__editor .editor-styles-wrapper {
+		min-block-size: calc(2lh + 2 * var(--jetpack-comments-pad));
+		max-block-size: $composer-max-height - $compact-toolbar-height - 1px;
+	}
+}
+
+.comments__block-editor:not(.has-pinned-toolbar).is-open .comments__block-editor-toolbar,
+.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+	min-block-size: $compact-toolbar-height + 1px;
+	border-block-end-color: var(--color-neutral-0);
+}
+
+.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments .jetpack-comments__toolbar {
+	padding-inline: 4px;
+
+	.components-toolbar-group {
+		min-height: $compact-toolbar-height;
+		padding-inline: 2px;
+	}
+
+	.components-toolbar-group .components-button {
+		min-width: $compact-toolbar-height;
+		height: $compact-toolbar-height;
+		padding: 4px;
+		color: var(--color-text-subtle);
+
+		&:hover,
+		&.is-pressed,
+		&[aria-expanded="true"] {
+			color: var(--color-text);
+		}
+
+		// The pressed and focused pill, sized for the shorter button.
+		&::before {
+			inset: 2px;
+		}
+	}
+
+	.components-toolbar-group .components-button svg {
+		width: 20px;
+		height: 20px;
+	}
 }
 
 .comments__block-editor .comments__block-editor-textarea {
