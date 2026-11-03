@@ -4,6 +4,7 @@
 
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { getFeatureName } from '../../../agency/amplify/constants';
 import { render } from '../../../test-utils';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import AgencySidebar from '../agency';
@@ -256,7 +257,7 @@ describe( '<AgencySidebar>', () => {
 		await renderSidebar( [ 'a4a_read_amplify' ] );
 
 		expect( screen.getByRole( 'button', { name: 'Clients' } ) ).toBeVisible();
-		const amplify = screen.getByRole( 'link', { name: /Amplify/ } );
+		const amplify = screen.getByRole( 'link', { name: getFeatureName() } );
 		expect( amplify ).toBeVisible();
 		expect( amplify ).toHaveAttribute( 'href', expect.stringMatching( /\/amplify$/ ) );
 		expect( amplify ).not.toHaveAttribute( 'target', '_blank' );
@@ -265,12 +266,12 @@ describe( '<AgencySidebar>', () => {
 	test( 'hides Amplify when the user lacks the amplify capability', async () => {
 		await renderSidebar( [ 'a4a_read_managed_sites' ] );
 
-		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: getFeatureName() } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'hides Amplify when the agency is not allowed to use it', async () => {
 		await renderSidebar( [ 'a4a_read_amplify' ], false );
 
-		expect( screen.queryByRole( 'link', { name: /Amplify/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'link', { name: getFeatureName() } ) ).not.toBeInTheDocument();
 	} );
 } );
