@@ -1,7 +1,7 @@
-import { commentsEmbedUrl, type CommentsEditorSettings } from '@automattic/api-core';
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { loadCommentEditor } from './load-comment-editor';
+import { commentEmbedUrl, loadCommentEditor } from './load-comment-editor';
+import type { CommentsEditorSettings } from '@automattic/api-core';
 
 import './comment-block-editor.scss';
 
@@ -67,7 +67,7 @@ export default function CommentBlockEditor( {
 					initialContent: latest.current.value,
 					labels: {
 						...settings.editor,
-						embedUrl: commentsEmbedUrl( siteId ),
+						embedUrl: commentEmbedUrl( siteId ),
 					},
 					placeholder,
 					focus: focus
