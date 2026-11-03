@@ -194,6 +194,7 @@ function SiteLogsContent( {
 					{ logType === LogType.PHP || logType === LogType.SERVER ? (
 						<HostingFeatureGatedWithCallout site={ site } { ...getLogsCalloutProps() }>
 							<SiteLogsDataViews
+								key={ site.ID }
 								logType={ logType }
 								dateRange={ dateRange }
 								dateRangeVersion={ dateRangeVersion }

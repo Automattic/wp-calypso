@@ -16,7 +16,7 @@ import {
 	settings,
 } from '@wordpress/icons';
 import { useAppContext } from '../../app/context';
-import { SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
+import { SidebarBackButton, SidebarMenu, SidebarMenuItem } from '../../components/sidebar';
 import type { AppConfig, MeSupports } from '../../app/context';
 
 import './style.scss';
@@ -33,23 +33,26 @@ export default function MeSidebar() {
 	}
 
 	return (
-		<VStack spacing={ 4 }>
-			<HStack justify="flex-start" alignment="center" spacing={ 3 }>
-				<div className="me-sidebar__avatar-wrapper">
-					<div className="me-sidebar__avatar">
-						<img src={ userSettings.avatar_URL } alt={ __( 'Profile photo' ) } />
+		<VStack spacing={ 2 }>
+			<SidebarBackButton to="/sites">{ __( 'Back to Sites' ) }</SidebarBackButton>
+			<VStack spacing={ 4 }>
+				<HStack justify="flex-start" alignment="center" spacing={ 3 }>
+					<div className="me-sidebar__avatar-wrapper">
+						<div className="me-sidebar__avatar">
+							<img src={ userSettings.avatar_URL } alt={ __( 'Profile photo' ) } />
+						</div>
 					</div>
-				</div>
-				<VStack spacing={ 0 } style={ { minWidth: 0 } }>
-					<Text weight={ 500 } size="13px" truncate numberOfLines={ 1 }>
-						{ userSettings.display_name }
-					</Text>
-					<Text variant="muted" size="12px" truncate numberOfLines={ 1 }>
-						{ `@${ userSettings.user_login }` }
-					</Text>
-				</VStack>
-			</HStack>
-			<MeMenuSidebar />
+					<VStack spacing={ 0 } style={ { minWidth: 0 } }>
+						<Text weight={ 500 } size="13px" truncate numberOfLines={ 1 }>
+							{ userSettings.display_name }
+						</Text>
+						<Text variant="muted" size="12px" truncate numberOfLines={ 1 }>
+							{ `@${ userSettings.user_login }` }
+						</Text>
+					</VStack>
+				</HStack>
+				<MeMenuSidebar />
+			</VStack>
 		</VStack>
 	);
 }

@@ -208,11 +208,6 @@ body.is-section-site-redesign .step-container-v2__sticky-bottom-bar button:focus
 	max-inline-size: calc( var( --site-redesign-frame-width ) * 1px );
 }
 
-// Unlike the candidates, the installed site can be scrolled and clicked through.
-.site-redesign__frame.is-live {
-	pointer-events: auto;
-}
-
 // Same beat as the Site Builder canvas placeholders, so loading reads the same in both.
 .site-redesign__skeleton > div,
 .site-redesign__caption-skeleton {

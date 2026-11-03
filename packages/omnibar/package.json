@@ -38,7 +38,7 @@
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
+		"@wordpress/icons": "^15.5.0",
 		"@wordpress/private-apis": "^1.51.0",
 		"@wordpress/ui": "^0.23.0"
 	},

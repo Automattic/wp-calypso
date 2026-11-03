@@ -58,6 +58,10 @@
 	text-align: center;
 	transform: translateY( -50% );
 
+	> svg {
+		fill: var( --color-neutral-20 );
+	}
+
 	&.importer-upload-success {
 		color: var( --color-success );
 	}
