@@ -6,7 +6,7 @@ import { Button as WPButton } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component, useContext, useEffect } from 'react';
+import { Component, createRef, useContext, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import UserAvatar from 'calypso/blocks/user-avatar';
@@ -59,6 +59,8 @@ function PostCommentFormError( { type } ) {
 }
 
 class PostCommentForm extends Component {
+	form = createRef();
+
 	state = {
 		haveFocus: false,
 		// Outside the inbox the plain textarea stands in until the first focus.
@@ -88,6 +90,18 @@ class PostCommentForm extends Component {
 			this.handleSubmit( event );
 		}
 
+		// Escape closes an empty editor, as clicking away does, unless it's closing one of the
+		// editor's menus. Focus goes back to the textarea, so the keyboard doesn't lose its place.
+		if (
+			event.keyCode === 27 &&
+			this.state.editorOpen &&
+			this.canCloseEditor() &&
+			! event.target.closest?.( '.components-popover' )
+		) {
+			this.escaped = true;
+			this.setState( { editorClosing: true } );
+		}
+
 		// Use ESC to remove the erroneous comment placeholder and just start over
 		if ( event.keyCode === 27 ) {
 			if ( this.props.placeholderId ) {
@@ -107,9 +121,25 @@ class PostCommentForm extends Component {
 		this.setState( { haveFocus: true, editorOpen: true, editorClosing: false } );
 	};
 
-	handleTextareaFocus = ( event ) => {
-		this.setState( { openFrom: event.target.closest( 'fieldset' )?.offsetHeight } );
+	openEditorFrom( textarea ) {
+		this.setState( { openFrom: textarea.closest( 'fieldset' )?.offsetHeight } );
 		this.handleFocus();
+	}
+
+	handleTextareaFocus = ( event ) => {
+		// Back from Escape: the textarea holds focus until the writer types or clicks.
+		if ( this.escaped ) {
+			this.escaped = false;
+			return;
+		}
+		this.openEditorFrom( event.target );
+	};
+
+	// A click on the textarea that already has focus, which fires no focus event.
+	handleTextareaPointerDown = ( event ) => {
+		if ( this.props.editorSettings && event.target === event.target.ownerDocument.activeElement ) {
+			this.openEditorFrom( event.target );
+		}
 	};
 
 	handleEditorError = () => {
@@ -125,26 +155,40 @@ class PostCommentForm extends Component {
 		this.setState( { haveFocus: false } );
 	};
 
-	// An empty editor outside the inbox shrinks back to the textarea once focus leaves it.
-	handleEditorBlur = () => {
-		if ( this.props.composer || this.props.parentCommentId || this.hasCommentText() ) {
-			return;
-		}
+	// Outside the inbox, an empty editor shrinks back to the textarea.
+	canCloseEditor() {
+		return ! this.props.composer && ! this.props.parentCommentId && ! this.hasCommentText();
+	}
 
-		this.setState( { editorClosing: true } );
+	handleEditorBlur = () => {
+		if ( this.canCloseEditor() ) {
+			this.setState( { editorClosing: true } );
+		}
 	};
 
 	handleEditorClosed = () => {
-		this.setState( ( { editorKey } ) => ( {
-			haveFocus: false,
-			editorOpen: false,
-			editorClosing: false,
-			editorKey: editorKey + 1,
-		} ) );
+		this.setState(
+			( { editorKey } ) => ( {
+				haveFocus: false,
+				editorOpen: false,
+				editorClosing: false,
+				editorKey: editorKey + 1,
+			} ),
+			() => {
+				if ( this.escaped ) {
+					this.form.current?.querySelector( 'textarea' )?.focus();
+					this.escaped = false;
+				}
+			}
+		);
 	};
 
 	handleTextChange = ( event ) => {
 		this.updateCommentText( event.target.value );
+		// Typing after Escape brings the editor back, with what was typed.
+		if ( this.props.editorSettings && ! this.state.editorOpen ) {
+			this.openEditorFrom( event.target );
+		}
 	};
 
 	updateCommentText = ( value ) => {
@@ -270,11 +314,6 @@ class PostCommentForm extends Component {
 			);
 		}
 
-		const buttonClasses = clsx( {
-			'is-active': this.hasCommentText(),
-			'is-visible': this.state.haveFocus || this.hasCommentText(),
-		} );
-
 		const isReply = !! this.props.parentCommentId;
 		const { composer } = this.props;
 		const showEditor =
@@ -284,6 +323,13 @@ class PostCommentForm extends Component {
 				isReply ||
 				this.state.editorOpen ||
 				this.getCommentText().includes( '<!-- wp:' ) );
+
+		// Under the editor, Send shows once there's something to send.
+		const buttonClasses = clsx( {
+			'is-active': this.hasCommentText(),
+			'is-visible': this.hasCommentText() || ( this.state.haveFocus && ! showEditor ),
+			'is-reserved': showEditor,
+		} );
 		let submitLabel = translate( 'Send' );
 		if ( this.props.error ) {
 			submitLabel = translate( 'Resend' );
@@ -306,7 +352,7 @@ class PostCommentForm extends Component {
 		);
 
 		return (
-			<form className={ clsx( 'comments__form', { 'is-composer': composer } ) }>
+			<form ref={ this.form } className={ clsx( 'comments__form', { 'is-composer': composer } ) }>
 				<ProtectFormGuard isChanged={ this.hasCommentText() } />
 				<FormFieldset>
 					{ composer ? (
@@ -344,6 +390,7 @@ class PostCommentForm extends Component {
 							onKeyUp={ this.handleKeyUp }
 							onKeyDown={ this.handleKeyDown }
 							onFocus={ this.handleTextareaFocus }
+							onPointerDown={ this.handleTextareaPointerDown }
 							onBlur={ this.handleBlur }
 							onChange={ this.handleTextChange }
 							enableAutoFocus={ isReply }

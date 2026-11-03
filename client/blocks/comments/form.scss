@@ -32,11 +32,21 @@
 			cursor: pointer;
 		}
 
-		&.is-visible {
+		&.is-visible,
+		&.is-reserved {
 			position: relative;
 			z-index: z-index("root", ".comments__form .button:not(.components-button)");
 			float: right;
+		}
+
+		&.is-visible {
 			opacity: 1;
+		}
+
+		// Holding its place under an open editor, so it fades in with the first word instead of
+		// pushing the page down.
+		&.is-reserved:not(.is-visible) {
+			visibility: hidden;
 		}
 	}
 

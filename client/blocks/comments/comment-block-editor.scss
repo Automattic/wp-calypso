@@ -133,6 +133,29 @@ $composer-max-height: 400px;
 	}
 }
 
+// Room for a finger on a touch screen.
+@media (pointer: coarse) {
+	.comments__block-editor:not(.has-pinned-toolbar).is-open .comments__block-editor-toolbar,
+	.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+		min-block-size: $toolbar-height + 1px;
+	}
+
+	.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments .jetpack-comments__toolbar {
+		.components-toolbar-group {
+			min-height: $toolbar-height;
+		}
+
+		.components-toolbar-group .components-button {
+			min-width: 40px;
+			height: $toolbar-height;
+		}
+
+		.components-toolbar-group .components-button::before {
+			inset: 4px 2px;
+		}
+	}
+}
+
 .comments__block-editor .comments__block-editor-textarea {
 	display: block;
 	inline-size: 100%;
