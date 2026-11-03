@@ -52,7 +52,7 @@ function isDismissed( destination: CrossoverDestinationId ) {
 /**
  * Sends the agency to another dashboard in a new tab, after the crossover modal unless they
  * asked not to see it again for this destination. The modal is `CrossoverModalHost`, which
- * the agency sidebar mounts.
+ * the agency layout mounts.
  */
 export function leaveDashboard( destination: CrossoverDestinationId, onLeave?: () => void ) {
 	const request = { destination, onLeave };

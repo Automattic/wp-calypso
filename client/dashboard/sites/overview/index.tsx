@@ -37,6 +37,7 @@ import ScanCard from '../overview-scan-card';
 import SiteActionMenu from '../overview-site-action-menu';
 import SiteOverviewFields from '../overview-site-fields';
 import {
+	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
 	useStaticSiteImport,
@@ -228,6 +229,9 @@ function SiteOverview( {
 		);
 	};
 
+	// A refused site keeps its notice: our team can't move content that isn't allowed.
+	const showImportFailed = siteImport?.status === 'failed' && ! siteImport.isRefused;
+
 	return (
 		<PageLayout
 			header={
@@ -242,7 +246,7 @@ function SiteOverview( {
 					{ stagingSiteSyncForNotice && (
 						<StagingSiteSyncNotice site={ site } syncState={ stagingSiteSyncForNotice } />
 					) }
-					{ siteImport && siteImport.status !== 'moving' && (
+					{ siteImport && siteImport.status !== 'moving' && ! showImportFailed && (
 						<StaticSiteImportNotice
 							site={ site }
 							siteImport={ siteImport }
@@ -266,9 +270,11 @@ function SiteOverview( {
 				</>
 			}
 		>
-			{ siteImport?.status === 'moving' ? (
+			{ siteImport?.status === 'moving' && (
 				<StaticSiteImportProgress siteImport={ siteImport } search={ importSearch } />
-			) : (
+			) }
+			{ showImportFailed && <StaticSiteImportFailed site={ site } search={ importSearch } /> }
+			{ siteImport?.status !== 'moving' && ! showImportFailed && (
 				<VStack alignment="stretch" spacing={ isSmallViewport ? 5 : 10 }>
 					<Grid { ...gridLayout } gap={ gap }>
 						<SiteOverviewPrimaryCards site={ site } gap={ gap } />

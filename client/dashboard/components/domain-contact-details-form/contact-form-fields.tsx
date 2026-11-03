@@ -1,7 +1,9 @@
 import { smsCountryCodesQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import {
 	CheckboxControl,
+	ExternalLink,
 	// eslint-disable-next-line wpcalypso/no-unsafe-wp-apis
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -139,6 +141,39 @@ function OrganizationNotice() {
 	);
 }
 
+function EmailNotice() {
+	const hasEnTranslation = useHasEnTranslation();
+	const icannLink = (
+		<ExternalLink href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en">
+			ICANN
+		</ExternalLink>
+	);
+
+	return (
+		<Notice variant="warning">
+			{ hasEnTranslation(
+				'<icannLink>ICANN</icannLink> sends a verification to this email address. If it bounces or goes unanswered, the domain is suspended until it is confirmed.'
+			)
+				? createInterpolateElement(
+						__(
+							'<icannLink>ICANN</icannLink> sends a verification to this email address. If it bounces or goes unanswered, the domain is suspended until it is confirmed.'
+						),
+						{ icannLink }
+					)
+				: createInterpolateElement(
+						sprintf(
+							/* translators: %s: ICANN acronym */
+							__(
+								'<external>%s</external> requires accurate contact information for registrants. This information will be validated after purchase. Failure to validate your contact information will result in domain suspension.'
+							),
+							'ICANN'
+						),
+						{ external: icannLink }
+					) }
+		</Notice>
+	);
+}
+
 export const getContactFormFields = (
 	countryList: CountryListItem[] | undefined,
 	statesList: StatesListItem[] | undefined,
@@ -188,6 +223,14 @@ export const getContactFormFields = (
 				required: true,
 				custom: createFieldAsyncValidator( 'email', asyncValidator ),
 			},
+		},
+		{
+			id: 'emailNotice',
+			label: __( 'Email notice' ),
+			// DataForm skips a field without an Edit control, even a read-only one.
+			type: 'text',
+			readOnly: true,
+			render: EmailNotice,
 		},
 		{
 			id: 'phone',
