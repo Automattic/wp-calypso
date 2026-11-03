@@ -386,21 +386,39 @@ describe( 'StaticSiteImportNotice preview link', () => {
 } );
 
 describe( 'StaticSiteImportNotice help with the move', () => {
-	it( 'offers a person to talk to when the moved site isn’t right', async () => {
+	it.each( [
+		[
+			'offers our team when the moved site isn’t right',
+			{},
+			'Something not right? Let our team fix it',
+			undefined,
+		],
+		[
+			'names a store the move found and offers our team to finish it',
+			{ commerce: 4 },
+			'Let our team finish your move',
+			'We found a store on busybearscleaning.com. Our team can set up your products and checkout.',
+		],
+	] )( '%s', async ( _, capabilities, button, finding ) => {
+		mockApi().post( '/wpcom/v2/help/migration-ticket/new' ).reply( 200, { success: true } );
+		const finished = {
+			status: 'finished' as const,
+			session: session( 'finished', {
+				preview_summary: { pages: 12, inspection: { measured: true, capabilities } },
+			} ) as StaticSiteImportSession,
+		};
 		const { recordTracksEvent } = render(
-			<StaticSiteImportNotice
-				site={ site }
-				siteImport={ { status: 'finished' } }
-				search={ search }
-			/>
+			<StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } />
 		);
 
-		await userEvent.click(
-			screen.getByRole( 'button', { name: 'Something not right? Get help with your move' } )
-		);
+		if ( finding ) {
+			expect( screen.getByText( finding ) ).toBeVisible();
+		}
+		await userEvent.click( screen.getByRole( 'button', { name: button } ) );
+		expect( await screen.findByText( /Our team has your move/ ) ).toBeVisible();
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_static_site_import_ready_notice_click',
-			{ site_id: 42, source_platform: 'wix', action: 'get_help' }
+			expect.objectContaining( { action: 'request_handoff' } )
 		);
 	} );
 

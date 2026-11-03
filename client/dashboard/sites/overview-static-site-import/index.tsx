@@ -100,16 +100,52 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-/** Opens a chat with our team (not the AI assistant), with a message naming where the site came from. */
-function useAskForMoveHelp( site: Site ) {
-	const { setNewMessagingChat } = useHelpCenter();
-	return ( initialMessage: string ) =>
-		setNewMessagingChat( {
-			initialMessage,
-			section: 'static-site-import',
-			siteUrl: site.URL,
-			siteId: String( site.ID ),
-		} );
+/**
+ * Hands the move to our migrations team: files a ticket for the Non-WP Migrations queue, which
+ * emails the customer to finish the move.
+ */
+function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
+	const locale = useLocale();
+	const handoff = useMutation( staticSiteImportHandoffMutation() );
+	const requestHandoff = () =>
+		handoff.mutate( { blogUrl: site.slug, fromUrl: search.from ?? '', locale } );
+	return { handoff, requestHandoff };
+}
+
+/** Features a move can show but only our team can make work: they need a backend we don't import. */
+const TEAM_CAPABILITIES = [ 'commerce', 'booking', 'membership' ] as const;
+
+/** The first such feature the move found on the old site, if any. */
+function getTeamCapability( session?: StaticSiteImportSession ) {
+	const summary = Array.isArray( session?.preview_summary ) ? undefined : session?.preview_summary;
+	const found = summary?.inspection?.capabilities ?? {};
+	return TEAM_CAPABILITIES.find( ( capability ) => ( found[ capability ] ?? 0 ) > 0 );
+}
+
+function teamCapabilityMessage(
+	capability: ( typeof TEAM_CAPABILITIES )[ number ],
+	sourceName: string
+) {
+	switch ( capability ) {
+		case 'commerce':
+			return sprintf(
+				/* translators: %s: the address of the site that was moved, e.g. example.com. */
+				__( 'We found a store on %s. Our team can set up your products and checkout.' ),
+				sourceName
+			);
+		case 'booking':
+			return sprintf(
+				/* translators: %s: the address of the site that was moved, e.g. example.com. */
+				__( 'We found bookings on %s. Our team can set up your scheduling.' ),
+				sourceName
+			);
+		case 'membership':
+			return sprintf(
+				/* translators: %s: the address of the site that was moved, e.g. example.com. */
+				__( 'We found memberships on %s. Our team can set up your members area.' ),
+				sourceName
+			);
+	}
 }
 
 /** Takes the place of the progress card when a move fails. */
@@ -120,8 +156,7 @@ export function StaticSiteImportFailed( {
 	site: Site;
 	search: StaticSiteImportSearch;
 } ) {
-	const locale = useLocale();
-	const handoff = useMutation( staticSiteImportHandoffMutation() );
+	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( search.from );
 	const { data: planPurchase } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
@@ -172,13 +207,7 @@ export function StaticSiteImportFailed( {
 								variant="primary"
 								isBusy={ handoff.isPending }
 								disabled={ handoff.isPending }
-								onClick={ () =>
-									handoff.mutate( {
-										blogUrl: site.slug,
-										fromUrl: search.from ?? '',
-										locale,
-									} )
-								}
+								onClick={ requestHandoff }
 							>
 								{ __( 'Let our team move it' ) }
 							</Button>
@@ -247,12 +276,14 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
-	const askForMoveHelp = useAskForMoveHelp( site );
+	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
 	const isReady = siteImport.status === 'finished';
+	const teamCapability = getTeamCapability( siteImport.session );
 	const trackingProps = {
 		site_id: site.ID,
 		source_platform: platform,
+		...( teamCapability && { team_capability: teamCapability } ),
 	};
 
 	// Counts notices shown, so clicks on its buttons can be read as a rate.
@@ -265,10 +296,13 @@ export function StaticSiteImportNotice( {
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_impression', {
 			site_id: site.ID,
 			source_platform: platform,
+			...( teamCapability && { team_capability: teamCapability } ),
 		} );
-	}, [ isReady, recordTracksEvent, site.ID, platform ] );
+	}, [ isReady, recordTracksEvent, site.ID, platform, teamCapability ] );
 
-	const recordClick = ( action: 'connect_domain' | 'get_domain' | 'preview_site' | 'get_help' ) =>
+	const recordClick = (
+		action: 'connect_domain' | 'get_domain' | 'preview_site' | 'request_handoff'
+	) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
 			...trackingProps,
 			action,
@@ -278,8 +312,6 @@ export function StaticSiteImportNotice( {
 	// isn't until they first visit WP Admin, so open the site through SSO to log them in on the way.
 	const previewUrl =
 		site.is_coming_soon && site.is_wpcom_atomic ? withJetpackSso( site.URL ) : site.URL;
-
-	const sourceName = sourceHost || __( 'my old platform' );
 
 	if ( siteImport.isRefused ) {
 		return (
@@ -381,38 +413,53 @@ export function StaticSiteImportNotice( {
 							>
 								{ __( 'Preview site' ) }
 							</Button>
-							<Button
-								__next40pxDefaultSize
-								variant="link"
-								onClick={ () => {
-									recordClick( 'get_help' );
-									askForMoveHelp(
-										sprintf(
-											/* translators: %s: the address of the site that was moved, e.g. example.com. */
-											__(
-												'My site moved from %s, but some things didn’t come across right. Can you help me with my move?'
-											),
-											sourceName
-										)
-									);
-								} }
-							>
-								{ __( 'Something not right? Get help with your move' ) }
-							</Button>
+							{ ! handoff.isSuccess && (
+								<Button
+									__next40pxDefaultSize
+									variant={ teamCapability ? 'secondary' : 'link' }
+									isBusy={ handoff.isPending }
+									disabled={ handoff.isPending }
+									onClick={ () => {
+										recordClick( 'request_handoff' );
+										requestHandoff();
+									} }
+								>
+									{ teamCapability
+										? __( 'Let our team finish your move' )
+										: __( 'Something not right? Let our team fix it' ) }
+								</Button>
+							) }
 						</>
 					}
 				>
-					{ sourceHost
-						? sprintf(
-								/* translators: %s: the domain of the site that was moved, e.g. example.com. */
-								__(
-									'%s is copied and running on WordPress.com. It stays private until you launch it.'
-								),
-								sourceHost
-							)
-						: __(
-								'Your site is copied and running on WordPress.com. It stays private until you launch it.'
-							) }
+					<VStack spacing={ 2 }>
+						<span>
+							{ sourceHost
+								? sprintf(
+										/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+										__(
+											'%s is copied and running on WordPress.com. It stays private until you launch it.'
+										),
+										sourceHost
+									)
+								: __(
+										'Your site is copied and running on WordPress.com. It stays private until you launch it.'
+									) }
+						</span>
+						{ teamCapability && (
+							<span>
+								{ teamCapabilityMessage( teamCapability, sourceHost || __( 'your old site' ) ) }
+							</span>
+						) }
+						{ handoff.isError && (
+							<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
+						) }
+						{ handoff.isSuccess && (
+							<span>
+								{ __( 'Our team has your move. We’ll email you to finish moving your site.' ) }
+							</span>
+						) }
+					</VStack>
 				</Notice>
 			) }
 		</>
