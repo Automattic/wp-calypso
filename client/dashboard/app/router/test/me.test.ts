@@ -7,7 +7,13 @@ import { createMemoryHistory, createRouter } from '@tanstack/react-router';
 import nock from 'nock';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import { APP_CONTEXT_DEFAULT_CONFIG, type AppConfig } from '../../context';
-import { createMeRoutes, meRoute, purchaseSettingsIndexRoute } from '../me';
+import {
+	appsRedirectRoute,
+	createMeRoutes,
+	getAppsRedirectRoute,
+	meRoute,
+	purchaseSettingsIndexRoute,
+} from '../me';
 import { rootRoute } from '../root';
 
 jest.mock( '../../../utils/is-dashboard-backport', () => ( {
@@ -222,3 +228,19 @@ test( 'redirects to reauthorize when the two-step session has expired', async ()
 		reloadDocument: true,
 	} );
 } );
+
+test.each( [ appsRedirectRoute, getAppsRedirectRoute ] )(
+	'redirects $options.path to the apps landing page',
+	( route ) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const beforeLoad = route.options.beforeLoad as any;
+
+		expect( () => beforeLoad() ).toThrow(
+			expect.objectContaining( {
+				isRedirect: true,
+				href: 'https://apps.wordpress.com/',
+				reloadDocument: true,
+			} )
+		);
+	}
+);

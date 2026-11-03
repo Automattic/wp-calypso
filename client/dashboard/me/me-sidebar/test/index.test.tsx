@@ -18,7 +18,7 @@ beforeEach( () => {
 	} as UserSettings );
 } );
 
-test( 'shows WordPress Agent separately from Apps', () => {
+test( 'does not show an Apps item', () => {
 	render( <MeSidebar />, {
 		queryClient,
 		config: {
@@ -34,5 +34,5 @@ test( 'shows WordPress Agent separately from Apps', () => {
 		'href',
 		'/me/agent'
 	);
-	expect( screen.getByRole( 'link', { name: 'Apps' } ) ).toHaveAttribute( 'href', '/me/apps' );
+	expect( screen.queryByRole( 'link', { name: 'Apps' } ) ).not.toBeInTheDocument();
 } );
