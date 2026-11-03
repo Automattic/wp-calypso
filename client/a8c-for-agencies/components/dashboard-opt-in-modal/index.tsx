@@ -98,11 +98,16 @@ export default function DashboardOptInModal( { onClose, source }: Props ) {
 				<img className="a4a-dashboard-opt-in-modal-drawing" src={ newDashboardDrawing } alt="" />
 				<VStack spacing={ 2 }>
 					<Heading level={ 2 } size={ 20 } weight={ 600 }>
-						{ __( 'Try the new dashboard' ) }
+						{ __( 'Enable the new dashboard' ) }
 					</Heading>
 					<Text>
 						{ __(
-							'Manage your sites, purchases, and earnings in one place. Your whole team moves with you, and you can switch back at any time from Agency > Dashboard.'
+							'The new dashboard comes to every agency in December, and you can start using it today. It’s faster, with improved navigation, easier site management, and simpler ways to track commissions and agency health.'
+						) }
+					</Text>
+					<Text>
+						{ __(
+							'When you opt in, all invited team members will gain access to the new dashboard. To switch back, open Agency in the sidebar and choose Classic dashboard.'
 						) }
 					</Text>
 				</VStack>
@@ -122,7 +127,7 @@ export default function DashboardOptInModal( { onClose, source }: Props ) {
 						disabled={ isPending }
 						__next40pxDefaultSize
 					>
-						{ __( 'Switch to the new dashboard' ) }
+						{ __( 'Enable the new dashboard' ) }
 					</Button>
 				</HStack>
 			</VStack>

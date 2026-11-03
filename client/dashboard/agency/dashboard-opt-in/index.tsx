@@ -26,9 +26,10 @@ import { Text } from '../../components/text';
 import { a4aLink } from '../../utils/link';
 import { isOnNewAgencyDashboard } from '../lib/dashboard-opt-in';
 import { OWNER_ROLE } from '../team/constants';
+import DashboardFeedbackCard from './feedback-card';
 
 /**
- * Agency > Dashboard: which dashboard the whole agency uses. Only the owner can change it,
+ * Agency > Classic dashboard: which dashboard the whole agency uses. Only the owner can change it,
  * and switching back asks first, since it moves everyone on the team.
  */
 export default function AgencyDashboardOptIn() {
@@ -95,7 +96,7 @@ export default function AgencyDashboardOptIn() {
 				);
 			},
 			onError: () => {
-				createErrorNotice( __( 'Failed to switch to the previous dashboard.' ), {
+				createErrorNotice( __( 'Failed to switch to the classic dashboard.' ), {
 					type: 'snackbar',
 				} );
 			},
@@ -119,7 +120,7 @@ export default function AgencyDashboardOptIn() {
 							<SectionHeader
 								title={ __( 'New dashboard' ) }
 								description={ __(
-									'The new dashboard brings your sites, purchases, and earnings together. Everyone on your team uses the dashboard you choose.'
+									'The new dashboard brings your sites, purchases, and earnings together. Everyone on your team uses the dashboard you choose. It comes to every agency in December, so take some time now to get to know it.'
 								) }
 								level={ 3 }
 							/>
@@ -134,9 +135,10 @@ export default function AgencyDashboardOptIn() {
 						</VStack>
 					</CardBody>
 				</Card>
+				{ isOptedIn && agency && <DashboardFeedbackCard agencyId={ agency.id } /> }
 				{ ! isOptedIn && (
 					<Notice
-						title={ __( 'Prefer the previous dashboard?' ) }
+						title={ __( 'Prefer the classic dashboard?' ) }
 						variant="info"
 						actions={
 							<Button
@@ -145,26 +147,24 @@ export default function AgencyDashboardOptIn() {
 								href={ previousDashboardUrl }
 								onClick={ () => recordTracksEvent( 'calypso_a4a_dashboard_opt_in_return_click' ) }
 							>
-								{ __( 'Go to the previous dashboard' ) }
+								{ __( 'Go to the classic dashboard' ) }
 							</Button>
 						}
 					>
-						{ __(
-							'Your team will use the previous dashboard until you turn the new one back on.'
-						) }
+						{ __( 'Your team will use the classic dashboard until you turn the new one back on.' ) }
 					</Notice>
 				) }
 			</VStack>
 			{ isConfirmOpen && (
 				<Modal
-					title={ __( 'Switch to the previous dashboard?' ) }
+					title={ __( 'Switch to the classic dashboard?' ) }
 					size="medium"
 					onRequestClose={ isSwitchingBack ? () => {} : handleCancelSwitchBack }
 				>
 					<VStack spacing={ 6 }>
 						<Text>
 							{ __(
-								'Your whole team will use the previous dashboard. You can turn the new one back on here at any time.'
+								'Your whole team will use the classic dashboard. You can turn the new one back on here at any time.'
 							) }
 						</Text>
 						<TextareaControl
@@ -192,7 +192,7 @@ export default function AgencyDashboardOptIn() {
 								isBusy={ isSwitchingBack }
 								disabled={ isSwitchingBack }
 							>
-								{ __( 'Switch to the previous dashboard' ) }
+								{ __( 'Switch to the classic dashboard' ) }
 							</Button>
 						</ButtonStack>
 					</VStack>

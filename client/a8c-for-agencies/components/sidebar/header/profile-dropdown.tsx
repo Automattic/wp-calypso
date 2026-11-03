@@ -1,5 +1,6 @@
 import { Button, Gravatar } from '@automattic/components';
 import { __experimentalText as Text } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -106,7 +107,10 @@ const DropdownMenu = ( { isExpanded, closeMenu }: DropdownMenuProps ) => {
 						onClick={ onDashboardOptIn }
 						href={ getDashboardOptInLink( 'profile-menu' ) }
 					>
-						{ translate( 'Switch to the new dashboard' ) }
+						<span className="a4a-sidebar__profile-dropdown-menu-item-label">
+							{ translate( 'Enable the new dashboard' ) }
+							<Badge intent="stable">{ translate( 'Beta' ) }</Badge>
+						</span>
 					</Button>
 				</li>
 			) }

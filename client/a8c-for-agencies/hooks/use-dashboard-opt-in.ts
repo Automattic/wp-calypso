@@ -2,6 +2,7 @@ import { agencyDashboardOptInMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useCallback } from 'react';
+import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import {
 	canSwitchAgencyDashboard,
 	isOnNewAgencyDashboard,
@@ -31,7 +32,18 @@ export default function useDashboardOptIn() {
 				window.location.href = buildDashboardLink( 'a4a', '/overview' );
 			},
 			onError: () => {
-				dispatch( errorNotice( __( 'Failed to switch to the new dashboard. Please try again.' ) ) );
+				dispatch(
+					errorNotice(
+						__(
+							'We couldn’t enable the new dashboard. Please try again, or contact support if it keeps happening.'
+						),
+						{
+							button: __( 'Contact support' ),
+							// Opens the "Send us an email" form, as the profile menu's Contact support does.
+							href: CONTACT_URL_HASH_FRAGMENT,
+						}
+					)
+				);
 			},
 		} );
 	}, [ dispatch, mutate ] );

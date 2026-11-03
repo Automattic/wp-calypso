@@ -18,7 +18,7 @@ const SEEN_PREFERENCE = 'a4a-dashboard-welcome-notice-seen';
 
 /**
  * The first visit after the agency switches, on whichever agency page they land on first,
- * since links from the previous dashboard forward to the matching page.
+ * since links from the classic dashboard forward to the matching page.
  */
 export function useWelcomeNoticeEligibility() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -64,7 +64,7 @@ export default function WelcomeNotice() {
 	return (
 		<Notice
 			variant="info"
-			title={ __( 'Welcome to the new dashboard' ) }
+			title={ __( 'Welcome to the new Automattic for Agencies experience' ) }
 			onClose={ handleDismiss }
 			actions={
 				<Button variant="primary" onClick={ handleTakeTour } __next40pxDefaultSize>
@@ -74,10 +74,10 @@ export default function WelcomeNotice() {
 		>
 			{ isOwner
 				? __(
-						'Your sites, purchases, and earnings are all here now. Plugins and Billing open in WordPress.com, and Amplify and Reports stay in the previous dashboard. You can switch back in Agency > Dashboard.'
+						'You’re getting an early look at the new dashboard before it comes to every agency in December. All the benefits of the program are now grouped to help you focus on clients, growing your business, and earning opportunities. To switch back, open Agency in the sidebar and choose Classic dashboard.'
 					)
 				: __(
-						'Your agency switched to the new dashboard. Plugins and Billing open in WordPress.com, and Amplify and Reports stay in the previous dashboard. Your agency owner can switch back in Agency > Dashboard.'
+						'Your agency owner turned on an early look at the new dashboard, which comes to every agency in December. All the benefits of the program are now grouped to help you focus on clients, growing your business, and earning opportunities. Your agency owner can switch back to the classic dashboard at any time.'
 					) }
 		</Notice>
 	);
