@@ -737,6 +737,7 @@ describe( 'Site Migration Flow', () => {
 							action: 'continue',
 							from: 'https://example.com',
 							platform,
+							staticSiteImportable: platform !== 'wordpress',
 						} )
 					);
 					const destination = new URL(
@@ -1504,14 +1505,15 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'unknown',
+								platform: 'wix',
+								staticSiteImportable: true,
 								from: 'https://site-to-be-migrated.com',
 							},
 						} );
 
 						expect( window.location.assign ).toMatchURL( {
 							path: '/setup/static-site-import/plans',
-							query: { from: 'https://site-to-be-migrated.com', platform: 'unknown' },
+							query: { from: 'https://site-to-be-migrated.com', platform: 'wix' },
 						} );
 					} );
 
@@ -1522,13 +1524,14 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'unknown',
+								platform: 'wix',
+								staticSiteImportable: true,
 								from: 'https://source.example.com',
 							},
 						} );
 						expect( window.location.assign ).toMatchURL( {
 							path: '/setup/static-site-import/plans/es',
-							query: { from: 'https://source.example.com', platform: 'unknown' },
+							query: { from: 'https://source.example.com', platform: 'wix' },
 						} );
 					} );
 
@@ -1537,7 +1540,8 @@ describe( 'Site Migration Flow', () => {
 							from: STEPS.SITE_MIGRATION_IDENTIFY,
 							dependencies: {
 								action: 'continue',
-								platform: 'unknown',
+								platform: 'wix',
+								staticSiteImportable: true,
 								from: 'https://site-to-be-migrated.com',
 							},
 							query: { siteId: 123, siteSlug: 'example.wordpress.com' },
@@ -1547,15 +1551,15 @@ describe( 'Site Migration Flow', () => {
 							path: '/setup/static-site-import/plans',
 							query: {
 								from: 'https://site-to-be-migrated.com',
-								platform: 'unknown',
+								platform: 'wix',
 								siteId: '123',
 								siteSlug: 'example.wordpress.com',
 							},
 						} );
 					} );
 
-					it.each( [ 'wix', 'squarespace' ] )(
-						'sends %s sources to static site import plans',
+					it.each( [ 'squarespace', 'medium', 'substack' ] )(
+						'sends importable %s sources to static site import plans',
 						( platform ) => {
 							runNavigation( {
 								from: STEPS.SITE_MIGRATION_IDENTIFY,
@@ -1563,6 +1567,7 @@ describe( 'Site Migration Flow', () => {
 									action: 'continue',
 									platform,
 									from: 'https://site-to-be-migrated.com',
+									staticSiteImportable: true,
 								},
 							} );
 
@@ -1574,24 +1579,27 @@ describe( 'Site Migration Flow', () => {
 					);
 
 					it.each( [
+						[ 'wix', 'importerWix' ],
 						[ 'medium', 'importerMedium' ],
-						[ 'substack', 'importerSubstack' ],
-					] )( 'keeps %s sources on their importer', ( platform, importerStep ) => {
-						runNavigation( {
-							from: STEPS.SITE_MIGRATION_IDENTIFY,
-							dependencies: {
-								action: 'continue',
-								platform,
-								from: 'https://site-to-be-migrated.com',
-							},
-							query: { siteId: 123, siteSlug: 'example.wordpress.com' },
-						} );
+					] )(
+						'keeps %s sources the analyzer cannot import on their importer',
+						( platform, importerStep ) => {
+							runNavigation( {
+								from: STEPS.SITE_MIGRATION_IDENTIFY,
+								dependencies: {
+									action: 'continue',
+									platform,
+									from: 'https://site-to-be-migrated.com',
+								},
+								query: { siteId: 123, siteSlug: 'example.wordpress.com' },
+							} );
 
-						expect( window.location.assign ).toMatchURL( {
-							path: `/setup/site-setup/${ importerStep }`,
-							query: { from: 'https://site-to-be-migrated.com' },
-						} );
-					} );
+							expect( window.location.assign ).toMatchURL( {
+								path: `/setup/site-setup/${ importerStep }`,
+								query: { from: 'https://site-to-be-migrated.com' },
+							} );
+						}
+					);
 
 					it( 'keeps WordPress sources in this flow', async () => {
 						const destination = runNavigation( {

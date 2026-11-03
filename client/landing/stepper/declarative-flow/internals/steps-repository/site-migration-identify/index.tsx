@@ -1,5 +1,6 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { Notice, VisuallyHidden } from '@wordpress/components';
 import clsx from 'clsx';
@@ -12,12 +13,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 type ConnectionIssue = 'unreachable';
@@ -257,17 +260,25 @@ const SiteMigrationIdentify: StepType< {
 				from?: string;
 				host?: string;
 				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
 		  }
 		| undefined;
-} > = function ( { navigation, flow, checkOnArrival = false } ) {
+} > = function ( { navigation, flow, stepName, checkOnArrival = false } ) {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
 		async (
 			action: SiteMigrationIdentifyAction,
-			data?: { platform: string; from: string; host?: string; isWpcom?: boolean }
+			data?: {
+				platform: string;
+				from: string;
+				host?: string;
+				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
+			}
 		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
@@ -303,7 +314,28 @@ const SiteMigrationIdentify: StepType< {
 	}, [] );
 
 	const isChecking = isReprintFlow && ! isVisible;
-	const goBack = isChecking || connectionIssue ? () => setSiteURL( '' ) : navigation?.goBack;
+	const contentRef = useRef< HTMLDivElement >( null );
+	const [ isReturningToAddress, setIsReturningToAddress ] = useState( false );
+	const changeAddress =
+		isChecking || connectionIssue
+			? () => {
+					setSiteURL( '' );
+					setIsReturningToAddress( true );
+				}
+			: undefined;
+
+	// Change address unmounts itself, so focus would drop to the page. Once the field is
+	// editable again, it takes the focus instead.
+	useEffect( () => {
+		if ( ! isReturningToAddress ) {
+			return;
+		}
+		const input = contentRef.current?.querySelector< HTMLInputElement >( 'input[type="text"]' );
+		if ( input && ! input.readOnly ) {
+			input.focus();
+			setIsReturningToAddress( false );
+		}
+	}, [ isReturningToAddress, siteURL, isVisible, connectionIssue ] );
 	let title = isManualWordPress
 		? translate( "Let's find your WordPress site" )
 		: translate( "Let's find your site" );
@@ -317,12 +349,16 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url, platform_data }, hostingProviderSlug ) =>
+			onComplete={ (
+				{ platform, url, platform_data, static_site_importable },
+				hostingProviderSlug
+			) =>
 				handleSubmit( 'continue', {
 					platform,
 					from: url,
 					host: hostingProviderSlug,
 					...( isReprintFlow && platform_data?.is_wpcom ? { isWpcom: true } : {} ),
+					...( static_site_importable ? { staticSiteImportable: true } : {} ),
 				} ).catch( () => setSiteURL( '' ) )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
@@ -361,17 +397,27 @@ const SiteMigrationIdentify: StepType< {
 					'site-migration-identify--reprint': isReprintFlow,
 					'site-migration-identify--connection-issue': !! connectionIssue,
 				} ) }
-				columnWidth={ connectionIssue ? 6 : 4 }
+				columnWidth={ 4 }
 				topBar={
-					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
-				}
-				heading={
-					isReprintFlow || isVisible ? (
-						<Step.Heading text={ title } subText={ subTitle } />
-					) : undefined
+					<Step.TopBar
+						logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+						onLogoClick={ () =>
+							recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+						}
+					/>
 				}
 			>
-				{ stepContent }
+				<div className="account-template" ref={ contentRef }>
+					{ ( isReprintFlow || isVisible ) && <Step.Heading text={ title } subText={ subTitle } /> }
+					{ stepContent }
+					{ changeAddress && (
+						<div className="account-template__secondary-actions">
+							<Step.LinkButton onClick={ changeAddress }>
+								{ translate( 'Change address' ) }
+							</Step.LinkButton>
+						</div>
+					) }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

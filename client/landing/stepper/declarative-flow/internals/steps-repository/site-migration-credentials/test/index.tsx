@@ -225,6 +225,17 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
+	it( 'links the logo to the homepage as its way out, without a Back button', () => {
+		render( { navigation: { goBack: jest.fn(), submit: jest.fn() } } );
+
+		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/'
+		);
+		expect( screen.queryByRole( 'button', { name: /Back/ } ) ).not.toBeInTheDocument();
+		expect( skipButton() ).toBeVisible();
+	} );
+
 	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
 		const submit = jest.fn();
 		const pendingPromise = new Promise( () => {} );
@@ -237,6 +248,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await waitFor( () => {
 			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
+		expect( continueButton( /Scanning site/ ) ).toBeDisabled();
 	} );
 
 	it( 'shows "Scanning site" on the Continue button during submission when fetching site info with application password', async () => {
@@ -258,6 +270,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await waitFor( () => {
 			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
+		expect( continueButton( /Scanning site/ ) ).toBeDisabled();
 	} );
 
 	it( 'submits credentials-required action when there is an error on to get the authorization path', async () => {

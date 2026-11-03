@@ -15,6 +15,7 @@ import { agencyTeamRoute, hasAnyCapability } from '../../app/router/agency';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { ApprovalGate, useIsApprovalGated } from '../approval-gate';
 import { MilestoneFeedbackModal, useMilestoneFeedback } from '../feedback';
 import { useTeamActions, type TeamActionRequest } from './dataviews/actions';
 import { DEFAULT_VIEW } from './dataviews/views';
@@ -57,6 +58,8 @@ export default function AgencyTeam() {
 
 	const [ activeRequest, setActiveRequest ] = useState< TeamActionRequest | null >( null );
 	const [ isInviteOpen, setIsInviteOpen ] = useState( false );
+	const isGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 	const [ invitedLogin, setInvitedLogin ] = useState< string | null >( null );
 	const { shouldAsk: shouldAskAboutInvite } = useMilestoneFeedback( 'team-member-invite-sent' );
 
@@ -95,6 +98,10 @@ export default function AgencyTeam() {
 								variant="primary"
 								__next40pxDefaultSize
 								onClick={ () => {
+									if ( isGated ) {
+										setIsGateOpen( true );
+										return;
+									}
 									recordTracksEvent( 'calypso_a4a_team_invite_team_member_click' );
 									setIsInviteOpen( true );
 								} }
@@ -122,6 +129,7 @@ export default function AgencyTeam() {
 					onClose={ () => setActiveRequest( null ) }
 				/>
 			) }
+			{ isGateOpen && <ApprovalGate kind="team" onClose={ () => setIsGateOpen( false ) } /> }
 			{ isInviteOpen && (
 				<InviteTeamMemberModal
 					agencyId={ agencyId }
