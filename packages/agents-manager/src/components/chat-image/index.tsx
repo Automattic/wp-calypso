@@ -2,7 +2,6 @@ import { useRefEffect } from '@wordpress/compose';
 import { createPortal, useState } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { Icon, close } from '@wordpress/icons';
-import clsx from 'clsx';
 import { useIsInsideLink } from '../../contexts/inside-link-context';
 import type { ImgHTMLAttributes, KeyboardEvent } from 'react';
 import './style.scss';
@@ -19,7 +18,6 @@ interface ChatImageLightboxProps {
  */
 function ChatImageLightbox( { src, alt, onClose }: ChatImageLightboxProps ) {
 	const showModalRef = useRefEffect< HTMLDialogElement >( ( dialog ) => dialog.showModal(), [] );
-	const [ isTall, setIsTall ] = useState( false );
 
 	// The chat closes on any Escape left unprevented, so this closes only the lightbox.
 	const handleKeyDown = ( event: KeyboardEvent< HTMLDialogElement > ) => {
@@ -34,21 +32,13 @@ function ChatImageLightbox( { src, alt, onClose }: ChatImageLightboxProps ) {
 		// eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions
 		<dialog
 			ref={ showModalRef }
-			className={ clsx( 'agents-manager-chat-image__lightbox', {
-				'agents-manager-chat-image__lightbox--tall': isTall,
-			} ) }
+			className="agents-manager-chat-image__lightbox"
 			aria-label={ alt || __( 'Image', __i18n_text_domain__ ) }
 			onClose={ onClose }
 			onClick={ ( event ) => event.currentTarget.close() }
 			onKeyDown={ handleKeyDown }
 		>
-			<img
-				src={ src }
-				alt={ alt }
-				onLoad={ ( event ) =>
-					setIsTall( event.currentTarget.naturalHeight > event.currentTarget.naturalWidth )
-				}
-			/>
+			<img src={ src } alt={ alt } />
 			<button
 				type="button"
 				className="agents-manager-chat-image__close"

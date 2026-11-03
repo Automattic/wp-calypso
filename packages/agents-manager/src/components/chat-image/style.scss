@@ -50,17 +50,13 @@ html:has( .agents-manager-chat-image__lightbox[open] ) {
 		background: rgba( $black, 0.8 );
 	}
 
+	// The whole image fits the screen, and is never enlarged.
 	img {
 		display: block;
 		max-width: 90vw;
 		// `dvh` keeps it clear of mobile toolbars.
 		max-height: 90dvh;
 		border-radius: $radius-large;
-	}
-
-	// A tall image keeps a readable width and scrolls.
-	&--tall img {
-		max-height: none;
 	}
 }
 
