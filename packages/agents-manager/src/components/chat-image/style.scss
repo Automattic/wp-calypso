@@ -1,7 +1,7 @@
 @use '@wordpress/base-styles/animations' as *;
 @use '../../styles/variables' as *;
 
-// Lets a preview size itself to the visible conversation (`cqh`).
+// Lets a preview size to the visible chat.
 .agents-manager-chat [data-slot='messages'] {
 	container-type: size;
 }
@@ -18,7 +18,7 @@
 
 	img {
 		display: block;
-		// It grows with the chat, but leaves room for the conversation, even in a tall chat.
+		// Grows with the chat, but leaves room for the conversation.
 		/* stylelint-disable-next-line unit-allowed-list -- The allow-list predates container units. */
 		max-height: min( 75cqh, 50dvh );
 		border-radius: inherit;
