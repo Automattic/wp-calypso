@@ -211,6 +211,23 @@ describe( 'DomainConnectionVerification', () => {
 			expect( badgeElements.length ).toBeGreaterThan( 0 );
 			expect( badgeElements[ 0 ] ).toBeVisible();
 		} );
+
+		test.each( [
+			[ 'connected', true ],
+			[ 'verifying', false ],
+		] )( 'does not show a progress bar when the domain is %s', ( _status, isConnected ) => {
+			render(
+				<DomainConnectionVerification
+					{ ...defaultProps }
+					domainMappingStatus={ createMockDomainMappingStatus( {
+						has_wpcom_ip_addresses: isConnected,
+						resolves_to_wpcom: isConnected,
+					} ) }
+				/>
+			);
+
+			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+		} );
 	} );
 
 	describe( 'Help Section', () => {
