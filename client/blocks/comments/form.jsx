@@ -22,7 +22,7 @@ import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
 import CommentBlockEditor from './comment-block-editor';
 import { CommentEditorContext } from './comment-editor-context';
-import { loadCommentEditor } from './load-comment-editor';
+import { isBlockMarkup, loadCommentEditor } from './load-comment-editor';
 import { usePageSettled } from './use-page-settled';
 
 const noop = () => {};
@@ -89,8 +89,21 @@ class PostCommentForm extends Component {
 		}
 
 		this.resetCommentText();
-		this.setState( ( { editorKey } ) => ( { haveFocus: false, editorKey: editorKey + 1 } ) );
+		this.resetEditor();
 	};
+
+	// A fresh editor, or the textarea again outside the inbox: the editor keeps its own content once mounted.
+	resetEditor( callback ) {
+		this.setState(
+			( { editorKey } ) => ( {
+				haveFocus: false,
+				editorOpen: false,
+				editorClosing: false,
+				editorKey: editorKey + 1,
+			} ),
+			callback
+		);
+	}
 
 	handleKeyDown = ( event ) => {
 		// Use Ctrl+Enter to submit comment
@@ -99,20 +112,19 @@ class PostCommentForm extends Component {
 			this.handleSubmit( event );
 		}
 
-		// Escape closes an empty editor, as clicking away does, unless it's closing one of the
-		// editor's menus. Focus goes back to the textarea, so the keyboard doesn't lose its place.
-		if (
-			event.keyCode === 27 &&
-			this.state.editorOpen &&
-			this.canCloseEditor() &&
-			! event.target.closest?.( '.components-popover' )
-		) {
-			this.escaped = true;
-			this.setState( { editorClosing: true } );
-		}
-
-		// Use ESC to remove the erroneous comment placeholder and just start over
 		if ( event.keyCode === 27 ) {
+			// Escape closes an empty editor, as clicking away does, unless it's closing one of the
+			// editor's menus. Focus goes back to the textarea, so the keyboard doesn't lose its place.
+			if (
+				this.state.editorOpen &&
+				this.canCloseEditor() &&
+				! event.target.closest?.( '.components-popover' )
+			) {
+				this.escaped = true;
+				this.setState( { editorClosing: true } );
+			}
+
+			// Use ESC to remove the erroneous comment placeholder and just start over
 			if ( this.props.placeholderId ) {
 				// sync the text to the upper level so it won't be lost
 				this.props.onUpdateCommentText( this.getCommentText() );
@@ -155,7 +167,7 @@ class PostCommentForm extends Component {
 		this.setState( { editorFailed: true } );
 		// The textarea cannot show block markup, so it gets the words instead.
 		const text = this.getCommentText();
-		if ( text.includes( '<!-- wp:' ) ) {
+		if ( isBlockMarkup( text ) ) {
 			this.props.onUpdateCommentText( blocksToText( text ) );
 		}
 	};
@@ -176,29 +188,21 @@ class PostCommentForm extends Component {
 	};
 
 	handleEditorClosed = () => {
-		this.setState(
-			( { editorKey } ) => ( {
-				haveFocus: false,
-				editorOpen: false,
-				editorClosing: false,
-				editorKey: editorKey + 1,
-			} ),
-			() => {
-				if ( this.escaped ) {
-					// Straight to its focused border, not a fade in from the unfocused one.
-					const textarea = this.form.current?.querySelector( 'textarea' );
-					if ( textarea ) {
-						textarea.style.transition = 'none';
-						textarea.focus();
-						// Two frames: the focused border has been drawn by the second.
-						requestAnimationFrame( () =>
-							requestAnimationFrame( () => ( textarea.style.transition = '' ) )
-						);
-					}
-					this.escaped = false;
+		this.resetEditor( () => {
+			if ( this.escaped ) {
+				// Straight to its focused border, not a fade in from the unfocused one.
+				const textarea = this.form.current?.querySelector( 'textarea' );
+				if ( textarea ) {
+					textarea.style.transition = 'none';
+					textarea.focus();
+					// Two frames: the focused border has been drawn by the second.
+					requestAnimationFrame( () =>
+						requestAnimationFrame( () => ( textarea.style.transition = '' ) )
+					);
 				}
+				this.escaped = false;
 			}
-		);
+		} );
 	};
 
 	handleTextChange = ( event ) => {
@@ -276,12 +280,7 @@ class PostCommentForm extends Component {
 		);
 
 		this.resetCommentText();
-		this.setState( ( { editorKey } ) => ( {
-			haveFocus: false,
-			editorOpen: false,
-			editorClosing: false,
-			editorKey: editorKey + 1,
-		} ) );
+		this.resetEditor();
 
 		// Resets the active reply comment in PostCommentList
 		this.props.onCommentSubmit();
@@ -300,7 +299,7 @@ class PostCommentForm extends Component {
 
 	hasCommentText() {
 		const text = this.getCommentText();
-		return text.includes( '<!-- wp:' ) ? hasBlockContent( text ) : text.trim().length > 0;
+		return isBlockMarkup( text ) ? hasBlockContent( text ) : text.trim().length > 0;
 	}
 
 	render() {
@@ -334,18 +333,16 @@ class PostCommentForm extends Component {
 
 		const isReply = !! this.props.parentCommentId;
 		const { composer } = this.props;
+		const hasText = this.hasCommentText();
 		const showEditor =
 			this.props.editorSettings &&
 			! this.state.editorFailed &&
-			( composer ||
-				isReply ||
-				this.state.editorOpen ||
-				this.getCommentText().includes( '<!-- wp:' ) );
+			( composer || isReply || this.state.editorOpen || isBlockMarkup( this.getCommentText() ) );
 
 		// Under the editor, Send shows once there's something to send.
 		const buttonClasses = clsx( {
-			'is-active': this.hasCommentText(),
-			'is-visible': this.hasCommentText() || ( this.state.haveFocus && ! showEditor ),
+			'is-active': hasText,
+			'is-visible': hasText || ( this.state.haveFocus && ! showEditor ),
 			'is-reserved': showEditor,
 		} );
 		let submitLabel = translate( 'Send' );
@@ -376,7 +373,7 @@ class PostCommentForm extends Component {
 				onPointerEnter={ this.props.onIntent }
 				onFocus={ this.props.onIntent }
 			>
-				<ProtectFormGuard isChanged={ this.hasCommentText() } />
+				<ProtectFormGuard isChanged={ hasText } />
 				<FormFieldset>
 					{ composer ? (
 						<div className="comments__form-author">
@@ -397,7 +394,7 @@ class PostCommentForm extends Component {
 							// Settings that arrive after a focus keep it.
 							takeFocus={ isReply || this.state.haveFocus }
 							pinToolbar={ composer }
-							openFrom={ composer ? undefined : this.state.openFrom }
+							openFrom={ this.state.openFrom }
 							closing={ this.state.editorClosing }
 							onClosed={ this.handleEditorClosed }
 							onChange={ this.updateCommentText }
@@ -427,7 +424,7 @@ class PostCommentForm extends Component {
 									__next40pxDefaultSize
 									variant="tertiary"
 									// A reply closes; a root composer only has a draft to discard.
-									disabled={ ! isReply && ! this.hasCommentText() }
+									disabled={ ! isReply && ! hasText }
 									onClick={ this.handleCancel }
 								>
 									{ translate( 'Cancel' ) }
@@ -436,7 +433,7 @@ class PostCommentForm extends Component {
 							<WPButton
 								__next40pxDefaultSize
 								variant="primary"
-								disabled={ ! this.hasCommentText() }
+								disabled={ ! hasText }
 								onClick={ this.handleSubmit }
 							>
 								{ submitLabel }
@@ -445,7 +442,7 @@ class PostCommentForm extends Component {
 					) : (
 						<Button
 							className={ buttonClasses }
-							disabled={ ! this.hasCommentText() }
+							disabled={ ! hasText }
 							onClick={ this.handleSubmit }
 						>
 							{ submitLabel }
@@ -505,18 +502,21 @@ const withCommentsEditorSettings = ( WrappedComponent ) => {
 	const WithCommentsEditorSettings = ( props ) => {
 		const blockEditor = useContext( CommentEditorContext );
 		const settled = usePageSettled();
-		const quiet = usePageSettled( FALLBACK_PRELOAD_DELAY );
 		// A pointer over the form, or focus in it: a writer on their way in.
 		const [ wanted, setWanted ] = useState( false );
 		const { data } = useQuery( { ...commentsEditorQuery(), enabled: settled || wanted } );
 
 		// The editor downloads ahead of the first focus, so it's ready when someone clicks in.
-		const preload = !! data && ( wanted || ( quiet && ! isConstrainedConnection() ) );
 		useEffect( () => {
-			if ( preload ) {
-				loadCommentEditor( data ).catch( noop );
+			if ( ! data || ( ! wanted && isConstrainedConnection() ) ) {
+				return;
 			}
-		}, [ preload, data ] );
+			const timer = setTimeout(
+				() => loadCommentEditor( data ).catch( noop ),
+				wanted ? 0 : FALLBACK_PRELOAD_DELAY
+			);
+			return () => clearTimeout( timer );
+		}, [ data, wanted ] );
 
 		return (
 			<WrappedComponent

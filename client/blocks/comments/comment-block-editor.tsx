@@ -1,7 +1,8 @@
+import { useReducedMotion } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { commentEmbedUrl, loadCommentEditor } from './load-comment-editor';
+import { commentEmbedUrl, isBlockMarkup, loadCommentEditor } from './load-comment-editor';
 import type { CommentsEditorSettings } from '@automattic/api-core';
 
 import './comment-block-editor.scss';
@@ -69,9 +70,10 @@ export default function CommentBlockEditor( {
 
 	// The form row's height, not the box's or its parts': the editor swaps in for its stand-in
 	// partway through, and the row's Send button shows on focus, so it slides in with the box.
+	const reduceMotion = useReducedMotion();
 	const row = () => box.current?.parentElement;
 	const resize = ( from: number, to: number, fill?: FillMode ) =>
-		! row()?.animate || window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches
+		! row()?.animate || reduceMotion
 			? null
 			: row()!.animate(
 					[
@@ -171,7 +173,7 @@ export default function CommentBlockEditor( {
 		document.addEventListener( 'pointerdown', pointerdown );
 
 		// A draft from the editor is block markup, which only the editor shows.
-		if ( latest.current.value.includes( '<!-- wp:' ) ) {
+		if ( isBlockMarkup( latest.current.value ) ) {
 			openEditor( false );
 		}
 
@@ -186,7 +188,7 @@ export default function CommentBlockEditor( {
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- set up once, with the draft of that moment.
 	}, [] );
 
-	const text = editor !== 'ready' && value.includes( '<!-- wp:' ) ? '' : value;
+	const text = editor !== 'ready' && isBlockMarkup( value ) ? '' : value;
 	// The loading copy animates its own dots, so it drops the translation's.
 	const prompt = placeholder.replace( /\s*(?:\.{3}|…+)$/u, '' );
 

@@ -4,6 +4,11 @@ $toolbar-height: 48px;
 $compact-toolbar-height: 32px;
 // The whole composer, toolbar included; past it the writing area scrolls.
 $composer-max-height: 400px;
+// How the toolbar opens and folds, besides when it shows.
+$toolbar-fold:
+	grid-template-rows 0.25s ease-in-out,
+	min-block-size 0.25s ease-in-out,
+	border-color 0.25s ease-in-out;
 
 // The box and type, which the editor's own styles read as variables.
 .comments__block-editor {
@@ -31,11 +36,7 @@ $composer-max-height: 400px;
 	min-block-size: 0;
 	padding-inline: 12px;
 	border-block-end: 1px solid transparent;
-	transition:
-		grid-template-rows 0.25s ease-in-out,
-		min-block-size 0.25s ease-in-out,
-		border-color 0.25s ease-in-out,
-		visibility 0s linear 0.25s;
+	transition: $toolbar-fold, visibility 0s linear 0.25s;
 }
 
 .comments__block-editor:not(.is-open) .comments__block-editor-toolbar {
@@ -48,24 +49,13 @@ $composer-max-height: 400px;
 	min-block-size: $toolbar-height + 1px;
 	visibility: visible;
 	border-block-end-color: var(--color-neutral-5);
-	transition:
-		grid-template-rows 0.25s ease-in-out,
-		min-block-size 0.25s ease-in-out,
-		border-color 0.25s ease-in-out,
-		visibility 0s;
+	transition: $toolbar-fold, visibility 0s;
 	animation: none;
 }
 
 // The inbox's composer has it from the start, so its box never grows.
 .comments__block-editor.has-pinned-toolbar.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
 	transition: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.comments__block-editor.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar,
-	.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
-		transition: none;
-	}
 }
 
 // The writing area, the same for the stand-in and the editor, so the swap doesn't move it.
@@ -109,12 +99,14 @@ $composer-max-height: 400px;
 	&.is-closing.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
 		border-block-end-width: 0;
 	}
+}
 
-	@media (prefers-reduced-motion: reduce) {
-		.comments__block-editor-textarea,
-		.jetpack-comments__editor .editor-styles-wrapper {
-			transition: none;
-		}
+@media (prefers-reduced-motion: reduce) {
+	.comments__block-editor.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar,
+	.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar,
+	.comments__block-editor:not(.has-pinned-toolbar) .comments__block-editor-textarea,
+	.comments__block-editor:not(.has-pinned-toolbar) .jetpack-comments__editor .editor-styles-wrapper {
+		transition: none;
 	}
 }
 
