@@ -755,6 +755,65 @@ const assertDefaultContext = ( { url, entry } ) => {
 			expect( request.context.commitChecksum ).toEqual( 'abcd0123' );
 		} );
 	} );
+
+	describe( 'with environment jetpack-cloud-production', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'jetpack-cloud-production' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
+		} );
+
+		describe( 'Route /manage/signup', () => {
+			it( 'redirects logged-out visitors to A4A signup before login', async () => {
+				const { response } = await customApp.run( { request: { url: '/manage/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects logged-in visitors too', async () => {
+				const { response } = await customApp.run( {
+					request: { url: '/manage/signup', cookies: { wordpress_logged_in: true } },
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects the legacy /agency/signup path', async () => {
+				const { response } = await customApp.run( { request: { url: '/agency/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'forwards acquisition params and drops everything else', async () => {
+				const { response } = await customApp.run( {
+					request: {
+						url: '/manage/signup',
+						query: { ref: 'agencies-lp', utm_source: 'newsletter', foo: 'bar' },
+					},
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=agencies-lp&utm_source=newsletter'
+				);
+			} );
+		} );
+	} );
 };
 
 const assertSection = ( { url, entry, sectionName, sectionGroup } ) => {

@@ -19,14 +19,18 @@ export interface StaticSiteImportSearch {
 }
 
 export interface StaticSiteImport {
-	status: 'moving' | 'finished' | 'failed';
+	/**
+	 * - moving: the move is running.
+	 * - finished / failed: the move itself reported that state.
+	 * - stalled: naming this site as the destination failed; asking again may work.
+	 * - unavailable: this move can't be read for this viewer (another account's move,
+	 *   a wrong or expired link). It isn't a failed move.
+	 */
+	status: 'moving' | 'finished' | 'failed' | 'stalled' | 'unavailable';
 	session?: StaticSiteImportSession;
-	errorCode?: string;
 	/** A site check refused the built site, so no other route applies. */
 	isRefused?: boolean;
-	/** The session is gone, so the source has to be read again. */
-	needsRestart: boolean;
-	/** Set when starting the move failed and it's worth asking again. */
+	/** Set when the move is stalled: asks again to name this site as the destination. */
 	retry?: () => void;
 }
 
@@ -77,44 +81,39 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		return null;
 	}
 
-	const errorCode =
-		getStaticSiteImportErrorCode( approveError ) ?? getStaticSiteImportErrorCode( sessionError );
-	const isRefused = session?.receipt?.code === 'static_site_capture_blocked';
-	const needsRestart =
-		! isRefused &&
-		( errorCode === 'static_site_import_session_not_found' ||
-			( session?.state === 'failed' && ! session.site_url ) );
-	const approveFailed =
-		Boolean( approveError ) &&
-		errorCode !== 'static_site_import_session_already_approved' &&
-		errorCode !== 'static_site_import_session_approval_in_progress';
-	const hasFailed =
-		needsRestart ||
-		approveFailed ||
-		session?.state === 'failed' ||
-		isPermanentStaticSiteImportError( sessionError );
-
-	if ( hasFailed ) {
+	// Only the move's own state decides finished or failed, so a passing error can't
+	// make a move that's still running look final.
+	if ( session?.state === 'failed' ) {
 		return {
 			status: 'failed',
 			session,
-			errorCode,
-			isRefused,
-			needsRestart,
-			retry:
-				approveFailed && ! needsRestart
-					? () => {
-							resetApprove();
-							hasRequestedApproval.current = false;
-							refetch();
-						}
-					: undefined,
+			isRefused: session.receipt?.code === 'static_site_capture_blocked',
+		};
+	}
+	if ( session?.state === 'finished' ) {
+		return { status: 'finished', session };
+	}
+	if ( ! session && isPermanentStaticSiteImportError( sessionError ) ) {
+		return { status: 'unavailable' };
+	}
+
+	const approveErrorCode = getStaticSiteImportErrorCode( approveError );
+	const isStalled =
+		Boolean( approveError ) &&
+		! session?.site_url &&
+		approveErrorCode !== 'static_site_import_session_already_approved' &&
+		approveErrorCode !== 'static_site_import_session_approval_in_progress';
+	if ( isStalled ) {
+		return {
+			status: 'stalled',
+			session,
+			retry: () => {
+				resetApprove();
+				hasRequestedApproval.current = false;
+				refetch();
+			},
 		};
 	}
 
-	return {
-		status: session?.state === 'finished' ? 'finished' : 'moving',
-		session,
-		needsRestart: false,
-	};
+	return { status: 'moving', session };
 }

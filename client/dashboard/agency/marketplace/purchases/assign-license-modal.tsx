@@ -5,6 +5,7 @@ import {
 } from '@automattic/api-queries';
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
+import { speak } from '@wordpress/a11y';
 import {
 	Button,
 	RadioControl,
@@ -17,13 +18,16 @@ import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { ButtonStack } from '../../../components/button-stack';
 import { DataViews, DataViewsCard } from '../../../components/dataviews';
+import InlineSupportLink from '../../../components/inline-support-link';
+import Notice from '../../../components/notice';
 import { formatDate, parseDateAsUTC } from '../../../utils/datetime';
+import { openWooDownload } from './woo-download/store';
 import type { AgencySite } from '@automattic/api-core';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -32,8 +36,27 @@ import './style.scss';
 // Few enough rows that the modal fits on a laptop screen without scrolling.
 const SITES_PER_PAGE = 5;
 
-const CONNECT_USER_HELP_URL =
-	'https://agencieshelp.automattic.com/knowledge-base/invite-and-manage-team-members/#limitations-for-the-team-member-role';
+// Both guides explain that the agency owner must be a connected admin on the site.
+const ASSIGN_JETPACK_HELP_URL =
+	'https://agencieshelp.automattic.com/knowledge-base/assign-a-jetpack-plugin-to-a-site/';
+const ASSIGN_WOOCOMMERCE_HELP_URL =
+	'https://agencieshelp.automattic.com/knowledge-base/assign-a-woocommerce-extension-to-a-site/';
+
+// The WooCommerce.com connection screen; it also lists the store's WooCommerce.com subscriptions.
+const WOOCOMMERCE_CONNECT_PATH = '/wp-admin/admin.php?page=wc-addons&section=helper';
+const WOOCOMMERCE_INSTALL_PATH = '/wp-admin/plugin-install.php?s=woocommerce&tab=search&type=term';
+
+type AssignError = 'user-not-connected' | 'woocommerce-not-installed' | 'woocommerce-not-connected';
+
+const getAssignErrorTitle = ( error: AssignError ) =>
+	( {
+		'user-not-connected': __( 'You’re not connected to this site' ),
+		'woocommerce-not-installed': __( 'WooCommerce isn’t installed' ),
+		'woocommerce-not-connected': __( 'Store isn’t connected to WooCommerce.com' ),
+	} )[ error ];
+
+const getSiteUrl = ( site: AgencySite ) =>
+	( site.url_with_scheme ?? `https://${ site.url }` ).replace( /\/$/, '' );
 
 const DEFAULT_SITES_VIEW: View = {
 	type: 'table',
@@ -71,8 +94,20 @@ export default function AssignLicenseModal( {
 	const agencyId = agency?.id;
 	const [ view, setView ] = useState< View >( DEFAULT_SITES_VIEW );
 	const [ selectedSite, setSelectedSite ] = useState< AgencySite | null >( null );
+	const [ assignError, setAssignError ] = useState< AssignError | null >( null );
+	const errorRef = useRef< HTMLDivElement >( null );
+
+	// The error sits above the site list, out of view once the modal is scrolled to its buttons.
+	useEffect( () => {
+		if ( assignError ) {
+			errorRef.current?.scrollIntoView( { block: 'start', behavior: 'smooth' } );
+			// The notice itself isn't announced, unlike the snackbars it replaces.
+			speak( getAssignErrorTitle( assignError ), 'assertive' );
+		}
+	}, [ assignError ] );
 	// Jetpack Backup and Scan can't be assigned to a multisite.
 	const isMultisiteAssignable = ! /^jetpack-(backup|scan)/.test( licenseKey );
+	const isWooExtension = licenseKey.startsWith( 'woocommerce' );
 
 	const { data, isLoading, isPlaceholderData } = useQuery( {
 		...paginatedAgencySitesQuery(
@@ -92,6 +127,11 @@ export default function AssignLicenseModal( {
 	const sites = data?.sites ?? [];
 	const totalItems = data?.total ?? 0;
 
+	const selectSite = useCallback( ( site: AgencySite ) => {
+		setSelectedSite( site );
+		setAssignError( null );
+	}, [] );
+
 	const fields = useMemo< Field< AgencySite >[] >(
 		() => [
 			{
@@ -107,23 +147,34 @@ export default function AssignLicenseModal( {
 						hideLabelFromVision
 						selected={ selectedSite?.blog_id === item.blog_id ? String( item.blog_id ) : '' }
 						options={ [ { label: item.url, value: String( item.blog_id ) } ] }
-						onChange={ () => setSelectedSite( item ) }
+						onChange={ () => selectSite( item ) }
 					/>
 				),
 			},
 		],
-		[ selectedSite ]
+		[ selectedSite, selectSite ]
 	);
 
 	const handleAssign = () => {
 		if ( ! selectedSite ) {
 			return;
 		}
+		setAssignError( null );
 		recordTracksEvent( 'calypso_a4a_license_list_assign_license_click' );
 		assign.mutate(
 			{ licenseKey, siteId: selectedSite.blog_id },
 			{
 				onSuccess: () => {
+					if ( isWooExtension ) {
+						closeModal?.();
+						openWooDownload( {
+							licenseKey,
+							productName,
+							siteUrl: selectedSite.url,
+							onClose: onAssigned,
+						} );
+						return;
+					}
 					createSuccessNotice(
 						sprintf(
 							/* translators: %1$s is the product name, %2$s is the site URL. */
@@ -138,18 +189,21 @@ export default function AssignLicenseModal( {
 				},
 				onError: ( error: Error & { code?: string } ) => {
 					if ( error.code === 'partner_not_connected_to_site' ) {
-						createErrorNotice(
-							sprintf(
-								/* translators: %s is the WordPress.com username of the current user. */
-								__( 'Connect your WordPress.com user (%s) as a site admin to continue.' ),
-								user?.display_name ?? ''
-							),
-							{
-								type: 'snackbar',
-								// Keep it up until dismissed so the link stays reachable.
-								explicitDismiss: true,
-								actions: [ { label: __( 'How to connect' ), url: CONNECT_USER_HELP_URL } ],
-							}
+						setAssignError( 'user-not-connected' );
+						return;
+					}
+					// Woo extensions only provision on a store that runs WooCommerce and is
+					// connected to WooCommerce.com, which a Jetpack connection doesn't cover.
+					if (
+						isWooExtension &&
+						/provision|woocommerce/i.test( `${ error.code ?? '' } ${ error.message }` )
+					) {
+						// The API only says why in the message: the store isn't connected to
+						// WooCommerce.com, or (otherwise) WooCommerce isn't there to provision on.
+						setAssignError(
+							/woocommerce\.com/i.test( error.message )
+								? 'woocommerce-not-connected'
+								: 'woocommerce-not-installed'
 						);
 						return;
 					}
@@ -161,6 +215,8 @@ export default function AssignLicenseModal( {
 			}
 		);
 	};
+
+	const errorSiteUrl = selectedSite ? getSiteUrl( selectedSite ) : '';
 
 	return (
 		<VStack spacing={ 6 }>
@@ -194,6 +250,94 @@ export default function AssignLicenseModal( {
 					</Text>
 				) }
 			</VStack>
+			{ assignError === 'woocommerce-not-installed' && (
+				<Notice
+					ref={ errorRef }
+					variant="error"
+					title={ getAssignErrorTitle( 'woocommerce-not-installed' ) }
+					actions={
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							href={ errorSiteUrl + WOOCOMMERCE_INSTALL_PATH }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () =>
+								recordTracksEvent( 'calypso_a4a_license_assign_woocommerce_install_click' )
+							}
+						>
+							{ __( 'Install WooCommerce' ) }
+						</Button>
+					}
+				>
+					{ sprintf(
+						/* translators: %1$s is the product name, %2$s is the site URL. */
+						__(
+							'%1$s needs WooCommerce. Install and activate WooCommerce on %2$s, then try again.'
+						),
+						productName,
+						selectedSite?.url ?? ''
+					) }
+				</Notice>
+			) }
+			{ assignError === 'user-not-connected' && (
+				<Notice
+					ref={ errorRef }
+					variant="error"
+					title={ getAssignErrorTitle( 'user-not-connected' ) }
+				>
+					{ createInterpolateElement(
+						__(
+							'Connect your WordPress.com user (<username/>) as an admin on <site/>, then try again. <a>How to connect</a>'
+						),
+						{
+							username: <>{ user?.display_name }</>,
+							site: <>{ selectedSite?.url }</>,
+							a: (
+								<InlineSupportLink
+									supportLink={
+										isWooExtension ? ASSIGN_WOOCOMMERCE_HELP_URL : ASSIGN_JETPACK_HELP_URL
+									}
+									forceOpenInHelpCenter
+									onClick={ () =>
+										recordTracksEvent( 'calypso_a4a_license_assign_connect_help_click' )
+									}
+								/>
+							),
+						}
+					) }
+				</Notice>
+			) }
+			{ assignError === 'woocommerce-not-connected' && (
+				<Notice
+					ref={ errorRef }
+					variant="error"
+					title={ getAssignErrorTitle( 'woocommerce-not-connected' ) }
+					actions={
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							href={ errorSiteUrl + WOOCOMMERCE_CONNECT_PATH }
+							target="_blank"
+							rel="noopener noreferrer"
+							onClick={ () =>
+								recordTracksEvent( 'calypso_a4a_license_assign_woocommerce_connect_click' )
+							}
+						>
+							{ __( 'Connect to WooCommerce.com' ) }
+						</Button>
+					}
+				>
+					{ sprintf(
+						/* translators: %1$s is the product name, %2$s is the site URL. */
+						__(
+							'%1$s can only be assigned to a store connected to WooCommerce.com. Connect %2$s, then try again.'
+						),
+						productName,
+						selectedSite?.url ?? ''
+					) }
+				</Notice>
+			) }
 			<VStack spacing={ 3 }>
 				<VStack spacing={ 1 }>
 					<Heading level={ 2 } size={ 15 } weight={ 500 }>
@@ -217,7 +361,7 @@ export default function AssignLicenseModal( {
 							onChangeView={ setView }
 							getItemId={ ( item ) => String( item.blog_id ) }
 							isItemClickable={ () => true }
-							onClickItem={ setSelectedSite }
+							onClickItem={ selectSite }
 							isLoading={ isLoading }
 							isPlaceholderData={ isPlaceholderData }
 							paginationInfo={ {
