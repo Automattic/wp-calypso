@@ -10,10 +10,11 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
+import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { Icon, info, check } from '@wordpress/icons';
-import { useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useMemo, useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
@@ -22,6 +23,8 @@ import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/u
 import { isCustomDomainEmail } from './email-utils';
 import { useIsEmailWritePending } from './use-email-write-pending';
 import type { UserSettings } from '@automattic/api-core';
+import type { DataFormControlProps, Field, Form } from '@wordpress/dataviews';
+import type { ReactNode } from 'react';
 import './style.scss';
 
 interface EmailSectionProps {
@@ -32,6 +35,48 @@ interface EmailSectionProps {
 	isEmailVerified: boolean;
 	onValidationChange?: ( isValid: boolean ) => void;
 }
+
+type EmailFormData = { user_email: string };
+
+const EmailFieldContext = createContext< {
+	help: ReactNode;
+	className: string;
+	disabled: boolean;
+} >( { help: null, className: '', disabled: false } );
+
+// Defined at module level so DataForm gets a stable component and the input keeps focus while typing.
+function EmailEdit( { data, field, onChange }: DataFormControlProps< EmailFormData > ) {
+	const { help, className, disabled } = useContext( EmailFieldContext );
+	return (
+		<InputControl
+			__next40pxDefaultSize
+			id="email-input"
+			type="text"
+			label={ field.label }
+			value={ data.user_email }
+			onChange={ ( newValue?: string ) => onChange( { user_email: newValue ?? '' } ) }
+			autoComplete="email"
+			disabled={ disabled }
+			className={ className }
+			help={ help }
+			aria-describedby={ help ? 'email-help' : undefined }
+		/>
+	);
+}
+
+const emailFields: Field< EmailFormData >[] = [
+	{
+		id: 'user_email',
+		label: __( 'Email address' ),
+		type: 'text',
+		Edit: EmailEdit,
+	},
+];
+
+const emailForm: Form = {
+	layout: { type: 'regular' },
+	fields: [ 'user_email' ],
+};
 
 type EmailValidationState = 'valid' | 'invalid' | 'unknown_tld' | null;
 
@@ -237,21 +282,24 @@ export default function EmailSection( {
 		isEmailWritePending,
 	] );
 
+	const formData = useMemo( () => ( { user_email: value } ), [ value ] );
+	const help = getHelpText();
+	const className = getValidationClass();
+	const fieldContext = useMemo(
+		() => ( { help, className, disabled: disabled || !! isEmailPending } ),
+		[ help, className, disabled, isEmailPending ]
+	);
+
 	return (
 		<VStack spacing={ 4 }>
-			<InputControl
-				__next40pxDefaultSize
-				id="email-input"
-				type="text"
-				label={ __( 'Email address' ) }
-				value={ value }
-				onChange={ ( newValue ) => onChange( newValue ?? '' ) }
-				autoComplete="email"
-				disabled={ disabled || isEmailPending }
-				className={ getValidationClass() }
-				help={ getHelpText() }
-				aria-describedby={ getHelpText() ? 'email-help' : undefined }
-			/>
+			<EmailFieldContext.Provider value={ fieldContext }>
+				<DataForm< EmailFormData >
+					data={ formData }
+					fields={ emailFields }
+					form={ emailForm }
+					onChange={ ( edits ) => onChange( edits.user_email ?? '' ) }
+				/>
+			</EmailFieldContext.Provider>
 			{ showCustomDomainWarning && (
 				<Notice
 					variant="warning"
