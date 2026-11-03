@@ -1,12 +1,10 @@
 @use '@wordpress/base-styles/animations' as *;
 @use '../../styles/variables' as *;
 
-// The most a preview grows to in a large chat.
-$chat-image-preview-max-size: 400px;
-
 .agents-manager-chat-image {
 	display: block;
-	max-width: min( 100%, $chat-image-preview-max-size );
+	// Fills the message, up to 400px wide in a large chat.
+	max-width: min( 100%, 400px );
 	padding: 0;
 	border: 0;
 	border-radius: var( --radius-sm );
@@ -18,8 +16,6 @@ $chat-image-preview-max-size: 400px;
 
 	img {
 		display: block;
-		// A tall image scales down to fit, so nothing is cut.
-		max-height: $chat-image-preview-max-size;
 		border-radius: inherit;
 	}
 
