@@ -1,9 +1,15 @@
 import { mkdir, writeFile } from 'fs/promises';
 import path from 'path';
-import { DataHelper, LoggedOutHomePage } from '@automattic/calypso-e2e';
+import {
+	DataHelper,
+	LoggedOutHomePage,
+	NewSiteResponse,
+	NewUserResponse,
+	RestAPIClient,
+} from '@automattic/calypso-e2e';
 import { FiltersEngine, Request, fromPlaywrightDetails } from '@ghostery/adblocker-playwright';
 import { expect, tags, test } from '../../lib/pw-base';
-import { swapBaseUrl } from '../shared';
+import { apiCloseAccount, apiDeleteSite, recordAccountLeakMarker, swapBaseUrl } from '../shared';
 import type { APIRequestContext } from '@playwright/test';
 
 /**
@@ -32,7 +38,7 @@ const KNOWN_BLOCKED_URL = 'https://example.com/cookie-banner.js';
 
 const CALYPSO_SCRIPT_OR_STYLESHEET = /\/calypso\/[^?#]*\.(?:js|css)(?:[?#]|$)/;
 
-const ONBOARDING_PATH = /\/setup\/onboarding(?:[/?#]|$)/;
+const SIGNUP_JOURNEY_PATH = /\/(?:setup\/onboarding|checkout)(?:[/?#]|$)/;
 
 const CALYPSO_STACK_FRAME = /\/calypso\/[^\s)]*\.js/;
 
@@ -42,9 +48,14 @@ const CALYPSO_STACK_FRAME = /\/calypso\/[^\s)]*\.js/;
  */
 const FAILED_SCRIPT_LOAD = /^Failed to load script "([^"]+)"/;
 
-function isBlockedScriptLoad( error: string, blockedUrls: string[], pageUrl: string ): boolean {
-	const src = FAILED_SCRIPT_LOAD.exec( error )?.[ 1 ];
-	return !! src && blockedUrls.includes( new URL( src, pageUrl ).href );
+interface PageError {
+	message: string;
+	pageUrl: string;
+}
+
+function isBlockedScriptLoad( error: PageError, blockedUrls: string[] ): boolean {
+	const src = FAILED_SCRIPT_LOAD.exec( error.message )?.[ 1 ];
+	return !! src && blockedUrls.includes( new URL( src, error.pageUrl ).href );
 }
 
 /**
@@ -113,22 +124,66 @@ async function fetchServedCommit( request: APIRequestContext, baseUrl: string ):
 }
 
 /**
- * A visitor whose browser runs a content blocker must still get a usable signup
- * step from the homepage's primary call to action. Blocked chunks must not blank
- * the page, and no Calypso script or stylesheet may match the lists at all.
+ * A visitor whose browser runs a content blocker must still be able to go from the
+ * homepage's primary call to action through signup to a checkout they can pay at.
+ * Blocked chunks must not blank a step, and no Calypso script or stylesheet may match
+ * the lists at all.
  */
 test.describe(
 	DataHelper.createSuiteTitle( 'Signup: Logged-out homepage with a content blocker' ),
 	{ tag: [ tags.CONTENT_BLOCKER ] },
 	() => {
-		test( 'As a logged-out visitor with a content blocker, I can reach a usable signup step from the homepage', async ( {
+		const planName = 'Personal';
+		const testUser = DataHelper.getNewTestUser();
+		let signupAttempted = false;
+		let newUserDetails: NewUserResponse | undefined;
+		let newSiteDetails: NewSiteResponse | undefined;
+
+		test.afterAll( 'Close the account the test created', async function () {
+			if ( ! newUserDetails ) {
+				if ( signupAttempted ) {
+					recordAccountLeakMarker( {
+						username: testUser.username,
+						email: testUser.email,
+						error: 'Signup did not return account details; account creation status is unknown.',
+					} );
+				}
+				return;
+			}
+			const restAPIClient = new RestAPIClient(
+				{ username: testUser.username, password: testUser.password },
+				newUserDetails.body.bearer_token
+			);
+			if ( newSiteDetails ) {
+				await apiDeleteSite( restAPIClient, {
+					url: newSiteDetails.blog_details.url,
+					id: newSiteDetails.blog_details.blogid,
+					name: newSiteDetails.blog_details.blogname,
+				} );
+			}
+			await apiCloseAccount( restAPIClient, {
+				userID: newUserDetails.body.user_id,
+				username: newUserDetails.body.username,
+				email: testUser.email,
+			} );
+		} );
+
+		test( 'As a logged-out visitor with a content blocker, I can sign up from the homepage and reach checkout', async ( {
 			page,
 			request,
 			environment,
+			componentDomainSearch,
+			helperData,
+			pageCartCheckout,
+			pageSignupPickPlan,
+			pageUserSignUp,
 		}, testInfo ) => {
+			// The filter lists take about ten seconds to download and parse.
+			test.setTimeout( 180_000 );
+
 			const loggedOutHomePage = new LoggedOutHomePage( page );
 			const blockedUrls: string[] = [];
-			const pageErrors: string[] = [];
+			const pageErrors: PageError[] = [];
 
 			await test.step( 'Given my browser blocks requests the way Brave and uBlock Origin do', async function () {
 				const [ blocker, servedCommit ] = await Promise.all( [
@@ -155,9 +210,16 @@ test.describe(
 
 				// Routed by hand rather than through PlaywrightBlocker so blocked requests are
 				// recorded and allowed ones fall back to the routes the page fixture registered.
+				// Like PlaywrightBlocker, never block the top-level document: no content blocker
+				// aborts a navigation, and a `$document` rule would read as a signup outage.
 				await page.route( '**/*', async ( route ) => {
 					const request = route.request();
-					if ( ! blocker.match( fromPlaywrightDetails( request ) ).match ) {
+					const frame = request.frame();
+					const details = fromPlaywrightDetails( request );
+					const isTopLevelDocument =
+						details.isMainFrame() ||
+						( details.type === 'document' && frame.parentFrame() === null );
+					if ( isTopLevelDocument || ! blocker.match( details ).match ) {
 						await route.fallback();
 						return;
 					}
@@ -176,10 +238,11 @@ test.describe(
 			} );
 
 			await test.step( 'And I click the Get started button', async function () {
-				// Errors on the marketing homepage are not this check's concern; the user step's are.
+				// Errors on the marketing homepage are not this check's concern; the signup journey's are.
 				page.on( 'pageerror', ( error ) => {
-					if ( ONBOARDING_PATH.test( page.url() ) ) {
-						pageErrors.push( `${ error.message }\n${ error.stack ?? '' }` );
+					const pageUrl = page.url();
+					if ( SIGNUP_JOURNEY_PATH.test( pageUrl ) ) {
+						pageErrors.push( { message: `${ error.message }\n${ error.stack ?? '' }`, pageUrl } );
 					}
 				} );
 
@@ -216,12 +279,29 @@ test.describe(
 				} );
 			} );
 
-			await test.step( 'And I can enter my email address', async function () {
-				if ( await continueWithEmailButton.isVisible() ) {
-					await continueWithEmailButton.click();
-				}
-				await emailInput.fill( 'content-blocker@example.com' );
-				await expect( emailInput ).toHaveValue( 'content-blocker@example.com' );
+			await test.step( 'When I sign up with my email address', async function () {
+				signupAttempted = true;
+				newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
+			} );
+
+			await test.step( 'And I skip choosing a domain', async function () {
+				await componentDomainSearch.search( helperData.getBlogName() );
+				await componentDomainSearch.skipPurchase();
+			} );
+
+			await test.step( `And I select the ${ planName } plan`, async function () {
+				newSiteDetails = await pageSignupPickPlan.selectPlan( planName );
+			} );
+
+			await test.step( 'Then I see the plan at checkout', async function () {
+				await pageCartCheckout.validateCartItem( `WordPress.com ${ planName }` );
+			} );
+
+			await test.step( 'And I can enter my billing and card details', async function () {
+				// Fills the contact and card forms, Stripe's fields included, without paying.
+				const paymentDetails = helperData.getTestPaymentDetails();
+				await pageCartCheckout.enterBillingDetails( paymentDetails );
+				await pageCartCheckout.enterPaymentDetails( paymentDetails );
 			} );
 
 			await test.step( 'And the content blocker was blocking requests', async function () {
@@ -235,15 +315,21 @@ test.describe(
 				);
 			} );
 
-			await test.step( 'And Calypso raised no uncaught errors on the user step', async function () {
-				await testInfo.attach( 'page-errors.txt', { body: pageErrors.join( '\n\n' ) } );
+			await test.step( 'And Calypso raised no uncaught errors during signup', async function () {
+				await testInfo.attach( 'page-errors.txt', {
+					body: pageErrors
+						.map( ( error ) => `${ error.pageUrl }\n${ error.message }` )
+						.join( '\n\n' ),
+				} );
 				// Third-party scripts throw on production for reasons unrelated to blocking.
 				expect(
-					pageErrors.filter(
-						( error ) =>
-							CALYPSO_STACK_FRAME.test( error ) &&
-							! isBlockedScriptLoad( error, blockedUrls, page.url() )
-					)
+					pageErrors
+						.filter(
+							( error ) =>
+								CALYPSO_STACK_FRAME.test( error.message ) &&
+								! isBlockedScriptLoad( error, blockedUrls )
+						)
+						.map( ( error ) => error.message )
 				).toEqual( [] );
 			} );
 		} );

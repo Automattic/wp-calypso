@@ -1,7 +1,4 @@
-import {
-	FEATURE_GOOGLE_ANALYTICS,
-	PLAN_JETPACK_SECURITY_DAILY,
-} from '@automattic/calypso-products';
+import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
 import {
 	FormInputValidation as FormTextValidation,
 	FormLabel,
@@ -21,7 +18,6 @@ import FormTextInput from 'calypso/components/forms/form-text-input';
 import InlineSupportLink from 'calypso/components/inline-support-link';
 import { PanelCard, PanelCardHeading } from 'calypso/components/panel';
 import SupportInfo from 'calypso/components/support-info';
-import { PRODUCT_UPSELLS_BY_FEATURE } from 'calypso/my-sites/plans/jetpack-plans/constants';
 import JetpackModuleToggle from 'calypso/my-sites/site-settings/jetpack-module-toggle';
 import { useDispatch } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
@@ -57,7 +53,7 @@ const GoogleAnalyticsJetpackForm = ( {
 	isAtomic,
 	isJetpackModuleAvailable,
 } ) => {
-	const upsellHref = `/checkout/${ site.slug }/${ PRODUCT_UPSELLS_BY_FEATURE[ FEATURE_GOOGLE_ANALYTICS ] }`;
+	const upsellHref = `/plans/${ site.slug }`;
 	const analyticsSupportUrl = isAtomic
 		? localizeUrl( 'https://wordpress.com/support/google-analytics/' )
 		: 'https://jetpack.com/support/google-analytics/';
@@ -252,7 +248,6 @@ const GoogleAnalyticsJetpackForm = ( {
 						) }
 						event="google_analytics_settings"
 						feature={ FEATURE_GOOGLE_ANALYTICS }
-						plan={ PLAN_JETPACK_SECURITY_DAILY }
 						href={ upsellHref }
 						showIcon
 						title={ nudgeTitle }

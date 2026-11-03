@@ -1,6 +1,7 @@
 import { wpcom } from '../wpcom-fetcher';
 import type {
 	Agency,
+	AgencyDashboardOptInChoice,
 	AgencyHostingReferral,
 	AgencyHostingReferralResponse,
 	AgencyLeadMatchingProfile,
@@ -124,5 +125,19 @@ export async function recordAgencyResourceEvent(
 		path: '/agency/resources/record-event',
 		apiNamespace: 'wpcom/v2',
 		body: { agency_id: agencyId, ...event },
+	} );
+}
+
+/**
+ * Moves the agency to the Multi-site Dashboard, or back, and returns the updated agency.
+ */
+export async function updateAgencyDashboardOptIn(
+	agencyId: number,
+	value: AgencyDashboardOptInChoice
+): Promise< Agency > {
+	return wpcom.req.post( {
+		path: `/agency/${ agencyId }/dashboard-opt-in`,
+		apiNamespace: 'wpcom/v2',
+		body: { value },
 	} );
 }

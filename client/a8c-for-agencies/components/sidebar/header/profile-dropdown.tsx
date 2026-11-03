@@ -3,6 +3,7 @@ import { __experimentalText as Text } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
+import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
 import { isClientView } from 'calypso/a8c-for-agencies/sections/purchases/payment-methods/lib/is-client-view';
 import useOutsideClickCallback from 'calypso/lib/use-outside-click-callback';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -12,6 +13,7 @@ import { redirectToLogout } from 'calypso/state/current-user/actions';
 import { getCurrentUser } from 'calypso/state/current-user/selectors';
 import { CONTACT_URL_HASH_FRAGMENT } from '../../a4a-contact-support-widget';
 import { PROVIDE_FEEDBACK_URL_HASH_FRAGMENT } from '../../a4a-feedback/provide-feedback';
+import { getDashboardOptInLink } from '../../dashboard-opt-in-modal';
 import {
 	EXTERNAL_A4A_KNOWLEDGE_BASE,
 	EXTERNAL_A4A_CLIENT_KNOWLEDGE_BASE,
@@ -23,28 +25,34 @@ import './style.scss';
 
 type DropdownMenuProps = {
 	isExpanded: boolean;
-	setMenuExpanded: ( isExpanded: boolean ) => void;
+	closeMenu: () => void;
 };
-const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
+const DropdownMenu = ( { isExpanded, closeMenu }: DropdownMenuProps ) => {
 	const dispatch = useDispatch();
 	const translate = useTranslate();
 	const user = useSelector( getCurrentUser );
 	const agency = useSelector( getActiveAgency );
+	const { canOptIn } = useDashboardOptIn();
 
 	const onGetHelp = useCallback( () => {
-		setMenuExpanded( false );
+		closeMenu();
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_gethelp' ) );
-	}, [ dispatch, setMenuExpanded ] );
+	}, [ dispatch, closeMenu ] );
 
 	const onProvideFeedback = useCallback( () => {
-		setMenuExpanded( false );
+		closeMenu();
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_provide_feedback' ) );
-	}, [ dispatch, setMenuExpanded ] );
+	}, [ dispatch, closeMenu ] );
 
 	const onPlatformAgreement = useCallback( () => {
-		setMenuExpanded( false );
+		closeMenu();
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_platform_agreement' ) );
-	}, [ dispatch, setMenuExpanded ] );
+	}, [ dispatch, closeMenu ] );
+
+	const onDashboardOptIn = useCallback( () => {
+		closeMenu();
+		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_dashboard_opt_in' ) );
+	}, [ dispatch, closeMenu ] );
 
 	const onSignOut = useCallback( () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_sidebar_signout' ) );
@@ -91,6 +99,17 @@ const DropdownMenu = ( { isExpanded, setMenuExpanded }: DropdownMenuProps ) => {
 					</>
 				)
 			}
+			{ canOptIn && (
+				<li className="a4a-sidebar__profile-dropdown-menu-item">
+					<Button
+						borderless
+						onClick={ onDashboardOptIn }
+						href={ getDashboardOptInLink( 'profile-menu' ) }
+					>
+						{ translate( 'Switch to the new dashboard' ) }
+					</Button>
+				</li>
+			) }
 			<li className="a4a-sidebar__profile-dropdown-menu-item">
 				<Button
 					borderless
@@ -155,7 +174,15 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 	}, [ dispatch, isMenuExpanded ] );
 
 	const dropdownRef = useRef( null );
+	const toggleButtonRef = useRef< HTMLButtonElement >( null );
 	useOutsideClickCallback( dropdownRef, onCloseMenu );
+
+	// The menu is hidden once an item is chosen, so focus goes back to its toggle,
+	// and from there to any modal the item opens.
+	const closeMenuFromItem = useCallback( () => {
+		setMenuExpanded( false );
+		toggleButtonRef.current?.focus();
+	}, [] );
 
 	return (
 		<nav
@@ -169,6 +196,7 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 		>
 			<Button
 				borderless
+				ref={ toggleButtonRef }
 				className="a4a-sidebar__profile-dropdown-button"
 				onClick={ onToggleMenu }
 				aria-expanded={ isMenuExpanded }
@@ -183,7 +211,7 @@ const ProfileDropdown = ( { dropdownPosition = 'down' }: ProfileDropdownProps ) 
 			</Button>
 
 			<SidebarHelpCenter />
-			<DropdownMenu isExpanded={ isMenuExpanded } setMenuExpanded={ setMenuExpanded } />
+			<DropdownMenu isExpanded={ isMenuExpanded } closeMenu={ closeMenuFromItem } />
 		</nav>
 	);
 };

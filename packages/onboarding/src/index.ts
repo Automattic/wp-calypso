@@ -5,7 +5,6 @@ export {
 	createSite,
 	getNewSiteParams,
 	addProductsToCart,
-	hasCopySitePlan,
 	replaceProductsInCart,
 	setThemeOnSite,
 } from './cart';

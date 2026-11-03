@@ -1,9 +1,8 @@
 import { Visibility } from '@automattic/data-stores';
 import wpcom from 'calypso/lib/wp'; // eslint-disable-line no-restricted-imports
-import { createSite, getNewSiteParams, hasCopySitePlan } from '..';
+import { createSite, getNewSiteParams } from '..';
 import { HOSTING_LP_FLOW, ONBOARDING_FLOW } from '../../utils/flows';
 import wpcomRequest from '../../wpcom-request';
-import type { ResponseCart } from '@automattic/shopping-cart';
 
 jest.mock( 'calypso/lib/wp', () => ( { req: { post: jest.fn() } } ), { virtual: true } );
 jest.mock( '../../wpcom-request', () => jest.fn() );
@@ -53,19 +52,6 @@ describe( 'createSite', () => {
 			domainItem: undefined,
 		} );
 	} );
-} );
-
-test( 'requires the intended plan to retain the Copy Site tag', () => {
-	const cart = {
-		products: [
-			{ product_slug: 'business-bundle', extra: {} },
-			{ product_slug: 'business-bundle-monthly', extra: { signup_flow: 'copy-site' } },
-		],
-	} as ResponseCart;
-
-	expect( hasCopySitePlan( cart, 'business-bundle-monthly' ) ).toBe( true );
-	expect( hasCopySitePlan( cart, 'business-bundle' ) ).toBe( false );
-	expect( hasCopySitePlan( undefined, 'business-bundle-monthly' ) ).toBe( false );
 } );
 
 describe( 'getNewSiteParams', () => {

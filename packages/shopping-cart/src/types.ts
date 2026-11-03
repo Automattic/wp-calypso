@@ -875,7 +875,6 @@ export type DomainBundleRole = 'primary' | 'companion';
  */
 export interface ResponseCartProductExtra {
 	context?: string;
-	signup_flow?: string;
 	source?: string;
 	/**
 	 * The AI agent session that generated the checkout link. Recorded on the

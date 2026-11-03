@@ -189,25 +189,35 @@ it.each( [ 'domains', 'use-my-domain' ] as const )(
 	}
 );
 
-it( 'opens checkout with the prepared cart instead of adding a plan from the URL', async () => {
-	const { result } = renderHookWithProvider(
-		() => copySite.useStepNavigation( 'processing', navigate ),
-		{
-			wrapper: ( { children }: { children: React.ReactNode } ) => (
-				<MemoryRouter initialEntries={ [ `/?sourceSlug=${ sourceSlug }` ] }>
-					{ children }
-				</MemoryRouter>
-			),
-		}
-	);
-	await act( async () => {
-		await result.current.submit( { siteSlug: destinationSlug } );
-	} );
-	const redirect = jest.mocked( window.location.assign ).mock.calls[ 0 ][ 0 ];
-	expect( new URL( redirect, 'https://wordpress.com' ).pathname ).toBe(
-		`/checkout/${ destinationSlug }`
-	);
-} );
+it.each( [ true, false ] )(
+	'opens checkout only when the saved plan is tagged (%s)',
+	async ( tagged ) => {
+		jest.mocked( wpcom.req.get ).mockResolvedValueOnce( {
+			products: [
+				{ product_slug: 'business-bundle', extra: tagged ? { signup_flow: 'copy-site' } : {} },
+			],
+		} );
+		const { result } = renderHookWithProvider(
+			() => copySite.useStepNavigation( 'processing', navigate ),
+			{
+				wrapper: ( { children }: { children: React.ReactNode } ) => (
+					<MemoryRouter initialEntries={ [ `/?sourceSlug=${ sourceSlug }&plan=business-bundle` ] }>
+						{ children }
+					</MemoryRouter>
+				),
+			}
+		);
+		await act( async () => {
+			await result.current.submit( { siteSlug: destinationSlug } );
+		} );
+		expect( navigate.mock.calls ).toEqual( tagged ? [] : [ [ 'error' ] ] );
+		expect(
+			jest
+				.mocked( window.location.assign )
+				.mock.calls.map( ( [ redirect ] ) => new URL( redirect, 'https://wordpress.com' ).pathname )
+		).toEqual( tagged ? [ `/checkout/${ destinationSlug }` ] : [] );
+	}
+);
 
 describe( 'copy site source validation', () => {
 	it( 'rejects a missing source without validating the destination as the source', async () => {

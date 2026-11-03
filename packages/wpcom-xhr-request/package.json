@@ -52,7 +52,7 @@
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"postcss": "^8.5.30",
+		"postcss": "^8.5.31",
 		"webpack": "^5.111.1"
 	}
 }

@@ -144,6 +144,14 @@ const domainsIn = ( id: string ) =>
 		item.querySelector( '[data-domain]' )?.getAttribute( 'data-domain' )
 	);
 
+// Each test renders the full results page and drives it through several userEvent
+// interactions. On busy CI agents the slowest ones run close to Jest's 5s default
+// and sometimes cross it, so give them more headroom.
+jest.setTimeout( 12000 );
+
+// The slowest tests in the suite, well above the others on CI, need more still.
+const SLOW_TEST_TIMEOUT = 20000;
+
 describe( 'NamePulseResults', () => {
 	beforeEach( () => {
 		queryClient.clear();
@@ -281,35 +289,39 @@ describe( 'NamePulseResults', () => {
 		expect( within( unknown ).queryByRole( 'button' ) ).not.toBeInTheDocument();
 	} );
 
-	it( 'reveals more exact matches and checks the revealed rows', async () => {
-		const availabilityRequests: string[][] = [];
-		const user = userEvent.setup();
+	it(
+		'reveals more exact matches and checks the revealed rows',
+		async () => {
+			const availabilityRequests: string[][] = [];
+			const user = userEvent.setup();
 
-		render(
-			<NamePulseTestSearch query="icecream" availabilityRequests={ availabilityRequests } />
-		);
+			render(
+				<NamePulseTestSearch query="icecream" availabilityRequests={ availabilityRequests } />
+			);
 
-		await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
-		const checkedBefore = availabilityRequests.flat();
-		expect( checkedBefore ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			const checkedBefore = availabilityRequests.flat();
+			expect( checkedBefore ).toHaveLength( NAME_PULSE_INITIAL_CHECK_SINGLE_WORD );
 
-		await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
-		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE * 2 );
-		// The first two pages were checked up front; nothing new to request yet.
-		expect( availabilityRequests.flat() ).toHaveLength( checkedBefore.length );
+			await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
+			expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE * 2 );
+			// The first two pages were checked up front; nothing new to request yet.
+			expect( availabilityRequests.flat() ).toHaveLength( checkedBefore.length );
 
-		await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
-		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE * 3 );
+			await user.click( screen.getByRole( 'button', { name: 'Show more exact matches' } ) );
+			expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE * 3 );
 
-		const revealed = domainsIn( 'exact' ).slice( NAME_PULSE_PAGE_SIZE * 2 );
-		const unchecked = revealed.filter( ( name ) => name && ! checkedBefore.includes( name ) );
+			const revealed = domainsIn( 'exact' ).slice( NAME_PULSE_PAGE_SIZE * 2 );
+			const unchecked = revealed.filter( ( name ) => name && ! checkedBefore.includes( name ) );
 
-		expect( unchecked.length ).toBeGreaterThan( 0 );
-		expect( availabilityRequests.flat() ).toEqual( expect.arrayContaining( unchecked ) );
-		expect(
-			await within( rowFor( unchecked[ 0 ] as string ) ).findByText( '$24' )
-		).toBeInTheDocument();
-	} );
+			expect( unchecked.length ).toBeGreaterThan( 0 );
+			expect( availabilityRequests.flat() ).toEqual( expect.arrayContaining( unchecked ) );
+			expect(
+				await within( rowFor( unchecked[ 0 ] as string ) ).findByText( '$24' )
+			).toBeInTheDocument();
+		},
+		SLOW_TEST_TIMEOUT
+	);
 
 	it( 'renders Related matches for a one-word query', async () => {
 		render( <NamePulseTestSearch query="icecream" /> );
@@ -731,67 +743,74 @@ describe( 'NamePulseResults', () => {
 		expect( cart.onAddItem ).not.toHaveBeenCalled();
 	} );
 
-	it( 'narrows every section to the chosen endings and restores them on clear', async () => {
-		const user = userEvent.setup();
-		const keywordRequests: NamePulseSuggestionsQuery[] = [];
+	it(
+		'narrows every section to the chosen endings and restores them on clear',
+		async () => {
+			const user = userEvent.setup();
+			const keywordRequests: NamePulseSuggestionsQuery[] = [];
 
-		render(
-			<NamePulseTestSearch
-				query="ice cream"
-				suggestions={ async ( params ) => {
-					keywordRequests.push( params );
+			render(
+				<NamePulseTestSearch
+					query="ice cream"
+					suggestions={ async ( params ) => {
+						keywordRequests.push( params );
 
-					// Like the endpoint, a filtered request returns extra matching names.
-					return {
-						suggestions: params.tlds
-							? [
-									...NAME_PULSE_SUGGESTIONS_FIXTURE.filter( ( { domain_name } ) =>
-										params.tlds?.some( ( tld ) => domain_name.endsWith( `.${ tld }` ) )
-									),
-									{ domain_name: 'scoopsandcones.com', relevance: 0.1, raw_price: 24 },
-								]
-							: NAME_PULSE_SUGGESTIONS_FIXTURE,
-						errors: [],
-					};
-				} }
-			/>
-		);
+						// Like the endpoint, a filtered request returns extra matching names.
+						return {
+							suggestions: params.tlds
+								? [
+										...NAME_PULSE_SUGGESTIONS_FIXTURE.filter( ( { domain_name } ) =>
+											params.tlds?.some( ( tld ) => domain_name.endsWith( `.${ tld }` ) )
+										),
+										{ domain_name: 'scoopsandcones.com', relevance: 0.1, raw_price: 24 },
+									]
+								: NAME_PULSE_SUGGESTIONS_FIXTURE,
+							errors: [],
+						};
+					} }
+				/>
+			);
 
-		await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
-		await findRow( 'creamyice.com' );
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			await findRow( 'creamyice.com' );
 
-		await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
-		await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
-		await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Filter, no filters applied' } ) );
+			await user.click( await screen.findByRole( 'option', { name: '.com' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Apply' } ) );
 
-		// One ending reads like typing that domain, so it gets the Exact match card.
-		await waitFor( () =>
-			expect( rowFor( 'icecream.com' ) ).toHaveClass( 'name-pulse-exact-card' )
-		);
-		expect( document.querySelector( '[data-section="top"]' ) ).toBeNull();
-		expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
-		await waitFor( () =>
-			expect( domainsIn( 'suggestions' ) ).toEqual( [
-				'creamyice.com',
-				'icecreamshop.com',
-				'frozentreats.com',
-				'scoopsandcones.com',
-			] )
-		);
-		expect( keywordRequests.map( ( params ) => params.tlds ) ).toEqual( [ undefined, [ 'com' ] ] );
+			// One ending reads like typing that domain, so it gets the Exact match card.
+			await waitFor( () =>
+				expect( rowFor( 'icecream.com' ) ).toHaveClass( 'name-pulse-exact-card' )
+			);
+			expect( document.querySelector( '[data-section="top"]' ) ).toBeNull();
+			expect( document.querySelector( '[data-section="exact"]' ) ).toBeNull();
+			await waitFor( () =>
+				expect( domainsIn( 'suggestions' ) ).toEqual( [
+					'creamyice.com',
+					'icecreamshop.com',
+					'frozentreats.com',
+					'scoopsandcones.com',
+				] )
+			);
+			expect( keywordRequests.map( ( params ) => params.tlds ) ).toEqual( [
+				undefined,
+				[ 'com' ],
+			] );
 
-		await user.click( screen.getByRole( 'button', { name: 'Filter, 1 filter applied' } ) );
-		await user.click( await screen.findByRole( 'button', { name: 'Clear' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Filter, 1 filter applied' } ) );
+			await user.click( await screen.findByRole( 'button', { name: 'Clear' } ) );
 
-		await waitFor( () =>
-			expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.org' ] )
-		);
-		expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
-		expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
-		expect(
-			screen.getByRole( 'button', { name: 'Filter, no filters applied' } )
-		).toBeInTheDocument();
-	} );
+			await waitFor( () =>
+				expect( domainsIn( 'top' ) ).toEqual( [ 'icecream.blog', 'icecream.com', 'icecream.org' ] )
+			);
+			expect( sectionRows( 'exact' ) ).toHaveLength( NAME_PULSE_PAGE_SIZE );
+			expect( sectionRows( 'suggestions' ) ).toHaveLength( NAME_PULSE_SUGGESTIONS_FIXTURE.length );
+			expect(
+				screen.getByRole( 'button', { name: 'Filter, no filters applied' } )
+			).toBeInTheDocument();
+		},
+		SLOW_TEST_TIMEOUT
+	);
 
 	it( 'keeps the ending of a typed domain when the filter leaves it out', async () => {
 		const user = userEvent.setup();
@@ -1233,6 +1252,81 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
+		it( 'counts every group in the result count, not only the suggestions', async () => {
+			const events = buildEvents();
+
+			render( <NamePulseTestSearch query="icecream" events={ events } /> );
+
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalled() );
+
+			const [ [ , , , properties ] ] = events.onSuggestionsReceive.mock.calls;
+
+			expect( properties.result_count ).toBe(
+				properties.result_count_exact +
+					properties.result_count_top +
+					properties.result_count_exact_tlds +
+					properties.result_count_related +
+					properties.result_count_creative
+			);
+			expect( properties.result_count ).toBeGreaterThan( properties.result_count_related );
+		} );
+
+		it( 'records nothing for a query too short to register', async () => {
+			const events = buildEvents();
+
+			const { rerender } = render( <NamePulseTestSearch query="b" events={ events } /> );
+
+			// Longer than the settle delay, so the query has settled.
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 500 ) ) );
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
+			expect( events.onSuggestionsReceive ).not.toHaveBeenCalled();
+
+			rerender( <NamePulseTestSearch query="icecream" events={ events } /> );
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 ) );
+			expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'records neither the search nor its cards when the query changes before it has results', async () => {
+			const events = buildEvents();
+			// The first query's suggestions never arrive, so its result set is never complete.
+			const suggestions = ( { query, use_ai }: NamePulseSuggestionsQuery ) =>
+				query === 'icecream'
+					? new Promise< NamePulseSuggestionsResponse >( () => {} )
+					: Promise.resolve( {
+							suggestions: use_ai
+								? NAME_PULSE_AI_SUGGESTIONS_FIXTURE
+								: NAME_PULSE_SUGGESTIONS_FIXTURE,
+							errors: [],
+						} );
+
+			const { rerender } = render(
+				<NamePulseTestSearch query="icecream" events={ events } suggestions={ suggestions } />
+			);
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			// Longer than the settle delay, so the first query has settled with cards on the page.
+			await act( () => new Promise( ( resolve ) => setTimeout( resolve, 500 ) ) );
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
+			expect( events.onSuggestionRender ).not.toHaveBeenCalled();
+
+			rerender(
+				<NamePulseTestSearch query="ice cream" events={ events } suggestions={ suggestions } />
+			);
+			await waitFor( () => expect( events.onSuggestionsReceive ).toHaveBeenCalled() );
+			await waitFor( () => expect( events.onSuggestionRender ).toHaveBeenCalled() );
+
+			const [ [ , , , { result_set_id: resultSetId } ] ] = events.onSuggestionsReceive.mock.calls;
+
+			expect( events.onNamePulseSearch ).toHaveBeenCalledTimes( 1 );
+			expect( events.onNamePulseSearch.mock.calls[ 0 ][ 0 ] ).toBe( 'ice cream' );
+			expect( events.onSuggestionsReceive ).toHaveBeenCalledTimes( 1 );
+			expect(
+				events.onSuggestionRender.mock.calls.every(
+					( [ , , properties ] ) => properties.result_set_id === resultSetId
+				)
+			).toBe( true );
+		} );
+
 		it( 'reports every name with a verdict once, taken ones included, each with its own railcar', async () => {
 			const events = buildEvents();
 
@@ -1403,6 +1497,42 @@ describe( 'NamePulseResults', () => {
 			);
 		} );
 
+		it( 'records no interaction when the real-time check finds the name taken', async () => {
+			const user = userEvent.setup();
+			const events = buildEvents();
+
+			render(
+				<NamePulseTestSearch
+					query="icecream"
+					events={ events }
+					domainAvailability={ async ( domainName ) =>
+						buildAvailability( {
+							domain_name: domainName,
+							status: DomainAvailabilityStatus.NOT_AVAILABLE,
+						} )
+					}
+				/>
+			);
+
+			await within( await findRow( 'icecream.net' ) ).findByText( '$24' );
+			await waitFor( () =>
+				expect( events.onSuggestionRender ).toHaveBeenCalledWith(
+					expect.objectContaining( { domain_name: 'icecream.net' } ),
+					undefined,
+					expect.anything()
+				)
+			);
+			await user.click(
+				within( rowFor( 'icecream.net' ) ).getByRole( 'button', { name: 'Add to cart' } )
+			);
+
+			expect(
+				await within( rowFor( 'icecream.net' ) ).findByText( 'Unavailable' )
+			).toBeInTheDocument();
+			expect( events.onSuggestionInteract ).not.toHaveBeenCalled();
+			expect( events.onAddDomainToCart ).not.toHaveBeenCalled();
+		} );
+
 		it( 'adds to the cart without an interaction when the name has not reported its render', async () => {
 			const user = userEvent.setup();
 			const events = buildEvents();
@@ -1480,10 +1610,11 @@ describe( 'NamePulseResults', () => {
 
 			await waitFor( () =>
 				expect( namePulseEvent( events, 'results_error' ) ).toEqual( {
-					search_id: events.onNamePulseSearch.mock.calls[ 0 ][ 2 ].search_id,
+					search_id: expect.any( String ),
 					error_type: 'tlds_failed',
 				} )
 			);
+			expect( events.onNamePulseSearch ).not.toHaveBeenCalled();
 			expect( events.onSuggestionsReceive ).not.toHaveBeenCalled();
 		} );
 

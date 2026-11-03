@@ -10,6 +10,7 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import { A4A_REPORTS_LINK } from 'calypso/a8c-for-agencies/sections/reports/constants';
 import CertificationTierPageCard from 'calypso/dashboard/agency/certification/tier-page-card';
+import InfluencedRevenue from 'calypso/dashboard/agency/tiers/influenced-revenue';
 import TierBenefits from 'calypso/dashboard/agency/tiers/tier-benefits';
 import TierCards from 'calypso/dashboard/agency/tiers/tier-cards';
 import Divider from 'calypso/dashboard/components/divider';
@@ -18,7 +19,6 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { successNotice } from 'calypso/state/notices/actions';
 import useScheduleCall from '../../../hooks/use-schedule-call';
 import DownloadBadges from '../download-badges';
-import InfluencedRevenue from './influenced-revenue';
 import type { AgencyTierType, TierBenefitLinks } from 'calypso/dashboard/agency/tiers/types';
 import type { AgencyTierStatus } from 'calypso/state/a8c-for-agencies/types';
 import type { ComponentProps } from 'react';
@@ -69,6 +69,7 @@ export default function AgencyTierOverviewContent( {
 					<InfluencedRevenue
 						currentAgencyTierId={ currentAgencyTierId }
 						totalInfluencedRevenue={ totalInfluencedRevenue }
+						recordTracksEvent={ recordTracks }
 					/>
 				</CardBody>
 			</Card>

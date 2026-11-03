@@ -8,11 +8,10 @@ import { preventWidows } from 'calypso/lib/formatting';
 import { navigate } from 'calypso/lib/navigate';
 import { TASK_SITE_RESUME_COPY } from 'calypso/my-sites/customer-home/cards/constants';
 import Task from 'calypso/my-sites/customer-home/cards/tasks/task';
-import { errorNotice } from 'calypso/state/notices/actions';
 import { getSite, getSiteOption } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
-const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug, showErrorNotice } ) => {
+const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug } ) => {
 	const translate = useTranslate();
 	const [ isAddingProducts, setIsAddingProducts ] = useState( false );
 	const { resumeSiteCopy } = useSiteCopy( sourceSite );
@@ -31,11 +30,7 @@ const SiteResumeCopy = ( { siteSlug, sourceSite, sourceSiteSlug, showErrorNotice
 			actionOnClick={ async () => {
 				recordTracksEvent( 'calypso_resume_copy_site_click' );
 				setIsAddingProducts( true );
-				if ( ! ( await resumeSiteCopy( siteSlug ).catch( () => false ) ) ) {
-					setIsAddingProducts( false );
-					showErrorNotice( translate( 'We couldn’t prepare your cart. Please try again.' ) );
-					return;
-				}
+				await resumeSiteCopy( siteSlug );
 				navigate(
 					`/setup/copy-site/resuming?sourceSlug=${ sourceSiteSlug }&siteSlug=${ siteSlug }`
 				);
@@ -55,4 +50,4 @@ const mapStateToProps = ( state ) => {
 	};
 };
 
-export default connect( mapStateToProps, { showErrorNotice: errorNotice } )( SiteResumeCopy );
+export default connect( mapStateToProps )( SiteResumeCopy );

@@ -1,5 +1,4 @@
 import { formatCurrency } from '@automattic/number-formatters';
-import { useLocation } from '@tanstack/react-router';
 import {
 	Button,
 	Dropdown,
@@ -15,6 +14,7 @@ import { useAnalytics } from '../../../app/analytics';
 import RouterLinkButton from '../../../components/router-link-button';
 import { TextBlur } from '../../../components/text-blur';
 import { ApprovalGate, useIsApprovalGated } from '../../approval-gate';
+import { useBackHereSearch } from '../../components/fullscreen-page';
 import { WPCOM_CREATOR_PLAN_SLUG, WPCOM_HOSTING_FAMILY_SLUG } from '../lib/wpcom-hosting';
 import { MARKETPLACE_REFERRAL_CHECKOUT_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from './lib/checkout-url';
@@ -60,7 +60,7 @@ export default function CartMenu( {
 	onCheckout,
 }: CartMenuProps ) {
 	const { recordTracksEvent } = useAnalytics();
-	const location = useLocation();
+	const backHereSearch = useBackHereSearch();
 	const { lines, currency, total, commission, isTotalReady, hasWpcomHostingPlan } = useCartLines( {
 		items,
 		products,
@@ -94,7 +94,7 @@ export default function CartMenu( {
 		<RouterLinkButton
 			{ ...checkoutButtonProps }
 			to={ MARKETPLACE_REFERRAL_CHECKOUT_ROUTE }
-			search={ { from: location.pathname + location.searchStr } }
+			search={ backHereSearch }
 		/>
 	) : (
 		<Button

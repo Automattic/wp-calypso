@@ -1,6 +1,6 @@
 import { userPurchasesQuery } from '@automattic/api-queries';
 import { WPCOM_FEATURES_COPY_SITE } from '@automattic/calypso-products';
-import { COPY_SITE_FLOW, addProductsToCart, hasCopySitePlan } from '@automattic/onboarding';
+import { COPY_SITE_FLOW, addProductsToCart } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import { useDispatch, useSelect } from '@wordpress/data';
@@ -116,14 +116,12 @@ export const useSiteCopy = (
 	const resumeSiteCopy = useCallback(
 		async ( destinationSiteSlug: string ) => {
 			if ( ! shouldShowSiteCopyItem || ! site?.ID ) {
-				return false;
+				return;
 			}
-			const planProduct = getPlanProduct( plan );
-			const cart = await addProductsToCart( destinationSiteSlug, COPY_SITE_FLOW, [
-				planProduct,
+			await addProductsToCart( destinationSiteSlug, COPY_SITE_FLOW, [
+				getPlanProduct( plan ),
 				...getMarketplaceProducts( purchases, site.ID ),
 			] );
-			return hasCopySitePlan( cart, planProduct.product_slug );
 		},
 		[ plan, purchases, shouldShowSiteCopyItem, site?.ID ]
 	);

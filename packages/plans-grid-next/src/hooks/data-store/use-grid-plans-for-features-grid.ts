@@ -27,12 +27,8 @@ const useGridPlansForFeaturesGrid = ( {
 	taglineOverrides,
 	isDomainOnlySite,
 	reflectStorageSelectionInPlanPrices,
-	useVar42NoAiFeatures,
 	usePlansGridRedesignFeatures,
-	showPricingDifferentiationFeaturePills,
-	useFocusedNewCopyTaglines,
 	usePlansGridRedesignNewDescription,
-	isExperimentVariant,
 	showBillingDescriptionForIncreasedRenewalPrice,
 }: UseGridPlansParams ): GridPlan[] | null => {
 	const gridPlans = useGridPlans( {
@@ -56,7 +52,6 @@ const useGridPlansForFeaturesGrid = ( {
 		taglineOverrides,
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
 		showBillingDescriptionForIncreasedRenewalPrice,
 	} );
@@ -69,10 +64,7 @@ const useGridPlansForFeaturesGrid = ( {
 		isInSignup,
 		selectedFeature,
 		showLegacyStorageFeature,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
-		isExperimentVariant,
 	} );
 
 	return useMemo( () => {

@@ -3,11 +3,13 @@ import { PLAN_BUSINESS } from '@automattic/calypso-products';
 import { COPY_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useMatch } from 'react-router';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
-import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
+import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
+import wpcom from 'calypso/lib/wp';
 import {
 	clearSignupDestinationCookie,
 	setSignupCompleteSlug,
@@ -25,6 +27,7 @@ import {
 	type ProvidedDependencies,
 	type StepperStep,
 } from '../../internals/types';
+import { hasCopySitePlan } from './has-copy-site-plan';
 import type { OnboardActions } from '@automattic/data-stores';
 
 function useIsValidSite( enabled: boolean ) {
@@ -82,6 +85,7 @@ const copySite: Flow = {
 			enabled: _currentStepSlug === 'domains' || _currentStepSlug === 'use-my-domain',
 		} );
 		const plan = urlQueryParams.get( 'plan' ) || sourceSite?.plan?.product_slug || PLAN_BUSINESS;
+		const { setSiteSetupError } = useDispatch( SITE_STORE );
 		const {
 			setHideFreePlan,
 			setSignupDomainOrigin,
@@ -160,6 +164,16 @@ const copySite: Flow = {
 						! siteSlug ||
 						providedDependencies.processingResult === ProcessingResult.FAILURE
 					) {
+						return navigate( 'error' );
+					}
+					const cart = await wpcom.req
+						.get( {
+							path: `/me/shopping-cart/${ encodeURIComponent( siteSlug ) }`,
+							apiVersion: '1.1',
+						} )
+						.catch( () => undefined );
+					if ( ! hasCopySitePlan( cart, plan ) ) {
+						setSiteSetupError( '', __( 'We couldn’t prepare your cart. Please try again.' ) );
 						return navigate( 'error' );
 					}
 					const destination = addQueryArgs( `/setup/${ this.name }/automated-copy`, {

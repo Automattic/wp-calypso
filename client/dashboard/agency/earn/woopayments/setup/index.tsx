@@ -7,6 +7,7 @@ import { PageHeader } from '../../../../components/page-header';
 import PageLayout from '../../../../components/page-layout';
 import { TextSkeleton } from '../../../../components/text-skeleton';
 import { getSiteDisplayUrl } from '../../../../utils/site-url';
+import { ApprovalGate, useIsApprovalGated } from '../../../approval-gate';
 import { useWooPaymentsSiteSetup } from '../hooks/use-woopayments-site-setup';
 import SetupSteps from './setup-steps';
 
@@ -22,8 +23,15 @@ export default function EarnWooPaymentsSetup() {
 
 	const [ error, setError ] = useState( false );
 	const [ isInstalled, setIsInstalled ] = useState( false );
+	const isApprovalGated = useIsApprovalGated();
+	const [ isGateOpen, setIsGateOpen ] = useState( false );
 
 	const onInstallClick = async () => {
+		if ( isApprovalGated ) {
+			setIsGateOpen( true );
+			return;
+		}
+
 		recordTracksEvent( 'calypso_a4a_woopayments_site_setup_install_plugin_click', {
 			status: isInstalled ? 'installed' : 'not_installed',
 			woocommerce_status: woocommerceStatus,
@@ -79,6 +87,7 @@ export default function EarnWooPaymentsSetup() {
 				/>
 			}
 		>
+			{ isGateOpen && <ApprovalGate kind="woopayments" onClose={ () => setIsGateOpen( false ) } /> }
 			<SetupSteps
 				wpAdminInstallUrl={ `${ site.URL }/wp-admin/plugin-install.php?s=woopayments&tab=search&type=term` }
 				isWooPaymentsActive={ isWooPaymentsActive }

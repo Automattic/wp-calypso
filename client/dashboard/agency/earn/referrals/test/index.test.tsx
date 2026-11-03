@@ -136,7 +136,7 @@ describe( '<EarnReferrals>', () => {
 		reasons.forEach( ( reason ) => expect( reason ).toBeVisible() );
 		expect( screen.getByRole( 'link', { name: 'Add my details' } ) ).toHaveAttribute(
 			'href',
-			'/payout-settings'
+			expect.stringMatching( /^\/payout-settings\?from=/ )
 		);
 	} );
 } );
