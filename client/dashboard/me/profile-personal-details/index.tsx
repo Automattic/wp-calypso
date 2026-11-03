@@ -1,3 +1,4 @@
+import { isWpError } from '@automattic/api-core';
 import {
 	isAutomatticianQuery,
 	userEmailSettingsMutation,
@@ -28,12 +29,10 @@ import UsernameSection from './username-section';
 import type { UserSettings } from '@automattic/api-core';
 import './style.scss';
 
-function isEmailFieldError( error: Error ) {
+function isEmailFieldError( error: unknown ) {
 	return (
-		'data' in error &&
-		typeof error.data === 'object' &&
-		error.data !== null &&
-		( error.data as Record< string, unknown > )[ 'form-field' ] === 'email'
+		isWpError( error ) &&
+		( error.data as Record< string, unknown > | undefined )?.[ 'form-field' ] === 'email'
 	);
 }
 
@@ -45,7 +44,6 @@ export default function PersonalDetailsSection() {
 
 	const [ edits, setEdits ] = useState< Partial< UserSettings > >( {} );
 	const [ isEmailValid, setIsEmailValid ] = useState< boolean >( true );
-	const [ emailSaveError, setEmailSaveError ] = useState< string | null >( null );
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const queryClient = useQueryClient();
 
@@ -54,22 +52,18 @@ export default function PersonalDetailsSection() {
 		withSnackbar( userSettingsMutation(), { success, error: { source: 'server' } } )
 	);
 	// Two instances rather than one whose options change with the payload, which a save already
-	// in flight would pick up. Errors that concern the email address are shown on the field
-	// instead of in a snackbar, so this one reports its own errors.
-	const emailMutation = useMutation( {
-		...withSnackbar( userEmailSettingsMutation(), { success } ),
-		onError: ( error ) => {
-			if ( isEmailFieldError( error ) ) {
-				setEmailSaveError( error.message );
-				// Rejecting the address also cancels any email change that was pending.
-				queryClient.invalidateQueries( userSettingsQuery() );
-			} else {
-				createErrorNotice( error.message, { type: 'snackbar' } );
-			}
-		},
-	} );
+	// in flight would pick up. This one reports its own errors, since those that concern the email
+	// address are shown on the field instead of in a snackbar.
+	const emailMutation = useMutation( withSnackbar( userEmailSettingsMutation(), { success } ) );
 
 	const data = useMemo( () => ( { ...userSettings, ...edits } ), [ userSettings, edits ] );
+
+	// Shown on the field until the rejected address is changed.
+	const emailSaveError =
+		isEmailFieldError( emailMutation.error ) &&
+		emailMutation.variables?.user_email === data.user_email
+			? emailMutation.error?.message
+			: undefined;
 
 	const currentUsername = userSettings.user_login || '';
 	const isEmailVerified = user.email_verified;
@@ -78,9 +72,6 @@ export default function PersonalDetailsSection() {
 	// Form event handlers
 	const handleFieldChange = ( partial: Partial< UserSettings > ) => {
 		setEdits( ( current ) => ( { ...current, ...partial } ) );
-		if ( 'user_email' in partial ) {
-			setEmailSaveError( null );
-		}
 	};
 
 	const handleSubmit = async ( e: React.FormEvent ) => {
@@ -97,7 +88,14 @@ export default function PersonalDetailsSection() {
 			emailMutation.mutate( submissionEdits, {
 				onSuccess: () => {
 					setEdits( {} );
-					setEmailSaveError( null );
+				},
+				onError: ( error ) => {
+					if ( isEmailFieldError( error ) ) {
+						// Rejecting the address also cancels any email change that was pending.
+						queryClient.invalidateQueries( userSettingsQuery() );
+					} else {
+						createErrorNotice( error.message, { type: 'snackbar' } );
+					}
 				},
 			} );
 			return;
@@ -206,7 +204,7 @@ export default function PersonalDetailsSection() {
 								variant="primary"
 								type="submit"
 								isBusy={ isSaving }
-								disabled={ isSaving || ! isDirty || ! isEmailValid || !! emailSaveError }
+								disabled={ isSaving || ! isDirty || ! isEmailValid }
 							>
 								{ __( 'Save' ) }
 							</Button>

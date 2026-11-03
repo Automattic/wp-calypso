@@ -31,7 +31,7 @@ interface EmailSectionProps {
 	/**
 	 * An error from saving the email address, shown on the field until the address is changed.
 	 */
-	serverError?: string | null;
+	serverError?: string;
 }
 
 type EmailFormData = { user_email: string };
@@ -144,7 +144,8 @@ export default function EmailSection( {
 	}, [ cancelPendingEmail ] );
 
 	const emailValidationState = getEmailValidationState( value, currentEmail );
-	const isEmailValid = emailValidationState === 'valid' || emailValidationState === null;
+	const isEmailValid =
+		! serverError && ( emailValidationState === 'valid' || emailValidationState === null );
 
 	useEffect( () => {
 		onValidationChange?.( isEmailValid );
