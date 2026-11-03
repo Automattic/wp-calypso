@@ -2,6 +2,10 @@ import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import './style.scss';
 
+// Tables remount their cells whenever their columns change, so remember the previews that
+// already loaded to show them again without the placeholder flashing.
+const loadedScreenshots = new Map< string, string >();
+
 export default function SiteScreenshot( {
 	url,
 	alt,
@@ -21,14 +25,19 @@ export default function SiteScreenshot( {
 	width?: number;
 	height?: number;
 } ) {
-	const [ attempt, setAttempt ] = useState( 0 );
-	const [ ready, setReady ] = useState( false );
-	const [ failed, setFailed ] = useState( false );
 	const shotWidth = compact ? 300 : 1200;
 	const shotHeight = compact ? 180 : 675;
-	const src = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=${ shotWidth }&h=${ shotHeight }&vpw=1200&vph=800&countToRefresh=${ attempt }`;
+	const baseSrc = `https://s0.wp.com/mshots/v1/${ encodeURIComponent( url ) }?w=${ shotWidth }&h=${ shotHeight }&vpw=1200&vph=800`;
+	const loadedSrc = loadedScreenshots.get( baseSrc );
+	const [ attempt, setAttempt ] = useState( 0 );
+	const [ ready, setReady ] = useState( !! loadedSrc );
+	const [ failed, setFailed ] = useState( false );
+	const src = loadedSrc ?? `${ baseSrc }&countToRefresh=${ attempt }`;
 
 	useEffect( () => {
+		if ( ready ) {
+			return;
+		}
 		const controller = new AbortController();
 		const timeout = setTimeout(
 			async () => {
@@ -47,6 +56,7 @@ export default function SiteScreenshot( {
 							setFailed( true );
 						}
 					} else {
+						loadedScreenshots.set( baseSrc, src );
 						setReady( true );
 					}
 				} catch {
@@ -62,7 +72,7 @@ export default function SiteScreenshot( {
 			controller.abort();
 			clearTimeout( timeout );
 		};
-	}, [ src, attempt ] );
+	}, [ baseSrc, src, attempt, ready ] );
 	const statusText = failed ? __( 'Preview unavailable' ) : __( 'Preparing preview…' );
 	const placeholder = decorative ? null : <span>{ statusText }</span>;
 
