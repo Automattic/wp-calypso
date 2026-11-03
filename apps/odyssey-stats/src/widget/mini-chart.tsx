@@ -2,6 +2,7 @@ import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
+import { PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from 'calypso/dashboard/utils/premium-analytics-url';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { readChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
@@ -46,7 +47,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	// "More stats" opens the days the chart shows, on Stats or Premium Analytics.
 	const moreStatsUrl = statsLink(
 		`${ statsBaseUrl }/stats/${ unit }/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
-		'/',
+		PREMIUM_ANALYTICS_TRAFFIC_ROUTE,
 		{ from: startDate, to: endDate, gmtOffset }
 	);
 
