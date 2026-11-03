@@ -776,6 +776,7 @@ __metadata:
   resolution: "@automattic/calypso-config@workspace:packages/calypso-config"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": "npm:^0.6.0"
     "@types/node": "npm:^24.12.2"

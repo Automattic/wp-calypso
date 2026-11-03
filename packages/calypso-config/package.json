@@ -1,6 +1,6 @@
 {
 	"name": "@automattic/calypso-config",
-	"version": "1.0.0-alpha.0",
+	"version": "2.0.0",
 	"description": "The Calypso configuration API.",
 	"homepage": "https://github.com/Automattic/wp-calypso",
 	"license": "GPL-2.0-or-later",
@@ -39,6 +39,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
+		"@automattic/calypso-url": "workspace:^",
 		"@automattic/create-calypso-config": "workspace:^",
 		"@types/cookie": "^0.6.0",
 		"@types/node": "^24.12.2",
