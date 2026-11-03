@@ -55,13 +55,31 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		migration?.status === 'failed'
 			? migration.findings.find( ( { code } ) => code === 'source_connection_failed' )
 			: undefined;
-	const isConnecting = migration?.status === 'not_started' || !! connectionFailure;
+
+	// A stopped migration can also be taken back to that step, until it's no longer stopped, wherever it was started from.
+	const isStopped = migration?.status === 'paused' || migration?.status === 'failed';
+	const [ isBackToSetup, setIsBackToSetup ] = useState( false );
+	useEffect( () => {
+		if ( ! isStopped ) {
+			setIsBackToSetup( false );
+		}
+	}, [ isStopped ] );
+	const isConnecting =
+		migration?.status === 'not_started' || !! connectionFailure || ( isStopped && isBackToSetup );
+
+	// What stopped the run stays on screen there too, so a connected source doesn't read as nothing having gone wrong.
+	const backToSetupFailure =
+		isStopped && isBackToSetup
+			? migration?.findings.find( ( { severity } ) => severity === 'failure' )
+			: undefined;
 
 	// The connect step shows how the source can be connected, so it waits for that before showing at all. It's read
 	// alongside the migration, before we know which step that is, and only kept up for the connect step after.
 	const { isPending: isConfigurationPending } = useQuery( {
 		...siteWordPressMigrationConfigurationQuery( site.ID ),
 		enabled: ! migration || isConnecting,
+		// The source is connected on its own site, often in another tab, so check again on coming back to this one.
+		refetchOnWindowFocus: isConnecting ? 'always' : false,
 	} );
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
@@ -153,7 +171,11 @@ export function WordPressMigration( { site }: { site: Site } ) {
 				/>
 			) }
 			{ isConnecting && ! isConfigurationPending && (
-				<Connect site={ site } sourceHost={ sourceHost } failure={ connectionFailure } />
+				<Connect
+					site={ site }
+					sourceHost={ sourceHost }
+					failure={ connectionFailure ?? backToSetupFailure }
+				/>
 			) }
 			{ migration?.status === 'running' && (
 				<Running
@@ -163,8 +185,19 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					notificationEmails={ migration.notification_emails }
 				/>
 			) }
-			{ ( migration?.status === 'paused' || migration?.status === 'failed' ) &&
-				! connectionFailure && <Findings site={ site } migration={ migration } /> }
+			{ migration && isStopped && ! isConnecting && (
+				<Findings
+					site={ site }
+					migration={ migration }
+					onBackToSetup={ () => {
+						// It isn't kept up while the run is going, and the source may have changed since.
+						queryClient.invalidateQueries( {
+							queryKey: siteWordPressMigrationConfigurationQuery( site.ID ).queryKey,
+						} );
+						setIsBackToSetup( true );
+					} }
+				/>
+			) }
 			{ isCompleted && (
 				<MigrationCard
 					title={ __( 'Your site has been migrated' ) }

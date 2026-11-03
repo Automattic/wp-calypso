@@ -61,7 +61,7 @@ export default function AddDomainForwarding() {
 				domainName={ domainName }
 				onSubmit={ handleSubmit }
 				isSubmitting={ saveMutation.isPending }
-				submitButtonText={ __( 'Add' ) }
+				submitButtonText={ __( 'Add forwarding' ) }
 				forceSubdomain={ forceSubdomainsOnly }
 				defaultSourceType={ hasRootForwarding ? '' : 'root' }
 			/>

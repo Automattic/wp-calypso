@@ -2,9 +2,11 @@
 
 Moves a site built on another platform (Wix, Squarespace, and similar) to WordPress.com.
 
-The `site-migration` flow identifies the source without requiring an account and hands eligible
-non-WordPress sources here with `from` and `platform`. For now, other sources with a content
-importer (Medium, Substack, and others) keep using it; see `canUseStaticSiteImport`.
+The `site-migration` flow identifies the source without requiring an account and hands
+non-WordPress sources here with `from` and `platform` when the URL analyzer reports
+`static_site_importable`: a working site that is neither WordPress nor a parked domain. Parked
+and unhealthy sites keep the previous behavior. Landing pages such as `/move` link to
+the plans step directly using the same analyzer field.
 Opening this flow without a supported source sends the user to that identify step.
 
 ## Steps
