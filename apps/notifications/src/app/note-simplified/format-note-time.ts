@@ -1,3 +1,5 @@
+import { __ } from '@wordpress/i18n';
+
 const MINUTE = 60 * 1000;
 const HOUR = 60 * MINUTE;
 const DAY = 24 * HOUR;
@@ -23,6 +25,10 @@ export function formatNoteTime( timestamp: string, locale: string, now = Date.no
 		return new Intl.DateTimeFormat( getIntlLocale( locale ), { dateStyle: 'medium' } ).format(
 			date
 		);
+	}
+
+	if ( elapsed < MINUTE ) {
+		return __( 'just now' );
 	}
 
 	const relative = new Intl.RelativeTimeFormat( getIntlLocale( locale ), { numeric: 'auto' } );

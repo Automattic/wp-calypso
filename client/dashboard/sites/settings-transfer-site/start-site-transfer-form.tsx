@@ -111,7 +111,7 @@ export function StartSiteTransferForm( {
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
 				<SectionHeader title={ __( 'Start site transfer' ) } level={ 3 } />
-				<Notice variant="warning" density="medium">
+				<Notice variant="warning">
 					{ __( 'Please read the following carefully. Transferring a site cannot be undone.' ) }
 				</Notice>
 				<VStack spacing={ 6 }>

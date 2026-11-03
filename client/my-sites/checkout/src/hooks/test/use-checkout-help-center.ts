@@ -5,7 +5,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import { useProductsWithPremiumSupport } from '@automattic/help-center/src/hooks';
 import { act, renderHook } from '@testing-library/react';
-import { loadCheckoutSupportVariation } from '../../lib/checkout-support-routing';
+import { loadCheckoutSupportAssignment } from '../../lib/checkout-support-routing';
 import { useCheckoutHelpCenter } from '../use-checkout-help-center';
 
 const mockSetShowHelpCenter = jest.fn();
@@ -19,7 +19,7 @@ let mockSectionName = 'checkout';
 let mockSiteId: number | null = 123;
 let mockIsJetpackSite = false;
 let mockIsAtomicSite = false;
-let mockCartProducts: { product_slug: string }[] = [];
+let mockCartProducts: { product_slug: string; is_renewal?: boolean }[] = [];
 let mockIsCartLoading = false;
 let mockIsCartUpdating = false;
 
@@ -116,12 +116,19 @@ jest.mock( 'calypso/state/ui/selectors', () => ( {
 } ) );
 
 jest.mock( '../../lib/checkout-support-routing', () => ( {
-	loadCheckoutSupportVariation: jest.fn(),
+	loadCheckoutSupportAssignment: jest.fn(),
 } ) );
 
 const mockIsEnabled = config.isEnabled as jest.Mock;
 const mockUseProductsWithPremiumSupport = useProductsWithPremiumSupport as jest.Mock;
-const mockLoadCheckoutSupportVariation = loadCheckoutSupportVariation as jest.Mock;
+const mockLoadCheckoutSupportAssignment = loadCheckoutSupportAssignment as jest.Mock;
+
+// The result of assigning the user to the checkout support experiment.
+const assigned = ( variation?: string, { timedOut = false, durationMs = 150 } = {} ) => ( {
+	variation,
+	timedOut,
+	durationMs,
+} );
 
 const openHelpCenter = async () => {
 	const { result } = renderHook( () => useCheckoutHelpCenter() );
@@ -164,7 +171,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 	} );
 
 	it( 'sends the human-only variation straight to a human', async () => {
-		mockLoadCheckoutSupportVariation.mockResolvedValue( 'human_only' );
+		mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned( 'human_only' ) );
 
 		await openHelpCenter();
 
@@ -173,7 +180,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 	} );
 
 	it.each( [ 'hybrid', 'control' ] )( 'sends the %s variation to Odie', async ( variation ) => {
-		mockLoadCheckoutSupportVariation.mockResolvedValue( variation );
+		mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned( variation ) );
 
 		await openHelpCenter();
 
@@ -182,7 +189,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 	} );
 
 	it( 'opens the usual Help Center when the user gets no variation', async () => {
-		mockLoadCheckoutSupportVariation.mockResolvedValue( undefined );
+		mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned() );
 
 		await openHelpCenter();
 
@@ -244,7 +251,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 
 		await openHelpCenter();
 
-		expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
+		expect( mockLoadCheckoutSupportAssignment ).not.toHaveBeenCalled();
 		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: undefined } );
 		expect( route() ).toBe( '/odie' );
 	} );
@@ -265,22 +272,22 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		],
 	] )( 'keeps %s in the experiment', async ( _case, setUp ) => {
 		setUp();
-		mockLoadCheckoutSupportVariation.mockResolvedValue( 'human_only' );
+		mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned( 'human_only' ) );
 
 		await openHelpCenter();
 
-		expect( mockLoadCheckoutSupportVariation ).toHaveBeenCalled();
+		expect( mockLoadCheckoutSupportAssignment ).toHaveBeenCalled();
 		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: 'human_only' } );
 	} );
 
 	it( 'keeps Atomic sites in the experiment', async () => {
 		mockIsJetpackSite = true;
 		mockIsAtomicSite = true;
-		mockLoadCheckoutSupportVariation.mockResolvedValue( 'human_only' );
+		mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned( 'human_only' ) );
 
 		await openHelpCenter();
 
-		expect( mockLoadCheckoutSupportVariation ).toHaveBeenCalled();
+		expect( mockLoadCheckoutSupportAssignment ).toHaveBeenCalled();
 		expect( shownWith() ).toMatchObject( { checkoutSupportVariation: 'human_only' } );
 	} );
 
@@ -294,7 +301,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 
 		await openHelpCenter();
 
-		expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
+		expect( mockLoadCheckoutSupportAssignment ).not.toHaveBeenCalled();
 		expect( route() ).toContain( '/odie?provider=zendesk' );
 		expect( route() ).toContain( 'userFieldFlowName=messaging_flow_dotcom_100_year_plan' );
 	} );
@@ -315,7 +322,7 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 
 		await openHelpCenter();
 
-		expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
+		expect( mockLoadCheckoutSupportAssignment ).not.toHaveBeenCalled();
 		expect( mockSetShowHelpCenter.mock.calls.at( -1 )?.[ 0 ] ).toBe( false );
 	} );
 
@@ -347,17 +354,17 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 			await openHelpCenter();
 
 			expect( mockSetIsMinimized ).toHaveBeenCalledWith( false );
-			expect( mockLoadCheckoutSupportVariation ).not.toHaveBeenCalled();
+			expect( mockLoadCheckoutSupportAssignment ).not.toHaveBeenCalled();
 			expect( mockSetShowHelpCenter ).not.toHaveBeenCalled();
 			expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
 		} );
 
 		it( 'opens it for the variation when it was minimized before checkout', async () => {
-			mockLoadCheckoutSupportVariation.mockResolvedValue( 'human_only' );
+			mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned( 'human_only' ) );
 
 			await openHelpCenter();
 
-			expect( mockLoadCheckoutSupportVariation ).toHaveBeenCalled();
+			expect( mockLoadCheckoutSupportAssignment ).toHaveBeenCalled();
 			expect( mockSetShowHelpCenter ).toHaveBeenCalledWith(
 				true,
 				expect.objectContaining( { checkoutSupportVariation: 'human_only' } )
@@ -370,9 +377,9 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 		let resolveAssignment: ( variation: string ) => void;
 
 		beforeEach( () => {
-			mockLoadCheckoutSupportVariation.mockReturnValue(
+			mockLoadCheckoutSupportAssignment.mockReturnValue(
 				new Promise( ( resolve ) => {
-					resolveAssignment = resolve;
+					resolveAssignment = ( variation ) => resolve( assigned( variation ) );
 				} )
 			);
 		} );
@@ -422,6 +429,98 @@ describe( 'useCheckoutHelpCenter – checkout support experiment', () => {
 
 			expect( mockSetShowHelpCenter ).not.toHaveBeenCalled();
 			expect( mockSetNavigateToRoute ).not.toHaveBeenCalled();
+		} );
+	} );
+
+	describe( 'the checkout entry event', () => {
+		const openEvents = () =>
+			( recordTracksEvent as jest.Mock ).mock.calls.filter(
+				( [ name ] ) => name === 'calypso_checkout_support_open'
+			);
+
+		it( 'records opening support from checkout, with the variation and the cart', async () => {
+			mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned( 'human_only' ) );
+
+			await openHelpCenter();
+
+			expect( openEvents() ).toEqual( [
+				[
+					'calypso_checkout_support_open',
+					{
+						checkout_support_variation: 'human_only',
+						can_join_experiment: true,
+						assignment_timed_out: false,
+						assignment_ms: 150,
+						is_logged_in: true,
+						cart_type: 'new_purchase',
+						has_premium_support: false,
+					},
+				],
+			] );
+		} );
+
+		it( 'records an assignment that took too long, without a variation', async () => {
+			mockLoadCheckoutSupportAssignment.mockResolvedValue(
+				assigned( undefined, { timedOut: true, durationMs: 2000 } )
+			);
+
+			await openHelpCenter();
+
+			expect( openEvents()[ 0 ][ 1 ] ).toEqual( {
+				can_join_experiment: true,
+				assignment_timed_out: true,
+				assignment_ms: 2000,
+				is_logged_in: true,
+				cart_type: 'new_purchase',
+				has_premium_support: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'renewal', [ { product_slug: 'personal-bundle', is_renewal: true } ] ],
+			[
+				'mixed',
+				[ { product_slug: 'personal-bundle', is_renewal: true }, { product_slug: 'domain_reg' } ],
+			],
+		] )( 'records a %s cart', async ( cartType, products ) => {
+			mockCartProducts = products;
+			mockLoadCheckoutSupportAssignment.mockResolvedValue( assigned( 'control' ) );
+
+			await openHelpCenter();
+
+			expect( openEvents()[ 0 ][ 1 ] ).toMatchObject( { cart_type: cartType } );
+		} );
+
+		it( 'records users who are not in the experiment, without assignment details', async () => {
+			mockIsLoggedIn = false;
+
+			await openHelpCenter();
+
+			expect( openEvents()[ 0 ][ 1 ] ).toEqual( {
+				can_join_experiment: false,
+				is_logged_in: false,
+				cart_type: 'new_purchase',
+				has_premium_support: false,
+			} );
+		} );
+
+		it.each( [
+			[ 'when closing the Help Center', () => ( mockIsHelpCenterShown = true ) ],
+			[ 'on the thank-you page', () => ( mockSectionName = 'checkout-thank-you' ) ],
+			[
+				'when bringing back a minimized checkout support chat',
+				() => {
+					mockIsHelpCenterShown = true;
+					mockIsMinimized = true;
+					mockStoredVariation = 'human_only';
+				},
+			],
+		] )( 'is not recorded %s', async ( _case, setUp ) => {
+			setUp();
+
+			await openHelpCenter();
+
+			expect( openEvents() ).toHaveLength( 0 );
 		} );
 	} );
 } );

@@ -3,7 +3,7 @@ import type { RefObject } from 'react';
 
 /**
  * What a surface's components share: its ID, disabled state, whether its fields show their errors,
- * and theme for an open modal.
+ * and the element whose theme its modals and chart tooltips copy.
  */
 export const InteractiveUiSurfaceContext = createContext< {
 	surfaceId?: string;
@@ -13,7 +13,10 @@ export const InteractiveUiSurfaceContext = createContext< {
 	showErrors?: () => void;
 	/** The host's classes for the surface, which its modal takes too. */
 	className?: string;
-	/** The surface's root element, whose theme its modal copies. */
+	/**
+	 * The element the components render in: the surface's root, or a modal's content. Modals and
+	 * chart tooltips copy its theme, and chart tooltips stay within it.
+	 */
 	rootRef?: RefObject< HTMLElement | null >;
 } >( { disabled: false, isShowingErrors: false } );
 

@@ -329,6 +329,12 @@ const sections = [
 		enableLoggedOut: true,
 		isomorphic: true,
 	},
+	{
+		name: 'site-redesign',
+		paths: [ '/site-redesign' ],
+		module: 'calypso/my-sites/site-redesign',
+		group: 'sites',
+	},
 	// Since we're using find() and startsWith() on paths, 'themes' needs to go before 'theme',
 	// or it'll be falsely associated with the latter section.
 	{
@@ -744,12 +750,6 @@ const sections = [
 		name: 'jetpack-cloud-partner-portal',
 		paths: [ '/partner-portal' ],
 		module: 'calypso/jetpack-cloud/sections/partner-portal',
-		group: 'jetpack-cloud',
-	},
-	{
-		name: 'jetpack-cloud-agency-signup',
-		paths: [ '/manage/signup', '/agency/signup' ],
-		module: 'calypso/jetpack-cloud/sections/agency-signup',
 		group: 'jetpack-cloud',
 	},
 	{

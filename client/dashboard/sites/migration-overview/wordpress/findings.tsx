@@ -16,9 +16,11 @@ import type {
 export function Findings( {
 	site,
 	migration,
+	onBackToSetup,
 }: {
 	site: Site;
 	migration: WordPressMigrationStatus;
+	onBackToSetup: () => void;
 } ) {
 	const { setShowHelpCenter } = useHelpCenter();
 	const run = useMutation(
@@ -30,12 +32,18 @@ export function Findings( {
 	const { findings } = migration;
 	const codes = findings.map( ( { code } ) => code );
 	const isFailed = migration.status === 'failed';
-	// Continuing past a `retry` finding only runs the same step again.
-	const isRetry = findings.some( ( { resolution } ) => resolution === 'retry' );
+	const isRetry = findings.some( ( { resolution } ) =>
+		[ 'retry', 'assisted_handoff' ].includes( resolution )
+	);
+	// Only warnings mean the migration could read the source. Anything worse may be its connection.
+	const hasError = isFailed || findings.some( ( { severity } ) => severity === 'failure' );
 
 	const getDescription = () => {
 		if ( isFailed ) {
-			return __( 'Something went wrong and the migration couldn’t finish.' );
+			// The findings say what went wrong themselves.
+			return findings.length > 0
+				? undefined
+				: __( 'Something went wrong and the migration couldn’t finish.' );
 		}
 		return findings.length > 0
 			? __( 'We checked your site and found a few things you should know about.' )
@@ -43,7 +51,7 @@ export function Findings( {
 	};
 
 	const getStatus = () => {
-		if ( isFailed || findings.some( ( { severity } ) => severity === 'failure' ) ) {
+		if ( hasError ) {
 			return 'error';
 		}
 		return findings.length > 0 ? 'warning' : 'pending';
@@ -54,6 +62,11 @@ export function Findings( {
 			title={ isFailed ? __( 'Your migration stopped' ) : __( 'Before we migrate your site' ) }
 			description={ getDescription() }
 			decoration={ <StatusIcon status={ getStatus() } /> }
+			back={
+				hasError
+					? { label: __( 'Back to setup' ), onClick: onBackToSetup, disabled: run.isPending }
+					: undefined
+			}
 			actions={
 				<>
 					<Button
@@ -70,7 +83,7 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			footer={ <AssistedHandoffLink /> }
+			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice

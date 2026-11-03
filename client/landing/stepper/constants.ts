@@ -13,6 +13,12 @@ export const SITE_PICKER_FILTER_CONFIG = [ 'wpcom', 'atomic' ];
 export const WOO_HOSTING_SOLUTIONS_REF = 'woo-hosting-solutions-flow';
 
 /**
+ * The `signup_layout` that shows the account step with a grid of themes beside the form. The
+ * marketing bar's CTA destination experiment sends its hybrid arm to signup with it.
+ */
+export const THEME_GRID_SIGNUP_LAYOUT = 'theme_grid';
+
+/**
  * The `ref` the `site-selected` signup flow hands its purchase to the onboarding post-checkout
  * step with, so that run's events and landing page stay attributed to it.
  */

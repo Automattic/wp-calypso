@@ -13,9 +13,17 @@ import {
 	REMOTE_PATH_AUTH,
 	JPC_PATH_CHECKOUT,
 } from './constants';
+import { getPluginsForEntryPoint } from './entry-points';
 import { authorizeQueryDataSchema } from './schema';
 
 export function authQueryTransformer( queryObject ) {
+	const plugins = queryObject.plugins
+		? queryObject.plugins
+				.split( ',' )
+				.map( ( s ) => s.trim() )
+				.filter( Boolean )
+		: [];
+
 	return {
 		// Required
 		clientId: parseInt( queryObject.client_id, 10 ),
@@ -54,12 +62,9 @@ export function authQueryTransformer( queryObject ) {
 		// Related WooCommerce PR: https://github.com/woocommerce/woocommerce/pull/39799
 		// this param will be removed after the expierment is over
 		plugin_name: queryObject.plugin_name || null,
-		plugins: queryObject.plugins
-			? queryObject.plugins
-					.split( ',' )
-					.map( ( s ) => s.trim() )
-					.filter( Boolean )
-			: [],
+		plugins,
+		// What the connection screens present; `plugins` stays as the raw values.
+		connectorPlugins: getPluginsForEntryPoint( plugins, queryObject.from ),
 	};
 }
 
@@ -85,6 +90,7 @@ export const authQueryPropTypes = PropTypes.shape( {
 	installedExtSuccess: PropTypes.string,
 	plugin_name: PropTypes.string,
 	plugins: PropTypes.arrayOf( PropTypes.string ),
+	connectorPlugins: PropTypes.arrayOf( PropTypes.string ),
 } );
 
 export function addCalypsoEnvQueryArg( url ) {

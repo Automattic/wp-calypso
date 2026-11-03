@@ -1,12 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import {
-	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
 	DOMAIN_FOR_GRAVATAR_FLOW,
-	WEBSITE_DESIGN_SERVICES,
 } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
@@ -32,25 +30,15 @@ export function generateFlows( {
 
 	const flows = [
 		{
-			name: 'hosting', // This flow is to be removed once the Landpack changes are completed.
+			name: 'hosting',
 			steps: [ userSocialStep, 'hosting-decider' ],
 			destination: getHostingFlowDestination,
-			description: 'To be deleted.',
-			lastModified: '2024-03-22',
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
+			lastModified: '2026-10-30',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
-		},
-		{
-			name: HOSTING_LP_FLOW,
-			steps: [ userSocialStep, 'hosting-decider' ],
-			destination: getHostingFlowDestination,
-			description: 'Create an account and redirect the user to the hosted site flow forking step.',
-			lastModified: '2024-03-22',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'account',
@@ -132,18 +120,6 @@ export function generateFlows( {
 					deemphasizeFreePlan: true,
 				},
 			},
-		},
-		{
-			name: 'import',
-			steps: [ userSocialStep, 'domains', 'plans-import' ],
-			destination: ( dependencies ) => `/setup/site-migration?siteSlug=${ dependencies.siteSlug }`,
-			description: 'Beginning of the flow to import content',
-			lastModified: '2023-10-11',
-			showRecaptcha: true,
-			get pageTitle() {
-				return translate( 'Import' );
-			},
-			hideProgressIndicator: true,
 		},
 		{
 			name: 'onboarding-with-email',
@@ -306,25 +282,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'coupon' ],
 			optionalDependenciesInQuery: [ 'coupon' ],
 		},
-		{
-			name: WEBSITE_DESIGN_SERVICES,
-			steps: [ 'difm-options', 'social-profiles', 'difm-design-setup-site', 'difm-page-picker' ],
-			destination: getDIFMSignupDestination,
-			description: 'A flow for DIFM onboarding',
-			excludeFromManageSiteFlows: true,
-			providesDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			optionalDependenciesInQuery: [ 'siteSlug', 'back_to' ],
-			lastModified: '2025-03-04',
-			enabledHelpCenterGeos: [ 'US' ],
-			hideProgressIndicator: true,
-			get helpCenterButtonCopy() {
-				return translate( 'Questions?' );
-			},
-			get helpCenterButtonLink() {
-				return translate( 'Contact our site-building team' );
-			},
-		},
-
 		{
 			name: 'site-content-collection',
 			steps: [ userSocialStep, 'website-content' ],

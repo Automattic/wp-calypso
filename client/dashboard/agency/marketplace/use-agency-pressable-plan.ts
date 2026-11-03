@@ -18,7 +18,9 @@ export function useAgencyPressablePlan() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
 
-	const { data: allProducts } = useQuery( agencyProductsQuery( agencyId ) );
+	const { data: allProducts, isFetched: areProductsFetched } = useQuery(
+		agencyProductsQuery( agencyId )
+	);
 	const { data: licenses, isFetched } = useQuery( {
 		...pressableLicensesQuery( agencyId ),
 		enabled: agencyId > 0,
@@ -36,6 +38,6 @@ export function useAgencyPressablePlan() {
 		products,
 		licenses: pressableLicenses,
 		ownership: getPressableOwnershipType( agency ),
-		isReady: isFetched,
+		isReady: isFetched && areProductsFetched,
 	};
 }

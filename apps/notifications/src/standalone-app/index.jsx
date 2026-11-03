@@ -232,6 +232,7 @@ const NotesWrapper = ( { wpcom } ) => {
 			locale={ locale }
 			wpcom={ wpcom }
 			isDismissible={ isMobileViewport }
+			constrainTabbing
 			isViewSettingsEnabled={ isViewSettingsEnabled }
 			isSimplifiedNoteEnabled={ isViewSettingsEnabled }
 			preferences={ preferences }

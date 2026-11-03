@@ -1,4 +1,5 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import { useConstrainedTabbing } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useState, type MouseEvent, type TransitionEvent } from 'react';
 import { Provider } from 'react-redux';
@@ -68,7 +69,13 @@ const defaultHandlers = {
 	],
 };
 
-const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) => {
+const NotificationContent = ( {
+	isDismissible,
+	constrainTabbing,
+}: {
+	isDismissible: boolean;
+	constrainTabbing: boolean;
+} ) => {
 	const [ filterName, setFilterName ] = useState< FilterName >( 'all' );
 	const [ selectedNoteId, setSelectedNoteId ] = useState< string | undefined >( undefined );
 	const isDetailOpen = selectedNoteId !== undefined;
@@ -96,9 +103,11 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 	};
 
 	const noteNavigation = useNoteNavigation( { filterName, selectedNoteId, setSelectedNoteId } );
+	const constrainedTabbingRef = useConstrainedTabbing();
 
 	return (
 		<HStack
+			ref={ constrainTabbing ? constrainedTabbingRef : undefined }
 			className="wpnc-app"
 			spacing={ 0 }
 			alignment="stretch"
@@ -143,6 +152,7 @@ const NotificationContent = ( { isDismissible }: { isDismissible: boolean } ) =>
 const NotificationApp = ( {
 	locale = 'en',
 	isDismissible = false,
+	constrainTabbing = false,
 	isViewSettingsEnabled = false,
 	isSimplifiedNoteEnabled = false,
 	preferences,
@@ -152,6 +162,7 @@ const NotificationApp = ( {
 }: {
 	locale?: string;
 	isDismissible?: boolean;
+	constrainTabbing?: boolean;
 	isViewSettingsEnabled?: boolean;
 	isSimplifiedNoteEnabled?: boolean;
 	preferences?: NotificationPreferences;
@@ -265,7 +276,10 @@ const NotificationApp = ( {
 					isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 					onPreferenceChange={ onPreferenceChange }
 				>
-					<NotificationContent isDismissible={ isDismissible } />
+					<NotificationContent
+						isDismissible={ isDismissible }
+						constrainTabbing={ constrainTabbing }
+					/>
 				</AppProvider>
 			</Provider>
 		</ErrorBoundary>

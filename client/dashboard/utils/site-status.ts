@@ -63,9 +63,17 @@ export function isWordPressMigration( item: Site ) {
 	return config.isEnabled( 'migration/reprint-flow' ) && item.site_migration.type === 'wordpress';
 }
 
+// A WordPress migration handed to our team, which has its own views too.
+export function isAssistedWordPressMigration( item: Site ) {
+	return (
+		config.isEnabled( 'migration/reprint-flow' ) &&
+		item.site_migration.type === 'assisted-wordpress'
+	);
+}
+
 export function isSiteMigrationInProgress( item: Site ) {
 	// A WordPress (Reprint) migration reports its own state. The others still go by their flow sticker.
-	if ( isWordPressMigration( item ) ) {
+	if ( isWordPressMigration( item ) || isAssistedWordPressMigration( item ) ) {
 		return item.site_migration.status_v2 !== 'completed';
 	}
 
