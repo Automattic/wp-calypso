@@ -29,6 +29,7 @@ export default function UsernameUpdateConfirmationModal( {
 		<ConfirmModal
 			isOpen={ isOpen }
 			title={ __( 'Change your username?' ) }
+			size="medium"
 			__experimentalHideHeader={ false }
 			onConfirm={ onConfirm }
 			onCancel={ onCancel }
