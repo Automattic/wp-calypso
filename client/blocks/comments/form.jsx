@@ -63,7 +63,7 @@ class PostCommentForm extends Component {
 		haveFocus: false,
 		// Outside the inbox the plain textarea stands in until the first focus.
 		editorOpen: false,
-		// The textarea's height, which the editor grows from and shrinks back to.
+		// The form row's height with the textarea, which the editor grows from and shrinks back to.
 		openFrom: undefined,
 		editorClosing: false,
 		editorFailed: false,
@@ -108,7 +108,7 @@ class PostCommentForm extends Component {
 	};
 
 	handleTextareaFocus = ( event ) => {
-		this.setState( { openFrom: event.target.offsetHeight } );
+		this.setState( { openFrom: event.target.closest( 'fieldset' )?.offsetHeight } );
 		this.handleFocus();
 	};
 

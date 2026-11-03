@@ -15,9 +15,9 @@ type Props = {
 	takeFocus?: boolean;
 	/** Open from the start and kept open, as the inbox's composer has it. */
 	pinToolbar?: boolean;
-	/** The height of the textarea this box replaces, which it grows from and shrinks back to. */
+	/** The height of the form row before this box replaced its textarea, which the row grows from and shrinks back to. */
 	openFrom?: number;
-	/** Shrinks the box back to `openFrom`, then calls `onClosed`. */
+	/** Shrinks the row back to `openFrom`, then calls `onClosed`. */
 	closing?: boolean;
 	onClosed?: () => void;
 	onChange: ( content: string ) => void;
@@ -67,21 +67,23 @@ export default function CommentBlockEditor( {
 	const latest = useRef( { value, onChange, onError, onKeyDown, onFocus, onBlur, onClosed } );
 	latest.current = { value, onChange, onError, onKeyDown, onFocus, onBlur, onClosed };
 
-	// The height, not the parts: the editor swaps in for its stand-in partway through.
+	// The form row's height, not the box's or its parts': the editor swaps in for its stand-in
+	// partway through, and the row's Send button shows on focus, so it slides in with the box.
+	const row = () => box.current?.parentElement;
 	const resize = ( from: number, to: number, fill?: FillMode ) =>
-		! box.current?.animate || window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches
+		! row()?.animate || window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches
 			? null
-			: box.current.animate(
+			: row()!.animate(
 					[
-						{ height: `${ from }px`, overflow: 'hidden' },
-						{ height: `${ to }px`, overflow: 'hidden' },
+						{ height: `${ from }px`, boxSizing: 'border-box', overflow: 'hidden' },
+						{ height: `${ to }px`, boxSizing: 'border-box', overflow: 'hidden' },
 					],
 					{ duration: 250, easing: 'ease-in-out', fill }
 				);
 
 	useLayoutEffect( () => {
 		if ( openFrom ) {
-			resize( openFrom, box.current!.offsetHeight );
+			resize( openFrom, row()!.offsetHeight );
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- once, as the box replaces the textarea.
 	}, [] );
@@ -92,7 +94,7 @@ export default function CommentBlockEditor( {
 		}
 
 		// Held at the textarea's height, so nothing jumps before the textarea takes its place.
-		const animation = openFrom ? resize( box.current!.offsetHeight, openFrom, 'forwards' ) : null;
+		const animation = openFrom ? resize( row()!.offsetHeight, openFrom, 'forwards' ) : null;
 		if ( ! animation ) {
 			latest.current.onClosed?.();
 			return;
