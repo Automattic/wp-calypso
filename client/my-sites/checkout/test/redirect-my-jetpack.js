@@ -17,7 +17,7 @@ describe( 'redirectMyJetpack', () => {
 
 	const query = {
 		site: 'example.com',
-		redirect_to: encodeURIComponent( 'http://example.com/wp-admin/admin.php?page=my-jetpack' ),
+		redirect_to: 'http://example.com/wp-admin/admin.php?page=my-jetpack',
 		source: 'my-jetpack',
 	};
 
@@ -55,7 +55,7 @@ describe( 'redirectMyJetpack', () => {
 			{
 				connect_after_checkout: true,
 				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+				admin_url: 'http://example.com/wp-admin/',
 			},
 			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 		);
@@ -76,7 +76,7 @@ describe( 'redirectMyJetpack', () => {
 			{
 				connect_after_checkout: true,
 				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to.split( '?' )[ 0 ],
+				admin_url: 'http://example.com/wp-admin/',
 			},
 			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 		);
@@ -107,7 +107,7 @@ describe( 'redirectMyJetpack', () => {
 				{
 					connect_after_checkout: true,
 					from_site_slug: statsContext.query.site,
-					admin_url: statsContext.query.redirect_to.split( '?' )[ 0 ],
+					admin_url: 'http://example.com/wp-admin/',
 				},
 				statsContext.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 			);
@@ -136,6 +136,37 @@ describe( 'redirectMyJetpack', () => {
 		);
 
 		redirectMyJetpack( contextWithoutRedirect, next );
+
+		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
+		expect( next ).not.toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[ 'https://example.com/wp-admin/admin.php?page=my-jetpack', 'https://example.com/wp-admin/' ],
+		[
+			'https://example.com/blog/wp-admin/admin.php?page=my-jetpack',
+			'https://example.com/blog/wp-admin/',
+		],
+		[ 'https://example.com/wp-admin/', 'https://example.com/wp-admin/' ],
+		[ 'https://example.com/some-page/', undefined ],
+		[ 'https://example.com/?next=/wp-admin/', undefined ],
+	] )( 'sends redirect_to %s to siteless checkout with admin_url %s', ( redirectTo, adminUrl ) => {
+		const redirectQuery = { ...query, redirect_to: redirectTo };
+		const redirectContext = {
+			...context,
+			query: redirectQuery,
+			path: addQueryArgs( redirectQuery, context.pathname ),
+		};
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: redirectQuery.site,
+				admin_url: adminUrl,
+			},
+			redirectContext.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+
+		redirectMyJetpack( redirectContext, next );
 
 		expect( pageSpy ).toHaveBeenCalledWith( redirectUrl );
 		expect( next ).not.toHaveBeenCalled();

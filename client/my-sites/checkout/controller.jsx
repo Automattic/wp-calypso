@@ -487,6 +487,20 @@ export function checkout( context, next ) {
 }
 
 /**
+ * The site's wp-admin URL (e.g. `https://example.com/wp-admin/`), taken from a
+ * `redirect_to` that points into wp-admin. Checkout appends wp-admin paths to it.
+ * @param   {string|undefined} redirectTo The `redirect_to` the site sent to checkout
+ * @returns {string|undefined}            The wp-admin URL, or undefined when `redirectTo` isn't in wp-admin
+ */
+function getAdminUrlFromRedirectTo( redirectTo ) {
+	if ( typeof redirectTo !== 'string' ) {
+		return undefined;
+	}
+
+	return redirectTo.match( /^[^?#]*?\/wp-admin\// )?.[ 0 ];
+}
+
+/**
  * Middleware to send logged-out users coming from My Jetpack or the Premium
  * Analytics upgrade page to siteless checkout
  * @see pbNhbs-ag3-p2
@@ -507,7 +521,7 @@ export function redirectMyJetpack( context, next ) {
 			{
 				connect_after_checkout: true,
 				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to?.split( '?' )[ 0 ],
+				admin_url: getAdminUrlFromRedirectTo( context.query.redirect_to ),
 			},
 			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
 		);
