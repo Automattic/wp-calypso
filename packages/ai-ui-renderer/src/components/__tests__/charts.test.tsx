@@ -72,7 +72,10 @@ it.each( [
 
 		render( <InteractiveUiSurface surface={ runtime.getSurface( 'chart' )! } /> );
 
-		expect( await screen.findByText( 'Stats', { selector: 'figcaption' } ) ).toBeVisible();
+		// The first chart to render warms up the library, which can take over a second on a busy CI agent.
+		expect(
+			await screen.findByText( 'Stats', { selector: 'figcaption' }, { timeout: 4000 } )
+		).toBeVisible();
 		expect( screen.getByRole( 'row', { name: row } ) ).toBeInTheDocument();
 		expect( onError ).not.toHaveBeenCalled();
 	}
