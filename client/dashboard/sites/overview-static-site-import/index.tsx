@@ -22,7 +22,7 @@ import Notice from '../../components/notice';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { withJetpackSso } from '../../utils/site-sso';
-import { getSourceHost, isPlatformHost } from './use-static-site-import';
+import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
@@ -328,9 +328,8 @@ export function StaticSiteImportNotice( {
 		);
 	}
 
-	// A builder's free address (e.g. name.wixsite.com) isn't the customer's to connect,
-	// so send them to find a domain instead of prefilling one they can't use.
-	const ownedDomain = sourceHost && ! isPlatformHost( sourceHost ) ? sourceHost : '';
+	// The server names a domain only when the customer owns it; otherwise they get one.
+	const ownedDomain = siteImport.session?.connectable_domain ?? '';
 	const domainUrl = ownedDomain
 		? addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
 				initialQuery: ownedDomain,
