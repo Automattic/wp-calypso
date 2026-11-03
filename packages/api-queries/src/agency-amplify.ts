@@ -29,6 +29,7 @@ export const amplifyReportsQuery = ( agencyId: number ) =>
 
 export const startAmplifyReportMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		mutationKey: [ 'agency', agencyId, 'amplify', 'reports', 'start' ],
 		meta: { statId: 'agcy-amplify-report-create' },
 		mutationFn: ( input: StartAmplifyReportInput ) => startAmplifyReport( agencyId, input ),
 		onSuccess: ( report ) => {
@@ -48,6 +49,7 @@ export const startAmplifyReportMutation = ( agencyId: number ) =>
 
 export const archiveAmplifyReportMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		mutationKey: [ 'agency', agencyId, 'amplify', 'reports', 'archive' ],
 		meta: { statId: 'agcy-amplify-report-archive' },
 		mutationFn: ( reportId: string ) => archiveAmplifyReport( agencyId, reportId ),
 		onSuccess: ( report ) => {

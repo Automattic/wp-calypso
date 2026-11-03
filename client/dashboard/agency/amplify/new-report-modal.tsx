@@ -1,3 +1,5 @@
+import { startAmplifyReportMutation } from '@automattic/api-queries';
+import { useIsMutating } from '@tanstack/react-query';
 import { Modal } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import AmplifyReportCreator from './report-creator';
@@ -27,8 +29,17 @@ export default function AmplifyNewReportModal( {
 	onCreated: () => void;
 	onUsageError?: ( code: string ) => void;
 } ) {
+	const isStarting =
+		useIsMutating( { mutationKey: startAmplifyReportMutation( agencyId ).mutationKey } ) > 0;
 	return (
-		<Modal title={ __( 'New report' ) } size="medium" onRequestClose={ onClose }>
+		<Modal
+			title={ __( 'New report' ) }
+			size="medium"
+			isDismissible={ ! isStarting }
+			shouldCloseOnEsc={ ! isStarting }
+			shouldCloseOnClickOutside={ ! isStarting }
+			onRequestClose={ onClose }
+		>
 			<AmplifyReportCreator
 				agencyId={ agencyId }
 				initialUrl={ initialUrl }

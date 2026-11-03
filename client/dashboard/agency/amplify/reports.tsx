@@ -3,7 +3,7 @@ import {
 	paginatedAgencySitesQuery,
 	retryAmplifyReportMutation,
 } from '@automattic/api-queries';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useIsMutating, useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -198,7 +198,13 @@ function ArchiveReportModal( {
 				) }
 			</Text>
 			<ButtonStack justify="flex-end">
-				<Button __next40pxDefaultSize variant="tertiary" onClick={ closeModal }>
+				<Button
+					__next40pxDefaultSize
+					variant="tertiary"
+					disabled={ archive.isPending }
+					accessibleWhenDisabled
+					onClick={ closeModal }
+				>
 					{ __( 'Cancel' ) }
 				</Button>
 				<Button
@@ -245,6 +251,8 @@ export default function AmplifyReportsList( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const [ reportToArchive, setReportToArchive ] = useState< AmplifyReport | null >( null );
+	const isArchiving =
+		useIsMutating( { mutationKey: archiveAmplifyReportMutation( agencyId ).mutationKey } ) > 0;
 	const {
 		mutate: retryReport,
 		isPending: isRetryPending,
@@ -539,6 +547,9 @@ export default function AmplifyReportsList( {
 				<Modal
 					title={ __( 'Archive report?' ) }
 					size="small"
+					isDismissible={ ! isArchiving }
+					shouldCloseOnEsc={ ! isArchiving }
+					shouldCloseOnClickOutside={ ! isArchiving }
 					onRequestClose={ () => setReportToArchive( null ) }
 				>
 					<ArchiveReportModal
