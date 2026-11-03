@@ -226,7 +226,7 @@ function ArchiveReportModal( {
 								closeModal?.();
 							},
 							onError: () =>
-								createErrorNotice( __( 'Could not archive the report. Please try again.' ), {
+								createErrorNotice( __( 'Failed to archive the report.' ), {
 									type: 'snackbar',
 								} ),
 						} );
@@ -269,7 +269,7 @@ export default function AmplifyReportsList( {
 				mode: item.mode,
 			} );
 			downloadReportPdf( item.id ).catch( () =>
-				createErrorNotice( __( 'We couldn’t download the report. Try again.' ), {
+				createErrorNotice( __( 'Failed to download the report.' ), {
 					type: 'snackbar',
 				} )
 			);
@@ -292,7 +292,7 @@ export default function AmplifyReportsList( {
 					createErrorNotice(
 						( error as { code?: string } )?.code === 'amplify_report_retry_limit_reached'
 							? __( 'This report was already retried. Start a new report instead.' )
-							: __( 'Could not restart the report. Please try again.' ),
+							: __( 'Failed to restart the report.' ),
 						{ type: 'snackbar' }
 					),
 			} );
