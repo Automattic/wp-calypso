@@ -9,12 +9,6 @@ import { SAMPLE_REPORT_URL } from './sample-report-pages';
 import { PERSPECTIVES } from './score-preview';
 import { severityFor } from './score-severity';
 
-// TODO: replace with the knowledge base articles once they're published.
-const KB_URLS: Record< 'human' | 'ai', string > = {
-	human: 'https://agencieshelp.automattic.com/knowledge-base/',
-	ai: 'https://agencieshelp.automattic.com/knowledge-base/',
-};
-
 const FAQS = [
 	{
 		id: 'site-requirements',
@@ -365,8 +359,6 @@ function RubricItem( {
 }
 
 function ScoreCategories() {
-	const { recordTracksEvent } = useAnalytics();
-
 	return (
 		<section className="dashboard-amplify-story__rubric" aria-labelledby="amplify-rubric-title">
 			<Heading id="amplify-rubric-title" level={ 2 }>
@@ -394,15 +386,7 @@ function ScoreCategories() {
 									: __(
 											'Whether AI tools can read the site, understand the business, and recommend it.'
 										) }
-							</span>{ ' ' }
-							<ExternalLink
-								href={ KB_URLS[ type ] }
-								onClick={ () =>
-									recordTracksEvent( 'calypso_a4a_amplify_rubric_kb_click', { lens: type } )
-								}
-							>
-								{ __( 'Learn more' ) }
-							</ExternalLink>
+							</span>
 						</p>
 						<div className="dashboard-amplify-story__rubric-grid">
 							{ PERSPECTIVES[ type ].metrics.map( ( metric ) => (
