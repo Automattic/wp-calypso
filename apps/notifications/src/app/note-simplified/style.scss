@@ -126,6 +126,10 @@
 	}
 }
 
+.wpnc-simplified__parent-text.is-excerpt img:not(.emoji) {
+	display: none;
+}
+
 .wpnc-simplified__card {
 	display: block;
 	overflow-wrap: anywhere;

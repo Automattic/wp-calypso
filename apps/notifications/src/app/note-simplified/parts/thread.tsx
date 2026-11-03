@@ -34,7 +34,10 @@ function truncateBlock( block: Block, maxLength: number ): Block {
 			?.filter( ( item ) => item.indices[ 0 ] < keptLength )
 			.map( ( item ): T => ( {
 				...item,
-				indices: [ item.indices[ 0 ], Math.min( item.indices[ 1 ], keptLength ) ],
+				indices: [
+					item.indices[ 0 ],
+					item.indices[ 1 ] > keptLength ? keptLength + 1 : item.indices[ 1 ],
+				],
 			} ) );
 
 	return {
@@ -132,7 +135,12 @@ export function ThreadParent( {
 				)
 			}
 		>
-			<div className={ clsx( 'wpnc-simplified__parent-text', { 'is-truncated': truncate } ) }>
+			<div
+				className={ clsx( 'wpnc-simplified__parent-text', {
+					'is-truncated': truncate,
+					'is-excerpt': maxLength,
+				} ) }
+			>
 				{ p( html( truncate ? toPreview( content ) : content ) ) }
 			</div>
 		</ThreadItem>
