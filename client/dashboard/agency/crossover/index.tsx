@@ -179,7 +179,7 @@ function CrossoverModal( {
 
 /**
  * Shows the crossover modal for whichever link asked to leave the agency dashboard through
- * `leaveDashboard`. Mounted once, next to the agency sidebar.
+ * `leaveDashboard`. Mounted once, in the agency layout.
  */
 export default function CrossoverModalHost() {
 	const request = useCrossoverRequest();

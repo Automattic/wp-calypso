@@ -2,7 +2,6 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
-import CrossoverModalHost from '../../agency/crossover';
 import { crossoverLinkProps } from '../../agency/crossover/store';
 import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
@@ -181,7 +180,6 @@ export default function AgencySidebar() {
 					) }
 				</SidebarExpandableMenuItem>
 			) }
-			<CrossoverModalHost />
 		</>
 	);
 }
