@@ -32,7 +32,7 @@ export default function SpacefastSidebarPromo( {
 			icon={ <SpacefastSymbol /> }
 			title={ __( 'Spacefast' ) }
 			badge={ __( 'New' ) }
-			description={ __( 'Publish and share what your agents make.' ) }
+			description={ __( 'One shared place to ship your team’s AI work in seconds.' ) }
 			cta={ { label: __( 'Try Spacefast' ), href: getSpacefastUrl( 'sidebar' ) } }
 			onView={ onView }
 			onClick={ () =>

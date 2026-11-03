@@ -21,7 +21,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	min-block-size: 240px;
+	min-block-size: 360px;
 	background-color: $spacefast-green;
 
 	@container a4a-spacefast-dev-tools ( max-width: 719px ) {
@@ -32,8 +32,8 @@
 
 .a4a-spacefast-dev-tools__logo {
 	display: block;
-	inline-size: 60%;
-	max-inline-size: 280px;
+	inline-size: 75%;
+	max-inline-size: 420px;
 	block-size: auto;
 	color: $spacefast-ink;
 }
