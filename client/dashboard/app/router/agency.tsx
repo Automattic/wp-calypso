@@ -55,6 +55,7 @@ import {
 import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
+import { getFeatureName as getAmplifyFeatureName } from '../../agency/amplify/constants';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
 	canSwitchAgencyDashboard,
@@ -236,6 +237,40 @@ export const agencyTiersRoute = createRoute( {
 		} )
 	)
 );
+
+// `/amplify` – prospect-site analyses and reports.
+export const agencyAmplifyRoute = createRoute( {
+	staticData: { requiresAgencyCapability: 'a4a_read_amplify' },
+	head: () => ( { meta: [ { title: getAmplifyFeatureName() } ] } ),
+	getParentRoute: () => agencyRoute,
+	path: 'amplify',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! agency?.amplify?.allowed ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} );
+
+const agencyAmplifyOverviewRoute = createRoute( {
+	getParentRoute: () => agencyAmplifyRoute,
+	path: '/',
+} ).lazy( () =>
+	import( '../../agency/amplify' ).then( ( d ) =>
+		createLazyRoute( 'agency-amplify' )( { component: d.default } )
+	)
+);
+
+const agencyAmplifyReportsRoute = createRoute( {
+	getParentRoute: () => agencyAmplifyRoute,
+	path: 'reports',
+	beforeLoad: () => {
+		throw dashboardRedirect( { to: '/amplify' } );
+	},
+} );
 
 // `/partner-directory` – layout that shows the tier upsell to agencies
 // below Agency Partner
@@ -2350,6 +2385,7 @@ export const createAgencyRoutes = () => [
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
 		agencyTiersRoute,
+		agencyAmplifyRoute.addChildren( [ agencyAmplifyOverviewRoute, agencyAmplifyReportsRoute ] ),
 		agencyPartnerDirectoryRoute.addChildren( [
 			agencyPartnerDirectoryIndexRoute,
 			agencyPartnerDirectoryExpertiseRoute,

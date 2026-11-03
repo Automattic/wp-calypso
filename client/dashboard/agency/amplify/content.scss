@@ -1,0 +1,14 @@
+.dashboard-amplify-view {
+	width: 100%;
+	text-wrap: pretty;
+}
+
+.dashboard-amplify-results {
+	margin-block-start: 0;
+}
+
+.dashboard-amplify-results__error {
+	padding: 24px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+}
