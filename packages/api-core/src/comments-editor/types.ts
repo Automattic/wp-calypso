@@ -2,8 +2,6 @@
 export interface CommentsEditorLabels {
 	blockTools: string;
 	addBlock: string;
-	/** The embed preview route, or empty where embeds are off. */
-	embedUrl: string;
 	images: boolean;
 	imageError: string;
 }

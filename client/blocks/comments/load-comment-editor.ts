@@ -3,7 +3,8 @@ import type { CommentsEditorLabels, CommentsEditorSettings } from '@automattic/a
 
 export type CommentEditorProps = {
 	initialContent: string;
-	labels: CommentsEditorLabels;
+	/** With the embed preview route, which belongs to the site the comment goes to. */
+	labels: CommentsEditorLabels & { embedUrl: string };
 	/** The caret's offset into the text, or -1 for the end. Left out, the editor takes no focus. */
 	focus?: () => number;
 	placeholder: string;
