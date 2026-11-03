@@ -9,9 +9,9 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { __, isRTL, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useId, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { Card, CardBody } from '../../components/card';
 import Grid from '../../components/grid';
@@ -86,6 +86,29 @@ function ReportTypeCards( {
 } ) {
 	const labelId = useId();
 	const isWide = useViewportMatch( 'large' );
+	const cardRefs = useRef< ( HTMLElement | null )[] >( [] );
+	// Like native radios: the arrow keys move and select, wrapping at the ends.
+	const selectByKey = ( key: string, index: number ) => {
+		const last = REPORT_MODES.length - 1;
+		const next = isRTL() ? 'ArrowLeft' : 'ArrowRight';
+		const previous = isRTL() ? 'ArrowRight' : 'ArrowLeft';
+		let target: number | null = null;
+		if ( key === 'ArrowDown' || key === next ) {
+			target = index === last ? 0 : index + 1;
+		} else if ( key === 'ArrowUp' || key === previous ) {
+			target = index === 0 ? last : index - 1;
+		} else if ( key === 'Home' ) {
+			target = 0;
+		} else if ( key === 'End' ) {
+			target = last;
+		}
+		if ( target === null ) {
+			return false;
+		}
+		onSelect( REPORT_MODES[ target ].value );
+		cardRefs.current[ target ]?.focus();
+		return true;
+	};
 	return (
 		<VStack className="dashboard-amplify-overview__mode-options" spacing={ 2 }>
 			<BaseControl.VisualLabel id={ labelId }>{ __( 'Report type' ) }</BaseControl.VisualLabel>
@@ -95,19 +118,25 @@ function ReportTypeCards( {
 				columns={ isSingleColumn || ! isWide ? 1 : REPORT_MODES.length }
 				gap="sm"
 			>
-				{ REPORT_MODES.map( ( option ) => {
+				{ REPORT_MODES.map( ( option, index ) => {
 					const isSelected = option.value === selected;
 					return (
 						<Card
 							key={ option.value }
+							ref={ ( element: HTMLElement | null ) => {
+								cardRefs.current[ index ] = element;
+							} }
 							role="radio"
 							aria-checked={ isSelected }
-							tabIndex={ 0 }
+							// Only the selected card is a Tab stop; the arrow keys move within the group.
+							tabIndex={ isSelected ? 0 : -1 }
 							onClick={ () => onSelect( option.value ) }
 							onKeyDown={ ( event: React.KeyboardEvent ) => {
 								if ( event.key === 'Enter' || event.key === ' ' ) {
 									event.preventDefault();
 									onSelect( option.value );
+								} else if ( selectByKey( event.key, index ) ) {
+									event.preventDefault();
 								}
 							} }
 							style={ {

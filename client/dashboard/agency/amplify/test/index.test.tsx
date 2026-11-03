@@ -3,6 +3,7 @@
  */
 
 import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import AgencyAmplify from '../index';
@@ -57,6 +58,17 @@ function mockSites() {
 }
 
 describe( '<AgencyAmplify>', () => {
+	// jsdom has no Web Animations API, which the score preview uses when the report type changes.
+	const originalAnimate = Element.prototype.animate;
+	beforeAll( () => {
+		Element.prototype.animate = jest.fn(
+			() => ( { cancel: jest.fn(), onfinish: null } ) as unknown as Animation
+		);
+	} );
+	afterAll( () => {
+		Element.prototype.animate = originalAnimate;
+	} );
+
 	beforeEach( () => {
 		mockAgency();
 		mockSites();
@@ -74,6 +86,30 @@ describe( '<AgencyAmplify>', () => {
 		).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Create report' } ) ).toBeVisible();
 		expect( await screen.findByText( '12 reports left this month' ) ).toBeVisible();
+	} );
+
+	test( 'moves between report types with the arrow keys', async () => {
+		mockReports( [] );
+		const user = userEvent.setup();
+
+		render( <AgencyAmplify /> );
+
+		const full = await screen.findByRole( 'radio', { name: /^Full report/ } );
+		expect( full ).toHaveAttribute( 'aria-checked', 'true' );
+		expect( screen.getByRole( 'radio', { name: /^People/ } ) ).toHaveAttribute( 'tabindex', '-1' );
+
+		full.focus();
+		await user.keyboard( '{ArrowDown}' );
+
+		const people = screen.getByRole( 'radio', { name: /^People/ } );
+		expect( people ).toHaveAttribute( 'aria-checked', 'true' );
+		expect( people ).toHaveFocus();
+
+		await user.keyboard( '{End}' );
+		expect( screen.getByRole( 'radio', { name: /^AI agents/ } ) ).toHaveFocus();
+
+		await user.keyboard( '{ArrowDown}' );
+		expect( screen.getByRole( 'radio', { name: /^Full report/ } ) ).toHaveFocus();
 	} );
 
 	test( 'lists reports with the monthly usage', async () => {
