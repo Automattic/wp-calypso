@@ -1,4 +1,9 @@
-import { isJetpackLegacyItem, isJetpackLegacyTermUpgrade } from '@automattic/calypso-products';
+import {
+	isJetpackLegacyItem,
+	isJetpackLegacyTermUpgrade,
+	isJetpackPlanSlug,
+	isJetpackProductSlug,
+} from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import debugFactory from 'debug';
 import { useTranslate } from 'i18n-calypso';
@@ -59,7 +64,11 @@ import UpsellNudge, {
 	CONCIERGE_QUICKSTART_SESSION,
 	PROFESSIONAL_EMAIL_UPSELL,
 } from './upsell-nudge';
-import { getProductSlugFromContext, isContextJetpackSitelessCheckout } from './utils';
+import {
+	getProductSlugFromContext,
+	isContextJetpackSitelessCheckout,
+	isSitelessCheckoutSource,
+} from './utils';
 
 const debug = debugFactory( 'calypso:checkout-controller' );
 
@@ -473,6 +482,38 @@ export function checkout( context, next ) {
 			/>
 		</>
 	);
+
+	next();
+}
+
+/**
+ * Middleware to send logged-out users coming from My Jetpack or the Premium
+ * Analytics upgrade page to siteless checkout
+ * @see pbNhbs-ag3-p2
+ * @param   {Object}   context Context object
+ * @param   {Function} next    Calls next middleware
+ * @returns {void}
+ */
+export function redirectMyJetpack( context, next ) {
+	const state = context.store.getState();
+	const productSlug = getProductSlugFromContext( context );
+	// Strip the slug's quantity suffix, for upgradable quantity based products.
+	const product = productSlug.replace( /:-q-\d+/, '' );
+	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
+
+	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isSitelessCheckoutSource( context ) ) {
+		// Redirect to the siteless checkout page
+		const redirectUrl = addQueryArgs(
+			{
+				connect_after_checkout: true,
+				from_site_slug: context.query.site,
+				admin_url: context.query.redirect_to?.split( '?' )[ 0 ],
+			},
+			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
+		);
+		page( redirectUrl );
+		return;
+	}
 
 	next();
 }
