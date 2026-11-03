@@ -78,6 +78,7 @@ function WebsiteAddressInput( {
 					value ? (
 						<InputControlSuffixWrapper variant="control">
 							<Button
+								__next40pxDefaultSize
 								size="small"
 								icon={ closeSmall }
 								label={ __( 'Clear website address' ) }
