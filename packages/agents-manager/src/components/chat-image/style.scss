@@ -1,6 +1,11 @@
 @use '@wordpress/base-styles/animations' as *;
 @use '../../styles/variables' as *;
 
+// Lets a preview size itself to the visible conversation (`cqh`).
+.agents-manager-chat [data-slot='messages'] {
+	container-type: size;
+}
+
 // Agenttic fits the image to the message; this makes it a button that keeps that size.
 .agents-manager-chat-image {
 	display: block;
@@ -13,8 +18,9 @@
 
 	img {
 		display: block;
-		// Up to half the screen tall, so the conversation stays in view.
-		max-height: 50dvh;
+		// It grows with the chat, but leaves room for the conversation, even in a tall chat.
+		/* stylelint-disable-next-line unit-allowed-list -- The allow-list predates container units. */
+		max-height: min( 75cqh, 50dvh );
 		border-radius: inherit;
 		// A hairline edge, so a white screenshot doesn't blend into the message.
 		outline: $border-width solid var( --color-input-border );
