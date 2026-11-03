@@ -446,6 +446,8 @@ export interface UseAgentChatReturn {
 
 	// Tool integration
 	addMessage: ( message: UIMessage ) => void;
+	// Drops a shown error without a new send, for a reply the UI makes itself.
+	clearError: () => void;
 
 	// Abort control
 	abortCurrentRequest: () => void;
@@ -1057,6 +1059,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		} ) );
 	}, [] );
 
+	const clearError = useCallback( () => {
+		setState( ( prev ) => ( prev.error ? { ...prev, error: null } : prev ) );
+	}, [] );
+
 	// Suggestions management
 	const registerSuggestions = useCallback( ( suggestions: Suggestion[] ) => {
 		setState( ( prev ) => ( {
@@ -1169,6 +1175,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 		// Tool integration
 		addMessage,
+		clearError,
 
 		// Abort control
 		abortCurrentRequest,

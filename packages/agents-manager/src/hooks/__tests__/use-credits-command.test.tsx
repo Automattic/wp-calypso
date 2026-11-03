@@ -24,10 +24,11 @@ const creditsAnswer = {
 const setup = ( overrides: Partial< Parameters< typeof useCreditsCommand >[ 0 ] > = {} ) => {
 	const addMessage = jest.fn();
 	const beforeSubmit = jest.fn( () => false );
+	const clearError = jest.fn();
 	const { result } = renderHook( () =>
-		useCreditsCommand( { creditsAnswer, beforeSubmit, addMessage, ...overrides } )
+		useCreditsCommand( { creditsAnswer, beforeSubmit, addMessage, clearError, ...overrides } )
 	);
-	return { result, addMessage, beforeSubmit };
+	return { result, addMessage, beforeSubmit, clearError };
 };
 
 describe( 'useCreditsCommand', () => {
@@ -71,6 +72,16 @@ describe( 'useCreditsCommand', () => {
 
 		expect( result.current.beforeSubmit( 'Write a post' ) ).toBe( false );
 		expect( beforeSubmit ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'clears a failed send’s error when it answers, and only then', () => {
+		const { result, clearError } = setup();
+
+		result.current.handleCommand( 'Write a post' );
+		expect( clearError ).not.toHaveBeenCalled();
+
+		result.current.handleCommand( '/credits' );
+		expect( clearError ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'does not handle other messages', () => {

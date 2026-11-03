@@ -11,6 +11,7 @@ interface UseCreditsCommandOptions {
 	creditsAnswer: UseCreditsResult[ 'creditsAnswer' ];
 	beforeSubmit: UseCreditsResult[ 'beforeSubmit' ];
 	addMessage: UseAgentChatReturn[ 'addMessage' ];
+	clearError: UseAgentChatReturn[ 'clearError' ];
 }
 
 /**
@@ -27,6 +28,7 @@ export function useCreditsCommand( {
 	creditsAnswer,
 	beforeSubmit,
 	addMessage,
+	clearError,
 }: UseCreditsCommandOptions ) {
 	// Whether a send is handled here, read by the composer's gate and its send path alike.
 	const handlesMessage = useCallback(
@@ -42,6 +44,8 @@ export function useCreditsCommand( {
 
 			// Neither message is in the agent's client history, so neither is sent. The question shows
 			// as the user's own bubble, which `isUiOnly` keeps when a later turn rebuilds the thread.
+			// A failed send's error sits below the thread, so it would read as the answer's.
+			clearError();
 			const timestamp = Date.now();
 			const id = generateUUID();
 			addMessage( {
@@ -74,7 +78,7 @@ export function useCreditsCommand( {
 			} );
 			return true;
 		},
-		[ creditsAnswer, addMessage ]
+		[ creditsAnswer, addMessage, clearError ]
 	);
 
 	const beforeComposerSubmit = useCallback(

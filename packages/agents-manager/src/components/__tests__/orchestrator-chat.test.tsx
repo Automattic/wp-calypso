@@ -571,6 +571,7 @@ const chat = ( props: Partial< ComponentProps< typeof OrchestratorChat > > = {} 
 
 const agentChatReturn = ( overrides: Record< string, unknown > = {} ) => ( {
 	addMessage: jest.fn(),
+	clearError: jest.fn(),
 	messages: [],
 	suggestions: [],
 	isProcessing: false,
@@ -1607,13 +1608,14 @@ describe( 'OrchestratorChat', () => {
 	} );
 
 	it( 'answers /credits in the thread without sending it to the model', () => {
-		const { onSubmit, addMessage } = mockUseAgentChat();
+		const { onSubmit, addMessage, clearError } = mockUseAgentChat();
 		mockCreditsAnswer = { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } };
 
 		render( chat() );
 		fireEvent.click( screen.getByText( 'Submit credits command' ) );
 
 		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( clearError ).toHaveBeenCalled();
 		expect( addMessage ).toHaveBeenCalledWith(
 			expect.objectContaining( { id: expect.stringMatching( /^credits-command-/ ), role: 'agent' } )
 		);

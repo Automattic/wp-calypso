@@ -203,6 +203,7 @@ export default function OrchestratorChat( {
 	} );
 	const {
 		addMessage,
+		clearError,
 		messages,
 		suggestions,
 		isProcessing,
@@ -221,6 +222,7 @@ export default function OrchestratorChat( {
 		creditsAnswer: credits.creditsAnswer,
 		beforeSubmit: credits.beforeSubmit,
 		addMessage,
+		clearError,
 	} );
 	const getTraceIdForMessage = useAgentTraceIds( agentConfig );
 
@@ -282,7 +284,7 @@ export default function OrchestratorChat( {
 		abortCurrentRequest,
 		beforeSubmit: credits.beforeSubmit,
 		flushPendingNavigation,
-		handleCommand: creditsCommand.handleCommand,
+		handleCommand: isReaderChat ? undefined : creditsCommand.handleCommand,
 		suggestionPromptsRef,
 	} );
 
@@ -599,7 +601,7 @@ export default function OrchestratorChat( {
 			imageUpload={ imageUpload }
 			notice={ credits.notice ?? replyNotice }
 			trailingActions={ credits.trailingActions }
-			beforeSubmit={ creditsCommand.beforeSubmit }
+			beforeSubmit={ isReaderChat ? credits.beforeSubmit : creditsCommand.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }
 			showFeedbackInput={ showFeedbackInput }
 			onSubmitFeedbackText={ submitFeedbackText }
