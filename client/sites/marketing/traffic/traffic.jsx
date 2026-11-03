@@ -31,9 +31,8 @@ import isJetpackSeoPageAvailable from 'calypso/state/selectors/is-jetpack-seo-pa
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
 import siteHasFeature from 'calypso/state/selectors/site-has-feature';
-import { getSiteAdminUrl, getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
+import { getSiteSlug, isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
-import SeoOptInBanner from './seo-opt-in-banner';
 
 import './style.scss';
 
@@ -73,7 +72,6 @@ const SiteSettingsTraffic = ( {
 	siteSlug,
 	shouldShowAdvertisingOption,
 	showSeoSettings,
-	seoSettingsUrl,
 	showSeoVisibilityNotice,
 	translate,
 } ) => {
@@ -116,9 +114,6 @@ const SiteSettingsTraffic = ( {
 						<EmptyContent title={ translate( 'You are not authorized to view this page' ) } />
 					) }
 					<JetpackDevModeNotice />
-					{ isJetpackAdmin && showSeoSettings && (
-						<SeoOptInBanner siteId={ siteId } settingsUrl={ seoSettingsUrl } />
-					) }
 					{ isAdmin && showSeoSettings && showSeoVisibilityNotice && (
 						<AsyncLoad require={ loadVisibilityNotice } placeholder={ null } />
 					) }
@@ -185,7 +180,6 @@ const connectComponent = connect( ( state ) => {
 	const isJetpackAdmin = isJetpack && isAdmin;
 	const siteSlug = getSiteSlug( state, siteId );
 	const showAdvertisingOption = shouldShowBlazeAdvertisingOption( state, siteId );
-	const jetpackSettingsUrl = getSiteAdminUrl( state, siteId, 'admin.php?page=jetpack' );
 
 	return {
 		siteId,
@@ -195,7 +189,6 @@ const connectComponent = connect( ( state ) => {
 		siteSlug,
 		shouldShowAdvertisingOption: showAdvertisingOption,
 		showSeoSettings: ! isJetpackSeoPageAvailable( state, siteId ),
-		seoSettingsUrl: jetpackSettingsUrl ? `${ jetpackSettingsUrl }#/traffic` : null,
 		showSeoVisibilityNotice:
 			siteHasFeature( state, siteId, FEATURE_ADVANCED_SEO ) &&
 			( isPrivateSite( state, siteId ) || isHiddenSite( state, siteId ) ),
