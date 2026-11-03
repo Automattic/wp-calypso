@@ -9,7 +9,7 @@ import Context from '../parts/context';
 import type { Note } from '../../types';
 
 export default function ReactionsNote( { note }: { note: Note } ) {
-	const heading = note.meta?.heading;
+	const heading = note.meta?.heading ?? note.title;
 
 	return (
 		<>
