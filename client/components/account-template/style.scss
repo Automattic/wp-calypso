@@ -152,13 +152,13 @@
 			padding-inline: 0;
 
 			.form-fieldset {
-				margin-bottom: 1rem;
+				margin-bottom: $grid-unit-20;
 			}
 		}
 
 		.two-factor-authentication__actions.card {
-			gap: 0.5rem;
-			padding: 0.5rem 0 0;
+			gap: $grid-unit-10;
+			padding: $grid-unit-10 0 0;
 		}
 
 		.two-factor-authentication__push-notification-approval {
@@ -167,15 +167,16 @@
 
 		// The text above the security key CTA sits 16px from it, while waiting or not.
 		.security-key-form__help-text p:last-child {
-			margin-bottom: 1rem;
+			margin-bottom: $grid-unit-20;
 		}
 
 		.security-key-form__add-wait-for-key {
 			display: grid;
 			grid-template-columns: auto 1fr;
 			align-items: center;
-			gap: 0.5rem;
-			margin-bottom: 1rem;
+			// 24px between the rows, like the paragraphs of the idle state.
+			gap: $grid-unit-30 $grid-unit-10;
+			margin-bottom: $grid-unit-20;
 			text-align: start;
 
 			.spinner,
@@ -192,20 +193,17 @@
 			}
 		}
 
-		// The footer links under the two-step form are the template's secondary button: 8px
-		// below the last button, centered in a 40px row. `.login` has a 2rem gap to take back.
+		// The footer links under the two-step form keep `.login`'s 2rem gap, and each is
+		// centered in a 40px row.
 		.login:has(
 				.two-factor-authentication__verification-code-form-wrapper,
 				.two-factor-authentication__push-notification-approval
 			)
-			> .one-login__footer {
-			margin-top: -1.5rem;
-
+			> .one-login__footer
 			.one-login__footer-link {
-				display: inline-flex;
-				align-items: center;
-				min-height: 40px;
-			}
+			display: inline-flex;
+			align-items: center;
+			min-height: $button-size-next-default-40px;
 		}
 
 		// The link under the CTA ("Enter a password instead") is the template's secondary
@@ -268,7 +266,7 @@
 	display: flex;
 	align-items: center;
 	gap: 0.75rem;
-	font-size: 13px;
+	font-size: $font-size-medium;
 	line-height: $font-line-height-small;
 
 	> * + * {
