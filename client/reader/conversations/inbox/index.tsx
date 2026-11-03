@@ -33,6 +33,8 @@ interface Props {
 }
 
 const REFRESH_INTERVAL = 60 * 1000;
+// The Reader sidebar (~272px) and the 372px list leave the detail pane about 480px at this width.
+const SINGLE_PANE_BREAKPOINT = '<1120px';
 
 const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' | 'postId' > ) =>
 	`/reader/conversations/inbox/${ siteId }/${ postId }`;
@@ -50,7 +52,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	} );
 	const { mutate: markRead } = useMarkNotesRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
-	const isNarrow = useBreakpoint( '<782px' );
+	const isNarrow = useBreakpoint( SINGLE_PANE_BREAKPOINT );
 	const currentUserId = useSelector( getCurrentUserId );
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
