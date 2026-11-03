@@ -87,6 +87,39 @@ const getEmailTakenLoginRedirectMessage = (
 	);
 };
 
+const isEmailTaken = ( emailErrors: Record< string, string > ) =>
+	Object.prototype.hasOwnProperty.call( emailErrors, 'taken' );
+
+const getEmailTakenToastMessage = ( translate: ReturnType< typeof useTranslate > ) =>
+	String(
+		translate(
+			'That email address is already in use. If you have an existing account, please log in.'
+		)
+	);
+
+export async function validateLoggedOutEmailOnBlur(
+	email: string,
+	translate: ReturnType< typeof useTranslate >,
+	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void
+): Promise< void > {
+	if ( ! email.includes( '@' ) ) {
+		return;
+	}
+	try {
+		const { validationResult } = await getSignupEmailValidationResult(
+			email,
+			( newEmail: string ) => getEmailTakenLoginRedirectMessage( newEmail, translate )
+		);
+		if ( isContactValidationResponse( validationResult ) && ! validationResult.success ) {
+			applyDomainContactValidationResults(
+				formatDomainContactValidationResponse( validationResult )
+			);
+		}
+	} catch ( error ) {
+		debug( 'email validation on blur failed', error );
+	}
+}
+
 async function runContactValidationCheck(
 	contactInfo: ManagedContactDetails,
 	responseCart: ResponseCart
@@ -171,6 +204,9 @@ export async function validateContactDetails(
 				validationResult: loggedOutValidationResult,
 				applyDomainContactValidationResults,
 				clearDomainContactErrorMessages,
+				errorMessage: isEmailTaken( emailErrors )
+					? getEmailTakenToastMessage( translate )
+					: undefined,
 			} );
 		}
 
@@ -362,9 +398,11 @@ function handleContactValidationResult( {
 	validationResult,
 	applyDomainContactValidationResults,
 	clearDomainContactErrorMessages,
+	errorMessage,
 }: {
 	translate: ReturnType< typeof useTranslate >;
 	showErrorMessage: ( message: string ) => void;
+	errorMessage?: string;
 	validationResult: unknown;
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void;
 	clearDomainContactErrorMessages: () => void;
@@ -384,11 +422,12 @@ function handleContactValidationResult( {
 	}
 	if ( validationResult && ! validationResult.success && validationResult.messages ) {
 		showErrorMessage(
-			String(
-				translate(
-					'We could not validate your contact information. Please review and update all the highlighted fields.'
+			errorMessage ??
+				String(
+					translate(
+						'We could not validate your contact information. Please review and update all the highlighted fields.'
+					)
 				)
-			)
 		);
 	}
 	if ( validationResult?.success ) {
