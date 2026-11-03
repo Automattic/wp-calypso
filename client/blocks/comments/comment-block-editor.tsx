@@ -1,7 +1,7 @@
+import { commentsEmbedUrl, type CommentsEditorSettings } from '@automattic/api-core';
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { loadCommentEditor } from './load-comment-editor';
-import type { CommentsEditorSettings } from '@automattic/api-core';
 
 import './comment-block-editor.scss';
 
@@ -67,7 +67,7 @@ export default function CommentBlockEditor( {
 					initialContent: latest.current.value,
 					labels: {
 						...settings.editor,
-						embedUrl: `https://public-api.wordpress.com/wpcom/v2/sites/${ siteId }/comments/embed`,
+						embedUrl: commentsEmbedUrl( siteId ),
 					},
 					placeholder,
 					focus: focus
