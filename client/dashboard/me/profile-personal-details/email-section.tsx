@@ -5,11 +5,12 @@ import {
 	isValidEmailAddress,
 } from '@automattic/onboarding/src/utils/email-validation';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button, privateApis } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
@@ -17,7 +18,6 @@ import RouterLinkButton from '../../components/router-link-button';
 import { recoveryEmailMatchesAccountEmail } from '../security-account-recovery/utils';
 import { isCustomDomainEmail } from './email-utils';
 import { useIsEmailWritePending } from './use-email-write-pending';
-import { ValidatedTextEdit } from './validated-text-edit';
 import type { UserSettings } from '@automattic/api-core';
 import type { DataFormControlProps, Field, Form, FormValidity } from '@wordpress/dataviews';
 
@@ -32,9 +32,54 @@ interface EmailSectionProps {
 
 type EmailFormData = { user_email: string };
 
-const EmailEdit = ( props: DataFormControlProps< EmailFormData > ) => (
-	<ValidatedTextEdit { ...props } id="email-input" type="text" autoComplete="email" />
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
 );
+const { ValidatedInputControl } = unlock( privateApis );
+
+/**
+ * A validity message only shows once the input has been blurred or fired an `invalid` event. A
+ * bouncing email is already invalid on mount, so reveal it then.
+ */
+function EmailEdit( { data, field, onChange, validity }: DataFormControlProps< EmailFormData > ) {
+	const inputRef = useRef< HTMLInputElement >( null );
+
+	useEffect( () => {
+		const input = inputRef.current;
+		if ( validity?.custom?.type !== 'invalid' || ! input ) {
+			return;
+		}
+		// The control focuses the input in response to `invalid`, so hand focus back.
+		const previouslyFocused = input.ownerDocument.activeElement;
+		input.dispatchEvent( new Event( 'invalid', { cancelable: true } ) );
+		if ( previouslyFocused instanceof HTMLElement && previouslyFocused !== document.body ) {
+			previouslyFocused.focus();
+		} else {
+			input.blur();
+		}
+		// Only on mount
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [] );
+
+	return (
+		<ValidatedInputControl
+			__next40pxDefaultSize
+			id="email-input"
+			type="text"
+			autoComplete="email"
+			ref={ inputRef }
+			customValidity={ validity?.custom }
+			label={ field.label }
+			help={ field.description }
+			value={ field.getValue( { item: data } ) ?? '' }
+			onChange={ ( value?: string ) =>
+				onChange( field.setValue( { item: data, value: value ?? '' } ) )
+			}
+			disabled={ field.isDisabled( { item: data, field } ) }
+		/>
+	);
+}
 
 const emailForm: Form = {
 	layout: { type: 'regular' },

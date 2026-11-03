@@ -1,9 +1,10 @@
 import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
 import { useDebounce } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useMemo, useRef, useState, useCallback } from 'react';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { reloadWithFlashMessage } from '../../components/flash-message';
@@ -15,7 +16,6 @@ import {
 	getUsernameValidationMessage,
 	type ValidationResult,
 } from './update-username/username-validation-utils';
-import { ValidatedTextEdit } from './validated-text-edit';
 import type { DataFormControlProps, Field, Form, FormValidity } from '@wordpress/dataviews';
 
 interface UsernameSectionProps {
@@ -30,13 +30,32 @@ interface UsernameSectionProps {
 
 type UsernameFormData = { user_login?: string };
 
-const UsernameEdit = ( props: DataFormControlProps< UsernameFormData > ) => (
-	<ValidatedTextEdit
-		{ ...props }
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+const { ValidatedInputControl } = unlock( privateApis );
+
+const UsernameEdit = ( {
+	data,
+	field,
+	onChange,
+	validity,
+}: DataFormControlProps< UsernameFormData > ) => (
+	<ValidatedInputControl
+		__next40pxDefaultSize
 		id="username-input"
 		autoCapitalize="off"
 		autoComplete="username"
 		autoCorrect="off"
+		customValidity={ validity?.custom }
+		label={ field.label }
+		help={ field.description }
+		value={ field.getValue( { item: data } ) ?? '' }
+		onChange={ ( value?: string ) =>
+			onChange( field.setValue( { item: data, value: value ?? '' } ) )
+		}
+		disabled={ field.isDisabled( { item: data, field } ) }
 	/>
 );
 

@@ -1,11 +1,16 @@
 import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, RadioControl, __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	RadioControl,
+	__experimentalVStack as VStack,
+	privateApis,
+} from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
+import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { useMemo } from 'react';
 import { ButtonStack } from '../../../components/button-stack';
-import { ValidatedTextEdit } from '../validated-text-edit';
 import {
 	isUsernameValid,
 	getUsernameValidationMessage,
@@ -29,14 +34,33 @@ interface UsernameUpdateFormProps {
 
 type UsernameConfirmFormData = { username_confirm: string };
 
-const UsernameConfirmEdit = ( props: DataFormControlProps< UsernameConfirmFormData > ) => (
-	<ValidatedTextEdit
-		{ ...props }
+const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
+	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
+	'@wordpress/components'
+);
+const { ValidatedInputControl } = unlock( privateApis );
+
+const UsernameConfirmEdit = ( {
+	data,
+	field,
+	onChange,
+	validity,
+}: DataFormControlProps< UsernameConfirmFormData > ) => (
+	<ValidatedInputControl
+		__next40pxDefaultSize
 		id="username_confirm"
 		name="username_confirm"
 		autoCapitalize="off"
 		autoComplete="off"
 		autoCorrect="off"
+		customValidity={ validity?.custom }
+		label={ field.label }
+		help={ field.description }
+		value={ field.getValue( { item: data } ) ?? '' }
+		onChange={ ( value?: string ) =>
+			onChange( field.setValue( { item: data, value: value ?? '' } ) )
+		}
+		disabled={ field.isDisabled( { item: data, field } ) }
 	/>
 );
 
