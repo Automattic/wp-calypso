@@ -226,14 +226,14 @@ describe( 'ConversationsInbox', () => {
 	} );
 
 	describe( 'on narrow screens', () => {
+		beforeEach( () => {
+			mockIsNarrow = true;
+		} );
+
 		it( 'switches to a single pane before the detail pane gets cramped', () => {
 			renderInbox();
 
 			expect( useBreakpoint ).toHaveBeenCalledWith( '<1120px' );
-		} );
-
-		beforeEach( () => {
-			mockIsNarrow = true;
 		} );
 
 		it( 'shows only the list and does not pick a conversation when the URL has none', () => {
