@@ -7,9 +7,6 @@ $chat-image-preview-max-size: 600px;
 .agents-manager-chat-image {
 	display: block;
 	max-width: min( 100%, $chat-image-preview-max-size );
-	// A tall image shows its top.
-	max-height: $chat-image-preview-max-size;
-	overflow: hidden;
 	padding: 0;
 	border: 0;
 	border-radius: var( --radius-sm );
@@ -21,6 +18,9 @@ $chat-image-preview-max-size: 600px;
 
 	img {
 		display: block;
+		// A tall image scales down to fit, so nothing is cut.
+		max-height: $chat-image-preview-max-size;
+		border-radius: inherit;
 	}
 
 	&:focus-visible {
