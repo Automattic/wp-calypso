@@ -2,7 +2,6 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
 import {
 	UrlFriendlyTermType,
-	isDomainMapping,
 	isDomainTransfer,
 	PLAN_WOO_HOSTED_FREE_TRIAL_MONTHLY,
 	PlanSlug,
@@ -695,7 +694,6 @@ function UnifiedPlansStep( {
 				signupFlowUserName={ username ?? undefined }
 				siteId={ selectedSite?.ID }
 				isDomainTransfer={ domainCartItem ? isDomainTransfer( domainCartItem ) : false }
-				isDomainConnection={ domainCartItem ? isDomainMapping( domainCartItem ) : false }
 				isCustomDomainAllowedOnFreePlan={ isCustomDomainAllowedOnFreePlan }
 				isInSignup={ isInSignup }
 				isLaunchPage={ isLaunchPage }
