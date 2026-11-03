@@ -101,13 +101,7 @@
 }
 
 .wpnc-simplified__parent-text p {
-	&:first-child {
-		margin-top: 0;
-	}
-
-	&:last-child {
-		margin-bottom: 0;
-	}
+	margin: 0;
 }
 
 .wpnc-simplified__parent-text.is-truncated {
@@ -116,10 +110,6 @@
 	-webkit-line-clamp: 2;
 	overflow: hidden;
 	white-space: normal;
-
-	p {
-		margin-bottom: 0;
-	}
 
 	img:not(.emoji) {
 		display: none;
