@@ -20,6 +20,7 @@ import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions
 import { getCurrentRoute } from 'calypso/state/selectors/get-current-route';
 import { getPreviousPath } from 'calypso/state/selectors/get-previous-path';
 import AutoresizingFormTextarea from './autoresizing-form-textarea';
+import { blocksToHtml } from './blocks-to-html';
 import CommentBlockEditor from './comment-block-editor';
 import { CommentEditorContext } from './comment-editor-context';
 
@@ -60,18 +61,6 @@ class PostCommentForm extends Component {
 	state = {
 		haveFocus: false,
 		editorFailed: false,
-		// Bumped to start the editor over, since it keeps its own content once mounted.
-		editorKey: 0,
-	};
-
-	handleCancel = () => {
-		if ( this.props.parentCommentId && this.props.onReplyCancel ) {
-			this.props.onReplyCancel();
-			return;
-		}
-
-		this.resetCommentText();
-		this.setState( ( { editorKey } ) => ( { haveFocus: false, editorKey: editorKey + 1 } ) );
 	};
 
 	handleKeyDown = ( event ) => {
@@ -134,7 +123,11 @@ class PostCommentForm extends Component {
 		event.preventDefault();
 
 		const post = this.props.post;
-		const commentText = this.getCommentText().trim();
+		let commentText = this.getCommentText().trim();
+		// A site without block comments doesn't render block markup, so it gets plain HTML.
+		if ( this.props.editorSettings?.blocks === false && commentText.includes( '<!-- wp:' ) ) {
+			commentText = blocksToHtml( commentText );
+		}
 
 		if ( ! this.hasCommentText() ) {
 			this.resetCommentText(); // Clean up any newlines
@@ -276,7 +269,6 @@ class PostCommentForm extends Component {
 					) }
 					{ this.props.editorSettings && ! this.state.editorFailed ? (
 						<CommentBlockEditor
-							key={ this.state.editorKey }
 							settings={ this.props.editorSettings }
 							siteId={ post.site_ID }
 							value={ this.getCommentText() }
@@ -304,13 +296,11 @@ class PostCommentForm extends Component {
 					) }
 					{ composer ? (
 						<div className="comments__form-actions">
-							{ ! this.props.placeholderId && (
+							{ isReply && ! this.props.placeholderId && (
 								<WPButton
 									__next40pxDefaultSize
 									variant="tertiary"
-									// A reply closes; a root composer only has a draft to discard.
-									disabled={ ! isReply && ! this.hasCommentText() }
-									onClick={ this.handleCancel }
+									onClick={ this.props.onReplyCancel }
 								>
 									{ translate( 'Cancel' ) }
 								</WPButton>

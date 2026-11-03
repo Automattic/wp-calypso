@@ -13,6 +13,8 @@ export interface CommentsEditorSettings {
 	/** The versioned loader script, which sets `window.JetpackCommentsEditor`. */
 	loaderUrl: string;
 	maxLength: number;
+	/** False where the site stores plain HTML comments, so the Reader saves HTML, not block markup. */
+	blocks: boolean;
 	/** Core's translations of the editor's strings, keyed as its script translations are. */
 	editorLocale: Record< string, unknown >;
 	editor: CommentsEditorLabels;
