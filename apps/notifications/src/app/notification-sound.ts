@@ -18,18 +18,18 @@ export type NotificationSoundOptions = {
 	onError?: ( error: unknown, stage: NotificationSoundErrorStage ) => void;
 };
 
-// True once the person has clicked or typed anywhere on the page, even before this code loaded.
-// Browsers let audio start after that, and a touch `pointerdown` alone does not count.
-function hasBeenActivated() {
-	return navigator.userActivation?.hasBeenActive === true;
-}
-
 export function createNotificationSound( { onError }: NotificationSoundOptions = {} ) {
 	let audioContext: AudioContext | undefined;
 	let lastPlayedAt: number | undefined;
 	let disposed = false;
 	let unavailableReason: 'unsupported' | 'create_failed' | undefined;
 	let resuming: Promise< void > | undefined;
+	let suspendedForIdle = false;
+	let audioHasRun = false;
+
+	function hasBeenActivated() {
+		return audioHasRun || navigator.userActivation?.hasBeenActive === true;
+	}
 
 	function reportError( error: unknown, stage: NotificationSoundErrorStage ) {
 		try {
@@ -55,7 +55,18 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 	}
 
 	function updateGestureListeners() {
-		if ( disposed || audioContext?.state === 'running' || audioContext?.state === 'closed' ) {
+		if ( audioContext?.state === 'running' ) {
+			audioHasRun = true;
+		}
+		if ( audioContext?.state !== 'suspended' ) {
+			suspendedForIdle = false;
+		}
+		if (
+			disposed ||
+			suspendedForIdle ||
+			audioContext?.state === 'running' ||
+			audioContext?.state === 'closed'
+		) {
 			removeGestureListeners();
 		} else {
 			document.addEventListener( 'pointerdown', activateAudio );
@@ -91,6 +102,7 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 		}
 
 		const context = audioContext;
+		suspendedForIdle = false;
 		updateGestureListeners();
 		if ( context.state === 'running' || context.state === 'closed' ) {
 			return;
@@ -103,14 +115,18 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 			return;
 		}
 		// Safari needs a fresh gesture to start audio, so keep listening until it runs.
-		resuming = resume.then(
-			() => {
-				if ( context.state === 'running' ) {
-					removeGestureListeners();
-				}
-			},
-			( error ) => reportError( error, 'resume' )
-		);
+		resuming = resume.then( updateGestureListeners, ( error ) => reportError( error, 'resume' ) );
+	}
+
+	async function suspendAudio( context: AudioContext ) {
+		suspendedForIdle = true;
+		try {
+			await context.suspend();
+		} catch ( error ) {
+			suspendedForIdle = false;
+			updateGestureListeners();
+			reportError( error, 'suspend' );
+		}
 	}
 
 	function playTone( context: AudioContext ): NotificationSoundResult {
@@ -121,7 +137,7 @@ export function createNotificationSound( { onError }: NotificationSoundOptions =
 				oscillator.disconnect();
 				gain.disconnect();
 				if ( ! disposed && context.state === 'running' ) {
-					settle( () => context.suspend(), 'suspend' );
+					void suspendAudio( context );
 				}
 			};
 			oscillator.type = 'sine';

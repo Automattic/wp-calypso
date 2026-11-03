@@ -219,7 +219,7 @@ describe( 'createNotificationSound', () => {
 		sound.dispose();
 	} );
 
-	it( 'waits for a user gesture and does not replay an alert that arrived before it', async () => {
+	it( 'uses local gestures without the activation API and only plays new alerts', async () => {
 		const sound = createNotificationSound();
 		await sound.play();
 
@@ -230,8 +230,13 @@ describe( 'createNotificationSound', () => {
 		expect( audioContextConstructor ).toHaveBeenCalledTimes( 1 );
 		expect( audioContext.createOscillator ).not.toHaveBeenCalled();
 
-		await sound.play();
+		expect( await sound.play() ).toBe( 'played' );
 		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 1 );
+		oscillator.onended?.();
+		await Promise.resolve();
+		jest.advanceTimersByTime( 3000 );
+		expect( await sound.play() ).toBe( 'played' );
+		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 2 );
 		sound.dispose();
 	} );
 
@@ -409,6 +414,12 @@ describe( 'createNotificationSound', () => {
 		expect( audioContext.suspend ).toHaveBeenCalledTimes( 1 );
 		expect( audioContext.state ).toBe( 'suspended' );
 		const resumeCalls = audioContext.resume.mock.calls.length;
+		document.dispatchEvent( new Event( 'pointerdown' ) );
+		document.dispatchEvent( new Event( 'pointerup' ) );
+		document.dispatchEvent( new KeyboardEvent( 'keydown', { key: 'Enter' } ) );
+		await Promise.resolve();
+		expect( audioContext.state ).toBe( 'suspended' );
+		expect( audioContext.createOscillator ).toHaveBeenCalledTimes( 1 );
 		expect( sound.play() ).toBe( 'cooldown' );
 		expect( audioContext.resume ).toHaveBeenCalledTimes( resumeCalls );
 
@@ -429,6 +440,12 @@ describe( 'createNotificationSound', () => {
 		oscillator.onended?.();
 		await Promise.resolve();
 		expect( onError ).toHaveBeenCalledWith( error, 'suspend' );
+		audioContext.state = 'suspended';
+		audioContext.onstatechange?.();
+		const resumeCalls = audioContext.resume.mock.calls.length;
+		document.dispatchEvent( new Event( 'pointerup' ) );
+		await Promise.resolve();
+		expect( audioContext.resume ).toHaveBeenCalledTimes( resumeCalls + 1 );
 		jest.advanceTimersByTime( 3000 );
 		expect( await sound.play() ).toBe( 'played' );
 		sound.dispose();
