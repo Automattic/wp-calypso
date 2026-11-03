@@ -33,6 +33,7 @@ interface Props {
 	flowName: string;
 	onVisibilityChange: ( isVisible: boolean, issue?: ConnectionIssue ) => void;
 	isReprintFlow?: boolean;
+	isManualWordPress: boolean;
 	siteURL: string;
 	onSiteURLChange: ( url: string ) => void;
 }
@@ -43,6 +44,7 @@ export const Analyzer: FC< Props > = ( {
 	onVisibilityChange,
 	hideImporterListLink = false,
 	isReprintFlow = false,
+	isManualWordPress,
 	siteURL,
 	onSiteURLChange,
 } ) => {
@@ -229,9 +231,11 @@ export const Analyzer: FC< Props > = ( {
 					} }
 					placeholder={ translate( 'your-existing-site.com' ) }
 					label={ translate( 'Site address' ) }
-					dontHaveSiteAddressLabel={ translate(
-						'Or <button>pick your current platform from a list</button>'
-					) }
+					dontHaveSiteAddressLabel={
+						isManualWordPress
+							? translate( 'Or <button>select another platform from the list</button>' )
+							: translate( 'Or <button>pick your current platform from a list</button>' )
+					}
 					hideImporterListLink={
 						hideImporterListLink && ! ( isReprintFlow && siteURL && hasError )
 					}
@@ -300,7 +304,9 @@ const SiteMigrationIdentify: StepType< {
 
 	const isChecking = isReprintFlow && ! isVisible;
 	const goBack = isChecking || connectionIssue ? () => setSiteURL( '' ) : navigation?.goBack;
-	let title = translate( "Let's find your site" );
+	let title = isManualWordPress
+		? translate( "Let's find your WordPress site" )
+		: translate( "Let's find your site" );
 	let subTitle = translate( 'Enter your current site address below to get started.' );
 	if ( connectionIssue === 'unreachable' ) {
 		title = translate( 'We couldn’t reach your site' );
@@ -327,6 +333,7 @@ const SiteMigrationIdentify: StepType< {
 				} )
 			}
 			isReprintFlow={ isReprintFlow }
+			isManualWordPress={ isManualWordPress }
 			siteURL={ siteURL }
 			onSiteURLChange={ ( url ) => {
 				if ( url && isManualWordPress ) {

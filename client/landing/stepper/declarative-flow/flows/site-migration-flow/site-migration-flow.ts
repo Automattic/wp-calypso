@@ -235,6 +235,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 			!! ( siteId || siteSlug );
 		return {
+			importList: {
+				allowAutomaticDetection: config.isEnabled( 'migration/reprint-flow' ),
+			},
 			'site-migration-identify': {
 				// A landing page hands over an address the user already submitted, so check it once on arrival.
 				checkOnArrival:
@@ -550,8 +553,8 @@ const siteMigration: FlowV2< typeof initialize > = {
 						config.isEnabled( 'migration/reprint-flow' ) &&
 						action === 'skip_platform_identification'
 					) {
-						if ( from ) {
-							replace( paths.identifyPath( { from } ) );
+						if ( from || urlQueryParams.get( 'manualPlatform' ) === 'wordpress' ) {
+							replace( paths.identifyPath( { from: from || '' } ) );
 						}
 						return navigate(
 							paths.importListPath( {
@@ -677,8 +680,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( ! config.isEnabled( 'migration/reprint-flow' ) ) {
 						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
-					const { platform } = providedDependencies;
 					const from = fromQueryParam || '';
+					if ( providedDependencies.action === 'use_automatic_detection' ) {
+						return replace(
+							paths.identifyPath( { from, manualPlatform: '', start: '', action: '' } )
+						);
+					}
+					const { platform } = providedDependencies;
 					if ( platform === 'wordpress' ) {
 						return navigate(
 							paths.identifyPath( {

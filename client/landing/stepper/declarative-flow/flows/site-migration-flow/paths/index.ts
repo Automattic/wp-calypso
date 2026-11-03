@@ -271,7 +271,7 @@ export const identifyPath = buildPathHelper<
 		queryParams: {
 			from: string | null;
 			platform?: ImporterPlatform;
-			manualPlatform?: 'wordpress';
+			manualPlatform?: 'wordpress' | '';
 			host?: string;
 			isWpcom?: '';
 			ssh?: string;

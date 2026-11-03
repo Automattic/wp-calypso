@@ -229,6 +229,43 @@ describe( 'Site Migration Flow', () => {
 			}
 		);
 
+		it.each( [ '', 'https://new.example.com' ] )(
+			'returns to automatic detection after clearing the WordPress choice with address "%s"',
+			( from ) => {
+				jest.spyOn( config, 'isEnabled' ).mockReturnValue( true );
+				jest.spyOn( window.history, 'length', 'get' ).mockReturnValue( 2 );
+				const { result } = renderNavigation( [
+					'/setup/site-migration/site-migration-identify?manualPlatform=wordpress&from=https://old.example.com&siteId=123',
+				] );
+
+				const openList = () =>
+					act( () =>
+						result.current.navigation.submit( { action: 'skip_platform_identification', from } )
+					);
+
+				openList();
+				expect( result.current.location.pathname ).toBe( '/site-migration/importList' );
+				act( () => result.current.navigation.goBack() );
+				expect(
+					new URLSearchParams( result.current.location.search ).get( 'manualPlatform' )
+				).toBe( 'wordpress' );
+				expect( new URLSearchParams( result.current.location.search ).get( 'from' ) ).toBe( from );
+
+				openList();
+				act( () => result.current.navigation.submit( { action: 'use_automatic_detection' } ) );
+
+				expect( result.current.location.pathname ).toBe(
+					'/site-migration/site-migration-identify'
+				);
+				const query = new URLSearchParams( result.current.location.search );
+				expect( query.get( 'manualPlatform' ) ).toBe( '' );
+				expect( query.get( 'start' ) ).toBe( '' );
+				expect( query.get( 'action' ) ).toBe( '' );
+				expect( query.get( 'from' ) ).toBe( from );
+				expect( query.get( 'siteId' ) ).toBe( '123' );
+			}
+		);
+
 		it.each( [ 0, 2 ] )(
 			'opens platforms before the destination and supports Back with %s sites',
 			( siteCount ) => {

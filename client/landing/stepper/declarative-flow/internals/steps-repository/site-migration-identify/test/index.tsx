@@ -332,6 +332,12 @@ describe( 'SiteMigrationIdentify', () => {
 					}
 				);
 
+				expect(
+					screen.getByRole( 'heading', { name: "Let's find your WordPress site" } )
+				).toBeVisible();
+				expect(
+					screen.getByRole( 'button', { name: 'select another platform from the list' } )
+				).toBeVisible();
 				expect( getInput() ).toHaveValue( from );
 				expect( submit ).not.toHaveBeenCalled();
 				if ( ! from ) {
@@ -347,6 +353,23 @@ describe( 'SiteMigrationIdentify', () => {
 				expect( analysis.isDone() ).toBe( false );
 			}
 		);
+
+		it( 'lets users change their selected platform while keeping the address', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://example.com&manualPlatform=wordpress' }
+			);
+
+			await user.click(
+				screen.getByRole( 'button', { name: 'select another platform from the list' } )
+			);
+
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://example.com',
+			} );
+		} );
 
 		it( 'preserves the current address when opening the platform list before checking', async () => {
 			const submit = jest.fn();
