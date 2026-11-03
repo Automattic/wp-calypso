@@ -386,7 +386,15 @@ describe( 'StaticSiteImportNotice preview link', () => {
 } );
 
 describe( 'StaticSiteImportNotice help with the move', () => {
-	it( 'offers a person to talk to when the moved site isn’t right', async () => {
+	it( 'hands the move to our migrations team when the moved site isn’t right', async () => {
+		const ticket = mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new', {
+				blog_url: 'busybears.wordpress.com',
+				from_url: 'busybearscleaning.com',
+				locale: 'en',
+				context: 'site_is_not_wordpress',
+			} )
+			.reply( 200, { success: true } );
 		const { recordTracksEvent } = render(
 			<StaticSiteImportNotice
 				site={ site }
@@ -396,12 +404,42 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		);
 
 		await userEvent.click(
-			screen.getByRole( 'button', { name: 'Something not right? Get help with your move' } )
+			screen.getByRole( 'button', { name: 'Something not right? Let our team fix it' } )
 		);
+		expect( await screen.findByText( /Our team has your move/ ) ).toBeVisible();
+		expect( ticket.isDone() ).toBe( true );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_static_site_import_ready_notice_click',
-			{ site_id: 42, source_platform: 'wix', action: 'get_help' }
+			{ site_id: 42, source_platform: 'wix', action: 'request_handoff' }
 		);
+	} );
+
+	it.each( [
+		[
+			'says nothing extra for a simple site',
+			{ observed_band: 'simple', capabilities: { navigation: 3 } },
+			null,
+		],
+		[
+			'names what the move found that it doesn’t carry over',
+			{ observed_band: 'complex', capabilities: { commerce: 4, events: 2, forms: 1, dialogs: 2 } },
+			'We found a store, event tickets, and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
+		],
+		[
+			'warns when inspection rated the site demanding without naming a feature',
+			{ observed_band: 'moderate', capabilities: { dialogs: 2, media: 1 } },
+			'Larger or more interactive sites like this one sometimes need a hand. If anything looks off, our team can fix it.',
+		],
+	] as const )( '%s', ( _, inspection, message ) => {
+		const finished = {
+			status: 'finished' as const,
+			session: session( 'finished', {
+				preview_summary: { pages: 12, inspection: { measured: true, ...inspection } },
+			} ) as StaticSiteImportSession,
+		};
+		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
+
+		expect( screen.queryByText( /We found|need a hand/ )?.textContent ?? null ).toBe( message );
 	} );
 
 	it( 'leaves a failed move to the failure card', () => {

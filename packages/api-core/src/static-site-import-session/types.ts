@@ -7,7 +7,15 @@ export const STATIC_SITE_IMPORT_TERMINAL_STATES: readonly StaticSiteImportState[
 ];
 
 export type StaticSiteImportCapability =
-	'booking' | 'commerce' | 'dialogs' | 'embeds' | 'forms' | 'media' | 'membership' | 'navigation';
+	| 'booking'
+	| 'commerce'
+	| 'dialogs'
+	| 'embeds'
+	| 'events'
+	| 'forms'
+	| 'media'
+	| 'membership'
+	| 'navigation';
 
 export type StaticSiteImportBand = 'simple' | 'moderate' | 'complex' | 'unknown';
 
