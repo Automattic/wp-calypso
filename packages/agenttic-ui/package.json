@@ -24,7 +24,8 @@
 		"!dist/tsconfig.tsbuildinfo"
 	],
 	"scripts": {
-		"build": "yarn run clean && yarn run i18n:download-json && vite build && tsc --project tsconfig.json --emitDeclarationOnly",
+		"build": "yarn run build:js && tsc --project tsconfig.json --emitDeclarationOnly",
+		"build:js": "yarn run clean && yarn run i18n:download-json && vite build",
 		"prepare": "yarn run build",
 		"dev": "vite",
 		"clean": "rm -rf dist",
