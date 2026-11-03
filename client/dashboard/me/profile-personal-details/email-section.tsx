@@ -10,7 +10,7 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import { useMemo, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import Notice from '../../components/notice';
@@ -81,19 +81,20 @@ const emailForm: Form = {
 
 type EmailValidationState = 'valid' | 'invalid' | 'unknown_tld' | null;
 
-function useEmailValidation( onValidationChange?: ( isValid: boolean ) => void ) {
-	const [ emailValidationState, setEmailValidationStateValue ] =
-		useState< EmailValidationState >( null );
+function getEmailValidationState( email: string, currentEmail: string ): EmailValidationState {
+	if ( ! email || email === currentEmail ) {
+		return null;
+	}
 
-	const setEmailValidationState = useCallback(
-		( state: EmailValidationState ) => {
-			setEmailValidationStateValue( state );
-			onValidationChange?.( state === 'valid' || state === null );
-		},
-		[ onValidationChange ]
-	);
-
-	return [ emailValidationState, setEmailValidationState ] as const;
+	try {
+		const emailError = getEmailAddressError( email );
+		if ( emailError === 'unknown_tld' ) {
+			return 'unknown_tld';
+		}
+		return emailError ? 'invalid' : 'valid';
+	} catch ( error ) {
+		return 'invalid';
+	}
 }
 
 export default function EmailSection( {
@@ -126,39 +127,16 @@ export default function EmailSection( {
 	const pendingEmail = userSettings.new_user_email;
 	const currentEmail = isEmailPending && pendingEmail ? pendingEmail : userSettings.user_email;
 
-	const [ emailValidationState, setEmailValidationState ] =
-		useEmailValidation( onValidationChange );
-
 	const handleCancelPendingEmail = useCallback( () => {
 		cancelPendingEmail();
 	}, [ cancelPendingEmail ] );
 
-	const validateEmail = useCallback(
-		( email: string ) => {
-			if ( ! email || email === currentEmail ) {
-				setEmailValidationState( null );
-				return;
-			}
-
-			try {
-				const emailError = getEmailAddressError( email );
-				if ( emailError === 'unknown_tld' ) {
-					setEmailValidationState( 'unknown_tld' );
-				} else if ( emailError ) {
-					setEmailValidationState( 'invalid' );
-				} else {
-					setEmailValidationState( 'valid' );
-				}
-			} catch ( error ) {
-				setEmailValidationState( 'invalid' );
-			}
-		},
-		[ currentEmail, setEmailValidationState ]
-	);
+	const emailValidationState = getEmailValidationState( value, currentEmail );
+	const isEmailValid = emailValidationState === 'valid' || emailValidationState === null;
 
 	useEffect( () => {
-		validateEmail( value );
-	}, [ value, validateEmail ] );
+		onValidationChange?.( isEmailValid );
+	}, [ isEmailValid, onValidationChange ] );
 
 	const { user } = useAuth();
 	const { data: accountRecovery } = useQuery( accountRecoveryQuery() );
