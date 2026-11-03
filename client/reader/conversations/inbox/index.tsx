@@ -184,11 +184,9 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	};
 
-	const selectedPostKey = useMemo(
-		() => ( siteId && postId ? { blogId: Number( siteId ), postId: Number( postId ) } : null ),
-		[ siteId, postId ]
+	const { toggleSelectedLike } = useSelectedPostCommands(
+		siteId && postId ? { blogId: Number( siteId ), postId: Number( postId ) } : null
 	);
-	const { toggleSelectedLike } = useSelectedPostCommands( selectedPostKey );
 
 	useInboxKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
