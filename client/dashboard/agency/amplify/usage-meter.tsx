@@ -15,7 +15,7 @@ import { Card, CardBody } from '../../components/card';
 import Grid from '../../components/grid';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
-import { a4aLink } from '../../utils/link';
+import { useContactSupport } from '../support/use-contact-support';
 import { ALL_TIERS } from '../tiers/constants';
 import { useScheduleCall } from '../tiers/use-schedule-call';
 import { canContactForMoreScans, getTierAllowances } from './constants';
@@ -357,6 +357,7 @@ function useLimitMessage( {
 } ): LimitMessage | null {
 	const { recordTracksEvent } = useAnalytics();
 	const { scheduleCall, isLoading: isScheduling } = useScheduleCall( agencyId );
+	const { openContactForm } = useContactSupport();
 
 	// Same language as the Overview "We’re reviewing your account" card and
 	// the marketplace approval notice.
@@ -378,8 +379,7 @@ function useLimitMessage( {
 				__(
 					'We have not approved your application for the Automattic for Agencies program. Please <a>contact support</a> to discuss this further if you think this was done in error.'
 				),
-				// Same target as the marketplace approval notice until the MSD has a support widget.
-				{ a: <a href={ a4aLink( '/overview#contact-support' ) } /> }
+				{ a: <Button variant="link" onClick={ () => openContactForm() } /> }
 			),
 		};
 	}
