@@ -17,6 +17,8 @@ import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selector
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getCurrentRoute from 'calypso/state/selectors/get-current-route';
 
+import './error-notice.scss';
+
 class ErrorNotice extends Component {
 	static propTypes = {
 		createAccountError: PropTypes.object,
@@ -128,8 +130,10 @@ class ErrorNotice extends Component {
 		}
 
 		return (
-			<Notice.Root className="login__error-notice" intent="error">
-				<Notice.Description render={ <div /> }>{ message }</Notice.Description>
+			<Notice.Root className="login__error-notice" icon={ null } intent="error">
+				<Notice.Description className="login__error-notice-text" render={ <div /> }>
+					{ message }
+				</Notice.Description>
 			</Notice.Root>
 		);
 	}
