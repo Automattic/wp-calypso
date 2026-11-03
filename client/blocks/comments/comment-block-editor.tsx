@@ -1,3 +1,4 @@
+import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { commentEmbedUrl, loadCommentEditor } from './load-comment-editor';
@@ -12,12 +13,14 @@ type Props = {
 	placeholder: string;
 	label: string;
 	takeFocus?: boolean;
+	/** Open from the start, not only while a block has tools. */
+	pinToolbar?: boolean;
 	onChange: ( content: string ) => void;
 	onError: ( error: unknown ) => void;
 	/** Native, not synthetic: the editor renders in its own React root, which React's events never leave. */
 	onKeyDown?: ( event: KeyboardEvent ) => void;
 	onFocus?: () => void;
-	/** When focus leaves the box, not when it moves around inside it. */
+	/** On a click or a move of focus outside the box. */
 	onBlur?: () => void;
 };
 
@@ -33,6 +36,7 @@ export default function CommentBlockEditor( {
 	placeholder,
 	label,
 	takeFocus,
+	pinToolbar,
 	onChange,
 	onError,
 	onKeyDown,
@@ -43,6 +47,8 @@ export default function CommentBlockEditor( {
 	const textarea = useRef< HTMLTextAreaElement >( null );
 	const container = useRef< HTMLDivElement >( null );
 	const [ editor, setEditor ] = useState< 'none' | 'loading' | 'ready' >( 'none' );
+	// Whether the writer is in the box, which opens the editor's toolbar as in Jetpack Comments.
+	const [ active, setActive ] = useState( false );
 	const opened = useRef( false );
 	const gone = useRef( false );
 	const unmount = useRef< ( () => void ) | void >( undefined );
@@ -91,20 +97,31 @@ export default function CommentBlockEditor( {
 		const element = box.current!;
 		gone.current = false;
 		const keydown = ( event: KeyboardEvent ) => latest.current.onKeyDown?.( event );
-		const focusin = () => latest.current.onFocus?.();
-		// The editor's popovers render inside the box, so they don't count as leaving it. Nor
-		// does the stand-in losing focus as it hides for the editor.
+		const focusin = () => {
+			setActive( true );
+			latest.current.onFocus?.();
+		};
+		const leave = () => {
+			setActive( false );
+			latest.current.onBlur?.();
+		};
+		// Clicks are read from pointerdown, not focusout: Safari fires focusout for a button inside
+		// the box too, with no relatedTarget, as does the stand-in hiding for the editor. The
+		// editor's popovers render inside the box, so they don't count as leaving it.
+		const pointerdown = ( event: PointerEvent ) => {
+			if ( ! element.contains( event.target as Node ) ) {
+				leave();
+			}
+		};
 		const focusout = ( event: FocusEvent ) => {
-			if (
-				event.target !== textarea.current &&
-				! element.contains( event.relatedTarget as Node | null )
-			) {
-				latest.current.onBlur?.();
+			if ( event.relatedTarget instanceof Node && ! element.contains( event.relatedTarget ) ) {
+				leave();
 			}
 		};
 		element.addEventListener( 'keydown', keydown );
 		element.addEventListener( 'focusin', focusin );
 		element.addEventListener( 'focusout', focusout );
+		document.addEventListener( 'pointerdown', pointerdown );
 
 		// A draft from the editor is block markup, which only the editor shows.
 		if ( latest.current.value.includes( '<!-- wp:' ) ) {
@@ -116,6 +133,7 @@ export default function CommentBlockEditor( {
 			element.removeEventListener( 'keydown', keydown );
 			element.removeEventListener( 'focusin', focusin );
 			element.removeEventListener( 'focusout', focusout );
+			document.removeEventListener( 'pointerdown', pointerdown );
 			unmount.current?.();
 		};
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- set up once, with the draft of that moment.
@@ -128,11 +146,14 @@ export default function CommentBlockEditor( {
 	return (
 		<div
 			ref={ box }
-			className="comments__block-editor jetpack-comments jetpack-comments__box is-open"
+			className={ clsx( 'comments__block-editor jetpack-comments jetpack-comments__box', {
+				'is-open': pinToolbar || active,
+				'has-pinned-toolbar': pinToolbar,
+			} ) }
 		>
 			<div className="comments__block-editor-placeholder" hidden={ editor === 'ready' }>
 				{ /* The toolbar's strip, which the editor's own fills once a block has focus. */ }
-				<div className="comments__block-editor-toolbar" />
+				{ pinToolbar && <div className="comments__block-editor-toolbar" /> }
 				<div className="comments__block-editor-content">
 					<textarea
 						ref={ textarea }

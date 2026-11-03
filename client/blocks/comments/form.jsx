@@ -313,6 +313,7 @@ class PostCommentForm extends Component {
 							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }
 							// Settings that arrive after a focus keep it.
 							takeFocus={ isReply || this.state.haveFocus }
+							pinToolbar={ composer }
 							onChange={ this.updateCommentText }
 							onError={ this.handleEditorError }
 							onKeyDown={ this.handleKeyDown }

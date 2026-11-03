@@ -22,17 +22,27 @@ $composer-max-height: 400px;
 	}
 }
 
-// Open from the start, not only once a block has tools, so the box doesn't grow on focus.
+// Elsewhere the toolbar opens with the selected block's tools while the box is in use, and
+// closes once the writer leaves, as in Jetpack Comments.
+.comments__block-editor .jetpack-comments__toolbar {
+	padding-inline: 12px;
+}
+
+.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar:has(.jetpack-comments__block-tools) {
+	border-block-end-color: var(--color-neutral-5);
+}
+
+// The inbox's composer keeps it open from the start, so the box doesn't grow on focus.
 // The classes outrank the editor's open rule, which loads after this.
-.comments__block-editor .comments__block-editor-toolbar,
-.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+.comments__block-editor.has-pinned-toolbar .comments__block-editor-toolbar,
+.comments__block-editor.has-pinned-toolbar.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
 	box-sizing: border-box;
 	min-block-size: $toolbar-height + 1px;
 	padding-inline: 12px;
 	border-block-end: 1px solid var(--color-neutral-5);
 }
 
-.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+.comments__block-editor.has-pinned-toolbar.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
 	grid-template-rows: 1fr;
 	visibility: visible;
 	transition: none;
