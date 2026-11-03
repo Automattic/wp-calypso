@@ -125,6 +125,7 @@ function LimitsExplainer( {
 				</Text>
 			) }
 			<Button
+				__next40pxDefaultSize
 				ref={ setAnchor }
 				size="small"
 				icon={ info }
@@ -206,6 +207,7 @@ function LimitsExplainer( {
 						</VStack>
 						<Text size={ 13 } lineHeight="20px">
 							<Button
+								__next40pxDefaultSize
 								variant="link"
 								href={ tiersPath }
 								onClick={ ( event: MouseEvent ) => {
@@ -396,7 +398,7 @@ function useLimitMessage( {
 				__(
 					'We have not approved your application for the Automattic for Agencies program. Please <a>contact support</a> to discuss this further if you think this was done in error.'
 				),
-				{ a: <Button variant="link" onClick={ () => openContactForm() } /> }
+				{ a: <Button __next40pxDefaultSize variant="link" onClick={ () => openContactForm() } /> }
 			),
 		};
 	}
