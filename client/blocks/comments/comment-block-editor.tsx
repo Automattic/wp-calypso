@@ -1,5 +1,5 @@
 import clsx from 'clsx';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { commentEmbedUrl, loadCommentEditor } from './load-comment-editor';
 import type { CommentsEditorSettings } from '@automattic/api-core';
@@ -13,8 +13,13 @@ type Props = {
 	placeholder: string;
 	label: string;
 	takeFocus?: boolean;
-	/** Open from the start, not only while a block has tools. */
+	/** Open from the start and kept open, as the inbox's composer has it. */
 	pinToolbar?: boolean;
+	/** The height of the textarea this box replaces, which it grows from and shrinks back to. */
+	openFrom?: number;
+	/** Shrinks the box back to `openFrom`, then calls `onClosed`. */
+	closing?: boolean;
+	onClosed?: () => void;
 	onChange: ( content: string ) => void;
 	onError: ( error: unknown ) => void;
 	/** Native, not synthetic: the editor renders in its own React root, which React's events never leave. */
@@ -37,6 +42,9 @@ export default function CommentBlockEditor( {
 	label,
 	takeFocus,
 	pinToolbar,
+	openFrom,
+	closing,
+	onClosed,
 	onChange,
 	onError,
 	onKeyDown,
@@ -47,16 +55,53 @@ export default function CommentBlockEditor( {
 	const textarea = useRef< HTMLTextAreaElement >( null );
 	const container = useRef< HTMLDivElement >( null );
 	const [ editor, setEditor ] = useState< 'none' | 'loading' | 'ready' >( 'none' );
-	// Whether the writer is in the box, which opens the editor's toolbar as in Jetpack Comments.
-	const [ active, setActive ] = useState( false );
+	// Whether the writer is in the box, which opens the toolbar. From the first paint when the box
+	// takes focus, so it arrives open, revealed by the box growing, not sliding in after.
+	const [ active, setActive ] = useState( !! takeFocus );
 	const opened = useRef( false );
 	const gone = useRef( false );
 	const unmount = useRef< ( () => void ) | void >( undefined );
 	// Set by a click, so the editor's caret lands where it did; a keyboard arrival goes to the end.
 	const clicked = useRef( false );
 	// The editor keeps the callbacks it was mounted with, so it reads the latest through a ref.
-	const latest = useRef( { value, onChange, onError, onKeyDown, onFocus, onBlur } );
-	latest.current = { value, onChange, onError, onKeyDown, onFocus, onBlur };
+	const latest = useRef( { value, onChange, onError, onKeyDown, onFocus, onBlur, onClosed } );
+	latest.current = { value, onChange, onError, onKeyDown, onFocus, onBlur, onClosed };
+
+	// The height, not the parts: the editor swaps in for its stand-in partway through.
+	const resize = ( from: number, to: number, fill?: FillMode ) =>
+		! box.current?.animate || window.matchMedia?.( '(prefers-reduced-motion: reduce)' ).matches
+			? null
+			: box.current.animate(
+					[
+						{ height: `${ from }px`, overflow: 'hidden' },
+						{ height: `${ to }px`, overflow: 'hidden' },
+					],
+					{ duration: 250, easing: 'ease-in-out', fill }
+				);
+
+	useLayoutEffect( () => {
+		if ( openFrom ) {
+			resize( openFrom, box.current!.offsetHeight );
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- once, as the box replaces the textarea.
+	}, [] );
+
+	useEffect( () => {
+		if ( ! closing ) {
+			return;
+		}
+
+		// Held at the textarea's height, so nothing jumps before the textarea takes its place.
+		const animation = openFrom ? resize( box.current!.offsetHeight, openFrom, 'forwards' ) : null;
+		if ( ! animation ) {
+			latest.current.onClosed?.();
+			return;
+		}
+
+		animation.onfinish = () => latest.current.onClosed?.();
+		return () => animation.cancel();
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- runs as closing turns on or off.
+	}, [ closing ] );
 
 	const openEditor = ( focus: boolean ) => {
 		if ( opened.current ) {
@@ -153,7 +198,7 @@ export default function CommentBlockEditor( {
 		>
 			<div className="comments__block-editor-placeholder" hidden={ editor === 'ready' }>
 				{ /* The toolbar's strip, which the editor's own fills once a block has focus. */ }
-				{ pinToolbar && <div className="comments__block-editor-toolbar" /> }
+				<div className="comments__block-editor-toolbar" />
 				<div className="comments__block-editor-content">
 					<textarea
 						ref={ textarea }

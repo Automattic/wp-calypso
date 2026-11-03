@@ -63,6 +63,9 @@ class PostCommentForm extends Component {
 		haveFocus: false,
 		// Outside the inbox the plain textarea stands in until the first focus.
 		editorOpen: false,
+		// The textarea's height, which the editor grows from and shrinks back to.
+		openFrom: undefined,
+		editorClosing: false,
 		editorFailed: false,
 		// Bumped to start the editor over, since it keeps its own content once mounted.
 		editorKey: 0,
@@ -101,7 +104,12 @@ class PostCommentForm extends Component {
 	};
 
 	handleFocus = () => {
-		this.setState( { haveFocus: true, editorOpen: true } );
+		this.setState( { haveFocus: true, editorOpen: true, editorClosing: false } );
+	};
+
+	handleTextareaFocus = ( event ) => {
+		this.setState( { openFrom: event.target.offsetHeight } );
+		this.handleFocus();
 	};
 
 	handleEditorError = () => {
@@ -123,9 +131,14 @@ class PostCommentForm extends Component {
 			return;
 		}
 
+		this.setState( { editorClosing: true } );
+	};
+
+	handleEditorClosed = () => {
 		this.setState( ( { editorKey } ) => ( {
 			haveFocus: false,
 			editorOpen: false,
+			editorClosing: false,
 			editorKey: editorKey + 1,
 		} ) );
 	};
@@ -204,6 +217,7 @@ class PostCommentForm extends Component {
 		this.setState( ( { editorKey } ) => ( {
 			haveFocus: false,
 			editorOpen: false,
+			editorClosing: false,
 			editorKey: editorKey + 1,
 		} ) );
 
@@ -314,6 +328,9 @@ class PostCommentForm extends Component {
 							// Settings that arrive after a focus keep it.
 							takeFocus={ isReply || this.state.haveFocus }
 							pinToolbar={ composer }
+							openFrom={ composer ? undefined : this.state.openFrom }
+							closing={ this.state.editorClosing }
+							onClosed={ this.handleEditorClosed }
 							onChange={ this.updateCommentText }
 							onError={ this.handleEditorError }
 							onKeyDown={ this.handleKeyDown }
@@ -326,7 +343,7 @@ class PostCommentForm extends Component {
 							placeholder={ placeholder }
 							onKeyUp={ this.handleKeyUp }
 							onKeyDown={ this.handleKeyDown }
-							onFocus={ this.handleFocus }
+							onFocus={ this.handleTextareaFocus }
 							onBlur={ this.handleBlur }
 							onChange={ this.handleTextChange }
 							enableAutoFocus={ isReply }

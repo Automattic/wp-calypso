@@ -22,31 +22,49 @@ $composer-max-height: 400px;
 	}
 }
 
-// Elsewhere the toolbar opens with the selected block's tools while the box is in use, and
-// closes once the writer leaves, as in Jetpack Comments.
-.comments__block-editor .jetpack-comments__toolbar {
-	padding-inline: 12px;
-}
-
-.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar:has(.jetpack-comments__block-tools) {
-	border-block-end-color: var(--color-neutral-5);
-}
-
-// The inbox's composer keeps it open from the start, so the box doesn't grow on focus.
-// The classes outrank the editor's open rule, which loads after this.
-.comments__block-editor.has-pinned-toolbar .comments__block-editor-toolbar,
-.comments__block-editor.has-pinned-toolbar.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+// The toolbar: open while the box is in use, folding up once the writer leaves. The classes
+// outrank the editor's own rules, which load after these and open it only for a block's tools.
+.comments__block-editor .comments__block-editor-toolbar,
+.comments__block-editor.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
 	box-sizing: border-box;
-	min-block-size: $toolbar-height + 1px;
+	min-block-size: 0;
 	padding-inline: 12px;
-	border-block-end: 1px solid var(--color-neutral-5);
+	border-block-end: 1px solid transparent;
+	transition:
+		grid-template-rows 0.25s ease-in-out,
+		min-block-size 0.25s ease-in-out,
+		border-color 0.25s ease-in-out,
+		visibility 0s linear 0.25s;
 }
 
-.comments__block-editor.has-pinned-toolbar.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+.comments__block-editor:not(.is-open) .comments__block-editor-toolbar {
+	display: none;
+}
+
+.comments__block-editor.is-open .comments__block-editor-toolbar,
+.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
 	grid-template-rows: 1fr;
+	min-block-size: $toolbar-height + 1px;
 	visibility: visible;
-	transition: none;
+	border-block-end-color: var(--color-neutral-5);
+	transition:
+		grid-template-rows 0.25s ease-in-out,
+		min-block-size 0.25s ease-in-out,
+		border-color 0.25s ease-in-out,
+		visibility 0s;
 	animation: none;
+}
+
+// The inbox's composer has it from the start, so its box never grows.
+.comments__block-editor.has-pinned-toolbar.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
+	transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.comments__block-editor.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar,
+	.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+		transition: none;
+	}
 }
 
 // The writing area, the same for the stand-in and the editor, so the swap doesn't move it.
