@@ -26,3 +26,11 @@ export function canSwitchAgencyDashboard( agency: OptInAgency ): boolean {
 		canUseNewAgencyDashboard( agency ) && value !== 'forced-opt-in' && value !== 'forced-opt-out'
 	);
 }
+
+/**
+ * Whether the agency has to use the previous dashboard, because only agencies on Billing Dragon
+ * can use the Multi-site Dashboard.
+ */
+export function needsPreviousAgencyDashboard( agency: OptInAgency ): boolean {
+	return isEnabled( 'a4a-dashboard-opt-in' ) && !! agency && ! canUseNewAgencyDashboard( agency );
+}
