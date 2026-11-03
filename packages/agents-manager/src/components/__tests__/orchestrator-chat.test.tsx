@@ -1631,6 +1631,27 @@ describe( 'OrchestratorChat', () => {
 		);
 	} );
 
+	it( 'clears an earlier upload error when /credits answers', async () => {
+		mockCreditsCommand = {
+			state: 'balance',
+			answer: { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } },
+		};
+		renderWithImageUpload(
+			createImageUpload( {
+				pendingImages: [ { id: 'p1' } ],
+				uploadImagesToWordPress: jest.fn().mockRejectedValue( new Error( 'network' ) ),
+			} )
+		);
+		fireEvent.click( screen.getByText( 'Submit message' ) );
+		expect( await screen.findByTestId( 'chat-error' ) ).toHaveTextContent(
+			'Failed to upload images. Please try again.'
+		);
+
+		fireEvent.click( screen.getByText( 'Submit credits command' ) );
+
+		await waitFor( () => expect( screen.queryByTestId( 'chat-error' ) ).not.toBeInTheDocument() );
+	} );
+
 	it( 'sends /credits as any other message when no site balance is known', async () => {
 		const { onSubmit, addMessage } = mockUseAgentChat();
 

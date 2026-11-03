@@ -844,6 +844,16 @@ export function useCredits( {
 		recordCreditsEvent,
 	] );
 
+	const recordTopUpClick = useCallback(
+		( shown?: LiveCredits ) =>
+			recordCreditsEvent(
+				'calypso_agents_manager_credits_cta_clicked',
+				{ cta_type: 'top_up', ref: CREDITS_UPGRADE_SOURCE, placement: 'none' },
+				shown
+			),
+		[ recordCreditsEvent ]
+	);
+
 	// Personal and Premium upgrade first, though a credits pack is cheaper than a plan.
 	const addCreditsAction = useMemo< CreditsAnswerAction | undefined >( () => {
 		if ( planPurchaseLink?.kind !== 'upgrade' || access?.canBuyCredits !== true ) {
@@ -856,27 +866,28 @@ export function useCredits( {
 			action && {
 				...action,
 				kind: 'top_up' as const,
-				onClick: () =>
-					recordCreditsEvent( 'calypso_agents_manager_credits_cta_clicked', {
-						cta_type: 'top_up',
-						ref: CREDITS_UPGRADE_SOURCE,
-						placement: 'none',
-					} ),
+				onClick: () => recordTopUpClick(),
 			}
 		);
-	}, [ planPurchaseLink, access, siteId, site, recordCreditsEvent ] );
+	}, [ planPurchaseLink, access, siteId, site, recordTopUpClick ] );
 
 	// Live balances only: a mock or an unknown balance has nothing true to say.
 	const creditsAnswer = useMemo< CreditsAnswerContent | undefined >( () => {
 		if ( ! siteId || ! status || ! snapshot ) {
 			return undefined;
 		}
+		// The card stays in the thread after a later read fails, so its clicks count against its own balance.
+		const shown: LiveCredits = { status, siteId, agentConfig };
 		const actions: CreditsAnswerAction[] = [];
 		if ( purchaseAction && purchaseKind ) {
-			actions.push( { ...purchaseAction, kind: purchaseKind } );
+			actions.push( {
+				...purchaseAction,
+				kind: purchaseKind,
+				onClick: () => recordPurchaseClick( 'none', shown ),
+			} );
 		}
 		if ( addCreditsAction ) {
-			actions.push( addCreditsAction );
+			actions.push( { ...addCreditsAction, onClick: () => recordTopUpClick( shown ) } );
 		}
 		return {
 			status,
@@ -884,7 +895,18 @@ export function useCredits( {
 			actions,
 			purchaseHint: actions.length ? undefined : purchaseHint,
 		};
-	}, [ siteId, status, snapshot, purchaseKind, purchaseAction, addCreditsAction, purchaseHint ] );
+	}, [
+		siteId,
+		status,
+		snapshot,
+		agentConfig,
+		purchaseKind,
+		purchaseAction,
+		addCreditsAction,
+		purchaseHint,
+		recordPurchaseClick,
+		recordTopUpClick,
+	] );
 
 	const lastKnown =
 		lastKnownSnapshot.current?.scope === scope &&

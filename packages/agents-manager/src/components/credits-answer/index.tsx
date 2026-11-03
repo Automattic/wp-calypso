@@ -87,13 +87,15 @@ export function CreditsAnswer( { status, resetDate, actions, purchaseHint, creat
 								<td>{ __( 'Don’t expire', __i18n_text_domain__ ) }</td>
 							</tr>
 						) }
-						{ topUps !== undefined && status.remaining !== undefined && (
-							<tr>
-								<th scope="row">{ __( 'Total', __i18n_text_domain__ ) }</th>
-								<td>{ formatCreditsShort( status.remaining ) }</td>
-								<td />
-							</tr>
-						) }
+						{ status.remaining !== undefined &&
+							( topUps !== undefined ||
+								( plan?.remaining !== undefined && status.remaining !== plan.remaining ) ) && (
+								<tr>
+									<th scope="row">{ __( 'Total', __i18n_text_domain__ ) }</th>
+									<td>{ formatCreditsShort( status.remaining ) }</td>
+									<td />
+								</tr>
+							) }
 					</tbody>
 				</table>
 			</div>

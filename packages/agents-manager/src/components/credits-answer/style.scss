@@ -96,7 +96,7 @@
 			color: var( --color-foreground );
 		}
 
-		&:focus-visible {
+		&:focus-visible:not( :disabled ) {
 			box-shadow: 0 0 0 2px var( --color-primary );
 		}
 	}

@@ -62,6 +62,26 @@ describe( 'CreditsAnswer', () => {
 		expect( screen.queryByRole( 'rowheader', { name: 'Total' } ) ).not.toBeInTheDocument();
 	} );
 
+	it( 'shows the total when more is available than the plan holds, even with no top-ups row', () => {
+		const unknownTopUps = buildLiveCreditsStatus(
+			creditSnapshot( {
+				credits_limit: 15000,
+				credits_used: 4200,
+				credits_remaining: 10800,
+				credits_available: 77800,
+				top_up_credits_purchased: null,
+				top_up_credits_remaining: 67000,
+			} )
+		);
+		render( <CreditsAnswer { ...answer } status={ unknownTopUps } /> );
+
+		expect( screen.getAllByRole( 'row' ).map( ( row ) => row.textContent ) ).toEqual( [
+			'SourceLeftResets',
+			'Monthly plan10.8kOct 17 (UTC)',
+			'Total77.8k',
+		] );
+	} );
+
 	it( 'offers Upgrade and Add credits as links that open a new tab and record the click', () => {
 		render( <CreditsAnswer { ...answer } actions={ [ upgrade, addCredits ] } /> );
 

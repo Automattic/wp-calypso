@@ -227,6 +227,7 @@ export function useChatComposer( {
 		( message: string ) => {
 			// Agenttic has already cleared the input, and nothing else of a send applies.
 			if ( handleCommand?.( message ) ) {
+				setUploadError( null );
 				return;
 			}
 			return sendMessage( message );

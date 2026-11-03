@@ -3356,6 +3356,37 @@ describe( 'credits answer', () => {
 			expect( reply && 'answer' in reply && reply.answer.status.remaining ).toBe( 12500 );
 			expect( reply && 'answer' in reply && reply.answer.actions ).toEqual( [] );
 		} );
+
+		it( 'still records a click on an earlier card once a later read fails', async () => {
+			fetchMock.mockResolvedValueOnce(
+				response( creditSnapshot( { plan_tier: 'personal', credits_available: 12500 } ) )
+			);
+			const { result } = renderCredits();
+			await flush();
+			const actions = answerOf( result.current )?.actions ?? [];
+			expect( actions.map( ( { kind } ) => kind ) ).toEqual( [ 'upgrade', 'top_up' ] );
+
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			act( () => {
+				window.dispatchEvent( new Event( 'online' ) );
+			} );
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'stale' );
+
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			act( () => actions[ 0 ].onClick?.() );
+			act( () => actions[ 1 ].onClick?.() );
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				1,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'upgrade', placement: 'none' } )
+			);
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				2,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'top_up', placement: 'none' } )
+			);
+		} );
 	} );
 
 	it( 'is absent on a chat with no site, even in demo mode', () => {
