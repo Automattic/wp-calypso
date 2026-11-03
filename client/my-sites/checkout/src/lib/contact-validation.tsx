@@ -90,12 +90,8 @@ const getEmailTakenLoginRedirectMessage = (
 const isEmailTaken = ( emailErrors: Record< string, string > ) =>
 	Object.prototype.hasOwnProperty.call( emailErrors, 'taken' );
 
-const getEmailTakenToastMessage = ( translate: ReturnType< typeof useTranslate > ) =>
-	String(
-		translate(
-			'That email address is already in use. If you have an existing account, please log in.'
-		)
-	);
+const getEmailValidationErrors = ( validationResult: unknown ): TranslateResult[] =>
+	( validationResult as { messages?: { email?: TranslateResult[] } } ).messages?.email ?? [];
 
 export async function validateLoggedOutEmailOnBlur(
 	email: string,
@@ -155,7 +151,7 @@ export async function validateContactDetails(
 	contactInfo: ManagedContactDetails,
 	isLoggedOutCart: boolean,
 	responseCart: ResponseCart,
-	showErrorMessageBriefly: ( message: string ) => void,
+	showErrorMessageBriefly: ( message: TranslateResult ) => void,
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void,
 	clearDomainContactErrorMessages: () => void,
 	translate: ReturnType< typeof useTranslate >,
@@ -205,7 +201,7 @@ export async function validateContactDetails(
 				applyDomainContactValidationResults,
 				clearDomainContactErrorMessages,
 				errorMessage: isEmailTaken( emailErrors )
-					? getEmailTakenToastMessage( translate )
+					? getEmailValidationErrors( loggedOutValidationResult )[ 0 ]
 					: undefined,
 			} );
 		}
@@ -401,8 +397,8 @@ function handleContactValidationResult( {
 	errorMessage,
 }: {
 	translate: ReturnType< typeof useTranslate >;
-	showErrorMessage: ( message: string ) => void;
-	errorMessage?: string;
+	showErrorMessage: ( message: TranslateResult ) => void;
+	errorMessage?: TranslateResult;
 	validationResult: unknown;
 	applyDomainContactValidationResults: ( results: ManagedContactDetailsErrors ) => void;
 	clearDomainContactErrorMessages: () => void;
