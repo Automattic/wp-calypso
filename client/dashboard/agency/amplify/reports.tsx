@@ -462,6 +462,11 @@ export default function AmplifyReportsList( {
 								isBusy={ downloadingId === item.id }
 								disabled={ ! item.has_pdf || downloadingId === item.id }
 								accessibleWhenDisabled
+								aria-label={ sprintf(
+									/* translators: %s: name or address of the site the report is for */
+									__( 'Download PDF for %s' ),
+									titleFor( item )
+								) }
 								onClick={ () => onDownload( item ) }
 							>
 								{ __( 'Download PDF' ) }
@@ -475,6 +480,11 @@ export default function AmplifyReportsList( {
 								isBusy={ retryingId === item.id }
 								disabled={ !! retryingId }
 								accessibleWhenDisabled
+								aria-label={ sprintf(
+									/* translators: %s: name or address of the site the report is for */
+									__( 'Retry report for %s' ),
+									titleFor( item )
+								) }
 								onClick={ () => onRetry( item ) }
 							>
 								{ __( 'Retry' ) }
@@ -488,6 +498,11 @@ export default function AmplifyReportsList( {
 							size="compact"
 							icon={ archiveBoxIcon }
 							label={ __( 'Archive report' ) }
+							aria-label={ sprintf(
+								/* translators: %s: name or address of the site the report is for */
+								__( 'Archive report for %s' ),
+								titleFor( item )
+							) }
 							showTooltip
 							onClick={ () => {
 								recordTracksEvent( 'calypso_a4a_amplify_report_archive_click', {
