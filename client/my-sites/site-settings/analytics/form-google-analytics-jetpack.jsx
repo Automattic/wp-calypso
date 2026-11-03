@@ -1,7 +1,4 @@
-import {
-	FEATURE_GOOGLE_ANALYTICS,
-	PLAN_JETPACK_SECURITY_DAILY,
-} from '@automattic/calypso-products';
+import { FEATURE_GOOGLE_ANALYTICS } from '@automattic/calypso-products';
 import {
 	FormInputValidation as FormTextValidation,
 	FormLabel,
@@ -251,7 +248,6 @@ const GoogleAnalyticsJetpackForm = ( {
 						) }
 						event="google_analytics_settings"
 						feature={ FEATURE_GOOGLE_ANALYTICS }
-						plan={ PLAN_JETPACK_SECURITY_DAILY }
 						href={ upsellHref }
 						showIcon
 						title={ nudgeTitle }

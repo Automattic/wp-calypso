@@ -13,6 +13,7 @@ import {
 	WPCOM_FEATURES_CLASSIC_SEARCH,
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_VIDEOPRESS,
+	getPlan,
 	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
 import { JETPACK_PRICING_PAGE } from '@automattic/urls';
@@ -39,15 +40,14 @@ export type Product = {
 };
 
 export function getAvailableUpsells() {
-	const securityDescription = translate(
-		'Protect your site from hackers and spam with automated backups, malware scanning, and spam filtering.'
-	);
 	const securityFeatures = [ WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN, WPCOM_FEATURES_ANTISPAM ];
 
 	// Security until Pro goes on sale, then Pro; the section drops whichever is off sale.
 	return [
 		{
-			description: securityDescription,
+			description: translate(
+				'Protect your site from hackers and spam with automated backups, malware scanning, and spam filtering.'
+			),
 			href: 'https://jetpack.com/features/security/',
 			iconUrl: SecurityIcon,
 			isFree: false,
@@ -57,7 +57,7 @@ export function getAvailableUpsells() {
 			checkoutSlug: PLAN_JETPACK_SECURITY_T1_YEARLY,
 		},
 		{
-			description: securityDescription,
+			description: getPlan( PLAN_JETPACK_PRO_YEARLY )?.getDescription() ?? '',
 			href: JETPACK_PRICING_PAGE,
 			iconUrl: SecurityIcon,
 			isFree: false,

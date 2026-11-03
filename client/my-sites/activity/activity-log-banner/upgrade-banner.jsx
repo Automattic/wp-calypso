@@ -28,8 +28,7 @@ class UpgradeBanner extends Component {
 						description={ preventWidows(
 							translate(
 								'You currently have access to the 20 most recent events ' +
-									'on your site. Upgrade to Jetpack VaultPress Backup ' +
-									'or Jetpack Security to unlock powerful features:'
+									'on your site. Upgrade to unlock powerful features:'
 							)
 						) }
 						showIcon

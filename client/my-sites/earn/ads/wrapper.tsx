@@ -316,7 +316,7 @@ const AdsWrapper = ( { section, children }: AdsWrapperProps ) => {
 			body: translate(
 				'Make money each time someone visits your site by displaying ads on all your posts and pages.'
 			),
-			href: addQueryArgs( `/plans/${ siteSlug }`, { redirect_to: getUpsellReturnUrl() } ),
+			href: addQueryArgs( `/plans/${ siteSlug }`, getUpsellCheckoutQueryArgs() ),
 			tracksClickName: 'calypso_upgrade_nudge_click',
 			ctaName: 'calypso_upgrade_nudge_impression',
 		} );

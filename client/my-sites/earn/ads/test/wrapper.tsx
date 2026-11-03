@@ -85,6 +85,9 @@ describe( 'AdsWrapper', () => {
 		expect( url.searchParams.get( 'redirect_to' ) ).toBe(
 			'/earn/ads-settings/example.wordpress.com'
 		);
+		expect( url.searchParams.get( 'cancel_to' ) ).toBe(
+			'/earn/ads-settings/example.wordpress.com'
+		);
 	} );
 
 	// The plans page forwards `redirect_to` to checkout, but has no use for
