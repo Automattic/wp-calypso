@@ -19,6 +19,10 @@ jest.mock( 'calypso/reader/data/notifications', () => ( {
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
+jest.mock( 'calypso/reader/stream/use-selected-post-commands', () => ( {
+	useSelectedPostCommands: () => ( { toggleSelectedLike: jest.fn() } ),
+} ) );
+
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
 } ) );
