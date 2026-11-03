@@ -1,0 +1,51 @@
+/* Usage counter (header) */
+.dashboard-amplify-usage__bar {
+	position: relative;
+	width: 100%;
+	height: 8px;
+	overflow: hidden;
+	border-radius: 4px;
+	background: var( --color-border-subtle );
+}
+
+.dashboard-amplify-usage__bar > span {
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 0;
+	border-radius: inherit;
+	background: var( --color-primary );
+	transition: width 0.3s ease;
+}
+
+.dashboard-amplify-usage[data-status='low'] .dashboard-amplify-usage__bar > span {
+	background: var( --studio-yellow-20 );
+}
+
+.dashboard-amplify-usage[data-status='cap'] .dashboard-amplify-usage__bar > span {
+	background: var( --color-error );
+}
+
+.dashboard-amplify-limit-reached {
+	position: relative;
+	z-index: 3;
+	box-sizing: border-box;
+	width: min( 100%, 680px );
+	padding: 24px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	text-align: center;
+	text-wrap: pretty;
+}
+
+.dashboard-amplify-scans-left {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 2px 6px;
+	margin-block-start: 6px;
+}
+
+.dashboard-amplify-scans-left__title {
+	color: var( --color-text );
+	font-weight: 500;
+}
