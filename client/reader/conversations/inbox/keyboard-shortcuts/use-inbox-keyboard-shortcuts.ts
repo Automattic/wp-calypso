@@ -127,6 +127,8 @@ export function useInboxKeyboardShortcuts( {
 					handlers.onToggleLike();
 					break;
 				case 'n':
+					// Keep the notifications panel's own `n` listener from toggling it back closed.
+					event.stopPropagation();
 					event.preventDefault();
 					handlers.onOpenNotifications();
 					break;

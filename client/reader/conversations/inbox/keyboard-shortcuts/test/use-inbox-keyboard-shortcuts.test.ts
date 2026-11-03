@@ -73,11 +73,17 @@ describe( 'useInboxKeyboardShortcuts', () => {
 		document.body.innerHTML = '<button type="button">Conversation</button>';
 		renderHook( () => useInboxKeyboardShortcuts( handlers ) );
 
+		const bubbleListener = jest.fn();
+		document.addEventListener( 'keydown', bubbleListener );
+
 		document.querySelector< HTMLButtonElement >( 'button' )?.focus();
-		await user.keyboard( 'ln' );
+		await user.keyboard( 'n' );
+		document.removeEventListener( 'keydown', bubbleListener );
+		await user.keyboard( 'l' );
 
 		expect( handlers.onToggleLike ).toHaveBeenCalledTimes( 1 );
 		expect( handlers.onOpenNotifications ).toHaveBeenCalledTimes( 1 );
+		expect( bubbleListener ).not.toHaveBeenCalled();
 	} );
 
 	it( 'toggles the shortcuts menu with i, including from inside the shortcuts popover', async () => {
