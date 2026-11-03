@@ -1,5 +1,5 @@
 import './form.scss';
-import { siteCommentsEditorQuery } from '@automattic/api-queries';
+import { commentsEditorQuery } from '@automattic/api-queries';
 import { Button, FormInputValidation } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Button as WPButton } from '@wordpress/components';
@@ -351,7 +351,7 @@ PostCommentForm.propTypes = {
 
 	onReplyCancel: PropTypes.func,
 
-	// From withCommentsEditorSettings: the inbox's composer layout, and the editor where its site has one.
+	// From withCommentsEditorSettings: the inbox's composer layout, and the editor's settings.
 	composer: PropTypes.bool,
 	editorSettings: PropTypes.object,
 
@@ -384,8 +384,7 @@ const withPostCommentActions = ( WrappedComponent ) => {
 const withCommentsEditorSettings = ( WrappedComponent ) => {
 	const WithCommentsEditorSettings = ( props ) => {
 		const blockEditor = useContext( CommentEditorContext );
-		const query = siteCommentsEditorQuery( props.post?.site_ID );
-		const { data } = useQuery( { ...query, enabled: blockEditor && query.enabled } );
+		const { data } = useQuery( { ...commentsEditorQuery(), enabled: blockEditor } );
 
 		return <WrappedComponent { ...props } composer={ blockEditor } editorSettings={ data } />;
 	};

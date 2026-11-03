@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { loadCommentEditor } from './load-comment-editor';
-import type { SiteCommentsEditorSettings } from '@automattic/api-core';
+import type { CommentsEditorSettings } from '@automattic/api-core';
 
 import './comment-block-editor.scss';
 
 type Props = {
-	settings: SiteCommentsEditorSettings;
+	settings: CommentsEditorSettings;
 	value: string;
 	placeholder: string;
 	label: string;
