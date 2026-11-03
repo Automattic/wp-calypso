@@ -35,7 +35,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, getTwoFactorAuthNonce } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -72,6 +72,7 @@ export class Login extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		hasTwoFactorEmailNonce: PropTypes.bool,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isWoo: PropTypes.bool,
@@ -108,6 +109,7 @@ export class Login extends Component {
 		// List all props that affect the heading text
 		const headingProps = [
 			'twoFactorAuthType',
+			'hasTwoFactorEmailNonce',
 			'isManualRenewalImmediateLoginAttempt',
 			'socialConnect',
 			'linkingSocialService',
@@ -465,6 +467,7 @@ export class Login extends Component {
 function getInitialHeadingState( props, translate ) {
 	const {
 		twoFactorAuthType,
+		hasTwoFactorEmailNonce,
 		isManualRenewalImmediateLoginAttempt,
 		socialConnect,
 		linkingSocialService,
@@ -516,6 +519,7 @@ function getInitialHeadingState( props, translate ) {
 	const headingSubText = getHeadingSubText( {
 		isSocialFirst,
 		twoFactorAuthType,
+		hasTwoFactorEmailNonce,
 		action,
 		translate,
 		isWooJPC,
@@ -620,6 +624,7 @@ export default connect(
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
+			hasTwoFactorEmailNonce: !! getTwoFactorAuthNonce( state, 'email' ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),
 		};
 	},
