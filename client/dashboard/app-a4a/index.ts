@@ -56,7 +56,6 @@ boot( {
 		colorScheme: false,
 		darkMode: false,
 	},
-	optIn: false,
 	components: {
 		omnibar: A4AOmnibar,
 		helpCenter: A4AHelpCenter,

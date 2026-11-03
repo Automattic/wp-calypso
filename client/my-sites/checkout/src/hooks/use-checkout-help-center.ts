@@ -28,7 +28,7 @@ import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import isAtomicSite from 'calypso/state/selectors/is-site-automated-transfer';
 import { isJetpackSite } from 'calypso/state/sites/selectors';
 import { getSectionName, getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
-import { loadCheckoutSupportVariation } from '../lib/checkout-support-routing';
+import { loadCheckoutSupportAssignment } from '../lib/checkout-support-routing';
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -54,6 +54,17 @@ const isWordPressComCart = (
 
 // Checkout has no admin bar node to read the arm from, so it asks ExPlat itself.
 const GET_HELP_EXPERIMENT = 'calypso_help_center_get_help_chat_forward';
+
+const getCartType = ( products: { is_renewal?: boolean }[] ) => {
+	const renewalCount = products.filter( ( product ) => product.is_renewal ).length;
+	if ( ! products.length ) {
+		return 'empty';
+	}
+	if ( renewalCount === products.length ) {
+		return 'renewal';
+	}
+	return renewalCount ? 'mixed' : 'new_purchase';
+};
 
 export const useCheckoutHelpCenter = (): {
 	toggleHelpCenter: () => void;
@@ -166,12 +177,33 @@ export const useCheckoutHelpCenter = (): {
 		}
 
 		// Assign the variation only when opening, so only people who ask for help are in the experiment.
-		const checkoutSupportVariation =
+		const assignment =
 			isOpening && canJoinCheckoutSupportExperiment
-				? await loadCheckoutSupportVariation()
+				? await loadCheckoutSupportAssignment()
 				: undefined;
+		const checkoutSupportVariation = assignment?.variation;
 		if ( toggle !== toggleCountRef.current || window.location.pathname !== pathname ) {
 			return;
+		}
+
+		// Someone opening support from checkout itself, for the checkout support experiment's
+		// readout. Bringing back a minimized chat isn't a new opening, so it has returned already.
+		if ( isOpening && sectionName === 'checkout' ) {
+			recordTracksEvent( 'calypso_checkout_support_open', {
+				...( checkoutSupportVariation && {
+					checkout_support_variation: checkoutSupportVariation,
+				} ),
+				can_join_experiment: canJoinCheckoutSupportExperiment,
+				// Someone who waited too long got no variation, though ExPlat may still have assigned
+				// one, so the readout leaves them out of every group.
+				...( assignment && {
+					assignment_timed_out: assignment.timedOut,
+					assignment_ms: assignment.durationMs,
+				} ),
+				is_logged_in: isLoggedIn,
+				cart_type: getCartType( responseCart.products ),
+				has_premium_support: hasPremiumSupport,
+			} );
 		}
 
 		setShowHelpCenter( isOpening, {

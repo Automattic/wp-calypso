@@ -10,7 +10,6 @@ import {
 	getOdieEmailFallbackMessage,
 	getOdieInitialMessage,
 	getOdieZendeskConnectionErrorMessage,
-	ODIE_DEFAULT_BOT_SLUG_LEGACY,
 } from '../../constants';
 import { useOdieAssistantContext } from '../../context';
 import { useCurrentSupportInteraction } from '../../data/use-current-support-interaction';
@@ -254,7 +253,6 @@ export const MessagesContainer = ( { currentUser }: ChatMessagesProps ) => {
 				{ ( chat.odieId || chat.provider !== 'zendesk' ) && (
 					<ChatMessage
 						message={ getOdieInitialMessage(
-							supportInteraction?.bot_slug || ODIE_DEFAULT_BOT_SLUG_LEGACY,
 							currentUser?.display_name,
 							hasEnTranslation,
 							launcherContext

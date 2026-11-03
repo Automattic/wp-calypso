@@ -8,4 +8,9 @@ $modal-padding: $grid-unit-30;
 	inline-size: 760px;
 	max-inline-size: calc( 100% + #{$modal-padding * 2} );
 	margin: -$modal-padding;
+
+	// Without an image, the text alone would stretch across the full width.
+	&.is-without-image {
+		inline-size: 480px;
+	}
 }

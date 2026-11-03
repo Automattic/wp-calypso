@@ -54,6 +54,19 @@ export const emailsIndexRoute = createRoute( {
 	)
 );
 
+const emailRedirectRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'email',
+	beforeLoad: ( { location } ) => {
+		throw dashboardRedirect( {
+			to: emailsRoute.fullPath,
+			search: true,
+			hash: location.hash,
+			replace: true,
+		} );
+	},
+} );
+
 const isMailboxProvider = ( value: unknown ): value is MailboxProvider =>
 	value === MailboxProvider.Titan || value === MailboxProvider.Google;
 
@@ -400,6 +413,7 @@ const emailsDomainRedirectRoute = createRoute( {
 
 export const createEmailsRoutes = () => {
 	return [
+		emailRedirectRoute,
 		emailsRoute.addChildren( [
 			emailsIndexRoute,
 			chooseDomainRoute,

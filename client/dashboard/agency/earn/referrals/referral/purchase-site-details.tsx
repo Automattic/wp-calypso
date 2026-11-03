@@ -17,7 +17,7 @@ import RouterLinkButton from '../../../../components/router-link-button';
 import { Text } from '../../../../components/text';
 import { formatDate } from '../../../../utils/datetime';
 import { urlToSlug } from '../../../../utils/url';
-import { PRESSABLE_AGENCY_URL } from '../../../marketplace/hosting/lib/pressable-plans';
+import { crossoverLinkProps } from '../../../crossover/store';
 import { findAgencyProduct } from '../lib/get-product-name';
 import { getPurchaseStatus } from '../lib/get-purchase-status';
 import { isCancelledButActive } from '../lib/purchase-placement';
@@ -90,7 +90,9 @@ export default function PurchaseSiteDetails( {
 
 	if ( licenseKey.startsWith( 'pressable-' ) ) {
 		return (
-			<ExternalLink href={ PRESSABLE_AGENCY_URL }>{ __( 'Manage in Pressable' ) }</ExternalLink>
+			<ExternalLink { ...crossoverLinkProps( 'pressable' ) }>
+				{ __( 'Manage in Pressable' ) }
+			</ExternalLink>
 		);
 	}
 

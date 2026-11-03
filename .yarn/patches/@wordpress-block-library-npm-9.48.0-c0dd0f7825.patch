@@ -1,0 +1,82 @@
+diff --git a/build/post-time-to-read/index.cjs b/build/post-time-to-read/index.cjs
+index 2d17fe0607d9286fcf94669c304093ef326c3373..9817fd25f56a05c3068712fa43f4cae20d907338 100644
+--- a/build/post-time-to-read/index.cjs
++++ b/build/post-time-to-read/index.cjs
+@@ -44,7 +44,7 @@ var import_variations = __toESM(require("./variations.cjs"));
+ var import_deprecated = __toESM(require("./deprecated.cjs"));
+ var { name } = import_block.default;
+ var settings = {
+-  icon: import_icons.timeToRead,
++  icon: import_icons.time,
+   edit: import_edit.default,
+   variations: import_variations.default,
+   example: {},
+diff --git a/build/post-time-to-read/variations.cjs b/build/post-time-to-read/variations.cjs
+index 754a6d81427fbae27c25a0e85891350c36706eb3..38638fac2c5596022f1b027bc0ff0635a0f70efa 100644
+--- a/build/post-time-to-read/variations.cjs
++++ b/build/post-time-to-read/variations.cjs
+@@ -35,7 +35,7 @@ var variations = [
+     },
+     scope: ["inserter", "transform"],
+     isActive: (blockAttributes) => blockAttributes?.displayMode === "time",
+-    icon: import_icons.timeToRead,
++    icon: import_icons.time,
+     isDefault: true
+   },
+   {
+diff --git a/build/tab/index.cjs b/build/tab/index.cjs
+index 183294bb324281d971413682ebf68daf94eedf2d..e0cebe18c3cbfabf51a7002a8a1d8facb4bb4cdd 100644
+--- a/build/tab/index.cjs
++++ b/build/tab/index.cjs
+@@ -43,7 +43,7 @@ var import_save = __toESM(require("./save.cjs"));
+ var import_block = __toESM(require("./block.json"));
+ var { name } = import_block.default;
+ var settings = {
+-  icon: import_icons.tab,
++  icon: import_icons.tabPanel,
+   edit: import_edit.default,
+   save: import_save.default
+ };
+diff --git a/build-module/post-time-to-read/index.mjs b/build-module/post-time-to-read/index.mjs
+index 7d333819582cb5a81c25a70e19a6edce3f763054..8291b0a37e02db07f8afa3ad37ac0b4259c7018a 100644
+--- a/build-module/post-time-to-read/index.mjs
++++ b/build-module/post-time-to-read/index.mjs
+@@ -1,5 +1,5 @@
+ // packages/block-library/src/post-time-to-read/index.js
+-import { timeToRead as icon } from "@wordpress/icons";
++import { time as icon } from "@wordpress/icons";
+ import initBlock from "../utils/init-block.mjs";
+ import metadata from "./block.json";
+ import edit from "./edit.mjs";
+diff --git a/build-module/post-time-to-read/variations.mjs b/build-module/post-time-to-read/variations.mjs
+index 3d4d2e24a970b250f70b9a65940e6832ceab7dc6..a70fd1adb9528745427273c9131dfafa755c10b2 100644
+--- a/build-module/post-time-to-read/variations.mjs
++++ b/build-module/post-time-to-read/variations.mjs
+@@ -1,6 +1,6 @@
+ // packages/block-library/src/post-time-to-read/variations.js
+ import { __ } from "@wordpress/i18n";
+-import { timeToRead, wordCount } from "@wordpress/icons";
++import { time, wordCount } from "@wordpress/icons";
+ var variations = [
+   {
+     name: "time-to-read",
+@@ -11,7 +11,7 @@ var variations = [
+     },
+     scope: ["inserter", "transform"],
+     isActive: (blockAttributes) => blockAttributes?.displayMode === "time",
+-    icon: timeToRead,
++    icon: time,
+     isDefault: true
+   },
+   {
+diff --git a/build-module/tab/index.mjs b/build-module/tab/index.mjs
+index d3274833dab7394e19e4feb02b4160029e479074..371d9bc272e9f39126def795825e97c9b1ceaeb1 100644
+--- a/build-module/tab/index.mjs
++++ b/build-module/tab/index.mjs
+@@ -1,5 +1,5 @@
+ // packages/block-library/src/tab/index.js
+-import { tab as icon } from "@wordpress/icons";
++import { tabPanel as icon } from "@wordpress/icons";
+ import initBlock from "../utils/init-block.mjs";
+ import edit from "./edit.mjs";
+ import save from "./save.mjs";

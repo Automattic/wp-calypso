@@ -1,7 +1,6 @@
 import config from '@automattic/calypso-config';
 import {
 	getHostingDashboardEnrollment,
-	isOptInToggleVisible,
 	isAdvancedNoticeVisible,
 } from '../hosting-dashboard-enrollment';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
@@ -82,33 +81,6 @@ describe( 'getHostingDashboardEnrollment', () => {
 			expect( getHostingDashboardEnrollment( preference( 'opt-out' ), undefined ) ).toEqual( {
 				enrolled: false,
 			} );
-		} );
-	} );
-} );
-
-describe( 'isOptInToggleVisible', () => {
-	it( 'shows the toggle while the rollout flag is off', () => {
-		expect( isOptInToggleVisible( preference( 'opt-out' ), HIGH_USER_ID ) ).toBe( true );
-	} );
-
-	it( 'hides the toggle from escape-hatched users even while the rollout flag is off', () => {
-		expect( isOptInToggleVisible( preference( 'forced-opt-out' ), HIGH_USER_ID ) ).toBe( false );
-	} );
-
-	describe( 'with the rollout flag on', () => {
-		beforeEach( () => enableFlags( 'dashboard/enable-percentage-rollout' ) );
-
-		it( 'hides the toggle from every user, whatever their ID', () => {
-			expect( isOptInToggleVisible( preference( 'opt-in' ), LOW_USER_ID ) ).toBe( false );
-			expect( isOptInToggleVisible( preference( 'opt-out' ), HIGH_USER_ID ) ).toBe( false );
-		} );
-	} );
-
-	describe( 'with force-opt-in-visibility on', () => {
-		it( 'overrides the cohort and the escape hatch', () => {
-			enableFlags( 'dashboard/force-opt-in-visibility', 'dashboard/enable-percentage-rollout' );
-			expect( isOptInToggleVisible( undefined, LOW_USER_ID ) ).toBe( true );
-			expect( isOptInToggleVisible( preference( 'forced-opt-out' ), HIGH_USER_ID ) ).toBe( true );
 		} );
 	} );
 } );

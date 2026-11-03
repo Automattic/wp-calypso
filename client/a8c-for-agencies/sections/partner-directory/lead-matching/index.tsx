@@ -1,3 +1,4 @@
+import { validateAgencyLeadMatchingContact } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { Card, CardBody, ToggleControl, Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
@@ -20,7 +21,12 @@ import {
 } from 'calypso/state/a8c-for-agencies/agency/actions';
 import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import {
+	errorNotice,
+	removeNotice,
+	successNotice,
+	warningNotice,
+} from 'calypso/state/notices/actions';
 import { useFormSelectors } from '../components/hooks/use-form-selectors';
 import LanguagesSelector from '../components/languages-selector';
 import {
@@ -32,7 +38,13 @@ import {
 	AgencyLeadMatchingResponse,
 	LeadMatchingDetails,
 } from '../types';
-import { mapAgencyDetailsFormData } from '../utils/map-application-form-data';
+import {
+	hasLeadMatchingAnswerChanges,
+	mapAgencyDetailsFormData,
+	mapLeadMatchingDetailsToProfile,
+	mapLeadMatchingProfileToFormData,
+} from '../utils/map-application-form-data';
+import ContactOptionsPreview from './contact-options-preview';
 import useLeadMatchingForm from './hooks/use-lead-matching-form';
 import useLeadMatchingFormValidation from './hooks/use-lead-matching-form-validation';
 import useLeadMatchingSaveState from './hooks/use-lead-matching-save-state';
@@ -116,7 +128,11 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		availableBudgetLevels,
 	} = useFormSelectors();
 	const { validate, validationError, updateValidationError } = useLeadMatchingFormValidation();
-	const { formData, updateField: updateFormField } = useLeadMatchingForm( {
+	const {
+		formData,
+		setFormData,
+		updateField: updateFormField,
+	} = useLeadMatchingForm( {
 		agencyId: agency?.id,
 		initialFormData,
 	} );
@@ -211,6 +227,9 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	}, [ dispatch ] );
 
 	const [ hasSavedSuccessfully, setHasSavedSuccessfully ] = useState( false );
+	const [ contactErrors, setContactErrors ] = useState< { phone?: string; bookingLink?: string } >(
+		{}
+	);
 	const [ availabilityDraft, setAvailabilityDraft ] = useState< boolean | null >( null );
 	const currentAvailability = availabilityDraft ?? persistedAvailability;
 
@@ -230,15 +249,53 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 
 	const onSubmitSuccess = useCallback(
 		( response: AgencyLeadMatchingResponse, { source }: { source: 'manual' | 'exit' } ) => {
+			const ignoredFields = response.ignored_contact_fields ?? [];
+			const savedFormData =
+				mapLeadMatchingProfileToFormData( response.lead_matching_profile ) ?? formData;
+			if ( ignoredFields.includes( 'phone' ) ) {
+				savedFormData.phoneNumber = formData.phoneNumber;
+				savedFormData.phoneCountryCode = formData.phoneCountryCode;
+			}
+			if ( ignoredFields.includes( 'booking_link' ) ) {
+				savedFormData.bookingLink = formData.bookingLink;
+			}
 			setHasSavedSuccessfully( true );
 			dispatch(
 				updateActiveAgencyLeadMatching( {
-					draft: null,
+					draft: ignoredFields.length ? savedFormData : null,
 					profile: response.lead_matching_profile,
 					sync: response.sync,
 				} )
 			);
 
+			if ( ignoredFields.length ) {
+				dispatch(
+					warningNotice(
+						sprintf(
+							/* translators: %s is a list of contact fields that were not saved. */
+							__(
+								'Preferences saved, but these contact fields were not saved: %s. Check them and try again.'
+							),
+							ignoredFields
+								.map( ( field ) =>
+									field === 'phone' ? __( 'Phone number' ) : __( 'Booking link' )
+								)
+								.join( ', ' )
+						),
+						{ id: 'lead-matching-contact-warning', displayOnNextPage: true }
+					)
+				);
+				dispatch(
+					recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_partial', {
+						agency_id: agency?.id,
+						source,
+						ignored_contact_fields: ignoredFields,
+					} )
+				);
+				return;
+			}
+
+			dispatch( removeNotice( 'lead-matching-contact-warning' ) );
 			dispatch(
 				recordTracksEvent( 'calypso_a4a_partner_directory_lead_matching_submit_success', {
 					agency_id: agency?.id,
@@ -259,7 +316,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 				}
 			}
 		},
-		[ agency, dispatch ]
+		[ agency?.id, dispatch, formData ]
 	);
 
 	const onSubmitError = useCallback(
@@ -304,6 +361,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	} );
 	const hasUnsavedAvailability = availabilityDraft !== null;
 	const hasUnsavedState = hasUnsavedChanges || hasUnsavedAvailability;
+	const hasMatchingAnswerChanges = hasLeadMatchingAnswerChanges( formData, profile );
 
 	const updateField = useCallback(
 		< K extends keyof LeadMatchingDetails >( field: K, value: LeadMatchingDetails[ K ] ) => {
@@ -349,6 +407,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 
 	const saveLeadMatchingPreferences = useCallback(
 		async ( source: 'manual' | 'exit' ) => {
+			const errors = validateAgencyLeadMatchingContact(
+				mapLeadMatchingDetailsToProfile( formData, profile ).contact
+			);
+			setContactErrors( errors );
 			const didSaveAvailability = await saveAvailability( source );
 
 			if ( ! didSaveAvailability ) {
@@ -368,7 +430,16 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 
 			return response;
 		},
-		[ dispatch, hasUnsavedAvailability, hasUnsavedChanges, saveAvailability, saveNow, saveOnExit ]
+		[
+			dispatch,
+			formData,
+			profile,
+			hasUnsavedAvailability,
+			hasUnsavedChanges,
+			saveAvailability,
+			saveNow,
+			saveOnExit,
+		]
 	);
 
 	useEffect( () => {
@@ -397,7 +468,10 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 			return 'not-accepting';
 		}
 
-		const hasSavedState = ( wasInitiallyComplete || hasSavedSuccessfully ) && ! hasUnsavedState;
+		const hasSavedState =
+			( wasInitiallyComplete || hasSavedSuccessfully ) &&
+			! hasMatchingAnswerChanges &&
+			! hasUnsavedAvailability;
 
 		if ( hasSavedState && completionStatus.isComplete ) {
 			return 'eligible';
@@ -410,7 +484,8 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 		completionStatus.isComplete,
 		currentAvailability,
 		hasSavedSuccessfully,
-		hasUnsavedState,
+		hasMatchingAnswerChanges,
+		hasUnsavedAvailability,
 		wasInitiallyComplete,
 	] );
 
@@ -478,7 +553,7 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 	} );
 
 	const submitForm = () => {
-		if ( hasUnsavedChanges ) {
+		if ( hasMatchingAnswerChanges ) {
 			const error = validate( formData );
 			if ( error ) {
 				const firstInvalidField = REQUIRED_FIELDS_IN_ORDER.find( ( field ) => error[ field ] );
@@ -584,6 +659,14 @@ const LeadMatchingForm = ( { initialFormData, profile }: Props ) => {
 						/>
 					</FormField>
 				</FormSection>
+
+				<ContactOptionsPreview
+					key={ agency?.id }
+					countryCode={ agency?.profile?.company_details?.country }
+					formData={ formData }
+					onChange={ ( fields ) => setFormData( { ...formData, ...fields } ) }
+					errors={ contactErrors }
+				/>
 
 				<FormSection
 					title={ __( 'Regions and languages' ) }
