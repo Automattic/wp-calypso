@@ -7,7 +7,8 @@ import AmplifyReportsList from './reports';
 import { AmplifyUsageCard } from './usage-meter';
 import type { AmplifyTiersLink } from './types';
 import type { AmplifyPage } from './use-amplify-page';
-import './style.scss';
+
+import './content.scss';
 
 /** The Prospect reports page body: the first-visit overview, or the reports and their usage. */
 export default function AmplifyContent( {

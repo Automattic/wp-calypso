@@ -27,6 +27,8 @@ import type { AmplifyTiersLink } from './types';
 import type { AmplifyUsageStatus } from './usage';
 import type { AgencyTierId, AmplifyMode, AmplifyUsage } from '@automattic/api-core';
 
+import './report-creator.scss';
+
 const REPORT_MODES: {
 	value: AmplifyMode;
 	label: string;

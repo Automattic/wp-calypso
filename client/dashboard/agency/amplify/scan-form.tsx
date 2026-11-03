@@ -13,6 +13,8 @@ import SiteScreenshot from '../components/site-screenshot';
 import { normalizeAmplifyUrl } from './url';
 import type { CSSProperties } from 'react';
 
+import './scan-form.scss';
+
 export type SiteOption = { label: string; url: string; hostname: string };
 
 export function getStartErrorMessage( error: unknown ): string {

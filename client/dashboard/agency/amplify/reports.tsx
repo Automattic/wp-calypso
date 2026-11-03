@@ -34,6 +34,8 @@ import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
 import '../../components/site-icon/style.scss';
 
+import './reports.scss';
+
 const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {

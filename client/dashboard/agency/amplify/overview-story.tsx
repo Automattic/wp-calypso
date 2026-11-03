@@ -9,6 +9,8 @@ import { SAMPLE_REPORT_URL } from './sample-report-pages';
 import { PERSPECTIVES } from './score-preview';
 import { severityFor } from './score-severity';
 
+import './overview-story.scss';
+
 const FAQS = [
 	{
 		id: 'site-requirements',

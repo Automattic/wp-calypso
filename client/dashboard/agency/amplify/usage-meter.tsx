@@ -24,6 +24,8 @@ import type { AmplifyUsageStatus } from './usage';
 import type { AgencyTierId, AmplifyUsage } from '@automattic/api-core';
 import type { MouseEvent } from 'react';
 
+import './usage-meter.scss';
+
 function useResetDate( usage?: AmplifyUsage, month: 'long' | 'short' = 'long' ) {
 	const locale = useIntlLocale();
 	if ( ! usage?.resets_at ) {

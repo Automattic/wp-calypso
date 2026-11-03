@@ -4,6 +4,8 @@ import { useLayoutEffect, useRef, useState } from 'react';
 import { severityFor } from './score-severity';
 import type { AmplifyMode } from '@automattic/api-core';
 
+import './score-preview.scss';
+
 type ScoreMetric = {
 	label: string;
 	description: string;
