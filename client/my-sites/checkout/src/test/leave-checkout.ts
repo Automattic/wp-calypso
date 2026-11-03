@@ -106,6 +106,31 @@ describe( 'leaveCheckout', () => {
 			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
 		} );
 
+		it.each( [
+			'https://my.wordpress.com@evil.example.com/',
+			'https://my.wordpress.com.evil.example.com/',
+		] )( 'should not redirect to cancel_to %s', ( cancelTo ) => {
+			window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+			leaveCheckout( {
+				siteSlug: 'test.wordpress.com',
+				tracksEvent: 'checkout_cancel',
+				userHasClearedCart: true,
+			} );
+
+			expect( window.location.href ).not.toBe( cancelTo );
+			expect( navigate ).toHaveBeenCalledWith( '/plans/test.wordpress.com' );
+		} );
+
+		it( 'should redirect to cancel_to when it is a dashboard URL', () => {
+			const cancelTo = 'https://my.wordpress.com/sites/example.com';
+			window.location.search = `?cancel_to=${ encodeURIComponent( cancelTo ) }`;
+
+			leaveCheckout( { tracksEvent: 'checkout_cancel' } );
+
+			expect( window.location.href ).toBe( cancelTo );
+		} );
+
 		it( 'should fall through to closeUrl when cancel_to is an invalid external URL', () => {
 			window.location.search = '?cancel_to=https://evil.com/malicious';
 
