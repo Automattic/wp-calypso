@@ -29,4 +29,15 @@
 			}
 		}
 	}
+
+	&.is-large
+		thead
+		tr:first-child
+		.plan-features-2023-grid__table-item.popular-plan-parent-class
+		.plan-features-2023-grid__popular-badge.is-personal-plan
+		.plans-grid__plan-pill {
+		background-color: var(--studio-gray-100);
+		border-color: var(--studio-gray-100);
+		color: var(--studio-white);
+	}
 }
