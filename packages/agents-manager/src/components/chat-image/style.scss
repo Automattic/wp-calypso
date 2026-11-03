@@ -1,13 +1,10 @@
 @use '@wordpress/base-styles/animations' as *;
 @use '../../styles/variables' as *;
 
-// A preview keeps this size in a chat resized wider; a click shows the full size.
-$chat-image-preview-max-size: 400px;
-
 // Agenttic fits the image to the message; this makes it a button that keeps that size.
 .agents-manager-chat-image {
 	display: block;
-	max-width: min( 100%, $chat-image-preview-max-size );
+	max-width: 100%;
 	padding: 0;
 	border: 0;
 	border-radius: var( --radius-sm );
@@ -16,7 +13,8 @@ $chat-image-preview-max-size: 400px;
 
 	img {
 		display: block;
-		max-height: $chat-image-preview-max-size;
+		// Up to half the screen tall, so the conversation stays in view.
+		max-height: 50dvh;
 		border-radius: inherit;
 		// A hairline edge, so a white screenshot doesn't blend into the message.
 		outline: $border-width solid var( --color-input-border );
