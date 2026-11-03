@@ -11,6 +11,7 @@ import { AmplifyApprovalNotice } from 'calypso/dashboard/agency/amplify/usage-me
 import { useAmplifyPage } from 'calypso/dashboard/agency/amplify/use-amplify-page';
 import { AnalyticsProvider } from 'calypso/dashboard/app/analytics';
 import { AuthProvider } from 'calypso/dashboard/app/auth';
+import Snackbars from 'calypso/dashboard/app/snackbars';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
@@ -46,8 +47,8 @@ function ProspectReportsLayout() {
 }
 
 /**
- * The Multi-site Dashboard's Prospect reports page, with the query client, auth and
- * analytics it reads from there.
+ * The Multi-site Dashboard's Prospect reports page, with the query client, auth,
+ * analytics and snackbars it relies on there.
  */
 export default function ProspectReports() {
 	const analyticsClient = useAnalyticsClient( undefined, window.location.pathname );
@@ -57,6 +58,7 @@ export default function ProspectReports() {
 			<AuthProvider>
 				<AnalyticsProvider client={ analyticsClient }>
 					<ProspectReportsLayout />
+					<Snackbars />
 				</AnalyticsProvider>
 			</AuthProvider>
 		</QueryClientProvider>
