@@ -25,6 +25,7 @@ const OPEN_ROUTE_PATHS = new Set( [
 	'', // the pathless `agency` guard route itself
 	'overview', // the fallback the capability guard redirects to
 	'/team/invite/accept', // the invitee has no agency yet, so no capabilities either
+	'agency/dashboard', // every member sees which dashboard the agency uses; only the owner can change it
 ] );
 
 function collectUnguardedRoutes(

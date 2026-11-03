@@ -218,7 +218,9 @@ function ItemVariantOption( {
 	return (
 		<Option
 			id={ productId.toString() }
-			className={ isSelected ? 'item-variant-option--selected' : undefined }
+			className={
+				isSelected ? 'item-variant-option item-variant-option--selected' : 'item-variant-option'
+			}
 			aria-label={ variantLabel.noun }
 			aria-selected={ isSelected }
 			data-product-slug={ productSlug }

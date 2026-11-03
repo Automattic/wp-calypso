@@ -4,10 +4,49 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import clsx from 'clsx';
+import { html } from '../../../panel/indices-to-html';
+import { p } from '../../../panel/templates/functions';
 import NoteIcon from '../../note-icon';
 import { NoteTime } from './note-meta';
-import type { NoteActor, NoteParentComment } from '../../types';
+import type { Block, NoteActor, NoteParentComment } from '../../types';
 import type { ReactNode } from 'react';
+
+/**
+ * Flattens a block onto one line, for a clamped preview.
+ */
+function toPreview( block: Block ): Block {
+	return { ...block, text: block.text.replace( /\n/g, ' ' ) };
+}
+
+/**
+ * Shortens a block to at most `maxLength` characters at a word boundary, ending it with an ellipsis.
+ */
+function truncateBlock( block: Block, maxLength: number ): Block {
+	if ( block.text.length <= maxLength ) {
+		return block;
+	}
+
+	const lastSpace = block.text.lastIndexOf( ' ', maxLength );
+	const cutAtSpace = lastSpace > maxLength * 0.7;
+	const keptLength = block.text.slice( 0, cutAtSpace ? lastSpace : maxLength ).trimEnd().length;
+	const clampIndices = < T extends { indices: [ number, number ] } >( items?: T[] ) =>
+		items
+			?.filter( ( item ) => item.indices[ 0 ] < keptLength )
+			.map( ( item ): T => ( {
+				...item,
+				indices: [
+					item.indices[ 0 ],
+					item.indices[ 1 ] > keptLength ? keptLength + 1 : item.indices[ 1 ],
+				],
+			} ) );
+
+	return {
+		...block,
+		text: block.text.slice( 0, keptLength ) + '…',
+		ranges: clampIndices( block.ranges ),
+		media: clampIndices( block.media ),
+	};
+}
 
 const ThreadItem = ( {
 	avatar,
@@ -73,10 +112,15 @@ const ThreadItem = ( {
 export function ThreadParent( {
 	comment,
 	truncate = false,
+	maxLength,
 }: {
 	comment: NoteParentComment;
 	truncate?: boolean;
+	maxLength?: number;
 } ) {
+	const fullContent = comment.content ?? { text: comment.text };
+	const content = maxLength ? truncateBlock( fullContent, maxLength ) : fullContent;
+
 	return (
 		<ThreadItem
 			className="wpnc-simplified__thread-parent"
@@ -94,9 +138,10 @@ export function ThreadParent( {
 			<div
 				className={ clsx( 'wpnc-simplified__parent-text', {
 					'is-truncated': truncate,
+					'is-excerpt': maxLength,
 				} ) }
 			>
-				{ comment.text }
+				{ p( html( truncate ? toPreview( content ) : content ) ) }
 			</div>
 		</ThreadItem>
 	);

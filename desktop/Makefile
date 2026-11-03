@@ -46,7 +46,7 @@ package:
 e2e:
 	$(info Running end-to-end tests...)
 
-	@cd $(CALYPSO_DIR) && yarn run test-desktop:e2e
+	@cd $(DESKTOP_DIR) && yarn run test:e2e
 
 clean:
 	@rm -rf $(DESKTOP_DIR)$/release

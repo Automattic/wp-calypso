@@ -1,4 +1,5 @@
 import { __experimentalText as Text } from '@wordpress/components';
+import Author from '../parts/author';
 import Body from '../parts/body';
 import Headline from '../parts/headline';
 import NoteMeta from '../parts/note-meta';
@@ -7,12 +8,16 @@ import type { Note } from '../../types';
 
 export default function NewPostNote( { note }: { note: Note } ) {
 	const { post, site, actor, actor_count: actorCount } = note.meta ?? {};
-	const author = actor?.url ? (
-		<a href={ actor.url } target="_blank" rel="noreferrer">
-			{ actor.name }
-		</a>
-	) : (
-		actor?.name
+	const author = actor?.name && (
+		<Author avatar={ actor.avatar }>
+			{ actor.url ? (
+				<a href={ actor.url } target="_blank" rel="noreferrer">
+					{ actor.name }
+				</a>
+			) : (
+				actor.name
+			) }
+		</Author>
 	);
 
 	return (

@@ -62,13 +62,14 @@ describe( 'StagingSiteSyncDropdown', () => {
 			expect( await screen.findByRole( 'button', { name: 'Sync' } ) ).toBeVisible();
 		} );
 
-		test( 'shows "Syncing…" when sync is in progress', async () => {
+		test( 'disables the sync button when sync is in progress', async () => {
 			mockSiteBySlug( createMockSite() );
 			mockSyncState( 'pending' );
 			render( <StagingSiteSyncDropdown siteSlug="test-site" /> );
 
-			const button = await screen.findByRole( 'button', { name: 'Syncing…' } );
-			expect( button ).toBeDisabled();
+			await waitFor( () =>
+				expect( screen.getByRole( 'button', { name: 'Sync' } ) ).toBeDisabled()
+			);
 		} );
 
 		test( 'returns null when no production site ID', async () => {

@@ -11,13 +11,16 @@ export async function createSshKey( data: CreateSshKeyArgs ) {
 	);
 }
 
-export async function updateSshKey( { name, key }: UpdateSshKeyArgs ) {
+export async function updateSshKey( { name, key, label }: UpdateSshKeyArgs ) {
 	return wpcom.req.put(
 		{
 			path: `/me/ssh-keys/${ encodeURIComponent( name ) }`,
 			apiNamespace: 'wpcom/v2',
 		},
-		{ key }
+		{
+			...( key !== undefined && { key } ),
+			...( label !== undefined && { label } ),
+		}
 	);
 }
 

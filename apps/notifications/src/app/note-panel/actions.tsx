@@ -1,6 +1,6 @@
-import { Button, DropdownMenu, Icon, privateApis } from '@wordpress/components';
+import { Button, Icon, privateApis } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { cog, keyboard, settings } from '@wordpress/icons';
+import { cog, settings } from '@wordpress/icons';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
 import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -8,7 +8,6 @@ import { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import actions from '../../panel/state/actions';
-import getIsShortcutsPopoverOpen from '../../panel/state/selectors/get-is-shortcuts-popover-open';
 import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import getViewSettingsSeen from '../../panel/state/selectors/get-view-settings-seen';
 import { useAppContext } from '../context';
@@ -33,7 +32,6 @@ const LAYOUTS: { value: LayoutStyle; label: string }[] = [
 
 export default function NotePanelActions() {
 	const dispatch = useDispatch();
-	const isShortcutsPopoverOpen = useSelector( getIsShortcutsPopoverOpen );
 	const layoutStyle = useSelector( getLayoutStyle );
 	const { isViewSettingsEnabled } = useAppContext();
 	const viewSettingsSeen = useSelector( getViewSettingsSeen );
@@ -82,30 +80,7 @@ export default function NotePanelActions() {
 
 	return (
 		<>
-			<DropdownMenu
-				icon={ keyboard }
-				label={ __( 'Keyboard shortcuts' ) }
-				// Drive the open state from Redux so the `i` keyboard shortcut
-				// keeps toggling the panel.
-				open={ isShortcutsPopoverOpen }
-				onToggle={ ( willOpen ) => {
-					if ( willOpen !== isShortcutsPopoverOpen ) {
-						dispatch( actions.ui.toggleShortcutsPopover() );
-					}
-				} }
-				toggleProps={ {
-					size: 'small',
-				} }
-				popoverProps={ {
-					focusOnMount: true,
-					// Render in place. Portalled to the body the popover's coordinates are
-					// document-relative, so every scroll frame has to re-derive them from a
-					// panel that is fixed to the viewport, and it visibly chases the page.
-					inline: true,
-				} }
-			>
-				{ () => <NoteShortcuts /> }
-			</DropdownMenu>
+			<NoteShortcuts />
 			{ ! isViewSettingsEnabled && (
 				<Button
 					size="small"

@@ -98,6 +98,37 @@ describe( 'useSiteSetupChecklist', () => {
 		} );
 	} );
 
+	it( 'keeps the task picked last as the active one, or the first in progress', () => {
+		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
+			initialProps: {
+				...config,
+				messages: [ userMessage( 'u1', 'design' ), userMessage( 'u2', 'about' ) ],
+			},
+		} );
+		// `about` is done on the server, so the picked-last fallback is the first in progress.
+		expect( result.current.activeItemId ).toBe( 'design' );
+
+		mockUseQuery.mockReturnValue( {
+			data: {
+				...DETAILS,
+				tasks: [
+					...DETAILS.tasks,
+					{ id: 'domain', title: 'Add a domain', status: 'in-progress', disabled: false },
+				],
+			},
+			isLoading: false,
+			refetch: mockRefetch,
+		} );
+		rerender( {
+			...config,
+			messages: [ userMessage( 'u1', 'design' ), userMessage( 'u2', 'domain' ) ],
+		} );
+		expect( result.current.activeItemId ).toBe( 'domain' );
+
+		rerender( { ...config, messages: [ userMessage( 'u1' ) ] } );
+		expect( result.current.activeItemId ).toBeUndefined();
+	} );
+
 	it( 'hands the focus over only on the empty → pinned move of the same session', () => {
 		const { result, rerender } = renderHook( ( props ) => useSiteSetupChecklist( props ), {
 			initialProps: config,

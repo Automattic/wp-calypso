@@ -22,6 +22,7 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 		ID: 1234,
 		product_slug: DotcomPlans.BUSINESS,
 		product_name: 'WordPress.com Business',
+		advertised_total_upload_space_in_gb: 50,
 		expiry_date: expiryInDays( 120 ),
 		expiry_status: 'manual-renew',
 		subscription_status: 'active',
@@ -136,13 +137,28 @@ describe( 'more than 60 days before expiration', () => {
 		} );
 	} );
 
-	test( 'sends the reader to add a payment method when that is what is missing', () => {
+	test( 'sends the reader to add a payment method when auto-renew is on but no method is saved', () => {
 		const notice = getPlanExpiryNotice(
 			makePurchase( {
 				expiry_date: expiryInDays( 120 ),
 				is_auto_renew_enabled: true,
 				is_rechargeable: false,
 				might_still_auto_renew: false,
+			} )
+		);
+
+		expect( notice?.primaryAction ).toEqual( {
+			type: 'add-payment-method',
+			label: 'Add payment method',
+		} );
+	} );
+
+	test( 'offers to turn auto-renew on via a payment method when it is off and none is saved', () => {
+		const notice = getPlanExpiryNotice(
+			makePurchase( {
+				expiry_date: expiryInDays( 120 ),
+				is_auto_renew_enabled: false,
+				is_rechargeable: false,
 			} )
 		);
 
@@ -323,6 +339,12 @@ describe( 'after the expiration date', () => {
 
 		expect( notice?.body ).toMatch( /^Your site will move to the Free plan\./ );
 	} );
+
+	test( 'shows the storage amount from the purchase', () => {
+		const notice = getPlanExpiryNotice( expired( { advertised_total_upload_space_in_gb: 200 } ) );
+
+		expect( notice?.body ).toContain( '200 GB of storage' );
+	} );
 } );
 
 describe( 'storage figures', () => {
@@ -331,9 +353,15 @@ describe( 'storage figures', () => {
 		[ DotcomPlans.PREMIUM, 'Premium', 13 ],
 		[ DotcomPlans.BUSINESS, 'Business', 50 ],
 		[ DotcomPlans.ECOMMERCE, 'Commerce', 50 ],
+		// Legacy Business plans come with 200 GB.
+		[ DotcomPlans.BUSINESS, 'Business', 200 ],
 	] )( '%s reads as the %s plan with %d GB', ( product_slug, planName, storageGb ) => {
 		const notice = getPlanExpiryNotice(
-			makePurchase( { product_slug: product_slug as string, expiry_date: expiryInDays( 45 ) } )
+			makePurchase( {
+				product_slug: product_slug as string,
+				advertised_total_upload_space_in_gb: storageGb as number,
+				expiry_date: expiryInDays( 45 ),
+			} )
 		);
 
 		expect( notice?.title ).toContain( planName );

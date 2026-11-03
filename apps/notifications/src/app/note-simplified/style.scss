@@ -25,7 +25,6 @@
 
 	> :not(:last-child)::after {
 		content: '·';
-		margin-inline-start: $grid-unit-05;
 	}
 }
 
@@ -59,6 +58,7 @@
 		}
 
 		.wpnc-simplified__parent-text {
+			@extend .wpnc-simplified__quiet-links;
 			color: var(--wp-components-color-gray-700, #{$gray-700});
 		}
 	}
@@ -100,16 +100,20 @@
 	}
 }
 
-.wpnc-simplified__parent-text {
-	white-space: pre-line;
+.wpnc-simplified__parent-text.is-truncated {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+	white-space: normal;
 
-	&.is-truncated {
-		display: -webkit-box;
-		-webkit-box-orient: vertical;
-		-webkit-line-clamp: 2;
-		overflow: hidden;
-		white-space: normal;
+	img:not(.emoji) {
+		display: none;
 	}
+}
+
+.wpnc-simplified__parent-text.is-excerpt img:not(.emoji) {
+	display: none;
 }
 
 .wpnc-simplified__card {
@@ -149,13 +153,26 @@
 	}
 }
 
-.wpnc-simplified .wpnc__body .wpnc__body-content > :last-child > .wpnc__paragraph:last-child {
+.wpnc-simplified .wpnc__body .wpnc__body-content > :last-child > .wpnc__paragraph:last-child,
+.wpnc-simplified .wpnc-simplified__parent-text > .wpnc__paragraph:last-child {
 	padding-bottom: 0;
 }
 
 .wpnc-simplified .wpnc__reply {
+	// Adds to the body stack's 8px gap for 12px above the line.
+	margin-block-start: $grid-unit-05;
+	font-size: 15px;
+	line-height: 24px;
+
 	.wpnc__gridicon {
 		margin-inline-end: 2px;
+	}
+
+	// Same optical alignment as the note list's reply icon, at the glyph's native 18px.
+	.wpnc__gridicon .gridicons-reply {
+		margin-inline-start: -2px;
+		vertical-align: middle;
+		transform: translateY(-1px);
 	}
 
 	a {
@@ -163,9 +180,9 @@
 	}
 }
 
-.wpnc-simplified .wpnc__body-content .wpnc__comment,
-.wpnc-simplified .wpnc__new_post .wpnc__body .wpnc__body-content,
-.wpnc-simplified__parent-text {
+.wpnc-simplified .wpnc__body-content > .wpnc__comment,
+.wpnc-simplified .wpnc__body-content > .wpnc__post,
+.wpnc-simplified .wpnc-simplified__parent-text {
 	font-size: 15px;
 	line-height: 24px;
 }

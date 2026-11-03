@@ -856,6 +856,18 @@ export function hasAmountAvailableToRefund( purchase: Purchase ) {
 }
 
 /**
+ * Returns the refund for an instant downgrade to `toProductId`, or 0 if
+ * `refund_options` omits that product. Use this instead of
+ * `total_refund_amount`, which is the larger refund for removing the plan.
+ */
+export function getDowngradeRefundAmount( purchase: Purchase, toProductId?: number ): number {
+	return (
+		purchase.refund_options?.find( ( option ) => option.to_product_id === toProductId )
+			?.refund_amount ?? 0
+	);
+}
+
+/**
  * Returns true if the plan is eligible for an instant, self-serve downgrade,
  * performed now via the cancel endpoint rather than scheduled for renewal.
  *

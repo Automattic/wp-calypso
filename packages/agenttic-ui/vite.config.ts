@@ -32,7 +32,6 @@ export default defineConfig( {
 				'class-variance-authority',
 				'clsx',
 				'framer-motion',
-				'lucide-react',
 				'react-markdown',
 				'react-textarea-autosize',
 				'remark-gfm',

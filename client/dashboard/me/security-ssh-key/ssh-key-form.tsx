@@ -21,6 +21,7 @@ import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import { isSshKeyValid } from '../../utils/ssh';
+import { getInvalidSshKeyMessage, getSshKeyHelpText } from './messages';
 import type { UserSshKey } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
@@ -70,21 +71,16 @@ export default function SshKeyForm( {
 
 	const handleCreateSshKey = () => {
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_create_click' );
-		createSshKey( { key: formData.key, name: 'default' } );
+		createSshKey( { key: formData.key } );
 	};
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
 		const isValid = isSshKeyValid( formData.key );
 		if ( ! isValid ) {
-			createErrorNotice(
-				__(
-					'Invalid SSH public key. It should begin with ssh-rsa, ssh-ed25519, ecdsa-sha2-nistp256, ecdsa-sha2-nistp384, or ecdsa-sha2-nistp521.'
-				),
-				{
-					type: 'snackbar',
-				}
-			);
+			createErrorNotice( getInvalidSshKeyMessage(), {
+				type: 'snackbar',
+			} );
 			return;
 		}
 		if ( isEditing ) {
@@ -99,9 +95,7 @@ export default function SshKeyForm( {
 			{
 				id: 'key',
 				label: isEditing ? __( 'New Public ssh key' ) : __( 'Public ssh key' ),
-				description: __(
-					'Paste your SSH public key here. It should begin with ssh-rsa, ssh-ed25519, ecdsa-sha2-nistp256, ecdsa-sha2-nistp384 or ecdsa-sha2-nistp521…'
-				),
+				description: getSshKeyHelpText(),
 				type: 'text',
 				Edit: ( { field, data, onChange } ) => {
 					const { id, getValue } = field;

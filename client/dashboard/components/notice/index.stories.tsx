@@ -65,27 +65,6 @@ export const Error: Story = {
 	},
 };
 
-export const LowDensity: Story = {
-	args: {
-		...defaultArgs,
-		density: 'low',
-	},
-};
-
-export const MediumDensity: Story = {
-	args: {
-		...defaultArgs,
-		density: 'medium',
-	},
-};
-
-export const HighDensity: Story = {
-	args: {
-		...defaultArgs,
-		density: 'high',
-	},
-};
-
 export const WithoutActions: Story = {
 	args: {
 		...defaultArgs,

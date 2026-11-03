@@ -15,7 +15,7 @@ import { mightStillAutoRenew } from '../../utils/purchase';
 import { PaymentMethodDetails } from './payment-method-details';
 import type { Purchase, StoredPaymentMethod } from '@automattic/api-core';
 
-interface Props {
+interface PaymentMethodDeleteDialogProps {
 	paymentMethod: StoredPaymentMethod;
 	isVisible: boolean;
 	onCancel: () => void;
@@ -27,7 +27,7 @@ export const PaymentMethodDeleteDialog = ( {
 	onCancel,
 	isVisible,
 	onConfirm,
-}: Props ) => {
+}: PaymentMethodDeleteDialogProps ) => {
 	const locale = useLocale();
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 	const associatedSubscriptions =
