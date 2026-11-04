@@ -471,6 +471,7 @@ const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 const mockCreditsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsCommand: unknown;
 const mockRefusalNotice = jest.fn( (): unknown => undefined );
+const mockTopUpsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 jest.mock( '../../hooks/use-credits', () => ( {
 	useCredits: ( {
@@ -494,6 +495,7 @@ jest.mock( '../../hooks/use-credits', () => ( {
 			notice: mockCreditsNotice(),
 			creditsCommand: mockCreditsCommand,
 			refusalNotice: mockRefusalNotice(),
+			topUpsNotice: mockTopUpsNotice(),
 		};
 	},
 } ) );
@@ -805,6 +807,7 @@ describe( 'OrchestratorChat', () => {
 		mockCreditsNotice.mockReturnValue( undefined );
 		mockCreditsCommand = undefined;
 		mockRefusalNotice.mockReturnValue( undefined );
+		mockTopUpsNotice.mockReturnValue( undefined );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockAgentConfig = { agentId: 'wp-orchestrator' };
@@ -4953,6 +4956,30 @@ describe( 'OrchestratorChat', () => {
 			expect( props.notice ).toEqual( notice );
 			expect( props.isProcessing ).toBe( false );
 			expect( mockConversationConfig?.waitForReply ).toBe( true );
+		} );
+
+		it( 'shows the top-ups notice only once neither the credits notice nor a reply notice applies', () => {
+			const creditsNotice = { message: '6k credits left.', dismissible: true };
+			const replyNotice = { message: 'Waiting for the reply…' };
+			const topUpsNotice = { message: 'Now using top-ups: 25k left.', dismissible: true };
+			const noticeProp = () =>
+				( mockAgentChat.mock.calls.at( -1 )![ 0 ] as { notice?: unknown } ).notice;
+			mockTopUpsNotice.mockReturnValue( topUpsNotice );
+			mockCreditsNotice.mockReturnValue( creditsNotice );
+			mockUseConversation.mockReturnValue( { isLoading: false, notice: replyNotice } );
+			const { rerender } = render( chat() );
+
+			expect( noticeProp() ).toBe( creditsNotice );
+
+			mockCreditsNotice.mockReturnValue( undefined );
+			rerender( chat() );
+
+			expect( noticeProp() ).toBe( replyNotice );
+
+			mockUseConversation.mockReturnValue( { isLoading: false } );
+			rerender( chat() );
+
+			expect( noticeProp() ).toBe( topUpsNotice );
 		} );
 
 		it( 'does not wait while a turn runs in this tab', () => {

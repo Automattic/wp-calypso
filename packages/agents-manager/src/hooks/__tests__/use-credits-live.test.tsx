@@ -13,7 +13,7 @@ import {
 	setSessionSiteKey,
 	setSessionUserId,
 } from '../../utils/agent-session';
-import { CREDITS_LOW_BALANCE, getCreditsLabel, isCreditsAlert } from '../../utils/credits';
+import { CREDITS_LOW_BALANCE, getCreditsLabel } from '../../utils/credits';
 import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import { useCredits } from '../use-credits';
@@ -732,7 +732,7 @@ it.each( [
 	}
 );
 
-it( 'switches the meter to its alert icon by amount through depletion and replenishment', async () => {
+it( 'shows the credits notice by amount through depletion and replenishment', async () => {
 	const balance = ( remaining: number ) =>
 		creditSnapshot( {
 			credits_limit: 100000,
@@ -743,28 +743,21 @@ it( 'switches the meter to its alert icon by amount through depletion and replen
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	const { result } = renderCredits();
 	await flush();
-	// The meter and the notice share one rule, so the alert icon shows exactly when a notice would.
-	const expectAlert = ( isAlert: boolean, message?: string ) => {
-		const actual = isCreditsAlert( props( result.current ).status );
-		expect( actual ).toBe( isAlert );
-		expect( result.current.notice?.message ).toBe( message );
-		expect( result.current.notice !== undefined ).toBe( actual );
-	};
-	expectAlert( false );
-	for ( const [ remaining, isAlert, message ] of [
-		[ 10000, false, undefined ],
-		[ 9999, true, `${ localNumber( 9.9 ) }k credits left.` ],
-		[ 800, true, `${ localNumber( 800 ) } credits left.` ],
-		[ 0, true, 'You’ve used all your site credits.' ],
+	expect( result.current.notice ).toBeUndefined();
+	for ( const [ remaining, message ] of [
+		[ 10000, undefined ],
+		[ 9999, `${ localNumber( 9.9 ) }k credits left.` ],
+		[ 800, `${ localNumber( 800 ) } credits left.` ],
+		[ 0, 'You’ve used all your site credits.' ],
 	] as const ) {
 		await receive( balance( remaining ) );
 		expect( props( result.current ).status.remaining ).toBe( remaining );
-		expectAlert( isAlert, message );
+		expect( result.current.notice?.message ).toBe( message );
 	}
 	fetchMock.mockResolvedValueOnce( response( balance( 25000 ) ) );
 	act( () => window.dispatchEvent( new Event( 'focus' ) ) );
 	await flush();
-	expectAlert( false );
+	expect( result.current.notice ).toBeUndefined();
 } );
 
 it.each( [ 'GET', 'terminal' ] )(
@@ -797,17 +790,18 @@ it.each( [ 'GET', 'terminal' ] )(
 	}
 );
 
-// A 15,000-credit plan with 67,000 of 100,000 top-up credits left.
-const withTopUps = ( planRemaining: number ) =>
+// A 15,000-credit plan with 67,000, or `topUpsRemaining`, of 100,000 top-up credits left.
+const withTopUps = ( planRemaining: number, topUpsRemaining = 67000 ) =>
 	creditSnapshot( {
 		plan_tier: 'personal',
 		credits_limit: 15000,
 		credits_used: 15000 - planRemaining,
 		credits_remaining: planRemaining,
-		credits_available: planRemaining + 67000,
+		credits_available: planRemaining + topUpsRemaining,
+		exhausted: planRemaining + topUpsRemaining === 0,
 		top_up_credits_purchased: 100000,
-		top_up_credits_used: 33000,
-		top_up_credits_remaining: 67000,
+		top_up_credits_used: 100000 - topUpsRemaining,
+		top_up_credits_remaining: topUpsRemaining,
 	} );
 
 it( 'shows no low notice while top-ups keep a low plan balance above the limit', async () => {
@@ -854,6 +848,147 @@ it.each( [ 'GET', 'terminal' ] )(
 		act( () => expect( result.current.beforeSubmit() ).toBe( true ) );
 	}
 );
+
+describe( 'the top-ups notice', () => {
+	const topUpsMessage = ( thousands: number ) =>
+		`Now using top-ups: ${ localNumber( thousands ) }k left.`;
+	const otherSite = {
+		...defaultOptions,
+		siteKey: '456',
+		agentConfig: { ...agentConfig, authenticationScope: { siteId: 456, userId: 1 } },
+	};
+
+	it( 'shows once plan credits are spent with 10,000 or more left', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 10000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.topUpsNotice ).toEqual( {
+			icon: false,
+			message: topUpsMessage( 10 ),
+			action: {
+				label: 'Upgrade',
+				href: UPGRADE_URL,
+				target: '_blank',
+				rel: 'noopener noreferrer',
+				onClick: expect.any( Function ),
+			},
+			dismissible: true,
+			onDismiss: expect.any( Function ),
+		} );
+		expect( result.current.topUpsNotice?.action ).toBe( props( result.current ).action );
+	} );
+
+	it( 'tells someone who can’t buy who to ask, with no button', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ), false ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.topUpsNotice?.message ).toBe(
+			`${ topUpsMessage( 25 ) } Ask a site admin to add more.`
+		);
+		expect( result.current.topUpsNotice?.action ).toBeUndefined();
+	} );
+
+	it( 'reads the combined balance when the top-up fields are absent', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response(
+				creditSnapshot( {
+					plan_tier: 'personal',
+					credits_used: 2500,
+					credits_remaining: 0,
+					credits_available: 67000,
+				} )
+			)
+		);
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).status.pools ).toEqual( [
+			expect.objectContaining( { id: 'plan' } ),
+		] );
+		expect( result.current.topUpsNotice?.message ).toBe( topUpsMessage( 67 ) );
+	} );
+
+	it( 'gives way to the low notice under 10,000, and shows neither once that one is closed', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+		await receive( withTopUps( 0, 9999 ) );
+		expect( result.current.notice?.message ).toBe( `${ localNumber( 9.9 ) }k credits left.` );
+		expect( result.current.topUpsNotice ).toBeUndefined();
+		act( () => result.current.notice?.onDismiss?.() );
+		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.topUpsNotice ).toBeUndefined();
+	} );
+
+	it( 'gives way to the zero notice, then the credits-back notice, and returns with the next turn', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		const view = renderCredits();
+		await flush();
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+		await refuse( withTopUps( 0, 0 ) );
+		expect( view.result.current.notice?.message ).toBe( 'You’ve used all your site credits.' );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( view.result.current.notice?.message ).toBe( 'Your site has credits again.' );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		mockIsProcessing = true;
+		view.rerender( defaultOptions );
+		expect( view.result.current.notice ).toBeUndefined();
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+	} );
+
+	it( 'goes once the plan refills', async () => {
+		fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( result.current.topUpsNotice ).toBeDefined();
+		await receive( withTopUps( 15000, 25000 ) );
+		expect( result.current.notice ).toBeUndefined();
+		expect( result.current.topUpsNotice ).toBeUndefined();
+	} );
+
+	it( 'stays closed through a read and a turn, and shows again on returning to the site', async () => {
+		fetchMock.mockResolvedValue( response( withTopUps( 0, 25000 ) ) );
+		const view = renderCredits();
+		await flush();
+		act( () => view.result.current.topUpsNotice?.onDismiss?.() );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await flush();
+		expect( fetchMock ).toHaveBeenCalledTimes( 2 );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		mockIsProcessing = true;
+		view.rerender( defaultOptions );
+		await receive( withTopUps( 0, 20000 ) );
+		mockIsProcessing = false;
+		view.rerender( defaultOptions );
+		await flush();
+		expect( props( view.result.current ).status.remaining ).toBe( 20000 );
+		expect( view.result.current.topUpsNotice ).toBeUndefined();
+		view.rerender( otherSite );
+		await flush();
+		view.rerender( defaultOptions );
+		await flush();
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+	} );
+
+	it( 'ignores a close from a previous visit to the site', async () => {
+		fetchMock.mockResolvedValue( response( withTopUps( 0, 25000 ) ) );
+		const view = renderCredits();
+		await flush();
+		const oldDismiss = view.result.current.topUpsNotice?.onDismiss;
+		expect( oldDismiss ).toBeDefined();
+		view.rerender( otherSite );
+		await flush();
+		view.rerender( defaultOptions );
+		await flush();
+		act( () => oldDismiss?.() );
+		expect( view.result.current.topUpsNotice?.message ).toBe( topUpsMessage( 25 ) );
+	} );
+} );
 
 it.each( [ undefined, 'unsupported' ] )(
 	'shows the exhausted notice without a purchase link for tier %p',
@@ -2177,6 +2312,55 @@ describe( 'credits Tracks events', () => {
 			).toEqual( [
 				[ 'exhausted', 0 ],
 				[ 'submit_blocked', 0 ],
+			] );
+		} );
+	} );
+
+	describe( 'the top-ups notice', () => {
+		it( 'records a click on its button as ok, with placement none', async () => {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			act( () => result.current.topUpsNotice?.action?.onClick?.() );
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_cta_clicked',
+					{
+						...base,
+						state: 'ok',
+						credits_left: 25000,
+						plan_tier: 'personal',
+						top_up_credits_left: 25000,
+						cta_type: 'upgrade',
+						ref: 'wp_ai_credits',
+						placement: 'none',
+					},
+				],
+			] );
+		} );
+
+		it( 'records nothing when it shows or closes', async () => {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			expect( result.current.topUpsNotice ).toBeDefined();
+			act( () => result.current.topUpsNotice?.onDismiss?.() );
+			expect( result.current.topUpsNotice ).toBeUndefined();
+			expect( creditsEvents() ).toEqual( [] );
+		} );
+
+		it( 'leaves the low notice that follows it to record as usual', async () => {
+			fetchMock.mockResolvedValueOnce( response( withTopUps( 0, 25000 ) ) );
+			const { result } = renderCredits( freshScope() );
+			await flush();
+			expect( result.current.topUpsNotice ).toBeDefined();
+			await receive( withTopUps( 0, 6000 ) );
+			expect( result.current.notice?.message ).toBe( `${ localNumber( 6 ) }k credits left.` );
+			expect( creditsEvents() ).toEqual( [
+				[
+					'calypso_agents_manager_credits_notice_shown',
+					expect.objectContaining( { state: 'low', top_up_credits_left: 6000 } ),
+				],
 			] );
 		} );
 	} );

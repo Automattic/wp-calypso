@@ -5,9 +5,33 @@
 import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from '@wordpress/element';
-import type { ReactElement } from 'react';
-import { caution, info } from '@wordpress/icons';
 
+// agenttic-ui ships ESM only, which jest can't load here; its own tests cover the ring.
+jest.mock(
+	'@automattic/agenttic-ui',
+	() => ( {
+		ProgressRing: ( {
+			percent,
+			tone,
+			size,
+			className,
+		}: {
+			percent: number;
+			tone?: string;
+			size?: number;
+			className?: string;
+		} ) => (
+			<svg
+				data-testid="credits-ring"
+				data-percent={ percent }
+				data-tone={ tone }
+				data-size={ size }
+				className={ className }
+			/>
+		),
+	} ),
+	{ virtual: true }
+);
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
 
 import CreditsMeter from '../credits-meter';
@@ -17,14 +41,6 @@ import { buildMockCreditsStatus } from '../../utils/credits';
 import { buildLiveCreditsStatus, parseCreditSnapshot } from '../../utils/live-credits';
 import type { CreditsStatus } from '../../utils/credits';
 import type { CreditSnapshot } from '../../utils/live-credits';
-
-// The toggle's icon, compared by its path so the test follows the icon library.
-const iconPath = ( icon: ReactElement ) =>
-	render( icon, { container: document.createElement( 'div' ) } )
-		.container.querySelector( 'path' )
-		?.getAttribute( 'd' );
-const togglePath = ( toggle: HTMLElement ) =>
-	toggle.querySelector( 'svg path' )?.getAttribute( 'd' );
 
 const freeFine: CreditsStatus = {
 	plan: 'free',
@@ -179,32 +195,90 @@ describe( 'CreditsMeter', () => {
 		const onToggle = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ onToggle } /> );
 		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 11.6 ) }k credits left` } );
-		expect( toggle ).not.toHaveClass( 'is-alert' );
-		expect( togglePath( toggle ) ).toBe( iconPath( info ) );
 		expect( toggle ).not.toHaveAccessibleDescription();
 		fireEvent.click( toggle );
 		expect( onToggle ).toHaveBeenCalledWith( true );
 	} );
 
-	it( 'shows the info icon on a free plan with credits to spare', () => {
+	it( 'draws the ring from the plan share, not the balance left', () => {
+		render(
+			<CreditsMeter
+				status={ { ...livePaid( 0 ), remaining: 67000 } }
+				isOpen={ false }
+				onToggle={ () => {} }
+			/>
+		);
+		const toggle = screen.getByRole( 'button', { name: `${ localNumber( 67 ) }k credits left` } );
+		expect( within( toggle ).getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-percent', '0' );
+	} );
+
+	it( 'draws the ring in the muted grey', () => {
+		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } /> );
+		expect( screen.getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-tone', 'muted' );
+	} );
+
+	it( 'draws the ring at 16 px', () => {
+		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } /> );
+		expect( screen.getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-size', '16' );
+	} );
+
+	it( 'draws the ring from the free pool on a free plan', () => {
 		render( <CreditsMeter status={ freeFine } isOpen={ false } onToggle={ () => {} } /> );
 		const toggle = screen.getByRole( 'button', { name: '80% of free credits left' } );
-		expect( toggle ).not.toHaveClass( 'is-alert' );
-		expect( togglePath( toggle ) ).toBe( iconPath( info ) );
-		expect( toggle.querySelector( 'svg' ) ).toHaveAttribute( 'width', '24' );
+		expect( within( toggle ).getByTestId( 'credits-ring' ) ).toHaveAttribute(
+			'data-percent',
+			'80'
+		);
 	} );
 
 	it.each( [
-		[ 'low', livePaid( 9999 ), `Low on credits: ${ localNumber( 9.9 ) }k credits left` ],
-		[ 'out', livePaid( 0 ), `Out of credits: ${ localNumber( 0 ) } credits left` ],
-	] )( 'switches to the alert icon when credits are %s', async ( _state, status, name ) => {
-		render( <CreditsMeter status={ status } isOpen={ false } onToggle={ () => {} } /> );
-		const toggle = screen.getByRole( 'button', { name } );
-		expect( toggle ).toHaveClass( 'is-alert' );
-		expect( togglePath( toggle ) ).toBe( iconPath( caution ) );
-		await userEvent.hover( toggle );
-		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( name );
-		expect( toggle ).not.toHaveAccessibleDescription();
+		[ 'low', livePaid( 8000 ), '10', `Low on credits: ${ localNumber( 8 ) }k credits left` ],
+		[ 'out', livePaid( 0 ), '0', `Out of credits: ${ localNumber( 0 ) } credits left` ],
+	] )(
+		'keeps the one ring when credits are %s, with the state in the tooltip',
+		async ( _state, status, percent, name ) => {
+			render( <CreditsMeter status={ status } isOpen={ false } onToggle={ () => {} } /> );
+			const toggle = screen.getByRole( 'button', { name } );
+			expect( toggle.querySelectorAll( 'svg' ) ).toHaveLength( 1 );
+			expect( within( toggle ).getByTestId( 'credits-ring' ) ).toHaveAttribute(
+				'data-percent',
+				percent
+			);
+			await userEvent.hover( toggle );
+			expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( name );
+			expect( toggle ).not.toHaveAccessibleDescription();
+		}
+	);
+
+	it( 'marks the ring as empty at exactly 0, not with a credit left', () => {
+		const ring = () => within( screen.getByRole( 'button' ) ).getByTestId( 'credits-ring' );
+		const { rerender } = render(
+			<CreditsMeter status={ livePaid( 0 ) } isOpen={ false } onToggle={ () => {} } />
+		);
+		expect( ring() ).toHaveClass( 'agents-manager-credits-meter__ring--empty' );
+
+		rerender( <CreditsMeter status={ livePaid( 1 ) } isOpen={ false } onToggle={ () => {} } /> );
+		expect( ring() ).toHaveClass( 'agents-manager-credits-meter__ring' );
+		expect( ring() ).not.toHaveClass( 'agents-manager-credits-meter__ring--empty' );
+	} );
+
+	it( 'leads the popover with the combined balance, above the pools', () => {
+		render( <CreditsMeter status={ paid } isOpen onToggle={ () => {} } /> );
+		const total = screen.getByText( `${ localNumber( 11.6 ) }k credits left` );
+		const planRow = screen.getByRole( 'group', { name: /^Monthly plan/ } );
+		expect( total.compareDocumentPosition( planRow ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
+	} );
+
+	it( 'leads the popover with the share left on a free plan', () => {
+		render( <CreditsMeter status={ freeFine } isOpen onToggle={ () => {} } /> );
+		expect( screen.getByText( '80% of free credits left' ) ).toBeInTheDocument();
+	} );
+
+	it( 'keeps the total at zero, ahead of the used-all message', () => {
+		render( <CreditsMeter status={ livePaid( 0 ) } isOpen onToggle={ () => {} } /> );
+		const total = screen.getByText( `${ localNumber( 0 ) } credits left` );
+		const message = screen.getByText( 'You’ve used all your site credits.' );
+		expect( total.compareDocumentPosition( message ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 	} );
 
 	it( 'lists each pool with its figures and a secondary CTA on paid plans', () => {
@@ -262,7 +336,7 @@ describe( 'CreditsMeter', () => {
 		);
 		expect(
 			screen.getByRole( 'button', { name: `Out of credits: ${ localNumber( 0 ) } credits left` } )
-		).toHaveClass( 'is-alert' );
+		).toBeInTheDocument();
 		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'
@@ -322,7 +396,7 @@ describe( 'CreditsMeter', () => {
 		);
 		expect(
 			screen.getByRole( 'button', { name: `${ localNumber( 67 ) }k credits left` } )
-		).not.toHaveClass( 'is-alert' );
+		).toBeInTheDocument();
 		expect( screen.getByText( '0%' ) ).not.toHaveClass( 'is-exhausted' );
 		expect(
 			screen.getByText( `${ localNumber( 0 ) } of ${ localNumber( 80 ) }k credits left` )

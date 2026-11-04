@@ -5,9 +5,9 @@ Chats outside the dock that show the site's AI credits, such as Image Studio, us
 ## Balance
 
 - `parseLiveCreditsStatus( value, siteId )` turns a site's allowance snapshot into a `CreditsStatus`, or `undefined` if the snapshot isn't valid.
-- `CreditsMeter` shows that status.
+- `CreditsMeter` shows that status. Its toggle is a grey ring of this period's plan credits left: full at the start, and empty at 0 even while top-ups remain. An empty ring keeps a stronger grey track, so the toggle stays visible. Its tooltip gives the combined balance. Its popover leads with the same total, and then lists each pool.
 - `formatCreditsShort()` formats an amount such as "800" or "8.5k", rounding down.
-- `CREDITS_LOW_BALANCE` is the 10,000-credit balance below which a paid plan runs low: the meter swaps its info icon for an alert icon on a red tint, and the low-balance notice shows. Free plans run low at 20% or below.
+- `CREDITS_LOW_BALANCE` is the 10,000-credit balance below which a paid plan runs low: the toggle's label leads with "Low on credits:", and the low-balance notice shows. Free plans run low at 20% or below.
 
 ## Purchase links
 
@@ -36,7 +36,15 @@ Checkout refuses an upgrade from most people who didn't buy the plan, though any
 ## Calls to action
 
 - `getCreditsPurchaseAction( options )` turns `getCreditsPurchaseOptions()`'s result into a button labelled Upgrade or Add credits that opens in a new tab. The chat notice's `action` and `CreditsMeter`'s `action` both take it; add an `onClick` to record the click.
-- `getCreditsNoticeMessage( level, remaining, askToUpgrade? )` gives the low (`low`) or zero-balance (`out`) notice, naming who to ask.
+- `getCreditsNoticeMessage( level, remaining, askToUpgrade? )` gives the low (`low`), zero-balance (`out`) or top-ups (`top_ups`) notice, naming who to ask.
+
+## Top-ups
+
+- `isCreditsOnTopUps( status )` says a paid site's plan credits are used up while top-ups remain. Plan credits are spent first, so the combined balance is then the top-ups left, even when the snapshot's top-up fields were unreadable.
+- `getCreditsTopUpsNotice( remaining, askToUpgrade, action, onDismiss )` gives its notice: "Now using top-ups: 25k left.", with the purchase button or who to ask, and a close button.
+- It shows only when no other credits notice applies. Under `CREDITS_LOW_BALANCE` the low notice shows instead, and closing that one doesn't bring this one back. In the dock it also gives way to the conversation's reply notices, such as "Waiting for the reply…".
+- Closing it lasts until the chat remounts or the site, user or agent changes. Where the chat has an AI chat button, closing the dock remounts it. Opening another of the dock's screens, such as the history, remounts it too. In Image Studio it stays closed until the modal opens again. Its dismissal is separate from the low notice's.
+- It sends no shown or dismissed event. A click on its button sends the usual click event, with `state: 'ok'`.
 
 ## Refusals
 

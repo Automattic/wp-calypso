@@ -48,16 +48,16 @@ describe( 'Credits meter CSS contract', () => {
 	// The winning value of `prop` on `target`; `[data-hover]` stands in for `:hover`.
 	const resolve = (
 		prop,
-		{ dark = false, alert = false, hover = false, open = false } = {},
+		{ dark = false, hover = false, open = false, empty = false } = {},
 		target = 'button'
 	) => {
 		const root = document.createElement( 'div' );
 		root.className = dark ? 'agenttic dark' : 'agenttic';
-		root.innerHTML = `<div class="agents-manager-credits-meter"><button class="agents-manager-credits-meter__toggle components-button${
-			alert ? ' is-alert' : ''
-		}" aria-expanded="${ open }"${
+		root.innerHTML = `<div class="agents-manager-credits-meter"><button class="agents-manager-credits-meter__toggle components-button" aria-expanded="${ open }"${
 			hover ? ' data-hover' : ''
-		}></button><span class="agents-manager-credits-meter__pool-percent is-exhausted"></span></div>
+		}><svg class="agents-manager-credits-meter__ring${
+			empty ? ' agents-manager-credits-meter__ring--empty' : ''
+		}" data-slot="progress-ring"></svg></button><span class="agents-manager-credits-meter__pool-percent is-exhausted"></span></div>
 		<div class="agents-manager-credits-meter__pool is-balance-only"><span class="agents-manager-credits-meter__pool-label"></span><span class="agents-manager-credits-meter__pool-date"></span><span class="agents-manager-credits-meter__pool-detail"></span></div>
 		<p class="agents-manager-credits-meter__message"></p><a class="agents-manager-credits-meter__manage components-button"></a>`;
 		const toggle = root.querySelector( target );
@@ -126,8 +126,6 @@ describe( 'Credits meter CSS contract', () => {
 			.concat( alpha );
 	};
 
-	const over = ( [ r, g, b, alpha ], base ) =>
-		[ r, g, b ].map( ( c, i ) => c * alpha + base[ i ] * ( 1 - alpha ) );
 	const luminance = ( rgb ) =>
 		rgb
 			.slice( 0, 3 )
@@ -146,56 +144,44 @@ describe( 'Credits meter CSS contract', () => {
 			.join( '' );
 
 	const themes = [ 'light', 'dark' ];
-	const alertStates = [
-		[ 'at rest', {} ],
+	const ring = '.agents-manager-credits-meter__ring';
+
+	it.each( [
 		[ 'on hover', { hover: true } ],
 		[ 'when open', { open: true } ],
-	];
-
-	it.each( alertStates )( 'keeps the alert toggle on the Figma tint %s', ( _, state ) => {
-		themes.forEach( ( theme ) => {
-			const tint = evaluate(
-				resolve( 'background-color', { alert: true, dark: theme === 'dark', ...state } ),
-				theme
-			);
-			expect( hex( tint ) ).toBe( '#e7000b' );
-			expect( tint[ 3 ] ).toBeCloseTo( 0.2 );
-		} );
-	} );
-
-	it.each( alertStates )( 'draws the alert glyph in the Figma red %s', ( _, state ) => {
-		const glyph = ( theme ) =>
-			hex(
-				evaluate( resolve( 'color', { alert: true, dark: theme === 'dark', ...state } ), theme )
-			);
-		expect( glyph( 'light' ) ).toBe( '#e7000b' );
-		expect( glyph( 'dark' ) ).toBe( '#f87171' );
-	} );
-
-	it( 'takes the alert red from an agenttic token', () => {
-		themes.forEach( ( theme ) => {
-			expect( resolve( 'color', { alert: true, dark: theme === 'dark' } ) ).toMatch(
-				/^var\(--color-[\w-]+\)$/
-			);
-		} );
-	} );
-
-	it.each( themes )( 'keeps the alert glyph at 3:1 on its tint in %s', ( theme ) => {
-		const dark = theme === 'dark';
-		const tint = over(
-			evaluate( resolve( 'background-color', { alert: true, dark } ), theme ),
-			evaluate( 'var(--color-background)', theme )
-		);
-		const glyph = evaluate( resolve( 'color', { alert: true, dark } ), theme );
-		expect( contrast( glyph, tint ) ).toBeGreaterThanOrEqual( 3 );
-	} );
-
-	it( 'draws the popover’s 0% left in the same red as the alert glyph', () => {
-		const percent = '.agents-manager-credits-meter__pool-percent';
+	] )( 'keeps the ring’s track apart from the toggle’s background %s', ( _, state ) => {
 		themes.forEach( ( theme ) => {
 			const dark = theme === 'dark';
-			expect( resolve( 'color', { dark }, percent ) ).toBe(
-				resolve( 'color', { alert: true, dark } )
+			const track = resolve( '--color-input-border', { dark, ...state }, ring );
+			const background = resolve( 'background-color', { dark, ...state } );
+			expect( track ).toMatch( /^var\(\s*--color-[\w-]+\s*\)$/ );
+			expect( hex( evaluate( track, theme ) ) ).not.toBe( hex( evaluate( background, theme ) ) );
+		} );
+	} );
+
+	it( 'draws an empty ring’s track a shade stronger at rest, on hover and when open', () => {
+		[ {}, { hover: true }, { open: true } ].forEach( ( state ) => {
+			themes.forEach( ( theme ) => {
+				const dark = theme === 'dark';
+				const track = resolve( '--color-input-border', { dark, empty: true, ...state }, ring );
+				// The toggle has no background at rest, so the composer's shows through.
+				const surface = evaluate(
+					resolve( 'background-color', { dark, ...state } ) ?? 'var(--color-background)',
+					theme
+				);
+				expect( track ).toMatch( /^var\(\s*--color-[\w-]+\s*\)$/ );
+				expect( contrast( evaluate( track, theme ), surface ) ).toBeGreaterThan(
+					contrast( evaluate( 'var(--color-input-border)', theme ), surface )
+				);
+			} );
+		} );
+	} );
+
+	it( 'draws the popover’s 0% left in the error red', () => {
+		const percent = '.agents-manager-credits-meter__pool-percent';
+		themes.forEach( ( theme ) => {
+			expect( resolve( 'color', { dark: theme === 'dark' }, percent ) ).toBe(
+				'var(--color-error-strong)'
 			);
 		} );
 	} );
