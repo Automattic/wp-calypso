@@ -108,7 +108,12 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 	const locale = useLocale();
 	const handoff = useMutation( staticSiteImportHandoffMutation() );
 	const requestHandoff = () =>
-		handoff.mutate( { blogUrl: site.slug, fromUrl: search.from ?? '', locale } );
+		handoff.mutate( {
+			blogUrl: site.slug,
+			fromUrl: search.from ?? '',
+			locale,
+			importSessionId: search.importSessionId,
+		} );
 	return { handoff, requestHandoff };
 }
 
