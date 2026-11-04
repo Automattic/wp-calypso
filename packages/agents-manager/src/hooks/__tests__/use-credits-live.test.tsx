@@ -3172,3 +3172,245 @@ describe( 'refusal code', () => {
 		} );
 	} );
 } );
+
+const answerOf = ( credits: ReturnType< typeof useCredits > ) =>
+	credits.creditsCommand && 'answer' in credits.creditsCommand
+		? credits.creditsCommand.answer
+		: undefined;
+
+describe( 'credits answer', () => {
+	it.each( [ 'personal', 'premium' ] as const )(
+		'offers Upgrade and Add credits on %s, each click recording its own cta_type',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce(
+				response(
+					creditSnapshot( {
+						plan_tier,
+						credits_available: 62450,
+						top_up_credits_purchased: 100000,
+						top_up_credits_remaining: 60000,
+					} )
+				)
+			);
+			const { result } = renderCredits();
+			await flush();
+
+			const { status, resetDate, actions } = answerOf( result.current ) ?? {};
+			expect( status?.remaining ).toBe( 62450 );
+			expect( resetDate ).toBe( 'Oct 1' );
+			expect( actions?.map( ( { kind, label, href } ) => ( { kind, label, href } ) ) ).toEqual( [
+				{ kind: 'upgrade', label: 'Upgrade', href: UPGRADE_URL },
+				{ kind: 'top_up', label: 'Add credits', href: ADD_CREDITS_URL },
+			] );
+			expect( actions?.[ 0 ] ).toMatchObject( { href: props( result.current ).action?.href } );
+
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			act( () => actions?.[ 0 ].onClick?.() );
+			act( () => actions?.[ 1 ].onClick?.() );
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				1,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'upgrade', placement: 'none' } )
+			);
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				2,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'top_up', ref: 'wp_ai_credits', placement: 'none' } )
+			);
+		}
+	);
+
+	it.each( [
+		[ 'another account bought the plan', true, false, true ],
+		[ 'the plan buyer is unknown', true, null, false ],
+	] as const )(
+		'offers no button on Personal when %s, as in the meter',
+		async ( _, canBuyCredits, canUpgrade, namesPlanOwner ) => {
+			fetchMock.mockResolvedValueOnce(
+				response( creditSnapshot( { plan_tier: 'personal' } ), canBuyCredits, canUpgrade )
+			);
+			const { result } = renderCredits();
+			await flush();
+
+			expect( answerOf( result.current )?.actions ).toEqual( [] );
+			expect( props( result.current ).action ).toBeUndefined();
+			expect(
+				answerOf( result.current )?.purchaseHint?.includes( 'different WordPress.com account' ) ??
+					false
+			).toBe( namesPlanOwner );
+		}
+	);
+
+	it.each( [ 'business', 'commerce' ] as const )(
+		'offers only Add credits on %s',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ) ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect(
+				answerOf( result.current )?.actions.map( ( { kind, href } ) => ( { kind, href } ) )
+			).toEqual( [ { kind: 'top_up', href: ADD_CREDITS_URL } ] );
+		}
+	);
+
+	it.each( [ 'personal', 'business' ] as const )(
+		'names who to ask, with no button, for someone who can’t buy on %s',
+		async ( plan_tier ) => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { plan_tier } ), false ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( answerOf( result.current )?.actions ).toEqual( [] );
+			expect( answerOf( result.current )?.purchaseHint ).toBe( 'Ask a site admin to add more.' );
+		}
+	);
+
+	it( 'offers nothing while it isn’t known who may buy', async () => {
+		fetchMock.mockResolvedValueOnce(
+			response( creditSnapshot( { plan_tier: 'personal' } ), null )
+		);
+		const { result } = renderCredits();
+		await flush();
+
+		expect( answerOf( result.current )?.actions ).toEqual( [] );
+		expect( answerOf( result.current )?.purchaseHint ).toBeUndefined();
+	} );
+
+	describe( '/credits reply states', () => {
+		afterEach( () => {
+			delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+		} );
+
+		it( 'answers with the balance on a metered site', async () => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot() ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+		} );
+
+		it.each( [
+			[ 'a 404', { ok: false, status: 404, json: async () => ( {} ) } ],
+			[ 'an answer with no credits data', { ok: true, status: 200, json: async () => ( {} ) } ],
+		] )( 'says the site has no credits after %s, never failed', async ( _name, reply ) => {
+			fetchMock.mockResolvedValueOnce( reply );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'unmetered' } );
+		} );
+
+		it( 'says the site has no credits when the host says it isn’t metered, without waiting for a read', () => {
+			( window as { agentsManagerData?: unknown } ).agentsManagerData = { isMetered: false };
+			fetchMock.mockReturnValue( new Promise( () => {} ) );
+			const { result } = renderCredits();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'unmetered' } );
+		} );
+
+		it( 'says it is loading until the read settles', async () => {
+			let settle: ( value: unknown ) => void = () => {};
+			fetchMock.mockReturnValueOnce( new Promise( ( resolve ) => ( settle = resolve ) ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'loading' } );
+
+			await act( async () => settle( response( creditSnapshot() ) ) );
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+		} );
+
+		it.each( [
+			[ 'a 5xx', { ok: false, status: 503, json: async () => ( {} ) } ],
+			[
+				'a snapshot that isn’t valid',
+				{ ok: true, status: 200, json: async () => ( { ai_credits: { a: 1 } } ) },
+			],
+		] )(
+			'says it couldn’t check after %s, never that the site has no credits',
+			async ( _name, reply ) => {
+				fetchMock.mockResolvedValueOnce( reply );
+				const { result } = renderCredits();
+				await flush();
+
+				expect( result.current.creditsCommand ).toEqual( { state: 'failed' } );
+			}
+		);
+
+		it( 'says it couldn’t check when the read fails on the network', async () => {
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			const { result } = renderCredits();
+			await flush();
+
+			expect( result.current.creditsCommand ).toEqual( { state: 'failed' } );
+		} );
+
+		it( 'keeps the last known balance when a later read fails', async () => {
+			fetchMock.mockResolvedValueOnce( response( creditSnapshot( { credits_available: 12500 } ) ) );
+			const { result } = renderCredits();
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'balance' );
+
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			act( () => {
+				window.dispatchEvent( new Event( 'online' ) );
+			} );
+			await flush();
+
+			const reply = result.current.creditsCommand;
+			expect( reply?.state ).toBe( 'stale' );
+			expect( reply && 'answer' in reply && reply.answer.status.remaining ).toBe( 12500 );
+			expect( reply && 'answer' in reply && reply.answer.actions ).toEqual( [] );
+		} );
+
+		it( 'still records a click on an earlier card once a later read fails', async () => {
+			fetchMock.mockResolvedValueOnce(
+				response( creditSnapshot( { plan_tier: 'personal', credits_available: 12500 } ) )
+			);
+			const { result } = renderCredits();
+			await flush();
+			const actions = answerOf( result.current )?.actions ?? [];
+			expect( actions.map( ( { kind } ) => kind ) ).toEqual( [ 'upgrade', 'top_up' ] );
+
+			fetchMock.mockRejectedValueOnce( new Error( 'offline' ) );
+			act( () => {
+				window.dispatchEvent( new Event( 'online' ) );
+			} );
+			await flush();
+			expect( result.current.creditsCommand?.state ).toBe( 'stale' );
+
+			jest.mocked( recordAgentsManagerTracksEvent ).mockClear();
+			act( () => actions[ 0 ].onClick?.() );
+			act( () => actions[ 1 ].onClick?.() );
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				1,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'upgrade', placement: 'none' } )
+			);
+			expect( recordAgentsManagerTracksEvent ).toHaveBeenNthCalledWith(
+				2,
+				'calypso_agents_manager_credits_cta_clicked',
+				expect.objectContaining( { cta_type: 'top_up', placement: 'none' } )
+			);
+		} );
+	} );
+
+	it( 'is absent on a chat with no site, even in demo mode', () => {
+		window.history.replaceState( {}, '', '/?am_credits=55&am_plan=paid' );
+		const { result } = renderCredits( { siteKey: NO_SITE } );
+
+		expect( result.current.creditsCommand ).toBeUndefined();
+	} );
+
+	it( 'is absent where the host says the page isn’t in dev mode, which reads nothing', async () => {
+		( window as { agentsManagerData?: unknown } ).agentsManagerData = { isDevMode: false };
+		const { result } = renderCredits();
+		await flush();
+
+		expect( fetchMock ).not.toHaveBeenCalled();
+		expect( result.current.creditsCommand ).toBeUndefined();
+		delete ( window as { agentsManagerData?: unknown } ).agentsManagerData;
+	} );
+} );

@@ -37,7 +37,9 @@ export const filterUiOnlyMessages = (
 	uiMessages: UIMessage[],
 	clientMessageIds: Set< string >
 ): UIMessage[] => {
-	return uiMessages.filter( ( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user' );
+	return uiMessages.filter(
+		( msg ) => ! clientMessageIds.has( msg.id ) && ( msg.role !== 'user' || msg.isUiOnly )
+	);
 };
 
 /**
@@ -157,6 +159,8 @@ export interface UIMessage {
 	icon?: string;
 	actions?: UIMessageAction[];
 	reactKey?: string; // Stable key for React rendering (prevents unmount/remount during updates)
+	/** A user message that never goes to the server, so a rebuilt history keeps it as it does an agent's. */
+	isUiOnly?: boolean;
 }
 
 // Mirrors `MessageAction.visibility` in agenttic-ui.
@@ -442,6 +446,8 @@ export interface UseAgentChatReturn {
 
 	// Tool integration
 	addMessage: ( message: UIMessage ) => void;
+	// Drops a shown error without a new send, for a reply the UI makes itself.
+	clearError: () => void;
 
 	// Abort control
 	abortCurrentRequest: () => void;
@@ -1053,6 +1059,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		} ) );
 	}, [] );
 
+	const clearError = useCallback( () => {
+		setState( ( prev ) => ( prev.error ? { ...prev, error: null } : prev ) );
+	}, [] );
+
 	// Suggestions management
 	const registerSuggestions = useCallback( ( suggestions: Suggestion[] ) => {
 		setState( ( prev ) => ( {
@@ -1087,11 +1097,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const updatedUIMessages = transformMessages( prev.clientMessages );
 
 			// Find UI-only messages (messages not in client history, e.g. injected by tools)
-			// Exclude user messages since they'll come back from server with different IDs
 			const clientMessageIds = new Set( prev.clientMessages.map( ( msg ) => msg.messageId ) );
-			const uiOnlyMessages = prev.uiMessages.filter(
-				( msg ) => ! clientMessageIds.has( msg.id ) && msg.role !== 'user'
-			);
+			const uiOnlyMessages = filterUiOnlyMessages( prev.uiMessages, clientMessageIds );
 
 			return {
 				...prev,
@@ -1168,6 +1175,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 		// Tool integration
 		addMessage,
+		clearError,
 
 		// Abort control
 		abortCurrentRequest,

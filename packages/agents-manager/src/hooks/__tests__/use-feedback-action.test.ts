@@ -155,6 +155,14 @@ describe( 'useFeedbackAction', () => {
 			expect( capturedCondition?.( createMessage( '1', 'agent', 'hi' ) ) ).toBe( true );
 			expect( capturedCondition?.( createMessage( '2', 'user', 'hi' ) ) ).toBe( false );
 		} );
+
+		it( 'leaves out the browser’s own answer to /credits', () => {
+			renderHook( () => useFeedbackAction( defaultConfig ) );
+
+			expect( capturedCondition?.( createMessage( 'credits-command-1', 'agent', 'hi' ) ) ).toBe(
+				false
+			);
+		} );
 	} );
 
 	describe( 'thumbs up feedback', () => {
