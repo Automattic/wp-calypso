@@ -59,6 +59,11 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	getActivityLogHiddenGroups,
@@ -643,6 +648,7 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	loader: () => prefetchApmAccess(),
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -673,10 +679,19 @@ export const sitePerformanceFrontendRoute = createRoute( {
 export const sitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		if ( ! ( await canViewApm() ) ) {
+			throw dashboardRedirect( { to: `/sites/${ siteSlug }/performance/frontend` } );
+		}
+	},
 } );
 
 async function prefetchApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	// The page shows an upsell instead of APM data on these plans.
+	if ( ! hasBackendAccess( site.plan?.product_slug ) ) {
+		return;
+	}
 	const [ { siteApmAggregateRollingQuery }, { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } ] =
 		await Promise.all( [
 			import( '@automattic/api-queries' ),
@@ -844,6 +859,7 @@ export const siteSettingsRoute = createRoute( {
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
 				queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) ),
+			prefetchApmAccess(),
 		] );
 	},
 } );
@@ -1333,6 +1349,11 @@ export const siteSettingsApmRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'apm',
+	beforeLoad: async ( { params: { siteSlug } } ) => {
+		if ( ! ( await canViewApm() ) ) {
+			throw dashboardRedirect( { to: `/sites/${ siteSlug }/settings` } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-apm' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-apm' )( {
