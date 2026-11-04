@@ -281,6 +281,20 @@ describe( 'CreditsMeter', () => {
 		expect( total.compareDocumentPosition( message ) ).toBe( Node.DOCUMENT_POSITION_FOLLOWING );
 	} );
 
+	it( 'asks the chat for the balance from the popover header', () => {
+		const onShowCredits = jest.fn();
+		const { rerender } = render(
+			<CreditsMeter status={ paid } isOpen onToggle={ () => {} } onShowCredits={ onShowCredits } />
+		);
+		fireEvent.click( screen.getByRole( 'button', { name: 'Show my credits in the chat' } ) );
+		expect( onShowCredits ).toHaveBeenCalledTimes( 1 );
+
+		rerender( <CreditsMeter status={ paid } isOpen onToggle={ () => {} } /> );
+		expect(
+			screen.queryByRole( 'button', { name: 'Show my credits in the chat' } )
+		).not.toBeInTheDocument();
+	} );
+
 	it( 'lists each pool with its figures and a secondary CTA on paid plans', () => {
 		const onAction = jest.fn();
 		render( <CreditsMeter status={ paid } isOpen onToggle={ () => {} } onAction={ onAction } /> );

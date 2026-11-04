@@ -473,21 +473,25 @@ let mockCreditsCommand: unknown;
 const mockRefusalNotice = jest.fn( (): unknown => undefined );
 const mockTopUpsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
+let mockCreditsOnShowCredits: ( () => void ) | undefined;
 jest.mock( '../../hooks/use-credits', () => ( {
 	useCredits: ( {
 		agentConfig,
 		isOpen,
 		isNoticeVisible,
 		onTryAgain,
+		onShowCredits,
 	}: {
 		agentConfig: unknown;
 		isOpen: boolean;
 		isNoticeVisible: boolean;
 		onTryAgain?: ( message: string ) => void;
+		onShowCredits?: () => void;
 	} ) => {
 		mockCreditsVisibility( isOpen );
 		mockCreditsNoticeVisibility( isNoticeVisible );
 		mockCreditsOnTryAgain = onTryAgain;
+		mockCreditsOnShowCredits = onShowCredits;
 		return {
 			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
@@ -1632,6 +1636,51 @@ describe( 'OrchestratorChat', () => {
 			'jetpack_big_sky_chat_input_send_message',
 			expect.anything()
 		);
+	} );
+
+	it( 'answers /credits when the credits popover asks for it', () => {
+		const { onSubmit, addMessage } = mockUseAgentChat();
+		mockCreditsCommand = {
+			state: 'balance',
+			answer: { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } },
+		};
+
+		render( chat() );
+		act( () => {
+			mockCreditsOnShowCredits!();
+		} );
+
+		expect( onSubmit ).not.toHaveBeenCalled();
+		expect( addMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { role: 'user', content: [ { type: 'text', text: '/credits' } ] } )
+		);
+		expect( addMessage ).toHaveBeenCalledWith(
+			expect.objectContaining( { id: expect.stringMatching( /^credits-command-/ ), role: 'agent' } )
+		);
+	} );
+
+	it.each( [
+		[ 'expands a compact chat first', { isOpen: false, isCompactMode: true }, 1 ],
+		[ 'leaves an open chat as it is', { isOpen: true }, 0 ],
+	] as const )( 'asking for /credits from the popover %s', ( _name, options, expands ) => {
+		const onExpand = jest.fn();
+		mockCreditsCommand = {
+			state: 'balance',
+			answer: { status: { plan: 'paid', remaining: 5, percent: 1, pools: [] } },
+		};
+
+		render( chat( { ...options, onExpand } ) );
+		act( () => {
+			mockCreditsOnShowCredits!();
+		} );
+
+		expect( onExpand ).toHaveBeenCalledTimes( expands );
+	} );
+
+	it( 'offers no credits popover button in the Reader chat', () => {
+		mockIsReaderChatAgent.mockReturnValue( true );
+		render( chat() );
+		expect( mockCreditsOnShowCredits ).toBeUndefined();
 	} );
 
 	it( 'clears an earlier upload error when /credits answers', async () => {
