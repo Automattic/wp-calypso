@@ -5,6 +5,8 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { A4A_MIGRATIONS_IMPORT_SITE_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
+import { isPathAllowed } from 'calypso/a8c-for-agencies/lib/permission';
 import GlobalNotices from 'calypso/components/global-notices';
 import agencyReducer from 'calypso/state/a8c-for-agencies/reducer';
 import noticesReducer from 'calypso/state/notices/reducer';
@@ -86,6 +88,11 @@ async function startImportAndConfirm( provision: ( body: Record< string, unknown
 }
 
 describe( '<ImportSite>', () => {
+	test( 'is a route agency members with migrations access can open', () => {
+		const agency = { user: { capabilities: [ 'a4a_read_migrations' ] } };
+		expect( isPathAllowed( A4A_MIGRATIONS_IMPORT_SITE_LINK, agency as never ) ).toBe( true );
+	} );
+
 	afterEach( () => nock.cleanAll() );
 
 	test( 'starts an import from the address and provisions a dev site that holds it', async () => {
