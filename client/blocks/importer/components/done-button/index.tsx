@@ -1,4 +1,4 @@
-import { NextButton } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import React from 'react';
 import { ImportJob } from '../../types';
@@ -26,17 +26,20 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 
 	function onButtonClick() {
 		onSiteViewClick?.();
-		job && siteId && resetImport && resetImport( siteId, job?.importerId );
+		if ( job && siteId && resetImport ) {
+			resetImport( siteId, job.importerId );
+		}
 	}
 
 	return (
-		<NextButton
+		<Button
+			__next40pxDefaultSize
 			variant={ isPrimary ? 'primary' : 'secondary' }
 			className={ className }
 			onClick={ onButtonClick }
 		>
 			{ label }
-		</NextButton>
+		</Button>
 	);
 };
 

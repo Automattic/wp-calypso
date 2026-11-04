@@ -1,5 +1,6 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Hooray, NextButton, SubTitle, Title } from '@automattic/onboarding';
+import { Hooray, SubTitle, Title } from '@automattic/onboarding';
+import { Button, __experimentalHStack as HStack } from '@wordpress/components';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
 import { ImportJob } from '../../types';
@@ -29,18 +30,20 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 			<div className="import__heading import__heading-center">
 				<Title>{ __( 'Hooray!' ) }</Title>
 				<SubTitle>{ __( 'Congratulations. Your content was successfully imported.' ) }</SubTitle>
-				<DoneButton
-					siteId={ siteId }
-					job={ job as ImportJob }
-					resetImport={ resetImport }
-					label={ buttonLabel }
-					onSiteViewClick={ onSiteViewClick }
-				/>
-				{ onImportAnotherClick && (
-					<NextButton variant="secondary" onClick={ onImportAnotherClick }>
-						{ __( 'Start another import' ) }
-					</NextButton>
-				) }
+				<HStack justify="center" spacing={ 4 } wrap>
+					<DoneButton
+						siteId={ siteId }
+						job={ job as ImportJob }
+						resetImport={ resetImport }
+						label={ buttonLabel }
+						onSiteViewClick={ onSiteViewClick }
+					/>
+					{ onImportAnotherClick && (
+						<Button variant="secondary" __next40pxDefaultSize onClick={ onImportAnotherClick }>
+							{ __( 'Start another import' ) }
+						</Button>
+					) }
+				</HStack>
 			</div>
 		</Hooray>
 	);
