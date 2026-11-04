@@ -970,19 +970,21 @@ function getFields( {
 							return sprintf( __( 'You will be billed on %(date)s' ), { date: renewDate } );
 						}
 						return createInterpolateElement(
-							sprintf(
-								/* translators: %(renewDate)s and %(expiryDate)s are formatted dates, inlineSupportLink is a web link. */
-								__(
-									'You will be billed on %(renewDate)s. Your subscription is paid through %(expiryDate)s, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
-								),
-								{
-									renewDate,
-									expiryDate: formatDate( new Date( purchase.expiry_date ), locale, {
-										dateStyle: 'long',
-									} ),
-								}
+							/* translators: <renewDate/> and <expiryDate/> are formatted dates, e.g. "January 5, 2026". inlineSupportLink is a web link. */
+							__(
+								'You will be billed on <renewDate/>. Your subscription is paid through <expiryDate/>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
 							),
-							{ inlineSupportLink: <InlineSupportLink supportContext="autorenewal" /> }
+							{
+								renewDate: <span>{ renewDate }</span>,
+								expiryDate: (
+									<span>
+										{ formatDate( new Date( purchase.expiry_date ), locale, {
+											dateStyle: 'long',
+										} ) }
+									</span>
+								),
+								inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
+							}
 						);
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
