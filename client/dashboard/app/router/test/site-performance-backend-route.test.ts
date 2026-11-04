@@ -3,8 +3,12 @@
  */
 
 import { queryClient } from '@automattic/api-queries';
+import { createRouter } from '@tanstack/react-router';
 import nock from 'nock';
+import { APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
+import { rootRoute } from '../root';
 import {
+	createSitesRoutes,
 	sitePerformanceBackendIndexRoute,
 	sitePerformanceBackendRoute,
 	siteSettingsApmRoute,
@@ -45,6 +49,18 @@ function mockApmAggregate() {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RouteFn = ( args: any ) => Promise< unknown >;
 
+beforeAll( () => {
+	// Building the route tree resolves each route's `fullPath`, which the guards redirect to.
+	const config = {
+		...APP_CONTEXT_DEFAULT_CONFIG,
+		supports: { ...APP_CONTEXT_DEFAULT_CONFIG.supports, sites: true },
+	};
+	createRouter( {
+		routeTree: rootRoute.addChildren( createSitesRoutes( config ) ),
+		context: { config },
+	} );
+} );
+
 beforeEach( () => {
 	queryClient.clear();
 	nock.cleanAll();
@@ -58,7 +74,8 @@ describe( 'sitePerformanceBackendRoute', () => {
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
 			isRedirect: true,
-			to: `/sites/${ siteSlug }/performance/frontend`,
+			to: '/sites/$siteSlug/performance/frontend',
+			params: { siteSlug },
 			search: { flash: 'route-not-allowed' },
 		} );
 	} );
@@ -70,7 +87,8 @@ describe( 'sitePerformanceBackendRoute', () => {
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
 			isRedirect: true,
-			to: `/sites/${ siteSlug }/performance/frontend`,
+			to: '/sites/$siteSlug/performance/frontend',
+			params: { siteSlug },
 			search: { flash: 'route-not-allowed' },
 		} );
 	} );
@@ -121,7 +139,8 @@ describe( 'siteSettingsApmRoute', () => {
 
 		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
 			isRedirect: true,
-			to: `/sites/${ siteSlug }/settings`,
+			to: '/sites/$siteSlug/settings',
+			params: { siteSlug },
 			search: { flash: 'route-not-allowed' },
 		} );
 	} );

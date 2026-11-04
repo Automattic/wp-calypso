@@ -684,7 +684,10 @@ export const sitePerformanceBackendRoute = createRoute( {
 			return;
 		}
 		if ( ! ( await canViewApm() ) ) {
-			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }/performance/frontend` } );
+			throw redirectAsNotAllowed( {
+				to: sitePerformanceFrontendRoute.fullPath,
+				params: { siteSlug },
+			} );
 		}
 	},
 } );
@@ -1357,7 +1360,7 @@ export const siteSettingsApmRoute = createRoute( {
 			return;
 		}
 		if ( ! ( await canViewApm() ) ) {
-			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }/settings` } );
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
 } ).lazy( () =>
