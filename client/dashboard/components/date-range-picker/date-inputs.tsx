@@ -17,7 +17,6 @@ type DateInputsProps = {
 	stack?: boolean;
 	justify?:
 		'flex-start' | 'flex-end' | 'center' | 'space-between' | 'space-around' | 'space-evenly';
-	containerStyle?: React.CSSProperties;
 	onFromFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
 	onToFocus?: ( e: FocusEvent< HTMLInputElement > ) => void;
 	onFromBlur?: ( e: FocusEvent< HTMLInputElement > ) => void;
@@ -34,7 +33,6 @@ export function DateInputs( {
 	toStyle,
 	stack = false,
 	justify = 'flex-start',
-	containerStyle,
 	onFromFocus,
 	onToFocus,
 	onFromBlur,
@@ -42,7 +40,7 @@ export function DateInputs( {
 }: DateInputsProps ) {
 	if ( stack ) {
 		return (
-			<VStack as="div" spacing={ 2 } className="daterange-inputs" style={ containerStyle }>
+			<VStack as="div" spacing={ 2 } className="daterange-inputs">
 				<InputControl
 					type="date"
 					label={ __( 'Start date' ) }
@@ -84,14 +82,7 @@ export function DateInputs( {
 	}
 
 	return (
-		<HStack
-			as="div"
-			spacing={ 8 }
-			justify={ justify }
-			className="daterange-inputs"
-			wrap={ false }
-			style={ containerStyle }
-		>
+		<HStack as="div" spacing={ 8 } justify={ justify } className="daterange-inputs" wrap={ false }>
 			<InputControl
 				type="date"
 				label={ __( 'Start date' ) }
