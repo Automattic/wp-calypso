@@ -63,10 +63,16 @@ $credits-meter-muted-foreground: color-mix(
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	gap: 8px;
 }
 
 .agents-manager-credits-meter__title {
 	font-weight: 600;
+}
+
+.agents-manager-credits-meter__show-credits.components-button {
+	margin-inline-start: auto;
+	color: color-mix( in srgb, var( --color-foreground ) 80%, var( --color-popover ) );
 }
 
 .agents-manager-credits-meter__manage.components-button {

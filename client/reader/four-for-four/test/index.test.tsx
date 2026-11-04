@@ -96,6 +96,12 @@ function mockStatus( status: string | null, followedBlogIds: number[] = [] ) {
 		.reply( 200, { status, blog_id: 1, followed_blog_ids: followedBlogIds } );
 }
 
+function mockBlockedFollow() {
+	return nock( API )
+		.post( '/rest/v1.1/read/following/mine/new' )
+		.reply( 200, { subscribed: false, info: 'blocked' } );
+}
+
 function mockFollow( blogId: number, delayMs = 0 ) {
 	return nock( API )
 		.post( '/rest/v1.1/read/following/mine/new' )
@@ -114,6 +120,13 @@ function mockFollow( blogId: number, delayMs = 0 ) {
 const initialState = {
 	currentUser: { id: 1, user: { ID: 1, email_verified: true } },
 };
+
+// No backoff between the progress mutation's own retries, and no retries for
+// queries, so failure paths resolve quickly.
+const createQueryClient = () =>
+	new QueryClient( {
+		defaultOptions: { queries: { retry: false }, mutations: { retryDelay: 0 } },
+	} );
 
 describe( 'FourForFour', () => {
 	beforeEach( () => {
@@ -241,13 +254,6 @@ describe( 'FourForFour', () => {
 	} );
 
 	describe( 'saving progress', () => {
-		// No backoff between the progress mutation's own retries, and no
-		// retries for queries, so failure paths resolve quickly.
-		const createQueryClient = () =>
-			new QueryClient( {
-				defaultOptions: { queries: { retry: false }, mutations: { retryDelay: 0 } },
-			} );
-
 		it( 'shows an error when a save fails and saves again on retry', async () => {
 			const user = userEvent.setup();
 			mockStatus( 'opted_in', [ 3, 4, 5 ] );
@@ -324,6 +330,56 @@ describe( 'FourForFour', () => {
 			await waitFor( () => expect( first.isDone() ).toBe( true ) );
 			await waitFor( () => expect( second.isDone() ).toBe( true ) );
 			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' );
+		} );
+	} );
+
+	describe( 'a follow the server refuses', () => {
+		it( 'names the site without counting it, and clears once a retry succeeds', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [ 3 ] );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockBlockedFollow();
+			mockFollow( 2 );
+			nock( API )
+				.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 2 ] } )
+				.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3, 2 ] } );
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			const subscribe = await screen.findByRole( 'button', { name: 'Subscribe' } );
+			await user.click( subscribe );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'We were unable to subscribe you to Second Site.'
+			);
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '1' );
+
+			await user.click( subscribe );
+
+			await waitFor( () => expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument() );
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '2' );
+		} );
+
+		it( 'uses a general message when more than one site is refused', async () => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in' );
+			mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+			mockBlockedFollow();
+			mockBlockedFollow();
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
+
+			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
+			await screen.findByRole( 'alert' );
+			await user.click( screen.getByTestId( 'list-item-3' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
+
+			await waitFor( () =>
+				expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+					'We were unable to subscribe you to some of these sites.'
+				)
+			);
+			expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '0' );
 		} );
 	} );
 } );

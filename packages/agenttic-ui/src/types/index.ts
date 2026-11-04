@@ -99,6 +99,8 @@ export interface Message {
 	sources?: AgentSource[]; // Agent message sources/citations rendered beneath the body
 	/** Starts a turn though no user message shows before it, such as a reply to a click in a message. */
 	startsTurn?: boolean;
+	/** Added by the host and not sent to the agent, so no turn answers it. */
+	isUiOnly?: boolean;
 }
 
 /**

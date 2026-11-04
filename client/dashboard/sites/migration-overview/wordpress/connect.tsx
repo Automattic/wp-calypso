@@ -3,7 +3,6 @@ import {
 	siteWordPressMigrationConfigureMutation,
 	siteWordPressMigrationRunMutation,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -14,7 +13,7 @@ import {
 import { useInstanceId } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, chevronDown, chevronUp, info, published } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp, published } from '@wordpress/icons';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
@@ -25,16 +24,6 @@ import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card
 import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
 
 const MANUAL_INSTALL = 'manual-wpcom-install';
-
-// Temporary, can remove at/after launch.
-const IS_TESTING_BUILD = [
-	'dashboard-stage',
-	'dashboard-horizon',
-	'dashboard-development',
-	'development',
-].includes( config( 'env_id' ) );
-const TESTING_HINT =
-	'Note: The plugin will default to the BlogVault screen. Use the <link>new screen</link>.';
 
 function useManualInstall( site: Site ) {
 	const {
@@ -194,21 +183,6 @@ export function Connect( {
 					<Text variant="muted">
 						{ __( '2. Connect to WordPress.com on the plugin’s settings page.' ) }
 					</Text>
-					{ IS_TESTING_BUILD && (
-						<HStack
-							spacing={ 1 }
-							alignment="flex-start"
-							justify="flex-start"
-							className="wordpress-migration__testing-hint"
-						>
-							<Icon icon={ info } size={ 18 } />
-							<Text variant="muted">
-								{ createInterpolateElement( TESTING_HINT, {
-									link: linkTo( manualInstall?.connect_url ),
-								} ) }
-							</Text>
-						</HStack>
-					) }
 					<Text variant="muted">{ __( '3. Come back here and start the migration.' ) }</Text>
 				</VStack>
 				<VStack spacing={ 4 }>
