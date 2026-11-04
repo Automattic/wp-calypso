@@ -46,7 +46,7 @@ const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /Let us guide you/ } );
+const skipButton = () => getByRole( 'button', { name: /Have our team email you/ } );
 
 const fillAddressField = async () => {
 	await userEvent.click( credentialsOption() );
@@ -152,7 +152,12 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await userEvent.click( skipButton() );
 
-		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
+		expect( wp.req.post ).toHaveBeenCalledWith(
+			{ path: '/help/migration-ticket/new', apiNamespace: 'wpcom/v2' },
+			{},
+			expect.objectContaining( { blog_url: 'site-url.wordpress.com', context: 'help_requested' } )
+		);
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
 	} );
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {

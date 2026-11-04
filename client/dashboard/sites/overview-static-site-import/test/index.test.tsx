@@ -386,7 +386,15 @@ describe( 'StaticSiteImportNotice preview link', () => {
 } );
 
 describe( 'StaticSiteImportNotice help with the move', () => {
-	it( 'offers a person to talk to when the moved site isn’t right', async () => {
+	it( 'hands the move to our migrations team when the moved site isn’t right', async () => {
+		const ticket = mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new', {
+				blog_url: 'busybears.wordpress.com',
+				from_url: 'busybearscleaning.com',
+				locale: 'en',
+				context: 'site_is_not_wordpress',
+			} )
+			.reply( 200, { success: true } );
 		const { recordTracksEvent } = render(
 			<StaticSiteImportNotice
 				site={ site }
@@ -396,12 +404,26 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		);
 
 		await userEvent.click(
-			screen.getByRole( 'button', { name: 'Something not right? Get help with your move' } )
+			screen.getByRole( 'button', { name: 'Something not right? Let our team fix it' } )
 		);
+		expect( await screen.findByText( /Our team has your move/ ) ).toBeVisible();
+		expect( ticket.isDone() ).toBe( true );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_static_site_import_ready_notice_click',
-			{ site_id: 42, source_platform: 'wix', action: 'get_help' }
+			{ site_id: 42, source_platform: 'wix', action: 'request_handoff' }
 		);
+	} );
+
+	it( 'shows the note wpcom wrote about what the move found', () => {
+		const finished = {
+			status: 'finished' as const,
+			session: session( 'finished', {
+				review_note: 'We found a store on busybearscleaning.com.',
+			} ) as StaticSiteImportSession,
+		};
+		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
+
+		expect( screen.getByText( 'We found a store on busybearscleaning.com.' ) ).toBeVisible();
 	} );
 
 	it( 'leaves a failed move to the failure card', () => {
