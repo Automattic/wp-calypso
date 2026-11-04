@@ -133,9 +133,8 @@ export const urlLocalizationMapping: UrlLocalizationMapping = {
 		// Translated terms are only published on wordpress.com.
 		if ( magnificentNonEnLocales.includes( localeSlug ) ) {
 			url.host = 'wordpress.com';
-			url.pathname = localeSlug + url.pathname;
 		}
-		return url;
+		return prefixLocalizedUrlPath( magnificentNonEnLocales )( url, localeSlug );
 	},
 	'wordpress.com/wp-admin/': setLocalizedUrlHost( 'wordpress.com', magnificentNonEnLocales ),
 	'wordpress.com/wp-login.php': setLocalizedUrlHost( 'wordpress.com', wpLoginLocales ),
