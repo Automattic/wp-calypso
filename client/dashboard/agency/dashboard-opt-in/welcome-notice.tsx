@@ -22,7 +22,9 @@ const SEEN_PREFERENCE = 'a4a-dashboard-welcome-notice-seen';
  */
 export function useWelcomeNoticeEligibility() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const isOptedIn = isOnNewAgencyDashboard( agency );
+	// Agencies moved here for good, like new sign-ups, can't switch back, so the notice's way back doesn't apply.
+	const isOptedIn =
+		isOnNewAgencyDashboard( agency ) && agency?.dashboard_opt_in?.value !== 'forced-opt-in';
 	const { data: seenAt, isFetched } = useQuery( {
 		...userPreferenceQuery( SEEN_PREFERENCE ),
 		enabled: isOptedIn,
