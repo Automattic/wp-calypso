@@ -62,7 +62,7 @@
 		"@automattic/shopping-cart": "workspace:^",
 		"@tanstack/query-core": "^5.83.0",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/api-fetch": "^7.57.0",
+		"@wordpress/api-fetch": "^7.56.0",
 		"@wordpress/data-controls": "^4.48.0",
 		"@wordpress/deprecated": "^4.57.0",
 		"@wordpress/element": "^8.0.0",

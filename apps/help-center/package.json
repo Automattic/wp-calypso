@@ -40,7 +40,7 @@
 		"@automattic/odie-client": "workspace:^",
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/api-fetch": "^7.57.0",
+		"@wordpress/api-fetch": "^7.56.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",

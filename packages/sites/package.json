@@ -34,7 +34,7 @@
 		"@automattic/data-stores": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@wordpress/compose": "^8.2.0",
-		"@wordpress/react-i18n": "^4.48.1"
+		"@wordpress/react-i18n": "^4.48.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
