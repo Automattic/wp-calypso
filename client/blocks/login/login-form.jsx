@@ -504,11 +504,7 @@ export class LoginForm extends Component {
 				<ScreenReaderText>
 					{ this.props.translate( 'WordPress.com email address or username' ) }
 				</ScreenReaderText>
-				<span aria-hidden="true">
-					{ this.props.isSocialAboveForm
-						? this.props.translate( 'Email' )
-						: this.props.translate( 'Email address or username' ) }
-				</span>
+				<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
 			</>
 		);
 	}

@@ -161,12 +161,12 @@ describe( 'User email signup step', () => {
 
 	it( 'passes userEmail from user_email query param to SignupFormSocialFirst', () => {
 		renderUserStep( '/onboarding/user?user_email=hello@wp.com' );
-		expect( screen.getByLabelText( 'Email' ) ).toHaveValue( 'hello@wp.com' );
+		expect( screen.getByLabelText( 'Email address' ) ).toHaveValue( 'hello@wp.com' );
 	} );
 
 	it( 'defaults userEmail to empty string when user_email is missing', () => {
 		renderUserStep( '/onboarding/user' );
-		expect( screen.getByLabelText( 'Email' ) ).toHaveValue( '' );
+		expect( screen.getByLabelText( 'Email address' ) ).toHaveValue( '' );
 	} );
 
 	describe( 'mobile compact layout', () => {
@@ -318,7 +318,7 @@ describe( 'User email signup step', () => {
 			expect(
 				screen
 					.getByRole( 'button', { name: /Continue with Google/i } )
-					.compareDocumentPosition( screen.getByLabelText( 'Email' ) ) &
+					.compareDocumentPosition( screen.getByLabelText( 'Email address' ) ) &
 					Node.DOCUMENT_POSITION_FOLLOWING
 			).toBeTruthy();
 		} );

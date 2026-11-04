@@ -301,7 +301,9 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	let emailLabelText;
 	if ( isStepContainerV2 ) {
-		emailLabelText = isBrandedLayout ? translate( 'Email' ) : translate( 'Enter your email' );
+		emailLabelText = isBrandedLayout
+			? translate( 'Email address' )
+			: translate( 'Enter your email' );
 	}
 	// Partner branding always wins: isMobileCompactLayout is already false whenever
 	// partnerConfig is set, so the ! partnerConfig check here is belt-and-suspenders
