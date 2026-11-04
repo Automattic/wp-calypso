@@ -1,5 +1,6 @@
-import config, { isCalypsoLive } from '@automattic/calypso-config';
+import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import { isEmpty } from '@automattic/js-utils';
 import PropTypes from 'prop-types';
 import validUrl from 'valid-url';
@@ -95,7 +96,11 @@ export const authQueryPropTypes = PropTypes.shape( {
 
 export function addCalypsoEnvQueryArg( url ) {
 	let calypsoEnv = config( 'env_id' );
-	if ( 'object' === typeof window && window.COMMIT_SHA && isCalypsoLive() ) {
+	if (
+		'object' === typeof window &&
+		window.COMMIT_SHA &&
+		isCalypsoLiveHostname( window.location.hostname )
+	) {
 		calypsoEnv = `live-${ COMMIT_SHA }`;
 	}
 	return addQueryArgs( { calypso_env: calypsoEnv }, url );
