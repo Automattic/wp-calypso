@@ -30,12 +30,31 @@
 
 	th,
 	td {
-		padding: 10px 8px 10px 0;
+		padding: 10px 12px 10px 0;
 		border: 0;
 		background: transparent;
 		color: inherit;
 		font-weight: 400;
 		text-align: start;
+		overflow-wrap: normal;
+		word-break: normal;
+	}
+
+	// A long translated header hyphenates in its own language rather than running past the card.
+	thead th {
+		font-weight: 700;
+		hyphens: auto;
+	}
+
+	// More room before the reset column, which also moves this one left.
+	th:nth-child( 2 ),
+	td:nth-child( 2 ) {
+		padding-inline-end: 24px;
+	}
+
+	th:last-child,
+	td:last-child {
+		padding-inline-end: 0;
 	}
 
 	thead tr,

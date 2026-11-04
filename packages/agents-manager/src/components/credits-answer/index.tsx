@@ -62,8 +62,18 @@ export function CreditsAnswer( { status, resetDate, actions, purchaseHint, creat
 					<thead>
 						<tr>
 							<th scope="col">{ __( 'Source', __i18n_text_domain__ ) }</th>
-							<th scope="col">{ __( 'Left', __i18n_text_domain__ ) }</th>
-							<th scope="col">{ __( 'Resets', __i18n_text_domain__ ) }</th>
+							<th scope="col">
+								{
+									/* translators: table column header, a single short word: how many credits are left */
+									__( 'Remaining', __i18n_text_domain__ )
+								}
+							</th>
+							<th scope="col">
+								{
+									/* translators: table column header, a single short word: when the credits reset */
+									__( 'Resets', __i18n_text_domain__ )
+								}
+							</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -84,7 +94,7 @@ export function CreditsAnswer( { status, resetDate, actions, purchaseHint, creat
 							<tr>
 								<th scope="row">{ __( 'Top-ups', __i18n_text_domain__ ) }</th>
 								<td>{ formatCreditsShort( topUps ) }</td>
-								<td>{ __( 'Don’t expire', __i18n_text_domain__ ) }</td>
+								<td>{ __( 'Never expires', __i18n_text_domain__ ) }</td>
 							</tr>
 						) }
 						{ status.remaining !== undefined &&
@@ -108,10 +118,10 @@ export function CreditsAnswer( { status, resetDate, actions, purchaseHint, creat
 						<p>
 							{ canUpgrade
 								? __(
-										'Upgrading your plan raises your monthly credits. Top-ups don’t expire.',
+										'Upgrade your hosting plan or directly buy more credits',
 										__i18n_text_domain__
 									)
-								: __( 'Add a credits pack for more. Top-ups don’t expire.', __i18n_text_domain__ ) }
+								: __( 'Add a credits pack for more. Top-ups never expire.', __i18n_text_domain__ ) }
 						</p>
 					) }
 					{ purchaseHint && <p>{ purchaseHint }</p> }

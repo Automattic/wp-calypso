@@ -45,9 +45,9 @@ describe( 'CreditsAnswer', () => {
 
 		const rows = screen.getAllByRole( 'row' ).map( ( row ) => row.textContent );
 		expect( rows ).toEqual( [
-			'SourceLeftResets',
+			'SourceRemainingResets',
 			'Monthly plan12kOct 17 (UTC)',
-			'Top-ups60kDon’t expire',
+			'Top-ups60kNever expires',
 			'Total72k',
 		] );
 	} );
@@ -76,7 +76,7 @@ describe( 'CreditsAnswer', () => {
 		render( <CreditsAnswer { ...answer } status={ unknownTopUps } /> );
 
 		expect( screen.getAllByRole( 'row' ).map( ( row ) => row.textContent ) ).toEqual( [
-			'SourceLeftResets',
+			'SourceRemainingResets',
 			'Monthly plan10.8kOct 17 (UTC)',
 			'Total77.8k',
 		] );
@@ -87,7 +87,7 @@ describe( 'CreditsAnswer', () => {
 
 		expect( screen.getByText( 'Need more?' ) ).toBeVisible();
 		expect(
-			screen.getByText( 'Upgrading your plan raises your monthly credits. Top-ups don’t expire.' )
+			screen.getByText( 'Upgrade your hosting plan or directly buy more credits' )
 		).toBeVisible();
 		const link = screen.getByRole( 'link', { name: 'Upgrade' } );
 		expect( link ).toHaveAttribute( 'href', upgrade.href );
@@ -104,7 +104,7 @@ describe( 'CreditsAnswer', () => {
 		render( <CreditsAnswer { ...answer } actions={ [ addCredits ] } /> );
 
 		expect(
-			screen.getByText( 'Add a credits pack for more. Top-ups don’t expire.' )
+			screen.getByText( 'Add a credits pack for more. Top-ups never expire.' )
 		).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Add credits' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'Upgrade' } ) ).not.toBeInTheDocument();
@@ -114,7 +114,7 @@ describe( 'CreditsAnswer', () => {
 		render( <CreditsAnswer { ...answer } purchaseHint="Ask a site admin to add more." /> );
 
 		expect( screen.getByText( 'Ask a site admin to add more.' ) ).toBeVisible();
-		expect( screen.queryByText( /Top-ups don’t expire/ ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( /Top-ups never expire/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
