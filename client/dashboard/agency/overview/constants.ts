@@ -8,12 +8,18 @@ export const PROGRAM_INCENTIVES_URL = 'https://automattic.com/for-agencies/progr
 
 // Inlined from client/a8c-for-agencies/components/a4a-pressable-offer/constants
 // so the dashboard has no dependency on the classic A4A app.
+
+// The moment the holiday offer ends, 11:59pm Pacific on November 30, 2026: the
+// introductory offer card and banner both stop at this instant.
+export const PRESSABLE_HOLIDAY_2026_OFFER_ENDS_AT = '2026-12-01T08:00:00Z';
+export const PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL =
+	'https://pressable.com/legal/2026-holiday-promotion-terms-and-conditions/';
+// The Q3 2026 offer has ended. Its dates stay because the expansion offer, which is
+// not part of the holiday offer, keys its eligibility on the Q3 start date.
 export const PRESSABLE_Q3_2026_OFFER_START_DATE = '2026-08-11';
-/** The day after the offer ends: the promo cards and the license fetch behind
- * the expansion offer both stop at this date. */
+// The day after the Q3 offer ended: the expansion offer card and the license fetch
+// behind it both stop at this date.
 export const PRESSABLE_Q3_2026_OFFER_ENDS_AT = '2026-10-01';
-export const PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL =
-	'https://pressable.com/legal/late-summer-promotion-terms-and-conditions/';
 export const PRESSABLE_EXPANSION_OFFER_TERMS_URL =
 	'https://pressable.com/legal/summer-2026-expansion-incentive-terms-and-conditions/';
 

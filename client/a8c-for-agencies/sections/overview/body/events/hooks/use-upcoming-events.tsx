@@ -4,7 +4,9 @@ import moment from 'moment';
 import { useMemo } from 'react';
 import {
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
-	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+	PRESSABLE_HOLIDAY_2026_OFFER_END_DATE,
+	PRESSABLE_HOLIDAY_2026_OFFER_START_DATE,
+	PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
 	PRESSABLE_Q3_2026_OFFER_END_DATE,
 	PRESSABLE_Q3_2026_OFFER_START_DATE,
 } from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/constants';
@@ -152,13 +154,13 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 			...( isEligibleForIntroductoryOffer
 				? [
 						{
-							id: 'a4a-pressable-promo-offer-2026-q3',
+							id: 'a4a-pressable-promo-offer-2026-holiday',
 							date: {
-								from: moment( PRESSABLE_Q3_2026_OFFER_START_DATE ),
-								to: moment( PRESSABLE_Q3_2026_OFFER_END_DATE ),
+								from: moment( PRESSABLE_HOLIDAY_2026_OFFER_START_DATE ),
+								to: moment( PRESSABLE_HOLIDAY_2026_OFFER_END_DATE ),
 							},
 							title: translate(
-								'Limited time offer: Get up to 6 months of free Pressable hosting on new plans!'
+								'Holiday offer: Get up to 6 months of free Pressable hosting on new plans!'
 							),
 							subtitle: translate( 'Automattic for Agencies & Pressable' ),
 							descriptions: [
@@ -172,15 +174,15 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 									label: translate( 'View promo details' ),
 									url: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 									trackEventName:
-										'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_view_promo_details_click',
+										'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_view_promo_details_click',
 								},
 								{
 									variant: 'secondary',
 									label: translate( 'See full terms' ),
-									url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+									url: PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
 									isExternal: true,
 									trackEventName:
-										'calypso_a4a_overview_events_a4a_pressable_promo_offer_q3_2026_see_full_terms_click',
+										'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 								},
 							],
 							logoUrl: PressableLogo,
