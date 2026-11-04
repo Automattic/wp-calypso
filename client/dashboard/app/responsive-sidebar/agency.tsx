@@ -2,8 +2,8 @@ import { agencyQuery, activeAgencyQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { home, globe, people, tag, trendingUp, currencyDollar } from '@wordpress/icons';
-import CrossoverModalHost from '../../agency/crossover';
 import { crossoverLinkProps } from '../../agency/crossover/store';
+import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
 import { isAgencyApproved } from '../../agency/marketplace/is-agency-approved';
 import { SidebarExpandableMenuItem, SidebarMenuItem } from '../../components/sidebar';
 import { a4aLink } from '../../utils/link';
@@ -77,7 +77,9 @@ export default function AgencySidebar() {
 		canAccessMigrations ||
 		canAccessAmplify;
 	const canAccessGrow = canAccessLibrary || canAccessPartnerDirectory || canAccessTiers;
-	const canAccessAgency = canAccessTeam || canAccessMcp || canAccessBilling;
+	const canAccessDashboardOptIn = canSwitchAgencyDashboard( activeAgency );
+	const canAccessAgency =
+		canAccessTeam || canAccessMcp || canAccessBilling || canAccessDashboardOptIn;
 
 	return (
 		<>
@@ -173,9 +175,11 @@ export default function AgencySidebar() {
 							{ __( 'Billing' ) }
 						</SidebarMenuItem>
 					) }
+					{ canAccessDashboardOptIn && (
+						<SidebarMenuItem to="/agency/dashboard">{ __( 'Dashboard' ) }</SidebarMenuItem>
+					) }
 				</SidebarExpandableMenuItem>
 			) }
-			<CrossoverModalHost />
 		</>
 	);
 }

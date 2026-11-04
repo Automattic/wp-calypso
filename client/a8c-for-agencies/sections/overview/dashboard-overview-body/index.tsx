@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 import { CONTACT_URL_HASH_FRAGMENT } from 'calypso/a8c-for-agencies/components/a4a-contact-support-widget';
 import useIsEligibleForExpansionOffer from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-is-eligible-for-expansion-offer';
 import usePressableOfferEligibility from 'calypso/a8c-for-agencies/components/a4a-pressable-offer/hooks/use-pressable-offer-eligibility';
+import { getDashboardOptInLink } from 'calypso/a8c-for-agencies/components/dashboard-opt-in-modal';
 import { ONBOARDING_TOUR_HASH } from 'calypso/a8c-for-agencies/components/hoc/with-onboarding-tour/hooks/use-onboarding-tour';
 import {
 	A4A_AGENCY_TIER_LINK,
@@ -16,6 +17,7 @@ import {
 	A4A_WOOPAYMENTS_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import useLeadMatchingProfile from 'calypso/a8c-for-agencies/data/partner-directory/use-lead-matching-profile';
+import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
@@ -59,6 +61,7 @@ function DashboardOverviewBodyContent( {
 	const contact = leadMatching?.lead_matching_profile?.contact;
 
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall();
+	const { canOptIn } = useDashboardOptIn();
 
 	const handleRecordTracksEvent = useCallback(
 		( eventName: string, properties?: Record< string, unknown > ) => {
@@ -113,6 +116,15 @@ function DashboardOverviewBodyContent( {
 				aiMcp: A4A_AI_MCP_LINK,
 				pressableHosting: A4A_MARKETPLACE_HOSTING_PRESSABLE_LINK,
 				helpful: [
+					...( canOptIn
+						? [
+								{
+									id: 'switch-to-new-dashboard',
+									label: __( 'Switch to the new dashboard' ),
+									href: getDashboardOptInLink( 'helpful-links' ),
+								},
+							]
+						: [] ),
 					{
 						id: 'contact-support',
 						label: __( 'Contact sales & support' ),

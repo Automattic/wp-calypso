@@ -626,6 +626,58 @@ describe( 'SiteRedesign', () => {
 		expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
 	} );
 
+	describe( 'while other designs are still being made', () => {
+		const stillMaking = ( canApply: boolean ) =>
+			session( {
+				status: 'generating',
+				candidates: [
+					candidate( 1 ),
+					{ ...candidate( 2 ), status: 'running', routes: null },
+					{ ...candidate( 3 ), status: 'queued', routes: null },
+				],
+				eligibility: {
+					can_preview: true,
+					can_apply: canApply,
+					reason: canApply ? null : 'upgrade_required',
+					required_plan: 'personal',
+				},
+			} );
+
+		it( 'lets a site that can apply choose the one that is ready', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			jest.mocked( applyRedesign ).mockReturnValue( new Promise( () => {} ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
+			expect( chooseButton() ).toBeEnabled();
+			expect( screen.getByText( 'Ready to choose' ) ).toBeVisible();
+			await userEvent.click( chooseButton() );
+
+			expect( applyRedesign ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 1 ).id );
+		} );
+
+		it( 'keeps the unfinished ones from being chosen', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( true ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1' );
+			[ 2, 3 ].forEach( ( n ) =>
+				expect(
+					screen.getByRole( 'button', { name: new RegExp( `^Design ${ n } of 3` ) } )
+				).toBeDisabled()
+			);
+		} );
+
+		it( 'waits for the whole batch when the site cannot apply yet', async () => {
+			jest.mocked( fetchRedesign ).mockResolvedValue( stillMaking( false ) );
+			renderPage();
+
+			await selectDesign( 'Design 1 of 3', 'Preview of design 1', { withBar: false } );
+			expect( screen.queryByRole( 'button', { name: 'Choose this one' } ) ).toBeNull();
+			expect( applyRedesign ).not.toHaveBeenCalled();
+		} );
+	} );
+
 	it( 'keeps the bar away until every design is made and its preview is on screen', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue( session() );
 		const resolvers: Array< () => void > = [];
@@ -1122,10 +1174,14 @@ describe( 'SiteRedesign', () => {
 		const { container } = renderPage( true );
 
 		const frame = await screen.findByTitle( 'Preview of your new design' );
-		expect( frame ).toHaveAttribute(
-			'src',
-			'https://example.wordpress.com/?wp_theme_preview=pub%2Fnew'
-		);
+		// The stored preview of the chosen design, not the site: a site just moved to Atomic has no
+		// session for a frame, so framing it showed the old theme.
+		expect( fetchPreview ).toHaveBeenCalledWith( 1, REDESIGN_ID, candidate( 2 ).id );
+		expect( frame ).toHaveAttribute( 'srcdoc', '<p>preview</p>' );
+		expect( frame ).not.toHaveAttribute( 'src' );
+		// A click on a link inside the stored page would navigate the frame itself.
+		expect( frame ).not.toHaveClass( 'is-live' );
+		expect( frame ).toHaveAttribute( 'sandbox', 'allow-scripts' );
 		expect( screen.getByRole( 'heading', { name: 'Your new design is ready' } ) ).toBeVisible();
 		expect(
 			screen.getByText(
@@ -1170,7 +1226,7 @@ describe( 'SiteRedesign', () => {
 		expect( screen.getByTitle( 'Preview of your new design' ) ).toBe( frame );
 	} );
 
-	it( 'says so when the installed theme has no preview to show', async () => {
+	it( 'shows the stored preview even when the API gives no live link, and offers no link', async () => {
 		jest.mocked( fetchRedesign ).mockResolvedValue(
 			installed( {
 				applied: {
@@ -1182,14 +1238,42 @@ describe( 'SiteRedesign', () => {
 		);
 		renderPage();
 
+		expect( await screen.findByTitle( 'Preview of your new design' ) ).toHaveAttribute(
+			'srcdoc',
+			'<p>preview</p>'
+		);
+		expect( screen.queryByRole( 'link', { name: 'Open preview in a new tab' } ) ).toBeNull();
+		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();
+	} );
+
+	it( 'says so when the chosen design’s preview cannot be loaded, and still offers the live tab', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( installed() );
+		jest
+			.mocked( fetchPreview )
+			.mockRejectedValue( new Error( 'This design is no longer available.' ) );
+		renderPage(
+			false,
+			REDESIGN_ID,
+			new QueryClient( { defaultOptions: { queries: { retry: false } } } )
+		);
+
+		expect( await screen.findByText( 'This design is no longer available.' ) ).toBeVisible();
+		expect( screen.queryByTitle( 'Preview of your new design' ) ).toBeNull();
+		expect( screen.getByRole( 'link', { name: 'Open preview in a new tab' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();
+	} );
+
+	it( 'does not frame the site when no design is recorded as chosen', async () => {
+		jest.mocked( fetchRedesign ).mockResolvedValue( installed( { selected: null } ) );
+		renderPage();
+
 		expect(
 			await screen.findByText(
 				'The preview isn’t available right now. You can still switch to your new design.'
 			)
 		).toBeVisible();
+		expect( fetchPreview ).not.toHaveBeenCalled();
 		expect( screen.queryByTitle( 'Preview of your new design' ) ).toBeNull();
-		expect( screen.queryByRole( 'link', { name: 'Open preview in a new tab' } ) ).toBeNull();
-		expect( screen.getByRole( 'button', { name: 'Use this design' } ) ).toBeEnabled();
 	} );
 
 	it( 'takes the site to its theme list once the new design is live', async () => {

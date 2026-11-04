@@ -1,5 +1,5 @@
 import * as renderer from '@automattic/ai-ui-renderer';
-import { BASIC_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
+import { BASIC_CATALOG_ID, CHARTS_CATALOG_ID } from '@automattic/ai-ui-renderer/capabilities';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ButtonPicker, ColorPicker, FontPicker } from '../../components/style-pickers';
 import { openHelpCenterChat } from '../../utils/open-help-center-chat';
@@ -38,11 +38,12 @@ afterAll( () => {
 	jest.resetModules();
 } );
 
-it( 'builds the Basic catalog, Agents Manager’s and each provider’s', () => {
+it( 'builds the Basic catalog, the charts catalog, Agents Manager’s and each provider’s', () => {
 	const catalogs = createInteractiveUiCatalogs( renderer, [ createCatalog( WOO_CATALOG_ID ) ] );
 
 	expect( catalogs.map( ( { id } ) => id ) ).toEqual( [
 		BASIC_CATALOG_ID,
+		CHARTS_CATALOG_ID,
 		AGENTS_MANAGER_CATALOG_ID,
 		WOO_CATALOG_ID,
 	] );
@@ -198,6 +199,7 @@ it( 'skips a catalog that fails to build, and keeps the others', () => {
 
 	expect( catalogs.map( ( { id } ) => id ) ).toEqual( [
 		BASIC_CATALOG_ID,
+		CHARTS_CATALOG_ID,
 		AGENTS_MANAGER_CATALOG_ID,
 		WOO_CATALOG_ID,
 	] );
@@ -216,12 +218,13 @@ it( 'keeps only valid provider catalogs, the first with each ID', () => {
 		createCatalog( WOO_CATALOG_ID ),
 		createCatalog( AGENTS_MANAGER_CATALOG_ID ),
 		createCatalog( BASIC_CATALOG_ID ),
+		createCatalog( CHARTS_CATALOG_ID ),
 		createCatalog( 'urn:broken:v1', {} ),
 		{} as InteractiveUiCatalogDefinition,
 	] );
 
 	expect( catalogs ).toEqual( [ first ] );
-	expect( consoleError ).toHaveBeenCalledTimes( 5 );
+	expect( consoleError ).toHaveBeenCalledTimes( 6 );
 	expect( consoleError ).toHaveBeenCalledWith(
 		'[AgentsManager] Skipped an interactive UI catalog:',
 		new Error( 'The interactive UI component WooAiProductCard has no implementation.' )
@@ -258,8 +261,14 @@ it( 'describes the catalogs the chat renders as A2UI renderer capabilities, list
 
 	expect( getInteractiveUiCapabilities( [ wooCatalog ] ) ).toEqual( {
 		'v1.0': {
-			supportedCatalogIds: [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID, WOO_CATALOG_ID ],
+			supportedCatalogIds: [
+				BASIC_CATALOG_ID,
+				CHARTS_CATALOG_ID,
+				AGENTS_MANAGER_CATALOG_ID,
+				WOO_CATALOG_ID,
+			],
 			inlineCatalogs: [
+				expect.objectContaining( { catalogId: CHARTS_CATALOG_ID } ),
 				{
 					$id: WOO_CATALOG_ID,
 					catalogId: WOO_CATALOG_ID,

@@ -571,12 +571,57 @@ const assertDefaultContext = ( { url, entry } ) => {
 				'https://github.com/Automattic/wp-calypso/issues/'
 			);
 		} );
+	} );
+
+	describe( 'on calypso.live', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'horizon' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
+		} );
 
 		it( 'sets the branch name', async () => {
 			const { request } = await customApp.run( {
-				request: { query: { branch: 'my-branch' } },
+				request: { hostname: 'hash-abcd1234.calypso.live', query: { branch: 'my-branch' } },
 			} );
 			expect( request.context.branchName ).toEqual( 'my-branch' );
+		} );
+
+		it( 'enables the dev helpers', async () => {
+			const { request } = await customApp.run( {
+				request: { hostname: 'hash-abcd1234.calypso.live' },
+			} );
+			expect( request.context ).toMatchObject( {
+				accountSettingsHelper: true,
+				authHelper: true,
+				preferencesHelper: true,
+				storeSandboxHelper: true,
+			} );
+		} );
+
+		it( 'does not enable the dev helpers outside calypso.live', async () => {
+			const { request } = await customApp.run();
+			expect( request.context.accountSettingsHelper ).toBeFalsy();
+			expect( request.context.authHelper ).toBeFalsy();
+			expect( request.context.preferencesHelper ).toBeFalsy();
+			expect( request.context.storeSandboxHelper ).toBeFalsy();
+		} );
+
+		it( 'does not set the branch name outside calypso.live', async () => {
+			const { request } = await customApp.run( {
+				request: { query: { branch: 'my-branch' } },
+			} );
+			expect( request.context.branchName ).toBeUndefined();
 		} );
 	} );
 
@@ -753,6 +798,65 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the commit checksum', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.commitChecksum ).toEqual( 'abcd0123' );
+		} );
+	} );
+
+	describe( 'with environment jetpack-cloud-production', () => {
+		let customApp;
+
+		beforeAll( () => {
+			customApp = buildApp( 'jetpack-cloud-production' );
+		} );
+
+		beforeEach( () => {
+			customApp.withServerRender( '' );
+			customApp.withMockFilesystem();
+			customApp.withEvergreenBrowser();
+		} );
+
+		afterEach( () => {
+			customApp.reset();
+		} );
+
+		describe( 'Route /manage/signup', () => {
+			it( 'redirects logged-out visitors to A4A signup before login', async () => {
+				const { response } = await customApp.run( { request: { url: '/manage/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects logged-in visitors too', async () => {
+				const { response } = await customApp.run( {
+					request: { url: '/manage/signup', cookies: { wordpress_logged_in: true } },
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'redirects the legacy /agency/signup path', async () => {
+				const { response } = await customApp.run( { request: { url: '/agency/signup' } } );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=jetpack-manage'
+				);
+			} );
+
+			it( 'forwards acquisition params and drops everything else', async () => {
+				const { response } = await customApp.run( {
+					request: {
+						url: '/manage/signup',
+						query: { ref: 'agencies-lp', utm_source: 'newsletter', foo: 'bar' },
+					},
+				} );
+				expect( response.redirect ).toHaveBeenCalledWith(
+					302,
+					'https://agencies.automattic.com/signup?ref=agencies-lp&utm_source=newsletter'
+				);
+			} );
 		} );
 	} );
 };

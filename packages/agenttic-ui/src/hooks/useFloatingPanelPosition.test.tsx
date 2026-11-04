@@ -178,78 +178,67 @@ describe( 'useFloatingPanelPosition', () => {
 		expect( onFreeDragEnd ).toHaveBeenCalledWith( { x: 240, y: -120 } );
 	} );
 
-	it( 'does not start a move-drag from a resize-handle pointer-down', async () => {
-		harness = renderHook( {} );
-		await harness.render();
-		const result = harness.captured.current!;
-		const startSpy = vi.spyOn( result.dragControls, 'start' );
+	describe( 'handlePointerDown', () => {
+		// Renders the hook, and returns the panel the handler is bound to, a pointer-down that
+		// bubbles to it, and a spy on starting a move-drag.
+		async function setUpPointerDown() {
+			harness = renderHook( {} );
+			await harness.render();
+			const result = harness.captured.current!;
+			const startSpy = vi.spyOn( result.dragControls, 'start' );
+			const panel = document.createElement( 'div' );
 
-		const handle = document.createElement( 'div' );
-		handle.setAttribute( 'data-slot', 'resize-handle' );
-		result.handlePointerDown( {
-			target: handle,
-			nativeEvent: {},
-			preventDefault: () => {},
-		} as unknown as React.PointerEvent< HTMLDivElement > );
+			const pointerDown = ( target: Element ) =>
+				result.handlePointerDown( {
+					target,
+					currentTarget: panel,
+					nativeEvent: {},
+					preventDefault: () => {},
+				} as unknown as React.PointerEvent< HTMLDivElement > );
 
-		expect( startSpy ).not.toHaveBeenCalled();
-	} );
+			return { panel, pointerDown, startSpy };
+		}
 
-	it( 'does not start a move-drag from inside a chat dialog', async () => {
-		harness = renderHook( {} );
-		await harness.render();
-		const result = harness.captured.current!;
-		const startSpy = vi.spyOn( result.dragControls, 'start' );
+		it( 'starts a move-drag from the panel', async () => {
+			const { panel, pointerDown, startSpy } = await setUpPointerDown();
+			const content = panel.appendChild( document.createElement( 'div' ) );
 
-		const dialog = document.createElement( 'div' );
-		dialog.setAttribute( 'data-slot', 'chat-dialog' );
-		const textarea = document.createElement( 'textarea' );
-		dialog.appendChild( textarea );
-		document.body.appendChild( dialog );
-		result.handlePointerDown( {
-			target: textarea,
-			nativeEvent: {},
-			preventDefault: () => {},
-		} as unknown as React.PointerEvent< HTMLDivElement > );
+			pointerDown( content );
 
-		expect( startSpy ).not.toHaveBeenCalled();
-		dialog.remove();
-	} );
+			expect( startSpy ).toHaveBeenCalledTimes( 1 );
+		} );
 
-	it( 'does not start a move-drag when the target is from an iframe', async () => {
-		harness = renderHook( {} );
-		await harness.render();
-		const result = harness.captured.current!;
-		const startSpy = vi.spyOn( result.dragControls, 'start' );
+		it( 'does not start a move-drag from a resize handle', async () => {
+			const { panel, pointerDown, startSpy } = await setUpPointerDown();
+			const handle = panel.appendChild( document.createElement( 'div' ) );
+			handle.setAttribute( 'data-slot', 'resize-handle' );
 
-		// A different ownerDocument signals an iframe-hosted element.
-		const iframeTarget = {
-			ownerDocument: {},
-			closest: () => null,
-		};
-		result.handlePointerDown( {
-			target: iframeTarget,
-			nativeEvent: {},
-			preventDefault: () => {},
-		} as unknown as React.PointerEvent< HTMLDivElement > );
+			pointerDown( handle );
 
-		expect( startSpy ).not.toHaveBeenCalled();
-	} );
+			expect( startSpy ).not.toHaveBeenCalled();
+		} );
 
-	it( 'starts a move-drag for a plain body pointer-down', async () => {
-		harness = renderHook( {} );
-		await harness.render();
-		const result = harness.captured.current!;
-		const startSpy = vi.spyOn( result.dragControls, 'start' );
+		it( 'does not start a move-drag from inside a chat dialog', async () => {
+			const { panel, pointerDown, startSpy } = await setUpPointerDown();
+			const dialog = panel.appendChild( document.createElement( 'div' ) );
+			dialog.setAttribute( 'data-slot', 'chat-dialog' );
+			const textarea = dialog.appendChild( document.createElement( 'textarea' ) );
 
-		const body = document.createElement( 'div' );
-		result.handlePointerDown( {
-			target: body,
-			nativeEvent: {},
-			preventDefault: () => {},
-		} as unknown as React.PointerEvent< HTMLDivElement > );
+			pointerDown( textarea );
 
-		expect( startSpy ).toHaveBeenCalledTimes( 1 );
+			expect( startSpy ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [
+			[ 'a portal on the page', () => document.createElement( 'div' ) ],
+			[ 'an iframe', () => document.implementation.createHTMLDocument().createElement( 'div' ) ],
+		] )( 'does not start a move-drag from outside the panel, such as %s', async ( _, create ) => {
+			const { pointerDown, startSpy } = await setUpPointerDown();
+
+			pointerDown( create() );
+
+			expect( startSpy ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	describe( 'repositionForResize', () => {
