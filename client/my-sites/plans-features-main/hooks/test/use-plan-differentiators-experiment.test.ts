@@ -4,7 +4,9 @@
 import { renderHook } from '@testing-library/react';
 import { useExperiment } from 'calypso/lib/explat';
 import { useSelector } from 'calypso/state';
-import usePlanDifferentiatorsExperiment from '../use-plan-differentiators-experiment';
+import usePlanDifferentiatorsExperiment, {
+	PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE,
+} from '../use-plan-differentiators-experiment';
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
@@ -33,6 +35,16 @@ const mockUseSelector = useSelector as jest.Mock;
 
 const SITE_ID = 123;
 
+const LAUNCH_TIME = Date.parse( PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE );
+const SECOND = 1000;
+const HOUR = 60 * 60 * SECOND;
+
+// Formats a time as the API's created_at, e.g. 2026-11-04T01:00:00+02:00 for an offset of 2.
+function toCreatedAt( time: number, offsetHours = 0 ) {
+	const offset = `+${ String( offsetHours ).padStart( 2, '0' ) }:00`;
+	return new Date( time + offsetHours * HOUR ).toISOString().replace( /\.\d{3}Z$/, offset );
+}
+
 // Runs the hook's real selectors against the given sites.
 function mockSitesState( items: Record< number, object > ) {
 	mockUseSelector.mockImplementation( ( selector ) => selector( { sites: { items } } ) );
@@ -40,7 +52,7 @@ function mockSitesState( items: Record< number, object > ) {
 
 function mockSite( {
 	siteCreationFlow = 'onboarding',
-	createdAt = '2026-11-05T00:00:01+00:00',
+	createdAt = toCreatedAt( LAUNCH_TIME + SECOND ),
 }: {
 	siteCreationFlow?: string | null;
 	createdAt?: string;
@@ -125,9 +137,9 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 		} );
 
 		test.each( [
-			[ 'before launch', '2026-11-04T23:59:59+00:00' ],
-			[ 'exactly at launch', '2026-11-05T00:00:00+00:00' ],
-			[ 'before launch in another timezone', '2026-11-05T01:00:00+02:00' ],
+			[ 'before launch', toCreatedAt( LAUNCH_TIME - SECOND ) ],
+			[ 'exactly at launch', toCreatedAt( LAUNCH_TIME ) ],
+			[ 'before launch in another timezone', toCreatedAt( LAUNCH_TIME - HOUR, 2 ) ],
 		] )(
 			'is not eligible for logged-in plans pages when the site was created %s',
 			( _, createdAt ) => {

@@ -93,4 +93,5 @@ function usePlanDifferentiatorsExperiment( {
 }
 
 export default usePlanDifferentiatorsExperiment;
+export { PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE };
 export type { PlanDifferentiatorsResult, PlanDifferentiatorsExperimentVariant };
