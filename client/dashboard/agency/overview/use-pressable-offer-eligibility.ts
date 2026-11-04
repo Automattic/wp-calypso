@@ -5,7 +5,7 @@ import {
 } from '@automattic/api-core';
 import { jetpackAgencyLicensesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { PRESSABLE_Q3_2026_OFFER_ENDS_AT, PRESSABLE_Q3_2026_OFFER_START_DATE } from './constants';
+import { PRESSABLE_OFFER_ENDS_AT, PRESSABLE_OFFER_START_DATE } from './constants';
 import type { Agency, JetpackLicense } from '@automattic/api-core';
 
 // The offer only covers moves up within the Signature and Premium tiers, the
@@ -38,7 +38,7 @@ export function hasBenefitedFromIntroductoryOffer( licenses: JetpackLicense[] ):
 		license.issued_at < earliest.issued_at ? license : earliest
 	);
 
-	return earliestLicense.issued_at.slice( 0, 10 ) >= PRESSABLE_Q3_2026_OFFER_START_DATE;
+	return earliestLicense.issued_at.slice( 0, 10 ) >= PRESSABLE_OFFER_START_DATE;
 }
 
 // An agency on a legacy plan has no upgrade path the offer applies to, so the
@@ -61,8 +61,7 @@ export const pressableOfferLicensesQuery = ( agencyId: number ) => ( {
 	staleTime: 5 * 60 * 1000,
 } );
 
-export const isPressableOfferActive = () =>
-	new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
+export const isPressableOfferActive = () => new Date() < new Date( PRESSABLE_OFFER_ENDS_AT );
 
 // No expansion offer runs alongside the holiday introductory offer.
 const EXPANSION_OFFER_IS_RUNNING = false;

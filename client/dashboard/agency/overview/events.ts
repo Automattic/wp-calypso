@@ -8,7 +8,7 @@ import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
 	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	PRESSABLE_OFFER_ENDS_AT,
 } from './constants';
 import type { CSSProperties, ReactNode } from 'react';
 
@@ -139,7 +139,7 @@ export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): Fea
 				'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 		},
 	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	endsAt: PRESSABLE_OFFER_ENDS_AT,
 } );
 
 export const getPressableExpansionOfferEvent = (
@@ -177,7 +177,7 @@ export const getPressableExpansionOfferEvent = (
 				'calypso_a4a_overview_events_a4a_pressable_expansion_offer_see_pressable_plans_click',
 		},
 	],
-	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	endsAt: PRESSABLE_OFFER_ENDS_AT,
 } );
 
 export const getLeadMatchingContactAnnouncement = ( leadMatchingHref: string ): FeaturedEvent => ( {

@@ -1,9 +1,6 @@
 import { useTranslate } from 'i18n-calypso';
 import PressableOfferBanner from './banner';
-import {
-	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
-	PRESSABLE_Q3_2026_OFFER_DEADLINE,
-} from './constants';
+import { PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL, PRESSABLE_OFFER_DEADLINE } from './constants';
 import usePressableOfferEligibility from './hooks/use-pressable-offer-eligibility';
 
 const PressableIntroductoryOffer = () => {
@@ -11,8 +8,7 @@ const PressableIntroductoryOffer = () => {
 
 	const { isEligibleForIntroductoryOffer } = usePressableOfferEligibility();
 
-	const shouldShowOffer =
-		isEligibleForIntroductoryOffer && new Date() <= PRESSABLE_Q3_2026_OFFER_DEADLINE;
+	const shouldShowOffer = isEligibleForIntroductoryOffer && new Date() <= PRESSABLE_OFFER_DEADLINE;
 
 	if ( ! shouldShowOffer ) {
 		return null;
