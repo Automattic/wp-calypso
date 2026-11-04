@@ -1,6 +1,5 @@
 import { siteBySlugQuery, sitePerformancePagesQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
-import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -48,11 +47,9 @@ export default function SitePerformanceFrontend( { siteSlug }: { siteSlug: strin
 		return pagesData?.[ 0 ];
 	}, [ page_id, pagesData ] );
 
-	const performanceUrl =
-		[ 'development', 'dashboard-development' ].includes( config( 'env_id' ) ) ||
-		isCalypsoLiveHostname( window.location.hostname )
-			? ( url ?? currentPage?.link )
-			: currentPage?.link;
+	const performanceUrl = config.isEnabled( 'performance/test-url-override' )
+		? ( url ?? currentPage?.link )
+		: currentPage?.link;
 
 	const {
 		hasError,

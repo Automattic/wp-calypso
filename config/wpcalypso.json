@@ -124,6 +124,7 @@
 		"onboarding/woo-hosting-post-purchase-setup-choice": true,
 		"p2/p2-plus": true,
 		"performance/apm": false,
+		"performance/test-url-override": true,
 		"plans/migration-trial": true,
 		"plans/scheduled-term-change": true,
 		"plans/updated-storage-labels": true,
