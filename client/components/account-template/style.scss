@@ -63,12 +63,10 @@
 		color: var( --color-neutral-100 );
 		font-size: $font-body-small;
 		line-height: $font-line-height-small;
-		letter-spacing: -0.15px;
 
 		@include break-small {
 			font-size: $font-body;
 			line-height: $font-line-height-medium;
-			letter-spacing: -0.32px;
 		}
 
 		.wp-login__one-login-layout-tos,

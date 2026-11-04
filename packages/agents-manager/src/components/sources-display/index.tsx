@@ -9,10 +9,9 @@ import { FROM_CHAT } from '../../constants';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
 import './style.scss';
 
-interface Source {
+export interface Source {
 	title: string;
 	url: string;
-	content?: string;
 }
 
 interface Props {
@@ -27,10 +26,6 @@ export default function SourcesDisplay( { sources }: Props ) {
 		() => [ ...new Map( sources.map( ( source ) => [ source.url, source ] ) ).values() ],
 		[ sources ]
 	);
-
-	if ( uniqueSources.length === 0 ) {
-		return null;
-	}
 
 	const handleSourceClick = ( e: React.MouseEvent, url: string ) => {
 		const isSupportArticle = isThisASupportArticleLink( url );
@@ -62,9 +57,9 @@ export default function SourcesDisplay( { sources }: Props ) {
 			smooth
 		>
 			<div className="agents-manager-sources-display__list">
-				{ uniqueSources.map( ( source, index ) => (
+				{ uniqueSources.map( ( source ) => (
 					<a
-						key={ index }
+						key={ source.url }
 						className="agents-manager-sources-display__link"
 						href={ source.url }
 						rel="noopener noreferrer"

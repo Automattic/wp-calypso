@@ -337,7 +337,6 @@ const PlansPageSubheader = ( {
 	isDisplayingPlansNeededForFeature,
 	deemphasizeFreePlan,
 	renderFreePlanCtaInStepContainerV2,
-	isInStepContainerV2,
 	showPlanBenefits,
 	offeringFreePlan,
 	flowName,
@@ -351,7 +350,6 @@ const PlansPageSubheader = ( {
 	isDisplayingPlansNeededForFeature: boolean;
 	deemphasizeFreePlan?: boolean;
 	renderFreePlanCtaInStepContainerV2?: boolean;
-	isInStepContainerV2?: boolean;
 	offeringFreePlan?: boolean;
 	showPlanBenefits?: boolean;
 	flowName?: string | null;
@@ -365,8 +363,7 @@ const PlansPageSubheader = ( {
 
 	const isOnboarding = isOnboardingFlow( flowName ?? null );
 
-	const isUsingStepContainerV2 =
-		isInStepContainerV2 ?? Boolean( flowName && shouldUseStepContainerV2( flowName ) );
+	const isUsingStepContainerV2 = Boolean( flowName && shouldUseStepContainerV2( flowName ) );
 
 	const isVisualSplitIntent =
 		intent === 'plans-wordpress-hosting' || intent === 'plans-website-builder';

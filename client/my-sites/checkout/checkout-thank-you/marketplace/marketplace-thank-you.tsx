@@ -15,6 +15,7 @@ import { requestAdminMenu } from 'calypso/state/admin-menu/actions';
 import { transferCompleteStates } from 'calypso/state/automated-transfer/constants';
 import { getAutomatedTransferStatus } from 'calypso/state/automated-transfer/selectors';
 import isSiteAutomatedTransfer from 'calypso/state/selectors/is-site-automated-transfer';
+import isSiteWpcomAtomic from 'calypso/state/selectors/is-site-wpcom-atomic';
 import { getSiteAdminUrl, isJetpackSite } from 'calypso/state/sites/selectors';
 import { setThemePreviewOptions } from 'calypso/state/themes/actions';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
@@ -141,13 +142,16 @@ const MarketplaceThankYou = ( {
 	const isJetpack = useSelector( ( state ) => isJetpackSite( state, siteId ) );
 	const isAtomic = useSelector( ( state ) => isSiteAutomatedTransfer( state, siteId ) );
 	const isJetpackSelfHosted = isJetpack && ! isAtomic;
+	const isWpcomAtomic = useSelector( ( state ) => isSiteWpcomAtomic( state, siteId as number ) );
 
 	// Site is already Atomic (or just transferred).
 	// Poll the plugin installation status.
 	useEffect( () => {
 		if (
 			! siteId ||
-			( ! isJetpackSelfHosted && ! transferCompleteStates.includes( transferStatus ) )
+			( ! isJetpackSelfHosted &&
+				! isWpcomAtomic &&
+				! transferCompleteStates.includes( transferStatus ) )
 		) {
 			return;
 		}
@@ -157,7 +161,7 @@ const MarketplaceThankYou = ( {
 			dispatch( requestAdminMenu( siteId ) );
 			return;
 		}
-	}, [ isPageReady, dispatch, siteId, transferStatus, isJetpackSelfHosted ] );
+	}, [ isPageReady, dispatch, siteId, transferStatus, isJetpackSelfHosted, isWpcomAtomic ] );
 
 	useEffect( () => {
 		if ( isPageReady ) {
