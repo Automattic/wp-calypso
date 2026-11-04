@@ -9,7 +9,7 @@ import {
 	useEventEmitter,
 } from '@visx/xychart';
 import moment from 'moment';
-import { FunctionComponent, useCallback, useContext, useRef } from 'react';
+import { FunctionComponent, useCallback, useContext, useMemo, useRef } from 'react';
 import { getBucketDays, type ChartRange } from '../lib/date-ranges';
 import type {
 	DataPoint,
@@ -27,6 +27,24 @@ const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', ga
 
 // A press that travels further than this before its release is a drag, not a click.
 const CLICK_DRAG_TOLERANCE_PX = 4;
+
+/**
+ * The series with no point before the range. A week is keyed by its Monday, which for the
+ * first week can fall before the range's first day, where its count starts: that point is
+ * drawn, named and read from the first day instead.
+ * @param series    The series as fetched.
+ * @param startDate The range's first day, as `YYYY-MM-DD`.
+ * @returns The series, their points within the range.
+ */
+function clampToRange( series: SeriesData[], startDate: string ): SeriesData[] {
+	const firstDay = moment( startDate, 'YYYY-MM-DD' ).toDate();
+	return series.map( ( entry ) => ( {
+		...entry,
+		data: ( entry.data as DataPointDate[] ).map( ( point ) =>
+			point.date && point.date < firstDay ? { ...point, date: firstDay } : point
+		),
+	} ) );
+}
 
 /**
  * Names the days a hovered point covers, in the site locale's order. Not moment's `LL`: in
@@ -238,6 +256,10 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 	onBucketClick,
 } ) => {
 	const { unit } = range;
+	const drawn = useMemo(
+		() => clampToRange( series, range.startDate ),
+		[ series, range.startDate ]
+	);
 	const clickHandlers = useBucketClick( onBucketClick );
 	const options: LineChartProps[ 'options' ] = {
 		// From zero, so a range that never approaches it doesn't look more dramatic than it is.
@@ -258,7 +280,7 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 		},
 	};
 	const renderTooltipForRange = ( params: RenderTooltipParams< DataPointDate > ) =>
-		renderTooltip( range, series, params );
+		renderTooltip( range, drawn, params );
 
 	if ( 'bar' === chartType ) {
 		return (
@@ -271,7 +293,7 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 						/>
 					) }
 					<BarChart
-						data={ nestSeries( series ) }
+						data={ nestSeries( drawn ) }
 						withTooltips
 						animation
 						// A zero-value bar has no height, so a quiet day would otherwise read as
@@ -289,7 +311,7 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 
 	return (
 		<LineChart
-			data={ series }
+			data={ drawn }
 			withTooltips
 			withGradientFill
 			animation

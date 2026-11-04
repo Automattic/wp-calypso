@@ -42,7 +42,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
-	const { id: rangeId, unit, quantity, startDate, endDate } = range;
+	const { id: rangeId, unit, startDate, endDate } = range;
 
 	// "More stats" opens the days the chart shows, on Stats or Premium Analytics.
 	const moreStatsUrl = statsLink(
@@ -79,7 +79,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
-	const { status, data } = useVisitsQuery( siteId, unit, quantity, endDate, startDate );
+	const { status, data } = useVisitsQuery( siteId, range );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -94,20 +94,14 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 
 	const series = useMemo( () => {
 		const chartData = buildChartData( [ 'visitors' ], 'views', data, unit, endDate );
-		// A week is keyed by its Monday, which for the first one can fall before the range.
-		// That bucket is drawn from the range's first day, where its count starts.
-		const firstDay = parseLocalDate( startDate );
 		const toPoints = ( attribute: 'views' | 'visitors' ) =>
 			chartData
-				.map( ( record: { data: VisitRecord } ) => {
+				.map( ( record: { data: VisitRecord } ) => ( {
 					// Periods are bare dates ("2026-09-20"), which `new Date()` reads as UTC
 					// midnight: behind UTC that lands each point on the previous evening.
-					const date = parseLocalDate( record.data.period );
-					return {
-						date: date < firstDay ? firstDay : date,
-						value: record.data[ attribute ] ?? 0,
-					};
-				} )
+					date: parseLocalDate( record.data.period ),
+					value: record.data[ attribute ] ?? 0,
+				} ) )
 				.filter( ( point: { date: Date } ) => ! isNaN( point.date.getTime() ) );
 
 		return [
@@ -122,7 +116,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 				options: { stroke: visitorsColor },
 			},
 		];
-	}, [ data, unit, startDate, endDate, viewsColor, visitorsColor, translate ] );
+	}, [ data, unit, endDate, viewsColor, visitorsColor, translate ] );
 
 	const isPending = status === 'pending';
 	const isEmpty = status === 'success' && totals.views === 0 && totals.visitors === 0;
