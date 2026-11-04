@@ -21,7 +21,7 @@ import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-
 import useScheduleCall from 'calypso/a8c-for-agencies/hooks/use-schedule-call';
 import { PARTNER_DIRECTORY_LEAD_MATCHING_SLUG } from 'calypso/a8c-for-agencies/sections/partner-directory/constants';
 import {
-	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
+	PRESSABLE_OFFER_ENDS_AT,
 	PROGRAM_INCENTIVES_URL,
 } from 'calypso/dashboard/agency/overview/constants';
 import { getAnsweredMatchingProfileCount } from 'calypso/dashboard/agency/overview/matching-profile-visibility';
@@ -168,7 +168,7 @@ export default function DashboardOverviewBody() {
 	const { mayBeEligibleForExpansionOffer } = usePressableOfferEligibility();
 	// Once the offer ends the card can never render, so don't pay for the
 	// license fetch either.
-	const isOfferActive = new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
+	const isOfferActive = new Date() < new Date( PRESSABLE_OFFER_ENDS_AT );
 
 	// Gate before rendering so the license fetch behind the expansion offer
 	// check only runs for agencies that own a Pressable plan through A4A.
