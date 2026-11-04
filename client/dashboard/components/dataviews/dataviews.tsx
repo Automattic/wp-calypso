@@ -37,7 +37,7 @@ export function DataViews< Item >( { view, isPlaceholderData, ...props }: DataVi
 		}
 	}, [ view.page, isPlaceholderData ] );
 
-	const sanitizedView = sanitizeView( view, props.fields );
+	const sanitizedView = sanitizeView( view, props.fields, props.defaultLayouts );
 
 	return <WPDataViews< Item > view={ sanitizedView } { ...( props as any ) } />;
 }
