@@ -30,7 +30,7 @@
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/editor": "^14.51.0",
-		"@wordpress/element": "^9.0.0",
+		"@wordpress/element": "^10.0.0",
 		"@wordpress/hooks": "^4.57.0",
 		"@wordpress/i18n": "^6.30.0",
 		"@wordpress/icons": "^15.5.0",
