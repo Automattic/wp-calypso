@@ -1,4 +1,5 @@
-import { siteSetPrimaryDomainMutation } from '@automattic/api-queries';
+import { DomainSubtype } from '@automattic/api-core';
+import { setWwwPrimaryDomainMutation, siteSetPrimaryDomainMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import {
 	Button,
@@ -21,7 +22,7 @@ import './change-primary-domain-modal.scss';
 
 interface ChangePrimaryDomainModalProps {
 	site: Site;
-	currentPrimaryDomain?: string;
+	currentPrimaryDomain?: DomainSummary;
 	eligibleDomains: DomainSummary[];
 	onClose: () => void;
 }
@@ -34,29 +35,36 @@ export default function ChangePrimaryDomainModal( {
 }: ChangePrimaryDomainModalProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const titleId = useId();
-	const [ selectedDomain, setSelectedDomain ] = useState( currentPrimaryDomain ?? '' );
+	const primaryAddress = currentPrimaryDomain?.domain ?? '';
+	const wwwAddress = `www.${ primaryAddress }`;
+	const canUseWww =
+		site.is_wpcom_atomic &&
+		!! currentPrimaryDomain &&
+		currentPrimaryDomain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS;
+	const currentAddress =
+		canUseWww && currentPrimaryDomain.primary_is_www ? wwwAddress : primaryAddress;
+	const [ selectedDomain, setSelectedDomain ] = useState( currentAddress );
+	const snackbar = {
+		success: sprintf(
+			/* translators: %s is domain */
+			__( 'Primary site address changed: all domains will redirect to %s.' ),
+			selectedDomain
+		),
+		error: { source: 'server' as const },
+	};
 	const setPrimaryDomainMutation = useMutation(
-		withSnackbar( siteSetPrimaryDomainMutation(), {
-			success: sprintf(
-				/* translators: %s is domain */
-				__( 'Primary site address changed: all domains will redirect to %s.' ),
-				selectedDomain
-			),
-			error: { source: 'server' },
-		} )
+		withSnackbar( siteSetPrimaryDomainMutation(), snackbar )
 	);
+	const setWwwMutation = useMutation( withSnackbar( setWwwPrimaryDomainMutation(), snackbar ) );
+	const isPending = setPrimaryDomainMutation.isPending || setWwwMutation.isPending;
 
 	const options = [
-		...( currentPrimaryDomain
-			? [ { label: currentPrimaryDomain, value: currentPrimaryDomain } ]
-			: [] ),
+		...( primaryAddress ? [ { label: primaryAddress, value: primaryAddress } ] : [] ),
+		...( canUseWww ? [ { label: wwwAddress, value: wwwAddress } ] : [] ),
 		...eligibleDomains.map( ( { domain } ) => ( { label: domain, value: domain } ) ),
 	];
 
-	const canSubmit =
-		!! selectedDomain &&
-		selectedDomain !== currentPrimaryDomain &&
-		! setPrimaryDomainMutation.isPending;
+	const canSubmit = !! selectedDomain && selectedDomain !== currentAddress && ! isPending;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
@@ -68,7 +76,16 @@ export default function ChangePrimaryDomainModal( {
 		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
 			site: site.slug,
 			domain: selectedDomain,
+			www: selectedDomain === wwwAddress,
 		} );
+
+		if ( selectedDomain === primaryAddress || selectedDomain === wwwAddress ) {
+			setWwwMutation.mutate(
+				{ siteId: site.ID, domain: primaryAddress, enabled: selectedDomain === wwwAddress },
+				{ onSuccess: onClose }
+			);
+			return;
+		}
 
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain: selectedDomain },
@@ -98,14 +115,14 @@ export default function ChangePrimaryDomainModal( {
 						<Heading id={ titleId } level={ 1 } size={ 20 } weight={ 700 }>
 							{ __( 'Primary site address' ) }
 						</Heading>
-						{ currentPrimaryDomain && (
+						{ currentAddress && (
 							<Text as="p">
 								{ createInterpolateElement(
 									/* translators: <currentPrimaryDomain /> is the current primary site address, e.g. example.com */
 									__(
 										'The current primary site address for this site is <currentPrimaryDomain />. You can change it to a different one from the list below.'
 									),
-									{ currentPrimaryDomain: <strong>{ currentPrimaryDomain }</strong> }
+									{ currentPrimaryDomain: <strong>{ currentAddress }</strong> }
 								) }
 							</Text>
 						) }
@@ -115,14 +132,14 @@ export default function ChangePrimaryDomainModal( {
 						label={ __( 'Primary site address' ) }
 						value={ selectedDomain }
 						options={ options }
-						disabled={ setPrimaryDomainMutation.isPending }
+						disabled={ isPending }
 						onChange={ setSelectedDomain }
 					/>
 					<ButtonStack justify="flex-end">
 						<Button
 							__next40pxDefaultSize
 							variant="tertiary"
-							disabled={ setPrimaryDomainMutation.isPending }
+							disabled={ isPending }
 							onClick={ onClose }
 						>
 							{ __( 'Cancel' ) }
@@ -131,7 +148,7 @@ export default function ChangePrimaryDomainModal( {
 							__next40pxDefaultSize
 							variant="primary"
 							type="submit"
-							isBusy={ setPrimaryDomainMutation.isPending }
+							isBusy={ isPending }
 							disabled={ ! canSubmit }
 						>
 							{ __( 'Change address' ) }
