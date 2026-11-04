@@ -8,6 +8,9 @@ import type { AgencyTierId } from '@automattic/api-core';
  */
 export const getFeatureName = () => __( 'Prospect reports' );
 
+/** Query param that opens the New report modal when the page loads, e.g. `/amplify?new-report=1`. */
+export const NEW_REPORT_PARAM = 'new-report';
+
 /** Timing copy used everywhere, per the v1 PRD. */
 export const getReportTiming = () => __( '10 to 20 minutes' );
 

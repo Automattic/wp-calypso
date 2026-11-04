@@ -6,6 +6,8 @@ import { Card, CardBody } from '../../components/card';
 import Divider from '../../components/divider';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { NEW_REPORT_PARAM } from '../amplify/constants';
+import { useProspectReportsBenefit } from '../amplify/use-prospect-reports-benefit';
 import CertificationTierPageCard from '../certification/tier-page-card';
 import { PARTNER_DIRECTORY_ROUTE } from '../partner-directory/paths';
 import { useContactSupport } from '../support/use-contact-support';
@@ -24,11 +26,33 @@ const BENEFIT_LINKS: TierBenefitLinks = {
 	'manage-profile': PARTNER_DIRECTORY_ROUTE,
 };
 
+const BENEFIT_LINKS_WITH_AMPLIFY: TierBenefitLinks = {
+	...BENEFIT_LINKS,
+	'generate-prospect-report': `/amplify?${ NEW_REPORT_PARAM }=1`,
+};
+
+const BENEFIT_LINKS_WITH_AMPLIFY_REPORTS: TierBenefitLinks = {
+	...BENEFIT_LINKS_WITH_AMPLIFY,
+	'view-prospect-reports': '/amplify',
+};
+
+function getBenefitLinks( hasProspectReports: boolean, hasReports: boolean ) {
+	if ( ! hasProspectReports ) {
+		return BENEFIT_LINKS;
+	}
+	return hasReports ? BENEFIT_LINKS_WITH_AMPLIFY_REPORTS : BENEFIT_LINKS_WITH_AMPLIFY;
+}
+
 export default function AgencyTiers() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const { recordTracksEvent } = useAnalytics();
 	const { openContactForm } = useContactSupport();
 	const { scheduleCall, isLoading: isSchedulingCall } = useScheduleCall( agency?.id );
+	const hasProspectReports = !! agency?.amplify?.allowed;
+	const prospectReports = useProspectReportsBenefit( {
+		agencyId: agency?.id,
+		allowed: hasProspectReports,
+	} );
 
 	if ( ! agency ) {
 		return <PageLayout header={ <PageHeader title={ __( 'Tiers' ) } /> } />;
@@ -70,7 +94,8 @@ export default function AgencyTiers() {
 				onScheduleCall={ handleScheduleCall }
 				isSchedulingCall={ isSchedulingCall }
 				onContactSupport={ () => openContactForm() }
-				links={ BENEFIT_LINKS }
+				links={ getBenefitLinks( hasProspectReports, prospectReports.hasReports ) }
+				prospectReports={ prospectReports }
 				renderDownloadBadges={ ( buttonProps ) => (
 					<DownloadBadges
 						directories={ partnerDirectories }

@@ -36,7 +36,7 @@ export default function AgencyAmplify() {
 				<PageHeader
 					title={ getFeatureName() }
 					description={ __(
-						'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
+						'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fixes.'
 					) }
 					actions={ <AmplifyHeaderActions page={ page } tiersLink={ tiersLink } /> }
 				/>
