@@ -11,7 +11,7 @@ type Props = {
 
 export default function AmplifySidebar( { path }: Props ) {
 	const menuItems = useAmplifyMenuItems( path );
-	const backButtonProps = useBackToOverviewButtonProps();
+	const backButtonProps = useBackToOverviewButtonProps( 'amplify' );
 
 	return (
 		<Sidebar

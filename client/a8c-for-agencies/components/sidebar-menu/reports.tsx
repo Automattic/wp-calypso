@@ -12,7 +12,7 @@ type Props = {
 export default function ReportsSidebar( { path }: Props ) {
 	const translate = useTranslate();
 	const menuItems = useReportsMenuItems( path );
-	const backButtonProps = useBackToOverviewButtonProps();
+	const backButtonProps = useBackToOverviewButtonProps( 'reports' );
 
 	return (
 		<Sidebar
