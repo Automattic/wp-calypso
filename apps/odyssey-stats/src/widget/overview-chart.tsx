@@ -9,7 +9,15 @@ import {
 	useEventEmitter,
 } from '@visx/xychart';
 import moment from 'moment';
-import { FunctionComponent, useCallback, useContext, useMemo, useRef } from 'react';
+import {
+	FunctionComponent,
+	KeyboardEvent,
+	ReactNode,
+	useCallback,
+	useContext,
+	useMemo,
+	useRef,
+} from 'react';
 import { getBucketDays, type ChartRange } from '../lib/date-ranges';
 import type {
 	DataPoint,
@@ -129,31 +137,79 @@ interface OverviewChartProps {
 	onBucketClick?: ( date: Date ) => void;
 }
 
-/** What a press or release reports: the point under it, if any, and where it was. */
+/** What a press or release reports: the point under it, if any, where it was, and the event. */
 interface PointerParams {
 	datum?: unknown;
 	svgPoint?: { x: number; y: number } | null;
+	event?: unknown;
+}
+
+/** The handlers of a chart that opens its points. */
+interface BucketClickHandlers {
+	onPointerDown: ( params: PointerParams ) => void;
+	onPointerUp: ( params: PointerParams ) => void;
+	/** Opens a point, if the datum is one. */
+	open: ( datum: unknown ) => void;
 }
 
 /**
- * Pointer handlers that report a click on a point, and leave a drag or a release that began
- * off the chart alone. Neither chart has a click of its own; the line chart's drag is a zoom
- * only when asked for.
+ * Whether a press is a plain one by the primary button. A press with a modifier, or by another
+ * button, asks for a new tab or a menu, which the chart cannot give; it is left alone, as a
+ * link leaves its own.
+ * @param event The press's event.
+ * @returns Whether the press counts towards a click.
+ */
+function isPlainPrimaryPress( event: unknown ): boolean {
+	const { button, metaKey, ctrlKey, shiftKey, altKey } = ( event ?? {} ) as {
+		button?: number;
+		metaKey?: boolean;
+		ctrlKey?: boolean;
+		shiftKey?: boolean;
+		altKey?: boolean;
+	};
+	return 0 === button && ! metaKey && ! ctrlKey && ! shiftKey && ! altKey;
+}
+
+/**
+ * The date of a chart point.
+ * @param datum The point, as the chart reports it.
+ * @returns Its date, or nothing for anything else.
+ */
+function pointDate( datum: unknown ): Date | undefined {
+	const date = ( datum as { date?: unknown } | undefined )?.date;
+	return date instanceof Date ? date : undefined;
+}
+
+/**
+ * Handlers that report a click on a point, and leave a drag, a modified or secondary press, or
+ * a release that began off the chart alone. Neither chart has a click of its own; the line
+ * chart's drag is a zoom only when asked for.
  * @param onBucketClick Called with the clicked point's date.
  * @returns The handlers, or none without a callback, so an unclickable chart listens for nothing.
  */
-function useBucketClick( onBucketClick?: ( date: Date ) => void ) {
+function useBucketClick( onBucketClick?: ( date: Date ) => void ): BucketClickHandlers | null {
 	const pressedAt = useRef< { x: number; y: number } | null >( null );
 
-	const onPointerDown = useCallback( ( { svgPoint }: PointerParams ) => {
-		pressedAt.current = svgPoint ? { x: svgPoint.x, y: svgPoint.y } : null;
+	const open = useCallback(
+		( datum: unknown ) => {
+			const date = pointDate( datum );
+			if ( date ) {
+				onBucketClick?.( date );
+			}
+		},
+		[ onBucketClick ]
+	);
+
+	const onPointerDown = useCallback( ( { svgPoint, event }: PointerParams ) => {
+		pressedAt.current =
+			svgPoint && isPlainPrimaryPress( event ) ? { x: svgPoint.x, y: svgPoint.y } : null;
 	}, [] );
 
 	const onPointerUp = useCallback(
 		( { datum, svgPoint }: PointerParams ) => {
 			const start = pressedAt.current;
 			pressedAt.current = null;
-			if ( ! start || ! onBucketClick ) {
+			if ( ! start ) {
 				return;
 			}
 			if (
@@ -162,55 +218,73 @@ function useBucketClick( onBucketClick?: ( date: Date ) => void ) {
 			) {
 				return;
 			}
-			const date = ( datum as { date?: unknown } | undefined )?.date;
-			if ( date instanceof Date ) {
-				onBucketClick( date );
-			}
+			open( datum );
 		},
-		[ onBucketClick ]
+		[ open ]
 	);
 
-	return onBucketClick ? { onPointerDown, onPointerUp } : {};
+	return onBucketClick ? { onPointerDown, onPointerUp, open } : null;
 }
 
+// Wraps the chart without entering the layout, so the responsive chart measures its box as before.
+const CONTENTS_STYLE = { display: 'contents' } as const;
+
 /**
- * Reports a press and a release on the bar chart. The bar chart forwards no pointer events
- * (its package does from 3.2.0; this build is on 1.x), so this listens on the chart's own
- * event emitter, and reads the bar from its tooltip, which snaps to the nearest one. Both
- * come from the providers around the chart, which it adopts in place of its own.
- * @param props               Component props.
- * @param props.onPointerDown The press handler.
- * @param props.onPointerUp   The release handler.
+ * Opens the chart's points from the keyboard, and from the pointer on the bar chart. Enter opens
+ * the point the arrow keys have moved to, which the chart reports through its tooltip. The bar
+ * chart forwards no pointer events (its package does from 3.2.0; this build is on 1.x), so its
+ * presses and releases are taken from the chart's own event emitter, with the bar its tooltip
+ * snapped to. Both come from the providers around the chart, which it adopts in place of its own.
+ * @param props             Component props.
+ * @param props.handlers    The click handlers.
+ * @param props.fromEmitter Whether to take presses and releases from the emitter too.
+ * @param props.children    The chart.
  */
-function BarClickListener( {
-	onPointerDown,
-	onPointerUp,
+function ClickableChart( {
+	handlers,
+	fromEmitter,
+	children,
 }: {
-	onPointerDown: ( params: PointerParams ) => void;
-	onPointerUp: ( params: PointerParams ) => void;
+	handlers: BucketClickHandlers;
+	fromEmitter: boolean;
+	children: ReactNode;
 } ) {
-	// Read at the release, not when the handler was made: the tooltip moves between the two.
+	// Read when asked, not when the handler was made: the tooltip moves in between.
 	const tooltip = useContext( TooltipContext );
 	const tooltipRef = useRef( tooltip );
 	tooltipRef.current = tooltip;
+	const focusedDatum = () => tooltipRef.current?.tooltipData?.nearestDatum?.datum;
 
+	const { onPointerDown, onPointerUp, open } = handlers;
 	useEventEmitter(
 		'pointerdown',
-		useCallback( ( params ) => onPointerDown( { svgPoint: params?.svgPoint } ), [ onPointerDown ] )
+		useCallback(
+			( params ) =>
+				fromEmitter && onPointerDown( { svgPoint: params?.svgPoint, event: params?.event } ),
+			[ fromEmitter, onPointerDown ]
+		)
 	);
 	useEventEmitter(
 		'pointerup',
 		useCallback(
 			( params ) =>
-				onPointerUp( {
-					datum: tooltipRef.current?.tooltipData?.nearestDatum?.datum,
-					svgPoint: params?.svgPoint,
-				} ),
-			[ onPointerUp ]
+				fromEmitter && onPointerUp( { datum: focusedDatum(), svgPoint: params?.svgPoint } ),
+			[ fromEmitter, onPointerUp ]
 		)
 	);
 
-	return null;
+	const onKeyDown = ( event: KeyboardEvent ) => {
+		if ( 'Enter' === event.key ) {
+			open( focusedDatum() );
+		}
+	};
+
+	// Not a control of its own: the chart's points take the focus, and this only hears them.
+	return (
+		<div style={ CONTENTS_STYLE } onKeyDown={ onKeyDown } role="presentation">
+			{ children }
+		</div>
+	);
 }
 
 /**
@@ -282,46 +356,48 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 	const renderTooltipForRange = ( params: RenderTooltipParams< DataPointDate > ) =>
 		renderTooltip( range, drawn, params );
 
-	if ( 'bar' === chartType ) {
-		return (
-			<EventEmitterProvider>
-				<TooltipProvider>
-					{ clickHandlers.onPointerDown && clickHandlers.onPointerUp && (
-						<BarClickListener
-							onPointerDown={ clickHandlers.onPointerDown }
-							onPointerUp={ clickHandlers.onPointerUp }
-						/>
-					) }
-					<BarChart
-						data={ nestSeries( drawn ) }
-						withTooltips
-						animation
-						// A zero-value bar has no height, so a quiet day would otherwise read as
-						// missing data. This draws it as a hairline stub instead.
-						showZeroValues
-						height={ height }
-						renderTooltip={ renderTooltipForRange }
-						margin={ MARGIN }
-						options={ options }
-					/>
-				</TooltipProvider>
-			</EventEmitterProvider>
+	const chart =
+		'bar' === chartType ? (
+			<BarChart
+				data={ nestSeries( drawn ) }
+				withTooltips
+				animation
+				// A zero-value bar has no height, so a quiet day would otherwise read as missing
+				// data. This draws it as a hairline stub instead.
+				showZeroValues
+				height={ height }
+				renderTooltip={ renderTooltipForRange }
+				margin={ MARGIN }
+				options={ options }
+			/>
+		) : (
+			<LineChart
+				data={ drawn }
+				withTooltips
+				withGradientFill
+				animation
+				height={ height }
+				curveType="monotone"
+				renderTooltip={ renderTooltipForRange }
+				margin={ MARGIN }
+				options={ options }
+				onPointerDown={ clickHandlers?.onPointerDown }
+				onPointerUp={ clickHandlers?.onPointerUp }
+			/>
 		);
+
+	if ( ! clickHandlers ) {
+		return chart;
 	}
 
 	return (
-		<LineChart
-			data={ drawn }
-			withTooltips
-			withGradientFill
-			animation
-			height={ height }
-			curveType="monotone"
-			renderTooltip={ renderTooltipForRange }
-			margin={ MARGIN }
-			options={ options }
-			{ ...clickHandlers }
-		/>
+		<EventEmitterProvider>
+			<TooltipProvider>
+				<ClickableChart handlers={ clickHandlers } fromEmitter={ 'bar' === chartType }>
+					{ chart }
+				</ClickableChart>
+			</TooltipProvider>
+		</EventEmitterProvider>
 	);
 };
 
