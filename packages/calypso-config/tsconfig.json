@@ -7,5 +7,5 @@
 		"types": [ "node" ]
 	},
 	"include": [ "src" ],
-	"references": [ { "path": "../create-calypso-config" } ]
+	"references": [ { "path": "../calypso-url" }, { "path": "../create-calypso-config" } ]
 }

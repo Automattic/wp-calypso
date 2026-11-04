@@ -56,13 +56,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/components@npm:0.1.10":
-  version: 0.1.10
-  resolution: "@ariakit/components@npm:0.1.10"
+"@ariakit/components@npm:0.1.15":
+  version: 0.1.15
+  resolution: "@ariakit/components@npm:0.1.15"
   dependencies:
-    "@ariakit/store": "npm:0.1.8"
-    "@ariakit/utils": "npm:0.1.6"
-  checksum: 3ae16d98657bad8541c9a3e8156fac5c87aeb5df9de2a25eb8a08b519d14c82fce8206f24d8db2d8194ac436f004f5e243fdc69d59ce520a2b6c98feead17dd5
+    "@ariakit/store": "npm:0.1.11"
+    "@ariakit/utils": "npm:0.2.2"
+  checksum: bfd8c8ce9decccab5c88e7659955f87b1bf59fd5645c7d2862549c64a73ac3f6a25de7a0e289928cb226ee9ebc3c607ae227bc6dcd7cc123ce9881f962c2373a
   languageName: node
   linkType: hard
 
@@ -73,67 +73,67 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/react-components@npm:0.4.1":
-  version: 0.4.1
-  resolution: "@ariakit/react-components@npm:0.4.1"
+"@ariakit/react-components@npm:0.7.1":
+  version: 0.7.1
+  resolution: "@ariakit/react-components@npm:0.7.1"
   dependencies:
-    "@ariakit/components": "npm:0.1.10"
-    "@ariakit/react-store": "npm:0.1.9"
-    "@ariakit/react-utils": "npm:0.2.4"
-    "@ariakit/store": "npm:0.1.8"
-    "@ariakit/utils": "npm:0.1.6"
+    "@ariakit/components": "npm:0.1.15"
+    "@ariakit/react-store": "npm:0.1.13"
+    "@ariakit/react-utils": "npm:0.2.8"
+    "@ariakit/store": "npm:0.1.11"
+    "@ariakit/utils": "npm:0.2.2"
     "@floating-ui/dom": "npm:^1.0.0"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: f2841740fac3e1635e9c39ebefd28cf43e2af3566b9895b4b30402dfd2b17a212cb46c80ac544dd5384ceba54d056daa367033a4e8241126d943e016dce98700
+  checksum: d2391ccded3fe8e3976c71dc0b3b5af1c8cc02c7a8f02a2c860c5e61753397778f4cab31be1005c7677768e5118eae6b55ced7c9ac340d38a5f88ac4b69a81ee
   languageName: node
   linkType: hard
 
-"@ariakit/react-store@npm:0.1.9":
-  version: 0.1.9
-  resolution: "@ariakit/react-store@npm:0.1.9"
+"@ariakit/react-store@npm:0.1.13":
+  version: 0.1.13
+  resolution: "@ariakit/react-store@npm:0.1.13"
   dependencies:
-    "@ariakit/react-utils": "npm:0.2.4"
-    "@ariakit/store": "npm:0.1.8"
-    "@ariakit/utils": "npm:0.1.6"
+    "@ariakit/react-utils": "npm:0.2.8"
+    "@ariakit/store": "npm:0.1.11"
+    "@ariakit/utils": "npm:0.2.2"
     use-sync-external-store: "npm:^1.6.0"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: f1e5c8754221979466c580702ce95ce47cab8043f70545c74f84a5f77eac52cb2696e3fbb7dae5c76372aefd2efc163be50d73fb5403c26286f64330cb8fc949
+  checksum: da5a10dd93ff39b73aa2fe7187d0bc57b3b61718d47d50edd137199de01422c16e306a92186aac77de033328eb2b961f8b23e064d0a76efcae35b05bff2bac2a
   languageName: node
   linkType: hard
 
-"@ariakit/react-utils@npm:0.2.4":
-  version: 0.2.4
-  resolution: "@ariakit/react-utils@npm:0.2.4"
+"@ariakit/react-utils@npm:0.2.8":
+  version: 0.2.8
+  resolution: "@ariakit/react-utils@npm:0.2.8"
   dependencies:
-    "@ariakit/store": "npm:0.1.8"
-    "@ariakit/utils": "npm:0.1.6"
+    "@ariakit/store": "npm:0.1.11"
+    "@ariakit/utils": "npm:0.2.2"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 11604075e37d394fb868ec0d2dab46a7a053180329c1c4ab4e151c7b25236b57bc698f6a9b96d38d96587eb3e4060f657735f6e3f7648ea151c42df4b217e2a8
+  checksum: 8b4c76fbdb454731d726cd681e95527c962e71b481b0a7e65e054f42c9ec6ad96ed4675cb55291613607215acc3160476f5d4690740ad1202d054d1ae09f02db
   languageName: node
   linkType: hard
 
-"@ariakit/react@npm:^0.4.15, @ariakit/react@npm:^0.4.32, @ariakit/react@npm:^0.4.35":
-  version: 0.4.37
-  resolution: "@ariakit/react@npm:0.4.37"
+"@ariakit/react@npm:^0.4.32, @ariakit/react@npm:^0.4.35, @ariakit/react@npm:^0.4.42":
+  version: 0.4.42
+  resolution: "@ariakit/react@npm:0.4.42"
   dependencies:
-    "@ariakit/react-components": "npm:0.4.1"
+    "@ariakit/react-components": "npm:0.7.1"
   peerDependencies:
     react: ^17.0.0 || ^18.0.0 || ^19.0.0
     react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-  checksum: 2a11e018c23bbe0ff848c52bdbf124302c23532f28d48c0835674a292ba1fa235ac9f1fa3c150d1113a1c232ab760180ec8510b83a75de2160c1669f77b18b3c
+  checksum: a87079a0ab7bd32627bbdc349b67d0d9d41961984dbcc94a0af562c753a6028748661e7c2ceecdfbec1a3c5f17bbde9c746800d02489a1c1ec9910200e86f91e
   languageName: node
   linkType: hard
 
-"@ariakit/store@npm:0.1.8":
-  version: 0.1.8
-  resolution: "@ariakit/store@npm:0.1.8"
+"@ariakit/store@npm:0.1.11":
+  version: 0.1.11
+  resolution: "@ariakit/store@npm:0.1.11"
   dependencies:
-    "@ariakit/utils": "npm:0.1.6"
-  checksum: df642861f6626e7abc7c21c9f92db388b20a690edf7b582d7ebb7840b8f09b0256205a420a89db45ac536289b6ccd26104701e889fd3c2616cf88ce810d2cb5d
+    "@ariakit/utils": "npm:0.2.2"
+  checksum: 6e527b4e53f398c2b2306a3b19b731d19c08f00d6276c69b7cc0e2737099947451bb6b1cf2431f7cc19e1563ef3c31db12a920e0478bd260f46f5bd27423be98
   languageName: node
   linkType: hard
 
@@ -158,10 +158,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/utils@npm:0.1.6":
-  version: 0.1.6
-  resolution: "@ariakit/utils@npm:0.1.6"
-  checksum: 155e34d69e666ab54a3f2985a0c3f8aa2f49e0a8fd1b7da5cb93803d7febd427422340734366fbc5ff61afc7ce3bf252034c37f8b6dd640aa1cd9ba09fe12818
+"@ariakit/utils@npm:0.2.2":
+  version: 0.2.2
+  resolution: "@ariakit/utils@npm:0.2.2"
+  checksum: 06525494f1345e776b0f54672a7001b33084e926147720366360c269bc22564da21bf57c2646e054a08393e9d30638ab5f6f3aa57db2b11ea479594fdcc55b6a
   languageName: node
   linkType: hard
 
@@ -612,7 +612,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-redux: "npm:^9.2.0"
+    react-redux: "npm:^9.3.0"
     redux: "npm:^5.0.1"
     redux-thunk: "npm:^3.1.0"
     webpack: "npm:^5.111.1"
@@ -776,6 +776,7 @@ __metadata:
   resolution: "@automattic/calypso-config@workspace:packages/calypso-config"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@automattic/create-calypso-config": "workspace:^"
     "@types/cookie": "npm:^0.6.0"
     "@types/node": "npm:^24.12.2"
@@ -919,6 +920,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@sentry/react": "npm:^7.120.4"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
@@ -1049,7 +1051,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@automattic/components@workspace:packages/components"
   dependencies:
-    "@ariakit/react": "npm:^0.4.15"
+    "@ariakit/react": "npm:^0.4.42"
     "@ariakit/test": "npm:0.4.15"
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-color-schemes": "workspace:^"
@@ -1911,7 +1913,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-redux: "npm:^9.2.0"
+    react-redux: "npm:^9.3.0"
     redux: "npm:^5.0.1"
     redux-thunk: "npm:^3.1.0"
     webpack: "npm:^5.111.1"
@@ -2011,7 +2013,7 @@ __metadata:
     react-dom: "npm:^18.3.1"
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^9.0.1"
-    react-redux: "npm:^9.2.0"
+    react-redux: "npm:^9.3.0"
     react-router-dom: "npm:7.18.4"
     smooch: "npm:^5.7.17"
     tslib: "npm:^2.8.1"
@@ -2068,7 +2070,7 @@ __metadata:
     prop-types: "npm:^15.8.1"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
-    react-redux: "npm:^9.2.0"
+    react-redux: "npm:^9.3.0"
     redux: "npm:^5.0.1"
     redux-thunk: "npm:^3.1.0"
     size-limit: "npm:^8.2.6"
@@ -4657,13 +4659,6 @@ __metadata:
     enabled: "npm:2.0.x"
     kuler: "npm:^2.0.0"
   checksum: dba1b85d3092488bbddbe328e699be2fcb84a4cfa4d67aa4420ff3d46d5d80479def05226f6002a59035904d06bac9db7ffb5221431a48274b956b8dbdd65a55
-  languageName: node
-  linkType: hard
-
-"@date-fns/tz@npm:1.2.0":
-  version: 1.2.0
-  resolution: "@date-fns/tz@npm:1.2.0"
-  checksum: 411e9d4303b10951f6fd0189d18fb845f0d934a575df2176bc10daf664282c765fb6b057a977e446bbb1229151d89e7788978600a019f1fc24b5c75276d496bd
   languageName: node
   linkType: hard
 
@@ -10305,6 +10300,13 @@ __metadata:
   dependencies:
     defer-to-connect: "npm:^2.0.0"
   checksum: 73946918c025339db68b09abd91fa3001e87fc749c619d2e9c2003a663039d4c3cb89836c98a96598b3d47dec2481284ba85355392644911f5ecd2336536697f
+  languageName: node
+  linkType: hard
+
+"@tabby_ai/hijri-converter@npm:1.0.5":
+  version: 1.0.5
+  resolution: "@tabby_ai/hijri-converter@npm:1.0.5"
+  checksum: 40044f463ff57855315c8925461942311460bb64e16706480dde98142f40bcd8e9925bb6fee401fd209397b5bb25368d1529c85b1e6c7e6216ea2085f6aaf61e
   languageName: node
   linkType: hard
 
@@ -16264,7 +16266,7 @@ __metadata:
     react-intersection-observer: "npm:^9.4.3"
     react-markdown: "npm:^8.0.7"
     react-modal: "npm:^3.16.3"
-    react-redux: "npm:^9.2.0"
+    react-redux: "npm:^9.3.0"
     react-router: "npm:7.18.4"
     react-router-dom: "npm:7.18.4"
     react-slider: "npm:^2.0.6"
@@ -18050,13 +18052,6 @@ __metadata:
   version: 4.1.0-0
   resolution: "date-fns-jalali@npm:4.1.0-0"
   checksum: f9ad98d9f7e8e5abe0d070dc806b0c8baded2b1208626c42e92cbd2605b5171f5714d6b79b20cc2666267d821699244c9d0b5e93274106cf57d6232da77596ed
-  languageName: node
-  linkType: hard
-
-"date-fns@npm:4.1.0":
-  version: 4.1.0
-  resolution: "date-fns@npm:4.1.0"
-  checksum: b79ff32830e6b7faa009590af6ae0fb8c3fd9ffad46d930548fbb5acf473773b4712ae887e156ba91a7b3dc30591ce0f517d69fd83bd9c38650fdc03b4e0bac8
   languageName: node
   linkType: hard
 
@@ -29082,13 +29077,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"qs@npm:^6.14.1, qs@npm:^6.15.2, qs@npm:^6.5.1, qs@npm:~6.16.0":
-  version: 6.16.0
-  resolution: "qs@npm:6.16.0"
+"qs@npm:^6.14.1, qs@npm:^6.15.2, qs@npm:^6.5.1":
+  version: 6.17.0
+  resolution: "qs@npm:6.17.0"
   dependencies:
     es-define-property: "npm:^1.0.1"
     side-channel: "npm:^1.1.1"
-  checksum: eb3e31992fbd70e31a1791e571ed817d70975de7d3bfcbbbec93d77d1dd305877e9e8fdbcc62303c228ee5c3606685622cd6231c042dbc4790bb4e7c65fcbe18
+  checksum: 62d59fddc00fa6e141a8b3de78df89bb5863a02346af844403c6ad3b1d175b236602df293c1f2c0fa010b95ea862cacef337f108a2eef0a34556897454fcebe6
+  languageName: node
+  linkType: hard
+
+"qs@npm:~6.16.0":
+  version: 6.16.2
+  resolution: "qs@npm:6.16.2"
+  dependencies:
+    es-define-property: "npm:^1.0.1"
+    side-channel: "npm:^1.1.1"
+  checksum: 945e933f943e419bcd0ca54eeacff7d7bb5a098de886249425cbba3b5ed1be10e177b84b97d7d2c4099e90afa09bb3489112672b89dfa56edc0b5bcb829c456b
   languageName: node
   linkType: hard
 
@@ -29214,15 +29219,16 @@ __metadata:
   linkType: hard
 
 "react-day-picker@npm:^9.7.0":
-  version: 9.7.0
-  resolution: "react-day-picker@npm:9.7.0"
+  version: 9.14.0
+  resolution: "react-day-picker@npm:9.14.0"
   dependencies:
-    "@date-fns/tz": "npm:1.2.0"
-    date-fns: "npm:4.1.0"
+    "@date-fns/tz": "npm:^1.4.1"
+    "@tabby_ai/hijri-converter": "npm:1.0.5"
+    date-fns: "npm:^4.1.0"
     date-fns-jalali: "npm:4.1.0-0"
   peerDependencies:
     react: ">=16.8.0"
-  checksum: c08c45a53aebceda1c938d2e4c95eb1702dcf149715e3457739f8930dce19a3be5780e5bad12dcc9d244d50b7e0efb226c336d81c1c062f616cf422e6a3804a6
+  checksum: 5d26b2e8e28fb504c2ec577bda2ea26709ccab07555aada0674bd72ae38963de6f5cab135d936bb2fef935f97f73c6510657b15b936766e53d5c65811d13289a
   languageName: node
   linkType: hard
 
@@ -29430,9 +29436,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-redux@npm:^9.2.0":
-  version: 9.2.0
-  resolution: "react-redux@npm:9.2.0"
+"react-redux@npm:^9.3.0":
+  version: 9.3.0
+  resolution: "react-redux@npm:9.3.0"
   dependencies:
     "@types/use-sync-external-store": "npm:^0.0.6"
     use-sync-external-store: "npm:^1.4.0"
@@ -29445,7 +29451,7 @@ __metadata:
       optional: true
     redux:
       optional: true
-  checksum: 00d485f9d9219ca1507b4d30dde5f6ff8fb68ba642458f742e0ec83af052f89e65cd668249b99299e1053cc6ad3d2d8ac6cb89e2f70d2ac5585ae0d7fa0ef259
+  checksum: b9f4efcfbfbc90cac9d1709ab3affb1e18a9dc9bd3cceda43bd2e1d9d2394ee0c29df36ec2202d52b566db774888b594c8c5aa86b64f27ef34fca607c687c9e3
   languageName: node
   linkType: hard
 

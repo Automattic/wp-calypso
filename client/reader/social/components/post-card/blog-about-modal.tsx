@@ -20,7 +20,7 @@ export function BlogAboutModal( { post, onClose }: BlogAboutModalProps ) {
 	const connectionId = analytics?.connectionId;
 	const submittedRef = useRef( false );
 
-	const { data: sites, isPending, isError } = useQuery( sitesQuery( 'all' ) );
+	const { data: sites, isPending, isError } = useQuery( sitesQuery() );
 
 	const shownRef = useRef( false );
 	useEffect( () => {

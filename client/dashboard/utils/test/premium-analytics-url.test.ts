@@ -1,4 +1,4 @@
-import { getPremiumAnalyticsPath } from '../premium-analytics-url';
+import { getPremiumAnalyticsPath, PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from '../premium-analytics-url';
 
 /**
  * The route the dashboard would read out of the `p` param.
@@ -18,6 +18,26 @@ describe( 'getPremiumAnalyticsPath', () => {
 	it( 'serves the route from the page it is given', () => {
 		expect( getPremiumAnalyticsPath( '/', undefined, 'jetpack-analytics' ) ).toBe(
 			'admin.php?page=jetpack-analytics&p=%2F'
+		);
+	} );
+
+	it( 'keeps a query the route brings of its own', () => {
+		expect( route( getPremiumAnalyticsPath( PREMIUM_ANALYTICS_TRAFFIC_ROUTE ) ) ).toBe(
+			'/?section=traffic'
+		);
+	} );
+
+	it( 'adds the range to a query the route brings of its own', () => {
+		expect(
+			route(
+				getPremiumAnalyticsPath( PREMIUM_ANALYTICS_TRAFFIC_ROUTE, {
+					from: '2026-09-24',
+					to: '2026-09-30',
+					gmtOffset: 0,
+				} )
+			)
+		).toBe(
+			'/?section=traffic&from=2026-09-24T00%3A00%3A00.000%2B00%3A00&to=2026-09-30T23%3A59%3A59.999%2B00%3A00'
 		);
 	} );
 

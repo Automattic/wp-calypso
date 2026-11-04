@@ -1,10 +1,9 @@
-import { siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
+import { domainsQuery, siteBySlugQuery, siteRedirectQuery } from '@automattic/api-queries';
 import { useQueryClient, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useNavigate } from '@tanstack/react-router';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
-import { useAppContext } from '../../app/context';
 import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { siteRoute, siteDomainsRoute, siteSettingsRedirectRoute } from '../../app/router/sites';
@@ -38,12 +37,11 @@ function getDomainId( domain: DomainSummary ) {
 
 function SiteDomains() {
 	const queryClient = useQueryClient();
-	const { queries } = useAppContext();
 	const { siteSlug } = siteRoute.useParams();
 	const { user } = useAuth();
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 	const { data: siteDomains } = useSuspenseQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
@@ -100,7 +98,7 @@ function SiteDomains() {
 						{ ! hasRedirect && pendingDomain && (
 							<PendingPrimaryDomainNotice
 								domainName={ pendingDomain.domain }
-								onComplete={ () => queryClient.invalidateQueries( queries.domainsQuery() ) }
+								onComplete={ () => queryClient.invalidateQueries( domainsQuery() ) }
 							/>
 						) }
 						{ ! hasRedirect && ! pendingDomain && (
