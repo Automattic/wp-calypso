@@ -1,6 +1,6 @@
 import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { useAuth } from '../../app/auth';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import InlineSupportLink from '../../components/inline-support-link';
@@ -29,15 +29,11 @@ export default function Account() {
 					description={
 						<>
 							{ createInterpolateElement(
-								sprintf(
-									/* translators: %s: the user's email address */
-									__(
-										'Set the name, avatar, and details that identify you on WordPress.com. Most of them are also your <gravatar>Gravatar profile</gravatar>, shown on other sites when you comment with <strong>%s</strong>.'
-									),
-									user.email
+								__(
+									'Set the name, avatar, and details that identify you on WordPress.com. Most of them are also your <gravatar>Gravatar profile</gravatar>, shown on other sites when you comment with <email />.'
 								),
 								{
-									strong: <strong />,
+									email: <strong>{ user.email }</strong>,
 									gravatar: <GravatarProfileLink />,
 								}
 							) }{ ' ' }
