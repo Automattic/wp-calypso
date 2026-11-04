@@ -34,7 +34,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			name: 'ChatGPT',
 			description: __( 'OpenAI’s chat app' ),
 			logo: LOGO_BASE_URL + 'chatgpt.svg',
-			actionLabel: __( 'Add app' ),
+			actionLabel: __( 'Add plugin' ),
 			href: 'https://wp.me/chatgpt',
 		},
 		{
@@ -42,7 +42,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			name: 'Claude',
 			description: __( 'App and desktop' ),
 			logo: LOGO_BASE_URL + 'claude.svg',
-			actionLabel: __( 'Add app' ),
+			actionLabel: __( 'Add connector' ),
 			href: 'https://wp.me/claude',
 		},
 		{
