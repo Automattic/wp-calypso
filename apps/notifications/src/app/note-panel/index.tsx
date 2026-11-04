@@ -2,6 +2,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
+	Button,
+	CardFooter,
 	CardHeader,
 } from '@wordpress/components';
 import '@wordpress/components/build-style/style.css';
@@ -13,6 +15,7 @@ import { modifierKeyIsActive } from '../../panel/helpers/input';
 import { recordTracksEvent } from '../../panel/helpers/stats';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { getFilters } from '../../panel/templates/filters';
+import { useAppContext } from '../context';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
@@ -44,6 +47,7 @@ const NotePanel = ( {
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
 	const selectedTabRef = useRef< string >( filterName );
+	const { onOpenFullView } = useAppContext();
 
 	const handleSelect = useCallback(
 		( tabId: string | null | undefined, source: 'tab' | 'shortcut' ) => {
@@ -170,6 +174,13 @@ const NotePanel = ( {
 					) }
 				</Tabs.Panel>
 			) ) }
+			{ onOpenFullView && (
+				<CardFooter size="small" justify="center">
+					<Button className="wpnc-app__full-view" variant="tertiary" onClick={ onOpenFullView }>
+						{ __( 'Open full view' ) }
+					</Button>
+				</CardFooter>
+			) }
 		</Tabs.Root>
 	);
 };
