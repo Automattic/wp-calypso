@@ -44,9 +44,9 @@ describe( '<PerformancePage>', () => {
 		expect( screen.getByText( 'Server response content' ) ).toBeVisible();
 	} );
 
-	test( 'hides the tabs when APM is disabled', async () => {
+	test( 'hides the tabs when APM is disabled, without asking who the user is', async () => {
 		mockedIsEnabled.mockReturnValue( false );
-		mockIsAutomattician( true );
+		const teams = mockIsAutomattician( true );
 
 		render(
 			<PerformancePage siteSlug="test-site.wordpress.com" tab="frontend">
@@ -56,6 +56,8 @@ describe( '<PerformancePage>', () => {
 
 		expect( await screen.findByText( 'Page speed content' ) ).toBeVisible();
 		expect( screen.queryByRole( 'tab' ) ).not.toBeInTheDocument();
+		await new Promise( ( resolve ) => setTimeout( resolve, 100 ) );
+		expect( teams.isDone() ).toBe( false );
 	} );
 
 	test( 'hides the tabs from users who are not Automatticians', async () => {

@@ -23,8 +23,12 @@ export function hasBackendAccess( productSlug: string | undefined ) {
  * unknown or failed lookup hides the views.
  */
 export function useCanViewApm() {
-	const { data: isAutomattician } = useQuery( isAutomatticianQuery() );
-	return isEnabled( 'performance/apm' ) && isAutomattician === true;
+	const apmEnabled = isEnabled( 'performance/apm' );
+	const { data: isAutomattician } = useQuery( {
+		...isAutomatticianQuery(),
+		enabled: apmEnabled,
+	} );
+	return apmEnabled && isAutomattician === true;
 }
 
 /**
