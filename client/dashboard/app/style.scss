@@ -36,6 +36,7 @@ body {
 	color: var( --dashboard__text-color );
 	font-size: $font-size-medium;
 	line-height: $font-line-height-small;
+	text-wrap-style: pretty;
 
 	/* stylelint-disable-next-line unit-allowed-list */
 	@media ( -webkit-min-device-pixel-ratio: 1.25 ), ( min-resolution: 120dpi ) {

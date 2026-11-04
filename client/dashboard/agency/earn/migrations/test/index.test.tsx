@@ -4,10 +4,23 @@
  * Run: yarn test-client client/dashboard/agency/earn/migrations/test/index.test.tsx
  */
 
-import { screen } from '@testing-library/react';
+import { act, screen } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
+import { setPreviewPreset } from '../../../design-preview';
 import EarnMigrations from '../index';
+
+jest.mock( '../../../design-preview', () => {
+	const actual = jest.requireActual( '../../../design-preview' );
+	return {
+		...actual,
+		__esModule: true,
+		useDesignPreview: () => {
+			const state = actual.useDesignPreview();
+			return { ...state, migrationsActive: state.migrations !== 'live' };
+		},
+	};
+} );
 
 // Empty-state copy rendered by MigrationsCommissionsContent when there are no
 // tagged sites (regardless of eligibility).
@@ -76,5 +89,19 @@ describe( '<EarnMigrations>', () => {
 
 		expect( await screen.findByText( EMPTY_STATE_HEADING ) ).toBeVisible();
 		expect( screen.queryByRole( 'button', { name: TAG_SITES_BUTTON } ) ).not.toBeInTheDocument();
+	} );
+	test( 'switches repeatedly between live, sample, and loading states without hook-order errors', async () => {
+		mockAgency();
+		mockTaggedSites();
+		render( <EarnMigrations /> );
+		expect( await screen.findByText( EMPTY_STATE_HEADING ) ).toBeVisible();
+		for ( const mode of [ 'one', 'mixed', 'two', 'many' ] ) {
+			act( () => setPreviewPreset( 'migrations', mode ) );
+			expect( await screen.findByText( 'Review status' ) ).toBeVisible();
+			act( () => setPreviewPreset( 'migrations', 'loading' ) );
+			expect( screen.queryByText( 'Review status' ) ).not.toBeInTheDocument();
+			act( () => setPreviewPreset( 'migrations', 'live' ) );
+			expect( await screen.findByText( EMPTY_STATE_HEADING ) ).toBeVisible();
+		}
 	} );
 } );

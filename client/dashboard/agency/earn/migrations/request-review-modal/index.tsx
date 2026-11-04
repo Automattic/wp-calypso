@@ -15,6 +15,7 @@ import {
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
+import { simulateMigration } from '../../../design-preview';
 import type { RecordTracksEvent, ShowSuccessNotice, TaggedSite } from '../types';
 
 export default function RequestReviewModal( {
@@ -43,6 +44,11 @@ export default function RequestReviewModal( {
 	const isValid = reason.trim().length > 0;
 
 	const handleSubmit = () => {
+		if ( simulateMigration( 'review', [ site.id ] ) ) {
+			onSuccess( 'Preview: verification requested.' );
+			onClose();
+			return;
+		}
 		requestReview(
 			{
 				siteId: site.id,

@@ -1,0 +1,43 @@
+.agency-access-menu {
+	inline-size: min( 100%, 264px );
+	font-size: 14px;
+	line-height: 1.4;
+}
+
+.agency-access-menu__list {
+	position: relative;
+	box-sizing: border-box;
+	margin: 0;
+	padding: 8px;
+	border: 1px solid var( --color-border-subtle );
+	border-radius: 8px;
+	background: var( --color-surface );
+	box-shadow: 0 12px 32px color-mix( in srgb, var( --color-text ) 10%, transparent );
+	list-style: none;
+}
+
+.agency-access-menu__list li {
+	position: relative;
+	display: flex;
+	align-items: center;
+	box-sizing: border-box;
+	block-size: 36px;
+	padding-inline: 12px;
+	color: var( --color-text );
+	white-space: nowrap;
+	transition: color 200ms;
+}
+
+.agency-access-menu__list li[data-active] {
+	color: var( --color-surface );
+}
+
+.agency-access-menu__list .agency-access-menu__highlight {
+	position: absolute;
+	inset-block-start: 8px;
+	inset-inline: 8px;
+	padding: 0;
+	border-radius: 4px;
+	background: var( --color-primary );
+	transition: transform 450ms cubic-bezier( 0.3, 1.4, 0.5, 1 );
+}
