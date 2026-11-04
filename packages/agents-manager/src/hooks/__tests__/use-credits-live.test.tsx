@@ -361,6 +361,10 @@ describe( 'purchase access', () => {
 		act( () => props( result.current ).onShowCredits!() );
 		expect( onShowCredits ).toHaveBeenCalledTimes( 1 );
 		expect( props( result.current ).isOpen ).toBe( false );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_credits_show_clicked',
+			expect.objectContaining( { state: 'zero' } )
+		);
 	} );
 
 	it( 'shows the popover’s credits button only when the chat asks for it', async () => {

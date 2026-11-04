@@ -596,9 +596,10 @@ export function useCredits( {
 	// Only where `/credits` is answered in the browser, as anywhere else it would reach the model.
 	const canShowCredits = !! onShowCredits && !! siteId && canReadBalance( scope );
 	const showCredits = useCallback( () => {
+		recordCreditsEvent( 'calypso_agents_manager_credits_show_clicked' );
 		setIsPopoverOpen( false );
 		onShowCredits?.();
-	}, [ onShowCredits, setIsPopoverOpen ] );
+	}, [ onShowCredits, recordCreditsEvent, setIsPopoverOpen ] );
 
 	// Only a click that opens the popover records here; an opening by itself records above.
 	const toggleMeter = useCallback(
