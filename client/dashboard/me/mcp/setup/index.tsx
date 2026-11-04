@@ -22,15 +22,9 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
-import { MCP_SERVER_NAME, MCP_SERVER_URL } from '../connect-agents';
+import { CURSOR_PLUGIN_URL, MCP_SERVER_NAME, MCP_SERVER_URL } from '../connect-agents';
 
 import './style.scss';
-
-// Cursor's one-click install for the remote server, so no local bridge is needed.
-const CURSOR_INSTALL_URL = `cursor://anysphere.cursor-deeplink/mcp/install?${ new URLSearchParams( {
-	name: 'WordPress.com',
-	config: btoa( JSON.stringify( { url: MCP_SERVER_URL } ) ),
-} ) }`;
 
 function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -324,16 +318,16 @@ function McpSetupComponent() {
 									<VStack spacing={ 4 }>
 										<Text as="p" variant="muted">
 											{ __(
-												'For Cursor users, use the one-click install to add the WordPress.com MCP app.'
+												'Add the WordPress.com plugin from the Cursor Marketplace, then follow the prompts in Cursor.'
 											) }
 										</Text>
 										<Button
 											variant="primary"
-											href={ CURSOR_INSTALL_URL }
+											href={ CURSOR_PLUGIN_URL }
 											target="_blank"
 											className="mcp-setup__action-button"
 										>
-											{ __( 'Install in Cursor' ) }
+											{ __( 'Open the WordPress.com plugin' ) }
 										</Button>
 									</VStack>
 								) }

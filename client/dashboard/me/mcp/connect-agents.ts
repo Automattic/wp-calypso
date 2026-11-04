@@ -3,6 +3,9 @@ import { __ } from '@wordpress/i18n';
 export const MCP_SERVER_NAME = 'wpcom-mcp';
 export const MCP_SERVER_URL = 'https://public-api.wordpress.com/wpcom/v2/mcp/v1';
 
+// The WordPress.com plugin on the Cursor Marketplace, which has a one-click install.
+export const CURSOR_PLUGIN_URL = 'https://cursor.com/marketplace/wordpress';
+
 // Opens VS Code's own install prompt, so there is no shell command to quote.
 export const VSCODE_INSTALL_URL = `https://vscode.dev/redirect/mcp/install?${ new URLSearchParams( {
 	name: MCP_SERVER_NAME,
@@ -55,8 +58,8 @@ export function getConnectAgents(): ConnectAgent[] {
 			name: 'Cursor',
 			description: __( 'AI code editor' ),
 			logo: LOGO_BASE_URL + 'cursor.svg',
-			actionLabel: __( 'Copy command' ),
-			code: '/add-plugin wordpress-com',
+			actionLabel: __( 'Add plugin' ),
+			href: CURSOR_PLUGIN_URL,
 		},
 		{
 			key: 'vscode',

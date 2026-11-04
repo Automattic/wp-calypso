@@ -35,6 +35,15 @@ describe( '<McpConnectCard />', () => {
 		);
 	} );
 
+	test( 'links Cursor to the WordPress.com plugin on its Marketplace', () => {
+		renderCard();
+
+		expect( screen.getByRole( 'link', { name: 'Cursor' } ) ).toHaveAttribute(
+			'href',
+			'https://cursor.com/marketplace/wordpress'
+		);
+	} );
+
 	test( 'names each tile by its agent and describes it by the rest', () => {
 		renderCard();
 
