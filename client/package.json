@@ -111,7 +111,7 @@
 		"@wordpress/date": "^5.57.0",
 		"@wordpress/dom": "^4.57.0",
 		"@wordpress/edit-post": "^8.48.0",
-		"@wordpress/element": "^8.0.0",
+		"@wordpress/element": "^9.0.0",
 		"@wordpress/hooks": "^4.57.0",
 		"@wordpress/html-entities": "^4.57.0",
 		"@wordpress/i18n": "^6.30.0",
