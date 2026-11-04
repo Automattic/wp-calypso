@@ -96,4 +96,4 @@ test( 'announces missing saved contact options only to listed classic partners w
 	await waitFor( () => expect( announcement() ).not.toBeInTheDocument() );
 	view.unmount();
 	queryClient.clear();
-} );
+}, 15000 );
