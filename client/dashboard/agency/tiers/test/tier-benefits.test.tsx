@@ -199,6 +199,30 @@ describe( '<TierBenefits>', () => {
 		);
 	} );
 
+	test( 'disables Generate a report once the agency hits its monthly cap', () => {
+		render(
+			<TierBenefits
+				currentAgencyTierId="emerging-partner"
+				onScheduleCall={ jest.fn() }
+				links={ {
+					'generate-prospect-report': '/amplify?new-report=1',
+					'view-prospect-reports': '/amplify',
+				} }
+				shouldUseRouterLink={ false }
+				prospectReports={ {
+					usage: { used: 5, limit: 5, resets_at: '2026-12-01T00:00:00Z' },
+				} }
+			/>
+		);
+		const card = within( essentialBenefits() );
+		expect( card.queryByRole( 'link', { name: 'Generate a report' } ) ).not.toBeInTheDocument();
+		expect( card.getByRole( 'button', { name: 'Generate a report' } ) ).toHaveAttribute(
+			'aria-disabled',
+			'true'
+		);
+		expect( card.getByRole( 'link', { name: 'View reports' } ) ).toBeVisible();
+	} );
+
 	test( 'shows bigger report allowances on higher tiers only when the agency has access', () => {
 		const { unmount } = render(
 			<TierBenefits currentAgencyTierId="emerging-partner" onScheduleCall={ jest.fn() } />
