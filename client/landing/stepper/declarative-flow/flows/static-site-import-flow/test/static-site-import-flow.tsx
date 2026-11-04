@@ -114,6 +114,43 @@ describe( 'Static site import flow', () => {
 		} );
 
 		it.each( [
+			'   ',
+			'https://!!!',
+			'not a url',
+			'https://exa mple.com',
+			'localhost',
+			'https://1.2.3.4',
+			'ftp://example.com',
+			'javascript:alert(1)',
+			'me@example.com',
+			'https://user:secret@example.com',
+		] )( 'sends the malformed source "%s" to be identified', ( from ) => {
+			const search = `?${ new URLSearchParams( { from, platform: 'unknown' } ) }`;
+			window.location.search = search;
+
+			expect( staticSiteImportFlow.initialize() ).toBe( false );
+			expect( window.location.replace ).toHaveBeenCalledWith( `${ identifyPath }${ search }` );
+		} );
+
+		it.each( [
+			'example.com',
+			' example.com ',
+			'http://example.com',
+			'https://www.example.com/shop?page=1',
+			'example.com:8080/path',
+			'https://my--site.example.com',
+			'https://my_blog.example.com',
+			'https://münchen.de',
+			'https://xn--mnchen-3ya.de',
+			'https://example.xn--p1ai',
+		] )( 'accepts the source "%s"', ( from ) => {
+			window.location.search = `?${ new URLSearchParams( { from, platform: 'unknown' } ) }`;
+
+			expect( staticSiteImportFlow.initialize() ).not.toBe( false );
+			expect( window.location.replace ).not.toHaveBeenCalled();
+		} );
+
+		it.each( [
 			[ readingPath, plansPath ],
 			[ `${ readingPath }/es`, `${ plansPath }/es` ],
 		] )(
