@@ -2,6 +2,7 @@ import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	bulkDomainUpdateStatusQuery,
+	domainsQuery,
 	userSettingsQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
@@ -41,8 +42,8 @@ import {
 	siteSftpUsersQuery,
 	siteSshAccessStatusQuery,
 	siteStaticFile404SettingQuery,
+	siteWordPressTrackVersionsQuery,
 	siteWordPressVersionQuery,
-	wpOrgCoreVersionQuery,
 	queryClient,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
@@ -58,6 +59,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	getActivityLogHiddenGroups,
 	hasHostingFeature,
@@ -81,6 +83,7 @@ import {
 	redirectIfTwoStepReauthRequired,
 } from './redirect';
 import { rootRoute } from './root';
+import type { MigrationCompletedSearch } from '../../sites/overview/migration-completed-notice';
 import type { DifmOfferSearch } from '../../sites/overview-difm-offer-card/thank-you';
 import type { StaticSiteImportSearch } from '../../sites/overview-static-site-import';
 import type { AppConfig } from '../context';
@@ -228,18 +231,20 @@ export const siteOverviewRoute = createRoute( {
 	staticData: { availableToInaccessibleJetpackSites: true },
 	getParentRoute: () => siteRoute,
 	path: '/',
-	validateSearch: ( search ): StaticSiteImportSearch & DifmOfferSearch => {
+	validateSearch: (
+		search
+	): StaticSiteImportSearch & DifmOfferSearch & MigrationCompletedSearch => {
 		const asString = ( value: unknown ) => ( typeof value === 'string' ? value : undefined );
 		return {
 			importSessionId: asString( search.importSessionId ),
 			from: asString( search.from ),
 			platform: asString( search.platform ),
-			domainChoice: asString( search.domainChoice ),
 			difmOffer:
 				search.difmOffer === 'purchased' || search.difmOffer === 'open'
 					? search.difmOffer
 					: undefined,
 			source: asString( search.source ),
+			migration: search.migration === 'completed' ? 'completed' : undefined,
 		};
 	},
 	loader: async ( { params: { siteSlug }, preload } ) => {
@@ -342,6 +347,7 @@ export const siteLogsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'logs',
+	validateSearch: validateDateRangeSearch,
 } );
 
 export const siteLogsIndexRoute = createRoute( {
@@ -494,6 +500,7 @@ export const siteBackupsRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'backups',
+	validateSearch: validateDateRangeSearch,
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		// Preload activity log backup-related entries and group counts.
@@ -608,11 +615,11 @@ export const siteDomainsRoute = createRoute( {
 	validateSearch: ( search ): { action?: 'change-site-address' } => ( {
 		action: search.action === 'change-site-address' ? 'change-site-address' : undefined,
 	} ),
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
 			queryClient.ensureQueryData( bulkDomainUpdateStatusQuery() ),
 		] );
@@ -863,12 +870,12 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -1095,11 +1102,10 @@ export const siteSettingsWordPressRoute = createRoute( {
 	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 		if ( canSwitchWordPressVersion( site ) || canOptOutOfWordPressBeta( site, 'beta' ) ) {
-			// Fire-and-forget the external wp.org queries so a slow upstream
+			// Fire-and-forget the track versions so a slow site or wp.org
 			// doesn't hang navigation; the component suspends on them via
 			// useSuspenseQuery and falls back to the route's Suspense boundary.
-			queryClient.prefetchQuery( wpOrgCoreVersionQuery() );
-			queryClient.prefetchQuery( wpOrgCoreVersionQuery( 'beta' ) );
+			queryClient.prefetchQuery( siteWordPressTrackVersionsQuery( site.ID ) );
 			await queryClient.ensureQueryData( siteWordPressVersionQuery( site.ID ) );
 		}
 	},
@@ -1785,6 +1791,36 @@ export const siteMigrationOverviewRoute = createRoute( {
 	)
 );
 
+export const siteMigrationAssistedIntroRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Let our team migrate your site' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	// Under the migration's own path, so the migration lock lets it through.
+	path: 'migration-overview/assisted',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		// Only a WordPress migration the customer is still running themselves can be handed to our team.
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isWordPressMigration( site ) || site.site_migration.status_v2 === 'completed' ) {
+			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-overview/assisted-intro' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview-assisted' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSSHMigrationFailedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1863,6 +1899,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
+		siteMigrationAssistedIntroRoute,
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),

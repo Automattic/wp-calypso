@@ -111,9 +111,10 @@ export async function registerSite( redirectUri: string ): Promise< Registration
 			// bundle is served from a CDN, so it can run against either.
 			registration_nonce: state.registrationNonce,
 			redirect_uri: redirectUri,
-			// The sanctioned value for a new caller, per `client/jetpack-connect/AGENTS.md`. It is
-			// also what returns the visitor to `redirect_uri`: an unrecognised `from` falls through
-			// to Calypso's default target, which is the Jetpack plans page.
+			// Borrows the Connectors card's value, which gets the unified connection screen and
+			// returns the visitor to `redirect_uri`. A standard name would do both too (see
+			// `client/jetpack-connect/AGENTS.md`), but WordPress.com's unified emails still match
+			// `jetpack-connector` exactly, so switching waits until they accept standard names.
 			from: 'jetpack-connector',
 		} ),
 	} );

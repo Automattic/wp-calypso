@@ -70,22 +70,24 @@ $z-index: 999;
 			}
 		}
 
-		&.is-staging {
+		&.is-staging,
+		&.is-dashboard-staging,
+		&.is-a8c-for-agencies-staging {
 			color: var(--studio-orange-90);
 			background-color: var(--studio-orange-20);
 		}
-		&.is-wpcalypso {
+		&.is-wpcalypso,
+		&.is-horizon,
+		&.is-dashboard-horizon,
+		&.is-feedback {
 			color: var(--studio-celadon-90);
 			background-color: var(--studio-celadon-20);
 		}
-		&.is-dev {
+		&.is-dev,
+		&.is-dashboard-dev,
+		&.is-a8c-for-agencies-dev {
 			color: var(--studio-purple-90);
 			background-color: var(--studio-purple-20);
-		}
-		&.is-horizon,
-		&.is-feedback {
-			color: var(--studio-blue-90);
-			background-color: var(--studio-blue-20);
 		}
 		&.is-jetpack-cloud-dev,
 		&.is-jetpack-cloud-staging {

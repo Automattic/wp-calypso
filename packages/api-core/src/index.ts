@@ -15,6 +15,7 @@ export * from './agency-migrations';
 export * from './akismet-api-key';
 export * from './big-sky-plugin';
 export * from './cancellation-offers';
+export * from './comments-editor';
 export * from './currency-overrides';
 export * from './dashboard-admin-bar';
 export * from './dashboard-site-list';

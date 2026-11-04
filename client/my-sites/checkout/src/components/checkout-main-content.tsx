@@ -147,6 +147,7 @@ import type {
 	ResponseCart,
 } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -464,7 +465,7 @@ export default function CheckoutMainContent( {
 	areStoredCardsFiltered?: boolean;
 	isBusinessCardsFilterEmpty?: boolean;
 	removeProductFromCart: RemoveProductFromCart;
-	showErrorMessageBriefly: ( error: string ) => void;
+	showErrorMessageBriefly: ( error: TranslateResult ) => void;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
 	isRemovingProductFromCart: boolean;
@@ -1077,7 +1078,7 @@ export default function CheckoutMainContent( {
 						validatingButtonText={ validatingButtonText }
 						validatingButtonAriaLabel={ validatingButtonText }
 						onPageLoadError={ onPageLoadError }
-						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay' ] }
+						waitForPaymentMethodIds={ [ 'apple-pay', 'google-pay', 'stripe-wallet' ] }
 						{ ...( isMobileCheckoutStickySummary && {
 							/* Figma 3971:13237 — the active heading reads "Payment method"
 							   under the experiment (vs. composite-checkout's default

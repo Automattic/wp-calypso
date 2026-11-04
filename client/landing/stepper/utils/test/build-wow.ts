@@ -1,8 +1,8 @@
 import config from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
-import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import {
 	getBuildWowGraph,
+	getDesignCandidate,
 	getBuildWowSiteIdentifier,
 	getBuildWowSiteSpecUrl,
 	isBuildWowSiteEditorReady,
@@ -12,10 +12,6 @@ import {
 jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: { isEnabled: jest.fn( () => false ) },
-} ) );
-
-jest.mock( 'calypso/state/query-client', () => ( {
-	getCalypsoQueryClient: jest.fn( () => null ),
 } ) );
 
 jest.mock( 'calypso/lib/logstash', () => ( {
@@ -127,6 +123,31 @@ describe( 'build-wow utilities', () => {
 		expect( getBuildWowGraph( new URLSearchParams( '' ) ) ).toBeUndefined();
 	} );
 
+	it( 'reads a design candidate from 1 to 4 and ignores anything else', () => {
+		expect( getDesignCandidate( '1' ) ).toBe( '1' );
+		expect( getDesignCandidate( '4' ) ).toBe( '4' );
+		expect( getDesignCandidate( '5' ) ).toBeUndefined();
+		expect( getDesignCandidate( 'candidate-1' ) ).toBeUndefined();
+		expect( getDesignCandidate( 2 ) ).toBeUndefined();
+		expect( getDesignCandidate( null ) ).toBeUndefined();
+	} );
+
+	it( 'sends the design candidate only on the call that queues a build', async () => {
+		const post = wpcom.req.post as jest.Mock;
+		post.mockReset();
+		post.mockResolvedValue( {} );
+
+		await requestBuildWowSite( '123', 'spec-1', 'dsl', undefined, '3' );
+		expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {
+			spec_id: 'spec-1',
+			graph: 'dsl',
+			design_candidate: 3,
+		} );
+
+		await requestBuildWowSite( '123', undefined, undefined, undefined, '3' );
+		expect( post.mock.calls[ 1 ][ 1 ] ).toEqual( {} );
+	} );
+
 	it( 'sends the graph only on the call that queues a build', async () => {
 		const post = wpcom.req.post as jest.Mock;
 		post.mockReset();
@@ -146,25 +167,18 @@ describe( 'build-wow utilities', () => {
 
 	describe( 'live feed opt-in', () => {
 		const post = wpcom.req.post as jest.Mock;
-		const fetchQuery = jest.fn();
 
 		beforeEach( () => {
 			post.mockReset();
 			post.mockResolvedValue( {} );
-			fetchQuery.mockReset();
-			fetchQuery.mockResolvedValue( { teams: [ { slug: 'a8c' } ] } );
 			jest.mocked( config.isEnabled ).mockReturnValue( true );
-			jest.mocked( getCalypsoQueryClient ).mockReturnValue( {
-				fetchQuery,
-			} as unknown as ReturnType< typeof getCalypsoQueryClient > );
 		} );
 
 		afterEach( () => {
 			jest.mocked( config.isEnabled ).mockReturnValue( false );
-			jest.mocked( getCalypsoQueryClient ).mockReturnValue( null );
 		} );
 
-		it( 'asks for the feed for an Automattician where streaming is on', async () => {
+		it( 'asks for the feed where streaming is on, whoever builds', async () => {
 			await requestBuildWowSite( '123', 'spec-1', 'dsl' );
 
 			expect( config.isEnabled ).toHaveBeenCalledWith( 'site-spec/build-wow-streaming' );
@@ -178,29 +192,11 @@ describe( 'build-wow utilities', () => {
 		it( 'does not ask for the feed on a call that queues no build', async () => {
 			await requestBuildWowSite( '123' );
 
-			expect( fetchQuery ).not.toHaveBeenCalled();
 			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( {} );
 		} );
 
 		it( 'does not ask for the feed where streaming is off', async () => {
 			jest.mocked( config.isEnabled ).mockReturnValue( false );
-
-			await requestBuildWowSite( '123', 'spec-1' );
-
-			expect( fetchQuery ).not.toHaveBeenCalled();
-			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( { spec_id: 'spec-1' } );
-		} );
-
-		it( 'does not ask for the feed for someone outside Automattic', async () => {
-			fetchQuery.mockResolvedValue( { teams: [ { slug: 'other' } ] } );
-
-			await requestBuildWowSite( '123', 'spec-1' );
-
-			expect( post.mock.calls[ 0 ][ 1 ] ).toEqual( { spec_id: 'spec-1' } );
-		} );
-
-		it( 'still queues the build when the team lookup fails', async () => {
-			fetchQuery.mockRejectedValue( new Error( 'offline' ) );
 
 			await requestBuildWowSite( '123', 'spec-1' );
 

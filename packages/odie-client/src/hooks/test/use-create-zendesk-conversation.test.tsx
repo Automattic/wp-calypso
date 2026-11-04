@@ -269,6 +269,45 @@ describe( 'useCreateZendeskConversation — conversation tags', () => {
 		} );
 	} );
 
+	it.each( [ 'control', 'human_only', 'hybrid' ] )(
+		'tags a chat from the checkout support experiment with its %s variation',
+		async ( variation ) => {
+			const context = ( useOdieAssistantContext as jest.Mock )();
+			( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+				...context,
+				checkoutSupportVariation: variation,
+			} );
+
+			const { result } = renderHook( () => useCreateZendeskConversation() );
+			await result.current( { createdFrom: 'direct_url' } );
+
+			expect( smoochCreateConversation ).toHaveBeenCalledWith( {
+				metadata: expect.objectContaining( {
+					'zen:ticket:tags': `wpcom_checkout_chat,wpcom_checkout_chat_${ variation }`,
+				} ),
+			} );
+		}
+	);
+
+	it( 'keeps the configured tags next to the checkout support tags', async () => {
+		const context = ( useOdieAssistantContext as jest.Mock )();
+		( useOdieAssistantContext as jest.Mock ).mockReturnValue( {
+			...context,
+			zendeskConversationTags: [ 'woo_support_flow_help_center' ],
+			checkoutSupportVariation: 'hybrid',
+		} );
+
+		const { result } = renderHook( () => useCreateZendeskConversation() );
+		await result.current( { createdFrom: 'automatic_escalation' } );
+
+		expect( smoochCreateConversation ).toHaveBeenCalledWith( {
+			metadata: expect.objectContaining( {
+				'zen:ticket:tags':
+					'woo_support_flow_help_center,wpcom_checkout_chat,wpcom_checkout_chat_hybrid',
+			} ),
+		} );
+	} );
+
 	it( 'writes no tags when none are configured', async () => {
 		const { result } = renderHook( () => useCreateZendeskConversation() );
 		await result.current( { createdFrom: 'automatic_escalation' } );

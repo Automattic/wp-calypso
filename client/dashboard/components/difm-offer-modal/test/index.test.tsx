@@ -349,7 +349,22 @@ describe( '<DifmOfferModal>', () => {
 		expect( mockAddProductsToCart ).not.toHaveBeenCalled();
 	} );
 
-	test( 'records a dismiss when the modal closes without a submit', async () => {
+	test( 'records a dismiss with the offer step when the modal closes on the offer step', async () => {
+		const user = userEvent.setup();
+		const onClose = jest.fn();
+		const { recordTracksEvent } = renderModal( onClose );
+
+		await screen.findByRole( 'button', { name: 'Tell us about your site' } );
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		expect( onClose ).toHaveBeenCalled();
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_upsell_dismiss', {
+			...expectedTracksProps,
+			step: 'offer',
+		} );
+	} );
+
+	test( 'records a dismiss with the request step when the modal closes without a submit', async () => {
 		const user = userEvent.setup();
 		const onClose = jest.fn();
 		const { recordTracksEvent } = renderModal( onClose );
@@ -358,9 +373,9 @@ describe( '<DifmOfferModal>', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
 		expect( onClose ).toHaveBeenCalled();
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_upsell_dismiss',
-			expectedTracksProps
-		);
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_upsell_dismiss', {
+			...expectedTracksProps,
+			step: 'request',
+		} );
 	} );
 } );

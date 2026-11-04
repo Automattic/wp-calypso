@@ -47,7 +47,7 @@ export default function SshKey( {
 
 	const handleRemove = () => {
 		recordTracksEvent( 'calypso_dashboard_security_ssh_key_remove_click' );
-		deleteSshKey( undefined, {
+		deleteSshKey( sshKey.name, {
 			onSettled: () => {
 				setIsRemoveDialogOpen( false );
 			},

@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { Button, Modal } from '@wordpress/components';
 import { __, _n, sprintf } from '@wordpress/i18n';
 import { useState } from 'react';
@@ -96,14 +97,14 @@ export function ScanContent( {
 										} }
 									>
 										{ sprintf(
-											/* translators: %(threatsCount)d: number of threats */
+											/* translators: %(threatsCount)s: formatted number of threats */
 											_n(
-												'Auto-fix %(threatsCount)d threat',
-												'Auto-fix %(threatsCount)d threats',
+												'Auto-fix %(threatsCount)s threat',
+												'Auto-fix %(threatsCount)s threats',
 												fixableThreatsCount
 											),
 											{
-												threatsCount: fixableThreatsCount,
+												threatsCount: formatNumber( fixableThreatsCount ),
 											}
 										) }
 									</Button>

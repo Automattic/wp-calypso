@@ -53,6 +53,12 @@ const DEFAULT_VIEW: DnsView = {
 	},
 	fields: [ 'name', 'value' ],
 	filters: [],
+	layout: {
+		styles: {
+			type: { maxWidth: '96px', minWidth: '72px' },
+			name: { maxWidth: '140px', minWidth: '72px' },
+		},
+	},
 };
 
 const DEFAULT_LAYOUTS = {

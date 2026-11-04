@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { setCheckpoint } from '../../utils/checkpoints';
 import { injectFontFamiliesIntoEditorIframe } from '../../utils/font-families-to-css';
 import FontPicker from '../font-picker';
 
@@ -9,14 +10,17 @@ import FontPicker from '../font-picker';
 jest.mock( '../variation-picker', () => {
 	const MockVariationPicker = ( {
 		variations,
+		disabled,
 		onSelect,
 	}: {
 		variations: unknown[];
+		disabled?: boolean;
 		onSelect?: ( variation: unknown ) => void;
 	} ) => (
 		<button
 			data-testid="mock-variation-picker"
 			data-count={ variations.length }
+			data-disabled={ disabled }
 			onClick={ () => onSelect?.( variations[ 0 ] ) }
 		/>
 	);
@@ -24,6 +28,12 @@ jest.mock( '../variation-picker', () => {
 	return MockVariationPicker;
 } );
 
+jest.mock( '../../utils/checkpoints', () => ( {
+	checkpointKeys: { COLOR: 'color', FONT: 'font', BUTTON: 'button' },
+	clearCheckpoint: jest.fn(),
+	hasCheckpoint: jest.fn(),
+	setCheckpoint: jest.fn(),
+} ) );
 jest.mock( '../../hooks/use-global-styles', () => ( {
 	__esModule: true,
 	default: () => ( { globalStylesId: null, globalStyles: null } ),
@@ -67,6 +77,17 @@ describe( 'FontPicker', () => {
 		expect( getByTestId( 'mock-variation-picker' ) ).toHaveAttribute( 'data-count', '2' );
 	} );
 
+	it( 'checkpoints its first pick under its surface, and disables its cards with it', () => {
+		const { rerender } = render( <FontPicker { ...defaultProps } surfaceId="fonts-1" /> );
+		const picker = screen.getByTestId( 'mock-variation-picker' );
+
+		fireEvent.click( picker );
+		expect( setCheckpoint ).toHaveBeenCalledWith( 'fonts-1', [ 'font' ], expect.any( Object ) );
+
+		rerender( <FontPicker { ...defaultProps } surfaceId="fonts-1" disabled /> );
+		expect( picker ).toHaveAttribute( 'data-disabled', 'true' );
+	} );
+
 	it( 'loads the picked variation fonts into the editor canvas', () => {
 		const families = [ { name: 'Inter', fontFamily: 'Inter' } ];
 		const variation = {
@@ -82,5 +103,18 @@ describe( 'FontPicker', () => {
 
 		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenCalledTimes( 1 );
 		expect( injectFontFamiliesIntoEditorIframe ).toHaveBeenCalledWith( families );
+	} );
+
+	it( 'leaves the editor canvas alone when its message is stale', () => {
+		const variation = {
+			title: 'Modern Sans',
+			settings: {
+				typography: { fontFamilies: { theme: [ { name: 'Inter', fontFamily: 'Inter' } ] } },
+			},
+			styles: {},
+		};
+		render( <FontPicker variations={ [ variation ] } isMessageStale /> );
+
+		expect( injectFontFamiliesIntoEditorIframe ).not.toHaveBeenCalled();
 	} );
 } );

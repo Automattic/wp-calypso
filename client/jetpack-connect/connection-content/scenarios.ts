@@ -18,11 +18,13 @@ import { getPluginEntry } from './plugin-registry';
  * handles the impossible-but-still-possible case where the plugin list
  * arrives malformed (URL truncation, etc.) — see the Woo branch below.
  *
- * The 16 keys are the canonical scenario set, and each surface's
+ * These keys are the canonical scenario set, and each surface's
  * pre-composed subtitle table is keyed by exactly these values — see
  * `copy.ts`.
  */
 export type SubtitleScenario =
+	| 'MIGRATION'
+	| 'MIGRATION_WITH_PLUGINS'
 	| 'A4A_ONLY'
 	| 'A4A_WOO'
 	| 'A4A_JETPACK'
@@ -70,6 +72,8 @@ function getJetpackSingleScenario( slug: string ): SubtitleScenario | null {
  *
  * Decision order, top-down:
  *
+ * The migration plugin leads; otherwise:
+ *
  * 1. Multi-family combinations (A4A + Woo + Jetpack), in priority order.
  * 2. Single-family combinations:
  *    - Woo: WooCommerce + WooPayments together routes to `WOO_AND_PAY`;
@@ -89,6 +93,9 @@ function getJetpackSingleScenario( slug: string ): SubtitleScenario | null {
  */
 export function getSubtitleScenario( pluginSlugs: readonly string[] = [] ): SubtitleScenario {
 	const families = new Set( pluginSlugs.map( getFamilyFromSlug ) );
+	if ( families.has( 'migration' ) ) {
+		return families.size > 1 ? 'MIGRATION_WITH_PLUGINS' : 'MIGRATION';
+	}
 	const hasA4A = families.has( 'a4a' );
 	const hasWoo = families.has( 'woo' );
 	const hasJetpack = families.has( 'jetpack' );

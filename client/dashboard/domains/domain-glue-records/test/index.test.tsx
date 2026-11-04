@@ -36,7 +36,7 @@ const mockFetchDomainGlueRecordsApiRequest = ( {
 	data?: DomainGlueRecord[];
 } = {} ) => {
 	return nock( 'https://public-api.wordpress.com' )
-		.get( `/wpcom/v2/domains/glue-records/${ domainName }` )
+		.get( `/wpcom/v2/domains/glue-records/${ domainName }/` )
 		.reply( responseCode, data );
 };
 

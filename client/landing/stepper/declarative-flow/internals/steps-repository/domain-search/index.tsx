@@ -60,7 +60,7 @@ import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { getSkipSuggestionCopy } from './get-skip-suggestion-copy';
 import { useDomainSearchResultsExperiment } from './results-experiment';
 import type { Step as StepType } from '../../types';
-import type { FreeDomainSuggestion } from '@automattic/api-core';
+import type { DomainAvailabilityStatus, FreeDomainSuggestion } from '@automattic/api-core';
 import type { HelpCenterSelect, OnboardSelect } from '@automattic/data-stores';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
@@ -342,7 +342,8 @@ const DomainSearchStep: StepType< {
 				} );
 			},
 			// Omitted (not `undefined`) outside onboarding: the WPCOM wrapper wraps every event
-			// key in a function, which would render the card in other flows.
+			// key in a function, which would render the migrate card and the notice skip link in
+			// other flows.
 			...( isOnboardingFlow( flow ) && {
 				onMigrateSiteClick: () => {
 					recordTracksEvent( 'calypso_domain_search_migrate_site_button_click', {
@@ -350,6 +351,14 @@ const DomainSearchStep: StepType< {
 						flow_name: flow,
 					} );
 					window.location.assign( `/setup/${ SITE_MIGRATION_FLOW }?ref=${ flow }` );
+				},
+				onSearchNoticeSkipClick: ( domainName: string, status: DomainAvailabilityStatus ) => {
+					recordTracksEvent( 'calypso_domain_search_notice_skip_click', {
+						section: 'signup',
+						flow_name: flow,
+						domain: domainName,
+						availability_status: status,
+					} );
 				},
 			} ),
 			onContinue: ( domainCart: MinimalRequestCartProduct[] ) => {

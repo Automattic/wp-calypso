@@ -491,13 +491,13 @@ describe( 'SiteGenerationView wait estimate', () => {
 	} );
 
 	it.each( [ 'blocks-first' as const, undefined ] )(
-		'promises up to 10 minutes when the graph is %s',
+		'promises a few minutes when the graph is %s',
 		( graph ) => {
 			render(
 				<SiteGenerationView graph={ graph } onReload={ jest.fn() } state={ workingState } />
 			);
 
-			expect( screen.getByText( /This can take up to 10 minutes\./ ) ).toBeInTheDocument();
+			expect( screen.getByText( /This usually takes a few minutes\./ ) ).toBeVisible();
 		}
 	);
 } );

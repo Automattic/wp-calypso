@@ -7,8 +7,6 @@ import { translate } from 'i18n-calypso';
 import { isMigrationInProgress } from 'calypso/data/site-migration';
 import type { SiteExcerptData, SiteExcerptNetworkData } from '@automattic/sites';
 
-export const TRACK_SOURCE_NAME = 'sites-dashboard';
-
 export const getLaunchpadUrl = ( slug: string, flow: string ) => {
 	return `/setup/${ flow }/launchpad?siteSlug=${ slug }`;
 };

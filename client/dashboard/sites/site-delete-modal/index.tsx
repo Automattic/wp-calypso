@@ -196,7 +196,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 	return (
 		<>
 			{ isSyncing && (
-				<Notice variant="warning" density="medium">
+				<Notice variant="warning">
 					<Text>
 						{ __(
 							'A sync is currently in progress. Deleting this site will cancel the sync and any unfinished changes will be lost.'
@@ -204,7 +204,7 @@ function SiteDeleteConfirmContent( { site, onClose }: { site: Site; onClose: () 
 					</Text>
 				</Notice>
 			) }
-			<Notice variant="warning" density="medium">
+			<Notice variant="warning">
 				<Text>
 					{ createInterpolateElement(
 						__(
@@ -272,7 +272,10 @@ export default function SiteDeleteModal( { site, onClose }: { site: Site; onClos
 		select: ( purchases ) => purchases.some( ( purchase ) => purchase.blocks_site_deletion ),
 	} );
 
-	const canBeDeleted = canDeleteSite( site ) && ! hasPurchasesThatBlockSiteDeletion;
+	const canBeDeleted =
+		canDeleteSite( site ) &&
+		! ( site.plan?.is_free && site.is_wpcom_atomic ) && // Can occur when atomic removal already in progress.
+		! hasPurchasesThatBlockSiteDeletion;
 	const title = canBeDeleted ? __( 'Delete site' ) : __( 'Unable to delete site' );
 
 	if ( isLoading ) {

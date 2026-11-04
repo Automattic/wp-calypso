@@ -44,6 +44,7 @@ export function AgentUIContainer( {
 	isStreaming,
 	isReplying,
 	error,
+	errorNotice,
 	onSubmit,
 	variant = 'floating',
 	triggerIcon,
@@ -502,6 +503,7 @@ export function AgentUIContainer( {
 		isStreaming,
 		isReplying,
 		error,
+		errorNotice,
 
 		// Input state
 		inputValue: input.value,

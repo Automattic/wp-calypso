@@ -1,24 +1,23 @@
 import { getUrlParts } from '@automattic/calypso-url';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { Notice } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SitePreview } from '../site-migration-instructions/site-preview';
+import { mShotConfigs } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import successIcon from './success.svg';
 import type { Step as StepType } from '../../types';
 
 import './style.scss';
 
-const PREVIEW_OPTIONS = {
-	vpw: 1200,
-	vph: 800,
-	w: 1200,
-	h: 800,
-	screen_height: 800,
-	scale: 2,
-};
+export type CopySiteEligibility = 'eligible' | 'ineligible' | 'loading';
+
+// The size the address step has already asked mShots to capture the source at, so it's ready sooner.
+const PREVIEW_OPTIONS = mShotConfigs.desktop;
 
 const SiteMigrationCheck: StepType< {
 	accepts: {
@@ -29,11 +28,13 @@ const SiteMigrationCheck: StepType< {
 		isLoadingDestination?: boolean;
 		destinationFailed?: boolean;
 		onRetryDestination?: () => void;
+		copySiteEligibility?: CopySiteEligibility;
 	};
 	submits:
 		| { action: 'back' }
 		| {
-				action: 'continue' | 'select-existing-site';
+				action:
+					'continue' | 'select-existing-site' | 'copy-site' | 'transfer-domain' | 'get-access';
 				from: string;
 				platform: 'wordpress';
 				host?: string;
@@ -47,6 +48,7 @@ const SiteMigrationCheck: StepType< {
 	isLoadingDestination,
 	destinationFailed,
 	onRetryDestination,
+	copySiteEligibility = 'ineligible',
 } ) => {
 	const translate = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -76,20 +78,53 @@ const SiteMigrationCheck: StepType< {
 		title = translate( 'Your site is already on WordPress.com' );
 		subTitle = translate( 'Let’s figure out your next step together.' );
 	}
-	const choices = [
+	const choices: {
+		action: 'copy-site' | 'transfer-domain' | 'get-access';
+		title: TranslateResult;
+		description: TranslateResult;
+		disabled?: boolean;
+		href?: string;
+		ineligible?: boolean;
+	}[] = [
 		{
-			title: translate( 'Make a copy of your site' ),
-			description: translate( 'Duplicate it to a new site you can work on.' ),
-		},
-		{
+			action: 'transfer-domain',
 			title: translate( 'Transfer your domain to WordPress.com' ),
 			description: translate( 'Bring the registration across too.' ),
 		},
 		{
+			action: 'get-access',
 			title: translate( 'Get access to your site' ),
 			description: translate( 'Get help accessing and managing your site.' ),
 		},
 	];
+
+	if ( copySiteEligibility === 'ineligible' ) {
+		choices.push( {
+			action: 'copy-site',
+			title: translate( 'Make a copy of your site' ),
+			description: translate(
+				'This site isn’t eligible to be copied. {{learnMore}}Learn more{{/learnMore}}',
+				{
+					components: {
+						learnMore: <span className="site-migration-check__choice-learn-more" />,
+					},
+				}
+			),
+			href: localizeUrl( 'https://wordpress.com/support/copy-a-site/' ),
+			ineligible: true,
+		} );
+	} else {
+		const isCheckingCopySite = copySiteEligibility === 'loading';
+		choices.push( {
+			action: 'copy-site',
+			title: translate( 'Make a copy of your site' ),
+			description: isCheckingCopySite
+				? translate( 'Checking if your site can be copied…' )
+				: translate( 'Duplicate it to a new site you can work on.' ),
+			disabled: isCheckingCopySite,
+		} );
+	}
+
 	const returnToAddress = () => navigation.submit?.( { action: 'back' } );
 
 	useEffect( () => {
@@ -161,11 +196,20 @@ const SiteMigrationCheck: StepType< {
 				{ ! destinationFailed &&
 					( showChoices ? (
 						<div className="site-migration-check__card">
-							{ choices.map( ( { title, description } ) => (
+							{ choices.map( ( { action, title, description, disabled, href, ineligible } ) => (
 								<Step.LinkButton
-									key={ String( title ) }
-									className="site-migration-check__choice"
-									disabled
+									key={ action }
+									className={ clsx( 'site-migration-check__choice', {
+										'site-migration-check__choice--ineligible': ineligible,
+									} ) }
+									disabled={ disabled }
+									href={ href }
+									target={ href ? '_blank' : undefined }
+									onClick={
+										href
+											? undefined
+											: () => navigation.submit?.( { action, from, platform: 'wordpress', host } )
+									}
 								>
 									<span className="site-migration-check__choice-content">
 										<span className="site-migration-check__choice-title">{ title }</span>
@@ -173,8 +217,13 @@ const SiteMigrationCheck: StepType< {
 											{ description }
 										</span>
 									</span>
-									<span className="site-migration-check__choice-arrow" aria-hidden="true">
-										›
+									<span
+										className={ clsx( 'site-migration-check__choice-arrow', {
+											'site-migration-check__choice-arrow--external': href,
+										} ) }
+										aria-hidden="true"
+									>
+										{ href ? '↗' : '›' }
 									</span>
 								</Step.LinkButton>
 							) ) }
@@ -312,11 +361,6 @@ const SiteMigrationCheck: StepType< {
 										</Step.LinkButton>
 									) }
 								</div>
-								{ ! hasDestination && (
-									<Step.LinkButton disabled>
-										{ translate( 'Rather have us do it? Talk to a migration expert' ) }
-									</Step.LinkButton>
-								) }
 							</div>
 						</>
 					) ) }

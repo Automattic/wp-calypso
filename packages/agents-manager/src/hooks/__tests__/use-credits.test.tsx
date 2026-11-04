@@ -10,7 +10,7 @@ let mockIsProcessing = false;
 jest.mock(
 	'@automattic/agenttic-client',
 	() => ( {
-		useAgentChat: () => ( { isProcessing: mockIsProcessing } ),
+		useAgentChat: () => ( { isProcessing: mockIsProcessing, messages: [] } ),
 	} ),
 	{ virtual: true }
 );
@@ -69,6 +69,24 @@ describe( 'useCredits', () => {
 		seed( '?am_credits=55&am_plan=free' );
 		const disabled = renderCredits( false );
 		expect( disabled.result.current.trailingActions ).toBeUndefined();
+	} );
+
+	it( 'leaves the popover’s credits button out of a mock balance, which `/credits` can’t answer', () => {
+		seed( '?am_credits=25&am_plan=free' );
+		const { result } = renderHook( () =>
+			useCredits( {
+				enabled: true,
+				agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
+				siteKey: 'no-site',
+				isOpen: true,
+				isNoticeVisible: true,
+				onShowCredits: jest.fn(),
+			} )
+		);
+		const meter = result.current.trailingActions as React.ReactElement< {
+			onShowCredits?: () => void;
+		} >;
+		expect( meter.props.onShowCredits ).toBeUndefined();
 	} );
 
 	it( 'spends when a request finishes, not on the submit attempt', () => {

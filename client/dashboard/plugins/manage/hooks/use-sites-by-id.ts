@@ -1,11 +1,10 @@
 import { Site } from '@automattic/api-core';
+import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { useAppContext } from '../../../app/context';
 
 export const useSitesById = () => {
-	const { queries } = useAppContext();
-	const { data: sites, isLoading: isLoadingSites } = useQuery( queries.sitesQuery() );
+	const { data: sites, isLoading: isLoadingSites } = useQuery( sitesQuery() );
 
 	const sitesById = useMemo( () => {
 		if ( isLoadingSites ) {
@@ -24,5 +23,5 @@ export const useSitesById = () => {
 			}, new Map< number, Site >() );
 	}, [ isLoadingSites, sites ] );
 
-	return { isLoadingSites, sitesById };
+	return { isLoadingSites, sitesById, hasSites: !! sites?.length };
 };

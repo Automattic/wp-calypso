@@ -86,3 +86,4 @@ export const EXTERNAL_WPCOM_BILLING_HISTORY_URL = `${ EXTERNAL_WPCOM_ACCOUNT_URL
 
 // Pressable External links
 export const EXTERNAL_PRESSABLE_AUTH_URL = 'https://my.pressable.com/agency/auth';
+export const EXTERNAL_PRESSABLE_USAGE_URL = 'https://my.pressable.com/usage';

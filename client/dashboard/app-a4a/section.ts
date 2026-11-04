@@ -24,6 +24,7 @@ export const A4A_DASHBOARD_SECTION_PATHS = [
 	'/woopayments',
 	'/payout-settings',
 	'/agency/team',
+	'/agency/dashboard',
 	'/agency/ai',
 	'/agency/ai/read',
 	'/agency/ai/write',

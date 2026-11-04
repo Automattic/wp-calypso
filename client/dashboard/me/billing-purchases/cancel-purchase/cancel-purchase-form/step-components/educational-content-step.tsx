@@ -66,14 +66,18 @@ function Content( { image, ...props }: ContentProps ) {
 	);
 }
 
-type StepProps = {
+type EducationalContentStepProps = {
 	type: string;
 	siteSlug: string;
 	onDecline?: () => void;
 	cancellationReason?: string;
 };
 
-export default function EducationalContentStep( { type, siteSlug, ...props }: StepProps ) {
+export default function EducationalContentStep( {
+	type,
+	siteSlug,
+	...props
+}: EducationalContentStepProps ) {
 	const { setShowHelpCenter, setSubject } = useHelpCenter();
 	const hasEnTranslation = useHasEnTranslation();
 

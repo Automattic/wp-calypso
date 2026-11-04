@@ -102,7 +102,9 @@ export const UserMessage = ( {
 			return '';
 		}
 
-		if ( hasReachedLimit ) {
+		// Only when GetSupport offers the open conversations: when support is email-only or the
+		// chat client hasn't loaded, it offers email, and without paid support, the forums.
+		if ( hasReachedLimit && isUserEligibleForPaidSupport && ! forceEmailSupport && isChatLoaded ) {
 			return getConversationLimitReachedMessage().content;
 		}
 

@@ -6,8 +6,10 @@ import {
 	formatCreditsLeft,
 	formatCreditsShort,
 	formatPercent,
+	getAgentEnvironment,
 	getCreditsLabel,
 	getCreditsToggleLabel,
+	getTopUpCreditsLeft,
 	isCreditsAlert,
 	isCreditsExhausted,
 	isCreditsLow,
@@ -105,6 +107,52 @@ describe( 'isCreditsAlert', () => {
 	it( 'ignores the plan share on paid plans', () => {
 		expect( isCreditsAlert( { ...paid( 10 ), remaining: 205000 } ) ).toBe( false );
 		expect( isCreditsAlert( { ...paid( 0 ), remaining: 25000 } ) ).toBe( false );
+	} );
+} );
+
+describe( 'getTopUpCreditsLeft', () => {
+	const withTopUps = ( remaining: number ): CreditsStatus => ( {
+		...paid( 0, remaining ),
+		pools: [ ...paid( 0 ).pools, { id: 'topups', label: 'Top-ups', remaining } ],
+	} );
+
+	it( 'sends the top-ups row’s balance', () => {
+		expect( getTopUpCreditsLeft( withTopUps( 67000 ) ) ).toBe( 67000 );
+	} );
+
+	it( 'sends 0, not none, for a used-up pack', () => {
+		expect( getTopUpCreditsLeft( withTopUps( 0 ) ) ).toBe( 0 );
+	} );
+
+	it.each( [
+		[ 'a paid plan', paid( 50 ) ],
+		[ 'a free plan', free( 50 ) ],
+	] )( 'sends none for %s without a top-ups row', ( _plan, status ) => {
+		expect( getTopUpCreditsLeft( status ) ).toBe( 'none' );
+	} );
+} );
+
+describe( 'getAgentEnvironment', () => {
+	it( 'sends the client context environment unchanged', () => {
+		expect(
+			getAgentEnvironment( { getClientContext: () => ( { environment: 'image-studio' } ) } )
+		).toBe( 'image-studio' );
+	} );
+
+	it.each( [
+		[ 'no context provider', undefined ],
+		[ 'no environment', { getClientContext: () => ( {} ) } ],
+		[ 'an empty environment', { getClientContext: () => ( { environment: '' } ) } ],
+		[
+			'a context that throws',
+			{
+				getClientContext: () => {
+					throw new Error( 'No store' );
+				},
+			},
+		],
+	] )( 'sends none for %s', ( _case, contextProvider ) => {
+		expect( getAgentEnvironment( contextProvider ) ).toBe( 'none' );
 	} );
 } );
 

@@ -6,6 +6,6 @@ export const canUseStaticSiteImport = (
 	from?: string | null
 ) =>
 	config.isEnabled( 'migration/non-wordpress-source' ) &&
-	Boolean( platform ) &&
+	!! platform &&
 	platform !== 'wordpress' &&
 	Boolean( from );

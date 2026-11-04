@@ -32,6 +32,7 @@ export function useTeamActions( {
 			{
 				id: 'resend-user-invite',
 				label: __( 'Resend invite' ),
+				isPrimary: true,
 				isEligible: ( item: TeamMember ) => canInvite && isNotOwner( item ) && isInvited( item ),
 				callback: ( items: TeamMember[] ) => onResendInvite( items[ 0 ] ),
 			},

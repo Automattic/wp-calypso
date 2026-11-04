@@ -26,7 +26,7 @@ import {
 import { detectPartnerConfig, getPartnerFormattedWindowTitle } from 'calypso/lib/partner-branding';
 import isPassportRedirect from 'calypso/lib/passport/is-passport-redirect';
 import { login, lostPassword } from 'calypso/lib/paths';
-import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
+import { useEntryClarityLoginTreatment } from 'calypso/lib/signup/use-entry-clarity-experiment';
 import { getHeaderText } from 'calypso/login/wp-login/hooks/get-header-text';
 import {
 	recordPageViewWithClientId as recordPageView,
@@ -35,7 +35,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, getTwoFactorAuthNonce } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -49,6 +49,7 @@ import isWooJPCFlow, {
 	isWooCommercePaymentsOnboardingFlow,
 } from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import { getConnectionFlowFromRedirectTo } from '../connection-flow';
 import LoginContextProvider, { LoginContext } from '../login-context';
 import OneLoginFooter from './components/one-login-footer';
 import OneLoginLayout from './components/one-login-layout';
@@ -72,6 +73,7 @@ export class Login extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		hasTwoFactorEmailNonce: PropTypes.bool,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isWoo: PropTypes.bool,
@@ -108,6 +110,7 @@ export class Login extends Component {
 		// List all props that affect the heading text
 		const headingProps = [
 			'twoFactorAuthType',
+			'hasTwoFactorEmailNonce',
 			'isManualRenewalImmediateLoginAttempt',
 			'socialConnect',
 			'linkingSocialService',
@@ -121,7 +124,7 @@ export class Login extends Component {
 			'isFromAkismet',
 			'isFromPassport',
 			'isFromAutomatticForAgenciesPlugin',
-			'isFromJetpackConnector',
+			'isUnifiedConnectionFlow',
 			'connectorPlugins',
 			'partnerConfig',
 			'isGravPoweredClient',
@@ -409,7 +412,7 @@ export class Login extends Component {
 
 				<DocumentHead
 					title={ getPartnerFormattedWindowTitle(
-						translate( 'Log In', { textOnly: true } ),
+						translate( 'Log in', { textOnly: true } ),
 						partnerConfig
 					) }
 					skipTitleFormatting
@@ -431,20 +434,25 @@ export class Login extends Component {
 		);
 
 		const isLostPasswordView = action === 'lostpassword' || action === 'jetpack/lostpassword';
+		// The login form sits beside the social buttons, so it needs the wider, centered layout.
+		// Lost password and two-step screens follow the layout's default: the 432px account
+		// template, or centered with a logo above the title.
+		const isLoginFormView = ! isLostPasswordView && ! this.props.twoFactorAuthType;
 
 		return (
 			<>
 				{ ! isGravPoweredClient && (
 					<OneLoginLayout
 						isJetpack={ isJetpack }
-						isFromJetpackConnector={ this.props.isFromJetpackConnector }
+						isUnifiedConnectionFlow={ this.props.isUnifiedConnectionFlow }
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
+						columnWidth={ isLoginFormView ? 6 : undefined }
+						isCentered={ isLoginFormView || undefined }
 						// The footer carries the route to signup on desktop instead.
 						signupLinkMobileOnly={ isEntryClarityTreatment }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
-						subHeadingProminent={ this.props.isFromJetpackConnector && ! isLostPasswordView }
 						notice={ notices }
 						linkLogoToHome
 					>
@@ -460,6 +468,7 @@ export class Login extends Component {
 function getInitialHeadingState( props, translate ) {
 	const {
 		twoFactorAuthType,
+		hasTwoFactorEmailNonce,
 		isManualRenewalImmediateLoginAttempt,
 		socialConnect,
 		linkingSocialService,
@@ -473,7 +482,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -499,7 +508,7 @@ function getInitialHeadingState( props, translate ) {
 		isFromAkismet,
 		isFromPassport,
 		isFromAutomatticForAgenciesPlugin,
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 		partnerConfig,
 		isGravPoweredClient,
@@ -511,11 +520,12 @@ function getInitialHeadingState( props, translate ) {
 	const headingSubText = getHeadingSubText( {
 		isSocialFirst,
 		twoFactorAuthType,
+		hasTwoFactorEmailNonce,
 		action,
 		translate,
 		isWooJPC,
 		partnerConfig,
-		isFromJetpackConnector,
+		isUnifiedConnectionFlow,
 		connectorPlugins,
 	} );
 
@@ -532,9 +542,9 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
-	// Logged-out visitors on the main login view, the same audience as the signup step. Gravatar-
-	// powered logins have their own layout, which the treatment does not change.
-	const isEntryClarityTreatment = useEntryClarityExperiment(
+	// Logged-out visitors on the main login view. Gravatar-powered logins have their own layout,
+	// which the treatment does not change.
+	const isEntryClarityTreatment = useEntryClarityLoginTreatment(
 		props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient
 	);
 
@@ -553,23 +563,16 @@ const LoginWithContext = ( props ) => {
 	);
 };
 
-const trimString = ( s ) => s.trim();
-
 export default connect(
 	( state, props ) => {
 		const currentQuery = getCurrentQueryArguments( state );
 		const oauth2Client = getCurrentOAuth2Client( state );
 		const currentRoute = getCurrentRoute( state );
 
-		const redirectParams = new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] );
-		const connectorFromParam = redirectParams.get( 'from' ) || currentQuery?.from;
-		const isFromJetpackConnector = connectorFromParam === 'jetpack-connector';
-		const connectorPlugins = isFromJetpackConnector
-			? ( redirectParams.get( 'plugins' ) || currentQuery?.plugins || '' )
-					.split( ',' )
-					.map( trimString )
-					.filter( Boolean )
-			: [];
+		const { isUnifiedConnectionFlow, connectorPlugins } = getConnectionFlowFromRedirectTo(
+			getRedirectToOriginal( state ),
+			currentQuery
+		);
 
 		return {
 			locale: getCurrentLocaleSlug( state ),
@@ -610,11 +613,12 @@ export default connect(
 				'automattic-for-agencies-client' === getCurrentQueryArguments( state )?.from ||
 				'automattic-for-agencies-client' ===
 					new URLSearchParams( getRedirectToOriginal( state )?.split( '?' )[ 1 ] ).get( 'from' ),
-			isFromJetpackConnector,
+			isUnifiedConnectionFlow,
 			connectorPlugins,
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
+			hasTwoFactorEmailNonce: !! getTwoFactorAuthNonce( state, 'email' ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),
 		};
 	},

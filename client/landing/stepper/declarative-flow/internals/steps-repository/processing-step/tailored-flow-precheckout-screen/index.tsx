@@ -1,6 +1,5 @@
 import { NEWSLETTER_FLOW } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
-import PropTypes from 'prop-types';
 import { useRef, useState, useEffect } from 'react';
 import Loading from 'calypso/components/loading';
 import { useInterval } from 'calypso/lib/interval/use-interval';
@@ -79,7 +78,3 @@ export default function TailoredFlowPreCheckoutScreen( { flowName }: { flowName:
 
 	return <Loading title={ steps.current[ currentStep ]?.title } progress={ progress } />;
 }
-
-TailoredFlowPreCheckoutScreen.propTypes = {
-	flowName: PropTypes.string,
-};

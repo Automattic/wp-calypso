@@ -1,13 +1,16 @@
-export { createInteractiveUiCatalog } from './catalog';
-export type { InteractiveUiCatalog, InteractiveUiCatalogOptions } from './catalog';
+export { CHARTS_CATALOG, createInteractiveUiCatalog } from './utils/catalog';
+export type { InteractiveUiCatalog } from './utils/catalog';
+export type { InteractiveUiCatalogDefinition } from './utils/definitions';
+export { createInteractiveUiRuntime } from './utils/runtime';
 export type {
-	InteractiveUiComponentDefinition,
-	InteractiveUiFunctionDefinition,
-} from './definitions';
-export { createInteractiveUiRuntime } from './runtime';
-export type { InteractiveUiRuntime } from './runtime';
-export { InteractiveUiSurface } from './interactive-ui-surface';
+	InteractiveUiDataModel,
+	InteractiveUiMessage,
+	InteractiveUiRuntime,
+	InteractiveUiRuntimeOptions,
+} from './utils/runtime';
+export type { InteractiveUiActionMode } from './capabilities';
+export { InteractiveUiSurface } from './components/interactive-ui-surface';
 export type {
-	A2uiClientAction as InteractiveUiAction,
-	A2uiMessage as InteractiveUiMessage,
-} from '@a2ui/web_core/v0_9';
+	ActionPayload as InteractiveUiAction,
+	A2uiErrorPayload as InteractiveUiError,
+} from '@a2ui/web_core';

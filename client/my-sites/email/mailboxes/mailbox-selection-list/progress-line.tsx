@@ -1,5 +1,3 @@
-import PropTypes from 'prop-types';
-
 import './progress-line-style.scss';
 
 const ProgressLine = ( { statusText }: { statusText: string } ) => {
@@ -13,10 +11,6 @@ const ProgressLine = ( { statusText }: { statusText: string } ) => {
 			</div>
 		</div>
 	);
-};
-
-ProgressLine.propType = {
-	mailbox: PropTypes.node.isRequired,
 };
 
 export default ProgressLine;

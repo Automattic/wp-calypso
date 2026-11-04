@@ -1,6 +1,9 @@
 import { __, sprintf } from '@wordpress/i18n';
 import { formatDate } from '../../../utils/datetime';
-import { getDowngradeTargetProductName } from '../../../utils/downgrade-target-name';
+import {
+	getScheduledChangeTargetName,
+	isScheduledTermChange,
+} from '../../../utils/downgrade-target-name';
 import type { Purchase } from '@automattic/api-core';
 
 export interface DelayedDowngradeNotice {
@@ -29,9 +32,7 @@ export function getDelayedDowngradeNotice(
 		return null;
 	}
 
-	const targetPlanName = getDowngradeTargetProductName(
-		purchase.delayed_downgrade_to_product_slug
-	);
+	const targetPlanName = getScheduledChangeTargetName( purchase, hasEnTranslation );
 	// `renew_date` is the next auto-renewal attempt date, which for annual
 	// plans is up to 30 days before expiry. The downgrade takes effect on
 	// that renewal, so it's the accurate date to show the customer.
@@ -79,6 +80,24 @@ export function getDelayedDowngradeNotice(
 				isRetryingRenewal: true,
 			};
 		}
+	}
+
+	// A shorter term, such as monthly from yearly, isn't necessarily a downgrade.
+	if (
+		isScheduledTermChange( purchase ) &&
+		targetPlanName &&
+		renewalDate &&
+		hasEnTranslation( 'Your plan is scheduled to change to %1$s at your next renewal on %2$s.' )
+	) {
+		return {
+			message: sprintf(
+				// translators: %1$s is the name of the plan with its billing term, e.g. "Premium (monthly)"; %2$s is a date, e.g. "January 1, 2026"
+				__( 'Your plan is scheduled to change to %1$s at your next renewal on %2$s.' ),
+				targetPlanName,
+				renewalDate
+			),
+			isRetryingRenewal: false,
+		};
 	}
 
 	return {

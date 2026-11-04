@@ -19,7 +19,7 @@ import {
 } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
-interface Props {
+interface UpcomingRenewalsDialogProps {
 	siteDomain: string;
 	purchases: Purchase[];
 	onClose: () => void;
@@ -88,7 +88,7 @@ export function UpcomingRenewalsDialog( {
 	onClose,
 	onConfirm,
 	submitButtonText,
-}: Props ) {
+}: UpcomingRenewalsDialogProps ) {
 	const locale = useLocale();
 	const hasEnTranslation = useHasEnTranslation();
 

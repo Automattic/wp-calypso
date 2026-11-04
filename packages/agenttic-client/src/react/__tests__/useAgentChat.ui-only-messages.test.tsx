@@ -132,6 +132,45 @@ describe( 'useAgentChat normal send reconcile', () => {
 		expect( latestHookValue?.isProcessing ).toBe( false );
 	} );
 
+	it( 'keeps the final message’s interactive UI surface under the streamed text', async () => {
+		const surface = {
+			type: 'data' as const,
+			data: [ { version: 'v1.0', deleteSurface: { surfaceId: 'form' } } ],
+			metadata: { mimeType: 'application/a2ui+json' as const },
+		};
+
+		vi.mocked( mockClient.sendMessageStream ).mockImplementation(
+			async function* (): AsyncIterable< TaskUpdate > {
+				yield { id: 'task-1', final: false, status: { state: 'working' }, text: 'Here’s a form.' };
+				yield {
+					id: 'task-1',
+					final: true,
+					status: {
+						state: 'completed',
+						message: {
+							...clientMessage( 'agent-1', 'agent', 'Here’s a form.', Date.now() ),
+							parts: [ { type: 'text', text: 'Here’s a form.' }, surface ],
+						},
+					},
+					text: 'Here’s a form.',
+				};
+			}
+		);
+
+		await act( async () => {
+			root.render( <HookHarness /> );
+		} );
+
+		await act( async () => {
+			await latestHookValue?.onSubmit( 'Show me a form.' );
+		} );
+
+		expect( latestHookValue?.messages.at( -1 )?.content ).toEqual( [
+			{ type: 'text', text: 'Here’s a form.' },
+			{ type: 'data', data: { a2ui: surface } },
+		] );
+	} );
+
 	it( 'keeps the optimistic user message when actions re-register mid-send', async () => {
 		// A consumer that re-registers a message action while a send is in
 		// flight must not drop the optimistic user message. The drop is

@@ -1,21 +1,28 @@
-import {
-	Card,
-	CardBody,
-	__experimentalHStack as HStack,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-	Icon,
-} from '@wordpress/components';
-import { arrowUpRight, wordpress } from '@wordpress/icons';
+import { __experimentalText as Text } from '@wordpress/components';
 import { useAppContext } from '../../context';
 import { formatDate } from '../format-note-time';
+import Author from './author';
+import LinkCard from './link-card';
+import MetaList from './meta-list';
+import SiteIdentity from './site-identity';
 import type { NotePost, NoteSite } from '../../types';
 
-export default function PostCard( { post, site }: { post: NotePost; site?: NoteSite } ) {
+export default function PostCard( {
+	post,
+	site,
+	url,
+}: {
+	post: NotePost;
+	site?: NoteSite;
+	url?: string;
+} ) {
 	const { locale } = useAppContext();
-	const byline = [ post.author_name, post.date && formatDate( post.date, locale ) ]
-		.filter( Boolean )
-		.join( ' · ' );
+	const byline = (
+		<MetaList>
+			{ post.author_name && <Author avatar={ post.author_avatar }>{ post.author_name }</Author> }
+			{ post.date && formatDate( post.date, locale ) }
+		</MetaList>
+	);
 
 	const title = (
 		<Text size={ 15 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
@@ -23,54 +30,13 @@ export default function PostCard( { post, site }: { post: NotePost; site?: NoteS
 		</Text>
 	);
 
+	if ( ! site ) {
+		return <LinkCard href={ url || post.url } header={ title } />;
+	}
+
 	return (
-		<Card
-			as="a"
-			className="wpnc-simplified__card"
-			href={ post.url }
-			target="_blank"
-			rel="noreferrer"
-			size="small"
-		>
-			<CardBody>
-				<VStack spacing={ 3 }>
-					<HStack alignment="top" justify="space-between" spacing={ 3 }>
-						{ site ? (
-							<HStack justify="flex-start" spacing={ 3 }>
-								{ site.icon ? (
-									<img
-										className="wpnc-simplified__site-icon"
-										src={ site.icon }
-										alt=""
-										width={ 36 }
-										height={ 36 }
-									/>
-								) : (
-									<Icon
-										className="wpnc-simplified__site-icon is-placeholder"
-										icon={ wordpress }
-										size={ 36 }
-									/>
-								) }
-								<VStack spacing={ 1 }>
-									<Text size={ 13 } weight={ 600 } truncate>
-										{ site.name }
-									</Text>
-									{ byline && (
-										<Text size={ 12 } variant="muted">
-											{ byline }
-										</Text>
-									) }
-								</VStack>
-							</HStack>
-						) : (
-							title
-						) }
-						<Icon className="wpnc-simplified__card-arrow" icon={ arrowUpRight } size={ 20 } />
-					</HStack>
-					{ site && title }
-				</VStack>
-			</CardBody>
-		</Card>
+		<LinkCard href={ url || post.url } header={ <SiteIdentity site={ site } details={ byline } /> }>
+			{ title }
+		</LinkCard>
 	);
 }

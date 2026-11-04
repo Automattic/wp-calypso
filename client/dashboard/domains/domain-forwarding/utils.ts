@@ -85,6 +85,10 @@ export function isTargetUrlValid( targetUrl: string, sourceDomain: string ): str
 	if ( ! isSubdomain( domainParts, targetHostParts, domainLevel, targetHostLevel ) ) {
 		return null;
 	}
+	// A `www` forward is valid if the domain has a custom CNAME pointing elsewhere. Let the backend validate that
+	if ( url.hostname === `www.${ sourceDomain }` ) {
+		return null;
+	}
 	return __( 'Forwarding to a further nested domain is not allowed.' );
 }
 
@@ -137,4 +141,15 @@ export function formDataToSubmitData(
 	}
 
 	return submitData;
+}
+
+export function getForwardingSummary( isPermanent: boolean, forwardPaths: boolean ): string {
+	if ( isPermanent ) {
+		return forwardPaths
+			? __( 'Permanent forward. Visitors land on the matching page.' )
+			: __( 'Permanent forward. Everyone lands on the same address.' );
+	}
+	return forwardPaths
+		? __( 'Temporary forward. Visitors land on the matching page.' )
+		: __( 'Temporary forward. Everyone lands on the same address.' );
 }
