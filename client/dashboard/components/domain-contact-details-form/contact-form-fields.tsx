@@ -26,6 +26,7 @@ import {
 import { RegionAddressFieldsets } from './region-address-fieldsets';
 import type { CountryListItem } from './custom-form-fieldsets/types';
 import type { DomainContactDetails, StatesListItem } from '@automattic/api-core';
+import './style.scss';
 
 // The supported-countries list repeats popular countries and includes an empty-code
 // separator; the combobox keys options by code, so dedupe to avoid duplicate React keys.
@@ -144,6 +145,7 @@ function EmailNotice() {
 	const hasEnTranslation = useHasEnTranslation();
 	const icannLink = (
 		<a
+			className="domain-contact-details-form__icann-link"
 			href="https://www.icann.org/resources/pages/contact-verification-2013-05-03-en"
 			target="_blank"
 			rel="noopener noreferrer"
