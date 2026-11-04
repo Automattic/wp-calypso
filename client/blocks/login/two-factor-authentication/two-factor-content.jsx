@@ -45,6 +45,7 @@ function TwoFactorContent( {
 				{ poller }
 				<VerificationCodeForm
 					key={ twoFactorAuthType }
+					isGravPoweredClient={ isGravPoweredClient }
 					onSuccess={ handleValid2FACode }
 					twoFactorAuthType={ twoFactorAuthType }
 					switchTwoFactorAuthType={ switchTwoFactorAuthType }
@@ -58,7 +59,10 @@ function TwoFactorContent( {
 		return (
 			<div>
 				{ poller }
-				<WaitingTwoFactorNotificationApproval switchTwoFactorAuthType={ switchTwoFactorAuthType } />
+				<WaitingTwoFactorNotificationApproval
+					isGravPoweredClient={ isGravPoweredClient }
+					switchTwoFactorAuthType={ switchTwoFactorAuthType }
+				/>
 			</div>
 		);
 	}

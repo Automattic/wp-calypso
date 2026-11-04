@@ -12,6 +12,7 @@ import {
 	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
+	domainsQuery,
 	githubInstallationsQuery,
 	mcpSettingsQuery,
 	agencyPendingSitesQuery,
@@ -55,7 +56,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
-import { canSwitchAgencyDashboard } from '../../agency/lib/dashboard-opt-in';
+import {
+	canSwitchAgencyDashboard,
+	needsPreviousAgencyDashboard,
+} from '../../agency/lib/dashboard-opt-in';
 import {
 	getPressableOwnershipType,
 	pressableLicensesQuery,
@@ -88,6 +92,7 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
+import { a4aLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
@@ -168,6 +173,10 @@ const agencyRoute = createRoute( {
 		] );
 		if ( agency.isClientUser ) {
 			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
+		}
+
+		if ( needsPreviousAgencyDashboard( activeAgency ) ) {
+			throw dashboardRedirect( { href: a4aLink( '/overview' ), reloadDocument: true } );
 		}
 
 		const capabilities = activeAgency?.user?.capabilities ?? [];
@@ -1698,12 +1707,12 @@ export const agencySiteSettingsSiteVisibilityRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Site visibility' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),

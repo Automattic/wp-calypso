@@ -9,12 +9,19 @@ import jetpackBackupsAndRestores from 'calypso/assets/images/plans/wpcom/busines
 import newsletters from 'calypso/assets/images/plans/wpcom/business-trial/newsletters.svg';
 import seoTools from 'calypso/assets/images/plans/wpcom/business-trial/seo-tools.svg';
 import spamProtection from 'calypso/assets/images/plans/wpcom/business-trial/spam-protection.svg';
+import { useSelector } from 'calypso/state';
+import isJetpackSeoPageAvailable from 'calypso/state/selectors/is-jetpack-seo-page-available';
+import { getSiteId } from 'calypso/state/sites/selectors';
 import type { SiteSlug } from 'calypso/types';
 
 export default function useBusinessTrialIncludedFeatures(
 	siteSlug: SiteSlug,
 	siteAdminUrl: string
 ) {
+	const seoPageAvailable = useSelector( ( state ) => {
+		const siteId = getSiteId( state, siteSlug );
+		return isJetpackSeoPageAvailable( state, siteId );
+	} );
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
 
@@ -85,7 +92,10 @@ export default function useBusinessTrialIncludedFeatures(
 			illustration: seoTools,
 			showButton: true,
 			buttonText: translate( 'Increase visibility' ),
-			buttonClick: () => page( `/marketing/traffic/${ siteSlug }` ),
+			buttonClick: () =>
+				seoPageAvailable && siteAdminUrl
+					? ( location.href = siteAdminUrl + 'admin.php?page=jetpack-seo' )
+					: page( `/marketing/traffic/${ siteSlug }` ),
 		},
 		{
 			id: 'google-analytics',

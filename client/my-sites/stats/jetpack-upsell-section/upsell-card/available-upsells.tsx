@@ -1,6 +1,7 @@
 import {
 	FEATURE_CLOUD_CRITICAL_CSS,
 	FEATURE_SOCIAL_ENHANCED_PUBLISHING,
+	PLAN_JETPACK_PRO_YEARLY,
 	PLAN_JETPACK_SECURITY_T1_YEARLY,
 	PRODUCT_JETPACK_BACKUP_T1_YEARLY,
 	PRODUCT_JETPACK_BOOST,
@@ -12,7 +13,10 @@ import {
 	WPCOM_FEATURES_CLASSIC_SEARCH,
 	WPCOM_FEATURES_SCAN,
 	WPCOM_FEATURES_VIDEOPRESS,
+	getPlan,
+	isJetpackPlanSlug,
 } from '@automattic/calypso-products';
+import { JETPACK_PRICING_PAGE } from '@automattic/urls';
 import { translate, TranslateResult } from 'i18n-calypso';
 import SecurityIcon from './icons/jetpack-icon-lock.svg';
 import BackupIcon from './icons/jetpack-product-icon-backup.svg';
@@ -36,6 +40,9 @@ export type Product = {
 };
 
 export function getAvailableUpsells() {
+	const securityFeatures = [ WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN, WPCOM_FEATURES_ANTISPAM ];
+
+	// Security until Pro goes on sale, then Pro; the section drops whichever is off sale.
 	return [
 		{
 			description: translate(
@@ -46,8 +53,18 @@ export function getAvailableUpsells() {
 			isFree: false,
 			slug: 'security',
 			title: 'Security',
-			ownedFeatures: [ WPCOM_FEATURES_BACKUPS, WPCOM_FEATURES_SCAN, WPCOM_FEATURES_ANTISPAM ],
+			ownedFeatures: securityFeatures,
 			checkoutSlug: PLAN_JETPACK_SECURITY_T1_YEARLY,
+		},
+		{
+			description: getPlan( PLAN_JETPACK_PRO_YEARLY )?.getDescription() ?? '',
+			href: JETPACK_PRICING_PAGE,
+			iconUrl: SecurityIcon,
+			isFree: false,
+			slug: 'pro',
+			title: 'Pro',
+			ownedFeatures: securityFeatures,
+			checkoutSlug: PLAN_JETPACK_PRO_YEARLY,
 		},
 		{
 			description: translate(
@@ -117,6 +134,18 @@ export function getAvailableUpsells() {
 export function getUpsellFeatureSlugs(): string[] {
 	const upsells = getAvailableUpsells();
 	return [ ...new Set( upsells.flatMap( ( upsell ) => upsell.ownedFeatures ) ) ];
+}
+
+/**
+ * Drops bundles that are off sale, and every bundle while the catalog is unknown.
+ */
+export function filterUpsellsOnSale(
+	upsells: Product[],
+	isOnSale?: ( productSlug: string ) => boolean
+): Product[] {
+	return upsells.filter(
+		( { checkoutSlug } ) => ! isJetpackPlanSlug( checkoutSlug ) || !! isOnSale?.( checkoutSlug )
+	);
 }
 
 export function filterUpsellsBySiteFeatures(

@@ -7,8 +7,13 @@ import { useI18n } from '@wordpress/react-i18n';
 import { addQueryArgs, getQueryArg, isURL } from '@wordpress/url';
 import { useMemo } from 'react';
 import { WPCOMDomainSearch } from 'calypso/components/domains/wpcom-domain-search';
+import { recordUseYourDomainButtonClick } from 'calypso/components/domains/wpcom-domain-search/analytics';
 import { FreeDomainForAYearPromo } from 'calypso/components/domains/wpcom-domain-search/free-domain-for-a-year-promo';
 import { useQueryHandler } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
+import {
+	getSearchUiVersion,
+	withSearchUiVersion,
+} from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
 import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { isRelativeUrl } from 'calypso/dashboard/utils/url';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
@@ -23,7 +28,7 @@ import {
 } from 'calypso/my-sites/domains/paths';
 import StepWrapper from 'calypso/signup/step-wrapper';
 import { getNextStepName, getStepUrl } from 'calypso/signup/utils';
-import { useSelector } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserSiteCount, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { hasDashboardOptIn } from 'calypso/state/dashboard/selectors';
 import { getSelectedSite } from 'calypso/state/ui/selectors';
@@ -96,6 +101,7 @@ const DomainSearchUI = (
 
 	const isLoggedIn = useSelector( isUserLoggedIn );
 	const site = useSelector( getSelectedSite );
+	const dispatch = useDispatch();
 
 	const siteSlug = queryObject.siteSlug;
 	const siteId = queryObject.siteId;
@@ -439,7 +445,17 @@ const DomainSearchUI = (
 		return (
 			<Button
 				className="step-wrapper__navigation-link forward"
-				onClick={ () => events.onExternalDomainClick( query ) }
+				onClick={ () => {
+					if ( isDomainOnlyFlow ) {
+						dispatch(
+							withSearchUiVersion(
+								recordUseYourDomainButtonClick( 'domain-first', 'header', flowName ),
+								getSearchUiVersion( showNamePulseSearch )
+							)
+						);
+					}
+					events.onExternalDomainClick( query );
+				} }
 				variant="link"
 			>
 				<span>{ __( 'Use a domain I already own' ) }</span>

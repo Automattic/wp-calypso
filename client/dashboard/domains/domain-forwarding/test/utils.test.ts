@@ -35,6 +35,12 @@ describe( 'domain forwarding utils', () => {
 			expect( error ).toBe( 'Forwarding to a further nested domain is not allowed.' );
 		} );
 
+		it( 'leaves forwarding to the www subdomain for the backend to validate', () => {
+			const error = isTargetUrlValid( 'https://www.example.com', sourceDomain );
+
+			expect( error ).toBeNull();
+		} );
+
 		it( 'allows forwarding to a different domain', () => {
 			const error = isTargetUrlValid( 'https://wordpress.com', sourceDomain );
 
