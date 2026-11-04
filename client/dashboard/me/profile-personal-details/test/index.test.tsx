@@ -560,7 +560,7 @@ describe( '<PersonalDetailsSection>', () => {
 			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
 			const refetch = mockUserSettings( settings );
 			await user.clear( emailInput );
-			await user.type( emailInput, 'taken@example.com' );
+			await user.paste( 'taken@example.com' );
 			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 			expect(
@@ -577,7 +577,7 @@ describe( '<PersonalDetailsSection>', () => {
 			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
 
 			await user.clear( emailInput );
-			await user.type( emailInput, 'free@example.com' );
+			await user.paste( 'free@example.com' );
 
 			expect(
 				screen.queryByText( 'That e-mail address is already being used.' )
@@ -603,7 +603,7 @@ describe( '<PersonalDetailsSection>', () => {
 
 			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
 			await user.clear( emailInput );
-			await user.type( emailInput, 'new@example.com' );
+			await user.paste( 'new@example.com' );
 			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
 
 			expect(
@@ -629,7 +629,8 @@ describe( '<PersonalDetailsSection>', () => {
 			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
 			mockUserSettings( settings );
 			await user.clear( emailInput );
-			await user.type( emailInput, 'taken@example.com{Enter}' );
+			await user.paste( 'taken@example.com' );
+			await user.keyboard( '{Enter}' );
 
 			expect(
 				await screen.findByText( 'That e-mail address is already being used.' )
@@ -650,7 +651,7 @@ describe( '<PersonalDetailsSection>', () => {
 
 			const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
 			await user.clear( emailInput );
-			await user.type( emailInput, 'invalid-email' );
+			await user.paste( 'invalid-email' );
 
 			await waitFor( () => {
 				expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
@@ -724,7 +725,7 @@ describe( '<PersonalDetailsSection>', () => {
 
 			const urlInput = screen.getByRole( 'textbox', { name: 'Web address' } );
 			await user.clear( urlInput );
-			await user.type( urlInput, 'not-a-url' );
+			await user.paste( 'not-a-url' );
 			await user.tab();
 
 			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
