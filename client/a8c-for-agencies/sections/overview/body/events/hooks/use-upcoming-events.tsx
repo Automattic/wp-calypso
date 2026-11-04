@@ -160,7 +160,7 @@ export const useUpcomingEvents = ( { showPressableExpansionOffer = false } = {} 
 								to: moment( PRESSABLE_HOLIDAY_2026_OFFER_END_DATE ),
 							},
 							title: translate(
-								'Holiday offer: Get up to 6 months of free Pressable hosting on new plans!'
+								'Limited time offer: Get up to 6 months of free Pressable hosting on new plans!'
 							),
 							subtitle: translate( 'Automattic for Agencies & Pressable' ),
 							descriptions: [
