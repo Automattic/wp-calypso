@@ -98,4 +98,27 @@ describe( 'Image Studio save', () => {
 		);
 		expect( mockSetLastSavedAttachmentId ).toHaveBeenCalledWith( 42 );
 	} );
+
+	it( 'waits for the attach to finish before recording the save', async () => {
+		let finishAttach = () => {};
+		mockAttachToEditorPost.mockImplementationOnce(
+			() =>
+				new Promise< void >( ( resolve ) => {
+					finishAttach = resolve;
+				} )
+		);
+		mockSetLastSavedAttachmentId.mockClear();
+
+		let saving: Promise< void > | undefined;
+		await act( async () => {
+			saving = mockCaptured.onSave?.();
+		} );
+		expect( mockSetLastSavedAttachmentId ).not.toHaveBeenCalled();
+
+		await act( async () => {
+			finishAttach();
+			await saving;
+		} );
+		expect( mockSetLastSavedAttachmentId ).toHaveBeenCalledWith( 42 );
+	} );
 } );

@@ -96,6 +96,7 @@ describe( 'useAttachToEditorPost', () => {
 		await result.current( 42, null );
 
 		expect( mockSaveEntityRecord ).not.toHaveBeenCalled();
+		expect( mockTrackImageStudioError ).not.toHaveBeenCalled();
 	} );
 
 	it( 'keeps the save going and reports it when the site refuses the attach', async () => {
