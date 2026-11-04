@@ -1,0 +1,11 @@
+.domain-contact-details-form__icann-link {
+	// The notice carries the warning color, which the dashboard's default link
+	// styling would otherwise override.
+	color: inherit;
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: inherit;
+	}
+}
