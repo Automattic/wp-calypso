@@ -5,3 +5,15 @@
 .dashboard-notice > button > svg {
 	fill: currentColor;
 }
+
+// Links in a notice read as part of its text, so they keep the intent color
+// instead of the dashboard's default link color. Action buttons keep their own.
+.dashboard-notice a:not( .components-button ) {
+	color: inherit;
+	text-decoration: underline;
+
+	&:hover,
+	&:focus {
+		color: inherit;
+	}
+}
