@@ -103,7 +103,7 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 };
 
 /**
- * The Q3 2026 Pressable promos, shown to eligible agencies alongside the
+ * The Pressable promos, shown to eligible agencies alongside the
  * featured event. Which one an agency sees is decided by the shells through
  * the eligibility props on AgencyOverviewContent: the introductory offer
  * targets agencies without a Pressable plan through A4A, the expansion offer

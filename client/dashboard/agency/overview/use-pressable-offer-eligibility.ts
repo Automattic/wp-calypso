@@ -82,8 +82,8 @@ export function mayBeEligibleForPressableExpansionOffer( agency: Agency | null |
 }
 
 /**
- * The dashboard's port of the classic app's Pressable Q3 2026 offer
- * eligibility (client/a8c-for-agencies/components/a4a-pressable-offer): the
+ * The dashboard's port of the classic app's Pressable offer eligibility
+ * (client/a8c-for-agencies/components/a4a-pressable-offer): the
  * introductory offer targets agencies without a Pressable plan through the A4A
  * marketplace, the expansion offer agencies with one that did not benefit from
  * the introductory offer. The license check behind the expansion offer only
