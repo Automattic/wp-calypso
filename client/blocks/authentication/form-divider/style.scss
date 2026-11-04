@@ -90,6 +90,10 @@ $breakpoint-mobile: 660px;
 	}
 }
 
+.layout:not(.is-grav-powered-client) .wp-login__main.is-stacked-login .auth-form__separator {
+	@include horizontal-separator;
+}
+
 .layout:not(.is-grav-powered-client).is-section-login {
 	.login__body--continue-as-user {
 		.auth-form__separator {

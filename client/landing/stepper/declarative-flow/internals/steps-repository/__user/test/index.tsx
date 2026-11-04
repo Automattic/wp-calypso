@@ -16,6 +16,11 @@ jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn(),
 } ) );
 
+jest.mock( '../use-branded-account-layout', () => ( {
+	__esModule: true,
+	default: jest.fn( jest.requireActual( '../use-branded-account-layout' ).default ),
+} ) );
+
 jest.mock( 'calypso/lib/explat', () => {
 	const actual = jest.requireActual( 'calypso/lib/explat' );
 	return { ...actual, useExperiment: jest.fn( actual.useExperiment ) };
@@ -31,10 +36,12 @@ import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep, { type UserStepAccepts } from '..';
+import useBrandedAccountLayout from '../use-branded-account-layout';
 
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 const mockUseExperiment = useExperiment as unknown as jest.Mock;
+const mockUseBrandedAccountLayout = useBrandedAccountLayout as unknown as jest.Mock;
 
 const ENTRY_CLARITY_EXPERIMENT = 'calypso_account_step_entry_clarity_202609';
 
@@ -154,12 +161,12 @@ describe( 'User email signup step', () => {
 
 	it( 'passes userEmail from user_email query param to SignupFormSocialFirst', () => {
 		renderUserStep( '/onboarding/user?user_email=hello@wp.com' );
-		expect( screen.getByLabelText( 'Enter your email' ) ).toHaveValue( 'hello@wp.com' );
+		expect( screen.getByLabelText( 'Email' ) ).toHaveValue( 'hello@wp.com' );
 	} );
 
 	it( 'defaults userEmail to empty string when user_email is missing', () => {
 		renderUserStep( '/onboarding/user' );
-		expect( screen.getByLabelText( 'Enter your email' ) ).toHaveValue( '' );
+		expect( screen.getByLabelText( 'Email' ) ).toHaveValue( '' );
 	} );
 
 	describe( 'mobile compact layout', () => {
@@ -302,7 +309,42 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
+	describe( 'branded layout', () => {
+		it( 'shows the brand panel, with social above email, on large viewports', () => {
+			const { container } = renderUserStep();
+
+			expect( screen.getByText( 'Millions of sites run on WordPress' ) ).toBeVisible();
+			expect( container.getElementsByClassName( 'signup-slider' ) ).toHaveLength( 0 );
+			expect(
+				screen
+					.getByRole( 'button', { name: /Continue with Google/i } )
+					.compareDocumentPosition( screen.getByLabelText( 'Email' ) ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+
+		it( 'keeps the carousel for Woo referrers', () => {
+			const { container } = renderUserStep(
+				'/onboarding/user?user_email=test@example.com&ref=woo-hosting-solutions-flow'
+			);
+
+			expect( container.getElementsByClassName( 'signup-slider' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'signup-brand-panel' ) ).toHaveLength( 0 );
+		} );
+	} );
+
 	describe( 'entry clarity experiment', () => {
+		// The branded layout is left out of this experiment.
+		beforeEach( () => {
+			mockUseBrandedAccountLayout.mockReturnValue( false );
+		} );
+
+		afterEach( () => {
+			mockUseBrandedAccountLayout.mockImplementation(
+				jest.requireActual( '../use-branded-account-layout' ).default
+			);
+		} );
+
 		const loginLinkSelector = '.signup-form-social-first__login-link';
 		const gapClass = 'step-container-v2--user-entry-clarity';
 		const emailButtonIcon = () =>

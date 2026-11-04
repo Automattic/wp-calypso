@@ -22,7 +22,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep from '..';
 import EmailVerificationGate from '../email-verification';
 import { gateScope, markResendUnavailableUntil } from '../email-verification/storage';
-import useAccountCreationExperiment from '../use-account-creation-experiment';
+import useBrandedAccountLayout from '../use-branded-account-layout';
 import type { ReactNode } from 'react';
 
 const CORRECTED_EMAIL = 'corrected@example.com';
@@ -63,7 +63,7 @@ jest.mock( '@wordpress/compose', () => ( {
 	...jest.requireActual( '@wordpress/compose' ),
 	useViewportMatch: jest.fn(),
 } ) );
-jest.mock( '../use-account-creation-experiment', () => jest.fn() );
+jest.mock( '../use-branded-account-layout', () => jest.fn() );
 jest.mock( '../use-social-service', () => ( {
 	useSocialService: () => ( { socialServiceResponse: undefined } ),
 } ) );
@@ -135,7 +135,7 @@ jest.mock( 'calypso/blocks/signup-form/signup-form-social-first', () => ( {
 
 const mockUseExperiment = useExperiment as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
-const mockUseAccountCreationExperiment = useAccountCreationExperiment as unknown as jest.Mock;
+const mockUseBrandedAccountLayout = useBrandedAccountLayout as unknown as jest.Mock;
 
 const EMAIL = 'onboarder@example.com';
 const GATE_HEADING = 'Verify your email';
@@ -193,10 +193,7 @@ describe( 'account step email verification gate', () => {
 			topBarLogo: undefined,
 			signupTosElement: undefined,
 		} );
-		mockUseAccountCreationExperiment.mockReturnValue( {
-			isEmailFirstVariant: false,
-			isEmailAtBottom: false,
-		} );
+		mockUseBrandedAccountLayout.mockReturnValue( false );
 	} );
 
 	afterEach( () => {

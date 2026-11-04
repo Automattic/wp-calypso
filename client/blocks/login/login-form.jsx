@@ -119,6 +119,7 @@ export class LoginForm extends Component {
 		isUserAccountEmailUpdateRedirect: PropTypes.bool,
 		loginButtonText: PropTypes.string,
 		lostPasswordLink: PropTypes.node,
+		isSocialAboveForm: PropTypes.bool,
 		isGravatarFixedAccountLogin: PropTypes.bool.isRequired,
 		isGravPoweredClient: PropTypes.bool,
 	};
@@ -503,7 +504,11 @@ export class LoginForm extends Component {
 				<ScreenReaderText>
 					{ this.props.translate( 'WordPress.com email address or username' ) }
 				</ScreenReaderText>
-				<span aria-hidden="true">{ this.props.translate( 'Email address or username' ) }</span>
+				<span aria-hidden="true">
+					{ this.props.isSocialAboveForm
+						? this.props.translate( 'Email' )
+						: this.props.translate( 'Email address or username' ) }
+				</span>
 			</>
 		);
 	}
@@ -714,6 +719,7 @@ export class LoginForm extends Component {
 			isSocialFirst,
 			isUserAccountEmailUpdateRedirect,
 			lostPasswordLink,
+			isSocialAboveForm,
 		} = this.props;
 
 		const isLastUsedPassword =
@@ -788,6 +794,23 @@ export class LoginForm extends Component {
 			);
 		};
 
+		const usernameLabel = (
+			<FormLabel
+				htmlFor="usernameOrEmail"
+				hasCoreStylesNoCaps
+				className={ clsx( {
+					'has-last-used-badge': isLastUsedPassword,
+				} ) }
+			>
+				{ this.renderUsernameorEmailLabel() }
+				{ isLastUsedPassword && (
+					<Badge intent="informational" className="login__form-last-used-badge">
+						{ this.props.translate( 'Last used' ) }
+					</Badge>
+				) }
+			</FormLabel>
+		);
+
 		return (
 			<Card className="login__form">
 				{ isWoo && <ErrorNotice /> }
@@ -798,20 +821,14 @@ export class LoginForm extends Component {
 
 					{ this.isPasswordView() && this.renderChangeUsername() }
 
-					<FormLabel
-						htmlFor="usernameOrEmail"
-						hasCoreStylesNoCaps
-						className={ clsx( {
-							'has-last-used-badge': isLastUsedPassword,
-						} ) }
-					>
-						{ this.renderUsernameorEmailLabel() }
-						{ isLastUsedPassword && (
-							<Badge intent="informational" className="login__form-last-used-badge">
-								{ this.props.translate( 'Last used' ) }
-							</Badge>
-						) }
-					</FormLabel>
+					{ isSocialAboveForm && lostPasswordLink ? (
+						<div className="login__form-username-label-row">
+							{ usernameLabel }
+							{ lostPasswordLink }
+						</div>
+					) : (
+						usernameLabel
+					) }
 
 					<FormTextInput
 						autoCapitalize="off"
@@ -900,7 +917,7 @@ export class LoginForm extends Component {
 					>
 						{ /* Only while the password is shown: `is-hidden` keeps the block in the DOM,
 						   and a link there would still take focus. */ }
-						{ lostPasswordLink && ! isPasswordHidden ? (
+						{ lostPasswordLink && ! isPasswordHidden && ! isSocialAboveForm ? (
 							<div className="login__form-password-label-row">
 								<FormLabel htmlFor="password" hasCoreStylesNoCaps>
 									{ this.props.translate( 'Password' ) }
@@ -980,31 +997,45 @@ export class LoginForm extends Component {
 			! isCoreProfilerLostPasswordFlow &&
 			! isGravatarFixedAccountLogin;
 
+		const socialLoginForm = shouldShowSocialLoginForm && (
+			<SocialLoginForm
+				lastUsedAuthenticationMethod={
+					showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
+				}
+				handleLogin={ this.handleSocialLogin }
+				trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
+				resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
+				socialServiceResponse={ this.props.socialServiceResponse }
+				isSocialFirst={ isSocialFirst }
+				magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
+				qrLoginLink={ this.props.isSocialAboveForm ? null : this.getQrLoginLink() }
+				isJetpack={ isJetpack }
+				allowedSocialServices={ this.props.allowedSocialServices }
+				oauth2Client={ this.props.oauth2Client }
+				isWoo={ this.props.isWoo }
+				currentRoute={ this.props.currentRoute }
+				from={ this.props.currentQuery?.from }
+			/>
+		);
+
+		if ( this.props.isSocialAboveForm && socialLoginForm ) {
+			return (
+				<>
+					{ socialLoginForm }
+					<FormDivider />
+					{ this.renderLoginCard() }
+				</>
+			);
+		}
+
 		return (
 			<>
 				{ this.renderLoginCard() }
 
-				{ shouldShowSocialLoginForm && (
+				{ socialLoginForm && (
 					<Fragment>
 						<FormDivider />
-						<SocialLoginForm
-							lastUsedAuthenticationMethod={
-								showLastUsedAuthenticationMethod ? this.state.lastUsedAuthenticationMethod : ''
-							}
-							handleLogin={ this.handleSocialLogin }
-							trackLoginAndRememberRedirect={ this.trackLoginAndRememberRedirect }
-							resetLastUsedAuthenticationMethod={ this.resetLastUsedAuthenticationMethod }
-							socialServiceResponse={ this.props.socialServiceResponse }
-							isSocialFirst={ isSocialFirst }
-							magicLoginLink={ ! isWooJPC ? this.getMagicLoginPageLink() : null }
-							qrLoginLink={ this.getQrLoginLink() }
-							isJetpack={ isJetpack }
-							allowedSocialServices={ this.props.allowedSocialServices }
-							oauth2Client={ this.props.oauth2Client }
-							isWoo={ this.props.isWoo }
-							currentRoute={ this.props.currentRoute }
-							from={ this.props.currentQuery?.from }
-						/>
+						{ socialLoginForm }
 					</Fragment>
 				) }
 			</>
