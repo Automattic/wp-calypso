@@ -4,6 +4,7 @@ import {
 	validateSiteAddressChangeMutation,
 	changeSiteAddressChangeMutation,
 } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
@@ -70,6 +71,7 @@ const NewSiteAddressForm = ( {
 	onCancel: () => void;
 } ) => {
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const hasEnTranslation = useHasEnTranslation();
 	const { data: siteDomains } = useQuery( {
 		...domainsQuery(),
 		select: ( data ) => {
@@ -166,12 +168,18 @@ const NewSiteAddressForm = ( {
 	return (
 		<VStack spacing={ 4 }>
 			{ !! siteDomains && ! hasCustomDomain && (
-				<Notice variant="warning">
+				<Notice variant="info">
 					<Text>
 						{ createInterpolateElement(
-							__(
-								'Before changing site address, consider <link>adding a custom domain</link> instead?'
-							),
+							hasEnTranslation(
+								'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+							)
+								? __(
+										'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+									)
+								: __(
+										'Before changing site address, consider <link>adding a custom domain</link> instead?'
+									),
 							{
 								link: <a href={ getAddSiteDomainUrl( site.slug ) } />,
 							}
