@@ -111,7 +111,7 @@
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": true,
 		"migration/ssh-migration": false,
-		"migration/reprint-flow": false,
+		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,
@@ -193,7 +193,6 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "production",
-	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
 	"survicate_enabled": true
 }

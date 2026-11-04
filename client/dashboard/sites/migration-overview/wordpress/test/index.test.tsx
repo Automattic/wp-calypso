@@ -290,6 +290,33 @@ describe( 'WordPressMigration', () => {
 		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
 	} );
 
+	it( 'sends a migration stopped for a missing plan to choose one, then try again', async () => {
+		mockApi()
+			.get( statusPath )
+			.query( true )
+			.reply(
+				200,
+				migration( 'failed', {
+					phase: 'prepare-destination',
+					findings: [ { ...finding( 'destination_needs_plan', 'failure' ), resolution: 'retry' } ],
+				} )
+			);
+
+		render( <WordPressMigration site={ site } />, { queryClient } );
+
+		expect( await screen.findByText( 'destination_needs_plan label' ) ).toBeVisible();
+
+		const choosePlan = new URL(
+			screen.getByRole( 'link', { name: 'Choose a plan' } ).getAttribute( 'href' ) ?? ''
+		);
+		expect( choosePlan.pathname ).toBe( '/setup/plan-upgrade/' );
+		expect( choosePlan.searchParams.get( 'siteSlug' ) ).toBe( 'example.wordpress.com' );
+		expect( choosePlan.searchParams.get( 'redirect_to' ) ).toBeTruthy();
+
+		// Coming back with a plan, the stored finding is still there, so trying again has to stay on offer.
+		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeEnabled();
+	} );
+
 	it( 'takes a stopped migration back to setup, and leaves once it starts again', async () => {
 		const stopped = migration( 'failed', {
 			phase: 'preflight',
