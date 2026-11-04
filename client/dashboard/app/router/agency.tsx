@@ -12,6 +12,7 @@ import {
 	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
+	domainsQuery,
 	githubInstallationsQuery,
 	mcpSettingsQuery,
 	agencyPendingSitesQuery,
@@ -927,7 +928,7 @@ export const agencyTeamRoute = createRoute( {
 // `/agency/dashboard` – which dashboard the agency uses; only the owner can change it
 export const agencyDashboardOptInRoute = createRoute( {
 	head: () => ( {
-		meta: [ { title: __( 'Dashboard' ) } ],
+		meta: [ { title: __( 'Classic dashboard' ) } ],
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'agency/dashboard',
@@ -1706,12 +1707,12 @@ export const agencySiteSettingsSiteVisibilityRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Site visibility' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),

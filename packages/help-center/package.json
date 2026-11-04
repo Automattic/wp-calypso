@@ -60,7 +60,7 @@
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
-		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/i18n": "^6.30.0",
 		"@wordpress/icons": "^15.5.0",
 		"@wordpress/primitives": "^4.56.0",
 		"clsx": "^2.1.1",
