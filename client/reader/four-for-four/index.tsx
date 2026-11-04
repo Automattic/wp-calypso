@@ -45,6 +45,7 @@ export function FourForFour() {
 		refetchCandidates,
 		status,
 		followedCount,
+		failedBlogIds,
 		hasSaveError,
 		retrySave,
 	} = useFourForFour();
@@ -68,6 +69,8 @@ export function FourForFour() {
 			is_participant: selectedCandidate.isParticipant ? 1 : 0,
 		} );
 	}, [ selectedCandidate?.blogId ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
+
+	const failedSite = candidates.find( ( candidate ) => candidate.blogId === failedBlogIds[ 0 ] );
 
 	const isComplete = status === 'completed';
 	const progressCount = Math.min( followedCount, FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS );
@@ -138,6 +141,27 @@ export function FourForFour() {
 							<Button variant="link" onClick={ retrySave }>
 								{ translate( 'Try again' ) }
 							</Button>
+						</HStack>
+					) }
+
+					{ failedBlogIds.length > 0 && (
+						<HStack
+							className="four-for-four-modal__follow-error"
+							alignment="left"
+							expanded={ false }
+							spacing={ 3 }
+							role="alert"
+						>
+							<span>
+								{ failedBlogIds.length === 1 && failedSite
+									? translate(
+											'We were unable to subscribe you to %(siteName)s. Please pick another site from the list.',
+											{ args: { siteName: failedSite.name } }
+										)
+									: translate(
+											'We were unable to subscribe you to some of these sites. Please pick others from the list.'
+										) }
+							</span>
 						</HStack>
 					) }
 
