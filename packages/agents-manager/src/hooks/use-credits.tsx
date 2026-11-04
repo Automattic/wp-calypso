@@ -139,6 +139,8 @@ interface UseCreditsOptions {
 	isNoticeVisible: boolean;
 	/** Sends again once credits are back, given the refused question's text; the notice then offers Continue. */
 	onTryAgain?: ( message: string ) => void;
+	/** Sends `/credits` to the chat, from the popover's button. */
+	onShowCredits?: () => void;
 }
 
 export interface UseCreditsResult {
@@ -195,6 +197,7 @@ export function useCredits( {
 	isOpen,
 	isNoticeVisible,
 	onTryAgain,
+	onShowCredits,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
 	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
@@ -590,6 +593,14 @@ export function useCredits( {
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
+	// Only where `/credits` is answered in the browser, as anywhere else it would reach the model.
+	const canShowCredits = !! onShowCredits && !! siteId && canReadBalance( scope );
+	const showCredits = useCallback( () => {
+		recordCreditsEvent( 'calypso_agents_manager_credits_show_clicked' );
+		setIsPopoverOpen( false );
+		onShowCredits?.();
+	}, [ onShowCredits, recordCreditsEvent, setIsPopoverOpen ] );
+
 	// Only a click that opens the popover records here; an opening by itself records above.
 	const toggleMeter = useCallback(
 		( open: boolean ) => {
@@ -630,9 +641,20 @@ export function useCredits( {
 				onAction={ siteId ? undefined : handleAction }
 				action={ purchaseAction }
 				purchaseHint={ purchaseHint }
+				onShowCredits={ canShowCredits ? showCredits : undefined }
 			/>
 		);
-	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, purchaseAction, purchaseHint ] );
+	}, [
+		status,
+		isPopoverOpen,
+		toggleMeter,
+		handleAction,
+		siteId,
+		purchaseAction,
+		purchaseHint,
+		canShowCredits,
+		showCredits,
+	] );
 
 	// Continue resends text only, as the conversation's Retry does, so a question with
 	// images is asked again by hand.

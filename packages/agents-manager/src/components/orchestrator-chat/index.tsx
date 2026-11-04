@@ -190,8 +190,12 @@ export default function OrchestratorChat( {
 	// The composer's retry send is created after credits, so the notice reaches it through a ref.
 	const retrySendRef = useRef< ( message: string ) => void >( () => {} );
 	const tryAgain = useCallback( ( message: string ) => retrySendRef.current( message ), [] );
+	// The same for the popover's button, which sends `/credits` through the composer.
+	const showCreditsRef = useRef< () => void >( () => {} );
+	const showCredits = useCallback( () => showCreditsRef.current(), [] );
 	const credits = useCredits( {
 		onTryAgain: tryAgain,
+		onShowCredits: isReaderChat ? undefined : showCredits,
 		enabled: ! isReaderChat,
 		agentConfig: agentChatConfig!,
 		siteKey,
@@ -292,6 +296,14 @@ export default function OrchestratorChat( {
 	// The draft goes as typed, so the composer recognises and clears it.
 	retrySendRef.current = ( message ) =>
 		submitRetryMessage( inputValue.trim() ? inputValue : message );
+
+	showCreditsRef.current = () => {
+		// The compact composer expands the chat as it sends; this send skips that step.
+		if ( ! isOpen ) {
+			onExpand();
+		}
+		submitComposerMessage( '/credits' );
+	};
 
 	// Marks the session as sent whichever path started the turn.
 	useEffect( () => {

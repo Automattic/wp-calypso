@@ -96,6 +96,7 @@ const props = ( value: ReturnType< typeof useCredits > ) =>
 			isOpen: boolean;
 			onToggle: ( open: boolean ) => void;
 			onAction?: unknown;
+			onShowCredits?: () => void;
 			action?: CreditsPurchaseAction;
 			manageUrl?: string;
 		} >
@@ -351,6 +352,27 @@ describe( 'purchase access', () => {
 				purchaseHint?: string;
 			} >
 		 )?.props.purchaseHint;
+
+	it( 'offers the popover’s credits button for a live balance, and closes the popover on click', async () => {
+		fetchMock.mockResolvedValueOnce( response( exhausted() ) );
+		const onShowCredits = jest.fn();
+		const { result } = renderCredits( { onShowCredits } );
+		await flush();
+		act( () => props( result.current ).onShowCredits!() );
+		expect( onShowCredits ).toHaveBeenCalledTimes( 1 );
+		expect( props( result.current ).isOpen ).toBe( false );
+		expect( recordAgentsManagerTracksEvent ).toHaveBeenCalledWith(
+			'calypso_agents_manager_credits_show_clicked',
+			expect.objectContaining( { state: 'zero' } )
+		);
+	} );
+
+	it( 'shows the popover’s credits button only when the chat asks for it', async () => {
+		fetchMock.mockResolvedValueOnce( response( exhausted() ) );
+		const { result } = renderCredits();
+		await flush();
+		expect( props( result.current ).onShowCredits ).toBeUndefined();
+	} );
 
 	it( 'shows Upgrade with no guidance to someone who can upgrade the plan but can’t buy credits', async () => {
 		fetchMock.mockResolvedValueOnce(
