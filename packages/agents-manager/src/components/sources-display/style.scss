@@ -9,6 +9,11 @@ $actions-row-height: 32px;
 	> .MessageActions-module_dock {
 	order: -1;
 	min-height: $actions-row-height;
+
+	// Its full-width layer would cover Sources; the panel takes clicks back when shown.
+	.MessageActions-module_dockInner {
+		pointer-events: none;
+	}
 }
 
 .agents-manager-sources-display {
