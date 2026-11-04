@@ -133,7 +133,7 @@ export default function SshKeys() {
 			>
 				<ActionList>
 					<VStack spacing={ 4 } style={ { paddingBlock: '16px' } }>
-						<HStack justify="space-between" alignment="top">
+						<HStack justify="space-between" alignment={ hasReachedLimit ? 'top' : 'center' }>
 							<SectionHeader
 								level={ 3 }
 								title={ __( 'Your SSH keys' ) }
@@ -144,9 +144,7 @@ export default function SshKeys() {
 												__( 'You can add up to %s SSH keys. Delete a key to add another one.' ),
 												formatNumber( MAX_SSH_KEYS )
 											)
-										: __(
-												'Add an SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
-											)
+										: undefined
 								}
 							/>
 							<VStack style={ { flexShrink: 0 } }>

@@ -13,7 +13,9 @@ type MemberAPIResponse = {
 	joined_timestamp: string;
 };
 
-export default function useFetchActiveMembers(): UseQueryResult< TeamMember[], unknown > {
+export default function useFetchActiveMembers( {
+	enabled = true,
+}: { enabled?: boolean } = {} ): UseQueryResult< TeamMember[], unknown > {
 	const agencyId = useSelector( getActiveAgencyId );
 
 	return useQuery( {
@@ -34,6 +36,6 @@ export default function useFetchActiveMembers(): UseQueryResult< TeamMember[], u
 				dateAdded: member.joined_timestamp,
 			} ) );
 		},
-		enabled: !! agencyId,
+		enabled: !! agencyId && enabled,
 	} );
 }

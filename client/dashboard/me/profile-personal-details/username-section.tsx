@@ -1,7 +1,13 @@
 import { updateUsernameMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { __experimentalVStack as VStack, privateApis } from '@wordpress/components';
-import { useDebounce } from '@wordpress/compose';
+import {
+	FlexBlock,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+	__experimentalInputControlPrefixWrapper as InputControlPrefixWrapper,
+	privateApis,
+} from '@wordpress/components';
+import { useDebounce, useViewportMatch } from '@wordpress/compose';
 import { DataForm } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
@@ -26,6 +32,8 @@ interface UsernameSectionProps {
 	isEmailVerified: boolean;
 	canChangeUsername: boolean;
 	onCancel: () => void;
+	/** Rendered beside the username input on wide screens, below it on narrow ones. */
+	inlineField: React.ReactNode;
 }
 
 type UsernameFormData = { user_login?: string };
@@ -48,6 +56,7 @@ const UsernameEdit = ( {
 		autoCapitalize="off"
 		autoComplete="username"
 		autoCorrect="off"
+		prefix={ <InputControlPrefixWrapper>@</InputControlPrefixWrapper> }
 		customValidity={ validity?.custom }
 		label={ field.label }
 		help={ field.description }
@@ -78,7 +87,9 @@ export default function UsernameSection( {
 	isEmailVerified,
 	canChangeUsername,
 	onCancel,
+	inlineField,
 }: UsernameSectionProps ) {
+	const isMobile = useViewportMatch( 'small', '<' );
 	const [ showConfirmModal, setShowConfirmModal ] = useState( false );
 	const [ userLoginConfirm, setUserLoginConfirm ] = useState( '' );
 	const [ usernameAction, setUsernameAction ] = useState< string >( 'none' );
@@ -113,7 +124,7 @@ export default function UsernameSection( {
 			return __( 'Username can be changed once your email address is verified.' );
 		}
 
-		return undefined;
+		return __( 'Sign-in and @mentions. Changes can’t be undone.' );
 	}, [ hasUsernameChange, isAutomattician, isEmailVerified ] );
 
 	const validity = useMemo( (): FormValidity => {
@@ -198,39 +209,66 @@ export default function UsernameSection( {
 
 	const formData = useMemo( () => ( { user_login: value || '' } ), [ value ] );
 
+	const usernameInput = (
+		<DataForm< UsernameFormData >
+			data={ formData }
+			fields={ fields }
+			form={ usernameForm }
+			validity={ validity }
+			onChange={ ( edits ) => handleUsernameChange( edits.user_login ) }
+		/>
+	);
+
+	const updateForm = (
+		<UsernameUpdateForm
+			hasUsernameChange={ hasUsernameChange }
+			userLoginConfirm={ userLoginConfirm }
+			usernameToConfirm={ value }
+			validationResult={ validationResult }
+			usernameAction={ usernameAction }
+			onConfirmChange={ setUserLoginConfirm }
+			onActionChange={ setUsernameAction }
+			onShowConfirmModal={ () => setShowConfirmModal( true ) }
+			onCancel={ cancelUsernameChange }
+			onValidationChange={ setValidationResult }
+		/>
+	);
+
+	const hiddenUntilChanged = hasUsernameChange ? {} : { display: 'none' };
+
+	const updateFormRegion = (
+		<VStack
+			role="region"
+			aria-label={ __( 'Username confirmation' ) }
+			aria-live="polite"
+			style={ hiddenUntilChanged }
+			spacing={ 0 }
+		>
+			{ updateForm }
+		</VStack>
+	);
+
 	return (
 		<>
-			<VStack spacing={ 1 }>
-				<DataForm< UsernameFormData >
-					data={ formData }
-					fields={ fields }
-					form={ usernameForm }
-					validity={ validity }
-					onChange={ ( edits ) => handleUsernameChange( edits.user_login ) }
-				/>
-			</VStack>
-
-			{ /* Update username form */ }
-			<VStack
-				role="region"
-				aria-label={ __( 'Username confirmation' ) }
-				aria-live="polite"
-				style={ hasUsernameChange ? {} : { display: 'none' } }
-				spacing={ 0 }
-			>
-				<UsernameUpdateForm
-					hasUsernameChange={ hasUsernameChange }
-					userLoginConfirm={ userLoginConfirm }
-					usernameToConfirm={ value }
-					validationResult={ validationResult }
-					usernameAction={ usernameAction }
-					onConfirmChange={ setUserLoginConfirm }
-					onActionChange={ setUsernameAction }
-					onShowConfirmModal={ () => setShowConfirmModal( true ) }
-					onCancel={ cancelUsernameChange }
-					onValidationChange={ setValidationResult }
-				/>
-			</VStack>
+			{ isMobile ? (
+				<VStack spacing={ 4 }>
+					{ usernameInput }
+					{ updateFormRegion }
+					{ inlineField }
+				</VStack>
+			) : (
+				<VStack spacing={ 4 }>
+					<HStack alignment="top" spacing={ 4 }>
+						<FlexBlock>{ usernameInput }</FlexBlock>
+						<FlexBlock>{ inlineField }</FlexBlock>
+					</HStack>
+					{ /* Kept to the username column so it lines up with the input above */ }
+					<HStack alignment="top" spacing={ 4 } style={ hiddenUntilChanged }>
+						<FlexBlock>{ updateFormRegion }</FlexBlock>
+						<FlexBlock />
+					</HStack>
+				</VStack>
+			) }
 
 			{ /* Confirmation modal to update username */ }
 			<UsernameUpdateConfirmationModal

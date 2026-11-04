@@ -1,5 +1,6 @@
 import { Button, Gravatar } from '@automattic/components';
-import { __experimentalText as Text } from '@wordpress/components';
+import { __experimentalHStack as HStack, __experimentalText as Text } from '@wordpress/components';
+import { Badge } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -106,7 +107,12 @@ const DropdownMenu = ( { isExpanded, closeMenu }: DropdownMenuProps ) => {
 						onClick={ onDashboardOptIn }
 						href={ getDashboardOptInLink( 'profile-menu' ) }
 					>
-						{ translate( 'Switch to the new dashboard' ) }
+						<HStack spacing={ 2 } expanded={ false } wrap={ false }>
+							<Text color="inherit" size="inherit" lineHeight="inherit">
+								{ translate( 'Enable the new dashboard' ) }
+							</Text>
+							<Badge intent="stable">{ translate( 'Beta' ) }</Badge>
+						</HStack>
 					</Button>
 				</li>
 			) }
