@@ -414,32 +414,16 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		);
 	} );
 
-	it.each( [
-		[
-			'says nothing extra for a simple site',
-			{ observed_band: 'simple', capabilities: { navigation: 3 } },
-			null,
-		],
-		[
-			'names what the move found that it doesn’t carry over',
-			{ observed_band: 'complex', capabilities: { commerce: 4, events: 2, forms: 1, dialogs: 2 } },
-			'We found a store, event tickets, and forms on busybearscleaning.com. If any of it isn’t working, our team can fix it.',
-		],
-		[
-			'warns when inspection rated the site demanding without naming a feature',
-			{ observed_band: 'moderate', capabilities: { dialogs: 2, media: 1 } },
-			'Larger or more interactive sites like this one sometimes need a hand. If anything looks off, our team can fix it.',
-		],
-	] as const )( '%s', ( _, inspection, message ) => {
+	it( 'shows the note wpcom wrote about what the move found', () => {
 		const finished = {
 			status: 'finished' as const,
 			session: session( 'finished', {
-				preview_summary: { pages: 12, inspection: { measured: true, ...inspection } },
+				review_note: 'We found a store on busybearscleaning.com.',
 			} ) as StaticSiteImportSession,
 		};
 		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
 
-		expect( screen.queryByText( /We found|need a hand/ )?.textContent ?? null ).toBe( message );
+		expect( screen.getByText( 'We found a store on busybearscleaning.com.' ) ).toBeVisible();
 	} );
 
 	it( 'leaves a failed move to the failure card', () => {

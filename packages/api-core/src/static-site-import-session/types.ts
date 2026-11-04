@@ -78,6 +78,12 @@ export interface StaticSiteImportSession {
 	preview_summary: StaticSiteImportPreviewSummary | [];
 	/** Empty until approval binds a destination. */
 	site_url: string;
+	/**
+	 * What the move found on the old site that may need our team, translated for the reader, e.g.
+	 * "We found a store on example.com." The ready email carries the same sentence. '' when there is
+	 * nothing to say.
+	 */
+	review_note?: string;
 	/** The source domain the customer can connect, or '' for a builder's free address or an upload. */
 	connectable_domain: string;
 	/** Present from `preview_ready`. */
