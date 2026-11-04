@@ -3,7 +3,7 @@ import { useQueries, useQuery } from '@tanstack/react-query';
 import { createElement, useMemo } from 'react';
 import { runFastRules, runSlowRules } from 'calypso/reader/data/post/normalization';
 import readerContentWidth from 'calypso/reader/lib/content-width';
-import { keyForPost, keyToString } from 'calypso/reader/post-key';
+import { isSavedSnapshotPost, keyForPost, keyToString } from 'calypso/reader/post-key';
 import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import type { ReadPost as ApiPost, ReadPostKey } from '@automattic/api-core';
@@ -22,6 +22,7 @@ interface PostCacheKey {
 	blogId?: number | string | null;
 	feedId?: number | string | null;
 	postId?: number | string | null;
+	snapshotId?: string | null;
 }
 
 type PostCacheTarget = PostCacheKey | Post | null | undefined;
@@ -66,6 +67,13 @@ const postKeyStringFromPost = ( post: Post ): string | null => {
 };
 
 const postKeyStringsFromPost = ( post: Post ): string[] => {
+	// A snapshot's `ID` isn't a post ID and its feed is `0`, so the numeric keys
+	// below would collide with other snapshots.
+	if ( isSavedSnapshotPost( post ) ) {
+		const keyString = postKeyStringFromPost( post );
+		return keyString ? [ keyString ] : [];
+	}
+
 	const keyStrings = new Set< string >();
 	const siteId = valueToString( post.site_ID );
 	const postId = valueToString( post.ID );
@@ -102,7 +110,7 @@ const isPostCacheKey = ( target: PostCacheTarget ): target is PostCacheKey => {
 	return (
 		typeof target === 'object' &&
 		target !== null &&
-		( 'postId' in target || 'blogId' in target || 'feedId' in target )
+		( 'postId' in target || 'blogId' in target || 'feedId' in target || 'snapshotId' in target )
 	);
 };
 
@@ -180,6 +188,10 @@ const arraysShareMatchingValue = ( left: unknown, right: unknown ): boolean => {
 };
 
 const postMatchesKey = ( post: Post, key: PostCacheKey ): boolean => {
+	if ( key.snapshotId ) {
+		return postKeyStringFromPost( post ) === postKeyStringFromKey( key );
+	}
+
 	if ( key.blogId && key.postId ) {
 		return (
 			isValidReaderPostId( key.postId ) &&
@@ -210,6 +222,9 @@ const postMatchesKey = ( post: Post, key: PostCacheKey ): boolean => {
 const postsShareIdentity = ( left: Post, right: Post ): boolean => {
 	if ( valuesMatch( left.global_ID, right.global_ID ) ) {
 		return true;
+	}
+	if ( isSavedSnapshotPost( left ) || isSavedSnapshotPost( right ) ) {
+		return false;
 	}
 	if (
 		isValidReaderPostId( left.ID ) &&

@@ -1,9 +1,10 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	Button,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
-import { Icon, error, pending, people, published } from '@wordpress/icons';
+import { __, isRTL } from '@wordpress/i18n';
+import { Icon, arrowLeft, arrowRight, error, pending, people, published } from '@wordpress/icons';
 import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody, CardFooter } from '../../../components/card';
 import { caution } from '../../../components/notice/icons';
@@ -17,6 +18,7 @@ export function MigrationCard( {
 	title,
 	description,
 	decoration,
+	back,
 	actions,
 	note,
 	children,
@@ -24,6 +26,8 @@ export function MigrationCard( {
 	title: React.ReactNode;
 	description?: React.ReactNode;
 	decoration?: React.ReactNode;
+	// A way back to the step before, ahead of the title.
+	back?: { label: string; onClick: () => void; disabled?: boolean };
 	actions?: React.ReactNode;
 	note?: React.ReactNode;
 	children?: React.ReactNode;
@@ -37,7 +41,22 @@ export function MigrationCard( {
 						<VStack spacing={ 2 }>
 							<SectionHeader
 								title={ title }
-								decoration={ decoration }
+								decoration={
+									back ? (
+										<HStack spacing={ 2 } expanded={ false }>
+											<Button
+												size="small"
+												icon={ isRTL() ? arrowRight : arrowLeft }
+												label={ back.label }
+												disabled={ back.disabled }
+												onClick={ back.onClick }
+											/>
+											{ decoration }
+										</HStack>
+									) : (
+										decoration
+									)
+								}
 								level={ 3 }
 								className="wordpress-migration__card-header"
 							/>

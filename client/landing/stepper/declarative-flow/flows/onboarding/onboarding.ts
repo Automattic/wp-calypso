@@ -11,6 +11,7 @@ import {
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { resolveSelect, useDispatch, useSelect } from '@wordpress/data';
 import { addQueryArgs, getQueryArg, getQueryArgs } from '@wordpress/url';
+import { translate } from 'i18n-calypso';
 import { useEffect, useMemo } from 'react';
 import { matchPath } from 'react-router';
 import { clearSessionStorageQuery } from 'calypso/components/domains/wpcom-domain-search/use-query-handler';
@@ -44,11 +45,13 @@ import { useFlowLocale } from '../../../hooks/use-flow-locale';
 import { useQuery } from '../../../hooks/use-query';
 import { ONBOARD_STORE, SITE_STORE } from '../../../stores';
 import {
+	BLUEPRINT_BUILD_DEST_SIMPLE,
 	getBlueprintArchiveSiteSpecUrl,
 	getSpecMetaFromQuery,
 	getStandaloneBlueprintArchiveSlug,
 	getStandaloneBlueprintSimpleSlug,
 	isBlueprintCustomThemeBuild,
+	ZOOM_BLUEPRINT_SLUG,
 } from '../../../utils/blueprint-archive-import';
 import {
 	getBuildWowSiteIdentifier,
@@ -318,7 +321,13 @@ async function initialize( reduxStore: Store ) {
 		STEPS.SETUP_YOUR_SITE_AI,
 	];
 
-	return [ ...stepsWithRequiredLogin( steps ), STEPS.PLAYGROUND, STEPS.BLUEPRINT, STEPS.ERROR ];
+	return [
+		...stepsWithRequiredLogin( steps ),
+		STEPS.PLAYGROUND,
+		STEPS.BLUEPRINT,
+		STEPS.ZOOM_BLUEPRINT,
+		STEPS.ERROR,
+	];
 }
 
 const onboarding: FlowV2< typeof initialize > = {
@@ -998,6 +1007,28 @@ const onboarding: FlowV2< typeof initialize > = {
 					const backTo = window.location.pathname + window.location.search;
 					return navigate(
 						addQueryArgs( 'domains', { back_to: backTo } ) as typeof currentStepSlug
+					);
+				}
+				case 'zoom': {
+					// The Zoom partner link: from here the run is the blueprint entry it stands for. What the
+					// link leaves out is filled in here; what it names (these, the spec meta, ref) rides along
+					// as given. This step is replaced in history, since Back onto it would only forward again.
+					const linkParams = new URLSearchParams( window.location.search );
+					const defaults: Record< string, string > = {
+						blueprint: ZOOM_BLUEPRINT_SLUG,
+						build_dest: BLUEPRINT_BUILD_DEST_SIMPLE,
+						// The title is the only thing the blueprint's interview would open to ask for.
+						site_title: String( translate( 'My Booking Site' ) ),
+					};
+					return navigate(
+						addQueryArgs(
+							'blueprint',
+							Object.fromEntries(
+								Object.entries( defaults ).filter( ( [ key ] ) => ! linkParams.get( key ) )
+							)
+						) as typeof currentStepSlug,
+						undefined,
+						true
 					);
 				}
 				default:

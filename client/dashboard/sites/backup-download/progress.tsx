@@ -9,6 +9,8 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
+import { ThemedIllustration } from '../../components/themed-illustration';
+import downloadIllustrationDark from './backup-download-illustration-dark.svg';
 import downloadIllustration from './backup-download-illustration.svg';
 import type { Site } from '@automattic/api-core';
 
@@ -61,7 +63,13 @@ function SiteBackupDownloadProgress( {
 	return (
 		<>
 			<VStack spacing={ 4 } alignment="center">
-				<img src={ downloadIllustration } alt="" width={ 408 } height={ 280 } />
+				<ThemedIllustration
+					light={ downloadIllustration }
+					dark={ downloadIllustrationDark }
+					alt=""
+					width={ 408 }
+					height={ 280 }
+				/>
 				<Text size={ 20 }> { __( 'Initializing the download process' ) } </Text>
 				<Text size={ 13 } variant="muted">
 					{ sprintf(

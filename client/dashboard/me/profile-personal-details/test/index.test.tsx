@@ -3,9 +3,12 @@
  */
 
 import '@testing-library/jest-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import Snackbars from '../../../app/snackbars';
 import { render } from '../../../test-utils';
 import PersonalDetailsSection from '../index';
 import type { User, UserSettings } from '@automattic/api-core';
@@ -63,6 +66,13 @@ function mockAccountRecovery( {
 }
 
 describe( '<PersonalDetailsSection>', () => {
+	afterEach( () => {
+		jest.useRealTimers();
+		act( () => {
+			dispatch( noticesStore ).removeAllNotices( 'snackbar' );
+		} );
+	} );
+
 	test( 'renders the form and saves the form', async () => {
 		const user = userEvent.setup();
 		mockUserSettings( settings );
@@ -74,8 +84,16 @@ describe( '<PersonalDetailsSection>', () => {
 		expect( screen.getByRole( 'textbox', { name: 'First name' } ) ).toHaveValue( 'John' );
 		expect( screen.getByRole( 'textbox', { name: 'Last name' } ) ).toHaveValue( 'Doe' );
 		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveValue( 'johndoe' );
+		expect( screen.getByRole( 'textbox', { name: 'Username' } ) ).toHaveAttribute(
+			'autocomplete',
+			'username'
+		);
 		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveValue(
 			'john@example.com'
+		);
+		expect( screen.getByRole( 'textbox', { name: 'Email address' } ) ).toHaveAttribute(
+			'autocomplete',
+			'email'
 		);
 		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
 		await user.clear( firstNameInput );
@@ -141,8 +159,105 @@ describe( '<PersonalDetailsSection>', () => {
 			).toBeVisible();
 		} );
 
-		test( 'shows username update form and submits username change', async () => {
+		test( 'keeps focus in the username inputs while typing', async () => {
 			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+
+			expect( usernameInput ).toHaveValue( 'newusername' );
+			expect( usernameInput ).toHaveFocus();
+
+			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
+			await user.type( confirmInput, 'newusername' );
+
+			expect( confirmInput ).toHaveValue( 'newusername' );
+			expect( confirmInput ).toHaveFocus();
+
+			await waitFor(
+				() => {
+					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+				},
+				{ timeout: 2000 }
+			);
+		} );
+
+		test( 'confirms an available username once the field is left', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+			await user.tab();
+
+			expect(
+				await screen.findByText( 'Nice username!', undefined, { timeout: 2000 } )
+			).toBeVisible();
+		} );
+
+		test( 'shows why a username is not allowed', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'abc' );
+			await user.tab();
+
+			expect(
+				await screen.findByText( 'Usernames must be at least 4 characters.', undefined, {
+					timeout: 2000,
+				} )
+			).toBeVisible();
+			expect( usernameInput ).toBeInvalid();
+		} );
+
+		test( 'flags a confirmation that does not match the new username', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			mockValidateUsername( 'newusername' );
+
+			render( <PersonalDetailsSection /> );
+
+			const usernameInput = await screen.findByRole( 'textbox', { name: 'Username' } );
+			await user.clear( usernameInput );
+			await user.type( usernameInput, 'newusername' );
+
+			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
+			await user.type( confirmInput, 'otherusername' );
+			await user.tab();
+
+			expect( screen.getByText( 'Usernames do not match.' ) ).toBeVisible();
+			expect( confirmInput ).toBeInvalid();
+
+			await user.clear( confirmInput );
+			await user.type( confirmInput, 'newusername' );
+
+			expect( screen.getByText( 'Thanks for confirming your new username!' ) ).toBeVisible();
+			await waitFor(
+				() => {
+					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+				},
+				{ timeout: 2000 }
+			);
+		} );
+
+		test( 'shows username update form and submits username change', async () => {
 			mockUserSettings( settings );
 			mockIsAutomattician( false );
 			mockValidateUsername( 'newusername' );
@@ -154,19 +269,23 @@ describe( '<PersonalDetailsSection>', () => {
 			} );
 
 			const usernameInput = screen.getByRole( 'textbox', { name: 'Username' } );
+
+			jest.useFakeTimers( { doNotFake: [ 'nextTick', 'setImmediate' ] } );
+			const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
+
 			await user.clear( usernameInput );
 			await user.type( usernameInput, 'newusername' );
 
 			const confirmInput = await screen.findByRole( 'textbox', { name: 'Confirm new username' } );
 			await user.type( confirmInput, 'newusername' );
 
-			// Wait for debounced validation to complete
-			await waitFor(
-				() => {
-					expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
-				},
-				{ timeout: 2000 }
-			);
+			await act( async () => {
+				jest.advanceTimersByTime( 600 );
+			} );
+
+			await waitFor( () => {
+				expect( screen.getByRole( 'button', { name: 'Change username' } ) ).toBeEnabled();
+			} );
 
 			const scope = nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/me/username', ( body ) => {
@@ -370,6 +489,105 @@ describe( '<PersonalDetailsSection>', () => {
 			render( <PersonalDetailsSection /> );
 
 			expect( await screen.findByText( /lose access to account recovery/i ) ).toBeVisible();
+		} );
+
+		test( 'shows an email address error from the server on the field', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'That e-mail address is already being used.',
+					data: { 'form-field': 'email' },
+				} );
+
+			render(
+				<>
+					<PersonalDetailsSection />
+					<Snackbars />
+				</>
+			);
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			const refetch = mockUserSettings( settings );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'taken@example.com' );
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+			expect(
+				await screen.findByText( 'That e-mail address is already being used.' )
+			).toBeVisible();
+			// The server cancels any pending email change when it rejects the address.
+			await waitFor( () => expect( refetch.isDone() ).toBe( true ) );
+			expect(
+				screen.queryByRole( 'button', { name: 'Dismiss this notice' } )
+			).not.toBeInTheDocument();
+			// Before `toBeInvalid()`, whose `invalid` event focuses the field.
+			expect( emailInput ).toHaveFocus();
+			expect( emailInput ).toBeInvalid();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeDisabled();
+
+			await user.clear( emailInput );
+			await user.type( emailInput, 'free@example.com' );
+
+			expect(
+				screen.queryByText( 'That e-mail address is already being used.' )
+			).not.toBeInTheDocument();
+			expect( emailInput ).toBeValid();
+			expect( screen.getByRole( 'button', { name: 'Save' } ) ).toBeEnabled();
+		} );
+
+		test( 'shows an error that does not concern the email address in a snackbar', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 500, { error: 'server_error', message: 'Something went wrong.' } );
+
+			render(
+				<>
+					<PersonalDetailsSection />
+					<Snackbars />
+				</>
+			);
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'new@example.com' );
+			await user.click( screen.getByRole( 'button', { name: 'Save' } ) );
+
+			expect(
+				await screen.findByRole( 'button', { name: 'Dismiss this notice' } )
+			).toHaveTextContent( 'Something went wrong.' );
+			expect( emailInput ).toBeValid();
+		} );
+
+		test( 'shows an email address error on the field even if it was never left', async () => {
+			const user = userEvent.setup();
+			mockUserSettings( settings );
+			mockIsAutomattician( false );
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/me/settings' )
+				.reply( 400, {
+					error: 'invalid_input',
+					message: 'That e-mail address is already being used.',
+					data: { 'form-field': 'email' },
+				} );
+
+			render( <PersonalDetailsSection /> );
+
+			const emailInput = await screen.findByRole( 'textbox', { name: 'Email address' } );
+			mockUserSettings( settings );
+			await user.clear( emailInput );
+			await user.type( emailInput, 'taken@example.com{Enter}' );
+
+			expect(
+				await screen.findByText( 'That e-mail address is already being used.' )
+			).toBeVisible();
+			expect( emailInput ).toHaveFocus();
 		} );
 
 		test( 'disables save when email is invalid', async () => {

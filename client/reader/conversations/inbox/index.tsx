@@ -7,6 +7,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
+import { useSelectedPostCommands } from 'calypso/reader/stream/use-selected-post-commands';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import { errorNotice } from 'calypso/state/notices/actions';
@@ -14,6 +15,7 @@ import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
 import { filterConversations } from './conversation-list/filter-conversations';
@@ -33,6 +35,8 @@ interface Props {
 }
 
 const REFRESH_INTERVAL = 60 * 1000;
+// The Reader sidebar (~272px) and the 372px list leave the detail pane about 480px at this width.
+const SINGLE_PANE_BREAKPOINT = '<1120px';
 
 const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' | 'postId' > ) =>
 	`/reader/conversations/inbox/${ siteId }/${ postId }`;
@@ -50,7 +54,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	} );
 	const { mutate: markRead } = useMarkNotesRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
-	const isNarrow = useBreakpoint( '<782px' );
+	const isNarrow = useBreakpoint( SINGLE_PANE_BREAKPOINT );
 	const currentUserId = useSelector( getCurrentUserId );
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
@@ -182,6 +186,10 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	};
 
+	const { toggleSelectedLike } = useSelectedPostCommands(
+		siteId && postId ? { blogId: Number( siteId ), postId: Number( postId ) } : null
+	);
+
 	useInboxKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
 		onNext: () => goTo( nextIndex, 'shortcut' )?.(),
@@ -190,6 +198,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		onPreviousTab: () => moveTab( -1 ),
 		onSelectTab: ( next ) => selectTab( next, 'shortcut' ),
 		onToggleShortcuts: () => setIsShortcutsOpen( ( isOpen ) => ! isOpen ),
+		onToggleLike: toggleSelectedLike,
+		onOpenNotifications: () => dispatch( toggleNotificationsPanel() ),
 	} );
 
 	const hasConversation = Boolean( siteId && postId );

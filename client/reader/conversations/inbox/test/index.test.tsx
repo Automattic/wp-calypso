@@ -9,7 +9,7 @@ jest.mock( '@automattic/calypso-router', () => ( {
 let mockIsNarrow = false;
 
 jest.mock( '@automattic/viewport-react', () => ( {
-	useBreakpoint: () => mockIsNarrow,
+	useBreakpoint: jest.fn( () => mockIsNarrow ),
 } ) );
 
 jest.mock( 'calypso/reader/data/notifications', () => ( {
@@ -18,6 +18,10 @@ jest.mock( 'calypso/reader/data/notifications', () => ( {
 } ) );
 
 jest.mock( 'calypso/components/data/document-head', () => () => null );
+
+jest.mock( 'calypso/reader/stream/use-selected-post-commands', () => ( {
+	useSelectedPostCommands: () => ( { toggleSelectedLike: jest.fn() } ),
+} ) );
 
 jest.mock( 'calypso/state/reader/analytics/actions', () => ( {
 	recordReaderTracksEvent: jest.fn( () => ( { type: 'READER_TRACKS_EVENT_TEST' } ) ),
@@ -72,6 +76,7 @@ jest.mock( '../conversation-detail', () => ( {
 } ) );
 
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -227,6 +232,12 @@ describe( 'ConversationsInbox', () => {
 	describe( 'on narrow screens', () => {
 		beforeEach( () => {
 			mockIsNarrow = true;
+		} );
+
+		it( 'switches to a single pane before the detail pane gets cramped', () => {
+			renderInbox();
+
+			expect( useBreakpoint ).toHaveBeenCalledWith( '<1120px' );
 		} );
 
 		it( 'shows only the list and does not pick a conversation when the URL has none', () => {

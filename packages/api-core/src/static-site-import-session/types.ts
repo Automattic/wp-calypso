@@ -7,7 +7,15 @@ export const STATIC_SITE_IMPORT_TERMINAL_STATES: readonly StaticSiteImportState[
 ];
 
 export type StaticSiteImportCapability =
-	'booking' | 'commerce' | 'dialogs' | 'embeds' | 'forms' | 'media' | 'membership' | 'navigation';
+	| 'booking'
+	| 'commerce'
+	| 'dialogs'
+	| 'embeds'
+	| 'events'
+	| 'forms'
+	| 'media'
+	| 'membership'
+	| 'navigation';
 
 export type StaticSiteImportBand = 'simple' | 'moderate' | 'complex' | 'unknown';
 
@@ -70,6 +78,14 @@ export interface StaticSiteImportSession {
 	preview_summary: StaticSiteImportPreviewSummary | [];
 	/** Empty until approval binds a destination. */
 	site_url: string;
+	/**
+	 * What the move found on the old site that may need our team, translated for the reader, e.g.
+	 * "We found a store on example.com." The ready email carries the same sentence. '' when there is
+	 * nothing to say.
+	 */
+	review_note?: string;
+	/** The source domain the customer can connect, or '' for a builder's free address or an upload. */
+	connectable_domain: string;
 	/** Present from `preview_ready`. */
 	archive_hash?: string;
 	/** A short-lived link to the preview's Playground archive, only while `preview_ready`. */
@@ -80,4 +96,10 @@ export interface StaticSiteImportSession {
 export interface ApproveStaticSiteImportSessionParams {
 	sessionId: string;
 	destinationBlogId: number;
+}
+
+export interface StaticSiteImportHandoffParams {
+	blogUrl: string;
+	fromUrl: string;
+	locale: string;
 }

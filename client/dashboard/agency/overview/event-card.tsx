@@ -24,6 +24,20 @@ import {
 import type { FeaturedEvent, FeaturedEventActionCta } from './events';
 import type { RecordTracksEvent } from '../tiers/types';
 
+const DESCRIPTION_TAGS = {
+	strong: <strong />,
+	coupon: (
+		<span
+			style={ {
+				fontWeight: 600,
+				background: 'var(--color-gray-100)',
+				borderRadius: '2px',
+				padding: '0 4px',
+			} }
+		/>
+	),
+};
+
 interface EventCardProps {
 	isEligibleForPressableIntroOffer?: boolean;
 	isEligibleForPressableExpansionOffer?: boolean;
@@ -79,19 +93,7 @@ export function SingleEventCard( {
 					<VStack spacing={ 4 }>
 						{ description.map( ( paragraph ) => (
 							<Text key={ paragraph } size={ 13 } lineHeight="20px">
-								{ createInterpolateElement( paragraph, {
-									strong: <strong />,
-									// Calypso's global `code` rule sets its own size and weight.
-									code: (
-										<code
-											style={ {
-												fontSize: 'inherit',
-												fontWeight: 'inherit',
-												lineHeight: 'inherit',
-											} }
-										/>
-									),
-								} ) }
+								{ createInterpolateElement( paragraph, DESCRIPTION_TAGS ) }
 							</Text>
 						) ) }
 					</VStack>

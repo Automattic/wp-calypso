@@ -55,7 +55,9 @@ export function AssistedWordPressMigration( { site }: { site: Site } ) {
 	return (
 		<MigrationCard
 			title={ __( 'We’ve received your migration request' ) }
-			description={ __( 'We will review your site to make sure we have everything we need.' ) }
+			description={ __(
+				'We will review your site to make sure we have everything we need. Keep an eye on your inbox, we’ll send you emails as we work through the migration. Feel free to reply at any time if you have a question.'
+			) }
 			decoration={ <StatusIcon status="pending" /> }
 			note={ cancelButton }
 		>
