@@ -3,11 +3,11 @@ import {
 	bigSkyPluginQuery,
 	queryClient,
 	sitePostByEmailSettingsQuery,
+	sitesQuery,
 } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import WordPressAgentEmail from '../wordpress-agent-email';
 import type { Site } from '@automattic/api-core';
@@ -41,13 +41,13 @@ const JETPACK_SITE = {
 	jetpack: true,
 	is_wpcom_atomic: false,
 } as Site;
-const sitesQuery = APP_CONTEXT_DEFAULT_CONFIG.queries.sitesQuery( {
+const visibleSitesQuery = sitesQuery( 'all', {
 	site_visibility: 'visible',
 	include_a8c_owned: false,
 } );
 
 function seedSite( site = SITE ) {
-	queryClient.setQueryData( sitesQuery.queryKey, [ site ] );
+	queryClient.setQueryData( visibleSitesQuery.queryKey, [ site ] );
 	queryClient.setQueryData( bigSkyPluginQuery( site.ID ).queryKey, {
 		blog_id: site.ID,
 		enabled: true,

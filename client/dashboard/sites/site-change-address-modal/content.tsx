@@ -1,5 +1,6 @@
 import { DomainSubtype, FreeSiteAddressType, isWpError } from '@automattic/api-core';
 import {
+	domainsQuery,
 	validateSiteAddressChangeMutation,
 	changeSiteAddressChangeMutation,
 } from '@automattic/api-queries';
@@ -14,7 +15,6 @@ import { check, closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
@@ -69,10 +69,9 @@ const NewSiteAddressForm = ( {
 	onSubmit: ( data: NewSiteAddressFormData ) => void;
 	onCancel: () => void;
 } ) => {
-	const { queries } = useAppContext();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { data: siteDomains } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
