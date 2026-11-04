@@ -930,9 +930,13 @@ const onboarding: FlowV2< typeof initialize > = {
 						}
 					} else {
 						// NO_ACTION reaches here only without a siteSlug to send it back with.
-						return navigate( 'error' as typeof currentStepSlug, {
-							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
-						} );
+						// Replaced so Back skips processing. Pushed, Back re-runs processing, which
+						// fails at once and pushes the error step again, once per press.
+						return navigate(
+							'error' as typeof currentStepSlug,
+							{ errorReason: getProcessingErrorReason( providedDependencies.processingResult ) },
+							true
+						);
 					}
 					return;
 				}
