@@ -2,13 +2,12 @@ import { useQuery } from '@tanstack/react-query';
 import wpcom from 'calypso/lib/wp';
 import getDefaultQueryParams from 'calypso/my-sites/stats/hooks/default-query-params';
 import { parseChartData } from 'calypso/state/stats/lists/utils';
-import { Unit } from '../typings';
+import type { ResolvedDateRange } from '../lib/date-ranges';
 
 interface QueryStatsVisitsParams {
-	unit: Unit;
-	quantity: number;
+	unit: ResolvedDateRange[ 'unit' ];
+	start_date: string;
 	date: string;
-	start_date?: string;
 	stat_fields: string;
 }
 
@@ -17,32 +16,26 @@ function queryStatsVisits( siteId: number, params: QueryStatsVisitsParams ) {
 }
 
 /**
- * The site's visits per bucket, ending on a day.
- * @param siteId    The site.
- * @param unit      The bucket.
- * @param quantity  How many buckets, counted back from `date`.
- * @param date      The last day, as `YYYY-MM-DD`.
- * @param startDate The first day, as `YYYY-MM-DD`. With it the API counts the buckets the days
- *                  touch, so a week or a month at either end can be partial.
- * @param fields    The stats to count.
+ * The site's visits per bucket over a range's days. The API counts the buckets the days touch,
+ * so a week or a month at either end can be partial.
+ * @param siteId The site.
+ * @param range  The range's bucket, and its first and last day.
+ * @param fields The stats to count.
  */
 export default function useVisitsQuery(
 	siteId: number,
-	unit: Unit,
-	quantity: number,
-	date: string,
-	startDate?: string,
+	range: Pick< ResolvedDateRange, 'unit' | 'startDate' | 'endDate' >,
 	fields = [ 'views', 'visitors' ]
 ) {
+	const { unit, startDate, endDate } = range;
 	return useQuery( {
 		...getDefaultQueryParams< Array< object > >(),
-		queryKey: [ 'stats-widget', 'visits', siteId, unit, quantity, date, startDate, fields ],
+		queryKey: [ 'stats-widget', 'visits', siteId, unit, startDate, endDate, fields ],
 		queryFn: () =>
 			queryStatsVisits( siteId, {
 				unit,
-				quantity,
-				date,
-				...( startDate && { start_date: startDate } ),
+				start_date: startDate,
+				date: endDate,
 				stat_fields: fields.join( ',' ),
 			} ),
 		select: parseChartData,

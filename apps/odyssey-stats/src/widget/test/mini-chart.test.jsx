@@ -115,10 +115,13 @@ describe( 'MiniChart', () => {
 	it( 'asks for the range from its first day, so a week at either end can be partial', () => {
 		render( renderMiniChart( success( days( [ 20, 8 ] ) ), DATE_RANGE_LAST_90_DAYS ) );
 
-		expect( useVisitsQuery ).toHaveBeenCalledWith( 1, 'week', 13, '2026-10-07', '2026-10-01' );
+		expect( useVisitsQuery ).toHaveBeenCalledWith(
+			1,
+			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } )
+		);
 	} );
 
-	it( 'draws a week that starts before the range from its first day', async () => {
+	it( 'hands the chart the weeks as keyed, with the range they are cut to', async () => {
 		// Monday September 28 starts the week the range's first day, a Thursday, falls in.
 		const weeks = [
 			{ period: '2026-09-28', views: 20, visitors: 8 },
@@ -128,7 +131,7 @@ describe( 'MiniChart', () => {
 		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
 
 		const dates = mockChartProps.series[ 0 ].data.map( ( point ) => point.date );
-		expect( dates ).toEqual( [ new Date( 2026, 9, 1 ), new Date( 2026, 9, 5 ) ] );
+		expect( dates ).toEqual( [ new Date( 2026, 8, 28 ), new Date( 2026, 9, 5 ) ] );
 		expect( mockChartProps.range ).toEqual(
 			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } )
 		);

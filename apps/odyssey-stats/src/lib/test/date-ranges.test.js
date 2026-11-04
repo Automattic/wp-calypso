@@ -70,7 +70,6 @@ describe( 'resolveDateRange', () => {
 		expect( resolveDateRange( DATE_RANGE_LAST_90_DAYS, 2 ) ).toEqual( {
 			id: DATE_RANGE_LAST_90_DAYS,
 			unit: 'week',
-			quantity: 13,
 			days: 90,
 			startDate: '2026-07-09',
 			endDate: '2026-10-06',

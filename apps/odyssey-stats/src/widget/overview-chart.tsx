@@ -3,7 +3,7 @@ import { BarChart, LineChart } from '@automattic/charts';
 import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
-import { FunctionComponent } from 'react';
+import { FunctionComponent, useMemo } from 'react';
 import type { ResolvedDateRange } from '../lib/date-ranges';
 import type {
 	DataPoint,
@@ -21,6 +21,24 @@ const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', ga
 
 /** The days a chart draws: its bucket, and the first and last day it covers. */
 type ChartRange = Pick< ResolvedDateRange, 'unit' | 'startDate' | 'endDate' >;
+
+/**
+ * The series with no point before the range. A week is keyed by its Monday, which for the
+ * first week can fall before the range's first day, where its count starts: that point is
+ * drawn, named and read from the first day instead.
+ * @param series    The series as fetched.
+ * @param startDate The range's first day, as `YYYY-MM-DD`.
+ * @returns The series, their points within the range.
+ */
+function clampToRange( series: SeriesData[], startDate: string ): SeriesData[] {
+	const firstDay = moment( startDate, 'YYYY-MM-DD' ).toDate();
+	return series.map( ( entry ) => ( {
+		...entry,
+		data: ( entry.data as DataPointDate[] ).map( ( point ) =>
+			point.date && point.date < firstDay ? { ...point, date: firstDay } : point
+		),
+	} ) );
+}
 
 /**
  * Names the days a hovered point covers, in the site locale's order. Not moment's `LL`: in
@@ -146,6 +164,10 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 	chartType,
 } ) => {
 	const { unit } = range;
+	const drawn = useMemo(
+		() => clampToRange( series, range.startDate ),
+		[ series, range.startDate ]
+	);
 	const options: LineChartProps[ 'options' ] = {
 		// From zero, so a range that never approaches it doesn't look more dramatic than it is.
 		yScale: { type: 'linear', zero: true },
@@ -165,12 +187,12 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 		},
 	};
 	const renderTooltipForRange = ( params: RenderTooltipParams< DataPointDate > ) =>
-		renderTooltip( range, series, params );
+		renderTooltip( range, drawn, params );
 
 	if ( 'bar' === chartType ) {
 		return (
 			<BarChart
-				data={ nestSeries( series ) }
+				data={ nestSeries( drawn ) }
 				withTooltips
 				animation
 				// A zero-value bar has no height, so a quiet day would otherwise read as missing
@@ -186,7 +208,7 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 
 	return (
 		<LineChart
-			data={ series }
+			data={ drawn }
 			withTooltips
 			withGradientFill
 			animation
