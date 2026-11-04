@@ -110,74 +110,32 @@ function AgentTile( {
 	);
 }
 
-// A warning while MCP access is off, and a success message in the same place once it
-// turns on, so the tiles and the toggle below don't move.
-function AccessNotice( {
-	mcpEnabled,
+function AccessOffNotice( {
 	onTurnOn,
 	isTurningOn,
-	onDismiss,
 }: {
-	mcpEnabled: boolean;
 	onTurnOn: () => void;
 	isTurningOn: boolean;
-	onDismiss: () => void;
 } ) {
-	const [ wasEnabled, setWasEnabled ] = useState( mcpEnabled );
-	const [ showTurnedOn, setShowTurnedOn ] = useState( false );
-
-	// Set during render, not in an effect, so no frame paints without a notice.
-	if ( mcpEnabled !== wasEnabled ) {
-		setWasEnabled( mcpEnabled );
-		setShowTurnedOn( mcpEnabled );
-	}
-
-	if ( ! mcpEnabled ) {
-		return (
-			<Notice
-				variant="warning"
-				title={ __( 'MCP access is off' ) }
-				actions={
-					<Button
-						variant="secondary"
-						size="compact"
-						onClick={ onTurnOn }
-						isBusy={ isTurningOn }
-						disabled={ isTurningOn }
-					>
-						{ __( 'Turn on MCP access' ) }
-					</Button>
-				}
-			>
-				{ __(
-					'Agents can still connect, but they can’t read or change anything until you turn it on.'
-				) }
-			</Notice>
-		);
-	}
-
-	if ( ! showTurnedOn ) {
-		return null;
-	}
-
 	return (
 		<Notice
-			variant="success"
-			title={ __( 'MCP access is on' ) }
+			variant="warning"
+			title={ __( 'MCP access is off' ) }
 			actions={
 				<Button
 					variant="secondary"
 					size="compact"
-					onClick={ () => {
-						setShowTurnedOn( false );
-						onDismiss();
-					} }
+					onClick={ onTurnOn }
+					isBusy={ isTurningOn }
+					disabled={ isTurningOn }
 				>
-					{ __( 'Dismiss' ) }
+					{ __( 'Turn on MCP access' ) }
 				</Button>
 			}
 		>
-			{ __( 'Connected agents can now use the tools you allow below.' ) }
+			{ __(
+				'Agents can still connect, but they can’t read or change anything until you turn it on.'
+			) }
 		</Notice>
 	);
 }
@@ -195,7 +153,6 @@ export default function McpConnectCard( {
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
 	const copiedTimeout = useRef< ReturnType< typeof setTimeout > >( undefined );
-	const gridRef = useRef< HTMLUListElement >( null );
 
 	useEffect( () => () => clearTimeout( copiedTimeout.current ), [] );
 
@@ -220,10 +177,6 @@ export default function McpConnectCard( {
 		} );
 	};
 
-	// The notice closes with focus inside it, so move focus to the first tile.
-	const focusFirstTile = () =>
-		gridRef.current?.querySelector< HTMLElement >( '.mcp-connect__tile-target' )?.focus();
-
 	return (
 		<Card>
 			<CardBody>
@@ -235,13 +188,8 @@ export default function McpConnectCard( {
 							'Add WordPress.com to your agent, then sign in to approve the connection.'
 						) }
 					/>
-					<AccessNotice
-						mcpEnabled={ mcpEnabled }
-						onTurnOn={ onTurnOn }
-						isTurningOn={ isTurningOn }
-						onDismiss={ focusFirstTile }
-					/>
-					<ul ref={ gridRef } className="mcp-connect__grid">
+					{ ! mcpEnabled && <AccessOffNotice onTurnOn={ onTurnOn } isTurningOn={ isTurningOn } /> }
+					<ul className="mcp-connect__grid">
 						{ getConnectAgents().map( ( agent ) => (
 							<li key={ agent.key }>
 								<AgentTile
