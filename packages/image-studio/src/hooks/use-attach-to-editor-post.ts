@@ -31,7 +31,7 @@ export function useAttachToEditorPost(): AttachToEditorPost {
 
 	return useCallback(
 		async ( attachmentId: number | null, originalAttachmentId: number | null ) => {
-			// Only images made in this session: the original may already belong to another post.
+			// Never move the original: it may already belong to another post.
 			if ( ! attachmentId || attachmentId === originalAttachmentId ) {
 				return;
 			}
@@ -41,17 +41,17 @@ export function useAttachToEditorPost(): AttachToEditorPost {
 				return;
 			}
 
-			// The agent can put any attachment on the canvas, so never move one that already has a parent.
-			const attachment = ( await resolveSelect( coreStore ).getEntityRecord(
-				'postType',
-				'attachment',
-				attachmentId
-			) ) as { post?: number | null } | undefined;
-			if ( ! attachment || attachment.post ) {
-				return;
-			}
-
 			try {
+				// The agent can put any attachment on the canvas, so never move one that already has a parent.
+				const attachment = ( await resolveSelect( coreStore ).getEntityRecord(
+					'postType',
+					'attachment',
+					attachmentId
+				) ) as { post?: number | null } | undefined;
+				if ( ! attachment || attachment.post ) {
+					return;
+				}
+
 				await saveEntityRecord(
 					'postType',
 					'attachment',

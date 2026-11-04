@@ -114,4 +114,22 @@ describe( 'useAttachToEditorPost', () => {
 
 		consoleError.mockRestore();
 	} );
+
+	it( 'keeps the save going and reports it when the image lookup fails', async () => {
+		mockEditorStore = editorShowing( { id: 7 } );
+		mockGetEntityRecord.mockRejectedValue( new Error( 'rest_forbidden' ) );
+		const consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const { result } = renderHook( () => useAttachToEditorPost() );
+
+		await expect( result.current( 42, null ) ).resolves.toBeUndefined();
+		expect( mockSaveEntityRecord ).not.toHaveBeenCalled();
+		expect( consoleError ).toHaveBeenCalled();
+		expect( mockTrackImageStudioError ).toHaveBeenCalledWith( {
+			mode: 'generate',
+			errorType: 'attach_to_post_failed',
+			attachmentId: 42,
+		} );
+
+		consoleError.mockRestore();
+	} );
 } );
