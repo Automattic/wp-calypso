@@ -42,7 +42,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
-	const { id: rangeId, unit, quantity, startDate, endDate } = range;
+	const { id: rangeId, unit, startDate, endDate } = range;
 
 	// "More stats" opens the days the chart shows, on Stats or Premium Analytics.
 	const moreStatsUrl = statsLink(
@@ -58,12 +58,13 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const visitorsColor = useCssVariable( '--chart-series-visitors', rootElement );
 
 	// Read once: the choice is made on the Stats page, so a change there shows on the next
-	// load of the dashboard.
-	const chartType = useMemo( () => readChartType( siteId ), [ siteId ] );
+	// load of the dashboard. Bars on a phone too, as Stats v2 draws them, rather than the Stats
+	// page's lines.
+	const chartType = useMemo( () => readChartType( siteId, false ), [ siteId ] );
 
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
-	const { status, data } = useVisitsQuery( siteId, unit, quantity, endDate );
+	const { status, data } = useVisitsQuery( siteId, range );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -190,7 +191,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 							<OverviewChart
 								series={ series }
 								height={ CHART_HEIGHT }
-								unit={ unit }
+								range={ range }
 								chartType={ chartType }
 							/>
 						</div>
