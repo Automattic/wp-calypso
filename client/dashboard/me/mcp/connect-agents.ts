@@ -1,6 +1,13 @@
 import { __ } from '@wordpress/i18n';
 
+export const MCP_SERVER_NAME = 'wpcom-mcp';
 export const MCP_SERVER_URL = 'https://public-api.wordpress.com/wpcom/v2/mcp/v1';
+
+// Opens VS Code's own install prompt, so there is no shell command to quote.
+export const VSCODE_INSTALL_URL = `https://vscode.dev/redirect/mcp/install?${ new URLSearchParams( {
+	name: MCP_SERVER_NAME,
+	config: JSON.stringify( { type: 'http', url: MCP_SERVER_URL } ),
+} ) }`;
 
 const LOGO_BASE_URL = 'https://s2.wp.com/wp-content/themes/a8c/jetpack-2026/assets/home/agents/';
 
@@ -41,7 +48,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			description: __( 'Anthropic’s coding agent' ),
 			logo: LOGO_BASE_URL + 'claude-code.svg',
 			actionLabel: __( 'Copy command' ),
-			code: `claude mcp add --transport http wpcom-mcp ${ MCP_SERVER_URL }`,
+			code: `claude mcp add --transport http ${ MCP_SERVER_NAME } ${ MCP_SERVER_URL }`,
 		},
 		{
 			key: 'cursor',
@@ -56,12 +63,8 @@ export function getConnectAgents(): ConnectAgent[] {
 			name: 'VS Code',
 			description: __( 'With GitHub Copilot' ),
 			logo: LOGO_BASE_URL + 'vscode.svg',
-			actionLabel: __( 'Copy command' ),
-			code: `code --add-mcp '${ JSON.stringify( {
-				name: 'wpcom-mcp',
-				type: 'http',
-				url: MCP_SERVER_URL,
-			} ) }'`,
+			actionLabel: __( 'Add server' ),
+			href: VSCODE_INSTALL_URL,
 		},
 		{
 			key: 'codex',
@@ -69,7 +72,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			description: __( 'OpenAI’s coding agent' ),
 			logo: LOGO_BASE_URL + 'openai.svg',
 			actionLabel: __( 'Copy command' ),
-			code: `codex mcp add wpcom-mcp --url ${ MCP_SERVER_URL }`,
+			code: `codex mcp add ${ MCP_SERVER_NAME } --url ${ MCP_SERVER_URL }`,
 		},
 		{
 			key: 'antigravity',

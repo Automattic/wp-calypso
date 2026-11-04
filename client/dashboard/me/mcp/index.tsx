@@ -128,7 +128,7 @@ function McpComponent() {
 		} )
 	);
 
-	const handleMcpToggle = ( enabled: boolean ) => {
+	const handleMcpToggle = ( enabled: boolean, source: 'toggle' | 'connect_notice' = 'toggle' ) => {
 		const overrides = getOverridesToMatch( Object.entries( mcpAbilities ), enabled ) as
 			Record< string, boolean > | undefined;
 
@@ -152,6 +152,7 @@ function McpComponent() {
 					recordTracksEvent( 'calypso_dashboard_mcp_account_toggled', {
 						...tracksAudienceProps,
 						enabled,
+						source,
 					} );
 				},
 			}
@@ -169,7 +170,7 @@ function McpComponent() {
 				<PageHeader
 					title={ __( 'AI and MCP' ) }
 					description={ __(
-						'Control how AI assistants interact with your WordPress.com account and sites.'
+						'Control how external AI agents interact with your WordPress.com account and sites.'
 					) }
 					prefix={ <Breadcrumbs length={ 2 } /> }
 				/>
@@ -181,7 +182,7 @@ function McpComponent() {
 			/>
 			<McpConnectCard
 				mcpEnabled={ mcpEnabled }
-				onTurnOn={ () => handleMcpToggle( true ) }
+				onTurnOn={ () => handleMcpToggle( true, 'connect_notice' ) }
 				isTurningOn={ mutation.isPending }
 			/>
 			<Card className="mcp-preferences__access-card">
@@ -199,7 +200,7 @@ function McpComponent() {
 							checked={ mcpEnabled }
 							disabled={ mutation.isPending }
 							label={ __( 'Enable MCP access' ) }
-							onChange={ handleMcpToggle }
+							onChange={ ( checked ) => handleMcpToggle( checked ) }
 						/>
 					</VStack>
 				</CardBody>

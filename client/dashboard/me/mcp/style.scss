@@ -19,16 +19,13 @@
 	}
 }
 
-.mcp-connect__tile {
-	display: flex;
-	flex-direction: column;
-	gap: 10px;
-	box-sizing: border-box;
+// A plain link or button around a dashboard Card: no box of its own.
+.mcp-connect__tile-target {
+	display: block;
 	width: 100%;
 	height: 100%;
-	min-height: 124px;
-	padding: 14px;
-	border: 1px solid var( --dashboard-surface__border-color );
+	padding: 0;
+	border: 0;
 	border-radius: 8px;
 	background: none;
 	color: inherit;
@@ -37,16 +34,30 @@
 	text-decoration: none;
 	cursor: pointer;
 
-	&:hover {
-		border-color: color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 12%, transparent );
-		background: color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 2%, transparent );
-		color: var( --wp-admin-theme-color, #3858e9 );
-	}
-
 	&:focus-visible {
 		outline: var( --wp-admin-border-width-focus, 2px ) solid var( --wp-admin-theme-color, #3858e9 );
 		outline-offset: 1px;
 	}
+}
+
+.mcp-connect__tile.components-card {
+	height: 100%;
+	min-height: 124px;
+
+	// The Card draws its border with box-shadow.
+	.mcp-connect__tile-target:hover & {
+		box-shadow: 0 0 0 1px
+			color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 12%, transparent );
+		background: color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 2%, transparent );
+		color: var( --wp-admin-theme-color, #3858e9 );
+	}
+}
+
+.mcp-connect__tile-body.components-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	height: 100%;
 }
 
 // Logos are drawn for a light tile, so the badge stays white in dark mode too.
@@ -103,6 +114,12 @@
 	justify-content: space-between;
 	gap: 16px;
 	background: color-mix( in srgb, var( --dashboard__text-color ) 3%, transparent );
+}
+
+.mcp-connect__footer-actions {
+	display: flex;
+	flex: none;
+	gap: 8px;
 }
 
 .mcp-connect__helper-button.components-button {

@@ -23,7 +23,7 @@ import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
 
-import './style.scss';
+import '../../../me/mcp/setup/style.scss';
 
 function SiteAIToolsSetup() {
 	const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
