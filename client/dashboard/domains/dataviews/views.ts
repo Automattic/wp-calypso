@@ -96,10 +96,6 @@ export function recordDomainViewChanges(
 
 	if ( oldView.type !== newView.type ) {
 		recordTracksEvent( 'calypso_dashboard_domains_view_type_changed', { type: newView.type } );
-
-		// Changing view type can also change fields, but they weren't triggered by a user
-		// action, so we won't record those tracks events.
-		return;
 	}
 
 	if (

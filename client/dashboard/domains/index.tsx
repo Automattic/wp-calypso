@@ -16,6 +16,7 @@ import {
 	BulkActionsProgressNotice,
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
+	getDomainId,
 	useActions,
 	useFields,
 	DOMAINS_LIST_CONFIG,
@@ -27,10 +28,6 @@ import {
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
 import type { DomainSummary } from '@automattic/api-core';
-
-export function getDomainId( domain: DomainSummary ): string {
-	return `${ domain.domain }-${ domain.blog_id }`;
-}
 
 const defaultView = {
 	...DOMAINS_LIST_DEFAULT_VIEW,
@@ -80,16 +77,6 @@ function Domains() {
 	const hasDomains = domains.length > 0;
 	const isCardsLayout = view.type === 'grid';
 
-	const emptySearchState = (
-		<DataViewsEmptyStateLayout
-			title={ __( 'No domains match your search' ) }
-			description={ __( 'Try again, or add a new domain with the options below.' ) }
-			isBorderless
-		>
-			<EmptyDomainsStateActions />
-		</DataViewsEmptyStateLayout>
-	);
-
 	return (
 		<>
 			<PageLayout
@@ -127,15 +114,22 @@ function Domains() {
 							getItemId={ getDomainId }
 							defaultLayouts={ DOMAINS_LIST_LAYOUTS }
 							config={ DOMAINS_LIST_CONFIG }
-							empty={ emptySearchState }
+							empty={
+								<DataViewsEmptyStateLayout
+									title={ __( 'No domains match your search' ) }
+									description={ __( 'Try again, or add a new domain with the options below.' ) }
+									isBorderless
+								>
+									<EmptyDomainsStateActions />
+								</DataViewsEmptyStateLayout>
+							}
 						>
 							{ isCardsLayout ? (
 								<DomainCardsLayout
-									data={ filteredData || [] }
+									data={ filteredData }
 									fields={ fields }
 									actions={ actions }
 									view={ view }
-									empty={ emptySearchState }
 								/>
 							) : undefined }
 						</DataViews>

@@ -42,10 +42,10 @@ describe( 'sanitizeDomainFields', () => {
 } );
 
 describe( 'recordDomainViewChanges', () => {
-	test( 'layout change records only the type change', () => {
+	test( 'layout change records the type change', () => {
 		const tracks = jest.fn();
 		const oldView: View = { type: 'table', fields: [ 'blog_name' ] };
-		const newView: View = { type: 'grid', fields: [ 'blog_name', 'expiry' ] };
+		const newView: View = { type: 'grid', fields: [ 'blog_name' ] };
 
 		recordDomainViewChanges( oldView, newView, tracks );
 

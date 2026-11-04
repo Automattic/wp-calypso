@@ -6,11 +6,13 @@ import { sslDetailsQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { select } from '@wordpress/data';
 import { DataViews } from '@wordpress/dataviews';
+import { store as noticesStore } from '@wordpress/notices';
 import { render } from '../../../test-utils';
 import { DomainCardsLayout } from '../domain-cards';
 import type { DomainSummary } from '@automattic/api-core';
-import type { Action, Field, View } from '@wordpress/dataviews';
+import type { Action, Field, ViewGrid } from '@wordpress/dataviews';
 
 const domain = {
 	domain: 'example.com',
@@ -27,13 +29,12 @@ const fields: Field< DomainSummary >[] = [
 	{ id: 'blog_name', label: 'Site', render: ( { item } ) => <span>{ item.blog_name }</span> },
 	{ id: 'expiry', label: 'Paid until', render: ( { item } ) => <span>{ item.expiry }</span> },
 	{ id: 'hidden', label: 'Hidden field', render: () => <span>Hidden value</span> },
-	{ id: 'empty', label: 'Empty field', render: () => null },
 ];
 
-const view: View = {
+const view: ViewGrid = {
 	type: 'grid',
 	titleField: 'domain',
-	fields: [ 'expiry', 'blog_name', 'empty' ],
+	fields: [ 'expiry', 'blog_name' ],
 };
 
 function renderCards( actions: Action< DomainSummary >[], data = [ domain ] ) {
@@ -51,14 +52,9 @@ function renderCards( actions: Action< DomainSummary >[], data = [ domain ] ) {
 			paginationInfo={ { totalItems: data.length, totalPages: 1 } }
 			defaultLayouts={ { table: {}, grid: {} } }
 			getItemId={ ( item ) => item.domain }
+			empty={ <p>Nothing found</p> }
 		>
-			<DomainCardsLayout
-				data={ data }
-				fields={ fields }
-				actions={ actions }
-				view={ view }
-				empty={ <p>Nothing found</p> }
-			/>
+			<DomainCardsLayout data={ data } fields={ fields } actions={ actions } view={ view } />
 		</DataViews>,
 		{ queryClient }
 	);
@@ -71,7 +67,7 @@ describe( '<DomainCardsLayout>', () => {
 
 		await screen.findByText( 'Paid until' );
 		const labels = screen.getAllByRole( 'term' ).map( ( term ) => term.textContent );
-		expect( labels ).toEqual( [ 'Paid until', 'Site', 'Empty field' ] );
+		expect( labels ).toEqual( [ 'Paid until', 'Site' ] );
 		expect( screen.queryByText( 'Hidden value' ) ).not.toBeInTheDocument();
 	} );
 
@@ -249,6 +245,37 @@ describe( '<DomainCardsLayout>', () => {
 		await user.click( await screen.findByRole( 'menuitem', { name: 'Add mailbox' } ) );
 
 		expect( callback ).not.toHaveBeenCalled();
+	} );
+
+	test( 'shows an error when an action throws', async () => {
+		renderCards( [
+			{
+				id: 'manage-domain',
+				label: () => 'View settings',
+				callback: () => {
+					throw new Error( 'Action failed' );
+				},
+			},
+		] );
+		const user = userEvent.setup();
+
+		await user.click( await screen.findByRole( 'button', { name: 'Settings' } ) );
+
+		expect( select( noticesStore ).getNotices() ).toEqual( [
+			expect.objectContaining( {
+				status: 'error',
+				content: 'Something went wrong. Please try again.',
+			} ),
+		] );
+	} );
+
+	test( 'gives the title the full domain name, which can be truncated', async () => {
+		renderCards( [] );
+
+		expect( await screen.findByRole( 'heading', { name: 'example.com' } ) ).toHaveAttribute(
+			'title',
+			'example.com'
+		);
 	} );
 
 	test( 'hides the menu when no actions are left for it', async () => {

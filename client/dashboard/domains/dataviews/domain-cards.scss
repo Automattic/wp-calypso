@@ -18,7 +18,6 @@
 }
 
 .domain-cards__body {
-	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
 	flex: 1;
@@ -57,9 +56,5 @@
 			overflow: hidden;
 			text-overflow: ellipsis;
 		}
-	}
-
-	&:has( dd:empty ) {
-		display: none;
 	}
 }

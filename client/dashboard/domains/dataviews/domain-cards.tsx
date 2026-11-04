@@ -8,27 +8,28 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useRegistry } from '@wordpress/data';
+import { useDispatch, useRegistry } from '@wordpress/data';
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useId, useState } from 'react';
 import { Card, CardBody, CardFooter } from '../../components/card';
 import { DataViewsActionModal } from '../../components/dataviews';
 import Grid from '../../components/grid';
 import { Text } from '../../components/text';
 import { useDomainNameNote } from './field-domain-name';
+import { getDomainId } from './utils';
 import type { GapSize } from '../../components/grid';
 import type { DomainSummary } from '@automattic/api-core';
 import type {
 	Action,
 	ActionModal,
+	Density,
 	Field,
 	NormalizedField,
-	View,
 	ViewGrid,
 } from '@wordpress/dataviews';
-import type { ReactNode } from 'react';
 
 import './domain-cards.scss';
 
@@ -39,34 +40,22 @@ import './domain-cards.scss';
 const GRID_TEMPLATE_COLUMNS =
 	'repeat( auto-fill, minmax( max( min( 280px, 100% ), calc( ( 100% - 64px ) / 3 ) ), 1fr ) )';
 
-const GAP_BY_DENSITY: Record< NonNullable< ViewGrid[ 'layout' ] >[ 'density' ] & string, GapSize > =
-	{
-		compact: 'lg',
-		balanced: 'xl',
-		comfortable: '2xl',
-	};
+const GAP_BY_DENSITY: Record< Density, GapSize > = {
+	compact: 'lg',
+	balanced: 'xl',
+	comfortable: '2xl',
+};
 
 function getActionLabel( action: Action< DomainSummary >, item: DomainSummary ) {
 	return typeof action.label === 'function' ? action.label( [ item ] ) : action.label;
 }
 
-const FOOTER_ACTION_IDS = [ 'manage-domain', 'renew', 'manage-dns-settings' ];
-
 /*
  * Every renewable domain is eligible for "Renew", so it only moves to the footer once the domain has expired.
  * That's also when DNS stops being what the domain needs next, so it leaves the footer for the menu.
  */
-function isFooterAction( action: Action< DomainSummary >, item: DomainSummary ) {
-	switch ( action.id ) {
-		case 'manage-domain':
-			return true;
-		case 'renew':
-			return item.expired;
-		case 'manage-dns-settings':
-			return ! item.expired;
-		default:
-			return false;
-	}
+function getFooterActionIds( item: DomainSummary ) {
+	return item.expired ? [ 'manage-domain', 'renew' ] : [ 'manage-domain', 'manage-dns-settings' ];
 }
 
 function getFooterActionLabel( action: Action< DomainSummary >, item: DomainSummary ) {
@@ -90,6 +79,7 @@ function DomainCard( {
 	actions: Action< DomainSummary >[];
 } ) {
 	const registry = useRegistry();
+	const { createErrorNotice } = useDispatch( noticesStore );
 	const titleId = useId();
 	const note = useDomainNameNote( item );
 	const [ activeModalAction, setActiveModalAction ] =
@@ -100,24 +90,37 @@ function DomainCard( {
 			setActiveModalAction( action );
 			return;
 		}
-		action.callback( [ item ], { registry } );
+		try {
+			action.callback( [ item ], { registry } );
+		} catch {
+			createErrorNotice( __( 'Something went wrong. Please try again.' ), { type: 'snackbar' } );
+		}
 	};
 
 	const eligibleActions = actions.filter(
 		( action ) => ! action.isEligible || action.isEligible( item )
 	);
-	const footerActions = FOOTER_ACTION_IDS.flatMap(
-		( id ) =>
-			eligibleActions.find( ( action ) => action.id === id && isFooterAction( action, item ) ) ?? []
+	const footerActionIds = getFooterActionIds( item );
+	const footerActions = footerActionIds.flatMap(
+		( id ) => eligibleActions.find( ( action ) => action.id === id ) ?? []
 	);
-	const menuActions = eligibleActions.filter( ( action ) => ! isFooterAction( action, item ) );
+	const menuActions = eligibleActions.filter(
+		( action ) => ! footerActionIds.includes( action.id )
+	);
 
 	return (
 		<Card className="domain-cards__card" size="small" role="group" aria-labelledby={ titleId }>
 			<CardBody className="domain-cards__body">
-				<HStack alignment="topLeft" justify="space-between" spacing={ 2 }>
+				<HStack alignment="topLeft" spacing={ 2 }>
 					<VStack className="domain-cards__title" spacing={ 1 }>
-						<Heading id={ titleId } level={ 3 } size={ 13 } weight={ 500 } truncate>
+						<Heading
+							id={ titleId }
+							level={ 3 }
+							size={ 13 }
+							weight={ 500 }
+							title={ item.domain }
+							truncate
+						>
 							{ item.domain }
 						</Heading>
 						{ note && (
@@ -175,22 +178,18 @@ function DomainCard( {
 				</dl>
 			</CardBody>
 			{ footerActions.length > 0 && (
-				<CardFooter justify="flex-start" size="small" isBorderless>
-					<HStack justify="flex-start" spacing={ 4 } expanded={ false }>
-						{ footerActions.map( ( action ) => (
-							<Button
-								key={ action.id }
-								__next40pxDefaultSize
-								variant="link"
-								aria-describedby={ titleId }
-								disabled={ !! action.disabled }
-								accessibleWhenDisabled
-								onClick={ () => runAction( action ) }
-							>
-								{ getFooterActionLabel( action, item ) }
-							</Button>
-						) ) }
-					</HStack>
+				<CardFooter justify="flex-start" gap={ 4 } isBorderless>
+					{ footerActions.map( ( action ) => (
+						<Button
+							key={ action.id }
+							__next40pxDefaultSize
+							variant="link"
+							aria-describedby={ titleId }
+							onClick={ () => runAction( action ) }
+						>
+							{ getFooterActionLabel( action, item ) }
+						</Button>
+					) ) }
 				</CardFooter>
 			) }
 			{ activeModalAction && (
@@ -214,15 +213,12 @@ export function DomainCardsLayout( {
 	fields,
 	actions,
 	view,
-	empty,
 }: {
 	data: DomainSummary[];
 	fields: Field< DomainSummary >[];
 	actions: Action< DomainSummary >[];
-	view: View;
-	empty: ReactNode;
+	view: ViewGrid;
 } ) {
-	const layout = view.type === 'grid' ? view.layout : undefined;
 	const visibleFields = ( view.fields ?? [] ).flatMap(
 		( id ) => fields.find( ( field ) => field.id === id ) ?? []
 	);
@@ -245,11 +241,11 @@ export function DomainCardsLayout( {
 				<Grid
 					className="domain-cards"
 					templateColumns={ GRID_TEMPLATE_COLUMNS }
-					gap={ GAP_BY_DENSITY[ layout?.density ?? 'balanced' ] }
+					gap={ GAP_BY_DENSITY[ view.layout?.density ?? 'balanced' ] }
 				>
 					{ data.map( ( item ) => (
 						<DomainCard
-							key={ `${ item.domain }-${ item.blog_id }` }
+							key={ getDomainId( item ) }
 							item={ item }
 							fields={ visibleFields }
 							actions={ actions }
@@ -257,7 +253,7 @@ export function DomainCardsLayout( {
 					) ) }
 				</Grid>
 			) : (
-				empty
+				<WPDataViews.Layout />
 			) }
 			<WPDataViews.Footer />
 		</>
