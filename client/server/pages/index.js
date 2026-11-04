@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { parseTrackingPrefs } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import {
 	filterLanguageRevisions,
 	isTranslatedIncompletely,
@@ -332,10 +333,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		// this is for calypso.live, so that branchName can be available while rendering the page
-		if ( request.query.branch ) {
-			context.branchName = request.query.branch;
-		}
+	}
+
+	// calypso.live passes the branch along, so that it can be shown in the environment badge.
+	if ( isCalypsoLiveHostname( request.hostname ) && request.query.branch ) {
+		context.branchName = request.query.branch;
 	}
 
 	if ( calypsoEnv === 'horizon' ) {

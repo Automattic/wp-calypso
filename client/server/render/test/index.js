@@ -1,4 +1,9 @@
-import { shouldServerSideRender, setShouldServerSideRender } from '..';
+import config from '@automattic/calypso-config';
+import {
+	customizeClientDataForRequest,
+	shouldServerSideRender,
+	setShouldServerSideRender,
+} from '..';
 
 /**
  * A mutable hashmap that is used to create the current context (i.e. the values set here can be used as return
@@ -25,7 +30,8 @@ function remock( newReturnValues ) {
 }
 
 jest.mock( '@automattic/calypso-config', () => {
-	const fn = () => {};
+	const fn = ( key ) => fn.values[ key ];
+	fn.values = {};
 	fn.isEnabled = ( feature_key ) =>
 		feature_key === 'server-side-rendering' ? mockReturnValues.configServerSideRender : false;
 	return fn;
@@ -122,5 +128,56 @@ describe( 'setShouldServerSideRender', () => {
 		setShouldServerSideRender( contextWithQueryKeys, next );
 		expect( contextWithQueryKeys.serverSideRender ).toBe( false );
 		expect( next ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'customizeClientDataForRequest', () => {
+	const IMAGE = 'registry.a8c.com/calypso/app:build-123';
+	const ENVS = { wpcom: 'calypso', dashboard: 'dashboard' };
+	const originalImage = process.env.CALYPSO_LIVE_IMAGE;
+
+	beforeEach( () => {
+		process.env.CALYPSO_LIVE_IMAGE = IMAGE;
+	} );
+
+	afterEach( () => {
+		if ( originalImage === undefined ) {
+			delete process.env.CALYPSO_LIVE_IMAGE;
+		} else {
+			process.env.CALYPSO_LIVE_IMAGE = originalImage;
+		}
+	} );
+
+	function customize( hostname, values ) {
+		config.values = values;
+		return customizeClientDataForRequest( { hostname }, {} );
+	}
+
+	test( 'adds the image for a flavour that names its calypso.live envs', () => {
+		expect(
+			customize( 'container-abc.calypso.live', { calypso_live_envs: ENVS } ).calypso_live_image
+		).toBe( IMAGE );
+	} );
+
+	test( 'leaves out the image for a flavour that names no calypso.live envs', () => {
+		expect(
+			customize( 'container-abc.calypso.live', { calypso_live_envs: false } )
+		).not.toHaveProperty( 'calypso_live_image' );
+	} );
+
+	test( 'leaves out the image outside calypso.live and on A4A containers', () => {
+		expect( customize( 'horizon.wordpress.com', { calypso_live_envs: ENVS } ) ).not.toHaveProperty(
+			'calypso_live_image'
+		);
+		expect(
+			customize( 'container-abc-a4a.calypso.live', { calypso_live_envs: ENVS } )
+		).not.toHaveProperty( 'calypso_live_image' );
+	} );
+
+	test( 'leaves out an image that is not a build ref', () => {
+		process.env.CALYPSO_LIVE_IMAGE = 'registry.a8c.com/calypso/app:commit-abc';
+		expect(
+			customize( 'container-abc.calypso.live', { calypso_live_envs: ENVS } )
+		).not.toHaveProperty( 'calypso_live_image' );
 	} );
 } );
