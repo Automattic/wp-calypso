@@ -527,6 +527,31 @@ describe( 'Image Studio Store', () => {
 			} );
 		} );
 
+		describe( 'ADD_TRANSFORMED_ATTACHMENT_ID', () => {
+			it( 'adds attachment ID to transformed list', () => {
+				const state = reducer( getInitialState(), actions.addTransformedAttachmentId( 456 ) );
+
+				expect( state.transformedAttachmentIds ).toEqual( [ 456 ] );
+			} );
+
+			it.each( [
+				[ 'open', () => actions.openImageStudio( 123 ) ],
+				[ 'close', () => actions.closeImageStudio() ],
+				[ 'navigate', () => actions.navigateToAttachment( 20 ) ],
+				[ 'revert', () => actions.resetCanvasHistory() ],
+			] )( 'clears the transformed list on %s', ( _name, createAction ) => {
+				const previousState: ImageStudioState = {
+					...getInitialState(),
+					navigableAttachmentIds: [ 10, 20 ],
+					transformedAttachmentIds: [ 456 ],
+				};
+
+				const state = reducer( previousState, createAction() );
+
+				expect( state.transformedAttachmentIds ).toEqual( [] );
+			} );
+		} );
+
 		describe( 'ADD_NOTICE and REMOVE_NOTICE', () => {
 			it( 'adds notice to list', () => {
 				const state = reducer( getInitialState(), actions.addNotice( 'Error message', 'error' ) );

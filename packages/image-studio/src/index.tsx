@@ -96,6 +96,7 @@ function ImageStudioIntegration(): JSX.Element | null {
 		setLastSavedAttachmentId,
 		addSavedAttachmentId,
 		setHasUpdatedMetadata,
+		setIsExitConfirmed,
 	} = useDispatch( imageStudioStore ) as ImageStudioActions;
 	const { invalidateResolution, saveEntityRecord } = useDispatch(
 		coreStore
@@ -374,6 +375,9 @@ function ImageStudioIntegration(): JSX.Element | null {
 				mode: attachmentId ? ImageStudioMode.Edit : ImageStudioMode.Generate,
 			} );
 
+			// Lets a pending rotate or flip know to discard its result instead of adding a draft.
+			setIsExitConfirmed( true );
+
 			// Cleanup drafts
 			await cleanupOnExit();
 
@@ -417,7 +421,14 @@ function ImageStudioIntegration(): JSX.Element | null {
 			// Close the modal
 			closeImageStudio();
 		},
-		[ attachmentId, cleanupOnExit, closeImageStudio, invalidateResolution, onCloseCallback ]
+		[
+			attachmentId,
+			cleanupOnExit,
+			closeImageStudio,
+			invalidateResolution,
+			onCloseCallback,
+			setIsExitConfirmed,
+		]
 	);
 
 	// Open the Media Library classic editor in a new tab. Image Studio stays open so
