@@ -25,12 +25,18 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
-	{ action: 'continue'; importSessionId: string } | { action: 'unavailable' };
+	| { action: 'continue'; importSessionId: string }
+	| { action: 'migrate' }
+	| { action: 'unavailable' };
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
 const isRefusedError = ( error: unknown ) =>
 	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_refused';
+
+// The server found WordPress behind the source, which a site migration moves whole.
+const isWordPressSourceError = ( error: unknown ) =>
+	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_is_wordpress';
 
 const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
 	function StaticSiteImportReading( { navigation } ) {
@@ -116,7 +122,8 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				onSuccess: ( session ) =>
 					submit( { action: 'continue', importSessionId: session.session_id } ),
 				onError: ( createError ) =>
-					! isRefusedError( createError ) && submit( { action: 'unavailable' } ),
+					! isRefusedError( createError ) &&
+					submit( { action: isWordPressSourceError( createError ) ? 'migrate' : 'unavailable' } ),
 			} );
 		} );
 		const hasStarted = useRef( false );
