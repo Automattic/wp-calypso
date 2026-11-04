@@ -340,12 +340,12 @@ export function StaticSiteImportNotice( {
 				title={ __( 'Your move hasn’t started yet' ) }
 				actions={
 					<>
-						<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
+						<Button __next40pxDefaultSize variant="primary" onClick={ siteImport.retry }>
 							{ __( 'Try again' ) }
 						</Button>
 						<Button
 							__next40pxDefaultSize
-							variant="link"
+							variant="secondary"
 							onClick={ () => setShowHelpCenter( true ) }
 						>
 							{ __( 'Contact us' ) }
