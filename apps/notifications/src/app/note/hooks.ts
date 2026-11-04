@@ -5,7 +5,7 @@ import getAllNotes from '../../panel/state/selectors/get-all-notes';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
-import { getFilter } from '../../panel/templates/filters';
+import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import type { FilterName, Note } from '../types';
 
@@ -31,7 +31,7 @@ export function useNoteNavigation( {
 	const hiddenNoteIds = useSelector( getHiddenNoteIds );
 	const { client } = useAppContext();
 
-	const filter = getFilter( filterName );
+	const filter = getFilters()[ filterName ];
 	// Keep the selected note in the navigation list at its natural position even
 	// if it no longer matches the active filter. Opening a note marks it read,
 	// so on the "Unread" tab the selected note would otherwise drop out of the

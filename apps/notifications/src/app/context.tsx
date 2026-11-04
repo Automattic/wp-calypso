@@ -6,6 +6,7 @@ export type AppContextData = {
 	locale: string;
 	isViewSettingsEnabled: boolean;
 	isMarkAsUnreadEnabled: boolean;
+	onOpenFullView?: () => void;
 };
 
 const AppContext = createContext< AppContextData >( {
@@ -20,12 +21,14 @@ export const AppProvider = ( {
 	locale,
 	isViewSettingsEnabled = false,
 	isMarkAsUnreadEnabled = false,
+	onOpenFullView,
 	children,
 }: {
 	client: Client | null;
 	locale: string;
 	isViewSettingsEnabled?: boolean;
 	isMarkAsUnreadEnabled?: boolean;
+	onOpenFullView?: () => void;
 	children: React.ReactNode;
 } ) => {
 	const value = useMemo(
@@ -34,8 +37,9 @@ export const AppProvider = ( {
 			locale,
 			isViewSettingsEnabled,
 			isMarkAsUnreadEnabled,
+			onOpenFullView,
 		} ),
-		[ client, locale, isViewSettingsEnabled, isMarkAsUnreadEnabled ]
+		[ client, locale, isViewSettingsEnabled, isMarkAsUnreadEnabled, onOpenFullView ]
 	);
 
 	return <AppContext.Provider value={ value }>{ children }</AppContext.Provider>;

@@ -1,7 +1,6 @@
 import type { getFilters } from '../panel/templates/filters';
 
-export type FilterName =
-	keyof ReturnType< typeof getFilters > | `types:${ string }` | `types-unread:${ string }`;
+export type FilterName = keyof ReturnType< typeof getFilters >;
 
 export type LayoutStyle = 'detailed' | 'simplified';
 

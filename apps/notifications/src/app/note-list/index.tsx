@@ -12,7 +12,7 @@ import getFilteredLoading from '../../panel/state/selectors/get-filtered-loading
 import getFilteredNoteIds from '../../panel/state/selectors/get-filtered-note-ids';
 import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getIsLoading from '../../panel/state/selectors/get-is-loading';
-import { getFilter } from '../../panel/templates/filters';
+import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, SelectedNoteIdContext } from './dataviews';
 import { useNoteListFocusOnNoteClose, useNoteListNavigationKeyboardShortcuts } from './hooks';
@@ -43,7 +43,7 @@ type NoteListProps = {
 };
 
 const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListProps ) => {
-	const filter = getFilter( filterName );
+	const filter = getFilters()[ filterName ];
 	const isAllTab = filterName === 'all';
 	const allNotes = useSelector( ( state ) => getAllNotes( state ) || [] ) as Note[];
 	// This tab's cached id list, keyed by tab name, or undefined until its first
@@ -58,7 +58,7 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 	// Everything the render needs that depends on which tab is active, derived in
 	// one place so the All-vs-filtered split lives here and nowhere else.
 	const tab = useMemo( () => {
-		const { filter: matches } = getFilter( filterName );
+		const { filter: matches } = getFilters()[ filterName ];
 
 		// The All tab renders the whole store; a filtered tab renders the server's
 		// id list for its filter. `matches` still runs on top so an in-app change
