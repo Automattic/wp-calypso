@@ -61,7 +61,6 @@
 		"@automattic/omnibar": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
 		"@automattic/plans-grid-next": "workspace:^",
-		"@automattic/posthog": "workspace:^",
 		"@automattic/request-external-access": "workspace:^",
 		"@automattic/search": "workspace:^",
 		"@automattic/shopping-cart": "workspace:^",
