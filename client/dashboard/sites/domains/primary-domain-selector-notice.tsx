@@ -47,16 +47,6 @@ const PrimaryDomainSelectorNotice = ( {
 	const canUserSetPrimaryDomainOnThisSite =
 		! ( primaryWithPlanOnly && isOnFreePlan ) &&
 		( site?.plan?.features?.active.includes( 'set-primary-custom-domain' ) ?? false );
-	const setPrimaryDomainMutation = useMutation(
-		withSnackbar( siteSetPrimaryDomainMutation(), {
-			success: sprintf(
-				/* translators: %s is domain */
-				__( 'Primary site address changed: all domains will redirect to %s.' ),
-				formData.primaryDomain
-			),
-			error: { source: 'server' },
-		} )
-	);
 	const currentPrimaryDomain = domains.find( ( domain ) => domain.primary_domain )?.domain;
 	const domainsList = useMemo( () => {
 		if ( ! domains || ! site ) {
@@ -79,6 +69,34 @@ const PrimaryDomainSelectorNotice = ( {
 			return true;
 		} );
 	}, [ domains, site ] );
+
+	// When the site still uses its default address and exactly one custom domain
+	// could replace it (e.g. right after buying one), offer that domain directly
+	// instead of hiding it behind a link and a dropdown.
+	const currentPrimaryIsDefaultAddress =
+		domains.find( ( domain ) => domain.primary_domain )?.subtype.id ===
+		DomainSubtype.DEFAULT_ADDRESS;
+	const customDomainCandidates = domainsList.filter(
+		( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+	);
+	const suggestedDomain =
+		canUserSetPrimaryDomainOnThisSite &&
+		currentPrimaryIsDefaultAddress &&
+		customDomainCandidates.length === 1
+			? customDomainCandidates[ 0 ].domain
+			: undefined;
+	const domainToSet = suggestedDomain ?? formData.primaryDomain;
+
+	const setPrimaryDomainMutation = useMutation(
+		withSnackbar( siteSetPrimaryDomainMutation(), {
+			success: sprintf(
+				/* translators: %s is domain */
+				__( '%s is now your site address. Your other addresses redirect to it.' ),
+				domainToSet
+			),
+			error: { source: 'server' },
+		} )
+	);
 
 	if ( ! domains || ! site ) {
 		return null;
@@ -153,6 +171,20 @@ const PrimaryDomainSelectorNotice = ( {
 		);
 	};
 
+	const handleSetSuggestedDomain = () => {
+		if ( ! suggestedDomain ) {
+			return;
+		}
+
+		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
+			site: site.slug,
+			domain: suggestedDomain,
+			origin: 'suggested_domain',
+		} );
+
+		setPrimaryDomainMutation.mutate( { siteId: site.ID, domain: suggestedDomain } );
+	};
+
 	const handleSubmit = () => {
 		if ( ! formData.primaryDomain ) {
 			return;
@@ -173,6 +205,50 @@ const PrimaryDomainSelectorNotice = ( {
 			}
 		);
 	};
+
+	if ( suggestedDomain ) {
+		return (
+			<Notice
+				variant="info"
+				title={ sprintf(
+					/* translators: %s is the domain name */
+					__( '%s isn’t your site address yet' ),
+					suggestedDomain
+				) }
+			>
+				<VStack spacing={ 4 }>
+					<Text as="p">
+						{ createInterpolateElement(
+							__(
+								'Visitors still see <currentPrimaryDomain />. Make <suggestedDomain /> your site address and every other address will redirect to it. <learnMoreLink />'
+							),
+							{
+								currentPrimaryDomain: <strong>{ currentPrimaryDomain }</strong>,
+								suggestedDomain: <strong>{ suggestedDomain }</strong>,
+								learnMoreLink: <InlineSupportLink supportContext="primary-site-address" />,
+							}
+						) }
+					</Text>
+					<HStack justify="flex-start">
+						<Button
+							variant="primary"
+							onClick={ handleSetSuggestedDomain }
+							__next40pxDefaultSize
+							isBusy={ setPrimaryDomainMutation.isPending }
+							disabled={ setPrimaryDomainMutation.isPending }
+							accessibleWhenDisabled
+						>
+							{ sprintf(
+								/* translators: %s is the domain name */
+								__( 'Make %s my site address' ),
+								suggestedDomain
+							) }
+						</Button>
+					</HStack>
+				</VStack>
+			</Notice>
+		);
+	}
 
 	return (
 		<Notice variant="info" title={ __( 'Primary site address' ) }>
