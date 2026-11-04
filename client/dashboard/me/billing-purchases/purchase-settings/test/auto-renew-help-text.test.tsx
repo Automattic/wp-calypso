@@ -50,8 +50,7 @@ describe( 'auto-renew help text', () => {
 			/>
 		);
 
-		expect( getToggleHelp() ).toHaveTextContent( 'You will be billed on January 1, 2027.' );
-		expect( getToggleHelp() ).not.toHaveTextContent( 'paid through' );
+		expect( getToggleHelp() ).toHaveTextContent( /^You will be billed on January 1, 2027$/ );
 		expect( screen.queryByRole( 'link', { name: /Learn more/ } ) ).not.toBeInTheDocument();
 	} );
 } );

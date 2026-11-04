@@ -958,39 +958,31 @@ function getFields( {
 						purchase.renew_date &&
 						isRenewingBeforeExpiration( purchase )
 					) {
-						// translators: %(date)s is a formatted date string
-						const billedOn = sprintf( __( 'You will be billed on %(date)s.' ), {
-							date: formatDate( new Date( purchase.renew_date ), locale, {
-								dateStyle: 'long',
-							} ),
+						const renewDate = formatDate( new Date( purchase.renew_date ), locale, {
+							dateStyle: 'long',
 						} );
 						const isRenewingEarly =
 							Boolean( purchase.expiry_date ) &&
 							! purchase.is_hundred_year_domain &&
 							purchase.renew_date !== purchase.expiry_date;
 						if ( ! isRenewingEarly ) {
-							return billedOn;
+							// translators: %(date)s is a formatted date string
+							return sprintf( __( 'You will be billed on %(date)s' ), { date: renewDate } );
 						}
-						return (
-							<>
-								{ billedOn }{ ' ' }
-								{ createInterpolateElement(
-									/* translators: <expireDate /> is a date and inlineSupportLink is a web link. */
-									__(
-										'Your subscription is paid through <expireDate></expireDate>, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
-									),
-									{
-										expireDate: (
-											<span>
-												{ formatDate( new Date( purchase.expiry_date ), locale, {
-													dateStyle: 'long',
-												} ) }
-											</span>
-										),
-										inlineSupportLink: <InlineSupportLink supportContext="autorenewal" />,
-									}
-								) }
-							</>
+						return createInterpolateElement(
+							sprintf(
+								/* translators: %(renewDate)s and %(expiryDate)s are formatted dates, inlineSupportLink is a web link. */
+								__(
+									'You will be billed on %(renewDate)s. Your subscription is paid through %(expiryDate)s, but will be renewed prior to that date. <inlineSupportLink>Learn more</inlineSupportLink>'
+								),
+								{
+									renewDate,
+									expiryDate: formatDate( new Date( purchase.expiry_date ), locale, {
+										dateStyle: 'long',
+									} ),
+								}
+							),
+							{ inlineSupportLink: <InlineSupportLink supportContext="autorenewal" /> }
 						);
 					}
 					if ( ! purchase.is_auto_renew_enabled && purchase.expiry_date ) {
