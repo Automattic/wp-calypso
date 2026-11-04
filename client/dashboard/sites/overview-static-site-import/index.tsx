@@ -334,14 +334,6 @@ export function StaticSiteImportNotice( {
 	}
 
 	if ( siteImport.status === 'stalled' ) {
-		if ( handoff.isSuccess ) {
-			return (
-				<Notice variant="success" title={ __( 'Our team has your move' ) }>
-					{ __( 'We’ll email you to finish moving your site.' ) }
-				</Notice>
-			);
-		}
-
 		return (
 			<Notice
 				variant="warning"
@@ -354,25 +346,14 @@ export function StaticSiteImportNotice( {
 						<Button
 							__next40pxDefaultSize
 							variant="link"
-							isBusy={ handoff.isPending }
-							disabled={ handoff.isPending }
-							onClick={ requestHandoff }
+							onClick={ () => setShowHelpCenter( true ) }
 						>
-							{ __( 'Let our team move it' ) }
+							{ __( 'Contact us' ) }
 						</Button>
 					</>
 				}
 			>
-				<VStack spacing={ 2 }>
-					<span>
-						{ __(
-							'Something stopped it from starting. Nothing has changed on your current site.'
-						) }
-					</span>
-					{ handoff.isError && (
-						<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
-					) }
-				</VStack>
+				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }
 			</Notice>
 		);
 	}

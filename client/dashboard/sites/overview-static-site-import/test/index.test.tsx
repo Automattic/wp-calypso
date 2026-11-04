@@ -321,6 +321,10 @@ describe( 'StaticSiteImportCard', () => {
 
 		expect( await screen.findByText( 'Your move hasn’t started yet' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Let our team move it' } )
+		).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'heading', { name: 'Your move stopped' } )
 		).not.toBeInTheDocument();
@@ -346,28 +350,6 @@ describe( 'StaticSiteImportCard', () => {
 		await user.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
 
 		await waitFor( () => expect( secondApprove.isDone() ).toBe( true ) );
-		nock.cleanAll();
-	} );
-
-	test( 'lets the customer hand the move to our team when naming the destination fails', async () => {
-		const user = userEvent.setup();
-		mockApi()
-			.get( '/wpcom/v2/static-site-import-session/abc123' )
-			.query( true )
-			.times( 2 )
-			.reply( 200, session( 'queued' ) );
-		mockApi()
-			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
-			.reply( 400, { code: 'rest_forbidden', message: 'Not allowed' } );
-		mockApi().post( '/wpcom/v2/help/migration-ticket/new' ).reply( 200, { success: true } );
-
-		render( <StaticSiteImport /> );
-
-		await user.click( await screen.findByRole( 'button', { name: 'Let our team move it' } ) );
-
-		expect( await screen.findByText( 'Our team has your move' ) ).toBeVisible();
-		expect( screen.queryByText( /Your move hasn/ ) ).not.toBeInTheDocument();
-		expect( screen.queryByRole( 'button', { name: 'Try again' } ) ).not.toBeInTheDocument();
 		nock.cleanAll();
 	} );
 
