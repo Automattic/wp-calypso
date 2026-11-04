@@ -34,8 +34,8 @@ import type {
 import './domain-cards.scss';
 
 /*
- * At most three cards per row, with fewer when they would drop below 280px. Subtracting the largest gap
- * always leaves room for three tracks and never for a fourth, and `1fr` takes up any space left over.
+ * At most three cards per row, with fewer when they would drop below 280px. The 64px is two gutters of the largest
+ * gap in `GAP_BY_DENSITY`, so wide containers always fit three tracks and never a fourth. `1fr` takes up any space left over.
  */
 const GRID_TEMPLATE_COLUMNS =
 	'repeat( auto-fill, minmax( max( min( 280px, 100% ), calc( ( 100% - 64px ) / 3 ) ), 1fr ) )';
@@ -225,7 +225,7 @@ export function DomainCardsLayout( {
 
 	return (
 		<>
-			{ /* These class names give the toolbar the same spacing as DataViews' default composition. */ }
+			{ /* These class names give the toolbar the same padding as DataViews' default composition. */ }
 			<HStack className="dataviews__view-actions" alignment="top" justify="space-between">
 				<HStack className="dataviews__search" justify="flex-start" expanded={ false }>
 					<WPDataViews.Search />

@@ -90,9 +90,9 @@ export const useActions = ( {
 		);
 	}, [ sites ] );
 	// A domain can only be made primary once its SSL certificate is provisioned.
-	// DomainSummary has no SSL field, so resolve it from the same query the SSL
-	// column uses, but only for domains that are otherwise eligible to avoid
-	// firing SSL requests for the whole list.
+	// DomainSummary has no SSL field, so resolve it from the SSL details query,
+	// but only for domains that are otherwise eligible to avoid firing SSL
+	// requests for the whole list.
 	const primaryCandidateDomainNames = useMemo( () => {
 		return ( domains ?? [] )
 			.filter( ( item ) => {
