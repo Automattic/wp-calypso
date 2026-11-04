@@ -1,6 +1,7 @@
 import {
 	Button,
 	Icon,
+	Tooltip,
 	__experimentalText as Text,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -12,6 +13,7 @@ import { Fragment } from 'react';
 import { Card, CardBody, CardDivider, CardHeader } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { SectionHeader } from '../../components/section-header';
+import { getUsageStatus } from '../amplify/usage';
 import { ALL_TIERS, getReportAllowance } from './constants';
 import getCurrentAgencyTier from './get-current-agency-tier';
 import type {
@@ -93,6 +95,7 @@ function BenefitRow( {
 		benefit.id === 'prospect-reports' && ! isLocked
 			? getProspectReportsUsageText( prospectReports, currentAgencyTierId )
 			: null;
+	const isAtReportCap = getUsageStatus( prospectReports?.usage ) === 'cap';
 
 	const renderActions = () => {
 		// Locked (higher) tiers don't expose actions yet.
@@ -151,6 +154,22 @@ function BenefitRow( {
 			const href = links[ action.id ];
 			if ( ! href ) {
 				return null;
+			}
+			if ( action.id === 'generate-prospect-report' && isAtReportCap ) {
+				return (
+					<Tooltip key={ action.id } text={ __( 'You’ve used all your reports for this month.' ) }>
+						<Button
+							__next40pxDefaultSize
+							{ ...buttonProps }
+							// Tertiary buttons keep the accent color when disabled.
+							style={ { ...buttonProps.style, color: 'var(--color-text-subtle)' } }
+							disabled
+							accessibleWhenDisabled
+						>
+							{ action.label }
+						</Button>
+					</Tooltip>
+				);
 			}
 			// Only in-app paths go through the router; absolute URLs and hash
 			// links stay plain anchors.
