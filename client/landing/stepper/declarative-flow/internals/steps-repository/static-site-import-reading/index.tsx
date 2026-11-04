@@ -1,15 +1,15 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
-import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
+import { createStaticSiteImportSessionMutation, sitePurchasesQuery } from '@automattic/api-queries';
 import { HelpCenter, Onboard, Visibility } from '@automattic/data-stores';
 import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
-import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { dashboardLink, wpcomLink } from 'calypso/dashboard/utils/link';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSchemeIfMissing } from 'calypso/lib/url';
@@ -36,7 +36,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 	function StaticSiteImportReading( { navigation } ) {
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
-		const { site, siteSlug } = useSiteData();
+		const { site, siteSlug, siteId: destinationSiteId } = useSiteData();
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
 		const from = searchParams.get( 'from' )?.trim();
@@ -56,6 +56,11 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
+		const { data: planPurchase } = useQuery( {
+			...sitePurchasesQuery( destinationSiteId ),
+			enabled: isRefusedError( error ) && destinationSiteId > 0,
+			select: ( purchases ) => purchases.find( ( purchase ) => purchase.is_plan ),
+		} );
 
 		const start = useEffectEvent( async () => {
 			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
@@ -148,6 +153,13 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 							<Step.SecondaryButton href={ dashboardLink( `/sites/${ siteSlug }` ) }>
 								{ __( 'Go to your site' ) }
 							</Step.SecondaryButton>
+						) }
+						{ siteSlug && planPurchase && (
+							<Step.LinkButton
+								href={ wpcomLink( `/me/purchases/${ siteSlug }/${ planPurchase.ID }/cancel` ) }
+							>
+								{ __( 'Get a refund' ) }
+							</Step.LinkButton>
 						) }
 					</Step.CenteredColumnLayout>
 				</>

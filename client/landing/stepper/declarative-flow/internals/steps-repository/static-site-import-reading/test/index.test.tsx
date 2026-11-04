@@ -20,6 +20,11 @@ import { mockStepProps } from '../../test/helpers';
 const mockApi = () => nock( 'https://public-api.wordpress.com:443' );
 const sessionResponse = { session_id: 'abc123', state: 'capture_queued' };
 const continueWithSession = { action: 'continue', importSessionId: 'abc123' };
+const mockRefusedSource = () =>
+	mockApi().post( '/wpcom/v2/static-site-import-session' ).query( true ).reply( 403, {
+		code: 'static_site_import_source_refused',
+		message: 'This site cannot be imported.',
+	} );
 
 jest.mock( 'calypso/lib/analytics/signup', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/signup' ),
@@ -28,6 +33,7 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		siteSlug: 'destination.example.com',
+		siteId: 123,
 		site: { plan: { product_slug: 'business-bundle' } },
 	} ),
 } ) );
@@ -175,10 +181,8 @@ describe( 'StaticSiteImportReading', () => {
 	} );
 
 	it( 'stops at a refused source instead of offering another route', async () => {
-		mockApi().post( '/wpcom/v2/static-site-import-session' ).query( true ).reply( 403, {
-			code: 'static_site_import_source_refused',
-			message: 'This site cannot be imported.',
-		} );
+		mockRefusedSource();
+		mockApi().get( '/rest/v1.2/upgrades' ).query( { site: 123 } ).reply( 200, [] );
 
 		const submit = render( 'from=busybearscleaning.com' );
 
@@ -189,5 +193,50 @@ describe( 'StaticSiteImportReading', () => {
 			expect.stringContaining( '/sites/destination.example.com' )
 		);
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'links a refused source to the plan’s cancel path for a refund', async () => {
+		mockRefusedSource();
+		mockApi()
+			.get( '/rest/v1.2/upgrades' )
+			.query( { site: 123 } )
+			.reply( 200, [
+				{ ID: 455, is_plan: false },
+				{ ID: 456, is_plan: true },
+			] );
+
+		render( 'from=busybearscleaning.com' );
+
+		expect( await screen.findByRole( 'link', { name: 'Get a refund' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/me/purchases/destination.example.com/456/cancel' )
+		);
+	} );
+
+	it( 'offers no refund for a refused source when the site has no plan purchase', async () => {
+		mockRefusedSource();
+		const purchases = mockApi()
+			.get( '/rest/v1.2/upgrades' )
+			.query( { site: 123 } )
+			.reply( 200, [ { ID: 455, is_plan: false } ] );
+
+		render( 'from=busybearscleaning.com' );
+
+		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
+		await waitFor( () => expect( purchases.isDone() ).toBe( true ) );
+		expect( screen.queryByRole( 'link', { name: 'Get a refund' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not fetch purchases unless the source is refused', async () => {
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( 200, sessionResponse );
+		const purchases = mockApi().get( '/rest/v1.2/upgrades' ).query( true ).reply( 200, [] );
+
+		const submit = render( 'from=busybearscleaning.com' );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( purchases.isDone() ).toBe( false );
 	} );
 } );
