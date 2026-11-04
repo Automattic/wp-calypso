@@ -22,8 +22,15 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
+import { MCP_SERVER_NAME, MCP_SERVER_URL } from '../connect-agents';
 
 import './style.scss';
+
+// Cursor's one-click install for the remote server, so no local bridge is needed.
+const CURSOR_INSTALL_URL = `cursor://anysphere.cursor-deeplink/mcp/install?${ new URLSearchParams( {
+	name: 'WordPress.com',
+	config: btoa( JSON.stringify( { url: MCP_SERVER_URL } ) ),
+} ) }`;
 
 function McpSetupComponent() {
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
@@ -63,11 +70,11 @@ function McpSetupComponent() {
 		default: __( 'MCP documentation' ),
 	};
 
-	const serverName = 'wpcom-mcp';
+	const serverName = MCP_SERVER_NAME;
 
 	const generateMcpConfig = ( client: McpClient ) => {
 		const baseConfig = {
-			url: 'https://public-api.wordpress.com/wpcom/v2/mcp/v1',
+			url: MCP_SERVER_URL,
 		};
 
 		switch ( client ) {
@@ -324,7 +331,7 @@ function McpSetupComponent() {
 										</Text>
 										<Button
 											variant="primary"
-											href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
+											href={ CURSOR_INSTALL_URL }
 											target="_blank"
 											className="mcp-setup__action-button"
 										>

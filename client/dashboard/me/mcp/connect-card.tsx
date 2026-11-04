@@ -1,3 +1,4 @@
+import { speak } from '@wordpress/a11y';
 import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { arrowUpRight, copy } from '@wordpress/icons';
@@ -206,6 +207,7 @@ export default function McpConnectCard( {
 			return;
 		}
 		setCopiedKey( key );
+		speak( __( 'Copied' ) );
 		clearTimeout( copiedTimeout.current );
 		copiedTimeout.current = setTimeout( () => setCopiedKey( null ), COPIED_DURATION_MS );
 	};
@@ -274,14 +276,17 @@ export default function McpConnectCard( {
 					>
 						{ copiedKey === 'helper' ? __( 'Copied' ) : __( 'Copy prompt' ) }
 					</Button>
-					<RouterLinkButton
-						className="mcp-connect__helper-button"
-						variant="tertiary"
-						size="small"
-						to="/me/preferences/mcp/setup"
-					>
-						{ __( 'Manual setup' ) }
-					</RouterLinkButton>
+					{ /* The setup page needs MCP access, so offer it only while access is on. */ }
+					{ mcpEnabled && (
+						<RouterLinkButton
+							className="mcp-connect__helper-button"
+							variant="tertiary"
+							size="small"
+							to="/me/preferences/mcp/setup"
+						>
+							{ __( 'Manual setup' ) }
+						</RouterLinkButton>
+					) }
 				</div>
 			</CardFooter>
 		</Card>

@@ -111,6 +111,7 @@
 }
 
 .mcp-connect__footer.components-card__footer {
+	flex-wrap: wrap;
 	justify-content: space-between;
 	gap: 16px;
 	background: color-mix( in srgb, var( --dashboard__text-color ) 3%, transparent );

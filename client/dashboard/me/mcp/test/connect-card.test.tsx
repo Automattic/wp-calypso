@@ -93,7 +93,7 @@ describe( '<McpConnectCard />', () => {
 		expect( writeText ).toHaveBeenCalledWith( HELPER_PROMPT );
 	} );
 
-	test( 'links Manual setup to the setup page', () => {
+	test( 'links Manual setup to the setup page while access is on', () => {
 		renderCard();
 
 		expect( screen.getByRole( 'link', { name: 'Manual setup' } ) ).toHaveAttribute(
@@ -109,6 +109,7 @@ describe( '<McpConnectCard />', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Turn on MCP access' } ) );
 
 		expect( onTurnOn ).toHaveBeenCalled();
+		expect( screen.queryByRole( 'link', { name: 'Manual setup' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows no notice while access is already on', () => {
