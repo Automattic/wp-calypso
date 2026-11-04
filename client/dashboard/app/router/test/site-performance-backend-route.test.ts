@@ -56,9 +56,10 @@ describe( 'sitePerformanceBackendRoute', () => {
 	test( 'sends users who are not Automatticians to Page speed', async () => {
 		mockIsAutomattician( false );
 
-		await expect( beforeLoad( { params: { siteSlug } } ) ).rejects.toMatchObject( {
+		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
 			isRedirect: true,
 			to: `/sites/${ siteSlug }/performance/frontend`,
+			search: { flash: 'route-not-allowed' },
 		} );
 	} );
 
@@ -67,16 +68,26 @@ describe( 'sitePerformanceBackendRoute', () => {
 			.get( '/rest/v1.2/read/teams' )
 			.reply( 403, { error: 'unauthorized', message: 'User cannot read teams' } );
 
-		await expect( beforeLoad( { params: { siteSlug } } ) ).rejects.toMatchObject( {
+		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
 			isRedirect: true,
 			to: `/sites/${ siteSlug }/performance/frontend`,
+			search: { flash: 'route-not-allowed' },
 		} );
 	} );
 
 	test( 'lets Automatticians through', async () => {
 		mockIsAutomattician( true );
 
-		await expect( beforeLoad( { params: { siteSlug } } ) ).resolves.toBeUndefined();
+		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).resolves.toBeUndefined();
+	} );
+
+	test( 'skips the check when the route is only preloaded', async () => {
+		const teams = mockIsAutomattician( false );
+
+		await expect(
+			beforeLoad( { cause: 'preload', params: { siteSlug } } )
+		).resolves.toBeUndefined();
+		expect( teams.isDone() ).toBe( false );
 	} );
 } );
 
@@ -108,15 +119,16 @@ describe( 'siteSettingsApmRoute', () => {
 	test( 'sends users who are not Automatticians back to Settings', async () => {
 		mockIsAutomattician( false );
 
-		await expect( beforeLoad( { params: { siteSlug } } ) ).rejects.toMatchObject( {
+		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).rejects.toMatchObject( {
 			isRedirect: true,
 			to: `/sites/${ siteSlug }/settings`,
+			search: { flash: 'route-not-allowed' },
 		} );
 	} );
 
 	test( 'lets Automatticians through', async () => {
 		mockIsAutomattician( true );
 
-		await expect( beforeLoad( { params: { siteSlug } } ) ).resolves.toBeUndefined();
+		await expect( beforeLoad( { cause: 'enter', params: { siteSlug } } ) ).resolves.toBeUndefined();
 	} );
 } );

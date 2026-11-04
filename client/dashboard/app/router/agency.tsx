@@ -1506,9 +1506,12 @@ export const agencySitePerformanceFrontendRoute = createRoute( {
 export const agencySitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => agencySitePerformanceRoute,
 	path: 'backend',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
 		if ( ! ( await canViewApm() ) ) {
-			throw dashboardRedirect( { to: `/sites/${ siteSlug }/performance/frontend` } );
+			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }/performance/frontend` } );
 		}
 	},
 } );
@@ -2232,9 +2235,12 @@ const agencySiteSettingsApmRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Application Performance Monitoring' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'apm',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
 		if ( ! ( await canViewApm() ) ) {
-			throw dashboardRedirect( { to: `/sites/${ siteSlug }/settings` } );
+			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }/settings` } );
 		}
 	},
 } ).lazy( () =>

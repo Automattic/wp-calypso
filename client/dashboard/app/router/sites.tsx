@@ -679,9 +679,12 @@ export const sitePerformanceFrontendRoute = createRoute( {
 export const sitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
 		if ( ! ( await canViewApm() ) ) {
-			throw dashboardRedirect( { to: `/sites/${ siteSlug }/performance/frontend` } );
+			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }/performance/frontend` } );
 		}
 	},
 } );
@@ -1349,9 +1352,12 @@ export const siteSettingsApmRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'apm',
-	beforeLoad: async ( { params: { siteSlug } } ) => {
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
 		if ( ! ( await canViewApm() ) ) {
-			throw dashboardRedirect( { to: `/sites/${ siteSlug }/settings` } );
+			throw redirectAsNotAllowed( { to: `/sites/${ siteSlug }/settings` } );
 		}
 	},
 } ).lazy( () =>
