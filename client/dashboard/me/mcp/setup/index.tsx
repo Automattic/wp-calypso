@@ -86,8 +86,6 @@ function McpSetupComponent() {
 				return { servers: { [ serverName ]: baseConfig } };
 			case 'cursor':
 				return { mcpServers: { [ serverName ]: baseConfig } };
-			case 'continue':
-				return { mcpServers: [ { name: serverName, ...baseConfig } ] };
 			default:
 				return { mcpServers: { [ serverName ]: baseConfig } };
 		}
@@ -364,6 +362,8 @@ function McpSetupComponent() {
 								<TextareaControl
 									className="mcp-setup__config-textarea"
 									__nextHasNoMarginBottom
+									label={ __( 'MCP configuration' ) }
+									hideLabelFromVision
 									value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
 									onChange={ () => {} }
 									readOnly
