@@ -597,6 +597,26 @@ const assertDefaultContext = ( { url, entry } ) => {
 			expect( request.context.branchName ).toEqual( 'my-branch' );
 		} );
 
+		it( 'enables the dev helpers', async () => {
+			const { request } = await customApp.run( {
+				request: { hostname: 'hash-abcd1234.calypso.live' },
+			} );
+			expect( request.context ).toMatchObject( {
+				accountSettingsHelper: true,
+				authHelper: true,
+				preferencesHelper: true,
+				storeSandboxHelper: true,
+			} );
+		} );
+
+		it( 'does not enable the dev helpers outside calypso.live', async () => {
+			const { request } = await customApp.run();
+			expect( request.context.accountSettingsHelper ).toBeFalsy();
+			expect( request.context.authHelper ).toBeFalsy();
+			expect( request.context.preferencesHelper ).toBeFalsy();
+			expect( request.context.storeSandboxHelper ).toBeFalsy();
+		} );
+
 		it( 'does not set the branch name outside calypso.live', async () => {
 			const { request } = await customApp.run( {
 				request: { query: { branch: 'my-branch' } },
