@@ -920,6 +920,7 @@ __metadata:
   dependencies:
     "@automattic/calypso-config": "workspace:^"
     "@automattic/calypso-typescript-config": "workspace:^"
+    "@automattic/calypso-url": "workspace:^"
     "@sentry/react": "npm:^7.120.4"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
