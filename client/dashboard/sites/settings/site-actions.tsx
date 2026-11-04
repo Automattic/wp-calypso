@@ -1,11 +1,13 @@
 import { sitePlanSoftwareRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { useAuth } from '../../app/auth';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
+import InlineSupportLink from '../../components/inline-support-link';
 import { SectionHeader } from '../../components/section-header';
 import { wpcomLink } from '../../utils/link';
 import { canViewSiteActions, canDuplicateSite } from '../features';
@@ -26,8 +28,13 @@ const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	return (
 		<ActionList.ActionItem
 			title={ __( 'Re-install plugins & themes' ) }
-			description={ __(
-				'If your website is missing plugins and themes that come with your plan you can re-install them here.'
+			description={ createInterpolateElement(
+				__(
+					'If your website is missing plugins and themes that come with your plan you can re-install them here. <learnMoreLink />'
+				),
+				{
+					learnMoreLink: <InlineSupportLink supportContext="hosting-restore-plan-software" />,
+				}
 			) }
 			actions={
 				<Button
