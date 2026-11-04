@@ -1,18 +1,5 @@
-/* eslint-disable no-restricted-imports */
-import {
-	sitesQuery,
-	paginatedSitesQuery,
-	dashboardSiteFiltersQuery,
-	domainsQuery,
-} from '@automattic/api-queries';
-/* eslint-enable no-restricted-imports */
 import { createContext, useContext } from 'react';
-import type {
-	FetchSitesOptions,
-	FetchPaginatedSitesOptions,
-	FetchDashboardSiteFiltersParams,
-	User,
-} from '@automattic/api-core';
+import type { User } from '@automattic/api-core';
 import type { PostHogOverrides } from '@automattic/posthog';
 
 export type AgencySupports = {
@@ -87,16 +74,6 @@ export type AppConfig = {
 		/** Replaces the WordPress.com Help Center panel, which the omnibar's help node toggles. */
 		helpCenter?: React.FC;
 	};
-	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => ReturnType< typeof sitesQuery >;
-		paginatedSitesQuery: (
-			fetchSiteOptions?: FetchPaginatedSitesOptions
-		) => ReturnType< typeof paginatedSitesQuery >;
-		dashboardSiteFiltersQuery: (
-			field: FetchDashboardSiteFiltersParams[ 'fields' ]
-		) => ReturnType< typeof dashboardSiteFiltersQuery >;
-		domainsQuery: () => ReturnType< typeof domainsQuery >;
-	};
 };
 
 export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
@@ -125,14 +102,6 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 	components: {
 		sites: () => Promise.resolve( { default: () => null } ),
 		siteSwitcher: () => Promise.resolve( { default: () => null } ),
-	},
-	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
-			paginatedSitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
-			dashboardSiteFiltersQuery( 'all', fields ),
-		domainsQuery: () => domainsQuery(),
 	},
 };
 
