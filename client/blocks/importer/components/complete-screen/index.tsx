@@ -39,7 +39,7 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 				{ onImportAnotherClick && (
 					<div>
 						<BackButton onClick={ onImportAnotherClick }>
-							{ __( 'Import another file' ) }
+							{ __( 'Start another import' ) }
 						</BackButton>
 					</div>
 				) }

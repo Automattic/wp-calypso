@@ -30,7 +30,7 @@ jest.mock(
 	() =>
 		( { onImportAnotherClick }: { onImportAnotherClick?: () => void } ) =>
 			onImportAnotherClick ? (
-				<button onClick={ onImportAnotherClick }>Import another file</button>
+				<button onClick={ onImportAnotherClick }>Start another import</button>
 			) : null
 );
 jest.mock( '../../../components/error-message', () => () => null );
@@ -82,7 +82,7 @@ describe( 'ImportContentOnly', () => {
 			site: { ID: 123 },
 		} as ImportJob );
 
-		await userEvent.click( screen.getByRole( 'button', { name: 'Import another file' } ) );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Start another import' } ) );
 
 		expect( resetImport ).toHaveBeenCalledWith( 123, 'importer-123' );
 	} );
