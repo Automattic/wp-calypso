@@ -46,7 +46,7 @@ const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /Let us guide you/ } );
+const skipButton = () => getByRole( 'button', { name: /Have our team email you/ } );
 
 const fillAddressField = async () => {
 	await userEvent.click( credentialsOption() );
@@ -152,7 +152,7 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await userEvent.click( skipButton() );
 
-		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
 	} );
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {

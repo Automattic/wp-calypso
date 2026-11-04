@@ -9,8 +9,6 @@ import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
 import { useUpdateMigrationStatus } from 'calypso/data/site-migration/landing/use-update-migration-status';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param';
-import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
-import { useSubmitMigrationTicket } from 'calypso/landing/stepper/hooks/use-submit-migration-ticket';
 import {
 	recordMigrationCredentialsEvent,
 	recordMigrationRequestSubmittedFacebookEvent,
@@ -21,6 +19,7 @@ import { resetSite } from 'calypso/state/sites/actions';
 import { isHostingSupportedForSSHMigration } from '../site-migration-ssh-share-access/utils/hosting-provider-validation';
 import { CredentialsForm } from './components/credentials-form';
 import { NeedHelpLink } from './components/need-help-link';
+import { useRequestMigrationHelp } from './hooks/use-request-migration-help';
 import { ApplicationPasswordsInfo } from './types';
 import type { Step as StepType } from '../../types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
@@ -65,7 +64,6 @@ const SiteMigrationCredentials: StepType< {
 		from?: string;
 		platform?: ImporterPlatform;
 		authorizationUrl?: string;
-		hasError?: 'ticket-creation';
 		host?: string;
 	};
 } > = function ( { navigation, flow, stepName } ) {
@@ -77,27 +75,13 @@ const SiteMigrationCredentials: StepType< {
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const locale = useLocale();
-	const siteSlugParam = useSiteSlugParam();
-	const siteSlug = siteSlugParam ?? '';
-	const { sendTicketAsync } = useSubmitMigrationTicket( {
-		onSuccess: () => {
-			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_success', {
-				blog_url: siteSlug,
-				from_url: fromUrl,
-			} );
-		},
-		onError: ( error ) => {
-			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_error', {
-				blog_url: siteSlug,
-				from_url: fromUrl,
-				error: error.message,
-			} );
-			navigation.submit?.( {
-				action: 'skip',
-				hasError: 'ticket-creation',
-				from: fromUrl,
-			} );
-		},
+	const requestHelp = useRequestMigrationHelp( () => {
+		// Reset the site in the state to ensure the correct overview screen is shown.
+		if ( siteId ) {
+			dispatch( resetSite( siteId ) );
+		}
+
+		navigation.submit?.( { action: 'skip' } );
 	} );
 
 	const handleSubmit = (
@@ -137,7 +121,7 @@ const SiteMigrationCredentials: StepType< {
 		} );
 	};
 
-	const handleSkip = async () => {
+	const handleSkip = () => {
 		recordTracksEvent( 'wpcom_support_free_migration_request_click', {
 			path: window.location.pathname,
 			automated_migration: true,
@@ -146,25 +130,7 @@ const SiteMigrationCredentials: StepType< {
 		// Fire Google Ads tracking event when credentials are skipped
 		recordMigrationCredentialsEvent( 'SiteMigrationCredentials' );
 
-		try {
-			await sendTicketAsync( {
-				locale,
-				from_url: fromUrl,
-				blog_url: siteSlug,
-			} );
-
-			// Reset the site in the state to ensure the correct overview screen is shown.
-			if ( siteId ) {
-				dispatch( resetSite( siteId ) );
-			}
-
-			return navigation.submit?.( {
-				action: 'skip',
-			} );
-		} catch ( error ) {
-			// eslint-disable-next-line no-console
-			console.error( 'There was an error submitting the ticket', error );
-		}
+		requestHelp();
 	};
 
 	useEffect( () => {

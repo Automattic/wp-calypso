@@ -34,7 +34,7 @@ const usernameInput = () => getByLabelText( 'WordPress admin username' );
 const passwordInput = () => getByLabelText( 'Password' );
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /I need help, please contact me/ } );
+const skipButton = () => getByRole( 'button', { name: /Have our team email you/ } );
 
 const fillAllFields = async () => {
 	await userEvent.type( usernameInput(), 'username' );
@@ -105,8 +105,12 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await userEvent.click( skipButton() );
 
-		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
-		expect( wp.req.post ).not.toHaveBeenCalled();
+		expect( wp.req.post ).toHaveBeenCalledWith(
+			{ path: '/help/migration-ticket/new', apiNamespace: 'wpcom/v2' },
+			{},
+			expect.objectContaining( { blog_url: 'site-url.wordpress.com' } )
+		);
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
 	} );
 
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {

@@ -9,6 +9,8 @@ import { useSiteIdParam } from 'calypso/landing/stepper/hooks/use-site-id-param'
 import { useSiteSlugParam } from 'calypso/landing/stepper/hooks/use-site-slug-param';
 import { useDispatch } from 'calypso/state';
 import { resetSite } from 'calypso/state/sites/actions';
+import { NeedHelpLink } from '../site-migration-credentials/components/need-help-link';
+import { useRequestMigrationHelp } from '../site-migration-credentials/hooks/use-request-migration-help';
 import Authorization from './components/authorization';
 import useStoreApplicationPassword from './hooks/use-store-application-password';
 import type { Step as StepType } from '../../types';
@@ -55,7 +57,9 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 
 	useEffect( () => {
 		if ( isStoreApplicationPasswordSuccess ) {
-			siteId && dispatch( resetSite( siteId ) );
+			if ( siteId ) {
+				dispatch( resetSite( siteId ) );
+			}
 			navigation?.submit?.( { action: 'migration-started' } );
 		}
 	}, [ isStoreApplicationPasswordSuccess, navigation, dispatch, siteId ] );
@@ -68,9 +72,9 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		navigation?.submit?.( { action: 'authorization', authorizationUrl } );
 	};
 
-	const contactMe = () => {
-		navigation?.submit?.( { action: 'contact-me' } );
-	};
+	const contactMe = useRequestMigrationHelp( () =>
+		navigation?.submit?.( { action: 'contact-me' } )
+	);
 
 	let notice = undefined;
 	if ( isStoreApplicationPasswordError ) {
@@ -132,6 +136,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 						leftElement={
 							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
 						}
+						rightElement={ <NeedHelpLink onHelpLinkClicked={ contactMe } /> }
 					/>
 				}
 				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
