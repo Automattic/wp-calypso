@@ -1,5 +1,7 @@
+import config from '@automattic/calypso-config';
 import { Gridicon, WordPressLogo, Popover } from '@automattic/components';
 import { Button } from '@wordpress/components';
+import { Icon, globe } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useMemo, useRef, useState } from 'react';
@@ -9,6 +11,7 @@ import PopoverMenuItem from 'calypso/a8c-for-agencies/components/a4a-popover/men
 import {
 	A4A_MIGRATIONS_MIGRATE_TO_WPCOM_LINK,
 	A4A_MIGRATIONS_MIGRATE_TO_PRESSABLE_LINK,
+	A4A_MIGRATIONS_IMPORT_SITE_LINK,
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import preventWidows from 'calypso/lib/post-normalizer/rule-prevent-widows';
@@ -72,6 +75,28 @@ const MigrateSiteButton = () => {
 							},
 						} }
 					/>
+					{ config.isEnabled( 'a4a/static-site-import' ) && (
+						<PopoverMenuItem
+							icon={ <Icon icon={ globe } /> }
+							heading={ translate( 'Move a site from another platform' ) }
+							description={ preventWidows(
+								translate(
+									'Enter its address. We build it on a free development site you can review before you pay.'
+								)
+							) }
+							buttonProps={ {
+								href: A4A_MIGRATIONS_IMPORT_SITE_LINK,
+								onClick: () => {
+									dispatch(
+										recordTracksEvent(
+											'calypso_a4a_migrations_migrate_sites_import_site_button_click'
+										)
+									);
+									setMenuVisible( false );
+								},
+							} }
+						/>
+					) }
 					<PopoverMenuItem
 						icon={ <img src={ pressableIcon } alt="" /> }
 						heading={ translate( 'Self migrate to Pressable' ) }

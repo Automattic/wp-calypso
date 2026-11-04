@@ -3,6 +3,7 @@ import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-t
 import MigrationsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/migrations';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
 import ReferralsBankDetails from '../referrals/primary/bank-details';
+import ImportSite from './primary/import-site';
 import MigrationsCommissions from './primary/migrations-commissions';
 import MigrationsLanding from './primary/migrations-landing';
 import MigrationsOverviewV2 from './primary/migrations-overview-v2';
@@ -41,6 +42,17 @@ export const migrateToWpcomContext: Callback = ( context, next ) => {
 		<>
 			<PageViewTracker title="Migrations > Migrate to WordPress.com" path={ context.path } />
 			<SelfMigrationTool type="wpcom" />
+		</>
+	);
+	context.secondary = <MigrationsSidebar path={ context.path } />;
+	next();
+};
+
+export const importSiteContext: Callback = ( context, next ) => {
+	context.primary = (
+		<>
+			<PageViewTracker title="Migrations > Move from another platform" path={ context.path } />
+			<ImportSite />
 		</>
 	);
 	context.secondary = <MigrationsSidebar path={ context.path } />;

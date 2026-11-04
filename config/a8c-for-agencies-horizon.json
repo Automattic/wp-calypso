@@ -38,6 +38,7 @@
 		"a4a-updated-add-new-site": true,
 		"a4a/site-details-pane": true,
 		"a4a/site-migration": true,
+		"a4a/static-site-import": true,
 		"a8c-for-agencies": true,
 		"ad-tracking": false,
 		"checkout/stripe-upi": true,
