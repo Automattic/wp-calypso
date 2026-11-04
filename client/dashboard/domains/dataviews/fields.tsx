@@ -17,9 +17,11 @@ import type { Field, Operator } from '@wordpress/dataviews';
 
 export const useFields = ( {
 	site,
+	showPrimaryDomainBadge = true,
 	inOverview = false,
 }: {
 	site?: Site;
+	showPrimaryDomainBadge?: boolean;
 	inOverview?: boolean;
 } = {} ) => {
 	const { data: domains } = useQuery( domainsQuery() );
@@ -57,6 +59,7 @@ export const useFields = ( {
 						site={ site }
 						value={ field.getValue( { item } ) }
 						showWwwPrefix={ !! site && item.primary_domain && !! item.primary_is_www }
+						showPrimaryDomainBadge={ showPrimaryDomainBadge }
 					/>
 				),
 			},
@@ -136,7 +139,7 @@ export const useFields = ( {
 			},
 			{
 				id: 'expiry',
-				label: __( 'Renews on' ),
+				label: __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
 				sort: sortNullableStrings,
@@ -186,7 +189,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, siteElements, inOverview ]
+		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
 	);
 
 	return fields;

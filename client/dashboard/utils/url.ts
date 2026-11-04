@@ -17,3 +17,9 @@ export function isOnboardingUrl( url: string ) {
 export function urlToSlug( url: string ) {
 	return url.replace( /^https?:\/\//, '' ).replace( /\//g, '::' );
 }
+
+export function queryParamToArray( param: unknown ): string[] {
+	return typeof param === 'string'
+		? param.split( ',' ).map( ( domain: string ) => domain.trim() )
+		: [];
+}

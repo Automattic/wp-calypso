@@ -12,3 +12,23 @@ export function shuffleArray( collection: string[] ) {
 	} );
 	return newArray;
 }
+
+export function mostCommonValueInArray< T >( arr: T[] ): T | undefined {
+	const map = new Map< T, number >();
+
+	for ( const value of arr ) {
+		map.set( value, ( map.get( value ) ?? 0 ) + 1 );
+	}
+
+	let result: T | undefined = undefined;
+	let max = 0;
+
+	for ( const [ value, count ] of map ) {
+		if ( count > max ) {
+			max = count;
+			result = value;
+		}
+	}
+
+	return result;
+}
