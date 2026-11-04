@@ -18,7 +18,9 @@ import {
 	clearSignupCompleteFlowName,
 	clearSignupDestinationCookie,
 	getSignupCompleteFlowName,
+	getSignupCompleteRecordedSiteId,
 	getSignupIsNewUserAndClear,
+	setSignupCompleteRecordedSiteId,
 } from 'calypso/signup/storageUtils';
 import { useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
@@ -63,12 +65,16 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 				return submit( { action: 'unavailable' } );
 			}
 
-			if ( isCheckoutReturn ) {
-				clearSignupCompleteFlowName();
-				clearSignupDestinationCookie();
-			}
+			// The marker outlives the work below so a reload resumes it instead of asking again.
+			const clearCheckoutReturn = () => {
+				if ( isCheckoutReturn ) {
+					clearSignupCompleteFlowName();
+					clearSignupDestinationCookie();
+				}
+			};
 
-			if ( isNewSite ) {
+			if ( isNewSite && getSignupCompleteRecordedSiteId() !== String( siteId ) ) {
+				setSignupCompleteRecordedSiteId( siteId );
 				recordSignupComplete(
 					{
 						flow: STATIC_SITE_IMPORT_FLOW,
@@ -89,6 +95,9 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 					},
 					true
 				);
+			}
+
+			if ( isNewSite ) {
 				// Logged-in checkout creates the site during the transaction without the
 				// flow's site params, so apply them here. They don't block the import.
 				await Promise.allSettled( [
@@ -110,13 +119,20 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			}
 
 			if ( sessionId ) {
+				clearCheckoutReturn();
 				return submit( { action: 'continue', importSessionId: sessionId } );
 			}
 			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
-				onError: ( createError ) =>
-					! isRefusedError( createError ) && submit( { action: 'unavailable' } ),
+				onSuccess: ( session ) => {
+					clearCheckoutReturn();
+					submit( { action: 'continue', importSessionId: session.session_id } );
+				},
+				onError: ( createError ) => {
+					clearCheckoutReturn();
+					if ( ! isRefusedError( createError ) ) {
+						submit( { action: 'unavailable' } );
+					}
+				},
 			} );
 		} );
 		const hasStarted = useRef( false );

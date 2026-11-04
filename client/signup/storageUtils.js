@@ -76,6 +76,14 @@ export const getSignupCompleteFlowNameAndClear = () => {
 	clearSignupCompleteFlowName();
 	return value;
 };
+export const getSignupCompleteRecordedSiteId = () =>
+	ignoreFatalsForStorage( () =>
+		sessionStorage?.getItem( 'wpcom_signup_complete_recorded_site_id' )
+	);
+export const setSignupCompleteRecordedSiteId = ( value ) =>
+	ignoreFatalsForStorage( () =>
+		sessionStorage?.setItem( 'wpcom_signup_complete_recorded_site_id', value )
+	);
 export const getSignupCompleteStepName = () =>
 	ignoreFatalsForStorage( () => sessionStorage?.getItem( 'wpcom_signup_complete_step_name' ) );
 export const setSignupCompleteStepName = ( value ) =>

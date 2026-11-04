@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { cleanup, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
@@ -153,6 +153,57 @@ describe( 'StaticSiteImportReading', () => {
 		expect( recordSignupComplete ).toHaveBeenCalledTimes( 1 );
 	} );
 
+	it( 'resumes new-site setup without asking again when reloaded before it finishes', async () => {
+		setSignupIsNewUser( 7 );
+		let settingsRequested = false;
+		mockApi()
+			.post( '/rest/v1.4/sites/123/settings' )
+			.reply( () => {
+				settingsRequested = true;
+				return new Promise( () => {} );
+			} );
+		mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 200, {} );
+
+		render( 'newSite=1&from=busybearscleaning.com' );
+		await waitFor( () => expect( settingsRequested ).toBe( true ) );
+		expect( getSignupCompleteFlowName() ).toBe( 'static-site-import' );
+		cleanup();
+
+		mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 200, {} );
+		mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 200, {} );
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( 200, sessionResponse );
+		const submit = render( 'newSite=1&from=busybearscleaning.com', { afterCheckout: false } );
+
+		expect( screen.queryByRole( 'button', { name: 'Import into this site' } ) ).toBeNull();
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( nock.pendingMocks() ).toHaveLength( 0 );
+		expect( getSignupCompleteFlowName() ).toBeNull();
+		expect( recordSignupComplete ).toHaveBeenCalledTimes( 1 );
+		expect( recordSignupComplete ).toHaveBeenCalledWith(
+			expect.objectContaining( { isNewUser: true } ),
+			true
+		);
+	} );
+
+	it( 'keeps the checkout marker until the session request finishes', async () => {
+		let sessionRequested = false;
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( () => {
+				sessionRequested = true;
+				return new Promise( () => {} );
+			} );
+
+		render( 'from=busybearscleaning.com' );
+
+		await waitFor( () => expect( sessionRequested ).toBe( true ) );
+		expect( getSignupCompleteFlowName() ).toBe( 'static-site-import' );
+	} );
+
 	it( 'continues the import when applying site settings fails', async () => {
 		mockApi().post( '/rest/v1.4/sites/123/settings' ).reply( 500 );
 		mockApi().post( '/wpcom/v2/sites/123/site-intent' ).reply( 500 );
@@ -183,6 +234,7 @@ describe( 'StaticSiteImportReading', () => {
 		const submit = render( 'from=busybearscleaning.com' );
 
 		expect( await screen.findByText( 'We can’t import this site' ) ).toBeVisible();
+		expect( getSignupCompleteFlowName() ).toBeNull();
 		expect( screen.getByRole( 'button', { name: 'Get help' } ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'Go to your site' } ) ).toHaveAttribute(
 			'href',
