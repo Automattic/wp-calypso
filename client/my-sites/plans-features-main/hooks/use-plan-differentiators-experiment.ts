@@ -7,7 +7,7 @@ import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { IAppState } from 'calypso/state/types';
 
 const PLAN_DIFFERENTIATORS_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
-const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-05T00:00:00Z';
+const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-04T00:00:00Z';
 
 const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [ 'control', 'reversed_order' ] as const;
 
