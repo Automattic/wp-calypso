@@ -30,7 +30,7 @@ export default function Account() {
 						<>
 							{ createInterpolateElement(
 								__(
-									'Set the name, avatar, and details that identify you on WordPress.com. Most of them are also your <gravatar>Gravatar profile</gravatar>, shown on other sites when you comment with <email />.'
+									'Set the name, avatar, and details that identify you on WordPress.com. Most of them are also your <gravatar>Gravatar profile</gravatar>, shown on other sites when you comment with <email/>.'
 								),
 								{
 									email: <strong>{ user.email }</strong>,
