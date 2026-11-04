@@ -147,6 +147,9 @@ describe( '<ContactForm>', () => {
 
 		expect( await screen.findByRole( 'textbox', { name: 'Email' } ) ).toBeVisible();
 		expect( screen.getByText( /sends a verification to this email address/ ) ).toBeVisible();
+		const icannLink = screen.getByRole( 'link', { name: 'ICANN' } );
+		expect( icannLink ).toHaveAttribute( 'target', '_blank' );
+		expect( icannLink ).not.toHaveTextContent( '\u2197' );
 	} );
 
 	test( 'shows the section title above the form when given', async () => {
