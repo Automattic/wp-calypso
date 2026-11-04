@@ -24,23 +24,6 @@ jest.mock( 'calypso/reader/stream/typed', () => ( {
 	),
 } ) );
 
-jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
-	__esModule: true,
-	default: ( {
-		siteId,
-		site,
-		onItemClick,
-	}: {
-		siteId: number;
-		site: { title: string };
-		onItemClick: () => void;
-	} ) => (
-		<button type="button" data-testid={ `list-item-${ siteId }` } onClick={ onItemClick }>
-			{ site.title }
-		</button>
-	),
-} ) );
-
 // A follow button that runs the real follow mutation, so the page's
 // "report progress once the follow succeeds" path is exercised end to end.
 function MockFollowButton( {
@@ -75,13 +58,17 @@ jest.mock( 'calypso/reader/controller-helper', () => ( {
 
 const API = 'https://public-api.wordpress.com';
 
-const candidate = ( blogId: number, name: string, isParticipant = false ) => ( {
+const candidate = (
+	blogId: number,
+	name: string,
+	{ isParticipant = false, description = '' } = {}
+) => ( {
 	blog_id: blogId,
 	feed_id: blogId * 10,
 	name,
 	url: `https://site${ blogId }.wordpress.com`,
 	feed_url: `https://site${ blogId }.wordpress.com/feed/`,
-	description: '',
+	description,
 	icon: null,
 	is_participant: isParticipant,
 } );
@@ -143,12 +130,24 @@ describe( 'FourForFour', () => {
 
 	it( 'lists candidates and previews the first one', async () => {
 		mockStatus( 'opted_in' );
-		mockCandidates( [ candidate( 2, 'Second Site', true ), candidate( 3, 'Third Site' ) ] );
+		mockCandidates( [
+			candidate( 2, 'Second Site', { isParticipant: true, description: 'Poems about the sea.' } ),
+			candidate( 3, 'Third Site' ),
+		] );
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		expect( await screen.findByTestId( 'list-item-2' ) ).toHaveTextContent( 'Second Site' );
-		expect( screen.getByTestId( 'list-item-3' ) ).toHaveTextContent( 'Third Site' );
+		const second = await screen.findByRole( 'button', {
+			name: 'Second Site Poems about the sea.',
+		} );
+		expect( second ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Third Site' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+		// Each site in the list is a single control; subscribing happens in the preview.
+		expect( screen.getAllByRole( 'button', { name: 'Subscribe' } ) ).toHaveLength( 1 );
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 		expect( screen.getByTestId( 'preview-stream' ) ).toHaveTextContent( 'feed:20' );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '0' );
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
@@ -164,9 +163,13 @@ describe( 'FourForFour', () => {
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		await user.click( await screen.findByTestId( 'list-item-3' ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Third Site' } ) );
 
 		expect( screen.getByTestId( 'preview-stream' ) ).toHaveTextContent( 'feed:30' );
+		expect( screen.getByRole( 'button', { name: 'Third Site' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_four_for_four_site_previewed',
 			{ blog_id: 3, is_participant: 0 }
@@ -233,7 +236,7 @@ describe( 'FourForFour', () => {
 		expect( await screen.findByText( 'No new writers to show right now.' ) ).toBeVisible();
 		await user.click( screen.getByRole( 'button', { name: 'Check again' } ) );
 
-		expect( await screen.findByTestId( 'list-item-2' ) ).toHaveTextContent( 'Second Site' );
+		expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
 		expect( refetch.isDone() ).toBe( true );
 	} );
 
@@ -322,7 +325,7 @@ describe( 'FourForFour', () => {
 			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
 
 			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
-			await user.click( screen.getByTestId( 'list-item-3' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Third Site' } ) );
 			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 			// The second save waits for the first to finish.
@@ -371,7 +374,7 @@ describe( 'FourForFour', () => {
 
 			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
 			await screen.findByRole( 'alert' );
-			await user.click( screen.getByTestId( 'list-item-3' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Third Site' } ) );
 			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 			await waitFor( () =>

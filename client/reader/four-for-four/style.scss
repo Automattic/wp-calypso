@@ -54,20 +54,76 @@
 	}
 }
 
-// Let the byline use the card's full width: the subscribe control sits over
-// the top-right corner instead of taking a column of its own, and only the
-// title line reserves room for it.
-.subscribe-modal.four-for-four-modal
-	.subscribe-modal__site-list-column
-	.reader-subscription-list-item {
-	.reader-subscription-list-item__options {
-		position: absolute;
-		top: 12px;
-		inset-inline-end: 12px;
+.four-for-four-modal__site {
+	position: relative;
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	width: 100%;
+	margin-bottom: 12px;
+	padding: 12px;
+	border: 1px solid var( --color-neutral-5 );
+	border-radius: 6px; /* stylelint-disable-line scales/radii */
+	background-color: var( --color-surface );
+	color: var( --color-text );
+	font: inherit;
+	text-align: start;
+
+	&:hover {
+		border-color: var( --color-neutral-10 );
 	}
 
-	.reader-subscription-list-item__site-title {
-		display: block;
-		padding-inline-end: 28px;
+	.site-icon.site-icon {
+		flex-shrink: 0;
+		border-radius: 50%;
+		overflow: hidden;
 	}
+
+	&.is-selected {
+		background-color: color-mix( in srgb, var( --color-accent ) 8%, var( --color-surface ) );
+		border-color: color-mix( in srgb, var( --color-accent ) 25%, var( --color-surface ) );
+
+		// Points at the preview, which only shows when there's room for it.
+		@media ( min-width: 700px ) {
+			&::after {
+				content: '';
+				position: absolute;
+				top: 50%;
+				inset-inline-end: -1px;
+				width: 20px;
+				height: 20px;
+				border-top: 1px solid;
+				border-right: 1px solid;
+				border-color: inherit;
+				border-radius: 2px;
+				background-color: inherit;
+				transform: translate( 50%, -50% ) rotate( 45deg );
+			}
+		}
+	}
+}
+
+.four-for-four-modal__site-byline {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.four-for-four-modal__site-name {
+	font-size: 0.875rem;
+	font-weight: 600;
+	line-height: 18px;
+	color: var( --color-neutral-100 );
+	overflow-wrap: anywhere;
+}
+
+.four-for-four-modal__site-description {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	font-size: 0.75rem;
+	line-height: 18px;
+	color: var( --color-neutral-70 );
 }

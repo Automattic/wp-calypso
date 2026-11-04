@@ -10,13 +10,13 @@ import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
-import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import EmptyContent from 'calypso/components/empty-content';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
 import { useFourForFour } from 'calypso/reader/data/four-for-four';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_FOUR_FOR_FOUR } from 'calypso/reader/follow-sources';
+import { getSiteDescription, getSiteName } from 'calypso/reader/get-helpers';
 import { TypedStream } from 'calypso/reader/stream/typed';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import {
@@ -188,23 +188,33 @@ export function FourForFour() {
 							) }
 							{ candidates.length > 0 && (
 								<div className="subscribe-modal__recommended-sites">
-									{ candidates.map( ( candidate ) => (
-										<ConnectedReaderSubscriptionListItem
-											key={ candidate.blogId }
-											feedId={ candidate.feedId ?? undefined }
-											siteId={ candidate.blogId }
-											site={ candidate.site }
-											url={ candidate.feedUrl || candidate.url }
-											showLastUpdatedDate={ false }
-											showNotificationSettings={ false }
-											showFollowedOnDate={ false }
-											followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
-											followSource={ READER_FOUR_FOR_FOUR }
-											replaceStreamClickWithItemClick
-											onItemClick={ () => setSelectedBlogId( candidate.blogId ) }
-											isSelected={ selectedCandidate?.blogId === candidate.blogId }
-										/>
-									) ) }
+									{ candidates.map( ( candidate ) => {
+										const isSelected = selectedCandidate?.blogId === candidate.blogId;
+										const description = getSiteDescription( { site: candidate.site } );
+										return (
+											<button
+												key={ candidate.blogId }
+												type="button"
+												className={ clsx( 'four-for-four-modal__site', {
+													'is-selected': isSelected,
+												} ) }
+												aria-pressed={ isSelected }
+												onClick={ () => setSelectedBlogId( candidate.blogId ) }
+											>
+												<SiteIcon size={ 32 } iconUrl={ candidate.icon ?? undefined } />
+												<span className="four-for-four-modal__site-byline">
+													<span className="four-for-four-modal__site-name">
+														{ getSiteName( { site: candidate.site } ) ?? candidate.name }
+													</span>
+													{ description && (
+														<span className="four-for-four-modal__site-description">
+															{ description }
+														</span>
+													) }
+												</span>
+											</button>
+										);
+									} ) }
 								</div>
 							) }
 						</div>
