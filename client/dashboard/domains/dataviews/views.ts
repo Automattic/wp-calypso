@@ -1,5 +1,5 @@
 import type { AnalyticsClient } from '../../app/analytics';
-import type { View } from '@wordpress/dataviews';
+import type { SupportedLayouts, View } from '@wordpress/dataviews';
 
 // Base properties that are common to all view types
 const BASE_VIEW_PROPS: View = {
@@ -18,7 +18,6 @@ const BASE_VIEW_PROPS: View = {
 	fields: [
 		// 'owner',
 		'blog_name',
-		'ssl_status',
 		'expiry',
 		'domain_status',
 	],
@@ -28,7 +27,7 @@ export const DEFAULT_VIEW = BASE_VIEW_PROPS;
 
 export const SITE_CONTEXT_VIEW = {
 	...BASE_VIEW_PROPS,
-	fields: [ 'ssl_status', 'expiry', 'domain_status' ],
+	fields: [ 'expiry', 'domain_status' ],
 };
 
 // Default layouts
@@ -49,6 +48,43 @@ export function sanitizeDomainsListLayout( view: View ): View {
 	return { ...viewWithoutLayout, type: 'table', layout: DEFAULT_VIEW.layout } as View;
 }
 
+const DOMAINS_LIST_GRID_LAYOUT = {
+	layout: {
+		previewSize: 290,
+	},
+	showLevels: false,
+	showMedia: false,
+	titleField: 'domain',
+};
+
+export const DOMAINS_LIST_LAYOUTS: SupportedLayouts = {
+	table: {
+		layout: {
+			density: 'balanced',
+		},
+		showLevels: false,
+		showMedia: false,
+		titleField: 'domain',
+	},
+	grid: DOMAINS_LIST_GRID_LAYOUT,
+};
+
+export const DOMAINS_LIST_CONFIG = {
+	perPageSizes: [ 12, 24, 48, 96 ],
+};
+
+export const DOMAINS_LIST_DEFAULT_VIEW = {
+	...BASE_VIEW_PROPS,
+	...DOMAINS_LIST_GRID_LAYOUT,
+	type: 'grid',
+	perPage: 12,
+} as View;
+
+// Saved views can still list the removed SSL field, which the table would render as a blank column.
+export function sanitizeDomainFields( fields: View[ 'fields' ] ) {
+	return fields?.filter( ( field ) => field !== 'ssl_status' );
+}
+
 export function recordDomainViewChanges(
 	oldView: View,
 	newView: View,
@@ -56,6 +92,14 @@ export function recordDomainViewChanges(
 ) {
 	if ( ! oldView.search && newView.search ) {
 		recordTracksEvent( 'calypso_dashboard_domains_search' );
+	}
+
+	if ( oldView.type !== newView.type ) {
+		recordTracksEvent( 'calypso_dashboard_domains_view_type_changed', { type: newView.type } );
+
+		// Changing view type can also change fields, but they weren't triggered by a user
+		// action, so we won't record those tracks events.
+		return;
 	}
 
 	if (

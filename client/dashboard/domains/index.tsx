@@ -14,13 +14,16 @@ import PageLayout from '../components/page-layout';
 import AddDomainButton from './add-domain-button';
 import {
 	BulkActionsProgressNotice,
+	DomainCardsLayout,
 	filterSortAndPaginateDomains,
 	useActions,
 	useFields,
-	DEFAULT_VIEW,
-	DEFAULT_LAYOUTS,
+	DOMAINS_LIST_CONFIG,
+	DOMAINS_LIST_DEFAULT_VIEW,
+	DOMAINS_LIST_LAYOUTS,
 	recordDomainViewChanges,
 	sanitizeDomainsListLayout,
+	sanitizeDomainFields,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -31,7 +34,7 @@ export function getDomainId( domain: DomainSummary ): string {
 }
 
 const defaultView = {
-	...DEFAULT_VIEW,
+	...DOMAINS_LIST_DEFAULT_VIEW,
 	filters: [
 		{
 			field: 'owner',
@@ -56,6 +59,7 @@ function Domains() {
 		slug: 'domains',
 		defaultView,
 		queryParams: searchParams,
+		sanitizeFields: sanitizeDomainFields,
 	} );
 	const view = sanitizeDomainsListLayout( persistentView );
 
@@ -75,6 +79,17 @@ function Domains() {
 	);
 
 	const hasDomains = domains.length > 0;
+	const isCardsLayout = view.type === 'grid';
+
+	const emptySearchState = (
+		<DataViewsEmptyStateLayout
+			title={ __( 'No domains match your search' ) }
+			description={ __( 'Try again, or add a new domain with the options below.' ) }
+			isBorderless
+		>
+			<EmptyDomainsStateActions />
+		</DataViewsEmptyStateLayout>
+	);
 
 	return (
 		<>
@@ -106,21 +121,25 @@ function Domains() {
 							} }
 							onReset={ resetView }
 							view={ view }
-							actions={ actions }
+							// The cards render their own actions, and DataViews would add a bulk selection footer.
+							actions={ isCardsLayout ? undefined : actions }
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
-							defaultLayouts={ DEFAULT_LAYOUTS }
-							empty={
-								<DataViewsEmptyStateLayout
-									title={ __( 'No domains match your search' ) }
-									description={ __( 'Try again, or add a new domain with the options below.' ) }
-									isBorderless
-								>
-									<EmptyDomainsStateActions />
-								</DataViewsEmptyStateLayout>
-							}
-						/>
+							defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+							config={ DOMAINS_LIST_CONFIG }
+							empty={ emptySearchState }
+						>
+							{ isCardsLayout ? (
+								<DomainCardsLayout
+									data={ filteredData || [] }
+									fields={ fields }
+									actions={ actions }
+									view={ view }
+									empty={ emptySearchState }
+								/>
+							) : undefined }
+						</DataViews>
 					</DataViewsCard>
 				) }
 			</PageLayout>

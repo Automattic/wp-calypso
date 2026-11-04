@@ -1,4 +1,8 @@
-import { recordDomainViewChanges, sanitizeDomainsListLayout } from '../dataviews/views';
+import {
+	recordDomainViewChanges,
+	sanitizeDomainFields,
+	sanitizeDomainsListLayout,
+} from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
 
 describe( 'sanitizeDomainsListLayout', () => {
@@ -24,7 +28,33 @@ describe( 'sanitizeDomainsListLayout', () => {
 	} );
 } );
 
+describe( 'sanitizeDomainFields', () => {
+	test( 'drops the removed SSL field from a saved view', () => {
+		expect( sanitizeDomainFields( [ 'blog_name', 'ssl_status', 'expiry' ] ) ).toEqual( [
+			'blog_name',
+			'expiry',
+		] );
+	} );
+
+	test( 'leaves a view without saved fields alone', () => {
+		expect( sanitizeDomainFields( undefined ) ).toBeUndefined();
+	} );
+} );
+
 describe( 'recordDomainViewChanges', () => {
+	test( 'layout change records only the type change', () => {
+		const tracks = jest.fn();
+		const oldView: View = { type: 'table', fields: [ 'blog_name' ] };
+		const newView: View = { type: 'grid', fields: [ 'blog_name', 'expiry' ] };
+
+		recordDomainViewChanges( oldView, newView, tracks );
+
+		expect( tracks ).toHaveBeenCalledTimes( 1 );
+		expect( tracks ).toHaveBeenCalledWith( 'calypso_dashboard_domains_view_type_changed', {
+			type: 'grid',
+		} );
+	} );
+
 	test( 'nothing relevant changed', () => {
 		const tracks = jest.fn();
 		const oldView: View = {

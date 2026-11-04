@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { sslDetailsQuery } from '@automattic/api-queries';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -9,6 +10,7 @@ import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
 import { render } from '../../../test-utils';
 import SiteDomains from '../index';
 import type { Site, User } from '@automattic/api-core';
+import type { QueryClient } from '@tanstack/react-query';
 
 let mockSearchParams: { action?: string } = {};
 
@@ -162,6 +164,12 @@ function mockApis( {
 	}
 }
 
+// The action and status checks below only mean something once the SSL details have arrived.
+const waitForSslDetails = ( queryClient: QueryClient, domainName: string ) =>
+	waitFor( () =>
+		expect( queryClient.getQueryData( sslDetailsQuery( domainName ).queryKey ) ).toBeDefined()
+	);
+
 describe( '<SiteDomains>', () => {
 	beforeEach( () => {
 		mockSearchParams = {};
@@ -239,6 +247,39 @@ describe( '<SiteDomains>', () => {
 				.getAllByText( /^test-site\./ )
 				.map( ( element ) => element.textContent )
 		).toEqual( [ 'test-site.wordpress.com', 'test-site.com' ] );
+	} );
+
+	test( 'does not show an SSL column', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect(
+			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
+		).not.toBeInTheDocument();
+		expect( screen.queryByText( /^SSL (active|pending)$/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {
+		const { unmount } = render( <SiteDomains />, { user: ownerUser } );
+		const defaultHeaderCount = within( await screen.findByRole( 'table' ) ).getAllByRole(
+			'columnheader'
+		).length;
+		unmount();
+
+		nock.cleanAll();
+		mockApis( {
+			preferences: {
+				'hosting-dashboard-dataviews-view-site-domains': {
+					...SITE_CONTEXT_VIEW,
+					fields: [ 'ssl_status', 'expiry', 'domain_status' ],
+				},
+			},
+		} );
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect(
+			within( await screen.findByRole( 'table' ) ).getAllByRole( 'columnheader' )
+		).toHaveLength( defaultHeaderCount );
 	} );
 
 	test( 'does not open a modal without the deep link', async () => {
@@ -336,9 +377,9 @@ describe( '<SiteDomains>', () => {
 			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: false },
 		} );
 
-		render( <SiteDomains />, { user: ownerUser } );
+		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
-		await screen.findByText( 'SSL pending' );
+		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
 
 		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
 		await user.click( actionsButtons[ 0 ] );
@@ -354,9 +395,9 @@ describe( '<SiteDomains>', () => {
 			ssl: { domain: primaryCandidateDomain.domain, certificate_provisioned: true },
 		} );
 
-		render( <SiteDomains />, { user: ownerUser } );
+		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
-		await screen.findByText( 'SSL active' );
+		await waitForSslDetails( queryClient, primaryCandidateDomain.domain );
 
 		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
 		await user.click( actionsButtons[ 0 ] );
@@ -376,7 +417,6 @@ describe( '<SiteDomains>', () => {
 		expect( await screen.findByText( 'Preparing your new domain name' ) ).toBeVisible();
 		expect( screen.getByText( 'Activating' ) ).toBeVisible();
 		expect( screen.getByRole( 'img', { name: 'Can take up to 15 minutes' } ) ).toBeVisible();
-		expect( screen.queryByText( 'SSL pending' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows a working domain as active while the backend still reports it as pending primary', async () => {
@@ -393,9 +433,10 @@ describe( '<SiteDomains>', () => {
 			.reply( 200, { ...domain, primary_domain: false, set_primary_domain_pending: true } )
 			.persist();
 
-		render( <SiteDomains />, { user: ownerUser } );
+		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
-		await waitFor( () => expect( screen.getAllByText( 'SSL active' ) ).toHaveLength( 2 ) );
+		await waitForSslDetails( queryClient, domain.domain );
+		await screen.findByRole( 'table' );
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
@@ -407,9 +448,10 @@ describe( '<SiteDomains>', () => {
 			ssl: { domain: domain.domain, certificate_provisioned: true, is_newly_registered: true },
 		} );
 
-		render( <SiteDomains />, { user: ownerUser } );
+		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
-		await waitFor( () => expect( screen.getAllByText( 'SSL active' ) ).toHaveLength( 2 ) );
+		await waitForSslDetails( queryClient, domain.domain );
+		await screen.findByRole( 'table' );
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 	} );

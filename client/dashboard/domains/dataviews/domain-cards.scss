@@ -1,0 +1,68 @@
+.domain-cards {
+	padding: 0 var( --wpds-dimension-padding-2xl, 24px ) var( --wpds-dimension-padding-2xl, 24px );
+
+	// Matches the inset `app/dataviews-overrides.scss` gives the native grid on small screens.
+	@media ( max-width: 782px ) {
+		padding-inline: 16px;
+	}
+}
+
+.domain-cards__card,
+.domain-cards__body {
+	height: 100%;
+}
+
+.domain-cards__body {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.domain-cards__title {
+	flex: 1;
+	font-weight: 500;
+	min-width: 0;
+
+	a {
+		text-decoration: none;
+	}
+}
+
+.domain-cards__fields {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+}
+
+.domain-cards__field {
+	display: grid;
+	gap: 8px;
+	grid-template-columns: 35% minmax( 0, 1fr );
+
+	dt {
+		color: var( --wpds-color-foreground-content-neutral-weak, #757575 );
+		font-weight: 400;
+	}
+
+	dd {
+		margin: 0;
+		overflow: hidden;
+
+		// The Site field renders its link inside a flex row, which needs this to shrink and truncate.
+		a {
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+	}
+
+	&:has( dd:empty ) {
+		display: none;
+	}
+}
+
+.domain-cards__actions {
+	margin-top: auto;
+}

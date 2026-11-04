@@ -25,6 +25,7 @@ import {
 	useFields,
 	DEFAULT_LAYOUTS,
 	SITE_CONTEXT_VIEW,
+	sanitizeDomainFields,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
 import {
@@ -102,6 +103,7 @@ function SiteDomains() {
 		slug: 'site-domains',
 		defaultView: SITE_CONTEXT_VIEW,
 		queryParams: searchParams,
+		sanitizeFields: sanitizeDomainFields,
 	} );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(

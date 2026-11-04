@@ -9,7 +9,7 @@ function isAwaitingFirstCertificate( sslDetails?: SslDetails ) {
 	return !! sslDetails && sslDetails.is_newly_registered && ! sslDetails.certificate_provisioned;
 }
 
-export function useDomainSslDetails( domain: DomainSummary ) {
+function useDomainSslDetails( domain: DomainSummary ) {
 	return useQuery( {
 		...sslDetailsQuery( domain.domain ),
 		staleTime: 60_000,

@@ -9,7 +9,6 @@ import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
 import { DomainStatusField } from './field-domain-status';
 import { DomainExpiryField } from './field-expiry';
-import { DomainSslField } from './field-ssl';
 import { IneligibleIndicator } from './ineligible-indicator';
 import { sortNullableStrings } from './sort-nullable-strings';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -129,13 +128,6 @@ export const useFields = ( {
 				},
 				getValue: ( { item }: { item: DomainSummary } ) => item.blog_id.toString(),
 				render: ( { item } ) => <DomainSiteField domain={ item } value={ item.blog_name ?? '' } />,
-			},
-			{
-				id: 'ssl_status',
-				label: __( 'SSL' ),
-				enableHiding: true,
-				enableSorting: false,
-				render: ( { item } ) => <DomainSslField domain={ item } />,
 			},
 			{
 				id: 'expiry',
