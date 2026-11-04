@@ -28,6 +28,7 @@
 	flex-wrap: wrap;
 	// DataViews table cells are `white-space: nowrap`; without this, long descriptions overflow into the next columns.
 	white-space: normal;
+	overflow-wrap: anywhere;
 
 	> span {
 		color: var(--dashboard__text-muted-color);
