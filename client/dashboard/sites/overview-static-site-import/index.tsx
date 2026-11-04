@@ -108,7 +108,12 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 	const locale = useLocale();
 	const handoff = useMutation( staticSiteImportHandoffMutation() );
 	const requestHandoff = () =>
-		handoff.mutate( { blogUrl: site.slug, fromUrl: search.from ?? '', locale } );
+		handoff.mutate( {
+			blogUrl: site.slug,
+			fromUrl: search.from ?? '',
+			locale,
+			importSessionId: search.importSessionId,
+		} );
 	return { handoff, requestHandoff };
 }
 
@@ -303,9 +308,18 @@ export function StaticSiteImportNotice( {
 				variant="warning"
 				title={ __( 'Your move hasn’t started yet' ) }
 				actions={
-					<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
-						{ __( 'Try again' ) }
-					</Button>
+					<>
+						<Button __next40pxDefaultSize variant="primary" onClick={ siteImport.retry }>
+							{ __( 'Try again' ) }
+						</Button>
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							onClick={ () => setShowHelpCenter( true ) }
+						>
+							{ __( 'Contact us' ) }
+						</Button>
+					</>
 				}
 			>
 				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }

@@ -314,6 +314,88 @@ describe( 'SiteMigrationIdentify', () => {
 			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
 		} );
 
+		it.each( [ '', 'https://example.com' ] )(
+			'leaves the address "%s" editable without analyzing until Continue',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
+				const host = mockHost();
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&start=&platform=unknown`,
+					}
+				);
+				await act( async () => {
+					jest.advanceTimersByTime( 3000 );
+					await realTick();
+				} );
+				expect( getInput() ).toHaveValue( from );
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				expect( analysis.isDone() ).toBe( false );
+				expect( host.isDone() ).toBe( false );
+				expect( submit ).not.toHaveBeenCalled();
+				await user.clear( getInput() );
+				await checkSite();
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith(
+						expect.objectContaining( { action: 'continue', platform: 'wordpress' } )
+					)
+				);
+			}
+		);
+
+		it.each( [ '', 'https://manual.example.com' ] )(
+			'uses the selected WordPress platform without analyzing "%s"',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( { platform: 'unknown' }, 200, from || 'manual.example.com' );
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&manualPlatform=wordpress`,
+					}
+				);
+
+				expect(
+					screen.getByRole( 'heading', { name: "Let's find your WordPress site" } )
+				).toBeVisible();
+				expect(
+					screen.getByRole( 'button', { name: 'select another platform from the list' } )
+				).toBeVisible();
+				expect( getInput() ).toHaveValue( from );
+				expect( submit ).not.toHaveBeenCalled();
+				if ( ! from ) {
+					await user.type( getInput(), 'manual.example.com' );
+				}
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					platform: 'wordpress',
+					from: 'https://manual.example.com',
+				} );
+				expect( analysis.isDone() ).toBe( false );
+			}
+		);
+
+		it( 'lets users change their selected platform while keeping the address', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://example.com&manualPlatform=wordpress' }
+			);
+
+			await user.click(
+				screen.getByRole( 'button', { name: 'select another platform from the list' } )
+			);
+
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://example.com',
+			} );
+		} );
+
 		it( 'preserves the current address when opening the platform list before checking', async () => {
 			const submit = jest.fn();
 			render(

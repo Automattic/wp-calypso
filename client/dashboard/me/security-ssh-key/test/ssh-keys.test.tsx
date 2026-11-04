@@ -95,6 +95,15 @@ describe( '<SshKeys>', () => {
 		expect( within( dialog ).getByLabelText( 'Label' ) ).toHaveValue( 'Work laptop' );
 	} );
 
+	test( 'shows the limit message only at the limit', async () => {
+		mockSshKeys( [ buildKey( { name: 'laptop', label: 'Laptop' } ) ] );
+
+		render( <SshKeys /> );
+
+		expect( await screen.findByRole( 'button', { name: 'Add SSH key' } ) ).toBeEnabled();
+		expect( screen.queryByText( /You can add up to/ ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'disables adding keys at the limit', async () => {
 		mockSshKeys(
 			Array.from( { length: 10 }, ( _, index ) =>

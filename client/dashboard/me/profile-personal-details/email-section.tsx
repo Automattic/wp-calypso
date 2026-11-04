@@ -272,11 +272,16 @@ export default function EmailSection( {
 			return __( 'Your email has not been verified yet.' );
 		}
 
-		return undefined;
+		if ( validity?.user_email?.custom ) {
+			return undefined;
+		}
+
+		return __( 'Sign-in and account emails. Not shown publicly.' );
 	}, [
 		isEmailPending,
 		isEmailVerified,
 		hasEmailError,
+		validity,
 		handleCancelPendingEmail,
 		isEmailWritePending,
 	] );
