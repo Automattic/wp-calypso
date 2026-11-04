@@ -9,6 +9,7 @@ import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboar
 import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
 import {
@@ -19,6 +20,7 @@ import { AssertConditionState } from 'calypso/landing/stepper/declarative-flow/i
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
@@ -111,8 +113,10 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			setIntent( Onboard.SiteIntent.SiteMigration );
 		}, [ resetOnboardStore, setIntent ] );
 	},
-	useAssertConditions(): AssertConditionResult {
+	useAssertConditions( navigate ): AssertConditionResult {
 		const { isAdmin, isFetching } = useIsSiteAdmin();
+		const { isError: hasSiteError } = useSiteQuery();
+		const { pathname } = useLocation();
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const checksDestination = hasDestinationSite( useQuery() ) && userIsLoggedIn;
 		useEffect( () => {
@@ -121,9 +125,18 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 			}
 		}, [ checksDestination, isAdmin ] );
 
+		const isOnErrorStep = pathname.includes( `/${ STEPS.ERROR.slug }` );
+		const shouldLeaveForErrorStep = checksDestination && hasSiteError && ! isOnErrorStep;
+		useEffect( () => {
+			if ( shouldLeaveForErrorStep ) {
+				navigate?.( STEPS.ERROR.slug, { errorReason: 'site_lookup_failed' }, true );
+			}
+			// eslint-disable-next-line react-hooks/exhaustive-deps -- navigate is recreated on every render.
+		}, [ shouldLeaveForErrorStep ] );
+
 		return {
 			state:
-				checksDestination && isFetching
+				checksDestination && isFetching && ! ( hasSiteError && isOnErrorStep )
 					? AssertConditionState.CHECKING
 					: AssertConditionState.SUCCESS,
 		};

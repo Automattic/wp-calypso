@@ -16,7 +16,7 @@ import {
 } from 'calypso/landing/stepper/declarative-flow/test/helpers';
 import { useFlowLocale } from 'calypso/landing/stepper/hooks/use-flow-locale';
 import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
-import { useSite } from 'calypso/landing/stepper/hooks/use-site';
+import { useSite, useSiteQuery } from 'calypso/landing/stepper/hooks/use-site';
 import { goToCheckout, goToUnifiedCheckout } from 'calypso/landing/stepper/utils/checkout';
 import { clearSignupDestinationCookie } from 'calypso/signup/storageUtils';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
@@ -41,6 +41,7 @@ const PLAN = { cartItems: [ { product_slug: 'business-bundle' } ] };
 const readingPath = '/setup/static-site-import/static-site-import-reading';
 const identifyPath = '/setup/site-migration/site-migration-identify';
 const plansPath = '/setup/static-site-import/plans';
+const errorPath = '/setup/static-site-import/error';
 
 const parseUrl = ( url: string ) => {
 	const [ path, query = '' ] = url.split( '?' );
@@ -68,6 +69,19 @@ const renderPlansNavigation = ( url: string ) => {
 	return navigate;
 };
 
+const renderAssertConditions = ( url: string ) => {
+	const navigate = jest.fn();
+	const { result } = renderHookWithProvider(
+		() => staticSiteImportFlow.useAssertConditions( navigate ),
+		{
+			wrapper: ( { children } ) => (
+				<MemoryRouter initialEntries={ [ url ] }>{ children }</MemoryRouter>
+			),
+		}
+	);
+	return { navigate, result };
+};
+
 describe( 'Static site import flow', () => {
 	beforeAll( () => {
 		Object.defineProperty( window, 'location', {
@@ -89,6 +103,7 @@ describe( 'Static site import flow', () => {
 		jest.mocked( isCurrentUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( isUserLoggedIn ).mockReturnValue( true );
 		jest.mocked( useSite ).mockReturnValue( undefined );
+		jest.mocked( useSiteQuery ).mockReturnValue( { isError: false } );
 		jest.mocked( useFlowLocale ).mockReturnValue( 'en' );
 		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: true, isFetching: false } );
 	} );
@@ -201,6 +216,53 @@ describe( 'Static site import flow', () => {
 
 			expect( result.state ).toBe( state );
 			expect( window.location.assign ).not.toHaveBeenCalled();
+		} );
+
+		describe( 'when the destination site fails to load', () => {
+			beforeEach( () => {
+				jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: null, isFetching: true } );
+				jest.mocked( useSiteQuery ).mockReturnValue( { isError: true } );
+			} );
+
+			it.each( [ readingPath, plansPath ] )(
+				'goes to the error step without rendering %s',
+				( path ) => {
+					const { navigate, result } = renderAssertConditions( `${ path }?siteId=abc` );
+
+					expect( navigate ).toHaveBeenCalledTimes( 1 );
+					expect( navigate ).toHaveBeenCalledWith(
+						STEPS.ERROR.slug,
+						{ errorReason: 'site_lookup_failed' },
+						true
+					);
+					expect( result.current.state ).toBe( AssertConditionState.CHECKING );
+				}
+			);
+
+			it( 'renders the error step once it gets there', () => {
+				const { navigate, result } = renderAssertConditions( `${ errorPath }?siteId=abc` );
+
+				expect( navigate ).not.toHaveBeenCalled();
+				expect( result.current.state ).toBe( AssertConditionState.SUCCESS );
+			} );
+
+			it( 'leaves logged-out users to the login step', () => {
+				jest.mocked( isUserLoggedIn ).mockReturnValue( false );
+
+				const { navigate, result } = renderAssertConditions( `${ readingPath }?siteId=abc` );
+
+				expect( navigate ).not.toHaveBeenCalled();
+				expect( result.current.state ).toBe( AssertConditionState.SUCCESS );
+			} );
+		} );
+
+		it( 'keeps waiting on the error step while the site is still loading', () => {
+			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: null, isFetching: true } );
+
+			const { navigate, result } = renderAssertConditions( `${ errorPath }?siteId=42` );
+
+			expect( navigate ).not.toHaveBeenCalled();
+			expect( result.current.state ).toBe( AssertConditionState.CHECKING );
 		} );
 	} );
 
