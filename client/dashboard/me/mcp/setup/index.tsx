@@ -1,5 +1,6 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { speak } from '@wordpress/a11y';
 import {
 	Button,
 	ExternalLink,
@@ -90,6 +91,7 @@ function McpSetupComponent() {
 		try {
 			await navigator.clipboard.writeText( configText );
 			setCopyStatus( 'success' );
+			speak( __( 'Copied' ) );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
 		} catch {
 			// Silently fail — clipboard access may be blocked
