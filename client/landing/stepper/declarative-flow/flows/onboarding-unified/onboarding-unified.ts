@@ -18,7 +18,10 @@ import { ONBOARD_STORE, USER_STORE } from '../../../stores';
 import { getOnboardingPostCheckoutDestination } from '../../helpers/get-onboarding-post-checkout-destination';
 import { usePurchasePlanNotification } from '../../internals/hooks/use-purchase-plan-notification';
 import { STEPS } from '../../internals/steps';
-import { ProcessingResult } from '../../internals/steps-repository/processing-step/constants';
+import {
+	getProcessingErrorReason,
+	ProcessingResult,
+} from '../../internals/steps-repository/processing-step/constants';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 
 function initialize() {
@@ -127,7 +130,7 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 					}
 
 					// Fallback to error if no plan selected
-					return navigate( 'error' );
+					return navigate( 'error', { errorReason: 'no_plan_selected' } );
 				}
 
 				case 'post-checkout-onboarding':
@@ -153,14 +156,16 @@ const onboardingUnifiedFlow: FlowV2< typeof initialize > = {
 						window.location.replace( destination );
 					} else {
 						// Handle errors by navigating to error step
-						return navigate( 'error' );
+						return navigate( 'error', {
+							errorReason: getProcessingErrorReason( providedDependencies.processingResult ),
+						} );
 					}
 					return;
 				}
 
 				default:
 					// This shouldn't happen in this flow
-					return navigate( 'error' );
+					return navigate( 'error', { errorReason: 'unknown_step' } );
 			}
 		};
 

@@ -43,6 +43,21 @@ describe( 'useAccountCreationExperiment', () => {
 		expect( result.current.isEmailAtBottom ).toBe( false );
 	} );
 
+	it.each( [
+		[ 'Woo-referrer users', 'ref=woo-hosting-solutions-flow' ],
+		[ 'the theme grid layout', 'signup_layout=theme_grid' ],
+	] )( 'leaves %s out of the experiment', ( _label, query ) => {
+		mockUseQuery.mockReturnValue( new URLSearchParams( query ) );
+		mockUseExperiment.mockReturnValue( [ false, null ] );
+
+		renderHook( () => useAccountCreationExperiment( { flow: 'onboarding' } ) );
+
+		expect( mockUseExperiment ).toHaveBeenCalledWith(
+			'calypso_account_step_improvement_202606_v2',
+			{ isEligible: false }
+		);
+	} );
+
 	it( 'returns control on sub-960 px viewports regardless of assignment', () => {
 		mockUseViewportMatch.mockReturnValue( false );
 		mockUseExperiment.mockReturnValue( [

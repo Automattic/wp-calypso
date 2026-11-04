@@ -444,6 +444,27 @@ describe( 'agentManager', () => {
 			await agentManager.createAgent( 'test-key', testConfig );
 		} );
 
+		it( 'sends a message under its history copy’s ID', async () => {
+			vi.mocked( createTextMessage ).mockReturnValueOnce( {
+				role: 'user',
+				kind: 'message',
+				parts: [ { type: 'text', text: 'Hello' } ],
+				messageId: 'user-1',
+			} );
+			mockClient.sendMessageStream.mockImplementation( async function* () {} );
+
+			for await ( const update of agentManager.sendMessageStream( 'test-key', 'Hello' ) ) {
+				void update;
+			}
+
+			expect( mockClient.sendMessageStream.mock.calls[ 0 ][ 0 ].message.messageId ).toBe(
+				'user-1'
+			);
+			expect( agentManager.getConversationHistory( 'test-key' ).at( -1 )?.messageId ).toBe(
+				'user-1'
+			);
+		} );
+
 		it( 'sendToolResult supersedes a stale recorded result for the same call', async () => {
 			// The executor records a local result for every executed tool; a
 			// later tool-result send must replace it, not duplicate it.

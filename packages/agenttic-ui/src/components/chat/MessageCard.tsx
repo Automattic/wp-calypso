@@ -5,9 +5,11 @@ interface MessageCardProps {
 	title: string;
 	description?: string;
 	url?: string;
+	/** Runs before the link opens, for example to record the click. */
+	onClick?: () => void;
 }
 
-export function MessageCard( { title, description, url }: MessageCardProps ) {
+export function MessageCard( { title, description, url, onClick }: MessageCardProps ) {
 	const content = (
 		<>
 			<div className={ styles.content }>
@@ -20,7 +22,13 @@ export function MessageCard( { title, description, url }: MessageCardProps ) {
 
 	if ( url ) {
 		return (
-			<a href={ url } className={ styles.card } target="_blank" rel="noopener noreferrer">
+			<a
+				href={ url }
+				className={ styles.card }
+				target="_blank"
+				rel="noopener noreferrer"
+				onClick={ onClick }
+			>
 				{ content }
 			</a>
 		);

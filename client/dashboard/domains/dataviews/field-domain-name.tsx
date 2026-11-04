@@ -7,6 +7,7 @@ import { useAnalytics } from '../../app/analytics';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
+import { useIsDomainActivating } from './use-domain-activation';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
@@ -15,14 +16,24 @@ export const DomainNameField = ( {
 	site,
 	value,
 	showPrimaryDomainBadge,
+	showWwwPrefix,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
 	showPrimaryDomainBadge?: boolean;
+	showWwwPrefix?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
+	const isActivating = useIsDomainActivating( domain );
+
+	let note: string | null = null;
+	if ( isActivating ) {
+		note = __( 'Preparing your new domain name' );
+	} else if ( domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION ) {
+		note = domain.subtype.label;
+	}
 
 	const siteSlug = site?.slug ?? domain.site_slug;
 
@@ -35,7 +46,13 @@ export const DomainNameField = ( {
 
 	const content = (
 		<VStack spacing={ 1 }>
-			<span style={ textOverflowStyles }>{ value }</span>
+			<span style={ textOverflowStyles }>
+				{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
+				<Text variant="muted" weight="inherit">
+					{ showWwwPrefix ? 'www.' : '' }
+				</Text>
+				{ value }
+			</span>
 			{ showPrimaryDomainBadge && domain.primary_domain && (
 				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
 					<span
@@ -51,9 +68,9 @@ export const DomainNameField = ( {
 					</span>
 				</Tooltip>
 			) }
-			{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+			{ note && (
 				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
-					{ domain.subtype.label }
+					{ note }
 				</Text>
 			) }
 		</VStack>

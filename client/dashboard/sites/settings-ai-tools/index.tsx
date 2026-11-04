@@ -48,6 +48,7 @@ import {
 	getSiteMcpAbilities,
 	getSiteRemoteGroups,
 	isRemoteAbilityEnabled,
+	isRemoteKeyEnabled,
 	mergeSiteMcpAbilities,
 } from '../../../me/mcp/utils';
 import { useAnalytics } from '../../app/analytics';
@@ -66,6 +67,7 @@ import RouterLinkSummaryButton from '../../components/router-link-summary-button
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { isWriteTool } from '../../me/mcp/categories';
 import {
 	getAgentEmailAddress,
@@ -74,6 +76,7 @@ import {
 } from '../../utils/wordpress-agent-email';
 import UpsellCallout from '../hosting-feature-gated-with-callout/upsell';
 import { collectNamespaces } from './remote-abilities-section';
+import upsellIllustrationDarkUrl from './upsell-illustration-dark.svg';
 import upsellIllustrationUrl from './upsell-illustration.svg';
 
 export { getAgentEmailAddress, getAgentEmailVCard } from '../../utils/wordpress-agent-email';
@@ -216,7 +219,7 @@ function EmailAssistantCard( {
 						label={ __( 'Enable WordPress Agent email address' ) }
 						onChange={ handleEmailAddressToggle }
 					/>
-					<Notice density="medium">
+					<Notice>
 						{ __(
 							'Enabling this also enables Post by Email. Disabling it deletes the Post by Email address, so both Post by Email and this WordPress Agent address will stop working.'
 						) }
@@ -323,6 +326,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 	// back to counting their keys. Gated at the computation level: even a
 	// previously cached catalog must not leak into the totals for other users.
 	const remoteCounts = ( category: 'read' | 'write' ) => {
+		const defaultEnabled =
+			isMcpEnabled && enabledToolCount( category === 'read' ? readTools : writeTools ) > 0;
 		if ( ! isAutomattician ) {
 			return { total: 0, enabled: 0 };
 		}
@@ -332,13 +337,18 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 			if ( group.abilities.length > 0 ) {
 				total += group.abilities.length;
 				enabled += group.abilities.filter( ( ability ) =>
-					isRemoteAbilityEnabled( savedRemoteGroups, ability.name, ability.meta?.annotations )
+					isRemoteAbilityEnabled(
+						savedRemoteGroups,
+						ability.name,
+						ability.meta?.annotations,
+						defaultEnabled
+					)
 				).length;
 				return;
 			}
 			total += group.keys.length + group.abilityKeys.length;
-			enabled += [ ...group.keys, ...group.abilityKeys ].filter(
-				( key ) => savedRemoteGroups[ key ] === true
+			enabled += [ ...group.keys, ...group.abilityKeys ].filter( ( key ) =>
+				isRemoteKeyEnabled( savedRemoteGroups, key, defaultEnabled )
 			).length;
 		} );
 		return { total, enabled };
@@ -643,7 +653,12 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 						'Get WordPress Agent to help you build, edit, and redesign your site with ease.'
 					) }
 					upsellIcon={ comment }
-					upsellImage={ upsellIllustrationUrl }
+					upsellImage={
+						<ThemedIllustration
+							light={ upsellIllustrationUrl }
+							dark={ upsellIllustrationDarkUrl }
+						/>
+					}
 				/>
 			) }
 			{ renderSettings() }

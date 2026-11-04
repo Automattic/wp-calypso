@@ -15,6 +15,8 @@ interface UseConversationHydrationOptions {
 	loadMessages: UseAgentChatReturn[ 'loadMessages' ];
 	/** Called with the fetched transcript, even when the live history is kept instead. */
 	onFetch: ( loadedMessages: Message[] ) => void;
+	/** Called right before the fetched transcript replaces the chat's. */
+	onHistoryLoad: () => void;
 	/** Whether a turn is running; a running turn ends the wait for a reply. */
 	isProcessing: boolean;
 	/** Called with the unanswered question when the user picks Retry. */
@@ -40,6 +42,7 @@ export function useConversationHydration( {
 	hadParkedNavigation,
 	loadMessages,
 	onFetch,
+	onHistoryLoad,
 	isProcessing,
 	onRetry,
 	onSubmit,
@@ -89,6 +92,7 @@ export function useConversationHydration( {
 				agentManager.isTurnInFlight( agentId ) ||
 				( hadParkedNavigation && agentManager.getConversationHistory( agentId ).length > 0 );
 			if ( ! hasNewerLiveHistory ) {
+				onHistoryLoad();
 				loadMessages( loadedMessages );
 			}
 

@@ -1,4 +1,10 @@
-import { isAutomatticianQuery, siteBySlugQuery, siteByIdQuery } from '@automattic/api-queries';
+import {
+	dashboardSiteFiltersQuery,
+	isAutomatticianQuery,
+	paginatedSitesQuery,
+	siteBySlugQuery,
+	siteByIdQuery,
+} from '@automattic/api-queries';
 import {
 	useQuery,
 	useQueryClient,
@@ -128,16 +134,14 @@ const getFetchPaginatedSitesOptions = (
 export function useSiteListQuery( view: View, options: SiteListQueryOptions ) {
 	const queryClient = useQueryClient();
 
-	const { queries } = useAppContext();
-
 	const { data: siteFilters } = useQuery( {
-		...queries.dashboardSiteFiltersQuery( [ 'plan' ] ),
+		...dashboardSiteFiltersQuery( 'all', [ 'plan' ] ),
 		staleTime: 5 * 60 * 1000, // Consider valid for 5 minutes
 		enabled: !! view.filters?.find( ( filter ) => filter.field === 'plan' ),
 	} );
 
 	const paginatedSitesQueryResult = useQuery( {
-		...queries.paginatedSitesQuery( getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
+		...paginatedSitesQuery( 'all', getFetchPaginatedSitesOptions( view, options, siteFilters ) ),
 		placeholderData: keepPreviousData,
 		meta: {
 			fullPageLoader: true,

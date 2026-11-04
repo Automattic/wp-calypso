@@ -53,7 +53,7 @@ export default function DifmOfferModal( {
 		// Once the build request succeeds, the user has acted on the offer, even when the
 		// cart step fails afterwards, so closing the modal is not a dismissal.
 		if ( ! hasSentRequest.current ) {
-			recordTracksEvent( 'calypso_dashboard_upsell_dismiss', tracksProps );
+			recordTracksEvent( 'calypso_dashboard_upsell_dismiss', { ...tracksProps, step } );
 		}
 		onClose();
 	};

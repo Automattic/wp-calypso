@@ -11,6 +11,7 @@ import ReaderFollowConversationIcon from 'calypso/reader/components/icons/follow
 import { isConversationFollowable } from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost } from 'calypso/reader/stats';
 import CommentCount from './comment-count';
+import { CommentEditorContext } from './comment-editor-context';
 import PostCommentFormRoot from './form-root';
 import PostComment from './post-comment';
 
@@ -34,6 +35,8 @@ import './post-comment-list.scss';
  */
 
 class PostCommentList extends Component {
+	static contextType = CommentEditorContext;
+
 	static propTypes = {
 		post: PropTypes.shape( {
 			ID: PropTypes.number.isRequired,
@@ -67,6 +70,8 @@ class PostCommentList extends Component {
 		fetchLaterComments: PropTypes.func.isRequired,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
+		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
+		collapsibleThreads: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -236,6 +241,8 @@ class PostCommentList extends Component {
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 				shouldHighlightNew={ this.props.shouldHighlightNew }
+				highlightedCommentIds={ this.props.highlightedCommentIds }
+				collapsibleThreads={ this.props.collapsibleThreads }
 				isInlineComment={ this.props.expandableView }
 				expandComments={ this.props.expandComments }
 				comments={ this.props.comments }
@@ -583,6 +590,19 @@ class PostCommentList extends Component {
 			? this.getDisplayedCollapsedInlineComments( commentsTree )
 			: this.getDisplayedComments( commentsTree.children, amountOfCommentsToTake );
 
+		// The inbox's composer closes the thread; elsewhere the form opens it.
+		const isComposer = this.context;
+		const rootForm = (
+			<PostCommentFormRoot
+				post={ this.props.post }
+				commentsTree={ commentsTreeToUse }
+				commentText={ this.state.commentText }
+				onUpdateCommentText={ this.onUpdateCommentText }
+				activeReplyCommentId={ this.props.activeReplyCommentId }
+				isInlineComment={ this.props.expandableView }
+			/>
+		);
+
 		// Note: we might show fewer comments than commentsCount because some comments might be
 		// orphans (parent deleted/unapproved), that comment will become unreachable but still counted.
 		const showViewMoreComments =
@@ -641,14 +661,7 @@ class PostCommentList extends Component {
 						</div>
 					</div>
 				) }
-				<PostCommentFormRoot
-					post={ this.props.post }
-					commentsTree={ commentsTreeToUse }
-					commentText={ this.state.commentText }
-					onUpdateCommentText={ this.onUpdateCommentText }
-					activeReplyCommentId={ this.props.activeReplyCommentId }
-					isInlineComment={ this.props.expandableView }
-				/>
+				{ ! isComposer && rootForm }
 				{ shouldShowFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
@@ -713,6 +726,7 @@ class PostCommentList extends Component {
 						} ) }
 					</button>
 				) }
+				{ isComposer && rootForm }
 			</div>
 		);
 	}

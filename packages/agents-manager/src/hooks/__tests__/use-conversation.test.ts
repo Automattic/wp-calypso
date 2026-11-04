@@ -7,6 +7,7 @@ const mockCancelQueries = jest.fn();
 const mockGetQueryData = jest.fn();
 const mockLoadChatFromServer = jest.fn();
 const mockLoadAllMessagesFromServer = jest.fn();
+const mockWithUniqueMessageIds = jest.fn( ( messages: unknown[] ) => messages );
 let mockParkedNavigationCallId: string | undefined;
 
 jest.mock(
@@ -17,6 +18,7 @@ jest.mock(
 		createOdieBotId: ( agentId: string ) => agentId,
 		loadAllMessagesFromServer: ( ...args: unknown[] ) => mockLoadAllMessagesFromServer( ...args ),
 		loadChatFromServer: ( ...args: unknown[] ) => mockLoadChatFromServer( ...args ),
+		withUniqueMessageIds: ( messages: unknown[] ) => mockWithUniqueMessageIds( messages ),
 	} ),
 	{ virtual: true }
 );
@@ -335,6 +337,20 @@ describe( 'useConversation', () => {
 			expect( mockLoadAllMessagesFromServer ).not.toHaveBeenCalled();
 			expect( mockLoadChatFromServer.mock.calls[ 0 ].slice( 2 ) ).toEqual( [ 1, 50, true ] );
 			expect( result.messages ).toEqual( [ toolResult, reply, question ] );
+		} );
+
+		it( 'keeps each message ID on one message of the merged pages', async () => {
+			const unique = [ reply, { ...question, messageId: '1' } ];
+			mockLoadedConversation( [ question ] );
+			renderWaitingConversation();
+			mockGetQueryData.mockReturnValue( { messages: [ question ] } );
+			mockLoadChatFromServer.mockResolvedValue( { messages: [ reply ] } );
+			mockWithUniqueMessageIds.mockReturnValueOnce( unique );
+
+			const result = await lastQueryOptions().queryFn();
+
+			expect( mockWithUniqueMessageIds ).toHaveBeenCalledWith( [ reply, question ] );
+			expect( result.messages ).toBe( unique );
 		} );
 
 		it( 'restarts the wait whenever a new message lands', () => {

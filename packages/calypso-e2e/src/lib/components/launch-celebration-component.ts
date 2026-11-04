@@ -26,6 +26,6 @@ export class LaunchCelebrationComponent {
 	 * Waits for the "Congrats, your site is live!" heading to appear on the page.
 	 */
 	async validateVisible(): Promise< void > {
-		await this.heading.waitFor();
+		await this.heading.waitFor( { timeout: 30 * 1000 } );
 	}
 }

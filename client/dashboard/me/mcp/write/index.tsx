@@ -72,13 +72,9 @@ export default function McpWrite() {
 		.filter( ( [ , tool ] ) => tool.visible !== false )
 		.filter( ( [ toolId, tool ] ) => isWriteTool( toolId, tool ) );
 
-	// Tool search: fuzzy-filters the tools on this page. A tool anchor in the
-	// URL seeds the search with the anchored tool's label and filters to
-	// exactly that tool until the user edits the search.
+	// Tool search: fuzzy-filters the tools on this page.
 	const locationHash = ( useLocation().hash ?? '' ).replace( /^#/, '' );
 	const [ search, setSearch ] = useState( '' );
-	const [ anchorTool, setAnchorTool ] = useState< string | null >( null );
-	const anchorSeeded = useRef( false );
 	const deferredSearch = useDeferredValue( search );
 	const query = deferredSearch.trim();
 
@@ -88,16 +84,16 @@ export default function McpWrite() {
 		keys: [ 'tool.title', 'tool.description' ],
 		query,
 	} );
-	const filteredTools = anchorTool
-		? allTools.filter( ( [ toolId ] ) => toolId === anchorTool )
-		: filteredSearchable.map( ( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ] );
+	const filteredTools = filteredSearchable.map(
+		( { toolId, tool } ) => [ toolId, tool ] as [ string, McpAbility ]
+	);
 
 	const groupDescriptors = getGroupDescriptors( userSettings || {} ) as McpGroupDescriptor[];
 	const groups = groupToolsByGroup( filteredTools, groupDescriptors ) as ToolGroup[];
 	const pageAllEnabled = allTools.length > 0 && allTools.every( ( [ , tool ] ) => tool.enabled );
 
-	// Seed the search from a tool anchor and open the group containing it
-	// (or the group named by a group anchor), scrolling the target into view.
+	// Open the group containing a tool anchor (or the group named by a group
+	// anchor), scrolling the target into view. Every other tool stays visible.
 	// Runs once per hash value, after the groups exist.
 	const handledHash = useRef( '' );
 	useEffect( () => {
@@ -105,14 +101,6 @@ export default function McpWrite() {
 			return;
 		}
 		handledHash.current = locationHash;
-		if ( ! anchorSeeded.current ) {
-			anchorSeeded.current = true;
-			const hit = allTools.find( ( [ toolId ] ) => toolId === locationHash );
-			if ( hit ) {
-				setSearch( hit[ 1 ].title );
-				setAnchorTool( locationHash );
-			}
-		}
 		groups.forEach( ( { group: descriptor, tools: groupTools } ) => {
 			const groupKey = descriptor?.name ?? '__other__';
 			if (
@@ -252,7 +240,6 @@ export default function McpWrite() {
 						placeholder={ __( 'Search tools' ) }
 						onChange={ ( value: string ) => {
 							setSearch( value );
-							setAnchorTool( null );
 						} }
 						__nextHasNoMarginBottom
 					/>

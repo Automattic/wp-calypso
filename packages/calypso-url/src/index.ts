@@ -5,3 +5,4 @@ export { safeImageUrl } from './safe-image-url';
 export { getCalypsoUrl } from './get-calypso-url';
 export { isSameOrigin } from './is-same-origin';
 export { isAllowedRedirectUrl } from './is-allowed-redirect-url';
+export { isCalypsoLiveHostname } from './is-calypso-live-hostname';

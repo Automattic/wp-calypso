@@ -43,9 +43,10 @@ export function getLicenseDisplayStatus( license: JetpackLicense ): LicenseStatu
 }
 
 // A bundle's parent license holds the quantity; its child licenses are the
-// ones that get assigned to sites. Like classic, any quantity means a bundle.
+// ones that get assigned to sites. Any quantity means a bundle, except on a Titan
+// license, where it is the inbox count of a single subscription.
 export function isBundleParent( license: JetpackLicense ): boolean {
-	return !! license.quantity;
+	return !! license.quantity && ! isPressableTitanLicense( license );
 }
 
 // Standard licenses are owned by a WordPress.com user rather than the agency, so
@@ -70,6 +71,11 @@ export function isPressableLicense( license: JetpackLicense ): boolean {
 // Add-ons attach to the Pressable plan, so they are never assigned to a site.
 export function isPressableAddonLicense( license: JetpackLicense ): boolean {
 	return license.license_key.startsWith( 'pressable-addon' );
+}
+
+// Titan inboxes belong to a domain rather than a site, and are managed and cancelled in Pressable.
+export function isPressableTitanLicense( license: JetpackLicense ): boolean {
+	return license.license_key.startsWith( 'pressable-addon-titan-inbox' );
 }
 
 // Jetpack CRM extensions are downloaded from a dedicated page rather than the license.
@@ -141,6 +147,9 @@ export function getLicenseTags( license: JetpackLicense ): string[] {
 	}
 	if ( license.meta?.a4a_is_dev_site === '1' ) {
 		tags.push( __( 'Development' ) );
+	}
+	if ( ! isPartnerLicense( license ) ) {
+		tags.push( __( 'Standard license' ) );
 	}
 
 	return tags;

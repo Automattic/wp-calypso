@@ -1,5 +1,6 @@
 import jetpackConnectA8cLogo from '../images/jetpack-connect-a8c.svg';
 import jetpackConnectAllLogo from '../images/jetpack-connect-all.svg';
+import wordpressLogo from '../images/jetpack-connect-migration.svg';
 import jetpackConnectWooLogo from '../images/jetpack-connect-woo.svg';
 import jetpackConnectLogo from '../images/jetpack-connect.svg';
 import type { Family } from './families';
@@ -30,6 +31,11 @@ export interface PluginEntry {
  * than relying on the entry being present here.
  */
 export const PLUGIN_REGISTRY: Record< string, PluginEntry > = {
+	'wpcom-migration': {
+		slug: 'wpcom-migration',
+		family: 'migration',
+		displayName: 'Migrate to WordPress.com',
+	},
 	jetpack: {
 		slug: 'jetpack',
 		family: 'jetpack',
@@ -65,6 +71,11 @@ export const PLUGIN_REGISTRY: Record< string, PluginEntry > = {
 		slug: 'jetpack-videopress',
 		family: 'jetpack',
 		displayName: 'Jetpack VideoPress',
+	},
+	'jetpack-premium-analytics': {
+		slug: 'jetpack-premium-analytics',
+		family: 'jetpack',
+		displayName: 'Jetpack Stats',
 	},
 	woocommerce: {
 		slug: 'woocommerce',
@@ -110,6 +121,9 @@ export function getPluginEntry( slug: string ): PluginEntry | undefined {
  * `class-jetpack-connector.php` so Calypso and Jetpack stay aligned.
  */
 export function getLogoForFamilies( families: readonly Family[] ): string {
+	if ( families.length === 1 && families[ 0 ] === 'migration' ) {
+		return wordpressLogo;
+	}
 	const hasWoo = families.includes( 'woo' );
 	const hasA4a = families.includes( 'a4a' );
 

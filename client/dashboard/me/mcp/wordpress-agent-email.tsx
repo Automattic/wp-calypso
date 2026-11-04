@@ -2,6 +2,7 @@ import {
 	bigSkyPluginQuery,
 	sitePostByEmailSettingsMutation,
 	sitePostByEmailSettingsQuery,
+	sitesQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button, Notice, Spinner, __experimentalVStack as VStack } from '@wordpress/components';
@@ -10,7 +11,6 @@ import { __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useAuth } from '../../app/auth';
-import { useAppContext } from '../../app/context';
 import { sitePlansRoute } from '../../app/router/sites';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { Card, CardBody, CardDivider } from '../../components/card';
@@ -170,12 +170,11 @@ function WordPressAgentEmailForSite( { site }: { site: Site } ) {
 
 export default function WordPressAgentEmail() {
 	const { recordTracksEvent } = useAnalytics();
-	const { queries } = useAppContext();
-	const sitesQuery = useQuery(
-		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+	const sitesResult = useQuery(
+		sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 	const sites =
-		( sitesQuery.data as Site[] | undefined )?.filter(
+		( sitesResult.data as Site[] | undefined )?.filter(
 			( site ) => site.capabilities?.manage_options !== false
 		) ?? [];
 	const [ selectedSiteId, setSelectedSiteId ] = useState< string | null >( null );
@@ -209,9 +208,9 @@ export default function WordPressAgentEmail() {
 						value={ selectedSite?.ID.toString() ?? '' }
 						onChange={ selectSite }
 						label={ __( 'Select site' ) }
-						isLoading={ sitesQuery.isLoading }
+						isLoading={ sitesResult.isLoading }
 					/>
-					{ ! sitesQuery.isLoading && sites.length === 0 && (
+					{ ! sitesResult.isLoading && sites.length === 0 && (
 						<Notice status="info" isDismissible={ false }>
 							{ __( 'You do not have any sites that can use a WordPress Agent email address.' ) }
 						</Notice>

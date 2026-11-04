@@ -280,11 +280,7 @@ body.is-section-reader {
 		font-weight: 600;
 		line-height: 1.6;
 		border-top: 1px solid var( --color-neutral-10 );
-		background: linear-gradient(
-			to bottom,
-			color-mix( in srgb, var( --color-neutral-0 ) 100%, transparent ) 0%,
-			color-mix( in srgb, var( --color-neutral-0 ) 0%, transparent ) 100%
-		);
+		background: none;
 
 		.avatar {
 			display: none;

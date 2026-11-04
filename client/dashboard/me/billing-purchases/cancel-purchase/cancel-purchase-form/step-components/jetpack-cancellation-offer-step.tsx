@@ -10,7 +10,7 @@ import InlineSupportLink from '../../../../../components/inline-support-link';
 import type { Purchase, CancellationOffer } from '@automattic/api-core';
 import type { FC } from 'react';
 
-interface Props {
+interface JetpackCancellationOfferStepProps {
 	purchase: Purchase;
 	offer: Pick<
 		CancellationOffer,
@@ -21,7 +21,7 @@ interface Props {
 	isAkismet?: boolean;
 }
 
-const JetpackCancellationOfferStep: FC< Props > = ( props ) => {
+const JetpackCancellationOfferStep: FC< JetpackCancellationOfferStepProps > = ( props ) => {
 	const { offer, purchase, percentDiscount, isAkismet } = props;
 	const { offerHeadline, renewalCopy } = useMemo( () => {
 		const periods = offer.discounted_periods;

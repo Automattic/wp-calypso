@@ -2,21 +2,32 @@ import { formatNumber, formatNumberCompact } from '@automattic/number-formatters
 import { Tooltip } from '@wordpress/components';
 import { FunctionComponent } from 'react';
 import useCountUp from '../hooks/use-count-up';
+import Skeleton from './skeleton';
 
 interface MetricValueProps {
-	/** The figure to show. Pass 0 while loading so it counts up once the data lands. */
+	/** The figure to show. */
 	value: number;
 	/** Words the full amount for the tooltip, e.g. "1,234 views". */
 	describe: ( formattedValue: string ) => string;
+	/** Stands a placeholder in for the figure, which counts up from zero once it lands. */
+	isLoading?: boolean;
 }
 
 /**
  * A metric's figure, counted up and shown compact ("12.3K"), with the full amount in a
  * tooltip when the compact form hides digits.
  */
-const MetricValue: FunctionComponent< MetricValueProps > = ( { value, describe } ) => {
-	const displayedValue = useCountUp( value );
+const MetricValue: FunctionComponent< MetricValueProps > = ( {
+	value,
+	describe,
+	isLoading = false,
+} ) => {
+	const displayedValue = useCountUp( isLoading ? 0 : value );
 	const compact = formatNumberCompact( Math.round( displayedValue ) );
+
+	if ( isLoading ) {
+		return <Skeleton className="stats-widget-metric__value-skeleton" />;
+	}
 
 	// Compared on the settled value, so the tooltip does not come and go mid-count.
 	if ( formatNumberCompact( value ) === formatNumber( value ) ) {

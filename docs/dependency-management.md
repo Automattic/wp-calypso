@@ -74,6 +74,8 @@ To delete a dependency of the root project, run:
 yarn remove -w uuid
 ```
 
+The root `package.json` lists `@babel/code-frame`, `@babel/generator`, `@babel/helper-module-imports`, `@babel/helper-plugin-utils`, `@babel/parser`, `@babel/template`, `@babel/traverse` and `@babel/types` although nothing at the root imports them. They put the Babel 8 copies at the root of `node_modules`. Without them, tools still on Babel 7 (Jest's internals, react-docgen and others) keep the 7.x copies there, every Babel 8 plugin gets its own nested 8.x copy, and each webpack Babel worker loads up to 16 copies of `@babel/types`. Remove them once `yarn why @babel/types` shows nothing that asks for 7.x.
+
 ### Update a dependency
 
 Run

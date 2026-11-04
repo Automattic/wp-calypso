@@ -1,9 +1,8 @@
 import config from '@automattic/calypso-config';
 import { getUrlParts } from '@automattic/calypso-url';
-import { formatNumber } from '@automattic/number-formatters';
+import { localizeUrl, useLocale } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
-import { Notice, ProgressBar } from '@wordpress/components';
-import { next, published, shield } from '@wordpress/icons';
+import { Notice, VisuallyHidden } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { type FC, useEffect, useState, useCallback, useRef } from 'react';
@@ -14,13 +13,14 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
-import { ChecklistCard } from '../../components/checklist-card';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import warningIcon from './warning.svg';
 import type { Step as StepType } from '../../types';
 import type { UrlData } from 'calypso/blocks/import/types';
 
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 type ConnectionIssue = 'unreachable';
@@ -120,6 +120,7 @@ export const Analyzer: FC< Props > = ( {
 	// Update loading state to include hosting check
 	const isScanning =
 		! shownIssue && ( isHeld || isFetching || isFetchingHosting || ( isFetched && ! hasError ) );
+	const isFormHidden = isReprintFlow && !! shownIssue;
 
 	useEffect( () => {
 		// Only complete when we have both site info AND hosting info (or hosting check failed)
@@ -163,36 +164,14 @@ export const Analyzer: FC< Props > = ( {
 			? convertPlatformName( siteInfo.platform )
 			: undefined;
 
-	const hostingDetailItems = [
-		{
-			icon: next,
-			text: translate(
-				'Blazing fast speeds with lightning-fast load times for a seamless experience.'
-			),
-		},
-		{
-			icon: published,
-			text: translate(
-				'Unmatched reliability with %(uptimePercent)s uptime and unmetered traffic.',
-				{
-					args: {
-						uptimePercent: formatNumber( 0.99999, {
-							numberFormatOptions: { style: 'percent', maximumFractionDigits: 3 },
-						} ),
-					},
-					comment: '99.999% uptime',
-				}
-			),
-		},
-		{
-			icon: shield,
-			text: translate( 'Round-the-clock security monitoring and DDoS protection.' ),
-		},
-	];
-
 	return (
 		<>
-			{ isReprintFlow && ( isScanning || shownIssue ) && (
+			{ isReprintFlow && (
+				<VisuallyHidden role="status">
+					{ isScanning ? translate( 'Checking your site' ) : '' }
+				</VisuallyHidden>
+			) }
+			{ isFormHidden && (
 				<div className="site-migration-identify__checking">
 					<div className="site-migration-identify__summary">
 						<span>{ hostname }</span>
@@ -202,45 +181,28 @@ export const Analyzer: FC< Props > = ( {
 								: translate( 'View site ↗' ) }
 						</Step.LinkButton>
 					</div>
-					{ shownIssue ? (
-						<div className="site-migration-identify__status site-migration-identify__connection-issue">
-							<Notice status="warning" isDismissible={ false }>
-								<img src={ warningIcon } alt="" width={ 24 } height={ 24 } />
-								<span>{ translate( 'Couldn’t connect' ) }</span>
-							</Notice>
-							<p>
-								{ translate(
-									'Check the address and try again. If your site is down, our team can take a look and help you migrate it once it’s back.'
-								) }
-							</p>
-							<div className="site-migration-identify__actions">
-								<Step.PrimaryButton onClick={ () => refetch() }>
-									{ translate( 'Try again' ) }
-								</Step.PrimaryButton>
-							</div>
-							<Step.LinkButton onClick={ () => onSkip( sourceURL ) }>
-								{ translate( 'pick your current platform from a list' ) }
-							</Step.LinkButton>
+					<div className="site-migration-identify__status site-migration-identify__connection-issue">
+						<Notice status="warning" isDismissible={ false }>
+							<img src={ warningIcon } alt="" width={ 24 } height={ 24 } />
+							<span>{ translate( 'Couldn’t connect' ) }</span>
+						</Notice>
+						<p>
+							{ translate(
+								'Check the address and try again. If your site is down, our team can take a look and help you migrate it once it’s back.'
+							) }
+						</p>
+						<div className="site-migration-identify__actions">
+							<Step.PrimaryButton onClick={ () => refetch() }>
+								{ translate( 'Try again' ) }
+							</Step.PrimaryButton>
 						</div>
-					) : (
-						<div className="site-migration-identify__status" role="status" aria-live="polite">
-							<ProgressBar
-								className="site-migration-identify__progress-bar"
-								aria-label={ translate( 'Checking your site' ) }
-							/>
-							<p>
-								{ translate( 'We’re looking at %(site)s to see what we can move.', {
-									args: { site: hostname },
-								} ) }
-							</p>
-						</div>
-					) }
+						<Step.LinkButton onClick={ () => onSkip( sourceURL ) }>
+							{ translate( 'pick your current platform from a list' ) }
+						</Step.LinkButton>
+					</div>
 				</div>
 			) }
-			<div
-				className="import__capture-container"
-				hidden={ isReprintFlow && ( isScanning || !! shownIssue ) }
-			>
+			<div className="import__capture-container" hidden={ isFormHidden }>
 				{ isReprintFlow && siteURL && hasError && ! isScanning && ! shownIssue && (
 					<Notice
 						status="error"
@@ -260,6 +222,7 @@ export const Analyzer: FC< Props > = ( {
 					} }
 					onInputChange={ () => onSiteURLChange( '' ) }
 					hasError={ ! isReprintFlow && hasError }
+					isBusy={ isReprintFlow && isScanning }
 					skipInitialChecking
 					onDontHaveSiteAddressClick={ ( url ) => {
 						if ( ! isReprintFlow || ! url ) {
@@ -278,10 +241,6 @@ export const Analyzer: FC< Props > = ( {
 					nextLabelText={ isReprintFlow ? translate( 'Continue' ) : translate( 'Check my site' ) }
 				/>
 			</div>
-			<ChecklistCard
-				title={ translate( 'Why should you host with us?' ) }
-				items={ hostingDetailItems }
-			/>
 		</>
 	);
 };
@@ -297,17 +256,25 @@ const SiteMigrationIdentify: StepType< {
 				from?: string;
 				host?: string;
 				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
 		  }
 		| undefined;
-} > = function ( { navigation, flow, checkOnArrival = false } ) {
+} > = function ( { navigation, flow, stepName, checkOnArrival = false } ) {
 	const translate = useTranslate();
+	const locale = useLocale();
 	const isReprintFlow = config.isEnabled( 'migration/reprint-flow' );
 	const { createScreenshots } = useSitePreviewMShotImageHandler();
 
 	const handleSubmit = useCallback(
 		async (
 			action: SiteMigrationIdentifyAction,
-			data?: { platform: string; from: string; host?: string; isWpcom?: boolean }
+			data?: {
+				platform: string;
+				from: string;
+				host?: string;
+				isWpcom?: boolean;
+				staticSiteImportable?: boolean;
+			}
 		) => {
 			// If we have a URL of the source, we send requests to the mShots API to create screenshots
 			// early in the flow to avoid long loading times in the migration instructions step.
@@ -341,11 +308,30 @@ const SiteMigrationIdentify: StepType< {
 	}, [] );
 
 	const isChecking = isReprintFlow && ! isVisible;
-	const goBack = isChecking || connectionIssue ? () => setSiteURL( '' ) : navigation?.goBack;
-	let title = isChecking ? translate( 'Checking your site' ) : translate( "Let's find your site" );
-	let subTitle = isChecking
-		? undefined
-		: translate( 'Enter your current site address below to get started.' );
+	const contentRef = useRef< HTMLDivElement >( null );
+	const [ isReturningToAddress, setIsReturningToAddress ] = useState( false );
+	const changeAddress =
+		isChecking || connectionIssue
+			? () => {
+					setSiteURL( '' );
+					setIsReturningToAddress( true );
+				}
+			: undefined;
+
+	// Change address unmounts itself, so focus would drop to the page. Once the field is
+	// editable again, it takes the focus instead.
+	useEffect( () => {
+		if ( ! isReturningToAddress ) {
+			return;
+		}
+		const input = contentRef.current?.querySelector< HTMLInputElement >( 'input[type="text"]' );
+		if ( input && ! input.readOnly ) {
+			input.focus();
+			setIsReturningToAddress( false );
+		}
+	}, [ isReturningToAddress, siteURL, isVisible, connectionIssue ] );
+	let title = translate( "Let's find your site" );
+	let subTitle = translate( 'Enter your current site address below to get started.' );
 	if ( connectionIssue === 'unreachable' ) {
 		title = translate( 'We couldn’t reach your site' );
 		subTitle = translate(
@@ -355,12 +341,16 @@ const SiteMigrationIdentify: StepType< {
 
 	const stepContent = (
 		<Analyzer
-			onComplete={ ( { platform, url, platform_data }, hostingProviderSlug ) =>
+			onComplete={ (
+				{ platform, url, platform_data, static_site_importable },
+				hostingProviderSlug
+			) =>
 				handleSubmit( 'continue', {
 					platform,
 					from: url,
 					host: hostingProviderSlug,
 					...( isReprintFlow && platform_data?.is_wpcom ? { isWpcom: true } : {} ),
+					...( static_site_importable ? { staticSiteImportable: true } : {} ),
 				} ).catch( () => setSiteURL( '' ) )
 			}
 			hideImporterListLink={ urlQueryParams.get( 'hide_importer_link' ) === 'true' }
@@ -387,18 +377,29 @@ const SiteMigrationIdentify: StepType< {
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--site-migration-identify', {
 					'site-migration-identify--reprint': isReprintFlow,
-					'site-migration-identify--checking': isChecking,
 					'site-migration-identify--connection-issue': !! connectionIssue,
 				} ) }
-				columnWidth={ isChecking || connectionIssue ? 6 : 4 }
+				columnWidth={ 4 }
 				topBar={
-					<Step.TopBar leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null } />
-				}
-				heading={
-					isChecking || isVisible ? <Step.Heading text={ title } subText={ subTitle } /> : undefined
+					<Step.TopBar
+						logoHref={ localizeUrl( 'https://wordpress.com/', locale ) }
+						onLogoClick={ () =>
+							recordTracksEvent( 'calypso_signup_logo_click', { flow, step: stepName } )
+						}
+					/>
 				}
 			>
-				{ stepContent }
+				<div className="account-template" ref={ contentRef }>
+					{ ( isReprintFlow || isVisible ) && <Step.Heading text={ title } subText={ subTitle } /> }
+					{ stepContent }
+					{ changeAddress && (
+						<div className="account-template__secondary-actions">
+							<Step.LinkButton onClick={ changeAddress }>
+								{ translate( 'Change address' ) }
+							</Step.LinkButton>
+						</div>
+					) }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

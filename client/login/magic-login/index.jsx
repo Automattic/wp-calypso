@@ -41,6 +41,7 @@ import getMagicLoginRequestEmailError from 'calypso/state/selectors/get-magic-lo
 import isMagicLoginEmailRequested from 'calypso/state/selectors/is-magic-login-email-requested';
 import isWooJPCFlow from 'calypso/state/selectors/is-woo-jpc-flow';
 import { withEnhancers } from 'calypso/state/utils';
+import { getConnectionFlowFromRedirectTo } from '../connection-flow';
 import LoginContextProvider from '../login-context';
 import GravPoweredMagicLogin from './gravatar';
 import MainContentWooCoreProfiler from './main-content-woo-core-profiler';
@@ -275,7 +276,6 @@ export class MagicLogin extends Component {
 			isWooJPC,
 			isJetpackLogin,
 			isUnifiedConnectionFlow,
-			isFromJetpackConnector,
 			connectorPlugins,
 		} = this.props;
 		const { usernameOrEmail } = this.state;
@@ -337,7 +337,6 @@ export class MagicLogin extends Component {
 		return (
 			<OneLoginLayout
 				isJetpack={ isJetpackLogin }
-				isFromJetpackConnector={ isFromJetpackConnector }
 				isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
 				connectorPlugins={ connectorPlugins }
 				linkLogoToHome
@@ -389,23 +388,6 @@ const MagicLoginWithContext = ( props ) => {
 			<MagicLogin { ...props } translate={ translate } />
 		</LoginContextProvider>
 	);
-};
-
-export const getConnectionFlowFromRedirectTo = ( redirectToOriginal, currentQuery = {} ) => {
-	const redirectToParams = new URLSearchParams( redirectToOriginal?.split( '?' )[ 1 ] );
-	const from = redirectToParams.get( 'from' ) || currentQuery.from || null;
-	const isFromJetpackConnector = from === 'jetpack-connector';
-	const rawPlugins = isFromJetpackConnector
-		? redirectToParams.get( 'plugins' ) || currentQuery.plugins || ''
-		: '';
-	return {
-		isUnifiedConnectionFlow: [ 'jetpack-onboarding', 'jetpack-connector' ].includes( from ),
-		isFromJetpackConnector,
-		connectorPlugins: rawPlugins
-			.split( ',' )
-			.map( ( s ) => s.trim() )
-			.filter( Boolean ),
-	};
 };
 
 const mapState = ( state ) => {

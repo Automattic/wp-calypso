@@ -220,6 +220,7 @@ interface AgentUIProps {
 	isStreaming?: boolean; // Whether the latest reply is still streaming, when that differs from `isProcessing` (the default)
 	isReplying?: boolean; // Whether reply text is streaming in. When set, it drives the thinking indicator
 	error?: string | null;
+	errorNotice?: NoticeConfig; // An error shown in the message list, alongside or instead of `error`: a notice, or with `title` a message card whose link is `action.href`; its text is read out as written when it appears or changes (not by `EmbeddedAgentUI`)
 	onSubmit: ( message: string ) => void;
 	onStop?: () => void;
 
@@ -499,6 +500,7 @@ interface Message {
 	icon?: string;
 	actions?: MessageAction[];
 	disabled?: boolean;
+	startsTurn?: boolean; // Starts a turn though no user message shows before it, such as a reply to a click in a message
 }
 
 interface MessageAction {
@@ -521,6 +523,8 @@ interface Suggestion {
 
 interface NoticeConfig {
 	icon?: React.ReactNode | null | false;
+	// As `errorNotice`, shows a message card with this title, `message` below it and `action.href` as its link.
+	title?: string;
 	message: string;
 	action?:
 		| { label: string; onClick: () => void; href?: never }
@@ -551,8 +555,9 @@ import '@automattic/agenttic-ui/index.css';
 
 All styles are scoped to `.agenttic` class to prevent conflicts.
 
-Add `data-agenttic-isolated` to an embedded UI wrapper to skip the base message
-typography reset for its descendants. Element-specific Markdown styles still apply.
+Add `data-agenttic-isolated` to the wrapper of an embedded UI that styles itself, such as
+interactive UI, to skip the base reset and the message typography for its descendants.
+Element-specific Markdown styles still apply.
 
 ### Customization
 

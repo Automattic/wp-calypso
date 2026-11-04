@@ -48,7 +48,7 @@ import type { AgencyProduct } from '@automattic/api-core';
 
 const PRESSABLE_DEMO_URL = 'https://pressable.com/request-demo';
 
-interface Props {
+interface PressableSectionProps {
 	/** The Pressable hosting plans in the catalog. */
 	products: AgencyProduct[];
 	/** The plan the agency bought for itself, if any. */
@@ -131,7 +131,7 @@ export default function PressableSection( {
 	term,
 	isReferralMode,
 	onAddToCart,
-}: Props ) {
+}: PressableSectionProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { openContactForm } = useContactSupport();
 

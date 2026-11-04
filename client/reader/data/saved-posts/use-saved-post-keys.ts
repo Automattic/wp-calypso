@@ -1,7 +1,11 @@
-import { getReadSavedKeyId, readSavedKeysQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import {
+	addMissingReadSavedKeys,
+	getReadSavedKeyId,
+	readSavedKeysQuery,
+} from '@automattic/api-queries';
+import { useQuery, type QueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
-import { savedKeyForPost } from './saved-key-for-post';
+import { savedKeysForPost } from './saved-key-for-post';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
 import type { Post } from 'calypso/reader/data/post';
 
@@ -19,7 +23,10 @@ export function useSavedPostKeys( options?: SavedPostKeysQueryOptions ) {
 // Every card reads the same keys response, so build its lookup once and share it.
 const savedKeyIdsByResponse = new WeakMap< ReadSavedKeysResponse, Set< string > >();
 
-function getSavedKeyIds( data: ReadSavedKeysResponse ) {
+/**
+ * The `getReadSavedKeyId()` of every key in the response.
+ */
+export function getSavedKeyIds( data: ReadSavedKeysResponse ) {
 	let ids = savedKeyIdsByResponse.get( data );
 	if ( ! ids ) {
 		ids = new Set( data.keys.map( getReadSavedKeyId ) );
@@ -37,12 +44,18 @@ export function useIsPostSaved(
 	post: Post | null | undefined,
 	options?: SavedPostKeysQueryOptions
 ): boolean | undefined {
-	const key = post ? savedKeyForPost( post ) : null;
-	const keyId = key ? getReadSavedKeyId( key ) : null;
+	const [ keyId = null, otherKeyId = null ] = post
+		? savedKeysForPost( post ).map( getReadSavedKeyId )
+		: [];
 	// Selecting a boolean means a card only re-renders when its own post flips.
 	const select = useCallback(
-		( data: ReadSavedKeysResponse ) => keyId !== null && getSavedKeyIds( data ).has( keyId ),
-		[ keyId ]
+		( data: ReadSavedKeysResponse ) => {
+			const ids = getSavedKeyIds( data );
+			return (
+				( keyId !== null && ids.has( keyId ) ) || ( otherKeyId !== null && ids.has( otherKeyId ) )
+			);
+		},
+		[ keyId, otherKeyId ]
 	);
 	const { data: isSaved } = useQuery( {
 		...readSavedKeysQuery(),
@@ -52,4 +65,28 @@ export function useIsPostSaved(
 	} );
 
 	return keyId === null ? false : isSaved;
+}
+
+/**
+ * Marks every post in a page of the Saved stream as saved. A post saved
+ * elsewhere, such as in the browser extension, can reach the stream before the
+ * keys query refetches, and its URL can differ from the one the keys list.
+ */
+export function addSavedStreamPostsToKeys(
+	queryClient: QueryClient,
+	posts: Array< Post | null | undefined >
+) {
+	addMissingReadSavedKeys(
+		queryClient,
+		posts.flatMap( ( post ) =>
+			post
+				? [
+						{
+							keys: savedKeysForPost( post ),
+							date_saved: typeof post.date_saved === 'string' ? post.date_saved : '',
+						},
+					]
+				: []
+		)
+	);
 }

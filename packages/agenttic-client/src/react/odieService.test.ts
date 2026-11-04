@@ -63,4 +63,28 @@ describe( 'loadAllMessagesFromServer', () => {
 
 		expect( result.pendingClientTools ).toEqual( pending );
 	} );
+
+	it( 'gives an ID that rows on two pages share to the newest row only', async () => {
+		const retried = ( message_id: number ) => ( {
+			message_id,
+			role: 'user' as const,
+			content: 'Hi',
+			created_at: '2026-10-01 10:00:00',
+			a2a_message_id: 'a2a-1',
+		} );
+		vi.stubGlobal(
+			'fetch',
+			vi.fn( async ( url: string ) =>
+				respond(
+					new URL( url ).searchParams.get( 'page_number' ) === '1'
+						? page( 1, { messages: [ retried( 60 ) ] } )
+						: page( 2, { messages: [ retried( 10 ) ] } )
+				)
+			)
+		);
+
+		const result = await loadAllMessagesFromServer( 'session-1', { botId: 'wpcom-agent' } );
+
+		expect( result.messages.map( ( message ) => message.messageId ) ).toEqual( [ 'a2a-1', '10' ] );
+	} );
 } );

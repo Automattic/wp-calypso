@@ -14,7 +14,7 @@ export const MAX_FEATURED_CARDS = 3;
 
 /**
  * Return families present in the active plugin list, ordered by priority
- * (A4A → Woo → Jetpack → Other). Each family appears at most once.
+ * (Migration → A4A → Woo → Jetpack → Other). Each family appears at most once.
  */
 export function getPresentFamilies( pluginSlugs: readonly string[] ): Family[] {
 	const present = new Set< Family >();
@@ -105,8 +105,9 @@ function getFamilyCardKey( family: Family, pluginSlugs: readonly string[] ): Fea
 
 /**
  * Pick the cards to feature in the connect-account features section,
- * capped at `max` cards (default `MAX_FEATURED_CARDS` so the function
- * stays aligned with the layout's card cap).
+ * capped at `max` cards plus the migration hero (default
+ * `MAX_FEATURED_CARDS` so the function stays aligned with the layout's
+ * card cap).
  *
  * Decision order:
  *  1. Take the highest-priority families with known copy (`a4a`, `woo`,
@@ -129,7 +130,9 @@ export function getFeatureSelection(
 		return { cardKeys: [ 'other' ] };
 	}
 
-	const featured = knownFamilies.slice( 0, max );
+	// The migration hero leaves room for all three supporting families.
+	const cap = knownFamilies.includes( 'migration' ) ? max + 1 : max;
+	const featured = knownFamilies.slice( 0, cap );
 	const cardKeys = featured.map( ( family ) => getFamilyCardKey( family, pluginSlugs ) );
 
 	return { cardKeys };

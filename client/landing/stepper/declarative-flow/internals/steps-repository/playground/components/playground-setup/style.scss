@@ -1,4 +1,4 @@
-@import "../../style";
+@import '../../style';
 
 .step-route.importer-playground {
 	display: flex;
@@ -8,4 +8,11 @@
 	.playground__onboarding-iframe {
 		display: none;
 	}
+}
+
+.playground-setup__actions {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	margin-top: 24px;
 }

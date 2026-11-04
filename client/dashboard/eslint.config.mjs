@@ -1,4 +1,6 @@
+import { fixupRule } from '@eslint/compat';
 import { defineConfig } from 'eslint/config';
+import reactPlugin from 'eslint-plugin-react';
 import parent from '../eslint.config.mjs';
 
 export default defineConfig( [
@@ -166,11 +168,6 @@ export default defineConfig( [
 								'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
 						},
 						{
-							name: '@automattic/api-queries',
-							importNames: [ 'sitesQuery', 'dashboardSiteListQuery', 'dashboardSiteFiltersQuery' ],
-							message: 'Use local queries exported from either context or useAppContext instead.',
-						},
-						{
 							name: '@wordpress/element',
 							importNames: [
 								'useState',
@@ -220,6 +217,26 @@ export default defineConfig( [
 					message:
 						'Setting `meta.snackbar` by hand drops the mutation’s `meta.statId`. Use `withSnackbar()` from app/snackbars/with-snackbar instead.',
 				},
+			],
+		},
+	},
+	{
+		name: 'calypso/dashboard/tsx-only-for-jsx',
+		files: [ '**/*.ts', '**/*.tsx' ],
+		// Code blocks in Markdown docs are linted as virtual `.tsx` files.
+		ignores: [ '**/*.md/**' ],
+		plugins: {
+			// The upstream rule still calls `context.getFilename()`, which ESLint 10 removed.
+			'dashboard-react': {
+				rules: {
+					'jsx-filename-extension': fixupRule( reactPlugin.rules[ 'jsx-filename-extension' ] ),
+				},
+			},
+		},
+		rules: {
+			'dashboard-react/jsx-filename-extension': [
+				'error',
+				{ extensions: [ '.tsx' ], allow: 'as-needed' },
 			],
 		},
 	},

@@ -1,5 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { siteSettingsMutation } from '@automattic/api-queries';
+import { domainsQuery, siteSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
@@ -121,9 +121,9 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
-	const { queries, supports } = useAppContext();
+	const { supports } = useAppContext();
 	const { data: domains = [] } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
@@ -226,7 +226,7 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 							{ formData.visibility === 'public' &&
 								isPrimaryDomainStaging &&
 								( site.is_wpcom_staging_site ? (
-									<Notice variant="warning" density="medium">
+									<Notice variant="warning">
 										{ __(
 											'Staging sites are intended for testing purposes and will not be indexed by search engines.'
 										) }
@@ -234,7 +234,6 @@ export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSet
 								) : (
 									<Notice
 										variant="warning"
-										density="medium"
 										actions={
 											hasNonWpcomDomain ? (
 												manageDomainsButton

@@ -1,6 +1,7 @@
-import { EmailBox, isWpError } from '@automattic/api-core';
+import { DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
+	domainsQuery,
 	mailboxAccountsQuery,
 	productsQuery,
 	queryClient,
@@ -9,6 +10,7 @@ import {
 	siteProductsQuery,
 	userMailboxesQuery,
 } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { createLazyRoute, createRoute, Outlet } from '@tanstack/react-router';
 import { __, _n } from '@wordpress/i18n';
 import { IntervalLength, MailboxProvider, TitanPlanTier } from '../../emails/types';
@@ -38,10 +40,10 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -52,6 +54,25 @@ export const emailsIndexRoute = createRoute( {
 		} )
 	)
 );
+
+const emailRedirectRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'email',
+	beforeLoad: ( { location } ) => {
+		throw dashboardRedirect( {
+			to: emailsRoute.fullPath,
+			search: true,
+			hash: location.hash,
+			replace: true,
+		} );
+	},
+} );
+
+const isMailboxProvider = ( value: unknown ): value is MailboxProvider =>
+	value === MailboxProvider.Titan || value === MailboxProvider.Google;
+
+const isIntervalLength = ( value: unknown ): value is IntervalLength =>
+	value === IntervalLength.Monthly || value === IntervalLength.Annually;
 
 const redirectIfInvalidDomain = async ( domainName: string ) => {
 	try {
@@ -87,12 +108,59 @@ export const chooseDomainRoute = createRoute( {
 	} ),
 	getParentRoute: () => emailsRoute,
 	path: 'choose-domain',
-	loader: async ( { context } ) => {
-		queryClient.prefetchQuery( context.config.queries.domainsQuery() );
+	// Set when the user picked a plan before picking a domain.
+	validateSearch: (
+		search
+	): { provider?: MailboxProvider; interval?: IntervalLength; tier?: TitanPlanTier } => {
+		if ( ! isMailboxProvider( search.provider ) || ! isIntervalLength( search.interval ) ) {
+			return {};
+		}
+		return {
+			provider: search.provider,
+			interval: search.interval,
+			tier: isTitanPlanTier( search.tier ) ? search.tier : undefined,
+		};
+	},
+	loader: async () => {
+		const domains = await queryClient.ensureQueryData( domainsQuery() );
+		const hasEmailableDomains = domains.some(
+			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+		);
+
+		// The emails page explains how to get a domain.
+		if ( ! hasEmailableDomains ) {
+			throw dashboardRedirect( { to: emailsRoute.fullPath } );
+		}
 	},
 } ).lazy( () =>
 	import( '../../emails/choose-domain' ).then( ( d ) =>
 		createLazyRoute( 'choose-domain' )( {
+			component: d.default,
+		} )
+	)
+);
+
+export const chooseEmailPlanRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Choose an email solution' ),
+			},
+		],
+	} ),
+	getParentRoute: () => emailsRoute,
+	path: 'choose-email-solution',
+	beforeLoad: () => {
+		if ( ! isEnabled( 'emails/titan-tiers' ) ) {
+			throw dashboardRedirect( { to: chooseDomainRoute.fullPath } );
+		}
+	},
+	loader: async () => {
+		await queryClient.ensureQueryData( productsQuery() );
+	},
+} ).lazy( () =>
+	import( '../../emails/choose-email-plan' ).then( ( d ) =>
+		createLazyRoute( 'choose-email-plan' )( {
 			component: d.default,
 		} )
 	)
@@ -332,16 +400,31 @@ export const mailboxesReadyRoute = createRoute( {
 	)
 );
 
+// Redirects /emails/:domain to the mailboxes list filtered by that domain.
+const emailsDomainRedirectRoute = createRoute( {
+	getParentRoute: () => emailsRoute,
+	path: '$domain',
+	beforeLoad: ( { params: { domain } } ) => {
+		throw dashboardRedirect( {
+			to: emailsRoute.fullPath,
+			search: { domainName: domain },
+		} );
+	},
+} );
+
 export const createEmailsRoutes = () => {
 	return [
+		emailRedirectRoute,
 		emailsRoute.addChildren( [
 			emailsIndexRoute,
 			chooseDomainRoute,
+			chooseEmailPlanRoute,
 			chooseEmailSolutionRoute,
 			addMailboxRoute,
 			setUpMailboxRoute,
 			addEmailForwarderRoute,
 			mailboxesReadyRoute,
+			emailsDomainRedirectRoute,
 		] ),
 	];
 };

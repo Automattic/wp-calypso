@@ -14,7 +14,7 @@ import nock from 'nock';
 import { Suspense } from 'react';
 import { EmailSettings } from '..';
 import Snackbars from '../../../../../app/snackbars';
-import { getFieldLabel } from '../../../helpers/translations';
+import { getFieldLabel } from '../../../utils/translations';
 
 const Wrapper = ( { children }: { children: React.ReactNode } ) => {
 	const queryClient = new QueryClient( {

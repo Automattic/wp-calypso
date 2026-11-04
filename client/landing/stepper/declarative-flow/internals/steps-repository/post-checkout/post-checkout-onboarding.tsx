@@ -7,7 +7,7 @@ import {
 	isPremium,
 } from '@automattic/calypso-products';
 import { SiteIntent } from '@automattic/data-stores/src/onboard';
-import { Step } from '@automattic/onboarding';
+import { ONBOARDING_FLOW, Step } from '@automattic/onboarding';
 import { useQuery } from '@tanstack/react-query';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { useI18n } from '@wordpress/react-i18n';
@@ -62,7 +62,10 @@ const PostCheckoutOnboarding: StepType< {
 
 	const showBigSkyChoice =
 		!! site?.plan &&
-		( isPersonal( site.plan ) || isPremium( site.plan ) || isBusiness( site.plan ) ) &&
+		( isPersonal( site.plan ) ||
+			isPremium( site.plan ) ||
+			isBusiness( site.plan ) ||
+			isEcommerce( site.plan ) ) &&
 		site.plan.features?.active?.includes( FEATURE_BIG_SKY );
 
 	const intent = useSelect(
@@ -191,7 +194,6 @@ const PostCheckoutOnboarding: StepType< {
 				siteSlug,
 				hasExternalTheme,
 				hasPluginByGoal,
-				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
 			};
 
 			if ( ! isJetpackOrAtomic ) {
@@ -210,9 +212,25 @@ const PostCheckoutOnboarding: StepType< {
 			// via the transfer initiated above).
 			if ( isWooHostingSolutions ) {
 				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
+			} else if ( isCommercePlan && showBigSkyChoice && flow === ONBOARDING_FLOW ) {
+				// A Commerce site headed for the onboarding setup chooser waits too, so neither
+				// builder opens on a half-made store. A store still not ready after the wait skips
+				// the chooser instead of failing a paid checkout.
+				try {
+					await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
+				} catch {
+					recordTracksEvent( 'calypso_onboarding_post_checkout_setup_error', {
+						flow,
+						error_woocommerce_timeout: true,
+					} );
+					return providedDependencies;
+				}
 			}
 
-			return providedDependencies;
+			return {
+				...providedDependencies,
+				...( showBigSkyChoice ? { postCheckoutBigSky: true } : {} ),
+			};
 		} );
 
 		submit?.( {

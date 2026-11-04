@@ -13,12 +13,14 @@ interface PendingPrimaryDomainNoticeProps {
 	onComplete?: () => void;
 }
 
-export default function PendingPrimaryDomainNotice( {
-	domainName,
-	onComplete,
-}: PendingPrimaryDomainNoticeProps ) {
+/**
+ * Polls a domain while the backend makes it the site's primary address, and
+ * shows a snackbar once it is done.
+ */
+export function usePendingPrimaryDomain( domainName?: string, onComplete?: () => void ) {
 	const { data: polledDomain } = useQuery( {
-		...domainQuery( domainName ),
+		...domainQuery( domainName ?? '' ),
+		enabled: !! domainName,
 		refetchInterval: ( query ) => {
 			const domain = query.state.data;
 			return domain && isPendingPrimaryDomain( domain ) ? 5000 : false;
@@ -26,7 +28,7 @@ export default function PendingPrimaryDomainNotice( {
 		meta: { persist: false },
 	} );
 
-	const isPending = ! polledDomain || isPendingPrimaryDomain( polledDomain );
+	const isPending = !! domainName && ( ! polledDomain || isPendingPrimaryDomain( polledDomain ) );
 
 	// Track whether the domain was ever actually pending, so we don't fire
 	// a spurious snackbar when rendered for a non-pending domain.
@@ -35,12 +37,12 @@ export default function PendingPrimaryDomainNotice( {
 		wasPendingRef.current = true;
 	}
 
-	// Show completion snackbar when primary domain setup finishes.
 	const { createSuccessNotice } = useDispatch( noticesStore );
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;
 	useEffect( () => {
-		if ( ! isPending && wasPendingRef.current ) {
+		if ( domainName && ! isPending && wasPendingRef.current ) {
+			wasPendingRef.current = false;
 			createSuccessNotice(
 				sprintf(
 					/* translators: %s is the domain name */
@@ -52,6 +54,15 @@ export default function PendingPrimaryDomainNotice( {
 			onCompleteRef.current?.();
 		}
 	}, [ isPending, createSuccessNotice, domainName ] );
+
+	return { isPending, polledDomain };
+}
+
+export default function PendingPrimaryDomainNotice( {
+	domainName,
+	onComplete,
+}: PendingPrimaryDomainNoticeProps ) {
+	const { isPending, polledDomain } = usePendingPrimaryDomain( domainName, onComplete );
 
 	if ( ! isPending || ! polledDomain ) {
 		return null;

@@ -7,7 +7,7 @@ import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ONBOARD_STORE } from '../../../../stores';
 import { STEPS } from '../../../internals/steps';
 import { ProcessingResult } from '../../../internals/steps-repository/processing-step/constants';
-import { runFlowNavigation } from '../../../test/helpers';
+import { getFlowLocation, runFlowNavigation } from '../../../test/helpers';
 import educationFlow, { STUDENT_PLAN_SLUG } from '../education';
 import type { StepperStep } from '../../../internals/types';
 import type { OnboardActions } from '@automattic/data-stores';
@@ -222,6 +222,23 @@ describe( 'Education Flow', () => {
 			step: STEPS.ERROR,
 			query: null,
 		} );
+		expect( getFlowLocation().state ).toEqual( { errorReason: 'processing_failed' } );
+	} );
+
+	it( 'names the cause when processing succeeds without a site', () => {
+		const destination = runNavigation( {
+			from: STEPS.PROCESSING,
+			dependencies: {
+				processingResult: ProcessingResult.SUCCESS,
+				siteId: 123,
+			},
+		} );
+
+		expect( destination ).toMatchDestination( {
+			step: STEPS.ERROR,
+			query: null,
+		} );
+		expect( getFlowLocation().state ).toEqual( { errorReason: 'processing_missing_site' } );
 	} );
 
 	it( 'personalizes the domain search copy and hides the free-domain promo', () => {

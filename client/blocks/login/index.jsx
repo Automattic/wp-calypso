@@ -377,12 +377,17 @@ class Login extends Component {
 		);
 	}
 
+	isTwoFactorStep() {
+		const { twoFactorAuthType, twoFactorEnabled } = this.props;
+
+		return Boolean( twoFactorEnabled && twoFactorAuthType );
+	}
+
 	renderContent() {
 		const {
 			domain,
 			isJetpack,
 			twoFactorAuthType,
-			twoFactorEnabled,
 			twoFactorNotificationSent,
 			socialConnect,
 			socialService,
@@ -433,7 +438,7 @@ class Login extends Component {
 			);
 		}
 
-		if ( twoFactorEnabled && twoFactorAuthType ) {
+		if ( this.isTwoFactorStep() ) {
 			return (
 				<Fragment>
 					<AsyncLoad
@@ -587,8 +592,9 @@ class Login extends Component {
 				     client gets this. */ }
 				{ isGravPoweredClient && <SignupExistingAccountNotice /> }
 
-				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx */ }
-				{ ! isWCCOM && <ErrorNotice locale={ locale } /> }
+				{ /* For Woo, we render the ErrrorNotice component in login-form.jsx, which the
+				     two-factor step doesn't render. */ }
+				{ ( ! isWCCOM || this.isTwoFactorStep() ) && <ErrorNotice locale={ locale } /> }
 
 				{ this.renderNotice() }
 

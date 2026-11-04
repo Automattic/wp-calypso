@@ -84,7 +84,6 @@ import {
 	ensureCompatibleIntervalType,
 } from 'calypso/my-sites/plans-features-main/components/utils/utils';
 import { useFreeTrialPlanSlugs } from 'calypso/my-sites/plans-features-main/hooks/use-free-trial-plan-slugs';
-import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlanTypeDestinationCallback from 'calypso/my-sites/plans-features-main/hooks/use-plan-type-destination-callback';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getCurrentUserName } from 'calypso/state/current-user/selectors';
@@ -112,6 +111,13 @@ import usePlanIntentFromSiteMeta from './hooks/use-plan-intent-from-site-meta';
 import { useRenewalPricingExperiment } from './hooks/use-renewal-price-experiment';
 import useSelectedFeature from './hooks/use-selected-feature';
 import useGetFreeSubdomainSuggestion from './hooks/use-suggested-free-domain-from-paid-domain';
+import {
+	getSitePlanNameWithTerm,
+	getSitePlanRenewalPriceWithTerm,
+	isScheduledOnlyPlanChange,
+	isScheduledTermChangeEnabled,
+	isShorterTermPlanChange,
+} from './scheduled-term-change';
 import type { CheckoutAttribution } from './hooks/use-generate-action-callback';
 import type { PlanChangeLostFeature } from '@automattic/api-core';
 import type {
@@ -213,6 +219,11 @@ export interface PlansFeaturesMainProps {
 	showPlanTypeSelectorDropdown?: boolean;
 	onPlanIntervalUpdate?: ( path: string ) => void;
 	onReady?: () => void;
+	/**
+	 * Called with the resolved plans intent (props, site metadata, upsell and the escape hatch
+	 * applied) once it is known, and again whenever it changes.
+	 */
+	onIntentResolved?: ( intent: PlansIntent ) => void;
 
 	/*
 	 * Shows the free plan as a plain text anchor instead of a plan card.
@@ -282,6 +293,7 @@ const PlansFeaturesMain = ( {
 	onPlanIntervalUpdate,
 	selectedThemeType,
 	onReady,
+	onIntentResolved,
 }: PlansFeaturesMainProps ) => {
 	const [ isModalOpen, setIsModalOpen ] = useState( false );
 	const [ pendingDowngradePlanSlug, setPendingDowngradePlanSlug ] = useState< PlanSlug | null >(
@@ -324,7 +336,8 @@ const PlansFeaturesMain = ( {
 	const sitePlansData = useSelector( ( state: IAppState ) =>
 		siteId ? getPlansBySiteId( state, siteId )?.data : null
 	);
-	const isPlanExpired = !! sitePlansData?.find( ( p ) => p.currentPlan )?.expired;
+	const currentSitePlan = sitePlansData?.find( ( p ) => p.currentPlan );
+	const isPlanExpired = !! currentSitePlan?.expired;
 
 	// Refund-window instant downgrade: when the server reports the plan can be
 	// downgraded instantly, the downgrade is performed via the cancel endpoint
@@ -350,12 +363,29 @@ const PlansFeaturesMain = ( {
 	} );
 	const isInstantDowngradeAvailable =
 		!! currentPurchase && currentPurchase.is_instant_downgrade_available;
+	const getScheduledOnlySitePlan = ( planSlug: PlanSlug | null ) => {
+		if ( ! isScheduledTermChangeEnabled() || ! planSlug || isPlanExpired ) {
+			return null;
+		}
+		const sitePlan = sitePlansData?.find( ( p ) => p.productSlug === planSlug );
+		return isScheduledOnlyPlanChange( sitePlan ) ? sitePlan : null;
+	};
+	const pendingDowngradeSitePlan = sitePlansData?.find(
+		( p ) => p.productSlug === pendingDowngradePlanSlug
+	);
+	const isPendingDowngradeScheduledOnly = !! getScheduledOnlySitePlan( pendingDowngradePlanSlug );
+	const isPendingDowngradeTermChange =
+		isScheduledTermChangeEnabled() &&
+		isShorterTermPlanChange( currentSitePlan, pendingDowngradeSitePlan );
 	// Three downgrade modes:
 	//   'instant'  — server allows it now: cancel+refund via the cancel endpoint
 	//   'checkout' — expired plan: route to checkout to purchase the new plan
 	//   'delayed'  — active plan, no instant downgrade: schedule downgrade at renewal
+	// Some targets, such as a shorter term, can only ever be scheduled for renewal.
 	let downgradeMode: 'instant' | 'checkout' | 'delayed';
-	if ( isInstantDowngradeAvailable ) {
+	if ( isPendingDowngradeScheduledOnly ) {
+		downgradeMode = 'delayed';
+	} else if ( isInstantDowngradeAvailable ) {
 		downgradeMode = 'instant';
 	} else if ( ! isPlanExpired ) {
 		downgradeMode = 'delayed';
@@ -384,6 +414,28 @@ const PlansFeaturesMain = ( {
 	const downgradeRenewalDate = currentPurchase?.renew_date
 		? moment( currentPurchase.renew_date ).format( 'LL' )
 		: undefined;
+
+	// For a term change, name the terms (two terms of the same plan share a
+	// product name) and what the renewal will charge.
+	const downgradeRenewalPriceText =
+		isPendingDowngradeTermChange && pendingDowngradeSitePlan
+			? getSitePlanRenewalPriceWithTerm(
+					pendingDowngradeSitePlan,
+					( amount, currencyCode ) =>
+						formatCurrency( amount, currencyCode, { isSmallestUnit: true, stripZeros: true } ),
+					translate
+				)
+			: null;
+	const downgradeCurrentPlanName = String(
+		isPendingDowngradeTermChange && currentSitePlan
+			? getSitePlanNameWithTerm( currentSitePlan, translate )
+			: ( currentSitePlan?.productName ?? '' )
+	);
+	const downgradeTargetPlanName = String(
+		isPendingDowngradeTermChange && pendingDowngradeSitePlan
+			? getSitePlanNameWithTerm( pendingDowngradeSitePlan, translate )
+			: ( pendingDowngradeSitePlan?.productName ?? '' )
+	);
 
 	// Ignore dismiss requests (X/Escape/overlay) while an instant downgrade is in
 	// flight so the loader stays visible until the redirect.
@@ -628,10 +680,12 @@ const PlansFeaturesMain = ( {
 		displayedIntervals,
 		flowName,
 		paidDomainName,
+		sitePlans: sitePlansData,
 	} );
 
 	// Ensure intervalType is compatible with the current plan's term
-	// Users can only select interval types that are equal to or longer than their current plan's interval
+	// Users can only select interval types that are equal to or longer than their current plan's interval,
+	// or a shorter one the interval filter kept because its plans can be scheduled for renewal.
 	// Only apply this fix in the plan-upgrade flow to avoid breaking other flows
 	const currentPlanTerm =
 		isStepperUpgradeFlow &&
@@ -641,8 +695,11 @@ const PlansFeaturesMain = ( {
 			? getPlan( sitePlanSlug )?.term
 			: null;
 	const compatibleIntervalType = useMemo(
-		() => ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
-		[ currentPlanTerm, intervalType ]
+		() =>
+			isScheduledTermChangeEnabled() && filteredDisplayedIntervals.includes( intervalType )
+				? intervalType
+				: ensureCompatibleIntervalType( currentPlanTerm, intervalType ),
+		[ currentPlanTerm, intervalType, filteredDisplayedIntervals ]
 	);
 
 	const term = usePlanBillingPeriod( {
@@ -691,6 +748,12 @@ const PlansFeaturesMain = ( {
 		defaultWpcomPlansIntent,
 	] );
 
+	useEffect( () => {
+		if ( intent ) {
+			onIntentResolved?.( intent );
+		}
+	}, [ intent, onIntentResolved ] );
+
 	const isDisplayingPlansNeededForFeature =
 		!! selectedFeature &&
 		// For plans-upgrade intent, skip isValidFeatureKey check since we want to check against "included" features
@@ -716,13 +779,6 @@ const PlansFeaturesMain = ( {
 	const showSimplifiedFeatures = ! ( intent && [ 'plans-newsletter' ].includes( intent ) );
 
 	const {
-		showDifferentiatorHeader,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
-		isExperimentVariant,
-	} = usePlanDifferentiatorsExperiment( { isInSignup, siteId } );
-	const {
 		isLoading: isPlansGridRedesignExperimentLoading,
 		showDifferentiatorHeader: showPlansGridRedesignDifferentiatorHeader,
 		showEnterpriseBottomCard,
@@ -730,7 +786,7 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesign,
 		usePlansGridRedesignNewDescription,
-	} = usePlansGridRedesignExperiment( { flowName, intent, isInSignup, siteId } );
+	} = usePlansGridRedesignExperiment( { isInSignup, intent } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -742,7 +798,7 @@ const PlansFeaturesMain = ( {
 		if ( currentPlanPurchaseId ) {
 			try {
 				await queryClient.ensureQueryData(
-					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'treatment', planSlug )
+					purchaseCancelFeaturesQuery( currentPlanPurchaseId, 'control', planSlug )
 				);
 			} catch {
 				// Open the modal regardless; its own query will retry and show a spinner.
@@ -781,6 +837,13 @@ const PlansFeaturesMain = ( {
 			! isFreePlan( planSlug ) &&
 			sitePlansData?.find( ( p ) => p.productSlug === planSlug )?.availableForDowngrade
 		) {
+			await openDowngradeModal( planSlug );
+			return true;
+		}
+
+		// Targets the server only allows at renewal, such as a shorter term, are
+		// always scheduled, even while the current plan could be downgraded now.
+		if ( getScheduledOnlySitePlan( planSlug ) ) {
 			await openDowngradeModal( planSlug );
 			return true;
 		}
@@ -894,7 +957,8 @@ const PlansFeaturesMain = ( {
 	const isUpgradeOrDowngradeFlow =
 		intent === 'plans-upgrade' || intent === 'plans-upgrade-or-downgrade';
 	const isDelayedDowngradePending =
-		isUpgradeOrDowngradeFlow && !! currentPurchase?.is_delayed_downgrade_pending;
+		( isUpgradeOrDowngradeFlow || isScheduledTermChangeEnabled() ) &&
+		!! currentPurchase?.is_delayed_downgrade_pending;
 	const delayedDowngradeToProductSlug = isDelayedDowngradePending
 		? ( currentPurchase?.delayed_downgrade_to_product_slug ?? null )
 		: null;
@@ -965,9 +1029,22 @@ const PlansFeaturesMain = ( {
 		}
 		return {
 			...highlightLabelOverrides,
-			[ delayedDowngradeToProductSlug as PlanSlug ]: translate( 'Downgrade scheduled' ),
+			[ delayedDowngradeToProductSlug as PlanSlug ]:
+				isScheduledTermChangeEnabled() &&
+				isShorterTermPlanChange(
+					currentSitePlan,
+					sitePlansData?.find( ( p ) => p.productSlug === delayedDowngradeToProductSlug )
+				)
+					? translate( 'Change scheduled' )
+					: translate( 'Downgrade scheduled' ),
 		};
-	}, [ highlightLabelOverrides, delayedDowngradeToProductSlug, translate ] );
+	}, [
+		highlightLabelOverrides,
+		delayedDowngradeToProductSlug,
+		currentSitePlan,
+		sitePlansData,
+		translate,
+	] );
 
 	// we need all the plans that are available to pick for comparison grid (these should extend into plans-ui data store selectors)
 	const gridPlansForComparisonGrid = useGridPlansForComparisonGrid( {
@@ -990,11 +1067,7 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		reflectStorageSelectionInPlanPrices: true,
 		isInSignup,
-		useVar42NoAiFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
@@ -1022,12 +1095,8 @@ const PlansFeaturesMain = ( {
 		isDomainOnlySite,
 		term,
 		reflectStorageSelectionInPlanPrices: true,
-		useVar42NoAiFeatures,
 		usePlansGridRedesignFeatures,
-		showPricingDifferentiationFeaturePills,
-		useFocusedNewCopyTaglines,
 		usePlansGridRedesignNewDescription,
-		isExperimentVariant,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
@@ -1114,13 +1183,18 @@ const PlansFeaturesMain = ( {
 
 	let hidePlanSelector = false;
 	let enableTermSavingsPriceDisplay = true;
+	// The redesigned standard feature list is annual-only in signup. Intents that curate their
+	// own feature list keep the selector, as does Woo hosting solutions: it borrows the standard
+	// list but is a curated grid whose money-back guarantee copy depends on the monthly term.
+	const keepsPlanTypeSelector =
+		hasTailoredFeatureList( intent ) || intent === 'plans-woo-hosting-solutions';
 	// In the "purchase a plan and free domain" flow we do not want to show
 	// monthly plans because monthly plans do not come with a free domain.
 	if (
 		redirectToAddDomainFlow !== undefined ||
 		hidePlanTypeSelector ||
 		isVisualSplitEnabled ||
-		( usePlansGridRedesign && isInSignup )
+		( usePlansGridRedesignFeatures && isInSignup && ! keepsPlanTypeSelector )
 	) {
 		hidePlanSelector = true;
 	}
@@ -1368,7 +1442,7 @@ const PlansFeaturesMain = ( {
 			// The row set has to match the feature lists the comparison grid is built from, which a
 			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
 			// titles with a control list.
-			isExperimentVariant: isExperimentVariant && ! hasTailoredFeatureList( intent ),
+			isExperimentVariant: ! hasTailoredFeatureList( intent ),
 		} );
 	}
 
@@ -1379,10 +1453,7 @@ const PlansFeaturesMain = ( {
 		featureGroupMapForFeaturesGrid = getWooExpressFeaturesGroupedForFeaturesGrid();
 	} else if ( intent === 'plans-wordpress-hosting' ) {
 		featureGroupMapForFeaturesGrid = getWordPressHostingFeaturesGroupedForFeaturesGrid();
-	} else if (
-		( useVar42NoAiFeatures || usePlansGridRedesignFeatures ) &&
-		! hasTailoredFeatureList( intent )
-	) {
+	} else if ( usePlansGridRedesignFeatures && ! hasTailoredFeatureList( intent ) ) {
 		// Stacked rollout variant should render a single, ordered list (no grouping),
 		// otherwise features get scattered across groups causing gaps and can be filtered out.
 		// Skipped for intents that curate their own feature list, whose grouping is theirs too.
@@ -1510,16 +1581,17 @@ const PlansFeaturesMain = ( {
 				/>
 				<DowngradeConfirmationModal
 					isOpen={ !! pendingDowngradePlanSlug }
-					currentPlanName={ sitePlansData?.find( ( p ) => p.currentPlan )?.productName ?? '' }
-					targetPlanName={
-						sitePlansData?.find( ( p ) => p.productSlug === pendingDowngradePlanSlug )
-							?.productName ?? ''
-					}
+					currentPlanName={ downgradeCurrentPlanName }
+					targetPlanName={ downgradeTargetPlanName }
 					targetPlanSlug={ pendingDowngradePlanSlug }
 					purchaseId={ currentPlan?.purchaseId }
 					isInstantDowngrade={ downgradeMode === 'instant' }
 					isDelayedDowngrade={ downgradeMode === 'delayed' }
 					renewalDate={ downgradeRenewalDate }
+					isTermChange={ isPendingDowngradeTermChange }
+					renewalPriceText={
+						downgradeRenewalPriceText ? String( downgradeRenewalPriceText ) : undefined
+					}
 					refundText={ downgradeRefundText }
 					isConfirming={ cancelAndRefundMutation.isPending || isDowngrading }
 					isRechargeable={ currentPurchase?.is_rechargeable ?? false }
@@ -1561,9 +1633,7 @@ const PlansFeaturesMain = ( {
 					onFreePlanCTAClick={ onFreePlanCTAClick }
 					intent={ intent }
 					isPlansGridRedesign={ usePlansGridRedesign }
-					showDifferentiatorHeader={
-						showDifferentiatorHeader || showPlansGridRedesignDifferentiatorHeader
-					}
+					showDifferentiatorHeader={ showPlansGridRedesignDifferentiatorHeader }
 				/>
 				{ ! isPlansGridReady && <Spinner size={ 30 } /> }
 				{ isPlansGridReady && (
@@ -1602,7 +1672,6 @@ const PlansFeaturesMain = ( {
 										allFeaturesList={ getFeaturesList() }
 										bottomGridPlan={ bottomGridPlanForFeaturesGrid }
 										className={ clsx( 'plans-features-main__features-grid', {
-											'is-plan-differentiators-experiment': isExperimentVariant,
 											'is-plans-grid-redesign-experiment': usePlansGridRedesign,
 										} ) }
 										coupon={ coupon }
@@ -1642,7 +1711,6 @@ const PlansFeaturesMain = ( {
 										enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 										showSimplifiedBillingDescription={ isInSignup }
 										showBillingDescriptionForIncreasedRenewalPrice={ renewalPricingVariation }
-										isExperimentVariant={ isExperimentVariant }
 										showFeatureCheckmarks={ usePlansGridRedesign }
 									/>
 								) }
@@ -1712,7 +1780,6 @@ const PlansFeaturesMain = ( {
 													featureGroupMap={ featureGroupMapForComparisonGrid }
 													enableTermSavingsPriceDisplay={ enableTermSavingsPriceDisplay }
 													showSimplifiedBillingDescription={ isInSignup }
-													isExperimentVariant={ isExperimentVariant }
 												/>
 											) }
 											<ComparisonGridToggle

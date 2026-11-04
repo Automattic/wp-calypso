@@ -1,7 +1,7 @@
 import { LogType, PHPLog, ServerLog, SiteLogsParams } from '@automattic/api-core';
 import { siteLogsInfiniteQuery } from '@automattic/api-queries';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useRouter } from '@tanstack/react-router';
+import { keepPreviousData, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import { useRouter, useSearch } from '@tanstack/react-router';
 import { ToggleControl, Button, Spinner } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { View, Filter, Field } from '@wordpress/dataviews';
@@ -89,27 +89,9 @@ function SiteLogsDataViews( {
 		[ persistedView, startPosition ]
 	);
 
-	// We want to parse 'from' and 'to' from the URL.
-	const parseUrlSeconds = useMemo( () => {
-		const searchParams = new URLSearchParams( search );
-
-		const readSeconds = ( key: 'from' | 'to' ) => {
-			const raw = searchParams.get( key );
-			if ( ! raw ) {
-				return null;
-			}
-			const number = Number.parseInt( raw, 10 );
-			if ( ! Number.isFinite( number ) ) {
-				return null;
-			}
-			// Enforce seconds-only here. The page-level normalizer will rewrite ms→s on mount.
-			return number > 1e11 ? null : number;
-		};
-
-		const from = readSeconds( 'from' );
-		const to = readSeconds( 'to' );
-		return from != null && to != null ? { from, to } : null;
-	}, [ search ] );
+	const { from: urlFrom, to: urlTo } = useSearch( { strict: false } );
+	const parseUrlSeconds =
+		urlFrom !== undefined && urlTo !== undefined ? { from: urlFrom, to: urlTo } : null;
 
 	const computed = useMemo(
 		() => buildTimeRangeInSeconds( dateRange.start, dateRange.end, timezoneString, gmtOffset ),
@@ -158,10 +140,16 @@ function SiteLogsDataViews( {
 		data,
 		isFetching,
 		isFetchingNextPage,
+		isPlaceholderData,
 		fetchNextPage,
 		hasNextPage,
 		isLoading: isLoadingLogQuery,
-	} = useInfiniteQuery( siteLogsInfiniteQuery( site.ID, params ) );
+	} = useInfiniteQuery( {
+		...siteLogsInfiniteQuery( site.ID, params ),
+		placeholderData: keepPreviousData,
+	} );
+
+	const pages = isPlaceholderData ? undefined : data?.pages;
 
 	const handleResize = useCallback( () => {
 		if ( ! dataviewsRef.current ) {
@@ -217,15 +205,15 @@ function SiteLogsDataViews( {
 		if ( logType !== LogType.PHP ) {
 			return [];
 		}
-		return buildPhpLogsWithId( ( data?.pages as Array< { logs?: PHPLog[] } > ) ?? [] );
-	}, [ data?.pages, logType ] );
+		return buildPhpLogsWithId( ( pages as Array< { logs?: PHPLog[] } > ) ?? [] );
+	}, [ pages, logType ] );
 
 	const serverLogs = useMemo< ServerLogWithId[] >( () => {
 		if ( logType !== LogType.SERVER ) {
 			return [];
 		}
-		return buildServerLogsWithId( ( data?.pages as Array< { logs?: ServerLog[] } > ) ?? [] );
-	}, [ data?.pages, logType ] );
+		return buildServerLogsWithId( ( pages as Array< { logs?: ServerLog[] } > ) ?? [] );
+	}, [ pages, logType ] );
 
 	const logs = logType === LogType.PHP ? phpLogs : serverLogs;
 	const perPage = view.perPage ?? DEFAULT_PER_PAGE;
@@ -356,6 +344,9 @@ function SiteLogsDataViews( {
 		totalPages: 1,
 	};
 
+	const dataViewsView = isPlaceholderData ? { ...view, infiniteScrollEnabled: false } : view;
+	const isLoadingDataViews = isFetchingNextPage || ( isPlaceholderData && isFetching );
+
 	const emptyState = (
 		<DataViewsEmptyStateLayout
 			isBorderless
@@ -393,11 +384,12 @@ function SiteLogsDataViews( {
 			{ logType === LogType.PHP ? (
 				<DataViews< PHPLog >
 					data={ visiblePhpLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingDataViews }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< PHPLog >[] }
 					getItemId={ ( item ) => item.id }
-					view={ view }
+					view={ dataViewsView }
+					config={ { perPageSizes: [ DEFAULT_PER_PAGE ] } }
 					actions={ actions as Action< PHPLog >[] }
 					search={ false }
 					defaultLayouts={ { table: {} } }
@@ -409,11 +401,12 @@ function SiteLogsDataViews( {
 			) : (
 				<DataViews< ServerLog >
 					data={ visibleServerLogs }
-					isLoading={ isFetchingNextPage }
+					isLoading={ isLoadingDataViews }
 					paginationInfo={ paginationInfo }
 					fields={ fields as Field< ServerLog >[] }
 					getItemId={ ( item ) => item.id }
-					view={ view }
+					view={ dataViewsView }
+					config={ { perPageSizes: [ DEFAULT_PER_PAGE ] } }
 					actions={ actions as Action< ServerLog >[] }
 					search={ false }
 					defaultLayouts={ { table: {} } }

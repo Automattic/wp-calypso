@@ -14,7 +14,10 @@ import { useSelector } from 'calypso/state';
 import { getDomainsBySiteId } from 'calypso/state/sites/domains/selectors';
 import { getSite } from 'calypso/state/sites/selectors';
 import ThankYouDomainProduct from '../products/domain-product';
-import type { ReceiptData, ReceiptPurchase } from 'calypso/state/receipts/types';
+import type {
+	ReceiptData,
+	ReceiptPurchase,
+} from 'calypso/my-sites/checkout/checkout-thank-you/receipt';
 
 interface DomainBulkTransferThankYouProps {
 	receipt: ReceiptData;

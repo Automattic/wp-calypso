@@ -25,6 +25,7 @@ import { findAbilityByName } from '../abilities/ability-name';
 import { handlePageDesignTaskUpdate } from '../abilities/stream-page-design/stream';
 import { wooFallbackToolProvider } from '../abilities/woocommerce';
 import { DEFAULT_ACCEPTED_UPLOAD_TYPES } from '../constants';
+import { filterInteractiveUiCatalogs } from '../interactive-ui/catalogs';
 import { withAbilityCompletionBroadcast } from './ability-completion-broadcast';
 import { bigSkyPageContextProvider, isBigSkyEnabled } from './big-sky-page-context';
 import { withCanvasBinding, withCanvasGuard } from './canvas-guard';
@@ -43,6 +44,7 @@ import type {
 } from '../types';
 import type { UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { MarkdownComponents, MarkdownExtensions, Suggestion } from '@automattic/agenttic-ui';
+import type { InteractiveUiCatalogDefinition } from '@automattic/ai-ui-renderer';
 import type { ReactNode } from 'react';
 
 /**
@@ -187,6 +189,10 @@ export interface LoadedProviders {
 	suppressEmptyViewDefaults?: boolean;
 	markdownComponents?: MarkdownComponents;
 	markdownExtensions?: MarkdownExtensions;
+	/** A provider's own interactive UI catalog: its document, components and functions. */
+	interactiveUi?: InteractiveUiCatalogDefinition;
+	/** Every loaded provider's interactive UI catalog, one per catalog ID. */
+	interactiveUiCatalogs?: InteractiveUiCatalogDefinition[];
 	useAbilitiesSetup?: AbilitiesSetupHook;
 	useSuggestions?: UseSuggestionsHook;
 	getChatComponent?: GetChatComponent;
@@ -649,6 +655,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 	const allContextProviders: ContextProvider[] = isBigSkySite ? [ bigSkyPageContextProvider ] : [];
 	const allMarkdownComponents: MarkdownComponents[] = [];
 	const allMarkdownExtensions: MarkdownExtensions[] = [];
+	const allInteractiveUiCatalogs: InteractiveUiCatalogDefinition[] = [];
 	const allGetChatComponents: GetChatComponent[] = [];
 	const allTransformMessages: TransformMessages[] = [];
 	const allAbilitiesSetups: AbilitiesSetupHook[] = [];
@@ -733,6 +740,9 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		}
 		if ( module.markdownExtensions ) {
 			allMarkdownExtensions.push( module.markdownExtensions );
+		}
+		if ( module.interactiveUi ) {
+			allInteractiveUiCatalogs.push( module.interactiveUi );
 		}
 
 		// First-write-wins for the singleton export.
@@ -903,6 +913,7 @@ export async function loadExternalProviders(): Promise< LoadedProviders > {
 		getEmptyViewSuggestions: mergedGetEmptyViewSuggestions,
 		markdownComponents: mergedMarkdownComponents,
 		markdownExtensions: { ...defaultMarkdownExtensions, ...mergedMarkdownExtensions },
+		interactiveUiCatalogs: filterInteractiveUiCatalogs( allInteractiveUiCatalogs ),
 		providerIds: allProviderIds.length ? allProviderIds : undefined,
 		useAbilitiesSetup: mergedAbilitiesSetup,
 		onTaskUpdate: isEditor ? handlePageDesignTaskUpdate : undefined,

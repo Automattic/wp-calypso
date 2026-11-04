@@ -151,6 +151,18 @@ describe( 'useAgentChat', () => {
 			expect( result ).toBeNull();
 		} );
 
+		it( 'keeps an interactive UI surface under `a2ui`, even without text', () => {
+			const surface: Part = {
+				type: 'data',
+				data: [ { version: 'v1.0', deleteSurface: { surfaceId: 'form' } } ],
+				metadata: { mimeType: 'application/a2ui+json' },
+			};
+
+			const result = transformClientMessageToUI( buildMessage( [ surface ] ) );
+
+			expect( result?.content ).toEqual( [ { type: 'data', data: { a2ui: surface } } ] );
+		} );
+
 		it( 'drops a message that has no parts', () => {
 			// Nothing to render, so the message is dropped rather than left as
 			// an empty entry in the list.
@@ -190,6 +202,38 @@ describe( 'useAgentChat', () => {
 			);
 
 			expect( result?.content ).toEqual( [ { type: 'data', data: { flags } } ] );
+		} );
+
+		it( 'preserves `promptSource` data parts', () => {
+			const result = transformClientMessageToUI(
+				buildMessage( [ { type: 'data', data: { promptSource: 'site-setup-checklist' } } ] )
+			);
+
+			expect( result?.content ).toEqual( [
+				{ type: 'data', data: { promptSource: 'site-setup-checklist' } },
+			] );
+		} );
+
+		it( 'surfaces a live message’s prompt source metadata as the same data part', () => {
+			const result = transformClientMessageToUI( {
+				...buildMessage( [ { type: 'text', text: 'Help me with: design' } ] ),
+				role: 'user',
+				metadata: { promptSource: 'site-setup-checklist', promptSourceId: 'design' },
+			} );
+
+			expect( result?.content ).toEqual( [
+				{ type: 'text', text: 'Help me with: design' },
+				{ type: 'data', data: { promptSource: 'site-setup-checklist', promptSourceId: 'design' } },
+			] );
+		} );
+
+		it( 'does not duplicate a prompt source that already came as a data part', () => {
+			const result = transformClientMessageToUI( {
+				...buildMessage( [ { type: 'data', data: { promptSource: 'site-setup-checklist' } } ] ),
+				metadata: { promptSource: 'site-setup-checklist' },
+			} );
+
+			expect( result?.content ).toHaveLength( 1 );
 		} );
 
 		it( 'keeps `text` content and drops unknown `data` in the same message', () => {

@@ -1,19 +1,16 @@
 import { activeAgencyQuery, agencyProductsQuery } from '@automattic/api-queries';
-import { AutomatticLogo } from '@automattic/components/src/logos/automattic-logo';
 import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHeading as Heading,
-	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
 import { useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { marketplaceReferralCheckoutRoute } from '../../../app/router/agency';
 import { Notice } from '../../../components/notice';
-import RouterLinkButton from '../../../components/router-link-button';
+import FullscreenPage from '../../components/fullscreen-page';
 import { MARKETPLACE_PRODUCTS_ROUTE } from '../paths';
 import { getCheckoutUrl, getLegacyCheckoutUrl } from '../products/lib/checkout-url';
 import { useCartLines } from '../products/use-cart-lines';
@@ -97,18 +94,7 @@ export default function ReferralCheckout() {
 	}
 
 	return (
-		<div className="referral-checkout">
-			<HStack
-				className="referral-checkout__top-bar"
-				justify="flex-start"
-				spacing={ 6 }
-				expanded={ false }
-			>
-				<AutomatticLogo width={ 183 } height={ 40 } />
-				<RouterLinkButton to={ backTo } variant="link" icon={ chevronLeft }>
-					{ __( 'Back' ) }
-				</RouterLinkButton>
-			</HStack>
+		<FullscreenPage backTo={ backTo }>
 			{ notice ?? (
 				<div className="referral-checkout__body">
 					<VStack className="referral-checkout__main" spacing={ 6 }>
@@ -176,6 +162,6 @@ export default function ReferralCheckout() {
 					onClose={ () => setPreview( null ) }
 				/>
 			) }
-		</div>
+		</FullscreenPage>
 	);
 }

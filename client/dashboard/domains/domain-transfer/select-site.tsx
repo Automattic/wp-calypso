@@ -1,3 +1,4 @@
+import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	SearchControl,
@@ -7,7 +8,6 @@ import {
 import { DataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { useMemo, useState, useCallback, useRef } from 'react';
-import { useAppContext } from '../../app/context';
 import SiteIcon from '../../components/site-icon';
 import { canManageSite } from '../../sites/features';
 import { getSiteDisplayUrl } from '../../utils/site-url';
@@ -15,7 +15,7 @@ import type { Site } from '@automattic/api-core';
 import type { View } from '@wordpress/dataviews';
 import './select-site.scss';
 
-interface Props {
+interface SelectSiteProps {
 	attachedSiteId?: number;
 	/**
 	 * Narrows the sites offered beyond those the user can manage.
@@ -24,9 +24,8 @@ interface Props {
 	onSiteSelect: ( site: Site ) => void;
 }
 
-export function SelectSite( { attachedSiteId, filter, onSiteSelect }: Props ) {
-	const { queries } = useAppContext();
-	const { data: allSites = [], isLoading } = useQuery( queries.sitesQuery() );
+export function SelectSite( { attachedSiteId, filter, onSiteSelect }: SelectSiteProps ) {
+	const { data: allSites = [], isLoading } = useQuery( sitesQuery() );
 	const sites = useMemo(
 		() =>
 			allSites.filter(

@@ -326,7 +326,8 @@ const siteSetupFlow: Flow = {
 				}
 
 				case 'importerPlayground': {
-					return navigate( `importerWordpress?${ urlQueryParams.toString() }` );
+					// The step waits for the import, so the site is ready here.
+					return exitFlow( `/home/${ siteId ?? siteSlug }` );
 				}
 
 				case 'trialAcknowledge': {

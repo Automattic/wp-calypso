@@ -404,6 +404,36 @@ describe( 'CheckoutMain', () => {
 		} );
 	} );
 
+	it.each( [ undefined, 'jetpack' ] )(
+		'shows an error for an empty product slug in %s checkout without updating the cart',
+		async ( sitelessCheckoutType ) => {
+			const setCart = jest.fn( mockSetCartEndpoint );
+			render(
+				<MockCheckout
+					initialCart={ initialCart }
+					setCart={ setCart }
+					cartChanges={ { products: [] } }
+					additionalProps={ { productAliasFromUrl: ':product', sitelessCheckoutType } }
+				/>
+			);
+
+			await waitFor( () => {
+				expect( errorNotice ).toHaveBeenCalledWith(
+					[
+						expect.objectContaining( {
+							props: expect.objectContaining( {
+								children:
+									"I tried and failed to create products matching the identifier ':product'",
+							} ),
+						} ),
+					],
+					{ id: 'checkout-cart-error' }
+				);
+			} );
+			expect( setCart ).not.toHaveBeenCalled();
+		}
+	);
+
 	it( 'adds the product to the cart when the url has a jetpack product', async () => {
 		const cartChanges = { products: [] };
 		const additionalProps = { productAliasFromUrl: 'jetpack_scan' };

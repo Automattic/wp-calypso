@@ -687,6 +687,22 @@ describe( 'loadExternalProviders', () => {
 		} );
 	} );
 
+	it( 'collects each provider’s interactive UI catalog in order', async () => {
+		const jetpackAiCatalog = { catalog: { catalogId: 'urn:jetpack-ai:v1' } };
+		const wooAiCatalog = { catalog: { catalogId: 'urn:woo-ai:v1' } };
+		setAgentsManagerData( {
+			agentProviders: [
+				{ interactiveUi: jetpackAiCatalog },
+				{ markdownComponents: {} },
+				{ interactiveUi: wooAiCatalog },
+			],
+		} );
+
+		const providers = await loadExternalProviders();
+
+		expect( providers.interactiveUiCatalogs ).toEqual( [ jetpackAiCatalog, wooAiCatalog ] );
+	} );
+
 	it( 'chains markdown code renderers so later providers can handle structured blocks', async () => {
 		const hostCode = jest.fn( ( props ) => ( {
 			type: 'code',

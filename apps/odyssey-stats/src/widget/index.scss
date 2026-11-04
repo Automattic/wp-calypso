@@ -13,6 +13,13 @@
 	// square bottom corners would poke out past them.
 	border-radius: 0 0 var(--wpds-border-radius-lg, 8px) var(--wpds-border-radius-lg, 8px);
 	overflow: hidden;
+
+	// The skeleton pulls itself flush to the postbox's edges while the widget's stylesheet is
+	// still on its way. Once this rule applies, the mount does that, and the skeleton stays
+	// put until React replaces it.
+	.jp-stats-widget-skeleton {
+		margin: 0;
+	}
 }
 
 // WordPress 7.1 defines the focus ring colour as a fixed blue, while admin colour schemes only

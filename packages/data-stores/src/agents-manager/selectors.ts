@@ -6,8 +6,6 @@ export const getAgentsManagerState = ( state: State ) => ( {
 	isMinimized: state.isMinimized,
 	// Minimized counts as hidden even though the chat stays open.
 	isChatVisible: state.isOpen && ! state.isMinimized,
-	routerHistory: state.routerHistory,
-	lastActivity: state.lastActivity,
 	isLoading: state.isLoading,
 	hasLoaded: state.hasLoaded,
 	floatingPosition: state.floatingPosition,
@@ -19,18 +17,6 @@ export const getIsOpen = ( state: State ) => state.isOpen;
 export const getIsDocked = ( state: State ) => state.isDocked;
 export const getIsMinimized = ( state: State ) => state.isMinimized;
 export const getIsSplitScreen = ( state: State ) => state.isSplitScreen;
-export const getRouterHistory = ( state: State, siteKey: string ) => {
-	if ( ! state.routerHistory ) {
-		return undefined;
-	}
-	return state.routerHistory[ siteKey ];
-};
-export const getLastActivity = ( state: State, siteKey: string ) => {
-	if ( ! state.lastActivity ) {
-		return undefined;
-	}
-	return state.lastActivity[ siteKey ];
-};
 export const getIsLoading = ( state: State ) => state.isLoading;
 export const getHasLoaded = ( state: State ) => state.hasLoaded;
 export const getFloatingPosition = ( state: State ) => state.floatingPosition;

@@ -1,9 +1,9 @@
 import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
@@ -41,10 +41,9 @@ const defaultView = {
 
 function Domains() {
 	const { user } = useAuth();
-	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
-	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
+	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
 
 	const { view, updateView, resetView } = usePersistentView( {
@@ -54,7 +53,7 @@ function Domains() {
 	} );
 
 	const { data: domains } = useSuspenseQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		},

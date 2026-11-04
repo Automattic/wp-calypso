@@ -35,6 +35,7 @@ const jetpackAiQuotaCredits = {
 	state: 'zero',
 	planTier: 'none',
 	creditsLeft: 'none',
+	topUpCreditsLeft: 'none',
 	ctaType: 'upgrade',
 	ref: 'none',
 };

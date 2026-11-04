@@ -1,6 +1,6 @@
 import { dateI18n } from '@wordpress/date';
 import { __, sprintf } from '@wordpress/i18n';
-import { startOfDay, endOfDay, fromUnixTime, isValid as isValidDate } from 'date-fns';
+import { startOfDay, endOfDay } from 'date-fns';
 import { formatDateWithOffset, getUtcOffsetDisplay } from '../../utils/datetime';
 import { getIntlLocale } from '../../utils/locale';
 import type { PHPLog, ServerLog } from '@automattic/api-core';
@@ -8,8 +8,6 @@ import type { Badge } from '@wordpress/ui';
 import type { ComponentProps } from 'react';
 
 type BadgeIntent = NonNullable< ComponentProps< typeof Badge >[ 'intent' ] >;
-
-type DateRange = { start: Date; end: Date };
 
 const HOUR_MS = 3_600_000;
 const SECONDS_PER_DAY = 86_400;
@@ -112,26 +110,6 @@ export function formatLogDateTimeForDisplay(
 	} );
 }
 
-/**
- * Get the initial date range from the URL search parameters.
- */
-export function getInitialDateRangeFromSearch( search: string ): DateRange | null {
-	const params = new URLSearchParams( search );
-	const valueAsNumber = ( value?: string | null ) => ( value ? Number( value ) : NaN );
-	const toDate = ( dateString?: string | null ) => {
-		const num = valueAsNumber( dateString );
-		if ( ! Number.isFinite( num ) ) {
-			return undefined;
-		}
-		const date = fromUnixTime( num );
-		return isValidDate( date ) ? date : undefined;
-	};
-
-	const start = toDate( params.get( 'from' ) );
-	const end = toDate( params.get( 'to' ) );
-	return start && end && start <= end ? { start, end } : null;
-}
-
 export function formatDateCell( {
 	timezoneString,
 	gmtOffset,
@@ -182,6 +160,9 @@ export function getDateTimeLabel( {
 	}
 	return dateTimeLabel;
 }
+
+export const formatLogDetailValue = ( value: string | number | null | undefined ): string =>
+	value === null || value === undefined || String( value ).trim() === '' ? '-' : String( value );
 
 // Logs helpers
 
