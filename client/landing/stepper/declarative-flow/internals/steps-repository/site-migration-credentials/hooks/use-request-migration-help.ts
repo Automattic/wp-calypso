@@ -12,7 +12,7 @@ export function useRequestMigrationHelp( onDone: () => void ) {
 	const locale = useLocale();
 	const siteSlug = useSiteSlugParam() ?? '';
 	const fromUrl = useQuery().get( 'from' ) || '';
-	const { sendTicket } = useSubmitMigrationTicket( {
+	const { sendTicket, isIdle } = useSubmitMigrationTicket( {
 		onSuccess: () => {
 			recordTracksEvent( 'calypso_migration_credentials_ticket_submit_success', {
 				blog_url: siteSlug,
@@ -28,6 +28,13 @@ export function useRequestMigrationHelp( onDone: () => void ) {
 		},
 	} );
 
-	return () =>
-		sendTicket( { locale, from_url: fromUrl, blog_url: siteSlug }, { onSettled: onDone } );
+	return {
+		requestHelp: () => {
+			if ( isIdle ) {
+				sendTicket( { locale, from_url: fromUrl, blog_url: siteSlug }, { onSettled: onDone } );
+			}
+		},
+		// Stays on once settled too, while the customer is on their way out of the flow.
+		isHelpRequested: ! isIdle,
+	};
 }

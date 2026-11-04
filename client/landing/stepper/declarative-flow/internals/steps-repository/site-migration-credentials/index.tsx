@@ -75,7 +75,7 @@ const SiteMigrationCredentials: StepType< {
 	const { mutate: updateMigrationStatus } = useUpdateMigrationStatus( siteId );
 
 	const locale = useLocale();
-	const requestHelp = useRequestMigrationHelp( () => {
+	const { requestHelp, isHelpRequested } = useRequestMigrationHelp( () => {
 		// Reset the site in the state to ensure the correct overview screen is shown.
 		if ( siteId ) {
 			dispatch( resetSite( siteId ) );
@@ -144,7 +144,7 @@ const SiteMigrationCredentials: StepType< {
 	const mainForm = <CredentialsForm onSubmit={ handleSubmit } />;
 	const skipButton = (
 		<div className="account-template__top-bar-links">
-			<NeedHelpLink onHelpLinkClicked={ handleSkip } />
+			<NeedHelpLink onHelpLinkClicked={ handleSkip } isBusy={ isHelpRequested } />
 		</div>
 	);
 

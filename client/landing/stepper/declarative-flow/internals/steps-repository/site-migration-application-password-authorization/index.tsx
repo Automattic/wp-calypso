@@ -72,7 +72,7 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		navigation?.submit?.( { action: 'authorization', authorizationUrl } );
 	};
 
-	const contactMe = useRequestMigrationHelp( () =>
+	const { requestHelp: contactMe, isHelpRequested } = useRequestMigrationHelp( () =>
 		navigation?.submit?.( { action: 'contact-me' } )
 	);
 
@@ -136,7 +136,9 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 						leftElement={
 							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
 						}
-						rightElement={ <NeedHelpLink onHelpLinkClicked={ contactMe } /> }
+						rightElement={
+							<NeedHelpLink onHelpLinkClicked={ contactMe } isBusy={ isHelpRequested } />
+						}
 					/>
 				}
 				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }

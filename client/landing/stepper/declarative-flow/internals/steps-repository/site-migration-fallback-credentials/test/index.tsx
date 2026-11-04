@@ -99,7 +99,7 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
-	it( 'skips the credential creation when the user does not fill the fields', async () => {
+	it( 'asks our team for help and leaves the flow without the fields filled in', async () => {
 		const submit = jest.fn();
 		render( { navigation: { submit } } );
 
@@ -111,6 +111,17 @@ describe( 'SiteMigrationCredentials', () => {
 			expect.objectContaining( { blog_url: 'site-url.wordpress.com' } )
 		);
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
+	} );
+
+	it( 'asks only once, and still leaves the flow, when asking for help fails', async () => {
+		const submit = jest.fn();
+		( wp.req.post as jest.Mock ).mockRejectedValueOnce( new Error( 'Ticket failed' ) );
+		render( { navigation: { submit } } );
+
+		await userEvent.dblClick( skipButton() );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
+		expect( wp.req.post ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'shows error messages by each field when the server returns "invalid param" by each field', async () => {

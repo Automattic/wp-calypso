@@ -152,6 +152,11 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await userEvent.click( skipButton() );
 
+		expect( wp.req.post ).toHaveBeenCalledWith(
+			{ path: '/help/migration-ticket/new', apiNamespace: 'wpcom/v2' },
+			{},
+			expect.objectContaining( { blog_url: 'site-url.wordpress.com' } )
+		);
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
 	} );
 

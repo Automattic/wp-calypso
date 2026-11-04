@@ -22,7 +22,9 @@ const SiteMigrationFallbackCredentials: StepType< {
 } > = function ( { navigation } ) {
 	const translate = useTranslate();
 	const siteURL = useQuery().get( 'from' ) || '';
-	const handleSkip = useRequestMigrationHelp( () => navigation.submit?.( { action: 'skip' } ) );
+	const { requestHelp, isHelpRequested } = useRequestMigrationHelp( () =>
+		navigation.submit?.( { action: 'skip' } )
+	);
 
 	// Removes "https://" or "http://" from URL
 	const cleanUrl = siteURL.replace( /^(https?:\/\/)?(.*?)(\/)?$/, '$2' );
@@ -55,7 +57,9 @@ const SiteMigrationFallbackCredentials: StepType< {
 						leftElement={
 							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
 						}
-						rightElement={ <NeedHelpLink onHelpLinkClicked={ handleSkip } /> }
+						rightElement={
+							<NeedHelpLink onHelpLinkClicked={ requestHelp } isBusy={ isHelpRequested } />
+						}
 					/>
 				}
 				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
