@@ -14,10 +14,10 @@ import {
 	getSearchUiVersion,
 	withSearchUiVersion,
 } from 'calypso/components/domains/wpcom-domain-search/use-wpcom-domain-search-events';
-import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
-import { isRelativeUrl } from 'calypso/dashboard/utils/url';
+import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { getSuggestionsVendor } from 'calypso/lib/domains/suggestions';
+import { getSafeUrl } from 'calypso/lib/site-launch/destination';
 import {
 	domainMapping,
 	domainAddNew,
@@ -46,14 +46,6 @@ const getThemeSlugWithRepo = ( themeSlug: string | undefined, isPurchasingTheme:
 
 	return `${ repo }/${ themeSlug }`;
 };
-
-function isDashboardUrl( url: string ) {
-	try {
-		return dashboardOrigins().includes( new URL( url ).origin );
-	} catch {
-		return false;
-	}
-}
 
 const DomainSearchUI = (
 	props: StepProps & {
@@ -401,11 +393,11 @@ const DomainSearchUI = (
 			backUrl = defaultBackUrl;
 			backLabelText = sitesBackLabelText;
 
-			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString() ?? '';
-			const isSafeBackTo = isRelativeUrl( backTo ) || isDashboardUrl( backTo );
+			const backTo = getQueryArg( window.location.href, 'back_to' )?.toString();
+			const safeBackTo = getSafeUrl( backTo );
 
-			if ( isSafeBackTo ) {
-				backUrl = backTo;
+			if ( safeBackTo ) {
+				backUrl = safeBackTo;
 				backLabelText = __( 'Back' );
 			}
 		}
