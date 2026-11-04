@@ -69,7 +69,7 @@ function Domains() {
 		},
 	} );
 
-	const actions = useActions( { user, sites, domains } );
+	const actions = useActions( { user, sites, domains, layout: view.type } );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],

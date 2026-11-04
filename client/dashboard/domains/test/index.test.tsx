@@ -185,6 +185,21 @@ describe( '<Domains>', () => {
 		);
 	} );
 
+	test( 'records the layout an action was used from', async () => {
+		const user = userEvent.setup();
+		mockApis( [ mockDomain( 1 ) ] );
+		const { recordTracksEvent } = render( <Domains /> );
+
+		const card = await screen.findByRole( 'group', { name: 'domain01.com' } );
+		await user.click( within( card ).getByRole( 'button', { name: 'DNS' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_dashboard_domains_action_click', {
+			action: 'manage-dns-settings',
+			layout: 'grid',
+			domain: 'domain01.com',
+		} );
+	} );
+
 	test( 'does not read a view saved in the `domains` preference', async () => {
 		mockApis( [ mockDomain( 1 ) ], {
 			'hosting-dashboard-dataviews-view-domains': { type: 'table', titleField: 'domain' },

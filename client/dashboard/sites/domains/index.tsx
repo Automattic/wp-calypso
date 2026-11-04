@@ -81,29 +81,31 @@ function SiteDomains() {
 	const openChangePrimaryDomain = useCallback( () => setIsChangePrimaryDomainOpen( true ), [] );
 
 	const sites = useMemo( () => [ site ], [ site ] );
-	const actions = useActions( {
-		user,
-		site,
-		sites,
-		domains: siteDomains,
-		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
-	} );
 
 	const searchParams = siteDomainsRoute.useSearch();
 	const navigate = useNavigate();
-
-	const deepLinkedAction = useDeepLinkedDataViewsAction( {
-		queryParams: searchParams,
-		navigate,
-		actions,
-		items: siteDomains,
-	} );
 
 	const { view, updateView, resetView } = usePersistentView( {
 		slug: 'site-domains',
 		defaultView: SITE_CONTEXT_VIEW,
 		queryParams: searchParams,
 		sanitizeFields: sanitizeDomainFields,
+	} );
+
+	const actions = useActions( {
+		user,
+		site,
+		sites,
+		domains: siteDomains,
+		layout: view.type,
+		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
+	} );
+
+	const deepLinkedAction = useDeepLinkedDataViewsAction( {
+		queryParams: searchParams,
+		navigate,
+		actions,
+		items: siteDomains,
 	} );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
