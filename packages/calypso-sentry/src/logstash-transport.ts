@@ -13,6 +13,11 @@ const MAX_KEEPALIVE_REQUESTS = 15;
 const MAX_BREADCRUMBS = 20;
 const MAX_MESSAGE_LENGTH = 10 * 1024;
 
+// Sentry backs off when its server says so; logstash never does, so cap the
+// copies ourselves to keep an error loop from flooding the endpoint.
+const MAX_EVENTS_PER_WINDOW = 10;
+const WINDOW_MS = 60 * 1000;
+
 export interface LogstashPayload {
 	feature: 'calypso_client';
 	message: string;
@@ -106,11 +111,31 @@ export function eventToLogstashPayload( event: SentryApi.Event ): LogstashPayloa
 function createLogstashSender() {
 	let pendingBytes = 0;
 	let pendingCount = 0;
+	let recentSendTimes: number[] = [];
+	let throttledCount = 0;
+
+	function isThrottled( now: number ) {
+		recentSendTimes = recentSendTimes.filter( ( time ) => now - time < WINDOW_MS );
+		if ( recentSendTimes.length >= MAX_EVENTS_PER_WINDOW ) {
+			throttledCount++;
+			return true;
+		}
+		recentSendTimes.push( now );
+		return false;
+	}
 
 	function send( event: SentryApi.Event ) {
-		const body = new URLSearchParams( {
-			params: JSON.stringify( eventToLogstashPayload( event ) ),
-		} );
+		if ( isThrottled( Date.now() ) ) {
+			return;
+		}
+
+		const payload = eventToLogstashPayload( event );
+		if ( throttledCount > 0 ) {
+			payload.properties.throttled_count = throttledCount;
+			throttledCount = 0;
+		}
+
+		const body = new URLSearchParams( { params: JSON.stringify( payload ) } );
 		const bodySize = body.toString().length;
 		pendingBytes += bodySize;
 		pendingCount++;
@@ -128,7 +153,6 @@ function createLogstashSender() {
 				keepalive: pendingBytes <= MAX_KEEPALIVE_BYTES && pendingCount < MAX_KEEPALIVE_REQUESTS,
 			} ).then( settle, settle );
 		} catch {
-			// Never let the logstash copy interfere with delivery to Sentry.
 			settle();
 		}
 	}
@@ -160,7 +184,11 @@ export function makeLogstashMirrorTransport(
 
 		return {
 			send( envelope ) {
-				sendToLogstash( envelope );
+				try {
+					sendToLogstash( envelope );
+				} catch {
+					// Never let the logstash copy interfere with delivery to Sentry.
+				}
 				return sentryTransport.send( envelope );
 			},
 			flush( timeout ) {

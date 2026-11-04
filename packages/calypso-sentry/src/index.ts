@@ -163,11 +163,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 	try {
 		// No Sentry loading on the server.
 		// No double-loading.
-		if (
-			typeof window === 'undefined' ||
-			typeof document === 'undefined' ||
-			! [ 'initial', 'disabled' ].includes( state.state )
-		) {
+		if ( typeof document === 'undefined' || ! [ 'initial', 'disabled' ].includes( state.state ) ) {
 			return;
 		}
 
