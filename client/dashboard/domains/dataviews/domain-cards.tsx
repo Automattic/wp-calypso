@@ -1,4 +1,4 @@
-import { DomainStatus } from '@automattic/api-core';
+import { DomainSubtype } from '@automattic/api-core';
 import {
 	Button,
 	DropdownMenu,
@@ -11,7 +11,7 @@ import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
 import { useState } from 'react';
-import { Card, CardBody } from '../../components/card';
+import { Card, CardBody, CardFooter } from '../../components/card';
 import { DataViewsActionModal } from '../../components/dataviews';
 import Grid from '../../components/grid';
 import { DomainNameField } from './field-domain-name';
@@ -29,7 +29,12 @@ import type { ReactNode } from 'react';
 
 import './domain-cards.scss';
 
-const DEFAULT_CARD_WIDTH = 290;
+/*
+ * At most three cards per row, with fewer when they would drop below 280px. Subtracting the largest gap
+ * always leaves room for three tracks and never for a fourth, and `1fr` takes up any space left over.
+ */
+const GRID_TEMPLATE_COLUMNS =
+	'repeat( auto-fill, minmax( max( min( 280px, 100% ), calc( ( 100% - 64px ) / 3 ) ), 1fr ) )';
 
 const GAP_BY_DENSITY: Record< NonNullable< ViewGrid[ 'layout' ] >[ 'density' ] & string, GapSize > =
 	{
@@ -42,16 +47,34 @@ function getActionLabel( action: Action< DomainSummary >, item: DomainSummary ) 
 	return typeof action.label === 'function' ? action.label( [ item ] ) : action.label;
 }
 
+const FOOTER_ACTION_IDS = [ 'manage-domain', 'renew', 'manage-dns-settings' ];
+
 /*
- * Every renewable domain is eligible for "Renew", so it only earns a button once the domain is close to lapsing.
- * "Set up" stays in the menu because the status field already links to connection setup.
+ * Every renewable domain is eligible for "Renew", so it only moves to the footer once the domain has expired.
+ * That's also when DNS stops being what the domain needs next, so it leaves the footer for the menu.
  */
-function isInlineAction( action: Action< DomainSummary >, item: DomainSummary ) {
-	return (
-		action.id === 'renew' &&
-		( item.domain_status.id === DomainStatus.EXPIRED ||
-			item.domain_status.id === DomainStatus.EXPIRING_SOON )
-	);
+function isFooterAction( action: Action< DomainSummary >, item: DomainSummary ) {
+	switch ( action.id ) {
+		case 'manage-domain':
+			return true;
+		case 'renew':
+			return item.expired;
+		case 'manage-dns-settings':
+			return ! item.expired;
+		default:
+			return false;
+	}
+}
+
+function getFooterActionLabel( action: Action< DomainSummary >, item: DomainSummary ) {
+	if ( action.id === 'manage-dns-settings' ) {
+		return __( 'DNS' );
+	}
+	// A transfer's "View transfer" says where it goes, which isn't its settings.
+	if ( action.id === 'manage-domain' && item.subtype.id !== DomainSubtype.DOMAIN_TRANSFER ) {
+		return __( 'Settings' );
+	}
+	return getActionLabel( action, item );
 }
 
 function DomainCard( {
@@ -78,15 +101,18 @@ function DomainCard( {
 	const eligibleActions = actions.filter(
 		( action ) => ! action.isEligible || action.isEligible( item )
 	);
-	const inlineActions = eligibleActions.filter( ( action ) => isInlineAction( action, item ) );
-	const menuActions = eligibleActions.filter( ( action ) => ! isInlineAction( action, item ) );
+	const footerActions = FOOTER_ACTION_IDS.flatMap(
+		( id ) =>
+			eligibleActions.find( ( action ) => action.id === id && isFooterAction( action, item ) ) ?? []
+	);
+	const menuActions = eligibleActions.filter( ( action ) => ! isFooterAction( action, item ) );
 
 	return (
 		<Card className="domain-cards__card" size="small">
 			<CardBody className="domain-cards__body">
 				<HStack alignment="topLeft" justify="space-between" spacing={ 2 }>
 					<div className="domain-cards__title">
-						<DomainNameField domain={ item } value={ item.domain } />
+						<DomainNameField domain={ item } value={ item.domain } isLinked={ false } />
 					</div>
 					{ menuActions.length > 0 && (
 						<DropdownMenu
@@ -131,23 +157,24 @@ function DomainCard( {
 							)
 					) }
 				</dl>
-				{ inlineActions.length > 0 && (
-					<HStack className="domain-cards__actions" justify="flex-start" spacing={ 2 }>
-						{ inlineActions.map( ( action ) => (
+			</CardBody>
+			{ footerActions.length > 0 && (
+				<CardFooter justify="flex-start" size="small" isBorderless>
+					<HStack justify="flex-start" spacing={ 4 } expanded={ false }>
+						{ footerActions.map( ( action ) => (
 							<Button
 								key={ action.id }
-								variant="secondary"
-								size="compact"
+								variant="link"
 								disabled={ !! action.disabled }
 								accessibleWhenDisabled
 								onClick={ () => runAction( action ) }
 							>
-								{ getActionLabel( action, item ) }
+								{ getFooterActionLabel( action, item ) }
 							</Button>
 						) ) }
 					</HStack>
-				) }
-			</CardBody>
+				</CardFooter>
+			) }
 			{ activeModalAction && (
 				<DataViewsActionModal
 					action={ activeModalAction }
@@ -178,7 +205,6 @@ export function DomainCardsLayout( {
 	empty: ReactNode;
 } ) {
 	const layout = view.type === 'grid' ? view.layout : undefined;
-	const cardWidth = layout?.previewSize ?? DEFAULT_CARD_WIDTH;
 	const visibleFields = ( view.fields ?? [] ).flatMap(
 		( id ) => fields.find( ( field ) => field.id === id ) ?? []
 	);
@@ -200,7 +226,7 @@ export function DomainCardsLayout( {
 			{ data.length > 0 ? (
 				<Grid
 					className="domain-cards"
-					templateColumns={ `repeat( auto-fill, minmax( min( ${ cardWidth }px, 100% ), 1fr ) )` }
+					templateColumns={ GRID_TEMPLATE_COLUMNS }
 					gap={ GAP_BY_DENSITY[ layout?.density ?? 'balanced' ] }
 				>
 					{ data.map( ( item ) => (

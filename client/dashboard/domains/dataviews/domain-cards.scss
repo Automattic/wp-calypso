@@ -7,26 +7,29 @@
 	}
 }
 
-.domain-cards__card,
-.domain-cards__body {
+.domain-cards__card {
 	height: 100%;
+
+	// The card's content wrapper, so the body can grow and keep the footer at the bottom of a stretched card.
+	> :first-child {
+		display: flex;
+		flex-direction: column;
+	}
 }
 
 .domain-cards__body {
 	box-sizing: border-box;
 	display: flex;
 	flex-direction: column;
+	flex: 1;
 	gap: 12px;
 }
 
 .domain-cards__title {
+	color: var( --wpds-color-foreground-content-neutral, #1e1e1e );
 	flex: 1;
 	font-weight: 500;
 	min-width: 0;
-
-	a {
-		text-decoration: none;
-	}
 }
 
 .domain-cards__fields {
@@ -61,8 +64,4 @@
 	&:has( dd:empty ) {
 		display: none;
 	}
-}
-
-.domain-cards__actions {
-	margin-top: auto;
 }

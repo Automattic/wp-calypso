@@ -75,46 +75,108 @@ describe( '<DomainCardsLayout>', () => {
 		expect( screen.queryByText( 'Hidden value' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows renewal inline when the domain is close to lapsing and the rest in a menu', async () => {
-		const expiringDomain = {
-			...domain,
-			domain_status: { id: DomainStatus.EXPIRING_SOON, label: 'Expiring soon', type: 'warning' },
-		} as DomainSummary;
-		const renew = jest.fn();
+	test( 'shows the domain name as a title rather than a link', async () => {
+		renderCards( [] );
+
+		expect( await screen.findByText( 'example.com' ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'example.com' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'puts Settings and DNS in the footer of an active domain, in that order', async () => {
+		const settings = jest.fn();
 		const dns = jest.fn();
+		renderCards( [
+			{ id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() },
+			{ id: 'manage-domain', isPrimary: true, label: () => 'View settings', callback: settings },
+			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: dns },
+			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
+			{ id: 'ineligible', label: 'Ineligible', callback: jest.fn(), isEligible: () => false },
+		] );
+		const user = userEvent.setup();
+
+		const settingsButton = await screen.findByRole( 'button', { name: 'Settings' } );
+		const buttons = screen.getAllByRole( 'button' ).map( ( button ) => button.textContent );
+		expect( buttons.slice( -2 ) ).toEqual( [ 'Settings', 'DNS' ] );
+
+		await user.click( settingsButton );
+		await user.click( screen.getByRole( 'button', { name: 'DNS' } ) );
+		expect( settings ).toHaveBeenCalledWith( [ domain ], expect.anything() );
+		expect( dns ).toHaveBeenCalledWith( [ domain ], expect.anything() );
+
+		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
+		const menu = await screen.findByRole( 'menu' );
+		expect( within( menu ).getByRole( 'menuitem', { name: 'Add mailbox' } ) ).toBeInTheDocument();
+		expect( within( menu ).getByRole( 'menuitem', { name: 'Renew' } ) ).toBeInTheDocument();
+		expect(
+			within( menu ).queryByRole( 'menuitem', { name: 'Ineligible' } )
+		).not.toBeInTheDocument();
+	} );
+
+	test( 'swaps DNS for Renew in the footer of an expired domain', async () => {
+		const expiredDomain = { ...domain, expired: true } as DomainSummary;
+		const renew = jest.fn();
 		renderCards(
 			[
 				{ id: 'renew', isPrimary: true, label: 'Renew', callback: renew },
 				{ id: 'manage-domain', isPrimary: true, label: () => 'View settings', callback: jest.fn() },
-				{ id: 'manage-dns-settings', label: 'Manage DNS', callback: dns },
-				{ id: 'ineligible', label: 'Ineligible', callback: jest.fn(), isEligible: () => false },
+				{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
 			],
-			[ expiringDomain ]
+			[ expiredDomain ]
 		);
 		const user = userEvent.setup();
 
-		await user.click( await screen.findByRole( 'button', { name: 'Renew' } ) );
-		expect( renew ).toHaveBeenCalledWith( [ expiringDomain ], expect.anything() );
+		const renewButton = await screen.findByRole( 'button', { name: 'Renew' } );
+		const buttons = screen.getAllByRole( 'button' ).map( ( button ) => button.textContent );
+		expect( buttons.slice( -2 ) ).toEqual( [ 'Settings', 'Renew' ] );
+		expect( screen.queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
+
+		await user.click( renewButton );
+		expect( renew ).toHaveBeenCalledWith( [ expiredDomain ], expect.anything() );
 
 		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 		const menu = await screen.findByRole( 'menu' );
-		expect( within( menu ).getByRole( 'menuitem', { name: 'View settings' } ) ).toBeInTheDocument();
-		expect( within( menu ).queryByRole( 'menuitem', { name: 'Renew' } ) ).not.toBeInTheDocument();
-		expect(
-			within( menu ).queryByRole( 'menuitem', { name: 'Ineligible' } )
-		).not.toBeInTheDocument();
-
-		await user.click( within( menu ).getByRole( 'menuitem', { name: 'Manage DNS' } ) );
-		expect( dns ).toHaveBeenCalledWith( [ expiringDomain ], expect.anything() );
+		expect( within( menu ).getByRole( 'menuitem', { name: 'Manage DNS' } ) ).toBeInTheDocument();
 	} );
 
-	test( 'keeps renewal in the menu for a domain that is not close to lapsing', async () => {
+	test( 'keeps Renew in the menu for a domain that has not expired', async () => {
 		renderCards( [ { id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() } ] );
 		const user = userEvent.setup();
 
-		await user.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+		const menuToggle = await screen.findByRole( 'button', { name: 'Actions' } );
+		expect( screen.queryByRole( 'button', { name: 'Renew' } ) ).not.toBeInTheDocument();
+		await user.click( menuToggle );
 
 		expect( await screen.findByRole( 'menuitem', { name: 'Renew' } ) ).toBeInTheDocument();
+	} );
+
+	test( 'leaves DNS out of the footer when the domain is not eligible for it', async () => {
+		renderCards( [
+			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{
+				id: 'manage-dns-settings',
+				label: 'Manage DNS',
+				callback: jest.fn(),
+				isEligible: () => false,
+			},
+		] );
+
+		await screen.findByRole( 'button', { name: 'Settings' } );
+		expect( screen.queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the action’s own label for a transfer, which does not go to its settings', async () => {
+		renderCards(
+			[ { id: 'manage-domain', label: () => 'View transfer', callback: jest.fn() } ],
+			[
+				{
+					...domain,
+					subtype: { id: DomainSubtype.DOMAIN_TRANSFER, label: 'Domain name transfer' },
+				} as DomainSummary,
+			]
+		);
+
+		expect( await screen.findByRole( 'button', { name: 'View transfer' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Settings' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'keeps connection setup in the menu', async () => {
@@ -145,16 +207,9 @@ describe( '<DomainCardsLayout>', () => {
 	} );
 
 	test( 'hides the menu when no actions are left for it', async () => {
-		const expiringDomain = {
-			...domain,
-			domain_status: { id: DomainStatus.EXPIRED, label: 'Expired', type: 'error' },
-		} as DomainSummary;
-		renderCards(
-			[ { id: 'renew', isPrimary: true, label: 'Renew', callback: jest.fn() } ],
-			[ expiringDomain ]
-		);
+		renderCards( [ { id: 'manage-domain', label: () => 'View settings', callback: jest.fn() } ] );
 
-		await screen.findByRole( 'button', { name: 'Renew' } );
+		await screen.findByRole( 'button', { name: 'Settings' } );
 		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
 	} );
 

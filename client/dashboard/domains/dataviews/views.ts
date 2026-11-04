@@ -50,7 +50,7 @@ export function sanitizeDomainsListLayout( view: View ): View {
 
 const DOMAINS_LIST_GRID_LAYOUT = {
 	layout: {
-		previewSize: 290,
+		density: 'balanced' as const,
 	},
 	showLevels: false,
 	showMedia: false,

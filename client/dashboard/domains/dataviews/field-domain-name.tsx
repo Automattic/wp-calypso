@@ -17,12 +17,14 @@ export const DomainNameField = ( {
 	value,
 	showPrimaryDomainBadge,
 	showWwwPrefix,
+	isLinked = true,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
 	showPrimaryDomainBadge?: boolean;
 	showWwwPrefix?: boolean;
+	isLinked?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
@@ -76,7 +78,7 @@ export const DomainNameField = ( {
 		</VStack>
 	);
 
-	if ( ! domain.subscription_id ) {
+	if ( ! isLinked || ! domain.subscription_id ) {
 		return content;
 	}
 
