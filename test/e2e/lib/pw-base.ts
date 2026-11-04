@@ -534,7 +534,12 @@ export const test = base.extend<
 			},
 		] );
 
-		if ( [ 'authentication', 'chrome', 'mobile' ].includes( testInfo.project.name ) ) {
+		// Prefixes: mixed Atomic runs split `chrome` into `chrome-atomic-<variation>`.
+		if (
+			[ 'authentication', 'chrome', 'mobile' ].some( ( name ) =>
+				testInfo.project.name.startsWith( name )
+			)
+		) {
 			await useBlackboxTestKeyForCollect( page );
 		}
 
