@@ -1,6 +1,7 @@
 import { __ } from '@wordpress/i18n';
 import type { Note } from '../types';
 
+const STAR_NOTICON = '\uf408';
 const REBLOG_NOTICON = '\uf805';
 
 export const getTemporaryNoteTitle = ( note: Note ) => {
@@ -13,7 +14,13 @@ export const getTemporaryNoteTitle = ( note: Note ) => {
 		case 'activitypub_followed_note':
 			return __( 'Followers' );
 		case 'activitypub_interaction_note':
-			return note.noticon === REBLOG_NOTICON ? __( 'Reposts' ) : __( 'Likes' );
+			if ( note.noticon === STAR_NOTICON ) {
+				return __( 'Likes' );
+			}
+			if ( note.noticon === REBLOG_NOTICON ) {
+				return __( 'Reposts' );
+			}
+			return note.title;
 		default:
 			return note.title;
 	}
