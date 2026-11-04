@@ -6,7 +6,7 @@ import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import {
 	Button,
 	__experimentalHStack as HStack,
-	__experimentalVStack as VStack,
+	__experimentalText as Text,
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -20,7 +20,6 @@ import ConfirmModal from '../../components/confirm-modal';
 import InlineSupportLink from '../../components/inline-support-link';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
-import { SectionHeader } from '../../components/section-header';
 import { getSshKeyLabel, MAX_SSH_KEYS } from '../../utils/ssh';
 import AddSshKeyModal from './add-ssh-key-modal';
 import EditSshKeyModal from './edit-ssh-key-modal';
@@ -131,38 +130,7 @@ export default function SshKeys() {
 					/>
 				}
 			>
-				<ActionList>
-					<VStack spacing={ 4 } style={ { paddingBlock: '16px' } }>
-						<HStack justify="space-between" alignment="top">
-							<SectionHeader
-								level={ 3 }
-								title={ __( 'Your SSH keys' ) }
-								description={
-									hasReachedLimit
-										? sprintf(
-												/* translators: %s is the maximum number of SSH keys. */
-												__( 'You can add up to %s SSH keys. Delete a key to add another one.' ),
-												formatNumber( MAX_SSH_KEYS )
-											)
-										: __(
-												'Add an SSH key to your WordPress.com account to make it available for SFTP and SSH authentication.'
-											)
-								}
-							/>
-							<VStack style={ { flexShrink: 0 } }>
-								<Button
-									__next40pxDefaultSize
-									variant="secondary"
-									size="compact"
-									onClick={ handleAdd }
-									disabled={ hasReachedLimit }
-									accessibleWhenDisabled
-								>
-									{ __( 'Add SSH key' ) }
-								</Button>
-							</VStack>
-						</HStack>
-					</VStack>
+				<ActionList title={ __( 'Your SSH keys' ) }>
 					{ sshKeys.map( ( sshKey ) => (
 						<SshKeyItem
 							key={ sshKey.name }
@@ -171,6 +139,27 @@ export default function SshKeys() {
 							onDelete={ () => handleDeleteDialogOpen( sshKey ) }
 						/>
 					) ) }
+					<HStack justify="flex-start" spacing={ 3 } wrap style={ { paddingBlock: '16px' } }>
+						<Button
+							__next40pxDefaultSize
+							variant="secondary"
+							size="compact"
+							onClick={ handleAdd }
+							disabled={ hasReachedLimit }
+							accessibleWhenDisabled
+						>
+							{ __( 'Add SSH key' ) }
+						</Button>
+						{ hasReachedLimit && (
+							<Text variant="muted">
+								{ sprintf(
+									/* translators: %s is the maximum number of SSH keys. */
+									__( 'You can add up to %s SSH keys. Delete a key to add another one.' ),
+									formatNumber( MAX_SSH_KEYS )
+								) }
+							</Text>
+						) }
+					</HStack>
 				</ActionList>
 			</PageLayout>
 			{ isAddModalOpen && (
