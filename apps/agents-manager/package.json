@@ -38,7 +38,7 @@
 		"@wordpress/components": "^28.23.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/data": "^10.48.0",
-		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/i18n": "^6.30.0",
 		"@wordpress/plugins": "^7.48.0"
 	},
 	"devDependencies": {
