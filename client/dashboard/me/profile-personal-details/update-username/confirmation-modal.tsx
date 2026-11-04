@@ -1,6 +1,6 @@
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import ConfirmModal from '../../../components/confirm-modal';
 import { Text } from '../../../components/text';
 
@@ -40,14 +40,13 @@ export default function UsernameUpdateConfirmationModal( {
 			<VStack spacing={ 3 }>
 				<Text as="p">
 					{ createInterpolateElement(
-						sprintf(
-							/* translators: %(currentUsername)s is the current username that will be changed, %(newUsername)s is the new username */
-							__(
-								'Your username will change from <strong>%(currentUsername)s</strong> to <strong>%(newUsername)s</strong>. This can’t be undone.'
-							),
-							{ currentUsername, newUsername }
+						__(
+							'Your username will change from <currentUsername /> to <newUsername />. This can’t be undone.'
 						),
-						{ strong: <strong /> }
+						{
+							currentUsername: <strong>{ currentUsername }</strong>,
+							newUsername: <strong>{ newUsername }</strong>,
+						}
 					) }
 				</Text>
 				<Text as="p">{ __( 'What changes:' ) }</Text>
