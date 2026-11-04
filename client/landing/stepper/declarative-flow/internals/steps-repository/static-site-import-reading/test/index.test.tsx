@@ -163,15 +163,18 @@ describe( 'StaticSiteImportReading', () => {
 		expect( getSignupCompleteFlowName() ).toBeNull();
 	} );
 
-	it( 'reports the flow as unavailable when the API can’t start a session', async () => {
-		mockApi().post( '/wpcom/v2/static-site-import-session' ).query( true ).reply( 404, {
-			code: 'static_site_import_disabled',
-			message: 'Static site import is not enabled.',
-		} );
+	it.each( [
+		[ 404, 'static_site_import_disabled', 'unavailable' ],
+		[ 409, 'static_site_import_source_is_wordpress', 'migrate' ],
+	] )( 'answers a %d %s error with %s', async ( status, code, action ) => {
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( status, { code, message: code } );
 
 		const submit = render( 'from=busybearscleaning.com' );
 
-		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action } ) );
 	} );
 
 	it( 'stops at a refused source instead of offering another route', async () => {
