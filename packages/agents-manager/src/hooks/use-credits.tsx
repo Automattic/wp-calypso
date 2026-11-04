@@ -854,9 +854,14 @@ export function useCredits( {
 		[ recordCreditsEvent ]
 	);
 
-	// Personal and Premium upgrade first, though a credits pack is cheaper than a plan.
+	// Personal and Premium upgrade first, though a credits pack is cheaper than a plan. Whoever
+	// can't upgrade gets no credits pack either, as in the meter.
 	const addCreditsAction = useMemo< CreditsAnswerAction | undefined >( () => {
-		if ( planPurchaseLink?.kind !== 'upgrade' || access?.canBuyCredits !== true ) {
+		if (
+			planPurchaseLink?.kind !== 'upgrade' ||
+			access?.canUpgrade !== true ||
+			access.canBuyCredits !== true
+		) {
 			return undefined;
 		}
 		const link = getLiveCreditsTopUpLink( siteId, site );

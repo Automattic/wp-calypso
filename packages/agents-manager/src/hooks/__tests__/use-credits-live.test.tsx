@@ -3220,6 +3220,27 @@ describe( 'credits answer', () => {
 		}
 	);
 
+	it.each( [
+		[ 'another account bought the plan', true, false, true ],
+		[ 'the plan buyer is unknown', true, null, false ],
+	] as const )(
+		'offers no button on Personal when %s, as in the meter',
+		async ( _, canBuyCredits, canUpgrade, namesPlanOwner ) => {
+			fetchMock.mockResolvedValueOnce(
+				response( creditSnapshot( { plan_tier: 'personal' } ), canBuyCredits, canUpgrade )
+			);
+			const { result } = renderCredits();
+			await flush();
+
+			expect( answerOf( result.current )?.actions ).toEqual( [] );
+			expect( props( result.current ).action ).toBeUndefined();
+			expect(
+				answerOf( result.current )?.purchaseHint?.includes( 'different WordPress.com account' ) ??
+					false
+			).toBe( namesPlanOwner );
+		}
+	);
+
 	it.each( [ 'business', 'commerce' ] as const )(
 		'offers only Add credits on %s',
 		async ( plan_tier ) => {
@@ -3232,19 +3253,6 @@ describe( 'credits answer', () => {
 			).toEqual( [ { kind: 'top_up', href: ADD_CREDITS_URL } ] );
 		}
 	);
-
-	it( 'offers only Add credits to an admin who can’t upgrade the plan', async () => {
-		fetchMock.mockResolvedValueOnce(
-			response( creditSnapshot( { plan_tier: 'personal' } ), true, false )
-		);
-		const { result } = renderCredits();
-		await flush();
-
-		expect( answerOf( result.current )?.actions.map( ( { kind } ) => kind ) ).toEqual( [
-			'top_up',
-		] );
-		expect( answerOf( result.current )?.purchaseHint ).toBeUndefined();
-	} );
 
 	it.each( [ 'personal', 'business' ] as const )(
 		'names who to ask, with no button, for someone who can’t buy on %s',
