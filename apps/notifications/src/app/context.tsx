@@ -7,6 +7,7 @@ export type AppContextData = {
 	isViewSettingsEnabled: boolean;
 	isSimplifiedNoteEnabled: boolean;
 	onPreferenceChange: ( key: string, value: unknown ) => Promise< unknown >;
+	onOpenFullView?: () => void;
 };
 
 const AppContext = createContext< AppContextData >( {
@@ -23,6 +24,7 @@ export const AppProvider = ( {
 	isViewSettingsEnabled = false,
 	isSimplifiedNoteEnabled = false,
 	onPreferenceChange = () => Promise.resolve(),
+	onOpenFullView,
 	children,
 }: {
 	client: Client | null;
@@ -30,6 +32,7 @@ export const AppProvider = ( {
 	isViewSettingsEnabled?: boolean;
 	isSimplifiedNoteEnabled?: boolean;
 	onPreferenceChange?: ( key: string, value: unknown ) => Promise< unknown >;
+	onOpenFullView?: () => void;
 	children: React.ReactNode;
 } ) => {
 	const value = useMemo(
@@ -39,8 +42,16 @@ export const AppProvider = ( {
 			isViewSettingsEnabled,
 			isSimplifiedNoteEnabled,
 			onPreferenceChange,
+			onOpenFullView,
 		} ),
-		[ client, locale, isViewSettingsEnabled, isSimplifiedNoteEnabled, onPreferenceChange ]
+		[
+			client,
+			locale,
+			isViewSettingsEnabled,
+			isSimplifiedNoteEnabled,
+			onPreferenceChange,
+			onOpenFullView,
+		]
 	);
 
 	return <AppContext.Provider value={ value }>{ children }</AppContext.Provider>;

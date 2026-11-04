@@ -41,11 +41,13 @@ export default function Notifications( {
 	className,
 	anchor,
 	isInboxShown = false,
+	onOpenInbox,
 }: {
 	className?: string;
 	/** When true, hides the built-in toggle button (the omnibar provides its own). */
 	anchor?: boolean;
 	isInboxShown?: boolean;
+	onOpenInbox?: () => void;
 } ) {
 	const { user } = useAuth();
 	const locale = useLocale();
@@ -234,6 +236,7 @@ export default function Notifications( {
 						isSimplifiedNoteEnabled={ isSimplifiedNoteEnabled }
 						preferences={ notificationPreferences }
 						onPreferenceChange={ handlePreferenceChange }
+						onOpenFullView={ onOpenInbox }
 						actionHandlers={ actionHandlers }
 						wpcom={ wpcom }
 					/>

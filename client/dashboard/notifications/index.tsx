@@ -1,13 +1,13 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { __experimentalVStack as VStack, Button, SelectControl } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __ } from '@wordpress/i18n';
 import { Tabs } from '@wordpress/ui';
 import { Suspense, lazy, useState } from 'react';
 import wpcom from 'calypso/lib/wp';
+import { useAuth } from '../app/auth';
 import { useLocale } from '../app/locale';
 import { Card } from '../components/card';
-import Grid from '../components/grid';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
 
@@ -17,37 +17,13 @@ const NotificationsInbox = lazy( () => import( '@automattic/notifications/src/in
 
 type ReadFilter = 'all' | 'unread';
 
-function getNoteTypeOptions() {
-	return [
-		{ value: '', label: __( 'All types' ) },
-		{ value: 'comment', label: __( 'Comments' ) },
-		{ value: 'comment_like,like', label: __( 'Likes' ) },
-		{ value: 'follow', label: __( 'Subscribers' ) },
-		{ value: 'reblog', label: __( 'Reblogs' ) },
-		{ value: 'automattcher', label: __( 'Mentions' ) },
-		{ value: 'new_post', label: __( 'New posts' ) },
-	];
-}
-
-/**
- * Returns the notes client filter for the read filter and comma-separated note types.
- */
-function getFilterName( readFilter: ReadFilter, noteTypes: string ) {
-	if ( ! noteTypes ) {
-		return readFilter;
-	}
-	return readFilter === 'unread'
-		? ( `types-unread:${ noteTypes }` as const )
-		: ( `types:${ noteTypes }` as const );
-}
-
 export default function Notifications() {
 	const navigate = useNavigate();
 	const locale = useLocale();
+	const { user } = useAuth();
 	const { noteId } = useParams( { strict: false } );
 	const isSmallViewport = useViewportMatch( 'large', '<' );
 	const [ readFilter, setReadFilter ] = useState< ReadFilter >( 'all' );
-	const [ noteTypes, setNoteTypes ] = useState( '' );
 
 	const setSelectedNoteId = ( selectedNoteId: string | undefined ) => {
 		if ( selectedNoteId ) {
@@ -58,26 +34,21 @@ export default function Notifications() {
 	};
 
 	const renderListPane = ( list: React.ReactNode ) => (
-		<Card className="dashboard-notifications__list">
+		<div className="dashboard-notifications__list">
 			<Tabs.Root
 				className="dashboard-notifications__tabs"
 				value={ readFilter }
 				onValueChange={ ( value ) => setReadFilter( value === 'unread' ? 'unread' : 'all' ) }
 			>
-				<VStack spacing={ 3 } className="dashboard-notifications__filters">
-					<Tabs.List>
-						<Tabs.Tab value="all">{ __( 'All' ) }</Tabs.Tab>
-						<Tabs.Tab value="unread">{ __( 'Unread' ) }</Tabs.Tab>
-					</Tabs.List>
-					<SelectControl
-						__next40pxDefaultSize
-						label={ __( 'Type' ) }
-						hideLabelFromVision
-						value={ noteTypes }
-						options={ getNoteTypeOptions() }
-						onChange={ setNoteTypes }
-					/>
-				</VStack>
+				<Tabs.List className="dashboard-notifications__tab-list">
+					<Tabs.Tab value="all">{ __( 'All' ) }</Tabs.Tab>
+					<Tabs.Tab value="unread">{ __( 'Unread' ) }</Tabs.Tab>
+				</Tabs.List>
+				<div className="dashboard-notifications__list-actions">
+					<Button variant="tertiary" size="small">
+						{ __( 'Mark all as read' ) }
+					</Button>
+				</div>
 				<Tabs.Panel value="all" className="dashboard-notifications__tab-panel">
 					{ list }
 				</Tabs.Panel>
@@ -85,45 +56,36 @@ export default function Notifications() {
 					{ list }
 				</Tabs.Panel>
 			</Tabs.Root>
-		</Card>
+		</div>
 	);
 
 	return (
-		<PageLayout
-			size="large"
-			header={
-				<PageHeader
-					title={ __( 'Notifications' ) }
-					actions={
-						<Button variant="secondary" __next40pxDefaultSize disabled accessibleWhenDisabled>
-							{ __( 'Mark all as read' ) }
-						</Button>
-					}
-				/>
-			}
-		>
+		<PageLayout size="large" header={ <PageHeader title={ __( 'Notifications' ) } /> }>
 			<Suspense fallback={ null }>
 				<NotificationsInbox
 					wpcom={ wpcom }
 					locale={ locale }
-					filterName={ getFilterName( readFilter, noteTypes ) }
+					currentUser={ { name: user.display_name, avatarUrl: user.avatar_URL } }
+					filterName={ readFilter }
 					selectedNoteId={ noteId }
 					setSelectedNoteId={ setSelectedNoteId }
 					renderLayout={ ( { list, detail } ) => {
 						const listPane = renderListPane( list );
 						const detailPane = detail && (
-							<Card className="dashboard-notifications__detail">{ detail }</Card>
+							<div className="dashboard-notifications__detail">{ detail }</div>
 						);
 
-						if ( isSmallViewport ) {
-							return detailPane || listPane;
-						}
-
 						return (
-							<Grid gap="md" templateColumns="392px 1fr">
-								{ listPane }
-								{ detailPane }
-							</Grid>
+							<Card className="dashboard-notifications">
+								{ isSmallViewport ? (
+									detailPane || listPane
+								) : (
+									<div className="dashboard-notifications__panes">
+										{ listPane }
+										{ detailPane }
+									</div>
+								) }
+							</Card>
 						);
 					} }
 				/>

@@ -1,6 +1,5 @@
-import { isEnabled } from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
-import { bell, envelope, globe, layout, plugins } from '@wordpress/icons';
+import { envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
@@ -86,11 +85,6 @@ function PrimaryMenuSidebar() {
 			{ supports.emails && (
 				<SidebarMenuItem icon={ envelope } to="/emails">
 					{ __( 'Emails' ) }
-				</SidebarMenuItem>
-			) }
-			{ supports.notifications && isEnabled( 'dashboard/notifications-inbox' ) && (
-				<SidebarMenuItem icon={ bell } to="/notifications">
-					{ __( 'Notifications' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.plugins && (
