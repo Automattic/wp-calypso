@@ -65,6 +65,7 @@
 		"@wordpress/hooks": "^4.57.0",
 		"@wordpress/i18n": "^6.30.0",
 		"@wordpress/icons": "^15.5.0",
+		"@wordpress/image-cropper": "^1.12.0",
 		"@wordpress/plugins": "^7.48.0",
 		"@wordpress/primitives": "^4.56.0",
 		"@wordpress/url": "^4.57.0",
