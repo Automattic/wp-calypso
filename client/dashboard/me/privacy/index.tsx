@@ -23,7 +23,9 @@ export default function Privacy() {
 		>
 			<VStack spacing={ 8 }>
 				<UsageInformationCard />
-				{ config.isEnabled( 'me/email-tracking-consent' ) && <EmailTrackingCard source="privacy" /> }
+				{ config.isEnabled( 'me/email-tracking-consent' ) && (
+					<EmailTrackingCard source="privacy" />
+				) }
 				<DpaCard />
 				{ config.isEnabled( 'cookie-banner' ) && <DoNotSellCard /> }
 			</VStack>
