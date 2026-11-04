@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { onlineManager } from '@tanstack/react-query';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
@@ -172,6 +173,83 @@ describe( 'StaticSiteImportReading', () => {
 		const submit = render( 'from=busybearscleaning.com' );
 
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
+	} );
+
+	describe( 'when starting a session fails temporarily', () => {
+		const mockCreate = () => mockApi().post( '/wpcom/v2/static-site-import-session' ).query( true );
+
+		afterEach( () => {
+			jest.useRealTimers();
+			onlineManager.setOnline( true );
+		} );
+
+		it.each( [
+			[ 'a 500', () => mockCreate().reply( 500, { code: 'internal_server_error' } ) ],
+			[ 'a 429', () => mockCreate().reply( 429, { code: 'rate_limit_exceeded' } ) ],
+			[ 'a network error', () => mockCreate().replyWithError( 'socket hang up' ) ],
+		] )( 'offers a retry after %s, and the retry can succeed', async ( _name, mockFailure ) => {
+			mockFailure();
+			const submit = render( 'from=busybearscleaning.com' );
+
+			const tryAgain = await screen.findByRole( 'button', { name: 'Try again' } );
+			expect( tryAgain ).toBeVisible();
+			expect( screen.getByRole( 'button', { name: 'Get help' } ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+
+			mockCreate().reply( 200, sessionResponse );
+			await userEvent.click( tryAgain );
+
+			await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		} );
+
+		it( 'keeps offering a retry when the retry fails too', async () => {
+			mockCreate().reply( 500 );
+			const submit = render( 'from=busybearscleaning.com' );
+			const tryAgain = await screen.findByRole( 'button', { name: 'Try again' } );
+
+			const retry = mockCreate().reply( 503 );
+			await userEvent.click( tryAgain );
+
+			await waitFor( () => expect( retry.isDone() ).toBe( true ) );
+			expect( await screen.findByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not repeat new-site setup on retry', async () => {
+			mockApi().post( '/rest/v1.4/sites/123/settings' ).once().reply( 200, {} );
+			mockApi().post( '/wpcom/v2/sites/123/site-intent' ).once().reply( 200, {} );
+			mockCreate().reply( 500 );
+			const submit = render( 'newSite=1&from=busybearscleaning.com' );
+
+			const tryAgain = await screen.findByRole( 'button', { name: 'Try again' } );
+			mockCreate().reply( 200, sessionResponse );
+			await userEvent.click( tryAgain );
+
+			await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+			expect( recordSignupComplete ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'stops waiting for a request that never finishes', async () => {
+			jest.useFakeTimers();
+			mockCreate()
+				.delay( 10 * 60 * 1000 )
+				.reply( 200, sessionResponse );
+			const submit = render( 'from=busybearscleaning.com' );
+
+			await act( () => jest.advanceTimersByTimeAsync( 2 * 60 * 1000 ) );
+
+			expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not wait for the connection to come back when offline', async () => {
+			onlineManager.setOnline( false );
+			mockCreate().replyWithError( 'network down' );
+			const submit = render( 'from=busybearscleaning.com' );
+
+			expect( await screen.findByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
 	} );
 
 	it( 'stops at a refused source instead of offering another route', async () => {

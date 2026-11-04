@@ -1,8 +1,9 @@
-import { getStaticSiteImportErrorCode } from '@automattic/api-core';
+import { getStaticSiteImportErrorCode, isWpError } from '@automattic/api-core';
 import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
 import { HelpCenter, Onboard, Visibility } from '@automattic/data-stores';
 import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -32,6 +33,9 @@ const HELP_CENTER_STORE = HelpCenter.register();
 const isRefusedError = ( error: unknown ) =>
 	getStaticSiteImportErrorCode( error ) === 'static_site_import_source_refused';
 
+const isTransientError = ( error: unknown ) =>
+	! isWpError( error ) || error.status < 400 || error.status === 429 || error.status >= 500;
+
 const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmits } > =
 	function StaticSiteImportReading( { navigation } ) {
 		const { __ } = useI18n();
@@ -57,8 +61,18 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
 
+		const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
+		const startSession = () =>
+			createSession( sourceUrl, {
+				onSuccess: ( session ) =>
+					submit( { action: 'continue', importSessionId: session.session_id } ),
+				onError: ( createError ) =>
+					! isRefusedError( createError ) &&
+					! isTransientError( createError ) &&
+					submit( { action: 'unavailable' } ),
+			} );
+
 		const start = useEffectEvent( async () => {
-			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
 			if ( ! sessionId && ! sourceUrl ) {
 				return submit( { action: 'unavailable' } );
 			}
@@ -112,12 +126,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			if ( sessionId ) {
 				return submit( { action: 'continue', importSessionId: sessionId } );
 			}
-			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
-				onError: ( createError ) =>
-					! isRefusedError( createError ) && submit( { action: 'unavailable' } ),
-			} );
+			startSession();
 		} );
 		const hasStarted = useRef( false );
 		useEffect( () => {
@@ -149,6 +158,33 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 								{ __( 'Go to your site' ) }
 							</Step.SecondaryButton>
 						) }
+					</Step.CenteredColumnLayout>
+				</>
+			);
+		}
+
+		if ( error && isTransientError( error ) ) {
+			return (
+				<>
+					<DocumentHead title={ __( 'We couldn’t start your import' ) } />
+					<Step.CenteredColumnLayout
+						columnWidth={ 8 }
+						topBar={ <Step.TopBar /> }
+						heading={
+							<Step.Heading
+								text={ __( 'We couldn’t start your import' ) }
+								subText={ __( 'This is usually temporary. Please try again.' ) }
+							/>
+						}
+					>
+						<HStack justify="center">
+							<Step.PrimaryButton onClick={ startSession }>
+								{ __( 'Try again' ) }
+							</Step.PrimaryButton>
+							<Step.SecondaryButton onClick={ () => setShowHelpCenter( true ) }>
+								{ __( 'Get help' ) }
+							</Step.SecondaryButton>
+						</HStack>
 					</Step.CenteredColumnLayout>
 				</>
 			);

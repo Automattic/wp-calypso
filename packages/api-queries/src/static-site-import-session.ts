@@ -14,6 +14,7 @@ import type {
 } from '@automattic/api-core';
 
 const POLL_INTERVAL = 5000;
+const CREATE_TIMEOUT = 60000;
 
 export const staticSiteImportSessionQuery = ( sessionId: string ) =>
 	queryOptions( {
@@ -39,7 +40,20 @@ export const pollStaticSiteImportSessionUntil =
 export const createStaticSiteImportSessionMutation = () =>
 	mutationOptions( {
 		meta: { statId: 'static-site-import-create' },
-		mutationFn: ( sourceUrl: string ) => createStaticSiteImportSession( sourceUrl ),
+		// A mutation paused while offline never runs, so it would never reach the timeout.
+		networkMode: 'always',
+		mutationFn: ( sourceUrl: string ) => {
+			let timer: ReturnType< typeof setTimeout >;
+			const timeout = new Promise< never >( ( _resolve, reject ) => {
+				timer = setTimeout(
+					() => reject( new Error( 'Creating the import session timed out' ) ),
+					CREATE_TIMEOUT
+				);
+			} );
+			return Promise.race( [ createStaticSiteImportSession( sourceUrl ), timeout ] ).finally( () =>
+				clearTimeout( timer )
+			);
+		},
 	} );
 
 export const approveStaticSiteImportSessionMutation = () =>
