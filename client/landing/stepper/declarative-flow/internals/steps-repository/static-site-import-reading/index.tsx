@@ -3,6 +3,7 @@ import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
 import { HelpCenter, Onboard, Visibility } from '@automattic/data-stores';
 import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
+import { __experimentalHStack as HStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
@@ -10,6 +11,7 @@ import { useEffect, useEffectEvent, useRef, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import DocumentHead from 'calypso/components/data/document-head';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { recordSignupComplete, SIGNUP_DOMAIN_ORIGIN } from 'calypso/lib/analytics/signup';
 import { addSchemeIfMissing } from 'calypso/lib/url';
@@ -25,7 +27,9 @@ import { getCurrentUserId } from 'calypso/state/current-user/selectors';
 import type { Step as StepType } from '../../types';
 
 export type StaticSiteImportReadingSubmits =
-	{ action: 'continue'; importSessionId: string } | { action: 'unavailable' };
+	| { action: 'continue'; importSessionId: string }
+	| { action: 'unavailable' }
+	| { action: 'new-site' };
 
 const HELP_CENTER_STORE = HelpCenter.register();
 
@@ -37,6 +41,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		const { __ } = useI18n();
 		const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
 		const { site, siteSlug } = useSiteData();
+		const { isAdmin } = useIsSiteAdmin();
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
 		const from = searchParams.get( 'from' )?.trim();
@@ -121,11 +126,38 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		} );
 		const hasStarted = useRef( false );
 		useEffect( () => {
-			if ( ! needsConfirmation && ! hasStarted.current ) {
+			if ( ! needsConfirmation && ! hasStarted.current && isAdmin !== false ) {
 				hasStarted.current = true;
 				start();
 			}
-		}, [ needsConfirmation ] );
+		}, [ needsConfirmation, isAdmin ] );
+
+		if ( isAdmin === false ) {
+			return (
+				<>
+					<DocumentHead title={ __( 'You are not authorized to import content' ) } />
+					<Step.CenteredColumnLayout
+						columnWidth={ 8 }
+						topBar={ <Step.TopBar /> }
+						heading={
+							<Step.Heading
+								text={ __( 'You are not authorized to import content' ) }
+								subText={ __( 'Please check with your site admin.' ) }
+							/>
+						}
+					>
+						<HStack justify="center" spacing={ 4 }>
+							<Step.PrimaryButton onClick={ () => navigation.submit?.( { action: 'new-site' } ) }>
+								{ __( 'Import into a new site' ) }
+							</Step.PrimaryButton>
+							<Step.SecondaryButton href={ dashboardLink( '/sites' ) }>
+								{ __( 'Back to sites' ) }
+							</Step.SecondaryButton>
+						</HStack>
+					</Step.CenteredColumnLayout>
+				</>
+			);
+		}
 
 		if ( isRefusedError( error ) ) {
 			return (

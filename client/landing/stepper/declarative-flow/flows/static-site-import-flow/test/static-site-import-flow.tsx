@@ -177,15 +177,36 @@ describe( 'Static site import flow', () => {
 	} );
 
 	describe( 'destination checks', () => {
-		it( 'sends users who cannot manage the destination site to the start page', () => {
+		it( 'keeps users who cannot manage the destination site in the flow', () => {
 			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
 
-			renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
+			const result = renderFlow( staticSiteImportFlow ).runUseAssertionCondition( {
 				currentStep: STEPS.STATIC_SITE_IMPORT_READING.slug,
 				currentURL: `${ readingPath }?siteId=42`,
 			} );
 
-			expect( window.location.assign ).toHaveBeenCalledWith( '/start' );
+			expect( result.state ).toBe( AssertConditionState.SUCCESS );
+			expect( window.location.assign ).not.toHaveBeenCalled();
+		} );
+
+		it( 'moves users who cannot manage the destination site from plans to the reading step', () => {
+			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
+
+			const navigate = renderPlansNavigation( `${ plansPath }?siteId=42` );
+
+			expect( navigate ).toHaveBeenCalledWith(
+				STEPS.STATIC_SITE_IMPORT_READING.slug,
+				undefined,
+				true
+			);
+		} );
+
+		it( 'ignores a lingering site when the URL names no destination', () => {
+			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
+
+			const navigate = renderPlansNavigation( plansPath );
+
+			expect( navigate ).not.toHaveBeenCalled();
 		} );
 
 		it.each( [
@@ -307,6 +328,19 @@ describe( 'Static site import flow', () => {
 			expect( destination ).toMatchDestination( {
 				step: STEPS.UNIFIED_PLANS,
 				query: { importSessionId: 'abc123' },
+			} );
+		} );
+
+		it( 'sends users choosing a new site to plans with the source but no destination', () => {
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'new-site' },
+				query: { ...SOURCE, ...SITE, importSessionId: 'abc123' },
+			} );
+
+			expect( lastExit() ).toEqual( {
+				path: plansPath,
+				query: { ...SOURCE, ref: 'static-site-import' },
 			} );
 		} );
 

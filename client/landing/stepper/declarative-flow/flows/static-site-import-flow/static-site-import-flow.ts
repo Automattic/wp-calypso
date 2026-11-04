@@ -112,14 +112,9 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		}, [ resetOnboardStore, setIntent ] );
 	},
 	useAssertConditions(): AssertConditionResult {
-		const { isAdmin, isFetching } = useIsSiteAdmin();
+		const { isFetching } = useIsSiteAdmin();
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const checksDestination = hasDestinationSite( useQuery() ) && userIsLoggedIn;
-		useEffect( () => {
-			if ( checksDestination && isAdmin === false ) {
-				window.location.assign( '/start' );
-			}
-		}, [ checksDestination, isAdmin ] );
 
 		return {
 			state:
@@ -141,16 +136,18 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		const site = hasDestination ? siteData.site : undefined;
 		const hasSite = Boolean( siteId && siteSlug );
 		const isSiteOnPaidPlan = Boolean( site?.plan ) && ! site?.plan?.is_free;
+		const { isAdmin } = useIsSiteAdmin();
+		const skipsPlans = isSiteOnPaidPlan || ( hasDestination && isAdmin === false );
 		const from = urlQueryParams.get( 'from' ) ?? '';
 		const platform = ( urlQueryParams.get( 'platform' ) || 'unknown' ) as ImporterPlatform;
 		const userIsLoggedIn = useSelector( isUserLoggedIn );
 		const { setPlanCartItem } = useDispatch( ONBOARD_STORE ) as OnboardActions;
 
 		useEffect( () => {
-			if ( currentStep === STEPS.UNIFIED_PLANS.slug && isSiteOnPaidPlan ) {
+			if ( currentStep === STEPS.UNIFIED_PLANS.slug && skipsPlans ) {
 				navigate( STEPS.STATIC_SITE_IMPORT_READING.slug, undefined, true );
 			}
-		}, [ currentStep, isSiteOnPaidPlan, navigate ] );
+		}, [ currentStep, skipsPlans, navigate ] );
 
 		const exitFlow = ( to: string ) =>
 			window.location.replace( addQueryArgs( { ref: STATIC_SITE_IMPORT_FLOW }, to ) );
@@ -166,6 +163,15 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 			switch ( slug ) {
 				case STEPS.STATIC_SITE_IMPORT_READING.slug: {
+					if ( providedDependencies.action === 'new-site' ) {
+						return exitFlow(
+							addQueryArgs(
+								{ from, platform },
+								withLocale( `/setup/${ flowPath }/${ STEPS.UNIFIED_PLANS.slug }`, locale )
+							)
+						);
+					}
+
 					if ( providedDependencies.action === 'unavailable' ) {
 						if ( ! hasSite ) {
 							return navigate( STEPS.UNIFIED_PLANS.slug );

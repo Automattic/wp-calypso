@@ -5,6 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { MemoryRouter } from 'react-router';
+import { useIsSiteAdmin } from 'calypso/landing/stepper/hooks/use-is-site-admin';
 import { recordSignupComplete } from 'calypso/lib/analytics/signup';
 import {
 	getSignupCompleteFlowName,
@@ -25,6 +26,7 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/signup' ),
 	recordSignupComplete: jest.fn(),
 } ) );
+jest.mock( 'calypso/landing/stepper/hooks/use-is-site-admin' );
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		siteSlug: 'destination.example.com',
@@ -60,6 +62,7 @@ describe( 'StaticSiteImportReading', () => {
 		jest.clearAllMocks();
 		window.localStorage.clear();
 		window.sessionStorage.clear();
+		jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: true, isFetching: false } );
 	} );
 
 	it.each( [
@@ -190,4 +193,27 @@ describe( 'StaticSiteImportReading', () => {
 		);
 		expect( submit ).not.toHaveBeenCalled();
 	} );
+	it.each( [ true, false ] )(
+		'tells users who cannot manage the destination and starts nothing (afterCheckout: %s)',
+		async ( afterCheckout ) => {
+			jest.mocked( useIsSiteAdmin ).mockReturnValue( { isAdmin: false, isFetching: false } );
+			const createSession = mockApi()
+				.post( '/wpcom/v2/static-site-import-session' )
+				.query( true )
+				.reply( 200, sessionResponse );
+			const submit = render( 'from=busybearscleaning.com', { afterCheckout } );
+
+			expect(
+				screen.getByRole( 'heading', { name: 'You are not authorized to import content' } )
+			).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: 'Import into this site' } ) ).toBeNull();
+			expect( screen.getByRole( 'link', { name: 'Back to sites' } ) ).toBeVisible();
+			expect( createSession.isDone() ).toBe( false );
+			expect( submit ).not.toHaveBeenCalled();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Import into a new site' } ) );
+
+			expect( submit ).toHaveBeenCalledWith( { action: 'new-site' } );
+		}
+	);
 } );

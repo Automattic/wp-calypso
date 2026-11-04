@@ -26,6 +26,8 @@ move to our migrations team.
 
 An existing destination requires authentication. Paid destinations skip plans and checkout;
 free destinations use site checkout to buy a plan before starting the import session.
+Someone who can’t manage the destination stops at the reading step, which says so and offers plans
+for a new site with the source retained.
 The reading step asks for confirmation before importing into an existing destination unless
 this tab just came back from checkout in this flow. When unified checkout created the site
 (`newSite=1`), the step also records the signup and applies the flow’s site settings.
