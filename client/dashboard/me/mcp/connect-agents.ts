@@ -2,6 +2,7 @@ import { __ } from '@wordpress/i18n';
 
 export const MCP_SERVER_NAME = 'wpcom-mcp';
 export const MCP_SERVER_URL = 'https://public-api.wordpress.com/wpcom/v2/mcp/v1';
+export const CLAUDE_CODE_COMMAND = `claude mcp add --transport http ${ MCP_SERVER_NAME } ${ MCP_SERVER_URL }`;
 
 // The WordPress.com plugin on the Cursor Marketplace, which has a one-click install.
 export const CURSOR_PLUGIN_URL = 'https://cursor.com/marketplace/wordpress';
@@ -51,7 +52,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			description: __( 'Anthropic’s coding agent' ),
 			logo: LOGO_BASE_URL + 'claude-code.svg',
 			actionLabel: __( 'Copy command' ),
-			code: `claude mcp add --transport http ${ MCP_SERVER_NAME } ${ MCP_SERVER_URL }`,
+			code: CLAUDE_CODE_COMMAND,
 		},
 		{
 			key: 'cursor',

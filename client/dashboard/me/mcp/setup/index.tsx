@@ -23,7 +23,12 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
-import { CURSOR_PLUGIN_URL, MCP_SERVER_NAME, MCP_SERVER_URL } from '../connect-agents';
+import {
+	CLAUDE_CODE_COMMAND,
+	CURSOR_PLUGIN_URL,
+	MCP_SERVER_NAME,
+	MCP_SERVER_URL,
+} from '../connect-agents';
 
 import './style.scss';
 
@@ -227,16 +232,12 @@ function McpSetupComponent() {
 											<li>
 												<Text as="p" variant="muted">
 													{ createInterpolateElement(
-														/* translators: %s is the CLI command to add the MCP server */
-														__( 'Run this command in your terminal: <code>%s</code>' ).replace(
-															'%s',
-															'claude mcp add --transport http wpcom-mcp https://public-api.wordpress.com/wpcom/v2/mcp/v1'
-														),
+														/* translators: <code/> is replaced with the CLI command to add the MCP server */
+														__( 'Run this command in your terminal: <code/>' ),
 														{
 															code: (
 																<code className="mcp-setup__code" key="claude-code-cmd">
-																	claude mcp add --transport http wpcom-mcp
-																	https://public-api.wordpress.com/wpcom/v2/mcp/v1
+																	{ CLAUDE_CODE_COMMAND }
 																</code>
 															),
 														}
@@ -324,6 +325,7 @@ function McpSetupComponent() {
 											) }
 										</Text>
 										<Button
+											__next40pxDefaultSize
 											variant="primary"
 											href={ CURSOR_PLUGIN_URL }
 											target="_blank"
