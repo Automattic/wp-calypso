@@ -18,8 +18,11 @@ jest.mock( '@automattic/charts', () => ( {
 
 const series = [ { label: 'Views', data: [] } ];
 
-const renderChart = ( unit = 'day', chartType = 'line', data = series ) => {
-	render( <OverviewChart series={ data } height={ 160 } unit={ unit } chartType={ chartType } /> );
+const renderChart = ( unit = 'day', chartType = 'line', data = series, endDate = '2026-07-31' ) => {
+	const range = { unit, startDate: '2026-06-01', endDate };
+	render(
+		<OverviewChart series={ data } height={ 160 } range={ range } chartType={ chartType } />
+	);
 	return ( 'bar' === chartType ? BarChart : LineChart ).mock.calls[ 0 ][ 0 ];
 };
 
@@ -66,10 +69,29 @@ describe( 'OverviewChart', () => {
 	] )( 'draws the series as a %s chart', ( chartType, drawn, other ) => {
 		const props = renderChart( 'day', chartType );
 
-		expect( props.data ).toBe( series );
+		expect( props.data ).toEqual( series );
 		expect( props.height ).toBe( 160 );
 		expect( other ).not.toHaveBeenCalled();
 		expect( drawn ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'draws the visitors bar inside the views bar', () => {
+		const views = { label: 'Views', data: [], options: { stroke: '#00f' } };
+		const visitors = { label: 'Visitors', data: [], options: { stroke: '#0f0' } };
+		const { data } = renderChart( 'day', 'bar', [ views, visitors ] );
+
+		expect( data ).toEqual( [
+			{ ...views, group: 'traffic', options: { stroke: '#00f', type: 'comparison' } },
+			{ ...visitors, group: 'traffic' },
+		] );
+	} );
+
+	it( 'draws the lines as they are, one over the other', () => {
+		const views = { label: 'Views', data: [] };
+		const visitors = { label: 'Visitors', data: [] };
+		const { data } = renderChart( 'day', 'line', [ views, visitors ] );
+
+		expect( data ).toEqual( [ views, visitors ] );
 	} );
 
 	it( 'gives both charts the same scale, axis labels and margin', () => {
@@ -80,6 +102,21 @@ describe( 'OverviewChart', () => {
 		expect( bar.options.axis.y.tickFormat( 1200 ) ).toBe( line.options.axis.y.tickFormat( 1200 ) );
 		expect( bar.margin ).toEqual( line.margin );
 	} );
+
+	it.each( [ 'line', 'bar' ] )(
+		'draws a week that starts before the range from its first day, as a %s chart',
+		( chartType ) => {
+			// Monday June 29 starts the week the range's first day, a Wednesday, falls in.
+			const data = [ { label: 'Views', data: [ { date: new Date( 2026, 5, 29 ), value: 3 } ] } ];
+			const range = { unit: 'week', startDate: '2026-07-01', endDate: '2026-07-31' };
+			render(
+				<OverviewChart series={ data } height={ 160 } range={ range } chartType={ chartType } />
+			);
+			const props = ( 'bar' === chartType ? BarChart : LineChart ).mock.calls[ 0 ][ 0 ];
+
+			expect( props.data[ 0 ].data ).toEqual( [ { date: HOVERED, value: 3 } ] );
+		}
+	);
 } );
 
 describe( 'OverviewChart axes', () => {
@@ -95,6 +132,7 @@ describe( 'OverviewChart axes', () => {
 
 	it.each( [
 		[ 'day', 'Sep 20' ],
+		[ 'week', 'Sep 20' ],
 		[ 'month', 'Sep' ],
 	] )( 'labels a %s point as %s', ( unit, expected ) => {
 		const { x } = renderAxes( unit );
@@ -124,6 +162,20 @@ describe( 'OverviewChart tooltip', () => {
 		[ 'day', 'July 1, 2026' ],
 	] )( 'names the %s a total covers', ( unit, expected ) => {
 		renderTooltip( unit, { Views: 1200 } );
+		expect( screen.getByText( expected ) ).toBeInTheDocument();
+	} );
+
+	it.each( [
+		// Wednesday July 1 starts a week the range begins in; the week runs to its Sunday.
+		[ 'to its Sunday', '2026-07-31', /^July 1\s*–\s*5, 2026$/ ],
+		[ "to the range's last day", '2026-07-02', /^July 1\s*–\s*2, 2026$/ ],
+	] )( 'names the days of a week %s', ( _, endDate, expected ) => {
+		const data = [ { label: 'Views', data: [ { date: HOVERED, value: 3 } ] } ];
+		const tooltip = renderChart( 'week', 'line', data, endDate ).renderTooltip( {
+			tooltipData: { nearestDatum: { datum: { date: HOVERED } } },
+		} );
+		render( <div>{ tooltip }</div> );
+
 		expect( screen.getByText( expected ) ).toBeInTheDocument();
 	} );
 
@@ -183,5 +235,18 @@ describe( 'OverviewChart tooltip', () => {
 
 		expect( screen.getByText( '3' ) ).toBeInTheDocument();
 		expect( screen.getByText( '0' ) ).toBeInTheDocument();
+	} );
+
+	it( "names and reads a week moved to the range's first day from that day", () => {
+		const data = [ { label: 'Views', data: [ { date: new Date( 2026, 5, 29 ), value: 3 } ] } ];
+		const range = { unit: 'week', startDate: '2026-07-01', endDate: '2026-07-31' };
+		render( <OverviewChart series={ data } height={ 160 } range={ range } chartType="line" /> );
+		const tooltip = LineChart.mock.calls[ 0 ][ 0 ].renderTooltip( {
+			tooltipData: { nearestDatum: { datum: { date: HOVERED } } },
+		} );
+		render( <div>{ tooltip }</div> );
+
+		expect( screen.getByText( /^July 1\s*–\s*5, 2026$/ ) ).toBeInTheDocument();
+		expect( screen.getByText( '3' ) ).toBeInTheDocument();
 	} );
 } );

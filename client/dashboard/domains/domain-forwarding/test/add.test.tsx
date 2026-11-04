@@ -330,6 +330,21 @@ test( 'allows target URL that redirects to same domain with path', async () => {
 	} );
 } );
 
+test( 'submits a root domain forward to its www subdomain', async () => {
+	const user = userEvent.setup();
+	const mockOnSubmit = jest.fn();
+
+	renderForm( { defaultSourceType: 'root', onSubmit: mockOnSubmit } );
+
+	const targetUrlInput = await screen.findByRole( 'textbox', { name: /forward to/i } );
+	await user.type( targetUrlInput, 'https://www.example.com' );
+	await user.click( screen.getByRole( 'button', { name: 'Add' } ) );
+
+	expect( mockOnSubmit ).toHaveBeenCalledWith(
+		expect.objectContaining( { sourceType: 'root', targetUrl: 'https://www.example.com' } )
+	);
+} );
+
 test( 'allows target URL without protocol (normalizes input)', async () => {
 	const user = userEvent.setup();
 	const mockOnSubmit = jest.fn();

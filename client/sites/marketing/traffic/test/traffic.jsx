@@ -1,8 +1,5 @@
-import {
-	getBlazeAdvertisingUrl,
-	isJetpackSeoPageAvailable,
-	shouldShowBlazeAdvertisingOption,
-} from '../traffic';
+import isJetpackSeoPageAvailable from 'calypso/state/selectors/is-jetpack-seo-page-available';
+import { getBlazeAdvertisingUrl, shouldShowBlazeAdvertisingOption } from '../traffic';
 
 const siteId = 123;
 

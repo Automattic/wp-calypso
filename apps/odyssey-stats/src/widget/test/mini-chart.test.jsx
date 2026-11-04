@@ -18,7 +18,8 @@ let mockChartProps = null;
 
 jest.mock( '../../hooks/use-visits-query' );
 jest.mock( 'calypso/my-sites/stats/hooks/use-css-variable', () => () => '#3858e9' );
-jest.mock( '../use-stats-link', () => () => ( url ) => url );
+const mockStatsLink = jest.fn( ( url ) => url );
+jest.mock( '../use-stats-link', () => () => mockStatsLink );
 jest.mock( '../record-widget-event', () => ( {
 	__esModule: true,
 	default: jest.fn(),
@@ -49,9 +50,9 @@ const success = ( data ) => ( { status: 'success', data } );
 const failed = () => ( { status: 'error' } );
 const pending = () => ( { status: 'pending' } );
 
-function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
+function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS, startDate = '2026-10-01' ) {
 	useVisitsQuery.mockReturnValue( state );
-	const range = { ...getDateRange( rangeId ), startDate: '2026-10-01', endDate: '2026-10-07' };
+	const range = { ...getDateRange( rangeId ), startDate, endDate: '2026-10-07' };
 	return (
 		<MiniChart
 			siteId={ 1 }
@@ -90,9 +91,9 @@ describe( 'MiniChart', () => {
 
 	it.each( [
 		[ 'bars, as the Stats page does', null, false, 'bar' ],
-		[ 'lines on a phone, as the Stats page does', null, true, 'line' ],
+		[ 'bars on a phone too, as Stats v2 does', null, true, 'bar' ],
 		[ 'lines when the viewer chose them on the Stats page', 'line', false, 'line' ],
-		[ 'bars when the viewer chose them on the Stats page', 'bar', true, 'bar' ],
+		[ 'lines on a phone when the viewer chose them', 'line', true, 'line' ],
 		[ 'bars over a value the Stats page never writes', 'pie', false, 'bar' ],
 	] )( 'draws %s', async ( _, stored, mobile, expected ) => {
 		if ( stored ) {
@@ -111,6 +112,31 @@ describe( 'MiniChart', () => {
 		);
 	} );
 
+	it( 'asks for the range from its first day, so a week at either end can be partial', () => {
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ), DATE_RANGE_LAST_90_DAYS ) );
+
+		expect( useVisitsQuery ).toHaveBeenCalledWith(
+			1,
+			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } )
+		);
+	} );
+
+	it( 'hands the chart the weeks as keyed, with the range they are cut to', async () => {
+		// Monday September 28 starts the week the range's first day, a Thursday, falls in.
+		const weeks = [
+			{ period: '2026-09-28', views: 20, visitors: 8 },
+			{ period: '2026-10-05', views: 10, visitors: 4 },
+		];
+		render( renderMiniChart( success( weeks ), DATE_RANGE_LAST_90_DAYS ) );
+		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
+
+		const dates = mockChartProps.series[ 0 ].data.map( ( point ) => point.date );
+		expect( dates ).toEqual( [ new Date( 2026, 8, 28 ), new Date( 2026, 9, 5 ) ] );
+		expect( mockChartProps.range ).toEqual(
+			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } )
+		);
+	} );
+
 	it( 'opens "More stats" on the days the chart shows', async () => {
 		// Each tracked link gets its own handler, so the click can be traced to this one.
 		recordWidgetEventThenFollow.mockImplementation( () =>
@@ -124,6 +150,12 @@ describe( 'MiniChart', () => {
 			'href',
 			'https://example.com/wp-admin/admin.php?page=stats/stats/day/1?chartStart=2026-10-01&chartEnd=2026-10-07'
 		);
+		// On Premium Analytics, the Traffic section: the bare dashboard opens a store's WooCommerce section first.
+		expect( mockStatsLink ).toHaveBeenCalledWith( expect.any( String ), '/?section=traffic', {
+			from: '2026-10-01',
+			to: '2026-10-07',
+			gmtOffset: 0,
+		} );
 		expect( recordWidgetEventThenFollow ).toHaveBeenCalledWith( 'more_stats_clicked', {
 			range: DATE_RANGE_LAST_7_DAYS,
 		} );

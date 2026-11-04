@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import { parseTrackingPrefs } from '@automattic/calypso-analytics';
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
 import {
 	filterLanguageRevisions,
 	isTranslatedIncompletely,
@@ -270,13 +271,15 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	];
 	const isDebug = devEnvironments.includes( calypsoEnv ) || request.query.debug !== undefined;
 	const reactQueryDevtoolsHelper = config.isEnabled( 'dev/react-query-devtools' );
-	const authHelper = config.isEnabled( 'dev/auth-helper' );
-	const accountSettingsHelper = config.isEnabled( 'dev/account-settings-helper' );
-	const storeSandboxHelper = config.isEnabled( 'dev/store-sandbox-helper' );
+	const isCalypsoLive = isCalypsoLiveHostname( request.hostname );
+	const authHelper = isCalypsoLive || config.isEnabled( 'dev/auth-helper' );
+	const accountSettingsHelper = isCalypsoLive || config.isEnabled( 'dev/account-settings-helper' );
+	const storeSandboxHelper = isCalypsoLive || config.isEnabled( 'dev/store-sandbox-helper' );
 	const blackboxHelper = config.isEnabled( 'dev/blackbox-helper' );
 	// preferences helper requires a Redux store, which doesn't exist in Gutenboarding
 	const preferencesHelper =
-		config.isEnabled( 'dev/preferences-helper' ) && entrypoint !== 'entry-gutenboarding';
+		( isCalypsoLive || config.isEnabled( 'dev/preferences-helper' ) ) &&
+		entrypoint !== 'entry-gutenboarding';
 	const featuresHelper = config.isEnabled( 'dev/features-helper' );
 
 	const flags = ( request.query.flags || '' ).split( ',' );
@@ -332,10 +335,11 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
 		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
-		// this is for calypso.live, so that branchName can be available while rendering the page
-		if ( request.query.branch ) {
-			context.branchName = request.query.branch;
-		}
+	}
+
+	// calypso.live passes the branch along, so that it can be shown in the environment badge.
+	if ( isCalypsoLive && request.query.branch ) {
+		context.branchName = request.query.branch;
 	}
 
 	if ( calypsoEnv === 'horizon' ) {

@@ -21,6 +21,7 @@
 	"logout_url": false,
 	"wpcom_url": "https://wordpress.com",
 	"calypso_live_image": false,
+	"calypso_live_envs": false,
 	"wpcom_signup_url": false,
 	"wpcom_login_url": false,
 	"wpcom_authorize_endpoint": false,
