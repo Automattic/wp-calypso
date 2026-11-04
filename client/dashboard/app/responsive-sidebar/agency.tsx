@@ -176,7 +176,7 @@ export default function AgencySidebar() {
 						</SidebarMenuItem>
 					) }
 					{ canAccessDashboardOptIn && (
-						<SidebarMenuItem to="/agency/dashboard">{ __( 'Dashboard' ) }</SidebarMenuItem>
+						<SidebarMenuItem to="/agency/dashboard">{ __( 'Classic dashboard' ) }</SidebarMenuItem>
 					) }
 				</SidebarExpandableMenuItem>
 			) }

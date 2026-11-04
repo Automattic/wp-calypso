@@ -1,14 +1,27 @@
 import moment from 'moment';
 
 /**
- * One option of the widget's range control. `unit` and `quantity` are the chart's buckets;
- * the lists cover the same days through `getRangeStartDate`. There is no hourly range
- * because top posts and referrers have no hourly period.
+ * One option of the widget's range control: the chart's bucket and the days it covers, which
+ * the lists cover too through `getRangeStartDate`. There is no hourly range because top posts
+ * and referrers have no hourly period.
  */
-export interface DateRange {
-	id: DateRangeId;
+export type DateRange = { id: DateRangeId } & DateRangeBuckets;
+
+type DateRangeBuckets = BucketedRange | WeekRange;
+
+interface BucketedRange {
 	unit: 'day' | 'month';
+	/** How many buckets the range covers, counted back from its last day. */
 	quantity: number;
+}
+
+interface WeekRange {
+	unit: 'week';
+	/**
+	 * The days the range covers. It has no bucket count: the API counts the weeks its days
+	 * touch, the first and last of them partial, so 90 days are 13 or 14 weeks.
+	 */
+	days: number;
 }
 
 export const DATE_RANGE_LAST_7_DAYS = 'last_7_days';
@@ -24,10 +37,12 @@ export type DateRangeId =
 
 export const DEFAULT_DATE_RANGE_ID: DateRangeId = DATE_RANGE_LAST_7_DAYS;
 
-const DATE_RANGE_BUCKETS: Record< DateRangeId, Pick< DateRange, 'unit' | 'quantity' > > = {
+// Last 90 days is drawn by week, as the Stats v2 traffic chart draws it: 90 daily bars are
+// too thin to read or to hover in the widget's column.
+const DATE_RANGE_BUCKETS: Record< DateRangeId, DateRangeBuckets > = {
 	[ DATE_RANGE_LAST_7_DAYS ]: { unit: 'day', quantity: 7 },
 	[ DATE_RANGE_LAST_30_DAYS ]: { unit: 'day', quantity: 30 },
-	[ DATE_RANGE_LAST_90_DAYS ]: { unit: 'day', quantity: 90 },
+	[ DATE_RANGE_LAST_90_DAYS ]: { unit: 'week', days: 90 },
 	[ DATE_RANGE_LAST_12_MONTHS ]: { unit: 'month', quantity: 12 },
 };
 
@@ -36,11 +51,11 @@ export const DATE_RANGES: DateRange[] = ( Object.keys( DATE_RANGE_BUCKETS ) as D
 );
 
 /** A range pinned to the days it covers, so the chart, the lists and their links agree. */
-export interface ResolvedDateRange extends DateRange {
+export type ResolvedDateRange = DateRange & {
 	/** First and last day, as `YYYY-MM-DD`. */
 	startDate: string;
 	endDate: string;
-}
+};
 
 /**
  * Whether a value read back from storage is still a range the control offers.
@@ -69,6 +84,11 @@ export function getSiteToday( gmtOffset: number ): string {
  */
 export function getRangeStartDate( range: DateRange, endDate: string ): string {
 	const end = moment( endDate, 'YYYY-MM-DD' );
+
+	// A range of weeks keeps to its days; its chart starts mid-week.
+	if ( 'week' === range.unit ) {
+		return end.subtract( range.days - 1, 'days' ).format( 'YYYY-MM-DD' );
+	}
 
 	// From the first of the earliest month, matching the chart's monthly buckets.
 	const start =
