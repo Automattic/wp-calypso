@@ -11,31 +11,31 @@ import { useIsDomainActivating } from './use-domain-activation';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
+export function useDomainNameNote( domain: DomainSummary ) {
+	const isActivating = useIsDomainActivating( domain );
+
+	if ( isActivating ) {
+		return __( 'Preparing your new domain name' );
+	}
+	return domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION ? domain.subtype.label : null;
+}
+
 export const DomainNameField = ( {
 	domain,
 	site,
 	value,
 	showPrimaryDomainBadge,
 	showWwwPrefix,
-	isLinked = true,
 }: {
 	domain: DomainSummary;
 	site?: Site;
 	value: string;
 	showPrimaryDomainBadge?: boolean;
 	showWwwPrefix?: boolean;
-	isLinked?: boolean;
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
-	const isActivating = useIsDomainActivating( domain );
-
-	let note: string | null = null;
-	if ( isActivating ) {
-		note = __( 'Preparing your new domain name' );
-	} else if ( domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION ) {
-		note = domain.subtype.label;
-	}
+	const note = useDomainNameNote( domain );
 
 	const siteSlug = site?.slug ?? domain.site_slug;
 
@@ -78,7 +78,7 @@ export const DomainNameField = ( {
 		</VStack>
 	);
 
-	if ( ! isLinked || ! domain.subscription_id ) {
+	if ( ! domain.subscription_id ) {
 		return content;
 	}
 

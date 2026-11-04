@@ -4,7 +4,7 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { sslDetailsQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { DataViews } from '@wordpress/dataviews';
 import { render } from '../../../test-utils';
@@ -75,11 +75,41 @@ describe( '<DomainCardsLayout>', () => {
 		expect( screen.queryByText( 'Hidden value' ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows the domain name as a title rather than a link', async () => {
+	test( 'shows the domain name as a heading rather than a link', async () => {
 		renderCards( [] );
 
-		expect( await screen.findByText( 'example.com' ) ).toBeVisible();
+		expect( await screen.findByRole( 'heading', { name: 'example.com', level: 3 } ) ).toBeVisible();
 		expect( screen.queryByRole( 'link', { name: 'example.com' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'names the card after its domain and ties its actions to it', async () => {
+		renderCards( [
+			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{ id: 'add-mailbox', label: 'Add mailbox', callback: jest.fn() },
+		] );
+
+		const card = await screen.findByRole( 'group', { name: 'example.com' } );
+
+		expect(
+			within( card ).getByRole( 'button', { name: 'Settings' } )
+		).toHaveAccessibleDescription( 'example.com' );
+		expect( within( card ).getByRole( 'button', { name: 'Actions' } ) ).toHaveAccessibleDescription(
+			'example.com'
+		);
+	} );
+
+	test( 'shows the subtype under the title of a domain that is not a registration', async () => {
+		renderCards(
+			[],
+			[
+				{
+					...domain,
+					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain name connection' },
+				} as DomainSummary,
+			]
+		);
+
+		expect( await screen.findByText( 'Domain name connection' ) ).toBeVisible();
 	} );
 
 	test( 'puts Settings and DNS in the footer of an active domain, in that order', async () => {
@@ -204,6 +234,21 @@ describe( '<DomainCardsLayout>', () => {
 		await user.click( await screen.findByRole( 'menuitem', { name: 'Manage auto-renew' } ) );
 
 		expect( await screen.findByText( 'Modal content' ) ).toBeVisible();
+
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+
+		await waitFor( () => expect( screen.queryByText( 'Modal content' ) ).not.toBeInTheDocument() );
+	} );
+
+	test( 'does not run a disabled menu action', async () => {
+		const callback = jest.fn();
+		renderCards( [ { id: 'add-mailbox', label: 'Add mailbox', callback, disabled: true } ] );
+		const user = userEvent.setup();
+
+		await user.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Add mailbox' } ) );
+
+		expect( callback ).not.toHaveBeenCalled();
 	} );
 
 	test( 'hides the menu when no actions are left for it', async () => {

@@ -26,9 +26,7 @@
 }
 
 .domain-cards__title {
-	color: var( --wpds-color-foreground-content-neutral, #1e1e1e );
 	flex: 1;
-	font-weight: 500;
 	min-width: 0;
 }
 
@@ -45,7 +43,7 @@
 	grid-template-columns: 35% minmax( 0, 1fr );
 
 	dt {
-		color: var( --wpds-color-foreground-content-neutral-weak, #757575 );
+		color: var( --wpds-color-foreground-content-neutral-weak );
 		font-weight: 400;
 	}
 

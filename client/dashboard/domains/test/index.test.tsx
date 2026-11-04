@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { queryClient as apiQueryClient } from '@automattic/api-queries';
-import { screen, waitFor } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../test-utils';
@@ -85,6 +85,104 @@ describe( '<Domains>', () => {
 		mockSearch.current = {};
 		nock.cleanAll();
 		apiQueryClient.clear();
+	} );
+
+	const domainNames = () =>
+		screen.queryAllByRole( 'heading', { level: 3 } ).map( ( heading ) => heading.textContent );
+
+	test( 'shows cards with their actions and no bulk selection by default', async () => {
+		mockApis( [ mockDomain( 1 ) ] );
+
+		render( <Domains /> );
+
+		const card = await screen.findByRole( 'group', { name: 'domain01.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( within( card ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
+		expect( within( card ).getByRole( 'button', { name: 'DNS' } ) ).toBeVisible();
+		expect( within( card ).getByText( 'Active' ) ).toBeVisible();
+	} );
+
+	test( 'offers the toolbar controls on the cards', async () => {
+		mockApis( [ mockDomain( 1 ) ] );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain01.com' } );
+		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'View options' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: /filter/i } ) ).toBeVisible();
+	} );
+
+	test( 'moves Renew to the footer of an expired domain using the real actions', async () => {
+		mockApis( [
+			mockDomain( 1, {
+				expired: true,
+				domain_status: { id: 'expired', label: 'Expired', type: 'error' },
+			} ),
+		] );
+
+		render( <Domains /> );
+
+		const card = await screen.findByRole( 'group', { name: 'domain01.com' } );
+		expect( within( card ).getByRole( 'button', { name: 'Renew' } ) ).toBeVisible();
+		expect( within( card ).queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows 12 cards per page with pagination', async () => {
+		mockApis( Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ) );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( domainNames() ).toHaveLength( 12 );
+		expect( screen.getByRole( 'button', { name: /next page/i } ) ).toBeEnabled();
+	} );
+
+	test( 'shows the page from the URL', async () => {
+		mockSearch.current = { page: '2' };
+		mockApis( Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ) );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain12.com' } );
+		expect( domainNames() ).toEqual( [ 'domain12.com' ] );
+	} );
+
+	test( 'applies the default owner filter to the cards', async () => {
+		mockApis( [ mockDomain( 1 ), mockDomain( 2, { current_user_is_owner: false } ) ] );
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain01.com' } );
+		expect( domainNames() ).toEqual( [ 'domain01.com' ] );
+	} );
+
+	test( 'applies the search to the cards and shows the no-results state', async () => {
+		mockSearch.current = { search: 'no-such-domain' };
+		mockApis( [ mockDomain( 1 ) ] );
+
+		render( <Domains /> );
+
+		expect( await screen.findByText( 'No domains match your search' ) ).toBeVisible();
+		expect( domainNames() ).toHaveLength( 0 );
+	} );
+
+	test( 'switches to a table with bulk selection and tracks the change', async () => {
+		const user = userEvent.setup();
+		mockApis( [ mockDomain( 1 ) ] );
+		const { recordTracksEvent } = render( <Domains />, { queryClient: apiQueryClient } );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Layout' } ) );
+		await user.click( await screen.findByRole( 'menuitemradio', { name: /table/i } ) );
+
+		const table = await screen.findByRole( 'table' );
+		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_domains_view_type_changed',
+			{ type: 'table' }
+		);
 	} );
 
 	test( 'does not read a view saved in the `domains` preference', async () => {

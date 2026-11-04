@@ -4,17 +4,20 @@ import {
 	DropdownMenu,
 	MenuGroup,
 	MenuItem,
+	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { useRegistry } from '@wordpress/data';
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { moreVertical } from '@wordpress/icons';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { Card, CardBody, CardFooter } from '../../components/card';
 import { DataViewsActionModal } from '../../components/dataviews';
 import Grid from '../../components/grid';
-import { DomainNameField } from './field-domain-name';
+import { Text } from '../../components/text';
+import { useDomainNameNote } from './field-domain-name';
 import type { GapSize } from '../../components/grid';
 import type { DomainSummary } from '@automattic/api-core';
 import type {
@@ -87,6 +90,8 @@ function DomainCard( {
 	actions: Action< DomainSummary >[];
 } ) {
 	const registry = useRegistry();
+	const titleId = useId();
+	const note = useDomainNameNote( item );
 	const [ activeModalAction, setActiveModalAction ] =
 		useState< ActionModal< DomainSummary > | null >( null );
 
@@ -108,17 +113,28 @@ function DomainCard( {
 	const menuActions = eligibleActions.filter( ( action ) => ! isFooterAction( action, item ) );
 
 	return (
-		<Card className="domain-cards__card" size="small">
+		<Card className="domain-cards__card" size="small" role="group" aria-labelledby={ titleId }>
 			<CardBody className="domain-cards__body">
 				<HStack alignment="topLeft" justify="space-between" spacing={ 2 }>
-					<div className="domain-cards__title">
-						<DomainNameField domain={ item } value={ item.domain } isLinked={ false } />
-					</div>
+					<VStack className="domain-cards__title" spacing={ 1 }>
+						<Heading id={ titleId } level={ 3 } size={ 13 } weight={ 500 } truncate>
+							{ item.domain }
+						</Heading>
+						{ note && (
+							<Text variant="muted" truncate>
+								{ note }
+							</Text>
+						) }
+					</VStack>
 					{ menuActions.length > 0 && (
 						<DropdownMenu
 							icon={ moreVertical }
 							label={ __( 'Actions' ) }
-							toggleProps={ { size: 'small' } }
+							toggleProps={ {
+								__next40pxDefaultSize: true,
+								size: 'small',
+								'aria-describedby': titleId,
+							} }
 							popoverProps={ { placement: 'bottom-end' } }
 						>
 							{ ( { onClose } ) => (
@@ -164,7 +180,9 @@ function DomainCard( {
 						{ footerActions.map( ( action ) => (
 							<Button
 								key={ action.id }
+								__next40pxDefaultSize
 								variant="link"
+								aria-describedby={ titleId }
 								disabled={ !! action.disabled }
 								accessibleWhenDisabled
 								onClick={ () => runAction( action ) }
