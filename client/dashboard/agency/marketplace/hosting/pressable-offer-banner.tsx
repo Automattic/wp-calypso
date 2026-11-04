@@ -111,7 +111,9 @@ export default function PressableOffers( { agency }: { agency: Agency | null | u
 			<PressableOfferBanner
 				title={ bold(
 					/* translators: <b> wraps the bold lead-in. */
-					__( '<b>Holiday offer:</b> Get up to 6 months of free Pressable hosting on new plans!' )
+					__(
+						'<b>Limited time offer:</b> Get up to 6 months of free Pressable hosting on new plans!'
+					)
 				) }
 				items={ [
 					bold(

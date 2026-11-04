@@ -21,7 +21,7 @@ const PressableIntroductoryOffer = () => {
 	return (
 		<PressableOfferBanner
 			title={ translate(
-				'{{b}}Holiday offer:{{/b}} Get up to 6 months of free Pressable hosting on new plans!',
+				'{{b}}Limited time offer:{{/b}} Get up to 6 months of free Pressable hosting on new plans!',
 				{
 					components: {
 						b: <b />,
