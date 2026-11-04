@@ -76,7 +76,10 @@ $z-index: 999;
 			color: var(--studio-orange-90);
 			background-color: var(--studio-orange-20);
 		}
-		&.is-wpcalypso {
+		&.is-wpcalypso,
+		&.is-horizon,
+		&.is-dashboard-horizon,
+		&.is-feedback {
 			color: var(--studio-celadon-90);
 			background-color: var(--studio-celadon-20);
 		}
@@ -85,12 +88,6 @@ $z-index: 999;
 		&.is-a8c-for-agencies-dev {
 			color: var(--studio-purple-90);
 			background-color: var(--studio-purple-20);
-		}
-		&.is-horizon,
-		&.is-dashboard-horizon,
-		&.is-feedback {
-			color: var(--studio-blue-90);
-			background-color: var(--studio-blue-20);
 		}
 		&.is-jetpack-cloud-dev,
 		&.is-jetpack-cloud-staging {
