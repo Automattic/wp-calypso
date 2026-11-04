@@ -47,19 +47,19 @@ function ReplyForm( { note, currentUser }: { note: Note; currentUser: InboxUser 
 	const textareaRef = useRef< HTMLTextAreaElement | null >( null );
 	const dispatch = useDispatch();
 	const { client } = useAppContext();
-	const [ value, setValue ] = useState( '' );
+	const [ replyText, setReplyText ] = useState( '' );
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
 
 	const handleSubmit = ( event: FormEvent ) => {
 		event.preventDefault();
-		if ( ! value.trim() || isSubmitting ) {
+		if ( ! replyText.trim() || isSubmitting ) {
 			return;
 		}
 
 		setIsSubmitting( true );
 		recordTracksEvent( 'calypso_notification_note_reply', { note_type: note.type } );
 
-		postReply( note, value, ( error ) => {
+		postReply( note, replyText, ( error ) => {
 			setIsSubmitting( false );
 			if ( error ) {
 				return;
@@ -69,12 +69,12 @@ function ReplyForm( { note, currentUser }: { note: Note; currentUser: InboxUser 
 				dispatch( actions.notes.approveNote( note.id, true ) );
 				client?.getNote( note.id );
 			}
-			setValue( '' );
+			setReplyText( '' );
 		} );
 	};
 
 	const handleCancel = () => {
-		setValue( '' );
+		setReplyText( '' );
 		textareaRef.current?.blur();
 	};
 
@@ -92,8 +92,8 @@ function ReplyForm( { note, currentUser }: { note: Note; currentUser: InboxUser 
 					label={ __( 'Reply' ) }
 					hideLabelFromVision
 					rows={ 4 }
-					value={ value }
-					onChange={ setValue }
+					value={ replyText }
+					onChange={ setReplyText }
 					__nextHasNoMarginBottom
 				/>
 				<HStack spacing={ 2 } justify="flex-end">
@@ -104,7 +104,7 @@ function ReplyForm( { note, currentUser }: { note: Note; currentUser: InboxUser 
 						type="submit"
 						variant="primary"
 						isBusy={ isSubmitting }
-						disabled={ ! value.trim() || isSubmitting }
+						disabled={ ! replyText.trim() || isSubmitting }
 						accessibleWhenDisabled
 						__next40pxDefaultSize
 					>
