@@ -2,7 +2,7 @@
 
 Shared migration router for source identification, destination selection, and plan selection. WordPress source access and migration execution belong to the Migration Status Dashboard (MSD).
 
-The WordPress journey is gated by `migration/reprint-flow`, which defaults to false. Non-WordPress sources retain the existing importer and static-site import routes. Backup upload is deferred and has no entry point in this flow.
+The WordPress journey is gated by `migration/reprint-flow`. Non-WordPress sources retain the existing importer and static-site import routes. Backup upload is deferred and has no entry point in this flow.
 
 ## Entry points
 
