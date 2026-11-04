@@ -60,7 +60,12 @@ function renderCards( actions: Action< DomainSummary >[], data = [ domain ] ) {
 	);
 }
 
-// Menu items exist before the popover has positioned itself, so these tests don't assert visibility.
+// The card's only other button is the icon-only menu toggle, which has no text.
+const getFooterLabels = () =>
+	within( screen.getByRole( 'group', { name: 'example.com' } ) )
+		.getAllByRole( 'button' )
+		.flatMap( ( button ) => button.textContent || [] );
+
 describe( '<DomainCardsLayout>', () => {
 	test( 'shows only the fields in the view, in the view’s order', async () => {
 		renderCards( [] );
@@ -121,8 +126,7 @@ describe( '<DomainCardsLayout>', () => {
 		const user = userEvent.setup();
 
 		const settingsButton = await screen.findByRole( 'button', { name: 'Settings' } );
-		const buttons = screen.getAllByRole( 'button' ).map( ( button ) => button.textContent );
-		expect( buttons.slice( -2 ) ).toEqual( [ 'Settings', 'DNS' ] );
+		expect( getFooterLabels() ).toEqual( [ 'Settings', 'DNS' ] );
 
 		await user.click( settingsButton );
 		await user.click( screen.getByRole( 'button', { name: 'DNS' } ) );
@@ -131,8 +135,12 @@ describe( '<DomainCardsLayout>', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 		const menu = await screen.findByRole( 'menu' );
-		expect( within( menu ).getByRole( 'menuitem', { name: 'Add mailbox' } ) ).toBeInTheDocument();
-		expect( within( menu ).getByRole( 'menuitem', { name: 'Renew' } ) ).toBeInTheDocument();
+		await waitFor( () =>
+			expect( within( menu ).getByRole( 'menuitem', { name: 'Add mailbox' } ) ).toBeVisible()
+		);
+		await waitFor( () =>
+			expect( within( menu ).getByRole( 'menuitem', { name: 'Renew' } ) ).toBeVisible()
+		);
 		expect(
 			within( menu ).queryByRole( 'menuitem', { name: 'Ineligible' } )
 		).not.toBeInTheDocument();
@@ -152,8 +160,7 @@ describe( '<DomainCardsLayout>', () => {
 		const user = userEvent.setup();
 
 		const renewButton = await screen.findByRole( 'button', { name: 'Renew' } );
-		const buttons = screen.getAllByRole( 'button' ).map( ( button ) => button.textContent );
-		expect( buttons.slice( -2 ) ).toEqual( [ 'Settings', 'Renew' ] );
+		expect( getFooterLabels() ).toEqual( [ 'Settings', 'Renew' ] );
 		expect( screen.queryByRole( 'button', { name: 'DNS' } ) ).not.toBeInTheDocument();
 
 		await user.click( renewButton );
@@ -161,7 +168,9 @@ describe( '<DomainCardsLayout>', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Actions' } ) );
 		const menu = await screen.findByRole( 'menu' );
-		expect( within( menu ).getByRole( 'menuitem', { name: 'Manage DNS' } ) ).toBeInTheDocument();
+		await waitFor( () =>
+			expect( within( menu ).getByRole( 'menuitem', { name: 'Manage DNS' } ) ).toBeVisible()
+		);
 	} );
 
 	test( 'keeps Renew in the menu for a domain that has not expired', async () => {
@@ -172,7 +181,8 @@ describe( '<DomainCardsLayout>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Renew' } ) ).not.toBeInTheDocument();
 		await user.click( menuToggle );
 
-		expect( await screen.findByRole( 'menuitem', { name: 'Renew' } ) ).toBeInTheDocument();
+		const renew = await screen.findByRole( 'menuitem', { name: 'Renew' } );
+		await waitFor( () => expect( renew ).toBeVisible() );
 	} );
 
 	test( 'leaves DNS out of the footer when the domain is not eligible for it', async () => {
@@ -213,7 +223,8 @@ describe( '<DomainCardsLayout>', () => {
 		expect( screen.queryByRole( 'button', { name: 'Set up' } ) ).not.toBeInTheDocument();
 		await user.click( menuToggle );
 
-		expect( await screen.findByRole( 'menuitem', { name: 'Set up' } ) ).toBeInTheDocument();
+		const setup = await screen.findByRole( 'menuitem', { name: 'Set up' } );
+		await waitFor( () => expect( setup ).toBeVisible() );
 	} );
 
 	test( 'opens modal actions in a modal', async () => {

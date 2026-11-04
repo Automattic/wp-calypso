@@ -83,7 +83,6 @@ function mockApis( domains: unknown[], preferences = {} ) {
 describe( '<Domains>', () => {
 	beforeEach( () => {
 		mockSearch.current = {};
-		nock.cleanAll();
 		apiQueryClient.clear();
 	} );
 

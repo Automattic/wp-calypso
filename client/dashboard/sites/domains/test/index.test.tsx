@@ -250,9 +250,15 @@ describe( '<SiteDomains>', () => {
 	} );
 
 	test( 'does not show an SSL column', async () => {
-		render( <SiteDomains />, { user: ownerUser } );
+		nock.cleanAll();
+		mockApis( {
+			ssl: { domain: domain.domain, certificate_provisioned: true },
+		} );
+
+		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
 		const table = await screen.findByRole( 'table' );
+		await waitForSslDetails( queryClient, domain.domain );
 		expect(
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
@@ -436,7 +442,8 @@ describe( '<SiteDomains>', () => {
 		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
 		await waitForSslDetails( queryClient, domain.domain );
-		await screen.findByRole( 'table' );
+		const row = await screen.findByRole( 'row', { name: new RegExp( domain.domain ) } );
+		expect( within( row ).getByText( 'Active' ) ).toBeVisible();
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
@@ -451,7 +458,8 @@ describe( '<SiteDomains>', () => {
 		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
 		await waitForSslDetails( queryClient, domain.domain );
-		await screen.findByRole( 'table' );
+		const row = await screen.findByRole( 'row', { name: new RegExp( domain.domain ) } );
+		expect( within( row ).getByText( 'Active' ) ).toBeVisible();
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 	} );
