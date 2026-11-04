@@ -11,7 +11,7 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useAnalytics } from '../../../app/analytics';
 import { Card, CardBody } from '../../../components/card';
 
-export const EmailTrackingCard = () => {
+export const EmailTrackingCard = ( { source }: { source: 'extras' | 'privacy' } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 
@@ -29,14 +29,14 @@ export const EmailTrackingCard = () => {
 	}
 
 	const handleChange = ( nextValue: boolean ) => {
-		recordTracksEvent( 'calypso_dashboard_notifications_email_tracking_updated', {
-			setting_value: nextValue,
-		} );
-
 		updateSettings(
 			{ data: { wpcom: { email_tracking: nextValue } } },
 			{
 				onSuccess: () => {
+					recordTracksEvent( 'calypso_dashboard_notifications_email_tracking_updated', {
+						setting_value: nextValue,
+						source,
+					} );
 					createSuccessNotice(
 						nextValue ? __( 'Email tracking turned on.' ) : __( 'Email tracking turned off.' ),
 						{ type: 'snackbar' }
