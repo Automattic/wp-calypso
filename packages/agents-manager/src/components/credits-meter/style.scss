@@ -72,12 +72,7 @@ $credits-meter-muted-foreground: color-mix(
 
 .agents-manager-credits-meter__show-credits.components-button {
 	margin-inline-start: auto;
-	color: $credits-meter-muted-foreground;
-
-	&:hover:not( :disabled ),
-	&:focus:not( :disabled ) {
-		color: var( --color-foreground );
-	}
+	color: color-mix( in srgb, var( --color-foreground ) 80%, var( --color-popover ) );
 }
 
 .agents-manager-credits-meter__manage.components-button {
