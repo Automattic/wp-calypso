@@ -1,11 +1,11 @@
 import { a4aFeedbackSurveyMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
 import { Button, TextareaControl, __experimentalVStack as VStack } from '@wordpress/components';
-import { useDispatch } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
-import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import { SectionHeader } from '../../components/section-header';
 
@@ -14,10 +14,14 @@ import { SectionHeader } from '../../components/section-header';
  * A4A feedback survey as the reason for switching back, under its own survey ID.
  */
 export default function DashboardFeedbackCard( { agencyId }: { agencyId: number } ) {
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
 	const [ feedback, setFeedback ] = useState( '' );
-	const { mutate: fileSurvey, isPending } = useMutation( a4aFeedbackSurveyMutation() );
+	const { mutate: fileSurvey, isPending } = useMutation(
+		withSnackbar( a4aFeedbackSurveyMutation(), {
+			success: __( 'Thanks! Your feedback is on its way to our team.' ),
+			error: __( 'Failed to send your feedback. Please try again.' ),
+		} )
+	);
 
 	const comment = feedback.trim();
 
@@ -32,19 +36,7 @@ export default function DashboardFeedbackCard( { agencyId }: { agencyId: number 
 				survey_id: 'dashboard-feedback',
 				survey_responses: { comment: { text: comment }, suggestions: { text: '' } },
 			},
-			{
-				onSuccess: () => {
-					setFeedback( '' );
-					createSuccessNotice( __( 'Thanks! Your feedback is on its way to our team.' ), {
-						type: 'snackbar',
-					} );
-				},
-				onError: () => {
-					createErrorNotice( __( 'We couldn’t send your feedback. Please try again.' ), {
-						type: 'snackbar',
-					} );
-				},
-			}
+			{ onSuccess: () => setFeedback( '' ) }
 		);
 	};
 
@@ -69,7 +61,7 @@ export default function DashboardFeedbackCard( { agencyId }: { agencyId: number 
 						rows={ 4 }
 						disabled={ isPending }
 					/>
-					<div>
+					<ButtonStack justify="flex-start">
 						<Button
 							__next40pxDefaultSize
 							variant="primary"
@@ -79,7 +71,7 @@ export default function DashboardFeedbackCard( { agencyId }: { agencyId: number 
 						>
 							{ __( 'Send feedback' ) }
 						</Button>
-					</div>
+					</ButtonStack>
 				</VStack>
 			</CardBody>
 		</Card>

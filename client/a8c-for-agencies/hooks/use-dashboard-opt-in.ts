@@ -26,27 +26,31 @@ export default function useDashboardOptIn() {
 
 	const { mutate, isPending } = useMutation( agencyDashboardOptInMutation( agency?.id ) );
 
-	const optIn = useCallback( () => {
-		mutate( 'opt-in', {
-			onSuccess: () => {
-				window.location.href = buildDashboardLink( 'a4a', '/overview' );
-			},
-			onError: () => {
-				dispatch(
-					errorNotice(
-						__(
-							'We couldn’t enable the new dashboard. Please try again, or contact support if it keeps happening.'
-						),
-						{
-							button: __( 'Contact support' ),
-							// Opens the "Send us an email" form, as the profile menu's Contact support does.
-							href: CONTACT_URL_HASH_FRAGMENT,
-						}
-					)
-				);
-			},
-		} );
-	}, [ dispatch, mutate ] );
+	const optIn = useCallback(
+		( { onError }: { onError?: () => void } = {} ) => {
+			mutate( 'opt-in', {
+				onSuccess: () => {
+					window.location.href = buildDashboardLink( 'a4a', '/overview' );
+				},
+				onError: () => {
+					onError?.();
+					dispatch(
+						errorNotice(
+							__(
+								'We couldn’t enable the new dashboard. Please try again, or contact support if it keeps happening.'
+							),
+							{
+								button: __( 'Contact support' ),
+								// Opens the "Send us an email" form, as the profile menu's Contact support does.
+								href: CONTACT_URL_HASH_FRAGMENT,
+							}
+						)
+					);
+				},
+			} );
+		},
+		[ dispatch, mutate ]
+	);
 
 	return { canOptIn, optIn, isPending };
 }

@@ -1,9 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { __, sprintf } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import DashboardOptInModal from 'calypso/a8c-for-agencies/components/dashboard-opt-in-modal';
 import useFetchActiveMembers from 'calypso/a8c-for-agencies/data/team/use-fetch-active-members';
 import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
+import { OWNER_ROLE } from 'calypso/dashboard/agency/team/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency, isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -14,7 +15,6 @@ const DISMISS_PREFERENCE = 'a4a-dashboard-opt-in-invitation-dismissed';
 // The `updated_at` of the switch back the user has already been told about.
 const SWITCHED_BACK_NOTE_PREFERENCE = 'a4a-dashboard-switched-back-note-seen';
 const NOTE_ID = 'a4a-dashboard-opt-in-note';
-const OWNER_ROLE = 'a4a_administrator';
 
 /**
  * Tells everyone on the team once that the agency switched back to this dashboard.
@@ -57,7 +57,7 @@ function useSwitchedBackNote() {
 			);
 		} else if ( ownerName ) {
 			message = sprintf(
-				/* translators: %s: the agency owner's name */
+				/* translators: %s: the agency owner's username, as shown on the Team page */
 				__(
 					'Your agency owner %s switched back to the classic dashboard. Reach out to them if you’d like to try the new dashboard again.'
 				),
@@ -82,12 +82,14 @@ export default function DashboardOptInInvitation() {
 	const hasNeverChosen = ( agency?.dashboard_opt_in?.value ?? 'unset' ) === 'unset';
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => !! getPreference( state, DISMISS_PREFERENCE ) );
+	const [ isClosed, setIsClosed ] = useState( false );
 	useSwitchedBackNote();
 
-	if ( canOptIn && hasNeverChosen && hasPreferences && ! isDismissed ) {
+	if ( canOptIn && hasNeverChosen && hasPreferences && ! isDismissed && ! isClosed ) {
 		return (
 			<DashboardOptInModal
 				source="overview"
+				onError={ () => setIsClosed( true ) }
 				onClose={ () => {
 					dispatch( savePreference( DISMISS_PREFERENCE, true ) );
 					dispatch(

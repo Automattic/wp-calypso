@@ -14,6 +14,17 @@ import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 type NoteProduct = 'amplify' | 'reports';
 
+const TRACKS_EVENTS: Record< NoteProduct, { click: string; dismiss: string } > = {
+	amplify: {
+		click: 'calypso_a4a_amplify_new_dashboard_note_click',
+		dismiss: 'calypso_a4a_amplify_new_dashboard_note_dismiss',
+	},
+	reports: {
+		click: 'calypso_a4a_reports_new_dashboard_note_click',
+		dismiss: 'calypso_a4a_reports_new_dashboard_note_dismiss',
+	},
+};
+
 // Full sentences per product, so each translates on its own.
 function getNoteTitle( product: NoteProduct ) {
 	return product === 'reports'
@@ -40,7 +51,7 @@ export default function NewDashboardNote( { product = 'amplify' }: { product?: N
 			level="info"
 			title={ getNoteTitle( product ) }
 			onClose={ () => {
-				dispatch( recordTracksEvent( `calypso_a4a_${ product }_new_dashboard_note_dismiss` ) );
+				dispatch( recordTracksEvent( TRACKS_EVENTS[ product ].dismiss ) );
 				setIsClosed( true );
 			} }
 		>
@@ -49,9 +60,7 @@ export default function NewDashboardNote( { product = 'amplify' }: { product?: N
 				<Button
 					variant="primary"
 					href={ buildDashboardLink( 'a4a', '/overview' ) }
-					onClick={ () =>
-						dispatch( recordTracksEvent( `calypso_a4a_${ product }_new_dashboard_note_click` ) )
-					}
+					onClick={ () => dispatch( recordTracksEvent( TRACKS_EVENTS[ product ].click ) ) }
 					__next40pxDefaultSize
 				>
 					{ __( 'Back to the new dashboard' ) }

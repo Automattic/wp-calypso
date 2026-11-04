@@ -108,7 +108,7 @@ export default function AgencyDashboardOptIn() {
 			size="small"
 			header={
 				<PageHeader
-					title={ __( 'Dashboard' ) }
+					title={ __( 'Classic dashboard' ) }
 					description={ __( 'Choose which dashboard your agency uses.' ) }
 				/>
 			}

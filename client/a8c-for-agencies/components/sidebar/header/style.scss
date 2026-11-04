@@ -1,5 +1,5 @@
-@import '@wordpress/base-styles/variables';
-@import '@wordpress/base-styles/mixins';
+@import "@wordpress/base-styles/variables";
+@import "@wordpress/base-styles/mixins";
 
 // Rules in this file inspired by:
 // client/components/jetpack/profile-dropdown/style.scss
@@ -9,10 +9,10 @@
 	justify-content: space-between;
 }
 .components-button .help-center__icon {
-	fill: var( --color-sidebar-text );
+	fill: var(--color-sidebar-text);
 }
 .components-button:hover .help-center__icon {
-	fill: var( --color-sidebar-menu-selected-background );
+	fill: var(--color-sidebar-menu-selected-background);
 }
 
 .a4a-sidebar__profile-dropdown {
@@ -23,7 +23,7 @@
 	justify-content: space-between;
 	padding: 16px;
 
-	border-block-start: 1px solid var( --color-neutral-70 );
+	border-block-start: 1px solid var(--color-neutral-70);
 	margin: 0 -16px -16px;
 }
 
@@ -42,7 +42,7 @@
 }
 
 html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
-	box-shadow: inset 0 0 0 2px var( --color-primary-light );
+	box-shadow: inset 0 0 0 2px var(--color-primary-light);
 }
 
 .a4a-sidebar__profile-dropdown-menu {
@@ -53,7 +53,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 
 	position: absolute;
 	// 4px below the bottom of the icon
-	inset-block-start: calc( 100% + 4px );
+	inset-block-start: calc(100% + 4px);
 
 	// The menu should render "on top" of the profile picture & site switcher
 	z-index: 20;
@@ -61,16 +61,16 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	// Grows past 220px only when an item needs it, so labels stay on one line.
 	width: max-content;
 	min-width: 220px;
-	max-width: calc( 100vw - 32px );
+	max-width: calc(100vw - 32px);
 	margin: 0;
 	padding: 8px;
 
-	background: var( --color-surface );
-	border: 1px solid var( --color-accent-0 );
+	background: var(--color-surface);
+	border: 1px solid var(--color-accent-0);
 	border-radius: 4px;
 	box-shadow:
-		0 4px 6px color-mix( in srgb, var( --color-accent-100 ) 10%, transparent ),
-		0 1px 2px color-mix( in srgb, var( --color-accent-100 ) 10%, transparent );
+		0 4px 6px color-mix(in srgb, var(--color-accent-100) 10%, transparent),
+		0 1px 2px color-mix(in srgb, var(--color-accent-100) 10%, transparent);
 	list-style-type: none;
 
 	@include body-medium;
@@ -80,7 +80,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	// Anchor the upward menu by its bottom edge so it always sits above the
 	// button regardless of its height (the menu grows with the greeting).
 	inset-block-start: auto;
-	inset-block-end: calc( 100% + 4px );
+	inset-block-end: calc(100% + 4px);
 }
 
 .a4a-sidebar__profile-dropdown-greeting {
@@ -89,7 +89,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 	gap: 2px;
 	padding: 4px 8px 12px;
 	margin-block-end: 8px;
-	border-block-end: 1px solid var( --color-border-subtle );
+	border-block-end: 1px solid var(--color-border-subtle);
 }
 
 // Qualified with the parent class so these rules out-specify the Text
@@ -105,7 +105,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 }
 
 .a4a-sidebar__profile-dropdown-greeting .a4a-sidebar__profile-dropdown-greeting-name {
-	color: var( --color-text );
+	color: var(--color-text);
 }
 
 .a4a-sidebar__profile-dropdown-menu-item {
@@ -114,12 +114,12 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 
 	&:hover,
 	&:focus {
-		background: var( --wp-components-color-accent );
+		background: var(--wp-components-color-accent);
 
 		a.button.is-borderless,
 		button.button.is-borderless {
-			color: var( --color-text-inverted );
-			fill: var( --color-text-inverted );
+			color: var(--color-text-inverted);
+			fill: var(--color-text-inverted);
 		}
 	}
 
@@ -131,7 +131,7 @@ html.accessible-focus .a4a-sidebar__profile-dropdown-button:focus {
 		width: 100%;
 		height: 100%;
 
-		color: var( --color-sidebar-text );
+		color: var(--color-sidebar-text);
 	}
 
 	.button {
@@ -169,10 +169,3 @@ a.a4a-sidebar__external-link {
 	}
 }
 
-// A label with a pill beside it, such as "Beta", kept on one line.
-.a4a-sidebar__profile-dropdown-menu-item-label {
-	display: inline-flex;
-	align-items: center;
-	gap: 8px;
-	white-space: nowrap;
-}

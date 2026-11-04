@@ -21,6 +21,8 @@ type LinkSource = ( typeof LINK_SOURCES )[ number ];
 
 type Props = {
 	onClose: () => void;
+	// Called instead of `onClose` when enabling fails.
+	onError?: () => void;
 	// Where the modal was opened from, for Tracks.
 	source: 'overview' | LinkSource;
 };
@@ -70,7 +72,7 @@ export function DashboardOptInLinkModal() {
 /**
  * Introduces the new dashboard and moves the agency there in one step.
  */
-export default function DashboardOptInModal( { onClose, source }: Props ) {
+export default function DashboardOptInModal( { onClose, onError = onClose, source }: Props ) {
 	const dispatch = useDispatch();
 	const { optIn, isPending } = useDashboardOptIn();
 
@@ -85,7 +87,7 @@ export default function DashboardOptInModal( { onClose, source }: Props ) {
 
 	const handleConfirm = () => {
 		dispatch( recordTracksEvent( 'calypso_a4a_dashboard_opt_in_modal_confirm', { source } ) );
-		optIn();
+		optIn( { onError } );
 	};
 
 	return (

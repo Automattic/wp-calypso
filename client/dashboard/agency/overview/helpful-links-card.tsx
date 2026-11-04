@@ -3,6 +3,7 @@ import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { Text } from '../../components/text';
 import NewTabLabel from '../components/new-tab-label';
 import type { RecordTracksEvent } from '../tiers/types';
 
@@ -28,7 +29,7 @@ function HelpfulLinkTitle( { link }: { link: HelpfulLink } ) {
 	}
 	return (
 		<HStack alignment="left" spacing={ 2 } expanded={ false }>
-			<span>{ label }</span>
+			<Text>{ label }</Text>
 			<Badge intent="stable">{ link.badge }</Badge>
 		</HStack>
 	);
