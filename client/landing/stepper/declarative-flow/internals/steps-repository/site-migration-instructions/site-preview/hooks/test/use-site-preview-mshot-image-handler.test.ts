@@ -64,11 +64,11 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 			1200,
 			'desktop',
 			{
-				vpw: 1600,
-				vph: 1600,
-				w: 1600,
-				h: 1624,
-				screen_height: 1600,
+				vpw: 1440,
+				vph: 1440,
+				w: 1440,
+				h: 1462,
+				screen_height: 1440,
 				scale: 2,
 			},
 		],
@@ -139,7 +139,7 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 		const url = 'http://example.com';
 
 		const expectedUrls = [
-			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1600&vph=1600&w=1600&h=1624&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1440&vph=1440&w=1440&h=1462&screen_height=1440&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=767&vph=1600&w=767&h=1600&screen_height=1600&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=479&vph=1200&w=479&h=1200&screen_height=1200&scale=2',
 		];
@@ -163,7 +163,7 @@ describe( 'useSitePreviewMShotImageHandler', () => {
 		const url = 'http://example.com';
 
 		const expectedUrls = [
-			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1600&vph=1600&w=1600&h=1624&screen_height=1600&scale=2',
+			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=1440&vph=1440&w=1440&h=1462&screen_height=1440&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=767&vph=1600&w=767&h=1600&screen_height=1600&scale=2',
 			'/mshots/v1/http%3A%2F%2Fexample.com?vpw=479&vph=1200&w=479&h=1200&screen_height=1200&scale=2',
 		];
