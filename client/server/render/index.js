@@ -9,14 +9,12 @@ import Lru from 'lru';
 import { createElement } from 'react';
 import ReactDomServer from 'react-dom/server';
 import superagent from 'superagent';
-import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { logServerEvent } from 'calypso/lib/analytics/statsd-utils';
 import {
 	getLanguageFileUrl,
 	getLanguageManifestFileUrl,
 	getTranslationChunkFileUrl,
 } from 'calypso/lib/i18n-utils/switch-locale';
-import isJetpackCloud from 'calypso/lib/jetpack/is-jetpack-cloud';
 import { getCacheKey } from 'calypso/server/isomorphic-routing';
 import performanceMark from 'calypso/server/lib/performance-mark';
 import stateCache from 'calypso/server/state-cache';
@@ -85,9 +83,9 @@ export function customizeClientDataForRequest( req, baseClientData ) {
 	if (
 		liveImageRef &&
 		isCalypsoLiveDotcomHostname( reqHostname ) &&
-		// Flavours without a dotcom sibling (e.g. Jetpack Cloud) keep static values.
-		! isJetpackCloud() &&
-		! isA8CForAgencies()
+		// Only flavours that name the redirector envs of their sibling apps get the
+		// image, so that links between them stay inside the previewed build.
+		config( 'calypso_live_envs' )
 	) {
 		clientData = {
 			...clientData,
