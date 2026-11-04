@@ -77,8 +77,7 @@ describe( '<PersonalDetailsSection>', () => {
 		} );
 	} );
 
-	test( 'renders the form and saves the form', async () => {
-		const user = userEvent.setup();
+	test( 'renders the saved values', async () => {
 		mockUserSettings( settings );
 		mockIsAutomattician( false );
 
@@ -104,25 +103,27 @@ describe( '<PersonalDetailsSection>', () => {
 			'https://example.com'
 		);
 		expect( screen.getByRole( 'textbox', { name: 'About me' } ) ).toHaveValue( 'Hello world' );
-		const firstNameInput = screen.getByRole( 'textbox', { name: 'First name' } );
-		await user.clear( firstNameInput );
-		await user.type( firstNameInput, 'Jane' );
+	} );
 
-		const lastNameInput = screen.getByRole( 'textbox', { name: 'Last name' } );
-		await user.clear( lastNameInput );
-		await user.type( lastNameInput, 'Smith' );
+	test( 'saves the changed fields', async () => {
+		const user = userEvent.setup();
+		mockUserSettings( settings );
+		mockIsAutomattician( false );
 
-		const emailInput = screen.getByRole( 'textbox', { name: 'Email address' } );
-		await user.clear( emailInput );
-		await user.type( emailInput, 'jane@example.com' );
+		render( <PersonalDetailsSection /> );
+		await screen.findByRole( 'textbox', { name: 'Email address' }, { timeout: 2000 } );
 
-		const displayNameInput = screen.getByRole( 'textbox', { name: 'Display name' } );
-		await user.clear( displayNameInput );
-		await user.type( displayNameInput, 'Jane Smith' );
-
-		const descriptionInput = screen.getByRole( 'textbox', { name: 'About me' } );
-		await user.clear( descriptionInput );
-		await user.type( descriptionInput, 'Updated bio' );
+		const changes = [
+			[ 'First name', 'Jane' ],
+			[ 'Last name', 'Smith' ],
+			[ 'Email address', 'jane@example.com' ],
+			[ 'Display name', 'Jane Smith' ],
+			[ 'About me', 'Updated bio' ],
+		];
+		for ( const [ name, value ] of changes ) {
+			await user.clear( screen.getByRole( 'textbox', { name } ) );
+			await user.paste( value );
+		}
 
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/me/settings', ( body ) => {
