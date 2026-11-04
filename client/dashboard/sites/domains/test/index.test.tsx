@@ -318,6 +318,25 @@ describe( '<SiteDomains>', () => {
 		} );
 	} );
 
+	test( 'does not offer www actions in the row menu of the primary domain', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ domain, primaryCandidateDomain ],
+			siteResponse: { ...siteWithPrimaryDomainFeature, is_wpcom_atomic: true } as Site,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		const primaryRow = within( table ).getByText( 'test-site.com' ).closest( 'tr' ) as HTMLElement;
+		await user.click( within( primaryRow ).getByLabelText( 'Actions' ) );
+
+		const menuItems = await screen.findAllByRole( 'menuitem' );
+		expect( menuItems.length ).toBeGreaterThan( 0 );
+		expect( screen.queryByRole( 'menuitem', { name: /www/ } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
 		const user = userEvent.setup();
 		nock.cleanAll();

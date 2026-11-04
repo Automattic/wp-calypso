@@ -2,7 +2,6 @@ import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import {
 	userPurchasesQuery,
 	siteSetPrimaryDomainMutation,
-	setWwwPrimaryDomainMutation,
 	sslDetailsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -12,7 +11,7 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { useCallback, useMemo, Suspense, lazy } from 'react';
+import { useMemo, Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
@@ -32,7 +31,6 @@ import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
-import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
 
@@ -47,28 +45,20 @@ const noop = () => {};
 
 export const useActions = ( {
 	user,
-	site,
 	sites,
 	domains,
 }: {
 	user: User;
-	site?: Site;
 	sites?: Site[];
 	domains?: DomainSummary[];
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createInfoNotice, removeNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice } = useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
 		withSnackbar( siteSetPrimaryDomainMutation(), {
-			error: { source: 'server' },
-		} )
-	);
-
-	const { mutate: setWwwPrimaryDomain, isPending: isSettingWwwPrimaryDomain } = useMutation(
-		withSnackbar( setWwwPrimaryDomainMutation(), {
 			error: { source: 'server' },
 		} )
 	);
@@ -123,15 +113,6 @@ export const useActions = ( {
 		} );
 		return map;
 	}, [ primaryCandidateDomainNames, sslActiveKey ] );
-
-	const canToggleWwwPrimary = useCallback(
-		( item: DomainSummary ) =>
-			!! site?.is_wpcom_atomic &&
-			item.blog_id === site.ID &&
-			item.primary_domain &&
-			item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS,
-		[ site ]
-	);
 
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
@@ -336,66 +317,6 @@ export const useActions = ( {
 				disabled: isSettingPrimaryDomain,
 			},
 			{
-				id: 'set-www-primary-site-address',
-				label: __( 'Set www as primary' ),
-				modalHeader: __( 'Use the “www” address as primary?' ),
-				supportsBulk: false,
-				callback: noop,
-				RenderModal: ( { items, closeModal = noop } ) => (
-					<>
-						<ComponentViewTracker
-							eventName="calypso_dashboard_domains_action_click"
-							properties={ { action: 'set-www-primary-site-address', domain: items[ 0 ].domain } }
-						/>
-						<WwwPrimaryDomainModal domain={ items[ 0 ] } onClose={ closeModal } />
-					</>
-				),
-				isEligible: ( item: DomainSummary ) => canToggleWwwPrimary( item ) && ! item.primary_is_www,
-			},
-			{
-				id: 'unset-www-primary-site-address',
-				label: __( 'Unset www as primary' ),
-				supportsBulk: false,
-				callback: ( items: DomainSummary[] ) => {
-					const domain = items[ 0 ];
-
-					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
-						action: 'unset-www-primary-site-address',
-						domain: domain.domain,
-					} );
-
-					const processingNoticeId = `unset-www-primary-${ domain.domain }`;
-
-					createInfoNotice( __( 'Updating primary site address…' ), {
-						id: processingNoticeId,
-						type: 'snackbar',
-						isDismissible: false,
-					} );
-
-					setWwwPrimaryDomain(
-						{ siteId: domain.blog_id, domain: domain.domain, enabled: false },
-						{
-							onSettled: () => {
-								removeNotice( processingNoticeId );
-							},
-							onSuccess: () => {
-								createSuccessNotice(
-									sprintf(
-										/* translators: %s is the domain name */
-										__( '%s is now the primary site address.' ),
-										domain.domain
-									),
-									{ type: 'snackbar' }
-								);
-							},
-						}
-					);
-				},
-				isEligible: ( item: DomainSummary ) =>
-					canToggleWwwPrimary( item ) && !! item.primary_is_www,
-				disabled: isSettingWwwPrimaryDomain,
-			},
-			{
 				id: 'transfer-domain',
 				label: __( 'Transfer to WordPress.com' ),
 				supportsBulk: false,
@@ -546,14 +467,9 @@ export const useActions = ( {
 			purchases,
 			setPrimaryDomain,
 			isSettingPrimaryDomain,
-			setWwwPrimaryDomain,
-			isSettingWwwPrimaryDomain,
 			createSuccessNotice,
-			createInfoNotice,
-			removeNotice,
 			sitesByBlogId,
 			sslActiveByDomain,
-			canToggleWwwPrimary,
 			recordTracksEvent,
 		]
 	);
