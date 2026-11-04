@@ -29,7 +29,6 @@ const EnvironmentSwitcher = ( { site }: { site: Site } ) => {
 
 					return (
 						<Button
-							className="dashboard-menu__item active"
 							icon={ canToggle ? chevronDownSmall : null }
 							iconPosition="right"
 							disabled={ ! canToggle }
