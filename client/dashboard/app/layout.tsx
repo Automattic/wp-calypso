@@ -8,6 +8,7 @@ import { GlobalChartsProvider } from '@automattic/charts';
 import { resolveDeviceTypeByViewPort } from '@automattic/viewport';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider, type AnyRouter } from '@tanstack/react-router';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { useMemo, useEffect } from 'react';
 import { withColorScheme } from 'calypso/lib/color-scheme';
 import { AnalyticsProvider, type AnalyticsClient } from './analytics';
@@ -103,6 +104,7 @@ function AnalyticsProviderWithClient( {
 }
 
 function Layout( { config }: { config: AppConfig } ) {
+	useEnableWpCompatOverlaySlot();
 	const router = useMemo( () => getRouter( config ), [ config ] );
 
 	return (
