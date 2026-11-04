@@ -161,6 +161,9 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 						dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 					} }
 					onSiteViewClick={ onCompleteSiteViewClick }
+					onImportAnotherClick={
+						job?.importerFileType !== 'playground' ? onTryAgainClick : undefined
+					}
 				/>
 			) }
 		</div>

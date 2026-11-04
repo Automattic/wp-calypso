@@ -1,5 +1,5 @@
 import { recordTracksEvent } from '@automattic/calypso-analytics';
-import { Hooray, SubTitle, Title } from '@automattic/onboarding';
+import { BackButton, Hooray, SubTitle, Title } from '@automattic/onboarding';
 import { useI18n } from '@wordpress/react-i18n';
 import React, { useEffect } from 'react';
 import { ImportJob } from '../../types';
@@ -12,10 +12,11 @@ interface Props {
 	resetImport: ( siteId: number, importerId: string ) => void;
 	buttonLabel?: string;
 	onSiteViewClick?: () => void;
+	onImportAnotherClick?: () => void;
 }
 const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 	const { __ } = useI18n();
-	const { job, siteId, buttonLabel, resetImport, onSiteViewClick } = props;
+	const { job, siteId, buttonLabel, resetImport, onSiteViewClick, onImportAnotherClick } = props;
 
 	// A successful `import-site` API request in `state/imports/site-importer/actions` records the
 	// same event name, so one import can record it twice.
@@ -35,6 +36,13 @@ const CompleteScreen: React.FunctionComponent< Props > = ( props ) => {
 					label={ buttonLabel }
 					onSiteViewClick={ onSiteViewClick }
 				/>
+				{ onImportAnotherClick && (
+					<div>
+						<BackButton onClick={ onImportAnotherClick }>
+							{ __( 'Import another file' ) }
+						</BackButton>
+					</div>
+				) }
 			</div>
 		</Hooray>
 	);
