@@ -482,7 +482,7 @@ describe( 'NotificationsExtras', () => {
 			mockGetPreferencesApi();
 			mockSaveNotificationSettingsApi( { email_tracking: false } );
 
-			dashboardRender(
+			const { recordTracksEvent } = dashboardRender(
 				<>
 					<Snackbars />
 					<NotificationsExtras />
@@ -497,6 +497,37 @@ describe( 'NotificationsExtras', () => {
 			await waitFor( () => {
 				expect( notificationSnackBar() ).toHaveTextContent( 'Email tracking turned off.' );
 			} );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_notifications_email_tracking_updated',
+				{ setting_value: false, source: 'extras' }
+			);
+		} );
+
+		it( 'does not record the change when saving fails', async () => {
+			mockGetNotificationSettingsApi( settingsWithEmailTracking );
+			mockGetPreferencesApi();
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/me/notifications/settings' )
+				.reply( 500, { error: 'Internal server error' } );
+
+			const { recordTracksEvent } = dashboardRender(
+				<>
+					<Snackbars />
+					<NotificationsExtras />
+				</>
+			);
+
+			await userEvent.click( await screen.findByLabelText( 'Track email opens and clicks' ) );
+
+			await waitFor( () => {
+				expect( notificationSnackBar() ).toHaveTextContent(
+					'Failed to save email tracking settings.'
+				);
+			} );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_notifications_email_tracking_updated',
+				expect.anything()
+			);
 		} );
 
 		it( 'is not changed by "Unsubscribe from all"', async () => {
