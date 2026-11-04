@@ -73,4 +73,27 @@ describe( '<Omnibar> free domain upsell node', () => {
 			upsellEventProps
 		);
 	} );
+
+	test( 'sends the flow back to the current Dashboard page', async () => {
+		window.history.pushState(
+			{},
+			'',
+			'/sites/test-site.wordpress.com?purchased_plan=value_bundle'
+		);
+		const user = userEvent.setup();
+		render( <FreeDomainUpsellNodeOmnibar /> );
+
+		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
+		const node = await within( toolbar ).findByRole( 'button', { name: 'Free domain' } );
+		await user.click( node );
+
+		const query = new URL( node.getAttribute( 'href' ) ?? '' ).searchParams;
+		expect( query.get( 'siteSlug' ) ).toBe( 'test-site.wordpress.com' );
+		expect( query.get( 'ref' ) ).toBe( 'omnibar-free-domain' );
+		expect( query.get( 'back_to' ) ).toContain(
+			'/sites/test-site.wordpress.com?purchased_plan=value_bundle'
+		);
+
+		window.history.pushState( {}, '', '/' );
+	} );
 } );
