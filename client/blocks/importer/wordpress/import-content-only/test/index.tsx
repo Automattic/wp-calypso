@@ -74,7 +74,7 @@ describe( 'ImportContentOnly', () => {
 	} );
 
 	// Without it, a finished import keeps the importer on the success screen until it expires.
-	it( 'resets the finished import when importing another file', async () => {
+	it( 'resets the finished import when starting another import', async () => {
 		renderImporter( {
 			importerId: 'importer-123',
 			importerState: appStates.IMPORT_SUCCESS,
@@ -85,5 +85,18 @@ describe( 'ImportContentOnly', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Start another import' } ) );
 
 		expect( resetImport ).toHaveBeenCalledWith( 123, 'importer-123' );
+	} );
+
+	// Playground imports finish on their own success screen and shouldn't offer the upload screen.
+	it( 'does not offer another import after a Playground import', () => {
+		renderImporter( {
+			importerId: 'importer-123',
+			importerState: appStates.IMPORT_SUCCESS,
+			importerFileType: 'playground',
+			type: 'importer-type-wordpress',
+			site: { ID: 123 },
+		} as ImportJob );
+
+		expect( screen.queryByRole( 'button', { name: 'Start another import' } ) ).toBeNull();
 	} );
 } );
