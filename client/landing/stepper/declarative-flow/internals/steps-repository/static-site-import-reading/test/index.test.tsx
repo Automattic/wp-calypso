@@ -114,6 +114,22 @@ describe( 'StaticSiteImportReading', () => {
 		expect( recordSignupComplete ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps an HTTP source URL as HTTP', async () => {
+		let postedBody: Record< string, unknown > = {};
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session', ( body ) => {
+				postedBody = body;
+				return true;
+			} )
+			.query( true )
+			.reply( 200, sessionResponse );
+
+		const submit = render( 'from=http://busybearscleaning.com&platform=wix' );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( postedBody ).toEqual( { source_url: 'http://busybearscleaning.com' } );
+	} );
+
 	it( 'records the signup and applies the flow’s site settings to a site checkout created', async () => {
 		setSignupIsNewUser( 7 );
 		const expectedSettings = { blogname: 'My Site', blog_public: 0, wpcom_public_coming_soon: 1 };
