@@ -114,6 +114,7 @@ describe( 'CreditsAnswer', () => {
 		render( <CreditsAnswer { ...answer } purchaseHint="Ask a site admin to add more." /> );
 
 		expect( screen.getByText( 'Ask a site admin to add more.' ) ).toBeVisible();
+		expect( screen.queryByText( /Top-ups don’t expire/ ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 

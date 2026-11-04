@@ -104,14 +104,16 @@ export function CreditsAnswer( { status, resetDate, actions, purchaseHint, creat
 					<h3 className="agents-manager-credits-answer__heading">
 						{ __( 'Need more?', __i18n_text_domain__ ) }
 					</h3>
-					<p>
-						{ canUpgrade
-							? __(
-									'Upgrading your plan raises your monthly credits. Top-ups don’t expire.',
-									__i18n_text_domain__
-								)
-							: __( 'Add a credits pack for more. Top-ups don’t expire.', __i18n_text_domain__ ) }
-					</p>
+					{ actions.length > 0 && (
+						<p>
+							{ canUpgrade
+								? __(
+										'Upgrading your plan raises your monthly credits. Top-ups don’t expire.',
+										__i18n_text_domain__
+									)
+								: __( 'Add a credits pack for more. Top-ups don’t expire.', __i18n_text_domain__ ) }
+						</p>
+					) }
 					{ purchaseHint && <p>{ purchaseHint }</p> }
 					{ actions.length > 0 && (
 						<div className="agents-manager-credits-answer__actions">
