@@ -2,6 +2,7 @@ const fs = require( 'fs' );
 const path = require( 'path' );
 const rcopy = require( 'recursive-copy' );
 const yargs = require( 'yargs' );
+const serverDeps = require( '../client/package.json' ).dependencies;
 
 const args = yargs
 	.usage( 'Usage: $0' )
@@ -74,14 +75,12 @@ function processPackage( pkgName, context ) {
 	// read package's package.json
 	const pkgJson = JSON.parse( fs.readFileSync( pkgFolder + '/package.json' ) );
 
-	// Optional peers are skipped: they're only installed here because the repo uses them for
-	// development, e.g. @wordpress/theme's vite and stylelint integrations, not by the server.
-	// Limit: if a package loads an optional peer at runtime that the bundle doesn't request itself,
-	// it fails only in the production image; exempt that peer from this filter to ship it.
+	// Optional peers ship only if the server lists them as dependencies; the rest are installed
+	// for development, e.g. @wordpress/theme's vite and stylelint integrations.
 	const pkgDeps = [
 		...Object.keys( pkgJson.dependencies || {} ),
 		...Object.keys( pkgJson.peerDependencies || {} ).filter(
-			( dep ) => pkgJson.peerDependenciesMeta?.[ dep ]?.optional !== true
+			( dep ) => pkgJson.peerDependenciesMeta?.[ dep ]?.optional !== true || dep in serverDeps
 		),
 		...Object.keys( pkgJson.optionalDependencies || {} ),
 	];
