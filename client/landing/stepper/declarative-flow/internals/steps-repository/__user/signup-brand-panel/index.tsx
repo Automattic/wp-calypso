@@ -1,13 +1,42 @@
 import { useTranslate } from 'i18n-calypso';
 import './style.scss';
 
-const themeImage = ( name: string ) =>
-	`https://wordpress.com/wp-content/uploads/2026/10/ai-hero-card-${ name }.webp`;
+// Examples from the AI website builder page and real themes from the logged-out homepage, sized
+// for a card at 2x.
+const aiExample = ( name: string ) =>
+	`https://wordpress.com/wp-content/uploads/2026/10/ai-hero-card-${ name }.webp?w=640`;
+const theme = ( name: string ) =>
+	`https://wordpress.com/wp-content/uploads/2025/04/${ name }-desktop.webp?w=640`;
 
 const WALL_COLUMNS = [
-	[ '01-think-pieces', '04-ceramics', '07-agency', '10-travel-blog' ],
-	[ '02-tattoo', '05-bakery', '08-paintings', '11-pet-adoption' ],
-	[ '03-coffee', '06-portfolio', '09-board-shop', '04-ceramics' ],
+	[
+		aiExample( '04-ceramics' ),
+		theme( 'punk' ),
+		aiExample( '07-agency' ),
+		theme( 'patisserie' ),
+		aiExample( '10-travel-blog' ),
+		theme( 'noteslab' ),
+		aiExample( '01-think-pieces' ),
+	],
+	[
+		theme( 'dropp' ),
+		aiExample( '05-bakery' ),
+		theme( 'clairevoyant' ),
+		aiExample( '08-paintings' ),
+		theme( 'stranger' ),
+		aiExample( '11-pet-adoption' ),
+		theme( 'raconteur' ),
+	],
+	[
+		aiExample( '09-board-shop' ),
+		theme( 'alter' ),
+		aiExample( '03-coffee' ),
+		theme( 'sankofa' ),
+		aiExample( '06-portfolio' ),
+		theme( 'psychedeli' ),
+		aiExample( '02-tattoo' ),
+		theme( 'primarium' ),
+	],
 ];
 
 export const SignupBrandPanel = () => {
@@ -21,10 +50,10 @@ export const SignupBrandPanel = () => {
 						{ WALL_COLUMNS.map( ( column, columnIndex ) => (
 							<div className="signup-brand-panel__column" key={ columnIndex }>
 								{ /* Twice over, so the drift loops without a jump. */ }
-								{ [ ...column, ...column ].map( ( name, cardIndex ) => (
+								{ [ ...column, ...column ].map( ( src, cardIndex ) => (
 									<img
 										className="signup-brand-panel__card"
-										src={ themeImage( name ) }
+										src={ src }
 										alt=""
 										loading="lazy"
 										key={ cardIndex }

@@ -58,11 +58,12 @@
 
 .signup-brand-panel__wall {
 	display: flex;
+	align-items: flex-start;
 	gap: var( --wpds-dimension-gap-lg );
 	position: absolute;
-	top: -18%;
-	left: -14%;
-	width: 128%;
+	// Sized around the panel, with the columns overflowing, so it rotates around the panel's center
+	// however long they are.
+	inset: -18% -14%;
 	transform: rotate( -7deg );
 }
 
