@@ -1,8 +1,8 @@
 import { purchaseQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { Button } from '@wordpress/ui';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useLocale } from '../../app/locale';
@@ -34,8 +34,7 @@ export default function ExpiredDomainNotice( { domain }: { domain: DomainSummary
 			onClose={ () => setIsDismissed( true ) }
 			actions={
 				<Button
-					__next40pxDefaultSize
-					variant="primary"
+					tone="neutral"
 					disabled={ ! purchase }
 					onClick={ () => {
 						if ( ! purchase ) {
