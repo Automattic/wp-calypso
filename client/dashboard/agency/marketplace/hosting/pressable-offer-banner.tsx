@@ -13,10 +13,11 @@ import { ButtonStack } from '../../../components/button-stack';
 import { Card, CardBody } from '../../../components/card';
 import {
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
-	PRESSABLE_HOLIDAY_2026_OFFER_ENDS_AT,
-	PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
+	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 } from '../../overview/constants';
-import usePressableOfferEligibility from '../../overview/use-pressable-offer-eligibility';
+import usePressableOfferEligibility, {
+	isPressableOfferActive,
+} from '../../overview/use-pressable-offer-eligibility';
 import { useContactSupport } from '../../support/use-contact-support';
 import { CheckList } from './content-sections';
 import type { Agency } from '@automattic/api-core';
@@ -95,18 +96,18 @@ function PressableOfferBanner( { title, items, ctas, footnote, toggleEventName }
 
 const bold = ( text: string ) => createInterpolateElement( text, { b: <b /> } );
 
-// The same eligibility rules as the Overview cards: the holiday introductory
-// offer targets agencies without a Pressable plan through A4A, the Q3 expansion
-// offer agencies on an eligible plan that did not benefit from the Q3
-// introductory one. The expansion offer has ended, and its eligibility check
-// already includes the Q3 end date, so it stays hidden.
+// The same eligibility rules as the Overview cards: the introductory offer
+// targets agencies without a Pressable plan through A4A, the expansion offer
+// agencies on an eligible plan that did not benefit from the introductory one.
 export default function PressableOffers( { agency }: { agency: Agency | null | undefined } ) {
 	const { isEligibleForPressableIntroOffer, isEligibleForPressableExpansionOffer } =
 		usePressableOfferEligibility( agency );
 	const { openContactForm } = useContactSupport();
-	const isHolidayOfferActive = new Date() < new Date( PRESSABLE_HOLIDAY_2026_OFFER_ENDS_AT );
+	if ( ! isPressableOfferActive() ) {
+		return null;
+	}
 
-	if ( isEligibleForPressableIntroOffer && isHolidayOfferActive ) {
+	if ( isEligibleForPressableIntroOffer ) {
 		return (
 			<PressableOfferBanner
 				title={ bold(
@@ -141,7 +142,7 @@ export default function PressableOffers( { agency }: { agency: Agency | null | u
 				ctas={ [
 					{
 						label: __( 'See full terms ↗' ),
-						url: PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
+						url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 						eventName: 'calypso_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 						isExternal: true,
 					},
