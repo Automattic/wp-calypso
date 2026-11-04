@@ -2,6 +2,7 @@ import {
 	recordDomainViewChanges,
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
+	sanitizeDomainsListPageSize,
 } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
 
@@ -38,6 +39,31 @@ describe( 'sanitizeDomainFields', () => {
 
 	test( 'leaves a view without saved fields alone', () => {
 		expect( sanitizeDomainFields( undefined ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'sanitizeDomainsListPageSize', () => {
+	test.each( [
+		[ 10, 12 ],
+		[ 20, 24 ],
+		[ 50, 48 ],
+		[ 100, 96 ],
+	] )( 'moves a saved page size of %i to %i', ( saved, expected ) => {
+		expect( sanitizeDomainsListPageSize( { type: 'table', perPage: saved } ).perPage ).toBe(
+			expected
+		);
+	} );
+
+	test( 'returns the same view when its page size is offered', () => {
+		const view: View = { type: 'grid', perPage: 24 };
+
+		expect( sanitizeDomainsListPageSize( view ) ).toBe( view );
+	} );
+
+	test( 'leaves a view without a page size alone', () => {
+		const view: View = { type: 'grid' };
+
+		expect( sanitizeDomainsListPageSize( view ) ).toBe( view );
 	} );
 } );
 

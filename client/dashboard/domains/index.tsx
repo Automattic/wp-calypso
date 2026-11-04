@@ -23,7 +23,9 @@ import {
 	DOMAINS_LIST_DEFAULT_VIEW,
 	DOMAINS_LIST_LAYOUTS,
 	recordDomainViewChanges,
+	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
+	sanitizeDomainsListPageSize,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -52,12 +54,12 @@ function Domains() {
 		updateView,
 		resetView,
 	} = usePersistentView( {
-		// Not `domains`: builds reading that preference have no grid layout, and DataViews renders nothing for a saved layout it wasn't given.
-		slug: 'domains-list',
+		slug: 'domains',
 		defaultView,
 		queryParams: searchParams,
+		sanitizeFields: sanitizeDomainFields,
 	} );
-	const view = sanitizeDomainsListLayout( persistentView );
+	const view = sanitizeDomainsListPageSize( sanitizeDomainsListLayout( persistentView ) );
 
 	const { data: domains } = useSuspenseQuery( {
 		...domainsQuery(),

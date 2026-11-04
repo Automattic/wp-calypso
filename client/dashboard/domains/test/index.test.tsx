@@ -199,18 +199,46 @@ describe( '<Domains>', () => {
 		} );
 	} );
 
-	test( 'does not read a view saved in the `domains` preference', async () => {
+	test( 'keeps a saved table view without a blank column for the removed SSL field', async () => {
 		mockApis( [ mockDomain( 1 ) ], {
-			'hosting-dashboard-dataviews-view-domains': { type: 'table', titleField: 'domain' },
+			'hosting-dashboard-dataviews-view-domains': {
+				type: 'table',
+				titleField: 'domain',
+				showMedia: false,
+				fields: [ 'blog_name', 'ssl_status', 'expiry', 'domain_status' ],
+			},
 		} );
 
 		render( <Domains /> );
 
-		await screen.findByRole( 'button', { name: 'Settings' } );
-		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		const table = await screen.findByRole( 'table' );
+		const headers = within( table ).getAllByRole( 'columnheader' );
+		expect( headers.map( ( header ) => header.textContent ) ).not.toContain( 'SSL' );
+		// Selection, name, site, paid until, status and actions.
+		expect( headers ).toHaveLength( 6 );
+		expect( screen.queryByRole( 'group', { name: 'domain01.com' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'saves view changes without touching the `domains` preference', async () => {
+	test( 'moves a saved page size that is no longer offered to the nearest one', async () => {
+		mockApis(
+			Array.from( { length: 13 }, ( _, index ) => mockDomain( index ) ),
+			{
+				'hosting-dashboard-dataviews-view-domains': {
+					type: 'grid',
+					titleField: 'domain',
+					perPage: 10,
+					fields: [ 'blog_name', 'expiry', 'domain_status' ],
+				},
+			}
+		);
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( domainNames() ).toHaveLength( 12 );
+	} );
+
+	test( 'saves view changes to the `domains` preference', async () => {
 		const user = userEvent.setup();
 		const { savedPreferences } = mockApis( [ mockDomain( 1 ) ] );
 		// `userPreferenceOptimisticMutation` writes to the API package's client.
@@ -221,9 +249,6 @@ describe( '<Domains>', () => {
 
 		await waitFor( () => expect( savedPreferences ).not.toHaveLength( 0 ) );
 		expect( savedPreferences[ 0 ] ).toHaveProperty( [
-			'hosting-dashboard-dataviews-view-domains-list',
-		] );
-		expect( savedPreferences[ 0 ] ).not.toHaveProperty( [
 			'hosting-dashboard-dataviews-view-domains',
 		] );
 	} );

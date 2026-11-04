@@ -85,6 +85,20 @@ export function sanitizeDomainFields( fields: View[ 'fields' ] ) {
 	return fields?.filter( ( field ) => field !== 'ssl_status' );
 }
 
+// Saved views can hold a page size from before these options, which the page size control couldn't show as selected.
+export function sanitizeDomainsListPageSize( view: View ): View {
+	const { perPage } = view;
+	const { perPageSizes } = DOMAINS_LIST_CONFIG;
+	if ( ! perPage || perPageSizes.includes( perPage ) ) {
+		return view;
+	}
+
+	const nearest = perPageSizes.reduce( ( closest, size ) =>
+		Math.abs( size - perPage ) < Math.abs( closest - perPage ) ? size : closest
+	);
+	return { ...view, perPage: nearest };
+}
+
 export function recordDomainViewChanges(
 	oldView: View,
 	newView: View,
