@@ -12,8 +12,11 @@ export const getFeatureName = () => __( 'Prospect reports' );
 /** The page description under the title, in both dashboards. */
 export const getFeatureDescription = () =>
 	__(
-		'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
+		'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fixes.'
 	);
+
+/** Query param that opens the New report modal when the page loads, e.g. `/prospect-reports?new-report=1`. */
+export const NEW_REPORT_PARAM = 'new-report';
 
 /** Timing copy used everywhere, per the v1 PRD. */
 export const getReportTiming = () => __( '10 to 20 minutes' );
