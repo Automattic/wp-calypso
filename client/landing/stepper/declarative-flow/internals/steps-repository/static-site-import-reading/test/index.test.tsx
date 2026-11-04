@@ -25,10 +25,11 @@ jest.mock( 'calypso/lib/analytics/signup', () => ( {
 	...jest.requireActual( 'calypso/lib/analytics/signup' ),
 	recordSignupComplete: jest.fn(),
 } ) );
+let mockPlan: { product_slug: string; is_free?: boolean };
 jest.mock( 'calypso/landing/stepper/hooks/use-site-data', () => ( {
 	useSiteData: () => ( {
 		siteSlug: 'destination.example.com',
-		site: { plan: { product_slug: 'business-bundle' } },
+		site: { ID: 123, plan: mockPlan },
 	} ),
 } ) );
 
@@ -60,6 +61,74 @@ describe( 'StaticSiteImportReading', () => {
 		jest.clearAllMocks();
 		window.localStorage.clear();
 		window.sessionStorage.clear();
+		mockPlan = { product_slug: 'business-bundle' };
+	} );
+
+	const mockCreate = () =>
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( 200, sessionResponse );
+	const mockApprove = () =>
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve', { destination_blog_id: 123 } )
+			.query( true );
+
+	it( 'names a paid destination before leaving the step', async () => {
+		mockCreate();
+		let submit = jest.fn();
+		let submitCallsAtApproval: number | undefined;
+		const approve = mockApprove().reply( 200, () => {
+			submitCallsAtApproval = submit.mock.calls.length;
+			return sessionResponse;
+		} );
+
+		submit = render( 'from=busybearscleaning.com' );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( approve.isDone() ).toBe( true );
+		expect( submitCallsAtApproval ).toBe( 0 );
+	} );
+
+	it( 'names the destination when checkout returns with a session from before payment', async () => {
+		const approve = mockApprove().reply( 200, sessionResponse );
+
+		const submit = render( 'importSessionId=abc123' );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( approve.isDone() ).toBe( true );
+	} );
+
+	it( 'does not name a free destination, which still has to go through checkout', async () => {
+		mockPlan = { product_slug: 'free_plan', is_free: true };
+		mockCreate();
+		const approve = mockApprove().reply( 200, sessionResponse );
+
+		const submit = render( 'from=busybearscleaning.com', { afterCheckout: false } );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Import into this site' } ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( approve.isDone() ).toBe( false );
+	} );
+
+	it( 'leaves a session from a direct link for Overview to check', async () => {
+		const approve = mockApprove().reply( 200, sessionResponse );
+
+		const submit = render( 'importSessionId=abc123', { afterCheckout: false } );
+		await userEvent.click( screen.getByRole( 'button', { name: 'Import into this site' } ) );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( approve.isDone() ).toBe( false );
+	} );
+
+	it( 'continues when naming the destination fails, so Overview can ask again', async () => {
+		mockCreate();
+		const approve = mockApprove().reply( 500 );
+
+		const submit = render( 'from=busybearscleaning.com' );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( approve.isDone() ).toBe( true );
 	} );
 
 	it.each( [

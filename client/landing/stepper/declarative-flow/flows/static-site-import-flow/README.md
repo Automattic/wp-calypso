@@ -18,11 +18,11 @@ Opening this flow without a supported source sends the user to that identify ste
 | `static-site-import-reading` | Checking your site as the session starts    |
 
 There is no preview or address/domain selection step. Unified checkout creates the destination
-site and returns its ID to the authenticated reading step. That step starts the import session
-and immediately opens the site’s Overview in the dashboard
-(`client/dashboard/sites/overview-static-site-import`). Overview records delivery intent and
-tracks capture and import in the background, then offers the finished site with a way to hand the
-move to our migrations team.
+site and returns its ID to the authenticated reading step. That step starts the import session,
+names a paid site as its destination, and immediately opens the site’s Overview in the dashboard
+(`client/dashboard/sites/overview-static-site-import`). Overview names the destination if that
+hasn’t happened and tracks capture and import in the background, then offers the finished site
+with a way to hand the move to our migrations team.
 
 An existing destination requires authentication. Paid destinations skip plans and checkout;
 free destinations use site checkout to buy a plan before starting the import session.

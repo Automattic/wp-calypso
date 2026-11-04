@@ -1,5 +1,8 @@
 import { getStaticSiteImportErrorCode } from '@automattic/api-core';
-import { createStaticSiteImportSessionMutation } from '@automattic/api-queries';
+import {
+	approveStaticSiteImportSessionMutation,
+	createStaticSiteImportSessionMutation,
+} from '@automattic/api-queries';
 import { HelpCenter, Onboard, Visibility } from '@automattic/data-stores';
 import { STATIC_SITE_IMPORT_FLOW, Step } from '@automattic/onboarding';
 import { useMutation } from '@tanstack/react-query';
@@ -56,9 +59,21 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		const needsConfirmation = ! isCheckoutReturn && ! hasConfirmed;
 
 		const { mutate: createSession, error } = useMutation( createStaticSiteImportSessionMutation() );
+		const { mutateAsync: approveSession } = useMutation( approveStaticSiteImportSessionMutation() );
 
 		const start = useEffectEvent( async () => {
 			const submit = ( result: StaticSiteImportReadingSubmits ) => navigation.submit?.( result );
+			// Delivery shouldn't depend on Overview loading, though it asks again if this fails.
+			// A free destination hasn't paid yet: its session gets approved after checkout.
+			const approveAndContinue = async ( importSessionId: string ) => {
+				if ( site?.plan && ! site.plan.is_free ) {
+					await Promise.allSettled( [
+						approveSession( { sessionId: importSessionId, destinationBlogId: site.ID } ),
+					] );
+				}
+				submit( { action: 'continue', importSessionId } );
+			};
+
 			if ( ! sessionId && ! sourceUrl ) {
 				return submit( { action: 'unavailable' } );
 			}
@@ -110,11 +125,13 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 			}
 
 			if ( sessionId ) {
-				return submit( { action: 'continue', importSessionId: sessionId } );
+				// A session from a direct link may already be bound, which only Overview checks.
+				return isCheckoutReturn
+					? approveAndContinue( sessionId )
+					: submit( { action: 'continue', importSessionId: sessionId } );
 			}
 			createSession( sourceUrl, {
-				onSuccess: ( session ) =>
-					submit( { action: 'continue', importSessionId: session.session_id } ),
+				onSuccess: ( session ) => approveAndContinue( session.session_id ),
 				onError: ( createError ) =>
 					! isRefusedError( createError ) && submit( { action: 'unavailable' } ),
 			} );
