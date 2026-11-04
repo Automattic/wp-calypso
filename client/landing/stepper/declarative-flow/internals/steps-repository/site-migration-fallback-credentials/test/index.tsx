@@ -108,7 +108,7 @@ describe( 'SiteMigrationCredentials', () => {
 		expect( wp.req.post ).toHaveBeenCalledWith(
 			{ path: '/help/migration-ticket/new', apiNamespace: 'wpcom/v2' },
 			{},
-			expect.objectContaining( { blog_url: 'site-url.wordpress.com' } )
+			expect.objectContaining( { blog_url: 'site-url.wordpress.com', context: 'help_requested' } )
 		);
 		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
 	} );

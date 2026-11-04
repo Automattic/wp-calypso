@@ -31,7 +31,10 @@ export function useRequestMigrationHelp( onDone: () => void ) {
 	return {
 		requestHelp: () => {
 			if ( isIdle ) {
-				sendTicket( { locale, from_url: fromUrl, blog_url: siteSlug }, { onSettled: onDone } );
+				sendTicket(
+					{ locale, from_url: fromUrl, blog_url: siteSlug, context: 'help_requested' },
+					{ onSettled: onDone }
+				);
 			}
 		},
 		// Stays on once settled too, while the customer is on their way out of the flow.
