@@ -44,6 +44,9 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 	const { job, importer, siteItem, siteSlug, siteAnalyzedData, stepNavigator, renderHeading } =
 		props;
 	const isSiteCompatible = siteItem && isTargetSitePlanCompatible( siteItem );
+	// These files restore a whole site, so don't suggest importing over it again.
+	const isSiteRestore =
+		job?.importerFileType === 'playground' || job?.importerFileType === 'jetpack_backup';
 
 	/**
 	 ↓ Callbacks
@@ -161,9 +164,7 @@ const ImportContentOnly: React.FunctionComponent< Props > = ( props ) => {
 						dispatch( resetImport( siteItem?.ID, job?.importerId ) );
 					} }
 					onSiteViewClick={ onCompleteSiteViewClick }
-					onImportAnotherClick={
-						job?.importerFileType !== 'playground' ? onTryAgainClick : undefined
-					}
+					onImportAnotherClick={ isSiteRestore ? undefined : onTryAgainClick }
 				/>
 			) }
 		</div>

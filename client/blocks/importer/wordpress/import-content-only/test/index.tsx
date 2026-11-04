@@ -87,16 +87,18 @@ describe( 'ImportContentOnly', () => {
 		expect( resetImport ).toHaveBeenCalledWith( 123, 'importer-123' );
 	} );
 
-	// Playground imports finish on their own success screen and shouldn't offer the upload screen.
-	it( 'does not offer another import after a Playground import', () => {
-		renderImporter( {
-			importerId: 'importer-123',
-			importerState: appStates.IMPORT_SUCCESS,
-			importerFileType: 'playground',
-			type: 'importer-type-wordpress',
-			site: { ID: 123 },
-		} as ImportJob );
+	it.each( [ 'playground', 'jetpack_backup' ] as const )(
+		'does not offer another import after a site restore from a %s file',
+		( importerFileType ) => {
+			renderImporter( {
+				importerId: 'importer-123',
+				importerState: appStates.IMPORT_SUCCESS,
+				importerFileType,
+				type: 'importer-type-wordpress',
+				site: { ID: 123 },
+			} as ImportJob );
 
-		expect( screen.queryByRole( 'button', { name: 'Start another import' } ) ).toBeNull();
-	} );
+			expect( screen.queryByRole( 'button', { name: 'Start another import' } ) ).toBeNull();
+		}
+	);
 } );
