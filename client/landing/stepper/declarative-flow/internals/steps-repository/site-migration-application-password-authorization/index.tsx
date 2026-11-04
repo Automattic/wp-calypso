@@ -14,6 +14,8 @@ import { useRequestMigrationHelp } from '../site-migration-credentials/hooks/use
 import Authorization from './components/authorization';
 import useStoreApplicationPassword from './hooks/use-store-application-password';
 import type { Step as StepType } from '../../types';
+
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 const SiteMigrationApplicationPasswordsAuthorization: StepType< {
@@ -130,22 +132,26 @@ const SiteMigrationApplicationPasswordsAuthorization: StepType< {
 		<>
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
-				columnWidth={ 5 }
+				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar
 						leftElement={
 							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
 						}
 						rightElement={
-							<NeedHelpLink onHelpLinkClicked={ contactMe } isBusy={ isHelpRequested } />
+							<div className="account-template__top-bar-links">
+								<NeedHelpLink onHelpLinkClicked={ contactMe } isBusy={ isHelpRequested } />
+							</div>
 						}
 					/>
 				}
-				heading={ <Step.Heading text={ title } subText={ subHeaderText } /> }
 				className="site-migration-application-password-authorization-v2"
 			>
-				{ notice }
-				{ stepContent }
+				<div className="account-template">
+					<Step.Heading text={ title } subText={ subHeaderText } />
+					{ notice }
+					{ stepContent }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);

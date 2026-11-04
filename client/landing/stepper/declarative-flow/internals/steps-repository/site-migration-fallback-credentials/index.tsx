@@ -10,6 +10,8 @@ import { NeedHelpLink } from '../site-migration-credentials/components/need-help
 import { useRequestMigrationHelp } from '../site-migration-credentials/hooks/use-request-migration-help';
 import { CredentialsForm } from './components/credentials-form';
 import type { Step as StepType } from '../../types';
+
+import 'calypso/components/account-template/style.scss';
 import './style.scss';
 
 const SiteMigrationFallbackCredentials: StepType< {
@@ -51,20 +53,24 @@ const SiteMigrationFallbackCredentials: StepType< {
 		<>
 			<DocumentHead title={ title } />
 			<Step.CenteredColumnLayout
-				columnWidth={ 5 }
+				columnWidth={ 4 }
 				topBar={
 					<Step.TopBar
 						leftElement={
 							navigation?.goBack ? <Step.BackButton onClick={ navigation.goBack } /> : null
 						}
 						rightElement={
-							<NeedHelpLink onHelpLinkClicked={ requestHelp } isBusy={ isHelpRequested } />
+							<div className="account-template__top-bar-links">
+								<NeedHelpLink onHelpLinkClicked={ requestHelp } isBusy={ isHelpRequested } />
+							</div>
 						}
 					/>
 				}
-				heading={ <Step.Heading text={ headerText } subText={ subHeaderText } /> }
 			>
-				{ content }
+				<div className="account-template">
+					<Step.Heading text={ headerText } subText={ subHeaderText } />
+					{ content }
+				</div>
 			</Step.CenteredColumnLayout>
 		</>
 	);
