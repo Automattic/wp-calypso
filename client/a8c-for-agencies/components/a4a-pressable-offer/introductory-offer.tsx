@@ -1,8 +1,8 @@
 import { useTranslate } from 'i18n-calypso';
 import PressableOfferBanner from './banner';
 import {
-	PRESSABLE_HOLIDAY_2026_OFFER_DEADLINE,
-	PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
+	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
+	PRESSABLE_Q3_2026_OFFER_DEADLINE,
 } from './constants';
 import usePressableOfferEligibility from './hooks/use-pressable-offer-eligibility';
 
@@ -12,7 +12,7 @@ const PressableIntroductoryOffer = () => {
 	const { isEligibleForIntroductoryOffer } = usePressableOfferEligibility();
 
 	const shouldShowOffer =
-		isEligibleForIntroductoryOffer && new Date() <= PRESSABLE_HOLIDAY_2026_OFFER_DEADLINE;
+		isEligibleForIntroductoryOffer && new Date() <= PRESSABLE_Q3_2026_OFFER_DEADLINE;
 
 	if ( ! shouldShowOffer ) {
 		return null;
@@ -60,7 +60,7 @@ const PressableIntroductoryOffer = () => {
 			ctas={ [
 				{
 					label: translate( 'See full terms ↗' ),
-					url: PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
+					url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 					eventName: 'calypso_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 					isExternal: true,
 				},

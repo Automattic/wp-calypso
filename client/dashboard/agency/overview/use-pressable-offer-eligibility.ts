@@ -64,6 +64,9 @@ export const pressableOfferLicensesQuery = ( agencyId: number ) => ( {
 export const isPressableOfferActive = () =>
 	new Date() < new Date( PRESSABLE_Q3_2026_OFFER_ENDS_AT );
 
+// No expansion offer runs alongside the holiday introductory offer.
+const EXPANSION_OFFER_IS_RUNNING = false;
+
 /**
  * The cheap checks before the license fetch: the offer is still running and
  * the agency is a Billing Dragon agency with a Pressable plan bought through A4A.
@@ -72,6 +75,7 @@ export function mayBeEligibleForPressableExpansionOffer( agency: Agency | null |
 	const pressable = agency?.third_party?.pressable;
 	const ownsPressableThroughA4A = !! pressable?.pressable_id && pressable?.a4a_id !== null;
 	return (
+		EXPANSION_OFFER_IS_RUNNING &&
 		isPressableOfferActive() &&
 		agency?.billing_system === 'billingdragon' &&
 		ownsPressableThroughA4A

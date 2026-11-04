@@ -7,8 +7,7 @@ import { CERTIFICATION_EXAM_URL, PROMO_LAST_DAY } from '../certification/constan
 import {
 	AI_MCP_ANNOUNCEMENT_BLOG_POST_URL,
 	PRESSABLE_EXPANSION_OFFER_TERMS_URL,
-	PRESSABLE_HOLIDAY_2026_OFFER_ENDS_AT,
-	PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
+	PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 	PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 } from './constants';
 import type { CSSProperties, ReactNode } from 'react';
@@ -104,12 +103,11 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 };
 
 /**
- * The Pressable promos, shown to eligible agencies alongside the featured
- * event. Which one an agency sees is decided by the shells through the
- * eligibility props on AgencyOverviewContent: the holiday 2026 introductory
- * offer targets agencies without a Pressable plan through A4A, the Q3 2026
- * expansion offer agencies with one that missed that quarter's introductory
- * offer. The expansion offer has ended and stays hidden by its end date.
+ * The Q3 2026 Pressable promos, shown to eligible agencies alongside the
+ * featured event. Which one an agency sees is decided by the shells through
+ * the eligibility props on AgencyOverviewContent: the introductory offer
+ * targets agencies without a Pressable plan through A4A, the expansion offer
+ * agencies with one that missed the introductory offer.
  */
 export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): FeaturedEvent => ( {
 	id: 'a4a-pressable-promo-offer-2026-holiday',
@@ -135,13 +133,13 @@ export const getPressableIntroOfferEvent = ( pressableHostingHref: string ): Fea
 		{
 			id: 'see-full-terms',
 			label: __( 'See full terms' ),
-			url: PRESSABLE_HOLIDAY_2026_OFFER_TERMS_URL,
+			url: PRESSABLE_INTRODUCTORY_OFFER_TERMS_URL,
 			isExternal: true,
 			legacyTrackEventName:
 				'calypso_a4a_overview_events_a4a_pressable_promo_offer_holiday_2026_see_full_terms_click',
 		},
 	],
-	endsAt: PRESSABLE_HOLIDAY_2026_OFFER_ENDS_AT,
+	endsAt: PRESSABLE_Q3_2026_OFFER_ENDS_AT,
 } );
 
 export const getPressableExpansionOfferEvent = (
