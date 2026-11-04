@@ -1,9 +1,9 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
 import { useMemo } from 'react';
-import { useAppContext } from '../../app/context';
 import { Text } from '../../components/text';
 import { DomainNameField } from './field-domain-name';
 import { DomainSiteField } from './field-domain-site';
@@ -22,8 +22,7 @@ export const useFields = ( {
 	site?: Site;
 	inOverview?: boolean;
 } = {} ) => {
-	const { queries } = useAppContext();
-	const { data: domains } = useQuery( queries.domainsQuery() );
+	const { data: domains } = useQuery( domainsQuery() );
 
 	const siteElements = useMemo( () => {
 		if ( ! domains ) {

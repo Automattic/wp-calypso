@@ -281,6 +281,7 @@ describe( 'StaticSiteImportCard', () => {
 				from_url: 'busybearscleaning.com',
 				locale: 'en',
 				context: 'site_is_not_wordpress',
+				import_session_id: 'abc123',
 			} )
 			.reply( 200, { success: true } );
 
@@ -321,9 +322,35 @@ describe( 'StaticSiteImportCard', () => {
 
 		expect( await screen.findByText( 'Your move hasn’t started yet' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Try again' } ) ).toBeVisible();
+		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Let our team move it' } )
+		).not.toBeInTheDocument();
 		expect(
 			screen.queryByRole( 'heading', { name: 'Your move stopped' } )
 		).not.toBeInTheDocument();
+		nock.cleanAll();
+	} );
+
+	test( 'asks again to name the destination when trying again, even if the session has not changed', async () => {
+		const user = userEvent.setup();
+		mockApi()
+			.get( '/wpcom/v2/static-site-import-session/abc123' )
+			.query( true )
+			.times( 3 )
+			.reply( 200, session( 'preview_ready' ) );
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 500, { code: 'internal_error', message: 'Something went wrong' } );
+		const secondApprove = mockApi()
+			.post( '/wpcom/v2/static-site-import-session/abc123/approve' )
+			.reply( 200, session( 'queued' ) );
+
+		render( <StaticSiteImport /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Try again' } ) );
+
+		await waitFor( () => expect( secondApprove.isDone() ).toBe( true ) );
 		nock.cleanAll();
 	} );
 
@@ -386,7 +413,16 @@ describe( 'StaticSiteImportNotice preview link', () => {
 } );
 
 describe( 'StaticSiteImportNotice help with the move', () => {
-	it( 'offers a person to talk to when the moved site isn’t right', async () => {
+	it( 'hands the move to our migrations team when the moved site isn’t right', async () => {
+		const ticket = mockApi()
+			.post( '/wpcom/v2/help/migration-ticket/new', {
+				blog_url: 'busybears.wordpress.com',
+				from_url: 'busybearscleaning.com',
+				locale: 'en',
+				context: 'site_is_not_wordpress',
+				import_session_id: 'abc123',
+			} )
+			.reply( 200, { success: true } );
 		const { recordTracksEvent } = render(
 			<StaticSiteImportNotice
 				site={ site }
@@ -396,12 +432,26 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 		);
 
 		await userEvent.click(
-			screen.getByRole( 'button', { name: 'Something not right? Get help with your move' } )
+			screen.getByRole( 'button', { name: 'Something not right? Let our team fix it' } )
 		);
+		expect( await screen.findByText( /Our team has your move/ ) ).toBeVisible();
+		expect( ticket.isDone() ).toBe( true );
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_static_site_import_ready_notice_click',
-			{ site_id: 42, source_platform: 'wix', action: 'get_help' }
+			{ site_id: 42, source_platform: 'wix', action: 'request_handoff' }
 		);
+	} );
+
+	it( 'shows the note wpcom wrote about what the move found', () => {
+		const finished = {
+			status: 'finished' as const,
+			session: session( 'finished', {
+				review_note: 'We found a store on busybearscleaning.com.',
+			} ) as StaticSiteImportSession,
+		};
+		render( <StaticSiteImportNotice site={ site } siteImport={ finished } search={ search } /> );
+
+		expect( screen.getByText( 'We found a store on busybearscleaning.com.' ) ).toBeVisible();
 	} );
 
 	it( 'leaves a failed move to the failure card', () => {

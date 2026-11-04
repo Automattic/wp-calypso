@@ -33,6 +33,7 @@ export { default as AiChatEntryLabel } from './components/ai-chat-entry-label';
 // Feedback exports
 export { submitFeedback, rateMessage } from './hooks/use-feedback-action';
 export { default as FeedbackInput } from './components/feedback-input';
+export { default as useAgentTraceIds } from './hooks/use-agent-trace-ids';
 
 // Site credits copy, so other chats show the same amounts and low-balance limit
 export { CREDITS_LOW_BALANCE, formatCreditsShort } from './utils/credits';

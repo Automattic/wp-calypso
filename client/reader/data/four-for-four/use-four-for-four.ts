@@ -73,6 +73,30 @@ export function useFourForFour() {
 		[ follows, candidateBlogIdByUrl, candidateBlogIds ]
 	);
 
+	const failedFeedUrls = useMutationState( {
+		filters: {
+			predicate: ( mutation ) =>
+				mutation.options.meta?.statId === 'read-site-follow' && mutation.state.status === 'error',
+		},
+		select: ( mutation ) =>
+			( mutation.state.variables as FollowSiteParams | undefined )?.feedUrl ?? '',
+	} );
+
+	const followedBlogIds = new Set( [
+		...recordedBlogIds,
+		...candidateFollows.map( ( follow ) => follow.blogId ),
+	] );
+
+	// A follow can be refused outright, most often by the spam filter. The
+	// shared error notice can't name the site or clear once a retry succeeds,
+	// and screen readers don't announce it while the modal is open, so the
+	// modal lists refused follows itself.
+	const failedSites = candidates.filter(
+		( candidate ) =>
+			failedFeedUrls.includes( candidate.feedUrl || candidate.url ) &&
+			! followedBlogIds.has( candidate.blogId )
+	);
+
 	// IDs the server has answered for, whether or not it kept them (it drops
 	// follows it can't verify). Never re-sent, so a dropped ID can't loop.
 	const answeredBlogIds = useRef( new Set< number >() );
@@ -108,11 +132,6 @@ export function useFourForFour() {
 		);
 	}, [ statusQuery.isSuccess, isSaving, isSaveError, unsavedBlogIds, recordProgress ] );
 
-	const followedCount = new Set( [
-		...recordedBlogIds,
-		...candidateFollows.map( ( follow ) => follow.blogId ),
-	] ).size;
-
 	const retrySave = () => {
 		if ( statusQuery.isError ) {
 			statusQuery.refetch();
@@ -128,7 +147,8 @@ export function useFourForFour() {
 		isCandidatesError: candidatesQuery.isError,
 		refetchCandidates: candidatesQuery.refetch,
 		status: statusQuery.data?.status ?? null,
-		followedCount,
+		followedCount: followedBlogIds.size,
+		failedSites,
 		hasSaveError: statusQuery.isError || progress.isError,
 		retrySave,
 	};

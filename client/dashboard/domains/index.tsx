@@ -1,8 +1,9 @@
 import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../app/analytics';
-import { useAppContext } from '../app/context';
+import { useAuth } from '../app/auth';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
@@ -22,7 +23,6 @@ import {
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
 import type { DomainSummary } from '@automattic/api-core';
-import './dataviews/style.scss';
 
 export function getDomainId( domain: DomainSummary ): string {
 	return `${ domain.domain }-${ domain.blog_id }`;
@@ -40,10 +40,10 @@ const defaultView = {
 };
 
 function Domains() {
-	const { queries } = useAppContext();
+	const { user } = useAuth();
 	const { recordTracksEvent } = useAnalytics();
-	const fields = useFields();
-	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
+	const fields = useFields( { showPrimaryDomainBadge: false } );
+	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
 
 	const { view, updateView, resetView } = usePersistentView( {
@@ -53,13 +53,13 @@ function Domains() {
 	} );
 
 	const { data: domains } = useSuspenseQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		},
 	} );
 
-	const actions = useActions( { sites } );
+	const actions = useActions( { user, sites, domains } );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		domains ?? [],
@@ -89,7 +89,7 @@ function Domains() {
 						<EmptyDomainsStateUpsell />
 					</DataViewsEmptyStateLayout>
 				) : (
-					<DataViewsCard className="domains-dataviews">
+					<DataViewsCard>
 						<DataViews< DomainSummary >
 							data={ filteredData || [] }
 							fields={ fields }

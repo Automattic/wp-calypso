@@ -1,12 +1,20 @@
-import { Button } from '@wordpress/components';
+import { Step } from '@automattic/onboarding';
 import { translate } from 'i18n-calypso';
 
-export const NeedHelpLink = ( { onHelpLinkClicked }: { onHelpLinkClicked: () => void } ) => {
+export const NeedHelpLink = ( {
+	onHelpLinkClicked,
+	isBusy,
+}: {
+	onHelpLinkClicked: () => void;
+	isBusy: boolean;
+} ) => {
 	return (
 		<span>
-			{ translate( 'Need help? {{button}}Let us guide you{{/button}}', {
+			{ translate( 'Need help? {{button}}Have our team email you{{/button}}', {
 				components: {
-					button: <Button variant="link" onClick={ onHelpLinkClicked } type="button" />,
+					button: (
+						<Step.LinkButton onClick={ onHelpLinkClicked } isBusy={ isBusy } disabled={ isBusy } />
+					),
 				},
 			} ) }
 		</span>

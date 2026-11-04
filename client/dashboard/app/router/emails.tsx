@@ -1,6 +1,7 @@
 import { DomainSubtype, EmailBox, isWpError } from '@automattic/api-core';
 import {
 	domainQuery,
+	domainsQuery,
 	mailboxAccountsQuery,
 	productsQuery,
 	queryClient,
@@ -39,10 +40,10 @@ export const emailsRoute = createRoute( {
 export const emailsIndexRoute = createRoute( {
 	getParentRoute: () => emailsRoute,
 	path: '/',
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( userMailboxesQuery() ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -120,8 +121,8 @@ export const chooseDomainRoute = createRoute( {
 			tier: isTitanPlanTier( search.tier ) ? search.tier : undefined,
 		};
 	},
-	loader: async ( { context } ) => {
-		const domains = await queryClient.ensureQueryData( context.config.queries.domainsQuery() );
+	loader: async () => {
+		const domains = await queryClient.ensureQueryData( domainsQuery() );
 		const hasEmailableDomains = domains.some(
 			( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
 		);

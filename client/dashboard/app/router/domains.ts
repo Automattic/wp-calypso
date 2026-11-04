@@ -6,6 +6,8 @@ import {
 	domainForwardingQuery,
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
+	domainsQuery,
+	sitesQuery,
 	sslDetailsQuery,
 	mailboxAccountsQuery,
 	siteByIdQuery,
@@ -59,10 +61,10 @@ const domainsRoute = createRoute( {
 export const domainsIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: '/',
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( sitesQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},

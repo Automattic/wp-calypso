@@ -1,7 +1,6 @@
 import {
 	accountRecoveryQuery,
 	allowedPaymentMethodsQuery,
-	allSitesQuery,
 	connectedApplicationsQuery,
 	countryListQuery,
 	domainQuery,
@@ -22,6 +21,7 @@ import {
 	siteFeaturesQuery,
 	siteMediaStorageQuery,
 	sitePurchasesQuery,
+	sitesQuery,
 	smsCountryCodesQuery,
 	sshKeysQuery,
 	twoStepAuthAppSetupQuery,
@@ -185,7 +185,7 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
-		queryClient.prefetchQuery( allSitesQuery() );
+		queryClient.prefetchQuery( sitesQuery() );
 	},
 	validateSearch: (
 		search
@@ -253,7 +253,7 @@ export const purchasesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( userPurchasesQuery() );
 		queryClient.prefetchQuery( userTransferredPurchasesQuery() );
 		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
-		queryClient.prefetchQuery( allSitesQuery() );
+		queryClient.prefetchQuery( sitesQuery() );
 	},
 	validateSearch: (
 		search
@@ -1124,7 +1124,7 @@ export const wordpressLabsRoute = createRoute( {
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.prefetchQuery( allSitesQuery() ),
+			queryClient.prefetchQuery( sitesQuery() ),
 		] );
 	},
 } ).lazy( () =>

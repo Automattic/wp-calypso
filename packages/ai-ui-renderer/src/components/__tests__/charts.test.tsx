@@ -8,6 +8,16 @@ import type { InteractiveUiRuntime } from '../../utils/runtime';
 let runtime: InteractiveUiRuntime;
 let onError: jest.Mock;
 
+const CHART_MODULES_LOAD_TIMEOUT_MS = 30000;
+
+beforeAll( async () => {
+	await Promise.all( [
+		import( '../line-chart' ),
+		import( '../bar-chart' ),
+		import( '../pie-chart' ),
+	] );
+}, CHART_MODULES_LOAD_TIMEOUT_MS );
+
 beforeEach( () => {
 	// Dates follow the page's language, so the tests don't depend on the machine's.
 	document.documentElement.lang = 'en-US';

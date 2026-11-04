@@ -2,8 +2,9 @@
  * @jest-environment jsdom
  */
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
+import { domainsQuery } from '@automattic/api-queries';
+import { QueryClient } from '@tanstack/react-query';
 import { waitFor } from '@testing-library/react';
-import { APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import { useFields } from '../fields';
 import { filterSortAndPaginateDomains } from '../filter-sort-and-paginate';
@@ -43,8 +44,6 @@ const DOMAINS = [
 	domain( 'sooner.com', inDays( 10 ) ),
 ];
 
-type AppQueries = typeof APP_CONTEXT_DEFAULT_CONFIG.queries;
-
 async function getFields() {
 	let fields: Field< DomainSummary >[] = [];
 
@@ -53,19 +52,12 @@ async function getFields() {
 		return null;
 	}
 
-	render( <Probe />, {
-		config: {
-			...APP_CONTEXT_DEFAULT_CONFIG,
-			queries: {
-				...APP_CONTEXT_DEFAULT_CONFIG.queries,
-				domainsQuery: () =>
-					( {
-						queryKey: [ 'test', 'domains' ],
-						queryFn: async () => DOMAINS,
-					} ) as unknown as ReturnType< AppQueries[ 'domainsQuery' ] >,
-			},
-		},
+	const queryClient = new QueryClient( {
+		defaultOptions: { queries: { retry: false, staleTime: Infinity } },
 	} );
+	queryClient.setQueryData( domainsQuery().queryKey, DOMAINS );
+
+	render( <Probe />, { queryClient } );
 
 	await waitFor( () => expect( fields.length ).toBeGreaterThan( 0 ) );
 	return fields;
