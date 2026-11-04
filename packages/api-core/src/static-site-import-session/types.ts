@@ -102,4 +102,6 @@ export interface StaticSiteImportHandoffParams {
 	blogUrl: string;
 	fromUrl: string;
 	locale: string;
+	/** The move being handed over, so the ticket can say what it found. */
+	importSessionId?: string;
 }
