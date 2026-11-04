@@ -1,13 +1,9 @@
-import page from '@automattic/calypso-router';
 import { __ } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
-import { isOnNewAgencyDashboard } from 'calypso/dashboard/agency/lib/dashboard-opt-in';
-import { useSelector } from 'calypso/state';
-import { getActiveAgency } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import Sidebar from '../sidebar';
 import useAmplifyMenuItems from './hooks/use-amplify-menu-items';
-import { A4A_AMPLIFY_LINK, A4A_OVERVIEW_LINK } from './lib/constants';
+import useBackToOverviewButtonProps from './hooks/use-back-to-overview-button-props';
+import { A4A_AMPLIFY_LINK } from './lib/constants';
 
 type Props = {
 	path: string;
@@ -15,10 +11,7 @@ type Props = {
 
 export default function AmplifySidebar( { path }: Props ) {
 	const menuItems = useAmplifyMenuItems( path );
-	const agency = useSelector( getActiveAgency );
-	// Agencies on the Multi-site Dashboard open Amplify from its sidebar, so a
-	// way back to this app's overview would only confuse them.
-	const hideBackButton = isOnNewAgencyDashboard( agency );
+	const backButtonProps = useBackToOverviewButtonProps();
 
 	return (
 		<Sidebar
@@ -29,17 +22,7 @@ export default function AmplifySidebar( { path }: Props ) {
 					<Badge intent="draft">{ __( 'Beta' ) }</Badge>
 				</div>
 			}
-			backButtonProps={
-				hideBackButton
-					? undefined
-					: {
-							label: __( 'Back to overview' ),
-							icon: chevronLeft,
-							onClick: () => {
-								page( A4A_OVERVIEW_LINK );
-							},
-						}
-			}
+			backButtonProps={ backButtonProps }
 			menuItems={ menuItems }
 			withUserProfileFooter
 		/>
