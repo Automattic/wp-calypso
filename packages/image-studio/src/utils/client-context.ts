@@ -234,7 +234,7 @@ function detectImageEntity(): DetectedEntity | null {
 		const entryPoint = storeSelect.getEntryPoint?.() || null;
 
 		const selectedAspectRatio =
-			storeSelect.getSelectedAspectRatio?.() || getDefaultAspectRatio( entryPoint );
+			storeSelect.getSelectedAspectRatio?.() || getDefaultAspectRatio( entryPoint, select );
 
 		const blockType = storeSelect.getBlockType?.() || null;
 

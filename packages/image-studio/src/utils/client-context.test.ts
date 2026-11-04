@@ -51,6 +51,7 @@ interface VideoStoreSelectors {
 
 interface EditorStoreSelectors {
 	getEditedPostAttribute?: ( name: string ) => unknown;
+	getCurrentTemplateId?: () => string | null | undefined;
 }
 
 function setupSelect( {
@@ -283,6 +284,64 @@ describe( 'getClientContext', () => {
 		const ctx = getClientContext();
 
 		expect( ctx.imageStudio ).toMatchObject( { aspect_ratio: '16:9' } );
+	} );
+
+	it( 'starts featured image sessions at the theme ratio when the template sets one', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'jetpack_ai_featured_image',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => null,
+			},
+			core: {
+				getEntityRecord: () => null,
+				getEditedEntityRecord: () => ( {
+					content: '<!-- wp:post-featured-image {"aspectRatio":"4/3"} /-->',
+				} ),
+			},
+			editor: {
+				getCurrentTemplateId: () => 'theme//single',
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio ).toMatchObject( { aspect_ratio: '4:3' } );
+	} );
+
+	it( 'leaves other sessions alone when the template sets a ratio', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'editor_block',
+				getBlockType: () => 'core/image',
+			},
+			videoStudio: {
+				getSelectedStyle: () => null,
+			},
+			core: {
+				getEntityRecord: () => null,
+				getEditedEntityRecord: () => ( {
+					content: '<!-- wp:post-featured-image {"aspectRatio":"4/3"} /-->',
+				} ),
+			},
+			editor: {
+				getCurrentTemplateId: () => 'theme//single',
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio ).not.toHaveProperty( 'aspect_ratio' );
 	} );
 
 	it( 'keeps a picked ratio in featured image sessions', () => {

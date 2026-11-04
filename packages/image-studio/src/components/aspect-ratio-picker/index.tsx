@@ -22,7 +22,9 @@ export function AspectRatioPicker( { disabled = false }: AspectRatioPickerProps 
 
 	const selectedAspectRatio = useSelect( ( select ) => {
 		const studio = select( imageStudioStore );
-		return studio.getSelectedAspectRatio() ?? getDefaultAspectRatio( studio.getEntryPoint() );
+		return (
+			studio.getSelectedAspectRatio() ?? getDefaultAspectRatio( studio.getEntryPoint(), select )
+		);
 	}, [] );
 
 	const handleAspectRatioSelect = ( value: string ) => {
