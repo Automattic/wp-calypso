@@ -25,6 +25,7 @@ let mockState = {
 	transferStatus: transferStates.COMPLETE as string | null,
 	isJetpack: false,
 	isAtomic: true,
+	isWpcomAtomic: false,
 	isRequestingPlugins: false,
 };
 
@@ -69,6 +70,10 @@ jest.mock( 'calypso/state/plugins/wporg/selectors', () => ( {
 jest.mock( 'calypso/state/selectors/is-site-automated-transfer', () => ( {
 	__esModule: true,
 	default: ( state: typeof mockState ) => state.isAtomic,
+} ) );
+jest.mock( 'calypso/state/selectors/is-site-wpcom-atomic', () => ( {
+	__esModule: true,
+	default: ( state: typeof mockState ) => state.isWpcomAtomic,
 } ) );
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	isJetpackSite: ( state: typeof mockState ) => state.isJetpack,
@@ -133,6 +138,26 @@ describe( 'usePluginsThankYouData', () => {
 
 	it( 'does not poll before transfer completion', () => {
 		mockState.transferStatus = transferStates.ACTIVE;
+		renderPlugins();
+
+		act( () => jest.advanceTimersByTime( 10000 ) );
+
+		expect( fetchSitePlugins ).not.toHaveBeenCalled();
+	} );
+
+	it( 'polls without a transfer status when the site is already Atomic', () => {
+		mockState.transferStatus = null;
+		mockState.isWpcomAtomic = true;
+		renderPlugins();
+
+		expect( fetchSitePlugins ).toHaveBeenCalledWith( 1 );
+
+		act( () => jest.advanceTimersByTime( 3000 ) );
+		expect( fetchSitePlugins ).toHaveBeenCalledTimes( 2 );
+	} );
+
+	it( 'does not poll without a transfer status when the site is not Atomic', () => {
+		mockState.transferStatus = null;
 		renderPlugins();
 
 		act( () => jest.advanceTimersByTime( 10000 ) );
