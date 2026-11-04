@@ -235,6 +235,9 @@ const siteMigration: FlowV2< typeof initialize > = {
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 			!! ( siteId || siteSlug );
 		return {
+			importList: {
+				allowAutomaticDetection: config.isEnabled( 'migration/reprint-flow' ),
+			},
 			'site-migration-identify': {
 				// A landing page hands over an address the user already submitted, so check it once on arrival.
 				checkOnArrival:
@@ -552,13 +555,14 @@ const siteMigration: FlowV2< typeof initialize > = {
 						config.isEnabled( 'migration/reprint-flow' ) &&
 						action === 'skip_platform_identification'
 					) {
-						if ( from ) {
-							replace( paths.identifyPath( { from } ) );
+						if ( from || urlQueryParams.get( 'manualPlatform' ) === 'wordpress' ) {
+							replace( paths.identifyPath( { from: from || '' } ) );
 						}
 						return navigate(
 							paths.importListPath( {
 								from: from || '',
 								platform: 'unknown',
+								manualPlatform: '',
 								host: '',
 								isWpcom: '',
 								ssh: '',
@@ -679,19 +683,36 @@ const siteMigration: FlowV2< typeof initialize > = {
 					if ( ! config.isEnabled( 'migration/reprint-flow' ) ) {
 						return navigate( STEPS.SITE_MIGRATION_IDENTIFY.slug );
 					}
-					const { platform } = providedDependencies;
 					const from = fromQueryParam || '';
-					const isAssistedMigration = platform === 'wordpress';
+					if ( providedDependencies.action === 'use_automatic_detection' ) {
+						return replace(
+							paths.identifyPath( { from, manualPlatform: '', start: '', action: '' } )
+						);
+					}
+					const { platform } = providedDependencies;
+					if ( platform === 'wordpress' ) {
+						return navigate(
+							paths.identifyPath( {
+								from,
+								platform: 'unknown',
+								manualPlatform: 'wordpress',
+								host: '',
+								isWpcom: '',
+								ssh: '',
+								action: '',
+								how: '',
+								start: '',
+							} )
+						);
+					}
 					const context = {
 						from,
 						platform,
-						action: isAssistedMigration ? 'migrate' : 'import',
-						how: isAssistedMigration ? HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME : '',
+						action: 'import',
+						how: '',
 					};
 					if ( hasSite( siteId, siteSlug ) ) {
-						return isAssistedMigration
-							? navigate( paths.howToMigratePath( { ...context, siteId, siteSlug } ) )
-							: exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
+						return exitFlow( getFullImporterUrl( platform, siteSlug, from ) );
 					}
 					return navigate(
 						userHasOtherWPComSites

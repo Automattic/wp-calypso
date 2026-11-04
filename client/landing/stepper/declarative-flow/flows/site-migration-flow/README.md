@@ -7,6 +7,7 @@ The WordPress journey is gated by `migration/reprint-flow`. Non-WordPress source
 ## Entry points
 
 - `/setup/site-migration`: the user enters their site address and runs URL/platform analysis before signup or login. WordPress migration requires authentication on the next step. Static-site import continues to public plan selection, with account creation handled by unified checkout.
+- With the flag on, selecting WordPress from the platform list returns to the address form, prefilling any earlier address. Continue uses the selected WordPress platform and opens the Reprint flow without platform detection.
 - `/setup/site-migration/site-migration-identify?from=<url>&start=true`: hands over an address the user already submitted elsewhere, such as a landing page. With the flag on, identify checks it once on arrival; going back to identify shows the address form.
 - Landing pages built with landpack's `url-analyzer` block (e.g. `/move`) currently run their own analysis and link WordPress sources to `sitePicker?from=<url>&platform=wordpress&start=true`. With the flag on, `initialize` rewrites those to identify. Once the flag ships, point the block at identify and drop its routing and this rewrite.
 
