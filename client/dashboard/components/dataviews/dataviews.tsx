@@ -1,8 +1,7 @@
 import { DataViews as WPDataViews } from '@wordpress/dataviews';
 import { useEffect, useLayoutEffect, useRef } from 'react';
 import { isDashboardBackport } from '../../utils/is-dashboard-backport';
-import ComponentViewTracker from '../component-view-tracker';
-import { isLayoutAvailable, sanitizeView } from './sanitize-view';
+import { sanitizeView } from './sanitize-view';
 import type { ComponentProps } from 'react';
 
 export type DataViewsProps< Item > = ComponentProps< typeof WPDataViews< Item > >;
@@ -34,24 +33,10 @@ export function DataViews< Item >( { view, isLoading, ...props }: DataViewsProps
 		}
 	}, [ view.page, isLoading ] );
 
-	const sanitizedView = sanitizeView( view, props.fields, props.defaultLayouts );
+	const sanitizedView = sanitizeView( view, props.fields );
 
 	return (
-		<>
-			{ sanitizedView.type !== view.type && (
-				<ComponentViewTracker
-					eventName="calypso_dashboard_dataviews_saved_layout_fallback"
-					properties={ { saved_layout: view.type, fallback_layout: sanitizedView.type } }
-				/>
-			) }
-			{ ! isLayoutAvailable( sanitizedView.type, props.defaultLayouts ) && (
-				<ComponentViewTracker
-					eventName="calypso_dashboard_dataviews_no_available_layout"
-					properties={ { saved_layout: view.type } }
-				/>
-			) }
-			<WPDataViews< Item > view={ sanitizedView } isLoading={ isLoading } { ...( props as any ) } />
-		</>
+		<WPDataViews< Item > view={ sanitizedView } isLoading={ isLoading } { ...( props as any ) } />
 	);
 }
 

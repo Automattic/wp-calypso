@@ -7,6 +7,7 @@ import { useAuth } from '../app/auth';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
+import ComponentViewTracker from '../components/component-view-tracker';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -19,6 +20,7 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 	recordDomainViewChanges,
+	sanitizeDomainsListLayout,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -46,11 +48,16 @@ function Domains() {
 	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
 
-	const { view, updateView, resetView } = usePersistentView( {
+	const {
+		view: persistentView,
+		updateView,
+		resetView,
+	} = usePersistentView( {
 		slug: 'domains',
 		defaultView,
 		queryParams: searchParams,
 	} );
+	const view = sanitizeDomainsListLayout( persistentView );
 
 	const { data: domains } = useSuspenseQuery( {
 		...domainsQuery(),
@@ -117,6 +124,12 @@ function Domains() {
 					</DataViewsCard>
 				) }
 			</PageLayout>
+			{ view.type !== persistentView.type && (
+				<ComponentViewTracker
+					eventName="calypso_dashboard_domains_saved_layout_fallback"
+					properties={ { saved_layout: persistentView.type, fallback_layout: view.type } }
+				/>
+			) }
 			<PerformanceTrackerStop />
 		</>
 	);
