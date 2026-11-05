@@ -261,7 +261,13 @@ describe( 'ConversationsInbox', () => {
 
 		await screen.findByText( 'New: 1001' );
 		replyConversations = () =>
-			conversationsPage( conversations.map( ( item ) => ( { ...item, unread_note_ids: [] } ) ) );
+			conversationsPage(
+				conversations.map( ( item ) => ( {
+					...item,
+					unread_note_ids: [],
+					unread_comment_ids: [],
+				} ) )
+			);
 		await user.click( screen.getByRole( 'button', { name: '10-p-200' } ) );
 		rerender( <ConversationsInbox siteId="10" postId="200" /> );
 
@@ -273,7 +279,7 @@ describe( 'ConversationsInbox', () => {
 		expect( screen.getByText( 'New: none' ) ).toBeVisible();
 	} );
 
-	it( 'highlights the new comments of a conversation opened before the notes loaded', async () => {
+	it( 'highlights the new comments of a post opened before the notes loaded', async () => {
 		const user = userEvent.setup();
 		let releaseNotes = () => {};
 		notesReady = new Promise( ( resolve ) => {
@@ -281,13 +287,15 @@ describe( 'ConversationsInbox', () => {
 		} );
 		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
 
-		await user.click( await findRow( '10-p-200' ) );
-		rerender( <ConversationsInbox siteId="10" postId="200" /> );
+		await findRow( '10-p-100' );
+		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
+		await user.click( await findRow( '10-p-400-c-41' ) );
+		rerender( <ConversationsInbox siteId="10" postId="400" /> );
 		expect( screen.getByText( 'New: none' ) ).toBeVisible();
 
 		releaseNotes();
 
-		expect( await screen.findByText( 'New: 2001' ) ).toBeVisible();
+		expect( await screen.findByText( 'New: 41' ) ).toBeVisible();
 	} );
 
 	it( 'shows only unread conversations on the Unread tab', async () => {

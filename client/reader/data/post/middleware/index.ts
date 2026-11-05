@@ -1,7 +1,9 @@
+import { getReaderPostQueryKeyPrefix } from '@automattic/api-queries';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
 import { READER_CONVERSATION_UPDATE_FOLLOW_STATUS } from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { updateCachedPost } from '../cache';
+import type { ReadPost } from '@automattic/api-core';
 import type { QueryClient } from '@tanstack/react-query';
 import type { Middleware } from 'redux';
 
@@ -22,9 +24,26 @@ const patchConversationState = ( queryClient: QueryClient, action: PostCacheActi
 		return;
 	}
 
+	const isFollowing = followStatus === CONVERSATION_FOLLOW_STATUS.following;
 	updateCachedPost( queryClient, { blogId: siteId, postId }, () => ( {
-		is_following_conversation: followStatus === CONVERSATION_FOLLOW_STATUS.following,
+		is_following_conversation: isFollowing,
 	} ) );
+	// A remounted post view syncs the fetched post again, so it has to agree with the cache.
+	queryClient.setQueriesData< ReadPost >(
+		{
+			queryKey: getReaderPostQueryKeyPrefix(),
+			predicate: ( { state } ) => {
+				const post = state.data as Partial< ReadPost > | undefined;
+				// Rewriting a post that already agrees would sync it again, and dispatch again.
+				return (
+					post?.site_ID === siteId &&
+					post?.ID === postId &&
+					post?.is_following_conversation !== isFollowing
+				);
+			},
+		},
+		( post ) => post && { ...post, is_following_conversation: isFollowing }
+	);
 };
 
 export const createPostCacheMiddleware =

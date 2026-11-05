@@ -117,7 +117,8 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 			const pages = data.pages.map( ( page ) => ( {
 				...page,
 				conversations: page.conversations.map( ( conversation ) => {
-					const unread = conversation.unread_note_ids.filter( ( id ) => ! ids.has( id ) );
+					const kept = conversation.unread_note_ids.map( ( id ) => ! ids.has( id ) );
+					const unread = conversation.unread_note_ids.filter( ( _id, index ) => kept[ index ] );
 					const marked = conversation.unread_note_ids.length - unread.length;
 					if ( ! marked ) {
 						return conversation;
@@ -127,7 +128,14 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 					if ( previousCount && ! unreadCount ) {
 						cleared++;
 					}
-					return { ...conversation, unread_note_ids: unread, unread_count: unreadCount };
+					return {
+						...conversation,
+						unread_note_ids: unread,
+						unread_comment_ids: conversation.unread_comment_ids.filter(
+							( _id, index ) => kept[ index ]
+						),
+						unread_count: unreadCount,
+					};
 				} ),
 			} ) );
 			// Only the first page's total is read.

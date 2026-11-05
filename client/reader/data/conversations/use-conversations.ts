@@ -51,6 +51,7 @@ export const adaptReadConversation = ( conversation: ReadConversation ): Convers
 	commenterCount: conversation.commenter_count,
 	unreadCount: conversation.unread_count ?? 0,
 	unreadNoteIds: conversation.unread_note_ids,
+	unreadCommentIds: conversation.unread_comment_ids,
 	isFollowing: conversation.is_following,
 } );
 
