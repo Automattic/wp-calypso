@@ -33,8 +33,5 @@ boot( {
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),
 	},
-	components: {
-		sites: () => import( '../sites' ),
-		siteSwitcher: () => import( '../sites/site-switcher' ),
-	},
+	components: {},
 } );
