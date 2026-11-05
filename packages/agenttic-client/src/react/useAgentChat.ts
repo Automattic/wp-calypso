@@ -529,12 +529,23 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 	// Bound to the chat of this render: a callback a tool still holds must not
 	// write to a chat that has replaced it.
-	const liveChat = getLiveChat();
+	const renderedChat = getLiveChat();
 
 	const setState = useCallback(
-		( update: SetStateAction< AgentChatState > ) => updateLiveChat( liveChat, update ),
-		[ liveChat ]
+		( update: SetStateAction< AgentChatState > ) => updateLiveChat( renderedChat, update ),
+		[ renderedChat ]
 	);
+
+	// Pins the chat current now, for work that outlives the render: a chat that
+	// replaces it must not get the result.
+	const pinLiveChat = useCallback( () => {
+		const liveChat = getLiveChat();
+
+		return {
+			liveChat,
+			setState: ( update: SetStateAction< AgentChatState > ) => updateLiveChat( liveChat, update ),
+		};
+	}, [ getLiveChat ] );
 
 	// Initialize message actions
 	const {
@@ -558,10 +569,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	// Transform client messages to UI messages
 	const transformMessages = useCallback(
 		( messages: ClientMessage[] ): UIMessage[] => {
-			const liveChat = getLiveChat();
+			const { registrations: currentRegistrations } = getLiveChat();
 
 			return messages
-				.map( ( msg ) => transformClientMessageToUI( msg, liveChat.registrations ) )
+				.map( ( msg ) => transformClientMessageToUI( msg, currentRegistrations ) )
 				.filter( ( msg ): msg is UIMessage => msg !== null );
 		},
 		[ getLiveChat ]
@@ -588,12 +599,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
-			// Pinned: a chat that replaces this one mid-await must not get this conversation.
-			let liveChat = getLiveChat();
-
-			const setState = ( update: SetStateAction< AgentChatState > ) =>
-				updateLiveChat( liveChat, update );
-
+			let { setState } = pinLiveChat();
 			let hasAgent = agentManager.hasAgent( agentKey );
 
 			if ( hasAgent && ! isSessionRequested ) {
@@ -607,7 +613,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				agentManager.abortCurrentRequest( agentKey );
 				agentManager.removeAgent( agentKey );
 				hasAgent = false;
-				liveChat = getLiveChat();
+				// The agent's removal replaced its chat.
+				( { setState } = pinLiveChat() );
 				setState( ( prev ) => ( { ...prev, clientMessages: [], uiMessages: [] } ) );
 			}
 
@@ -682,9 +689,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.enableStreaming,
 		config.odieBotId,
 		config.credentials,
-		getLiveChat,
 		isResumable,
 		isValidConfig,
+		pinLiveChat,
 		transformMessages,
 	] );
 
@@ -708,17 +715,11 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
-			// Pinned: a new agent's chat must not hear from this send.
-			const liveChat = getLiveChat();
-
-			const setState = ( update: SetStateAction< AgentChatState > ) =>
-				updateLiveChat( liveChat, update );
+			const { liveChat, setState } = pinLiveChat();
 
 			if ( liveChat.isSending ) {
 				return;
 			}
-
-			liveChat.isSending = true;
 
 			// Keep in-flight updates attached to the site and agent that started the request.
 			const onTaskUpdate = onTaskUpdateRef.current;
@@ -803,6 +804,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					error: null,
 				} ) );
 			}
+
+			// Claimed last: only the `finally` below releases the lock, so a throw
+			// above must not strand it.
+			liveChat.isSending = true;
 
 			try {
 				// Truncate history inside the guarded send so a concurrent
@@ -1090,7 +1095,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				liveChat.isSending = false;
 			}
 		},
-		[ agentConfig.agentId, getLiveChat, isValidConfig ]
+		[ agentConfig.agentId, getLiveChat, isValidConfig, pinLiveChat ]
 	);
 
 	const onSubmit = useCallback(
@@ -1135,7 +1140,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	// messages in place, so a send in flight keeps its optimistic message.
 	const applyRegistrations = useCallback(
 		( nextRegistrations: MessageActionsRegistration[] ) => {
-			liveChat.registrations = nextRegistrations;
+			renderedChat.registrations = nextRegistrations;
 
 			setState( ( prev ) => {
 				if ( prev.clientMessages.length === 0 ) {
@@ -1154,7 +1159,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				};
 			} );
 		},
-		[ liveChat, setState, transformMessages ]
+		[ renderedChat, setState, transformMessages ]
 	);
 
 	useEffect( () => applyRegistrations( registrations ), [ applyRegistrations, registrations ] );
@@ -1193,8 +1198,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
-			// Pinned: a chat that replaces this one mid-await must not get these messages.
-			const liveChat = getLiveChat();
+			const { setState } = pinLiveChat();
 
 			// Replace agent's conversation history
 			await agentManager.replaceMessages( agentKey, messages );
@@ -1202,13 +1206,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Transform to UI messages and update React state
 			const uiMessages = transformMessages( messages );
 
-			updateLiveChat( liveChat, ( prev ) => ( {
+			setState( ( prev ) => ( {
 				...prev,
 				clientMessages: messages,
 				uiMessages,
 			} ) );
 		},
-		[ agentConfig.agentId, getLiveChat, isValidConfig, transformMessages ]
+		[ agentConfig.agentId, isValidConfig, pinLiveChat, transformMessages ]
 	);
 
 	const { getRegenerateHandler } = useRegenerate( {
