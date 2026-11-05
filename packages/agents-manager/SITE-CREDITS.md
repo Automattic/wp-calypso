@@ -5,7 +5,7 @@ Chats outside the dock that show the site's AI credits, such as Image Studio, us
 ## Balance
 
 - `parseLiveCreditsStatus( value, siteId )` turns a site's allowance snapshot into a `CreditsStatus`, or `undefined` if the snapshot isn't valid.
-- `CreditsMeter` shows that status. Its toggle is a grey ring of this period's plan credits left: full at the start, and empty at 0 even while top-ups remain. An empty ring keeps a stronger grey track, so the toggle stays visible. Its tooltip gives the combined balance. Its popover leads with the same total, and then lists each pool.
+- `CreditsMeter` shows that status. Its toggle is a ring of this period's plan credits left, in the primary blue: full at the start, and empty at 0 even while top-ups remain. An empty ring is drawn as a grey circle, so the toggle stays visible. Its tooltip gives the combined balance. Its popover leads with the same total, and then lists each pool.
 - `formatCreditsShort()` formats an amount such as "800" or "8.5k", rounding down.
 - `CREDITS_LOW_BALANCE` is the 10,000-credit balance below which a paid plan runs low: the toggle's label leads with "Low on credits:", and the low-balance notice shows. Free plans run low at 20% or below.
 

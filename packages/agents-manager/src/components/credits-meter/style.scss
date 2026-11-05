@@ -17,14 +17,13 @@ $credits-meter-muted-foreground: color-mix(
 		padding: 0;
 		border-radius: 50%;
 
-		// Figma's dark hover. The background takes the track's token, so the ring's track
-		// steps up a shade to stay apart from it.
+		// A translucent tint, so the hover follows whichever composer surface sits behind it.
 		&:hover:not( :disabled ),
 		&[aria-expanded='true'] {
-			background-color: var( --color-input-border );
+			background-color: color-mix( in srgb, var( --color-foreground ) 5%, transparent );
 
-			.agents-manager-credits-meter__ring {
-				--color-input-border: var( --color-input-border-focused );
+			.agenttic.dark & {
+				background-color: color-mix( in srgb, var( --color-input-border ) 30%, transparent );
 			}
 		}
 
@@ -35,10 +34,10 @@ $credits-meter-muted-foreground: color-mix(
 		}
 	}
 
-	// Figma draws an empty ring's track in a stronger grey in every state, so it doesn't fade
-	// out once the arc is gone. The focused border is the closest token.
+	// The arc is hidden at 0%, so the track is the toggle's only mark. The muted text grey
+	// keeps it at 3:1 on the composer and on the hover tint.
 	.agents-manager-credits-meter__ring--empty {
-		--color-input-border: var( --color-input-border-focused );
+		--color-progress-ring-track: var( --color-muted-foreground );
 	}
 }
 

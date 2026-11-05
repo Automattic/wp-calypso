@@ -212,9 +212,9 @@ describe( 'CreditsMeter', () => {
 		expect( within( toggle ).getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-percent', '0' );
 	} );
 
-	it( 'draws the ring in the muted grey', () => {
+	it( 'draws the ring in the primary blue', () => {
 		render( <CreditsMeter status={ paid } isOpen={ false } onToggle={ () => {} } /> );
-		expect( screen.getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-tone', 'muted' );
+		expect( screen.getByTestId( 'credits-ring' ) ).toHaveAttribute( 'data-tone', 'primary' );
 	} );
 
 	it( 'draws the ring at 16 px', () => {
@@ -351,7 +351,9 @@ describe( 'CreditsMeter', () => {
 		expect(
 			screen.getByRole( 'button', { name: `Out of credits: ${ localNumber( 0 ) } credits left` } )
 		).toBeInTheDocument();
-		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+		// Screen readers don't see the bar, so only the row's name says "left".
+		const row = screen.getByRole( 'group', { name: 'Monthly plan, 0% left, Resets Oct 8 (UTC)' } );
+		expect( within( row ).getByText( '0%' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your site credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'
 		);
@@ -487,7 +489,7 @@ describe( 'CreditsMeter', () => {
 			);
 			const amount = `${ localNumber( 0 ) } credits left`;
 			balanceOnly( `Top-ups, ${ amount }`, amount );
-			expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+			expect( screen.getByText( '0%' ) ).toHaveClass( 'is-exhausted' );
 			expect( screen.getByText( /used all your site credits/ ) ).toBeInTheDocument();
 		} );
 
@@ -560,7 +562,7 @@ describe( 'CreditsMeter', () => {
 				manageUrl="/credits"
 			/>
 		);
-		expect( screen.getByText( '0% left' ) ).toHaveClass( 'is-exhausted' );
+		expect( screen.getByText( '0%' ) ).toHaveClass( 'is-exhausted' );
 		expect( screen.getByText( 'You’ve used all your free credits.' ) ).toHaveClass(
 			'agents-manager-credits-meter__message'
 		);

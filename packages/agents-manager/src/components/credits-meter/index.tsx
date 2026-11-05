@@ -90,17 +90,11 @@ function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boole
 						'is-exhausted': isExhausted,
 					} ) }
 				>
-					{ isExhausted
-						? sprintf(
-								/* translators: %s: percentage of credits left, e.g. "0" */
-								__( '%s%% left', __i18n_text_domain__ ),
-								percentLabel
-							)
-						: sprintf(
-								/* translators: %s: percentage of credits left, e.g. "72" or "<1" */
-								__( '%s%%', __i18n_text_domain__ ),
-								percentLabel
-							) }
+					{ sprintf(
+						/* translators: %s: percentage of credits left, e.g. "72", "<1" or "0" */
+						__( '%s%%', __i18n_text_domain__ ),
+						percentLabel
+					) }
 				</span>
 			</div>
 			<div className="agents-manager-credits-meter__bar" aria-hidden="true">
@@ -157,7 +151,7 @@ export default function CreditsMeter( {
 					icon={
 						<ProgressRing
 							percent={ ringPercent }
-							tone="muted"
+							tone="primary"
 							className={ clsx( 'agents-manager-credits-meter__ring', {
 								'agents-manager-credits-meter__ring--empty': ringPercent === 0,
 							} ) }
