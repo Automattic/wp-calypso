@@ -585,8 +585,8 @@ const DomainSearchStep: StepType< {
 				return;
 			}
 
-			// Matches legacy /start/launch-site, which ignores `source` and also follows a `back_to` on
-			// the site, such as the wp-admin screen the launch started from.
+			// Launching ignores `source` and also follows a `back_to` on the site itself, such as the
+			// wp-admin screen the launch started from.
 			if ( flow === LAUNCH_SITE_FLOW ) {
 				const launchBackTo = getSafeUrl( backTo, site?.URL );
 

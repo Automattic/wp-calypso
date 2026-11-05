@@ -226,14 +226,6 @@ class MeSidebar extends Component {
 						onNavigate={ this.onNavigate }
 						preloadSectionName="site-blocks"
 					/>
-
-					<SidebarItem
-						selected={ itemLinkMatches( '/get-apps', path ) }
-						link="/me/get-apps"
-						label={ translate( 'Apps' ) }
-						icon="plans"
-						onNavigate={ this.onNavigate }
-					/>
 				</SidebarMenu>
 			</>
 		);

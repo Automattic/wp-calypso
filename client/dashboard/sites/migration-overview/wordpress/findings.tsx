@@ -3,9 +3,12 @@ import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useHelpCenter } from '../../../app/help-center';
+import { getCurrentDashboard } from '../../../app/routing';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
+import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type {
 	Site,
@@ -37,6 +40,7 @@ export function Findings( {
 	);
 	// Only warnings mean the migration could read the source. Anything worse may be its connection.
 	const hasError = isFailed || findings.some( ( { severity } ) => severity === 'failure' );
+	const needsPlan = codes.includes( 'destination_needs_plan' );
 
 	const getDescription = () => {
 		if ( isFailed ) {
@@ -69,9 +73,14 @@ export function Findings( {
 			}
 			actions={
 				<>
+					{ needsPlan && (
+						<Button __next40pxDefaultSize variant="primary" href={ getPlanUpgradeUrl( site ) }>
+							{ __( 'Choose a plan' ) }
+						</Button>
+					) }
 					<Button
 						__next40pxDefaultSize
-						variant="primary"
+						variant={ needsPlan ? 'secondary' : 'primary' }
 						isBusy={ run.isPending }
 						disabled={ run.isPending }
 						onClick={ () => run.mutate( { accept_findings: codes } ) }
@@ -96,6 +105,17 @@ export function Findings( {
 			) ) }
 		</MigrationCard>
 	);
+}
+
+// Outside the dashboard, where the site's migration lock doesn't send it straight back here.
+function getPlanUpgradeUrl( site: Site ) {
+	const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	return addQueryArgs( wpcomLink( '/setup/plan-upgrade/' ), {
+		siteSlug: site.slug,
+		cancel_to: backUrl,
+		redirect_to: backUrl,
+		dashboard: getCurrentDashboard(),
+	} );
 }
 
 // The server's message, except where the finding's data reads better set apart from the text.
