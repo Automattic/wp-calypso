@@ -116,7 +116,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ariakit/react@npm:^0.4.32, @ariakit/react@npm:^0.4.35, @ariakit/react@npm:^0.4.42":
+"@ariakit/react@npm:^0.4.32, @ariakit/react@npm:^0.4.39, @ariakit/react@npm:^0.4.42":
   version: 0.4.42
   resolution: "@ariakit/react@npm:0.4.42"
   dependencies:
@@ -513,7 +513,7 @@ __metadata:
     "@automattic/i18n-utils": "workspace:^"
     "@automattic/languages": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
-    "@wordpress/dataviews": "npm:^18.0.0"
+    "@wordpress/dataviews": "npm:^19.1.0"
     "@wordpress/html-entities": "npm:^4.48.0"
     "@wordpress/i18n": "npm:^6.21.0"
     "@wordpress/url": "npm:^4.48.0"
@@ -1897,7 +1897,7 @@ __metadata:
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^18.0.0"
+    "@wordpress/dataviews": "npm:^19.1.0"
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/i18n": "npm:^6.30.0"
     "@wordpress/icons": "npm:^15.5.0"
@@ -13177,33 +13177,51 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/dataviews@npm:^18.0.0":
-  version: 18.0.0
-  resolution: "@wordpress/dataviews@npm:18.0.0"
+"@wordpress/dataviews@npm:^19.1.0":
+  version: 19.1.0
+  resolution: "@wordpress/dataviews@npm:19.1.0"
   dependencies:
-    "@ariakit/react": "npm:^0.4.35"
-    "@wordpress/a11y": "npm:^4.53.0"
-    "@wordpress/base-styles": "npm:^12.1.0"
-    "@wordpress/components": "npm:^39.0.0"
-    "@wordpress/compose": "npm:^8.6.0"
-    "@wordpress/data": "npm:^10.53.0"
-    "@wordpress/date": "npm:^5.53.0"
-    "@wordpress/deprecated": "npm:^4.53.0"
-    "@wordpress/element": "npm:^8.5.0"
-    "@wordpress/i18n": "npm:^6.26.0"
-    "@wordpress/icons": "npm:^15.4.0"
-    "@wordpress/kebab-case": "npm:^1.0.0"
-    "@wordpress/keycodes": "npm:^4.53.0"
-    "@wordpress/primitives": "npm:^4.53.0"
-    "@wordpress/private-apis": "npm:^1.53.0"
-    "@wordpress/ui": "npm:^0.20.0"
-    "@wordpress/warning": "npm:^3.53.0"
+    "@ariakit/react": "npm:^0.4.39"
+    "@base-ui/react": "npm:^1.8.0"
+    "@date-fns/tz": "npm:^1.5.0"
+    "@daypicker/react": "npm:^10.0.1"
+    "@emotion/cache": "npm:^11.14.0"
+    "@emotion/css": "npm:^11.13.5"
+    "@emotion/react": "npm:^11.14.0"
+    "@emotion/styled": "npm:^11.14.1"
+    "@emotion/utils": "npm:^1.4.2"
+    "@floating-ui/react-dom": "npm:^2.1.9"
+    "@use-gesture/react": "npm:^10.3.1"
+    "@wordpress/a11y": "npm:^4.56.0"
+    "@wordpress/base-styles": "npm:^13.2.0"
+    "@wordpress/components": "npm:^41.0.0"
+    "@wordpress/compose": "npm:^8.9.0"
+    "@wordpress/data": "npm:^10.56.0"
+    "@wordpress/date": "npm:^5.56.0"
+    "@wordpress/deprecated": "npm:^4.56.0"
+    "@wordpress/element": "npm:^8.8.0"
+    "@wordpress/hooks": "npm:^4.56.0"
+    "@wordpress/i18n": "npm:^6.29.0"
+    "@wordpress/icons": "npm:^17.0.0"
+    "@wordpress/kebab-case": "npm:^1.3.0"
+    "@wordpress/keycodes": "npm:^4.56.0"
+    "@wordpress/ui": "npm:^0.23.0"
+    "@wordpress/warning": "npm:^3.56.0"
+    change-case: "npm:^4.1.2"
     clsx: "npm:^2.1.1"
-    colord: "npm:^2.9.3"
+    colord: "npm:^2.9.4"
+    colorjs.io: "npm:^0.7.1"
     date-fns: "npm:^4.4.0"
     deepmerge: "npm:^4.3.1"
     fast-deep-equal: "npm:^3.1.3"
+    framer-motion: "npm:^11.15.0"
+    highlight-words-core: "npm:^1.2.2"
+    is-plain-object: "npm:^5.1.0"
+    memize: "npm:^2.1.1"
+    react-colorful: "npm:^5.6.1"
     remove-accents: "npm:^0.5.0"
+    use-memo-one: "npm:^1.1.1"
+    uuid: "npm:^14.0.0"
   peerDependencies:
     "@types/react": ^18 || ^19
     react: ^18 || ^19
@@ -13211,7 +13229,7 @@ __metadata:
   peerDependenciesMeta:
     "@types/react":
       optional: true
-  checksum: 5a8c3cc49eb4c6615b177060d3c8726ed5299fad048b75ed9f2d6577d2d673a002a3760d72510d44a622a26bfc04041a1563bdbc9120c5ea4d902c461e1ec081
+  checksum: 9ac848af4e41c4b1477ce11e62cf54d7639800076f1d3d07098e505c0d1ee2c1a3ced14c43b09576d33c623bd3d9810a56bfee8c11d0511bd10fa58f56f12536
   languageName: node
   linkType: hard
 
@@ -13819,12 +13837,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/kebab-case@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "@wordpress/kebab-case@npm:1.0.0"
+"@wordpress/kebab-case@npm:^1.3.0":
+  version: 1.4.0
+  resolution: "@wordpress/kebab-case@npm:1.4.0"
   dependencies:
     change-case: "npm:^4.1.2"
-  checksum: 260813a1aa9af11fa38a149cfa91176388302e0be47790964b703366330dab57453e325cc027181a23a814c7f3437bb367e4d028de327d5cd7fb92df4d2f6e63
+  checksum: d5006768baf30b287805740aaf0af182eec628b1710ce93d9ed1da3fddd763636424f2450b0a1060d62daf2c3951b5ef4d54e5ffe98c012f297a95fbe8dc4e41
   languageName: node
   linkType: hard
 
@@ -16189,7 +16207,7 @@ __metadata:
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
     "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/dataviews": "npm:^18.0.0"
+    "@wordpress/dataviews": "npm:^19.1.0"
     "@wordpress/date": "npm:^5.57.0"
     "@wordpress/dom": "npm:^4.57.0"
     "@wordpress/edit-post": "npm:^8.48.0"
@@ -16932,7 +16950,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"colord@npm:^2.10.0, colord@npm:^2.7.0, colord@npm:^2.9.2, colord@npm:^2.9.3":
+"colord@npm:^2.10.0, colord@npm:^2.7.0, colord@npm:^2.9.2, colord@npm:^2.9.3, colord@npm:^2.9.4":
   version: 2.10.0
   resolution: "colord@npm:2.10.0"
   checksum: 2f5d1d1759124f593deca17bbbab8a88bdc3ab68bbcc88db76c1192d9a5d575db202badde044bf61789561fa0ed7a9eb895382becad1af27ec65934c216e9e04

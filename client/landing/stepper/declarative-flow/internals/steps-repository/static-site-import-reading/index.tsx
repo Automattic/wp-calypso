@@ -46,9 +46,7 @@ const StaticSiteImportReading: StepType< { submits: StaticSiteImportReadingSubmi
 		const userId = useSelector( getCurrentUserId );
 		const [ searchParams ] = useSearchParams();
 		const from = searchParams.get( 'from' )?.trim();
-		const sourceUrl = from
-			? addSchemeIfMissing( from, 'https' ).replace( /^http:/i, 'https:' )
-			: '';
+		const sourceUrl = from ? addSchemeIfMissing( from, 'https' ) : '';
 		// Not `sessionId`: Stepper uses that param for its own flow state.
 		const sessionId = searchParams.get( 'importSessionId' );
 		const siteId = Number( searchParams.get( 'siteId' ) );

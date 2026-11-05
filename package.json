@@ -389,7 +389,7 @@
 		"@wordpress/customize-widgets": "5.48.0",
 		"@wordpress/data-controls": "4.48.0",
 		"@wordpress/data": "^10.48.0",
-		"@wordpress/dataviews": "^18.0.0",
+		"@wordpress/dataviews": "^19.1.0",
 		"@wordpress/date": "5.57.0",
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.57.0",
 		"@wordpress/deprecated": "4.57.0",
