@@ -47,10 +47,12 @@ export const useActions = ( {
 	user,
 	sites,
 	domains,
+	onChangePrimaryDomain,
 }: {
 	user: User;
 	sites?: Site[];
 	domains?: DomainSummary[];
+	onChangePrimaryDomain?: () => void;
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
@@ -162,6 +164,20 @@ export const useActions = ( {
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
+			},
+			{
+				id: 'change-primary-domain',
+				isPrimary: true,
+				/* translators: Row action on the primary site address that opens the dialog to pick another one. */
+				label: __( 'Change primary' ),
+				callback: ( items: DomainSummary[] ) => {
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'change-primary-domain',
+						domain: items[ 0 ].domain,
+					} );
+					onChangePrimaryDomain?.();
+				},
+				isEligible: ( item: DomainSummary ) => !! onChangePrimaryDomain && item.primary_domain,
 			},
 			{
 				id: 'manage-domain',
@@ -471,6 +487,7 @@ export const useActions = ( {
 			sitesByBlogId,
 			sslActiveByDomain,
 			recordTracksEvent,
+			onChangePrimaryDomain,
 		]
 	);
 

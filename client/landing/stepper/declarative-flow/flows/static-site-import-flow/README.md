@@ -30,8 +30,11 @@ The reading step asks for confirmation before importing into an existing destina
 this tab just came back from checkout in this flow. When unified checkout created the site
 (`newSite=1`), the step also records the signup and applies the flow’s site settings.
 
-If the session API refuses the source, the reading step says so and stops there. Other failures
-to start fall back to the content importer for the destination site.
+If the session API refuses the source, the reading step says so and stops there. If it finds
+WordPress behind the source (`static_site_import_source_is_wordpress`), for example a site the
+analyzer saw only as a hosting notice, the user continues to `site-migration`'s check step with
+`platform=wordpress` and the destination, skipping identification. Other failures to start fall
+back to the content importer for the destination site.
 
 The source, platform, and entry parameters survive checkout in the return URL. The receipt
 resolves the new destination’s `siteId`. Cancelling checkout returns to plans with the source

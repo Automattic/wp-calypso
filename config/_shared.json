@@ -215,7 +215,7 @@
 		}
 	],
 	"restricted_me_access": true,
-	"theme_color": "",
+	"theme_color": "#1E1E1E",
 	"theme_color_admin_color_scheme_override": true,
 	"100_year_plan_calendly_id": "wpcom-100-years/30min",
 	"dolly_telegram_auth_url": "",

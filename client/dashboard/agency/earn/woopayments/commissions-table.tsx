@@ -1,12 +1,15 @@
+import { isWpError } from '@automattic/api-core';
 import {
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
 	Modal,
 	Spinner,
 } from '@wordpress/components';
+import { useDispatch } from '@wordpress/data';
 import { DataViews as WPDataViews, filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
 import { download, external } from '@wordpress/icons';
+import { store as noticesStore } from '@wordpress/notices';
 import { useCallback, useMemo, useState } from 'react';
 import { DataViews } from '../../../components/dataviews';
 import { TextBlur } from '../../../components/text-blur';
@@ -41,6 +44,7 @@ export default function CommissionsTable( {
 	onContinueSetup,
 }: CommissionsTableProps ) {
 	const [ isGeneratingReport, setIsGeneratingReport ] = useState( false );
+	const { createInfoNotice, createErrorNotice } = useDispatch( noticesStore );
 
 	const [ view, setView ] = useState< View >( {
 		type: 'table',
@@ -154,13 +158,23 @@ export default function CommissionsTable( {
 			try {
 				await onDownloadReport( selectedItems[ 0 ].blogId );
 				recordTracksEvent( 'calypso_a4a_woopayments_download_commissions_report' );
-			} catch {
+			} catch ( error ) {
 				recordTracksEvent( 'calypso_a4a_woopayments_download_commissions_report_error' );
+				// The report endpoint answers with this error when the site has no commissions yet.
+				if ( isWpError( error ) && ( error.error ?? error.code ) === 'no_commissions' ) {
+					createInfoNotice( __( 'This site has no commissions to report yet.' ), {
+						type: 'snackbar',
+					} );
+				} else {
+					createErrorNotice( __( 'Failed to download the commissions report.' ), {
+						type: 'snackbar',
+					} );
+				}
 			} finally {
 				setIsGeneratingReport( false );
 			}
 		},
-		[ onDownloadReport, recordTracksEvent ]
+		[ onDownloadReport, recordTracksEvent, createInfoNotice, createErrorNotice ]
 	);
 
 	const actions = useMemo(

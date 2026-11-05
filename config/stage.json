@@ -102,12 +102,14 @@
 		"mcp-settings": true,
 		"me/account-close": true,
 		"me/account/color-scheme-picker": true,
+		"me/email-tracking-consent": true,
 		"me/legacy-contact": true,
 		"migration-flow/introductory-offer": true,
 		"migration/non-wordpress-source": true,
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
+		"notifications/subscriber-alerts-default-on": true,
 		"notifications/view-settings": true,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,
@@ -190,7 +192,6 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "stage",
-	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
 	"survicate_enabled": true
 }
