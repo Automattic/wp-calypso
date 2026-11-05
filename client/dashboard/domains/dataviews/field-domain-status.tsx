@@ -80,7 +80,7 @@ export const DomainStatusField = ( {
 					spacing={ 1 }
 					justify="flex-start"
 					expanded={ false }
-					style={ isActivating ? { cursor: 'default' } : undefined }
+					style={ isActivating ? { cursor: 'pointer' } : undefined }
 				>
 					<Text
 						intent={ isActivating ? undefined : domain.domain_status.type }
