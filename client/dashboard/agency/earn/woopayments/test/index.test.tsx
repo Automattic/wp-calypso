@@ -137,6 +137,7 @@ describe( 'EarnWooPayments', () => {
 		await screen.findByRole( 'dialog', PICKER );
 		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		await waitFor( () => expect( queryClient.isFetching() ).toBe( 0 ) );
 
 		// The agency now has a WooPayments site, so the header's button replaces the empty state's.
 		nock.cleanAll();
