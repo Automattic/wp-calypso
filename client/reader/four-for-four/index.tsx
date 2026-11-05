@@ -45,6 +45,7 @@ export function FourForFour() {
 		refetchCandidates,
 		status,
 		followedCount,
+		failedSites,
 		hasSaveError,
 		retrySave,
 	} = useFourForFour();
@@ -138,6 +139,26 @@ export function FourForFour() {
 							<Button variant="link" onClick={ retrySave }>
 								{ translate( 'Try again' ) }
 							</Button>
+						</HStack>
+					) }
+
+					{ failedSites.length > 0 && (
+						<HStack
+							className="four-for-four-modal__follow-error"
+							alignment="left"
+							expanded={ false }
+							role="alert"
+						>
+							<span>
+								{ failedSites.length === 1
+									? translate(
+											'We were unable to subscribe you to %(siteName)s. Please pick another site from the list.',
+											{ args: { siteName: failedSites[ 0 ].name } }
+										)
+									: translate(
+											'We were unable to subscribe you to some of these sites. Please pick others from the list.'
+										) }
+							</span>
 						</HStack>
 					) }
 

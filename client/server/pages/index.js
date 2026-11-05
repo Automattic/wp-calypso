@@ -83,6 +83,7 @@ import middlewareUnsupportedBrowser from '../middleware/unsupported-browser.js';
 import { logSectionResponse } from './analytics';
 import { registerCspReportRoute } from './csp-report';
 import { getFrameHeaders } from './frame-options';
+import { isProbingPath } from './probing-paths';
 const debug = debugFactory( 'calypso:pages' );
 
 const calypsoEnv = config( 'env_id' );
@@ -893,8 +894,10 @@ const setUpSectionContext = ( section, entrypoint ) => ( req, res, next ) => {
 
 const setNotFoundStatus = ( req, res, next ) => {
 	res.status( 404 );
-	// bumpStat only accepts 32 chars max for the value
-	bumpStat( 'dashboard-404', req.path.slice( 0, 32 ) );
+	bumpStat(
+		isProbingPath( req.path ) ? 'dashboard-404-probing' : 'dashboard-404',
+		req.path.slice( 0, 32 ) // bumpStat only accepts 32 chars max for the value
+	);
 	next();
 };
 

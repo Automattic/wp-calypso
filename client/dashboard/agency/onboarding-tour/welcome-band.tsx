@@ -195,8 +195,11 @@ export default function WelcomeBand( {
 							</Heading>
 							{ isPending && (
 								<Text variant="muted" lineHeight="20px">
-									{ __(
-										'We’re reviewing your account, and you can book your advisor call now. Most are activated within one business day.'
+									{ createInterpolateElement(
+										__(
+											'<strong>We’re reviewing your account</strong>, and <strong>you can book your advisor call now</strong>. Most are activated within one business day.'
+										),
+										{ strong: <strong /> }
 									) }
 								</Text>
 							) }

@@ -1888,8 +1888,7 @@ export const sitePlansRoute = createRoute( {
 );
 
 export const createSitesRoutes = ( config: AppConfig ) => {
-	const sitesComponent = config.components.sites;
-	if ( ! config.supports.sites || ! sitesComponent ) {
+	if ( ! config.supports.sites ) {
 		return [];
 	}
 
@@ -1990,7 +1989,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	return [
 		sitesRoute.lazy( () =>
-			sitesComponent().then( ( d ) =>
+			import( '../../sites' ).then( ( d ) =>
 				createLazyRoute( 'sites' )( {
 					component: d.default,
 				} )
