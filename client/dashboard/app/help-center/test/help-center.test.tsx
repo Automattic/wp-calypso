@@ -7,6 +7,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
 import { render } from '../../../test-utils';
+import { HELP_CENTER_STORE, type HelpCenterDispatch } from '..';
 import HelpCenter from '../help-center';
 import type { Site } from '@automattic/api-core';
 
@@ -89,7 +90,9 @@ describe( '<HelpCenter />', () => {
 		const requester = jest.fn( async () => ( { calypso_preferences: {} } ) );
 		setRequester( requester as Parameters< typeof setRequester >[ 0 ] );
 		HelpCenterStore.register();
-		await act( () => dispatch( 'automattic/help-center' ).setShowHelpCenter( true ) );
+		await act( () =>
+			( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setShowHelpCenter( true )
+		);
 
 		expect( await screen.findByRole( 'region', { name: 'Help Center' } ) ).toBeVisible();
 		expect( requester ).toHaveBeenCalledWith(
