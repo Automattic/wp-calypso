@@ -136,6 +136,19 @@
 	width: min( 100%, 782px );
 }
 
+.dashboard-amplify-overview__mode-card {
+	cursor: pointer;
+}
+
+.dashboard-amplify-overview__mode-card[aria-checked='true'] {
+	box-shadow: inset 0 0 0 2px var( --color-primary );
+}
+
+.dashboard-amplify-overview__mode-card:focus-visible {
+	outline: 2px solid var( --color-primary );
+	outline-offset: 2px;
+}
+
 .dashboard-amplify-overview[data-context='learn-more'] {
 	flex: none;
 }
