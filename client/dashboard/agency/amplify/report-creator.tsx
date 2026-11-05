@@ -88,7 +88,7 @@ function ReportTypeCards( {
 	onSelect: ( mode: AmplifyMode ) => void;
 } ) {
 	const labelId = useId();
-	const isWide = useViewportMatch( 'large' );
+	const isWide = useViewportMatch( 'wide' );
 	const reportModes = getReportModes();
 	const cardRefs = useRef< ( HTMLElement | null )[] >( [] );
 	// Like native radios: the arrow keys move and select, wrapping at the ends.
