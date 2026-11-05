@@ -89,7 +89,10 @@ export default function SiteScreenshot( {
 					src={ src }
 					alt={ alt }
 					loading="lazy"
-					onError={ () => setFailed( true ) }
+					onError={ () => {
+						loadedScreenshots.delete( baseSrc );
+						setFailed( true );
+					} }
 					style={ width && height ? { width, height } : undefined }
 				/>
 			) : (
