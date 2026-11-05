@@ -22,7 +22,6 @@ import { ButtonStack } from '../../components/button-stack';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { Text } from '../../components/text';
 import SiteScreenshot from '../components/site-screenshot';
-import { Preview } from '../sites/dataviews/site';
 import { useDownloadReportPdf } from './use-download-report-pdf';
 import type { AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
@@ -35,13 +34,6 @@ const REPORT_LAYOUTS: SupportedLayouts = {
 		},
 		showMedia: true,
 		mediaField: 'icon',
-		titleField: 'site',
-		descriptionField: 'url',
-	},
-	grid: {
-		layout: { previewSize: 290 },
-		showMedia: true,
-		mediaField: 'preview',
 		titleField: 'site',
 		descriptionField: 'url',
 	},
@@ -265,13 +257,6 @@ export default function AmplifyReportsList( {
 					/>
 				),
 				enableSorting: false,
-			},
-			{
-				id: 'preview',
-				label: __( 'Preview' ),
-				render: ( { item } ) => <Preview url={ item.url } />,
-				enableSorting: false,
-				enableHiding: false,
 			},
 			{
 				id: 'site',
