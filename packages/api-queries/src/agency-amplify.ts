@@ -66,6 +66,7 @@ export const archiveAmplifyReportMutation = ( agencyId: number ) =>
 
 export const retryAmplifyReportMutation = ( agencyId: number ) =>
 	mutationOptions( {
+		mutationKey: [ 'agency', agencyId, 'amplify', 'reports', 'retry' ],
 		meta: { statId: 'agcy-amplify-report-retry' },
 		mutationFn: ( reportId: string ) => retryAmplifyReport( agencyId, reportId ),
 		onSuccess: ( report ) => {
