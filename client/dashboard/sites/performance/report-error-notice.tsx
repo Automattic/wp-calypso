@@ -1,8 +1,7 @@
-import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import InlineSupportLink from '../../components/inline-support-link';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionButton } from '../../components/notice';
 
 export default function ReportErrorNotice( { onRetestClick }: { onRetestClick: () => void } ) {
 	return (
@@ -10,9 +9,9 @@ export default function ReportErrorNotice( { onRetestClick }: { onRetestClick: (
 			variant="error"
 			title={ __( 'Results not available' ) }
 			actions={
-				<Button variant="primary" onClick={ onRetestClick }>
+				<NoticeActionButton variant="solid" onClick={ onRetestClick }>
 					{ __( 'Re-run test' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		>
 			{ createInterpolateElement(

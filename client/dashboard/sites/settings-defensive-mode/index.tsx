@@ -21,7 +21,7 @@ import Breadcrumbs from '../../app/breadcrumbs';
 import { ButtonStack } from '../../components/button-stack';
 import { Card, CardBody } from '../../components/card';
 import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton } from '../../components/notice';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { SectionHeader } from '../../components/section-header';
@@ -128,16 +128,15 @@ export default function DefensiveModeSettings( { siteSlug }: { siteSlug: string 
 				title={ __( 'Defensive mode is enabled' ) }
 				actions={
 					! enabled_by_a11n && (
-						<Button
-							variant="primary"
-							size="compact"
+						<NoticeActionButton
+							variant="solid"
 							type="submit"
-							isBusy={ isPending }
+							loading={ isPending }
 							disabled={ isPending }
 							onClick={ handleDisable }
 						>
 							{ __( 'Disable' ) }
-						</Button>
+						</NoticeActionButton>
 					)
 				}
 			>

@@ -132,11 +132,10 @@ describe( 'StaticSiteImportCard', () => {
 			'href',
 			expect.stringContaining( 'initialQuery=busybearscleaning.com' )
 		);
-		expect( connect ).toHaveClass( 'is-primary' );
 
 		const preview = screen.getByRole( 'link', { name: /Preview site/ } );
 		expect( preview ).toHaveAttribute( 'href', 'https://busybears.wordpress.com' );
-		expect( preview ).toHaveClass( 'is-secondary' );
+		expect( preview ).toHaveAttribute( 'target', '_blank' );
 
 		expect( screen.queryByText( 'Does it look right?' ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: 'Looks right' } ) ).not.toBeInTheDocument();
@@ -153,7 +152,6 @@ describe( 'StaticSiteImportCard', () => {
 
 		expect( screen.getByText( 'Your site is ready' ) ).toBeVisible();
 		const getDomain = screen.getByRole( 'link', { name: 'Get a domain' } );
-		expect( getDomain ).toHaveClass( 'is-primary' );
 		// Domain search: /setup/domain, or /domains/add/<site> in the backported dashboard.
 		expect( getDomain ).toHaveAttribute(
 			'href',

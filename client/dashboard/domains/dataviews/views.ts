@@ -1,5 +1,5 @@
 import type { AnalyticsClient } from '../../app/analytics';
-import type { View } from '@wordpress/dataviews';
+import type { SupportedLayouts, View } from '@wordpress/dataviews';
 
 // Base properties that are common to all view types
 const BASE_VIEW_PROPS: View = {
@@ -18,7 +18,6 @@ const BASE_VIEW_PROPS: View = {
 	fields: [
 		// 'owner',
 		'blog_name',
-		'ssl_status',
 		'expiry',
 		'domain_status',
 	],
@@ -26,22 +25,73 @@ const BASE_VIEW_PROPS: View = {
 
 export const DEFAULT_VIEW = BASE_VIEW_PROPS;
 
-export const SITE_CONTEXT_VIEW = {
-	...BASE_VIEW_PROPS,
-	fields: [ 'ssl_status', 'expiry', 'domain_status' ],
-};
-
 // Default layouts
 export const DEFAULT_LAYOUTS = {
 	table: {},
 };
+
+const DOMAINS_LIST_GRID_LAYOUT = {
+	layout: {
+		density: 'balanced' as const,
+	},
+	showLevels: false,
+	showMedia: false,
+	titleField: 'domain',
+};
+
+export const DOMAINS_LIST_LAYOUTS: SupportedLayouts = {
+	table: {
+		layout: {
+			density: 'balanced',
+		},
+		showLevels: false,
+		showMedia: false,
+		titleField: 'domain',
+	},
+	grid: DOMAINS_LIST_GRID_LAYOUT,
+};
+
+export const DOMAINS_LIST_CONFIG = {
+	perPageSizes: [ 12, 24, 48, 96 ],
+};
+
+export const DOMAINS_LIST_DEFAULT_VIEW = {
+	...BASE_VIEW_PROPS,
+	...DOMAINS_LIST_GRID_LAYOUT,
+	type: 'grid',
+	perPage: 12,
+} as View;
+
+export const SITE_CONTEXT_VIEW: View = {
+	...DOMAINS_LIST_DEFAULT_VIEW,
+	fields: [ 'expiry', 'domain_status' ],
+};
+
+// Saved views can still list the removed SSL field, which the table would render as a blank column.
+export function sanitizeDomainFields( fields: View[ 'fields' ] ) {
+	return fields?.filter( ( field ) => field !== 'ssl_status' );
+}
+
+// Saved views can hold a page size from before these options, which the page size control couldn't show as selected.
+export function sanitizeDomainsListPageSize( view: View ): View {
+	const { perPage } = view;
+	const { perPageSizes } = DOMAINS_LIST_CONFIG;
+	if ( ! perPage || perPageSizes.includes( perPage ) ) {
+		return view;
+	}
+
+	const nearest = perPageSizes.reduce( ( closest, size ) =>
+		Math.abs( size - perPage ) < Math.abs( closest - perPage ) ? size : closest
+	);
+	return { ...view, perPage: nearest };
+}
 
 /*
  * DataViews renders nothing for a layout it wasn't given, including its reset control. A saved view can name one
  * when a build that offers it shares the user's preferences, or after that layout is removed, so show it as a table instead.
  */
 export function sanitizeDomainsListLayout( view: View ): View {
-	if ( view.type in DEFAULT_LAYOUTS ) {
+	if ( view.type in DOMAINS_LIST_LAYOUTS ) {
 		return view;
 	}
 
@@ -56,6 +106,10 @@ export function recordDomainViewChanges(
 ) {
 	if ( ! oldView.search && newView.search ) {
 		recordTracksEvent( 'calypso_dashboard_domains_search' );
+	}
+
+	if ( oldView.type !== newView.type ) {
+		recordTracksEvent( 'calypso_dashboard_domains_view_type_changed', { type: newView.type } );
 	}
 
 	if (
