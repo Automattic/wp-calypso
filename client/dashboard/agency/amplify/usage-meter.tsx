@@ -212,7 +212,14 @@ function LimitsExplainer( {
 								href={ tiersPath }
 								onClick={ ( event: MouseEvent ) => {
 									recordTracksEvent( 'calypso_a4a_amplify_usage_info_tiers_click' );
-									if ( tiersLink?.onNavigate ) {
+									if (
+										tiersLink?.onNavigate &&
+										event.button === 0 &&
+										! event.metaKey &&
+										! event.ctrlKey &&
+										! event.shiftKey &&
+										! event.altKey
+									) {
 										event.preventDefault();
 										tiersLink.onNavigate( tiersPath );
 									}
