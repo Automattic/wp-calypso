@@ -65,18 +65,17 @@ export const adaptReadConversationOwnComment = (
 	newCommentCount: row.new_comment_count ?? 0,
 } );
 
-// Adapting per page keeps rows of untouched pages identical across cache updates.
-const adaptedPages = new WeakMap< object, ( Conversation | OwnComment )[] >();
+// Adapting each page's rows once keeps rows of untouched pages identical across cache updates.
+const adaptedPages = new WeakMap< object[], ( Conversation | OwnComment )[] >();
 
-function adaptPage< Row, Item extends Conversation | OwnComment >(
-	page: object,
+function adaptPage< Row extends object, Item extends Conversation | OwnComment >(
 	rows: Row[],
 	adapt: ( row: Row ) => Item
 ): Item[] {
-	let items = adaptedPages.get( page ) as Item[] | undefined;
+	let items = adaptedPages.get( rows ) as Item[] | undefined;
 	if ( ! items ) {
 		items = rows.map( adapt );
-		adaptedPages.set( page, items );
+		adaptedPages.set( rows, items );
 	}
 	return items;
 }
@@ -100,9 +99,8 @@ export function useConversations( {
 	const { data } = query;
 	const conversations = useMemo(
 		() =>
-			data?.pages.flatMap( ( page ) =>
-				adaptPage( page, page.conversations, adaptReadConversation )
-			) ?? [],
+			data?.pages.flatMap( ( page ) => adaptPage( page.conversations, adaptReadConversation ) ) ??
+			[],
 		[ data ]
 	);
 
@@ -130,7 +128,7 @@ export function useOwnComments( {
 	const comments = useMemo(
 		() =>
 			data?.pages.flatMap( ( page ) =>
-				adaptPage( page, page.comments, adaptReadConversationOwnComment )
+				adaptPage( page.comments, adaptReadConversationOwnComment )
 			) ?? [],
 		[ data ]
 	);

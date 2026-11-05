@@ -4,7 +4,6 @@ import {
 	markNotificationsRead,
 	type ReadConversation,
 	type ReadConversationsResponse,
-	type ReadConversationsScope,
 	type ReadConversationsSort,
 } from '@automattic/api-core';
 import {
@@ -58,17 +57,15 @@ const getReadConversationsListQueryKey = () =>
 	[ ...getReadConversationsQueryKeyPrefix(), 'list' ] as const;
 
 export const readConversationsQuery = ( {
-	scope = 'following',
 	sort = 'newest',
 	search = '',
-}: { scope?: ReadConversationsScope; sort?: ReadConversationsSort; search?: string } = {} ) =>
+}: { sort?: ReadConversationsSort; search?: string } = {} ) =>
 	infiniteQueryOptions( {
-		queryKey: [ ...getReadConversationsListQueryKey(), { scope, sort, search } ],
+		queryKey: [ ...getReadConversationsListQueryKey(), { sort, search } ],
 		queryFn: ( { pageParam } ) =>
 			fetchPageWithRows(
 				( cursor ) =>
 					fetchReadConversationsList( {
-						scope,
 						sort,
 						search: search || undefined,
 						number: PAGE_SIZE,
@@ -102,8 +99,8 @@ export const readConversationsCommentsQuery = ( {
 	} );
 
 /**
- * Applies `update` to every loaded conversation in every list query. Pages with no
- * changed conversation keep their identity, so their rows don't re-render.
+ * Applies `update` to every loaded conversation in every list query. Structural
+ * sharing keeps unchanged pages and rows at their old references.
  */
 function updateReadConversations(
 	queryClient: QueryClient,
@@ -111,31 +108,17 @@ function updateReadConversations(
 ) {
 	queryClient.setQueriesData< ReadConversationsInfiniteData >(
 		{ queryKey: getReadConversationsListQueryKey() },
-		( data ) => {
-			if ( ! data ) {
-				return data;
+		( data ) =>
+			data && {
+				...data,
+				pages: data.pages.map( ( page ) => ( {
+					...page,
+					conversations: page.conversations.map( update ),
+				} ) ),
 			}
-			let changed = false;
-			const pages = data.pages.map( ( page ) => {
-				const conversations = page.conversations.map( update );
-				if (
-					conversations.every( ( conversation, i ) => conversation === page.conversations[ i ] )
-				) {
-					return page;
-				}
-				changed = true;
-				return { ...page, conversations };
-			} );
-			return changed ? { ...data, pages } : data;
-		}
 	);
 }
 
-/**
- * Marks comment notes read and clears them from the loaded conversations right
- * away. The route sends at most 50 note ids per conversation, so one with more
- * is refetched afterward to get the rest, as is everything when the request fails.
- */
 const markReadMutationKey = [ ...getReadConversationsQueryKeyPrefix(), 'mark-read' ];
 
 // Overlapping marks refetch once, when the last one settles, if any of them needed it.
@@ -147,6 +130,11 @@ const getMarkReadQueryKeys = () => [
 	getNotificationsQueryKey(),
 ];
 
+/**
+ * Marks comment notes read and clears them from the loaded conversations right
+ * away. The route sends at most 50 note ids per conversation, so one with more
+ * is refetched afterward to get the rest, as is everything when the request fails.
+ */
 export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		mutationKey: markReadMutationKey,
@@ -158,13 +146,9 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 			if ( queryKeys.some( ( queryKey ) => queryClient.isFetching( { queryKey } ) ) ) {
 				pendingRefetch.add( queryClient );
 			}
-			try {
-				await Promise.all(
-					queryKeys.map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
-				);
-			} catch {
-				// Cancelling is best-effort; the optimistic update below must still happen.
-			}
+			await Promise.all(
+				queryKeys.map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
+			);
 			markCachedNotesRead( queryClient, noteIds );
 			const ids = new Set( noteIds );
 			const cleared = new Set< string >();
