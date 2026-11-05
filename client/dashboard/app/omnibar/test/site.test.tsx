@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
+import { omnibarCurrentUrlQuery, omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
 import {
 	Outlet,
 	RouterProvider,
@@ -61,6 +61,24 @@ describe( 'useSyncOmnibarSite', () => {
 
 		await waitFor( () =>
 			expect( queryClient.getQueryData( omnibarSiteIdQuery().queryKey ) ).toBeNull()
+		);
+	} );
+
+	test( 'publishes a link back to the current page', async () => {
+		const router = renderRouterWithSiteRoute( { ID: 456, capabilities: {} } as Site );
+		await screen.findByText( 'home' );
+
+		router.navigate( {
+			to: '/sites/$slug',
+			params: { slug: 'foo' },
+			search: { purchased_plan: 'value_bundle' },
+		} );
+		await screen.findByText( 'site' );
+
+		await waitFor( () =>
+			expect( queryClient.getQueryData( omnibarCurrentUrlQuery().queryKey ) ).toBe(
+				'/sites/foo?purchased_plan=value_bundle'
+			)
 		);
 	} );
 } );
