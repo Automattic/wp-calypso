@@ -4,7 +4,7 @@ import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/compone
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import { A4A_AGENCY_TIER_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
-import { getFeatureName } from 'calypso/dashboard/agency/amplify/constants';
+import { getFeatureDescription, getFeatureName } from 'calypso/dashboard/agency/amplify/constants';
 import AmplifyContent from 'calypso/dashboard/agency/amplify/content';
 import AmplifyHeaderActions from 'calypso/dashboard/agency/amplify/header-actions';
 import { AmplifyApprovalNotice } from 'calypso/dashboard/agency/amplify/usage-meter';
@@ -15,6 +15,7 @@ import Snackbars from 'calypso/dashboard/app/snackbars';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
 import LayoutHeader, {
 	LayoutHeaderTitle as Title,
+	LayoutHeaderSubtitle as Subtitle,
 	LayoutHeaderActions as Actions,
 } from 'calypso/layout/hosting-dashboard/header';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
@@ -33,6 +34,7 @@ function ProspectReportsLayout() {
 				) }
 				<LayoutHeader>
 					<Title>{ title }</Title>
+					<Subtitle>{ getFeatureDescription() }</Subtitle>
 					<Actions>
 						<MobileSidebarNavigation />
 						<AmplifyHeaderActions page={ page } tiersLink={ TIERS_LINK } />
