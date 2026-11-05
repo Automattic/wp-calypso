@@ -14,13 +14,14 @@ const mockRecordReaderTracksEvent = jest.fn();
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
-let mockHasNoPreview = false;
+let mockHasPreview = true;
 jest.mock( '@wordpress/compose', () => {
 	const actual = jest.requireActual( '@wordpress/compose' );
+	const { FOUR_FOR_FOUR_PREVIEW_QUERY } = jest.requireActual( '../constants' );
 	return {
 		...actual,
 		useMediaQuery: ( query?: string ) =>
-			query === '(max-width: 699px)' ? mockHasNoPreview : actual.useMediaQuery( query ),
+			query === FOUR_FOR_FOUR_PREVIEW_QUERY ? mockHasPreview : actual.useMediaQuery( query ),
 	};
 } );
 
@@ -101,7 +102,10 @@ function mockBlockedFollow() {
 
 function mockFollow( blogId: number, delayMs = 0 ) {
 	return nock( API )
-		.post( '/rest/v1.1/read/following/mine/new' )
+		.post(
+			'/rest/v1.1/read/following/mine/new',
+			( body ) => body.url === `https://site${ blogId }.wordpress.com/feed/`
+		)
 		.delay( delayMs )
 		.reply( 200, {
 			subscribed: true,
@@ -136,7 +140,7 @@ describe( 'FourForFour', () => {
 		} );
 		mockRecordReaderTracksEvent.mockClear();
 		jest.mocked( page ).mockClear();
-		mockHasNoPreview = false;
+		mockHasPreview = true;
 	} );
 
 	it( 'lists candidates and previews the first one', async () => {
@@ -189,23 +193,10 @@ describe( 'FourForFour', () => {
 
 	it( 'gives each site its own subscribe button when there is no room for the preview', async () => {
 		const user = userEvent.setup();
-		mockHasNoPreview = true;
+		mockHasPreview = false;
 		mockStatus( 'opted_in' );
 		mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
-		const follow = nock( API )
-			.post(
-				'/rest/v1.1/read/following/mine/new',
-				( body ) => body.url === 'https://site3.wordpress.com/feed/'
-			)
-			.reply( 200, {
-				subscribed: true,
-				subscription: {
-					ID: 503,
-					blog_ID: 3,
-					feed_ID: 30,
-					URL: 'https://site3.wordpress.com/feed/',
-				},
-			} );
+		const follow = mockFollow( 3 );
 		const progress = nock( API )
 			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 3 ] } )
 			.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3 ] } );
