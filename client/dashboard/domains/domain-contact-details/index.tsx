@@ -7,6 +7,7 @@ import {
 	domainWhoisQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
@@ -29,6 +30,7 @@ import {
 	isUkDomain,
 	mapWhoisExtraToUkContactExtra,
 } from '../../components/domain-contact-details-form/uk-contact-fields';
+import { SectionHeader } from '../../components/section-header';
 import { findRegistrantWhois } from '../../utils/domain';
 import { DomainContactDetailsLayout } from './layout';
 import type { DomainContactDetails, DomainContactDetailsExtra } from '@automattic/api-core';
@@ -160,18 +162,22 @@ export default function DomainContactInfo() {
 				domainNames={ [ domainName ] }
 				isSubmitting={ isSubmitting }
 				onSubmit={ handleSubmit }
+				title={ __( 'Contact details' ) }
 				beforeFormCard={
 					! domain.is_hundred_year_domain && (
-						<Card>
-							<CardBody>
-								<ContactFormPrivacy
-									domainName={ domainName }
-									isSubmitting={ isSubmitting }
-									onTogglePrivacyProtection={ handleTogglePrivacyProtection }
-									onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
-								/>
-							</CardBody>
-						</Card>
+						<VStack spacing={ 4 }>
+							<SectionHeader title={ __( 'Privacy protection' ) } level={ 3 } />
+							<Card>
+								<CardBody>
+									<ContactFormPrivacy
+										domainName={ domainName }
+										isSubmitting={ isSubmitting }
+										onTogglePrivacyProtection={ handleTogglePrivacyProtection }
+										onTogglePrivacyDisclosure={ handleTogglePrivacyDisclosure }
+									/>
+								</CardBody>
+							</Card>
+						</VStack>
 					)
 				}
 				key={ key }

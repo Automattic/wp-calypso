@@ -9,6 +9,7 @@ import {
 } from '@wordpress/element';
 import { LOCAL_TOOL_RUNNING_MESSAGE } from '../constants';
 import { useAgentsManagerContext } from '../contexts';
+import { isCreditsCommandMessageId } from '../utils/credits-command';
 import { recordAgentsManagerTracksEvent, recordBigSkyTracksEvent } from '../utils/tracks';
 import type { AuthProvider, UIMessage as Message } from '@automattic/agenttic-client';
 import type { MessageAction } from '@automattic/agenttic-ui';
@@ -242,7 +243,9 @@ export default function useFeedbackAction( {
 
 		return createFeedbackActions( {
 			onFeedback: handleFeedback,
-			condition: ( message: Message ) => message.role === 'agent',
+			// The server has no record of the browser's own `/credits` answer to rate.
+			condition: ( message: Message ) =>
+				message.role === 'agent' && ! isCreditsCommandMessageId( message.id ),
 			icons: {
 				up: createElement( ThumbsUpIcon, { className: 'agents-manager-message-action-icon' } ),
 				down: createElement( ThumbsDownIcon, { className: 'agents-manager-message-action-icon' } ),

@@ -240,7 +240,7 @@ describe( 'SiteMigrationIdentify', () => {
 		}
 	);
 
-	it( 'shows the back link when the "ref" param is set', () => {
+	it( 'links the logo to the homepage as its way out, without a Back button', () => {
 		render(
 			{
 				navigation: {
@@ -251,7 +251,12 @@ describe( 'SiteMigrationIdentify', () => {
 			{ initialEntry: '/some-path?ref=goals' }
 		);
 
-		expect( screen.getByRole( 'button', { name: /Back/ } ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/'
+		);
+		expect( screen.queryByRole( 'button', { name: /Back/ } ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Change address' } ) ).not.toBeInTheDocument();
 	} );
 
 	describe( 'with migration/reprint-flow enabled', () => {
@@ -277,6 +282,26 @@ describe( 'SiteMigrationIdentify', () => {
 				);
 		} );
 
+		it( 'changes the address during a check without leaving the step', async () => {
+			const goBack = jest.fn();
+			const submit = jest.fn();
+			render( { navigation: { goBack, submit } } );
+			const analysis = mockApi()
+				.get( '/wpcom/v2/imports/analyze-url' )
+				.query( { site_url: 'https://example.com' } )
+				.reply( 200, () => new Promise( () => {} ) );
+			await checkSite();
+			await waitFor( () => expect( analysis.isDone() ).toBe( true ) );
+
+			await user.click( screen.getByRole( 'button', { name: 'Change address' } ) );
+
+			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( getInput() ).toHaveValue( 'https://example.com' );
+			expect( getInput() ).toHaveFocus();
+			expect( goBack ).not.toHaveBeenCalled();
+			expect( submit ).not.toHaveBeenCalled();
+		} );
+
 		it( 'keeps the platform list available on the simplified address screen', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
@@ -287,6 +312,88 @@ describe( 'SiteMigrationIdentify', () => {
 			).not.toBeInTheDocument();
 			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
 			expect( submit ).toHaveBeenCalledWith( { action: 'skip_platform_identification' } );
+		} );
+
+		it.each( [ '', 'https://example.com' ] )(
+			'leaves the address "%s" editable without analyzing until Continue',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( API_RESPONSE_WORDPRESS_PLATFORM );
+				const host = mockHost();
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&start=&platform=unknown`,
+					}
+				);
+				await act( async () => {
+					jest.advanceTimersByTime( 3000 );
+					await realTick();
+				} );
+				expect( getInput() ).toHaveValue( from );
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				expect( analysis.isDone() ).toBe( false );
+				expect( host.isDone() ).toBe( false );
+				expect( submit ).not.toHaveBeenCalled();
+				await user.clear( getInput() );
+				await checkSite();
+				await waitFor( () =>
+					expect( submit ).toHaveBeenCalledWith(
+						expect.objectContaining( { action: 'continue', platform: 'wordpress' } )
+					)
+				);
+			}
+		);
+
+		it.each( [ '', 'https://manual.example.com' ] )(
+			'uses the selected WordPress platform without analyzing "%s"',
+			async ( from ) => {
+				const submit = jest.fn();
+				const analysis = mockAnalysis( { platform: 'unknown' }, 200, from || 'manual.example.com' );
+				render(
+					{ navigation: { submit } },
+					{
+						initialEntry: `/some-path?from=${ encodeURIComponent( from ) }&manualPlatform=wordpress`,
+					}
+				);
+
+				expect(
+					screen.getByRole( 'heading', { name: "Let's find your WordPress site" } )
+				).toBeVisible();
+				expect(
+					screen.getByRole( 'button', { name: 'select another platform from the list' } )
+				).toBeVisible();
+				expect( getInput() ).toHaveValue( from );
+				expect( submit ).not.toHaveBeenCalled();
+				if ( ! from ) {
+					await user.type( getInput(), 'manual.example.com' );
+				}
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+				expect( submit ).toHaveBeenCalledWith( {
+					action: 'continue',
+					platform: 'wordpress',
+					from: 'https://manual.example.com',
+				} );
+				expect( analysis.isDone() ).toBe( false );
+			}
+		);
+
+		it( 'lets users change their selected platform while keeping the address', async () => {
+			const submit = jest.fn();
+			render(
+				{ navigation: { submit } },
+				{ initialEntry: '/some-path?from=https://example.com&manualPlatform=wordpress' }
+			);
+
+			await user.click(
+				screen.getByRole( 'button', { name: 'select another platform from the list' } )
+			);
+
+			expect( submit ).toHaveBeenCalledWith( {
+				action: 'skip_platform_identification',
+				from: 'https://example.com',
+			} );
 		} );
 
 		it( 'preserves the current address when opening the platform list before checking', async () => {
@@ -552,7 +659,7 @@ describe( 'SiteMigrationIdentify', () => {
 			} );
 		} );
 
-		it( 'does not complete or reopen an outcome when Back cancels a retry', async () => {
+		it( 'does not complete or reopen an outcome when Change address cancels a retry', async () => {
 			const submit = jest.fn();
 			render( { navigation: { submit } } );
 			mockAnalysis( { code: 'http_request_failed' }, 500 );
@@ -568,11 +675,12 @@ describe( 'SiteMigrationIdentify', () => {
 			await user.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 			expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toHaveClass( 'is-busy' );
 			await waitFor( () => expect( completeRetry ).toEqual( expect.any( Function ) ) );
-			await user.click( screen.getByRole( 'button', { name: 'Back' } ) );
+			await user.click( screen.getByRole( 'button', { name: 'Change address' } ) );
 			await act( async () => completeRetry?.() );
 			expect( getInput() ).toBeVisible();
 			expect( getInput() ).toHaveValue( 'https://example.com' );
 			expect( getInput() ).not.toHaveAttribute( 'readonly' );
+			expect( getInput() ).toHaveFocus();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 

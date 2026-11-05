@@ -1,7 +1,8 @@
-import { omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
+import { omnibarCurrentUrlQuery, omnibarSiteIdQuery, queryClient } from '@automattic/api-queries';
 import { useRouter } from '@tanstack/react-router';
 import { removeQueryArgs } from '@wordpress/url';
 import { useEffect } from 'react';
+import { redirectToDashboardLink } from '../../utils/link';
 import type { Site } from '@automattic/api-core';
 
 function isMemberOfSite( site: Site ) {
@@ -10,7 +11,7 @@ function isMemberOfSite( site: Site ) {
 }
 
 /**
- * Keeps the omnibar's current site in sync with the URL.
+ * Keeps the omnibar's current site and current page in sync with the URL.
  */
 export function useSyncOmnibarSite() {
 	const router = useRouter();
@@ -39,6 +40,10 @@ export function useSyncOmnibarSite() {
 					removeQueryArgs( window.location.pathname + window.location.search, 'origin_site_id' )
 				);
 			}
+
+			queryClient.setQueryData( omnibarCurrentUrlQuery().queryKey, () =>
+				redirectToDashboardLink( { supportBackport: true } )
+			);
 		}
 
 		syncOmnibarSite();

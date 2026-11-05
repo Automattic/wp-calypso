@@ -1,4 +1,5 @@
 import { addQueryArgs } from '@wordpress/url';
+import { withJetpackSso } from 'calypso/dashboard/utils/site-sso';
 import { logToLogstash } from 'calypso/lib/logstash';
 import wpcom from 'calypso/lib/wp';
 import { transferStates, TransferStates } from 'calypso/state/automated-transfer/constants';
@@ -689,52 +690,6 @@ export function getSiteEditorUrl(
 export function getSimpleSiteEditorUrl( adminUrl: string ): string {
 	const base = adminUrl.endsWith( '/' ) ? adminUrl : `${ adminUrl }/`;
 	return `${ base }site-editor.php`;
-}
-
-/**
- * Route an Atomic wp-admin URL through Jetpack SSO so the customer arrives
- * logged in.
- *
- * They have a WordPress.com session, not a session on their Atomic site, and
- * those are different things. Sending them straight to wp-admin showed them a
- * login form for a site they had just made — asking them to sign in to
- * something they had not been told was separate. Jetpack SSO trades the session
- * they have for the one they need and forwards them on.
- * @param adminUrl Absolute wp-admin URL to land on.
- * @returns The SSO URL, or the original when it cannot be parsed.
- */
-function withJetpackSso( adminUrl: string ): string {
-	let target: URL;
-	try {
-		target = new URL( adminUrl );
-	} catch {
-		// Not something we can rewrite. Hand back what we were given rather than
-		// dropping the customer's redirect entirely.
-		return adminUrl;
-	}
-
-	// SSO lives on the site's own host. A *.wordpress.com address is the
-	// WordPress.com side of an Atomic site rather than the site itself, and
-	// logging in there does not produce a session for wp-admin.
-	if ( target.hostname.endsWith( '.wordpress.com' ) ) {
-		target.hostname = target.hostname.replace( '.wordpress.com', '.wpcomstaging.com' );
-	}
-
-	const login = new URL( target.href );
-	login.pathname = '/wp-login.php';
-	login.search = '';
-
-	// Deliberately NOT `action=jetpack-sso`. Jetpack only saves the
-	// `jetpack_sso_redirect_to` cookie — the sole carrier of the destination
-	// across the WordPress.com round trip — on the plain login path; a direct
-	// `action=jetpack-sso` entry skips save_cookies() and the return leg falls
-	// back to admin_url(), landing the customer on /wp-admin with the deep link
-	// gone. A plain wp-login.php?redirect_to=… saves the cookie, and wpcomsh
-	// auto-forwards Calypso-referred visitors to WordPress.com SSO anyway.
-	return addQueryArgs( login.href, {
-		// Relative, so the redirect cannot be pointed off-site.
-		redirect_to: `${ target.pathname }${ target.search }`,
-	} );
 }
 
 export function logBlueprintArchiveEvent(

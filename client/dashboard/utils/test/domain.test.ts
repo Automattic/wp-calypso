@@ -4,6 +4,7 @@ import {
 	canSetAsPrimaryIgnoringSsl,
 	findRegistrantWhois,
 	findPrivacyServiceWhois,
+	getDomainTypeLabel,
 	isPendingPrimaryDomain,
 } from '../domain';
 import type { DomainSummary, Site, User, WhoisDataEntry } from '@automattic/api-core';
@@ -187,5 +188,19 @@ describe( 'utils', () => {
 				} )
 			).toBe( false );
 		} );
+	} );
+} );
+
+describe( 'getDomainTypeLabel', () => {
+	test.each( [
+		[ DomainSubtype.DOMAIN_REGISTRATION, 'Registered with us' ],
+		[ DomainSubtype.DOMAIN_CONNECTION, 'Connected domain name' ],
+		[ DomainSubtype.DOMAIN_TRANSFER, 'Domain name transfer' ],
+		[ DomainSubtype.DEFAULT_ADDRESS, 'Included site address' ],
+		[ DomainSubtype.SITE_REDIRECT, 'From the API' ],
+	] )( '%s is labelled "%s"', ( id, expected ) => {
+		expect(
+			getDomainTypeLabel( { subtype: { id, label: 'From the API' } } as DomainSummary )
+		).toBe( expected );
 	} );
 } );

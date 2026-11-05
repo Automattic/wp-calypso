@@ -51,7 +51,7 @@ describe( 'SiteMigrationCheck', () => {
 		] ) {
 			const preview = screen.getByRole( 'img', { name: label } );
 			expect( preview ).toHaveAttribute( 'data-url', url );
-			expect( preview ).toHaveAttribute( 'data-viewport', '1200x800' );
+			expect( preview ).toHaveAttribute( 'data-viewport', '1440x1440' );
 		}
 		expect( screen.getByText( 'Source' ) ).toBeVisible();
 		expect( screen.getByRole( 'link', { name: 'example.com' } ) ).toHaveAttribute(
@@ -177,13 +177,12 @@ describe( 'SiteMigrationCheck', () => {
 		expect( screen.getByText( 'Site preview' ) ).toBeVisible();
 		expect( screen.getByRole( 'img', { name: 'Site preview' } ) ).toHaveAttribute(
 			'data-viewport',
-			'1200x800'
+			'1440x1440'
 		);
 		expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(
 			'href',
 			'https://example.com'
 		);
-		expect( screen.getByRole( 'button', { name: /Talk to a migration expert/ } ) ).toBeDisabled();
 		expect( submit ).not.toHaveBeenCalled();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );

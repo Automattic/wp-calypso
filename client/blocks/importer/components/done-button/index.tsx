@@ -26,7 +26,9 @@ const DoneButton: React.FunctionComponent< Props > = ( props ) => {
 
 	function onButtonClick() {
 		onSiteViewClick?.();
-		job && siteId && resetImport && resetImport( siteId, job?.importerId );
+		if ( job && siteId && resetImport ) {
+			resetImport( siteId, job.importerId );
+		}
 	}
 
 	return (

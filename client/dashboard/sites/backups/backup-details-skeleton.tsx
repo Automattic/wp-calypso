@@ -9,7 +9,7 @@ import { TextSkeleton } from '../../components/text-skeleton';
 export function BackupDetailsSkeleton() {
 	return (
 		<Card>
-			<CardHeader style={ { flexDirection: 'column', alignItems: 'stretch' } }>
+			<CardHeader direction="column" expanded={ false }>
 				<SectionHeader title={ <TextSkeleton length={ 20 } /> } />
 			</CardHeader>
 			<CardBody style={ { minHeight: '300px' } }>
