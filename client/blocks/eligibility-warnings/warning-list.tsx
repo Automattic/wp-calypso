@@ -14,6 +14,8 @@ interface ExternalProps {
 	warnings: EligibilityWarning[];
 	showContact?: boolean;
 	transferAction?: AtomicTransferAction;
+	/** The user is asked to upgrade first, so the move is described as happening after it. */
+	isAfterUpgrade?: boolean;
 }
 
 type Props = ExternalProps & LocalizeProps;
@@ -24,8 +26,9 @@ export const WarningList = ( {
 	warnings,
 	showContact = true,
 	transferAction,
+	isAfterUpgrade = false,
 }: Props ) => {
-	const transferIntro = getAtomicTransferIntro( transferAction, translate );
+	const transferIntro = getAtomicTransferIntro( transferAction, isAfterUpgrade, translate );
 
 	return (
 		<div>
@@ -106,8 +109,15 @@ export const WarningList = ( {
 
 function getAtomicTransferIntro(
 	transferAction: AtomicTransferAction | undefined,
+	isAfterUpgrade: boolean,
 	translate: LocalizeProps[ 'translate' ]
 ) {
+	if ( transferAction && isAfterUpgrade ) {
+		return translate(
+			'Once you’ve upgraded, we’ll move your site over to WordPress.com’s advanced managed cloud hosting.'
+		);
+	}
+
 	switch ( transferAction ) {
 		case 'hosting-features':
 			return translate(

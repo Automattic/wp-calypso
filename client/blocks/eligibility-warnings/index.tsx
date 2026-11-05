@@ -251,6 +251,7 @@ export const EligibilityWarnings = ( {
 						warnings={ warnings }
 						showContact={ false }
 						transferAction={ atomicTransferAction }
+						isAfterUpgrade={ listHolds.includes( 'NO_BUSINESS_PLAN' ) && ! showFreeTrial }
 					/>
 				</CompactCard>
 			) }
