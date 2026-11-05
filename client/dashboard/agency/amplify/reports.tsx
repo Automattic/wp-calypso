@@ -35,8 +35,6 @@ import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
 import '../../components/site-icon/style.scss';
 
-import './reports.scss';
-
 const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {
@@ -377,7 +375,7 @@ export default function AmplifyReportsList( {
 							{ displayUrl( item.url ) }
 						</ExternalLink>
 						{ item.status === 'failed' && (
-							<Text intent="error" size={ 12 } className="dashboard-amplify-report-failure">
+							<Text intent="error" size={ 12 }>
 								{ item.failure_reason || __( 'The report didn’t finish.' ) }
 							</Text>
 						) }
