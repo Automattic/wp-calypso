@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, type ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
@@ -86,6 +86,21 @@ export function ConversationList( {
 			onLoadMore?.();
 		}
 	}, [ isEndInView, autoLoad, hasMore, isLoadingMore, isLoadMoreError, onLoadMore ] );
+
+	const listRef = useRef< HTMLDivElement >( null );
+	const showLoadMoreButton = ! autoLoad || isLoadMoreError;
+	const refocusRef = useRef( false );
+	// The button goes away once a retry works or the last page loads, which would drop its focus.
+	useEffect( () => {
+		if ( ! refocusRef.current || isLoadingMore ) {
+			return;
+		}
+		refocusRef.current = false;
+		const { activeElement, body } = document;
+		if ( ( ! hasMore || ! showLoadMoreButton ) && ( ! activeElement || activeElement === body ) ) {
+			listRef.current?.focus( { preventScroll: true } );
+		}
+	}, [ isLoadingMore, hasMore, showLoadMoreButton ] );
 
 	const emptyStates = {
 		all: {
@@ -168,7 +183,11 @@ export function ConversationList( {
 					</span>
 				</Button>
 			) }
-			<div className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }>
+			<div
+				ref={ listRef }
+				tabIndex={ -1 }
+				className={ clsx( 'conversations-inbox__list', `is-density-${ density }` ) }
+			>
 				{ isLoading && <Spinner /> }
 				{ ! isLoading && isError && (
 					<ListMessage
@@ -224,7 +243,7 @@ export function ConversationList( {
 								description={ translate( 'None of the conversations loaded so far match.' ) }
 							/>
 						) }
-						{ ! autoLoad || isLoadMoreError ? (
+						{ showLoadMoreButton ? (
 							// Stays mounted while loading so the focus isn't lost.
 							<Button
 								__next40pxDefaultSize
@@ -232,7 +251,10 @@ export function ConversationList( {
 								isBusy={ isLoadingMore }
 								disabled={ isLoadingMore }
 								accessibleWhenDisabled
-								onClick={ onLoadMore }
+								onClick={ () => {
+									refocusRef.current = true;
+									onLoadMore?.();
+								} }
 							>
 								{ isLoadMoreError ? translate( 'Retry' ) : translate( 'Load more' ) }
 							</Button>

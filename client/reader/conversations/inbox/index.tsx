@@ -1,3 +1,4 @@
+import { type NotificationNote } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
@@ -47,13 +48,25 @@ const MAX_SEARCH_LENGTH = 100;
 // It has to be one @automattic/viewport defines, or useBreakpoint never matches.
 const SINGLE_PANE_BREAKPOINT = '<1180px';
 
+// Your comments can open a post the All pages haven't loaded yet, so its unread notes come from the notes.
+const getUnreadNoteIds = (
+	notes: NotificationNote[] | undefined,
+	{ siteId, postId }: Pick< Conversation, 'siteId' | 'postId' >
+) =>
+	notes
+		?.filter(
+			( { read, meta } ) => ! read && meta?.ids?.site === siteId && meta?.ids?.post === postId
+		)
+		.map( ( { id } ) => id );
+
 const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' | 'postId' > ) =>
 	`/reader/conversations/inbox/${ siteId }/${ postId }`;
 
 interface Opened {
 	key: string;
-	// Marking a conversation read clears its unread comments, so keep the ones it had when it was opened.
-	commentIds: number[];
+	// Marking a conversation read clears its unread notes, so keep the ones it had when it was opened.
+	// Unset while the notes a post outside the loaded pages needs are still loading.
+	noteIds?: number[];
 	// Set when opened from Your comments, which starts the thread at that comment.
 	anchor?: { key: string; commentId: number };
 }
@@ -111,7 +124,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		() => new Map( notes?.map( ( note ) => [ note.id, note.meta?.ids?.comment ] ) ),
 		[ notes ]
 	);
-	const getCommentIds = ( noteIds: number[] = [] ) =>
+	const getCommentIds = ( noteIds: number[] ) =>
 		noteIds.flatMap( ( id ) => commentIdsByNoteId.get( id ) ?? [] );
 	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
 	const [ opened, setOpened ] = useState< Opened >();
@@ -126,7 +139,10 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 			setOpened( undefined );
 		}
 	}
-	const newCommentIds = activeOpened?.commentIds ?? getCommentIds( selected?.unreadNoteIds );
+	// Mapped on each render, so notes that load after opening, or polled ones, still get highlighted.
+	const newCommentIds = getCommentIds( [
+		...new Set( [ ...( activeOpened?.noteIds ?? [] ), ...( selected?.unreadNoteIds ?? [] ) ] ),
+	] );
 
 	useEffect( () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
@@ -138,24 +154,32 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	}, [ isNarrow, selectedKey, conversations ] );
 
+	// A post opened before the notes loaded gets its unread notes, and is marked read, once they do.
+	const isWaitingForNotes = !! activeOpened && ! activeOpened.noteIds;
+	useEffect( () => {
+		const noteIds = getUnreadNoteIds( notes, {
+			siteId: Number( siteId ),
+			postId: Number( postId ),
+		} );
+		if ( ! isWaitingForNotes || ! noteIds ) {
+			return;
+		}
+		setOpened( ( current ) => current && { ...current, noteIds } );
+		if ( noteIds.length ) {
+			markRead( noteIds );
+		}
+	}, [ isWaitingForNotes, notes, siteId, postId, markRead ] );
+
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		const key = getConversationKey( item.siteId, item.postId );
 		const conversation = conversations.find( ( candidate ) => candidate.key === key );
-		// Your comments can open a post the All pages haven't loaded yet.
-		const unreadNoteIds =
-			conversation?.unreadNoteIds ??
-			( notes ?? [] )
-				.filter(
-					( { read, meta } ) =>
-						! read && meta?.ids?.site === item.siteId && meta?.ids?.post === item.postId
-				)
-				.map( ( { id } ) => id );
+		const unreadNoteIds = conversation?.unreadNoteIds ?? getUnreadNoteIds( notes, item );
 		setOpened( {
 			key,
-			commentIds: key === opened?.key ? opened.commentIds : getCommentIds( unreadNoteIds ),
+			noteIds: key === opened?.key ? opened.noteIds : unreadNoteIds,
 			anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
 		} );
-		if ( unreadNoteIds.length ) {
+		if ( unreadNoteIds?.length ) {
 			markRead( unreadNoteIds );
 		}
 		if ( key === selectedKey ) {
@@ -164,7 +188,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_conversation_opened', {
 				source,
-				unread_count: conversation?.unreadCount ?? 0,
+				unread_count: conversation?.unreadCount ?? unreadNoteIds?.length ?? 0,
 			} )
 		);
 		page.show( getConversationPath( item ) );
@@ -175,7 +199,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		markRead( markable.flatMap( ( { unreadNoteIds } ) => unreadNoteIds ) );
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_marked_all_read', {
-				count: unreadTotal,
+				count: markable.length,
 			} )
 		);
 	};

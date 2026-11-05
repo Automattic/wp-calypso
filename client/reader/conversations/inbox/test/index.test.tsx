@@ -118,6 +118,7 @@ let requests: string[];
 let replyConversations: ( uri: string ) => object;
 let markReadStatus: number;
 let markReadBodies: { counts: Record< string, number > }[];
+let notesReady: Promise< void >;
 
 const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
 	renderWithProvider( <ConversationsInbox { ...props } />, {
@@ -136,6 +137,7 @@ beforeEach( () => {
 	replyConversations = () => conversationsPage();
 	markReadStatus = 200;
 	markReadBodies = [];
+	notesReady = Promise.resolve();
 	nock( BASE )
 		.persist()
 		.get( '/wpcom/v2/read/conversations' )
@@ -159,7 +161,9 @@ beforeEach( () => {
 		} )
 		.get( '/rest/v1.1/notifications/' )
 		.query( true )
-		.reply( 200, { notes } )
+		.reply( ( _uri, _body, callback ) => {
+			notesReady.then( () => callback( null, [ 200, { notes } ] ) );
+		} )
 		.post( /\/notifications\/read/ )
 		.reply( ( _uri, body ) => {
 			markReadBodies.push( body as ( typeof markReadBodies )[ number ] );
@@ -286,6 +290,23 @@ describe( 'ConversationsInbox', () => {
 		rerender( <ConversationsInbox siteId="10" postId="200" /> );
 
 		expect( screen.getByText( 'New: none' ) ).toBeVisible();
+	} );
+
+	it( 'highlights the new comments of a conversation opened before the notes loaded', async () => {
+		const user = userEvent.setup();
+		let releaseNotes = () => {};
+		notesReady = new Promise( ( resolve ) => {
+			releaseNotes = resolve;
+		} );
+		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
+
+		await user.click( await findRow( '10-p-200' ) );
+		rerender( <ConversationsInbox siteId="10" postId="200" /> );
+		expect( screen.getByText( 'New: none' ) ).toBeVisible();
+
+		releaseNotes();
+
+		expect( await screen.findByText( 'New: 2001' ) ).toBeVisible();
 	} );
 
 	it( 'shows only unread conversations on the Unread tab', async () => {
