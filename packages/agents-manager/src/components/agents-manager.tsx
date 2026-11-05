@@ -284,6 +284,19 @@ function AgentSetup( {
 				return;
 			}
 
+			// A conversation switch: stop the previous reply now, not after the
+			// config wait below.
+			if (
+				hasLiveAgent &&
+				getAgentManager().getAgentSessionId( agentId ) !== ( sessionId || null )
+			) {
+				await discardAgent();
+
+				if ( isSuperseded ) {
+					return;
+				}
+			}
+
 			let providers = loadedProvidersRef.current;
 			if ( ! providers ) {
 				providers = await loadExternalProviders();
