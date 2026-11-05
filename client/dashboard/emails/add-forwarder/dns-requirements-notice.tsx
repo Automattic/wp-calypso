@@ -2,8 +2,7 @@ import { DomainSubtype, Domain } from '@automattic/api-core';
 import { __ } from '@wordpress/i18n';
 import { domainDnsRoute, domainNameServersRoute } from '../../app/router/domains';
 import InlineSupportLink from '../../components/inline-support-link';
-import Notice from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import Notice, { RouterNoticeActionLink } from '../../components/notice';
 
 interface DnsRequirementsNoticeProps {
 	domainName: string;
@@ -39,16 +38,12 @@ export const DnsRequirementsNotice = ( { domainName, domainData }: DnsRequiremen
 			title={ __( 'DNS configuration required' ) }
 			actions={
 				<>
-					<RouterLinkButton to={ domainDnsRoute.fullPath } params={ { domainName } } variant="link">
+					<RouterNoticeActionLink to={ domainDnsRoute.fullPath } params={ { domainName } }>
 						{ __( 'Manage DNS records' ) }
-					</RouterLinkButton>
-					<RouterLinkButton
-						to={ domainNameServersRoute.fullPath }
-						params={ { domainName } }
-						variant="link"
-					>
+					</RouterNoticeActionLink>
+					<RouterNoticeActionLink to={ domainNameServersRoute.fullPath } params={ { domainName } }>
 						{ __( 'Switch to WordPress.com name servers' ) }
-					</RouterLinkButton>
+					</RouterNoticeActionLink>
 					<InlineSupportLink supportContext="dns-default-mx-records">
 						{ __( 'Learn more about MX records' ) }
 					</InlineSupportLink>

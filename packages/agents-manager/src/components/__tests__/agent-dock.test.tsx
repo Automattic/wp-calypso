@@ -6,7 +6,6 @@ import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import { MemoryRouter, useLocation } from 'react-router-dom';
 import type { AgentsManagerContextType } from '../../contexts';
 
-const mockAbortCurrentRequest = jest.fn();
 const mockSetIsOpen = jest.fn();
 const mockSetIsDocked = jest.fn();
 const mockSetIsMinimized = jest.fn();
@@ -29,16 +28,7 @@ let mockAgentsManagerState: {
 } = { isOpen: true, isDocked: false };
 let mockHasAdminBar = false;
 
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		getAgentManager: () => ( {
-			hasAgent: () => true,
-			abortCurrentRequest: mockAbortCurrentRequest,
-		} ),
-	} ),
-	{ virtual: true }
-);
+jest.mock( '@automattic/agenttic-client', () => ( {} ), { virtual: true } );
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setIsOpen: mockSetIsOpen,
