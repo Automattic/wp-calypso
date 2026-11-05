@@ -113,9 +113,15 @@ describe( '<WelcomeBand>', () => {
 		expect( screen.queryByRole( 'link', { name: 'Set up WooPayments' } ) ).not.toBeInTheDocument();
 	} );
 
-	test( 'shows for an agency at Emerging Partner that joined recently', async () => {
+	test.each( [
+		[ 'an agency at Emerging Partner that joined recently', NEW_EMERGING_PARTNER ],
+		[
+			'an approved agency that joined recently and has no tier yet',
+			{ ...NEW_EMERGING_PARTNER, tierId: undefined },
+		],
+	] )( 'shows for %s', async ( _, props ) => {
 		mockPreferences();
-		renderBand();
+		renderBand( props );
 
 		expect( await screen.findByRole( 'heading', { name: 'Your account is ready' } ) ).toBeVisible();
 	} );
