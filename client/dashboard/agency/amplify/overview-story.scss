@@ -42,13 +42,6 @@
 	max-width: 440px;
 }
 
-.dashboard-amplify-story__copy p {
-	margin-block: 16px 0;
-	color: var( --color-text-subtle );
-	font-size: 16px;
-	line-height: 1.6;
-}
-
 .dashboard-amplify-story__prompt {
 	display: flex;
 	flex-direction: column;
@@ -135,16 +128,8 @@
 	margin-block: 24px 96px;
 }
 
-.dashboard-amplify-story__rubric-intro,
-.dashboard-amplify-story__faq-intro {
-	color: var( --color-text-subtle );
-	font-size: 16px;
-	line-height: 1.6;
-}
-
 .dashboard-amplify-story__rubric-intro {
 	max-width: 680px;
-	margin: 12px 0 0;
 }
 
 .dashboard-amplify-story__rubric-columns {
@@ -156,13 +141,6 @@
 
 .dashboard-amplify-story__rubric-perspective {
 	min-width: 0;
-}
-
-.dashboard-amplify-story__rubric-perspective > p {
-	margin: 8px 0 0;
-	color: var( --color-text-subtle );
-	font-size: 14px;
-	line-height: 1.5;
 }
 
 .dashboard-amplify-story__rubric-grid {
@@ -251,22 +229,14 @@
 	}
 }
 
-.dashboard-amplify-story__faq-intro {
-	margin: 12px 0 0;
-}
-
 .dashboard-amplify-story__faq-list {
 	display: grid;
 	gap: 30px;
 	margin-block-start: 40px;
 }
 
-.dashboard-amplify-story__faq-item p {
+.dashboard-amplify-story__faq-answer {
 	max-width: 640px;
-	margin: 8px 0 0;
-	color: var( --color-text-subtle );
-	font-size: 16px;
-	line-height: 1.6;
 }
 
 @media ( max-width: 900px ) {
@@ -288,7 +258,6 @@
 
 .dashboard-amplify-story__sample-link {
 	display: inline-block;
-	margin-block-start: 12px;
 }
 
 /* Real report pages peeking up from the bottom of a story graphic. */

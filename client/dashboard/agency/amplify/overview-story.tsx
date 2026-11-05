@@ -1,8 +1,13 @@
-import { ExternalLink, __experimentalHeading as Heading } from '@wordpress/components';
+import {
+	ExternalLink,
+	__experimentalHeading as Heading,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { Text } from '../../components/text';
 import { useTermTooltip } from '../components/term-tooltip';
 import { getReportTiming, getTierAllowances } from './constants';
 import { SAMPLE_REPORT_URL } from './sample-report-pages';
@@ -358,14 +363,22 @@ function ScoreCategories() {
 	const perspectives = getPerspectives();
 	return (
 		<section className="dashboard-amplify-story__rubric" aria-labelledby="amplify-rubric-title">
-			<Heading id="amplify-rubric-title" level={ 2 }>
-				{ __( 'What each score looks for' ) }
-			</Heading>
-			<p className="dashboard-amplify-story__rubric-intro">
-				{ __(
-					'Each lens looks at eight categories. Together, they show where a homepage is doing well and where it needs improvements.'
-				) }
-			</p>
+			<VStack spacing={ 3 }>
+				<Heading id="amplify-rubric-title" level={ 2 }>
+					{ __( 'What each score looks for' ) }
+				</Heading>
+				<Text
+					as="p"
+					className="dashboard-amplify-story__rubric-intro"
+					size={ 16 }
+					lineHeight="1.6"
+					color="var( --color-text-subtle )"
+				>
+					{ __(
+						'Each lens looks at eight categories. Together, they show where a homepage is doing well and where it needs improvements.'
+					) }
+				</Text>
+			</VStack>
 			<div className="dashboard-amplify-story__rubric-columns">
 				{ ( [ 'human', 'ai' ] as const ).map( ( type ) => (
 					<section
@@ -373,18 +386,28 @@ function ScoreCategories() {
 						key={ type }
 						aria-labelledby={ `amplify-rubric-${ type }` }
 					>
-						<Heading id={ `amplify-rubric-${ type }` } level={ 3 } size={ 20 } lineHeight="27px">
-							{ perspectives[ type ].title }
-						</Heading>
-						<p>
-							<span>
-								{ type === 'human'
-									? __( 'Whether a first-time visitor trusts the business enough to get in touch.' )
-									: __(
-											'Whether AI tools can read the site, understand the business, and recommend it.'
-										) }
-							</span>
-						</p>
+						<VStack spacing={ 2 }>
+							<Heading id={ `amplify-rubric-${ type }` } level={ 3 } size={ 20 } lineHeight="27px">
+								{ perspectives[ type ].title }
+							</Heading>
+							<Text
+								as="p"
+								className="dashboard-amplify-story__rubric-perspective-text"
+								size={ 14 }
+								lineHeight="1.5"
+								color="var( --color-text-subtle )"
+							>
+								<span>
+									{ type === 'human'
+										? __(
+												'Whether a first-time visitor trusts the business enough to get in touch.'
+											)
+										: __(
+												'Whether AI tools can read the site, understand the business, and recommend it.'
+											) }
+								</span>
+							</Text>
+						</VStack>
 						<div className="dashboard-amplify-story__rubric-grid">
 							{ perspectives[ type ].metrics.map( ( metric ) => (
 								<RubricItem
@@ -419,25 +442,33 @@ export default function AmplifyOverviewStory() {
 						} }
 					/>
 				</div>
-				<div className="dashboard-amplify-story__copy">
+				<VStack spacing={ 4 } className="dashboard-amplify-story__copy">
 					<Heading id="amplify-categories-title" level={ 2 }>
 						{ __( 'What’s in the report' ) }
 					</Heading>
-					<p>
-						{ __(
-							'A detailed PDF of everything holding the site back. Bring prospects proof of the problems, and a clear plan for how you’ll fix them once they hire you.'
-						) }
-					</p>
-					<ExternalLink
-						className="dashboard-amplify-story__sample-link"
-						href={ SAMPLE_REPORT_URL }
-						onClick={ () =>
-							recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', { source: 'story' } )
-						}
-					>
-						{ __( 'View a sample report' ) }
-					</ExternalLink>
-				</div>
+					<VStack spacing={ 3 }>
+						<Text
+							as="p"
+							className="dashboard-amplify-story__copy-text"
+							size={ 16 }
+							lineHeight="1.6"
+							color="var( --color-text-subtle )"
+						>
+							{ __(
+								'A detailed PDF of everything holding the site back. Bring prospects proof of the problems, and a clear plan for how you’ll fix them once they hire you.'
+							) }
+						</Text>
+						<ExternalLink
+							className="dashboard-amplify-story__sample-link"
+							href={ SAMPLE_REPORT_URL }
+							onClick={ () =>
+								recordTracksEvent( 'calypso_a4a_amplify_sample_report_open', { source: 'story' } )
+							}
+						>
+							{ __( 'View a sample report' ) }
+						</ExternalLink>
+					</VStack>
+				</VStack>
 			</section>
 
 			<section
@@ -447,32 +478,44 @@ export default function AmplifyOverviewStory() {
 				<div className="dashboard-amplify-story__graphic">
 					<CategoryGraphic />
 				</div>
-				<div className="dashboard-amplify-story__copy">
+				<VStack spacing={ 4 } className="dashboard-amplify-story__copy">
 					<Heading id="amplify-perspectives-title" level={ 2 }>
 						{ __( 'Specific findings you can pitch' ) }
 					</Heading>
-					<p>
+					<Text
+						as="p"
+						className="dashboard-amplify-story__copy-text"
+						size={ 16 }
+						lineHeight="1.6"
+						color="var( --color-text-subtle )"
+					>
 						{ __(
 							'Each finding names the problem, explains why it costs the business customers, and shows how to fix it. You walk into the pitch with specifics, not opinions.'
 						) }
-					</p>
-				</div>
+					</Text>
+				</VStack>
 			</section>
 
 			<section className="dashboard-amplify-story__section" aria-labelledby="amplify-prompts-title">
 				<div className="dashboard-amplify-story__graphic">
 					<PromptGraphic />
 				</div>
-				<div className="dashboard-amplify-story__copy">
+				<VStack spacing={ 4 } className="dashboard-amplify-story__copy">
 					<Heading id="amplify-prompts-title" level={ 2 }>
 						{ __( 'Turn it into your pitch' ) }
 					</Heading>
-					<p>
+					<Text
+						as="p"
+						className="dashboard-amplify-story__copy-text"
+						size={ 16 }
+						lineHeight="1.6"
+						color="var( --color-text-subtle )"
+					>
 						{ __(
 							'Feed the PDF into your AI tool of choice to turn it into a branded report or pitch deck in your agency’s voice.'
 						) }
-					</p>
-				</div>
+					</Text>
+				</VStack>
 			</section>
 
 			<section
@@ -482,35 +525,57 @@ export default function AmplifyOverviewStory() {
 				<div className="dashboard-amplify-story__graphic">
 					<AudiencesGraphic />
 				</div>
-				<div className="dashboard-amplify-story__copy">
+				<VStack spacing={ 4 } className="dashboard-amplify-story__copy">
 					<Heading id="amplify-audiences-title" level={ 2 }>
 						{ __( 'Not just for new clients' ) }
 					</Heading>
-					<p>
+					<Text
+						as="p"
+						className="dashboard-amplify-story__copy-text"
+						size={ 16 }
+						lineHeight="1.6"
+						color="var( --color-text-subtle )"
+					>
 						{ __(
 							'Run one on a current client’s site to plan their next round of work, or on your own homepage to see it the way prospects do.'
 						) }
-					</p>
-				</div>
+					</Text>
+				</VStack>
 			</section>
 
 			<ScoreCategories />
 
 			<section className="dashboard-amplify-story__faq" aria-labelledby="amplify-faq-title">
-				<Heading id="amplify-faq-title" level={ 2 }>
-					{ __( 'Frequently asked questions' ) }
-				</Heading>
-				<p className="dashboard-amplify-story__faq-intro">
-					{ __( 'A few things to know before you create or share a report.' ) }
-				</p>
+				<VStack spacing={ 3 }>
+					<Heading id="amplify-faq-title" level={ 2 }>
+						{ __( 'Frequently asked questions' ) }
+					</Heading>
+					<Text
+						as="p"
+						className="dashboard-amplify-story__faq-intro"
+						size={ 16 }
+						lineHeight="1.6"
+						color="var( --color-text-subtle )"
+					>
+						{ __( 'A few things to know before you create or share a report.' ) }
+					</Text>
+				</VStack>
 				<div className="dashboard-amplify-story__faq-list">
 					{ getFaqs().map( ( faq ) => (
-						<div className="dashboard-amplify-story__faq-item" key={ faq.id }>
+						<VStack spacing={ 2 } className="dashboard-amplify-story__faq-item" key={ faq.id }>
 							<Heading level={ 3 } size={ 18 } weight={ 600 } lineHeight="25px">
 								{ faq.question }
 							</Heading>
-							<p>{ faq.answer }</p>
-						</div>
+							<Text
+								as="p"
+								className="dashboard-amplify-story__faq-answer"
+								size={ 16 }
+								lineHeight="1.6"
+								color="var( --color-text-subtle )"
+							>
+								{ faq.answer }
+							</Text>
+						</VStack>
 					) ) }
 				</div>
 			</section>
