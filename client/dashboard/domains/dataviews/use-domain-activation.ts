@@ -5,11 +5,22 @@ import type { DomainSummary, SslDetails } from '@automattic/api-core';
 
 const SSL_POLL_INTERVAL_MS = 10_000;
 
-function isAwaitingFirstCertificate( sslDetails?: SslDetails ) {
-	return !! sslDetails && sslDetails.is_newly_registered && ! sslDetails.certificate_provisioned;
+/**
+ * The SSL endpoint stops reporting `is_newly_registered` once the domain
+ * resolves, which can happen before the certificate is issued. While the
+ * domain is still being made the primary address, it is activating too.
+ * `set_primary_domain_pending` alone is not enough: the backend keeps
+ * reporting it for days after a purchase, even once the domain works.
+ */
+function isAwaitingFirstCertificate( domain: DomainSummary, sslDetails?: SslDetails ) {
+	return (
+		!! sslDetails &&
+		! sslDetails.certificate_provisioned &&
+		( sslDetails.is_newly_registered || domain.set_primary_domain_pending )
+	);
 }
 
-function useDomainSslDetails( domain: DomainSummary ) {
+export function useDomainSslDetails( domain: DomainSummary ) {
 	return useQuery( {
 		...sslDetailsQuery( domain.domain ),
 		staleTime: 60_000,
@@ -17,20 +28,21 @@ function useDomainSslDetails( domain: DomainSummary ) {
 			domain.subtype.id !== DomainSubtype.DOMAIN_TRANSFER &&
 			domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS,
 		refetchInterval: ( query ) =>
-			isAwaitingFirstCertificate( query.state.data ) ? SSL_POLL_INTERVAL_MS : false,
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
+			isAwaitingFirstCertificate( domain, query.state.data )
+				? SSL_POLL_INTERVAL_MS
+				: false,
 	} );
 }
 
 /**
  * A new registration is activating until its first SSL certificate is issued.
- * `set_primary_domain_pending` is not used here: the backend keeps reporting it
- * for days after a purchase, even once the domain works.
  */
 export function useIsDomainActivating( domain: DomainSummary ) {
 	const { data: sslDetails } = useDomainSslDetails( domain );
 
 	return (
 		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		isAwaitingFirstCertificate( sslDetails )
+		isAwaitingFirstCertificate( domain, sslDetails )
 	);
 }
