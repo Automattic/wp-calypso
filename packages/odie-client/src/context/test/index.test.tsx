@@ -145,6 +145,62 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 	} );
 } );
 
+describe( 'OdieAssistantProvider – bot for new chats', () => {
+	const SlugReader = () => {
+		const { newInteractionsBotSlug } = useOdieAssistantContext();
+		return <span data-testid="slug">{ newInteractionsBotSlug }</span>;
+	};
+
+	const renderFor = ( currentUser: { display_name: string; ID?: number; email?: string } ) =>
+		render(
+			<OdieAssistantProvider
+				newInteractionsBotSlug="wpcom-workflow-support_chat"
+				newLoggedOutInteractionsBotSlug="wpcom-workflow-chat_loggedout"
+				currentUser={ currentUser }
+			>
+				<SlugReader />
+			</OdieAssistantProvider>
+		);
+
+	const slugInUse = () => screen.getByTestId( 'slug' ).textContent;
+
+	afterEach( () => {
+		mockOdieBotNameSlug = undefined;
+	} );
+
+	it( 'sends a sampled user to the Call an HE bot', () => {
+		renderFor( { display_name: 'Me', ID: 20 } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat_call_an_he' );
+	} );
+
+	it( 'sends an Automattician to the Call an HE bot', () => {
+		renderFor( { display_name: 'Me', ID: 21, email: 'someone@automattic.com' } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat_call_an_he' );
+	} );
+
+	it( 'keeps everyone else on the normal bot', () => {
+		renderFor( { display_name: 'Me', ID: 21, email: 'someone@example.com' } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat' );
+	} );
+
+	it( 'keeps a logged-out user on the normal bot', () => {
+		renderFor( { display_name: 'Me' } );
+
+		expect( slugInUse() ).toBe( 'wpcom-workflow-support_chat' );
+	} );
+
+	it( 'leaves a bot the Help Center chose alone, even for a sampled user', () => {
+		mockOdieBotNameSlug = 'automattic-chat-support_a4a';
+
+		renderFor( { display_name: 'Me', ID: 20 } );
+
+		expect( slugInUse() ).toBe( 'automattic-chat-support_a4a' );
+	} );
+} );
+
 describe( 'OdieAssistantProvider – loading human chats from Zendesk', () => {
 	const renderWith = ( props: {
 		isUserEligibleForPaidSupport: boolean;
