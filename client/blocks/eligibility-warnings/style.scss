@@ -60,66 +60,26 @@
 	.eligibility-warnings__hold-list {
 		display: flex;
 		flex-direction: column;
-		gap: 12px;
-		margin-block-end: 24px;
+		align-items: flex-start;
+		margin-bottom: 24px;
+		gap: 10px;
+
+		h1.card-heading.card-heading-20 {
+			font-size: unset;
+			font-weight: 600;
+			margin: unset;
+			color: unset;
+		}
 
 		.eligibility-warnings__hold {
+			padding: unset;
+			margin: unset;
 			width: 100%;
 		}
 
 		.eligibility-warnings__message {
-			margin: 0;
-		}
-
-		.eligibility-warnings__message-title {
-			font-weight: 500;
-		}
-	}
-
-	.eligibility-warnings__steps {
-		counter-reset: eligibility-step;
-		display: flex;
-		flex-direction: column;
-		gap: 24px;
-		list-style: none;
-		margin: 0 0 24px;
-		padding: 0;
-	}
-
-	.eligibility-warnings__step {
-		counter-increment: eligibility-step;
-		position: relative;
-		padding-inline-start: 40px;
-
-		&::before {
-			content: counter(eligibility-step);
-			position: absolute;
-			inset-block-start: 0;
-			inset-inline-start: 0;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 24px;
-			height: 24px;
-			border-radius: 50%;
-			background: var(--color-neutral-5);
-			color: var(--color-text);
-			font-size: $font-body-extra-small;
-			font-weight: 600;
-		}
-
-		.eligibility-warnings__hold .eligibility-warnings__message {
-			margin: 0;
-		}
-
-		.eligibility-warnings__message-title {
-			font-weight: 500;
-			line-height: 24px;
-			margin-block-end: 4px;
-		}
-
-		.eligibility-warnings__domain-names {
-			margin-block: 16px 0;
+			padding: 0;
+			margin: unset;
 		}
 	}
 

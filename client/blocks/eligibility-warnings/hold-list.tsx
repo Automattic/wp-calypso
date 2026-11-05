@@ -2,10 +2,10 @@ import { isEnabled } from '@automattic/calypso-config';
 import { PLAN_BUSINESS, PLAN_PERSONAL, getPlan } from '@automattic/calypso-products';
 import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
-import { __experimentalHeading as Heading } from '@wordpress/components';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
-import { Fragment, ReactNode } from 'react';
+import { ReactNode } from 'react';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
+import CardHeading from 'calypso/components/card-heading';
 import { useShowHelpCenter } from 'calypso/components/help-center';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
 import NoticeAction from 'calypso/components/notice/notice-action';
@@ -248,8 +248,6 @@ export function getBlockingMessages(
 }
 
 interface ExternalProps {
-	/** Render each hold as an `<li>` step, for use inside a numbered list. */
-	asSteps?: boolean;
 	context: EligibilityContext | null;
 	holds: EligibilityHold[];
 	isMarketplace?: boolean;
@@ -307,14 +305,7 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( {
-	asSteps,
-	context,
-	holds,
-	isMarketplace,
-	isPlaceholder,
-	translate,
-}: Props ) => {
+export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const billingPeriod = useSelector( getBillingInterval );
@@ -326,43 +317,13 @@ export const HoldList = ( {
 		hasEnTranslation,
 	} );
 
-	const renderHold = ( hold: DisplayableHold ) => (
-		<div className="eligibility-warnings__hold">
-			<div className="eligibility-warnings__message">
-				<div className="eligibility-warnings__message-title">{ holdMessages[ hold ].title }</div>
-				<p className="eligibility-warnings__message-description">
-					{ holdMessages[ hold ].description }
-				</p>
-			</div>
-			{ holdMessages[ hold ].supportUrl && (
-				<div className="eligibility-warnings__hold-action">
-					<Button compact href={ holdMessages[ hold ].supportUrl ?? '' } rel="noopener noreferrer">
-						{ translate( 'Help' ) }
-					</Button>
-				</div>
-			) }
-		</div>
-	);
-
-	const displayableHoldsToRender = holds.filter( isDisplayableHoldType );
-
-	if ( asSteps ) {
-		return (
-			<>
-				{ displayableHoldsToRender.map( ( hold ) => (
-					<li className="eligibility-warnings__step" key={ hold }>
-						{ renderHold( hold ) }
-					</li>
-				) ) }
-			</>
-		);
-	}
-
 	return (
 		<div className="eligibility-warnings__hold-list" data-testid="HoldList-Card">
-			<Heading level={ 2 } size={ 14 } className="eligibility-warnings__section-heading">
-				{ getCardHeading( context, translate ) }
-			</Heading>
+			<CardHeading>
+				<span className="eligibility-warnings__hold-heading">
+					{ getCardHeading( context, translate ) }
+				</span>
+			</CardHeading>
 			{ isPlaceholder && (
 				<div>
 					<div className="eligibility-warnings__hold">
@@ -376,9 +337,31 @@ export const HoldList = ( {
 				</div>
 			) }
 			{ ! isPlaceholder &&
-				displayableHoldsToRender.map( ( hold ) => (
-					<Fragment key={ hold }>{ renderHold( hold ) }</Fragment>
-				) ) }
+				holds.map( ( hold ) =>
+					! isDisplayableHoldType( hold ) ? null : (
+						<div className="eligibility-warnings__hold" key={ hold }>
+							<div className="eligibility-warnings__message">
+								<div className="eligibility-warnings__message-title">
+									{ holdMessages[ hold ].title }
+								</div>
+								<p className="eligibility-warnings__message-description">
+									{ holdMessages[ hold ].description }
+								</p>
+							</div>
+							{ holdMessages[ hold ].supportUrl && (
+								<div className="eligibility-warnings__hold-action">
+									<Button
+										compact
+										href={ holdMessages[ hold ].supportUrl ?? '' }
+										rel="noopener noreferrer"
+									>
+										{ translate( 'Help' ) }
+									</Button>
+								</div>
+							) }
+						</div>
+					)
+				) }
 		</div>
 	);
 };

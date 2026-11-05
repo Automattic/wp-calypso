@@ -173,39 +173,6 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
 	} );
 
-	it( 'lists the required upgrade and the site move as numbered steps', () => {
-		const state = createState( {
-			holds: [ 'NO_BUSINESS_PLAN' ],
-			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
-		} );
-
-		const { getAllByRole, getByRole } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
-			state
-		);
-
-		const steps = getAllByRole( 'listitem' );
-		expect( steps ).toHaveLength( 2 );
-		expect( steps[ 0 ] ).toHaveTextContent( 'Upgrade to a Business plan' );
-		expect( steps[ 1 ] ).toHaveTextContent( 'We’ll move your site to our managed cloud hosting' );
-		expect( steps[ 1 ] ).toHaveTextContent( 'Describes the transfer' );
-		expect( getByRole( 'list' ) ).toBeVisible();
-	} );
-
-	it( 'shows the site move without steps when nothing needs to be done first', () => {
-		const state = createState( {
-			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
-		} );
-
-		const { getByText, queryByRole } = renderWithStore(
-			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
-			state
-		);
-
-		expect( getByText( 'Describes the transfer' ) ).toBeVisible();
-		expect( queryByRole( 'list' ) ).toBeNull();
-	} );
-
 	it( 'renders warning notices when the API returns warnings', () => {
 		const state = createState( {
 			warnings: [

@@ -192,10 +192,6 @@ export const EligibilityWarnings = ( {
 	const blockingMessages = getBlockingMessages( translate );
 
 	const hasHoldsToDisplay = isPlaceholder || hasDisplayableHold( listHolds );
-	const showHoldList = hasHoldsToDisplay && ! showFreeTrial && ! hasValidBlockingHold;
-	// When the user has to act before the site can move, list their actions and the
-	// move itself as numbered steps so the order (and who does what) is clear.
-	const showSteps = showHoldList && showWarnings && ! isPlaceholder;
 
 	const noticeOffersSupport =
 		!! validBlockingHold && blockingMessages[ validBlockingHold ].opensHelpCenter;
@@ -226,27 +222,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showSteps && (
-				<CompactCard>
-					<ol className="eligibility-warnings__steps">
-						<HoldList
-							asSteps
-							context={ context }
-							holds={ listHolds }
-							isPlaceholder={ false }
-							isMarketplace={ isMarketplace }
-						/>
-						<li className="eligibility-warnings__step">
-							<div className="eligibility-warnings__message-title">
-								{ translate( 'We’ll move your site to our managed cloud hosting' ) }
-							</div>
-							<WarningList context={ context } warnings={ warnings } showContact={ false } />
-						</li>
-					</ol>
-				</CompactCard>
-			) }
-
-			{ showHoldList && ! showSteps && (
+			{ hasHoldsToDisplay && ! showFreeTrial && ! hasValidBlockingHold && (
 				<CompactCard>
 					<HoldList
 						context={ context }
@@ -266,7 +242,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showWarnings && ! showSteps && (
+			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
 					<WarningList
 						context={ context }
