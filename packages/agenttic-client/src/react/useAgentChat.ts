@@ -373,6 +373,28 @@ export const transformClientMessageToUI = (
 	return uiMessage;
 };
 
+/**
+ * Resolves the registrations' actions onto the UI messages a client message
+ * backs. In place, so the list keeps its optimistic and UI-only messages.
+ */
+const resolveMessageActions = (
+	uiMessages: UIMessage[],
+	clientMessages: ClientMessage[],
+	registrations: MessageActionsRegistration[]
+): UIMessage[] => {
+	const actionsById = new Map(
+		clientMessages.map( ( msg ) => {
+			const uiMessage = transformClientMessageToUI( msg, registrations );
+
+			return [ uiMessage?.id, uiMessage?.actions ] as const;
+		} )
+	);
+
+	return uiMessages.map( ( msg ) =>
+		actionsById.has( msg.id ) ? { ...msg, actions: actionsById.get( msg.id ) } : msg
+	);
+};
+
 // Default providers
 const createNoOpContextProvider = (): ContextProvider => ( {
 	getClientContext: () => ( {} ),
@@ -748,7 +770,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				setState( ( prev ) => ( {
 					...prev,
 					clientMessages: restoreOnError.clientMessages,
-					uiMessages: restoreOnError.uiMessages,
+					// The registrations can have changed since these were captured.
+					uiMessages: resolveMessageActions(
+						restoreOnError.uiMessages,
+						restoreOnError.clientMessages,
+						liveChat.registrations
+					),
 					isProcessing: false,
 					progressMessage: null,
 					progressPhase: null,
@@ -1142,24 +1169,20 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		( nextRegistrations: MessageActionsRegistration[] ) => {
 			renderedChat.registrations = nextRegistrations;
 
-			setState( ( prev ) => {
-				if ( prev.clientMessages.length === 0 ) {
-					return prev;
-				}
-
-				const actionsById = new Map(
-					transformMessages( prev.clientMessages ).map( ( msg ) => [ msg.id, msg.actions ] )
-				);
-
-				return {
-					...prev,
-					uiMessages: prev.uiMessages.map( ( msg ) =>
-						actionsById.has( msg.id ) ? { ...msg, actions: actionsById.get( msg.id ) } : msg
-					),
-				};
-			} );
+			setState( ( prev ) =>
+				prev.clientMessages.length === 0
+					? prev
+					: {
+							...prev,
+							uiMessages: resolveMessageActions(
+								prev.uiMessages,
+								prev.clientMessages,
+								nextRegistrations
+							),
+						}
+			);
 		},
-		[ renderedChat, setState, transformMessages ]
+		[ renderedChat, setState ]
 	);
 
 	useEffect( () => applyRegistrations( registrations ), [ applyRegistrations, registrations ] );

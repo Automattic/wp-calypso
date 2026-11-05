@@ -63,11 +63,12 @@ const REPLY: Message = {
 	parts: [ { type: 'text', text: 'Hi' } ],
 };
 
+const PARTIAL_REPLY = 'Step one';
+
 const progress: TaskUpdate = {
 	id: 'task-1',
 	status: { state: 'working' },
-	text: '',
-	kind: 'status',
+	text: PARTIAL_REPLY,
 	progressMessage: 'Writing the reply…',
 };
 const finalUpdate: TaskUpdate = {
@@ -81,10 +82,10 @@ const finalUpdate: TaskUpdate = {
 // Lets the stream run until it awaits its next pause.
 const flush = () => new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
-const hasPrompt = ( chat: UseAgentChatReturn ) =>
-	chat.messages.some( ( message ) =>
-		message.content.some( ( content ) => content.text === PROMPT )
-	);
+const hasText = ( chat: UseAgentChatReturn, text: string ) =>
+	chat.messages.some( ( message ) => message.content.some( ( content ) => content.text === text ) );
+
+const hasPrompt = ( chat: UseAgentChatReturn ) => hasText( chat, PROMPT );
 
 describe( 'useAgentChat — resumeOnRemount', () => {
 	let container: HTMLDivElement;
@@ -155,6 +156,7 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 		await mount( { agentId: 'streaming-agent', resumeOnRemount: true } );
 
 		expect( hasPrompt( chat ) ).toBe( true );
+		expect( hasText( chat, PARTIAL_REPLY ) ).toBe( true );
 		expect( chat.isProcessing ).toBe( true );
 		expect( chat.progressMessage ).toBe( 'Writing the reply…' );
 
