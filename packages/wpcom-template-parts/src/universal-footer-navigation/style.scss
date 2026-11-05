@@ -877,12 +877,12 @@
 }
 
 .wpcom-global-nav-footer--2026 {
-	/* Studio palette: gray-100 #101517, gray-50 #646970, gray-20 #a7aaad,
+	/* Studio palette: gray-100 #101517, gray-50 #646970, gray-10 #c3c4c7,
 	   blue-50 #3858e9, blue-70 #1d35b4. */
 	--lp-footer-primary-color-rgb: 16, 21, 23;
 	--lp-footer-secondary-color: #646970;
 	--lp-footer-secondary-color-rgb: 100, 105, 112;
-	--lp-footer-control-border-color: #a7aaad;
+	--lp-footer-control-border-color: #c3c4c7;
 	--lp-footer-focus-color: #3858e9;
 	--lp-footer-automattic-hover-color: #1d35b4;
 
@@ -1068,7 +1068,7 @@
 		--lp-mobile-badge-color: #101517;
 		--lp-mobile-badge-background: #fff;
 		--lp-mobile-badge-background-clip: unset;
-		--lp-mobile-badge-border-color-rgb: 167, 170, 173;
+		--lp-mobile-badge-border-color-rgb: 195, 196, 199;
 		--lp-mobile-badge-border-opacity: 1;
 	}
 
@@ -1121,12 +1121,12 @@
 		background-color: #fff;
 	}
 
-	/* Dark colourway: white / gray-20 / gray-50 / blue-20 #adbaf3. */
+	/* Dark colourway: white / gray-20 / gray-40 / blue-20 #adbaf3. */
 	&.wpcom-global-nav-footer--dark {
 		--lp-footer-primary-color-rgb: 255, 255, 255;
 		--lp-footer-secondary-color: #a7aaad;
 		--lp-footer-secondary-color-rgb: 167, 170, 173;
-		--lp-footer-control-border-color: #646970;
+		--lp-footer-control-border-color: #787c82;
 		--lp-footer-focus-color: #adbaf3;
 		--lp-footer-automattic-hover-color: #adbaf3;
 
@@ -1141,7 +1141,7 @@
 		.lp-mobile-badge {
 			--lp-mobile-badge-color: #fff;
 			--lp-mobile-badge-background: #101517;
-			--lp-mobile-badge-border-color-rgb: 100, 105, 112;
+			--lp-mobile-badge-border-color-rgb: 120, 124, 130;
 			--lp-mobile-badge-border-opacity: 1;
 		}
 
@@ -1152,6 +1152,7 @@
 	}
 	.lp-footer-bottom {
 		display: grid;
+		grid-template-columns: minmax( 0, 1fr );
 		gap: 0;
 		padding: 60px 0 28px;
 		color: var(--lp-footer-secondary-color);
@@ -1198,14 +1199,12 @@
 		height: 34px;
 	}
 
+	/* Equal columns so the social row can line up with the App Store button. */
 	.lp-footer-apps {
-		display: flex;
+		display: grid;
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
 		gap: 16px;
 		width: 100%;
-	}
-
-	.lp-footer-apps > li {
-		flex: 1;
 	}
 
 	.lp-footer-apps .lp-mobile-badge__link {
@@ -1214,9 +1213,10 @@
 		border-radius: 6px;
 	}
 
+	/* The content is centred; thin side padding keeps Google Play inside its column at 320. */
 	.lp-footer-apps .lp-mobile-badge__content {
-		padding: 11px 8px;
-		gap: 10px;
+		padding: 11px 2px;
+		gap: 9px;
 		min-height: 48px;
 		box-sizing: border-box;
 	}
@@ -1224,6 +1224,12 @@
 	.lp-footer-apps .lp-mobile-badge__content__icon {
 		top: 0;
 		width: 20px;
+		height: 22px;
+	}
+
+	.lp-footer-apps .lp-mobile-badge--type-apple-app-store .lp-mobile-badge__content__icon {
+		top: -1px;
+		width: 18px;
 		height: 23px;
 	}
 
@@ -1245,11 +1251,20 @@
 	.lp-footer-bottom .lp-footer-social-media {
 		display: flex;
 		gap: 14px;
+
+		/* Spans the App Store button whenever the store buttons show. */
+		@media ( max-width: 1151px ) {
+			justify-content: space-between;
+			gap: 0;
+			width: calc( ( 100% - 16px ) / 2 );
+		}
 	}
 
+	/* Fills the circle, border included: the glyph sits in Figma's frame. */
 	.lp-footer-bottom .lp-footer-social-media .lp-icon {
-		width: 20px;
-		height: 20px;
+		flex: none;
+		width: 32px;
+		height: 32px;
 	}
 
 	.lp-footer-legal {
@@ -1301,6 +1316,18 @@
 		--lp-color: var(--lp-footer-secondary-color-rgb);
 		text-transform: uppercase;
 		letter-spacing: 0.04em;
+
+		/* Long translations wrap rather than scroll the page at this size. */
+		@media ( max-width: 1151px ) {
+			flex-wrap: wrap;
+			row-gap: 0;
+			font-size: 15px;
+
+			/* Half a pixel down, so the larger caps centre on the wordmark. */
+			.lp-icon--custom-automattic-footer {
+				margin-top: 1px;
+			}
+		}
 	}
 
 	@media (min-width: 1152px) {
@@ -1347,8 +1374,8 @@
 		}
 
 		.lp-footer-bottom .lp-footer-social-media .lp-icon {
-			width: 20px;
-			height: 20px;
+			width: 26px;
+			height: 26px;
 		}
 
 		.lp-footer-legal {
@@ -1416,15 +1443,6 @@
 			}
 		}
 	}
-	.lp-mobile-badge__content__icon [fill]:not(mask) {
-		fill: currentColor;
-	}
-
-	.lp-mobile-badge__content__icon g > path {
-		stroke: var( --lp-mobile-badge-background );
-		stroke-width: 1;
-	}
-
 	.lp-footer-social-media a {
 		display: flex;
 		align-items: center;
@@ -1436,10 +1454,6 @@
 		border-radius: 50%;
 	}
 
-	.lp-footer-social-media .lp-icon {
-		width: 20px;
-		height: 20px;
-	}
 	/* External-link arrow per the design: a 12px regular-weight ↗ beside the 14px label,
 	   not the vendored bold, scaled glyph. */
 	:is( .lp-link-chevron-external.lp-link-chevron-external )::after,
