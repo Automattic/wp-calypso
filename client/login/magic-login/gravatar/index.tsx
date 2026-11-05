@@ -660,7 +660,7 @@ export const GravPoweredEmailCodeVerification = ( {
 					twoFactorAuthType: getDefaultTwoFactorAuthType( {
 						supportedAuthTypes: twoFactorSupportedAuthTypes,
 						notificationSent: twoFactorNotificationSent,
-						isBrowserSupported: isWebAuthnSupported(),
+						isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
 					} ),
 					redirectTo: redirectToSanitized ?? '',
 					oauth2ClientId: oauth2Client.id,

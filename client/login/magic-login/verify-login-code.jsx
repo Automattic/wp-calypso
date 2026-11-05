@@ -46,6 +46,7 @@ const VerifyLoginCode = ( {
 	twoFactorNotificationSent,
 	twoFactorSupportedAuthTypes,
 	translate,
+	locale,
 	onResendEmail,
 	isNewAccount,
 } ) => {
@@ -76,10 +77,11 @@ const VerifyLoginCode = ( {
 				page(
 					login( {
 						isJetpack: true,
+						locale,
 						twoFactorAuthType: getDefaultTwoFactorAuthType( {
 							supportedAuthTypes: twoFactorSupportedAuthTypes,
 							notificationSent: twoFactorNotificationSent,
-							isBrowserSupported: isWebAuthnSupported(),
+							isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
 						} ),
 						redirectTo: redirectToSanitized ?? undefined,
 					} )
@@ -100,6 +102,7 @@ const VerifyLoginCode = ( {
 		dispatch,
 		isAuthenticated,
 		authSuccessData,
+		locale,
 		redirectToSanitized,
 		twoFactorEnabled,
 		twoFactorNotificationSent,
