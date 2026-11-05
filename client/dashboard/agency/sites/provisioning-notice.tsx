@@ -6,11 +6,11 @@ import {
 } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
-import { Button, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useMemo, useState } from 'react';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionLinkButton } from '../../components/notice';
 import { wpcomLink } from '../../utils/link';
 import { MilestoneFeedbackModal, useMilestoneFeedback } from '../feedback';
 import {
@@ -74,11 +74,11 @@ function SetUpSiteButton( {
 	} );
 	const isListed = hasSite( searchResults );
 
-	// One <Button> whichever way it points: swapping elements crashes React
+	// One link whichever way it points: swapping elements crashes React
 	// under Google Translate (react/react#11538).
 	return (
-		<Button
-			variant="primary"
+		<NoticeActionLinkButton
+			variant="solid"
 			href={ isListed ? `/sites/${ siteSlug }` : wpcomLink( `/overview/${ siteSlug }` ) }
 			target={ isListed ? undefined : '_blank' }
 			rel={ isListed ? undefined : 'noreferrer' }
@@ -95,10 +95,9 @@ function SetUpSiteButton( {
 				}
 				onClick( event, isListed );
 			} }
-			__next40pxDefaultSize
 		>
 			{ __( 'Set up your site' ) }
-		</Button>
+		</NoticeActionLinkButton>
 	);
 }
 

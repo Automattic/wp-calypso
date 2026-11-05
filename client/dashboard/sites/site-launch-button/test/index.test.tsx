@@ -5,7 +5,7 @@
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { SiteLaunchButton } from '..';
+import { SiteLaunchButton, SiteLaunchNoticeAction } from '..';
 import { render } from '../../../test-utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
@@ -319,5 +319,34 @@ describe( '<SiteLaunchButton>', () => {
 		const launchLink = await screen.findByRole( 'link', { name: 'Launch your site' } );
 		expect( launchLink ).toHaveAttribute( 'href', expect.stringContaining( '/setup/launch-site' ) );
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+	} );
+} );
+
+describe( '<SiteLaunchNoticeAction>', () => {
+	test( 'links to the launch flow for a paid site without a custom domain', async () => {
+		mockDomainsApi( [ createMockDomain( 'kaonashi.wordpress.com', false ) ] );
+
+		render( <SiteLaunchNoticeAction site={ createMockSite() } tracksContext="test" /> );
+
+		expect( await screen.findByRole( 'link', { name: 'Launch your site' } ) ).toHaveAttribute(
+			'href',
+			expect.stringContaining( '/setup/launch-site' )
+		);
+	} );
+
+	test( 'opens the pre-launch modal for a paid site with a custom domain', async () => {
+		const user = userEvent.setup();
+		mockDomainsApi( [
+			createMockDomain( 'kaonashi.wordpress.com', false ),
+			createMockDomain( 'kaonashi.com' ),
+		] );
+
+		render( <SiteLaunchNoticeAction site={ createMockSite() } tracksContext="test" /> );
+
+		await user.click( await screen.findByRole( 'button', { name: 'Launch your site' } ) );
+
+		expect(
+			await screen.findByRole( 'dialog', { name: 'Launching makes your site public' } )
+		).toBeVisible();
 	} );
 } );
