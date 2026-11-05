@@ -17,13 +17,27 @@ import './scan-form.scss';
 
 export type SiteOption = { label: string; url: string; hostname: string };
 
+type StartError = {
+	code?: string;
+	data?: { details?: { url?: { code?: string } } };
+};
+
 export function getStartErrorMessage( error: unknown ): string {
-	const code = ( error as { code?: string } )?.code;
+	const { code, data } = ( error ?? {} ) as StartError;
+	// A rejected URL comes back as an invalid parameter, with the reason on the field.
+	if ( code === 'rest_invalid_param' && data?.details?.url?.code === 'a4a_amplify_bad_url' ) {
+		return __(
+			'We can’t audit that address. It needs to be a public http:// or https:// URL on a standard port.'
+		);
+	}
 	if ( code === 'site_unreachable' ) {
 		return __( 'We couldn’t reach that site. Check that it’s public and try again.' );
 	}
-	if ( code === 'amplify_report_limit_reached' || code === 'amplify_report_rate_limited' ) {
+	if ( code === 'amplify_report_limit_reached' ) {
 		return __( 'You’ve used all your reports for this month.' );
+	}
+	if ( code === 'amplify_report_rate_limited' ) {
+		return __( 'You’ve started too many reports today. Try again later.' );
 	}
 	if ( code === 'amplify_account_not_activated' ) {
 		return __( 'Reports unlock once your account is activated.' );
