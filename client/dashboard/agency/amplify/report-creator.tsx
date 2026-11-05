@@ -300,7 +300,11 @@ export default function AmplifyReportCreator( {
 			) : (
 				<>
 					<form className="dashboard-amplify-overview__url-form" onSubmit={ handleSubmit }>
-						<div className="dashboard-amplify-overview__url-row">
+						<HStack
+							spacing={ 2 }
+							alignment="bottom"
+							className="dashboard-amplify-overview__url-row"
+						>
 							<WebsiteAddressPicker
 								agencyId={ agencyId }
 								label={ __( 'Homepage URL' ) }
@@ -337,7 +341,7 @@ export default function AmplifyReportCreator( {
 							>
 								{ __( 'Create report' ) }
 							</Button>
-						</div>
+						</HStack>
 						{ urlError && (
 							<Spacer marginTop={ 2 } marginBottom={ 0 }>
 								<Text as="p" id={ urlErrorId } intent="error" size={ 12 } role="alert">
