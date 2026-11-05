@@ -1,14 +1,9 @@
 .agency-site-screenshot {
-	display: flex;
-	align-items: center;
-	justify-content: center;
 	min-height: 80px;
 	background: var( --color-surface-backdrop );
-	color: var( --color-text-subtle );
-	font-size: 11px;
 }
 
-.agency-site-screenshot img {
+.agency-site-screenshot__image {
 	display: block;
 	width: 100%;
 	aspect-ratio: 16 / 9;
@@ -22,7 +17,7 @@
 	min-height: 0;
 }
 
-.agency-site-screenshot[data-fill] img {
+.agency-site-screenshot[data-fill] .agency-site-screenshot__image {
 	height: 100%;
 	aspect-ratio: auto;
 }

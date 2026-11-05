@@ -1,5 +1,7 @@
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
+import { Text } from '../../../components/text';
 
 import './style.scss';
 
@@ -75,10 +77,17 @@ export default function SiteScreenshot( {
 		};
 	}, [ baseSrc, src, attempt, ready ] );
 	const statusText = failed ? __( 'Preview unavailable' ) : __( 'Preparing preview…' );
-	const placeholder = decorative ? null : <span>{ statusText }</span>;
+	const placeholder = decorative ? null : (
+		<Text size={ 11 } variant="muted">
+			{ statusText }
+		</Text>
+	);
 
 	return (
-		<div
+		<VStack
+			spacing={ 0 }
+			alignment="center"
+			justify="center"
 			className="agency-site-screenshot"
 			data-fill={ fill || undefined }
 			aria-hidden={ decorative || undefined }
@@ -86,6 +95,7 @@ export default function SiteScreenshot( {
 		>
 			{ ready && ! failed ? (
 				<img
+					className="agency-site-screenshot__image"
 					src={ src }
 					alt={ alt }
 					loading="lazy"
@@ -98,6 +108,6 @@ export default function SiteScreenshot( {
 			) : (
 				placeholder
 			) }
-		</div>
+		</VStack>
 	);
 }
