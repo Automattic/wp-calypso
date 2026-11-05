@@ -29,6 +29,7 @@ import PendingRegistrationNotice from './pending-registration-notice';
 import PointToWpcomNotice from './point-to-wpcom-notice';
 import DomainOverviewRegistration from './registration';
 import DomainOverviewSettings from './settings';
+import DomainOverviewSslStatus from './ssl-status';
 import TransferredDomainDetails from './transferred-domain-details';
 
 export default function DomainOverview() {
@@ -77,12 +78,10 @@ export default function DomainOverview() {
 					<PageHeader
 						title={ wrappableDomainName }
 						description={
-							<HStack spacing={ 2 } alignment="center" justify="flex-start">
+							<HStack spacing={ 2 } alignment="center" justify="flex-start" wrap>
 								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION &&
 									domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
-								{ domain.ssl_status === 'active' && (
-									<Badge intent="stable">{ __( 'SSL active' ) }</Badge>
-								) }
+								<DomainOverviewSslStatus domain={ domain } />
 								<span>
 									{ ( () => {
 										switch ( domain.subtype.id ) {
