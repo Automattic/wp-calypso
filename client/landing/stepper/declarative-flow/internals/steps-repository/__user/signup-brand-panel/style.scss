@@ -120,6 +120,25 @@
 	line-height: 1.5;
 }
 
+// The panel is at its narrowest here, so the copy steps down to keep the headline on two lines.
+@media ( max-width: 1199px ) {
+	.signup-brand-panel__copy {
+		inset-inline: var( --wpds-dimension-padding-lg );
+	}
+
+	.signup-brand-panel__headline {
+		font-size: 36px;
+	}
+
+	.signup-brand-panel__description {
+		font-size: 16px;
+
+		br {
+			display: none;
+		}
+	}
+}
+
 // Half the column, which is the list twice, minus half a gap.
 @keyframes signup-brand-panel-drift {
 	to {

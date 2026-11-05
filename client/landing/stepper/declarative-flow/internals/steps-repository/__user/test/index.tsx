@@ -323,6 +323,16 @@ describe( 'User email signup step', () => {
 			).toBeTruthy();
 		} );
 
+		it( 'uses the same form without the brand panel between the breakpoints', () => {
+			setViewport( { isMobile: false, isLarge: false } );
+
+			const { container } = renderUserStep();
+
+			expect( container.getElementsByClassName( 'signup-brand-panel' ) ).toHaveLength( 0 );
+			expect( screen.getByLabelText( 'Email address' ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /Continue with email/i } ) ).toBeNull();
+		} );
+
 		it( 'keeps the carousel for Woo referrers', () => {
 			const { container } = renderUserStep(
 				'/onboarding/user?user_email=test@example.com&ref=woo-hosting-solutions-flow'
@@ -388,14 +398,11 @@ describe( 'User email signup step', () => {
 		} );
 
 		it( 'leaves the band between the breakpoints out of the experiment', () => {
-			// Between 600px and 960px the login link stays in the top bar, matching login.
 			setViewport( { isMobile: false, isLarge: false } );
 
-			const { container } = renderUserStep();
+			renderUserStep();
 
 			expect( isEligibleForEntryClarity() ).toBe( false );
-			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
 		} );
 
 		it.each( [

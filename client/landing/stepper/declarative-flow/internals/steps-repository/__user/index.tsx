@@ -121,7 +121,8 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 
 	// Woo-referrer users keep the permanent email-first + slider treatment from PR #110118, and the
 	// theme grid layout is email-first with the grid instead of the slider, email below social.
-	// Everyone else at 960 px and up gets the branded layout, unless a partner's branding applies.
+	// Everyone else at 600 px and up gets the branded form, with the brand panel from 960 px, unless
+	// a partner's branding applies.
 	const isWooReferrer = queryArgs.get( 'ref' ) === WOO_HOSTING_SOLUTIONS_REF;
 	const isThemeGridLayout = queryArgs.get( 'signup_layout' ) === THEME_GRID_SIGNUP_LAYOUT;
 	const isBrandedLayout = useBrandedAccountLayout( flow ) && ! hasCustomBranding;
@@ -493,6 +494,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 		return (
 			<Step.CenteredColumnLayout
 				className={ clsx( 'step-container-v2--user', {
+					'step-container-v2--user-branded': isBrandedLayout,
 					'step-container-v2--user-mobile': isMobileCompactLayout,
 					'step-container-v2--user-entry-clarity': isEntryClarityTreatment,
 				} ) }

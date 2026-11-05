@@ -23,10 +23,10 @@ describe( 'useBrandedAccountLayout', () => {
 	beforeEach( () => {
 		jest.resetAllMocks();
 		mockUseQuery.mockReturnValue( new URLSearchParams() );
-		mockUseViewportMatch.mockReturnValue( true );
+		mockUseViewportMatch.mockReturnValue( false );
 	} );
 
-	it( 'applies to onboarding on large viewports', () => {
+	it( 'applies to onboarding from 600 px', () => {
 		const { result } = renderHook( () => useBrandedAccountLayout( 'onboarding' ) );
 
 		expect( result.current ).toBe( true );
@@ -38,8 +38,8 @@ describe( 'useBrandedAccountLayout', () => {
 		expect( result.current ).toBe( false );
 	} );
 
-	it( 'leaves out viewports below 960 px', () => {
-		mockUseViewportMatch.mockReturnValue( false );
+	it( 'leaves out viewports below 600 px', () => {
+		mockUseViewportMatch.mockReturnValue( true );
 
 		const { result } = renderHook( () => useBrandedAccountLayout( 'onboarding' ) );
 
