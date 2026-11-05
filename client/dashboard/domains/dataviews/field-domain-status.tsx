@@ -75,15 +75,20 @@ export const DomainStatusField = ( {
 
 	return (
 		<VStack spacing={ 1 }>
-			<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
-				<Text
-					intent={ isActivating ? undefined : domain.domain_status.type }
-					variant={ isActivating ? 'muted' : undefined }
+			<Tooltip text={ isActivating ? activationTime : undefined }>
+				<HStack
+					spacing={ 1 }
+					justify="flex-start"
+					expanded={ false }
+					style={ isActivating ? { cursor: 'default' } : undefined }
 				>
-					{ isActivating ? __( 'Activating' ) : label }
-				</Text>
-				{ isActivating && (
-					<Tooltip text={ activationTime }>
+					<Text
+						intent={ isActivating ? undefined : domain.domain_status.type }
+						variant={ isActivating ? 'muted' : undefined }
+					>
+						{ isActivating ? __( 'Activating' ) : label }
+					</Text>
+					{ isActivating && (
 						<Text
 							variant="muted"
 							role="img"
@@ -93,9 +98,9 @@ export const DomainStatusField = ( {
 						>
 							<Icon icon={ info } style={ { fill: 'currentColor' } } />
 						</Text>
-					</Tooltip>
-				) }
-			</HStack>
+					) }
+				</HStack>
+			</Tooltip>
 			{ ! isActivating && domain.domain_status?.cta && getCtaLink( domain ) }
 		</VStack>
 	);

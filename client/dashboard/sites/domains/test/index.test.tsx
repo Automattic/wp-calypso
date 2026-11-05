@@ -534,6 +534,21 @@ describe( '<SiteDomains>', () => {
 		expect( screen.getByRole( 'img', { name: 'Can take up to 15 minutes' } ) ).toBeVisible();
 	} );
 
+	test( 'shows the activation time when hovering the activating status', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ { ...domain, primary_domain: false }, defaultAddressDomain ],
+			ssl: { domain: domain.domain, certificate_provisioned: false, is_newly_registered: true },
+		} );
+		const user = userEvent.setup();
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await user.hover( await screen.findByText( 'Activating' ) );
+
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( 'Can take up to 15 minutes' );
+	} );
+
 	test( 'shows a new domain as activating while it is set as the primary address', async () => {
 		nock.cleanAll();
 		mockApis( {
