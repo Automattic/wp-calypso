@@ -44,8 +44,8 @@ const domain = {
 } as DomainSummary;
 const site = { ID: 123, slug: 'site-slug.com' } as Site;
 
-function ViewSettings() {
-	const actions = useActions( { user: {} as User } );
+function ViewSettings( { siteList }: { siteList?: Site } ) {
+	const actions = useActions( { user: {} as User, site: siteList, layout: 'table' } );
 	const viewSettings = actions.find( ( { id } ) => id === 'manage-domain' ) as unknown as {
 		callback: ( items: DomainSummary[] ) => void;
 	};
@@ -71,11 +71,11 @@ function renderAt( url: string ) {
 	const router = createRouter( {
 		history: createMemoryHistory( { initialEntries: [ url ] } ),
 		routeTree: rootRoute.addChildren( [
-			page( 'domains', ViewSettings ),
+			page( 'domains', () => <ViewSettings /> ),
 			page( 'domains/$domainName' ),
 			page( 'domains/$domainName/dns' ),
 			page( 'domains/$domainName/no-sidebar' ),
-			page( 'sites/$siteSlug/domains', ViewSettings ),
+			page( 'sites/$siteSlug/domains', () => <ViewSettings siteList={ site } /> ),
 		] ),
 	} );
 

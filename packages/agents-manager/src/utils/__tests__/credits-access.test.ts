@@ -6,6 +6,7 @@ import {
 	getCreditsRefusalNotice,
 	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
+	getCreditsTopUpsNotice,
 	parseCreditsAccess,
 } from '../credits-access';
 
@@ -200,6 +201,25 @@ describe( 'getCreditsNoticeMessage', () => {
 			'1 credit left. Ask a site admin to add more.'
 		);
 	} );
+
+	it.each( [
+		[ 'the plan buyer', undefined, 'Now using top-ups: 25k left.' ],
+		[
+			'someone who can’t buy',
+			'site-admin',
+			'Now using top-ups: 25k left. Ask a site admin to add more.',
+		],
+		[
+			'an admin who didn’t buy the plan',
+			'plan-owner',
+			'Now using top-ups: 25k left. Ask the plan owner to upgrade.',
+		],
+	] as const )(
+		'tells %s top-ups are paying, and how many are left',
+		( _who, askToUpgrade, message ) => {
+			expect( getCreditsNoticeMessage( 'top_ups', 25_000, askToUpgrade ) ).toBe( message );
+		}
+	);
 } );
 
 describe( 'getCreditsOutNotice', () => {
@@ -219,6 +239,20 @@ describe( 'getCreditsOutNotice', () => {
 			message: 'You’ve used all your site credits. Ask a site admin to add more.',
 			action: undefined,
 			dismissible: false,
+		} );
+	} );
+} );
+
+describe( 'getCreditsTopUpsNotice', () => {
+	it( 'can be closed, with the purchase action', () => {
+		const action = { label: 'Upgrade', href: UPGRADE_URL };
+		const onDismiss = jest.fn();
+		expect( getCreditsTopUpsNotice( 25_000, undefined, action, onDismiss ) ).toEqual( {
+			icon: false,
+			message: 'Now using top-ups: 25k left.',
+			action,
+			dismissible: true,
+			onDismiss,
 		} );
 	} );
 } );

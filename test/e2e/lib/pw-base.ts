@@ -794,7 +794,7 @@ export const test = base.extend<
 			const message = await clientEmail.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
 				sentTo: testUser.email,
-				subject: 'Activate',
+				subject: 'Confirm your email address',
 			} );
 			const links = await clientEmail.getLinksFromMessage( message );
 			const activationLink = links.find( ( link: string ) =>
