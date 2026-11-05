@@ -326,3 +326,197 @@ html[dir='rtl'] .dashboard-amplify-score-preview__card {
 		transition: none;
 	}
 }
+
+/* Sizes and positions inside the overview hero. */
+
+.dashboard-amplify-overview__hero-preview .dashboard-amplify-score-preview__anchor,
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-mode='full'] {
+	width: min( 100%, 900px );
+	height: 300px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='false'] {
+	width: min( 100%, 800px );
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-expanded='true'] {
+	width: min( 100%, 1120px );
+	height: 540px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'] {
+	--score-card-scale: 0.8;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full']
+	.dashboard-amplify-score-preview__sheet {
+	inset-block-start: 40px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards:not( [data-mode='full'] )[data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'],
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards:not( [data-mode='full'] )[data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	scale: 1.08;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+	.dashboard-amplify-score-preview__sheet {
+	width: 540px;
+	height: 340px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+	inset-inline-start: 0;
+	inset-block-start: 40px;
+	z-index: 1;
+	transform: scale( var( --score-card-scale ) ) rotate( -1deg );
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	inset-inline-start: 368px;
+	inset-block-start: 40px;
+	z-index: 2;
+	transform: scale( var( --score-card-scale ) ) rotate( 1deg );
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true'] {
+	--score-card-scale: 1;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='true'] {
+	width: min( calc( 100% - 48px ), 1120px );
+	height: 440px;
+}
+
+.dashboard-amplify-overview__hero-preview
+	.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+	.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+	inset-inline-start: calc( 100% - 540px );
+	z-index: 3;
+}
+
+@container amplify-preview ( max-width: 1179px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='true'] {
+		width: min( calc( 100% - 48px ), 840px );
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true'] {
+		--score-card-scale: 0.75;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: calc( 100% - 405px );
+	}
+}
+
+@container amplify-preview ( max-width: 899px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='true'] {
+		width: min( 100%, 540px );
+		height: 780px;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true'] {
+		--score-card-scale: 1;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='human'],
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 0;
+		width: 100%;
+		height: 340px;
+		transform: none;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+		inset-block-start: 24px;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='true']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-block-start: 380px;
+	}
+}
+
+@container amplify-preview ( max-width: 799px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='false'] {
+		width: min( 100%, 680px );
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false'] {
+		--score-card-scale: 0.65;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 329px;
+	}
+}
+
+@container amplify-preview ( max-width: 679px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__anchor[data-mode='full'][data-expanded='false'] {
+		width: min( 100%, 320px );
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false'] {
+		--score-card-scale: 0.55;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='human'] {
+		inset-block-start: 24px;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 23px;
+		inset-block-start: 112px;
+	}
+}
+
+@container amplify-preview ( max-width: 319px ) {
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false'] {
+		--score-card-scale: 0.5;
+	}
+
+	.dashboard-amplify-overview__hero-preview
+		.dashboard-amplify-score-preview__cards[data-mode='full'][data-expanded='false']
+		.dashboard-amplify-score-preview__sheet[data-perspective='ai'] {
+		inset-inline-start: 18px;
+	}
+}
