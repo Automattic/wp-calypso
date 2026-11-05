@@ -28,11 +28,11 @@ import type { AgencyTierId, AmplifyMode, AmplifyUsage } from '@automattic/api-co
 
 import './report-creator.scss';
 
-const REPORT_MODES: {
+const getReportModes = (): {
 	value: AmplifyMode;
 	label: string;
 	description: string;
-}[] = [
+}[] => [
 	{
 		value: 'full',
 		label: __( 'Full report' ),
@@ -88,10 +88,11 @@ function ReportTypeCards( {
 } ) {
 	const labelId = useId();
 	const isWide = useViewportMatch( 'large' );
+	const reportModes = getReportModes();
 	const cardRefs = useRef< ( HTMLElement | null )[] >( [] );
 	// Like native radios: the arrow keys move and select, wrapping at the ends.
 	const selectByKey = ( key: string, index: number ) => {
-		const last = REPORT_MODES.length - 1;
+		const last = reportModes.length - 1;
 		const next = isRTL() ? 'ArrowLeft' : 'ArrowRight';
 		const previous = isRTL() ? 'ArrowRight' : 'ArrowLeft';
 		let target: number | null = null;
@@ -107,7 +108,7 @@ function ReportTypeCards( {
 		if ( target === null ) {
 			return false;
 		}
-		onSelect( REPORT_MODES[ target ].value );
+		onSelect( reportModes[ target ].value );
 		cardRefs.current[ target ]?.focus();
 		return true;
 	};
@@ -117,10 +118,10 @@ function ReportTypeCards( {
 			<Grid
 				role="radiogroup"
 				aria-labelledby={ labelId }
-				columns={ isSingleColumn || ! isWide ? 1 : REPORT_MODES.length }
+				columns={ isSingleColumn || ! isWide ? 1 : reportModes.length }
 				gap="sm"
 			>
-				{ REPORT_MODES.map( ( option, index ) => {
+				{ reportModes.map( ( option, index ) => {
 					const isSelected = option.value === selected;
 					return (
 						<Card
