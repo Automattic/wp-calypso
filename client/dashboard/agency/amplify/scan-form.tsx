@@ -3,12 +3,14 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalInputControl as InputControl,
 	__experimentalInputControlSuffixWrapper as InputControlSuffixWrapper,
+	__experimentalVStack as VStack,
 	Button,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { closeSmall } from '@wordpress/icons';
 import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { Text } from '../../components/text';
 import SiteScreenshot from '../components/site-screenshot';
 import { normalizeAmplifyUrl } from './url';
 import type { CSSProperties } from 'react';
@@ -182,6 +184,16 @@ export function WebsiteAddressPicker( {
 	);
 	const showSuggestions =
 		isOpen && ! selectedSite && ( suggestions.length > 0 || ! normalizeAmplifyUrl( value ) );
+	// Loading, error and empty messages sit beside the listbox, which only holds options.
+	let statusMessage: string | null = null;
+	if ( firstSites.isLoading ) {
+		statusMessage = __( 'Loading connected sites…' );
+	} else if ( firstSites.isError || allSites.isError ) {
+		statusMessage = __( 'Connected sites are unavailable. You can still enter a public URL.' );
+	} else if ( ! suggestions.length ) {
+		statusMessage = __( 'No matching connected sites. You can continue with a public URL.' );
+	}
+	const showOptions = showSuggestions && ! statusMessage;
 	useLayoutEffect( () => {
 		if ( ! portalSuggestions || ! showSuggestions ) {
 			return;
@@ -234,63 +246,64 @@ export function WebsiteAddressPicker( {
 				}
 				return ( current - 1 + suggestions.length ) % suggestions.length;
 			} );
-		} else if ( event.key === 'Enter' && showSuggestions && activeIndex >= 0 ) {
+		} else if ( event.key === 'Enter' && showOptions && activeIndex >= 0 ) {
 			event.preventDefault();
 			chooseSite( suggestions[ activeIndex ] );
 		}
 	};
-	let suggestionContent: React.ReactNode;
-	if ( firstSites.isLoading ) {
-		suggestionContent = <p>{ __( 'Loading connected sites…' ) }</p>;
-	} else if ( firstSites.isError || allSites.isError ) {
-		suggestionContent = (
-			<p>{ __( 'Connected sites are unavailable. You can still enter a public URL.' ) }</p>
-		);
-	} else if ( suggestions.length ) {
-		suggestionContent = suggestions.map( ( site, index ) => (
-			// The field keeps focus and moves through the options with aria-activedescendant.
-			<div
-				id={ `${ idPrefix }-${ index }` }
-				key={ site.url }
-				role="option"
-				tabIndex={ -1 }
-				aria-selected={ activeIndex === index }
-				className="dashboard-amplify-scan-form__suggestion"
-				data-active={ activeIndex === index }
-				onMouseEnter={ () => setActiveIndex( index ) }
-				// Choosing on mousedown keeps focus in the field, so the list doesn't blur closed first.
-				onMouseDown={ ( event ) => {
-					event.preventDefault();
-					chooseSite( site );
-				} }
-			>
-				<span className="dashboard-amplify-scan-form__suggestion-thumbnail">
-					<SiteScreenshot url={ site.url } alt="" compact decorative fill />
-				</span>
-				<span className="dashboard-amplify-scan-form__suggestion-details">
-					<strong>{ site.label }</strong>
-					<span className="dashboard-amplify-url">{ site.hostname }</span>
-				</span>
-			</div>
-		) );
-	} else {
-		suggestionContent = (
-			<p>{ __( 'No matching connected sites. You can continue with a public URL.' ) }</p>
-		);
-	}
 
 	const suggestionList = showSuggestions && (
 		<div
 			ref={ listRef }
 			className={ `dashboard-amplify-scan-form__suggestions${ portalSuggestions ? ' is-portaled' : '' }` }
-			id={ listId }
-			role="listbox"
-			tabIndex={ -1 }
-			aria-label={ __( 'Connected sites' ) }
 			style={ portalSuggestions ? portalStyle : undefined }
+			role="presentation"
 			onMouseDown={ portalSuggestions ? ( event ) => event.preventDefault() : undefined }
 		>
-			{ suggestionContent }
+			{ statusMessage ? (
+				<Text
+					as="p"
+					role="status"
+					size={ 13 }
+					variant="muted"
+					className="dashboard-amplify-scan-form__suggestions-status"
+				>
+					{ statusMessage }
+				</Text>
+			) : (
+				<div id={ listId } role="listbox" tabIndex={ -1 } aria-label={ __( 'Connected sites' ) }>
+					{ suggestions.map( ( site, index ) => (
+						// The field keeps focus and moves through the options with aria-activedescendant.
+						<div
+							id={ `${ idPrefix }-${ index }` }
+							key={ site.url }
+							role="option"
+							tabIndex={ -1 }
+							aria-selected={ activeIndex === index }
+							className="dashboard-amplify-scan-form__suggestion"
+							data-active={ activeIndex === index }
+							onMouseEnter={ () => setActiveIndex( index ) }
+							// Choosing on mousedown keeps focus in the field, so the list doesn't blur closed first.
+							onMouseDown={ ( event ) => {
+								event.preventDefault();
+								chooseSite( site );
+							} }
+						>
+							<span className="dashboard-amplify-scan-form__suggestion-thumbnail">
+								<SiteScreenshot url={ site.url } alt="" compact decorative fill />
+							</span>
+							<VStack spacing={ 0.5 } className="dashboard-amplify-scan-form__suggestion-details">
+								<Text weight={ 600 } truncate>
+									{ site.label }
+								</Text>
+								<Text size={ 12 } variant="muted" truncate className="dashboard-amplify-url">
+									{ site.hostname }
+								</Text>
+							</VStack>
+						</div>
+					) ) }
+				</div>
+			) }
 		</div>
 	);
 
@@ -325,10 +338,9 @@ export function WebsiteAddressPicker( {
 				placeholder={ placeholder }
 				invalid={ invalid }
 				combobox={ {
-					expanded: showSuggestions,
+					expanded: showOptions,
 					listId,
-					activeId:
-						showSuggestions && activeIndex >= 0 ? `${ idPrefix }-${ activeIndex }` : undefined,
+					activeId: showOptions && activeIndex >= 0 ? `${ idPrefix }-${ activeIndex }` : undefined,
 				} }
 			/>
 			{ portalSuggestions && suggestionList
