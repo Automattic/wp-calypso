@@ -10,32 +10,25 @@ const theme = ( name: string ) =>
 
 const WALL_COLUMNS = [
 	[
-		aiExample( '04-ceramics' ),
-		theme( 'punk' ),
-		aiExample( '07-agency' ),
-		theme( 'patisserie' ),
-		aiExample( '10-travel-blog' ),
-		theme( 'noteslab' ),
 		aiExample( '01-think-pieces' ),
+		theme( 'stranger' ),
+		aiExample( '04-ceramics' ),
+		aiExample( '07-agency' ),
+		aiExample( '10-travel-blog' ),
 	],
 	[
+		aiExample( '02-tattoo' ),
 		theme( 'dropp' ),
 		aiExample( '05-bakery' ),
-		theme( 'clairevoyant' ),
 		aiExample( '08-paintings' ),
-		theme( 'stranger' ),
 		aiExample( '11-pet-adoption' ),
-		theme( 'raconteur' ),
 	],
 	[
-		aiExample( '09-board-shop' ),
 		theme( 'alter' ),
 		aiExample( '03-coffee' ),
-		theme( 'sankofa' ),
+		theme( 'clairevoyant' ),
+		aiExample( '09-board-shop' ),
 		aiExample( '06-portfolio' ),
-		theme( 'psychedeli' ),
-		aiExample( '02-tattoo' ),
-		theme( 'primarium' ),
 	],
 ];
 
@@ -49,8 +42,8 @@ export const SignupBrandPanel = () => {
 					<div className="signup-brand-panel__wall">
 						{ WALL_COLUMNS.map( ( column, columnIndex ) => (
 							<div className="signup-brand-panel__column" key={ columnIndex }>
-								{ /* Twice over, so the drift loops without a jump. */ }
-								{ [ ...column, ...column ].map( ( src, cardIndex ) => (
+								{ /* An even number of times, so the drift loops without a jump, and enough to fill tall panels. */ }
+								{ [ ...column, ...column, ...column, ...column ].map( ( src, cardIndex ) => (
 									<img
 										className="signup-brand-panel__card"
 										src={ src }

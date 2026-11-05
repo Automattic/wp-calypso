@@ -42,15 +42,14 @@
 	pointer-events: none;
 	user-select: none;
 
-	// Opaque, so the grid can't show through a theme as it fades.
 	&::after {
 		content: '';
 		position: absolute;
 		inset: 0;
 		background: linear-gradient(
 			180deg,
-			rgb( from var( --studio-wordpress-blue-50 ) r g b / 0 ) 34%,
-			rgb( from var( --studio-wordpress-blue-50 ) r g b / 0.92 ) 58%,
+			rgb( from var( --studio-wordpress-blue-50 ) r g b / 0 ) 44%,
+			rgb( from var( --studio-wordpress-blue-50 ) r g b / 0.92 ) 60%,
 			var( --studio-wordpress-blue-50 ) 66%
 		);
 	}
