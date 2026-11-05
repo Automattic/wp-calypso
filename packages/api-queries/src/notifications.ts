@@ -8,6 +8,17 @@ import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react
 
 const NOTIFICATIONS_QUERY_KEY = [ 'notifications', 'notes' ];
 
+export const getNotificationsQueryKey = () => NOTIFICATIONS_QUERY_KEY;
+
+/** Marks notes read in every cached notifications list. */
+export function markCachedNotesRead( queryClient: QueryClient, noteIds: number[] ) {
+	const ids = new Set( noteIds );
+	queryClient.setQueriesData< NotificationNote[] >(
+		{ queryKey: NOTIFICATIONS_QUERY_KEY },
+		( notes ) => notes?.map( ( note ) => ( ids.has( note.id ) ? { ...note, read: 1 } : note ) )
+	);
+}
+
 export const notificationsQuery = ( params: FetchNotificationsParams ) =>
 	queryOptions( {
 		queryKey: [ ...NOTIFICATIONS_QUERY_KEY, params ],
@@ -27,11 +38,7 @@ export const markNotificationsReadMutation = ( queryClient: QueryClient ) =>
 			const previous = queryClient.getQueriesData< NotificationNote[] >( {
 				queryKey: NOTIFICATIONS_QUERY_KEY,
 			} );
-			queryClient.setQueriesData< NotificationNote[] >(
-				{ queryKey: NOTIFICATIONS_QUERY_KEY },
-				( notes ) =>
-					notes?.map( ( note ) => ( noteIds.includes( note.id ) ? { ...note, read: 1 } : note ) )
-			);
+			markCachedNotesRead( queryClient, noteIds );
 			return { previous };
 		},
 		onError: ( _error, _noteIds, context ) => {

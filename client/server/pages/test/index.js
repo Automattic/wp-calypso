@@ -142,6 +142,7 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
 			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
@@ -151,6 +152,7 @@ const buildApp = ( environment ) => {
 			attachBuildTimestamp,
 			attachI18n,
 			attachHead,
+			bumpStat,
 			customizeClientDataForRequest,
 			renderJsx,
 			serverRender,
@@ -1945,6 +1947,21 @@ describe( 'dashboard app', () => {
 		expect( request.context.sectionName ).toBe( 'dashboard-dotcom' );
 		expect( response.statusCode ).toBe( 404 );
 		expect( app.getMocks().serverRender ).toHaveBeenCalled();
+	} );
+
+	it( 'bumps dashboard-404 for unmatched paths', async () => {
+		await app.run( { request: { url: '/does-not-exist', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith( 'dashboard-404', '/does-not-exist' );
+	} );
+
+	it( 'bumps dashboard-404-probing for paths bots probe', async () => {
+		await app.run( { request: { url: '/sitemap.xml', hostname: 'my.wordpress.com' } } );
+
+		expect( app.getMocks().bumpStat ).toHaveBeenCalledWith(
+			'dashboard-404-probing',
+			'/sitemap.xml'
+		);
 	} );
 
 	it( 'serves known dashboard routes without a 404', async () => {

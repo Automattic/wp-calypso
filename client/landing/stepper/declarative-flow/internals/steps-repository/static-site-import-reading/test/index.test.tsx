@@ -114,6 +114,22 @@ describe( 'StaticSiteImportReading', () => {
 		expect( recordSignupComplete ).not.toHaveBeenCalled();
 	} );
 
+	it( 'keeps an HTTP source URL as HTTP', async () => {
+		let postedBody: Record< string, unknown > = {};
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session', ( body ) => {
+				postedBody = body;
+				return true;
+			} )
+			.query( true )
+			.reply( 200, sessionResponse );
+
+		const submit = render( 'from=http://busybearscleaning.com&platform=wix' );
+
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( continueWithSession ) );
+		expect( postedBody ).toEqual( { source_url: 'http://busybearscleaning.com' } );
+	} );
+
 	it( 'records the signup and applies the flow’s site settings to a site checkout created', async () => {
 		setSignupIsNewUser( 7 );
 		const expectedSettings = { blogname: 'My Site', blog_public: 0, wpcom_public_coming_soon: 1 };
@@ -163,15 +179,18 @@ describe( 'StaticSiteImportReading', () => {
 		expect( getSignupCompleteFlowName() ).toBeNull();
 	} );
 
-	it( 'reports the flow as unavailable when the API can’t start a session', async () => {
-		mockApi().post( '/wpcom/v2/static-site-import-session' ).query( true ).reply( 404, {
-			code: 'static_site_import_disabled',
-			message: 'Static site import is not enabled.',
-		} );
+	it.each( [
+		[ 404, 'static_site_import_disabled', 'unavailable' ],
+		[ 409, 'static_site_import_source_is_wordpress', 'migrate' ],
+	] )( 'answers a %d %s error with %s', async ( status, code, action ) => {
+		mockApi()
+			.post( '/wpcom/v2/static-site-import-session' )
+			.query( true )
+			.reply( status, { code, message: code } );
 
 		const submit = render( 'from=busybearscleaning.com' );
 
-		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'unavailable' } ) );
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action } ) );
 	} );
 
 	it( 'stops at a refused source instead of offering another route', async () => {

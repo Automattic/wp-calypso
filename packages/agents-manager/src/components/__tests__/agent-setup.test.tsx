@@ -8,6 +8,7 @@ const mockAgentManager = {
 	hasAgent: jest.fn( () => true ),
 	abortCurrentRequest: jest.fn(),
 	removeAgent: jest.fn(),
+	getAgentSessionId: jest.fn< string | null, [] >(),
 };
 let mockIsOpen = true;
 let mockHasAiChatEntry = false;
@@ -115,6 +116,8 @@ describe( 'AgentSetup', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockAgentManager.hasAgent.mockReturnValue( true );
+		// The live agent follows the tab's session unless a test says otherwise.
+		mockAgentManager.getAgentSessionId.mockImplementation( () => getSessionId() || null );
 		mockIsOpen = true;
 		mockHasAiChatEntry = false;
 		mockIsStoreReady = true;
@@ -401,20 +404,40 @@ describe( 'AgentSetup', () => {
 		expect( screen.getByTestId( 'published-session' ).textContent ).toBe( 'session-live' );
 	} );
 
-	it( 'loads a conversation selected from the history view', async () => {
+	it( 'stops the previous reply before loading a conversation selected from the history view', async () => {
 		render( manager( 111 ) );
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
 
 		fireEvent.click( screen.getByText( 'go-history' ) );
 
-		// `AgentDock` saves the selected conversation before navigating back.
+		// `AgentDock` saves the selection first; the agent still runs the previous chat.
+		mockAgentManager.getAgentSessionId.mockReturnValue( 'session-previous' );
 		saveSessionId( 'session-selected' );
 		fireEvent.click( screen.getByText( 'go-chat' ) );
 
 		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 2 ) );
+
 		expect( mockCreateAgentConfig ).toHaveBeenLastCalledWith(
 			expect.objectContaining( { sessionId: 'session-selected' } )
 		);
+		expect( mockAgentManager.abortCurrentRequest ).toHaveBeenCalled();
+		expect( mockAgentManager.removeAgent.mock.invocationCallOrder[ 0 ] ).toBeLessThan(
+			mockCreateAgentConfig.mock.invocationCallOrder[ 1 ]
+		);
+	} );
+
+	it( 'keeps the running reply when the same conversation is selected again', async () => {
+		render( manager( 111 ) );
+		await waitFor( () => expect( mockCreateAgentConfig ).toHaveBeenCalledTimes( 1 ) );
+
+		fireEvent.click( screen.getByText( 'go-history' ) );
+		saveSessionId( getSessionId() );
+		fireEvent.click( screen.getByText( 'go-chat' ) );
+
+		await act( async () => {} );
+
+		expect( mockAgentManager.abortCurrentRequest ).not.toHaveBeenCalled();
+		expect( mockAgentManager.removeAgent ).not.toHaveBeenCalled();
 	} );
 
 	it( 'ignores a superseded initialization that resolves after a site switch', async () => {

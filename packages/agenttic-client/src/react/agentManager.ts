@@ -23,6 +23,7 @@ import {
 	extractToolResultsFromMessage,
 	messageCarriesToolPayload,
 } from './conversationUtils';
+import { endResumableChat } from './liveChat';
 import type {
 	Client,
 	ClientConfig,
@@ -328,7 +329,13 @@ function createAgentManager(): AgentManager {
 		},
 
 		removeAgent( key: string ): boolean {
-			return agents.delete( key );
+			const isRemoved = agents.delete( key );
+
+			if ( isRemoved ) {
+				endResumableChat( key );
+			}
+
+			return isRemoved;
 		},
 
 		async sendMessage(
@@ -969,6 +976,8 @@ function createAgentManager(): AgentManager {
 		},
 
 		clear(): void {
+			agents.forEach( ( _agent, key ) => endResumableChat( key ) );
+
 			agents.clear();
 		},
 	};

@@ -10,6 +10,7 @@ const ESM_PACKAGE_PATTERNS = [
 	'@fnando',
 	`@wordpress${ PATH_SEPARATOR }theme`,
 	`(?:.*${ PATH_SEPARATOR })?uuid`,
+	`(?:.*${ PATH_SEPARATOR })?marked`,
 	'@a2ui',
 	`@preact${ PATH_SEPARATOR }signals-core`,
 	'@?lit(?:-html|-element)?',
