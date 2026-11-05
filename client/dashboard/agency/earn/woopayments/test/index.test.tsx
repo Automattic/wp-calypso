@@ -168,7 +168,7 @@ describe( 'EarnWooPayments', () => {
 		const { recordTracksEvent, router } = render( <EarnWooPayments />, { queryClient } );
 
 		expect( await screen.findByRole( 'dialog', PICKER ) ).toBeVisible();
-		expect( screen.getByText( 'store.example.com' ) ).toBeInTheDocument();
+		expect( await screen.findByText( 'store.example.com' ) ).toBeInTheDocument();
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 		await waitFor( () => expect( screen.queryByRole( 'dialog', PICKER ) ).not.toBeInTheDocument() );
