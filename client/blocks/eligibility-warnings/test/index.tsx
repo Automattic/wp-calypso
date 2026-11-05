@@ -173,6 +173,53 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
 	} );
 
+	it( 'describes the site move as happening after the upgrade', () => {
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN' ],
+			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
+		} );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings
+				onProceed={ noop }
+				context="plugin-details"
+				atomicTransferAction="plugins"
+				inModal
+			/>,
+			state
+		);
+
+		expect(
+			getByText(
+				'Once you’ve upgraded, we’ll move your site over to WordPress.com’s advanced managed cloud hosting.'
+			)
+		).toBeVisible();
+		expect( queryByText( /^To install plugins, we’ll need to move your site/ ) ).toBeNull();
+	} );
+
+	it( 'keeps the usual site move intro when no upgrade is needed', () => {
+		const state = createState( {
+			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
+		} );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings
+				onProceed={ noop }
+				context="plugin-details"
+				atomicTransferAction="plugins"
+				inModal
+			/>,
+			state
+		);
+
+		expect(
+			getByText(
+				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			)
+		).toBeVisible();
+		expect( queryByText( /^Once you’ve upgraded/ ) ).toBeNull();
+	} );
+
 	it( 'renders warning notices when the API returns warnings', () => {
 		const state = createState( {
 			warnings: [
