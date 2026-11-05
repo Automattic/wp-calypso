@@ -115,6 +115,11 @@
 		);
 		animation: a4a-sidebar-scroll-fade linear both;
 		animation-timeline: scroll(self);
+		// Chrome holds a finished scroll-driven animation at its end state even after
+		// the menu stops scrolling, so a menu scrolled to the bottom kept its top fade
+		// once the window grew. Ending the range just past the scroll end keeps the
+		// animation from ever finishing.
+		animation-range-end: calc(100% + 0.5px);
 	}
 }
 
