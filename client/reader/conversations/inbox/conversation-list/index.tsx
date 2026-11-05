@@ -9,22 +9,28 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useMemo, type ReactNode } from 'react';
+import { useEffect, useMemo, type ReactNode } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
-import { ConversationListItem, type OpenSource } from './list-item';
+import { ConversationListItem, type InboxItem, type OpenSource } from './list-item';
 import { ConversationListTabs, type InboxTab } from './tabs';
 import { ConversationListToolbar, type Density, type SortOrder } from './toolbar';
-import type { Conversation } from '../group-notes';
 
 import './style.scss';
 
 interface Props {
-	conversations: Conversation[];
+	items: InboxItem[];
 	unreadCount: number;
 	isLoading: boolean;
 	isError?: boolean;
 	onRetry?: () => void;
+	hasMore?: boolean;
+	/** False shows a Load more button in place of loading on scroll. */
+	autoLoad?: boolean;
+	isLoadingMore?: boolean;
+	isLoadMoreError?: boolean;
+	onLoadMore?: () => void;
 	tab: InboxTab;
 	onTabChange: ( tab: InboxTab ) => void;
 	search: string;
@@ -33,20 +39,27 @@ interface Props {
 	onDensityChange: ( density: Density ) => void;
 	sort: SortOrder;
 	onSortChange: ( sort: SortOrder ) => void;
+	/** Loaded conversations with notes to mark, which can be fewer than `unreadCount`. */
+	markAllCount: number;
 	onMarkAllRead: () => void;
 	isShortcutsOpen: boolean;
 	onShortcutsToggle: ( isOpen: boolean ) => void;
 	selectedKey?: string;
 	openOnFocus: boolean;
-	onSelect: ( conversation: Conversation, source: OpenSource ) => void;
+	onSelect: ( item: InboxItem, source: OpenSource ) => void;
 }
 
 export function ConversationList( {
-	conversations,
+	items,
 	unreadCount,
 	isLoading,
 	isError,
 	onRetry,
+	hasMore,
+	autoLoad = true,
+	isLoadingMore,
+	isLoadMoreError,
+	onLoadMore,
 	tab,
 	onTabChange,
 	search,
@@ -55,6 +68,7 @@ export function ConversationList( {
 	onDensityChange,
 	sort,
 	onSortChange,
+	markAllCount,
 	onMarkAllRead,
 	isShortcutsOpen,
 	onShortcutsToggle,
@@ -64,6 +78,14 @@ export function ConversationList( {
 }: Props ) {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
+	const { ref: endRef, inView: isEndInView } = useInView();
+
+	// Runs again after each page, so a page the filters empty out still loads the next one.
+	useEffect( () => {
+		if ( isEndInView && autoLoad && hasMore && ! isLoadingMore && ! isLoadMoreError ) {
+			onLoadMore?.();
+		}
+	}, [ isEndInView, autoLoad, hasMore, isLoadingMore, isLoadMoreError, onLoadMore ] );
 
 	const emptyStates = {
 		all: {
@@ -91,22 +113,23 @@ export function ConversationList( {
 			{ start: today.clone().subtract( 30, 'days' ), label: translate( 'Older than a week' ) },
 			{ start: moment( 0 ), label: translate( 'Older than a month' ) },
 		];
-		const result: { label: string; items: Conversation[] }[] = [];
-		if ( sort !== 'newest_replies' ) {
-			return conversations.length ? [ { label: '', items: conversations } ] : result;
+		const result: { label: string; items: InboxItem[] }[] = [];
+		// Your comments are dated by the comment but ordered by the conversation's latest one.
+		if ( sort !== 'newest' || tab === 'yours' ) {
+			return items.length ? [ { label: '', items } ] : result;
 		}
-		for ( const conversation of conversations ) {
+		for ( const item of items ) {
 			const { label } =
-				groups.find( ( { start } ) => conversation.timestamp >= start.valueOf() ) ?? groups[ 4 ];
+				groups.find( ( { start } ) => item.timestamp >= start.valueOf() ) ?? groups[ 4 ];
 			const last = result[ result.length - 1 ];
 			if ( last?.label === label ) {
-				last.items.push( conversation );
+				last.items.push( item );
 			} else {
-				result.push( { label, items: [ conversation ] } );
+				result.push( { label, items: [ item ] } );
 			}
 		}
 		return result;
-	}, [ conversations, sort, moment, translate ] );
+	}, [ items, sort, tab, moment, translate ] );
 
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
@@ -125,7 +148,7 @@ export function ConversationList( {
 				density={ density }
 				onDensityChange={ onDensityChange }
 			/>
-			{ unreadCount > 0 && tab !== 'yours' && (
+			{ markAllCount > 0 && tab !== 'yours' && (
 				<Button
 					__next40pxDefaultSize
 					variant="link"
@@ -137,8 +160,8 @@ export function ConversationList( {
 							'Mark {{count}}%(count)s{{/count}} as read',
 							'Mark {{count}}%(count)s{{/count}} as read',
 							{
-								count: unreadCount,
-								args: { count: formatNumber( unreadCount ) },
+								count: markAllCount,
+								args: { count: formatNumber( markAllCount ) },
 								components: { count: <strong /> },
 							}
 						) }
@@ -157,7 +180,7 @@ export function ConversationList( {
 						</Button>
 					</ListMessage>
 				) }
-				{ ! isLoading && ! isError && conversations.length === 0 && (
+				{ ! isLoading && ! isError && items.length === 0 && ! hasMore && (
 					<ListMessage
 						{ ...( search.trim()
 							? { description: translate( 'No conversations match your search.' ) }
@@ -178,11 +201,11 @@ export function ConversationList( {
 							</Heading>
 						) }
 						<ul>
-							{ items.map( ( conversation ) => (
+							{ items.map( ( item ) => (
 								<ConversationListItem
-									key={ conversation.key }
-									conversation={ conversation }
-									isSelected={ conversation.key === selectedKey }
+									key={ item.key }
+									item={ item }
+									isSelected={ item.key === selectedKey }
 									openOnFocus={ openOnFocus }
 									density={ density }
 									onSelect={ onSelect }
@@ -191,6 +214,33 @@ export function ConversationList( {
 						</ul>
 					</section>
 				) ) }
+				{ ! isLoading && hasMore && (
+					<div ref={ endRef } className="conversations-inbox__list-end">
+						{ isLoadMoreError && (
+							<ListMessage description={ translate( 'Couldn’t load more conversations.' ) } />
+						) }
+						{ ! isLoadMoreError && ! autoLoad && items.length === 0 && (
+							<ListMessage
+								description={ translate( 'None of the conversations loaded so far match.' ) }
+							/>
+						) }
+						{ autoLoad && ! isLoadMoreError ? (
+							isLoadingMore && <Spinner />
+						) : (
+							// Stays mounted while loading so the focus isn't lost.
+							<Button
+								__next40pxDefaultSize
+								variant="secondary"
+								isBusy={ isLoadingMore }
+								disabled={ isLoadingMore }
+								accessibleWhenDisabled
+								onClick={ onLoadMore }
+							>
+								{ isLoadMoreError ? translate( 'Retry' ) : translate( 'Load more' ) }
+							</Button>
+						) }
+					</div>
+				) }
 			</div>
 		</VStack>
 	);
