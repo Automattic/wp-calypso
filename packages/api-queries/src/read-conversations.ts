@@ -117,8 +117,7 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 			const pages = data.pages.map( ( page ) => ( {
 				...page,
 				conversations: page.conversations.map( ( conversation ) => {
-					const kept = conversation.unread_note_ids.map( ( id ) => ! ids.has( id ) );
-					const unread = conversation.unread_note_ids.filter( ( _id, index ) => kept[ index ] );
+					const unread = conversation.unread_note_ids.filter( ( id ) => ! ids.has( id ) );
 					const marked = conversation.unread_note_ids.length - unread.length;
 					if ( ! marked ) {
 						return conversation;
@@ -132,7 +131,7 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 						...conversation,
 						unread_note_ids: unread,
 						unread_comment_ids: conversation.unread_comment_ids.filter(
-							( _id, index ) => kept[ index ]
+							( _id, index ) => ! ids.has( conversation.unread_note_ids[ index ] )
 						),
 						unread_count: unreadCount,
 					};
