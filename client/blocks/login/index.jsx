@@ -282,7 +282,7 @@ class Login extends Component {
 				getDefaultTwoFactorAuthType( {
 					supportedAuthTypes: this.props.twoFactorSupportedAuthTypes,
 					notificationSent: this.props.twoFactorNotificationSent,
-					isBrowserSupported: this.state.isBrowserSupported,
+					isWebAuthnSupportedByBrowser: this.state.isBrowserSupported,
 				} )
 			);
 		} else if ( this.props.isLinking ) {
