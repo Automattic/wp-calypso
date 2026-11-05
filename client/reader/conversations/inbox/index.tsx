@@ -100,7 +100,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const { fetchNextPage } = listQuery;
 	const loadMore = useCallback( () => fetchNextPage(), [ fetchNextPage ] );
 	// The routes return unread note ids; the notes map them to the comments to highlight.
-	const { data: notes } = useCommentNotes();
+	const { data: notes } = useCommentNotes( { refetchInterval: REFRESH_INTERVAL } );
 	const { mutate: markRead } = useMarkConversationsRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const isNarrow = useBreakpoint( SINGLE_PANE_BREAKPOINT );
@@ -176,7 +176,11 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		const unreadNoteIds = conversation?.unreadNoteIds ?? getUnreadNoteIds( notes, item );
 		setOpened( {
 			key,
-			noteIds: key === opened?.key ? opened.noteIds : unreadNoteIds,
+			// Opening it again adds any notes that came in since, such as past the route's 50 ids.
+			noteIds:
+				key === opened?.key && ( opened.noteIds || unreadNoteIds )
+					? [ ...new Set( [ ...( opened.noteIds ?? [] ), ...( unreadNoteIds ?? [] ) ] ) ]
+					: unreadNoteIds,
 			anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
 		} );
 		if ( unreadNoteIds?.length ) {

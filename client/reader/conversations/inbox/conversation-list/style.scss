@@ -134,6 +134,11 @@
 	}
 }
 
+// Only takes focus from code, after the load-more button goes away.
+.conversations-inbox__list:focus {
+	outline: none;
+}
+
 .conversations-inbox__list.is-density-compact .conversations-inbox__item {
 	padding-block: 10px;
 }

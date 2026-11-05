@@ -5,10 +5,11 @@ import { useQuery } from '@tanstack/react-query';
 // The inbox only maps note ids to comments and checks what's unread.
 const COMMENT_NOTE_FIELDS = 'id,read,meta';
 
-export function useCommentNotes() {
+export function useCommentNotes( { refetchInterval }: { refetchInterval?: number | false } = {} ) {
 	const locale = useLocale();
 
-	return useQuery(
-		notificationsQuery( { type: 'comment', number: 100, fields: COMMENT_NOTE_FIELDS, locale } )
-	);
+	return useQuery( {
+		...notificationsQuery( { type: 'comment', number: 100, fields: COMMENT_NOTE_FIELDS, locale } ),
+		refetchInterval,
+	} );
 }
