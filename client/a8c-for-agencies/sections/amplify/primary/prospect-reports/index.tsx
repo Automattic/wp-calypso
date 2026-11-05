@@ -20,6 +20,8 @@ import LayoutHeader, {
 } from 'calypso/layout/hosting-dashboard/header';
 import { useAnalyticsClient } from 'calypso/sites/v2/hooks/use-analytics-client';
 
+import './style.scss';
+
 const TIERS_LINK = { tiersPath: A4A_AGENCY_TIER_LINK };
 
 function ProspectReportsLayout() {
@@ -27,7 +29,7 @@ function ProspectReportsLayout() {
 	const page = useAmplifyPage();
 
 	return (
-		<Layout title={ title } wide>
+		<Layout className="prospect-reports" title={ title } wide>
 			<LayoutTop>
 				{ ( page.usageStatus === 'pending' || page.usageStatus === 'rejected' ) && (
 					<AmplifyApprovalNotice agencyId={ page.agencyId } status={ page.usageStatus } />
