@@ -211,7 +211,7 @@ export default function TierBenefits( {
 	const allTiersToShow = [ currentTier, ...lowerTiers, ...higherTiers ];
 
 	return (
-		<VStack spacing={ 6 } style={ { alignItems: 'center' } }>
+		<VStack spacing={ 6 } alignment="center">
 			{ allTiersToShow.map( ( tier ) => {
 				const isCurrentTier = tier.id === currentAgencyTierId;
 				const isLowerTier = tier.level < currentTier.level;

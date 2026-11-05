@@ -136,6 +136,20 @@ describe( 'groupNotesByPost', () => {
 		expect( conversation.commenters ).toEqual( [] );
 	} );
 
+	const ME = 7;
+
+	it.each( [
+		[ 'post', { headerUserId: ME } ],
+		[ 'reply', { headerUserId: ME, parentCommentId: 5 } ],
+		[ 'mention', { headerUserId: 99, noticon: '\uf814' } ],
+		[ 'other', { headerUserId: 99, parentCommentId: 5 } ],
+		[ 'other', { headerUserId: ME, noticon: '\uf475' } ],
+	] )( 'derives a %s context from %o', ( expected, overrides ) => {
+		expect( groupNotesByPost( [ makeNote( { id: 1, ...overrides } ) ], ME )[ 0 ].context ).toBe(
+			expected
+		);
+	} );
+
 	it( 'skips notes without site or post ids', () => {
 		expect( groupNotesByPost( [ makeNote( { id: 1, meta: { ids: { site: 10 } } } ) ] ) ).toEqual(
 			[]

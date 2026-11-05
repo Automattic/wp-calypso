@@ -3,7 +3,6 @@ import {
 	siteWordPressMigrationConfigureMutation,
 	siteWordPressMigrationRunMutation,
 } from '@automattic/api-queries';
-import config from '@automattic/calypso-config';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import {
 	__experimentalHStack as HStack,
@@ -14,26 +13,17 @@ import {
 import { useInstanceId } from '@wordpress/compose';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, chevronDown, chevronUp, info } from '@wordpress/icons';
+import { Icon, chevronDown, chevronUp, published } from '@wordpress/icons';
 import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
+import ConfirmModal from '../../../components/confirm-modal';
 import Notice from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
 
 const MANUAL_INSTALL = 'manual-wpcom-install';
-
-// Temporary, can remove at/after launch.
-const IS_TESTING_BUILD = [
-	'dashboard-stage',
-	'dashboard-horizon',
-	'dashboard-development',
-	'development',
-].includes( config( 'env_id' ) );
-const TESTING_HINT =
-	'Note: The plugin will default to the BlogVault screen. Use the <link>new screen</link>.';
 
 function useManualInstall( site: Site ) {
 	const {
@@ -64,19 +54,35 @@ export function Connect( {
 	const snackbar = { error: __( 'Failed to start the migration.' ) };
 	const { manualInstall, isError, refetch } = useManualInstall( site );
 	const [ isShowingFallbacks, setIsShowingFallbacks ] = useState( false );
+	const [ hasSeenKey, setHasSeenKey ] = useState( false );
+	const [ isConfirming, setIsConfirming ] = useState( false );
 	const fallbacksId = useInstanceId( Connect, 'wordpress-migration-fallbacks' );
 	const configure = useMutation(
 		withSnackbar( siteWordPressMigrationConfigureMutation( site.ID ), snackbar )
 	);
 	const run = useMutation( withSnackbar( siteWordPressMigrationRunMutation( site.ID ), snackbar ) );
 	const isStarting = configure.isPending || run.isPending;
-	const isConnected = manualInstall?.connected && ! failure;
+	const isConnected = !! manualInstall?.connected;
 
 	const startMigration = () =>
 		configure.mutate(
 			{ source_connection: { method: MANUAL_INSTALL } },
 			{ onSuccess: () => run.mutate( {} ) }
 		);
+
+	// A key copied in by hand doesn't read as connected, so check rather than assume the source can't be reached.
+	const onStart = () => {
+		if ( ! isConnected && ! hasSeenKey ) {
+			setIsConfirming( true );
+			return;
+		}
+		startMigration();
+	};
+
+	const toggleFallbacks = () => {
+		setIsShowingFallbacks( ! isShowingFallbacks );
+		setHasSeenKey( true );
+	};
 
 	return (
 		<MigrationCard
@@ -108,20 +114,29 @@ export function Connect( {
 						variant={ isConnected ? 'primary' : 'secondary' }
 						isBusy={ isStarting }
 						disabled={ ! manualInstall || isStarting }
-						onClick={ startMigration }
+						onClick={ onStart }
 					>
 						{ __( 'Start the migration' ) }
 					</Button>
 				</>
 			}
-			secondaryAction={ <AssistedHandoffLink /> }
+			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
+			{ /* What stopped the last run stays until the next one, even once the source reads as connected: it may still refuse. */ }
 			{ failure && (
-				<Notice variant="error" title={ failure.label }>
+				<Notice
+					variant="error"
+					title={ sprintf(
+						/* translators: %s: what stopped the migration, e.g. "Your site refused the connection". */
+						__( 'The last attempt ran into a problem: %s' ),
+						failure.label
+					) }
+				>
 					{ failure.message }
 				</Notice>
 			) }
-			{ isError && (
+			{ /* Only when there's nothing to show: a failed refresh leaves what was last read on screen. */ }
+			{ isError && ! manualInstall && (
 				<Notice
 					variant="error"
 					actions={
@@ -133,14 +148,33 @@ export function Connect( {
 					{ __( 'We couldn’t load your site’s details.' ) }
 				</Notice>
 			) }
-			{ isConnected && (
+			{ isConnected && ! failure && (
 				<Notice variant="success" title={ __( 'Plugin installed and connected' ) }>
 					{ __( 'Your site is connected to WordPress.com.' ) }
 				</Notice>
 			) }
 			{ /* Hidden, not removed: swapping it out under Google Translate can crash the page (react/react#11538). */ }
-			<VStack spacing={ 4 } hidden={ isConnected } className="wordpress-migration__connect-help">
-				<VStack spacing={ 1 }>
+			<VStack
+				spacing={ 4 }
+				hidden={ isConnected && ! failure }
+				className="wordpress-migration__connect-help"
+			>
+				{ isConnected && (
+					<HStack
+						spacing={ 1 }
+						alignment="flex-start"
+						justify="flex-start"
+						className="wordpress-migration__connected-hint"
+					>
+						<Icon icon={ published } size={ 18 } />
+						<Text>
+							{ __(
+								'Your site appears to have the plugin installed and connected to WordPress.com.'
+							) }
+						</Text>
+					</HStack>
+				) }
+				<VStack spacing={ 1 } hidden={ isConnected } className="wordpress-migration__connect-help">
 					<Text variant="muted">
 						{ __(
 							'1. Install and activate the Migrate to WordPress.com plugin on your existing site.'
@@ -149,21 +183,6 @@ export function Connect( {
 					<Text variant="muted">
 						{ __( '2. Connect to WordPress.com on the plugin’s settings page.' ) }
 					</Text>
-					{ IS_TESTING_BUILD && (
-						<HStack
-							spacing={ 1 }
-							alignment="flex-start"
-							justify="flex-start"
-							className="wordpress-migration__testing-hint"
-						>
-							<Icon icon={ info } size={ 18 } />
-							<Text variant="muted">
-								{ createInterpolateElement( TESTING_HINT, {
-									link: linkTo( manualInstall?.connect_url ),
-								} ) }
-							</Text>
-						</HStack>
-					) }
 					<Text variant="muted">{ __( '3. Come back here and start the migration.' ) }</Text>
 				</VStack>
 				<VStack spacing={ 4 }>
@@ -177,7 +196,7 @@ export function Connect( {
 						aria-controls={ isShowingFallbacks ? fallbacksId : undefined }
 						// Its links and key come with the site's details, so it opens once they've loaded.
 						disabled={ ! manualInstall }
-						onClick={ () => setIsShowingFallbacks( ! isShowingFallbacks ) }
+						onClick={ toggleFallbacks }
 						className="wordpress-migration__fallbacks-toggle"
 					>
 						{ __( 'Having trouble? See other ways to set this up.' ) }
@@ -215,6 +234,23 @@ export function Connect( {
 					) }
 				</VStack>
 			</VStack>
+			<ConfirmModal
+				__experimentalHideHeader={ false }
+				title={ __( 'Have you connected your site?' ) }
+				isDismissible={ false }
+				isOpen={ isConfirming }
+				cancelButtonText={ __( 'Go back' ) }
+				confirmButtonProps={ { label: __( 'Start the migration' ) } }
+				onCancel={ () => setIsConfirming( false ) }
+				onConfirm={ () => {
+					setIsConfirming( false );
+					startMigration();
+				} }
+			>
+				{ __(
+					'We haven’t been able to confirm that your site is connected to WordPress.com. Only continue if you have connected the plugin or copied over the migration key manually.'
+				) }
+			</ConfirmModal>
 		</MigrationCard>
 	);
 }

@@ -45,11 +45,13 @@ const defaultValues: Required< UserPreferences > = {
 	'a4a-agency-approval-notice-dismissed': false,
 	'a4a-dashboard-onboarding-tour-section': '',
 	'a4a-overview-welcome-band-dismissed': false,
+	'a4a-dashboard-welcome-notice-seen': '',
 	'a4a-library-read-resources': [],
 	'a4a-crossover-dismissed': [],
 };
 
 const staticPreferenceStatIds: Record< string, string > = {
+	'notifications-subscriber-alerts-enabled': 'subalrt',
 	recentSites: 'recent',
 	'hosting-dashboard-color-scheme': 'color',
 	'hosting-dashboard-dark-mode-announcement-dismissed': 'darkann',
@@ -79,6 +81,7 @@ const staticPreferenceStatIds: Record< string, string > = {
 	'a4a-dashboard-onboarding-tour-section': 'a4adtour',
 	'a4a-overview-welcome-band-dismissed': 'a4awelc',
 	'a4a-crossover-dismissed': 'a4across',
+	'a4a-dashboard-welcome-notice-seen': 'a4adwel',
 	'hosting-dashboard-difm-offer-dismissed': 'difmofr',
 	'a4a-library-read-resources': 'a4aread',
 };
@@ -120,14 +123,17 @@ export const rawUserPreferencesQuery = () =>
 		queryFn: fetchPreferences,
 	} );
 
-export const userPreferenceQuery = < P extends keyof UserPreferences >( preferenceName: P ) =>
+export const userPreferenceQuery = < P extends keyof UserPreferences >(
+	preferenceName: P,
+	defaultValue: Required< UserPreferences >[ P ] = defaultValues[ preferenceName ]
+) =>
 	queryOptions( {
 		queryKey: rawUserPreferencesQuery().queryKey,
 		queryFn: fetchPreferences,
 		select: ( data ): Required< UserPreferences >[ P ] => {
 			const fetchedValue = data[ preferenceName ];
 			return fetchedValue === undefined
-				? defaultValues[ preferenceName ]
+				? defaultValue
 				: // `fetchedValue` is a `NonNullable< UserPreferences[ P ] >`, which we know is the same
 					// as `Required< UserPreferences >[ P ]`, but the later gives better type hints when
 					// the query is used in the component.

@@ -38,7 +38,7 @@
 		"watch": "tsc --build ./tsconfig.json --watch"
 	},
 	"dependencies": {
-		"debug": "^4.4.1",
+		"debug": "^4.4.3",
 		"tslib": "^2.8.1"
 	},
 	"devDependencies": {

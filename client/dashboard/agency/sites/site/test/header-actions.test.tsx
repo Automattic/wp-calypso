@@ -61,6 +61,28 @@ describe( '<AgencySiteHeaderActions>', () => {
 		);
 	} );
 
+	test( 'offers Prepare for launch on a development site', async () => {
+		mockAgency();
+
+		render(
+			<AgencySiteHeaderActions
+				site={ { ...site, a4a_is_dev_site: true } as AgencySite }
+				fullSite={ fullSite }
+			/>
+		);
+
+		expect( await screen.findByRole( 'link', { name: 'Prepare for launch' } ) ).toBeVisible();
+	} );
+
+	test( 'does not offer Prepare for launch on a launched site', async () => {
+		mockAgency();
+
+		render( <AgencySiteHeaderActions site={ site } fullSite={ fullSite } /> );
+
+		expect( await screen.findByRole( 'link', { name: 'WP Admin' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Prepare for launch' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'opens Settings under an admin URL without a trailing slash', async () => {
 		mockAgency();
 		const open = jest.spyOn( window, 'open' ).mockReturnValue( null );

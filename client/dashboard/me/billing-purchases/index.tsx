@@ -1,7 +1,7 @@
 import {
+	sitesQuery,
 	userPaymentMethodsQuery,
 	userPurchasesQuery,
-	allSitesQuery,
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { formatNumber } from '@automattic/number-formatters';
@@ -77,7 +77,7 @@ export default function PurchasesList() {
 	const { data: transferredPurchases = [], isLoading: isLoadingTransferredPurchases } = useQuery(
 		userTransferredPurchasesQuery()
 	);
-	const { data: sites = [], isLoading: isLoadingSites } = useQuery( allSitesQuery() );
+	const { data: sites = [], isLoading: isLoadingSites } = useQuery( sitesQuery() );
 
 	// Dismiss the success notice when the background mutation rolls back —
 	// detected by the captured purchase reappearing in the userPurchasesQuery

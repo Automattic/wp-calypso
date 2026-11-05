@@ -27,7 +27,7 @@ export interface NamePulsePolicyNotice {
 export const useNamePulseCartToggle = (
 	result: Parameters< typeof toNamePulseTracksSuggestion >[ 0 ],
 	position: number,
-	// Read on click, as the render is reported after this hook runs.
+	// Read when an event is sent, as the render is reported after this hook runs.
 	getRendered: () => NamePulseRenderReport | undefined,
 	policyNotices: PolicyNotice[] = []
 ) => {
@@ -101,6 +101,13 @@ export const useNamePulseCartToggle = (
 		},
 		onSuccess: ( data ) => {
 			if ( data.addedToCart && data.suggestion ) {
+				const rendered = getRendered();
+
+				// Only a rendered card has a railcar to match.
+				if ( rendered ) {
+					events.onSuggestionInteract( getTracksSuggestion(), rendered.railcar );
+				}
+
 				events.onAddDomainToCart(
 					domainName,
 					getRenderedPosition(),
@@ -118,13 +125,6 @@ export const useNamePulseCartToggle = (
 		isPending,
 		error,
 		toggleCart: () => {
-			const rendered = getRendered();
-
-			// Only a rendered card has a railcar to match.
-			if ( ! inCart && rendered ) {
-				events.onSuggestionInteract( getTracksSuggestion(), rendered.railcar );
-			}
-
 			if ( inCart || policyNotices.length === 0 ) {
 				toggleCart( { acceptedTrademarkClaim: false } );
 				return;

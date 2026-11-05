@@ -5,7 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, FunctionComponent } from 'react';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../hooks/use-module-data-query';
-import config, { optionalConfig } from '../lib/config-api';
+import hasSiteProtection from '../lib/has-site-protection';
 import canCurrentUser from '../lib/selectors/can-current-user';
 import MetricValue from './metric-value';
 import { recordWidgetEventThenFollow } from './record-widget-event';
@@ -84,10 +84,10 @@ const ModuleCard: FunctionComponent< ModuleCardProps > = ( {
 		>
 			<div className="stats-widget-metric__title">{ title }</div>
 			{ ( isLoading || ! isError ) && (
-				// Zero while loading, so it counts up once the figure lands, as in Overview.
 				<MetricValue
-					value={ ! isLoading && Number.isFinite( value ) ? value : 0 }
+					value={ Number.isFinite( value ) ? value : 0 }
 					describe={ describe }
+					isLoading={ isLoading }
 				/>
 			) }
 			{ ! isLoading && (
@@ -188,6 +188,11 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 			icon={ shield }
 			className="stats-widget-modules"
 		>
+			{ /* The placeholders are decorative, so this is the one word a screen reader gets
+			     while the counts load. */ }
+			{ ( protect.isPending || akismet.isPending ) && (
+				<span className="screen-reader-text">{ translate( 'Loading…' ) }</span>
+			) }
 			<div className="stats-widget-metrics">
 				<ModuleCard
 					title={ translate( 'Blocked login attempts' ) }
@@ -237,18 +242,10 @@ const SiteProtection: FunctionComponent< ModulesProps > = ( { siteId, adminBaseU
 };
 
 export default function Modules( { siteId, adminBaseUrl }: ModulesProps ) {
-	// Akismet and Protect modules are not available on Simple sites.
-	if ( ! config.isEnabled( 'is_running_in_jetpack_site' ) ) {
+	// SiteProtection runs the module queries, so it mounts only once the gate passes.
+	if ( ! hasSiteProtection() ) {
 		return null;
 	}
 
-	// Only the Jetpack plugin registers the REST routes these cards read. The standalone
-	// Stats plugin prints an empty `jetpack_version` when Jetpack is not active;
-	// stats-admin releases older than that key ship only with the Jetpack plugin.
-	if ( optionalConfig( 'jetpack_version' ) === '' ) {
-		return null;
-	}
-
-	// SiteProtection runs the module queries, so it mounts only once both gates pass.
 	return <SiteProtection siteId={ siteId } adminBaseUrl={ adminBaseUrl } />;
 }

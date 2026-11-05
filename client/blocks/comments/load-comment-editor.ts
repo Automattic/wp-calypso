@@ -1,9 +1,9 @@
 import { loadScript } from '@automattic/load-script';
-import type { SiteCommentsEditorLabels, SiteCommentsEditorSettings } from '@automattic/api-core';
+import type { CommentsEditorLabels, CommentsEditorSettings } from '@automattic/api-core';
 
 export type CommentEditorProps = {
 	initialContent: string;
-	labels: SiteCommentsEditorLabels;
+	labels: CommentsEditorLabels & { embedUrl: string };
 	/** The caret's offset into the text, or -1 for the end. Left out, the editor takes no focus. */
 	focus?: () => number;
 	placeholder: string;
@@ -21,18 +21,22 @@ declare global {
 		/** Set by the Jetpack Comments loader script. */
 		JetpackCommentsEditor?: {
 			load: ( options?: {
-				locale?: SiteCommentsEditorSettings[ 'editorLocale' ];
+				locale?: CommentsEditorSettings[ 'editorLocale' ];
 				assetsUrl?: string;
 			} ) => Promise< CommentEditorModule >;
 		};
 	}
 }
 
+// The embed preview route belongs to the site the comment goes to, so the settings leave it out.
+export const commentEmbedUrl = ( siteId: number ) =>
+	`https://public-api.wordpress.com/wpcom/v2/sites/${ siteId }/comments/embed`;
+
 // Shared by every form on the page, keyed on the loader's URL, which a deploy changes.
 // A failure clears it, so the next focus tries again.
 let loaded: { url: string; module: Promise< CommentEditorModule > } | null = null;
 
-export const loadCommentEditor = ( settings: SiteCommentsEditorSettings ) => {
+export const loadCommentEditor = ( settings: CommentsEditorSettings ) => {
 	if ( loaded?.url !== settings.loaderUrl ) {
 		const module = loadScript( settings.loaderUrl )
 			.then( () => {

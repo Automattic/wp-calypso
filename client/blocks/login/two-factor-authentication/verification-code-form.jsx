@@ -20,6 +20,7 @@ import {
 	getTwoFactorAuthRequestError,
 	isTwoFactorEnhancedSecurityEnabled,
 } from 'calypso/state/login/selectors';
+import { getTwoFactorHelpText } from './get-two-factor-help-text';
 import { getVerificationCodeErrorMessage } from './get-verification-code-error-message';
 import TwoFactorActions from './two-factor-actions';
 
@@ -29,6 +30,7 @@ class VerificationCodeForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
 		isEnhancedSecurityEnabled: PropTypes.bool,
+		isGravPoweredClient: PropTypes.bool,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -116,26 +118,15 @@ class VerificationCodeForm extends Component {
 			twoFactorAuthType,
 			switchTwoFactorAuthType,
 			twoFactorEmailNonce,
+			isGravPoweredClient,
 		} = this.props;
 
 		let buttonText = translate( 'Continue' );
-		let helpText = translate( 'Enter the code from your authenticator app.' );
 		let labelText = translate( 'Verification code' );
 		let smallPrint;
 		let enhancedSecurityNotice;
 
-		if ( twoFactorEmailNonce ) {
-			helpText = translate( 'Enter the code from the email we sent you.' );
-		}
-
-		if ( twoFactorAuthType === 'sms' ) {
-			helpText = translate( 'Enter the code from the text message we sent you.' );
-		}
-
 		if ( twoFactorAuthType === 'backup' ) {
-			helpText = translate(
-				'Enter a backup code to continue. Use one of the 10 codes you received during setup.'
-			);
 			labelText = translate( 'Backup code' );
 			smallPrint = (
 				<div className="two-factor-authentication__small-print">
@@ -174,7 +165,12 @@ class VerificationCodeForm extends Component {
 			>
 				<Card className="two-factor-authentication__verification-code-form">
 					{ enhancedSecurityNotice }
-					<p className="verification-code-form__help-text">{ helpText }</p>
+					{ /* Every other client shows this as the subtitle of the account template. */ }
+					{ isGravPoweredClient && (
+						<p className="verification-code-form__help-text">
+							{ getTwoFactorHelpText( twoFactorAuthType, !! twoFactorEmailNonce, translate ) }
+						</p>
+					) }
 
 					<FormFieldset>
 						<FormLabel htmlFor="twoStepCode">{ labelText }</FormLabel>

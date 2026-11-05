@@ -1,5 +1,28 @@
-import { recordDomainViewChanges } from '../dataviews/views';
+import { recordDomainViewChanges, sanitizeDomainsListLayout } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
+
+describe( 'sanitizeDomainsListLayout', () => {
+	test( 'returns the same view when its layout is available', () => {
+		const view: View = { type: 'table', layout: { density: 'compact' } };
+
+		expect( sanitizeDomainsListLayout( view ) ).toBe( view );
+	} );
+
+	test( 'shows a view as a table when its layout is not available, keeping its settings', () => {
+		const sort = { field: 'expiry', direction: 'desc' as const };
+		const filters = [ { field: 'owner', operator: 'isAny' as const, value: [ 'owned-by-me' ] } ];
+
+		expect(
+			sanitizeDomainsListLayout( {
+				type: 'grid',
+				layout: { previewSize: 290 },
+				sort,
+				filters,
+				perPage: 24,
+			} )
+		).toEqual( { type: 'table', layout: { density: 'balanced' }, sort, filters, perPage: 24 } );
+	} );
+} );
 
 describe( 'recordDomainViewChanges', () => {
 	test( 'nothing relevant changed', () => {

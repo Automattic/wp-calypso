@@ -1,5 +1,5 @@
 /**
- * Tracks props for the site credits notice, its dismissal, the credits popover and their Upgrade and Add credits clicks,
+ * Tracks props for the site credits notice, its dismissal, the credits popover and its Upgrade, Add credits and show-credits clicks,
  * and the refusal codes a failed reply carries.
  */
 import {
@@ -18,7 +18,8 @@ export type CreditsTracksEventName =
 	| 'calypso_agents_manager_credits_notice_shown'
 	| 'calypso_agents_manager_credits_notice_dismissed'
 	| 'calypso_agents_manager_credits_meter_opened'
-	| 'calypso_agents_manager_credits_cta_clicked';
+	| 'calypso_agents_manager_credits_cta_clicked'
+	| 'calypso_agents_manager_credits_show_clicked';
 
 /** By the same rules as the meter and the notices, so it follows `CREDITS_LOW_BALANCE`. */
 export function getCreditsState( status: CreditsStatus ): CreditsState {

@@ -532,6 +532,7 @@ const wpcomAllowedOrigins = [
 	'https://cloud.jetpack.com',
 	'https://jetpack.com',
 	'https://agencies.automattic.com',
+	'https://agencies-beta.automattic.com',
 	'https://my.wordpress.com',
 	'https://my.woo.ai',
 	'http://wpcalypso.wordpress.com', // for running docker on dev instances
