@@ -174,8 +174,9 @@ export function useUnfollowConversation() {
 				);
 				return;
 			}
-			// Following in this session sets a Redux status the post menu reads first. Not following
-			// removes it, so the menu goes back to the list, which the factory already updated.
+			// Following in this session, or loading a followed post, sets a Redux status the post menu
+			// reads first. Not following removes it, so the menu goes back to the list, which the
+			// factory already updated.
 			dispatch(
 				updateConversationFollowStatus( {
 					siteId: blogId,

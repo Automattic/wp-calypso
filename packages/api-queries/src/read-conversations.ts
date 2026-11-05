@@ -202,7 +202,11 @@ export const unfollowReadConversationMutation = ( queryClient: QueryClient ) =>
 		onSuccess: async ( _response, { blogId, postId } ) => {
 			const queryKey = getReadConversationsListQueryKey();
 			// A list fetched before the unfollow would otherwise land after it and follow again.
-			await queryClient.cancelQueries( { queryKey } );
+			// Lists still on their first fetch keep it, since cancelling would leave them empty.
+			await queryClient.cancelQueries( {
+				queryKey,
+				predicate: ( query ) => query.state.data !== undefined,
+			} );
 			queryClient.setQueriesData< ReadConversationsInfiniteData >(
 				{ queryKey },
 				( data ) =>
