@@ -138,14 +138,16 @@ describe( 'useConsumeSearchParams', () => {
 		expect( onConsume.mock.calls ).toEqual( [ [ 'first' ], [ 'second' ] ] );
 	} );
 
-	test( 'removes only the values it consumed', async () => {
+	test( 'removes only the values it consumed, and consumes them again once they return', async () => {
 		function Relay() {
 			const router = useRouter();
 			useConsumeSearchParams( [ 'flash' ], {
 				when: ( params ) => params.flash === 'saved',
 				onConsume: () => {
 					onConsume( 'saved' );
-					router.navigate( { to: '/page', search: { flash: 'other' }, ignoreBlocker: true } );
+					if ( onConsume.mock.calls.length === 1 ) {
+						router.navigate( { to: '/page', search: { flash: 'other' }, ignoreBlocker: true } );
+					}
 				},
 			} );
 			return null;
@@ -157,6 +159,10 @@ describe( 'useConsumeSearchParams', () => {
 		await act( () => wait( 20 ) );
 		expect( window.location.search ).toBe( '?flash=other' );
 		expect( onConsume ).toHaveBeenCalledTimes( 1 );
+
+		await act( () => router.navigate( { to: '/page', search: { flash: 'saved' } } ) );
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		expect( onConsume ).toHaveBeenCalledTimes( 2 );
 	} );
 
 	test( 'waits for a redirect that adds the params to resolve before removing them', async () => {
