@@ -224,9 +224,7 @@ export function ConversationList( {
 								description={ translate( 'None of the conversations loaded so far match.' ) }
 							/>
 						) }
-						{ autoLoad && ! isLoadMoreError ? (
-							isLoadingMore && <Spinner />
-						) : (
+						{ ! autoLoad || isLoadMoreError ? (
 							// Stays mounted while loading so the focus isn't lost.
 							<Button
 								__next40pxDefaultSize
@@ -238,6 +236,8 @@ export function ConversationList( {
 							>
 								{ isLoadMoreError ? translate( 'Retry' ) : translate( 'Load more' ) }
 							</Button>
+						) : (
+							isLoadingMore && <Spinner />
 						) }
 					</div>
 				) }

@@ -2,7 +2,8 @@ import { notificationsQuery } from '@automattic/api-queries';
 import { useLocale } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 
-const COMMENT_NOTE_FIELDS = 'id,type,read,body,subject,header,timestamp,meta,icon,title,noticon';
+// The inbox only maps note ids to comments and checks what's unread.
+const COMMENT_NOTE_FIELDS = 'id,read,meta';
 
 export function useCommentNotes() {
 	const locale = useLocale();

@@ -3,7 +3,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import {
@@ -73,7 +73,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	}, [ searchTerm ] );
 	const conversationsQuery = useConversations( {
 		sort,
-		search: debouncedSearch,
+		// Your comments only reads the conversations for the open one, which a search could hide.
+		search: tab === 'yours' ? '' : debouncedSearch,
 		refetchInterval: REFRESH_INTERVAL,
 	} );
 	const ownCommentsQuery = useOwnComments( {
@@ -83,6 +84,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	} );
 	const { conversations, unreadTotal } = conversationsQuery;
 	const listQuery = tab === 'yours' ? ownCommentsQuery : conversationsQuery;
+	const { fetchNextPage } = listQuery;
+	const loadMore = useCallback( () => fetchNextPage(), [ fetchNextPage ] );
 	// The routes return unread note ids; the notes map them to the comments to highlight.
 	const { data: notes } = useCommentNotes();
 	const { mutate: markRead } = useMarkConversationsRead();
@@ -279,7 +282,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					}
 					isLoadingMore={ listQuery.isFetchingNextPage }
 					isLoadMoreError={ listQuery.isFetchNextPageError }
-					onLoadMore={ () => listQuery.fetchNextPage() }
+					onLoadMore={ loadMore }
 					tab={ tab }
 					onTabChange={ ( next ) => selectTab( next, 'click' ) }
 					search={ search }
