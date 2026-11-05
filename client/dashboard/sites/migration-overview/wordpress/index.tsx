@@ -83,14 +83,15 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		refetchOnWindowFocus: isConnecting ? 'always' : false,
 	} );
 
-	// Each run asks once, whether it started from this page or was already going when the page opened.
+	// Each migration asks once, whether it started from this page or was already going when the page opened. A run
+	// resumed after a pause is the same migration, so the key is the source rather than when the run started.
 	const isRunning = migration?.status === 'running';
-	const startedAt = migration?.started_at;
+	const sourceUrl = migration?.source_url;
 	useEffect( () => {
-		if ( isRunning ) {
-			return invokeSurvicateEventOnce( 'migrationStarted', `${ site.ID }:${ startedAt }` );
+		if ( isRunning && sourceUrl ) {
+			return invokeSurvicateEventOnce( 'migrationStarted', `${ site.ID }:${ sourceUrl }` );
 		}
-	}, [ isRunning, startedAt, site.ID ] );
+	}, [ isRunning, sourceUrl, site.ID ] );
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,

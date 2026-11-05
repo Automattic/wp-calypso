@@ -66,10 +66,43 @@ describe( 'invokeSurvicateEventOnce', () => {
 		window._sva = undefined;
 
 		invokeSurvicateEventOnce( 'migrationCompleted', '42:1700000000' );
+		expect( window.localStorage.length ).toBe( 0 );
+
 		window._sva = { invokeEvent };
 		window.dispatchEvent( new Event( 'SurvicateReady' ) );
 		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
 
+		invokeSurvicateEventOnce( 'migrationCompleted', '42:1700000000' );
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should ask again later when the screen was left before the SDK was ready', () => {
+		window._sva = undefined;
+
+		const cleanup = invokeSurvicateEventOnce( 'migrationCompleted', '42:1700000000' );
+		cleanup();
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+		expect( invokeEvent ).not.toHaveBeenCalled();
+
+		invokeSurvicateEventOnce( 'migrationCompleted', '42:1700000000' );
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should ask again later when a deferred event was suppressed at SurvicateReady time', () => {
+		window._sva = undefined;
+
+		invokeSurvicateEventOnce( 'migrationCompleted', '42:1700000000' );
+		const modal = document.createElement( 'div' );
+		modal.setAttribute( 'role', 'dialog' );
+		modal.setAttribute( 'aria-modal', 'true' );
+		( modal as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		document.body.appendChild( modal );
+		window._sva = { invokeEvent };
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+		expect( invokeEvent ).not.toHaveBeenCalled();
+
+		modal.remove();
 		invokeSurvicateEventOnce( 'migrationCompleted', '42:1700000000' );
 		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
 	} );

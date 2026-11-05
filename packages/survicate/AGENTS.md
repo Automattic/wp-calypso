@@ -265,7 +265,8 @@ race where a survey is already mid-display as a modal or the Help Center appears
 - `invoke-event-once.ts` — `invokeSurvicateEventOnce( eventName, key )`: for screens
   that keep reporting the same outcome on every visit (a migration that completed days
   ago), marks the event per key in `localStorage` so the survey is asked for once per
-  outcome rather than per visit. A suppressed event isn't marked, so a later visit asks.
+  outcome rather than per visit. The key is marked only once the SDK is handed the event,
+  so a suppressed or abandoned deferred event isn't marked and a later visit asks.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.
 - `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:

@@ -135,20 +135,20 @@ test( 'asks for the migration survey once per migration, even on a later visit',
 
 	mockPreferences();
 	const { unmount } = render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
-	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeInTheDocument() );
+	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeVisible() );
 	expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
 	expect( invokeEvent ).toHaveBeenCalledWith( 'migrationCompleted' );
 	unmount();
 
 	mockPreferences();
 	const { unmount: unmountAgain } = render( <Harness site={ completedSite( { hoursAgo: 1 } ) } /> );
-	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeInTheDocument() );
+	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeVisible() );
 	expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
 	unmountAgain();
 
 	// A later migration into the same site asks again.
 	mockPreferences();
 	render( <Harness site={ completedSite( { hoursAgo: 0.5 } ) } /> );
-	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeInTheDocument() );
+	await waitFor( () => expect( screen.getByText( 'Your site is ready' ) ).toBeVisible() );
 	expect( invokeEvent ).toHaveBeenCalledTimes( 2 );
 } );
