@@ -38,4 +38,12 @@ describe( '<GrowthCard>', () => {
 
 		expect( screen.getByText( /Reach \$100,000 IAR to qualify for VIP Pro/ ) ).toBeVisible();
 	} );
+
+	test( 'gives VIP Pro the Premier target', () => {
+		renderGrowthCard( 'vip-pro-agency-partner' );
+
+		expect(
+			screen.getByText( /Reach \$250,000 IAR to qualify for Premier Partner/ )
+		).toBeVisible();
+	} );
 } );

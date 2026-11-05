@@ -166,7 +166,7 @@ function getVipProContent( links: GrowthCardLinks ): GrowthContent {
 		description: sprintf(
 			/* translators: %s is the influenced revenue target, e.g. $250,000 */
 			__(
-				'Reach %s IAR to become a Premier Partner and unlock Marketing Development Funds and a Parse.ly trial. All three paths below count toward your IAR.'
+				'Reach %s IAR to qualify for Premier Partner, an invitation-only tier with Marketing Development Funds and a Parse.ly trial. All three paths below count toward your IAR.'
 			),
 			formatCurrency( TARGET_INFLUENCED_REVENUE[ 'premier-partner' ], 'USD', {
 				stripZeros: true,
