@@ -129,6 +129,7 @@ function ReportTypeCards( {
 							ref={ ( element: HTMLElement | null ) => {
 								cardRefs.current[ index ] = element;
 							} }
+							className="dashboard-amplify-overview__mode-card"
 							role="radio"
 							aria-checked={ isSelected }
 							// Only the selected card is a Tab stop; the arrow keys move within the group.
@@ -141,10 +142,6 @@ function ReportTypeCards( {
 								} else if ( selectByKey( event.key, index ) ) {
 									event.preventDefault();
 								}
-							} }
-							style={ {
-								cursor: 'pointer',
-								boxShadow: isSelected ? 'inset 0 0 0 2px var( --color-primary )' : undefined,
 							} }
 						>
 							<CardBody
