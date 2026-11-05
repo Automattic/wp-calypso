@@ -32,6 +32,7 @@ import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
+import { getBackToSearch } from './field-domain-name';
 import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
 import type { Action } from '@wordpress/dataviews';
@@ -221,12 +222,14 @@ export const useActions = ( {
 						config.isEnabled( 'domain-transfer-redesign' )
 							? domainTransferRoute
 							: domainOverviewRoute;
+					const { matches } = router.state;
 
 					router.navigate( {
 						to: targetRoute.fullPath,
 						params: {
 							domainName: domain.domain,
 						},
+						search: getBackToSearch( matches[ matches.length - 1 ].fullPath ),
 					} );
 				},
 				isEligible: ( item: DomainSummary ) => {

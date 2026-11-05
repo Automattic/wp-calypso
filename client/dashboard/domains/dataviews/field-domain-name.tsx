@@ -11,6 +11,16 @@ import { useIsDomainActivating } from './use-domain-activation';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
+export const getBackToSearch = ( routeFullPath: string ) => {
+	if ( routeFullPath === siteDomainsRoute.fullPath ) {
+		return { back_to: 'site-domains' };
+	}
+	if ( routeFullPath === siteOverviewRoute.fullPath ) {
+		return { back_to: 'site-overview' };
+	}
+	return undefined;
+};
+
 export const DomainNameField = ( {
 	domain,
 	site,
@@ -82,21 +92,11 @@ export const DomainNameField = ( {
 
 	const currentRoute = matches[ matches.length - 1 ];
 
-	const searchParams = () => {
-		if ( currentRoute.fullPath === siteDomainsRoute.fullPath ) {
-			return { back_to: 'site-domains' };
-		}
-		if ( currentRoute.fullPath === siteOverviewRoute.fullPath ) {
-			return { back_to: 'site-overview' };
-		}
-		return undefined;
-	};
-
 	return (
 		<Link
 			to={ href }
 			params={ { siteSlug, domainName: domain.domain } }
-			search={ searchParams() }
+			search={ getBackToSearch( currentRoute.fullPath ) }
 			onClick={ () =>
 				recordTracksEvent( 'calypso_dashboard_domains_domain_name_clicked', {
 					domain: domain.domain,
