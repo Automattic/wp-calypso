@@ -123,6 +123,7 @@ function AccessOffNotice( {
 			title={ __( 'MCP access is off' ) }
 			actions={
 				<Button
+					__next40pxDefaultSize
 					variant="secondary"
 					size="compact"
 					onClick={ onTurnOn }
@@ -212,6 +213,7 @@ export default function McpConnectCard( {
 				<span>{ __( 'Not sure where to start? Have the agent connect itself.' ) }</span>
 				<div className="mcp-connect__footer-actions">
 					<Button
+						__next40pxDefaultSize
 						className="mcp-connect__helper-button"
 						variant="tertiary"
 						size="small"
@@ -227,6 +229,7 @@ export default function McpConnectCard( {
 					{ /* The setup page needs MCP access, so offer it only while access is on. */ }
 					{ mcpEnabled && (
 						<RouterLinkButton
+							__next40pxDefaultSize
 							className="mcp-connect__helper-button"
 							variant="tertiary"
 							size="small"

@@ -1,4 +1,5 @@
 @import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
 
 // The card already has its own border-block-end, so drop the last row's divider.
 // The Bypass row keeps it while open, since its select follows the button.
@@ -69,8 +70,8 @@
 	height: 32px;
 	border: 1px solid var( --dashboard-surface__border-color );
 	border-radius: 8px;
-	background: #fff;
-	color: #1e1e1e;
+	background: $white;
+	color: $gray-900;
 	font-weight: 600;
 
 	img {
