@@ -105,6 +105,12 @@ function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: bo
 	);
 }
 
+/** The failure reason without the error code the API puts in front of it. */
+function getFailureMessage( reason: string | null ) {
+	const message = reason?.replace( /^[a-z0-9]+(?:_[a-z0-9]+)+(?::\s*|$)/, '' ).trim();
+	return message || __( 'The report didn’t finish.' );
+}
+
 function titleFor( report: AmplifyReport ) {
 	return report.site_title || displayUrl( report.url );
 }
@@ -278,7 +284,7 @@ export default function AmplifyReportsList( {
 						</ExternalLink>
 						{ item.status === 'failed' && (
 							<Text intent="error" size={ 12 }>
-								{ item.failure_reason || __( 'The report didn’t finish.' ) }
+								{ getFailureMessage( item.failure_reason ) }
 							</Text>
 						) }
 					</VStack>
