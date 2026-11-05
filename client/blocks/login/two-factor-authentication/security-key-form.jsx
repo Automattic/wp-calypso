@@ -58,6 +58,15 @@ class SecurityKeyForm extends Component {
 	render() {
 		const { translate, isEnhancedSecurityEnabled, isWoo, switchTwoFactorAuthType } = this.props;
 
+		// Rendered inside whichever block is showing, so it takes that block's alignment.
+		const enhancedSecurityText = isEnhancedSecurityEnabled && (
+			<p>
+				{ translate(
+					'Enhanced account security is on, so you need a passkey or security key to log in.'
+				) }
+			</p>
+		);
+
 		return (
 			<form
 				className={ clsx( 'two-factor-authentication__verification-code-form-wrapper', {
@@ -83,6 +92,7 @@ class SecurityKeyForm extends Component {
 									'Insert your hardware security key, or follow the instructions in your browser or phone to log in.'
 								) }
 							</p>
+							{ enhancedSecurityText }
 						</div>
 					) }
 					{ this.state.isAuthenticating && (
@@ -96,15 +106,7 @@ class SecurityKeyForm extends Component {
 									'Connect and touch your security key to log in, or follow the directions in your browser or pop-up.'
 								) }
 							</p>
-						</div>
-					) }
-					{ isEnhancedSecurityEnabled && (
-						<div className="security-key-form__help-text">
-							<p>
-								{ translate(
-									'Enhanced account security is on, so you need a passkey or security key to log in.'
-								) }
-							</p>
+							{ enhancedSecurityText }
 						</div>
 					) }
 					<Button

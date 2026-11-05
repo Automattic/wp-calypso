@@ -14,10 +14,16 @@ jest.mock( 'calypso/lib/webauthn', () => ( {
 	isWebAuthnSupported: () => mockIsWebAuthnSupported(),
 } ) );
 
-// Never settles, so the security key form stays in its waiting state.
+const mockLoginUserWithSecurityKey = jest.fn();
+
 jest.mock( 'calypso/state/login/actions/login-user-with-security-key', () => ( {
-	loginUserWithSecurityKey: () => () => new Promise( () => {} ),
+	loginUserWithSecurityKey: () => () => mockLoginUserWithSecurityKey(),
 } ) );
+
+beforeEach( () => {
+	// Never settles, so the security key form stays in its waiting state.
+	mockLoginUserWithSecurityKey.mockImplementation( () => new Promise( () => {} ) );
+} );
 
 const UNSUPPORTED_MESSAGE =
 	'This browser doesn’t support passkeys or security keys. Try a different browser to log in with one.';
@@ -96,6 +102,17 @@ describe( 'TwoFactorContent', () => {
 		test( 'says why the security key form asks for a passkey', () => {
 			renderContent( { supportedAuthTypes: [ 'webauthn', 'backup' ], isBrowserSupported: true } );
 
+			expect( screen.getByText( 'Waiting for security key' ) ).toBeVisible();
+			expect( screen.getByText( ENHANCED_SECURITY_MESSAGE ) ).toBeVisible();
+		} );
+
+		test( 'still says why after the passkey prompt fails', async () => {
+			mockLoginUserWithSecurityKey.mockRejectedValueOnce( new Error( 'The prompt timed out' ) );
+			renderContent( { supportedAuthTypes: [ 'webauthn', 'backup' ], isBrowserSupported: true } );
+
+			expect(
+				await screen.findByText( 'Use your security key to finish logging in.' )
+			).toBeVisible();
 			expect( screen.getByText( ENHANCED_SECURITY_MESSAGE ) ).toBeVisible();
 		} );
 
