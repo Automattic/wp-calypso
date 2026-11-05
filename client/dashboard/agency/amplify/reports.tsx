@@ -12,14 +12,12 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { useResizeObserver } from '@wordpress/compose';
 import { useDispatch } from '@wordpress/data';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __, sprintf } from '@wordpress/i18n';
 import { box as archiveBoxIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { Badge } from '@wordpress/ui';
-import clsx from 'clsx';
 import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useIntlLocale } from '../../app/locale';
@@ -27,13 +25,11 @@ import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ButtonStack } from '../../components/button-stack';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../../components/dataviews';
 import { Text } from '../../components/text';
-import SitePreview from '../../sites/site-preview';
 import SiteScreenshot from '../components/site-screenshot';
+import { Preview } from '../sites/dataviews/site';
 import { useDownloadReportPdf } from './use-download-report-pdf';
 import type { AgencySite, AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
-
-import '../../components/site-icon/style.scss';
 
 const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
@@ -125,59 +121,6 @@ function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: bo
 				score
 			) }
 		</Badge>
-	);
-}
-
-function ReportSiteIcon( {
-	title,
-	site,
-	size,
-}: {
-	title: string;
-	site?: AgencySite;
-	size: number;
-} ) {
-	const icon = site?.icon?.img || site?.icon?.ico;
-	const className = clsx( { 'is-small': size <= 16 } );
-	if ( icon ) {
-		return (
-			<img
-				className={ clsx( 'site-icon', className ) }
-				src={ icon }
-				alt=""
-				width={ size }
-				height={ size }
-				loading="lazy"
-				style={ { display: 'block', flexShrink: 0, width: size, height: size, objectFit: 'cover' } }
-			/>
-		);
-	}
-	return (
-		<div
-			aria-hidden="true"
-			className={ clsx( 'site-letter', className ) }
-			style={ { width: size, height: size, minWidth: size, fontSize: size * 0.5 } }
-		>
-			<span>{ title.charAt( 0 ) }</span>
-		</div>
-	);
-}
-
-function ReportPreview( { url }: { url: string } ) {
-	const [ resizeListener, { width } ] = useResizeObserver();
-	return (
-		<div
-			style={ {
-				display: 'block',
-				height: '100%',
-				width: '100%',
-				borderRadius: 'inherit',
-				overflow: 'hidden',
-			} }
-		>
-			{ resizeListener }
-			{ width && <SitePreview url={ url } scale={ width / 1200 } height={ 1200 } /> }
-		</div>
 	);
 }
 
@@ -335,26 +278,23 @@ export default function AmplifyReportsList( {
 			{
 				id: 'icon',
 				label: __( 'Site preview' ),
-				render: ( { item } ) =>
-					view.type === 'grid' ? (
-						<ReportSiteIcon title={ titleFor( item ) } site={ siteFor( item ) } size={ 64 } />
-					) : (
-						<SiteScreenshot
-							key={ item.url }
-							url={ item.url }
-							alt=""
-							compact
-							decorative
-							width={ 60 }
-							height={ 48 }
-						/>
-					),
+				render: ( { item } ) => (
+					<SiteScreenshot
+						key={ item.url }
+						url={ item.url }
+						alt=""
+						compact
+						decorative
+						width={ 60 }
+						height={ 48 }
+					/>
+				),
 				enableSorting: false,
 			},
 			{
 				id: 'preview',
 				label: __( 'Preview' ),
-				render: ( { item } ) => <ReportPreview url={ item.url } />,
+				render: ( { item } ) => <Preview url={ item.url } />,
 				enableSorting: false,
 				enableHiding: false,
 			},
@@ -523,17 +463,7 @@ export default function AmplifyReportsList( {
 				filterBy: false,
 			},
 		],
-		[
-			downloadingId,
-			locale,
-			onDownload,
-			onRetry,
-			recordTracksEvent,
-			retryingId,
-			siteFor,
-			titleFor,
-			view.type,
-		]
+		[ downloadingId, locale, onDownload, onRetry, recordTracksEvent, retryingId, titleFor ]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
