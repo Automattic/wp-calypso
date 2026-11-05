@@ -9,11 +9,7 @@ export default function AmplifyLearnMoreModal( { onClose }: { onClose: () => voi
 	const aboutLabel = sprintf( __( 'About %s' ), getFeatureName() );
 	return (
 		<Modal title={ aboutLabel } onRequestClose={ onClose }>
-			<div
-				className="dashboard-amplify-overview"
-				data-context="learn-more"
-				aria-labelledby="dashboard-amplify-title"
-			>
+			<div className="dashboard-amplify-overview" data-context="learn-more">
 				<AmplifyOverviewIntro mode="full" />
 				<AmplifyOverviewStory />
 			</div>
