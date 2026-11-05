@@ -613,7 +613,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ credits.notice ?? replyNotice }
+			notice={ credits.notice ?? replyNotice ?? credits.topUpsNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ isReaderChat ? credits.beforeSubmit : creditsCommand.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

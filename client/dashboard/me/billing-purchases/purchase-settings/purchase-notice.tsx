@@ -10,7 +10,6 @@ import {
 import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Link, useRouter } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n, sprintf } from '@wordpress/i18n';
@@ -21,7 +20,10 @@ import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
 import { useLocale } from '../../../app/locale';
 import { changePaymentMethodRoute, purchaseSettingsRoute } from '../../../app/router/me';
-import Notice from '../../../components/notice';
+import Notice, {
+	NoticeActionButton,
+	RouterNoticeActionLinkButton,
+} from '../../../components/notice';
 import {
 	PlanExpiryNotice,
 	hasPlanExpiryNotice,
@@ -224,15 +226,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 				actions={
 					<>
 						{ delayedDowngradeNotice.isRetryingRenewal && (
-							<Button
-								variant="primary"
-								size="compact"
-								href={
-									router.buildLocation( {
-										to: changePaymentMethodRoute.fullPath,
-										params: { purchaseId: purchase.ID },
-									} ).href
-								}
+							<RouterNoticeActionLinkButton
+								variant="solid"
+								to={ changePaymentMethodRoute.fullPath }
+								params={ { purchaseId: purchase.ID } }
 								onClick={ () =>
 									recordTracksEvent(
 										'calypso_purchases_delayed_downgrade_update_payment_method_click',
@@ -241,11 +238,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 								}
 							>
 								{ __( 'Update payment method' ) }
-							</Button>
+							</RouterNoticeActionLinkButton>
 						) }
-						<Button
-							variant="secondary"
-							size="compact"
+						<NoticeActionButton
+							variant="outline"
 							onClick={ () => {
 								recordTracksEvent( 'calypso_purchases_cancel_delayed_downgrade_click', {
 									purchase_id: purchase.ID,
@@ -268,10 +264,10 @@ export function PurchaseNotice( { purchase }: { purchase: Purchase } ) {
 								);
 							} }
 							disabled={ isCancellingDelayedDowngrade }
-							isBusy={ isCancellingDelayedDowngrade }
+							loading={ isCancellingDelayedDowngrade }
 						>
 							{ __( 'Cancel downgrade' ) }
-						</Button>
+						</NoticeActionButton>
 					</>
 				}
 			>
@@ -638,9 +634,9 @@ function TrialNotice( { purchase }: { purchase: Purchase } ) {
 				isCloseToExpiration( purchase ) && ! isRecentMonthlyPurchase( purchase ) ? 'error' : 'info'
 			}
 			actions={
-				<Button variant="primary" onClick={ onClickUpgrade }>
+				<NoticeActionButton variant="solid" onClick={ onClickUpgrade }>
 					{ __( 'Upgrade now' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		>
 			{ noticeText }

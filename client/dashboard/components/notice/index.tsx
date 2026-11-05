@@ -19,14 +19,14 @@ import './style.scss';
  * collapses to its padding.
  *
  * ```jsx
- * import { Notice } from '@automattic/components';
+ * import { Notice, NoticeActionButton } from 'calypso/dashboard/components/notice';
  * import { ExternalLink } from '@wordpress/components';
  *
  * function MyComponent() {
  * 	return (
  * 		<Notice
  * 			title="Title"
- * 			actions={ <Button variant="primary">Label</Button> }
+ * 			actions={ <NoticeActionButton variant="solid">Label</NoticeActionButton> }
  * 		>
  * 			<>Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink></>
  * 		</Notice>
@@ -56,5 +56,7 @@ function UnforwardedNotice(
 }
 
 export const Notice = forwardRef( UnforwardedNotice );
+
+export * from './actions';
 
 export default Notice;

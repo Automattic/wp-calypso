@@ -6,7 +6,7 @@
 
 .track {
 	fill: none;
-	stroke: var( --color-input-border );
+	stroke: var( --color-progress-ring-track, var( --color-input-border ) );
 }
 
 .fill {
