@@ -3,7 +3,7 @@ import {
 	paginatedAgencySitesQuery,
 	agencyPendingSitesQuery,
 } from '@automattic/api-queries';
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { Button, Modal } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
@@ -132,10 +132,7 @@ export default function AgencySites() {
 		sanitizeFields: removeLegacyFields,
 	} );
 
-	const { data, isLoading, isPlaceholderData } = useQuery( {
-		...paginatedAgencySitesQuery( toAgencyFetchOptions( view ) ),
-		placeholderData: keepPreviousData,
-	} );
+	const { data, isLoading } = useQuery( paginatedAgencySitesQuery( toAgencyFetchOptions( view ) ) );
 
 	const sites = data?.sites ?? [];
 	const totalItems = data?.total ?? 0;
@@ -212,7 +209,6 @@ export default function AgencySites() {
 					actions={ actions }
 					view={ view }
 					isLoading={ isLoading }
-					isPlaceholderData={ isPlaceholderData }
 					onChangeView={ handleViewChange }
 					onReset={ resetView }
 					defaultLayouts={ AGENCY_LAYOUTS }

@@ -166,6 +166,24 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 			switch ( slug ) {
 				case STEPS.STATIC_SITE_IMPORT_READING.slug: {
+					// Past identification, which read this source as static, so the check step
+					// takes the WordPress source on to the migration of this destination.
+					if ( providedDependencies.action === 'migrate' ) {
+						return exitFlow(
+							addQueryArgs(
+								{
+									from,
+									platform: 'wordpress',
+									siteId: hasSite ? String( siteId ) : undefined,
+									siteSlug: hasSite ? siteSlug : undefined,
+								},
+								withLocale(
+									`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_CHECK.slug }`,
+									locale
+								)
+							)
+						);
+					}
 					if ( providedDependencies.action === 'unavailable' ) {
 						if ( ! hasSite ) {
 							return navigate( STEPS.UNIFIED_PLANS.slug );

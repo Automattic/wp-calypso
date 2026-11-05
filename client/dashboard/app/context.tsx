@@ -66,9 +66,6 @@ export type AppConfig = {
 		overrides?: PostHogOverrides;
 	};
 	components: {
-		sites?: () => Promise< { default: React.FC } >;
-		// eslint-disable-next-line @typescript-eslint/no-explicit-any
-		siteSwitcher?: () => Promise< { default: React.FC< any > } >;
 		/** Replaces the WordPress.com omnibar, whose nodes come from the admin bar endpoint. */
 		omnibar?: React.FC< { user?: User } >;
 		/** Replaces the WordPress.com Help Center panel, which the omnibar's help node toggles. */
@@ -99,10 +96,7 @@ export const APP_CONTEXT_DEFAULT_CONFIG: AppConfig = {
 		colorScheme: false,
 		darkMode: false,
 	},
-	components: {
-		sites: () => Promise.resolve( { default: () => null } ),
-		siteSwitcher: () => Promise.resolve( { default: () => null } ),
-	},
+	components: {},
 };
 
 const AppContext = createContext< AppConfig >( APP_CONTEXT_DEFAULT_CONFIG );
