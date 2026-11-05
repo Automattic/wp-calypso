@@ -66,15 +66,15 @@ function mockApis( savedView: Partial< View > ) {
 		.reply( 200, { data: { certificate_provisioned: true, is_newly_registered: false } } );
 }
 
-const SAVED_VIEW = {
+const SAVED_VIEW: Partial< View > = {
 	titleField: 'domain',
 	sort: { field: 'domain', direction: 'desc' },
 	fields: [ 'blog_name', 'domain_status' ],
-} as const;
+};
 
 describe( '<Domains> saved layouts', () => {
 	test( 'shows a saved view with an unavailable layout as a table and records it once', async () => {
-		mockApis( { ...SAVED_VIEW, type: 'grid', layout: { previewSize: 290 } } );
+		mockApis( { ...SAVED_VIEW, type: 'grid', layout: { previewSize: 290 } } as Partial< View > );
 
 		const { recordTracksEvent } = render( <Domains /> );
 
@@ -86,19 +86,18 @@ describe( '<Domains> saved layouts', () => {
 		).toEqual( [ 'b-domain.com', 'a-domain.com' ] );
 		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
 
-		const fallbackEvents = recordTracksEvent.mock.calls.filter(
-			( [ eventName ] ) => eventName === 'calypso_dashboard_domains_saved_layout_fallback'
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_domains_saved_layout_fallback',
+			{ saved_layout: 'grid', fallback_layout: 'table' }
 		);
-		expect( fallbackEvents ).toEqual( [
-			[
-				'calypso_dashboard_domains_saved_layout_fallback',
-				{ saved_layout: 'grid', fallback_layout: 'table' },
-			],
-		] );
+		const fallbackEventCount = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
+			( [ eventName ] ) => eventName === 'calypso_dashboard_domains_saved_layout_fallback'
+		).length;
+		expect( fallbackEventCount ).toBe( 1 );
 	} );
 
 	test( 'records nothing when the saved layout is available', async () => {
-		mockApis( { ...SAVED_VIEW, type: 'table' } );
+		mockApis( { ...SAVED_VIEW, type: 'table' } as Partial< View > );
 
 		const { recordTracksEvent } = render( <Domains /> );
 
