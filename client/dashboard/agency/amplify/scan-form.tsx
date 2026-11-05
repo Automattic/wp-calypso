@@ -49,8 +49,8 @@ function WebsiteAddressInput( {
 	value,
 	onChange,
 	onClear,
-	label = __( 'Website address' ),
-	placeholder = __( 'Paste a public URL' ),
+	label,
+	placeholder,
 	onFocus,
 	onKeyDown,
 	combobox,
@@ -59,8 +59,8 @@ function WebsiteAddressInput( {
 	value: string;
 	onChange: ( value: string ) => void;
 	onClear: () => void;
-	label?: string;
-	placeholder?: string;
+	label: string;
+	placeholder: string;
 	onFocus?: () => void;
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	combobox?: { expanded: boolean; activeId?: string; listId: string };
@@ -113,8 +113,8 @@ export function WebsiteAddressPicker( {
 	onChange,
 	onClear,
 	onSelectSite,
-	label = __( 'Website' ),
-	placeholder = __( 'Enter a URL or site name' ),
+	label,
+	placeholder,
 	idPrefix = 'amplify-connected-site',
 	invalid,
 	portalSuggestions = false,
@@ -125,8 +125,8 @@ export function WebsiteAddressPicker( {
 	onChange: ( value: string ) => void;
 	onClear: () => void;
 	onSelectSite: ( site: SiteOption ) => void;
-	label?: string;
-	placeholder?: string;
+	label: string;
+	placeholder: string;
 	idPrefix?: string;
 	invalid?: boolean;
 	portalSuggestions?: boolean;
