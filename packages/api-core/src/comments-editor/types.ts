@@ -17,9 +17,3 @@ export interface CommentsEditorSettings {
 	editorLocale: Record< string, unknown >;
 	editor: CommentsEditorLabels;
 }
-
-/** What `/sites/{siteId}/comments/blocks` returns. */
-export interface SiteCommentsBlocks {
-	/** False where the site stores plain HTML comments, so the Reader saves HTML, not block markup. */
-	blocks: boolean;
-}

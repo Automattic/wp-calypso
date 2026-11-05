@@ -135,11 +135,6 @@ describe( 'PostCommentForm', () => {
 				.get( '/wpcom/v2/comments/editor' )
 				.query( true )
 				.reply( status, body );
-		const mockSiteBlocks = ( blocks ) =>
-			nock( 'https://public-api.wordpress.com' )
-				.get( '/wpcom/v2/sites/456/comments/blocks' )
-				.query( true )
-				.reply( 200, { blocks } );
 		const postReply = async ( content ) => {
 			const request = nock( 'https://public-api.wordpress.com' )
 				.post( '/rest/v1.1/sites/456/posts/123/replies/new', { content } )
@@ -166,11 +161,13 @@ describe( 'PostCommentForm', () => {
 			],
 		] )( 'saves %s', async ( _, blocks, content ) => {
 			mockEditorSettings( 200, editorSettings );
-			const site = mockSiteBlocks( blocks );
-			renderForm( { commentText: markup }, { composer: true } );
+			const post = {
+				...defaultPost,
+				discussion: { ...defaultPost.discussion, comments_allow_blocks: blocks },
+			};
+			renderForm( { post, commentText: markup }, { composer: true } );
 
 			await screen.findByRole( 'textbox', { name: 'Comment' } );
-			await waitFor( () => expect( site.isDone() ).toBe( true ) );
 			expect( await postReply( content ) ).toBe( true );
 		} );
 

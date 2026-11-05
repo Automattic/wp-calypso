@@ -1,5 +1,5 @@
 import './form.scss';
-import { commentsEditorQuery, siteCommentsBlocksQuery } from '@automattic/api-queries';
+import { commentsEditorQuery } from '@automattic/api-queries';
 import { Button, FormInputValidation } from '@automattic/components';
 import { useQuery } from '@tanstack/react-query';
 import { Button as WPButton } from '@wordpress/components';
@@ -13,7 +13,11 @@ import UserAvatar from 'calypso/blocks/user-avatar';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import { ProtectFormGuard } from 'calypso/lib/protect-form';
 import { usePostCommentActions } from 'calypso/reader/data/comments';
-import { isCommentsOpen, isLoginRequiredToComment } from 'calypso/reader/post/capabilities';
+import {
+	isCommentHtmlOnly,
+	isCommentsOpen,
+	isLoginRequiredToComment,
+} from 'calypso/reader/post/capabilities';
 import { recordAction, recordGaEvent, recordTrackForPost, getLocation } from 'calypso/reader/stats';
 import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
@@ -127,7 +131,9 @@ class PostCommentForm extends Component {
 
 		// A site without block comments doesn't render block markup, so it gets plain HTML.
 		const content =
-			this.props.html && isBlockMarkup( commentText ) ? blocksToHtml( commentText ) : commentText;
+			isCommentHtmlOnly( post ) && isBlockMarkup( commentText )
+				? blocksToHtml( commentText )
+				: commentText;
 
 		if ( this.props.parentCommentId ) {
 			this.props.replyComment( content, post.site_ID, post.ID, this.props.parentCommentId );
@@ -251,7 +257,7 @@ class PostCommentForm extends Component {
 						<CommentBlockEditor
 							settings={ this.props.editorSettings }
 							siteId={ post.site_ID }
-							html={ this.props.html }
+							html={ isCommentHtmlOnly( post ) }
 							value={ this.getCommentText() }
 							placeholder={ placeholder }
 							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }
@@ -322,11 +328,9 @@ PostCommentForm.propTypes = {
 
 	onReplyCancel: PropTypes.func,
 
-	// From withCommentsEditorSettings: the inbox's composer layout, the editor's settings, and
-	// whether the site saves comments as HTML rather than blocks.
+	// From withCommentsEditorSettings: the inbox's composer layout, and the editor's settings.
 	composer: PropTypes.bool,
 	editorSettings: PropTypes.object,
-	html: PropTypes.bool,
 
 	// connect()ed props:
 	currentUser: PropTypes.object,
@@ -357,21 +361,9 @@ const withPostCommentActions = ( WrappedComponent ) => {
 const withCommentsEditorSettings = ( WrappedComponent ) => {
 	const WithCommentsEditorSettings = ( props ) => {
 		const blockEditor = useContext( CommentEditorContext );
-		const siteId = props.post?.site_ID;
 		const { data } = useQuery( { ...commentsEditorQuery(), enabled: blockEditor } );
-		const { data: site } = useQuery( {
-			...siteCommentsBlocksQuery( siteId ),
-			enabled: blockEditor && siteId > 0,
-		} );
 
-		return (
-			<WrappedComponent
-				{ ...props }
-				composer={ blockEditor }
-				editorSettings={ data }
-				html={ site?.blocks === false }
-			/>
-		);
+		return <WrappedComponent { ...props } composer={ blockEditor } editorSettings={ data } />;
 	};
 
 	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${
