@@ -35,7 +35,7 @@ const modulesToStub = [
 	/@wordpress\/components\/build-module\/palette-edit(?:$|\/)/,
 
 	// Other unused libraries
-	/^marked$/, // Markdown parser (~50KB)
+	/^marked$/, // Markdown parser (~46KB)
 	/^react-easy-crop$/, // Image cropping (~46KB)
 ];
 
