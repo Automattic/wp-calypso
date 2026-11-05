@@ -39,7 +39,12 @@ and each needs its own guard:
 
 1. **Explicit events** — our code calls `invokeSurvicateEvent('migrationCompleted')`
    etc. from ~6 call sites (purchase cancel/refund flows, migration completion,
-   checkout thank-you). Guarded inside `invoke-event.ts`.
+   checkout thank-you). Guarded inside `invoke-event.ts`. When the action is
+   confirmed in a modal, use `invokeSurvicateEventAfterModalsClose()` instead: the
+   action resolves while its own dialog is still mounted, so a plain invoke is
+   dropped as `modal`. It waits (via `observeModals`) for every modal to close,
+   then resumes targeting (the SDK ignores events while `disableTargeting` is set)
+   and invokes as usual; after a 3s timeout it invokes anyway and is suppressed.
 2. **Auto-campaigns** — Survicate's own targeting fires a survey on its own (URL match,
    "show after N seconds", etc.). This **never touches our code**, so an invoke-time
    guard can't catch it. The only universal hook is the SDK's `survey_displayed` event.
@@ -259,7 +264,7 @@ race where a survey is already mid-display as a modal or the Help Center appears
   only) and `SURVICATE_WORKSPACE_ID`.
 - `load-script.ts` — `loadSurvicateScript()` injects the SDK and wires the
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
-- `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`,
+- `invoke-event.ts` — `invokeSurvicateEvent()`, `invokeSurvicateEventAfterModalsClose()`, `isHelpCenterOpen()`,
   `observeHelpCenter()`, `getSuppressionReason()`, and `shouldSuppressSurvey()`.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.

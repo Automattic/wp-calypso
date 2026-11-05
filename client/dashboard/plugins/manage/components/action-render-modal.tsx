@@ -1,5 +1,6 @@
 import { Site } from '@automattic/api-core';
 import { formatNumber } from '@automattic/number-formatters';
+import { invokeSurvicateEventAfterModalsClose } from '@automattic/survicate';
 import {
 	__experimentalVStack as VStack,
 	__experimentalHStack as HStack,
@@ -27,6 +28,15 @@ export type ActionRenderModalProps = RenderModalProps< PluginListRow > & {
 	// Function that executes the underlying action (e.g., existing callback)
 	onExecute: ( items: PluginListRow[] ) => Promise< ActionOnExecuteResponse >;
 };
+
+const SURVICATE_EVENTS: Record< string, string > = {
+	activate: 'pluginActivated',
+	deactivate: 'pluginDeactivated',
+	update: 'pluginUpdated',
+};
+
+// Before the SDK loads each event waits for SurvicateReady; keep only the latest action's.
+let cancelSurvicateEvent = () => {};
 
 function getConfirmButtonLabel( actionId: string ) {
 	switch ( actionId ) {
@@ -412,12 +422,14 @@ export default function ActionRenderModal( {
 			action_id: actionId,
 		} );
 		setIsBusy( true );
+		let survicateEvent: string | undefined;
 		try {
 			const { successCount, errorCount } = await onExecute( items );
 			if ( successCount > 0 ) {
 				createSuccessNotice( buildSuccessMessage( actionId, items, successCount ), {
 					type: 'snackbar',
 				} );
+				survicateEvent = SURVICATE_EVENTS[ actionId ];
 			}
 			if ( errorCount > 0 ) {
 				createErrorNotice( buildErrorMessage( actionId, items, errorCount ), {
@@ -428,6 +440,10 @@ export default function ActionRenderModal( {
 		} finally {
 			setIsBusy( false );
 			closeModal?.();
+			if ( survicateEvent ) {
+				cancelSurvicateEvent();
+				cancelSurvicateEvent = invokeSurvicateEventAfterModalsClose( survicateEvent );
+			}
 		}
 	};
 
