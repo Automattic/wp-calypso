@@ -290,8 +290,6 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 	const humanSheet = useRef< HTMLDivElement >( null );
 	const aiSheet = useRef< HTMLDivElement >( null );
 	const activeShuffle = useRef< {
-		from: 'human' | 'ai';
-		to: 'human' | 'ai';
 		target: 'human' | 'ai';
 		animations: Animation[];
 	} | null >( null );
@@ -362,8 +360,6 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 			back.animate( backKeyframes, options ),
 		];
 		const shuffle = {
-			from: displayMode,
-			to: mode,
 			target: mode,
 			animations,
 		};
