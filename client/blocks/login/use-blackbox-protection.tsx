@@ -23,8 +23,6 @@ interface UseBlackboxProtectionOptions {
 	 * When disabled, `getSessionId` is a no-op so no SDK load/collect happens.
 	 */
 	feature: string;
-	/** Collect with `blackbox_signup_api_key`. See `getBlackboxApiKey()`. */
-	legacySignupKey?: boolean;
 	/**
 	 * Keep Blackbox off while the host form is mounted but not the active
 	 * surface (e.g. hidden behind another step). No collect happens and no
@@ -45,11 +43,10 @@ const noopGetSessionId = () => Promise.resolve( undefined );
  */
 export function useBlackboxProtection( {
 	feature,
-	legacySignupKey,
 	suspended,
 	resetOnError,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
-	const apiKey = getBlackboxApiKey( legacySignupKey );
+	const apiKey = getBlackboxApiKey();
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );

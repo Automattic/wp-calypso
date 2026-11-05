@@ -8,14 +8,11 @@ let loadPromise = null;
 export const BLACKBOX_KEY_VERSION = 2;
 
 /**
- * Public key for a Blackbox surface.
- * @param {boolean} [legacySignupKey] Use `blackbox_signup_api_key`. Only the magic-login page
- * does, and its requests send no `blackbox_key_version`.
+ * Public key for Blackbox collects.
  * @returns {string|undefined} Configured public key.
  */
-export function getBlackboxApiKey( legacySignupKey = false ) {
-	const configKey = legacySignupKey ? 'blackbox_signup_api_key' : 'blackbox_api_key';
-	const configApiKey = config( configKey );
+export function getBlackboxApiKey() {
+	const configApiKey = config( 'blackbox_api_key' );
 
 	if ( process.env.NODE_ENV === 'development' ) {
 		// Guarded require so the dev-only override module is dead-code

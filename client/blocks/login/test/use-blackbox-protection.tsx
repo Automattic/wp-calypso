@@ -179,14 +179,4 @@ describe( 'useBlackboxProtection key', () => {
 
 		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'login-key' );
 	} );
-
-	it( 'collects with the signup key when asked for the legacy signup key', async () => {
-		const { result } = renderHook( () =>
-			useBlackboxProtection( { feature: 'blackbox-signup', legacySignupKey: true } )
-		);
-
-		await result.current.getSessionId();
-
-		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key' );
-	} );
 } );
