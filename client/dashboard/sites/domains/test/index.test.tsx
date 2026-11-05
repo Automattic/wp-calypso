@@ -549,9 +549,13 @@ describe( '<SiteDomains>', () => {
 			screen.queryByRole( 'button', { name: 'Change primary site address' } )
 		).not.toBeInTheDocument();
 
-		const table = screen.getByRole( 'table' );
-		expect( within( table ).getByText( /^Expired on / ) ).toBeVisible();
-		expect( within( table ).getByRole( 'button', { name: 'Change primary' } ) ).toBeVisible();
+		expect( screen.getByText( /^Expired on / ) ).toBeVisible();
+
+		const user = userEvent.setup();
+		const primaryCard = screen.getByRole( 'group', { name: domain.domain } );
+		await user.click( within( primaryCard ).getByRole( 'button', { name: 'Actions' } ) );
+		const changePrimary = await screen.findByRole( 'menuitem', { name: 'Change primary' } );
+		await waitFor( () => expect( changePrimary ).toBeVisible() );
 	} );
 
 	test( 'opens the primary site address modal from "Change primary" on the primary domain row', async () => {
@@ -564,8 +568,9 @@ describe( '<SiteDomains>', () => {
 
 		render( <SiteDomains />, { user: ownerUser } );
 
-		const table = await screen.findByRole( 'table' );
-		await user.click( await within( table ).findByRole( 'button', { name: 'Change primary' } ) );
+		const primaryCard = await screen.findByRole( 'group', { name: domain.domain } );
+		await user.click( within( primaryCard ).getByRole( 'button', { name: 'Actions' } ) );
+		await user.click( await screen.findByRole( 'menuitem', { name: 'Change primary' } ) );
 
 		const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
 		expect(
