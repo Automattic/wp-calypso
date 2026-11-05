@@ -236,7 +236,10 @@ describe( 'ConversationsInbox', () => {
 		await user.click( await findRow( '10-p-200' ) );
 
 		await waitFor( () =>
-			expect( errorNotice ).toHaveBeenCalledWith( 'Couldn’t mark as read. Try again.' )
+			expect( errorNotice ).toHaveBeenCalledWith(
+				'Couldn’t mark as read. Try again.',
+				expect.anything()
+			)
 		);
 	} );
 
