@@ -336,7 +336,11 @@ export default function GrowthCard( {
 									<ButtonStack
 										justify={ isSmallViewport ? 'flex-start' : 'flex-end' }
 										expanded={ isSmallViewport }
-										style={ { flexShrink: 0 } }
+										style={ {
+											flexShrink: 0,
+											// Keeps long descriptions off the button in the inline layout.
+											paddingInlineStart: isSmallViewport ? undefined : '16px',
+										} }
 										as="span"
 									>
 										{ item.isExternal ? (
