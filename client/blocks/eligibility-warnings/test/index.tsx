@@ -15,6 +15,12 @@ jest.mock( '@automattic/calypso-router', () => ( {
 	redirect: jest.fn(),
 } ) );
 
+const mockHasEnTranslation = jest.fn( ( text: string ) => !! text );
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => mockHasEnTranslation,
+} ) );
+
 jest.mock( '@automattic/odie-client/src/data', () => ( {
 	useManageSupportInteraction: () => ( {
 		startNewInteraction: jest.fn().mockResolvedValue( undefined ),
@@ -65,6 +71,7 @@ function createState( {
 describe( '<EligibilityWarnings>', () => {
 	beforeEach( () => {
 		page.redirect.mockReset();
+		mockHasEnTranslation.mockImplementation( ( text: string ) => !! text );
 	} );
 
 	afterAll( () => {
@@ -195,6 +202,33 @@ describe( '<EligibilityWarnings>', () => {
 			)
 		).toBeVisible();
 		expect( queryByText( /^To install plugins, we’ll need to move your site/ ) ).toBeNull();
+	} );
+
+	it( 'falls back to the usual site move intro until the new one is translated', () => {
+		mockHasEnTranslation.mockImplementation(
+			( text: string ) => ! text.startsWith( 'Once you’ve upgraded' )
+		);
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN' ],
+			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
+		} );
+
+		const { getByText, queryByText } = renderWithStore(
+			<EligibilityWarnings
+				onProceed={ noop }
+				context="plugin-details"
+				atomicTransferAction="plugins"
+				inModal
+			/>,
+			state
+		);
+
+		expect(
+			getByText(
+				'To install plugins, we’ll need to move your site over to WordPress.com’s advanced managed cloud hosting.'
+			)
+		).toBeVisible();
+		expect( queryByText( /^Once you’ve upgraded/ ) ).toBeNull();
 	} );
 
 	it( 'keeps the usual site move intro when no upgrade is needed', () => {

@@ -1,5 +1,5 @@
 import { Card, Badge } from '@automattic/components';
-import { localizeUrl } from '@automattic/i18n-utils';
+import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import DOMPurify from 'dompurify';
 import { localize, LocalizeProps, translate } from 'i18n-calypso';
 import { Fragment } from 'react';
@@ -28,7 +28,13 @@ export const WarningList = ( {
 	transferAction,
 	isAfterUpgrade = false,
 }: Props ) => {
-	const transferIntro = getAtomicTransferIntro( transferAction, isAfterUpgrade, translate );
+	const hasEnTranslation = useHasEnTranslation();
+	const transferIntro = getAtomicTransferIntro(
+		transferAction,
+		isAfterUpgrade,
+		translate,
+		hasEnTranslation
+	);
 
 	return (
 		<div>
@@ -110,9 +116,16 @@ export const WarningList = ( {
 function getAtomicTransferIntro(
 	transferAction: AtomicTransferAction | undefined,
 	isAfterUpgrade: boolean,
-	translate: LocalizeProps[ 'translate' ]
+	translate: LocalizeProps[ 'translate' ],
+	hasEnTranslation: ( text: string ) => boolean
 ) {
-	if ( transferAction && isAfterUpgrade ) {
+	if (
+		transferAction &&
+		isAfterUpgrade &&
+		hasEnTranslation(
+			'Once you’ve upgraded, we’ll move your site over to WordPress.com’s advanced managed cloud hosting.'
+		)
+	) {
 		return translate(
 			'Once you’ve upgraded, we’ll move your site over to WordPress.com’s advanced managed cloud hosting.'
 		);
