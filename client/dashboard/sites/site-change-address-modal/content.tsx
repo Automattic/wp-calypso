@@ -188,10 +188,13 @@ const NewSiteAddressForm = ( {
 				</Notice>
 			) }
 			<Text as="p">
-				{ sprintf(
-					/* translators: %s: site domain */
-					__( 'Once you change your site address, %s will no longer be available.' ),
-					wpcomDomain?.domain ?? ''
+				{ createInterpolateElement(
+					sprintf(
+						/* translators: %s: site domain */
+						__( 'Once you change your site address, %s will no longer be available.' ),
+						`<strong>${ wpcomDomain?.domain ?? '' }</strong>`
+					),
+					{ strong: <strong /> }
 				) }
 			</Text>
 			<form ref={ formRef } onSubmit={ handleSubmit }>
