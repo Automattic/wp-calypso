@@ -19,7 +19,7 @@ export default function AmplifyHeaderActions( {
 	const [ isNewReportOpen, setIsNewReportOpen ] = useState( false );
 	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
 
-	if ( page.state === 'empty' ) {
+	if ( page.state === 'empty' || page.state === 'loading' ) {
 		return null;
 	}
 
