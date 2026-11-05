@@ -571,6 +571,93 @@ describe( 'useAiCredits', () => {
 		} );
 	} );
 
+	describe( 'the top-ups notice', () => {
+		it( 'shows once plan credits are spent with 10,000 or more in packs, with no notice event', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice ).toEqual( {
+				icon: false,
+				message: 'Now using top-ups: 25k left.',
+				action: { ...addCreditsButton, onClick: expect.any( Function ) },
+				dismissible: true,
+				onDismiss: expect.any( Function ),
+			} );
+			expect( result.current.isLimitReached ).toBe( false );
+			expect( result.current.beforeSubmit() ).toBe( true );
+			expect( trackImageStudioUpgradeNoticeShown ).not.toHaveBeenCalled();
+		} );
+
+		it( 'tells someone who can’t buy who to ask, with no button', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...EDITOR } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			expect( result.current.notice?.message ).toBe(
+				'Now using top-ups: 25k left. Ask a site admin to add more.'
+			);
+			expect( result.current.notice?.action ).toBeUndefined();
+		} );
+
+		it( 'records a click on its button as ok', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits( ImageStudioMode.Edit );
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+
+			result.current.notice?.action?.onClick?.();
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( {
+				mode: ImageStudioMode.Edit,
+				trigger: 'open',
+				meter: 'site_credits',
+				state: 'ok',
+				planTier: 'business',
+				creditsLeft: 25_000,
+				topUpCreditsLeft: 25_000,
+				ctaType: 'top_up',
+				ref: 'wp_ai_credits',
+			} );
+		} );
+
+		it( 'hides once closed, until the modal opens again', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const first = renderCredits();
+			await waitFor( () => expect( first.result.current.notice ).toBeDefined() );
+
+			act( () => {
+				first.result.current.notice?.onDismiss?.();
+			} );
+			expect( first.result.current.notice ).toBeUndefined();
+			first.unmount();
+
+			const second = renderCredits();
+			await waitFor( () =>
+				expect( second.result.current.notice?.message ).toBe( 'Now using top-ups: 25k left.' )
+			);
+		} );
+
+		it( 'gives way to the low notice under 10,000 in packs, which records as usual', async () => {
+			respondWith( { ai_credits: withPacks( 0, 25_000 ), ...PLAN_BUYER } );
+			const { result } = renderCredits();
+			await waitFor( () => expect( result.current.notice ).toBeDefined() );
+			expect( result.current.notice?.message ).toBe( 'Now using top-ups: 25k left.' );
+
+			act( () => {
+				result.current.onTaskUpdate( finalUpdate( withPacks( 0, 6_000 ) ) );
+			} );
+			expect( result.current.notice?.message ).toBe( '6k credits left.' );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 1 );
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith(
+				expect.objectContaining( { state: 'low', topUpCreditsLeft: 6_000 } )
+			);
+
+			act( () => {
+				result.current.notice?.onDismiss?.();
+			} );
+			expect( result.current.notice ).toBeUndefined();
+		} );
+	} );
+
 	describe( 'for people who can’t upgrade the plan', () => {
 		it.each( [
 			{
@@ -1352,7 +1439,7 @@ describe( 'useAiCredits', () => {
 			await returnToPage( [ 'focus' ] );
 
 			await waitFor( () => expect( result.current.isLimitReached ).toBe( false ) );
-			expect( result.current.notice ).toBeUndefined();
+			expect( result.current.notice?.message ).toBe( 'Now using top-ups: 100k left.' );
 			expect( result.current.meter?.status ).toMatchObject( { remaining: 100_000 } );
 			expect( result.current.beforeSubmit() ).toBe( true );
 		} );
