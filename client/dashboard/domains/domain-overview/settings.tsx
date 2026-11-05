@@ -8,16 +8,22 @@ import {
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
+import { getCurrentDashboard } from '../../app/routing';
 import { SectionHeader } from '../../components/section-header';
+import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
+import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import DomainConnectionSetupSummary from '../domain-connection-setup/summary';
-import DomainContactDetailsSettingsSummary from '../domain-contact-details/summary';
 import DomainDiagnosticsSettingsSummary from '../domain-diagnostics/summary';
 import DnsSettingsSummary from '../domain-dns/summary';
 import DomainForwardingSettingsSummary from '../domain-forwarding/summary';
 import DomainGlueRecordsSettingsSummary from '../domain-glue-records/summary';
 import DomainSecuritySettingsSummary from '../domain-security/summary';
 import NameServersSettingsSummary from '../name-servers/summary';
+import { shouldShowTransferInAction } from './actions.utils';
+import DomainEmailsSettingsSummary from './emails-summary';
+import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
 export default function DomainOverviewSettings( {
@@ -32,7 +38,18 @@ export default function DomainOverviewSettings( {
 	isDisabled?: boolean;
 } ) {
 	const trackItem = useTrackOverviewItem( domain );
-	const buttonListItems = [];
+	const buttonListItems = [
+		<DomainSiteSettingsSummary
+			key="site"
+			domain={ domain }
+			onClick={ () => trackItem( 'site' ) }
+		/>,
+		<DomainEmailsSettingsSummary
+			key="emails"
+			domain={ domain }
+			onClick={ () => trackItem( 'emails' ) }
+		/>,
+	];
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 		buttonListItems.push(
@@ -103,28 +120,6 @@ export default function DomainOverviewSettings( {
 	}
 
 	/**
-	 * I simplified the condition heere because the original code seemed to have a logical redundancy.
-	 * see: https://github.com/Automattic/wp-calypso/blob/b1c63880294fcf63f95518a3c42779236f56f5b2/client/my-sites/domains/domain-management/settings/index.tsx#L515
-	 */
-	// `current_user_can_manage` is always false in a support session. The link is still shown so
-	// that support can copy its URL for the user; the route itself blocks editing in that case.
-	if (
-		domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION &&
-		( domain.current_user_can_manage || isSupportSession() ) &&
-		! domain.pending_transfer &&
-		! domain.expired
-	) {
-		buttonListItems.push(
-			<DomainContactDetailsSettingsSummary
-				key="contact-details"
-				domain={ domain }
-				isDisabled={ isDisabled }
-				onClick={ () => trackItem( 'contact-details' ) }
-			/>
-		);
-	}
-
-	/**
 	 * TODO: review this one - we need to show the security for transfers but only if there is
 	 * mapping. Right now I copied the code from the original code but it seems wrong
 	 */
@@ -162,12 +157,29 @@ export default function DomainOverviewSettings( {
 		);
 	}
 
+	if ( shouldShowTransferInAction( domain ) ) {
+		buttonListItems.push(
+			<SummaryButton
+				key="transfer-in"
+				title={ __( 'Bring your domain to WordPress.com' ) }
+				density="medium"
+				href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+					initialQuery: domain.domain,
+					initialMode: 'transfer-domain',
+					siteSlug: domain.site_slug,
+					dashboard: getCurrentDashboard(),
+					back_to: redirectToDashboardLink(),
+				} ) }
+				disabled={ isDisabled }
+				onClick={ () => trackItem( 'transfer-in' ) }
+			/>
+		);
+	}
+
 	return (
-		buttonListItems.length > 0 && (
-			<VStack spacing={ 3 }>
-				<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
-				<SummaryButtonList>{ buttonListItems }</SummaryButtonList>
-			</VStack>
-		)
+		<VStack spacing={ 3 }>
+			<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
+			<SummaryButtonList>{ buttonListItems }</SummaryButtonList>
+		</VStack>
 	);
 }
