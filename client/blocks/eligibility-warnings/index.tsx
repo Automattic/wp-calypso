@@ -10,7 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
-import { Button } from '@wordpress/components';
+import { Button, __experimentalHeading as Heading } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useState } from 'react';
@@ -192,6 +192,7 @@ export const EligibilityWarnings = ( {
 	const blockingMessages = getBlockingMessages( translate );
 
 	const hasHoldsToDisplay = isPlaceholder || hasDisplayableHold( listHolds );
+	const showHoldList = hasHoldsToDisplay && ! showFreeTrial && ! hasValidBlockingHold;
 
 	const noticeOffersSupport =
 		!! validBlockingHold && blockingMessages[ validBlockingHold ].opensHelpCenter;
@@ -222,7 +223,7 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ hasHoldsToDisplay && ! showFreeTrial && ! hasValidBlockingHold && (
+			{ showHoldList && (
 				<CompactCard>
 					<HoldList
 						context={ context }
@@ -244,6 +245,11 @@ export const EligibilityWarnings = ( {
 
 			{ showWarnings && (
 				<CompactCard className="eligibility-warnings__warnings-card">
+					{ showHoldList && (
+						<Heading level={ 2 } size={ 14 } className="eligibility-warnings__section-heading">
+							{ translate( 'Here’s what happens next:' ) }
+						</Heading>
+					) }
 					<WarningList
 						context={ context }
 						warnings={ warnings }
