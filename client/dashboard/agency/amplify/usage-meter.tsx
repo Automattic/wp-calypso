@@ -364,6 +364,23 @@ type LimitMessage = {
 	action?: React.ReactNode;
 };
 
+/** The cap message's body. `undefined` leaves the date out, `null` means it's unknown. */
+function getCapBody( resetDate?: string | null ) {
+	if ( resetDate === undefined ) {
+		return __( 'Your existing reports are still here to download.' );
+	}
+	if ( resetDate === null ) {
+		return __(
+			'Your allowance resets on the 1st of next month. Your existing reports are still here to download.'
+		);
+	}
+	return sprintf(
+		/* translators: %s: date the allowance resets, e.g. November 1 */
+		__( 'Your allowance resets on %s. Your existing reports are still here to download.' ),
+		resetDate
+	);
+}
+
 /**
  * Awaiting review, not approved, and cap-reached copy. Null while reports are available.
  */
@@ -422,14 +439,7 @@ function useLimitMessage( {
 			__( 'You’ve used all %d reports this month' ),
 			usage.limit
 		),
-		body:
-			resetDate === undefined
-				? __( 'Your existing reports are still here to download.' )
-				: sprintf(
-						/* translators: %s: date the allowance resets, e.g. November 1 */
-						__( 'Your allowance resets on %s. Your existing reports are still here to download.' ),
-						resetDate ?? __( 'the 1st of next month' )
-					),
+		body: getCapBody( resetDate ),
 		action: canContactForMoreScans( tierId ) ? (
 			<Button
 				__next40pxDefaultSize
