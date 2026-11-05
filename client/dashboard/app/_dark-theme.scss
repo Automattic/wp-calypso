@@ -115,6 +115,24 @@
 			--wpds-color-foreground-content-#{$intent}: var( --dashboard__text-color );
 			--wpds-color-foreground-content-#{$intent}-weak: #{$color};
 		}
+
+		// Neutral solid action buttons, which are near-black by default.
+		--wpds-color-background-interactive-neutral-strong: var( --dashboard__text-color );
+		--wpds-color-background-interactive-neutral-strong-active: var(
+			--wp-components-color-gray-700
+		);
+		--wpds-color-background-interactive-neutral-strong-disabled: var(
+			--wp-components-color-gray-200
+		);
+		--wpds-color-foreground-interactive-neutral-strong: var(
+			--wp-components-color-foreground-inverted
+		);
+		--wpds-color-foreground-interactive-neutral-strong-active: var(
+			--wp-components-color-foreground-inverted
+		);
+		--wpds-color-foreground-interactive-neutral-strong-disabled: var(
+			--wp-components-color-gray-600
+		);
 	}
 }
 
