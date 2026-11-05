@@ -11,6 +11,8 @@ type ScoreMetric = {
 	description: string;
 	score: number;
 	max: number;
+	/** The score in the sample PDF report, shown on the overview's report pages. */
+	reportScore: number;
 };
 
 type ScorePerspective = {
@@ -38,6 +40,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 4,
 				max: 18,
+				reportScore: 7,
 			},
 			{
 				label: __( 'Contact & Conversion' ),
@@ -46,6 +49,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 3,
 				max: 17,
+				reportScore: 8.5,
 			},
 			{
 				label: __( 'SEO' ),
@@ -54,6 +58,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 5,
 				max: 11,
+				reportScore: 7.5,
 			},
 			{
 				label: __( 'Mobile Experience' ),
@@ -62,6 +67,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 7,
 				max: 12,
+				reportScore: 9,
 			},
 			{
 				label: __( 'Content Quality' ),
@@ -70,6 +76,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 11,
 				max: 12,
+				reportScore: 10,
 			},
 			{
 				label: __( 'Design & Experience' ),
@@ -78,6 +85,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 5,
 				max: 10,
+				reportScore: 7.5,
 			},
 			{
 				label: __( 'Accessibility' ),
@@ -86,6 +94,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 8,
 				max: 10,
+				reportScore: 7,
 			},
 			{
 				label: __( 'Audience Resonance' ),
@@ -94,6 +103,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 3,
 				max: 10,
+				reportScore: 3,
 			},
 		],
 	},
@@ -113,6 +123,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 18,
 				max: 20,
+				reportScore: 15,
 			},
 			{
 				label: __( 'Structured Data' ),
@@ -121,6 +132,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 3,
 				max: 18,
+				reportScore: 5,
 			},
 			{
 				label: __( 'AEO Readiness' ),
@@ -129,6 +141,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 3,
 				max: 16,
+				reportScore: 6,
 			},
 			{
 				label: __( 'E-E-A-T Signals' ),
@@ -137,6 +150,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 9,
 				max: 14,
+				reportScore: 5,
 			},
 			{
 				label: __( 'Content Freshness' ),
@@ -145,6 +159,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 7,
 				max: 12,
+				reportScore: 6,
 			},
 			{
 				label: __( 'Entity Clarity' ),
@@ -153,6 +168,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 7,
 				max: 10,
+				reportScore: 7.5,
 			},
 			{
 				label: __( 'Content Specificity' ),
@@ -161,6 +177,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 3,
 				max: 7,
+				reportScore: 6,
 			},
 			{
 				label: __( 'llms.txt' ),
@@ -169,6 +186,7 @@ export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > =>
 				),
 				score: 0,
 				max: 3,
+				reportScore: 0,
 			},
 		],
 	},

@@ -145,12 +145,6 @@ function CategoryGraphic() {
 	);
 }
 
-// The sample report's score summary, in the same order as `getPerspectives()` metrics.
-const SAMPLE_REPORT_SCORES = {
-	human: [ 7, 8.5, 7.5, 9, 10, 7.5, 7, 3 ],
-	ai: [ 15, 5, 6, 5, 6, 7.5, 6, 0 ],
-};
-
 function SamplePageHeader() {
 	return (
 		<div className="dashboard-amplify-story__page-header">
@@ -249,8 +243,8 @@ function ReportPagesGraphic( { onOpen }: { onOpen: () => void } ) {
 				<div className="dashboard-amplify-story__page-scores">
 					{ ( [ 'human', 'ai' ] as const ).map( ( type ) => (
 						<div key={ type }>
-							{ perspectives[ type ].metrics.map( ( metric, index ) => {
-								const score = SAMPLE_REPORT_SCORES[ type ][ index ];
+							{ perspectives[ type ].metrics.map( ( metric ) => {
+								const score = metric.reportScore;
 								return (
 									<div
 										key={ metric.label }
