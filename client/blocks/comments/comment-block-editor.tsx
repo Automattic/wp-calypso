@@ -16,8 +16,6 @@ type Props = {
 	placeholder: string;
 	label: string;
 	takeFocus?: boolean;
-	/** Open from the start and kept open, as the inbox's composer has it. */
-	pinToolbar?: boolean;
 	/** The height of the form row before this box replaced its textarea, which the row grows from and shrinks back to. */
 	openFrom?: number;
 	/** Shrinks the row back to `openFrom`, then calls `onClosed`. */
@@ -45,7 +43,6 @@ export default function CommentBlockEditor( {
 	placeholder,
 	label,
 	takeFocus,
-	pinToolbar,
 	openFrom,
 	closing,
 	onClosed,
@@ -201,9 +198,8 @@ export default function CommentBlockEditor( {
 			ref={ box }
 			className={ clsx( 'comments__block-editor jetpack-comments jetpack-comments__box', {
 				// Closing folds the toolbar too, so the words slide up to where the textarea shows them.
-				'is-open': ( pinToolbar || active ) && ! closing,
+				'is-open': active && ! closing,
 				'is-closing': closing,
-				'has-pinned-toolbar': pinToolbar,
 			} ) }
 		>
 			<div className="comments__block-editor-placeholder" hidden={ editor === 'ready' }>

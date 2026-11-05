@@ -2,8 +2,8 @@
 
 $toolbar-height: 48px;
 $compact-toolbar-height: 32px;
-// The whole composer, toolbar included; past it the writing area scrolls.
-$composer-max-height: 400px;
+// The whole box, toolbar included; past it the writing area scrolls.
+$editor-max-height: 400px;
 // How the toolbar opens and folds, besides when it shows.
 $toolbar-fold:
 	grid-template-rows 0.25s ease-in-out,
@@ -53,17 +53,12 @@ $toolbar-fold:
 	animation: none;
 }
 
-// The inbox's composer has it from the start, so its box never grows.
-.comments__block-editor.has-pinned-toolbar.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar {
-	transition: none;
-}
-
 // The writing area, the same for the stand-in and the editor, so the swap doesn't move it.
 .comments__block-editor .comments__block-editor-textarea,
 .comments__block-editor .jetpack-comments__editor .editor-styles-wrapper {
 	box-sizing: border-box;
 	min-block-size: calc(4lh + 2 * var(--jetpack-comments-pad));
-	max-block-size: $composer-max-height - $toolbar-height - 1px;
+	max-block-size: $editor-max-height - $toolbar-height - 1px;
 	overflow-y: auto;
 }
 
@@ -71,9 +66,10 @@ $toolbar-fold:
 	position: relative;
 }
 
-// Outside the inbox, the box stays close to the textarea it replaces: its border and type, two
-// lines to write on, and a slimmer toolbar that keeps to the background until it's used.
-.comments__block-editor:not(.has-pinned-toolbar) {
+// The box stays close to the textarea it replaces: its border and type, two lines to write on, and
+// a slimmer toolbar that keeps to the background until it's used. The doubled class outranks the
+// editor's own styles.
+.comments__block-editor.comments__block-editor {
 	--jetpack-comments-pad: 12px;
 	--jetpack-comments-font-size: #{$font-body-small};
 	--jetpack-comments-line-height: 21px;
@@ -85,7 +81,7 @@ $toolbar-fold:
 	.comments__block-editor-textarea,
 	.jetpack-comments__editor .editor-styles-wrapper {
 		min-block-size: calc(2lh + 2 * var(--jetpack-comments-pad));
-		max-block-size: $composer-max-height - $compact-toolbar-height - 1px;
+		max-block-size: $editor-max-height - $compact-toolbar-height - 1px;
 		transition: padding-block 0.25s ease-in-out;
 	}
 
@@ -104,19 +100,19 @@ $toolbar-fold:
 @media (prefers-reduced-motion: reduce) {
 	.comments__block-editor.jetpack-comments.jetpack-comments__box .jetpack-comments__toolbar,
 	.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar,
-	.comments__block-editor:not(.has-pinned-toolbar) .comments__block-editor-textarea,
-	.comments__block-editor:not(.has-pinned-toolbar) .jetpack-comments__editor .editor-styles-wrapper {
+	.comments__block-editor.comments__block-editor .comments__block-editor-textarea,
+	.comments__block-editor.comments__block-editor .jetpack-comments__editor .editor-styles-wrapper {
 		transition: none;
 	}
 }
 
-.comments__block-editor:not(.has-pinned-toolbar).is-open .comments__block-editor-toolbar,
-.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+.comments__block-editor.comments__block-editor.is-open .comments__block-editor-toolbar,
+.comments__block-editor.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
 	min-block-size: $compact-toolbar-height + 1px;
 	border-block-end-color: var(--color-neutral-0);
 }
 
-.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments .jetpack-comments__toolbar {
+.comments__block-editor.comments__block-editor.jetpack-comments .jetpack-comments__toolbar {
 	padding-inline: 4px;
 
 	.components-toolbar-group {
@@ -150,12 +146,12 @@ $toolbar-fold:
 
 // Room for a finger on a touch screen.
 @media (pointer: coarse) {
-	.comments__block-editor:not(.has-pinned-toolbar).is-open .comments__block-editor-toolbar,
-	.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
+	.comments__block-editor.comments__block-editor.is-open .comments__block-editor-toolbar,
+	.comments__block-editor.comments__block-editor.jetpack-comments.jetpack-comments__box.is-open .jetpack-comments__toolbar {
 		min-block-size: $toolbar-height + 1px;
 	}
 
-	.comments__block-editor:not(.has-pinned-toolbar).jetpack-comments .jetpack-comments__toolbar {
+	.comments__block-editor.comments__block-editor.jetpack-comments .jetpack-comments__toolbar {
 		.components-toolbar-group {
 			min-height: $toolbar-height;
 		}

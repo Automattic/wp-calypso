@@ -404,7 +404,7 @@ PostCommentForm.propTypes = {
 
 	onReplyCancel: PropTypes.func,
 
-	// From withCommentsEditorSettings: the editor's settings, inside the inbox only.
+	// From withCommentsEditorSettings, inside the inbox only.
 	editorSettings: PropTypes.object,
 	onIntent: PropTypes.func,
 
@@ -435,18 +435,11 @@ const withPostCommentActions = ( WrappedComponent ) => {
 };
 
 const withCommentsEditorSettings = ( WrappedComponent ) => {
-	const WithCommentsEditorSettings = ( props ) => {
-		// Only the Conversations inbox gets the editor until it's released to the whole Reader.
-		const blockEditor = useContext( CommentEditorContext );
+	const WithEditor = ( props ) => {
 		const settled = usePageSettled();
 		// A pointer over the form, or focus in it: a writer on their way in.
 		const [ wanted, setWanted ] = useState( false );
-		const { data: settings } = useQuery( {
-			...commentsEditorQuery(),
-			enabled: blockEditor && ( settled || wanted ),
-		} );
-		// The settings stay cached after the inbox, so the gate also holds them back here.
-		const data = blockEditor ? settings : undefined;
+		const { data } = useQuery( { ...commentsEditorQuery(), enabled: settled || wanted } );
 
 		// The editor downloads ahead of the first focus, so it's ready when someone clicks in.
 		useEffect( () => {
@@ -464,10 +457,18 @@ const withCommentsEditorSettings = ( WrappedComponent ) => {
 			<WrappedComponent
 				{ ...props }
 				editorSettings={ data }
-				onIntent={ ! blockEditor || wanted ? undefined : () => setWanted( true ) }
+				onIntent={ wanted ? undefined : () => setWanted( true ) }
 			/>
 		);
 	};
+
+	// Only the Conversations inbox gets the editor until it's released to the whole Reader.
+	const WithCommentsEditorSettings = ( props ) =>
+		useContext( CommentEditorContext ) ? (
+			<WithEditor { ...props } />
+		) : (
+			<WrappedComponent { ...props } />
+		);
 
 	WithCommentsEditorSettings.displayName = `withCommentsEditorSettings(${
 		WrappedComponent.displayName || WrappedComponent.name || 'Component'
