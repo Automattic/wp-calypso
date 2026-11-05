@@ -1,10 +1,11 @@
 import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { invokeSurvicateEventOnce } from '@automattic/survicate';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { external } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { getCurrentDashboard } from '../../app/routing';
 import Notice from '../../components/notice';
@@ -59,6 +60,13 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 		userPreferenceMutation( `site-migration-completed-notice-dismissed-${ site.ID }` )
 	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
+
+	// Each migration into the site asks once, whether the user waited for it or came back to it later.
+	const completedAt = site.site_migration.completed_at;
+	useEffect(
+		() => invokeSurvicateEventOnce( 'migrationCompleted', `${ site.ID }:${ completedAt }` ),
+		[ site.ID, completedAt ]
+	);
 
 	if ( isDismissed ) {
 		return null;
