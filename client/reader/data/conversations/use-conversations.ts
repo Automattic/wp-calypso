@@ -144,6 +144,11 @@ export function useMarkConversationsRead() {
 	return useMutation( {
 		...markReadConversationNotesMutation( queryClient ),
 		// Here rather than in mutate(), which drops its callbacks once another mark starts.
-		onError: () => dispatch( errorNotice( translate( 'Couldn’t mark as read. Try again.' ) ) ),
+		onError: () =>
+			dispatch(
+				errorNotice( translate( 'Couldn’t mark as read. Try again.' ), {
+					id: 'reader-conversations-mark-read-error',
+				} )
+			),
 	} );
 }

@@ -2,7 +2,6 @@ import {
 	fetchReadConversationsList,
 	fetchReadConversationsComments,
 	markNotificationsRead,
-	type ReadConversation,
 	type ReadConversationsResponse,
 	type ReadConversationsSort,
 } from '@automattic/api-core';
@@ -75,6 +74,7 @@ export const readConversationsQuery = ( {
 				pageParam
 			),
 		...cursorPaging,
+		meta: { persist: false },
 	} );
 
 export const readConversationsCommentsQuery = ( {
@@ -96,111 +96,85 @@ export const readConversationsCommentsQuery = ( {
 				pageParam
 			),
 		...cursorPaging,
+		meta: { persist: false },
 	} );
 
 /**
- * Applies `update` to every loaded conversation in every list query. Structural
- * sharing keeps unchanged pages and rows at their old references.
+ * Clears the marked notes from every loaded conversation. Each list lowers its own
+ * `unread_total` by the conversations it clears, so lists cached at different
+ * times don't lower each other's totals.
  */
-function updateReadConversations(
-	queryClient: QueryClient,
-	update: ( conversation: ReadConversation ) => ReadConversation
-) {
+function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: number[] ) {
+	const ids = new Set( noteIds );
 	queryClient.setQueriesData< ReadConversationsInfiniteData >(
 		{ queryKey: getReadConversationsListQueryKey() },
-		( data ) =>
-			data && {
-				...data,
-				pages: data.pages.map( ( page ) => ( {
-					...page,
-					conversations: page.conversations.map( update ),
-				} ) ),
+		( data ) => {
+			if ( ! data?.pages.length ) {
+				return data;
 			}
+			let cleared = 0;
+			const pages = data.pages.map( ( page ) => ( {
+				...page,
+				conversations: page.conversations.map( ( conversation ) => {
+					const unread = conversation.unread_note_ids.filter( ( id ) => ! ids.has( id ) );
+					const marked = conversation.unread_note_ids.length - unread.length;
+					if ( ! marked ) {
+						return conversation;
+					}
+					const previousCount = conversation.unread_count ?? 0;
+					const unreadCount = Math.max( 0, previousCount - marked );
+					if ( previousCount && ! unreadCount ) {
+						cleared++;
+					}
+					return { ...conversation, unread_note_ids: unread, unread_count: unreadCount };
+				} ),
+			} ) );
+			// Only the first page's total is read.
+			pages[ 0 ] = {
+				...pages[ 0 ],
+				unread_total: Math.max( 0, pages[ 0 ].unread_total - cleared ),
+			};
+			// Structural sharing keeps unchanged pages and rows at their old references.
+			return { ...data, pages };
+		}
 	);
 }
 
-const markReadMutationKey = [ ...getReadConversationsQueryKeyPrefix(), 'mark-read' ];
+/**
+ * Marks in flight per QueryClient. Counted here rather than with `isMutating()`,
+ * which still counts marks that settle in the same tick, so none would refetch.
+ */
+const pendingMarks = new WeakMap< QueryClient, number >();
 
-// Overlapping marks refetch once, when the last one settles, if any of them needed it.
-const pendingRefetch = new WeakSet< QueryClient >();
-
-// Mark-read patches the conversations and the comment notes.
 const getMarkReadQueryKeys = () => [
 	getReadConversationsListQueryKey(),
 	getNotificationsQueryKey(),
 ];
 
 /**
- * Marks comment notes read and clears them from the loaded conversations right
- * away. The route sends at most 50 note ids per conversation, so one with more
- * is refetched afterward to get the rest, as is everything when the request fails.
+ * Marks comment notes read and clears them from the cached conversations and notes
+ * right away. Both refetch once the last overlapping mark settles. That picks up
+ * notes past the route's 50 ids per conversation, undoes a failed mark, and replaces
+ * anything a poll or focus refetch fetched before the mark landed.
  */
 export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
-		mutationKey: markReadMutationKey,
 		meta: { statId: 'read-conversation-mark-read' },
 		mutationFn: markNotificationsRead,
 		onMutate: async ( noteIds: number[] ) => {
-			const queryKeys = getMarkReadQueryKeys();
-			// A refetch cancelled here, such as an earlier mark's, has to run again later.
-			if ( queryKeys.some( ( queryKey ) => queryClient.isFetching( { queryKey } ) ) ) {
-				pendingRefetch.add( queryClient );
-			}
+			pendingMarks.set( queryClient, ( pendingMarks.get( queryClient ) ?? 0 ) + 1 );
 			await Promise.all(
-				queryKeys.map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
+				getMarkReadQueryKeys().map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
 			);
 			markCachedNotesRead( queryClient, noteIds );
-			const ids = new Set( noteIds );
-			const cleared = new Set< string >();
-			let hasMoreUnread = false;
-			updateReadConversations( queryClient, ( conversation ) => {
-				const unread = conversation.unread_note_ids.filter( ( id ) => ! ids.has( id ) );
-				if ( unread.length === conversation.unread_note_ids.length ) {
-					return conversation;
-				}
-				const unreadCount = Math.max(
-					0,
-					( conversation.unread_count ?? 0 ) -
-						( conversation.unread_note_ids.length - unread.length )
-				);
-				if ( ! unreadCount ) {
-					cleared.add( conversation.id );
-				} else if ( ! unread.length ) {
-					hasMoreUnread = true;
-				}
-				return { ...conversation, unread_note_ids: unread, unread_count: unreadCount };
-			} );
-			if ( cleared.size ) {
-				// Only the first page's total is read.
-				queryClient.setQueriesData< ReadConversationsInfiniteData >(
-					{ queryKey: getReadConversationsListQueryKey() },
-					( data ) =>
-						data?.pages.length
-							? {
-									...data,
-									pages: [
-										{
-											...data.pages[ 0 ],
-											unread_total: Math.max( 0, data.pages[ 0 ].unread_total - cleared.size ),
-										},
-										...data.pages.slice( 1 ),
-									],
-								}
-							: data
-				);
-			}
-			return { hasMoreUnread };
+			markCachedConversationNotesRead( queryClient, noteIds );
 		},
-		// Refetching on error, rather than restoring a snapshot, keeps other marks made meanwhile.
-		// Waiting for the last pending mark keeps the refetch from bringing back what it cleared.
-		onSettled: ( _response, error, _noteIds, context ) => {
-			if ( error || context?.hasMoreUnread ) {
-				pendingRefetch.add( queryClient );
-			}
-			if (
-				queryClient.isMutating( { mutationKey: markReadMutationKey } ) > 1 ||
-				! pendingRefetch.delete( queryClient )
-			) {
+		// Refetching rather than restoring a snapshot keeps other marks made meanwhile, and
+		// waiting for the last one keeps the refetch from bringing back what they cleared.
+		onSettled: () => {
+			const pending = Math.max( 0, ( pendingMarks.get( queryClient ) ?? 0 ) - 1 );
+			pendingMarks.set( queryClient, pending );
+			if ( pending ) {
 				return;
 			}
 			return Promise.all(
