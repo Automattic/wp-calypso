@@ -7,6 +7,7 @@ import { useLocale } from '../../app/locale';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import OverviewCard from '../../components/overview-card';
 import { formatDate } from '../../utils/datetime';
+import { useTrackOverviewItem } from './use-track-overview-item';
 
 interface FeaturedCardRenewProps {
 	domain: Domain;
@@ -15,6 +16,7 @@ interface FeaturedCardRenewProps {
 export default function FeaturedCardRenew( { domain }: FeaturedCardRenewProps ) {
 	const router = useRouter();
 	const locale = useLocale();
+	const trackItem = useTrackOverviewItem( domain );
 	const date = domain.auto_renewing ? domain.auto_renewal_date : domain.expiry;
 
 	if ( ! date || domain.subscription_id === null ) {
@@ -53,6 +55,7 @@ export default function FeaturedCardRenew( { domain }: FeaturedCardRenewProps ) 
 				domain.auto_renewing ? __( 'Auto-renew is enabled.' ) : __( 'Auto-renew is disabled.' )
 			}
 			intent={ intent }
+			onClick={ () => trackItem( 'renew' ) }
 		/>
 	);
 }
