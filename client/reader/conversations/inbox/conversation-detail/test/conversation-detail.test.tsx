@@ -1,6 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+jest.mock( 'calypso/state/notices/actions', () => {
+	const actual = jest.requireActual( 'calypso/state/notices/actions' );
+	return {
+		...actual,
+		errorNotice: jest.fn( actual.errorNotice ),
+		successNotice: jest.fn( actual.successNotice ),
+	};
+} );
 jest.mock( 'calypso/reader/data/post', () => ( {
 	usePost: jest.fn(),
 } ) );
@@ -15,10 +23,12 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 	) ),
 } ) );
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { adaptReadConversation } from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import preferences from 'calypso/state/preferences/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationDetail } from '..';
@@ -53,6 +63,8 @@ const renderDetail = ( props: Partial< React.ComponentProps< typeof Conversation
 
 beforeEach( () => {
 	mockedUsePost.mockReset();
+	jest.mocked( errorNotice ).mockClear();
+	jest.mocked( successNotice ).mockClear();
 } );
 
 describe( 'ConversationDetail', () => {
@@ -175,6 +187,44 @@ describe( 'ConversationDetail', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
 
 		expect( screen.getByRole( 'menuitem', { name: 'Follow conversation' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'unfollows a conversation the user follows', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/read/sites/10/posts/100/unfollow' )
+			.reply( 200, { success: true } );
+
+		renderDetail( { conversation: { ...conversation, isFollowing: true } } );
+		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Unfollow conversation' } ) );
+
+		await waitFor( () =>
+			expect( successNotice ).toHaveBeenCalledWith(
+				'The conversation has been successfully unfollowed.',
+				expect.anything()
+			)
+		);
+	} );
+
+	it( 'shows an error when the unfollow does not go through', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/read/sites/10/posts/100/unfollow' )
+			.reply( 200, { success: false } );
+
+		renderDetail( { conversation: { ...conversation, isFollowing: true } } );
+		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Unfollow conversation' } ) );
+
+		await waitFor( () =>
+			expect( errorNotice ).toHaveBeenCalledWith(
+				'Sorry, we had a problem unfollowing that conversation. Please try again.'
+			)
+		);
+		expect( successNotice ).not.toHaveBeenCalled();
 	} );
 
 	it( 'doesn’t offer to follow a conversation the user follows', async () => {
