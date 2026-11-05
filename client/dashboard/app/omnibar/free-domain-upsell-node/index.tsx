@@ -1,16 +1,19 @@
 import { Icon } from '@wordpress/components';
 import { addQueryArgs } from '@wordpress/url';
 import { upsell } from '../../../components/icons';
-import { redirectToDashboardLink } from '../../../utils/link';
 import type { AnalyticsClient } from '../../analytics';
-import type { AdminBarNode, OmnibarNode } from '@automattic/omnibar';
+import type { AdminBarNode, OmnibarHrefResolver, OmnibarNode } from '@automattic/omnibar';
 
 import './style.scss';
 
 export function createFreeDomainUpsellNodeBuilder( {
+	currentUrl,
+	resolveHref = ( href ) => href,
 	sectionName,
 	recordTracksEvent,
 }: {
+	currentUrl?: string | null;
+	resolveHref?: OmnibarHrefResolver;
 	sectionName?: string;
 	recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ];
 } ) {
@@ -27,19 +30,11 @@ export function createFreeDomainUpsellNodeBuilder( {
 		return {
 			icon: <Icon icon={ upsell } size={ 16 } viewBox="4 5 16 14" />,
 			className: 'omnibar__free-domain-upsell',
+			...( currentUrl
+				? { href: addQueryArgs( resolveHref( adminBarNode.href ), { back_to: currentUrl } ) }
+				: {} ),
 			onView: () => recordTracksEvent( 'calypso_omnibar_upsell_impression', eventProps ),
-			onClick: ( event ) => {
-				recordTracksEvent( 'calypso_omnibar_upsell_click', eventProps );
-
-				// The flow's Back button follows `back_to`. The omnibar is its own React
-				// root and does not re-render on Dashboard route changes, so the link is
-				// pointed at the current page here rather than when the node is built.
-				if ( source === 'dashboard' && event.currentTarget instanceof HTMLAnchorElement ) {
-					event.currentTarget.href = addQueryArgs( event.currentTarget.href, {
-						back_to: redirectToDashboardLink( { supportBackport: true } ),
-					} );
-				}
-			},
+			onClick: () => recordTracksEvent( 'calypso_omnibar_upsell_click', eventProps ),
 		};
 	};
 }
