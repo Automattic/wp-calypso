@@ -7,6 +7,10 @@
 }
 
 .dashboard-amplify-story__pages {
+	// The sample report's own blues, so the pages match the PDF they open.
+	--amplify-report-blue: #0240e4;
+	--amplify-report-blue-light: #0387ff;
+
 	position: absolute;
 	inset: 0;
 	display: block;
@@ -92,7 +96,7 @@
 
 .dashboard-amplify-story__page-eyebrow {
 	display: block;
-	color: var( --color-primary );
+	color: var( --amplify-report-blue );
 	font-size: calc( 1.5 * var( --page-u ) );
 	font-weight: 700;
 	text-transform: uppercase;
@@ -111,7 +115,7 @@
 
 .dashboard-amplify-story__page[data-page='cover'] {
 	padding: 0;
-	background: color-mix( in srgb, var( --color-primary ) 55%, var( --color-surface ) );
+	background: var( --amplify-report-blue-light );
 }
 
 .dashboard-amplify-story__page-cover {
@@ -120,7 +124,7 @@
 	height: 61%;
 	padding: calc( 5 * var( --page-u ) ) calc( 6 * var( --page-u ) );
 	box-sizing: border-box;
-	background: var( --color-primary );
+	background: var( --amplify-report-blue );
 	color: var( --color-text-inverted );
 }
 
@@ -154,7 +158,7 @@
 
 .dashboard-amplify-story__page-art circle,
 .dashboard-amplify-story__page-art rect {
-	fill: var( --color-primary );
+	fill: var( --amplify-report-blue );
 }
 
 .dashboard-amplify-story__page-art rect:nth-of-type( n + 2 ) {
