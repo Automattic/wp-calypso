@@ -100,6 +100,54 @@ describe( '<Domains>', () => {
 		expect( within( card ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
 		expect( within( card ).getByRole( 'button', { name: 'DNS' } ) ).toBeVisible();
 		expect( within( card ).getByText( 'Active' ) ).toBeVisible();
+		expect( within( card ).getByText( 'Registered with us' ) ).toBeVisible();
+	} );
+
+	test( 'keeps "Registered with us" on a domain being transferred out', async () => {
+		mockApis( [
+			mockDomain( 1, {
+				domain_status: {
+					id: 'pending_transfer',
+					label: 'Outgoing transfer pending',
+					type: 'warning',
+				},
+			} ),
+		] );
+
+		render( <Domains /> );
+
+		const card = await screen.findByRole( 'group', { name: 'domain01.com' } );
+		expect( within( card ).getByText( 'Registered with us' ) ).toBeVisible();
+		expect( within( card ).getByText( 'Outgoing transfer pending' ) ).toBeVisible();
+	} );
+
+	test( 'shows "Domain name transfer" on an incoming transfer in any state', async () => {
+		mockApis(
+			[ 'in_progress', 'transfer_error', 'transfer_completed' ].map( ( id, index ) =>
+				mockDomain( index, {
+					subtype: { id: 'domain_transfer', label: 'From the API' },
+					domain_status: { id, label: 'Status', type: 'warning' },
+				} )
+			)
+		);
+
+		render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'domain00.com' } );
+		expect( screen.getAllByText( 'Domain name transfer' ) ).toHaveLength( 3 );
+	} );
+
+	test( 'shows the type, not the primary address, on this all-sites list', async () => {
+		mockApis( [ mockDomain( 1, { primary_domain: true } ) ] );
+
+		render( <Domains /> );
+
+		const card = await screen.findByRole( 'group', { name: 'domain01.com' } );
+		expect( within( card ).getByText( 'Registered with us' ) ).toBeVisible();
+		expect( within( card ).queryByText( 'Primary site address' ) ).not.toBeInTheDocument();
+		expect(
+			within( card ).queryByRole( 'button', { name: 'Change primary' } )
+		).not.toBeInTheDocument();
 	} );
 
 	test( 'offers the toolbar controls on the cards', async () => {

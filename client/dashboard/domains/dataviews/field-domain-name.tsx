@@ -7,6 +7,7 @@ import { useAnalytics } from '../../app/analytics';
 import { domainOverviewRoute, domainTransferRoute } from '../../app/router/domains';
 import { siteDomainsRoute, siteOverviewRoute } from '../../app/router/sites';
 import { Text } from '../../components/text';
+import { getDomainTypeLabel } from '../../utils/domain';
 import { useIsDomainActivating } from './use-domain-activation';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -29,13 +30,21 @@ export function PrimaryDomainBadge() {
 	);
 }
 
-export function useDomainNameNote( domain: DomainSummary ) {
+export function useDomainNameNote( domain: DomainSummary, isPrimaryBadgeShown?: boolean ) {
 	const isActivating = useIsDomainActivating( domain );
 
 	if ( isActivating ) {
 		return __( 'Preparing your new domain name' );
 	}
-	return domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION ? domain.subtype.label : null;
+	// Being the primary address matters more here than how the domain came to the site.
+	if (
+		isPrimaryBadgeShown &&
+		( domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION )
+	) {
+		return null;
+	}
+	return getDomainTypeLabel( domain );
 }
 
 export const DomainNameField = ( {
@@ -53,7 +62,8 @@ export const DomainNameField = ( {
 } ) => {
 	const { recordTracksEvent } = useAnalytics();
 	const matches = useMatches();
-	const note = useDomainNameNote( domain );
+	const isPrimaryBadgeShown = !! showPrimaryDomainBadge && domain.primary_domain;
+	const note = useDomainNameNote( domain, isPrimaryBadgeShown );
 
 	const siteSlug = site?.slug ?? domain.site_slug;
 
@@ -73,7 +83,7 @@ export const DomainNameField = ( {
 				</Text>
 				{ value }
 			</span>
-			{ showPrimaryDomainBadge && domain.primary_domain && <PrimaryDomainBadge /> }
+			{ isPrimaryBadgeShown && <PrimaryDomainBadge /> }
 			{ note && (
 				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
 					{ note }

@@ -99,18 +99,40 @@ describe( '<DomainCardsLayout>', () => {
 		);
 	} );
 
-	test( 'shows the subtype under the title of a domain that is not a registration', async () => {
+	test( 'shows the domain’s type under the title', async () => {
 		renderCards(
 			[],
 			[
 				{
 					...domain,
-					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain name connection' },
+					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'From the API' },
 				} as DomainSummary,
 			]
 		);
 
-		expect( await screen.findByText( 'Domain name connection' ) ).toBeVisible();
+		expect( await screen.findByText( 'Connected domain name' ) ).toBeVisible();
+	} );
+
+	test( 'adds "Change primary" to the footer when the domain can use it', async () => {
+		const changePrimary = jest.fn();
+		renderCards( [
+			{ id: 'manage-domain', label: () => 'View settings', callback: jest.fn() },
+			{ id: 'manage-dns-settings', label: 'Manage DNS', callback: jest.fn() },
+			{
+				id: 'change-primary-domain',
+				isPrimary: true,
+				label: 'Change primary',
+				callback: changePrimary,
+			},
+		] );
+		const user = userEvent.setup();
+
+		await screen.findByRole( 'button', { name: 'Settings' } );
+		expect( getFooterLabels() ).toEqual( [ 'Settings', 'DNS', 'Change primary' ] );
+		expect( screen.queryByRole( 'button', { name: 'Actions' } ) ).not.toBeInTheDocument();
+
+		await user.click( screen.getByRole( 'button', { name: 'Change primary' } ) );
+		expect( changePrimary ).toHaveBeenCalledWith( [ domain ], expect.anything() );
 	} );
 
 	test( 'puts Settings and DNS in the footer of an active domain, in that order', async () => {

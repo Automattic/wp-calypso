@@ -86,9 +86,9 @@ export const useFields = ( {
 				enableHiding: false,
 				enableSorting: false,
 				elements: [
-					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Domain name registration' ) },
+					{ value: DomainSubtype.DOMAIN_REGISTRATION, label: __( 'Registered with us' ) },
 					{ value: DomainSubtype.DOMAIN_TRANSFER, label: __( 'Domain name transfer' ) },
-					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Domain name connection' ) },
+					{ value: DomainSubtype.DOMAIN_CONNECTION, label: __( 'Connected domain name' ) },
 					{ value: DomainSubtype.DEFAULT_ADDRESS, label: __( 'Included site address' ) },
 				],
 				filterBy: {

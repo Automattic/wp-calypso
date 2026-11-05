@@ -55,7 +55,11 @@ function getActionLabel( action: Action< DomainSummary >, item: DomainSummary ) 
  * That's also when DNS stops being what the domain needs next, so it leaves the footer for the menu.
  */
 function getFooterActionIds( item: DomainSummary ) {
-	return item.expired ? [ 'manage-domain', 'renew' ] : [ 'manage-domain', 'manage-dns-settings' ];
+	return [
+		'manage-domain',
+		item.expired ? 'renew' : 'manage-dns-settings',
+		'change-primary-domain',
+	];
 }
 
 function getFooterActionLabel( action: Action< DomainSummary >, item: DomainSummary ) {
@@ -83,7 +87,9 @@ function DomainCard( {
 	const registry = useRegistry();
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const titleId = useId();
-	const note = useDomainNameNote( item );
+	// The primary address only means something when looking at that site's own domains.
+	const isPrimaryOnSite = !! site && item.primary_domain;
+	const note = useDomainNameNote( item, isPrimaryOnSite );
 	const [ activeModalAction, setActiveModalAction ] =
 		useState< ActionModal< DomainSummary > | null >( null );
 
@@ -109,9 +115,6 @@ function DomainCard( {
 	const menuActions = eligibleActions.filter(
 		( action ) => ! footerActionIds.includes( action.id )
 	);
-
-	// The primary address only means something when looking at that site's own domains.
-	const isPrimaryOnSite = !! site && item.primary_domain;
 
 	return (
 		<Card className="domain-cards__card" size="small" role="group" aria-labelledby={ titleId }>

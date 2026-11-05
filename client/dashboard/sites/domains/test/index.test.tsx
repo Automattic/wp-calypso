@@ -289,14 +289,53 @@ describe( '<SiteDomains>', () => {
 		expect( within( card ).getByText( 'Primary site address' ) ).toBeVisible();
 	} );
 
-	test( 'does not mark a domain that is not primary', async () => {
+	test.each( [
+		[ 'domain_registration', 'Registered with us' ],
+		[ 'domain_connection', 'Connected domain name' ],
+	] )( 'says a primary %s is the primary address, not its type', async ( id, typeLabel ) => {
 		nock.cleanAll();
-		mockApis( { domains: [ { ...domain, primary_domain: false } ] } );
+		mockApis( {
+			domains: [ { ...domain, primary_domain: true, subtype: { id, label: 'From the API' } } ],
+		} );
 
 		render( <SiteDomains />, { user: ownerUser } );
 
 		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		expect( within( card ).getByText( 'Primary site address' ) ).toBeVisible();
+		expect( within( card ).queryByText( typeLabel ) ).not.toBeInTheDocument();
+	} );
+
+	test.each( [
+		[ 'domain_registration', 'Registered with us' ],
+		[ 'domain_connection', 'Connected domain name' ],
+	] )( 'shows the type of a %s that is not primary', async ( id, typeLabel ) => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ { ...domain, primary_domain: false, subtype: { id, label: 'From the API' } } ],
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		expect( within( card ).getByText( typeLabel ) ).toBeVisible();
 		expect( within( card ).queryByText( 'Primary site address' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the table’s subtitle the same as the cards', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [
+				{ ...domain, primary_domain: true },
+				{ ...domain, domain: 'second.com', primary_domain: false },
+			],
+			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		expect( within( table ).getByText( 'Primary site address' ) ).toBeVisible();
+		expect( within( table ).getAllByText( 'Registered with us' ) ).toHaveLength( 1 );
 	} );
 
 	test( 'keeps the way back to this list when opening a domain’s settings', async () => {
@@ -551,11 +590,8 @@ describe( '<SiteDomains>', () => {
 
 		expect( screen.getByText( /^Expired on / ) ).toBeVisible();
 
-		const user = userEvent.setup();
 		const primaryCard = screen.getByRole( 'group', { name: domain.domain } );
-		await user.click( within( primaryCard ).getByRole( 'button', { name: 'Actions' } ) );
-		const changePrimary = await screen.findByRole( 'menuitem', { name: 'Change primary' } );
-		await waitFor( () => expect( changePrimary ).toBeVisible() );
+		expect( within( primaryCard ).getByRole( 'button', { name: 'Change primary' } ) ).toBeVisible();
 	} );
 
 	test( 'opens the primary site address modal from "Change primary" on the primary domain row', async () => {
@@ -569,8 +605,9 @@ describe( '<SiteDomains>', () => {
 		render( <SiteDomains />, { user: ownerUser } );
 
 		const primaryCard = await screen.findByRole( 'group', { name: domain.domain } );
-		await user.click( within( primaryCard ).getByRole( 'button', { name: 'Actions' } ) );
-		await user.click( await screen.findByRole( 'menuitem', { name: 'Change primary' } ) );
+		await user.click(
+			await within( primaryCard ).findByRole( 'button', { name: 'Change primary' } )
+		);
 
 		const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
 		expect(
