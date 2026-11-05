@@ -65,13 +65,27 @@ describe( '<McpConnectCard />', () => {
 		renderCard();
 
 		const url = new URL( screen.getByRole( 'link', { name: 'VS Code' } ).getAttribute( 'href' )! );
+		const target = url.searchParams.get( 'url' )!;
+		const prefix = 'vscode:mcp/install?';
 
-		expect( url.origin + url.pathname ).toBe( 'https://vscode.dev/redirect/mcp/install' );
-		expect( url.searchParams.get( 'name' ) ).toBe( MCP_SERVER_NAME );
-		expect( JSON.parse( url.searchParams.get( 'config' )! ) ).toEqual( {
+		expect( url.origin + url.pathname ).toBe( 'https://vscode.dev/redirect' );
+		expect( target.startsWith( prefix ) ).toBe( true );
+		expect( JSON.parse( decodeURIComponent( target.slice( prefix.length ) ) ) ).toEqual( {
+			name: MCP_SERVER_NAME,
 			type: 'http',
 			url: MCP_SERVER_URL,
 		} );
+	} );
+
+	test( 'records the open when a link tile is clicked', async () => {
+		const { recordTracksEvent } = renderCard();
+
+		await userEvent.click( screen.getByRole( 'link', { name: 'Cursor' } ) );
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_mcp_connect_click',
+			expect.objectContaining( { agent: 'cursor', action: 'open' } )
+		);
 	} );
 
 	test( 'copies the Claude Code command and confirms it', async () => {

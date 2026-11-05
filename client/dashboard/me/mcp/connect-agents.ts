@@ -8,10 +8,12 @@ export const CLAUDE_CODE_COMMAND = `claude mcp add --transport http ${ MCP_SERVE
 export const CURSOR_PLUGIN_URL = 'https://cursor.com/marketplace/wordpress';
 
 // Opens VS Code's own install prompt, so there is no shell command to quote.
-export const VSCODE_INSTALL_URL = `https://vscode.dev/redirect/mcp/install?${ new URLSearchParams( {
-	name: MCP_SERVER_NAME,
-	config: JSON.stringify( { type: 'http', url: MCP_SERVER_URL } ),
-} ) }`;
+// The link format from the VS Code docs. vscode.dev hands the config to the installed app.
+export const VSCODE_INSTALL_URL = `https://vscode.dev/redirect?url=${ encodeURIComponent(
+	`vscode:mcp/install?${ encodeURIComponent(
+		JSON.stringify( { name: MCP_SERVER_NAME, type: 'http', url: MCP_SERVER_URL } )
+	) }`
+) }`;
 
 const LOGO_BASE_URL = 'https://s2.wp.com/wp-content/themes/a8c/jetpack-2026/assets/home/agents/';
 
