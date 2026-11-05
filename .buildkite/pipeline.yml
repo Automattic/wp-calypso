@@ -6,11 +6,17 @@
 steps:
   # The desktop build is resource-intensive and this repo runs many builds,
   # so keep it scoped to the same branch families the CircleCI workflow used.
+  - label: ":mag: Assert mac image (validation only)"
+    key: assert-mac-image
+    agents:
+      queue: mac
+    env:
+      IMAGE_ID: $IMAGE_ID
+    command: .buildkite/commands/assert-mac-image.sh
+
   - label: ":desktop_computer: Build desktop (mac)"
     key: desktop-build-mac
-    # FIXME: Not running on trunk at the moment because of recurring CI load issues.
-    # See AINFRA-3515 for the followup work to re-enable and improve.
-    branches: release/* desktop/* desktop-v*
+    depends_on: assert-mac-image
     notify:
       - github_commit_status:
           context: Desktop / Build (mac)
