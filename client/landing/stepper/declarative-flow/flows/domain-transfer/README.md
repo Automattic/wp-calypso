@@ -7,7 +7,7 @@ Bulk domain transfer: a logged-in user unlocks their domains at the current regi
 1. Go to /setup/domain-transfer.
 2. Verify the page uses the default WordPress.com top bar. Add `?back_to=https://my.wordpress.com/domains` and verify a "Back" button appears in the top bar and leads there.
 3. Click "Get Started", add a domain and authorization code, and continue to checkout.
-4. Go to /setup/hundred-year-domain-transfer/domains and verify the 100-Year Domain layout is unchanged.
+4. Go to /setup/hundred-year-domain-transfer/domains and verify the 100-Year Domain layout is unchanged, including the loading screen shown before the step mounts.
 
 ## Owned by
 

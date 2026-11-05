@@ -3,7 +3,7 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .domain-transfer {
-	&:not(:has(.step-container-v2)) {
+	&.hundred-year-domain-transfer {
 		height: 100%;
 		padding: 60px 0 0;
 		margin: 0 auto;
@@ -12,9 +12,6 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 30px;
-	}
-
-	&.hundred-year-domain-transfer {
 
 		&.step-route.domains.domain-transfer {
 			gap: 0;
@@ -47,30 +44,16 @@
 			}
 		}
 
-		.bulk-domain-transfer__cta-container {
-			display: flex;
-			justify-content: center;
-			margin-bottom: 32px;
+		.bulk-domain-transfer__cta {
+			&.components-button.is-primary[disabled] {
+				background: var(--studio-gray-30);
+			}
 
-			.bulk-domain-transfer__cta {
-				height: 48px;
-				width: 240px;
+			&.components-button.is-primary {
+				background: var(--studio-gray-100);
 
-				&.components-button.is-primary[disabled]{
-					background: var(--studio-gray-30);
-				}
-
-				&.components-button.is-primary{
-					background: var(--studio-gray-100);
-
-					&:hover {
-						background: var(--studio-gray-70);
-					}
-				}
-				
-
-				@media (max-width: $break-medium) {
-					width: 100%;
+				&:hover {
+					background: var(--studio-gray-70);
 				}
 			}
 		}
@@ -99,7 +82,7 @@
 		outline: 3px solid transparent;
 	}
 
-	&.domains:not(:has(.step-container-v2)) {
+	&.hundred-year-domain-transfer.domains {
 		padding: 0;
 		width: 754px;
 

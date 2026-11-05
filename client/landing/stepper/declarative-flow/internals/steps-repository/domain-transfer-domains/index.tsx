@@ -1,10 +1,8 @@
-import { MaterialIcon } from '@automattic/components';
 import { Step, HUNDRED_YEAR_DOMAIN_TRANSFER } from '@automattic/onboarding';
-import { useViewportMatch } from '@wordpress/compose';
 import { useI18n } from '@wordpress/react-i18n';
-import ChatButton from 'calypso/components/chat-button';
 import FormattedHeader from 'calypso/components/formatted-header';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
+import DomainTransferHelpButton from '../domain-transfer-help-button';
 import HundredYearPlanStepWrapper from '../hundred-year-plan-step-wrapper';
 import { WIDE_BREAKPOINT } from '../hundred-year-plan-step-wrapper/constants';
 import TransferDomains from './domains';
@@ -15,7 +13,6 @@ import './styles.scss';
 const Domains: StepType = function Domains( { navigation, flow, variantSlug } ) {
 	const { submit, goBack } = navigation;
 	const { __ } = useI18n();
-	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	const handleSubmit = () => {
 		submit?.();
@@ -56,22 +53,10 @@ const Domains: StepType = function Domains( { navigation, flow, variantSlug } ) 
 	return (
 		<Step.CenteredColumnLayout
 			columnWidth={ 8 }
-			className="step-container-v2--domain-transfer-domains"
 			topBar={
 				<Step.TopBar
 					leftElement={ goBack ? <Step.BackButton onClick={ goBack } /> : null }
-					rightElement={
-						<ChatButton
-							chatIntent="SUPPORT"
-							initialMessage="User is contacting us from the domains-transfer flow"
-							className="domains-transfer-chat-button"
-							withHelpCenter={ false }
-							section="domains-transfer"
-						>
-							<MaterialIcon icon="chat_bubble" />
-							{ isMobileViewport ? __( 'Help' ) : __( 'Need help?' ) }
-						</ChatButton>
-					}
+					rightElement={ <DomainTransferHelpButton /> }
 				/>
 			}
 			heading={
