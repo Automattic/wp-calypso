@@ -37,6 +37,7 @@ const VerifyLoginCode = ( {
 } ) => {
 	const { challenge, getSessionId, isSubmitBlocked } = useBlackboxProtection( {
 		feature: 'blackbox-signup',
+		legacySignupKey: true,
 		suspended: ! isNewAccount,
 		resetOnError: authError,
 	} );
