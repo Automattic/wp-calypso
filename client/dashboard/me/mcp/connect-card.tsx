@@ -147,9 +147,7 @@ function AccessOffNotice( {
 				</Button>
 			}
 		>
-			{ __(
-				'Agents can still connect, but they can’t read or change anything until you turn it on.'
-			) }
+			{ __( 'Turn it on so agents can read and change your sites.' ) }
 		</Notice>
 	);
 }
