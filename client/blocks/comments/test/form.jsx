@@ -17,6 +17,7 @@ jest.mock( 'calypso/blocks/user-mentions', () => ( {
 
 // The editor's script stays loading, so the form keeps the markup it was given.
 jest.mock( '../load-comment-editor', () => ( {
+	...jest.requireActual( '../load-comment-editor' ),
 	loadCommentEditor: () => new Promise( () => {} ),
 } ) );
 
@@ -43,12 +44,12 @@ const defaultProps = {
 	onCommentSubmit: jest.fn(),
 };
 
-const renderForm = ( props = {}, { composer = false } = {} ) => {
+const renderForm = ( props = {}, { inbox = false } = {} ) => {
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 
 	return renderWithProvider(
 		<QueryClientProvider client={ queryClient }>
-			<CommentEditorContext.Provider value={ composer }>
+			<CommentEditorContext.Provider value={ inbox }>
 				<PostCommentForm { ...defaultProps } { ...props } />
 			</CommentEditorContext.Provider>
 		</QueryClientProvider>,
@@ -119,7 +120,7 @@ describe( 'PostCommentForm', () => {
 		} );
 	} );
 
-	describe( 'in the inbox composer', () => {
+	describe( 'in the inbox', () => {
 		const markup =
 			'<!-- wp:paragraph --><p>Hello <strong>there</strong></p><!-- /wp:paragraph -->\n\n' +
 			'<!-- wp:list --><ul><!-- wp:list-item --><li>One</li><!-- /wp:list-item --></ul><!-- /wp:list -->';
@@ -147,7 +148,7 @@ describe( 'PostCommentForm', () => {
 					status: 'approved',
 				} );
 
-			await userEvent.click( screen.getByRole( 'button', { name: 'Reply' } ) );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
 
 			return request.isDone();
 		};
@@ -165,7 +166,7 @@ describe( 'PostCommentForm', () => {
 				...defaultPost,
 				discussion: { ...defaultPost.discussion, comments_allow_blocks: blocks },
 			};
-			renderForm( { post, commentText: markup }, { composer: true } );
+			renderForm( { post, commentText: markup }, { inbox: true } );
 
 			await screen.findByRole( 'textbox', { name: 'Comment' } );
 			expect( await postReply( content ) ).toBe( true );
@@ -173,25 +174,11 @@ describe( 'PostCommentForm', () => {
 
 		it( 'keeps the textarea when the editor settings fail to load', async () => {
 			const settings = mockEditorSettings( 404, { code: 'editor_not_available' } );
-			renderForm( { commentText: 'Plain words' }, { composer: true } );
+			renderForm( { commentText: 'Plain words' }, { inbox: true } );
 
 			await waitFor( () => expect( settings.isDone() ).toBe( true ) );
 			expect( screen.queryByRole( 'textbox', { name: 'Comment' } ) ).not.toBeInTheDocument();
 			expect( await postReply( 'Plain words' ) ).toBe( true );
-		} );
-
-		it( 'leaves Cancel off the top-level composer', () => {
-			mockEditorSettings( 404, {} );
-			renderForm( {}, { composer: true } );
-
-			expect( screen.queryByRole( 'button', { name: 'Cancel' } ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'offers Cancel on a reply', () => {
-			mockEditorSettings( 404, {} );
-			renderForm( { parentCommentId: 99, onReplyCancel: jest.fn() }, { composer: true } );
-
-			expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeVisible();
 		} );
 	} );
 

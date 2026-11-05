@@ -32,17 +32,34 @@
 			cursor: pointer;
 		}
 
-		&.is-visible {
+		&.is-visible,
+		&.is-reserved {
 			position: relative;
 			z-index: z-index("root", ".comments__form .button:not(.components-button)");
 			float: right;
+		}
+
+		&.is-visible {
 			opacity: 1;
+		}
+
+		// Holding its place under an open editor, so it fades in with the first word instead of
+		// pushing the page down.
+		&.is-reserved:not(.is-visible) {
+			visibility: hidden;
 		}
 	}
 
 	button:focus {
 		outline: dotted 1px var(--color-link);
 		color: var(--color-link);
+	}
+
+	// The block editor's side padding, so the words don't shift over when it takes over. The
+	// hidden mirror that sizes the textarea gets it too.
+	.expanding-area pre,
+	.expanding-area textarea {
+		padding-inline: 12px;
 	}
 
 	@include ui-mixins.when-dark-theme {
@@ -60,36 +77,6 @@
 				box-shadow: 0 0 0 1px var( --color-link );
 			}
 		}
-	}
-}
-
-// The conversations inbox: the author over the box, and the actions under it.
-.comments__form.is-composer {
-	padding: 0;
-
-	.comments__form-author {
-		display: flex;
-		align-items: center;
-		gap: 12px;
-		margin-block-end: 12px;
-		font-size: $font-body;
-		font-weight: 500;
-		color: var(--color-text);
-	}
-
-	.comments__form-author .user-avatar {
-		position: static;
-	}
-
-	.comments__form-actions {
-		display: flex;
-		justify-content: flex-end;
-		gap: 8px;
-		margin-block-start: 12px;
-	}
-
-	.comments__form-actions .components-button {
-		margin: 0;
 	}
 }
 

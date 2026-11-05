@@ -28,6 +28,9 @@ declare global {
 	}
 }
 
+/** Whether the text is the editor's block markup, which only the editor can show. */
+export const isBlockMarkup = ( text: string ) => text.includes( '<!-- wp:' );
+
 // The embed preview route belongs to the site the comment goes to, so the settings leave it out.
 export const commentEmbedUrl = ( siteId: number ) =>
 	`https://public-api.wordpress.com/wpcom/v2/sites/${ siteId }/comments/embed`;

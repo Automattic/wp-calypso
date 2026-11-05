@@ -1,5 +1,3 @@
-export const isBlockMarkup = ( content ) => content.includes( '<!-- wp:' );
-
 // An inert document, so nothing in the markup runs or loads.
 const parse = ( markup ) => new DOMParser().parseFromString( markup, 'text/html' ).body;
 
