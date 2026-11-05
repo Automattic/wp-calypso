@@ -146,6 +146,54 @@ describe( 'CaptureInput', () => {
 		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
 	} );
 
+	it( 'refuses a WordPress.com page instead of entering it', async () => {
+		const onInputEnter = jest.fn();
+		render(
+			<MemoryRouter>
+				<CaptureInput onInputEnter={ onInputEnter } />
+			</MemoryRouter>
+		);
+
+		await userEvent.type(
+			screen.getByLabelText( /Enter the URL of the site/ ),
+			'https://wordpress.com/home/example.com'
+		);
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( onInputEnter ).not.toHaveBeenCalled();
+		expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+		expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_importer_capture_input_invalid',
+			{ error_code: 'wordpress_com_page' }
+		);
+	} );
+
+	it( 'explains a handed-over WordPress.com page straight away', () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=wordpress.com/log-in' ] }>
+				<CaptureInput onInputEnter={ jest.fn() } skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		expect( screen.getByRole( 'textbox' ) ).toHaveValue( 'wordpress.com/log-in' );
+		expect( screen.getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+		expect( mockedRecordTracksEvent ).not.toHaveBeenCalled();
+	} );
+
+	it( 'waits for Continue before explaining other handed-over addresses', async () => {
+		render(
+			<MemoryRouter initialEntries={ [ '/?from=myblog' ] }>
+				<CaptureInput onInputEnter={ jest.fn() } skipInitialChecking />
+			</MemoryRouter>
+		);
+
+		expect( screen.queryByText( /missing its domain extension/ ) ).not.toBeInTheDocument();
+
+		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
+
+		expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+	} );
+
 	it( 'shows a custom CTA label', async () => {
 		render(
 			<MemoryRouter>
@@ -198,6 +246,11 @@ describe( 'URL Validation', () => {
 			input: 'www.例子.测试',
 			error:
 				"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com').",
+		},
+		{
+			input: 'wordpress.com/log-in',
+			error:
+				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com, there’s nothing to move.",
 		},
 		{
 			input: 'example.com-',

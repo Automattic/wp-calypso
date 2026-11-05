@@ -27,8 +27,32 @@ function isIDN( url: string ): boolean {
 	}
 }
 
+// WordPress.com's own pages, like the log-in page or a site's dashboard, aren't a site to move or import.
+const WORDPRESS_COM_PAGE_HOSTS = [
+	'wordpress.com',
+	'www.wordpress.com',
+	'public-api.wordpress.com',
+	'wp.com',
+	'www.wp.com',
+];
+
+export function isWordPressComPage( url: string ): boolean {
+	try {
+		const { hostname } = new URL( /^https?:\/\//i.test( url ) ? url : `https://${ url }` );
+		return WORDPRESS_COM_PAGE_HOSTS.includes( hostname );
+	} catch {
+		return false;
+	}
+}
+
 export type UrlValidationErrorReason =
-	'email' | 'idn' | 'invalid_characters' | 'missing_tld' | 'invalid_protocol' | 'invalid_url';
+	| 'email'
+	| 'idn'
+	| 'invalid_characters'
+	| 'missing_tld'
+	| 'invalid_protocol'
+	| 'invalid_url'
+	| 'wordpress_com_page';
 
 /*
  * Validate a site URL the user entered.
@@ -40,7 +64,7 @@ export type UrlValidationErrorReason =
  */
 export function getUrlValidationError( url: string ): UrlValidationErrorReason | null {
 	if ( CAPTURE_URL_RGX.test( url ) ) {
-		return null;
+		return isWordPressComPage( url ) ? 'wordpress_com_page' : null;
 	}
 
 	const missingTLDRegex = /^(?:https?:\/\/)?(?!.*\.[a-z]{2,})([a-zA-Z0-9-_]+)$/;
@@ -101,6 +125,10 @@ export function getValidationMessage(
 		case 'invalid_url':
 			return translate(
 				"Please add a valid website address (like 'example.com'). Feel free to copy and paste it in if that helps."
+			);
+		case 'wordpress_com_page':
+			return translate(
+				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com, there’s nothing to move."
 			);
 	}
 }

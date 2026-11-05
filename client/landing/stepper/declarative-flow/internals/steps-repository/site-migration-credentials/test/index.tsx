@@ -326,6 +326,26 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
+	it( 'asks for the site address instead of filing a request for a WordPress.com page', async () => {
+		const submit = jest.fn();
+		render( { navigation: { submit } } );
+
+		await userEvent.type( siteAddressInput(), 'https://wordpress.com/home/example.com' );
+		await userEvent.click( continueButton() );
+
+		await waitFor( () => {
+			expect( getByText( /WordPress\.com page, not your site/ ) ).toBeVisible();
+		} );
+		const postedPaths = jest
+			.mocked( wp.req.post )
+			.mock.calls.map( ( [ request ] ) => request.path );
+		expect( wp.req.get ).not.toHaveBeenCalled();
+		expect( postedPaths ).not.toContainEqual(
+			expect.stringMatching( /migration-ticket|automated-migration/ )
+		);
+		expect( submit ).not.toHaveBeenCalled();
+	} );
+
 	it( 'submits site-is-not-using-wordpress action when platform is not wordpress', async () => {
 		const submit = jest.fn();
 		( wp.req.get as jest.Mock ).mockResolvedValue( siteInfoUsingTumblr );
