@@ -6,6 +6,7 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -24,6 +25,7 @@ import {
 	FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS,
 	FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX,
 } from './constants';
+import type { ReadFourForFourCandidate } from '@automattic/api-core';
 
 // The modal reuses the Reader onboarding discover step's frame and layout.
 import 'calypso/reader/onboarding-rsm/style.scss';
@@ -31,6 +33,27 @@ import 'calypso/reader/onboarding-rsm/subscribe-modal/style.scss';
 import './style.scss';
 
 const TITLE_ID = 'four-for-four-modal-title';
+
+// The shared modal styles hide the preview column below this width.
+const NO_PREVIEW_QUERY = '(max-width: 699px)';
+
+function FollowButton( { candidate }: { candidate: ReadFourForFourCandidate } ) {
+	return (
+		<ReaderFollowButton
+			className="four-for-four-modal__follow-button"
+			siteUrl={ candidate.feedUrl || candidate.url }
+			feedId={ candidate.feedId ?? undefined }
+			siteId={ candidate.blogId }
+			followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
+			followSource={ READER_FOUR_FOR_FOUR }
+			hasButtonStyle
+			followIcon={ <></> }
+			followingIcon={
+				<Icon key="following" className="reader-following-feed" icon={ check } size={ 18 } />
+			}
+		/>
+	);
+}
 
 export function FourForFour() {
 	const translate = useTranslate();
@@ -50,15 +73,17 @@ export function FourForFour() {
 		retrySave,
 	} = useFourForFour();
 
+	const hasNoPreview = useMediaQuery( NO_PREVIEW_QUERY );
 	const [ selectedBlogId, setSelectedBlogId ] = useState< number | null >( null );
 	const selectedCandidate =
 		candidates.find( ( candidate ) => candidate.blogId === selectedBlogId ) ?? candidates[ 0 ];
 
 	// Reset the preview scroll and record the preview whenever the selection
-	// changes, including the initial default selection.
+	// changes or the preview comes into view, including the initial default
+	// selection.
 	const previewRef = useRef< HTMLDivElement | null >( null );
 	useEffect( () => {
-		if ( ! selectedCandidate ) {
+		if ( ! selectedCandidate || hasNoPreview ) {
 			return;
 		}
 		if ( previewRef.current ) {
@@ -68,7 +93,7 @@ export function FourForFour() {
 			blog_id: selectedCandidate.blogId,
 			is_participant: selectedCandidate.isParticipant ? 1 : 0,
 		} );
-	}, [ selectedCandidate?.blogId ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
+	}, [ selectedCandidate?.blogId, hasNoPreview ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
 
 	const isComplete = status === 'completed';
 	const progressCount = Math.min( followedCount, FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS );
@@ -191,16 +216,8 @@ export function FourForFour() {
 									{ candidates.map( ( candidate ) => {
 										const isSelected = selectedCandidate?.blogId === candidate.blogId;
 										const description = getSiteDescription( { site: candidate.site } );
-										return (
-											<button
-												key={ candidate.blogId }
-												type="button"
-												className={ clsx( 'four-for-four-modal__site', {
-													'is-selected': isSelected,
-												} ) }
-												aria-pressed={ isSelected }
-												onClick={ () => setSelectedBlogId( candidate.blogId ) }
-											>
+										const details = (
+											<>
 												<SiteIcon size={ 32 } iconUrl={ candidate.icon ?? undefined } />
 												<span className="four-for-four-modal__site-byline">
 													<span className="four-for-four-modal__site-name">
@@ -212,6 +229,28 @@ export function FourForFour() {
 														</span>
 													) }
 												</span>
+											</>
+										);
+										// With no preview to open, each site carries its own subscribe button.
+										if ( hasNoPreview ) {
+											return (
+												<div key={ candidate.blogId } className="four-for-four-modal__site">
+													{ details }
+													<FollowButton candidate={ candidate } />
+												</div>
+											);
+										}
+										return (
+											<button
+												key={ candidate.blogId }
+												type="button"
+												className={ clsx( 'four-for-four-modal__site', {
+													'is-selected': isSelected,
+												} ) }
+												aria-pressed={ isSelected }
+												onClick={ () => setSelectedBlogId( candidate.blogId ) }
+											>
+												{ details }
 											</button>
 										);
 									} ) }
@@ -220,7 +259,7 @@ export function FourForFour() {
 						</div>
 						<div className="subscribe-modal__preview-column">
 							<div className="subscribe-modal__preview-placeholder">
-								{ selectedCandidate && (
+								{ selectedCandidate && ! hasNoPreview && (
 									<>
 										<div className="subscribe-modal__preview-stream-header">
 											<div className="subscribe-modal__preview-site">
@@ -229,23 +268,9 @@ export function FourForFour() {
 													{ selectedCandidate.name }
 												</span>
 											</div>
-											<ReaderFollowButton
+											<FollowButton
 												key={ selectedCandidate.blogId }
-												siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
-												feedId={ selectedCandidate.feedId ?? undefined }
-												siteId={ selectedCandidate.blogId }
-												followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
-												followSource={ READER_FOUR_FOR_FOUR }
-												hasButtonStyle
-												followIcon={ <></> }
-												followingIcon={
-													<Icon
-														key="following"
-														className="reader-following-feed"
-														icon={ check }
-														size={ 18 }
-													/>
-												}
+												candidate={ selectedCandidate }
 											/>
 										</div>
 										<div className="subscribe-modal__preview-stream-container" ref={ previewRef }>

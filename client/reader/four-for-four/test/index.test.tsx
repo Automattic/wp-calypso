@@ -14,6 +14,16 @@ const mockRecordReaderTracksEvent = jest.fn();
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
+let mockHasNoPreview = false;
+jest.mock( '@wordpress/compose', () => {
+	const actual = jest.requireActual( '@wordpress/compose' );
+	return {
+		...actual,
+		useMediaQuery: ( query?: string ) =>
+			query === '(max-width: 699px)' ? mockHasNoPreview : actual.useMediaQuery( query ),
+	};
+} );
+
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
@@ -126,6 +136,7 @@ describe( 'FourForFour', () => {
 		} );
 		mockRecordReaderTracksEvent.mockClear();
 		jest.mocked( page ).mockClear();
+		mockHasNoPreview = false;
 	} );
 
 	it( 'lists candidates and previews the first one', async () => {
@@ -174,6 +185,48 @@ describe( 'FourForFour', () => {
 			'calypso_reader_four_for_four_site_previewed',
 			{ blog_id: 3, is_participant: 0 }
 		);
+	} );
+
+	it( 'gives each site its own subscribe button when there is no room for the preview', async () => {
+		const user = userEvent.setup();
+		mockHasNoPreview = true;
+		mockStatus( 'opted_in' );
+		mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+		const follow = nock( API )
+			.post(
+				'/rest/v1.1/read/following/mine/new',
+				( body ) => body.url === 'https://site3.wordpress.com/feed/'
+			)
+			.reply( 200, {
+				subscribed: true,
+				subscription: {
+					ID: 503,
+					blog_ID: 3,
+					feed_ID: 30,
+					URL: 'https://site3.wordpress.com/feed/',
+				},
+			} );
+		const progress = nock( API )
+			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 3 ] } )
+			.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3 ] } );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		expect( await screen.findByText( 'Third Site' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Third Site' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'preview-stream' ) ).not.toBeInTheDocument();
+		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_site_previewed',
+			expect.anything()
+		);
+
+		const subscribeButtons = screen.getAllByRole( 'button', { name: 'Subscribe' } );
+		expect( subscribeButtons ).toHaveLength( 2 );
+		await user.click( subscribeButtons[ 1 ] );
+
+		await waitFor( () => expect( follow.isDone() ).toBe( true ) );
+		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '1' );
 	} );
 
 	it( 'shows server-recorded progress', async () => {

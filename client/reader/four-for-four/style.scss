@@ -105,9 +105,14 @@
 
 .four-for-four-modal__site-byline {
 	display: flex;
+	flex: 1;
 	flex-direction: column;
 	gap: 2px;
 	min-width: 0;
+}
+
+.four-for-four-modal__follow-button {
+	flex-shrink: 0;
 }
 
 .four-for-four-modal__site-name {
