@@ -30,10 +30,11 @@ const upsellEventProps = {
 	source: 'dashboard',
 };
 
-function FreeDomainUpsellNodeOmnibar() {
+function FreeDomainUpsellNodeOmnibar( { currentUrl }: { currentUrl?: string | null } = {} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { siteNodes } = buildOmnibarNodesFromAdminBarNodes( [ freeDomainUpsellNode ], {
 		'free-domain-upsell': createFreeDomainUpsellNodeBuilder( {
+			currentUrl,
 			sectionName: 'dashboard',
 			recordTracksEvent,
 		} ),
@@ -71,6 +72,22 @@ describe( '<Omnibar> free domain upsell node', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_omnibar_upsell_click',
 			upsellEventProps
+		);
+	} );
+
+	test( 'sends the flow back to the current page', async () => {
+		render(
+			<FreeDomainUpsellNodeOmnibar currentUrl="https://my.wordpress.com/sites/test-site.wordpress.com?purchased_plan=value_bundle" />
+		);
+
+		const toolbar = screen.getByRole( 'navigation', { name: 'Toolbar' } );
+		const node = await within( toolbar ).findByRole( 'button', { name: 'Free domain' } );
+
+		const query = new URL( node.getAttribute( 'href' ) ?? '' ).searchParams;
+		expect( query.get( 'siteSlug' ) ).toBe( 'test-site.wordpress.com' );
+		expect( query.get( 'ref' ) ).toBe( 'omnibar-free-domain' );
+		expect( query.get( 'back_to' ) ).toBe(
+			'https://my.wordpress.com/sites/test-site.wordpress.com?purchased_plan=value_bundle'
 		);
 	} );
 } );
