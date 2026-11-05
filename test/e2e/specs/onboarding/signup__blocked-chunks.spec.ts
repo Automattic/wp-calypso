@@ -13,7 +13,6 @@ test.describe(
 		for ( const chunk of [ COOKIE_BANNER_CHUNK, GLOBAL_NOTICES_CHUNK ] ) {
 			test( `As a logged-out user, I can still use the signup step when the ${ chunk.name } cannot load`, async ( {
 				page,
-				viewportName,
 			} ) => {
 				let blocked: Awaited< ReturnType< typeof blockChunk > >;
 
@@ -29,16 +28,12 @@ test.describe(
 					);
 				} );
 
-				const emailInput = page.locator( 'input[name="email"]' );
-				// Desktop hides the email field behind "Continue with email"; mobile shows it inline.
-				const signupEntryPoint =
-					viewportName === 'mobile'
-						? emailInput
-						: page.getByRole( 'button', { name: 'Continue with email' } );
+				// The form keeps a second, hidden email input mounted on the screen it doesn't show.
+				const emailInput = page.locator( 'input[name="email"]:visible' );
 
 				await test.step( 'Then the signup options are shown', async function () {
 					// Same budget UserSignupPage gives the signup form to hydrate.
-					await expect( signupEntryPoint ).toBeVisible( { timeout: 30_000 } );
+					await expect( emailInput ).toBeVisible( { timeout: 30_000 } );
 				} );
 
 				await test.step( `And the ${ chunk.name }'s chunks were requested and blocked`, async function () {
@@ -46,7 +41,6 @@ test.describe(
 				} );
 
 				await test.step( 'And I can enter my email address', async function () {
-					await signupEntryPoint.click();
 					await emailInput.fill( 'blocked-chunk@example.com' );
 					await expect( emailInput ).toHaveValue( 'blocked-chunk@example.com' );
 				} );
