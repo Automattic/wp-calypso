@@ -4,11 +4,12 @@ import { createContext, useCallback, useContext, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import {
 	HELP_CENTER_STORE,
+	ODIE_CALL_AN_HE_BOT_SLUG,
 	ODIE_NEW_INTERACTIONS_BOT_SLUG,
 	ODIE_NEW_LOGGED_OUT_INTERACTIONS_BOT_SLUG,
 } from '../constants';
 import { useGetCombinedChat } from '../hooks';
-import { isOdieAllowedBot, getIsRequestingHumanSupport } from '../utils';
+import { isOdieAllowedBot, getIsRequestingHumanSupport, isCallAnHESampledUser } from '../utils';
 import type {
 	Chat,
 	HumanSupportRequest,
@@ -99,14 +100,19 @@ export const OdieAssistantProvider: React.FC< OdieAssistantProviderProps > = ( {
 					? ( store.getOdieBotNameSlug() as OdieAllowedBots )
 					: newInteractionsBotSlug;
 
+				const replacedBotSlug =
+					isCallAnHESampledUser( currentUser ) && odieBotNameSlug === ODIE_NEW_INTERACTIONS_BOT_SLUG
+						? ODIE_CALL_AN_HE_BOT_SLUG
+						: odieBotNameSlug;
+
 				return {
-					dynamicNewInteractionsBotSlug: odieBotNameSlug,
+					dynamicNewInteractionsBotSlug: replacedBotSlug,
 					isMinimized: store.getIsMinimized(),
 					isChatLoaded: store.getIsChatLoaded(),
 					checkoutSupportVariation: store.getCheckoutSupportVariation(),
 				};
 			},
-			[ newInteractionsBotSlug ]
+			[ newInteractionsBotSlug, currentUser ]
 		);
 
 	const navigate = useNavigate();
