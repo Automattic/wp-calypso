@@ -1,69 +1,89 @@
-import type { NotificationNote as Note } from '@automattic/api-core';
+import type {
+	ReadConversation,
+	ReadConversationOwnComment,
+	ReadConversationReason,
+} from '@automattic/api-core';
 
-// One timestamp per module load, so notes built in the same fixture never differ by a
-// millisecond and the stable sort in groupNotesByPost keeps them in fixture order.
-const DEFAULT_TIMESTAMP = new Date().toISOString();
+// One date per module load, so every fixture lands in the same day section.
+const DEFAULT_DATE = new Date().toISOString();
 
-const POST_TITLE_SUBJECT = ( name: string, title: string ) => {
-	const text = `${ name } commented on ${ title }`;
-	return {
-		text,
-		ranges: [
-			{
-				type: 'post',
-				indices: [ text.length - title.length, text.length ] as [ number, number ],
-				id: 1,
-			},
-		],
-	};
-};
+const person = ( name: string ) => ( {
+	name,
+	avatar: `https://example.com/${ name }.png`,
+	url: null,
+} );
 
-export const makeNote = ( {
-	id,
-	siteId = 10,
+export const makeConversation = ( {
+	blogId = 10,
 	postId = 100,
-	commentId = id * 1000,
 	title = 'A post title',
-	commenter = 'Ana',
-	avatar = `https://example.com/${ commenter }.png`,
+	commenters = [ 'Ana' ],
 	excerpt = 'A comment excerpt',
-	timestamp = DEFAULT_TIMESTAMP,
-	read = 0,
-	parentCommentId,
-	headerUserId,
-	...overrides
-}: Partial< Note > & {
-	id: number;
-	siteId?: number;
+	date = DEFAULT_DATE,
+	commentId = postId * 10 + 1,
+	reason = 'following',
+	unreadNoteIds = [],
+	isFollowing = false,
+}: {
+	blogId?: number;
+	postId?: number;
+	title?: string;
+	commenters?: string[];
+	excerpt?: string;
+	date?: string;
+	commentId?: number;
+	reason?: ReadConversationReason;
+	unreadNoteIds?: number[];
+	isFollowing?: boolean;
+} = {} ): ReadConversation => ( {
+	id: `${ blogId }-p-${ postId }`,
+	blog_id: blogId,
+	post_id: postId,
+	post: { title, url: `https://example.com/${ postId }`, date },
+	site: { name: 'A blog', icon: null, url: 'https://example.com' },
+	comment_count: commenters.length,
+	commenters: commenters.map( person ),
+	commenter_count: commenters.length,
+	latest_comment: {
+		id: commentId,
+		excerpt,
+		date,
+		url: `https://example.com/${ postId }#comment-${ commentId }`,
+		author: person( commenters[ 0 ] ),
+	},
+	reason,
+	unread_count: unreadNoteIds.length || null,
+	unread_note_ids: unreadNoteIds,
+	is_following: isFollowing,
+} );
+
+export const makeOwnComment = ( {
+	blogId = 10,
+	postId = 100,
+	commentId = 5000,
+	title = 'A post title',
+	excerpt = 'My comment',
+	newCommentCount = 0,
+}: {
+	blogId?: number;
 	postId?: number;
 	commentId?: number;
-	commenter?: string;
-	avatar?: string;
+	title?: string;
 	excerpt?: string;
-	parentCommentId?: number;
-	headerUserId?: number;
-} ): Note => ( {
-	id,
-	type: 'comment',
-	read,
-	timestamp,
-	icon: avatar,
-	title: 'Comment',
-	noticon: '\uf300',
-	meta: {
-		ids: { site: siteId, post: postId, comment: commentId, parent_comment: parentCommentId },
+	newCommentCount?: number | null;
+} = {} ): ReadConversationOwnComment => ( {
+	id: `${ blogId }-p-${ postId }-c-${ commentId }`,
+	blog_id: blogId,
+	post_id: postId,
+	comment_id: commentId,
+	post: { title, url: `https://example.com/${ postId }`, date: DEFAULT_DATE },
+	site: { name: 'A blog', icon: null, url: 'https://example.com' },
+	comment: {
+		id: commentId,
+		excerpt,
+		date: DEFAULT_DATE,
+		url: `https://example.com/${ postId }#comment-${ commentId }`,
+		author: person( 'Me' ),
 	},
-	subject: [ POST_TITLE_SUBJECT( commenter, title ), { text: excerpt } ],
-	...( headerUserId && {
-		header: [
-			{
-				text: 'Author',
-				ranges: [ { type: 'user', indices: [ 0, 6 ] as [ number, number ], id: headerUserId } ],
-			},
-		],
-	} ),
-	body: [
-		{ type: 'user', text: commenter, media: [ { type: 'image', indices: [ 0, 0 ], url: avatar } ] },
-	],
-	...overrides,
+	new_comment_count: newCommentCount,
 } );

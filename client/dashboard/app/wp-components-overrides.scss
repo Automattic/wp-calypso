@@ -1,12 +1,9 @@
-// @wordpress/components 37.0.0 moved Button and other emphasised labels from the legacy
-// medium weight onto `--wpds-typography-font-weight-emphasis`, which @wordpress/theme sets
-// to 600. Hold the previous 499 so button text keeps its existing weight. Remove this to
-// adopt the heavier design-system weight.
-//
-// Calypso applies the same override in
-// calypso/assets/stylesheets/_wp-components-overrides.scss, which the dashboard entries
-// don't load.
-:root {
+// Hold the design system font weight tokens at the removed base-styles
+// `$font-weight-regular` and `$font-weight-medium` values. Calypso sets the same values
+// in calypso/assets/stylesheets/_wp-components-overrides.scss, which the dashboard
+// entries don't load. Set on body so a later :root from design-tokens.css can't override it.
+body {
+	--wpds-typography-font-weight-default: 400;
 	--wpds-typography-font-weight-emphasis: 499;
 }
 

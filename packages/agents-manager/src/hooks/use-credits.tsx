@@ -13,6 +13,7 @@ import {
 	formatPercent,
 	isCreditsExhausted,
 	isCreditsLow,
+	isCreditsOnTopUps,
 } from '../utils/credits';
 import {
 	type CreditsAccess,
@@ -24,6 +25,7 @@ import {
 	getCreditsRefusalNotice,
 	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
+	getCreditsTopUpsNotice,
 	parseCreditsAccess,
 } from '../utils/credits-access';
 import {
@@ -163,6 +165,11 @@ export interface UseCreditsResult {
 	 * live read), so the command isn't handled and goes out as any text does.
 	 */
 	creditsCommand?: CreditsCommandReply;
+	/**
+	 * Once plan credits are spent and top-ups pay, when `notice` has nothing. Kept apart so it never
+	 * hides the reply-wait notice. It sends no shown or dismissed event, only its button's clicks.
+	 */
+	topUpsNotice?: NoticeConfig;
 }
 
 /**
@@ -275,6 +282,14 @@ export function useCredits( {
 			setDismissedNoticeScope( scope );
 		}
 	}, [ scope, recordCreditsEvent ] );
+	// The top-ups notice has its own dismissal, which records nothing.
+	const [ dismissedTopUpsNoticeScope, setDismissedTopUpsNoticeScope ] = useState< typeof scope >();
+	const isTopUpsNoticeDismissed = dismissedTopUpsNoticeScope === scope;
+	const dismissTopUpsNotice = useCallback( () => {
+		if ( currentScope.current === scope && scope.active ) {
+			setDismissedTopUpsNoticeScope( scope );
+		}
+	}, [ scope ] );
 	// A new object per opening, so an opening by itself records once and a close drops it unrecorded.
 	const [ popover, setPopover ] = useState< { scope: typeof scope; byItself: boolean } >();
 	const isPopoverOpen = popover?.scope === scope;
@@ -753,6 +768,35 @@ export function useCredits( {
 		dismissLowNotice,
 	] );
 
+	// A low balance keeps its own notice, even once that one is closed.
+	const topUpsNotice = useMemo< NoticeConfig | undefined >( () => {
+		if (
+			! siteId ||
+			status?.plan !== 'paid' ||
+			! isCreditsOnTopUps( status ) ||
+			isRefusedForCredits ||
+			isLow ||
+			isTopUpsNoticeDismissed
+		) {
+			return undefined;
+		}
+		return getCreditsTopUpsNotice(
+			status.remaining,
+			askToUpgrade,
+			purchaseAction,
+			dismissTopUpsNotice
+		);
+	}, [
+		siteId,
+		status,
+		isRefusedForCredits,
+		isLow,
+		isTopUpsNoticeDismissed,
+		askToUpgrade,
+		purchaseAction,
+		dismissTopUpsNotice,
+	] );
+
 	// The card stays in the thread as a record once credits are back; the composer says so.
 	const liveRefusalNotice = useMemo< NoticeConfig | undefined >( () => {
 		if ( ! isRefusedForCredits || ! siteId || status?.plan !== 'paid' ) {
@@ -979,7 +1023,17 @@ export function useCredits( {
 			takeRefusalCode,
 			refusalNotice,
 			creditsCommand,
+			topUpsNotice,
 		} ),
-		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice, creditsCommand ]
+		[
+			chat,
+			trailingActions,
+			notice,
+			beforeSubmit,
+			takeRefusalCode,
+			refusalNotice,
+			creditsCommand,
+			topUpsNotice,
+		]
 	);
 }

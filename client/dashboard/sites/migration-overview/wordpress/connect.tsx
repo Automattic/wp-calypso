@@ -18,7 +18,7 @@ import { useState } from 'react';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import ClipboardInputControl from '../../../components/clipboard-input-control';
 import ConfirmModal from '../../../components/confirm-modal';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import { Text } from '../../../components/text';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type { Site, WordPressMigrationFinding } from '@automattic/api-core';
@@ -140,9 +140,9 @@ export function Connect( {
 				<Notice
 					variant="error"
 					actions={
-						<Button variant="link" onClick={ () => refetch() }>
+						<NoticeActionButton variant="minimal" onClick={ () => refetch() }>
 							{ __( 'Try again' ) }
-						</Button>
+						</NoticeActionButton>
 					}
 				>
 					{ __( 'We couldn’t load your site’s details.' ) }

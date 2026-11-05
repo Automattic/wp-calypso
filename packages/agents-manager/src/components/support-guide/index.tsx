@@ -18,8 +18,6 @@ interface SupportGuideProps {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
-	/** Called when the user aborts the current request. */
-	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
@@ -30,7 +28,6 @@ export default function SupportGuide( {
 	isOpen,
 	chatHeaderOptions,
 	isDocked,
-	onAbort,
 	onClose,
 	onExpand,
 }: SupportGuideProps ) {
@@ -68,7 +65,6 @@ export default function SupportGuide( {
 			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
-			onStop={ onAbort }
 			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>
