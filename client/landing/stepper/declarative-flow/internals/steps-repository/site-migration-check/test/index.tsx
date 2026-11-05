@@ -220,6 +220,7 @@ describe( 'SiteMigrationCheck', () => {
 				<SiteMigrationCheck
 					{ ...mockStepProps( { navigation: { submit } } ) }
 					copySiteEligibility={ copySiteEligibility }
+					canUseAsDestination
 				/>,
 				{
 					initialEntry:
@@ -242,6 +243,7 @@ describe( 'SiteMigrationCheck', () => {
 				canCopySite ? 0 : 1
 			);
 			for ( const [ name, action ] of [
+				[ /Move your external site here/, 'use-as-destination' ],
 				...( canCopySite ? [ [ /Make a copy of your site/, 'copy-site' ] as const ] : [] ),
 				[ /Transfer your domain/, 'transfer-domain' ],
 				[ /Get access to your site/, 'get-access' ],
@@ -262,6 +264,31 @@ describe( 'SiteMigrationCheck', () => {
 			}
 		}
 	);
+
+	it( 'offers migration into the entered site first even if an earlier destination failed', () => {
+		renderStep(
+			<SiteMigrationCheck { ...mockStepProps() } destinationFailed canUseAsDestination />,
+			{
+				initialEntry:
+					'/site-migration-check?from=https://example.com&platform=wordpress&isWpcom=true',
+			}
+		);
+		const choices = screen.getAllByRole( 'button', {
+			name: /Move your external site here|Transfer your domain|Get access to your site/,
+		} );
+		expect( choices[ 0 ] ).toHaveTextContent( 'Move your external site here' );
+		expect( screen.queryByText( /We couldn’t load the destination site/ ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'does not offer migration into a site that has not been validated as a destination', () => {
+		renderStep( <SiteMigrationCheck { ...mockStepProps() } />, {
+			initialEntry:
+				'/site-migration-check?from=https://example.com&platform=wordpress&isWpcom=true',
+		} );
+		expect(
+			screen.queryByRole( 'button', { name: /Move your external site here/ } )
+		).not.toBeInTheDocument();
+	} );
 
 	it( 'explains why an ineligible site can’t be copied', () => {
 		renderStep( <SiteMigrationCheck { ...mockStepProps() } copySiteEligibility="ineligible" />, {

@@ -2,6 +2,7 @@ import { getUrlParts } from '@automattic/calypso-url';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import { Notice } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import clsx from 'clsx';
 import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
@@ -29,12 +30,18 @@ const SiteMigrationCheck: StepType< {
 		destinationFailed?: boolean;
 		onRetryDestination?: () => void;
 		copySiteEligibility?: CopySiteEligibility;
+		canUseAsDestination?: boolean;
 	};
 	submits:
 		| { action: 'back' }
 		| {
 				action:
-					'continue' | 'select-existing-site' | 'copy-site' | 'transfer-domain' | 'get-access';
+					| 'continue'
+					| 'select-existing-site'
+					| 'copy-site'
+					| 'transfer-domain'
+					| 'get-access'
+					| 'use-as-destination';
 				from: string;
 				platform: 'wordpress';
 				host?: string;
@@ -49,6 +56,7 @@ const SiteMigrationCheck: StepType< {
 	destinationFailed,
 	onRetryDestination,
 	copySiteEligibility = 'ineligible',
+	canUseAsDestination = false,
 } ) => {
 	const translate = useTranslate();
 	const [ isSubmitting, setIsSubmitting ] = useState( false );
@@ -79,7 +87,7 @@ const SiteMigrationCheck: StepType< {
 		subTitle = translate( 'Let’s figure out your next step together.' );
 	}
 	const choices: {
-		action: 'copy-site' | 'transfer-domain' | 'get-access';
+		action: 'copy-site' | 'transfer-domain' | 'get-access' | 'use-as-destination';
 		title: TranslateResult;
 		description: TranslateResult;
 		disabled?: boolean;
@@ -97,6 +105,14 @@ const SiteMigrationCheck: StepType< {
 			description: translate( 'Get help accessing and managing your site.' ),
 		},
 	];
+
+	if ( canUseAsDestination ) {
+		choices.unshift( {
+			action: 'use-as-destination',
+			title: __( 'Move your external site here' ),
+			description: __( 'Choose the site you want to bring to this WordPress.com site.' ),
+		} );
+	}
 
 	if ( copySiteEligibility === 'ineligible' ) {
 		choices.push( {
@@ -165,7 +181,7 @@ const SiteMigrationCheck: StepType< {
 						</Step.LinkButton>
 					</div>
 				) }
-				{ destinationFailed && (
+				{ ! showChoices && destinationFailed && (
 					<div className="site-migration-check__card">
 						<Notice status="error" isDismissible={ false }>
 							{ destinationSiteSlug
@@ -193,7 +209,7 @@ const SiteMigrationCheck: StepType< {
 						</div>
 					</div>
 				) }
-				{ ! destinationFailed &&
+				{ ( showChoices || ! destinationFailed ) &&
 					( showChoices ? (
 						<div className="site-migration-check__card">
 							{ choices.map( ( { action, title, description, disabled, href, ineligible } ) => (
