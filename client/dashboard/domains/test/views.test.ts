@@ -1,11 +1,56 @@
-import { recordDomainViewChanges, sanitizeDomainsListLayout } from '../dataviews/views';
+import {
+	recordDomainViewChanges,
+	sanitizeDomainFields,
+	sanitizeDomainsListLayout,
+	sanitizeDomainsListPageSize,
+} from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
+
+describe( 'sanitizeDomainFields', () => {
+	test( 'drops the removed SSL field from a saved view', () => {
+		expect( sanitizeDomainFields( [ 'blog_name', 'ssl_status', 'expiry' ] ) ).toEqual( [
+			'blog_name',
+			'expiry',
+		] );
+	} );
+
+	test( 'leaves a view without saved fields alone', () => {
+		expect( sanitizeDomainFields( undefined ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'sanitizeDomainsListPageSize', () => {
+	test.each( [
+		[ 10, 12 ],
+		[ 20, 24 ],
+		[ 50, 48 ],
+		[ 100, 96 ],
+	] )( 'moves a saved page size of %i to %i', ( saved, expected ) => {
+		expect( sanitizeDomainsListPageSize( { type: 'table', perPage: saved } ).perPage ).toBe(
+			expected
+		);
+	} );
+
+	test( 'returns the same view when its page size is offered', () => {
+		const view: View = { type: 'grid', perPage: 24 };
+
+		expect( sanitizeDomainsListPageSize( view ) ).toBe( view );
+	} );
+
+	test( 'leaves a view without a page size alone', () => {
+		const view: View = { type: 'grid' };
+
+		expect( sanitizeDomainsListPageSize( view ) ).toBe( view );
+	} );
+} );
 
 describe( 'sanitizeDomainsListLayout', () => {
 	test( 'returns the same view when its layout is available', () => {
-		const view: View = { type: 'table', layout: { density: 'compact' } };
+		const tableView: View = { type: 'table', layout: { density: 'compact' } };
+		const gridView: View = { type: 'grid', layout: { previewSize: 290 } };
 
-		expect( sanitizeDomainsListLayout( view ) ).toBe( view );
+		expect( sanitizeDomainsListLayout( tableView ) ).toBe( tableView );
+		expect( sanitizeDomainsListLayout( gridView ) ).toBe( gridView );
 	} );
 
 	test( 'shows a view as a table when its layout is not available, keeping its settings', () => {
@@ -14,8 +59,7 @@ describe( 'sanitizeDomainsListLayout', () => {
 
 		expect(
 			sanitizeDomainsListLayout( {
-				type: 'grid',
-				layout: { previewSize: 290 },
+				type: 'list',
 				sort,
 				filters,
 				perPage: 24,
@@ -25,6 +69,19 @@ describe( 'sanitizeDomainsListLayout', () => {
 } );
 
 describe( 'recordDomainViewChanges', () => {
+	test( 'layout change records the type change', () => {
+		const tracks = jest.fn();
+		const oldView: View = { type: 'table', fields: [ 'blog_name' ] };
+		const newView: View = { type: 'grid', fields: [ 'blog_name' ] };
+
+		recordDomainViewChanges( oldView, newView, tracks );
+
+		expect( tracks ).toHaveBeenCalledTimes( 1 );
+		expect( tracks ).toHaveBeenCalledWith( 'calypso_dashboard_domains_view_type_changed', {
+			type: 'grid',
+		} );
+	} );
+
 	test( 'nothing relevant changed', () => {
 		const tracks = jest.fn();
 		const oldView: View = {

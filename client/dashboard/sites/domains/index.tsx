@@ -20,11 +20,15 @@ import PageLayout from '../../components/page-layout';
 import { usePendingPrimaryDomain } from '../../components/pending-primary-domain-notice';
 import AddDomainButton from '../../domains/add-domain-button';
 import {
+	DomainCardsLayout,
 	filterSortAndPaginateDomains,
 	useActions,
 	useFields,
-	DEFAULT_LAYOUTS,
+	DOMAINS_LIST_CONFIG,
+	DOMAINS_LIST_LAYOUTS,
 	SITE_CONTEXT_VIEW,
+	sanitizeDomainFields,
+	sanitizeDomainsListPageSize,
 	useBulkActionsProgressNotice,
 } from '../../domains/dataviews';
 import {
@@ -80,28 +84,37 @@ function SiteDomains() {
 	const openChangePrimaryDomain = useCallback( () => setIsChangePrimaryDomainOpen( true ), [] );
 
 	const sites = useMemo( () => [ site ], [ site ] );
+
+	const searchParams = siteDomainsRoute.useSearch();
+	const navigate = useNavigate();
+
+	const {
+		view: persistentView,
+		updateView,
+		resetView,
+	} = usePersistentView( {
+		slug: 'site-domains',
+		defaultView: SITE_CONTEXT_VIEW,
+		queryParams: searchParams,
+		sanitizeFields: sanitizeDomainFields,
+	} );
+	const view = sanitizeDomainsListPageSize( persistentView );
+	const isCardsLayout = view.type === 'grid';
+
 	const actions = useActions( {
 		user,
 		site,
 		sites,
 		domains: siteDomains,
+		layout: view.type,
 		onChangePrimaryDomain: canChangePrimaryDomain ? openChangePrimaryDomain : undefined,
 	} );
-
-	const searchParams = siteDomainsRoute.useSearch();
-	const navigate = useNavigate();
 
 	const deepLinkedAction = useDeepLinkedDataViewsAction( {
 		queryParams: searchParams,
 		navigate,
 		actions,
 		items: siteDomains,
-	} );
-
-	const { view, updateView, resetView } = usePersistentView( {
-		slug: 'site-domains',
-		defaultView: SITE_CONTEXT_VIEW,
-		queryParams: searchParams,
 	} );
 
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
@@ -157,12 +170,24 @@ function SiteDomains() {
 					onChangeView={ updateView }
 					onReset={ resetView }
 					view={ view }
-					actions={ hasEligibleActions ? actions : [] }
+					// The cards render their own actions, and DataViews would add a bulk selection footer.
+					actions={ isCardsLayout || ! hasEligibleActions ? [] : actions }
 					search
 					paginationInfo={ paginationInfo }
 					getItemId={ getDomainId }
-					defaultLayouts={ DEFAULT_LAYOUTS }
-				/>
+					defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+					config={ DOMAINS_LIST_CONFIG }
+				>
+					{ isCardsLayout ? (
+						<DomainCardsLayout
+							data={ filteredData }
+							fields={ fields }
+							actions={ actions }
+							view={ view }
+							site={ site }
+						/>
+					) : undefined }
+				</DataViews>
 			</DataViewsCard>
 			{ deepLinkedAction && <DataViewsActionModal { ...deepLinkedAction } /> }
 			{ isChangePrimaryDomainOpen && (

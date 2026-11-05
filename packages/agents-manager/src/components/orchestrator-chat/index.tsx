@@ -166,6 +166,8 @@ export default function OrchestratorChat( {
 		return {
 			...agentConfig,
 			trackReplying: true,
+			// History and closing the panel unmount the chat mid-reply.
+			resumeOnRemount: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				// A previous session's stream must not write into this one.
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
