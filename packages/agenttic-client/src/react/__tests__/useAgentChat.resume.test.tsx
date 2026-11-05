@@ -19,6 +19,9 @@ vi.mock( '../agentManager', () => {
 			.fn()
 			.mockReturnValue( [ { role: 'user', parts: [ { type: 'text', text: 'Write a guide' } ] } ] ),
 		updateSessionId: vi.fn(),
+		abortCurrentRequest: vi.fn(),
+		removeAgent: vi.fn(),
+		createAgent: vi.fn(),
 		replaceMessages: vi.fn(),
 		sendMessageStream: vi.fn(),
 	};
@@ -30,15 +33,21 @@ vi.mock( '../agentManager', () => {
 interface HarnessProps {
 	agentId: string;
 	resumeOnRemount: boolean;
+	sessionId?: string;
 	onRender: ( chat: UseAgentChatReturn ) => void;
 }
 
-function HookHarness( { agentId, resumeOnRemount, onRender }: HarnessProps ): null {
+function HookHarness( {
+	agentId,
+	resumeOnRemount,
+	sessionId = 'test-session',
+	onRender,
+}: HarnessProps ): null {
 	onRender(
 		useAgentChat( {
 			agentId,
 			agentUrl: 'https://example.com/agents',
-			sessionId: 'test-session',
+			sessionId,
 			resumeOnRemount,
 		} )
 	);
@@ -112,6 +121,8 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 	}
 
 	beforeEach( () => {
+		vi.clearAllMocks();
+		vi.mocked( getAgentManager().getAgentSessionId ).mockReturnValue( 'test-session' );
 		container = document.createElement( 'div' );
 		document.body.appendChild( container );
 
@@ -218,6 +229,42 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 		await mount( props );
 
 		expect( chat.error ).toBeNull();
+	} );
+
+	it.each( [
+		[ 'the server’s', 'server-session' ],
+		[ 'unset', null ],
+	] )(
+		'resumes its agent when the config has no session yet and the agent’s is %s',
+		async ( _case, agentSessionId ) => {
+			const props = { agentId: `lagging-agent-${ _case }`, resumeOnRemount: true, sessionId: '' };
+
+			vi.mocked( getAgentManager().getAgentSessionId ).mockReturnValue( agentSessionId );
+			await sendThenUnmount( props );
+			await mount( props );
+
+			expect( getAgentManager().removeAgent ).not.toHaveBeenCalled();
+			expect( getAgentManager().replaceMessages ).not.toHaveBeenCalled();
+			expect( chat.isProcessing ).toBe( true );
+
+			await finishReply();
+		}
+	);
+
+	it( 'switches conversation when the config’s session changes while mounted', async () => {
+		const props = { agentId: 'switching-agent', resumeOnRemount: true };
+		const onRender = ( latest: UseAgentChatReturn ) => {
+			chat = latest;
+		};
+
+		await mount( props );
+		await act( async () => {
+			root.render(
+				React.createElement( HookHarness, { ...props, sessionId: 'another-session', onRender } )
+			);
+		} );
+
+		expect( getAgentManager().removeAgent ).toHaveBeenCalledWith( 'switching-agent' );
 	} );
 
 	it( "keeps each agent's chat to itself", async () => {

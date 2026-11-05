@@ -563,17 +563,33 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		[ getLiveChat ]
 	);
 
+	// The session the config asked for on the last run of the effect below.
+	const requestedSessionIdRef = useRef( agentConfig.sessionId );
+
 	// Initialize agent
 	useEffect( () => {
 		if ( ! isValidConfig ) {
 			return;
 		}
 
+		// A resumable chat takes only a change of the config's session as a
+		// conversation switch: on mount that session can lag the agent's, as
+		// while the server assigns one during the first turn.
+		const isSessionRequested =
+			! isResumable || requestedSessionIdRef.current !== agentConfig.sessionId;
+
+		requestedSessionIdRef.current = agentConfig.sessionId;
+
 		const initializeAgent = async () => {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
 			let hasAgent = agentManager.hasAgent( agentKey );
+
+			if ( hasAgent && ! isSessionRequested ) {
+				return;
+			}
+
 			if (
 				hasAgent &&
 				agentManager.getAgentSessionId( agentKey ) !== ( agentConfig.sessionId || null )
@@ -655,6 +671,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.enableStreaming,
 		config.odieBotId,
 		config.credentials,
+		isResumable,
 		isValidConfig,
 		setState,
 		transformMessages,
