@@ -42,7 +42,11 @@ const mockUseCheckpointAction = jest.fn();
 const mockUseConversation = jest.fn();
 const mockUseImageUpload = jest.fn();
 const mockIsReaderChatAgent = jest.fn();
-let mockAgentConfig: { agentId: string; sessionId?: string } = {
+let mockAgentConfig: {
+	agentId: string;
+	sessionId?: string;
+	onTaskUpdate?: ( update: TaskUpdate ) => Promise< void >;
+} = {
 	agentId: 'wp-orchestrator',
 };
 let mockTabSessionId: string | undefined = 'session-id';
@@ -474,15 +478,16 @@ const mockRefusalNotice = jest.fn( (): unknown => undefined );
 const mockTopUpsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 let mockCreditsOnShowCredits: ( () => void ) | undefined;
+const mockCreditsOnTaskUpdate = jest.fn();
 jest.mock( '../../hooks/use-credits', () => ( {
+	// One scope per site, as the real hook gives one per visit.
+	useCreditsScope: () => `scope:${ mockSiteKey }`,
 	useCredits: ( {
-		agentConfig,
 		isOpen,
 		isNoticeVisible,
 		onTryAgain,
 		onShowCredits,
 	}: {
-		agentConfig: unknown;
 		isOpen: boolean;
 		isNoticeVisible: boolean;
 		onTryAgain?: ( message: string ) => void;
@@ -493,7 +498,7 @@ jest.mock( '../../hooks/use-credits', () => ( {
 		mockCreditsOnTryAgain = onTryAgain;
 		mockCreditsOnShowCredits = onShowCredits;
 		return {
-			chat: jest.requireMock( '@automattic/agenttic-client' ).useAgentChat( agentConfig ),
+			onTaskUpdate: mockCreditsOnTaskUpdate,
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
 			takeRefusalCode: mockTakeRefusalCode,
 			notice: mockCreditsNotice(),
@@ -863,6 +868,32 @@ describe( 'OrchestratorChat', () => {
 		render( chat() );
 
 		expect( mockAgentChatConfig ).toEqual( expect.objectContaining( { resumeOnRemount: true } ) );
+	} );
+
+	it( 'sends each task update to credits with the visit its request was sent in', async () => {
+		const update = { id: 'task', status: { state: 'completed' }, final: true } as TaskUpdate;
+		const { rerender } = render( chat() );
+		// Agenttic keeps the `onTaskUpdate` a request was sent with.
+		const sentOnFirstSite = mockAgentChatConfig?.onTaskUpdate;
+
+		mockSiteKey = 'site-2';
+		rerender( chat() );
+		await act( async () => sentOnFirstSite?.( update ) );
+
+		expect( mockCreditsOnTaskUpdate ).toHaveBeenCalledWith( update, 'scope:site-1' );
+	} );
+
+	it( 'forwards a provider’s task observer error unchanged', async () => {
+		const error = new Error( 'provider observer failed' );
+		mockAgentConfig = { ...mockAgentConfig, onTaskUpdate: jest.fn().mockRejectedValue( error ) };
+		render( chat() );
+
+		await expect(
+			mockAgentChatConfig?.onTaskUpdate?.( {
+				id: 'task',
+				status: { state: 'working' },
+			} as TaskUpdate )
+		).rejects.toBe( error );
 	} );
 
 	it( 'ignores a conversation result for a discarded agent', () => {
