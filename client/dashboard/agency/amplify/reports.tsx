@@ -119,7 +119,15 @@ function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: bo
 	} else if ( score >= 50 ) {
 		intent = 'medium';
 	}
-	return <Badge intent={ intent }>{ `${ score }/100` }</Badge>;
+	return (
+		<Badge intent={ intent }>
+			{ sprintf(
+				/* translators: %d: score out of 100 */
+				__( '%d/100' ),
+				score
+			) }
+		</Badge>
+	);
 }
 
 function ReportSiteIcon( {
