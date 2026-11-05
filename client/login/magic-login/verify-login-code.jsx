@@ -80,7 +80,7 @@ const VerifyLoginCode = ( {
 						twoFactorAuthType: getDefaultTwoFactorAuthType( {
 							supportedAuthTypes: twoFactorSupportedAuthTypes,
 							notificationSent: twoFactorNotificationSent,
-							isBrowserSupported: isWebAuthnSupported(),
+							isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
 						} ),
 						redirectTo: redirectToSanitized ?? undefined,
 					} )
