@@ -5,6 +5,7 @@
 const mockShouldLoadSurvicate = jest.fn();
 const mockLoadSurvicateScript = jest.fn();
 const mockSetSurvicateVisitorTraits = jest.fn();
+const mockObserveWpAdminPluginEvents = jest.fn();
 const mockIsMobile = jest.fn();
 
 jest.mock( '@automattic/survicate', () => ( {
@@ -12,6 +13,7 @@ jest.mock( '@automattic/survicate', () => ( {
 	shouldLoadSurvicate: mockShouldLoadSurvicate,
 	loadSurvicateScript: mockLoadSurvicateScript,
 	setSurvicateVisitorTraits: mockSetSurvicateVisitorTraits,
+	observeWpAdminPluginEvents: mockObserveWpAdminPluginEvents,
 } ) );
 
 jest.mock( '@automattic/viewport', () => ( {
@@ -48,6 +50,7 @@ describe( 'wp-admin Survicate entry', () => {
 		mockShouldLoadSurvicate.mockReset().mockReturnValue( true );
 		mockLoadSurvicateScript.mockReset().mockResolvedValue( undefined );
 		mockSetSurvicateVisitorTraits.mockReset();
+		mockObserveWpAdminPluginEvents.mockReset();
 		mockIsMobile.mockReset().mockReturnValue( false );
 	} );
 
@@ -90,6 +93,13 @@ describe( 'wp-admin Survicate entry', () => {
 		boot( CONFIG );
 
 		expect( mockLoadSurvicateScript ).not.toHaveBeenCalled();
+		expect( mockObserveWpAdminPluginEvents ).not.toHaveBeenCalled();
+	} );
+
+	it( 'observes wp-admin plugin actions once the SDK is loading', () => {
+		boot( CONFIG );
+
+		expect( mockObserveWpAdminPluginEvents ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'loads the SDK for the shared workspace and pushes the PHP traits', async () => {
