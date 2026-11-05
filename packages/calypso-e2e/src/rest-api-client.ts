@@ -70,6 +70,8 @@ type RequestParams = Pick< RequestInit, 'method' | 'headers' | 'body' >;
 /* Constants */
 
 export const BEARER_TOKEN_URL = 'https://wordpress.com/wp-login.php?action=login-endpoint';
+// Below the 120s test timeout, so a stalled request names its endpoint instead of timing out the test.
+const REQUEST_TIMEOUT_MS = 60 * 1000;
 const REST_API_BASE_URL = 'https://public-api.wordpress.com';
 
 /**
@@ -197,11 +199,26 @@ export class RestAPIClient {
 	 *
 	 * @param {URL} url URL of the endpoint.
 	 * @param {RequestParams} params Parameters for the request.
+	 * @param {number} timeoutMs How long to wait for the full response.
 	 * @returns {Promise<any>} Decoded JSON response.
+	 * @throws {Error} If the response doesn't arrive in time.
 	 */
-	async sendRequest( url: URL, params: RequestParams | URLSearchParams ): Promise< any > {
-		const response = await fetch( url.toString(), params as RequestInit );
-		const responseBody = await response.text();
+	async sendRequest(
+		url: URL,
+		params: RequestParams | URLSearchParams,
+		timeoutMs = REQUEST_TIMEOUT_MS
+	): Promise< any > {
+		const signal = AbortSignal.timeout( timeoutMs );
+		let responseBody: string;
+		try {
+			const response = await fetch( url.toString(), { ...( params as RequestInit ), signal } );
+			responseBody = await response.text();
+		} catch ( error ) {
+			if ( signal.aborted ) {
+				throw new Error( `Request to ${ url.pathname } timed out after ${ timeoutMs }ms.` );
+			}
+			throw error;
+		}
 		try {
 			return JSON.parse( responseBody.trim() );
 		} catch ( error ) {

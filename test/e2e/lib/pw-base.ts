@@ -756,8 +756,11 @@ export const test = base.extend<
 		{ page, clientEmail, helperData, pageLogin, pageUserSignUp, sitePublicSiteCount },
 		use
 	) => {
+		// These steps mostly run outside the browser, so a trace can't show which one a stalled setup reached.
+		const logStep = ( step: string ) => console.log( `[sitePublic] ${ step }` );
 		const testUser = helperData.getNewTestUser( { useMailosaur: true } );
 		const siteName = helperData.getBlogName();
+		logStep( 'Signing up' );
 		await pageLogin.visit();
 		await pageLogin.clickCreateNewAccount();
 		const newUserDetails = await pageUserSignUp.signupSocialFirstWithEmail( testUser.email );
@@ -770,11 +773,14 @@ export const test = base.extend<
 		// the site, once created). The try/finally attempts cleanup either way.
 		let site: NewSiteResponse | undefined;
 		try {
+			logStep( 'Waiting for the bearer token' );
 			await apiWaitForBearerTokenAcceptance( restAPIClient, testUser.email );
+			logStep( 'Creating the site' );
 			site = await restAPIClient.createSite( {
 				name: siteName,
 				title: siteName,
 			} );
+			logStep( 'Dismissing the sidebar JITM' );
 			// New free sites are the audience of a sidebar JITM campaign that outranks the
 			// "Upgrade" domain upsell specs open from the sidebar. Dismiss it before any page
 			// loads: the site caches the JITM served per path for its TTL, so a dismissal
@@ -791,6 +797,7 @@ export const test = base.extend<
 					title: companionSiteName,
 				} );
 			}
+			logStep( 'Waiting for the activation email' );
 			const message = await clientEmail.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
 				sentTo: testUser.email,
@@ -800,8 +807,10 @@ export const test = base.extend<
 			const activationLink = links.find( ( link: string ) =>
 				link.includes( 'activate' )
 			) as string;
+			logStep( 'Activating the account' );
 			await page.goto( activationLink );
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
+			logStep( 'Ready' );
 			// Fresh accounts have no recovery method set up, so the dashboard's
 			// account-recovery interstitial would mount over every route and block
 			// specs that load the dashboard with this fixture. Snooze it up front.
