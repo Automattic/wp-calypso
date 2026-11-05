@@ -35,6 +35,9 @@ export const RESUME_AFTER_MS = 10_000;
 
 type ReplyWait = 'idle' | 'waiting' | 'resuming' | 'timed-out';
 
+// A loaded copy, and whether a turn was running here when it was requested.
+type LoadedConversation = ServerLoadResult & { isRequestedMidTurn: boolean };
+
 // At most this many history pages are loaded per conversation.
 const MAX_PAGES = 10;
 
@@ -48,7 +51,8 @@ interface Config {
 		toolResults: ToolResultInput[],
 		turnToolCalls: TurnToolCall[]
 	) => Promise< boolean >;
-	onSuccess?: ( messages: Message[], sessionId: string ) => void;
+	/** Called with each loaded copy, and whether a turn here has made it stale. */
+	onSuccess?: ( messages: Message[], sessionId: string, isStale: boolean ) => void;
 }
 
 interface Result {
@@ -63,6 +67,10 @@ interface Result {
  *
  * After a page change mid-turn the conversation can load before its reply, so
  * it is reloaded until the reply lands, then offers Retry if none comes.
+ *
+ * A copy must not replace a newer live history: one requested mid-turn lacks
+ * the reply whenever it lands, and one cached by an earlier mount may predate
+ * a turn, so each mount loads only what it fetched.
  *
  * A turn paused on a browser-run tool has no page left to send the result, so
  * after `RESUME_AFTER_MS` this page answers its calls with an "interrupted" result
@@ -101,25 +109,31 @@ export default function useConversation( {
 	const queryKey = [ 'agents-manager-conversation', sessionId ];
 
 	// eslint-disable-next-line @tanstack/query/exhaustive-deps -- we only want to refetch when sessionId changes
-	const { data, isLoading, error } = useQuery( {
+	const { data, isLoading, error, isFetchedAfterMount } = useQuery( {
 		queryKey,
-		queryFn: async () => {
+		queryFn: async (): Promise< LoadedConversation > => {
+			const isRequestedMidTurn = getAgentManager().isTurnInFlight( agentId );
+
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
 			const botId = getConversationBotId( agentId, hasAgentParam );
 			const config = { botId, apiBaseUrl: API_BASE_URL, authProvider };
 
 			// Only the newest page can change while a reply is awaited.
-			const loaded = queryClient.getQueryData< ServerLoadResult >( queryKey );
+			const loaded = queryClient.getQueryData< LoadedConversation >( queryKey );
 			if ( replyWaitRef.current === 'waiting' && loaded ) {
 				const newestPage = await loadChatFromServer( sessionId, config, 1, 50, true );
 				return {
 					...newestPage,
 					messages: withUniqueMessageIds( mergeNewestPage( loaded.messages, newestPage.messages ) ),
+					isRequestedMidTurn,
 				};
 			}
 
-			return await loadAllMessagesFromServer( sessionId, config, MAX_PAGES, true );
+			return {
+				...( await loadAllMessagesFromServer( sessionId, config, MAX_PAGES, true ) ),
+				isRequestedMidTurn,
+			};
 		},
 		// Public Reader Chat does not expose conversation history, and the
 		// server-side history endpoint requires permissions public readers
@@ -169,7 +183,8 @@ export default function useConversation( {
 
 	useEffect(
 		() => {
-			if ( ! data ) {
+			// A cached copy may predate a turn: wait for this mount's fetch.
+			if ( ! data || ! isFetchedAfterMount ) {
 				return;
 			}
 
@@ -179,7 +194,7 @@ export default function useConversation( {
 				return;
 			}
 
-			const isTurnInFlight = getAgentManager().isTurnInFlight( agentId );
+			const isStale = data.isRequestedMidTurn || getAgentManager().isTurnInFlight( agentId );
 
 			if ( replyWait === 'waiting' ) {
 				// No new message: done once the reply is the newest one.
@@ -192,7 +207,7 @@ export default function useConversation( {
 				}
 
 				// Loading now would replace the live stream.
-				if ( ! waitForReply || isTurnInFlight ) {
+				if ( ! waitForReply || isStale ) {
 					setReplyWait( 'idle' );
 
 					return;
@@ -200,11 +215,11 @@ export default function useConversation( {
 			}
 
 			loadedNewestIdRef.current = newestId;
-			onSuccessRef.current( data.messages, data.sessionId || sessionId );
+			onSuccessRef.current( data.messages, data.sessionId || sessionId, isStale );
 
 			if (
 				waitForReply &&
-				! isTurnInFlight &&
+				! isStale &&
 				question &&
 				Date.now() - question.lastActivityAt < MAX_REPLY_WAIT_MS
 			) {

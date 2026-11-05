@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
 import { getAgentManager, type ToolResultInput, type TurnToolCall } from './agentManager';
+import { createLiveChat, getResumableChat, updateLiveChat } from './liveChat';
 import { useRegenerate } from './useRegenerate';
 import type {
 	AuthProvider,
@@ -14,7 +15,7 @@ import type {
 	TaskUpdate,
 	ToolProvider,
 } from '../client/types/index';
-import type { ReactNode } from 'react';
+import type { ReactNode, SetStateAction } from 'react';
 
 // Utility function to sort UI messages by timestamp
 const sortUIMessagesByTime = ( messages: UIMessage[] ): UIMessage[] => {
@@ -417,6 +418,7 @@ export interface UseAgentChatConfig {
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
+	resumeOnRemount?: boolean; // Set to resume the chat, a streaming reply included, when it mounts again with the same agent.
 }
 
 // Hook return interface
@@ -500,17 +502,35 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	// Validate configuration
 	const isValidConfig = validateAgentConfig( agentConfig );
 
-	// Internal state
-	const [ state, setState ] = useState< AgentChatState >( {
-		clientMessages: [],
-		uiMessages: [],
-		isProcessing: false,
-		error: isValidConfig ? null : 'Invalid agent configuration',
-		suggestions: [],
-		progressMessage: null,
-		progressPhase: null,
-		isReplying: false,
-	} );
+	// Internal state: the component's own chat, or the agent's when resumable.
+	const [ ownLiveChat ] = useState( createLiveChat );
+	const isResumable = !! config.resumeOnRemount;
+
+	const getLiveChat = useCallback(
+		() => ( isResumable ? getResumableChat( agentConfig.agentId ) : ownLiveChat ),
+		[ agentConfig.agentId, isResumable, ownLiveChat ]
+	);
+
+	const subscribe = useCallback(
+		( listener: () => void ) => {
+			// A chat that replaces this one takes the set over, so read it once.
+			const { listeners } = getLiveChat();
+			listeners.add( listener );
+
+			return () => {
+				listeners.delete( listener );
+			};
+		},
+		[ getLiveChat ]
+	);
+
+	const getState = useCallback( () => getLiveChat().state, [ getLiveChat ] );
+	const state = useSyncExternalStore( subscribe, getState, getState );
+
+	const setState = useCallback(
+		( update: SetStateAction< AgentChatState > ) => updateLiveChat( getLiveChat(), update ),
+		[ getLiveChat ]
+	);
 
 	// Initialize message actions
 	const {
@@ -519,14 +539,6 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		clearAllMessageActions,
 		registrations,
 	} = useMessageActions();
-
-	// Guard against concurrent sends racing on `conversationHistory`
-	const isSendingRef = useRef( false );
-
-	const stateRef = useRef( state );
-	useEffect( () => {
-		stateRef.current = state;
-	}, [ state ] );
 
 	// Keep the raw task-update observer and `trackReplying` fresh without
 	// reinitializing the agent or changing the stable onSubmit callback identity.
@@ -539,20 +551,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		trackReplyingRef.current = config.trackReplying;
 	}, [ config.trackReplying ] );
 
-	// Use a ref to always have access to the latest registrations
-	const registrationsRef = useRef( registrations );
-	useEffect( () => {
-		registrationsRef.current = registrations;
-	}, [ registrations ] );
-
 	// Transform client messages to UI messages
 	const transformMessages = useCallback(
 		( messages: ClientMessage[] ): UIMessage[] => {
+			const liveChat = getLiveChat();
+
 			return messages
-				.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
+				.map( ( msg ) => transformClientMessageToUI( msg, liveChat.registrations ) )
 				.filter( ( msg ): msg is UIMessage => msg !== null );
 		},
-		[] // registrationsRef is stable, so no deps needed
+		[ getLiveChat ]
 	);
 
 	// Initialize agent
@@ -648,6 +656,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.odieBotId,
 		config.credentials,
 		isValidConfig,
+		setState,
 		transformMessages,
 	] );
 
@@ -671,10 +680,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
 			}
 
-			if ( isSendingRef.current ) {
+			// Pinned: a new agent's chat must not hear from this send.
+			const liveChat = getLiveChat();
+
+			const setState = ( update: SetStateAction< AgentChatState > ) =>
+				updateLiveChat( liveChat, update );
+
+			if ( liveChat.isSending ) {
 				return;
 			}
-			isSendingRef.current = true;
+
+			liveChat.isSending = true;
 
 			// Keep in-flight updates attached to the site and agent that started the request.
 			const onTaskUpdate = onTaskUpdateRef.current;
@@ -692,7 +708,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// original error and leave `isProcessing` stuck. Surface the
 				// original error regardless of whether persistence succeeds.
 				try {
-					await agentManager.replaceMessages( agentKey, restoreOnError.clientMessages );
+					// A replaced chat means the agent now runs another conversation.
+					if ( liveChat === getLiveChat() ) {
+						await agentManager.replaceMessages( agentKey, restoreOnError.clientMessages );
+					}
 				} catch ( restoreError ) {
 					logger( 'Failed to restore conversation history after a failed send', restoreError );
 				}
@@ -910,7 +929,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						const currentStreamingId = streamingMessageId;
 						const finalMessage = transformClientMessageToUI(
 							update.status.message,
-							registrationsRef.current
+							liveChat.registrations
 						);
 
 						if ( finalMessage ) {
@@ -982,7 +1001,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 						// Transform client messages to UI format
 						const transformedClientMessages = updatedClientHistory
-							.map( ( msg ) => transformClientMessageToUI( msg, registrationsRef.current ) )
+							.map( ( msg ) => transformClientMessageToUI( msg, liveChat.registrations ) )
 							.filter( ( msg ): msg is UIMessage => msg !== null );
 
 						// Find UI-only messages (messages not in client history, e.g. injected by tools)
@@ -1040,10 +1059,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				}
 				throw error;
 			} finally {
-				isSendingRef.current = false;
+				liveChat.isSending = false;
 			}
 		},
-		[ agentConfig.agentId, isValidConfig ]
+		[ agentConfig.agentId, getLiveChat, isValidConfig ]
 	);
 
 	const onSubmit = useCallback(
@@ -1052,60 +1071,77 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	);
 
 	// Add message function - for tools to directly add UI messages
-	const addMessage = useCallback( ( message: UIMessage ) => {
-		setState( ( prev ) => ( {
-			...prev,
-			uiMessages: sortUIMessagesByTime( [ ...prev.uiMessages, message ] ),
-		} ) );
-	}, [] );
+	const addMessage = useCallback(
+		( message: UIMessage ) => {
+			setState( ( prev ) => ( {
+				...prev,
+				uiMessages: sortUIMessagesByTime( [ ...prev.uiMessages, message ] ),
+			} ) );
+		},
+		[ setState ]
+	);
 
 	const clearError = useCallback( () => {
 		setState( ( prev ) => ( prev.error ? { ...prev, error: null } : prev ) );
-	}, [] );
+	}, [ setState ] );
 
 	// Suggestions management
-	const registerSuggestions = useCallback( ( suggestions: Suggestion[] ) => {
-		setState( ( prev ) => ( {
-			...prev,
-			suggestions,
-		} ) );
-	}, [] );
+	const registerSuggestions = useCallback(
+		( suggestions: Suggestion[] ) => {
+			setState( ( prev ) => ( {
+				...prev,
+				suggestions,
+			} ) );
+		},
+		[ setState ]
+	);
 
 	const clearSuggestions = useCallback( () => {
 		setState( ( prev ) => ( {
 			...prev,
 			suggestions: [],
 		} ) );
-	}, [] );
+	}, [ setState ] );
 
-	// Re-transform messages when registrations change so newly registered
-	// actions are resolved onto existing messages.
-	useEffect( () => {
-		setState( ( prev ) => {
-			// A send owns the optimistic user message until it reconciles, so
-			// rebuilding here mid-flight would drop it. Let the send settle.
-			if ( isSendingRef.current ) {
-				return prev;
+	// Sets the component's actions on the chat and resolves them onto its
+	// messages in place, so a send in flight keeps its optimistic message.
+	const applyRegistrations = useCallback(
+		( nextRegistrations: MessageActionsRegistration[] ) => {
+			getLiveChat().registrations = nextRegistrations;
+
+			setState( ( prev ) => {
+				if ( prev.clientMessages.length === 0 ) {
+					return prev;
+				}
+
+				const actionsById = new Map(
+					transformMessages( prev.clientMessages ).map( ( msg ) => [ msg.id, msg.actions ] )
+				);
+
+				return {
+					...prev,
+					uiMessages: prev.uiMessages.map( ( msg ) =>
+						actionsById.has( msg.id ) ? { ...msg, actions: actionsById.get( msg.id ) } : msg
+					),
+				};
+			} );
+		},
+		[ getLiveChat, setState, transformMessages ]
+	);
+
+	useEffect( () => applyRegistrations( registrations ), [ applyRegistrations, registrations ] );
+
+	// A resumable chat outlives its component, so it drops what was the
+	// component's: its actions, and an error it has already shown.
+	useEffect(
+		() => () => {
+			if ( isResumable ) {
+				applyRegistrations( [] );
+				clearError();
 			}
-
-			// Don't update if we have no client messages
-			if ( prev.clientMessages.length === 0 ) {
-				return prev;
-			}
-
-			// Re-transform all messages with current registrations
-			const updatedUIMessages = transformMessages( prev.clientMessages );
-
-			// Find UI-only messages (messages not in client history, e.g. injected by tools)
-			const clientMessageIds = new Set( prev.clientMessages.map( ( msg ) => msg.messageId ) );
-			const uiOnlyMessages = filterUiOnlyMessages( prev.uiMessages, clientMessageIds );
-
-			return {
-				...prev,
-				uiMessages: sortUIMessagesByTime( [ ...updatedUIMessages, ...uiOnlyMessages ] ),
-			};
-		} );
-	}, [ registrations, transformMessages ] );
+		},
+		[ applyRegistrations, clearError, isResumable ]
+	);
 
 	// Create abort function - delegates to agent manager
 	const abortCurrentRequest = useCallback( () => {
@@ -1140,14 +1176,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				uiMessages,
 			} ) );
 		},
-		[ agentConfig.agentId, isValidConfig, transformMessages ]
+		[ agentConfig.agentId, isValidConfig, setState, transformMessages ]
 	);
 
 	const { getRegenerateHandler } = useRegenerate( {
 		agentId: agentConfig.agentId,
 		isValidConfig,
-		isSendingRef,
-		stateRef,
+		getLiveChat,
 		transformMessages,
 		sendMessage,
 	} );
@@ -1156,7 +1191,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		// AgentUI props
 		messages: state.uiMessages,
 		isProcessing: state.isProcessing,
-		error: state.error,
+		error: isValidConfig ? state.error : 'Invalid agent configuration',
 		onSubmit,
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,

@@ -184,6 +184,7 @@ const {
 - `toolProvider?: ToolProvider` - Tool execution capabilities
 - `authProvider?: AuthProvider` - Authentication headers
 - `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Needs `enableStreaming`. Reply text then also clears `progressMessage` and `progressPhase`
+- `resumeOnRemount?: boolean` - Resume the chat, a reply still streaming included, when it mounts again for the same agent. A new agent under that `agentId` starts a new chat. Without it, each mount starts empty
 
 ### useClientContext Hook
 

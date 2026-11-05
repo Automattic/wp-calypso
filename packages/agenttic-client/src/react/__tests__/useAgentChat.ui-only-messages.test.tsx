@@ -224,7 +224,7 @@ describe( 'useAgentChat normal send reconcile', () => {
 			}
 		} );
 
-		// Re-register mid-send, while isSendingRef is true.
+		// Re-register mid-send.
 		await act( async () => {
 			latestHookValue?.registerMessageActions( {
 				id: 'mid-send-action',
@@ -239,6 +239,68 @@ describe( 'useAgentChat normal send reconcile', () => {
 		);
 
 		expect( midSendCopies ).toHaveLength( 1 );
+
+		await act( async () => {
+			releaseFinal();
+			await sendDone;
+		} );
+	} );
+
+	it( 'resolves actions registered mid-send onto earlier messages, keeping the optimistic one', async () => {
+		let releaseFinal: () => void = () => {};
+		const finalGate = new Promise< void >( ( resolve ) => {
+			releaseFinal = resolve;
+		} );
+		vi.mocked( mockClient.sendMessageStream ).mockImplementation(
+			async function* (): AsyncIterable< TaskUpdate > {
+				yield {
+					id: 'task-1',
+					final: false,
+					kind: 'delta',
+					status: { state: 'working' },
+					text: 'Second',
+				};
+				await finalGate;
+				yield {
+					id: 'task-1',
+					final: true,
+					status: {
+						state: 'completed',
+						message: clientMessage( 'agent-2', 'agent', 'Second answer', Date.now() + 2 ),
+					},
+					text: 'Second answer',
+				};
+			}
+		);
+
+		await act( async () => {
+			root.render( <HookHarness /> );
+		} );
+		await act( async () => {
+			await latestHookValue?.loadMessages( [
+				clientMessage( 'user-1', 'user', 'First question', 1 ),
+				clientMessage( 'agent-1', 'agent', 'First answer', 2 ),
+			] );
+		} );
+
+		let sendDone: Promise< void > | undefined;
+		await act( async () => {
+			sendDone = latestHookValue?.onSubmit( 'Second question' );
+			await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
+		} );
+		await act( async () => {
+			latestHookValue?.registerMessageActions( {
+				id: 'copy',
+				actions: [ { id: 'copy', label: 'Copy', onClick: () => {} } ],
+			} );
+		} );
+
+		const firstAnswer = latestHookValue?.messages.find( ( message ) => message.id === 'agent-1' );
+
+		expect( firstAnswer?.actions ).toEqual( [ expect.objectContaining( { id: 'copy' } ) ] );
+		expect( latestHookValue?.messages.map( ( message ) => message.content[ 0 ].text ) ).toContain(
+			'Second question'
+		);
 
 		await act( async () => {
 			releaseFinal();
