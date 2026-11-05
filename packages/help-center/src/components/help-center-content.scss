@@ -1,4 +1,8 @@
 .help-center__container {
+	// Calypso's font weights, for wp-admin and the editor, where Calypso's stylesheets don't load.
+	--wpds-typography-font-weight-default: 400;
+	--wpds-typography-font-weight-emphasis: 499;
+
 	.help-center__container-content {
 		flex-grow: 1;
 		scroll-behavior: smooth;

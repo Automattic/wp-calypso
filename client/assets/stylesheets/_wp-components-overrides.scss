@@ -234,12 +234,15 @@
 	}
 }
 
-/* @wordpress/components emphasis font weight ----------------------------------------- *
- * 37.0.0 moved Button and other emphasised labels from the legacy medium weight onto
- * `--wpds-typography-font-weight-emphasis`, which the design system sets to 600. Hold
- * the previous 499 so button text keeps its existing weight. Remove this to adopt the
- * heavier design-system weight. */
-:root {
+/* Design system font weights ------------------------------------------------------- *
+ * @wordpress/components and the base-styles heading mixins read these tokens, which the
+ * design system sets to 400 and 600. Hold the values of the removed base-styles
+ * `$font-weight-regular` and `$font-weight-medium`. The Help Center sets the same values
+ * for wp-admin, where this file doesn't load. Set on body, not :root, so that
+ * @wordpress/theme/design-tokens.css, which sets them on :root and loads later on some
+ * pages, can't override them. */
+body {
+	--wpds-typography-font-weight-default: 400;
 	--wpds-typography-font-weight-emphasis: 499;
 }
 
