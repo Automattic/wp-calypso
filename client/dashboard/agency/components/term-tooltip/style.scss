@@ -44,7 +44,8 @@
 }
 
 @media ( prefers-reduced-motion: reduce ) {
-	.agency-term-tooltip__content {
+	.agency-term-tooltip__content,
+	.agency-term-tooltip__content[data-handoff] {
 		animation: none;
 	}
 }
