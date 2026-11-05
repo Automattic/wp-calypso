@@ -173,6 +173,35 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
 	} );
 
+	it( 'separates the required upgrade from what happens after it', () => {
+		const state = createState( {
+			holds: [ 'NO_BUSINESS_PLAN' ],
+			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
+		} );
+
+		const { getByRole } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
+			state
+		);
+
+		expect( getByRole( 'heading', { name: "To continue you'll need to:" } ) ).toBeVisible();
+		expect( getByRole( 'heading', { name: 'Here’s what happens next:' } ) ).toBeVisible();
+	} );
+
+	it( 'omits the "what happens next" heading when nothing needs to be done first', () => {
+		const state = createState( {
+			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
+		} );
+
+		const { getByText, queryByRole } = renderWithStore(
+			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
+			state
+		);
+
+		expect( getByText( 'Describes the transfer' ) ).toBeVisible();
+		expect( queryByRole( 'heading', { name: 'Here’s what happens next:' } ) ).toBeNull();
+	} );
+
 	it( 'renders warning notices when the API returns warnings', () => {
 		const state = createState( {
 			warnings: [
