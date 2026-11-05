@@ -308,11 +308,10 @@ function AudiencesGraphic() {
 	);
 }
 
+const SCORE_INTENTS = { good: 'stable', warn: 'medium', danger: 'high' } as const;
+
 function getScoreIntent( score: number ) {
-	if ( score >= 80 ) {
-		return 'stable';
-	}
-	return score >= 50 ? 'medium' : 'high';
+	return SCORE_INTENTS[ severityFor( score, 100 ) ];
 }
 
 function PromptGraphic() {
