@@ -18,7 +18,9 @@ export interface ConsumeSearchParamsOptions< K extends string > {
 	when?: ( params: ConsumedSearchParams< K > ) => boolean;
 	/**
 	 * Runs once per arrival of the params, after commit, for snackbars and Tracks events. The
-	 * latest callback is used, so it doesn't need to be stable.
+	 * latest callback is used, so it doesn't need to be stable. To navigate from it, pass
+	 * `replace: true`: the params leave the URL only after it returns, and an entry that a push
+	 * leaves keeps them for Back.
 	 */
 	onConsume?: ( params: ConsumedSearchParams< K > ) => void;
 }
@@ -169,12 +171,12 @@ export function useConsumeSearchParams< K extends string >(
 	const handled = useRef< string | null >( null );
 
 	const sync = useEvent( () => {
-		if ( ! isPresent ) {
-			handled.current = null;
+		const id = JSON.stringify( params );
+		if ( handled.current === id ) {
 			return;
 		}
-		const id = JSON.stringify( params );
-		if ( ! shouldConsume || handled.current === id || ! isRouterIdle ) {
+		handled.current = null;
+		if ( ! shouldConsume || ! isRouterIdle ) {
 			return;
 		}
 		handled.current = id;
