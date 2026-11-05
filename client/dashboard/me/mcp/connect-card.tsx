@@ -1,5 +1,10 @@
 import { speak } from '@wordpress/a11y';
-import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
+import {
+	__experimentalVStack as VStack,
+	Button,
+	Icon,
+	VisuallyHidden,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { arrowUpRight, copy } from '@wordpress/icons';
 import { useEffect, useId, useRef, useState } from 'react';
@@ -59,6 +64,14 @@ function TileContent( {
 			<span id={ `${ id }-action` } className="mcp-connect__action">
 				<span>{ isCopied ? __( 'Copied' ) : agent.actionLabel }</span>
 				<Icon icon={ agent.href ? arrowUpRight : copy } size={ 12 } />
+				{ agent.href && (
+					<VisuallyHidden>
+						{
+							/* translators: accessibility text */
+							__( '(opens in a new tab)' )
+						}
+					</VisuallyHidden>
+				) }
 			</span>
 		</CardBody>
 	);
@@ -154,20 +167,30 @@ export default function McpConnectCard( {
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
 	const copiedTimeout = useRef< ReturnType< typeof setTimeout > >( undefined );
+	const gridRef = useRef< HTMLUListElement >( null );
+	const wasEnabled = useRef( mcpEnabled );
 
 	useEffect( () => () => clearTimeout( copiedTimeout.current ), [] );
+
+	// Turning access on removes the notice and its focused button, so move focus to the first tile.
+	useEffect( () => {
+		if ( ! wasEnabled.current && mcpEnabled && document.activeElement === document.body ) {
+			gridRef.current?.querySelector< HTMLElement >( 'a, button' )?.focus();
+		}
+		wasEnabled.current = mcpEnabled;
+	}, [ mcpEnabled ] );
 
 	const copyText = async ( key: string, text: string ) => {
 		try {
 			await navigator.clipboard.writeText( text );
 		} catch {
-			// Clipboard access may be blocked; there is nothing useful to show.
-			return;
+			return false;
 		}
 		setCopiedKey( key );
 		speak( __( 'Copied' ) );
 		clearTimeout( copiedTimeout.current );
 		copiedTimeout.current = setTimeout( () => setCopiedKey( null ), COPIED_DURATION_MS );
+		return true;
 	};
 
 	const trackAgentClick = ( agent: ConnectAgent ) => {
@@ -190,17 +213,16 @@ export default function McpConnectCard( {
 						) }
 					/>
 					{ ! mcpEnabled && <AccessOffNotice onTurnOn={ onTurnOn } isTurningOn={ isTurningOn } /> }
-					<ul className="mcp-connect__grid">
+					<ul ref={ gridRef } className="mcp-connect__grid">
 						{ getConnectAgents().map( ( agent ) => (
 							<li key={ agent.key }>
 								<AgentTile
 									agent={ agent }
 									isCopied={ copiedKey === agent.key }
 									onOpen={ () => trackAgentClick( agent ) }
-									onCopy={ () => {
-										trackAgentClick( agent );
-										if ( agent.code !== undefined ) {
-											copyText( agent.key, agent.code );
+									onCopy={ async () => {
+										if ( agent.code !== undefined && ( await copyText( agent.key, agent.code ) ) ) {
+											trackAgentClick( agent );
 										}
 									} }
 								/>
@@ -219,9 +241,13 @@ export default function McpConnectCard( {
 						size="small"
 						icon={ copy }
 						iconSize={ 16 }
-						onClick={ () => {
-							recordTracksEvent( 'calypso_dashboard_mcp_connect_helper_copy', tracksAudienceProps );
-							copyText( 'helper', HELPER_PROMPT );
+						onClick={ async () => {
+							if ( await copyText( 'helper', HELPER_PROMPT ) ) {
+								recordTracksEvent(
+									'calypso_dashboard_mcp_connect_helper_copy',
+									tracksAudienceProps
+								);
+							}
 						} }
 					>
 						{ copiedKey === 'helper' ? __( 'Copied' ) : __( 'Copy prompt' ) }

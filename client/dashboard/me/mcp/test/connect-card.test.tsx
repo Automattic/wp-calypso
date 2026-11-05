@@ -2,6 +2,7 @@
 import { isAutomatticianQuery, queryClient } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { render } from '../../../test-utils';
 import { MCP_SERVER_NAME, MCP_SERVER_URL, HELPER_PROMPT } from '../connect-agents';
 import McpConnectCard from '../connect-card';
@@ -32,6 +33,14 @@ describe( '<McpConnectCard />', () => {
 		expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toHaveAttribute(
 			'href',
 			'https://wp.me/chatgpt'
+		);
+	} );
+
+	test( 'tells screen readers that a link tile opens a new tab', () => {
+		renderCard();
+
+		expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toHaveAccessibleDescription(
+			'OpenAI’s chat app Add plugin (opens in a new tab)'
 		);
 	} );
 
@@ -81,10 +90,39 @@ describe( '<McpConnectCard />', () => {
 		);
 	} );
 
+	test( 'records nothing when the copy fails', async () => {
+		writeText.mockRejectedValue( new Error( 'Blocked' ) );
+		const { recordTracksEvent } = renderCard();
+
+		const tile = screen.getByRole( 'button', { name: 'Claude Code' } );
+		await userEvent.click( tile );
+
+		expect( writeText ).toHaveBeenCalled();
+		expect( tile ).toHaveAccessibleDescription( /Copy command$/ );
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_mcp_connect_click',
+			expect.anything()
+		);
+	} );
+
 	test( 'copies the prompt that lets an agent connect itself', async () => {
-		renderCard();
+		const { recordTracksEvent } = renderCard();
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Copy prompt' } ) );
+
+		expect( writeText ).toHaveBeenCalledWith( HELPER_PROMPT );
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_mcp_connect_helper_copy',
+				expect.any( Object )
+			)
+		);
+	} );
+
+	test( 'gives Antigravity the same prompt', async () => {
+		renderCard();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Antigravity' } ) );
 
 		expect( writeText ).toHaveBeenCalledWith( HELPER_PROMPT );
 	} );
@@ -106,6 +144,24 @@ describe( '<McpConnectCard />', () => {
 
 		expect( onTurnOn ).toHaveBeenCalled();
 		expect( screen.queryByRole( 'link', { name: 'Manual setup' } ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'moves focus to the first tile after turning access on', async () => {
+		function Harness() {
+			const [ enabled, setEnabled ] = useState( false );
+			return (
+				<McpConnectCard
+					mcpEnabled={ enabled }
+					onTurnOn={ () => setEnabled( true ) }
+					isTurningOn={ false }
+				/>
+			);
+		}
+		render( <Harness />, { queryClient } );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Turn on MCP access' } ) );
+
+		await waitFor( () => expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toHaveFocus() );
 	} );
 
 	test( 'hides the MCP-off notice while access is on', () => {

@@ -1251,6 +1251,7 @@ export const mcpLegacySubpageRedirectRoute = createRoute( {
 			case 'write':
 				throw dashboardRedirect( { to: '/me/preferences/mcp/write' } );
 			case 'mcp-sites':
+			case 'add-site':
 				throw dashboardRedirect( { to: '/me/preferences/mcp/mcp-sites' } );
 			case 'setup':
 				throw dashboardRedirect( { to: '/me/preferences/mcp/setup' } );

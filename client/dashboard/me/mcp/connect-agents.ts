@@ -84,7 +84,7 @@ export function getConnectAgents(): ConnectAgent[] {
 			description: __( 'Google’s coding agent' ),
 			logo: LOGO_BASE_URL + 'antigravity.svg',
 			actionLabel: __( 'Copy prompt' ),
-			code: 'Install the WordPress plugin and show me how to connect my site.',
+			code: HELPER_PROMPT,
 		},
 		{
 			key: 'mcp',
