@@ -52,6 +52,8 @@ function PostCommentFormError( { type } ) {
 }
 
 class PostCommentForm extends Component {
+	static contextType = CommentEditorContext;
+
 	form = createRef();
 
 	state = {
@@ -90,6 +92,7 @@ class PostCommentForm extends Component {
 			// Escape closes an empty editor, as clicking away does, unless it's closing one of the
 			// editor's menus. Focus goes back to the textarea, so the keyboard doesn't lose its place.
 			if (
+				this.props.editorSettings &&
 				this.state.editorOpen &&
 				this.canCloseEditor() &&
 				! event.target.closest?.( '.components-popover' )
@@ -162,6 +165,8 @@ class PostCommentForm extends Component {
 	};
 
 	handleEditorClosed = () => {
+		// An emptied list, quote, or code block is still markup, which would keep the editor up.
+		this.resetCommentText();
 		this.resetEditor( () => {
 			if ( this.escaped ) {
 				// Straight to its focused border, not a fade in from the unfocused one.
@@ -226,9 +231,10 @@ class PostCommentForm extends Component {
 			this.props.deleteComment( post.site_ID, post.ID, this.props.placeholderId );
 		}
 
-		// A site without block comments doesn't render block markup, so it gets plain HTML.
+		// A site without block comments doesn't render the editor's block markup, so it gets plain
+		// HTML. A textarea's words go as typed.
 		const content =
-			isCommentHtmlOnly( post ) && isBlockMarkup( commentText )
+			this.props.editorSettings && isCommentHtmlOnly( post ) && isBlockMarkup( commentText )
 				? blocksToHtml( commentText )
 				: commentText;
 
@@ -342,7 +348,7 @@ class PostCommentForm extends Component {
 		return (
 			<form
 				ref={ this.form }
-				className="comments__form"
+				className={ clsx( 'comments__form', { 'has-block-editor': this.context } ) }
 				onPointerEnter={ this.props.onIntent }
 				onFocus={ this.props.onIntent }
 			>

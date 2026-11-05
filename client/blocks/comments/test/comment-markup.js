@@ -33,6 +33,17 @@ describe( 'blocksToHtml', () => {
 		).toBe( '1. First\n  - Inner\n2. <em>Second</em>' );
 	} );
 
+	it( 'numbers lists from their start, and down when reversed', () => {
+		expect( blocksToHtml( '<ol start="5"><li>A</li><li>B</li></ol>' ) ).toBe( '5. A\n6. B' );
+		expect( blocksToHtml( '<ol reversed><li>A</li><li>B</li></ol>' ) ).toBe( '2. A\n1. B' );
+	} );
+
+	it( 'keeps code in one piece for wpautop', () => {
+		expect( blocksToHtml( '<pre class="wp-block-code"><code>a\n\n  \nb</code></pre>' ) ).toBe(
+			'<code>a\nb</code>'
+		);
+	} );
+
 	it( 'writes images and embeds as their URLs, with captions under them', () => {
 		expect(
 			blocksToHtml(

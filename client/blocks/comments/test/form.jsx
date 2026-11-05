@@ -118,6 +118,30 @@ describe( 'PostCommentForm', () => {
 
 			expect( request.isDone() ).toBe( true );
 		} );
+
+		it( 'sends textarea words as typed to a site without block comments', async () => {
+			const content = 'Try <!-- wp:more --> in a post';
+			const request = nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/456/posts/123/replies/new', { content } )
+				.reply( 200, {
+					ID: 5,
+					content,
+					date: '2026-11-06T00:00:00.000Z',
+					parent: false,
+					post: { ID: 123 },
+					status: 'approved',
+				} );
+			const post = {
+				...defaultPost,
+				discussion: { ...defaultPost.discussion, comments_allow_blocks: false },
+			};
+
+			renderForm( { post, commentText: content } );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Send' } ) );
+
+			expect( request.isDone() ).toBe( true );
+		} );
 	} );
 
 	describe( 'in the inbox', () => {

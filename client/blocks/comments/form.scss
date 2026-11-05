@@ -57,8 +57,8 @@
 
 	// The block editor's side padding, so the words don't shift over when it takes over. The
 	// hidden mirror that sizes the textarea gets it too.
-	.expanding-area pre,
-	.expanding-area textarea {
+	&.has-block-editor .expanding-area pre,
+	&.has-block-editor .expanding-area textarea {
 		padding-inline: 12px;
 	}
 

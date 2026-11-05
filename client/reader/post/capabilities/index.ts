@@ -21,7 +21,7 @@ export function isLoginRequiredToComment( post: ReaderPost ): boolean {
 	return !! post.discussion?.comments_require_registration;
 }
 
-// Left out until wpcom sends it, which keeps the block markup the Reader saved before.
+// A post without the field takes blocks, as the Reader always assumed.
 export function isCommentHtmlOnly( post: ReaderPost ): boolean {
 	return post.discussion?.comments_allow_blocks === false;
 }

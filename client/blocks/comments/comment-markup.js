@@ -67,19 +67,22 @@ const inline = ( node ) =>
 		} )
 		.join( '' );
 
-const list = ( node, depth = 0 ) =>
-	Array.from( node.children )
-		.filter( ( item ) => item.tagName === 'LI' )
-		.flatMap( ( item, index ) => {
-			const marker = node.tagName === 'OL' ? `${ index + 1 }.` : '-';
-			const nested = Array.from( item.children ).filter(
-				( child ) => child.tagName === 'UL' || child.tagName === 'OL'
-			);
-			return [
-				`${ '  '.repeat( depth ) }${ marker } ${ inline( item ).trim() }`,
-				...nested.flatMap( ( child ) => list( child, depth + 1 ) ),
-			];
-		} );
+const list = ( node, depth = 0 ) => {
+	const items = Array.from( node.children ).filter( ( item ) => item.tagName === 'LI' );
+	const reversed = node.hasAttribute( 'reversed' );
+	const start = Number( node.getAttribute( 'start' ) ) || ( reversed ? items.length : 1 );
+
+	return items.flatMap( ( item, index ) => {
+		const marker = node.tagName === 'OL' ? `${ reversed ? start - index : start + index }.` : '-';
+		const nested = Array.from( item.children ).filter(
+			( child ) => child.tagName === 'UL' || child.tagName === 'OL'
+		);
+		return [
+			`${ '  '.repeat( depth ) }${ marker } ${ inline( item ).trim() }`,
+			...nested.flatMap( ( child ) => list( child, depth + 1 ) ),
+		];
+	} );
+};
 
 function block( node ) {
 	switch ( node.tagName ) {
@@ -88,8 +91,9 @@ function block( node ) {
 			return list( node ).join( '\n' );
 		case 'BLOCKQUOTE':
 			return `<blockquote>${ blocks( node ) }</blockquote>`;
+		// wpautop splits on a blank line, even inside code, so code keeps none.
 		case 'PRE':
-			return `<code>${ escape( node.textContent ) }</code>`;
+			return `<code>${ escape( node.textContent.replace( /\n(?:[^\S\n]*\n)+/g, '\n' ) ) }</code>`;
 		default:
 			return inline( node ).trim();
 	}
