@@ -1,9 +1,5 @@
-import {
-	archiveAmplifyReportMutation,
-	paginatedAgencySitesQuery,
-	retryAmplifyReportMutation,
-} from '@automattic/api-queries';
-import { useIsMutating, useMutation, useQuery } from '@tanstack/react-query';
+import { archiveAmplifyReportMutation, retryAmplifyReportMutation } from '@automattic/api-queries';
+import { useIsMutating, useMutation } from '@tanstack/react-query';
 import {
 	Button,
 	ExternalLink,
@@ -28,7 +24,7 @@ import { Text } from '../../components/text';
 import SiteScreenshot from '../components/site-screenshot';
 import { Preview } from '../sites/dataviews/site';
 import { useDownloadReportPdf } from './use-download-report-pdf';
-import type { AgencySite, AmplifyReport } from '@automattic/api-core';
+import type { AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
 const REPORT_LAYOUTS: SupportedLayouts = {
@@ -90,15 +86,6 @@ function formatCreated( value: string, locale: string ) {
 	return new Intl.DateTimeFormat( locale, { dateStyle: 'medium' } ).format( date );
 }
 
-function siteKey( value: string ): string | null {
-	try {
-		const url = new URL( value.includes( '://' ) ? value : `https://${ value }` );
-		return `${ url.hostname.replace( /^www\./, '' ) }${ url.pathname.replace( /\/$/, '' ) }`;
-	} catch {
-		return null;
-	}
-}
-
 /** Failed rows leave the score cells empty so the failure reason can run across them. */
 function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: boolean } ) {
 	if ( isEmpty ) {
@@ -122,6 +109,10 @@ function Score( { score, isEmpty = false }: { score: number | null; isEmpty?: bo
 			) }
 		</Badge>
 	);
+}
+
+function titleFor( report: AmplifyReport ) {
+	return report.site_title || displayUrl( report.url );
 }
 
 function displayUrl( value: string ) {
@@ -243,34 +234,6 @@ export default function AmplifyReportsList( {
 			} );
 		},
 		[ createErrorNotice, createSuccessNotice, recordTracksEvent, retryReport ]
-	);
-	const firstSites = useQuery( {
-		...paginatedAgencySitesQuery( { page: 1, per_page: 20 }, agencyId ),
-		enabled: !! agencyId && reports.length > 0,
-	} );
-	const siteCount = firstSites.data?.total ?? 0;
-	const allSites = useQuery( {
-		...paginatedAgencySitesQuery( { page: 1, per_page: siteCount || 20 }, agencyId ),
-		enabled: !! agencyId && reports.length > 0 && siteCount > 20,
-	} );
-	const agencySites = useMemo( () => {
-		const sites = new Map< string, AgencySite >();
-		for ( const site of allSites.data?.sites ?? firstSites.data?.sites ?? [] ) {
-			const key = siteKey( site.url_with_scheme ?? site.url );
-			if ( key ) {
-				sites.set( key, site );
-			}
-		}
-		return sites;
-	}, [ allSites.data?.sites, firstSites.data?.sites ] );
-	const siteFor = useCallback(
-		( report: AmplifyReport ) => agencySites.get( siteKey( report.url ) ?? '' ),
-		[ agencySites ]
-	);
-	const titleFor = useCallback(
-		( report: AmplifyReport ) =>
-			report.site_title || siteFor( report )?.blogname || displayUrl( report.url ),
-		[ siteFor ]
 	);
 
 	const fields = useMemo< Field< AmplifyReport >[] >(
@@ -463,7 +426,7 @@ export default function AmplifyReportsList( {
 				filterBy: false,
 			},
 		],
-		[ downloadingId, locale, onDownload, onRetry, recordTracksEvent, retryingId, titleFor ]
+		[ downloadingId, locale, onDownload, onRetry, recordTracksEvent, retryingId ]
 	);
 
 	const { data: visibleReports, paginationInfo } = filterSortAndPaginate( reports, view, fields );
