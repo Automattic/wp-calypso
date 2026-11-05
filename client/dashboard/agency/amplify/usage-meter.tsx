@@ -265,7 +265,13 @@ export function AmplifyScansLeft( {
 		return (
 			<div className="dashboard-amplify-scans-left" data-status={ status }>
 				<Text size={ 12 } lineHeight="18px" variant="muted">
-					<span className="dashboard-amplify-scans-left__title">{ message.title }.</span>{ ' ' }
+					<span className="dashboard-amplify-scans-left__title">
+						{ sprintf(
+							/* translators: %s: a short status, e.g. "You’ve used all 5 reports this month" */
+							__( '%s.' ),
+							message.title
+						) }
+					</span>{ ' ' }
 					{ message.body }
 				</Text>
 				{ message.action }
