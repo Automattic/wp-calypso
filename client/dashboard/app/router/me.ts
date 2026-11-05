@@ -35,6 +35,7 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __, _x } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
@@ -1215,23 +1216,27 @@ export const wordpressDefaultsRoute = createRoute( {
 	)
 );
 
-export const appsRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Apps' ),
-			},
-		],
-	} ),
+export const appsRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'apps',
-} ).lazy( () =>
-	import( '../../me/apps' ).then( ( d ) =>
-		createLazyRoute( 'apps' )( {
-			component: d.default,
-		} )
-	)
-);
+	beforeLoad: () => {
+		throw dashboardRedirect( {
+			href: localizeUrl( 'https://apps.wordpress.com/' ),
+			reloadDocument: true,
+		} );
+	},
+} );
+
+export const getAppsRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'get-apps',
+	beforeLoad: () => {
+		throw dashboardRedirect( {
+			href: localizeUrl( 'https://apps.wordpress.com/' ),
+			reloadDocument: true,
+		} );
+	},
+} );
 
 export const mcpLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
@@ -1544,7 +1549,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	);
 
 	if ( config.supports.me.apps ) {
-		meRoutes.push( appsRoute );
+		meRoutes.push( appsRedirectRoute, getAppsRedirectRoute );
 	}
 
 	if ( isEnabled( 'mcp-settings' ) ) {

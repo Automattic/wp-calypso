@@ -8,7 +8,9 @@ import nock from 'nock';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import { APP_CONTEXT_DEFAULT_CONFIG, type AppConfig } from '../../context';
 import {
+	appsRedirectRoute,
 	createMeRoutes,
+	getAppsRedirectRoute,
 	mcpLegacyRedirectRoute,
 	mcpLegacySubpageRedirectRoute,
 	meRoute,
@@ -228,6 +230,22 @@ test( 'redirects to reauthorize when the two-step session has expired', async ()
 		reloadDocument: true,
 	} );
 } );
+
+test.each( [ appsRedirectRoute, getAppsRedirectRoute ] )(
+	'redirects $options.path to the apps landing page',
+	( route ) => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const beforeLoad = route.options.beforeLoad as any;
+
+		expect( () => beforeLoad() ).toThrow(
+			expect.objectContaining( {
+				isRedirect: true,
+				href: 'https://apps.wordpress.com/',
+				reloadDocument: true,
+			} )
+		);
+	}
+);
 
 function getRedirectTarget( beforeLoad: unknown, args: unknown ) {
 	try {
