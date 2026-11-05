@@ -52,12 +52,12 @@ export const archiveAmplifyReportMutation = ( agencyId: number ) =>
 		mutationKey: [ 'agency', agencyId, 'amplify', 'reports', 'archive' ],
 		meta: { statId: 'agcy-amplify-report-archive' },
 		mutationFn: ( reportId: string ) => archiveAmplifyReport( agencyId, reportId ),
-		onSuccess: ( report ) => {
+		onSuccess: ( _report, reportId ) => {
 			queryClient.setQueryData< AmplifyReportsResponse >(
 				amplifyReportsQuery( agencyId ).queryKey,
 				( previous ) =>
 					previous
-						? { ...previous, reports: previous.reports.filter( ( item ) => item.id !== report.id ) }
+						? { ...previous, reports: previous.reports.filter( ( item ) => item.id !== reportId ) }
 						: previous
 			);
 			queryClient.invalidateQueries( { queryKey: amplifyReportsQuery( agencyId ).queryKey } );
