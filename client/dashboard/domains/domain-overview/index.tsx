@@ -20,7 +20,7 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import { formatDate } from '../../utils/datetime';
-import { isTldInMaintenance } from '../../utils/domain';
+import { getDomainTypeLabel, isTldInMaintenance } from '../../utils/domain';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
@@ -79,8 +79,9 @@ export default function DomainOverview() {
 						title={ wrappableDomainName }
 						description={
 							<HStack spacing={ 2 } alignment="center" justify="flex-start" wrap>
-								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION &&
-									domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
+								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+									<Badge>{ getDomainTypeLabel( domain ) }</Badge>
+								) }
 								<DomainOverviewSslStatus domain={ domain } />
 								<span>
 									{ ( () => {

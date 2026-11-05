@@ -8,11 +8,12 @@ import {
 	formatPercent,
 	getAgentEnvironment,
 	getCreditsLabel,
+	getCreditsRingPercent,
 	getCreditsToggleLabel,
 	getTopUpCreditsLeft,
-	isCreditsAlert,
 	isCreditsExhausted,
 	isCreditsLow,
+	isCreditsOnTopUps,
 } from '../credits';
 import { localNumber } from './fixtures/local-number';
 
@@ -81,32 +82,46 @@ describe( 'credit states', () => {
 	} );
 } );
 
-describe( 'isCreditsAlert', () => {
-	it.each( [
-		[ 100, false ],
-		[ 20.01, false ],
-		[ 20, true ],
-		[ 19.99, true ],
-		[ 0.4, true ],
-		[ 0, true ],
-	] )( 'uses the unrounded free share at %s%%', ( percent, isAlert ) => {
-		expect( isCreditsAlert( free( percent ) ) ).toBe( isAlert );
+describe( 'getCreditsRingPercent', () => {
+	it( 'reads the plan pool’s share on paid plans, not the combined share', () => {
+		const demo = buildMockCreditsStatus( 'paid', 50 );
+		expect( demo.percent ).toBe( 50 );
+		expect( getCreditsRingPercent( demo ) ).toBeCloseTo( 46.7, 1 );
+		expect( getCreditsRingPercent( { ...paid( 0 ), remaining: 25000 } ) ).toBe( 0 );
+	} );
+
+	it( 'reads the free pool’s share on free plans', () => {
+		expect( getCreditsRingPercent( free( 80 ) ) ).toBe( 80 );
+	} );
+
+	it( 'falls back to the status’s share without a pool, clamped', () => {
+		expect( getCreditsRingPercent( { ...paid( 30 ), pools: [] } ) ).toBe( 30 );
+		expect( getCreditsRingPercent( { ...paid( 140 ), pools: [] } ) ).toBe( 100 );
+	} );
+} );
+
+describe( 'isCreditsOnTopUps', () => {
+	const planPool = ( remaining?: number ): CreditsStatus => ( {
+		plan: 'paid',
+		percent: 0,
+		remaining: 25000,
+		pools: [ { id: 'plan', label: 'Monthly plan', percent: 0, remaining, total: 15000 } ],
 	} );
 
 	it.each( [
-		[ 25000, false ],
-		[ 10000, false ],
-		[ 9999, true ],
-		[ 800, true ],
-		[ 1, true ],
-		[ 0, true ],
-	] )( 'uses the paid amount at %i credits', ( remaining, isAlert ) => {
-		expect( isCreditsAlert( paid( 100, remaining ) ) ).toBe( isAlert );
+		[ 'a used-up plan pool', planPool( 0 ) ],
+		[ 'a plan pool at 0% with no amount', planPool() ],
+	] )( 'is true with credits left and %s', ( _case, status ) => {
+		expect( isCreditsOnTopUps( status ) ).toBe( true );
 	} );
 
-	it( 'ignores the plan share on paid plans', () => {
-		expect( isCreditsAlert( { ...paid( 10 ), remaining: 205000 } ) ).toBe( false );
-		expect( isCreditsAlert( { ...paid( 0 ), remaining: 25000 } ) ).toBe( false );
+	it.each( [
+		[ 'nothing left at all', paid( 0 ) ],
+		[ 'plan credits left', { ...paid( 1 ), remaining: 25000 } ],
+		[ 'a plan pool with an amount left', planPool( 5 ) ],
+		[ 'a free plan', free( 50 ) ],
+	] )( 'is false with %s', ( _case, status ) => {
+		expect( isCreditsOnTopUps( status ) ).toBe( false );
 	} );
 } );
 
