@@ -34,19 +34,37 @@ describe( 'blackbox-sdk', () => {
 		delete window.Blackbox;
 	} );
 
-	test( 'getBlackboxApiKey uses the signup key for signup surfaces', () => {
-		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
+	test( 'getBlackboxKey pairs the login key with key version 2', () => {
+		const { getBlackboxKey } = require( '../blackbox-sdk' );
 
-		expect( getBlackboxApiKey( 'blackbox-signup' ) ).toBe( 'signup-key' );
-		expect( getBlackboxApiKey( 'blackbox-userless-checkout' ) ).toBe( 'signup-key' );
+		expect( getBlackboxKey() ).toEqual( { apiKey: 'login-key', keyVersion: 2 } );
 	} );
 
-	test( 'getBlackboxApiKey uses the login key for other surfaces', () => {
-		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
+	test( 'getBlackboxKey sends no key version with the legacy signup key', () => {
+		const { getBlackboxKey } = require( '../blackbox-sdk' );
 
-		expect( getBlackboxApiKey() ).toBe( 'login-key' );
-		expect( getBlackboxApiKey( 'blackbox-login' ) ).toBe( 'login-key' );
-		expect( getBlackboxApiKey( 'blackbox-lost-password' ) ).toBe( 'login-key' );
+		expect( getBlackboxKey( { legacySignupKey: true } ) ).toEqual( {
+			apiKey: 'signup-key',
+			keyVersion: undefined,
+		} );
+	} );
+
+	test( 'getBlackboxSignupFields sends the key version with the session ID', () => {
+		const { getBlackboxSignupFields } = require( '../blackbox-sdk' );
+
+		expect( getBlackboxSignupFields( 'abc123', 2 ) ).toEqual( {
+			blackbox_session_id: 'abc123',
+			blackbox_key_version: 2,
+		} );
+		expect( getBlackboxSignupFields( 'abc123', undefined ) ).toEqual( {
+			blackbox_session_id: 'abc123',
+		} );
+	} );
+
+	test( 'getBlackboxSignupFields sends nothing without a session', () => {
+		const { getBlackboxSignupFields } = require( '../blackbox-sdk' );
+
+		expect( getBlackboxSignupFields( undefined, 2 ) ).toEqual( {} );
 	} );
 
 	test( 'loadBlackboxSdk injects the api key it was given', async () => {

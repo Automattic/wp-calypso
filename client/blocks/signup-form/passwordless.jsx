@@ -111,14 +111,14 @@ class PasswordlessSignupForm extends Component {
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
 		if ( flowName === '' && this.props.submitForm ) {
-			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			const blackboxFields = await this.props.blackbox.getSignupFields();
 
 			// The parent spreads this payload into its /users/new request body.
 			this.props.submitForm(
 				{
 					email,
 					is_passwordless: true,
-					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+					...blackboxFields,
 				},
 				( error ) => {
 					this.submitLock = false;
@@ -148,7 +148,7 @@ class PasswordlessSignupForm extends Component {
 		const signup_flow_name = queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : flowName;
 
 		try {
-			const blackboxSessionId = await this.props.blackbox.getSessionId();
+			const blackboxFields = await this.props.blackbox.getSignupFields();
 
 			const body = {
 				email: this.getTrimmedEmail(),
@@ -164,7 +164,7 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
-				...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+				...blackboxFields,
 			};
 
 			const { search = '' } = typeof window !== 'undefined' ? window.location : {};
