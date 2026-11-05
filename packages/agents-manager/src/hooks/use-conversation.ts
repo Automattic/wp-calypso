@@ -154,6 +154,15 @@ export default function useConversation( {
 		refetchIntervalInBackground: true,
 	} );
 
+	// A load still in flight belongs to this mount: the next one requests its own.
+	useEffect(
+		() => () => {
+			queryClient.cancelQueries( { queryKey, exact: true } );
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- `queryKey` changes only with the session
+		[ queryClient, sessionId ]
+	);
+
 	const question = data && getUnansweredQuestion( data.messages );
 	const newestId = data ? getNewestServerId( data.messages ) : 0;
 
