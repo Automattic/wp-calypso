@@ -1159,6 +1159,11 @@
 		font-size: 12px;
 		line-height: 26px;
 		letter-spacing: 0.01em;
+
+		/* Leaves the tagline clear of the fixed help button at the end of the page. */
+		@media ( max-width: 599px ) {
+			padding-bottom: 76px;
+		}
 	}
 
 	.lp-footer-bottom__language {
@@ -1219,9 +1224,14 @@
 		gap: 10px;
 		min-height: 48px;
 		box-sizing: border-box;
+
+		@media ( max-width: 343px ) {
+			gap: 8px;
+		}
 	}
 
 	.lp-footer-apps .lp-mobile-badge__content__icon {
+		flex: none;
 		top: 0;
 		width: 20px;
 		height: 22px;
@@ -1252,8 +1262,8 @@
 		display: flex;
 		gap: 14px;
 
-		/* Spans the App Store button whenever the store buttons show. */
-		@media ( max-width: 1151px ) {
+		/* Spans the App Store button on phones. */
+		@media ( max-width: 599px ) {
 			justify-content: space-between;
 			gap: 0;
 			width: calc( ( 100% - 16px ) / 2 );
@@ -1265,6 +1275,15 @@
 		flex: none;
 		width: 32px;
 		height: 32px;
+	}
+
+	/* Four 32px circles leave under 4px gaps here. */
+	@media ( max-width: 343px ) {
+		.lp-footer-bottom .lp-footer-social-media a,
+		.lp-footer-bottom .lp-footer-social-media .lp-icon {
+			width: 28px;
+			height: 28px;
+		}
 	}
 
 	.lp-footer-legal {
