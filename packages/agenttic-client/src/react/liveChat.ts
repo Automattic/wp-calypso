@@ -26,17 +26,14 @@ const INITIAL_STATE: AgentChatState = {
 // The chats that set `resumeOnRemount`, by agent id.
 const resumableChats = new Map< string, LiveChat >();
 
-/**
- * Creates a chat. One that replaces `previous` takes over what belongs to the
- * mounted component: its subscribers and message actions.
- */
+/** Creates a chat. One that replaces `previous` takes over its subscribers. */
 export function createLiveChat( previous?: LiveChat ): LiveChat {
 	return {
 		// A new object, so subscribers of `previous` render the new chat.
 		state: { ...INITIAL_STATE },
 		listeners: previous?.listeners ?? new Set(),
 		isSending: false,
-		registrations: previous?.registrations ?? [],
+		registrations: [],
 	};
 }
 

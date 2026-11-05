@@ -208,6 +208,25 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 		await mount( props );
 	} );
 
+	it( 'gives a mounted component’s message actions to the chat that replaces its own', async () => {
+		await mount( { agentId: 'replaced-actions-agent', resumeOnRemount: true } );
+		await act( async () => {
+			chat.registerMessageActions( {
+				id: 'copy',
+				actions: [ { id: 'copy', label: 'Copy', onClick: () => {} } ],
+			} );
+		} );
+
+		await act( async () => {
+			endResumableChat( 'replaced-actions-agent' );
+		} );
+		await act( async () => {
+			await chat.loadMessages( [ REPLY ] );
+		} );
+
+		expect( chat.messages[ 0 ].actions ).toHaveLength( 1 );
+	} );
+
 	it( 'takes a component’s suggestions off the chat it leaves', async () => {
 		await mount( { agentId: 'suggesting-agent', resumeOnRemount: true } );
 		await act( async () => {
