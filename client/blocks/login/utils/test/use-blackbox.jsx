@@ -9,6 +9,7 @@ import { waitForChallengeSettled } from '../challenge-gate';
 import { useBlackbox } from '../use-blackbox';
 
 jest.mock( '../blackbox-sdk', () => ( {
+	getBlackboxApiKey: jest.fn( () => 'test-api-key' ),
 	loadBlackboxSdk: jest.fn( () => Promise.resolve() ),
 } ) );
 

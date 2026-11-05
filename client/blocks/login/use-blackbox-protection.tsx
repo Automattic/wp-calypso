@@ -1,7 +1,7 @@
 import config from '@automattic/calypso-config';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
-import { getBlackboxKey, getBlackboxSignupFields } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
 
@@ -12,11 +12,6 @@ export interface BlackboxProtection {
 	challenge: ReactElement;
 	/** Resolves the Blackbox session ID (no-op when disabled). */
 	getSessionId: () => Promise< string | undefined >;
-	/**
-	 * Resolves the Blackbox fields for a `/users/new` body: the session ID and
-	 * the version of the key that collected it (empty when disabled).
-	 */
-	getSignupFields: () => Promise< BlackboxSignupFields >;
 	/** Resets the Blackbox session so a retry starts fresh. */
 	reset: () => void;
 }
@@ -28,10 +23,7 @@ interface UseBlackboxProtectionOptions {
 	 * When disabled, `getSessionId` is a no-op so no SDK load/collect happens.
 	 */
 	feature: string;
-	/**
-	 * Collect with `blackbox_signup_api_key` instead of `blackbox_api_key`. Only
-	 * the magic-login page uses it; its requests send no `blackbox_key_version`.
-	 */
+	/** Collect with `blackbox_signup_api_key`. See `getBlackboxApiKey()`. */
 	legacySignupKey?: boolean;
 	/**
 	 * Keep Blackbox off while the host form is mounted but not the active
@@ -46,13 +38,7 @@ interface UseBlackboxProtectionOptions {
 	resetOnError?: unknown;
 }
 
-interface BlackboxSignupFields {
-	blackbox_session_id?: string;
-	blackbox_key_version?: number;
-}
-
 const noopGetSessionId = () => Promise.resolve( undefined );
-const noopGetSignupFields = () => Promise.resolve( {} );
 
 /**
  * Wire Blackbox into a form.
@@ -63,7 +49,7 @@ export function useBlackboxProtection( {
 	suspended,
 	resetOnError,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
-	const { apiKey, keyVersion } = getBlackboxKey( { legacySignupKey } );
+	const apiKey = getBlackboxApiKey( legacySignupKey );
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
@@ -86,11 +72,6 @@ export function useBlackboxProtection( {
 	const getSessionId = useCallback(
 		() => ( apiKey ? getBlackboxSessionId( apiKey ) : Promise.resolve( undefined ) ),
 		[ apiKey ]
-	);
-
-	const getSignupFields = useCallback(
-		async () => getBlackboxSignupFields( await getSessionId(), keyVersion ),
-		[ getSessionId, keyVersion ]
 	);
 
 	const reset = useCallback( () => {
@@ -134,7 +115,6 @@ export function useBlackboxProtection( {
 			/>
 		),
 		getSessionId: enabled ? getSessionId : noopGetSessionId,
-		getSignupFields: enabled ? getSignupFields : noopGetSignupFields,
 		reset,
 	};
 }
