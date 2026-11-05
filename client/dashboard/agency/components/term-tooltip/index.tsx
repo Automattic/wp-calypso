@@ -122,7 +122,7 @@ export function useTermTooltip< T extends HTMLElement >( content: ReactNode ) {
 			}
 		},
 		onBlur: () => {
-			if ( ! hovered.current && ! pinned ) {
+			if ( ! hovered.current ) {
 				close();
 			}
 		},
