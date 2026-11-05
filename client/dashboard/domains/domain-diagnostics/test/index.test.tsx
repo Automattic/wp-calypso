@@ -18,7 +18,7 @@ jest.mock( '../../../app/router/domains', () => ( {
 
 const mockDiagnosticsApiRequest = ( data: DomainDiagnosticsData ) =>
 	nock( 'https://public-api.wordpress.com' )
-		.get( `/wpcom/v2/domains/diagnostics/${ domainName }` )
+		.get( `/wpcom/v2/domains/diagnostics/${ domainName }/` )
 		.reply( 200, data );
 
 describe( '<DomainDiagnostics>', () => {
