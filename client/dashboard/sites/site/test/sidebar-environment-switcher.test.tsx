@@ -7,7 +7,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
-import EnvironmentSwitcher from '../environment-switcher';
+import SidebarEnvironmentSwitcher from '../sidebar-environment-switcher';
 import type { Site } from '@automattic/api-core';
 
 const mockCreateSuccessNotice = jest.fn();
@@ -164,20 +164,20 @@ const clickDropdown = async ( user: ReturnType< typeof userEvent.setup > ) => {
 	await user.click( screen.getByRole( 'button' ) );
 };
 
-describe( 'EnvironmentSwitcher', () => {
+describe( 'SidebarEnvironmentSwitcher', () => {
 	afterEach( () => nock.cleanAll() );
 
 	describe( 'Environment Display', () => {
 		test( 'displays "Production" for production sites', async () => {
 			const scope = mockSiteRequests();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
+			render( <SidebarEnvironmentSwitcher site={ mockProductionSiteWithStaging } /> );
 			expect( screen.getByText( 'Production' ) ).toBeVisible();
 			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		} );
 
 		test( 'displays "Staging" for staging sites', async () => {
 			const scope = mockSiteRequests();
-			render( <EnvironmentSwitcher site={ mockStagingSite } /> );
+			render( <SidebarEnvironmentSwitcher site={ mockStagingSite } /> );
 			expect( screen.getByText( 'Staging' ) ).toBeVisible();
 			await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 		} );
@@ -189,7 +189,7 @@ describe( 'EnvironmentSwitcher', () => {
 			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
+			render( <SidebarEnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
 				queryClient,
 			} );
 
@@ -205,7 +205,9 @@ describe( 'EnvironmentSwitcher', () => {
 			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, { queryClient } );
+			render( <SidebarEnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
+				queryClient,
+			} );
 
 			await clickDropdown( user );
 			await user.click( await screen.findByText( 'Add staging site' ) );
@@ -224,7 +226,9 @@ describe( 'EnvironmentSwitcher', () => {
 			const queryClient = buildQueryClient( mockProductionSiteWithoutStaging );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, { queryClient } );
+			render( <SidebarEnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
+				queryClient,
+			} );
 
 			await clickDropdown( user );
 			await user.click( await screen.findByText( 'Add staging site' ) );
@@ -251,7 +255,9 @@ describe( 'EnvironmentSwitcher', () => {
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
+			render( <SidebarEnvironmentSwitcher site={ mockProductionSiteWithStaging } />, {
+				queryClient,
+			} );
 
 			await clickDropdown( user );
 			await waitFor( () => expect( screen.getByText( 'Adding staging site…' ) ).toBeVisible() );
@@ -266,7 +272,9 @@ describe( 'EnvironmentSwitcher', () => {
 			} );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithStaging } />, { queryClient } );
+			render( <SidebarEnvironmentSwitcher site={ mockProductionSiteWithStaging } />, {
+				queryClient,
+			} );
 
 			await clickDropdown( user );
 			await waitFor( () => expect( screen.getByText( 'Deleting staging site…' ) ).toBeVisible() );
@@ -284,7 +292,7 @@ describe( 'EnvironmentSwitcher', () => {
 				.reply( 200, { success: true } );
 
 			const user = userEvent.setup();
-			render( <EnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
+			render( <SidebarEnvironmentSwitcher site={ mockProductionSiteWithoutStaging } />, {
 				queryClient,
 			} );
 
