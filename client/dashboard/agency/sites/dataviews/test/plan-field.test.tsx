@@ -116,4 +116,21 @@ describe( 'withFullPlanName', () => {
 
 		expect( screen.getByText( 'WordPress.com Business' ) ).toBeVisible();
 	} );
+
+	test( 'keeps the staging label for a staging site', () => {
+		const PlanCell = withFullPlanName( { id: 'plan' } ).render!;
+		const site = {
+			ID: 1,
+			is_wpcom_staging_site: true,
+			plan: {
+				product_slug: 'business-bundle',
+				product_name_short: 'Business',
+				product_name: 'WordPress.com Business',
+			},
+		} as Site;
+
+		render( <PlanCell item={ site } field={ {} as never } /> );
+
+		expect( screen.getByText( 'Staging Site' ) ).toBeVisible();
+	} );
 } );

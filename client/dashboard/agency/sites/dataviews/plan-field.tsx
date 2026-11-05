@@ -50,8 +50,8 @@ export function withPressablePlan( field: Field< AgencySite > | null ): Field< A
 	return { ...field, render: PlanCell };
 }
 
-// Agencies manage sites on several hosts, so a WordPress.com plan shows its full name
-// (“WordPress.com Business”), like Jetpack and Pressable plans do, not the short one.
+// Agencies manage sites on several hosts, so a plan not bought through A4A shows its full
+// name (“WordPress.com Business”), as licensed plans already do, not the short one.
 function getPlanName( site: Site ) {
 	const name = getSitePlanDisplayName( site );
 	return name === site.plan?.product_name_short && site.plan?.product_name
