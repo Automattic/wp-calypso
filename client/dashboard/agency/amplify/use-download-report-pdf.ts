@@ -24,7 +24,7 @@ export function useDownloadReportPdf( agencyId: number ) {
 
 				window.URL.revokeObjectURL( url );
 			} finally {
-				setDownloadingId( null );
+				setDownloadingId( ( current ) => ( current === reportId ? null : current ) );
 			}
 		},
 		[ agencyId ]
