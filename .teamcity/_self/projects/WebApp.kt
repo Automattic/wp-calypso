@@ -75,10 +75,12 @@ object BuildDockerImage : BuildType({
         ),
     )
 
+    // Emoji are written as HTML character references because TeamCity mangles non-ASCII
+    // characters in build scripts.
     val linksBlock = buildString {
-        appendLine("<h2>🧐 Test on Calypso Live 🌅</h2>")
+        appendLine("<h2>&#x1F9D0; Test on Calypso Live &#x1F305;</h2>")
         appendLine()
-        appendLine("| Environment | 🔗 |")
+        appendLine("| Environment | &#x1F517; |")
         appendLine("| - | - |")
         environments.forEach { env ->
             val url = "${env.baseUrl}?image=$imageBase:build-%build.number%${env.envQuery}"
@@ -200,7 +202,7 @@ object BuildDockerImage : BuildType({
 				export GH_TOKEN="%matticbot_oauth_token%"
 				chmod +x ./bin/add-pr-comment.sh
 				./bin/add-pr-comment.sh "%teamcity.build.branch%" "calypso-live" <<- EOF || true
-				Link to live branch is being generated...
+				Calypso Live links are being generated...
 				Please wait a few minutes and refresh this page.
 				EOF
 			"""
