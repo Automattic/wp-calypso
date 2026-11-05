@@ -1,4 +1,8 @@
-import { PLAN_BUSINESS, FEATURE_SSH, getPlanBusinessTitle } from '@automattic/calypso-products';
+import {
+	PLAN_BUSINESS,
+	WPCOM_FEATURES_GITHUB_DEPLOYMENTS,
+	getPlanBusinessTitle,
+} from '@automattic/calypso-products';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
 import UpsellNudge from 'calypso/blocks/upsell-nudge';
@@ -27,7 +31,7 @@ const DeploymentsUpsellNudge = () => {
 			callToAction={ translate( 'Upgrade' ) }
 			plan={ PLAN_BUSINESS }
 			showIcon
-			feature={ FEATURE_SSH }
+			feature={ WPCOM_FEATURES_GITHUB_DEPLOYMENTS }
 		/>
 	);
 };

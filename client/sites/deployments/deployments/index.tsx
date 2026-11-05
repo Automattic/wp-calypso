@@ -1,4 +1,4 @@
-import { FEATURE_SSH } from '@automattic/calypso-products';
+import { WPCOM_FEATURES_GITHUB_DEPLOYMENTS } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { useI18n } from '@wordpress/react-i18n';
 import { HostingCard } from 'calypso/components/hosting-card';
@@ -26,7 +26,9 @@ export function GitHubDeployments() {
 	const requestingSiteFeatures = useSelector( ( state ) =>
 		isRequestingSiteFeatures( state, siteId )
 	);
-	const hasSshFeature = useSelector( ( state ) => siteHasFeature( state, siteId, FEATURE_SSH ) );
+	const hasDeploymentsFeature = useSelector( ( state ) =>
+		siteHasFeature( state, siteId, WPCOM_FEATURES_GITHUB_DEPLOYMENTS )
+	);
 
 	const { data: deployments, isLoading, refetch } = useCodeDeploymentsQuery( siteId );
 
@@ -34,7 +36,7 @@ export function GitHubDeployments() {
 		return null;
 	}
 
-	if ( ! hasSshFeature ) {
+	if ( ! hasDeploymentsFeature ) {
 		return (
 			<PageShell pageTitle={ __( 'Deployments' ) }>
 				<DeploymentsUpsellNudge />
