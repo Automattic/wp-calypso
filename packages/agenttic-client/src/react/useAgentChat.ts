@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
@@ -511,21 +511,21 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		[ agentConfig.agentId, isResumable, ownLiveChat ]
 	);
 
-	const subscribe = useCallback(
-		( listener: () => void ) => {
-			// A chat that replaces this one takes the set over, so read it once.
-			const { listeners } = getLiveChat();
-			listeners.add( listener );
+	// Mirrored in React state, so the chat's updates batch as `useState`'s do.
+	const [ state, setRenderedState ] = useState( () => getLiveChat().state );
 
-			return () => {
-				listeners.delete( listener );
-			};
-		},
-		[ getLiveChat ]
-	);
+	useEffect( () => {
+		// A chat that replaces this one takes the set over, so read it once.
+		const { listeners } = getLiveChat();
+		const renderState = () => setRenderedState( getLiveChat().state );
 
-	const getState = useCallback( () => getLiveChat().state, [ getLiveChat ] );
-	const state = useSyncExternalStore( subscribe, getState, getState );
+		renderState();
+		listeners.add( renderState );
+
+		return () => {
+			listeners.delete( renderState );
+		};
+	}, [ getLiveChat ] );
 
 	// Bound to the chat of this render: a callback a tool still holds must not
 	// write to a chat that has replaced it.
@@ -1160,15 +1160,16 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	useEffect( () => applyRegistrations( registrations ), [ applyRegistrations, registrations ] );
 
 	// A resumable chat outlives its component, so it drops what was the
-	// component's: its actions, and an error it has already shown.
+	// component's: its actions, its suggestions and an error it has shown.
 	useEffect(
 		() => () => {
 			if ( isResumable ) {
 				applyRegistrations( [] );
+				clearSuggestions();
 				clearError();
 			}
 		},
-		[ applyRegistrations, clearError, isResumable ]
+		[ applyRegistrations, clearError, clearSuggestions, isResumable ]
 	);
 
 	// Create abort function - delegates to agent manager

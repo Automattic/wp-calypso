@@ -35,8 +35,9 @@ export const RESUME_AFTER_MS = 10_000;
 
 type ReplyWait = 'idle' | 'waiting' | 'resuming' | 'timed-out';
 
-// A loaded copy, and whether a turn was running here when it was requested.
-type LoadedConversation = ServerLoadResult & { isRequestedMidTurn: boolean };
+// A loaded copy, with whether a turn was running here when it was requested and
+// how many had started by then.
+type LoadedConversation = ServerLoadResult & { isRequestedMidTurn: boolean; turnCount: number };
 
 // At most this many history pages are loaded per conversation.
 const MAX_PAGES = 10;
@@ -68,10 +69,10 @@ interface Result {
  * After a page change mid-turn the conversation can load before its reply, so
  * it is reloaded until the reply lands, then offers Retry if none comes.
  *
- * A copy must not replace a newer live history: one requested mid-turn lacks
- * the reply whenever it lands, one still loading when a turn starts is
- * cancelled, and one cached by an earlier mount may predate a turn, so each
- * mount loads only what it fetched.
+ * A copy must not replace a newer live history: one requested mid-turn, or
+ * before a turn that has started since, lacks that turn whenever it lands, and
+ * one cached by an earlier mount may predate a turn, so each mount loads only
+ * what it fetched.
  *
  * A turn paused on a browser-run tool has no page left to send the result, so
  * after `RESUME_AFTER_MS` this page answers its calls with an "interrupted" result
@@ -99,6 +100,8 @@ export default function useConversation( {
 	const replyWaitRef = useRef( replyWait );
 	replyWaitRef.current = replyWait;
 	const loadedNewestIdRef = useRef( 0 );
+	// The turns this mount has seen start: a copy requested before one lacks it.
+	const turnCountRef = useRef( 0 );
 	// The pending calls a resume answered, so the same turn is resumed once.
 	const resumedCallsRef = useRef( '' );
 	// Set when a reload lands mid-resume; it is processed if no reply comes of the resume.
@@ -114,6 +117,7 @@ export default function useConversation( {
 		queryKey,
 		queryFn: async (): Promise< LoadedConversation > => {
 			const isRequestedMidTurn = getAgentManager().isTurnInFlight( agentId );
+			const turnCount = turnCountRef.current;
 
 			const urlSearchParams = new URLSearchParams( window.location.search );
 			const hasAgentParam = urlSearchParams.has( 'agent' );
@@ -128,12 +132,14 @@ export default function useConversation( {
 					...newestPage,
 					messages: withUniqueMessageIds( mergeNewestPage( loaded.messages, newestPage.messages ) ),
 					isRequestedMidTurn,
+					turnCount,
 				};
 			}
 
 			return {
 				...( await loadAllMessagesFromServer( sessionId, config, MAX_PAGES, true ) ),
 				isRequestedMidTurn,
+				turnCount,
 			};
 		},
 		// Public Reader Chat does not expose conversation history, and the
@@ -158,19 +164,18 @@ export default function useConversation( {
 		setHasFailedResume( false );
 	}, [ sessionId ] );
 
-	const wasWaitingForReplyRef = useRef( waitForReply );
-
 	useEffect(
 		() => {
-			const hasTurnStarted = wasWaitingForReplyRef.current && ! waitForReply;
-
-			wasWaitingForReplyRef.current = waitForReply;
-
 			if ( waitForReply ) {
 				return;
 			}
 
 			setHasFailedResume( false );
+
+			// The hook's own resume adds nothing a copy lacks unless a reply comes of it.
+			if ( replyWait !== 'resuming' ) {
+				turnCountRef.current += 1;
+			}
 
 			// A new turn answers the Retry notice too: its Retry would resend mid-turn.
 			if ( replyWait === 'timed-out' ) {
@@ -179,11 +184,8 @@ export default function useConversation( {
 
 			if ( replyWait === 'waiting' ) {
 				setReplyWait( 'idle' );
-			}
 
-			// A load still in flight would land over the turn that just started. The
-			// hook's own resume keeps its reload, which is loaded if no reply comes.
-			if ( hasTurnStarted && replyWait !== 'resuming' ) {
+				// A reload still in flight would land over the turn that just started.
 				queryClient.cancelQueries( { queryKey, exact: true } );
 			}
 		},
@@ -204,7 +206,10 @@ export default function useConversation( {
 				return;
 			}
 
-			const isStale = data.isRequestedMidTurn || getAgentManager().isTurnInFlight( agentId );
+			const isStale =
+				data.isRequestedMidTurn ||
+				data.turnCount !== turnCountRef.current ||
+				getAgentManager().isTurnInFlight( agentId );
 
 			if ( replyWait === 'waiting' ) {
 				// No new message: done once the reply is the newest one.

@@ -208,6 +208,21 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 		await mount( props );
 	} );
 
+	it( 'takes a component’s suggestions off the chat it leaves', async () => {
+		await mount( { agentId: 'suggesting-agent', resumeOnRemount: true } );
+		await act( async () => {
+			chat.registerSuggestions( [ { id: 'idea', label: 'Idea', prompt: 'Give me an idea' } ] );
+		} );
+
+		expect( chat.suggestions ).toHaveLength( 1 );
+
+		await act( async () => root.unmount() );
+
+		expect( getResumableChat( 'suggesting-agent' ).state.suggestions ).toEqual( [] );
+
+		await mount( { agentId: 'suggesting-agent', resumeOnRemount: true } );
+	} );
+
 	it( 'drops an error the component it leaves has already shown', async () => {
 		const props = { agentId: 'failing-agent', resumeOnRemount: true };
 

@@ -28,11 +28,12 @@ const resumableChats = new Map< string, LiveChat >();
 
 /**
  * Creates a chat. One that replaces `previous` takes over what belongs to the
- * mounted component: its subscribers, message actions and suggestions.
+ * mounted component: its subscribers and message actions.
  */
 export function createLiveChat( previous?: LiveChat ): LiveChat {
 	return {
-		state: { ...INITIAL_STATE, suggestions: previous?.state.suggestions ?? [] },
+		// A new object, so subscribers of `previous` render the new chat.
+		state: { ...INITIAL_STATE },
 		listeners: previous?.listeners ?? new Set(),
 		isSending: false,
 		registrations: previous?.registrations ?? [],
