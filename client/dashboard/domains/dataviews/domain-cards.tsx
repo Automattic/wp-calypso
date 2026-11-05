@@ -18,10 +18,10 @@ import { Card, CardBody, CardFooter } from '../../components/card';
 import { DataViewsActionModal } from '../../components/dataviews';
 import Grid from '../../components/grid';
 import { Text } from '../../components/text';
-import { useDomainNameNote } from './field-domain-name';
-import { getDomainId } from './utils';
+import { PrimaryDomainBadge, useDomainNameNote } from './field-domain-name';
+import { getDomainId, textOverflowStyles } from './utils';
 import type { GapSize } from '../../components/grid';
-import type { DomainSummary } from '@automattic/api-core';
+import type { DomainSummary, Site } from '@automattic/api-core';
 import type {
 	Action,
 	ActionModal,
@@ -71,10 +71,12 @@ function getFooterActionLabel( action: Action< DomainSummary >, item: DomainSumm
 
 function DomainCard( {
 	item,
+	site,
 	fields,
 	actions,
 }: {
 	item: DomainSummary;
+	site?: Site;
 	fields: Field< DomainSummary >[];
 	actions: Action< DomainSummary >[];
 } ) {
@@ -108,6 +110,9 @@ function DomainCard( {
 		( action ) => ! footerActionIds.includes( action.id )
 	);
 
+	// The primary address only means something when looking at that site's own domains.
+	const isPrimaryOnSite = !! site && item.primary_domain;
+
 	return (
 		<Card className="domain-cards__card" size="small" role="group" aria-labelledby={ titleId }>
 			<CardBody className="domain-cards__body">
@@ -116,13 +121,18 @@ function DomainCard( {
 						<Heading
 							id={ titleId }
 							level={ 3 }
-							size={ 13 }
+							size={ 14 }
 							weight={ 500 }
 							title={ item.domain }
-							truncate
+							style={ textOverflowStyles }
 						>
+							{ /* Always mounted, even when empty, to dodge a Google Translate DOM crash (react/react#11538). */ }
+							<Text variant="muted" weight="inherit">
+								{ isPrimaryOnSite && item.primary_is_www ? 'www.' : '' }
+							</Text>
 							{ item.domain }
 						</Heading>
+						{ isPrimaryOnSite && <PrimaryDomainBadge /> }
 						{ note && (
 							<Text variant="muted" truncate>
 								{ note }
@@ -178,7 +188,17 @@ function DomainCard( {
 				</dl>
 			</CardBody>
 			{ footerActions.length > 0 && (
-				<CardFooter justify="flex-start" gap={ 4 } isBorderless>
+				<CardFooter
+					justify="flex-start"
+					gap={ 4 }
+					size={ {
+						blockStart: 'none',
+						blockEnd: 'small',
+						inlineStart: 'small',
+						inlineEnd: 'small',
+					} }
+					isBorderless
+				>
 					{ footerActions.map( ( action ) => (
 						<Button
 							key={ action.id }
@@ -204,7 +224,7 @@ function DomainCard( {
 }
 
 /**
- * The Domains list's grid layout, composed from DataViews' public subcomponents.
+ * The grid layout for domain lists, composed from DataViews' public subcomponents.
  * The native grid can't omit its media slot and hides primary actions in a menu.
  * Must be rendered as a child of `DataViews`.
  */
@@ -213,11 +233,13 @@ export function DomainCardsLayout( {
 	fields,
 	actions,
 	view,
+	site,
 }: {
 	data: DomainSummary[];
 	fields: Field< DomainSummary >[];
 	actions: Action< DomainSummary >[];
 	view: ViewGrid;
+	site?: Site;
 } ) {
 	const visibleFields = ( view.fields ?? [] ).flatMap(
 		( id ) => fields.find( ( field ) => field.id === id ) ?? []
@@ -247,6 +269,7 @@ export function DomainCardsLayout( {
 						<DomainCard
 							key={ getDomainId( item ) }
 							item={ item }
+							site={ site }
 							fields={ visibleFields }
 							actions={ actions }
 						/>

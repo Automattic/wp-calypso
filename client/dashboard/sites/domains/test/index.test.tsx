@@ -164,6 +164,12 @@ function mockApis( {
 	}
 }
 
+const SAVED_TABLE_VIEW = {
+	...SITE_CONTEXT_VIEW,
+	type: 'table',
+	layout: { density: 'balanced' },
+};
+
 // The action and status checks below only mean something once the SSL details have arrived.
 const waitForSslDetails = ( queryClient: QueryClient, domainName: string ) =>
 	waitFor( () =>
@@ -213,7 +219,8 @@ describe( '<SiteDomains>', () => {
 
 		await user.click( await screen.findByLabelText( 'Actions' ) );
 
-		expect( await screen.findByText( 'Change site address' ) ).toBeVisible();
+		const action = await screen.findByText( 'Change site address' );
+		await waitFor( () => expect( action ).toBeVisible() );
 	} );
 
 	test( 'hides "Change site address" action when the site is suspended', async () => {
@@ -222,8 +229,7 @@ describe( '<SiteDomains>', () => {
 
 		render( <SiteDomains />, { user: ownerUser } );
 
-		const table = await screen.findByRole( 'table' );
-		expect( within( table ).getByText( 'test-site.wordpress.com' ) ).toBeVisible();
+		await screen.findByRole( 'group', { name: 'test-site.wordpress.com' } );
 
 		expect( screen.queryByLabelText( 'Actions' ) ).not.toBeInTheDocument();
 	} );
@@ -241,15 +247,13 @@ describe( '<SiteDomains>', () => {
 
 		render( <SiteDomains />, { user: ownerUser } );
 
-		const table = await screen.findByRole( 'table' );
+		await screen.findByRole( 'group', { name: 'test-site.com' } );
 		expect(
-			within( table )
-				.getAllByText( /^test-site\./ )
-				.map( ( element ) => element.textContent )
+			screen.getAllByRole( 'heading', { level: 3 } ).map( ( heading ) => heading.textContent )
 		).toEqual( [ 'test-site.wordpress.com', 'test-site.com' ] );
 	} );
 
-	test( 'does not show an SSL column', async () => {
+	test( 'does not show an SSL status on the cards', async () => {
 		nock.cleanAll();
 		mockApis( {
 			ssl: { domain: domain.domain, certificate_provisioned: true },
@@ -257,15 +261,80 @@ describe( '<SiteDomains>', () => {
 
 		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
-		const table = await screen.findByRole( 'table' );
+		await screen.findByRole( 'group', { name: domain.domain } );
 		await waitForSslDetails( queryClient, domain.domain );
+		expect( screen.queryByText( /^SSL/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows the cards by default, with the actions on them', async () => {
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( within( card ).getByRole( 'button', { name: 'Settings' } ) ).toBeVisible();
+		expect( within( card ).getByRole( 'button', { name: 'DNS' } ) ).toBeVisible();
+	} );
+
+	test( 'marks the primary address on its card, with its www prefix', async () => {
+		nock.cleanAll();
+		mockApis( { domains: [ { ...domain, primary_domain: true, primary_is_www: true } ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const card = await screen.findByRole( 'group', { name: /test-site\.com$/ } );
+		expect( within( card ).getByRole( 'heading', { level: 3 } ) ).toHaveTextContent(
+			`www.${ domain.domain }`
+		);
+		expect( within( card ).getByText( 'Primary site address' ) ).toBeVisible();
+	} );
+
+	test( 'does not mark a domain that is not primary', async () => {
+		nock.cleanAll();
+		mockApis( { domains: [ { ...domain, primary_domain: false } ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		expect( within( card ).queryByText( 'Primary site address' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the way back to this list when opening a domain’s settings', async () => {
+		const user = userEvent.setup();
+		const { router } = render( <SiteDomains />, { user: ownerUser } );
+		const navigate = jest.spyOn( router, 'navigate' );
+
+		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		await user.click( within( card ).getByRole( 'button', { name: 'Settings' } ) );
+
+		expect( navigate ).toHaveBeenCalledWith(
+			expect.objectContaining( {
+				params: { domainName: domain.domain },
+				search: { back_to: 'site-domains' },
+			} )
+		);
+	} );
+
+	test( 'keeps a saved table view, with bulk selection', async () => {
+		nock.cleanAll();
+		mockApis( {
+			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
 		expect(
 			within( table ).queryByRole( 'columnheader', { name: 'SSL' } )
 		).not.toBeInTheDocument();
-		expect( screen.queryByText( /^SSL (active|pending)$/ ) ).not.toBeInTheDocument();
+		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
 	} );
 
 	test( 'does not leave a blank column for a saved view that lists the SSL field', async () => {
+		nock.cleanAll();
+		mockApis( {
+			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
+		} );
 		const { unmount } = render( <SiteDomains />, { user: ownerUser } );
 		const defaultHeaderCount = within( await screen.findByRole( 'table' ) ).getAllByRole(
 			'columnheader'
@@ -276,7 +345,7 @@ describe( '<SiteDomains>', () => {
 		mockApis( {
 			preferences: {
 				'hosting-dashboard-dataviews-view-site-domains': {
-					...SITE_CONTEXT_VIEW,
+					...SAVED_TABLE_VIEW,
 					fields: [ 'ssl_status', 'expiry', 'domain_status' ],
 				},
 			},
@@ -408,7 +477,8 @@ describe( '<SiteDomains>', () => {
 		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
 		await user.click( actionsButtons[ 0 ] );
 
-		expect( await screen.findByText( 'Make primary site address' ) ).toBeVisible();
+		const action = await screen.findByText( 'Make primary site address' );
+		await waitFor( () => expect( action ).toBeVisible() );
 	} );
 
 	test( 'shows a newly registered domain as activating until its certificate is issued', async () => {
@@ -442,8 +512,8 @@ describe( '<SiteDomains>', () => {
 		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
 		await waitForSslDetails( queryClient, domain.domain );
-		const row = await screen.findByRole( 'row', { name: new RegExp( domain.domain ) } );
-		expect( within( row ).getByText( 'Active' ) ).toBeVisible();
+		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		expect( within( card ).getByText( 'Active' ) ).toBeVisible();
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
@@ -458,8 +528,8 @@ describe( '<SiteDomains>', () => {
 		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
 
 		await waitForSslDetails( queryClient, domain.domain );
-		const row = await screen.findByRole( 'row', { name: new RegExp( domain.domain ) } );
-		expect( within( row ).getByText( 'Active' ) ).toBeVisible();
+		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		expect( within( card ).getByText( 'Active' ) ).toBeVisible();
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 	} );

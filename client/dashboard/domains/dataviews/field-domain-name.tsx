@@ -11,6 +11,24 @@ import { useIsDomainActivating } from './use-domain-activation';
 import { textOverflowStyles } from './utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
+export function PrimaryDomainBadge() {
+	return (
+		<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
+			<span
+				style={ {
+					...textOverflowStyles,
+					color: 'var(--dashboard__foreground-color-success)',
+					fontWeight: 'normal',
+					textDecoration: 'underline',
+					textDecorationStyle: 'dotted',
+				} }
+			>
+				{ __( 'Primary site address' ) }
+			</span>
+		</Tooltip>
+	);
+}
+
 export function useDomainNameNote( domain: DomainSummary ) {
 	const isActivating = useIsDomainActivating( domain );
 
@@ -55,21 +73,7 @@ export const DomainNameField = ( {
 				</Text>
 				{ value }
 			</span>
-			{ showPrimaryDomainBadge && domain.primary_domain && (
-				<Tooltip text={ __( 'The address people see when visiting your site.' ) }>
-					<span
-						style={ {
-							...textOverflowStyles,
-							color: 'var(--dashboard__foreground-color-success)',
-							fontWeight: 'normal',
-							textDecoration: 'underline',
-							textDecorationStyle: 'dotted',
-						} }
-					>
-						{ __( 'Primary site address' ) }
-					</span>
-				</Tooltip>
-			) }
+			{ showPrimaryDomainBadge && domain.primary_domain && <PrimaryDomainBadge /> }
 			{ note && (
 				<Text variant="muted" style={ { ...textOverflowStyles, fontWeight: 'normal' } }>
 					{ note }

@@ -233,6 +233,7 @@ export const useActions = ( {
 						params: {
 							domainName: domain.domain,
 						},
+						search: site ? { back_to: 'site-domains' } : undefined,
 					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
@@ -589,6 +590,7 @@ export const useActions = ( {
 			canToggleWwwPrimary,
 			recordTracksEvent,
 			layout,
+			site,
 			onChangePrimaryDomain,
 		]
 	);

@@ -25,11 +25,6 @@ const BASE_VIEW_PROPS: View = {
 
 export const DEFAULT_VIEW = BASE_VIEW_PROPS;
 
-export const SITE_CONTEXT_VIEW = {
-	...BASE_VIEW_PROPS,
-	fields: [ 'expiry', 'domain_status' ],
-};
-
 // Default layouts
 export const DEFAULT_LAYOUTS = {
 	table: {},
@@ -79,6 +74,11 @@ export const DOMAINS_LIST_DEFAULT_VIEW = {
 	type: 'grid',
 	perPage: 12,
 } as View;
+
+export const SITE_CONTEXT_VIEW: View = {
+	...DOMAINS_LIST_DEFAULT_VIEW,
+	fields: [ 'expiry', 'domain_status' ],
+};
 
 // Saved views can still list the removed SSL field, which the table would render as a blank column.
 export function sanitizeDomainFields( fields: View[ 'fields' ] ) {
