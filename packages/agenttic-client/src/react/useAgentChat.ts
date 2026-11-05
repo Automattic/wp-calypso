@@ -527,9 +527,13 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	const getState = useCallback( () => getLiveChat().state, [ getLiveChat ] );
 	const state = useSyncExternalStore( subscribe, getState, getState );
 
+	// Bound to the chat of this render: a callback a tool still holds must not
+	// write to a chat that has replaced it.
+	const liveChat = getLiveChat();
+
 	const setState = useCallback(
-		( update: SetStateAction< AgentChatState > ) => updateLiveChat( getLiveChat(), update ),
-		[ getLiveChat ]
+		( update: SetStateAction< AgentChatState > ) => updateLiveChat( liveChat, update ),
+		[ liveChat ]
 	);
 
 	// Initialize message actions
@@ -1131,7 +1135,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	// messages in place, so a send in flight keeps its optimistic message.
 	const applyRegistrations = useCallback(
 		( nextRegistrations: MessageActionsRegistration[] ) => {
-			getLiveChat().registrations = nextRegistrations;
+			liveChat.registrations = nextRegistrations;
 
 			setState( ( prev ) => {
 				if ( prev.clientMessages.length === 0 ) {
@@ -1150,7 +1154,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				};
 			} );
 		},
-		[ getLiveChat, setState, transformMessages ]
+		[ liveChat, setState, transformMessages ]
 	);
 
 	useEffect( () => applyRegistrations( registrations ), [ applyRegistrations, registrations ] );

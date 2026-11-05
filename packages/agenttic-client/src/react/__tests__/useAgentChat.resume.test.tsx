@@ -287,6 +287,25 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 		expect( chat.messages ).toEqual( [] );
 	} );
 
+	it( 'keeps a message added late out of the chat that replaced its own', async () => {
+		await mount( { agentId: 'adding-agent', resumeOnRemount: true } );
+		const { addMessage } = chat;
+
+		await act( async () => {
+			endResumableChat( 'adding-agent' );
+			addMessage( {
+				id: 'late',
+				role: 'agent',
+				content: [],
+				timestamp: 0,
+				archived: false,
+				showIcon: true,
+			} );
+		} );
+
+		expect( chat.messages ).toEqual( [] );
+	} );
+
 	it( 'keeps an agent created late out of the chat that replaced its own', async () => {
 		let finishCreate!: ( client: Client ) => void;
 
