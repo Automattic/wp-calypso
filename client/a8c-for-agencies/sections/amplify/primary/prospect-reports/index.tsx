@@ -46,10 +46,6 @@ function ProspectReportsLayout() {
 	);
 }
 
-/**
- * The Multi-site Dashboard's Prospect reports page, with the query client, auth,
- * analytics and snackbars it relies on there.
- */
 export default function ProspectReports() {
 	const analyticsClient = useAnalyticsClient( undefined, window.location.pathname );
 
