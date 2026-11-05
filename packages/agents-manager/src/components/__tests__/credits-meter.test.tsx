@@ -138,42 +138,57 @@ describe( 'CreditsMeter', () => {
 		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 	} );
 
-	it.each( [ 'click', 'Enter', 'Space' ] )(
-		'focuses the popover on %s, keeps Upgrade keyboard accessible, and restores focus on Escape',
-		async ( input ) => {
-			const user = userEvent.setup();
-			function Meter() {
-				const [ isOpen, setIsOpen ] = useState( false );
-				return (
-					<CreditsMeter
-						status={ paid }
-						isOpen={ isOpen }
-						onToggle={ setIsOpen }
-						action={ upgrade }
-					/>
-				);
-			}
-			render( <Meter /> );
-			const toggle = screen.getByRole( 'button', {
-				name: `${ localNumber( 11.6 ) }k credits left`,
-			} );
-			if ( input === 'click' ) {
-				await user.click( toggle );
-			} else {
+	describe( 'keyboard focus', () => {
+		let getClientRectsSpy: jest.SpyInstance;
+
+		beforeEach( () => {
+			// jsdom has no layout, so the popover's constrained tabbing finds nothing tabbable and blocks Tab.
+			getClientRectsSpy = jest
+				.spyOn( HTMLElement.prototype, 'getClientRects' )
+				.mockReturnValue( [ {} ] as unknown as DOMRectList );
+		} );
+
+		afterEach( () => {
+			getClientRectsSpy.mockRestore();
+		} );
+
+		it.each( [ 'click', 'Enter', 'Space' ] )(
+			'focuses the popover on %s, keeps Upgrade keyboard accessible, and restores focus on Escape',
+			async ( input ) => {
+				const user = userEvent.setup();
+				function Meter() {
+					const [ isOpen, setIsOpen ] = useState( false );
+					return (
+						<CreditsMeter
+							status={ paid }
+							isOpen={ isOpen }
+							onToggle={ setIsOpen }
+							action={ upgrade }
+						/>
+					);
+				}
+				render( <Meter /> );
+				const toggle = screen.getByRole( 'button', {
+					name: `${ localNumber( 11.6 ) }k credits left`,
+				} );
+				if ( input === 'click' ) {
+					await user.click( toggle );
+				} else {
+					await user.tab();
+					await user.keyboard( input === 'Enter' ? '{Enter}' : ' ' );
+				}
+				const dialog = screen.getByRole( 'dialog', { name: 'Site credits' } );
+				await waitFor( () => expect( dialog ).toHaveFocus() );
+				const action = screen.getByRole( 'link', { name: 'Upgrade' } );
+				expect( action ).not.toHaveFocus();
 				await user.tab();
-				await user.keyboard( input === 'Enter' ? '{Enter}' : ' ' );
+				expect( action ).toHaveFocus();
+				await user.keyboard( '{Escape}' );
+				expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+				await waitFor( () => expect( toggle ).toHaveFocus() );
 			}
-			const dialog = screen.getByRole( 'dialog', { name: 'Site credits' } );
-			await waitFor( () => expect( dialog ).toHaveFocus() );
-			const action = screen.getByRole( 'link', { name: 'Upgrade' } );
-			expect( action ).not.toHaveFocus();
-			await user.tab();
-			expect( action ).toHaveFocus();
-			await user.keyboard( '{Escape}' );
-			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
-			await waitFor( () => expect( toggle ).toHaveFocus() );
-		}
-	);
+		);
+	} );
 
 	it( 'labels the toggle with the balance sentence and toggles the popover', () => {
 		const onToggle = jest.fn();
