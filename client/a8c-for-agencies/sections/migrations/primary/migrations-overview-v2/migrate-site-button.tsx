@@ -15,12 +15,16 @@ import {
 } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import preventWidows from 'calypso/lib/post-normalizer/rule-prevent-widows';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 
 const MigrateSiteButton = () => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	// The server attaches an import only to a dev site its owner administers.
+	const canImportSite =
+		useSelector( isAgencyOwner ) && config.isEnabled( 'a4a/static-site-import' );
 
 	const popoverMenuContext = useRef( null );
 
@@ -75,7 +79,7 @@ const MigrateSiteButton = () => {
 							},
 						} }
 					/>
-					{ config.isEnabled( 'a4a/static-site-import' ) && (
+					{ canImportSite && (
 						<PopoverMenuItem
 							icon={ <Icon icon={ globe } /> }
 							heading={ translate( 'Move a site from another platform' ) }
@@ -120,7 +124,7 @@ const MigrateSiteButton = () => {
 				</div>
 			</div>
 		);
-	}, [ dispatch, translate ] );
+	}, [ canImportSite, dispatch, translate ] );
 
 	return (
 		<>

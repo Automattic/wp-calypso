@@ -36,7 +36,9 @@ jest.mock(
 		} ),
 	} )
 );
-jest.mock( '@automattic/calypso-router', () => jest.fn() );
+jest.mock( '@automattic/calypso-router', () =>
+	Object.assign( jest.fn(), { redirect: jest.fn() } )
+);
 
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;
@@ -95,8 +97,13 @@ describe( '<ImportSite>', () => {
 
 	afterEach( () => nock.cleanAll() );
 
-	test( 'starts an import from the address and provisions a dev site that holds it', async () => {
+	test( 'provisions a dev site that holds the import and follows it until it is ready', async () => {
 		provisionReply = [ 200, { site: { id: 456 }, license: {}, provision: {} } ];
+		nock( API ).get( `/wpcom/v2/static-site-import-session/${ SESSION_ID }` ).reply( 200, {
+			session_id: SESSION_ID,
+			state: 'finished',
+			site_url: 'https://agencymove.wpcomstaging.com/',
+		} );
 		const bodies: Record< string, unknown >[] = [];
 
 		await startImportAndConfirm( ( body ) => bodies.push( body ) );
@@ -106,6 +113,23 @@ describe( '<ImportSite>', () => {
 			site_name: 'agencymove',
 			import_session_id: SESSION_ID,
 		} );
+		expect( await screen.findByText( 'Your site is ready to review' ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Review the site' } ) ).toHaveAttribute(
+			'href',
+			'https://agencymove.wpcomstaging.com/'
+		);
+	} );
+
+	test( 'offers to start again when the import fails on the dev site', async () => {
+		provisionReply = [ 200, { site: { id: 456 }, license: {}, provision: {} } ];
+		nock( API )
+			.get( `/wpcom/v2/static-site-import-session/${ SESSION_ID }` )
+			.reply( 200, { session_id: SESSION_ID, state: 'failed', site_url: '' } );
+
+		await startImportAndConfirm( () => {} );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Start again' } ) );
+		expect( screen.getByLabelText( 'Site address' ) ).toBeVisible();
 	} );
 
 	test.each( [

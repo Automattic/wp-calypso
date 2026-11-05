@@ -1,7 +1,9 @@
-import { type Callback } from '@automattic/calypso-router';
+import page, { type Callback } from '@automattic/calypso-router';
 import PageViewTracker from 'calypso/a8c-for-agencies/components/a4a-page-view-tracker';
+import { A4A_MIGRATIONS_OVERVIEW_LINK } from 'calypso/a8c-for-agencies/components/sidebar-menu/lib/constants';
 import MigrationsSidebar from 'calypso/a8c-for-agencies/components/sidebar-menu/migrations';
 import SidebarPlaceholder from 'calypso/a8c-for-agencies/components/sidebar-placeholder';
+import { isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import ReferralsBankDetails from '../referrals/primary/bank-details';
 import ImportSite from './primary/import-site';
 import MigrationsCommissions from './primary/migrations-commissions';
@@ -49,6 +51,10 @@ export const migrateToWpcomContext: Callback = ( context, next ) => {
 };
 
 export const importSiteContext: Callback = ( context, next ) => {
+	if ( ! isAgencyOwner( context.store.getState() ) ) {
+		page.redirect( A4A_MIGRATIONS_OVERVIEW_LINK );
+		return;
+	}
 	context.primary = (
 		<>
 			<PageViewTracker title="Migrations > Move from another platform" path={ context.path } />
