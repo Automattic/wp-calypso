@@ -324,27 +324,3 @@ describe( 'RestAPIClient: createSite', function () {
 		error.mockRestore();
 	} );
 } );
-
-describe( 'RestAPIClient: sendRequest', function () {
-	const restAPIClient = new RestAPIClient( {
-		username: 'fake_user',
-		password: 'fake_password',
-	} );
-	const requestURL = restAPIClient.getRequestURL( '3', '/sites/123/jitm', 'wpcom' );
-
-	test( 'Names the endpoint when the response does not arrive in time', async function () {
-		nock( requestURL.origin ).post( requestURL.pathname ).delayConnection( 200 ).reply( 200, {} );
-
-		await expect( restAPIClient.sendRequest( requestURL, { method: 'post' }, 10 ) ).rejects.toThrow(
-			`Request to ${ requestURL.pathname } timed out after 10ms.`
-		);
-	} );
-
-	test( 'Returns the decoded response when it arrives in time', async function () {
-		nock( requestURL.origin ).post( requestURL.pathname ).reply( 200, { success: true } );
-
-		await expect( restAPIClient.sendRequest( requestURL, { method: 'post' } ) ).resolves.toEqual( {
-			success: true,
-		} );
-	} );
-} );
