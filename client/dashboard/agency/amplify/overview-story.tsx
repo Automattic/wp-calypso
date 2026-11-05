@@ -6,12 +6,12 @@ import { useAnalytics } from '../../app/analytics';
 import { useTermTooltip } from '../components/term-tooltip';
 import { getReportTiming, getTierAllowances } from './constants';
 import { SAMPLE_REPORT_URL } from './sample-report-pages';
-import { PERSPECTIVES } from './score-preview';
+import { getPerspectives } from './score-preview';
 import { severityFor } from './score-severity';
 
 import './overview-story.scss';
 
-const FAQS = [
+const getFaqs = () => [
 	{
 		id: 'site-requirements',
 		question: __( 'What does a site need to be audited?' ),
@@ -145,7 +145,7 @@ function CategoryGraphic() {
 	);
 }
 
-// The sample report's score summary, in the same order as `PERSPECTIVES` metrics.
+// The sample report's score summary, in the same order as `getPerspectives()` metrics.
 const SAMPLE_REPORT_SCORES = {
 	human: [ 7, 8.5, 7.5, 9, 10, 7.5, 7, 3 ],
 	ai: [ 15, 5, 6, 5, 6, 7.5, 6, 0 ],
@@ -179,6 +179,7 @@ function SampleRing( { value }: { value: number } ) {
 
 /** The sample report's first pages, rebuilt in HTML and fanned out; opens the full sample. */
 function ReportPagesGraphic( { onOpen }: { onOpen: () => void } ) {
+	const perspectives = getPerspectives();
 	return (
 		<a
 			className="dashboard-amplify-story__pages"
@@ -248,7 +249,7 @@ function ReportPagesGraphic( { onOpen }: { onOpen: () => void } ) {
 				<div className="dashboard-amplify-story__page-scores">
 					{ ( [ 'human', 'ai' ] as const ).map( ( type ) => (
 						<div key={ type }>
-							{ PERSPECTIVES[ type ].metrics.map( ( metric, index ) => {
+							{ perspectives[ type ].metrics.map( ( metric, index ) => {
 								const score = SAMPLE_REPORT_SCORES[ type ][ index ];
 								return (
 									<div
@@ -360,6 +361,7 @@ function RubricItem( {
 }
 
 function ScoreCategories() {
+	const perspectives = getPerspectives();
 	return (
 		<section className="dashboard-amplify-story__rubric" aria-labelledby="amplify-rubric-title">
 			<Heading id="amplify-rubric-title" level={ 2 }>
@@ -378,7 +380,7 @@ function ScoreCategories() {
 						aria-labelledby={ `amplify-rubric-${ type }` }
 					>
 						<Heading id={ `amplify-rubric-${ type }` } level={ 3 } size={ 20 } lineHeight="27px">
-							{ PERSPECTIVES[ type ].title }
+							{ perspectives[ type ].title }
 						</Heading>
 						<p>
 							<span>
@@ -390,7 +392,7 @@ function ScoreCategories() {
 							</span>
 						</p>
 						<div className="dashboard-amplify-story__rubric-grid">
-							{ PERSPECTIVES[ type ].metrics.map( ( metric ) => (
+							{ perspectives[ type ].metrics.map( ( metric ) => (
 								<RubricItem
 									key={ metric.label }
 									label={ metric.label }
@@ -508,7 +510,7 @@ export default function AmplifyOverviewStory() {
 					{ __( 'A few things to know before you create or share a report.' ) }
 				</p>
 				<div className="dashboard-amplify-story__faq-list">
-					{ FAQS.map( ( faq ) => (
+					{ getFaqs().map( ( faq ) => (
 						<div className="dashboard-amplify-story__faq-item" key={ faq.id }>
 							<Heading level={ 3 } size={ 18 } weight={ 600 } lineHeight="25px">
 								{ faq.question }

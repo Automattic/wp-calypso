@@ -23,7 +23,7 @@ type ScorePerspective = {
 };
 
 // Example results from a real report, with the current weighted rubric categories.
-export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
+export const getPerspectives = (): Record< 'human' | 'ai', ScorePerspective > => ( {
 	human: {
 		type: 'human',
 		label: __( 'People' ),
@@ -172,7 +172,7 @@ export const PERSPECTIVES: Record< 'human' | 'ai', ScorePerspective > = {
 			},
 		],
 	},
-};
+} );
 
 function ScoreIllustration( { type }: { type: ScorePerspective[ 'type' ] } ) {
 	return (
@@ -287,6 +287,7 @@ function ScoreCard( {
 export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 	const [ displayMode, setDisplayMode ] = useState( mode );
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const perspectives = getPerspectives();
 	const anchor = useRef< HTMLDivElement >( null );
 	const humanSheet = useRef< HTMLDivElement >( null );
 	const aiSheet = useRef< HTMLDivElement >( null );
@@ -420,7 +421,7 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 					aria-hidden={ ! isExpanded && mode === 'ai' }
 				>
 					<ScoreCard
-						perspective={ PERSPECTIVES.human }
+						perspective={ perspectives.human }
 						isHidden={ ! isExpanded && mode === 'ai' }
 						isExpanded={ isExpanded }
 					/>
@@ -432,7 +433,7 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 					aria-hidden={ ! isExpanded && mode === 'human' }
 				>
 					<ScoreCard
-						perspective={ PERSPECTIVES.ai }
+						perspective={ perspectives.ai }
 						isHidden={ ! isExpanded && mode === 'human' }
 						isExpanded={ isExpanded }
 					/>
