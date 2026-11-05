@@ -1,12 +1,28 @@
+import { VIEW_LAYOUTS } from '@wordpress/dataviews';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
+
+// What DataViews falls back to when a screen doesn't name its layouts.
+const DATAVIEWS_DEFAULT_LAYOUTS: SupportedLayouts = { table: {}, grid: {}, list: {} };
+
+// DataViews ignores picker layouts, so a screen can name layouts it won't render.
+function getAvailableLayouts( layouts: SupportedLayouts = DATAVIEWS_DEFAULT_LAYOUTS ) {
+	return Object.entries( layouts ).filter(
+		( [ type, layout ] ) =>
+			layout && VIEW_LAYOUTS.some( ( view ) => view.type === type && ! view.isPicker )
+	);
+}
+
+export function isLayoutAvailable( type: View[ 'type' ], layouts?: SupportedLayouts ) {
+	return getAvailableLayouts( layouts ).some( ( [ availableType ] ) => availableType === type );
+}
 
 /*
  * DataViews renders nothing for a layout it wasn't given, including its reset control. A saved view can name one
  * when a screen drops a layout, or when a build that offers it shares the user's preferences, so keep the view on the screen's first layout.
  */
 function withAvailableLayout( view: View, layouts?: SupportedLayouts ) {
-	const [ fallback ] = Object.entries( layouts ?? {} );
-	if ( ! layouts || ! fallback || layouts[ view.type ] ) {
+	const [ fallback ] = getAvailableLayouts( layouts );
+	if ( ! fallback || isLayoutAvailable( view.type, layouts ) ) {
 		return view;
 	}
 

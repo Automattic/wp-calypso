@@ -59,6 +59,27 @@ describe( 'sanitizeView', () => {
 		} );
 	} );
 
+	it( 'should use the DataViews defaults when the screen does not name its layouts', () => {
+		const view: View = { type: 'activity' };
+
+		expect( sanitizeView( view, fields ) ).toEqual( { type: 'table' } );
+	} );
+
+	it( 'should not fall back to a layout DataViews would not render', () => {
+		const view: View = { type: 'grid' };
+
+		expect( sanitizeView( view, fields, { pickerTable: {}, table: {} } ) ).toEqual( {
+			type: 'table',
+		} );
+	} );
+
+	it( 'should keep the view when the screen has no layout to fall back to', () => {
+		const view: View = { type: 'grid' };
+
+		expect( sanitizeView( view, fields, { pickerTable: {} } ) ).toBe( view );
+		expect( sanitizeView( view, fields, {} ) ).toBe( view );
+	} );
+
 	it( 'should accept `true` as a layout’s configuration', () => {
 		const view: View = { type: 'grid', layout: { previewSize: 290 } };
 
