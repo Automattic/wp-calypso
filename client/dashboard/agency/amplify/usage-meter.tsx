@@ -473,7 +473,7 @@ export function AmplifyUsageCard( {
 		return null;
 	}
 	return (
-		<Card className="dashboard-amplify-results__usage">
+		<Card>
 			<CardBody size="small">
 				<VStack spacing={ 4 }>
 					{ showMeter && (
