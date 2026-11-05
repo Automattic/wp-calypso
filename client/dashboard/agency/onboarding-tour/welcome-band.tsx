@@ -15,6 +15,7 @@ import { Card } from '../../components/card';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
 import NewTabLabel from '../components/new-tab-label';
+import getCurrentAgencyTier from '../tiers/get-current-agency-tier';
 import callArt from './images/welcome/call.svg';
 import referralsArt from './images/welcome/referrals.svg';
 import wooPaymentsArt from './images/welcome/woopayments.svg';
@@ -31,8 +32,7 @@ const NEW_AGENCY_WINDOW_MS = 60 * 24 * 60 * 60 * 1000;
 
 /**
  * Who sees the band on Overview, until they close it: agencies under review, and agencies at
- * the first tier that joined in the last 60 days. Agencies get a tier only once they earn
- * Agency Partner, so no tier means the first tier. A rejected application gets its own card.
+ * the first tier that joined in the last 60 days. A rejected application gets its own card.
  * While `isLoading`, the band may still show, so Overview holds back the Pending card instead
  * of swapping it for the band.
  */
@@ -46,7 +46,7 @@ export function useWelcomeBandVisibility(
 	const isEligible =
 		approvalStatus !== 'rejected' &&
 		( approvalStatus === 'pending' ||
-			( ( ! tierId || tierId === 'emerging-partner' ) && isNewAgency ) );
+			( getCurrentAgencyTier( tierId )?.level === 0 && isNewAgency ) );
 	const { data: isDismissed, isFetched } = useQuery( {
 		...userPreferenceQuery( WELCOME_BAND_DISMISSED_PREFERENCE ),
 		enabled: isEligible,
