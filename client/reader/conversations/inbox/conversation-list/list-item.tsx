@@ -156,8 +156,9 @@ export function ConversationListItem( {
 							expanded={ false }
 							className="conversations-inbox__avatars"
 						>
-							{ commenters.slice( 0, MAX_AVATARS ).map( ( { name, avatar } ) => (
-								<img key={ name } src={ avatar } alt="" width={ 24 } height={ 24 } />
+							{ /* Two commenters can share a name, and the list never reorders. */ }
+							{ commenters.slice( 0, MAX_AVATARS ).map( ( { avatar }, index ) => (
+								<img key={ index } src={ avatar } alt="" width={ 24 } height={ 24 } />
 							) ) }
 						</HStack>
 						<span>

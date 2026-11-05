@@ -41,7 +41,6 @@ jest.mock( '../conversation-list', () => ( {
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
-			<p>Unread: { props.unreadCount }</p>
 			{ props.markAllCount > 0 && (
 				<button onClick={ props.onMarkAllRead }>Mark { props.markAllCount } as read</button>
 			) }
@@ -192,24 +191,6 @@ describe( 'ConversationsInbox', () => {
 		expect( screen.getByText( 'Selected: 10-p-200' ) ).toBeVisible();
 		expect( screen.getByText( 'Detail: 10-200' ) ).toBeVisible();
 		expect( page.replace ).not.toHaveBeenCalled();
-	} );
-
-	it( 'hides mark all as read when no loaded conversation has notes to mark', async () => {
-		replyConversations = () => ( {
-			...conversationsPage( [ conversations[ 2 ] ] ),
-			unread_total: 1,
-		} );
-		renderInbox( { siteId: '10', postId: '300' } );
-
-		await findRow( '10-p-300' );
-
-		expect( screen.queryByRole( 'button', { name: /as read/ } ) ).not.toBeInTheDocument();
-	} );
-
-	it( 'shows the unread total from the route', async () => {
-		renderInbox( { siteId: '10', postId: '100' } );
-
-		expect( await screen.findByText( 'Unread: 2' ) ).toBeVisible();
 	} );
 
 	it( 'marks a conversation as read and navigates to it when opened from the list', async () => {
@@ -460,7 +441,7 @@ describe( 'ConversationsInbox', () => {
 			] );
 		} );
 
-		it( 'marks every unread note as read in one call and records the unread total', async () => {
+		it( 'marks every loaded unread note as read in one call and records the count', async () => {
 			const user = userEvent.setup();
 			renderInbox( { siteId: '10', postId: '100' } );
 

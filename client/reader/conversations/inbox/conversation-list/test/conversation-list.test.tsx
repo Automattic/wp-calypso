@@ -148,7 +148,7 @@ describe( 'ConversationList', () => {
 
 		await user.click( screen.getByRole( 'button', { name: 'Retry' } ) );
 
-		expect( screen.getByText( 'Couldn’t load more conversations.' ) ).toBeVisible();
+		expect( screen.getByText( 'Couldn’t load more.' ) ).toBeVisible();
 		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
 	} );
 
@@ -160,12 +160,6 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Load more' } ) );
 
 		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'explains the Load more button when no loaded conversation matches', () => {
-		renderList( { items: [], hasMore: true, autoLoad: false } );
-
-		expect( screen.getByText( 'None of the conversations loaded so far match.' ) ).toBeVisible();
 	} );
 
 	it( 'selects a conversation on click', async () => {

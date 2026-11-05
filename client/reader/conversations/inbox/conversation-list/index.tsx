@@ -236,7 +236,7 @@ export function ConversationList( {
 				{ ! isLoading && hasMore && (
 					<div ref={ endRef } className="conversations-inbox__list-end">
 						{ isLoadMoreError && (
-							<ListMessage description={ translate( 'Couldn’t load more conversations.' ) } />
+							<ListMessage description={ translate( 'Couldn’t load more.' ) } />
 						) }
 						{ ! isLoadMoreError && ! autoLoad && items.length === 0 && (
 							<ListMessage
