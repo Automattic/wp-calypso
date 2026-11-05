@@ -1,4 +1,4 @@
-import { userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
+import { sitesQuery, userSettingsQuery, userSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useSuspenseQuery, useMutation } from '@tanstack/react-query';
 import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -11,7 +11,6 @@ import {
 } from '../../../../me/mcp/utils';
 import { useAnalytics } from '../../../app/analytics';
 import Breadcrumbs from '../../../app/breadcrumbs';
-import { useAppContext } from '../../../app/context';
 import { siteSettingsAIToolsRoute } from '../../../app/router/sites';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import { ActionList } from '../../../components/action-list';
@@ -63,10 +62,9 @@ function SiteManageButton( { site }: { site: Site } ) {
 export default function McpMcpSites() {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
-	const { queries } = useAppContext();
 	const { data: userSettings } = useSuspenseQuery( userSettingsQuery() );
 	const sitesQueryResult = useQuery(
-		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+		sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 	const sites = ( sitesQueryResult.data as Site[] | undefined ) ?? [];
 	const isSiteListLoading = sitesQueryResult.isLoading;

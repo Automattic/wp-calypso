@@ -3,8 +3,10 @@ import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 import { getCurrentDashboard } from '../../app/routing';
 import { Callout } from '../../components/callout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import UpsellCTAButton from '../../components/upsell-cta-button';
 import { wpcomLink } from '../../utils/link';
+import illustrationTransferDomainDarkUrl from './upsell-illustration-transfer-domain-dark.svg';
 import illustrationTransferDomainUrl from './upsell-illustration-transfer-domain.svg';
 
 export default function DomainTransferUpsellCard() {
@@ -19,7 +21,12 @@ export default function DomainTransferUpsellCard() {
 					) }
 				</Text>
 			}
-			image={ illustrationTransferDomainUrl }
+			image={
+				<ThemedIllustration
+					light={ illustrationTransferDomainUrl }
+					dark={ illustrationTransferDomainDarkUrl }
+				/>
+			}
 			imageVariant="full-bleed"
 			actions={
 				<UpsellCTAButton

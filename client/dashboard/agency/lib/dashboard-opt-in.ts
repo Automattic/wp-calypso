@@ -1,4 +1,4 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import type { AgencyDashboardOptIn } from '@automattic/api-core';
 
 // Both A4A clients call these, and their `Agency` types differ, so take only what's read.
@@ -25,4 +25,19 @@ export function canSwitchAgencyDashboard( agency: OptInAgency ): boolean {
 	return (
 		canUseNewAgencyDashboard( agency ) && value !== 'forced-opt-in' && value !== 'forced-opt-out'
 	);
+}
+
+// Development and horizon keep every agency here, so the dashboard can be tested with any agency.
+const ENVS_WITHOUT_PREVIOUS_DASHBOARD_REDIRECT = [ 'dashboard-development', 'dashboard-horizon' ];
+
+/**
+ * Whether the agency has to use the previous dashboard, because only agencies on Billing Dragon
+ * can use the Multi-site Dashboard.
+ */
+export function needsPreviousAgencyDashboard( agency: OptInAgency ): boolean {
+	if ( ENVS_WITHOUT_PREVIOUS_DASHBOARD_REDIRECT.includes( config( 'env_id' ) ) ) {
+		return false;
+	}
+
+	return isEnabled( 'a4a-dashboard-opt-in' ) && !! agency && ! canUseNewAgencyDashboard( agency );
 }

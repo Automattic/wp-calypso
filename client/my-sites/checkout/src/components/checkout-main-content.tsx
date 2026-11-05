@@ -147,6 +147,7 @@ import type {
 	ResponseCart,
 } from '@automattic/shopping-cart';
 import type { CountryListItem } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 const debug = debugFactory( 'calypso:wp-checkout' );
 
@@ -464,7 +465,7 @@ export default function CheckoutMainContent( {
 	areStoredCardsFiltered?: boolean;
 	isBusinessCardsFilterEmpty?: boolean;
 	removeProductFromCart: RemoveProductFromCart;
-	showErrorMessageBriefly: ( error: string ) => void;
+	showErrorMessageBriefly: ( error: TranslateResult ) => void;
 	siteId: number | undefined;
 	siteUrl: string | undefined;
 	isRemovingProductFromCart: boolean;

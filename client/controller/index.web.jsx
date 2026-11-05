@@ -1,5 +1,4 @@
 import config from '@automattic/calypso-config';
-import { isJetpackPlanSlug, isJetpackProductSlug } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import {
@@ -8,6 +7,7 @@ import {
 	removeLocaleFromPathLocaleInFront,
 } from '@automattic/i18n-utils';
 import { QueryClientProvider } from '@tanstack/react-query';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import { removeQueryArgs } from '@wordpress/url';
 import { translate, fixMe } from 'i18n-calypso';
 import { Provider as ReduxProvider } from 'react-redux';
@@ -25,12 +25,8 @@ import { logToLogstash } from 'calypso/lib/logstash';
 import { navigate } from 'calypso/lib/navigate';
 import { createAccountUrl, login } from 'calypso/lib/paths';
 import { CalypsoReactQueryDevtools } from 'calypso/lib/react-query-devtools-helper';
-import { addQueryArgs, getSiteFragment } from 'calypso/lib/route';
+import { getSiteFragment } from 'calypso/lib/route';
 import { getLogoutUrl, rawCurrentUserFetch } from 'calypso/lib/user/shared-utils';
-import {
-	getProductSlugFromContext,
-	isSitelessCheckoutSource,
-} from 'calypso/my-sites/checkout/utils';
 import { isUserLoggedIn, getCurrentUser } from 'calypso/state/current-user/selectors';
 import { hasDashboardForcedOptIn } from 'calypso/state/dashboard/selectors';
 import {
@@ -65,6 +61,7 @@ export const ProviderWrappedLayout = ( {
 	renderHeaderSection,
 	redirectUri,
 } ) => {
+	useEnableWpCompatOverlaySlot();
 	const state = store.getState();
 	const userLoggedIn = isUserLoggedIn( state );
 
@@ -369,38 +366,6 @@ export function redirectLoggedOutToSignup( context, next ) {
 	}
 
 	return page.redirect( createAccountUrl( { redirectTo: context.path, ref: 'reader-lp' } ) );
-}
-
-/**
- * Middleware to send logged-out users coming from My Jetpack or the Premium
- * Analytics upgrade page to siteless checkout
- * @see pbNhbs-ag3-p2
- * @param   {Object}   context Context object
- * @param   {Function} next    Calls next middleware
- * @returns {void}
- */
-export function redirectMyJetpack( context, next ) {
-	const state = context.store.getState();
-	const productSlug = getProductSlugFromContext( context );
-	// Strip the slug's quantity suffix, for upgradable quantity based products.
-	const product = productSlug.replace( /:-q-\d+/, '' );
-	const isJetpackProduct = isJetpackPlanSlug( product ) || isJetpackProductSlug( product );
-
-	if ( isJetpackProduct && ! isUserLoggedIn( state ) && isSitelessCheckoutSource( context ) ) {
-		// Redirect to the siteless checkout page
-		const redirectUrl = addQueryArgs(
-			{
-				connect_after_checkout: true,
-				from_site_slug: context.query.site,
-				admin_url: context.query.redirect_to?.split( '?' )[ 0 ],
-			},
-			context.path.replace( /checkout\/[^?/]+\//, 'checkout/jetpack/' )
-		);
-		page( redirectUrl );
-		return;
-	}
-
-	next();
 }
 
 /**

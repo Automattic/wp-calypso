@@ -17,6 +17,17 @@ jest.mock( '@automattic/calypso-config', () =>
 	Object.assign( jest.fn(), { isEnabled: jest.fn() } )
 );
 
+let mockIsAutomattician = false;
+let mockIsAutomatticianLoading = false;
+jest.mock( 'calypso/landing/stepper/hooks/use-design-candidates-enabled', () => ( {
+	useDesignCandidatesEnabled: ( requested: boolean ) => ( {
+		isEnabled:
+			jest.requireMock( '@automattic/calypso-config' ).isEnabled( 'site-spec/design-candidates' ) ||
+			( requested && mockIsAutomattician ),
+		isLoading: requested && mockIsAutomatticianLoading,
+	} ),
+} ) );
+
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
@@ -48,6 +59,8 @@ describe( 'SiteGeneration recovery', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsAutomattician = false;
+		mockIsAutomatticianLoading = false;
 		jest
 			.mocked( config.isEnabled )
 			.mockImplementation( ( flag ) => flag === 'site-spec/build-wow-streaming' );
@@ -119,6 +132,48 @@ describe( 'SiteGeneration recovery', () => {
 		);
 		expect( window.location.assign ).toHaveBeenCalledWith(
 			'https://new-domain.com/wp-admin/site-editor.php?p=%2Fpage%2F12&canvas=edit&source=sites-dashboard'
+		);
+	} );
+
+	it.each( [
+		[ true, '2' ],
+		[ false, undefined ],
+	] )(
+		'gives the picked design from the URL to the retry while the flag is %s',
+		( flagOn, expected ) => {
+			jest
+				.mocked( config.isEnabled )
+				.mockImplementation(
+					( flag ) =>
+						flag === 'site-spec/build-wow-streaming' ||
+						( flagOn && flag === 'site-spec/design-candidates' )
+				);
+			window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=2';
+			renderStep();
+
+			expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+				expect.objectContaining( { specId: 'spec-1', designCandidate: expected } )
+			);
+		}
+	);
+
+	it( 'gives the picked design to the retry of an Automattician with the flag off', () => {
+		mockIsAutomattician = true;
+		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
+		renderStep();
+
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { specId: 'spec-1', designCandidate: '3' } )
+		);
+	} );
+
+	it( 'keeps the picked design for the retry while the Automattician check runs', () => {
+		mockIsAutomatticianLoading = true;
+		window.location.search = '?siteSlug=example.wordpress.com&specId=spec-1&designCandidate=3';
+		renderStep();
+
+		expect( useSiteGenerationMock ).toHaveBeenCalledWith(
+			expect.objectContaining( { specId: 'spec-1', designCandidate: '3' } )
 		);
 	} );
 

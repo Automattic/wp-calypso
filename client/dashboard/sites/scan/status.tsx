@@ -5,6 +5,8 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Text } from '../../components/text';
+import { ThemedIllustration } from '../../components/themed-illustration';
+import scanScanningIllustrationDark from './scan-scanning-illustration-dark.svg';
 import scanScanningIllustration from './scan-scanning-illustration.svg';
 import type { ScanState } from './use-scan-state';
 
@@ -38,8 +40,9 @@ export function ScanStatus( { scanState }: ScanStatusProps ) {
 	return (
 		<Spacer marginBottom={ 24 } marginTop={ 12 }>
 			<VStack alignment="center">
-				<img
-					src={ scanScanningIllustration }
+				<ThemedIllustration
+					light={ scanScanningIllustration }
+					dark={ scanScanningIllustrationDark }
 					alt={ __( 'Scan scanning illustration' ) }
 					width={ 408 }
 					height={ 280 }

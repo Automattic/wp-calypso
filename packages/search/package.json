@@ -39,7 +39,7 @@
 		"@wordpress/base-styles": "^9.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
-		"@wordpress/icons": "^13.3.0",
+		"@wordpress/icons": "^15.5.0",
 		"@wordpress/react-i18n": "^4.48.0",
 		"clsx": "^2.1.1",
 		"fuse.js": "^6.6.2",

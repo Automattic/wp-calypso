@@ -103,9 +103,9 @@ export function useFloatingPanelPosition( {
 				return;
 			}
 
-			const isFromIframe = target.ownerDocument !== document;
-
-			if ( isFromIframe ) {
+			// React also bubbles events here from the chat's portals, such as a dialog or a menu on
+			// the page or in an iframe. Only the panel itself starts a drag.
+			if ( ! event.currentTarget.contains( target ) ) {
 				return;
 			}
 

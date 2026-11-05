@@ -10,6 +10,7 @@ import {
 import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import { LayoutWithGuidedTour as Layout } from 'calypso/a8c-for-agencies/components/layout/layout-with-guided-tour';
 import LayoutTop from 'calypso/a8c-for-agencies/components/layout/layout-with-payment-notification';
+import NewDashboardNote from 'calypso/a8c-for-agencies/components/new-dashboard-note';
 import { PageBodyPlaceholder } from 'calypso/a8c-for-agencies/components/page-placeholder';
 import MobileSidebarNavigation from 'calypso/a8c-for-agencies/components/sidebar/mobile-sidebar-navigation';
 import LayoutBody from 'calypso/layout/hosting-dashboard/body';
@@ -108,6 +109,7 @@ export default function ReportsDashboard() {
 		>
 			<LayoutColumn wide className="reports-dashboard__column" scrollable>
 				<LayoutTop isFullWidth={ isFullWidth }>
+					<NewDashboardNote product="reports" />
 					<LayoutHeader>
 						<Title>{ title }</Title>
 						<Actions>

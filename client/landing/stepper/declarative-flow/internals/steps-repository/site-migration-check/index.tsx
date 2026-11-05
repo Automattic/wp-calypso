@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
 import { SitePreview } from '../site-migration-instructions/site-preview';
+import { mShotConfigs } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import successIcon from './success.svg';
 import type { Step as StepType } from '../../types';
 
@@ -15,14 +16,8 @@ import './style.scss';
 
 export type CopySiteEligibility = 'eligible' | 'ineligible' | 'loading';
 
-const PREVIEW_OPTIONS = {
-	vpw: 1200,
-	vph: 800,
-	w: 1200,
-	h: 800,
-	screen_height: 800,
-	scale: 2,
-};
+// The size the address step has already asked mShots to capture the source at, so it's ready sooner.
+const PREVIEW_OPTIONS = mShotConfigs.desktop;
 
 const SiteMigrationCheck: StepType< {
 	accepts: {
@@ -366,11 +361,6 @@ const SiteMigrationCheck: StepType< {
 										</Step.LinkButton>
 									) }
 								</div>
-								{ ! hasDestination && (
-									<Step.LinkButton disabled>
-										{ translate( 'Rather have us do it? Talk to a migration expert' ) }
-									</Step.LinkButton>
-								) }
 							</div>
 						</>
 					) ) }

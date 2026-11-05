@@ -39,7 +39,7 @@ export function PaymentMethodEditDialog( {
 			}
 			onCancel={ onCancel }
 		>
-			<VStack style={ { gap: '24px' } }>
+			<VStack spacing={ 6 }>
 				<Heading level={ 2 } size={ 20 } weight={ 500 }>
 					{ __( 'Edit billing address' ) }
 				</Heading>
