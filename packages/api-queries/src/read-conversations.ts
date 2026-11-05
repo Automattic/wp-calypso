@@ -171,14 +171,19 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 		},
 		// Refetching rather than restoring a snapshot keeps other marks made meanwhile, and
 		// waiting for the last one keeps the refetch from bringing back what they cleared.
-		onSettled: () => {
+		onSettled: async () => {
 			const pending = Math.max( 0, ( pendingMarks.get( queryClient ) ?? 0 ) - 1 );
 			pendingMarks.set( queryClient, pending );
 			if ( pending ) {
 				return;
 			}
-			return Promise.all(
-				getMarkReadQueryKeys().map( ( queryKey ) => queryClient.invalidateQueries( { queryKey } ) )
+			const queryKeys = getMarkReadQueryKeys();
+			// Invalidating joins a first fetch still in flight, which may predate the mark.
+			await Promise.all(
+				queryKeys.map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
+			);
+			await Promise.all(
+				queryKeys.map( ( queryKey ) => queryClient.invalidateQueries( { queryKey } ) )
 			);
 		},
 	} );
