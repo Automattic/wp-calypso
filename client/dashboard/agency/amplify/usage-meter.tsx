@@ -371,7 +371,7 @@ export function AmplifyUsageMeter( {
 				aria-valuenow={ used }
 				aria-label={ __( 'Reports used this month' ) }
 			>
-				<span style={ { width: `${ percent }%` } } />
+				<span className="dashboard-amplify-usage__fill" style={ { width: `${ percent }%` } } />
 			</div>
 		</VStack>
 	);

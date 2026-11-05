@@ -8,7 +8,7 @@
 	background: var( --color-border-subtle );
 }
 
-.dashboard-amplify-usage__bar > span {
+.dashboard-amplify-usage__fill {
 	position: absolute;
 	inset-block: 0;
 	inset-inline-start: 0;
@@ -17,11 +17,11 @@
 	transition: width 0.3s ease;
 }
 
-.dashboard-amplify-usage[data-status='low'] .dashboard-amplify-usage__bar > span {
+.dashboard-amplify-usage[data-status='low'] .dashboard-amplify-usage__fill {
 	background: var( --studio-yellow-20 );
 }
 
-.dashboard-amplify-usage[data-status='cap'] .dashboard-amplify-usage__bar > span {
+.dashboard-amplify-usage[data-status='cap'] .dashboard-amplify-usage__fill {
 	background: var( --color-error );
 }
 
