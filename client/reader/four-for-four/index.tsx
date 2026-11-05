@@ -14,7 +14,7 @@ import { useEffect, useRef, useState } from 'react';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import EmptyContent from 'calypso/components/empty-content';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import { useFourForFour } from 'calypso/reader/data/four-for-four';
+import { useFourForFour, useFourForFourReview } from 'calypso/reader/data/four-for-four';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_FOUR_FOR_FOUR } from 'calypso/reader/follow-sources';
 import { getSiteDescription, getSiteName } from 'calypso/reader/get-helpers';
@@ -26,7 +26,7 @@ import {
 	FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS,
 	FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX,
 } from './constants';
-import type { ReadFourForFourCandidate } from '@automattic/api-core';
+import type { ReadFourForFourCandidate, ReadFourForFourReviewVerdict } from '@automattic/api-core';
 
 // The modal reuses the Reader onboarding discover step's frame and layout.
 import 'calypso/reader/onboarding-rsm/style.scss';
@@ -70,11 +70,76 @@ function FollowButton( { candidate }: { candidate: ReadFourForFourCandidate } ) 
 	);
 }
 
+function SiteReviewPending( { isReviewing }: { isReviewing: boolean } ) {
+	const translate = useTranslate();
+	return (
+		<VStack
+			className="subscribe-modal__container four-for-four-modal__review"
+			alignment="center"
+			justify="center"
+			spacing={ 4 }
+		>
+			<Spinner />
+			{ isReviewing && (
+				<p className="subscribe-modal__description" role="status">
+					{ translate( 'Checking your site to see if it qualifies…' ) }
+				</p>
+			) }
+		</VStack>
+	);
+}
+
+function SiteNotEligible( {
+	verdict,
+	onClose,
+}: {
+	verdict: Extract< ReadFourForFourReviewVerdict, 'not_personal_blog' | 'not_english' >;
+	onClose: () => void;
+} ) {
+	const translate = useTranslate();
+	return (
+		<VStack
+			className="subscribe-modal__container four-for-four-modal__review"
+			alignment="center"
+			justify="center"
+			spacing={ 6 }
+		>
+			<VStack alignment="center" spacing={ 2 } expanded={ false }>
+				<h2 id={ TITLE_ID } className="subscribe-modal__title">
+					{ verdict === 'not_english'
+						? translate( '4 for 4 is English-only for now' )
+						: translate( '4 for 4 is for personal blogs' ) }
+				</h2>
+				<p className="subscribe-modal__description">
+					{ verdict === 'not_english'
+						? translate(
+								"Sorry, we can only include sites written in English right now, so we can't include yours."
+							)
+						: translate(
+								"Sorry, we're mainly looking for personal blogs right now, where people write about their own stories, life, hobbies or travel, so we can't include your site."
+							) }
+				</p>
+			</VStack>
+			<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
+				{ translate( 'Back to Reader' ) }
+			</Button>
+		</VStack>
+	);
+}
+
+/**
+ * The writer's site is checked before the list is shown, so nobody subscribes
+ * to 4 sites and only then finds out their own site won't be shown.
+ */
 export function FourForFour() {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const recordTracksRef = useRef( recordReaderTracksEvent );
 	recordTracksRef.current = recordReaderTracksEvent;
+
+	const { isLoadingStatus, isReviewing, verdict } = useFourForFourReview();
+	const isNotEligible = verdict === 'not_personal_blog' || verdict === 'not_english';
+	const isShowingSites = ! isLoadingStatus && ! isReviewing && ! isNotEligible;
 
 	const {
 		candidates,
@@ -98,7 +163,7 @@ export function FourForFour() {
 	// selection.
 	const previewRef = useRef< HTMLDivElement | null >( null );
 	useEffect( () => {
-		if ( ! selectedCandidate || ! hasPreview ) {
+		if ( ! selectedCandidate || ! hasPreview || ! isShowingSites ) {
 			return;
 		}
 		if ( previewRef.current ) {
@@ -108,7 +173,7 @@ export function FourForFour() {
 			blog_id: selectedCandidate.blogId,
 			is_participant: selectedCandidate.isParticipant ? 1 : 0,
 		} );
-	}, [ selectedCandidate?.blogId, hasPreview ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
+	}, [ selectedCandidate?.blogId, hasPreview, isShowingSites ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
 
 	const isComplete = status === 'completed';
 	const progressCount = Math.min( followedCount, FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS );
@@ -126,13 +191,32 @@ export function FourForFour() {
 		page( '/reader' );
 	};
 
+	const modalProps = {
+		onRequestClose: handleClose,
+		size: 'medium',
+		className: 'reader-onboarding-rsm-modal subscribe-modal four-for-four-modal',
+		aria: { labelledby: TITLE_ID },
+	} as const;
+
+	// Every branch renders the same Modal at the root, so React keeps the open
+	// modal and swaps only its contents, instead of replaying its open animation.
+	if ( isNotEligible ) {
+		return (
+			<Modal { ...modalProps }>
+				<SiteNotEligible verdict={ verdict } onClose={ handleClose } />
+			</Modal>
+		);
+	}
+	if ( ! isShowingSites ) {
+		return (
+			<Modal { ...modalProps } contentLabel={ String( translate( 'Subscribe to 4 new writers' ) ) }>
+				<SiteReviewPending isReviewing={ isReviewing } />
+			</Modal>
+		);
+	}
+
 	return (
-		<Modal
-			onRequestClose={ handleClose }
-			size="medium"
-			className="reader-onboarding-rsm-modal subscribe-modal four-for-four-modal"
-			aria={ { labelledby: TITLE_ID } }
-		>
+		<Modal { ...modalProps }>
 			<div className="subscribe-modal__container">
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__intro">

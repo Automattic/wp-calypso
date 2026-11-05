@@ -88,10 +88,26 @@ function mockCandidates( candidates: ReturnType< typeof candidate >[] ) {
 	nock( API ).get( '/wpcom/v2/read/four-for-four/candidates' ).reply( 200, { candidates } );
 }
 
-function mockStatus( status: string | null, followedBlogIds: number[] = [] ) {
+function mockStatus(
+	status: string | null,
+	followedBlogIds: number[] = [],
+	review: { verdict: string } | null = { verdict: 'pass' }
+) {
 	nock( API )
 		.get( '/wpcom/v2/read/four-for-four/status' )
-		.reply( 200, { status, blog_id: 1, followed_blog_ids: followedBlogIds } );
+		.reply( 200, { status, blog_id: 1, followed_blog_ids: followedBlogIds, review } );
+}
+
+function mockReview( verdict: string, delayMs = 0 ) {
+	return nock( API )
+		.post( '/wpcom/v2/read/four-for-four/review' )
+		.delay( delayMs )
+		.reply( 200, {
+			verdict,
+			language: verdict === 'not_english' ? 'es' : 'en',
+			category: verdict === 'not_personal_blog' ? 'commercial' : 'personal',
+			is_cached: false,
+		} );
 }
 
 function mockBlockedFollow() {
@@ -298,6 +314,117 @@ describe( 'FourForFour', () => {
 			'calypso_reader_four_for_four_closed',
 			{ followed_count: 0, is_complete: 0 }
 		);
+	} );
+
+	describe( "reviewing the writer's site", () => {
+		const previewEvents = () =>
+			mockRecordReaderTracksEvent.mock.calls.filter(
+				( [ name ] ) => name === 'calypso_reader_four_for_four_site_previewed'
+			);
+
+		it( 'checks a site with no verdict before showing the list', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			const review = mockReview( 'pass', 300 );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'status' ) ).toHaveTextContent(
+				'Checking your site to see if it qualifies…'
+			);
+			expect( screen.queryByRole( 'button', { name: 'Second Site' } ) ).not.toBeInTheDocument();
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_started'
+			);
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( review.isDone() ).toBe( true );
+			expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_completed',
+				{
+					verdict: 'pass',
+					language: 'en',
+					category: 'personal',
+					duration_ms: expect.any( Number ),
+					is_cached: 0,
+				}
+			);
+			// The candidates loaded during the check, but the preview only counts
+			// once the writer can see it.
+			expect( previewEvents() ).toHaveLength( 1 );
+		} );
+
+		it.each( [
+			[ 'not_personal_blog', '4 for 4 is for personal blogs' ],
+			[ 'not_english', '4 for 4 is English-only for now' ],
+		] )( 'explains a %s verdict instead of showing the list', async ( verdict, title ) => {
+			const user = userEvent.setup();
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockReview( verdict );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'dialog', { name: title } ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: 'Second Site' } ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'progressbar' ) ).not.toBeInTheDocument();
+			expect( previewEvents() ).toHaveLength( 0 );
+
+			await user.click( screen.getByRole( 'button', { name: 'Back to Reader' } ) );
+
+			expect( page ).toHaveBeenCalledWith( '/reader' );
+		} );
+
+		it( 'shows the list when the review is unchecked', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			mockReview( 'unchecked' );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+		} );
+
+		it( 'shows the list when the review request fails', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			nock( API ).post( '/wpcom/v2/read/four-for-four/review' ).reply( 500, { code: 'error' } );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_completed',
+				expect.anything()
+			);
+		} );
+
+		it( 'uses a stored verdict without reviewing the site again', async () => {
+			mockStatus( 'opted_in', [], { verdict: 'not_english' } );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			const review = mockReview( 'pass' );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect(
+				await screen.findByRole( 'dialog', { name: '4 for 4 is English-only for now' } )
+			).toBeVisible();
+			expect( review.isDone() ).toBe( false );
+			expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_reader_four_for_four_review_started'
+			);
+		} );
+
+		it( "doesn't review a site for a writer who hasn't joined", async () => {
+			mockStatus( null, [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			const review = mockReview( 'pass' );
+
+			renderWithProvider( <FourForFour />, { initialState } );
+
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( review.isDone() ).toBe( false );
+		} );
 	} );
 
 	describe( 'saving progress', () => {
