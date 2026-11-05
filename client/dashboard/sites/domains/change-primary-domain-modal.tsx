@@ -36,60 +36,75 @@ export default function ChangePrimaryDomainModal( {
 	const { recordTracksEvent } = useAnalytics();
 	const titleId = useId();
 	const primaryAddress = currentPrimaryDomain?.domain ?? '';
-	const wwwAddress = `www.${ primaryAddress }`;
-	const canUseWww =
-		site.is_wpcom_atomic &&
-		!! currentPrimaryDomain &&
-		currentPrimaryDomain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS;
+	const addresses = [
+		...( currentPrimaryDomain ? [ currentPrimaryDomain ] : [] ),
+		...eligibleDomains,
+	].flatMap( ( domain ) => {
+		const plainAddress = { address: domain.domain, domain, www: false };
+		return site.is_wpcom_atomic && domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS
+			? [ plainAddress, { address: `www.${ domain.domain }`, domain, www: true } ]
+			: [ plainAddress ];
+	} );
 	const currentAddress =
-		canUseWww && currentPrimaryDomain.primary_is_www ? wwwAddress : primaryAddress;
+		addresses.find(
+			( { domain, www } ) => domain === currentPrimaryDomain && www === !! domain.primary_is_www
+		)?.address ?? primaryAddress;
 	const [ selectedDomain, setSelectedDomain ] = useState( currentAddress );
-	const snackbar = {
+	const selected = addresses.find( ( { address } ) => address === selectedDomain );
+	const changesWww = !! selected && !! selected.domain.primary_is_www !== selected.www;
+	const errorSnackbar = { error: { source: 'server' as const } };
+	const successSnackbar = {
+		...errorSnackbar,
 		success: sprintf(
 			/* translators: %s is domain */
 			__( 'Primary site address changed: all domains will redirect to %s.' ),
 			selectedDomain
 		),
-		error: { source: 'server' as const },
 	};
 	const setPrimaryDomainMutation = useMutation(
-		withSnackbar( siteSetPrimaryDomainMutation(), snackbar )
+		withSnackbar(
+			siteSetPrimaryDomainMutation(),
+			// The www request that follows shows the success message.
+			changesWww ? errorSnackbar : successSnackbar
+		)
 	);
-	const setWwwMutation = useMutation( withSnackbar( setWwwPrimaryDomainMutation(), snackbar ) );
+	const setWwwMutation = useMutation(
+		withSnackbar( setWwwPrimaryDomainMutation(), successSnackbar )
+	);
 	const isPending = setPrimaryDomainMutation.isPending || setWwwMutation.isPending;
 
-	const options = [
-		...( primaryAddress ? [ { label: primaryAddress, value: primaryAddress } ] : [] ),
-		...( canUseWww ? [ { label: wwwAddress, value: wwwAddress } ] : [] ),
-		...eligibleDomains.map( ( { domain } ) => ( { label: domain, value: domain } ) ),
-	];
+	const options = addresses.map( ( { address } ) => ( { label: address, value: address } ) );
 
-	const canSubmit = !! selectedDomain && selectedDomain !== currentAddress && ! isPending;
+	const canSubmit = !! selected && selectedDomain !== currentAddress && ! isPending;
 
 	const handleSubmit = ( event: React.FormEvent ) => {
 		event.preventDefault();
 
-		if ( ! canSubmit ) {
+		if ( ! canSubmit || ! selected ) {
 			return;
 		}
 
 		recordTracksEvent( 'calypso_dashboard_site_domains_primary_domain_selector_submit', {
 			site: site.slug,
 			domain: selectedDomain,
-			www: selectedDomain === wwwAddress,
+			www: selected.www,
 		} );
 
-		if ( selectedDomain === primaryAddress || selectedDomain === wwwAddress ) {
+		const domain = selected.domain.domain;
+		const setWww = () =>
 			setWwwMutation.mutate(
-				{ siteId: site.ID, domain: primaryAddress, enabled: selectedDomain === wwwAddress },
+				{ siteId: site.ID, domain, enabled: selected.www },
 				{ onSuccess: onClose }
 			);
+
+		if ( domain === primaryAddress ) {
+			setWww();
 			return;
 		}
 
 		setPrimaryDomainMutation.mutate(
-			{ siteId: site.ID, domain: selectedDomain },
-			{ onSuccess: onClose }
+			{ siteId: site.ID, domain },
+			{ onSuccess: changesWww ? setWww : onClose }
 		);
 	};
 
