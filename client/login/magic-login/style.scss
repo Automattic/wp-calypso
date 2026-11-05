@@ -326,16 +326,6 @@
 			white-space: pre;
 		}
 	}
-
-	// ConsentText's own link color would otherwise win over the line's color.
-	&.connect-screen-consent-text a {
-		color: inherit;
-
-		&:hover,
-		&:focus {
-			color: inherit;
-		}
-	}
 }
 
 .magic-login__a4a-logo {
