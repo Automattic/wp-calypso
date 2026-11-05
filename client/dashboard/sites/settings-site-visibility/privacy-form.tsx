@@ -1,5 +1,5 @@
 import { DomainSubtype } from '@automattic/api-core';
-import { siteSettingsMutation } from '@automattic/api-queries';
+import { domainsQuery, siteSettingsMutation } from '@automattic/api-queries';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, CheckboxControl } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
@@ -123,9 +123,9 @@ const robotForm = {
 } satisfies Form;
 
 export function PrivacyForm( { site, settings }: { site: Site; settings: SiteSettings } ) {
-	const { queries, supports } = useAppContext();
+	const { supports } = useAppContext();
 	const { data: domains = [] } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},

@@ -50,12 +50,15 @@
 		"emails/titan-tiers": true,
 		"marketplace-redesign": true,
 		"mcp-settings": true,
+		"me/email-tracking-consent": true,
 		"me/legacy-contact": true,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
+		"notifications/subscriber-alerts-default-on": true,
 		"notifications/view-settings": true,
 		"onboarding/interval-dropdown": true,
 		"performance/apm": true,
+		"performance/test-url-override": true,
 		"plans/migration-trial": true,
 		"plans/scheduled-term-change": true,
 		"plans/updated-storage-labels": true,
@@ -82,6 +85,5 @@
 	},
 	"site_filter": [],
 	"theme": "dashboard",
-	"theme_color": "#3858E9",
 	"restricted_me_access": false
 }

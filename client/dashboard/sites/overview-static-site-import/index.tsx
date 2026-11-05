@@ -1,5 +1,9 @@
+import { sitePurchasesQuery, staticSiteImportHandoffMutation } from '@automattic/api-queries';
+import { useLocale } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import {
+	Button,
 	Spinner,
 	__experimentalHStack as HStack,
 	__experimentalHeading as Heading,
@@ -7,19 +11,17 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, published } from '@wordpress/icons';
+import { Icon, border, caution, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
-import Notice, {
-	NoticeActionButton,
-	NoticeActionLink,
-	NoticeActionLinkButton,
-} from '../../components/notice';
+import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../components/notice';
+import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { withJetpackSso } from '../../utils/site-sso';
 import { getSourceHost } from './use-static-site-import';
 import type { StaticSiteImport, StaticSiteImportSearch } from './use-static-site-import';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
@@ -98,6 +100,99 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
+/**
+ * Hands the move to our migrations team: files a ticket for the Non-WP Migrations queue, which
+ * emails the customer to finish the move.
+ */
+function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
+	const locale = useLocale();
+	const handoff = useMutation( staticSiteImportHandoffMutation() );
+	const requestHandoff = () =>
+		handoff.mutate( {
+			blogUrl: site.slug,
+			fromUrl: search.from ?? '',
+			locale,
+			importSessionId: search.importSessionId,
+		} );
+	return { handoff, requestHandoff };
+}
+
+/** Takes the place of the progress card when a move fails. */
+export function StaticSiteImportFailed( {
+	site,
+	search,
+}: {
+	site: Site;
+	search: StaticSiteImportSearch;
+} ) {
+	const { handoff, requestHandoff } = useMoveHandoff( site, search );
+	const sourceHost = getSourceHost( search.from );
+	const { data: planPurchase } = useQuery( {
+		...sitePurchasesQuery( site.ID ),
+		select: ( purchases ) => purchases.find( ( purchase ) => purchase.is_plan ),
+	} );
+	// Cancelling the plan is where the refund happens; the classic path forwards to
+	// whichever dashboard the customer uses. Without a plan there's nothing to refund.
+	const refundUrl = planPurchase
+		? wpcomLink( `/me/purchases/${ site.slug }/${ planPurchase.ID }/cancel` )
+		: undefined;
+
+	return (
+		<Card>
+			<CardBody>
+				<VStack spacing={ 6 }>
+					<HStack justify="flex-start" spacing={ 2 }>
+						<Icon
+							icon={ caution }
+							size={ 24 }
+							style={ { fill: 'var(--dashboard__foreground-color-error)' } }
+						/>
+						<Heading level={ 2 } size={ 20 } weight={ 600 }>
+							{ __( 'Your move stopped' ) }
+						</Heading>
+					</HStack>
+					<Text>
+						{ sourceHost
+							? sprintf(
+									/* translators: %s: the address of the site being moved, e.g. example.com. */
+									__( 'Nothing is lost, and %s is still online.' ),
+									sourceHost
+								)
+							: __( 'Nothing is lost, and your current site is still online.' ) }
+					</Text>
+					{ handoff.isError && (
+						<Notice variant="error">
+							{ __( 'We couldn’t reach our team. Please try again.' ) }
+						</Notice>
+					) }
+					{ handoff.isSuccess ? (
+						<Notice variant="success" title={ __( 'Our team has your move' ) }>
+							{ __( 'We’ll email you to finish moving your site.' ) }
+						</Notice>
+					) : (
+						<HStack justify="flex-start" spacing={ 4 } wrap>
+							<Button
+								__next40pxDefaultSize
+								variant="primary"
+								isBusy={ handoff.isPending }
+								disabled={ handoff.isPending }
+								onClick={ requestHandoff }
+							>
+								{ __( 'Let our team move it' ) }
+							</Button>
+							{ refundUrl && (
+								<Button variant="link" href={ refundUrl }>
+									{ __( 'Get a refund' ) }
+								</Button>
+							) }
+						</HStack>
+					) }
+				</VStack>
+			</CardBody>
+		</Card>
+	);
+}
+
 /** Takes the place of the overview cards while the site is being moved. */
 export function StaticSiteImportProgress( {
 	siteImport,
@@ -150,7 +245,10 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
+	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
+	// What the move found that may need our team, already in the reader's language.
+	const reviewNote = siteImport.session?.review_note;
 	const isReady = siteImport.status === 'finished';
 	const trackingProps = {
 		site_id: site.ID,
@@ -170,11 +268,18 @@ export function StaticSiteImportNotice( {
 		} );
 	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
-	const recordClick = ( action: 'connect_domain' | 'preview_site' ) =>
+	const recordClick = (
+		action: 'connect_domain' | 'get_domain' | 'preview_site' | 'request_handoff'
+	) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
 			...trackingProps,
 			action,
 		} );
+
+	// A moved site stays Coming Soon, which lets in visitors logged in to the site itself. The owner
+	// isn't until they first visit WP Admin, so open the site through SSO to log them in on the way.
+	const previewUrl =
+		site.is_coming_soon && site.is_wpcom_atomic ? withJetpackSso( site.URL ) : site.URL;
 
 	if ( siteImport.isRefused ) {
 		return (
@@ -192,51 +297,59 @@ export function StaticSiteImportNotice( {
 		);
 	}
 
+	// A failed move shows StaticSiteImportFailed in place of the progress card instead.
 	if ( siteImport.status === 'failed' ) {
-		const restartUrl = addQueryArgs(
-			wpcomLink( '/setup/static-site-import/static-site-import-reading' ),
-			{ from, platform, siteId: site.ID, siteSlug: site.slug }
-		);
+		return null;
+	}
 
+	if ( siteImport.status === 'stalled' ) {
 		return (
 			<Notice
-				variant="error"
-				title={ __( 'We couldn’t finish your move' ) }
+				variant="warning"
+				title={ __( 'Your move hasn’t started yet' ) }
 				actions={
 					<>
-						{ siteImport.needsRestart && (
-							<NoticeActionLink href={ restartUrl }>
-								{ __( 'Read my site again' ) }
-							</NoticeActionLink>
-						) }
-						{ siteImport.retry && (
-							<NoticeActionButton variant="minimal" onClick={ siteImport.retry }>
-								{ __( 'Try again' ) }
-							</NoticeActionButton>
-						) }
-						<NoticeActionButton variant="minimal" onClick={ () => setShowHelpCenter( true ) }>
-							{ __( 'Get help' ) }
+						<NoticeActionButton variant="solid" onClick={ siteImport.retry }>
+							{ __( 'Try again' ) }
+						</NoticeActionButton>
+						<NoticeActionButton variant="outline" onClick={ () => setShowHelpCenter( true ) }>
+							{ __( 'Contact us' ) }
 						</NoticeActionButton>
 					</>
 				}
 			>
-				{ siteImport.errorCode === 'static_site_import_atomic_unavailable'
-					? __(
-							'Your plan can’t host an imported site yet. Nothing has changed on your current site.'
-						)
-					: __(
-							'Nothing has changed on your current site. You can try again or ask us for help.'
-						) }
+				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }
 			</Notice>
 		);
 	}
 
-	const connectDomainUrl = addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-		initialQuery: sourceHost || undefined,
-		siteSlug: site.slug,
-		dashboard: getCurrentDashboard(),
-		back_to: redirectToDashboardLink(),
-	} );
+	if ( siteImport.status === 'unavailable' ) {
+		return (
+			<Notice variant="info" title={ __( 'We can’t show this move' ) }>
+				{ __(
+					'It may belong to another account. If you started it, make sure you’re logged in to that account.'
+				) }
+			</Notice>
+		);
+	}
+
+	// The server names a domain only when the customer owns it; otherwise they get one.
+	const ownedDomain = siteImport.session?.connectable_domain ?? '';
+	const domainUrl = ownedDomain
+		? addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+				initialQuery: ownedDomain,
+				siteSlug: site.slug,
+				dashboard: getCurrentDashboard(),
+				back_to: redirectToDashboardLink(),
+			} )
+		: getAddSiteDomainUrl( site.slug );
+	const domainLabel = ownedDomain
+		? sprintf(
+				/* translators: %s: the site's domain, e.g. example.com. */
+				__( 'Connect %s' ),
+				ownedDomain
+			)
+		: __( 'Get a domain' );
 
 	return (
 		<>
@@ -255,40 +368,60 @@ export function StaticSiteImportNotice( {
 						<>
 							<NoticeActionLinkButton
 								variant="solid"
-								href={ connectDomainUrl }
-								onClick={ () => recordClick( 'connect_domain' ) }
+								href={ domainUrl }
+								onClick={ () => recordClick( ownedDomain ? 'connect_domain' : 'get_domain' ) }
 							>
-								{ sourceHost
-									? sprintf(
-											/* translators: %s: the site's domain, e.g. example.com. */
-											__( 'Connect %s' ),
-											sourceHost
-										)
-									: __( 'Connect domain' ) }
+								{ domainLabel }
 							</NoticeActionLinkButton>
 							<NoticeActionLinkButton
 								variant="outline"
-								href={ site.URL }
+								href={ previewUrl }
 								openInNewTab
 								rel="noopener noreferrer"
 								onClick={ () => recordClick( 'preview_site' ) }
 							>
 								{ __( 'Preview site' ) }
 							</NoticeActionLinkButton>
+							{ ! handoff.isSuccess && (
+								<NoticeActionButton
+									variant="minimal"
+									loading={ handoff.isPending }
+									disabled={ handoff.isPending }
+									onClick={ () => {
+										recordClick( 'request_handoff' );
+										requestHandoff();
+									} }
+								>
+									{ __( 'Something not right? Let our team fix it' ) }
+								</NoticeActionButton>
+							) }
 						</>
 					}
 				>
-					{ sourceHost
-						? sprintf(
-								/* translators: %s: the domain of the site that was moved, e.g. example.com. */
-								__(
-									'%s is copied and running on WordPress.com. It stays private until you launch it.'
-								),
-								sourceHost
-							)
-						: __(
-								'Your site is copied and running on WordPress.com. It stays private until you launch it.'
-							) }
+					<VStack spacing={ 2 }>
+						<span>
+							{ sourceHost
+								? sprintf(
+										/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+										__(
+											'%s is copied and running on WordPress.com. It stays private until you launch it.'
+										),
+										sourceHost
+									)
+								: __(
+										'Your site is copied and running on WordPress.com. It stays private until you launch it.'
+									) }
+						</span>
+						{ reviewNote && <span>{ reviewNote }</span> }
+						{ handoff.isError && (
+							<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
+						) }
+						{ handoff.isSuccess && (
+							<span>
+								{ __( 'Our team has your move. We’ll email you to finish moving your site.' ) }
+							</span>
+						) }
+					</VStack>
 				</Notice>
 			) }
 		</>

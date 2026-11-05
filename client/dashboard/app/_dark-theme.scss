@@ -115,6 +115,24 @@
 			--wpds-color-foreground-content-#{$intent}: var( --dashboard__text-color );
 			--wpds-color-foreground-content-#{$intent}-weak: #{$color};
 		}
+
+		// Neutral solid action buttons, which are near-black by default.
+		--wpds-color-background-interactive-neutral-strong: var( --dashboard__text-color );
+		--wpds-color-background-interactive-neutral-strong-active: var(
+			--wp-components-color-gray-700
+		);
+		--wpds-color-background-interactive-neutral-strong-disabled: var(
+			--wp-components-color-gray-200
+		);
+		--wpds-color-foreground-interactive-neutral-strong: var(
+			--wp-components-color-foreground-inverted
+		);
+		--wpds-color-foreground-interactive-neutral-strong-active: var(
+			--wp-components-color-foreground-inverted
+		);
+		--wpds-color-foreground-interactive-neutral-strong-disabled: var(
+			--wp-components-color-gray-600
+		);
 	}
 }
 
@@ -153,21 +171,6 @@
 /* Form Controls */
 @mixin dashboard-dark-theme-form-controls {
 	@include color-scheme-dark-theme-form-controls;
-
-	.components-input-control.has-error .components-input-control__backdrop,
-	.components-input-control.has-error
-		.components-input-control__input:focus
-		+ .components-input-control__backdrop {
-		border-color: var( --dashboard-danger__color );
-	}
-
-	.components-input-control.has-error .components-base-control__help {
-		color: var( --dashboard-danger__color-hover );
-	}
-
-	.components-input-control.has-error .components-base-control__help svg {
-		fill: var( --dashboard-danger__color-hover );
-	}
 
 	.components-validated-control:has( :is( input, select ):invalid[data-validity-visible] )
 		.components-input-control__backdrop,
@@ -447,6 +450,28 @@
 	}
 }
 
+/* Primary site address illustration */
+@mixin dashboard-dark-theme-primary-address-illustration {
+	.primary-address-illustration {
+		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
+		--wpds-color-stroke-interactive-brand: var( --wp-admin-theme-color-darker-20 );
+		--wpds-color-foreground-interactive-brand: var( --wp-admin-theme-color-darker-20 );
+		background: var( --dashboard__background-color );
+	}
+
+	.primary-address-illustration__window-dots span {
+		border-color: var( --wp-components-color-gray-600 );
+	}
+
+	.primary-address-illustration__address-line {
+		background: var( --wp-components-color-gray-600 );
+	}
+
+	.primary-address-illustration__address {
+		color: var( --dashboard__text-color );
+	}
+}
+
 @mixin dashboard-dark-theme-site-launch-modal {
 	.celebration-modal--content,
 	.site-launch-pre-launch-modal__preview-card {
@@ -462,6 +487,26 @@
 	.site-launch-pre-launch-modal__meta svg {
 		fill: var( --dashboard__text-color );
 	}
+}
+
+@mixin dashboard-dark-theme-illustrations {
+	.dashboard-themed-illustration--light {
+		display: none;
+	}
+
+	.dashboard-themed-illustration--dark {
+		display: block;
+	}
+}
+
+// The domain upsell card's illustration is inline SVG that reads these, falling back to its light
+// colors. Hex values match the dark illustration assets.
+@mixin dashboard-dark-theme-domain-upsell-illustration {
+	--dashboard-domain-upsell-canvas: transparent;
+	--dashboard-domain-upsell-grid-opacity: 0;
+	--dashboard-domain-upsell-window: #1e2735;
+	--dashboard-domain-upsell-chrome: #2a3345;
+	--dashboard-domain-upsell-dot-stroke: #50575e;
 }
 
 // :root variables overridden for dark theme
@@ -480,6 +525,8 @@
 	@include dashboard-dark-theme-destructive-secondary-button;
 	@include dashboard-dark-theme-emails;
 	@include dashboard-dark-theme-form-controls;
+	@include dashboard-dark-theme-domain-upsell-illustration;
+	@include dashboard-dark-theme-illustrations;
 	@include dashboard-dark-theme-item-group;
 	@include dashboard-dark-theme-links;
 	@include color-scheme-dark-theme-modal;
@@ -488,6 +535,7 @@
 	@include color-scheme-dark-theme-palettes;
 	@include dashboard-dark-theme-panel;
 	@include dashboard-dark-theme-plugins;
+	@include dashboard-dark-theme-primary-address-illustration;
 	@include color-scheme-dark-theme-popover;
 	@include color-scheme-dark-theme-primary-button;
 	@include dashboard-dark-theme-scan;

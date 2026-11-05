@@ -16,8 +16,8 @@ export interface ReadFourForFourCandidatesResponse {
 }
 
 /**
- * The subset of the Reader site shape that `ReaderSubscriptionListItem` and
- * the follow button read, filled from the candidate payload so the list can
+ * The subset of the Reader site shape that the Reader's site name and
+ * description helpers read, filled from the candidate payload so the list can
  * render without a per-site request.
  */
 export interface ReadFourForFourCandidateSite {

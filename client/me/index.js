@@ -46,15 +46,7 @@ export default function () {
 		);
 	}
 
-	page(
-		'/me/get-apps',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/apps' ),
-		controller.sidebar,
-		controller.apps,
-		makeLayout,
-		clientRender
-	);
+	page( '/me/get-apps', controller.appsRedirect );
 
 	page(
 		'/me/mcp/setup',

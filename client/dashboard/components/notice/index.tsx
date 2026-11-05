@@ -13,6 +13,11 @@ import './style.scss';
  *
  * It's a thin wrapper around the `Notice` from `@wordpress/ui`.
  *
+ * The notice needs a parent that gives it a width, such as block flow or a stretched
+ * `VStack`. It's a size container (`container-type: inline-size`), so its text doesn't widen
+ * its parent: as an item in a row (`HStack`, `CardHeader`) or in any content-sized wrapper it
+ * collapses to its padding.
+ *
  * ```jsx
  * import { Notice, NoticeActionButton } from 'calypso/dashboard/components/notice';
  * import { ExternalLink } from '@wordpress/components';

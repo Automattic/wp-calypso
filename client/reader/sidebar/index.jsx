@@ -273,7 +273,7 @@ export class ReaderSidebar extends Component {
 						</span>
 					</li>
 
-					{ isEnabled( 'reader/saved-posts' ) && (
+					{ ( isEnabled( 'reader/saved-posts' ) || isAutomatticTeamMember( teams ) ) && (
 						<SidebarItem
 							label={ translate( 'Saved' ) }
 							onNavigate={ this.handleSidebarMenuClick( TrackingKeys.saved ) }

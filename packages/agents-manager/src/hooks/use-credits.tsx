@@ -4,6 +4,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import { API_BASE_URL } from '../constants';
 import { NO_SITE } from '../utils/agent-session';
+import { isContextOnlyMessage } from '../utils/context-only-message';
 import {
 	type CreditsPlan,
 	type CreditsStatus,
@@ -15,6 +16,7 @@ import {
 } from '../utils/credits';
 import {
 	type CreditsAccess,
+	type CreditsPurchaseAction,
 	getCreditsBackNotice,
 	getCreditsCtaType,
 	getCreditsNoticeMessage,
@@ -38,15 +40,31 @@ import { getLatestUserMessageIndex } from '../utils/latest-message';
 import {
 	CREDITS_UPGRADE_SOURCE,
 	buildLiveCreditsStatus,
+	formatCreditsResetDate,
 	getLiveCreditSiteId,
 	getLiveCreditsPurchaseLink,
+	getLiveCreditsTopUpLink,
 	parseCreditSnapshot,
 } from '../utils/live-credits';
 import type { AgentConfig } from '../utils/create-agent-config';
-import type { CreditSnapshot } from '../utils/live-credits';
+import type { CreditSnapshot, CreditsPurchaseKind } from '../utils/live-credits';
 import type { AuthProvider, TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
 import type { AgentsManagerSite } from '@automattic/data-stores';
+
+export interface CreditsAnswerAction extends CreditsPurchaseAction {
+	kind: CreditsPurchaseKind;
+}
+
+export interface CreditsAnswerContent {
+	status: CreditsStatus;
+	/** When the monthly plan credits reset, already formatted for display. */
+	resetDate: string;
+	/** What the popover offers, and on the lower plans a credits pack too, which any admin may buy. */
+	actions: CreditsAnswerAction[];
+	/** Who to ask, when nothing can be bought. */
+	purchaseHint?: string;
+}
 
 interface LiveCredits {
 	status: CreditsStatus;
@@ -104,6 +122,11 @@ function canReadBalance< Scope extends { siteId?: number; authProvider?: AuthPro
 	);
 }
 
+/** Whether the host says the site has no AI credits. Absent means the balance read decides. */
+function isKnownUnmetered(): boolean {
+	return getAgentsManagerInlineData()?.isMetered === false;
+}
+
 interface UseCreditsOptions {
 	/** Surfaces without metering (Reader chat) pass false and get nothing. */
 	enabled: boolean;
@@ -116,6 +139,8 @@ interface UseCreditsOptions {
 	isNoticeVisible: boolean;
 	/** Sends again once credits are back, given the refused question's text; the notice then offers Continue. */
 	onTryAgain?: ( message: string ) => void;
+	/** Sends `/credits` to the chat, from the popover's button. */
+	onShowCredits?: () => void;
 }
 
 export interface UseCreditsResult {
@@ -133,7 +158,21 @@ export interface UseCreditsResult {
 	 * a credits-back notice once it is above 0, and the last of these while it is unknown.
 	 */
 	refusalNotice?: NoticeConfig;
+	/**
+	 * How `/credits` answers. Absent when nothing can be said (credits off, a mock balance, no
+	 * live read), so the command isn't handled and goes out as any text does.
+	 */
+	creditsCommand?: CreditsCommandReply;
 }
+
+/**
+ * `balance` is the live balance with the purchase button or hint the popover shows, `stale` the
+ * last known balance after a failed read, `loading` a read not yet settled, `failed` a read that
+ * failed with no balance known, and `unmetered` a site that has no AI credits.
+ */
+export type CreditsCommandReply =
+	| { state: 'balance' | 'stale'; answer: CreditsAnswerContent }
+	| { state: 'loading' | 'failed' | 'unmetered' };
 
 /**
  * Loads balances independently of prompts and keeps reads and terminal updates
@@ -158,6 +197,7 @@ export function useCredits( {
 	isOpen,
 	isNoticeVisible,
 	onTryAgain,
+	onShowCredits,
 }: UseCreditsOptions ): UseCreditsResult {
 	const isMockEnabled = enabled && siteKey === NO_SITE;
 	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
@@ -190,6 +230,15 @@ export function useCredits( {
 		 */
 		isUnconfirmed?: boolean;
 	} >();
+	// How the last balance read ended when it left no balance: no credits on the site, or a failure.
+	const [ readOutcome, setReadOutcome ] = useState< {
+		scope: typeof scope;
+		outcome: 'unmetered' | 'failed';
+	} >();
+	// The last valid balance, kept past a failed read for `/credits` to show as the last known.
+	const lastKnownSnapshot = useRef< { scope: typeof scope; snapshot: CreditSnapshot } | undefined >(
+		undefined
+	);
 	// Who may buy, from the balance read. Terminal updates don't carry it.
 	const [ upgradeAccess, setUpgradeAccess ] = useState< { scope: typeof scope } & CreditsAccess >();
 	const upgradeAccessRef = useRef( upgradeAccess );
@@ -271,6 +320,8 @@ export function useCredits( {
 			const snapshot = parseCreditSnapshot( update.aiCredits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
 				scope.validTerminalRevision++;
+				lastKnownSnapshot.current = { scope, snapshot };
+				setReadOutcome( undefined );
 				setBalance( { scope, snapshot, isFromTurn: true } );
 			} else {
 				invalidateBalance();
@@ -350,12 +401,18 @@ export function useCredits( {
 			}
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
+				lastKnownSnapshot.current = { scope, snapshot };
+				setReadOutcome( undefined );
 				setBalance( { scope, snapshot, isFromTurn: false } );
 			} else {
+				// A 404 or an answer with no credits data means no metering; any other miss is a failure.
+				const isUnmetered = response.status === 404 || ( response.ok && ! data?.ai_credits );
+				setReadOutcome( { scope, outcome: isUnmetered ? 'unmetered' : 'failed' } );
 				invalidateBalance();
 			}
 		} catch {
 			if ( isCurrent() ) {
+				setReadOutcome( { scope, outcome: 'failed' } );
 				invalidateBalance();
 			}
 		} finally {
@@ -536,6 +593,14 @@ export function useCredits( {
 		setIsPopoverOpen( false );
 	}, [ setIsPopoverOpen ] );
 
+	// Only where `/credits` is answered in the browser, as anywhere else it would reach the model.
+	const canShowCredits = !! onShowCredits && !! siteId && canReadBalance( scope );
+	const showCredits = useCallback( () => {
+		recordCreditsEvent( 'calypso_agents_manager_credits_show_clicked' );
+		setIsPopoverOpen( false );
+		onShowCredits?.();
+	}, [ onShowCredits, recordCreditsEvent, setIsPopoverOpen ] );
+
 	// Only a click that opens the popover records here; an opening by itself records above.
 	const toggleMeter = useCallback(
 		( open: boolean ) => {
@@ -576,9 +641,20 @@ export function useCredits( {
 				onAction={ siteId ? undefined : handleAction }
 				action={ purchaseAction }
 				purchaseHint={ purchaseHint }
+				onShowCredits={ canShowCredits ? showCredits : undefined }
 			/>
 		);
-	}, [ status, isPopoverOpen, toggleMeter, handleAction, siteId, purchaseAction, purchaseHint ] );
+	}, [
+		status,
+		isPopoverOpen,
+		toggleMeter,
+		handleAction,
+		siteId,
+		purchaseAction,
+		purchaseHint,
+		canShowCredits,
+		showCredits,
+	] );
 
 	// Continue resends text only, as the conversation's Retry does, so a question with
 	// images is asked again by hand.
@@ -592,6 +668,18 @@ export function useCredits( {
 			.join( ' ' )
 			.trim();
 		return text || undefined;
+	}, [ chat.messages ] );
+	// The refusal brings only its code, so the thread tells whether the server took the question.
+	// Any agent message after it that isn't context-only says it did, even one the transcript
+	// hides, such as a failed block edit's: it follows a model call.
+	const hasTurnOutput = useMemo( () => {
+		const questionIndex = getLatestUserMessageIndex( chat.messages );
+		return (
+			questionIndex >= 0 &&
+			chat.messages
+				.slice( questionIndex + 1 )
+				.some( ( message ) => message.role === 'agent' && ! isContextOnlyMessage( message ) )
+		);
 	}, [ chat.messages ] );
 	const tryAgainAction = useMemo< NoticeConfig[ 'action' ] >(
 		() =>
@@ -676,7 +764,8 @@ export function useCredits( {
 			purchaseAction && {
 				...purchaseAction,
 				onClick: () => recordPurchaseClick( 'refusal', shown ),
-			}
+			},
+			hasTurnOutput
 		);
 	}, [
 		isRefusedForCredits,
@@ -686,6 +775,7 @@ export function useCredits( {
 		purchaseKind,
 		purchaseAction,
 		recordPurchaseClick,
+		hasTurnOutput,
 	] );
 	// An unknown balance keeps this refusal's last notice, as a failed read keeps the last answer.
 	// Only an earlier render knows that notice, so it's state, updated while rendering.
@@ -776,8 +866,120 @@ export function useCredits( {
 		recordCreditsEvent,
 	] );
 
+	const recordTopUpClick = useCallback(
+		( shown?: LiveCredits ) =>
+			recordCreditsEvent(
+				'calypso_agents_manager_credits_cta_clicked',
+				{ cta_type: 'top_up', ref: CREDITS_UPGRADE_SOURCE, placement: 'none' },
+				shown
+			),
+		[ recordCreditsEvent ]
+	);
+
+	// Personal and Premium upgrade first, though a credits pack is cheaper than a plan. Whoever
+	// can't upgrade gets no credits pack either, as in the meter.
+	const addCreditsAction = useMemo< CreditsAnswerAction | undefined >( () => {
+		if (
+			planPurchaseLink?.kind !== 'upgrade' ||
+			access?.canUpgrade !== true ||
+			access.canBuyCredits !== true
+		) {
+			return undefined;
+		}
+		const link = getLiveCreditsTopUpLink( siteId, site );
+		const action =
+			link && getCreditsPurchaseAction( { purchaseUrl: link.url, purchaseKind: 'top_up' } );
+		return (
+			action && {
+				...action,
+				kind: 'top_up' as const,
+				onClick: () => recordTopUpClick(),
+			}
+		);
+	}, [ planPurchaseLink, access, siteId, site, recordTopUpClick ] );
+
+	// Live balances only: a mock or an unknown balance has nothing true to say.
+	const creditsAnswer = useMemo< CreditsAnswerContent | undefined >( () => {
+		if ( ! siteId || ! status || ! snapshot ) {
+			return undefined;
+		}
+		// The card stays in the thread after a later read fails, so its clicks count against its own balance.
+		const shown: LiveCredits = { status, siteId, agentConfig };
+		const actions: CreditsAnswerAction[] = [];
+		if ( purchaseAction && purchaseKind ) {
+			actions.push( {
+				...purchaseAction,
+				kind: purchaseKind,
+				onClick: () => recordPurchaseClick( 'none', shown ),
+			} );
+		}
+		if ( addCreditsAction ) {
+			actions.push( { ...addCreditsAction, onClick: () => recordTopUpClick( shown ) } );
+		}
+		return {
+			status,
+			resetDate: formatCreditsResetDate( snapshot.resets_at ),
+			actions,
+			purchaseHint: actions.length ? undefined : purchaseHint,
+		};
+	}, [
+		siteId,
+		status,
+		snapshot,
+		agentConfig,
+		purchaseKind,
+		purchaseAction,
+		addCreditsAction,
+		purchaseHint,
+		recordPurchaseClick,
+		recordTopUpClick,
+	] );
+
+	const lastKnown =
+		lastKnownSnapshot.current?.scope === scope &&
+		Date.parse( lastKnownSnapshot.current.snapshot.resets_at ) > Date.now()
+			? lastKnownSnapshot.current.snapshot
+			: undefined;
+	const failedOutcome = readOutcome?.scope === scope ? readOutcome.outcome : undefined;
+	// Live balances only: a mock balance, or a read that can't run, has nothing true to say.
+	const creditsCommand = useMemo< CreditsCommandReply | undefined >( () => {
+		if ( ! enabled || ! siteId || ! canReadBalance( scope ) ) {
+			return undefined;
+		}
+		if ( isKnownUnmetered() ) {
+			return { state: 'unmetered' };
+		}
+		if ( creditsAnswer ) {
+			return { state: 'balance', answer: creditsAnswer };
+		}
+		if ( failedOutcome === 'unmetered' ) {
+			return { state: 'unmetered' };
+		}
+		if ( failedOutcome === 'failed' ) {
+			return lastKnown
+				? {
+						state: 'stale',
+						answer: {
+							status: buildLiveCreditsStatus( lastKnown ),
+							resetDate: formatCreditsResetDate( lastKnown.resets_at ),
+							actions: [],
+						},
+					}
+				: { state: 'failed' };
+		}
+		return { state: 'loading' };
+	}, [ enabled, siteId, scope, creditsAnswer, failedOutcome, lastKnown ] );
+
 	return useMemo(
-		() => ( { chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice } ),
-		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice ]
+		() => ( {
+			chat,
+			trailingActions,
+			notice,
+			beforeSubmit,
+			takeRefusalCode,
+			refusalNotice,
+			creditsCommand,
+		} ),
+		[ chat, trailingActions, notice, beforeSubmit, takeRefusalCode, refusalNotice, creditsCommand ]
 	);
 }

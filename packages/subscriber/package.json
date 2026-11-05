@@ -50,15 +50,15 @@
 		"@wordpress/dom": "^4.48.0",
 		"@wordpress/element": "^8.0.0",
 		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
-		"@wordpress/primitives": "^4.48.0",
+		"@wordpress/icons": "^15.5.0",
+		"@wordpress/primitives": "^4.56.0",
 		"@wordpress/react-i18n": "^4.48.0",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.3",
 		"email-validator": "^2.0.4"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.48.0",
+		"@wordpress/data": "^10.48.0 || ^11.0.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0",
 		"redux": "^5.0.1"

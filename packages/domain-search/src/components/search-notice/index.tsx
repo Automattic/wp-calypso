@@ -1,5 +1,5 @@
 import { DomainAvailability, DomainAvailabilityStatus } from '@automattic/api-core';
-import { useQuery } from '@tanstack/react-query';
+import { useIsMutating, useQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { useMemo } from 'react';
@@ -74,18 +74,29 @@ const shouldReturnGenericMappedMessage = ( availability: DomainAvailability ): b
 	);
 };
 
+const isConnectedToOtherAccount = ( availability: DomainAvailability ): boolean => {
+	return (
+		availability.status === DomainAvailabilityStatus.REGISTERED ||
+		( availability.status === DomainAvailabilityStatus.MAPPED &&
+			availability.mappable === DomainAvailabilityStatus.MAPPED )
+	);
+};
+
 export const SearchNotice = () => {
 	const {
 		query,
 		queries,
 		events,
 		currentSiteUrl,
-		config: { includeOwnedDomainInSuggestions },
+		config: { includeOwnedDomainInSuggestions, skippable },
 	} = useDomainSearch();
 	const { error: suggestionError } = useQuery( queries.domainSuggestions( query ) );
 	const { data: availability, error: availabilityError } = useQuery(
 		queries.domainAvailability( query )
 	);
+
+	const isMutating = useIsMutating();
+	const { onSearchNoticeSkipClick } = events;
 
 	const notice = useMemo( () => {
 		if (
@@ -113,6 +124,28 @@ export const SearchNotice = () => {
 			};
 		}
 
+		if ( onSearchNoticeSkipClick && skippable && isConnectedToOtherAccount( availability ) ) {
+			return {
+				severity: 'error' as const,
+				message: createInterpolateElement(
+					__(
+						'This domain is already connected to a WordPress.com site. You can <button>skip the domain for now</button> and keep building.'
+					),
+					{
+						button: (
+							<button
+								disabled={ !! isMutating }
+								onClick={ () => {
+									onSearchNoticeSkipClick( query, availability.status );
+									events.onSkip();
+								} }
+							/>
+						),
+					}
+				),
+			};
+		}
+
 		if ( shouldReturnGenericMappedMessage( availability ) ) {
 			return {
 				severity: 'error' as const,
@@ -121,7 +154,16 @@ export const SearchNotice = () => {
 		}
 
 		return getAvailabilityNotice( query, availability, events, currentSiteUrl );
-	}, [ query, availability, events, currentSiteUrl, includeOwnedDomainInSuggestions ] );
+	}, [
+		query,
+		availability,
+		events,
+		currentSiteUrl,
+		includeOwnedDomainInSuggestions,
+		onSearchNoticeSkipClick,
+		skippable,
+		isMutating,
+	] );
 
 	// A failed suggestions request still renders the exact-match card when the FQDN is
 	// available, so its error would contradict the card.

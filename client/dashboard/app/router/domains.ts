@@ -6,6 +6,8 @@ import {
 	domainForwardingQuery,
 	domainGlueRecordsQuery,
 	domainNameServersQuery,
+	domainsQuery,
+	sitesQuery,
 	sslDetailsQuery,
 	mailboxAccountsQuery,
 	siteByIdQuery,
@@ -20,6 +22,7 @@ import {
 	siteUsersWpcomQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
+import { translationExists } from '@automattic/i18n-utils';
 import {
 	createRoute,
 	createLazyRoute,
@@ -59,10 +62,10 @@ const domainsRoute = createRoute( {
 export const domainsIndexRoute = createRoute( {
 	getParentRoute: () => domainsRoute,
 	path: '/',
-	loader: async ( { context } ) => {
+	loader: async () => {
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
-			queryClient.ensureQueryData( context.config.queries.sitesQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
+			queryClient.ensureQueryData( sitesQuery() ),
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
 		] );
 	},
@@ -342,7 +345,7 @@ export const domainForwardingAddRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Add domain forwarding' ),
+				title: __( 'Add forwarding' ),
 			},
 		],
 	} ),
@@ -390,7 +393,9 @@ export const domainContactInfoRoute = createRoute( {
 	head: () => ( {
 		meta: [
 			{
-				title: __( 'Contact details' ),
+				title: translationExists( 'Contact details & privacy' )
+					? __( 'Contact details & privacy' )
+					: __( 'Contact details' ),
 			},
 		],
 	} ),

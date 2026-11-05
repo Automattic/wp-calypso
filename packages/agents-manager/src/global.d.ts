@@ -26,6 +26,8 @@ declare const agentsManagerData:
 			agentId?: string;
 			/** Dev/internal context (localhost, jurassic, proxied a11ns, internal Atomic). Drives `is_test`. */
 			isDevMode?: boolean;
+			/** Whether the site has AI credits metering. Absent until the host sets it, then the balance read decides. */
+			isMetered?: boolean;
 			/** Whether the current request is attributed to an Automattician for tracking. */
 			isA11n?: boolean;
 			/**

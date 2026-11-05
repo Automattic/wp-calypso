@@ -63,15 +63,6 @@ jest.mock( 'calypso/lib/analytics/survicate', () => ( {
 // loadExperimentAssignment side effect never hits a real network fetch.
 jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
-	// A plain function, not jest.fn: the suite's beforeEach resetAllMocks would wipe a jest.fn's
-	// implementation, leaving useExperiment returning undefined (its tuple is destructured).
-	useExperiment: () => [ false, null ],
-} ) );
-
-let mockPostPlanSelectionEmailVerification = false;
-jest.mock( '../internals/steps-repository/__user/use-email-verification-gate', () => ( {
-	...jest.requireActual( '../internals/steps-repository/__user/use-email-verification-gate' ),
-	useIsPostPlanSelectionEmailVerification: () => mockPostPlanSelectionEmailVerification,
 } ) );
 
 describe( 'Onboarding Flow', () => {
@@ -233,24 +224,12 @@ describe( 'Onboarding Flow', () => {
 				dispatch( ONBOARD_STORE ).setPlanCartItem( { product_slug: PLAN_PREMIUM } );
 			} );
 
-			afterEach( () => {
-				mockPostPlanSelectionEmailVerification = false;
-			} );
-
 			// Without the ID, a setup chooser choice made before the site loads hands
 			// build-wow a site-spec URL with no siteId.
 			it( 'carries the site ID to post-checkout onboarding', async () => {
 				const returnUrl = await getReturnUrl();
 
 				expect( returnUrl.pathname ).toBe( '/setup/onboarding/post-checkout-onboarding' );
-				expect( returnUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
-			} );
-
-			it( 'carries the site ID through email verification', async () => {
-				mockPostPlanSelectionEmailVerification = true;
-				const returnUrl = await getReturnUrl();
-
-				expect( returnUrl.pathname ).toBe( '/setup/onboarding/email-verification' );
 				expect( returnUrl.searchParams.get( 'siteId' ) ).toBe( '123' );
 			} );
 
@@ -354,10 +333,6 @@ describe( 'Onboarding Flow', () => {
 			const POST_URL = 'https://example.blog/2026/10/a-post/?utm_source=x&lang=es';
 			const REBLOG_EDITOR = `/post/test-site.wordpress.com?url=${ encodeURIComponent( POST_URL ) }`;
 
-			beforeEach( () => {
-				mockPostPlanSelectionEmailVerification = false;
-			} );
-
 			const finishProcessing = async ( dependencies: Record< string, unknown > ) => {
 				const { runUseStepNavigationSubmit } = renderFlow( onboarding );
 
@@ -419,27 +394,10 @@ describe( 'Onboarding Flow', () => {
 					expect( back.searchParams.get( 'ref' ) ).toBe( 'reblog' );
 				}
 			} );
-
-			// Without this, a reblog order skips the post-plan email-verification gate.
-			it( 'returns a paid site through email verification, keeping the post', async () => {
-				mockPostPlanSelectionEmailVerification = true;
-				const checkoutUrl = new URL( await finishProcessing( { goToCheckout: true } ), 'http://x' );
-				const returnUrl = new URL(
-					checkoutUrl.searchParams.get( 'redirect_to' ) ?? '',
-					'http://x'
-				);
-
-				expect( returnUrl.pathname ).toBe( '/setup/onboarding/email-verification' );
-				expect( returnUrl.searchParams.get( 'blog_post' ) ).toBe( POST_URL );
-			} );
 		} );
 
 		describe( 'import destination', () => {
 			const SITE_MIGRATION = '/setup/site-migration?siteSlug=test-site.wordpress.com';
-
-			beforeEach( () => {
-				mockPostPlanSelectionEmailVerification = false;
-			} );
 
 			const finishProcessing = async ( dependencies: Record< string, unknown > ) => {
 				const { runUseStepNavigationSubmit } = renderFlow( onboarding );

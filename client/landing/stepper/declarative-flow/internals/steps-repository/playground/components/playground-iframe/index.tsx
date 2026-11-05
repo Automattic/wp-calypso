@@ -166,8 +166,25 @@ export function PlaygroundIframe( {
 		setIsLoading( true );
 		setBootProgress( showIntro ? INITIAL_BOOT_PROGRESS : null );
 		heldMessagesRef.current = showIntro ? [] : null;
+
+		const recordAbandon = ( event: PageTransitionEvent ) => {
+			// A page kept in the back/forward cache can come back to the running load.
+			if ( event.persisted ) {
+				return;
+			}
+			window.removeEventListener( 'pagehide', recordAbandon );
+			recordTracksEvent( 'calypso_playground_woo_intro_abandoned', {
+				blueprint,
+				duration_seconds: durationSeconds(),
+				// Tracks then sends it with a keepalive fetch, which outlives the page, instead of an image.
+				use_beacon: true,
+			} );
+		};
+		const stopWatchingForAbandon = () => window.removeEventListener( 'pagehide', recordAbandon );
+
 		if ( showIntro ) {
 			recordTracksEvent( 'calypso_playground_woo_intro_show', { blueprint } );
+			window.addEventListener( 'pagehide', recordAbandon );
 		}
 
 		initializeWordPressPlayground(
@@ -178,6 +195,7 @@ export function PlaygroundIframe( {
 			showIntro ? setBootProgress : undefined
 		)
 			.then( ( result ) => {
+				stopWatchingForAbandon();
 				setPlaygroundClient( result.client, { isNewPlayground: result.isNewPlayground } );
 				if ( showIntro ) {
 					setBootProgress( null );
@@ -200,6 +218,7 @@ export function PlaygroundIframe( {
 				}
 			} )
 			.catch( ( error ) => {
+				stopWatchingForAbandon();
 				setIsLoading( false );
 				setBootProgress( null );
 				heldMessagesRef.current = null;
@@ -212,6 +231,8 @@ export function PlaygroundIframe( {
 				}
 				setPlaygroundError( error instanceof Error ? error : new Error( String( error ) ) );
 			} );
+
+		return stopWatchingForAbandon;
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [ attempt, recommendedPHPVersion ] );
 

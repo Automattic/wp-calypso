@@ -3,8 +3,8 @@ import { BarChart, LineChart } from '@automattic/charts';
 import '@automattic/charts/style.css';
 import { formatNumber, formatNumberCompact } from '@automattic/number-formatters';
 import moment from 'moment';
-import { FunctionComponent } from 'react';
-import type { DateRange } from '../lib/date-ranges';
+import { FunctionComponent, useMemo } from 'react';
+import type { ResolvedDateRange } from '../lib/date-ranges';
 import type {
 	DataPoint,
 	DataPointDate,
@@ -19,33 +19,65 @@ import type { ChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-ty
 const TOOLTIP_DATE_STYLE = { fontWeight: 600, marginBlockEnd: '4px' };
 const TOOLTIP_ROW_STYLE = { display: 'flex', justifyContent: 'space-between', gap: '12px' };
 
+/** The days a chart draws: its bucket, and the first and last day it covers. */
+type ChartRange = Pick< ResolvedDateRange, 'unit' | 'startDate' | 'endDate' >;
+
 /**
- * Names the date a hovered point covers, in the site locale's order. Not moment's `LL`: in
+ * The series with no point before the range. A week is keyed by its Monday, which for the
+ * first week can fall before the range's first day, where its count starts: that point is
+ * drawn, named and read from the first day instead.
+ * @param series    The series as fetched.
+ * @param startDate The range's first day, as `YYYY-MM-DD`.
+ * @returns The series, their points within the range.
+ */
+function clampToRange( series: SeriesData[], startDate: string ): SeriesData[] {
+	const firstDay = moment( startDate, 'YYYY-MM-DD' ).toDate();
+	return series.map( ( entry ) => ( {
+		...entry,
+		data: ( entry.data as DataPointDate[] ).map( ( point ) =>
+			point.date && point.date < firstDay ? { ...point, date: firstDay } : point
+		),
+	} ) );
+}
+
+/**
+ * Names the days a hovered point covers, in the site locale's order. Not moment's `LL`: in
  * wp-admin, core rewrites it to the site's PHP date format, so moment prints "F j, 2026".
  * Gregorian like the axis, since a locale's default calendar can differ (Persian, Thai).
- * @param date The hovered point's date.
- * @param unit The range's bucket.
- * @returns The formatted date.
+ * @param date  The hovered point's date: a day, a week's first day, or a month's.
+ * @param range The chart's range.
+ * @returns The formatted date, or the days of a week.
  */
-function formatTooltipDate( date: Date, unit: DateRange[ 'unit' ] ) {
+function formatTooltipDate( date: Date, range: ChartRange ) {
 	const options: Intl.DateTimeFormatOptions =
-		'month' === unit
+		'month' === range.unit
 			? { month: 'long', year: 'numeric', calendar: 'gregory' }
 			: { dateStyle: 'long', calendar: 'gregory' };
-	return new Intl.DateTimeFormat( moment.locale(), options ).format( date );
+	const format = new Intl.DateTimeFormat( moment.locale(), options );
+
+	if ( 'week' !== range.unit ) {
+		return format.format( date );
+	}
+
+	// A week runs to its Sunday, or to the range's last day in its last week. The point
+	// already sits on the range's first day when its week starts earlier.
+	const weekEnd = moment
+		.min( moment( date ).endOf( 'isoWeek' ), moment( range.endDate, 'YYYY-MM-DD' ) )
+		.toDate();
+	return format.formatRange( date, weekEnd );
 }
 
 /**
  * Tooltip for a hovered point. The package's own prints `toLocaleDateString()`, which names
  * a month's total by its first day and ignores the site's locale.
- * @param unit               The range's bucket.
+ * @param range              The chart's range.
  * @param series             The series drawn, read at the hovered date.
  * @param params             The chart's tooltip state.
  * @param params.tooltipData The hovered point.
  * @returns The tooltip, or nothing when no point is hovered.
  */
 function renderTooltip(
-	unit: DateRange[ 'unit' ],
+	range: ChartRange,
 	series: SeriesData[],
 	{ tooltipData }: RenderTooltipParams< DataPointDate >
 ) {
@@ -70,7 +102,7 @@ function renderTooltip(
 
 	return (
 		<div>
-			<div style={ TOOLTIP_DATE_STYLE }>{ formatTooltipDate( hoveredDate, unit ) }</div>
+			<div style={ TOOLTIP_DATE_STYLE }>{ formatTooltipDate( hoveredDate, range ) }</div>
 			{ points.map( ( point ) => (
 				<div key={ point.label } style={ TOOLTIP_ROW_STYLE }>
 					<span>{ point.label }</span>
@@ -82,12 +114,34 @@ function renderTooltip(
 }
 
 interface OverviewChartProps {
+	/** Views, then visitors. */
 	series: SeriesData[];
 	height: number;
-	/** The range's bucket, so monthly points are labelled by month rather than by date. */
-	unit: DateRange[ 'unit' ];
+	/** The chart's range, for its bucket and the days a partial week covers. */
+	range: ChartRange;
 	/** Bars or lines, as the viewer draws the Stats page's chart. */
 	chartType: ChartType;
+}
+
+/**
+ * The series as bars, the second drawn inside the first: visitors inside views, as the old
+ * widget and the Stats v2 traffic chart draw them, which works since a visitor has at least one
+ * view. The package draws a "comparison" series as a wider, lighter bar behind its group's
+ * other series, which is this shape.
+ * @param series Views, then visitors.
+ * @returns The series, grouped.
+ */
+function nestSeries( series: SeriesData[] ): SeriesData[] {
+	const [ outer, inner, ...rest ] = series;
+	if ( ! outer || ! inner ) {
+		return series;
+	}
+	const group = 'traffic';
+	return [
+		{ ...outer, group, options: { ...outer.options, type: 'comparison' } },
+		{ ...inner, group },
+		...rest,
+	];
 }
 
 // Room on the right for half a date label ("Sep 30"), since the last tick can fall on the
@@ -100,15 +154,20 @@ const MARGIN = { left: 32, top: 8, bottom: 20, right: 24 };
  * @param props           Component props.
  * @param props.series    The series to plot.
  * @param props.height    Chart height in pixels.
- * @param props.unit      The range's bucket.
+ * @param props.range     The chart's range.
  * @param props.chartType Bars or lines.
  */
 const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 	series,
 	height,
-	unit,
+	range,
 	chartType,
 } ) => {
+	const { unit } = range;
+	const drawn = useMemo(
+		() => clampToRange( series, range.startDate ),
+		[ series, range.startDate ]
+	);
 	const options: LineChartProps[ 'options' ] = {
 		// From zero, so a range that never approaches it doesn't look more dramatic than it is.
 		yScale: { type: 'linear', zero: true },
@@ -127,20 +186,20 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 			},
 		},
 	};
-	const renderTooltipForUnit = ( params: RenderTooltipParams< DataPointDate > ) =>
-		renderTooltip( unit, series, params );
+	const renderTooltipForRange = ( params: RenderTooltipParams< DataPointDate > ) =>
+		renderTooltip( range, drawn, params );
 
 	if ( 'bar' === chartType ) {
 		return (
 			<BarChart
-				data={ series }
+				data={ nestSeries( drawn ) }
 				withTooltips
 				animation
 				// A zero-value bar has no height, so a quiet day would otherwise read as missing
 				// data. This draws it as a hairline stub instead.
 				showZeroValues
 				height={ height }
-				renderTooltip={ renderTooltipForUnit }
+				renderTooltip={ renderTooltipForRange }
 				margin={ MARGIN }
 				options={ options }
 			/>
@@ -149,13 +208,13 @@ const OverviewChart: FunctionComponent< OverviewChartProps > = ( {
 
 	return (
 		<LineChart
-			data={ series }
+			data={ drawn }
 			withTooltips
 			withGradientFill
 			animation
 			height={ height }
 			curveType="monotone"
-			renderTooltip={ renderTooltipForUnit }
+			renderTooltip={ renderTooltipForRange }
 			margin={ MARGIN }
 			options={ options }
 		/>
