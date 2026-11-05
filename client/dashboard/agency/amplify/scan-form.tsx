@@ -196,7 +196,7 @@ export function WebsiteAddressPicker( {
 		setActiveIndex( -1 );
 	};
 	const handleKeyDown = ( event: React.KeyboardEvent< HTMLInputElement > ) => {
-		if ( event.key === 'Escape' && isOpen ) {
+		if ( event.key === 'Escape' && showSuggestions ) {
 			event.preventDefault();
 			setIsOpen( false );
 			setActiveIndex( -1 );
