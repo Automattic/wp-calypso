@@ -120,7 +120,8 @@ function DashboardOverviewBodyContent( {
 						? [
 								{
 									id: 'switch-to-new-dashboard',
-									label: __( 'Switch to the new dashboard' ),
+									label: __( 'Enable the new dashboard' ),
+									badge: __( 'Beta' ),
 									href: getDashboardOptInLink( 'helpful-links' ),
 								},
 							]

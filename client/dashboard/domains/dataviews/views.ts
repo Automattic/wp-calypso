@@ -36,6 +36,19 @@ export const DEFAULT_LAYOUTS = {
 	table: {},
 };
 
+/*
+ * DataViews renders nothing for a layout it wasn't given, including its reset control. A saved view can name one
+ * when a build that offers it shares the user's preferences, or after that layout is removed, so show it as a table instead.
+ */
+export function sanitizeDomainsListLayout( view: View ): View {
+	if ( view.type in DEFAULT_LAYOUTS ) {
+		return view;
+	}
+
+	const { layout, ...viewWithoutLayout } = view;
+	return { ...viewWithoutLayout, type: 'table', layout: DEFAULT_VIEW.layout } as View;
+}
+
 export function recordDomainViewChanges(
 	oldView: View,
 	newView: View,

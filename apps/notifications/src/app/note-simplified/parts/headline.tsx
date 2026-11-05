@@ -4,6 +4,7 @@ import {
 } from '@wordpress/components';
 import { html } from '../../../panel/indices-to-html';
 import NoteIcon from '../../note-icon';
+import NoteSummary from '../../templates/note-summary';
 import { useIsPendingApproval } from '../use-is-pending-approval';
 import NoteMeta from './note-meta';
 import PendingApproval from './pending-approval';
@@ -13,7 +14,7 @@ export default function Headline( { note }: { note: Note } ) {
 	const isPendingApproval = useIsPendingApproval( note );
 	const { actor, summary } = note.meta ?? {};
 	if ( ! summary || ! actor ) {
-		return null;
+		return <NoteSummary header={ note.header } url={ note.url } />;
 	}
 	const icon = <NoteIcon icon={ note.icon } size={ 36 } />;
 

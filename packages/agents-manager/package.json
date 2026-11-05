@@ -60,19 +60,19 @@
 		"@automattic/zendesk-client": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
 		"@wordpress/abilities": "^0.14.0",
-		"@wordpress/api-fetch": "^7.48.0",
+		"@wordpress/api-fetch": "^7.56.0",
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
 		"@wordpress/blocks": "^15.21.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^8.2.0",
 		"@wordpress/core-data": "^7.48.0",
-		"@wordpress/html-entities": "^4.48.0",
-		"@wordpress/i18n": "^6.21.0",
-		"@wordpress/icons": "^13.3.0",
-		"@wordpress/primitives": "^4.48.0",
-		"@wordpress/private-apis": "^1.51.0",
+		"@wordpress/html-entities": "^4.57.0",
+		"@wordpress/i18n": "^6.30.0",
+		"@wordpress/icons": "^15.5.0",
+		"@wordpress/primitives": "^4.56.0",
+		"@wordpress/private-apis": "^1.56.0",
 		"@wordpress/router": "^1.51.0",
-		"@wordpress/url": "^4.48.0",
+		"@wordpress/url": "^4.57.0",
 		"clsx": "^2.1.1",
 		"colord": "2.9.4",
 		"deepmerge": "^4.3.1",
@@ -97,7 +97,7 @@
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^10.48.0",
-		"@wordpress/element": "^8.0.0"
+		"@wordpress/element": "^10.0.0"
 	},
 	"private": true
 }

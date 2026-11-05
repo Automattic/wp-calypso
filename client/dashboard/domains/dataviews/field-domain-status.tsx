@@ -1,7 +1,12 @@
 import { DomainStatusCta } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Tooltip,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Icon, info } from '@wordpress/icons';
 import {
 	domainOverviewRoute,
 	domainConnectionSetupRoute,
@@ -9,6 +14,7 @@ import {
 } from '../../app/router/domains';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
+import { useIsDomainActivating } from './use-domain-activation';
 import type { DomainSummary } from '@automattic/api-core';
 
 const getCtaLink = ( domain: DomainSummary ) => {
@@ -55,10 +61,34 @@ export const DomainStatusField = ( {
 	domain: DomainSummary;
 	value: string;
 } ) => {
+	const isActivating = useIsDomainActivating( domain );
+
+	const activationTime = __( 'Can take up to 15 minutes' );
+
 	return (
 		<VStack spacing={ 1 }>
-			<Text intent={ domain.domain_status.type }>{ value }</Text>
-			{ domain.domain_status?.cta && getCtaLink( domain ) }
+			<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
+				<Text
+					intent={ isActivating ? undefined : domain.domain_status.type }
+					variant={ isActivating ? 'muted' : undefined }
+				>
+					{ isActivating ? __( 'Activating' ) : value }
+				</Text>
+				{ isActivating && (
+					<Tooltip text={ activationTime }>
+						<Text
+							variant="muted"
+							role="img"
+							aria-label={ activationTime }
+							tabIndex={ 0 }
+							style={ { display: 'flex' } }
+						>
+							<Icon icon={ info } style={ { fill: 'currentColor' } } />
+						</Text>
+					</Tooltip>
+				) }
+			</HStack>
+			{ ! isActivating && domain.domain_status?.cta && getCtaLink( domain ) }
 		</VStack>
 	);
 };

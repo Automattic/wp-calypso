@@ -44,7 +44,7 @@ yarn test-client --findRelatedTests <file>  # Find + run related tests
 - Avoid `__experimental*` components unless already used in the codebase.
 - Prefer `VStack`, `HStack` over `Flex` components.
 - Use the `Heading` component for headings, not `Text` (or raw elements) styled with heading mixins.
-- Minimize custom CSS; rely on the design system first.
+- Minimize custom CSS, inline `style={}` included; rely on the design system first. Before writing any CSS, check the component's prop types for a prop that already does it, and don't treat existing `style={}` overrides as precedent.
 
 ### CSS/SCSS
 

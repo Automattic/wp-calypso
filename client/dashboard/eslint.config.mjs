@@ -168,11 +168,6 @@ export default defineConfig( [
 								'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
 						},
 						{
-							name: '@automattic/api-queries',
-							importNames: [ 'sitesQuery', 'dashboardSiteListQuery', 'dashboardSiteFiltersQuery' ],
-							message: 'Use local queries exported from either context or useAppContext instead.',
-						},
-						{
 							name: '@wordpress/element',
 							importNames: [
 								'useState',

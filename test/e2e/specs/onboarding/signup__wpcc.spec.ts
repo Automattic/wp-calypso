@@ -66,7 +66,7 @@ test.describe(
 				const message = await emailClient.getLastMatchingMessage( {
 					inboxId: testUser.inboxId,
 					sentTo: testUser.email,
-					subject: 'Activate',
+					subject: 'Confirm your email address',
 				} );
 				const links = await emailClient.getLinksFromMessage( message );
 				activationLink = links.find( ( link: string ) => link.includes( 'activate' ) ) as string;

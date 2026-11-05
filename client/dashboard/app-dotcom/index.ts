@@ -1,18 +1,5 @@
-/* eslint-disable no-restricted-imports */
-import {
-	sitesQuery,
-	paginatedSitesQuery,
-	dashboardSiteFiltersQuery,
-	domainsQuery,
-} from '@automattic/api-queries';
-/* eslint-enable no-restricted-imports */
 import { isEnabled } from '@automattic/calypso-config';
 import boot from '../app/boot';
-import type {
-	FetchSitesOptions,
-	FetchPaginatedSitesOptions,
-	FetchDashboardSiteFiltersParams,
-} from '@automattic/api-core';
 import './style.scss';
 
 boot( {
@@ -46,16 +33,5 @@ boot( {
 		colorScheme: isEnabled( 'dark-mode' ),
 		darkMode: isEnabled( 'dark-mode' ),
 	},
-	components: {
-		sites: () => import( '../sites' ),
-		siteSwitcher: () => import( '../sites/site-switcher' ),
-	},
-	queries: {
-		sitesQuery: ( fetchSiteOptions?: FetchSitesOptions ) => sitesQuery( 'all', fetchSiteOptions ),
-		paginatedSitesQuery: ( fetchSiteOptions?: FetchPaginatedSitesOptions ) =>
-			paginatedSitesQuery( 'all', fetchSiteOptions ),
-		dashboardSiteFiltersQuery: ( fields: FetchDashboardSiteFiltersParams[ 'fields' ] ) =>
-			dashboardSiteFiltersQuery( 'all', fields ),
-		domainsQuery: () => domainsQuery(),
-	},
+	components: {},
 } );

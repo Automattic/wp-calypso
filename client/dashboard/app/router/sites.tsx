@@ -2,6 +2,7 @@ import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	bulkDomainUpdateStatusQuery,
+	domainsQuery,
 	userSettingsQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
@@ -614,11 +615,11 @@ export const siteDomainsRoute = createRoute( {
 	validateSearch: ( search ): { action?: 'change-site-address' } => ( {
 		action: search.action === 'change-site-address' ? 'change-site-address' : undefined,
 	} ),
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
 			queryClient.ensureQueryData( bulkDomainUpdateStatusQuery() ),
 		] );
@@ -869,12 +870,12 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -1887,8 +1888,7 @@ export const sitePlansRoute = createRoute( {
 );
 
 export const createSitesRoutes = ( config: AppConfig ) => {
-	const sitesComponent = config.components.sites;
-	if ( ! config.supports.sites || ! sitesComponent ) {
+	if ( ! config.supports.sites ) {
 		return [];
 	}
 
@@ -1989,7 +1989,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	return [
 		sitesRoute.lazy( () =>
-			sitesComponent().then( ( d ) =>
+			import( '../../sites' ).then( ( d ) =>
 				createLazyRoute( 'sites' )( {
 					component: d.default,
 				} )

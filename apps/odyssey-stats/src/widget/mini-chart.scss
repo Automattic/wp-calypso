@@ -27,6 +27,11 @@
 
 		&.is-views {
 			background-color: var(--chart-series-views);
+
+			// The views bar is drawn behind the visitors bar at the chart's comparison opacity.
+			&.is-bar {
+				opacity: 0.5;
+			}
 		}
 
 		&.is-visitors {
