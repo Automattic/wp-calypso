@@ -72,10 +72,15 @@ const reply = serverMessage( 3, 'agent', 'You have 12 products.' );
 // Each load is a new object, as a refetch returns.
 const mockLoadedConversation = ( messages: object[], pendingClientTools?: PendingClientTools ) =>
 	mockUseQuery.mockReturnValue( {
-		data: { messages: [ ...messages ], ...( pendingClientTools && { pendingClientTools } ) },
+		data: {
+			messages: [ ...messages ],
+			turnCount: 0,
+			...( pendingClientTools && { pendingClientTools } ),
+		},
 		error: null,
 		isError: false,
 		isLoading: false,
+		isFetchedAfterMount: true,
 	} );
 
 const lastQueryOptions = () => mockUseQuery.mock.calls.at( -1 )[ 0 ];
@@ -220,6 +225,57 @@ describe( 'useConversation', () => {
 			expect( result.current.notice ).toBeUndefined();
 		} );
 
+		it( 'marks a copy requested while a turn runs', async () => {
+			renderHook( () => useConversation( {} ) );
+			mockIsTurnInFlight.mockReturnValue( true );
+			mockLoadAllMessagesFromServer.mockResolvedValue( { messages: [ question ] } );
+
+			const result = await lastQueryOptions().queryFn();
+
+			expect( result.isRequestedMidTurn ).toBe( true );
+		} );
+
+		it( 'keeps the live history over a copy requested mid-turn once the turn is over', () => {
+			const onSuccess = jest.fn();
+			mockUseQuery.mockReturnValue( {
+				data: { messages: [ question ], turnCount: 0, isRequestedMidTurn: true },
+				error: null,
+				isError: false,
+				isLoading: false,
+				isFetchedAfterMount: true,
+			} );
+
+			const { result } = renderWaitingConversation( onSuccess );
+
+			expect( onSuccess ).toHaveBeenCalledWith( [ question ], 'orchestrator-session', true );
+			expect( lastQueryOptions().refetchInterval ).toBe( false );
+			expect( result.current.notice ).toBeUndefined();
+		} );
+
+		it( 'leaves a copy an earlier mount cached to this mount’s fetch', () => {
+			const onSuccess = jest.fn();
+			mockUseQuery.mockReturnValue( {
+				data: { messages: [ question ], turnCount: 0 },
+				error: null,
+				isError: false,
+				isLoading: false,
+				isFetchedAfterMount: false,
+			} );
+
+			const { rerender } = renderWaitingConversation( onSuccess );
+
+			expect( onSuccess ).not.toHaveBeenCalled();
+
+			mockLoadedConversation( [ question, reply ] );
+			rerender();
+
+			expect( onSuccess ).toHaveBeenCalledWith(
+				[ question, reply ],
+				'orchestrator-session',
+				false
+			);
+		} );
+
 		it.each( [
 			[ 'the agent starts a turn', true, true ],
 			[ 'the chat starts processing', false, false ],
@@ -272,6 +328,34 @@ describe( 'useConversation', () => {
 				queryKey: [ 'agents-manager-conversation', 'orchestrator-session' ],
 				exact: true,
 			} );
+		} );
+
+		it( 'marks a copy with the turns that had started when it was requested', async () => {
+			const { rerender } = renderHook(
+				( props: { waitForReply: boolean } ) => useConversation( props ),
+				{ initialProps: { waitForReply: true } }
+			);
+
+			rerender( { waitForReply: false } );
+			mockLoadAllMessagesFromServer.mockResolvedValue( { messages: [ question ] } );
+
+			const result = await lastQueryOptions().queryFn();
+
+			expect( result.turnCount ).toBe( 1 );
+		} );
+
+		it( 'keeps the live history over a copy requested before a turn that started since', () => {
+			const onSuccess = jest.fn();
+			const { rerender } = renderHook(
+				( props: { waitForReply: boolean } ) => useConversation( { ...props, onSuccess } ),
+				{ initialProps: { waitForReply: true } }
+			);
+
+			rerender( { waitForReply: false } );
+			mockLoadedConversation( [ question ] );
+			rerender( { waitForReply: true } );
+
+			expect( onSuccess ).toHaveBeenCalledWith( [ question ], 'orchestrator-session', true );
 		} );
 
 		it.each( [

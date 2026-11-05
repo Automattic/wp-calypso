@@ -1,4 +1,6 @@
-// Frame, columns, list cards, and preview pane come from the onboarding
+@import '@automattic/typography/styles/variables';
+
+// Frame, columns, card borders, and preview pane come from the onboarding
 // discover step (`.subscribe-modal`); this file only adds the 4 for 4 pieces.
 .four-for-four-modal {
 	&__progress {
@@ -54,20 +56,38 @@
 	}
 }
 
-// Let the byline use the card's full width: the subscribe control sits over
-// the top-right corner instead of taking a column of its own, and only the
-// title line reserves room for it.
-.subscribe-modal.four-for-four-modal
-	.subscribe-modal__site-list-column
-	.reader-subscription-list-item {
-	.reader-subscription-list-item__options {
-		position: absolute;
-		top: 12px;
-		inset-inline-end: 12px;
-	}
+.four-for-four-modal__site {
+	display: flex;
+	align-items: flex-start;
+	gap: 12px;
+	width: 100%;
+	background: none;
+	color: var( --color-text );
+	font: inherit;
+	text-align: start;
+}
 
-	.reader-subscription-list-item__site-title {
-		display: block;
-		padding-inline-end: 28px;
-	}
+.four-for-four-modal__site-byline {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	line-height: 18px;
+}
+
+.four-for-four-modal__site-name {
+	font-size: $font-body-small;
+	font-weight: 600;
+	color: var( --color-neutral-100 );
+	overflow-wrap: anywhere;
+}
+
+.four-for-four-modal__site-description {
+	display: -webkit-box;
+	overflow: hidden;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	font-size: $font-body-extra-small;
+	color: var( --color-neutral-70 );
 }

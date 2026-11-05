@@ -82,18 +82,8 @@ function InfluencedRevenueStrapline( {
 
 const formatAmount = ( value: number ) => formatCurrency( value, 'USD', { stripZeros: true } );
 
-const TOP_TIER_LEVEL = Math.max( ...ALL_TIERS.map( ( tier ) => tier.level ) );
-const PRO_TIER_LEVEL = 2;
-
-/**
- * Pro and VIP Pro both grow toward Premier, as the Overview growth card says.
- */
 function getNextTier( currentTier: TierItem ) {
-	if ( currentTier.level >= TOP_TIER_LEVEL ) {
-		return undefined;
-	}
-	const nextLevel = currentTier.level >= PRO_TIER_LEVEL ? TOP_TIER_LEVEL : currentTier.level + 1;
-	return ALL_TIERS.find( ( tier ) => tier.level === nextLevel );
+	return ALL_TIERS.find( ( tier ) => tier.level === currentTier.level + 1 );
 }
 
 function getProgress( currentTier: TierItem, total: number ) {

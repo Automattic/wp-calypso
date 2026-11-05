@@ -28,8 +28,8 @@ interface UseConversationHydrationOptions {
 /**
  * Loads the saved conversation from the server and fills the chat with it,
  * unless the chat already holds a newer history: a pending navigation resume,
- * or a turn still running after a remount. `useConversation` skips Reader
- * Chat, which has no server history.
+ * or a turn that ran while the copy was fetched. `useConversation` skips
+ * Reader Chat, which has no server history.
  *
  * A turn paused on a browser tool whose page went away has no one left to
  * answer it, so this page answers it and the reply streams in here.
@@ -70,7 +70,7 @@ export function useConversationHydration( {
 		waitForReply: ! isProcessing,
 		onRetry,
 		onResume: resumeToolCalls,
-		onSuccess: ( loadedMessages, serverSessionId ) => {
+		onSuccess: ( loadedMessages, serverSessionId, isStale ) => {
 			const agentId = agentConfig!.agentId;
 
 			// The agent may have been discarded (e.g. a site switch) while this
@@ -82,14 +82,14 @@ export function useConversationHydration( {
 
 			onFetch( loadedMessages );
 
-			// Keep the live history while a turn is in flight: a remount mid-turn
+			// Keep the live history when it is the newer one: a remount mid-turn
 			// (History and back, reopening the panel) fetches a transcript without
 			// the reply yet. With a resume pending, the tab's store holds the parked
 			// call's conversation, so hydrate only if its restore came up empty
 			// (e.g. a quota-failed persist). Read the manager, not React state:
 			// `messages` stays empty until the async agent init lands.
 			const hasNewerLiveHistory =
-				agentManager.isTurnInFlight( agentId ) ||
+				isStale ||
 				( hadParkedNavigation && agentManager.getConversationHistory( agentId ).length > 0 );
 			if ( ! hasNewerLiveHistory ) {
 				onHistoryLoad();

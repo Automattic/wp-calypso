@@ -16,20 +16,15 @@ $credits-meter-muted-foreground: color-mix(
 		min-width: 32px;
 		padding: 0;
 		border-radius: 50%;
-		color: var( --color-muted-foreground );
 
+		// A translucent tint, so the hover follows whichever composer surface sits behind it.
 		&:hover:not( :disabled ),
 		&[aria-expanded='true'] {
-			background-color: var( --color-muted );
-			color: var( --color-foreground );
-		}
+			background-color: color-mix( in srgb, var( --color-foreground ) 5%, transparent );
 
-		// Low or out: the alert icon on a 20% red tint in every state, per the Figma spec.
-		&.is-alert,
-		&.is-alert:hover:not( :disabled ),
-		&.is-alert[aria-expanded='true'] {
-			background-color: color-mix( in srgb, var( --color-error-accent ) 20%, transparent );
-			color: var( --color-error-strong );
+			.agenttic.dark & {
+				background-color: color-mix( in srgb, var( --color-input-border ) 30%, transparent );
+			}
 		}
 
 		// Show the focus ring for keyboard focus only.
@@ -37,6 +32,12 @@ $credits-meter-muted-foreground: color-mix(
 			box-shadow: none;
 			outline: none;
 		}
+	}
+
+	// The arc is hidden at 0%, so the track is the toggle's only mark. The muted text grey
+	// keeps it at 3:1 on the composer and on the hover tint.
+	.agents-manager-credits-meter__ring--empty {
+		--color-progress-ring-track: var( --color-muted-foreground );
 	}
 }
 
@@ -73,6 +74,13 @@ $credits-meter-muted-foreground: color-mix(
 .agents-manager-credits-meter__show-credits.components-button {
 	margin-inline-start: auto;
 	color: color-mix( in srgb, var( --color-foreground ) 80%, var( --color-popover ) );
+}
+
+.agents-manager-credits-meter__total {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 600;
+	line-height: 1.5;
 }
 
 .agents-manager-credits-meter__manage.components-button {
