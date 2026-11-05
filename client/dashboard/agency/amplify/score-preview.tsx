@@ -287,6 +287,7 @@ function ScoreCard( {
 export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 	const [ displayMode, setDisplayMode ] = useState( mode );
 	const [ isExpanded, setIsExpanded ] = useState( false );
+	const anchor = useRef< HTMLDivElement >( null );
 	const humanSheet = useRef< HTMLDivElement >( null );
 	const aiSheet = useRef< HTMLDivElement >( null );
 	const activeShuffle = useRef< {
@@ -298,9 +299,19 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 			return;
 		}
 		const handleKeyDown = ( event: KeyboardEvent ) => {
-			if ( event.key === 'Escape' ) {
-				setIsExpanded( false );
+			if ( event.key !== 'Escape' || event.defaultPrevented ) {
+				return;
 			}
+			// Leave Escape to whatever else has focus, such as another popover.
+			const focused = anchor.current?.ownerDocument.activeElement;
+			if (
+				focused &&
+				focused !== focused.ownerDocument.body &&
+				! anchor.current?.contains( focused )
+			) {
+				return;
+			}
+			setIsExpanded( false );
 		};
 		window.addEventListener( 'keydown', handleKeyDown );
 		return () => {
@@ -387,6 +398,7 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 
 	return (
 		<div
+			ref={ anchor }
 			className="dashboard-amplify-score-preview__anchor"
 			data-mode={ displayMode }
 			data-expanded={ isExpanded }
