@@ -6,20 +6,24 @@ const AUTH_TYPES_WITHOUT_NOTIFICATION = [ 'authenticator', 'backup' ];
  * fails with "two_step_nonce required." whatever code the user enters.
  * SMS and email are only the default once that notification was actually sent.
  * @param {Object}    options
- * @param {?string[]} options.supportedAuthTypes Methods the server advertised for this login
- * @param {?string}   options.notificationSent   Notification the server sent (push, sms, email or none)
- * @param {boolean}   options.isBrowserSupported Whether this browser supports WebAuthn
+ * @param {?string[]} options.supportedAuthTypes           Methods the server advertised for this login
+ * @param {?string}   options.notificationSent             Notification the server sent (push, sms, email or none)
+ * @param {boolean}   options.isWebAuthnSupportedByBrowser Whether this browser supports WebAuthn
  * @returns {string} The two-step auth type to show
  */
 export function getDefaultTwoFactorAuthType( {
 	supportedAuthTypes,
 	notificationSent,
-	isBrowserSupported,
+	isWebAuthnSupportedByBrowser,
 } ) {
 	const authTypes = supportedAuthTypes ?? [];
-	const isSecurityKeySupported = authTypes.includes( 'webauthn' );
+	const isSecurityKeySupportedByServer = authTypes.includes( 'webauthn' );
 
-	if ( isBrowserSupported && isSecurityKeySupported && notificationSent !== 'push' ) {
+	if (
+		isWebAuthnSupportedByBrowser &&
+		isSecurityKeySupportedByServer &&
+		notificationSent !== 'push'
+	) {
 		return 'webauthn';
 	}
 
@@ -35,7 +39,7 @@ export function getDefaultTwoFactorAuthType( {
 	}
 
 	// The security key step tells the user this browser can't continue.
-	if ( isSecurityKeySupported ) {
+	if ( isSecurityKeySupportedByServer ) {
 		return 'webauthn';
 	}
 

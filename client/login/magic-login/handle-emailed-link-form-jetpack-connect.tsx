@@ -93,7 +93,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 					twoFactorAuthType: getDefaultTwoFactorAuthType( {
 						supportedAuthTypes: twoFactorSupportedAuthTypes,
 						notificationSent: twoFactorNotificationSent,
-						isBrowserSupported: isWebAuthnSupported(),
+						isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
 					} ),
 					redirectTo: redirectToSanitized ?? undefined,
 				} )

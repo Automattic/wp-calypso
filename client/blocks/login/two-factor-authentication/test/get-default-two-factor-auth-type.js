@@ -2,7 +2,7 @@ import { getDefaultTwoFactorAuthType } from '../get-default-two-factor-auth-type
 
 describe( 'getDefaultTwoFactorAuthType', () => {
 	describe( 'when the browser supports WebAuthn', () => {
-		const isBrowserSupported = true;
+		const isWebAuthnSupportedByBrowser = true;
 
 		test.each( [ 'none', 'sms', 'email' ] )(
 			'uses the security key when advertised and %s was sent',
@@ -11,7 +11,7 @@ describe( 'getDefaultTwoFactorAuthType', () => {
 					getDefaultTwoFactorAuthType( {
 						supportedAuthTypes: [ 'webauthn', 'authenticator', 'backup', 'sms' ],
 						notificationSent,
-						isBrowserSupported,
+						isWebAuthnSupportedByBrowser,
 					} )
 				).toBe( 'webauthn' );
 			}
@@ -22,7 +22,7 @@ describe( 'getDefaultTwoFactorAuthType', () => {
 				getDefaultTwoFactorAuthType( {
 					supportedAuthTypes: [ 'webauthn', 'push', 'backup' ],
 					notificationSent: 'push',
-					isBrowserSupported,
+					isWebAuthnSupportedByBrowser,
 				} )
 			).toBe( 'push' );
 		} );
@@ -32,14 +32,14 @@ describe( 'getDefaultTwoFactorAuthType', () => {
 				getDefaultTwoFactorAuthType( {
 					supportedAuthTypes: [ 'backup', 'sms' ],
 					notificationSent: 'none',
-					isBrowserSupported,
+					isWebAuthnSupportedByBrowser,
 				} )
 			).toBe( 'backup' );
 		} );
 	} );
 
 	describe( 'when the browser does not support WebAuthn', () => {
-		const isBrowserSupported = false;
+		const isWebAuthnSupportedByBrowser = false;
 
 		test.each( [
 			[ 'the security key step', [ 'webauthn' ], 'webauthn' ],
@@ -54,7 +54,7 @@ describe( 'getDefaultTwoFactorAuthType', () => {
 					getDefaultTwoFactorAuthType( {
 						supportedAuthTypes,
 						notificationSent: 'none',
-						isBrowserSupported,
+						isWebAuthnSupportedByBrowser,
 					} )
 				).toBe( expected );
 			}
@@ -67,7 +67,7 @@ describe( 'getDefaultTwoFactorAuthType', () => {
 					getDefaultTwoFactorAuthType( {
 						supportedAuthTypes: [ 'webauthn', 'push', 'sms', 'email', 'backup' ],
 						notificationSent,
-						isBrowserSupported,
+						isWebAuthnSupportedByBrowser,
 					} )
 				).toBe( notificationSent );
 			}
@@ -81,7 +81,7 @@ describe( 'getDefaultTwoFactorAuthType', () => {
 				getDefaultTwoFactorAuthType( {
 					supportedAuthTypes,
 					notificationSent: 'none',
-					isBrowserSupported: true,
+					isWebAuthnSupportedByBrowser: true,
 				} )
 			).toBe( 'authenticator' );
 		}
