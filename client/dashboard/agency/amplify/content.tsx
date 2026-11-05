@@ -20,7 +20,7 @@ export default function AmplifyContent( {
 } ) {
 	const { agencyId, state, usage, usageStatus, tierId } = page;
 	return (
-		<div className="dashboard-amplify-view">
+		<VStack spacing={ 0 } className="dashboard-amplify-view">
 			{ state === 'empty' && (
 				<Card>
 					<AmplifyReportCreator
@@ -62,6 +62,6 @@ export default function AmplifyContent( {
 					</Button>
 				</VStack>
 			) }
-		</div>
+		</VStack>
 	);
 }
