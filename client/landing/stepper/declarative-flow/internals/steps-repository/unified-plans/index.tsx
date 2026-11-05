@@ -52,7 +52,7 @@ const PlansStepAdaptor: StepType< {
 		selectedFeature?: string;
 		displayedIntervals?: SupportedIntervalTypes[];
 		headerText?: string;
-		subHeaderText?: string;
+		subHeaderText?: TranslateResult;
 		showExistingSiteLink?: boolean;
 		hideFreePlan?: boolean;
 		hideEnterprisePlan?: boolean;

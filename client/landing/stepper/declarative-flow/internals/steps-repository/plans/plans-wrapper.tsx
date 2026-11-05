@@ -1,12 +1,7 @@
 import config from '@automattic/calypso-config';
 import { PRODUCT_1GB_SPACE } from '@automattic/calypso-products';
 import { Button } from '@automattic/components';
-import {
-	isNewsletterFlow,
-	NEWSLETTER_FLOW,
-	NEW_HOSTED_SITE_FLOW,
-	isDomainAndPlanFlow,
-} from '@automattic/onboarding';
+import { isNewsletterFlow, NEWSLETTER_FLOW, NEW_HOSTED_SITE_FLOW } from '@automattic/onboarding';
 import { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 import { useDesktopBreakpoint } from '@automattic/viewport-react';
 import { useSelect, useDispatch } from '@wordpress/data';
@@ -87,7 +82,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	const stepName = 'plans';
 	const customerType = 'personal';
 	const headerText = __( 'Choose a plan' );
-	const isInSignup = isDomainAndPlanFlow( flowName ) ? false : true;
 	/**
 	 * isWordCampPromo is temporary
 	 */
@@ -165,7 +159,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					siteId={ site?.ID }
 					displayedIntervals={ [ 'yearly', '2yearly', '3yearly', 'monthly' ] }
 					hideFreePlan={ hideFreePlan }
-					isInSignup={ isInSignup }
+					isInSignup
 					isStepperUpgradeFlow
 					intervalType={ getIntervalType() }
 					onUpgradeClick={ onUpgradeClick }
@@ -178,7 +172,7 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 					removePaidDomain={ removePaidDomain }
 					setSiteUrlAsFreeDomainSuggestion={ setSiteUrlAsFreeDomainSuggestion }
 					showPlanTypeSelectorDropdown={ config.isEnabled( 'onboarding/interval-dropdown' ) }
-					hidePlanTypeSelector={ isWordCampPromo || isDomainAndPlanFlow( flowName ) }
+					hidePlanTypeSelector={ isWordCampPromo }
 					onPlanIntervalUpdate={ onPlanIntervalUpdate }
 					coupon={ couponCode }
 				/>
@@ -187,14 +181,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 	};
 
 	const getHeaderText = () => {
-		if ( isDomainAndPlanFlow( flowName ) && domainCartItem?.meta ) {
-			return __( 'Your domain name is ready' );
-		}
-
-		if ( isDomainAndPlanFlow( flowName ) ) {
-			return __( 'Choose the perfect plan' );
-		}
-
 		if ( isNewsletterFlow( flowName ) ) {
 			return __( "There's a plan for you." );
 		}
@@ -213,20 +199,6 @@ const PlansWrapper: React.FC< Props > = ( props ) => {
 
 		if ( isNewsletterFlow( flowName ) ) {
 			return;
-		}
-
-		if ( isDomainAndPlanFlow( flowName ) && domainCartItem?.meta ) {
-			return translate(
-				'Get {{strong}}%(domainName)s{{/strong}} free for the first year with any annual plan.',
-				{
-					args: {
-						domainName: domainCartItem.meta,
-					},
-					components: {
-						strong: <strong />,
-					},
-				}
-			);
 		}
 
 		if ( ! hideFreePlan ) {

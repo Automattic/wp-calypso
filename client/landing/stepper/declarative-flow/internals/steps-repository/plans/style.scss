@@ -137,31 +137,8 @@
 	}
 }
 
-.domain-and-plan.plans {
-	.signup-header h1 {
-		display: none;
-	}
-
-	.step-wrapper__header,
-	#step-header {
-		margin-top: 0;
-		margin-bottom: 24px;
-	}
-
-	button.button.navigation-link.is-borderless {
-		background: none;
-		border: none;
-		color: var( --studio-gray-100 );
-		font-size: 0.875rem;
-		font-weight: 600;
-		padding: 0;
-		text-decoration: none;
-	}
-}
-
 // Override styles for newsletter flow
-.newsletter.plans,
-.domain-and-plan.plans {
+.newsletter.plans {
 	.step-container {
 		.step-wrapper__header {
 			.formatted-header {

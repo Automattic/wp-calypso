@@ -1,4 +1,4 @@
-import { isDomainAndPlanFlow, StepContainer } from '@automattic/onboarding';
+import { StepContainer } from '@automattic/onboarding';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { useQuery } from '../../../../hooks/use-query';
 import PlansWrapper from './plans-wrapper';
@@ -10,7 +10,6 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 const plans: Step< {
 	submits: {
 		plan: MinimalRequestCartProduct | null;
-		goToCheckout: boolean;
 		// Fake type just to make the this step types isomorphic to unified-plans.
 		cartItems?: undefined;
 	};
@@ -22,12 +21,7 @@ const plans: Step< {
 	const plan = queryParams.plan;
 
 	const handleSubmit = ( plan: MinimalRequestCartProduct | null ) => {
-		const providedDependencies = {
-			plan,
-			goToCheckout: isDomainAndPlanFlow( flow ),
-		};
-
-		submit?.( providedDependencies );
+		submit?.( { plan } );
 	};
 
 	// If we have a plan from URL params, submit it immediately and don't render anything
@@ -35,8 +29,6 @@ const plans: Step< {
 		handleSubmit( { product_slug: plan } );
 		return null;
 	}
-
-	const isAllowedToGoBack = isDomainAndPlanFlow( flow );
 
 	return (
 		<StepContainer
@@ -47,7 +39,7 @@ const plans: Step< {
 			isExtraWideLayout
 			hideFormattedHeader
 			isLargeSkipLayout={ false }
-			hideBack={ ! isAllowedToGoBack }
+			hideBack
 			stepContent={ <PlansWrapper flowName={ flow } onSubmit={ handleSubmit } /> }
 			recordTracksEvent={ recordTracksEvent }
 		/>

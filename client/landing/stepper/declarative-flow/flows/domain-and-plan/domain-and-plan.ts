@@ -3,9 +3,10 @@ import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { updateLaunchpadSettings, useLaunchpad } from '@automattic/launchpad';
 import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { __, sprintf } from '@wordpress/i18n';
+import { __ } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
-import { useEffect, useRef } from 'react';
+import { useTranslate } from 'i18n-calypso';
+import { createElement, useRef } from 'react';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { hasPlanFeature } from 'calypso/dashboard/utils/site-features';
 import wpcom from 'calypso/lib/wp';
@@ -15,13 +16,20 @@ import { useQuery } from '../../../hooks/use-query';
 import { useSite } from '../../../hooks/use-site';
 import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
+import { getCurrentQueryParams } from '../../../utils/get-current-query-params';
 import { getSingleMappingDomain } from '../../../utils/get-single-mapping-domain';
 import { STEPS } from '../../internals/steps';
-import { AssertConditionState } from '../../internals/types';
 import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 function initialize() {
+	const query = getCurrentQueryParams();
+
+	if ( ! query.get( 'siteSlug' ) && ! query.get( 'siteId' ) ) {
+		window.location.replace( '/sites' );
+		return false;
+	}
+
 	return [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.UNIFIED_PLANS ];
 }
 
@@ -49,26 +57,39 @@ const domainUpsell: FlowV2< typeof initialize > = {
 	initialize,
 
 	useStepsProps() {
-		const domainCartItem = useSelect(
-			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
-			[]
-		);
-		const domainName = domainCartItem?.meta;
+		const translate = useTranslate();
+		const { domainCartItem, signupDomainOrigin } = useSelect( ( select ) => {
+			const onboard = select( ONBOARD_STORE ) as OnboardSelect;
+
+			return {
+				domainCartItem: onboard.getDomainCartItem(),
+				signupDomainOrigin: onboard.getSignupDomainOrigin(),
+			};
+		}, [] );
+		// Only a registration comes free with the plan; a domain the user already owns is
+		// connected or transferred instead.
+		const registeredDomainName =
+			signupDomainOrigin === SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN
+				? undefined
+				: domainCartItem?.meta;
 
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				// The site already exists, so price the plans as an upgrade.
 				isInSignup: false,
 				isStepperUpgradeFlow: true,
+				hideFreePlan: true,
 				hidePlanTypeSelector: true,
-				headerText: domainName
+				headerText: registeredDomainName
 					? __( 'Your domain name is ready' )
 					: __( 'Choose the perfect plan' ),
-				subHeaderText: domainName
-					? sprintf(
-							/* translators: %(domainName)s is the domain the user picked, like example.com. */
-							__( 'Get %(domainName)s free for the first year with any annual plan.' ),
-							{ domainName }
+				subHeaderText: registeredDomainName
+					? translate(
+							'Get {{strong}}%(domainName)s{{/strong}} free for the first year with any annual plan.',
+							{
+								args: { domainName: registeredDomainName },
+								components: { strong: createElement( 'strong' ) },
+							}
 						)
 					: undefined,
 			},
@@ -128,9 +149,11 @@ const domainUpsell: FlowV2< typeof initialize > = {
 			const domainCartItems = getDomainCartItems() ?? [];
 			const cartItems = [ ...planCartItems, ...domainCartItems ];
 
-			if ( cartItems.length > 0 ) {
-				await addProductsToCart( siteSlug, DOMAIN_AND_PLAN_FLOW, cartItems );
+			if ( cartItems.length === 0 ) {
+				return window.location.assign( returnUrl );
 			}
+
+			await addProductsToCart( siteSlug, DOMAIN_AND_PLAN_FLOW, cartItems );
 
 			return window.location.assign(
 				`/checkout/${ siteSlug }?redirect_to=${ encodeURIComponent(
@@ -263,30 +286,14 @@ const domainUpsell: FlowV2< typeof initialize > = {
 						checklist_statuses: { plan_completed: true },
 					} );
 
-					// The plan comes first, followed by any add-ons picked alongside it.
+					// The plan comes first, followed by any add-ons picked alongside it. `null` means
+					// the user kept the free plan, which leaves just the domain to buy.
 					return addToCartAndRedirectToCheckout( providedDependencies?.cartItems ?? [] );
 				}
 			}
 		};
 
 		return { submit, goBack };
-	},
-	useAssertConditions() {
-		const siteSlug = useSiteSlug();
-
-		if ( ! siteSlug ) {
-			window.location.assign( '/sites' );
-			return { state: AssertConditionState.FAILURE, message: 'siteSlug is required' };
-		}
-
-		return { state: AssertConditionState.SUCCESS };
-	},
-	useSideEffect() {
-		const { setHideFreePlan } = useDispatch( ONBOARD_STORE ) as OnboardActions;
-
-		useEffect( () => {
-			setHideFreePlan( true );
-		}, [ setHideFreePlan ] );
 	},
 };
 

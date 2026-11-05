@@ -11,18 +11,22 @@ import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const mockSetDomainCartItem = jest.fn();
 const mockSetDomainCartItems = jest.fn();
+const mockGetDomainCartItem = jest.fn( (): MinimalRequestCartProduct | null => null );
 const mockGetDomainCartItems = jest.fn( (): MinimalRequestCartProduct[] => [] );
+const mockGetSignupDomainOrigin = jest.fn( (): string | undefined => undefined );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		setDomainCartItem: mockSetDomainCartItem,
 		setDomainCartItems: mockSetDomainCartItems,
 		setSignupDomainOrigin: jest.fn(),
-		setHideFreePlan: jest.fn(),
 	} ),
-	useSelect: () => ( {
-		getDomainCartItems: mockGetDomainCartItems,
-	} ),
+	useSelect: ( selector: ( select: () => unknown ) => unknown ) =>
+		selector( () => ( {
+			getDomainCartItem: mockGetDomainCartItem,
+			getDomainCartItems: mockGetDomainCartItems,
+			getSignupDomainOrigin: mockGetSignupDomainOrigin,
+		} ) ),
 } ) );
 
 jest.mock( '@automattic/launchpad', () => ( {
@@ -81,6 +85,7 @@ const FREE_SITE = {
 	},
 };
 
+const REGISTRATION_CART_ITEM = { product_slug: 'dotcom_domain', meta: 'example.com' };
 const MAPPING_CART_ITEM = { product_slug: 'domain_map', meta: 'example.com' };
 const TRANSFER_CART_ITEM = { product_slug: 'domain_transfer', meta: 'example.com' };
 const PAID_MONTHLY_SITE = {
@@ -374,5 +379,73 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 				'/home/example.wordpress.com'
 			) }`
 		);
+	} );
+
+	it( 'buys just the domain when the user keeps the free plan', async () => {
+		mockGetDomainCartItems.mockReturnValue( [ REGISTRATION_CART_ITEM ] );
+
+		await submitStep( 'plans', { cartItems: null } );
+
+		expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'domain-and-plan', [
+			REGISTRATION_CART_ITEM,
+		] );
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(
+				'/home/example.wordpress.com'
+			) }`
+		);
+	} );
+
+	it( 'returns to the site instead of opening an empty checkout', async () => {
+		mockQueryArgs = 'back_to=/domains/manage/example.wordpress.com';
+
+		await submitStep( 'plans', { cartItems: null } );
+
+		expect( addProductsToCart ).not.toHaveBeenCalled();
+		expect( window.location.assign ).toHaveBeenCalledWith(
+			'/domains/manage/example.wordpress.com'
+		);
+	} );
+} );
+
+describe( 'domain-and-plan flow plans step copy', () => {
+	beforeEach( () => {
+		jest.clearAllMocks();
+		mockGetDomainCartItem.mockReturnValue( null );
+		mockGetSignupDomainOrigin.mockReturnValue( undefined );
+	} );
+
+	const renderPlansProps = () => {
+		const { result } = renderHook( () => domainAndPlan.useStepsProps?.() );
+
+		return result.current?.plans;
+	};
+
+	it( 'promotes the free first year for a domain the user is registering', () => {
+		mockGetDomainCartItem.mockReturnValue( REGISTRATION_CART_ITEM );
+		mockGetSignupDomainOrigin.mockReturnValue( 'custom' );
+
+		expect( renderPlansProps() ).toMatchObject( {
+			headerText: 'Your domain name is ready',
+			hideFreePlan: true,
+		} );
+		expect( renderPlansProps()?.subHeaderText ).toBeDefined();
+	} );
+
+	it( 'does not promise a free year for a domain the user already owns', () => {
+		mockGetDomainCartItem.mockReturnValue( MAPPING_CART_ITEM );
+		mockGetSignupDomainOrigin.mockReturnValue( 'use-your-domain' );
+
+		expect( renderPlansProps() ).toMatchObject( {
+			headerText: 'Choose the perfect plan',
+			subHeaderText: undefined,
+		} );
+	} );
+
+	it( 'asks for a plan when no domain was picked', () => {
+		expect( renderPlansProps() ).toMatchObject( {
+			headerText: 'Choose the perfect plan',
+			subHeaderText: undefined,
+		} );
 	} );
 } );

@@ -10,12 +10,15 @@ domain CTAs, the launchpad domain task and the customer home domain upsell.
 2. Verify: every step renders the default Stepper header (a top bar with the Back button),
    not the legacy WordPress logo header.
 3. Search for a domain, pick a suggestion and continue.
-4. Verify: the plans step opens with the picked domain named in its heading and no billing
-   interval selector; the Back button returns to the domain search.
+4. Verify: the plans step opens with the picked domain named in its heading, no free plan and
+   no billing interval selector; the Back button returns to the domain search.
 5. Pick a plan.
 6. Verify: checkout opens with the plan and the domain in the cart.
-7. Repeat with a site on a yearly paid plan.
-8. Verify: picking a domain goes straight to checkout, skipping the plans step.
+7. Go back, choose "Use a domain I own", enter a domain you own and continue.
+8. Verify: the plans step reads "Choose the perfect plan" without the free first year promise.
+9. Repeat with a site on a yearly paid plan.
+10. Verify: picking a domain goes straight to checkout, skipping the plans step.
+11. Open `/setup/domain-and-plan` without a `siteSlug` and verify it redirects to `/sites`.
 
 ## Owned by
 
