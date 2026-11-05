@@ -6,29 +6,6 @@ import {
 } from '../dataviews/views';
 import type { View } from '@wordpress/dataviews';
 
-describe( 'sanitizeDomainsListLayout', () => {
-	test( 'returns the same view when its layout is available', () => {
-		const view: View = { type: 'table', layout: { density: 'compact' } };
-
-		expect( sanitizeDomainsListLayout( view ) ).toBe( view );
-	} );
-
-	test( 'shows a view as a table when its layout is not available, keeping its settings', () => {
-		const sort = { field: 'expiry', direction: 'desc' as const };
-		const filters = [ { field: 'owner', operator: 'isAny' as const, value: [ 'owned-by-me' ] } ];
-
-		expect(
-			sanitizeDomainsListLayout( {
-				type: 'grid',
-				layout: { previewSize: 290 },
-				sort,
-				filters,
-				perPage: 24,
-			} )
-		).toEqual( { type: 'table', layout: { density: 'balanced' }, sort, filters, perPage: 24 } );
-	} );
-} );
-
 describe( 'sanitizeDomainFields', () => {
 	test( 'drops the removed SSL field from a saved view', () => {
 		expect( sanitizeDomainFields( [ 'blog_name', 'ssl_status', 'expiry' ] ) ).toEqual( [
@@ -64,6 +41,30 @@ describe( 'sanitizeDomainsListPageSize', () => {
 		const view: View = { type: 'grid' };
 
 		expect( sanitizeDomainsListPageSize( view ) ).toBe( view );
+	} );
+} );
+
+describe( 'sanitizeDomainsListLayout', () => {
+	test( 'returns the same view when its layout is available', () => {
+		const tableView: View = { type: 'table', layout: { density: 'compact' } };
+		const gridView: View = { type: 'grid', layout: { previewSize: 290 } };
+
+		expect( sanitizeDomainsListLayout( tableView ) ).toBe( tableView );
+		expect( sanitizeDomainsListLayout( gridView ) ).toBe( gridView );
+	} );
+
+	test( 'shows a view as a table when its layout is not available, keeping its settings', () => {
+		const sort = { field: 'expiry', direction: 'desc' as const };
+		const filters = [ { field: 'owner', operator: 'isAny' as const, value: [ 'owned-by-me' ] } ];
+
+		expect(
+			sanitizeDomainsListLayout( {
+				type: 'list',
+				sort,
+				filters,
+				perPage: 24,
+			} )
+		).toEqual( { type: 'table', layout: { density: 'balanced' }, sort, filters, perPage: 24 } );
 	} );
 } );
 
