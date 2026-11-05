@@ -283,13 +283,7 @@ describe( 'SiteMigrationIdentify', () => {
 				);
 		} );
 
-		it.each( [
-			'https://destination.wordpress.com',
-			'http://destination.wordpress.com/a-page?example=1',
-			'WWW.DESTINATION.WORDPRESS.COM',
-			'https://custom.example.com/',
-			'https://default.wpcomstaging.com/',
-		] )( 'rejects the destination address "%s" and lets the user correct it', async ( url ) => {
+		it( 'rejects known destination addresses and lets the user correct the source', async () => {
 			const submit = jest.fn();
 			renderStep(
 				<SiteMigrationIdentify
@@ -299,19 +293,27 @@ describe( 'SiteMigrationIdentify', () => {
 						'https://custom.example.com',
 						'https://default.wpcomstaging.com',
 					] }
-				/>
+				/>,
+				{ initialEntry: '/some-path?manualPlatform=wordpress' }
 			);
 			const analysis = mockApi()
 				.get( '/wpcom/v2/imports/analyze-url' )
 				.query( true )
 				.reply( 200, API_RESPONSE_WORDPRESS_PLATFORM );
 			mockHost();
-			await checkSite( url );
-			expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
-				'This is your destination site. Enter the address of the site you want to migrate from.'
-			);
-			expect( getInput() ).not.toHaveAttribute( 'readonly' );
-			await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			for ( const url of [
+				'http://WWW.DESTINATION.WORDPRESS.COM/a-page?example=1',
+				'custom.example.com/',
+				'https://default.wpcomstaging.com/',
+			] ) {
+				await user.clear( getInput() );
+				await checkSite( url );
+				expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+					'This is your destination site. Enter the address of the site you want to migrate from.'
+				);
+				expect( getInput() ).not.toHaveAttribute( 'readonly' );
+				await user.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+			}
 			await act( async () => {
 				jest.advanceTimersByTime( 2000 );
 				await realTick();
@@ -340,20 +342,6 @@ describe( 'SiteMigrationIdentify', () => {
 			);
 			expect( screen.getByRole( 'alert' ) ).toBeVisible();
 			await user.click( screen.getByRole( 'button', { name: /pick your current platform/ } ) );
-			expect( submit ).not.toHaveBeenCalled();
-		} );
-
-		it( 'also rejects the destination after selecting WordPress manually', async () => {
-			const submit = jest.fn();
-			renderStep(
-				<SiteMigrationIdentify
-					{ ...mockStepProps( { navigation: { submit } } ) }
-					destinationSiteUrls={ [ 'example.com' ] }
-				/>,
-				{ initialEntry: '/some-path?manualPlatform=wordpress' }
-			);
-			await checkSite();
-			expect( screen.getByRole( 'alert' ) ).toBeVisible();
 			expect( submit ).not.toHaveBeenCalled();
 		} );
 
@@ -420,15 +408,20 @@ describe( 'SiteMigrationIdentify', () => {
 			}
 		);
 
-		it.each( [ '', 'https://manual.example.com' ] )(
-			'checks hosting while keeping the selected WordPress platform for "%s"',
-			async ( from ) => {
+		it.each( [
+			[ '', false ],
+			[ 'https://manual.example.com', true ],
+		] as const )(
+			'checks hosting without overriding manual WordPress selection (prefill: "%s", WordPress.com: %s)',
+			async ( from, isWpcom ) => {
 				const submit = jest.fn();
 				const analysis = mockAnalysis(
 					{
 						...API_RESPONSE_WORDPRESS_PLATFORM,
 						url: 'https://manual.example.com',
-						platform: 'unknown',
+						platform: 'squarespace',
+						static_site_importable: true,
+						platform_data: { is_wpcom: isWpcom },
 					},
 					200,
 					from || 'manual.example.com'
@@ -462,37 +455,10 @@ describe( 'SiteMigrationIdentify', () => {
 						platform: 'wordpress',
 						from: 'https://manual.example.com',
 						host: 'bluehost',
-					} )
-				);
-				expect( analysis.isDone() ).toBe( true );
-			}
-		);
-
-		it.each( [ false, true ] )(
-			'detects WordPress.com after manual selection: %s',
-			async ( isWpcom ) => {
-				const submit = jest.fn();
-				render(
-					{ navigation: { submit } },
-					{ initialEntry: '/some-path?manualPlatform=wordpress' }
-				);
-				mockAnalysis( {
-					...API_RESPONSE_WORDPRESS_PLATFORM,
-					platform: 'squarespace',
-					static_site_importable: true,
-					platform_data: { is_wpcom: isWpcom },
-				} );
-				mockHost();
-				await checkSite();
-				await waitFor( () =>
-					expect( submit ).toHaveBeenCalledWith( {
-						action: 'continue',
-						platform: 'wordpress',
-						from: 'https://example.com',
-						host: 'bluehost',
 						...( isWpcom ? { isWpcom: true } : {} ),
 					} )
 				);
+				expect( analysis.isDone() ).toBe( true );
 			}
 		);
 

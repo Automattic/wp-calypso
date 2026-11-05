@@ -212,7 +212,7 @@ describe( 'SiteMigrationCheck', () => {
 	} );
 
 	it.each( [ 'ineligible', 'eligible' ] as const )(
-		'shows the WordPress.com actions with copy eligibility %s',
+		'shows WordPress.com actions despite a failed destination with copy eligibility %s',
 		async ( copySiteEligibility ) => {
 			const canCopySite = copySiteEligibility === 'eligible';
 			const submit = jest.fn();
@@ -221,12 +221,20 @@ describe( 'SiteMigrationCheck', () => {
 					{ ...mockStepProps( { navigation: { submit } } ) }
 					copySiteEligibility={ copySiteEligibility }
 					canUseAsDestination
+					destinationFailed
 				/>,
 				{
 					initialEntry:
 						'/site-migration-check?from=https://cotrim.dev/&platform=wordpress&isWpcom=true',
 				}
 			);
+			const choices = screen.getAllByRole( 'button', {
+				name: /Move your external site here|Transfer your domain|Get access to your site/,
+			} );
+			expect( choices[ 0 ] ).toHaveTextContent( 'Move your external site here' );
+			expect(
+				screen.queryByText( /We couldn’t load the destination site/ )
+			).not.toBeInTheDocument();
 			expect(
 				screen.getByRole( 'heading', { name: 'Your site is already on WordPress.com' } )
 			).toBeVisible();
@@ -264,21 +272,6 @@ describe( 'SiteMigrationCheck', () => {
 			}
 		}
 	);
-
-	it( 'offers migration into the entered site first even if an earlier destination failed', () => {
-		renderStep(
-			<SiteMigrationCheck { ...mockStepProps() } destinationFailed canUseAsDestination />,
-			{
-				initialEntry:
-					'/site-migration-check?from=https://example.com&platform=wordpress&isWpcom=true',
-			}
-		);
-		const choices = screen.getAllByRole( 'button', {
-			name: /Move your external site here|Transfer your domain|Get access to your site/,
-		} );
-		expect( choices[ 0 ] ).toHaveTextContent( 'Move your external site here' );
-		expect( screen.queryByText( /We couldn’t load the destination site/ ) ).not.toBeInTheDocument();
-	} );
 
 	it( 'does not offer migration into a site that has not been validated as a destination', () => {
 		renderStep( <SiteMigrationCheck { ...mockStepProps() } />, {
