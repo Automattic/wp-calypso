@@ -326,6 +326,23 @@ describe( 'useConversation', () => {
 			} );
 		} );
 
+		it( 'cancels a load still in flight when a turn starts', () => {
+			const { rerender } = renderHook(
+				( props: { waitForReply: boolean } ) => useConversation( props ),
+				{ initialProps: { waitForReply: true } }
+			);
+
+			rerender( { waitForReply: false } );
+
+			expect( mockCancelQueries ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'keeps the load of a chat that mounts mid-turn', () => {
+			renderHook( () => useConversation( { waitForReply: false } ) );
+
+			expect( mockCancelQueries ).not.toHaveBeenCalled();
+		} );
+
 		it.each( [
 			[ 'an image only', [] ],
 			[ 'an image and text', [ { type: 'text', text: 'What is in this photo?' } ] ],

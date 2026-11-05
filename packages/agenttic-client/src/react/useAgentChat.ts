@@ -584,6 +584,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
+			// Pinned: a chat that replaces this one mid-await must not get this conversation.
+			let liveChat = getLiveChat();
+
+			const setState = ( update: SetStateAction< AgentChatState > ) =>
+				updateLiveChat( liveChat, update );
+
 			let hasAgent = agentManager.hasAgent( agentKey );
 
 			if ( hasAgent && ! isSessionRequested ) {
@@ -597,6 +603,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				agentManager.abortCurrentRequest( agentKey );
 				agentManager.removeAgent( agentKey );
 				hasAgent = false;
+				liveChat = getLiveChat();
 				setState( ( prev ) => ( { ...prev, clientMessages: [], uiMessages: [] } ) );
 			}
 
@@ -671,9 +678,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.enableStreaming,
 		config.odieBotId,
 		config.credentials,
+		getLiveChat,
 		isResumable,
 		isValidConfig,
-		setState,
 		transformMessages,
 	] );
 
@@ -1181,19 +1188,22 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 
+			// Pinned: a chat that replaces this one mid-await must not get these messages.
+			const liveChat = getLiveChat();
+
 			// Replace agent's conversation history
 			await agentManager.replaceMessages( agentKey, messages );
 
 			// Transform to UI messages and update React state
 			const uiMessages = transformMessages( messages );
 
-			setState( ( prev ) => ( {
+			updateLiveChat( liveChat, ( prev ) => ( {
 				...prev,
 				clientMessages: messages,
 				uiMessages,
 			} ) );
 		},
-		[ agentConfig.agentId, isValidConfig, setState, transformMessages ]
+		[ agentConfig.agentId, getLiveChat, isValidConfig, transformMessages ]
 	);
 
 	const { getRegenerateHandler } = useRegenerate( {

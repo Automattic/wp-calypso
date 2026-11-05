@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, type MockedFunction, vi } 
 import { getAgentManager } from '../agentManager';
 import { endResumableChat, getResumableChat } from '../liveChat';
 import { useAgentChat, type UseAgentChatReturn } from '../useAgentChat';
-import type { TaskUpdate } from '../../client/types';
+import type { Client, Message, TaskUpdate } from '../../client/types';
 
 // Required for React 18's act() in jsdom.
 ( globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean } ).IS_REACT_ACT_ENVIRONMENT = true;
@@ -56,6 +56,12 @@ function HookHarness( {
 }
 
 const PROMPT = 'Write a guide';
+const REPLY: Message = {
+	role: 'agent',
+	kind: 'message',
+	messageId: 'reply',
+	parts: [ { type: 'text', text: 'Hi' } ],
+};
 
 const progress: TaskUpdate = {
 	id: 'task-1',
@@ -185,14 +191,7 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 		await mount( props );
 
 		await act( async () => {
-			await chat.loadMessages( [
-				{
-					role: 'agent',
-					kind: 'message',
-					messageId: 'reply',
-					parts: [ { type: 'text', text: 'Hi' } ],
-				},
-			] );
+			await chat.loadMessages( [ REPLY ] );
 
 			chat.registerMessageActions( {
 				id: 'copy',
@@ -265,6 +264,47 @@ describe( 'useAgentChat — resumeOnRemount', () => {
 		} );
 
 		expect( getAgentManager().removeAgent ).toHaveBeenCalledWith( 'switching-agent' );
+	} );
+
+	it( 'keeps a history load that finishes late out of the chat that replaced its own', async () => {
+		let finishLoad!: () => void;
+
+		vi.mocked( getAgentManager().replaceMessages ).mockReturnValueOnce(
+			new Promise< void >( ( resolve ) => {
+				finishLoad = resolve;
+			} )
+		);
+		await mount( { agentId: 'loading-agent', resumeOnRemount: true } );
+
+		await act( async () => {
+			const loading = chat.loadMessages( [ REPLY ] );
+
+			endResumableChat( 'loading-agent' );
+			finishLoad();
+			await loading;
+		} );
+
+		expect( chat.messages ).toEqual( [] );
+	} );
+
+	it( 'keeps an agent created late out of the chat that replaced its own', async () => {
+		let finishCreate!: ( client: Client ) => void;
+
+		vi.mocked( getAgentManager().hasAgent ).mockReturnValueOnce( false );
+		vi.mocked( getAgentManager().createAgent ).mockReturnValueOnce(
+			new Promise< Client >( ( resolve ) => {
+				finishCreate = resolve;
+			} )
+		);
+		await mount( { agentId: 'creating-agent', resumeOnRemount: true } );
+
+		await act( async () => {
+			endResumableChat( 'creating-agent' );
+			finishCreate( {} as Client );
+			await flush();
+		} );
+
+		expect( chat.messages ).toEqual( [] );
 	} );
 
 	it( "keeps each agent's chat to itself", async () => {

@@ -69,8 +69,9 @@ interface Result {
  * it is reloaded until the reply lands, then offers Retry if none comes.
  *
  * A copy must not replace a newer live history: one requested mid-turn lacks
- * the reply whenever it lands, and one cached by an earlier mount may predate
- * a turn, so each mount loads only what it fetched.
+ * the reply whenever it lands, one still loading when a turn starts is
+ * cancelled, and one cached by an earlier mount may predate a turn, so each
+ * mount loads only what it fetched.
  *
  * A turn paused on a browser-run tool has no page left to send the result, so
  * after `RESUME_AFTER_MS` this page answers its calls with an "interrupted" result
@@ -157,8 +158,14 @@ export default function useConversation( {
 		setHasFailedResume( false );
 	}, [ sessionId ] );
 
+	const wasWaitingForReplyRef = useRef( waitForReply );
+
 	useEffect(
 		() => {
+			const hasTurnStarted = wasWaitingForReplyRef.current && ! waitForReply;
+
+			wasWaitingForReplyRef.current = waitForReply;
+
 			if ( waitForReply ) {
 				return;
 			}
@@ -172,8 +179,11 @@ export default function useConversation( {
 
 			if ( replyWait === 'waiting' ) {
 				setReplyWait( 'idle' );
+			}
 
-				// A reload still in flight would land over the turn that just started.
+			// A load still in flight would land over the turn that just started. The
+			// hook's own resume keeps its reload, which is loaded if no reply comes.
+			if ( hasTurnStarted && replyWait !== 'resuming' ) {
 				queryClient.cancelQueries( { queryKey, exact: true } );
 			}
 		},
