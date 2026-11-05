@@ -1,5 +1,6 @@
 import { useViewportMatch } from '@wordpress/compose';
 import { setLocaleData } from '@wordpress/i18n';
+import { useEnableWpCompatOverlaySlot } from '@wordpress/ui';
 import debugFactory from 'debug';
 import { setLocale } from 'i18n-calypso';
 import { useCallback, useEffect, useState } from 'react';
@@ -96,6 +97,7 @@ const ACTION_HANDLERS = {
 };
 
 const NotesWrapper = ( { wpcom } ) => {
+	useEnableWpCompatOverlaySlot();
 	const [ isShowing, setIsShowing ] = useState( false );
 	const [ isVisible, setIsVisible ] = useState( document.visibilityState === 'visible' );
 	const [ preferences, setPreferences ] = useState();

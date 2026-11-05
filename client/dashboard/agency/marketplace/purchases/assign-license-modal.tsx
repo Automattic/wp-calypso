@@ -3,7 +3,7 @@ import {
 	jetpackAgencyLicenseAssignMutation,
 	paginatedAgencySitesQuery,
 } from '@automattic/api-queries';
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Link } from '@tanstack/react-router';
 import { speak } from '@wordpress/a11y';
 import {
@@ -109,7 +109,7 @@ export default function AssignLicenseModal( {
 	const isMultisiteAssignable = ! /^jetpack-(backup|scan)/.test( licenseKey );
 	const isWooExtension = licenseKey.startsWith( 'woocommerce' );
 
-	const { data, isLoading, isPlaceholderData } = useQuery( {
+	const { data, isLoading } = useQuery( {
 		...paginatedAgencySitesQuery(
 			{
 				search: view.search,
@@ -120,7 +120,6 @@ export default function AssignLicenseModal( {
 			agencyId
 		),
 		enabled: !! agencyId,
-		placeholderData: keepPreviousData,
 	} );
 	const assign = useMutation( jetpackAgencyLicenseAssignMutation( agencyId ) );
 
@@ -363,7 +362,6 @@ export default function AssignLicenseModal( {
 							isItemClickable={ () => true }
 							onClickItem={ selectSite }
 							isLoading={ isLoading }
-							isPlaceholderData={ isPlaceholderData }
 							paginationInfo={ {
 								totalItems,
 								totalPages: Math.ceil( totalItems / ( view.perPage ?? SITES_PER_PAGE ) ),
