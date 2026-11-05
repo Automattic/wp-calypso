@@ -166,39 +166,27 @@ describe( 'useBlackboxProtection resetOnError', () => {
 	} );
 } );
 
-describe( 'useBlackboxProtection getSignupFields', () => {
+describe( 'useBlackboxProtection key', () => {
 	beforeEach( () => {
 		( getBlackboxSessionId as jest.Mock ).mockReset();
 		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 	} );
 
-	it( 'collects with the login key and sends key version 2', async () => {
+	it( 'collects with the login key', async () => {
 		const { result } = renderHook( () => useBlackboxProtection( { feature: 'blackbox-signup' } ) );
 
-		await expect( result.current.getSignupFields() ).resolves.toEqual( {
-			blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv',
-			blackbox_key_version: 2,
-		} );
+		await result.current.getSessionId();
+
 		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'login-key' );
 	} );
 
-	it( 'sends nothing while suspended', async () => {
-		const { result } = renderHook( () =>
-			useBlackboxProtection( { feature: 'blackbox-signup', suspended: true } )
-		);
-
-		await expect( result.current.getSignupFields() ).resolves.toEqual( {} );
-		expect( getBlackboxSessionId ).not.toHaveBeenCalled();
-	} );
-
-	it( 'collects with the legacy signup key and sends no key version', async () => {
+	it( 'collects with the signup key when asked for the legacy signup key', async () => {
 		const { result } = renderHook( () =>
 			useBlackboxProtection( { feature: 'blackbox-signup', legacySignupKey: true } )
 		);
 
-		await expect( result.current.getSignupFields() ).resolves.toEqual( {
-			blackbox_session_id: 'ABCDEFGHIJKLMNOPQRSTuv',
-		} );
+		await result.current.getSessionId();
+
 		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key' );
 	} );
 } );

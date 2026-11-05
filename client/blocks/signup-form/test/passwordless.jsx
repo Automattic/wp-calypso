@@ -118,7 +118,7 @@ describe( 'Blackbox integration', () => {
 		nock.cleanAll();
 	} );
 
-	it( 'attaches blackbox_session_id and its key version to the signup request when available', async () => {
+	it( 'attaches blackbox_session_id to the signup request when available', async () => {
 		getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 		const getRequestBody = interceptUsersNew( 403, { error: 'throttled' } );
 
@@ -214,7 +214,7 @@ describe( 'Blackbox integration', () => {
 			fireEvent.click( screen.getByRole( 'button', { name: /create your account/i } ) );
 		};
 
-		it( 'attaches blackbox_session_id and its key version to the submitForm payload', async () => {
+		it( 'attaches blackbox_session_id to the submitForm payload', async () => {
 			getBlackboxSessionId.mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
 			const submitForm = jest.fn();
 

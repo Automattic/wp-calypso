@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { BLACKBOX_KEY_VERSION } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -111,14 +112,17 @@ class PasswordlessSignupForm extends Component {
 		// If not in a flow, submit the form as a standard signup form.
 		// Since it is a passwordless form, we don't need to submit a password.
 		if ( flowName === '' && this.props.submitForm ) {
-			const blackboxFields = await this.props.blackbox.getSignupFields();
+			const blackboxSessionId = await this.props.blackbox.getSessionId();
 
 			// The parent spreads this payload into its /users/new request body.
 			this.props.submitForm(
 				{
 					email,
 					is_passwordless: true,
-					...blackboxFields,
+					...( blackboxSessionId && {
+						blackbox_session_id: blackboxSessionId,
+						blackbox_key_version: BLACKBOX_KEY_VERSION,
+					} ),
 				},
 				( error ) => {
 					this.submitLock = false;
@@ -148,7 +152,7 @@ class PasswordlessSignupForm extends Component {
 		const signup_flow_name = queryArgs.variationName === 'entrepreneur' ? 'entrepreneur' : flowName;
 
 		try {
-			const blackboxFields = await this.props.blackbox.getSignupFields();
+			const blackboxSessionId = await this.props.blackbox.getSessionId();
 
 			const body = {
 				email: this.getTrimmedEmail(),
@@ -164,7 +168,10 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
-				...blackboxFields,
+				...( blackboxSessionId && {
+					blackbox_session_id: blackboxSessionId,
+					blackbox_key_version: BLACKBOX_KEY_VERSION,
+				} ),
 			};
 
 			const { search = '' } = typeof window !== 'undefined' ? window.location : {};
