@@ -32,7 +32,6 @@ import { usePost } from 'calypso/reader/data/post';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
-import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -151,26 +150,7 @@ export function ConversationDetail( {
 								{ post }
 							)
 						);
-						unfollow(
-							{ blogId: siteId, postId },
-							{
-								onSuccess: () =>
-									dispatch(
-										successNotice(
-											translate( 'The conversation has been successfully unfollowed.' ),
-											{ duration: 5000 }
-										)
-									),
-								onError: () =>
-									dispatch(
-										errorNotice(
-											translate(
-												'Sorry, we had a problem unfollowing that conversation. Please try again.'
-											)
-										)
-									),
-							}
-						);
+						unfollow( { blogId: siteId, postId } );
 					},
 				}
 			: {

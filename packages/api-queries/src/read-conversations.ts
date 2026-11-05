@@ -192,10 +192,19 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 export const unfollowReadConversationMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		meta: { statId: 'read-conversation-unfollow' },
-		mutationFn: unfollowReadConversation,
-		onSuccess: ( _response, { blogId, postId } ) =>
+		mutationFn: async ( params: { blogId: number; postId: number } ) => {
+			const response = await unfollowReadConversation( params );
+			if ( ! response.success ) {
+				throw new Error( 'The conversation was not unfollowed.' );
+			}
+			return response;
+		},
+		onSuccess: async ( _response, { blogId, postId } ) => {
+			const queryKey = getReadConversationsListQueryKey();
+			// A list fetched before the unfollow would otherwise land after it and follow again.
+			await queryClient.cancelQueries( { queryKey } );
 			queryClient.setQueriesData< ReadConversationsInfiniteData >(
-				{ queryKey: getReadConversationsListQueryKey() },
+				{ queryKey },
 				( data ) =>
 					data && {
 						...data,
@@ -208,5 +217,6 @@ export const unfollowReadConversationMutation = ( queryClient: QueryClient ) =>
 							),
 						} ) ),
 					}
-			),
+			);
+		},
 	} );
