@@ -112,6 +112,9 @@ import { useBlackboxTestKeyForCollect } from './blackbox-test-key';
 import { snoozeAccountRecoveryInterstitial } from './dashboard-helpers';
 import { getAccount } from './get-account';
 
+// ID and feature class of the "Set up ChatGPT" sidebar campaign, live until 2026-11-24.
+const SIDEBAR_CAMPAIGN_JITM = 'wpcom_free_site_mcp_202610';
+
 export type CustomOptions = {
 	/**
 	 * Viewport name used to configure device-specific behavior in page objects.
@@ -772,6 +775,15 @@ export const test = base.extend<
 				name: siteName,
 				title: siteName,
 			} );
+			// New free sites are the audience of a sidebar JITM campaign that outranks the
+			// "Upgrade" domain upsell specs open from the sidebar. Dismiss it before any page
+			// loads: the site caches the JITM served per path for its TTL, so a dismissal
+			// after the first fetch empties the slot instead of revealing the upsell.
+			await restAPIClient.dismissJITM(
+				site.blog_details.blogid,
+				SIDEBAR_CAMPAIGN_JITM,
+				SIDEBAR_CAMPAIGN_JITM
+			);
 			if ( sitePublicSiteCount === 2 ) {
 				const companionSiteName = helperData.getBlogName();
 				await restAPIClient.createSite( {

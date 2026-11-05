@@ -15,7 +15,9 @@ import { usePersistentView } from '../../app/hooks/use-persistent-view';
 import { DataViews, DataViewsCard } from '../../components/dataviews';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
+import { ThemedIllustration } from '../../components/themed-illustration';
 import { hasHostingFeature } from '../../utils/site-features';
+import illustrationDarkUrl from '../deployments/deployments-callout-illustration-dark.svg';
 import illustrationUrl from '../deployments/deployments-callout-illustration.svg';
 import GithubIcon from '../deployments/icons/github';
 import { TriggerDeploymentModalForm } from '../deployments-list/trigger-deployment-modal-form';
@@ -180,7 +182,9 @@ function SiteRepositories() {
 				upsellId="site-settings-repositories"
 				upsellFeatureId="site-deployments"
 				upsellIcon={ <GithubIcon aria-label={ __( 'GitHub logo' ) } /> }
-				upsellImage={ illustrationUrl }
+				upsellImage={
+					<ThemedIllustration light={ illustrationUrl } dark={ illustrationDarkUrl } />
+				}
 				upsellTitle={ __( 'Deploy from GitHub' ) }
 				upsellDescription={ __(
 					'Connect your GitHub repo directly to your WordPress.com site—with seamless integration, straightforward version control, and automated workflows.'

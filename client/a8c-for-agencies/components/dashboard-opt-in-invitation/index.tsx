@@ -1,8 +1,10 @@
 import { isEnabled } from '@automattic/calypso-config';
-import { __ } from '@wordpress/i18n';
-import { useEffect } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
+import { useEffect, useState } from 'react';
 import DashboardOptInModal from 'calypso/a8c-for-agencies/components/dashboard-opt-in-modal';
+import useFetchActiveMembers from 'calypso/a8c-for-agencies/data/team/use-fetch-active-members';
 import useDashboardOptIn from 'calypso/a8c-for-agencies/hooks/use-dashboard-opt-in';
+import { OWNER_ROLE } from 'calypso/dashboard/agency/team/constants';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getActiveAgency, isAgencyOwner } from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { successNotice } from 'calypso/state/notices/actions';
@@ -25,26 +27,46 @@ function useSwitchedBackNote() {
 	const seenAt = useSelector( ( state ) => getPreference( state, SWITCHED_BACK_NOTE_PREFERENCE ) );
 	const optIn = agency?.dashboard_opt_in;
 	const switchedBackAt = optIn?.value === 'opt-out' ? optIn.updated_at : '';
+	const isNoteDue =
+		isEnabled( 'a4a-dashboard-opt-in' ) &&
+		hasPreferences &&
+		!! switchedBackAt &&
+		seenAt !== switchedBackAt;
+	// Team members are told who switched back, so they know who to ask. The team list is only
+	// fetched when that note is about to show.
+	const { data: members, isPending: isMembersPending } = useFetchActiveMembers( {
+		enabled: isNoteDue && ! isOwner,
+	} );
+	const ownerName = members?.find( ( member ) => member.role === OWNER_ROLE )?.displayName;
 
 	useEffect( () => {
-		if ( ! isEnabled( 'a4a-dashboard-opt-in' ) || ! hasPreferences || ! switchedBackAt ) {
+		if ( ! isNoteDue ) {
 			return;
 		}
-		if ( seenAt === switchedBackAt ) {
+		// Wait for the team list so the owner's name can be included. If it fails, the
+		// note goes out without it.
+		if ( ! isOwner && isMembersPending ) {
 			return;
 		}
-		dispatch(
-			successNotice(
-				isOwner
-					? __(
-							'You’re back on the previous dashboard. You can try the new one again from Helpful links on this page.'
-						)
-					: __( 'Your agency is back on the previous dashboard.' ),
-				{ id: NOTE_ID, duration: 10000 }
-			)
+		let message: string = __(
+			'Your agency owner switched back to the classic dashboard. Reach out to them if you’d like to try the new dashboard again.'
 		);
+		if ( isOwner ) {
+			message = __(
+				'You’re back on the classic dashboard. You can enable the new dashboard again any time from Helpful links on this page.'
+			);
+		} else if ( ownerName ) {
+			message = sprintf(
+				/* translators: %s: the agency owner's username, as shown on the Team page */
+				__(
+					'Your agency owner %s switched back to the classic dashboard. Reach out to them if you’d like to try the new dashboard again.'
+				),
+				ownerName
+			);
+		}
+		dispatch( successNotice( message, { id: NOTE_ID, duration: 10000 } ) );
 		dispatch( savePreference( SWITCHED_BACK_NOTE_PREFERENCE, switchedBackAt ) );
-	}, [ dispatch, hasPreferences, isOwner, seenAt, switchedBackAt ] );
+	}, [ dispatch, isMembersPending, isNoteDue, isOwner, ownerName, switchedBackAt ] );
 }
 
 /**
@@ -60,19 +82,24 @@ export default function DashboardOptInInvitation() {
 	const hasNeverChosen = ( agency?.dashboard_opt_in?.value ?? 'unset' ) === 'unset';
 	const hasPreferences = useSelector( hasReceivedRemotePreferences );
 	const isDismissed = useSelector( ( state ) => !! getPreference( state, DISMISS_PREFERENCE ) );
+	const [ isClosed, setIsClosed ] = useState( false );
 	useSwitchedBackNote();
 
-	if ( canOptIn && hasNeverChosen && hasPreferences && ! isDismissed ) {
+	if ( canOptIn && hasNeverChosen && hasPreferences && ! isDismissed && ! isClosed ) {
 		return (
 			<DashboardOptInModal
 				source="overview"
+				onError={ () => setIsClosed( true ) }
 				onClose={ () => {
 					dispatch( savePreference( DISMISS_PREFERENCE, true ) );
 					dispatch(
-						successNotice( __( 'You can switch any time from Helpful links on this page.' ), {
-							id: NOTE_ID,
-							duration: 10000,
-						} )
+						successNotice(
+							__( 'You can enable the new dashboard any time from Helpful links on this page.' ),
+							{
+								id: NOTE_ID,
+								duration: 10000,
+							}
+						)
 					);
 				} }
 			/>

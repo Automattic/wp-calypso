@@ -56,7 +56,7 @@ export interface FeaturedEvent {
 	when?: string;
 	title: string;
 	subtitle?: string;
-	/** One entry per paragraph. Supports `<strong>` and `<code>` tags. */
+	/** One entry per paragraph. Supports `<strong>` and `<coupon>` tags. */
 	description: string[];
 	ctas: ( FeaturedEventCta | FeaturedEventActionCta )[];
 	/** ISO expiry for dated events; omitted for announcements without an expiry. */
@@ -83,7 +83,7 @@ export const FEATURED_EVENT: FeaturedEvent | null = {
 		),
 		/* translators: Automattic50Off is a ticket discount code. Keep it exactly as written. */
 		__(
-			'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50% off General Admission tickets with the code <strong><code>Automattic50Off</code></strong>, so come say hello to our team while you’re there.'
+			'Spend two days at Civic Hall with the people shaping the future of the open web. As an Automattic for Agencies partner, you get 50% off General Admission tickets with the code <coupon>Automattic50Off</coupon>, so come say hello to our team while you’re there.'
 		),
 	],
 	ctas: [

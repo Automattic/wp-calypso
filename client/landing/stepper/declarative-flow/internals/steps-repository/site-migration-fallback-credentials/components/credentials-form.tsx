@@ -1,4 +1,4 @@
-import { NextButton } from '@automattic/onboarding';
+import { Button } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC } from 'react';
 import Notice from 'calypso/components/notice';
@@ -11,10 +11,9 @@ import { useFallbackCredentialsForm } from '../hooks/use-credentials-form';
 
 interface CredentialsFormProps {
 	onSubmit: ( from?: string ) => void;
-	onSkip: () => void;
 }
 
-export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip } ) => {
+export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit } ) => {
 	const translate = useTranslate();
 	const { control, errors, isBusy, submitHandler, canBypassVerification } =
 		useFallbackCredentialsForm( onSubmit );
@@ -65,20 +64,10 @@ export const CredentialsForm: FC< CredentialsFormProps > = ( { onSubmit, onSkip 
 				/>
 
 				<div className="site-migration-credentials__submit">
-					<NextButton disabled={ isBusy } type="submit">
+					<Button variant="primary" type="submit" disabled={ isBusy } __next40pxDefaultSize>
 						{ getContinueButtonText() }
-					</NextButton>
+					</Button>
 				</div>
-			</div>
-
-			<div className="site-migration-credentials__skip">
-				<button
-					className="button navigation-link step-container__navigation-link has-underline is-borderless"
-					onClick={ onSkip }
-					type="button"
-				>
-					{ translate( 'I need help, please contact me' ) }
-				</button>
 			</div>
 		</form>
 	);
