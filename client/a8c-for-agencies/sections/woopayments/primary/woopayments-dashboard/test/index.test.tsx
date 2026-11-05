@@ -3,6 +3,7 @@
  */
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { createStore } from 'redux';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -71,6 +72,25 @@ describe( 'WooPaymentsDashboard', () => {
 			await screen.findByText( 'Earn Revenue Share when clients use WooPayments' )
 		).toBeVisible();
 		expect( screen.queryByRole( 'dialog', PICKER ) ).not.toBeInTheDocument();
+
+		// page.js renders the same page again for the new URL.
+		window.history.pushState( null, '', '/woopayments/dashboard?add-woopayments-to-site=true' );
+		rerender( <WooPaymentsDashboard /> );
+
+		expect( await screen.findByRole( 'dialog', PICKER ) ).toBeVisible();
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+	} );
+
+	test( 'opens the site picker again for a later link to the page it already shows', async () => {
+		const user = userEvent.setup();
+		mockEmptyAgency();
+		window.history.replaceState( null, '', '/woopayments/dashboard?add-woopayments-to-site=true' );
+
+		const { rerender } = renderDashboard();
+		await screen.findByRole( 'dialog', PICKER );
+		expect( window.location.search ).toBe( '' );
+		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
+		await waitFor( () => expect( screen.queryByRole( 'dialog', PICKER ) ).not.toBeInTheDocument() );
 
 		// page.js renders the same page again for the new URL.
 		window.history.pushState( null, '', '/woopayments/dashboard?add-woopayments-to-site=true' );
