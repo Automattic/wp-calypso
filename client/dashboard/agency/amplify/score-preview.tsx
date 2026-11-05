@@ -395,7 +395,11 @@ export default function AmplifyScorePreview( { mode }: { mode: AmplifyMode } ) {
 				className="dashboard-amplify-score-preview__cards"
 				data-mode={ displayMode }
 				data-expanded={ isExpanded }
-				onPointerUp={ toggle }
+				onPointerUp={ ( event ) => {
+					if ( event.button === 0 ) {
+						toggle();
+					}
+				} }
 			>
 				<div
 					ref={ humanSheet }
