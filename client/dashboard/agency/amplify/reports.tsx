@@ -14,7 +14,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { box as archiveBoxIcon } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { Badge } from '@wordpress/ui';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useIntlLocale } from '../../app/locale';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
@@ -123,10 +123,12 @@ function ArchiveReportModal( {
 	agencyId,
 	report,
 	closeModal,
+	onArchived,
 }: {
 	agencyId: number;
 	report: AmplifyReport;
 	closeModal?: () => void;
+	onArchived?: () => void;
 } ) {
 	const { recordTracksEvent } = useAnalytics();
 	const archive = useMutation(
@@ -165,7 +167,7 @@ function ArchiveReportModal( {
 							report_id: report.id,
 							mode: report.mode,
 						} );
-						archive.mutate( report.id, { onSuccess: () => closeModal?.() } );
+						archive.mutate( report.id, { onSuccess: () => onArchived?.() } );
 					} }
 				>
 					{ __( 'Archive' ) }
@@ -189,6 +191,16 @@ export default function AmplifyReportsList( {
 	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
 	const [ view, setView ] = useState< View >( DEFAULT_VIEW );
 	const [ reportToArchive, setReportToArchive ] = useState< AmplifyReport | null >( null );
+	const reportsRef = useRef< HTMLDivElement >( null );
+	const [ focusAfterArchive, setFocusAfterArchive ] = useState( false );
+	// The archived row is gone, so focus moves to the table's search instead of the page body.
+	// This runs after the modal has unmounted and returned focus.
+	useEffect( () => {
+		if ( focusAfterArchive && ! reportToArchive ) {
+			reportsRef.current?.querySelector< HTMLElement >( 'input[type="search"]' )?.focus();
+			setFocusAfterArchive( false );
+		}
+	}, [ focusAfterArchive, reportToArchive ] );
 	const isArchiving =
 		useIsMutating( { mutationKey: archiveAmplifyReportMutation( agencyId ).mutationKey } ) > 0;
 	const {
@@ -434,7 +446,7 @@ export default function AmplifyReportsList( {
 
 	return (
 		<>
-			<DataViewsCard className="dashboard-amplify-reports">
+			<DataViewsCard ref={ reportsRef } className="dashboard-amplify-reports">
 				<DataViews< AmplifyReport >
 					data={ visibleReports }
 					fields={ fields }
@@ -467,6 +479,10 @@ export default function AmplifyReportsList( {
 						agencyId={ agencyId }
 						report={ reportToArchive }
 						closeModal={ () => setReportToArchive( null ) }
+						onArchived={ () => {
+							setReportToArchive( null );
+							setFocusAfterArchive( true );
+						} }
 					/>
 				</Modal>
 			) }
