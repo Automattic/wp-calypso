@@ -65,7 +65,7 @@
 		"@typescript-eslint/eslint-plugin": "^8.72.0",
 		"@typescript-eslint/parser": "^8.72.0",
 		"@wordpress/eslint-plugin": "^28.0.0",
-		"@wordpress/stylelint-config": "^26.1.0",
+		"@wordpress/stylelint-config": "^27.0.0",
 		"css-loader": "^7.1.5",
 		"sass-embedded": "^1.89.0",
 		"sass-loader": "^16.0.8",

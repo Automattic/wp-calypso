@@ -349,7 +349,7 @@ __metadata:
     "@testing-library/user-event": "npm:^14.6.8"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
-    "@wordpress/abilities": "npm:^0.14.0"
+    "@wordpress/abilities": "npm:^0.24.0"
     "@wordpress/api-fetch": "npm:^8.0.0"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
@@ -1626,7 +1626,7 @@ __metadata:
     "@testing-library/react": "npm:^16.3.3"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
-    "@wordpress/abilities": "npm:^0.14.0"
+    "@wordpress/abilities": "npm:^0.24.0"
     "@wordpress/api-fetch": "npm:^8.0.0"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -1711,7 +1711,7 @@ __metadata:
     "@automattic/components": "workspace:^"
     "@types/react": "npm:^18.3.1"
     "@types/react-dom": "npm:^18.3.1"
-    "@wordpress/abilities": "npm:^0.14.0"
+    "@wordpress/abilities": "npm:^0.24.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
     "@wordpress/blocks": "npm:^15.23.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -2586,7 +2586,7 @@ __metadata:
     "@wordpress/i18n": "npm:^7.0.0"
     "@wordpress/keycodes": "npm:^5.0.0"
     "@wordpress/rich-text": "npm:^7.54.0"
-    "@wordpress/stylelint-config": "npm:^26.1.0"
+    "@wordpress/stylelint-config": "npm:^27.0.0"
     "@wordpress/url": "npm:^5.0.0"
     css-loader: "npm:^7.1.5"
     sass-embedded: "npm:^1.89.0"
@@ -12602,16 +12602,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/abilities@npm:^0.14.0":
-  version: 0.14.0
-  resolution: "@wordpress/abilities@npm:0.14.0"
+"@wordpress/abilities@npm:^0.24.0":
+  version: 0.24.0
+  resolution: "@wordpress/abilities@npm:0.24.0"
   dependencies:
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    ajv: "npm:^8.17.1"
+    "@wordpress/data": "npm:^11.0.0"
+    "@wordpress/i18n": "npm:^7.0.0"
+    ajv: "npm:^8.20.0"
     ajv-draft-04: "npm:^1.0.0"
     ajv-formats: "npm:^3.0.1"
-  checksum: 1a49704a10fb3979d4146c1c9541156c6afcd4d506005533efedcecc9ee524f8c396f81ad2c5927edb34bfa27eb59b9d5833de023243518db88e406f5be39e89
+  peerDependencies:
+    "@types/react": ^18 || ^19
+    "@types/react-dom": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+    "@types/react-dom":
+      optional: true
+  checksum: 9e8c3f2b2dc60c36073d5466aa9c64ed5a24cbf1ca24b2d44b8eb0f6bbbd58e0c4165f4d293ba3cbeaac793ce9a96bee7048cac522b402cb407ff8c3f6aef067
   languageName: node
   linkType: hard
 
@@ -14156,26 +14166,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/reusable-blocks@npm:5.48.0":
-  version: 5.48.0
-  resolution: "@wordpress/reusable-blocks@npm:5.48.0"
+"@wordpress/reusable-blocks@npm:7.0.0":
+  version: 7.0.0
+  resolution: "@wordpress/reusable-blocks@npm:7.0.0"
   dependencies:
-    "@wordpress/base-styles": "npm:^9.1.0"
-    "@wordpress/block-editor": "npm:^15.21.0"
-    "@wordpress/blocks": "npm:^15.21.0"
-    "@wordpress/components": "npm:^35.0.0"
-    "@wordpress/core-data": "npm:^7.48.0"
-    "@wordpress/data": "npm:^10.48.0"
-    "@wordpress/element": "npm:^8.0.0"
-    "@wordpress/i18n": "npm:^6.21.0"
-    "@wordpress/icons": "npm:^13.3.0"
-    "@wordpress/notices": "npm:^5.48.0"
-    "@wordpress/private-apis": "npm:^1.48.0"
-    "@wordpress/url": "npm:^4.48.0"
+    "@wordpress/data": "npm:^11.0.0"
+    "@wordpress/deprecated": "npm:^5.0.0"
   peerDependencies:
-    react: ^18.0.0
-    react-dom: ^18.0.0
-  checksum: b4468b8b9f195e1c0b5bc4263d82cba2756aaace03e3a32e19567720471ea8cf7580be36258eb57052022188f7634fbfeb5e96ffe0d90cc82203be9f5dd70460
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  checksum: 19b92a03975b1ff5a3ba7b1e50a4aaca6ce0727a34e856faee442a5f44f4acd5d01ba58338c7f6dd65d77849bab569a3acd75f50fd88673e5ef502d3b9bdff3f
   languageName: node
   linkType: hard
 
@@ -14291,10 +14291,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/style-runtime@npm:^0.13.0":
-  version: 0.13.0
-  resolution: "@wordpress/style-runtime@npm:0.13.0"
-  checksum: e62de925e3a022b0c7eeb3ba07123e11e417d910c68d36ababf78d4dd7a7f6bf7e58a71aa1aba48878fcf2fd8ef25fda3beac30801f0b5bc6661cbe291e0286a
+"@wordpress/style-runtime@npm:^0.14.0":
+  version: 0.14.0
+  resolution: "@wordpress/style-runtime@npm:0.14.0"
+  checksum: 8cba8ca0c28eb571951e10bcdfe1047ac40b11ec952623f4ea0cc6d4501825ca90f92c100840095bddcbcc198767f8a02790d8643335d06a4a7513be0708da29
   languageName: node
   linkType: hard
 
@@ -14312,18 +14312,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/stylelint-config@npm:^26.1.0":
-  version: 26.1.0
-  resolution: "@wordpress/stylelint-config@npm:26.1.0"
+"@wordpress/stylelint-config@npm:27.0.0":
+  version: 27.0.0
+  resolution: "@wordpress/stylelint-config@npm:27.0.0"
   dependencies:
     "@stylistic/stylelint-plugin": "npm:^5.2.1"
-    "@wordpress/theme": "npm:^2.3.0"
+    "@wordpress/theme": "npm:^3.0.0"
     stylelint-config-recommended: "npm:^18.0.0"
     stylelint-config-recommended-scss: "npm:^17.0.1"
   peerDependencies:
     stylelint: ^17.14.1
     stylelint-scss: ^7.2.0
-  checksum: b093d664922b3d4a3e0f26fc127bf8f9fc8c20838a4573b8bdcf0047522ea5c672475dcdbbd781a458a1ee38a0fd6225c13eed39ca654e51380d95c888685f8f
+  checksum: a5175f290bf261668a35e1080509c739578496ba59ea8a07ba77075ff504e1336c823acee906156daa91c0a80a6d99c2139ad9d7999b216cc87cda23579c632a
   languageName: node
   linkType: hard
 
@@ -14344,19 +14344,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/theme@npm:2.3.0":
-  version: 2.3.0
-  resolution: "@wordpress/theme@npm:2.3.0"
+"@wordpress/theme@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@wordpress/theme@npm:3.0.0"
   dependencies:
     "@babel/parser": "npm:^7.28.6"
     "@babel/types": "npm:^7.29.7"
     "@jridgewell/remapping": "npm:^2.3.5"
     "@jridgewell/trace-mapping": "npm:^0.3.31"
-    "@wordpress/compose": "npm:^8.10.0"
-    "@wordpress/deprecated": "npm:^4.57.0"
-    "@wordpress/element": "npm:^9.0.0"
-    "@wordpress/private-apis": "npm:^2.0.0"
-    "@wordpress/style-runtime": "npm:^0.13.0"
+    "@wordpress/compose": "npm:^9.0.0"
+    "@wordpress/deprecated": "npm:^5.0.0"
+    "@wordpress/element": "npm:^10.0.0"
+    "@wordpress/private-apis": "npm:^3.0.0"
+    "@wordpress/style-runtime": "npm:^0.14.0"
     colorjs.io: "npm:^0.7.1"
     magic-string: "npm:^0.30.21"
     memize: "npm:^2.1.1"
@@ -14386,7 +14386,7 @@ __metadata:
       optional: true
     vite:
       optional: true
-  checksum: eed1cc9edcbdd867880636c0483da827fb5062c6ded7bbf160fa7c790e966cf9a2abf073b621d55206120b7a2acf09bc0bf6c9a97b24939f741a748ba75f3d6b
+  checksum: 596cd4c48dd043d9ac21c723f122fe1415a66bf51988328b103c8974f7e7f672442461f1dc1483c0d81333e3704f2cc82180c5cbefc060ecba77d1a2966db737
   languageName: node
   linkType: hard
 
@@ -14864,7 +14864,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^8.0.0, ajv@npm:^8.0.1, ajv@npm:^8.17.1, ajv@npm:^8.18.0, ajv@npm:^8.20.0, ajv@npm:^8.6.3, ajv@npm:~8.20.0":
+"ajv@npm:^8.0.0, ajv@npm:^8.0.1, ajv@npm:^8.18.0, ajv@npm:^8.20.0, ajv@npm:^8.6.3, ajv@npm:~8.20.0":
   version: 8.20.0
   resolution: "ajv@npm:8.20.0"
   dependencies:
@@ -16207,7 +16207,7 @@ __metadata:
     "@types/redux-mock-store": "npm:1.5.0"
     "@visx/glyph": "npm:^4.0.0"
     "@wordpress/a11y": "npm:^5.0.0"
-    "@wordpress/abilities": "npm:^0.14.0"
+    "@wordpress/abilities": "npm:^0.24.0"
     "@wordpress/api-fetch": "npm:^8.0.0"
     "@wordpress/base-styles": "npm:^9.1.0"
     "@wordpress/commands": "npm:^1.48.0"
@@ -16227,7 +16227,7 @@ __metadata:
     "@wordpress/notices": "npm:5.48.0"
     "@wordpress/private-apis": "npm:^3.0.0"
     "@wordpress/react-i18n": "npm:^5.0.0"
-    "@wordpress/theme": "npm:^2.3.0"
+    "@wordpress/theme": "npm:^3.0.0"
     "@wordpress/ui": "npm:^0.23.0"
     "@wordpress/warning": "npm:^4.0.0"
     autoprefixer: "npm:^10.4.21"
@@ -34933,7 +34933,7 @@ __metadata:
     "@wordpress/keycodes": "npm:^5.0.0"
     "@wordpress/primitives": "npm:^5.0.0"
     "@wordpress/rich-text": "npm:^7.54.0"
-    "@wordpress/stylelint-config": "npm:^26.1.0"
+    "@wordpress/stylelint-config": "npm:^27.0.0"
     "@wordpress/url": "npm:^5.0.0"
     "@zip.js/zip.js": "npm:2.8.17"
     animate.css: "npm:^4.1.1"
