@@ -83,4 +83,27 @@ describe( 'removeOriginSiteIdParam', () => {
 		expect( window.history.length ).toBe( length );
 		expect( window.history.state ).toEqual( { key: 'abc' } );
 	} );
+
+	test.each( [
+		[ '?origin_site_id=123&a=b=c', '?a=b=c' ],
+		[ '?a=1&origin_site_id=123&b=x%3Dy%26z', '?a=1&b=x%3Dy%26z' ],
+		[ '?search=My%20Site&origin_site_id=123', '?search=My%20Site' ],
+		[ '?origin_site_id=1&a=1&origin%5Fsite%5Fid=2', '?a=1' ],
+		[ '?origin_site_id=123', '' ],
+	] )( 'leaves the rest of %s as written', ( search, expected ) => {
+		window.history.replaceState( null, '', '/sites' + search );
+
+		removeOriginSiteIdParam();
+
+		expect( window.location.search ).toBe( expected );
+	} );
+
+	test( 'leaves spaces for the router to read', () => {
+		window.history.replaceState( null, '', '/?origin_site_id=123&search=My%20Site' );
+
+		removeOriginSiteIdParam();
+
+		const router = createRouter( { routeTree: createRootRoute() } );
+		expect( router.state.location.search ).toEqual( { search: 'My Site' } );
+	} );
 } );

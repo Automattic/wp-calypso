@@ -14,10 +14,14 @@ function isMemberOfSite( site: Site ) {
  */
 export function removeOriginSiteIdParam() {
 	const url = new URL( window.location.href );
-	if ( ! url.searchParams.has( 'origin_site_id' ) ) {
+	// Not `url.searchParams.delete()`: it rewrites the rest of the query, turning `%20` into a `+`
+	// that the router reads as a plus.
+	const params = url.search.slice( 1 ).split( '&' );
+	const kept = params.filter( ( param ) => ! new URLSearchParams( param ).has( 'origin_site_id' ) );
+	if ( kept.length === params.length ) {
 		return;
 	}
-	url.searchParams.delete( 'origin_site_id' );
+	url.search = kept.join( '&' );
 	window.history.replaceState( window.history.state, '', url );
 }
 
