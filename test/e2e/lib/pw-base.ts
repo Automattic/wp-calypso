@@ -792,6 +792,7 @@ export const test = base.extend<
 			);
 			if ( sitePublicSiteCount === 2 ) {
 				const companionSiteName = helperData.getBlogName();
+				logStep( 'Creating the second site' );
 				await restAPIClient.createSite( {
 					name: companionSiteName,
 					title: companionSiteName,
@@ -810,11 +811,12 @@ export const test = base.extend<
 			logStep( 'Activating the account' );
 			await page.goto( activationLink );
 			await apiWaitForEmailVerification( restAPIClient, testUser.email );
-			logStep( 'Ready' );
+			logStep( 'Snoozing the account recovery interstitial' );
 			// Fresh accounts have no recovery method set up, so the dashboard's
 			// account-recovery interstitial would mount over every route and block
 			// specs that load the dashboard with this fixture. Snooze it up front.
 			await snoozeAccountRecoveryInterstitial( restAPIClient );
+			logStep( 'Ready' );
 			await use( site );
 		} finally {
 			if ( site ) {
