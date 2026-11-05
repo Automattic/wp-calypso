@@ -354,6 +354,35 @@ describe( 'FourForFour', () => {
 			expect( previewEvents() ).toHaveLength( 1 );
 		} );
 
+		it( 'waits for a review still running from an earlier visit instead of starting another', async () => {
+			mockStatus( 'opted_in', [], null );
+			mockCandidates( [ candidate( 2, 'Second Site' ) ] );
+			let reviewRequests = 0;
+			nock( API )
+				.persist()
+				.post( '/wpcom/v2/read/four-for-four/review' )
+				.delay( 300 )
+				.reply( 200, () => {
+					reviewRequests++;
+					return { verdict: 'pass', language: 'en', category: 'personal', is_cached: false };
+				} );
+			const queryClient = createQueryClient();
+
+			const { unmount } = renderWithProvider( <FourForFour />, { initialState, queryClient } );
+			expect( await screen.findByRole( 'status' ) ).toHaveTextContent(
+				'Checking your site to see if it qualifies…'
+			);
+			unmount();
+
+			renderWithProvider( <FourForFour />, { initialState, queryClient } );
+
+			expect( screen.getByRole( 'status' ) ).toHaveTextContent(
+				'Checking your site to see if it qualifies…'
+			);
+			expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
+			expect( reviewRequests ).toBe( 1 );
+		} );
+
 		it.each( [
 			[ 'not_personal_blog', '4 for 4 is for personal blogs' ],
 			[ 'not_english', '4 for 4 is English-only for now' ],

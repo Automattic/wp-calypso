@@ -19,6 +19,9 @@ const EMPTY_POOL_RETRY_MS = 15 * 1000;
 export const getReadFourForFourStatusQueryKey = () =>
 	[ 'read', 'four-for-four', 'status' ] as const;
 
+export const getReadFourForFourReviewMutationKey = () =>
+	[ 'read', 'four-for-four', 'review' ] as const;
+
 const selectCandidates = ( data: ReadFourForFourCandidatesResponse ) =>
 	data.candidates.map( adaptReadFourForFourCandidate );
 
@@ -93,6 +96,7 @@ export const recordReadFourForFourProgressMutation = ( queryClient: QueryClient 
  */
 export const reviewReadFourForFourSiteMutation = ( queryClient: QueryClient ) =>
 	mutationOptions< ReadFourForFourReviewResponse, Error, void >( {
+		mutationKey: getReadFourForFourReviewMutationKey(),
 		meta: { statId: 'read-four-for-four-review' },
 		mutationFn: reviewReadFourForFourSite,
 		onSuccess: ( { verdict } ) => {
