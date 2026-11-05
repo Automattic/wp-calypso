@@ -245,7 +245,7 @@ function McpComponent( { path } ) {
 					className="mcp-hub__panel"
 					href={ dashboardLink( '/me/preferences/mcp' ) }
 					title={ translate( 'Connect external AI assistant' ) }
-					description={ translate( 'Get instructions for connecting your external AI assistant.' ) }
+					description={ translate( 'Add WordPress.com to ChatGPT, Claude and other agents.' ) }
 					decoration={ <Icon className="mcp-hub__summary-icon" icon={ connection } size={ 24 } /> }
 					density="low"
 				/>

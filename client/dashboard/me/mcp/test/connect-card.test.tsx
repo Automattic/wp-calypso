@@ -199,6 +199,33 @@ describe( '<McpConnectCard />', () => {
 		await waitFor( () => expect( screen.getByRole( 'link', { name: 'ChatGPT' } ) ).toHaveFocus() );
 	} );
 
+	test( 'leaves focus alone when access is turned on with the toggle', async () => {
+		function Harness() {
+			const [ enabled, setEnabled ] = useState( false );
+			return (
+				<>
+					<McpConnectCard mcpEnabled={ enabled } onTurnOn={ jest.fn() } isTurningOn={ false } />
+					<button
+						type="button"
+						onClick={ ( event ) => {
+							// The real toggle disables while saving, which drops focus to the body.
+							event.currentTarget.blur();
+							setEnabled( true );
+						} }
+					>
+						Toggle
+					</button>
+				</>
+			);
+		}
+		render( <Harness />, { queryClient } );
+
+		await userEvent.click( await screen.findByRole( 'button', { name: 'Toggle' } ) );
+
+		await screen.findByRole( 'link', { name: 'Manual setup' } );
+		expect( document.body ).toHaveFocus();
+	} );
+
 	test( 'hides the MCP-off notice while access is on', () => {
 		renderCard();
 

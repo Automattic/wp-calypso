@@ -196,16 +196,31 @@ export default function McpConnectCard( {
 	const copiedTimeout = useRef< ReturnType< typeof setTimeout > >( undefined );
 	const gridRef = useRef< HTMLUListElement >( null );
 	const wasEnabled = useRef( mcpEnabled );
+	const turnedOnFromNotice = useRef( false );
 
 	useEffect( () => () => clearTimeout( copiedTimeout.current ), [] );
 
-	// Turning access on removes the notice and its focused button, so move focus to the first tile.
+	const handleTurnOn = () => {
+		turnedOnFromNotice.current = true;
+		onTurnOn();
+	};
+
+	// Turning access on from the notice removes its button, so move focus to the first tile.
+	// The toggle also disables while saving, so only do this after the notice button.
 	useEffect( () => {
-		if ( ! wasEnabled.current && mcpEnabled && document.activeElement === document.body ) {
+		if (
+			! wasEnabled.current &&
+			mcpEnabled &&
+			turnedOnFromNotice.current &&
+			document.activeElement === document.body
+		) {
 			gridRef.current?.querySelector< HTMLElement >( 'a, button' )?.focus();
 		}
 		wasEnabled.current = mcpEnabled;
-	}, [ mcpEnabled ] );
+		if ( mcpEnabled || ! isTurningOn ) {
+			turnedOnFromNotice.current = false;
+		}
+	}, [ mcpEnabled, isTurningOn ] );
 
 	const copyText = async ( key: string, text: string ) => {
 		try {
@@ -241,7 +256,9 @@ export default function McpConnectCard( {
 							'Add WordPress.com to your agent, then sign in to approve the connection.'
 						) }
 					/>
-					{ ! mcpEnabled && <AccessOffNotice onTurnOn={ onTurnOn } isTurningOn={ isTurningOn } /> }
+					{ ! mcpEnabled && (
+						<AccessOffNotice onTurnOn={ handleTurnOn } isTurningOn={ isTurningOn } />
+					) }
 					<ul ref={ gridRef } className="mcp-connect__grid">
 						{ getConnectAgents().map( ( agent ) => (
 							<li key={ agent.key }>
