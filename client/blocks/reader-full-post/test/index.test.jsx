@@ -168,6 +168,56 @@ describe( 'withFullPostNavigation', () => {
 		);
 	} );
 
+	it( 'links a saved snapshot neighbor to the page it was saved from', () => {
+		const snapshotUrl = 'https://example.com/saved-page';
+		useStreamPostKeySelection.mockReturnValue( {
+			previousPostKey: { snapshotId: 'url-save-1', url: snapshotUrl },
+			nextPostKey: { blogId: 100, postId: 3 },
+		} );
+		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
+		const store = createStore( ( state = {} ) => state, {
+			readerUi: { currentStream: 'saved' },
+			ui: { language: { localeSlug: 'en' } },
+		} );
+
+		render(
+			<Provider store={ store }>
+				<FullPostNavigation blogId="100" postId="2" />
+			</Provider>
+		);
+
+		expect( WrappedComponent.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( {
+				previousPostUrl: snapshotUrl,
+				nextPostUrl: '/reader/blogs/100/posts/3',
+			} )
+		);
+	} );
+
+	it( 'does not link a saved snapshot neighbor to a URL that is not http or https', () => {
+		useStreamPostKeySelection.mockReturnValue( {
+			previousPostKey: { snapshotId: 'url-save-1', url: 'javascript:alert(1)' },
+			nextPostKey: null,
+		} );
+		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );
+		const FullPostNavigation = withFullPostNavigation( WrappedComponent );
+		const store = createStore( ( state = {} ) => state, {
+			readerUi: { currentStream: 'saved' },
+			ui: { language: { localeSlug: 'en' } },
+		} );
+
+		render(
+			<Provider store={ store }>
+				<FullPostNavigation blogId="100" postId="2" />
+			</Provider>
+		);
+
+		expect( WrappedComponent.mock.calls[ 0 ][ 0 ] ).toEqual(
+			expect.objectContaining( { previousPostUrl: '#' } )
+		);
+	} );
+
 	it( 'passes the comments API disabled state from Reader comment queries', () => {
 		usePostCommentsApiDisabled.mockReturnValue( true );
 		const WrappedComponent = jest.fn( () => <div data-testid="wrapped-full-post" /> );

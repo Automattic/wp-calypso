@@ -390,6 +390,14 @@ class ReaderStream extends Component {
 
 			// Open selection.
 			case 'Enter': {
+				// Let a focused button, such as a card's Save button, handle its own Enter.
+				if ( event.target.closest( 'button' ) ) {
+					return;
+				}
+				// A snapshot opens in a new tab, and so does its focused title link.
+				if ( this.props.selectedPostKey?.snapshotId ) {
+					event.preventDefault();
+				}
 				return this.handleOpenSelection();
 			}
 

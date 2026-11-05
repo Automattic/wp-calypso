@@ -209,7 +209,7 @@ const UseMyDomain: StepType< {
 		if ( useMyDomainMode === 'domain-input' ) {
 			columnWidth = 4 as const;
 			headingText = __( 'Enter your domain' );
-			subText = __( 'Type the domain you already own, like yourdomain.com.' );
+			subText = __( 'Type the domain you already own, like yourgroovydomain.com.' );
 		} else {
 			columnWidth = 6 as const;
 			headingText = __( 'Set up your domain' );

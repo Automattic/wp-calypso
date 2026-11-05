@@ -53,7 +53,11 @@ function getPricingDifferentiationFeatureBadgeText(
 	if ( isPremiumPlan( planSlug ) && featureSlug === FEATURE_SIMPLE_PAYMENTS ) {
 		return translate( 'New' );
 	}
-	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR ) {
+	if (
+		isBusinessPlan( planSlug ) &&
+		! isMonthly( planSlug ) &&
+		featureSlug === FEATURE_PROFESSIONAL_EMAIL_FREE_YEAR
+	) {
 		return translate( 'Email' );
 	}
 	if ( isBusinessPlan( planSlug ) && featureSlug === FEATURE_EMAIL_MARKETING ) {

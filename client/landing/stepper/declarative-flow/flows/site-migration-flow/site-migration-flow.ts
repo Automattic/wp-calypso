@@ -493,19 +493,21 @@ const siteMigration: FlowV2< typeof initialize > = {
 			switch ( slug ) {
 				case STEPS.SITE_MIGRATION_IDENTIFY.slug:
 				case STEPS.SITE_MIGRATION_CHECK.slug: {
-					const { from, platform, action, host, isWpcom } = providedDependencies as {
-						from: string;
-						platform: ImporterPlatform;
-						action:
-							| SiteMigrationIdentifyAction
-							| 'back'
-							| 'select-existing-site'
-							| 'copy-site'
-							| 'transfer-domain'
-							| 'get-access';
-						host?: string;
-						isWpcom?: boolean;
-					};
+					const { from, platform, action, host, isWpcom, staticSiteImportable } =
+						providedDependencies as {
+							from: string;
+							platform: ImporterPlatform;
+							action:
+								| SiteMigrationIdentifyAction
+								| 'back'
+								| 'select-existing-site'
+								| 'copy-site'
+								| 'transfer-domain'
+								| 'get-access';
+							host?: string;
+							isWpcom?: boolean;
+							staticSiteImportable?: boolean;
+						};
 					if ( slug === STEPS.SITE_MIGRATION_IDENTIFY.slug && ! get( 'migrationArrivalChecked' ) ) {
 						queryClient.setQueryData< Partial< FlowStateManifest > >( queryKey, ( state ) => ( {
 							...state,
@@ -627,6 +629,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 
 					if (
 						action !== 'skip_platform_identification' &&
+						staticSiteImportable &&
 						canUseStaticSiteImport( platform, from )
 					) {
 						return exitFlow(
