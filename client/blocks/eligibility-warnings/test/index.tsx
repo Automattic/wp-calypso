@@ -173,22 +173,26 @@ describe( '<EligibilityWarnings>', () => {
 		expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
 	} );
 
-	it( 'separates the required upgrade from what happens after it', () => {
+	it( 'lists the required upgrade and the site move as numbered steps', () => {
 		const state = createState( {
 			holds: [ 'NO_BUSINESS_PLAN' ],
 			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
 		} );
 
-		const { getByRole } = renderWithStore(
+		const { getAllByRole, getByRole } = renderWithStore(
 			<EligibilityWarnings onProceed={ noop } context="plugin-details" inModal />,
 			state
 		);
 
-		expect( getByRole( 'heading', { name: "To continue you'll need to:" } ) ).toBeVisible();
-		expect( getByRole( 'heading', { name: 'Here’s what happens next:' } ) ).toBeVisible();
+		const steps = getAllByRole( 'listitem' );
+		expect( steps ).toHaveLength( 2 );
+		expect( steps[ 0 ] ).toHaveTextContent( 'Upgrade to a Business plan' );
+		expect( steps[ 1 ] ).toHaveTextContent( 'We’ll move your site to our managed cloud hosting' );
+		expect( steps[ 1 ] ).toHaveTextContent( 'Describes the transfer' );
+		expect( getByRole( 'list' ) ).toBeVisible();
 	} );
 
-	it( 'omits the "what happens next" heading when nothing needs to be done first', () => {
+	it( 'shows the site move without steps when nothing needs to be done first', () => {
 		const state = createState( {
 			warnings: [ { name: 'Warning', description: 'Describes the transfer' } ],
 		} );
@@ -199,7 +203,7 @@ describe( '<EligibilityWarnings>', () => {
 		);
 
 		expect( getByText( 'Describes the transfer' ) ).toBeVisible();
-		expect( queryByRole( 'heading', { name: 'Here’s what happens next:' } ) ).toBeNull();
+		expect( queryByRole( 'list' ) ).toBeNull();
 	} );
 
 	it( 'renders warning notices when the API returns warnings', () => {

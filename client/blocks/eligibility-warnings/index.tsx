@@ -10,7 +10,7 @@ import {
 } from '@automattic/calypso-products';
 import page from '@automattic/calypso-router';
 import { CompactCard, Gridicon } from '@automattic/components';
-import { Button, __experimentalHeading as Heading } from '@wordpress/components';
+import { Button } from '@wordpress/components';
 import clsx from 'clsx';
 import { localize, LocalizeProps } from 'i18n-calypso';
 import { useState } from 'react';
@@ -195,6 +195,9 @@ export const EligibilityWarnings = ( {
 
 	const hasHoldsToDisplay = isPlaceholder || hasDisplayableHold( listHolds );
 	const showHoldList = hasHoldsToDisplay && ! showFreeTrial && ! hasValidBlockingHold;
+	// When the user has to act before the site can move, list their actions and the
+	// move itself as numbered steps so the order (and who does what) is clear.
+	const showSteps = showHoldList && showWarnings && ! isPlaceholder;
 
 	const noticeOffersSupport =
 		!! validBlockingHold && blockingMessages[ validBlockingHold ].opensHelpCenter;
@@ -225,7 +228,27 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showHoldList && (
+			{ showSteps && (
+				<CompactCard>
+					<ol className="eligibility-warnings__steps">
+						<HoldList
+							asSteps
+							context={ context }
+							holds={ listHolds }
+							isPlaceholder={ false }
+							isMarketplace={ isMarketplace }
+						/>
+						<li className="eligibility-warnings__step">
+							<div className="eligibility-warnings__message-title">
+								{ translate( 'We’ll move your site to our managed cloud hosting' ) }
+							</div>
+							<WarningList context={ context } warnings={ warnings } showContact={ false } />
+						</li>
+					</ol>
+				</CompactCard>
+			) }
+
+			{ showHoldList && ! showSteps && (
 				<CompactCard>
 					<HoldList
 						context={ context }
@@ -245,13 +268,8 @@ export const EligibilityWarnings = ( {
 				</CompactCard>
 			) }
 
-			{ showWarnings && (
+			{ showWarnings && ! showSteps && (
 				<CompactCard className="eligibility-warnings__warnings-card">
-					{ showHoldList && (
-						<Heading level={ 2 } size={ 14 } className="eligibility-warnings__section-heading">
-							{ translate( 'Here’s what happens next:' ) }
-						</Heading>
-					) }
 					<WarningList
 						context={ context }
 						warnings={ warnings }

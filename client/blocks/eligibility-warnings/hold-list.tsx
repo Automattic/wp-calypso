@@ -4,7 +4,7 @@ import { Button, Gridicon } from '@automattic/components';
 import { localizeUrl, useHasEnTranslation } from '@automattic/i18n-utils';
 import { __experimentalHeading as Heading } from '@wordpress/components';
 import { localize, LocalizeProps, TranslateResult } from 'i18n-calypso';
-import { ReactNode } from 'react';
+import { Fragment, ReactNode } from 'react';
 import ExcessiveDiskSpace from 'calypso/blocks/eligibility-warnings/excessive-disk-space';
 import { useShowHelpCenter } from 'calypso/components/help-center';
 import Notice, { NoticeStatus } from 'calypso/components/notice';
@@ -250,6 +250,8 @@ export function getBlockingMessages(
 }
 
 interface ExternalProps {
+	/** Render each hold as an `<li>` step, for use inside a numbered list. */
+	asSteps?: boolean;
 	context: EligibilityContext | null;
 	holds: EligibilityHold[];
 	isMarketplace?: boolean;
@@ -307,7 +309,14 @@ export const HardBlockingNotice = ( {
 	);
 };
 
-export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, translate }: Props ) => {
+export const HoldList = ( {
+	asSteps,
+	context,
+	holds,
+	isMarketplace,
+	isPlaceholder,
+	translate,
+}: Props ) => {
 	const hasEnTranslation = useHasEnTranslation();
 
 	const billingPeriod = useSelector( getBillingInterval );
@@ -318,6 +327,38 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 		isMarketplace,
 		hasEnTranslation,
 	} );
+
+	const renderHold = ( hold: DisplayableHold ) => (
+		<div className="eligibility-warnings__hold">
+			<div className="eligibility-warnings__message">
+				<div className="eligibility-warnings__message-title">{ holdMessages[ hold ].title }</div>
+				<p className="eligibility-warnings__message-description">
+					{ holdMessages[ hold ].description }
+				</p>
+			</div>
+			{ holdMessages[ hold ].supportUrl && (
+				<div className="eligibility-warnings__hold-action">
+					<Button compact href={ holdMessages[ hold ].supportUrl ?? '' } rel="noopener noreferrer">
+						{ translate( 'Help' ) }
+					</Button>
+				</div>
+			) }
+		</div>
+	);
+
+	const displayableHoldsToRender = holds.filter( isDisplayableHoldType );
+
+	if ( asSteps ) {
+		return (
+			<>
+				{ displayableHoldsToRender.map( ( hold ) => (
+					<li className="eligibility-warnings__step" key={ hold }>
+						{ renderHold( hold ) }
+					</li>
+				) ) }
+			</>
+		);
+	}
 
 	return (
 		<div className="eligibility-warnings__hold-list" data-testid="HoldList-Card">
@@ -337,31 +378,9 @@ export const HoldList = ( { context, holds, isMarketplace, isPlaceholder, transl
 				</div>
 			) }
 			{ ! isPlaceholder &&
-				holds.map( ( hold ) =>
-					! isDisplayableHoldType( hold ) ? null : (
-						<div className="eligibility-warnings__hold" key={ hold }>
-							<div className="eligibility-warnings__message">
-								<div className="eligibility-warnings__message-title">
-									{ holdMessages[ hold ].title }
-								</div>
-								<p className="eligibility-warnings__message-description">
-									{ holdMessages[ hold ].description }
-								</p>
-							</div>
-							{ holdMessages[ hold ].supportUrl && (
-								<div className="eligibility-warnings__hold-action">
-									<Button
-										compact
-										href={ holdMessages[ hold ].supportUrl ?? '' }
-										rel="noopener noreferrer"
-									>
-										{ translate( 'Help' ) }
-									</Button>
-								</div>
-							) }
-						</div>
-					)
-				) }
+				displayableHoldsToRender.map( ( hold ) => (
+					<Fragment key={ hold }>{ renderHold( hold ) }</Fragment>
+				) ) }
 		</div>
 	);
 };
