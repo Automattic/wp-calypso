@@ -6,7 +6,7 @@ import ProspectReports from './primary/prospect-reports';
 export const amplifyContext: Callback = ( context, next ) => {
 	context.primary = (
 		<>
-			<PageViewTracker title="Prospect Reports" path={ context.path } />
+			<PageViewTracker title="Prospect reports" path={ context.path } />
 			<ProspectReports />
 		</>
 	);
