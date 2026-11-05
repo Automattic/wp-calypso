@@ -332,9 +332,10 @@ export function AmplifyUsageMeter( {
 					</Text>
 					{ resetDate && (
 						<Text variant="muted">
+							<span aria-hidden="true">• </span>
 							{ sprintf(
 								/* translators: %s: date the limit resets, e.g. Nov 1 */
-								__( '• Resets %s' ),
+								__( 'Resets %s' ),
 								resetDate
 							) }
 						</Text>
