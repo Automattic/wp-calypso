@@ -31,7 +31,8 @@ const NEW_AGENCY_WINDOW_MS = 60 * 24 * 60 * 60 * 1000;
 
 /**
  * Who sees the band on Overview, until they close it: agencies under review, and agencies at
- * the first tier that joined in the last 60 days. A rejected application gets its own card.
+ * the first tier that joined in the last 60 days. Agencies get a tier only once they earn
+ * Agency Partner, so no tier means the first tier. A rejected application gets its own card.
  * While `isLoading`, the band may still show, so Overview holds back the Pending card instead
  * of swapping it for the band.
  */
@@ -44,7 +45,8 @@ export function useWelcomeBandVisibility(
 		!! createdAt && new Date( createdAt ).getTime() >= Date.now() - NEW_AGENCY_WINDOW_MS;
 	const isEligible =
 		approvalStatus !== 'rejected' &&
-		( approvalStatus === 'pending' || ( tierId === 'emerging-partner' && isNewAgency ) );
+		( approvalStatus === 'pending' ||
+			( ( ! tierId || tierId === 'emerging-partner' ) && isNewAgency ) );
 	const { data: isDismissed, isFetched } = useQuery( {
 		...userPreferenceQuery( WELCOME_BAND_DISMISSED_PREFERENCE ),
 		enabled: isEligible,
