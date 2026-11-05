@@ -55,6 +55,17 @@ describe( 'EmailedLoginLinkSuccessfully', () => {
 		).not.toBeInTheDocument();
 	} );
 
+	it( 'checks for a heading logo with the connection flow plugins', () => {
+		renderWithProvider( <EmailedLoginLinkSuccessfully emailAddress="person@gmail.com" />, {
+			initialPath: '/log-in/link?from=jetpack-connector&plugins=woocommerce',
+		} );
+
+		expect( useHeadingLogo ).toHaveBeenCalledWith( {
+			isUnifiedConnectionFlow: true,
+			connectorPlugins: expect.arrayContaining( [ 'woocommerce' ] ),
+		} );
+	} );
+
 	it( 'goes to lost password from the help text', async () => {
 		renderScreen();
 

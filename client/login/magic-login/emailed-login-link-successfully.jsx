@@ -19,6 +19,7 @@ import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slu
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
 import getIsWCCOM from 'calypso/state/selectors/get-is-wccom';
 import { withEnhancers } from 'calypso/state/utils';
+import { getConnectionFlowFromRedirectTo } from '../connection-flow';
 import { LoginContext } from '../login-context';
 import {
 	MagicLoginEmailButton,
@@ -27,8 +28,13 @@ import {
 
 // Product logins with a logo above the title (WooCommerce, Studio, Akismet...) keep their
 // own centered layout; the rest follow the account template.
-function CheckYourEmailActions( { emailAddress, renderHelpText } ) {
-	const headingLogo = useHeadingLogo( {} );
+function CheckYourEmailActions( {
+	emailAddress,
+	isUnifiedConnectionFlow,
+	connectorPlugins,
+	renderHelpText,
+} ) {
+	const headingLogo = useHeadingLogo( { isUnifiedConnectionFlow, connectorPlugins } );
 
 	if ( headingLogo ) {
 		return (
@@ -107,7 +113,11 @@ class EmailedLoginLinkSuccessfully extends Component {
 	}
 
 	render() {
-		const { emailAddress } = this.props;
+		const { emailAddress, redirectTo, currentQuery } = this.props;
+		const { isUnifiedConnectionFlow, connectorPlugins } = getConnectionFlowFromRedirectTo(
+			redirectTo,
+			currentQuery
+		);
 
 		return (
 			<>
@@ -119,6 +129,8 @@ class EmailedLoginLinkSuccessfully extends Component {
 
 				<CheckYourEmailActions
 					emailAddress={ emailAddress }
+					isUnifiedConnectionFlow={ isUnifiedConnectionFlow }
+					connectorPlugins={ connectorPlugins }
 					renderHelpText={ ( className ) => this.renderHelpText( className ) }
 				/>
 			</>
