@@ -7,13 +7,9 @@ import type { PlansIntent } from '@automattic/plans-grid-next';
 import type { IAppState } from 'calypso/state/types';
 
 const PLAN_DIFFERENTIATORS_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
-const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-05T00:00:00Z';
+const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-04T00:00:00Z';
 
-const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [
-	'control',
-	'ai_credits',
-	'ai_credits_reversed_order',
-] as const;
+const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [ 'control', 'reversed_order' ] as const;
 
 type PlanDifferentiatorsExperimentVariant =
 	( typeof PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS )[ number ];
@@ -21,10 +17,6 @@ type PlanDifferentiatorsExperimentVariant =
 type PlanDifferentiatorsResult = {
 	isLoading: boolean;
 	variant: PlanDifferentiatorsExperimentVariant;
-	/**
-	 * When true, show each paid plan's monthly AI credits on the grid.
-	 */
-	showAiCredits: boolean;
 	/**
 	 * When true, list the plans most expensive first, with Enterprise kept in the last column.
 	 * Not for intents that curate their own plan mix.
@@ -94,13 +86,12 @@ function usePlanDifferentiatorsExperiment( {
 	return {
 		isLoading,
 		variant,
-		showAiCredits: variant !== 'control',
 		// Reversing assumes the standard lineup, which a curated intent (e.g. newsletter) replaces.
-		useReversedPlanOrder:
-			variant === 'ai_credits_reversed_order' && ! hasTailoredFeatureList( intent ),
+		useReversedPlanOrder: variant === 'reversed_order' && ! hasTailoredFeatureList( intent ),
 		isExperimentEligible: isEligible,
 	};
 }
 
 export default usePlanDifferentiatorsExperiment;
+export { PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE };
 export type { PlanDifferentiatorsResult, PlanDifferentiatorsExperimentVariant };
