@@ -112,7 +112,7 @@ describe( '<AmplifyReportsList>', () => {
 		).toBeInTheDocument();
 	} );
 
-	test( 'keeps the archive dialog open until the report is archived', async () => {
+	test( 'keeps the archive dialog open until the report is archived, then focuses the search', async () => {
 		let finishArchive: () => void = () => {};
 		const archived = new Promise< void >( ( resolve ) => {
 			finishArchive = resolve;
@@ -146,5 +146,6 @@ describe( '<AmplifyReportsList>', () => {
 		finishArchive();
 		expect( await findSnackbar( 'The report has been archived.' ) ).toBeInTheDocument();
 		await waitFor( () => expect( dialog ).not.toBeInTheDocument() );
+		await waitFor( () => expect( screen.getByRole( 'searchbox' ) ).toHaveFocus() );
 	} );
 } );
