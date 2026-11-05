@@ -7,6 +7,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { formUpdate, loginUserWithSecurityKey } from 'calypso/state/login/actions';
+import { isTwoFactorEnhancedSecurityEnabled } from 'calypso/state/login/selectors';
 import TwoFactorActions from './two-factor-actions';
 import './verification-code-form.scss';
 import './security-key-form.scss';
@@ -14,6 +15,7 @@ import './security-key-form.scss';
 class SecurityKeyForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isEnhancedSecurityEnabled: PropTypes.bool,
 		loginUserWithSecurityKey: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -54,7 +56,7 @@ class SecurityKeyForm extends Component {
 	};
 
 	render() {
-		const { translate, isWoo, switchTwoFactorAuthType } = this.props;
+		const { translate, isEnhancedSecurityEnabled, isWoo, switchTwoFactorAuthType } = this.props;
 
 		return (
 			<form
@@ -96,6 +98,15 @@ class SecurityKeyForm extends Component {
 							</p>
 						</div>
 					) }
+					{ isEnhancedSecurityEnabled && (
+						<div className="security-key-form__help-text">
+							<p>
+								{ translate(
+									'Enhanced account security is on, so you need a passkey or security key to log in.'
+								) }
+							</p>
+						</div>
+					) }
 					<Button
 						// eslint-disable-next-line jsx-a11y/no-autofocus
 						autoFocus
@@ -118,8 +129,13 @@ class SecurityKeyForm extends Component {
 	}
 }
 
-export default connect( null, {
-	formUpdate,
-	loginUserWithSecurityKey,
-	recordTracksEvent,
-} )( localize( SecurityKeyForm ) );
+export default connect(
+	( state ) => ( {
+		isEnhancedSecurityEnabled: isTwoFactorEnhancedSecurityEnabled( state ),
+	} ),
+	{
+		formUpdate,
+		loginUserWithSecurityKey,
+		recordTracksEvent,
+	}
+)( localize( SecurityKeyForm ) );

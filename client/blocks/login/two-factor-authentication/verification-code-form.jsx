@@ -8,13 +8,18 @@ import { connect } from 'react-redux';
 import ActionPanelLink from 'calypso/components/action-panel/link';
 import FormFieldset from 'calypso/components/forms/form-fieldset';
 import FormVerificationCodeInput from 'calypso/components/forms/form-verification-code-input';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import {
 	formUpdate,
 	loginUserWithTwoFactorVerificationCode,
 	sendSmsCode,
 } from 'calypso/state/login/actions';
-import { getTwoFactorAuthNonce, getTwoFactorAuthRequestError } from 'calypso/state/login/selectors';
+import {
+	getTwoFactorAuthNonce,
+	getTwoFactorAuthRequestError,
+	isTwoFactorEnhancedSecurityEnabled,
+} from 'calypso/state/login/selectors';
 import { getVerificationCodeErrorMessage } from './get-verification-code-error-message';
 import TwoFactorActions from './two-factor-actions';
 
@@ -23,6 +28,7 @@ import './verification-code-form.scss';
 class VerificationCodeForm extends Component {
 	static propTypes = {
 		formUpdate: PropTypes.func.isRequired,
+		isEnhancedSecurityEnabled: PropTypes.bool,
 		loginUserWithTwoFactorVerificationCode: PropTypes.func.isRequired,
 		onSuccess: PropTypes.func.isRequired,
 		recordTracksEvent: PropTypes.func.isRequired,
@@ -104,6 +110,7 @@ class VerificationCodeForm extends Component {
 
 	render() {
 		const {
+			isEnhancedSecurityEnabled,
 			translate,
 			twoFactorAuthRequestError: requestError,
 			twoFactorAuthType,
@@ -115,6 +122,7 @@ class VerificationCodeForm extends Component {
 		let helpText = translate( 'Enter the code from your authenticator app.' );
 		let labelText = translate( 'Verification code' );
 		let smallPrint;
+		let enhancedSecurityNotice;
 
 		if ( twoFactorEmailNonce ) {
 			helpText = translate( 'Enter the code from the email we sent you.' );
@@ -143,6 +151,20 @@ class VerificationCodeForm extends Component {
 				</div>
 			);
 			buttonText = translate( 'Continue with backup code' );
+
+			// Without passkey support, a backup code is the only way in for these accounts.
+			if ( isEnhancedSecurityEnabled && ! isWebAuthnSupported() ) {
+				enhancedSecurityNotice = (
+					<p className="verification-code-form__help-text">
+						{ translate(
+							'Enhanced account security is on, so you need a passkey or security key to log in.'
+						) }{ ' ' }
+						{ translate(
+							'This browser doesn’t support passkeys or security keys, so use a backup code instead.'
+						) }
+					</p>
+				);
+			}
 		}
 
 		return (
@@ -151,6 +173,7 @@ class VerificationCodeForm extends Component {
 				onSubmit={ this.onSubmitForm }
 			>
 				<Card className="two-factor-authentication__verification-code-form">
+					{ enhancedSecurityNotice }
 					<p className="verification-code-form__help-text">{ helpText }</p>
 
 					<FormFieldset>
@@ -206,6 +229,7 @@ class VerificationCodeForm extends Component {
 
 export default connect(
 	( state ) => ( {
+		isEnhancedSecurityEnabled: isTwoFactorEnhancedSecurityEnabled( state ),
 		twoFactorAuthRequestError: getTwoFactorAuthRequestError( state ),
 		twoFactorEmailNonce: getTwoFactorAuthNonce( state, 'email' ),
 	} ),
