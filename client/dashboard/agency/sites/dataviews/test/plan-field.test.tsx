@@ -5,8 +5,8 @@
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../../../test-utils';
-import { withPressablePlan } from '../plan-field';
-import type { AgencySite } from '@automattic/api-core';
+import { withFullPlanName, withPressablePlan } from '../plan-field';
+import type { AgencySite, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const API = 'https://public-api.wordpress.com';
@@ -97,5 +97,23 @@ describe( 'withPressablePlan', () => {
 		renderPlanCell( { blog_id: 1, hosting_provider_guess: 'unknown' } as AgencySite );
 
 		expect( screen.getByText( 'Jetpack Complete' ) ).toBeVisible();
+	} );
+} );
+
+describe( 'withFullPlanName', () => {
+	test( 'shows the full name of a WordPress.com plan', () => {
+		const PlanCell = withFullPlanName( { id: 'plan' } ).render!;
+		const site = {
+			ID: 1,
+			plan: {
+				product_slug: 'business-bundle',
+				product_name_short: 'Business',
+				product_name: 'WordPress.com Business',
+			},
+		} as Site;
+
+		render( <PlanCell item={ site } field={ {} as never } /> );
+
+		expect( screen.getByText( 'WordPress.com Business' ) ).toBeVisible();
 	} );
 } );
