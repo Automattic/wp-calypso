@@ -44,11 +44,6 @@ export const STEPS = {
 		asyncComponent: () => import( './steps-repository/education-student-validation' ),
 	},
 
-	EMAIL_VERIFICATION: {
-		slug: 'email-verification',
-		asyncComponent: () => import( './steps-repository/email-verification' ),
-	},
-
 	ERROR: { slug: 'error', asyncComponent: () => import( './steps-repository/error-step' ) },
 
 	NEWSLETTER_SETUP: {

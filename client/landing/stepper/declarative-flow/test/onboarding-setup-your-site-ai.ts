@@ -8,9 +8,6 @@ import { renderFlow } from './helpers';
 // loadExperimentAssignment side effect never hits a real network fetch.
 jest.mock( 'calypso/lib/explat', () => ( {
 	loadExperimentAssignment: jest.fn( () => Promise.resolve( { variationName: null } ) ),
-	// A plain function, not jest.fn: a resetAllMocks would wipe a jest.fn's implementation, leaving
-	// useExperiment returning undefined (its tuple is destructured in the gate hook).
-	useExperiment: () => [ false, null ],
 } ) );
 
 let mockSiteOptions: Record< string, unknown > = {};
