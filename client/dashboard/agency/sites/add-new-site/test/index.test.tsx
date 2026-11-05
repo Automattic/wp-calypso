@@ -75,6 +75,24 @@ describe( 'agency AddNewSite', () => {
 		expect( screen.getByText( 'Start building for free' ) ).toBeVisible();
 	} );
 
+	test( 'offers the agency owner moving a site from another platform', async () => {
+		const { onSelectAction } = await renderMenu( {
+			agency: { user: { capabilities: [], role: 'a4a_administrator' } },
+		} );
+
+		await userEvent.click( screen.getByRole( 'button', { name: /From another platform/ } ) );
+
+		expect( onSelectAction ).toHaveBeenCalledWith( 'import-from-platform' );
+	} );
+
+	test( 'keeps moving a site from another platform from team members', async () => {
+		await renderMenu( { agency: { user: { capabilities: [], role: 'a4a_manager' } } } );
+
+		expect(
+			screen.queryByRole( 'button', { name: /From another platform/ } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'reports the action chosen for the entries that open a modal', async () => {
 		const { onSelectAction } = await renderMenu();
 
