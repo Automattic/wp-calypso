@@ -111,9 +111,8 @@ describe( '<McpConnectCard />', () => {
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Claude Code' } ) );
 
-		const field = await screen.findByRole( 'textbox', {
-			name: 'Press Ctrl+C or ⌘C to copy this text.',
-		} );
+		const field = await screen.findByRole( 'textbox', { name: 'Your browser blocked copying' } );
+		expect( field ).toHaveAccessibleDescription( 'Press Ctrl+C or ⌘C to copy this text.' );
 		expect( field ).toHaveValue(
 			`claude mcp add --transport http ${ MCP_SERVER_NAME } ${ MCP_SERVER_URL }`
 		);

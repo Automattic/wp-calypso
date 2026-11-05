@@ -168,7 +168,9 @@ function CopyFallback( { text }: { text: string } ) {
 				__nextHasNoMarginBottom
 				ref={ fieldRef }
 				className="mcp-connect__copy-fallback"
-				label={ __( 'Press Ctrl+C or ⌘C to copy this text.' ) }
+				label={ __( 'Your browser blocked copying' ) }
+				hideLabelFromVision
+				help={ __( 'Press Ctrl+C or ⌘C to copy this text.' ) }
 				value={ text }
 				onChange={ () => {} }
 				readOnly
