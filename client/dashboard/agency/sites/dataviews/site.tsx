@@ -101,7 +101,8 @@ export function getSiteUrlField(): Field< AgencySite > {
 	};
 }
 
-function Preview( { site }: { site: AgencySite } ) {
+/** A scaled live preview of a site, filling its box. Also used by Prospect reports. */
+export function Preview( { url }: { url: string } ) {
 	const [ resizeListener, { width } ] = useResizeObserver();
 	return (
 		<div
@@ -114,13 +115,7 @@ function Preview( { site }: { site: AgencySite } ) {
 			} }
 		>
 			{ resizeListener }
-			{ width && (
-				<SitePreview
-					url={ getSiteUrl( site ).replace( /\/$/, '' ) }
-					scale={ width / 1200 }
-					height={ 1200 }
-				/>
-			) }
+			{ width && <SitePreview url={ url } scale={ width / 1200 } height={ 1200 } /> }
 		</div>
 	);
 }
@@ -129,7 +124,7 @@ export function getPreviewField(): Field< AgencySite > {
 	return {
 		id: 'preview',
 		label: __( 'Preview' ),
-		render: ( { item } ) => <Preview site={ item } />,
+		render: ( { item } ) => <Preview url={ getSiteUrl( item ).replace( /\/$/, '' ) } />,
 		enableHiding: false,
 		enableSorting: false,
 	};
