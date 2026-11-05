@@ -281,6 +281,7 @@ describe( 'StaticSiteImportCard', () => {
 				from_url: 'busybearscleaning.com',
 				locale: 'en',
 				context: 'site_is_not_wordpress',
+				import_session_id: 'abc123',
 			} )
 			.reply( 200, { success: true } );
 
@@ -419,6 +420,7 @@ describe( 'StaticSiteImportNotice help with the move', () => {
 				from_url: 'busybearscleaning.com',
 				locale: 'en',
 				context: 'site_is_not_wordpress',
+				import_session_id: 'abc123',
 			} )
 			.reply( 200, { success: true } );
 		const { recordTracksEvent } = render(
