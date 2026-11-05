@@ -1,6 +1,10 @@
 /** The menu entries that open a modal rather than navigating. */
 export type AddNewSiteAction =
-	'import-from-wpcom' | 'a4a-connection' | 'jetpack-connection' | 'dev-site-configurations';
+	| 'import-from-wpcom'
+	| 'import-from-platform'
+	| 'a4a-connection'
+	| 'jetpack-connection'
+	| 'dev-site-configurations';
 
 /** The actions handled by ConnectSiteModal: remotely installing a plugin on an existing site. */
 export type ConnectSiteAction = Extract<

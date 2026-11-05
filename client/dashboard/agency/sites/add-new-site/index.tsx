@@ -14,12 +14,14 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, _n, sprintf } from '@wordpress/i18n';
+import { Icon, globe } from '@wordpress/icons';
 import pressableIcon from 'calypso/assets/images/pressable/pressable-icon.svg';
 import { useAnalytics } from '../../../app/analytics';
 import Column from '../../../sites/add-new-site/column';
 import MenuItem from '../../../sites/add-new-site/menu-item';
 import { crossoverLinkProps } from '../../crossover/store';
 import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
+import { OWNER_ROLE } from '../../team/constants';
 import A4ALogo from './a4a-logo';
 import DevSiteCard from './dev-site-card';
 import { getAvailablePendingSites, getPressableOwnershipType, isAgencyApproved } from './lib';
@@ -56,6 +58,8 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 	const hasPendingSites = availablePendingSites.length > 0;
 	const pressableOwnership = getPressableOwnershipType( agency );
 	const ownsPressableDirectly = pressableOwnership === 'regular';
+	// The server attaches an import only to a dev site its owner administers.
+	const canImportFromPlatform = agency?.user?.role === OWNER_ROLE;
 
 	const isDesktop = useViewportMatch( 'medium' );
 	const Wrapper = isDesktop ? HStack : VStack;
@@ -109,6 +113,16 @@ function AddNewSite( { onSelectAction }: AddNewSiteProps ) {
 					description={ __( 'Install the Jetpack plugin on an existing site.' ) }
 					onClick={ () => selectAction( 'jetpack-connection' ) }
 				/>
+				{ canImportFromPlatform && (
+					<MenuItem
+						icon={ <Icon icon={ globe } /> }
+						title={ __( 'From another platform' ) }
+						description={ __(
+							'Move a Wix, Squarespace, or other site onto a free development site.'
+						) }
+						onClick={ () => selectAction( 'import-from-platform' ) }
+					/>
+				) }
 			</Column>
 			<Column title={ __( 'Add a new production site' ) }>
 				<MenuItem
