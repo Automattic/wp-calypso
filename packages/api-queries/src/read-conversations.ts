@@ -2,6 +2,7 @@ import {
 	fetchReadConversationsList,
 	fetchReadConversationsComments,
 	markNotificationsRead,
+	unfollowReadConversation,
 	type ReadConversationsResponse,
 	type ReadConversationsSort,
 } from '@automattic/api-core';
@@ -186,4 +187,26 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 				queryKeys.map( ( queryKey ) => queryClient.invalidateQueries( { queryKey } ) )
 			);
 		},
+	} );
+
+export const unfollowReadConversationMutation = ( queryClient: QueryClient ) =>
+	mutationOptions( {
+		meta: { statId: 'read-conversation-unfollow' },
+		mutationFn: unfollowReadConversation,
+		onSuccess: ( _response, { blogId, postId } ) =>
+			queryClient.setQueriesData< ReadConversationsInfiniteData >(
+				{ queryKey: getReadConversationsListQueryKey() },
+				( data ) =>
+					data && {
+						...data,
+						pages: data.pages.map( ( page ) => ( {
+							...page,
+							conversations: page.conversations.map( ( conversation ) =>
+								conversation.blog_id === blogId && conversation.post_id === postId
+									? { ...conversation, is_following: false }
+									: conversation
+							),
+						} ) ),
+					}
+			),
 	} );

@@ -23,11 +23,16 @@ import { useEffect, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { getConversationKey, type Conversation } from 'calypso/reader/data/conversations';
+import {
+	getConversationKey,
+	useUnfollowConversation,
+	type Conversation,
+} from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
 import { getCurrentUserId } from 'calypso/state/current-user/selectors';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
 import { savePreference } from 'calypso/state/preferences/actions';
 import { getPreference, hasReceivedRemotePreferences } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
@@ -126,6 +131,8 @@ export function ConversationDetail( {
 		title = translate( 'Conversation' );
 	}
 
+	const { mutate: unfollow } = useUnfollowConversation();
+
 	const act = ( event: string, action: typeof followConversation ) => () => {
 		dispatch( recordReaderTracksEvent( event, { source: 'post_menu' }, { post } ) );
 		dispatch( action( { siteId, postId } ) );
@@ -133,13 +140,46 @@ export function ConversationDetail( {
 
 	const controls = [
 		{ title: translate( 'View post' ) as string, onClick: () => page( postUrl ) },
-		! isFollowing && {
-			title: translate( 'Follow conversation' ) as string,
-			onClick: act(
-				'calypso_reader_conversations_inbox_conversation_followed',
-				followConversation
-			),
-		},
+		isFollowing
+			? {
+					title: translate( 'Unfollow conversation' ) as string,
+					onClick: () => {
+						dispatch(
+							recordReaderTracksEvent(
+								'calypso_reader_conversations_inbox_conversation_unfollowed',
+								{ source: 'post_menu' },
+								{ post }
+							)
+						);
+						unfollow(
+							{ blogId: siteId, postId },
+							{
+								onSuccess: () =>
+									dispatch(
+										successNotice(
+											translate( 'The conversation has been successfully unfollowed.' ),
+											{ duration: 5000 }
+										)
+									),
+								onError: () =>
+									dispatch(
+										errorNotice(
+											translate(
+												'Sorry, we had a problem unfollowing that conversation. Please try again.'
+											)
+										)
+									),
+							}
+						);
+					},
+				}
+			: {
+					title: translate( 'Follow conversation' ) as string,
+					onClick: act(
+						'calypso_reader_conversations_inbox_conversation_followed',
+						followConversation
+					),
+				},
 		! isMuted && {
 			title: translate( 'Mute conversation' ) as string,
 			onClick: act( 'calypso_reader_conversations_inbox_conversation_muted', muteConversation ),

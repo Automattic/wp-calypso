@@ -15,8 +15,9 @@ jest.mock( 'calypso/blocks/comments', () => ( {
 	) ),
 } ) );
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { adaptReadConversation } from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
 import preferences from 'calypso/state/preferences/reducer';
@@ -175,6 +176,20 @@ describe( 'ConversationDetail', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
 
 		expect( screen.getByRole( 'menuitem', { name: 'Follow conversation' } ) ).toBeInTheDocument();
+	} );
+
+	it( 'unfollows a conversation the user follows', async () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+		const user = userEvent.setup();
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/wpcom/v2/read/sites/10/posts/100/unfollow' )
+			.reply( 200, { success: true } );
+
+		renderDetail( { conversation: { ...conversation, isFollowing: true } } );
+		await user.click( screen.getByRole( 'button', { name: 'Post actions' } ) );
+		await user.click( screen.getByRole( 'menuitem', { name: 'Unfollow conversation' } ) );
+
+		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
 	} );
 
 	it( 'doesn’t offer to follow a conversation the user follows', async () => {
