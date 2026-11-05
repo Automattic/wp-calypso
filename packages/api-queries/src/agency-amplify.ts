@@ -27,24 +27,28 @@ export const amplifyReportsQuery = ( agencyId: number ) =>
 			hasActiveAmplifyReports( query.state.data?.reports ) ? 15_000 : false,
 	} );
 
+/** Updates the cached report list, then refetches it so usage stays current. */
+function updateCachedReports(
+	agencyId: number,
+	update: ( reports: AmplifyReport[] ) => AmplifyReport[]
+) {
+	const { queryKey } = amplifyReportsQuery( agencyId );
+	queryClient.setQueryData< AmplifyReportsResponse >( queryKey, ( previous ) =>
+		previous ? { ...previous, reports: update( previous.reports ) } : previous
+	);
+	queryClient.invalidateQueries( { queryKey } );
+}
+
 export const startAmplifyReportMutation = ( agencyId: number ) =>
 	mutationOptions( {
 		mutationKey: [ 'agency', agencyId, 'amplify', 'reports', 'start' ],
 		meta: { statId: 'agcy-amplify-report-create' },
 		mutationFn: ( input: StartAmplifyReportInput ) => startAmplifyReport( agencyId, input ),
-		onSuccess: ( report ) => {
-			queryClient.setQueryData< AmplifyReportsResponse >(
-				amplifyReportsQuery( agencyId ).queryKey,
-				( previous ) => ( {
-					...previous,
-					reports: [
-						report,
-						...( previous?.reports ?? [] ).filter( ( item ) => item.id !== report.id ),
-					],
-				} )
-			);
-			queryClient.invalidateQueries( { queryKey: amplifyReportsQuery( agencyId ).queryKey } );
-		},
+		onSuccess: ( report ) =>
+			updateCachedReports( agencyId, ( reports ) => [
+				report,
+				...reports.filter( ( item ) => item.id !== report.id ),
+			] ),
 	} );
 
 export const archiveAmplifyReportMutation = ( agencyId: number ) =>
@@ -52,16 +56,10 @@ export const archiveAmplifyReportMutation = ( agencyId: number ) =>
 		mutationKey: [ 'agency', agencyId, 'amplify', 'reports', 'archive' ],
 		meta: { statId: 'agcy-amplify-report-archive' },
 		mutationFn: ( reportId: string ) => archiveAmplifyReport( agencyId, reportId ),
-		onSuccess: ( _report, reportId ) => {
-			queryClient.setQueryData< AmplifyReportsResponse >(
-				amplifyReportsQuery( agencyId ).queryKey,
-				( previous ) =>
-					previous
-						? { ...previous, reports: previous.reports.filter( ( item ) => item.id !== reportId ) }
-						: previous
-			);
-			queryClient.invalidateQueries( { queryKey: amplifyReportsQuery( agencyId ).queryKey } );
-		},
+		onSuccess: ( _report, reportId ) =>
+			updateCachedReports( agencyId, ( reports ) =>
+				reports.filter( ( item ) => item.id !== reportId )
+			),
 	} );
 
 export const retryAmplifyReportMutation = ( agencyId: number ) =>
@@ -69,19 +67,8 @@ export const retryAmplifyReportMutation = ( agencyId: number ) =>
 		mutationKey: [ 'agency', agencyId, 'amplify', 'reports', 'retry' ],
 		meta: { statId: 'agcy-amplify-report-retry' },
 		mutationFn: ( reportId: string ) => retryAmplifyReport( agencyId, reportId ),
-		onSuccess: ( report ) => {
-			queryClient.setQueryData< AmplifyReportsResponse >(
-				amplifyReportsQuery( agencyId ).queryKey,
-				( previous ) =>
-					previous
-						? {
-								...previous,
-								reports: previous.reports.map( ( item ) =>
-									item.id === report.id ? report : item
-								),
-							}
-						: previous
-			);
-			queryClient.invalidateQueries( { queryKey: amplifyReportsQuery( agencyId ).queryKey } );
-		},
+		onSuccess: ( report ) =>
+			updateCachedReports( agencyId, ( reports ) =>
+				reports.map( ( item ) => ( item.id === report.id ? report : item ) )
+			),
 	} );
