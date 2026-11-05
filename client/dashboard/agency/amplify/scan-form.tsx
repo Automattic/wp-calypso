@@ -177,7 +177,9 @@ export function WebsiteAddressPicker( {
 			const maxHeight = Math.max( 80, Math.min( 304, placeAbove ? above : below ) );
 			setPortalStyle( {
 				left: rect.left,
-				top: placeAbove ? rect.top - maxHeight - 8 : rect.bottom + 8,
+				...( placeAbove
+					? { bottom: window.innerHeight - rect.top + 8 }
+					: { top: rect.bottom + 8 } ),
 				width: rect.width,
 				maxHeight,
 			} );
