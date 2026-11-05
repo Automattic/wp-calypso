@@ -11,6 +11,8 @@ There are two admin bar queries from `@automattic/api-queries`:
 
 The current site is held in `omnibarSiteIdQuery()`, a client-only query that the host app writes with `queryClient.setQueryData` (`null` means no site).
 
+The current page is held in `omnibarCurrentUrlQuery()` the same way: a link back to where the user is, already usable from another app (the Dashboard writes `redirectToDashboardLink( { supportBackport: true } )`). Nodes that link into a flow pass it along as `back_to` and the like. `null` means the host doesn't publish it, so the link is left as the admin bar sent it.
+
 ### Which admin bar each page uses
 
 - **Global Dashboard pages, and Calypso pages without a site (e.g. Reader)**: only the dashboard admin bar is used.

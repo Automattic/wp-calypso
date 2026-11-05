@@ -14,6 +14,17 @@ const mockRecordReaderTracksEvent = jest.fn();
 
 jest.mock( '@automattic/calypso-router', () => jest.fn() );
 
+let mockHasPreview = true;
+jest.mock( '@wordpress/compose', () => {
+	const actual = jest.requireActual( '@wordpress/compose' );
+	const { FOUR_FOR_FOUR_PREVIEW_QUERY } = jest.requireActual( '../constants' );
+	return {
+		...actual,
+		useMediaQuery: ( query?: string ) =>
+			query === FOUR_FOR_FOUR_PREVIEW_QUERY ? mockHasPreview : actual.useMediaQuery( query ),
+	};
+} );
+
 jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( {
 	useRecordReaderTracksEvent: () => mockRecordReaderTracksEvent,
 } ) );
@@ -21,23 +32,6 @@ jest.mock( 'calypso/state/reader/analytics/useRecordReaderTracksEvent', () => ( 
 jest.mock( 'calypso/reader/stream/typed', () => ( {
 	TypedStream: ( { streamKey }: { streamKey: string } ) => (
 		<div data-testid="preview-stream">{ streamKey }</div>
-	),
-} ) );
-
-jest.mock( 'calypso/blocks/reader-subscription-list-item/connected', () => ( {
-	__esModule: true,
-	default: ( {
-		siteId,
-		site,
-		onItemClick,
-	}: {
-		siteId: number;
-		site: { title: string };
-		onItemClick: () => void;
-	} ) => (
-		<button type="button" data-testid={ `list-item-${ siteId }` } onClick={ onItemClick }>
-			{ site.title }
-		</button>
 	),
 } ) );
 
@@ -75,13 +69,17 @@ jest.mock( 'calypso/reader/controller-helper', () => ( {
 
 const API = 'https://public-api.wordpress.com';
 
-const candidate = ( blogId: number, name: string, isParticipant = false ) => ( {
+const candidate = (
+	blogId: number,
+	name: string,
+	{ isParticipant = false, description = '' } = {}
+) => ( {
 	blog_id: blogId,
 	feed_id: blogId * 10,
 	name,
 	url: `https://site${ blogId }.wordpress.com`,
 	feed_url: `https://site${ blogId }.wordpress.com/feed/`,
-	description: '',
+	description,
 	icon: null,
 	is_participant: isParticipant,
 } );
@@ -104,7 +102,10 @@ function mockBlockedFollow() {
 
 function mockFollow( blogId: number, delayMs = 0 ) {
 	return nock( API )
-		.post( '/rest/v1.1/read/following/mine/new' )
+		.post(
+			'/rest/v1.1/read/following/mine/new',
+			( body ) => body.url === `https://site${ blogId }.wordpress.com/feed/`
+		)
 		.delay( delayMs )
 		.reply( 200, {
 			subscribed: true,
@@ -139,16 +140,29 @@ describe( 'FourForFour', () => {
 		} );
 		mockRecordReaderTracksEvent.mockClear();
 		jest.mocked( page ).mockClear();
+		mockHasPreview = true;
 	} );
 
 	it( 'lists candidates and previews the first one', async () => {
 		mockStatus( 'opted_in' );
-		mockCandidates( [ candidate( 2, 'Second Site', true ), candidate( 3, 'Third Site' ) ] );
+		mockCandidates( [
+			candidate( 2, 'Second Site', { isParticipant: true, description: 'Poems about the sea.' } ),
+			candidate( 3, 'Third Site' ),
+		] );
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		expect( await screen.findByTestId( 'list-item-2' ) ).toHaveTextContent( 'Second Site' );
-		expect( screen.getByTestId( 'list-item-3' ) ).toHaveTextContent( 'Third Site' );
+		const second = await screen.findByRole( 'button', {
+			name: 'Second Site Poems about the sea.',
+		} );
+		expect( second ).toHaveAttribute( 'aria-pressed', 'true' );
+		expect( screen.getByRole( 'button', { name: 'Third Site' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'false'
+		);
+		// Each site in the list is a single control; subscribing happens in the preview.
+		expect( screen.getAllByRole( 'button', { name: 'Subscribe' } ) ).toHaveLength( 1 );
+		expect( screen.queryByRole( 'link' ) ).not.toBeInTheDocument();
 		expect( screen.getByTestId( 'preview-stream' ) ).toHaveTextContent( 'feed:20' );
 		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '0' );
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
@@ -164,13 +178,46 @@ describe( 'FourForFour', () => {
 
 		renderWithProvider( <FourForFour />, { initialState } );
 
-		await user.click( await screen.findByTestId( 'list-item-3' ) );
+		await user.click( await screen.findByRole( 'button', { name: 'Third Site' } ) );
 
 		expect( screen.getByTestId( 'preview-stream' ) ).toHaveTextContent( 'feed:30' );
+		expect( screen.getByRole( 'button', { name: 'Third Site' } ) ).toHaveAttribute(
+			'aria-pressed',
+			'true'
+		);
 		expect( mockRecordReaderTracksEvent ).toHaveBeenCalledWith(
 			'calypso_reader_four_for_four_site_previewed',
 			{ blog_id: 3, is_participant: 0 }
 		);
+	} );
+
+	it( 'gives each site its own subscribe button when there is no room for the preview', async () => {
+		const user = userEvent.setup();
+		mockHasPreview = false;
+		mockStatus( 'opted_in' );
+		mockCandidates( [ candidate( 2, 'Second Site' ), candidate( 3, 'Third Site' ) ] );
+		const follow = mockFollow( 3 );
+		const progress = nock( API )
+			.post( '/wpcom/v2/read/four-for-four/progress', { blog_ids: [ 3 ] } )
+			.reply( 200, { status: 'opted_in', blog_id: 1, followed_blog_ids: [ 3 ] } );
+
+		renderWithProvider( <FourForFour />, { initialState } );
+
+		expect( await screen.findByText( 'Third Site' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: 'Third Site' } ) ).not.toBeInTheDocument();
+		expect( screen.queryByTestId( 'preview-stream' ) ).not.toBeInTheDocument();
+		expect( mockRecordReaderTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_reader_four_for_four_site_previewed',
+			expect.anything()
+		);
+
+		const subscribeButtons = screen.getAllByRole( 'button', { name: 'Subscribe' } );
+		expect( subscribeButtons ).toHaveLength( 2 );
+		await user.click( subscribeButtons[ 1 ] );
+
+		await waitFor( () => expect( follow.isDone() ).toBe( true ) );
+		await waitFor( () => expect( progress.isDone() ).toBe( true ) );
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'aria-valuenow', '1' );
 	} );
 
 	it( 'shows server-recorded progress', async () => {
@@ -233,7 +280,7 @@ describe( 'FourForFour', () => {
 		expect( await screen.findByText( 'No new writers to show right now.' ) ).toBeVisible();
 		await user.click( screen.getByRole( 'button', { name: 'Check again' } ) );
 
-		expect( await screen.findByTestId( 'list-item-2' ) ).toHaveTextContent( 'Second Site' );
+		expect( await screen.findByRole( 'button', { name: 'Second Site' } ) ).toBeVisible();
 		expect( refetch.isDone() ).toBe( true );
 	} );
 
@@ -322,7 +369,7 @@ describe( 'FourForFour', () => {
 			renderWithProvider( <FourForFour />, { initialState, queryClient: createQueryClient() } );
 
 			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
-			await user.click( screen.getByTestId( 'list-item-3' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Third Site' } ) );
 			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 			// The second save waits for the first to finish.
@@ -371,7 +418,7 @@ describe( 'FourForFour', () => {
 
 			await user.click( await screen.findByRole( 'button', { name: 'Subscribe' } ) );
 			await screen.findByRole( 'alert' );
-			await user.click( screen.getByTestId( 'list-item-3' ) );
+			await user.click( screen.getByRole( 'button', { name: 'Third Site' } ) );
 			await user.click( screen.getByRole( 'button', { name: 'Subscribe' } ) );
 
 			await waitFor( () =>
