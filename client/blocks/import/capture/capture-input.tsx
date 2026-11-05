@@ -57,8 +57,8 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		const urlValue = new URLSearchParams( search ).get( 'from' ) || '';
 		if ( skipInitialChecking ) {
 			setUrlValue( urlValue );
-			if ( urlValue ) {
-				validateUrl( urlValue );
+			if ( urlValue && validateUrl( urlValue ) === 'wordpress_com_page' ) {
+				setSubmitted( true );
 			}
 			return;
 		}
@@ -78,6 +78,7 @@ const CaptureInput: FunctionComponent< Props > = ( props ) => {
 		const error = getUrlValidationError( url );
 		setIsValid( ! error );
 		setValidationMessage( error ? getValidationMessage( error, translate ) : '' );
+		return error;
 	}
 
 	function onChange( e: ChangeEvent< HTMLInputElement > ) {
