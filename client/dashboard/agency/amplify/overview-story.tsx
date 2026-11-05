@@ -34,9 +34,9 @@ const FAQS = [
 		id: 'limits',
 		question: __( 'How many reports can I create?' ),
 		answer: sprintf(
-			/* translators: 1: monthly reports for Account Activated, 2: for Agency Partner, 3: for Pro Agency Partner, 4: for VIP Pro & Premier */
+			/* translators: 1: monthly reports for Account activated, 2: for Agency Partner, 3: for Pro Agency Partner, 4: for VIP Pro & Premier */
 			__(
-				'It depends on your agency tier: %1$d reports a month for Account Activated, %2$d for Agency Partner, %3$d for Pro Agency Partner, and %4$d for VIP Pro & Premier. Your allowance resets on the 1st of every month, and Agency Partners and above can ask for more.'
+				'It depends on your agency tier: %1$d reports a month for Account activated, %2$d for Agency Partner, %3$d for Pro Agency Partner, and %4$d for VIP Pro & Premier. Your allowance resets on the 1st of every month, and Agency Partners and above can ask for more.'
 			),
 			...( getTierAllowances().map( ( tier ) => tier.scans ) as [ number, number, number, number ] )
 		),
