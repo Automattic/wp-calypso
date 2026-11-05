@@ -6,12 +6,12 @@ import { renderHook } from '@testing-library/react';
 import { useSite } from 'calypso/landing/stepper/hooks/use-site';
 import wpcom from 'calypso/lib/wp';
 import domainAndPlan from '../domain-and-plan';
+import type { BaseNavigationControls } from '../../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
 const mockSetDomainCartItem = jest.fn();
 const mockSetDomainCartItems = jest.fn();
 const mockGetDomainCartItems = jest.fn( (): MinimalRequestCartProduct[] => [] );
-const mockGetPlanCartItem = jest.fn( (): MinimalRequestCartProduct | null => null );
 
 jest.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
@@ -22,7 +22,6 @@ jest.mock( '@wordpress/data', () => ( {
 	} ),
 	useSelect: () => ( {
 		getDomainCartItems: mockGetDomainCartItems,
-		getPlanCartItem: mockGetPlanCartItem,
 	} ),
 } ) );
 
@@ -102,18 +101,18 @@ const SITE_WITHOUT_PLAN_FEATURES = {
 
 const PLAN_CART_ITEM = { product_slug: 'value_bundle' };
 
+type StepSlug = Parameters< typeof domainAndPlan.useStepNavigation >[ 0 ];
+type SubmittedStep = Parameters<
+	ReturnType< typeof domainAndPlan.useStepNavigation >[ 'submit' ]
+>[ 0 ];
+
 const submitStep = async ( step: string, providedDependencies: Record< string, unknown > = {} ) => {
 	const navigate = jest.fn();
 	const { result } = renderHook( () =>
-		// `useStepNavigation` reads `this.name`, so it must be invoked bound to the flow.
-		domainAndPlan.useStepNavigation.call(
-			domainAndPlan,
-			step as Parameters< typeof domainAndPlan.useStepNavigation >[ 0 ],
-			navigate
-		)
+		domainAndPlan.useStepNavigation( step as StepSlug, navigate )
 	);
 
-	await result.current.submit?.( providedDependencies );
+	await result.current.submit( { slug: step, providedDependencies } as SubmittedStep );
 
 	return { navigate };
 };
@@ -129,15 +128,18 @@ const submitUseMyDomainThenGoBack = async ( providedDependencies: Record< string
 	const navigate = jest.fn();
 	let currentStep = 'use-my-domain';
 
-	const { result, rerender } = renderHook( () =>
-		domainAndPlan.useStepNavigation.call(
-			domainAndPlan,
-			currentStep as Parameters< typeof domainAndPlan.useStepNavigation >[ 0 ],
-			navigate
-		)
+	const { result, rerender } = renderHook(
+		() =>
+			domainAndPlan.useStepNavigation( currentStep as StepSlug, navigate ) as ReturnType<
+				typeof domainAndPlan.useStepNavigation
+			> &
+				BaseNavigationControls
 	);
 
-	await result.current.submit?.( providedDependencies );
+	await result.current.submit( {
+		slug: 'use-my-domain',
+		providedDependencies,
+	} as SubmittedStep );
 
 	currentStep = 'plans';
 	rerender();
@@ -175,7 +177,6 @@ describe( 'domain-and-plan flow use-my-domain navigation', () => {
 		jest.clearAllMocks();
 		mockQueryArgs = '';
 		mockGetDomainCartItems.mockReturnValue( [] );
-		mockGetPlanCartItem.mockReturnValue( null );
 	} );
 
 	it( 'connects the domain directly and lands on the connection setup page when mapping is included in the plan', async () => {
@@ -332,13 +333,12 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 		mockQueryArgs = '';
 		( useSite as jest.Mock ).mockReturnValue( FREE_SITE );
 		mockGetDomainCartItems.mockReturnValue( [] );
-		mockGetPlanCartItem.mockReturnValue( PLAN_CART_ITEM );
 	} );
 
 	it( 'finishes on the connection setup page after the plan that unlocks the connection is paid for', async () => {
 		mockGetDomainCartItems.mockReturnValue( [ MAPPING_CART_ITEM ] );
 
-		await submitStep( 'plans', { goToCheckout: true } );
+		await submitStep( 'plans', { cartItems: [ PLAN_CART_ITEM ] } );
 
 		expect( addProductsToCart ).toHaveBeenCalledWith( 'example.wordpress.com', 'domain-and-plan', [
 			PLAN_CART_ITEM,
@@ -357,7 +357,7 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 			{ product_slug: 'domain_map', meta: 'second.com' },
 		] );
 
-		await submitStep( 'plans', { goToCheckout: true } );
+		await submitStep( 'plans', { cartItems: [ PLAN_CART_ITEM ] } );
 
 		expect( window.location.assign ).toHaveBeenCalledWith(
 			`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(
@@ -367,7 +367,7 @@ describe( 'domain-and-plan flow post-checkout destination', () => {
 	} );
 
 	it( 'keeps the default destination when no domain is being connected', async () => {
-		await submitStep( 'plans', { goToCheckout: true } );
+		await submitStep( 'plans', { cartItems: [ PLAN_CART_ITEM ] } );
 
 		expect( window.location.assign ).toHaveBeenCalledWith(
 			`/checkout/example.wordpress.com?redirect_to=${ encodeURIComponent(

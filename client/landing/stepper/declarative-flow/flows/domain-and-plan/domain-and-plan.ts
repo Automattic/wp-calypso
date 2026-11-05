@@ -3,6 +3,7 @@ import { OnboardActions, OnboardSelect } from '@automattic/data-stores';
 import { updateLaunchpadSettings, useLaunchpad } from '@automattic/launchpad';
 import { addProductsToCart, DOMAIN_AND_PLAN_FLOW } from '@automattic/onboarding';
 import { useDispatch, useSelect } from '@wordpress/data';
+import { __, sprintf } from '@wordpress/i18n';
 import { addQueryArgs, getQueryArgs } from '@wordpress/url';
 import { useEffect, useRef } from 'react';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
@@ -16,11 +17,13 @@ import { useSiteSlug } from '../../../hooks/use-site-slug';
 import { ONBOARD_STORE } from '../../../stores';
 import { getSingleMappingDomain } from '../../../utils/get-single-mapping-domain';
 import { STEPS } from '../../internals/steps';
-import { AssertConditionState, ProvidedDependencies } from '../../internals/types';
-import type { Flow } from '../../internals/types';
+import { AssertConditionState } from '../../internals/types';
+import type { FlowV2, SubmitHandler } from '../../internals/types';
 import type { MinimalRequestCartProduct } from '@automattic/shopping-cart';
 
-const DOMAIN_UPSELL_STEPS = [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.PLANS ];
+function initialize() {
+	return [ STEPS.DOMAIN_SEARCH, STEPS.USE_MY_DOMAIN, STEPS.UNIFIED_PLANS ];
+}
 
 /**
  * The `domainConnectionSetupUrl` template arrives via the query string and ends up in
@@ -40,17 +43,40 @@ function isSafeDomainConnectionSetupUrl( value: string ) {
 	}
 }
 
-const domainUpsell: Flow = {
+const domainUpsell: FlowV2< typeof initialize > = {
 	name: DOMAIN_AND_PLAN_FLOW,
 	isSignupFlow: false,
+	initialize,
 
-	useSteps() {
-		return DOMAIN_UPSELL_STEPS;
+	useStepsProps() {
+		const domainCartItem = useSelect(
+			( select ) => ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItem(),
+			[]
+		);
+		const domainName = domainCartItem?.meta;
+
+		return {
+			[ STEPS.UNIFIED_PLANS.slug ]: {
+				// The site already exists, so price the plans as an upgrade.
+				isInSignup: false,
+				isStepperUpgradeFlow: true,
+				hidePlanTypeSelector: true,
+				headerText: domainName
+					? __( 'Your domain name is ready' )
+					: __( 'Choose the perfect plan' ),
+				subHeaderText: domainName
+					? sprintf(
+							/* translators: %(domainName)s is the domain the user picked, like example.com. */
+							__( 'Get %(domainName)s free for the first year with any annual plan.' ),
+							{ domainName }
+						)
+					: undefined,
+			},
+		};
 	},
 
 	useStepNavigation( currentStep, navigate ) {
 		const backTo = useQuery().get( 'back_to' );
-		const flowName = this.name;
 		const siteSlug = useSiteSlug()!;
 		const site = useSite();
 		const hasQualifyingPlan =
@@ -66,10 +92,9 @@ const domainUpsell: Flow = {
 			isSafeDomainConnectionSetupUrl( domainConnectionSetupUrlParam )
 				? domainConnectionSetupUrlParam
 				: null;
-		const { getDomainCartItems, getPlanCartItem } = useSelect(
+		const { getDomainCartItems } = useSelect(
 			( select ) => ( {
 				getDomainCartItems: ( select( ONBOARD_STORE ) as OnboardSelect ).getDomainCartItems,
-				getPlanCartItem: ( select( ONBOARD_STORE ) as OnboardSelect ).getPlanCartItem,
 			} ),
 			[]
 		);
@@ -97,17 +122,14 @@ const domainUpsell: Flow = {
 			return domain ? getDomainConnectionSetupUrl( domain ) : returnUrl;
 		}
 
-		async function addToCartAndRedirectToCheckout( { includePlan = true } = {} ) {
-			const planCartItem = getPlanCartItem();
+		async function addToCartAndRedirectToCheckout(
+			planCartItems: MinimalRequestCartProduct[] = []
+		) {
 			const domainCartItems = getDomainCartItems() ?? [];
-
-			const cartItems = [
-				...( includePlan && planCartItem ? [ planCartItem ] : [] ),
-				...domainCartItems,
-			];
+			const cartItems = [ ...planCartItems, ...domainCartItems ];
 
 			if ( cartItems.length > 0 ) {
-				await addProductsToCart( siteSlug, flowName, cartItems );
+				await addProductsToCart( siteSlug, DOMAIN_AND_PLAN_FLOW, cartItems );
 			}
 
 			return window.location.assign(
@@ -121,7 +143,7 @@ const domainUpsell: Flow = {
 			if ( currentStep === STEPS.DOMAIN_SEARCH.slug ) {
 				return window.location.assign( returnUrl );
 			}
-			if ( currentStep === STEPS.PLANS.slug ) {
+			if ( currentStep === STEPS.UNIFIED_PLANS.slug ) {
 				if ( ! submittedDomains.current ) {
 					return window.location.assign( returnUrl );
 				}
@@ -136,16 +158,18 @@ const domainUpsell: Flow = {
 			throw new Error( `Step back button not handled: ${ currentStep }` );
 		}
 
-		async function submit( providedDependencies: ProvidedDependencies = {} ) {
-			switch ( currentStep ) {
+		const submit: SubmitHandler< typeof initialize > = async ( submittedStep ) => {
+			const { slug, providedDependencies } = submittedStep;
+
+			switch ( slug ) {
 				case STEPS.DOMAIN_SEARCH.slug: {
-					if ( providedDependencies.navigateToUseMyDomain ) {
+					if ( providedDependencies?.navigateToUseMyDomain ) {
 						const currentQueryArgs = getQueryArgs( window.location.href );
 						currentQueryArgs.step = 'domain-input';
 
-						let useMyDomainURL = addQueryArgs( 'use-my-domain', currentQueryArgs );
+						let useMyDomainURL = addQueryArgs( STEPS.USE_MY_DOMAIN.slug, currentQueryArgs );
 
-						const lastQueryParam = providedDependencies.lastQuery as string | undefined;
+						const lastQueryParam = providedDependencies.lastQuery;
 
 						if ( lastQueryParam !== undefined ) {
 							currentQueryArgs.initialQuery = lastQueryParam;
@@ -157,26 +181,21 @@ const domainUpsell: Flow = {
 
 					submittedDomains.current = true;
 
-					setDomainCartItem( providedDependencies.domainItem as MinimalRequestCartProduct );
-					setDomainCartItems( providedDependencies.domainCart as MinimalRequestCartProduct[] );
-					setSignupDomainOrigin( providedDependencies.signupDomainOrigin as string );
+					setDomainCartItem( providedDependencies?.domainItem );
+					setDomainCartItems( providedDependencies?.domainCart ?? [] );
+					setSignupDomainOrigin( providedDependencies?.signupDomainOrigin );
 
 					if ( hasQualifyingPlan ) {
-						return addToCartAndRedirectToCheckout( { includePlan: false } );
+						return addToCartAndRedirectToCheckout();
 					}
 
-					return navigate( STEPS.PLANS.slug );
+					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
 				case STEPS.USE_MY_DOMAIN.slug: {
 					setSignupDomainOrigin( SIGNUP_DOMAIN_ORIGIN.USE_YOUR_DOMAIN );
 
-					if (
-						providedDependencies &&
-						'mode' in providedDependencies &&
-						providedDependencies.mode &&
-						providedDependencies.domain
-					) {
-						const destination = addQueryArgs( 'use-my-domain', {
+					if ( providedDependencies && 'mode' in providedDependencies ) {
+						const destination = addQueryArgs( STEPS.USE_MY_DOMAIN.slug, {
 							...getQueryArgs( window.location.href ),
 							step: providedDependencies.mode,
 							initialQuery: providedDependencies.domain,
@@ -186,31 +205,30 @@ const domainUpsell: Flow = {
 
 					// The step verified domain ownership and created the mapping itself, so all
 					// that is left is to walk the user through pointing the domain at the site.
-					if (
-						'ownershipVerificationCompleted' in providedDependencies &&
-						providedDependencies.domain
-					) {
+					if ( providedDependencies && 'ownershipVerificationCompleted' in providedDependencies ) {
 						submittedDomains.current = true;
 
 						// replace() rather than assign(): Back must not land on a submit step
 						// for a mapping that already exists.
 						return window.location.replace(
-							getDomainConnectionSetupUrl( providedDependencies.domain as string )
+							getDomainConnectionSetupUrl( providedDependencies.domain )
 						);
 					}
 
 					submittedDomains.current = true;
 
 					// The domain can only be connected once the user has bought a plan.
-					if ( 'skipToPlan' in providedDependencies ) {
-						return navigate( STEPS.PLANS.slug );
+					if ( providedDependencies && 'skipToPlan' in providedDependencies ) {
+						return navigate( STEPS.UNIFIED_PLANS.slug );
 					}
 
-					const domainCartItem = providedDependencies.domainCartItem as
-						MinimalRequestCartProduct | undefined;
+					const domainCartItem =
+						providedDependencies && 'domainCartItem' in providedDependencies
+							? providedDependencies.domainCartItem
+							: undefined;
 
 					if ( ! domainCartItem ) {
-						return navigate( STEPS.PLANS.slug );
+						return navigate( STEPS.UNIFIED_PLANS.slug );
 					}
 
 					setDomainCartItem( domainCartItem );
@@ -230,28 +248,26 @@ const domainUpsell: Flow = {
 						} catch {
 							// The plan already covers the connection, so let checkout retry it. Falling
 							// through to the plans step would ask a paying customer to buy a plan twice.
-							return addToCartAndRedirectToCheckout( { includePlan: false } );
+							return addToCartAndRedirectToCheckout();
 						}
 					}
 
 					if ( hasQualifyingPlan ) {
-						return addToCartAndRedirectToCheckout( { includePlan: false } );
+						return addToCartAndRedirectToCheckout();
 					}
 
-					return navigate( STEPS.PLANS.slug );
+					return navigate( STEPS.UNIFIED_PLANS.slug );
 				}
-				case STEPS.PLANS.slug:
+				case STEPS.UNIFIED_PLANS.slug: {
 					await updateLaunchpadSettings( siteSlug, {
 						checklist_statuses: { plan_completed: true },
 					} );
 
-					if ( providedDependencies?.goToCheckout ) {
-						return addToCartAndRedirectToCheckout();
-					}
-
-					return window.location.assign( returnUrl );
+					// The plan comes first, followed by any add-ons picked alongside it.
+					return addToCartAndRedirectToCheckout( providedDependencies?.cartItems ?? [] );
+				}
 			}
-		}
+		};
 
 		return { submit, goBack };
 	},

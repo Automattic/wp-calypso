@@ -75,6 +75,11 @@ const availableFlows: Record< string, () => Promise< { default: FlowV2< any > } 
 
 	[ LAUNCH_SITE_FLOW ]: () =>
 		import( /* webpackChunkName: "launch-site-flow" */ './flows/launch-site/launch-site' ),
+
+	[ DOMAIN_AND_PLAN_FLOW ]: () =>
+		import(
+			/* webpackChunkName: "domain-and-plan-flow" */ './flows/domain-and-plan/domain-and-plan'
+		),
 };
 
 /**
@@ -97,11 +102,6 @@ export const deprecatedV1Flows: Record< string, () => Promise< { default: Flow }
 
 	'update-design': () =>
 		import( /* webpackChunkName: "update-design-flow" */ './flows/update-design/update-design' ),
-
-	[ DOMAIN_AND_PLAN_FLOW ]: () =>
-		import(
-			/* webpackChunkName: "domain-and-plan-flow" */ './flows/domain-and-plan/domain-and-plan'
-		),
 
 	build: () => import( /* webpackChunkName: "build-flow" */ './flows/build/build' ),
 
