@@ -459,7 +459,8 @@
 		"@wordpress/global-styles-ui": "patch:@wordpress/global-styles-ui@npm%3A1.15.0#~/.yarn/patches/@wordpress-global-styles-ui-npm-1.15.0-6f08ab4082.patch",
 		"@wordpress/worker-threads": "2.0.0",
 		"@emotion/native": "patch:@emotion/native@npm%3A11.11.0#~/.yarn/patches/@emotion-native-npm-11.11.0-8a3c683556.patch",
-		"nwsapi": "2.2.28"
+		"nwsapi": "2.2.28",
+		"marked@npm:^18.0.3": "18.1.1"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {

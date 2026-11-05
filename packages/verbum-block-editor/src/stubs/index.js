@@ -77,13 +77,13 @@ export const DateFormatPicker = createNullComponent( 'DateFormatPicker' );
 export const PublishDateTimePicker = createNullComponent( 'PublishDateTimePicker' );
 export const PrivatePublishDateTimePicker = createNullComponent( 'PrivatePublishDateTimePicker' );
 
-// showdown Markdown converter stub
-export class Converter {
-	makeHtml( text ) {
-		warnStubUsed( 'showdown.Converter.makeHtml' );
+// marked Markdown converter stub
+export class Marked {
+	parse( text ) {
+		warnStubUsed( 'marked.parse' );
 		return text;
 	}
 }
 
-// Default export with Converter for `import showdown from 'showdown'; new showdown.Converter()`
-export default { Converter };
+// Default export for stubbed modules imported by default, such as react-easy-crop
+export default {};
