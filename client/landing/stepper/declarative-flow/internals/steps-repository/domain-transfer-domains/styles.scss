@@ -3,7 +3,9 @@
 @import "@automattic/onboarding/styles/mixins";
 
 .domain-transfer {
-	&.hundred-year-domain-transfer {
+	// Only the 100-year variant still renders the V1 step container. `:where()` keeps
+	// these below the specificity of the global `.step-route` padding/margin pair.
+	&:where(.hundred-year-domain-transfer, .step-container) {
 		height: 100%;
 		padding: 60px 0 0;
 		margin: 0 auto;
@@ -12,16 +14,14 @@
 		flex-direction: column;
 		align-items: center;
 		gap: 30px;
+	}
 
+	&.hundred-year-domain-transfer {
 		&.step-route.domains.domain-transfer {
 			gap: 0;
 			width: 100%;
-			margin: 0;
+			margin: -60px 0 0;
 			max-width: none;
-
-			@include break-small {
-				margin-top: 0;
-			}
 
 			&.processing {
 				padding: 0;
@@ -82,7 +82,7 @@
 		outline: 3px solid transparent;
 	}
 
-	&.hundred-year-domain-transfer.domains {
+	&.domains:where(.step-container) {
 		padding: 0;
 		width: 754px;
 
