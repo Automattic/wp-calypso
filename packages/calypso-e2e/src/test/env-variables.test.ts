@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import vm from 'vm';
 import { afterAll, beforeEach, describe, expect, jest, test } from '@jest/globals';
 import envVariables, {
@@ -191,6 +192,25 @@ describe( 'EnvVariables Tests', function () {
 			expect( assignAtomicVariations( [ ...SPEC_FILES ].reverse() ) ).toEqual(
 				assignAtomicVariations( SPEC_FILES )
 			);
+		} );
+
+		// Files whose hashes collide still have to keep their variations across re-runs.
+		test( 'the same commit assigns the same variations when hashes collide', function () {
+			const collision = jest.spyOn( crypto, 'createHash' ).mockReturnValue( {
+				update() {
+					return this;
+				},
+				digest: () => '0'.repeat( 32 ),
+			} as unknown as crypto.Hash );
+
+			try {
+				expect( assignAtomicVariations( [ ...SPEC_FILES ].reverse() ) ).toEqual(
+					assignAtomicVariations( SPEC_FILES )
+				);
+				expect( collision ).toHaveBeenCalled();
+			} finally {
+				collision.mockRestore();
+			}
 		} );
 
 		// A re-run on a machine with another locale, e.g. da_DK sorting "aa" after "f", has to match.

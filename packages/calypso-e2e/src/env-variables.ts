@@ -343,8 +343,8 @@ export function assignAtomicVariations( specFiles: string[] ): Record< string, A
 
 	const ranked = files
 		.map( ( file ) => ( { file, rank: hashHex( `${ key }:${ file }` ) } ) )
-		// Not localeCompare: collation varies by locale, e.g. da_DK sorts "aa" after "f".
-		.sort( ( a, b ) => ( a.rank < b.rank ? -1 : 1 ) );
+		// Colliding hashes fall back to the file name, unique, so the order never depends on the input's.
+		.sort( ( a, b ) => compareCodeUnits( a.rank, b.rank ) || compareCodeUnits( a.file, b.file ) );
 	const offset = parseInt( hashHex( key ).slice( 0, 2 ), 16 );
 
 	return Object.fromEntries(
@@ -353,6 +353,15 @@ export function assignAtomicVariations( specFiles: string[] ): Record< string, A
 			ATOMIC_VARIATIONS[ ( index + offset ) % ATOMIC_VARIATIONS.length ],
 		] )
 	);
+}
+
+// Not localeCompare: collation varies by locale, e.g. da_DK sorts "aa" after "f".
+function compareCodeUnits( a: string, b: string ): number {
+	if ( a === b ) {
+		return 0;
+	}
+
+	return a < b ? -1 : 1;
 }
 
 function hashHex( value: string ): string {
