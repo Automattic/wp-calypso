@@ -34,16 +34,10 @@ describe( 'blackbox-sdk', () => {
 		delete window.Blackbox;
 	} );
 
-	test( 'getBlackboxApiKey uses the login key by default', () => {
+	test( 'getBlackboxApiKey uses the login key', () => {
 		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
 
 		expect( getBlackboxApiKey() ).toBe( 'login-key' );
-	} );
-
-	test( 'getBlackboxApiKey uses the signup key when asked for the legacy signup key', () => {
-		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
-
-		expect( getBlackboxApiKey( true ) ).toBe( 'signup-key' );
 	} );
 
 	test( 'loadBlackboxSdk injects the api key it was given', async () => {
