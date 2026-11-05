@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { AgentRequestError } from './errors';
 import { parseSSEStream, streamToTask } from './streaming';
 import type { TaskUpdate } from '../../types';
 
@@ -964,7 +965,9 @@ describe( 'parseSSEStream', () => {
 			status: { state: 'failed' },
 			aiCredits: { credits_remaining: 0, blocked: false, preview: true },
 		} );
-		expect( thrown ).toEqual( new Error( 'Streaming error: Agent request failed' ) );
+		expect( thrown ).toEqual(
+			new AgentRequestError( 'Streaming error: Agent request failed', { code: -32000 } )
+		);
 	} );
 
 	it( 'does not swallow an error when a combined payload is handled as a delta', async () => {
@@ -991,7 +994,30 @@ describe( 'parseSSEStream', () => {
 		}
 
 		expect( updates ).toHaveLength( 1 );
-		expect( thrown ).toEqual( new Error( 'Streaming error: Terminal failure' ) );
+		expect( thrown ).toEqual(
+			new AgentRequestError( 'Streaming error: Terminal failure', { code: -32000 } )
+		);
+	} );
+
+	it( 'keeps the stream error’s code on the error it throws', async () => {
+		const stream = streamFromEvents( [
+			{
+				jsonrpc: '2.0',
+				id: 'req-1',
+				error: { code: -32000, message: 'Refused', data: { code: 'rest_forbidden' } },
+			},
+		] );
+
+		const consume = async () => {
+			for await ( const update of parseSSEStream( stream ) ) {
+				void update;
+			}
+		};
+
+		await expect( consume() ).rejects.toMatchObject( {
+			message: 'Streaming error: Refused',
+			code: 'rest_forbidden',
+		} );
 	} );
 
 	describe( 'delta pacing', () => {

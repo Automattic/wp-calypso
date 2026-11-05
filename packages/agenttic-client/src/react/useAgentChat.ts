@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { isA2uiDataPart } from '../client/utils/core';
+import { getAgentErrorDetails, type AgentErrorDetails } from '../client/utils/internal/errors';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -417,6 +418,9 @@ export interface UseAgentChatConfig {
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
 	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
+	// Called for a failure the chat doesn't show: a request the client's timer cut off
+	// (`timedOut`), or a stream that ended without finishing the turn (`StreamIncompleteError`).
+	onSilentError?: ( details: AgentErrorDetails ) => void;
 }
 
 // Hook return interface
@@ -425,6 +429,8 @@ export interface UseAgentChatReturn {
 	messages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	// The status and code behind `error`, so a consumer can tell causes apart without its text.
+	errorDetails: AgentErrorDetails | null;
 	onSubmit: ( message: string, options?: SubmitOptions ) => Promise< void >;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
@@ -462,6 +468,7 @@ export interface AgentChatState {
 	uiMessages: UIMessage[];
 	isProcessing: boolean;
 	error: string | null;
+	errorDetails: AgentErrorDetails | null;
 	suggestions: Suggestion[];
 	progressMessage: string | null;
 	progressPhase: string | null;
@@ -506,6 +513,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		uiMessages: [],
 		isProcessing: false,
 		error: isValidConfig ? null : 'Invalid agent configuration',
+		errorDetails: null,
 		suggestions: [],
 		progressMessage: null,
 		progressPhase: null,
@@ -538,6 +546,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 	useEffect( () => {
 		trackReplyingRef.current = config.trackReplying;
 	}, [ config.trackReplying ] );
+	const onSilentErrorRef = useRef( config.onSilentError );
+	useEffect( () => {
+		onSilentErrorRef.current = config.onSilentError;
+	}, [ config.onSilentError ] );
 
 	// Use a ref to always have access to the latest registrations
 	const registrationsRef = useRef( registrations );
@@ -681,7 +693,19 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			const agentManager = getAgentManager();
 			const agentKey = agentConfig.agentId;
 			const preserveUiOnlyMessages = internalOptions?.preserveUiOnlyMessages ?? true;
-			const restoreMessagesOnError = async ( error: string | null ): Promise< boolean > => {
+			// A consumer's reporter must not change the turn. `onTaskUpdate` is guarded the same way.
+			const reportSilentError = ( details: AgentErrorDetails ) => {
+				try {
+					onSilentErrorRef.current?.( details );
+				} catch ( reporterError ) {
+					logger( 'Error in onSilentError callback: %O', reporterError );
+				}
+			};
+
+			const restoreMessagesOnError = async (
+				error: string | null,
+				errorDetails: AgentErrorDetails | null
+			): Promise< boolean > => {
 				const restoreOnError = internalOptions?.restoreOnError;
 
 				if ( ! restoreOnError ) {
@@ -705,6 +729,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					progressMessage: null,
 					progressPhase: null,
 					error,
+					errorDetails,
 				} ) );
 
 				return true;
@@ -747,6 +772,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					isProcessing: true,
 					isReplying: false,
 					error: null,
+					errorDetails: null,
 				} ) );
 			} else {
 				setState( ( prev ) => ( {
@@ -754,6 +780,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					isProcessing: true,
 					isReplying: false,
 					error: null,
+					errorDetails: null,
 				} ) );
 			}
 
@@ -767,6 +794,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				// Track streaming message for incremental updates
 				let streamingMessageId: string | null = null;
 				let finalMessageAdded = false;
+				// As in `agentManager`: a final update, or a pause for a tool result or user input.
+				let sawTurnTerminus = false;
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
@@ -816,6 +845,10 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 				}
 
 				for await ( const update of stream ) {
+					if ( update.final || update.status?.state === 'input-required' ) {
+						sawTurnTerminus = true;
+					}
+
 					if ( onTaskUpdate ) {
 						try {
 							await onTaskUpdate( update );
@@ -968,6 +1001,12 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					}
 				}
 
+				// An SSE reader that hits EOF mid-turn reads as a clean finish. The
+				// turn settles as before; the failure is only reported.
+				if ( ! sawTurnTerminus ) {
+					reportSilentError( { name: 'StreamIncompleteError' } );
+				}
+
 				// Only update from conversation history if we didn't already handle the final message
 				if ( ! finalMessageAdded ) {
 					// Update internal messages and transform for UI
@@ -1013,8 +1052,14 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			} catch ( error ) {
 				// Handle AbortError specially - it's not really an error, just user cancellation
 				if ( error instanceof Error && error.name === 'AbortError' ) {
-					logger( 'Request was aborted by user' );
-					const restored = await restoreMessagesOnError( null );
+					const errorDetails = getAgentErrorDetails( error );
+					if ( errorDetails.timedOut ) {
+						reportSilentError( errorDetails );
+						logger( 'Request was cut off by the client timer' );
+					} else {
+						logger( 'Request was aborted by user' );
+					}
+					const restored = await restoreMessagesOnError( null, null );
 					if ( ! restored ) {
 						setState( ( prev ) => ( {
 							...prev,
@@ -1022,13 +1067,15 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 							progressMessage: null,
 							progressPhase: null,
 							error: null, // Don't show error for user-initiated abort
+							errorDetails: null,
 						} ) );
 					}
 					return; // Don't re-throw AbortError
 				}
 
 				const errorMessage = error instanceof Error ? error.message : 'Failed to send message';
-				const restored = await restoreMessagesOnError( errorMessage );
+				const errorDetails = getAgentErrorDetails( error );
+				const restored = await restoreMessagesOnError( errorMessage, errorDetails );
 				if ( ! restored ) {
 					setState( ( prev ) => ( {
 						...prev,
@@ -1036,6 +1083,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						progressMessage: null,
 						progressPhase: null,
 						error: errorMessage,
+						errorDetails,
 					} ) );
 				}
 				throw error;
@@ -1157,6 +1205,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		messages: state.uiMessages,
 		isProcessing: state.isProcessing,
 		error: state.error,
+		errorDetails: state.errorDetails,
 		onSubmit,
 		suggestions: state.suggestions,
 		progressMessage: state.progressMessage,

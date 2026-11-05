@@ -158,6 +158,7 @@ const {
 	isProcessing, // boolean - request in progress
 	isReplying, // boolean | undefined - reply text is streaming in (with `trackReplying`, during a request)
 	error, // string | null - last error
+	errorDetails, // { name, status?, code? } | null - the error's name, HTTP status and server code
 
 	// Core methods
 	onSubmit, // (message: string) => Promise<void>
@@ -184,6 +185,7 @@ const {
 - `toolProvider?: ToolProvider` - Tool execution capabilities
 - `authProvider?: AuthProvider` - Authentication headers
 - `trackReplying?: boolean` - Return `isReplying` during a request, e.g. for AgentUI's `isReplying` prop. Needs `enableStreaming`. Reply text then also clears `progressMessage` and `progressPhase`
+- `onSilentError?: ( details: AgentErrorDetails ) => void` - Called for a failure the chat doesn't show, so it can still be recorded: a request the client's timer cut off (`timedOut: true`), or a stream that ended without finishing the turn (`name: 'StreamIncompleteError'`). `error` stays null for both
 
 ### useClientContext Hook
 
@@ -388,6 +390,8 @@ try {
 	}
 }
 ```
+
+A request the client's own timer cuts off also throws an `AbortError`, marked `timedOut: true`.
 
 ### Message Actions
 

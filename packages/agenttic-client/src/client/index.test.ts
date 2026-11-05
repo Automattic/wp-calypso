@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createTextMessage } from './utils/index';
-import { validateJsonRpcResponse } from './utils/internal/errors';
+import { AgentRequestError, validateJsonRpcResponse } from './utils/internal/errors';
 import { createClient, sendMessageAndWait } from './index';
 import type { JsonRpcResponse, ToolProvider } from './types/index';
 
@@ -188,7 +188,9 @@ describe( 'Client', () => {
 			sendMessageAndWait( createClient( { agentId: 'test-agent' } ), {
 				message: createTextMessage( 'hello' ),
 			} )
-		).rejects.toEqual( new Error( `Streaming error: ${ errorMessage }` ) );
+		).rejects.toEqual(
+			new AgentRequestError( `Streaming error: ${ errorMessage }`, { code: -32000 } )
+		);
 	} );
 
 	it( 'keeps the successful snapshot in the wait helper', async () => {
@@ -556,7 +558,9 @@ describe( 'Client', () => {
 						expect.objectContaining( { status: expect.objectContaining( { state } ), aiCredits } ),
 					] );
 					expect( thrown ).toEqual(
-						protocolError ? new Error( 'Streaming error: Agent request failed' ) : undefined
+						protocolError
+							? new AgentRequestError( 'Streaming error: Agent request failed', { code: -32000 } )
+							: undefined
 					);
 				}
 			);

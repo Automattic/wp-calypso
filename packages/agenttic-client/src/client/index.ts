@@ -1,4 +1,5 @@
 import {
+	AgentRequestError,
 	executeRequest,
 	executeStreamingRequest,
 	prepareRequest,
@@ -835,7 +836,9 @@ async function* processAgentResponseStream(
 
 					// If we didn't get a final result, throw an error
 					if ( ! continuedTaskUpdate ) {
-						throw new Error( 'Continue task stream ended without final result' );
+						throw new AgentRequestError( 'Continue task stream ended without final result', {
+							name: 'StreamIncompleteError',
+						} );
 					}
 
 					// Check if the continued task has more tool calls to process
@@ -940,7 +943,9 @@ async function* processAgentResponseStream(
 
 								// If we didn't get a final result, throw an error
 								if ( ! moreFinalTask ) {
-									throw new Error( 'Continue task stream ended without final result' );
+									throw new AgentRequestError( 'Continue task stream ended without final result', {
+										name: 'StreamIncompleteError',
+									} );
 								}
 
 								finalTask = moreFinalTask;
@@ -1423,5 +1428,7 @@ export async function sendMessageAndWait(
 	if ( failedUpdate ) {
 		return failedUpdate;
 	}
-	throw new Error( 'Stream ended without final result' );
+	throw new AgentRequestError( 'Stream ended without final result', {
+		name: 'StreamIncompleteError',
+	} );
 }

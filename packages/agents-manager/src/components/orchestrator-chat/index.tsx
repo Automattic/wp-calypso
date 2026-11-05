@@ -1,4 +1,8 @@
-import { getAgentManager, type TaskUpdate } from '@automattic/agenttic-client';
+import {
+	getAgentManager,
+	type AgentErrorDetails,
+	type TaskUpdate,
+} from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -157,6 +161,8 @@ export default function OrchestratorChat( {
 	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
 	const trackResponseOutcome = useResponseOutcomeTracking();
 
+	// The chat error hook comes after the chat, so its recorder reaches the config through a ref.
+	const recordSilentErrorRef = useRef< ( details: AgentErrorDetails ) => void >( () => {} );
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -166,6 +172,7 @@ export default function OrchestratorChat( {
 		return {
 			...agentConfig,
 			trackReplying: true,
+			onSilentError: ( details: AgentErrorDetails ) => recordSilentErrorRef.current( details ),
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				// A previous session's stream must not write into this one.
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
@@ -212,6 +219,7 @@ export default function OrchestratorChat( {
 		suggestions,
 		isProcessing,
 		error,
+		errorDetails,
 		loadMessages,
 		onSubmit,
 		abortCurrentRequest,
@@ -345,10 +353,13 @@ export default function OrchestratorChat( {
 
 	const chatError = useChatError( {
 		error: hasFailedResume ? null : error,
+		errorDetails,
+		isProcessing,
 		isReaderChat,
 		takeRefusalCode: credits.takeRefusalCode,
 		refusalNotice: credits.refusalNotice,
 	} );
+	recordSilentErrorRef.current = chatError.recordSilentError;
 
 	// Registered before the providers' ability setup below, whose effects may
 	// clear suggestions.
