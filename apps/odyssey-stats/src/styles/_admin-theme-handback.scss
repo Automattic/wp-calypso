@@ -13,8 +13,8 @@
 //
 // Only the schemes wp-admin ships are listed: the WordPress.com-only ones have no counterpart for
 // wp-admin to have set a value for, so there is nothing to hand back. `fresh` is here even though
-// `@wordpress/base-styles` has no `admin-scheme()` block for it — core treats it as the `:root`
-// default rather than a named scheme, but wp-admin still puts `admin-color-fresh` on <body>,
+// wp-admin has no `admin-scheme()` block for it — it resolves to the `:root` default rather than
+// a named scheme, but wp-admin still puts `admin-color-fresh` on <body>,
 // `useWPAdminTheme` still turns that into `is-fresh`, and `_fresh.scss` still aliases the token, so
 // leaving it out would exempt the default scheme, the one most Odyssey installs run.
 //

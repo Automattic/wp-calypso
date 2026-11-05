@@ -4,14 +4,14 @@
 .dashboard-stat__strapline {
 	font-size: $font-size-x-small;
 	line-height: $font-line-height-medium;
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	color: var(--dashboard-menu-item__color);
 	text-transform: uppercase;
 }
 
 .dashboard-stat__metric {
 	color: var(--dashboard__text-color);
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 }
 
 .dashboard-stat__description {

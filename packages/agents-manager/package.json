@@ -89,7 +89,7 @@
 		"@testing-library/user-event": "^14.6.8",
 		"@types/react": "^18.3.1",
 		"@types/react-dom": "^18.3.1",
-		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/base-styles": "^15.0.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
 		"smooch": "^5.7.17",

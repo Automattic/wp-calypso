@@ -102,7 +102,7 @@
 		"@wordpress/a11y": "^5.1.0",
 		"@wordpress/abilities": "^0.25.0",
 		"@wordpress/api-fetch": "^8.1.0",
-		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/base-styles": "^15.0.0",
 		"@wordpress/commands": "^1.48.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^9.1.0",
