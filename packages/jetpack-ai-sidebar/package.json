@@ -51,9 +51,9 @@
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
 		"@wordpress/blocks": "^15.27.0",
 		"@wordpress/components": "^37.0.0",
-		"@wordpress/compose": "^7.23.0",
-		"@wordpress/hooks": "^4.46.0",
-		"@wordpress/i18n": "^6.30.0",
+		"@wordpress/compose": "^9.0.0",
+		"@wordpress/hooks": "^5.0.0",
+		"@wordpress/i18n": "^7.0.0",
 		"@wordpress/icons": "^15.5.0"
 	},
 	"devDependencies": {
@@ -64,7 +64,7 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.54.0",
+		"@wordpress/data": "^11.0.0",
 		"@wordpress/element": "^10.0.0",
 		"react": "^18.3.1 || ^19.0.0",
 		"react-dom": "^18.3.1 || ^19.0.0"

@@ -47,13 +47,13 @@
 		"@wordpress/block-library": "^9.48.0",
 		"@wordpress/blocks": "^15.27.0",
 		"@wordpress/components": "^37.0.0",
-		"@wordpress/data": "^10.54.0",
+		"@wordpress/data": "^11.0.0",
 		"@wordpress/element": "^10.0.0",
 		"@wordpress/format-library": "^5.48.0",
-		"@wordpress/i18n": "^6.30.0",
-		"@wordpress/keycodes": "^4.57.0",
+		"@wordpress/i18n": "^7.0.0",
+		"@wordpress/keycodes": "^5.0.0",
 		"@wordpress/rich-text": "^7.54.0",
-		"@wordpress/url": "^4.57.0"
+		"@wordpress/url": "^5.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",
@@ -74,9 +74,9 @@
 		"typescript": "^6.0.3"
 	},
 	"peerDependencies": {
-		"@wordpress/data": "^10.54.0",
+		"@wordpress/data": "^11.0.0",
 		"@wordpress/element": "^10.0.0",
-		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/i18n": "^7.0.0",
 		"debug": "^4.4.3",
 		"eslint": "*",
 		"postcss": "*",
