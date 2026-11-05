@@ -1,6 +1,6 @@
 import { Button, Dropdown } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { caution, info } from '@wordpress/icons';
+import { caution, chartBar, info } from '@wordpress/icons';
 import clsx from 'clsx';
 import {
 	type CreditsPool,
@@ -28,6 +28,8 @@ interface Props {
 	purchaseHint?: string;
 	/** Full balance and purchases page, when available. */
 	manageUrl?: string;
+	/** Asks the chat for the balance, as typing `/credits` does. */
+	onShowCredits?: () => void;
 }
 
 function PoolRow( { pool, isExhausted }: { pool: CreditsPool; isExhausted: boolean } ) {
@@ -129,6 +131,7 @@ export default function CreditsMeter( {
 	action,
 	purchaseHint,
 	manageUrl,
+	onShowCredits,
 }: Props ) {
 	const label = getCreditsToggleLabel( status );
 	const isAlert = isCreditsAlert( status );
@@ -169,6 +172,16 @@ export default function CreditsMeter( {
 						<span className="agents-manager-credits-meter__title">
 							{ __( 'Site credits', __i18n_text_domain__ ) }
 						</span>
+						{ onShowCredits && (
+							<Button
+								className="agents-manager-credits-meter__show-credits"
+								icon={ chartBar }
+								iconSize={ 20 }
+								label={ __( 'Show my credits in the chat', __i18n_text_domain__ ) }
+								onClick={ onShowCredits }
+								size="small"
+							/>
+						) }
 						{ manageUrl && (
 							<Button
 								className="agents-manager-credits-meter__manage"

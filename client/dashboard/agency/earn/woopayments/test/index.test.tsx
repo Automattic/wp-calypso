@@ -16,7 +16,7 @@ function mockAgency() {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
-		.reply( 200, [ { id: AGENCY_ID } ] )
+		.reply( 200, [ { id: AGENCY_ID, approval_status: 'approved' } ] )
 		.persist();
 }
 
@@ -158,7 +158,10 @@ describe( 'EarnWooPayments', () => {
 		mockWooPaymentsSite();
 		// The route loads the agency before the page renders, so the empty state never shows.
 		const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
-		queryClient.setQueryData( activeAgencyQuery().queryKey, { id: AGENCY_ID } as never );
+		queryClient.setQueryData( activeAgencyQuery().queryKey, {
+			id: AGENCY_ID,
+			approval_status: 'approved',
+		} as never );
 		window.history.replaceState( null, '', '/woopayments?add-woopayments-to-site=true' );
 
 		const { recordTracksEvent, router } = render( <EarnWooPayments />, { queryClient } );

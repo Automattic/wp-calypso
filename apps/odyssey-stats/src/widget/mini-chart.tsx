@@ -2,7 +2,9 @@ import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
+import { PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from 'calypso/dashboard/utils/premium-analytics-url';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
+import { readChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
 import { buildChartData } from 'calypso/my-sites/stats/stats-chart-tabs/utility';
 import { parseLocalDate } from 'calypso/my-sites/stats/utils';
 import useVisitsQuery from '../hooks/use-visits-query';
@@ -40,12 +42,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 } ) => {
 	const translate = useTranslate();
 	const statsLink = useStatsLink( siteId );
-	const { id: rangeId, unit, quantity, startDate, endDate } = range;
+	const { id: rangeId, unit, startDate, endDate } = range;
 
 	// "More stats" opens the days the chart shows, on Stats or Premium Analytics.
 	const moreStatsUrl = statsLink(
 		`${ statsBaseUrl }/stats/${ unit }/${ siteId }?chartStart=${ startDate }&chartEnd=${ endDate }`,
-		'/',
+		PREMIUM_ANALYTICS_TRAFFIC_ROUTE,
 		{ from: startDate, to: endDate, gmtOffset }
 	);
 
@@ -55,9 +57,14 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const viewsColor = useCssVariable( '--chart-series-views', rootElement );
 	const visitorsColor = useCssVariable( '--chart-series-visitors', rootElement );
 
+	// Read once: the choice is made on the Stats page, so a change there shows on the next
+	// load of the dashboard. Bars on a phone too, as Stats v2 draws them, rather than the Stats
+	// page's lines.
+	const chartType = useMemo( () => readChartType( siteId, false ), [ siteId ] );
+
 	// `status`, not `isLoading`: a retry waiting on a hidden tab or a lost connection is still
 	// pending, while `isLoading` is false and would read the range as empty.
-	const { status, data } = useVisitsQuery( siteId, unit, quantity, endDate );
+	const { status, data } = useVisitsQuery( siteId, range );
 
 	const totals = useMemo( () => {
 		const records = ( data ?? [] ) as VisitRecord[];
@@ -120,7 +127,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Views', { context: 'noun' } ) }
-							<span className="stats-widget-metric__swatch is-views" aria-hidden="true" />
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-views', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
 						</div>
 						<MetricValue
 							value={ totals.views }
@@ -136,7 +148,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 					<div className="stats-widget-metric">
 						<div className="stats-widget-metric__title">
 							{ translate( 'Visitors', { context: 'noun' } ) }
-							<span className="stats-widget-metric__swatch is-visitors" aria-hidden="true" />
+							<span
+								className={ clsx( 'stats-widget-metric__swatch', 'is-visitors', {
+									'is-bar': 'bar' === chartType,
+								} ) }
+								aria-hidden="true"
+							/>
 						</div>
 						<MetricValue
 							value={ totals.visitors }
@@ -171,7 +188,12 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 				<ChartBoundary fallback={ noData }>
 					<Suspense fallback={ chartPlaceholder }>
 						<div className="stats-widget-chart" style={ chartBoxStyle }>
-							<OverviewChart series={ series } height={ CHART_HEIGHT } unit={ unit } />
+							<OverviewChart
+								series={ series }
+								height={ CHART_HEIGHT }
+								range={ range }
+								chartType={ chartType }
+							/>
 						</div>
 					</Suspense>
 				</ChartBoundary>

@@ -4,6 +4,8 @@
 // Otherwise, we'd add a fair amount to the bundle size when we don't really need
 // it for every single request.
 import config from '@automattic/calypso-config';
+import { isCalypsoLiveHostname } from '@automattic/calypso-url';
+import { makeLogstashMirrorTransport } from './logstash-transport';
 import type * as SentryApi from '@sentry/react';
 
 // Static sentry configuration. We add any dynamic values when initializing Sentry.
@@ -138,6 +140,11 @@ function shouldEnableSentry( sampleRate: number = 0.1 ): boolean {
 		return true;
 	}
 
+	// calypso.live runs unreleased PR builds, whose errors shouldn't be reported.
+	if ( isCalypsoLiveHostname( window.location.hostname ) ) {
+		return false;
+	}
+
 	// By default, only load for 10% of requests when Sentry is enabled in the environment:
 	return (
 		config.isEnabled( 'catch-js-errors' ) &&
@@ -209,7 +216,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 			const Sentry = await import( '@sentry/react' );
 			// We don't set a release outside of production builds because we don't
 			// really "release" anything other than new deploys from trunk builds.
-			// wpcalypso (calypso.live) runs on PRs, which doesn't really map to a
+			// calypso.live runs on PRs, which doesn't really map to a
 			// release we need to track. Horizon is just a different flavor of trunk,
 			// so it can be mapped to a trunk release.
 			const environment = config< string >( 'env_id' );
@@ -231,6 +238,7 @@ export async function initSentry( parameters?: SentryOptions ) {
 				release,
 				beforeBreadcrumb,
 				beforeSend,
+				transport: makeLogstashMirrorTransport( Sentry.makeFetchTransport ),
 			} );
 			state = { state: 'loaded', params, sentry: Sentry };
 		} catch ( err ) {

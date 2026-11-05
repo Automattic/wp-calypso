@@ -11,6 +11,7 @@ import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { DataViewsCard } from '../../../components/dataviews';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
+import { useIsApprovalGated } from '../../approval-gate';
 import { AgencyNotices } from '../../components/agency-notices';
 import MissingPaymentSettingsNotice, {
 	useMissingPaymentSettings,
@@ -44,6 +45,7 @@ export default function EarnWooPayments() {
 	const locale = useLocale();
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
 	const router = useRouter();
+	const isApprovalGated = useIsApprovalGated();
 	const [ isAddSiteRequested, setIsAddSiteRequested ] = useState( false );
 	useConsumeSearchParams( ADD_TO_SITE_PARAMS, {
 		when: ( params ) => params[ 'add-woopayments-to-site' ] === 'true',
@@ -77,6 +79,7 @@ export default function EarnWooPayments() {
 						recordTracksEvent={ recordTracksEvent }
 						onSelectSite={ navigateToSiteSetup }
 						shouldUseRouterLink
+						isApprovalGated={ isApprovalGated }
 						autoOpen={ isAddSiteRequested }
 						onAutoOpen={ handleAddSiteAutoOpen }
 					/>

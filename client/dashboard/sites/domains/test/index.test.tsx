@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, within } from '@testing-library/react';
+import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { SITE_CONTEXT_VIEW } from '../../../domains/dataviews/views';
@@ -85,6 +85,16 @@ const primaryCandidateDomain = {
 	can_set_as_primary: true,
 };
 
+const expiredDomain = {
+	...domain,
+	domain: 'expired.blog',
+	domain_status: { id: 'expired', label: 'Expired', type: 'error' },
+	expiry: '2026-09-04T00:00:00+00:00',
+	expired: true,
+	primary_domain: false,
+	subscription_id: '123',
+};
+
 const ownerUser = {
 	ID: OWNER_USER_ID,
 	username: 'owner',
@@ -101,19 +111,26 @@ const nonOwnerUser = {
 	meta: { data: { flags: { active_flags: [] } } },
 } as unknown as User;
 
+const siteWithPrimaryDomainFeature = {
+	...site,
+	plan: { is_free: false, features: { active: [ 'set-primary-custom-domain' ] } },
+} as unknown as Site;
+
 function mockApis( {
 	domains = [ domain, defaultAddressDomain ],
 	ssl,
 	preferences = {},
+	siteResponse = site,
 }: {
 	domains?: unknown[];
-	ssl?: { domain: string; certificate_provisioned: boolean };
+	ssl?: { domain: string; certificate_provisioned: boolean; is_newly_registered?: boolean };
 	preferences?: Record< string, unknown >;
+	siteResponse?: Site;
 } = {} ) {
 	nock( 'https://public-api.wordpress.com' )
 		.get( `/rest/v1.1/sites/${ site.slug }` )
 		.query( true )
-		.reply( 200, site );
+		.reply( 200, siteResponse );
 
 	nock( 'https://public-api.wordpress.com' )
 		.get( '/rest/v1.2/all-domains' )
@@ -137,7 +154,7 @@ function mockApis( {
 			.reply( 200, {
 				data: {
 					certificate_provisioned: ssl.certificate_provisioned,
-					is_newly_registered: false,
+					is_newly_registered: ssl.is_newly_registered ?? false,
 					is_expired: false,
 				},
 			} )
@@ -188,7 +205,7 @@ describe( '<SiteDomains>', () => {
 
 		await user.click( await screen.findByLabelText( 'Actions' ) );
 
-		expect( screen.getByText( 'Change site address' ) ).toBeVisible();
+		expect( await screen.findByText( 'Change site address' ) ).toBeVisible();
 	} );
 
 	test( 'hides "Change site address" action when the site is suspended', async () => {
@@ -232,6 +249,85 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
 	} );
 
+	describe( 'primary site address modal', () => {
+		async function openModal() {
+			const user = userEvent.setup();
+			nock.cleanAll();
+			mockApis( {
+				domains: [ primaryCandidateDomain, domain, defaultAddressDomain ],
+				siteResponse: siteWithPrimaryDomainFeature,
+			} );
+
+			const { recordTracksEvent } = render( <SiteDomains />, { user: ownerUser } );
+
+			await user.click(
+				await screen.findByRole( 'button', { name: 'Change primary site address' } )
+			);
+
+			const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+			return { user, dialog, recordTracksEvent };
+		}
+
+		test( 'opens from the notice with the current address selected', async () => {
+			const { dialog } = await openModal();
+
+			expect(
+				within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } )
+			).toHaveValue( 'test-site.com' );
+			expect( within( dialog ).getByRole( 'button', { name: 'Change address' } ) ).toBeDisabled();
+		} );
+
+		test( 'closes without saving when cancelled', async () => {
+			const { user, dialog, recordTracksEvent } = await openModal();
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Cancel' } ) );
+
+			expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument();
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_site_domains_primary_domain_selector_submit',
+				expect.anything()
+			);
+		} );
+
+		test( 'closes from the close button', async () => {
+			const { user, dialog } = await openModal();
+
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Close' } ) );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+		} );
+
+		test( 'changes the address, disabling the select while saving', async () => {
+			const { user, dialog, recordTracksEvent } = await openModal();
+
+			let finishSaving = () => {};
+			const saving = new Promise< void >( ( resolve ) => {
+				finishSaving = resolve;
+			} );
+			const saveRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( async () => {
+					await saving;
+					return [ 200, {} ];
+				} );
+
+			const select = within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } );
+			await user.selectOptions( select, 'candidate.com' );
+			await user.click( within( dialog ).getByRole( 'button', { name: 'Change address' } ) );
+
+			await waitFor( () => expect( select ).toBeDisabled() );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_site_domains_primary_domain_selector_submit',
+				{ site: site.slug, domain: 'candidate.com' }
+			);
+
+			finishSaving();
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( saveRequest.isDone() ).toBe( true );
+		} );
+	} );
+
 	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
 		const user = userEvent.setup();
 		nock.cleanAll();
@@ -265,6 +361,108 @@ describe( '<SiteDomains>', () => {
 		const actionsButtons = await screen.findAllByLabelText( 'Actions' );
 		await user.click( actionsButtons[ 0 ] );
 
-		expect( screen.getByText( 'Make primary site address' ) ).toBeVisible();
+		expect( await screen.findByText( 'Make primary site address' ) ).toBeVisible();
+	} );
+
+	test( 'shows a newly registered domain as activating until its certificate is issued', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ { ...domain, primary_domain: false }, defaultAddressDomain ],
+			ssl: { domain: domain.domain, certificate_provisioned: false, is_newly_registered: true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Preparing your new domain name' ) ).toBeVisible();
+		expect( screen.getByText( 'Activating' ) ).toBeVisible();
+		expect( screen.getByRole( 'img', { name: 'Can take up to 15 minutes' } ) ).toBeVisible();
+		expect( screen.queryByText( 'SSL pending' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows a working domain as active while the backend still reports it as pending primary', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [
+				{ ...domain, primary_domain: false, set_primary_domain_pending: true },
+				defaultAddressDomain,
+			],
+			ssl: { domain: domain.domain, certificate_provisioned: true, is_newly_registered: true },
+		} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/rest/v1.2/domain-details/${ domain.domain }/` )
+			.reply( 200, { ...domain, primary_domain: false, set_primary_domain_pending: true } )
+			.persist();
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await waitFor( () => expect( screen.getAllByText( 'SSL active' ) ).toHaveLength( 2 ) );
+		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows a registered domain with an issued certificate as active', async () => {
+		nock.cleanAll();
+		mockApis( {
+			ssl: { domain: domain.domain, certificate_provisioned: true, is_newly_registered: true },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await waitFor( () => expect( screen.getAllByText( 'SSL active' ) ).toHaveLength( 2 ) );
+		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
+		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows an expired domain notice instead of the primary site address notice', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ expiredDomain, primaryCandidateDomain, domain, defaultAddressDomain ],
+			siteResponse: siteWithPrimaryDomainFeature,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Expired domain' ) ).toBeVisible();
+		expect( screen.getByText( /will be released if it is not renewed/ ) ).toBeVisible();
+		expect(
+			screen.queryByRole( 'button', { name: 'Change primary site address' } )
+		).not.toBeInTheDocument();
+
+		const table = screen.getByRole( 'table' );
+		expect( within( table ).getByText( /^Expired on / ) ).toBeVisible();
+		expect( within( table ).getByRole( 'button', { name: 'Change primary' } ) ).toBeVisible();
+	} );
+
+	test( 'opens the primary site address modal from "Change primary" on the primary domain row', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ expiredDomain, primaryCandidateDomain, domain, defaultAddressDomain ],
+			siteResponse: siteWithPrimaryDomainFeature,
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		await user.click( await within( table ).findByRole( 'button', { name: 'Change primary' } ) );
+
+		const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+		expect(
+			within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } )
+		).toHaveValue( 'test-site.com' );
+	} );
+
+	test( 'dismisses the expired domain notice', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( { domains: [ expiredDomain, domain, defaultAddressDomain ] } );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await screen.findByText( 'Expired domain' );
+		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );
+
+		expect( screen.queryByText( 'Expired domain' ) ).not.toBeInTheDocument();
 	} );
 } );

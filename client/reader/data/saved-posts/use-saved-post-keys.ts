@@ -1,5 +1,9 @@
-import { getReadSavedKeyId, readSavedKeysQuery } from '@automattic/api-queries';
-import { useQuery } from '@tanstack/react-query';
+import {
+	addMissingReadSavedKeys,
+	getReadSavedKeyId,
+	readSavedKeysQuery,
+} from '@automattic/api-queries';
+import { useQuery, type QueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 import { savedKeysForPost } from './saved-key-for-post';
 import type { ReadSavedKeysResponse } from '@automattic/api-core';
@@ -61,4 +65,28 @@ export function useIsPostSaved(
 	} );
 
 	return keyId === null ? false : isSaved;
+}
+
+/**
+ * Marks every post in a page of the Saved stream as saved. A post saved
+ * elsewhere, such as in the browser extension, can reach the stream before the
+ * keys query refetches, and its URL can differ from the one the keys list.
+ */
+export function addSavedStreamPostsToKeys(
+	queryClient: QueryClient,
+	posts: Array< Post | null | undefined >
+) {
+	addMissingReadSavedKeys(
+		queryClient,
+		posts.flatMap( ( post ) =>
+			post
+				? [
+						{
+							keys: savedKeysForPost( post ),
+							date_saved: typeof post.date_saved === 'string' ? post.date_saved : '',
+						},
+					]
+				: []
+		)
+	);
 }

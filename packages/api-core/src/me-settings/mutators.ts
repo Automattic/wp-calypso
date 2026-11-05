@@ -40,7 +40,6 @@ export async function updateUserSettings(
 		'mcp_approval_bypass',
 		'ai_assistant',
 		'user_email_change_pending',
-		'user_email_change_requested_from',
 	];
 	const payload = Object.fromEntries(
 		saveableKeys.filter( ( key ) => key in data ).map( ( key ) => [ key, data[ key ] ] )

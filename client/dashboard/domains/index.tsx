@@ -1,12 +1,13 @@
 import { DomainSubtype } from '@automattic/api-core';
+import { domainsQuery, sitesQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../app/analytics';
 import { useAuth } from '../app/auth';
-import { useAppContext } from '../app/context';
 import { usePersistentView } from '../app/hooks/use-persistent-view';
 import { PerformanceTrackerStop } from '../app/performance-tracking';
 import { domainsIndexRoute } from '../app/router/domains';
+import ComponentViewTracker from '../components/component-view-tracker';
 import { DataViews, DataViewsCard, DataViewsEmptyStateLayout } from '../components/dataviews';
 import { PageHeader } from '../components/page-header';
 import PageLayout from '../components/page-layout';
@@ -19,6 +20,7 @@ import {
 	DEFAULT_VIEW,
 	DEFAULT_LAYOUTS,
 	recordDomainViewChanges,
+	sanitizeDomainsListLayout,
 } from './dataviews';
 import EmptyDomainsStateActions from './empty-domains-state/actions';
 import { EmptyDomainsStateUpsell } from './empty-domains-state/upsell';
@@ -41,20 +43,24 @@ const defaultView = {
 
 function Domains() {
 	const { user } = useAuth();
-	const { queries } = useAppContext();
 	const { recordTracksEvent } = useAnalytics();
 	const fields = useFields( { showPrimaryDomainBadge: false } );
-	const { data: sites } = useSuspenseQuery( queries.sitesQuery() );
+	const { data: sites } = useSuspenseQuery( sitesQuery() );
 	const searchParams = domainsIndexRoute.useSearch();
 
-	const { view, updateView, resetView } = usePersistentView( {
+	const {
+		view: persistentView,
+		updateView,
+		resetView,
+	} = usePersistentView( {
 		slug: 'domains',
 		defaultView,
 		queryParams: searchParams,
 	} );
+	const view = sanitizeDomainsListLayout( persistentView );
 
 	const { data: domains } = useSuspenseQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.subtype.id !== DomainSubtype.DEFAULT_ADDRESS );
 		},
@@ -118,6 +124,12 @@ function Domains() {
 					</DataViewsCard>
 				) }
 			</PageLayout>
+			{ view.type !== persistentView.type && (
+				<ComponentViewTracker
+					eventName="calypso_dashboard_domains_saved_layout_fallback"
+					properties={ { saved_layout: persistentView.type, fallback_layout: view.type } }
+				/>
+			) }
 			<PerformanceTrackerStop />
 		</>
 	);

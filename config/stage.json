@@ -108,6 +108,7 @@
 		"migration/ssh-migration": false,
 		"migration/reprint-flow": true,
 		"notifications/subscriber-alerts": true,
+		"notifications/subscriber-alerts-default-on": true,
 		"notifications/view-settings": true,
 		"onboarding/create-course": false,
 		"onboarding/import-from-blogger": true,
@@ -125,7 +126,7 @@
 		"plans/scheduled-term-change": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
-		"plugins/stepper-plans": false,
+		"plugins/stepper-plans": true,
 		"plugins/universal-header": true,
 		"posthog-tracking": true,
 		"press-this": true,
@@ -190,7 +191,6 @@
 	"boom_analytics_enabled": true,
 	"server_side_boom_analytics_enabled": true,
 	"boom_analytics_key": "stage",
-	"theme_color": "#1D2327",
 	"hotjar_enabled": true,
 	"survicate_enabled": true
 }

@@ -142,4 +142,35 @@ describe( 'useAgentTraceIds', () => {
 		await window.fetch( 'https://example.com' );
 		expect( fetchSpy ).toHaveBeenCalledWith( 'https://example.com' );
 	} );
+
+	it( 'keeps capturing for a remaining consumer when another unmounts first', async () => {
+		const response = createResponse(
+			JSON.stringify( createTraceEvent( 'message-shared', 'trace-shared' ) ),
+			'application/json'
+		);
+		window.fetch = jest.fn().mockResolvedValue( response ) as unknown as typeof window.fetch;
+
+		const first = renderHook( () => useAgentTraceIds( agentConfig ) );
+		const second = renderHook( () => useAgentTraceIds( agentConfig ) );
+
+		first.unmount();
+		await fetchAndFlush( agentUrl );
+
+		await waitFor( () =>
+			expect( second.result.current( 'message-shared' ) ).toBe( 'trace-shared' )
+		);
+	} );
+
+	it( 'restores the original fetch only after every consumer unmounts', () => {
+		const baseFetch = jest.fn() as unknown as typeof window.fetch;
+		window.fetch = baseFetch;
+
+		const first = renderHook( () => useAgentTraceIds( agentConfig ) );
+		const second = renderHook( () => useAgentTraceIds( agentConfig ) );
+
+		first.unmount();
+		expect( window.fetch ).not.toBe( baseFetch );
+		second.unmount();
+		expect( window.fetch ).toBe( baseFetch );
+	} );
 } );
