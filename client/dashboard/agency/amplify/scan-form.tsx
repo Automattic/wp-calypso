@@ -57,6 +57,7 @@ function WebsiteAddressInput( {
 	onKeyDown,
 	combobox,
 	invalid,
+	describedBy,
 }: {
 	value: string;
 	onChange: ( value: string ) => void;
@@ -67,6 +68,7 @@ function WebsiteAddressInput( {
 	onKeyDown?: ( event: React.KeyboardEvent< HTMLInputElement > ) => void;
 	combobox?: { expanded: boolean; activeId?: string; listId: string };
 	invalid?: boolean;
+	describedBy?: string;
 } ) {
 	const inputRef = useRef< HTMLInputElement >( null );
 	return (
@@ -92,6 +94,7 @@ function WebsiteAddressInput( {
 				aria-controls={ combobox?.expanded ? combobox.listId : undefined }
 				aria-activedescendant={ combobox?.activeId }
 				aria-invalid={ invalid }
+				aria-describedby={ describedBy }
 				suffix={
 					value ? (
 						<InputControlSuffixWrapper variant="control">
@@ -125,6 +128,7 @@ export function WebsiteAddressPicker( {
 	placeholder,
 	idPrefix = 'amplify-connected-site',
 	invalid,
+	describedBy,
 	portalSuggestions = false,
 }: {
 	agencyId: number;
@@ -137,6 +141,8 @@ export function WebsiteAddressPicker( {
 	placeholder: string;
 	idPrefix?: string;
 	invalid?: boolean;
+	/** The id of the error message, so screen readers read it with the field. */
+	describedBy?: string;
 	portalSuggestions?: boolean;
 } ) {
 	const listId = `${ idPrefix }-list`;
@@ -337,6 +343,7 @@ export function WebsiteAddressPicker( {
 				label={ label }
 				placeholder={ placeholder }
 				invalid={ invalid }
+				describedBy={ describedBy }
 				combobox={ {
 					expanded: showOptions,
 					listId,

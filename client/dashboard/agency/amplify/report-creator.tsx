@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import {
 	BaseControl,
 	Button,
+	__experimentalSpacer as Spacer,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
@@ -233,6 +234,7 @@ export default function AmplifyReportCreator( {
 	);
 	const [ urlInput, setUrlInput ] = useState( initialUrl );
 	const [ urlError, setUrlError ] = useState( '' );
+	const urlErrorId = useId();
 	const [ selectedSite, setSelectedSite ] = useState< string | null >( null );
 	const [ mode, setMode ] = useState< AmplifyMode >( initialMode );
 	const handleSubmit = ( event: React.FormEvent ) => {
@@ -322,6 +324,7 @@ export default function AmplifyReportCreator( {
 									setUrlError( '' );
 								} }
 								invalid={ !! urlError }
+								describedBy={ urlError ? urlErrorId : undefined }
 								portalSuggestions={ isModal }
 							/>
 							<Button
@@ -336,9 +339,11 @@ export default function AmplifyReportCreator( {
 							</Button>
 						</div>
 						{ urlError && (
-							<p className="dashboard-amplify-overview__url-error" role="alert">
-								{ urlError }
-							</p>
+							<Spacer marginTop={ 2 } marginBottom={ 0 }>
+								<Text as="p" id={ urlErrorId } intent="error" size={ 12 } role="alert">
+									{ urlError }
+								</Text>
+							</Spacer>
 						) }
 						<AmplifyScansLeft
 							agencyId={ agencyId }
