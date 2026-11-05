@@ -3,6 +3,7 @@ import {
 	__experimentalVStack as VStack,
 	Button,
 	Icon,
+	TextareaControl,
 	VisuallyHidden,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
@@ -152,6 +153,31 @@ function AccessOffNotice( {
 	);
 }
 
+function CopyFallback( { text }: { text: string } ) {
+	const fieldRef = useRef< HTMLTextAreaElement >( null );
+
+	// Select the text so people only need to press the copy shortcut.
+	useEffect( () => {
+		fieldRef.current?.focus();
+		fieldRef.current?.select();
+	}, [ text ] );
+
+	return (
+		<Notice variant="warning" title={ __( 'Your browser blocked copying' ) }>
+			<TextareaControl
+				__nextHasNoMarginBottom
+				ref={ fieldRef }
+				className="mcp-connect__copy-fallback"
+				label={ __( 'Press Ctrl+C or ⌘C to copy this text.' ) }
+				value={ text }
+				onChange={ () => {} }
+				readOnly
+				rows={ text.length > 100 ? 3 : 2 }
+			/>
+		</Notice>
+	);
+}
+
 export default function McpConnectCard( {
 	mcpEnabled,
 	onTurnOn,
@@ -164,6 +190,7 @@ export default function McpConnectCard( {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
+	const [ failedText, setFailedText ] = useState< string | null >( null );
 	const copiedTimeout = useRef< ReturnType< typeof setTimeout > >( undefined );
 	const gridRef = useRef< HTMLUListElement >( null );
 	const wasEnabled = useRef( mcpEnabled );
@@ -182,8 +209,10 @@ export default function McpConnectCard( {
 		try {
 			await navigator.clipboard.writeText( text );
 		} catch {
+			setFailedText( text );
 			return false;
 		}
+		setFailedText( null );
 		setCopiedKey( key );
 		speak( __( 'Copied' ) );
 		clearTimeout( copiedTimeout.current );
@@ -227,6 +256,7 @@ export default function McpConnectCard( {
 							</li>
 						) ) }
 					</ul>
+					{ failedText !== null && <CopyFallback text={ failedText } /> }
 				</VStack>
 			</CardBody>
 			<CardFooter className="mcp-connect__footer">

@@ -105,6 +105,28 @@ describe( '<McpConnectCard />', () => {
 		);
 	} );
 
+	test( 'shows the text, selected, when the copy fails', async () => {
+		writeText.mockRejectedValueOnce( new Error( 'Blocked' ) );
+		renderCard();
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Claude Code' } ) );
+
+		const field = await screen.findByRole( 'textbox', {
+			name: 'Press Ctrl+C or ⌘C to copy this text.',
+		} );
+		expect( field ).toHaveValue(
+			`claude mcp add --transport http ${ MCP_SERVER_NAME } ${ MCP_SERVER_URL }`
+		);
+		expect( field ).toHaveFocus();
+		expect( ( field as HTMLTextAreaElement ).selectionEnd ).toBe(
+			( field as HTMLTextAreaElement ).value.length
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Copy prompt' } ) );
+
+		await waitFor( () => expect( field ).not.toBeInTheDocument() );
+	} );
+
 	test( 'copies the prompt that lets an agent connect itself', async () => {
 		const { recordTracksEvent } = renderCard();
 
