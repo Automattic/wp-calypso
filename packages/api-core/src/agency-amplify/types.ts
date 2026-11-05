@@ -12,8 +12,6 @@ export interface AmplifyReport {
 	updated_at: string | null;
 	user_id: number | null;
 	score: { human: number | null; ai: number | null };
-	/** @deprecated Download through `fetchAmplifyReportPdf` instead. Will be removed. */
-	pdf_url: string | null;
 	has_pdf: boolean;
 	archived: boolean;
 	failure_reason: string | null;
