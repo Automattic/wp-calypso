@@ -263,20 +263,27 @@ export function AmplifyScansLeft( {
 	const message = status === 'cap' ? limitMessage : null;
 	if ( message ) {
 		return (
-			<div className="dashboard-amplify-scans-left" data-status={ status }>
+			<HStack
+				className="dashboard-amplify-scans-left"
+				data-status={ status }
+				spacing={ 1.5 }
+				justify="flex-start"
+				alignment="center"
+				wrap
+			>
 				<Text size={ 12 } lineHeight="18px" variant="muted">
-					<span className="dashboard-amplify-scans-left__title">
+					<Text size={ 12 } lineHeight="18px" weight={ 500 }>
 						{ sprintf(
 							/* translators: %s: a short status, e.g. "You’ve used all 5 reports this month" */
 							__( '%s.' ),
 							message.title
 						) }
-					</span>{ ' ' }
+					</Text>{ ' ' }
 					{ message.body }
 				</Text>
 				{ message.action }
 				<LimitsExplainer tierId={ tierId } tiersLink={ tiersLink } />
-			</div>
+			</HStack>
 		);
 	}
 	if ( ! usage || usage.limit === null || ! hasAllowance( status ) ) {
@@ -284,7 +291,14 @@ export function AmplifyScansLeft( {
 	}
 	const left = Math.max( 0, usage.limit - usage.used );
 	return (
-		<div className="dashboard-amplify-scans-left" data-status={ status }>
+		<HStack
+			className="dashboard-amplify-scans-left"
+			data-status={ status }
+			spacing={ 1.5 }
+			justify="flex-start"
+			alignment="center"
+			wrap
+		>
 			<Text
 				size={ 12 }
 				lineHeight="16px"
@@ -298,7 +312,7 @@ export function AmplifyScansLeft( {
 				) }
 			</Text>
 			<LimitsExplainer tierId={ tierId } tiersLink={ tiersLink } />
-		</div>
+		</HStack>
 	);
 }
 

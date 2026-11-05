@@ -38,14 +38,5 @@
 }
 
 .dashboard-amplify-scans-left {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 2px 6px;
 	margin-block-start: 6px;
-}
-
-.dashboard-amplify-scans-left__title {
-	color: var( --color-text );
-	font-weight: 500;
 }
