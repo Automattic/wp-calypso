@@ -534,6 +534,42 @@ describe( '<SiteDomains>', () => {
 		expect( screen.getByRole( 'img', { name: 'Can take up to 15 minutes' } ) ).toBeVisible();
 	} );
 
+	test( 'shows the activation time when hovering the activating status', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [ { ...domain, primary_domain: false }, defaultAddressDomain ],
+			ssl: { domain: domain.domain, certificate_provisioned: false, is_newly_registered: true },
+		} );
+		const user = userEvent.setup();
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		await user.hover( await screen.findByText( 'Activating' ) );
+
+		expect( await screen.findByRole( 'tooltip' ) ).toHaveTextContent( 'Can take up to 15 minutes' );
+	} );
+
+	test( 'shows a new domain as activating while it is set as the primary address', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [
+				{ ...domain, primary_domain: false, set_primary_domain_pending: true },
+				defaultAddressDomain,
+			],
+			ssl: { domain: domain.domain, certificate_provisioned: false, is_newly_registered: false },
+		} );
+		nock( 'https://public-api.wordpress.com' )
+			.get( `/rest/v1.2/domain-details/${ domain.domain }/` )
+			.reply( 200, { ...domain, primary_domain: false, set_primary_domain_pending: true } )
+			.persist();
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		expect( await screen.findByText( 'Preparing your new domain name' ) ).toBeVisible();
+		expect( screen.getByText( 'Activating' ) ).toBeVisible();
+		expect( screen.getByRole( 'img', { name: 'Can take up to 15 minutes' } ) ).toBeVisible();
+	} );
+
 	test( 'shows a working domain as active while the backend still reports it as pending primary', async () => {
 		nock.cleanAll();
 		mockApis( {
@@ -556,6 +592,27 @@ describe( '<SiteDomains>', () => {
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Setting up your custom domain' ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'shows a new domain as active once its certificate is issued', async () => {
+		nock.cleanAll();
+		mockApis( {
+			domains: [
+				{
+					...domain,
+					domain_status: { id: 'active', label: 'Activating', type: 'success' },
+				},
+				defaultAddressDomain,
+			],
+			ssl: { domain: domain.domain, certificate_provisioned: true, is_newly_registered: false },
+		} );
+
+		const { queryClient } = render( <SiteDomains />, { user: ownerUser } );
+
+		await waitForSslDetails( queryClient, domain.domain );
+		const card = await screen.findByRole( 'group', { name: domain.domain } );
+		expect( within( card ).getByText( 'Active' ) ).toBeVisible();
+		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'shows a registered domain with an issued certificate as active', async () => {
