@@ -42,6 +42,14 @@ const inline = ( node ) =>
 			if ( tag === 'br' ) {
 				return '\n';
 			}
+			// An image is its URL, as an embed already is, which the site's comment text turns into a link.
+			if ( tag === 'img' ) {
+				const src = child.getAttribute( 'src' ) ?? '';
+				return /^https?:/i.test( src ) ? escape( src ) : '';
+			}
+			if ( tag === 'figcaption' ) {
+				return '\n' + inline( child );
+			}
 			// A nested list is written out as lines of its own.
 			if ( tag === 'ul' || tag === 'ol' ) {
 				return '';

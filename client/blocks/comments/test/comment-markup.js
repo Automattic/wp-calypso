@@ -33,6 +33,15 @@ describe( 'blocksToHtml', () => {
 		).toBe( '1. First\n  - Inner\n2. <em>Second</em>' );
 	} );
 
+	it( 'writes images and embeds as their URLs, with captions under them', () => {
+		expect(
+			blocksToHtml(
+				'<figure class="wp-block-image"><img src="https://example.com/a.jpg" alt=""/><figcaption>A cat</figcaption></figure>' +
+					'<figure class="wp-block-embed"><div class="wp-block-embed__wrapper">\nhttps://youtu.be/x\n</div></figure>'
+			)
+		).toBe( 'https://example.com/a.jpg\nA cat\n\nhttps://youtu.be/x' );
+	} );
+
 	it( 'keeps quotes and code', () => {
 		expect(
 			blocksToHtml(

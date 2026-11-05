@@ -354,7 +354,6 @@ class PostCommentForm extends Component {
 							key={ this.state.editorKey }
 							settings={ this.props.editorSettings }
 							siteId={ post.site_ID }
-							html={ isCommentHtmlOnly( post ) }
 							value={ this.getCommentText() }
 							placeholder={ placeholder }
 							label={ isReply ? translate( 'Reply' ) : translate( 'Comment', { context: 'noun' } ) }

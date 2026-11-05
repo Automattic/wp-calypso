@@ -10,8 +10,6 @@ import './comment-block-editor.scss';
 type Props = {
 	settings: CommentsEditorSettings;
 	siteId: number;
-	/** Where the site saves the comment as HTML, which carries no images or embeds. */
-	html?: boolean;
 	value: string;
 	placeholder: string;
 	label: string;
@@ -38,7 +36,6 @@ type Props = {
 export default function CommentBlockEditor( {
 	settings,
 	siteId,
-	html,
 	value,
 	placeholder,
 	label,
@@ -125,8 +122,7 @@ export default function CommentBlockEditor( {
 					initialContent: latest.current.value,
 					labels: {
 						...settings.editor,
-						images: ! html && settings.editor.images,
-						embedUrl: html ? '' : commentEmbedUrl( siteId ),
+						embedUrl: commentEmbedUrl( siteId ),
 					},
 					placeholder,
 					focus: focus
