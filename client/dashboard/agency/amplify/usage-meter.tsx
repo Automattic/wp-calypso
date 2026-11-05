@@ -347,7 +347,7 @@ export function AmplifyUsageMeter( {
 				role="meter"
 				aria-valuemin={ 0 }
 				aria-valuemax={ usage.limit }
-				aria-valuenow={ Math.min( usage.used, usage.limit ) }
+				aria-valuenow={ used }
 				aria-label={ __( 'Reports used this month' ) }
 			>
 				<span style={ { width: `${ percent }%` } } />
