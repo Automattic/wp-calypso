@@ -1,7 +1,8 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, within } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
+import { render } from '../../../test-utils';
 import { DataViews } from '../dataviews';
 import type { Field, View } from '@wordpress/dataviews';
 
@@ -26,7 +27,7 @@ const renderDataViews = ( view: View, onChangeView = jest.fn() ) =>
 	);
 
 describe( '<DataViews>', () => {
-	test( 'keeps a saved view on screen when its layout is not available', () => {
+	test( 'keeps a saved view on screen when its layout is not available', async () => {
 		renderDataViews( {
 			type: 'grid',
 			titleField: 'name',
@@ -34,7 +35,7 @@ describe( '<DataViews>', () => {
 			layout: { previewSize: 290 },
 		} );
 
-		expect( within( screen.getByRole( 'table' ) ).getByText( 'First item' ) ).toBeVisible();
+		expect( within( await screen.findByRole( 'table' ) ).getByText( 'First item' ) ).toBeVisible();
 		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
 	} );
 } );
