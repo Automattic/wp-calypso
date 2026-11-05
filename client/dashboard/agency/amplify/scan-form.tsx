@@ -66,9 +66,11 @@ function WebsiteAddressInput( {
 	combobox?: { expanded: boolean; activeId?: string; listId: string };
 	invalid?: boolean;
 } ) {
+	const inputRef = useRef< HTMLInputElement >( null );
 	return (
 		<div className="dashboard-amplify-scan-form__url-input">
 			<InputControl
+				ref={ inputRef }
 				__next40pxDefaultSize
 				label={ label }
 				value={ value }
@@ -96,7 +98,11 @@ function WebsiteAddressInput( {
 								size="small"
 								icon={ closeSmall }
 								label={ __( 'Clear website address' ) }
-								onClick={ onClear }
+								onClick={ () => {
+									onClear();
+									// The button disappears with the text, so keep focus in the field.
+									inputRef.current?.focus();
+								} }
 							/>
 						</InputControlSuffixWrapper>
 					) : undefined
