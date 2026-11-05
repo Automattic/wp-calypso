@@ -1,14 +1,18 @@
-import { isEnabled } from '@automattic/calypso-config';
+import config, { isEnabled } from '@automattic/calypso-config';
 import { needsPreviousAgencyDashboard } from '../dashboard-opt-in';
 
 jest.mock( '@automattic/calypso-config', () => ( {
+	__esModule: true,
+	default: jest.fn(),
 	isEnabled: jest.fn(),
 } ) );
 
+const mockedConfig = jest.mocked( config );
 const mockedIsEnabled = jest.mocked( isEnabled );
 
 describe( 'needsPreviousAgencyDashboard', () => {
 	beforeEach( () => {
+		mockedConfig.mockReturnValue( 'dashboard-production' );
 		mockedIsEnabled.mockReturnValue( true );
 	} );
 
@@ -29,4 +33,13 @@ describe( 'needsPreviousAgencyDashboard', () => {
 	it( 'keeps people without an agency here', () => {
 		expect( needsPreviousAgencyDashboard( null ) ).toBe( false );
 	} );
+
+	it.each( [ 'dashboard-development', 'dashboard-horizon' ] )(
+		'keeps agencies that are not on Billing Dragon here on %s',
+		( envId ) => {
+			mockedConfig.mockReturnValue( envId );
+
+			expect( needsPreviousAgencyDashboard( { billing_system: 'legacy' } ) ).toBe( false );
+		}
+	);
 } );
