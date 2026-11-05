@@ -1,5 +1,6 @@
 import { type DomainAvailability } from '@automattic/api-core';
-import { useIsMutating, useMutation } from '@tanstack/react-query';
+import { siteByIdQuery } from '@automattic/api-queries';
+import { useIsMutating, useMutation, useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	Modal,
@@ -25,6 +26,12 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 
 	const domain = availability.domain_name;
 	const site = availability.other_site_domain;
+
+	const { data: otherSite } = useQuery( {
+		...siteByIdQuery( availability.will_remove_from_site ?? 0 ),
+		enabled: !! availability.will_remove_from_site,
+	} );
+	const otherSiteName = otherSite?.name || site;
 
 	// The FQDN is the only result offered here, so it takes the first position.
 	const suggestion = {
@@ -92,10 +99,15 @@ export const ConnectedDomainMoveNotice = ( { availability }: ConnectedDomainMove
 				>
 					<VStack spacing={ 4 }>
 						<p>
-							{ sprintf(
-								/* translators: %s is the other site domain */
-								__( 'After checkout, %s will no longer be reachable at this domain.' ),
-								site
+							{ createInterpolateElement(
+								sprintf(
+									/* translators: %(site)s is the other site's title, or its domain when it has no title, %(domain)s is the domain name */
+									__(
+										'After checkout, <strong>%(site)s</strong> will stay online, but visitors won’t reach it at <strong>%(domain)s</strong> anymore.'
+									),
+									{ site: otherSiteName, domain }
+								),
+								{ strong: <strong /> }
 							) }
 						</p>
 						{ availability.moves_email_subscriptions && (

@@ -6,6 +6,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { render, screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import nock from 'nock';
 import { useEffect } from 'react';
 import { SearchNotice } from '..';
 import { buildAvailability } from '../../../test-helpers/factories/availability';
@@ -1649,10 +1650,12 @@ describe( 'SearchNotice', () => {
 				siteSlug,
 				includeInternalMoveEligible = true,
 				suggestions = [],
+				siteName = 'Other Site',
 			}: {
 				siteSlug?: string;
 				includeInternalMoveEligible?: boolean;
 				suggestions?: DomainSuggestion[] | Error;
+				siteName?: string;
 			} = {}
 		) => {
 			mockGetSuggestionsQuery( {
@@ -1679,7 +1682,21 @@ describe( 'SearchNotice', () => {
 					...overrides,
 				} ),
 			} );
+
+			nock( 'https://public-api.wordpress.com' )
+				.get( /\/sites\/123(\?|$)/ )
+				.reply( 200, { ID: 123, name: siteName } );
 		};
+
+		// Not every test opens the dialog, so an unused site mock would leak into the next test.
+		afterEach( () => {
+			nock.cleanAll();
+		} );
+
+		const findMoveExplanation = ( text: string ) =>
+			screen.findByText(
+				( _, element ) => element?.tagName === 'P' && element.textContent === text
+			);
 
 		it( 'offers to move the domain to the new site instead of contacting support', async () => {
 			mockMovableConnectedDomain();
@@ -1838,8 +1855,8 @@ describe( 'SearchNotice', () => {
 				screen.getByRole( 'dialog', { name: `Move ${ DOMAIN } to your new site?` } )
 			).toBeVisible();
 			expect(
-				screen.getByText(
-					'After checkout, other-site.com will no longer be reachable at this domain.'
+				await findMoveExplanation(
+					`After checkout, Other Site will stay online, but visitors won’t reach it at ${ DOMAIN } anymore.`
 				)
 			).toBeVisible();
 			expect( onAddItem ).not.toHaveBeenCalled();
@@ -1849,6 +1866,25 @@ describe( 'SearchNotice', () => {
 			expect( onAddItem ).toHaveBeenCalledWith(
 				expect.objectContaining( { domain_name: DOMAIN, product_slug: 'domain_move_internal' } )
 			);
+		} );
+
+		it( 'names the other site by its domain when it has no title', async () => {
+			const user = userEvent.setup();
+			mockMovableConnectedDomain( {}, { siteName: '' } );
+
+			render(
+				<TestDomainSearchWithCustomCart query={ DOMAIN }>
+					<SearchNotice />
+				</TestDomainSearchWithCustomCart>
+			);
+
+			await user.click( await screen.findByRole( 'button', { name: 'move it to your new site' } ) );
+
+			expect(
+				await findMoveExplanation(
+					`After checkout, other-site.com will stay online, but visitors won’t reach it at ${ DOMAIN } anymore.`
+				)
+			).toBeVisible();
 		} );
 
 		it( 'does not move the domain when the user cancels', async () => {
