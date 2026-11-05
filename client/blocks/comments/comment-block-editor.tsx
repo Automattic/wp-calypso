@@ -2,14 +2,13 @@ import { useReducedMotion } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { commentEmbedUrl, isBlockMarkup, loadCommentEditor } from './load-comment-editor';
+import { isBlockMarkup, loadCommentEditor } from './load-comment-editor';
 import type { CommentsEditorSettings } from '@automattic/api-core';
 
 import './comment-block-editor.scss';
 
 type Props = {
 	settings: CommentsEditorSettings;
-	siteId: number;
 	value: string;
 	placeholder: string;
 	label: string;
@@ -35,7 +34,6 @@ type Props = {
  */
 export default function CommentBlockEditor( {
 	settings,
-	siteId,
 	value,
 	placeholder,
 	label,
@@ -122,7 +120,7 @@ export default function CommentBlockEditor( {
 					initialContent: latest.current.value,
 					labels: {
 						...settings.editor,
-						embedUrl: commentEmbedUrl( siteId ),
+						embedUrl: 'https://public-api.wordpress.com/wpcom/v2/read/embed',
 					},
 					placeholder,
 					focus: focus
