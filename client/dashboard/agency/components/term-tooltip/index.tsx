@@ -1,4 +1,4 @@
-import { Popover } from '@wordpress/components';
+import { Popover, __experimentalVStack as VStack } from '@wordpress/components';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import type { ComponentProps, PointerEvent, ReactNode } from 'react';
 
@@ -151,9 +151,13 @@ export function useTermTooltip< T extends HTMLElement >( content: ReactNode ) {
 			shift
 			onClose={ close }
 		>
-			<div className="agency-term-tooltip__content" data-handoff={ isHandoff || undefined }>
+			<VStack
+				spacing={ 0 }
+				className="agency-term-tooltip__content"
+				data-handoff={ isHandoff || undefined }
+			>
 				{ content }
-			</div>
+			</VStack>
 		</Popover>
 	);
 
