@@ -26,6 +26,8 @@ import { useDownloadReportPdf } from './use-download-report-pdf';
 import type { AmplifyReport } from '@automattic/api-core';
 import type { Field, SupportedLayouts, View } from '@wordpress/dataviews';
 
+import './reports.scss';
+
 const REPORT_LAYOUTS: SupportedLayouts = {
 	table: {
 		layout: {
