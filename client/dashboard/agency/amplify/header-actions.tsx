@@ -23,33 +23,31 @@ export default function AmplifyHeaderActions( {
 		return null;
 	}
 
-	let newReportButton = (
-		<Button
-			__next40pxDefaultSize
-			variant="primary"
-			onClick={ () => {
-				recordTracksEvent( 'calypso_a4a_amplify_new_report_click' );
-				setIsNewReportOpen( true );
-			} }
-			disabled={ ! page.canScan }
-			accessibleWhenDisabled
-		>
-			{ __( 'New report' ) }
-		</Button>
-	);
+	let disabledReason: string | undefined;
 	if ( ! page.canScan ) {
-		newReportButton = (
-			<Tooltip
-				text={
-					page.usageStatus === 'cap'
-						? __( 'You’ve used all your reports for this month.' )
-						: __( 'Reports unlock once your account is activated.' )
-				}
-			>
-				{ newReportButton }
-			</Tooltip>
-		);
+		disabledReason =
+			page.usageStatus === 'cap'
+				? __( 'You’ve used all your reports for this month.' )
+				: __( 'Reports unlock once your account is activated.' );
 	}
+	// Always inside the tooltip, which shows nothing without text, so the button keeps its
+	// place in the tree and focus when it becomes disabled.
+	const newReportButton = (
+		<Tooltip text={ disabledReason }>
+			<Button
+				__next40pxDefaultSize
+				variant="primary"
+				onClick={ () => {
+					recordTracksEvent( 'calypso_a4a_amplify_new_report_click' );
+					setIsNewReportOpen( true );
+				} }
+				disabled={ ! page.canScan }
+				accessibleWhenDisabled
+			>
+				{ __( 'New report' ) }
+			</Button>
+		</Tooltip>
+	);
 
 	return (
 		<HStack spacing={ 2 } alignment="center" expanded={ false }>
