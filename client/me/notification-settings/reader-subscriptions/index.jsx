@@ -35,6 +35,7 @@ import ReauthRequired from 'calypso/me/reauth-required';
 import { useNonSelfSubscriptionsCount } from 'calypso/reader/following/hooks/use-non-self-subscriptions-count';
 import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
+import { isFetchingUserSettings } from 'calypso/state/user-settings/selectors';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
 export class NotificationSubscriptions extends Component {
@@ -258,7 +259,7 @@ export class NotificationSubscriptions extends Component {
 							<FormLabel htmlFor="subscription_delivery_email_default">
 								{ this.props.translate( 'Default email delivery' ) }
 							</FormLabel>
-							{ defaultEmailDelivery === '' ? (
+							{ defaultEmailDelivery === '' && this.props.isFetchingUserSettings ? (
 								<LoadingPlaceholder height="calc(1.4rem + 18px)" />
 							) : (
 								<FormSelect
@@ -269,6 +270,7 @@ export class NotificationSubscriptions extends Component {
 									onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
 									value={ defaultEmailDelivery }
 								>
+									{ defaultEmailDelivery === '' && <option value="" disabled hidden /> }
 									<option value="never">{ this.props.translate( 'Never send email' ) }</option>
 									<option value="instantly">
 										{ this.props.translate( 'Send email instantly' ) }
@@ -434,6 +436,10 @@ export class NotificationSubscriptions extends Component {
 	}
 }
 
+const mapStateToProps = ( state ) => ( {
+	isFetchingUserSettings: isFetchingUserSettings( state ),
+} );
+
 const mapDispatchToProps = {
 	recordGoogleEvent,
 };
@@ -454,7 +460,7 @@ const NotificationSubscriptionsWithHooks = ( props ) => {
 
 export default compose(
 	withReaderTeams,
-	connect( null, mapDispatchToProps ),
+	connect( mapStateToProps, mapDispatchToProps ),
 	localize,
 	protectForm,
 	withLocale,
