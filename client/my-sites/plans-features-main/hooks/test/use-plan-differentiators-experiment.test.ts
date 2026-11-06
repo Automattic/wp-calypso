@@ -22,6 +22,7 @@ const CONTROL_RESULT = {
 	isLoading: false,
 	variant: 'control',
 	useReversedPlanOrder: false,
+	useMcpFeature: false,
 	isExperimentEligible: true,
 };
 
@@ -195,6 +196,29 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 
 			expect( result.current.variant ).toBe( 'reversed_order' );
 			expect( result.current.useReversedPlanOrder ).toBe( false );
+		} );
+
+		test( 'shows the MCP feature for the mcp_feature variant', () => {
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_feature' } ] );
+
+			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SIGNUP_PARAMS ) );
+
+			expect( result.current ).toEqual( {
+				...CONTROL_RESULT,
+				variant: 'mcp_feature',
+				useMcpFeature: true,
+			} );
+		} );
+
+		test( 'hides the MCP feature for intents that curate their own feature lists', () => {
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_feature' } ] );
+
+			const { result } = renderHook( () =>
+				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
+			);
+
+			expect( result.current.variant ).toBe( 'mcp_feature' );
+			expect( result.current.useMcpFeature ).toBe( false );
 		} );
 
 		test( 'falls back to control for an unknown variation', () => {

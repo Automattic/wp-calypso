@@ -3,6 +3,7 @@ import {
 	FEATURE_AD_FREE_EXPERIENCE,
 	FEATURE_ADVANCED_SEO_TOOLS,
 	FEATURE_BLAZE_AD_CREDITS,
+	FEATURE_CONNECT_AI_AGENTS,
 	FEATURE_CUSTOM_DOMAIN,
 	FEATURE_DEV_TOOLS,
 	FEATURE_EARLY_ONBOARDING_CALLS,
@@ -145,6 +146,15 @@ function getPlansGridRedesignFeatureSlugsForPlan(
 	return defaultFeatureSlugs;
 }
 
+function replacePremiumThemesWithAiAgents( featureSlugs: Feature[] ): Feature[] {
+	return featureSlugs.map( ( featureSlug ) =>
+		featureSlug === WPCOM_FEATURES_PREMIUM_THEMES_UNLIMITED ||
+		featureSlug === FEATURE_PREMIUM_STORE_THEMES
+			? FEATURE_CONNECT_AI_AGENTS
+			: featureSlug
+	);
+}
+
 function isBusinessOrEcommercePlan( planSlug: string ): boolean {
 	return isBusinessPlan( planSlug ) || isEcommercePlan( planSlug );
 }
@@ -180,6 +190,9 @@ function getPlansGridRedesignFeatureTitleOverride(
 	}
 	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_BLAZE_AD_CREDITS ) {
 		return translate( '$200 in ad credits' );
+	}
+	if ( isBusinessOrEcommercePlan( planSlug ) && featureSlug === FEATURE_SITE_STAGING_SITES ) {
+		return translate( 'Staging site' );
 	}
 	return undefined;
 }
@@ -219,6 +232,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	selectedFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
+	useMcpFeature,
 }: {
 	gridPlans: Omit< GridPlan, 'features' >[];
 	allFeaturesList: FeatureList;
@@ -228,6 +242,7 @@ export type UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature?: boolean;
 	isInSignup?: boolean;
 	usePlansGridRedesignFeatures?: boolean;
+	useMcpFeature?: boolean;
 } ) => { [ planSlug: string ]: PlanFeaturesForGridPlan };
 
 /**
@@ -244,6 +259,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 	showLegacyStorageFeature,
 	isInSignup,
 	usePlansGridRedesignFeatures,
+	useMcpFeature,
 } ) => {
 	const translate = useTranslate();
 	const highlightedFeatures = useHighlightedFeatures( { intent: intent ?? null, isInSignup } );
@@ -254,7 +270,6 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		 * below, so the relative order of the intent branches themselves is untouched.
 		 */
 		const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
-
 		return gridPlans.reduce(
 			( acc, gridPlan ) => {
 				const planSlug = gridPlan.planSlug;
@@ -265,14 +280,16 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let jetpackFeatures: FeatureObject[] = [];
 
 				if ( usePlansGridRedesignFeatures && useDifferentiationFeatures ) {
-					const featureSlugs =
+					const featureSlugs = getPlansGridRedesignFeatureSlugsForPlan(
+						planSlug,
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
-						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
-						[];
+							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
+							[]
+					);
 
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						getPlansGridRedesignFeatureSlugsForPlan( planSlug, featureSlugs ),
+						useMcpFeature ? replacePremiumThemesWithAiAgents( featureSlugs ) : featureSlugs,
 						true
 					);
 
@@ -501,6 +518,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		allFeaturesList,
 		hasRedeemedDomainCredit,
 		usePlansGridRedesignFeatures,
+		useMcpFeature,
 		translate,
 	] );
 };

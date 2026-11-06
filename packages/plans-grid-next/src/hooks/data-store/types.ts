@@ -49,6 +49,7 @@ export interface UseGridPlansParams {
 	 * When true, use the pricing-grid redesign feature set for plan cards.
 	 */
 	usePlansGridRedesignFeatures?: boolean;
+	useMcpFeature?: boolean;
 	/**
 	 * When true, use the pricing grid redesign taglines for plan headers.
 	 */
