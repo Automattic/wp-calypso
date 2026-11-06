@@ -10,7 +10,7 @@ import NewReferralFeedback from '../new-referral-feedback';
 const API = 'https://public-api.wordpress.com';
 const AGENCY_ID = 123;
 
-const mockUseSearch = jest.fn();
+const mockUseSearch = vi.fn();
 vi.mock( '../../../../app/router/agency', () => ( {
 	earnReferralsRoute: { useSearch: () => mockUseSearch() },
 } ) );

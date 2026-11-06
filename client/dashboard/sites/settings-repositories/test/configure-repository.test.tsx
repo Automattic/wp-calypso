@@ -4,7 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { render } from '../../../test-utils';
 import ConfigureRepository from '../configure-repository';
 import type { AnalyticsClient } from '../../../app/analytics';
@@ -78,7 +78,7 @@ function mockApis() {
 }
 
 function eventCalls( recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ], name: string ) {
-	return ( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ event ] ) => event === name );
+	return ( recordTracksEvent as Mock ).mock.calls.filter( ( [ event ] ) => event === name );
 }
 
 async function submit( user: ReturnType< typeof userEvent.setup > ) {

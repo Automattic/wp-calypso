@@ -12,23 +12,23 @@ import SiteActivityLogsDataViews from '../index';
 import type { Site } from '@automattic/api-core';
 import type { DeepPartial } from 'utility-types';
 
-const mockNavigate = jest.fn();
+const mockNavigate = vi.fn();
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
 vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: vi.fn(),
 	} ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 } ) );
 
 vi.mock( '@wordpress/i18n', () => ( {
@@ -165,7 +165,7 @@ function renderActivityLogsDataViews(
 			site={ mockSite as Site }
 			dateRange={ { start: new Date(), end: new Date() } }
 			autoRefresh={ false }
-			setAutoRefresh={ jest.fn() }
+			setAutoRefresh={ vi.fn() }
 			logType="activity"
 			hasActivityLogsAccess
 			searchParams={ {} }

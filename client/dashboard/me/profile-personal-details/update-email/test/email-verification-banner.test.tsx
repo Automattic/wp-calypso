@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import { dispatch } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import EmailVerificationBanner from '../email-verification-banner';
@@ -45,7 +46,7 @@ describe( '<EmailVerificationBanner>', () => {
 	// snackbars are their own notice type, and `@wordpress/a11y` keeps a live region on the body.
 	beforeEach( () => {
 		// Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	afterEach( () => {

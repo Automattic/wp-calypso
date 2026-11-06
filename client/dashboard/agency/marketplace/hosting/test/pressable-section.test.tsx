@@ -56,7 +56,7 @@ function renderSection( props: Partial< React.ComponentProps< typeof PressableSe
 			ownership="none"
 			term="yearly"
 			isReferralMode={ false }
-			onAddToCart={ jest.fn() }
+			onAddToCart={ vi.fn() }
 			{ ...props }
 		/>
 	);

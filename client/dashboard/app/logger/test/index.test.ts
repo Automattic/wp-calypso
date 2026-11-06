@@ -3,7 +3,7 @@
  */
 
 import { captureException } from '@automattic/calypso-sentry';
-import { vi } from 'vitest';
+import { vi, type MockInstance } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../../chunk-load-recovery';
 import { getDomInterferenceReport } from '../dom-interference';
@@ -11,31 +11,31 @@ import { handleOnCatch, handleUncaughtError, initLogger } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
-vi.mock( '@automattic/calypso-config', () => ( { default: jest.fn( () => 'development' ) } ) );
+vi.mock( '@automattic/calypso-config', () => ( { default: vi.fn( () => 'development' ) } ) );
 vi.mock( '@automattic/calypso-sentry', () => ( {
-	captureException: jest.fn(),
+	captureException: vi.fn(),
 } ) );
 vi.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+	logToLogstash: vi.fn(),
 } ) );
 vi.mock( '../../chunk-load-recovery', () => ( {
-	maybeReloadForChunkError: jest.fn(),
+	maybeReloadForChunkError: vi.fn(),
 } ) );
 vi.mock( '../dom-interference', () => ( {
-	getDomInterferenceReport: jest.fn( () => ( {
+	getDomInterferenceReport: vi.fn( () => ( {
 		tags: { dom_google_translate: 'true' },
 		context: { fontCount: 3 },
 	} ) ),
 } ) );
 
-const mockedLogToLogstash = jest.mocked( logToLogstash );
-const mockedCaptureException = jest.mocked( captureException );
-const mockedMaybeReloadForChunkError = jest.mocked( maybeReloadForChunkError );
+const mockedLogToLogstash = vi.mocked( logToLogstash );
+const mockedCaptureException = vi.mocked( captureException );
+const mockedMaybeReloadForChunkError = vi.mocked( maybeReloadForChunkError );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockedMaybeReloadForChunkError.mockReturnValue( false );
-	jest.mocked( getDomInterferenceReport ).mockReturnValue( {
+	vi.mocked( getDomInterferenceReport ).mockReturnValue( {
 		tags: { dom_google_translate: 'true' },
 		context: { fontCount: 3 },
 	} );
@@ -199,10 +199,10 @@ describe( 'handleOnCatch', () => {
 } );
 
 describe( 'handleUncaughtError', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {

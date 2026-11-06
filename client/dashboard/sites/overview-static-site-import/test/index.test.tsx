@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import {
 	StaticSiteImportFailed,
@@ -212,7 +213,7 @@ describe( 'StaticSiteImportCard', () => {
 			const { recordTracksEvent } = render( <StaticSiteImport /> );
 
 			await screen.findByText( 'Your site is ready' );
-			const impressions = jest
+			const impressions = vi
 				.mocked( recordTracksEvent )
 				.mock.calls.filter(
 					( [ name ] ) => name === 'calypso_dashboard_static_site_import_ready_notice_impression'

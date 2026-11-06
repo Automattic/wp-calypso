@@ -17,7 +17,7 @@ vi.mock( '../../../utils/is-dashboard-backport', async () => {
 	const actual = await vi.importActual< typeof import( '../../../utils/is-dashboard-backport' ) >(
 		'../../../utils/is-dashboard-backport'
 	);
-	return { isDashboardBackport: jest.fn( actual.isDashboardBackport ) };
+	return { isDashboardBackport: vi.fn( actual.isDashboardBackport ) };
 } );
 
 const { isDashboardBackport: actualIsDashboardBackport } = await vi.importActual<
@@ -25,7 +25,7 @@ const { isDashboardBackport: actualIsDashboardBackport } = await vi.importActual
 >( '../../../utils/is-dashboard-backport' );
 
 afterEach( () => {
-	jest.mocked( isDashboardBackport ).mockImplementation( actualIsDashboardBackport );
+	vi.mocked( isDashboardBackport ).mockImplementation( actualIsDashboardBackport );
 } );
 
 const site = {
@@ -461,7 +461,7 @@ describe( '<SiteVisibilitySettings>', () => {
 		} );
 
 		test( 'wpcomstaging warning links "Manage domains" to the WordPress.com dashboard when the app has no domains route', async () => {
-			jest.mocked( isDashboardBackport ).mockReturnValue( false );
+			vi.mocked( isDashboardBackport ).mockReturnValue( false );
 			mockSite( { ...site, slug: 'site.wpcomstaging.com' } as Site, {
 				domains: [ 'site.wpcomstaging.com', 'example.com' ],
 				primary_domain: 'site.wpcomstaging.com',

@@ -6,7 +6,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { useQuery } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
-import { vi } from 'vitest';
+import { vi, type MockedFunction } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { bumpStat } from '../../analytics';
 import { useAuth } from '../../auth';
@@ -20,12 +20,12 @@ type Candidate = {
 	wasVisibleAtReceipt: boolean;
 };
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
-const mockUseAuth = useAuth as jest.MockedFunction< typeof useAuth >;
-const mockSitesQuery = jest.fn();
-const mockSubscribeSubscriberNotifications = jest.fn();
-const mockSubscribeUnseenCount = jest.fn();
-const mockUnsubscribe = jest.fn();
+const mockUseQuery = useQuery as MockedFunction< typeof useQuery >;
+const mockUseAuth = useAuth as MockedFunction< typeof useAuth >;
+const mockSitesQuery = vi.fn();
+const mockSubscribeSubscriberNotifications = vi.fn();
+const mockSubscribeUnseenCount = vi.fn();
+const mockUnsubscribe = vi.fn();
 const mockUser = { ID: 1, has_unseen_notes: false };
 let mockOnNotificationCount: ( count: number ) => void = () => {};
 let mockOnConfirmed: ( candidate: Candidate ) => boolean | void = () => {};
@@ -33,52 +33,52 @@ let mockAlertCallbacks: {
 	onSound: ( result: string, candidate: Candidate ) => void;
 	onError: ( error: unknown, stage: string ) => void;
 };
-const mockRecordTracksEvent = jest.fn();
+const mockRecordTracksEvent = vi.fn();
 
 vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: Object.assign(
-		jest.fn( () => 'test-env' ),
-		{ isEnabled: jest.fn() }
+		vi.fn( () => 'test-env' ),
+		{ isEnabled: vi.fn() }
 	),
 } ) );
-vi.mock( '@automattic/calypso-sentry', () => ( { captureException: jest.fn() } ) );
+vi.mock( '@automattic/calypso-sentry', () => ( { captureException: vi.fn() } ) );
 vi.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 vi.mock( '../../analytics', () => ( {
-	bumpStat: jest.fn(),
+	bumpStat: vi.fn(),
 	useAnalytics: () => ( { recordTracksEvent: mockRecordTracksEvent } ),
 } ) );
 vi.mock( '@tanstack/react-query', () => ( {
-	useMutation: jest.fn( () => ( { mutateAsync: jest.fn() } ) ),
-	useQuery: jest.fn(),
+	useMutation: vi.fn( () => ( { mutateAsync: vi.fn() } ) ),
+	useQuery: vi.fn(),
 } ) );
 vi.mock( '@automattic/api-queries', () => ( {
-	userPreferenceQuery: jest.fn( ( key ) => ( { queryKey: [ key ] } ) ),
-	userPreferencesMutation: jest.fn( () => ( {} ) ),
+	userPreferenceQuery: vi.fn( ( key ) => ( { queryKey: [ key ] } ) ),
+	userPreferencesMutation: vi.fn( () => ( {} ) ),
 	sitesQuery: ( ...args: unknown[] ) => mockSitesQuery( ...args ),
 } ) );
-vi.mock( '../../auth', () => ( { useAuth: jest.fn() } ) );
+vi.mock( '../../auth', () => ( { useAuth: vi.fn() } ) );
 vi.mock( '../../help-center', () => ( {
-	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
+	useHelpCenter: vi.fn( () => ( { isShown: false, setShowHelpCenter: vi.fn() } ) ),
 } ) );
-vi.mock( '../../locale', () => ( { useLocale: jest.fn( () => 'en' ) } ) );
+vi.mock( '../../locale', () => ( { useLocale: vi.fn( () => 'en' ) } ) );
 vi.mock( '../../omnibar/events', () => ( {
 	omnibarEvents: {
-		notificationsOpen: { emit: jest.fn() },
-		notificationsUnseenCount: { emit: jest.fn() },
-		notificationsSubscriberReceived: { emit: jest.fn() },
+		notificationsOpen: { emit: vi.fn() },
+		notificationsUnseenCount: { emit: vi.fn() },
+		notificationsSubscriberReceived: { emit: vi.fn() },
 	},
-	useOmnibarEvent: jest.fn(),
+	useOmnibarEvent: vi.fn(),
 } ) );
 vi.mock( '@wordpress/components', () => ( {
-	Button: jest.fn( () => null ),
-	Dropdown: jest.fn( () => null ),
+	Button: vi.fn( () => null ),
+	Dropdown: vi.fn( () => null ),
 } ) );
 vi.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( component: unknown ) => component,
-	useViewportMatch: jest.fn( () => false ),
+	useViewportMatch: vi.fn( () => false ),
 } ) );
 vi.mock( '@wordpress/i18n', () => ( { __: ( value: string ) => value } ) );
 vi.mock( '@wordpress/icons', () => ( { bell: {}, bellUnread: {} } ) );
@@ -91,9 +91,9 @@ vi.mock( '@automattic/notifications/src/app/client', () => ( {
 } ) );
 
 const configure = ( featureEnabled: boolean, preferenceEnabled: boolean ) => {
-	jest
-		.mocked( config.isEnabled )
-		.mockImplementation( ( key ) => key === 'notifications/subscriber-alerts' && featureEnabled );
+	vi.mocked( config.isEnabled ).mockImplementation(
+		( key ) => key === 'notifications/subscriber-alerts' && featureEnabled
+	);
 	mockUseQuery.mockImplementation( ( options ) => {
 		const queryOptions = options as { queryKey?: string[] };
 		if ( queryOptions.queryKey?.[ 0 ] === 'notifications-subscriber-alerts-enabled' ) {
@@ -130,7 +130,7 @@ const candidate = (): Candidate => ( {
 
 describe( 'Notifications subscriber alerts', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockUser.ID = 1;
 		mockOnNotificationCount = () => {};
 		mockOnConfirmed = () => {};

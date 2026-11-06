@@ -3,7 +3,7 @@
  */
 import { screen, within } from '@testing-library/react';
 import nock from 'nock';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { render } from '../../test-utils';
 import Domains from '../index';
 import type { View } from '@wordpress/dataviews';
@@ -94,7 +94,7 @@ describe( '<Domains> saved layouts', () => {
 			'calypso_dashboard_domains_saved_layout_fallback',
 			{ saved_layout: 'list', fallback_layout: 'table' }
 		);
-		const fallbackEventCount = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
+		const fallbackEventCount = ( recordTracksEvent as Mock ).mock.calls.filter(
 			( [ eventName ] ) => eventName === 'calypso_dashboard_domains_saved_layout_fallback'
 		).length;
 		expect( fallbackEventCount ).toBe( 1 );

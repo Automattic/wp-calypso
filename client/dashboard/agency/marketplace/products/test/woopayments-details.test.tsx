@@ -8,8 +8,8 @@ import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import WooPaymentsDetails from '../woopayments-details';
 
-const mockSetShowHelpCenter = jest.fn();
-const mockSetNavigateToRoute = jest.fn();
+const mockSetShowHelpCenter = vi.fn();
+const mockSetNavigateToRoute = vi.fn();
 
 vi.mock( '../../../../app/help-center', () => ( {
 	useHelpCenter: () => ( {

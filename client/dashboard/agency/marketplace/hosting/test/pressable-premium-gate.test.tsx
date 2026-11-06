@@ -12,7 +12,7 @@ import PressablePremiumGate from '../pressable-premium-gate';
 import type { Agency } from '@automattic/api-core';
 
 vi.mock( '../../../tiers/use-schedule-call', () => ( {
-	useScheduleCall: () => ( { scheduleCall: jest.fn(), isLoading: false } ),
+	useScheduleCall: () => ( { scheduleCall: vi.fn(), isLoading: false } ),
 } ) );
 
 function renderGate( approvalStatus: Agency[ 'approval_status' ] = 'approved' ) {

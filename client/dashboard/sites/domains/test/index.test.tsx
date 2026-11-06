@@ -344,7 +344,7 @@ describe( '<SiteDomains>', () => {
 	test( 'keeps the way back to this list when opening a domain’s settings', async () => {
 		const user = userEvent.setup();
 		const { router } = render( <SiteDomains />, { user: ownerUser } );
-		const navigate = jest.spyOn( router, 'navigate' );
+		const navigate = vi.spyOn( router, 'navigate' );
 
 		const card = await screen.findByRole( 'group', { name: domain.domain } );
 		await user.click( within( card ).getByRole( 'button', { name: 'Settings' } ) );

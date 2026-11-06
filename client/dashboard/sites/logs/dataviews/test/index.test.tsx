@@ -18,17 +18,17 @@ const mockSiteId = 123;
 
 vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: vi.fn(),
 	} ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
@@ -140,7 +140,7 @@ const fixedDateRange = {
 
 describe( 'SiteLogsDataViews', () => {
 	test( 'renders PHP logs and syncs URL params', async () => {
-		const replaceSpy = jest.spyOn( window.history, 'replaceState' );
+		const replaceSpy = vi.spyOn( window.history, 'replaceState' );
 		mockPreferences();
 		mockPhpLogsOnce();
 
@@ -151,7 +151,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.PHP }
 			/>
 		);
@@ -175,7 +175,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.SERVER }
 			/>
 		);
@@ -191,7 +191,7 @@ describe( 'SiteLogsDataViews', () => {
 		mockPreferences();
 		mockPhpLogsOnce();
 		const user = userEvent.setup();
-		const autoRefresh = jest.fn();
+		const autoRefresh = vi.fn();
 
 		const { recordTracksEvent } = render(
 			<SiteLogsDataViews
@@ -226,7 +226,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.SERVER }
 			/>,
 			{ queryClient: appQueryClient }
@@ -255,7 +255,7 @@ describe( 'SiteLogsDataViews', () => {
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
 				autoRefreshDisabledReason="blocked"
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.PHP }
 			/>
 		);
@@ -278,7 +278,7 @@ describe( 'SiteLogsDataViews', () => {
 				site={ mockSite as Site }
 				dateRange={ fixedDateRange }
 				autoRefresh={ false }
-				setAutoRefresh={ jest.fn() }
+				setAutoRefresh={ vi.fn() }
 				logType={ LogType.SERVER }
 			/>,
 			{ queryClient: appQueryClient }

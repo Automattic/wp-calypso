@@ -22,10 +22,10 @@ import type { User } from '@automattic/api-core';
 
 vi.mock( '../../analytics', async () => ( {
 	...( await vi.importActual< typeof import( '../../analytics' ) >( '../../analytics' ) ),
-	bumpStat: jest.fn(),
+	bumpStat: vi.fn(),
 } ) );
 
-const mockedBumpStat = jest.mocked( bumpStat );
+const mockedBumpStat = vi.mocked( bumpStat );
 
 const testUser = { ID: 1, username: 'testuser', language: 'en' } as User;
 

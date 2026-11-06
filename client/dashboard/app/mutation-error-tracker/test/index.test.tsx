@@ -9,15 +9,15 @@ import MutationErrorTracker from '../index';
 
 vi.mock( '../../analytics', async () => ( {
 	...( await vi.importActual< typeof import( '../../analytics' ) >( '../../analytics' ) ),
-	bumpMultipleStats: jest.fn(),
+	bumpMultipleStats: vi.fn(),
 } ) );
 
 vi.mock( '@automattic/calypso-sentry', () => ( {
-	captureException: jest.fn(),
+	captureException: vi.fn(),
 } ) );
 
-const mockedBumpMultipleStats = jest.mocked( bumpMultipleStats );
-const mockedCaptureException = jest.mocked( captureException );
+const mockedBumpMultipleStats = vi.mocked( bumpMultipleStats );
+const mockedCaptureException = vi.mocked( captureException );
 
 function wpError( fields: { status: number; statusCode: number; error?: string } ) {
 	return Object.assign( new Error( 'boom' ), fields );

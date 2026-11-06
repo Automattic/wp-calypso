@@ -5,6 +5,7 @@ import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type MockInstance, vi } from 'vitest';
 import CrossoverModalHost from '../';
 import { render } from '../../../test-utils';
 import { getCrossoverDestination } from '../destinations';
@@ -32,10 +33,10 @@ function renderHost() {
 
 describe( '<CrossoverModalHost>', () => {
 	const pluginsUrl = getCrossoverDestination( 'wpcom-plugins' ).url;
-	let open: jest.SpyInstance;
+	let open: MockInstance;
 
 	beforeEach( () => {
-		open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 	} );
 
 	afterEach( () => {

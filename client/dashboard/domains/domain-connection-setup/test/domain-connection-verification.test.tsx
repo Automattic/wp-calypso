@@ -165,7 +165,7 @@ describe( 'DomainConnectionVerification', () => {
 		siteSlug: 'example.wordpress.com',
 		domainMappingStatus: createMockDomainMappingStatus(),
 		domainConnectionSetupInfo: createMockDomainConnectionSetupInfo(),
-		onRestartConnection: jest.fn(),
+		onRestartConnection: vi.fn(),
 		isRestartingConnection: false,
 	};
 

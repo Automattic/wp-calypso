@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { act, fireEvent, render } from '@testing-library/react';
+import { type Mock, vi } from 'vitest';
 import {
 	DIFM_OFFER_BANNER_HOVER_EVENT,
 	DIFM_OFFER_BANNER_TEXT_SELECT_EVENT,
@@ -14,7 +15,7 @@ const PROPERTIES = {
 	variation: 'no_time_to_build',
 };
 
-function TrackedBanner( { record }: { record: jest.Mock } ) {
+function TrackedBanner( { record }: { record: Mock } ) {
 	// A new properties object on each render must not reset the tracking.
 	const ref = useDifmOfferEngagementTracking( record, { ...PROPERTIES } );
 	return (
@@ -28,7 +29,7 @@ function TrackedBanner( { record }: { record: jest.Mock } ) {
 }
 
 function renderBanner() {
-	const record = jest.fn();
+	const record = vi.fn();
 	const result = render( <TrackedBanner record={ record } /> );
 	return { ...result, record, banner: result.getByTestId( 'banner' ) };
 }
@@ -44,17 +45,17 @@ function selectText( node: Node, start: number, end: number ) {
 }
 
 describe( 'useDifmOfferEngagementTracking', () => {
-	beforeEach( () => jest.useFakeTimers() );
+	beforeEach( () => vi.useFakeTimers() );
 	afterEach( () => {
 		document.getSelection()?.removeAllRanges();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'records one hover event after a 500 ms hover', () => {
 		const { banner, record } = renderBanner();
 
 		fireEvent.pointerEnter( banner );
-		act( () => jest.advanceTimersByTime( 500 ) );
+		act( () => vi.advanceTimersByTime( 500 ) );
 
 		expect( record ).toHaveBeenCalledTimes( 1 );
 		expect( record ).toHaveBeenCalledWith( DIFM_OFFER_BANNER_HOVER_EVENT, PROPERTIES );
@@ -64,9 +65,9 @@ describe( 'useDifmOfferEngagementTracking', () => {
 		const { banner, record } = renderBanner();
 
 		fireEvent.pointerEnter( banner );
-		act( () => jest.advanceTimersByTime( 499 ) );
+		act( () => vi.advanceTimersByTime( 499 ) );
 		fireEvent.pointerLeave( banner );
-		act( () => jest.advanceTimersByTime( 1000 ) );
+		act( () => vi.advanceTimersByTime( 1000 ) );
 
 		expect( record ).not.toHaveBeenCalled();
 	} );
@@ -75,10 +76,10 @@ describe( 'useDifmOfferEngagementTracking', () => {
 		const { banner, record } = renderBanner();
 
 		fireEvent.pointerEnter( banner );
-		act( () => jest.advanceTimersByTime( 500 ) );
+		act( () => vi.advanceTimersByTime( 500 ) );
 		fireEvent.pointerLeave( banner );
 		fireEvent.pointerEnter( banner );
-		act( () => jest.advanceTimersByTime( 500 ) );
+		act( () => vi.advanceTimersByTime( 500 ) );
 
 		expect( record ).toHaveBeenCalledTimes( 1 );
 	} );
@@ -88,11 +89,11 @@ describe( 'useDifmOfferEngagementTracking', () => {
 		const textNode = getByTestId( 'banner-text' ).firstChild as Node;
 
 		selectText( textNode, 0, 2 );
-		act( () => jest.advanceTimersByTime( 100 ) );
+		act( () => vi.advanceTimersByTime( 100 ) );
 		selectText( textNode, 0, 5 );
-		act( () => jest.advanceTimersByTime( 100 ) );
+		act( () => vi.advanceTimersByTime( 100 ) );
 		selectText( textNode, 0, 7 );
-		act( () => jest.advanceTimersByTime( 300 ) );
+		act( () => vi.advanceTimersByTime( 300 ) );
 
 		expect( record ).toHaveBeenCalledTimes( 1 );
 		expect( record ).toHaveBeenCalledWith( DIFM_OFFER_BANNER_TEXT_SELECT_EVENT, {
@@ -109,7 +110,7 @@ describe( 'useDifmOfferEngagementTracking', () => {
 		range.setEnd( getByTestId( 'outside-text' ).firstChild as Node, 4 );
 		document.getSelection()?.addRange( range );
 		document.dispatchEvent( new Event( 'selectionchange' ) );
-		act( () => jest.advanceTimersByTime( 300 ) );
+		act( () => vi.advanceTimersByTime( 300 ) );
 
 		expect( record ).toHaveBeenCalledWith(
 			DIFM_OFFER_BANNER_TEXT_SELECT_EVENT,
@@ -121,7 +122,7 @@ describe( 'useDifmOfferEngagementTracking', () => {
 		const { getByTestId, record } = renderBanner();
 
 		selectText( getByTestId( 'outside-text' ).firstChild as Node, 0, 4 );
-		act( () => jest.advanceTimersByTime( 300 ) );
+		act( () => vi.advanceTimersByTime( 300 ) );
 
 		expect( record ).not.toHaveBeenCalled();
 	} );
@@ -132,7 +133,7 @@ describe( 'useDifmOfferEngagementTracking', () => {
 		fireEvent.pointerEnter( banner );
 		selectText( getByTestId( 'banner-text' ).firstChild as Node, 0, 7 );
 		unmount();
-		act( () => jest.advanceTimersByTime( 1000 ) );
+		act( () => vi.advanceTimersByTime( 1000 ) );
 
 		expect( record ).not.toHaveBeenCalled();
 	} );

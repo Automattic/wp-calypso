@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import AgencyPartnerDirectoryDetails from '../details';
 import PartnerDirectoryDetailsContent from '../details/details-content';
@@ -68,7 +69,7 @@ function mockSave() {
 beforeAll( () => {
 	// jsdom doesn't implement scrollIntoView, which the form calls when
 	// validation fails on the fields above the fold.
-	window.HTMLElement.prototype.scrollIntoView = jest.fn();
+	window.HTMLElement.prototype.scrollIntoView = vi.fn();
 } );
 
 beforeEach( () => {
@@ -111,12 +112,12 @@ describe( '<AgencyPartnerDirectoryDetails>', () => {
 		const updatedAgency = { id: 123, name: 'Test Agency', profile: makeProfile() };
 		const scope = nock( API ).put( '/wpcom/v2/agency/123/profile' ).reply( 200, updatedAgency );
 
-		const onSubmitSuccess = jest.fn();
+		const onSubmitSuccess = vi.fn();
 
 		render(
 			<PartnerDirectoryDetailsContent
 				agency={ { id: 123, profile: makeProfile() } }
-				recordTracksEvent={ jest.fn() }
+				recordTracksEvent={ vi.fn() }
 				onSubmitSuccess={ onSubmitSuccess }
 			/>
 		);

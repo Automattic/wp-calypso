@@ -56,11 +56,11 @@ describe( 'getSiteData', () => {
 	};
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'includes only current quarter transactions when next and current payout dates are equal', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const result = getSiteData( mockWooPaymentsData, 123 );
 
@@ -70,7 +70,7 @@ describe( 'getSiteData', () => {
 	} );
 
 	it( 'includes both current and previous quarter transactions when payout dates differ', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
 
 		const result = getSiteData( mockWooPaymentsData, 123 );
 
@@ -80,7 +80,7 @@ describe( 'getSiteData', () => {
 	} );
 
 	it( 'returns null transactions when site has no data', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const result = getSiteData( mockWooPaymentsData, 999 );
 
@@ -90,7 +90,7 @@ describe( 'getSiteData', () => {
 	} );
 
 	it( 'handles missing estimated data gracefully', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( true );
 
 		const dataWithoutEstimates: WooPaymentsData = {
 			...mockWooPaymentsData,
@@ -122,7 +122,7 @@ describe( 'getSiteData', () => {
 	} );
 
 	it( 'returns estimated transactions even when completed transactions are zero (regression test)', () => {
-		jest.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
+		vi.spyOn( payoutDateModule, 'areNextAndCurrentPayoutDatesEqual' ).mockReturnValue( false );
 
 		const newMerchantData: WooPaymentsData = {
 			...mockWooPaymentsData,

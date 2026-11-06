@@ -6,6 +6,7 @@ import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { DEFAULT_VIEW } from '../dataviews/views';
 import ResourceCenter from '../resource-center';
@@ -84,8 +85,8 @@ function Library( { initialSelectedId, onReadIdsChange, ...props }: LibraryProps
 
 function renderLibrary( props: Partial< LibraryProps > = {} ) {
 	const callbacks = {
-		recordTracksEvent: jest.fn(),
-		onReadIdsChange: jest.fn(),
+		recordTracksEvent: vi.fn(),
+		onReadIdsChange: vi.fn(),
 	};
 	render( <Library resources={ resources } agencyId={ 1 } { ...callbacks } { ...props } /> );
 	return callbacks;

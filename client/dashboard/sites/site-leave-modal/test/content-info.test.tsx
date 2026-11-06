@@ -45,7 +45,7 @@ function purchase( overrides: object = {} ) {
 	};
 }
 
-const renderContent = () => render( <ContentInfo site={ site } onClose={ jest.fn() } /> );
+const renderContent = () => render( <ContentInfo site={ site } onClose={ vi.fn() } /> );
 
 const findManagePurchases = () => screen.findByRole( 'link', { name: 'Manage purchases' } );
 

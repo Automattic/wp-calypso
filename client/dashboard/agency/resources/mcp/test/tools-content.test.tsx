@@ -4,6 +4,7 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import McpTools from '../tools-content';
 import type { McpAvailableAbility, McpSettings } from '@automattic/api-core';
@@ -42,7 +43,7 @@ const SETTINGS: McpSettings = {
 
 describe( '<McpTools toolType="read">', () => {
 	test( 'groups tools by category and hides them until the group is expanded', async () => {
-		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ jest.fn() } /> );
+		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ vi.fn() } /> );
 
 		expect( screen.getByRole( 'heading', { name: 'Sites' } ) ).toBeVisible();
 		expect( screen.getByRole( 'heading', { name: 'Billing & Invoices' } ) ).toBeVisible();
@@ -57,7 +58,7 @@ describe( '<McpTools toolType="read">', () => {
 	} );
 
 	test( 'leaves out the write tools', () => {
-		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ jest.fn() } /> );
+		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ vi.fn() } /> );
 
 		expect( screen.queryByRole( 'heading', { name: 'Feedback' } ) ).not.toBeInTheDocument();
 	} );
@@ -79,7 +80,7 @@ describe( '<McpTools toolType="read">', () => {
 						},
 					],
 				} }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -87,7 +88,7 @@ describe( '<McpTools toolType="read">', () => {
 	} );
 
 	test( 'describes each group from the local description map', () => {
-		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ jest.fn() } /> );
+		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ vi.fn() } /> );
 
 		expect(
 			screen.getByText( 'Browse the sites your agency manages and their full records.' )
@@ -106,7 +107,7 @@ describe( '<McpTools toolType="read">', () => {
 					available_categories: [ { slug: 'brand-new', label: 'Brand new' } ],
 					available_abilities: [ ability( 'do-a-thing', 'brand-new', true, 'Do a thing' ) ],
 				} }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -114,7 +115,7 @@ describe( '<McpTools toolType="read">', () => {
 	} );
 
 	test( 'collapses an expanded group again', async () => {
-		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ jest.fn() } /> );
+		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ vi.fn() } /> );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Show Sites tools' } ) );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Hide Sites tools' } ) );
@@ -123,7 +124,7 @@ describe( '<McpTools toolType="read">', () => {
 	} );
 
 	test( 'toggling a single tool saves just that ability', async () => {
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ onSave } /> );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Show Sites tools' } ) );
@@ -135,7 +136,7 @@ describe( '<McpTools toolType="read">', () => {
 	} );
 
 	test( 'the group toggle saves every ability in that group', async () => {
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ onSave } /> );
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable all Sites tools' } ) );
@@ -149,7 +150,7 @@ describe( '<McpTools toolType="read">', () => {
 	} );
 
 	test( 'the page toggle saves every read ability but no write ones', async () => {
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		render( <McpTools toolType="read" settings={ SETTINGS } onSave={ onSave } /> );
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable all' } ) );
@@ -165,7 +166,7 @@ describe( '<McpTools toolType="read">', () => {
 
 	test( 'the page toggle is on only when every ability is enabled', () => {
 		const { rerender } = render(
-			<McpTools toolType="read" settings={ SETTINGS } onSave={ jest.fn() } />
+			<McpTools toolType="read" settings={ SETTINGS } onSave={ vi.fn() } />
 		);
 		expect( screen.getByRole( 'checkbox', { name: 'Enable all' } ) ).not.toBeChecked();
 
@@ -179,14 +180,14 @@ describe( '<McpTools toolType="read">', () => {
 						enabled: true,
 					} ) ),
 				} }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 		expect( screen.getByRole( 'checkbox', { name: 'Enable all' } ) ).toBeChecked();
 	} );
 
 	test( 'disables the toggles while saving', () => {
-		render( <McpTools toolType="read" settings={ SETTINGS } isSaving onSave={ jest.fn() } /> );
+		render( <McpTools toolType="read" settings={ SETTINGS } isSaving onSave={ vi.fn() } /> );
 
 		expect( screen.getByRole( 'checkbox', { name: 'Enable all' } ) ).toBeDisabled();
 		expect( screen.getByRole( 'checkbox', { name: 'Enable all Sites tools' } ) ).toBeDisabled();
@@ -197,7 +198,7 @@ describe( '<McpTools toolType="read">', () => {
 			<McpTools
 				toolType="read"
 				settings={ { ...SETTINGS, available_abilities: [] } }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -205,12 +206,12 @@ describe( '<McpTools toolType="read">', () => {
 	} );
 
 	test( 'tags its tracks events as read', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		render(
 			<McpTools
 				toolType="read"
 				settings={ SETTINGS }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		);
@@ -226,7 +227,7 @@ describe( '<McpTools toolType="read">', () => {
 
 describe( '<McpTools toolType="write">', () => {
 	test( 'shows only the abilities the API flags as not read-only', async () => {
-		render( <McpTools toolType="write" settings={ SETTINGS } onSave={ jest.fn() } /> );
+		render( <McpTools toolType="write" settings={ SETTINGS } onSave={ vi.fn() } /> );
 
 		expect( screen.getByRole( 'heading', { name: 'Feedback' } ) ).toBeVisible();
 		expect( screen.queryByRole( 'heading', { name: 'Sites' } ) ).not.toBeInTheDocument();
@@ -240,7 +241,7 @@ describe( '<McpTools toolType="write">', () => {
 	} );
 
 	test( 'the page toggle saves only the write abilities', async () => {
-		const onSave = jest.fn();
+		const onSave = vi.fn();
 		render( <McpTools toolType="write" settings={ SETTINGS } onSave={ onSave } /> );
 
 		await userEvent.click( screen.getByRole( 'checkbox', { name: 'Enable all' } ) );
@@ -258,7 +259,7 @@ describe( '<McpTools toolType="write">', () => {
 					...SETTINGS,
 					available_abilities: SETTINGS.available_abilities.filter( ( a ) => a.readonly !== false ),
 				} }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 			/>
 		);
 
@@ -266,12 +267,12 @@ describe( '<McpTools toolType="write">', () => {
 	} );
 
 	test( 'tags its tracks events as write', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		render(
 			<McpTools
 				toolType="write"
 				settings={ SETTINGS }
-				onSave={ jest.fn() }
+				onSave={ vi.fn() }
 				recordTracksEvent={ recordTracksEvent }
 			/>
 		);

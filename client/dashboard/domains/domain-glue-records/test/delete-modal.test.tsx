@@ -5,6 +5,7 @@ import { DomainGlueRecord } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainGlueRecordDeleteModal from '../delete-modal';
 
@@ -22,7 +23,7 @@ function renderDeleteModal( props: RenderDeleteModalProps = {} ) {
 	const defaultProps = {
 		domainName,
 		glueRecord,
-		onClose: jest.fn(),
+		onClose: vi.fn(),
 		...props,
 	};
 
@@ -54,7 +55,7 @@ test( 'renders delete modal with correct title and buttons', async () => {
 
 test( 'calls onClose when Cancel button is clicked', async () => {
 	const user = userEvent.setup();
-	const mockOnClose = jest.fn();
+	const mockOnClose = vi.fn();
 
 	renderDeleteModal( { onClose: mockOnClose } );
 
@@ -65,7 +66,7 @@ test( 'calls onClose when Cancel button is clicked', async () => {
 
 test( 'calls delete mutation and onClose when Delete button is clicked and the request is successful', async () => {
 	const user = userEvent.setup();
-	const mockOnClose = jest.fn();
+	const mockOnClose = vi.fn();
 
 	renderDeleteModal( { onClose: mockOnClose } );
 
@@ -78,7 +79,7 @@ test( 'calls delete mutation and onClose when Delete button is clicked and the r
 
 test( 'calls delete mutation and onClose when Delete button is clicked and the request fails', async () => {
 	const user = userEvent.setup();
-	const mockOnClose = jest.fn();
+	const mockOnClose = vi.fn();
 
 	renderDeleteModal( { onClose: mockOnClose } );
 

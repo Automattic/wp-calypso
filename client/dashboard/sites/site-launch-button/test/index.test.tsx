@@ -5,6 +5,7 @@
 import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { SiteLaunchButton } from '..';
 import { render } from '../../../test-utils';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -230,7 +231,7 @@ describe( '<SiteLaunchButton>', () => {
 		const launchScope = mockLaunchApi();
 
 		const originalLocation = window.location;
-		const assign = jest.fn();
+		const assign = vi.fn();
 		Object.defineProperty( window, 'location', {
 			writable: true,
 			value: {
@@ -241,9 +242,7 @@ describe( '<SiteLaunchButton>', () => {
 				assign,
 			},
 		} );
-		const replaceState = jest
-			.spyOn( window.history, 'replaceState' )
-			.mockImplementation( () => {} );
+		const replaceState = vi.spyOn( window.history, 'replaceState' ).mockImplementation( () => {} );
 
 		try {
 			render(

@@ -15,12 +15,12 @@ import {
 import type { Purchase } from '@automattic/api-core';
 
 vi.mock( '../is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn(),
+	isDashboardBackport: vi.fn(),
 } ) );
 
 vi.mock( '../jetpack', async () => ( {
 	...( await vi.importActual< typeof import( '../jetpack' ) >( '../jetpack' ) ),
-	isJetpackCloud: jest.fn(),
+	isJetpackCloud: vi.fn(),
 } ) );
 
 const purchase = {
@@ -37,8 +37,8 @@ function setEnvironment( {
 	backport: boolean;
 	jetpackCloud: boolean;
 } ) {
-	jest.mocked( isDashboardBackport ).mockReturnValue( backport );
-	jest.mocked( isJetpackCloud ).mockReturnValue( jetpackCloud );
+	vi.mocked( isDashboardBackport ).mockReturnValue( backport );
+	vi.mocked( isJetpackCloud ).mockReturnValue( jetpackCloud );
 }
 
 describe( 'dashboardLinkWithBackport', () => {

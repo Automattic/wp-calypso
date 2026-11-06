@@ -11,7 +11,7 @@ import type { Site, ActivityLogsData } from '@automattic/api-core';
 
 const mockSiteId = 123;
 
-const mockFetchSiteActivityLog = jest.fn();
+const mockFetchSiteActivityLog = vi.fn();
 
 vi.mock( '@automattic/api-core', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),

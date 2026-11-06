@@ -4,16 +4,16 @@
 import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
 vi.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 afterEach( () => {
-	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	( isSupportSession as Mock ).mockReturnValue( false );
 } );
 
 const domainName = 'example.com';
@@ -175,7 +175,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 
 		test( 'shows contact details and glue records in a support session even when user cannot manage', async () => {
-			( isSupportSession as jest.Mock ).mockReturnValue( true );
+			( isSupportSession as Mock ).mockReturnValue( true );
 
 			renderDomainSettings( {
 				subtype: { id: DomainSubtype.DOMAIN_REGISTRATION, label: 'Domain Registration' },

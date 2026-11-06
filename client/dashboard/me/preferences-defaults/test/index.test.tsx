@@ -5,12 +5,13 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import PreferencesDefaults from '../index';
 import type { Site, User, UserPreferences } from '@automattic/api-core';
 
 // The suggestions list scrolls the highlighted option into view, which JSDOM lacks.
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 const PRIMARY_SITE_ID = 123;
 

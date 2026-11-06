@@ -15,27 +15,27 @@ const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
 vi.mock( '@wordpress/react-i18n', () => ( {
-	useI18n: jest.fn(),
+	useI18n: vi.fn(),
 } ) );
 
 vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
-		createSuccessNotice: jest.fn(),
-		createErrorNotice: jest.fn(),
+		createSuccessNotice: vi.fn(),
+		createErrorNotice: vi.fn(),
 	} ),
 	useRegistry: () => ( {} ),
-	combineReducers: jest.fn(),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn( ( selector ) => selector ),
-	store: jest.fn(),
-	select: jest.fn(),
-	dispatch: jest.fn(),
+	combineReducers: vi.fn(),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn( ( selector ) => selector ),
+	store: vi.fn(),
+	select: vi.fn(),
+	dispatch: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
 // Mock scrollIntoView for JSDOM compatibility
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
@@ -57,8 +57,8 @@ vi.mock(
 			},
 			locale: 'en',
 			notices: {
-				showError: jest.fn(),
-				showSuccess: jest.fn(),
+				showError: vi.fn(),
+				showSuccess: vi.fn(),
 			},
 		} ),
 	} )
@@ -72,7 +72,7 @@ vi.mock( '@tanstack/react-router', async () => {
 
 	return {
 		...actual,
-		useParams: jest.fn( () => {
+		useParams: vi.fn( () => {
 			return mockRouterParams;
 		} ),
 	};

@@ -16,7 +16,7 @@ vi.mock( '../../../components/inline-support-link', () => ( {
 	default: () => <span>Learn more</span>,
 } ) );
 
-const mockHasEnTranslation = jest.fn( () => true );
+const mockHasEnTranslation = vi.fn( () => true );
 vi.mock( '@automattic/i18n-utils', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
 		'@automattic/i18n-utils'

@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { SelectSite } from '../select-site';
 import type { Site } from '@automattic/api-core';
@@ -45,7 +46,7 @@ describe( '<SelectSite>', () => {
 
 	test( 'filters sites by name', async () => {
 		const user = userEvent.setup();
-		render( <SelectSite onSiteSelect={ jest.fn() } /> );
+		render( <SelectSite onSiteSelect={ vi.fn() } /> );
 
 		await screen.findByText( 'My Blog' );
 
@@ -61,7 +62,7 @@ describe( '<SelectSite>', () => {
 
 	test( 'filters sites by URL', async () => {
 		const user = userEvent.setup();
-		render( <SelectSite onSiteSelect={ jest.fn() } /> );
+		render( <SelectSite onSiteSelect={ vi.fn() } /> );
 
 		await screen.findByText( 'My Blog' );
 

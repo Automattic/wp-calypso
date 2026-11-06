@@ -7,8 +7,8 @@ import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import NewReferralNotice from '../new-referral-notice';
 
-const mockUseSearch = jest.fn();
-const mockNavigate = jest.fn();
+const mockUseSearch = vi.fn();
+const mockNavigate = vi.fn();
 
 vi.mock( '../../../../app/router/agency', () => ( {
 	earnReferralsRoute: { useSearch: () => mockUseSearch() },
@@ -25,7 +25,7 @@ const CHECKOUT_URL = 'https://wordpress.com/checkout/agency/referral?referral_bl
 
 describe( 'NewReferralNotice', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'confirms a sent referral with the client’s email', async () => {

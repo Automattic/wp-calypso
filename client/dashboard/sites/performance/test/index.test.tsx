@@ -18,9 +18,9 @@ vi.mock( '../../../app/router/sites', () => ( {
 // The candidate reads the leaf route match, which the test router does not
 // have; the arbiter's own tests cover the real hook.
 vi.mock( '../../../components/site-expiry-notice', () => ( {
-	useSiteExpiryNoticeCandidate: jest.fn( () => null ),
+	useSiteExpiryNoticeCandidate: vi.fn( () => null ),
 } ) );
-const mockCandidate = jest.mocked( useSiteExpiryNoticeCandidate );
+const mockCandidate = vi.mocked( useSiteExpiryNoticeCandidate );
 
 const site = {
 	ID: 1,

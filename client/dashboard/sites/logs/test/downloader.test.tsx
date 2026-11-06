@@ -6,7 +6,7 @@ import '@testing-library/jest-dom';
 import { LogType, FilterType } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { vi, type Mock, type MockInstance } from 'vitest';
 import { render } from '../../../test-utils';
 import { LogsDownloader } from '../downloader';
 import type { JSX } from 'react';
@@ -50,7 +50,7 @@ vi.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
 vi.mock( '@automattic/api-core', async () => {
 	const actual =
 		await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' );
-	const fetchSiteLogsBatchMock = jest.fn();
+	const fetchSiteLogsBatchMock = vi.fn();
 	return {
 		...actual,
 		fetchSiteLogsBatch: ( ...args: unknown[] ) => fetchSiteLogsBatchMock( ...args ),
@@ -58,17 +58,17 @@ vi.mock( '@automattic/api-core', async () => {
 	};
 } );
 
-let createObjectURLMock: jest.Mock;
-let revokeObjectURLMock: jest.Mock;
-let anchorClickSpy: jest.SpyInstance;
+let createObjectURLMock: Mock;
+let revokeObjectURLMock: Mock;
+let anchorClickSpy: MockInstance;
 
 const { __mocks } = ( await import( '@automattic/api-core' ) ) as unknown as {
-	__mocks: { fetchSiteLogsBatchMock: jest.Mock };
+	__mocks: { fetchSiteLogsBatchMock: Mock };
 };
 
 beforeAll( () => {
-	createObjectURLMock = jest.fn( () => 'blob:mock' );
-	revokeObjectURLMock = jest.fn();
+	createObjectURLMock = vi.fn( () => 'blob:mock' );
+	revokeObjectURLMock = vi.fn();
 	// JSDOM: polyfill URL methods used in tests
 	if ( ! window.URL ) {
 		// @ts-expect-error test-only polyfill
@@ -78,9 +78,7 @@ beforeAll( () => {
 	window.URL.revokeObjectURL = revokeObjectURLMock;
 
 	// Avoid JSDOM navigation errors when clicking the fake download link
-	anchorClickSpy = jest
-		.spyOn( HTMLAnchorElement.prototype, 'click' )
-		.mockImplementation( () => {} );
+	anchorClickSpy = vi.spyOn( HTMLAnchorElement.prototype, 'click' ).mockImplementation( () => {} );
 } );
 
 afterAll( () => {
@@ -116,7 +114,7 @@ test( 'downloads logs and records analytics', async () => {
 		total_results: 1,
 	} );
 
-	const onSuccess = jest.fn();
+	const onSuccess = vi.fn();
 
 	const { recordTracksEvent } = render(
 		<LogsDownloader

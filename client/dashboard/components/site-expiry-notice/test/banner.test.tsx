@@ -8,6 +8,7 @@ import { render as testingLibraryRender, screen, waitFor } from '@testing-librar
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import {
 	NOW,
@@ -39,8 +40,8 @@ function renderBanner(
 	state: SiteExpiryNoticeState,
 	extra: Partial< ComponentProps< typeof SiteExpiryNoticeBanner > > = {}
 ) {
-	const recordTracksEvent = jest.fn();
-	const onContactSupport = jest.fn();
+	const recordTracksEvent = vi.fn();
+	const onContactSupport = vi.fn();
 	render(
 		<SiteExpiryNoticeBanner
 			siteId={ SITE_ID }
@@ -115,7 +116,7 @@ test( 'the reverted state records the impression once across re-renders', () => 
 	// so its `rerender` unmounts and remounts rather than re-rendering the same
 	// instance; render directly here, with just the QueryClientProvider this
 	// notice needs, so the same instance survives the rerender.
-	const recordTracksEvent = jest.fn();
+	const recordTracksEvent = vi.fn();
 	const queryClient = new QueryClient( { defaultOptions: { queries: { retry: false } } } );
 	const tree = () => (
 		<QueryClientProvider client={ queryClient }>

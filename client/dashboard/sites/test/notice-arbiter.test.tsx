@@ -12,9 +12,9 @@ import { render } from '../../test-utils';
 import { SitesNoticeArbiter } from '../notice-arbiter';
 
 vi.mock( '../../components/site-expiry-notice', () => ( {
-	useSiteExpiryNoticeCandidate: jest.fn( () => null ),
+	useSiteExpiryNoticeCandidate: vi.fn( () => null ),
 } ) );
-const mockCandidate = jest.mocked( useSiteExpiryNoticeCandidate );
+const mockCandidate = vi.mocked( useSiteExpiryNoticeCandidate );
 
 afterEach( () => mockCandidate.mockReturnValue( null ) );
 

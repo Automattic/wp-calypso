@@ -5,6 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useMemo, useState } from 'react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { getContactFormFields } from '../contact-form-fields';
 import type { AsyncValidator } from '../contact-validation-utils';
@@ -48,7 +49,7 @@ describe( 'getContactFormFields country field', () => {
 } );
 
 // ComboboxControl scrolls the highlighted option into view; jsdom doesn't implement it.
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 // +1 is shared by the Bahamas, the US and Canada. The Bahamas is first so it is
 // the plain-first-match fallback; the address country disambiguates the seed.

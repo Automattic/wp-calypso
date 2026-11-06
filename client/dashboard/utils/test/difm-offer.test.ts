@@ -19,10 +19,10 @@ import {
 } from '../difm-offer';
 
 vi.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
+	useExperiment: vi.fn(),
 } ) );
 
-const mockUseExperiment = jest.mocked( useExperiment );
+const mockUseExperiment = vi.mocked( useExperiment );
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse( '2026-09-24T12:00:00Z' );

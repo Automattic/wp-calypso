@@ -20,7 +20,7 @@ vi.mock( '@automattic/i18n-utils', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
 		'@automattic/i18n-utils'
 	) ),
-	translationExists: jest.fn( () => true ),
+	translationExists: vi.fn( () => true ),
 } ) );
 
 const sitewide = ( purchase: Purchase, extra = {} ) =>
@@ -28,7 +28,7 @@ const sitewide = ( purchase: Purchase, extra = {} ) =>
 
 beforeEach( () => {
 	MockDate.set( NOW );
-	jest.mocked( translationExists ).mockReturnValue( true );
+	vi.mocked( translationExists ).mockReturnValue( true );
 } );
 afterEach( () => MockDate.reset() );
 
@@ -124,7 +124,7 @@ describe( 'sitewide scope: grace period', () => {
 			href: '/plans/x',
 		} );
 
-		jest.mocked( translationExists ).mockReturnValue( false );
+		vi.mocked( translationExists ).mockReturnValue( false );
 		expect( sitewide( grace() )?.secondaryAction ).toMatchObject( { type: 'view-other-plans' } );
 	} );
 

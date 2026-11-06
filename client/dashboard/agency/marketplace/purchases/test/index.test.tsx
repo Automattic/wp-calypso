@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { render } from '../../../../test-utils';
 import CrossoverModalHost from '../../../crossover';
@@ -266,7 +267,7 @@ describe( '<MarketplacePurchases>', () => {
 
 	test( 'does not ask a partner who already answered', async () => {
 		// SnackbarList reaches for window.scrollTo, which jsdom does not implement.
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 		mockAgency();
 		mockPreferences( { 'purchase-completed': { lastSubmittedAt: 1757000000000 } } );
 		mockAssignableLicense();
@@ -327,7 +328,7 @@ describe( '<MarketplacePurchases>', () => {
 			mockLicenses( [ pressableLicenseAttached( 2 ) ] );
 			mockPendingSites( 'pending' );
 
-			const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+			const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 			render(
 				<>
 					<MarketplacePurchases />

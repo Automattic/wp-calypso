@@ -3,6 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ContactFormPrivacy from '../contact-form-privacy';
 import type { Domain } from '@automattic/api-core';
@@ -18,8 +19,8 @@ function renderPrivacy( domain: Partial< Domain > ) {
 		<ContactFormPrivacy
 			domainName={ domainName }
 			isSubmitting={ false }
-			onTogglePrivacyProtection={ jest.fn() }
-			onTogglePrivacyDisclosure={ jest.fn() }
+			onTogglePrivacyProtection={ vi.fn() }
+			onTogglePrivacyDisclosure={ vi.fn() }
 		/>
 	);
 }

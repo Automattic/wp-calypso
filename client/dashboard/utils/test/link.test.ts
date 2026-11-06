@@ -3,14 +3,14 @@ import { vi } from 'vitest';
 import { calypsoLiveRedirectorLink } from '../link';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn();
-	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } ) };
+	const fn = vi.fn();
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: vi.fn() } ) };
 } );
 
 const IMAGE = 'registry.a8c.com/calypso/app:build-123';
 
 function setConfig( values: Record< string, unknown > ) {
-	jest.mocked( config ).mockImplementation( ( key: string ) => values[ key ] as never );
+	vi.mocked( config ).mockImplementation( ( key: string ) => values[ key ] as never );
 }
 
 describe( 'calypsoLiveRedirectorLink', () => {

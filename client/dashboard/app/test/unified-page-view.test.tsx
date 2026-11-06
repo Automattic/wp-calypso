@@ -26,17 +26,17 @@ import type { AnyRouter } from '@tanstack/react-router';
 import type { PropsWithChildren, ReactNode } from 'react';
 
 vi.mock( '@automattic/calypso-analytics', () => ( {
-	initializeAnalytics: jest.fn(),
-	recordTracksEvent: jest.fn(),
-	recordTracksPageViewWithPageParams: jest.fn(),
+	initializeAnalytics: vi.fn(),
+	recordTracksEvent: vi.fn(),
+	recordTracksPageViewWithPageParams: vi.fn(),
 } ) );
 vi.mock( '@automattic/charts', () => ( {
 	GlobalChartsProvider: ( { children }: PropsWithChildren ) => children,
 } ) );
-vi.mock( '../router', () => ( { getRouter: jest.fn() } ) );
+vi.mock( '../router', () => ( { getRouter: vi.fn() } ) );
 vi.mock( '../survicate', () => ( {
-	useSurvicate: jest.fn(),
-	useSurvicateVisitTraits: jest.fn(),
+	useSurvicate: vi.fn(),
+	useSurvicateVisitTraits: vi.fn(),
 } ) );
 vi.mock( '../auth', async () => ( {
 	...( await vi.importActual< typeof import( '../auth' ) >( '../auth' ) ),
@@ -97,13 +97,13 @@ async function renderTracker(
 		defaultPendingMinMs: 0,
 	} );
 
-	jest.mocked< ( config: AppConfig ) => AnyRouter >( getRouter ).mockReturnValue( router );
+	vi.mocked< ( config: AppConfig ) => AnyRouter >( getRouter ).mockReturnValue( router );
 	render( <Layout config={ appConfig } /> );
 	await waitFor( () => {
 		expect( router.state.status ).toBe( 'idle' );
 		expect( router.state.matches.at( -1 )?.status ).toBe( 'success' );
 	} );
-	const tracksEvent = jest.mocked( recordTracksEvent );
+	const tracksEvent = vi.mocked( recordTracksEvent );
 	return {
 		router,
 		pendingLoad,
@@ -115,7 +115,7 @@ async function renderTracker(
 
 describe( 'Unified admin page views', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it.each( [

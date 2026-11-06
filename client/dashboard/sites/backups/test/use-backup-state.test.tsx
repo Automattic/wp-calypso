@@ -17,7 +17,7 @@ import { useBackupState } from '../use-backup-state';
 vi.mock( 'calypso/lib/wp', () => ( {
 	default: {
 		req: {
-			get: jest.fn(),
+			get: vi.fn(),
 		},
 	},
 } ) );

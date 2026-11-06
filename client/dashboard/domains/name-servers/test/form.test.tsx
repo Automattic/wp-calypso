@@ -18,7 +18,7 @@ vi.mock( '../../../components/inline-support-link', () => ( {
 	),
 } ) );
 
-const mockHasEnTranslation = jest.fn( () => true );
+const mockHasEnTranslation = vi.fn( () => true );
 vi.mock( '@automattic/i18n-utils', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
 		'@automattic/i18n-utils'
@@ -33,7 +33,7 @@ describe( 'NameServersForm', () => {
 		nameServers: [],
 		isUsingDefaultNameServers: false,
 		isBusy: false,
-		onSubmit: jest.fn(),
+		onSubmit: vi.fn(),
 		defaultNameServers: [ 'ns1.wordpress.com', 'ns2.wordpress.com', 'ns3.wordpress.com' ],
 	};
 
@@ -260,7 +260,7 @@ describe( 'NameServersForm', () => {
 	describe( 'Form Submission', () => {
 		it( 'calls onSubmit with correct data when form is submitted', async () => {
 			const user = userEvent.setup();
-			const mockOnSubmit = jest.fn();
+			const mockOnSubmit = vi.fn();
 
 			render( <NameServersForm { ...defaultProps } onSubmit={ mockOnSubmit } /> );
 
@@ -283,7 +283,7 @@ describe( 'NameServersForm', () => {
 
 		it( 'calls onSubmit with WPCOM nameservers when they are selected', async () => {
 			const user = userEvent.setup();
-			const mockOnSubmit = jest.fn();
+			const mockOnSubmit = vi.fn();
 
 			render( <NameServersForm { ...defaultProps } onSubmit={ mockOnSubmit } /> );
 

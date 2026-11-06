@@ -4,7 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import { render } from '../../../test-utils';
 import ConnectRepository from '../connect-repository';
 import type { AnalyticsClient } from '../../../app/analytics';
@@ -69,7 +69,7 @@ function mockApis( { installations = [] }: { installations?: object[] } = {} ) {
 }
 
 function eventCalls( recordTracksEvent: AnalyticsClient[ 'recordTracksEvent' ], name: string ) {
-	return ( recordTracksEvent as jest.Mock ).mock.calls.filter( ( [ event ] ) => event === name );
+	return ( recordTracksEvent as Mock ).mock.calls.filter( ( [ event ] ) => event === name );
 }
 
 async function selectRepositoryAndSubmit( user: ReturnType< typeof userEvent.setup > ) {
@@ -87,11 +87,11 @@ async function selectRepositoryAndSubmit( user: ReturnType< typeof userEvent.set
 describe( '<ConnectRepository>', () => {
 	beforeEach( () => {
 		// A blocked popup: window.open returns null rather than throwing.
-		jest.spyOn( window, 'open' ).mockReturnValue( null );
+		vi.spyOn( window, 'open' ).mockReturnValue( null );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	test( 'does not record the auth popup event on render', async () => {

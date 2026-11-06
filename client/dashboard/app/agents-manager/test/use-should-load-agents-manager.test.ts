@@ -10,10 +10,10 @@ import useShouldLoadAgentsManager, {
 } from '../use-should-load-agents-manager';
 
 vi.mock( '@automattic/calypso-config', () => ( {
-	isEnabled: jest.fn(),
+	isEnabled: vi.fn(),
 } ) );
 
-const mockedIsEnabled = jest.mocked( isEnabled );
+const mockedIsEnabled = vi.mocked( isEnabled );
 
 describe( 'useShouldLoadAgentsManager', () => {
 	beforeEach( () => {

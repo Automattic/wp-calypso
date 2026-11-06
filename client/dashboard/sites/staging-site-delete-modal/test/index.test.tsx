@@ -10,19 +10,19 @@ import { render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
 
-const mockCreateErrorNotice = jest.fn();
-const mockCreateSuccessNotice = jest.fn();
-const mockNavigate = jest.fn();
+const mockCreateErrorNotice = vi.fn();
+const mockCreateSuccessNotice = vi.fn();
+const mockNavigate = vi.fn();
 
 vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createErrorNotice: mockCreateErrorNotice,
 		createSuccessNotice: mockCreateSuccessNotice,
 	} ),
-	combineReducers: jest.fn( ( reducers ) => reducers ),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn(),
+	combineReducers: vi.fn( ( reducers ) => reducers ),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
@@ -83,7 +83,7 @@ describe( 'StagingSiteDeleteModal', () => {
 	describe( 'Modal Display', () => {
 		test( 'renders modal with correct title and content', async () => {
 			mockProductionSite();
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			expect( screen.getByRole( 'dialog', { name: 'Delete staging site' } ) ).toBeInTheDocument();
@@ -96,7 +96,7 @@ describe( 'StagingSiteDeleteModal', () => {
 
 		test( 'displays cancel and delete buttons', async () => {
 			mockProductionSite();
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
 
 			expect( getButton( 'Cancel' ) ).toBeInTheDocument();
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
@@ -105,7 +105,7 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'returns null when no production site ID is provided', () => {
 			mockProductionSite();
 			const { container } = render(
-				<StagingSiteDeleteModal site={ mockStagingSiteWithoutProductionId } onClose={ jest.fn() } />
+				<StagingSiteDeleteModal site={ mockStagingSiteWithoutProductionId } onClose={ vi.fn() } />
 			);
 
 			expect( container.firstChild ).toBeNull();
@@ -115,7 +115,7 @@ describe( 'StagingSiteDeleteModal', () => {
 	describe( 'User Interactions', () => {
 		test( 'calls onClose when cancel button is clicked', async () => {
 			const user = userEvent.setup();
-			const mockOnClose = jest.fn();
+			const mockOnClose = vi.fn();
 			mockProductionSite();
 			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ mockOnClose } /> );
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
@@ -129,7 +129,7 @@ describe( 'StagingSiteDeleteModal', () => {
 			const user = userEvent.setup();
 			const scope = mockStagingSiteDelete();
 			mockProductionSite();
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
@@ -143,7 +143,7 @@ describe( 'StagingSiteDeleteModal', () => {
 			const user = userEvent.setup();
 			mockStagingSiteDelete();
 			mockProductionSite();
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
@@ -160,7 +160,7 @@ describe( 'StagingSiteDeleteModal', () => {
 
 			mockProductionSite();
 			const { recordTracksEvent } = render(
-				<StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } />
+				<StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } />
 			);
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
@@ -182,7 +182,7 @@ describe( 'StagingSiteDeleteModal', () => {
 			mockStagingSiteDelete( 400, { message: '' } );
 
 			mockProductionSite();
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			await user.click( getButton( 'Delete staging site' ) );
@@ -199,7 +199,7 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'shows warning notice when a sync is in progress', async () => {
 			mockProductionSite();
 			mockSyncState( 'backing_up' );
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
 
 			expect(
 				await screen.findByText(
@@ -211,7 +211,7 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'does not show warning notice when no sync is in progress', async () => {
 			mockProductionSite();
 			mockSyncState( 'completed' );
-			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ jest.fn() } /> );
+			render( <StagingSiteDeleteModal site={ mockStagingSite } onClose={ vi.fn() } /> );
 			await waitFor( () => expect( getButton( 'Delete staging site' ) ).toBeEnabled() );
 
 			expect(
@@ -237,7 +237,7 @@ describe( 'StagingSiteDeleteModal', () => {
 		test( 'shows success notice, closes modal, and navigates on successful deletion', async () => {
 			const user = userEvent.setup();
 			mockStagingSiteDelete();
-			const mockOnClose = jest.fn();
+			const mockOnClose = vi.fn();
 			mockProductionSite();
 			const { recordTracksEvent } = render(
 				<StagingSiteDeleteModal site={ mockStagingSite } onClose={ mockOnClose } />

@@ -19,10 +19,10 @@ import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-
 import type { ReactNode } from 'react';
 
 vi.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
+	useExperiment: vi.fn(),
 } ) );
 
-const mockUseExperiment = jest.mocked( useExperiment );
+const mockUseExperiment = vi.mocked( useExperiment );
 const DAY_IN_SECONDS = 24 * 60 * 60;
 
 function timestampDaysAgo( days: number ): number {
@@ -98,7 +98,7 @@ describe( 'useResurrectedFreeUserEligibility', () => {
 	afterEach( () => {
 		disable( WELCOME_BACK_90_DAY_ELIGIBILITY_FLAG );
 		disable( WELCOME_BACK_MODAL_FORCE_FLAG );
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'returns an assigned variation for an eligible resurrected user', async () => {

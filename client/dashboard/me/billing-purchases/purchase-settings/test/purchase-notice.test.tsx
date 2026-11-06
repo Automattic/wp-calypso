@@ -11,12 +11,12 @@ import { PurchaseNotice } from '../purchase-notice';
 import type { Purchase } from '@automattic/api-core';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
+	const fn = vi.fn( () => '' );
 	return {
 		...Object.assign( fn, {
 			__esModule: true,
 			default: fn,
-			isEnabled: jest.fn( () => false ),
+			isEnabled: vi.fn( () => false ),
 		} ),
 	};
 } );

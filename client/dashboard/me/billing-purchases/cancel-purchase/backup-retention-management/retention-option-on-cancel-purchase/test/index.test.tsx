@@ -4,6 +4,7 @@
 
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../../../test-utils';
 import BackupRetentionOptionOnCancelPurchase from '../index';
 import type { Purchase } from '@automattic/api-core';
@@ -27,7 +28,7 @@ function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
  * for a holding site the user is not a member of.
  */
 function interceptSiteRequests() {
-	const onSiteRequest = jest.fn();
+	const onSiteRequest = vi.fn();
 	nock( 'https://public-api.wordpress.com' )
 		.persist()
 		.get( new RegExp( `/sites/${ SITE_ID }(/|\\?|$)` ) )

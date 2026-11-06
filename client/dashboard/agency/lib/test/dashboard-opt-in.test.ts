@@ -4,12 +4,12 @@ import { needsPreviousAgencyDashboard } from '../dashboard-opt-in';
 
 vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
-	default: jest.fn(),
-	isEnabled: jest.fn(),
+	default: vi.fn(),
+	isEnabled: vi.fn(),
 } ) );
 
-const mockedConfig = jest.mocked( config );
-const mockedIsEnabled = jest.mocked( isEnabled );
+const mockedConfig = vi.mocked( config );
+const mockedIsEnabled = vi.mocked( isEnabled );
 
 describe( 'needsPreviousAgencyDashboard', () => {
 	beforeEach( () => {

@@ -57,7 +57,7 @@ describe( 'DomainConnectionSetup', () => {
 	const defaultProps = {
 		domainName: 'example.com',
 		siteSlug: 'example.wordpress.com',
-		onVerifyConnection: jest.fn(),
+		onVerifyConnection: vi.fn(),
 		isUpdatingConnectionMode: false,
 	};
 
@@ -163,7 +163,7 @@ describe( 'DomainConnectionSetup', () => {
 
 		test( 'calls onVerifyConnection with DC mode when "Start setup" is clicked', async () => {
 			const user = userEvent.setup();
-			const onVerifyConnection = jest.fn();
+			const onVerifyConnection = vi.fn();
 			const domainMappingStatus = createMockDomainMappingStatus( { mode: null } );
 			const domainConnectionSetupInfo = createMockDomainConnectionSetupInfo( {
 				domain_connect_apply_wpcom_hosting: 'https://example.com/domain-connect',

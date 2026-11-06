@@ -11,10 +11,10 @@ import type { Site } from '@automattic/api-core';
 
 const mockSiteId = 123;
 
-const mockFetchSitePlans = jest.fn();
-const mockFetchDomainSuggestions = jest.fn();
-const mockReplaceProductsInCart = jest.fn();
-const mockCreateErrorNotice = jest.fn();
+const mockFetchSitePlans = vi.fn();
+const mockFetchDomainSuggestions = vi.fn();
+const mockReplaceProductsInCart = vi.fn();
+const mockCreateErrorNotice = vi.fn();
 let mockShoppingCartImportError: Error | null = null;
 
 vi.mock( '@automattic/api-core', async () => ( {
@@ -49,11 +49,11 @@ vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
-	useSelect: jest.fn( () => ( {} ) ),
-	combineReducers: jest.fn( ( reducers ) => reducers ),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn(),
+	useSelect: vi.fn( () => ( {} ) ),
+	combineReducers: vi.fn( ( reducers ) => reducers ),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
@@ -71,7 +71,7 @@ const mockSite: Site = {
 const originalLocation = window.location;
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockShoppingCartImportError = null;
 	mockFetchSitePlans.mockResolvedValue( {
 		plans: [ { current_plan: true, has_domain_credit: true } ],

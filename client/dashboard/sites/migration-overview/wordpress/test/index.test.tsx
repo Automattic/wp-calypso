@@ -11,6 +11,7 @@ import { focusManager } from '@tanstack/react-query';
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { WordPressMigration } from '../index';
 import type { Site } from '@automattic/api-core';
@@ -540,7 +541,7 @@ describe( 'WordPressMigration', () => {
 	} );
 
 	it( 'waits on a completed migration whose site is still locked, then offers a way out', async () => {
-		jest.useFakeTimers( { advanceTimers: true } );
+		vi.useFakeTimers( { shouldAdvanceTime: true } );
 		mockApi().get( statusPath ).query( true ).reply( 200, migration( 'completed' ) );
 
 		const { router } = render( <WordPressMigration site={ site } />, { queryClient } );
@@ -552,12 +553,12 @@ describe( 'WordPressMigration', () => {
 		expect( screen.queryByRole( 'button', { name: 'Reload' } ) ).not.toBeInTheDocument();
 		expect( router.state.location.pathname ).toBe( '/' );
 
-		act( () => jest.advanceTimersByTime( 30000 ) );
+		act( () => vi.advanceTimersByTime( 30000 ) );
 
 		expect( await screen.findByRole( 'button', { name: 'Reload' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Contact us' } ) ).toBeVisible();
 		expect( router.state.location.pathname ).toBe( '/' );
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'hands over to the site once a completed migration has unlocked it', async () => {

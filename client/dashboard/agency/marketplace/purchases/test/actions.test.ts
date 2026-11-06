@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { getLicenseActions } from '../actions';
 import type { JetpackLicense } from '@automattic/api-core';
 
@@ -98,9 +99,9 @@ function setup( { canRevoke = true, isAgencyOwner = true } = {} ) {
 }
 
 function setupWithCallbacks( { canRevoke = true, isAgencyOwner = true } = {} ) {
-	const onOpenHosting = jest.fn();
-	const onNavigate = jest.fn();
-	const onLicenseAssigned = jest.fn();
+	const onOpenHosting = vi.fn();
+	const onNavigate = vi.fn();
+	const onLicenseAssigned = vi.fn();
 	const actions = getLicenseActions( {
 		canRevoke,
 		isAgencyOwner,
@@ -167,7 +168,7 @@ describe( 'getLicenseActions eligibility', () => {
 
 	it( 'keeps Change domain outside the dashboard', () => {
 		const { run } = setupWithCallbacks();
-		const open = jest.spyOn( window, 'open' ).mockImplementation( () => null );
+		const open = vi.spyOn( window, 'open' ).mockImplementation( () => null );
 
 		// The A4A app registers no domains routes, so this one still leaves the dashboard.
 		run( 'change-domain', assignedWpcom );
@@ -185,7 +186,7 @@ describe( 'getLicenseActions eligibility', () => {
 
 		// Users without `manage_options` are turned away by the routes themselves,
 		// which explain it on the site page, so nothing is gated here.
-		expect( onNavigate.mock.calls.map( ( [ to ]: [ string ] ) => to ) ).toEqual( [
+		expect( onNavigate.mock.calls.map( ( [ to ] ) => to ) ).toEqual( [
 			'/sites/example.wpcomstaging.com',
 			'/sites/example.wpcomstaging.com/settings',
 			'/sites/example.wpcomstaging.com/settings/site-visibility',

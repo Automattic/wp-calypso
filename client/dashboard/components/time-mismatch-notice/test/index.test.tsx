@@ -5,6 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import TimeMismatchNotice from '../index';
 
@@ -26,11 +27,11 @@ describe( 'TimeMismatchNotice', () => {
 	const mockTimezoneOffsetMinutes = -120;
 
 	beforeEach( () => {
-		jest.spyOn( Date.prototype, 'getTimezoneOffset' ).mockReturnValue( mockTimezoneOffsetMinutes );
+		vi.spyOn( Date.prototype, 'getTimezoneOffset' ).mockReturnValue( mockTimezoneOffsetMinutes );
 	} );
 
 	afterEach( () => {
-		jest.restoreAllMocks();
+		vi.restoreAllMocks();
 	} );
 
 	test( 'does not render if siteTime matches local timezone offset', async () => {

@@ -3,6 +3,7 @@ import { isAutomatticianQuery, queryClient } from '@automattic/api-queries';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import McpApprovalBypassControl from '../approval-bypass';
 
@@ -135,7 +136,7 @@ describe( '<McpApprovalBypassControl />', () => {
 	} );
 
 	test( 'switches to off when the deadline passes while the page is open', () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		try {
 			render(
 				<McpApprovalBypassControl
@@ -147,13 +148,13 @@ describe( '<McpApprovalBypassControl />', () => {
 			expect( screen.getByText( /^On until / ) ).toBeVisible();
 
 			act( () => {
-				jest.advanceTimersByTime( 61_000 );
+				vi.advanceTimersByTime( 61_000 );
 			} );
 
 			expect( screen.queryByText( /^On until / ) ).not.toBeInTheDocument();
 			expect( screen.getByText( 'Off' ) ).toBeVisible();
 		} finally {
-			jest.useRealTimers();
+			vi.useRealTimers();
 		}
 	} );
 } );

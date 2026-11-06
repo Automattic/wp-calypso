@@ -68,7 +68,7 @@ function renderCart(
 		id: 1,
 		approval_status: approvalStatus,
 	} as Agency );
-	const onToggle = jest.fn();
+	const onToggle = vi.fn();
 	const { recordTracksEvent } = render(
 		<CartMenu
 			items={ [ { slug: product.slug, quantity: 1 } ] }
@@ -78,7 +78,7 @@ function renderCart(
 			isAgencyApproved={ approvalStatus === 'approved' }
 			open
 			onToggle={ onToggle }
-			onRemove={ jest.fn() }
+			onRemove={ vi.fn() }
 		/>,
 		{ queryClient }
 	);

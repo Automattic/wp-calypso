@@ -89,7 +89,7 @@ const notificationSnackBar = () => {
 describe( 'NotificationsExtras', () => {
 	beforeEach( () => {
 		// Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 	} );
 
 	it( 'renders the page header and sections correctly', async () => {

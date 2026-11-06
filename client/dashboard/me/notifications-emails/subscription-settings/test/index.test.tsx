@@ -13,7 +13,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { SubscriptionSettings } from '../index';
 
@@ -31,7 +31,7 @@ vi.mock( '@automattic/i18n-utils', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
 		'@automattic/i18n-utils'
 	) ),
-	useDeliveryWindowTimezone: jest.fn(),
+	useDeliveryWindowTimezone: vi.fn(),
 } ) );
 
 const mockGetIsAutomatticianApi = ( isAutomttician: boolean ) => {
@@ -113,9 +113,9 @@ describe( 'SubscriptionSettings', () => {
 
 	beforeEach( () => {
 		//Snackbar requires window.scrollTo to be defined
-		window.scrollTo = jest.fn();
+		window.scrollTo = vi.fn();
 		// Default to UTC so the existing tests keep their identity behavior.
-		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+		( useDeliveryWindowTimezone as Mock ).mockReturnValue( {
 			timezone: 'UTC',
 			offsetHours: 0,
 			isUtcFallback: false,
@@ -228,7 +228,7 @@ describe( 'SubscriptionSettings', () => {
 		// Evaluate the offset the same way the hook would, so the test stays
 		// correct across daylight-saving transitions.
 		const offsetHours = getDeliveryWindowOffsetHours( 'America/Los_Angeles' ) ?? 0;
-		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+		( useDeliveryWindowTimezone as Mock ).mockReturnValue( {
 			timezone: 'America/Los_Angeles',
 			offsetHours,
 			isUtcFallback: false,
@@ -275,7 +275,7 @@ describe( 'SubscriptionSettings', () => {
 	} );
 
 	it( 'falls back to clearly labeled UTC when the time zone is unknown', async () => {
-		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+		( useDeliveryWindowTimezone as Mock ).mockReturnValue( {
 			timezone: undefined,
 			offsetHours: null,
 			isUtcFallback: true,
@@ -298,7 +298,7 @@ describe( 'SubscriptionSettings', () => {
 	} );
 
 	it( 'preserves an odd stored UTC hour when only the day changes in UTC fallback mode', async () => {
-		( useDeliveryWindowTimezone as jest.Mock ).mockReturnValue( {
+		( useDeliveryWindowTimezone as Mock ).mockReturnValue( {
 			timezone: undefined,
 			offsetHours: null,
 			isUtcFallback: true,

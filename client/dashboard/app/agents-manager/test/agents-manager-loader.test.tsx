@@ -20,7 +20,7 @@ vi.mock( '@automattic/agents-manager', () => ( {
 	default: () => <div role="region" aria-label="Agents Manager" />,
 } ) );
 
-const mockedUseShouldLoadAgentsManager = jest.mocked( useShouldLoadAgentsManager );
+const mockedUseShouldLoadAgentsManager = vi.mocked( useShouldLoadAgentsManager );
 const siteId = 123;
 const site = {
 	ID: siteId,
@@ -34,10 +34,10 @@ describe( '<AgentsManagerLoader />', () => {
 		queryClient.setQueryData( omnibarSiteIdQuery().queryKey, siteId );
 		queryClient.setQueryData( siteByIdQuery( siteId ).queryKey, site );
 	} );
-	afterEach( () => jest.restoreAllMocks() );
+	afterEach( () => vi.restoreAllMocks() );
 
 	it( 'publishes enabled eligibility for the independently mounted omnibar', async () => {
-		const cancelQueries = jest.spyOn( queryClient, 'cancelQueries' );
+		const cancelQueries = vi.spyOn( queryClient, 'cancelQueries' );
 		mockedUseShouldLoadAgentsManager.mockReturnValue( {
 			routeIsEnabled: true,
 			isInternalOnly: true,

@@ -9,15 +9,15 @@ import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 
 // The Stripe SDK confirmation step is not an HTTP boundary nock can intercept.
 vi.mock( '@automattic/calypso-stripe', () => ( {
-	confirmStripeSetupIntentAndAttachCard: jest.fn( async () => ( {
+	confirmStripeSetupIntentAndAttachCard: vi.fn( async () => ( {
 		id: 'seti_123_secret',
 		payment_method: 'pm_123',
 	} ) ),
 } ) );
 
 function setup( { purchase }: { purchase?: Purchase } = {} ) {
-	const saveCreditCard = jest.fn( async () => ( {} ) );
-	const updateCreditCard = jest.fn( async () => ( {} ) );
+	const saveCreditCard = vi.fn( async () => ( {} ) );
+	const updateCreditCard = vi.fn( async () => ( {} ) );
 
 	const run = ( submitData: Record< string, unknown > ) =>
 		assignNewCardProcessor(

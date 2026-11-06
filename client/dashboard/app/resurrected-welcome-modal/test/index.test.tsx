@@ -19,7 +19,7 @@ import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-
 
 vi.mock( '../use-resurrected-free-user-eligibility' );
 
-const mockUseEligibility = jest.mocked( useResurrectedFreeUserEligibility );
+const mockUseEligibility = vi.mocked( useResurrectedFreeUserEligibility );
 const eligibleUser = {
 	isLoading: false,
 	lastSeen: 1721600000,
@@ -50,7 +50,7 @@ describe( 'ResurrectedWelcomeModalGate', () => {
 					},
 				],
 			} );
-		const onEligibilityResolved = jest.fn();
+		const onEligibilityResolved = vi.fn();
 		const { recordTracksEvent } = render(
 			<ResurrectedWelcomeModalGate onEligibilityResolved={ onEligibilityResolved } />
 		);
@@ -82,7 +82,7 @@ describe( 'ResurrectedWelcomeModalGate', () => {
 			isEligible: false,
 			variationName: 'treatment_manual_dual',
 		} );
-		const onEligibilityResolved = jest.fn();
+		const onEligibilityResolved = vi.fn();
 
 		render( <ResurrectedWelcomeModalGate onEligibilityResolved={ onEligibilityResolved } /> );
 
@@ -110,7 +110,7 @@ describe( 'ResurrectedWelcomeModalGate', () => {
 
 	test( 'allows lower-priority modals when dismissed earlier in the session', async () => {
 		window.sessionStorage.setItem( 'wpcom_resurrected_welcome_modal_dismissed', 'true' );
-		const onEligibilityResolved = jest.fn();
+		const onEligibilityResolved = vi.fn();
 
 		render( <ResurrectedWelcomeModalGate onEligibilityResolved={ onEligibilityResolved } /> );
 

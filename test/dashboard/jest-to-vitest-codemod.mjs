@@ -244,8 +244,10 @@ for ( const file of files ) {
 		e.isTypeOnly ? `type ${ e.name.text }` : e.name.text
 	);
 	if ( existing ) {
-		if ( [ ...vitestImports ].some( ( n ) => ! existingNames.includes( n ) ) ) {
-			flag( existing, 'already imports vitest; merge imports by hand' );
+		const missing = [ ...vitestImports ].filter( ( n ) => ! existingNames.includes( n ) );
+		if ( missing.length ) {
+			const els = existing.importClause.namedBindings.elements;
+			edits.push( { start: els.end, end: els.end, text: ', ' + missing.join( ', ' ) } );
 		}
 	} else {
 		const names = [ ...vitestImports ].sort( ( a, b ) =>

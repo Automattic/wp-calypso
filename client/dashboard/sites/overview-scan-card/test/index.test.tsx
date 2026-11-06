@@ -11,7 +11,7 @@ import type { Site, SiteScan, Threat } from '@automattic/api-core';
 
 const mockSiteId = 123;
 
-const mockFetchSiteScan = jest.fn();
+const mockFetchSiteScan = vi.fn();
 
 vi.mock( '@automattic/api-core', async () => ( {
 	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),

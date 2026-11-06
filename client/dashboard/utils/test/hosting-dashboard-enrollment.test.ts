@@ -7,11 +7,11 @@ import {
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const mock = jest.fn();
-	return { default: Object.assign( mock, { isEnabled: jest.fn() } ) };
+	const mock = vi.fn();
+	return { default: Object.assign( mock, { isEnabled: vi.fn() } ) };
 } );
 
-const mockedIsEnabled = jest.mocked( config.isEnabled );
+const mockedIsEnabled = vi.mocked( config.isEnabled );
 
 // At 100% every user is in the cohort, whatever their ID. These two sit either
 // side of the boundary the rollout used on its way up, so they double as a

@@ -3,12 +3,13 @@
  */
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import HostCards from '../host-cards';
 
 function renderCards( props: Partial< React.ComponentProps< typeof HostCards > > = {} ) {
 	return render(
-		<HostCards owned={ {} } isReferralMode={ false } onPick={ jest.fn() } { ...props } />
+		<HostCards owned={ {} } isReferralMode={ false } onPick={ vi.fn() } { ...props } />
 	);
 }
 

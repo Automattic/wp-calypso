@@ -20,16 +20,16 @@ vi.mock( '@automattic/calypso-config', async () => {
 	return {
 		...actual,
 		__esModule: true,
-		isEnabled: jest.fn( actual.isEnabled ),
+		isEnabled: vi.fn( actual.isEnabled ),
 	};
 } );
 
 vi.mock( '../../../utils/is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn( () => false ),
+	isDashboardBackport: vi.fn( () => false ),
 } ) );
 
-const mockIsDashboardBackport = jest.mocked( isDashboardBackport );
-const mockIsEnabled = jest.mocked( isEnabled );
+const mockIsDashboardBackport = vi.mocked( isDashboardBackport );
+const mockIsEnabled = vi.mocked( isEnabled );
 
 const dashboardConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,

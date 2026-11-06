@@ -14,24 +14,24 @@ import { useSurvicateVisitTraits } from '../index';
 import type { User } from '@automattic/api-core';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn();
-	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } ) };
+	const fn = vi.fn();
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: vi.fn() } ) };
 } );
 
 vi.mock( '@automattic/survicate', () => ( {
-	shouldLoadSurvicate: jest.fn(),
-	setSurvicateVisitorTraits: jest.fn(),
+	shouldLoadSurvicate: vi.fn(),
+	setSurvicateVisitorTraits: vi.fn(),
 } ) );
 
 vi.mock( '@wordpress/compose', async () => ( {
 	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
-	useViewportMatch: jest.fn(),
+	useViewportMatch: vi.fn(),
 } ) );
 
-const mockedConfig = jest.mocked( config );
-const mockedShouldLoad = jest.mocked( shouldLoadSurvicate );
-const mockedSetTraits = jest.mocked( setSurvicateVisitorTraits );
-const mockedUseViewportMatch = jest.mocked( useViewportMatch );
+const mockedConfig = vi.mocked( config );
+const mockedShouldLoad = vi.mocked( shouldLoadSurvicate );
+const mockedSetTraits = vi.mocked( setSurvicateVisitorTraits );
+const mockedUseViewportMatch = vi.mocked( useViewportMatch );
 
 const user = { ID: 1, email: 'test@example.com', language: 'en' } as User;
 
@@ -46,7 +46,7 @@ function renderTraitsHook() {
 	return renderHook( () => useSurvicateVisitTraits(), {
 		wrapper: ( { children } ) => (
 			<QueryClientProvider client={ queryClient }>
-				<AuthContext.Provider value={ { user, logout: jest.fn() } }>
+				<AuthContext.Provider value={ { user, logout: vi.fn() } }>
 					{ children }
 				</AuthContext.Provider>
 			</QueryClientProvider>
@@ -56,8 +56,8 @@ function renderTraitsHook() {
 
 describe( 'useSurvicateVisitTraits', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
-		mockedSetTraits.mockReturnValue( jest.fn() );
+		vi.clearAllMocks();
+		mockedSetTraits.mockReturnValue( vi.fn() );
 		mockedConfig.mockReturnValue( true );
 		mockedShouldLoad.mockReturnValue( true );
 		mockedUseViewportMatch.mockReturnValue( false );

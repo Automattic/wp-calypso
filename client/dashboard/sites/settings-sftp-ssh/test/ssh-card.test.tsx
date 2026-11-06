@@ -15,8 +15,8 @@ import { render } from '../../../test-utils';
 import SshCard from '../ssh-card';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn();
-	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } ) };
+	const fn = vi.fn();
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: vi.fn() } ) };
 } );
 
 const siteId = 123;
@@ -188,11 +188,11 @@ describe( '<SshCard>', () => {
 		};
 
 		beforeEach( () => {
-			jest.mocked( isEnabled ).mockImplementation( ( flag ) => flag === 'ssh-multiple-keys' );
+			vi.mocked( isEnabled ).mockImplementation( ( flag ) => flag === 'ssh-multiple-keys' );
 		} );
 
 		afterEach( () => {
-			jest.mocked( isEnabled ).mockReset();
+			vi.mocked( isEnabled ).mockReset();
 		} );
 
 		test( 'shows labels of attached keys, with the owner for other users’ keys', async () => {

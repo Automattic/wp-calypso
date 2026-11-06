@@ -11,10 +11,10 @@ vi.mock( '@automattic/calypso-config', async () => {
 	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
 		'@automattic/calypso-config'
 	);
-	return { ...actual, __esModule: true, isEnabled: jest.fn( actual.isEnabled ) };
+	return { ...actual, __esModule: true, isEnabled: vi.fn( actual.isEnabled ) };
 } );
 
-const mockIsEnabled = jest.mocked( isEnabled );
+const mockIsEnabled = vi.mocked( isEnabled );
 
 function setup( enabled: boolean ) {
 	mockIsEnabled.mockImplementation(

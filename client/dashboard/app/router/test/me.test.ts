@@ -18,10 +18,10 @@ import {
 import { rootRoute } from '../root';
 
 vi.mock( '../../../utils/is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn( () => false ),
+	isDashboardBackport: vi.fn( () => false ),
 } ) );
 
-const mockIsDashboardBackport = jest.mocked( isDashboardBackport );
+const mockIsDashboardBackport = vi.mocked( isDashboardBackport );
 
 const dashboardConfig: AppConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,

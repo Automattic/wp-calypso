@@ -4,23 +4,23 @@
 
 import config from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, type MockedFunction } from 'vitest';
 import { render } from '../../../../test-utils';
 import ConfirmCheckbox from '../confirm-checkbox';
 import type { Purchase } from '@automattic/api-core';
 
 vi.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
+	const fn = vi.fn( () => '' );
 	return {
 		...Object.assign( fn, {
 			__esModule: true,
 			default: fn,
-			isEnabled: jest.fn( () => false ),
+			isEnabled: vi.fn( () => false ),
 		} ),
 	};
 } );
 
-const mockedIsEnabled = config.isEnabled as jest.MockedFunction< typeof config.isEnabled >;
+const mockedIsEnabled = config.isEnabled as MockedFunction< typeof config.isEnabled >;
 
 function makePurchase( overrides: Partial< Purchase > = {} ): Purchase {
 	return {

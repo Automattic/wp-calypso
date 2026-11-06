@@ -6,7 +6,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { renderHook } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, type MockedFunction } from 'vitest';
 import {
 	A4A_MIGRATED_SITE_TAG,
 	A4A_MIGRATED_SITE_TAG_PRESSABLE_INCENTIVE_2026,
@@ -18,10 +18,10 @@ vi.mock( '@tanstack/react-query', async () => ( {
 	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
 		'@tanstack/react-query'
 	) ),
-	useQuery: jest.fn(),
+	useQuery: vi.fn(),
 } ) );
 
-const mockUseQuery = useQuery as jest.MockedFunction< typeof useQuery >;
+const mockUseQuery = useQuery as MockedFunction< typeof useQuery >;
 
 function mockActiveAgency( startDate?: string | null ) {
 	return {
@@ -43,7 +43,7 @@ function mockAgencyQuery( agency: ReturnType< typeof mockActiveAgency > | null )
 
 describe( 'useCanTagSitesForCommission', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	it( 'returns false and omits the incentive tag while the agency is still loading', () => {

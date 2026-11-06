@@ -6,12 +6,12 @@ import { useQueryClient } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
-import { vi } from 'vitest';
+import { vi, type Mock } from 'vitest';
 import Snackbars from '../index';
 
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
-const mockRemoveNotice = jest.fn();
+const mockCreateSuccessNotice = vi.fn();
+const mockCreateErrorNotice = vi.fn();
+const mockRemoveNotice = vi.fn();
 type MutationEvent = {
 	type: 'updated';
 	action: {
@@ -32,25 +32,25 @@ let subscriptionCallback: ( event: MutationEvent ) => void;
 let hasSubscription = false;
 
 vi.mock( '@wordpress/data', () => ( {
-	useSelect: jest.fn(),
-	useDispatch: jest.fn(),
+	useSelect: vi.fn(),
+	useDispatch: vi.fn(),
 } ) );
 
 vi.mock( '@tanstack/react-query', () => ( {
-	useQueryClient: jest.fn(),
+	useQueryClient: vi.fn(),
 } ) );
 
 vi.mock( '@wordpress/components', () => ( {
-	SnackbarList: jest.fn( () => null ),
+	SnackbarList: vi.fn( () => null ),
 } ) );
 
 vi.mock( '@wordpress/notices', () => ( {
 	store: {},
 } ) );
 
-const mockedUseSelect = useSelect as jest.Mock;
-const mockedUseDispatch = useDispatch as jest.Mock;
-const mockedUseQueryClient = useQueryClient as jest.Mock;
+const mockedUseSelect = useSelect as Mock;
+const mockedUseDispatch = useDispatch as Mock;
+const mockedUseQueryClient = useQueryClient as Mock;
 
 describe( 'Snackbars', () => {
 	let currentNotices: Array< {
@@ -59,7 +59,7 @@ describe( 'Snackbars', () => {
 		status?: string;
 		content?: string;
 	} >;
-	let mockSubscribe: jest.Mock;
+	let mockSubscribe: Mock;
 
 	beforeEach( () => {
 		hasSubscription = false;
@@ -81,10 +81,10 @@ describe( 'Snackbars', () => {
 			createErrorNotice: mockCreateErrorNotice,
 		} ) );
 
-		mockSubscribe = jest.fn( ( callback: ( event: MutationEvent ) => void ) => {
+		mockSubscribe = vi.fn( ( callback: ( event: MutationEvent ) => void ) => {
 			subscriptionCallback = callback;
 			hasSubscription = true;
-			return jest.fn();
+			return vi.fn();
 		} );
 
 		mockedUseQueryClient.mockReturnValue( {
@@ -142,7 +142,7 @@ describe( 'Snackbars', () => {
 
 		render( <Snackbars /> );
 
-		const [ props ] = ( SnackbarList as jest.Mock ).mock.calls[ 0 ];
+		const [ props ] = ( SnackbarList as Mock ).mock.calls[ 0 ];
 
 		expect( props.notices ).toEqual(
 			expect.arrayContaining( [

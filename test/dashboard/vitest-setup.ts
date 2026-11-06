@@ -6,10 +6,6 @@ import nock from 'nock';
 import ResizeObserver from 'resize-observer-polyfill';
 import { afterEach, vi } from 'vitest';
 
-// Hybrid migration: test files keep `jest.fn()` etc. Only `jest.mock` / `jest.requireActual`
-// are codemodded, because Vitest hoists mocks written on `vi` alone.
-( globalThis as any ).jest = vi;
-
 // vm pools and jsdom may lack Node's web platform classes, which nock needs. Borrow them, as
 // calypso-jest's setup-globals does.
 {
@@ -32,6 +28,11 @@ import { afterEach, vi } from 'vitest';
 		}
 	}
 }
+
+// RTL's `waitFor` only advances fake timers when it finds a global `jest`.
+( globalThis as any ).jest = {
+	advanceTimersByTime: ( ms: number ) => vi.advanceTimersByTime( ms ),
+};
 
 ( globalThis as any ).google = {};
 
@@ -128,7 +129,6 @@ vi.mock( '@automattic/agenttic-ui', () => ( {
 } ) );
 
 if ( isJsdom ) {
-	await import( 'jest-canvas-mock' );
 	window.matchMedia = vi.fn( ( query: string ) => ( {
 		matches: false,
 		media: query,
