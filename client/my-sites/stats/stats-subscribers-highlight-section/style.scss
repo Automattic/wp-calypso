@@ -11,6 +11,7 @@
 	.highlight-cards-list {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
+		grid-auto-rows: 1fr;
 		gap: 24px;
 	}
 
