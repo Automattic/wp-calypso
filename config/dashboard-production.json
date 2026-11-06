@@ -59,7 +59,6 @@
 		"plans/scheduled-term-change": true,
 		"plans/updated-storage-labels": true,
 		"plans/upgradeable-storage": true,
-		"posthog-tracking": true,
 		"purchases/cancel-options-cards": false,
 		"purchases/split-cancel-remove": false,
 		"purchases/site-transfer": true,
