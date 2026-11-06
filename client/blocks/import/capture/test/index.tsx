@@ -2,10 +2,13 @@
  * @jest-environment jsdom
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
-import { render, screen } from '@testing-library/react';
+import { HelpCenter } from '@automattic/data-stores';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { dispatch, select } from '@wordpress/data';
 import React from 'react';
 import { MemoryRouter } from 'react-router';
+import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import CaptureInput from '../capture-input';
 
 const mockedRecordTracksEvent = jest.fn();
@@ -13,6 +16,9 @@ const mockedRecordTracksEvent = jest.fn();
 jest.mock( '@automattic/calypso-analytics', () => ( {
 	recordTracksEvent: ( ...args ) => mockedRecordTracksEvent( ...args ),
 } ) );
+
+const HELP_CENTER_STORE = HelpCenter.register();
+const SIGNED_IN = { currentUser: { id: 1, user: { ID: 1 } } };
 
 describe( 'CaptureInput', () => {
 	beforeEach( () => jest.resetAllMocks() );
@@ -148,7 +154,7 @@ describe( 'CaptureInput', () => {
 
 	it( 'refuses a WordPress.com page instead of entering it', async () => {
 		const onInputEnter = jest.fn();
-		render(
+		renderWithProvider(
 			<MemoryRouter>
 				<CaptureInput onInputEnter={ onInputEnter } />
 			</MemoryRouter>
@@ -169,7 +175,7 @@ describe( 'CaptureInput', () => {
 	} );
 
 	it( 'explains a handed-over WordPress.com page straight away', () => {
-		render(
+		renderWithProvider(
 			<MemoryRouter initialEntries={ [ '/?from=wordpress.com/log-in' ] }>
 				<CaptureInput onInputEnter={ jest.fn() } skipInitialChecking />
 			</MemoryRouter>
@@ -192,6 +198,84 @@ describe( 'CaptureInput', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: /Continue/ } ) );
 
 		expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+	} );
+
+	describe( 'support link on a WordPress.com page', () => {
+		beforeEach( async () => {
+			await dispatch( HELP_CENTER_STORE ).setShowHelpCenter( false, undefined, true );
+		} );
+
+		const enterWordPressComPage = async ( { initialState, onInputEnter = jest.fn() } = {} ) => {
+			renderWithProvider(
+				<MemoryRouter>
+					<CaptureInput onInputEnter={ onInputEnter } />
+				</MemoryRouter>,
+				{ initialState }
+			);
+			await userEvent.type( screen.getByRole( 'textbox' ), 'wordpress.com/log-in' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+		};
+
+		it( 'reads as one sentence with the support words inside it', async () => {
+			await enterWordPressComPage( { initialState: SIGNED_IN } );
+
+			const supportButton = screen.getByRole( 'button', { name: 'contact our support' } );
+
+			expect( supportButton.closest( '.is-error' ) ).toHaveTextContent(
+				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com and you need help, contact our support."
+			);
+		} );
+
+		it( 'opens the Odie chat on the same page for signed-in people', async () => {
+			const onInputEnter = jest.fn();
+			await enterWordPressComPage( { initialState: SIGNED_IN, onInputEnter } );
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'contact our support' } ) );
+
+			await waitFor( () => {
+				expect( select( HELP_CENTER_STORE ).isHelpCenterShown() ).toBe( true );
+			} );
+			expect( select( HELP_CENTER_STORE ).getNavigateToRoute().route ).toBe( '/odie' );
+			expect( onInputEnter ).not.toHaveBeenCalled();
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_importer_capture_contact_support_click',
+				{ is_logged_in: true }
+			);
+		} );
+
+		it( 'links signed-out people to log in and then the Odie chat in a new tab', async () => {
+			await enterWordPressComPage();
+
+			const supportLink = screen.getByRole( 'link', { name: /contact our support/ } );
+
+			expect( supportLink ).toHaveAttribute( 'href', '/sites?help-center=wapuu' );
+			expect( supportLink ).toHaveAttribute( 'target', '_blank' );
+			expect(
+				screen.queryByRole( 'button', { name: 'contact our support' } )
+			).not.toBeInTheDocument();
+
+			await userEvent.click( supportLink );
+
+			expect( select( HELP_CENTER_STORE ).isHelpCenterShown() ).toBe( false );
+			expect( mockedRecordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_importer_capture_contact_support_click',
+				{ is_logged_in: false }
+			);
+		} );
+
+		it( 'goes away once the address has a different mistake', async () => {
+			await enterWordPressComPage();
+			expect( screen.getByRole( 'link', { name: /contact our support/ } ) ).toBeVisible();
+
+			await userEvent.clear( screen.getByRole( 'textbox' ) );
+			await userEvent.type( screen.getByRole( 'textbox' ), 'notaurl' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Continue' } ) );
+
+			expect( screen.getByText( /missing its domain extension/ ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'link', { name: /contact our support/ } )
+			).not.toBeInTheDocument();
+		} );
 	} );
 
 	it( 'shows a custom CTA label', async () => {
@@ -246,11 +330,6 @@ describe( 'URL Validation', () => {
 			input: 'www.例子.测试',
 			error:
 				"Looks like you’ve added an internationalized domain name. Please try a standard URL instead (like 'example.com').",
-		},
-		{
-			input: 'wordpress.com/log-in',
-			error:
-				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com, there’s nothing to move.",
 		},
 		{
 			input: 'example.com-',

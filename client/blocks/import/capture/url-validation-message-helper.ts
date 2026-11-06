@@ -128,7 +128,7 @@ export function getValidationMessage(
 			);
 		case 'wordpress_com_page':
 			return translate(
-				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com, there’s nothing to move."
+				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com and you need help, <supportLink>contact our support</supportLink>."
 			);
 	}
 }

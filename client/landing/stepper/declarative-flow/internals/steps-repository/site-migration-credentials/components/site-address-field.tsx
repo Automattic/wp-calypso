@@ -5,6 +5,7 @@ import {
 	getUrlValidationError,
 	getValidationMessage,
 } from 'calypso/blocks/import/capture/url-validation-message-helper';
+import WordPressComPageMessage from 'calypso/blocks/import/capture/wordpress-com-page-message';
 import FormTextInput from 'calypso/components/forms/form-text-input';
 import { CredentialsFormFieldProps } from '../types';
 import { ErrorMessage } from './error-message';
@@ -14,6 +15,10 @@ export const SiteAddressField: React.FC< CredentialsFormFieldProps > = ( { contr
 
 	const validateSiteAddress = ( siteAddress: string ) => {
 		const error = getUrlValidationError( siteAddress );
+		// react-hook-form keeps this as a plain string, so its sentence and link are rendered below.
+		if ( error === 'wordpress_com_page' ) {
+			return error;
+		}
 		if ( error ) {
 			return getValidationMessage( error, translate );
 		}
@@ -33,7 +38,9 @@ export const SiteAddressField: React.FC< CredentialsFormFieldProps > = ( { contr
 					<FormTextInput id="from_url" isError={ !! errors?.from_url } type="text" { ...field } />
 				) }
 			/>
-			<ErrorMessage error={ errors?.from_url } />
+			<ErrorMessage error={ errors?.from_url }>
+				{ errors?.from_url?.message === 'wordpress_com_page' && <WordPressComPageMessage /> }
+			</ErrorMessage>
 		</div>
 	);
 };

@@ -4,6 +4,7 @@
 // @ts-nocheck - TODO: Fix TypeScript issues
 import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import i18n from 'i18n-calypso';
 import nock from 'nock';
 import React from 'react';
 import { MigrationStatus } from 'calypso/data/site-migration/landing/types';
@@ -344,6 +345,40 @@ describe( 'SiteMigrationCredentials', () => {
 			expect.stringMatching( /migration-ticket|automated-migration/ )
 		);
 		expect( submit ).not.toHaveBeenCalled();
+	} );
+
+	it( 'offers the support button when the address is a WordPress.com page', async () => {
+		render( {}, { initialState: { currentUser: { id: 1, user: { ID: 1 } } } } );
+
+		await userEvent.type( siteAddressInput(), 'wordpress.com/log-in' );
+		await userEvent.click( continueButton() );
+
+		const supportButton = await screen.findByRole( 'button', { name: 'contact our support' } );
+
+		expect( supportButton.parentElement ).toHaveTextContent(
+			"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com and you need help, contact our support."
+		);
+	} );
+
+	describe( 'when translations load after the WordPress.com page message shows', () => {
+		afterEach( () => i18n.setLocale( { '': { localeSlug: 'en' } } ) );
+
+		it( 'shows the translated sentence with its button, not the raw tag', async () => {
+			render( {}, { initialState: { currentUser: { id: 1, user: { ID: 1 } } } } );
+
+			await userEvent.type( siteAddressInput(), 'wordpress.com/log-in' );
+			await userEvent.click( continueButton() );
+			await screen.findByRole( 'button', { name: 'contact our support' } );
+
+			i18n.setLocale( {
+				'': { localeSlug: 'es', 'plural-forms': 'nplurals=2; plural=n != 1;' },
+				"That’s a WordPress.com page, not your site’s address. Please enter the address of the site you want to move, like 'example.com'. If your site is already on WordPress.com and you need help, <supportLink>contact our support</supportLink>.":
+					[ 'Es una página de WordPress.com. <supportLink>Contacta con soporte</supportLink>.' ],
+			} );
+
+			expect( await screen.findByRole( 'button', { name: 'Contacta con soporte' } ) ).toBeVisible();
+			expect( document.body ).not.toHaveTextContent( '<supportLink>' );
+		} );
 	} );
 
 	it( 'submits site-is-not-using-wordpress action when platform is not wordpress', async () => {
