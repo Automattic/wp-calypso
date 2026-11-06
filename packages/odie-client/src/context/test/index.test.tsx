@@ -9,6 +9,7 @@ import type { CheckoutSupportVariation } from '@automattic/data-stores';
 
 let mockCheckoutSupportVariation: CheckoutSupportVariation | undefined;
 let mockOdieBotNameSlug: string | undefined;
+let mockSupportInteraction: { bot_slug: string } | undefined;
 
 jest.mock( '@automattic/data-stores', () => ( {
 	HelpCenter: { register: () => 'automattic/help-center' },
@@ -35,6 +36,10 @@ jest.mock( '@wordpress/data', () => ( {
 
 jest.mock( 'react-router-dom', () => ( {
 	useNavigate: () => jest.fn(),
+} ) );
+
+jest.mock( '../../data/use-current-support-interaction', () => ( {
+	useCurrentSupportInteraction: () => ( { data: mockSupportInteraction } ),
 } ) );
 
 // Arguments: whether Zendesk chats can be loaded, and whether that is still being checked.
@@ -112,6 +117,7 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 	afterEach( () => {
 		mockCheckoutSupportVariation = undefined;
 		mockOdieBotNameSlug = undefined;
+		mockSupportInteraction = undefined;
 	} );
 
 	it( 'adds the checkout support variation to events from a checkout support chat', () => {
@@ -141,6 +147,36 @@ describe( 'OdieAssistantProvider – Odie events', () => {
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_odie_test_event',
 			expect.objectContaining( { bot_name_slug: 'automattic-chat-support_a4a' } )
+		);
+	} );
+
+	it( "records the chat's own bot, not the one new chats would get", () => {
+		mockSupportInteraction = { bot_slug: 'wpcom-workflow-support_chat' };
+
+		render(
+			<OdieAssistantProvider
+				newInteractionsBotSlug="wpcom-workflow-support_chat"
+				newLoggedOutInteractionsBotSlug="wpcom-workflow-chat_loggedout"
+				currentUser={ { display_name: 'Me', ID: 20 } }
+			>
+				<EventSender />
+			</OdieAssistantProvider>
+		);
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_odie_test_event',
+			expect.objectContaining( { bot_name_slug: 'wpcom-workflow-support_chat' } )
+		);
+	} );
+
+	it( 'records the legacy bot for an interaction without a slug', () => {
+		mockSupportInteraction = { bot_slug: '' };
+
+		renderAndSendEvent();
+
+		expect( recordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_odie_test_event',
+			expect.objectContaining( { bot_name_slug: 'wpcom-support-chat' } )
 		);
 	} );
 } );
