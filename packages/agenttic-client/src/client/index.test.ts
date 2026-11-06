@@ -3079,4 +3079,69 @@ describe( 'Client', () => {
 			expect( fetchOptions.credentials ).toBe( 'include' );
 		} );
 	} );
+
+	describe( 'message extensions', () => {
+		const APPROVALS_EXTENSION = 'https://wordpress.com/a2a/extensions/action-approvals/v1';
+
+		const mockJsonRpcResponse = () => {
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( { 'content-type': 'application/json' } ),
+				json: async () => ( {
+					jsonrpc: '2.0',
+					id: 'test-request-id',
+					result: { id: 'test-task-id', status: { state: 'completed' } },
+				} ),
+			} );
+		};
+
+		const getSentMessage = () => JSON.parse( mockFetch.mock.calls[ 0 ][ 1 ].body ).params.message;
+
+		it( 'declares the configured extensions on the message, once each', async () => {
+			mockJsonRpcResponse();
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agents',
+				extensions: [ APPROVALS_EXTENSION ],
+			} );
+
+			await client.sendMessage( {
+				message: { ...createTextMessage( 'hello' ), extensions: [ APPROVALS_EXTENSION ] },
+			} );
+
+			expect( getSentMessage().extensions ).toEqual( [ APPROVALS_EXTENSION ] );
+			expect( mockFetch.mock.calls[ 0 ][ 1 ].headers ).not.toHaveProperty( 'A2A-Extensions' );
+		} );
+
+		it( 'keeps the extensions the message already declares', async () => {
+			mockJsonRpcResponse();
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agents',
+				extensions: [ APPROVALS_EXTENSION ],
+			} );
+
+			await client.sendMessage( {
+				message: { ...createTextMessage( 'hello' ), extensions: [ 'https://example.com/ext' ] },
+			} );
+
+			expect( getSentMessage().extensions ).toEqual( [
+				'https://example.com/ext',
+				APPROVALS_EXTENSION,
+			] );
+		} );
+
+		it( 'declares no extensions when none are configured', async () => {
+			mockJsonRpcResponse();
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agents',
+			} );
+
+			await client.sendMessage( { message: createTextMessage( 'hello' ) } );
+
+			expect( getSentMessage() ).not.toHaveProperty( 'extensions' );
+		} );
+	} );
 } );

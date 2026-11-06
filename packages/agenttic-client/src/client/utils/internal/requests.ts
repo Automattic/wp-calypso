@@ -12,6 +12,7 @@ import { parseSSEStream } from './streaming';
 import type {
 	AuthProvider,
 	JsonRpcResponse,
+	Message,
 	SendMessageParams,
 	Task,
 	TaskUpdate,
@@ -27,6 +28,7 @@ export interface RequestConfig {
 	timeout: number;
 	proxy?: string;
 	credentials?: RequestCredentials;
+	extensions?: string[];
 }
 
 /**
@@ -37,6 +39,23 @@ export interface RequestConfig {
  */
 function constructAgentUrl( agentUrl: string, agentId: string ): string {
 	return `${ agentUrl }/${ agentId }`;
+}
+
+/**
+ * Declare the client's A2A extensions on a message, keeping any it already declares.
+ * @param message    - The outgoing message
+ * @param extensions - Extension URIs to declare
+ * @returns The message with every extension declared once
+ */
+function withExtensions( message: Message, extensions: string[] ): Message {
+	if ( extensions.length === 0 ) {
+		return message;
+	}
+
+	return {
+		...message,
+		extensions: Array.from( new Set( [ ...( message.extensions ?? [] ), ...extensions ] ) ),
+	};
 }
 
 /**
@@ -174,14 +193,17 @@ export async function prepareRequest(
 	defaultSessionId?: string
 ) {
 	const { message, sessionId, taskId, metadata } = params;
-	const { agentId, agentUrl, authProvider } = config;
+	const { agentId, agentUrl, authProvider, extensions = [] } = config;
 	const { isStreaming = false, enableTokenStreaming = false } = options;
 
 	const effectiveSessionId = sessionId || defaultSessionId;
 	const fullAgentUrl = constructAgentUrl( agentUrl, agentId );
 
 	// Enhance message with tools and context
-	const enhancedMessage = await enhanceMessage( message, toolProvider, contextProvider );
+	const enhancedMessage = withExtensions(
+		await enhanceMessage( message, toolProvider, contextProvider ),
+		extensions
+	);
 
 	// Create request payload with token streaming flag
 	// Use message/stream for SSE, add tokenStreaming: true for token streaming

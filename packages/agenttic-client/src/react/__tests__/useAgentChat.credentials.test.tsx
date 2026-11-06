@@ -32,6 +32,7 @@ vi.mock( '../agentManager', () => {
 
 function HookHarness( props: {
 	credentials?: RequestCredentials;
+	extensions?: string[];
 	onReady?: ( onSubmit: UseAgentChatReturn[ 'onSubmit' ] ) => void;
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 } ): null {
@@ -41,6 +42,7 @@ function HookHarness( props: {
 		agentUrl: 'https://example.com/agents',
 		sessionId: 'test-session',
 		credentials: props.credentials,
+		extensions: props.extensions,
 		onTaskUpdate,
 	} );
 
@@ -97,6 +99,17 @@ describe( 'useAgentChat — credentials pass-through', () => {
 		expect( createAgent ).toHaveBeenCalledTimes( 1 );
 		const [ , managerConfig ] = createAgent.mock.calls[ 0 ];
 		expect( managerConfig.credentials ).toBeUndefined();
+	} );
+
+	it( 'forwards extensions to agentManager.createAgent', async () => {
+		await act( async () => {
+			root.render(
+				React.createElement( HookHarness, { extensions: [ 'https://example.com/ext' ] } )
+			);
+		} );
+
+		const [ , managerConfig ] = createAgent.mock.calls[ 0 ];
+		expect( managerConfig.extensions ).toEqual( [ 'https://example.com/ext' ] );
 	} );
 
 	it( 'notifies onTaskUpdate for each streamed task update', async () => {

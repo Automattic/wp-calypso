@@ -2,6 +2,9 @@ export const API_BASE_URL = 'https://public-api.wordpress.com';
 
 export const ORCHESTRATOR_AGENT_URL = `${ API_BASE_URL }/wpcom/v2/ai/agent`;
 export const ORCHESTRATOR_AGENT_ID = 'wp-orchestrator';
+/** The A2A extension that declares the chat can show action approval cards, so the server may hold calls for them. */
+export const ACTION_APPROVALS_EXTENSION =
+	'https://wordpress.com/a2a/extensions/action-approvals/v1';
 export const DOLLY_AGENT_ID = 'dolly';
 export const LOCAL_TOOL_RUNNING_MESSAGE = 'local_tool_running';
 
