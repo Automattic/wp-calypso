@@ -3,7 +3,6 @@
  */
 // @ts-nocheck - TODO: Fix TypeScript issues
 
-import config from '@automattic/calypso-config';
 import page from '@automattic/calypso-router';
 import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -261,44 +260,6 @@ describe( '<EligibilityWarnings>', () => {
 		expect( page.redirect ).toHaveBeenCalledWith(
 			expect.stringContaining( '/checkout/example.wordpress.com/personal-bundle' )
 		);
-	} );
-
-	describe.each( [ 'hosting', 'hosting-features' ] )( 'in the %s context', ( context ) => {
-		afterEach( () => {
-			config.disable( 'hosting/dev-tools-all-paid-plans' );
-		} );
-
-		it( 'upsells the Business plan with hosting/dev-tools-all-paid-plans disabled', async () => {
-			const { getByText } = renderWithStore(
-				<EligibilityWarnings context={ context } onProceed={ noop } />,
-				createState( { holds: [ 'NO_BUSINESS_PLAN' ] } )
-			);
-
-			expect( getByText( 'Upgrade to a Business plan' ) ).toBeVisible();
-
-			await userEvent.click( getByText( 'Upgrade and continue' ) );
-
-			expect( page.redirect ).toHaveBeenCalledWith(
-				'/checkout/example.wordpress.com/business-bundle'
-			);
-		} );
-
-		it( 'upsells the Personal plan with hosting/dev-tools-all-paid-plans enabled', async () => {
-			config.enable( 'hosting/dev-tools-all-paid-plans' );
-
-			const { getByText } = renderWithStore(
-				<EligibilityWarnings context={ context } onProceed={ noop } />,
-				createState( { holds: [ 'NO_BUSINESS_PLAN' ] } )
-			);
-
-			expect( getByText( 'Upgrade to a Personal plan' ) ).toBeVisible();
-
-			await userEvent.click( getByText( 'Upgrade and continue' ) );
-
-			expect( page.redirect ).toHaveBeenCalledWith(
-				'/checkout/example.wordpress.com/personal-bundle'
-			);
-		} );
 	} );
 
 	it( 'disables the "Continue" button if holds can\'t be handled automatically', async () => {

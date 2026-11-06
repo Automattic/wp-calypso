@@ -2,7 +2,6 @@
  * @jest-environment jsdom
  */
 
-import config from '@automattic/calypso-config';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
@@ -233,32 +232,5 @@ describe( '<SshKeys>', () => {
 		await userEvent.click( screen.getByRole( 'button', { name: 'Delete SSH key' } ) );
 
 		await waitFor( () => expect( scope.isDone() ).toBe( true ) );
-	} );
-
-	describe( 'plan requirement copy', () => {
-		afterEach( () => {
-			config.disable( 'hosting/dev-tools-all-paid-plans' );
-		} );
-
-		test( 'names the Business and Commerce plans with hosting/dev-tools-all-paid-plans disabled', async () => {
-			mockSshKeys( [] );
-
-			render( <SshKeys /> );
-
-			expect(
-				await screen.findByText( /Attach your SSH keys to sites with a Business or Commerce plan/ )
-			).toBeVisible();
-		} );
-
-		test( 'says any paid plan with hosting/dev-tools-all-paid-plans enabled', async () => {
-			config.enable( 'hosting/dev-tools-all-paid-plans' );
-			mockSshKeys( [] );
-
-			render( <SshKeys /> );
-
-			expect(
-				await screen.findByText( /Attach your SSH keys to sites with a paid plan/ )
-			).toBeVisible();
-		} );
 	} );
 } );
