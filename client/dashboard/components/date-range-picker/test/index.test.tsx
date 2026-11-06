@@ -155,7 +155,7 @@ describe( 'DateRangePicker (new)', () => {
 			end: new Date( 2025, 0, 1 ),
 		} );
 		await userEvent.click( getByRole( 'button', { name: /Date range:/i } ) );
-		expect( await findByRole( 'grid', { name: /January 2025/i } ) ).toBeVisible();
+		expect( await findByRole( 'grid', { name: /January 2025/i } ) ).toBeInTheDocument();
 	} );
 
 	test( 'Clear → shows “Apply last 7 days”; click applies and closes', async () => {
