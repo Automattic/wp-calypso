@@ -30,8 +30,8 @@ let chatMessages: unknown[] = [];
 // As the chat calls it: the latest `onTaskUpdate`, with the visit the request was sent in.
 let latestOnTaskUpdate: UseCreditsResult[ 'onTaskUpdate' ];
 let onTaskUpdate: ( update: TaskUpdate ) => void;
-// The visit the scope hook reads from the Agents Manager context.
-let mockVisit: Pick< AgentsManagerContextType, 'agentConfig' | 'siteKey' > & {
+// The visit the credits hooks read from the Agents Manager context.
+let mockVisit: Pick< AgentsManagerContextType, 'agentConfig' | 'siteKey' | 'site' > & {
 	currentUser?: { ID: number };
 };
 jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
@@ -85,14 +85,15 @@ const flush = () =>
 	} );
 const renderCredits = ( initial = {} ) =>
 	renderHook(
-		( options ) => {
+		( { enabled, userId, agentConfig, siteKey, site, ...options } ) => {
 			mockVisit = {
-				agentConfig: options.agentConfig,
-				siteKey: options.siteKey,
-				currentUser: options.userId === undefined ? undefined : { ID: options.userId },
+				agentConfig,
+				siteKey,
+				site,
+				currentUser: userId === undefined ? undefined : { ID: userId },
 			};
 
-			const scope = useCreditsScope( options.enabled );
+			const scope = useCreditsScope( enabled );
 			const credits = useCredits( {
 				...options,
 				scope,

@@ -19,7 +19,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
 jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
-// A visit with no site, where the seeded mock balance applies. The scope hook reads it
+// A visit with no site, where the seeded mock balance applies. The credits hooks read it
 // from the Agents Manager context.
 const mockVisit = {
 	agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
@@ -27,13 +27,13 @@ const mockVisit = {
 };
 jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
 
-function useMockCredits(
-	options: Partial< Parameters< typeof useCredits >[ 0 ] > & { enabled: boolean }
-) {
-	const scope = useCreditsScope( options.enabled );
+function useMockCredits( {
+	enabled,
+	...options
+}: Partial< Parameters< typeof useCredits >[ 0 ] > & { enabled: boolean } ) {
+	const scope = useCreditsScope( enabled );
 
 	return useCredits( {
-		...mockVisit,
 		scope,
 		isProcessing: false,
 		messages: [],

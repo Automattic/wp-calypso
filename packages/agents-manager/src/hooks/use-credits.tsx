@@ -52,7 +52,6 @@ import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot, CreditsPurchaseKind } from '../utils/live-credits';
 import type { AuthProvider, TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
-import type { AgentsManagerSite } from '@automattic/data-stores';
 
 export interface CreditsAnswerAction extends CreditsPurchaseAction {
 	kind: CreditsPurchaseKind;
@@ -133,6 +132,8 @@ function isKnownUnmetered(): boolean {
 export interface CreditsScope {
 	/** The site, user, agent and whether credits apply. */
 	identity: string;
+	/** Surfaces without metering (Reader chat) have no credits, so nothing shows. */
+	enabled: boolean;
 	/** The site whose balance is read, only while the agent is authorized for it. */
 	siteId?: number;
 	authProvider?: AuthProvider;
@@ -143,16 +144,11 @@ export interface CreditsScope {
 }
 
 interface UseCreditsOptions {
-	/** Surfaces without metering (Reader chat) pass false and get nothing. */
-	enabled: boolean;
-	agentConfig: AgentConfig;
 	scope: CreditsScope;
 	/** Whether the chat is running a turn; no balance is read meanwhile. */
 	isProcessing: boolean;
 	/** The chat's messages, for the refusal notice and the question it retries. */
 	messages: UseAgentChatReturn[ 'messages' ];
-	siteKey: string;
-	site?: AgentsManagerSite | null;
 	isOpen: boolean;
 	/** Whether the chat draws the notice; the compact composer never does. */
 	isNoticeVisible: boolean;
@@ -217,20 +213,20 @@ export type CreditsCommandReply =
  * reports still shows.
  */
 export function useCredits( {
-	enabled,
-	agentConfig,
 	scope,
 	isProcessing,
 	messages,
-	siteKey,
-	site,
 	isOpen,
 	isNoticeVisible,
 	onTryAgain,
 	onShowCredits,
 }: UseCreditsOptions ): UseCreditsResult {
+	const { agentConfig: contextAgentConfig, siteKey, site } = useAgentsManagerContext();
+	// The chat renders only once its agent is configured.
+	const agentConfig = contextAgentConfig!;
+
+	const { identity: scopeIdentity, enabled, siteId } = scope;
 	const isMockEnabled = enabled && siteKey === NO_SITE;
-	const { identity: scopeIdentity, siteId } = scope;
 
 	const currentScope = useRef( scope );
 	currentScope.current = scope;
@@ -1162,7 +1158,7 @@ export function useCreditsScope( enabled: boolean ): CreditsScope {
 	const siteId = isAuthorized ? requestedSiteId : undefined;
 
 	return useMemo(
-		() => ( { identity, siteId, authProvider, active: true, validTerminalRevision: 0 } ),
-		[ identity, siteId, authProvider ]
+		() => ( { identity, enabled, siteId, authProvider, active: true, validTerminalRevision: 0 } ),
+		[ identity, enabled, siteId, authProvider ]
 	);
 }

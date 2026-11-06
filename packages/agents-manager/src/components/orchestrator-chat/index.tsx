@@ -134,7 +134,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, site } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 
 	// Set by the providers' abilities, e.g. while Big Sky builds a site.
@@ -224,13 +224,9 @@ export default function OrchestratorChat( {
 	const credits = useCredits( {
 		onTryAgain: tryAgain,
 		onShowCredits: isReaderChat ? undefined : showCredits,
-		enabled: ! isReaderChat,
-		agentConfig: agentChatConfig!,
 		scope: creditsScope,
 		isProcessing,
 		messages,
-		siteKey,
-		site,
 		// The compact composer can send too, so it keeps the balance fresh.
 		isOpen: isOpen || ( ! isDocked && isCompactMode ),
 		isNoticeVisible: isOpen,
