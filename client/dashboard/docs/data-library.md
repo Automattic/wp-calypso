@@ -52,7 +52,7 @@ const siteSettingsPHPRoute = createRoute( {
 
 TanStack's `queryClient.ensureQueryData` checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
 
-`ensureQueryData` resolves to the query's cached data without applying its `select`, which only runs in `useQuery` and `useSuspenseQuery`. The return type reflects this, but a truthiness check such as `if ( await queryClient.ensureQueryData( … ) )` still compiles. For example, `await queryClient.ensureQueryData( isAutomatticianQuery() )` resolves to the whole teams response, which is always truthy, not a boolean. Prefetching such a query is fine; to make a decision from it outside React, apply the selector yourself, as `fetchIsAutomattician()` does.
+`ensureQueryData` returns the cached data without applying `select`, which only runs in `useQuery` and `useSuspenseQuery`. A truthiness check on it still compiles: `ensureQueryData( isAutomatticianQuery() )` resolves to the teams response, which is always truthy. To decide outside React, apply the selector yourself, as `fetchIsAutomattician()` does.
 
 ### Component-level queries
 

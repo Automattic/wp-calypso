@@ -28,7 +28,7 @@ later the component can use the `useQuery` hook to access the data:
 const { data: profile } = useQuery( userSettingsQuery() );
 ```
 
-If a loader throws, the route renders the error page (`app/500`) instead of the screen, even when the failed request was for data the screen could do without. Only await what the screen can't render without. For a request that may fail, such as one the user might not have permission for, check access before making it or add a `.catch()`.
+If a loader throws, the route renders the error page instead of the screen. Only await what the screen needs, and check access before a request that may be refused, or `.catch()` it.
 
 ## Adding New Routes
 
@@ -59,12 +59,11 @@ export const siteSettingsFeatureRoute = createRoute( {
 } );
 ```
 
-- **Skip preloads.** `beforeLoad` also runs when the router preloads a route, for example when a link is hovered. Return early when `cause === 'preload'`, so the check and its requests only run on a real navigation.
-- **Redirect with `redirectAsNotAllowed()`** from `app/router/redirect.ts`. It adds the `route-not-allowed` flash that the destination page shows as a notice, and turns off the view transition.
-- **Redirect to a route's `fullPath`** with `params`, not a hand-built URL, so the redirect is type-checked and follows the route if its path changes.
-- **Don't let the check throw.** An error thrown from `beforeLoad` leaves every route below it pending, and the router never settles to show an error screen. Catch a failed lookup and treat it as not allowed. For a check that is only a shortcut, ignore the failure instead, as `redirectIfTwoStepReauthRequired()` does.
-- **Check what the API checks.** A feature flag (`isEnabled()`) only switches a feature per environment, and development and stage builds turn many flags on for every user. If the feature's endpoints only serve some users, such as Automatticians, the route guard and every link or tab leading to it need the same check. Otherwise everyone else gets an error page on those builds. Keep the decision in one module that exports a hook for the UI and an async function for `beforeLoad`, so the two can't drift apart.
+- **Skip preloads**, so the check only runs on a real navigation, not on link hover.
+- **Redirect with `redirectAsNotAllowed()` to a route's `fullPath`**, not a hand-built URL. It shows the not-allowed notice and keeps the redirect type-checked.
+- **Don't let the check throw.** An error from `beforeLoad` leaves the routes below it pending forever. Treat a failed lookup as not allowed.
+- **Check what the API checks.** Flags switch per environment, and dev and stage builds turn many on for every user. If the endpoints only serve some users, the guard and every link to the route need the same check, ideally from one shared helper.
 
-For routes that need a recent two-step login, call `redirectIfTwoStepReauthRequired()` from `beforeLoad` when `cause === 'enter'`.
+For a recent two-step login, call `redirectIfTwoStepReauthRequired()` when `cause === 'enter'`; it ignores its own failures.
 
 For current examples, search `app/router/` for `redirectAsNotAllowed`.
