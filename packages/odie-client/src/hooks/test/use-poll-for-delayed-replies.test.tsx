@@ -16,12 +16,16 @@ const QUIET_PERIOD_MS = 20 * 60 * 1000;
 let mockChat: Chat;
 let mockIsMinimized = false;
 let mockBotSlug: string = ODIE_CALL_AN_HE_BOT_SLUG;
+let mockInteractionStatus = 'open';
 const mockSetChat = jest.fn();
 const mockFetchOdieChat = jest.fn< Promise< OdieChat >, [ unknown ] >();
 
 // `constants` imports these; the mocks keep their build output out of the test.
 jest.mock( '@automattic/zendesk-client', () => ( {
 	isTestModeEnvironment: () => false,
+	isCsatTriggerMessage: ( message: { metadata?: { type?: string } } ) =>
+		message?.metadata?.type === 'csat',
+	isZendeskSurveyMessage: () => false,
 } ) );
 
 jest.mock( '@automattic/data-stores', () => ( {
@@ -38,7 +42,9 @@ jest.mock( '../../context', () => ( {
 } ) );
 
 jest.mock( '../../data/use-current-support-interaction', () => ( {
-	useCurrentSupportInteraction: () => ( { data: { bot_slug: mockBotSlug } } ),
+	useCurrentSupportInteraction: () => ( {
+		data: { bot_slug: mockBotSlug, status: mockInteractionStatus },
+	} ),
 } ) );
 
 jest.mock( '../../data/use-odie-chat', () => ( {
@@ -65,6 +71,9 @@ const makeChat = ( overrides: Partial< Chat > = {} ): Chat => ( {
 
 const serverChat = ( messages: Message[] ): OdieChat => ( { odieId: 123, messages } );
 
+// `created_at` as the server writes it: UTC, no zone, a space before the time.
+const serverDate = ( date: Date ) => date.toISOString().replace( 'T', ' ' ).slice( 0, 19 );
+
 const setVisibility = ( state: DocumentVisibilityState ) =>
 	Object.defineProperty( document, 'visibilityState', { configurable: true, get: () => state } );
 
@@ -83,6 +92,7 @@ beforeEach( () => {
 	mockChat = makeChat();
 	mockIsMinimized = false;
 	mockBotSlug = ODIE_CALL_AN_HE_BOT_SLUG;
+	mockInteractionStatus = 'open';
 	mockFetchOdieChat.mockResolvedValue( serverChat( [ userMessage, botMessage ] ) );
 	setVisibility( 'visible' );
 } );
@@ -241,6 +251,54 @@ describe( 'usePollForDelayedReplies', () => {
 		await tick();
 
 		expect( mockFetchOdieChat ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not poll a chat whose interaction is closed', async () => {
+		mockInteractionStatus = 'closed';
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		expect( mockFetchOdieChat ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not poll a chat that already asked for a rating', async () => {
+		const csat = {
+			...botMessage,
+			message_id: 3,
+			feedbackOptions: [ { value: 1, label: 'Good' } ],
+			metadata: { type: 'csat' },
+		} as unknown as Message;
+		mockChat = makeChat( { messages: [ userMessage, botMessage, csat ] } );
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		expect( mockFetchOdieChat ).not.toHaveBeenCalled();
+	} );
+
+	it( 'does not poll a chat opened from history whose last message is older than 20 minutes', async () => {
+		const anHourAgo = new Date( Date.now() - 60 * 60 * 1000 );
+		mockChat = makeChat( {
+			messages: [ userMessage, { ...botMessage, created_at: serverDate( anHourAgo ) } ],
+		} );
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		expect( mockFetchOdieChat ).not.toHaveBeenCalled();
+	} );
+
+	it( 'polls a chat opened from history whose last message is recent', async () => {
+		const aMinuteAgo = new Date( Date.now() - 60 * 1000 );
+		mockChat = makeChat( {
+			messages: [ userMessage, { ...botMessage, created_at: serverDate( aMinuteAgo ) } ],
+		} );
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		expect( mockFetchOdieChat ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'skips the tick while the tab is hidden', async () => {

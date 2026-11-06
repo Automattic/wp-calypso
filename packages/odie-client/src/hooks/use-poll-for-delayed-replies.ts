@@ -3,12 +3,21 @@ import { ODIE_CALL_AN_HE_BOT_SLUG } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { fetchOdieChat } from '../data/use-odie-chat';
-import { getIsRequestingHumanSupport } from '../utils';
+import {
+	getIsRequestingHumanSupport,
+	getTimestamp,
+	hasCSATMessage,
+	interactionHasEnded,
+	isStaleOdieChat,
+} from '../utils';
 
 const POLL_INTERVAL_MS = 5000;
 
 /**
  * Polling stops this long after the last change to the chat, and starts again with the next one.
+ * The server job makes its last check about 14 minutes after the question (first after 5, then up
+ * to three more 3 minutes apart), writes a bot message after each, and ends; an answer that comes
+ * later is not relayed. So nothing can arrive later than this after the newest message.
  */
 const QUIET_PERIOD_MS = 20 * 60 * 1000;
 
@@ -31,15 +40,22 @@ export const usePollForDelayedReplies = () => {
 		chat.provider === 'odie' &&
 		chat.status === 'loaded' &&
 		!! chat.odieId &&
-		! isMinimized;
+		! isMinimized &&
+		// A closed chat gets no reply: the same three checks that show the closed footer.
+		! hasCSATMessage( chat ) &&
+		! interactionHasEnded( currentSupportInteraction ) &&
+		! isStaleOdieChat( chat );
 
-	// Messages added in the browser carry no `created_at`, so keep our own clock: it restarts
-	// whenever the message count changes, and on mount.
+	// The clock restarts whenever the message count changes, from the newest message's
+	// `created_at` when it has one, so a chat opened from history counts from its last message.
+	// Messages added in the browser carry no `created_at`, so those count from now.
 	const lastChangeRef = useRef( Date.now() );
 	const messageCount = chat.messages.length;
+	const newestCreatedAt = chat.messages[ messageCount - 1 ]?.created_at;
 	useEffect( () => {
-		lastChangeRef.current = Date.now();
-	}, [ messageCount ] );
+		const createdAt = newestCreatedAt ? getTimestamp( newestCreatedAt ) * 1000 : NaN;
+		lastChangeRef.current = Number.isFinite( createdAt ) ? createdAt : Date.now();
+	}, [ messageCount, newestCreatedAt ] );
 
 	const chatId = chat.odieId;
 	const botSlug = currentSupportInteraction?.bot_slug;
