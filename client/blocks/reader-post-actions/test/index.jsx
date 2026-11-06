@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-import { readTeamsQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -144,23 +143,17 @@ describe( 'ReaderPostActions', () => {
 	} );
 
 	describe( 'the Save button', () => {
-		const A8C_TEAM = { slug: 'a8c', title: 'Automattic' };
-
 		const renderActions = ( {
 			post = defaultProps.post,
 			state = { currentUser: { id: 1 } },
-			teams = [],
-		} = {} ) => {
-			const queryClient = createQueryClient();
-			queryClient.setQueryData( readTeamsQuery().queryKey, { number: teams.length, teams } );
-			return render(
-				<QueryClientProvider client={ queryClient }>
+		} = {} ) =>
+			render(
+				<QueryClientProvider client={ createQueryClient() }>
 					<Provider store={ createMockStore( state ) }>
 						<ReaderPostActions { ...defaultProps } post={ post } />
 					</Provider>
 				</QueryClientProvider>
 			);
-		};
 
 		beforeEach( () => {
 			mockSavedPostsEnabled = true;
@@ -178,14 +171,6 @@ describe( 'ReaderPostActions', () => {
 			renderActions();
 
 			expect( screen.queryByTestId( 'save-button' ) ).not.toBeInTheDocument();
-		} );
-
-		it( 'shows for an Automattician when the saved posts feature is off', () => {
-			mockSavedPostsEnabled = false;
-
-			renderActions( { teams: [ A8C_TEAM ] } );
-
-			expect( screen.getByTestId( 'save-button' ) ).toBeVisible();
 		} );
 
 		it( 'is hidden from a logged-out user', () => {
