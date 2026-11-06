@@ -1,5 +1,6 @@
 import { DomainStatus, DomainSubtype } from '@automattic/api-core';
 import { domainsQuery } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery } from '@tanstack/react-query';
 import { dateI18n } from '@wordpress/date';
 import { __ } from '@wordpress/i18n';
@@ -23,6 +24,7 @@ export const useFields = ( {
 	showPrimaryDomainBadge?: boolean;
 	inOverview?: boolean;
 } = {} ) => {
+	const hasEnTranslation = useHasEnTranslation();
 	const { data: domains } = useQuery( domainsQuery() );
 
 	const siteElements = useMemo( () => {
@@ -131,7 +133,7 @@ export const useFields = ( {
 			},
 			{
 				id: 'expiry',
-				label: __( 'Paid until' ),
+				label: hasEnTranslation( 'Renews on' ) ? __( 'Renews on' ) : __( 'Paid until' ),
 				enableHiding: false,
 				enableSorting: true,
 				sort: sortNullableStrings,
@@ -181,7 +183,7 @@ export const useFields = ( {
 				},
 			},
 		],
-		[ site, showPrimaryDomainBadge, siteElements, inOverview ]
+		[ site, showPrimaryDomainBadge, siteElements, inOverview, hasEnTranslation ]
 	);
 
 	return fields;
