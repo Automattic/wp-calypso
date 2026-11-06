@@ -1,7 +1,7 @@
-import { __experimentalVStack as VStack, Button } from '@wordpress/components';
+import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionButton } from '../../components/notice';
 import { Text } from '../../components/text';
 
 function SiteBackupDownloadSuccess( {
@@ -25,11 +25,9 @@ function SiteBackupDownloadSuccess( {
 			variant="success"
 			title={ __( 'Backup download file is ready' ) }
 			actions={
-				<Button
-					variant="primary"
-					text={ __( 'Download file' ) + ( fileSizeBytes ? ` (${ fileSizeBytes })` : '' ) }
-					onClick={ handleDownloadClick }
-				/>
+				<NoticeActionButton variant="solid" onClick={ handleDownloadClick }>
+					{ __( 'Download file' ) + ( fileSizeBytes ? ` (${ fileSizeBytes })` : '' ) }
+				</NoticeActionButton>
 			}
 		>
 			<VStack spacing={ 1 }>

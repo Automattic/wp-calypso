@@ -1,7 +1,6 @@
 import { __, sprintf } from '@wordpress/i18n';
 import ComponentViewTracker from '../../components/component-view-tracker';
-import { Notice } from '../../components/notice';
-import RouterLinkButton from '../../components/router-link-button';
+import { Notice, RouterNoticeActionLinkButton } from '../../components/notice';
 import { useAnalytics } from '../analytics';
 import { useAuth } from '../auth';
 
@@ -26,9 +25,9 @@ export default function RecoveryEmailMatchesAccountEmailNotice() {
 				variant="warning"
 				title={ __( 'Your recovery email is the same as your account email' ) }
 				actions={
-					<RouterLinkButton
+					<RouterNoticeActionLinkButton
 						to="/me/security/account-recovery"
-						variant="primary"
+						variant="solid"
 						onClick={ () =>
 							recordTracksEvent(
 								'calypso_dashboard_recovery_email_matches_account_email_notice_click'
@@ -36,7 +35,7 @@ export default function RecoveryEmailMatchesAccountEmailNotice() {
 						}
 					>
 						{ __( 'Update recovery email' ) }
-					</RouterLinkButton>
+					</RouterNoticeActionLinkButton>
 				}
 			>
 				{ sprintf(

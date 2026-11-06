@@ -78,7 +78,7 @@ object BuildDockerImage : BuildType({
     // Emoji are written as HTML character references because TeamCity mangles non-ASCII
     // characters in build scripts.
     val linksBlock = buildString {
-        appendLine("<h2>&#x1F9D0; Test on Calypso Live &#x1F305;</h2>")
+        appendLine("<h2>&#x1F9D0; Test on Calypso Live &#x26C5;</h2>")
         appendLine()
         appendLine("| Environment | &#x1F517; |")
         appendLine("| - | - |")

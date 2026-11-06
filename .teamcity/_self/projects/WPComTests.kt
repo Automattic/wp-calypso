@@ -232,10 +232,7 @@ fun jetpackAtomicBuildSmokeE2eBuildType( targetDevice: String, buildUuid: String
 			runTaggedPlaywrightSpecs(
 				tag = "@jetpack-wpcom-integration",
 				targetDevice = targetDevice,
-				// The spec files spread over the seven Atomic sites, but every worker can still
-				// land on one of them at once: the private site fails at 14 concurrent workers
-				// and holds at 4, so the count stays bounded by what a single site serves.
-				additionalEnvVars = mapOf( "PW_WORKERS" to "4" ),
+				// No PW_WORKERS: the Playwright config sizes and caps mixed runs per Atomic site.
 			)
 		}
 
@@ -512,9 +509,7 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 	params {
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
-		// Every worker can land on the same Atomic site at once: the private site fails at
-		// 14 concurrent workers and holds at 4.
-		param("env.PW_WORKERS", "4")
+		// No PW_WORKERS: the Playwright config sizes and caps mixed runs per Atomic site.
 		param("env.ATOMIC_VARIATION", "mixed")
 		// What "mixed" resolves against, with each spec file's name. Keyed on the commit so a
 		// re-run of a failed build repeats the variations that failed.

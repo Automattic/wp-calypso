@@ -1,13 +1,12 @@
 import { userPreferenceMutation, userPreferenceQuery } from '@automattic/api-queries';
+import { invokeSurvicateEventOnce } from '@automattic/survicate';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { external } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { getCurrentDashboard } from '../../app/routing';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionLinkButton } from '../../components/notice';
 import { getDomainConnectionSetupTemplateUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { isWordPressMigration } from '../../utils/site-status';
@@ -60,6 +59,13 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 	);
 	const [ isDismissed, setIsDismissed ] = useState( false );
 
+	// Each migration into the site asks once, whether the user waited for it or came back to it later.
+	const completedAt = site.site_migration.completed_at;
+	useEffect(
+		() => invokeSurvicateEventOnce( 'migrationCompleted', `${ site.ID }:${ completedAt }` ),
+		[ site.ID, completedAt ]
+	);
+
 	if ( isDismissed ) {
 		return null;
 	}
@@ -90,9 +96,8 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 			actions={
 				<>
 					{ ! isSourceDomainPrimary && (
-						<Button
-							__next40pxDefaultSize
-							variant="primary"
+						<NoticeActionLinkButton
+							variant="solid"
 							href={ connectDomainUrl }
 							onClick={ () =>
 								recordTracksEvent(
@@ -106,16 +111,13 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 								__( 'Connect %s' ),
 								sourceDomain
 							) }
-						</Button>
+						</NoticeActionLinkButton>
 					) }
-					<Button
-						__next40pxDefaultSize
-						variant="secondary"
+					<NoticeActionLinkButton
+						variant="outline"
 						href={ site.URL }
-						target="_blank"
+						openInNewTab
 						rel="noopener noreferrer"
-						icon={ external }
-						iconPosition="right"
 						onClick={ () =>
 							recordTracksEvent(
 								'calypso_dashboard_wordpress_migration_completed_notice_view_site_click',
@@ -124,7 +126,7 @@ export function MigrationCompletedNotice( { site }: { site: Site } ) {
 						}
 					>
 						{ __( 'View site' ) }
-					</Button>
+					</NoticeActionLinkButton>
 				</>
 			}
 		>

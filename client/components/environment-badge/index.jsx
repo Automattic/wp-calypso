@@ -1,5 +1,5 @@
 import { Icon } from '@wordpress/components';
-import { bug } from '@wordpress/icons';
+import { bug, cloud, shield } from '@wordpress/icons';
 import { node, string } from 'prop-types';
 
 import './style.scss';
@@ -40,29 +40,45 @@ export function Branch( { branchName, commitChecksum } ) {
 	);
 }
 
+function getBadgeIcon( badge ) {
+	if ( badge === 'dev' || badge.endsWith( '-dev' ) ) {
+		return bug;
+	}
+	if ( badge === 'staging' || badge.endsWith( '-staging' ) ) {
+		return shield;
+	}
+	return cloud;
+}
+
 function EnvironmentBadge( { badge, feedbackURL, children } ) {
+	const icon = <Icon icon={ getBadgeIcon( badge ) } size={ 24 } />;
+
 	// Static HTML only is produced here. Event listeners get added in
 	// load-dev-helpers/index.js
 	return (
 		<div className="environment-badge">
 			{ children }
 			<span className={ `environment is-${ badge } is-env` }>{ badge }</span>
-			<a
-				className="bug-report"
-				href={ feedbackURL }
-				title="Report an issue"
-				target="_blank"
-				rel="noopener noreferrer"
-			>
-				<Icon icon={ bug } size={ 24 } />
-			</a>
+			{ feedbackURL ? (
+				<a
+					className="environment-badge-icon"
+					href={ feedbackURL }
+					title="Report an issue"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					{ icon }
+				</a>
+			) : (
+				<span className="environment-badge-icon">{ icon }</span>
+			) }
 		</div>
 	);
 }
 
 EnvironmentBadge.propTypes = {
 	badge: string.isRequired,
-	feedbackURL: string.isRequired,
+	feedbackURL: string,
 	children: node,
 };
 

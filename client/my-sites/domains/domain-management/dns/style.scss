@@ -2,7 +2,6 @@
 @import "@automattic/typography/styles/variables";
 @import "@wordpress/base-styles/breakpoints";
 @import "@wordpress/base-styles/colors";
-@import "@wordpress/base-styles/colors.native";
 
 .dns__form {
 	border-top: 1px solid var(--color-neutral-0);
@@ -45,25 +44,25 @@ body.dns__body-white {
 		margin: 24px 0 0;
 
 		.dns-records-list-item__wrapper {
-			color: $gray-50;
-			border-top: 1px solid $gray-5;
+			color: var(--studio-gray-50);
+			border-top: 1px solid var(--studio-gray-5);
 			border-bottom: none;
 			font-size: $font-body-small;
 			font-weight: 400;
 			padding: 16px 0;
 
 			&:last-of-type {
-				border-bottom: 1px solid $gray-5;
+				border-bottom: 1px solid var(--studio-gray-5);
 			}
 
 			@include break-mobile {
 				padding: 16px;
 				border-top: none;
-				border-bottom: 1px solid $gray-5;
+				border-bottom: 1px solid var(--studio-gray-5);
 			}
 
 			&.is-header {
-				border-bottom: 1px solid $gray-20;
+				border-bottom: 1px solid var(--studio-gray-20);
 				font-weight: 600;
 				display: none;
 
@@ -73,10 +72,10 @@ body.dns__body-white {
 			}
 
 			&.is-disabled {
-				color: $gray-20;
+				color: var(--studio-gray-20);
 
 				& .dns-records-list-item .dns-records-list-item__data.dns-records-list-item__type {
-					color: $gray-20;
+					color: var(--studio-gray-20);
 				}
 			}
 
@@ -280,7 +279,7 @@ button.dns__breadcrumb-button {
 	.import-bind-file-confirmation-dialog__row {
 		display: flex;
 		padding: 8px;
-		border-bottom: 1px solid $gray-20;
+		border-bottom: 1px solid var(--studio-gray-20);
 	}
 
 	.import-bind-file-confirmation-dialog__header label {
@@ -290,7 +289,7 @@ button.dns__breadcrumb-button {
 	}
 
 	.import-bind-file-confirmation-dialog__row {
-		border-bottom: 1px solid $gray-5;
+		border-bottom: 1px solid var(--studio-gray-5);
 
 		.components-base-control__field {
 			display: flex;
@@ -302,7 +301,7 @@ button.dns__breadcrumb-button {
 		}
 
 		&.not-selected label {
-			color: $gray-20;
+			color: var(--studio-gray-20);
 		}
 	}
 }

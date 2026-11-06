@@ -166,6 +166,8 @@ export default function OrchestratorChat( {
 		return {
 			...agentConfig,
 			trackReplying: true,
+			// History and closing the panel unmount the chat mid-reply.
+			resumeOnRemount: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
 				// A previous session's stream must not write into this one.
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
@@ -611,7 +613,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ credits.notice ?? replyNotice }
+			notice={ credits.notice ?? replyNotice ?? credits.topUpsNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ isReaderChat ? credits.beforeSubmit : creditsCommand.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

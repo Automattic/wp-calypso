@@ -11,6 +11,7 @@ import {
 } from '../client/utils/index';
 import { type AgentManager, getAgentManager } from './agentManager';
 import { clearConversation, loadConversation, storeConversation } from './conversationStorage';
+import { getResumableChat } from './liveChat';
 import type {
 	ClientConfig,
 	DataPart,
@@ -198,6 +199,18 @@ describe( 'agentManager', () => {
 	} );
 
 	describe( 'removeAgent', () => {
+		it.each( [
+			[ 'removeAgent', () => agentManager.removeAgent( 'test-key' ) ],
+			[ 'clear', () => agentManager.clear() ],
+		] )( 'should end the resumable chat of an agent that %s removes', async ( _method, remove ) => {
+			await agentManager.createAgent( 'test-key', testConfig );
+			const liveChat = getResumableChat( 'test-key' );
+
+			remove();
+
+			expect( getResumableChat( 'test-key' ) ).not.toBe( liveChat );
+		} );
+
 		it( 'should remove existing agent', async () => {
 			await agentManager.createAgent( 'test-key', testConfig );
 			const removed = agentManager.removeAgent( 'test-key' );
