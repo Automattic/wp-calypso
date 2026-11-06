@@ -207,8 +207,12 @@
 			--dashboard-surface__background-color
 		);
 		--wpds-color-stroke-interactive-neutral: var( --dashboard-field__border-color );
-		--wpds-color-stroke-interactive-neutral-active: var( --dashboard-field__border-color );
+		--wpds-color-stroke-interactive-neutral-active: var( --wp-components-color-gray-700 );
 		--wpds-color-stroke-interactive-neutral-disabled: var( --dashboard-surface__border-color );
+		--wpds-color-stroke-interactive-error: var( --dashboard-danger__color );
+		--wpds-color-stroke-interactive-error-active: var( --dashboard-danger__color-hover );
+		--wpds-color-foreground-content-error-weak: var( --dashboard-danger__color-hover );
+		--wpds-color-foreground-content-success-weak: var( --dashboard__foreground-color-success );
 	}
 }
 
