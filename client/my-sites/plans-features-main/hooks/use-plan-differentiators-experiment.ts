@@ -9,7 +9,11 @@ import type { IAppState } from 'calypso/state/types';
 const PLAN_DIFFERENTIATORS_EXPERIMENT_NAME = 'calypso_pricing_differentiation_202611';
 const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-04T00:00:00Z';
 
-const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [ 'control', 'reversed_order' ] as const;
+const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [
+	'control',
+	'reversed_order',
+	'mcp_feature',
+] as const;
 
 type PlanDifferentiatorsExperimentVariant =
 	( typeof PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS )[ number ];
@@ -22,6 +26,11 @@ type PlanDifferentiatorsResult = {
 	 * Not for intents that curate their own plan mix.
 	 */
 	useReversedPlanOrder: boolean;
+	/**
+	 * When true, show the AI agents (MCP) feature on the plan cards, in place of premium themes,
+	 * and in the comparison grid. Not for intents that curate their own feature lists.
+	 */
+	useMcpFeature: boolean;
 	/**
 	 * When true, the user is eligible for the experiment (including control).
 	 */
@@ -88,6 +97,7 @@ function usePlanDifferentiatorsExperiment( {
 		variant,
 		// Reversing assumes the standard lineup, which a curated intent (e.g. newsletter) replaces.
 		useReversedPlanOrder: variant === 'reversed_order' && ! hasTailoredFeatureList( intent ),
+		useMcpFeature: variant === 'mcp_feature' && ! hasTailoredFeatureList( intent ),
 		isExperimentEligible: isEligible,
 	};
 }
