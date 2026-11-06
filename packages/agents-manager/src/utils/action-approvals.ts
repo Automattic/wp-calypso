@@ -4,6 +4,9 @@ import type { TaskUpdate } from '@automattic/agenttic-client';
 
 export type ActionApprovalDecision = 'allow' | 'decline';
 
+/** `execute` for a server ability; `dispatch` for a client tool, which the server sends back to run once allowed. */
+export type ActionApprovalOrigin = 'execute' | 'dispatch';
+
 export type ActionApprovalStatus =
 	// Waiting for the user's answer: the card shows.
 	| 'pending'
@@ -22,7 +25,12 @@ export interface ActionApproval {
 	toolCallId: string;
 	toolId: string;
 	proposalId: number;
+	/** The action's name, from the server. */
+	label?: string;
 	arguments: Record< string, unknown >;
+	origin: ActionApprovalOrigin;
+	/** The agent message that asked for the approval, whose fallback text the card replaces. */
+	messageId?: string;
 	status: ActionApprovalStatus;
 	/** Why it failed, for `failed` and `error`. */
 	message?: string;
@@ -42,8 +50,61 @@ export interface ToolResultPart {
 	result: unknown;
 }
 
-const AWAITING_USER_APPROVAL = 'awaiting_user_approval';
 const DIGITS = /^\d+$/;
+
+function getProposalId( value: unknown ): number | undefined {
+	if ( typeof value === 'number' && Number.isInteger( value ) && value > 0 ) {
+		return value;
+	}
+
+	return typeof value === 'string' && DIGITS.test( value ) ? Number( value ) : undefined;
+}
+
+/**
+ * The call a held turn asks the user to approve: the `approvalRequest` data
+ * part of its final `auth-required` message. The request isn't a call part, so
+ * nothing runs it: a `dispatch` call runs only once the server sends it back.
+ */
+export function getApprovalRequestFromTaskUpdate(
+	update: TaskUpdate
+): Omit< ActionApproval, 'status' | 'timestamp' > | undefined {
+	const message = update.status?.message;
+	if ( update.status?.state !== 'auth-required' || message?.role !== 'agent' ) {
+		return undefined;
+	}
+
+	for ( const part of message.parts ?? [] ) {
+		const data: unknown = part.type === 'data' ? part.data : undefined;
+		const request = isRecord( data ) ? data.approvalRequest : undefined;
+		if ( ! isRecord( request ) ) {
+			continue;
+		}
+
+		const proposalId = getProposalId( request.proposalId );
+		const { toolCallId, toolId, label, origin } = request;
+		if (
+			proposalId === undefined ||
+			typeof toolCallId !== 'string' ||
+			! toolCallId ||
+			typeof toolId !== 'string' ||
+			! toolId
+		) {
+			continue;
+		}
+
+		return {
+			toolCallId,
+			toolId,
+			proposalId,
+			...( typeof label === 'string' && label.trim() && { label: label.trim() } ),
+			arguments: isRecord( request.arguments ) ? request.arguments : {},
+			origin: origin === 'dispatch' ? 'dispatch' : 'execute',
+			messageId: message.messageId,
+		};
+	}
+
+	return undefined;
+}
 
 /**
  * The tool calls and results an update's agent message carries. The client's
@@ -82,39 +143,6 @@ export function getToolPartsFromTaskUpdate( update: TaskUpdate ): {
 	return { calls, results };
 }
 
-/** The proposal a held call's result waits on, or `undefined` if the call wasn't held. */
-export function getHeldProposalId( result: unknown ): number | undefined {
-	if ( ! isRecord( result ) || result.status !== AWAITING_USER_APPROVAL ) {
-		return undefined;
-	}
-
-	const { proposal_id: proposalId } = result;
-	if ( typeof proposalId === 'number' && Number.isInteger( proposalId ) ) {
-		return proposalId;
-	}
-
-	return typeof proposalId === 'string' && DIGITS.test( proposalId )
-		? Number( proposalId )
-		: undefined;
-}
-
-/**
- * The tool id and arguments a held client tool's result carries. The server
- * streams no call part for it, since the client would run the call on receipt.
- */
-export function getHeldToolCall(
-	result: unknown
-): Partial< Pick< ToolCallPart, 'toolId' | 'arguments' > > {
-	if ( ! isRecord( result ) ) {
-		return {};
-	}
-
-	return {
-		...( typeof result.tool_id === 'string' && result.tool_id && { toolId: result.tool_id } ),
-		...( isRecord( result.arguments ) && { arguments: result.arguments } ),
-	};
-}
-
 /**
  * The calls whose results the client sends back to the agent, after it ran
  * them for an `input-required` update: its `working` message replays them with
@@ -137,11 +165,7 @@ export function getSentToolResultIds( update: TaskUpdate ): string[] {
 /** How a held call ended, from the result the server sends once it is answered. */
 export function getApprovalOutcome(
 	result: unknown
-): Pick< ActionApproval, 'status' | 'message' > | undefined {
-	if ( isRecord( result ) && result.status === AWAITING_USER_APPROVAL ) {
-		return undefined;
-	}
-
+): Pick< ActionApproval, 'status' | 'message' > {
 	const status = isRecord( result ) ? result.status : undefined;
 	if ( status === 'failed' ) {
 		const message = isRecord( result ) ? result.message : undefined;
@@ -160,6 +184,7 @@ export function getApprovalOutcome(
 const STORED_STATE_STATUS: Record< string, ActionApprovalStatus > = {
 	approved: 'in-progress',
 	executing: 'in-progress',
+	dispatched: 'in-progress',
 	succeeded: 'done',
 	failed: 'failed',
 	declined: 'declined',
@@ -168,33 +193,35 @@ const STORED_STATE_STATUS: Record< string, ActionApprovalStatus > = {
 };
 
 /**
- * What a failed decision does to its card. The server's `error.data.code` says
- * why; an already answered card takes the stored state instead of an error.
- * A card the server no longer has, or one proposed for another site, stops being
- * answerable: any other error keeps it, for a retry.
+ * What a failed decision does to its card. An error with the server's own
+ * approval code (`error.data.code`) means the card can't be answered any more:
+ * an already answered card takes the stored state. Any other error, such as a
+ * lost connection, keeps it, for a retry; a retry after an answer that did land
+ * gets the stored state.
  */
 export function getApprovalErrorUpdate(
 	error: unknown
 ): Pick< ActionApproval, 'status' | 'message' > {
 	const data = isRecord( error ) && isRecord( error.data ) ? error.data : {};
+	const code = typeof data.code === 'string' ? data.code : '';
 
-	switch ( data.code ) {
-		case 'approval_already_decided':
-			return {
-				status:
-					( typeof data.state === 'string' && STORED_STATE_STATUS[ data.state ] ) || 'unknown',
-			};
-		case 'approval_not_found':
-			return { status: 'unavailable' };
-		case 'approval_site_mismatch':
-			// Switching sites starts a new stream, which drops the card, so it can't be answered later either.
-			return {
-				status: 'unavailable',
-				message: __(
-					'This request was made on another site and can’t be answered here.',
-					__i18n_text_domain__
-				),
-			};
+	if ( code === 'approval_already_decided' ) {
+		return {
+			status:
+				( typeof data.state === 'string' && STORED_STATE_STATUS[ data.state ] ) || 'unavailable',
+		};
+	}
+	if ( code === 'approval_site_mismatch' ) {
+		return {
+			status: 'unavailable',
+			message: __(
+				'This request was made on another site and can’t be answered here.',
+				__i18n_text_domain__
+			),
+		};
+	}
+	if ( code.startsWith( 'approval_' ) || code === 'invalid_approval_decision' ) {
+		return { status: 'unavailable' };
 	}
 
 	return {
@@ -203,9 +230,12 @@ export function getApprovalErrorUpdate(
 	};
 }
 
-/** The command that answers a held call: `/approve 123` or `/decline 123`. */
-export function getApprovalCommand( proposalId: number, decision: ActionApprovalDecision ): string {
-	return `/${ decision === 'allow' ? 'approve' : 'decline' } ${ proposalId }`;
+/** The data part that answers a held call. */
+export function getApprovalDecisionData(
+	proposalId: number,
+	decision: ActionApprovalDecision
+): Record< string, unknown > {
+	return { approvalDecision: { proposalId, decision } };
 }
 
 /** Whether a call still waits for the user's answer, so its card shows instead of a status message. */
@@ -239,13 +269,17 @@ function getKeyArgument( args: Record< string, unknown > ): string | undefined {
 }
 
 /**
- * A readable name for the held action, from its tool id and arguments:
- * `wpcom__plugins` with `{ action: 'uninstall', plugin: 'hello-dolly' }` is
- * "Plugin uninstall (hello-dolly)". There is no summary from the server yet.
+ * A readable name for the held action: the server's label, or else one from
+ * its tool id and arguments: `wpcom__plugins` with
+ * `{ action: 'uninstall', plugin: 'hello-dolly' }` is "Plugin uninstall (hello-dolly)".
  */
 export function getApprovalActionLabel(
-	approval: Pick< ActionApproval, 'toolId' | 'arguments' >
+	approval: Pick< ActionApproval, 'toolId' | 'arguments' | 'label' >
 ): string {
+	if ( approval.label ) {
+		return approval.label;
+	}
+
 	const toolName =
 		approval.toolId.split( '__' ).pop()?.replace( /_/g, ' ' ).trim() || approval.toolId;
 	const action = approval.arguments.action;

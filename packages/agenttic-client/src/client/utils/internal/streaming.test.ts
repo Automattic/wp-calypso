@@ -994,6 +994,20 @@ describe( 'parseSSEStream', () => {
 		expect( thrown ).toEqual( new Error( 'Streaming error: Terminal failure' ) );
 	} );
 
+	it( 'ends the turn at a held call even without a final flag', async () => {
+		const updates = [];
+		for await ( const update of parseSSEStream(
+			streamFromEvents( [
+				{ jsonrpc: '2.0', id: 1, result: { id: 'task-1', status: { state: 'auth-required' } } },
+			] )
+		) ) {
+			updates.push( update );
+		}
+
+		expect( updates ).toHaveLength( 1 );
+		expect( updates[ 0 ].final ).toBe( true );
+	} );
+
 	it( 'keeps the JSON-RPC error data on the thrown error', async () => {
 		const stream = streamFromEvents( [
 			{

@@ -158,8 +158,13 @@ export default function OrchestratorChat( {
 		invalidateLoadedCheckpoints,
 	} = useStreamedCheckpointMessages();
 	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
-	const { approvals, isAwaitingApprovalAnswer, recordApprovalUpdate, updateApproval } =
-		useActionApprovals( streamGeneration );
+	const {
+		approvals,
+		isAwaitingApprovalAnswer,
+		recordApprovalUpdate,
+		updateApproval,
+		cancelAwaitingApprovals,
+	} = useActionApprovals( streamGeneration );
 	const trackResponseOutcome = useResponseOutcomeTracking();
 
 	// Credits runs after the chat, so task updates reach it through its visit.
@@ -307,10 +312,11 @@ export default function OrchestratorChat( {
 		suggestionPromptsRef,
 	} );
 
-	// Held calls' cards, answered with a hidden command message.
+	// Held calls' cards, answered with a hidden decision message.
 	const { withActionApprovalCards, isErrorOnCard } = useActionApprovalSubmission( {
 		approvals,
 		updateApproval,
+		cancelAwaitingApprovals,
 		submitContextMessage,
 		isProcessing,
 		streamGeneration,

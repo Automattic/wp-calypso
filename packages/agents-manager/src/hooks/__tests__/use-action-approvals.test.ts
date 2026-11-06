@@ -7,20 +7,40 @@ import type { TaskUpdate } from '@automattic/agenttic-client';
 
 jest.mock( '@wordpress/i18n', () => ( { __: ( text: string ) => text } ) );
 
-const TOOL_CALL = {
-	type: 'data',
-	data: {
-		toolCallId: 'toolu_abc',
-		toolId: 'wpcom__plugins',
-		arguments: { action: 'uninstall', plugin: 'jetpack-boost' },
-	},
+const APPROVAL_REQUEST = {
+	proposalId: 123,
+	toolCallId: 'toolu_abc',
+	toolId: 'wpcom__plugin_uninstall',
+	ability: 'wpcom/plugin-uninstall',
+	label: 'Uninstall plugin',
+	arguments: { slug: 'jetpack-boost' },
+	origin: 'execute',
+	siteId: 12345,
 };
 
-function toolResult( result: unknown ) {
-	return { type: 'data', data: { toolCallId: 'toolu_abc', toolId: 'wpcom__plugins', result } };
+function heldUpdate( request: Record< string, unknown > = APPROVAL_REQUEST ) {
+	return {
+		id: 'task-1',
+		kind: 'status',
+		final: true,
+		status: {
+			state: 'auth-required',
+			final: true,
+			message: {
+				role: 'agent',
+				messageId: `approval-${ request.toolCallId }`,
+				parts: [
+					{ type: 'text', text: 'This action needs your approval: Uninstall plugin.' },
+					{ type: 'data', data: { approvalRequest: request } },
+				],
+			},
+		},
+	} as unknown as TaskUpdate;
 }
 
-const HELD_RESULT = toolResult( { proposal_id: 123, status: 'awaiting_user_approval' } );
+function toolResult( result: unknown, toolCallId = 'toolu_abc' ) {
+	return { type: 'data', data: { toolCallId, toolId: 'wpcom__plugin_uninstall', result } };
+}
 
 function taskUpdate( parts: unknown[], role = 'agent', state = 'working' ) {
 	return {
@@ -30,23 +50,18 @@ function taskUpdate( parts: unknown[], role = 'agent', state = 'working' ) {
 	} as unknown as TaskUpdate;
 }
 
-// A held client tool streams no call part: its result carries the call.
+// A held client tool: Allow hands the call back to run, under the held call's id.
 const CLIENT_TOOL_ARGUMENTS = { path: '/wp-admin/site-editor.php', canvas: 'edit' };
-const CLIENT_HELD_RESULT = {
-	type: 'data',
-	data: {
-		toolCallId: 'toolu_client',
-		toolId: 'site_editor_navigate',
-		result: {
-			proposal_id: 125,
-			status: 'awaiting_user_approval',
-			message: 'Not performed. The user was asked to approve this action and has not answered yet.',
-			tool_id: 'site_editor_navigate',
-			arguments: CLIENT_TOOL_ARGUMENTS,
-		},
-	},
+const CLIENT_APPROVAL_REQUEST = {
+	...APPROVAL_REQUEST,
+	proposalId: 125,
+	toolCallId: 'toolu_client',
+	toolId: 'site-editor/navigate',
+	ability: 'site-editor/navigate',
+	label: 'Open the site editor',
+	arguments: CLIENT_TOOL_ARGUMENTS,
+	origin: 'dispatch',
 };
-// Allow hands the stored call back to run, under the held call's id.
 const CLIENT_TOOL_CALL = {
 	type: 'data',
 	data: {
@@ -67,29 +82,35 @@ function renderApprovals() {
 }
 
 describe( 'useActionApprovals', () => {
-	it( 'adds a pending card with its call’s arguments when a call is held', () => {
-		const { result } = renderApprovals();
+	it.each( [ 'execute', 'dispatch' ] )(
+		'adds a pending card from a held %s call’s approval request',
+		( origin ) => {
+			const { result } = renderApprovals();
 
-		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL ] ) );
-			result.current.recordApprovalUpdate( taskUpdate( [ HELD_RESULT ] ) );
-		} );
+			act( () => {
+				result.current.recordApprovalUpdate( heldUpdate( { ...APPROVAL_REQUEST, origin } ) );
+			} );
 
-		expect( result.current.approvals.get( 'toolu_abc' ) ).toEqual(
-			expect.objectContaining( {
-				toolId: 'wpcom__plugins',
-				proposalId: 123,
-				arguments: { action: 'uninstall', plugin: 'jetpack-boost' },
-				status: 'pending',
-			} )
-		);
-	} );
+			expect( result.current.approvals.get( 'toolu_abc' ) ).toEqual(
+				expect.objectContaining( {
+					toolId: 'wpcom__plugin_uninstall',
+					proposalId: 123,
+					label: 'Uninstall plugin',
+					arguments: { slug: 'jetpack-boost' },
+					origin,
+					messageId: 'approval-toolu_abc',
+					status: 'pending',
+				} )
+			);
+			expect( result.current.isAwaitingApprovalAnswer ).toBe( true );
+		}
+	);
 
 	it( 'ignores results of calls that weren’t held', () => {
 		const { result } = renderApprovals();
 
 		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL, toolResult( 'ok' ) ] ) );
+			result.current.recordApprovalUpdate( taskUpdate( [ toolResult( 'ok' ) ] ) );
 		} );
 
 		expect( result.current.approvals.size ).toBe( 0 );
@@ -104,25 +125,27 @@ describe( 'useActionApprovals', () => {
 		const { result } = renderApprovals();
 
 		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL, HELD_RESULT ] ) );
+			result.current.recordApprovalUpdate( heldUpdate() );
 		} );
 		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL, toolResult( outcome ) ] ) );
+			result.current.updateApproval( 'toolu_abc', { status: 'sending' } );
+			result.current.recordApprovalUpdate( taskUpdate( [ toolResult( outcome ) ] ) );
 		} );
 
 		expect( result.current.approvals.get( 'toolu_abc' )?.status ).toBe( status );
+		expect( result.current.isAwaitingApprovalAnswer ).toBe( false );
 	} );
 
-	it( 'keeps a card’s place when its held result streams again', () => {
+	it( 'keeps a card’s place when its request streams again', () => {
 		const { result } = renderApprovals();
 
 		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL, HELD_RESULT ] ) );
+			result.current.recordApprovalUpdate( heldUpdate() );
 		} );
 		const { timestamp } = result.current.approvals.get( 'toolu_abc' )!;
 		act( () => {
 			result.current.updateApproval( 'toolu_abc', { status: 'sending' } );
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL, HELD_RESULT ] ) );
+			result.current.recordApprovalUpdate( heldUpdate() );
 		} );
 
 		expect( result.current.approvals.get( 'toolu_abc' ) ).toEqual(
@@ -132,18 +155,13 @@ describe( 'useActionApprovals', () => {
 
 	it( 'keeps only the latest held call waiting, and shows earlier ones as not performed', () => {
 		const { result } = renderApprovals();
-		const laterHeldResult = {
-			type: 'data',
-			data: {
-				toolCallId: 'toolu_later',
-				toolId: 'wpcom__plugins',
-				result: { proposal_id: 124, status: 'awaiting_user_approval' },
-			},
-		};
 
 		act( () => {
+			result.current.recordApprovalUpdate( heldUpdate() );
+		} );
+		act( () => {
 			result.current.recordApprovalUpdate(
-				taskUpdate( [ TOOL_CALL, HELD_RESULT, laterHeldResult ] )
+				heldUpdate( { ...APPROVAL_REQUEST, proposalId: 124, toolCallId: 'toolu_later' } )
 			);
 		} );
 
@@ -151,99 +169,65 @@ describe( 'useActionApprovals', () => {
 		expect( result.current.approvals.get( 'toolu_later' )?.status ).toBe( 'pending' );
 	} );
 
-	it( 'adds a pending card with a held client tool’s own tool id and arguments', () => {
+	it( 'cancels a waiting card, and leaves answered ones alone', () => {
 		const { result } = renderApprovals();
 
 		act( () => {
-			result.current.recordApprovalUpdate(
-				taskUpdate( [ CLIENT_HELD_RESULT ], 'agent', 'running' )
-			);
+			result.current.recordApprovalUpdate( heldUpdate() );
+			result.current.updateApproval( 'toolu_abc', { status: 'done' } );
+			result.current.recordApprovalUpdate( heldUpdate( CLIENT_APPROVAL_REQUEST ) );
 		} );
-
-		expect( result.current.approvals.get( 'toolu_client' ) ).toEqual(
-			expect.objectContaining( {
-				toolId: 'site_editor_navigate',
-				proposalId: 125,
-				arguments: CLIENT_TOOL_ARGUMENTS,
-				status: 'pending',
-			} )
-		);
-	} );
-
-	it( 'prefers a held call’s call part to its result for a server ability', () => {
-		const { result } = renderApprovals();
-		const heldResultWithCall = toolResult( {
-			proposal_id: 123,
-			status: 'awaiting_user_approval',
-			tool_id: 'other_tool',
-			arguments: { other: 'value' },
-		} );
-
 		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL ], 'agent', 'running' ) );
-			result.current.recordApprovalUpdate(
-				taskUpdate( [ heldResultWithCall ], 'agent', 'running' )
-			);
+			result.current.cancelAwaitingApprovals();
 		} );
 
-		expect( result.current.approvals.get( 'toolu_abc' ) ).toEqual(
-			expect.objectContaining( { arguments: { action: 'uninstall', plugin: 'jetpack-boost' } } )
-		);
+		expect( result.current.approvals.get( 'toolu_abc' )?.status ).toBe( 'done' );
+		expect( result.current.approvals.get( 'toolu_client' )?.status ).toBe( 'cancelled' );
+		expect( result.current.isAwaitingApprovalAnswer ).toBe( false );
 	} );
 
 	it( 'shows an allowed client tool in progress while the client runs it, then done', () => {
 		const { result } = renderApprovals();
 
 		act( () => {
-			result.current.recordApprovalUpdate(
-				taskUpdate( [ CLIENT_HELD_RESULT ], 'agent', 'running' )
-			);
+			result.current.recordApprovalUpdate( heldUpdate( CLIENT_APPROVAL_REQUEST ) );
+			result.current.updateApproval( 'toolu_client', { status: 'sending' } );
 		} );
 		act( () => {
-			result.current.updateApproval( 'toolu_client', { status: 'sending' } );
 			result.current.recordApprovalUpdate(
 				taskUpdate( [ CLIENT_TOOL_CALL ], 'agent', 'input-required' )
 			);
 		} );
-
-		expect( result.current.approvals.get( 'toolu_client' ) ).toEqual(
-			expect.objectContaining( { toolId: 'site_editor_navigate', status: 'in-progress' } )
-		);
-		expect( result.current.approvals.size ).toBe( 1 );
+		expect( result.current.approvals.get( 'toolu_client' )?.status ).toBe( 'in-progress' );
 
 		act( () => {
 			result.current.recordApprovalUpdate(
 				taskUpdate( [ CLIENT_TOOL_CALL, CLIENT_TOOL_RESULT ], 'user', 'working' )
 			);
 		} );
-
 		expect( result.current.approvals.get( 'toolu_client' )?.status ).toBe( 'done' );
 	} );
 
-	it( 'leaves other cards alone when an input-required call isn’t an answered card', () => {
+	it( 'leaves a card waiting when an input-required call wasn’t answered from it', () => {
 		const { result } = renderApprovals();
 
 		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL, HELD_RESULT ] ) );
+			result.current.recordApprovalUpdate( heldUpdate( CLIENT_APPROVAL_REQUEST ) );
 		} );
 		act( () => {
 			result.current.recordApprovalUpdate(
 				taskUpdate( [ CLIENT_TOOL_CALL ], 'agent', 'input-required' )
 			);
-			result.current.recordApprovalUpdate(
-				taskUpdate( [ CLIENT_TOOL_CALL, CLIENT_TOOL_RESULT ], 'user', 'working' )
-			);
 		} );
 
-		expect( result.current.approvals.size ).toBe( 1 );
-		expect( result.current.approvals.get( 'toolu_abc' )?.status ).toBe( 'pending' );
+		expect( result.current.approvals.get( 'toolu_client' )?.status ).toBe( 'pending' );
 	} );
 
-	it( 'drops the cards when the stream generation changes', () => {
+	it( 'starts a new stream generation with no cards', () => {
 		const { result, rerender } = renderApprovals();
 
 		act( () => {
-			result.current.recordApprovalUpdate( taskUpdate( [ TOOL_CALL, HELD_RESULT ] ) );
+			result.current.recordApprovalUpdate( heldUpdate() );
 		} );
 		rerender( { streamGeneration: Symbol() } );
 

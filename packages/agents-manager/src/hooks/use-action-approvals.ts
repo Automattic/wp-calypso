@@ -1,14 +1,12 @@
 import { useCallback, useRef, useState } from '@wordpress/element';
 import {
 	getApprovalOutcome,
-	getHeldProposalId,
-	getHeldToolCall,
+	getApprovalRequestFromTaskUpdate,
 	getSentToolResultIds,
 	getToolPartsFromTaskUpdate,
 	isAwaitingApproval,
 	type ActionApproval,
 	type ActionApprovalStatus,
-	type ToolCallPart,
 } from '../utils/action-approvals';
 import type { TaskUpdate } from '@automattic/agenttic-client';
 
@@ -24,17 +22,18 @@ type ApprovalPatch =
 
 /**
  * Action approvals: the ability calls WordPress Agent holds until the user
- * answers them in the chat. Only the stream says a call is held (a reloaded
- * chat has no tool messages), so the held calls and how they end are read from
- * task updates: the held call's result, the result its answer streams back,
- * and the "cancelled" result a new message streams for each unanswered card.
- * A held client tool's Allow streams no result: the server hands the call back
- * as `input-required` under the same id, and the client runs it, so its card is
- * in progress until the client sends the result back.
+ * answers them in the chat. A held call ends its turn in `auth-required`, with
+ * an `approvalRequest` the card is built from. How it ends is read from later
+ * task updates: the result its answer streams back (the call's real result, or
+ * "declined"). A held client tool's Allow streams no result: the server hands
+ * the call back as `input-required` under the same id, and the client runs it,
+ * so its card is in progress until the client sends the result back. Only the
+ * stream says a call is held: a reloaded chat has no cards.
  *
  * At most one card waits at a time: the server ends the turn at a held call, so
  * a newer held call means an earlier one was left behind, and it shows as not
- * performed. `isAwaitingApproval` says one is waiting, so the chat can hide its
+ * performed, as does a card left unanswered when the user sends something
+ * else. `isAwaitingApproval` says one is waiting, so the chat can hide its
  * composer and leave Allow and Decline as the only way forward.
  *
  * Kept per stream generation, so a session switch starts with no cards and a
@@ -47,8 +46,6 @@ export function useActionApprovals( streamGeneration: symbol ) {
 	} );
 	const streamGenerationRef = useRef( streamGeneration );
 	streamGenerationRef.current = streamGeneration;
-	// A held call's arguments arrive on its call part, before its result.
-	const toolCallsRef = useRef( new Map< string, ToolCallPart >() );
 
 	const approvals = state.streamGeneration === streamGeneration ? state.byToolCallId : NO_APPROVALS;
 
@@ -91,6 +88,27 @@ export function useActionApprovals( streamGeneration: symbol ) {
 	// The caller drops updates from an earlier stream generation.
 	const recordApprovalUpdate = useCallback(
 		( update: TaskUpdate ) => {
+			const request = getApprovalRequestFromTaskUpdate( update );
+			if ( request ) {
+				updateApprovals( ( byToolCallId ) => {
+					if ( byToolCallId.has( request.toolCallId ) ) {
+						return undefined;
+					}
+					byToolCallId.forEach( ( earlier, earlierToolCallId ) => {
+						if ( isAwaitingApproval( earlier ) ) {
+							byToolCallId.set( earlierToolCallId, { ...earlier, status: 'cancelled' } );
+						}
+					} );
+					byToolCallId.set( request.toolCallId, {
+						...request,
+						status: 'pending',
+						timestamp: Date.now(),
+					} );
+					return byToolCallId;
+				} );
+				return;
+			}
+
 			const { calls, results } = getToolPartsFromTaskUpdate( update );
 			if ( update.status?.state === 'input-required' ) {
 				setApprovalStatuses(
@@ -105,52 +123,16 @@ export function useActionApprovals( streamGeneration: symbol ) {
 				setApprovalStatuses( sentToolResultIds, 'in-progress', 'done' );
 				return;
 			}
-
-			calls.forEach( ( call ) => toolCallsRef.current.set( call.toolCallId, call ) );
 			if ( results.length === 0 ) {
 				return;
 			}
-			const callArguments = new Map(
-				results.map( ( { toolCallId } ) => [
-					toolCallId,
-					toolCallsRef.current.get( toolCallId )?.arguments,
-				] )
-			);
-			results.forEach( ( { toolCallId } ) => toolCallsRef.current.delete( toolCallId ) );
 
 			updateApprovals( ( byToolCallId ) => {
 				let hasChanged = false;
-
-				for ( const { toolCallId, toolId, result } of results ) {
+				for ( const { toolCallId, result } of results ) {
 					const approval = byToolCallId.get( toolCallId );
-					const proposalId = getHeldProposalId( result );
-
-					if ( proposalId !== undefined && ! approval ) {
-						const heldToolCall = getHeldToolCall( result );
-						byToolCallId.forEach( ( earlier, earlierToolCallId ) => {
-							if ( isAwaitingApproval( earlier ) ) {
-								byToolCallId.set( earlierToolCallId, { ...earlier, status: 'cancelled' } );
-							}
-						} );
-						byToolCallId.set( toolCallId, {
-							toolCallId,
-							toolId: heldToolCall.toolId ?? toolId,
-							proposalId,
-							arguments: callArguments.get( toolCallId ) ?? heldToolCall.arguments ?? {},
-							status: 'pending',
-							timestamp: Date.now(),
-						} );
-						hasChanged = true;
-						continue;
-					}
-
-					const outcome = approval && getApprovalOutcome( result );
-					if ( approval && outcome ) {
-						byToolCallId.set( toolCallId, {
-							...approval,
-							status: outcome.status,
-							message: outcome.message,
-						} );
+					if ( approval ) {
+						byToolCallId.set( toolCallId, { ...approval, ...getApprovalOutcome( result ) } );
 						hasChanged = true;
 					}
 				}
@@ -160,6 +142,21 @@ export function useActionApprovals( streamGeneration: symbol ) {
 		},
 		[ setApprovalStatuses, updateApprovals ]
 	);
+
+	// The server cancels a card the user leaves unanswered by sending something else.
+	const cancelAwaitingApprovals = useCallback( () => {
+		updateApprovals( ( byToolCallId ) => {
+			let hasChanged = false;
+			byToolCallId.forEach( ( approval, toolCallId ) => {
+				if ( isAwaitingApproval( approval ) ) {
+					byToolCallId.set( toolCallId, { ...approval, status: 'cancelled', message: undefined } );
+					hasChanged = true;
+				}
+			} );
+
+			return hasChanged ? byToolCallId : undefined;
+		} );
+	}, [ updateApprovals ] );
 
 	const updateApproval = useCallback(
 		( toolCallId: string, patch: ApprovalPatch ) => {
@@ -179,5 +176,11 @@ export function useActionApprovals( streamGeneration: symbol ) {
 
 	const isAwaitingApprovalAnswer = Array.from( approvals.values() ).some( isAwaitingApproval );
 
-	return { approvals, isAwaitingApprovalAnswer, recordApprovalUpdate, updateApproval };
+	return {
+		approvals,
+		isAwaitingApprovalAnswer,
+		recordApprovalUpdate,
+		updateApproval,
+		cancelAwaitingApprovals,
+	};
 }

@@ -734,7 +734,9 @@ function createAgentManager(): AgentManager {
 
 						managedAgent.inFlightUserMessageId = null;
 
-						if ( update.status?.message ) {
+						// A held call's request for approval stays out of the history later turns send, where it
+						// would sit beside the call's real outcome. The client shows it as it arrives.
+						if ( update.status?.message && update.status.state !== 'auth-required' ) {
 							const finalAgentMessage = extractNewContentFromMessage( update.status.message );
 							currentConversationHistory = [ ...currentConversationHistory, finalAgentMessage ];
 						}
