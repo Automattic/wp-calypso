@@ -14,7 +14,6 @@ interface ExternalProps {
 	warnings: EligibilityWarning[];
 	showContact?: boolean;
 	transferAction?: AtomicTransferAction;
-	/** The user is asked to upgrade first, so the move is described as happening after it. */
 	isAfterUpgrade?: boolean;
 }
 
