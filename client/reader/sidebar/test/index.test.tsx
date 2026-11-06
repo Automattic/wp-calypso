@@ -102,9 +102,7 @@ describe( 'ReaderSidebar', () => {
 	} );
 
 	describe( 'Saved', () => {
-		const A8C_TEAMS = [ { slug: 'a8c', title: 'Automattic' } ];
-
-		it( 'is shown to everyone once the saved posts feature is on', () => {
+		it( 'is shown once the saved posts feature is on', () => {
 			jest
 				.mocked( isEnabled )
 				.mockImplementation( ( feature: string ) => feature === 'reader/saved-posts' );
@@ -114,13 +112,7 @@ describe( 'ReaderSidebar', () => {
 			expect( screen.getByText( 'Saved' ) ).toBeVisible();
 		} );
 
-		it( 'is shown to Automattic team members while the feature is off', () => {
-			render( new ReaderSidebar( { ...defaultProps, teams: A8C_TEAMS } ).renderSidebarMenu() );
-
-			expect( screen.getByText( 'Saved' ) ).toBeVisible();
-		} );
-
-		it( 'is hidden from everyone else while the feature is off', () => {
+		it( 'is hidden while the feature is off', () => {
 			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
 
 			expect( screen.queryByText( 'Saved' ) ).not.toBeInTheDocument();
