@@ -59,7 +59,10 @@ export const Modal = createComponentImplementation(
 					initialFocus={ popupRef }
 					finalFocus={ triggerRef }
 					portal={
+						// On `<body>`, not ui's overlay layer, which stacks above the chart tooltips
+						// that portal there.
 						<Dialog.Portal
+							container={ document.body }
 							ref={ copySurfaceTheme }
 							className={ clsx( 'ai-ui-renderer__modal', className ) }
 						/>

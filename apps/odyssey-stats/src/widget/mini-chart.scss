@@ -47,11 +47,6 @@
 		max-inline-size: 100%;
 		margin-inline: auto;
 		margin-block: var(--wpds-dimension-gap-lg, 16px);
-
-		// wp-admin doesn't give the icon `fill: currentColor`.
-		svg {
-			fill: currentColor;
-		}
 	}
 
 	// Styled as the lists' own "No data to show".
