@@ -75,6 +75,8 @@ function DefaultAddDomainButton() {
 	);
 }
 
+const FILL_ROW_STYLE = { flexGrow: 1, justifyContent: 'center' };
+
 function AddDomainButtons( {
 	onSearchClick,
 	onTransferOrConnectClick,
@@ -92,10 +94,11 @@ function AddDomainButtons( {
 	};
 
 	return (
-		<HStack spacing={ 2 } expanded={ false }>
+		<HStack spacing={ 2 } wrap>
 			<Button
 				variant="tertiary"
 				__next40pxDefaultSize
+				style={ FILL_ROW_STYLE }
 				onClick={ () => {
 					recordOptionClick( 'transfer_or_connect' );
 					onTransferOrConnectClick();
@@ -106,6 +109,7 @@ function AddDomainButtons( {
 			<Button
 				variant="primary"
 				__next40pxDefaultSize
+				style={ FILL_ROW_STYLE }
 				onClick={ () => {
 					recordOptionClick( 'search' );
 					onSearchClick();
