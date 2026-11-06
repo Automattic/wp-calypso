@@ -10,6 +10,29 @@ import { afterEach, vi } from 'vitest';
 // are codemodded, because Vitest hoists mocks written on `vi` alone.
 ( globalThis as any ).jest = vi;
 
+// vm pools and jsdom may lack Node's web platform classes, which nock needs. Borrow them, as
+// calypso-jest's setup-globals does.
+{
+	const { runInThisContext } = await import( 'node:vm' );
+	const nodeGlobals = runInThisContext( 'globalThis' );
+	for ( const name of [
+		'Headers',
+		'Request',
+		'Response',
+		'FormData',
+		'TextEncoder',
+		'TextDecoder',
+		'ReadableStream',
+		'WritableStream',
+		'TransformStream',
+		'fetch',
+	] ) {
+		if ( typeof ( globalThis as any )[ name ] === 'undefined' ) {
+			( globalThis as any )[ name ] = nodeGlobals[ name ];
+		}
+	}
+}
+
 ( globalThis as any ).google = {};
 
 // Keep `CSS.escape`, which jest-dom's `css.escape` dependency has already polyfilled.

@@ -58,6 +58,9 @@ export default defineConfig( {
 		},
 		globals: true,
 		setupFiles: [ path.join( root, 'test/dashboard/vitest-setup.ts' ) ],
+		deps: {
+			optimizer: { client: { enabled: !! process.env.VITEST_OPTIMIZE } },
+		},
 		server: {
 			deps: {
 				// user-event must share RTL's copy of @testing-library/dom (the ESM build Vite resolves);
