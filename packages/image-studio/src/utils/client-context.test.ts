@@ -315,6 +315,35 @@ describe( 'getClientContext', () => {
 		expect( ctx.imageStudio ).toMatchObject( { aspect_ratio: '4:3' } );
 	} );
 
+	it( 'starts featured image sessions at the theme ratio when the template sets 3/2', () => {
+		setupSelect( {
+			imageStudio: {
+				getImageStudioAttachmentId: () => null,
+				getIsImageStudioOpen: () => true,
+				getSelectedStyle: () => null,
+				getSelectedAspectRatio: () => null,
+				getEntryPoint: () => 'jetpack_ai_featured_image',
+				getBlockType: () => null,
+			},
+			videoStudio: {
+				getSelectedStyle: () => null,
+			},
+			core: {
+				getEntityRecord: () => null,
+				getEditedEntityRecord: () => ( {
+					content: '<!-- wp:post-featured-image {"aspectRatio":"3/2"} /-->',
+				} ),
+			},
+			editor: {
+				getCurrentTemplateId: () => 'theme//single',
+			},
+		} );
+
+		const ctx = getClientContext();
+
+		expect( ctx.imageStudio ).toMatchObject( { aspect_ratio: '3:2' } );
+	} );
+
 	it( 'leaves other sessions alone when the template sets a ratio', () => {
 		setupSelect( {
 			imageStudio: {
