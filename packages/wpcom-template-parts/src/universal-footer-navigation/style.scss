@@ -908,6 +908,11 @@
 		}
 	}
 
+	/* Older iOS Safari ignores `list-style: none` on accordion headers. */
+	summary::-webkit-details-marker {
+		display: none;
+	}
+
 	/* From L the accordion headers are plain headings and do not transition. */
 	@media ( min-width: 1152px ) {
 		> .lp-footer-section .lp-footer-stack > summary {
