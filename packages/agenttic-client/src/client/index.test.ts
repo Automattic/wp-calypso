@@ -3080,6 +3080,86 @@ describe( 'Client', () => {
 		} );
 	} );
 
+	describe( 'held calls', () => {
+		it( 'never runs a held client tool, and ends the turn at it', async () => {
+			const executeTool = vi.fn( async () => ( { result: { success: true } } ) );
+			const heldEvent = {
+				jsonrpc: '2.0',
+				id: 'req-held',
+				result: {
+					type: 'TaskStatusUpdateEvent',
+					taskId: 'task-held',
+					status: {
+						state: 'auth-required',
+						final: true,
+						message: {
+							messageId: 'approval-message',
+							role: 'agent',
+							kind: 'message',
+							parts: [
+								{ type: 'text', text: 'This action needs your approval: Navigate.' },
+								{
+									type: 'data',
+									data: {
+										approvalRequest: {
+											proposalId: 4321,
+											toolCallId: 'call-1',
+											toolId: 'navigate',
+											arguments: { path: '/plugins' },
+											origin: 'dispatch',
+										},
+									},
+								},
+							],
+						},
+					},
+				},
+			};
+			mockFetch.mockResolvedValueOnce( {
+				ok: true,
+				status: 200,
+				headers: new Headers( { 'content-type': 'text/event-stream' } ),
+				body: new ReadableStream( {
+					start( controller ) {
+						controller.enqueue(
+							new TextEncoder().encode( `data: ${ JSON.stringify( heldEvent ) }\n\n` )
+						);
+						controller.close();
+					},
+				} ),
+			} );
+
+			const client = createClient( {
+				agentId: 'test-agent',
+				agentUrl: 'https://example.com/agents',
+				toolProvider: {
+					async getAvailableTools() {
+						return [
+							{
+								id: 'navigate',
+								name: 'Navigate',
+								description: 'Navigate',
+								input_schema: { type: 'object', properties: {} },
+							},
+						];
+					},
+					executeTool,
+				},
+			} );
+			const updates = [];
+			for await ( const update of client.sendMessageStream( {
+				message: createTextMessage( 'Go to plugins' ),
+			} ) ) {
+				updates.push( update );
+			}
+
+			expect( executeTool ).not.toHaveBeenCalled();
+			expect( mockFetch ).toHaveBeenCalledTimes( 1 );
+			expect( updates ).toHaveLength( 1 );
+			expect( updates[ 0 ] ).toMatchObject( { final: true, status: { state: 'auth-required' } } );
+		} );
+	} );
+
 	describe( 'message extensions', () => {
 		const APPROVALS_EXTENSION = 'https://wordpress.com/a2a/extensions/action-approvals/v1';
 

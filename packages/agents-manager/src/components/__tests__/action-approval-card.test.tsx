@@ -11,6 +11,7 @@ const PENDING: ActionApproval = {
 	toolId: 'wpcom__plugins',
 	proposalId: 123,
 	arguments: { action: 'uninstall', plugin: 'hello-dolly' },
+	origin: 'execute',
 	status: 'pending',
 	timestamp: 0,
 };
@@ -35,6 +36,22 @@ describe( 'ActionApprovalCard', () => {
 		expect( screen.getByText( 'plugin' ) ).toBeVisible();
 		expect( screen.getByText( 'hello-dolly' ) ).toBeVisible();
 	} );
+
+	it.each( [ 'execute', 'dispatch' ] as const )(
+		'names a held %s call by the server’s label, with its arguments',
+		( origin ) => {
+			renderCard( {
+				origin,
+				toolId: 'wpcom__plugin_uninstall',
+				label: 'Uninstall plugin',
+				arguments: { slug: 'hello-dolly' },
+			} );
+
+			expect( screen.getByText( 'Uninstall plugin' ) ).toBeVisible();
+			expect( screen.getByText( 'slug' ) ).toBeVisible();
+			expect( screen.getByText( 'hello-dolly' ) ).toBeVisible();
+		}
+	);
 
 	it.each( [
 		[ 'Allow', 'allow' ],

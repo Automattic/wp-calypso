@@ -1,10 +1,10 @@
 import {
 	getApprovalErrorUpdate,
 	getApprovalActionLabel,
+	getApprovalDecisionData,
 	getApprovalOutcome,
+	getApprovalRequestFromTaskUpdate,
 	getApprovalStatusMessage,
-	getHeldProposalId,
-	getHeldToolCall,
 	getSentToolResultIds,
 	getToolPartsFromTaskUpdate,
 	insertApprovalCardMessages,
@@ -22,10 +22,15 @@ jest.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 
-const HELD_RESULT = {
-	proposal_id: 123,
-	status: 'awaiting_user_approval',
-	message: 'Not performed. The user was asked to approve this action and has not answered yet.',
+const APPROVAL_REQUEST = {
+	proposalId: 4321,
+	toolCallId: 'call_abc',
+	toolId: 'wpcom__plugin_uninstall',
+	ability: 'wpcom/plugin-uninstall',
+	label: 'Uninstall plugin',
+	arguments: { slug: 'hello-dolly' },
+	origin: 'execute',
+	siteId: 12345,
 };
 
 function taskUpdate(
@@ -45,6 +50,7 @@ function approval( overrides: Partial< ActionApproval > = {} ): ActionApproval {
 		toolId: 'wpcom__plugins',
 		proposalId: 123,
 		arguments: {},
+		origin: 'execute',
 		status: 'pending',
 		timestamp: 0,
 		...overrides,
@@ -65,7 +71,7 @@ describe( 'getToolPartsFromTaskUpdate', () => {
 			},
 			{
 				type: 'data',
-				data: { toolCallId: 'toolu_abc', toolId: 'wpcom__plugins', result: HELD_RESULT },
+				data: { toolCallId: 'toolu_abc', toolId: 'wpcom__plugins', result: { success: true } },
 			},
 		] );
 
@@ -73,13 +79,13 @@ describe( 'getToolPartsFromTaskUpdate', () => {
 			calls: [
 				{ toolCallId: 'toolu_abc', toolId: 'wpcom__plugins', arguments: { action: 'uninstall' } },
 			],
-			results: [ { toolCallId: 'toolu_abc', toolId: 'wpcom__plugins', result: HELD_RESULT } ],
+			results: [ { toolCallId: 'toolu_abc', toolId: 'wpcom__plugins', result: { success: true } } ],
 		} );
 	} );
 
 	it( 'skips the client’s own history echo', () => {
 		const update = taskUpdate(
-			[ { type: 'data', data: { toolCallId: 'a', toolId: 'b', result: HELD_RESULT } } ],
+			[ { type: 'data', data: { toolCallId: 'a', toolId: 'b', result: { success: true } } } ],
 			{ role: 'user' }
 		);
 
@@ -96,38 +102,76 @@ describe( 'getToolPartsFromTaskUpdate', () => {
 	} );
 } );
 
-describe( 'getHeldProposalId', () => {
-	it.each( [
-		[ 'a numeric id', HELD_RESULT, 123 ],
-		[ 'a digit string id', { ...HELD_RESULT, proposal_id: '45' }, 45 ],
-		[ 'a non-numeric id', { ...HELD_RESULT, proposal_id: 'abc' }, undefined ],
-		[ 'another status', { ...HELD_RESULT, status: 'failed' }, undefined ],
-		[ 'a plain result', 'ok', undefined ],
-	] )( 'reads %s', ( _label, result, expected ) => {
-		expect( getHeldProposalId( result ) ).toBe( expected );
-	} );
-} );
+describe( 'getApprovalRequestFromTaskUpdate', () => {
+	function heldUpdate( request: unknown, { state = 'auth-required', role = 'agent' } = {} ) {
+		return {
+			id: 'task-1',
+			kind: 'status',
+			final: true,
+			status: {
+				state,
+				message: {
+					role,
+					messageId: 'approval-message',
+					parts: [
+						{ type: 'text', text: 'This action needs your approval: Uninstall plugin.' },
+						{ type: 'data', data: { approvalRequest: request } },
+					],
+				},
+			},
+		} as unknown as TaskUpdate;
+	}
 
-describe( 'getHeldToolCall', () => {
-	it( 'reads the tool id and arguments a held client tool carries', () => {
-		expect(
-			getHeldToolCall( {
-				...HELD_RESULT,
-				tool_id: 'site_editor_navigate',
-				arguments: { path: '/wp-admin/site-editor.php' },
-			} )
-		).toEqual( {
-			toolId: 'site_editor_navigate',
-			arguments: { path: '/wp-admin/site-editor.php' },
+	it( 'reads the approval request of a held call', () => {
+		expect( getApprovalRequestFromTaskUpdate( heldUpdate( APPROVAL_REQUEST ) ) ).toEqual( {
+			toolCallId: 'call_abc',
+			toolId: 'wpcom__plugin_uninstall',
+			proposalId: 4321,
+			label: 'Uninstall plugin',
+			arguments: { slug: 'hello-dolly' },
+			origin: 'execute',
+			messageId: 'approval-message',
 		} );
 	} );
 
+	it( 'reads a held client tool', () => {
+		expect(
+			getApprovalRequestFromTaskUpdate(
+				heldUpdate( { ...APPROVAL_REQUEST, origin: 'dispatch', label: '', arguments: {} } )
+			)
+		).toEqual( {
+			toolCallId: 'call_abc',
+			toolId: 'wpcom__plugin_uninstall',
+			proposalId: 4321,
+			arguments: {},
+			origin: 'dispatch',
+			messageId: 'approval-message',
+		} );
+	} );
+
+	it( 'reads a digit string proposal id', () => {
+		expect(
+			getApprovalRequestFromTaskUpdate( heldUpdate( { ...APPROVAL_REQUEST, proposalId: '45' } ) )
+				?.proposalId
+		).toBe( 45 );
+	} );
+
 	it.each( [
-		[ 'a held server ability', HELD_RESULT ],
-		[ 'a plain result', 'ok' ],
-		[ 'arguments that aren’t an object', { ...HELD_RESULT, tool_id: '', arguments: 'x' } ],
-	] )( 'reads nothing from %s', ( _label, result ) => {
-		expect( getHeldToolCall( result ) ).toEqual( {} );
+		[ 'another state', heldUpdate( APPROVAL_REQUEST, { state: 'completed' } ) ],
+		[ 'a user message', heldUpdate( APPROVAL_REQUEST, { role: 'user' } ) ],
+		[ 'a request with no proposal id', heldUpdate( { ...APPROVAL_REQUEST, proposalId: 'abc' } ) ],
+		[ 'a request with no call id', heldUpdate( { ...APPROVAL_REQUEST, toolCallId: '' } ) ],
+		[ 'a request that isn’t an object', heldUpdate( 'call_abc' ) ],
+	] )( 'reads nothing from %s', ( _label, update ) => {
+		expect( getApprovalRequestFromTaskUpdate( update ) ).toBeUndefined();
+	} );
+} );
+
+describe( 'getApprovalDecisionData', () => {
+	it( 'puts the decision under a top-level approvalDecision', () => {
+		expect( getApprovalDecisionData( 4321, 'decline' ) ).toEqual( {
+			approvalDecision: { proposalId: 4321, decision: 'decline' },
+		} );
 	} );
 } );
 
@@ -169,10 +213,6 @@ describe( 'getApprovalOutcome', () => {
 	] )( 'maps %p to %p', ( result, expected ) => {
 		expect( getApprovalOutcome( result ) ).toEqual( expected );
 	} );
-
-	it( 'has no outcome while the call is still held', () => {
-		expect( getApprovalOutcome( HELD_RESULT ) ).toBeUndefined();
-	} );
 } );
 
 describe( 'getApprovalErrorUpdate', () => {
@@ -183,6 +223,7 @@ describe( 'getApprovalErrorUpdate', () => {
 	it.each( [
 		[ 'approved', 'in-progress' ],
 		[ 'executing', 'in-progress' ],
+		[ 'dispatched', 'in-progress' ],
 		[ 'succeeded', 'done' ],
 		[ 'failed', 'failed' ],
 		[ 'declined', 'declined' ],
@@ -194,14 +235,20 @@ describe( 'getApprovalErrorUpdate', () => {
 		).toEqual( { status } );
 	} );
 
-	it( 'shows the result as unknown when the stored state isn’t one it knows', () => {
+	it( 'stops offering an answer when the stored state isn’t one it knows', () => {
 		expect(
 			getApprovalErrorUpdate( rpcError( { code: 'approval_already_decided', state: 'expired' } ) )
-		).toEqual( { status: 'unknown' } );
+		).toEqual( { status: 'unavailable' } );
 	} );
 
-	it( 'stops offering an answer for a card the server no longer has', () => {
-		expect( getApprovalErrorUpdate( rpcError( { code: 'approval_not_found' } ) ) ).toEqual( {
+	it.each( [
+		'approval_not_found',
+		'approval_extension_required',
+		'invalid_approval_decision',
+		'approval_claim_lost',
+		'approval_storage_failed',
+	] )( 'stops offering an answer after %s', ( code ) => {
+		expect( getApprovalErrorUpdate( rpcError( { code } ) ) ).toEqual( {
 			status: 'unavailable',
 		} );
 	} );
@@ -214,9 +261,9 @@ describe( 'getApprovalErrorUpdate', () => {
 	} );
 
 	it.each( [
-		[ 'a transient storage error', rpcError( { code: 'approval_storage_failed' } ) ],
-		[ 'a lost claim', rpcError( { code: 'approval_claim_lost' } ) ],
 		[ 'a network error', new Error( 'Failed to fetch' ) ],
+		[ 'a server error before the stream', new Error( 'HTTP error! status: 503' ) ],
+		[ 'an error with another code', rpcError( { code: 'rest_forbidden' } ) ],
 	] )( 'lets the user retry after %s', ( _label, error ) => {
 		expect( getApprovalErrorUpdate( error ) ).toEqual( {
 			status: 'error',
@@ -239,6 +286,16 @@ describe( 'getApprovalActionLabel', () => {
 		[ 'plugins', {}, 'Plugins' ],
 	] )( 'labels %s with %p as %s', ( toolId, args, label ) => {
 		expect( getApprovalActionLabel( { toolId, arguments: args } ) ).toBe( label );
+	} );
+
+	it( 'uses the server’s label when there is one', () => {
+		expect(
+			getApprovalActionLabel( {
+				toolId: 'wpcom__plugin_uninstall',
+				arguments: { slug: 'hello-dolly' },
+				label: 'Uninstall plugin',
+			} )
+		).toBe( 'Uninstall plugin' );
 	} );
 } );
 

@@ -15,7 +15,10 @@ const PENDING: ActionApproval = {
 	toolCallId: 'toolu_abc',
 	toolId: 'wpcom__plugins',
 	proposalId: 123,
-	arguments: {},
+	label: 'Uninstall plugin',
+	arguments: { slug: 'hello-dolly' },
+	origin: 'execute',
+	messageId: 'approval-message',
 	status: 'pending',
 	timestamp: 20,
 };
@@ -49,14 +52,18 @@ function renderSubmission( {
 			current = { ...current, ...( typeof patch === 'function' ? patch( current ) : patch ) };
 		}
 	);
-	const hook = renderHook( () =>
-		useActionApprovalSubmission( {
-			approvals: new Map( [ [ current.toolCallId, current ] ] ),
-			updateApproval,
-			submitContextMessage,
-			isProcessing: false,
-			streamGeneration,
-		} )
+	const cancelAwaitingApprovals = jest.fn();
+	const hook = renderHook(
+		( { isProcessing } ) =>
+			useActionApprovalSubmission( {
+				approvals: new Map( [ [ current.toolCallId, current ] ] ),
+				updateApproval,
+				cancelAwaitingApprovals,
+				submitContextMessage,
+				isProcessing,
+				streamGeneration,
+			} ),
+		{ initialProps: { isProcessing: false } }
 	);
 
 	const decide = async ( decision: 'allow' | 'decline' ) => {
@@ -68,7 +75,14 @@ function renderSubmission( {
 		} );
 	};
 
-	return { hook, decide, submitContextMessage, updateApproval, getApproval: () => current };
+	return {
+		hook,
+		decide,
+		submitContextMessage,
+		updateApproval,
+		cancelAwaitingApprovals,
+		getApproval: () => current,
+	};
 }
 
 describe( 'useActionApprovalSubmission', () => {
@@ -76,19 +90,66 @@ describe( 'useActionApprovalSubmission', () => {
 		jest.restoreAllMocks();
 	} );
 
-	it.each( [
-		[ 'allow', '/approve 123' ],
-		[ 'decline', '/decline 123' ],
-	] as const )( 'sends %s as the hidden command %s', async ( decision, command ) => {
-		const { decide, submitContextMessage } = renderSubmission();
+	it.each( [ 'allow', 'decline' ] as const )(
+		'sends %s as one approvalDecision data part, with no text',
+		async ( decision ) => {
+			const { decide, submitContextMessage } = renderSubmission();
 
-		await decide( decision );
+			await decide( decision );
 
-		expect( submitContextMessage ).toHaveBeenCalledWith(
-			command,
-			{ type: 'command' },
-			expect.any( Function )
+			expect( submitContextMessage ).toHaveBeenCalledWith(
+				'',
+				{ type: 'data', data: { approvalDecision: { proposalId: 123, decision } } },
+				expect.any( Function )
+			);
+		}
+	);
+
+	it( 'shows the card in place of the message that asked for the approval', () => {
+		const { hook } = renderSubmission();
+		const messages = [
+			{ id: 'preamble', timestamp: 10 },
+			{ id: 'approval-message', timestamp: 30 },
+		] as Parameters< typeof hook.result.current.withActionApprovalCards >[ 0 ];
+
+		expect(
+			hook.result.current.withActionApprovalCards( messages ).map( ( message ) => message.id )
+		).toEqual( [ 'preamble', 'action-approval-toolu_abc' ] );
+	} );
+
+	it( 'cancels a waiting card when another turn starts', () => {
+		const { hook, cancelAwaitingApprovals } = renderSubmission();
+
+		hook.rerender( { isProcessing: true } );
+
+		expect( cancelAwaitingApprovals ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	it( 'doesn’t cancel the card its own answer starts a turn for', async () => {
+		let finishSend: () => void = () => {};
+		const submitContextMessage = mockSubmit(
+			( _message, _options, onDispatch ) =>
+				new Promise< void >( ( resolve ) => {
+					onDispatch?.();
+					finishSend = resolve;
+				} )
 		);
+		const { hook, cancelAwaitingApprovals } = renderSubmission( { submitContextMessage } );
+		const [ card ] = hook.result.current
+			.withActionApprovalCards( [] )
+			.flatMap( ( message ) => message.content );
+
+		let answer: Promise< void > | undefined;
+		await act( async () => {
+			answer = card.componentProps.onDecide( 'allow' );
+		} );
+		hook.rerender( { isProcessing: true } );
+		await act( async () => {
+			finishSend();
+			await answer;
+		} );
+
+		expect( cancelAwaitingApprovals ).not.toHaveBeenCalled();
 	} );
 
 	it( 'marks the card as sending once the answer goes out', async () => {
@@ -158,11 +219,27 @@ describe( 'useActionApprovalSubmission', () => {
 		expect( hook.result.current.isErrorOnCard ).toBe( true );
 	} );
 
-	it( 'keeps the card answerable after a transient error', async () => {
+	it.each( [
+		'invalid_approval_decision',
+		'approval_not_found',
+		'approval_site_mismatch',
+		'approval_extension_required',
+		'approval_claim_lost',
+	] )( 'stops offering an answer after %s', async ( code ) => {
 		const submitContextMessage = mockSubmit( async () => {
-			throw Object.assign( new Error( 'Streaming error: busy' ), {
-				data: { code: 'approval_claim_lost' },
-			} );
+			throw Object.assign( new Error( 'Streaming error: approval' ), { data: { code } } );
+		} );
+		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const { decide, getApproval } = renderSubmission( { submitContextMessage } );
+
+		await decide( 'allow' );
+
+		expect( getApproval().status ).toBe( 'unavailable' );
+	} );
+
+	it( 'keeps the card answerable after a connection failure', async () => {
+		const submitContextMessage = mockSubmit( async () => {
+			throw new Error( 'Failed to fetch' );
 		} );
 		jest.spyOn( console, 'error' ).mockImplementation( () => {} );
 		const { decide, getApproval } = renderSubmission( { submitContextMessage } );

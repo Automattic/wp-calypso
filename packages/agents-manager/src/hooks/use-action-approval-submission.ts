@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from '@wordpress/element';
 import { ActionApprovalCard } from '../components/action-approval-card';
 import {
 	canAnswerApproval,
-	getApprovalCommand,
+	getApprovalDecisionData,
 	getApprovalErrorUpdate,
 	insertApprovalCardMessages,
 	isAwaitingApproval,
@@ -19,6 +19,7 @@ type ActionApprovals = ReturnType< typeof useActionApprovals >;
 interface Options {
 	approvals: ActionApprovals[ 'approvals' ];
 	updateApproval: ActionApprovals[ 'updateApproval' ];
+	cancelAwaitingApprovals: ActionApprovals[ 'cancelAwaitingApprovals' ];
 	submitContextMessage: ReturnType< typeof useChatComposer >[ 'submitContextMessage' ];
 	isProcessing: boolean;
 	streamGeneration: symbol;
@@ -27,10 +28,12 @@ interface Options {
 /**
  * Sends the user's Allow or Decline for a held call and shows each held call
  * in the transcript: its card while it waits, then the status message that
- * replaces it. The answer is a normal `message/stream` request whose text is
- * a command (`/approve 123`), kept out of the transcript and of later turns'
- * history; its stream carries the call's real result, which
- * `useActionApprovals` reads.
+ * replaces it. The card stands in for the English fallback text of the message
+ * that asked for the approval, which is hidden. The answer is a normal
+ * `message/stream` request whose only part of its own is an `approvalDecision`
+ * data part, kept out of the transcript and of later turns' history; its
+ * stream carries the call's real result, which `useActionApprovals` reads.
+ * Any other send leaves the waiting card behind, and the server cancels it.
  *
  * A failed answer is shown on its card, so `isErrorOnCard` tells the chat to
  * hide the same error until the next turn starts, or the stream generation
@@ -41,6 +44,7 @@ interface Options {
 export function useActionApprovalSubmission( {
 	approvals,
 	updateApproval,
+	cancelAwaitingApprovals,
 	submitContextMessage,
 	isProcessing,
 	streamGeneration,
@@ -53,10 +57,15 @@ export function useActionApprovalSubmission( {
 	const answeringToolCallIdsRef = useRef( new Set< string >() );
 
 	useEffect( () => {
-		if ( isProcessing ) {
-			setErrorOnCardGeneration( undefined );
+		if ( ! isProcessing ) {
+			return;
 		}
-	}, [ isProcessing ] );
+		setErrorOnCardGeneration( undefined );
+		// A turn that isn't an answer: text, a suggestion, or a send of the host's.
+		if ( answeringToolCallIdsRef.current.size === 0 ) {
+			cancelAwaitingApprovals();
+		}
+	}, [ isProcessing, cancelAwaitingApprovals ] );
 
 	const decide = useCallback(
 		async ( toolCallId: string, decision: ActionApprovalDecision ) => {
@@ -70,8 +79,8 @@ export function useActionApprovalSubmission( {
 			let isDispatched = false;
 			try {
 				await submitContextMessage(
-					getApprovalCommand( approval.proposalId, decision ),
-					{ type: 'command' },
+					'',
+					{ type: 'data', data: getApprovalDecisionData( approval.proposalId, decision ) },
 					() => {
 						isDispatched = true;
 						updateApproval( toolCallId, { status: 'sending', message: undefined } );
@@ -103,13 +112,15 @@ export function useActionApprovalSubmission( {
 	);
 
 	const withActionApprovalCards = useCallback(
-		( messages: AgentsManagerUIMessage[] ): AgentsManagerUIMessage[] =>
-			insertApprovalCardMessages(
-				messages,
-				Array.from( approvals.values(), ( approval ) =>
-					createCardMessage( approval, isProcessing, decide )
-				)
-			),
+		( messages: AgentsManagerUIMessage[] ): AgentsManagerUIMessage[] => {
+			const cards = Array.from( approvals.values() );
+			const requestMessageIds = new Set( cards.map( ( approval ) => approval.messageId ) );
+
+			return insertApprovalCardMessages(
+				messages.filter( ( message ) => ! requestMessageIds.has( message.id ) ),
+				cards.map( ( approval ) => createCardMessage( approval, isProcessing, decide ) )
+			);
+		},
 		[ approvals, decide, isProcessing ]
 	);
 

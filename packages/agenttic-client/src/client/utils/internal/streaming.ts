@@ -131,6 +131,7 @@ function isFinalTaskUpdate( result: {
 		result.final === true ||
 		result.status?.final === true ||
 		result.status?.state === 'completed' ||
+		result.status?.state === 'auth-required' ||
 		result.status?.state === 'failed' ||
 		result.status?.state === 'canceled'
 	);
