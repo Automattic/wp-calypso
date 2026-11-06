@@ -127,7 +127,14 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 					if ( previousCount && ! unreadCount ) {
 						cleared++;
 					}
-					return { ...conversation, unread_note_ids: unread, unread_count: unreadCount };
+					return {
+						...conversation,
+						unread_note_ids: unread,
+						unread_comment_ids: conversation.unread_comment_ids.filter(
+							( _id, index ) => ! ids.has( conversation.unread_note_ids[ index ] )
+						),
+						unread_count: unreadCount,
+					};
 				} ),
 			} ) );
 			// Only the first page's total is read.
