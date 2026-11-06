@@ -27,6 +27,35 @@ import DomainEmailsSettingsSummary from './emails-summary';
 import DomainSiteSettingsSummary from './site-summary';
 import { useTrackOverviewItem } from './use-track-overview-item';
 
+// A component of its own because `SummaryButtonList` overrides the density of its direct
+// children, which would hide the description.
+function TransferInSummary( {
+	domain,
+	isDisabled,
+	onClick,
+}: {
+	domain: Domain;
+	isDisabled?: boolean;
+	onClick: () => void;
+} ) {
+	return (
+		<SummaryButton
+			title={ __( 'Bring your domain to WordPress.com' ) }
+			description={ __( 'Manage your site and domain all in one place.' ) }
+			density="medium-low"
+			href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
+				initialQuery: domain.domain,
+				initialMode: 'transfer-domain',
+				siteSlug: domain.site_slug,
+				dashboard: getCurrentDashboard(),
+				back_to: redirectToDashboardLink(),
+			} ) }
+			disabled={ isDisabled }
+			onClick={ onClick }
+		/>
+	);
+}
+
 export default function DomainOverviewSettings( {
 	domain,
 	domainDiagnostics,
@@ -147,19 +176,10 @@ export default function DomainOverviewSettings( {
 
 	if ( shouldShowTransferInAction( domain ) ) {
 		buttonListItems.push(
-			<SummaryButton
+			<TransferInSummary
 				key="transfer-in"
-				title={ __( 'Bring your domain to WordPress.com' ) }
-				description={ __( 'Manage your site and domain all in one place.' ) }
-				density="medium-low"
-				href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
-					initialQuery: domain.domain,
-					initialMode: 'transfer-domain',
-					siteSlug: domain.site_slug,
-					dashboard: getCurrentDashboard(),
-					back_to: redirectToDashboardLink(),
-				} ) }
-				disabled={ isDisabled }
+				domain={ domain }
+				isDisabled={ isDisabled }
 				onClick={ () => trackItem( 'transfer-in' ) }
 			/>
 		);
