@@ -54,7 +54,7 @@ jobs:
 
             const body = [
               '<!--calypso-live-watermark:apr@v1-->',
-              '<h2>🧐 Test on Calypso Live 🌅</h2>',
+              '<h2>🧐 Test on Calypso Live ⛅</h2>',
               '',
               '| Environment | 🔗 |',
               '| - | - |',
