@@ -242,6 +242,24 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 		);
 	} );
 
+	it( "shows the site's icon, or the globe when the save has none", async () => {
+		const withIcon = {
+			...URL_SAVE,
+			site_icon_url: 'https://i0.wp.com/harvardlawreview.org/apple-touch-icon.png',
+		};
+		await renderSnapshots( [ withIcon, PRUNED_FEED_ITEM ] );
+
+		const icon = getCard( withIcon.title ).querySelector( '.site-icon__img' );
+		expect( icon ).toBeVisible();
+		expect( icon ).toHaveAttribute(
+			'src',
+			expect.stringContaining( 'harvardlawreview.org/apple-touch-icon.png' )
+		);
+		const blankIcon = getCard( PRUNED_FEED_ITEM.title ).querySelector( '.site-icon' );
+		expect( blankIcon ).toHaveClass( 'is-blank' );
+		expect( blankIcon?.querySelector( 'img' ) ).toBeNull();
+	} );
+
 	it( 'shows a save as saved before the saved keys include it', async () => {
 		nock.cleanAll();
 		nock( BASE )
