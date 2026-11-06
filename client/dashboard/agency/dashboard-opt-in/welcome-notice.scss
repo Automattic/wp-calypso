@@ -1,0 +1,100 @@
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
+// The layout follows the notice's own width, not the window's: the sidebar decides how
+// much room it really has.
+.a4a-dashboard-welcome-notice {
+	overflow: hidden;
+	// Matches the highlighted Callout, to stand out from the cards below.
+	background: color-mix( in srgb, var( --wp-admin-theme-color ) 4%, transparent );
+}
+
+.a4a-dashboard-welcome-notice-layout {
+	position: relative;
+	container: a4a-dashboard-welcome-notice / inline-size;
+}
+
+.a4a-dashboard-welcome-notice-close {
+	position: absolute;
+	z-index: 1;
+	inset-block-start: 8px;
+	inset-inline-end: 8px;
+}
+
+// Narrow: message first, video below it.
+.a4a-dashboard-welcome-notice-grid {
+	display: grid;
+	grid-template-columns: minmax( 0, 1fr );
+	gap: 24px;
+	padding: 24px;
+	padding-inline-end: 48px;
+
+	@container a4a-dashboard-welcome-notice ( min-width: 720px ) {
+		grid-template-columns: minmax( 0, 1fr ) minmax( 0, 1fr );
+		gap: 32px;
+		padding: 32px;
+		padding-inline-end: 56px;
+	}
+}
+
+.a4a-dashboard-welcome-notice-media {
+	align-self: center;
+}
+
+.a4a-dashboard-welcome-notice-video {
+	display: block;
+	inline-size: 100%;
+	aspect-ratio: 16 / 9;
+	border-radius: $radius-medium;
+	background-color: $gray-900;
+	object-fit: cover;
+}
+
+// Wide: the CTA sits at the bottom of the message column, level with the video.
+.a4a-dashboard-welcome-notice-content {
+	@container a4a-dashboard-welcome-notice ( min-width: 720px ) {
+		align-self: stretch;
+	}
+}
+
+.a4a-dashboard-welcome-notice-chapters {
+	margin-block-start: 8px;
+}
+
+.a4a-dashboard-welcome-notice-cta {
+	@container a4a-dashboard-welcome-notice ( min-width: 720px ) {
+		margin-block-start: auto;
+	}
+}
+
+.a4a-dashboard-welcome-notice-chapter-list {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	margin: 0;
+	padding-inline-start: 20px;
+	color: var( --dashboard__text-muted-color );
+	font-size: 13px;
+	line-height: 20px;
+
+	li::marker {
+		font-variant-numeric: tabular-nums;
+	}
+}
+
+.a4a-dashboard-welcome-notice-chapter.components-button.is-link {
+	font-size: inherit;
+	line-height: inherit;
+	text-align: start;
+
+	// The chapter that's playing.
+	&[aria-current='true'] {
+		font-weight: 600;
+		text-decoration: none;
+	}
+}
+
+.a4a-dashboard-welcome-notice-chapter-time {
+	margin-inline-start: 8px;
+	font-variant-numeric: tabular-nums;
+}
