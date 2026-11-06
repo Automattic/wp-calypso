@@ -125,14 +125,14 @@ export class UserSignupPage {
 		this.createYourAccountHeading = this.page.getByRole( 'heading', {
 			name: 'Create your account',
 		} );
-		// Email-first layouts keep a second, hidden email input mounted on the screen they don't show.
+		// Email-first layouts keep a second, hidden form mounted on the screen they don't show.
 		this.emailInput = this.page.locator( 'input[name="email"]:visible' );
 		this.usernameInput = this.page.locator( 'input[name="username"]' );
 		this.passwordInput = this.page.locator( 'input[name="password"]' );
 		this.firstNameInput = this.page.locator( 'input[name="firstName"]' );
 		this.lastNameInput = this.page.locator( 'input[name="lastName"]' );
-		this.submitButton = this.page.locator( 'button[type="submit"]' );
-		this.continueButton = this.page.locator( 'button:text("Continue")' );
+		this.submitButton = this.page.locator( 'button[type="submit"]:visible' );
+		this.continueButton = this.page.locator( 'button:text("Continue"):visible' );
 		this.createWPCOMAccountButton = this.page.locator(
 			'button:text("Create a WordPress.com Account"):visible'
 		);
