@@ -78,19 +78,19 @@ describe( 'admin theme colour declarations', () => {
 	} );
 
 	it( 'produces the exact shades wp-admin publishes, for a scheme verified against a real install', () => {
-		// Measured on a WP 7.0 site: body.admin-color-sunrise resolves to these three values.
+		// Measured on WordPress.com's wp-admin (WordPress 7.1): body.admin-color-sunrise resolves to these three values.
 		const block = parseBlocks( compile( '@include wp-admin-theme-colors(".stats-main");' ) ).find(
 			( b ) => b.selector.startsWith( 'body.is-sunrise ' )
 		);
 
 		expect( block?.declarations ).toMatchObject( {
-			'--wp-admin-theme-color': '#dd823b',
-			'--wp-admin-theme-color-darker-10': '#d97426',
-			'--wp-admin-theme-color-darker-20': '#c36922',
+			'--wp-admin-theme-color': '#ad631e',
+			'--wp-admin-theme-color-darker-10': '#97571a',
+			'--wp-admin-theme-color-darker-20': '#824a16',
 		} );
 	} );
 
-	it( 'covers fresh, the wp-admin default that upstream omits from the mixin', () => {
+	it( 'covers fresh, the wp-admin default scheme', () => {
 		expect( schemes().fresh ).toBeDefined();
 		expect( compile( '@include wp-admin-theme-colors(".stats-main");' ) ).toContain(
 			'body.is-fresh'

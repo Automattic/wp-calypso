@@ -4,6 +4,7 @@ import {
 	siteWordPressMigrationConfigurationQuery,
 	siteWordPressMigrationStatusQuery,
 } from '@automattic/api-queries';
+import { invokeSurvicateEventOnce } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
@@ -81,6 +82,16 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		// The source is connected on its own site, often in another tab, so check again on coming back to this one.
 		refetchOnWindowFocus: isConnecting ? 'always' : false,
 	} );
+
+	// Each migration asks once, whether it started from this page or was already going when the page opened. A run
+	// resumed after a pause is the same migration, so the key is the source rather than when the run started.
+	const isRunning = migration?.status === 'running';
+	const sourceUrl = migration?.source_url;
+	useEffect( () => {
+		if ( isRunning && sourceUrl ) {
+			return invokeSurvicateEventOnce( 'migrationStarted', `${ site.ID }:${ sourceUrl }` );
+		}
+	}, [ isRunning, sourceUrl, site.ID ] );
 
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
