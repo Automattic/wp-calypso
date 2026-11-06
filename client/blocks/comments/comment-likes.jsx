@@ -1,4 +1,5 @@
 import { pick } from '@automattic/js-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -18,18 +19,18 @@ function getLikedByLabel( likeCount = 0, iLike = false ) {
 		return undefined;
 	}
 	if ( ! iLike ) {
-		return translate( 'Liked by %(count)d person', 'Liked by %(count)d people', {
+		return translate( 'Liked by %(count)s person', 'Liked by %(count)s people', {
 			count: likeCount,
-			args: { count: likeCount },
+			args: { count: formatNumber( likeCount ) },
 		} );
 	}
 	const others = likeCount - 1;
 	if ( others <= 0 ) {
 		return translate( 'Liked by you' );
 	}
-	return translate( 'Liked by you and %(count)d other', 'Liked by you and %(count)d others', {
+	return translate( 'Liked by you and %(count)s other', 'Liked by you and %(count)s others', {
 		count: others,
-		args: { count: others },
+		args: { count: formatNumber( others ) },
 	} );
 }
 
