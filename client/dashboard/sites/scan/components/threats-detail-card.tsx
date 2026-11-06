@@ -1,9 +1,9 @@
 import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
+	Icon,
 	__experimentalText as Text,
 } from '@wordpress/components';
-import { Icon } from '@wordpress/icons';
 import { Card, CardBody, CardDivider } from '../../../components/card';
 import { SeverityBadge } from '../severity-badge';
 import { getThreatIcon } from '../utils';

@@ -15,7 +15,6 @@
 
 		svg {
 			fill: var(--studio-white);
-			color: var(--studio-white);
 		}
 
 		.edit-site-layout:not(.is-full-canvas) & {
@@ -23,7 +22,6 @@
 
 			svg {
 				fill: var(--studio-white);
-				color: var(--studio-white);
 			}
 		}
 	}
@@ -34,7 +32,6 @@
 
 		svg {
 			fill: #e0e0e0;
-			color: #e0e0e0;
 		}
 	}
 
@@ -153,7 +150,6 @@
 
 			svg {
 				fill: currentColor;
-				color: inherit;
 			}
 		}
 	}

@@ -150,7 +150,13 @@ const RepositorySelector = ( {
 							return (
 								<HStack alignment="left" spacing={ 1 }>
 									<Text style={ { color: 'currentColor' } }>{ item.label }</Text>
-									<Icon icon={ lock } size={ 16 } />
+									<Icon
+										icon={ lock }
+										size={ 16 }
+										style={ {
+											fill: 'currentColor',
+										} }
+									/>
 								</HStack>
 							);
 						}

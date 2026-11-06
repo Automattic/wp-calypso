@@ -68,7 +68,7 @@
 		"@wordpress/core-data": "^7.48.0",
 		"@wordpress/html-entities": "^5.1.0",
 		"@wordpress/i18n": "^7.1.0",
-		"@wordpress/icons": "^20.0.0",
+		"@wordpress/icons": "^15.5.0",
 		"@wordpress/primitives": "^5.1.0",
 		"@wordpress/private-apis": "^3.1.0",
 		"@wordpress/router": "^2.1.0",

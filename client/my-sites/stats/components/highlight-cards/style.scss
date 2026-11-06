@@ -74,7 +74,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 	svg {
 		fill: var(--studio-gray-30);
-		color: var(--studio-gray-30);
 	}
 }
 
@@ -305,7 +304,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 					flex-shrink: 0;
 					margin-inline-end: 14px;
 					fill: currentColor;
-					color: inherit;
 				}
 
 				&__text {
@@ -339,7 +337,6 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 
 				svg {
 					fill: var(--studio-gray-30);
-					color: var(--studio-gray-30);
 				}
 
 				&:not(:first-child) {

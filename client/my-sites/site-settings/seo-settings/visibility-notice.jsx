@@ -1,5 +1,7 @@
+import { speak } from '@wordpress/a11y';
 import { Link, Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import isPrivateSite from 'calypso/state/selectors/is-private-site';
 import isSiteComingSoon from 'calypso/state/selectors/is-site-coming-soon';
@@ -23,9 +25,16 @@ export default function SeoVisibilityNotice() {
 		);
 	}
 
+	const title = translate( 'Your site may not appear in search results' );
+
+	// @wordpress/ui's Notice doesn't announce itself.
+	useEffect( () => {
+		speak( `${ title } ${ visibility }`, 'polite' );
+	}, [ title, visibility ] );
+
 	return (
 		<Notice.Root className="seo-settings__visibility-notice" intent="warning">
-			<Notice.Title>{ translate( 'Your site may not appear in search results' ) }</Notice.Title>
+			<Notice.Title>{ title }</Notice.Title>
 			<Notice.Description>
 				{ visibility }{ ' ' }
 				{ translate(

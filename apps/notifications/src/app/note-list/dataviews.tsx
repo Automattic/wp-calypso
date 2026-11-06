@@ -8,7 +8,7 @@ import {
 	check,
 	comment,
 	info,
-	lock,
+	lockOutline,
 	plus,
 	thumbsUp,
 	update,
@@ -33,7 +33,7 @@ const iconMap: { [ key in string ]: JSX.Element } = {
 	'\uf300': comment,
 	'\uf801': plus,
 	'\uf455': info,
-	'\uf470': lock,
+	'\uf470': lockOutline,
 	'\uf806': chartBar, // stats
 	'\uf805': update, // reblog
 	'\uf408': thumbsUp, // star

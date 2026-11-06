@@ -106,7 +106,6 @@
 			.checklist-item__chevron,
 			.checklist-item__checkmark {
 				fill: var( --color-link );
-				color: var( --color-link );
 			}
 		}
 	}
@@ -149,7 +148,6 @@
 		svg,
 		svg * {
 			fill: currentColor;
-			color: inherit;
 		}
 	}
 
@@ -187,7 +185,6 @@
 	.subscribe-modal .button.follow-button.has-button-style.is-following svg.reader-following-feed,
 	.subscribe-modal .button.follow-button.has-button-style.is-following svg.reader-following-feed * {
 		fill: var( --wp-components-color-foreground-inverted );
-		color: var( --wp-components-color-foreground-inverted );
 	}
 
 	.subscribe-modal .button.follow-button.has-button-style.is-following .follow-button__label {

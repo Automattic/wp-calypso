@@ -173,7 +173,6 @@ const StyledFoldableCard = styled( FoldableCard )`
 			}
 			.gridicon {
 				fill: var( --studio-gray-0 );
-				color: var( --studio-gray-0 );
 				height: 16px;
 				width: 16px;
 			}

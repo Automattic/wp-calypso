@@ -158,9 +158,13 @@ const EditGravatar = ( { isEmailVerified = true, avatarUrl, userEmail }: EditGra
 
 						<div className="overlay-hover" style={ overlayStyle }>
 							<div style={ { color: '#fff' } }>
-								{ ! isEmailVerified && <Icon icon={ caution } size={ 24 } /> }
+								{ ! isEmailVerified && (
+									<Icon icon={ caution } size={ 24 } style={ { fill: 'currentColor' } } />
+								) }
 
-								{ isEmailVerified && <Icon icon={ upload } size={ 24 } /> }
+								{ isEmailVerified && (
+									<Icon icon={ upload } size={ 24 } style={ { fill: 'currentColor' } } />
+								) }
 							</div>
 						</div>
 					</div>

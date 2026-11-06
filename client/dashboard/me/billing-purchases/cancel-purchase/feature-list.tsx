@@ -90,8 +90,7 @@ const CancelPurchaseFeatureList = ( {
 											icon={ close }
 											style={ {
 												flexShrink: 0,
-												color: 'var( --dashboard__foreground-color-error )',
-												fill: 'none',
+												fill: 'var( --dashboard__foreground-color-error )',
 											} }
 										/>
 										<span>{ item.title }</span>
@@ -118,8 +117,7 @@ const CancelPurchaseFeatureList = ( {
 										icon={ info }
 										style={ {
 											flexShrink: 0,
-											color: 'var( --dashboard__foreground-color-warning )',
-											fill: 'none',
+											fill: 'var( --dashboard__foreground-color-warning )',
 										} }
 									/>
 									<span>{ change.getTitle() }</span>

@@ -322,7 +322,7 @@ export class TypeSelector extends Component {
 					{ shouldDisplayDelimiter && ': ' }
 					{ hasSelectedCheckboxes && selectedCheckboxesContent }
 				</span>
-				{ isCompact && <Icon icon={ chevronDown } size="16" /> }
+				{ isCompact && <Icon icon={ chevronDown } size="16" fill="currentColor" /> }
 			</Button>
 		);
 	};

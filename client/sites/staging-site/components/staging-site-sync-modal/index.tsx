@@ -73,8 +73,7 @@ const DirectionArrow = () => {
 			<Icon
 				icon={ isRTL() ? chevronLeft : chevronRight }
 				style={ {
-					color: '#949494',
-					fill: 'none',
+					fill: '#949494',
 				} }
 			/>
 		</div>

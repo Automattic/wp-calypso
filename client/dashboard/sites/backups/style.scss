@@ -7,7 +7,6 @@
 	inset-inline-start: 50%;
 	transform: translate(-50%, -50%);
 	fill: $gray-700;
-	color: $gray-700;
 }
 
 .dashboard-backups__progress-bar{
@@ -39,7 +38,6 @@
 
 	.file-card__preview-sensitive svg {
 		fill: var(--wp-admin-theme-color);
-		color: var(--wp-admin-theme-color);
 	}
 
 	.file-card__preview img {

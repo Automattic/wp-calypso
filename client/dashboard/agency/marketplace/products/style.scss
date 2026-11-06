@@ -18,7 +18,6 @@
 
 	svg {
 		fill: $gray-900;
-		color: $gray-900;
 	}
 
 	img {
@@ -143,7 +142,6 @@
 	svg {
 		flex-shrink: 0;
 		fill: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
-		color: var( --wp-components-color-accent, var( --wp-admin-theme-color ) );
 	}
 }
 

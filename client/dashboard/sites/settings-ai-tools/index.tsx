@@ -473,12 +473,8 @@ export default function AIToolsSettings( { siteSlug }: { siteSlug: string } ) {
 									<HStack key={ i } as="li" justify="flex-start" spacing={ 3 }>
 										<Icon
 											icon={ check }
-											style={ {
-												flexShrink: 0,
-												alignSelf: 'flex-start',
-												color: 'var(--dashboard__foreground-color-success)',
-												fill: 'none',
-											} }
+											fill="var(--dashboard__foreground-color-success)"
+											style={ { flexShrink: 0, alignSelf: 'flex-start' } }
 										/>
 										<Text>{ feature }</Text>
 									</HStack>

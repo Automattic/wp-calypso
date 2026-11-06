@@ -81,7 +81,7 @@ export function getFields( timezoneString?: string, gmtOffset?: number ): Field<
 							<Icon
 								icon={ check }
 								size={ 24 }
-								style={ { color: 'var(--dashboard__background-color-success)', fill: 'none' } }
+								style={ { fill: 'var(--dashboard__background-color-success)' } }
 								aria-label={ __( 'Auto-fix available' ) }
 							/>
 						</span>

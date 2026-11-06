@@ -51,7 +51,6 @@ const StyledLi = styled.li`
 
 const GreenIcon = styled( Icon )`
 	fill: var( --studio-green-50 );
-	color: var( --studio-green-50 );
 `;
 
 const useRequiredPlan = ( shouldUpgrade: boolean ) => {

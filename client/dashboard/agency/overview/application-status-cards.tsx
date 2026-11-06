@@ -61,11 +61,7 @@ export function PendingTierCard( {
 	return (
 		<ApplicationStatusCard
 			decoration={
-				<Icon
-					icon={ published }
-					size={ 24 }
-					style={ { color: 'var(--wp-admin-theme-color)', fill: 'none' } }
-				/>
+				<Icon icon={ published } size={ 24 } style={ { fill: 'var(--wp-admin-theme-color)' } } />
 			}
 			label={ __( 'Welcome' ) }
 			heading={ __( 'We’re reviewing your account' ) }
@@ -119,7 +115,7 @@ export function RejectedTierCard( {
 		<ApplicationStatusCard
 			decoration={
 				<Text intent="error" as="span">
-					<Icon icon={ error } size={ 24 } />
+					<Icon icon={ error } size={ 24 } fill="currentColor" />
 				</Text>
 			}
 			label={ __( 'Application status' ) }

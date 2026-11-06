@@ -168,7 +168,6 @@ body.is-section-reader {
 		.sidebar__expandable-arrow {
 			background: none;
 			fill: var( --studio-gray-20 );
-			color: var( --studio-gray-20 );
 			transition: transform 0.15s ease;
 			transform: rotate( -90deg );
 		}
@@ -186,7 +185,6 @@ body.is-section-reader {
 
 			&:hover .sidebar__expandable-arrow {
 				fill: var( --studio-gray-20 );
-				color: var( --studio-gray-20 );
 			}
 		}
 
@@ -215,7 +213,6 @@ body.is-section-reader {
 			}
 			.sidebar__menu-icon {
 				fill: currentColor;
-				color: inherit;
 				&.sidebar_svg-a8c {
 					fill: none;
 					g {
@@ -327,12 +324,10 @@ body.is-section-reader {
 
 				.sidebar__expandable-arrow {
 					fill: var( --studio-gray-70 );
-					color: var( --studio-gray-70 );
 				}
 
 				&:hover .sidebar__expandable-arrow {
 					fill: var( --studio-gray-30 );
-					color: var( --studio-gray-30 );
 				}
 			}
 		}
@@ -349,7 +344,6 @@ body.is-section-reader {
 			&:hover {
 				.sidebar__expandable-arrow {
 					fill: var( --studio-gray-70 );
-					color: var( --studio-gray-70 );
 				}
 			}
 		}

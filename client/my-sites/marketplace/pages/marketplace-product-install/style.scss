@@ -28,7 +28,6 @@ body.is-section-marketplace:has( .marketplace-plugin-install__masterbar ) {
 		// The wordmark carries a fill on each path, which a fill on the svg would not override.
 		path {
 			fill: var( --studio-gray-100 );
-			color: var( --studio-gray-100 );
 		}
 	}
 

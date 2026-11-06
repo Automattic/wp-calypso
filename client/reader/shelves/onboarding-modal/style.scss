@@ -35,7 +35,6 @@
 	.reader-shelves-onboarding__tick svg,
 	.reader-shelves-onboarding__badge svg {
 		fill: currentColor;
-		color: inherit;
 	}
 
 	// Extra breathing room above the welcome hero so the content sits more
@@ -101,7 +100,6 @@
 	.reader-shelves-onboarding__arrow {
 		flex: none;
 		fill: var( --color-neutral-30 );
-		color: var( --color-neutral-30 );
 	}
 
 	// Tinted round backdrop shared by the checkmarks and the "create" badge.

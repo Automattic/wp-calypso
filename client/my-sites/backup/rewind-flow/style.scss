@@ -24,7 +24,6 @@
 
 	.gridicon {
 		fill: var(--color-primary);
-		color: var(--color-primary);
 	}
 
 	img {
@@ -175,7 +174,6 @@ a.rewind-flow-notice__title-warning,
 a.rewind-flow-notice__title-warning:visited {
 	.gridicon {
 		fill: var(--rewind-flow-notice__icon-color);
-		color: var(--rewind-flow-notice__icon-color);
 	}
 
 	&:hover {

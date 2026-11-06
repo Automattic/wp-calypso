@@ -12,7 +12,6 @@ $rating-star-color: #ffb514;
 
 		.gridicon {
 			fill: var(--color-primary);
-			color: var(--color-primary);
 		}
 
 		.is-empty {
@@ -25,7 +24,6 @@ $rating-star-color: #ffb514;
 			.is-empty,
 			.gridicon {
 				fill: $rating-star-color;
-				color: $rating-star-color;
 			}
 		}
 	}

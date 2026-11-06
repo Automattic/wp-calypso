@@ -29,7 +29,6 @@ const ContactContainer = styled.div`
 	.gridicon {
 		display: block;
 		fill: var( --studio-gray-60 );
-		color: var( --studio-gray-60 );
 	}
 	label,
 	span {

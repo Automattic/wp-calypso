@@ -43,7 +43,6 @@
 		.reader-follow-feed {
 			path {
 				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
 			}
 		}
 	}
@@ -53,7 +52,6 @@
 		svg {
 			path {
 				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
 			}
 		}
 	}
@@ -674,7 +672,6 @@
 	.like-button.is-liked {
 		svg.reader-external path {
 			fill: var(--color-link);
-			color: var(--color-link);
 		}
 
 		svg.reader-comment path,
@@ -689,7 +686,6 @@
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var(--color-link);
-			color: var(--color-link);
 		}
 	}
 }
@@ -699,7 +695,6 @@
 
 	.gridicon {
 		fill: var(--color-primary);
-		color: var(--color-primary);
 	}
 
 	.follow-button__label {
@@ -711,13 +706,11 @@
 
 		.gridicon {
 			fill: var( --color-link );
-			color: var( --color-link );
 		}
 
 		svg,
 		svg path {
 			fill: currentColor;
-			color: inherit;
 		}
 
 		.follow-button__label {
@@ -729,7 +722,6 @@
 
 			.gridicon {
 				fill: var( --color-link-dark );
-				color: var( --color-link-dark );
 			}
 
 			.follow-button__label {
@@ -747,7 +739,6 @@
 	&.is-following {
 		.gridicon {
 			fill: var(--color-success);
-			color: var(--color-success);
 		}
 
 		.follow-button__label {

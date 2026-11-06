@@ -183,13 +183,11 @@
 
 .jetpack-product-info__regular-list-item-icon {
 	fill: var(--studio-jetpack-green);
-	color: var(--studio-jetpack-green);
 	margin-block-start: 2px;
 }
 
 .jetpack-product-info.is-woocommerce-product .jetpack-product-info__regular-list-item-icon {
 	fill: var(--studio-woocommerce-purple);
-	color: var(--studio-woocommerce-purple);
 }
 
 @keyframes trigger-highlight {

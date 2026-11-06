@@ -51,7 +51,10 @@ export default function Snackbars() {
 			return {
 				...notice,
 				className: statusClassName,
-				icon: 'icon' in notice ? notice.icon : icon && <Icon icon={ icon } />,
+				icon:
+					'icon' in notice
+						? notice.icon
+						: icon && <Icon icon={ icon } style={ { fill: 'currentcolor' } } />,
 			};
 		} );
 

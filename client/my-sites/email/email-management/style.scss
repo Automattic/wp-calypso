@@ -49,7 +49,6 @@
 
 	>.gridicon.gridicons-my-sites {
 		fill: var(--color-wordpress-com);
-		color: var(--color-wordpress-com);
 	}
 }
 
@@ -113,7 +112,6 @@
 
 		>svg {
 			fill: var(--color-error);
-			color: var(--color-error);
 		}
 	}
 
@@ -124,7 +122,6 @@
 
 		>svg {
 			fill: var(--color-warning);
-			color: var(--color-warning);
 		}
 	}
 }
@@ -176,7 +173,6 @@
 
 		>svg {
 			fill: $color;
-			color: $color;
 		}
 	}
 }
@@ -224,7 +220,6 @@
 
 	>.gridicon.gridicons-my-sites {
 		fill: var(--color-wordpress-com);
-		color: var(--color-wordpress-com);
 	}
 }
 
@@ -269,13 +264,11 @@
 
 		>svg {
 			fill: var(--studio-white);
-			color: var(--studio-white);
 		}
 	}
 
 	&:disabled>svg {
 		fill: currentColor;
-		color: inherit;
 	}
 
 	&.external-link>.gridicons-external {
@@ -506,7 +499,6 @@
 			svg {
 				height: 24px;
 				fill: var(--color-accent);
-				color: var(--color-accent);
 			}
 
 			// The my-sites SVG has a bit of extra padding on the sides, so we need to adjust the position.
@@ -590,7 +582,6 @@
 	.icon {
 		svg {
 			fill: #fff;
-			color: #fff;
 			padding: 4px;
 			border-radius: 100%;
 			background: var(--color-accent-60);
