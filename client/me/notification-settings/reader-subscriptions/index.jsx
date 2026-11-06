@@ -1,4 +1,4 @@
-import { Card, FormLabel } from '@automattic/components';
+import { Card, FormLabel, LoadingPlaceholder } from '@automattic/components';
 import {
 	applyDeliveryWindowEdit,
 	getDeliveryHourPickerHours,
@@ -37,7 +37,7 @@ import { isAutomatticTeamMember } from 'calypso/reader/lib/teams';
 import { recordGoogleEvent } from 'calypso/state/analytics/actions';
 import SubscriptionManagementBackButton from '../subscription-management-back-button';
 
-class NotificationSubscriptions extends Component {
+export class NotificationSubscriptions extends Component {
 	state = {
 		showConfirmModal: false,
 	};
@@ -210,6 +210,7 @@ class NotificationSubscriptions extends Component {
 		const { teams } = this.props;
 		const isAutomattician = isAutomatticTeamMember( teams );
 		const displayWindow = this.getDisplayDeliveryWindow();
+		const defaultEmailDelivery = this.props.getSetting( 'subscription_delivery_email_default' );
 
 		return (
 			<Main wideLayout className="reader-subscriptions__notifications-settings">
@@ -257,21 +258,27 @@ class NotificationSubscriptions extends Component {
 							<FormLabel htmlFor="subscription_delivery_email_default">
 								{ this.props.translate( 'Default email delivery' ) }
 							</FormLabel>
-							<FormSelect
-								disabled={ this.props.getDisabledState() }
-								id="subscription_delivery_email_default"
-								name="subscription_delivery_email_default"
-								onChange={ this.props.updateSetting }
-								onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
-								value={ this.props.getSetting( 'subscription_delivery_email_default' ) }
-							>
-								<option value="never">{ this.props.translate( 'Never send email' ) }</option>
-								<option value="instantly">
-									{ this.props.translate( 'Send email instantly' ) }
-								</option>
-								<option value="daily">{ this.props.translate( 'Send email daily' ) }</option>
-								<option value="weekly">{ this.props.translate( 'Send email every week' ) }</option>
-							</FormSelect>
+							{ defaultEmailDelivery === '' ? (
+								<LoadingPlaceholder />
+							) : (
+								<FormSelect
+									disabled={ this.props.getDisabledState() }
+									id="subscription_delivery_email_default"
+									name="subscription_delivery_email_default"
+									onChange={ this.props.updateSetting }
+									onFocus={ this.handleFocusEvent( 'Default Email Delivery' ) }
+									value={ defaultEmailDelivery }
+								>
+									<option value="never">{ this.props.translate( 'Never send email' ) }</option>
+									<option value="instantly">
+										{ this.props.translate( 'Send email instantly' ) }
+									</option>
+									<option value="daily">{ this.props.translate( 'Send email daily' ) }</option>
+									<option value="weekly">
+										{ this.props.translate( 'Send email every week' ) }
+									</option>
+								</FormSelect>
+							) }
 						</FormFieldset>
 
 						<FormFieldset>
