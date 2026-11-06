@@ -134,7 +134,13 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const activeOpened = opened?.key === selectedKey ? opened : undefined;
 	const selectedItemKey = tab === 'yours' ? activeOpened?.anchor?.key : selectedKey;
 	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedItemKey );
-	const selected = conversations.find( ( { key } ) => key === selectedKey );
+	const found = conversations.find( ( { key } ) => key === selectedKey );
+	// A search can filter the open conversation out of the list, which would drop its header and highlights.
+	const [ lastFound, setLastFound ] = useState( found );
+	if ( found && found !== lastFound ) {
+		setLastFound( found );
+	}
+	const selected = found ?? ( lastFound?.key === selectedKey ? lastFound : undefined );
 	const [ previousKey, setPreviousKey ] = useState( selectedKey );
 	if ( selectedKey !== previousKey ) {
 		setPreviousKey( selectedKey );
@@ -178,6 +184,25 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 			markRead( unread.unreadNoteIds );
 		}
 	}, [ isWaitingForNotes, notes, siteId, postId, markRead ] );
+
+	// A conversation opened from the URL, or as the first one, is read like one picked from the list.
+	const isLoadingList = conversationsQuery.isLoading;
+	useEffect( () => {
+		// A conversation opened from the list sets `opened` before the URL catches up.
+		if ( ! selectedKey || opened || ( ! selected && isLoadingList ) ) {
+			return;
+		}
+		setOpened( {
+			key: selectedKey,
+			unread: selected && {
+				unreadNoteIds: selected.unreadNoteIds,
+				unreadCommentIds: selected.unreadCommentIds,
+			},
+		} );
+		if ( selected?.unreadNoteIds.length ) {
+			markRead( selected.unreadNoteIds );
+		}
+	}, [ selectedKey, opened, selected, isLoadingList, markRead ] );
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		const key = getConversationKey( item.siteId, item.postId );

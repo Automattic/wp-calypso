@@ -1,7 +1,7 @@
 import { pick } from '@automattic/js-utils';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { Component } from 'react';
+import { Component, useContext } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import LikeButton from 'calypso/blocks/like-button/button';
@@ -11,6 +11,27 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
+import { CommentLabelsContext } from './comment-labels-context';
+
+function getLikedByLabel( likeCount = 0, iLike = false ) {
+	const others = likeCount - ( iLike ? 1 : 0 );
+	if ( likeCount <= 0 ) {
+		return null;
+	}
+	if ( ! iLike ) {
+		return translate( 'Liked by %(count)d person', 'Liked by %(count)d people', {
+			count: likeCount,
+			args: { count: likeCount },
+		} );
+	}
+	if ( others <= 0 ) {
+		return translate( 'Liked by you' );
+	}
+	return translate( 'Liked by you and %(count)d other', 'Liked by you and %(count)d others', {
+		count: others,
+		args: { count: others },
+	} );
+}
 
 class CommentLikeButtonContainer extends Component {
 	constructor() {
@@ -74,6 +95,7 @@ class CommentLikeButtonContainer extends Component {
 		const likeCount = this.props.comment?.like_count;
 		const iLike = this.props.comment?.i_like;
 		const likedLabel = translate( 'Liked' );
+		const likedByLabel = this.props.spellOutLikes && getLikedByLabel( likeCount, iLike );
 
 		const likeIcon = ReaderLikeIcon( {
 			liked: iLike,
@@ -83,13 +105,14 @@ class CommentLikeButtonContainer extends Component {
 		return (
 			<LikeButton
 				{ ...props }
-				likeCount={ likeCount }
+				// A zero count makes the button show its label, which then names who liked it.
+				likeCount={ likedByLabel ? 0 : likeCount }
 				liked={ iLike }
 				onLikeToggle={ this.boundHandleLikeToggle }
 				likedLabel={ likedLabel }
 				iconSize={ 18 }
 				icon={ likeIcon }
-				defaultLabel={ translate( 'Like' ) }
+				defaultLabel={ likedByLabel || translate( 'Like' ) }
 			/>
 		);
 	}
@@ -110,13 +133,17 @@ CommentLikeButtonContainer.propTypes = {
 	onLikeToggle: PropTypes.func.isRequired,
 	isLikePending: PropTypes.bool,
 	isUnlikePending: PropTypes.bool,
+	spellOutLikes: PropTypes.bool,
 };
 
 const withCommentLikeMutations = ( WrappedComponent ) => {
 	const WithCommentLikeMutations = ( props ) => {
 		const commentLikeMutations = useCommentLikeMutations( props.comment );
+		const spellOutLikes = useContext( CommentLabelsContext );
 
-		return <WrappedComponent { ...props } { ...commentLikeMutations } />;
+		return (
+			<WrappedComponent { ...props } { ...commentLikeMutations } spellOutLikes={ spellOutLikes } />
+		);
 	};
 
 	WithCommentLikeMutations.displayName = `withCommentLikeMutations(${

@@ -21,6 +21,7 @@ import {
 import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
+import { CommentLabelsContext } from 'calypso/blocks/comments/comment-labels-context';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
@@ -302,23 +303,25 @@ export function ConversationDetail( {
 								) }
 							</HStack>
 
-							<Comments
-								key={ startingComment.key }
-								useBlockEditor
-								showNestingReplyArrow
-								post={ post }
-								initialSize={ commentCount || 10 }
-								pageSize={ 25 }
-								startingCommentId={ startingComment.id }
-								commentCount={ commentCount }
-								maxDepth={ 1 }
-								commentsFilterDisplay={ COMMENTS_FILTER_ALL }
-								shouldHighlightNew
-								shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
-								deferNewComments
-								highlightedCommentIds={ highlightedCommentIds }
-								collapsibleThreads
-							/>
+							<CommentLabelsContext.Provider value>
+								<Comments
+									key={ startingComment.key }
+									useBlockEditor
+									showNestingReplyArrow
+									post={ post }
+									initialSize={ commentCount || 10 }
+									pageSize={ 25 }
+									startingCommentId={ startingComment.id }
+									commentCount={ commentCount }
+									maxDepth={ 1 }
+									commentsFilterDisplay={ COMMENTS_FILTER_ALL }
+									shouldHighlightNew
+									shouldPollForNewComments={ config.isEnabled( 'reader/comment-polling' ) }
+									deferNewComments
+									highlightedCommentIds={ highlightedCommentIds }
+									collapsibleThreads
+								/>
+							</CommentLabelsContext.Provider>
 						</>
 					) }
 				</VStack>

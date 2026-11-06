@@ -25,6 +25,7 @@ import { getCurrentUser, isUserLoggedIn } from 'calypso/state/current-user/selec
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
 import CommentActions from './comment-actions';
+import { CommentLabelsContext } from './comment-labels-context';
 import PostCommentForm from './form';
 import PostCommentContent from './post-comment-content';
 import PostCommentWithError from './post-comment-with-error';
@@ -50,6 +51,8 @@ const noop = () => {};
  */
 
 class PostComment extends PureComponent {
+	static contextType = CommentLabelsContext;
+
 	static propTypes = {
 		commentsTree: PropTypes.object.isRequired,
 		commentId: PropTypes.oneOfType( [
@@ -501,13 +504,29 @@ class PostComment extends PureComponent {
 					} ) }
 					{ this.props.showNestingReplyArrow && parentAuthorName && (
 						<span className="comments__comment-respondee">
-							<Gridicon icon="chevron-right" size={ 16 } />
-							{ this.renderAuthorTag( {
-								className: 'comments__comment-respondee-link',
-								authorName: parentAuthorName,
-								authorUrl: parentAuthorUrl,
-								commentId: parentCommentId,
-							} ) }
+							{ this.context ? (
+								translate( 'to {{author/}}', {
+									components: {
+										author: this.renderAuthorTag( {
+											className: 'comments__comment-respondee-link',
+											authorName: parentAuthorName,
+											authorUrl: parentAuthorUrl,
+											commentId: parentCommentId,
+										} ),
+									},
+									comment: 'Names the commenter a reply answers, as in "Petra to Bram".',
+								} )
+							) : (
+								<>
+									<Gridicon icon="chevron-right" size={ 16 } />
+									{ this.renderAuthorTag( {
+										className: 'comments__comment-respondee-link',
+										authorName: parentAuthorName,
+										authorUrl: parentAuthorUrl,
+										commentId: parentCommentId,
+									} ) }
+								</>
+							) }
 						</span>
 					) }
 					<div className="comments__comment-timestamp">

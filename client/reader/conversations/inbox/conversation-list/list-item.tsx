@@ -66,7 +66,6 @@ export function ConversationListItem( {
 	const locale = useLocale();
 	const { siteId, postId, excerpt, timestamp } = item;
 	const isOwnComment = 'commentId' in item;
-	const commenters = isOwnComment ? [ item.author ] : item.commenters;
 	const { data: post } = usePost( item.title ? null : { blogId: siteId, postId } );
 	const title = item.title || String( post?.title ?? '' );
 	const unreadCount = isOwnComment ? item.newCommentCount : item.unreadCount;
@@ -148,7 +147,7 @@ export function ConversationListItem( {
 					</Text>
 					{ density !== 'comfortable' && newCount }
 				</HStack>
-				{ density !== 'compact' && commenters.length > 0 && (
+				{ density !== 'compact' && ! isOwnComment && item.commenters.length > 0 && (
 					<HStack as="span" justify="flex-start">
 						<HStack
 							as="span"
@@ -157,13 +156,11 @@ export function ConversationListItem( {
 							className="conversations-inbox__avatars"
 						>
 							{ /* Two commenters can share a name, and the list never reorders. */ }
-							{ commenters.slice( 0, MAX_AVATARS ).map( ( { avatar }, index ) => (
+							{ item.commenters.slice( 0, MAX_AVATARS ).map( ( { avatar }, index ) => (
 								<img key={ index } src={ avatar } alt="" width={ 24 } height={ 24 } />
 							) ) }
 						</HStack>
-						<span>
-							{ isOwnComment ? translate( 'You commented' ) : getContextLine( translate, item ) }
-						</span>
+						<span>{ getContextLine( translate, item ) }</span>
 					</HStack>
 				) }
 				{ density === 'comfortable' && (
