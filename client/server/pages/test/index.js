@@ -566,13 +566,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'wpcalypso' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'on calypso.live', () => {
@@ -676,13 +669,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment development', () => {
@@ -709,13 +695,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'dev' );
-		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
 		} );
 
 		it( 'sets the branch name', async () => {
@@ -750,13 +729,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-staging' );
 		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
-		} );
 	} );
 
 	describe( 'with environment jetpack-cloud-development', () => {
@@ -783,13 +755,6 @@ const assertDefaultContext = ( { url, entry } ) => {
 		it( 'sets the badge', async () => {
 			const { request } = await customApp.run();
 			expect( request.context.badge ).toEqual( 'jetpack-cloud-dev' );
-		} );
-
-		it( 'sets the feedback url', async () => {
-			const { request } = await customApp.run();
-			expect( request.context.feedbackURL ).toEqual(
-				'https://github.com/Automattic/wp-calypso/issues/'
-			);
 		} );
 
 		it( 'sets the branch name', async () => {

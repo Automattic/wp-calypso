@@ -1,4 +1,5 @@
-import { DotcomPlans, getPlanNames } from '@automattic/api-core';
+import { DotcomFeatures, DotcomPlans, getPlanNames } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { __experimentalText as Text } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { settings } from '@wordpress/icons';
@@ -27,6 +28,25 @@ export interface UpsellCalloutProps {
 	feature?: HostingFeatureSlug;
 }
 
+const DEV_TOOLS_FEATURES: HostingFeatureSlug[] = [
+	DotcomFeatures.SFTP,
+	DotcomFeatures.SSH,
+	DotcomFeatures.GITHUB_DEPLOYMENTS,
+];
+
+function getDefaultPlanRequirement(
+	feature?: HostingFeatureSlug
+): UpsellCalloutProps[ 'upsellPlanRequirement' ] {
+	if (
+		feature &&
+		DEV_TOOLS_FEATURES.includes( feature ) &&
+		config.isEnabled( 'hosting/dev-tools-all-paid-plans' )
+	) {
+		return 'any';
+	}
+	return 'business-or-commerce';
+}
+
 export default function UpsellCallout( {
 	site,
 	upsellId,
@@ -36,9 +56,11 @@ export default function UpsellCallout( {
 	upsellTitle,
 	upsellTitleAs,
 	upsellDescription,
-	upsellPlanRequirement = 'business-or-commerce',
+	upsellPlanRequirement: upsellPlanRequirementProp,
 	feature,
 }: UpsellCalloutProps ) {
+	const upsellPlanRequirement = upsellPlanRequirementProp ?? getDefaultPlanRequirement( feature );
+
 	const handleUpsellClick = () => {
 		const backUrl = redirectToDashboardLink( { supportBackport: true } );
 

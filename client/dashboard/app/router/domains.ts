@@ -163,6 +163,7 @@ export const domainRoute = createRoute( {
 				throw dashboardRedirect( {
 					to: '/domains/$domainName',
 					params: { domainName },
+					search: location.search,
 				} );
 			}
 		}
@@ -596,7 +597,7 @@ export const domainTransferRoute = createRoute( {
 export const domainTransferIndexRoute = createRoute( {
 	getParentRoute: () => domainTransferRoute,
 	path: '/',
-	loader: async ( { params: { domainName } } ) => {
+	loader: async ( { params: { domainName }, location } ) => {
 		const domain = await queryClient.ensureQueryData( domainQuery( domainName ) );
 
 		const isInboundTransfer = domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER;
@@ -610,6 +611,7 @@ export const domainTransferIndexRoute = createRoute( {
 				throw dashboardRedirect( {
 					to: domainTransferSetupRoute.fullPath,
 					params: { domainName },
+					search: location.search,
 				} );
 			}
 			// If there was a transfer error, the user should see the transfer failed page
@@ -620,7 +622,11 @@ export const domainTransferIndexRoute = createRoute( {
 			DomainTransferStatus.PENDING_REGISTRY !== domain.transfer_status &&
 			DomainTransferStatus.CANCELLED !== domain.transfer_status
 		) {
-			throw dashboardRedirect( { to: domainOverviewRoute.fullPath, params: { domainName } } );
+			throw dashboardRedirect( {
+				to: domainOverviewRoute.fullPath,
+				params: { domainName },
+				search: location.search,
+			} );
 		}
 
 		return domain;

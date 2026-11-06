@@ -1,12 +1,3 @@
-// Hold the design system font weight tokens at the removed base-styles
-// `$font-weight-regular` and `$font-weight-medium` values. Calypso sets the same values
-// in calypso/assets/stylesheets/_wp-components-overrides.scss, which the dashboard
-// entries don't load. Set on body so a later :root from design-tokens.css can't override it.
-body {
-	--wpds-typography-font-weight-default: 400;
-	--wpds-typography-font-weight-emphasis: 499;
-}
-
 // 37.0.0 offsets the button focus ring by its own width, leaving a gap. Keep the ring
 // against the edge as before. The panel body toggle sets its own inset ring, so leave
 // it be. Remove to adopt the detached design-system ring.
