@@ -49,7 +49,7 @@ const comparisonRows = ( useMcpFeature: boolean ) =>
 		getPlanFeaturesGroupedForComparisonGrid( { isExperimentVariant: true, useMcpFeature } )
 	).flatMap( ( group ) => group?.getFeatures() ?? [] );
 
-describe( 'mcp_feature experiment variant', () => {
+describe( 'mcp_features experiment variant', () => {
 	describe( 'plan cards', () => {
 		it.each( PAID_PLANS )( 'lists AI agents instead of premium themes on %s', ( planSlug ) => {
 			const slugs = cardFeatureSlugs( planSlug, true );

@@ -198,26 +198,26 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 			expect( result.current.useReversedPlanOrder ).toBe( false );
 		} );
 
-		test( 'shows the MCP feature for the mcp_feature variant', () => {
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_feature' } ] );
+		test( 'shows the MCP feature for the mcp_features variant', () => {
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_features' } ] );
 
 			const { result } = renderHook( () => usePlanDifferentiatorsExperiment( SIGNUP_PARAMS ) );
 
 			expect( result.current ).toEqual( {
 				...CONTROL_RESULT,
-				variant: 'mcp_feature',
+				variant: 'mcp_features',
 				useMcpFeature: true,
 			} );
 		} );
 
 		test( 'hides the MCP feature for intents that curate their own feature lists', () => {
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_feature' } ] );
+			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_features' } ] );
 
 			const { result } = renderHook( () =>
 				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
 			);
 
-			expect( result.current.variant ).toBe( 'mcp_feature' );
+			expect( result.current.variant ).toBe( 'mcp_features' );
 			expect( result.current.useMcpFeature ).toBe( false );
 		} );
 
