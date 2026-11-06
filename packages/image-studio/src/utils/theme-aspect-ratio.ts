@@ -22,6 +22,7 @@ export const THEME_ASPECT_RATIOS = [ '16:9', '4:3' ];
 /**
  * Maps a `core/post-featured-image` `aspectRatio` attribute ("4/3") to a picker value, else null.
  * @param value - The block attribute value.
+ * @returns The picker value, or null when the picker cannot represent it.
  */
 export function normalizeThemeAspectRatio( value: unknown ): string | null {
 	if ( typeof value !== 'string' ) {
@@ -73,9 +74,11 @@ function parseTemplate( content: string ): TemplateBlock[] {
 }
 
 /**
- * The ratio the current post template applies to the featured image, as a picker value, else null.
- * The post editor loads the template at startup; template parts and patterns are not followed.
+ * The ratio the post's resolved template applies to the featured image, as a picker value, else null.
+ * Skips query loops, takes the first block that sets a ratio, prefers unsaved template edits.
+ * Template parts are not followed; patterns are already inlined by the templates endpoint.
  * @param select - The data registry's `select`.
+ * @returns The picker value, or null when the template sets none the picker can use.
  */
 export function getThemeFeaturedImageAspectRatio( select: SelectFn ): string | null {
 	try {
