@@ -21,18 +21,19 @@ export default function NameServersSettingsSummary( {
 		badges.push( { text: __( 'SSL Disabled' ), intent: 'high' as const } );
 	}
 
-	if ( DomainSubtype.DOMAIN_REGISTRATION === domain.subtype.id ) {
-		if ( domain.is_dnssec_enabled ) {
-			badges.push( { text: __( 'DNSSEC enabled' ), intent: 'stable' as const } );
-		} else {
-			badges.push( { text: __( 'DNSSEC disabled' ), intent: 'draft' as const } );
-		}
+	const isRegistration = DomainSubtype.DOMAIN_REGISTRATION === domain.subtype.id;
+	if ( isRegistration ) {
+		badges.push(
+			domain.is_dnssec_enabled
+				? { text: __( 'Enabled' ), intent: 'stable' as const }
+				: { text: __( 'Disabled' ), intent: 'draft' as const }
+		);
 	}
 
 	return (
 		<RouterLinkSummaryButton
 			to={ `/domains/${ domain.domain }/security` }
-			title={ __( 'Domain security' ) }
+			title={ isRegistration ? __( 'DNSSEC' ) : __( 'Domain security' ) }
 			badges={ badges }
 			density={ 'medium' as const }
 			disabled={ isDisabled }

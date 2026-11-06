@@ -6,9 +6,10 @@ import {
 	type DomainMappingStatus,
 } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { Button, __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
+import { useState } from 'react';
 import { getCurrentDashboard } from '../../app/routing';
 import { SectionHeader } from '../../components/section-header';
 import SummaryButton from '../../components/summary-button';
@@ -67,6 +68,7 @@ export default function DomainOverviewSettings( {
 	isDisabled?: boolean;
 } ) {
 	const trackItem = useTrackOverviewItem( domain );
+	const [ showAdvanced, setShowAdvanced ] = useState( false );
 	const buttonListItems = [
 		<DomainSiteSettingsSummary
 			key="site"
@@ -79,6 +81,13 @@ export default function DomainOverviewSettings( {
 			onClick={ () => trackItem( 'emails' ) }
 		/>,
 	];
+	const advancedButtonListItems = [];
+
+	const isManageable =
+		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ) &&
+		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC;
+	const canManageDns = isManageable && domain.can_manage_dns_records;
 
 	if ( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ) {
 		buttonListItems.push(
@@ -87,6 +96,16 @@ export default function DomainOverviewSettings( {
 				domain={ domain }
 				domainMappingStatus={ domainMappingStatus }
 				onClick={ () => trackItem( 'connection-setup' ) }
+			/>
+		);
+	}
+
+	if ( canManageDns ) {
+		buttonListItems.push(
+			<DomainForwardingSettingsSummary
+				key="forwarding"
+				domain={ domain }
+				onClick={ () => trackItem( 'forwarding' ) }
 			/>
 		);
 	}
@@ -105,13 +124,7 @@ export default function DomainOverviewSettings( {
 		);
 	}
 
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-		domain.can_manage_dns_records
-	) {
+	if ( canManageDns ) {
 		buttonListItems.push(
 			<DnsSettingsSummary key="dns" domain={ domain } onClick={ () => trackItem( 'dns' ) } />
 		);
@@ -132,33 +145,8 @@ export default function DomainOverviewSettings( {
 		);
 	}
 
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC &&
-		domain.can_manage_dns_records
-	) {
-		buttonListItems.push(
-			<DomainForwardingSettingsSummary
-				key="forwarding"
-				domain={ domain }
-				onClick={ () => trackItem( 'forwarding' ) }
-			/>
-		);
-	}
-
-	/**
-	 * TODO: review this one - we need to show the security for transfers but only if there is
-	 * mapping. Right now I copied the code from the original code but it seems wrong
-	 */
-	if (
-		( domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_REGISTRATION ||
-			domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ) &&
-		domain.transfer_status !== DomainTransferStatus.PENDING_ASYNC
-	) {
-		buttonListItems.push(
+	if ( isManageable ) {
+		advancedButtonListItems.push(
 			<DomainSecuritySettingsSummary
 				key="security"
 				domain={ domain }
@@ -176,7 +164,7 @@ export default function DomainOverviewSettings( {
 		domain.can_manage_dns_records
 		// TODO: Add property that shows or hides this option depending on the availability of the feature
 	) {
-		buttonListItems.push(
+		advancedButtonListItems.push(
 			<DomainGlueRecordsSettingsSummary
 				key="glue-records"
 				domainName={ domain.domain }
@@ -199,8 +187,28 @@ export default function DomainOverviewSettings( {
 
 	return (
 		<VStack spacing={ 3 }>
-			<SectionHeader title={ __( 'Settings' ) } level={ 3 } />
-			<SummaryButtonList>{ buttonListItems }</SummaryButtonList>
+			<SectionHeader
+				title={ __( 'Settings' ) }
+				level={ 3 }
+				actions={
+					advancedButtonListItems.length > 0 && (
+						<Button
+							__next40pxDefaultSize
+							variant="link"
+							aria-expanded={ showAdvanced }
+							onClick={ () => {
+								trackItem( 'advanced-toggle', { expanded: ! showAdvanced } );
+								setShowAdvanced( ! showAdvanced );
+							} }
+						>
+							{ showAdvanced ? __( 'Hide advanced settings' ) : __( 'Show advanced settings' ) }
+						</Button>
+					)
+				}
+			/>
+			<SummaryButtonList>
+				{ showAdvanced ? [ ...buttonListItems, ...advancedButtonListItems ] : buttonListItems }
+			</SummaryButtonList>
 		</VStack>
 	);
 }

@@ -32,6 +32,7 @@ import PointToWpcomNotice from './point-to-wpcom-notice';
 import DomainOverviewRegistration from './registration';
 import { useRenewalNote } from './renewal-summary';
 import DomainOverviewSettings from './settings';
+import DomainOverviewSslStatus from './ssl-status';
 import TransferredDomainDetails from './transferred-domain-details';
 
 export default function DomainOverview() {
@@ -107,13 +108,11 @@ export default function DomainOverview() {
 						}
 						title={ wrappableDomainName }
 						description={
-							<HStack spacing={ 2 } alignment="center" justify="flex-start">
+							<HStack spacing={ 2 } alignment="center" justify="flex-start" wrap>
 								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
 									<Badge>{ getDomainTypeLabel( domain ) }</Badge>
 								) }
-								{ domain.ssl_status === 'active' && (
-									<Badge intent="stable">{ __( 'SSL active' ) }</Badge>
-								) }
+								<DomainOverviewSslStatus domain={ domain } />
 								<span>
 									{ [ getRegistrationNote(), renewalNote ].filter( Boolean ).join( ' · ' ) }
 								</span>
