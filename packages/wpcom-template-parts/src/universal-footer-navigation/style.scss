@@ -1345,12 +1345,21 @@
 		@media ( max-width: 1151px ) {
 			flex-wrap: wrap;
 			row-gap: 0;
+			column-gap: 11px;
 			font-size: 15px;
+			font-weight: 500;
+			color: #787c82;
 
 			/* Half a pixel down, so the larger caps centre on the wordmark. */
 			.lp-icon--custom-automattic-footer {
 				margin-top: 1px;
 			}
+		}
+	}
+
+	@media ( max-width: 1151px ) {
+		&.wpcom-global-nav-footer--dark .lp-footer-bottom__branding .lp-flex--inline {
+			font-weight: 400;
 		}
 	}
 
