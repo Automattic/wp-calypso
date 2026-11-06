@@ -11,6 +11,7 @@ import { handleOAuthCallback } from './auth/oauth-callback';
 import { loadPreferencesHelper } from './dev-tools/preferences';
 import Layout from './layout';
 import { handleUncaughtError } from './logger';
+import { removeOriginSiteIdParam } from './omnibar/site';
 import limitTotalSnackbars from './snackbars/limit-total-snackbars';
 import type { AppConfig } from './context';
 
@@ -26,6 +27,8 @@ function boot( config: AppConfig ) {
 	if ( handleOAuthCallback() ) {
 		return;
 	}
+
+	removeOriginSiteIdParam();
 
 	maybeInitializeSupportSession( wpcom );
 	loadDevHelpers();
