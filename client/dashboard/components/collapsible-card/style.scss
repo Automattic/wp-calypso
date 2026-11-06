@@ -6,6 +6,7 @@
 	.collapsible-card__toggle svg {
 		transition: transform 0.2s ease-in-out;
 		fill: $gray-700;
+		color: $gray-700;
 	}
 
 	&.collapsed .collapsible-card__toggle svg {

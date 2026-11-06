@@ -46,11 +46,13 @@
 
 		svg.reader-external path {
 			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
 		}
 
 		svg.reader-follow-conversation path,
 		svg.reader-following-conversation path {
 			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
 
 			&.status {
 				fill: none;

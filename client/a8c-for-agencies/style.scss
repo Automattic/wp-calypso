@@ -193,6 +193,7 @@
 
 			svg {
 				fill: var(--color-primary-50);
+				color: var(--color-primary-50);
 				margin-inline-start: 4px;
 			}
 		}
@@ -225,6 +226,7 @@
 
 		svg {
 			fill: var(--color-text-white);
+			color: var(--color-text-white);
 		}
 
 		&.is-busy {
@@ -232,6 +234,7 @@
 
 			svg {
 				fill: var(--color-text);
+				color: var(--color-text);
 			}
 		}
 	}
@@ -760,6 +763,7 @@ html {
 
 		svg {
 			fill: var(--color-text-white);
+			color: var(--color-text-white);
 		}
 	}
 

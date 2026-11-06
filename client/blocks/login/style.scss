@@ -131,6 +131,7 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 	& > svg:not(.social-icons__mail):not(.jetpack-logo) path {
 		fill: #fff;
+		color: #fff;
 	}
 
 	& > svg.social-icons__mail {
@@ -143,10 +144,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 	& > svg.jetpack-logo {
 		polygon {
 			fill: var(--studio-wordpress-blue, #3858e9);
+			color: var(--studio-wordpress-blue, #3858e9);
 		}
 
 		path {
 			fill: #fff;
+			color: #fff;
 		}
 	}
 

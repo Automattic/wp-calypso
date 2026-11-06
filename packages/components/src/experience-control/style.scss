@@ -71,6 +71,7 @@ $experience-types: (
 	&:has(input[type="radio"]:checked) {
 		svg path {
 			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
 		}
 	}
 }

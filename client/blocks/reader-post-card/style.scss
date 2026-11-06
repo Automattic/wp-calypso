@@ -43,6 +43,7 @@
 		.reader-follow-feed {
 			path {
 				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
 			}
 		}
 	}
@@ -52,6 +53,7 @@
 		svg {
 			path {
 				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
 			}
 		}
 	}
@@ -672,6 +674,7 @@
 	.like-button.is-liked {
 		svg.reader-external path {
 			fill: var(--color-link);
+			color: var(--color-link);
 		}
 
 		svg.reader-comment path,
@@ -686,6 +689,7 @@
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var(--color-link);
+			color: var(--color-link);
 		}
 	}
 }
@@ -713,6 +717,7 @@
 		svg,
 		svg path {
 			fill: currentColor;
+			color: inherit;
 		}
 
 		.follow-button__label {

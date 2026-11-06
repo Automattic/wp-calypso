@@ -63,10 +63,12 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-green-80);
+						color: var(--studio-green-80);
 					}
 
 					.settings-header__badge-indicator svg {
 						fill: var(--studio-green-50);
+						color: var(--studio-green-50);
 					}
 				}
 
@@ -76,6 +78,7 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-orange-40);
+						color: var(--studio-orange-40);
 					}
 				}
 
@@ -85,6 +88,7 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-yellow-80);
+						color: var(--studio-yellow-80);
 						margin-right: 0;
 						margin-left: 4px;
 					}
@@ -96,6 +100,7 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-gray-80);
+						color: var(--studio-gray-80);
 					}
 				}
 			}

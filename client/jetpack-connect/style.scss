@@ -1492,6 +1492,7 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 		svg {
 			fill: #008a20;
+			color: #008a20;
 			margin-right: 8px;
 			min-width: 20px;
 		}
@@ -1596,6 +1597,7 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 			svg {
 				fill: $gray-600;
+				color: $gray-600;
 			}
 		}
 
@@ -1787,6 +1789,7 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 				svg {
 					fill: var( --wp-admin-theme-color );
+					color: var( --wp-admin-theme-color );
 				}
 			}
 		}

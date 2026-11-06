@@ -76,7 +76,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 							<Icon
 								icon={ published }
 								size={ 32 }
-								style={ { color: 'var(--dashboard__foreground-color-success)', fill: 'none' } }
+								style={ { color: 'var(--dashboard__foreground-color-success)' } }
 							/>
 						) }
 						{ isCurrent && <Spinner className="static-site-import-card__spinner" /> }
@@ -84,7 +84,7 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 							<Icon
 								icon={ border }
 								size={ 32 }
-								style={ { color: 'var(--dashboard__text-muted-color)', fill: 'none' } }
+								style={ { color: 'var(--dashboard__text-muted-color)' } }
 							/>
 						) }
 						<Text variant={ isDone || isCurrent ? undefined : 'muted' }>{ item.label }</Text>
@@ -145,7 +145,7 @@ export function StaticSiteImportFailed( {
 						<Icon
 							icon={ caution }
 							size={ 24 }
-							style={ { color: 'var(--dashboard__foreground-color-error)', fill: 'none' } }
+							style={ { color: 'var(--dashboard__foreground-color-error)' } }
 						/>
 						<Heading level={ 2 } size={ 20 } weight={ 600 }>
 							{ __( 'Your move stopped' ) }

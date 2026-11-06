@@ -15,12 +15,14 @@
 
 	svg {
 		fill: var(--color-text-subtle);
+		color: var(--color-text-subtle);
 		opacity: 0.6;
 	}
 
 	&:hover svg,
 	&:active svg {
 		fill: var(--color-link);
+		color: var(--color-link);
 		opacity: 1;
 	}
 

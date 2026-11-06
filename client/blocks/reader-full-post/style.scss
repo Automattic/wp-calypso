@@ -48,6 +48,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.comment-button__icon path {
 		fill: var( --color-neutral-0 );
+		color: var( --color-neutral-0 );
 	}
 }
 
@@ -369,12 +370,14 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 	}
 
 	.post-edit-button:hover {
 		svg {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 
 		.post-edit-button__label {
@@ -580,6 +583,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 	}
 
@@ -588,6 +592,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		svg.reader-external path {
 			stroke: var( --color-link );
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 
 		.reader-share__button-label {
@@ -633,6 +638,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 	}
 }

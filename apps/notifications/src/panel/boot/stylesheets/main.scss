@@ -875,6 +875,7 @@ $with-sidebar-min-page-width: 1114px;
 
 				rect {
 					fill: var(--color-link);
+					color: var(--color-link);
 				}
 
 				g {
@@ -890,6 +891,7 @@ $with-sidebar-min-page-width: 1114px;
 			&:hover {
 				svg.gridicons-pinned path {
 					fill: var(--color-link);
+					color: var(--color-link);
 				}
 			}
 		}

@@ -183,6 +183,7 @@
 	svg {
 		flex-shrink: 0;
 		fill: var( --wpds-color-foreground-content-neutral-weak, currentColor );
+		color: var( --wpds-color-foreground-content-neutral-weak, currentColor );
 	}
 }
 

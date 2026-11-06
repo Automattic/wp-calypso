@@ -96,6 +96,7 @@ $color-yellow: var(--studio-yellow-50);
 
 	span svg {
 		fill: $fill;
+		color: $fill;
 
 		path {
 			stroke: $stroke;

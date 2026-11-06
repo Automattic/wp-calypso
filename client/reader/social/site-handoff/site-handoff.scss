@@ -24,6 +24,7 @@
 	// readable against the theme primary background.
 	.is-selected .social-site-handoff-check path {
 		fill: var(--color-text-inverted);
+		color: var(--color-text-inverted);
 	}
 }
 
