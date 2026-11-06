@@ -136,8 +136,9 @@ describe( 'Static site import flow', () => {
 			const steps = staticSiteImportFlow.initialize();
 
 			expect( window.location.replace ).not.toHaveBeenCalled();
-			expect( steps.find( ( step ) => step.slug === STEPS.STATIC_SITE_IMPORT_READING.slug ) )
-				.toMatchObject( { requiresLoggedInUser: true } );
+			expect(
+				steps.find( ( step ) => step.slug === STEPS.STATIC_SITE_IMPORT_READING.slug )
+			).toMatchObject( { requiresLoggedInUser: true } );
 		} );
 	} );
 
