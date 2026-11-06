@@ -157,7 +157,6 @@ describe( '<Domains>', () => {
 
 		await screen.findByRole( 'group', { name: 'domain01.com' } );
 		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
-		expect( screen.getByRole( 'button', { name: 'Layout' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'View options' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: /filter/i } ) ).toBeVisible();
 	} );
@@ -216,22 +215,6 @@ describe( '<Domains>', () => {
 		expect( domainNames() ).toHaveLength( 0 );
 	} );
 
-	test( 'switches to a table with bulk selection and tracks the change', async () => {
-		const user = userEvent.setup();
-		mockApis( [ mockDomain( 1 ) ] );
-		const { recordTracksEvent } = render( <Domains />, { queryClient: apiQueryClient } );
-
-		await user.click( await screen.findByRole( 'button', { name: 'Layout' } ) );
-		await user.click( await screen.findByRole( 'menuitemradio', { name: /table/i } ) );
-
-		const table = await screen.findByRole( 'table' );
-		expect( within( table ).getAllByRole( 'checkbox' ).length ).toBeGreaterThan( 0 );
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_domains_view_type_changed',
-			{ type: 'table' }
-		);
-	} );
-
 	test( 'records the layout an action was used from', async () => {
 		const user = userEvent.setup();
 		mockApis( [ mockDomain( 1 ) ] );
@@ -247,24 +230,22 @@ describe( '<Domains>', () => {
 		} );
 	} );
 
-	test( 'keeps a saved table view without a blank column for the removed SSL field', async () => {
+	test( 'shows a saved table view as cards with no bulk selection', async () => {
 		mockApis( [ mockDomain( 1 ) ], {
 			'hosting-dashboard-dataviews-view-domains': {
 				type: 'table',
 				titleField: 'domain',
 				showMedia: false,
-				fields: [ 'blog_name', 'ssl_status', 'expiry', 'domain_status' ],
+				fields: [ 'blog_name', 'expiry', 'domain_status' ],
 			},
 		} );
 
 		render( <Domains /> );
 
-		const table = await screen.findByRole( 'table' );
-		const headers = within( table ).getAllByRole( 'columnheader' );
-		expect( headers.map( ( header ) => header.textContent ) ).not.toContain( 'SSL' );
-		// Selection, name, site, paid until, status and actions.
-		expect( headers ).toHaveLength( 6 );
-		expect( screen.queryByRole( 'group', { name: 'domain01.com' } ) ).not.toBeInTheDocument();
+		await screen.findByRole( 'group', { name: 'domain01.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'checkbox' ) ).not.toBeInTheDocument();
+		expect( screen.queryByRole( 'button', { name: 'Layout' } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'moves a saved page size that is no longer offered to the nearest one', async () => {
@@ -292,8 +273,8 @@ describe( '<Domains>', () => {
 		// `userPreferenceOptimisticMutation` writes to the API package's client.
 		render( <Domains />, { queryClient: apiQueryClient } );
 
-		await user.click( await screen.findByRole( 'button', { name: 'Layout' } ) );
-		await user.click( await screen.findByRole( 'menuitemradio', { name: /table/i } ) );
+		await user.click( await screen.findByRole( 'button', { name: 'View options' } ) );
+		await user.click( await screen.findByRole( 'radio', { name: '24' } ) );
 
 		await waitFor( () => expect( savedPreferences ).not.toHaveLength( 0 ) );
 		expect( savedPreferences[ 0 ] ).toHaveProperty( [

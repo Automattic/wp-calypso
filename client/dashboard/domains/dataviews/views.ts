@@ -1,5 +1,5 @@
 import type { AnalyticsClient } from '../../app/analytics';
-import type { SupportedLayouts, View } from '@wordpress/dataviews';
+import type { SupportedLayouts, View, ViewGrid } from '@wordpress/dataviews';
 
 // Base properties that are common to all view types
 const BASE_VIEW_PROPS: View = {
@@ -51,6 +51,10 @@ export const DOMAINS_LIST_LAYOUTS: SupportedLayouts = {
 	grid: DOMAINS_LIST_GRID_LAYOUT,
 };
 
+export const DOMAINS_LIST_GRID_ONLY_LAYOUTS: SupportedLayouts = {
+	grid: DOMAINS_LIST_GRID_LAYOUT,
+};
+
 export const DOMAINS_LIST_CONFIG = {
 	perPageSizes: [ 12, 24, 48, 96 ],
 };
@@ -73,7 +77,7 @@ export function sanitizeDomainFields( fields: View[ 'fields' ] ) {
 }
 
 // Saved views can hold a page size from before these options, which the page size control couldn't show as selected.
-export function sanitizeDomainsListPageSize( view: View ): View {
+export function sanitizeDomainsListPageSize< T extends View >( view: T ): T {
 	const { perPage } = view;
 	const { perPageSizes } = DOMAINS_LIST_CONFIG;
 	if ( ! perPage || perPageSizes.includes( perPage ) ) {
@@ -87,16 +91,16 @@ export function sanitizeDomainsListPageSize( view: View ): View {
 }
 
 /*
- * DataViews renders nothing for a layout it wasn't given, including its reset control. A saved view can name one
- * when a build that offers it shares the user's preferences, or after that layout is removed, so show it as a table instead.
+ * DataViews renders nothing for a layout it wasn't given, including its reset control. A saved view can still name
+ * the table, or another layout when a build that offers it shares the user's preferences, so show it as cards instead.
  */
-export function sanitizeDomainsListLayout( view: View ): View {
-	if ( view.type in DOMAINS_LIST_LAYOUTS ) {
+export function sanitizeDomainsListLayout( view: View ): ViewGrid {
+	if ( view.type === 'grid' ) {
 		return view;
 	}
 
 	const { layout, ...viewWithoutLayout } = view;
-	return { ...viewWithoutLayout, type: 'table', layout: DEFAULT_VIEW.layout } as View;
+	return { ...viewWithoutLayout, ...DOMAINS_LIST_GRID_LAYOUT, type: 'grid' } as ViewGrid;
 }
 
 export function recordDomainViewChanges(

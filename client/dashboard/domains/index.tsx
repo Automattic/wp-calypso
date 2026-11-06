@@ -21,7 +21,7 @@ import {
 	useFields,
 	DOMAINS_LIST_CONFIG,
 	DOMAINS_LIST_DEFAULT_VIEW,
-	DOMAINS_LIST_LAYOUTS,
+	DOMAINS_LIST_GRID_ONLY_LAYOUTS,
 	recordDomainViewChanges,
 	sanitizeDomainFields,
 	sanitizeDomainsListLayout,
@@ -77,7 +77,6 @@ function Domains() {
 	);
 
 	const hasDomains = domains.length > 0;
-	const isCardsLayout = view.type === 'grid';
 
 	return (
 		<>
@@ -109,12 +108,10 @@ function Domains() {
 							} }
 							onReset={ resetView }
 							view={ view }
-							// The cards render their own actions, and DataViews would add a bulk selection footer.
-							actions={ isCardsLayout ? undefined : actions }
 							search
 							paginationInfo={ paginationInfo }
 							getItemId={ getDomainId }
-							defaultLayouts={ DOMAINS_LIST_LAYOUTS }
+							defaultLayouts={ DOMAINS_LIST_GRID_ONLY_LAYOUTS }
 							config={ DOMAINS_LIST_CONFIG }
 							empty={
 								<DataViewsEmptyStateLayout
@@ -126,14 +123,12 @@ function Domains() {
 								</DataViewsEmptyStateLayout>
 							}
 						>
-							{ isCardsLayout ? (
-								<DomainCardsLayout
-									data={ filteredData }
-									fields={ fields }
-									actions={ actions }
-									view={ view }
-								/>
-							) : undefined }
+							<DomainCardsLayout
+								data={ filteredData }
+								fields={ fields }
+								actions={ actions }
+								view={ view }
+							/>
 						</DataViews>
 					</DataViewsCard>
 				) }
