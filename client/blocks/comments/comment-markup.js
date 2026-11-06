@@ -70,7 +70,9 @@ const inline = ( node ) =>
 const list = ( node, depth = 0 ) => {
 	const items = Array.from( node.children ).filter( ( item ) => item.tagName === 'LI' );
 	const reversed = node.hasAttribute( 'reversed' );
-	const start = Number( node.getAttribute( 'start' ) ) || ( reversed ? items.length : 1 );
+	const start = node.hasAttribute( 'start' )
+		? Number( node.getAttribute( 'start' ) )
+		: ( reversed && items.length ) || 1;
 
 	return items.flatMap( ( item, index ) => {
 		const marker = node.tagName === 'OL' ? `${ reversed ? start - index : start + index }.` : '-';

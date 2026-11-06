@@ -36,6 +36,7 @@ describe( 'blocksToHtml', () => {
 	it( 'numbers lists from their start, and down when reversed', () => {
 		expect( blocksToHtml( '<ol start="5"><li>A</li><li>B</li></ol>' ) ).toBe( '5. A\n6. B' );
 		expect( blocksToHtml( '<ol reversed><li>A</li><li>B</li></ol>' ) ).toBe( '2. A\n1. B' );
+		expect( blocksToHtml( '<ol start="0"><li>A</li></ol>' ) ).toBe( '0. A' );
 	} );
 
 	it( 'keeps code in one piece for wpautop', () => {

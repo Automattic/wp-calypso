@@ -92,7 +92,7 @@ class PostCommentForm extends Component {
 			// Escape closes an empty editor, as clicking away does, unless it's closing one of the
 			// editor's menus. Focus goes back to the textarea, so the keyboard doesn't lose its place.
 			if (
-				this.props.editorSettings &&
+				this.hasEditor() &&
 				this.state.editorOpen &&
 				this.canCloseEditor() &&
 				! event.target.closest?.( '.components-popover' )
@@ -153,6 +153,11 @@ class PostCommentForm extends Component {
 		this.setState( { haveFocus: false } );
 	};
 
+	// The editor's settings are in and its script hasn't failed: inside the inbox only.
+	hasEditor() {
+		return !! this.props.editorSettings && ! this.state.editorFailed;
+	}
+
 	// An empty editor shrinks back to the textarea.
 	canCloseEditor() {
 		return ! this.props.parentCommentId && ! this.hasCommentText();
@@ -165,6 +170,12 @@ class PostCommentForm extends Component {
 	};
 
 	handleEditorClosed = () => {
+		// Words typed while it was closing keep it open.
+		if ( ! this.canCloseEditor() ) {
+			this.escaped = false;
+			this.setState( { editorClosing: false } );
+			return;
+		}
 		// An emptied list, quote, or code block is still markup, which would keep the editor up.
 		this.resetCommentText();
 		this.resetEditor( () => {
@@ -232,9 +243,9 @@ class PostCommentForm extends Component {
 		}
 
 		// A site without block comments doesn't render the editor's block markup, so it gets plain
-		// HTML. A textarea's words go as typed.
+		// HTML. The editor's markup opens with a block; a textarea's words go as typed.
 		const content =
-			this.props.editorSettings && isCommentHtmlOnly( post ) && isBlockMarkup( commentText )
+			this.hasEditor() && isCommentHtmlOnly( post ) && commentText.startsWith( '<!-- wp:' )
 				? blocksToHtml( commentText )
 				: commentText;
 
@@ -320,8 +331,7 @@ class PostCommentForm extends Component {
 		const isReply = !! this.props.parentCommentId;
 		const hasText = this.hasCommentText();
 		const showEditor =
-			this.props.editorSettings &&
-			! this.state.editorFailed &&
+			this.hasEditor() &&
 			( isReply || this.state.editorOpen || isBlockMarkup( this.getCommentText() ) );
 
 		// Under the editor, Send shows once there's something to send.

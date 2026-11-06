@@ -196,6 +196,19 @@ describe( 'PostCommentForm', () => {
 			expect( await postReply( content ) ).toBe( true );
 		} );
 
+		it( 'sends words that only mention block markup as typed', async () => {
+			mockEditorSettings( 200, editorSettings );
+			const content = 'Try <!-- wp:more --> in a post';
+			const post = {
+				...defaultPost,
+				discussion: { ...defaultPost.discussion, comments_allow_blocks: false },
+			};
+			renderForm( { post, commentText: content }, { inbox: true } );
+
+			await screen.findByRole( 'textbox', { name: 'Comment' } );
+			expect( await postReply( content ) ).toBe( true );
+		} );
+
 		it( 'keeps the textarea when the editor settings fail to load', async () => {
 			const settings = mockEditorSettings( 404, { code: 'editor_not_available' } );
 			renderForm( { commentText: 'Plain words' }, { inbox: true } );
