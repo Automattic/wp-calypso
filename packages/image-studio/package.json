@@ -64,7 +64,7 @@
 		"@wordpress/editor": "^14.51.0",
 		"@wordpress/hooks": "^5.1.0",
 		"@wordpress/i18n": "^7.1.0",
-		"@wordpress/icons": "^15.5.0",
+		"@wordpress/icons": "^20.0.0",
 		"@wordpress/plugins": "^7.48.0",
 		"@wordpress/primitives": "^5.1.0",
 		"@wordpress/url": "^5.1.0",
