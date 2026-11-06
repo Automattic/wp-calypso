@@ -153,14 +153,15 @@ function AccessOffNotice( {
 	);
 }
 
-function CopyFallback( { text }: { text: string } ) {
+function CopyFallback( { failure }: { failure: { text: string } } ) {
+	const { text } = failure;
 	const fieldRef = useRef< HTMLTextAreaElement >( null );
 
 	// Select the text so people only need to press the copy shortcut.
 	useEffect( () => {
 		fieldRef.current?.focus();
 		fieldRef.current?.select();
-	}, [ text ] );
+	}, [ failure ] );
 
 	return (
 		<Notice variant="warning" title={ __( 'Your browser blocked copying' ) }>
@@ -192,7 +193,7 @@ export default function McpConnectCard( {
 	const { recordTracksEvent } = useAnalytics();
 	const tracksAudienceProps = useMcpTracksAudienceProps();
 	const [ copiedKey, setCopiedKey ] = useState< string | null >( null );
-	const [ failedText, setFailedText ] = useState< string | null >( null );
+	const [ failedCopy, setFailedCopy ] = useState< { text: string } | null >( null );
 	const copiedTimeout = useRef< ReturnType< typeof setTimeout > >( undefined );
 	const gridRef = useRef< HTMLUListElement >( null );
 	const wasEnabled = useRef( mcpEnabled );
@@ -226,10 +227,11 @@ export default function McpConnectCard( {
 		try {
 			await navigator.clipboard.writeText( text );
 		} catch {
-			setFailedText( text );
+			// A new object each time, so a repeat failure selects the text again.
+			setFailedCopy( { text } );
 			return false;
 		}
-		setFailedText( null );
+		setFailedCopy( null );
 		setCopiedKey( key );
 		speak( __( 'Copied' ) );
 		clearTimeout( copiedTimeout.current );
@@ -275,7 +277,7 @@ export default function McpConnectCard( {
 							</li>
 						) ) }
 					</ul>
-					{ failedText !== null && <CopyFallback text={ failedText } /> }
+					{ failedCopy && <CopyFallback failure={ failedCopy } /> }
 				</VStack>
 			</CardBody>
 			<CardFooter className="mcp-connect__footer">

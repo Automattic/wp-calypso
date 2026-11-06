@@ -140,6 +140,22 @@ describe( '<McpConnectCard />', () => {
 		await waitFor( () => expect( field ).not.toBeInTheDocument() );
 	} );
 
+	test( 'selects the text again when the same copy fails twice', async () => {
+		writeText.mockRejectedValue( new Error( 'Blocked' ) );
+		renderCard();
+
+		const tile = screen.getByRole( 'button', { name: 'Claude Code' } );
+		await userEvent.click( tile );
+		const field = await screen.findByRole( 'textbox', { name: 'Your browser blocked copying' } );
+		await userEvent.click( tile );
+
+		await waitFor( () => expect( field ).toHaveFocus() );
+		expect( ( field as HTMLTextAreaElement ).selectionStart ).toBe( 0 );
+		expect( ( field as HTMLTextAreaElement ).selectionEnd ).toBe(
+			( field as HTMLTextAreaElement ).value.length
+		);
+	} );
+
 	test( 'copies the prompt that lets an agent connect itself', async () => {
 		const { recordTracksEvent } = renderCard();
 
