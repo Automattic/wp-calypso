@@ -113,7 +113,7 @@ describe( 'ConversationList', () => {
 
 		const rows = screen.getAllByRole( 'button', { name: /^Commented post/ } );
 		expect( rows ).toHaveLength( 2 );
-		expect( rows[ 0 ] ).toHaveTextContent( 'You commented' );
+		expect( rows[ 0 ] ).not.toHaveTextContent( 'You commented' );
 		expect( rows[ 0 ] ).toHaveTextContent( 'My comment' );
 		expect( rows[ 0 ] ).toHaveTextContent( '3 new' );
 		expect( rows[ 1 ] ).not.toHaveTextContent( 'new' );

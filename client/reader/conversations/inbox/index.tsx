@@ -80,6 +80,8 @@ interface Opened {
 	unread?: Unread;
 	// Set when opened from Your comments, which starts the thread at that comment.
 	anchor?: { key: string; commentId: number };
+	// Keeps the header and highlights when a search filters the conversation out of the list.
+	conversation?: Conversation;
 }
 
 export function ConversationsInbox( { siteId, postId }: Props ) {
@@ -134,7 +136,8 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const activeOpened = opened?.key === selectedKey ? opened : undefined;
 	const selectedItemKey = tab === 'yours' ? activeOpened?.anchor?.key : selectedKey;
 	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedItemKey );
-	const selected = conversations.find( ( { key } ) => key === selectedKey );
+	const found = conversations.find( ( { key } ) => key === selectedKey );
+	const selected = found ?? activeOpened?.conversation;
 	const [ previousKey, setPreviousKey ] = useState( selectedKey );
 	if ( selectedKey !== previousKey ) {
 		setPreviousKey( selectedKey );
@@ -179,26 +182,46 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	}, [ isWaitingForNotes, notes, siteId, postId, markRead ] );
 
+	const open = useCallback(
+		( next: Opened, noteIds = next.unread?.unreadNoteIds ) => {
+			setOpened( next );
+			if ( noteIds?.length ) {
+				markRead( noteIds );
+			}
+		},
+		[ markRead ]
+	);
+
+	// A conversation opened from the URL, or as the first one, is read like one picked from the list.
+	useEffect( () => {
+		// A conversation opened from the list sets `opened` before the URL catches up.
+		if ( ! selectedKey || opened || ( ! found && conversationsQuery.isLoading ) ) {
+			return;
+		}
+		open( { key: selectedKey, unread: found, conversation: found } );
+	}, [ selectedKey, opened, found, conversationsQuery.isLoading, open ] );
+
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		const key = getConversationKey( item.siteId, item.postId );
 		const conversation = conversations.find( ( candidate ) => candidate.key === key );
 		const unread: Unread | undefined = conversation ?? getUnreadFromNotes( notes, item );
 		const unreadNoteIds = unread?.unreadNoteIds;
 		const previous = key === opened?.key ? opened.unread : undefined;
-		setOpened( {
-			key,
-			// Opening it again adds any notes that came in since, such as past the route's 50 ids.
-			unread: previous
-				? {
-						unreadNoteIds: union( previous.unreadNoteIds, unread?.unreadNoteIds ),
-						unreadCommentIds: union( previous.unreadCommentIds, unread?.unreadCommentIds ),
-					}
-				: unread,
-			anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
-		} );
-		if ( unreadNoteIds?.length ) {
-			markRead( unreadNoteIds );
-		}
+		open(
+			{
+				key,
+				// Opening it again adds any notes that came in since, such as past the route's 50 ids.
+				unread: previous
+					? {
+							unreadNoteIds: union( previous.unreadNoteIds, unread?.unreadNoteIds ),
+							unreadCommentIds: union( previous.unreadCommentIds, unread?.unreadCommentIds ),
+						}
+					: unread,
+				anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
+				conversation,
+			},
+			unreadNoteIds
+		);
 		if ( key === selectedKey ) {
 			return;
 		}

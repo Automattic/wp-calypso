@@ -189,9 +189,15 @@ describe( 'ConversationsInbox', () => {
 		expect( page.replace ).not.toHaveBeenCalled();
 	} );
 
+	it( 'marks the conversation from the URL as read once the list loads', async () => {
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1 ] ] ) );
+	} );
+
 	it( 'marks a conversation as read and navigates to it when opened from the list', async () => {
 		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		renderInbox( { siteId: '10', postId: '300' } );
 
 		await user.click( await findRow( '10-p-200' ) );
 
@@ -201,7 +207,7 @@ describe( 'ConversationsInbox', () => {
 
 	it( 'does not mark an already-read conversation as read when opened', async () => {
 		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		renderInbox();
 
 		await user.click( await findRow( '10-p-300' ) );
 
@@ -247,7 +253,7 @@ describe( 'ConversationsInbox', () => {
 		await findRow( '10-p-200' );
 		await user.click( screen.getByRole( 'button', { name: 'previous' } ) );
 
-		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1 ] ] ) );
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 2 ], [ 1 ] ] ) );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' );
 	} );
 
@@ -313,9 +319,9 @@ describe( 'ConversationsInbox', () => {
 
 	it( 'marks a comment read on a post the list has not loaded', async () => {
 		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		renderInbox( { siteId: '10', postId: '300' } );
 
-		await findRow( '10-p-100' );
+		await findRow( '10-p-300' );
 		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
 		await user.click( await findRow( '10-p-400-c-41' ) );
 
@@ -428,9 +434,9 @@ describe( 'ConversationsInbox', () => {
 
 		it( 'marks every loaded unread note as read in one call and records the count', async () => {
 			const user = userEvent.setup();
-			renderInbox( { siteId: '10', postId: '100' } );
+			renderInbox( { siteId: '10', postId: '300' } );
 
-			await findRow( '10-p-100' );
+			await findRow( '10-p-300' );
 			await user.click( screen.getByRole( 'button', { name: 'Mark 2 as read' } ) );
 
 			await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1, 2 ] ] ) );
