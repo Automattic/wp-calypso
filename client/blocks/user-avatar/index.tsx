@@ -1,8 +1,6 @@
 import './style.scss';
 
 import { UserResponse } from '@automattic/api-core';
-import { userQuery } from '@automattic/api-queries';
-import { useQueryClient } from '@tanstack/react-query';
 import { Popover } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { useCallback, useRef, useState } from 'react';
@@ -55,7 +53,6 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 	) : (
 		<UserAvatarDefaultIcon iconSize={ size } />
 	);
-	const queryClient = useQueryClient();
 
 	// Compute the placement of the hovercard based on available space in the viewport.
 	// This is done after we load the user data, so that we can take into account the height
@@ -101,13 +98,8 @@ export default function UserAvatar( { user, size = 32, hideHovercard = false }: 
 
 	const handleShowHovercard = useCallback( () => {
 		clearHoverTimer();
-		// Fetched on hover, not on mount, so a long thread doesn't load every commenter's profile.
-		const wpcomIdOrLogin = user?.wpcom_login || user?.wpcom_id;
-		if ( wpcomIdOrLogin && ! hideHovercard ) {
-			queryClient.prefetchQuery( userQuery( user?.wpcom_login, user?.wpcom_id ) );
-		}
 		hoverTimerRef.current = setTimeout( () => setIsHovered( true ), 200 );
-	}, [ clearHoverTimer, hideHovercard, queryClient, user?.wpcom_id, user?.wpcom_login ] );
+	}, [ clearHoverTimer ] );
 
 	const handleHideHovercard = useCallback( () => {
 		clearHoverTimer();

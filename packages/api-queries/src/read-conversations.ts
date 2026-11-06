@@ -104,15 +104,19 @@ export const readConversationsCommentsQuery = ( {
  * Clears the marked notes from every loaded conversation. Each list lowers its own
  * `unread_total` by the conversations it clears, so lists cached at different
  * times don't lower each other's totals.
+ * @returns True when a conversation still has unread notes past the 50 the route lists,
+ *          which only a refetch can show.
  */
 function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: number[] ) {
 	const ids = new Set( noteIds );
+	let hasUnlisted = false;
 	queryClient.setQueriesData< ReadConversationsInfiniteData >(
 		{ queryKey: getReadConversationsListQueryKey() },
 		( data ) => {
 			if ( ! data?.pages.length ) {
 				return data;
 			}
+			let changed = false;
 			let cleared = 0;
 			const pages = data.pages.map( ( page ) => ( {
 				...page,
@@ -122,10 +126,14 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 					if ( ! marked ) {
 						return conversation;
 					}
+					changed = true;
 					const previousCount = conversation.unread_count ?? 0;
 					const unreadCount = Math.max( 0, previousCount - marked );
 					if ( previousCount && ! unreadCount ) {
 						cleared++;
+					}
+					if ( unreadCount > unread.length ) {
+						hasUnlisted = true;
 					}
 					return {
 						...conversation,
@@ -137,6 +145,9 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 					};
 				} ),
 			} ) );
+			if ( ! changed ) {
+				return data;
+			}
 			// Only the first page's total is read.
 			pages[ 0 ] = {
 				...pages[ 0 ],
@@ -146,28 +157,13 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 			return { ...data, pages };
 		}
 	);
+	return hasUnlisted;
 }
 
-/**
- * True when a conversation holding one of these notes has more unread notes than the
- * route listed, so clearing the listed ones can't tell whether it's read now.
- */
-function hasUnlistedNotes( queryClient: QueryClient, noteIds: number[] ) {
-	const ids = new Set( noteIds );
-	return queryClient
-		.getQueriesData< ReadConversationsInfiniteData >( {
-			queryKey: getReadConversationsListQueryKey(),
-		} )
-		.some( ( [ , data ] ) =>
-			data?.pages.some( ( page ) =>
-				page.conversations.some(
-					( { unread_note_ids, unread_count } ) =>
-						( unread_count ?? 0 ) > unread_note_ids.length &&
-						unread_note_ids.some( ( id ) => ids.has( id ) )
-				)
-			)
-		);
-}
+const markCachedRead = ( queryClient: QueryClient, noteIds: number[] ) => {
+	markCachedNotesRead( queryClient, noteIds );
+	return markCachedConversationNotesRead( queryClient, noteIds );
+};
 
 /**
  * Marks in flight per QueryClient. Tracked here rather than with `isMutating()`, which
@@ -200,31 +196,23 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 				noteIds: [],
 				needsRefetch: false,
 			};
-			pendingMarks.set( queryClient, {
-				count: pending.count + 1,
-				noteIds: [ ...pending.noteIds, ...noteIds ],
-				needsRefetch: pending.needsRefetch || hasUnlistedNotes( queryClient, noteIds ),
-			} );
+			pending.count++;
+			pending.noteIds.push( ...noteIds );
+			pendingMarks.set( queryClient, pending );
 			await Promise.all(
 				getMarkReadQueryKeys().map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
 			);
-			markCachedNotesRead( queryClient, noteIds );
-			markCachedConversationNotesRead( queryClient, noteIds );
+			pending.needsRefetch ||= markCachedRead( queryClient, noteIds );
 		},
-		// Refetching rather than restoring a snapshot keeps other marks made meanwhile, and
-		// waiting for the last one keeps a refetch from bringing back what they cleared.
+		// Waiting for the last mark keeps a refetch from bringing back what the others cleared.
 		onSettled: async ( _data, error ) => {
 			const pending = pendingMarks.get( queryClient );
 			if ( ! pending ) {
 				return;
 			}
-			const settled = {
-				...pending,
-				count: pending.count - 1,
-				needsRefetch: pending.needsRefetch || !! error,
-			};
-			if ( settled.count > 0 ) {
-				pendingMarks.set( queryClient, settled );
+			pending.count--;
+			pending.needsRefetch ||= !! error;
+			if ( pending.count > 0 ) {
 				return;
 			}
 			pendingMarks.delete( queryClient );
@@ -234,13 +222,12 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 			await Promise.all(
 				queryKeys.map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
 			);
-			markCachedNotesRead( queryClient, settled.noteIds );
-			markCachedConversationNotesRead( queryClient, settled.noteIds );
+			markCachedRead( queryClient, pending.noteIds );
 			await Promise.all(
 				queryKeys.map( ( queryKey ) =>
 					queryClient.invalidateQueries( {
 						queryKey,
-						predicate: ( query ) => settled.needsRefetch || query.state.data === undefined,
+						predicate: ( query ) => pending.needsRefetch || query.state.data === undefined,
 					} )
 				)
 			);

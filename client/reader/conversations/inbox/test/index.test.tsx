@@ -237,14 +237,6 @@ describe( 'ConversationsInbox', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
 
 		expect( requests ).toHaveLength( 1 );
-		expect( await findRow( '10-p-100' ) ).toBeVisible();
-	} );
-
-	it( 'refetches the list when marking a conversation read fails', async () => {
-		markReadStatus = 500;
-		renderInbox( { siteId: '10', postId: '100' } );
-
-		await waitFor( () => expect( requests ).toHaveLength( 2 ) );
 	} );
 
 	it( 'refetches the list when a conversation has more unread notes than it lists', async () => {

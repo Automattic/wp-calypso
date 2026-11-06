@@ -6,11 +6,9 @@ import { render, screen, act } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import UserAvatar, { UserAvatarInfo } from '../index';
 
-const mockPrefetchQuery = jest.fn();
-
 jest.mock( '@tanstack/react-query', () => ( {
 	...jest.requireActual( '@tanstack/react-query' ),
-	useQueryClient: () => ( { prefetchQuery: mockPrefetchQuery } ),
+	useQuery: jest.fn(),
 } ) );
 
 let capturedOnUserLoaded: ( ( user: UserResponse | null ) => void ) | undefined;
@@ -153,28 +151,6 @@ describe( 'UserAvatar', () => {
 		// Should appear after the delay.
 		act( () => jest.advanceTimersByTime( 200 ) );
 		expect( screen.getByTestId( 'user-hovercard' ) ).toBeInTheDocument();
-	} );
-
-	test( 'fetches the profile on hover, not on mount', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		render( <UserAvatar user={ defaultUser } /> );
-
-		expect( mockPrefetchQuery ).not.toHaveBeenCalled();
-
-		await user.hover( document.querySelector( '.user-avatar' )! );
-
-		expect( mockPrefetchQuery ).toHaveBeenCalledWith(
-			expect.objectContaining( { queryKey: [ 'user', 'testuser', {} ] } )
-		);
-	} );
-
-	test( 'does not fetch the profile on hover when hideHovercard is true', async () => {
-		const user = userEvent.setup( { advanceTimers: jest.advanceTimersByTime } );
-		render( <UserAvatar user={ defaultUser } hideHovercard /> );
-
-		await user.hover( document.querySelector( '.user-avatar' )! );
-
-		expect( mockPrefetchQuery ).not.toHaveBeenCalled();
 	} );
 
 	test( 'hides hovercard on mouse leave', async () => {
