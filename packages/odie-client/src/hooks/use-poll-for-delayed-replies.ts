@@ -69,11 +69,33 @@ export const usePollForDelayedReplies = () => {
 					if ( prev.status !== 'loaded' || prev.provider !== 'odie' || prev.odieId !== chatId ) {
 						return prev;
 					}
-					const newestId = Math.max( 0, ...prev.messages.map( ( m ) => m.message_id ?? 0 ) );
+					const knownIds = new Set( prev.messages.map( ( m ) => m.message_id ) );
 					const fresh = fetched.messages.filter(
-						( m ) => m.role === 'bot' && ( m.message_id ?? 0 ) > newestId
+						( m ) => m.role === 'bot' && !! m.message_id && ! knownIds.has( m.message_id )
 					);
-					return fresh.length ? { ...prev, messages: [ ...prev.messages, ...fresh ] } : prev;
+					if ( ! fresh.length ) {
+						return prev;
+					}
+
+					// A reply written just before the customer's next message has a lower id than the
+					// bot's answer to it, so it goes in front of that answer. The customer's own messages
+					// are added in the browser without an id: the ones right before the answer belong to
+					// the same exchange, so the reply goes in front of them too.
+					const messages = [ ...prev.messages ];
+					for ( const message of fresh ) {
+						let at = messages.findIndex(
+							( existing ) => ( existing.message_id ?? 0 ) > ( message.message_id ?? 0 )
+						);
+						if ( at === -1 ) {
+							messages.push( message );
+							continue;
+						}
+						while ( at > 0 && ! messages[ at - 1 ].message_id ) {
+							at--;
+						}
+						messages.splice( at, 0, message );
+					}
+					return { ...prev, messages };
 				} );
 			} catch {
 				// Ignored: the next tick tries again.

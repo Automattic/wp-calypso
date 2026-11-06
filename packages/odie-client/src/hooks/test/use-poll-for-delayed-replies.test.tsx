@@ -129,6 +129,36 @@ describe( 'usePollForDelayedReplies', () => {
 		expect( afterSecond ).toBe( afterFirst );
 	} );
 
+	it( 'slots in a reply that arrived just before the customer wrote again', async () => {
+		// The customer's own message is added in the browser, without an id; the bot's answer to
+		// it comes back from the send with its id, so it is already on screen when the poll resumes.
+		const laterUserMessage = { role: 'user', type: 'message', content: 'Anything?' } as Message;
+		const laterBotMessage = { ...botMessage, message_id: 5, content: 'Not yet.' };
+		mockFetchOdieChat.mockResolvedValue(
+			serverChat( [
+				userMessage,
+				botMessage,
+				delayedReply,
+				{ ...laterUserMessage, message_id: 4 },
+				laterBotMessage,
+			] )
+		);
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		const prev = makeChat( {
+			messages: [ userMessage, botMessage, laterUserMessage, laterBotMessage ],
+		} );
+		expect( applyLastUpdater( prev ).messages ).toEqual( [
+			userMessage,
+			botMessage,
+			delayedReply,
+			laterUserMessage,
+			laterBotMessage,
+		] );
+	} );
+
 	it( 'drops the result if a send is running when it arrives', async () => {
 		mockFetchOdieChat.mockResolvedValue( serverChat( [ userMessage, botMessage, delayedReply ] ) );
 		renderHook( () => usePollForDelayedReplies() );
