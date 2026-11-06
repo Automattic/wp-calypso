@@ -149,10 +149,34 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 }
 
 /**
- * Marks in flight per QueryClient. Counted here rather than with `isMutating()`,
- * which still counts marks that settle in the same tick, so none would refetch.
+ * True when a conversation holding one of these notes has more unread notes than the
+ * route listed, so clearing the listed ones can't tell whether it's read now.
  */
-const pendingMarks = new WeakMap< QueryClient, number >();
+function hasUnlistedNotes( queryClient: QueryClient, noteIds: number[] ) {
+	const ids = new Set( noteIds );
+	return queryClient
+		.getQueriesData< ReadConversationsInfiniteData >( {
+			queryKey: getReadConversationsListQueryKey(),
+		} )
+		.some( ( [ , data ] ) =>
+			data?.pages.some( ( page ) =>
+				page.conversations.some(
+					( { unread_note_ids, unread_count } ) =>
+						( unread_count ?? 0 ) > unread_note_ids.length &&
+						unread_note_ids.some( ( id ) => ids.has( id ) )
+				)
+			)
+		);
+}
+
+/**
+ * Marks in flight per QueryClient. Tracked here rather than with `isMutating()`, which
+ * still counts marks that settle in the same tick, so none would know it was the last.
+ */
+const pendingMarks = new WeakMap<
+	QueryClient,
+	{ count: number; noteIds: number[]; needsRefetch: boolean }
+>();
 
 const getMarkReadQueryKeys = () => [
 	getReadConversationsListQueryKey(),
@@ -161,16 +185,26 @@ const getMarkReadQueryKeys = () => [
 
 /**
  * Marks comment notes read and clears them from the cached conversations and notes
- * right away. Both refetch once the last overlapping mark settles. That picks up
- * notes past the route's 50 ids per conversation, undoes a failed mark, and replaces
- * anything a poll or focus refetch fetched before the mark landed.
+ * right away. Once the last overlapping mark settles, the clears run again over
+ * anything a poll or focus refetch fetched before the marks landed. The caches only
+ * refetch when a mark fails or a conversation had notes past the route's 50 ids,
+ * since refetching a list refetches every page loaded.
  */
 export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 	mutationOptions( {
 		meta: { statId: 'read-conversation-mark-read' },
 		mutationFn: markNotificationsRead,
 		onMutate: async ( noteIds: number[] ) => {
-			pendingMarks.set( queryClient, ( pendingMarks.get( queryClient ) ?? 0 ) + 1 );
+			const pending = pendingMarks.get( queryClient ) ?? {
+				count: 0,
+				noteIds: [],
+				needsRefetch: false,
+			};
+			pendingMarks.set( queryClient, {
+				count: pending.count + 1,
+				noteIds: [ ...pending.noteIds, ...noteIds ],
+				needsRefetch: pending.needsRefetch || hasUnlistedNotes( queryClient, noteIds ),
+			} );
 			await Promise.all(
 				getMarkReadQueryKeys().map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
 			);
@@ -178,20 +212,37 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 			markCachedConversationNotesRead( queryClient, noteIds );
 		},
 		// Refetching rather than restoring a snapshot keeps other marks made meanwhile, and
-		// waiting for the last one keeps the refetch from bringing back what they cleared.
-		onSettled: async () => {
-			const pending = Math.max( 0, ( pendingMarks.get( queryClient ) ?? 0 ) - 1 );
-			pendingMarks.set( queryClient, pending );
-			if ( pending ) {
+		// waiting for the last one keeps a refetch from bringing back what they cleared.
+		onSettled: async ( _data, error ) => {
+			const pending = pendingMarks.get( queryClient );
+			if ( ! pending ) {
 				return;
 			}
+			const settled = {
+				...pending,
+				count: pending.count - 1,
+				needsRefetch: pending.needsRefetch || !! error,
+			};
+			if ( settled.count > 0 ) {
+				pendingMarks.set( queryClient, settled );
+				return;
+			}
+			pendingMarks.delete( queryClient );
 			const queryKeys = getMarkReadQueryKeys();
-			// Invalidating joins a first fetch still in flight, which may predate the mark.
+			// A fetch still in flight may predate the marks. Cancelling a first fetch leaves no
+			// data, so those fetch again.
 			await Promise.all(
 				queryKeys.map( ( queryKey ) => queryClient.cancelQueries( { queryKey } ) )
 			);
+			markCachedNotesRead( queryClient, settled.noteIds );
+			markCachedConversationNotesRead( queryClient, settled.noteIds );
 			await Promise.all(
-				queryKeys.map( ( queryKey ) => queryClient.invalidateQueries( { queryKey } ) )
+				queryKeys.map( ( queryKey ) =>
+					queryClient.invalidateQueries( {
+						queryKey,
+						predicate: ( query ) => settled.needsRefetch || query.state.data === undefined,
+					} )
+				)
 			);
 		},
 	} );
