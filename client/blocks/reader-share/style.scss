@@ -48,6 +48,7 @@
 
 		.gridicon {
 			fill: var(--color-primary);
+			color: var(--color-primary);
 		}
 	}
 
@@ -119,6 +120,7 @@
 		left: 18px;
 		padding: 0;
 		fill: var(--color-neutral-light);
+		color: var(--color-neutral-light);
 
 		@include breakpoint-deprecated( ">480px" ) {
 			left: 14px;
@@ -143,6 +145,7 @@
 		.reader-x,
 		.reader-facebook {
 			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
 		}
 	}
 }

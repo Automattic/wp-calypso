@@ -110,6 +110,7 @@
 	&__icon.gridicon {
 		min-width: 18px;
 		fill: var(--studio-gray-80);
+		color: var(--studio-gray-80);
 	}
 
 	&__message {
@@ -394,11 +395,13 @@
 
 			&.error {
 				fill: var(--studio-orange-40);
+				color: var(--studio-orange-40);
 				transform: rotate(180deg);
 			}
 
 			&.success {
 				fill: var(--studio-green-50);
+				color: var(--studio-green-50);
 			}
 		}
 
@@ -422,6 +425,7 @@
 	&__icon.gridicon {
 		min-width: 18px;
 		fill: var(--studio-gray-80);
+		color: var(--studio-gray-80);
 	}
 
 	&__message {

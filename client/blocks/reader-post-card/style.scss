@@ -695,6 +695,7 @@
 
 	.gridicon {
 		fill: var(--color-primary);
+		color: var(--color-primary);
 	}
 
 	.follow-button__label {
@@ -706,6 +707,7 @@
 
 		.gridicon {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 
 		svg,
@@ -722,6 +724,7 @@
 
 			.gridicon {
 				fill: var( --color-link-dark );
+				color: var( --color-link-dark );
 			}
 
 			.follow-button__label {
@@ -739,6 +742,7 @@
 	&.is-following {
 		.gridicon {
 			fill: var(--color-success);
+			color: var(--color-success);
 		}
 
 		.follow-button__label {

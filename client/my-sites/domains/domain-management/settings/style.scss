@@ -123,9 +123,11 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 		position: relative;
 		top: 2px;
 		fill: var(--studio-green-50);
+		color: var(--studio-green-50);
 
 		&--error {
 			fill: var(--studio-orange-40);
+			color: var(--studio-orange-40);
 		}
 	}
 
@@ -187,6 +189,7 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 			align-self: flex-start;
 			min-width: 18px;
 			fill: var(--studio-orange-40);
+			color: var(--studio-orange-40);
 			transform: rotate(180deg);
 			position: relative;
 		}

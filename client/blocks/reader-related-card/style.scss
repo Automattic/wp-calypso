@@ -369,6 +369,7 @@
 
 	.reader-follow-feed {
 		fill: var(--color-link);
+		color: var(--color-link);
 	}
 
 	@include breakpoint-deprecated( "<960px" ) {

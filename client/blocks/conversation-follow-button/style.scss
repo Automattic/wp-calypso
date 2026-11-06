@@ -32,6 +32,7 @@ button.conversation-follow-button {
 
 			.gridicon {
 				fill: var(--color-text-inverted);
+				color: var(--color-text-inverted);
 				g {
 					fill: var(--studio-white);
 					stroke: var(--color-success);
@@ -55,6 +56,7 @@ button.conversation-follow-button {
 			display: inline-block;
 			pointer-events: auto;
 			fill: var(--color-success);
+			color: var(--color-success);
 		}
 
 		.conversation-follow-button__label {
@@ -73,6 +75,7 @@ button.conversation-follow-button {
 
 			.reader-following-conversation {
 				fill: var(--color-success);
+				color: var(--color-success);
 			}
 		}
 

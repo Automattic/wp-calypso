@@ -127,6 +127,7 @@ $color-yellow: var(--studio-yellow-50);
 
 		.gridicon {
 			fill: var(--studio-white);
+			color: var(--studio-white);
 		}
 	}
 
@@ -153,6 +154,7 @@ $color-yellow: var(--studio-yellow-50);
 
 .site-expanded-content__help-icon {
 	fill: var(--studio-gray-10);
+	color: var(--studio-gray-10);
 	position: relative;
 	inset-block-start: 0.25rem;
 	inset-inline-start: 0.5rem;
