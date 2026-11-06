@@ -116,6 +116,8 @@ class PostCommentForm extends Component {
 	};
 
 	handleFocus = () => {
+		// Back in the editor, a close that Escape started is off.
+		this.escaped = false;
 		this.setState( { haveFocus: true, editorOpen: true, editorClosing: false } );
 	};
 
