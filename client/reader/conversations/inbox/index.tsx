@@ -48,10 +48,7 @@ const MAX_SEARCH_LENGTH = 100;
 // It has to be one @automattic/viewport defines, or useBreakpoint never matches.
 const SINGLE_PANE_BREAKPOINT = '<1180px';
 
-interface Unread {
-	noteIds: number[];
-	commentIds: number[];
-}
+type Unread = Pick< Conversation, 'unreadNoteIds' | 'unreadCommentIds' >;
 
 // Your comments can open a post the All pages haven't loaded yet, so its unread notes come from the notes.
 const getUnreadFromNotes = (
@@ -63,8 +60,8 @@ const getUnreadFromNotes = (
 	);
 	return (
 		unread && {
-			noteIds: unread.map( ( { id } ) => id ),
-			commentIds: unread.flatMap( ( { meta } ) => meta?.ids?.comment ?? [] ),
+			unreadNoteIds: unread.map( ( { id } ) => id ),
+			unreadCommentIds: unread.flatMap( ( { meta } ) => meta?.ids?.comment ?? [] ),
 		}
 	);
 };
@@ -146,7 +143,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	}
 	// Merged on each render, so comments that come in while it's open still get highlighted.
-	const newCommentIds = union( activeOpened?.unread?.commentIds, selected?.unreadCommentIds );
+	const newCommentIds = union( activeOpened?.unread?.unreadCommentIds, selected?.unreadCommentIds );
 	// A post opened before the notes loaded gets its unread notes, and is marked read, once they do.
 	const isWaitingForNotes = !! activeOpened && ! activeOpened.unread;
 	// Only posts outside the loaded pages need the notes, and only Your comments opens those.
@@ -166,37 +163,37 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	}, [ isNarrow, selectedKey, conversations ] );
 
 	useEffect( () => {
+		if ( ! isWaitingForNotes ) {
+			return;
+		}
 		const unread = getUnreadFromNotes( notes, {
 			siteId: Number( siteId ),
 			postId: Number( postId ),
 		} );
-		if ( ! isWaitingForNotes || ! unread ) {
+		if ( ! unread ) {
 			return;
 		}
 		setOpened( ( current ) => current && { ...current, unread } );
-		if ( unread.noteIds.length ) {
-			markRead( unread.noteIds );
+		if ( unread.unreadNoteIds.length ) {
+			markRead( unread.unreadNoteIds );
 		}
 	}, [ isWaitingForNotes, notes, siteId, postId, markRead ] );
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		const key = getConversationKey( item.siteId, item.postId );
 		const conversation = conversations.find( ( candidate ) => candidate.key === key );
-		const unread = conversation
-			? { noteIds: conversation.unreadNoteIds, commentIds: conversation.unreadCommentIds }
-			: getUnreadFromNotes( notes, item );
-		const unreadNoteIds = unread?.noteIds;
+		const unread: Unread | undefined = conversation ?? getUnreadFromNotes( notes, item );
+		const unreadNoteIds = unread?.unreadNoteIds;
 		const previous = key === opened?.key ? opened.unread : undefined;
 		setOpened( {
 			key,
 			// Opening it again adds any notes that came in since, such as past the route's 50 ids.
-			unread:
-				previous && unread
-					? {
-							noteIds: union( previous.noteIds, unread.noteIds ),
-							commentIds: union( previous.commentIds, unread.commentIds ),
-						}
-					: ( previous ?? unread ),
+			unread: previous
+				? {
+						unreadNoteIds: union( previous.unreadNoteIds, unread?.unreadNoteIds ),
+						unreadCommentIds: union( previous.unreadCommentIds, unread?.unreadCommentIds ),
+					}
+				: unread,
 			anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
 		} );
 		if ( unreadNoteIds?.length ) {
