@@ -380,7 +380,7 @@ class PostComment extends PureComponent {
 			<strong className={ className } id={ `comment-${ commentId }` }>
 				{ authorName }
 
-				{ isExternalUrl && (
+				{ isExternalUrl && ! this.context && (
 					<a
 						className="comments__external-link"
 						href={ authorUrl }
@@ -476,6 +476,14 @@ class PostComment extends PureComponent {
 		const { commentAuthorUrl, commentAuthorName } = this.getAuthorDetails( commentId );
 		const { commentAuthorUrl: parentAuthorUrl, commentAuthorName: parentAuthorName } =
 			this.getAuthorDetails( parentCommentId );
+		const respondee =
+			parentAuthorName &&
+			this.renderAuthorTag( {
+				className: 'comments__comment-respondee-link',
+				authorName: parentAuthorName,
+				authorUrl: parentAuthorUrl,
+				commentId: parentCommentId,
+			} );
 
 		// highlight comments not older than 10s
 		const isHighlighted =
@@ -506,25 +514,13 @@ class PostComment extends PureComponent {
 						<span className="comments__comment-respondee">
 							{ this.context ? (
 								translate( 'to {{author/}}', {
-									components: {
-										author: this.renderAuthorTag( {
-											className: 'comments__comment-respondee-link',
-											authorName: parentAuthorName,
-											authorUrl: parentAuthorUrl,
-											commentId: parentCommentId,
-										} ),
-									},
+									components: { author: respondee },
 									comment: 'Names the commenter a reply answers, as in "Petra to Bram".',
 								} )
 							) : (
 								<>
 									<Gridicon icon="chevron-right" size={ 16 } />
-									{ this.renderAuthorTag( {
-										className: 'comments__comment-respondee-link',
-										authorName: parentAuthorName,
-										authorUrl: parentAuthorUrl,
-										commentId: parentCommentId,
-									} ) }
+									{ respondee }
 								</>
 							) }
 						</span>

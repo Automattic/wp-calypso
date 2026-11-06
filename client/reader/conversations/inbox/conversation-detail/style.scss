@@ -91,14 +91,6 @@
 			text-decoration: underline;
 		}
 	}
-
-	.comments__comment-respondee-link {
-		margin-inline-start: 0;
-	}
-
-	.comments__external-link {
-		display: none;
-	}
 }
 
 @mixin conversations-inbox-welcome-dark {
