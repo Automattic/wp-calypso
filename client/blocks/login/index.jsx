@@ -87,6 +87,7 @@ class Login extends Component {
 		isFromAutomatticForAgenciesPlugin: PropTypes.bool,
 		isManualRenewalImmediateLoginAttempt: PropTypes.bool,
 		lostPasswordLink: PropTypes.node,
+		isSocialAboveForm: PropTypes.bool,
 		linkingSocialService: PropTypes.string,
 		oauth2Client: PropTypes.object,
 		rebootAfterLogin: PropTypes.func.isRequired,
@@ -398,6 +399,7 @@ class Login extends Component {
 			handleUsernameChange,
 			signupUrl,
 			lostPasswordLink,
+			isSocialAboveForm,
 			isWCCOM,
 			isBlazePro,
 			translate,
@@ -521,6 +523,7 @@ class Login extends Component {
 				handleUsernameChange={ handleUsernameChange }
 				signupUrl={ signupUrl }
 				lostPasswordLink={ lostPasswordLink }
+				isSocialAboveForm={ isSocialAboveForm }
 				sendMagicLoginLink={ this.sendMagicLoginLink }
 				isFromAkismet={ this.props.isFromAkismet }
 				isFromPassport={ this.props.isFromPassport }
