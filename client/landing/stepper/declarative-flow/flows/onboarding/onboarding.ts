@@ -83,7 +83,6 @@ import {
 } from '../../../utils/wow-funnel';
 import {
 	adoptWowFunnelSite,
-	canManageSite,
 	fetchPendingWowFunnelSite,
 	forgetWowFunnelRun,
 	startWowFunnelSite,
@@ -312,11 +311,13 @@ async function resumeWowFunnelRun( reduxStore: Store ): Promise< boolean > {
  */
 async function goToOwnPreviewSitePlans( reduxStore: Store ): Promise< boolean > {
 	const { preview_site: previewSite, ...args } = getQueryArgs( window.location.href );
-	if (
-		typeof previewSite !== 'string' ||
-		! isUserLoggedIn( reduxStore.getState() ) ||
-		! ( await canManageSite( previewSite ) )
-	) {
+	if ( typeof previewSite !== 'string' || ! isUserLoggedIn( reduxStore.getState() ) ) {
+		return false;
+	}
+
+	// Resolves to undefined for a site that isn't theirs.
+	const site = await resolveSelect( SITE_STORE ).getSite( previewSite );
+	if ( ! site?.capabilities?.manage_options ) {
 		return false;
 	}
 

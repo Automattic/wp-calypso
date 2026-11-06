@@ -62,22 +62,6 @@ export type PendingWowFunnelSite = {
 };
 
 /**
- * Whether the signed-in customer can manage a site, such as a preview site whose share link they opened.
- * @param siteSlug The site's hostname.
- * @returns False for a site that isn't theirs, and on any lookup failure.
- */
-export async function canManageSite( siteSlug: string ): Promise< boolean > {
-	try {
-		const site = ( await wpcom.req.get( `/sites/${ encodeURIComponent( siteSlug ) }`, {
-			fields: 'capabilities',
-		} ) ) as { capabilities?: { manage_options?: boolean } };
-		return Boolean( site?.capabilities?.manage_options );
-	} catch {
-		return false;
-	}
-}
-
-/**
  * Ask the server whether this customer already has an unpaid funnel site.
  *
  * The server drops its own pointer as it reads it, so an empty answer means the previous site is

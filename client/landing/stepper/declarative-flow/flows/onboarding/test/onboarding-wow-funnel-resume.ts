@@ -1,6 +1,7 @@
 /**
  * @jest-environment jsdom
  */
+import { resolveSelect } from '@wordpress/data';
 import onboarding from '../onboarding';
 
 const mockFetchPending = jest.fn();
@@ -8,14 +9,12 @@ const mockHasCartItems = jest.fn();
 const mockAdopt = jest.fn();
 const mockGoToCheckout = jest.fn();
 const mockAssign = jest.fn();
-const mockCanManageSite = jest.fn();
 let mockLoggedIn = true;
 
 jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
 	fetchPendingWowFunnelSite: ( ...args: unknown[] ) => mockFetchPending( ...args ),
 	wowFunnelSiteHasCartItems: ( ...args: unknown[] ) => mockHasCartItems( ...args ),
 	adoptWowFunnelSite: ( ...args: unknown[] ) => mockAdopt( ...args ),
-	canManageSite: ( ...args: unknown[] ) => mockCanManageSite( ...args ),
 	startWowFunnelSite: jest.fn(),
 	forgetWowFunnelRun: jest.fn(),
 } ) );
@@ -276,7 +275,10 @@ describe( 'preview site owner from a share link', () => {
 		[ 'starts signup for a signed-out viewer', false, true, undefined ],
 	] )( '%s', async ( _label, loggedIn, canManage, redirect ) => {
 		mockLoggedIn = loggedIn;
-		mockCanManageSite.mockResolvedValue( canManage );
+		const getSite = jest
+			.fn()
+			.mockResolvedValue( canManage ? { capabilities: { manage_options: true } } : undefined );
+		jest.mocked( resolveSelect ).mockReturnValue( { getSite } as never );
 
 		const steps = await onboarding.initialize( store );
 
