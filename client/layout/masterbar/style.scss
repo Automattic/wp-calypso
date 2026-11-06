@@ -283,6 +283,7 @@ body.is-mobile-app-view {
 	.gridicon,
 	svg {
 		fill: var(--color-masterbar-icon);
+		color: var(--color-masterbar-icon);
 		width: 24px;
 		height: 24px;
 	}
@@ -290,6 +291,7 @@ body.is-mobile-app-view {
 	.gridicon {
 		.masterbar--is-checkout & {
 			fill: var(--color-checkout-masterbar-text);
+			color: var(--color-checkout-masterbar-text);
 		}
 	}
 
@@ -509,6 +511,7 @@ body.is-mobile-app-view {
 			width: 24px;
 			margin-left: 5px;
 			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
 
 			.masterbar--is-checkout & {
 				margin-left: 0;

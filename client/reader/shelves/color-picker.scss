@@ -61,6 +61,11 @@
 	.shelf-color-picker__check {
 		position: relative;
 		fill: var( --color-text );
+
+		&:where(svg),
+		& :where(svg) {
+			color: var( --color-text );
+		}
 	}
 }
 
@@ -71,6 +76,11 @@
 	// stays white in both themes.
 	fill: var( --color-text-inverted );
 	pointer-events: none;
+
+	&:where(svg),
+	& :where(svg) {
+		color: var( --color-text-inverted );
+	}
 }
 
 // Visually hidden, but still focusable so the swatches keep native radio

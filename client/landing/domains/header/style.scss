@@ -16,6 +16,7 @@
 
 .header__logo {
 	fill: var(--color-primary);
+	color: var(--color-primary);
 
 	@include breakpoint-deprecated( "<960px" ) {
 		width: 39px;

@@ -23,6 +23,11 @@
 	.components-checkbox-control:has( input[disabled]:checked ) {
 		.components-checkbox-control__checked {
 			fill: #a0a5aa;
+
+			&:where(svg),
+			& :where(svg) {
+				color: #a0a5aa;
+			}
 		}
 	}
 
@@ -140,6 +145,7 @@
 			height: 22px;
 			margin-right: 4px;
 			fill: var( --theme-base-color );
+			color: var( --theme-base-color );
 		}
 
 		.components-button {

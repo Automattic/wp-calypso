@@ -5,6 +5,7 @@
 
 .site-activity-logs__event-icon {
 	fill: var(--dashboard__text-muted-color);
+	color: var(--dashboard__text-muted-color);
 	background-color: var(--wp-components-color-gray-100, $gray-100);
 	border-radius: $radius-small;
 	padding: 4px;

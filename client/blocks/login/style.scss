@@ -91,10 +91,12 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 	.jetpack-logo__icon-circle {
 		fill: var(--color-neutral-80);
+		color: var(--color-neutral-80);
 	}
 
 	.jetpack-logo__icon-triangle {
 		fill: var(--color-neutral-0);
+		color: var(--color-neutral-0);
 	}
 
 	.login__form-action .form-button {

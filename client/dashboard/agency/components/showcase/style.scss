@@ -154,6 +154,11 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	border-radius: 4px;
 	background: var( --showcase-glyph-bg );
 	fill: var( --showcase-glyph-fg );
+
+	&:where(svg),
+	& :where(svg) {
+		color: var( --showcase-glyph-fg );
+	}
 }
 
 .dashboard-showcase__lockup {

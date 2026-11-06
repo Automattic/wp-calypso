@@ -367,6 +367,7 @@ html {
 
 	path {
 		fill: var(--color-neutral-10);
+		color: var(--color-neutral-10);
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {
@@ -479,5 +480,6 @@ body.is-section-jetpack-cloud-pricing.is-group-jetpack-cloud .mini-cart {
 		width: 20px;
 		height: 20px;
 		fill: var(--studio-white);
+		color: var(--studio-white);
 	}
 }

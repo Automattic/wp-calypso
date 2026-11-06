@@ -74,6 +74,7 @@ body.connect-domain-setup__body-white {
 
 		&-icon {
 			fill: var(--color-text);
+			color: var(--color-text);
 			position: relative;
 			bottom: -4px;
 			margin-right: 8px;
@@ -102,6 +103,7 @@ body.connect-domain-setup__body-white {
 			position: relative;
 			bottom: -3px;
 			fill: var(--studio-gray-50);
+			color: var(--studio-gray-50);
 			margin-right: 4px;
 		}
 	}
@@ -124,6 +126,11 @@ body.connect-domain-setup__body-white {
 
 			@include break-mobile {
 				display: initial;
+			}
+
+			&:where(svg),
+			& :where(svg) {
+				color: #dcdcde;
 			}
 		}
 
@@ -259,6 +266,7 @@ body.connect-domain-setup__body-white {
 	&__suggested-start {
 		button .material-icon {
 			fill: var(--color-text-inverted);
+			color: var(--color-text-inverted);
 			vertical-align: text-bottom;
 		}
 	}
@@ -419,6 +427,11 @@ body.connect-domain-setup__body-white {
 				margin-right: 8px;
 				position: relative;
 				bottom: -3px;
+
+				&:where(svg),
+				& :where(svg) {
+					color: var(--studio-green-50);
+				}
 			}
 		}
 

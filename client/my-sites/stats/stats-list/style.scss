@@ -876,6 +876,7 @@ ul.module-content-list-legend {
 	.gridicon,
 	.stats-icon {
 		fill: var( --color-text-subtle );
+		color: var( --color-text-subtle );
 		vertical-align: middle;
 		transition: fill linear 0.1s;
 	}
@@ -887,6 +888,7 @@ ul.module-content-list-legend {
 		.stats-list-actions__mobile-toggle .gridicon,
 		.stats-list-actions__mobile-toggle .stats-icon {
 			fill: var( --color-text );
+			color: var( --color-text );
 		}
 	}
 

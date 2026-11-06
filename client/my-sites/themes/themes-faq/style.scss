@@ -70,6 +70,7 @@
 
 	.foldable-faq.is-expanded .foldable-faq__question .gridicon {
 		fill: var( --studio-gray-90 );
+		color: var( --studio-gray-90 );
 		background-color: var( --studio-white );
 		transform: rotate( 0 );
 	}
@@ -80,6 +81,7 @@
 
 		.gridicon {
 			fill: var( --studio-white );
+			color: var( --studio-white );
 			order: 1;
 			margin-inline-start: auto;
 			border: 1px solid var( --studio-white );

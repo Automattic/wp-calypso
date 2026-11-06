@@ -197,5 +197,10 @@ $lowestLevelColor: var(--color-neutral-5);
 		.post-count-icon {
 			margin-right: 12px;
 		}
+
+		&:where(svg),
+		& :where(svg) {
+			color: var(--studio-white);
+		}
 	}
 }

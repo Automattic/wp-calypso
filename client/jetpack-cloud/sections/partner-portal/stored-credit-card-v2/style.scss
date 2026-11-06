@@ -95,6 +95,7 @@
 .stored-credit-card-v2__payment-logo-amex {
 	svg path:first-child {
 		fill: var(--studio-white);
+		color: var(--studio-white);
 	}
 }
 
@@ -131,6 +132,7 @@ button.button.stored-credit-card-v2__card-footer-actions {
 
 			.gridicon {
 				fill: var(--color-text);
+				color: var(--color-text);
 			}
 		}
 	}

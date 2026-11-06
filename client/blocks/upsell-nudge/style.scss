@@ -16,6 +16,11 @@
 	.dismissible-card__close-button {
 		fill: var(--color-text-inverted);
 		margin-right: -6px;
+
+		&:where(svg),
+		& :where(svg) {
+			color: var(--color-text-inverted);
+		}
 	}
 	.banner__action {
 		position: relative;
@@ -38,6 +43,11 @@
 	}
 	.card__link-indicator {
 		fill: var(--color-text-inverted);
+
+		&:where(svg),
+		& :where(svg) {
+			color: var(--color-text-inverted);
+		}
 	}
 	.banner__icon-circle,
 	.banner__icon {

@@ -60,10 +60,12 @@
 
 		&__warning-icon--fix-threat {
 			fill: var(--color-primary-40);
+			color: var(--color-primary-40);
 		}
 
 		&__warning-icon--ignore-threat {
 			fill: var(--color-error-50);
+			color: var(--color-error-50);
 		}
 
 		&__warning-message {

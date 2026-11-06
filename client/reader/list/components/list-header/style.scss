@@ -27,6 +27,7 @@
 
 		.gridicon {
 			fill: var(--color-link);
+			color: var(--color-link);
 		}
 
 		.follow-button__label {
@@ -36,6 +37,7 @@
 		&.is-following {
 			.gridicon {
 				fill: var(--color-success);
+				color: var(--color-success);
 			}
 
 			.follow-button__label {
@@ -62,6 +64,7 @@
 
 	.list-stream__header-action-icon .gridicon {
 		fill: var(--color-neutral-dark);
+		color: var(--color-neutral-dark);
 	}
 
 	@include ui-mixins.when-dark-theme {

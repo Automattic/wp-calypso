@@ -167,6 +167,11 @@
 	.nav-item__complete {
 		fill: var(--color-success);
 		vertical-align: text-bottom;
+
+		&:where(svg),
+		& :where(svg) {
+			color: var(--color-success);
+		}
 	}
 
 	.nav-item__text {

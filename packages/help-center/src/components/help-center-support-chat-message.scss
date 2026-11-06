@@ -51,6 +51,11 @@
 		background-color: #ebf2fc;
 		.help-center-support-chat__open-conversation {
 			fill: $help-center-blue;
+
+			&:where(svg),
+			& :where(svg) {
+				color: $help-center-blue;
+			}
 		}
 	}
 

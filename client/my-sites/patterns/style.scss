@@ -47,6 +47,7 @@
 	.masterbar:not( :has( .x-nav--2026-redesign ) ) {
 		.x-nav-link__logo svg path {
 			fill: var( --studio-white );
+			color: var( --studio-white );
 		}
 
 		.x-nav-item,
@@ -85,6 +86,7 @@
 
 		.x-nav-link__logo svg path {
 			fill: var( --studio-gray-100 );
+			color: var( --studio-gray-100 );
 		}
 
 		// `border-color` (not `color`) so it animates with the existing chevron transition.

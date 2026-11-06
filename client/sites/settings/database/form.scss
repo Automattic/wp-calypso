@@ -3,6 +3,7 @@
 .phpmyadmin-card button {
 	&.is-primary svg {
 		fill: var(--color-text-inverted);
+		color: var(--color-text-inverted);
 	}
 	svg {
 		vertical-align: text-bottom;

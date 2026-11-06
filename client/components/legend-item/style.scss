@@ -59,4 +59,9 @@
 .legend-item__placeholder-title-circle {
 	fill: var(--color-neutral-0);
 	@include placeholder();
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-neutral-0);
+	}
 }

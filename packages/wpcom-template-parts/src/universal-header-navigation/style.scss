@@ -133,6 +133,7 @@ $studio-blue-15: #e5f4ff;
 
 	g {
 		fill: $studio-blue-30;
+		color: $studio-blue-30;
 	}
 }
 .x-icon span {
@@ -905,6 +906,7 @@ $x-menu-heading-line-height-wide: $x-menu-heading-font-size-wide + 7px; /* 1 */
 
 		.x-icon__logo path {
 			fill: #fff;
+			color: #fff;
 		}
 
 		.x-dropdown-link.x-dropdown-link {

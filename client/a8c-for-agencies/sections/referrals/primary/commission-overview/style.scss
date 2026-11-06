@@ -11,10 +11,12 @@
 
 	.jetpack-logo {
 		fill: var(--color-jetpack);
+		color: var(--color-jetpack);
 	}
 
 	.woocommerce-logo {
 		fill: var(--color-woocommerce);
+		color: var(--color-woocommerce);
 	}
 
 	.hosting-dashboard-layout__body-wrapper {
@@ -75,5 +77,6 @@
 
 .a4a-overview-hosting__wp-logo {
 	fill: var(--color-primary-50);
+	color: var(--color-primary-50);
 	margin: 0;
 }

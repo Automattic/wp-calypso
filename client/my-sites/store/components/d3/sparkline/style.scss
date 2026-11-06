@@ -9,5 +9,10 @@
 
 	.sparkline__highlight {
 		fill: var(--color-accent);
+
+		&:where(svg),
+		& :where(svg) {
+			color: var(--color-accent);
+		}
 	}
 }

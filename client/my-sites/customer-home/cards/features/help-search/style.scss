@@ -79,6 +79,7 @@ $min_results_height: 180px;
 
 		.gridicon {
 			fill: var( --color-primary );
+			color: var( --color-primary );
 			height: 28px;
 			width: 28px;
 			transform: translate( -2px, -2px );
@@ -87,6 +88,7 @@ $min_results_height: 180px;
 
 	.help-search__go-icon {
 		fill: var( --color-neutral-20 );
+		color: var( --color-neutral-20 );
 		margin-left: auto; // push away from other cta content
 		margin-right: -6px; // visually pull arrow RHS to edge of card
 	}

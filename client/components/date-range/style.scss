@@ -35,12 +35,14 @@ $date-range-mobile-layout-switch: $break-small;
 
 	.gridicons-chevron-down {
 		fill: var(--color-neutral-50);
+		color: var(--color-neutral-50);
 		margin: 0 0 0 5px;
 		flex-shrink: 0;
 		transition: transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
 		.is-disabled & {
 			fill: var(--color-neutral-5);
+			color: var(--color-neutral-5);
 		}
 
 		.toggle-visible & {

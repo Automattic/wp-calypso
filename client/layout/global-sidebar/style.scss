@@ -104,6 +104,7 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__expandable-arrow {
 			fill: var(--color-sidebar-text);
+			color: var(--color-sidebar-text);
 			height: 15px;
 			width: 15px;
 		}
@@ -280,6 +281,7 @@ $brand-text: "SF Pro Text", $sans;
 		svg.gridicons-chevron-left {
 			vertical-align: top;
 			fill: var(--color-sidebar-gridicon-fill);
+			color: var(--color-sidebar-gridicon-fill);
 		}
 
 		.sidebar__app-title {

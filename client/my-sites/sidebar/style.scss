@@ -268,6 +268,7 @@ $font-size: rem(14px);
 
 		.gridicons-chevron-right {
 			fill: var(--color-sidebar-text);
+			color: var(--color-sidebar-text);
 		}
 
 		.sidebar__expandable-content {
@@ -533,6 +534,7 @@ $font-size: rem(14px);
 			&:hover {
 				.sidebar__expandable-arrow {
 					fill: var(--color-sidebar-menu-hover-text);
+					color: var(--color-sidebar-menu-hover-text);
 				}
 			}
 		}
@@ -600,6 +602,7 @@ $font-size: rem(14px);
 
 		.upsell-nudge.banner.card.is-compact .dismissible-card__close-button .gridicon {
 			fill: var(--studio-black);
+			color: var(--studio-black);
 			width: 16px;
 			height: 16px;
 		}

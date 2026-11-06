@@ -35,22 +35,42 @@
 .line-chart__area-color-0 {
 	fill: var(--color-primary-dark);
 	opacity: 0.6;
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-dark);
+	}
 }
 
 .line-chart__area-color-1 {
 	fill: var(--color-accent);
 	opacity: 0.3;
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-accent);
+	}
 }
 
 .line-chart__area-color-2 {
 	fill: var(--color-primary-light);
 	opacity: 0.1;
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-light);
+	}
 }
 
 .line-chart__line-point {
 	cursor: pointer;
 	fill: var(--color-text-inverted);
 	stroke-width: 3px;
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-text-inverted);
+	}
 }
 
 .line-chart__line-point-color-0 {
@@ -82,16 +102,31 @@
 .line-chart__line-end-point-color-0 {
 	fill: var(--color-primary-dark);
 	stroke: var(--color-primary-dark);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-dark);
+	}
 }
 
 .line-chart__line-end-point-color-1 {
 	fill: var(--color-accent);
 	stroke: var(--color-accent);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-accent);
+	}
 }
 
 .line-chart__line-end-point-color-2 {
 	fill: var(--color-primary-light);
 	stroke: var(--color-primary-light);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-light);
+	}
 }
 
 .line-chart__placeholder {
@@ -112,10 +147,20 @@
 
 .line-chart__x-axis text {
 	fill: var(--color-neutral-60);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-neutral-60);
+	}
 }
 
 .line-chart__y-axis text {
 	fill: var(--color-neutral-40);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-neutral-40);
+	}
 }
 
 .line-chart__legend {
@@ -135,31 +180,66 @@
 
 .line-chart__legend-sample-0 {
 	fill: var(--color-primary-dark);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-dark);
+	}
 }
 
 .line-chart__legend-sample-1 {
 	fill: var(--color-accent);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-accent);
+	}
 }
 
 .line-chart__legend-sample-2 {
 	fill: var(--color-primary-light);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-light);
+	}
 }
 
 .line-chart__legend-sample-0-fill {
 	fill: var(--color-primary-dark);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-dark);
+	}
 }
 
 .line-chart__legend-sample-1-fill {
 	fill: var(--color-accent);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-accent);
+	}
 }
 
 .line-chart__legend-sample-2-fill {
 	fill: var(--color-primary-light);
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-primary-light);
+	}
 }
 
 .line-chart__date-range-selected {
 	fill: var(--color-accent);
 	opacity: 0.1;
+
+	&:where(svg),
+	& :where(svg) {
+		color: var(--color-accent);
+	}
 }
 
 .line-chart__tooltip {

@@ -23,6 +23,7 @@
 @mixin dashboard-dark-theme-command-palette {
 	.commands-command-menu__header-search-icon {
 		fill: var( --dashboard__text-color );
+		color: var( --dashboard__text-color );
 	}
 
 	.commands-command-menu__header .components-button {
@@ -188,6 +189,7 @@
 	.components-validated-control__indicator.is-invalid
 		.components-validated-control__indicator-icon {
 		fill: var( --dashboard-danger__color-hover );
+		color: var( --dashboard-danger__color-hover );
 	}
 }
 
@@ -233,6 +235,7 @@
 
 	.dashboard-section-header__decoration svg {
 		fill: var( --dashboard-subtle__color );
+		color: var( --dashboard-subtle__color );
 	}
 }
 
@@ -274,6 +277,7 @@
 
 		.dashboard-backups__list-icon {
 			fill: var( --wp-components-color-gray-700 );
+			color: var( --wp-components-color-gray-700 );
 		}
 
 		&::after {
@@ -287,6 +291,7 @@
 
 		.dashboard-overview-latest-activity-card__icon {
 			fill: var( --wp-components-color-gray-700 );
+			color: var( --wp-components-color-gray-700 );
 		}
 
 		&::after {
@@ -320,6 +325,7 @@
 		background-color: var( --wp-components-color-gray-200 );
 		box-shadow: inset 0 0 0 1px var( --wp-components-color-gray-300 );
 		fill: var( --wp-components-color-gray-700 );
+		color: var( --wp-components-color-gray-700 );
 	}
 }
 
@@ -424,6 +430,7 @@
 
 		svg {
 			fill: var( --wp-components-color-gray-700 );
+			color: var( --wp-components-color-gray-700 );
 		}
 	}
 
@@ -486,6 +493,7 @@
 
 	.site-launch-pre-launch-modal__meta svg {
 		fill: var( --dashboard__text-color );
+		color: var( --dashboard__text-color );
 	}
 }
 

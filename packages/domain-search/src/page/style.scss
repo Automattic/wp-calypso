@@ -217,6 +217,7 @@
 	// `fill` (not `color`) is required: @wordpress/icons chevron-down has no
 	// explicit `fill="currentColor"`, so SVG fill must be set directly.
 	fill: rgba( 0, 0, 0, 0.32 );
+	color: rgba( 0, 0, 0, 0.32 );
 }
 
 .domain-search--results__compact-banner-subtitle {

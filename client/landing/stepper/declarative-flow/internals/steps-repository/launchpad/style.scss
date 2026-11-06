@@ -71,6 +71,7 @@
 
 		&-checkmark-icon {
 			fill: var(--studio-green-40);
+			color: var(--studio-green-40);
 			display: none;
 
 			@include break-large {
@@ -97,6 +98,7 @@
 
 		&-close-icon {
 			fill: var(--studio-gray-20);
+			color: var(--studio-gray-20);
 		}
 
 		@include break-large {
@@ -251,6 +253,7 @@
 
 .launchpad__domain-checkmark-icon {
 	fill: var(--studio-green-50);
+	color: var(--studio-green-50);
 }
 
 .badge.launchpad__domain-upgrade-badge {

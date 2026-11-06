@@ -15,12 +15,14 @@
 
 	svg {
 		fill: var(--color-text-subtle);
+		color: var(--color-text-subtle);
 		opacity: 0.6;
 	}
 
 	&:hover svg,
 	&:active svg {
 		fill: var(--color-link);
+		color: var(--color-link);
 		opacity: 1;
 	}
 
@@ -48,6 +50,7 @@
 
 		.gridicon {
 			fill: var(--color-primary);
+			color: var(--color-primary);
 		}
 	}
 
@@ -127,10 +130,16 @@
 
 	.gridicons-my-sites {
 		fill: var(--color-primary);
+		color: var(--color-primary);
 	}
 
 	.reader-facebook {
 		fill: var(--color-facebook);
+
+		&:where(svg),
+		& :where(svg) {
+			color: var(--color-facebook);
+		}
 	}
 
 	.reader-x {

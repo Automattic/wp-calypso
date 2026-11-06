@@ -49,6 +49,7 @@
 
 		rect {
 			fill: var( --color-neutral-0 );
+			color: var( --color-neutral-0 );
 		}
 
 		@media ( prefers-color-scheme: dark ) {
@@ -154,11 +155,13 @@
 
 		.signup-wrapper__logo {
 			fill: var( --color-surface );
+			color: var( --color-surface );
 		}
 
 		.signup-wrapper__sidebar-image {
 			rect {
 				fill: #022836;
+				color: #022836;
 			}
 		}
 

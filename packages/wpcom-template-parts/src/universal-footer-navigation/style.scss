@@ -419,6 +419,11 @@
 	display:block;
 	height:42px;
 	fill:rgba(var(--lp-color-primary),var(--lp-color-primary-alpha,1));
+
+	&:where(svg),
+	& :where(svg) {
+		color: rgba(var(--lp-color-primary),var(--lp-color-primary-alpha,1));
+	}
 }
 
 .wpcom-global-nav-footer :is(.lp-footer-stack) {
@@ -924,6 +929,7 @@
 		width: 190px;
 		height: 25.6px;
 		fill: #3858e9;
+		color: #3858e9;
 	}
 
 	.lp-footer-stack__content__item,
@@ -1136,6 +1142,7 @@
 
 		.lp-footer-logo {
 			fill: #fff;
+			color: #fff;
 		}
 
 		.lp-mobile-badge {

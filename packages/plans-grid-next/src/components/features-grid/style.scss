@@ -1017,6 +1017,11 @@ $redesign-table-cell-max-width: 280px;
 
 		.st0 {
 			fill: var( --studio-white );
+
+			&:where(svg),
+			& :where(svg) {
+				color: var( --studio-white );
+			}
 		}
 	}
 
