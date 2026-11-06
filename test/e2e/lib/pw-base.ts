@@ -534,7 +534,12 @@ export const test = base.extend<
 			},
 		] );
 
-		if ( [ 'authentication', 'chrome', 'mobile' ].includes( testInfo.project.name ) ) {
+		// Prefixes: mixed Atomic runs split `chrome` into `chrome-atomic-<variation>`.
+		if (
+			[ 'authentication', 'chrome', 'mobile' ].some( ( name ) =>
+				testInfo.project.name.startsWith( name )
+			)
+		) {
 			await useBlackboxTestKeyForCollect( page );
 		}
 
@@ -794,7 +799,7 @@ export const test = base.extend<
 			const message = await clientEmail.getLastMatchingMessage( {
 				inboxId: testUser.inboxId,
 				sentTo: testUser.email,
-				subject: 'Activate',
+				subject: 'Confirm your email address',
 			} );
 			const links = await clientEmail.getLinksFromMessage( message );
 			const activationLink = links.find( ( link: string ) =>
