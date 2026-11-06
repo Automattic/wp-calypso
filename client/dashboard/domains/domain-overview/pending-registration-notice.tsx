@@ -1,6 +1,6 @@
-import { Button, __experimentalText as Text } from '@wordpress/components';
+import { __experimentalText as Text } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionLink } from '../../components/notice';
 import type { Domain } from '@automattic/api-core';
 
 export default function PendingRegistrationNotice( { domain }: { domain: Domain } ) {
@@ -11,14 +11,13 @@ export default function PendingRegistrationNotice( { domain }: { domain: Domain 
 				title={ __( 'Domain registration in progress' ) }
 				actions={
 					domain.pending_registration_at_registry_url ? (
-						<Button
-							variant="link"
+						<NoticeActionLink
 							href={ domain.pending_registration_at_registry_url }
 							target="_blank"
 							rel="noopener noreferrer"
 						>
 							{ __( 'More info' ) }
-						</Button>
+						</NoticeActionLink>
 					) : undefined
 				}
 			>

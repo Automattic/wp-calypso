@@ -3,11 +3,13 @@ import {
 	fetchReadFourForFourCandidates,
 	fetchReadFourForFourStatus,
 	recordReadFourForFourProgress,
+	reviewReadFourForFourSite,
 } from '@automattic/api-core';
 import { mutationOptions, queryOptions, type QueryClient } from '@tanstack/react-query';
 import type {
 	ReadFourForFourCandidatesResponse,
 	ReadFourForFourProgressParams,
+	ReadFourForFourReviewResponse,
 	ReadFourForFourStatusResponse,
 } from '@automattic/api-core';
 
@@ -16,6 +18,9 @@ const EMPTY_POOL_RETRY_MS = 15 * 1000;
 
 export const getReadFourForFourStatusQueryKey = () =>
 	[ 'read', 'four-for-four', 'status' ] as const;
+
+export const getReadFourForFourReviewMutationKey = () =>
+	[ 'read', 'four-for-four', 'review' ] as const;
 
 const selectCandidates = ( data: ReadFourForFourCandidatesResponse ) =>
 	data.candidates.map( adaptReadFourForFourCandidate );
@@ -82,5 +87,22 @@ export const recordReadFourForFourProgressMutation = ( queryClient: QueryClient 
 		},
 		onSuccess: ( status ) => {
 			queryClient.setQueryData( getReadFourForFourStatusQueryKey(), status );
+		},
+	} );
+
+/**
+ * Reviews the writer's site, or fetches its stored verdict, and copies the
+ * verdict into the status cache so the page doesn't ask for a review again.
+ */
+export const reviewReadFourForFourSiteMutation = ( queryClient: QueryClient ) =>
+	mutationOptions< ReadFourForFourReviewResponse, Error, void >( {
+		mutationKey: getReadFourForFourReviewMutationKey(),
+		meta: { statId: 'read-four-for-four-review' },
+		mutationFn: reviewReadFourForFourSite,
+		onSuccess: ( { verdict } ) => {
+			queryClient.setQueryData< ReadFourForFourStatusResponse >(
+				getReadFourForFourStatusQueryKey(),
+				( status ) => status && { ...status, review: { verdict } }
+			);
 		},
 	} );

@@ -74,7 +74,7 @@ const SAVED_VIEW: Partial< View > = {
 
 describe( '<Domains> saved layouts', () => {
 	test( 'shows a saved view with an unavailable layout as a table and records it once', async () => {
-		mockApis( { ...SAVED_VIEW, type: 'grid', layout: { previewSize: 290 } } as Partial< View > );
+		mockApis( { ...SAVED_VIEW, type: 'list' } as Partial< View > );
 
 		const { recordTracksEvent } = render( <Domains /> );
 
@@ -88,12 +88,25 @@ describe( '<Domains> saved layouts', () => {
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith(
 			'calypso_dashboard_domains_saved_layout_fallback',
-			{ saved_layout: 'grid', fallback_layout: 'table' }
+			{ saved_layout: 'list', fallback_layout: 'table' }
 		);
 		const fallbackEventCount = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
 			( [ eventName ] ) => eventName === 'calypso_dashboard_domains_saved_layout_fallback'
 		).length;
 		expect( fallbackEventCount ).toBe( 1 );
+	} );
+
+	test( 'keeps a saved grid view on the cards', async () => {
+		mockApis( { ...SAVED_VIEW, type: 'grid' } as Partial< View > );
+
+		const { recordTracksEvent } = render( <Domains /> );
+
+		await screen.findByRole( 'group', { name: 'a-domain.com' } );
+		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_domains_saved_layout_fallback',
+			expect.anything()
+		);
 	} );
 
 	test( 'records nothing when the saved layout is available', async () => {

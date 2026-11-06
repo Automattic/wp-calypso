@@ -57,7 +57,7 @@
 		"@automattic/oauth-token": "workspace:^",
 		"@wordpress/abilities": "^0.25.0",
 		"@wordpress/api-fetch": "^8.1.0",
-		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/base-styles": "^15.0.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^9.1.0",
 		"@wordpress/core-data": "^7.48.0",

@@ -95,11 +95,11 @@ describe( '<PurchaseNotice />', () => {
 				'Your subscription is cancelled and you won’t be billed again. Your site stays live until April 6, 2027. Download a backup to save your content, themes, and plugins.'
 			)
 		).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Download backup' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /^Download backup/ } ) ).toHaveAttribute(
 			'href',
 			'https://example.wordpress.com/wp-admin/export.php'
 		);
-		expect( screen.getByRole( 'link', { name: 'Download backup' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /^Download backup/ } ) ).toHaveAttribute(
 			'target',
 			'_blank'
 		);

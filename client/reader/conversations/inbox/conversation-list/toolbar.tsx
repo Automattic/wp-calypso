@@ -13,8 +13,9 @@ import {
 } from '@wordpress/components';
 import { Icon, cog, funnel } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import type { ReadConversationsSort } from '@automattic/api-core';
 
-export type SortOrder = 'newest_replies' | 'most_active';
+export type SortOrder = ReadConversationsSort;
 export type Density = 'comfortable' | 'balanced' | 'compact';
 
 interface Props {
@@ -37,7 +38,7 @@ export function ConversationListToolbar( {
 	const translate = useTranslate();
 
 	const sortChoices: { value: SortOrder; label: string }[] = [
-		{ value: 'newest_replies', label: translate( 'Newest replies' ) },
+		{ value: 'newest', label: translate( 'Newest replies' ) },
 		{ value: 'most_active', label: translate( 'Most active' ) },
 	];
 

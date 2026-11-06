@@ -351,7 +351,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.1"
     "@wordpress/abilities": "npm:^0.25.0"
     "@wordpress/api-fetch": "npm:^8.1.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
     "@wordpress/blocks": "npm:^15.23.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -490,7 +490,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@types/react": "npm:^18.3.1"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^15.5.0"
     "@wordpress/ui": "npm:^0.23.0"
@@ -1563,7 +1563,7 @@ __metadata:
     "@automattic/zendesk-client": "workspace:^"
     "@tanstack/react-query": "npm:^5.83.0"
     "@types/smooch": "npm:^5.6.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
@@ -1628,7 +1628,7 @@ __metadata:
     "@types/react-dom": "npm:^18.3.1"
     "@wordpress/abilities": "npm:^0.25.0"
     "@wordpress/api-fetch": "npm:^8.1.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/core-data": "npm:^7.48.0"
@@ -1941,7 +1941,7 @@ __metadata:
     "@automattic/calypso-build": "workspace:^"
     "@automattic/calypso-eslint-config": "workspace:^"
     "@wordpress/api-fetch": "npm:^8.1.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
     "@wordpress/blocks": "npm:^15.23.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -2047,7 +2047,7 @@ __metadata:
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
     "@testing-library/user-event": "npm:^14.6.8"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/data": "npm:^11.1.0"
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^7.1.0"
@@ -2201,18 +2201,6 @@ __metadata:
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
     events: "npm:^3.3.0"
-  languageName: unknown
-  linkType: soft
-
-"@automattic/posthog@workspace:^, @automattic/posthog@workspace:packages/posthog":
-  version: 0.0.0-use.local
-  resolution: "@automattic/posthog@workspace:packages/posthog"
-  dependencies:
-    "@automattic/calypso-analytics": "workspace:^"
-    "@automattic/calypso-typescript-config": "workspace:^"
-    posthog-js: "npm:^1.348.0"
-    tslib: "npm:^2.8.1"
-    typescript: "npm:^6.0.3"
   languageName: unknown
   linkType: soft
 
@@ -2692,7 +2680,7 @@ __metadata:
     "@automattic/typography": "workspace:^"
     "@babel/runtime": "npm:^8.0.7"
     "@wordpress/api-fetch": "npm:^8.1.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
     "@wordpress/blocks": "npm:^15.23.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -7127,146 +7115,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@opentelemetry/api-logs@npm:0.208.0, @opentelemetry/api-logs@npm:^0.208.0":
-  version: 0.208.0
-  resolution: "@opentelemetry/api-logs@npm:0.208.0"
-  dependencies:
-    "@opentelemetry/api": "npm:^1.3.0"
-  checksum: dc1fbee6219df4166509f43b74ea936bb18b6d594565b0bcf56b654a1c958b50d6046b8739dc36c98149fe890c02150ff3814e963f5ea439a07ff3c562555b99
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/api@npm:^1.3.0, @opentelemetry/api@npm:^1.9.0":
-  version: 1.9.0
-  resolution: "@opentelemetry/api@npm:1.9.0"
-  checksum: 9aae2fe6e8a3a3eeb6c1fdef78e1939cf05a0f37f8a4fae4d6bf2e09eb1e06f966ece85805626e01ba5fab48072b94f19b835449e58b6d26720ee19a58298add
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/core@npm:2.8.0":
-  version: 2.8.0
-  resolution: "@opentelemetry/core@npm:2.8.0"
-  dependencies:
-    "@opentelemetry/semantic-conventions": "npm:^1.29.0"
-  peerDependencies:
-    "@opentelemetry/api": ">=1.0.0 <1.10.0"
-  checksum: 35b8a464b359a0699fcbcea8c11a883f0f634ee7638719b89fa0c0cbbaaa38c57db22e9ac19ffb15ce18014751dc7db11a26d7fb6ad6259f89a26bdc4d167e4b
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/exporter-logs-otlp-http@npm:^0.208.0":
-  version: 0.208.0
-  resolution: "@opentelemetry/exporter-logs-otlp-http@npm:0.208.0"
-  dependencies:
-    "@opentelemetry/api-logs": "npm:0.208.0"
-    "@opentelemetry/core": "npm:2.2.0"
-    "@opentelemetry/otlp-exporter-base": "npm:0.208.0"
-    "@opentelemetry/otlp-transformer": "npm:0.208.0"
-    "@opentelemetry/sdk-logs": "npm:0.208.0"
-  peerDependencies:
-    "@opentelemetry/api": ^1.3.0
-  checksum: 2b8c649e04bfc7c86ebc49de4afb19ccd2562ebfc15ac30f1689787d9b014392f6d936f43b494729d9723de0588276027f742ba825834c74d8a08cd366c284ab
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/otlp-exporter-base@npm:0.208.0":
-  version: 0.208.0
-  resolution: "@opentelemetry/otlp-exporter-base@npm:0.208.0"
-  dependencies:
-    "@opentelemetry/core": "npm:2.2.0"
-    "@opentelemetry/otlp-transformer": "npm:0.208.0"
-  peerDependencies:
-    "@opentelemetry/api": ^1.3.0
-  checksum: c2b2014da16e2a2be0ebe525b1a62b3e64e286fc9c2575444e4c75bbe0060a83762172180dc7a97cdaaaa8c6765076073edea30340459fc1820cd43468ff98b0
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/otlp-transformer@npm:0.208.0":
-  version: 0.208.0
-  resolution: "@opentelemetry/otlp-transformer@npm:0.208.0"
-  dependencies:
-    "@opentelemetry/api-logs": "npm:0.208.0"
-    "@opentelemetry/core": "npm:2.2.0"
-    "@opentelemetry/resources": "npm:2.2.0"
-    "@opentelemetry/sdk-logs": "npm:0.208.0"
-    "@opentelemetry/sdk-metrics": "npm:2.2.0"
-    "@opentelemetry/sdk-trace-base": "npm:2.2.0"
-    protobufjs: "npm:^7.3.0"
-  peerDependencies:
-    "@opentelemetry/api": ^1.3.0
-  checksum: 70c04b2a52f0b2f8aece25ad21401c32ed3136ccd6e82b767d570a24d5456a5ded206ed4cc60ebc09eac08a4aa9c03bc8dcbf10730e491f1af3e7768c361ac12
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/resources@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@opentelemetry/resources@npm:2.2.0"
-  dependencies:
-    "@opentelemetry/core": "npm:2.2.0"
-    "@opentelemetry/semantic-conventions": "npm:^1.29.0"
-  peerDependencies:
-    "@opentelemetry/api": ">=1.3.0 <1.10.0"
-  checksum: f08fa69ccccb6d14b6932fabe6f8e097c0dfc41ae8f4c0f6c54fb04bc3d9c04e742da3e22d7240d74b585287101126d97a0da192b493a9724dc07a56ca1b77e0
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/resources@npm:^2.2.0":
-  version: 2.5.1
-  resolution: "@opentelemetry/resources@npm:2.5.1"
-  dependencies:
-    "@opentelemetry/core": "npm:2.5.1"
-    "@opentelemetry/semantic-conventions": "npm:^1.29.0"
-  peerDependencies:
-    "@opentelemetry/api": ">=1.3.0 <1.10.0"
-  checksum: c336d5066fa7457272bcffb5a9826f090e1e07c2a70c5976942cf2bb188be685842658982a0f323ddfc1d6fbc364f123b6b0e433e230b023aefd88ec60062ba4
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/sdk-logs@npm:0.208.0, @opentelemetry/sdk-logs@npm:^0.208.0":
-  version: 0.208.0
-  resolution: "@opentelemetry/sdk-logs@npm:0.208.0"
-  dependencies:
-    "@opentelemetry/api-logs": "npm:0.208.0"
-    "@opentelemetry/core": "npm:2.2.0"
-    "@opentelemetry/resources": "npm:2.2.0"
-  peerDependencies:
-    "@opentelemetry/api": ">=1.4.0 <1.10.0"
-  checksum: a167ee7d2818e435ff7480836461f94543e4e39f0e8e8013d462c635def9b960dcf1a29e5536743946b51ef13b764f518d9edb511e89bc1e8995acc96f54241f
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/sdk-metrics@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@opentelemetry/sdk-metrics@npm:2.2.0"
-  dependencies:
-    "@opentelemetry/core": "npm:2.2.0"
-    "@opentelemetry/resources": "npm:2.2.0"
-  peerDependencies:
-    "@opentelemetry/api": ">=1.9.0 <1.10.0"
-  checksum: a2668f9ef937123552a5ab96ec23675931ae7d3223ec7a31c8aac95fbbfb0b03a54a873f17f2356b04db7031421e7e3d7e3bf9d96d9069a0b97c680a2c158bc4
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/sdk-trace-base@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@opentelemetry/sdk-trace-base@npm:2.2.0"
-  dependencies:
-    "@opentelemetry/core": "npm:2.2.0"
-    "@opentelemetry/resources": "npm:2.2.0"
-    "@opentelemetry/semantic-conventions": "npm:^1.29.0"
-  peerDependencies:
-    "@opentelemetry/api": ">=1.3.0 <1.10.0"
-  checksum: a67715b71d7253cd61ea79954f56491796ac7a660d03d5381fd81defd4546042bb465b27e1b6eee4b1ed32c00305a5349a16d04fd44314c9a1d371a0a638107a
-  languageName: node
-  linkType: hard
-
-"@opentelemetry/semantic-conventions@npm:^1.29.0":
-  version: 1.39.0
-  resolution: "@opentelemetry/semantic-conventions@npm:1.39.0"
-  checksum: 1a8cc16e83ccd80aeb910e78146e8cde8482ac45feb3693348eec5983d8ad254f977f2b61db76f043ab0fa6009a27df610a9cff286a217d6cd4c114216861d0f
-  languageName: node
-  linkType: hard
-
 "@oxc-parser/binding-android-arm-eabi@npm:0.127.0":
   version: 0.127.0
   resolution: "@oxc-parser/binding-android-arm-eabi@npm:0.127.0"
@@ -8005,22 +7853,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@posthog/core@npm:1.23.0":
-  version: 1.23.0
-  resolution: "@posthog/core@npm:1.23.0"
-  dependencies:
-    cross-spawn: "npm:^7.0.6"
-  checksum: 3f0443e400a18653f9a0a76c0aad823ae89156664a5f51b923809b00f86fd3314367e9eca0eaf17f3199548e2a2bdcd1f31db8d95ecaf7005aee46ce1f0c5888
-  languageName: node
-  linkType: hard
-
-"@posthog/types@npm:1.350.0":
-  version: 1.350.0
-  resolution: "@posthog/types@npm:1.350.0"
-  checksum: 77fed0a8a9ecbfc92261ea8f2185eea8fb4d71b9a2d31807473843cf5a9c4fc1890c5fe216110a0f3d23216b5e5156f42c34c4c77503dca7fafba86a5d8675e7
-  languageName: node
-  linkType: hard
-
 "@preact/signals-core@npm:^1.14.2, @preact/signals-core@npm:^1.7.0":
   version: 1.14.4
   resolution: "@preact/signals-core@npm:1.14.4"
@@ -8036,71 +7868,6 @@ __metadata:
   peerDependencies:
     preact: 10.x
   checksum: a438e80dc6ef1c3801c988d1e3516056293fc07920d81326f5e1a399c998b16bd2d41cdd053cda4edc402da5c5ea91d95671766f5d864b6ebbd7c8fac3502050
-  languageName: node
-  linkType: hard
-
-"@protobufjs/aspromise@npm:^1.1.1, @protobufjs/aspromise@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@protobufjs/aspromise@npm:1.1.2"
-  checksum: a83343a468ff5b5ec6bff36fd788a64c839e48a07ff9f4f813564f58caf44d011cd6504ed2147bf34835bd7a7dd2107052af755961c6b098fd8902b4f6500d0f
-  languageName: node
-  linkType: hard
-
-"@protobufjs/base64@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@protobufjs/base64@npm:1.1.2"
-  checksum: eec925e681081af190b8ee231f9bad3101e189abbc182ff279da6b531e7dbd2a56f1f306f37a80b1be9e00aa2d271690d08dcc5f326f71c9eed8546675c8caf6
-  languageName: node
-  linkType: hard
-
-"@protobufjs/codegen@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "@protobufjs/codegen@npm:2.0.5"
-  checksum: 1b8a2ae56ee60a56e9d205cd4b6072a1503c5069b8ebb905710f974ff0098a0d0700641c137e0a8d98dedf14423156a106a9433695cbf52574810f55000fdcab
-  languageName: node
-  linkType: hard
-
-"@protobufjs/eventemitter@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@protobufjs/eventemitter@npm:1.1.1"
-  checksum: 8e06193d4629c5e7c09d4f8c2ddba8fc4dfa739f0149f33a1d901568d35bb7b8b5277a4e8452baf3bdd0b302fd599cf255d193267aa93a0a4747e23cd073c4ac
-  languageName: node
-  linkType: hard
-
-"@protobufjs/fetch@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@protobufjs/fetch@npm:1.1.1"
-  dependencies:
-    "@protobufjs/aspromise": "npm:^1.1.1"
-  checksum: a497ff5433854e8577f0427983ea39b9113b49a8120f94515291d763327061d2c3013e60e24ea436d091dafae01a0f6eb1867e3b1616045d96a31d8b3c646ed4
-  languageName: node
-  linkType: hard
-
-"@protobufjs/float@npm:^1.0.2":
-  version: 1.0.2
-  resolution: "@protobufjs/float@npm:1.0.2"
-  checksum: 18f2bdede76ffcf0170708af15c9c9db6259b771e6b84c51b06df34a9c339dbbeec267d14ce0bddd20acc142b1d980d983d31434398df7f98eb0c94a0eb79069
-  languageName: node
-  linkType: hard
-
-"@protobufjs/path@npm:^1.1.2":
-  version: 1.1.2
-  resolution: "@protobufjs/path@npm:1.1.2"
-  checksum: cece0a938e7f5dfd2fa03f8c14f2f1cf8b0d6e13ac7326ff4c96ea311effd5fb7ae0bba754fbf505312af2e38500250c90e68506b97c02360a43793d88a0d8b4
-  languageName: node
-  linkType: hard
-
-"@protobufjs/pool@npm:^1.1.0":
-  version: 1.1.0
-  resolution: "@protobufjs/pool@npm:1.1.0"
-  checksum: eda2718b7f222ac6e6ad36f758a92ef90d26526026a19f4f17f668f45e0306a5bd734def3f48f51f8134ae0978b6262a5c517c08b115a551756d1a3aadfcf038
-  languageName: node
-  linkType: hard
-
-"@protobufjs/utf8@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@protobufjs/utf8@npm:1.1.1"
-  checksum: 641fc145f00626405e8984b6e90b9edcbcc072ffc82d0647ca3176e09c730b2d022f988e65f011a7a17e2e4d77cde7733643aa10d8ac2bfa30f134dbcad553fd
   languageName: node
   linkType: hard
 
@@ -11246,7 +11013,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=13.7.0":
+"@types/node@npm:*":
   version: 25.2.3
   resolution: "@types/node@npm:25.2.3"
   dependencies:
@@ -12661,10 +12428,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wordpress/base-styles@npm:^9.1.0":
-  version: 9.1.0
-  resolution: "@wordpress/base-styles@npm:9.1.0"
-  checksum: e5e682888738f13c3445d690a9d4d3031e7b73607c3470885cef810d516b26d8669e93337696af7ea14623ddcfe77f5cb02f8a7fd7eaafa3186a0179ef0b3e9f
+"@wordpress/base-styles@npm:15.0.0":
+  version: 15.0.0
+  resolution: "@wordpress/base-styles@npm:15.0.0"
+  checksum: 4c54bdc0af8a7af82ab47374bcea80b9781345202d877137f9f6b8be0d390df3d63ce46030c95850db3238e50f6b59f91b59f758bf3487d4192c66f7035cded4
   languageName: node
   linkType: hard
 
@@ -16175,7 +15942,6 @@ __metadata:
     "@automattic/omnibar": "workspace:^"
     "@automattic/onboarding": "workspace:^"
     "@automattic/plans-grid-next": "workspace:^"
-    "@automattic/posthog": "workspace:^"
     "@automattic/request-external-access": "workspace:^"
     "@automattic/search": "workspace:^"
     "@automattic/shopping-cart": "workspace:^"
@@ -16226,7 +15992,7 @@ __metadata:
     "@wordpress/a11y": "npm:^5.1.0"
     "@wordpress/abilities": "npm:^0.25.0"
     "@wordpress/api-fetch": "npm:^8.1.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/commands": "npm:^1.48.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^9.1.0"
@@ -17369,7 +17135,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"core-js@npm:^3.30.0, core-js@npm:^3.38.1, core-js@npm:^3.6.4":
+"core-js@npm:^3.30.0, core-js@npm:^3.6.4":
   version: 3.48.0
   resolution: "core-js@npm:3.48.0"
   checksum: 6c3115900dd7cce9fab74c07cb262b3517fc250d02e8fd2ff34f80bda5f43a28482a909dbc4491dc6e1ddd9807f57a7df4c3eeecd1f202b7d9c8bfe25f9d680c
@@ -20456,13 +20222,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fflate@npm:^0.4.8":
-  version: 0.4.9
-  resolution: "fflate@npm:0.4.9"
-  checksum: a74e599dc8592766d810e1af5c476627480132d1ded41bad3a8bff5ccebdaec048c0a3504f2578792b1fa26db5c2603473fb76e4983e76d0635f5cfc188f8613
-  languageName: node
-  linkType: hard
-
 "figures@npm:^3.0.0":
   version: 3.2.0
   resolution: "figures@npm:3.2.0"
@@ -21609,7 +21368,7 @@ __metadata:
     "@emotion/styled": "npm:^11.11.0"
     "@testing-library/dom": "npm:^10.4.2"
     "@testing-library/react": "npm:^16.3.3"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch"
     "@wordpress/blocks": "npm:^15.23.0"
     "@wordpress/components": "npm:^37.0.0"
@@ -24731,13 +24490,6 @@ __metadata:
     ms: "npm:^2.1.1"
     triple-beam: "npm:^1.3.0"
   checksum: 60fb30d5664b94f8a3214bb0ce2e468893413f1560175235d25c830a41fe692bfc098929837bd0097697c1e939b35c7187c9feed260faeca4cea3dd4d5a715c6
-  languageName: node
-  linkType: hard
-
-"long@npm:^5.3.2":
-  version: 5.3.2
-  resolution: "long@npm:5.3.2"
-  checksum: 7130fe1cbce2dca06734b35b70d380ca3f70271c7f8852c922a7c62c86c4e35f0c39290565eca7133c625908d40e126ac57c02b1b1a4636b9457d77e1e60b981
   languageName: node
   linkType: hard
 
@@ -28808,28 +28560,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"posthog-js@npm:^1.348.0":
-  version: 1.350.0
-  resolution: "posthog-js@npm:1.350.0"
-  dependencies:
-    "@opentelemetry/api": "npm:^1.9.0"
-    "@opentelemetry/api-logs": "npm:^0.208.0"
-    "@opentelemetry/exporter-logs-otlp-http": "npm:^0.208.0"
-    "@opentelemetry/resources": "npm:^2.2.0"
-    "@opentelemetry/sdk-logs": "npm:^0.208.0"
-    "@posthog/core": "npm:1.23.0"
-    "@posthog/types": "npm:1.350.0"
-    core-js: "npm:^3.38.1"
-    dompurify: "npm:^3.3.1"
-    fflate: "npm:^0.4.8"
-    preact: "npm:^10.28.2"
-    query-selector-shadow-dom: "npm:^1.0.1"
-    web-vitals: "npm:^5.1.0"
-  checksum: 890d8443c7020b08eb95ba12f248751e724185645ecbdb7978043d4bec4e351aa0b3d2d34c19b7635cc7f6d50a90eefcdb5c4e7caa1911017f7145a5d96938c8
-  languageName: node
-  linkType: hard
-
-"preact@npm:^10.28.2, preact@npm:^10.29.1":
+"preact@npm:^10.29.1":
   version: 10.29.2
   resolution: "preact@npm:10.29.2"
   checksum: 2ee161274e475804524608d42bba8c79920636b322293248796a9e5bf4c3332336f8c0eca1b1566ed09cdee95e408eb20b5b7613d95820ea6b6eb8fc090ef60a
@@ -29022,25 +28753,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"protobufjs@npm:7.6.5":
-  version: 7.6.5
-  resolution: "protobufjs@npm:7.6.5"
-  dependencies:
-    "@protobufjs/aspromise": "npm:^1.1.2"
-    "@protobufjs/base64": "npm:^1.1.2"
-    "@protobufjs/codegen": "npm:^2.0.5"
-    "@protobufjs/eventemitter": "npm:^1.1.1"
-    "@protobufjs/fetch": "npm:^1.1.1"
-    "@protobufjs/float": "npm:^1.0.2"
-    "@protobufjs/path": "npm:^1.1.2"
-    "@protobufjs/pool": "npm:^1.1.0"
-    "@protobufjs/utf8": "npm:^1.1.1"
-    "@types/node": "npm:>=13.7.0"
-    long: "npm:^5.3.2"
-  checksum: 863eaca9c6f45bfcfb8787c545f53e9c6696507e328e3981b4643c12d35df7f2826021c10e3fd30bef342c13a8e9d306547bac9c0849ee3bf50f770a12f01dc5
-  languageName: node
-  linkType: hard
-
 "proxy-addr@npm:~2.0.7":
   version: 2.0.7
   resolution: "proxy-addr@npm:2.0.7"
@@ -29154,13 +28866,6 @@ __metadata:
     es-define-property: "npm:^1.0.1"
     side-channel: "npm:^1.1.1"
   checksum: 945e933f943e419bcd0ca54eeacff7d7bb5a098de886249425cbba3b5ed1be10e177b84b97d7d2c4099e90afa09bb3489112672b89dfa56edc0b5bcb829c456b
-  languageName: node
-  linkType: hard
-
-"query-selector-shadow-dom@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "query-selector-shadow-dom@npm:1.0.1"
-  checksum: f36de03f170ff1da69c3eecfa7f8b01e450a46dd266c921e17f36076ec59862eee00179489f30cb17c118bb56e868436578c01ea66f671fb358750d6ae474125
   languageName: node
   linkType: hard
 
@@ -34394,13 +34099,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-vitals@npm:^5.1.0":
-  version: 5.1.0
-  resolution: "web-vitals@npm:5.1.0"
-  checksum: 1af22ddbe2836ba880fcb492cfba24c3349f4760ebb5e92f38324ea67bca3c4dbb9c86f1a32af4795b6115cdaf98b90000cf3a7402bffef6e8c503f0d1b2e706
-  languageName: node
-  linkType: hard
-
 "web-worker@npm:^1.5.0":
   version: 1.5.0
   resolution: "web-worker@npm:1.5.0"
@@ -34937,7 +34635,7 @@ __metadata:
     "@vgs/collect-js": "npm:^0.7.2"
     "@vgs/collect-js-react": "npm:^2.1.1"
     "@wordpress/admin-ui": "npm:^2.3.0"
-    "@wordpress/base-styles": "npm:^9.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
     "@wordpress/block-editor": "npm:^15.21.0"
     "@wordpress/blocks": "npm:^15.23.0"
     "@wordpress/components": "npm:^37.0.0"

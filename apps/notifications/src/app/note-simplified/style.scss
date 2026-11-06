@@ -77,7 +77,7 @@
 .wpnc-simplified__pending-approval {
 	flex-shrink: 0;
 	font-size: $font-size-medium;
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	color: var(--wpds-color-foreground-content-warning-weak, #926300);
 
 	@include ui-mixins.when-dark-theme {

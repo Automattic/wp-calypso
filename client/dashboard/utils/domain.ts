@@ -5,6 +5,7 @@ import {
 	DomainStatus,
 	DomainTypes,
 } from '@automattic/api-core';
+import { __ } from '@wordpress/i18n';
 import { isAfter, subMinutes, subDays } from 'date-fns';
 import { hasPlanFeature } from './site-features';
 import { userHasFlag } from './user';
@@ -31,6 +32,22 @@ export function isRecentlyRegistered( registrationDate: string, numberOfMinutes 
 		!! registrationDate &&
 		isAfter( new Date( registrationDate ), subMinutes( new Date(), numberOfMinutes ) )
 	);
+}
+
+// The type shown under a domain's name. Anything else keeps the label from the API.
+export function getDomainTypeLabel( domain: Pick< DomainSummary, 'subtype' > ) {
+	switch ( domain.subtype.id ) {
+		case DomainSubtype.DOMAIN_REGISTRATION:
+			return __( 'Registered with us' );
+		case DomainSubtype.DOMAIN_CONNECTION:
+			return __( 'Connected domain name' );
+		case DomainSubtype.DOMAIN_TRANSFER:
+			return __( 'Domain name transfer' );
+		case DomainSubtype.DEFAULT_ADDRESS:
+			return __( 'Included site address' );
+		default:
+			return domain.subtype.label;
+	}
 }
 
 export function isDomainRenewable( domain: DomainSummary ): boolean {

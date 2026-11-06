@@ -91,3 +91,11 @@
 	font-size: $font-body-extra-small;
 	color: var( --color-neutral-70 );
 }
+
+.four-for-four-modal__review {
+	padding: 24px;
+
+	.subscribe-modal__description {
+		max-inline-size: 36rem;
+	}
+}
