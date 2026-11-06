@@ -1,5 +1,6 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { deleteSshKeyMutation, sshKeysQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { useMutation, useSuspenseQuery } from '@tanstack/react-query';
@@ -99,16 +100,20 @@ export default function SshKeys() {
 	};
 
 	const description = createInterpolateElement(
-		sprintf(
-			/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
-			__(
-				'Attach your SSH keys to sites with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for those sites. Deleting an SSH key also removes it from all attached sites. <learnMoreLink />'
-			),
-			{
-				businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],
-				commercePlan: getPlanNames()[ DotcomPlans.ECOMMERCE ],
-			}
-		),
+		isEnabled( 'hosting/dev-tools-all-paid-plans' )
+			? __(
+					'Attach your SSH keys to sites with a paid plan to enable SSH key authentication for those sites. Deleting an SSH key also removes it from all attached sites. <learnMoreLink />'
+				)
+			: sprintf(
+					/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
+					__(
+						'Attach your SSH keys to sites with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for those sites. Deleting an SSH key also removes it from all attached sites. <learnMoreLink />'
+					),
+					{
+						businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],
+						commercePlan: getPlanNames()[ DotcomPlans.ECOMMERCE ],
+					}
+				),
 		{
 			learnMoreLink: (
 				<InlineSupportLink
