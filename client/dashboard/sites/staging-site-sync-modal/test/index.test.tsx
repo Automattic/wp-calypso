@@ -39,7 +39,7 @@ vi.mock(
 		const { createContext, useContext, createElement, useState } =
 			await vi.importActual< typeof import( 'react' ) >( 'react' );
 
-		const FileBrowserContext = createContext( null );
+		const FileBrowserContext = createContext< { fileBrowserState: unknown } | null >( null );
 
 		const FileBrowserProvider = ( { children }: { children: React.ReactNode } ) => {
 			const [ sqlState, setSqlState ] = useState( 'unchecked' );
