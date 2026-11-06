@@ -31,6 +31,8 @@ const selectTimeZone = ( s: SiteSettings | undefined ) => ( {
 } );
 
 function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string } ) {
+	// The route stays mounted when the site changes, so the content is keyed by slug to start
+	// auto-refresh and the pinned date range over for each site.
 	const { data: site } = useSuspenseQuery( siteBySlugQuery( siteSlug ) );
 
 	// Sites with a Jetpack connection error can't reach the settings endpoint;
@@ -38,6 +40,7 @@ function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string }
 	if ( site.__inaccessible_jetpack_error ) {
 		return (
 			<SiteLogsContent
+				key={ siteSlug }
 				site={ site }
 				logType={ logType }
 				gmtOffset={ 0 }
@@ -46,7 +49,7 @@ function SiteLogs( { logType, siteSlug }: { logType: LogType; siteSlug: string }
 		);
 	}
 
-	return <SiteLogsForReachableSite site={ site } logType={ logType } />;
+	return <SiteLogsForReachableSite key={ siteSlug } site={ site } logType={ logType } />;
 }
 
 function SiteLogsForReachableSite( { site, logType }: { site: Site; logType: LogType } ) {
@@ -103,9 +106,12 @@ function SiteLogsContent( {
 			( logType === LogType.PHP || logType === LogType.SERVER ) &&
 			hasHostingFeature( site, HostingFeatures.LOGS ),
 	} );
-	// Only stop refresh after the router accepts a non-live range.
+	// Only stop refresh after the router accepts a non-live range. Clear the warning here
+	// too, since Back/Forward can restore a live range without going through the picker.
 	useEffect( () => {
-		if ( autoRefresh && ! isLast7Days( dateRange, timezoneString, gmtOffset ) ) {
+		if ( isLast7Days( dateRange, timezoneString, gmtOffset ) ) {
+			setAutoRefreshDisabledReason( null );
+		} else if ( autoRefresh ) {
 			setAutoRefresh( false );
 			setAutoRefreshDisabledReason( __( 'Auto-refresh only works with "Last 7 days" preset' ) );
 		}

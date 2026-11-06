@@ -4,12 +4,33 @@
 
 import '@testing-library/jest-dom';
 import { LogType } from '@automattic/api-core';
-import { act, screen, within, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+	Outlet,
+	RouterProvider,
+	createMemoryHistory,
+	createRootRoute,
+	createRoute,
+	createRouter,
+	useParams,
+} from '@tanstack/react-router';
+import {
+	act,
+	render as testingLibraryRender,
+	screen,
+	within,
+	waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import nock from 'nock';
+import { Suspense } from 'react';
+import { AnalyticsProvider } from '../../../app/analytics';
+import { AuthContext } from '../../../app/auth';
+import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import SiteLogs from '../index';
+import type { User } from '@automattic/api-core';
 
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
@@ -26,32 +47,50 @@ function mockSiteAndSettings( {
 	timezoneString = '',
 	features = [ 'full-activity-log', 'logs' ],
 	isAtomic = true,
-}: { gmtOffset?: number; timezoneString?: string; features?: string[]; isAtomic?: boolean } = {} ) {
+	slug = 'test-site',
+	siteId = mockSiteId,
+	inaccessibleJetpack = false,
+}: {
+	gmtOffset?: number;
+	timezoneString?: string;
+	features?: string[];
+	isAtomic?: boolean;
+	slug?: string;
+	siteId?: number;
+	inaccessibleJetpack?: boolean;
+} = {} ) {
+	if ( inaccessibleJetpack ) {
+		nock( API_BASE )
+			.get( `/rest/v1.1/sites/${ slug }` )
+			.query( ( query ) => query.force !== 'wpcom' )
+			.reply( 403, { error: 'unauthorized', message: 'The Jetpack site is inaccessible.' } );
+	}
 	nock( API_BASE )
-		.get( '/rest/v1.1/sites/test-site' )
+		.get( `/rest/v1.1/sites/${ slug }` )
 		.query( true )
 		.reply( 200, {
-			ID: mockSiteId,
-			slug: 'test-site',
+			ID: siteId,
+			slug,
 			options: { admin_url: 'https://example.com/wp-admin/' },
 			is_wpcom_atomic: isAtomic,
 			plan: { features: { active: features } },
 		} );
 	nock( API_BASE )
-		.get( `/rest/v1.4/sites/${ mockSiteId }/settings` )
+		.get( `/rest/v1.4/sites/${ siteId }/settings` )
 		.reply( 200, { settings: { gmt_offset: gmtOffset, timezone_string: timezoneString } } );
 }
 
-function mockPhpLogs( logs: unknown[] ) {
+function mockPhpLogs( logs: unknown[], siteId = mockSiteId ) {
 	const queries: Record< string, unknown >[] = [];
 	nock( API_BASE )
 		.persist()
-		.get( `/wpcom/v2/sites/${ mockSiteId }/hosting/error-logs` )
-		.query( ( query ) => {
-			queries.push( query );
-			return true;
-		} )
-		.reply( 200, { data: { total_results: logs.length, logs, scroll_id: null } } );
+		.get( `/wpcom/v2/sites/${ siteId }/hosting/error-logs` )
+		.query( true )
+		// Recorded on reply: nock runs query matchers before it compares the path.
+		.reply( 200, ( uri ) => {
+			queries.push( Object.fromEntries( new URL( uri, API_BASE ).searchParams ) );
+			return { data: { total_results: logs.length, logs, scroll_id: null } };
+		} );
 	return queries;
 }
 
@@ -211,6 +250,43 @@ describe( '<SiteLogs>', () => {
 		expect(
 			screen.queryByText( 'Auto-refresh only works with "Last 7 days" preset' )
 		).not.toBeInTheDocument();
+	} );
+
+	test( 'clears the auto-refresh warning when history restores the Last 7 days range', async () => {
+		mockPhpLogs( [] );
+		const { router } = render( <SiteLogs logType={ LogType.PHP } siteSlug="test-site" /> );
+		const warning = 'Auto-refresh only works with "Last 7 days" preset';
+		const picker = () => screen.getByRole( 'button', { name: /^Date range:/ } );
+		const checkbox = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
+		await userEvent.click( checkbox );
+		await waitFor( () =>
+			expect(
+				Number( ( router.state.location.search as Record< string, unknown > ).to )
+			).toBeLessThanOrEqual( Math.floor( Date.now() / 1000 ) )
+		);
+		const liveSearch = router.state.location.search;
+		const liveLabel = picker().getAttribute( 'aria-label' );
+
+		// Like following the active sidebar link, which drops the dates.
+		await act( () => router.navigate( { to: '/', search: {} } ) );
+		await userEvent.click( picker() );
+		await userEvent.click( screen.getByRole( 'option', { name: 'Yesterday' } ) );
+		expect( await screen.findByText( warning ) ).toBeVisible();
+		expect( checkbox ).not.toBeChecked();
+		expect( checkbox ).toBeDisabled();
+
+		await act( async () => router.history.back() );
+		await waitFor( () => expect( router.state.location.search ).toEqual( liveSearch ) );
+		expect( picker() ).toHaveAttribute( 'aria-label', liveLabel );
+		expect( screen.queryByText( warning ) ).not.toBeInTheDocument();
+		expect( checkbox ).toBeEnabled();
+
+		await act( async () => router.history.forward() );
+		await waitFor( () => expect( picker() ).not.toHaveAttribute( 'aria-label', liveLabel ) );
+		expect( screen.queryByText( warning ) ).not.toBeInTheDocument();
+		await userEvent.click( checkbox );
+		expect( checkbox ).not.toBeChecked();
+		expect( await screen.findByText( warning ) ).toBeVisible();
 	} );
 } );
 
@@ -419,5 +495,136 @@ describe( '<SiteLogs> site calendar request bounds', () => {
 			from: Date.parse( bounds.selectedAfter ) / 1000,
 			to: Date.parse( bounds.selectedBefore ) / 1000,
 		} );
+	} );
+} );
+
+describe( '<SiteLogs> site switches', () => {
+	const now = Date.parse( '2025-03-10T04:30:00Z' ) / 1000;
+	const today = Date.parse( '2025-03-10T00:00:00Z' ) / 1000;
+
+	function SiteLogsRoute() {
+		const { siteSlug } = useParams( { strict: false } ) as { siteSlug: string };
+		return <SiteLogs logType={ LogType.PHP } siteSlug={ siteSlug } />;
+	}
+
+	// The shared render helper has no `$siteSlug` route; like production, this one stays
+	// mounted while its params change.
+	function renderAtSiteLogsUrl( url: string ) {
+		const root = createRootRoute( {
+			pendingMs: 0,
+			component: () => (
+				<Suspense fallback={ null }>
+					<Outlet />
+				</Suspense>
+			),
+		} );
+		const logsRoute = createRoute( {
+			getParentRoute: () => root,
+			path: 'sites/$siteSlug/logs/php',
+			component: SiteLogsRoute,
+		} );
+		const router = createRouter( {
+			routeTree: root.addChildren( [ logsRoute ] ),
+			history: createMemoryHistory( { initialEntries: [ url ] } ),
+		} );
+		testingLibraryRender(
+			<QueryClientProvider
+				client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
+			>
+				<AppProvider config={ APP_CONTEXT_DEFAULT_CONFIG }>
+					<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
+						<AuthContext.Provider value={ { user: { ID: 1 } as User, logout: jest.fn() } }>
+							<RouterProvider router={ router } context={ { config: { basePath: '/' } } } />
+						</AuthContext.Provider>
+					</AnalyticsProvider>
+				</AppProvider>
+			</QueryClientProvider>
+		);
+		return router;
+	}
+
+	beforeEach( () => MockDate.set( now * 1000 ) );
+	afterEach( () => MockDate.reset() );
+
+	test.each( [
+		[ 'reachable', false ],
+		[ 'inaccessible Jetpack', true ],
+	] )(
+		'starts the next %s site with refresh off and its own range pinned',
+		async ( _, inaccessibleJetpack ) => {
+			mockSiteAndSettings( { inaccessibleJetpack } );
+			mockSiteAndSettings( { slug: 'other-site', siteId: 456, inaccessibleJetpack } );
+			mockPhpLogs( [] );
+			const requests = mockPhpLogs( [], 456 );
+			const router = renderAtSiteLogsUrl( '/sites/test-site/logs/php' );
+			const search = () => new URLSearchParams( router.state.location.searchStr );
+			await waitFor( () => expect( search().get( 'to' ) ).toBe( String( today + 86399 ) ) );
+			await userEvent.click( await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } ) );
+			await waitFor( () => expect( search().get( 'to' ) ).toBe( String( now ) ) );
+
+			await act( async () => router.history.push( '/sites/other-site/logs/php' ) );
+			await waitFor( () => expect( requests ).not.toHaveLength( 0 ) );
+			const checkbox = await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } );
+			expect( checkbox ).not.toBeChecked();
+			await waitFor( () => expect( search().get( 'to' ) ).toBe( String( today + 86399 ) ) );
+			expect( search().get( 'from' ) ).toBe( String( today - 6 * 86400 ) );
+
+			await userEvent.click( checkbox );
+			await waitFor( () =>
+				expect( requests ).toContainEqual(
+					expect.objectContaining( { start: String( now - 6 * 86400 ), end: String( now ) } )
+				)
+			);
+			expect( checkbox ).toBeChecked();
+			expect( search().get( 'to' ) ).toBe( String( now ) );
+		}
+	);
+
+	test( 'starts over when the same site opens under its ID', async () => {
+		mockSiteAndSettings();
+		mockSiteAndSettings( { slug: String( mockSiteId ) } );
+		mockPhpLogs( [] );
+		const router = renderAtSiteLogsUrl( '/sites/test-site/logs/php' );
+		const search = () => new URLSearchParams( router.state.location.searchStr );
+		await userEvent.click( await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } ) );
+		await waitFor( () => expect( search().get( 'to' ) ).toBe( String( now ) ) );
+
+		await act( async () => router.history.push( `/sites/${ mockSiteId }/logs/php` ) );
+		await waitFor( () => expect( search().get( 'to' ) ).toBe( String( today + 86399 ) ) );
+		expect( search().get( 'from' ) ).toBe( String( today - 6 * 86400 ) );
+		expect( screen.getByRole( 'checkbox', { name: 'Auto-refresh' } ) ).not.toBeChecked();
+	} );
+
+	test( 'keeps the range restored for a site in another time zone', async () => {
+		const from = Date.parse( '2025-01-31T15:00:00Z' ) / 1000;
+		const to = Date.parse( '2025-02-07T14:59:59Z' ) / 1000;
+		mockSiteAndSettings();
+		mockSiteAndSettings( { slug: 'other-site', siteId: 456, timezoneString: 'Asia/Tokyo' } );
+		const requests = mockPhpLogs( [] );
+		mockPhpLogs( [], 456 );
+		const router = renderAtSiteLogsUrl( `/sites/other-site/logs/php?from=${ from }&to=${ to }` );
+		const search = () => new URLSearchParams( router.state.location.searchStr );
+		const picker = () => screen.getByRole( 'button', { name: /^Date range:/ } );
+		await waitFor( () =>
+			expect( picker() ).toHaveAccessibleName( expect.stringContaining( 'Feb 1, 2025' ) )
+		);
+
+		await act( async () => router.history.push( '/sites/test-site/logs/php' ) );
+		await waitFor( () => expect( requests ).not.toHaveLength( 0 ) );
+		await userEvent.click( await screen.findByRole( 'checkbox', { name: 'Auto-refresh' } ) );
+		await waitFor( () => expect( search().get( 'to' ) ).toBe( String( now ) ) );
+
+		await act( async () => router.history.back() );
+		await waitFor( () =>
+			expect( router.state.location.pathname ).toBe( '/sites/other-site/logs/php' )
+		);
+		await waitFor( () =>
+			expect( screen.getByRole( 'checkbox', { name: 'Auto-refresh' } ) ).not.toBeChecked()
+		);
+		expect( search().get( 'from' ) ).toBe( String( from ) );
+		expect( search().get( 'to' ) ).toBe( String( to ) );
+		await waitFor( () =>
+			expect( picker() ).toHaveAccessibleName( expect.stringContaining( 'Feb 1, 2025' ) )
+		);
 	} );
 } );
