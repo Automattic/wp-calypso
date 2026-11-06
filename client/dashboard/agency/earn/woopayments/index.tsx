@@ -1,13 +1,19 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import {
+	Button,
+	__experimentalHStack as HStack,
+	__experimentalVStack as VStack,
+} from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from 'react';
+import { getQueryArg } from '@wordpress/url';
+import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useLocale } from '../../../app/locale';
 import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { DataViewsCard } from '../../../components/dataviews';
+import EmptyState from '../../../components/empty-state';
 import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import { useIsApprovalGated } from '../../approval-gate';
@@ -18,9 +24,19 @@ import MissingPaymentSettingsNotice, {
 import AddWooPaymentsToSite from './add-woopayments-to-site';
 import CommissionsTable from './commissions-table';
 import ConsolidatedViews from './consolidated-views';
-import WooPaymentsDashboardEmptyState from './empty-state';
 import { useDownloadCommissionsReport } from './use-download-commissions-report';
 import useWooPaymentsDashboardData from './use-woopayments-dashboard-data';
+
+// Agencies with sites only need the landing content once they open “Learn more”.
+const WooPaymentsLanding = lazy(
+	() => import( /* webpackChunkName: "async-load-a4a-woopayments-landing" */ './landing' )
+);
+const WooPaymentsLearnMoreModal = lazy(
+	() =>
+		import(
+			/* webpackChunkName: "async-load-a4a-woopayments-learn-more-modal" */ './landing/learn-more-modal'
+		)
+);
 
 export default function EarnWooPayments() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -43,6 +59,12 @@ export default function EarnWooPayments() {
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
 	const router = useRouter();
 	const isApprovalGated = useIsApprovalGated();
+	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
+	// Lets reviewers see the first-time landing page on an agency that already has sites.
+	const isLandingPreview =
+		process.env.NODE_ENV === 'development' &&
+		getQueryArg( window.location.href, 'preview' ) === 'landing';
+	const showLanding = showEmptyState || isLandingPreview;
 
 	const navigateToSiteSetup = useCallback(
 		( siteId: number ) =>
@@ -58,20 +80,37 @@ export default function EarnWooPayments() {
 		[ sitesWithPluginsStates ]
 	);
 
+	const addWooPaymentsToSite = (
+		<AddWooPaymentsToSite
+			agencyId={ agencyId }
+			excludedSiteIds={ excludedSiteIds }
+			recordTracksEvent={ recordTracksEvent }
+			onSelectSite={ navigateToSiteSetup }
+			shouldUseRouterLink
+			isApprovalGated={ isApprovalGated }
+		/>
+	);
+
 	const header = (
 		<PageHeader
 			title={ __( 'WooPayments commissions' ) }
 			description={ __( 'Earn revenue share from WooPayments on your clients’ stores.' ) }
 			actions={
-				hasSites ? (
-					<AddWooPaymentsToSite
-						agencyId={ agencyId }
-						excludedSiteIds={ excludedSiteIds }
-						recordTracksEvent={ recordTracksEvent }
-						onSelectSite={ navigateToSiteSetup }
-						shouldUseRouterLink
-						isApprovalGated={ isApprovalGated }
-					/>
+				hasSites && ! showLanding ? (
+					<HStack spacing={ 2 } alignment="center" expanded={ false }>
+						<Button
+							__next40pxDefaultSize
+							variant="tertiary"
+							className="dashboard-woopayments-learn-more-button"
+							onClick={ () => {
+								recordTracksEvent( 'calypso_a4a_woopayments_learn_more_click' );
+								setIsLearnMoreOpen( true );
+							} }
+						>
+							{ __( 'Learn more' ) }
+						</Button>
+						{ addWooPaymentsToSite }
+					</HStack>
 				) : undefined
 			}
 		/>
@@ -101,8 +140,14 @@ export default function EarnWooPayments() {
 				/>
 			}
 		>
-			{ showEmptyState ? (
-				<WooPaymentsDashboardEmptyState />
+			{ showLanding ? (
+				<div className="dashboard-woopayments-landing-view">
+					<EmptyState.Wrapper>
+						<Suspense fallback={ null }>
+							<WooPaymentsLanding cta={ addWooPaymentsToSite } />
+						</Suspense>
+					</EmptyState.Wrapper>
+				</div>
 			) : (
 				<VStack spacing={ 6 }>
 					<ConsolidatedViews
@@ -121,6 +166,11 @@ export default function EarnWooPayments() {
 						/>
 					</DataViewsCard>
 				</VStack>
+			) }
+			{ isLearnMoreOpen && (
+				<Suspense fallback={ null }>
+					<WooPaymentsLearnMoreModal onClose={ () => setIsLearnMoreOpen( false ) } />
+				</Suspense>
 			) }
 		</PageLayout>
 	);
