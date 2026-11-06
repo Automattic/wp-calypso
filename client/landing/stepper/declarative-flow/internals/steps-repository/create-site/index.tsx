@@ -158,20 +158,25 @@ const CreateSite: StepType = function CreateSite( { navigation, flow, data } ) {
 		blueprint,
 	} = useSelect(
 		( select: ( arg: string ) => OnboardSelect ) => ( {
-			domainItem: select( ONBOARD_STORE ).getSelectedDomain(),
+			// The entrepreneur flow never asks for a domain, so one in the store is left over from
+			// an earlier signup. Sending it would ask for that site's exact name again and fail
+			// with `blog_name_exists`.
+			domainItem: isEntrepreneurFlow( flow )
+				? undefined
+				: select( ONBOARD_STORE ).getSelectedDomain(),
 			domainCartItem: select( ONBOARD_STORE ).getDomainCartItem(),
 			domainCartItems: select( ONBOARD_STORE ).getDomainCartItems(),
 			planCartItem: select( ONBOARD_STORE ).getPlanCartItem(),
 			productCartItems: select( ONBOARD_STORE ).getProductCartItems(),
 			selectedSiteTitle: select( ONBOARD_STORE ).getSelectedSiteTitle(),
-			siteUrl: select( ONBOARD_STORE ).getSiteUrl(),
+			siteUrl: isEntrepreneurFlow( flow ) ? undefined : select( ONBOARD_STORE ).getSiteUrl(),
 			progress: select( ONBOARD_STORE ).getProgress(),
 			partnerBundle: select( ONBOARD_STORE ).getPartnerBundle(),
 			gardenName: select( ONBOARD_STORE ).getGardenName(),
 			gardenPartnerName: select( ONBOARD_STORE ).getGardenPartnerName(),
 			blueprint: select( ONBOARD_STORE ).getBlueprint(),
 		} ),
-		[]
+		[ flow ]
 	);
 
 	const { mutateAsync: addEcommerceTrial } = useAddEcommerceTrialMutation( partnerBundle );
