@@ -264,8 +264,10 @@
 
 /* @wordpress/icons stroke-drawn icons --------------------------------------------- *
  * They draw with `color` and set `fill: none` on the svg. Rules that fill their shapes, such as
- * @wordpress/components' select arrow, would fill them in solid. Shapes with their own `fill`
- * attribute are filled on purpose. */
+ * @wordpress/components 37's select arrow and Calypso's `svg path { fill }` rules, would fill them
+ * in solid. Shapes with their own `fill` attribute are filled on purpose. Remove once
+ * @wordpress/components is 44 or later, which no longer fills the arrow, and those Calypso rules
+ * no longer target stroke icons. */
 svg[stroke="currentColor"][style*="fill: none"] :is(path, circle, rect, line, polyline, polygon, ellipse):not([fill]) {
 	fill: none !important;
 }
