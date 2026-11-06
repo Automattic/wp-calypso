@@ -77,7 +77,7 @@ export function ConversationList( {
 	const moment = useLocalizedMoment();
 	const { ref: endRef, inView: isEndInView } = useInView();
 
-	// Runs again after each page, so a page the filters empty out still loads the next one.
+	// Runs again after each page, in case the end of the list is still in view.
 	useEffect( () => {
 		if ( isEndInView && hasMore && ! isLoadingMore && ! isLoadMoreError ) {
 			onLoadMore?.();
@@ -231,24 +231,24 @@ export function ConversationList( {
 				) ) }
 				{ ! isLoading && hasMore && (
 					<div ref={ endRef } className="conversations-inbox__list-end">
-						{ isLoadMoreError && (
-							<ListMessage description={ translate( 'Couldn’t load more.' ) } />
-						) }
 						{ isLoadMoreError ? (
-							// Stays mounted while loading so the focus isn't lost.
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
-								isBusy={ isLoadingMore }
-								disabled={ isLoadingMore }
-								accessibleWhenDisabled
-								onClick={ () => {
-									refocusRef.current = true;
-									onLoadMore?.();
-								} }
-							>
-								{ translate( 'Retry' ) }
-							</Button>
+							<>
+								<ListMessage description={ translate( 'Couldn’t load more.' ) } />
+								{ /* Stays mounted while loading so the focus isn't lost. */ }
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									isBusy={ isLoadingMore }
+									disabled={ isLoadingMore }
+									accessibleWhenDisabled
+									onClick={ () => {
+										refocusRef.current = true;
+										onLoadMore?.();
+									} }
+								>
+									{ translate( 'Retry' ) }
+								</Button>
+							</>
 						) : (
 							isLoadingMore && <Spinner />
 						) }

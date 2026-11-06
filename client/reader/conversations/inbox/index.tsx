@@ -97,9 +97,11 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	}, [ searchTerm ] );
 	const conversationsQuery = useConversations( {
 		sort,
-		// Your comments only reads the conversations for the open one, which a search could hide.
-		search: tab === 'yours' ? '' : debouncedSearch,
+		// The other tabs only read it to look up the open conversation, which a search could hide.
+		search: tab === 'all' ? debouncedSearch : '',
 		refetchInterval: REFRESH_INTERVAL,
+		// Its cached pages still serve those lookups while Unread runs its own query.
+		enabled: tab !== 'unread',
 	} );
 	const unreadQuery = useConversations( {
 		sort,
@@ -113,12 +115,15 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		search: debouncedSearch,
 		enabled: tab === 'yours',
 	} );
-	// The All count stays put on the Unread tab, whose own total only covers what's still unread.
-	const { unreadTotal } = conversationsQuery;
-	// Your comments looks up the posts it opens in All.
 	const conversationsShownQuery = tab === 'unread' ? unreadQuery : conversationsQuery;
 	const { conversations } = conversationsShownQuery;
+	// Every scope returns the same total, so All's keeps the count up while Unread loads.
+	const { unreadTotal } = unreadQuery.data && tab === 'unread' ? unreadQuery : conversationsQuery;
 	const listQuery = tab === 'yours' ? ownCommentsQuery : conversationsShownQuery;
+	// Your comments, and a conversation Unread no longer lists, are looked up in All.
+	const findConversation = ( key?: string ) =>
+		conversations.find( ( candidate ) => candidate.key === key ) ??
+		conversationsQuery.conversations.find( ( candidate ) => candidate.key === key );
 	const { fetchNextPage } = listQuery;
 	const loadMore = useCallback( () => fetchNextPage(), [ fetchNextPage ] );
 	const { mutate: markRead } = useMarkConversationsRead();
@@ -137,7 +142,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const activeOpened = opened?.key === selectedKey ? opened : undefined;
 	const selectedItemKey = tab === 'yours' ? activeOpened?.anchor?.key : selectedKey;
 	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedItemKey );
-	const found = conversations.find( ( { key } ) => key === selectedKey );
+	const found = findConversation( selectedKey );
 	const selected = found ?? activeOpened?.conversation;
 	const [ previousKey, setPreviousKey ] = useState( selectedKey );
 	if ( selectedKey !== previousKey ) {
@@ -204,7 +209,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		const key = getConversationKey( item.siteId, item.postId );
-		const conversation = conversations.find( ( candidate ) => candidate.key === key );
+		const conversation = findConversation( key );
 		const unread: Unread | undefined = conversation ?? getUnreadFromNotes( notes, item );
 		const unreadNoteIds = unread?.unreadNoteIds;
 		const previous = key === opened?.key ? opened.unread : undefined;
