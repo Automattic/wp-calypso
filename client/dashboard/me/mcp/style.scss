@@ -21,37 +21,47 @@
 	}
 }
 
-// A plain link or button around a dashboard Card: no box of its own.
-.mcp-connect__tile-target {
-	display: block;
-	width: 100%;
-	height: 100%;
-	padding: 0;
-	border: 0;
-	border-radius: 8px;
-	background: none;
-	color: inherit;
-	font: inherit;
-	text-align: start;
-	text-decoration: none;
-	cursor: pointer;
-
-	&:focus-visible {
-		outline: var( --wp-admin-border-width-focus, 2px ) solid var( --wp-admin-theme-color, #3858e9 );
-		outline-offset: 1px;
-	}
-}
-
 .mcp-connect__tile.components-card {
+	position: relative;
 	height: 100%;
 	min-height: 124px;
 
 	// The Card draws its border with box-shadow.
-	.mcp-connect__tile-target:hover & {
+	&:hover {
 		box-shadow: 0 0 0 1px
 			color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 12%, transparent );
 		background: color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 2%, transparent );
 		color: var( --wp-admin-theme-color, #3858e9 );
+	}
+}
+
+// Holds only the agent name. Its ::after layer covers the Card, so the whole tile is clickable.
+.mcp-connect__tile-target {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	text-align: start;
+	text-decoration: none;
+	cursor: pointer;
+
+	&::after {
+		content: '';
+		position: absolute;
+		z-index: 1;
+		inset: 0;
+		border-radius: 8px;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus-visible::after {
+		outline: var( --wp-admin-border-width-focus, 2px ) solid var( --wp-admin-theme-color, #3858e9 );
+		outline-offset: 1px;
 	}
 }
 
@@ -86,10 +96,6 @@
 .mcp-connect__text {
 	display: flex;
 	flex-direction: column;
-}
-
-.mcp-connect__name {
-	font-weight: 600;
 }
 
 .mcp-connect__description {

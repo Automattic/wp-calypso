@@ -34,50 +34,6 @@ function AgentLogo( { agent }: { agent: ConnectAgent } ) {
 	);
 }
 
-// The agent name names the tile; the description and the action describe it.
-function getTileAriaProps( id: string ) {
-	return {
-		'aria-labelledby': `${ id }-name`,
-		'aria-describedby': `${ id }-description ${ id }-action`,
-	};
-}
-
-function TileContent( {
-	id,
-	agent,
-	isCopied,
-}: {
-	id: string;
-	agent: ConnectAgent;
-	isCopied: boolean;
-} ) {
-	return (
-		<CardBody className="mcp-connect__tile-body">
-			<AgentLogo agent={ agent } />
-			<span className="mcp-connect__text">
-				<span id={ `${ id }-name` } className="mcp-connect__name">
-					{ agent.name }
-				</span>
-				<span id={ `${ id }-description` } className="mcp-connect__description">
-					{ agent.description }
-				</span>
-			</span>
-			<span id={ `${ id }-action` } className="mcp-connect__action">
-				<span>{ isCopied ? __( 'Copied' ) : agent.actionLabel }</span>
-				<Icon icon={ agent.href ? arrowUpRight : copy } size={ 12 } />
-				{ agent.href && (
-					<VisuallyHidden>
-						{
-							/* translators: accessibility text */
-							__( '(opens in a new tab)' )
-						}
-					</VisuallyHidden>
-				) }
-			</span>
-		</CardBody>
-	);
-}
-
 function AgentTile( {
 	agent,
 	isCopied,
@@ -90,37 +46,51 @@ function AgentTile( {
 	onCopy: () => void;
 } ) {
 	const id = useId();
-	// The link or button carries the semantics; the dashboard Card carries the look.
-	const content = (
-		<Card size="small" className="mcp-connect__tile">
-			<TileContent id={ id } agent={ agent } isCopied={ isCopied } />
-		</Card>
-	);
-
-	if ( agent.href !== undefined ) {
-		return (
-			<a
-				className="mcp-connect__tile-target"
-				href={ agent.href }
-				target="_blank"
-				rel="noreferrer"
-				onClick={ onOpen }
-				{ ...getTileAriaProps( id ) }
-			>
-				{ content }
-			</a>
-		);
-	}
+	// The link or button holds only the name, so its markup stays valid, and the CSS
+	// stretches it over the whole Card. The description and the action describe it.
+	const targetProps = {
+		className: 'mcp-connect__tile-target',
+		'aria-describedby': `${ id }-description ${ id }-action`,
+	};
 
 	return (
-		<button
-			type="button"
-			className="mcp-connect__tile-target"
-			onClick={ onCopy }
-			{ ...getTileAriaProps( id ) }
-		>
-			{ content }
-		</button>
+		<Card size="small" className="mcp-connect__tile">
+			<CardBody className="mcp-connect__tile-body">
+				<AgentLogo agent={ agent } />
+				<span className="mcp-connect__text">
+					{ agent.href !== undefined ? (
+						<a
+							{ ...targetProps }
+							href={ agent.href }
+							target="_blank"
+							rel="noreferrer"
+							onClick={ onOpen }
+						>
+							{ agent.name }
+						</a>
+					) : (
+						<button { ...targetProps } type="button" onClick={ onCopy }>
+							{ agent.name }
+						</button>
+					) }
+					<span id={ `${ id }-description` } className="mcp-connect__description">
+						{ agent.description }
+					</span>
+				</span>
+				<span id={ `${ id }-action` } className="mcp-connect__action">
+					<span>{ isCopied ? __( 'Copied' ) : agent.actionLabel }</span>
+					<Icon icon={ agent.href ? arrowUpRight : copy } size={ 12 } />
+					{ agent.href && (
+						<VisuallyHidden as="span">
+							{
+								/* translators: accessibility text */
+								__( '(opens in a new tab)' )
+							}
+						</VisuallyHidden>
+					) }
+				</span>
+			</CardBody>
+		</Card>
 	);
 }
 

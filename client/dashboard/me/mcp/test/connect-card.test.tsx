@@ -61,6 +61,15 @@ describe( '<McpConnectCard />', () => {
 		);
 	} );
 
+	test( 'keeps block elements out of the tile buttons and inline text', () => {
+		renderCard();
+
+		const blocks = document.querySelectorAll(
+			'.mcp-connect__tile-target *, .mcp-connect__text div, .mcp-connect__action div'
+		);
+		expect( blocks ).toHaveLength( 0 );
+	} );
+
 	test( 'opens VS Code’s install page with the server config', () => {
 		renderCard();
 
