@@ -29,6 +29,7 @@ import { NavigationBlockerRegistry } from '../navigation-blocker';
 import Notifications from '../notifications';
 import { useOmnibarEvent } from '../omnibar/events';
 import { useSyncOmnibarSite } from '../omnibar/site';
+import { RenewalSuccessFlashMessage } from '../renewal-success-flash-message';
 import ResponsiveSidebar from '../responsive-sidebar';
 import { ResurrectedWelcomeModalGate } from '../resurrected-welcome-modal';
 import Snackbars from '../snackbars';
@@ -192,6 +193,7 @@ function Root() {
 			<AgentsManagerLoader pathname={ pathname } />
 			<Snackbars />
 			<CheckoutSuccessFlashMessage />
+			<RenewalSuccessFlashMessage />
 			{ isResurrectedWelcomeModalEnabled && (
 				<ResurrectedWelcomeModalGate onEligibilityResolved={ handleResurrectedModalEligibility } />
 			) }

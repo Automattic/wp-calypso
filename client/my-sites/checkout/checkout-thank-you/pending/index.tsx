@@ -16,6 +16,10 @@ import Loading from 'calypso/components/loading';
 import Main from 'calypso/components/main';
 import { CHECKOUT_SUCCESS_PLAN_PARAM } from 'calypso/dashboard/app/checkout-success-flash';
 import { CHECKOUT_SUCCESS_FLASH_ID } from 'calypso/dashboard/app/checkout-success-flash-message';
+import {
+	RENEWAL_SUCCESS_FLASH_ID,
+	RENEWAL_SUCCESS_PURCHASE_PARAM,
+} from 'calypso/dashboard/app/renewal-success-flash-message';
 import { dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
@@ -152,18 +156,34 @@ function isDashboardUrl( url: string ): boolean {
 /**
  * Tags a successful redirect so the destination can show a success toast on
  * arrival. The Dashboard (a separate SPA) can't rely on the classic notice
- * mechanisms, so it gets its own `flash` param for `<CheckoutSuccessFlashMessage>`.
- * Classic My Home reads `notice`. Both name a newly bought plan.
+ * mechanisms, so it gets its own `flash` param: `<RenewalSuccessFlashMessage>`
+ * for a renewal, which names the renewed purchase so the Dashboard can look up
+ * its new expiry date, and `<CheckoutSuccessFlashMessage>` otherwise. Classic
+ * My Home reads `notice`. Both name a newly bought plan.
  */
 function addSuccessNoticeParams(
 	url: string,
-	{ purchasedPlanSlug, isRenewal }: { purchasedPlanSlug?: string; isRenewal: boolean }
+	{
+		purchasedPlanSlug,
+		isRenewal,
+		renewedPurchaseId,
+	}: { purchasedPlanSlug?: string; isRenewal: boolean; renewedPurchaseId?: number }
 ): string {
 	const planArgs = purchasedPlanSlug ? { [ CHECKOUT_SUCCESS_PLAN_PARAM ]: purchasedPlanSlug } : {};
 
 	if ( isDashboardUrl( url ) ) {
-		// Drop a plan slug left over from an earlier checkout started on the same page.
-		const cleanUrl = removeQueryArgs( url, CHECKOUT_SUCCESS_PLAN_PARAM );
+		// Drop params left over from an earlier checkout started on the same page.
+		const cleanUrl = removeQueryArgs(
+			url,
+			CHECKOUT_SUCCESS_PLAN_PARAM,
+			RENEWAL_SUCCESS_PURCHASE_PARAM
+		);
+		if ( isRenewal && renewedPurchaseId ) {
+			return addQueryArgs( cleanUrl, {
+				flash: RENEWAL_SUCCESS_FLASH_ID,
+				[ RENEWAL_SUCCESS_PURCHASE_PARAM ]: renewedPurchaseId,
+			} );
+		}
 		return addQueryArgs( cleanUrl, { flash: CHECKOUT_SUCCESS_FLASH_ID, ...planArgs } );
 	}
 
@@ -411,7 +431,11 @@ function useRedirectOnTransactionSuccess( {
 			: redirectInstructions.url;
 
 		if ( ! redirectInstructions.isError && ! redirectInstructions.isUnknown ) {
-			finalUrl = addSuccessNoticeParams( finalUrl, { purchasedPlanSlug, isRenewal } );
+			finalUrl = addSuccessNoticeParams( finalUrl, {
+				purchasedPlanSlug,
+				isRenewal,
+				renewedPurchaseId: resolvedPurchaseId,
+			} );
 		}
 
 		const finalRedirectInstructions = { ...redirectInstructions, url: finalUrl };
