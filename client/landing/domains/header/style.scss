@@ -16,7 +16,6 @@
 
 .header__logo {
 	fill: var(--color-primary);
-	color: var(--color-primary);
 
 	@include breakpoint-deprecated( "<960px" ) {
 		width: 39px;
@@ -26,6 +25,10 @@
 	@include breakpoint-deprecated( "<660px" ) {
 		width: 24px;
 		height: 24px;
+	}
+
+	&:where(svg) {
+		color: var(--color-primary);
 	}
 }
 

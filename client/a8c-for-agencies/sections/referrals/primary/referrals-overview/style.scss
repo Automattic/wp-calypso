@@ -208,12 +208,18 @@ $data-view-border-color: #f1f1f1;
 
 .jetpack-logo {
 	fill: var(--color-jetpack);
-	color: var(--color-jetpack);
+
+	&:where(svg) {
+		color: var(--color-jetpack);
+	}
 }
 
 .woocommerce-logo {
 	fill: var(--color-woocommerce);
-	color: var(--color-woocommerce);
+
+	&:where(svg) {
+		color: var(--color-woocommerce);
+	}
 }
 
 .referrals-overview__section-icons {

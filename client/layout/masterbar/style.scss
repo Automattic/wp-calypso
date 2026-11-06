@@ -316,6 +316,7 @@ body.is-mobile-app-view {
 		svg path,
 		.gridicon {
 			fill: var(--color-masterbar-highlight);
+			color: var(--color-masterbar-highlight);
 		}
 
 		@include breakpoint-deprecated( ">480px" ) {
@@ -511,10 +512,13 @@ body.is-mobile-app-view {
 			width: 24px;
 			margin-left: 5px;
 			fill: var(--color-text-inverted);
-			color: var(--color-text-inverted);
 
 			.masterbar--is-checkout & {
 				margin-left: 0;
+			}
+
+			&:where(svg) {
+				color: var(--color-text-inverted);
 			}
 		}
 

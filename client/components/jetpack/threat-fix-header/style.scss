@@ -16,7 +16,10 @@
 
 	&__warning-icon {
 		fill: #a7aaad;
-		color: #a7aaad;
+
+		&:where(svg) {
+			color: #a7aaad;
+		}
 	}
 
 	&__autofix-checkbox {

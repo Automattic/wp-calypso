@@ -59,7 +59,6 @@
 
 	.gridicons-notice {
 		fill: var(--color-error);
-		color: var(--color-error);
 		position: absolute;
 		top: 0;
 		left: 0;
@@ -73,6 +72,10 @@
 			position: relative;
 			width: 24px;
 			height: 24px;
+		}
+
+		&:where(svg) {
+			color: var(--color-error);
 		}
 	}
 }

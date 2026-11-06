@@ -142,7 +142,8 @@ $actions-row-height: 32px;
 		}
 
 		svg path {
-			fill: var(--color-muted-foreground)
+			fill: var(--color-muted-foreground);
+			color: var(--color-muted-foreground)
 		}
 	}
 }

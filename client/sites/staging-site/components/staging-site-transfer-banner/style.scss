@@ -1,8 +1,7 @@
 .staging-site-transfer-banner__checkmark {
 	fill: var( --color-primary );
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var( --color-primary )
 	}
 }

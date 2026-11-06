@@ -60,7 +60,10 @@
 		}
 		.migration-started-difm__icon {
 			fill: #3858E9;
-			color: #3858E9;
+
+			&:where(svg) {
+				color: #3858E9;
+			}
 		}
 		.migration-started-difm__icon-wrapper {
 			width: 52px;
@@ -109,7 +112,10 @@
 
 		.migration-ssh-failed__icon {
 			fill: #3858E9;
-			color: #3858E9;
+
+			&:where(svg) {
+				color: #3858E9;
+			}
 		}
 
 		.migration-ssh-failed__icon-wrapper {

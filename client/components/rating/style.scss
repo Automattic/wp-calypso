@@ -18,8 +18,7 @@ $rating-star-color: #ffb514;
 		.is-empty {
 			fill: var(--color-neutral-10);
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: var(--color-neutral-10);
 			}
 		}
@@ -31,8 +30,7 @@ $rating-star-color: #ffb514;
 			.gridicon {
 				fill: $rating-star-color;
 
-				&:where(svg),
-				& :where(svg) {
+				&:where(svg) {
 					color: $rating-star-color;
 				}
 			}

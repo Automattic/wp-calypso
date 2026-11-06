@@ -53,8 +53,11 @@ body.is-section-signup {
 		}
 		.search-component__icon-search {
 			fill: #a7aaad;
-			color: #a7aaad;
 			margin: 8px 6px 8px 8px;
+
+			&:where(svg) {
+				color: #a7aaad;
+			}
 		}
 		.search-component .search-component__icon-navigation {
 			padding: 0 7px;

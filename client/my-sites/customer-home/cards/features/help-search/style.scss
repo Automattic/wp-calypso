@@ -88,9 +88,12 @@ $min_results_height: 180px;
 
 	.help-search__go-icon {
 		fill: var( --color-neutral-20 );
-		color: var( --color-neutral-20 );
 		margin-left: auto; // push away from other cta content
 		margin-right: -6px; // visually pull arrow RHS to edge of card
+
+		&:where(svg) {
+			color: var( --color-neutral-20 );
+		}
 	}
 
 	.inline-help__search {

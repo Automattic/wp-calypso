@@ -1,5 +1,8 @@
 .a4a-overview-products__woocommerce-logo {
 	fill: var(--color-woocommerce);
-	color: var(--color-woocommerce);
 	margin: 0;
+
+	&:where(svg) {
+		color: var(--color-woocommerce)
+	}
 }

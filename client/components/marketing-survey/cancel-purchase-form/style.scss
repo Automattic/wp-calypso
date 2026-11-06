@@ -476,7 +476,10 @@
 		width: 24px;
 		height: 24px;
 		fill: #fff;
-		color: #fff;
+
+		&:where(svg) {
+			color: #fff;
+		}
 	}
 }
 

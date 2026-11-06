@@ -31,5 +31,8 @@
 
 .translator-invite__icon {
 	fill: #2c3338;
-	color: #2c3338;
+
+	&:where(svg) {
+		color: #2c3338;
+	}
 }

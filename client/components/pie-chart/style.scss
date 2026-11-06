@@ -77,8 +77,7 @@
 .pie-chart__legend-sample-0 {
 	fill: var(--color-primary-dark);
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var(--color-primary-dark);
 	}
 }
@@ -87,8 +86,7 @@
 .pie-chart__legend-sample-1 {
 	fill: var(--color-accent);
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var(--color-accent);
 	}
 }
@@ -97,8 +95,7 @@
 .pie-chart__legend-sample-2 {
 	fill: var(--color-primary-light);
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var(--color-primary-light);
 	}
 }
@@ -106,8 +103,7 @@
 .pie-chart__chart-drawing-empty {
 	fill: var(--color-neutral-light);
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var(--color-neutral-light);
 	}
 }
@@ -147,8 +143,7 @@
 	@include placeholder();
 	fill: var(--color-neutral-0);
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var(--color-neutral-0);
 	}
 }

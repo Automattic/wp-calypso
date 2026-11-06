@@ -126,24 +126,34 @@
 		@include breakpoint-deprecated( ">480px" ) {
 			left: 14px;
 		}
+
+		&:where(svg) {
+			color: var(--color-neutral-light);
+		}
 	}
 
 	.gridicons-my-sites {
 		fill: var(--color-primary);
-		color: var(--color-primary);
+
+		&:where(svg) {
+			color: var(--color-primary);
+		}
 	}
 
 	.reader-facebook {
 		fill: var(--color-facebook);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-facebook);
 		}
 	}
 
 	.reader-x {
 		fill: var(--color-x);
+
+		&:where(svg) {
+			color: var(--color-x);
+		}
 	}
 
 	&:focus,
@@ -152,6 +162,10 @@
 		.reader-x,
 		.reader-facebook {
 			fill: var(--color-text-inverted);
+
+			&:where(svg) {
+				color: var(--color-text-inverted);
+			}
 		}
 	}
 }

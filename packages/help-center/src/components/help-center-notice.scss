@@ -19,8 +19,11 @@
 		.info-icon {
 			display: block;
 			fill: var(--studio-orange-40);
-			color: var(--studio-orange-40);
 			margin-top: 2px;
+
+			&:where(svg) {
+				color: var(--studio-orange-40);
+			}
 		}
 
 		.components-external-link__icon {

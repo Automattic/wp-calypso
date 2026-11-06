@@ -59,8 +59,7 @@ button.conversation-follow-button {
 			pointer-events: auto;
 			fill: var(--color-success);
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: var(--color-success);
 			}
 		}
@@ -82,8 +81,7 @@ button.conversation-follow-button {
 			.reader-following-conversation {
 				fill: var(--color-success);
 
-				&:where(svg),
-				& :where(svg) {
+				&:where(svg) {
 					color: var(--color-success);
 				}
 			}

@@ -60,8 +60,11 @@
 
 			.comments__comment-actions-read-more-icon {
 				fill: var(--color-link);
-				color: var(--color-link);
 				vertical-align: bottom;
+
+				&:where(svg) {
+					color: var(--color-link);
+				}
 			}
 		}
 

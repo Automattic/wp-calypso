@@ -61,7 +61,10 @@ $alt-color: var(--color-neutral-0);
 
 	.woopayments-overview__list .simple-list-icon {
 		fill: #000;
-		color: #000;
+
+		&:where(svg) {
+			color: #000;
+		}
 	}
 }
 
@@ -96,7 +99,10 @@ a.components-button.woopayments-overview__button {
 .woopayments-overview__list {
 	.simple-list-icon {
 		fill: var(--studio-woocommerce-purple-50);
-		color: var(--studio-woocommerce-purple-50);
+
+		&:where(svg) {
+			color: var(--studio-woocommerce-purple-50);
+		}
 	}
 }
 

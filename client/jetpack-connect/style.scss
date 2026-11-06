@@ -263,7 +263,10 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 	.gridicons-globe {
 		fill: var( --color-neutral-0 );
-		color: var( --color-neutral-0 );
+
+		&:where(svg) {
+			color: var( --color-neutral-0 );
+		}
 	}
 }
 
@@ -1116,7 +1119,10 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		left: 8px;
 		top: 7px;
 		fill: var( --color-neutral-10 );
-		color: var( --color-neutral-10 );
+
+		&:where(svg) {
+			color: var( --color-neutral-10 );
+		}
 	}
 }
 
@@ -1219,6 +1225,10 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 	.plan-features__item-checkmark {
 		fill: var( --color-accent-dark );
+
+		&:where(svg) {
+			color: var( --color-accent-dark );
+		}
 	}
 
 	.plan-features__item-title a {
@@ -1330,12 +1340,18 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 		.jetpack-logo__icon-circle {
 			fill: var( --color-neutral-80 );
-			color: var( --color-neutral-80 );
+
+			&:where(svg) {
+				color: var( --color-neutral-80 );
+			}
 		}
 
 		.jetpack-logo__icon-triangle {
 			fill: var( --color-neutral-0 );
-			color: var( --color-neutral-0 );
+
+			&:where(svg) {
+				color: var( --color-neutral-0 );
+			}
 		}
 
 		.formatted-header__title {

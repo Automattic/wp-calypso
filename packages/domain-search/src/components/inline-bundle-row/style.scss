@@ -26,8 +26,11 @@
 
 .inline-bundle-row__lock-icon {
 	fill: #757575;
-	color: #757575;
 	flex-shrink: 0;
+
+	&:where(svg) {
+		color: #757575;
+	}
 }
 
 .inline-bundle-row__subline {

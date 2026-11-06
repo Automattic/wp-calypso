@@ -104,9 +104,12 @@ $brand-text: "SF Pro Text", $sans;
 
 		.sidebar__expandable-arrow {
 			fill: var(--color-sidebar-text);
-			color: var(--color-sidebar-text);
 			height: 15px;
 			width: 15px;
+
+			&:where(svg) {
+				color: var(--color-sidebar-text);
+			}
 		}
 
 		.selected .sidebar__menu-link::after {
@@ -209,6 +212,7 @@ $brand-text: "SF Pro Text", $sans;
 			svg path,
 			svg rect {
 				fill: var(--color-sidebar-gridicon-fill);
+				color: var(--color-sidebar-gridicon-fill);
 			}
 
 			&:hover {
@@ -218,6 +222,7 @@ $brand-text: "SF Pro Text", $sans;
 				svg path,
 				svg rect {
 					fill: var(--color-sidebar-menu-hover-text);
+					color: var(--color-sidebar-menu-hover-text);
 				}
 			}
 		}
@@ -234,6 +239,7 @@ $brand-text: "SF Pro Text", $sans;
 			&.is-active {
 				svg path {
 					fill: var(--color-sidebar-gridicon-selected-fill);
+					color: var(--color-sidebar-gridicon-selected-fill);
 				}
 			}
 		}

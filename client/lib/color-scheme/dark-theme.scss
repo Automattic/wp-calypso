@@ -779,6 +779,10 @@ This mixin generates alias variables for a color palette. For example, the
 
 	.components-popover__triangle-bg {
 		fill: var( --dashboard-surface__background-color );
+
+		&:where(svg) {
+			color: var( --dashboard-surface__background-color );
+		}
 	}
 
 	.components-popover__triangle-border {

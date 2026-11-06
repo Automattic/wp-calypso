@@ -14,8 +14,7 @@
 		font-weight: 500;
 		font-size: $font-body-extra-small;
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-blue-50);
 		}
 	}

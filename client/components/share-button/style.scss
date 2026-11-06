@@ -3,8 +3,7 @@
 	.wordpress {
 		fill: var(--color-wordpress-com);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-wordpress-com)
 		}
 	}
@@ -12,8 +11,7 @@
 	.facebook {
 		fill: var(--color-facebook);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-facebook)
 		}
 	}
@@ -21,8 +19,7 @@
 	.twitter {
 		fill: var(--color-twitter);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-twitter)
 		}
 	}
@@ -30,8 +27,7 @@
 	.tumblr {
 		fill: var(--color-tumblr);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-tumblr)
 		}
 	}
@@ -39,8 +35,7 @@
 	.linkedin {
 		fill: var(--color-linkedin);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-linkedin)
 		}
 	}
@@ -48,8 +43,7 @@
 	.pinterest {
 		fill: var(--color-pinterest);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-pinterest)
 		}
 	}
@@ -57,8 +51,7 @@
 	.telegram {
 		fill: var(--color-telegram);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-telegram)
 		}
 	}
@@ -66,8 +59,7 @@
 	.whatsapp {
 		fill: var(--color-whatsapp);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-whatsapp)
 		}
 	}

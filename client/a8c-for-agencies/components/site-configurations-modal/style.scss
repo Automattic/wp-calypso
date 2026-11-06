@@ -66,8 +66,7 @@
 			margin-right: -5px;
 			fill: var(--color-success);
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: var(--color-success);
 			}
 		}
@@ -76,8 +75,7 @@
 			margin-right: -5px;
 			fill: var(--color-error);
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: var(--color-error);
 			}
 		}

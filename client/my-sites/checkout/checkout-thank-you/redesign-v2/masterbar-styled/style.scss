@@ -7,10 +7,13 @@
 
 	.checkout-thank-you__logo {
 		fill: rgb(54, 54, 54);
-		color: rgb(54, 54, 54);
 		margin: 24px 12px 24px 24px;
 		@media (min-width: 480px) {
 			margin: 24px;
+		}
+
+		&:where(svg) {
+			color: rgb(54, 54, 54);
 		}
 	}
 

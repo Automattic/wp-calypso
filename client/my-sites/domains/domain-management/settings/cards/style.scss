@@ -397,13 +397,19 @@
 
 			&.error {
 				fill: var(--studio-orange-40);
-				color: var(--studio-orange-40);
 				transform: rotate(180deg);
+
+				&:where(svg) {
+					color: var(--studio-orange-40);
+				}
 			}
 
 			&.success {
 				fill: var(--studio-green-50);
-				color: var(--studio-green-50);
+
+				&:where(svg) {
+					color: var(--studio-green-50);
+				}
 			}
 		}
 

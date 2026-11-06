@@ -129,8 +129,7 @@ button.follow-button {
 		svg.reader-follow-feed * {
 			fill: var(--color-text-inverted);
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: var(--color-text-inverted);
 			}
 		}

@@ -177,8 +177,11 @@
 		flex: 24px 0 0;
 		top: 1px;
 		fill: var(--color-success);
-		color: var(--color-success);
 		margin-right: 11px;
+
+		&:where(svg) {
+			color: var(--color-success);
+		}
 	}
 }
 
@@ -642,7 +645,6 @@
 	height: 180px;
 	width: 180px;
 	fill: var(--color-wpcom);
-	color: var(--color-wpcom);
 	margin: 0 auto;
 	display: block;
 	transition: transform 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -651,6 +653,10 @@
 
 	&.is-large {
 		transform: scale(1);
+	}
+
+	&:where(svg) {
+		color: var(--color-wpcom);
 	}
 }
 

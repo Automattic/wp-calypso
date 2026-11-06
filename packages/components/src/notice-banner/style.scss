@@ -32,7 +32,10 @@ $banner-title-height: 22px;
 
 		.notice-banner__icon {
 			fill: var(--jp-black);
-			color: var(--jp-black);
+
+			&:where(svg) {
+				color: var(--jp-black);
+			}
 		}
 	}
 
@@ -142,7 +145,10 @@ $banner-title-height: 22px;
 
 	.notice-banner__icon {
 		fill: var(--jp-red-50);
-		color: var(--jp-red-50);
+
+		&:where(svg) {
+			color: var(--jp-red-50);
+		}
 	}
 }
 
@@ -151,7 +157,10 @@ $banner-title-height: 22px;
 
 	.notice-banner__icon {
 		fill: var(--jp-yellow-30);
-		color: var(--jp-yellow-30);
+
+		&:where(svg) {
+			color: var(--jp-yellow-30);
+		}
 	}
 }
 
@@ -160,7 +169,10 @@ $banner-title-height: 22px;
 
 	.notice-banner__icon {
 		fill: var(--jp-green);
-		color: var(--jp-green);
+
+		&:where(svg) {
+			color: var(--jp-green);
+		}
 	}
 
 	.notice-banner__action-link {

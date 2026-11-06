@@ -30,8 +30,7 @@ body:has( .omnibar:not( .is-support-session ) ) {
 .omnibar:not( .is-support-session ) .omnibar__notifications-unread-dot {
 	fill: var( --color-masterbar-unread-dot-background );
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var( --color-masterbar-unread-dot-background );
 	}
 }

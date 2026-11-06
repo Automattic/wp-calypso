@@ -83,7 +83,10 @@
 
 .notification-settings-blog-settings-placeholder__blog__content__icon__gridicon {
 	fill: #fff;
-	color: #fff;
+
+	&:where(svg) {
+		color: #fff;
+	}
 }
 
 .notification-settings-blog-settings-placeholder__blog__info {

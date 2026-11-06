@@ -246,8 +246,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		.reader-follow-feed path {
 			fill: var( --color-text-subtle ) !important;
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: var( --color-text-subtle ) !important;
 			}
 		}
@@ -266,8 +265,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 				fill: var( --color-link ) !important;
 				opacity: 1;
 
-				&:where(svg),
-				& :where(svg) {
+				&:where(svg) {
 					color: var( --color-link ) !important;
 				}
 			}
@@ -421,12 +419,18 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 
 	.reader-full-post__view-original-button-icon {
 		fill: var( --color-text-subtle );
-		color: var( --color-text-subtle );
+
+		&:where(svg) {
+			color: var( --color-text-subtle );
+		}
 	}
 
 	&:hover .reader-full-post__view-original-button-icon {
 		fill: var( --color-link );
-		color: var( --color-link );
+
+		&:where(svg) {
+			color: var( --color-link );
+		}
 	}
 
 	&:focus-visible {
@@ -591,6 +595,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 	}
 
@@ -599,6 +604,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 		svg.reader-external path {
 			stroke: var( --color-link );
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 
 		.reader-share__button-label {
@@ -644,6 +650,7 @@ $reader-full-post-desktop-min: $reader-full-post-sidebar-width + $reader-full-po
 	.like-button.is-liked {
 		svg.reader-star path {
 			fill: var( --color-link );
+			color: var( --color-link );
 		}
 	}
 }

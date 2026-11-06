@@ -2,8 +2,11 @@
 
 .domain-suggestions-list-item__icon {
 	fill: #{$gray-700};
-	color: #{$gray-700};
 	flex-shrink: 0;
+
+	&:where(svg) {
+		color: #{$gray-700};
+	}
 }
 
 .domain-suggestions-list-item__domain-name-container {

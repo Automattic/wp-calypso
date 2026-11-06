@@ -342,7 +342,10 @@
 	.gridicons-info {
 		margin: 3px 6px -8px 0;
 		fill: var(--color-neutral);
-		color: var(--color-neutral);
+
+		&:where(svg) {
+			color: var(--color-neutral);
+		}
 	}
 }
 

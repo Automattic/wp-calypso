@@ -14,8 +14,7 @@
 			font-size: $font-body-extra-small;
 			fill: var(--studio-gray-50);
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: var(--studio-gray-50);
 			}
 		}

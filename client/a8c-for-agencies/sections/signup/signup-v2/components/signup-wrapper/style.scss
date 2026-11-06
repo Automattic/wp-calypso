@@ -155,7 +155,10 @@
 
 		.signup-wrapper__logo {
 			fill: var( --color-surface );
-			color: var( --color-surface );
+
+			&:where(svg) {
+				color: var( --color-surface );
+			}
 		}
 
 		.signup-wrapper__sidebar-image {

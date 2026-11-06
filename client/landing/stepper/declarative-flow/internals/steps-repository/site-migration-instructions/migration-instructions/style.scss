@@ -23,8 +23,7 @@
 	.checklist-item__task.completed .checklist-item__task-content:hover .checklist-item__checkmark {
 		fill: var(--studio-wordpress-blue-50);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-wordpress-blue-50);
 		}
 	}

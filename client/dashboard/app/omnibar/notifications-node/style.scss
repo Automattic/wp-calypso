@@ -37,8 +37,7 @@
 	stroke: var( --omnibar-background );
 	stroke-width: 6%;
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: #adbaf3;
 	}
 }

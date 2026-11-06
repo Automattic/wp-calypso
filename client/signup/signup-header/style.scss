@@ -23,7 +23,6 @@
 		height: 180px;
 		width: 180px;
 		fill: var(--color-text-inverted);
-		color: var(--color-text-inverted);
 		margin: 0 auto;
 		display: block;
 		transition: transform 0.8s cubic-bezier(0.075, 0.82, 0.165, 1);
@@ -32,6 +31,10 @@
 
 		&.is-large {
 			transform: scale(1) translateY(80px);
+		}
+
+		&:where(svg) {
+			color: var(--color-text-inverted);
 		}
 	}
 

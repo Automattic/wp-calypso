@@ -1646,6 +1646,10 @@ $delay: 0.055s;
 	.header__submenu-bundles-list .header__submenu-link:hover .jetpack-hero-product-background {
 		transition: fill 0.2s ease-in-out;
 		fill: #069e08;
+
+		&:where(svg) {
+			color: #069e08;
+		}
 	}
 
 	.header__submenu-chevron {

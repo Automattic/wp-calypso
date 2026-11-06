@@ -22,7 +22,10 @@
 
 		.social-logo {
 			fill: var(--color-neutral-70);
-			color: var(--color-neutral-70);
+
+			&:where(svg) {
+				color: var(--color-neutral-70);
+			}
 		}
 	}
 
@@ -35,7 +38,10 @@
 
 		.social-logo {
 			fill: var(--color-accent);
-			color: var(--color-accent);
+
+			&:where(svg) {
+				color: var(--color-accent);
+			}
 		}
 	}
 }
@@ -48,5 +54,8 @@
 
 .vertical-menu__items__social-icon .social-logo {
 	fill: var(--color-neutral-light);
-	color: var(--color-neutral-light);
+
+	&:where(svg) {
+		color: var(--color-neutral-light);
+	}
 }

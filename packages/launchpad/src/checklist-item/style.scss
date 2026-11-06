@@ -193,8 +193,7 @@
 	.checklist-item__checkmark {
 		fill: var(--color-success);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-success);
 		}
 	}
@@ -220,8 +219,7 @@
 	.checklist-item__checkmark {
 		fill: var(--color-accent);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-accent);
 		}
 	}

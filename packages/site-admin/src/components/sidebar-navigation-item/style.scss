@@ -17,8 +17,7 @@
 		.a8c-site-admin-sidebar-navigation-item__drilldown-indicator {
 			fill: $gray-200;
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: $gray-200;
 			}
 		}
@@ -38,8 +37,7 @@
 	.a8c-site-admin-sidebar-navigation-item__drilldown-indicator {
 		fill: $gray-600;
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: $gray-600;
 		}
 	}

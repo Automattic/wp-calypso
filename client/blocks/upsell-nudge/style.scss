@@ -17,8 +17,7 @@
 		fill: var(--color-text-inverted);
 		margin-right: -6px;
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-text-inverted);
 		}
 	}
@@ -44,8 +43,7 @@
 	.card__link-indicator {
 		fill: var(--color-text-inverted);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-text-inverted);
 		}
 	}

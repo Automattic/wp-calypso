@@ -74,7 +74,6 @@
 		width: 24px;
 		height: 24px;
 		fill: var(--color-neutral-60);
-		color: var(--color-neutral-60);
 		transition: all 0.1s;
 
 		&.dashicons {
@@ -84,6 +83,10 @@
 				color: var(--color-neutral-60);
 				line-height: 24px;
 			}
+		}
+
+		&:where(svg) {
+			color: var(--color-neutral-60);
 		}
 	}
 
@@ -110,8 +113,7 @@
 		fill: var(--color-neutral-20);
 		right: 20px;
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-neutral-20);
 		}
 	}

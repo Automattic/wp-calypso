@@ -176,8 +176,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__legend-sample-verb-post {
 		fill: var(--studio-wordpress-blue-60);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-wordpress-blue-60);
 		}
 	}
@@ -185,8 +184,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__legend-sample-verb-get {
 		fill: var(--studio-wordpress-blue-30);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-wordpress-blue-30);
 		}
 	}
@@ -194,8 +192,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__legend-sample-verb-delete {
 		fill: var(--studio-red-10);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-red-10);
 		}
 	}
@@ -203,8 +200,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__legend-sample-verb-head {
 		fill: var(--studio-wordpress-blue-10);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-wordpress-blue-10);
 		}
 	}
@@ -215,8 +211,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__legend-sample-dynamic {
 		fill: var(--studio-celadon-30);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-celadon-30);
 		}
 	}
@@ -224,8 +219,7 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__legend-sample-static {
 		fill: var(--studio-celadon-5);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-celadon-5);
 		}
 	}

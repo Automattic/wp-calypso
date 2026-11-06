@@ -9,7 +9,6 @@
 
 	background-color: var(--color-neutral-70);
 	fill: var(--color-text-inverted);
-	color: var(--color-text-inverted);
 	border-radius: 2px;
 
 	&.wordpress {
@@ -42,5 +41,9 @@
 		width: 56px;
 		height: 56px;
 		padding: 4px;
+	}
+
+	&:where(svg) {
+		color: var(--color-text-inverted);
 	}
 }

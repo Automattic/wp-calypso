@@ -62,8 +62,7 @@
 		position: relative;
 		fill: var( --color-text );
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var( --color-text );
 		}
 	}
@@ -77,8 +76,7 @@
 	fill: var( --color-text-inverted );
 	pointer-events: none;
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var( --color-text-inverted );
 	}
 }

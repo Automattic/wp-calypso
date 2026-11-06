@@ -144,8 +144,11 @@ button {
 			inset-block-start: 20px;
 			inset-inline-start: 24px;
 			fill: var( --color-text );
-			color: var( --color-text );
 			transform-origin: 0 0;
+
+			&:where(svg) {
+				color: var( --color-text );
+			}
 		}
 
 		.signup-header__right {

@@ -370,8 +370,7 @@
 	.reader-follow-feed {
 		fill: var(--color-link);
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--color-link);
 		}
 	}

@@ -398,16 +398,14 @@
 	.sites-overview__stats-trend__up {
 		fill: var( --color-jetpack-40 );
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var( --color-jetpack-40 );
 		}
 	}
 	.sites-overview__stats-trend__down {
 		fill: var( --color-scary-50 );
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var( --color-scary-50 );
 		}
 	}
@@ -470,12 +468,15 @@
 		.wordpress-logo {
 			display: inline-block;
 			fill: var( --color-primary-50 );
-			color: var( --color-primary-50 );
 			visibility: hidden;
 			margin: auto 0;
 
 			&.is-visible {
 				visibility: visible;
+			}
+
+			&:where(svg) {
+				color: var( --color-primary-50 );
 			}
 		}
 	}

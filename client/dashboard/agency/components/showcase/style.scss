@@ -155,8 +155,7 @@ $lead-side-by-side: $pad-x * 2 + $words-min + $gap + $lead-object;
 	background: var( --showcase-glyph-bg );
 	fill: var( --showcase-glyph-fg );
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var( --showcase-glyph-fg );
 	}
 }

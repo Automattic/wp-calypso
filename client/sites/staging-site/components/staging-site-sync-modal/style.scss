@@ -24,8 +24,7 @@
 		.components-checkbox-control__checked {
 			fill: #a0a5aa;
 
-			&:where(svg),
-			& :where(svg) {
+			&:where(svg) {
 				color: #a0a5aa;
 			}
 		}

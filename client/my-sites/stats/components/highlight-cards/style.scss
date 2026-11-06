@@ -366,9 +366,12 @@ $highlight-card-tooltip-font: Inter, $sans !default;
 	}
 	.highlight-card-tooltip-icon {
 		fill: var(--studio-white);
-		color: var(--studio-white);
 		display: flex;
 		padding-right: 8px;
+
+		&:where(svg) {
+			color: var(--studio-white);
+		}
 	}
 }
 

@@ -92,8 +92,7 @@ $tablet-width: 760px;
 			clipPath {
 				fill: #000;
 
-				&:where(svg),
-				& :where(svg) {
+				&:where(svg) {
 					color: #000;
 				}
 			}
@@ -115,8 +114,7 @@ $tablet-width: 760px;
 					transition: 2s fill ease 0.5s;
 					fill: #fff;
 
-					&:where(svg),
-					& :where(svg) {
+					&:where(svg) {
 						color: #fff;
 					}
 				}

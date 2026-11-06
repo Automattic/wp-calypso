@@ -642,8 +642,11 @@ button.site-settings__general-settings-set-guessed-timezone.button.is-borderless
 	.banner__icon-no-circle {
 		.wordpress-logo {
 			fill: var(--color-neutral-100);
-			color: var(--color-neutral-100);
 			margin: 0;
+
+			&:where(svg) {
+				color: var(--color-neutral-100);
+			}
 		}
 	}
 	.banner__action {

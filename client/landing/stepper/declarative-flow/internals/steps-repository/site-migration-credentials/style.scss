@@ -159,7 +159,10 @@ $blueberry-color: #3858e9;
 
 		.site-migration-credentials__special-instructions-icon {
 			fill: var(--color-text) !important;
-			color: var(--color-text) !important;
+
+			&:where(svg) {
+				color: var(--color-text) !important;
+			}
 		}
 	}
 	.site-migration-credentials__backup-note {

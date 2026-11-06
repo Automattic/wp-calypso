@@ -6,8 +6,7 @@
 .stats-sparkline__bar {
 	fill: var(--color-stats-sparkline);
 
-	&:where(svg),
-	& :where(svg) {
+	&:where(svg) {
 		color: var(--color-stats-sparkline);
 	}
 }

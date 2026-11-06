@@ -57,9 +57,12 @@ body.is-section-posts .domain-upsell-callout {
 	}
 	&__icon {
 		fill: var( --studio-gray-60 );
-		color: var( --studio-gray-60 );
 		@media ( max-width: $break-wide ) {
 			display: none;
+		}
+
+		&:where(svg) {
+			color: var( --studio-gray-60 );
 		}
 	}
 	&__button {

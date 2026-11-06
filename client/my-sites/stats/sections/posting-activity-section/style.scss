@@ -198,8 +198,7 @@ $lowestLevelColor: var(--color-neutral-5);
 			margin-right: 12px;
 		}
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var(--studio-white);
 		}
 	}

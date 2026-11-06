@@ -38,8 +38,11 @@
 
 .bundle-card__footer-icon {
 	fill: #757575;
-	color: #757575;
 	flex-shrink: 0;
+
+	&:where(svg) {
+		color: #757575;
+	}
 }
 
 .bundle-card__cta {

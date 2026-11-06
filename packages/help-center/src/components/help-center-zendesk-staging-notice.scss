@@ -14,8 +14,11 @@
 	&__icon {
 		flex: 0 0 auto;
 		fill: $help-center-notice-color;
-		color: $help-center-notice-color;
 		margin-top: 2px;
+
+		&:where(svg) {
+			color: $help-center-notice-color;
+		}
 	}
 
 	p {

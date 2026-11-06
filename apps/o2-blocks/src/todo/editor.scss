@@ -51,10 +51,13 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 
 		.item-status .dashicon {
 			fill: var(--color-text-inverted);
-			color: var(--color-text-inverted);
 			position: absolute;
 			top: -2px;
 			left: -2px;
+
+			&:where(svg) {
+				color: var(--color-text-inverted);
+			}
 		}
 	}
 
@@ -74,7 +77,10 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 
 		.dashicon {
 			fill: $gray-200;
-			color: $gray-200;
+
+			&:where(svg) {
+				color: $gray-200;
+			}
 		}
 
 		&:hover {
@@ -82,7 +88,10 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 
 			.dashicon {
 				fill: $color-move-button-icon;
-				color: $color-move-button-icon;
+
+				&:where(svg) {
+					color: $color-move-button-icon;
+				}
 			}
 		}
 	}
@@ -108,9 +117,12 @@ $color-add-button-icon: #7e8993; // dark-gray-200
 
 			.dashicon {
 				fill: $gray-600;
-				color: $gray-600;
 				vertical-align: middle;
 				display: inline;
+
+				&:where(svg) {
+					color: $gray-600;
+				}
 			}
 		}
 	}

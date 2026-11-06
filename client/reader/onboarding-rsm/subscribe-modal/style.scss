@@ -277,6 +277,10 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 
 			* {
 				fill: var( --studio-white, #fff );
+
+				&:where(svg) {
+					color: var( --studio-white, #fff );
+				}
 			}
 		}
 

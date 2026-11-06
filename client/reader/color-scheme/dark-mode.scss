@@ -107,8 +107,7 @@
 			.checklist-item__checkmark {
 				fill: var( --color-link );
 
-				&:where(svg),
-				& :where(svg) {
+				&:where(svg) {
 					color: var( --color-link );
 				}
 			}
@@ -191,8 +190,7 @@
 	.subscribe-modal .button.follow-button.has-button-style.is-following svg.reader-following-feed * {
 		fill: var( --wp-components-color-foreground-inverted );
 
-		&:where(svg),
-		& :where(svg) {
+		&:where(svg) {
 			color: var( --wp-components-color-foreground-inverted );
 		}
 	}
