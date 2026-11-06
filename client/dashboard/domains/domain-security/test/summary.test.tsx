@@ -20,8 +20,21 @@ describe( '<DomainSecuritySettingsSummary>', () => {
 	test( 'does not show an SSL badge when the certificate is active', async () => {
 		render( <DomainSecuritySettingsSummary domain={ getMockedDomainData() } /> );
 
-		expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
+		expect( await screen.findByText( 'DNSSEC' ) ).toBeVisible();
+		expect( screen.getByText( 'Disabled' ) ).toBeVisible();
 		expect( screen.queryByText( /SSL/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'keeps the Domain security title where DNSSEC does not apply', async () => {
+		render(
+			<DomainSecuritySettingsSummary
+				domain={ getMockedDomainData( {
+					subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Domain Connection' },
+				} ) }
+			/>
+		);
+
+		expect( await screen.findByText( 'Domain security' ) ).toBeVisible();
 	} );
 
 	test( 'shows a pending badge when the certificate is pending', async () => {

@@ -21,9 +21,10 @@ const connected = { subtype: { id: DomainSubtype.DOMAIN_CONNECTION, label: 'Doma
 const NAME_SERVERS = 'Name servers';
 const DNS = 'DNS records';
 const FORWARDING = 'Domain forwarding';
-const SECURITY = 'Domain security';
+const SECURITY = 'DNSSEC';
+const CONNECTED_SECURITY = 'Domain security';
 const GLUE = 'Glue records';
-const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, GLUE ];
+const OPTIONAL_ROWS = [ NAME_SERVERS, DNS, FORWARDING, SECURITY, CONNECTED_SECURITY, GLUE ];
 const SHOW_ADVANCED = { name: 'Show advanced settings' };
 
 function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled = false ) {
@@ -60,7 +61,11 @@ async function getOptionalRows() {
 
 describe( 'DomainOverviewSettings', () => {
 	test.each< [ string, Partial< Domain >, string[] ] >( [
-		[ 'a fully manageable registered domain', {}, OPTIONAL_ROWS ],
+		[
+			'a fully manageable registered domain',
+			{},
+			[ NAME_SERVERS, DNS, FORWARDING, SECURITY, GLUE ],
+		],
 		[
 			'a gravatar restricted domain',
 			{ is_gravatar_restricted_domain: true },
@@ -76,11 +81,11 @@ describe( 'DomainOverviewSettings', () => {
 			{ current_user_can_manage: false },
 			[ NAME_SERVERS, DNS, FORWARDING, SECURITY ],
 		],
-		[ 'a connected domain', connected, [ DNS, FORWARDING, SECURITY ] ],
+		[ 'a connected domain', connected, [ DNS, FORWARDING, CONNECTED_SECURITY ] ],
 		[
 			'a connected domain whose DNS cannot be managed',
 			{ ...connected, can_manage_dns_records: false },
-			[ SECURITY ],
+			[ CONNECTED_SECURITY ],
 		],
 	] )( 'shows the right rows for %s', async ( _, customProps, expected ) => {
 		renderDomainSettings( customProps );
@@ -130,7 +135,7 @@ describe( 'DomainOverviewSettings', () => {
 		} );
 	} );
 
-	test( 'keeps only Site, Emails and Security for a partially restricted domain', async () => {
+	test( 'keeps only Site, Professional email and DNSSEC for a partially restricted domain', async () => {
 		renderDomainSettings( {
 			current_user_can_manage: false,
 			can_manage_dns_records: false,
