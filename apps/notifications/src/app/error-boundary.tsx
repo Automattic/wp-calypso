@@ -1,3 +1,4 @@
+import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
@@ -20,6 +21,11 @@ export default class ErrorBoundary extends Component< Props, State > {
 
 	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
 		logError( error, { componentStack: errorInfo.componentStack } );
+		// @wordpress/ui's Notice doesn't announce itself.
+		speak(
+			`${ __( 'Something went wrong' ) } ${ __( 'Please close and reopen notifications.' ) }`,
+			'assertive'
+		);
 	}
 
 	render() {

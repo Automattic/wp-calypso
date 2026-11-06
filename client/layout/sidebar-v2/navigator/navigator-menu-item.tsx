@@ -58,7 +58,7 @@ export const SidebarNavigatorMenuItem = ( {
 					{ icon && (
 						<Icon
 							className="sidebar__menu-icon"
-							style={ { fill: 'currentcolor' } }
+							style={ { fill: 'none' } }
 							icon={ icon }
 							size={ ICON_SIZE }
 						/>

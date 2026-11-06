@@ -88,6 +88,7 @@ const ScreenshotModal = styled( Modal )`
 
 			button svg {
 				fill: white;
+				color: white;
 				width: 16px;
 				height: 16px;
 				mix-blend-mode: difference;

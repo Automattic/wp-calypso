@@ -92,8 +92,8 @@ body.js.is-image-studio-open {
 	// Override host theme SVG fill/stroke rules for icon rendering.
 	// P2 and other themes apply global CSS fill properties on SVG elements,
 	// which override the fill/stroke inheritance used by @wordpress/icons
-	// and agenttic-ui icons.
-	svg:not([fill]) {
+	// and agenttic-ui icons. Stroke-drawn icons keep their own `fill: none`.
+	svg:not([fill], [stroke]) {
 		fill: currentColor !important;
 	}
 

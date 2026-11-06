@@ -154,7 +154,7 @@ const RepositorySelector = ( {
 										icon={ lock }
 										size={ 16 }
 										style={ {
-											fill: 'currentColor',
+											fill: 'none',
 										} }
 									/>
 								</HStack>

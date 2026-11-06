@@ -1,7 +1,8 @@
+import { speak } from '@wordpress/a11y';
 import { Notice } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { lazy, Suspense, useMemo, useState, FunctionComponent } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useState, FunctionComponent } from 'react';
 import { PREMIUM_ANALYTICS_TRAFFIC_ROUTE } from 'calypso/dashboard/utils/premium-analytics-url';
 import useCssVariable from 'calypso/my-sites/stats/hooks/use-css-variable';
 import { readChartType } from 'calypso/my-sites/stats/stats-chart-tabs/chart-type';
@@ -106,6 +107,14 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 	const isPending = status === 'pending';
 	const isEmpty = status === 'success' && totals.views === 0 && totals.visitors === 0;
 	const hasChart = status === 'success' && ! isEmpty;
+	const emptyMessage = translate( 'We are collecting traffic data for your site' ) as string;
+
+	// @wordpress/ui's Notice doesn't announce itself, and this one replaces the loading state.
+	useEffect( () => {
+		if ( isEmpty ) {
+			speak( emptyMessage, 'polite' );
+		}
+	}, [ isEmpty, emptyMessage ] );
 	// Fixed, so the card keeps its height from the placeholder to the chart. The footer below
 	// holds its place the same way, by staying mounted while the data loads.
 	const chartBoxStyle = { blockSize: `${ CHART_HEIGHT }px` };
@@ -172,9 +181,7 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 			{ isPending && chartPlaceholder }
 			{ isEmpty && (
 				<Notice.Root intent="info" className="stats-widget-empty-notice">
-					<Notice.Description>
-						{ translate( 'We are collecting traffic data for your site' ) }
-					</Notice.Description>
+					<Notice.Description>{ emptyMessage }</Notice.Description>
 					<Notice.Actions>
 						<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
 							{ translate( 'Learn more about stats' ) }

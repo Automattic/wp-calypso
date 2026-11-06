@@ -49,7 +49,10 @@ export default function SSHMigrationFailed() {
 											<Icon
 												icon={ item.icon }
 												size={ 24 }
-												style={ { fill: 'var(--wp-admin-theme-color-muted, #646970)' } }
+												style={ {
+													color: 'var(--wp-admin-theme-color-muted, #646970)',
+													fill: 'none',
+												} }
 											/>
 										</CardBody>
 									</Card>

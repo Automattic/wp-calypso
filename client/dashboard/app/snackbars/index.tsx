@@ -54,7 +54,7 @@ export default function Snackbars() {
 				icon:
 					'icon' in notice
 						? notice.icon
-						: icon && <Icon icon={ icon } style={ { fill: 'currentcolor' } } />,
+						: icon && <Icon icon={ icon } style={ { fill: 'none' } } />,
 			};
 		} );
 

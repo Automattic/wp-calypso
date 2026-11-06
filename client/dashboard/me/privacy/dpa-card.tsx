@@ -20,9 +20,7 @@ export default function DpaCard() {
 			onSuccess: () => {
 				createSuccessNotice( __( 'We’ve sent you our DPA via email.' ), {
 					// @wordpress/notices types `icon` as `string | null`, but the runtime (and the Dashboard snackbar) accepts a ReactNode.
-					icon: (
-						<Icon icon={ envelope } style={ { fill: 'currentcolor' } } />
-					 ) as unknown as string,
+					icon: ( <Icon icon={ envelope } style={ { fill: 'none' } } /> ) as unknown as string,
 					type: 'snackbar',
 				} );
 			},

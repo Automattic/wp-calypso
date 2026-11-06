@@ -101,7 +101,8 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 							width: '32px',
 							height: '32px',
 							minWidth: '32px',
-							fill: item.mainIcon.fill,
+							color: item.mainIcon.fill,
+							fill: 'none',
 							backgroundColor: item.mainIcon.backgroundColor,
 							borderRadius: '4px',
 							display: 'flex',
@@ -117,7 +118,11 @@ const InfoCard: FunctionComponent< InfoCardProps > = ( { item } ) => {
 						</Text>
 						<Text>{ item.description }</Text>
 						<HStack alignment="left" spacing={ 1 }>
-							<Icon icon={ item.locationIcon } size={ 16 } style={ { fill: '#757575' } } />
+							<Icon
+								icon={ item.locationIcon }
+								size={ 16 }
+								style={ { color: '#757575', fill: 'none' } }
+							/>
 							{ item.link ? (
 								<Text variant="muted">
 									<a href={ item.link } style={ { textDecoration: 'none' } }>

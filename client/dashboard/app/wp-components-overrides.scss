@@ -9,6 +9,6 @@
 // that fill their shapes, such as @wordpress/components 37's select arrow, would fill them in
 // solid. Shapes with their own `fill` attribute are filled on purpose. Calypso sets the same rule,
 // and says when to remove it, in calypso/assets/stylesheets/_wp-components-overrides.scss.
-svg[stroke="currentColor"][style*="fill: none"] :is(path, circle, rect, line, polyline, polygon, ellipse):not([fill]) {
+svg[stroke="currentColor"]:is([style*="fill: none"], [style*="fill:none"]) :is(path, circle, rect, line, polyline, polygon, ellipse):not([fill]) {
 	fill: none !important;
 }

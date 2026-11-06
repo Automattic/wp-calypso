@@ -96,7 +96,7 @@ export const DomainStatusField = ( {
 							tabIndex={ 0 }
 							style={ { display: 'flex' } }
 						>
-							<Icon icon={ info } style={ { fill: 'currentColor' } } />
+							<Icon icon={ info } style={ { fill: 'none' } } />
 						</Text>
 					) }
 				</HStack>

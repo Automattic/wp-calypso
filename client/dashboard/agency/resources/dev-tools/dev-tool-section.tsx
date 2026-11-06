@@ -79,7 +79,7 @@ export default function DevToolSection( {
 								<Icon
 									icon={ check }
 									size={ 24 }
-									style={ { flexShrink: 0, fill: 'var(--wp-admin-theme-color)' } }
+									style={ { flexShrink: 0, color: 'var(--wp-admin-theme-color)', fill: 'none' } }
 								/>
 								<Text size={ 15 } lineHeight="24px">
 									{ feature }
