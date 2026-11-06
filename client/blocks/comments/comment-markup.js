@@ -101,8 +101,17 @@ function block( node ) {
 	}
 }
 
+// Text outside any block, such as words typed after a stray delimiter, is kept as a paragraph.
 function blocks( parent ) {
-	return Array.from( parent.children ).map( block ).filter( Boolean ).join( '\n\n' );
+	return Array.from( parent.childNodes )
+		.map( ( node ) => {
+			if ( node.nodeType === node.TEXT_NODE ) {
+				return escape( node.textContent ).trim();
+			}
+			return node.nodeType === node.ELEMENT_NODE ? block( node ) : '';
+		} )
+		.filter( Boolean )
+		.join( '\n\n' );
 }
 
 /**

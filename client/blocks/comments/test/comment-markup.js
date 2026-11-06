@@ -39,6 +39,10 @@ describe( 'blocksToHtml', () => {
 		expect( blocksToHtml( '<ol start="0"><li>A</li></ol>' ) ).toBe( '0. A' );
 	} );
 
+	it( 'keeps words outside any block', () => {
+		expect( blocksToHtml( '<!-- wp:more --> hello & bye' ) ).toBe( 'hello &amp; bye' );
+	} );
+
 	it( 'keeps code in one piece for wpautop', () => {
 		expect( blocksToHtml( '<pre class="wp-block-code"><code>a\n\n  \nb</code></pre>' ) ).toBe(
 			'<code>a\nb</code>'
