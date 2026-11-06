@@ -70,6 +70,11 @@ export interface SummaryButtonProps {
 	 */
 	badges?: SummaryButtonBadgeProps[];
 	/**
+	 * Optional content shown where badges go, for values a text badge can't hold.
+	 * Not rendered in `low` density variant.
+	 */
+	suffix?: React.ReactNode;
+	/**
 	 * A flag that indicates whether to show an arrow at the UI.
 	 * @default true
 	 */

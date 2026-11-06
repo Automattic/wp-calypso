@@ -47,7 +47,7 @@ function renderDomainSettings( customProps: Partial< Domain > = {}, isDisabled =
 
 async function getOptionalRows() {
 	await screen.findByText( 'Site' );
-	expect( screen.getByText( 'Emails' ) ).toBeVisible();
+	expect( screen.getByText( 'Professional email' ) ).toBeVisible();
 
 	return OPTIONAL_ROWS.filter( ( row ) => screen.queryByText( row ) );
 }
