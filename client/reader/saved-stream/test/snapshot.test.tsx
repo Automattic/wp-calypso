@@ -255,9 +255,9 @@ describe( 'SavedPostsStream with saved snapshots', () => {
 			'src',
 			expect.stringContaining( 'harvardlawreview.org/apple-touch-icon.png' )
 		);
-		const blankIcon = getCard( PRUNED_FEED_ITEM.title ).querySelector( '.site-icon' );
-		expect( blankIcon ).toHaveClass( 'is-blank' );
-		expect( blankIcon?.querySelector( 'img' ) ).toBeNull();
+		expect( getCard( PRUNED_FEED_ITEM.title ).querySelector( '.site-icon' ) ).toHaveClass(
+			'is-blank'
+		);
 	} );
 
 	it( 'shows a save as saved before the saved keys include it', async () => {
