@@ -57,6 +57,8 @@ object WPComTests : Project({
 	buildType(GutenbergPlaywrightTests);
 
 	// Jetpack E2E Tests (Playwright)
+	// Started from outside this repository by build ID: check the callers listed in
+	// test/e2e/docs/tests_ci.md#jetpack-build-configurations before renaming or removing one.
 	template(JetpackE2ETestsBuildTemplate);
 	buildType(JetpackSimpleE2ETests);
 	buildType(JetpackAtomicE2ETests);
@@ -441,7 +443,7 @@ private object JetpackE2ETestsBuildTemplate : Template({
 		notifications {
 			notifierSettings = slackNotifier {
 				connection = "PROJECT_EXT_11"
-				sendTo = "#notif-test"
+				sendTo = "#jetpack-alerts"
 				messageFormat = verboseMessageFormat {
 					addStatusText = true
 				}
@@ -510,7 +512,9 @@ private object JetpackAtomicSmokeE2ETests : BuildType({
 	params {
 		param("PROJECT", "desktop")
 		param("env.TEST_ON_ATOMIC", "true")
-		param("env.PW_WORKERS", "14")
+		// Every worker can land on the same Atomic site at once: the private site fails at
+		// 14 concurrent workers and holds at 4.
+		param("env.PW_WORKERS", "4")
 		param("env.ATOMIC_VARIATION", "mixed")
 		// What "mixed" resolves against, with each spec file's name. Keyed on the commit so a
 		// re-run of a failed build repeats the variations that failed.

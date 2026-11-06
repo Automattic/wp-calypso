@@ -48,7 +48,7 @@ export default function CertificationTierPageCard( {
 
 	if ( isLoading ) {
 		return (
-			<VStack style={ { alignItems: 'center' } }>
+			<VStack alignment="center">
 				<CertificationCardSkeleton style={ width } />
 			</VStack>
 		);
@@ -59,7 +59,7 @@ export default function CertificationTierPageCard( {
 	}
 
 	return (
-		<VStack style={ { alignItems: 'center' } }>
+		<VStack alignment="center">
 			<Card
 				id="certification"
 				className="a4a-certification-tier-card"

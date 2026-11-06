@@ -310,6 +310,25 @@ describe( 'Static site import flow', () => {
 			} );
 		} );
 
+		it( 'continues a WordPress source as a migration into the destination', () => {
+			runNavigation( {
+				from: STEPS.STATIC_SITE_IMPORT_READING,
+				dependencies: { action: 'migrate' },
+				query: { ...SOURCE, ...SITE },
+			} );
+
+			expect( lastExit() ).toEqual( {
+				path: '/setup/site-migration/site-migration-check',
+				query: {
+					from: SOURCE.from,
+					platform: 'wordpress',
+					siteId: String( SITE.siteId ),
+					siteSlug: SITE.siteSlug,
+					ref: 'static-site-import',
+				},
+			} );
+		} );
+
 		it( 'falls back to the content importer when the session cannot start', () => {
 			runNavigation( {
 				from: STEPS.STATIC_SITE_IMPORT_READING,

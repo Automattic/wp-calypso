@@ -88,10 +88,11 @@ export function shouldSuppressSurvey(): boolean {
  *
  * Events are suppressed during a support session, and while the Help Center
  * or another modal is open.
- *
+ * @param eventName The Survicate event to invoke.
+ * @param onInvoked Called once the event has actually been handed to the SDK, whether now or at `SurvicateReady`.
  * @returns A cleanup function that removes the event listener.
  */
-export function invokeSurvicateEvent( eventName: string ): () => void {
+export function invokeSurvicateEvent( eventName: string, onInvoked?: () => void ): () => void {
 	const suppressionReason = getSuppressionReason();
 	if ( suppressionReason ) {
 		debug( 'Survicate event "%s" suppressed (reason: %s)', eventName, suppressionReason );
@@ -102,6 +103,7 @@ export function invokeSurvicateEvent( eventName: string ): () => void {
 
 	if ( typeof window._sva !== 'undefined' && window._sva.invokeEvent ) {
 		window._sva.invokeEvent( eventName );
+		onInvoked?.();
 		return () => {};
 	}
 
@@ -114,6 +116,7 @@ export function invokeSurvicateEvent( eventName: string ): () => void {
 		}
 		if ( typeof window._sva !== 'undefined' && window._sva.invokeEvent ) {
 			window._sva.invokeEvent( eventName );
+			onInvoked?.();
 		}
 	};
 

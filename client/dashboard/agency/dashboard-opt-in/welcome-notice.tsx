@@ -4,11 +4,10 @@ import {
 	userPreferenceQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { Notice } from '../../components/notice';
+import { Notice, NoticeActionButton } from '../../components/notice';
 import { isOnNewAgencyDashboard } from '../lib/dashboard-opt-in';
 import { useOnboardingTour } from '../onboarding-tour';
 import { OWNER_ROLE } from '../team/constants';
@@ -18,11 +17,13 @@ const SEEN_PREFERENCE = 'a4a-dashboard-welcome-notice-seen';
 
 /**
  * The first visit after the agency switches, on whichever agency page they land on first,
- * since links from the previous dashboard forward to the matching page.
+ * since links from the classic dashboard forward to the matching page.
  */
 export function useWelcomeNoticeEligibility() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
-	const isOptedIn = isOnNewAgencyDashboard( agency );
+	// Agencies moved here for good, like new sign-ups, can't switch back, so the notice's way back doesn't apply.
+	const isOptedIn =
+		isOnNewAgencyDashboard( agency ) && agency?.dashboard_opt_in?.value !== 'forced-opt-in';
 	const { data: seenAt, isFetched } = useQuery( {
 		...userPreferenceQuery( SEEN_PREFERENCE ),
 		enabled: isOptedIn,
@@ -64,20 +65,20 @@ export default function WelcomeNotice() {
 	return (
 		<Notice
 			variant="info"
-			title={ __( 'Welcome to the new dashboard' ) }
+			title={ __( 'Welcome to the new Automattic for Agencies experience' ) }
 			onClose={ handleDismiss }
 			actions={
-				<Button variant="primary" onClick={ handleTakeTour } __next40pxDefaultSize>
+				<NoticeActionButton variant="solid" onClick={ handleTakeTour }>
 					{ __( 'Take the tour' ) }
-				</Button>
+				</NoticeActionButton>
 			}
 		>
 			{ isOwner
 				? __(
-						'Your sites, purchases, and earnings are all here now. Plugins and Billing open in WordPress.com, and Amplify and Reports stay in the previous dashboard. You can switch back in Agency > Dashboard.'
+						'You’re getting an early look at the new dashboard before it comes to every agency in December. All the benefits of the program are now grouped to help you focus on clients, growing your business, and earning opportunities. To switch back, open Agency in the sidebar and choose Classic dashboard.'
 					)
 				: __(
-						'Your agency switched to the new dashboard. Plugins and Billing open in WordPress.com, and Amplify and Reports stay in the previous dashboard. Your agency owner can switch back in Agency > Dashboard.'
+						'Your agency owner turned on an early look at the new dashboard, which comes to every agency in December. All the benefits of the program are now grouped to help you focus on clients, growing your business, and earning opportunities. Your agency owner can switch back to the classic dashboard at any time.'
 					) }
 		</Notice>
 	);

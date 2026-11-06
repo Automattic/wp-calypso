@@ -53,11 +53,9 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 		enabled: Boolean( sessionId ),
 		refetchInterval: pollStaticSiteImportSessionUntil( STATIC_SITE_IMPORT_TERMINAL_STATES ),
 	} );
-	const {
-		mutate: approve,
-		error: approveError,
-		reset: resetApprove,
-	} = useMutation( approveStaticSiteImportSessionMutation() );
+	const { mutate: approve, error: approveError } = useMutation(
+		approveStaticSiteImportSessionMutation()
+	);
 
 	// Checkout was the consent, so name this site as the destination right away.
 	// The server delivers as soon as the build lands, even if the user has left.
@@ -108,9 +106,7 @@ export function useStaticSiteImport( site: Site, sessionId?: string ): StaticSit
 			status: 'stalled',
 			session,
 			retry: () => {
-				resetApprove();
-				hasRequestedApproval.current = false;
-				refetch();
+				approve( { sessionId, destinationBlogId: site.ID }, { onSettled: () => refetch() } );
 			},
 		};
 	}

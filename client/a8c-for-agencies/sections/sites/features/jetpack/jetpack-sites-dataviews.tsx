@@ -5,10 +5,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useCallback, useEffect, useContext, useMemo, useRef, useState, ReactNode } from 'react';
 import { DATAVIEWS_LIST } from 'calypso/a8c-for-agencies/components/items-dashboard/constants';
 import ItemsDataViews from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews';
-import {
-	DataViewsState,
-	ItemsDataViewsType,
-} from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
+import { DataViewsState } from 'calypso/a8c-for-agencies/components/items-dashboard/items-dataviews/interfaces';
 import SiteSetFavorite from 'calypso/a8c-for-agencies/sections/sites/site-set-favorite';
 import SitesEmptyState from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard/sites-empty-state';
 import SitesDashboardContext from 'calypso/a8c-for-agencies/sections/sites/sites-dashboard-context';
@@ -17,7 +14,6 @@ import SiteDataField from 'calypso/a8c-for-agencies/sections/sites/sites-datavie
 import { DataViews } from 'calypso/components/dataviews';
 import { GuidedTourStep } from 'calypso/components/guided-tour/step';
 import SiteStatusContent from 'calypso/jetpack-cloud/sections/agency-dashboard/sites-overview/site-status-content';
-import { JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE } from 'calypso/jetpack-cloud/sections/onboarding-tours/constants';
 import TextPlaceholder from 'calypso/jetpack-cloud/sections/partner-portal/text-placeholder';
 import { useFetchTestConnections } from '../../hooks/use-fetch-test-connection';
 import useFormattedSites from '../../hooks/use-formatted-sites';
@@ -27,6 +23,7 @@ import { AllowedTypes, Site, SiteData } from '../../types';
 import type { Action, Field } from '@wordpress/dataviews';
 
 const EMPTY_SELECTION: string[] = [];
+const DEFAULT_LAYOUTS = { table: {}, list: {} };
 
 const SitePreviewTourTarget = ( { children }: { children: ReactNode } ) => {
 	const [ context, setContext ] = useState< HTMLElement | null >();
@@ -50,7 +47,6 @@ export const JetpackSitesDataViews = ( {
 	setDataViewsState,
 	setSelectedSiteFeature,
 	dataViewsState,
-	forceTourExampleSite = false,
 	className,
 	onRefetchSite,
 }: SitesDataViewsProps ) => {
@@ -435,28 +431,6 @@ export const JetpackSitesDataViews = ( {
 		]
 	);
 
-	const urlParams = new URLSearchParams( window.location.search );
-	const isOnboardingTourActive = urlParams.get( 'tour' ) !== null;
-	const useExampleDataForTour =
-		forceTourExampleSite || ( isOnboardingTourActive && ( ! sites || sites.length === 0 ) );
-
-	const [ itemsData, setItemsData ] = useState< ItemsDataViewsType< SiteData > >( {
-		items: ! useExampleDataForTour ? sites : JETPACK_MANAGE_ONBOARDING_TOURS_EXAMPLE_SITE,
-		pagination: {
-			totalItems: totalSites,
-			totalPages: totalPages,
-		},
-		itemFieldId: 'ref',
-		searchLabel: translate( 'Search for sites' ),
-		fields: [],
-		actions: [],
-		setDataViewsState: setDataViewsState,
-		dataViewsState: dataViewsState,
-		selection,
-		onSelectionChange,
-		defaultLayouts: { table: {}, list: {} },
-	} );
-
 	useEffect( () => {
 		// Only the table layout needs this; the list layout ships its own full-row button.
 		const handleRowClick = ( event: Event ) => {
@@ -495,27 +469,21 @@ export const JetpackSitesDataViews = ( {
 		setSelectedSiteFeature,
 	} );
 
-	// Update the data packet
-	useEffect( () => {
-		setItemsData( ( prevState: ItemsDataViewsType< SiteData > ) => ( {
-			...prevState,
-			items: sites,
-			fields: fields,
-			actions: actions as Action< SiteData >[],
-			pagination: {
-				totalItems: totalSites,
-				totalPages: totalPages,
-			},
-			setDataViewsState: setDataViewsState,
-			dataViewsState: dataViewsState,
-			selection,
-			onSelectionChange,
-		} ) );
-	}, [ fields, dataViewsState, setDataViewsState, data, actions, selection, onSelectionChange ] );
-
 	return (
 		<ItemsDataViews
-			data={ itemsData }
+			data={ {
+				items: sites,
+				pagination: { totalItems: totalSites, totalPages },
+				itemFieldId: 'ref',
+				searchLabel: translate( 'Search for sites' ),
+				fields,
+				actions: actions as Action< SiteData >[],
+				setDataViewsState,
+				dataViewsState,
+				selection,
+				onSelectionChange,
+				defaultLayouts: DEFAULT_LAYOUTS,
+			} }
 			isLoading={ isLoading }
 			className={ className }
 			empty={

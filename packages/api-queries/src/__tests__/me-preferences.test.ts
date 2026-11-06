@@ -1,4 +1,8 @@
-import { userPreferenceMutation, userPreferenceOptimisticMutation } from '../me-preferences';
+import {
+	userPreferenceMutation,
+	userPreferenceOptimisticMutation,
+	userPreferenceQuery,
+} from '../me-preferences';
 import type { UserPreferences } from '@automattic/api-core';
 
 function getPreferenceMutationStatId( preferenceKey: keyof UserPreferences ) {
@@ -9,7 +13,32 @@ function getPreferenceOptimisticMutationStatId( preferenceKey: keyof UserPrefere
 	return userPreferenceOptimisticMutation( preferenceKey ).meta?.statId;
 }
 
+describe( 'user preference defaults', () => {
+	it.each( [ true, false ] )(
+		'uses the rollout default %s only for an unset preference',
+		( defaultEnabled ) => {
+			const query = userPreferenceQuery(
+				'notifications-subscriber-alerts-enabled',
+				defaultEnabled
+			);
+			expect( query.select?.( {} ) ).toBe( defaultEnabled );
+			expect( query.select?.( { 'notifications-subscriber-alerts-enabled': true } ) ).toBe( true );
+			expect( query.select?.( { 'notifications-subscriber-alerts-enabled': false } ) ).toBe(
+				false
+			);
+		}
+	);
+} );
+
 describe( 'user preference mutation meta', () => {
+	it( 'tracks subscriber alert preference saves separately', () => {
+		expect( getPreferenceMutationStatId( 'notifications-subscriber-alerts-enabled' ) ).toBe(
+			'user-pref-update.subalrt'
+		);
+		expect(
+			getPreferenceOptimisticMutationStatId( 'notifications-subscriber-alerts-enabled' )
+		).toBe( 'user-pref-opt-update.subalrt' );
+	} );
 	it( 'uses short codes for static preferences', () => {
 		expect( getPreferenceOptimisticMutationStatId( 'recentSites' ) ).toBe(
 			'user-pref-opt-update.recent'
@@ -54,6 +83,7 @@ describe( 'user preference mutation meta', () => {
 	it( 'keeps stat IDs within the length limit', () => {
 		const preferenceKeys: Array< keyof UserPreferences > = [
 			'recentSites',
+			'notifications-subscriber-alerts-enabled',
 			'hosting-dashboard-dark-mode-announcement-dismissed',
 			'account-recovery-interstitial-snoozed-until',
 			'reader-profile-posts-visibility',

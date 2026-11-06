@@ -15,8 +15,6 @@ interface Props {
 	isDocked: boolean;
 	/** Indicates if the chat is expanded (floating mode). */
 	isOpen: boolean;
-	/** Called when the user aborts the current request. */
-	onAbort: () => void;
 	/** Called when the chat is closed. */
 	onClose: () => void;
 	/** Called when the chat is expanded (floating mode). */
@@ -29,7 +27,6 @@ export default function AgentHistory( {
 	chatHeaderOptions,
 	isDocked,
 	isOpen,
-	onAbort,
 	onClose,
 	onExpand,
 	onSelectConversation,
@@ -58,7 +55,6 @@ export default function AgentHistory( {
 			triggerTitle={ title }
 			onClose={ onClose }
 			onExpand={ onExpand }
-			onStop={ onAbort }
 			expandOnHover={ false }
 		>
 			<AgentUI.ConversationView>

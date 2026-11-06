@@ -1323,6 +1323,7 @@ export function mockUserSignupValidationEndpoint( endpointResponse ) {
 	endpoint.mockReturnValue( true );
 
 	nock( 'https://public-api.wordpress.com' )
+		.persist()
 		.post( '/rest/v1.1/signups/validation/user/', ( body ) => {
 			return endpoint( body );
 		} )

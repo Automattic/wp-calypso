@@ -928,7 +928,7 @@ export const agencyTeamRoute = createRoute( {
 // `/agency/dashboard` – which dashboard the agency uses; only the owner can change it
 export const agencyDashboardOptInRoute = createRoute( {
 	head: () => ( {
-		meta: [ { title: __( 'Dashboard' ) } ],
+		meta: [ { title: __( 'Classic dashboard' ) } ],
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'agency/dashboard',

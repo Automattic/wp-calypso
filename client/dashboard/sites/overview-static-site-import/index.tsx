@@ -11,14 +11,14 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, caution, external, published } from '@wordpress/icons';
+import { Icon, border, caution, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../components/notice';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { withJetpackSso } from '../../utils/site-sso';
@@ -108,7 +108,12 @@ function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
 	const locale = useLocale();
 	const handoff = useMutation( staticSiteImportHandoffMutation() );
 	const requestHandoff = () =>
-		handoff.mutate( { blogUrl: site.slug, fromUrl: search.from ?? '', locale } );
+		handoff.mutate( {
+			blogUrl: site.slug,
+			fromUrl: search.from ?? '',
+			locale,
+			importSessionId: search.importSessionId,
+		} );
 	return { handoff, requestHandoff };
 }
 
@@ -282,9 +287,9 @@ export function StaticSiteImportNotice( {
 				variant="error"
 				title={ __( 'We can’t import this site' ) }
 				actions={
-					<Button __next40pxDefaultSize variant="link" onClick={ () => setShowHelpCenter( true ) }>
+					<NoticeActionButton variant="minimal" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Get help' ) }
-					</Button>
+					</NoticeActionButton>
 				}
 			>
 				{ __( 'Its content isn’t allowed on WordPress.com.' ) }
@@ -303,9 +308,14 @@ export function StaticSiteImportNotice( {
 				variant="warning"
 				title={ __( 'Your move hasn’t started yet' ) }
 				actions={
-					<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
-						{ __( 'Try again' ) }
-					</Button>
+					<>
+						<NoticeActionButton variant="solid" onClick={ siteImport.retry }>
+							{ __( 'Try again' ) }
+						</NoticeActionButton>
+						<NoticeActionButton variant="outline" onClick={ () => setShowHelpCenter( true ) }>
+							{ __( 'Contact us' ) }
+						</NoticeActionButton>
+					</>
 				}
 			>
 				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }
@@ -356,31 +366,26 @@ export function StaticSiteImportNotice( {
 					} }
 					actions={
 						<>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
+							<NoticeActionLinkButton
+								variant="solid"
 								href={ domainUrl }
 								onClick={ () => recordClick( ownedDomain ? 'connect_domain' : 'get_domain' ) }
 							>
 								{ domainLabel }
-							</Button>
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
+							</NoticeActionLinkButton>
+							<NoticeActionLinkButton
+								variant="outline"
 								href={ previewUrl }
-								target="_blank"
+								openInNewTab
 								rel="noopener noreferrer"
-								icon={ external }
-								iconPosition="right"
 								onClick={ () => recordClick( 'preview_site' ) }
 							>
 								{ __( 'Preview site' ) }
-							</Button>
+							</NoticeActionLinkButton>
 							{ ! handoff.isSuccess && (
-								<Button
-									__next40pxDefaultSize
-									variant="link"
-									isBusy={ handoff.isPending }
+								<NoticeActionButton
+									variant="minimal"
+									loading={ handoff.isPending }
 									disabled={ handoff.isPending }
 									onClick={ () => {
 										recordClick( 'request_handoff' );
@@ -388,7 +393,7 @@ export function StaticSiteImportNotice( {
 									} }
 								>
 									{ __( 'Something not right? Let our team fix it' ) }
-								</Button>
+								</NoticeActionButton>
 							) }
 						</>
 					}

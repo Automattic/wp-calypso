@@ -1,4 +1,4 @@
-import { DomainStatusCta } from '@automattic/api-core';
+import { DomainStatus, DomainStatusCta } from '@automattic/api-core';
 import { Link } from '@tanstack/react-router';
 import {
 	Tooltip,
@@ -14,7 +14,7 @@ import {
 } from '../../app/router/domains';
 import { purchaseSettingsRoute } from '../../app/router/me';
 import { Text } from '../../components/text';
-import { useIsDomainActivating } from './use-domain-activation';
+import { useDomainSslDetails, useIsDomainActivating } from './use-domain-activation';
 import type { DomainSummary } from '@automattic/api-core';
 
 const getCtaLink = ( domain: DomainSummary ) => {
@@ -62,20 +62,33 @@ export const DomainStatusField = ( {
 	value: string;
 } ) => {
 	const isActivating = useIsDomainActivating( domain );
+	const { data: sslDetails } = useDomainSslDetails( domain );
+
+	// The backend labels every registration "Activating" for its first 30 minutes,
+	// even once the domain works.
+	const label =
+		domain.domain_status.id === DomainStatus.ACTIVE && sslDetails?.certificate_provisioned
+			? __( 'Active' )
+			: value;
 
 	const activationTime = __( 'Can take up to 15 minutes' );
 
 	return (
 		<VStack spacing={ 1 }>
-			<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
-				<Text
-					intent={ isActivating ? undefined : domain.domain_status.type }
-					variant={ isActivating ? 'muted' : undefined }
+			<Tooltip text={ isActivating ? activationTime : undefined }>
+				<HStack
+					spacing={ 1 }
+					justify="flex-start"
+					expanded={ false }
+					style={ isActivating ? { cursor: 'pointer' } : undefined }
 				>
-					{ isActivating ? __( 'Activating' ) : value }
-				</Text>
-				{ isActivating && (
-					<Tooltip text={ activationTime }>
+					<Text
+						intent={ isActivating ? undefined : domain.domain_status.type }
+						variant={ isActivating ? 'muted' : undefined }
+					>
+						{ isActivating ? __( 'Activating' ) : label }
+					</Text>
+					{ isActivating && (
 						<Text
 							variant="muted"
 							role="img"
@@ -85,9 +98,9 @@ export const DomainStatusField = ( {
 						>
 							<Icon icon={ info } style={ { fill: 'currentColor' } } />
 						</Text>
-					</Tooltip>
-				) }
-			</HStack>
+					) }
+				</HStack>
+			</Tooltip>
 			{ ! isActivating && domain.domain_status?.cta && getCtaLink( domain ) }
 		</VStack>
 	);
