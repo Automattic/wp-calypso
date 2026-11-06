@@ -86,10 +86,6 @@
 	margin-inline-start: 2px;
 	margin-block-end: -4px;
 	cursor: pointer;
-
-	&:where(svg) {
-		color: var(--studio-gray-50);
-	}
 }
 
 .site-table-site-title {

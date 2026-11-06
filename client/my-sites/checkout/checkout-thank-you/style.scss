@@ -178,10 +178,6 @@
 		top: 1px;
 		fill: var(--color-success);
 		margin-right: 11px;
-
-		&:where(svg) {
-			color: var(--color-success);
-		}
 	}
 }
 
@@ -380,7 +376,6 @@
 
 	.gridicon {
 		fill: var(--color-text-subtle);
-		color: var(--color-text-subtle);
 		position: absolute;
 		height: auto;
 		width: auto;
@@ -653,10 +648,6 @@
 
 	&.is-large {
 		transform: scale(1);
-	}
-
-	&:where(svg) {
-		color: var(--color-wpcom);
 	}
 }
 

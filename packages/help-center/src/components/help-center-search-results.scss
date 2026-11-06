@@ -13,10 +13,6 @@
 		text-transform: uppercase;
 		font-weight: 500;
 		font-size: $font-body-extra-small;
-
-		&:where(svg) {
-			color: var(--studio-blue-50);
-		}
 	}
 
 	.help-center-search-results__title {

@@ -47,8 +47,4 @@
 .payment-method-form__notice-icon {
 	fill: var(--studio-gray-30);
 	flex-shrink: 0;
-
-	&:where(svg) {
-		color: var(--studio-gray-30);
-	}
 }

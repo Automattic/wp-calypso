@@ -5,10 +5,6 @@
 
 .stats-sparkline__bar {
 	fill: var(--color-stats-sparkline);
-
-	&:where(svg) {
-		color: var(--color-stats-sparkline);
-	}
 }
 
 a:focus {

@@ -12,15 +12,10 @@ $rating-star-color: #ffb514;
 
 		.gridicon {
 			fill: var(--color-primary);
-			color: var(--color-primary);
 		}
 
 		.is-empty {
 			fill: var(--color-neutral-10);
-
-			&:where(svg) {
-				color: var(--color-neutral-10);
-			}
 		}
 	}
 	.full-width-section & {
@@ -29,10 +24,6 @@ $rating-star-color: #ffb514;
 			.is-empty,
 			.gridicon {
 				fill: $rating-star-color;
-
-				&:where(svg) {
-					color: $rating-star-color;
-				}
 			}
 		}
 	}

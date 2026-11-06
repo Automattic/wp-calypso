@@ -6,10 +6,6 @@
 			background: transparent;
 			.wpcom-favicon {
 				fill: var(--color-primary-50);
-
-				&:where(svg) {
-					color: var(--color-primary-50);
-				}
 			}
 
 			.no-favicon {

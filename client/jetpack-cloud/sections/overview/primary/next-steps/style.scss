@@ -68,10 +68,6 @@
 			.checklist-item__chevron,
 			.checklist-item__checkmark {
 				fill: var(--studio-jetpack-green-50);
-
-				&:where(svg) {
-					color: var(--studio-jetpack-green-50);
-				}
 			}
 		}
 	}

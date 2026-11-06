@@ -13,10 +13,6 @@
 	margin-top: -4px;
 	flex-shrink: 0;
 	fill: var( --color-accent, var( --wp-admin-theme-color, #3858e9 ) );
-
-	&:where(svg) {
-		color: var( --color-accent, var( --wp-admin-theme-color, #3858e9 ) );
-	}
 }
 
 .domain-suggestion-match-reason__text {

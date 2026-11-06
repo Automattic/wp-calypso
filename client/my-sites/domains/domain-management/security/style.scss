@@ -18,11 +18,9 @@
 
 			&.disabled svg {
 				fill: var(--color-error);
-				color: var(--color-error);
 			}
 			&.active svg {
 				fill: var(--color-success);
-				color: var(--color-success);
 			}
 		}
 	}

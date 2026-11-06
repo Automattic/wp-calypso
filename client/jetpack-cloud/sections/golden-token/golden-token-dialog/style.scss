@@ -91,15 +91,10 @@ $tablet-width: 760px;
 			path,
 			clipPath {
 				fill: #000;
-
-				&:where(svg) {
-					color: #000;
-				}
 			}
 
 			path.jetpack-logo-triangles {
 				fill: #fff;
-				color: #fff;
 			}
 		}
 
@@ -113,16 +108,11 @@ $tablet-width: 760px;
 				clipPath {
 					transition: 2s fill ease 0.5s;
 					fill: #fff;
-
-					&:where(svg) {
-						color: #fff;
-					}
 				}
 
 				path.jetpack-logo-triangles {
 					transition: 2s fill ease 0.5s;
 					fill: #000;
-					color: #000;
 				}
 			}
 		}

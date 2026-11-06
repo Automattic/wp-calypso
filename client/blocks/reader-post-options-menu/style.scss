@@ -59,7 +59,6 @@
 
 			&:hover {
 				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
 			}
 		}
 
@@ -70,7 +69,6 @@
 
 			.gridicon {
 				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
 			}
 
 			.follow-button__label,
@@ -101,7 +99,6 @@
 
 		.gridicon {
 			fill: var(--color-error);
-			color: var(--color-error);
 		}
 
 		&:hover,
@@ -111,7 +108,6 @@
 
 			.gridicon {
 				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
 			}
 		}
 	}

@@ -69,10 +69,6 @@
 			.checklist-item__chevron,
 			.checklist-item__checkmark {
 				fill: var(--color-primary);
-
-				&:where(svg) {
-					color: var(--color-primary);
-				}
 			}
 		}
 	}

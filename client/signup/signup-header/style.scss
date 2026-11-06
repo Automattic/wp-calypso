@@ -32,10 +32,6 @@
 		&.is-large {
 			transform: scale(1) translateY(80px);
 		}
-
-		&:where(svg) {
-			color: var(--color-text-inverted);
-		}
 	}
 
 	h1 {

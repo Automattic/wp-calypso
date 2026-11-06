@@ -470,7 +470,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 				path {
 					fill: var(--color-primary);
-					color: var(--color-primary);
 				}
 			}
 
@@ -644,7 +643,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 			svg {
 				fill: var(--studio-gray-50);
-				color: var(--studio-gray-50);
 				min-width: 20px;
 			}
 		}
@@ -1128,7 +1126,6 @@ body.is-section-promote-post-i2 .layout__content .campaign-item-details.main {
 
 		svg {
 			fill: var(--color-surface);
-			color: var(--color-surface);
 		}
 	}
 
@@ -1400,14 +1397,12 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 
 				svg {
 					fill: var( --studio-gray-80 );
-					color: var( --studio-gray-80 );
 				}
 			}
 
 			svg {
 				margin-right: 5px;
-				fill: var( --color-link );
-				color: var( --color-link )
+				fill: var( --color-link )
 			}
 		}
 	}
@@ -1425,7 +1420,6 @@ $break-huge-collapsed-menu: $break-huge - 222px;
 
 			svg {
 				fill: var(--color-surface);
-				color: var(--color-surface);
 			}
 		}
 	}

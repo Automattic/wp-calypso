@@ -41,10 +41,6 @@ $heading-font-body-small: 15px;
 			height: 1.5rem;
 			fill: var( --color-text );
 			margin: 0 rem( 10px ) 0 0;
-
-			&:where(svg) {
-				color: var( --color-text );
-			}
 		}
 
 		.blazepress-widget__cancel {

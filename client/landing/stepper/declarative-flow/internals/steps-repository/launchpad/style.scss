@@ -77,10 +77,6 @@
 				display: block;
 			}
 
-			&:where(svg) {
-				color: var(--studio-green-40);
-			}
-
 		}
 
 		p,
@@ -101,10 +97,6 @@
 
 		&-close-icon {
 			fill: var(--studio-gray-20);
-
-			&:where(svg) {
-				color: var(--studio-gray-20);
-			}
 		}
 
 		@include break-large {
@@ -259,10 +251,6 @@
 
 .launchpad__domain-checkmark-icon {
 	fill: var(--studio-green-50);
-
-	&:where(svg) {
-		color: var(--studio-green-50);
-	}
 }
 
 .badge.launchpad__domain-upgrade-badge {

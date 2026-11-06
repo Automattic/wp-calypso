@@ -48,10 +48,6 @@
 	&__complete-icon {
 		flex-shrink: 0;
 		fill: var( --color-accent );
-
-		&:where(svg) {
-			color: var( --color-accent );
-		}
 	}
 
 	&__loading {

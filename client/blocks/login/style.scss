@@ -91,18 +91,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 	.jetpack-logo__icon-circle {
 		fill: var(--color-neutral-80);
-
-		&:where(svg) {
-			color: var(--color-neutral-80);
-		}
 	}
 
 	.jetpack-logo__icon-triangle {
 		fill: var(--color-neutral-0);
-
-		&:where(svg) {
-			color: var(--color-neutral-0);
-		}
 	}
 
 	.login__form-action .form-button {
@@ -139,7 +131,6 @@ $breakpoint-mobile: 782px; //Mobile size.
 
 	& > svg:not(.social-icons__mail):not(.jetpack-logo) path {
 		fill: #fff;
-		color: #fff;
 	}
 
 	& > svg.social-icons__mail {
@@ -152,12 +143,10 @@ $breakpoint-mobile: 782px; //Mobile size.
 	& > svg.jetpack-logo {
 		polygon {
 			fill: var(--studio-wordpress-blue, #3858e9);
-			color: var(--studio-wordpress-blue, #3858e9);
 		}
 
 		path {
 			fill: #fff;
-			color: #fff;
 		}
 	}
 

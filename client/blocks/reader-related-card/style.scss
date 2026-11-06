@@ -369,10 +369,6 @@
 
 	.reader-follow-feed {
 		fill: var(--color-link);
-
-		&:where(svg) {
-			color: var(--color-link);
-		}
 	}
 
 	@include breakpoint-deprecated( "<960px" ) {

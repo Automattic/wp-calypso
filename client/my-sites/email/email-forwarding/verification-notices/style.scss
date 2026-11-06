@@ -9,7 +9,6 @@
 	&.active {
 		svg {
 			fill: var(--studio-green-50);
-			color: var(--studio-green-50);
 		}
 
 		// hide text on mobile.
@@ -29,7 +28,6 @@
 
 		svg {
 			fill: var(--studio-orange-50);
-			color: var(--studio-orange-50);
 			display: none;
 		}
 

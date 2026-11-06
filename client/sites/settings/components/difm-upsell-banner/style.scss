@@ -8,10 +8,6 @@
 			.wordpress-logo {
 				fill: var(--color-neutral-100);
 				margin: 0;
-
-				&:where(svg) {
-					color: var(--color-neutral-100);
-				}
 			}
 		}
 		.banner__action {
@@ -20,10 +16,6 @@
 		.wordpress-logo {
 			fill: var(--color-text);
 			margin: 0;
-
-			&:where(svg) {
-				color: var(--color-text);
-			}
 		}
 	}
 }

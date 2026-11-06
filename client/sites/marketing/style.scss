@@ -586,10 +586,6 @@
 
 .sharing-buttons-preview__like-icon {
 	fill: var(--color-neutral-80);
-
-	&:where(svg) {
-		color: var(--color-neutral-80);
-	}
 }
 
 .sharing-buttons-preview__reblog-like .sharing-buttons-preview-button {
@@ -614,10 +610,6 @@
 	&:hover {
 		.sharing-buttons-preview__like-icon {
 			fill: var(--studio-blue-50);
-
-			&:where(svg) {
-				color: var(--studio-blue-50);
-			}
 		}
 	}
 }

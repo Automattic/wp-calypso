@@ -17,10 +17,6 @@
 	.simple-list-icon,
 	ul.hosting-additional-features svg.gridicon {
 		fill: var(--color-text);
-
-		&:where(svg) {
-			color: var(--color-text);
-		}
 	}
 }
 

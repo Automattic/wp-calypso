@@ -17,18 +17,10 @@
 	.site-activity-logs__actor-icon-default {
 		background-color: var( --wp-components-color-gray-300, $gray-300 );
 		fill: var( --dashboard__text-muted-color );
-
-		&:where(svg) {
-			color: var( --dashboard__text-muted-color );
-		}
 	}
 
 	.site-activity-logs__actor-icon-wordpress {
 		fill: var( --dashboard__text-muted-color );
-
-		&:where(svg) {
-			color: var( --dashboard__text-muted-color );
-		}
 	}
 
 	.site-activity-logs__actor-mcp {

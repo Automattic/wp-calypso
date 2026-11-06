@@ -10,10 +10,6 @@ $color-big-sky-background: #000cb2;
 
 	.wordpress-logo {
 		fill: $color-white !important;
-
-		&:where(svg) {
-			color: $color-white !important;
-		}
 	}
 
 	.processing-step__container {

@@ -145,10 +145,6 @@ button {
 			inset-inline-start: 24px;
 			fill: var( --color-text );
 			transform-origin: 0 0;
-
-			&:where(svg) {
-				color: var( --color-text );
-			}
 		}
 
 		.signup-header__right {
@@ -291,7 +287,6 @@ button {
 
 				svg {
 					fill: var( --studio-gray-30 );
-					color: var( --studio-gray-30 );
 				}
 
 				span {
@@ -304,7 +299,6 @@ button {
 
 					svg {
 						fill: var( --studio-wordpress-blue-50 );
-						color: var( --studio-wordpress-blue-50 );
 					}
 
 					span {
@@ -324,7 +318,6 @@ button {
 					box-shadow: none;
 					svg {
 						fill: #fff;
-						color: #fff;
 					}
 					span {
 						color: var( --studio-wordpress-blue-50 );

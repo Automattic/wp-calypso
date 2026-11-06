@@ -2,65 +2,33 @@
 .share-button.has-color {
 	.wordpress {
 		fill: var(--color-wordpress-com);
-
-		&:where(svg) {
-			color: var(--color-wordpress-com)
-		}
 	}
 
 	.facebook {
 		fill: var(--color-facebook);
-
-		&:where(svg) {
-			color: var(--color-facebook)
-		}
 	}
 
 	.twitter {
 		fill: var(--color-twitter);
-
-		&:where(svg) {
-			color: var(--color-twitter)
-		}
 	}
 
 	.tumblr {
 		fill: var(--color-tumblr);
-
-		&:where(svg) {
-			color: var(--color-tumblr)
-		}
 	}
 
 	.linkedin {
 		fill: var(--color-linkedin);
-
-		&:where(svg) {
-			color: var(--color-linkedin)
-		}
 	}
 
 	.pinterest {
 		fill: var(--color-pinterest);
-
-		&:where(svg) {
-			color: var(--color-pinterest)
-		}
 	}
 
 	.telegram {
 		fill: var(--color-telegram);
-
-		&:where(svg) {
-			color: var(--color-telegram)
-		}
 	}
 
 	.whatsapp {
 		fill: var(--color-whatsapp);
-
-		&:where(svg) {
-			color: var(--color-whatsapp)
-		}
 	}
 }

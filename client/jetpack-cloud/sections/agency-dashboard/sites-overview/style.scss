@@ -227,17 +227,9 @@
 }
 .sites-overview__stats-trend__up {
 	fill: var(--studio-jetpack-green-40);
-
-	&:where(svg) {
-		color: var(--studio-jetpack-green-40);
-	}
 }
 .sites-overview__stats-trend__down {
 	fill: var(--studio-red-50);
-
-	&:where(svg) {
-		color: var(--studio-red-50);
-	}
 }
 .sites-overview__stats-trend__same .empty-icon {
 	vertical-align: middle;
@@ -303,10 +295,6 @@
 
 		&.is-visible {
 			visibility: visible;
-		}
-
-		&:where(svg) {
-			color: var(--studio-blue-50);
 		}
 	}
 }

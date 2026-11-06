@@ -94,14 +94,12 @@
 
 	svg {
 		fill: var(--studio-gray-70);
-		color: var(--studio-gray-70);
 		padding: 0 4px;
 	}
 
 	button:disabled {
 		svg {
 			fill: var(--wp-components-color-gray-600, #949494);
-			color: var(--wp-components-color-gray-600, #949494);
 		}
 
 		color: var(--wp-components-color-gray-600, #949494);
@@ -132,7 +130,6 @@
 
 				svg {
 					fill: var(--studio-white);
-					color: var(--studio-white);
 				}
 			}
 
@@ -142,7 +139,6 @@
 
 				svg {
 					fill: var(--studio-gray-70);
-					color: var(--studio-gray-70);
 				}
 			}
 		}

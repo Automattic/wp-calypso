@@ -101,10 +101,6 @@
 
 			.notice-banner__icon {
 				fill: var( --color-primary );
-
-				&:where(svg) {
-					color: var( --color-primary );
-				}
 			}
 		}
 	}

@@ -70,7 +70,6 @@
 	&.external-link .gridicon {
 		align-self: center;
 		fill: var(--studio-gray-80);
-		color: var(--studio-gray-80);
 		// Cancel .external-link's baseline nudge; flex centering handles alignment.
 		top: 0;
 	}
@@ -79,7 +78,6 @@
 		color: var(--studio-gray-100);
 		.gridicon {
 			fill: var(--studio-gray-100);
-			color: var(--studio-gray-100);
 		}
 	}
 }

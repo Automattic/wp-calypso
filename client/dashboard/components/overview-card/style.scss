@@ -121,10 +121,6 @@
 			.dashboard-overview-card__link-icon {
 				fill: var( --wp-admin-theme-color );
 				background-color: transparent;
-
-				&:where(svg) {
-					color: var( --wp-admin-theme-color );
-				}
 			}
 		}
 	}

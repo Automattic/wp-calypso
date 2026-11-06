@@ -23,8 +23,4 @@
 	margin-block-end: -6px;
 	min-width: 24px;
 	min-height: 24px;
-
-	&:where(svg) {
-		color: var(--color-primary-40)
-	}
 }

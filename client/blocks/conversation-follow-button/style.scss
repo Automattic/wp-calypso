@@ -10,7 +10,6 @@ button.conversation-follow-button {
 
 		path {
 			fill: var(--color-link);
-			color: var(--color-link);
 		}
 	}
 
@@ -33,10 +32,8 @@ button.conversation-follow-button {
 
 			.gridicon {
 				fill: var(--color-text-inverted);
-				color: var(--color-text-inverted);
 				g {
 					fill: var(--studio-white);
-					color: var(--studio-white);
 					stroke: var(--color-success);
 				}
 			}
@@ -58,10 +55,6 @@ button.conversation-follow-button {
 			display: inline-block;
 			pointer-events: auto;
 			fill: var(--color-success);
-
-			&:where(svg) {
-				color: var(--color-success);
-			}
 		}
 
 		.conversation-follow-button__label {
@@ -80,10 +73,6 @@ button.conversation-follow-button {
 
 			.reader-following-conversation {
 				fill: var(--color-success);
-
-				&:where(svg) {
-					color: var(--color-success);
-				}
 			}
 		}
 
@@ -100,13 +89,11 @@ button.conversation-follow-button {
 
 				svg.reader-external path {
 					fill: var(--color-text-inverted);
-					color: var(--color-text-inverted);
 				}
 
 				svg.reader-follow-conversation path,
 				svg.reader-following-conversation path {
 					fill: var(--color-text-inverted);
-					color: var(--color-text-inverted);
 
 					&.status {
 						fill: none;

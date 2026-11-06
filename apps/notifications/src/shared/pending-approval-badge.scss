@@ -24,7 +24,6 @@
 
 	svg {
 		fill: var(--color-warning, #f0b849);
-		color: var(--color-warning, #f0b849);
 		flex-shrink: 0;
 
 		@include ui-mixins.when-dark-theme {

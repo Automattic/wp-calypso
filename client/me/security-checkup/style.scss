@@ -22,22 +22,10 @@
 
 			&.material-icon-check_circle {
 				fill: var(--color-success);
-
-				&:where(svg) {
-					color: var(--color-success);
-				}
 			}
 			&.material-icon-pending,
 			&.material-icon-error, {
 				fill: var(--color-warning-30);
-
-				&:where(svg) {
-					color: var(--color-warning-30);
-				}
-			}
-
-			&:where(svg) {
-				color: var(--color-neutral-90);
 			}
 		}
 		div {

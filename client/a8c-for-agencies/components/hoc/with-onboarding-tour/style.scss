@@ -26,10 +26,6 @@
 
 	.components-snackbar__icon {
 		fill: var(--color-text-inverted);
-
-		&:where(svg) {
-			color: var(--color-text-inverted);
-		}
 	}
 
 	.components-button.components-snackbar__action:hover {

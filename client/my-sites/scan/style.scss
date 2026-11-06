@@ -180,10 +180,6 @@ body.is-section-scan,
 
 .scan__upsell-icon {
 	fill: #7bb1cd;
-
-	&:where(svg) {
-		color: #7bb1cd;
-	}
 }
 
 .scan__wpcom-upsell {
@@ -228,10 +224,6 @@ body.is-section-scan,
 
 	.scan__upsell-callout-icon {
 		fill: var(--color-text);
-
-		&:where(svg) {
-			color: var(--color-text);
-		}
 	}
 
 	.scan__upsell-callout-title {

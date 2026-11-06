@@ -83,14 +83,6 @@ $compact-header-height: 35;
 
 		.is-disabled & {
 			fill: var(--color-neutral-0);
-
-			&:where(svg) {
-				color: var(--color-neutral-0);
-			}
-		}
-
-		&:where(svg) {
-			color: var(--color-neutral-50);
 		}
 	}
 
@@ -262,10 +254,6 @@ $compact-header-height: 35;
 		position: absolute;
 		top: #{( $option-height - 18 ) * 0.5}px;
 		right: #{$side-margin - 8 }px;
-
-		&:where(svg) {
-			color: var(--color-neutral);
-		}
 	}
 
 	.gridicon {

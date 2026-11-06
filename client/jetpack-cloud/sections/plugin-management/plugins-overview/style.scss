@@ -28,7 +28,6 @@
 
 	path {
 		fill: var(--color-neutral-10);
-		color: var(--color-neutral-10);
 	}
 
 	@include breakpoint-deprecated( ">960px" ) {

@@ -192,10 +192,6 @@
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
 		fill: var(--color-success);
-
-		&:where(svg) {
-			color: var(--color-success);
-		}
 	}
 	.checklist-item__counter {
 		color: var(--color-neutral-40);
@@ -218,10 +214,6 @@
 	.checklist-item__chevron,
 	.checklist-item__checkmark {
 		fill: var(--color-accent);
-
-		&:where(svg) {
-			color: var(--color-accent);
-		}
 	}
 
 	// change badge color on hover (Choose a Plan step)

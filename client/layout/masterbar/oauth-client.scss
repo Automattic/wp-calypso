@@ -136,10 +136,6 @@
 	// make sure jetpack logo is the correct green
 	.jetpack-logo__icon-circle {
 		fill: var(--studio-jetpack-green-40);
-
-		&:where(svg) {
-			color: var(--studio-jetpack-green-40);
-		}
 	}
 
 	.a4a-logo {

@@ -179,10 +179,6 @@
 			.icon {
 				fill: var(--studio-green-60);
 				vertical-align: text-bottom;
-
-				&:where(svg) {
-					color: var(--studio-green-60);
-				}
 			}
 
 			&.is-visible {

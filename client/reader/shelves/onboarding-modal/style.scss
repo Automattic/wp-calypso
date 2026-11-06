@@ -100,10 +100,6 @@
 	.reader-shelves-onboarding__arrow {
 		flex: none;
 		fill: var( --color-neutral-30 );
-
-		&:where(svg) {
-			color: var( --color-neutral-30 );
-		}
 	}
 
 	// Tinted round backdrop shared by the checkmarks and the "create" badge.

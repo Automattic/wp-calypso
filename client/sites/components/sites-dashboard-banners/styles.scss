@@ -32,10 +32,6 @@
 
 		.notice-banner__icon {
 			fill: $studio-wordpress-blue-80;
-
-			&:where(svg) {
-				color: $studio-wordpress-blue-80;
-			}
 		}
 	}
 }

@@ -41,10 +41,6 @@
 		.material-icon {
 			margin-right: 0.5rem;
 			fill: var(--color-neutral-60);
-
-			&:where(svg) {
-				color: var(--color-neutral-60);
-			}
 		}
 
 		a,

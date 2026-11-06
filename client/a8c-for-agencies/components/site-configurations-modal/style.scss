@@ -65,19 +65,11 @@
 		.configure-your-site-modal-form__site-name-success {
 			margin-right: -5px;
 			fill: var(--color-success);
-
-			&:where(svg) {
-				color: var(--color-success);
-			}
 		}
 
 		.configure-your-site-modal-form__site-name-fail {
 			margin-right: -5px;
 			fill: var(--color-error);
-
-			&:where(svg) {
-				color: var(--color-error);
-			}
 		}
 
 		.configure-your-site-modal-form__site-name-loading {

@@ -199,22 +199,10 @@
 
 	&--check {
 		fill: var(--studio-jetpack-green-40);
-
-		&:where(svg) {
-			color: var(--studio-jetpack-green-40);
-		}
 	}
 
 	&--cross {
 		fill: var(--studio-red-50);
-
-		&:where(svg) {
-			color: var(--studio-red-50);
-		}
-	}
-
-	&:where(svg) {
-		color: var(--studio-gray-5);
 	}
 }
 

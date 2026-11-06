@@ -212,10 +212,6 @@
 			@include break-small {
 				display: block;
 			}
-
-			&:where(svg) {
-				color: var(--color-text);
-			}
 		}
 	}
 

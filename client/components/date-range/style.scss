@@ -41,18 +41,10 @@ $date-range-mobile-layout-switch: $break-small;
 
 		.is-disabled & {
 			fill: var(--color-neutral-5);
-
-			&:where(svg) {
-				color: var(--color-neutral-5);
-			}
 		}
 
 		.toggle-visible & {
 			transform: rotate(-180deg);
-		}
-
-		&:where(svg) {
-			color: var(--color-neutral-50);
 		}
 	}
 }

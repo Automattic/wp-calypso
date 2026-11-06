@@ -77,10 +77,6 @@ body.connect-domain-setup__body-white {
 			position: relative;
 			bottom: -4px;
 			margin-right: 8px;
-
-			&:where(svg) {
-				color: var(--color-text);
-			}
 		}
 	}
 
@@ -107,10 +103,6 @@ body.connect-domain-setup__body-white {
 			bottom: -3px;
 			fill: var(--studio-gray-50);
 			margin-right: 4px;
-
-			&:where(svg) {
-				color: var(--studio-gray-50);
-			}
 		}
 	}
 
@@ -132,10 +124,6 @@ body.connect-domain-setup__body-white {
 
 			@include break-mobile {
 				display: initial;
-			}
-
-			&:where(svg) {
-				color: #dcdcde;
 			}
 		}
 
@@ -272,10 +260,6 @@ body.connect-domain-setup__body-white {
 		button .material-icon {
 			fill: var(--color-text-inverted);
 			vertical-align: text-bottom;
-
-			&:where(svg) {
-				color: var(--color-text-inverted);
-			}
 		}
 	}
 
@@ -435,10 +419,6 @@ body.connect-domain-setup__body-white {
 				margin-right: 8px;
 				position: relative;
 				bottom: -3px;
-
-				&:where(svg) {
-					color: var(--studio-green-50);
-				}
 			}
 		}
 

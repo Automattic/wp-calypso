@@ -175,34 +175,18 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__chart-section-verb-post,
 	.pie-chart__legend-sample-verb-post {
 		fill: var(--studio-wordpress-blue-60);
-
-		&:where(svg) {
-			color: var(--studio-wordpress-blue-60);
-		}
 	}
 	.pie-chart__chart-section-verb-get,
 	.pie-chart__legend-sample-verb-get {
 		fill: var(--studio-wordpress-blue-30);
-
-		&:where(svg) {
-			color: var(--studio-wordpress-blue-30);
-		}
 	}
 	.pie-chart__chart-section-verb-delete,
 	.pie-chart__legend-sample-verb-delete {
 		fill: var(--studio-red-10);
-
-		&:where(svg) {
-			color: var(--studio-red-10);
-		}
 	}
 	.pie-chart__chart-section-verb-head,
 	.pie-chart__legend-sample-verb-head {
 		fill: var(--studio-wordpress-blue-10);
-
-		&:where(svg) {
-			color: var(--studio-wordpress-blue-10);
-		}
 	}
 }
 
@@ -210,18 +194,10 @@ div.is-section-site-monitoring:not(.is-global-sidebar-visible) {
 	.pie-chart__chart-section-dynamic,
 	.pie-chart__legend-sample-dynamic {
 		fill: var(--studio-celadon-30);
-
-		&:where(svg) {
-			color: var(--studio-celadon-30);
-		}
 	}
 	.pie-chart__chart-section-static,
 	.pie-chart__legend-sample-static {
 		fill: var(--studio-celadon-5);
-
-		&:where(svg) {
-			color: var(--studio-celadon-5);
-		}
 	}
 }
 

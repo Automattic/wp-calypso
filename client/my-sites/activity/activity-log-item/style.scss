@@ -234,28 +234,16 @@
 			height: 24px;
 			margin-right: 8px;
 		}
-
-		&:where(svg) {
-			color: var(--color-neutral-40);
-		}
 	}
 
 	.social-logo {
 		fill: var(--color-text-inverted);
 		background: var(--color-wordpress-org);
 		border-radius: 50%;
-
-		&:where(svg) {
-			color: var(--color-text-inverted);
-		}
 	}
 
 	.jetpack-logo__icon-circle {
 		fill: var(--color-neutral-40);
-
-		&:where(svg) {
-			color: var(--color-neutral-40);
-		}
 	}
 
 	.gridicon {

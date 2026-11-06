@@ -391,18 +391,10 @@
 				.domains__domain-input-icon {
 					&.is-valid {
 						fill: #008a20;
-
-						&:where(svg) {
-							color: #008a20;
-						}
 					}
 
 					&.is-not-valid {
 						fill: #d63638;
-
-						&:where(svg) {
-							color: #d63638;
-						}
 					}
 				}
 			}

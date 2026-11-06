@@ -126,10 +126,6 @@ $breakpoint-mobile: 660px;
 		inset-block-start: 20px;
 		fill: var(--color-text);
 		transform-origin: 0 0;
-
-		&:where(svg) {
-			color: var(--color-text);
-		}
 	}
 
 	.signup-form-social-first {

@@ -25,10 +25,6 @@
 		display: block;
 		fill: $help-center-notice-color;
 		flex: 0 0 auto;
-
-		&:where(svg) {
-			color: $help-center-notice-color;
-		}
 	}
 
 	p {

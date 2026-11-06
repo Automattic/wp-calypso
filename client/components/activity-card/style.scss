@@ -51,10 +51,6 @@
 	&.with-error {
 		.activity-card__time-icon {
 			fill: var(--color-error);
-
-			&:where(svg) {
-				color: var(--color-error);
-			}
 		}
 
 		.activity-card__time-text {
@@ -69,10 +65,6 @@
 	&.with-warning {
 		.activity-card__time-icon {
 			fill: var(--color-warning);
-
-			&:where(svg) {
-				color: var(--color-warning);
-			}
 		}
 
 		.activity-card__time-text {
@@ -103,10 +95,6 @@
 	fill: var(--color-neutral-40);
 	height: 17px;
 	width: 17px;
-
-	&:where(svg) {
-		color: var(--color-neutral-40);
-	}
 }
 
 .activity-card__time-text {

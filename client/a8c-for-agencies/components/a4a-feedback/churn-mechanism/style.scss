@@ -93,10 +93,6 @@
 
 .a4a-feedback__pressable-plan-details-icon {
 	fill: var(--color-error);
-
-	&:where(svg) {
-		color: var(--color-error);
-	}
 }
 
 a.components-button.is-link.a4a-feedback__pressable-plan-details-button {

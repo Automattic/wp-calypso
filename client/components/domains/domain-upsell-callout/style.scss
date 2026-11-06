@@ -60,10 +60,6 @@ body.is-section-posts .domain-upsell-callout {
 		@media ( max-width: $break-wide ) {
 			display: none;
 		}
-
-		&:where(svg) {
-			color: var( --studio-gray-60 );
-		}
 	}
 	&__button {
 		font-size: $font-body-extra-small;

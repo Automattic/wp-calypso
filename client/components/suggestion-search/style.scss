@@ -13,10 +13,6 @@
 		+ input.form-text-input {
 			padding-left: 42px;
 		}
-
-		&:where(svg) {
-			color: var(--color-text-subtle);
-		}
 	}
 
 	.spinner {

@@ -33,7 +33,6 @@
 			@media (min-width: 481px) {
 				svg {
 					fill: var(--studio-white);
-					color: var(--studio-white);
 				}
 
 				a,
@@ -53,10 +52,6 @@
 			.stats-list-actions__mobile-toggle {
 				.stats-icon {
 					fill: var(--studio-white);
-
-					&:where(svg) {
-						color: var(--studio-white);
-					}
 				}
 			}
 		}

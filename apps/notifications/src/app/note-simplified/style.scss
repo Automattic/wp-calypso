@@ -140,10 +140,6 @@
 .wpnc-simplified__card-arrow {
 	flex-shrink: 0;
 	fill: var(--wp-components-color-gray-600, #{$gray-600});
-
-	&:where(svg) {
-		color: var(--wp-components-color-gray-600, #{$gray-600});
-	}
 }
 
 .wpnc-simplified__site-icon {
@@ -154,10 +150,6 @@
 		padding: $grid-unit-05;
 		background: var(--wp-components-color-gray-100, #{$gray-100});
 		fill: var(--wp-components-color-gray-700, #{$gray-700});
-
-		&:where(svg) {
-			color: var(--wp-components-color-gray-700, #{$gray-700});
-		}
 	}
 }
 

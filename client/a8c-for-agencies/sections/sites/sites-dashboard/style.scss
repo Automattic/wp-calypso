@@ -549,17 +549,9 @@
 	}
 	.sites-overview__stats-trend__up {
 		fill: var( --color-jetpack-40 );
-
-		&:where(svg) {
-			color: var( --color-jetpack-40 );
-		}
 	}
 	.sites-overview__stats-trend__down {
 		fill: var( --color-scary-50 );
-
-		&:where(svg) {
-			color: var( --color-scary-50 );
-		}
 	}
 	.sites-overview__stats-trend__same .empty-icon {
 		vertical-align: middle;
@@ -618,10 +610,6 @@
 
 			&.is-visible {
 				visibility: visible;
-			}
-
-			&:where(svg) {
-				color: var( --color-primary-50 );
 			}
 		}
 	}

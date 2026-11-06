@@ -16,10 +16,6 @@
 	fill: #adbaf3;
 	stroke: var( --omnibar-background );
 	stroke-width: 6%;
-
-	&:where(svg) {
-		color: #adbaf3;
-	}
 }
 
 .omnibar .omnibar__menu:hover .omnibar__cart-dot,

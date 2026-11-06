@@ -38,20 +38,12 @@
 
 			.subscriptions-ellipsis-menu__item-icon {
 				fill: $studio-blue-50;
-
-				&:where(svg) {
-					color: $studio-blue-50;
-				}
 			}
 		}
 	}
 
 	.subscriptions-ellipsis-menu__item-icon {
 		fill: $studio-gray-50;
-
-		&:where(svg) {
-			color: $studio-gray-50;
-		}
 	}
 
 	.settings-popover__item-label {

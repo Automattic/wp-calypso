@@ -13,10 +13,6 @@
 .plugin-default-icon {
 	background: var(--studio-gray-0);
 	fill: var(--studio-gray-40);
-
-	&:where(svg) {
-		color: var(--studio-gray-40);
-	}
 }
 
 .plugin-management-v2__actions {

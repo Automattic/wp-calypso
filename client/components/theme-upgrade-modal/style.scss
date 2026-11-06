@@ -128,10 +128,6 @@
 
 		.wpicon {
 			fill: var(--color-text-subtle);
-
-			&:where(svg) {
-				color: var(--color-text-subtle);
-			}
 		}
 	}
 
@@ -187,10 +183,6 @@
 			fill: var(--studio-green-50);
 			flex-shrink: 0;
 			margin-inline-end: 4px;
-
-			&:where(svg) {
-				color: var(--studio-green-50);
-			}
 		}
 
 		.components-popover.components-tooltip .components-popover__content {

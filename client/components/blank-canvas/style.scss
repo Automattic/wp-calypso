@@ -86,10 +86,6 @@
 		height: 1.5rem;
 		fill: var(--color-text);
 		margin: 0 1.5rem 0 0;
-
-		&:where(svg) {
-			color: var(--color-text);
-		}
 	}
 }
 

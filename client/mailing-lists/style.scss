@@ -27,7 +27,6 @@
 
 		&.gridicons-mail {
 			fill: var(--color-neutral-50);
-			color: var(--color-neutral-50);
 
 			@include breakpoint-deprecated( "<480px" ) {
 				height: 24px;
@@ -39,7 +38,6 @@
 			top: 32px;
 			left: 40px;
 			fill: var(--studio-white);
-			color: var(--studio-white);
 			background: var(--color-neutral-70);
 			border-radius: 100%;
 			box-shadow: 0 0 0 3px var(--color-neutral-0);

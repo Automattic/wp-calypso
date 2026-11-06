@@ -7,10 +7,6 @@
 			background: transparent;
 			.wpcom-favicon {
 				fill: var(--studio-blue-50);
-
-				&:where(svg) {
-					color: var(--studio-blue-50);
-				}
 			}
 
 			.no-favicon {

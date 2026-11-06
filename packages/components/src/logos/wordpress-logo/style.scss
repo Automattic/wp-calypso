@@ -1,8 +1,4 @@
 .wordpress-logo {
 	fill: var(--color-text-inverted);
 	margin: 0 auto 20px;
-
-	&:where(svg) {
-		color: var(--color-text-inverted)
-	}
 }

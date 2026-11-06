@@ -42,8 +42,4 @@
 		height: 56px;
 		padding: 4px;
 	}
-
-	&:where(svg) {
-		color: var(--color-text-inverted);
-	}
 }

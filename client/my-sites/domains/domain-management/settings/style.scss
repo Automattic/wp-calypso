@@ -63,12 +63,10 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-green-80);
-						color: var(--studio-green-80);
 					}
 
 					.settings-header__badge-indicator svg {
 						fill: var(--studio-green-50);
-						color: var(--studio-green-50);
 					}
 				}
 
@@ -78,7 +76,6 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-orange-40);
-						color: var(--studio-orange-40);
 					}
 				}
 
@@ -88,7 +85,6 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-yellow-80);
-						color: var(--studio-yellow-80);
 						margin-right: 0;
 						margin-left: 4px;
 					}
@@ -100,7 +96,6 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 
 					svg {
 						fill: var(--studio-gray-80);
-						color: var(--studio-gray-80);
 					}
 				}
 			}
@@ -128,14 +123,9 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 		position: relative;
 		top: 2px;
 		fill: var(--studio-green-50);
-		color: var(--studio-green-50);
 
 		&--error {
 			fill: var(--studio-orange-40);
-
-			&:where(svg) {
-				color: var(--studio-orange-40);
-			}
 		}
 	}
 
@@ -197,7 +187,6 @@ body:not(.is-global).edit__body-white.theme-default.color-scheme {
 			align-self: flex-start;
 			min-width: 18px;
 			fill: var(--studio-orange-40);
-			color: var(--studio-orange-40);
 			transform: rotate(180deg);
 			position: relative;
 		}
