@@ -27,6 +27,8 @@ export function KeyboardShortcuts( { isOpen, onToggle }: Props ) {
 		{ key: 'a', label: translate( 'View all' ) },
 		{ key: 'u', label: translate( 'View unread' ) },
 		{ key: 'c', label: translate( 'View your comments' ) },
+		{ key: 'l', label: translate( 'Like or unlike the post' ) },
+		{ key: 'n', label: translate( 'Open notifications' ) },
 		{ key: 'i', label: translate( 'Toggle shortcuts menu' ) },
 	];
 

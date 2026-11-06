@@ -1,79 +1,211 @@
+import { type NotificationNote } from '@automattic/api-core';
 import page from '@automattic/calypso-router';
+import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
+import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
-import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
+import {
+	getConversationKey,
+	useConversations,
+	useMarkConversationsRead,
+	useOwnComments,
+	type Conversation,
+} from 'calypso/reader/data/conversations';
+import { useCommentNotes } from 'calypso/reader/data/notifications';
+import { useSelectedPostCommands } from 'calypso/reader/stream/use-selected-post-commands';
 import { useDispatch, useSelector } from 'calypso/state';
+import { savePreference } from 'calypso/state/preferences/actions';
+import { getPreference } from 'calypso/state/preferences/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import isNotificationsOpen from 'calypso/state/selectors/is-notifications-open';
+import { toggleNotificationsPanel } from 'calypso/state/ui/actions';
 import { ConversationDetail } from './conversation-detail';
 import { ConversationList } from './conversation-list';
-import { filterConversations } from './conversation-list/filter-conversations';
-import { type OpenSource } from './conversation-list/list-item';
+import { type InboxItem, type OpenSource } from './conversation-list/list-item';
 import { INBOX_TABS, type InboxTab } from './conversation-list/tabs';
-import { getConversationKey, groupNotesByPost, type Conversation } from './group-notes';
+import { type Density, type SortOrder } from './conversation-list/toolbar';
 import { useInboxKeyboardShortcuts } from './keyboard-shortcuts/use-inbox-keyboard-shortcuts';
 
 import './style.scss';
+
+const DENSITY_PREFERENCE = 'reader_conversations_inbox_density';
 
 interface Props {
 	siteId?: string;
 	postId?: string;
 }
 
+const REFRESH_INTERVAL = 60 * 1000;
+const SEARCH_DEBOUNCE = 300;
+// Unread filters loaded pages, so loading on scroll could page through every conversation.
+const UNREAD_AUTO_LOAD_PAGES = 3;
+// The routes reject longer search terms.
+const MAX_SEARCH_LENGTH = 100;
+// The Reader sidebar (~272px) and the 372px list leave the detail pane about 540px at this width.
+// It has to be one @automattic/viewport defines, or useBreakpoint never matches.
+const SINGLE_PANE_BREAKPOINT = '<1180px';
+
+// Your comments can open a post the All pages haven't loaded yet, so its unread notes come from the notes.
+const getUnreadNoteIds = (
+	notes: NotificationNote[] | undefined,
+	{ siteId, postId }: Pick< Conversation, 'siteId' | 'postId' >
+) =>
+	notes
+		?.filter(
+			( { read, meta } ) => ! read && meta?.ids?.site === siteId && meta?.ids?.post === postId
+		)
+		.map( ( { id } ) => id );
+
 const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' | 'postId' > ) =>
 	`/reader/conversations/inbox/${ siteId }/${ postId }`;
+
+interface Opened {
+	key: string;
+	// Marking a conversation read clears its unread notes, so keep the ones it had when it was opened.
+	// Unset while the notes a post outside the loaded pages needs are still loading.
+	noteIds?: number[];
+	// Set when opened from Your comments, which starts the thread at that comment.
+	anchor?: { key: string; commentId: number };
+}
 
 export function ConversationsInbox( { siteId, postId }: Props ) {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
-	const { data: notes = [], isLoading } = useCommentNotes();
-	const { mutate: markRead } = useMarkNotesRead();
-	const notificationsOpen = useSelector( isNotificationsOpen );
 	const [ tab, setTab ] = useState< InboxTab >( 'all' );
 	const [ search, setSearch ] = useState( '' );
+	const [ sort, setSort ] = useState< SortOrder >( 'newest' );
+	const searchTerm = search.trim().slice( 0, MAX_SEARCH_LENGTH );
+	const [ debouncedSearch, setDebouncedSearch ] = useState( searchTerm );
+	// use-debounce 3 never fires again after React's StrictMode remounts the effect.
+	useEffect( () => {
+		const timer = setTimeout( () => setDebouncedSearch( searchTerm ), SEARCH_DEBOUNCE );
+		return () => clearTimeout( timer );
+	}, [ searchTerm ] );
+	const conversationsQuery = useConversations( {
+		sort,
+		// Your comments only reads the conversations for the open one, which a search could hide.
+		search: tab === 'yours' ? '' : debouncedSearch,
+		refetchInterval: REFRESH_INTERVAL,
+	} );
+	const ownCommentsQuery = useOwnComments( {
+		sort,
+		search: debouncedSearch,
+		enabled: tab === 'yours',
+	} );
+	const { conversations, unreadTotal } = conversationsQuery;
+	const listQuery = tab === 'yours' ? ownCommentsQuery : conversationsQuery;
+	const { fetchNextPage } = listQuery;
+	const loadMore = useCallback( () => fetchNextPage(), [ fetchNextPage ] );
+	// The routes return unread note ids; the notes map them to the comments to highlight.
+	const { data: notes } = useCommentNotes( { refetchInterval: REFRESH_INTERVAL } );
+	const { mutate: markRead } = useMarkConversationsRead();
+	const notificationsOpen = useSelector( isNotificationsOpen );
+	const isNarrow = useBreakpoint( SINGLE_PANE_BREAKPOINT );
 	const [ isShortcutsOpen, setIsShortcutsOpen ] = useState( false );
+	const inboxRef = useRef< HTMLDivElement >( null );
+	const wasShowingDetailRef = useRef( false );
+	const density: Density = useSelector(
+		( state ) => getPreference( state, DENSITY_PREFERENCE ) ?? 'comfortable'
+	);
 
-	const conversations = useMemo( () => groupNotesByPost( notes ), [ notes ] );
-	const visible = useMemo(
-		() => filterConversations( conversations, tab, search ),
-		[ conversations, tab, search ]
+	const visible: InboxItem[] = useMemo( () => {
+		if ( tab === 'yours' ) {
+			return ownCommentsQuery.comments;
+		}
+		// The route has no unread filter, so the Unread tab filters the pages loaded so far.
+		return tab === 'unread'
+			? conversations.filter( ( { unreadCount } ) => unreadCount > 0 )
+			: conversations;
+	}, [ conversations, ownCommentsQuery.comments, tab ] );
+	const commentIdsByNoteId = useMemo(
+		() => new Map( notes?.map( ( note ) => [ note.id, note.meta?.ids?.comment ] ) ),
+		[ notes ]
 	);
-	const unreadCount = conversations.reduce(
-		( total, { unreadNoteIds } ) => total + unreadNoteIds.length,
-		0
-	);
+	const getCommentIds = ( noteIds: number[] ) =>
+		noteIds.flatMap( ( id ) => commentIdsByNoteId.get( id ) ?? [] );
 	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
-	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedKey );
+	const [ opened, setOpened ] = useState< Opened >();
+	const activeOpened = opened?.key === selectedKey ? opened : undefined;
+	const selectedItemKey = tab === 'yours' ? activeOpened?.anchor?.key : selectedKey;
+	const selectedIndex = visible.findIndex( ( { key } ) => key === selectedItemKey );
 	const selected = conversations.find( ( { key } ) => key === selectedKey );
+	const [ previousKey, setPreviousKey ] = useState( selectedKey );
+	if ( selectedKey !== previousKey ) {
+		setPreviousKey( selectedKey );
+		if ( opened && opened.key !== selectedKey ) {
+			setOpened( undefined );
+		}
+	}
+	// Mapped on each render, so notes that load after opening, or polled ones, still get highlighted.
+	const newCommentIds = getCommentIds( [
+		...new Set( [ ...( activeOpened?.noteIds ?? [] ), ...( selected?.unreadNoteIds ?? [] ) ] ),
+	] );
 
 	useEffect( () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
 	}, [ dispatch ] );
 
 	useEffect( () => {
-		if ( ! selectedKey && conversations.length ) {
+		if ( ! isNarrow && ! selectedKey && conversations.length ) {
 			page.replace( getConversationPath( conversations[ 0 ] ) );
 		}
-	}, [ selectedKey, conversations ] );
+	}, [ isNarrow, selectedKey, conversations ] );
 
-	const openConversation = ( conversation: Conversation, source: OpenSource ) => {
-		const unreadCount = conversation.unreadNoteIds.length;
-		if ( unreadCount ) {
-			markRead( conversation.unreadNoteIds );
+	// A post opened before the notes loaded gets its unread notes, and is marked read, once they do.
+	const isWaitingForNotes = !! activeOpened && ! activeOpened.noteIds;
+	useEffect( () => {
+		const noteIds = getUnreadNoteIds( notes, {
+			siteId: Number( siteId ),
+			postId: Number( postId ),
+		} );
+		if ( ! isWaitingForNotes || ! noteIds ) {
+			return;
 		}
-		if ( conversation.key === selectedKey ) {
+		setOpened( ( current ) => current && { ...current, noteIds } );
+		if ( noteIds.length ) {
+			markRead( noteIds );
+		}
+	}, [ isWaitingForNotes, notes, siteId, postId, markRead ] );
+
+	const openConversation = ( item: InboxItem, source: OpenSource ) => {
+		const key = getConversationKey( item.siteId, item.postId );
+		const conversation = conversations.find( ( candidate ) => candidate.key === key );
+		const unreadNoteIds = conversation?.unreadNoteIds ?? getUnreadNoteIds( notes, item );
+		setOpened( {
+			key,
+			// Opening it again adds any notes that came in since, such as past the route's 50 ids.
+			noteIds:
+				key === opened?.key && ( opened.noteIds || unreadNoteIds )
+					? [ ...new Set( [ ...( opened.noteIds ?? [] ), ...( unreadNoteIds ?? [] ) ] ) ]
+					: unreadNoteIds,
+			anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
+		} );
+		if ( unreadNoteIds?.length ) {
+			markRead( unreadNoteIds );
+		}
+		if ( key === selectedKey ) {
 			return;
 		}
 		dispatch(
 			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_conversation_opened', {
 				source,
-				unread_count: unreadCount,
+				unread_count: conversation?.unreadCount ?? unreadNoteIds?.length ?? 0,
 			} )
 		);
-		page.show( getConversationPath( conversation ) );
+		page.show( getConversationPath( item ) );
+	};
+
+	const markable = conversations.filter( ( { unreadNoteIds } ) => unreadNoteIds.length );
+	const markAllRead = () => {
+		markRead( markable.flatMap( ( { unreadNoteIds } ) => unreadNoteIds ) );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_marked_all_read', {
+				count: markable.length,
+			} )
+		);
 	};
 
 	const goTo = ( index: number, source: OpenSource ) => {
@@ -98,12 +230,35 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		);
 	};
 
+	const selectSort = ( next: SortOrder ) => {
+		setSort( next );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_sorted', { sort: next } )
+		);
+	};
+
+	const changeDensity = ( next: Density ) => {
+		if ( next === density ) {
+			return;
+		}
+		dispatch( savePreference( DENSITY_PREFERENCE, next ) );
+		dispatch(
+			recordReaderTracksEvent( 'calypso_reader_conversations_inbox_density_changed', {
+				density: next,
+			} )
+		);
+	};
+
 	const moveTab = ( offset: number ) => {
 		const next = INBOX_TABS[ INBOX_TABS.indexOf( tab ) + offset ];
 		if ( next ) {
 			selectTab( next, 'shortcut' );
 		}
 	};
+
+	const { toggleSelectedLike } = useSelectedPostCommands(
+		siteId && postId ? { blogId: Number( siteId ), postId: Number( postId ) } : null
+	);
 
 	useInboxKeyboardShortcuts( {
 		enabled: ! notificationsOpen,
@@ -113,30 +268,73 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		onPreviousTab: () => moveTab( -1 ),
 		onSelectTab: ( next ) => selectTab( next, 'shortcut' ),
 		onToggleShortcuts: () => setIsShortcutsOpen( ( isOpen ) => ! isOpen ),
+		onToggleLike: toggleSelectedLike,
+		onOpenNotifications: () => dispatch( toggleNotificationsPanel() ),
 	} );
+
+	const hasConversation = Boolean( siteId && postId );
+	const isShowingDetail = isNarrow && hasConversation;
+
+	useEffect( () => {
+		// The back button unmounts with the detail, which would drop focus to the body.
+		if ( wasShowingDetailRef.current && isNarrow && ! hasConversation ) {
+			inboxRef.current
+				?.querySelector< HTMLElement >( '[role="tab"][aria-selected="true"]' )
+				?.focus();
+		}
+		wasShowingDetailRef.current = isNarrow && hasConversation;
+	}, [ isNarrow, hasConversation ] );
 
 	return (
 		<ReaderMain className="conversations-inbox-main no-padding" wideLayout>
 			<DocumentHead title={ translate( 'Conversations' ) } />
-			<HStack spacing={ 0 } alignment="stretch" className="conversations-inbox">
+			<HStack
+				ref={ inboxRef }
+				spacing={ 0 }
+				alignment="stretch"
+				className={ clsx( 'conversations-inbox', {
+					'is-narrow': isNarrow,
+					'is-showing-detail': isShowingDetail,
+				} ) }
+			>
 				<ConversationList
-					conversations={ visible }
-					unreadCount={ unreadCount }
-					isLoading={ isLoading }
+					items={ visible }
+					unreadCount={ unreadTotal }
+					isLoading={ listQuery.isLoading }
+					isError={ listQuery.isError && ! listQuery.data?.pages.length }
+					onRetry={ () => listQuery.refetch() }
+					hasMore={ listQuery.hasNextPage && ! listQuery.isPlaceholderData }
+					autoLoad={
+						tab !== 'unread' ||
+						( conversationsQuery.data?.pages.length ?? 0 ) < UNREAD_AUTO_LOAD_PAGES
+					}
+					isLoadingMore={ listQuery.isFetchingNextPage }
+					isLoadMoreError={ listQuery.isFetchNextPageError }
+					onLoadMore={ loadMore }
 					tab={ tab }
 					onTabChange={ ( next ) => selectTab( next, 'click' ) }
 					search={ search }
 					onSearchChange={ setSearch }
+					density={ density }
+					onDensityChange={ changeDensity }
+					sort={ sort }
+					onSortChange={ selectSort }
+					markAllCount={ markable.length }
+					onMarkAllRead={ markAllRead }
 					isShortcutsOpen={ isShortcutsOpen }
 					onShortcutsToggle={ setIsShortcutsOpen }
-					selectedKey={ selectedKey }
+					selectedKey={ selectedItemKey }
+					openOnFocus={ ! isNarrow }
 					onSelect={ openConversation }
 				/>
-				{ siteId && postId && (
+				{ hasConversation && (
 					<ConversationDetail
 						siteId={ Number( siteId ) }
 						postId={ Number( postId ) }
 						conversation={ selected }
+						startingCommentId={ activeOpened?.anchor?.commentId }
+						highlightedCommentIds={ newCommentIds }
+						onBack={ isNarrow ? () => page.show( '/reader/conversations/inbox' ) : undefined }
 						onPrevious={ goTo( previousIndex, 'button' ) }
 						onNext={ goTo( nextIndex, 'button' ) }
 					/>

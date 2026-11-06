@@ -10,9 +10,12 @@ const ESM_PACKAGE_PATTERNS = [
 	'@fnando',
 	`@wordpress${ PATH_SEPARATOR }theme`,
 	`(?:.*${ PATH_SEPARATOR })?uuid`,
+	`(?:.*${ PATH_SEPARATOR })?marked`,
 	'@a2ui',
 	`@preact${ PATH_SEPARATOR }signals-core`,
 	'@?lit(?:-html|-element)?',
+	// `@automattic/charts`' CommonJS build still requires Babel's ES module helpers.
+	`(?:.*${ PATH_SEPARATOR })?@babel${ PATH_SEPARATOR }runtime${ PATH_SEPARATOR }helpers${ PATH_SEPARATOR }esm`,
 ];
 
 const ESM_PATTERN = ESM_PACKAGE_PATTERNS.map( ( pattern ) => pattern + PATH_SEPARATOR ).join( '|' );

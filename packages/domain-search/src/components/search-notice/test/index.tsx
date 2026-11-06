@@ -1501,4 +1501,119 @@ describe( 'SearchNotice', () => {
 			}
 		);
 	} );
+
+	describe( 'skip link for domains connected to another account', () => {
+		const SKIP_NOTICE_TEXT =
+			'This domain is already connected to a WordPress.com site. You can skip the domain for now and keep building.';
+
+		const CONNECTED_TO_OTHER_ACCOUNT_CASES = [
+			{ status: DomainAvailabilityStatus.REGISTERED, mappable: DomainAvailabilityStatus.MAPPED },
+			{ status: DomainAvailabilityStatus.REGISTERED, mappable: 'mappable' },
+			{ status: DomainAvailabilityStatus.MAPPED, mappable: DomainAvailabilityStatus.MAPPED },
+		];
+
+		it.each( CONNECTED_TO_OTHER_ACCOUNT_CASES )(
+			'skips the domain step when status is $status and mappable is $mappable',
+			async ( { status, mappable } ) => {
+				const query = `taken-${ status }-${ mappable }.com`;
+				const onSkip = jest.fn();
+				const onSearchNoticeSkipClick = jest.fn();
+
+				mockNoSuggestionsAndAvailability(
+					query,
+					buildAvailability( { domain_name: query, tld: 'com', status, mappable } )
+				);
+
+				render(
+					<TestDomainSearchWithSuggestions
+						query={ query }
+						config={ { skippable: true } }
+						events={ { onSkip, onSearchNoticeSkipClick } }
+					>
+						<SearchNotice />
+					</TestDomainSearchWithSuggestions>
+				);
+
+				expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+				expect( screen.getAllByText( SKIP_NOTICE_TEXT )[ 0 ] ).toBeVisible();
+
+				await userEvent.click( screen.getByRole( 'button', { name: 'skip the domain for now' } ) );
+
+				expect( onSearchNoticeSkipClick ).toHaveBeenCalledWith( query, status );
+				expect( onSkip ).toHaveBeenCalledWith();
+			}
+		);
+
+		it.each( [
+			{ name: 'the skip event is not provided', config: { skippable: true }, events: {} },
+			{
+				name: 'the search is not skippable',
+				config: { skippable: false },
+				events: { onSearchNoticeSkipClick: jest.fn() },
+			},
+		] )( 'keeps the original message when $name', async ( { config, events } ) => {
+			mockNoSuggestionsAndAvailability(
+				'taken-default.com',
+				buildAvailability( {
+					domain_name: 'taken-default.com',
+					status: DomainAvailabilityStatus.MAPPED,
+					mappable: DomainAvailabilityStatus.MAPPED,
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query="taken-default.com"
+					config={ config }
+					events={ events }
+				>
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			expect( await screen.findByText( 'Error notice' ) ).toBeInTheDocument();
+			expect(
+				screen.getAllByText( 'This domain is already connected to a WordPress.com site.' )[ 0 ]
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: 'skip the domain for now' } )
+			).not.toBeInTheDocument();
+		} );
+
+		it.each( [
+			DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER,
+			DomainAvailabilityStatus.MAPPED_OTHER_SITE_SAME_USER_REGISTRABLE,
+			DomainAvailabilityStatus.REGISTERED_OTHER_SITE_SAME_USER,
+			DomainAvailabilityStatus.REGISTERED_SAME_SITE,
+		] )( 'does not add the skip link for the same-user status %s', async ( status ) => {
+			const query = `own-${ status }.com`;
+
+			mockNoSuggestionsAndAvailability(
+				query,
+				buildAvailability( {
+					domain_name: query,
+					status,
+					mappable: DomainAvailabilityStatus.MAPPED,
+					other_site_domain: 'other-site.com',
+				} )
+			);
+
+			render(
+				<TestDomainSearchWithSuggestions
+					query={ query }
+					config={ { skippable: true } }
+					events={ { onSearchNoticeSkipClick: jest.fn() } }
+				>
+					<SearchNotice />
+				</TestDomainSearchWithSuggestions>
+			);
+
+			await waitForElementToBeRemoved( () => screen.getByText( 'LOADING_TEST_CONTENT' ) );
+
+			expect( screen.queryByText( SKIP_NOTICE_TEXT ) ).not.toBeInTheDocument();
+			expect(
+				screen.queryByRole( 'button', { name: 'skip the domain for now' } )
+			).not.toBeInTheDocument();
+		} );
+	} );
 } );

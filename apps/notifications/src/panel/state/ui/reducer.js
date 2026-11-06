@@ -68,14 +68,6 @@ export const selectedNoteId = ( state = null, { type, noteId } ) => {
 	return state;
 };
 
-export const lastSelectedNoteId = ( state = null, { type, noteId } ) => {
-	if ( SELECT_NOTE === type && noteId ) {
-		return noteId;
-	}
-
-	return state;
-};
-
 export const keyboardShortcutsAreEnabled = ( state = false, action ) => {
 	switch ( action.type ) {
 		case ENABLE_KEYBOARD_SHORTCUTS: {
@@ -109,7 +101,6 @@ export default combineReducers( {
 	isPanelOpen,
 	layoutStyle,
 	selectedNoteId,
-	lastSelectedNoteId,
 	filterName,
 	keyboardShortcutsAreEnabled,
 	shortcutsPopoverIsOpen,

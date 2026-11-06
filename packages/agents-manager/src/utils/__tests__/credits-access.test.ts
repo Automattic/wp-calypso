@@ -6,6 +6,7 @@ import {
 	getCreditsRefusalNotice,
 	getCreditsPurchaseAction,
 	getCreditsPurchaseOptions,
+	getCreditsTopUpsNotice,
 	parseCreditsAccess,
 } from '../credits-access';
 
@@ -200,6 +201,25 @@ describe( 'getCreditsNoticeMessage', () => {
 			'1 credit left. Ask a site admin to add more.'
 		);
 	} );
+
+	it.each( [
+		[ 'the plan buyer', undefined, 'Now using top-ups: 25k left.' ],
+		[
+			'someone who can’t buy',
+			'site-admin',
+			'Now using top-ups: 25k left. Ask a site admin to add more.',
+		],
+		[
+			'an admin who didn’t buy the plan',
+			'plan-owner',
+			'Now using top-ups: 25k left. Ask the plan owner to upgrade.',
+		],
+	] as const )(
+		'tells %s top-ups are paying, and how many are left',
+		( _who, askToUpgrade, message ) => {
+			expect( getCreditsNoticeMessage( 'top_ups', 25_000, askToUpgrade ) ).toBe( message );
+		}
+	);
 } );
 
 describe( 'getCreditsOutNotice', () => {
@@ -223,6 +243,20 @@ describe( 'getCreditsOutNotice', () => {
 	} );
 } );
 
+describe( 'getCreditsTopUpsNotice', () => {
+	it( 'can be closed, with the purchase action', () => {
+		const action = { label: 'Upgrade', href: UPGRADE_URL };
+		const onDismiss = jest.fn();
+		expect( getCreditsTopUpsNotice( 25_000, undefined, action, onDismiss ) ).toEqual( {
+			icon: false,
+			message: 'Now using top-ups: 25k left.',
+			action,
+			dismissible: true,
+			onDismiss,
+		} );
+	} );
+} );
+
 describe( 'getCreditsBackNotice', () => {
 	it( 'says so, with no action', () => {
 		expect( getCreditsBackNotice() ).toEqual( {
@@ -242,7 +276,7 @@ describe( 'getCreditsBackNotice', () => {
 describe( 'getCreditsRefusalNotice', () => {
 	it( 'titles the refused message and offers the credits pack as its link', () => {
 		const action = { label: 'Add credits', href: TOP_UP_URL };
-		expect( getCreditsRefusalNotice( 'top_up', action ) ).toEqual( {
+		expect( getCreditsRefusalNotice( 'top_up', action, false ) ).toEqual( {
 			icon: false,
 			title: 'Your message wasn’t sent',
 			message: 'Add credits to keep working.',
@@ -253,18 +287,26 @@ describe( 'getCreditsRefusalNotice', () => {
 
 	it( 'offers the upgrade with matching words', () => {
 		const action = { label: 'Upgrade', href: UPGRADE_URL };
-		expect( getCreditsRefusalNotice( 'upgrade', action ).message ).toBe(
+		expect( getCreditsRefusalNotice( 'upgrade', action, false ).message ).toBe(
 			'Upgrade to keep working.'
 		);
 	} );
 
 	it( 'gives someone who can’t buy the title alone', () => {
-		expect( getCreditsRefusalNotice( 'top_up', undefined ) ).toEqual( {
+		expect( getCreditsRefusalNotice( 'top_up', undefined, false ) ).toEqual( {
 			icon: false,
 			title: 'Your message wasn’t sent',
 			message: '',
 			action: undefined,
 			dismissible: false,
+		} );
+	} );
+
+	it( 'titles a turn with output as not completed, with the same words and link', () => {
+		const action = { label: 'Add credits', href: TOP_UP_URL };
+		expect( getCreditsRefusalNotice( 'top_up', action, true ) ).toEqual( {
+			...getCreditsRefusalNotice( 'top_up', action, false ),
+			title: 'Your request didn’t complete',
 		} );
 	} );
 } );

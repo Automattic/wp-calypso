@@ -21,10 +21,23 @@ describe( '<InfluencedRevenue>', () => {
 		).toHaveAttribute( 'value', '0' );
 	} );
 
-	test( 'measures Pro toward Premier', () => {
+	test( 'measures Pro toward VIP Pro', () => {
 		render(
 			<InfluencedRevenue
 				currentAgencyTierId="pro-agency-partner"
+				totalInfluencedRevenue={ 17409.5 }
+			/>
+		);
+
+		expect( screen.getByText( '$82,590.50 more to reach VIP Pro Agency Partner' ) ).toBeVisible();
+		expect( screen.getByText( '$17,409.50 of $100,000' ) ).toBeVisible();
+		expect( screen.getByRole( 'progressbar' ) ).toHaveAttribute( 'value', '17' );
+	} );
+
+	test( 'measures VIP Pro toward Premier', () => {
+		render(
+			<InfluencedRevenue
+				currentAgencyTierId="vip-pro-agency-partner"
 				totalInfluencedRevenue={ 125000 }
 			/>
 		);
