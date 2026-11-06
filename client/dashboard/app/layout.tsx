@@ -29,21 +29,13 @@ function AnalyticsProviderWithClient( {
 	router: AnyRouter;
 } ) {
 	const { user } = useAuth();
-	const { posthog, unifiedAdminPageViewApp: app } = useAppContext();
+	const { unifiedAdminPageViewApp: app } = useAppContext();
 
 	useEffect( () => {
 		if ( user ) {
 			initializeAnalytics( user, getSuperProps( user, router, queryClient ) );
 		}
 	}, [ user, router ] );
-
-	useEffect( () => {
-		if ( posthog ) {
-			import( '@automattic/posthog' ).then( ( { init } ) =>
-				init( posthog.apiKey, user ? { ID: user.ID } : undefined, posthog.overrides )
-			);
-		}
-	}, [ user, posthog ] );
 
 	const analyticsClient: AnalyticsClient = useMemo(
 		() => ( {

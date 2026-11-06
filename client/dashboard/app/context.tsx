@@ -1,6 +1,5 @@
 import { createContext, useContext } from 'react';
 import type { User } from '@automattic/api-core';
-import type { PostHogOverrides } from '@automattic/posthog';
 
 export type AgencySupports = {
 	overview: boolean;
@@ -60,10 +59,6 @@ export type AppConfig = {
 		domainOnlySites: boolean;
 		colorScheme: boolean;
 		darkMode: boolean;
-	};
-	posthog?: {
-		apiKey: string;
-		overrides?: PostHogOverrides;
 	};
 	components: {
 		/** Replaces the WordPress.com omnibar, whose nodes come from the admin bar endpoint. */

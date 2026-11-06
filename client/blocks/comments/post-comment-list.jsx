@@ -590,8 +590,8 @@ class PostCommentList extends Component {
 			? this.getDisplayedCollapsedInlineComments( commentsTree )
 			: this.getDisplayedComments( commentsTree.children, amountOfCommentsToTake );
 
-		// The inbox's composer closes the thread; elsewhere the form opens it.
-		const isComposer = this.context;
+		// The inbox's form closes the thread; elsewhere it opens it.
+		const formAfterThread = this.context;
 		const rootForm = (
 			<PostCommentFormRoot
 				post={ this.props.post }
@@ -661,7 +661,7 @@ class PostCommentList extends Component {
 						</div>
 					</div>
 				) }
-				{ ! isComposer && rootForm }
+				{ ! formAfterThread && rootForm }
 				{ shouldShowFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
@@ -726,7 +726,7 @@ class PostCommentList extends Component {
 						} ) }
 					</button>
 				) }
-				{ isComposer && rootForm }
+				{ formAfterThread && rootForm }
 			</div>
 		);
 	}

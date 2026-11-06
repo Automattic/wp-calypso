@@ -236,7 +236,7 @@ const Footer2026Bottom = ( {
 					<div className="lp-block lp-mobile-badge lp-mobile-badge--type-google-play">
 						<a className="lp-mobile-badge__link" href={ GOOGLE_PLAY_URL }>
 							<span className="lp-mobile-badge__content">
-								<GooglePlayIconSvg />
+								<GooglePlayIconSvg redesigned />
 								<span className="lp-mobile-badge__content__label">
 									<span className="lp-mobile-badge__line lp-mobile-badge__line--is-top">
 										{ __( 'Get it on', __i18n_text_domain__ ) }
