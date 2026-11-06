@@ -20,7 +20,7 @@ import {
 	RENEWAL_SUCCESS_FLASH_ID,
 	RENEWAL_SUCCESS_PURCHASE_PARAM,
 } from 'calypso/dashboard/app/renewal-success-flash-message';
-import { dashboardOrigins } from 'calypso/dashboard/utils/link';
+import { dashboardLink, dashboardOrigins } from 'calypso/dashboard/utils/link';
 import { useInitialIsInStepContainerV2FlowContext } from 'calypso/layout/utils';
 import PageViewTracker from 'calypso/lib/analytics/page-view-tracker';
 import CalypsoShoppingCartProvider from 'calypso/my-sites/checkout/calypso-shopping-cart-provider';
@@ -151,6 +151,20 @@ function isDashboardUrl( url: string ): boolean {
 	} catch {
 		return false;
 	}
+}
+
+/**
+ * The classic purchase page only bounces to its Dashboard counterpart (see
+ * `client/me/purchases/index.js`) with a full page load, which would cut short
+ * any notice shown on it. Renewals without a `redirect_to` land there, so send
+ * them straight to the Dashboard page, where the renewal notice can show.
+ */
+function redirectClassicPurchasePageToDashboard( url: string ): string {
+	const match = url.match( /^\/me\/purchases\/[^/?#]+\/(\d+)(?=[?#]|$)/ );
+	if ( ! match ) {
+		return url;
+	}
+	return dashboardLink( `/me/billing/purchases/${ match[ 1 ] }` );
 }
 
 /**
@@ -369,7 +383,7 @@ function useRedirectOnTransactionSuccess( {
 			return redirectTo;
 		} )();
 
-		const redirectInstructions = getRedirectFromPendingPage( {
+		const pendingRedirect = getRedirectFromPendingPage( {
 			isLoadingOrder,
 			transaction,
 			orderId,
@@ -382,9 +396,13 @@ function useRedirectOnTransactionSuccess( {
 			receipt,
 		} );
 
-		if ( ! redirectInstructions ) {
+		if ( ! pendingRedirect ) {
 			return;
 		}
+		const redirectInstructions = {
+			...pendingRedirect,
+			url: redirectClassicPurchasePageToDashboard( pendingRedirect.url ),
+		};
 
 		// For unified checkout, wait for the current user to be re-fetched
 		// (triggered by the useEffect above) before proceeding. This ensures
@@ -522,7 +540,9 @@ function triggerPostRedirectNotices( {
 		return;
 	}
 
-	if ( isRenewal ) {
+	// The Dashboard never renders Calypso notices; it shows its own renewal
+	// notice from the params `addSuccessNoticeParams` adds to the URL.
+	if ( isRenewal && ! isDashboardUrl( redirectInstructions.url ) ) {
 		displayRenewalSuccessNotice( {
 			productName,
 			translate,
