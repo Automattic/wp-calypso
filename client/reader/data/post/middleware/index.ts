@@ -1,6 +1,10 @@
 import { getReaderPostQueryKeyPrefix } from '@automattic/api-queries';
 import { getCalypsoQueryClient } from 'calypso/state/query-client';
-import { READER_CONVERSATION_UPDATE_FOLLOW_STATUS } from 'calypso/state/reader/action-types';
+import {
+	READER_CONVERSATION_FOLLOW,
+	READER_CONVERSATION_MUTE,
+	READER_CONVERSATION_UPDATE_FOLLOW_STATUS,
+} from 'calypso/state/reader/action-types';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { updateCachedPost } from '../cache';
 import type { ReadPost } from '@automattic/api-core';
@@ -18,13 +22,16 @@ type PostCacheAction = {
 
 type GetQueryClient = () => QueryClient | null;
 
-const patchConversationState = ( queryClient: QueryClient, action: PostCacheAction ) => {
-	const { siteId, postId, followStatus } = action.payload ?? {};
+const patchConversationState = (
+	queryClient: QueryClient,
+	action: PostCacheAction,
+	isFollowing: boolean
+) => {
+	const { siteId, postId } = action.payload ?? {};
 	if ( ! siteId || ! postId ) {
 		return;
 	}
 
-	const isFollowing = followStatus === CONVERSATION_FOLLOW_STATUS.following;
 	updateCachedPost( queryClient, { blogId: siteId, postId }, () => ( {
 		is_following_conversation: isFollowing,
 	} ) );
@@ -59,8 +66,20 @@ export const createPostCacheMiddleware =
 			return result;
 		}
 
-		if ( readerAction.type === READER_CONVERSATION_UPDATE_FOLLOW_STATUS ) {
-			patchConversationState( queryClient, readerAction );
+		switch ( readerAction.type ) {
+			case READER_CONVERSATION_FOLLOW:
+				patchConversationState( queryClient, readerAction, true );
+				break;
+			case READER_CONVERSATION_MUTE:
+				patchConversationState( queryClient, readerAction, false );
+				break;
+			case READER_CONVERSATION_UPDATE_FOLLOW_STATUS:
+				patchConversationState(
+					queryClient,
+					readerAction,
+					readerAction.payload?.followStatus === CONVERSATION_FOLLOW_STATUS.following
+				);
+				break;
 		}
 
 		return result;
