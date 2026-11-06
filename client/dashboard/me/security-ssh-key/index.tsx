@@ -30,16 +30,20 @@ function SingleSshKey() {
 
 	let description: ReactNode = sshKey
 		? createInterpolateElement(
-				sprintf(
-					/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
-					__(
-						'Attach the SSH key to a site with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink />'
-					),
-					{
-						businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],
-						commercePlan: getPlanNames()[ DotcomPlans.ECOMMERCE ],
-					}
-				),
+				isEnabled( 'hosting/dev-tools-all-paid-plans' )
+					? __(
+							'Attach the SSH key to a site with a paid plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink />'
+						)
+					: sprintf(
+							/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
+							__(
+								'Attach the SSH key to a site with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink />'
+							),
+							{
+								businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],
+								commercePlan: getPlanNames()[ DotcomPlans.ECOMMERCE ],
+							}
+						),
 				{
 					learnMoreLink: (
 						<InlineSupportLink

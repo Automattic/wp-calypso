@@ -54,6 +54,7 @@ export const makeConversation = ( {
 	reason,
 	unread_count: unreadNoteIds.length || null,
 	unread_note_ids: unreadNoteIds,
+	unread_comment_ids: unreadNoteIds.map( () => commentId ),
 	is_following: isFollowing,
 } );
 

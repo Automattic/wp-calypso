@@ -48,16 +48,27 @@ const MAX_SEARCH_LENGTH = 100;
 // It has to be one @automattic/viewport defines, or useBreakpoint never matches.
 const SINGLE_PANE_BREAKPOINT = '<1180px';
 
+type Unread = Pick< Conversation, 'unreadNoteIds' | 'unreadCommentIds' >;
+
 // Your comments can open a post the All pages haven't loaded yet, so its unread notes come from the notes.
-const getUnreadNoteIds = (
+const getUnreadFromNotes = (
 	notes: NotificationNote[] | undefined,
 	{ siteId, postId }: Pick< Conversation, 'siteId' | 'postId' >
-) =>
-	notes
-		?.filter(
-			( { read, meta } ) => ! read && meta?.ids?.site === siteId && meta?.ids?.post === postId
-		)
-		.map( ( { id } ) => id );
+): Unread | undefined => {
+	const unread = notes?.filter(
+		( { read, meta } ) => ! read && meta?.ids?.site === siteId && meta?.ids?.post === postId
+	);
+	return (
+		unread && {
+			unreadNoteIds: unread.map( ( { id } ) => id ),
+			unreadCommentIds: unread.flatMap( ( { meta } ) => meta?.ids?.comment ?? [] ),
+		}
+	);
+};
+
+const union = ( ...lists: ( number[] | undefined )[] ) => [
+	...new Set( lists.flatMap( ( list ) => list ?? [] ) ),
+];
 
 const getConversationPath = ( { siteId, postId }: Pick< Conversation, 'siteId' | 'postId' > ) =>
 	`/reader/conversations/inbox/${ siteId }/${ postId }`;
@@ -66,7 +77,7 @@ interface Opened {
 	key: string;
 	// Marking a conversation read clears its unread notes, so keep the ones it had when it was opened.
 	// Unset while the notes a post outside the loaded pages needs are still loading.
-	noteIds?: number[];
+	unread?: Unread;
 	// Set when opened from Your comments, which starts the thread at that comment.
 	anchor?: { key: string; commentId: number };
 }
@@ -99,8 +110,6 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	const listQuery = tab === 'yours' ? ownCommentsQuery : conversationsQuery;
 	const { fetchNextPage } = listQuery;
 	const loadMore = useCallback( () => fetchNextPage(), [ fetchNextPage ] );
-	// The routes return unread note ids; the notes map them to the comments to highlight.
-	const { data: notes } = useCommentNotes( { refetchInterval: REFRESH_INTERVAL } );
 	const { mutate: markRead } = useMarkConversationsRead();
 	const notificationsOpen = useSelector( isNotificationsOpen );
 	const isNarrow = useBreakpoint( SINGLE_PANE_BREAKPOINT );
@@ -120,12 +129,6 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 			? conversations.filter( ( { unreadCount } ) => unreadCount > 0 )
 			: conversations;
 	}, [ conversations, ownCommentsQuery.comments, tab ] );
-	const commentIdsByNoteId = useMemo(
-		() => new Map( notes?.map( ( note ) => [ note.id, note.meta?.ids?.comment ] ) ),
-		[ notes ]
-	);
-	const getCommentIds = ( noteIds: number[] ) =>
-		noteIds.flatMap( ( id ) => commentIdsByNoteId.get( id ) ?? [] );
 	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
 	const [ opened, setOpened ] = useState< Opened >();
 	const activeOpened = opened?.key === selectedKey ? opened : undefined;
@@ -139,10 +142,15 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 			setOpened( undefined );
 		}
 	}
-	// Mapped on each render, so notes that load after opening, or polled ones, still get highlighted.
-	const newCommentIds = getCommentIds( [
-		...new Set( [ ...( activeOpened?.noteIds ?? [] ), ...( selected?.unreadNoteIds ?? [] ) ] ),
-	] );
+	// Merged on each render, so comments that come in while it's open still get highlighted.
+	const newCommentIds = union( activeOpened?.unread?.unreadCommentIds, selected?.unreadCommentIds );
+	// A post opened before the notes loaded gets its unread notes, and is marked read, once they do.
+	const isWaitingForNotes = !! activeOpened && ! activeOpened.unread;
+	// Only posts outside the loaded pages need the notes, and only Your comments opens those.
+	const { data: notes } = useCommentNotes( {
+		enabled: tab === 'yours' || isWaitingForNotes,
+		refetchInterval: REFRESH_INTERVAL,
+	} );
 
 	useEffect( () => {
 		dispatch( recordReaderTracksEvent( 'calypso_reader_conversations_inbox_viewed' ) );
@@ -154,33 +162,38 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		}
 	}, [ isNarrow, selectedKey, conversations ] );
 
-	// A post opened before the notes loaded gets its unread notes, and is marked read, once they do.
-	const isWaitingForNotes = !! activeOpened && ! activeOpened.noteIds;
 	useEffect( () => {
-		const noteIds = getUnreadNoteIds( notes, {
+		if ( ! isWaitingForNotes ) {
+			return;
+		}
+		const unread = getUnreadFromNotes( notes, {
 			siteId: Number( siteId ),
 			postId: Number( postId ),
 		} );
-		if ( ! isWaitingForNotes || ! noteIds ) {
+		if ( ! unread ) {
 			return;
 		}
-		setOpened( ( current ) => current && { ...current, noteIds } );
-		if ( noteIds.length ) {
-			markRead( noteIds );
+		setOpened( ( current ) => current && { ...current, unread } );
+		if ( unread.unreadNoteIds.length ) {
+			markRead( unread.unreadNoteIds );
 		}
 	}, [ isWaitingForNotes, notes, siteId, postId, markRead ] );
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		const key = getConversationKey( item.siteId, item.postId );
 		const conversation = conversations.find( ( candidate ) => candidate.key === key );
-		const unreadNoteIds = conversation?.unreadNoteIds ?? getUnreadNoteIds( notes, item );
+		const unread: Unread | undefined = conversation ?? getUnreadFromNotes( notes, item );
+		const unreadNoteIds = unread?.unreadNoteIds;
+		const previous = key === opened?.key ? opened.unread : undefined;
 		setOpened( {
 			key,
 			// Opening it again adds any notes that came in since, such as past the route's 50 ids.
-			noteIds:
-				key === opened?.key && ( opened.noteIds || unreadNoteIds )
-					? [ ...new Set( [ ...( opened.noteIds ?? [] ), ...( unreadNoteIds ?? [] ) ] ) ]
-					: unreadNoteIds,
+			unread: previous
+				? {
+						unreadNoteIds: union( previous.unreadNoteIds, unread?.unreadNoteIds ),
+						unreadCommentIds: union( previous.unreadCommentIds, unread?.unreadCommentIds ),
+					}
+				: unread,
 			anchor: 'commentId' in item ? { key: item.key, commentId: item.commentId } : undefined,
 		} );
 		if ( unreadNoteIds?.length ) {
