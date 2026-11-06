@@ -42,7 +42,7 @@ export default function DomainEmailsSettingsSummary( {
 	return (
 		<RouterLinkSummaryButton
 			{ ...linkProps }
-			title={ __( 'Emails' ) }
+			title={ __( 'Professional email' ) }
 			badges={ badges }
 			density="medium"
 			onClick={ onClick }

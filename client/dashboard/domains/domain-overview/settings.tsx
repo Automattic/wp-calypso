@@ -150,7 +150,8 @@ export default function DomainOverviewSettings( {
 			<SummaryButton
 				key="transfer-in"
 				title={ __( 'Bring your domain to WordPress.com' ) }
-				density="medium"
+				description={ __( 'Manage your site and domain all in one place.' ) }
+				density="medium-low"
 				href={ addQueryArgs( wpcomLink( '/setup/domain/use-my-domain' ), {
 					initialQuery: domain.domain,
 					initialMode: 'transfer-domain',

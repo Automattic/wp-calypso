@@ -1,3 +1,4 @@
+import { DomainSubtype } from '@automattic/api-core';
 import { __, sprintf } from '@wordpress/i18n';
 import { useLocale } from '../../app/locale';
 import { purchaseSettingsRoute } from '../../app/router/me';
@@ -6,44 +7,67 @@ import { formatDate } from '../../utils/datetime';
 import type { Domain } from '@automattic/api-core';
 import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary-button/types';
 
-function getBadges( domain: Domain, date: string ): SummaryButtonBadgeProps[] {
+export function getRenewalDate( domain: Domain ) {
+	if (
+		domain.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+		domain.subtype.id === DomainSubtype.DOMAIN_TRANSFER ||
+		! domain.subscription_id
+	) {
+		return null;
+	}
+
+	return (
+		( domain.auto_renewing && ! domain.expired ? domain.auto_renewal_date : domain.expiry ) || null
+	);
+}
+
+export function useRenewalNote( domain: Domain ) {
+	const locale = useLocale();
+	const renewalDate = getRenewalDate( domain );
+
+	if ( ! renewalDate ) {
+		return null;
+	}
+
+	const date = formatDate( new Date( renewalDate ), locale, { dateStyle: 'long' } );
+
 	if ( domain.expired ) {
 		// translators: %(date)s: the date the domain expired.
-		return [ { text: sprintf( __( 'Expired on %(date)s' ), { date } ), intent: 'high' } ];
+		return sprintf( __( 'Expired on %(date)s' ), { date } );
 	}
 
-	if ( domain.auto_renewing ) {
-		// translators: %(date)s: the date the domain renews.
-		return [ { text: sprintf( __( 'Renews on %(date)s' ), { date } ), intent: 'stable' } ];
+	return domain.auto_renewing
+		? // translators: %(date)s: the date the domain renews.
+			sprintf( __( 'Renews on %(date)s' ), { date } )
+		: // translators: %(date)s: the date the domain expires.
+			sprintf( __( 'Expires on %(date)s' ), { date } );
+}
+
+function getBadge( domain: Domain ): SummaryButtonBadgeProps {
+	if ( domain.expired ) {
+		return { text: __( 'Expired' ), intent: 'high' };
 	}
 
-	return [
-		{ text: __( 'Auto-renew off' ), intent: 'medium' },
-		// translators: %(date)s: the date the domain expires.
-		{ text: sprintf( __( 'Expires on %(date)s' ), { date } ), intent: 'medium' },
-	];
+	return domain.auto_renewing
+		? { text: __( 'Auto-renew on' ), intent: 'stable' }
+		: { text: __( 'Auto-renew off' ), intent: 'medium' };
 }
 
 export default function DomainRenewalSettingsSummary( {
 	domain,
 	purchaseId,
-	date,
 	onClick,
 }: {
 	domain: Domain;
 	purchaseId: string;
-	date: string;
 	onClick?: () => void;
 } ) {
-	const locale = useLocale();
-	const formattedDate = formatDate( new Date( date ), locale, { dateStyle: 'long' } );
-
 	return (
 		<RouterLinkSummaryButton
 			to={ purchaseSettingsRoute.fullPath }
 			params={ { purchaseId } }
 			title={ __( 'Renewal & billing' ) }
-			badges={ getBadges( domain, formattedDate ) }
+			badges={ [ getBadge( domain ) ] }
 			density="medium"
 			onClick={ onClick }
 		/>

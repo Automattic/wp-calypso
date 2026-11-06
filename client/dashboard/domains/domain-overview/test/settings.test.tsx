@@ -53,7 +53,7 @@ async function showAdvanced() {
 async function getOptionalRows() {
 	await showAdvanced();
 	await screen.findByText( 'Site' );
-	expect( screen.getByText( 'Emails' ) ).toBeVisible();
+	expect( screen.getByText( 'Professional email' ) ).toBeVisible();
 
 	return OPTIONAL_ROWS.filter( ( row ) => screen.queryByText( row ) );
 }

@@ -26,7 +26,7 @@ function renderSummary( domainName: string, status: number, accounts: EmailAccou
 	);
 }
 
-const getRow = () => screen.getByRole( 'link', { name: /Emails/ } );
+const getRow = () => screen.getByRole( 'link', { name: /Professional email/ } );
 
 describe( 'DomainEmailsSettingsSummary', () => {
 	test( 'counts the mailboxes on the domain and links to the list', async () => {
