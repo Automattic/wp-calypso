@@ -119,7 +119,7 @@ export function RejectedTierCard( {
 		<ApplicationStatusCard
 			decoration={
 				<Text intent="error" as="span">
-					<Icon icon={ error } size={ 24 } fill="currentColor" />
+					<Icon icon={ error } size={ 24 } />
 				</Text>
 			}
 			label={ __( 'Application status' ) }

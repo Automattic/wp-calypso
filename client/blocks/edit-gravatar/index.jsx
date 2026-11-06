@@ -98,7 +98,7 @@ export class EditGravatar extends Component {
 					<Gravatar imgSize={ GRAVATAR_IMG_SIZE } size={ 150 } user={ user } />
 					{ ! user.email_verified && (
 						<div className="edit-gravatar__caution-icon" data-testid="caution-icon">
-							<Icon icon={ caution } fill="#fff" size={ 24 } />
+							<Icon icon={ caution } style={ { color: '#fff', fill: 'none' } } size={ 24 } />
 						</div>
 					) }
 				</div>

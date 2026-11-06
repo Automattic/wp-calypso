@@ -116,7 +116,6 @@ export function DeploymentLogsStatus( {
 					style={ {
 						flexShrink: 0,
 						color: statusIcon.fill,
-						fill: 'none',
 					} }
 				/>
 			) }

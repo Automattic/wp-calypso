@@ -156,7 +156,7 @@ export class DateRangeSelector extends Component {
 							ref={ props.buttonRef }
 						>
 							{ customLabel ? customLabel : this.getFormattedDate( from, to ) }
-							{ isCompact && <Icon icon={ chevronDown } size="16" fill="currentColor" /> }
+							{ isCompact && <Icon icon={ chevronDown } size="16" /> }
 						</Button>
 						{ ( from || to ) && (
 							<Button

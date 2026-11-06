@@ -110,7 +110,7 @@ const getFields = (
 								display: 'flex',
 							} }
 						>
-							<Icon icon={ info } size={ 16 } style={ { fill: 'none' } } />
+							<Icon icon={ info } size={ 16 } />
 						</span>
 					</Tooltip>
 				</span>

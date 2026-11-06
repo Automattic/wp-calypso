@@ -37,11 +37,12 @@ export default function SetupStep( {
 					<Icon
 						size={ 24 }
 						icon={ completed ? published : swatch }
-						fill={
-							completed
+						style={ {
+							color: completed
 								? 'var(--dashboard__background-color-success)'
-								: 'var(--dashboard-menu-item__color)'
-						}
+								: 'var(--dashboard-menu-item__color)',
+							fill: 'none',
+						} }
 					/>
 					<Text size={ 15 } weight={ 500 }>
 						{ title }

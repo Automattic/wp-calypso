@@ -27,7 +27,7 @@ export const InboundTransferFailed = ( { domain }: { domain: Domain } ) => {
 				<Icon
 					size={ 24 }
 					icon={ cancelCircleFilled }
-					fill="var(--dashboard__foreground-color-error)"
+					style={ { color: 'var(--dashboard__foreground-color-error)', fill: 'none' } }
 				/>
 			}
 			title={ domain.domain }

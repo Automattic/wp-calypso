@@ -55,14 +55,7 @@ export const SidebarNavigatorMenuItem = ( {
 				target={ isExternalLink && ! openInSameTab ? '_blank' : undefined }
 			>
 				<HStack justify="flex-start">
-					{ icon && (
-						<Icon
-							className="sidebar__menu-icon"
-							style={ { fill: 'none' } }
-							icon={ icon }
-							size={ ICON_SIZE }
-						/>
-					) }
+					{ icon && <Icon className="sidebar__menu-icon" icon={ icon } size={ ICON_SIZE } /> }
 					<FlexBlock>{ children }</FlexBlock>
 					{ withChevron && <Icon icon={ chevronRightSmall } size={ ICON_SIZE } /> }
 					{ isExternalLink && (

@@ -96,7 +96,6 @@ const Controls = ( {
 					<Icon
 						icon={ navIcon }
 						size={ navArrowSize }
-						fill="currentColor"
 						style={
 							/* Flip the icon for languages with LTR direction. */
 							! isRtl ? { transform: 'scaleX(-1)' } : undefined
@@ -125,7 +124,6 @@ const Controls = ( {
 					<Icon
 						icon={ navIcon }
 						size={ navArrowSize }
-						fill="currentColor"
 						style={
 							/* Flip the icon for languages with RTL direction. */
 							isRtl ? { transform: 'scaleX(-1)' } : undefined
