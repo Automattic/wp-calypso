@@ -1,38 +1,22 @@
 import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
-import { useState, useEffect, useRef } from 'react';
+import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
+import { useConsumeSearchParams } from '../../app/hooks/use-consume-search-params';
 import Notice from '../../components/notice';
-
-function isVerifiedRedirect() {
-	if ( typeof window === 'undefined' ) {
-		return false;
-	}
-	return new URLSearchParams( window.location.search ).get( 'verified' ) === '1';
-}
-
-function removeVerifiedParam() {
-	const params = new URLSearchParams( window.location.search );
-	params.delete( 'verified' );
-	const newUrl = window.location.pathname + ( params.toString() ? '?' + params.toString() : '' );
-	window.history.replaceState( {}, '', newUrl );
-}
 
 export default function RecoveryNudgeNotice() {
 	const { recordTracksEvent } = useAnalytics();
-	const [ isVisible, setIsVisible ] = useState( isVerifiedRedirect );
-	const hasRecordedImpression = useRef( false );
+	const [ isDismissed, setIsDismissed ] = useState( false );
+	const { verified } = useConsumeSearchParams( [ 'verified' ], {
+		when: ( params ) => params.verified === '1',
+		onConsume: () => {
+			setIsDismissed( false );
+			recordTracksEvent( 'calypso_dashboard_security_recovery_notice_impression' );
+		},
+	} );
 
-	useEffect( () => {
-		if ( ! isVisible || hasRecordedImpression.current ) {
-			return;
-		}
-		hasRecordedImpression.current = true;
-		recordTracksEvent( 'calypso_dashboard_security_recovery_notice_impression' );
-		removeVerifiedParam();
-	}, [ isVisible, recordTracksEvent ] );
-
-	if ( ! isVisible ) {
+	if ( verified !== '1' || isDismissed ) {
 		return null;
 	}
 
@@ -42,7 +26,7 @@ export default function RecoveryNudgeNotice() {
 			title={ __( 'Email verified' ) }
 			onClose={ () => {
 				recordTracksEvent( 'calypso_dashboard_security_recovery_notice_dismiss' );
-				setIsVisible( false );
+				setIsDismissed( true );
 			} }
 			actions={
 				<Link
