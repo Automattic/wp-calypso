@@ -131,7 +131,7 @@ class EnvVariables implements SupportedEnvVariables {
 		}
 
 		if ( value === 'mixed' ) {
-			return getAtomicVariationInMixedRun( getAtomicVariationKey(), getCurrentSpecFile() );
+			return getAtomicVariationInMixedRun( getCurrentSpecFile() );
 		}
 
 		return value as AtomicVariation;
@@ -295,18 +295,97 @@ function getCurrentSpecFile(): string {
 	return path.basename( file );
 }
 
-// Keyed on the run and the spec file, so a run spreads its spec files over every Atomic site
-// instead of sending every worker to one. A spec resolves its variation once when Playwright
-// collects it and again in the worker that runs it, and both see the same key and file name.
-function getAtomicVariationInMixedRun( key: string, specFile: string ): AtomicVariation {
-	// Hashed, not counted: a re-run of the same commit has to repeat the variation that failed.
-	const hash = crypto
-		.createHash( 'md5' )
-		.update( `${ key }:${ specFile }` )
-		.digest()
-		.readUInt8( 0 );
+// Tests sharing an Atomic site interfere: 4 at once time out on the ecomm-plan site, 2 hold.
+// Playwright < 1.59 can exceed a project's cap while a worker restarts after a failure:
+// https://github.com/microsoft/playwright/pull/39539
+const ATOMIC_SITE_WORKERS = 2;
 
-	return ATOMIC_VARIATIONS[ hash % ATOMIC_VARIATIONS.length ];
+// A mixed run's worker total: every site's full share, no more.
+export const MIXED_RUN_WORKERS = ATOMIC_VARIATIONS.length * ATOMIC_SITE_WORKERS;
+
+/**
+ * Builds a mixed run's Playwright projects: one copy of `base` per Atomic site, named
+ * `<base>-atomic-<variation>`, running that site's spec files with at most
+ * `ATOMIC_SITE_WORKERS` workers. Publishes the assignment in `ATOMIC_VARIATION_BY_SPEC`:
+ * workers inherit the environment, so the collector and every worker agree.
+ */
+export function createAtomicSiteProjects< P extends { name?: string } >(
+	base: P,
+	specFiles: string[]
+) {
+	const assignment = assignAtomicVariations( specFiles );
+	process.env.ATOMIC_VARIATION_BY_SPEC = JSON.stringify( assignment );
+
+	return ATOMIC_VARIATIONS.map( ( variation ) => ( {
+		...base,
+		name: `${ base.name }-atomic-${ variation }`,
+		testMatch: specFiles.filter( ( file ) => assignment[ path.basename( file ) ] === variation ),
+		workers: ATOMIC_SITE_WORKERS,
+	} ) );
+}
+
+/**
+ * Deals the spec files of a mixed run out over the Atomic variations, evenly: 24 files over 7
+ * sites give 4, 4, 4, 3, 3, 3, 3. The order and the first site come from the run's key, so a
+ * re-run of the same commit repeats each file's variation while the next commit moves them.
+ */
+export function assignAtomicVariations( specFiles: string[] ): Record< string, AtomicVariation > {
+	const key = getAtomicVariationKey();
+	const files = specFiles.map( ( file ) => path.basename( file ) );
+
+	// Variations are looked up by file name: two files sharing one would share a site.
+	const duplicate = files.find( ( file, index ) => files.indexOf( file ) !== index );
+	if ( duplicate ) {
+		throw new Error(
+			`ATOMIC_VARIATION=mixed tells spec files apart by name, and two are named ${ duplicate }: rename one.`
+		);
+	}
+
+	const ranked = files
+		.map( ( file ) => ( { file, rank: hashHex( `${ key }:${ file }` ) } ) )
+		// Colliding hashes fall back to the file name, unique, so the order never depends on the input's.
+		.sort( ( a, b ) => compareCodeUnits( a.rank, b.rank ) || compareCodeUnits( a.file, b.file ) );
+	const offset = parseInt( hashHex( key ).slice( 0, 2 ), 16 );
+
+	return Object.fromEntries(
+		ranked.map( ( { file }, index ) => [
+			file,
+			ATOMIC_VARIATIONS[ ( index + offset ) % ATOMIC_VARIATIONS.length ],
+		] )
+	);
+}
+
+// Not localeCompare: collation varies by locale, e.g. da_DK sorts "aa" after "f".
+function compareCodeUnits( a: string, b: string ): number {
+	if ( a === b ) {
+		return 0;
+	}
+
+	return a < b ? -1 : 1;
+}
+
+function hashHex( value: string ): string {
+	return crypto.createHash( 'md5' ).update( value ).digest( 'hex' );
+}
+
+// A spec resolves its variation once when Playwright collects it and again in the worker that
+// runs it: both read the assignment the config published, so both agree.
+function getAtomicVariationInMixedRun( specFile: string ): AtomicVariation {
+	const published = process.env.ATOMIC_VARIATION_BY_SPEC;
+	if ( ! published ) {
+		throw new Error(
+			'ATOMIC_VARIATION=mixed requires ATOMIC_VARIATION_BY_SPEC, which the Playwright config sets: run the specs through it.'
+		);
+	}
+
+	const variation = ( JSON.parse( published ) as Record< string, AtomicVariation > )[ specFile ];
+	if ( ! variation ) {
+		throw new Error(
+			`ATOMIC_VARIATION=mixed assigns no variation to ${ specFile }: tag it with tags.JETPACK_WPCOM_INTEGRATION in the spec file itself, where the Playwright config looks for it.`
+		);
+	}
+
+	return variation;
 }
 
 function castAsNumber( name: string, value: string ): number {
