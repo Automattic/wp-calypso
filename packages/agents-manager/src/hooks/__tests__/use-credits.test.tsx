@@ -3,7 +3,7 @@
  */
 import { act, renderHook } from '@testing-library/react';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
-import { useCredits, useCreditsScope } from '../use-credits';
+import { useCredits, useCreditsVisit } from '../use-credits';
 import type { CreditsPool } from '../../utils/credits';
 
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
@@ -31,10 +31,10 @@ function useMockCredits( {
 	enabled,
 	...options
 }: Partial< Parameters< typeof useCredits >[ 0 ] > & { enabled: boolean } ) {
-	const scope = useCreditsScope( enabled );
+	const creditsVisit = useCreditsVisit( enabled );
 
 	return useCredits( {
-		scope,
+		creditsVisit,
 		isProcessing: false,
 		messages: [],
 		isOpen: true,

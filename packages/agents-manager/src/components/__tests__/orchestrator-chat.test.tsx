@@ -479,9 +479,20 @@ const mockTopUpsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 let mockCreditsOnShowCredits: ( () => void ) | undefined;
 const mockCreditsOnTaskUpdate = jest.fn();
+// One visit per site, as the real hook gives, each bound to its site.
+const mockCreditsVisits = new Map< string, { onTaskUpdate: ( update: TaskUpdate ) => void } >();
 jest.mock( '../../hooks/use-credits', () => ( {
-	// One scope per site, as the real hook gives one per visit.
-	useCreditsScope: () => `scope:${ mockSiteKey }`,
+	useCreditsVisit: () => {
+		const siteKey = mockSiteKey;
+
+		if ( ! mockCreditsVisits.has( siteKey ) ) {
+			mockCreditsVisits.set( siteKey, {
+				onTaskUpdate: ( update ) => mockCreditsOnTaskUpdate( update, siteKey ),
+			} );
+		}
+
+		return mockCreditsVisits.get( siteKey );
+	},
 	useCredits: ( {
 		isOpen,
 		isNoticeVisible,
@@ -498,7 +509,6 @@ jest.mock( '../../hooks/use-credits', () => ( {
 		mockCreditsOnTryAgain = onTryAgain;
 		mockCreditsOnShowCredits = onShowCredits;
 		return {
-			onTaskUpdate: mockCreditsOnTaskUpdate,
 			beforeSubmit: () => mockCreditsBeforeSubmit() !== false,
 			takeRefusalCode: mockTakeRefusalCode,
 			notice: mockCreditsNotice(),
@@ -880,7 +890,7 @@ describe( 'OrchestratorChat', () => {
 		rerender( chat() );
 		await act( async () => sentOnFirstSite?.( update ) );
 
-		expect( mockCreditsOnTaskUpdate ).toHaveBeenCalledWith( update, 'scope:site-1' );
+		expect( mockCreditsOnTaskUpdate ).toHaveBeenCalledWith( update, 'site-1' );
 	} );
 
 	it( 'forwards a provider’s task observer error unchanged', async () => {

@@ -22,7 +22,7 @@ import { useCheckpointAvailability } from '../../hooks/use-checkpoint-availabili
 import { useContextCardActions } from '../../hooks/use-context-card-actions';
 import { useConversationHydration } from '../../hooks/use-conversation-hydration';
 import useCopyAction from '../../hooks/use-copy-action';
-import { type UseCreditsResult, useCredits, useCreditsScope } from '../../hooks/use-credits';
+import { useCredits, useCreditsVisit } from '../../hooks/use-credits';
 import { useCreditsCommand } from '../../hooks/use-credits-command';
 import { useDynamicSuggestions } from '../../hooks/use-dynamic-suggestions';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
@@ -157,10 +157,8 @@ export default function OrchestratorChat( {
 	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
 	const trackResponseOutcome = useResponseOutcomeTracking();
 
-	// Credits runs after the chat it reads, so task updates reach it through a ref, each with
-	// the visit its request was sent in.
-	const creditsScope = useCreditsScope( ! isReaderChat );
-	const creditsTaskUpdateRef = useRef< UseCreditsResult[ 'onTaskUpdate' ] >( () => {} );
+	// Credits runs after the chat, so task updates reach it through its visit.
+	const creditsVisit = useCreditsVisit( ! isReaderChat );
 
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
@@ -174,7 +172,7 @@ export default function OrchestratorChat( {
 			// History and closing the panel unmount the chat mid-reply.
 			resumeOnRemount: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
-				creditsTaskUpdateRef.current( update, creditsScope );
+				creditsVisit.onTaskUpdate( update );
 
 				// A previous session's stream must not write into this one.
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
@@ -188,7 +186,7 @@ export default function OrchestratorChat( {
 		};
 	}, [
 		agentConfig,
-		creditsScope,
+		creditsVisit,
 		isCurrentStreamGeneration,
 		recordRetriedToolCall,
 		recordTaskUpdate,
@@ -224,14 +222,13 @@ export default function OrchestratorChat( {
 	const credits = useCredits( {
 		onTryAgain: tryAgain,
 		onShowCredits: isReaderChat ? undefined : showCredits,
-		scope: creditsScope,
+		creditsVisit,
 		isProcessing,
 		messages,
 		// The compact composer can send too, so it keeps the balance fresh.
 		isOpen: isOpen || ( ! isDocked && isCompactMode ),
 		isNoticeVisible: isOpen,
 	} );
-	creditsTaskUpdateRef.current = credits.onTaskUpdate;
 
 	const creditsCommand = useCreditsCommand( {
 		reply: credits.creditsCommand,

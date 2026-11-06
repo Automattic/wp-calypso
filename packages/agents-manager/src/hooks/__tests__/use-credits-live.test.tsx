@@ -16,7 +16,7 @@ import {
 import { CREDITS_LOW_BALANCE, getCreditsLabel } from '../../utils/credits';
 import { setResolvedAgentId } from '../../utils/resolved-agent-id';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
-import { type UseCreditsResult, useCredits, useCreditsScope } from '../use-credits';
+import { useCredits, useCreditsVisit } from '../use-credits';
 import type { AgentsManagerContextType } from '../../contexts';
 import type { AgentConfig } from '../../utils/create-agent-config';
 import type { CreditsPlanTier, CreditsStatus } from '../../utils/credits';
@@ -27,8 +27,7 @@ import type { ReactElement } from 'react';
 
 let chatIsProcessing = false;
 let chatMessages: unknown[] = [];
-// As the chat calls it: the latest `onTaskUpdate`, with the visit the request was sent in.
-let latestOnTaskUpdate: UseCreditsResult[ 'onTaskUpdate' ];
+// The latest visit's `onTaskUpdate`, as the chat sends it.
 let onTaskUpdate: ( update: TaskUpdate ) => void;
 // The visit the credits hooks read from the Agents Manager context.
 let mockVisit: Pick< AgentsManagerContextType, 'agentConfig' | 'siteKey' | 'site' > & {
@@ -93,18 +92,15 @@ const renderCredits = ( initial = {} ) =>
 				currentUser: userId === undefined ? undefined : { ID: userId },
 			};
 
-			const scope = useCreditsScope( enabled );
-			const credits = useCredits( {
+			const creditsVisit = useCreditsVisit( enabled );
+			onTaskUpdate = creditsVisit.onTaskUpdate;
+
+			return useCredits( {
 				...options,
-				scope,
+				creditsVisit,
 				isProcessing: chatIsProcessing,
 				messages: chatMessages as UseAgentChatReturn[ 'messages' ],
 			} );
-
-			latestOnTaskUpdate = credits.onTaskUpdate;
-			onTaskUpdate = ( update ) => latestOnTaskUpdate( update, scope );
-
-			return credits;
 		},
 		{ initialProps: { ...defaultOptions, ...initial } }
 	);
@@ -2424,6 +2420,19 @@ describe( 'credits Tracks events', () => {
 				( [ name ] ) => name === 'calypso_agents_manager_credits_notice_dismissed'
 			)
 		).toHaveLength( 1 );
+	} );
+
+	it( 'records nothing from a dismissal after the chat unmounts', async () => {
+		fetchMock.mockResolvedValueOnce( response( low() ) );
+		const view = renderCredits( freshScope() );
+		await flush();
+		const dismiss = view.result.current.notice?.onDismiss;
+		const count = creditsEvents().length;
+
+		view.unmount();
+		act( () => dismiss?.() );
+
+		expect( creditsEvents() ).toHaveLength( count );
 	} );
 
 	it( 'records a click on the meter as ok on a healthy balance, only when it opens', async () => {
