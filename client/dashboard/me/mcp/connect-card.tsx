@@ -82,6 +82,7 @@ function AgentTile( {
 					<Icon icon={ agent.href ? arrowUpRight : copy } size={ 12 } />
 					{ agent.href && (
 						<VisuallyHidden as="span">
+							{ ' ' }
 							{
 								/* translators: accessibility text */
 								__( '(opens in a new tab)' )
