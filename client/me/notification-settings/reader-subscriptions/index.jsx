@@ -259,7 +259,7 @@ export class NotificationSubscriptions extends Component {
 								{ this.props.translate( 'Default email delivery' ) }
 							</FormLabel>
 							{ defaultEmailDelivery === '' ? (
-								<LoadingPlaceholder />
+								<LoadingPlaceholder height="calc(1.4rem + 18px)" />
 							) : (
 								<FormSelect
 									disabled={ this.props.getDisabledState() }
