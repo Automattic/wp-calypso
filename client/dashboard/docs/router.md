@@ -41,7 +41,7 @@ To add a new route to the dashboard:
 
 ## Authorization and Protection
 
-By default, the whole dashboard is protected and the user must be logged in to access it. Routes that need more than that, such as a feature flag, a plan feature or a permission, check it in `beforeLoad` and send users who don't qualify to the nearest page they can use. Here `canViewFeature()` stands for the route's access check, which resolves to `false` if its lookup fails:
+By default, the whole dashboard is protected and the user must be logged in to access it. Routes that need more than that, such as a feature flag, a plan feature or a permission, check it in `beforeLoad` and send users who don't qualify to the nearest page they can use:
 
 ```typescript
 export const siteSettingsFeatureRoute = createRoute( {
@@ -51,7 +51,8 @@ export const siteSettingsFeatureRoute = createRoute( {
 		if ( cause === 'preload' ) {
 			return;
 		}
-		if ( ! ( await canViewFeature() ) ) {
+		// Stands for the route's own access check, which resolves to `false` if its lookup fails.
+		if ( ! ( await hasAccess() ) ) {
 			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
 		}
 	},
