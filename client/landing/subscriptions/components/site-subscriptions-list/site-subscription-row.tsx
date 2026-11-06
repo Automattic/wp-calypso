@@ -455,7 +455,13 @@ const SiteSubscriptionRow = ( {
 			) }
 			<div className="unsubscribe-action-cell" role="cell">
 				<Button variant="tertiary" onClick={ onUnsubscribe } title={ translate( 'Unsubscribe' ) }>
-					<Icon icon={ trash } css={ { fill: 'var(--studio-gray-60) !important;' } } />
+					<Icon
+						icon={ trash }
+						css={ {
+							fill: 'var(--studio-gray-60) !important;',
+							color: 'var(--studio-gray-60) !important;',
+						} }
+					/>
 				</Button>
 			</div>
 			<div className="actions-cell" role="cell">

@@ -23,6 +23,7 @@
 		.summary-button-navigation-icon,
 		.summary-button-decoration svg {
 			fill: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+			color: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 		}
 
 		&.has-density-low {
@@ -55,6 +56,7 @@
 	.summary-button-navigation-icon,
 	.summary-button-decoration svg {
 		fill: $gray-700;
+		color: $gray-700;
 		flex-shrink: 0;
 	}
 

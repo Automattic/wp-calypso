@@ -115,6 +115,7 @@ button:not(:disabled).foldable-card__action {
 
 	&:not(:disabled) .gridicon {
 		fill: var(--studio-gray-100);
+		color: var(--studio-gray-100);
 	}
 
 	&:disabled .gridicon {
