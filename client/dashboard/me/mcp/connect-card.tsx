@@ -81,13 +81,15 @@ function AgentTile( {
 					<span>{ isCopied ? __( 'Copied' ) : agent.actionLabel }</span>
 					<Icon icon={ agent.href ? arrowUpRight : copy } size={ 12 } />
 					{ agent.href && (
-						<VisuallyHidden as="span">
+						<>
 							{ ' ' }
-							{
-								/* translators: accessibility text */
-								__( '(opens in a new tab)' )
-							}
-						</VisuallyHidden>
+							<VisuallyHidden as="span">
+								{
+									/* translators: accessibility text */
+									__( '(opens in a new tab)' )
+								}
+							</VisuallyHidden>
+						</>
 					) }
 				</span>
 			</CardBody>
