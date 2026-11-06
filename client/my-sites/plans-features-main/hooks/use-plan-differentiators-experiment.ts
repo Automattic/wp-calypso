@@ -12,7 +12,7 @@ const PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE = '2026-11-04T00:00:00Z';
 const PLAN_DIFFERENTIATORS_EXPERIMENT_VARIANTS = [
 	'control',
 	'reversed_order',
-	'mcp_feature',
+	'mcp_features',
 ] as const;
 
 type PlanDifferentiatorsExperimentVariant =
@@ -97,7 +97,7 @@ function usePlanDifferentiatorsExperiment( {
 		variant,
 		// Reversing assumes the standard lineup, which a curated intent (e.g. newsletter) replaces.
 		useReversedPlanOrder: variant === 'reversed_order' && ! hasTailoredFeatureList( intent ),
-		useMcpFeature: variant === 'mcp_feature' && ! hasTailoredFeatureList( intent ),
+		useMcpFeature: variant === 'mcp_features' && ! hasTailoredFeatureList( intent ),
 		isExperimentEligible: isEligible,
 	};
 }
