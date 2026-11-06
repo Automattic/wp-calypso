@@ -60,7 +60,7 @@ export const siteSettingsFeatureRoute = createRoute( {
 ```
 
 - **Skip preloads**, so the check only runs on a real navigation, not on link hover.
-- **Redirect with `redirectAsNotAllowed()` to a route's `fullPath`**, not a hand-built URL. It shows the not-allowed notice and keeps the redirect type-checked.
+- **Redirect with `redirectAsNotAllowed()` to a route's `fullPath`**, not a hand-built URL. It shows the not-allowed notice and keeps the destination in sync with the route definition.
 - **Don't let the check throw.** An error from `beforeLoad` leaves the routes below it pending forever. Treat a failed lookup as not allowed.
 - **Check what the API checks.** Flags switch per environment, and dev and stage builds turn many on for every user. If the endpoints only serve some users, the guard and every link to the route need the same check, ideally from one shared helper.
 
