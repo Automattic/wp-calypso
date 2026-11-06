@@ -3,6 +3,7 @@ import { ODIE_CALL_AN_HE_BOT_SLUG } from '../constants';
 import { useOdieAssistantContext } from '../context';
 import { useCurrentSupportInteraction } from '../data/use-current-support-interaction';
 import { fetchOdieChat } from '../data/use-odie-chat';
+import { getIsRequestingHumanSupport } from '../utils';
 
 const POLL_INTERVAL_MS = 5000;
 
@@ -69,9 +70,16 @@ export const usePollForDelayedReplies = () => {
 					if ( prev.status !== 'loaded' || prev.provider !== 'odie' || prev.odieId !== chatId ) {
 						return prev;
 					}
+					// A reply that asks for a human is the send handler's: it swaps it for a prompt of its
+					// own, without the server's id, or moves the chat to Zendesk. Shown as is, it would
+					// promise a hand-off that nothing carries out.
 					const knownIds = new Set( prev.messages.map( ( m ) => m.message_id ) );
 					const fresh = fetched.messages.filter(
-						( m ) => m.role === 'bot' && !! m.message_id && ! knownIds.has( m.message_id )
+						( m ) =>
+							m.role === 'bot' &&
+							!! m.message_id &&
+							! knownIds.has( m.message_id ) &&
+							! getIsRequestingHumanSupport( m )
 					);
 					if ( ! fresh.length ) {
 						return prev;

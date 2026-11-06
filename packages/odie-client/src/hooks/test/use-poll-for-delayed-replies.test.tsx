@@ -159,6 +159,31 @@ describe( 'usePollForDelayedReplies', () => {
 		] );
 	} );
 
+	it( 'leaves out a reply that asks for a human, which the send handler already replaced', async () => {
+		const escalation = {
+			...delayedReply,
+			message_id: 4,
+			content: 'Let me connect you to a human.',
+			context: { flags: { forward_to_human_support: true } },
+		} as Message;
+		const prompt = {
+			role: 'bot',
+			type: 'message',
+			content: 'Please email us instead.',
+			context: { flags: { forward_to_human_support: true } },
+		} as Message;
+		const request = { role: 'user', type: 'message', content: 'A human, please' } as Message;
+		mockFetchOdieChat.mockResolvedValue(
+			serverChat( [ userMessage, botMessage, { ...request, message_id: 3 }, escalation ] )
+		);
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		const prev = makeChat( { messages: [ userMessage, botMessage, request, prompt ] } );
+		expect( applyLastUpdater( prev ) ).toBe( prev );
+	} );
+
 	it( 'drops the result if a send is running when it arrives', async () => {
 		mockFetchOdieChat.mockResolvedValue( serverChat( [ userMessage, botMessage, delayedReply ] ) );
 		renderHook( () => usePollForDelayedReplies() );
