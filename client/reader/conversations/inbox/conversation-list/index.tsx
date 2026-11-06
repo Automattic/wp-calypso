@@ -26,8 +26,6 @@ interface Props {
 	isError?: boolean;
 	onRetry?: () => void;
 	hasMore?: boolean;
-	/** False shows a Load more button in place of loading on scroll. */
-	autoLoad?: boolean;
 	isLoadingMore?: boolean;
 	isLoadMoreError?: boolean;
 	onLoadMore?: () => void;
@@ -56,7 +54,6 @@ export function ConversationList( {
 	isError,
 	onRetry,
 	hasMore,
-	autoLoad = true,
 	isLoadingMore,
 	isLoadMoreError,
 	onLoadMore,
@@ -82,13 +79,12 @@ export function ConversationList( {
 
 	// Runs again after each page, so a page the filters empty out still loads the next one.
 	useEffect( () => {
-		if ( isEndInView && autoLoad && hasMore && ! isLoadingMore && ! isLoadMoreError ) {
+		if ( isEndInView && hasMore && ! isLoadingMore && ! isLoadMoreError ) {
 			onLoadMore?.();
 		}
-	}, [ isEndInView, autoLoad, hasMore, isLoadingMore, isLoadMoreError, onLoadMore ] );
+	}, [ isEndInView, hasMore, isLoadingMore, isLoadMoreError, onLoadMore ] );
 
 	const listRef = useRef< HTMLDivElement >( null );
-	const showLoadMoreButton = ! autoLoad || isLoadMoreError;
 	const refocusRef = useRef( false );
 	// The button goes away once a retry works or the last page loads, which would drop its focus.
 	useEffect( () => {
@@ -97,10 +93,10 @@ export function ConversationList( {
 		}
 		refocusRef.current = false;
 		const { activeElement, body } = document;
-		if ( ( ! hasMore || ! showLoadMoreButton ) && ( ! activeElement || activeElement === body ) ) {
+		if ( ( ! hasMore || ! isLoadMoreError ) && ( ! activeElement || activeElement === body ) ) {
 			listRef.current?.focus( { preventScroll: true } );
 		}
-	}, [ isLoadingMore, hasMore, showLoadMoreButton ] );
+	}, [ isLoadingMore, hasMore, isLoadMoreError ] );
 
 	const emptyStates = {
 		all: {
@@ -238,12 +234,7 @@ export function ConversationList( {
 						{ isLoadMoreError && (
 							<ListMessage description={ translate( 'Couldn’t load more.' ) } />
 						) }
-						{ ! isLoadMoreError && ! autoLoad && items.length === 0 && (
-							<ListMessage
-								description={ translate( 'None of the conversations loaded so far match.' ) }
-							/>
-						) }
-						{ showLoadMoreButton ? (
+						{ isLoadMoreError ? (
 							// Stays mounted while loading so the focus isn't lost.
 							<Button
 								__next40pxDefaultSize
@@ -256,7 +247,7 @@ export function ConversationList( {
 									onLoadMore?.();
 								} }
 							>
-								{ isLoadMoreError ? translate( 'Retry' ) : translate( 'Load more' ) }
+								{ translate( 'Retry' ) }
 							</Button>
 						) : (
 							isLoadingMore && <Spinner />

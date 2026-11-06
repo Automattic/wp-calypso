@@ -1,4 +1,5 @@
-export type ReadConversationsScope = 'following' | 'commented';
+/** `unread` keeps the conversations with unread comment notes. */
+export type ReadConversationsScope = 'following' | 'commented' | 'unread';
 
 export type ReadConversationsSort = 'newest' | 'most_active';
 

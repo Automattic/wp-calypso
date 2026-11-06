@@ -281,15 +281,23 @@ describe( 'ConversationsInbox', () => {
 		expect( screen.getByText( 'New: none' ) ).toBeVisible();
 	} );
 
-	it( 'shows only unread conversations on the Unread tab', async () => {
+	it( 'shows the unread conversations the route returns on the Unread tab', async () => {
 		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		replyConversations = ( uri ) =>
+			conversationsPage( uri.includes( 'scope=unread' ) ? [ unread[ 1 ] ] : conversations );
+		renderInbox( { siteId: '10', postId: '300' } );
 
 		await findRow( '10-p-300' );
 		await user.click( screen.getByRole( 'button', { name: 'Unread' } ) );
 
-		expect( screen.getByRole( 'button', { name: '10-p-200' } ) ).toBeVisible();
+		expect( await findRow( '10-p-200' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: '10-p-100' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: '10-p-300' } ) ).not.toBeInTheDocument();
+		expect( requests.filter( ( uri ) => uri.includes( 'scope=unread' ) ) ).toHaveLength( 1 );
+
+		await user.click( screen.getByRole( 'button', { name: 'Mark 1 as read' } ) );
+
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 2 ] ] ) );
 	} );
 
 	it( 'sends the sort and search to the route', async () => {

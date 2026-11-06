@@ -4,7 +4,7 @@ import { useBreakpoint } from '@automattic/viewport-react';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import ReaderMain from 'calypso/reader/components/reader-main';
 import {
@@ -40,8 +40,6 @@ interface Props {
 
 const REFRESH_INTERVAL = 60 * 1000;
 const SEARCH_DEBOUNCE = 300;
-// Unread filters loaded pages, so loading on scroll could page through every conversation.
-const UNREAD_AUTO_LOAD_PAGES = 3;
 // The routes reject longer search terms.
 const MAX_SEARCH_LENGTH = 100;
 // The Reader sidebar (~272px) and the 372px list leave the detail pane about 540px at this width.
@@ -103,13 +101,24 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		search: tab === 'yours' ? '' : debouncedSearch,
 		refetchInterval: REFRESH_INTERVAL,
 	} );
+	const unreadQuery = useConversations( {
+		sort,
+		search: debouncedSearch,
+		scope: 'unread',
+		refetchInterval: REFRESH_INTERVAL,
+		enabled: tab === 'unread',
+	} );
 	const ownCommentsQuery = useOwnComments( {
 		sort,
 		search: debouncedSearch,
 		enabled: tab === 'yours',
 	} );
-	const { conversations, unreadTotal } = conversationsQuery;
-	const listQuery = tab === 'yours' ? ownCommentsQuery : conversationsQuery;
+	// The All count stays put on the Unread tab, whose own total only covers what's still unread.
+	const { unreadTotal } = conversationsQuery;
+	// Your comments looks up the posts it opens in All.
+	const conversationsShownQuery = tab === 'unread' ? unreadQuery : conversationsQuery;
+	const { conversations } = conversationsShownQuery;
+	const listQuery = tab === 'yours' ? ownCommentsQuery : conversationsShownQuery;
 	const { fetchNextPage } = listQuery;
 	const loadMore = useCallback( () => fetchNextPage(), [ fetchNextPage ] );
 	const { mutate: markRead } = useMarkConversationsRead();
@@ -122,15 +131,7 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 		( state ) => getPreference( state, DENSITY_PREFERENCE ) ?? 'comfortable'
 	);
 
-	const visible: InboxItem[] = useMemo( () => {
-		if ( tab === 'yours' ) {
-			return ownCommentsQuery.comments;
-		}
-		// The route has no unread filter, so the Unread tab filters the pages loaded so far.
-		return tab === 'unread'
-			? conversations.filter( ( { unreadCount } ) => unreadCount > 0 )
-			: conversations;
-	}, [ conversations, ownCommentsQuery.comments, tab ] );
+	const visible: InboxItem[] = tab === 'yours' ? ownCommentsQuery.comments : conversations;
 	const selectedKey = siteId && postId ? getConversationKey( siteId, postId ) : undefined;
 	const [ opened, setOpened ] = useState< Opened >();
 	const activeOpened = opened?.key === selectedKey ? opened : undefined;
@@ -195,11 +196,11 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 	// A conversation opened from the URL, or as the first one, is read like one picked from the list.
 	useEffect( () => {
 		// A conversation opened from the list sets `opened` before the URL catches up.
-		if ( ! selectedKey || opened || ( ! found && conversationsQuery.isLoading ) ) {
+		if ( ! selectedKey || opened || ( ! found && conversationsShownQuery.isLoading ) ) {
 			return;
 		}
 		open( { key: selectedKey, unread: found, conversation: found } );
-	}, [ selectedKey, opened, found, conversationsQuery.isLoading, open ] );
+	}, [ selectedKey, opened, found, conversationsShownQuery.isLoading, open ] );
 
 	const openConversation = ( item: InboxItem, source: OpenSource ) => {
 		const key = getConversationKey( item.siteId, item.postId );
@@ -340,10 +341,6 @@ export function ConversationsInbox( { siteId, postId }: Props ) {
 					isError={ listQuery.isError && ! listQuery.data?.pages.length }
 					onRetry={ () => listQuery.refetch() }
 					hasMore={ listQuery.hasNextPage && ! listQuery.isPlaceholderData }
-					autoLoad={
-						tab !== 'unread' ||
-						( conversationsQuery.data?.pages.length ?? 0 ) < UNREAD_AUTO_LOAD_PAGES
-					}
 					isLoadingMore={ listQuery.isFetchingNextPage }
 					isLoadMoreError={ listQuery.isFetchNextPageError }
 					onLoadMore={ loadMore }
