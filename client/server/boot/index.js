@@ -41,7 +41,10 @@ export default function setup() {
 	}
 
 	if ( 'development' === process.env.NODE_ENV ) {
-		require( 'calypso/server/bundler' )( app );
+		// PROTOTYPE (DOTMSD-1670): skip the client bundler to time server boot alone.
+		if ( process.env.PROTOTYPE_NO_CLIENT_BUNDLER !== '1' ) {
+			require( 'calypso/server/bundler' )( app );
+		}
 
 		// Production servers forward a request header with the user's country code. To ensure a
 		// consistent experience, we simulate this in local development with a custom middleware.

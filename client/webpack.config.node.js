@@ -88,6 +88,15 @@ const buildDir = path.resolve( 'build' );
 
 const webpackConfig = {
 	devtool: 'source-map',
+	// PROTOTYPE (DOTMSD-1670): variant (b), persistent cache for the server build.
+	cache:
+		process.env.PROTOTYPE_SERVER_CACHE === '1'
+			? {
+					type: 'filesystem',
+					cacheDirectory: path.resolve( '.cache', 'webpack-server' ),
+					buildDependencies: { config: [ __filename ] },
+				}
+			: false,
 	entry: path.join( __dirname, 'server' ),
 	target: 'node',
 	output: {
