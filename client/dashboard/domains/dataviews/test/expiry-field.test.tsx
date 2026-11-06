@@ -12,6 +12,13 @@ import { DEFAULT_VIEW } from '../views';
 import type { DomainSummary } from '@automattic/api-core';
 import type { Field, Filter, Operator, View } from '@wordpress/dataviews';
 
+let mockHasEnTranslation = true;
+
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => () => mockHasEnTranslation,
+} ) );
+
 const DAY = 24 * 60 * 60 * 1000;
 
 const inDays = ( days: number ) => new Date( Date.now() + days * DAY ).toISOString();
@@ -48,7 +55,7 @@ async function getFields() {
 	let fields: Field< DomainSummary >[] = [];
 
 	function Probe() {
-		fields = useFields( { showPrimaryDomainBadge: false } );
+		fields = useFields();
 		return null;
 	}
 
@@ -78,7 +85,24 @@ const query = ( fields: Field< DomainSummary >[], view: Partial< View > ) =>
 
 const names = ( result: { data: DomainSummary[] } ) => result.data.map( ( d ) => d.domain );
 
-describe( 'domains "Paid until" field', () => {
+describe( 'domains expiry field', () => {
+	beforeEach( () => {
+		mockHasEnTranslation = true;
+	} );
+
+	const expiryLabel = ( fields: Field< DomainSummary >[] ) =>
+		fields.find( ( field ) => field.id === 'expiry' )?.label;
+
+	it( 'is labelled "Renews on"', async () => {
+		expect( expiryLabel( await getFields() ) ).toBe( 'Renews on' );
+	} );
+
+	it( 'keeps the "Paid until" label until "Renews on" is translated', async () => {
+		mockHasEnTranslation = false;
+
+		expect( expiryLabel( await getFields() ) ).toBe( 'Paid until' );
+	} );
+
 	it( 'sorts by date with undated domains last in both directions', async () => {
 		const fields = await getFields();
 

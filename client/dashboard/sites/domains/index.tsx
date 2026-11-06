@@ -22,6 +22,7 @@ import AddDomainButton from '../../domains/add-domain-button';
 import {
 	DomainCardsLayout,
 	filterSortAndPaginateDomains,
+	getSiteDomainPinnedRank,
 	useActions,
 	useFields,
 	DOMAINS_LIST_CONFIG,
@@ -120,7 +121,8 @@ function SiteDomains() {
 	const { data: filteredData, paginationInfo } = filterSortAndPaginateDomains(
 		siteDomains,
 		view,
-		fields
+		fields,
+		{ getPinnedRank: getSiteDomainPinnedRank }
 	);
 
 	// Hide actions column when no domain has eligible actions.
