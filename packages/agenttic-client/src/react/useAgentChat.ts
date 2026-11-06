@@ -439,6 +439,7 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	extensions?: string[]; // A2A extension URIs declared on every request's message, for features the client supports.
 	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
 	resumeOnRemount?: boolean; // Set to resume the chat, a streaming reply included, when it mounts again with the same agent.
 }
@@ -654,6 +655,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					enableStreaming: config.enableStreaming,
 					odieBotId: config.odieBotId,
 					credentials: config.credentials,
+					extensions: config.extensions,
 				} );
 
 				// Only load messages when creating a new agent (initial mount or after removeAgent)
@@ -711,6 +713,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.enableStreaming,
 		config.odieBotId,
 		config.credentials,
+		config.extensions,
 		isResumable,
 		isValidConfig,
 		pinLiveChat,

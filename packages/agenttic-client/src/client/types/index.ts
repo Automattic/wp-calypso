@@ -240,6 +240,7 @@ export interface Message {
 	metadata?: Record< string, unknown >;
 	messageId: string;
 	kind: 'message';
+	extensions?: string[]; // A2A extension URIs the message declares
 }
 
 export interface TaskStatus {
@@ -320,6 +321,7 @@ export interface ClientConfig {
 	enableStreaming?: boolean; // Enable token-by-token streaming (requires server support)
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage via WordPress.com public API.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	extensions?: string[]; // A2A extension URIs declared on every request's message, for features the client supports.
 }
 
 // Image data with optional metadata (e.g., WordPress attachment ID)
