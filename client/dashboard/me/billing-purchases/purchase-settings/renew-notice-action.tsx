@@ -1,8 +1,7 @@
 import { SubscriptionBillPeriod } from '@automattic/api-core';
-import { useNavigate } from '@tanstack/react-router';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { changePaymentMethodRoute } from '../../../app/router/me';
+import { NoticeActionButton, RouterNoticeActionLinkButton } from '../../../components/notice';
 import { isCloseToExpiration, isExpiredAndInGracePeriod, isRemoved } from '../../../utils/purchase';
 import type { Purchase } from '@automattic/api-core';
 
@@ -61,53 +60,32 @@ export function RenewNoticeAction( {
 	purchase: Purchase;
 	onClick: () => void;
 } ) {
-	const navigate = useNavigate();
-
 	// When the purchase is close to expiration and has no payment method or
 	// can't be renewed, we should show an "Add Payment Method" action.
 	const shouldAddPaymentSourceInsteadOfRenewingNow =
 		isCloseToExpiration( purchase ) ||
 		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_MONTHLY_PERIOD;
 	if (
-		! purchase.payment_type &&
-		( ! purchase.can_explicit_renew || shouldAddPaymentSourceInsteadOfRenewingNow )
+		( ! purchase.payment_type &&
+			( ! purchase.can_explicit_renew || shouldAddPaymentSourceInsteadOfRenewingNow ) ) ||
+		// When the purchase is far away from expiration but was paid for with
+		// credits, we should show an "Add Payment Method" action too.
+		( purchase.payment_type === 'credits' && purchase.expiry_status === 'manual-renew' )
 	) {
 		return (
-			<Button
-				variant="primary"
-				onClick={ () => {
-					navigate( {
-						to: changePaymentMethodRoute.fullPath,
-						params: { purchaseId: purchase.ID },
-					} );
-				} }
+			<RouterNoticeActionLinkButton
+				variant="solid"
+				to={ changePaymentMethodRoute.fullPath }
+				params={ { purchaseId: purchase.ID } }
 			>
 				{ __( 'Add payment method' ) }
-			</Button>
-		);
-	}
-
-	// When the purchase is far away from expiration but was paid for with
-	// credits, we should show an "Add Payment Method" action too.
-	if ( purchase.payment_type === 'credits' && purchase.expiry_status === 'manual-renew' ) {
-		return (
-			<Button
-				variant="primary"
-				onClick={ () => {
-					navigate( {
-						to: changePaymentMethodRoute.fullPath,
-						params: { purchaseId: purchase.ID },
-					} );
-				} }
-			>
-				{ __( 'Add payment method' ) }
-			</Button>
+			</RouterNoticeActionLinkButton>
 		);
 	}
 
 	return (
-		<Button variant="primary" onClick={ onClick }>
+		<NoticeActionButton variant="solid" onClick={ onClick }>
 			{ __( 'Renew now' ) }
-		</Button>
+		</NoticeActionButton>
 	);
 }

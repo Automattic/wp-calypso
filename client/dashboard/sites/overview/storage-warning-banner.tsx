@@ -8,7 +8,7 @@ import { sprintf, __ } from '@wordpress/i18n';
 import { useState } from 'react';
 import { useIntlLocale } from '../../app/locale';
 import Notice from '../../components/notice';
-import UpsellCTAButton from '../../components/upsell-cta-button';
+import { UpsellNoticeActionButton } from '../../components/upsell-cta-button';
 import { formatStorage, getStorageAlertLevel } from '../../utils/site-storage';
 import { AddStorageModal } from '../storage/add-storage-modal';
 import type { Site } from '@automattic/api-core';
@@ -76,14 +76,14 @@ export function StorageWarningBanner( { site }: { site: Site } ) {
 			<Notice
 				{ ...noticeProps }
 				actions={
-					<UpsellCTAButton
-						variant="primary"
+					<UpsellNoticeActionButton
+						variant="solid"
 						upsellId={ upsellId }
 						upsellFeatureId="site-storage"
 						onClick={ () => setIsModalOpen( true ) }
 					>
 						{ __( 'Add more storage' ) }
-					</UpsellCTAButton>
+					</UpsellNoticeActionButton>
 				}
 			>
 				{ sprintf(

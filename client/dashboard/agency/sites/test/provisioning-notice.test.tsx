@@ -78,7 +78,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 		render( <ProvisioningSiteNotices /> );
 
 		expect( await screen.findByText( 'Your WordPress.com site is ready!' ) ).toBeVisible();
-		expect( screen.getByRole( 'link', { name: 'Set up your site' } ) ).toHaveAttribute(
+		expect( screen.getByRole( 'link', { name: /^Set up your site/ } ) ).toHaveAttribute(
 			'href',
 			'https://wordpress.com/overview/site7.wordpress.com'
 		);
@@ -96,7 +96,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 		render( <ProvisioningSiteNotices /> );
 
 		await waitFor( () =>
-			expect( screen.getByRole( 'link', { name: 'Set up your site' } ) ).toHaveAttribute(
+			expect( screen.getByRole( 'link', { name: /^Set up your site/ } ) ).toHaveAttribute(
 				'href',
 				'/sites/site7.wordpress.com'
 			)
@@ -110,7 +110,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 		trackProvisioningSite( 7 );
 
 		const { router } = render( <ProvisioningSiteNotices /> );
-		const link = await screen.findByRole( 'link', { name: 'Set up your site' } );
+		const link = await screen.findByRole( 'link', { name: /^Set up your site/ } );
 		await waitFor( () => expect( link ).toHaveAttribute( 'href', '/sites/site7.wordpress.com' ) );
 		await userEvent.click( link );
 
@@ -132,7 +132,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 		trackProvisioningSite( 7 );
 
 		const { router } = render( <ProvisioningSiteNotices /> );
-		await userEvent.click( await screen.findByRole( 'link', { name: 'Set up your site' } ) );
+		await userEvent.click( await screen.findByRole( 'link', { name: /^Set up your site/ } ) );
 
 		expect( await screen.findByRole( 'dialog', { name: 'Purchase complete!' } ) ).toBeVisible();
 
@@ -149,7 +149,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 		trackProvisioningSite( 7 );
 
 		const { router } = render( <ProvisioningSiteNotices /> );
-		const link = await screen.findByRole( 'link', { name: 'Set up your site' } );
+		const link = await screen.findByRole( 'link', { name: /^Set up your site/ } );
 		await waitFor( () => expect( link ).toHaveAttribute( 'href', '/sites/site7.wordpress.com' ) );
 		await userEvent.click( link );
 

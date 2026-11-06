@@ -7,10 +7,10 @@ import {
 	siteWordPressVersionQuery,
 } from '@automattic/api-queries';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
+import { NoticeActionButton } from '../../components/notice';
 import type { Site } from '@automattic/api-core';
 
 interface BetaOptOutButtonProps {
@@ -46,13 +46,13 @@ export function BetaOptOutButton( { site, onSuccess }: BetaOptOutButtonProps ) {
 	};
 
 	return (
-		<Button
-			variant="primary"
+		<NoticeActionButton
+			variant="solid"
 			onClick={ handleClick }
-			isBusy={ mutation.isPending }
+			loading={ mutation.isPending }
 			disabled={ mutation.isPending }
 		>
 			{ __( 'Opt out of the WordPress beta version' ) }
-		</Button>
+		</NoticeActionButton>
 	);
 }
