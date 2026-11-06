@@ -93,6 +93,29 @@ describe( 'WordPressMigration', () => {
 		// flight would take the next test's mocked replies.
 		focusManager.setFocused( undefined );
 		window.history.replaceState( {}, '', '/' );
+		window._sva = undefined;
+		window.localStorage.clear();
+	} );
+
+	test( 'asks for the migration survey once per migration, even when the run is resumed', async () => {
+		const invokeEvent = jest.fn();
+		Object.assign( window, { _sva: { invokeEvent } } );
+		const started = { ...running, started_at: '2026-11-05T10:00:00+00:00' };
+		mockApi().get( statusPath ).query( true ).reply( 200, started );
+
+		const { unmount } = render( <WordPressMigration site={ site } />, { queryClient } );
+		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
+		expect( invokeEvent ).toHaveBeenCalledWith( 'migrationStarted' );
+		unmount();
+
+		// Coming back to the same migration, resumed after a pause, doesn't ask again.
+		queryClient.clear();
+		const resumed = { ...running, started_at: '2026-11-05T11:00:00+00:00' };
+		mockApi().get( statusPath ).query( true ).reply( 200, resumed );
+		render( <WordPressMigration site={ site } />, { queryClient } );
+		expect( await screen.findByRole( 'heading', { name: 'Migrating example.com' } ) ).toBeVisible();
+		expect( invokeEvent ).toHaveBeenCalledTimes( 1 );
 	} );
 
 	it( 'walks through connecting the source, then follows the migration once it starts', async () => {
