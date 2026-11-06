@@ -18,7 +18,13 @@ const WOOPAYMENTS_LEARN_MORE_LINK =
 
 const EXCLUDED_SITE_IDS: number[] = [];
 
-export default function WooPaymentsDashboardEmptyState() {
+export default function WooPaymentsDashboardEmptyState( {
+	autoOpenAddSite,
+	onAddSiteAutoOpen,
+}: {
+	autoOpenAddSite?: boolean;
+	onAddSiteAutoOpen?: () => void;
+} ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { data: agency } = useQuery( activeAgencyQuery() );
 	const agencyId = agency?.id ?? 0;
@@ -54,6 +60,8 @@ export default function WooPaymentsDashboardEmptyState() {
 									recordTracksEvent={ recordTracksEvent }
 									shouldUseRouterLink
 									isApprovalGated={ isApprovalGated }
+									autoOpen={ autoOpenAddSite }
+									onAutoOpen={ onAddSiteAutoOpen }
 									onSelectSite={ ( siteId ) =>
 										router.navigate( {
 											to: earnWooPaymentsSetupRoute.fullPath,

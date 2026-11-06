@@ -3,8 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
+import { useConsumeSearchParams } from '../../../app/hooks/use-consume-search-params';
 import { useLocale } from '../../../app/locale';
 import { earnWooPaymentsSetupRoute } from '../../../app/router/agency';
 import { DataViewsCard } from '../../../components/dataviews';
@@ -21,6 +22,8 @@ import ConsolidatedViews from './consolidated-views';
 import WooPaymentsDashboardEmptyState from './empty-state';
 import { useDownloadCommissionsReport } from './use-download-commissions-report';
 import useWooPaymentsDashboardData from './use-woopayments-dashboard-data';
+
+const ADD_TO_SITE_PARAMS = [ 'add-woopayments-to-site' ] as const;
 
 export default function EarnWooPayments() {
 	const { data: agency } = useQuery( activeAgencyQuery() );
@@ -43,6 +46,12 @@ export default function EarnWooPayments() {
 	const { downloadCommissionsReport } = useDownloadCommissionsReport( agencyId );
 	const router = useRouter();
 	const isApprovalGated = useIsApprovalGated();
+	const [ isAddSiteRequested, setIsAddSiteRequested ] = useState( false );
+	useConsumeSearchParams( ADD_TO_SITE_PARAMS, {
+		when: ( params ) => params[ 'add-woopayments-to-site' ] === 'true',
+		onConsume: () => setIsAddSiteRequested( true ),
+	} );
+	const handleAddSiteAutoOpen = useCallback( () => setIsAddSiteRequested( false ), [] );
 
 	const navigateToSiteSetup = useCallback(
 		( siteId: number ) =>
@@ -71,6 +80,8 @@ export default function EarnWooPayments() {
 						onSelectSite={ navigateToSiteSetup }
 						shouldUseRouterLink
 						isApprovalGated={ isApprovalGated }
+						autoOpen={ isAddSiteRequested }
+						onAutoOpen={ handleAddSiteAutoOpen }
 					/>
 				) : undefined
 			}
@@ -102,7 +113,10 @@ export default function EarnWooPayments() {
 			}
 		>
 			{ showEmptyState ? (
-				<WooPaymentsDashboardEmptyState />
+				<WooPaymentsDashboardEmptyState
+					autoOpenAddSite={ isAddSiteRequested }
+					onAddSiteAutoOpen={ handleAddSiteAutoOpen }
+				/>
 			) : (
 				<VStack spacing={ 6 }>
 					<ConsolidatedViews
