@@ -23,7 +23,11 @@ import { useEffect, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
-import { useComments } from 'calypso/reader/data/comments';
+import {
+	getConversationKey,
+	useUnfollowConversation,
+	type Conversation,
+} from 'calypso/reader/data/conversations';
 import { usePost } from 'calypso/reader/data/post';
 import { getPostUrl } from 'calypso/reader/route';
 import { useDispatch, useSelector } from 'calypso/state';
@@ -34,7 +38,7 @@ import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions'
 import { followConversation, muteConversation } from 'calypso/state/reader/conversations/actions';
 import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import { getReaderConversationFollowStatus } from 'calypso/state/reader/conversations/selectors';
-import type { Conversation } from '../group-notes';
+import type { ReadConversationReason } from '@automattic/api-core';
 import type { AppState } from 'calypso/types';
 
 import './style.scss';
@@ -48,7 +52,24 @@ interface Props {
 	onBack?: () => void;
 	onPrevious?: () => void;
 	onNext?: () => void;
+	/** Starts the thread at this comment instead of the latest one. */
+	startingCommentId?: number;
 	highlightedCommentIds?: number[];
+}
+
+function getTitle( translate: ReturnType< typeof useTranslate >, reason: ReadConversationReason ) {
+	switch ( reason ) {
+		case 'reply':
+			return translate( 'Replied to you' );
+		case 'mention':
+			return translate( 'You were mentioned' );
+		case 'own_post':
+			return translate( 'Your post' );
+		case 'commented':
+			return translate( 'You commented' );
+		default:
+			return translate( 'You follow this' );
+	}
 }
 
 export function ConversationDetail( {
@@ -58,6 +79,7 @@ export function ConversationDetail( {
 	onBack,
 	onPrevious,
 	onNext,
+	startingCommentId,
 	highlightedCommentIds,
 }: Props ) {
 	const translate = useTranslate();
@@ -67,9 +89,6 @@ export function ConversationDetail( {
 	const dispatch = useDispatch();
 	const { data: post, isLoading } = usePost( { blogId: siteId, postId } );
 	const currentUserId = useSelector( getCurrentUserId );
-	const { comments } = useComments( { siteId, postId }, { enabled: !! post && ! post.is_error } );
-	const hasCommented =
-		!! currentUserId && comments.some( ( comment ) => comment.author?.ID === currentUserId );
 	const showWelcome = useSelector(
 		( state ) =>
 			hasReceivedRemotePreferences( state ) &&
@@ -78,17 +97,17 @@ export function ConversationDetail( {
 	const followStatus = useSelector( ( state: AppState ) =>
 		getReaderConversationFollowStatus( state, { siteId, postId } )
 	);
-	const isFollowing = followStatus === CONVERSATION_FOLLOW_STATUS.following;
+	// Redux knows only about follows changed or fetched in this session.
+	const isFollowing = followStatus
+		? followStatus === CONVERSATION_FOLLOW_STATUS.following
+		: !! conversation?.isFollowing;
 	const isMuted = followStatus === CONVERSATION_FOLLOW_STATUS.muting;
-	const conversationKey = `${ siteId }-${ postId }`;
-	const latestCommentId = conversation?.latestCommentId;
+	const anchorKey = `${ getConversationKey( siteId, postId ) }-${ startingCommentId ?? '' }`;
+	const anchorId = startingCommentId ?? conversation?.latestCommentId;
 	// Keeps the thread anchored when a list refresh brings in a newer latest comment.
-	const [ startingComment, setStartingComment ] = useState( {
-		key: conversationKey,
-		id: latestCommentId,
-	} );
-	if ( startingComment.key !== conversationKey || ( ! startingComment.id && latestCommentId ) ) {
-		setStartingComment( { key: conversationKey, id: latestCommentId } );
+	const [ startingComment, setStartingComment ] = useState( { key: anchorKey, id: anchorId } );
+	if ( startingComment.key !== anchorKey || ( ! startingComment.id && anchorId ) ) {
+		setStartingComment( { key: anchorKey, id: anchorId } );
 	}
 
 	const commentCount = Number(
@@ -99,12 +118,19 @@ export function ConversationDetail( {
 	const date = post?.date ? moment( String( post.date ) ) : null;
 	const postUrl = post ? getPostUrl( post ) : '';
 
-	let title = translate( 'You follow this' );
-	if ( currentUserId && author?.ID === currentUserId ) {
+	let title: string;
+	if ( conversation ) {
+		title = getTitle( translate, conversation.reason );
+	} else if ( currentUserId && author?.ID === currentUserId ) {
 		title = translate( 'Your post' );
-	} else if ( hasCommented ) {
-		title = translate( 'You commented' );
+	} else if ( startingCommentId ) {
+		// Opened from Your comments before the conversation loaded.
+		title = getTitle( translate, 'commented' );
+	} else {
+		title = translate( 'Conversation' );
 	}
+
+	const { mutate: unfollow } = useUnfollowConversation();
 
 	const act = ( event: string, action: typeof followConversation ) => () => {
 		dispatch( recordReaderTracksEvent( event, { source: 'post_menu' }, { post } ) );
@@ -113,13 +139,27 @@ export function ConversationDetail( {
 
 	const controls = [
 		{ title: translate( 'View post' ) as string, onClick: () => page( postUrl ) },
-		! isFollowing && {
-			title: translate( 'Follow conversation' ) as string,
-			onClick: act(
-				'calypso_reader_conversations_inbox_conversation_followed',
-				followConversation
-			),
-		},
+		isFollowing
+			? {
+					title: translate( 'Unfollow conversation' ) as string,
+					onClick: () => {
+						dispatch(
+							recordReaderTracksEvent(
+								'calypso_reader_conversations_inbox_conversation_unfollowed',
+								{ source: 'post_menu' },
+								{ post }
+							)
+						);
+						unfollow( { blogId: siteId, postId } );
+					},
+				}
+			: {
+					title: translate( 'Follow conversation' ) as string,
+					onClick: act(
+						'calypso_reader_conversations_inbox_conversation_followed',
+						followConversation
+					),
+				},
 		! isMuted && {
 			title: translate( 'Mute conversation' ) as string,
 			onClick: act( 'calypso_reader_conversations_inbox_conversation_muted', muteConversation ),
@@ -263,7 +303,7 @@ export function ConversationDetail( {
 							</HStack>
 
 							<Comments
-								key={ conversationKey }
+								key={ startingComment.key }
 								useBlockEditor
 								showNestingReplyArrow
 								post={ post }

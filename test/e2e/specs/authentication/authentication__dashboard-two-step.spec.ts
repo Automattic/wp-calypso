@@ -224,9 +224,11 @@ test.describe(
 				} );
 
 				// Onboarding treatments send a different subject from the control group.
-				expect( [ `Activate ${ testUser.email }`, 'Verify your email.' ] ).toContain(
-					message.subject
-				);
+				expect( [
+					`Activate ${ testUser.email }`,
+					'Verify your email.',
+					'Confirm your email address',
+				] ).toContain( message.subject );
 
 				const links = await clientEmail.getLinksFromMessage( message );
 				const activationLink = links.find( ( link ) => link.includes( 'activate' ) ) as string;

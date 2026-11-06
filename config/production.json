@@ -131,7 +131,6 @@
 		"plans/upgradeable-storage": true,
 		"plugins/stepper-plans": true,
 		"plugins/universal-header": true,
-		"posthog-tracking": true,
 		"press-this": true,
 		"purchases/cancel-options-cards": false,
 		"purchases/new-payment-methods": true,

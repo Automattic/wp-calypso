@@ -11,7 +11,6 @@ import type { ComponentProps } from 'react';
 const mockUseAgentChat = jest.fn();
 const mockUpdateSessionId = jest.fn();
 let mockManagerHasAgent = true;
-let mockManagerTurnInFlight = false;
 let mockConversationHistory: Array< {
 	role: string;
 	messageId?: string;
@@ -27,7 +26,8 @@ let mockConversationConfig:
 					parts: Array< { type: 'text'; text: string } >;
 					kind: 'message';
 				} >,
-				sessionId: string
+				sessionId: string,
+				isStale?: boolean
 			) => void;
 			waitForReply?: boolean;
 			onRetry?: ( question: string ) => void;
@@ -340,7 +340,7 @@ jest.mock(
 		getAgentManager: () => ( {
 			updateSessionId: mockUpdateSessionId,
 			hasAgent: () => mockManagerHasAgent,
-			isTurnInFlight: () => mockManagerTurnInFlight,
+			isTurnInFlight: () => false,
 			getConversationHistory: () => mockConversationHistory,
 		} ),
 		useAgentChat: ( config: typeof mockAgentChatConfig ) => {
@@ -471,6 +471,7 @@ const mockTakeRefusalCode = jest.fn( (): string | undefined => undefined );
 const mockCreditsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsCommand: unknown;
 const mockRefusalNotice = jest.fn( (): unknown => undefined );
+const mockTopUpsNotice = jest.fn( (): unknown => undefined );
 let mockCreditsOnTryAgain: ( ( message: string ) => void ) | undefined;
 let mockCreditsOnShowCredits: ( () => void ) | undefined;
 jest.mock( '../../hooks/use-credits', () => ( {
@@ -498,6 +499,7 @@ jest.mock( '../../hooks/use-credits', () => ( {
 			notice: mockCreditsNotice(),
 			creditsCommand: mockCreditsCommand,
 			refusalNotice: mockRefusalNotice(),
+			topUpsNotice: mockTopUpsNotice(),
 		};
 	},
 } ) );
@@ -809,6 +811,7 @@ describe( 'OrchestratorChat', () => {
 		mockCreditsNotice.mockReturnValue( undefined );
 		mockCreditsCommand = undefined;
 		mockRefusalNotice.mockReturnValue( undefined );
+		mockTopUpsNotice.mockReturnValue( undefined );
 		mockUseImageUpload.mockReturnValue( createImageUpload() );
 		mockIsReaderChatAgent.mockReturnValue( false );
 		mockAgentConfig = { agentId: 'wp-orchestrator' };
@@ -821,7 +824,6 @@ describe( 'OrchestratorChat', () => {
 		mockRenderedSuggestionsLimit = undefined;
 		sessionStorage.clear();
 		mockManagerHasAgent = true;
-		mockManagerTurnInFlight = false;
 		mockConversationHistory = [];
 		mockHasEditorRedo = false;
 		mockOpenPost = null;
@@ -857,6 +859,12 @@ describe( 'OrchestratorChat', () => {
 		}
 	);
 
+	it( 'resumes a reply still streaming when the chat mounts again', () => {
+		render( chat() );
+
+		expect( mockAgentChatConfig ).toEqual( expect.objectContaining( { resumeOnRemount: true } ) );
+	} );
+
 	it( 'ignores a conversation result for a discarded agent', () => {
 		mockManagerHasAgent = false;
 		render( chat() );
@@ -872,17 +880,16 @@ describe( 'OrchestratorChat', () => {
 		expect( getSessionId( 'wp-orchestrator' ) ).toBe( '' );
 	} );
 
-	it( 'keeps the live history when a remount fetches the conversation mid-turn', () => {
-		mockManagerTurnInFlight = true;
+	it( 'keeps the live history when it is newer than the fetched conversation', () => {
 		const loadMessages = jest.fn();
 		mockUseAgentChat.mockReturnValue( agentChatReturn( { loadMessages } ) );
 		render( chat() );
 
 		const { onSuccess } = mockUseConversation.mock.calls.at( -1 )![ 0 ] as {
-			onSuccess: ( messages: unknown[], sessionId: string ) => void;
+			onSuccess: ( messages: unknown[], sessionId: string, isStale: boolean ) => void;
 		};
 		act( () => {
-			onSuccess( [], 'canonical-session-id' );
+			onSuccess( [], 'canonical-session-id', true );
 		} );
 
 		expect( loadMessages ).not.toHaveBeenCalled();
@@ -4589,9 +4596,8 @@ describe( 'OrchestratorChat', () => {
 		);
 		const { rerender } = render( chat() );
 
-		mockManagerTurnInFlight = true;
 		act( () => {
-			mockConversationConfig?.onSuccess?.( [], 'history-session' );
+			mockConversationConfig?.onSuccess?.( [], 'history-session', true );
 		} );
 
 		// The stream drops the picker for a moment.
@@ -5002,6 +5008,30 @@ describe( 'OrchestratorChat', () => {
 			expect( props.notice ).toEqual( notice );
 			expect( props.isProcessing ).toBe( false );
 			expect( mockConversationConfig?.waitForReply ).toBe( true );
+		} );
+
+		it( 'shows the top-ups notice only once neither the credits notice nor a reply notice applies', () => {
+			const creditsNotice = { message: '6k credits left.', dismissible: true };
+			const replyNotice = { message: 'Waiting for the reply…' };
+			const topUpsNotice = { message: 'Now using top-ups: 25k left.', dismissible: true };
+			const noticeProp = () =>
+				( mockAgentChat.mock.calls.at( -1 )![ 0 ] as { notice?: unknown } ).notice;
+			mockTopUpsNotice.mockReturnValue( topUpsNotice );
+			mockCreditsNotice.mockReturnValue( creditsNotice );
+			mockUseConversation.mockReturnValue( { isLoading: false, notice: replyNotice } );
+			const { rerender } = render( chat() );
+
+			expect( noticeProp() ).toBe( creditsNotice );
+
+			mockCreditsNotice.mockReturnValue( undefined );
+			rerender( chat() );
+
+			expect( noticeProp() ).toBe( replyNotice );
+
+			mockUseConversation.mockReturnValue( { isLoading: false } );
+			rerender( chat() );
+
+			expect( noticeProp() ).toBe( topUpsNotice );
 		} );
 
 		it( 'does not wait while a turn runs in this tab', () => {

@@ -6,24 +6,31 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
+import { useMediaQuery } from '@wordpress/compose';
 import { Icon, check } from '@wordpress/icons';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
-import ConnectedReaderSubscriptionListItem from 'calypso/blocks/reader-subscription-list-item/connected';
 import { SiteIcon } from 'calypso/blocks/site-icon';
 import EmptyContent from 'calypso/components/empty-content';
 import { trackScrollPage } from 'calypso/reader/controller-helper';
-import { useFourForFour } from 'calypso/reader/data/four-for-four';
+import {
+	useFourForFour,
+	useFourForFourReview,
+	type FourForFourBlockingVerdict,
+} from 'calypso/reader/data/four-for-four';
 import ReaderFollowButton from 'calypso/reader/follow-button';
 import { READER_FOUR_FOR_FOUR } from 'calypso/reader/follow-sources';
+import { getSiteDescription, getSiteName } from 'calypso/reader/get-helpers';
 import { TypedStream } from 'calypso/reader/stream/typed';
 import { useRecordReaderTracksEvent } from 'calypso/state/reader/analytics/useRecordReaderTracksEvent';
 import {
 	FOUR_FOR_FOUR_FOLLOW_API_SOURCE,
+	FOUR_FOR_FOUR_PREVIEW_QUERY,
 	FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS,
 	FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX,
 } from './constants';
+import type { ReadFourForFourCandidate } from '@automattic/api-core';
 
 // The modal reuses the Reader onboarding discover step's frame and layout.
 import 'calypso/reader/onboarding-rsm/style.scss';
@@ -32,11 +39,155 @@ import './style.scss';
 
 const TITLE_ID = 'four-for-four-modal-title';
 
+const getCandidateName = ( candidate: ReadFourForFourCandidate ) =>
+	getSiteName( { site: candidate.site } ) ?? candidate.name;
+
+function SiteDetails( { candidate }: { candidate: ReadFourForFourCandidate } ) {
+	const description = getSiteDescription( { site: candidate.site } );
+	return (
+		<>
+			<SiteIcon size={ 32 } iconUrl={ candidate.icon ?? undefined } />
+			<span className="four-for-four-modal__site-byline">
+				<span className="four-for-four-modal__site-name">{ getCandidateName( candidate ) }</span>
+				{ description && (
+					<span className="four-for-four-modal__site-description">{ description }</span>
+				) }
+			</span>
+		</>
+	);
+}
+
+function FollowButton( { candidate }: { candidate: ReadFourForFourCandidate } ) {
+	return (
+		<ReaderFollowButton
+			siteUrl={ candidate.feedUrl || candidate.url }
+			feedId={ candidate.feedId ?? undefined }
+			siteId={ candidate.blogId }
+			followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
+			followSource={ READER_FOUR_FOR_FOUR }
+			hasButtonStyle
+			followIcon={ <></> }
+			followingIcon={
+				<Icon key="following" className="reader-following-feed" icon={ check } size={ 18 } />
+			}
+		/>
+	);
+}
+
+function SitePreview( { candidate }: { candidate: ReadFourForFourCandidate } ) {
+	const recordReaderTracksEvent = useRecordReaderTracksEvent();
+	const recordTracksRef = useRef( recordReaderTracksEvent );
+	recordTracksRef.current = recordReaderTracksEvent;
+
+	// Reset the scroll and record the preview each time a site is shown here,
+	// including the initial default selection.
+	const streamRef = useRef< HTMLDivElement | null >( null );
+	useEffect( () => {
+		if ( streamRef.current ) {
+			streamRef.current.scrollTop = 0;
+		}
+		recordTracksRef.current( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }site_previewed`, {
+			blog_id: candidate.blogId,
+			is_participant: candidate.isParticipant ? 1 : 0,
+		} );
+	}, [ candidate.blogId ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
+
+	return (
+		<>
+			<div className="subscribe-modal__preview-stream-header">
+				<div className="subscribe-modal__preview-site">
+					<SiteIcon size={ 36 } iconUrl={ candidate.icon ?? undefined } />
+					<span className="subscribe-modal__preview-site-title">
+						{ getCandidateName( candidate ) }
+					</span>
+				</div>
+				<FollowButton key={ candidate.blogId } candidate={ candidate } />
+			</div>
+			<div className="subscribe-modal__preview-stream-container" ref={ streamRef }>
+				<div className="subscribe-modal__preview-stream-inner" inert>
+					<TypedStream
+						streamKey={ candidate.streamKey }
+						className="is-site-stream subscribe-modal__preview-stream no-padding"
+						followSource={ READER_FOUR_FOR_FOUR }
+						useCompactCards
+						showBylineSecondarySiteLink={ false }
+						trackScrollPage={ trackScrollPage }
+					/>
+				</div>
+			</div>
+		</>
+	);
+}
+
+function SiteReviewPending( { isReviewing }: { isReviewing: boolean } ) {
+	const translate = useTranslate();
+	return (
+		<VStack
+			className="subscribe-modal__container four-for-four-modal__review"
+			alignment="center"
+			justify="center"
+			spacing={ 4 }
+		>
+			<Spinner />
+			{ isReviewing && (
+				<p className="subscribe-modal__description" role="status">
+					{ translate( 'Checking your site to see if it qualifies…' ) }
+				</p>
+			) }
+		</VStack>
+	);
+}
+
+function SiteNotEligible( {
+	verdict,
+	onClose,
+}: {
+	verdict: FourForFourBlockingVerdict;
+	onClose: () => void;
+} ) {
+	const translate = useTranslate();
+	return (
+		<VStack
+			className="subscribe-modal__container four-for-four-modal__review"
+			alignment="center"
+			justify="center"
+			spacing={ 6 }
+		>
+			<VStack alignment="center" spacing={ 2 } expanded={ false }>
+				<h2 id={ TITLE_ID } className="subscribe-modal__title">
+					{ verdict === 'not_english'
+						? translate( '4 for 4 is English-only for now' )
+						: translate( '4 for 4 is for personal blogs' ) }
+				</h2>
+				<p className="subscribe-modal__description">
+					{ verdict === 'not_english'
+						? translate(
+								"Sorry, we can only include sites written in English right now, so we can't include yours."
+							)
+						: translate(
+								"Sorry, we're mainly looking for personal blogs right now, where people write about their own stories, life, hobbies or travel, so we can't include your site."
+							) }
+				</p>
+			</VStack>
+			<Button __next40pxDefaultSize variant="primary" onClick={ onClose }>
+				{ translate( 'Back to Reader' ) }
+			</Button>
+		</VStack>
+	);
+}
+
+/**
+ * The writer's site is checked before the list is shown, so nobody subscribes
+ * to 4 sites and only then finds out their own site won't be shown.
+ */
 export function FourForFour() {
 	const translate = useTranslate();
 	const recordReaderTracksEvent = useRecordReaderTracksEvent();
 	const recordTracksRef = useRef( recordReaderTracksEvent );
 	recordTracksRef.current = recordReaderTracksEvent;
+
+	const { isLoadingStatus, isReviewing, blockingVerdict } = useFourForFourReview();
+	const isReviewPending = ! blockingVerdict && ( isLoadingStatus || isReviewing );
 
 	const {
 		candidates,
@@ -50,25 +201,10 @@ export function FourForFour() {
 		retrySave,
 	} = useFourForFour();
 
+	const hasPreview = useMediaQuery( FOUR_FOR_FOUR_PREVIEW_QUERY );
 	const [ selectedBlogId, setSelectedBlogId ] = useState< number | null >( null );
 	const selectedCandidate =
 		candidates.find( ( candidate ) => candidate.blogId === selectedBlogId ) ?? candidates[ 0 ];
-
-	// Reset the preview scroll and record the preview whenever the selection
-	// changes, including the initial default selection.
-	const previewRef = useRef< HTMLDivElement | null >( null );
-	useEffect( () => {
-		if ( ! selectedCandidate ) {
-			return;
-		}
-		if ( previewRef.current ) {
-			previewRef.current.scrollTop = 0;
-		}
-		recordTracksRef.current( `${ FOUR_FOR_FOUR_TRACKS_EVENT_PREFIX }site_previewed`, {
-			blog_id: selectedCandidate.blogId,
-			is_participant: selectedCandidate.isParticipant ? 1 : 0,
-		} );
-	}, [ selectedCandidate?.blogId ] ); // eslint-disable-line react-hooks/exhaustive-deps -- keyed on the id, not the object
 
 	const isComplete = status === 'completed';
 	const progressCount = Math.min( followedCount, FOUR_FOR_FOUR_REQUIRED_SUBSCRIPTIONS );
@@ -86,13 +222,8 @@ export function FourForFour() {
 		page( '/reader' );
 	};
 
-	return (
-		<Modal
-			onRequestClose={ handleClose }
-			size="medium"
-			className="reader-onboarding-rsm-modal subscribe-modal four-for-four-modal"
-			aria={ { labelledby: TITLE_ID } }
-		>
+	const sites = (
+		<>
 			<div className="subscribe-modal__container">
 				<div className="subscribe-modal__content">
 					<div className="subscribe-modal__intro">
@@ -188,69 +319,38 @@ export function FourForFour() {
 							) }
 							{ candidates.length > 0 && (
 								<div className="subscribe-modal__recommended-sites">
-									{ candidates.map( ( candidate ) => (
-										<ConnectedReaderSubscriptionListItem
-											key={ candidate.blogId }
-											feedId={ candidate.feedId ?? undefined }
-											siteId={ candidate.blogId }
-											site={ candidate.site }
-											url={ candidate.feedUrl || candidate.url }
-											showLastUpdatedDate={ false }
-											showNotificationSettings={ false }
-											showFollowedOnDate={ false }
-											followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
-											followSource={ READER_FOUR_FOR_FOUR }
-											replaceStreamClickWithItemClick
-											onItemClick={ () => setSelectedBlogId( candidate.blogId ) }
-											isSelected={ selectedCandidate?.blogId === candidate.blogId }
-										/>
-									) ) }
+									{ candidates.map( ( candidate ) =>
+										hasPreview ? (
+											<button
+												key={ candidate.blogId }
+												type="button"
+												className={ clsx(
+													'subscribe-modal__site-card',
+													'four-for-four-modal__site',
+													{ 'is-selected': selectedCandidate?.blogId === candidate.blogId }
+												) }
+												aria-pressed={ selectedCandidate?.blogId === candidate.blogId }
+												onClick={ () => setSelectedBlogId( candidate.blogId ) }
+											>
+												<SiteDetails candidate={ candidate } />
+											</button>
+										) : (
+											<div
+												key={ candidate.blogId }
+												className="subscribe-modal__site-card four-for-four-modal__site"
+											>
+												<SiteDetails candidate={ candidate } />
+												<FollowButton candidate={ candidate } />
+											</div>
+										)
+									) }
 								</div>
 							) }
 						</div>
 						<div className="subscribe-modal__preview-column">
 							<div className="subscribe-modal__preview-placeholder">
-								{ selectedCandidate && (
-									<>
-										<div className="subscribe-modal__preview-stream-header">
-											<div className="subscribe-modal__preview-site">
-												<SiteIcon size={ 36 } iconUrl={ selectedCandidate.icon ?? undefined } />
-												<span className="subscribe-modal__preview-site-title">
-													{ selectedCandidate.name }
-												</span>
-											</div>
-											<ReaderFollowButton
-												key={ selectedCandidate.blogId }
-												siteUrl={ selectedCandidate.feedUrl || selectedCandidate.url }
-												feedId={ selectedCandidate.feedId ?? undefined }
-												siteId={ selectedCandidate.blogId }
-												followApiSource={ FOUR_FOR_FOUR_FOLLOW_API_SOURCE }
-												followSource={ READER_FOUR_FOR_FOUR }
-												hasButtonStyle
-												followIcon={ <></> }
-												followingIcon={
-													<Icon
-														key="following"
-														className="reader-following-feed"
-														icon={ check }
-														size={ 18 }
-													/>
-												}
-											/>
-										</div>
-										<div className="subscribe-modal__preview-stream-container" ref={ previewRef }>
-											<div className="subscribe-modal__preview-stream-inner" inert>
-												<TypedStream
-													streamKey={ selectedCandidate.streamKey }
-													className="is-site-stream subscribe-modal__preview-stream no-padding"
-													followSource={ READER_FOUR_FOR_FOUR }
-													useCompactCards
-													showBylineSecondarySiteLink={ false }
-													trackScrollPage={ trackScrollPage }
-												/>
-											</div>
-										</div>
-									</>
+								{ selectedCandidate && hasPreview && (
+									<SitePreview candidate={ selectedCandidate } />
 								) }
 							</div>
 						</div>
@@ -292,6 +392,28 @@ export function FourForFour() {
 					</HStack>
 				</HStack>
 			</div>
+		</>
+	);
+
+	let content = sites;
+	if ( blockingVerdict ) {
+		content = <SiteNotEligible verdict={ blockingVerdict } onClose={ handleClose } />;
+	} else if ( isReviewPending ) {
+		content = <SiteReviewPending isReviewing={ isReviewing } />;
+	}
+
+	return (
+		<Modal
+			onRequestClose={ handleClose }
+			size="medium"
+			className="reader-onboarding-rsm-modal subscribe-modal four-for-four-modal"
+			aria={ { labelledby: TITLE_ID } }
+			// The pending screen has no heading to label the dialog with.
+			contentLabel={
+				isReviewPending ? String( translate( 'Subscribe to 4 new writers' ) ) : undefined
+			}
+		>
+			{ content }
 		</Modal>
 	);
 }
