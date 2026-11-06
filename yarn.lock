@@ -1894,6 +1894,7 @@ __metadata:
     "@automattic/languages": "workspace:^"
     "@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^"
     "@automattic/wp-oxc-makepot": "workspace:^"
+    "@wordpress/a11y": "npm:^5.1.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/data": "npm:^11.1.0"
