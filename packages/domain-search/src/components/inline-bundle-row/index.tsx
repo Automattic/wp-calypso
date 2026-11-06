@@ -7,7 +7,7 @@ import {
 	__experimentalHStack as HStack,
 } from '@wordpress/components';
 import { sprintf } from '@wordpress/i18n';
-import { arrowRight, Icon, lock, plus } from '@wordpress/icons';
+import { arrowRight, Icon, lockOutline, plus } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { useEffect } from 'react';
 import { getBundlePrimaryDomain } from '../../helpers/get-bundle-primary-domain';
@@ -157,7 +157,7 @@ export const InlineBundleRow = ( { bundle, isLoading }: InlineBundleRowProps ) =
 						</DomainSuggestionBadge>
 					</HStack>
 					<HStack justify="flex-start" spacing={ 2 } expanded={ false }>
-						<Icon icon={ lock } size={ 18 } className="inline-bundle-row__lock-icon" />
+						<Icon icon={ lockOutline } size={ 18 } className="inline-bundle-row__lock-icon" />
 						<Text size={ 13 } variant="muted" className="inline-bundle-row__subline">
 							{ __( 'Secure popular domain extensions and protect your brand' ) }
 						</Text>

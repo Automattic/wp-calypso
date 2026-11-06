@@ -8,7 +8,7 @@ import {
 } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
-import { check, code, lock, plus, trendingUp } from '@wordpress/icons';
+import { check, code, lockOutline, plus, trendingUp } from '@wordpress/icons';
 import enterpriseTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-1.webp';
 import enterpriseTestimonial2 from 'calypso/assets/images/a8c-for-agencies/hosting/enterprise-testimonial-2.webp';
 import premierTestimonial1 from 'calypso/assets/images/a8c-for-agencies/hosting/premier-testimonial-1.webp';
@@ -83,7 +83,7 @@ export function HostingFeatures( { brand, showFreeDomain = true }: HostingFeatur
 			],
 		},
 		{
-			icon: lock,
+			icon: lockOutline,
 			title: __( 'Security' ),
 			items: [
 				__( 'DDoS protection' ),

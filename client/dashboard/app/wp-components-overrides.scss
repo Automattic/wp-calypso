@@ -4,11 +4,3 @@
 .components-button:focus:not( :active ):not( .components-panel__body-toggle ) {
 	outline-offset: 0;
 }
-
-// @wordpress/icons stroke-drawn icons draw with `color` and set `fill: none` on the svg. Rules
-// that fill their shapes, such as @wordpress/components 37's select arrow, would fill them in
-// solid. Shapes with their own `fill` attribute are filled on purpose. Calypso sets the same rule,
-// and says when to remove it, in calypso/assets/stylesheets/_wp-components-overrides.scss.
-svg[stroke="currentColor"][style*="fill: none"] :is(path, circle, rect, line, polyline, polygon, ellipse):not([fill]) {
-	fill: none !important;
-}

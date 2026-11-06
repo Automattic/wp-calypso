@@ -8,7 +8,7 @@ import {
 	code,
 	cog,
 	commentAuthorAvatar,
-	lock,
+	lockOutline,
 	notAllowed,
 	payment,
 	seen,
@@ -161,7 +161,7 @@ class MeSidebar extends Component {
 						selected={ itemLinkMatches( '/security', path ) }
 						link="/me/security"
 						label={ translate( 'Security' ) }
-						icon={ lock }
+						icon={ lockOutline }
 						onNavigate={ this.onNavigate }
 						preloadSectionName="security"
 					/>

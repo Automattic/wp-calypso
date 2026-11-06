@@ -69,7 +69,7 @@ export const Modal = createComponentImplementation(
 						<Dialog.Title>
 							{ props.accessibility?.label || __( 'Details', 'default' ) }
 						</Dialog.Title>
-						{ /* CloseIconButton's tooltip needs private APIs that older WordPress hosts lack. */ }
+						{ /* CloseIcon's tooltip needs private APIs that older WordPress hosts lack. */ }
 						<Dialog.Action
 							className="ai-ui-renderer__dialog-close"
 							variant="minimal"

@@ -1,7 +1,7 @@
 import { siteLaunchpadQuery, sitePreviewLinksQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
-import { lock, published } from '@wordpress/icons';
+import { lockOutline, published } from '@wordpress/icons';
 import { launch } from '../../components/icons';
 import OverviewCard from '../../components/overview-card';
 import { wpcomLink } from '../../utils/link';
@@ -128,7 +128,7 @@ function VisibilityCardPrivate( { site }: { site: Site } ) {
 	return (
 		<OverviewCard
 			{ ...CARD_PROPS }
-			icon={ lock }
+			icon={ lockOutline }
 			heading={ __( 'Private' ) }
 			description={ __( 'Only invited users can view your site.' ) }
 			link={ getSiteVisibilityURL( site ) }

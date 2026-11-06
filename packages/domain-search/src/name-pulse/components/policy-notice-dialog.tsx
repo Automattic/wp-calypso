@@ -30,7 +30,7 @@ export const NamePulsePolicyNoticeDialog = ( {
 			<Dialog.Popup size="small" ref={ popupRef } initialFocus={ popupRef }>
 				<Dialog.Header>
 					<Dialog.Title>{ notice.title }</Dialog.Title>
-					<Dialog.CloseIconButton />
+					<Dialog.CloseIcon />
 				</Dialog.Header>
 				<Dialog.Content>
 					<Dialog.Description>{ notice.message }</Dialog.Description>
