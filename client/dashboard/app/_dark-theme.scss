@@ -91,7 +91,7 @@
 
 /* MCP connect card */
 @mixin dashboard-dark-theme-mcp-connect {
-	.mcp-connect__tile-target:hover .mcp-connect__tile.components-card {
+	.mcp-connect__tile.components-card:hover {
 		box-shadow: 0 0 0 1px var( --dashboard-surface__border-color );
 		background: color-mix(
 			in srgb,
