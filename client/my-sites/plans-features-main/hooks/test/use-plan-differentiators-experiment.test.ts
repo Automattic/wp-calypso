@@ -7,6 +7,7 @@ import { useSelector } from 'calypso/state';
 import usePlanDifferentiatorsExperiment, {
 	PLAN_DIFFERENTIATORS_EXPERIMENT_LAUNCH_DATE,
 } from '../use-plan-differentiators-experiment';
+import type { PlansIntent } from '@automattic/plans-grid-next';
 
 jest.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
@@ -73,14 +74,18 @@ function mockNoSite() {
 	mockSitesState( {} );
 }
 
+const INTENT = 'plans-default-wpcom' as const;
+
 const SIGNUP_PARAMS = {
 	flowName: 'onboarding',
+	intent: INTENT,
 	isInSignup: true,
 	siteId: null,
 };
 
 const SITE_PARAMS = {
 	flowName: null,
+	intent: INTENT,
 	isInSignup: false,
 	siteId: SITE_ID,
 };
@@ -98,6 +103,36 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 
 			expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: true } );
 			expect( result.current ).toEqual( CONTROL_RESULT );
+		} );
+
+		test( 'is not eligible for intents that curate their own plans or features', () => {
+			mockUseExperiment.mockReturnValue( [ false, null ] );
+
+			const { result } = renderHook( () =>
+				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
+			);
+
+			expect( mockUseExperiment ).toHaveBeenCalledWith( EXPERIMENT_NAME, { isEligible: false } );
+			expect( result.current ).toEqual( INELIGIBLE_RESULT );
+		} );
+
+		test( 'waits for the intent before enrolling', () => {
+			mockUseExperiment.mockReturnValue( [ false, null ] );
+
+			const { result, rerender } = renderHook(
+				( { intent }: { intent?: PlansIntent } ) =>
+					usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent } ),
+				{ initialProps: {} }
+			);
+
+			expect( mockUseExperiment ).toHaveBeenLastCalledWith( EXPERIMENT_NAME, {
+				isEligible: false,
+			} );
+			expect( result.current ).toEqual( { ...INELIGIBLE_RESULT, isLoading: true } );
+
+			rerender( { intent: INTENT } );
+
+			expect( mockUseExperiment ).toHaveBeenLastCalledWith( EXPERIMENT_NAME, { isEligible: true } );
 		} );
 
 		test( 'is not eligible for other signup flows', () => {
@@ -187,17 +222,6 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 			} );
 		} );
 
-		test( 'keeps the normal order for intents that curate their own plan mix', () => {
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'reversed_order' } ] );
-
-			const { result } = renderHook( () =>
-				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
-			);
-
-			expect( result.current.variant ).toBe( 'reversed_order' );
-			expect( result.current.useReversedPlanOrder ).toBe( false );
-		} );
-
 		test( 'shows the MCP feature for the mcp_features variant', () => {
 			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_features' } ] );
 
@@ -208,17 +232,6 @@ describe( 'usePlanDifferentiatorsExperiment', () => {
 				variant: 'mcp_features',
 				useMcpFeature: true,
 			} );
-		} );
-
-		test( 'hides the MCP feature for intents that curate their own feature lists', () => {
-			mockUseExperiment.mockReturnValue( [ false, { variationName: 'mcp_features' } ] );
-
-			const { result } = renderHook( () =>
-				usePlanDifferentiatorsExperiment( { ...SIGNUP_PARAMS, intent: 'plans-newsletter' } )
-			);
-
-			expect( result.current.variant ).toBe( 'mcp_features' );
-			expect( result.current.useMcpFeature ).toBe( false );
 		} );
 
 		test( 'falls back to control for an unknown variation', () => {

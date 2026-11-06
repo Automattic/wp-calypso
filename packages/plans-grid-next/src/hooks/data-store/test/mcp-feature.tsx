@@ -78,44 +78,50 @@ describe( 'mcp_features experiment variant', () => {
 		} );
 	} );
 
-	describe( 'staging site', () => {
-		it.each( [
-			[ PLAN_BUSINESS, false ],
-			[ PLAN_BUSINESS, true ],
-			[ PLAN_ECOMMERCE, false ],
-			[ PLAN_ECOMMERCE, true ],
-		] )( 'replaces the dev tools on %s with useMcpFeature %s', ( planSlug, useMcpFeature ) => {
-			const features = cardFeatures( planSlug, useMcpFeature );
-			const stagingFeature = features.find(
-				( feature ) => feature.getSlug() === FEATURE_SITE_STAGING_SITES
-			);
-
-			expect( stagingFeature?.getTitle() ).toBe( 'Staging site' );
-			expect( features.map( ( feature ) => feature.getSlug() ) ).not.toContain( FEATURE_DEV_TOOLS );
-		} );
-	} );
-
 	describe( 'comparison grid', () => {
 		it( 'has an AI agents row in the variant only', () => {
 			expect( comparisonRows( true ) ).toContain( FEATURE_CONNECT_AI_AGENTS );
 			expect( comparisonRows( false ) ).not.toContain( FEATURE_CONNECT_AI_AGENTS );
 		} );
 
-		it( 'includes AI agents from Personal up, but not on Free', () => {
+		const hasAgentsFeature = ( lineup: string[], planSlug: string ) => {
 			const { result } = renderHook( () =>
 				useRestructuredPlanFeaturesForComparisonGrid( {
-					gridPlans: toGridPlans( [ PLAN_FREE, ...PAID_PLANS ] ),
+					gridPlans: toGridPlans( lineup ),
 					allFeaturesList: getFeaturesList(),
 				} )
 			);
 
-			const hasAgentsFeature = ( planSlug: string ) =>
-				result.current[ planSlug ].wpcomFeatures.some(
-					( feature ) => feature.getSlug() === FEATURE_CONNECT_AI_AGENTS
-				);
+			return result.current[ planSlug ].wpcomFeatures.some(
+				( feature ) => feature.getSlug() === FEATURE_CONNECT_AI_AGENTS
+			);
+		};
 
-			expect( hasAgentsFeature( PLAN_FREE ) ).toBe( false );
-			expect( PAID_PLANS.every( hasAgentsFeature ) ).toBe( true );
+		it( 'does not include AI agents on Free', () => {
+			expect( hasAgentsFeature( [ PLAN_FREE, ...PAID_PLANS ], PLAN_FREE ) ).toBe( false );
+		} );
+
+		it.each( PAID_PLANS )( 'includes AI agents on %s without the plans before it', ( planSlug ) => {
+			expect( hasAgentsFeature( [ planSlug ], planSlug ) ).toBe( true );
 		} );
 	} );
+} );
+
+describe( 'staging site on the plan cards', () => {
+	it.each( [ PLAN_BUSINESS, PLAN_ECOMMERCE ] )(
+		'replaces the dev tools on %s for every variant',
+		( planSlug ) => {
+			[ false, true ].forEach( ( useMcpFeature ) => {
+				const features = cardFeatures( planSlug, useMcpFeature );
+				const stagingFeature = features.find(
+					( feature ) => feature.getSlug() === FEATURE_SITE_STAGING_SITES
+				);
+
+				expect( stagingFeature?.getTitle() ).toBe( 'Staging site' );
+				expect( features.map( ( feature ) => feature.getSlug() ) ).not.toContain(
+					FEATURE_DEV_TOOLS
+				);
+			} );
+		}
+	);
 } );

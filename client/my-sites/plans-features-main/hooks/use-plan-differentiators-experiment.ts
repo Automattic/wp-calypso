@@ -23,12 +23,11 @@ type PlanDifferentiatorsResult = {
 	variant: PlanDifferentiatorsExperimentVariant;
 	/**
 	 * When true, list the plans most expensive first, with Enterprise kept in the last column.
-	 * Not for intents that curate their own plan mix.
 	 */
 	useReversedPlanOrder: boolean;
 	/**
 	 * When true, show the AI agents (MCP) feature on the plan cards, in place of premium themes,
-	 * and in the comparison grid. Not for intents that curate their own feature lists.
+	 * and in the comparison grid.
 	 */
 	useMcpFeature: boolean;
 	/**
@@ -68,6 +67,9 @@ function usePlanDifferentiatorsExperiment( {
 	// Eligibility depends on the site's options, so report loading until the site arrives
 	// rather than briefly reporting control.
 	const isSiteLoading = !! siteId && ! hasSite;
+	// The intent is resolved in an effect, and useExperiment enrols on its first eligible render,
+	// so wait for it. Otherwise users on a tailored intent get enrolled before they are excluded.
+	const isIntentLoading = ! intent;
 
 	const wasCreatedWithOnboardingFlow = siteCreationFlow === 'onboarding';
 	const wasCreatedAfterExperimentLaunch =
@@ -76,13 +78,16 @@ function usePlanDifferentiatorsExperiment( {
 
 	const isEligibleSignupFlow = isInSignup && flowName === 'onboarding';
 	const isEligible =
-		( isEligibleSignupFlow && ! siteId ) ||
-		( wasCreatedWithOnboardingFlow && wasCreatedAfterExperimentLaunch );
+		! isIntentLoading &&
+		// Tailored intents replace the plan mix and feature lists that the variants change.
+		! hasTailoredFeatureList( intent ) &&
+		( ( isEligibleSignupFlow && ! siteId ) ||
+			( wasCreatedWithOnboardingFlow && wasCreatedAfterExperimentLaunch ) );
 
 	const [ isExperimentLoading, assignment ] = useExperiment( PLAN_DIFFERENTIATORS_EXPERIMENT_NAME, {
 		isEligible,
 	} );
-	const isLoading = isSiteLoading || isExperimentLoading;
+	const isLoading = isSiteLoading || isIntentLoading || isExperimentLoading;
 
 	const rawVariationName = assignment?.variationName;
 
@@ -95,9 +100,8 @@ function usePlanDifferentiatorsExperiment( {
 	return {
 		isLoading,
 		variant,
-		// Reversing assumes the standard lineup, which a curated intent (e.g. newsletter) replaces.
-		useReversedPlanOrder: variant === 'reversed_order' && ! hasTailoredFeatureList( intent ),
-		useMcpFeature: variant === 'mcp_features' && ! hasTailoredFeatureList( intent ),
+		useReversedPlanOrder: variant === 'reversed_order',
+		useMcpFeature: variant === 'mcp_features',
 		isExperimentEligible: isEligible,
 	};
 }

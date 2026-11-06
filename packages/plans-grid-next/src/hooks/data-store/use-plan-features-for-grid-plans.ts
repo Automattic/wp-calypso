@@ -270,6 +270,7 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 		 * below, so the relative order of the intent branches themselves is untouched.
 		 */
 		const useDifferentiationFeatures = ! hasTailoredFeatureList( intent );
+
 		return gridPlans.reduce(
 			( acc, gridPlan ) => {
 				const planSlug = gridPlan.planSlug;
@@ -280,16 +281,20 @@ const usePlanFeaturesForGridPlans: UsePlanFeaturesForGridPlans = ( {
 				let jetpackFeatures: FeatureObject[] = [];
 
 				if ( usePlansGridRedesignFeatures && useDifferentiationFeatures ) {
-					const featureSlugs = getPlansGridRedesignFeatureSlugsForPlan(
-						planSlug,
+					const featureSlugs =
 						planConstantObj?.getVar42NoAiSignupWpcomFeatures?.() ??
-							planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
-							[]
+						planConstantObj?.get2023PricingGridSignupWpcomFeatures?.() ??
+						[];
+					const redesignFeatureSlugs = getPlansGridRedesignFeatureSlugsForPlan(
+						planSlug,
+						featureSlugs
 					);
 
 					wpcomFeatures = getPlanFeaturesObject(
 						allFeaturesList,
-						useMcpFeature ? replacePremiumThemesWithAiAgents( featureSlugs ) : featureSlugs,
+						useMcpFeature
+							? replacePremiumThemesWithAiAgents( redesignFeatureSlugs )
+							: redesignFeatureSlugs,
 						true
 					);
 
