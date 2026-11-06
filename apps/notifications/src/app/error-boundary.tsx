@@ -1,4 +1,3 @@
-import { speak } from '@wordpress/a11y';
 import { __ } from '@wordpress/i18n';
 import { Notice } from '@wordpress/ui';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
@@ -21,27 +20,28 @@ export default class ErrorBoundary extends Component< Props, State > {
 
 	componentDidCatch( error: Error, errorInfo: ErrorInfo ) {
 		logError( error, { componentStack: errorInfo.componentStack } );
-		// @wordpress/ui's Notice doesn't announce itself.
-		speak(
-			`${ __( 'Something went wrong' ) } ${ __( 'Please close and reopen notifications.' ) }`,
-			'assertive'
-		);
 	}
 
 	render() {
-		if ( this.state.hasError ) {
-			return (
-				<div className="wpnc-app__error">
-					<Notice.Root intent="error" className="wpnc-app__error-notice">
-						<Notice.Title>{ __( 'Something went wrong' ) }</Notice.Title>
-						<Notice.Description>
-							{ __( 'Please close and reopen notifications.' ) }
-						</Notice.Description>
-					</Notice.Root>
-				</div>
-			);
-		}
+		const { hasError } = this.state;
 
-		return this.props.children;
+		// The list stays mounted so it announces the notice when it appears.
+		return (
+			<>
+				{ ! hasError && this.props.children }
+				<Notice.List>
+					{ hasError && (
+						<div className="wpnc-app__error">
+							<Notice.Root intent="error" politeness="assertive" className="wpnc-app__error-notice">
+								<Notice.Title>{ __( 'Something went wrong' ) }</Notice.Title>
+								<Notice.Description>
+									{ __( 'Please close and reopen notifications.' ) }
+								</Notice.Description>
+							</Notice.Root>
+						</div>
+					) }
+				</Notice.List>
+			</>
+		);
 	}
 }

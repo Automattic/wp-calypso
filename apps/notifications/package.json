@@ -32,7 +32,6 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/webpack-extensive-lodash-replacement-plugin": "workspace:^",
-		"@wordpress/a11y": "^5.1.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/compose": "^9.1.0",
 		"@wordpress/data": "^11.1.0",

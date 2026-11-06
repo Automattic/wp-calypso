@@ -1,9 +1,8 @@
 import { Step } from '@automattic/onboarding';
-import { speak } from '@wordpress/a11y';
 import { Notice } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import { BrandHeader } from 'calypso/components/connect-screen/brand-header';
 import { UserCard } from 'calypso/components/connect-screen/user-card';
@@ -31,33 +30,6 @@ export default function SsoPartnerBranded( {
 
 	const isEmailVerified = Boolean( currentUser?.email_verified );
 
-	const sendingTitle = translate( 'Sending…' );
-
-	const errorTitle = translate( 'The email could not be sent.' );
-
-	const successDescription = translate( 'We sent another confirmation email to %(email)s.', {
-		args: {
-			email: currentUser?.email,
-		},
-	} );
-
-	const defaultDescription = translate(
-		'You must verify your email to sign in with WordPress.com.'
-	);
-
-	// @wordpress/ui's Notice doesn't announce itself, so announce the current message.
-	const spokenVerificationMessage = isSendingVerificationEmail
-		? sendingTitle
-		: ( verificationEmailError && errorTitle ) ||
-			( verificationEmailSent && successDescription ) ||
-			defaultDescription;
-
-	useEffect( () => {
-		if ( ! isEmailVerified ) {
-			speak( spokenVerificationMessage, 'polite' );
-		}
-	}, [ isEmailVerified, spokenVerificationMessage ] );
-
 	const sendVerificationEmail = ( event ) => {
 		event?.preventDefault?.();
 
@@ -78,6 +50,8 @@ export default function SsoPartnerBranded( {
 
 	const renderEmailVerificationNotice = () => {
 		if ( isSendingVerificationEmail ) {
+			const sendingTitle = translate( 'Sending…' );
+
 			return (
 				<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
 					<Notice.Title>{ sendingTitle }</Notice.Title>
@@ -86,6 +60,8 @@ export default function SsoPartnerBranded( {
 		}
 
 		if ( verificationEmailError ) {
+			const errorTitle = translate( 'The email could not be sent.' );
+
 			return (
 				<Notice.Root intent="warning" className="jetpack-connect__sso-partner-branded-email-notice">
 					<Notice.Title>{ errorTitle }</Notice.Title>
@@ -99,12 +75,22 @@ export default function SsoPartnerBranded( {
 		}
 
 		if ( verificationEmailSent ) {
+			const successDescription = translate( 'We sent another confirmation email to %(email)s.', {
+				args: {
+					email: currentUser?.email,
+				},
+			} );
+
 			return (
 				<Notice.Root intent="success" className="jetpack-connect__sso-partner-branded-email-notice">
 					<Notice.Description>{ successDescription }</Notice.Description>
 				</Notice.Root>
 			);
 		}
+
+		const defaultDescription = translate(
+			'You must verify your email to sign in with WordPress.com.'
+		);
 
 		return (
 			<Notice.Root intent="info" className="jetpack-connect__sso-partner-branded-email-notice">
@@ -141,7 +127,7 @@ export default function SsoPartnerBranded( {
 
 				<div className="jetpack-connect__sso-partner-branded-logged-in">
 					{ errorNotice }
-					{ ! isEmailVerified && renderEmailVerificationNotice() }
+					{ ! isEmailVerified && <Notice.List>{ renderEmailVerificationNotice() }</Notice.List> }
 					<UserCard
 						className="jetpack-connect__sso-partner-branded-user-card"
 						size="large"
