@@ -53,7 +53,7 @@
 		"@a2ui/web_core": "0.14.0",
 		"@automattic/charts": "^1.10.0",
 		"@automattic/number-formatters": "^1.2.10",
-		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/base-styles": "^15.0.0",
 		"@wordpress/i18n": "^7.1.0",
 		"@wordpress/icons": "^15.5.0",
 		"@wordpress/ui": "^0.23.0",
