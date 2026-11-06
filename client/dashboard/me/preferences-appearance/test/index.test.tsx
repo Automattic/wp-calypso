@@ -6,14 +6,17 @@ import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ColorSchemeProvider } from 'calypso/lib/color-scheme';
 import PreferencesAppearance from '..';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
 	return {
 		...actual,
 		__esModule: true,
@@ -21,7 +24,7 @@ jest.mock( '@automattic/calypso-config', () => {
 	};
 } );
 
-jest.mock( '../../../utils/is-dashboard-backport', () => ( {
+vi.mock( '../../../utils/is-dashboard-backport', () => ( {
 	isDashboardBackport: jest.fn( () => false ),
 } ) );
 

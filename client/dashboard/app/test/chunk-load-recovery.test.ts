@@ -2,10 +2,11 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { bumpStat } from '../analytics';
 import { isChunkLoadError, maybeReloadForChunkError } from '../chunk-load-recovery';
 
-jest.mock( '../analytics', () => ( {
+vi.mock( '../analytics', () => ( {
 	bumpStat: jest.fn(),
 } ) );
 

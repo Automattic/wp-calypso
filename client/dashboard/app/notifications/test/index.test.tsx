@@ -6,6 +6,7 @@ import { captureException } from '@automattic/calypso-sentry';
 import { useQuery } from '@tanstack/react-query';
 import { act, render, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
+import { vi } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { bumpStat } from '../../analytics';
 import { useAuth } from '../../auth';
@@ -34,36 +35,36 @@ let mockAlertCallbacks: {
 };
 const mockRecordTracksEvent = jest.fn();
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: Object.assign(
 		jest.fn( () => 'test-env' ),
 		{ isEnabled: jest.fn() }
 	),
 } ) );
-jest.mock( '@automattic/calypso-sentry', () => ( { captureException: jest.fn() } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
+vi.mock( '@automattic/calypso-sentry', () => ( { captureException: jest.fn() } ) );
+vi.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn( () => Promise.resolve() ),
 } ) );
-jest.mock( '../../analytics', () => ( {
+vi.mock( '../../analytics', () => ( {
 	bumpStat: jest.fn(),
 	useAnalytics: () => ( { recordTracksEvent: mockRecordTracksEvent } ),
 } ) );
-jest.mock( '@tanstack/react-query', () => ( {
+vi.mock( '@tanstack/react-query', () => ( {
 	useMutation: jest.fn( () => ( { mutateAsync: jest.fn() } ) ),
 	useQuery: jest.fn(),
 } ) );
-jest.mock( '@automattic/api-queries', () => ( {
+vi.mock( '@automattic/api-queries', () => ( {
 	userPreferenceQuery: jest.fn( ( key ) => ( { queryKey: [ key ] } ) ),
 	userPreferencesMutation: jest.fn( () => ( {} ) ),
 	sitesQuery: ( ...args: unknown[] ) => mockSitesQuery( ...args ),
 } ) );
-jest.mock( '../../auth', () => ( { useAuth: jest.fn() } ) );
-jest.mock( '../../help-center', () => ( {
+vi.mock( '../../auth', () => ( { useAuth: jest.fn() } ) );
+vi.mock( '../../help-center', () => ( {
 	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
 } ) );
-jest.mock( '../../locale', () => ( { useLocale: jest.fn( () => 'en' ) } ) );
-jest.mock( '../../omnibar/events', () => ( {
+vi.mock( '../../locale', () => ( { useLocale: jest.fn( () => 'en' ) } ) );
+vi.mock( '../../omnibar/events', () => ( {
 	omnibarEvents: {
 		notificationsOpen: { emit: jest.fn() },
 		notificationsUnseenCount: { emit: jest.fn() },
@@ -71,27 +72,23 @@ jest.mock( '../../omnibar/events', () => ( {
 	},
 	useOmnibarEvent: jest.fn(),
 } ) );
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	Button: jest.fn( () => null ),
 	Dropdown: jest.fn( () => null ),
 } ) );
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	createHigherOrderComponent: ( component: unknown ) => component,
 	useViewportMatch: jest.fn( () => false ),
 } ) );
-jest.mock( '@wordpress/i18n', () => ( { __: ( value: string ) => value } ) );
-jest.mock( '@wordpress/icons', () => ( { bell: {}, bellUnread: {} } ) );
-jest.mock( 'calypso/lib/wp', () => ( { __esModule: true, default: {} } ) );
-jest.mock(
-	'@automattic/notifications/src/app/subscriber-notifications',
-	() => ( { subscribeSubscriberNotifications: mockSubscribeSubscriberNotifications } ),
-	{ virtual: true }
-);
-jest.mock(
-	'@automattic/notifications/src/app/client',
-	() => ( { subscribeUnseenCount: mockSubscribeUnseenCount } ),
-	{ virtual: true }
-);
+vi.mock( '@wordpress/i18n', () => ( { __: ( value: string ) => value } ) );
+vi.mock( '@wordpress/icons', () => ( { bell: {}, bellUnread: {} } ) );
+vi.mock( 'calypso/lib/wp', () => ( { __esModule: true, default: {} } ) );
+vi.mock( '@automattic/notifications/src/app/subscriber-notifications', () => ( {
+	subscribeSubscriberNotifications: mockSubscribeSubscriberNotifications,
+} ) );
+vi.mock( '@automattic/notifications/src/app/client', () => ( {
+	subscribeUnseenCount: mockSubscribeUnseenCount,
+} ) );
 
 const configure = ( featureEnabled: boolean, preferenceEnabled: boolean ) => {
 	jest

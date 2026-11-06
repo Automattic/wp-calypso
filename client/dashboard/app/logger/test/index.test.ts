@@ -3,6 +3,7 @@
  */
 
 import { captureException } from '@automattic/calypso-sentry';
+import { vi } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../../chunk-load-recovery';
 import { getDomInterferenceReport } from '../dom-interference';
@@ -10,17 +11,17 @@ import { handleOnCatch, handleUncaughtError, initLogger } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
-jest.mock( '@automattic/calypso-config', () => jest.fn( () => 'development' ) );
-jest.mock( '@automattic/calypso-sentry', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( { default: jest.fn( () => 'development' ) } ) );
+vi.mock( '@automattic/calypso-sentry', () => ( {
 	captureException: jest.fn(),
 } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
+vi.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn(),
 } ) );
-jest.mock( '../../chunk-load-recovery', () => ( {
+vi.mock( '../../chunk-load-recovery', () => ( {
 	maybeReloadForChunkError: jest.fn(),
 } ) );
-jest.mock( '../dom-interference', () => ( {
+vi.mock( '../dom-interference', () => ( {
 	getDomInterferenceReport: jest.fn( () => ( {
 		tags: { dom_google_translate: 'true' },
 		context: { fontCount: 3 },

@@ -5,6 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import StagingSiteDeleteModal from '../index';
 import type { Site } from '@automattic/api-core';
@@ -13,7 +14,7 @@ const mockCreateErrorNotice = jest.fn();
 const mockCreateSuccessNotice = jest.fn();
 const mockNavigate = jest.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createErrorNotice: mockCreateErrorNotice,
 		createSuccessNotice: mockCreateSuccessNotice,
@@ -25,8 +26,10 @@ jest.mock( '@wordpress/data', () => ( {
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 

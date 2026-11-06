@@ -27,6 +27,15 @@ export default defineConfig( {
 				find: /^@automattic\/calypso-config$/,
 				replacement: path.join( client, 'server/config/index.js' ),
 			},
+			// Externalized, the CJS browser build `require()`s @emotion/react through Node (no `browser`
+			// condition), loading a second copy with its own ThemeContext. The ESM build imports it via Vite.
+			{
+				find: /^@emotion\/styled$/,
+				replacement: path.join(
+					root,
+					'node_modules/@emotion/styled/dist/emotion-styled.browser.development.esm.js'
+				),
+			},
 			{
 				find: /^@mswjs\/interceptors\/presets\/node$/,
 				replacement: path.join(
@@ -51,7 +60,9 @@ export default defineConfig( {
 		setupFiles: [ path.join( root, 'test/dashboard/vitest-setup.ts' ) ],
 		server: {
 			deps: {
-				inline: [ 'nock' ],
+				// user-event must share RTL's copy of @testing-library/dom (the ESM build Vite resolves);
+				// externalized, Node gives it the CJS build, which RTL never configures with act().
+				inline: [ 'nock', '@testing-library/user-event' ],
 			},
 		},
 	},

@@ -1,8 +1,9 @@
+import { vi } from 'vitest';
 import * as payoutDateModule from '../../../referrals/lib/get-next-payout-date';
 import { getSiteData } from '../site-data';
 import type { WooPaymentsData } from '@automattic/api-core';
 
-jest.mock( '../../../referrals/lib/get-next-payout-date' );
+vi.mock( '../../../referrals/lib/get-next-payout-date' );
 
 describe( 'getSiteData', () => {
 	const mockWooPaymentsData: WooPaymentsData = {

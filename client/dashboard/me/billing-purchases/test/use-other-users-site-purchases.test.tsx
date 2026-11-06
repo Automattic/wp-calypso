@@ -5,12 +5,13 @@ import { fetchSitePurchases } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { vi } from 'vitest';
 import { AuthContext } from '../../../app/auth';
 import { useOtherUsersSitePurchases } from '../use-other-users-site-purchases';
 import type { Purchase, Site, User } from '@automattic/api-core';
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
 	fetchSitePurchases: jest.fn(),
 } ) );
 

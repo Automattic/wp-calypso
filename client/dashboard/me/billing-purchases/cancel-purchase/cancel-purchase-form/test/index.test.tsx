@@ -5,6 +5,7 @@
 import { disable, enable } from '@automattic/calypso-config';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
 import {
@@ -17,8 +18,10 @@ import {
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
 const mockNavigate = jest.fn();
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 

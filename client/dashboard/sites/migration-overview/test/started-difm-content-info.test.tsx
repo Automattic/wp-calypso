@@ -7,6 +7,7 @@ import { useQuery } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { StartedDIFMContentInfo } from '../started-difm-content-info';
 import type { Site } from '@automattic/api-core';
@@ -15,12 +16,14 @@ const mockNavigate = jest.fn();
 const mockCreateSuccessNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: mockCreateSuccessNotice,
 		createErrorNotice: mockCreateErrorNotice,
@@ -32,7 +35,7 @@ jest.mock( '@wordpress/data', () => ( {
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: jest.fn() } ) );
+vi.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: jest.fn() } ) );
 
 const site = {
 	ID: 123,

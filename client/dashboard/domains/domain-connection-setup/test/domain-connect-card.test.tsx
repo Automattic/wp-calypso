@@ -3,11 +3,12 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainConnectCard from '../domain-connect-card';
 
 // Mock InlineSupportLink to avoid async state updates warnings
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: ( { children }: { children: React.ReactNode } ) => <button>{ children }</button>,
 } ) );

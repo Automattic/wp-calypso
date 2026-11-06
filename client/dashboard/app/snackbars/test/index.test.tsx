@@ -6,6 +6,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { act, render } from '@testing-library/react';
 import { SnackbarList } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
+import { vi } from 'vitest';
 import Snackbars from '../index';
 
 const mockCreateSuccessNotice = jest.fn();
@@ -30,20 +31,20 @@ type MutationEvent = {
 let subscriptionCallback: ( event: MutationEvent ) => void;
 let hasSubscription = false;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useSelect: jest.fn(),
 	useDispatch: jest.fn(),
 } ) );
 
-jest.mock( '@tanstack/react-query', () => ( {
+vi.mock( '@tanstack/react-query', () => ( {
 	useQueryClient: jest.fn(),
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	SnackbarList: jest.fn( () => null ),
 } ) );
 
-jest.mock( '@wordpress/notices', () => ( {
+vi.mock( '@wordpress/notices', () => ( {
 	store: {},
 } ) );
 

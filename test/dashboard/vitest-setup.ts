@@ -12,7 +12,15 @@ import { afterEach, vi } from 'vitest';
 
 ( globalThis as any ).google = {};
 
-globalThis.CSS = { supports: vi.fn() } as any;
+// Keep `CSS.escape`, which jest-dom's `css.escape` dependency has already polyfilled.
+globalThis.CSS = { ...globalThis.CSS, supports: vi.fn() } as any;
+
+const isJsdom = typeof window !== 'undefined';
+
+if ( isJsdom ) {
+	// jsdom's DOMException comes from another realm, so `instanceof Error` is false under Vitest.
+	Object.setPrototypeOf( globalThis.DOMException.prototype, Error.prototype );
+}
 
 if ( typeof globalThis.MessageChannel === 'undefined' ) {
 	class PolyfilledMessagePort {
@@ -96,7 +104,7 @@ vi.mock( '@automattic/agenttic-ui', () => ( {
 	EmptyView: vi.fn( () => null ),
 } ) );
 
-if ( typeof window !== 'undefined' ) {
+if ( isJsdom ) {
 	await import( 'jest-canvas-mock' );
 	window.matchMedia = vi.fn( ( query: string ) => ( {
 		matches: false,

@@ -1,13 +1,14 @@
 /**
  * @jest-environment jsdom
  */
+import { vi } from 'vitest';
 import { assignNewCardProcessor } from '../assign-new-card-processor';
 import type { Purchase } from '@automattic/api-core';
 import type { StripeConfiguration } from '@automattic/calypso-stripe';
 import type { Stripe, StripeCardNumberElement } from '@stripe/stripe-js';
 
 // The Stripe SDK confirmation step is not an HTTP boundary nock can intercept.
-jest.mock( '@automattic/calypso-stripe', () => ( {
+vi.mock( '@automattic/calypso-stripe', () => ( {
 	confirmStripeSetupIntentAndAttachCard: jest.fn( async () => ( {
 		id: 'seti_123_secret',
 		payment_method: 'pm_123',

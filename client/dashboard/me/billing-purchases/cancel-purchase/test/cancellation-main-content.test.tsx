@@ -4,17 +4,20 @@
 
 import config from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CancellationMainContent from '../cancellation-main-content';
 import type { Purchase, Domain, AtomicTransfer, Site } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = jest.fn( () => '' );
-	return Object.assign( fn, {
-		__esModule: true,
-		default: fn,
-		isEnabled: jest.fn( () => false ),
-	} );
+	return {
+		...Object.assign( fn, {
+			__esModule: true,
+			default: fn,
+			isEnabled: jest.fn( () => false ),
+		} ),
+	};
 } );
 
 const mockedIsEnabled = config.isEnabled as jest.MockedFunction< typeof config.isEnabled >;

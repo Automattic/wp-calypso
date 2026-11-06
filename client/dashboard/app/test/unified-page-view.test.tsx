@@ -14,6 +14,7 @@ import {
 	Outlet,
 } from '@tanstack/react-router';
 import { act, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { PageViewTracker } from '../../components/page-view-tracker';
 import { render } from '../../test-utils';
 import { APP_CONTEXT_DEFAULT_CONFIG } from '../context';
@@ -24,27 +25,27 @@ import type { AppConfig } from '../context';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { PropsWithChildren, ReactNode } from 'react';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
+vi.mock( '@automattic/calypso-analytics', () => ( {
 	initializeAnalytics: jest.fn(),
 	recordTracksEvent: jest.fn(),
 	recordTracksPageViewWithPageParams: jest.fn(),
 } ) );
-jest.mock( '@automattic/charts', () => ( {
+vi.mock( '@automattic/charts', () => ( {
 	GlobalChartsProvider: ( { children }: PropsWithChildren ) => children,
 } ) );
-jest.mock( '../router', () => ( { getRouter: jest.fn() } ) );
-jest.mock( '../survicate', () => ( {
+vi.mock( '../router', () => ( { getRouter: jest.fn() } ) );
+vi.mock( '../survicate', () => ( {
 	useSurvicate: jest.fn(),
 	useSurvicateVisitTraits: jest.fn(),
 } ) );
-jest.mock( '../auth', () => ( {
-	...jest.requireActual( '../auth' ),
+vi.mock( '../auth', async () => ( {
+	...( await vi.importActual< typeof import( '../auth' ) >( '../auth' ) ),
 	AuthProvider: ( { children }: PropsWithChildren ) => children,
 } ) );
-jest.mock( '../i18n', () => ( {
+vi.mock( '../i18n', () => ( {
 	I18nProvider: ( { children }: PropsWithChildren ) => children,
 } ) );
-jest.mock( 'calypso/lib/color-scheme', () => ( {
+vi.mock( 'calypso/lib/color-scheme', () => ( {
 	withColorScheme: ( element: ReactNode ) => element,
 } ) );
 

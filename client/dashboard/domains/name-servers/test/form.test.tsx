@@ -3,11 +3,12 @@
  */
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import NameServersForm from '../form';
 
 // Mock InlineSupportLink to render a simple link
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: ( { supportContext }: { supportContext: string } ) => (
 		// eslint-disable-next-line jsx-a11y/anchor-is-valid
@@ -18,8 +19,10 @@ jest.mock( '../../../components/inline-support-link', () => ( {
 } ) );
 
 const mockHasEnTranslation = jest.fn( () => true );
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => mockHasEnTranslation,
 } ) );
 

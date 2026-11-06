@@ -4,17 +4,20 @@
 import { DomainPropagationStatus } from '@automattic/api-core';
 import { useQuery } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainPropagationStatusComponent from '../components/domain-propagation-status';
 
 // Mock the useQuery hook from React Query
-jest.mock( '@tanstack/react-query', () => ( {
-	...jest.requireActual( '@tanstack/react-query' ),
+vi.mock( '@tanstack/react-query', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-query' ) >(
+		'@tanstack/react-query'
+	) ),
 	useQuery: jest.fn(),
 } ) );
 
 // Mock the useTimeSince hook
-jest.mock( '../../../components/time-since', () => ( {
+vi.mock( '../../../components/time-since', () => ( {
 	useTimeSince: jest.fn( () => '2m ago' ),
 } ) );
 

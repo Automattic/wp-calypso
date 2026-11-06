@@ -3,6 +3,7 @@
  */
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../../../test-utils';
 import SolutionsCardsUpsellStep from '../solutions-cards-upsell-step';
 import type { Purchase } from '@automattic/api-core';
@@ -12,7 +13,7 @@ const mockSetNavigateToRoute = jest.fn();
 const mockSetShowHelpCenter = jest.fn();
 const mockSetOpenOdieWithContext = jest.fn();
 
-jest.mock( '../../../../../../app/help-center', () => ( {
+vi.mock( '../../../../../../app/help-center', () => ( {
 	useHelpCenter: () => ( {
 		setNewMessagingChat: mockSetNewMessagingChat,
 		setNavigateToRoute: mockSetNavigateToRoute,
@@ -23,7 +24,7 @@ jest.mock( '../../../../../../app/help-center', () => ( {
 
 let mockCanConnectToZendesk = true;
 
-jest.mock( '@automattic/zendesk-client', () => ( {
+vi.mock( '@automattic/zendesk-client', () => ( {
 	useCanConnectToZendeskMessaging: () => ( { data: mockCanConnectToZendesk } ),
 } ) );
 

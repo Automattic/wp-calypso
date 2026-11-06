@@ -8,13 +8,14 @@ import {
 	siteByIdQuery,
 } from '@automattic/api-queries';
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import AgentsManagerLoader from '../agents-manager-loader';
 import useShouldLoadAgentsManager from '../use-should-load-agents-manager';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../use-should-load-agents-manager' );
-jest.mock( '@automattic/agents-manager', () => ( {
+vi.mock( '../use-should-load-agents-manager' );
+vi.mock( '@automattic/agents-manager', () => ( {
 	__esModule: true,
 	default: () => <div role="region" aria-label="Agents Manager" />,
 } ) );

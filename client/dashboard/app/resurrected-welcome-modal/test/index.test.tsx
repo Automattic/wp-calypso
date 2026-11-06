@@ -6,6 +6,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { ResurrectedWelcomeModalGate } from '..';
 import { render } from '../../../test-utils';
 import {
@@ -16,7 +17,7 @@ import {
 } from '../constants';
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
 
-jest.mock( '../use-resurrected-free-user-eligibility' );
+vi.mock( '../use-resurrected-free-user-eligibility' );
 
 const mockUseEligibility = jest.mocked( useResurrectedFreeUserEligibility );
 const eligibleUser = {

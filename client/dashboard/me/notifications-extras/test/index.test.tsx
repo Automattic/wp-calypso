@@ -4,13 +4,16 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Snackbars from '../../../app/snackbars';
 import { render as dashboardRender } from '../../../test-utils';
 import NotificationsExtras from '../index';
 import type { UserNotificationSettings, WpcomNotificationSettings } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
 	return {
 		...actual,
 		isEnabled: ( flag: string ) => flag === 'me/email-tracking-consent' || actual.isEnabled( flag ),

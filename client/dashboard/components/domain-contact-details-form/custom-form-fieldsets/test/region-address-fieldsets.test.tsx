@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
+import { vi } from 'vitest';
 import { RegionAddressFieldsets, RegionAddressFieldsLayout } from '../../region-address-fieldsets';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -13,11 +14,11 @@ import type { DomainContactDetails, DomainContactValidationResponse } from '@aut
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 import type { ComponentType } from 'react';
 
-jest.mock( '@wordpress/compose', () => ( {
+vi.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn( () => false ), // Default to desktop view
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	__experimentalInputControl: ( {
 		label,
 		value,

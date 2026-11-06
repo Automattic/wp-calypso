@@ -4,6 +4,7 @@
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import BackupCard from '../index';
 import type { Site, ActivityLogsData } from '@automattic/api-core';
@@ -12,8 +13,8 @@ const mockSiteId = 123;
 
 const mockFetchSiteActivityLog = jest.fn();
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
 	fetchSiteActivityLog: ( ...args: unknown[] ) => mockFetchSiteActivityLog( ...args ),
 } ) );
 
@@ -27,12 +28,12 @@ const mockSite: Site = {
 	is_wpcom_atomic: true,
 } as Site;
 
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
+vi.mock( '@wordpress/i18n', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) ),
 	__: ( text: string ) => text,
 } ) );
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );

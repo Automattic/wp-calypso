@@ -5,13 +5,16 @@ import { userPurchasesQuery } from '@automattic/api-queries';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
+import { vi } from 'vitest';
 import { CANCEL_FLOW_TYPE } from '../../../../utils/purchase';
 import { useCancelMutationOnConfirm } from '../use-cancel-mutation-on-confirm';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/api-core', () => ( {} ) );
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+} ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
 		createErrorNotice: jest.fn(),

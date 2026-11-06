@@ -4,10 +4,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { SubscriberNotificationCard } from '../index';
 
-jest.mock( '@automattic/calypso-config', () => ( { isEnabled: jest.fn() } ) );
+vi.mock( '@automattic/calypso-config', () => ( { isEnabled: jest.fn() } ) );
 
 const key = 'notifications-subscriber-alerts-enabled';
 

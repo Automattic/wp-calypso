@@ -4,6 +4,7 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainUpsellCard from '../index';
 import type { Site } from '@automattic/api-core';
@@ -16,34 +17,35 @@ const mockReplaceProductsInCart = jest.fn();
 const mockCreateErrorNotice = jest.fn();
 let mockShoppingCartImportError: Error | null = null;
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
 	fetchSitePlans: ( ...args: unknown[] ) => mockFetchSitePlans( ...args ),
 	fetchDomainSuggestions: ( ...args: unknown[] ) => mockFetchDomainSuggestions( ...args ),
 } ) );
 
-jest.mock( '../../../app/shopping-cart', () => {
-	if ( mockShoppingCartImportError ) {
-		throw mockShoppingCartImportError;
-	}
+// Vitest wraps an error thrown by a mock factory in its own error, so throw from a getter instead.
+vi.mock( '../../../app/shopping-cart', () => ( {
+	get shoppingCartManagerClient() {
+		if ( mockShoppingCartImportError ) {
+			throw mockShoppingCartImportError;
+		}
 
-	return {
-		shoppingCartManagerClient: {
+		return {
 			forCartKey: () => ( {
 				actions: {
 					replaceProductsInCart: ( ...args: unknown[] ) => mockReplaceProductsInCart( ...args ),
 				},
 			} ),
-		},
-	};
-} );
+		};
+	},
+} ) );
 
 // eslint-disable-next-line no-restricted-imports
-jest.mock( 'calypso/lib/domains', () => ( {
+vi.mock( 'calypso/lib/domains', () => ( {
 	getDomainAndPlanUpsellUrl: () => '/upsell-url',
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
@@ -55,8 +57,8 @@ jest.mock( '@wordpress/data', () => ( {
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
+vi.mock( '@wordpress/i18n', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) ),
 	__: ( text: string ) => text,
 } ) );
 

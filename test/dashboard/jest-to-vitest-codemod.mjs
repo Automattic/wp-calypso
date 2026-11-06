@@ -42,11 +42,6 @@ for ( const file of files ) {
 	const flag = ( node, why ) => handFixes.push( `${ file }:${ lineOf( node ) } ${ why }` );
 
 	const isJest = ( node ) => ts.isIdentifier( node ) && node.text === 'jest';
-	const isJestCall = ( node, name ) =>
-		ts.isCallExpression( node ) &&
-		ts.isPropertyAccessExpression( node.expression ) &&
-		isJest( node.expression.expression ) &&
-		node.expression.name.text === name;
 
 	const enclosingFunction = ( node ) => {
 		for ( let n = node.parent; n; n = n.parent ) {
@@ -60,12 +55,103 @@ for ( const file of files ) {
 		}
 		return null;
 	};
+	const isMockCall = ( node ) =>
+		ts.isCallExpression( node ) &&
+		ts.isPropertyAccessExpression( node.expression ) &&
+		ts.isIdentifier( node.expression.expression ) &&
+		[ 'jest', 'vi' ].includes( node.expression.expression.text ) &&
+		node.expression.name.text === 'mock';
 	const isMockFactory = ( fn ) =>
-		fn && fn.parent && isJestCall( fn.parent, 'mock' ) && fn.parent.arguments[ 1 ] === fn;
+		fn && fn.parent && isMockCall( fn.parent ) && fn.parent.arguments[ 1 ] === fn;
+	const unwrap = ( e ) => ( ts.isParenthesizedExpression( e ) ? unwrap( e.expression ) : e );
+
+	// Jest lets a factory return the module itself (e.g. a function, read through the default
+	// import); Vitest needs an object of exports.
+	const wrapNonObjectFactory = ( call ) => {
+		const factory = call.arguments[ 1 ];
+		if ( ! factory || ! ( ts.isArrowFunction( factory ) || ts.isFunctionExpression( factory ) ) ) {
+			return;
+		}
+		if ( ts.isBlock( factory.body ) ) {
+			for ( const r of factory.body.statements.filter( ts.isReturnStatement ) ) {
+				const e = r.expression && unwrap( r.expression );
+				if ( ! e || ts.isObjectLiteralExpression( e ) ) {
+					continue;
+				}
+				// `Object.assign( fn, { default: fn, … } )`: copy its exports onto a plain object.
+				const hasDefault =
+					ts.isCallExpression( e ) &&
+					e.expression.getText( sf ) === 'Object.assign' &&
+					e.arguments.some(
+						( a ) =>
+							ts.isObjectLiteralExpression( a ) &&
+							a.properties.some( ( p ) => p.name?.getText( sf ) === 'default' )
+					);
+				if ( hasDefault ) {
+					edits.push( {
+						start: r.expression.getStart( sf ),
+						end: r.expression.getStart( sf ),
+						text: '{ ...',
+					} );
+					edits.push( { start: r.expression.end, end: r.expression.end, text: ' }' } );
+				} else {
+					edits.push( {
+						start: r.expression.getStart( sf ),
+						end: r.expression.getStart( sf ),
+						text: '{ default: ',
+					} );
+					edits.push( { start: r.expression.end, end: r.expression.end, text: ' }' } );
+				}
+			}
+			return;
+		}
+		if (
+			ts.isObjectLiteralExpression( unwrap( factory.body ) ) ||
+			ts.isAwaitExpression( unwrap( factory.body ) )
+		) {
+			return;
+		}
+		edits.push( {
+			start: factory.body.getStart( sf ),
+			end: factory.body.getStart( sf ),
+			text: '( { default: ',
+		} );
+		edits.push( { start: factory.body.end, end: factory.body.end, text: ' } )' } );
+		vitestImports.add( 'vi' );
+	};
 	const isAsync = ( fn ) => fn.modifiers?.some( ( m ) => m.kind === ts.SyntaxKind.AsyncKeyword );
 	const madeAsync = new Set();
 
+	const typeByPath = ( call ) => {
+		const [ arg ] = call.arguments;
+		if ( ! call.typeArguments && arg && ts.isStringLiteral( arg ) ) {
+			const at = call.expression.end;
+			edits.push( { start: at, end: at, text: `< typeof import( '${ arg.text }' ) >` } );
+		}
+	};
+
 	const visit = ( node ) => {
+		if ( isMockCall( node ) ) {
+			wrapNonObjectFactory( node );
+			// Vitest has no virtual mocks; it mocks any specifier it's given.
+			const opts = node.arguments[ 2 ];
+			if (
+				opts &&
+				ts.isObjectLiteralExpression( opts ) &&
+				/^\{\s*virtual:\s*true\s*\}$/.test( opts.getText( sf ) )
+			) {
+				edits.push( { start: node.arguments[ 1 ].end, end: opts.end, text: '' } );
+			}
+		}
+		if (
+			ts.isCallExpression( node ) &&
+			ts.isPropertyAccessExpression( node.expression ) &&
+			ts.isIdentifier( node.expression.expression ) &&
+			node.expression.expression.text === 'vi' &&
+			node.expression.name.text === 'importActual'
+		) {
+			typeByPath( node );
+		}
 		if ( ts.isPropertyAccessExpression( node ) && isJest( node.expression ) ) {
 			const name = node.name.text;
 			if ( name === 'requireActual' && ts.isCallExpression( node.parent ) ) {
@@ -80,11 +166,24 @@ for ( const file of files ) {
 					}
 					edits.push( { start: call.getStart( sf ), end: call.getStart( sf ), text: '( await ' } );
 					edits.push( { start: node.getStart( sf ), end: node.end, text: 'vi.importActual' } );
+					typeByPath( call );
 					edits.push( { start: call.end, end: call.end, text: ' )' } );
 					vitestImports.add( 'vi' );
 				}
-			} else if ( name === 'requireMock' ) {
-				flag( node, 'jest.requireMock has no Vitest equivalent' );
+			} else if ( name === 'requireMock' && ts.isCallExpression( node.parent ) ) {
+				const call = node.parent;
+				if ( enclosingFunction( call ) ) {
+					flag( call, 'requireMock inside a function' );
+				} else {
+					// Top-level `await import()` returns the mocked module.
+					edits.push( { start: call.getStart( sf ), end: call.getStart( sf ), text: '( await ' } );
+					edits.push( { start: node.getStart( sf ), end: node.end, text: 'import' } );
+					edits.push( {
+						start: call.end,
+						end: call.end,
+						text: ts.isAsExpression( call.parent ) ? ' ) as unknown' : ' )',
+					} );
+				}
 			} else if ( name === 'mock' || mode === 'full' ) {
 				edits.push( {
 					start: node.expression.getStart( sf ),
@@ -141,19 +240,37 @@ for ( const file of files ) {
 	const existing = sf.statements.find(
 		( s ) => ts.isImportDeclaration( s ) && s.moduleSpecifier.text === 'vitest'
 	);
+	const existingNames = existing?.importClause?.namedBindings?.elements?.map( ( e ) =>
+		e.isTypeOnly ? `type ${ e.name.text }` : e.name.text
+	);
 	if ( existing ) {
-		flag( existing, 'already imports vitest; merge imports by hand' );
+		if ( [ ...vitestImports ].some( ( n ) => ! existingNames.includes( n ) ) ) {
+			flag( existing, 'already imports vitest; merge imports by hand' );
+		}
 	} else {
 		const names = [ ...vitestImports ].sort( ( a, b ) =>
 			a.replace( 'type ', '' ).localeCompare( b.replace( 'type ', '' ) )
 		);
-		const firstImport = sf.statements.find( ( s ) => ts.isImportDeclaration( s ) );
-		const at = firstImport ? firstImport.getStart( sf ) : 0;
-		edits.push( {
-			start: at,
-			end: at,
-			text: `import { ${ names.join( ', ' ) } } from 'vitest';\n`,
-		} );
+		// After the last external value import, so `eslint --fix` can sort it into place (it won't
+		// move imports across a side-effect import such as `import '@testing-library/jest-dom'`).
+		const lastExternal = sf.statements
+			.filter(
+				( s ) =>
+					ts.isImportDeclaration( s ) &&
+					s.importClause &&
+					! s.importClause.isTypeOnly &&
+					! /^(\.|calypso\/)/.test( s.moduleSpecifier.text )
+			)
+			.pop();
+		let at;
+		let text = `import { ${ names.join( ', ' ) } } from 'vitest';\n`;
+		if ( lastExternal ) {
+			at = lastExternal.end;
+			text = '\n' + text.trimEnd();
+		} else {
+			at = sf.statements.length ? sf.statements[ 0 ].getStart( sf ) : 0;
+		}
+		edits.push( { start: at, end: at, text } );
 	}
 
 	let out = src;

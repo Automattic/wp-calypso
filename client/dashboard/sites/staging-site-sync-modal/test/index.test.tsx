@@ -5,13 +5,14 @@
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import useRewindableActivityLogQuery from '../../../../data/activity-log/use-rewindable-activity-log-query';
 import { render } from '../../../test-utils';
 import StagingSiteSyncModal from '../index';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', () =>
-	jest.fn( () => ( {
+vi.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', () => ( {
+	default: jest.fn( () => ( {
 		data: [
 			{
 				rewindId: 12345,
@@ -19,23 +20,24 @@ jest.mock( '../../../../data/activity-log/use-rewindable-activity-log-query', ()
 			},
 		],
 		isLoading: false,
-	} ) )
-);
+	} ) ),
+} ) );
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );
 
-jest.mock( '../../../components/inline-support-link', () => {
-	return jest.fn( ( { children } ) => <button>{ children }</button> );
+vi.mock( '../../../components/inline-support-link', () => {
+	return { default: jest.fn( ( { children } ) => <button>{ children }</button> ) };
 } );
 
 // Mock file browser context with a real Provider using state so updates re-render the tree
-jest.mock(
+vi.mock(
 	'../../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context',
-	() => {
-		const { createContext, useContext, createElement, useState } = jest.requireActual( 'react' );
+	async () => {
+		const { createContext, useContext, createElement, useState } =
+			await vi.importActual< typeof import( 'react' ) >( 'react' );
 
 		const FileBrowserContext = createContext( null );
 

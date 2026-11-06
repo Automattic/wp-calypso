@@ -1,9 +1,10 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { calypsoLiveRedirectorLink } from '../link';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = jest.fn();
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } ) };
 } );
 
 const IMAGE = 'registry.a8c.com/calypso/app:build-123';

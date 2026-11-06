@@ -5,6 +5,7 @@ import { onlineManager } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { render } from '../../../test-utils';
 import { bumpStat } from '../../analytics';
@@ -12,12 +13,12 @@ import { AuthContext } from '../../auth';
 import UnknownError from '../index';
 import type { User } from '@automattic/api-core';
 
-jest.mock( 'calypso/lib/logstash', () => ( {
+vi.mock( 'calypso/lib/logstash', () => ( {
 	logToLogstash: jest.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( '../../analytics', () => ( {
-	...jest.requireActual( '../../analytics' ),
+vi.mock( '../../analytics', async () => ( {
+	...( await vi.importActual< typeof import( '../../analytics' ) >( '../../analytics' ) ),
 	bumpStat: jest.fn(),
 } ) );
 

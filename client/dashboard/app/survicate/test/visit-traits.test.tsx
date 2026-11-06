@@ -8,22 +8,23 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { AuthContext } from '../../auth';
 import { useSurvicateVisitTraits } from '../index';
 import type { User } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = jest.fn();
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } ) };
 } );
 
-jest.mock( '@automattic/survicate', () => ( {
+vi.mock( '@automattic/survicate', () => ( {
 	shouldLoadSurvicate: jest.fn(),
 	setSurvicateVisitorTraits: jest.fn(),
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
 	useViewportMatch: jest.fn(),
 } ) );
 

@@ -4,10 +4,11 @@
 import { DomainSubtype, type Domain } from '@automattic/api-core';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainOverviewSettings from '../settings';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
+vi.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: jest.fn( () => false ),
 } ) );
 

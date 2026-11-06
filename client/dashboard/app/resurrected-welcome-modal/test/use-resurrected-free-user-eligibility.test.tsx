@@ -7,6 +7,7 @@ import { disable, enable } from '@automattic/calypso-config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	RESURRECTED_FREE_USERS_EXPERIMENT,
@@ -17,7 +18,7 @@ import {
 import { useResurrectedFreeUserEligibility } from '../use-resurrected-free-user-eligibility';
 import type { ReactNode } from 'react';
 
-jest.mock( 'calypso/lib/explat', () => ( {
+vi.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
 } ) );
 

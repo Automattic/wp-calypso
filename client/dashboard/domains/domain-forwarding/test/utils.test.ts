@@ -1,11 +1,12 @@
 /**
  * @jest-environment node
  */
-jest.mock( '@wordpress/i18n', () => ( {
+import { vi } from 'vitest';
+import { isTargetUrlValid } from '../utils';
+
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 } ) );
-
-import { isTargetUrlValid } from '../utils';
 
 describe( 'domain forwarding utils', () => {
 	describe( 'isTargetUrlValid', () => {

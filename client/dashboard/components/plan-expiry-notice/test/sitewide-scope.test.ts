@@ -4,6 +4,7 @@
 
 import { translationExists } from '@automattic/i18n-utils';
 import MockDate from 'mockdate';
+import { vi } from 'vitest';
 import {
 	getExpiryStateName,
 	getPlanExpiryNotice,
@@ -15,8 +16,10 @@ import {
 import { NOW, OWNER_ID, expiryInDays, grace, makePurchase, monthly, renewing } from './fixtures';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	translationExists: jest.fn( () => true ),
 } ) );
 

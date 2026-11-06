@@ -6,11 +6,12 @@ import { activeAgencyQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import PressablePremiumGate from '../pressable-premium-gate';
 import type { Agency } from '@automattic/api-core';
 
-jest.mock( '../../../tiers/use-schedule-call', () => ( {
+vi.mock( '../../../tiers/use-schedule-call', () => ( {
 	useScheduleCall: () => ( { scheduleCall: jest.fn(), isLoading: false } ),
 } ) );
 

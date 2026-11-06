@@ -1,13 +1,14 @@
 import config from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import {
 	getHostingDashboardEnrollment,
 	isAdvancedNoticeVisible,
 } from '../hosting-dashboard-enrollment';
 import type { HostingDashboardOptIn } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const mock = jest.fn();
-	return Object.assign( mock, { isEnabled: jest.fn() } );
+	return { default: Object.assign( mock, { isEnabled: jest.fn() } ) };
 } );
 
 const mockedIsEnabled = jest.mocked( config.isEnabled );

@@ -13,23 +13,24 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { Suspense } from 'react';
+import { vi } from 'vitest';
 import Snackbars from '../../../../app/snackbars';
 import { SubscriptionSettings } from '../index';
 
 //Required to prevent the inline support link from being rendered in the test
-jest.mock(
-	'../../../../components/inline-support-link',
-	() =>
-		( { children }: { children: React.ReactNode } ) => <span>{ children }</span>
-);
+vi.mock( '../../../../components/inline-support-link', () => ( {
+	default: ( { children }: { children: React.ReactNode } ) => <span>{ children }</span>,
+} ) );
 
-jest.mock( '@tanstack/react-router' );
+vi.mock( '@tanstack/react-router' );
 
 // Mock only the timezone hook so we can drive the UTC↔local delivery-window
 // conversion deterministically, without depending on the machine's real time
 // zone. The conversion helpers themselves stay real.
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useDeliveryWindowTimezone: jest.fn(),
 } ) );
 

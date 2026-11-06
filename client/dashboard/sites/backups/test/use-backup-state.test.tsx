@@ -9,13 +9,16 @@ import {
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import React from 'react';
+import { vi } from 'vitest';
 import wpcom from 'calypso/lib/wp';
 import { useBackupState } from '../use-backup-state';
 
 // Mock lib/wp to return data directly from our test setup
-jest.mock( 'calypso/lib/wp', () => ( {
-	req: {
-		get: jest.fn(),
+vi.mock( 'calypso/lib/wp', () => ( {
+	default: {
+		req: {
+			get: jest.fn(),
+		},
 	},
 } ) );
 

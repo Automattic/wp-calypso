@@ -4,15 +4,16 @@
 
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { renderFormattedContent, createFormattedBlock } from '../';
 import isA8CForAgencies from '../../../../lib/a8c-for-agencies/is-a8c-for-agencies';
 import isJetpackCloud from '../../../../lib/jetpack/is-jetpack-cloud';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 import type { ActivityBlockContent, ActivityBlockMeta } from '../types';
 
-jest.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => jest.fn() );
-jest.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => jest.fn() );
-jest.mock( '../../../utils/is-dashboard-backport', () => ( {
+vi.mock( '../../../../lib/jetpack/is-jetpack-cloud', () => ( { default: jest.fn() } ) );
+vi.mock( '../../../../lib/a8c-for-agencies/is-a8c-for-agencies', () => ( { default: jest.fn() } ) );
+vi.mock( '../../../utils/is-dashboard-backport', () => ( {
 	isDashboardBackport: jest.fn(),
 } ) );
 

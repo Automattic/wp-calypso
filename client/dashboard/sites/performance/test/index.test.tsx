@@ -4,19 +4,20 @@
 import { HostingFeatures } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import Notice from '../../../components/notice';
 import { useSiteExpiryNoticeCandidate } from '../../../components/site-expiry-notice';
 import { render } from '../../../test-utils';
 import { SitePerformanceContent } from '../index';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../../../app/router/sites', () => ( {
+vi.mock( '../../../app/router/sites', () => ( {
 	siteRoute: { useParams: () => ( { siteSlug: 'test-site' } ) },
 } ) );
 
 // The candidate reads the leaf route match, which the test router does not
 // have; the arbiter's own tests cover the real hook.
-jest.mock( '../../../components/site-expiry-notice', () => ( {
+vi.mock( '../../../components/site-expiry-notice', () => ( {
 	useSiteExpiryNoticeCandidate: jest.fn( () => null ),
 } ) );
 const mockCandidate = jest.mocked( useSiteExpiryNoticeCandidate );

@@ -3,18 +3,21 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import NewReferralNotice from '../new-referral-notice';
 
 const mockUseSearch = jest.fn();
 const mockNavigate = jest.fn();
 
-jest.mock( '../../../../app/router/agency', () => ( {
+vi.mock( '../../../../app/router/agency', () => ( {
 	earnReferralsRoute: { useSearch: () => mockUseSearch() },
 } ) );
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 

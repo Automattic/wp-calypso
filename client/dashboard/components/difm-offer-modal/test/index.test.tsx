@@ -5,6 +5,7 @@ import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DifmOfferModal from '../index';
 import type { Site } from '@automattic/api-core';
@@ -14,7 +15,7 @@ const BUILD_REQUEST_PATH = '/wpcom/v2/sites/123/difm-offer/build-request';
 
 const mockAddProductsToCart = jest.fn();
 
-jest.mock( '../../../app/shopping-cart', () => ( {
+vi.mock( '../../../app/shopping-cart', () => ( {
 	shoppingCartManagerClient: {
 		forCartKey: ( cartKey: number ) => ( {
 			actions: {

@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ConfigureRepository from '../configure-repository';
 import type { AnalyticsClient } from '../../../app/analytics';
@@ -31,8 +32,9 @@ const deployment = {
 	installation_id: installation.external_id,
 } as CodeDeploymentData;
 
-jest.mock( '@tanstack/react-router', () => {
-	const actual = jest.requireActual( '@tanstack/react-router' );
+vi.mock( '@tanstack/react-router', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@tanstack/react-router' ) >( '@tanstack/react-router' );
 	return {
 		...actual,
 		useParams: () => ( { siteSlug: 'test-site', deploymentId: 5 } ),

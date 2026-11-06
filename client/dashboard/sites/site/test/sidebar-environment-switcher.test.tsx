@@ -6,6 +6,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SidebarEnvironmentSwitcher from '../sidebar-environment-switcher';
 import type { Site } from '@automattic/api-core';
@@ -14,7 +15,7 @@ const mockCreateSuccessNotice = jest.fn();
 const mockCreateNotice = jest.fn();
 const mockCreateErrorNotice = jest.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: mockCreateSuccessNotice,
 		createNotice: mockCreateNotice,

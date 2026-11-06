@@ -5,6 +5,7 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	DIFM_OFFER_EXPERIMENT,
@@ -17,7 +18,7 @@ import {
 	useDifmOffer,
 } from '../difm-offer';
 
-jest.mock( 'calypso/lib/explat', () => ( {
+vi.mock( 'calypso/lib/explat', () => ( {
 	useExperiment: jest.fn(),
 } ) );
 

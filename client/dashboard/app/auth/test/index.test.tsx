@@ -5,6 +5,7 @@ import config from '@automattic/calypso-config';
 import { focusManager, QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { act, render, renderHook, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { bumpStat } from '../../analytics';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../context';
 import {
@@ -19,8 +20,8 @@ import {
 } from '../index';
 import type { User } from '@automattic/api-core';
 
-jest.mock( '../../analytics', () => ( {
-	...jest.requireActual( '../../analytics' ),
+vi.mock( '../../analytics', async () => ( {
+	...( await vi.importActual< typeof import( '../../analytics' ) >( '../../analytics' ) ),
 	bumpStat: jest.fn(),
 } ) );
 

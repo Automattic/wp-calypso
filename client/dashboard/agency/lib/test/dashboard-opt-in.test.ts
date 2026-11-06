@@ -1,7 +1,8 @@
 import config, { isEnabled } from '@automattic/calypso-config';
+import { vi } from 'vitest';
 import { needsPreviousAgencyDashboard } from '../dashboard-opt-in';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 	isEnabled: jest.fn(),

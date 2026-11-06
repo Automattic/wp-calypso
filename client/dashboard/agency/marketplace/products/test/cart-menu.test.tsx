@@ -5,6 +5,7 @@ import { activeAgencyQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import CartMenu from '../cart-menu';
 import type { Agency, AgencyProduct } from '@automattic/api-core';
@@ -32,7 +33,7 @@ const mockWooProduct = {
 
 let mockProduct = mockBackup;
 
-jest.mock( '../use-cart-lines', () => ( {
+vi.mock( '../use-cart-lines', () => ( {
 	useCartLines: () => ( {
 		lines: [
 			{
@@ -50,8 +51,10 @@ jest.mock( '../use-cart-lines', () => ( {
 	} ),
 } ) );
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useLocation: () => ( { pathname: '/products', searchStr: '?category=jetpack' } ),
 } ) );
 

@@ -6,6 +6,7 @@ import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import SiteActivityLogsDataViews from '../index';
 import type { Site } from '@automattic/api-core';
@@ -15,7 +16,7 @@ const mockNavigate = jest.fn();
 const API_BASE = 'https://public-api.wordpress.com';
 const mockSiteId = 123;
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: jest.fn(),
 		createErrorNotice: jest.fn(),
@@ -30,15 +31,17 @@ jest.mock( '@wordpress/data', () => ( {
 	dispatch: jest.fn(),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( text: string ) => text,
 	_x: ( text: string ) => text,
 	isRTL: () => false,
 	sprintf: ( text: string ) => text,
 } ) );
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useRouter: () => ( {
 		navigate: mockNavigate,
 		state: {
@@ -53,7 +56,7 @@ jest.mock( '@tanstack/react-router', () => ( {
 	} ),
 } ) );
 
-jest.mock( '../../../../app/router/sites', () => ( {
+vi.mock( '../../../../app/router/sites', () => ( {
 	siteLogsActivityRoute: {
 		useSearch: () => ( {} ),
 	},

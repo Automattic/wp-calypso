@@ -8,11 +8,12 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SecurityTwoStepAuthSummary from '../summary';
 import type { UserSettings } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
+vi.mock( '@automattic/calypso-support-session', () => ( {
 	isSupportSession: jest.fn( () => false ),
 } ) );
 

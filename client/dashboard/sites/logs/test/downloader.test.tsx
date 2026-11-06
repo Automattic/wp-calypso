@@ -6,11 +6,12 @@ import '@testing-library/jest-dom';
 import { LogType, FilterType } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { LogsDownloader } from '../downloader';
 import type { JSX } from 'react';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( s: string ) => s,
 	sprintf: ( s: string ) => s,
 } ) );
@@ -32,7 +33,7 @@ interface MockButtonProps {
 	'aria-label'?: string;
 }
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	__experimentalVStack: ( { children }: VStackProps ) => <div>{ children }</div>,
 	__experimentalHStack: ( { children }: HStackProps ) => <div>{ children }</div>,
 	Tooltip: ( { children }: ChildrenProps ) => <div>{ children }</div>,
@@ -44,10 +45,11 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
+vi.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
 
-jest.mock( '@automattic/api-core', () => {
-	const actual = jest.requireActual( '@automattic/api-core' );
+vi.mock( '@automattic/api-core', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' );
 	const fetchSiteLogsBatchMock = jest.fn();
 	return {
 		...actual,
@@ -60,7 +62,7 @@ let createObjectURLMock: jest.Mock;
 let revokeObjectURLMock: jest.Mock;
 let anchorClickSpy: jest.SpyInstance;
 
-const { __mocks } = jest.requireMock( '@automattic/api-core' ) as {
+const { __mocks } = ( await import( '@automattic/api-core' ) ) as unknown as {
 	__mocks: { fetchSiteLogsBatchMock: jest.Mock };
 };
 

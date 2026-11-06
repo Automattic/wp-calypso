@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { isDashboardBackport } from '../is-dashboard-backport';
 import { isJetpackCloud } from '../jetpack';
 import { dashboardLinkWithBackport } from '../link';
@@ -13,12 +14,12 @@ import {
 } from '../site-url';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '../is-dashboard-backport', () => ( {
+vi.mock( '../is-dashboard-backport', () => ( {
 	isDashboardBackport: jest.fn(),
 } ) );
 
-jest.mock( '../jetpack', () => ( {
-	...jest.requireActual( '../jetpack' ),
+vi.mock( '../jetpack', async () => ( {
+	...( await vi.importActual< typeof import( '../jetpack' ) >( '../jetpack' ) ),
 	isJetpackCloud: jest.fn(),
 } ) );
 

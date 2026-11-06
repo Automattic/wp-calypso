@@ -10,12 +10,13 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SshCard from '../ssh-card';
 
-jest.mock( '@automattic/calypso-config', () => {
+vi.mock( '@automattic/calypso-config', () => {
 	const fn = jest.fn();
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } ) };
 } );
 
 const siteId = 123;

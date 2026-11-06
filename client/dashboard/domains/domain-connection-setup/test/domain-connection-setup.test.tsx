@@ -8,11 +8,12 @@ import {
 } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainConnectionSetup from '../domain-connection-setup';
 
 // Mock InlineSupportLink to avoid async state update warnings
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: ( { children }: { children: React.ReactNode } ) => <button>{ children }</button>,
 } ) );

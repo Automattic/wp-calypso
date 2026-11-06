@@ -4,11 +4,12 @@
 import { bigSkyPluginQuery, queryClient } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import useShouldLoadAgentsManager, {
 	getAgentsManagerEligibility,
 } from '../use-should-load-agents-manager';
 
-jest.mock( '@automattic/calypso-config', () => ( {
+vi.mock( '@automattic/calypso-config', () => ( {
 	isEnabled: jest.fn(),
 } ) );
 

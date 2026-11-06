@@ -2,16 +2,17 @@
  * @jest-environment jsdom
  */
 import { captureException } from '@automattic/calypso-sentry';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { bumpMultipleStats } from '../../analytics';
 import MutationErrorTracker from '../index';
 
-jest.mock( '../../analytics', () => ( {
-	...jest.requireActual( '../../analytics' ),
+vi.mock( '../../analytics', async () => ( {
+	...( await vi.importActual< typeof import( '../../analytics' ) >( '../../analytics' ) ),
 	bumpMultipleStats: jest.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-sentry', () => ( {
+vi.mock( '@automattic/calypso-sentry', () => ( {
 	captureException: jest.fn(),
 } ) );
 
