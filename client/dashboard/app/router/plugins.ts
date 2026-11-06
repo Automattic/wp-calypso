@@ -3,6 +3,7 @@ import {
 	queryClient,
 	rawUserPreferencesQuery,
 	marketplacePluginsQuery,
+	sitesQuery,
 } from '@automattic/api-queries';
 import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
@@ -48,10 +49,10 @@ export const pluginsManageRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsRoute,
 	path: 'manage',
-	loader: async ( { context } ) => {
+	loader: async () => {
 		queryClient.prefetchQuery( marketplacePluginsQuery() );
 		queryClient.prefetchQuery( pluginsQuery() );
-		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+		queryClient.prefetchQuery( sitesQuery() );
 		await queryClient.ensureQueryData( rawUserPreferencesQuery() );
 	},
 } );
@@ -109,8 +110,8 @@ export const pluginsScheduledUpdatesNewRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/new',
-	loader: async ( { context } ) => {
-		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+	loader: async () => {
+		queryClient.prefetchQuery( sitesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/new' ).then( ( d ) =>
@@ -130,8 +131,8 @@ export const pluginsScheduledUpdatesEditRoute = createRoute( {
 	} ),
 	getParentRoute: () => pluginsScheduledUpdatesRoute,
 	path: '/edit/$scheduleId',
-	loader: async ( { context } ) => {
-		queryClient.prefetchQuery( context.config.queries.sitesQuery() );
+	loader: async () => {
+		queryClient.prefetchQuery( sitesQuery() );
 	},
 } ).lazy( () =>
 	import( '../../plugins/scheduled-updates/edit' ).then( ( d ) =>

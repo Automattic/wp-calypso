@@ -3,9 +3,12 @@ import { useMutation } from '@tanstack/react-query';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
+import { addQueryArgs } from '@wordpress/url';
 import { useHelpCenter } from '../../../app/help-center';
+import { getCurrentDashboard } from '../../../app/routing';
 import { withSnackbar } from '../../../app/snackbars/with-snackbar';
 import Notice from '../../../components/notice';
+import { redirectToDashboardLink, wpcomLink } from '../../../utils/link';
 import { AssistedHandoffLink, MigrationCard, StatusIcon } from './migration-card';
 import type {
 	Site,
@@ -16,9 +19,11 @@ import type {
 export function Findings( {
 	site,
 	migration,
+	onBackToSetup,
 }: {
 	site: Site;
 	migration: WordPressMigrationStatus;
+	onBackToSetup: () => void;
 } ) {
 	const { setShowHelpCenter } = useHelpCenter();
 	const run = useMutation(
@@ -30,12 +35,19 @@ export function Findings( {
 	const { findings } = migration;
 	const codes = findings.map( ( { code } ) => code );
 	const isFailed = migration.status === 'failed';
-	// Continuing past a `retry` finding only runs the same step again.
-	const isRetry = findings.some( ( { resolution } ) => resolution === 'retry' );
+	const isRetry = findings.some( ( { resolution } ) =>
+		[ 'retry', 'assisted_handoff' ].includes( resolution )
+	);
+	// Only warnings mean the migration could read the source. Anything worse may be its connection.
+	const hasError = isFailed || findings.some( ( { severity } ) => severity === 'failure' );
+	const needsPlan = codes.includes( 'destination_needs_plan' );
 
 	const getDescription = () => {
 		if ( isFailed ) {
-			return __( 'Something went wrong and the migration couldn’t finish.' );
+			// The findings say what went wrong themselves.
+			return findings.length > 0
+				? undefined
+				: __( 'Something went wrong and the migration couldn’t finish.' );
 		}
 		return findings.length > 0
 			? __( 'We checked your site and found a few things you should know about.' )
@@ -43,7 +55,7 @@ export function Findings( {
 	};
 
 	const getStatus = () => {
-		if ( isFailed || findings.some( ( { severity } ) => severity === 'failure' ) ) {
+		if ( hasError ) {
 			return 'error';
 		}
 		return findings.length > 0 ? 'warning' : 'pending';
@@ -54,11 +66,21 @@ export function Findings( {
 			title={ isFailed ? __( 'Your migration stopped' ) : __( 'Before we migrate your site' ) }
 			description={ getDescription() }
 			decoration={ <StatusIcon status={ getStatus() } /> }
+			back={
+				hasError
+					? { label: __( 'Back to setup' ), onClick: onBackToSetup, disabled: run.isPending }
+					: undefined
+			}
 			actions={
 				<>
+					{ needsPlan && (
+						<Button __next40pxDefaultSize variant="primary" href={ getPlanUpgradeUrl( site ) }>
+							{ __( 'Choose a plan' ) }
+						</Button>
+					) }
 					<Button
 						__next40pxDefaultSize
-						variant="primary"
+						variant={ needsPlan ? 'secondary' : 'primary' }
 						isBusy={ run.isPending }
 						disabled={ run.isPending }
 						onClick={ () => run.mutate( { accept_findings: codes } ) }
@@ -70,7 +92,7 @@ export function Findings( {
 					</Button>
 				</>
 			}
-			secondaryAction={ <AssistedHandoffLink /> }
+			note={ <AssistedHandoffLink siteSlug={ site.slug } /> }
 		>
 			{ findings.map( ( finding, index ) => (
 				<Notice
@@ -83,6 +105,17 @@ export function Findings( {
 			) ) }
 		</MigrationCard>
 	);
+}
+
+// Outside the dashboard, where the site's migration lock doesn't send it straight back here.
+function getPlanUpgradeUrl( site: Site ) {
+	const backUrl = redirectToDashboardLink( { supportBackport: true } );
+	return addQueryArgs( wpcomLink( '/setup/plan-upgrade/' ), {
+		siteSlug: site.slug,
+		cancel_to: backUrl,
+		redirect_to: backUrl,
+		dashboard: getCurrentDashboard(),
+	} );
 }
 
 // The server's message, except where the finding's data reads better set apart from the text.

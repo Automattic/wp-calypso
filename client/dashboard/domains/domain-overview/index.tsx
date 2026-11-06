@@ -4,7 +4,6 @@ import {
 	purchaseQuery,
 	domainDiagnosticsQuery,
 	domainMappingStatusQuery,
-	siteByIdQuery,
 } from '@automattic/api-queries';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useQuery, useSuspenseQuery } from '@tanstack/react-query';
@@ -15,12 +14,11 @@ import { useMemo } from 'react';
 import { useLocale } from '../../app/locale';
 import { PerformanceTrackerStop } from '../../app/performance-tracking';
 import { domainRoute } from '../../app/router/domains';
-import SnackbarBackButton from '../../app/snackbar-back-button';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import PendingPrimaryDomainNotice from '../../components/pending-primary-domain-notice';
 import { formatDate } from '../../utils/datetime';
-import { isTldInMaintenance } from '../../utils/domain';
+import { getDomainTypeLabel, isTldInMaintenance } from '../../utils/domain';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { TLDMaintenanceNotice } from '../maintenance-notice';
 import Actions from './actions';
@@ -40,8 +38,6 @@ export default function DomainOverview() {
 		...purchaseQuery( parseInt( domain.subscription_id ?? '0', 10 ) ),
 		enabled: !! domain.subscription_id,
 	} );
-
-	const { data: site } = useQuery( siteByIdQuery( domain.blog_id ) );
 
 	const { data: domainMappingStatus } = useQuery( {
 		...domainMappingStatusQuery( domain.domain ),
@@ -78,8 +74,12 @@ export default function DomainOverview() {
 						title={ wrappableDomainName }
 						description={
 							<HStack spacing={ 2 } alignment="center" justify="flex-start">
-								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION &&
-									domain.subtype?.label && <Badge>{ domain.subtype.label }</Badge> }
+								{ domain.subtype.id !== DomainSubtype.DOMAIN_REGISTRATION && (
+									<Badge>{ getDomainTypeLabel( domain ) }</Badge>
+								) }
+								{ domain.ssl_status === 'active' && (
+									<Badge intent="stable">{ __( 'SSL active' ) }</Badge>
+								) }
 								<span>
 									{ ( () => {
 										switch ( domain.subtype.id ) {
@@ -147,7 +147,6 @@ export default function DomainOverview() {
 				) }
 				<Actions isDisabled={ isTldInMaintenance( domain ) } />
 			</PageLayout>
-			<SnackbarBackButton backToParams={ { siteSlug: site?.slug ?? domain.site_slug } } />
 			<PerformanceTrackerStop />
 		</>
 	);

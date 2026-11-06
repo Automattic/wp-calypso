@@ -75,6 +75,7 @@ import type {
 } from '@automattic/composite-checkout';
 import type { MinimalRequestCartProduct, ResponseCart } from '@automattic/shopping-cart';
 import type { CheckoutPaymentMethodSlug, SitelessCheckoutType } from '@automattic/wpcom-checkout';
+import type { TranslateResult } from 'i18n-calypso';
 
 const { colors } = colorStudio;
 const debug = debugFactory( 'calypso:checkout-main' );
@@ -225,11 +226,10 @@ export default function CheckoutMain( {
 	}, [ akismetSiteSlug, jetpackSiteSlug, marketplaceSiteSlug, sitelessCheckoutType, siteSlug ] );
 
 	const showErrorMessageBriefly = useCallback(
-		( error: string ) => {
+		( error: TranslateResult ) => {
 			debug( 'error', error );
-			const message = error && error.toString ? error.toString() : error;
 			reduxDispatch(
-				errorNotice( message || translate( 'An error occurred during your purchase.' ), {
+				errorNotice( error || translate( 'An error occurred during your purchase.' ), {
 					duration: 5000,
 				} )
 			);

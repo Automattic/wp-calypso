@@ -1,6 +1,8 @@
 import {
 	assertInteractiveUiCatalogDefinition,
 	BASIC_CATALOG_ID,
+	CHARTS_CATALOG_DOCUMENT,
+	CHARTS_CATALOG_ID,
 	getInteractiveUiRendererCapabilities,
 } from '@automattic/ai-ui-renderer/capabilities';
 import OpenHelpCenterButton from '../components/open-help-center-button';
@@ -60,11 +62,11 @@ const AGENTS_MANAGER_CATALOG: InteractiveUiCatalogDefinition = {
 /**
  * Skips a provider catalog that isn't made of object schemas or whose implementations don't match
  * its document, so the chat doesn't advertise it. As with abilities, the first with an ID wins, so
- * a provider can't replace a catalog that already works. The Basic and Agents Manager IDs are
- * taken.
+ * a provider can't replace a catalog that already works. The Basic, charts and Agents Manager IDs
+ * are taken.
  */
 export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefinition[] ) {
-	const takenIds = new Set( [ BASIC_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID ] );
+	const takenIds = new Set( [ BASIC_CATALOG_ID, CHARTS_CATALOG_ID, AGENTS_MANAGER_CATALOG_ID ] );
 
 	return catalogs.filter( ( definition ) => {
 		try {
@@ -88,19 +90,27 @@ export function filterInteractiveUiCatalogs( catalogs: InteractiveUiCatalogDefin
 export function getInteractiveUiCapabilities(
 	providerCatalogs: InteractiveUiCatalogDefinition[] = []
 ) {
-	return getInteractiveUiRendererCapabilities( [ AGENTS_MANAGER_CATALOG, ...providerCatalogs ] );
+	return getInteractiveUiRendererCapabilities( [
+		{ catalog: CHARTS_CATALOG_DOCUMENT },
+		AGENTS_MANAGER_CATALOG,
+		...providerCatalogs,
+	] );
 }
 
 /**
- * Builds the catalogs a conversation's surfaces render with: A2UI's Basic catalog, Agents
- * Manager's, and each provider's, whose components record the shared response events. A catalog
- * that fails to build is skipped, so only its own surfaces don't render.
+ * Builds the catalogs a conversation's surfaces render with: A2UI's Basic catalog, the renderer's
+ * charts catalog, Agents Manager's and each provider's. Agents Manager's and the providers'
+ * components record the shared response events. A catalog that fails to build is skipped, so only
+ * its own surfaces don't render.
  */
 export function createInteractiveUiCatalogs(
 	renderer: InteractiveUiRenderer,
 	providerCatalogs: InteractiveUiCatalogDefinition[] = []
 ): InteractiveUiCatalog[] {
-	const catalogs = [ renderer.createInteractiveUiCatalog() ];
+	const catalogs = [
+		renderer.createInteractiveUiCatalog(),
+		renderer.createInteractiveUiCatalog( renderer.CHARTS_CATALOG ),
+	];
 
 	for ( const definition of [ AGENTS_MANAGER_CATALOG, ...providerCatalogs ] ) {
 		const components = Object.entries( definition.components ?? {} ).map(

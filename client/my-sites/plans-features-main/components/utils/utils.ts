@@ -1,4 +1,9 @@
-import { getIntervalTypeForTerm, PLAN_BUSINESS, PLAN_PREMIUM } from '@automattic/calypso-products';
+import {
+	getIntervalTypeForTerm,
+	isWpcomEnterpriseGridPlan,
+	PLAN_BUSINESS,
+	PLAN_PREMIUM,
+} from '@automattic/calypso-products';
 import {
 	PERSONAL_THEME,
 	PREMIUM_THEME,
@@ -9,7 +14,7 @@ import {
 import { PlansIntent } from '@automattic/plans-grid-next';
 import { THEME_TIERS } from 'calypso/components/theme-tier/constants';
 import { supportedIntervalTypes } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/unified-plans/util';
-import type { SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
+import type { GridPlan, SupportedUrlFriendlyTermType } from '@automattic/plans-grid-next';
 
 /* For Guided Signup intents we want to force the default plans for the comparison table. See: pdDR7T-1xi-p2 */
 export const shouldForceDefaultPlansBasedOnIntent = ( intent: PlansIntent | undefined ) => {
@@ -95,4 +100,19 @@ export const ensureCompatibleIntervalType = (
 	}
 
 	return currentPlanIntervalType as SupportedUrlFriendlyTermType;
+};
+
+/**
+ * Lists the plans most expensive first. Enterprise can't be bought from the grid, so it stays
+ * in the last column.
+ */
+export const reverseGridPlanOrder = ( gridPlans: GridPlan[] ): GridPlan[] => {
+	const purchasableGridPlans = gridPlans.filter(
+		( { planSlug } ) => ! isWpcomEnterpriseGridPlan( planSlug )
+	);
+	const enterpriseGridPlans = gridPlans.filter( ( { planSlug } ) =>
+		isWpcomEnterpriseGridPlan( planSlug )
+	);
+
+	return [ ...purchasableGridPlans.reverse(), ...enterpriseGridPlans ];
 };

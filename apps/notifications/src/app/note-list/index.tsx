@@ -16,11 +16,7 @@ import getLayoutStyle from '../../panel/state/selectors/get-layout-style';
 import { getFilters } from '../../panel/templates/filters';
 import { useAppContext } from '../context';
 import { getFields, SelectedNoteIdContext } from './dataviews';
-import {
-	useNoteListFocusOnNoteClose,
-	useNoteListFocusToLastSelectedNote,
-	useNoteListNavigationKeyboardShortcuts,
-} from './hooks';
+import { useNoteListFocusOnNoteClose, useNoteListNavigationKeyboardShortcuts } from './hooks';
 import type { FilterName, Note } from '../types';
 import type { View } from '@wordpress/dataviews';
 
@@ -199,7 +195,6 @@ const NoteList = ( { filterName, selectedNoteId, setSelectedNoteId }: NoteListPr
 
 	const noteListRef = useRef< HTMLObjectElement >( null );
 
-	useNoteListFocusToLastSelectedNote( { noteListRef, notes: tab.notes } );
 	useNoteListFocusOnNoteClose( { noteListRef, selectedNoteId } );
 	useNoteListNavigationKeyboardShortcuts( {
 		noteListRef,

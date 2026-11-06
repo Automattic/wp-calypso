@@ -104,7 +104,6 @@ export default defineConfig( [
 								'!@automattic/viewport',
 								'!@automattic/browser-data-collector',
 								'!@automattic/omnibar',
-								'!@automattic/posthog',
 								'!@automattic/site-launch-modals',
 								// Please do not add exceptions which pull in Calypso code/concepts.
 								// See docs/package-imports.md for policy.
@@ -166,11 +165,6 @@ export default defineConfig( [
 							importNames: [ 'redirect' ],
 							message:
 								'Use dashboardRedirect from client/dashboard/app/router/redirect instead. It disables view transitions on redirects.',
-						},
-						{
-							name: '@automattic/api-queries',
-							importNames: [ 'sitesQuery', 'dashboardSiteListQuery', 'dashboardSiteFiltersQuery' ],
-							message: 'Use local queries exported from either context or useAppContext instead.',
 						},
 						{
 							name: '@wordpress/element',

@@ -226,7 +226,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 					justify="flex-end"
 					className="daterange-inputs"
 					wrap={ false }
-					style={ { width: '100%' } }
 				>
 					<DateInputs
 						key={ `inputs-${ inputsVersion }-desktop` }
@@ -264,7 +263,6 @@ export function DateRangeContent( props: DateRangeContentProps ) {
 						fromStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						toStyle={ { minWidth: 220, flex: '0 0 auto' } }
 						justify="flex-end"
-						containerStyle={ { width: '100%' } }
 					/>
 				</HStack>
 			) }

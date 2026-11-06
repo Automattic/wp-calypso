@@ -3,17 +3,8 @@
  */
 import { act, renderHook } from '@testing-library/react';
 import { recordAgentsManagerTracksEvent } from '../../utils/tracks';
-import { useCredits } from '../use-credits';
+import { useCredits, useCreditsVisit } from '../use-credits';
 import type { CreditsPool } from '../../utils/credits';
-
-let mockIsProcessing = false;
-jest.mock(
-	'@automattic/agenttic-client',
-	() => ( {
-		useAgentChat: () => ( { isProcessing: mockIsProcessing, messages: [] } ),
-	} ),
-	{ virtual: true }
-);
 
 jest.mock( '@wordpress/element', () => jest.requireActual( 'react' ) );
 jest.mock( 'i18n-calypso', () => ( { getBrowserSafeLocale: () => 'en' } ) );
@@ -28,6 +19,29 @@ jest.mock( '@wordpress/i18n', () => ( {
 } ) );
 jest.mock( '../../components/credits-meter', () => () => null );
 jest.mock( '../../utils/tracks', () => ( { recordAgentsManagerTracksEvent: jest.fn() } ) );
+// A visit with no site, where the seeded mock balance applies. The credits hooks read it
+// from the Agents Manager context.
+const mockVisit = {
+	agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
+	siteKey: 'no-site',
+};
+jest.mock( '../../contexts', () => ( { useAgentsManagerContext: () => mockVisit } ) );
+
+function useMockCredits( {
+	enabled,
+	...options
+}: Partial< Parameters< typeof useCredits >[ 0 ] > & { enabled: boolean } ) {
+	const creditsVisit = useCreditsVisit( enabled );
+
+	return useCredits( {
+		creditsVisit,
+		isProcessing: false,
+		messages: [],
+		isOpen: true,
+		isNoticeVisible: true,
+		...options,
+	} );
+}
 
 // The seed is read when the hook mounts, so each case sets the URL first.
 function seed( search: string ) {
@@ -36,16 +50,7 @@ function seed( search: string ) {
 
 function renderCredits( enabled = true ) {
 	return renderHook(
-		( { isProcessing }: { isProcessing: boolean } ) => {
-			mockIsProcessing = isProcessing;
-			return useCredits( {
-				enabled,
-				agentConfig: { agentId: 'mock', agentUrl: '', sessionId: '' },
-				siteKey: 'no-site',
-				isOpen: true,
-				isNoticeVisible: true,
-			} );
-		},
+		( { isProcessing }: { isProcessing: boolean } ) => useMockCredits( { enabled, isProcessing } ),
 		{
 			initialProps: { isProcessing: false },
 		}
@@ -69,6 +74,17 @@ describe( 'useCredits', () => {
 		seed( '?am_credits=55&am_plan=free' );
 		const disabled = renderCredits( false );
 		expect( disabled.result.current.trailingActions ).toBeUndefined();
+	} );
+
+	it( 'leaves the popover’s credits button out of a mock balance, which `/credits` can’t answer', () => {
+		seed( '?am_credits=25&am_plan=free' );
+		const { result } = renderHook( () =>
+			useMockCredits( { enabled: true, onShowCredits: jest.fn() } )
+		);
+		const meter = result.current.trailingActions as React.ReactElement< {
+			onShowCredits?: () => void;
+		} >;
+		expect( meter.props.onShowCredits ).toBeUndefined();
 	} );
 
 	it( 'spends when a request finishes, not on the submit attempt', () => {

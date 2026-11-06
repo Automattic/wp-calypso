@@ -39,7 +39,8 @@ and each needs its own guard:
 
 1. **Explicit events** — our code calls `invokeSurvicateEvent('migrationCompleted')`
    etc. from ~6 call sites (purchase cancel/refund flows, migration completion,
-   checkout thank-you). Guarded inside `invoke-event.ts`.
+   checkout thank-you). Guarded inside `invoke-event.ts`. `invokeSurvicateEventOnce()`
+   wraps it for outcomes a screen keeps reporting on later visits.
 2. **Auto-campaigns** — Survicate's own targeting fires a survey on its own (URL match,
    "show after N seconds", etc.). This **never touches our code**, so an invoke-time
    guard can't catch it. The only universal hook is the SDK's `survey_displayed` event.
@@ -261,6 +262,11 @@ race where a survey is already mid-display as a modal or the Help Center appears
   `survey_displayed` safety net; `isSurvicateScriptLoaded()`.
 - `invoke-event.ts` — `invokeSurvicateEvent()`, `isHelpCenterOpen()`,
   `observeHelpCenter()`, `getSuppressionReason()`, and `shouldSuppressSurvey()`.
+- `invoke-event-once.ts` — `invokeSurvicateEventOnce( eventName, key )`: for screens
+  that keep reporting the same outcome on every visit (a migration that completed days
+  ago), marks the event per key in `localStorage` so the survey is asked for once per
+  outcome rather than per visit. The key is marked only once the SDK is handed the event,
+  so a suppressed or abandoned deferred event isn't marked and a later visit asks.
 - `modal-detection.ts` — `isModalOpen()`, `isSurveyVisible()`, `observeModals()`,
   `MODAL_SELECTOR`.
 - `targeting.ts` — `pauseSurvicateTargeting()` / `resumeSurvicateTargeting()`:

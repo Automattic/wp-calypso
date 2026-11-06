@@ -70,6 +70,8 @@ class PostCommentList extends Component {
 		fetchLaterComments: PropTypes.func.isRequired,
 		isInitialCommentLoading: PropTypes.bool,
 		shouldHighlightNew: PropTypes.bool,
+		highlightedCommentIds: PropTypes.arrayOf( PropTypes.number ),
+		collapsibleThreads: PropTypes.bool,
 	};
 
 	static defaultProps = {
@@ -239,6 +241,8 @@ class PostCommentList extends Component {
 				maxDepth={ this.props.maxDepth }
 				showNestingReplyArrow={ this.props.showNestingReplyArrow }
 				shouldHighlightNew={ this.props.shouldHighlightNew }
+				highlightedCommentIds={ this.props.highlightedCommentIds }
+				collapsibleThreads={ this.props.collapsibleThreads }
 				isInlineComment={ this.props.expandableView }
 				expandComments={ this.props.expandComments }
 				comments={ this.props.comments }
@@ -586,8 +590,8 @@ class PostCommentList extends Component {
 			? this.getDisplayedCollapsedInlineComments( commentsTree )
 			: this.getDisplayedComments( commentsTree.children, amountOfCommentsToTake );
 
-		// The inbox's composer closes the thread; elsewhere the form opens it.
-		const isComposer = this.context;
+		// The inbox's form closes the thread; elsewhere it opens it.
+		const formAfterThread = this.context;
 		const rootForm = (
 			<PostCommentFormRoot
 				post={ this.props.post }
@@ -657,7 +661,7 @@ class PostCommentList extends Component {
 						</div>
 					</div>
 				) }
-				{ ! isComposer && rootForm }
+				{ ! formAfterThread && rootForm }
 				{ shouldShowFilters && (
 					<SegmentedControl compact primary>
 						<SegmentedControl.Item
@@ -722,7 +726,7 @@ class PostCommentList extends Component {
 						} ) }
 					</button>
 				) }
-				{ isComposer && rootForm }
+				{ formAfterThread && rootForm }
 			</div>
 		);
 	}

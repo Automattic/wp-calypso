@@ -1,7 +1,6 @@
 import {
 	accountRecoveryQuery,
 	allowedPaymentMethodsQuery,
-	allSitesQuery,
 	connectedApplicationsQuery,
 	countryListQuery,
 	domainQuery,
@@ -22,6 +21,7 @@ import {
 	siteFeaturesQuery,
 	siteMediaStorageQuery,
 	sitePurchasesQuery,
+	sitesQuery,
 	smsCountryCodesQuery,
 	sshKeysQuery,
 	twoStepAuthAppSetupQuery,
@@ -35,6 +35,7 @@ import {
 	userTransferredPurchasesQuery,
 } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { createRoute, createLazyRoute, Outlet } from '@tanstack/react-router';
 import { __, _x } from '@wordpress/i18n';
 import { getMonetizeSubscriptionsPageTitle } from '../../me/billing-monetize-subscriptions/title';
@@ -185,7 +186,7 @@ export const billingHistoryIndexRoute = createRoute( {
 	path: '/',
 	loader: () => {
 		queryClient.prefetchQuery( userReceiptsQuery() );
-		queryClient.prefetchQuery( allSitesQuery() );
+		queryClient.prefetchQuery( sitesQuery() );
 	},
 	validateSearch: (
 		search
@@ -253,7 +254,7 @@ export const purchasesIndexRoute = createRoute( {
 		queryClient.prefetchQuery( userPurchasesQuery() );
 		queryClient.prefetchQuery( userTransferredPurchasesQuery() );
 		queryClient.prefetchQuery( userPaymentMethodsQuery( {} ) );
-		queryClient.prefetchQuery( allSitesQuery() );
+		queryClient.prefetchQuery( sitesQuery() );
 	},
 	validateSearch: (
 		search
@@ -954,6 +955,10 @@ export const privacyRoute = createRoute( {
 	} ),
 	getParentRoute: () => preferencesRoute,
 	path: 'privacy',
+	loader: () =>
+		isEnabled( 'me/email-tracking-consent' )
+			? queryClient.ensureQueryData( userNotificationsSettingsQuery() )
+			: undefined,
 } ).lazy( () =>
 	import( '../../me/privacy' ).then( ( d ) =>
 		createLazyRoute( 'privacy' )( {
@@ -1124,7 +1129,7 @@ export const wordpressLabsRoute = createRoute( {
 	loader: async () => {
 		await Promise.all( [
 			queryClient.ensureQueryData( rawUserPreferencesQuery() ),
-			queryClient.prefetchQuery( allSitesQuery() ),
+			queryClient.prefetchQuery( sitesQuery() ),
 		] );
 	},
 } ).lazy( () =>
@@ -1215,23 +1220,27 @@ export const wordpressDefaultsRoute = createRoute( {
 	)
 );
 
-export const appsRoute = createRoute( {
-	head: () => ( {
-		meta: [
-			{
-				title: __( 'Apps' ),
-			},
-		],
-	} ),
+export const appsRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
 	path: 'apps',
-} ).lazy( () =>
-	import( '../../me/apps' ).then( ( d ) =>
-		createLazyRoute( 'apps' )( {
-			component: d.default,
-		} )
-	)
-);
+	beforeLoad: () => {
+		throw dashboardRedirect( {
+			href: localizeUrl( 'https://apps.wordpress.com/' ),
+			reloadDocument: true,
+		} );
+	},
+} );
+
+export const getAppsRedirectRoute = createRoute( {
+	getParentRoute: () => meRoute,
+	path: 'get-apps',
+	beforeLoad: () => {
+		throw dashboardRedirect( {
+			href: localizeUrl( 'https://apps.wordpress.com/' ),
+			reloadDocument: true,
+		} );
+	},
+} );
 
 export const mcpLegacyRedirectRoute = createRoute( {
 	getParentRoute: () => meRoute,
@@ -1523,7 +1532,7 @@ export const createMeRoutes = ( config: AppConfig ) => {
 	);
 
 	if ( config.supports.me.apps ) {
-		meRoutes.push( appsRoute );
+		meRoutes.push( appsRedirectRoute, getAppsRedirectRoute );
 	}
 
 	if ( isEnabled( 'mcp-settings' ) ) {

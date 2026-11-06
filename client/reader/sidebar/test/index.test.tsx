@@ -101,6 +101,24 @@ describe( 'ReaderSidebar', () => {
 		} );
 	} );
 
+	describe( 'Saved', () => {
+		it( 'is shown once the saved posts feature is on', () => {
+			jest
+				.mocked( isEnabled )
+				.mockImplementation( ( feature: string ) => feature === 'reader/saved-posts' );
+
+			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
+
+			expect( screen.getByText( 'Saved' ) ).toBeVisible();
+		} );
+
+		it( 'is hidden while the feature is off', () => {
+			render( new ReaderSidebar( defaultProps ).renderSidebarMenu() );
+
+			expect( screen.queryByText( 'Saved' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'title actions', () => {
 		it( 'links to the new subscription page and to search', () => {
 			const instance = new ReaderSidebar( defaultProps );
