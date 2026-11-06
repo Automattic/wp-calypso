@@ -2,6 +2,7 @@ import {
 	fetchReadConversationsList,
 	fetchReadConversationsComments,
 	markNotificationsRead,
+	unfollowReadConversation,
 	type ReadConversationsResponse,
 	type ReadConversationsSort,
 } from '@automattic/api-core';
@@ -126,7 +127,14 @@ function markCachedConversationNotesRead( queryClient: QueryClient, noteIds: num
 					if ( previousCount && ! unreadCount ) {
 						cleared++;
 					}
-					return { ...conversation, unread_note_ids: unread, unread_count: unreadCount };
+					return {
+						...conversation,
+						unread_note_ids: unread,
+						unread_comment_ids: conversation.unread_comment_ids.filter(
+							( _id, index ) => ! ids.has( conversation.unread_note_ids[ index ] )
+						),
+						unread_count: unreadCount,
+					};
 				} ),
 			} ) );
 			// Only the first page's total is read.
@@ -184,6 +192,42 @@ export const markReadConversationNotesMutation = ( queryClient: QueryClient ) =>
 			);
 			await Promise.all(
 				queryKeys.map( ( queryKey ) => queryClient.invalidateQueries( { queryKey } ) )
+			);
+		},
+	} );
+
+export const unfollowReadConversationMutation = ( queryClient: QueryClient ) =>
+	mutationOptions( {
+		meta: { statId: 'read-conversation-unfollow' },
+		mutationFn: async ( params: { blogId: number; postId: number } ) => {
+			const response = await unfollowReadConversation( params );
+			if ( ! response.success ) {
+				throw new Error( 'The conversation was not unfollowed.' );
+			}
+			return response;
+		},
+		onSuccess: async ( _response, { blogId, postId } ) => {
+			const queryKey = getReadConversationsListQueryKey();
+			// A list fetched before the unfollow would otherwise land after it and follow again.
+			// Lists still on their first fetch keep it, since cancelling would leave them empty.
+			await queryClient.cancelQueries( {
+				queryKey,
+				predicate: ( query ) => query.state.data !== undefined,
+			} );
+			queryClient.setQueriesData< ReadConversationsInfiniteData >(
+				{ queryKey },
+				( data ) =>
+					data && {
+						...data,
+						pages: data.pages.map( ( page ) => ( {
+							...page,
+							conversations: page.conversations.map( ( conversation ) =>
+								conversation.blog_id === blogId && conversation.post_id === postId
+									? { ...conversation, is_following: false }
+									: conversation
+							),
+						} ) ),
+					}
 			);
 		},
 	} );

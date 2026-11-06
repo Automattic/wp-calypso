@@ -69,7 +69,7 @@ export const FollowLink = ( {
 			style={ {
 				height: '16px',
 				textDecoration: 'none',
-				fontWeight: 'var(--wpds-typography-font-weight-emphasis)',
+				fontWeight: 'var(--wpds-typography-font-weight-emphasis, 600)',
 			} }
 			onClick={ toggleFollowStatus }
 		>

@@ -12,11 +12,6 @@ jest.mock( '@automattic/viewport-react', () => ( {
 	useBreakpoint: jest.fn( () => mockIsNarrow ),
 } ) );
 
-jest.mock( 'calypso/reader/data/notifications', () => ( {
-	useCommentNotes: jest.fn(),
-	useMarkNotesRead: jest.fn(),
-} ) );
-
 jest.mock( 'calypso/components/data/document-head', () => () => null );
 
 jest.mock( 'calypso/reader/stream/use-selected-post-commands', () => ( {
@@ -33,22 +28,31 @@ jest.mock( 'calypso/state/notices/actions', () => ( {
 
 jest.mock( '../conversation-list', () => ( {
 	ConversationList: ( props: {
-		conversations: { key: string }[];
+		items: { key: string }[];
+		unreadCount: number;
 		selectedKey?: string;
-		onSelect: ( conversation: { key: string }, source: string ) => void;
+		onSelect: ( item: { key: string }, source: string ) => void;
 		onTabChange: ( tab: string ) => void;
+		onSortChange: ( sort: string ) => void;
+		onSearchChange: ( search: string ) => void;
+		markAllCount: number;
 		onMarkAllRead: () => void;
 		onDensityChange: ( density: string ) => void;
 	} ) => (
 		<div>
 			<p>Selected: { props.selectedKey ?? 'none' }</p>
-			<button onClick={ props.onMarkAllRead }>Mark all as read</button>
-			{ props.conversations.map( ( conversation ) => (
-				<button key={ conversation.key } onClick={ () => props.onSelect( conversation, 'click' ) }>
-					{ conversation.key }
+			{ props.markAllCount > 0 && (
+				<button onClick={ props.onMarkAllRead }>Mark { props.markAllCount } as read</button>
+			) }
+			{ props.items.map( ( item ) => (
+				<button key={ item.key } onClick={ () => props.onSelect( item, 'click' ) }>
+					{ item.key }
 				</button>
 			) ) }
 			<button onClick={ () => props.onTabChange( 'yours' ) }>Your comments</button>
+			<button onClick={ () => props.onTabChange( 'unread' ) }>Unread</button>
+			<button onClick={ () => props.onSortChange( 'most_active' ) }>Most active</button>
+			<button onClick={ () => props.onSearchChange( 'cats' ) }>Search</button>
 			<button onClick={ () => props.onDensityChange( 'compact' ) }>Compact</button>
 		</div>
 	),
@@ -60,10 +64,12 @@ jest.mock( '../conversation-detail', () => ( {
 		postId: number;
 		onPrevious?: () => void;
 		onNext?: () => void;
+		startingCommentId?: number;
 		highlightedCommentIds?: number[];
 	} ) => (
 		<div>
 			<p>Detail: { `${ props.siteId }-${ props.postId }` }</p>
+			<p>Start: { props.startingCommentId ?? 'latest' }</p>
 			<p>New: { props.highlightedCommentIds?.join( ',' ) || 'none' }</p>
 			<button disabled={ ! props.onPrevious } onClick={ props.onPrevious }>
 				previous
@@ -77,57 +83,93 @@ jest.mock( '../conversation-detail', () => ( {
 
 import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
+import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
-import { useCommentNotes, useMarkNotesRead } from 'calypso/reader/data/notifications';
 import { errorNotice } from 'calypso/state/notices/actions';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import { ConversationsInbox } from '..';
-import { makeNote } from '../test/helpers';
+import { makeConversation, makeOwnComment } from '../test/helpers';
 
-const mockedUseCommentNotes = jest.mocked( useCommentNotes );
-const mockedUseMarkNotesRead = jest.mocked( useMarkNotesRead );
+const BASE = 'https://public-api.wordpress.com';
+
+const unread = [
+	makeConversation( { postId: 100, commentId: 1001, unreadNoteIds: [ 1 ] } ),
+	makeConversation( { postId: 200, commentId: 2001, unreadNoteIds: [ 2 ] } ),
+];
+const conversations = [ ...unread, makeConversation( { postId: 300, commentId: 3001 } ) ];
 
 const notes = [
-	makeNote( {
-		id: 1,
-		postId: 100,
-		commentId: 1001,
-		timestamp: '2024-01-03T00:00:00Z',
-		read: 0,
-	} ),
-	makeNote( {
-		id: 2,
-		postId: 200,
-		commentId: 2001,
-		timestamp: '2024-01-02T00:00:00Z',
-		read: 0,
-	} ),
-	makeNote( {
-		id: 3,
-		postId: 300,
-		commentId: 3001,
-		timestamp: '2024-01-01T00:00:00Z',
-		read: 1,
-	} ),
+	{ id: 1, meta: { ids: { site: 10, post: 100, comment: 1001 } } },
+	{ id: 2, meta: { ids: { site: 10, post: 200, comment: 2001 } } },
+	{ id: 3, read: 0, meta: { ids: { site: 10, post: 400, comment: 41 } } },
 ];
 
-const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
-	renderWithProvider( <ConversationsInbox { ...props } /> );
+const conversationsPage = ( items = conversations, nextCursor: string | null = null ) => ( {
+	conversations: items,
+	next_cursor: nextCursor,
+	unread_total: items.filter( ( { unread_note_ids } ) => unread_note_ids.length ).length,
+} );
 
-let markRead: jest.Mock;
+let requests: string[];
+let replyConversations: ( uri: string ) => object;
+let markReadStatus: number;
+let markReadBodies: { counts: Record< string, number > }[];
+
+const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
+	renderWithProvider( <ConversationsInbox { ...props } />, {
+		queryClient: new QueryClient( { defaultOptions: { queries: { retry: false } } } ),
+	} );
+
+// The list loads asynchronously, so wait for a row before acting on it.
+const findRow = ( key: string ) => screen.findByRole( 'button', { name: key } );
 
 beforeEach( () => {
 	mockIsNarrow = false;
 	jest.mocked( page.show ).mockReset();
 	jest.mocked( page.replace ).mockReset();
 	jest.mocked( recordReaderTracksEvent ).mockClear();
-	markRead = jest.fn();
-	mockedUseCommentNotes.mockReturnValue( { data: notes, isLoading: false } as never );
-	mockedUseMarkNotesRead.mockReturnValue( { mutate: markRead } as never );
+	requests = [];
+	replyConversations = () => conversationsPage();
+	markReadStatus = 200;
+	markReadBodies = [];
+	nock( BASE )
+		.persist()
+		.get( '/wpcom/v2/read/conversations' )
+		.query( true )
+		.reply( 200, ( uri ) => {
+			requests.push( uri );
+			return replyConversations( uri );
+		} )
+		.get( '/wpcom/v2/read/conversations/comments' )
+		.query( true )
+		.reply( 200, ( uri ) => {
+			requests.push( uri );
+			return {
+				comments: [
+					makeOwnComment( { postId: 300, commentId: 31 } ),
+					makeOwnComment( { postId: 300, commentId: 32 } ),
+					makeOwnComment( { postId: 400, commentId: 41 } ),
+				],
+				next_cursor: null,
+			};
+		} )
+		.get( '/rest/v1.1/notifications/' )
+		.query( true )
+		.reply( 200, { notes } )
+		.post( /\/notifications\/read/ )
+		.reply( ( _uri, body ) => {
+			markReadBodies.push( body as ( typeof markReadBodies )[ number ] );
+			return [ markReadStatus, {} ];
+		} );
 } );
+
+afterEach( () => nock.cleanAll() );
+
+const markedNoteIds = () =>
+	markReadBodies.map( ( { counts } ) => Object.keys( counts ).map( Number ) );
 
 describe( 'ConversationsInbox', () => {
 	it( 'auto-selects the first conversation when the URL has none', async () => {
@@ -138,10 +180,11 @@ describe( 'ConversationsInbox', () => {
 		);
 	} );
 
-	it( 'selects the conversation from the URL without replacing it', () => {
+	it( 'selects the conversation from the URL without replacing it', async () => {
 		renderInbox( { siteId: '10', postId: '200' } );
 
-		expect( screen.getByText( 'Selected: 10-200' ) ).toBeVisible();
+		await findRow( '10-p-200' );
+		expect( screen.getByText( 'Selected: 10-p-200' ) ).toBeVisible();
 		expect( screen.getByText( 'Detail: 10-200' ) ).toBeVisible();
 		expect( page.replace ).not.toHaveBeenCalled();
 	} );
@@ -150,9 +193,9 @@ describe( 'ConversationsInbox', () => {
 		const user = userEvent.setup();
 		renderInbox( { siteId: '10', postId: '100' } );
 
-		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+		await user.click( await findRow( '10-p-200' ) );
 
-		expect( markRead ).toHaveBeenCalledWith( [ 2 ], expect.anything() );
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 2 ] ] ) );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/200' );
 	} );
 
@@ -160,32 +203,39 @@ describe( 'ConversationsInbox', () => {
 		const user = userEvent.setup();
 		renderInbox( { siteId: '10', postId: '100' } );
 
-		await user.click( screen.getByRole( 'button', { name: '10-300' } ) );
+		await user.click( await findRow( '10-p-300' ) );
 
-		expect( markRead ).not.toHaveBeenCalled();
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+		expect( markedNoteIds() ).toEqual( [] );
 	} );
 
 	it( 'shows an error notice when marking as read fails', async () => {
 		const user = userEvent.setup();
-		markRead.mockImplementation( ( _ids, options ) => options.onError() );
+		markReadStatus = 500;
 		renderInbox( { siteId: '10', postId: '100' } );
 
-		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+		await user.click( await findRow( '10-p-200' ) );
 
-		expect( errorNotice ).toHaveBeenCalledWith( 'Couldn’t mark as read. Try again.' );
+		await waitFor( () =>
+			expect( errorNotice ).toHaveBeenCalledWith(
+				'Couldn’t mark as read. Try again.',
+				expect.anything()
+			)
+		);
 	} );
 
-	it( 'disables the previous button at the start of the list', () => {
+	it( 'disables the previous button at the start of the list', async () => {
 		renderInbox( { siteId: '10', postId: '100' } );
 
+		await findRow( '10-p-100' );
 		expect( screen.getByRole( 'button', { name: 'previous' } ) ).toBeDisabled();
 		expect( screen.getByRole( 'button', { name: 'next' } ) ).toBeEnabled();
 	} );
 
-	it( 'disables the next button at the end of the list', () => {
+	it( 'disables the next button at the end of the list', async () => {
 		renderInbox( { siteId: '10', postId: '300' } );
 
+		await findRow( '10-p-300' );
 		expect( screen.getByRole( 'button', { name: 'previous' } ) ).toBeEnabled();
 		expect( screen.getByRole( 'button', { name: 'next' } ) ).toBeDisabled();
 	} );
@@ -194,31 +244,27 @@ describe( 'ConversationsInbox', () => {
 		const user = userEvent.setup();
 		renderInbox( { siteId: '10', postId: '200' } );
 
+		await findRow( '10-p-200' );
 		await user.click( screen.getByRole( 'button', { name: 'previous' } ) );
 
-		expect( markRead ).toHaveBeenCalledWith( [ 1 ], expect.anything() );
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1 ] ] ) );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' );
-	} );
-
-	it( 'opens the next conversation without marking it as read when it has no unread notes', async () => {
-		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '200' } );
-
-		await user.click( screen.getByRole( 'button', { name: 'next' } ) );
-
-		expect( markRead ).not.toHaveBeenCalled();
-		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
 	} );
 
 	it( 'keeps the new comments of an opened conversation after it is marked read', async () => {
 		const user = userEvent.setup();
 		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
 
-		await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
-		mockedUseCommentNotes.mockReturnValue( {
-			data: notes.map( ( note ) => ( { ...note, read: 1 } ) ),
-			isLoading: false,
-		} as never );
+		await screen.findByText( 'New: 1001' );
+		replyConversations = () =>
+			conversationsPage(
+				conversations.map( ( item ) => ( {
+					...item,
+					unread_note_ids: [],
+					unread_comment_ids: [],
+				} ) )
+			);
+		await user.click( screen.getByRole( 'button', { name: '10-p-200' } ) );
 		rerender( <ConversationsInbox siteId="10" postId="200" /> );
 
 		expect( screen.getByText( 'New: 2001' ) ).toBeVisible();
@@ -229,6 +275,70 @@ describe( 'ConversationsInbox', () => {
 		expect( screen.getByText( 'New: none' ) ).toBeVisible();
 	} );
 
+	it( 'shows only unread conversations on the Unread tab', async () => {
+		const user = userEvent.setup();
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await findRow( '10-p-300' );
+		await user.click( screen.getByRole( 'button', { name: 'Unread' } ) );
+
+		expect( screen.getByRole( 'button', { name: '10-p-200' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: '10-p-300' } ) ).not.toBeInTheDocument();
+	} );
+
+	it( 'sends the sort and search to the route', async () => {
+		const user = userEvent.setup();
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await findRow( '10-p-100' );
+		expect( requests[ 0 ] ).toContain( 'sort=newest' );
+
+		await user.click( screen.getByRole( 'button', { name: 'Most active' } ) );
+		await user.click( screen.getByRole( 'button', { name: 'Search' } ) );
+
+		await waitFor( () =>
+			expect( requests ).toContainEqual( expect.stringMatching( /sort=most_active.*search=cats/ ) )
+		);
+	} );
+
+	it( 'keeps loading when a page comes back empty with a cursor', async () => {
+		replyConversations = ( uri ) =>
+			uri.includes( 'cursor=next' )
+				? conversationsPage( [ conversations[ 2 ] ] )
+				: conversationsPage( [], 'next' );
+		renderInbox( { siteId: '10', postId: '300' } );
+
+		expect( await findRow( '10-p-300' ) ).toBeVisible();
+	} );
+
+	it( 'marks a comment read on a post the list has not loaded', async () => {
+		const user = userEvent.setup();
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await findRow( '10-p-100' );
+		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
+		await user.click( await findRow( '10-p-400-c-41' ) );
+
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 3 ] ] ) );
+	} );
+
+	it( 'lists your comments and opens one at that comment', async () => {
+		const user = userEvent.setup();
+		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
+
+		await findRow( '10-p-100' );
+		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
+		await user.click( await findRow( '10-p-300-c-32' ) );
+
+		expect( screen.getByRole( 'button', { name: '10-p-300-c-31' } ) ).toBeVisible();
+		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/300' );
+
+		rerender( <ConversationsInbox siteId="10" postId="300" /> );
+
+		expect( screen.getByText( 'Selected: 10-p-300-c-32' ) ).toBeVisible();
+		expect( screen.getByText( 'Start: 32' ) ).toBeVisible();
+	} );
+
 	describe( 'on narrow screens', () => {
 		beforeEach( () => {
 			mockIsNarrow = true;
@@ -237,12 +347,13 @@ describe( 'ConversationsInbox', () => {
 		it( 'switches to a single pane before the detail pane gets cramped', () => {
 			renderInbox();
 
-			expect( useBreakpoint ).toHaveBeenCalledWith( '<1120px' );
+			expect( useBreakpoint ).toHaveBeenCalledWith( '<1180px' );
 		} );
 
-		it( 'shows only the list and does not pick a conversation when the URL has none', () => {
+		it( 'shows only the list and does not pick a conversation when the URL has none', async () => {
 			renderInbox();
 
+			await findRow( '10-p-100' );
 			expect( screen.queryByText( /^Detail:/ ) ).not.toBeInTheDocument();
 			expect( page.replace ).not.toHaveBeenCalled();
 		} );
@@ -266,9 +377,9 @@ describe( 'ConversationsInbox', () => {
 			const user = userEvent.setup();
 			renderInbox( { siteId: '10', postId: '100' } );
 
-			await user.click( screen.getByRole( 'button', { name: '10-100' } ) );
+			await user.click( await findRow( '10-p-100' ) );
 
-			expect( markRead ).toHaveBeenCalledWith( [ 1 ], expect.anything() );
+			await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1 ] ] ) );
 			expect( page.show ).not.toHaveBeenCalled();
 			expect( tracked( 'calypso_reader_conversations_inbox_conversation_opened' ) ).toEqual( [] );
 		} );
@@ -284,7 +395,7 @@ describe( 'ConversationsInbox', () => {
 			const user = userEvent.setup();
 			renderInbox( { siteId: '10', postId: '100' } );
 
-			await user.click( screen.getByRole( 'button', { name: '10-200' } ) );
+			await user.click( await findRow( '10-p-200' ) );
 
 			expect( tracked( 'calypso_reader_conversations_inbox_conversation_opened' ) ).toEqual( [
 				{ source: 'click', unread_count: 1 },
@@ -295,6 +406,7 @@ describe( 'ConversationsInbox', () => {
 			const user = userEvent.setup();
 			renderInbox( { siteId: '10', postId: '200' } );
 
+			await findRow( '10-p-200' );
 			await user.click( screen.getByRole( 'button', { name: 'next' } ) );
 
 			expect( tracked( 'calypso_reader_conversations_inbox_conversation_opened' ) ).toEqual( [
@@ -306,6 +418,7 @@ describe( 'ConversationsInbox', () => {
 			const user = userEvent.setup();
 			renderInbox( { siteId: '10', postId: '100' } );
 
+			await findRow( '10-p-100' );
 			await user.keyboard( 'j' );
 
 			expect( tracked( 'calypso_reader_conversations_inbox_conversation_opened' ) ).toEqual( [
@@ -313,14 +426,14 @@ describe( 'ConversationsInbox', () => {
 			] );
 		} );
 
-		it( 'marks every unread note as read in one call and records the count', async () => {
+		it( 'marks every loaded unread note as read in one call and records the count', async () => {
 			const user = userEvent.setup();
 			renderInbox( { siteId: '10', postId: '100' } );
 
-			await user.click( screen.getByRole( 'button', { name: 'Mark all as read' } ) );
+			await findRow( '10-p-100' );
+			await user.click( screen.getByRole( 'button', { name: 'Mark 2 as read' } ) );
 
-			expect( markRead ).toHaveBeenCalledTimes( 1 );
-			expect( markRead ).toHaveBeenCalledWith( [ 1, 2 ] );
+			await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1, 2 ] ] ) );
 			expect( tracked( 'calypso_reader_conversations_inbox_marked_all_read' ) ).toEqual( [
 				{ count: 2 },
 			] );
@@ -343,7 +456,7 @@ describe( 'ConversationsInbox', () => {
 
 		it( 'saves and records the density picked', async () => {
 			const user = userEvent.setup();
-			const scope = nock( 'https://public-api.wordpress.com' )
+			const scope = nock( BASE )
 				.post( '/rest/v1.1/me/preferences', {
 					calypso_preferences: { reader_conversations_inbox_density: 'compact' },
 				} )

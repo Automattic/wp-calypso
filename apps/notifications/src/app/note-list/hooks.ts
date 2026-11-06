@@ -1,9 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
-import getHiddenNoteIds from '../../panel/state/selectors/get-hidden-note-ids';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
-import getLastSelectedNoteId from '../../panel/state/selectors/get-last-selected-note-id';
 import type { Note } from '../types';
 
 import './style.scss';
@@ -19,64 +17,6 @@ function getNoteRow(
 
 function focusToNote( noteListRef: React.RefObject< HTMLObjectElement | null >, note?: Note ) {
 	getNoteRow( noteListRef, note?.id )?.focus();
-}
-
-// Set the focus in the note list to the last selected note,
-// or to the nearest one when the last selected note is no longer visible.
-export function useNoteListFocusToLastSelectedNote( {
-	noteListRef,
-	notes,
-}: {
-	noteListRef: React.RefObject< HTMLObjectElement | null >;
-	notes: Note[];
-} ) {
-	const lastSelectedNoteId = useSelector( getLastSelectedNoteId );
-	const hiddenNoteIds = useSelector( ( state ) => getHiddenNoteIds( state ) );
-
-	useEffect(
-		() => {
-			let noteToFocus: Note | undefined = undefined;
-
-			if ( lastSelectedNoteId ) {
-				const noteIndex = notes.findIndex( ( note ) => note.id === lastSelectedNoteId );
-				if ( noteIndex < 0 ) {
-					return;
-				}
-
-				if ( hiddenNoteIds[ notes[ noteIndex ].id ] === true ) {
-					// The last selected note is no longer visible.
-
-					// Find the nearest visible note forwards.
-					for ( let i = noteIndex + 1; i < notes.length; i++ ) {
-						if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
-							noteToFocus = notes[ i ];
-							break;
-						}
-					}
-
-					if ( ! noteToFocus ) {
-						// Find the nearest visible note backwards.
-						for ( let i = noteIndex - 1; i >= 0; i-- ) {
-							if ( hiddenNoteIds[ notes[ i ].id ] !== true ) {
-								noteToFocus = notes[ i ];
-								break;
-							}
-						}
-					}
-				} else {
-					noteToFocus = notes[ noteIndex ];
-				}
-			}
-
-			if ( noteToFocus ) {
-				focusToNote( noteListRef, noteToFocus );
-			}
-		},
-
-		// Run only once on mount
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
-	);
 }
 
 /**

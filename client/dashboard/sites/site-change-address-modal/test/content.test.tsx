@@ -11,6 +11,13 @@ import { render } from '../../../test-utils';
 import SiteChangeAddressContent from '../content';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
+let mockHasEnTranslation = true;
+
+jest.mock( '@automattic/i18n-utils', () => ( {
+	...jest.requireActual( '@automattic/i18n-utils' ),
+	useHasEnTranslation: () => () => mockHasEnTranslation,
+} ) );
+
 const SITE_ID = 1;
 
 const site = {
@@ -50,6 +57,27 @@ async function submitAddress( value: string ) {
 }
 
 describe( '<SiteChangeAddressContent>', () => {
+	beforeEach( () => {
+		mockHasEnTranslation = true;
+	} );
+
+	test( 'suggests adding a custom domain when the site has none', async () => {
+		renderContent();
+
+		expect(
+			await screen.findByText( /A custom domain is easier to share and remember/ )
+		).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'Add a custom domain' } ) ).toBeVisible();
+	} );
+
+	test( 'falls back to the previous custom domain suggestion until it is translated', async () => {
+		mockHasEnTranslation = false;
+		renderContent();
+
+		expect( await screen.findByText( /Before changing site address, consider/ ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: 'adding a custom domain' } ) ).toBeVisible();
+	} );
+
 	afterEach( () => {
 		select( noticesStore )
 			.getNotices()
