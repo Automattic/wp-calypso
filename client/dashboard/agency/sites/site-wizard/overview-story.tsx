@@ -90,21 +90,19 @@ export default function SitesOverviewStory() {
 			key: 'portfolio',
 			title: __( 'See your whole portfolio' ),
 			description: __(
-				'Bring your clients’ WordPress sites into one view, even when they use different hosts. Find a site, see where it’s hosted, and check its status without keeping track of a dozen different bookmarks.'
+				'Connected, moved, and new sites show up in the same list, whatever their host. Find a site, see where it’s hosted, and check its status without a dozen bookmarks.'
 			),
 			graphic: <PortfolioSitesList />,
 		},
 		{
 			key: 'work',
 			title: __( 'Get straight to the site you need' ),
-			description: __(
-				'Go from your portfolio to a site’s WordPress admin or live homepage. Whether you’re publishing a client update or checking the finished page, your next stop is close at hand.'
-			),
+			description: __( 'Open WP Admin or the live site in one click.' ),
 			graphic: <SiteActionsMenu />,
 		},
 		{
 			key: 'migration',
-			title: __( 'Get a hand moving your portfolio' ),
+			title: __( 'Help moving your portfolio' ),
 			description:
 				partnerManager || hasPartnerManager
 					? __(
@@ -179,7 +177,7 @@ export default function SitesOverviewStory() {
 			) ) }
 			<section className="agency-sites-story__faq" aria-labelledby={ `${ id }-faq` }>
 				<Heading id={ `${ id }-faq` } level={ 2 }>
-					{ __( 'A few things to know before you start' ) }
+					{ __( 'Adding sites FAQ' ) }
 				</Heading>
 				<div className="agency-sites-story__faq-list">
 					{ faqs.map( ( faq ) => (

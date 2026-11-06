@@ -32,9 +32,11 @@ import { useAgencyFields, useAgencyActions } from './dataviews';
 import { hasWpcomLicenseWithoutSite } from './lib';
 import ProvisioningSiteNotices from './provisioning-notice';
 import SiteWizard from './site-wizard';
+import WelcomeModal from './site-wizard/welcome-modal';
 import './style.scss';
 import { useWizardHistory } from './site-wizard/wizard-history';
 import type { AddNewSiteAction } from './add-new-site/types';
+import type { SiteWelcome } from './site-wizard/welcome-modal';
 import type { AgencySite, FetchAgencySitesOptions } from '@automattic/api-core';
 import type { SupportedLayouts, View } from '@wordpress/dataviews';
 
@@ -133,7 +135,9 @@ function AgencySitesContent() {
 	const currentSearchParams = agencySitesRoute.useSearch();
 	const [ activeModal, setActiveModal ] = useState< AddNewSiteAction | null >( null );
 	const [ wizardOpen, setWizardOpen ] = useState( false );
+	const [ createRequest, setCreateRequest ] = useState( 0 );
 	const [ wizardRevision, setWizardRevision ] = useState( 0 );
+	const [ welcome, setWelcome ] = useState< SiteWelcome | null >( null );
 
 	useEffect( () => {
 		if ( preview.wizardJump ) {
@@ -221,21 +225,32 @@ function AgencySitesContent() {
 						licensesReadyToSetUp > 0 ? (
 							<NeedsSetupDescription count={ licensesReadyToSetUp } />
 						) : (
-							__( 'Manage your clients’ WordPress sites in one place.' )
+							! showEmptyState && __( 'Every client site you’ve connected, moved, or built.' )
 						)
 					}
 					actions={
-						! showWizard && (
+						// Entry C leads with the address field, so creating a site moves up here.
+						showWizard && showEmptyState && preview.entry === 'address' ? (
 							<Button
-								variant="primary"
-								onClick={ () => {
-									recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
-									setWizardOpen( true );
-								} }
+								variant="secondary"
+								onClick={ () => setCreateRequest( ( count ) => count + 1 ) }
 								__next40pxDefaultSize
 							>
-								{ __( 'Add new site' ) }
+								{ __( 'Create a site' ) }
 							</Button>
+						) : (
+							! showWizard && (
+								<Button
+									variant="primary"
+									onClick={ () => {
+										recordTracksEvent( 'calypso_a4a_sites_add_new_site_clicked' );
+										setWizardOpen( true );
+									} }
+									__next40pxDefaultSize
+								>
+									{ __( 'Add new site' ) }
+								</Button>
+							)
 						)
 					}
 				/>
@@ -264,6 +279,7 @@ function AgencySitesContent() {
 				<ImportFromWPCOMModal onClose={ closeModal } preview={ simulation?.import } />
 			) }
 			{ ! isLoading && <PerformanceTrackerStop /> }
+			{ welcome && <WelcomeModal welcome={ welcome } onClose={ () => setWelcome( null ) } /> }
 			{ showWizard ? (
 				<SiteWizard
 					key={ wizardRevision }
@@ -271,7 +287,12 @@ function AgencySitesContent() {
 					simulation={ simulation }
 					onStart={ () => setWizardOpen( true ) }
 					onClose={ closeWizard }
+					onComplete={ ( next ) => {
+						closeWizard();
+						setWelcome( next );
+					} }
 					onSelectAction={ setActiveModal }
+					createRequest={ createRequest }
 				/>
 			) : (
 				<div

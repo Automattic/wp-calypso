@@ -1,0 +1,52 @@
+.agency-bell__body {
+	transform-box: view-box;
+	transform-origin: 40px 46px;
+}
+
+.agency-bell__ring {
+	opacity: 0;
+}
+
+@media ( prefers-reduced-motion: no-preference ) {
+	.agency-site-wizard__choice:is( :hover, :focus-visible ) .agency-bell__body {
+		animation: agency-bell-ding 0.6s ease-out;
+	}
+
+	.agency-site-wizard__choice:is( :hover, :focus-visible ) .agency-bell__ring {
+		animation: agency-bell-ring 0.6s ease-out forwards;
+	}
+}
+
+@media ( prefers-reduced-motion: reduce ) {
+	.agency-site-wizard__choice:is( :hover, :focus-visible ) .agency-bell__ring {
+		opacity: 1;
+	}
+}
+
+@keyframes agency-bell-ding {
+	0%,
+	100% {
+		transform: rotate( 0deg );
+	}
+	25% {
+		transform: rotate( -6deg );
+	}
+	55% {
+		transform: rotate( 4deg );
+	}
+	80% {
+		transform: rotate( -2deg );
+	}
+}
+
+@keyframes agency-bell-ring {
+	0% {
+		opacity: 0;
+		transform: translateY( 2px );
+	}
+	40%,
+	100% {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+}

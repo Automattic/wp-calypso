@@ -11,7 +11,7 @@ export type Step =
 	| 'picker'
 	| 'url'
 	| 'authorize'
-	| 'connecting'
+	| 'checking'
 	| 'source'
 	| 'review'
 	| 'host'
@@ -34,7 +34,9 @@ const initialData = {
 	connectionChecks: 0,
 	url: '',
 	name: '',
-	address: 'clientdemo',
+	address: '',
+	phpVersion: '',
+	dataCenter: '',
 	email: '',
 	message: '',
 	selected: [] as number[],
@@ -69,7 +71,7 @@ export interface WizardJump {
 	billing?: Billing;
 }
 export function jumpHistory( target: WizardJump ): Step[] {
-	let path: Step[] = [ 'start', 'url', 'review', 'authorize', 'connecting', 'success' ];
+	let path: Step[] = [ 'start', 'url', 'review', 'authorize', 'checking', 'success' ];
 	if ( target.journey === 'migrate' ) {
 		path = [
 			'start',

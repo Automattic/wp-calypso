@@ -55,10 +55,15 @@ export default function SiteReview( {
 			) }
 			{ isLargeList && (
 				<div className="agency-site-wizard__review-shortcuts">
-					<Button variant="link" onClick={ () => onChange( available.map( ( site ) => site.id ) ) }>
+					<Button
+						__next40pxDefaultSize
+						variant="link"
+						onClick={ () => onChange( available.map( ( site ) => site.id ) ) }
+					>
 						{ __( 'Select all' ) }
 					</Button>
 					<Button
+						__next40pxDefaultSize
 						variant="link"
 						onClick={ () =>
 							onChange(
@@ -71,7 +76,7 @@ export default function SiteReview( {
 					>
 						{ __( 'Start with three' ) }
 					</Button>
-					<Button variant="link" onClick={ () => onChange( [] ) }>
+					<Button __next40pxDefaultSize variant="link" onClick={ () => onChange( [] ) }>
 						{ __( 'Clear selection' ) }
 					</Button>
 				</div>

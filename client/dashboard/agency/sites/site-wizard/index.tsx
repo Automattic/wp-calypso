@@ -1,25 +1,43 @@
+import { getDataCenterOptions } from '@automattic/api-core';
 import { activeAgencyQuery, agencyDevLicensesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import {
 	Button,
 	CheckboxControl,
+	SelectControl,
 	TextareaControl,
+	Spinner,
 	TextControl,
 	__experimentalHeading as Heading,
+	__experimentalVStack as VStack,
 } from '@wordpress/components';
-import { __, _n, sprintf } from '@wordpress/i18n';
-import { chevronLeft } from '@wordpress/icons';
-import { useEffect, useId, useRef } from 'react';
+import { __, _n, isRTL, sprintf } from '@wordpress/i18n';
+import { chevronLeft, chevronRight, Icon, people, reusableBlock, shield } from '@wordpress/icons';
+import { useEffect, useId, useRef, useState } from 'react';
+import { getPHPVersions } from 'calypso/data/php-versions';
 import { useAnalytics } from '../../../app/analytics';
+import { ActionList } from '../../../components/action-list';
 import { Card } from '../../../components/card';
+import SuffixInputControl from '../../../components/input-control/suffix-input-control';
+import RouterLinkButton from '../../../components/router-link-button';
 import { consumeWizardJump, setWizardPosition, useDesignPreview } from '../../design-preview';
-import { getMarketplaceHostingSectionRoute } from '../../marketplace/paths';
+import {
+	getMarketplaceHostingSectionRoute,
+	MARKETPLACE_PRODUCTS_ROUTE,
+} from '../../marketplace/paths';
 import { getFormatError } from '../../marketplace/purchases/use-site-address';
+import { TEAM_ROUTE } from '../../team/paths';
 import { isAgencyApproved, parseSiteUrl } from '../add-new-site/lib';
 import AmplifyBackdrop from './amplify-backdrop';
+import BellIllustration from './bell-illustration';
 import { Choice, RadioChoice } from './choices';
-import ConnectionSetup, { ConnectionInstructions, ConnectionSites } from './connection-setup';
-import ConnectionWaiting from './connection-waiting';
+import {
+	ConnectionInstall,
+	ConnectionSites,
+	ConnectionSiteList,
+	ConnectionTroubleshooting,
+	PluginInstallMenu,
+} from './connection-setup';
 import CreateChoices from './create-choices';
 import EntryChoices from './entry-choices';
 import EntryIllustration from './entry-illustration';
@@ -27,10 +45,21 @@ import HostingChoice from './hosting-choice';
 import SitesOverviewStory from './overview-story';
 import { parseSiteList, SITE_REVIEW_BULK_THRESHOLD } from './site-intake';
 import SiteIntake, { selectedSiteLabel } from './site-intake-form';
-import SitePreview from './site-preview';
+import SiteListInput, { SiteListSummary, SiteSummary } from './site-list-input';
 import SiteReview from './site-review';
+import {
+	CallHelp,
+	CreateQuestions,
+	HostingFeatures,
+	MoveQuestions,
+	SupportHelp,
+} from './step-details';
+import { NumberedSteps, Section } from './step-kit';
+import { useHostingEstimates } from './use-hosting-estimate';
 import useSiteWizard from './use-site-wizard';
+import type { IntakeSite } from './site-intake';
 import type { Journey, Step } from './use-site-wizard';
+import type { SiteWelcome } from './welcome-modal';
 import type useSiteSimulation from '../../design-preview/use-site-simulation';
 import type { AddNewSiteAction } from '../add-new-site/types';
 import type { ReactNode } from 'react';
@@ -40,8 +69,12 @@ interface Props {
 	simulation?: ReturnType< typeof useSiteSimulation >;
 	onStart: () => void;
 	onClose: () => void;
+	/** Leaves the wizard for the Sites list, with a note about what just arrived. */
+	onComplete?: ( welcome: SiteWelcome ) => void;
 	onSelectAction: ( action: AddNewSiteAction ) => void;
 	isFirstSite: boolean;
+	/** Increments each time the page asks the wizard to start creating a new site. */
+	createRequest?: number;
 }
 interface Action {
 	label: string;
@@ -54,8 +87,10 @@ export default function SiteWizard( {
 	simulation,
 	onStart,
 	onClose,
+	onComplete,
 	onSelectAction,
 	isFirstSite,
+	createRequest = 0,
 }: Props ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { wizardJump, sitesRevision, entry: previewEntry } = useDesignPreview();
@@ -96,20 +131,51 @@ export default function SiteWizard( {
 	useEffect( () => () => setWizardPosition( null ), [] );
 	const container = useRef< HTMLDivElement >( null );
 	const titleId = useId();
-	const isUrlStep =
-		step === 'url' || step === 'source' || ( step === 'start' && entry === 'address' );
+	const [ siteDraft, setSiteDraft ] = useState( '' );
+	const isUrlStep = step === 'url' || step === 'source';
+	// These steps show errors next to their address field instead of above the actions.
+	const hasFieldError = isUrlStep || ( step === 'start' && entry === 'address' );
 	const previousStep = useRef( step );
 	useEffect( () => {
 		if ( previousStep.current !== step ) {
-			const target = isUrlStep ? '.agency-site-wizard__url-input textarea' : 'h2';
+			let target = isUrlStep ? '.agency-site-wizard__url-input textarea' : 'h2';
+			if ( step === 'start' && entry === 'address' ) {
+				target = '.agency-site-wizard__site-list input';
+			}
 			container.current?.querySelector< HTMLElement >( target )?.focus();
 			previousStep.current = step;
 		}
-	}, [ step, isUrlStep ] );
+	}, [ step, isUrlStep, entry ] );
 	const go = ( next: Step ) => {
 		recordTracksEvent( 'calypso_a4a_site_wizard_step', { step: next, preview: !! simulation } );
 		changeStep( next );
 	};
+	const [ isChecking, setIsChecking ] = useState( false );
+	const afterCheck = useRef< () => void >( undefined );
+	useEffect( () => {
+		if ( ! isChecking ) {
+			return;
+		}
+		const timer = setTimeout( () => {
+			setIsChecking( false );
+			afterCheck.current?.();
+		}, 800 );
+		return () => clearTimeout( timer );
+	}, [ isChecking ] );
+	// The preview has no real connection to check, so it pauses and then runs `then`.
+	const checkConnections = ( then: () => void ) => {
+		afterCheck.current = then;
+		setIsChecking( true );
+	};
+	const lastCreateRequest = useRef( createRequest );
+	useEffect( () => {
+		if ( createRequest === lastCreateRequest.current ) {
+			return;
+		}
+		lastCreateRequest.current = createRequest;
+		recordTracksEvent( 'calypso_a4a_site_wizard_step', { step: 'new', preview: !! simulation } );
+		changeStep( 'new' );
+	}, [ createRequest, changeStep, recordTracksEvent, simulation ] );
 	const chooseJourney = ( journey: Journey, next: Step ) => {
 		change( { journey, undecided: false } );
 		go( next );
@@ -121,14 +187,16 @@ export default function SiteWizard( {
 	);
 	const isMigration = data.journey === 'migrate';
 	const isDevelopment = data.journey === 'development';
-	const siteAddress = `${ data.address }.${ data.host === 'wpcom' ? 'wpcomstaging.com' : 'mystagingwebsite.com' }`;
+	const addressSuffix = data.host === 'wpcom' ? '.wpcomstaging.com' : '.mystagingwebsite.com';
+	const suggestedAddress = data.name.toLowerCase().replace( /[^a-z0-9]/g, '' ) || 'clientsite';
+	const siteAddress = `${ data.address || suggestedAddress }${ addressSuffix }`;
 	// Entry C asks for addresses first and the keep-or-move question after them.
 	const reviewSites = ( input: string, undecided = data.undecided ) => {
 		const { sites, duplicates } = parseSiteList( input );
 		if ( ! sites.length ) {
 			setError(
 				__(
-					'We couldn’t find any website addresses. Try example.com, or paste the address column from your spreadsheet.'
+					'We couldn’t find any website addresses. Try yourgroovydomain.com, or paste the address column from your spreadsheet.'
 				)
 			);
 			return;
@@ -155,16 +223,39 @@ export default function SiteWizard( {
 		}
 		go( sites.length === 1 ? nextStep : 'review' );
 	};
+	const managedSites = simulation?.managedSites.map( ( site ) => site.url ) ?? [];
+	// Entry C lists every site as it's added, so it skips the separate review step.
+	const continueWithSites = () => {
+		const input = [ data.intake, siteDraft ].filter( Boolean ).join( '\n' );
+		const { sites, duplicates } = parseSiteList( input );
+		const eligible = sites.filter(
+			( site ) => ! data.completed.includes( site.id ) && ! managedSites.includes( site.id )
+		);
+		if ( ! eligible.length ) {
+			setError(
+				sites.length
+					? __( 'These sites are already in your agency dashboard.' )
+					: __( 'Add a site address to continue.' )
+			);
+			return;
+		}
+		setSiteDraft( '' );
+		change( {
+			intake: input,
+			sites,
+			duplicates,
+			chosen: eligible.map( ( site ) => site.id ),
+			url: eligible[ 0 ].url,
+			journey: 'connect',
+			undecided: true,
+		} );
+		go( 'path' );
+	};
 	const batch = data.sites.filter( ( site ) => data.chosen.includes( site.id ) );
 	const batchSize = Math.max( 1, batch.length );
-	const batchNames =
-		batch.length > 1
-			? sprintf(
-					/* translators: %d is the number of sites. */
-					__( '%d selected sites' ),
-					batch.length
-				)
-			: source?.host;
+	const hostingCount = isMigration ? batchSize : 1;
+	const hosting = useHostingEstimates( hostingCount );
+	const phpVersions = getPHPVersions();
 	const continueReview = () => {
 		if ( ! batch.length ) {
 			setError( __( 'Select at least one site to continue.' ) );
@@ -181,15 +272,19 @@ export default function SiteWizard( {
 		if ( ! simulation ) {
 			return;
 		}
+		const siteName = data.name || siteAddress;
+		let welcome: SiteWelcome;
 		if ( kind === 'picker' ) {
 			simulation.import.onImport( ids );
-			setResult(
-				sprintf(
+			welcome = {
+				kind: 'connect',
+				title: sprintf(
 					/* translators: %d is the number of connected sites. */
 					_n( '%d site connected', '%d sites connected', ids.length ),
 					ids.length
-				)
-			);
+				),
+				description: __( 'They’re in your Sites list, on the same hosting as before.' ),
+			};
 		} else if ( kind === 'connect' ) {
 			for ( const site of batch ) {
 				const accountSite = simulation.import.sites.find(
@@ -201,42 +296,80 @@ export default function SiteWizard( {
 					simulation.onConnect( site.url, site.name );
 				}
 			}
-			setResult(
-				batchSize === 1
-					? __( 'Your site is connected' )
-					: sprintf(
-							/* translators: %d is the number of sites. */
-							__( '%d sites connected' ),
-							batchSize
-						)
-			);
-		} else {
-			if ( kind === 'migrate' ) {
-				for ( const site of batch ) {
-					simulation.onCreateHosted( site.url, site.name, data.host );
-				}
-			} else {
-				simulation.onCreateHosted( siteAddress, data.name, data.host, isDevelopment );
-			}
-			let completion: string = __( 'Your new site is ready' );
-			if ( isDevelopment ) {
-				completion = __( 'Your development site is ready' );
-			}
-			if ( kind === 'migrate' ) {
-				completion =
+			welcome = {
+				kind: 'connect',
+				title:
 					batchSize === 1
-						? __( 'Your migration is complete' )
+						? __( 'Your site is connected' )
 						: sprintf(
 								/* translators: %d is the number of sites. */
-								__( '%d sites moved' ),
+								__( '%d sites connected' ),
 								batchSize
-							);
+							),
+				description: _n(
+					'It’s in your Sites list, on the same hosting as before.',
+					'They’re in your Sites list, on the same hosting as before.',
+					batchSize
+				),
+			};
+		} else if ( kind === 'migrate' ) {
+			for ( const site of batch ) {
+				simulation.onCreateHosted( site.url, site.name, data.host );
 			}
-			setResult( completion );
+			welcome = {
+				kind: 'migrate',
+				title: sprintf(
+					/* translators: 1: The number of sites. 2: The hosting provider. */
+					_n( '%1$d site moved to %2$s', '%1$d sites moved to %2$s', batchSize ),
+					batchSize,
+					hostName
+				),
+				description: __(
+					'Domain changes can take a few hours to reach everyone. Once your sites look right, cancel your old hosting.'
+				),
+			};
+		} else {
+			simulation.onCreateHosted( siteAddress, data.name, data.host, isDevelopment );
+			welcome = isDevelopment
+				? {
+						kind: 'development',
+						title: sprintf(
+							/* translators: %s is a site name. */
+							__( '%s is ready' ),
+							siteName
+						),
+						description: __(
+							'It’s in your Sites list and free while you build. Add hosting when you launch.'
+						),
+					}
+				: {
+						kind: 'hosted',
+						title: sprintf(
+							/* translators: %s is a site name. */
+							__( '%s is ready' ),
+							siteName
+						),
+						description: sprintf(
+							/* translators: %s is the hosting provider. */
+							__(
+								'It’s hosted on %s and in your Sites list. Connect your client’s domain when you launch.'
+							),
+							hostName
+						),
+					};
 		}
-		if ( kind === 'connect' || kind === 'migrate' ) {
-			change( { completed: [ ...new Set( [ ...data.completed, ...data.chosen ] ) ] } );
+		const completed =
+			kind === 'connect' || kind === 'migrate'
+				? [ ...new Set( [ ...data.completed, ...data.chosen ] ) ]
+				: data.completed;
+		const remaining = data.sites.some( ( site ) => ! completed.includes( site.id ) );
+		// A partial batch stays in the wizard so the rest of the portfolio is one click away.
+		if ( onComplete && ! ( remaining && kind !== 'create' ) ) {
+			onComplete( welcome );
+			return;
 		}
+		setResult( welcome.title );
+		change( { completed } );
 		go( 'success' );
 	};
 	const completeSetup = () => {
@@ -248,7 +381,7 @@ export default function SiteWizard( {
 	};
 	const submitSetup = () => {
 		if ( ! isMigration ) {
-			const addressError = getFormatError( data.address );
+			const addressError = getFormatError( data.address || suggestedAddress );
 			if ( addressError ) {
 				setError( addressError );
 				return;
@@ -339,27 +472,32 @@ export default function SiteWizard( {
 				);
 			}
 			if ( entry === 'address' ) {
-				description = __(
-					'Enter a client’s site address or paste your list. Next, choose to keep or move the hosting.'
-				);
+				const listed = parseSiteList( data.intake ).sites.length;
+				description = __( 'Add every site you manage, one by one or all at once.' );
 				content = (
 					<div className="agency-site-wizard__intake-layout">
-						<SiteIntake
-							compact
-							describedBy={ titleId }
+						<SiteListInput
 							value={ data.intake }
 							onChange={ ( intake ) => change( { intake } ) }
-							onReview={ ( input ) => reviewSites( input, true ) }
+							draft={ siteDraft }
+							onDraftChange={ setSiteDraft }
 							onError={ setError }
 							error={ error }
-							footer={
-								<Button variant="link" onClick={ () => go( 'new' ) }>
-									{ __( 'Create a new site instead' ) }
-								</Button>
-							}
+							managed={ managedSites }
+							simulate={ !! simulation }
 						/>
 					</div>
 				);
+				primary = {
+					label: listed
+						? sprintf(
+								/* translators: %d is the number of sites. */
+								_n( 'Choose hosting for %d site', 'Choose hosting for %d sites', listed ),
+								listed
+							)
+						: __( 'Choose hosting' ),
+					onClick: continueWithSites,
+				};
 			}
 			break;
 		case 'choose':
@@ -376,46 +514,52 @@ export default function SiteWizard( {
 			);
 			break;
 		case 'path':
-			title =
-				batchSize > 1
-					? __( 'Keep their hosting, or move them?' )
-					: __( 'Keep its hosting, or move it?' );
-			description = sprintf(
-				/* translators: %s is a site address or a number of sites. */
-				__( 'Either way, you’ll manage %s from this dashboard. You can move later, too.' ),
-				batchNames ?? __( 'your sites' )
+			title = _n(
+				'Where do you want this site hosted?',
+				'Where do you want these sites hosted?',
+				batchSize
+			);
+			description = _n(
+				'Not sure yet? Keep it where it is. You can move it later.',
+				'Not sure yet? Keep them where they are. You can move them later.',
+				batchSize
 			);
 			content = (
 				<div className="agency-site-wizard__choices agency-site-wizard__entry-options">
 					<Choice
 						illustration={ <EntryIllustration kind="connect" /> }
 						title={ __( 'Keep current hosting' ) }
-						description={ __(
-							'Connect with a plugin. The site, domain, and hosting stay where they are.'
-						) }
+						description={ __( 'Connect with a small plugin. Nothing else changes.' ) }
 						onClick={ () => chooseJourney( 'connect', 'authorize' ) }
 					/>
 					<Choice
 						illustration={ <EntryIllustration kind="move" /> }
-						title={ __( 'Move to new hosting' ) }
-						description={ __(
-							'Choose WordPress.com or Pressable, then move on your own or with our help.'
-						) }
+						title={ __( 'Move to our hosting' ) }
+						description={ __( 'Move to WordPress.com or Pressable, with or without our help.' ) }
 						onClick={ () => chooseJourney( 'migrate', 'host' ) }
 					/>
 				</div>
 			);
+			if ( batch.length ) {
+				content = (
+					<VStack spacing={ 10 }>
+						{ content }
+						<SiteSummary sites={ batch } />
+					</VStack>
+				);
+			}
 			break;
 		case 'new':
 			title = __( 'What kind of site are you creating?' );
-			description = __(
-				'Choose whether you’re building a project or setting up a website for visitors.'
-			);
+			description = __( 'Not sure? Start with a development site. It’s free.' );
 			content = (
-				<CreateChoices
-					onDevelopment={ startDevelopment }
-					onProduction={ () => chooseJourney( 'hosted', 'host' ) }
-				/>
+				<VStack spacing={ 12 }>
+					<CreateChoices
+						onDevelopment={ startDevelopment }
+						onProduction={ () => chooseJourney( 'hosted', 'host' ) }
+					/>
+					<CreateQuestions />
+				</VStack>
 			);
 			break;
 		case 'url':
@@ -425,9 +569,7 @@ export default function SiteWizard( {
 				? __(
 						'Enter one site to get started, or paste a list and choose which sites to move together.'
 					)
-				: __(
-						'Add one WordPress site or your whole client portfolio. Keep the hosting you already have.'
-					);
+				: __( 'Add one WordPress site or your whole client portfolio.' );
 			content = (
 				<div className="agency-site-wizard__intake-layout">
 					<SiteIntake
@@ -453,7 +595,7 @@ export default function SiteWizard( {
 				: __( 'Choose which sites to connect' );
 			description = isMigration
 				? __( 'Uncheck any sites you don’t want to move yet. You’ll choose hosting next.' )
-				: __( 'Uncheck any sites you don’t want to connect yet. Their hosting stays the same.' );
+				: __( 'Uncheck any sites you don’t want to connect yet.' );
 			if ( data.undecided ) {
 				title = __( 'Choose which sites to add' );
 				description = __(
@@ -483,7 +625,7 @@ export default function SiteWizard( {
 		case 'picker':
 			title = __( 'Add sites to your agency' );
 			description = __(
-				'These sites are linked to your WordPress.com account but aren’t in your agency dashboard yet. Choose which ones to add. Their hosting stays the same.'
+				'These sites are linked to your WordPress.com account but aren’t in your agency dashboard yet. Choose which ones to add.'
 			);
 			content = (
 				<div className="agency-site-wizard__form">
@@ -524,150 +666,194 @@ export default function SiteWizard( {
 			};
 			break;
 		case 'authorize': {
-			const alreadyLinked = !! knownSite && batchSize === 1;
-			title =
-				batchSize > 1
-					? __( 'Install the plugin on each site' )
-					: __( 'Install the plugin to connect' );
-			if ( alreadyLinked ) {
+			if ( knownSite && batchSize === 1 ) {
 				title = __( 'Add this site to your dashboard' );
-			}
-			description = alreadyLinked
-				? __( 'This site is already linked to your account. No plugin setup needed.' )
-				: _n(
-						'Your website and hosting stay where they are.',
-						'Your websites and hosting stay where they are.',
-						batchSize
-					);
-			content = (
-				<ConnectionSetup
-					sites={ batch }
-					knownSite={ alreadyLinked ? knownSite : undefined }
-					plugin={ data.plugin }
-					onPluginSelect={ ( plugin ) => {
-						change( { plugin, connectionChecks: 0 } );
-						if ( simulation || batchSize > 1 ) {
-							go( 'connecting' );
-						}
-					} }
-					simulate={ !! simulation }
-				/>
-			);
-			if ( alreadyLinked ) {
+				description = __( 'This site is already linked to your account. No plugin setup needed.' );
+				content = (
+					<div className="agency-site-wizard__connection">
+						<ConnectionSites sites={ batch } knownSite={ knownSite } simulate={ !! simulation } />
+					</div>
+				);
 				primary = {
 					label: __( 'Add to dashboard' ),
 					onClick: () => finish( 'connect' ),
 				};
-			}
-			break;
-		}
-		case 'connecting':
-			title = _n(
-				'Waiting for your site to connect',
-				'Waiting for your sites to connect',
-				batchSize
-			);
-			description = __( 'Finish setup in WordPress, then return here to check the connection.' );
-			if ( ! simulation ) {
-				title = __( 'Connect each site' );
-				description = __(
-					'Open each installer and approve the connection to your agency account.'
-				);
-				content = (
-					<div className="agency-site-wizard__connection">
-						<ConnectionSites
-							sites={ batch }
-							plugin={ data.plugin }
-							simulate={ false }
-							showInstallers
-						/>
-						<div className="agency-site-wizard__connection-setup">
-							<ConnectionInstructions plugin={ data.plugin } />
-						</div>
-					</div>
-				);
-				secondary = { label: __( 'View sites' ), onClick: onClose };
 				break;
 			}
-			content = (
-				<ConnectionWaiting
-					sites={ batch }
-					plugin={ data.plugin }
-					hasChecked={ data.connectionChecks > 0 }
-					onCheck={ () => {
-						// Preview the retry state first, then a successful return from the installer.
-						if ( data.connectionChecks === 0 ) {
-							change( { connectionChecks: 1 } );
-						} else {
-							finish( 'connect' );
-						}
-					} }
-				/>
+			title = _n(
+				'Install a plugin to connect your site',
+				'Install a plugin to connect your sites',
+				batchSize
 			);
+			description = _n(
+				'A small plugin connects your site to this dashboard. Your hosting stays the same.',
+				'A small plugin on each site connects it to this dashboard. Your hosting stays the same.',
+				batchSize
+			);
+			content = <ConnectionInstall sites={ batch } simulate={ !! simulation } />;
+			primary = simulation
+				? {
+						label: __( 'Continue' ),
+						onClick: () => {
+							go( 'checking' );
+							checkConnections( () => change( { connectionChecks: 1 } ) );
+						},
+					}
+				: { label: __( 'View sites' ), onClick: onClose };
 			break;
+		}
+		case 'checking': {
+			if ( isChecking ) {
+				title = _n( 'Checking your site…', 'Checking your sites…', batchSize );
+				description = __( 'Looking for the plugin and your approval. This takes a moment.' );
+				content = (
+					<div className="agency-site-wizard__checking">
+						<Spinner />
+					</div>
+				);
+				break;
+			}
+			// The preview fails a few sites on the first check, so the retry state can be reviewed.
+			const notConnected =
+				batch.length > 1 ? batch.filter( ( site, index ) => index % 3 === 1 ) : batch;
+			title = sprintf(
+				/* translators: %d is the number of sites. */
+				_n( '%d site isn’t connected yet', '%d sites aren’t connected yet', notConnected.length ),
+				notConnected.length
+			);
+			description =
+				notConnected.length < batch.length
+					? __( 'The rest are connected. Fix these, then check again.' )
+					: _n(
+							'Here’s what we found. Fix it, then check again.',
+							'Here’s what we found. Fix these, then check again.',
+							notConnected.length
+						);
+			// The preview gives each failed site a different reason, so every fix can be reviewed.
+			const reasonOf = ( site: IntakeSite ) =>
+				( [ 'missing', 'unapproved', 'unreachable' ] as const )[ notConnected.indexOf( site ) % 3 ];
+			content = (
+				<VStack spacing={ 10 }>
+					<ConnectionSiteList
+						sites={ notConnected }
+						simulate={ !! simulation }
+						showInstallers
+						heading={ __( 'Needs attention' ) }
+						describe={ ( site ) =>
+							( {
+								missing: __( 'Plugin not found' ),
+								unapproved: __( 'Connection not approved' ),
+								unreachable: __( 'Couldn’t reach the site' ),
+							} )[ reasonOf( site ) ]
+						}
+						renderAction={ ( site ) => {
+							const reason = reasonOf( site );
+							if ( reason === 'missing' ) {
+								return <PluginInstallMenu site={ site } />;
+							}
+							return (
+								<Button
+									__next40pxDefaultSize
+									variant="tertiary"
+									href={
+										reason === 'unapproved'
+											? `${ site.url.replace( /\/$/, '' ) }/wp-admin/plugins.php`
+											: site.url
+									}
+									target="_blank"
+									rel="noreferrer"
+								>
+									{ reason === 'unapproved' ? __( 'Approve in WordPress' ) : __( 'Visit site' ) }
+								</Button>
+							);
+						} }
+					/>
+					<ConnectionTroubleshooting sites={ notConnected } />
+				</VStack>
+			);
+			primary = {
+				label: __( 'Check again' ),
+				onClick: () => checkConnections( () => finish( 'connect' ) ),
+			};
+			break;
+		}
 		case 'host':
 			title = __( 'Choose your hosting' );
-			description = __(
-				'Choose a provider to continue. You’ll choose a plan and arrange payment later.'
-			);
+			description = isMigration
+				? _n(
+						'Compare what each includes and what it costs for this site.',
+						'Compare what each includes and what it costs for these sites.',
+						batchSize
+					)
+				: __( 'Compare what each includes and what it costs.' );
 			content = (
-				<div className="agency-site-wizard__choices agency-site-wizard__entry-options">
-					<HostingChoice
-						host="wpcom"
-						onClick={ () => {
-							change( { host: 'wpcom' } );
-							go( isMigration ? 'method' : 'setup' );
-						} }
-					/>
-					<HostingChoice
-						host="pressable"
-						onClick={ () => {
-							change( { host: 'pressable' } );
-							go( isMigration ? 'method' : 'setup' );
-						} }
-					/>
-				</div>
+				<VStack spacing={ 8 }>
+					<div className="agency-site-wizard__hosting-grid">
+						{ ( [ 'wpcom', 'pressable' ] as const ).map( ( host ) => (
+							<HostingChoice
+								key={ host }
+								host={ host }
+								sites={ hostingCount }
+								estimate={ hosting.estimates[ host ] }
+								isLoading={ hosting.isLoading }
+								onClick={ () => {
+									change( { host } );
+									go( isMigration ? 'method' : 'setup' );
+								} }
+							/>
+						) ) }
+					</div>
+					{ isMigration && batch.length > 0 && <SiteSummary sites={ batch } /> }
+				</VStack>
 			);
 			break;
 		case 'method':
-			title = __( 'Who should handle the move?' );
-			description = __( 'Either way, you’ll review the copied site before switching your domain.' );
+			title = _n( 'How do you want to move it?', 'How do you want to move them?', batchSize );
+			description = __( 'Moving is free either way. Your sites stay live until you switch them.' );
 			content = (
-				<div className="agency-site-wizard__choices">
-					<Choice
-						title={ __( 'Move it for me' ) }
-						description={ __( 'Our team copies the site and coordinates the move with you.' ) }
-						onClick={ () => {
-							change( { method: 'concierge' } );
-							go( 'setup' );
-						} }
-					/>
-					<Choice
-						title={ __( 'I’ll move it myself' ) }
-						description={ __(
-							'Use the migration tools to copy the site, check it, and connect your domain.'
-						) }
-						onClick={ () => {
-							change( { method: 'self' } );
-							go( 'setup' );
-						} }
-					/>
-				</div>
+				<VStack spacing={ 8 }>
+					<div className="agency-site-wizard__choices agency-site-wizard__entry-options">
+						<Choice
+							illustration={ <BellIllustration /> }
+							title={ __( 'Request a migration' ) }
+							description={ __( 'Our team moves them for you, usually within a week.' ) }
+							onClick={ () => {
+								change( { method: 'concierge' } );
+								go( 'setup' );
+							} }
+						/>
+						<Choice
+							illustration={ <EntryIllustration kind="move" /> }
+							title={ __( 'Move them myself' ) }
+							description={ __( 'Use our tools and guide, on your own schedule.' ) }
+							onClick={ () => {
+								change( { method: 'self' } );
+								go( 'setup' );
+							} }
+						/>
+					</div>
+					<MoveQuestions />
+				</VStack>
 			);
 			break;
-		case 'setup':
-			title = isMigration ? __( 'Arrange your migration' ) : __( 'Set up your site' );
-			description = isDevelopment
-				? __( 'Build on WordPress.com at no cost. A paid hosting plan is needed when you launch.' )
-				: sprintf(
-						/* translators: %s is the hosting provider. */
-						_n(
-							'Your website will be hosted on %s. Choose who pays for the hosting below.',
-							'Your websites will be hosted on %s. Choose who pays for the hosting below.',
-							isMigration ? batchSize : 1
-						),
-						hostName
-					);
+		case 'setup': {
+			const isConcierge = isMigration && data.method === 'concierge';
+			title = __( 'Set up your site' );
+			description = sprintf(
+				/* translators: %s is the hosting provider. */
+				__( 'It’ll be hosted on %s.' ),
+				hostName
+			);
+			if ( isDevelopment ) {
+				title = __( 'Set up your development site' );
+				description = __( 'It’s free while you build. Add hosting when you launch.' );
+			} else if ( isConcierge ) {
+				title = __( 'Request your migration' );
+				description = __( 'Our team gets your request and contacts you to plan the move.' );
+			} else if ( isMigration ) {
+				title = __( 'Set up hosting for your move' );
+				description = __( 'Next, you’ll get a step-by-step guide for moving each site.' );
+			}
 			if ( ! simulation ) {
 				content = (
 					<div className="agency-site-wizard__form">
@@ -692,6 +878,7 @@ export default function SiteWizard( {
 						</div>
 						{ isMigration && (
 							<Button
+								__next40pxDefaultSize
 								variant="link"
 								href={
 									data.method === 'concierge'
@@ -721,205 +908,303 @@ export default function SiteWizard( {
 				};
 				break;
 			}
+			const estimate = hosting.estimates[ data.host ];
+			const cost = estimate
+				? sprintf(
+						/* translators: 1: A monthly price. 2: The number of sites. */
+						_n( 'About %1$s/mo for %2$d site.', 'About %1$s/mo for %2$d sites.', hostingCount ),
+						estimate.total,
+						hostingCount
+					)
+				: '';
 			content = (
-				<div className="agency-site-wizard__sections">
+				<VStack spacing={ 8 }>
 					{ ! isMigration && (
-						<div className="agency-site-wizard__form">
-							<TextControl
-								label={ __( 'Site name' ) }
-								value={ data.name }
-								onChange={ ( name ) => change( { name } ) }
-								placeholder={ __( 'Client website' ) }
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-							/>
-							<TextControl
-								label={ __( 'Site address' ) }
-								value={ data.address }
-								onChange={ ( address ) => change( { address: address.toLowerCase() } ) }
-								help={
-									<span>
-										<bdi>{ siteAddress }</bdi> { __( 'You can connect a custom domain later.' ) }
-									</span>
-								}
-								dir="ltr"
-								__next40pxDefaultSize
-								__nextHasNoMarginBottom
-							/>
-						</div>
-					) }
-					{ isMigration && (
-						<p>
-							<bdi>{ batchNames }</bdi>
-							{ ' → ' }
-							{ hostName }
-						</p>
+						<Section title={ isDevelopment ? undefined : __( 'Site details' ) }>
+							<VStack spacing={ 4 }>
+								<TextControl
+									label={ __( 'Site name' ) }
+									value={ data.name }
+									onChange={ ( name ) => change( { name } ) }
+									placeholder={ __( 'Client website' ) }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+								/>
+								<SuffixInputControl
+									label={ __( 'Site address' ) }
+									value={ data.address }
+									placeholder={ suggestedAddress }
+									suffix={ addressSuffix }
+									onChange={ ( address?: string ) =>
+										change( { address: ( address ?? '' ).toLowerCase() } )
+									}
+									help={ __( 'Temporary. Connect your client’s domain when you launch.' ) }
+									spellCheck="false"
+									__next40pxDefaultSize
+								/>
+								<SelectControl
+									label={ __( 'PHP version' ) }
+									value={ data.phpVersion || phpVersions.recommendedValue }
+									options={ phpVersions.phpVersions.filter( ( version ) => ! version.disabled ) }
+									onChange={ ( phpVersion ) => change( { phpVersion } ) }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+								/>
+								<SelectControl
+									label={ __( 'Primary data center' ) }
+									value={ data.dataCenter }
+									options={ [
+										{ value: '', label: __( 'No preference' ) },
+										...Object.entries( getDataCenterOptions() ).map( ( [ value, label ] ) => ( {
+											value,
+											label,
+										} ) ),
+									] }
+									onChange={ ( dataCenter ) => change( { dataCenter } ) }
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+								/>
+							</VStack>
+						</Section>
 					) }
 					{ ! isDevelopment && (
-						<>
-							<div className="agency-site-wizard__panel agency-site-wizard__owned-plan">
-								<Heading level={ 3 }>{ __( 'Already on your agency account' ) }</Heading>
-								<CheckboxControl
-									__nextHasNoMarginBottom
-									label={
+						<Section title={ __( 'Who pays for hosting?' ) } description={ cost || undefined }>
+							<VStack spacing={ 3 } role="radiogroup" aria-label={ __( 'Who pays for hosting?' ) }>
+								<RadioChoice
+									title={
 										data.host === 'wpcom'
 											? __( 'Use my unused WordPress.com plan' )
-											: __( 'Add this website to my existing Pressable plan' )
+											: __( 'Add to my existing Pressable plan' )
 									}
-									help={ __(
-										'Your agency already has hosting for one more website. Use it first; any additional sites in this batch need paid hosting.'
-									) }
+									description={
+										isMigration && batchSize > 1
+											? __(
+													'It has room for one more site. The others in this batch still need a plan.'
+												)
+											: __( 'It has room for one more site.' )
+									}
+									name="payer"
+									value="existing"
 									checked={ data.billing === 'existing' }
-									onChange={ ( checked ) => change( { billing: checked ? 'existing' : 'agency' } ) }
+									onChange={ () => change( { billing: 'existing' } ) }
 								/>
-							</div>
-							{ data.billing !== 'existing' && (
-								<fieldset className="agency-site-wizard__fieldset">
-									<legend>{ __( 'Who will pay for the new hosting plan?' ) }</legend>
-									<div className="agency-site-wizard__choices">
-										<RadioChoice
-											title={ __( 'My agency pays' ) }
-											description={ __(
-												'Your agency purchases the hosting and receives the bill. You decide how to charge your client for it, such as including it in a maintenance package.'
-											) }
-											name="payer"
-											value="agency"
-											checked={ data.billing === 'agency' }
-											onChange={ () => change( { billing: 'agency' } ) }
-										/>
-										<RadioChoice
-											title={ __( 'My client pays' ) }
-											description={ __(
-												'Send your client a referral to purchase hosting directly. They receive the hosting bill, and you can manage their website through your agency.'
-											) }
-											name="payer"
-											value="client"
-											checked={ data.billing === 'client' }
-											onChange={ () => change( { billing: 'client' } ) }
-										/>
-									</div>
-								</fieldset>
-							) }
+								<RadioChoice
+									title={ __( 'My agency pays' ) }
+									description={ __( 'You get the bill and charge your client however you like.' ) }
+									name="payer"
+									value="agency"
+									checked={ data.billing === 'agency' }
+									onChange={ () => change( { billing: 'agency' } ) }
+								/>
+								<RadioChoice
+									title={ __( 'My client pays' ) }
+									description={ __(
+										'We email your client a link to buy it. They get the bill, you manage the sites.'
+									) }
+									name="payer"
+									value="client"
+									checked={ data.billing === 'client' }
+									onChange={ () => change( { billing: 'client' } ) }
+								/>
+							</VStack>
 							{ data.billing === 'client' && (
-								<div className="agency-site-wizard__form">
-									<TextControl
-										label={ __( 'Client email' ) }
-										type="email"
-										autoComplete="email"
-										dir="ltr"
-										value={ data.email }
-										onChange={ ( email ) => change( { email } ) }
-										help={ __(
-											'This client will pay for the selected sites. For different clients, start a separate batch for each. Setup continues after the purchase.'
-										) }
-										__next40pxDefaultSize
-										__nextHasNoMarginBottom
-									/>
-								</div>
+								<TextControl
+									label={ __( 'Client email' ) }
+									type="email"
+									autoComplete="email"
+									dir="ltr"
+									value={ data.email }
+									onChange={ ( email ) => change( { email } ) }
+									help={
+										isMigration && batchSize > 1
+											? __( 'This client pays for every site in this batch.' )
+											: undefined
+									}
+									__next40pxDefaultSize
+									__nextHasNoMarginBottom
+								/>
 							) }
-						</>
+						</Section>
 					) }
-					{ isMigration && data.method === 'concierge' && (
-						<div className="agency-site-wizard__form">
+					{ isConcierge && (
+						<Section
+							title={ __( 'Notes for our team' ) }
+							description={ __(
+								'Optional. Timing, stores that need a quiet window, or sites to move first.'
+							) }
+						>
 							<TextareaControl
-								label={ __( 'Anything we should know? (optional)' ) }
-								help={ __( 'Tell us about your preferred timing or any special requirements.' ) }
+								label={ __( 'Notes for our team' ) }
+								hideLabelFromVision
 								value={ data.message }
 								onChange={ ( message ) => change( { message } ) }
 								__nextHasNoMarginBottom
 							/>
-						</div>
+						</Section>
 					) }
-				</div>
+					{ isMigration && (
+						<SiteSummary
+							sites={ batch }
+							heading={ sprintf(
+								/* translators: 1: The number of sites. 2: The hosting provider. */
+								_n( 'Moving %1$d site to %2$s', 'Moving %1$d sites to %2$s', batchSize ),
+								batchSize,
+								hostName
+							) }
+						/>
+					) }
+				</VStack>
 			);
 			primary = { label: __( 'Create site' ), onClick: submitSetup };
 			if ( isMigration ) {
-				primary.label = data.method === 'concierge' ? __( 'Request migration' ) : __( 'Copy site' );
+				primary.label = isConcierge ? __( 'Send migration request' ) : __( 'Start moving' );
 			}
 			if ( ! isDevelopment && data.billing === 'client' ) {
 				primary.label = __( 'Send referral' );
 			}
 			break;
+		}
 		case 'referral-sent':
-			title = __( 'Your referral has been sent' );
-			description = __(
-				'Your client will receive an invitation to purchase hosting. Setup can continue once they’ve paid.'
+			title = __( 'Your referral is on its way' );
+			description = sprintf(
+				/* translators: %s is an email address. */
+				__( 'We emailed %s a link to buy hosting. You can leave this page.' ),
+				data.email
 			);
 			content = (
-				<div className="agency-site-wizard__form">
-					<div className="agency-site-wizard__panel">
-						<p>
-							<bdi>{ data.email }</bdi>
-						</p>
-						<p>{ __( 'Waiting for your client to complete their purchase.' ) }</p>
-					</div>
-				</div>
+				<VStack spacing={ 8 }>
+					<Section title={ __( 'What happens next' ) }>
+						<NumberedSteps
+							items={ [
+								{
+									title: __( 'Your client buys hosting' ),
+									description: sprintf(
+										/* translators: %s is the hosting provider. */
+										__( 'They pay %s directly. The bill goes to them, not you.' ),
+										hostName
+									),
+								},
+								{
+									title: __( 'We let you know' ),
+									description: __( 'You get an email as soon as they’ve paid.' ),
+								},
+								{
+									title: isMigration ? __( 'Your move continues' ) : __( 'Your site is created' ),
+									description: isMigration
+										? __( 'Pick up where you left off, right here.' )
+										: __( 'It shows up in your Sites list, ready to build.' ),
+								},
+							] }
+						/>
+					</Section>
+					<SupportHelp
+						title={ __( 'Client has questions?' ) }
+						description={ __( 'We can help with plans and billing.' ) }
+						chatMessage={ sprintf(
+							/* translators: %s is an email address. */
+							__( 'I sent a hosting referral to %s and have a question about it.' ),
+							data.email
+						) }
+					/>
+				</VStack>
 			);
-			primary = { label: __( 'Check purchase status' ), onClick: completeSetup };
+			primary = { label: __( 'Back to sites' ), onClick: onClose };
+			secondary = { label: __( 'Check purchase status' ), onClick: completeSetup };
 			break;
 		case 'requested':
-			title =
-				batchSize > 1
-					? __( 'Your migrations have been requested' )
-					: __( 'Your migration has been requested' );
+			title = __( 'Your migration request is in' );
 			description = __(
-				'Our migration team will follow up to arrange access and timing with you.'
+				'Our migration team will email you to plan the move. You can leave this page.'
 			);
 			content = (
-				<div className="agency-site-wizard__form">
-					<div className="agency-site-wizard__panel">
-						<p>
-							<bdi>{ batchNames }</bdi>
-						</p>
-						<p>
-							{ __(
-								'We’ll prepare a copy on your new hosting, then ask you to review it before switching your domain.'
-							) }
-						</p>
-					</div>
-				</div>
+				<VStack spacing={ 8 }>
+					<Section title={ __( 'What happens next' ) }>
+						<NumberedSteps
+							items={ [
+								{
+									title: __( 'We contact you' ),
+									description: __( 'To agree on timing and how to share access securely.' ),
+								},
+								{
+									title: _n( 'We copy your site', 'We copy your sites', batchSize ),
+									description:
+										batchSize > 10
+											? __( 'In groups, on a schedule you agree to. Originals stay live.' )
+											: __( 'Usually within a week. Originals stay live.' ),
+								},
+								{
+									title: __( 'You review and switch' ),
+									description: __( 'Check each copy, then approve its domain switch.' ),
+								},
+							] }
+						/>
+					</Section>
+					<SiteSummary
+						sites={ batch }
+						heading={ sprintf(
+							/* translators: %d is the number of sites. */
+							_n( '%d site in this request', '%d sites in this request', batchSize ),
+							batchSize
+						) }
+					/>
+					<CallHelp
+						title={ __( 'Planning a large move?' ) }
+						description={ __( 'Talk it through with your partner team.' ) }
+					/>
+				</VStack>
 			);
-			primary = { label: __( 'Check migration status' ), onClick: () => go( 'verify' ) };
+			primary = { label: __( 'Back to sites' ), onClick: onClose };
+			secondary = { label: __( 'Check migration status' ), onClick: () => go( 'verify' ) };
 			break;
 		case 'verify':
-			title =
-				batchSize > 1 ? __( 'Review your migrated sites' ) : __( 'Review your migrated site' );
-			description = __(
-				'The copy is ready. Review your pages, media, forms, and store before connecting your domain.'
+			title = sprintf(
+				/* translators: %s is the hosting provider. */
+				__( 'Welcome to %s' ),
+				hostName
+			);
+			description = _n(
+				'Your copy is ready. Check it, then switch the domain.',
+				'Your copies are ready. Check each one, then switch the domains.',
+				batchSize
 			);
 			content = (
-				<div className="agency-site-wizard__form">
-					<div className="agency-site-wizard__panel">
-						<p>
-							<bdi>{ batchNames }</bdi>
-						</p>
-						<ul>
-							<li>{ __( 'Website copied to the new host' ) }</li>
-							<li>{ __( 'Original website still online' ) }</li>
-							<li>{ __( 'Ready for your review and domain connection' ) }</li>
-						</ul>
-						{ batch.length > 1 && (
-							<ul className="agency-site-wizard__batch-list">
-								{ batch.map( ( site ) => (
-									<li key={ site.id }>
-										<strong>{ site.name }</strong>
-										<bdi>{ site.url }</bdi>
-									</li>
-								) ) }
-							</ul>
+				<VStack spacing={ 8 }>
+					<SiteListSummary
+						sites={ batch }
+						simulate={ !! simulation }
+						heading={ _n( 'Review your copy', 'Review your copies', batchSize ) }
+						renderAction={ ( site ) => (
+							<Button
+								variant="tertiary"
+								href={ site.url }
+								target="_blank"
+								rel="noreferrer"
+								__next40pxDefaultSize
+							>
+								{ __( 'Open copy' ) }
+							</Button>
 						) }
-					</div>
-				</div>
+					/>
+					<Section
+						title={ sprintf(
+							/* translators: %s is the hosting provider. */
+							__( 'Included with %s' ),
+							hostName
+						) }
+					>
+						<HostingFeatures host={ data.host } />
+					</Section>
+				</VStack>
 			);
 			primary = {
 				label:
 					batchSize > 1
 						? sprintf(
 								/* translators: %d is the number of sites. */
-								__( 'Confirm and connect %d domains' ),
+								__( 'Switch %d domains' ),
 								batchSize
 							)
-						: __( 'Confirm and connect domain' ),
+						: __( 'Switch domain' ),
 				onClick: () => finish( 'migrate' ),
 			};
 			break;
@@ -932,8 +1217,61 @@ export default function SiteWizard( {
 				'Your site has been added to your dashboard. You’re ready to start building.'
 			);
 			if ( data.journey === 'connect' ) {
-				description = __(
-					'You can now find your connected sites in your agency dashboard. Their hosting hasn’t changed.'
+				description = _n(
+					'It’s in your Sites list now.',
+					'They’re in your Sites list now.',
+					batchSize
+				);
+				content = (
+					<ActionList title={ __( 'Next steps' ) }>
+						<ActionList.ActionItem
+							title={ __( 'Invite your team' ) }
+							description={ __( 'Give teammates access to manage these sites.' ) }
+							decoration={ <Icon icon={ people } /> }
+							actions={
+								<RouterLinkButton
+									to={ TEAM_ROUTE }
+									variant="secondary"
+									size="compact"
+									__next40pxDefaultSize
+								>
+									{ __( 'Invite' ) }
+								</RouterLinkButton>
+							}
+						/>
+						<ActionList.ActionItem
+							title={ __( 'Add security and backups' ) }
+							description={ __(
+								'Protect these sites with Jetpack products from the marketplace.'
+							) }
+							decoration={ <Icon icon={ shield } /> }
+							actions={
+								<RouterLinkButton
+									to={ MARKETPLACE_PRODUCTS_ROUTE }
+									variant="secondary"
+									size="compact"
+									__next40pxDefaultSize
+								>
+									{ __( 'Browse products' ) }
+								</RouterLinkButton>
+							}
+						/>
+						<ActionList.ActionItem
+							title={ __( 'Move a site to new hosting' ) }
+							description={ __( 'When you’re ready, move a site to WordPress.com or Pressable.' ) }
+							decoration={ <Icon icon={ reusableBlock } /> }
+							actions={
+								<Button
+									variant="secondary"
+									size="compact"
+									onClick={ () => chooseJourney( 'migrate', 'source' ) }
+									__next40pxDefaultSize
+								>
+									{ __( 'Move a site' ) }
+								</Button>
+							}
+						/>
+					</ActionList>
 				);
 			}
 			if ( isMigration ) {
@@ -957,7 +1295,12 @@ export default function SiteWizard( {
 		step
 	);
 	return (
-		<div className="agency-site-wizard" data-step={ step } data-entry={ entry }>
+		<div
+			className="agency-site-wizard"
+			data-step={ step }
+			data-entry={ entry }
+			data-busy={ step === 'checking' && isChecking ? true : undefined }
+		>
 			<Card className="agency-site-wizard__workspace">
 				<AmplifyBackdrop />
 				<div className="agency-site-wizard__navigation">
@@ -966,7 +1309,7 @@ export default function SiteWizard( {
 							className="agency-site-wizard__back agency-site-wizard__directional-button"
 							variant="tertiary"
 							type="button"
-							icon={ chevronLeft }
+							icon={ isRTL() ? chevronRight : chevronLeft }
 							onClick={ back }
 							__next40pxDefaultSize
 						>
@@ -988,22 +1331,12 @@ export default function SiteWizard( {
 								<Heading level={ 2 } id={ titleId } tabIndex={ -1 }>
 									{ title }
 								</Heading>
-								<p>{ description }</p>
+								{ description && <p>{ description }</p> }
 							</div>
 						) }
 						<div className="agency-site-wizard__step-content">
-							{ batch.length === 1 && step === 'host' && (
-								<div className="agency-site-wizard__source-preview">
-									<SitePreview
-										key={ batch[ 0 ].url }
-										site={ batch[ 0 ] }
-										simulate={ !! simulation }
-										knownSite={ knownSite }
-									/>
-								</div>
-							) }
 							{ content }
-							{ ! isUrlStep && (
+							{ ! hasFieldError && (
 								<p className="agency-site-wizard__error" role="alert">
 									{ error }
 								</p>
@@ -1024,6 +1357,7 @@ export default function SiteWizard( {
 									) }
 									{ secondary && (
 										<Button
+											__next40pxDefaultSize
 											variant="link"
 											type="button"
 											href={ secondary.href }

@@ -1,6 +1,4 @@
 import { __ } from '@wordpress/i18n';
-import { globe, pages, people } from '@wordpress/icons';
-import ChoiceFacts from './choice-facts';
 import { Choice } from './choices';
 import EntryIllustration from './entry-illustration';
 
@@ -17,9 +15,7 @@ export default function EntryChoices( {
 		{
 			kind: 'connect' as const,
 			title: __( 'Connect a site' ),
-			description: __(
-				'Keep your current hosting and manage your WordPress sites in one dashboard.'
-			),
+			description: __( 'Add sites where they’re hosted today, using a plugin.' ),
 			onClick: onConnect,
 		},
 		{
@@ -43,43 +39,14 @@ export default function EntryChoices( {
 	return (
 		<div className="agency-site-wizard__choices agency-site-wizard__entry-options">
 			{ options.map( ( option ) => (
-				<div className="agency-site-wizard__entry-option" key={ option.kind }>
-					<Choice
-						illustration={ <EntryIllustration kind={ option.kind } /> }
-						title={ option.title }
-						description={ option.description }
-						onClick={ option.onClick }
-					/>
-					<ChoiceFacts
-						title={ option.title }
-						facts={ [
-							{
-								icon: globe,
-								label: {
-									connect: __( 'Stays with its current host' ),
-									move: __( 'Moves to WordPress.com or Pressable' ),
-									create: __( 'New WordPress.com or Pressable hosting' ),
-								}[ option.kind ],
-							},
-							{
-								icon: pages,
-								label: {
-									connect: __( 'Add many sites at once' ),
-									move: __( 'Move many sites at once' ),
-									create: __( 'One site at a time' ),
-								}[ option.kind ],
-							},
-							{
-								icon: people,
-								label: {
-									connect: __( 'Guided plugin setup' ),
-									move: __( 'We can do the move for you' ),
-									create: __( 'Free development site while you build' ),
-								}[ option.kind ],
-							},
-						] }
-					/>
-				</div>
+				<Choice
+					key={ option.kind }
+					cta
+					illustration={ <EntryIllustration kind={ option.kind } /> }
+					title={ option.title }
+					description={ option.description }
+					onClick={ option.onClick }
+				/>
 			) ) }
 		</div>
 	);

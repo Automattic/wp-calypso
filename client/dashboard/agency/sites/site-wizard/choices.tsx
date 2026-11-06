@@ -8,6 +8,7 @@ export function Choice( {
 	onClick,
 	badge,
 	illustration,
+	cta,
 	href,
 	className,
 	...buttonProps
@@ -17,6 +18,8 @@ export function Choice( {
 	onClick: () => void;
 	badge?: string;
 	illustration?: ReactNode;
+	/** Puts a small illustration beside the title instead of above it. */
+	cta?: boolean;
 	href?: string;
 	className?: string;
 	disabled?: boolean;
@@ -24,20 +27,30 @@ export function Choice( {
 	onDragOver?: DragEventHandler< HTMLElement >;
 	onDrop?: DragEventHandler< HTMLElement >;
 } ) {
-	return (
-		<Button
-			{ ...buttonProps }
-			className={ clsx( 'agency-site-wizard__choice', className ) }
-			type="button"
-			onClick={ onClick }
-			{ ...( href ? { href, target: '_blank', rel: 'noreferrer' } : {} ) }
-		>
-			{ illustration }
+	const text = (
+		<>
 			<span className="agency-site-wizard__choice-heading">
 				<span className="agency-site-wizard__choice-title">{ title }</span>
 				{ badge && <span className="agency-site-wizard__badge">{ badge }</span> }
 			</span>
 			<span className="agency-site-wizard__choice-description">{ description }</span>
+		</>
+	);
+	return (
+		<Button
+			__next40pxDefaultSize
+			{ ...buttonProps }
+			className={ clsx(
+				'agency-site-wizard__choice',
+				cta && 'agency-site-wizard__cta-choice',
+				className
+			) }
+			type="button"
+			onClick={ onClick }
+			{ ...( href ? { href, target: '_blank', rel: 'noreferrer' } : {} ) }
+		>
+			{ illustration }
+			{ text }
 		</Button>
 	);
 }

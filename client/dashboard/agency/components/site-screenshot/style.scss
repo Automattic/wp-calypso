@@ -1,11 +1,22 @@
+@use '@wordpress/base-styles/variables' as *;
+
 .agency-site-screenshot {
 	display: flex;
+	flex-direction: column;
+	gap: 4px;
 	align-items: center;
 	justify-content: center;
 	min-height: 80px;
 	background: var( --color-surface-backdrop );
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-size-x-small;
+	// A faint inset edge keeps white pages from blending into the background.
+	outline: 1px solid color-mix( in srgb, var( --color-text ) 10%, transparent );
+	outline-offset: -1px;
+}
+
+.agency-site-screenshot svg {
+	fill: currentColor;
 }
 
 .agency-site-screenshot img {

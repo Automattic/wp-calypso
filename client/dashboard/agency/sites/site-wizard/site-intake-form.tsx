@@ -1,8 +1,8 @@
 import { Button, TextareaControl, __experimentalHeading as Heading } from '@wordpress/components';
-import { __, sprintf, _n } from '@wordpress/i18n';
-import { arrowRight } from '@wordpress/icons';
+import { __, isRTL, sprintf, _n } from '@wordpress/i18n';
+import { arrowLeft, arrowRight } from '@wordpress/icons';
 import { isAppleOS } from '@wordpress/keycodes';
-import { useRef, useState, type ReactNode } from 'react';
+import { useRef, useState } from 'react';
 import { Choice } from './choices';
 import IntakeIllustration from './intake-illustration';
 import { readSiteFile } from './site-intake';
@@ -16,8 +16,6 @@ export default function SiteIntake( {
 	onError,
 	error,
 	onChooseAccount,
-	compact,
-	footer,
 }: {
 	describedBy?: string;
 	value: string;
@@ -26,8 +24,6 @@ export default function SiteIntake( {
 	onError: ( message: string ) => void;
 	error: string;
 	onChooseAccount?: () => void;
-	compact?: boolean;
-	footer?: ReactNode;
 } ) {
 	const fileInput = useRef< HTMLInputElement >( null );
 	const [ reading, setReading ] = useState( false );
@@ -60,7 +56,7 @@ export default function SiteIntake( {
 						ref={ input }
 						label={ __( 'Site addresses' ) }
 						hideLabelFromVision
-						placeholder="your-client.com"
+						placeholder={ __( 'yourgroovydomain.com' ) }
 						rows={ 1 }
 						value={ value }
 						onChange={ onChange }
@@ -104,7 +100,7 @@ export default function SiteIntake( {
 					<Button
 						className="agency-site-wizard__directional-button"
 						variant="primary"
-						icon={ arrowRight }
+						icon={ isRTL() ? arrowLeft : arrowRight }
 						iconSize={ 28 }
 						label={ isList ? __( 'Review sites' ) : __( 'Continue' ) }
 						onClick={ () => onReview( value ) }
@@ -116,55 +112,46 @@ export default function SiteIntake( {
 					{ error }
 				</p>
 			</div>
-			{ compact ? (
-				<div className="agency-site-wizard__intake-links">
-					<Button variant="link" onClick={ () => fileInput.current?.click() } disabled={ reading }>
-						{ __( 'Upload a spreadsheet' ) }
-					</Button>
-					{ footer }
-				</div>
-			) : (
-				<section
-					className="agency-site-wizard__intake-alternatives"
-					aria-labelledby="site-wizard-intake-alternatives"
-				>
-					<Heading level={ 3 } id="site-wizard-intake-alternatives">
-						{ __( 'Other ways to add sites' ) }
-					</Heading>
-					<div className="agency-site-wizard__intake-options">
+			<section
+				className="agency-site-wizard__intake-alternatives"
+				aria-labelledby="site-wizard-intake-alternatives"
+			>
+				<Heading level={ 3 } id="site-wizard-intake-alternatives">
+					{ __( 'Other ways to add sites' ) }
+				</Heading>
+				<div className="agency-site-wizard__intake-options">
+					<Choice
+						className="agency-site-wizard__intake-option"
+						title={ __( 'Upload a spreadsheet' ) }
+						description={ __(
+							'Choose a file or drop it here. Excel, CSV, TSV, and text files all work.'
+						) }
+						illustration={ <IntakeIllustration kind="spreadsheet" /> }
+						onClick={ () => fileInput.current?.click() }
+						isBusy={ reading }
+						disabled={ reading }
+						onDragOver={ ( event ) => event.preventDefault() }
+						onDrop={ ( event ) => {
+							event.preventDefault();
+							const file = event.dataTransfer.files[ 0 ];
+							if ( file && ! reading ) {
+								void read( file );
+							}
+						} }
+					/>
+					{ onChooseAccount && (
 						<Choice
 							className="agency-site-wizard__intake-option"
-							title={ __( 'Upload a spreadsheet' ) }
+							title={ __( 'Choose from WordPress.com' ) }
 							description={ __(
-								'Choose a file or drop it here. Excel, CSV, TSV, and text files all work.'
+								'Select sites linked to your account that aren’t in your agency dashboard yet.'
 							) }
-							illustration={ <IntakeIllustration kind="spreadsheet" /> }
-							onClick={ () => fileInput.current?.click() }
-							isBusy={ reading }
-							disabled={ reading }
-							onDragOver={ ( event ) => event.preventDefault() }
-							onDrop={ ( event ) => {
-								event.preventDefault();
-								const file = event.dataTransfer.files[ 0 ];
-								if ( file && ! reading ) {
-									void read( file );
-								}
-							} }
+							illustration={ <IntakeIllustration kind="account" /> }
+							onClick={ onChooseAccount }
 						/>
-						{ onChooseAccount && (
-							<Choice
-								className="agency-site-wizard__intake-option"
-								title={ __( 'Choose from WordPress.com' ) }
-								description={ __(
-									'Select sites linked to your account that aren’t in your agency dashboard yet.'
-								) }
-								illustration={ <IntakeIllustration kind="account" /> }
-								onClick={ onChooseAccount }
-							/>
-						) }
-					</div>
-				</section>
-			) }
+					) }
+				</div>
+			</section>
 			<input
 				ref={ fileInput }
 				type="file"

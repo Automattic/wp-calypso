@@ -114,24 +114,25 @@ describe( '<AgencySites>', () => {
 		const openConnection = async () => click( /^Connect a site/ );
 		const checkMockConnection = async () => {
 			expect(
-				screen.getByRole( 'heading', { name: /^Waiting for your sites? to connect$/ } )
-			).toHaveFocus();
+				await screen.findByRole( 'heading', { name: /^Install a plugin to connect/ } )
+			).toBeVisible();
 			expect( screen.queryByRole( 'button', { name: 'View sites' } ) ).not.toBeInTheDocument();
-			await click( 'Check connection' );
-			expect( screen.getByRole( 'button', { name: 'Check connection' } ) ).toHaveAttribute(
-				'aria-disabled',
-				'true'
-			);
-			expect( await screen.findByText( 'Not connected yet' ) ).toBeVisible();
-			expect( screen.getByRole( 'button', { name: 'Check again' } ) ).toHaveFocus();
+			await click( 'Continue' );
+			expect( screen.getByRole( 'heading', { name: /^Checking your sites?…$/ } ) ).toBeVisible();
+			expect(
+				await screen.findByRole( 'heading', { name: /n’t connected yet$/ }, { timeout: 3000 } )
+			).toBeVisible();
 			await click( 'Check again' );
-			await screen.findByRole( 'button', { name: 'View sites' } );
+		};
+		const closeWelcome = async ( name: string | RegExp ) => {
+			expect( await screen.findByRole( 'dialog', { name }, { timeout: 5000 } ) ).toBeVisible();
+			await click( 'Done' );
 		};
 		const configureHosting = async ( billing: string ) => {
 			if ( billing === 'existing' ) {
 				await userEvent.click(
-					screen.getByRole( 'checkbox', {
-						name: /Use my unused WordPress.com plan|Add this website to my existing Pressable plan/,
+					screen.getByRole( 'radio', {
+						name: /Use my unused WordPress.com plan|Add to my existing Pressable plan/,
 					} )
 				);
 			} else {
@@ -148,7 +149,7 @@ describe( '<AgencySites>', () => {
 		const submitSetup = async ( billing: string, label: string ) => {
 			if ( billing === 'client' ) {
 				await click( 'Send referral' );
-				await screen.findByRole( 'heading', { name: 'Your referral has been sent' } );
+				await screen.findByRole( 'heading', { name: 'Your referral is on its way' } );
 				await click( 'Check purchase status' );
 			} else {
 				await click( label );
@@ -186,8 +187,7 @@ describe( '<AgencySites>', () => {
 			await userEvent.click( screen.getByRole( 'checkbox', { name: 'Automattic' } ) );
 			await userEvent.click( screen.getByRole( 'checkbox', { name: 'Jetpack' } ) );
 			await click( 'Add selected sites' );
-			expect( screen.getByRole( 'heading', { name: '2 sites connected' } ) ).toBeVisible();
-			await click( 'View sites' );
+			await closeWelcome( '2 sites connected' );
 			expect( await screen.findByRole( 'row', { name: /Automattic/ } ) ).toBeVisible();
 			expect( screen.getByRole( 'row', { name: /Jetpack/ } ) ).toBeVisible();
 			await click( 'Add new site' );
@@ -197,47 +197,26 @@ describe( '<AgencySites>', () => {
 			expect( screen.getByRole( 'checkbox', { name: 'WooCommerce' } ) ).toBeVisible();
 		} );
 
-		test.each( [ 'a4a', 'jetpack' ] )( 'connects another site using %s', async ( plugin ) => {
+		test( 'connects another site with either plugin', async () => {
 			render( <AgencySites /> );
 			await openConnection();
 			await userEvent.type( screen.getByLabelText( 'Site addresses' ), 'client.example.com' );
 			await click( 'Continue' );
 			expect(
-				screen.getByRole( 'heading', { name: 'Install the plugin to connect' } )
+				screen.getByRole( 'heading', { name: 'Install a plugin to connect your site' } )
 			).toHaveFocus();
-			expect( screen.getAllByText( 'client.example.com' ) ).toHaveLength( 1 );
-			expect( screen.queryByRole( 'radio' ) ).not.toBeInTheDocument();
-			for ( const title of [ 'Automattic for Agencies', 'Jetpack' ] ) {
-				const facts = within( screen.getByRole( 'list', { name: `About ${ title }` } ) );
-				expect( screen.getByRole( 'button', { name: new RegExp( `^${ title }` ) } ) ).toBeVisible();
-				expect(
-					facts.getByText( 'Approve with your agency’s WordPress.com account' )
-				).toBeVisible();
-				expect(
-					facts.getByText(
-						title === 'Jetpack'
-							? 'Install with the Jetpack installer'
-							: 'Install and activate in WordPress'
-					)
-				).toBeVisible();
+			for ( const name of [ 'Automattic for Agencies', 'Jetpack' ] ) {
+				expect( screen.getByRole( 'heading', { name } ) ).toBeVisible();
 			}
-			expect(
-				screen.queryByRole( 'heading', { name: /^Install and activate/ } )
-			).not.toBeInTheDocument();
-			const card = screen.getByRole( 'button', {
-				name: plugin === 'a4a' ? /^Automattic for Agencies/ : /^Jetpack/,
-			} );
-			card.focus();
-			await userEvent.keyboard( '{Enter}' );
-			expect(
-				screen.getByRole( 'heading', {
-					name: `Install and activate ${ plugin === 'a4a' ? 'Automattic for Agencies' : 'Jetpack' }`,
-				} )
-			).toBeVisible();
+			await click( /^Install a plugin on/ );
+			for ( const name of [ /^Automattic for Agencies/, /^Jetpack/ ] ) {
+				await waitFor( () => expect( screen.getByRole( 'menuitem', { name } ) ).toBeVisible() );
+			}
+			await userEvent.keyboard( '{Escape}' );
 			await checkMockConnection();
-			await click( 'View sites' );
+			await closeWelcome( 'Your site is connected' );
 			expect( await screen.findByRole( 'row', { name: /client.example.com/ } ) ).toBeVisible();
-		} );
+		}, 25000 );
 
 		test( 'recognizes an account site by its URL without asking for another plugin installation', async () => {
 			render( <AgencySites /> );
@@ -246,10 +225,10 @@ describe( '<AgencySites>', () => {
 			await click( 'Continue' );
 			expect( screen.getByText( /already linked to your account/ ) ).toBeVisible();
 			expect(
-				screen.queryByRole( 'button', { name: /^Automattic for Agencies/ } )
+				screen.queryByRole( 'link', { name: /^Automattic for Agencies/ } )
 			).not.toBeInTheDocument();
 			await click( 'Add to dashboard' );
-			await click( 'View sites' );
+			await closeWelcome( 'Your site is connected' );
 			expect( await screen.findByRole( 'row', { name: /Automattic/ } ) ).toBeVisible();
 		} );
 
@@ -261,20 +240,21 @@ describe( '<AgencySites>', () => {
 			expect( screen.getByText( '0 of 30 selected' ) ).toBeVisible();
 			await click( 'Start with three' );
 			await click( 'Continue with 3 sites' );
-			await click( /^Automattic for Agencies/ );
 			await checkMockConnection();
-			expect( screen.getByRole( 'heading', { name: '3 sites connected' } ) ).toBeVisible();
+			expect(
+				await screen.findByRole( 'heading', { name: '3 sites connected' }, { timeout: 3000 } )
+			).toBeVisible();
 			await click( 'Continue with remaining sites' );
 			expect( screen.getByText( '0 of 27 selected' ) ).toBeVisible();
 			expect( screen.getByRole( 'checkbox', { name: 'Juniper Studio' } ) ).toBeDisabled();
 			await click( 'Start with three' );
 			await click( 'Continue with 3 sites' );
-			await click( /^Automattic for Agencies/ );
 			await checkMockConnection();
+			await screen.findByRole( 'heading', { name: '3 sites connected' }, { timeout: 3000 } );
 			await click( 'View sites' );
 			expect( await screen.findByRole( 'row', { name: /Juniper Studio/ } ) ).toBeVisible();
 			expect( screen.getByRole( 'row', { name: /Paper Plane/ } ) ).toBeVisible();
-		} );
+		}, 15000 );
 
 		test( 'reads a CSV upload and lets you select the extracted sites', async () => {
 			render( <AgencySites /> );
@@ -334,15 +314,18 @@ describe( '<AgencySites>', () => {
 			act( () => router.history.forward() );
 			await screen.findByRole( 'checkbox', { name: 'one.example' } );
 			act( () => router.history.forward() );
-			await click( /^Jetpack/ );
-			await click( 'Check connection' );
-			await screen.findByText( 'Not connected yet' );
+			await click( 'Continue' );
+			await screen.findByRole( 'heading', { name: /n’t connected yet$/ }, { timeout: 3000 } );
 			act( () => router.history.back() );
-			expect( await screen.findByRole( 'button', { name: /^Jetpack/ } ) ).toBeVisible();
-			act( () => router.history.forward() );
 			expect(
-				await screen.findByRole( 'heading', { name: 'Install and activate Jetpack' } )
+				await screen.findByRole( 'heading', { name: 'Install a plugin to connect your site' } )
 			).toBeVisible();
+			act( () => router.history.back() );
+			expect( await screen.findByRole( 'checkbox', { name: 'one.example' } ) ).toBeChecked();
+			act( () => router.history.forward() );
+			await screen.findByRole( 'heading', { name: 'Install a plugin to connect your site' } );
+			act( () => router.history.forward() );
+			await screen.findByRole( 'heading', { name: /n’t connected yet$/ } );
 			await click( 'Check again' );
 			await click( 'View sites' );
 			await screen.findByRole( 'row', { name: /one.example/ } );
@@ -411,11 +394,15 @@ describe( '<AgencySites>', () => {
 			await userEvent.click( screen.getByRole( 'checkbox', { name: 'Later' } ) );
 			await click( 'Continue with 2 sites' );
 			await click( /^Pressable/ );
-			await click( /^Move it for me/ );
-			await click( 'Request migration' );
+			await click( /^Request a migration/ );
+			await click( 'Send migration request' );
 			await click( 'Check migration status' );
-			await click( 'Confirm and connect 2 domains' );
-			expect( screen.getByRole( 'heading', { name: '2 sites moved' } ) ).toBeVisible();
+			expect( screen.getByRole( 'heading', { name: 'Welcome to Pressable' } ) ).toBeVisible();
+			await click( 'Switch 2 domains' );
+			// One site was left out, so the wizard stays open to offer the rest.
+			expect(
+				await screen.findByRole( 'heading', { name: '2 sites moved to Pressable' } )
+			).toBeVisible();
 			await click( 'View sites' );
 			expect( await screen.findByRole( 'row', { name: /Alpha/ } ) ).toBeVisible();
 			expect( screen.getByRole( 'row', { name: /Beta/ } ) ).toBeVisible();
@@ -430,18 +417,16 @@ describe( '<AgencySites>', () => {
 				jumpToWizardStep( { journey: 'migrate', step: 'setup', method: 'self', host: 'pressable' } )
 			);
 			expect(
-				await screen.findByRole( 'heading', { name: 'Arrange your migration' } )
+				await screen.findByRole( 'heading', { name: 'Set up hosting for your move' } )
 			).toBeVisible();
-			expect( screen.getByText( /Your websites will be hosted on Pressable/ ) ).toBeVisible();
+			expect( screen.getByText( /step-by-step guide/ ) ).toBeVisible();
 			await click( 'Back' );
 			expect(
-				await screen.findByRole( 'heading', { name: 'Who should handle the move?' } )
+				await screen.findByRole( 'heading', { name: /^How do you want to move/ } )
 			).toBeVisible();
 			act( () => jumpToWizardStep( { journey: 'development', step: 'setup' } ) );
 			await click( 'Create site' );
-			expect(
-				screen.getByRole( 'heading', { name: 'Your development site is ready' } )
-			).toBeVisible();
+			expect( await screen.findByRole( 'dialog', { name: /is ready$/ } ) ).toBeVisible();
 		} );
 
 		test( 'creates a development site and returns to the list from success', async () => {
@@ -451,10 +436,8 @@ describe( '<AgencySites>', () => {
 			await userEvent.clear( screen.getByLabelText( 'Site address' ) );
 			await userEvent.type( screen.getByLabelText( 'Site address' ), 'localclient' );
 			await click( 'Create site' );
-			expect(
-				screen.getByRole( 'heading', { name: 'Your development site is ready' } )
-			).toBeVisible();
-			await click( 'View sites' );
+			expect( await screen.findByRole( 'dialog', { name: /is ready$/ } ) ).toBeVisible();
+			await click( 'Done' );
 			const row = await screen.findByRole( 'row', { name: /localclient/ } );
 			expect( within( row ).getByText( 'Development' ) ).toBeVisible();
 		} );
@@ -471,14 +454,14 @@ describe( '<AgencySites>', () => {
 				await configureHosting( billing );
 				await userEvent.type( screen.getByLabelText( 'Site name' ), 'Client portfolio' );
 				await submitSetup( billing, 'Create site' );
-				await click( 'View sites' );
+				await click( 'Done' );
 				expect( await screen.findByRole( 'row', { name: /Client portfolio/ } ) ).toBeVisible();
 			}
 		);
 
 		test.each(
 			hosts.flatMap( ( host ) =>
-				[ 'Move it for me', 'I’ll move it myself' ].flatMap( ( method ) =>
+				[ 'Request a migration', 'Move them myself' ].flatMap( ( method ) =>
 					billings.map( ( billing ) => [ host, method, billing ] )
 				)
 			)
@@ -490,14 +473,16 @@ describe( '<AgencySites>', () => {
 			await click( new RegExp( `^${ host }` ) );
 			await click( new RegExp( `^${ method }` ) );
 			await configureHosting( billing );
-			await submitSetup( billing, method === 'Move it for me' ? 'Request migration' : 'Copy site' );
-			if ( method === 'Move it for me' ) {
-				await screen.findByRole( 'heading', { name: 'Your migration has been requested' } );
+			await submitSetup(
+				billing,
+				method === 'Request a migration' ? 'Send migration request' : 'Start moving'
+			);
+			if ( method === 'Request a migration' ) {
+				await screen.findByRole( 'heading', { name: 'Your migration request is in' } );
 				await click( 'Check migration status' );
 			}
-			await click( 'Confirm and connect domain' );
-			expect( screen.getByRole( 'heading', { name: 'Your migration is complete' } ) ).toBeVisible();
-			await click( 'View sites' );
+			await click( 'Switch domain' );
+			await closeWelcome( /site moved to/ );
 			expect( await screen.findByRole( 'row', { name: /moving.example.com/ } ) ).toBeVisible();
 		} );
 
@@ -538,18 +523,18 @@ describe( '<AgencySites>', () => {
 			expect( screen.queryByRole( 'button', { name: 'Continue' } ) ).not.toBeInTheDocument();
 			await click( /^Pressable/ );
 			expect(
-				screen.getByRole( 'heading', { name: 'Who should handle the move?' } )
+				screen.getByRole( 'heading', { name: 'How do you want to move it?' } )
 			).toHaveFocus();
 			await click( 'Back' );
 			await click( /^WordPress.com/ );
-			await click( /^I’ll move it myself/ );
-			expect( screen.getByRole( 'button', { name: 'Copy site' } ) ).toBeVisible();
-			expect( screen.getByText( /Your website will be hosted on WordPress.com/ ) ).toBeVisible();
+			await click( /^Move them myself/ );
+			expect( screen.getByRole( 'button', { name: 'Start moving' } ) ).toBeVisible();
+			expect( screen.getByText( /step-by-step guide/ ) ).toBeVisible();
 			await click( 'Back' );
-			await click( /^Move it for me/ );
-			expect( screen.getByRole( 'button', { name: 'Request migration' } ) ).toBeVisible();
+			await click( /^Request a migration/ );
+			expect( screen.getByRole( 'button', { name: 'Send migration request' } ) ).toBeVisible();
 			await click( 'Back' );
-			await screen.findByRole( 'heading', { name: 'Who should handle the move?' } );
+			await screen.findByRole( 'heading', { name: 'How do you want to move it?' } );
 			await click( 'Back' );
 			await screen.findByRole( 'heading', { name: 'Choose your hosting' } );
 			await click( 'Back' );

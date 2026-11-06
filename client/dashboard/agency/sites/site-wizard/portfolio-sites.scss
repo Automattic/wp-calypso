@@ -1,5 +1,6 @@
 @use 'sass:list';
 @use '@automattic/color-studio/dist/color-variables' as brand;
+@use '@wordpress/base-styles/variables' as *;
 
 $agency-mini-site-tones: (
 	'blue': ( brand.$studio-blue-50, brand.$studio-blue-5 ),
@@ -52,7 +53,7 @@ $agency-mini-site-tones: (
 .agency-portfolio-sites {
 	box-sizing: border-box;
 	inline-size: 100%;
-	font-size: 12px;
+	font-size: $font-size-small;
 	line-height: 1.4;
 	display: flex;
 	flex-direction: column;
@@ -103,12 +104,12 @@ $agency-mini-site-tones: (
 
 .agency-portfolio-sites strong {
 	color: var( --color-text );
-	font-size: 13px;
+	font-size: $font-size-medium;
 	font-weight: 500;
 }
 
 .agency-portfolio-sites bdi,
 .agency-portfolio-sites__host {
 	color: var( --color-text-subtle );
-	font-size: 11px;
+	font-size: $font-size-x-small;
 }

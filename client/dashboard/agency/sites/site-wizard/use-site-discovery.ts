@@ -42,3 +42,22 @@ export default function useSiteDiscovery( url: string, expanded: boolean ) {
 	} );
 	return { container, visible, reserved, analysis, hosting, dns };
 }
+
+/** The host a site appears to be on, or undefined while unknown or hidden behind a CDN. */
+export function getDetectedHost( {
+	analysis,
+	hosting,
+}: Pick< ReturnType< typeof useSiteDiscovery >, 'analysis' | 'hosting' > ) {
+	const platform = analysis.data?.platform_data;
+	if ( platform?.is_pressable ) {
+		return 'Pressable';
+	}
+	if ( platform?.is_wpcom ) {
+		return 'WordPress.com';
+	}
+	if ( platform?.is_wpengine ) {
+		return 'WP Engine';
+	}
+	const provider = hosting.data?.hosting_provider;
+	return provider && provider.slug !== 'unknown' && ! provider.is_cdn ? provider.name : undefined;
+}

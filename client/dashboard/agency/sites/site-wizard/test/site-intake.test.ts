@@ -40,12 +40,12 @@ describe( 'portfolio intake', () => {
 } );
 
 test( 'jump history follows the selected branch, including payment and migration method', () => {
-	expect( jumpHistory( { journey: 'connect', step: 'connecting' } ) ).toEqual( [
+	expect( jumpHistory( { journey: 'connect', step: 'checking' } ) ).toEqual( [
 		'start',
 		'url',
 		'review',
 		'authorize',
-		'connecting',
+		'checking',
 	] );
 	expect( jumpHistory( { journey: 'migrate', step: 'verify', method: 'self' } ) ).toEqual( [
 		'start',

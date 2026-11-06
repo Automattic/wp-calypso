@@ -1,6 +1,11 @@
 import { __ } from '@wordpress/i18n';
+import { globe, Icon } from '@wordpress/icons';
 import { useEffect, useState } from 'react';
 import './style.scss';
+
+// mshots answers a site it can't load with its own "404" image instead of an error.
+// The image is always the same file, so its size identifies it at each shot size.
+const MSHOTS_NOT_FOUND_BYTES = [ 4347, 26258 ];
 
 export default function SiteScreenshot( {
 	url,
@@ -34,7 +39,6 @@ export default function SiteScreenshot( {
 			async () => {
 				try {
 					const response = await fetch( src, {
-						method: 'HEAD',
 						cache: 'no-cache',
 						signal: controller.signal,
 					} );
@@ -47,7 +51,12 @@ export default function SiteScreenshot( {
 							setFailed( true );
 						}
 					} else {
-						setReady( true );
+						const { size } = await response.blob();
+						if ( MSHOTS_NOT_FOUND_BYTES.includes( size ) ) {
+							setFailed( true );
+						} else {
+							setReady( true );
+						}
 					}
 				} catch {
 					if ( ! controller.signal.aborted ) {
@@ -63,8 +72,15 @@ export default function SiteScreenshot( {
 			clearTimeout( timeout );
 		};
 	}, [ src, attempt ] );
-	const statusText = failed ? __( 'Preview unavailable' ) : __( 'Preparing preview…' );
-	const placeholder = decorative ? null : <span>{ statusText }</span>;
+	let placeholder = decorative ? null : <span>{ __( 'Preparing preview…' ) }</span>;
+	if ( failed ) {
+		placeholder = (
+			<>
+				<Icon icon={ globe } size={ 24 } />
+				{ ! decorative && <span>{ __( 'Preview unavailable' ) }</span> }
+			</>
+		);
+	}
 
 	return (
 		<div

@@ -1,6 +1,8 @@
+@use '@wordpress/base-styles/variables' as *;
+
 .agency-access-menu {
 	inline-size: min( 100%, 264px );
-	font-size: 14px;
+	font-size: $font-size-medium;
 	line-height: 1.4;
 }
 
