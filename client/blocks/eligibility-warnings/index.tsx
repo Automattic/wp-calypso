@@ -36,7 +36,7 @@ import HoldList, {
 	getBlockingMessages,
 } from './hold-list';
 import SupportLink from './support-link';
-import { isAtomicSiteWithoutBusinessPlan } from './utils';
+import { isAtomicSiteWithoutBusinessPlan, shouldUpsellPersonalPlan } from './utils';
 import WarningList, { type AtomicTransferAction } from './warning-list';
 import type { EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import type { EligibilityData } from 'calypso/state/automated-transfer/selectors';
@@ -161,9 +161,7 @@ export const EligibilityWarnings = ( {
 		}
 		if ( listHolds.includes( 'NO_BUSINESS_PLAN' ) ) {
 			recordUpgradeClick( ctaName, feature );
-			// Plugin upload is available on the Personal plan and up, so upsell the
-			// lowest eligible plan for that context instead of Business.
-			const planSlug = context === 'plugins-upload' ? PLAN_PERSONAL : PLAN_BUSINESS;
+			const planSlug = shouldUpsellPersonalPlan( context ) ? PLAN_PERSONAL : PLAN_BUSINESS;
 			let redirectUrl = `/checkout/${ siteSlug }/${ planSlug }`;
 			if ( context === 'plugins-upload' ) {
 				redirectUrl = `${ redirectUrl }?redirect_to=${ encodeURIComponent(
