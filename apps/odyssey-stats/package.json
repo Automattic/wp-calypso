@@ -37,7 +37,7 @@
 		"@automattic/components": "workspace:^",
 		"@automattic/js-utils": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/base-styles": "^9.1.0",
+		"@wordpress/base-styles": "^15.0.0",
 		"@wordpress/components": "^37.0.0",
 		"@wordpress/data": "^11.1.0",
 		"@wordpress/icons": "^15.5.0",

@@ -100,3 +100,10 @@ export interface ReadConversationsCommentsResponse {
 	comments: ReadConversationOwnComment[];
 	next_cursor: string | null;
 }
+
+/**
+ * Response shape for `POST /wpcom/v2/read/sites/{blog_id}/posts/{post_id}/unfollow`.
+ */
+export interface ReadConversationUnfollowResponse {
+	success: boolean;
+}
