@@ -182,6 +182,7 @@ function McpComponent() {
 			/>
 			<McpConnectCard
 				mcpEnabled={ mcpEnabled }
+				addedSiteCount={ enabledSiteIds.length }
 				onTurnOn={ () => handleMcpToggle( true, 'connect_notice' ) }
 				isTurningOn={ mutation.isPending }
 			/>

@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { speak } from '@wordpress/a11y';
 import {
 	__experimentalVStack as VStack,
@@ -6,7 +7,7 @@ import {
 	TextareaControl,
 	VisuallyHidden,
 } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
+import { __, _n, sprintf } from '@wordpress/i18n';
 import { arrowUpRight, copy } from '@wordpress/icons';
 import { useEffect, useId, useRef, useState } from 'react';
 import { useMcpTracksAudienceProps } from '../../../me/mcp/tracks';
@@ -98,12 +99,33 @@ function AgentTile( {
 }
 
 function AccessOffNotice( {
+	addedSiteCount,
 	onTurnOn,
 	isTurningOn,
 }: {
+	addedSiteCount: number;
 	onTurnOn: () => void;
 	isTurningOn: boolean;
 } ) {
+	if ( addedSiteCount > 0 ) {
+		return (
+			<Notice
+				variant="info"
+				title={ sprintf(
+					/* translators: %s is the formatted number of sites added under "Add MCP to specific sites" */
+					_n(
+						'MCP access is read-only on %s site',
+						'MCP access is read-only on %s sites',
+						addedSiteCount
+					),
+					formatNumber( addedSiteCount )
+				) }
+			>
+				{ __( 'Account access is off, so agents can only read the sites you added.' ) }
+			</Notice>
+		);
+	}
+
 	return (
 		<Notice
 			variant="warning"
@@ -156,10 +178,12 @@ function CopyFallback( { failure }: { failure: { text: string } } ) {
 
 export default function McpConnectCard( {
 	mcpEnabled,
+	addedSiteCount = 0,
 	onTurnOn,
 	isTurningOn,
 }: {
 	mcpEnabled: boolean;
+	addedSiteCount?: number;
 	onTurnOn: () => void;
 	isTurningOn: boolean;
 } ) {
@@ -232,7 +256,11 @@ export default function McpConnectCard( {
 						) }
 					/>
 					{ ! mcpEnabled && (
-						<AccessOffNotice onTurnOn={ handleTurnOn } isTurningOn={ isTurningOn } />
+						<AccessOffNotice
+							addedSiteCount={ addedSiteCount }
+							onTurnOn={ handleTurnOn }
+							isTurningOn={ isTurningOn }
+						/>
 					) }
 					<ul ref={ gridRef } className="mcp-connect__grid">
 						{ getConnectAgents().map( ( agent ) => (

@@ -206,6 +206,16 @@ describe( '<McpConnectCard />', () => {
 		expect( screen.queryByRole( 'link', { name: 'Manual setup' } ) ).not.toBeInTheDocument();
 	} );
 
+	test( 'says access is read-only, with no button, when sites were added', () => {
+		renderCard( { mcpEnabled: false, addedSiteCount: 6 } );
+
+		expect( screen.getByText( 'MCP access is read-only on 6 sites' ) ).toBeInTheDocument();
+		expect( screen.queryByText( 'MCP access is off' ) ).not.toBeInTheDocument();
+		expect(
+			screen.queryByRole( 'button', { name: 'Turn on MCP access' } )
+		).not.toBeInTheDocument();
+	} );
+
 	test( 'moves focus to the first tile after turning access on', async () => {
 		function Harness() {
 			const [ enabled, setEnabled ] = useState( false );
