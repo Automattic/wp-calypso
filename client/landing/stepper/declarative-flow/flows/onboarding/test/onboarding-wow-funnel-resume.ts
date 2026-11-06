@@ -8,12 +8,14 @@ const mockHasCartItems = jest.fn();
 const mockAdopt = jest.fn();
 const mockGoToCheckout = jest.fn();
 const mockAssign = jest.fn();
+const mockCanManageSite = jest.fn();
 let mockLoggedIn = true;
 
 jest.mock( 'calypso/landing/stepper/utils/wow-funnel-site', () => ( {
 	fetchPendingWowFunnelSite: ( ...args: unknown[] ) => mockFetchPending( ...args ),
 	wowFunnelSiteHasCartItems: ( ...args: unknown[] ) => mockHasCartItems( ...args ),
 	adoptWowFunnelSite: ( ...args: unknown[] ) => mockAdopt( ...args ),
+	canManageSite: ( ...args: unknown[] ) => mockCanManageSite( ...args ),
 	startWowFunnelSite: jest.fn(),
 	forgetWowFunnelRun: jest.fn(),
 } ) );
@@ -241,5 +243,44 @@ describe( 'wow funnel resume', () => {
 
 		await expect( onboarding.initialize( store ) ).resolves.not.toBe( false );
 		expect( mockFetchPending ).not.toHaveBeenCalled();
+	} );
+} );
+
+/**
+ * A preview site's badge sends every share-link viewer to /start with the site in `preview_site`,
+ * because the preview's own domain can't tell its owner from a visitor. The owner goes to the
+ * site's plans; everyone else signs up as before.
+ */
+describe( 'preview site owner from a share link', () => {
+	const search = '?preview_site=preview.wpcomstaging.com&utm_source=share_link_preview';
+
+	beforeEach( () => {
+		jest.clearAllMocks();
+		delete ( window as unknown as { location?: unknown } ).location;
+		( window as unknown as { location: unknown } ).location = {
+			pathname: '/setup/onboarding',
+			search,
+			href: `http://calypso.localhost:3000/setup/onboarding${ search }`,
+			assign: mockAssign,
+		};
+	} );
+
+	it.each( [
+		[
+			'sends the owner to the site plans',
+			true,
+			true,
+			'/plans/preview.wpcomstaging.com?utm_source=share_link_preview',
+		],
+		[ 'starts signup for someone else', true, false, undefined ],
+		[ 'starts signup for a signed-out viewer', false, true, undefined ],
+	] )( '%s', async ( _label, loggedIn, canManage, redirect ) => {
+		mockLoggedIn = loggedIn;
+		mockCanManageSite.mockResolvedValue( canManage );
+
+		const steps = await onboarding.initialize( store );
+
+		expect( mockAssign.mock.calls[ 0 ]?.[ 0 ] ).toBe( redirect );
+		expect( steps === false ).toBe( Boolean( redirect ) );
 	} );
 } );
