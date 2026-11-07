@@ -35,6 +35,11 @@ export default function loadHelpCenter() {
 		customProps.launcherContext = helpCenterData.launcherContext;
 	}
 
+	// What WooCommerce.com knows about the signed-in merchant, for routing requests for a human.
+	if ( helpCenterData?.wooHandoff ) {
+		customProps.wooHandoff = helpCenterData.wooHandoff;
+	}
+
 	helpCenterLoad = import( '@automattic/help-center' ).then( ( { default: HelpCenter } ) => {
 		// Only append once the chunk has loaded, so a failed import leaves no container behind and retries can mount.
 		const container = document.createElement( 'div' );
