@@ -72,6 +72,7 @@ const UseMyDomain: StepType< {
 	const [ useMyDomainMode, setUseMyDomainMode ] = useState< UseMyDomainInputMode >(
 		inputMode.domainInput
 	);
+	const [ isValidatingInitialQuery, setIsValidatingInitialQuery ] = useState( false );
 	const stepCounter = useOnboardingStepCounter( flow, 'use-my-domain' );
 
 	const { setShowHelpCenter } = useDispatch( HELP_CENTER_STORE );
@@ -196,6 +197,7 @@ const UseMyDomain: StepType< {
 					stepLocation={ location }
 					registerNowAction={ handleGoBack }
 					hideHeader={ shouldUseStepContainerV2( flow ) }
+					onValidatingInitialQueryChange={ setIsValidatingInitialQuery }
 				/>
 			</CalypsoShoppingCartProvider>
 		);
@@ -269,7 +271,11 @@ const UseMyDomain: StepType< {
 						/>
 					}
 					columnWidth={ columnWidth }
-					heading={ <Step.Heading text={ headingText } subText={ subText } /> }
+					heading={
+						// Hide the heading while a prefilled domain is auto-validated, so the
+						// "Enter your domain" heading doesn't flash before "Set up your domain".
+						! isValidatingInitialQuery && <Step.Heading text={ headingText } subText={ subText } />
+					}
 					verticalAlign="center"
 					className="use-my-domain--redesign"
 				>

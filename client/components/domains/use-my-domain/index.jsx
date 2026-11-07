@@ -1,12 +1,13 @@
 import { Gridicon } from '@automattic/components';
 import { useSiteDomainsQuery } from '@automattic/data-stores';
 import { BackButton } from '@automattic/onboarding';
+import { Spinner } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { getQueryArgs } from '@wordpress/url';
 import PropTypes from 'prop-types';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import ConnectDomainSteps from 'calypso/components/domains/connect-domain-step/connect-domain-steps';
 import {
@@ -58,6 +59,7 @@ function UseMyDomain( props ) {
 		registerNowAction,
 		hideHeader,
 		render,
+		onValidatingInitialQueryChange,
 	} = props;
 
 	const { __ } = useI18n();
@@ -74,6 +76,14 @@ function UseMyDomain( props ) {
 		Object.values( inputMode ).includes( initialMode ) && initialQuery
 	);
 	const [ mode, setMode ] = useState( wasInitialModeSet ? initialMode : inputMode.domainInput );
+	// When a valid `initialQuery` is passed, the component auto-submits it on mount. Track that
+	// so we can show a loading state instead of flashing the domain input form before moving on.
+	const [ isValidatingInitialQuery, setIsValidatingInitialQuery ] = useState(
+		() =>
+			Boolean( initialQuery ) &&
+			mode === inputMode.domainInput &&
+			! getDomainNameValidationErrorMessage( initialQuery )
+	);
 	const [ ownershipVerificationFlowPageSlug, setOwnershipVerificationFlowPageSlug ] = useState(
 		stepSlug.OWNERSHIP_VERIFICATION_LOGIN
 	);
@@ -356,7 +366,19 @@ function UseMyDomain( props ) {
 		);
 	};
 
+	const renderInitialQueryValidation = () => {
+		return (
+			<div className={ baseClassName + '__validating-initial-query' }>
+				<Spinner />
+			</div>
+		);
+	};
+
 	const renderContent = () => {
+		if ( isValidatingInitialQuery && mode === inputMode.domainInput ) {
+			return renderInitialQueryValidation();
+		}
+
 		switch ( mode ) {
 			case inputMode.domainInput:
 				return renderDomainInput();
@@ -447,9 +469,16 @@ function UseMyDomain( props ) {
 		initialValidation.current = true;
 		// Auto-submit if there's an initial query, we're in domain input mode, and validation passes
 		if ( mode === inputMode.domainInput && ! getDomainNameValidationErrorMessage( initialQuery ) ) {
-			onNext();
+			onNext().finally( () => setIsValidatingInitialQuery( false ) );
+		} else {
+			setIsValidatingInitialQuery( false );
 		}
 	}, [ mode, initialQuery, onNext ] );
+
+	// Layout effect so a parent (e.g. the Stepper step heading) can update before the first paint.
+	useLayoutEffect( () => {
+		onValidatingInitialQueryChange?.( isValidatingInitialQuery );
+	}, [ isValidatingInitialQuery, onValidatingInitialQueryChange ] );
 
 	useEffect( () => {
 		if ( inputMode.transferDomain === mode && inputMode.transferDomain === initialMode ) {
@@ -499,6 +528,7 @@ UseMyDomain.propTypes = {
 	registerNowAction: PropTypes.func,
 	hideHeader: PropTypes.bool,
 	render: PropTypes.func,
+	onValidatingInitialQueryChange: PropTypes.func,
 };
 
 export default connect( ( state ) => ( {
