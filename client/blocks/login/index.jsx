@@ -418,7 +418,13 @@ class Login extends Component {
 		const signupLink = this.getSignupLinkComponent();
 
 		if ( socialConnect ) {
-			return <AsyncLoad require={ loadSocialConnectPrompt } onSuccess={ this.handleValidLogin } />;
+			return (
+				<AsyncLoad
+					placeholder={ null }
+					require={ loadSocialConnectPrompt }
+					onSuccess={ this.handleValidLogin }
+				/>
+			);
 		}
 
 		if ( action === 'lostpassword' ) {
@@ -444,6 +450,7 @@ class Login extends Component {
 			return (
 				<Fragment>
 					<AsyncLoad
+						placeholder={ null }
 						require={ loadTwoFactorContent }
 						isBrowserSupported={ this.state.isBrowserSupported }
 						isJetpack={ isJetpack }
