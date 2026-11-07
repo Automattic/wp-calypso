@@ -6,6 +6,10 @@ describe( 'getUrlValidationError', () => {
 		'https://www.example.com',
 		'example.wordpress.com/blog',
 		'medium.com/@john.doe',
+		'https://example.wordpress.com/wp-admin/',
+		'mywordpress.com',
+		'wordpress.community',
+		'wordpress.com.au',
 	] )( 'accepts %s', ( url ) => {
 		expect( getUrlValidationError( url ) ).toBeNull();
 	} );
@@ -21,6 +25,14 @@ describe( 'getUrlValidationError', () => {
 		[ 'https://xn--example.com', 'idn' ],
 		[ 'www.例子.测试', 'idn' ],
 		[ 'example.com-', 'invalid_url' ],
+		[ 'wordpress.com/log-in', 'wordpress_com_page' ],
+		[ 'https://wordpress.com/home/example.com', 'wordpress_com_page' ],
+		[ 'WordPress.com', 'wordpress_com_page' ],
+		[ 'https://www.wordpress.com/setup/site-migration', 'wordpress_com_page' ],
+		[ 'wordpress.com:443/log-in', 'wordpress_com_page' ],
+		[ 'http://public-api.wordpress.com/wp-json/', 'wordpress_com_page' ],
+		[ 'wp.com', 'wordpress_com_page' ],
+		[ 'www.wp.com/log-in', 'wordpress_com_page' ],
 	] )( 'rejects %s as %s', ( url, reason ) => {
 		expect( getUrlValidationError( url ) ).toBe( reason );
 	} );
@@ -36,6 +48,7 @@ describe( 'getValidationMessage', () => {
 		[ 'missing_tld', /domain extension/ ],
 		[ 'invalid_protocol', /start with http:\/\/ or https:\/\// ],
 		[ 'invalid_url', /valid website address/ ],
+		[ 'wordpress_com_page', /WordPress\.com page, not your site/ ],
 	] as const )( 'explains %s', ( reason, message ) => {
 		expect( getValidationMessage( reason, translate ) ).toMatch( message );
 	} );
