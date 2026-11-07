@@ -29,7 +29,7 @@ export default function CommissionsInfo( {
 				: ( product.monthly_introductory_price ?? product.monthly_price ?? 0 );
 		const productAmount = product?.amount ? Number( product.amount.replace( /,/g, '' ) ) : 0;
 		const productPrice = isTermPricingEnabled ? termPrice : productAmount;
-		const totalCommissions = productPrice * commissionPercentage || 0;
+		const totalCommissions = productPrice * item.quantity * commissionPercentage || 0;
 		return acc + totalCommissions;
 	}, 0 );
 

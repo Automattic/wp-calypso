@@ -82,7 +82,9 @@ export function getCheckoutUrl(
 			.join( ',' ),
 		term,
 		redirect_to: getCheckoutReturnUrl( { hasWpcomHostingPlan, cart } ),
-		cancel_to: getCurrentPageUrl(),
+		// The checkout lists every license as its own line and can't change how
+		// many, so Back opens the cart, where the count is set.
+		cancel_to: `${ getCurrentPageUrl() }#cart`,
 	} );
 	return `${ window.location.origin }${ AGENCY_CHECKOUT_PATH }?${ search }`;
 }

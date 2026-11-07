@@ -88,7 +88,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 		isReferralMode
 	);
 
-	const { items: cartItems, swapItems, removeItem } = useShoppingCart();
+	const { items: cartItems, swapItems, removeItem, setItemQuantity } = useShoppingCart();
 	const [ isCartOpen, setIsCartOpen ] = useCartOpen();
 
 	// A hosting plan replaces the plan of the same family already in the cart.
@@ -206,6 +206,7 @@ export default function MarketplaceHosting( { section }: { section?: HostingSect
 									open={ isCartOpen }
 									onToggle={ setIsCartOpen }
 									onRemove={ removeItem }
+									onSetQuantity={ setItemQuantity }
 								/>
 							</HStack>
 						</HStack>

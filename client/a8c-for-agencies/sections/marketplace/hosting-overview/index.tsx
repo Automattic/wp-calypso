@@ -54,6 +54,7 @@ function HostingOverview( { section }: SectionProps ) {
 	const {
 		selectedCartItems,
 		onRemoveCartItem,
+		onSetCartItemQuantity,
 		showCart,
 		setShowCart,
 		toggleCart,
@@ -154,6 +155,7 @@ function HostingOverview( { section }: SectionProps ) {
 								toggleCart={ toggleCart }
 								items={ selectedCartItems }
 								onRemoveItem={ onRemoveCartItem }
+								onSetItemQuantity={ onSetCartItemQuantity }
 								onCheckout={ () => {
 									page.redirect( A4A_MARKETPLACE_CHECKOUT_LINK );
 								} }

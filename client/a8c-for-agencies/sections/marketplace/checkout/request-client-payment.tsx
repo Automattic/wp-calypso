@@ -136,7 +136,10 @@ function RequestClientPayment( { checkoutItems, termPricing }: Props ) {
 		[ checkoutItems ]
 	);
 
-	const productIds = checkoutItems.map( ( item ) => item.product_id ).join( ',' );
+	// The referral takes one id per license, so a line's count repeats its id.
+	const productIds = checkoutItems
+		.flatMap( ( item ) => Array< number >( item.quantity ).fill( item.product_id ) )
+		.join( ',' );
 
 	const licenses = useMemo(
 		() =>
