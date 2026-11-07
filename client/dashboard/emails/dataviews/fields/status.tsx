@@ -1,5 +1,6 @@
-import { __experimentalVStack as VStack } from '@wordpress/components';
+import { __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { info } from '@wordpress/icons';
 import { Text } from '../../../components/text';
 import type { Email } from '../../types';
 import type { Field } from '@wordpress/dataviews';
@@ -17,15 +18,24 @@ export const statusField: Field< Email > = {
 		}
 
 		if ( item.status === 'domain_not_connected' ) {
+			const note = __(
+				'This domain is no longer connected to WordPress.com, so this mailbox may not receive mail.'
+			);
 			return (
-				<VStack spacing={ 1 }>
+				<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
 					<Text intent="error">{ __( 'Domain not connected' ) }</Text>
-					<Text variant="muted">
-						{ __(
-							'This domain is no longer connected to WordPress.com, so this mailbox may not receive mail.'
-						) }
-					</Text>
-				</VStack>
+					<Tooltip text={ note }>
+						<Text
+							variant="muted"
+							role="img"
+							aria-label={ note }
+							tabIndex={ 0 }
+							style={ { display: 'flex' } }
+						>
+							<Icon icon={ info } style={ { fill: 'currentColor' } } />
+						</Text>
+					</Tooltip>
+				</HStack>
 			);
 		}
 
