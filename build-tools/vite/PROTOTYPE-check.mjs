@@ -37,9 +37,26 @@ const seen = new Set( dashboardEntries.map( ( e ) => '/' + e ) );
 const queue = [ ...seen ];
 let inFlight = 0;
 
+// webpack-only constructs that survive Vite's transform and fail only in the browser.
+const LEFTOVERS = [
+	[ /\brequire\.context\s*\(/, 'require.context()' ],
+	[ /\bmodule\.hot\b/, 'module.hot' ],
+	[ /(?<![.\w$])require\s*\(/, 'require() in ESM' ],
+	[ /\bimport\s*\(\s*`[^`]*\$\{/, 'template-literal import()' ],
+	[ /\bprocess\.env\.(?!NODE_ENV\b)\w+/, 'process.env.* without a define' ],
+];
+
 async function visit( url ) {
 	try {
-		await env.transformRequest( url );
+		const result = await env.transformRequest( url );
+		if ( result && ! /\.(s?css|sass)(\?|$)/.test( url ) ) {
+			for ( const [ re, what ] of LEFTOVERS ) {
+				const m = result.code.match( re );
+				if ( m ) {
+					failures.push( { url, message: `${ what }: ${ m[ 0 ] }` } );
+				}
+			}
+		}
 	} catch ( e ) {
 		failures.push( { url, message: String( e.message ).split( '\n' )[ 0 ] } );
 		return;
