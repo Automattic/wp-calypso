@@ -56,7 +56,7 @@
 		"@wordpress/readable-js-assets-webpack-plugin": "^4.1.0",
 		"copy-webpack-plugin": "^14.0.0",
 		"glob": "^7.2.3",
-		"postcss": "^8.5.31",
+		"postcss": "^8.5.32",
 		"webpack": "^5.111.1"
 	}
 }
