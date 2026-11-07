@@ -70,6 +70,8 @@ function createServer() {
 }
 
 const server = createServer();
+// PROTOTYPE (DOTMSD-1679): hand the http.Server to the Vite bundler so HMR shares the port.
+app.locals.onHttpServer?.( server );
 if ( process.env.NODE_ENV !== 'development' ) {
 	server.timeout = 50 * 1000; //50 seconds, in ms;
 }

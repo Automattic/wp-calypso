@@ -42,7 +42,10 @@ export default function setup() {
 
 	if ( 'development' === process.env.NODE_ENV ) {
 		// PROTOTYPE (DOTMSD-1670): skip the client bundler to time server boot alone.
-		if ( process.env.PROTOTYPE_NO_CLIENT_BUNDLER !== '1' ) {
+		if ( process.env.CALYPSO_BUNDLER === 'vite' ) {
+			// PROTOTYPE (DOTMSD-1679)
+			require( 'calypso/server/bundler/PROTOTYPE-vite' )( app );
+		} else if ( process.env.PROTOTYPE_NO_CLIENT_BUNDLER !== '1' ) {
 			require( 'calypso/server/bundler' )( app );
 		}
 

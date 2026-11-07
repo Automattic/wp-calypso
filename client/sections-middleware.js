@@ -121,7 +121,8 @@ export const setupRoutes = () => {
 	}
 };
 
-if ( module.hot ) {
+// PROTOTYPE (DOTMSD-1679): `module` doesn't exist in native ESM.
+if ( typeof module !== 'undefined' && module.hot ) {
 	module.hot.accept( './sections', () => {
 		const updatedSections = require( './sections' ).default;
 		receiveSections( updatedSections );

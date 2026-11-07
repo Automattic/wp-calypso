@@ -1,5 +1,7 @@
 import config from '@automattic/calypso-config';
 import { loadScript } from '@automattic/load-script';
+// PROTOTYPE (DOTMSD-1679): static import in place of the dev-only require().
+import { resolveBlackboxApiKey } from 'calypso/lib/blackbox-helper/api-key';
 
 let loadPromise = null;
 
@@ -17,9 +19,6 @@ export function getBlackboxApiKey( feature ) {
 	const configApiKey = config( configKey );
 
 	if ( process.env.NODE_ENV === 'development' ) {
-		// Guarded require so the dev-only override module is dead-code
-		// eliminated from production bundles.
-		const { resolveBlackboxApiKey } = require( 'calypso/lib/blackbox-helper/api-key' );
 		return resolveBlackboxApiKey( configApiKey );
 	}
 

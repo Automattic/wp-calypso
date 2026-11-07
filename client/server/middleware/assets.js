@@ -20,10 +20,48 @@ const getAssetType = ( asset ) => {
 
 const groupAssetsByType = ( assets ) => defaults( groupBy( assets, getAssetType ), EMPTY_ASSETS );
 
+// PROTOTYPE (DOTMSD-1679): assets provider for Vite. Entries are source URLs served by the Vite
+// middleware; sections load through `import()`, so their chunk groups are empty.
+const VITE_DASHBOARD_STYLES = [
+	'/packages/omnibar/src/style.scss?direct',
+	'/client/dashboard/app/omnibar/style.scss?direct',
+];
+const VITE_ASSETS = {
+	manifests: [],
+	assets: {
+		'entry-main': [ '/client/assets/stylesheets/style.scss?direct', '/client/boot/app.js' ],
+		'entry-stepper': [
+			'/client/assets/stylesheets/style.scss?direct',
+			'/client/landing/stepper/index.tsx',
+		],
+		'entry-dashboard-dotcom': [ '/client/dashboard/app-dotcom/index.ts' ],
+		'entry-dashboard-a4a': [ '/client/dashboard/app-a4a/index.ts' ],
+	},
+};
+const viteAssetType = ( asset ) => ( /\.(s?css)(\?|$)/.test( asset ) ? 'css.ltr' : 'js' );
+function viteAssetsHandler( req, res, next ) {
+	req.getAssets = () => VITE_ASSETS;
+	req.getFilesForChunkGroup = ( name ) => {
+		const files = VITE_ASSETS.assets[ name ];
+		if ( ! files ) {
+			return EMPTY_ASSETS;
+		}
+		const all = name.startsWith( 'entry-dashboard' )
+			? [ ...VITE_DASHBOARD_STYLES, ...files ]
+			: files;
+		return defaults( groupBy( all, viteAssetType ), EMPTY_ASSETS );
+	};
+	req.getEmptyAssets = () => EMPTY_ASSETS;
+	next();
+}
+
 /**
  * @returns {import('express').RequestHandler}
  */
 export default () => {
+	if ( process.env.CALYPSO_BUNDLER === 'vite' ) {
+		return viteAssetsHandler;
+	}
 	let assetsFile = null;
 	let assetsFileModified = 0;
 	async function doReadAssets() {
