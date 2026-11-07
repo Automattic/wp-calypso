@@ -46,7 +46,7 @@ const CustomALink = ( {
 				onClick={ ( e ) => {
 					// Open support article links in the Help Center.
 					if ( isThisASupportArticleLink( transformedHref ) ) {
-						navigate( `/post?link=${ transformedHref }` );
+						navigate( `/post?link=${ encodeURIComponent( transformedHref ) }` );
 						e.preventDefault();
 					}
 					trackEvent( 'chat_message_action_click', {
