@@ -2,6 +2,8 @@ import {
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 	__experimentalHeading as Heading,
+	Button,
+	CardFooter,
 	CardHeader,
 	privateApis,
 } from '@wordpress/components';
@@ -14,6 +16,7 @@ import { useSelector } from 'react-redux';
 import { modifierKeyIsActive } from '../../panel/helpers/input';
 import getKeyboardShortcutsEnabled from '../../panel/state/selectors/get-keyboard-shortcuts-enabled';
 import { getFilters } from '../../panel/templates/filters';
+import { useAppContext } from '../context';
 import ErrorBoundary from '../error-boundary';
 import NoteList from '../note-list';
 import CloseButton from '../templates/close-button';
@@ -53,6 +56,7 @@ const NotePanel = ( {
 	const tabRefs = useRef< Record< string, HTMLButtonElement > >( {} );
 	const keyboardShortcutsAreEnabled = useSelector( getKeyboardShortcutsEnabled );
 	const isSimplified = useIsSimplifiedNote();
+	const { onOpenFullView } = useAppContext();
 
 	const handleSelect = useCallback(
 		( tabId: string | null | undefined ) => {
@@ -175,6 +179,13 @@ const NotePanel = ( {
 					setSelectedNoteId={ setSelectedNoteId }
 				/>
 			</ErrorBoundary>
+			{ onOpenFullView && (
+				<CardFooter size="small" justify="center">
+					<Button className="wpnc-app__full-view" variant="tertiary" onClick={ onOpenFullView }>
+						{ __( 'Open full view' ) }
+					</Button>
+				</CardFooter>
+			) }
 		</>
 	);
 };
