@@ -96,7 +96,6 @@ export const CategoriesSection: React.FC< Props > = ( {
 								onClose={ () => setShowInfoPopover( false ) }
 								position="middle left"
 								noArrow={ false }
-								ignoreViewportSize
 							>
 								<div className="categories-info-popover">
 									<p>
