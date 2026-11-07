@@ -54,6 +54,11 @@ export function conversationsInbox( context, next ) {
 		'Reader > Conversations > Inbox',
 		'conversations-inbox'
 	);
+	recordTrack(
+		'calypso_reader_conversations_viewed',
+		{},
+		{ pathnameOverride: getCurrentRoute( context.store.getState() ) }
+	);
 
 	context.primary = (
 		<AsyncLoad
