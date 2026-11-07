@@ -1,0 +1,203 @@
+diff --git a/build/components/colors/utils.cjs b/build/components/colors/utils.cjs
+index 75101c633a93a6a660930b1c7b33935380b04669..2080f6a94dba74b06913b2e388de8425a5d86eaa 100644
+--- a/build/components/colors/utils.cjs
++++ b/build/components/colors/utils.cjs
+@@ -42,7 +42,7 @@ var import_a11y = __toESM(require("colord/plugins/a11y"));
+ var import_components = require("@wordpress/components");
+ var import_lock_unlock = require("../../lock-unlock.cjs");
+ (0, import_colord.extend)([import_names.default, import_a11y.default]);
+-var { kebabCase } = (0, import_lock_unlock.unlock)(import_components.privateApis);
++var { kebabCase } = require("@wordpress/kebab-case");
+ var getColorObjectByAttributeValues = (colors, definedColor, customColor) => {
+   if (definedColor) {
+     const colorObj = colors?.find(
+diff --git a/build/components/colors/with-colors.cjs b/build/components/colors/with-colors.cjs
+index 8e33e0d42efaef7302f1bf6448da71a6f173f97d..46a2896fa70f2d6b5feff3cc3d7d1025d3c2a6f1 100644
+--- a/build/components/colors/with-colors.cjs
++++ b/build/components/colors/with-colors.cjs
+@@ -31,7 +31,7 @@ var import_utils = require("./utils.cjs");
+ var import_use_settings = require("../use-settings/index.cjs");
+ var import_lock_unlock = require("../../lock-unlock.cjs");
+ var import_jsx_runtime = require("react/jsx-runtime");
+-var { kebabCase } = (0, import_lock_unlock.unlock)(import_components.privateApis);
++var { kebabCase } = require("@wordpress/kebab-case");
+ var upperFirst = ([firstLetter, ...rest]) => firstLetter.toUpperCase() + rest.join("");
+ var withCustomColorPalette = (colorsArray) => (0, import_compose.createHigherOrderComponent)(
+   (WrappedComponent) => function WithCustomColorPalette(props) {
+diff --git a/build/components/font-sizes/utils.cjs b/build/components/font-sizes/utils.cjs
+index 35bbfa5894ead672a7604ae4d76e3ceb0c693a30..eacd32dd0ed3495b93fa09eb1d03189c141b8033 100644
+--- a/build/components/font-sizes/utils.cjs
++++ b/build/components/font-sizes/utils.cjs
+@@ -27,7 +27,7 @@ __export(utils_exports, {
+ module.exports = __toCommonJS(utils_exports);
+ var import_components = require("@wordpress/components");
+ var import_lock_unlock = require("../../lock-unlock.cjs");
+-var { kebabCase } = (0, import_lock_unlock.unlock)(import_components.privateApis);
++var { kebabCase } = require("@wordpress/kebab-case");
+ var getFontSize = (fontSizes, fontSizeAttribute, customFontSizeAttribute) => {
+   if (fontSizeAttribute) {
+     const fontSizeObject = fontSizes?.find(
+diff --git a/build/components/iframe/index.cjs b/build/components/iframe/index.cjs
+index 8287e32cb414cf543972e7db9945a8f34d5f728b..e3bb13d803241584e73651f418c27d3cc9f56f52 100644
+--- a/build/components/iframe/index.cjs
++++ b/build/components/iframe/index.cjs
+@@ -119,9 +119,7 @@ function getIframeSrc(resolvedAssets) {
+ 		${resolvedAssets.styles ?? ""}
+ 		${resolvedAssets.scripts ?? ""}
+ 	</head>
+-	<body>
+-		<script>document.currentScript.parentElement.remove()</script>
+-	</body>
++	<body></body>
+ </html>`;
+   src = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+   iframeSrcCache.set(resolvedAssets, src);
+diff --git a/build/hooks/font-family.cjs b/build/hooks/font-family.cjs
+index 34c7252fbf7ad15b1ba89d8afc0cae6d139b8184..0bf1283944176d79307f447168957e793a9868fb 100644
+--- a/build/hooks/font-family.cjs
++++ b/build/hooks/font-family.cjs
+@@ -43,7 +43,7 @@ var import_utils = require("./utils.cjs");
+ var import_typography = require("./typography.cjs");
+ var import_lock_unlock = require("../lock-unlock.cjs");
+ var FONT_FAMILY_SUPPORT_KEY = "typography.__experimentalFontFamily";
+-var { kebabCase } = (0, import_lock_unlock.unlock)(import_components.privateApis);
++var { kebabCase } = require("@wordpress/kebab-case");
+ function addAttributes(settings) {
+   if (!(0, import_blocks.hasBlockSupport)(settings, FONT_FAMILY_SUPPORT_KEY)) {
+     return settings;
+diff --git a/build/hooks/layout.cjs b/build/hooks/layout.cjs
+index 24d1534661cdd7c9a9636bee4a49aa32c4e9dc06..bfb19a0591453d37e81ed1d6b4d01056a965a12e 100644
+--- a/build/hooks/layout.cjs
++++ b/build/hooks/layout.cjs
+@@ -73,7 +73,7 @@ var CHILD_LAYOUT_KEYS = [
+   "rowStart",
+   "rowSpan"
+ ];
+-var { kebabCase } = (0, import_lock_unlock.unlock)(import_components.privateApis);
++var { kebabCase } = require("@wordpress/kebab-case");
+ function getDefaultLayout(layoutBlockSupport = {}, blockVariation) {
+   const defaultBlockLayout = layoutBlockSupport?.default;
+   return blockVariation?.attributes?.layout ?? defaultBlockLayout;
+diff --git a/build/hooks/use-typography-props.cjs b/build/hooks/use-typography-props.cjs
+index 603df65588b209b23fc860a0509fb505dc249b55..3bcfa1c497e73618574f0b881ba0025e37368f67 100644
+--- a/build/hooks/use-typography-props.cjs
++++ b/build/hooks/use-typography-props.cjs
+@@ -39,7 +39,7 @@ var import_global_styles_engine = require("@wordpress/global-styles-engine");
+ var import_style = require("./style.cjs");
+ var import_font_sizes = require("../components/font-sizes/index.cjs");
+ var import_lock_unlock = require("../lock-unlock.cjs");
+-var { kebabCase } = (0, import_lock_unlock.unlock)(import_components.privateApis);
++var { kebabCase } = require("@wordpress/kebab-case");
+ function getTypographyClassesAndStyles(attributes, settings) {
+   let typographyStyles = attributes?.style?.typography || {};
+   typographyStyles = {
+diff --git a/build-module/components/colors/utils.mjs b/build-module/components/colors/utils.mjs
+index d3e9a33260d5833d23511b9fba8b0fc661a98216..31ff32b327b1d0e8b2354fcf9a2d71948b5de44d 100644
+--- a/build-module/components/colors/utils.mjs
++++ b/build-module/components/colors/utils.mjs
+@@ -5,7 +5,7 @@ import a11yPlugin from "colord/plugins/a11y";
+ import { privateApis as componentsPrivateApis } from "@wordpress/components";
+ import { unlock } from "../../lock-unlock.mjs";
+ extend([namesPlugin, a11yPlugin]);
+-var { kebabCase } = unlock(componentsPrivateApis);
++import { kebabCase } from "@wordpress/kebab-case";
+ var getColorObjectByAttributeValues = (colors, definedColor, customColor) => {
+   if (definedColor) {
+     const colorObj = colors?.find(
+diff --git a/build-module/components/colors/with-colors.mjs b/build-module/components/colors/with-colors.mjs
+index cd2c616ef2e2ea27261b61b2e961a0c249b5d568..6d9588ca774d0ef83a719abee52889c5598a4d18 100644
+--- a/build-module/components/colors/with-colors.mjs
++++ b/build-module/components/colors/with-colors.mjs
+@@ -11,7 +11,7 @@ import {
+ import { useSettings } from "../use-settings/index.mjs";
+ import { unlock } from "../../lock-unlock.mjs";
+ import { jsx } from "react/jsx-runtime";
+-var { kebabCase } = unlock(componentsPrivateApis);
++import { kebabCase } from "@wordpress/kebab-case";
+ var upperFirst = ([firstLetter, ...rest]) => firstLetter.toUpperCase() + rest.join("");
+ var withCustomColorPalette = (colorsArray) => createHigherOrderComponent(
+   (WrappedComponent) => function WithCustomColorPalette(props) {
+diff --git a/build-module/components/font-sizes/utils.mjs b/build-module/components/font-sizes/utils.mjs
+index 75e32df65c1176a569cd4477c835ff4369e7045e..812703ee421fcda2d91c5f9a4c95742c50fae82c 100644
+--- a/build-module/components/font-sizes/utils.mjs
++++ b/build-module/components/font-sizes/utils.mjs
+@@ -1,7 +1,7 @@
+ // packages/block-editor/src/components/font-sizes/utils.js
+ import { privateApis as componentsPrivateApis } from "@wordpress/components";
+ import { unlock } from "../../lock-unlock.mjs";
+-var { kebabCase } = unlock(componentsPrivateApis);
++import { kebabCase } from "@wordpress/kebab-case";
+ var getFontSize = (fontSizes, fontSizeAttribute, customFontSizeAttribute) => {
+   if (fontSizeAttribute) {
+     const fontSizeObject = fontSizes?.find(
+diff --git a/build-module/components/iframe/index.mjs b/build-module/components/iframe/index.mjs
+index 721cd25a3cd88e2cf8ab52bae027ce4584f9c266..4bd3783687be37f301dc17b7e1501c8fca1a12f7 100644
+--- a/build-module/components/iframe/index.mjs
++++ b/build-module/components/iframe/index.mjs
+@@ -85,9 +85,7 @@ function getIframeSrc(resolvedAssets) {
+ 		${resolvedAssets.styles ?? ""}
+ 		${resolvedAssets.scripts ?? ""}
+ 	</head>
+-	<body>
+-		<script>document.currentScript.parentElement.remove()</script>
+-	</body>
++	<body></body>
+ </html>`;
+   src = URL.createObjectURL(new Blob([html], { type: "text/html" }));
+   iframeSrcCache.set(resolvedAssets, src);
+diff --git a/build-module/hooks/font-family.mjs b/build-module/hooks/font-family.mjs
+index 889fb993681327b8813580a5d1ee28982986c50f..6ec53b79c50fc01311d3ee1855839bc03d70c447 100644
+--- a/build-module/hooks/font-family.mjs
++++ b/build-module/hooks/font-family.mjs
+@@ -7,7 +7,7 @@ import { shouldSkipSerialization } from "./utils.mjs";
+ import { TYPOGRAPHY_SUPPORT_KEY } from "./typography.mjs";
+ import { unlock } from "../lock-unlock.mjs";
+ var FONT_FAMILY_SUPPORT_KEY = "typography.__experimentalFontFamily";
+-var { kebabCase } = unlock(componentsPrivateApis);
++import { kebabCase } from "@wordpress/kebab-case";
+ function addAttributes(settings) {
+   if (!hasBlockSupport(settings, FONT_FAMILY_SUPPORT_KEY)) {
+     return settings;
+diff --git a/build-module/hooks/layout.mjs b/build-module/hooks/layout.mjs
+index d37399bee2440e9fef920551a4476b61f217056a..60876d8c12610fd15348a601019a13c71539b6ac 100644
+--- a/build-module/hooks/layout.mjs
++++ b/build-module/hooks/layout.mjs
+@@ -50,7 +50,7 @@ var CHILD_LAYOUT_KEYS = [
+   "rowStart",
+   "rowSpan"
+ ];
+-var { kebabCase } = unlock(componentsPrivateApis);
++import { kebabCase } from "@wordpress/kebab-case";
+ function getDefaultLayout(layoutBlockSupport = {}, blockVariation) {
+   const defaultBlockLayout = layoutBlockSupport?.default;
+   return blockVariation?.attributes?.layout ?? defaultBlockLayout;
+diff --git a/build-module/hooks/use-typography-props.mjs b/build-module/hooks/use-typography-props.mjs
+index 54a1c7c5847b998f0d5a7ecc0d57f54f045aedb2..0a1f4a7b58c207bd1802d7a6e58a1b6ddd5fa442 100644
+--- a/build-module/hooks/use-typography-props.mjs
++++ b/build-module/hooks/use-typography-props.mjs
+@@ -5,7 +5,7 @@ import { getTypographyFontSizeValue } from "@wordpress/global-styles-engine";
+ import { getInlineStyles } from "./style.mjs";
+ import { getFontSizeClass } from "../components/font-sizes/index.mjs";
+ import { unlock } from "../lock-unlock.mjs";
+-var { kebabCase } = unlock(componentsPrivateApis);
++import { kebabCase } from "@wordpress/kebab-case";
+ function getTypographyClassesAndStyles(attributes, settings) {
+   let typographyStyles = attributes?.style?.typography || {};
+   typographyStyles = {
+diff --git a/package.json b/package.json
+index e02a4d0f81779d47a7a3b4195a68922622880816..d34157e0d1a4f2b81c5a27b49745950c7e8e3ce9 100644
+--- a/package.json
++++ b/package.json
+@@ -39,7 +39,11 @@
+ 			"require": "./build/index.cjs"
+ 		},
+ 		"./package.json": "./package.json",
+-		"./build-style/": "./build-style/"
++		"./build-style/": "./build-style/",
++		"./build-module/components/iframe/get-compatibility-styles": {
++			"import": "./build-module/components/iframe/get-compatibility-styles.mjs",
++			"require": "./build/components/iframe/get-compatibility-styles.cjs"
++		}
+ 	},
+ 	"react-native": "src/index",
+ 	"wpScript": true,

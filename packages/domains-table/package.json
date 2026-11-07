@@ -56,7 +56,7 @@
 		"@automattic/urls": "workspace:^",
 		"@automattic/viewport": "workspace:^",
 		"@tanstack/react-query": "^5.83.0",
-		"@wordpress/components": "^37.0.0",
+		"@wordpress/components": "^44.0.0",
 		"@wordpress/react-i18n": "^5.1.0",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.4.0",

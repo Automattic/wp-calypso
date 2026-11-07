@@ -4,6 +4,10 @@
 
 .wpcom__loading {
 	--wp-components-color-foreground: #3858e9;
+	// ProgressBar paints its indicator and track with these tokens; mix them from the
+	// foreground color, as it did before.
+	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
+	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 	padding: 1em;
 	max-width: 540px;
 	margin: 32vh auto 0;
