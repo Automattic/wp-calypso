@@ -1,5 +1,5 @@
 import { createLink } from '@tanstack/react-router';
-import { LinkButton, Notice as UINotice } from '@wordpress/ui';
+import { ButtonLink, Notice as UINotice } from '@wordpress/ui';
 import { forwardRef, type ComponentProps } from 'react';
 
 /**
@@ -18,9 +18,9 @@ export const NoticeActionLink = UINotice.ActionLink;
  */
 export const NoticeActionLinkButton = forwardRef<
 	HTMLAnchorElement,
-	Omit< ComponentProps< typeof LinkButton >, 'size' | 'tone' >
+	Omit< ComponentProps< typeof ButtonLink >, 'size' | 'tone' >
 >( function NoticeActionLinkButton( props, ref ) {
-	return <LinkButton ref={ ref } { ...props } size="compact" tone="neutral" />;
+	return <ButtonLink ref={ ref } { ...props } size="compact" tone="neutral" />;
 } );
 
 /**

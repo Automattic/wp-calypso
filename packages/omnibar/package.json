@@ -40,7 +40,7 @@
 		"@wordpress/i18n": "^7.1.0",
 		"@wordpress/icons": "^15.5.0",
 		"@wordpress/private-apis": "^3.1.0",
-		"@wordpress/ui": "^0.23.0"
+		"@wordpress/ui": "^0.26.0"
 	},
 	"peerDependencies": {
 		"@wordpress/data": "^11.1.0",

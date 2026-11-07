@@ -316,6 +316,7 @@
 		"yargs": "^17.0.1"
 	},
 	"resolutions": {
+		"@wordpress/ui/@wordpress/icons": "20.0.0",
 		"@storybook/addon-webpack5-compiler-babel/@babel/core": "^8.0.7",
 		"jest-environment-jsdom/jsdom": "^20.0.3",
 		"@opentelemetry/core@npm:2.2.0": "2.8.0",
@@ -429,7 +430,7 @@
 		"@wordpress/url": "5.1.0",
 		"@wordpress/viewport": "7.1.0",
 		"@wordpress/theme": "4.0.0",
-		"@wordpress/ui": "0.23.0",
+		"@wordpress/ui": "0.26.0",
 		"@wordpress/warning": "4.1.0",
 		"@wordpress/widgets": "4.48.0",
 		"@wordpress/wordcount": "5.1.0",
