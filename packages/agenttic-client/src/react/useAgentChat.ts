@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { isA2uiDataPart } from '../client/utils/core';
+import { generateMessageId, isA2uiDataPart } from '../client/utils/core';
 import { logger } from '../client/utils/logger';
 import { resolveActionsForMessage } from '../message-actions/resolver';
 import { useMessageActions } from '../message-actions/useMessageActions';
@@ -88,10 +88,11 @@ export interface ImageData {
 
 // Extra options for submitting a message
 export interface SubmitOptions {
-	type?: ContentType | 'tool_result' | 'tool_results'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI)
+	type?: ContentType | 'tool_result' | 'tool_results' | 'data'; // `text` for normal visible text (default), `context` for hidden context, `tool_result` for tool result (hidden from UI), `tool_results` for the results of several calls of one turn (hidden from UI), `data` for a message of one data part the server acts on, such as an approval decision (hidden from UI and left out of later turns' history)
 	archived?: boolean;
 	imageUrls?: ( string | ImageData )[]; // Array of image URLs or image objects with metadata
 	sessionId?: string; // Optional `sessionId` to use for this message (overrides agent's `sessionId`)
+	data?: Record< string, unknown >; // Required when type is `data`: the message's only data part
 	toolCallId?: string; // Required when type is `tool_result`: the tool call ID to respond to
 	toolId?: string; // Required when type is `tool_result`: the tool ID
 	fileParts?: FilePart[]; // Optional when type is `tool_result`: files (typically images) produced by the tool
@@ -439,6 +440,7 @@ export interface UseAgentChatConfig {
 	onTaskUpdate?: ( update: TaskUpdate ) => void | Promise< void >;
 	odieBotId?: string; // Odie bot ID for server-based conversation storage (e.g., 'wpcom-agent-wp_orchestrator'). When set, enables server storage.
 	credentials?: RequestCredentials; // Set 'include' to send cookies with cross-origin requests.
+	extensions?: string[]; // A2A extension URIs declared on every request's message, for features the client supports.
 	trackReplying?: boolean; // Set to get `isReplying` (needs `enableStreaming`). Reply text then also clears the progress text.
 	resumeOnRemount?: boolean; // Set to resume the chat, a streaming reply included, when it mounts again with the same agent.
 }
@@ -654,6 +656,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 					enableStreaming: config.enableStreaming,
 					odieBotId: config.odieBotId,
 					credentials: config.credentials,
+					extensions: config.extensions,
 				} );
 
 				// Only load messages when creating a new agent (initial mount or after removeAgent)
@@ -711,6 +714,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 		config.enableStreaming,
 		config.odieBotId,
 		config.credentials,
+		config.extensions,
 		isResumable,
 		isValidConfig,
 		pinLiveChat,
@@ -726,6 +730,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 			const isToolResults = options?.type === 'tool_results';
 			const isToolResult = options?.type === 'tool_result' || isToolResults;
+			const isData = options?.type === 'data';
+			const isHidden = isToolResult || isData;
 
 			// Validate before claiming the send lock — only the `finally` at
 			// the end of the send releases it, so a throw above that point
@@ -735,6 +741,9 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			}
 			if ( isToolResult && ! isToolResults && ( ! options?.toolCallId || ! options?.toolId ) ) {
 				throw new Error( '`toolCallId` and `toolId` are required when type is `tool_result`' );
+			}
+			if ( isData && ! options?.data ) {
+				throw new Error( '`data` is required when type is `data`' );
 			}
 
 			const { liveChat, setState } = pinLiveChat();
@@ -788,8 +797,8 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 			// Capture timestamp once for consistency
 			const messageTimestamp = Date.now();
 
-			// Create user message immediately for UI (skipped for tool results)
-			if ( ! isToolResult ) {
+			// Create user message immediately for UI (skipped for hidden messages)
+			if ( ! isHidden ) {
 				const contentType = ( options?.type || 'text' ) as ContentType;
 				const promptSourcePart = options?.promptSource
 					? promptSourceDataPart( options.promptSource )
@@ -849,7 +858,7 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 
 				// Pass metadata including archived flag and content type if provided
 				const messageOptions: any = {};
-				const hasContentType = !! options?.type && ! isToolResult;
+				const hasContentType = !! options?.type && ! isHidden;
 				if ( options?.archived || hasContentType || options?.promptSource ) {
 					messageOptions.metadata = {
 						...( options?.archived && { archived: true } ),
@@ -881,6 +890,17 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						options?.turnToolCalls,
 						messageOptions
 					);
+				} else if ( isData ) {
+					stream = agentManager.sendMessageStream( agentKey, '', {
+						...messageOptions,
+						message: {
+							role: 'user',
+							kind: 'message',
+							messageId: generateMessageId(),
+							parts: [ { type: 'data', data: options!.data! } ],
+						},
+						excludeFromHistory: true,
+					} );
 				} else if ( isToolResult ) {
 					stream = agentManager.sendToolResult(
 						agentKey,
@@ -979,6 +999,22 @@ export function useAgentChat( config: UseAgentChatConfig ): UseAgentChatReturn {
 						// post-preamble deltas would overwrite the preamble bubble.
 						if ( update.kind === 'status' ) {
 							streamingMessageId = null;
+						}
+					}
+
+					// A held call's request for approval is a message of its own, never the
+					// final text of the reply streamed before it. It stays out of history,
+					// so it is kept as a UI-only message.
+					if ( update.final && update.status?.state === 'auth-required' ) {
+						streamingMessageId = null;
+						const approvalMessage = update.status.message
+							? transformClientMessageToUI( update.status.message, liveChat.registrations )
+							: null;
+						if ( approvalMessage ) {
+							setState( ( prev ) => ( {
+								...prev,
+								uiMessages: [ ...prev.uiMessages, approvalMessage ],
+							} ) );
 						}
 					}
 

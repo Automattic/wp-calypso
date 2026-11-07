@@ -14,7 +14,7 @@ jest.mock( '../turn-id', () => ( {
 	getTurnId: jest.fn( () => '' ),
 } ) );
 
-import { DOLLY_AGENT_ID } from '../../constants';
+import { ACTION_APPROVALS_EXTENSION, DOLLY_AGENT_ID } from '../../constants';
 import { getInteractiveUiSession, showInteractiveUiSession } from '../../interactive-ui/session';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
@@ -56,6 +56,21 @@ describe( 'createAgentConfig', () => {
 		} );
 		expect( config.authenticationScope ).toEqual( { siteId: 456, userId: 123 } );
 	} );
+
+	it( 'declares the action approvals extension for the orchestrator', async () => {
+		const config = await createAgentConfig( { sessionId: '', sessionSiteKey: '456' } );
+
+		expect( config.extensions ).toEqual( [ ACTION_APPROVALS_EXTENSION ] );
+	} );
+
+	it.each( [ DOLLY_AGENT_ID, 'reader-chat' ] )(
+		'declares no extensions for the %s agent',
+		async ( agentId ) => {
+			const config = await createAgentConfig( { sessionId: '', sessionSiteKey: '456', agentId } );
+
+			expect( config.extensions ).toBeUndefined();
+		}
+	);
 
 	it( 'does not add reader page context for regular agents', async () => {
 		setAgentsManagerData( {

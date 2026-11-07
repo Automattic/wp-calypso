@@ -6,7 +6,11 @@
  */
 
 import { createCalypsoAuthProvider } from '../auth/calypso-auth-provider';
-import { ORCHESTRATOR_AGENT_ID, ORCHESTRATOR_AGENT_URL } from '../constants';
+import {
+	ACTION_APPROVALS_EXTENSION,
+	ORCHESTRATOR_AGENT_ID,
+	ORCHESTRATOR_AGENT_URL,
+} from '../constants';
 import { getInteractiveUiCapabilities } from '../interactive-ui/catalogs';
 import { getShownInteractiveUiDataModel } from '../interactive-ui/session';
 import { saveSessionId } from './agent-session';
@@ -314,6 +318,7 @@ export async function createAgentConfig(
 			...( sessionUserId !== undefined && { userId: sessionUserId } ),
 		} ),
 		enableStreaming: true,
+		...( agentId === ORCHESTRATOR_AGENT_ID && { extensions: [ ACTION_APPROVALS_EXTENSION ] } ),
 	};
 
 	if ( onTaskUpdate ) {

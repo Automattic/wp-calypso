@@ -1,0 +1,63 @@
+.agents-manager-action-approval-card {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px;
+	border: 1px solid var( --color-muted );
+	border-radius: 8px;
+	color: var( --color-foreground );
+	background: var( --color-background );
+
+	&__eyebrow {
+		margin: 0;
+		font-size: 12px;
+		color: var( --color-muted-foreground );
+	}
+
+	&__title {
+		margin: 0;
+		font-weight: 600;
+	}
+
+	&__arguments {
+		display: grid;
+		grid-template-columns: max-content minmax( 0, 1fr );
+		gap: 2px 12px;
+		margin: 0;
+		font-size: 13px;
+
+		dt {
+			color: var( --color-muted-foreground );
+		}
+
+		dd {
+			margin: 0;
+			overflow-wrap: anywhere;
+		}
+	}
+
+	&__status {
+		margin: 0;
+		font-size: 13px;
+
+		&--error {
+			color: var( --color-error-strong );
+		}
+	}
+
+	&__actions {
+		display: flex;
+		gap: 8px;
+	}
+}
+
+.agents-manager-action-approval-status {
+	margin: 0;
+	font-size: 13px;
+	color: var( --color-muted-foreground );
+
+	&--failed,
+	&--unavailable {
+		color: var( --color-error-strong );
+	}
+}
