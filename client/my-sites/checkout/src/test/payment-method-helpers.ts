@@ -9,6 +9,7 @@ import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-se
 import { createAccount } from '../payment-method-helpers';
 
 jest.mock( 'calypso/blocks/login/utils/blackbox-sdk', () => ( {
+	BLACKBOX_KEY_VERSION: 2,
 	getBlackboxApiKey: jest.fn( () => 'signup-key' ),
 } ) );
 
@@ -52,9 +53,9 @@ describe( 'createAccount', () => {
 
 		await createAccount( createAccountArgs );
 
-		expect( getBlackboxApiKey ).toHaveBeenCalledWith( 'blackbox-userless-checkout' );
 		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'signup-key' );
 		expect( getRequestBody()?.blackbox_session_id ).toBe( 'ABCDEFGHIJKLMNOPQRSTuv' );
+		expect( getRequestBody()?.blackbox_key_version ).toBe( 2 );
 	} );
 
 	it( 'omits blackbox_session_id when the signup api key is missing', async () => {

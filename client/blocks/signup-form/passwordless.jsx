@@ -12,6 +12,7 @@ import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
 import { connect } from 'react-redux';
+import { BLACKBOX_KEY_VERSION } from 'calypso/blocks/login/utils/blackbox-sdk';
 import { withBlackboxProtection } from 'calypso/blocks/login/with-blackbox-protection';
 import { ActionButtons } from 'calypso/components/connect-screen/action-buttons';
 import FormTextInput from 'calypso/components/forms/form-text-input';
@@ -118,7 +119,10 @@ class PasswordlessSignupForm extends Component {
 				{
 					email,
 					is_passwordless: true,
-					...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+					...( blackboxSessionId && {
+						blackbox_session_id: blackboxSessionId,
+						blackbox_key_version: BLACKBOX_KEY_VERSION,
+					} ),
 				},
 				( error ) => {
 					this.submitLock = false;
@@ -164,7 +168,10 @@ class PasswordlessSignupForm extends Component {
 				} ),
 				anon_id: getTracksAnonymousUserId(),
 				extra: { has_segmentation_survey: queryArgs.variationName === 'entrepreneur' },
-				...( blackboxSessionId && { blackbox_session_id: blackboxSessionId } ),
+				...( blackboxSessionId && {
+					blackbox_session_id: blackboxSessionId,
+					blackbox_key_version: BLACKBOX_KEY_VERSION,
+				} ),
 			};
 
 			const { search = '' } = typeof window !== 'undefined' ? window.location : {};

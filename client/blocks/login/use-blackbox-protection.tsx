@@ -19,8 +19,7 @@ export interface BlackboxProtection {
 interface UseBlackboxProtectionOptions {
 	/**
 	 * Feature flag gating Blackbox for this surface. Form is only protected when
-	 * this flag is enabled and that surface's public key is configured. Signup
-	 * surfaces use `blackbox_signup_api_key`; other surfaces use `blackbox_api_key`.
+	 * this flag is enabled and that surface's public key is configured.
 	 * When disabled, `getSessionId` is a no-op so no SDK load/collect happens.
 	 */
 	feature: string;
@@ -47,7 +46,7 @@ export function useBlackboxProtection( {
 	suspended,
 	resetOnError,
 }: UseBlackboxProtectionOptions ): BlackboxProtection {
-	const apiKey = getBlackboxApiKey( feature );
+	const apiKey = getBlackboxApiKey();
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );

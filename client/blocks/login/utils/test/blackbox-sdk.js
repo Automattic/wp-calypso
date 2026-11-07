@@ -34,19 +34,10 @@ describe( 'blackbox-sdk', () => {
 		delete window.Blackbox;
 	} );
 
-	test( 'getBlackboxApiKey uses the signup key for signup surfaces', () => {
-		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
-
-		expect( getBlackboxApiKey( 'blackbox-signup' ) ).toBe( 'signup-key' );
-		expect( getBlackboxApiKey( 'blackbox-userless-checkout' ) ).toBe( 'signup-key' );
-	} );
-
-	test( 'getBlackboxApiKey uses the login key for other surfaces', () => {
+	test( 'getBlackboxApiKey uses the login key', () => {
 		const { getBlackboxApiKey } = require( '../blackbox-sdk' );
 
 		expect( getBlackboxApiKey() ).toBe( 'login-key' );
-		expect( getBlackboxApiKey( 'blackbox-login' ) ).toBe( 'login-key' );
-		expect( getBlackboxApiKey( 'blackbox-lost-password' ) ).toBe( 'login-key' );
 	} );
 
 	test( 'loadBlackboxSdk injects the api key it was given', async () => {

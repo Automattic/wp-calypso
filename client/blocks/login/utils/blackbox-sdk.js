@@ -3,18 +3,16 @@ import { loadScript } from '@automattic/load-script';
 
 let loadPromise = null;
 
-// Account creation collects under its own client so its thresholds stay
-// independent of login. Logged-out checkout creates the account.
-const SIGNUP_FEATURES = new Set( [ 'blackbox-signup', 'blackbox-userless-checkout' ] );
+// Sent with a signup session so wpcom verifies it with `blackbox_api_key`.
+// A signup that sends no version is verified with `blackbox_signup_api_key`.
+export const BLACKBOX_KEY_VERSION = 2;
 
 /**
- * Public key for a Blackbox surface.
- * @param {string} [feature] Feature flag for the surface. Signup surfaces use `blackbox_signup_api_key`.
+ * Public key for Blackbox collects.
  * @returns {string|undefined} Configured public key.
  */
-export function getBlackboxApiKey( feature ) {
-	const configKey = SIGNUP_FEATURES.has( feature ) ? 'blackbox_signup_api_key' : 'blackbox_api_key';
-	const configApiKey = config( configKey );
+export function getBlackboxApiKey() {
+	const configApiKey = config( 'blackbox_api_key' );
 
 	if ( process.env.NODE_ENV === 'development' ) {
 		// Guarded require so the dev-only override module is dead-code

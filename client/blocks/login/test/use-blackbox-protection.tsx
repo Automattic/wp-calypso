@@ -165,3 +165,18 @@ describe( 'useBlackboxProtection resetOnError', () => {
 		expect( screen.getByRole( 'button', { name: 'Continue' } ) ).toBeDisabled();
 	} );
 } );
+
+describe( 'useBlackboxProtection key', () => {
+	beforeEach( () => {
+		( getBlackboxSessionId as jest.Mock ).mockReset();
+		( getBlackboxSessionId as jest.Mock ).mockResolvedValue( 'ABCDEFGHIJKLMNOPQRSTuv' );
+	} );
+
+	it( 'collects with the login key', async () => {
+		const { result } = renderHook( () => useBlackboxProtection( { feature: 'blackbox-signup' } ) );
+
+		await result.current.getSessionId();
+
+		expect( getBlackboxSessionId ).toHaveBeenCalledWith( 'login-key' );
+	} );
+} );
