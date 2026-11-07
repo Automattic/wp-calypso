@@ -367,7 +367,7 @@ __metadata:
     clsx: "npm:^2.1.1"
     colord: "npm:2.9.4"
     deepmerge: "npm:^4.3.1"
-    fast-average-color: "npm:^9.3.0"
+    fast-average-color: "npm:^9.6.0"
     history: "npm:^5.3.0"
     i18n-calypso: "workspace:^"
     react: "npm:^18.3.1"
@@ -20093,7 +20093,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-average-color@npm:^9.1.1, fast-average-color@npm:^9.3.0":
+"fast-average-color@npm:^9.1.1, fast-average-color@npm:^9.6.0":
   version: 9.6.0
   resolution: "fast-average-color@npm:9.6.0"
   checksum: 0c42ee34078e69a75afc9d2c8e126a2356942d8316c8a01dbf45835b4719363a984828ca32d692658af3cc461da096bf2c3bf9cd3b796eea8cf5706bfd871e63
