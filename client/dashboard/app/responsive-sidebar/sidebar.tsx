@@ -1,6 +1,9 @@
+import { agencyQuery } from '@automattic/api-queries';
+import { useQuery } from '@tanstack/react-query';
 import { __, sprintf } from '@wordpress/i18n';
 import { envelope, globe, layout, plugins } from '@wordpress/icons';
 import { useRef } from 'react';
+import SidebarPromo from '../../agency/components/sidebar-promo';
 import ReferralSidebar from '../../agency/earn/referrals/referral-sidebar';
 import AgencySiteSidebar from '../../agency/sites/site-sidebar';
 import RouterLinkButton from '../../components/router-link-button';
@@ -61,8 +64,19 @@ export default function Sidebar( { scrollSyncEnabled = false }: { scrollSyncEnab
 					<MeSidebar />
 				</SidebarNavigator.Screen>
 			</SidebarNavigator>
+			<AgencySidebarPromo />
 		</div>
 	);
+}
+
+function AgencySidebarPromo() {
+	const { supports } = useAppContext();
+	const { recordTracksEvent } = useAnalytics();
+	const { data: agency } = useQuery( { ...agencyQuery(), enabled: !! supports.agency } );
+	if ( ! supports.agency || ! agency || agency.isClientUser ) {
+		return null;
+	}
+	return <SidebarPromo recordTracksEvent={ recordTracksEvent } />;
 }
 
 function PrimaryMenuSidebar() {

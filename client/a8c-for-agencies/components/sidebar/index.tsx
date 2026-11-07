@@ -2,8 +2,9 @@ import page from '@automattic/calypso-router';
 import { useBreakpoint } from '@automattic/viewport-react';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, type JSX } from 'react';
+import { useCallback, useEffect, type JSX } from 'react';
 import JetpackIcons from 'calypso/components/jetpack/jetpack-icons';
+import SidebarPromo from 'calypso/dashboard/agency/components/sidebar-promo';
 import Sidebar, {
 	SidebarV2Main as SidebarMain,
 	SidebarV2Footer as SidebarFooter,
@@ -11,7 +12,11 @@ import Sidebar, {
 	SidebarNavigatorMenu,
 	SidebarNavigatorMenuItem,
 } from 'calypso/layout/sidebar-v2';
-import { useDispatch } from 'calypso/state';
+import { useDispatch, useSelector } from 'calypso/state';
+import {
+	hasFetchedAgency,
+	isAgencyClientUser,
+} from 'calypso/state/a8c-for-agencies/agency/selectors';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 import { CONTACT_URL_HASH_FRAGMENT } from '../a4a-contact-support-widget';
@@ -62,8 +67,19 @@ const A4ASidebar = ( {
 }: Props ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
+	// Until the agency loads, a client can't be told apart from an agency user.
+	const showPromo = useSelector(
+		( state ) => hasFetchedAgency( state ) && ! isAgencyClientUser( state )
+	);
 
 	const isNarrowView = useBreakpoint( '<660px' );
+
+	const handleRecordTracksEvent = useCallback(
+		( eventName: string, properties?: Record< string, unknown > ) => {
+			dispatch( recordTracksEvent( eventName, properties ) );
+		},
+		[ dispatch ]
+	);
 
 	// When the sidebar is not displayed (narrow view), we need to set the layout focus to the preview.
 	// This is because, on a narrow view, we want to display the sidebar to navigate to all available pages
@@ -102,6 +118,8 @@ const A4ASidebar = ( {
 					</SidebarNavigatorMenu>
 				</SidebarNavigator>
 			</SidebarMain>
+
+			{ showPromo && <SidebarPromo tone="dark" recordTracksEvent={ handleRecordTracksEvent } /> }
 
 			<SidebarFooter className="a4a-sidebar__footer">
 				<ul>

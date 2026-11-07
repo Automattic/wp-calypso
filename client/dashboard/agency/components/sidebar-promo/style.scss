@@ -1,0 +1,91 @@
+@import '@wordpress/base-styles/variables';
+
+// Sits at the bottom of the sidebar column. a8c-for-agencies restyles it to
+// match its own sidebar. A promo themes its icon tile and badge through the
+// custom properties below.
+.a4a-sidebar-promo-card {
+	--a4a-sidebar-promo-icon-color: var( --dashboard__text-color );
+	--a4a-sidebar-promo-icon-background: var( --dashboard-header__border-color );
+	--a4a-sidebar-promo-badge-color: var( --dashboard__text-color );
+	--a4a-sidebar-promo-badge-background: var( --dashboard-header__border-color );
+	display: flex;
+	align-items: flex-start;
+	gap: $grid-unit-15;
+	// Pinned to the bottom of the sidebar, with a divider above it.
+	margin: auto 0 $grid-unit-20;
+	padding: $grid-unit-20 $grid-unit-20 0;
+	border: 0;
+	border-block-start: $border-width solid var( --dashboard-header__border-color );
+	border-radius: 0;
+	color: var( --dashboard__text-color );
+	text-decoration: none;
+
+	&:hover,
+	&:focus-visible {
+		color: var( --dashboard__text-color );
+	}
+
+	// The label only, so the new-tab arrow beside it stays clean.
+	&:hover .a4a-sidebar-promo-card__link-label {
+		text-decoration: underline;
+	}
+
+	&:focus-visible {
+		outline: var( --wp-admin-border-width-focus ) solid var( --wp-admin-theme-color );
+		outline-offset: 2px;
+	}
+}
+
+.a4a-sidebar-promo-card__icon {
+	display: flex;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	inline-size: 32px;
+	block-size: 32px;
+	border-radius: $radius-small;
+	color: var( --a4a-sidebar-promo-icon-color );
+	background-color: var( --a4a-sidebar-promo-icon-background );
+
+	svg {
+		inline-size: 20px;
+		block-size: 20px;
+	}
+}
+
+.a4a-sidebar-promo-card__text {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-inline-size: 0;
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.a4a-sidebar-promo-card__title {
+	display: flex;
+	align-items: center;
+	gap: $grid-unit-10;
+	font-size: 13px;
+	font-weight: 500;
+	line-height: 20px;
+}
+
+.a4a-sidebar-promo-card__badge {
+	padding: 0 6px;
+	border-radius: 2px;
+	font-size: 11px;
+	line-height: 16px;
+	color: var( --a4a-sidebar-promo-badge-color );
+	background-color: var( --a4a-sidebar-promo-badge-background );
+}
+
+// The A4A dashboard defines no muted text color, so this falls back to full contrast.
+.a4a-sidebar-promo-card__description {
+	color: var( --dashboard__text-muted-color, var( --dashboard__text-color ) );
+}
+
+.a4a-sidebar-promo-card__link {
+	margin-block-start: $grid-unit-05;
+	font-weight: 500;
+}
