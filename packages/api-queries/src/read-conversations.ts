@@ -40,10 +40,21 @@ async function fetchPageWithRows< Page extends { next_cursor: string | null } >(
 	return page;
 }
 
+/**
+ * Refetching an infinite query refetches every loaded page in turn, so automatic
+ * refetches stop once more than one is loaded.
+ */
+export const hasLoadedMorePages = ( { state }: { state: { data?: { pages: unknown[] } } } ) =>
+	( state.data?.pages.length ?? 0 ) > 1;
+
 const cursorPaging = {
 	initialPageParam: undefined as string | undefined,
 	getNextPageParam: ( lastPage: { next_cursor: string | null } ) =>
 		lastPage.next_cursor ?? undefined,
+	refetchOnWindowFocus: ( query: Parameters< typeof hasLoadedMorePages >[ 0 ] ) =>
+		! hasLoadedMorePages( query ),
+	refetchOnReconnect: ( query: Parameters< typeof hasLoadedMorePages >[ 0 ] ) =>
+		! hasLoadedMorePages( query ),
 };
 
 export type ReadConversationsInfiniteData = InfiniteData<

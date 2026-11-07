@@ -1,4 +1,5 @@
 import {
+	hasLoadedMorePages,
 	markReadConversationNotesMutation,
 	readConversationsCommentsQuery,
 	readConversationsQuery,
@@ -85,9 +86,6 @@ function adaptPage< Row extends object, Item extends Conversation | OwnComment >
 	return items;
 }
 
-const hasMorePages = ( { state }: { state: { data?: { pages: unknown[] } } } ) =>
-	( state.data?.pages.length ?? 0 ) > 1;
-
 export function useConversations( {
 	sort,
 	search,
@@ -105,10 +103,7 @@ export function useConversations( {
 		...readConversationsQuery( { sort, search, scope } ),
 		placeholderData: keepPreviousData,
 		enabled,
-		// Refetching an infinite query refetches every page, so live updates stop once more are loaded.
-		refetchInterval: ( query ) => ! hasMorePages( query ) && ( refetchInterval ?? false ),
-		refetchOnWindowFocus: ( query ) => ! hasMorePages( query ),
-		refetchOnReconnect: ( query ) => ! hasMorePages( query ),
+		refetchInterval: ( query ) => ! hasLoadedMorePages( query ) && ( refetchInterval ?? false ),
 	} );
 	const { data } = query;
 	const conversations = useMemo(
