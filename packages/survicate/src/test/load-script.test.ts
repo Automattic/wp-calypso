@@ -25,6 +25,7 @@ import { recordTracksEvent } from '@automattic/calypso-analytics';
 import { loadScript } from '@automattic/load-script';
 import { select, subscribe } from '@wordpress/data';
 import { loadSurvicateScript } from '../load-script';
+import { registerSurveySuppressor } from '../suppressors';
 
 const mockSelect = select as jest.Mock;
 const mockSubscribe = subscribe as unknown as jest.Mock;
@@ -403,5 +404,129 @@ describe( 'loadSurvicateScript', () => {
 		await new Promise( ( resolve ) => setTimeout( resolve, 0 ) );
 
 		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+	} );
+} );
+
+describe( 'loadSurvicateScript with a registered suppressor', () => {
+	let controller: AbortController;
+	let active: boolean;
+	let notify: () => void;
+	let unregister: () => void;
+
+	function setSuppressorActive( value: boolean ) {
+		active = value;
+		notify();
+	}
+
+	function boot( sva: NonNullable< typeof window._sva > ) {
+		window._sva = sva;
+		loadSurvicateScript( 'test-workspace-id', controller.signal );
+		window.dispatchEvent( new Event( 'SurvicateReady' ) );
+	}
+
+	beforeEach( () => {
+		window._sva = undefined;
+		setHelpCenterOpen( false );
+		controller = new AbortController();
+		active = false;
+		notify = () => {};
+		unregister = registerSurveySuppressor( {
+			reason: 'notifications',
+			isActive: () => active,
+			subscribe: ( onChange ) => {
+				notify = onChange;
+				return () => {
+					notify = () => {};
+				};
+			},
+		} );
+	} );
+
+	afterEach( () => {
+		controller.abort();
+		unregister();
+		window._sva = undefined;
+		mockSelect.mockReset();
+		mockRecordTracksEvent.mockReset();
+		document.body.innerHTML = '';
+	} );
+
+	test( 'should pause targeting and close the survey when it becomes active', () => {
+		const closeSurvey = jest.fn();
+		boot( { closeSurvey, addEventListener: jest.fn() } );
+
+		setSuppressorActive( true );
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( window._sva?.disableTargeting ).toBe( true );
+	} );
+
+	test( 'should resume targeting when it becomes inactive and nothing else suppresses', () => {
+		const retarget = jest.fn();
+		boot( { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget } );
+
+		setSuppressorActive( true );
+		setSuppressorActive( false );
+
+		expect( window._sva?.disableTargeting ).toBe( false );
+		expect( retarget ).toHaveBeenCalledTimes( 1 );
+	} );
+
+	test( 'should keep targeting paused when it becomes inactive while the Help Center is open', () => {
+		const retarget = jest.fn();
+		boot( { closeSurvey: jest.fn(), addEventListener: jest.fn(), retarget } );
+
+		setSuppressorActive( true );
+		setHelpCenterOpen( true );
+		setSuppressorActive( false );
+
+		expect( window._sva?.disableTargeting ).toBe( true );
+		expect( retarget ).not.toHaveBeenCalled();
+	} );
+
+	test( 'should close a survey displayed while it is active', () => {
+		const closeSurvey = jest.fn();
+		const addEventListener = jest.fn();
+		active = true;
+		boot( { closeSurvey, addEventListener } );
+
+		const onSurveyDisplayed = addEventListener.mock.calls.find(
+			( [ event ] ) => event === 'survey_displayed'
+		)?.[ 1 ];
+		onSurveyDisplayed?.();
+
+		expect( closeSurvey ).toHaveBeenCalledTimes( 1 );
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'notifications',
+			trigger: 'survey_displayed',
+		} );
+	} );
+
+	test( 'should record a suppression when it becomes active over a visible survey', () => {
+		boot( { closeSurvey: jest.fn(), addEventListener: jest.fn() } );
+		const box = document.createElement( 'div' );
+		box.id = 'survicate-box';
+		const survey = document.createElement( 'div' );
+		survey.setAttribute( 'role', 'dialog' );
+		( survey as HTMLElement & { checkVisibility?: () => boolean } ).checkVisibility = () => true;
+		box.appendChild( survey );
+		document.body.appendChild( box );
+
+		setSuppressorActive( true );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith( 'calypso_survicate_survey_suppressed', {
+			reason: 'notifications',
+			trigger: 'suppressor_activated',
+		} );
+	} );
+
+	test( 'should stop observing it once aborted', () => {
+		const closeSurvey = jest.fn();
+		boot( { closeSurvey, addEventListener: jest.fn(), removeEventListener: jest.fn() } );
+
+		controller.abort();
+		setSuppressorActive( true );
+
+		expect( closeSurvey ).not.toHaveBeenCalled();
 	} );
 } );
