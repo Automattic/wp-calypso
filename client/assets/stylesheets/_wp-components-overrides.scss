@@ -23,6 +23,17 @@
 	transition: opacity 1ms;
 }
 
+/* Checked controls -------------------------------------------------------------------- *
+ * Checkboxes, toggles and radios fill with this token before the admin theme color, and
+ * `@wordpress/theme` pins it to the default blue at :root. Set it on the controls so they
+ * follow the color scheme, or any section that scopes its own theme color. */
+.components-checkbox-control__input,
+.components-form-toggle,
+.components-radio-control__input,
+.dataviews-selection-checkbox {
+	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+}
+
 /* @wordpress/components Button overrides --------------------------------------------- */
 .components-button {
 	justify-content: center;
