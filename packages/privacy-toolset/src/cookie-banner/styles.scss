@@ -161,8 +161,17 @@ $cookie-banner-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Robo
 			}
 		}
 	}
-	.cookie-banner__options-selection input[type='checkbox']:not( :disabled ) {
-		cursor: pointer;
+	.cookie-banner__options-selection input[type='checkbox'] {
+		&:not( :disabled ) {
+			cursor: pointer;
+		}
+
+		// Reset margins on ::before pseudo-element to prevent wp-admin form styles
+		// from leaking and misaligning toggles in the checked state.
+		&::before,
+		&:checked::before {
+			margin: 0;
+		}
 	}
 	.cookie-banner__ok-button,
 	.cookie-banner__accept-all-button,
