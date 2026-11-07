@@ -4,3 +4,14 @@
 .components-button:focus:not( :active ):not( .components-panel__body-toggle ) {
 	outline-offset: 0;
 }
+
+// Checkboxes, toggles and radios fill with this token before the components accent, and
+// `@wordpress/theme` pins it to the default blue, so they'd ignore the dark theme's accent.
+.components-checkbox-control__input,
+.components-form-toggle,
+.components-radio-control__input,
+.dataviews-selection-checkbox,
+.dataviews-view-table__checkbox-column [role="checkbox"],
+.dataviews-bulk-actions [role="checkbox"] {
+	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+}
