@@ -17,6 +17,7 @@ import {
 } from '@automattic/shopping-cart';
 import {
 	A4ATitanInboxMeta,
+	CurrencyAmount,
 	doesIntroductoryOfferHaveDifferentTermLengthThanProduct,
 	doesIntroductoryOfferHavePriceIncrease,
 	filterCostOverridesForLineItem,
@@ -273,12 +274,14 @@ function LineItemCostOverride( {
 				{ costOverride.humanReadableReason }
 			</span>
 			<span className="cost-overrides-list-item__discount">
-				{ costOverride.discountAmount &&
-					shouldShowDiscount &&
-					formatCurrency( -costOverride.discountAmount, product.currency, {
-						isSmallestUnit: true,
-						signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
-					} ) }
+				{ costOverride.discountAmount && shouldShowDiscount && (
+					<CurrencyAmount>
+						{ formatCurrency( -costOverride.discountAmount, product.currency, {
+							isSmallestUnit: true,
+							signForPositive: true, // TODO clk numberFormatCurrency signForPositive only usage
+						} ) }
+					</CurrencyAmount>
+				) }
 			</span>
 			<LineItemIntroOfferCostOverrideDetail product={ product } costOverride={ costOverride } />
 		</div>
@@ -599,9 +602,11 @@ export function CouponCostOverride( {
 					<LoadingCopy width="50px" height="14px" noMargin />
 				) : (
 					<span className="cost-overrides-list-item__discount">
-						{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
-							isSmallestUnit: true,
-						} ) }
+						<CurrencyAmount>
+							{ formatCurrency( -responseCart.coupon_savings_total_integer, responseCart.currency, {
+								isSmallestUnit: true,
+							} ) }
+						</CurrencyAmount>
 					</span>
 				) }
 			</div>

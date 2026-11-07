@@ -123,7 +123,7 @@ describe( 'BundleLineItem', () => {
 		// 6500 + 6400 = 12900 smallest-unit => $129, struck through.
 		const crossedOut = screen.getByText( /\$129\b/ );
 		expect( crossedOut ).toBeVisible();
-		expect( crossedOut.tagName ).toBe( 'S' );
+		expect( crossedOut.closest( 's' ) ).toBeVisible();
 		expect( screen.getByText( 'Discount for first year' ) ).toBeVisible();
 	} );
 

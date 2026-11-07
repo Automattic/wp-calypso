@@ -2,6 +2,7 @@ import page from '@automattic/calypso-router';
 import { Button, Gridicon } from '@automattic/components';
 import { formatCurrency } from '@automattic/number-formatters';
 import {
+	CurrencyAmount,
 	PaymentLogo,
 	getCreditsLineItemFromCart,
 	getItemIntroductoryOfferDisplay,
@@ -179,12 +180,16 @@ function OrderReview( {
 		<dl className="purchase-modal__review">
 			{ creditsLineItem && <dt className="purchase-modal__credits">{ creditsLineItem.label }</dt> }
 			{ creditsLineItem && (
-				<dd className="purchase-modal__credits">{ creditsLineItem.formattedAmount }</dd>
+				<dd className="purchase-modal__credits">
+					<CurrencyAmount>{ creditsLineItem.formattedAmount }</CurrencyAmount>
+				</dd>
 			) }
 
 			{ couponLineItem && <dt className="purchase-modal__coupon">{ couponLineItem.label }</dt> }
 			{ couponLineItem && (
-				<dd className="purchase-modal__coupon">{ couponLineItem.formattedAmount }</dd>
+				<dd className="purchase-modal__coupon">
+					<CurrencyAmount>{ couponLineItem.formattedAmount }</CurrencyAmount>
+				</dd>
 			) }
 
 			{ shouldDisplayTax && <dt className="purchase-modal__tax">{ translate( 'Taxes' ) }</dt> }

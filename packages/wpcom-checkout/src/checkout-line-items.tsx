@@ -33,6 +33,7 @@ import { useTranslate } from 'i18n-calypso';
 import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
 import { A4ATitanInboxMeta, isA4ATitanInboxProduct } from './a4a-titan-inbox';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
+import { CurrencyAmount } from './currency-amount';
 import { type CartBundleLineItem } from './group-bundle-line-items';
 import {
 	getIntroductoryOfferIntervalDisplay,
@@ -275,8 +276,14 @@ export function LineItemPrice( {
 } ) {
 	return (
 		<LineItemPriceWrapper>
-			{ crossedOutAmount && <s>{ crossedOutAmount }</s> }
-			<span>{ actualAmount }</span>
+			{ crossedOutAmount && (
+				<s>
+					<CurrencyAmount>{ crossedOutAmount }</CurrencyAmount>
+				</s>
+			) }
+			<span>
+				<CurrencyAmount>{ actualAmount }</CurrencyAmount>
+			</span>
 		</LineItemPriceWrapper>
 	);
 }
