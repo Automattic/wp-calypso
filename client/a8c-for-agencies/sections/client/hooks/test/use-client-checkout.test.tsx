@@ -128,3 +128,17 @@ it( 'preserves ordinary referral product construction without prepared mode', as
 		} ),
 	] );
 } );
+
+it( 'keeps every license of a product the referral repeats', async () => {
+	const license = { product_id: 100, alternative_product_id: 101, slug: 'ordinary-referral' };
+	( useProductsById as jest.Mock ).mockReturnValue( {
+		referredProducts: [ license, license, license ],
+	} );
+	const { result } = renderHook( () => useClientCheckout( {} ) );
+	await waitFor( () => expect( result.current.isReady ).toBe( true ) );
+
+	const [ lines ] = replaceProductsInCart.mock.calls[ 0 ];
+	expect(
+		lines.map( ( line: { extra: { cart_item_index: number } } ) => line.extra.cart_item_index )
+	).toEqual( [ 0, 1, 2 ] );
+} );

@@ -27,10 +27,17 @@ import {
 	Theme,
 } from '@automattic/composite-checkout';
 import { useLocale } from '@automattic/i18n-utils';
-import { formatCurrency } from '@automattic/number-formatters';
+import { formatCurrency, formatNumber } from '@automattic/number-formatters';
 import styled from '@emotion/styled';
 import { useTranslate } from 'i18n-calypso';
-import { useState, PropsWithChildren, useRef, Dispatch, SetStateAction } from 'react';
+import {
+	useState,
+	PropsWithChildren,
+	useRef,
+	Dispatch,
+	SetStateAction,
+	type ReactNode,
+} from 'react';
 import { A4ATitanInboxMeta, isA4ATitanInboxProduct } from './a4a-titan-inbox';
 import { getLabel, DefaultLineItemSublabel } from './checkout-labels';
 import { type CartBundleLineItem } from './group-bundle-line-items';
@@ -631,6 +638,82 @@ export function BundleLineItem( {
 					/>
 				</>
 			) }
+		</BundleLineItemWrapper>
+	);
+	/* eslint-enable wpcalypso/jsx-classname-namespace */
+}
+
+/**
+ * Identical lines of one product, as one read-only line: the product, the total
+ * for all of them, and the count with the price of one. The count is set before
+ * checkout; `children` holds the term picker when the line keeps one.
+ */
+export function MergedLineItem( {
+	products,
+	className = null,
+	children,
+}: {
+	products: ResponseCartProduct[];
+	className?: string | null;
+	children?: ReactNode;
+} ) {
+	const translate = useTranslate();
+	const { formStatus } = useFormStatus();
+	const isCartUpdating = formStatus === FormStatus.VALIDATING;
+
+	const [ firstProduct ] = products;
+	const label = getLabel( firstProduct );
+	const currency = firstProduct.currency;
+	const format = ( amount: number ) =>
+		formatCurrency( amount, currency, { isSmallestUnit: true, stripZeros: true } );
+	const totalInteger = products.reduce(
+		( total, product ) => total + product.item_subtotal_integer,
+		0
+	);
+	const originalInteger = products.reduce(
+		( total, product ) => total + product.item_original_subtotal_integer,
+		0
+	);
+	const count = products.length;
+
+	/* eslint-disable wpcalypso/jsx-classname-namespace */
+	return (
+		<BundleLineItemWrapper
+			className={ joinClasses( [ className, 'checkout-line-item' ] ) }
+			data-e2e-product-slug={ firstProduct.product_slug }
+			data-product-type={ firstProduct.product_slug }
+		>
+			<LineItemTitle className="checkout-line-item__title">{ label }</LineItemTitle>
+
+			<span className="checkout-line-item__price">
+				{ isCartUpdating ? (
+					<LoadingCopy width="60px" height="16px" noMargin />
+				) : (
+					<LineItemPrice
+						actualAmount={ format( totalInteger ) }
+						crossedOutAmount={
+							totalInteger < originalInteger ? format( originalInteger ) : undefined
+						}
+					/>
+				) }
+			</span>
+
+			<LineItemMeta>
+				<LineItemSublabelTitle>
+					{ translate( 'Quantity: %(count)s at %(price)s each', {
+						args: {
+							count: formatNumber( count ),
+							price: format( firstProduct.item_subtotal_integer ),
+						},
+						comment: '%(price)s is the price of one, such as "$149".',
+					} ) }
+				</LineItemSublabelTitle>
+			</LineItemMeta>
+			<LineItemMeta>
+				<LineItemSublabelAndPrice product={ firstProduct } isCartUpdating={ isCartUpdating } />
+			</LineItemMeta>
+
+			{ children }
 		</BundleLineItemWrapper>
 	);
 	/* eslint-enable wpcalypso/jsx-classname-namespace */
