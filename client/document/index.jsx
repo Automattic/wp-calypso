@@ -174,10 +174,15 @@ class Document extends Component {
 			isPlaygroundWoo,
 		};
 		// Without a server-rendered layout, the loading placeholder is the only markup, and it
-		// renders the same for the same props.
+		// renders the same for the same props. Of `app`, it only reads the mobile-app flags; the
+		// rest varies per visitor.
+		const placeholderKey = JSON.stringify( {
+			...loadingPlaceholderProps,
+			app: { isWpMobileApp: app?.isWpMobileApp, isWcMobileApp: app?.isWcMobileApp },
+		} );
 		const headRuntimeStyles = renderedLayout
 			? runtimeStyles
-			: getCachedRuntimeStyles( `placeholder:${ JSON.stringify( loadingPlaceholderProps ) }`, () =>
+			: getCachedRuntimeStyles( `placeholder:${ placeholderKey }`, () =>
 					renderToStaticMarkup( <LoadingPlaceholder { ...loadingPlaceholderProps } /> )
 				);
 

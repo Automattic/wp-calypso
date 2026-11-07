@@ -58,7 +58,8 @@ export function getUsedRuntimeStyles( markup, styles = globalThis.__wpStyleRunti
 /**
  * Like `getUsedRuntimeStyles`, but scans the markup only the first time it sees `key`.
  * @param {string} key - Identifies markup that renders the same every time
- * @param {() => string | undefined} getMarkup - Returns the markup; not called on a cache hit
+ * @param {() => string | undefined} getMarkup - Returns the markup, or nothing when rendering
+ * failed; not called on a cache hit
  * @returns {Array<[string, string]>} Used styles as [hash, css] pairs
  */
 export function getCachedRuntimeStyles( key, getMarkup ) {
@@ -66,7 +67,8 @@ export function getCachedRuntimeStyles( key, getMarkup ) {
 	if ( ! used ) {
 		const markup = getMarkup();
 		used = getUsedRuntimeStyles( markup );
-		if ( markup ) {
+		// A failed render returns no markup; try again next time rather than cache that.
+		if ( typeof markup === 'string' ) {
 			usedStylesCache.set( key, used );
 		}
 	}
