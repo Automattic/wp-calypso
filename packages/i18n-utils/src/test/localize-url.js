@@ -469,20 +469,20 @@ describe( '#localizeUrl', () => {
 		);
 	} );
 	test( 'tos', () => {
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'en' ) ).toEqual(
-			'https://wordpress.com/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'en' ) ).toEqual(
+			'https://automattic.com/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'de' ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/tos/', 'de' ) ).toEqual(
 			'https://wordpress.com/de/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'pt-br' ) ).toEqual(
+		expect( localizeUrl( 'https://automattic.com/tos/', 'pt-br' ) ).toEqual(
 			'https://wordpress.com/pt-br/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'pl' ) ).toEqual(
-			'https://wordpress.com/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'pl' ) ).toEqual(
+			'https://automattic.com/tos/'
 		);
-		expect( localizeUrl( 'https://wordpress.com/tos/', 'th' ) ).toEqual(
-			'https://wordpress.com/tos/'
+		expect( localizeUrl( 'https://automattic.com/tos/', 'th' ) ).toEqual(
+			'https://automattic.com/tos/'
 		);
 	} );
 
