@@ -1,4 +1,5 @@
 import {
+	hasLoadedMorePages,
 	markReadConversationNotesMutation,
 	readConversationsCommentsQuery,
 	readConversationsQuery,
@@ -102,9 +103,7 @@ export function useConversations( {
 		...readConversationsQuery( { sort, search, scope } ),
 		placeholderData: keepPreviousData,
 		enabled,
-		// Refetching an infinite query refetches every page, so live updates stop once more are loaded.
-		refetchInterval: ( { state } ) =>
-			( state.data?.pages.length ?? 0 ) > 1 ? false : ( refetchInterval ?? false ),
+		refetchInterval: ( query ) => ! hasLoadedMorePages( query ) && ( refetchInterval ?? false ),
 	} );
 	const { data } = query;
 	const conversations = useMemo(
