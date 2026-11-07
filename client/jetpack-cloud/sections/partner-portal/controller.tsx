@@ -12,7 +12,6 @@ import BillingDashboard from 'calypso/jetpack-cloud/sections/partner-portal/prim
 import CompanyDetailsDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/company-details-dashboard';
 import DownloadProducts from 'calypso/jetpack-cloud/sections/partner-portal/primary/download-products';
 import InvoicesDashboard from 'calypso/jetpack-cloud/sections/partner-portal/primary/invoices-dashboard';
-import IssueLicense from 'calypso/jetpack-cloud/sections/partner-portal/primary/issue-license';
 import Licenses from 'calypso/jetpack-cloud/sections/partner-portal/primary/licenses';
 import PartnerAccess from 'calypso/jetpack-cloud/sections/partner-portal/primary/partner-access';
 import PaymentMethodAdd from 'calypso/jetpack-cloud/sections/partner-portal/primary/payment-method-add';
@@ -37,6 +36,7 @@ import { setAllSitesSelected } from 'calypso/state/ui/actions/set-sites';
 import Header from './header';
 import PaymentMethodAddV2 from './primary/payment-method-add-v2';
 import PaymentMethodListV2 from './primary/payment-methods-v2';
+import ProgramSunset from './primary/program-sunset';
 import WPCOMAtomicHosting from './primary/wpcom-atomic-hosting';
 
 const isNewCardAdditionEnabled = isEnabled( 'jetpack/card-addition-improvements' );
@@ -106,15 +106,9 @@ export const licensesContext: Callback = ( context, next ) => {
 };
 
 export const issueLicenseContext: Callback = ( context, next ) => {
-	const { site_id: siteId, product_slug: suggestedProduct } = context.query;
-	const state = context.store.getState();
-	const sites = getSites( state );
-	const selectedSite = siteId ? sites.find( ( site ) => site?.ID === parseInt( siteId ) ) : null;
 	context.header = <Header />;
 	setSidebar( context, true );
-	context.primary = (
-		<IssueLicense selectedSite={ selectedSite } suggestedProduct={ suggestedProduct } />
-	);
+	context.primary = <ProgramSunset />;
 	next();
 };
 
