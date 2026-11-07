@@ -1,6 +1,5 @@
-import { __experimentalHStack as HStack, Icon, Tooltip } from '@wordpress/components';
+import { Tooltip } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { info } from '@wordpress/icons';
 import { Text } from '../../../components/text';
 import type { Email } from '../../types';
 import type { Field } from '@wordpress/dataviews';
@@ -18,24 +17,20 @@ export const statusField: Field< Email > = {
 		}
 
 		if ( item.status === 'domain_not_connected' ) {
-			const note = __(
-				'This domain is no longer connected to WordPress.com, so this mailbox may not receive mail.'
-			);
 			return (
-				<HStack spacing={ 1 } justify="flex-start" expanded={ false }>
-					<Text intent="error">{ __( 'Domain not connected' ) }</Text>
-					<Tooltip text={ note }>
-						<Text
-							variant="muted"
-							role="img"
-							aria-label={ note }
-							tabIndex={ 0 }
-							style={ { display: 'flex' } }
-						>
-							<Icon icon={ info } style={ { fill: 'currentColor' } } />
-						</Text>
-					</Tooltip>
-				</HStack>
+				<Tooltip
+					text={ __(
+						'This domain is no longer connected to WordPress.com, so this mailbox may not receive mail.'
+					) }
+				>
+					<Text
+						intent="error"
+						tabIndex={ 0 }
+						style={ { textDecoration: 'underline', textDecorationStyle: 'dotted' } }
+					>
+						{ __( 'Disconnected' ) }
+					</Text>
+				</Tooltip>
 			);
 		}
 
@@ -69,6 +64,6 @@ export const statusField: Field< Email > = {
 		{ value: 'unverified_forwards', label: __( 'Pending verification' ) },
 		{ value: 'google_pending_tos_acceptance', label: __( 'Finish setup' ) },
 		{ value: 'suspended', label: __( 'Expired' ) },
-		{ value: 'domain_not_connected', label: __( 'Domain not connected' ) },
+		{ value: 'domain_not_connected', label: __( 'Disconnected' ) },
 	],
 };
