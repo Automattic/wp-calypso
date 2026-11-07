@@ -2,7 +2,7 @@ import page from '@automattic/calypso-router';
 import { Popover, Button } from '@automattic/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useState, useEffect, useCallback, type JSX } from 'react';
+import { useState, useEffect, useCallback, useRef, type JSX } from 'react';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
 import { getJetpackDashboardPreference as getPreference } from 'calypso/state/jetpack-agency-dashboard/selectors';
@@ -72,6 +72,7 @@ const GuidedTour = ( {
 
 	const [ currentStep, setCurrentStep ] = useState( 0 );
 	const [ isVisible, setIsVisible ] = useState( false );
+	const lastTrackedStep = useRef< { tour: string; step: number } | null >( null );
 
 	const preference = useSelector( ( state ) => getPreference( state, preferenceName ) );
 	const hasFetched = !! useSelector( preferencesLastFetchedTimestamp );
@@ -90,15 +91,34 @@ const GuidedTour = ( {
 	const targetElement = useAsyncElement( target, 3000 );
 
 	useEffect( () => {
-		if ( targetElement && ! isDismissed && hasFetched ) {
+		if ( isDismissed ) {
+			lastTrackedStep.current = null;
+			return;
+		}
+		if ( targetElement && hasFetched ) {
 			setIsVisible( true );
+			if (
+				targetElement !== document.querySelector( target ) ||
+				( lastTrackedStep.current?.tour === preferenceName &&
+					lastTrackedStep.current.step === currentStep )
+			) {
+				return;
+			}
+			const isStartingTour = lastTrackedStep.current?.tour !== preferenceName;
+			lastTrackedStep.current = { tour: preferenceName, step: currentStep };
 			dispatch(
-				recordTracksEvent( 'calypso_jetpack_cloud_start_tour', {
-					tour: preferenceName,
-				} )
+				recordTracksEvent(
+					isStartingTour
+						? 'calypso_jetpack_cloud_start_tour'
+						: 'calypso_jetpack_cloud_tour_step_view',
+					{
+						tour: preferenceName,
+						...( isStartingTour ? {} : { step: currentStep + 1 } ),
+					}
+				)
 			);
 		}
-	}, [ dispatch, isDismissed, preferenceName, targetElement, hasFetched ] );
+	}, [ currentStep, dispatch, isDismissed, preferenceName, target, targetElement, hasFetched ] );
 
 	const endTour = useCallback( () => {
 		dispatch( savePreference( preferenceName, { ...preference, dismiss: true } ) );
