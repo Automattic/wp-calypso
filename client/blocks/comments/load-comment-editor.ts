@@ -1,4 +1,4 @@
-import { fetchCommentEmbedPreview } from '@automattic/api-core';
+import { fetchCommentEmbedPreview, isWpError } from '@automattic/api-core';
 import { loadScript } from '@automattic/load-script';
 import type { CommentsEditorLabels, CommentsEditorSettings } from '@automattic/api-core';
 
@@ -38,12 +38,11 @@ declare global {
 export const fetchEmbed = ( url: string ): Promise< Response > =>
 	fetchCommentEmbedPreview( url ).then(
 		( data ) => new Response( JSON.stringify( data ), { status: 200 } ),
-		( error: { statusCode?: number } ) => {
-			const status = error?.statusCode ?? 0;
-			if ( status < 400 || status > 599 ) {
+		( error: unknown ) => {
+			if ( ! isWpError( error ) ) {
 				throw error;
 			}
-			return new Response( JSON.stringify( error ), { status } );
+			return new Response( JSON.stringify( error ), { status: error.statusCode } );
 		}
 	);
 
