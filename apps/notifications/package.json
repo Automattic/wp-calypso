@@ -63,7 +63,7 @@
 		"@automattic/languages": "workspace:^",
 		"@automattic/wp-oxc-makepot": "workspace:^",
 		"html-webpack-plugin": "^5.6.8",
-		"postcss": "^8.5.31",
+		"postcss": "^8.5.32",
 		"postcss-custom-properties": "^12.1.11",
 		"webpack": "^5.111.1"
 	}
