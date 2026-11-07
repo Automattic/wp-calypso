@@ -212,7 +212,6 @@ const NotesWrapper = ( { wpcom } ) => {
 			.then( ( { calypso_preferences } ) =>
 				setPreferences( {
 					layoutStyle: calypso_preferences?.[ 'notifications-layout-style' ],
-					viewSettingsSeen: calypso_preferences?.[ 'notifications-view-settings-seen' ],
 				} )
 			)
 			.catch( logError );
