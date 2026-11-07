@@ -21,6 +21,7 @@ import type {
 	ReadConversation,
 	ReadConversationOwnComment,
 	ReadConversationPerson,
+	ReadConversationsScope,
 	ReadConversationsSort,
 } from '@automattic/api-core';
 
@@ -87,15 +88,20 @@ function adaptPage< Row extends object, Item extends Conversation | OwnComment >
 export function useConversations( {
 	sort,
 	search,
+	scope,
 	refetchInterval,
+	enabled = true,
 }: {
 	sort: ReadConversationsSort;
 	search?: string;
+	scope?: ReadConversationsScope;
 	refetchInterval?: number;
+	enabled?: boolean;
 } ) {
 	const query = useInfiniteQuery( {
-		...readConversationsQuery( { sort, search } ),
+		...readConversationsQuery( { sort, search, scope } ),
 		placeholderData: keepPreviousData,
+		enabled,
 		// Refetching an infinite query refetches every page, so live updates stop once more are loaded.
 		refetchInterval: ( { state } ) =>
 			( state.data?.pages.length ?? 0 ) > 1 ? false : ( refetchInterval ?? false ),

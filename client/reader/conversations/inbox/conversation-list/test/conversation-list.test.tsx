@@ -152,16 +152,6 @@ describe( 'ConversationList', () => {
 		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
 	} );
 
-	it( 'loads more on click when it does not load on scroll', async () => {
-		const user = userEvent.setup();
-		const onLoadMore = jest.fn();
-		renderList( { hasMore: true, autoLoad: false, onLoadMore } );
-
-		await user.click( screen.getByRole( 'button', { name: 'Load more' } ) );
-
-		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
-	} );
-
 	it( 'selects a conversation on click', async () => {
 		const user = userEvent.setup();
 		const { onSelect } = renderList();

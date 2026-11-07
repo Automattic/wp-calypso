@@ -4,6 +4,7 @@ import {
 	markNotificationsRead,
 	unfollowReadConversation,
 	type ReadConversationsResponse,
+	type ReadConversationsScope,
 	type ReadConversationsSort,
 } from '@automattic/api-core';
 import {
@@ -59,13 +60,15 @@ const getReadConversationsListQueryKey = () =>
 export const readConversationsQuery = ( {
 	sort = 'newest',
 	search = '',
-}: { sort?: ReadConversationsSort; search?: string } = {} ) =>
+	scope,
+}: { sort?: ReadConversationsSort; search?: string; scope?: ReadConversationsScope } = {} ) =>
 	infiniteQueryOptions( {
-		queryKey: [ ...getReadConversationsListQueryKey(), { sort, search } ],
+		queryKey: [ ...getReadConversationsListQueryKey(), { sort, search, scope } ],
 		queryFn: ( { pageParam } ) =>
 			fetchPageWithRows(
 				( cursor ) =>
 					fetchReadConversationsList( {
+						scope,
 						sort,
 						search: search || undefined,
 						number: PAGE_SIZE,
