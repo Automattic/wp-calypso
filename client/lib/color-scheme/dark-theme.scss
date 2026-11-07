@@ -381,7 +381,8 @@ This mixin generates alias variables for a color palette. For example, the
 	}
 
 	.components-base-control__help,
-	.components-checkbox-control__help {
+	.components-checkbox-control__help,
+	.components-radio-control__help {
 		color: var( --dashboard__text-muted-color );
 	}
 
