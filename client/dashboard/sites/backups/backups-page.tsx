@@ -18,6 +18,11 @@ import type { ReactNode } from 'react';
 // The route-specific navigation each variant (dotcom, A4A) wires to its own route tree,
 // so the page shell below stays route-agnostic. Passing `null` clears back to the index route.
 export interface BackupsNavigation {
+	/**
+	 * Pathname of this variant's backups list, resolved for the site: no route params, search or
+	 * hash. A date pick navigates here in place of the current entry, so picking dates on a
+	 * backup's details returns to the list.
+	 */
 	listPath: string;
 	selectBackup: ( rewindId: string | null ) => void;
 	requestRestore: ( rewindId: string ) => void;

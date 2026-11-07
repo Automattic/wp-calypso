@@ -12,8 +12,19 @@ interface UseDateRangeOptions {
 	gmtOffset?: number;
 	autoRefresh?: boolean;
 	defaultDays?: number;
+	/**
+	 * Writes the default range to the URL on mount when it has none, so the page has a link to
+	 * share.
+	 */
 	initializeUrl?: boolean;
+	/**
+	 * Clears `page` when the user picks a new range, in the same navigation.
+	 */
 	resetPageOnChange?: boolean;
+	/**
+	 * Resolved pathname, without route params, search or hash, that a date pick navigates to in
+	 * place of the current entry. Initialization and auto-refresh stay on the current path.
+	 */
 	selectionPath?: string;
 }
 
