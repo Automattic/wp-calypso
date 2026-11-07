@@ -14,12 +14,24 @@ import type { Site } from '@automattic/api-core';
 const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 	const mutation = useMutation(
 		withSnackbar( sitePlanSoftwareRestoreMutation( site.ID ), {
-			success: __( 'Requested restoration of plugins and themes that come with your plan.' ),
+			success: __(
+				'Restoration requested. The plugins and themes included with your plan should be restored within a few minutes.'
+			),
 			error: __( 'Failed to request restoration of plan plugin and themes.' ),
 		} )
 	);
 
+	let buttonLabel: string = __( 'Restore' );
+	if ( mutation.isPending ) {
+		buttonLabel = __( 'Requesting…' );
+	} else if ( mutation.isSuccess ) {
+		buttonLabel = __( 'Requested' );
+	}
+
 	const handleClick = () => {
+		if ( mutation.isPending || mutation.isSuccess ) {
+			return;
+		}
 		mutation.mutate( undefined );
 	};
 
@@ -34,9 +46,10 @@ const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 					variant="secondary"
 					size="compact"
 					isBusy={ mutation.isPending }
+					disabled={ mutation.isPending || mutation.isSuccess }
 					onClick={ handleClick }
 				>
-					{ __( 'Restore' ) }
+					{ buttonLabel }
 				</Button>
 			}
 		/>
@@ -71,7 +84,9 @@ export default function SiteActions( { site }: { site: Site } ) {
 	}
 
 	const actions = [
-		site.is_wpcom_atomic && <RestorePlanSoftware key="restore-plan-software" site={ site } />,
+		site.is_wpcom_atomic && (
+			<RestorePlanSoftware key={ `restore-plan-software-${ site.ID }` } site={ site } />
+		),
 		canDuplicateSite( site, user ) && <DuplicateSite key="duplicate-site" site={ site } />,
 	].filter( Boolean );
 
