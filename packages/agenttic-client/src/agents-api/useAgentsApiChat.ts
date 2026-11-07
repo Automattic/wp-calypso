@@ -48,6 +48,7 @@ function containsUserMessage( messages: AgentsApiMessage[], message: AgentsApiMe
 
 export function useAgentsApiChat( {
 	adapter,
+	scopeKey,
 	mediaUploadFn,
 	runAdapter,
 	getRunId,
@@ -61,15 +62,21 @@ export function useAgentsApiChat( {
 	const [ sessions, setSessions ] = useState< AgentsApiSession[] >( [] );
 	const [ sessionId, setSessionId ] = useState< string | null >( null );
 	const [ runId, setRunId ] = useState< string | null >( null );
-	const [ isProcessing, setIsProcessing ] = useState( false );
+	const [ hasResolvedSessions, setHasResolvedSessions ] = useState( false );
+	const [ isLoadingSessions, setIsLoadingSessions ] = useState( false );
+	const [ activeOperation, setActiveOperation ] = useState< 'send' | 'transcript' | null >( null );
 	const [ error, setError ] = useState< string | null >( null );
 	const messageIdsRef = useRef< Set< string > >( new Set() );
+	const hasResolvedSessionsRef = useRef( false );
 	const onErrorRef = useRef( onError );
 	const onMessageRef = useRef( onMessage );
 	const onResponseMetadataRef = useRef( onResponseMetadata );
 	const onUnreadChangeRef = useRef( onUnreadChange );
 	const mountedRef = useRef( true );
 	const refreshRequestRef = useRef( 0 );
+	const operationRequestRef = useRef( 0 );
+	const isLoadingTranscript = activeOperation === 'transcript';
+	const isProcessing = activeOperation !== null;
 
 	useEffect( () => {
 		onErrorRef.current = onError;
@@ -97,22 +104,58 @@ export function useAgentsApiChat( {
 	const refreshSessions = useCallback( async () => {
 		/* eslint-disable @wordpress/no-unused-vars-before-return -- the request must complete before the staleness guard */
 		const requestId = ++refreshRequestRef.current;
-		const response = await adapter.listSessions();
-		const nextSessions = normalizeSessions( response );
-		/* eslint-enable @wordpress/no-unused-vars-before-return */
-		if ( ! mountedRef.current || requestId !== refreshRequestRef.current ) {
+		const isInitialLoad = ! hasResolvedSessionsRef.current;
+		if ( isInitialLoad ) {
+			setIsLoadingSessions( true );
+		}
+		try {
+			const response = await adapter.listSessions();
+			const nextSessions = normalizeSessions( response );
+			/* eslint-enable @wordpress/no-unused-vars-before-return */
+			if ( ! mountedRef.current || requestId !== refreshRequestRef.current ) {
+				return;
+			}
+			setSessions( nextSessions );
+			onUnreadChangeRef.current?.( unreadTotal( nextSessions ) );
+		} finally {
+			if ( mountedRef.current && requestId === refreshRequestRef.current ) {
+				hasResolvedSessionsRef.current = true;
+				setHasResolvedSessions( true );
+				if ( isInitialLoad ) {
+					setIsLoadingSessions( false );
+				}
+			}
+		}
+	}, [ adapter ] );
+
+	const newSession = useCallback( () => {
+		operationRequestRef.current += 1;
+		setSessionId( null );
+		setRunId( null );
+		setActiveOperation( null );
+		messageIdsRef.current = new Set();
+		setMessages( [] );
+		setError( null );
+	}, [] );
+
+	useEffect( () => {
+		if ( scopeKey === undefined ) {
 			return;
 		}
-		setSessions( nextSessions );
-		onUnreadChangeRef.current?.( unreadTotal( nextSessions ) );
-	}, [ adapter ] );
+		refreshRequestRef.current += 1;
+		hasResolvedSessionsRef.current = false;
+		setSessions( [] );
+		setHasResolvedSessions( false );
+		setIsLoadingSessions( false );
+		newSession();
+	}, [ newSession, scopeKey ] );
 
 	useEffect( () => {
 		if ( ! isVisible ) {
 			return;
 		}
 		refreshSessions().catch( setNormalizedError );
-	}, [ isVisible, refreshSessions, setNormalizedError ] );
+	}, [ isVisible, refreshSessions, scopeKey, setNormalizedError ] );
 
 	const sendMessage = useCallback(
 		async ( message: string, files?: File[] ) => {
@@ -128,13 +171,17 @@ export function useAgentsApiChat( {
 				},
 				'user'
 			);
-			setIsProcessing( true );
+			const requestId = ++operationRequestRef.current;
+			setActiveOperation( 'send' );
 			setError( null );
 			setMessages( ( currentMessages ) => [ ...currentMessages, submittedMessage ] );
 			messageIdsRef.current = new Set( [ ...messageIdsRef.current, submittedMessage.id ] );
 			onMessageRef.current?.( submittedMessage );
 			try {
 				const attachments = await uploadFiles( files, mediaUploadFn );
+				if ( requestId !== operationRequestRef.current ) {
+					return;
+				}
 				const existingMessageIds = new Set( messageIdsRef.current );
 				const response = await adapter.sendMessage( {
 					message: content,
@@ -142,7 +189,7 @@ export function useAgentsApiChat( {
 					attachments,
 				} );
 				const normalized = normalizeSendResponse( response, content, attachments );
-				if ( ! mountedRef.current ) {
+				if ( ! mountedRef.current || requestId !== operationRequestRef.current ) {
 					return;
 				}
 				const nextMessages = containsUserMessage( normalized.messages, submittedMessage )
@@ -160,10 +207,12 @@ export function useAgentsApiChat( {
 				onResponseMetadataRef.current?.( normalized.metadata );
 				await refreshSessions();
 			} catch ( err ) {
-				setNormalizedError( err );
+				if ( requestId === operationRequestRef.current ) {
+					setNormalizedError( err );
+				}
 			} finally {
-				if ( mountedRef.current ) {
-					setIsProcessing( false );
+				if ( mountedRef.current && requestId === operationRequestRef.current ) {
+					setActiveOperation( null );
 				}
 			}
 		},
@@ -172,11 +221,13 @@ export function useAgentsApiChat( {
 
 	const loadSession = useCallback(
 		async ( nextSessionId: string ) => {
-			setIsProcessing( true );
+			const requestId = ++operationRequestRef.current;
+			setActiveOperation( 'transcript' );
+			setError( null );
 			try {
 				const response = await adapter.loadSession( nextSessionId );
 				const loaded = normalizeLoadedSession( response );
-				if ( ! mountedRef.current ) {
+				if ( ! mountedRef.current || requestId !== operationRequestRef.current ) {
 					return;
 				}
 				messageIdsRef.current = new Set( loaded.messages.map( ( item ) => item.id ) );
@@ -184,38 +235,41 @@ export function useAgentsApiChat( {
 				setMessages( loaded.messages );
 				onResponseMetadataRef.current?.( loaded.metadata );
 				await adapter.markSessionRead( nextSessionId );
+				if ( requestId !== operationRequestRef.current ) {
+					return;
+				}
 				await refreshSessions();
 			} catch ( err ) {
-				setNormalizedError( err );
+				if ( requestId === operationRequestRef.current ) {
+					setNormalizedError( err );
+				}
 			} finally {
-				if ( mountedRef.current ) {
-					setIsProcessing( false );
+				if ( mountedRef.current && requestId === operationRequestRef.current ) {
+					setActiveOperation( null );
 				}
 			}
 		},
 		[ adapter, refreshSessions, setNormalizedError ]
 	);
 
-	const newSession = useCallback( () => {
-		setSessionId( null );
-		setRunId( null );
-		messageIdsRef.current = new Set();
-		setMessages( [] );
-		setError( null );
-	}, [] );
-
 	const cancelRun = useCallback( async () => {
 		if ( ! runId || ! sessionId || ! runAdapter?.cancel ) {
 			return;
 		}
 		await runAdapter.cancel( { runId, sessionId } );
-		setIsProcessing( false );
-	}, [ runAdapter, runId, sessionId ] );
+		if ( activeOperation === 'send' ) {
+			operationRequestRef.current += 1;
+		}
+		setActiveOperation( ( current ) => ( current === 'send' ? null : current ) );
+	}, [ activeOperation, runAdapter, runId, sessionId ] );
 
 	return {
 		messages,
 		sessions,
 		sessionId,
+		hasResolvedSessions,
+		isLoadingSessions,
+		isLoadingTranscript,
 		isProcessing,
 		error,
 		sendMessage,
