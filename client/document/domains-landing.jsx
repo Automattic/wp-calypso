@@ -15,6 +15,7 @@ function DomainsLanding( {
 	i18nLocaleScript,
 	lang,
 	manifests,
+	useVite,
 } ) {
 	const isRTL = isLocaleRtl( lang );
 	return (
@@ -63,8 +64,12 @@ function DomainsLanding( {
 				 * this lets us have the performance benefit in prod, without breaking HMR in dev
 				 * since the manifest needs to be updated on each save
 				 */ }
-				{ env === 'development' && (
+				{ env === 'development' && ! useVite && (
 					<script nonce={ inlineScriptNonce } src="/calypso/evergreen/runtime.js" />
+				) }
+				{ useVite && <script nonce={ inlineScriptNonce } type="module" src="/@vite/client" /> }
+				{ useVite && (
+					<script nonce={ inlineScriptNonce } type="module" src="/@calypso/react-preamble.js" />
 				) }
 				{ env !== 'development' &&
 					manifests.map( ( manifest ) => (
@@ -76,7 +81,12 @@ function DomainsLanding( {
 						/>
 					) ) }
 				{ entrypoint.js.map( ( asset ) => (
-					<script key={ asset } nonce={ inlineScriptNonce } src={ asset } />
+					<script
+						key={ asset }
+						nonce={ inlineScriptNonce }
+						type={ useVite ? 'module' : undefined }
+						src={ asset }
+					/>
 				) ) }
 				<script
 					nonce={ inlineScriptNonce }

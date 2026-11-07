@@ -100,7 +100,11 @@ export function devOverlay( { entries, httpServer, isSectionEnabled = () => fals
 	// visit and Vite re-optimizes and reloads the page.
 	const sectionEntries = require( path.join( client, 'sections.js' ) )
 		.filter( isSectionEnabled )
-		.map( ( s ) => s.module.replace( /^calypso\//, 'client/' ) + '/index.{web.js,js,jsx,ts,tsx}' );
+		.map(
+			( s ) =>
+				s.module.replace( /^calypso\//, 'client/' ) +
+				'/index.{web.js,web.jsx,web.ts,web.tsx,js,jsx,ts,tsx}'
+		);
 	return {
 		cacheDir: path.join( root, '.cache/vite' ),
 		appType: 'custom',
@@ -193,4 +197,23 @@ export function startDashboardDevConfig( options = {} ) {
 		calypsoBase(),
 		devOverlay( { entries: [ ...dashboardEntries, ...classicEntries ], ...options } )
 	);
+}
+
+// DOTMSD-1681 (local): `start:vite`, every entry.
+export const allEntries = [
+	...classicEntries,
+	'client/landing/login/index.js',
+	'client/landing/domains/index.jsx',
+	'client/landing/browsehappy/index.jsx',
+	'client/landing/subscriptions/index.tsx',
+	...dashboardEntries,
+];
+
+export function startDevConfig( options = {} ) {
+	const config = mergeConfig( calypsoBase(), devOverlay( { entries: allEntries, ...options } ) );
+	config.cacheDir = path.join( root, '.cache/vite-all' );
+	if ( process.env.CALYPSO_VITE_WARMUP ) {
+		config.server.warmup = { clientFiles: allEntries.map( ( e ) => './' + e ) };
+	}
+	return config;
 }

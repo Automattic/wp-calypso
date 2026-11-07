@@ -32,6 +32,11 @@ function fileUrls( publicPath ) {
 		enforce: 'pre',
 		load( id ) {
 			if ( /\.(gif|jpe?g|png|svg|webp|woff2?)$/.test( id ) ) {
+				// PROTOTYPE (DOTMSD-1682): the Vite client's URL for the same import, so markup hydrates.
+				if ( publicPath === 'vite-source' ) {
+					const rel = path.relative( root, id.replace( /[?#].*$/, '' ) );
+					return `export default ${ JSON.stringify( rel.startsWith( '..' ) ? '/@fs' + id : '/' + rel ) };`;
+				}
 				return `export default ${ JSON.stringify( publicPath + 'images/' + path.basename( id ) ) };`;
 			}
 		},
@@ -176,12 +181,19 @@ export function devServerBuildConfig() {
 	const isDevelopment = serverConfig( 'env' ) === 'development';
 	const sections = serverConfig( 'sections' );
 	const prebundle = JSON.parse(
-		fs.readFileSync( path.join( client, 'server/PROTOTYPE-server-build/ssr-prebundle.json' ), 'utf8' )
+		fs.readFileSync(
+			path.join( client, 'server/PROTOTYPE-server-build/ssr-prebundle.json' ),
+			'utf8'
+		)
 	);
 	return mergeConfig(
 		calypsoBase(),
 		serverOverlay( {
-			publicPath: isDevelopment ? `/calypso/${ process.env.DEV_TARGET || 'evergreen' }/` : '/calypso/',
+			// PROTOTYPE (DOTMSD-1682): this build only ever runs next to the Vite client.
+			publicPath:
+				process.env.CALYPSO_VITE_IMAGE_URLS === 'webpack'
+					? `/calypso/${ process.env.DEV_TARGET || 'evergreen' }/`
+					: 'vite-source',
 			isEnabled: ( s ) =>
 				! isDevelopment || ( sections?.[ s.name ] ?? serverConfig( 'enable_all_sections' ) ),
 			prebundle,

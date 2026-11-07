@@ -1340,6 +1340,13 @@ export default function pages() {
 		app.get(
 			pathRegex,
 			( req, res, next ) => ( ! reqFilter || reqFilter( req ) ? next() : next( 'route' ) ),
+			// PROTOTYPE (DOTMSD-1682)
+			( req, res, next ) =>
+				req.prepareChunkGroups
+					? req
+							.prepareChunkGroups( entrypoint ?? 'entry-main', entrypoint ? null : section )
+							.then( () => next(), next )
+					: next(),
 			setupDefaultContext( entrypoint, section.name ),
 			setUpSectionContext( section, entrypoint ),
 			// Skip the rest of the middleware chain if SSR compatible. Further

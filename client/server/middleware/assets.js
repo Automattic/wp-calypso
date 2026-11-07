@@ -34,22 +34,86 @@ const VITE_ASSETS = {
 			'/client/assets/stylesheets/style.scss?direct',
 			'/client/landing/stepper/index.tsx',
 		],
+		'entry-login': [
+			'/client/assets/stylesheets/style.scss?direct',
+			'/client/landing/login/index.js',
+		],
+		'entry-domains-landing': [
+			'/client/assets/stylesheets/style.scss?direct',
+			'/client/landing/domains/style.scss?direct',
+			'/client/landing/domains/index.jsx',
+		],
+		'entry-subscriptions': [
+			'/client/landing/subscriptions/styles/styles.scss?direct',
+			'/client/landing/subscriptions/index.tsx',
+		],
+		'entry-browsehappy': [
+			'/client/assets/stylesheets/style.scss?direct',
+			'/client/landing/browsehappy/style.scss?direct',
+			'/client/landing/browsehappy/circle.scss?direct',
+		],
 		'entry-dashboard-dotcom': [ '/client/dashboard/app-dotcom/index.ts' ],
 		'entry-dashboard-a4a': [ '/client/dashboard/app-a4a/index.ts' ],
 	},
 };
 const viteAssetType = ( asset ) => ( /\.(s?css)(\?|$)/.test( asset ) ? 'css.ltr' : 'js' );
+const viteCssId = ( href ) => path.join( process.cwd(), href.replace( /[?&]direct$/, '' ) );
+// PROTOTYPE (DOTMSD-1682): CALYPSO_VITE_SECTION_CSS = walk (default) | startup | combined | none.
+const SECTION_CSS_MODE = process.env.CALYPSO_VITE_SECTION_CSS ?? 'walk';
 function viteAssetsHandler( req, res, next ) {
+	const closures = {};
 	req.getAssets = () => VITE_ASSETS;
-	req.getFilesForChunkGroup = ( name ) => {
-		const files = VITE_ASSETS.assets[ name ];
-		if ( ! files ) {
-			return EMPTY_ASSETS;
+	// Async: work out the static CSS closure of the entry and section before the sync getters run.
+	req.prepareChunkGroups = async ( entrypoint, section ) => {
+		if ( SECTION_CSS_MODE === 'none' ) {
+			return;
 		}
-		const all = name.startsWith( 'entry-dashboard' )
+		const sectionCss = await globalThis.__viteSectionCss;
+		const entryJs = ( VITE_ASSETS.assets[ entrypoint ] ?? [] ).filter(
+			( f ) => viteAssetType( f ) === 'js'
+		);
+		const sectionUrl = section && ( await sectionCss.resolveUrl( section.module ) );
+		const groups = [ [ entrypoint, entryJs, [] ] ];
+		if ( sectionUrl ) {
+			groups.push( [ section.name, [ sectionUrl ], entryJs ] );
+		}
+		for ( const [ name, entries, exclude ] of groups ) {
+			if ( ! entries.length ) {
+				continue;
+			}
+			if ( SECTION_CSS_MODE === 'combined' ) {
+				const k = encodeURIComponent( JSON.stringify( { entries, exclude } ) );
+				closures[ name ] = [ { href: `/@calypso/combined-css?k=${ k }&.css` } ];
+			} else {
+				closures[ name ] = await sectionCss.cssFor( entries, exclude );
+			}
+		}
+	};
+	req.getFilesForChunkGroup = ( name ) => {
+		const files = VITE_ASSETS.assets[ name ] ?? [];
+		const base = name.startsWith( 'entry-dashboard' )
 			? [ ...VITE_DASHBOARD_STYLES, ...files ]
 			: files;
-		return defaults( groupBy( all, viteAssetType ), EMPTY_ASSETS );
+		const sheets = closures[ name ] ?? [];
+		if ( ! base.length && ! sheets.length ) {
+			return EMPTY_ASSETS;
+		}
+		const grouped = defaults( groupBy( base, viteAssetType ), EMPTY_ASSETS );
+		const linked = new Set( grouped[ 'css.ltr' ] );
+		const viteIds = {};
+		for ( const href of grouped[ 'css.ltr' ] ) {
+			viteIds[ href ] = viteCssId( href );
+		}
+		for ( const sheet of sheets ) {
+			if ( ! linked.has( sheet.href ) ) {
+				linked.add( sheet.href );
+				grouped[ 'css.ltr' ] = [ ...grouped[ 'css.ltr' ], sheet.href ];
+				if ( sheet.id ) {
+					viteIds[ sheet.href ] = sheet.id;
+				}
+			}
+		}
+		return { ...grouped, viteIds };
 	};
 	req.getEmptyAssets = () => EMPTY_ASSETS;
 	next();
