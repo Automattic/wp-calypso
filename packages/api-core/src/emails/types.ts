@@ -41,9 +41,16 @@ export type Role = 'standard';
 
 export type WarningType = 'action_required' | string;
 
+export type WarningSlug =
+	| 'domain_not_connected'
+	| 'google_pending_tos_acceptance'
+	| 'unverified_forwards'
+	| 'unused_mailboxes'
+	| string;
+
 export interface Warning {
 	warning_type: WarningType;
-	warning_slug: string;
+	warning_slug: WarningSlug;
 	message: string;
 }
 

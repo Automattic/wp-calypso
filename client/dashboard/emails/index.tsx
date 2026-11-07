@@ -100,7 +100,7 @@ function Emails() {
 	const hasNoEmails = emails.length === 0;
 
 	const renderContent = () => {
-		if ( hasNoDomains ) {
+		if ( hasNoDomains && hasNoEmails ) {
 			return (
 				<>
 					<EmptyDomainsState />
