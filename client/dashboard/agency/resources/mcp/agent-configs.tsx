@@ -37,19 +37,17 @@ export interface AgentConfig {
 	docsLabel: string;
 }
 
-// The `@automattic/mcp-remote` stdio bridge (requires Node), used by clients that
-// don't support a native remote HTTP connection yet.
+// The stdio bridge remains available for older clients and troubleshooting.
 const bridgeArgs = [ '-y', MCP_REMOTE_PACKAGE, A4A_MCP_URL ];
 
-// One-click install deep links. Cursor and VS Code don't support native remote
-// HTTP yet, so their deep links install the `@automattic/mcp-remote` bridge.
-// Cursor expects a base64-encoded server object; VS Code a URL-encoded one.
+// Native HTTP install links: Cursor expects a base64-encoded server object;
+// VS Code expects a URL-encoded object including the server name.
 const cursorInstallDeepLink = `cursor://anysphere.cursor-deeplink/mcp/install?name=${ MCP_SERVER_NAME }&config=${ encodeURIComponent(
-	btoa( JSON.stringify( { command: `npx -y ${ MCP_REMOTE_PACKAGE } ${ A4A_MCP_URL }` } ) )
+	btoa( JSON.stringify( { url: A4A_MCP_URL } ) )
 ) }`;
 
 const vscodeInstallDeepLink = `vscode:mcp/install?${ encodeURIComponent(
-	JSON.stringify( { name: MCP_SERVER_NAME, command: 'npx', args: bridgeArgs } )
+	JSON.stringify( { name: MCP_SERVER_NAME, type: 'http', url: A4A_MCP_URL } )
 ) }`;
 
 // Native, Node-free remote configurations (URL + browser OAuth).
@@ -61,6 +59,12 @@ const claudeCodeNativeSnippet = JSON.stringify(
 
 const urlServerSnippet = JSON.stringify(
 	{ mcpServers: { [ MCP_SERVER_NAME ]: { url: A4A_MCP_URL } } },
+	null,
+	2
+);
+
+const serversNativeSnippet = JSON.stringify(
+	{ servers: { [ MCP_SERVER_NAME ]: { type: 'http', url: A4A_MCP_URL } } },
 	null,
 	2
 );
@@ -103,8 +107,7 @@ const fallbackDescription = ( clientNote: string ) =>
 		clientNote
 	);
 
-// Node bridge setup steps. Cursor and VS Code connect only through the bridge, so
-// these are their primary guide; Claude Desktop uses them as a fallback.
+// Node bridge fallback setup steps.
 const claudeDesktopBridgeSteps: ReactNode[] = [
 	installNodeStep,
 	__(
@@ -235,26 +238,60 @@ export const AGENT_CONFIGS: AgentConfig[] = [
 	{
 		id: 'cursor',
 		label: 'Cursor',
-		quickSetup: cursorBridgeSteps,
+		quickSetup: [
+			createInterpolateElement(
+				__(
+					'Click “Install in Cursor”, or open <code>~/.cursor/mcp.json</code> and add the configuration below.'
+				),
+				{ code: <code /> }
+			),
+			__( 'Fully quit Cursor (Cmd+Q) and relaunch.' ),
+			__(
+				'Connect the server in Cursor’s MCP settings and sign in with your Automattic for Agencies account in the browser when prompted.'
+			),
+		],
 		installAction: {
 			label: __( 'Install in Cursor' ),
 			deepLink: cursorInstallDeepLink,
 		},
 		manualSetupFile: '~/.cursor/mcp.json',
-		manualSetupSnippet: mcpServersBridgeSnippet,
+		manualSetupSnippet: urlServerSnippet,
+		fallbackSetup: {
+			description: fallbackDescription( __( 'older Cursor versions without remote MCP support' ) ),
+			file: '~/.cursor/mcp.json',
+			steps: cursorBridgeSteps,
+			snippet: mcpServersBridgeSnippet,
+		},
 		docsUrl: 'https://cursor.com/docs/mcp',
 		docsLabel: __( 'Cursor documentation' ),
 	},
 	{
 		id: 'vscode',
 		label: 'VS Code',
-		quickSetup: vscodeBridgeSteps,
+		quickSetup: [
+			createInterpolateElement(
+				__(
+					'Click “Install in VS Code”, or open <code>~/Library/Application Support/Code/User/mcp.json</code> and add the configuration below.'
+				),
+				{ code: <code /> }
+			),
+			__( 'Restart VS Code.' ),
+			__(
+				'Start the server in VS Code and sign in with your Automattic for Agencies account in the browser when prompted.'
+			),
+		],
 		installAction: {
 			label: __( 'Install in VS Code' ),
 			deepLink: vscodeInstallDeepLink,
 		},
 		manualSetupFile: '~/Library/Application Support/Code/User/mcp.json',
-		manualSetupSnippet: serversBridgeSnippet,
+		manualSetupSnippet: serversNativeSnippet,
+		fallbackSetup: {
+			description: fallbackDescription( __( 'older VS Code versions without remote MCP support' ) ),
+			file: '~/Library/Application Support/Code/User/mcp.json',
+			steps: vscodeBridgeSteps,
+			snippet: serversBridgeSnippet,
+		},
 		docsUrl: 'https://code.visualstudio.com/docs/copilot/customization/mcp-servers',
 		docsLabel: __( 'VS Code MCP documentation' ),
 	},
