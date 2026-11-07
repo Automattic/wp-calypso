@@ -6,19 +6,25 @@ import { EmailProvider } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import Emails from '../index';
 import type { DomainSummary, EmailAccount } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const { default: actual } = await vi.importActual<
+		typeof import( '@automattic/calypso-config' )
+	>( '@automattic/calypso-config' );
 	const isEnabled = ( flag: string ) => flag === 'emails/titan-tiers' || actual.isEnabled( flag );
 	const config = Object.assign( ( key: string ) => actual( key ), actual, { isEnabled } );
-	return Object.assign( config, { __esModule: true, default: config } );
+	return { ...config, default: config };
 } );
 
-jest.mock( '../../app/router/emails', () => {
-	const actual = jest.requireActual( '../../app/router/emails' );
+vi.mock( '../../app/router/emails', async () => {
+	const actual =
+		await vi.importActual< typeof import( '../../app/router/emails' ) >(
+			'../../app/router/emails'
+		);
 	return {
 		...actual,
 		emailsRoute: {

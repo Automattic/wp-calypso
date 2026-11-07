@@ -3,6 +3,7 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { Notice } from '../index';
 
@@ -21,7 +22,7 @@ describe( '<Notice>', () => {
 
 	test( 'calls onClose when dismissed', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		render( <Notice onClose={ onClose }>Hello</Notice> );
 
 		await user.click( screen.getByRole( 'button', { name: 'Dismiss' } ) );

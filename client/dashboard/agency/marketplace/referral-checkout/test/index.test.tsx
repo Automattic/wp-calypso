@@ -4,6 +4,7 @@
 import { act, renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { useShoppingCart } from '../../products/use-shopping-cart';
 import ReferralCheckout from '../index';
@@ -13,7 +14,7 @@ const AGENCY_ID = 123;
 const DEV_SITE_ID = 55;
 
 let mockSearch: { referral_blog_id?: number } = {};
-jest.mock( '../../../../app/router/agency', () => ( {
+vi.mock( '../../../../app/router/agency', () => ( {
 	marketplaceReferralCheckoutRoute: { useSearch: () => mockSearch },
 } ) );
 

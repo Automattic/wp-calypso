@@ -4,12 +4,13 @@
 
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import PreferencesLoginSiteDropdown from '../site-dropdown';
 import type { Site } from '@automattic/api-core';
 
 // The suggestions list scrolls the highlighted option into view, which JSDOM lacks.
-Element.prototype.scrollIntoView = jest.fn();
+Element.prototype.scrollIntoView = vi.fn();
 
 const wombats = {
 	ID: 1,
@@ -28,7 +29,7 @@ const badgers = {
 } as Site;
 
 function renderDropdown( sites: Site[] = [ wombats, badgers ] ) {
-	const onChange = jest.fn();
+	const onChange = vi.fn();
 	render(
 		<PreferencesLoginSiteDropdown sites={ sites } value="" onChange={ onChange } label="Site" />
 	);

@@ -11,6 +11,7 @@ import { useMutation } from '@tanstack/react-query';
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import AgencyOverview from '..';
 import { render } from '../../../test-utils';
 import {
@@ -22,7 +23,7 @@ import {
 } from '../../partner-directory/lead-matching/test/fixtures';
 import type { Agency } from '@automattic/api-core';
 
-jest.mock( '../../earn/use-has-commission-activity', () => ( {
+vi.mock( '../../earn/use-has-commission-activity', () => ( {
 	useHasCommissionActivity: () => ( { hasActivity: false, isLoading: false } ),
 } ) );
 

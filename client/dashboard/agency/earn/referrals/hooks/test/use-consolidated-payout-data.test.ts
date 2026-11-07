@@ -3,13 +3,14 @@
  */
 
 import { renderHook } from '@testing-library/react';
+import { vi, type Mock } from 'vitest';
 import { getEstimatedCommission } from '../../lib/get-estimated-commission';
 import useGetConsolidatedPayoutData from '../use-consolidated-payout-data';
 import type { Referral } from '@automattic/api-core';
 
-jest.mock( '../../lib/get-estimated-commission' );
+vi.mock( '../../lib/get-estimated-commission' );
 
-const mockGetEstimatedCommission = getEstimatedCommission as jest.Mock;
+const mockGetEstimatedCommission = getEstimatedCommission as Mock;
 
 describe( 'useGetConsolidatedPayoutData', () => {
 	const mockReferrals: Referral[] = [
@@ -32,7 +33,7 @@ describe( 'useGetConsolidatedPayoutData', () => {
 	] as never;
 
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		// Default mock — `getEstimatedCommission` is dispatched on
 		// `usePreviousQuarter` so individual tests can override per-flag.
 		mockGetEstimatedCommission.mockReturnValue( 50 );

@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { AUTH_QUERY_KEY } from '../../../../app/auth';
 import { render } from '../../../../test-utils';
 import VerifyCodeForm from '../verify-code-form';
@@ -24,7 +25,7 @@ async function submitCode() {
 describe( '<VerifyCodeForm>', () => {
 	test( 'marks the cached user as having two-step once it is enabled', async () => {
 		const scope = mockValidateCode();
-		const onSuccess = jest.fn();
+		const onSuccess = vi.fn();
 		const { queryClient } = render(
 			<VerifyCodeForm actionType="enable-two-step" onSuccess={ onSuccess } />,
 			{ user: { ID: 1, two_step_enabled: false } as User }
@@ -40,7 +41,7 @@ describe( '<VerifyCodeForm>', () => {
 
 	test( 'leaves the cached user alone for a backup-code receipt', async () => {
 		mockValidateCode();
-		const onSuccess = jest.fn();
+		const onSuccess = vi.fn();
 		const { queryClient } = render(
 			<VerifyCodeForm actionType="create-backup-receipt" onSuccess={ onSuccess } />,
 			{ user: { ID: 1, two_step_enabled: false } as User }

@@ -6,6 +6,7 @@ import { isAutomatticianQuery, queryClient, userSettingsQuery } from '@automatti
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import McpRead from '../read';
 import type { UserSettings } from '@automattic/api-core';
@@ -56,7 +57,7 @@ function seed() {
 }
 
 function mockClipboard() {
-	const writeText = jest.fn().mockResolvedValue( undefined );
+	const writeText = vi.fn().mockResolvedValue( undefined );
 	Object.defineProperty( window.navigator, 'clipboard', {
 		value: { writeText },
 		configurable: true,

@@ -2,13 +2,14 @@
  * @jest-environment jsdom
  */
 import { act, renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useResendCooldown } from '../use-resend-cooldown';
 
 const MINUTE = 60 * 1000;
 
 describe( 'useResendCooldown', () => {
-	beforeEach( () => jest.useFakeTimers() );
-	afterEach( () => jest.useRealTimers() );
+	beforeEach( () => vi.useFakeTimers() );
+	afterEach( () => vi.useRealTimers() );
 
 	test( 'counts down to the deadline it was given', () => {
 		const { result } = renderHook( () => useResendCooldown() );
@@ -16,7 +17,7 @@ describe( 'useResendCooldown', () => {
 		act( () => result.current.hold( 5 * 60 ) );
 		expect( result.current.secondsUntilResend ).toBe( 5 * 60 );
 
-		act( () => jest.advanceTimersByTime( 2 * MINUTE ) );
+		act( () => vi.advanceTimersByTime( 2 * MINUTE ) );
 		expect( result.current.secondsUntilResend ).toBe( 3 * 60 );
 	} );
 
@@ -32,7 +33,7 @@ describe( 'useResendCooldown', () => {
 	} );
 
 	test( 'reports each hold to the caller that persists it', () => {
-		const onHold = jest.fn();
+		const onHold = vi.fn();
 		const { result } = renderHook( () => useResendCooldown( { onHold } ) );
 
 		act( () => result.current.hold( 5 * 60 ) );

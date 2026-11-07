@@ -10,12 +10,13 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SshCard from '../ssh-card';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn();
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn();
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: vi.fn() } ) };
 } );
 
 const siteId = 123;
@@ -187,11 +188,11 @@ describe( '<SshCard>', () => {
 		};
 
 		beforeEach( () => {
-			jest.mocked( isEnabled ).mockImplementation( ( flag ) => flag === 'ssh-multiple-keys' );
+			vi.mocked( isEnabled ).mockImplementation( ( flag ) => flag === 'ssh-multiple-keys' );
 		} );
 
 		afterEach( () => {
-			jest.mocked( isEnabled ).mockReset();
+			vi.mocked( isEnabled ).mockReset();
 		} );
 
 		test( 'shows labels of attached keys, with the owner for other users’ keys', async () => {

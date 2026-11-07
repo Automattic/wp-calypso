@@ -4,6 +4,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import AddWooPaymentsToSite from '../index';
 
@@ -15,14 +16,14 @@ test( 'shows the approval gate instead of the site picker to an unapproved agenc
 		.query( true )
 		.reply( 200, [ { id: 123, approval_status: 'pending' } ] )
 		.persist();
-	const recordTracksEvent = jest.fn();
+	const recordTracksEvent = vi.fn();
 
 	render(
 		<AddWooPaymentsToSite
 			agencyId={ 123 }
 			excludedSiteIds={ [] }
 			recordTracksEvent={ recordTracksEvent }
-			onSelectSite={ jest.fn() }
+			onSelectSite={ vi.fn() }
 			isApprovalGated
 		/>
 	);

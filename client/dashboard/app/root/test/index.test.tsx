@@ -10,6 +10,7 @@ import {
 	createRouter,
 } from '@tanstack/react-router';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { AnalyticsProvider } from '../../analytics';
 import { AuthContext } from '../../auth';
 import { APP_CONTEXT_DEFAULT_CONFIG, AppProvider } from '../../context';
@@ -47,9 +48,9 @@ function renderRoot( initialPath: string ) {
 			client={ new QueryClient( { defaultOptions: { queries: { retry: false } } } ) }
 		>
 			<AppProvider config={ config }>
-				<AnalyticsProvider client={ { recordTracksEvent: jest.fn(), recordPageView: jest.fn() } }>
+				<AnalyticsProvider client={ { recordTracksEvent: vi.fn(), recordPageView: vi.fn() } }>
 					<AuthContext.Provider
-						value={ { user: { ID: 1, username: 'testuser' } as User, logout: jest.fn() } }
+						value={ { user: { ID: 1, username: 'testuser' } as User, logout: vi.fn() } }
 					>
 						<RouterProvider router={ router } />
 					</AuthContext.Provider>

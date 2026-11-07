@@ -2,16 +2,17 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { bumpStat } from '../analytics';
 import { isChunkLoadError, maybeReloadForChunkError } from '../chunk-load-recovery';
 
-jest.mock( '../analytics', () => ( {
-	bumpStat: jest.fn(),
+vi.mock( '../analytics', () => ( {
+	bumpStat: vi.fn(),
 } ) );
 
-const mockedBumpStat = jest.mocked( bumpStat );
+const mockedBumpStat = vi.mocked( bumpStat );
 
-const replace = jest.fn();
+const replace = vi.fn();
 
 const setLocation = ( search: string ) => {
 	Object.defineProperty( window, 'location', {
@@ -21,7 +22,7 @@ const setLocation = ( search: string ) => {
 };
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	setLocation( '' );
 } );
 

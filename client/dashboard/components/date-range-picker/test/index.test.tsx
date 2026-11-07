@@ -5,6 +5,7 @@ import { render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MockDate from 'mockdate';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { DateRangePicker } from '..';
 import type { ComponentProps } from 'react';
 
@@ -296,7 +297,7 @@ describe( 'DateRangePicker (new)', () => {
 
 	test( 'invalid IANA timezone falls back gracefully (no crash, label correct)', async () => {
 		// Silence and assert the Moment Timezone warning for invalid zone
-		const errorSpy = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		const errorSpy = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 		try {
 			const { getByRole, findByRole } = renderDateRangePicker( {
 				timezoneString: 'Invalid/Timezone',

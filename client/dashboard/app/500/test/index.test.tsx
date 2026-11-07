@@ -5,6 +5,7 @@ import { onlineManager } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { render } from '../../../test-utils';
 import { bumpStat } from '../../analytics';
@@ -12,17 +13,17 @@ import { AuthContext } from '../../auth';
 import UnknownError from '../index';
 import type { User } from '@automattic/api-core';
 
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn( () => Promise.resolve() ),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn( () => Promise.resolve() ),
 } ) );
 
-jest.mock( '../../analytics', () => ( {
-	...jest.requireActual( '../../analytics' ),
-	bumpStat: jest.fn(),
+vi.mock( '../../analytics', async () => ( {
+	...( await vi.importActual< typeof import( '../../analytics' ) >( '../../analytics' ) ),
+	bumpStat: vi.fn(),
 } ) );
 
-const mockedBumpStat = jest.mocked( bumpStat );
-const mockedLogToLogstash = jest.mocked( logToLogstash );
+const mockedBumpStat = vi.mocked( bumpStat );
+const mockedLogToLogstash = vi.mocked( logToLogstash );
 
 const RAW_API_MESSAGE =
 	'An active access token must be used to query information about the current user.';
@@ -100,7 +101,7 @@ describe( 'UnknownError', () => {
 		beforeEach( mockDeadSession );
 
 		it( 'explains the problem instead of showing the raw API message', async () => {
-			renderWithLogout( authorizationError(), jest.fn() );
+			renderWithLogout( authorizationError(), vi.fn() );
 
 			expect(
 				await screen.findByText( /trouble accessing data from your account/i )
@@ -109,7 +110,7 @@ describe( 'UnknownError', () => {
 		} );
 
 		it( 'offers a way to log out and back in', async () => {
-			const logout = jest.fn();
+			const logout = vi.fn();
 			renderWithLogout( authorizationError(), logout );
 
 			await userEvent.click( await screen.findByRole( 'button', { name: /log out/i } ) );
@@ -118,13 +119,13 @@ describe( 'UnknownError', () => {
 		} );
 
 		it( 'links to support', async () => {
-			renderWithLogout( authorizationError(), jest.fn() );
+			renderWithLogout( authorizationError(), vi.fn() );
 
 			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
 		} );
 
 		it( 'counts the user as stranded', async () => {
-			renderWithLogout( authorizationError(), jest.fn() );
+			renderWithLogout( authorizationError(), vi.fn() );
 
 			// The screen shows this before the check resolves, so the stat is what says
 			// the session was actually confirmed gone.
@@ -138,20 +139,20 @@ describe( 'UnknownError', () => {
 		beforeEach( mockWorkingSession );
 
 		it( 'says so instead of blaming the session', async () => {
-			renderWithLogout( forbiddenError(), jest.fn() );
+			renderWithLogout( forbiddenError(), vi.fn() );
 
 			expect( await screen.findByText( /doesn’t have permission/i ) ).toBeVisible();
 			expect( screen.queryByRole( 'button', { name: /log out/i } ) ).not.toBeInTheDocument();
 		} );
 
 		it( 'still offers support', async () => {
-			renderWithLogout( forbiddenError(), jest.fn() );
+			renderWithLogout( forbiddenError(), vi.fn() );
 
 			expect( await screen.findByRole( 'link', { name: /support/i } ) ).toBeVisible();
 		} );
 
 		it( 'is recorded as a permission problem, not a dead session', async () => {
-			renderWithLogout( forbiddenError(), jest.fn() );
+			renderWithLogout( forbiddenError(), vi.fn() );
 
 			await screen.findByText( /doesn’t have permission/i );
 			expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'refused:alive' );
@@ -165,7 +166,7 @@ describe( 'UnknownError', () => {
 				.get( '/rest/v1.1/me' )
 				.query( true )
 				.replyWithError( 'offline' );
-			renderWithLogout( authorizationError(), jest.fn() );
+			renderWithLogout( authorizationError(), vi.fn() );
 
 			await waitFor( async () =>
 				expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible()
@@ -177,7 +178,7 @@ describe( 'UnknownError', () => {
 				.get( '/rest/v1.1/me' )
 				.query( true )
 				.replyWithError( 'offline' );
-			renderWithLogout( authorizationError(), jest.fn() );
+			renderWithLogout( authorizationError(), vi.fn() );
 
 			await waitFor( () =>
 				expect( mockedBumpStat ).toHaveBeenCalledWith( 'dashboard-error', 'refused:unknown' )
@@ -194,7 +195,7 @@ describe( 'UnknownError', () => {
 				.delay( 30000 )
 				.reply( 200, { ID: 1, username: 'testuser', language: 'en' } );
 
-			const { container } = renderWithLogout( authorizationError(), jest.fn() );
+			const { container } = renderWithLogout( authorizationError(), vi.fn() );
 
 			expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible();
 			expect( container ).not.toBeEmptyDOMElement();
@@ -211,7 +212,7 @@ describe( 'UnknownError', () => {
 				.query( true )
 				.replyWithError( 'offline' );
 
-			const { container } = renderWithLogout( authorizationError(), jest.fn() );
+			const { container } = renderWithLogout( authorizationError(), vi.fn() );
 
 			expect( await screen.findByRole( 'button', { name: /log out/i } ) ).toBeVisible();
 			expect( container ).not.toBeEmptyDOMElement();
@@ -223,7 +224,7 @@ describe( 'UnknownError', () => {
 				.query( true )
 				.replyWithError( 'offline' );
 
-			renderWithLogout( authorizationError(), jest.fn() );
+			renderWithLogout( authorizationError(), vi.fn() );
 
 			await waitFor( () => expect( nock.isDone() ).toBe( true ) );
 		} );
@@ -237,7 +238,7 @@ describe( 'UnknownError', () => {
 
 		it( 'records the endpoint reason next to what the session check found', async () => {
 			mockDeadSession();
-			renderWithLogout( unauthenticatedError(), jest.fn() );
+			renderWithLogout( unauthenticatedError(), vi.fn() );
 
 			await waitFor( () => expect( mockedLogToLogstash ).toHaveBeenCalled() );
 			expect( mockedLogToLogstash.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
@@ -254,7 +255,7 @@ describe( 'UnknownError', () => {
 
 		it( 'records the disagreement when the session is actually fine', async () => {
 			mockWorkingSession();
-			renderWithLogout( unauthenticatedError(), jest.fn() );
+			renderWithLogout( unauthenticatedError(), vi.fn() );
 
 			await waitFor( () => expect( mockedLogToLogstash ).toHaveBeenCalled() );
 			expect( mockedLogToLogstash.mock.calls[ 0 ][ 0 ] ).toMatchObject( {
@@ -266,7 +267,7 @@ describe( 'UnknownError', () => {
 			mockDeadSession();
 			renderWithLogout(
 				wpError( { code: 'rest_forbidden', data: { status: 403, reason: 'unauthenticated' } } ),
-				jest.fn()
+				vi.fn()
 			);
 
 			await waitFor( () => expect( mockedLogToLogstash ).toHaveBeenCalled() );

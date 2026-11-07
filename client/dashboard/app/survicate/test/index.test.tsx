@@ -14,42 +14,45 @@ import {
 import { renderHook } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
 import React from 'react';
+import { vi } from 'vitest';
 import { AuthContext } from '../../auth';
 import { useSurvicate } from '../index';
 import type { User } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-analytics', () => ( {
-	recordTracksEvent: jest.fn(),
+vi.mock( '@automattic/calypso-analytics', () => ( {
+	recordTracksEvent: vi.fn(),
 } ) );
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn();
-	return Object.assign( fn, {
-		__esModule: true,
-		default: fn,
-		isEnabled: jest.fn(),
-	} );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn();
+	return {
+		...Object.assign( fn, {
+			__esModule: true,
+			default: fn,
+			isEnabled: vi.fn(),
+		} ),
+	};
 } );
 
-jest.mock( '@automattic/survicate', () => ( {
-	shouldLoadSurvicate: jest.fn(),
-	loadSurvicateScript: jest.fn(),
-	setSurvicateVisitorTraits: jest.fn(),
-	getAccountAgeInDays: jest.fn( () => 42 ),
+vi.mock( '@automattic/survicate', () => ( {
+	shouldLoadSurvicate: vi.fn(),
+	loadSurvicateScript: vi.fn(),
+	setSurvicateVisitorTraits: vi.fn(),
+	getAccountAgeInDays: vi.fn( () => 42 ),
 	SURVICATE_WORKSPACE_ID: 'test-workspace-id',
 } ) );
 
-jest.mock( '@wordpress/compose', () => ( {
-	...jest.requireActual( '@wordpress/compose' ),
-	useViewportMatch: jest.fn(),
+vi.mock( '@wordpress/compose', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/compose' ) >( '@wordpress/compose' ) ),
+	useViewportMatch: vi.fn(),
 } ) );
 
-const mockedConfig = jest.mocked( config );
-const mockedShouldLoad = jest.mocked( shouldLoadSurvicate );
-const mockedLoadScript = jest.mocked( loadSurvicateScript );
-const mockedSetTraits = jest.mocked( setSurvicateVisitorTraits );
-const mockedUseViewportMatch = jest.mocked( useViewportMatch );
-const mockedRecordTracksEvent = jest.mocked( recordTracksEvent );
+const mockedConfig = vi.mocked( config );
+const mockedShouldLoad = vi.mocked( shouldLoadSurvicate );
+const mockedLoadScript = vi.mocked( loadSurvicateScript );
+const mockedSetTraits = vi.mocked( setSurvicateVisitorTraits );
+const mockedUseViewportMatch = vi.mocked( useViewportMatch );
+const mockedRecordTracksEvent = vi.mocked( recordTracksEvent );
 
 function createUser( overrides: Partial< User > = {} ): User {
 	return {
@@ -70,18 +73,16 @@ function createUser( overrides: Partial< User > = {} ): User {
 function renderWithAuth( user: User ) {
 	return renderHook( () => useSurvicate(), {
 		wrapper: ( { children } ) => (
-			<AuthContext.Provider value={ { user, logout: jest.fn() } }>
-				{ children }
-			</AuthContext.Provider>
+			<AuthContext.Provider value={ { user, logout: vi.fn() } }>{ children }</AuthContext.Provider>
 		),
 	} );
 }
 
 describe( 'useSurvicate', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 		mockedLoadScript.mockResolvedValue( undefined );
-		mockedSetTraits.mockReturnValue( jest.fn() );
+		mockedSetTraits.mockReturnValue( vi.fn() );
 	} );
 
 	test( 'loads script when all conditions are met', async () => {

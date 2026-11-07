@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { getDomInterferenceReport } from '../dom-interference';
 
 afterEach( () => {
@@ -51,7 +52,7 @@ describe( 'getDomInterferenceReport', () => {
 	} );
 
 	it( 'flags partial probe coverage on engines with undetectable built-in translation', () => {
-		const userAgent = jest.spyOn( navigator, 'userAgent', 'get' );
+		const userAgent = vi.spyOn( navigator, 'userAgent', 'get' );
 
 		userAgent.mockReturnValue(
 			'Mozilla/5.0 (Macintosh) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36'

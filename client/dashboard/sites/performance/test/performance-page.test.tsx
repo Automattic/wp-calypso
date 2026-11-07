@@ -4,15 +4,16 @@
 
 import { isEnabled } from '@automattic/calypso-config';
 import { screen } from '@testing-library/react';
+import { vi, type MockedFunction } from 'vitest';
 import { render } from '../../../test-utils';
 import PerformancePage from '../performance-page';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
-	return Object.assign( fn, { __esModule: true, default: fn, isEnabled: jest.fn() } );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn( () => '' );
+	return { ...Object.assign( fn, { __esModule: true, default: fn, isEnabled: vi.fn() } ) };
 } );
 
-const mockedIsEnabled = isEnabled as jest.MockedFunction< typeof isEnabled >;
+const mockedIsEnabled = isEnabled as MockedFunction< typeof isEnabled >;
 
 describe( '<PerformancePage>', () => {
 	test( 'renders one page title and both tabs, with the current tab selected', async () => {

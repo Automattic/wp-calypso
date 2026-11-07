@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import {
 	WPCOM_OPTION_KEYS,
 	WPCOM_TITLES,
@@ -12,7 +13,7 @@ import {
 import { ExtrasToggleCard, ExtrasToggleCardProps } from '../index';
 import type { WpcomNotificationSettings } from '@automattic/api-core';
 
-const mockOnMutate = jest.fn();
+const mockOnMutate = vi.fn();
 
 const defaultExtraSettings: Partial< WpcomNotificationSettings > = {
 	marketing: false,

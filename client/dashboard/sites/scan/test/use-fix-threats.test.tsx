@@ -5,17 +5,19 @@ import { fixThreats, fetchFixThreatsStatus } from '@automattic/api-core';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor, act } from '@testing-library/react';
 import { useState, type ReactNode } from 'react';
+import { vi, type MockedFunction } from 'vitest';
 import { useFixThreats } from '../hooks/use-fix-threats';
 import type { FixThreatsStatusResponse } from '@automattic/api-core';
 
 // Mock the API core functions
-jest.mock( '@automattic/api-core', () => ( {
-	fixThreats: jest.fn(),
-	fetchFixThreatsStatus: jest.fn(),
+vi.mock( '@automattic/api-core', async ( importOriginal ) => ( {
+	...( await importOriginal() ),
+	fixThreats: vi.fn(),
+	fetchFixThreatsStatus: vi.fn(),
 } ) );
 
-const mockFixThreats = fixThreats as jest.MockedFunction< typeof fixThreats >;
-const mockFetchFixThreatsStatus = fetchFixThreatsStatus as jest.MockedFunction<
+const mockFixThreats = fixThreats as MockedFunction< typeof fixThreats >;
+const mockFetchFixThreatsStatus = fetchFixThreatsStatus as MockedFunction<
 	typeof fetchFixThreatsStatus
 >;
 

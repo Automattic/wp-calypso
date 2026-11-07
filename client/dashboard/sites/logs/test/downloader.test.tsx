@@ -6,11 +6,12 @@ import '@testing-library/jest-dom';
 import { LogType, FilterType } from '@automattic/api-core';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi, type Mock, type MockInstance } from 'vitest';
 import { render } from '../../../test-utils';
 import { LogsDownloader } from '../downloader';
 import type { JSX } from 'react';
 
-jest.mock( '@wordpress/i18n', () => ( {
+vi.mock( '@wordpress/i18n', () => ( {
 	__: ( s: string ) => s,
 	sprintf: ( s: string ) => s,
 } ) );
@@ -32,7 +33,7 @@ interface MockButtonProps {
 	'aria-label'?: string;
 }
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	__experimentalVStack: ( { children }: VStackProps ) => <div>{ children }</div>,
 	__experimentalHStack: ( { children }: HStackProps ) => <div>{ children }</div>,
 	Tooltip: ( { children }: ChildrenProps ) => <div>{ children }</div>,
@@ -44,11 +45,12 @@ jest.mock( '@wordpress/components', () => ( {
 	),
 } ) );
 
-jest.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
+vi.mock( '@wordpress/icons', () => ( { download: 'download' } ) );
 
-jest.mock( '@automattic/api-core', () => {
-	const actual = jest.requireActual( '@automattic/api-core' );
-	const fetchSiteLogsBatchMock = jest.fn();
+vi.mock( '@automattic/api-core', async () => {
+	const actual =
+		await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' );
+	const fetchSiteLogsBatchMock = vi.fn();
 	return {
 		...actual,
 		fetchSiteLogsBatch: ( ...args: unknown[] ) => fetchSiteLogsBatchMock( ...args ),
@@ -56,17 +58,17 @@ jest.mock( '@automattic/api-core', () => {
 	};
 } );
 
-let createObjectURLMock: jest.Mock;
-let revokeObjectURLMock: jest.Mock;
-let anchorClickSpy: jest.SpyInstance;
+let createObjectURLMock: Mock;
+let revokeObjectURLMock: Mock;
+let anchorClickSpy: MockInstance;
 
-const { __mocks } = jest.requireMock( '@automattic/api-core' ) as {
-	__mocks: { fetchSiteLogsBatchMock: jest.Mock };
+const { __mocks } = ( await import( '@automattic/api-core' ) ) as unknown as {
+	__mocks: { fetchSiteLogsBatchMock: Mock };
 };
 
 beforeAll( () => {
-	createObjectURLMock = jest.fn( () => 'blob:mock' );
-	revokeObjectURLMock = jest.fn();
+	createObjectURLMock = vi.fn( () => 'blob:mock' );
+	revokeObjectURLMock = vi.fn();
 	// JSDOM: polyfill URL methods used in tests
 	if ( ! window.URL ) {
 		// @ts-expect-error test-only polyfill
@@ -76,9 +78,7 @@ beforeAll( () => {
 	window.URL.revokeObjectURL = revokeObjectURLMock;
 
 	// Avoid JSDOM navigation errors when clicking the fake download link
-	anchorClickSpy = jest
-		.spyOn( HTMLAnchorElement.prototype, 'click' )
-		.mockImplementation( () => {} );
+	anchorClickSpy = vi.spyOn( HTMLAnchorElement.prototype, 'click' ).mockImplementation( () => {} );
 } );
 
 afterAll( () => {
@@ -114,7 +114,7 @@ test( 'downloads logs and records analytics', async () => {
 		total_results: 1,
 	} );
 
-	const onSuccess = jest.fn();
+	const onSuccess = vi.fn();
 
 	const { recordTracksEvent } = render(
 		<LogsDownloader

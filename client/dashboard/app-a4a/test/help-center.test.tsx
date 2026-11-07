@@ -5,11 +5,12 @@
 import { activeAgencyQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import A4AHelpCenter from '../help-center';
 import type { Agency } from '@automattic/api-core';
 
-jest.mock( '@automattic/help-center', () => ( {
+vi.mock( '@automattic/help-center', () => ( {
 	__esModule: true,
 	default: ( {
 		product,

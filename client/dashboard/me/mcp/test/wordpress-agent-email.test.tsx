@@ -8,6 +8,7 @@ import {
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import WordPressAgentEmail from '../wordpress-agent-email';
 import type { Site } from '@automattic/api-core';
@@ -75,7 +76,7 @@ beforeEach( () => {
 		mutations: { retry: false },
 	} );
 	Object.defineProperty( window.navigator, 'clipboard', {
-		value: { writeText: jest.fn().mockResolvedValue( undefined ) },
+		value: { writeText: vi.fn().mockResolvedValue( undefined ) },
 		configurable: true,
 	} );
 } );

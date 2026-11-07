@@ -6,6 +6,7 @@ import { activeAgencyQuery, siteBySlugQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import AgencySiteOverview from '../overview';
 import type { Agency, AgencySite, Site } from '@automattic/api-core';
@@ -19,8 +20,10 @@ const mockAgencySite = {
 	blogname: 'Example site',
 } as unknown as AgencySite;
 
-jest.mock( '../../../../app/router/agency', () => ( {
-	...jest.requireActual( '../../../../app/router/agency' ),
+vi.mock( '../../../../app/router/agency', async () => ( {
+	...( await vi.importActual< typeof import( '../../../../app/router/agency' ) >(
+		'../../../../app/router/agency'
+	) ),
 	agencySiteRoute: {
 		useParams: () => ( { siteSlug: 'example.wpcomstaging.com' } ),
 		useLoaderData: () => mockAgencySite,

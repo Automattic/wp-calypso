@@ -3,23 +3,24 @@
  */
 import '@testing-library/jest-dom';
 import { act, fireEvent, render, screen, within } from '@testing-library/react';
+import { vi } from 'vitest';
 import { DifmOfferReviews } from '../index';
 
 let prefersReducedMotion = false;
 
 // useReducedMotion caches the MediaQueryList for each query, so `matches` reads the
 // current value instead of a value fixed when the list is made.
-window.matchMedia = jest.fn( ( query: string ) => ( {
+window.matchMedia = vi.fn( ( query: string ) => ( {
 	get matches() {
 		return query === '(prefers-reduced-motion: reduce)' && prefersReducedMotion;
 	},
 	media: query,
 	onchange: null,
-	addListener: jest.fn(),
-	removeListener: jest.fn(),
-	addEventListener: jest.fn(),
-	removeEventListener: jest.fn(),
-	dispatchEvent: jest.fn(),
+	addListener: vi.fn(),
+	removeListener: vi.fn(),
+	addEventListener: vi.fn(),
+	removeEventListener: vi.fn(),
+	dispatchEvent: vi.fn(),
 } ) );
 
 const INTERVAL = 1000;
@@ -31,12 +32,12 @@ function getVisibleReview() {
 
 describe( 'DifmOfferReviews', () => {
 	beforeEach( () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		prefersReducedMotion = false;
 	} );
 
 	afterEach( () => {
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	it( 'renders the first review in a labelled region', () => {
@@ -54,10 +55,10 @@ describe( 'DifmOfferReviews', () => {
 	it( 'shows the next review after the interval and returns to the first after the last', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
-		act( () => jest.advanceTimersByTime( INTERVAL ) );
+		act( () => vi.advanceTimersByTime( INTERVAL ) );
 		expect( getVisibleReview().getByText( 'Jennifer Board' ) ).toBeVisible();
 
-		act( () => jest.advanceTimersByTime( INTERVAL * 3 ) );
+		act( () => vi.advanceTimersByTime( INTERVAL * 3 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
@@ -65,7 +66,7 @@ describe( 'DifmOfferReviews', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		fireEvent.mouseEnter( screen.getByRole( 'figure' ) );
-		act( () => jest.advanceTimersByTime( INTERVAL * 2 ) );
+		act( () => vi.advanceTimersByTime( INTERVAL * 2 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
@@ -73,7 +74,7 @@ describe( 'DifmOfferReviews', () => {
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
 		act( () => screen.getByRole( 'button', { name: 'Show review 1 of 4' } ).focus() );
-		act( () => jest.advanceTimersByTime( INTERVAL * 2 ) );
+		act( () => vi.advanceTimersByTime( INTERVAL * 2 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 	} );
 
@@ -87,7 +88,7 @@ describe( 'DifmOfferReviews', () => {
 
 		// Move the focus out, so only the pick can stop the rotation.
 		act( () => dot.blur() );
-		act( () => jest.advanceTimersByTime( INTERVAL * 2 ) );
+		act( () => vi.advanceTimersByTime( INTERVAL * 2 ) );
 		expect( getVisibleReview().getByText( 'Steve Sonn' ) ).toBeVisible();
 	} );
 
@@ -95,7 +96,7 @@ describe( 'DifmOfferReviews', () => {
 		prefersReducedMotion = true;
 		render( <DifmOfferReviews interval={ INTERVAL } /> );
 
-		act( () => jest.advanceTimersByTime( INTERVAL * 3 ) );
+		act( () => vi.advanceTimersByTime( INTERVAL * 3 ) );
 		expect( getVisibleReview().getByText( 'Michelle Hennesay' ) ).toBeVisible();
 
 		fireEvent.click( screen.getByRole( 'button', { name: 'Show review 2 of 4' } ) );
@@ -103,10 +104,10 @@ describe( 'DifmOfferReviews', () => {
 	} );
 
 	it( 'links a review with a URL to Trustpilot in a new tab', () => {
-		const onReviewLinkClick = jest.fn();
+		const onReviewLinkClick = vi.fn();
 		render( <DifmOfferReviews interval={ INTERVAL } onReviewLinkClick={ onReviewLinkClick } /> );
 
-		act( () => jest.advanceTimersByTime( INTERVAL ) );
+		act( () => vi.advanceTimersByTime( INTERVAL ) );
 		const link = getVisibleReview().getByRole( 'link', {
 			name: 'Read the review by Jennifer Board on Trustpilot (opens in a new tab)',
 		} );

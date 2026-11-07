@@ -5,11 +5,12 @@
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import HelpCenter from '../help-center';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '@automattic/help-center', () => ( {
+vi.mock( '@automattic/help-center', () => ( {
 	__esModule: true,
 	default: ( { site }: { site?: { ID: number } | null } ) => (
 		<div role="region" aria-label="Help Center">

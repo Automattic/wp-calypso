@@ -5,6 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { getProvisioningSiteIds, untrackProvisioningSite } from '../../../sites/provisioning-sites';
 import SiteConfigurationModal, { DevSiteConfigurationModal } from '../site-configuration-modal';
@@ -58,7 +59,7 @@ function mockAddressSuggestion( address: string ) {
 		.reply( 200, [ { domain_name: `${ address }.wordpress.com` } ] );
 }
 
-function renderModal( closeModal = jest.fn() ) {
+function renderModal( closeModal = vi.fn() ) {
 	render( <SiteConfigurationModal licenseKey={ license.license_key } closeModal={ closeModal } /> );
 	return { closeModal, user: userEvent.setup() };
 }
@@ -325,7 +326,7 @@ describe( '<DevSiteConfigurationModal>', () => {
 	test( 'creates a development site at the suggested address', async () => {
 		mockAgency();
 		mockAddressSuggestion( 'ramblingthoughts' );
-		const closeModal = jest.fn();
+		const closeModal = vi.fn();
 		render( <DevSiteConfigurationModal closeModal={ closeModal } /> );
 		const user = userEvent.setup();
 
@@ -368,7 +369,7 @@ describe( '<DevSiteConfigurationModal>', () => {
 	test( 'cannot be dismissed while the site is being created', async () => {
 		mockAgency();
 		mockAddressSuggestion( 'ramblingthoughts' );
-		const closeModal = jest.fn();
+		const closeModal = vi.fn();
 		render( <DevSiteConfigurationModal closeModal={ closeModal } /> );
 		const user = userEvent.setup();
 
@@ -402,11 +403,11 @@ describe( '<DevSiteConfigurationModal>', () => {
 	test( 'records the close event however the modal is dismissed', async () => {
 		mockAgency();
 		mockAddressSuggestion( 'ramblingthoughts' );
-		const closeModal = jest.fn();
+		const closeModal = vi.fn();
 		const { recordTracksEvent } = render( <DevSiteConfigurationModal closeModal={ closeModal } /> );
 		const user = userEvent.setup();
 		const closeEvents = () =>
-			jest
+			vi
 				.mocked( recordTracksEvent )
 				.mock.calls.filter( ( [ name ] ) => name === 'calypso_a4a_create_site_config_close' );
 
@@ -453,7 +454,7 @@ describe( '<DevSiteConfigurationModal>', () => {
 			.post( '/wpcom/v2/agency/1/sites/provision-dev-site' )
 			.reply( 400, { message: 'Sorry, that site address is unavailable.' } );
 
-		render( <DevSiteConfigurationModal closeModal={ jest.fn() } /> );
+		render( <DevSiteConfigurationModal closeModal={ vi.fn() } /> );
 		const user = userEvent.setup();
 
 		await waitForSuggestedAddress();

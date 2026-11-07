@@ -4,6 +4,7 @@
 
 import { translationExists } from '@automattic/i18n-utils';
 import MockDate from 'mockdate';
+import { vi } from 'vitest';
 import {
 	getExpiryStateName,
 	getPlanExpiryNotice,
@@ -15,9 +16,11 @@ import {
 import { NOW, OWNER_ID, expiryInDays, grace, makePurchase, monthly, renewing } from './fixtures';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
-	translationExists: jest.fn( () => true ),
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
+	translationExists: vi.fn( () => true ),
 } ) );
 
 const sitewide = ( purchase: Purchase, extra = {} ) =>
@@ -25,7 +28,7 @@ const sitewide = ( purchase: Purchase, extra = {} ) =>
 
 beforeEach( () => {
 	MockDate.set( NOW );
-	jest.mocked( translationExists ).mockReturnValue( true );
+	vi.mocked( translationExists ).mockReturnValue( true );
 } );
 afterEach( () => MockDate.reset() );
 
@@ -121,7 +124,7 @@ describe( 'sitewide scope: grace period', () => {
 			href: '/plans/x',
 		} );
 
-		jest.mocked( translationExists ).mockReturnValue( false );
+		vi.mocked( translationExists ).mockReturnValue( false );
 		expect( sitewide( grace() )?.secondaryAction ).toMatchObject( { type: 'view-other-plans' } );
 	} );
 

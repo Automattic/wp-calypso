@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import TierOverviewCard from '../tier-overview-card';
 
@@ -10,7 +11,7 @@ const props = {
 	influencedRevenue: 0,
 	tiersHref: '/agency/tiers',
 	shouldUseRouterLink: false,
-	onScheduleCall: jest.fn(),
+	onScheduleCall: vi.fn(),
 };
 
 describe( '<TierOverviewCard>', () => {

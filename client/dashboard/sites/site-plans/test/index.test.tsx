@@ -4,12 +4,15 @@
 
 import { screen } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SitePlans from '../index';
 import type { Site, User } from '@automattic/api-core';
 
-jest.mock( '../../../app/router/sites', () => {
-	const actual = jest.requireActual( '../../../app/router/sites' );
+vi.mock( '../../../app/router/sites', async () => {
+	const actual = await vi.importActual< typeof import( '../../../app/router/sites' ) >(
+		'../../../app/router/sites'
+	);
 	return {
 		...actual,
 		siteRoute: {

@@ -3,6 +3,7 @@
  */
 
 import { captureException } from '@automattic/calypso-sentry';
+import { vi, type MockInstance } from 'vitest';
 import { logToLogstash } from 'calypso/lib/logstash';
 import { maybeReloadForChunkError } from '../../chunk-load-recovery';
 import { getDomInterferenceReport } from '../dom-interference';
@@ -10,31 +11,31 @@ import { handleOnCatch, handleUncaughtError, initLogger } from '../index';
 import type { AnyRouter } from '@tanstack/react-router';
 import type { ErrorInfo } from 'react';
 
-jest.mock( '@automattic/calypso-config', () => jest.fn( () => 'development' ) );
-jest.mock( '@automattic/calypso-sentry', () => ( {
-	captureException: jest.fn(),
+vi.mock( '@automattic/calypso-config', () => ( { default: vi.fn( () => 'development' ) } ) );
+vi.mock( '@automattic/calypso-sentry', () => ( {
+	captureException: vi.fn(),
 } ) );
-jest.mock( 'calypso/lib/logstash', () => ( {
-	logToLogstash: jest.fn(),
+vi.mock( 'calypso/lib/logstash', () => ( {
+	logToLogstash: vi.fn(),
 } ) );
-jest.mock( '../../chunk-load-recovery', () => ( {
-	maybeReloadForChunkError: jest.fn(),
+vi.mock( '../../chunk-load-recovery', () => ( {
+	maybeReloadForChunkError: vi.fn(),
 } ) );
-jest.mock( '../dom-interference', () => ( {
-	getDomInterferenceReport: jest.fn( () => ( {
+vi.mock( '../dom-interference', () => ( {
+	getDomInterferenceReport: vi.fn( () => ( {
 		tags: { dom_google_translate: 'true' },
 		context: { fontCount: 3 },
 	} ) ),
 } ) );
 
-const mockedLogToLogstash = jest.mocked( logToLogstash );
-const mockedCaptureException = jest.mocked( captureException );
-const mockedMaybeReloadForChunkError = jest.mocked( maybeReloadForChunkError );
+const mockedLogToLogstash = vi.mocked( logToLogstash );
+const mockedCaptureException = vi.mocked( captureException );
+const mockedMaybeReloadForChunkError = vi.mocked( maybeReloadForChunkError );
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockedMaybeReloadForChunkError.mockReturnValue( false );
-	jest.mocked( getDomInterferenceReport ).mockReturnValue( {
+	vi.mocked( getDomInterferenceReport ).mockReturnValue( {
 		tags: { dom_google_translate: 'true' },
 		context: { fontCount: 3 },
 	} );
@@ -198,10 +199,10 @@ describe( 'handleOnCatch', () => {
 } );
 
 describe( 'handleUncaughtError', () => {
-	let consoleError: jest.SpyInstance;
+	let consoleError: MockInstance;
 
 	beforeEach( () => {
-		consoleError = jest.spyOn( console, 'error' ).mockImplementation( () => {} );
+		consoleError = vi.spyOn( console, 'error' ).mockImplementation( () => {} );
 	} );
 
 	afterEach( () => {

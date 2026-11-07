@@ -4,6 +4,7 @@
 
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import ResourceModal from '../resource-modal';
 import type { AgencyEnablementResource } from '@automattic/api-core';
@@ -29,9 +30,9 @@ function resource( overrides: Partial< AgencyEnablementResource > = {} ) {
 
 function renderModal( props: Partial< Parameters< typeof ResourceModal >[ 0 ] > = {} ) {
 	const callbacks = {
-		onClose: jest.fn(),
-		onOpen: jest.fn(),
-		onToggleRead: jest.fn(),
+		onClose: vi.fn(),
+		onOpen: vi.fn(),
+		onToggleRead: vi.fn(),
 	};
 	render(
 		<ResourceModal resource={ resource() } isRead={ false } { ...callbacks } { ...props } />
@@ -72,8 +73,8 @@ describe( 'ResourceModal', () => {
 	} );
 
 	test( 'moves between resources with the buttons', async () => {
-		const onPrevious = jest.fn();
-		const onNext = jest.fn();
+		const onPrevious = vi.fn();
+		const onNext = vi.fn();
 		renderModal( { onPrevious, onNext } );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Previous resource' } ) );
@@ -84,8 +85,8 @@ describe( 'ResourceModal', () => {
 	} );
 
 	test( 'moves between resources with the arrow keys, but not modified ones', async () => {
-		const onPrevious = jest.fn();
-		const onNext = jest.fn();
+		const onPrevious = vi.fn();
+		const onNext = vi.fn();
 		renderModal( { onPrevious, onNext } );
 
 		await userEvent.keyboard( '{ArrowLeft}{ArrowRight}' );
@@ -113,7 +114,7 @@ describe( 'ResourceModal', () => {
 	} );
 
 	test( 'copies a link to the resource', async () => {
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		Object.defineProperty( window.navigator, 'clipboard', {
 			value: { writeText },
 			configurable: true,
@@ -128,7 +129,7 @@ describe( 'ResourceModal', () => {
 
 	test( 'says when the link couldn’t be copied', async () => {
 		Object.defineProperty( window.navigator, 'clipboard', {
-			value: { writeText: jest.fn().mockRejectedValue( new Error( 'Denied' ) ) },
+			value: { writeText: vi.fn().mockRejectedValue( new Error( 'Denied' ) ) },
 			configurable: true,
 		} );
 		renderModal();

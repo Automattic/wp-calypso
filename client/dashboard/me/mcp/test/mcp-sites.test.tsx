@@ -1,6 +1,7 @@
 /** @jest-environment jsdom */
 import { queryClient, sitesQuery, userSettingsQuery } from '@automattic/api-queries';
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import McpMcpSites from '../mcp-sites';
 import type { Site, UserSettings } from '@automattic/api-core';
@@ -9,7 +10,7 @@ import type { Site, UserSettings } from '@automattic/api-core';
 // this harness the component passes to={ undefined }. Mirror the production
 // template (/sites/$siteSlug/settings/ai-tools) and substitute the params the
 // component supplies, which is the part under test here.
-jest.mock( '../../../components/router-link-button', () => ( {
+vi.mock( '../../../components/router-link-button', () => ( {
 	__esModule: true,
 	default: ( {
 		params,

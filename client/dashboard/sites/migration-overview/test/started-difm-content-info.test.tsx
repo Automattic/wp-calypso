@@ -7,32 +7,35 @@ import { useQuery } from '@tanstack/react-query';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { StartedDIFMContentInfo } from '../started-difm-content-info';
 import type { Site } from '@automattic/api-core';
 
-const mockNavigate = jest.fn();
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
+const mockNavigate = vi.fn();
+const mockCreateSuccessNotice = vi.fn();
+const mockCreateErrorNotice = vi.fn();
 
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: mockCreateSuccessNotice,
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
-	combineReducers: jest.fn( ( reducers ) => reducers ),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn(),
+	combineReducers: vi.fn( ( reducers ) => reducers ),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: jest.fn() } ) );
+vi.mock( '@automattic/survicate', () => ( { invokeSurvicateEvent: vi.fn() } ) );
 
 const site = {
 	ID: 123,
@@ -60,7 +63,7 @@ function mockTicket( ticketId: number | null ) {
 		.reply( 200, { ticket_id: ticketId } );
 }
 
-beforeEach( () => jest.clearAllMocks() );
+beforeEach( () => vi.clearAllMocks() );
 
 it( 'keeps the existing cancellation message when a ticket exists', async () => {
 	mockTicket( 456 );
@@ -93,7 +96,7 @@ it( 'waits for fresh site data before navigating after cancelling a ticketless m
 	const { queryClient } = render( <MigrationOverview /> );
 	const siteQueryKey = siteBySlugQuery( site.slug ).queryKey;
 	queryClient.setQueryData( siteQueryKey, site );
-	const siteAtNavigation = jest.fn();
+	const siteAtNavigation = vi.fn();
 	mockNavigate.mockImplementationOnce( () => {
 		siteAtNavigation( queryClient.getQueryData( siteQueryKey ) );
 	} );

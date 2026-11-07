@@ -5,26 +5,31 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { PurchaseNotice } from '../purchase-notice';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const fn = jest.fn( () => '' );
-	return Object.assign( fn, {
-		__esModule: true,
-		default: fn,
-		isEnabled: jest.fn( () => false ),
-	} );
+vi.mock( '@automattic/calypso-config', () => {
+	const fn = vi.fn( () => '' );
+	return {
+		...Object.assign( fn, {
+			__esModule: true,
+			default: fn,
+			isEnabled: vi.fn( () => false ),
+		} ),
+	};
 } );
 
 type Search = Record< string, unknown >;
 
 let mockSearch: Search = {};
 
-jest.mock( '../../../../app/router/me', () => {
-	const { useReducer } = jest.requireActual( 'react' );
-	const actual = jest.requireActual( '../../../../app/router/me' );
+vi.mock( '../../../../app/router/me', async () => {
+	const { useReducer } = await vi.importActual< typeof import( 'react' ) >( 'react' );
+	const actual = await vi.importActual< typeof import( '../../../../app/router/me' ) >(
+		'../../../../app/router/me'
+	);
 	return {
 		...actual,
 		purchaseSettingsRoute: {

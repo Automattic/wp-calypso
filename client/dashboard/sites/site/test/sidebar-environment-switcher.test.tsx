@@ -6,25 +6,26 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SidebarEnvironmentSwitcher from '../sidebar-environment-switcher';
 import type { Site } from '@automattic/api-core';
 
-const mockCreateSuccessNotice = jest.fn();
-const mockCreateNotice = jest.fn();
-const mockCreateErrorNotice = jest.fn();
+const mockCreateSuccessNotice = vi.fn();
+const mockCreateNotice = vi.fn();
+const mockCreateErrorNotice = vi.fn();
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createSuccessNotice: mockCreateSuccessNotice,
 		createNotice: mockCreateNotice,
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
-	useSelect: jest.fn( () => ( {} ) ),
-	combineReducers: jest.fn( ( reducers ) => reducers ),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn(),
+	useSelect: vi.fn( () => ( {} ) ),
+	combineReducers: vi.fn( ( reducers ) => reducers ),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 

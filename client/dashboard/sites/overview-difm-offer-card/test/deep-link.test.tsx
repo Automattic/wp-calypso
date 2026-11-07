@@ -4,12 +4,13 @@
 import '@testing-library/jest-dom';
 import { act, screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { DIFM_OFFER_EXPERIMENT } from '../../../utils/difm-offer';
 import DifmOfferDeepLink from '../deep-link';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );

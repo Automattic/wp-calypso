@@ -4,13 +4,14 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import WooPaymentsDetails from '../woopayments-details';
 
-const mockSetShowHelpCenter = jest.fn();
-const mockSetNavigateToRoute = jest.fn();
+const mockSetShowHelpCenter = vi.fn();
+const mockSetNavigateToRoute = vi.fn();
 
-jest.mock( '../../../../app/help-center', () => ( {
+vi.mock( '../../../../app/help-center', () => ( {
 	useHelpCenter: () => ( {
 		setShowHelpCenter: mockSetShowHelpCenter,
 		setNavigateToRoute: mockSetNavigateToRoute,

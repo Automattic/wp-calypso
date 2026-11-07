@@ -5,6 +5,7 @@
 import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ProvisioningSiteNotices from '../provisioning-notice';
 import { trackProvisioningSite, untrackProvisioningSite } from '../provisioning-sites';
@@ -171,7 +172,7 @@ describe( '<ProvisioningSiteNotices>', () => {
 	} );
 
 	test( 'gives up on a site that never reports ready', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockAgencySites( [ provisionedSite( 7, 'provisioning' ) ] );
 		trackProvisioningSite( 7 );
 
@@ -180,17 +181,17 @@ describe( '<ProvisioningSiteNotices>', () => {
 		expect( await screen.findByText( 'Setting up your new WordPress.com site' ) ).toBeVisible();
 
 		await act( async () => {
-			jest.advanceTimersByTime( 5 * 60 * 1000 );
+			vi.advanceTimersByTime( 5 * 60 * 1000 );
 		} );
 
 		expect(
 			screen.queryByText( 'Setting up your new WordPress.com site' )
 		).not.toBeInTheDocument();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	test( 'keeps reporting a site that reported ready before the TTL passed', async () => {
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 		mockAgencySites( [ provisionedSite( 7, 'active' ) ] );
 		trackProvisioningSite( 7 );
 
@@ -199,11 +200,11 @@ describe( '<ProvisioningSiteNotices>', () => {
 		expect( await screen.findByText( 'Your WordPress.com site is ready!' ) ).toBeVisible();
 
 		await act( async () => {
-			jest.advanceTimersByTime( 5 * 60 * 1000 );
+			vi.advanceTimersByTime( 5 * 60 * 1000 );
 		} );
 
 		expect( screen.getByText( 'Your WordPress.com site is ready!' ) ).toBeVisible();
-		jest.useRealTimers();
+		vi.useRealTimers();
 	} );
 
 	// The banner renders on every /sites load, so it must not take the route down

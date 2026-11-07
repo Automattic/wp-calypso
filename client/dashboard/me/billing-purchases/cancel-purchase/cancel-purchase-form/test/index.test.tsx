@@ -5,6 +5,7 @@
 import { disable, enable } from '@automattic/calypso-config';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../../test-utils';
 import CancelPurchaseForm from '../index';
 import {
@@ -16,9 +17,11 @@ import {
 } from '../steps';
 import type { PlanProduct, Purchase } from '@automattic/api-core';
 
-const mockNavigate = jest.fn();
-jest.mock( '@tanstack/react-router', () => ( {
-	...jest.requireActual( '@tanstack/react-router' ),
+const mockNavigate = vi.fn();
+vi.mock( '@tanstack/react-router', async () => ( {
+	...( await vi.importActual< typeof import( '@tanstack/react-router' ) >(
+		'@tanstack/react-router'
+	) ),
 	useNavigate: () => mockNavigate,
 } ) );
 
@@ -65,7 +68,7 @@ const personalPlan = makePurchase( {
 
 describe( '<CancelPurchaseForm />', () => {
 	beforeEach( () => {
-		jest.clearAllMocks();
+		vi.clearAllMocks();
 	} );
 
 	test( 'asks for a cancellation reason for a Google Workspace purchase', () => {
@@ -180,7 +183,7 @@ describe( '<CancelPurchaseForm />', () => {
 
 	test( 'submits the removal from the Complete removal button on the remove plan step', async () => {
 		const user = userEvent.setup();
-		const onSubmit = jest.fn();
+		const onSubmit = vi.fn();
 		render(
 			<CancelPurchaseForm
 				{ ...defaultProps }
@@ -202,8 +205,8 @@ describe( '<CancelPurchaseForm />', () => {
 
 	test( 'returns to purchase settings when Keep plan is clicked on the remove plan step', async () => {
 		const user = userEvent.setup();
-		const onKeepSubscriptionClick = jest.fn();
-		const onSubmit = jest.fn();
+		const onKeepSubscriptionClick = vi.fn();
+		const onSubmit = vi.fn();
 		render(
 			<CancelPurchaseForm
 				{ ...defaultProps }

@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import SiteChangeAddressContent from '../content';
 import type { DomainSummary, Site } from '@automattic/api-core';
@@ -37,9 +38,7 @@ function renderContent() {
 		.query( true )
 		.reply( 200, { domains: [ domain ] } );
 
-	return render(
-		<SiteChangeAddressContent site={ site } domain={ domain } onClose={ jest.fn() } />
-	);
+	return render( <SiteChangeAddressContent site={ site } domain={ domain } onClose={ vi.fn() } /> );
 }
 
 async function submitAddress( value: string ) {

@@ -4,6 +4,7 @@
 import { render, renderHook, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { act } from 'react';
+import { type Mock, vi } from 'vitest';
 import { DataViewsActionModal, useDeepLinkedDataViewsAction } from '../dataviews-action-modal';
 import type { Action, ActionModal } from '@wordpress/dataviews';
 
@@ -26,9 +27,7 @@ function createAction(
 
 describe( '<DataViewsActionModal>', () => {
 	test( 'titles the modal with the action label, and renders its modal for the item', () => {
-		render(
-			<DataViewsActionModal action={ createAction() } item={ item } onClose={ jest.fn() } />
-		);
+		render( <DataViewsActionModal action={ createAction() } item={ item } onClose={ vi.fn() } /> );
 
 		expect( screen.getByRole( 'dialog', { name: 'Rename' } ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Renaming Example' } ) ).toBeVisible();
@@ -42,7 +41,7 @@ describe( '<DataViewsActionModal>', () => {
 					modalHeader: ( items ) => `Renaming ${ items[ 0 ].name }`,
 				} ) }
 				item={ item }
-				onClose={ jest.fn() }
+				onClose={ vi.fn() }
 			/>
 		);
 
@@ -50,7 +49,7 @@ describe( '<DataViewsActionModal>', () => {
 	} );
 
 	test( 'closes from the action’s own modal', async () => {
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		render( <DataViewsActionModal action={ createAction() } item={ item } onClose={ onClose } /> );
 
 		await userEvent.click( screen.getByRole( 'button', { name: 'Renaming Example' } ) );
@@ -82,10 +81,10 @@ const buttonAction = {
 const actions = [ modalAction, buttonAction ];
 
 describe( 'useDeepLinkedDataViewsAction', () => {
-	let navigate: jest.Mock;
+	let navigate: Mock;
 
 	beforeEach( () => {
-		navigate = jest.fn();
+		navigate = vi.fn();
 	} );
 
 	test( 'returns the action with the first item it is eligible for', () => {

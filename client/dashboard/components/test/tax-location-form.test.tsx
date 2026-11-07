@@ -5,6 +5,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
+import { vi } from 'vitest';
 import { render } from '../../test-utils';
 import {
 	TaxLocationForm,
@@ -167,7 +168,7 @@ describe( '<TaxLocationForm>', () => {
 	} );
 
 	test( 'reports the business use selection to the caller', async () => {
-		const onDataChange = jest.fn();
+		const onDataChange = vi.fn();
 		render(
 			<ControlledTaxLocationForm
 				initialData={ { ...defaultTaxLocation, country_code: 'US', postal_code: '44101' } }
@@ -198,7 +199,7 @@ describe( '<TaxLocationForm>', () => {
 	} );
 
 	test( 'reports the selected subdivision code to the caller', async () => {
-		const onDataChange = jest.fn();
+		const onDataChange = vi.fn();
 		render(
 			<ControlledTaxLocationForm
 				initialData={ { ...defaultTaxLocation, country_code: 'CA', postal_code: 'T8V 7S1' } }
@@ -217,7 +218,7 @@ describe( '<TaxLocationForm>', () => {
 	} );
 
 	test( 'clears the subdivision when the country changes', async () => {
-		const onDataChange = jest.fn();
+		const onDataChange = vi.fn();
 		render(
 			<ControlledTaxLocationForm
 				initialData={ {
@@ -241,7 +242,7 @@ describe( '<TaxLocationForm>', () => {
 	} );
 
 	test( 'clears a business use selection once the location stops being eligible', async () => {
-		const onDataChange = jest.fn();
+		const onDataChange = vi.fn();
 		render(
 			<ControlledTaxLocationForm
 				initialData={ { ...defaultTaxLocation, country_code: 'US', postal_code: '44101' } }

@@ -4,59 +4,61 @@
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import DomainUpsellCard from '../index';
 import type { Site } from '@automattic/api-core';
 
 const mockSiteId = 123;
 
-const mockFetchSitePlans = jest.fn();
-const mockFetchDomainSuggestions = jest.fn();
-const mockReplaceProductsInCart = jest.fn();
-const mockCreateErrorNotice = jest.fn();
+const mockFetchSitePlans = vi.fn();
+const mockFetchDomainSuggestions = vi.fn();
+const mockReplaceProductsInCart = vi.fn();
+const mockCreateErrorNotice = vi.fn();
 let mockShoppingCartImportError: Error | null = null;
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
 	fetchSitePlans: ( ...args: unknown[] ) => mockFetchSitePlans( ...args ),
 	fetchDomainSuggestions: ( ...args: unknown[] ) => mockFetchDomainSuggestions( ...args ),
 } ) );
 
-jest.mock( '../../../app/shopping-cart', () => {
-	if ( mockShoppingCartImportError ) {
-		throw mockShoppingCartImportError;
-	}
+// Vitest wraps an error thrown by a mock factory in its own error, so throw from a getter instead.
+vi.mock( '../../../app/shopping-cart', () => ( {
+	get shoppingCartManagerClient() {
+		if ( mockShoppingCartImportError ) {
+			throw mockShoppingCartImportError;
+		}
 
-	return {
-		shoppingCartManagerClient: {
+		return {
 			forCartKey: () => ( {
 				actions: {
 					replaceProductsInCart: ( ...args: unknown[] ) => mockReplaceProductsInCart( ...args ),
 				},
 			} ),
-		},
-	};
-} );
+		};
+	},
+} ) );
 
 // eslint-disable-next-line no-restricted-imports
-jest.mock( 'calypso/lib/domains', () => ( {
+vi.mock( 'calypso/lib/domains', () => ( {
 	getDomainAndPlanUpsellUrl: () => '/upsell-url',
 } ) );
 
-jest.mock( '@wordpress/data', () => ( {
+vi.mock( '@wordpress/data', () => ( {
 	useDispatch: () => ( {
 		createErrorNotice: mockCreateErrorNotice,
 	} ),
-	useSelect: jest.fn( () => ( {} ) ),
-	combineReducers: jest.fn( ( reducers ) => reducers ),
-	createReduxStore: jest.fn(),
-	register: jest.fn(),
-	createSelector: jest.fn(),
+	useSelect: vi.fn( () => ( {} ) ),
+	combineReducers: vi.fn( ( reducers ) => reducers ),
+	createReduxStore: vi.fn(),
+	register: vi.fn(),
+	createSelector: vi.fn(),
 	keyedReducer: () => () => ( {} ),
 } ) );
 
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
+vi.mock( '@wordpress/i18n', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) ),
 	__: ( text: string ) => text,
 } ) );
 
@@ -69,7 +71,7 @@ const mockSite: Site = {
 const originalLocation = window.location;
 
 beforeEach( () => {
-	jest.clearAllMocks();
+	vi.clearAllMocks();
 	mockShoppingCartImportError = null;
 	mockFetchSitePlans.mockResolvedValue( {
 		plans: [ { current_plan: true, has_domain_credit: true } ],

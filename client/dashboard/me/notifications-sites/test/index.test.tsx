@@ -3,15 +3,18 @@ import { isEnabled } from '@automattic/calypso-config';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import NotificationsSites from '../index';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
-	return { ...actual, __esModule: true, isEnabled: jest.fn( actual.isEnabled ) };
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
+	return { ...actual, __esModule: true, isEnabled: vi.fn( actual.isEnabled ) };
 } );
 
-const mockIsEnabled = jest.mocked( isEnabled );
+const mockIsEnabled = vi.mocked( isEnabled );
 
 function setup( enabled: boolean ) {
 	mockIsEnabled.mockImplementation(

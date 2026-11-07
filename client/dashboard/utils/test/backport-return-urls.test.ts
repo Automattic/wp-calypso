@@ -2,6 +2,7 @@
  * @jest-environment jsdom
  */
 
+import { vi } from 'vitest';
 import { isDashboardBackport } from '../is-dashboard-backport';
 import { isJetpackCloud } from '../jetpack';
 import { dashboardLinkWithBackport } from '../link';
@@ -13,13 +14,13 @@ import {
 } from '../site-url';
 import type { Purchase } from '@automattic/api-core';
 
-jest.mock( '../is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn(),
+vi.mock( '../is-dashboard-backport', () => ( {
+	isDashboardBackport: vi.fn(),
 } ) );
 
-jest.mock( '../jetpack', () => ( {
-	...jest.requireActual( '../jetpack' ),
-	isJetpackCloud: jest.fn(),
+vi.mock( '../jetpack', async () => ( {
+	...( await vi.importActual< typeof import( '../jetpack' ) >( '../jetpack' ) ),
+	isJetpackCloud: vi.fn(),
 } ) );
 
 const purchase = {
@@ -36,8 +37,8 @@ function setEnvironment( {
 	backport: boolean;
 	jetpackCloud: boolean;
 } ) {
-	jest.mocked( isDashboardBackport ).mockReturnValue( backport );
-	jest.mocked( isJetpackCloud ).mockReturnValue( jetpackCloud );
+	vi.mocked( isDashboardBackport ).mockReturnValue( backport );
+	vi.mocked( isJetpackCloud ).mockReturnValue( jetpackCloud );
 }
 
 describe( 'dashboardLinkWithBackport', () => {

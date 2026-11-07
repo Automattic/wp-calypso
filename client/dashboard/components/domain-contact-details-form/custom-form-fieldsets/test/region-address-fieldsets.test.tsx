@@ -3,6 +3,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { useViewportMatch } from '@wordpress/compose';
+import { vi } from 'vitest';
 import { RegionAddressFieldsets, RegionAddressFieldsLayout } from '../../region-address-fieldsets';
 import {
 	CHECKOUT_EU_ADDRESS_FORMAT_COUNTRY_CODES,
@@ -13,11 +14,11 @@ import type { DomainContactDetails, DomainContactValidationResponse } from '@aut
 import type { DataFormControlProps, Field } from '@wordpress/dataviews';
 import type { ComponentType } from 'react';
 
-jest.mock( '@wordpress/compose', () => ( {
-	useViewportMatch: jest.fn( () => false ), // Default to desktop view
+vi.mock( '@wordpress/compose', () => ( {
+	useViewportMatch: vi.fn( () => false ), // Default to desktop view
 } ) );
 
-jest.mock( '@wordpress/components', () => ( {
+vi.mock( '@wordpress/components', () => ( {
 	__experimentalInputControl: ( {
 		label,
 		value,
@@ -244,7 +245,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (desktop, with postal codes)', () => {
-			jest.mocked( useViewportMatch ).mockReturnValue( false );
+			vi.mocked( useViewportMatch ).mockReturnValue( false );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
@@ -267,7 +268,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (desktop, without postal codes)', () => {
-			jest.mocked( useViewportMatch ).mockReturnValue( false );
+			vi.mocked( useViewportMatch ).mockReturnValue( false );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
@@ -290,7 +291,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (mobile, with postal codes)', () => {
-			jest.mocked( useViewportMatch ).mockReturnValue( true );
+			vi.mocked( useViewportMatch ).mockReturnValue( true );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,
@@ -314,7 +315,7 @@ describe( 'Region Address Fieldsets', () => {
 		} );
 
 		test( 'should return US layout for countries with states (mobile, without postal codes)', () => {
-			jest.mocked( useViewportMatch ).mockReturnValue( true );
+			vi.mocked( useViewportMatch ).mockReturnValue( true );
 
 			const layout = RegionAddressFieldsLayout( {
 				statesList: mockStatesListUS,

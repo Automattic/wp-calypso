@@ -5,6 +5,7 @@
 import { DotcomPlans, JetpackPlans, WooHostedPlans } from '@automattic/api-core';
 import config from '@automattic/calypso-config';
 import { renderHook } from '@testing-library/react';
+import { vi } from 'vitest';
 import { useExperiment } from 'calypso/lib/explat';
 import {
 	DIFM_OFFER_EXPERIMENT,
@@ -17,11 +18,11 @@ import {
 	useDifmOffer,
 } from '../difm-offer';
 
-jest.mock( 'calypso/lib/explat', () => ( {
-	useExperiment: jest.fn(),
+vi.mock( 'calypso/lib/explat', () => ( {
+	useExperiment: vi.fn(),
 } ) );
 
-const mockUseExperiment = jest.mocked( useExperiment );
+const mockUseExperiment = vi.mocked( useExperiment );
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse( '2026-09-24T12:00:00Z' );

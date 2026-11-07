@@ -8,12 +8,13 @@ import userEvent from '@testing-library/user-event';
 import { dispatch, select } from '@wordpress/data';
 import { store as noticesStore } from '@wordpress/notices';
 import nock from 'nock';
+import { vi, type Mock } from 'vitest';
 import { render } from '../../../test-utils';
 import SecurityTwoStepAuthSummary from '../summary';
 import type { UserSettings } from '@automattic/api-core';
 
-jest.mock( '@automattic/calypso-support-session', () => ( {
-	isSupportSession: jest.fn( () => false ),
+vi.mock( '@automattic/calypso-support-session', () => ( {
+	isSupportSession: vi.fn( () => false ),
 } ) );
 
 function mockUserSettings( data: Partial< UserSettings > ) {
@@ -25,7 +26,7 @@ function mockUserSettings( data: Partial< UserSettings > ) {
 
 afterEach( () => {
 	nock.cleanAll();
-	( isSupportSession as jest.Mock ).mockReturnValue( false );
+	( isSupportSession as Mock ).mockReturnValue( false );
 	select( noticesStore )
 		.getNotices()
 		.forEach( ( notice ) => dispatch( noticesStore ).removeNotice( notice.id ) );
@@ -49,7 +50,7 @@ describe( '<SecurityTwoStepAuthSummary>', () => {
 	} );
 
 	test( 'shows no state and points to the User Report Card inside a support session', async () => {
-		( isSupportSession as jest.Mock ).mockReturnValue( true );
+		( isSupportSession as Mock ).mockReturnValue( true );
 		mockUserSettings( { two_step_enabled: false } );
 
 		render( <SecurityTwoStepAuthSummary /> );

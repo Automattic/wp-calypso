@@ -4,6 +4,7 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import CertificationDevToolsSection from '../dev-tools-section';
 
@@ -23,7 +24,7 @@ describe( '<CertificationDevToolsSection>', () => {
 
 	beforeEach( () => {
 		Object.defineProperty( window.navigator, 'clipboard', {
-			value: { writeText: jest.fn().mockResolvedValue( undefined ) },
+			value: { writeText: vi.fn().mockResolvedValue( undefined ) },
 			configurable: true,
 		} );
 	} );
@@ -37,7 +38,7 @@ describe( '<CertificationDevToolsSection>', () => {
 	} );
 
 	test( 'records a view, code copies, exam clicks and tier link clicks', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		mockAgencyWithCode();
 		render(
 			<CertificationDevToolsSection

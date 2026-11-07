@@ -6,27 +6,30 @@ import { queryClient, rawUserPreferencesQuery } from '@automattic/api-queries';
 import { isEnabled } from '@automattic/calypso-config';
 import '@testing-library/jest-dom';
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { ColorSchemeProvider } from 'calypso/lib/color-scheme';
 import PreferencesAppearance from '..';
 import { AppProvider, APP_CONTEXT_DEFAULT_CONFIG } from '../../../app/context';
 import { render } from '../../../test-utils';
 import { isDashboardBackport } from '../../../utils/is-dashboard-backport';
 
-jest.mock( '@automattic/calypso-config', () => {
-	const actual = jest.requireActual( '@automattic/calypso-config' );
+vi.mock( '@automattic/calypso-config', async () => {
+	const actual = await vi.importActual< typeof import( '@automattic/calypso-config' ) >(
+		'@automattic/calypso-config'
+	);
 	return {
 		...actual,
 		__esModule: true,
-		isEnabled: jest.fn( actual.isEnabled ),
+		isEnabled: vi.fn( actual.isEnabled ),
 	};
 } );
 
-jest.mock( '../../../utils/is-dashboard-backport', () => ( {
-	isDashboardBackport: jest.fn( () => false ),
+vi.mock( '../../../utils/is-dashboard-backport', () => ( {
+	isDashboardBackport: vi.fn( () => false ),
 } ) );
 
-const mockIsDashboardBackport = jest.mocked( isDashboardBackport );
-const mockIsEnabled = jest.mocked( isEnabled );
+const mockIsDashboardBackport = vi.mocked( isDashboardBackport );
+const mockIsEnabled = vi.mocked( isEnabled );
 
 const dashboardConfig = {
 	...APP_CONTEXT_DEFAULT_CONFIG,

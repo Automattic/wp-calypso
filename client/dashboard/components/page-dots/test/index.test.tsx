@@ -3,12 +3,13 @@
  */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import PageDots from '../';
 import { render } from '../../../test-utils';
 
 describe( '<PageDots>', () => {
 	test( 'marks the current page and jumps to a page when its dot is clicked', async () => {
-		const onChange = jest.fn();
+		const onChange = vi.fn();
 		render( <PageDots count={ 3 } current={ 1 } onChange={ onChange } label="Tour sections" /> );
 
 		expect( screen.getByRole( 'button', { name: 'Page 2 of 3' } ) ).toHaveAttribute(

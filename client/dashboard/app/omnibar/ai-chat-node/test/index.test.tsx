@@ -8,6 +8,7 @@ import { Omnibar } from '@automattic/omnibar';
 import { QueryClient } from '@tanstack/react-query';
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { useAiChatNode } from '../index';
 
@@ -16,8 +17,8 @@ function mockAgentsManagerActions( { isChatVisible = false } = {} ) {
 	const actions = {
 		isReady: true,
 		isChatVisible: () => isChatVisible,
-		resumeChat: jest.fn(),
-		setChatOpen: jest.fn(),
+		resumeChat: vi.fn(),
+		setChatOpen: vi.fn(),
 	};
 	( window as unknown as { __agentsManagerActions?: typeof actions } ).__agentsManagerActions =
 		actions;
@@ -40,7 +41,7 @@ function renderNode( {
 }
 
 describe( '<Omnibar> AI chat node', () => {
-	const onRecordEvent = jest.fn();
+	const onRecordEvent = vi.fn();
 
 	beforeEach( () => {
 		analyticsEvents.on( 'record-event', onRecordEvent );

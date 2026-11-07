@@ -6,6 +6,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import RevokeLicenseModal from '../revoke-license-modal';
 import type { Agency, AgencyProduct, JetpackLicense } from '@automattic/api-core';
@@ -49,7 +50,7 @@ function captureSurvey() {
 }
 
 function renderModal( license: JetpackLicense, products: AgencyProduct[] = [] ) {
-	const closeModal = jest.fn();
+	const closeModal = vi.fn();
 	const queryClient = new QueryClient();
 	queryClient.setQueryData( activeAgencyQuery().queryKey, { id: AGENCY_ID } as Agency );
 	queryClient.setQueryData( agencyProductsQuery( AGENCY_ID ).queryKey, products );

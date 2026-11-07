@@ -5,12 +5,13 @@ import '@testing-library/jest-dom';
 import { act, fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { DIFM_OFFER_EXPERIMENT } from '../../../utils/difm-offer';
 import DIFMOfferCard from '../index';
 import type { Site } from '@automattic/api-core';
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );
@@ -111,11 +112,11 @@ describe( 'DIFMOfferCard', () => {
 
 		const { recordTracksEvent } = render( <DIFMOfferCard site={ mockSite } /> );
 		const heading = await screen.findByRole( 'heading', { name: 'No time to build your site?' } );
-		jest.useFakeTimers();
+		vi.useFakeTimers();
 
 		fireEvent.pointerEnter( heading.closest( '.dashboard-difm-offer-card' ) as Element );
-		act( () => jest.advanceTimersByTime( 500 ) );
-		jest.useRealTimers();
+		act( () => vi.advanceTimersByTime( 500 ) );
+		vi.useRealTimers();
 
 		expect( recordTracksEvent ).toHaveBeenCalledWith( 'calypso_difm_offer_banner_hover', {
 			upsell_id: 'site-overview-difm-offer',

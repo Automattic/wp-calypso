@@ -4,10 +4,11 @@ import { isEnabled } from '@automattic/calypso-config';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import { SubscriberNotificationCard } from '../index';
 
-jest.mock( '@automattic/calypso-config', () => ( { isEnabled: jest.fn() } ) );
+vi.mock( '@automattic/calypso-config', () => ( { isEnabled: vi.fn() } ) );
 
 const key = 'notifications-subscriber-alerts-enabled';
 
@@ -22,7 +23,7 @@ function setup( value?: boolean ) {
 describe( 'SubscriberNotificationCard', () => {
 	beforeEach( () => {
 		queryClient.clear();
-		jest.mocked( isEnabled ).mockReturnValue( true );
+		vi.mocked( isEnabled ).mockReturnValue( true );
 		queryClient.setQueryDefaults( rawUserPreferencesQuery().queryKey, {
 			staleTime: Infinity,
 			retry: false,
@@ -35,13 +36,13 @@ describe( 'SubscriberNotificationCard', () => {
 	} );
 
 	it( 'leaves unset preferences off when the default rollout is disabled', () => {
-		jest.mocked( isEnabled ).mockReturnValue( false );
+		vi.mocked( isEnabled ).mockReturnValue( false );
 		setup();
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).not.toBeChecked();
 	} );
 
 	it( 'preserves saved opt-ins when the default rollout is disabled', () => {
-		jest.mocked( isEnabled ).mockReturnValue( false );
+		vi.mocked( isEnabled ).mockReturnValue( false );
 		setup( true );
 		expect( screen.getByRole( 'checkbox', { name: 'Subscriber alerts' } ) ).toBeChecked();
 	} );

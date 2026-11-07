@@ -5,6 +5,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import JetpackSiteDisconnect from '../index';
 import type { Site } from '@automattic/api-core';
@@ -32,7 +33,7 @@ function mockDisconnect() {
 		.reply( 200, {} );
 }
 
-const renderContent = ( onClose = jest.fn() ) =>
+const renderContent = ( onClose = vi.fn() ) =>
 	render( <JetpackSiteDisconnect site={ site } onClose={ onClose } /> );
 
 describe( '<JetpackSiteDisconnect>', () => {
@@ -83,7 +84,7 @@ describe( '<JetpackSiteDisconnect>', () => {
 
 	test( 'calls the disconnect endpoint and closes the modal on success', async () => {
 		const user = userEvent.setup();
-		const onClose = jest.fn();
+		const onClose = vi.fn();
 		mockPurchases();
 		const scope = mockDisconnect();
 

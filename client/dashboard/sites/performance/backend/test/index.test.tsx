@@ -5,11 +5,12 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import SitePerformanceBackend from '../index';
 import type { ApmAggregateResponse, Site } from '@automattic/api-core';
 
-jest.mock( '@automattic/charts', () => ( {
+vi.mock( '@automattic/charts', () => ( {
 	AreaChart: () => null,
 	BarListChart: () => null,
 	GlobalChartsProvider: ( { children }: { children: React.ReactNode } ) => children,

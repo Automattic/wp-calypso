@@ -2,22 +2,25 @@
  * @jest-environment jsdom
  */
 import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import { NameServersLayout } from '../layout';
 
-jest.mock( '../../../app/breadcrumbs', () => ( {
+vi.mock( '../../../app/breadcrumbs', () => ( {
 	__esModule: true,
 	default: () => null,
 } ) );
 
-jest.mock( '../../../components/inline-support-link', () => ( {
+vi.mock( '../../../components/inline-support-link', () => ( {
 	__esModule: true,
 	default: () => <span>Learn more</span>,
 } ) );
 
-const mockHasEnTranslation = jest.fn( () => true );
-jest.mock( '@automattic/i18n-utils', () => ( {
-	...jest.requireActual( '@automattic/i18n-utils' ),
+const mockHasEnTranslation = vi.fn( () => true );
+vi.mock( '@automattic/i18n-utils', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/i18n-utils' ) >(
+		'@automattic/i18n-utils'
+	) ),
 	useHasEnTranslation: () => mockHasEnTranslation,
 } ) );
 

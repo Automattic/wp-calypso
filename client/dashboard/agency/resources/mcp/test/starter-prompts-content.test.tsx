@@ -4,10 +4,11 @@
 import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../../test-utils';
 import McpStarterPrompts, { STARTER_PROMPTS } from '../starter-prompts-content';
 
-let clipboardWriteText: jest.Mock;
+let clipboardWriteText: Mock;
 
 function mockClipboard() {
 	Object.defineProperty( window.navigator, 'clipboard', {
@@ -17,7 +18,7 @@ function mockClipboard() {
 }
 
 beforeEach( () => {
-	clipboardWriteText = jest.fn().mockResolvedValue( undefined );
+	clipboardWriteText = vi.fn().mockResolvedValue( undefined );
 	mockClipboard();
 } );
 
@@ -52,7 +53,7 @@ describe( '<McpStarterPrompts>', () => {
 	} );
 
 	test( 'copies the raw prompt text and records a tracks event', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		render( <McpStarterPrompts recordTracksEvent={ recordTracksEvent } /> );
 
 		const firstPrompt = STARTER_PROMPTS[ 0 ];

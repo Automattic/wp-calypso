@@ -4,16 +4,17 @@
 import '@testing-library/jest-dom';
 import { HostingFeatures } from '@automattic/api-core';
 import { screen, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
 import { render } from '../../../test-utils';
 import ScanCard from '../index';
 import type { Site, SiteScan, Threat } from '@automattic/api-core';
 
 const mockSiteId = 123;
 
-const mockFetchSiteScan = jest.fn();
+const mockFetchSiteScan = vi.fn();
 
-jest.mock( '@automattic/api-core', () => ( {
-	...jest.requireActual( '@automattic/api-core' ),
+vi.mock( '@automattic/api-core', async () => ( {
+	...( await vi.importActual< typeof import( '@automattic/api-core' ) >( '@automattic/api-core' ) ),
 	fetchSiteScan: ( ...args: unknown[] ) => mockFetchSiteScan( ...args ),
 } ) );
 
@@ -27,8 +28,8 @@ const mockSite: Site = {
 	is_wpcom_atomic: true,
 } as Site;
 
-jest.mock( '@wordpress/i18n', () => ( {
-	...jest.requireActual( '@wordpress/i18n' ),
+vi.mock( '@wordpress/i18n', async () => ( {
+	...( await vi.importActual< typeof import( '@wordpress/i18n' ) >( '@wordpress/i18n' ) ),
 	__: ( text: string ) => text,
 	_n: ( singular: string, plural: string, count: number ) => ( count === 1 ? singular : plural ),
 	sprintf: ( format: string, ...args: unknown[] ) => {
@@ -40,7 +41,7 @@ jest.mock( '@wordpress/i18n', () => ( {
 	},
 } ) );
 
-jest.mock( '../../../app/locale', () => ( {
+vi.mock( '../../../app/locale', () => ( {
 	useLocale: () => 'en',
 	useIntlLocale: () => 'en',
 } ) );

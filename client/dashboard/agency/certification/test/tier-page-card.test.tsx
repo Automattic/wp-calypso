@@ -4,6 +4,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
+import { type Mock, vi } from 'vitest';
 import { render } from '../../../test-utils';
 import CertificationTierPageCard from '../tier-page-card';
 import type { AgencyApwdDiscountCode } from '@automattic/api-core';
@@ -26,7 +27,7 @@ function mockDiscountCode( coupon: Partial< AgencyApwdDiscountCode > | null ) {
 describe( '<CertificationTierPageCard>', () => {
 	const originalClipboard = window.navigator.clipboard;
 
-	function mockClipboard( writeText: jest.Mock ) {
+	function mockClipboard( writeText: Mock ) {
 		Object.defineProperty( window.navigator, 'clipboard', {
 			value: { writeText },
 			configurable: true,
@@ -34,7 +35,7 @@ describe( '<CertificationTierPageCard>', () => {
 	}
 
 	beforeEach( () => {
-		mockClipboard( jest.fn().mockResolvedValue( undefined ) );
+		mockClipboard( vi.fn().mockResolvedValue( undefined ) );
 	} );
 
 	afterEach( () => {
@@ -59,9 +60,9 @@ describe( '<CertificationTierPageCard>', () => {
 	} );
 
 	test( 'previews the share message read-only, then copies it', async () => {
-		const writeText = jest.fn().mockResolvedValue( undefined );
+		const writeText = vi.fn().mockResolvedValue( undefined );
 		mockClipboard( writeText );
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		mockAgency();
 		mockDiscountCode( { code: 'HUBSPOT-CODE-123', discount_percent: '30' } );
 		render( <CertificationTierPageCard recordTracksEvent={ recordTracksEvent } /> );
@@ -84,8 +85,8 @@ describe( '<CertificationTierPageCard>', () => {
 	} );
 
 	test( 'keeps the message open with an error when the copy fails', async () => {
-		mockClipboard( jest.fn().mockRejectedValue( new Error( 'Not allowed' ) ) );
-		const recordTracksEvent = jest.fn();
+		mockClipboard( vi.fn().mockRejectedValue( new Error( 'Not allowed' ) ) );
+		const recordTracksEvent = vi.fn();
 		mockAgency();
 		mockDiscountCode( { code: 'HUBSPOT-CODE-123', discount_percent: '30' } );
 		render( <CertificationTierPageCard recordTracksEvent={ recordTracksEvent } /> );
@@ -104,7 +105,7 @@ describe( '<CertificationTierPageCard>', () => {
 	} );
 
 	test( 'records a view, code copies and exam clicks', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		mockAgency();
 		mockDiscountCode( { code: 'HUBSPOT-CODE-123', discount_percent: '30' } );
 		render( <CertificationTierPageCard recordTracksEvent={ recordTracksEvent } /> );
@@ -127,7 +128,7 @@ describe( '<CertificationTierPageCard>', () => {
 	} );
 
 	test( 'stays hidden, and records no view, when the agency has no active coupon', async () => {
-		const recordTracksEvent = jest.fn();
+		const recordTracksEvent = vi.fn();
 		mockAgency();
 		const scope = mockDiscountCode( null );
 		render( <CertificationTierPageCard recordTracksEvent={ recordTracksEvent } /> );
