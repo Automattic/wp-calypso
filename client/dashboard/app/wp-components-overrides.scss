@@ -21,6 +21,7 @@
 .components-autocomplete__results,
 .components-form-token-field__suggestions-list {
 	--wpds-color-background-interactive-brand-strong-active: color-mix(in oklch, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 93%, #000);
+	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-foreground-inverted, #fff);
 }
 
 // Spinner now draws `@wordpress/ui`'s neutral gray arc; keep it in the accent color it had.
@@ -36,4 +37,5 @@
 	--wpds-color-foreground-interactive-neutral: var(--wp-components-color-foreground, #1e1e1e);
 	--wpds-color-foreground-content-neutral-weak: var(--wp-components-color-gray-700, #757575);
 	--wpds-color-background-interactive-brand-strong-active: color-mix(in oklch, var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9)) 93%, #000);
+	--wpds-color-foreground-interactive-brand-strong-active: var(--wp-components-color-foreground-inverted, #fff);
 }
