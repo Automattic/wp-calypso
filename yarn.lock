@@ -12502,7 +12502,7 @@ __metadata:
 
 "@wordpress/block-editor@patch:@wordpress/block-editor@^15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch":
   version: 15.21.0
-  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch::version=15.21.0&hash=043767"
+  resolution: "@wordpress/block-editor@patch:@wordpress/block-editor@npm%3A15.21.0#~/.yarn/patches/@wordpress-block-editor-npm-15.21.0-c8316c2917.patch::version=15.21.0&hash=5a8fa2"
   dependencies:
     "@react-spring/web": "npm:^9.4.5"
     "@wordpress/a11y": "npm:^4.48.0"
@@ -12559,7 +12559,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: 4a2a8494b211e5ce15fe969fece40e95aedb20da3dceefe5076d6367df7e2efcf604dca3d0dc961426ca85f53f6cd1f4e317bc9aa9fc166d01259d8f4779c7db
+  checksum: 3c92fd7bfc67a0f220e94801610fc0938b1427d06ae5e7794b39e083dc3dfbf3c576c27c5cb62cd1aa98d7b7a66022fc5983295fa24d9695999453eb0efa41e9
   languageName: node
   linkType: hard
 
@@ -12624,7 +12624,7 @@ __metadata:
 
 "@wordpress/block-library@patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch":
   version: 9.48.0
-  resolution: "@wordpress/block-library@patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch::version=9.48.0&hash=3c83e2"
+  resolution: "@wordpress/block-library@patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch::version=9.48.0&hash=ae9f52"
   dependencies:
     "@arraypress/waveform-player": "npm:1.2.1"
     "@wordpress/a11y": "npm:^4.48.0"
@@ -12677,7 +12677,7 @@ __metadata:
   peerDependencies:
     react: ^18.0.0
     react-dom: ^18.0.0
-  checksum: f94fb0a3f46d479d0f8b009cbbd1a1bee767a51bada285c2630d63ebd5c9beaa733bae6e34a97a22da29e130b3c9460711e71cc8ef716b175ebb7b0161fee47e
+  checksum: 34de96c2bb90c09daef2abc50baaa9465114ddfd6eec55335ef4d6943e2e1896235c4b60c88349120135abeb5c9d935b2ce675af18046155c2b1cad4cb09b08c
   languageName: node
   linkType: hard
 

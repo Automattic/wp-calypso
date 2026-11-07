@@ -132,15 +132,3 @@ index d3274833dab7394e19e4feb02b4160029e479074..371d9bc272e9f39126def795825e97c9
  import initBlock from "../utils/init-block.mjs";
  import edit from "./edit.mjs";
  import save from "./save.mjs";
-diff --git a/package.json b/package.json
-index 8b1c3a6208ac7ce35907f9f83c9d32341fbbe632..739b40612708714f8b6cb40387a697339565fc24 100644
---- a/package.json
-+++ b/package.json
-@@ -94,6 +94,7 @@
- 		"build-module/*/init.mjs"
- 	],
- 	"dependencies": {
-+		"@wordpress/kebab-case": "^2.1.0",
- 		"@arraypress/waveform-player": "1.2.1",
- 		"@wordpress/a11y": "^4.48.0",
- 		"@wordpress/api-fetch": "^7.48.0",

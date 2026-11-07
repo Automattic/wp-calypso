@@ -201,11 +201,3 @@ index e02a4d0f81779d47a7a3b4195a68922622880816..d34157e0d1a4f2b81c5a27b49745950c
  	},
  	"react-native": "src/index",
  	"wpScript": true,
-@@ -60,6 +64,7 @@
- 		"build-module/hooks/**"
- 	],
- 	"dependencies": {
-+		"@wordpress/kebab-case": "^2.1.0",
- 		"@react-spring/web": "^9.4.5",
- 		"@wordpress/a11y": "^4.48.0",
- 		"@wordpress/base-styles": "^9.1.0",
