@@ -36,6 +36,15 @@
 	--wpds-color-background-interactive-brand-strong: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
 }
 
+/* Text fields, token and combobox inputs and toggles draw their focus ring with this token,
+ * pinned the same way, where components 37 used the accent. */
+.components-text-control__input,
+.components-form-token-field__input-container,
+.components-combobox-control__suggestions-container,
+.components-form-toggle {
+	--wpds-color-stroke-focus: var(--wp-components-color-accent, var(--wp-admin-theme-color, #3858e9));
+}
+
 /* Focused menu items, autocomplete results and token suggestions fill with this token,
  * which is pinned the same way; match the fallback components uses with the theme color. */
 .components-dropdown__content,
