@@ -493,7 +493,7 @@ describe( '<SiteDomains>', () => {
 			await waitFor( () => expect( select ).toBeDisabled() );
 			expect( recordTracksEvent ).toHaveBeenCalledWith(
 				'calypso_dashboard_site_domains_primary_domain_selector_submit',
-				{ site: site.slug, domain: 'candidate.com' }
+				{ site: site.slug, domain: 'candidate.com', www: false }
 			);
 
 			finishSaving();
@@ -501,6 +501,26 @@ describe( '<SiteDomains>', () => {
 			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
 			expect( saveRequest.isDone() ).toBe( true );
 		} );
+	} );
+
+	test( 'does not offer www actions in the row menu of the primary domain', async () => {
+		const user = userEvent.setup();
+		nock.cleanAll();
+		mockApis( {
+			domains: [ domain, primaryCandidateDomain ],
+			siteResponse: { ...siteWithPrimaryDomainFeature, is_wpcom_atomic: true } as Site,
+			preferences: { 'hosting-dashboard-dataviews-view-site-domains': SAVED_TABLE_VIEW },
+		} );
+
+		render( <SiteDomains />, { user: ownerUser } );
+
+		const table = await screen.findByRole( 'table' );
+		const primaryRow = within( table ).getByText( 'test-site.com' ).closest( 'tr' ) as HTMLElement;
+		await user.click( within( primaryRow ).getByLabelText( 'Actions' ) );
+
+		const menuItems = await screen.findAllByRole( 'menuitem' );
+		expect( menuItems.length ).toBeGreaterThan( 0 );
+		expect( screen.queryByRole( 'menuitem', { name: /www/ } ) ).not.toBeInTheDocument();
 	} );
 
 	test( 'hides "Make primary site address" action while SSL is still pending', async () => {
@@ -648,6 +668,193 @@ describe( '<SiteDomains>', () => {
 		expect( within( card ).getByText( 'Active' ) ).toBeVisible();
 		expect( screen.queryByText( 'Activating' ) ).not.toBeInTheDocument();
 		expect( screen.queryByText( 'Preparing your new domain name' ) ).not.toBeInTheDocument();
+	} );
+
+	describe( 'www address in the primary site address modal', () => {
+		const atomicSite = { ...siteWithPrimaryDomainFeature, is_wpcom_atomic: true } as Site;
+
+		async function openModal( domains: unknown[], siteResponse: Site = atomicSite ) {
+			nock.cleanAll();
+			mockApis( { domains, siteResponse } );
+			const user = userEvent.setup();
+			const { recordTracksEvent } = render( <SiteDomains />, { user: ownerUser } );
+			await user.click(
+				await screen.findByRole( 'button', { name: 'Change primary site address' } )
+			);
+			const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+			const select = within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } );
+			const submit = async ( value: string ) => {
+				await user.selectOptions( select, value );
+				await user.click( within( dialog ).getByRole( 'button', { name: 'Change address' } ) );
+			};
+			return { dialog, select, submit, recordTracksEvent };
+		}
+
+		function optionValues( select: HTMLElement ) {
+			return within( select )
+				.getAllByRole( 'option' )
+				.map( ( option ) => ( option as HTMLOptionElement ).value );
+		}
+
+		test( 'offers www right after each custom domain on an Atomic site', async () => {
+			const { select } = await openModal( [ primaryCandidateDomain, domain ] );
+
+			expect( optionValues( select ) ).toEqual( [
+				'test-site.com',
+				'www.test-site.com',
+				'candidate.com',
+				'www.candidate.com',
+			] );
+			expect( select ).toHaveValue( 'test-site.com' );
+		} );
+
+		test( 'does not offer www on a Simple site', async () => {
+			const { select } = await openModal(
+				[ primaryCandidateDomain, domain ],
+				siteWithPrimaryDomainFeature
+			);
+
+			expect( optionValues( select ) ).toEqual( [ 'test-site.com', 'candidate.com' ] );
+		} );
+
+		test( 'does not offer www for the default address', async () => {
+			const { select } = await openModal( [
+				primaryCandidateDomain,
+				{ ...defaultAddressDomain, primary_domain: true },
+			] );
+
+			expect( optionValues( select ) ).toEqual( [
+				'test-site.wordpress.com',
+				'candidate.com',
+				'www.candidate.com',
+			] );
+		} );
+
+		test( 'shows www as the current address when www is on', async () => {
+			const { dialog, select } = await openModal( [
+				primaryCandidateDomain,
+				{ ...domain, primary_is_www: true },
+			] );
+
+			expect( select ).toHaveValue( 'www.test-site.com' );
+			expect( dialog ).toHaveTextContent(
+				'The current primary site address for this site is www.test-site.com.'
+			);
+			expect( within( dialog ).getByRole( 'button', { name: 'Change address' } ) ).toBeDisabled();
+		} );
+
+		test.each( [
+			{ primary_is_www: false, value: 'www.test-site.com', enabled: true },
+			{ primary_is_www: true, value: 'test-site.com', enabled: false },
+		] )(
+			'sends enabled: $enabled when $value is submitted',
+			async ( { primary_is_www, value, enabled } ) => {
+				const { submit, recordTracksEvent } = await openModal( [
+					primaryCandidateDomain,
+					{ ...domain, primary_is_www },
+				] );
+				const wwwRequest = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/domains/www-primary/test-site.com', { enabled } )
+					.reply( 200, { success: true } );
+
+				await submit( value );
+
+				await waitFor( () => expect( wwwRequest.isDone() ).toBe( true ) );
+				await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+				expect( recordTracksEvent ).toHaveBeenCalledWith(
+					'calypso_dashboard_site_domains_primary_domain_selector_submit',
+					{ site: site.slug, domain: value, www: enabled }
+				);
+			}
+		);
+
+		test( 'still sets another domain as primary', async () => {
+			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			const primaryRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, {} );
+
+			await submit( 'candidate.com' );
+
+			await waitFor( () => expect( primaryRequest.isDone() ).toBe( true ) );
+		} );
+
+		test( 'sets another domain as primary, then turns www on, for its www address', async () => {
+			const { submit, recordTracksEvent } = await openModal( [ primaryCandidateDomain, domain ] );
+			const requests: string[] = [];
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, () => {
+					requests.push( 'primary' );
+					return {};
+				} )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: true } )
+				.reply( 200, () => {
+					requests.push( 'www' );
+					return { success: true };
+				} );
+
+			await submit( 'www.candidate.com' );
+
+			await waitFor( () => expect( screen.queryByRole( 'dialog' ) ).not.toBeInTheDocument() );
+			expect( requests ).toEqual( [ 'primary', 'www' ] );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_site_domains_primary_domain_selector_submit',
+				{ site: site.slug, domain: 'www.candidate.com', www: true }
+			);
+		} );
+
+		test( 'turns www off when another domain with www on is chosen without www', async () => {
+			const { submit } = await openModal( [
+				{ ...primaryCandidateDomain, primary_is_www: true },
+				domain,
+			] );
+			const primaryRequest = nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'candidate.com' } )
+				.reply( 200, {} );
+			const wwwRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com', { enabled: false } )
+				.reply( 200, { success: true } );
+
+			await submit( 'candidate.com' );
+
+			await waitFor( () => expect( wwwRequest.isDone() ).toBe( true ) );
+			expect( primaryRequest.isDone() ).toBe( true );
+		} );
+
+		test( 'keeps the modal open when turning www on fails', async () => {
+			const { submit } = await openModal( [ primaryCandidateDomain, domain ] );
+			nock( 'https://public-api.wordpress.com' )
+				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary` )
+				.reply( 200, {} );
+			const wwwRequest = nock( 'https://public-api.wordpress.com' )
+				.post( '/wpcom/v2/domains/www-primary/candidate.com' )
+				.reply( 500, {} );
+
+			await submit( 'www.candidate.com' );
+
+			await waitFor( () => expect( wwwRequest.isDone() ).toBe( true ) );
+			await waitFor( () =>
+				expect( within( screen.getByRole( 'dialog' ) ).getByRole( 'combobox' ) ).toBeEnabled()
+			);
+		} );
+
+		test( 'offers www from "Change primary" on the primary domain row', async () => {
+			nock.cleanAll();
+			mockApis( { domains: [ primaryCandidateDomain, domain ], siteResponse: atomicSite } );
+			const user = userEvent.setup();
+			render( <SiteDomains />, { user: ownerUser } );
+
+			const primaryCard = await screen.findByRole( 'group', { name: domain.domain } );
+			await user.click(
+				await within( primaryCard ).findByRole( 'button', { name: 'Change primary' } )
+			);
+
+			const dialog = await screen.findByRole( 'dialog', { name: 'Primary site address' } );
+			expect(
+				optionValues( within( dialog ).getByRole( 'combobox', { name: 'Primary site address' } ) )
+			).toEqual( [ 'test-site.com', 'www.test-site.com', 'candidate.com', 'www.candidate.com' ] );
+		} );
 	} );
 
 	test( 'shows an expired domain notice instead of the primary site address notice', async () => {
