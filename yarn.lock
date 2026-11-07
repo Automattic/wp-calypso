@@ -15516,7 +15516,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"body-parser@npm:^1.20.8, body-parser@npm:~1.20.5":
+"body-parser@npm:^1.20.9, body-parser@npm:~1.20.5":
   version: 1.20.9
   resolution: "body-parser@npm:1.20.9"
   dependencies:
@@ -16016,7 +16016,7 @@ __metadata:
     "@wordpress/warning": "npm:^4.1.0"
     autoprefixer: "npm:^10.4.21"
     autosize: "npm:^4.0.4"
-    body-parser: "npm:^1.20.8"
+    body-parser: "npm:^1.20.9"
     browser-filesaver: "npm:^1.1.1"
     bunyan: "npm:^1.8.15"
     chalk: "npm:^4.1.2"
