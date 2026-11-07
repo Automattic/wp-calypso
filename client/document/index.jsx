@@ -67,6 +67,7 @@ class Document extends Component {
 			query,
 			reactQueryDevtoolsHelper,
 			renderedLayout,
+			runtimeStyles,
 			dashboard,
 			sectionGroup,
 			sectionName,
@@ -181,6 +182,15 @@ class Document extends Component {
 					{ chunkCssLinks( chunkFiles, shouldUseRtlCss ) }
 					{ chunkFiles.js.map( ( chunk ) => (
 						<link key={ chunk } rel="preload" as="script" href={ chunk } />
+					) ) }
+					{ /* Last, where the client would inject them; it skips hashes already present. */ }
+					{ runtimeStyles?.map( ( [ hash, css ] ) => (
+						<style
+							key={ hash }
+							data-wp-hash={ hash }
+							// eslint-disable-next-line react/no-danger
+							dangerouslySetInnerHTML={ { __html: css.replace( /<\/style/gi, '<\\/style' ) } }
+						/>
 					) ) }
 				</Head>
 				<body

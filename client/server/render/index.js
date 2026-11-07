@@ -27,6 +27,7 @@ import { dehydrateQueryClient } from 'calypso/state/query-client-ssr';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentLocaleVariant from 'calypso/state/selectors/get-current-locale-variant';
 import { serialize } from 'calypso/state/utils';
+import { getUsedRuntimeStyles } from './runtime-styles';
 
 const debug = debugFactory( 'calypso:server-render' );
 
@@ -326,6 +327,7 @@ export function serverRender( req, res ) {
 		debug( `SSR render with cache key ${ cacheKey }.` );
 
 		context.renderedLayout = render( context.layout, req.error?.message ?? cacheKey, req );
+		context.runtimeStyles = getUsedRuntimeStyles( context.renderedLayout );
 	}
 
 	performanceMark( req.context, 'dehydrateQueryClient', true );
