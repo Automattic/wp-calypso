@@ -123,7 +123,7 @@
 		"@wordpress/ui": "^0.23.0",
 		"@wordpress/warning": "^4.1.0",
 		"autosize": "^4.0.4",
-		"body-parser": "^1.20.8",
+		"body-parser": "^1.20.9",
 		"browser-filesaver": "^1.1.1",
 		"bunyan": "^1.8.15",
 		"chalk": "^4.1.2",
