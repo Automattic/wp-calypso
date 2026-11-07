@@ -15,11 +15,13 @@ export const getAllowedPluginActions = createSelector(
 		const hasManagePlugins =
 			selectedSite && siteHasFeature( state, selectedSite?.ID, WPCOM_FEATURES_MANAGE_PLUGINS );
 		const isManagedPlugin = siteIsAtomic && autoManagedPlugins.includes( plugin.slug );
+		// The API decides per hosting platform (e.g. Pressable) which plugins it manages.
+		const isApiManagedPlugin = !! ( selectedSite && plugin.sites?.[ selectedSite.ID ]?.is_managed );
 		const canManagePlugins =
 			! selectedSite || ( siteIsJetpack && ! siteIsAtomic ) || ( siteIsAtomic && hasManagePlugins );
 
 		return {
-			autoupdate: ! isManagedPlugin && canManagePlugins,
+			autoupdate: ! isManagedPlugin && ! isApiManagedPlugin && canManagePlugins,
 			activation: ! isManagedPlugin && canManagePlugins,
 		};
 	}
