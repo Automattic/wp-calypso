@@ -177,10 +177,6 @@
 		border-color: var( --dashboard-danger__color );
 	}
 
-	.components-validated-control__indicator.is-invalid {
-		color: var( --dashboard-danger__color-hover );
-	}
-
 	// Since DataViews 19.1, DataForm text fields are `@wordpress/ui` inputs. Their class names
 	// are hashed, and they paint the label, description, border and background with WPDS tokens
 	// that `color-scheme-dark-theme-tokens` leaves at their light defaults.

@@ -375,6 +375,7 @@ This mixin generates alias variables for a color palette. For example, the
 	.components-base-control__label,
 	.components-input-control__label,
 	.components-checkbox-control__label,
+	.components-radio-control__label,
 	.components-toggle-control__label:not( .is-disabled ) {
 		color: var( --dashboard__text-color );
 	}
@@ -743,7 +744,8 @@ This mixin generates alias variables for a color palette. For example, the
 		border-top-color: var( --dashboard-surface__border-color );
 	}
 
-	.dataviews-bulk-actions-footer__item-count {
+	.dataviews-bulk-actions-footer__item-count,
+	.dataviews-footer__item-count {
 		color: var( --dashboard__text-color );
 	}
 
@@ -924,7 +926,10 @@ This mixin generates alias variables for a color palette. For example, the
 
 		// Scoped to unselected indicators so the accent fill on selected
 		// ones still wins.
-		.dataviews-filters__selection-indicator[data-unchecked] {
+		// Multi-select filters put the attribute on the indicator; single-select ones on the
+		// radio inside it.
+		.dataviews-filters__selection-indicator[data-unchecked],
+		.dataviews-filters__selection-indicator [data-unchecked] {
 			border-color: var( --dashboard-field__border-color );
 			background: var( --dashboard-surface__background-color );
 		}
