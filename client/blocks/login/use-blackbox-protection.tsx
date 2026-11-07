@@ -1,7 +1,8 @@
 import config from '@automattic/calypso-config';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import BlackboxChallenge from 'calypso/blocks/login/blackbox-challenge';
 import { getBlackboxApiKey } from 'calypso/blocks/login/utils/blackbox-sdk';
+import { activateBlackboxSurface } from 'calypso/blocks/login/utils/blackbox-surface';
 import { getBlackboxSessionId } from 'calypso/blocks/login/utils/get-blackbox-session-id';
 import type { ReactElement } from 'react';
 
@@ -10,8 +11,8 @@ export interface BlackboxProtection {
 	isSubmitBlocked: boolean;
 	/** Challenge container element to render in the form. */
 	challenge: ReactElement;
-	/** Resolves the Blackbox session ID (no-op when disabled). */
-	getSessionId: () => Promise< string | undefined >;
+	/** Resolves an ID, undefined without a session, or null when the form becomes inactive. */
+	getSessionId: () => Promise< string | undefined | null >;
 	/** Resets the Blackbox session so a retry starts fresh. */
 	reset: () => void;
 }
@@ -39,6 +40,8 @@ interface UseBlackboxProtectionOptions {
 
 const noopGetSessionId = () => Promise.resolve( undefined );
 
+const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
+
 /**
  * Wire Blackbox into a form.
  */
@@ -51,8 +54,22 @@ export function useBlackboxProtection( {
 	const enabled =
 		! suspended && !! apiKey && config.isEnabled( 'blackbox' ) && config.isEnabled( feature );
 	const [ challengeBlocksSubmit, setChallengeBlocksSubmit ] = useState( enabled );
-	const [ replacementInFlight, setReplacementInFlight ] = useState( false );
-	const isSubmitBlocked = challengeBlocksSubmit || replacementInFlight;
+
+	// Register before paint so a submit can never see the previous surface.
+	const surfaceSignal = useRef< AbortSignal | undefined >( undefined );
+	useIsomorphicLayoutEffect( () => {
+		if ( ! enabled ) {
+			return;
+		}
+		const { signal, deactivate } = activateBlackboxSurface( apiKey );
+		surfaceSignal.current = signal;
+		return () => {
+			deactivate();
+			if ( surfaceSignal.current === signal ) {
+				surfaceSignal.current = undefined;
+			}
+		};
+	}, [ enabled, apiKey ] );
 
 	// Re-block during render when a suspended surface re-enables: the challenge
 	// only re-blocks from a post-paint effect, which would leave the submit
@@ -68,7 +85,8 @@ export function useBlackboxProtection( {
 	}, [] );
 
 	const getSessionId = useCallback(
-		() => ( apiKey ? getBlackboxSessionId( apiKey ) : Promise.resolve( undefined ) ),
+		() =>
+			apiKey ? getBlackboxSessionId( apiKey, surfaceSignal.current ) : Promise.resolve( undefined ),
 		[ apiKey ]
 	);
 
@@ -81,30 +99,13 @@ export function useBlackboxProtection( {
 	}, [] );
 
 	useEffect( () => {
-		if ( ! enabled || ! resetOnError ) {
-			setReplacementInFlight( false );
-			return;
+		if ( enabled && resetOnError ) {
+			reset();
 		}
-
-		let cancelled = false;
-		// reset() aborts the visible challenge before the replacement collect
-		// decides, and that abort would re-enable submit. Hold it until the
-		// collect settles; a challenge that starts keeps its own block.
-		setReplacementInFlight( true );
-		reset();
-		getSessionId().finally( () => {
-			if ( ! cancelled ) {
-				setReplacementInFlight( false );
-			}
-		} );
-
-		return () => {
-			cancelled = true;
-		};
-	}, [ enabled, resetOnError, reset, getSessionId ] );
+	}, [ enabled, resetOnError, reset ] );
 
 	return {
-		isSubmitBlocked,
+		isSubmitBlocked: challengeBlocksSubmit,
 		challenge: (
 			<BlackboxChallenge
 				enabled={ enabled }

@@ -200,6 +200,9 @@ const VerifyLoginCode = ( {
 		}
 		try {
 			const blackboxSessionId = await getSessionId();
+			if ( blackboxSessionId === null ) {
+				return;
+			}
 			authenticate( loginToken, redirectTo, null, true, blackboxSessionId );
 		} finally {
 			if ( shouldCollect ) {
