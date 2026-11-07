@@ -58,8 +58,6 @@ export function BackupsPage( {
 			site,
 			rewindId,
 			dateRange,
-			timezoneString,
-			gmtOffset,
 			enabled: hasBackups,
 		} );
 	const isMobileDetailsView = isSmallViewport && !! selectedBackup;
