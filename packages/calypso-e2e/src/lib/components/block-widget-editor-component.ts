@@ -3,9 +3,8 @@ import { Page } from 'playwright';
 const selectors = {
 	editor: '#widgets-editor',
 
-	// Welcome Guide and Welcome Tour
+	// Welcome Guide
 	welcomeModalDismissButton: 'div.components-modal__header > button', // Instead of aria-label, which changes depending on English UK/US.
-	welcomeTourDismissButton: 'button[aria-label="Close Tour"]',
 
 	// Block Widget editor
 	addBlockButton: 'button[aria-label="Add block"]',
@@ -63,31 +62,21 @@ export class BlockWidgetEditorComponent {
 	}
 
 	/**
-	 * Dismiss any welcome modals that appear.
+	 * Dismiss the Welcome modal if it appears.
 	 *
-	 * Call once `waitUntilLoaded` has resolved: neither modal renders before the editor.
-	 *
-	 * These include:
-	 * 	- Welcome modal
-	 * 	- Welcome Tour
+	 * Call once `waitUntilLoaded` has resolved: the modal doesn't render before the editor.
 	 */
 	async dismissModals(): Promise< void > {
-		const locators = [
-			this.page.locator( selectors.welcomeModalDismissButton ),
-			this.page.locator( selectors.welcomeTourDismissButton ),
-		];
+		const locator = this.page.locator( selectors.welcomeModalDismissButton );
 
-		for await ( const locator of locators ) {
-			try {
-				// Neither modal is guaranteed to appear, and the Welcome Tour can show
-				// without the Welcome modal, so a missing one skips rather than stops.
-				if ( ( await locator.count() ) === 0 ) {
-					continue;
-				}
-				await locator.click();
-			} catch {
-				//noop
+		try {
+			// The modal isn't guaranteed to appear.
+			if ( ( await locator.count() ) === 0 ) {
+				return;
 			}
+			await locator.click();
+		} catch {
+			//noop
 		}
 	}
 }
