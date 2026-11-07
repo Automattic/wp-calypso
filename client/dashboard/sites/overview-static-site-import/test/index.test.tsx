@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, waitFor } from '@testing-library/react';
+import { renderHook, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
@@ -9,8 +9,10 @@ import {
 	StaticSiteImportFailed,
 	StaticSiteImportNotice,
 	StaticSiteImportProgress,
+	useOpenPreviewWhenReady,
 	useStaticSiteImport,
 } from '../index';
+import type { StaticSiteImport as StaticSiteImportState } from '../index';
 import type { Site, StaticSiteImportSession } from '@automattic/api-core';
 
 const site = {
@@ -288,6 +290,65 @@ describe( 'StaticSiteImportCard', () => {
 
 		expect( await screen.findByText( 'Our team has your move' ) ).toBeVisible();
 		expect( ticket.isDone() ).toBe( true );
+	} );
+
+	describe( 'preview site', () => {
+		const shareUrl = 'https://busybears.wpcomstaging.com/?share=code';
+
+		it( 'offers to view and keep a finished preview instead of connecting a domain', async () => {
+			mockApi()
+				.get( '/wpcom/v2/static-site-import-session/abc123' )
+				.query( true )
+				.reply( 200, session( 'finished', { site_url: 'https://busybears.wordpress.com' } ) );
+			mockApi()
+				.get( '/wpcom/v2/wow-funnel/pending' )
+				.query( true )
+				.reply( 200, {
+					pending: false,
+					preview_sites: [ { blog_id: 42, site_slug: site.slug, share_url: shareUrl } ],
+				} );
+
+			render( <StaticSiteImport /> );
+
+			expect( await screen.findByText( 'Your preview is ready' ) ).toBeVisible();
+			expect( screen.getByRole( 'link', { name: /View site/ } ) ).toHaveAttribute(
+				'href',
+				shareUrl
+			);
+			expect( screen.getByRole( 'link', { name: 'Choose a plan' } ) ).toHaveAttribute(
+				'href',
+				expect.stringContaining( `/plans/${ site.slug }` )
+			);
+			expect( screen.queryByRole( 'link', { name: /Connect/ } ) ).not.toBeInTheDocument();
+		} );
+
+		const moving: StaticSiteImportState = { status: 'moving' };
+		const finishedPreview: StaticSiteImportState = {
+			status: 'finished',
+			isPreview: true,
+			previewUrl: shareUrl,
+		};
+
+		it.each( [
+			{ name: 'opens a preview whose move finishes here', first: moving, opens: true },
+			{
+				name: 'stays on a preview that had already finished',
+				first: finishedPreview,
+				opens: false,
+			},
+		] )( '$name', async ( { first, opens } ) => {
+			const assign = jest.fn();
+			const originalLocation = window.location;
+			Object.defineProperty( window, 'location', { value: { ...originalLocation, assign } } );
+
+			const { rerender } = renderHook( ( siteImport ) => useOpenPreviewWhenReady( siteImport ), {
+				initialProps: first,
+			} );
+			rerender( finishedPreview );
+
+			await waitFor( () => expect( assign.mock.calls ).toEqual( opens ? [ [ shareUrl ] ] : [] ) );
+			Object.defineProperty( window, 'location', { value: originalLocation } );
+		} );
 	} );
 
 	it( 'shows a neutral notice, not a failed move, when the move can’t be read', async () => {
