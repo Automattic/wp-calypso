@@ -44,15 +44,15 @@
 	"dependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
 		"@wordpress/block-editor": "patch:@wordpress/block-editor@npm%3A15.20.0#~/.yarn/patches/@wordpress-block-editor-npm-15.20.0-2d52fc5cc4.patch",
-		"@wordpress/block-library": "^9.48.0",
-		"@wordpress/blocks": "^15.23.0",
-		"@wordpress/components": "^37.0.0",
+		"@wordpress/block-library": "^12.1.0",
+		"@wordpress/blocks": "^17.1.0",
+		"@wordpress/components": "^44.0.0",
 		"@wordpress/data": "^11.1.0",
 		"@wordpress/element": "^10.1.0",
-		"@wordpress/format-library": "^5.48.0",
+		"@wordpress/format-library": "^6.1.0",
 		"@wordpress/i18n": "^7.1.0",
 		"@wordpress/keycodes": "^5.1.0",
-		"@wordpress/rich-text": "^7.54.0",
+		"@wordpress/rich-text": "^8.1.0",
 		"@wordpress/url": "^5.1.0"
 	},
 	"devDependencies": {
