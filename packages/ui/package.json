@@ -72,7 +72,7 @@
 		"stylelint": "^17.16.0",
 		"stylelint-plugin-logical-css": "^2.1.0",
 		"tsup": "^8.5.1",
-		"typescript": "^6.0.3"
+		"typescript": "^7.0.2"
 	},
 	"scripts": {
 		"clean": "rm -rf dist",
