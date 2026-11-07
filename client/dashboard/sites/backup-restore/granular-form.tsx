@@ -1,27 +1,35 @@
 import { siteBackupGranularRestoreMutation } from '@automattic/api-queries';
 import { useMutation } from '@tanstack/react-query';
-import { Button, __experimentalVStack as VStack, Panel } from '@wordpress/components';
+import { Button, Panel, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, _n } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { useCallback, useId, useState } from 'react';
 import { useFileBrowserContext } from '../../../my-sites/backup/backup-contents-page/file-browser/file-browser-context';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
+import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
 import FileSectionPanelBody from './file-section-panel-body';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
+import type { RestoreTrackingProps } from './types';
+import type { Site } from '@automattic/api-core';
 
 function SiteBackupGranularRestoreForm( {
+	site,
+	restoreLinkTo,
 	siteId,
 	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
+	site: Site;
+	restoreLinkTo?: string;
 	siteId: number;
 	rewindId: string;
 	restorePointDate: string;
-	onRestoreInitiate: ( restoreId: number ) => void;
+	onRestoreInitiate: ( restoreId: number, trackingProps?: RestoreTrackingProps ) => void;
 } ) {
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupGranularRestoreMutation( siteId )
@@ -31,6 +39,15 @@ function SiteBackupGranularRestoreForm( {
 	const { fileBrowserState } = useFileBrowserContext();
 	const browserCheckList = fileBrowserState.getCheckList( Number( rewindId ) );
 	const browserSelectedList = fileBrowserState.getSelectedList( Number( rewindId ) );
+
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const [ acknowledged, setAcknowledged ] = useState( false );
+	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
+		setHasKnownThreats( value );
+		if ( ! value ) {
+			setAcknowledged( false );
+		}
+	}, [] );
 
 	const handleGranularRestore = () => {
 		const includePaths = browserCheckList.includeList.map( ( item ) => item.id ).join( ',' );
@@ -46,7 +63,10 @@ function SiteBackupGranularRestoreForm( {
 			},
 			{
 				onSuccess: ( restoreId ) => {
-					onRestoreInitiate( restoreId );
+					onRestoreInitiate( restoreId, {
+						known_threats_shown: hasKnownThreats,
+						known_threats_acknowledged: hasKnownThreats && acknowledged,
+					} );
 				},
 				onError: () => {
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
@@ -57,8 +77,18 @@ function SiteBackupGranularRestoreForm( {
 		);
 	};
 
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const isRestoreDisabled = isRestoreMutationPending || awaitingAcknowledgement;
+	const acknowledgementHintId = useId();
+	const acknowledgementHint = __(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( isRestoreDisabled ) {
+			return;
+		}
 		handleGranularRestore();
 	};
 
@@ -108,15 +138,33 @@ function SiteBackupGranularRestoreForm( {
 					includesDatabase={ hasSelectedTables }
 				/>
 
+				<KnownThreatsNotice
+					site={ site }
+					restoreLinkTo={ restoreLinkTo }
+					rewindId={ rewindId }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ setAcknowledged }
+					onKnownThreatsChange={ handleKnownThreatsChange }
+				/>
+
 				<ButtonStack justify="flex-start">
+					{ /* The reason shows beside the button, which also takes it as its description. */ }
 					<Button
 						variant="primary"
 						type="submit"
 						isBusy={ isRestoreMutationPending }
-						disabled={ isRestoreMutationPending }
+						disabled={ isRestoreDisabled }
+						accessibleWhenDisabled={ awaitingAcknowledgement }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
 					>
 						{ _n( 'Restore selected file', 'Restore selected files', browserCheckList.totalItems ) }
 					</Button>
+					{ awaitingAcknowledgement && (
+						<Text variant="muted" id={ acknowledgementHintId }>
+							{ acknowledgementHint }
+						</Text>
+					) }
 				</ButtonStack>
 			</VStack>
 		</form>

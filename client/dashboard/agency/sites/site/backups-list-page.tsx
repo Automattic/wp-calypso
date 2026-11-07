@@ -36,6 +36,7 @@ export default function AgencySiteBackupsListPage() {
 							params: { siteSlug },
 							search: ( query: Record< string, string > ) => query,
 						} ),
+			restoreLinkTo: agencySiteBackupRestoreRoute.fullPath,
 			requestRestore: ( id ) =>
 				router.navigate( {
 					to: agencySiteBackupRestoreRoute.fullPath,

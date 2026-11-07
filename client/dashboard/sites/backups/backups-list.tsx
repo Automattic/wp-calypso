@@ -1,4 +1,7 @@
-import { siteBackupActivityLogGroupCountsQuery } from '@automattic/api-queries';
+import {
+	siteBackupActivityLogGroupCountsQuery,
+	siteBackupsKnownThreatsQuery,
+} from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { filterSortAndPaginate } from '@wordpress/dataviews';
 import { __ } from '@wordpress/i18n';
@@ -70,7 +73,9 @@ export function BackupsList( {
 		siteBackupActivityLogGroupCountsQuery( siteId, after, before )
 	);
 
-	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset );
+	const { data: knownThreatsPage } = useQuery( siteBackupsKnownThreatsQuery( siteId ) );
+
+	const fields = getFields( groupCountsData?.groups, timezoneString, gmtOffset, knownThreatsPage );
 	const { data: filteredData, paginationInfo } = filterSortAndPaginate( activityLog, view, fields );
 
 	useEffect( () => {

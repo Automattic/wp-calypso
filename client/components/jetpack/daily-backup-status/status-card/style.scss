@@ -296,3 +296,8 @@
 		fill: #7d5600;
 	}
 }
+
+// The same space between the known-threats warning and Restore as on the restore page.
+.status-card__known-threats:not(:empty) {
+	margin-block-end: 40px;
+}

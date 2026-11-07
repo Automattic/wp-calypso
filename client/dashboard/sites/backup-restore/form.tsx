@@ -6,11 +6,15 @@ import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
-import { useState } from 'react';
+import { useCallback, useId, useState } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
+import { Text } from '../../components/text';
+import KnownThreatsNotice from '../backups/known-threats/known-threats-notice';
+import { useRestoreInsteadFocusRef } from '../backups/known-threats/restore-that-one-instead-link';
 import WooSubscriptionsNotice from './woo-subscriptions-notice';
-import type { RestoreConfig } from '@automattic/api-core';
+import type { RestoreTrackingProps } from './types';
+import type { RestoreConfig, Site } from '@automattic/api-core';
 import type { Field } from '@wordpress/dataviews';
 
 const fields: Field< RestoreConfig >[] = [
@@ -51,15 +55,19 @@ const fields: Field< RestoreConfig >[] = [
 ];
 
 function SiteBackupRestoreForm( {
+	site,
+	restoreLinkTo,
 	siteId,
 	rewindId,
 	restorePointDate,
 	onRestoreInitiate,
 }: {
+	site: Site;
+	restoreLinkTo?: string;
 	siteId: number;
 	rewindId: string;
 	restorePointDate: string;
-	onRestoreInitiate: ( restoreId: number ) => void;
+	onRestoreInitiate: ( restoreId: number, trackingProps?: RestoreTrackingProps ) => void;
 } ) {
 	const { mutate: restoreMutation, isPending: isRestoreMutationPending } = useMutation(
 		siteBackupRestoreInitiateMutation( siteId )
@@ -74,6 +82,15 @@ function SiteBackupRestoreForm( {
 		sqls: true,
 		uploads: true,
 	} );
+
+	const [ hasKnownThreats, setHasKnownThreats ] = useState( false );
+	const [ acknowledged, setAcknowledged ] = useState( false );
+	const handleKnownThreatsChange = useCallback( ( value: boolean ) => {
+		setHasKnownThreats( value );
+		if ( ! value ) {
+			setAcknowledged( false );
+		}
+	}, [] );
 
 	const form = {
 		type: 'regular' as const,
@@ -92,7 +109,10 @@ function SiteBackupRestoreForm( {
 			},
 			{
 				onSuccess: ( restoreId ) => {
-					onRestoreInitiate( restoreId );
+					onRestoreInitiate( restoreId, {
+						known_threats_shown: hasKnownThreats,
+						known_threats_acknowledged: hasKnownThreats && acknowledged,
+					} );
 				},
 				onError: () => {
 					createErrorNotice( __( 'Failed to initiate restore. Please try again.' ), {
@@ -103,10 +123,24 @@ function SiteBackupRestoreForm( {
 		);
 	};
 
+	const isFormValid = Object.values( formData ).some( ( value ) => value );
+	const awaitingAcknowledgement = hasKnownThreats && ! acknowledged;
+	const isRestoreDisabled = ! isFormValid || isRestoreMutationPending || awaitingAcknowledgement;
+	const acknowledgementHintId = useId();
+	const acknowledgementHint = __(
+		'To restore this backup, confirm that you understand it contains known threats.'
+	);
+
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
+		if ( isRestoreDisabled ) {
+			return;
+		}
 		handleRestore();
 	};
+
+	// Opened from "Restore … backup instead": land on the line naming the backup now being restored.
+	const restorePointRef = useRestoreInsteadFocusRef( rewindId );
 
 	const restoreWarning = formData.sqls
 		? __(
@@ -116,12 +150,10 @@ function SiteBackupRestoreForm( {
 				'This action will replace the selected content with the content from the selected restore point.'
 			);
 
-	const isFormValid = Object.values( formData ).some( ( value ) => value );
-
 	return (
 		<form onSubmit={ handleSubmit }>
 			<VStack spacing={ 4 }>
-				<p>
+				<p ref={ restorePointRef } tabIndex={ -1 }>
 					{ createInterpolateElement(
 						__( 'Choose what to restore from your <restorePointDate /> backup:' ),
 						{ restorePointDate: <strong>{ restorePointDate }</strong> }
@@ -144,15 +176,33 @@ function SiteBackupRestoreForm( {
 					includesDatabase={ !! formData.sqls }
 				/>
 
+				<KnownThreatsNotice
+					site={ site }
+					restoreLinkTo={ restoreLinkTo }
+					rewindId={ rewindId }
+					requireAcknowledgement
+					acknowledged={ acknowledged }
+					onAcknowledgedChange={ setAcknowledged }
+					onKnownThreatsChange={ handleKnownThreatsChange }
+				/>
+
 				<ButtonStack justify="flex-start">
+					{ /* The reason shows beside the button, which also takes it as its description. */ }
 					<Button
 						variant="primary"
 						type="submit"
 						isBusy={ isRestoreMutationPending }
-						disabled={ ! isFormValid || isRestoreMutationPending }
+						disabled={ isRestoreDisabled }
+						accessibleWhenDisabled={ awaitingAcknowledgement }
+						aria-describedby={ awaitingAcknowledgement ? acknowledgementHintId : undefined }
 					>
 						{ __( 'Restore now' ) }
 					</Button>
+					{ awaitingAcknowledgement && (
+						<Text variant="muted" id={ acknowledgementHintId }>
+							{ acknowledgementHint }
+						</Text>
+					) }
 				</ButtonStack>
 			</VStack>
 		</form>

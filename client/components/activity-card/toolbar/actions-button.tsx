@@ -23,6 +23,7 @@ type SingleSiteOwnProps = {
 	rewindId: string;
 	isSuccessfulBackup: boolean;
 	useSplitButton?: boolean;
+	restoreDisabledHint?: string;
 };
 
 const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
@@ -31,6 +32,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 	rewindId,
 	isSuccessfulBackup,
 	useSplitButton = false,
+	restoreDisabledHint,
 } ) => {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
@@ -69,6 +71,7 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 				siteSlug={ siteSlug }
 				rewindId={ rewindId }
 				secondaryActions={ secondaryActions }
+				restoreDisabledHint={ restoreDisabledHint }
 			/>
 		);
 	}
@@ -91,7 +94,12 @@ const SingleSiteActionsButton: React.FC< SingleSiteOwnProps > = ( {
 				onClose={ closePopoverMenu }
 				className="toolbar__actions-popover"
 			>
-				<RestoreButton siteId={ siteId } siteSlug={ siteSlug } rewindId={ rewindId } />
+				<RestoreButton
+					siteId={ siteId }
+					siteSlug={ siteSlug }
+					rewindId={ rewindId }
+					restoreDisabledHint={ restoreDisabledHint }
+				/>
 				{ needsCredentials && <CredentialsPrompt siteSlug={ siteSlug } /> }
 				{ isSuccessfulBackup && <ViewFilesButton siteSlug={ siteSlug } rewindId={ rewindId } /> }
 				<DownloadButton siteId={ siteId } siteSlug={ siteSlug } rewindId={ rewindId } />
@@ -146,6 +154,8 @@ type OwnProps = {
 	availableActions?: Array< string >;
 	onClickClone?: ( period: string ) => void;
 	useSplitButton?: boolean;
+	/** Holds Restore back and says why, e.g. until known threats are acknowledged nearby. */
+	restoreDisabledHint?: string;
 };
 
 const ActionsButton: React.FC< OwnProps > = ( {
@@ -154,6 +164,7 @@ const ActionsButton: React.FC< OwnProps > = ( {
 	availableActions,
 	onClickClone,
 	useSplitButton = false,
+	restoreDisabledHint,
 } ) => {
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
 
@@ -189,6 +200,7 @@ const ActionsButton: React.FC< OwnProps > = ( {
 			rewindId={ actionableRewindId ?? '' }
 			isSuccessfulBackup={ isSuccessfulBackup }
 			useSplitButton={ useSplitButton }
+			restoreDisabledHint={ restoreDisabledHint }
 		/>
 	);
 };

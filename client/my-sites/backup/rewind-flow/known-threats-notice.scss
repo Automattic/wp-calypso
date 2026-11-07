@@ -1,0 +1,33 @@
+// Sits inside the RewindFlowNotice banner. The doubled class beats the banner's
+// generic `> div` flex rule so the controls stack at full width.
+.rewind-flow-notice > .rewind-flow-known-threats {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 8px;
+	width: auto;
+	margin-block-start: 8px;
+
+	.backup-known-threats__details {
+		margin-block-start: 0;
+	}
+}
+
+.rewind-flow-known-threats__details {
+	align-self: stretch;
+}
+
+// `.rewind-flow-notice a` (0,1,1) bumps every banner link to the body size; keep the
+// restore link at the @wordpress/components link size it has on the other surfaces.
+.rewind-flow-known-threats .is-link {
+	font-size: 13px;
+}
+
+// The acknowledgement is the decision the banner asks for, so it gets its own section below a
+// rule, away from the clean-backup link above it.
+.rewind-flow-known-threats__acknowledgement {
+	align-self: stretch;
+	margin-block-start: 4px;
+	padding-block-start: 16px;
+	border-block-start: 1px solid var( --color-warning-10 );
+}
