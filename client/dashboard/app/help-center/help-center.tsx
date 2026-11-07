@@ -1,9 +1,10 @@
 import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
 import { useQuery } from '@tanstack/react-query';
-import { Suspense, lazy, useCallback, useState } from 'react';
+import { dispatch } from '@wordpress/data';
+import { Suspense, lazy, useCallback, useEffect, useState } from 'react';
 import { useAuth } from '../auth';
-import { useHelpCenter } from '.';
+import { HELP_CENTER_STORE, useHelpCenter, type HelpCenterDispatch } from '.';
 import type HelpCenterApp from './help-center-app';
 import type { Site } from '@automattic/api-core';
 
@@ -47,6 +48,27 @@ function hasHelpCenterQueryParam() {
 	return new URLSearchParams( window.location.search ).has( 'help-center' );
 }
 
+// The first opening is saved before the panel mounts, so tell the store the user and app up front.
+function usePrepareHelpCenterStore(
+	user: ReturnType< typeof useAuth >[ 'user' ],
+	product?: string
+) {
+	useEffect( () => {
+		let isCancelled = false;
+		import( '@automattic/data-stores' ).then( ( { HelpCenter: HelpCenterStore } ) => {
+			if ( isCancelled ) {
+				return;
+			}
+			HelpCenterStore.register();
+			HelpCenterStore.setHelpCenterAppId( product && product !== 'wpcom' ? product : undefined );
+			( dispatch( HELP_CENTER_STORE ) as HelpCenterDispatch ).setCurrentUser( user );
+		} );
+		return () => {
+			isCancelled = true;
+		};
+	}, [ user, product ] );
+}
+
 /**
  * Renders the floating Help Center panel. The omnibar's help button handles
  * toggling via the shared help center store.
@@ -75,6 +97,8 @@ export default function HelpCenter( props: HelpCenterProps ) {
 	if ( isShown && ! shouldMount ) {
 		setShouldMount( true );
 	}
+
+	usePrepareHelpCenterStore( user, props.product );
 
 	// Defer the lazy chunk download until the panel is opened or deep-linked to.
 	if ( ! shouldMount ) {
