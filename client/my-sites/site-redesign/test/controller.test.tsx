@@ -76,6 +76,18 @@ describe( 'site redesign route', () => {
 		expect( context.primary.props ).toMatchObject( { redesignId: null, resume: false } );
 	} );
 
+	it( 'passes on where the owner came from, and only a plain ref', () => {
+		const context = contextFor( { ref: 'marketing_bar' } );
+		renderSiteRedesign( context, jest.fn() );
+		expect( context.primary.props ).toMatchObject( { entryRef: 'marketing_bar' } );
+
+		for ( const ref of [ '', 'Marketing Bar', '<b>', 'x'.repeat( 33 ) ] ) {
+			const other = contextFor( { ref } );
+			renderSiteRedesign( other, jest.fn() );
+			expect( other.primary.props ).toMatchObject( { entryRef: null } );
+		}
+	} );
+
 	it( 'renders without the site sidebar', () => {
 		const context = contextFor();
 		renderSiteRedesign( context, jest.fn() );

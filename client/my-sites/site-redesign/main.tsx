@@ -1,3 +1,4 @@
+import { recordTracksEvent } from '@automattic/calypso-analytics';
 import page from '@automattic/calypso-router';
 import { formatNumber } from '@automattic/number-formatters';
 import { Step } from '@automattic/onboarding';
@@ -59,6 +60,8 @@ type Props = {
 	siteSlug: string;
 	redesignId: string | null;
 	resume: boolean;
+	/** Where the owner came from (`ref` on the URL, such as `marketing_bar`), sent with every event. */
+	entryRef?: string | null;
 };
 
 const redesignKey = ( siteId: number, id: string | null ) => [ 'site-redesign', siteId, id ];
@@ -80,6 +83,28 @@ function httpUrl( url: string | undefined ): string | undefined {
 		return url && [ 'http:', 'https:' ].includes( new URL( url ).protocol ) ? url : undefined;
 	} catch {
 		return undefined;
+	}
+}
+
+const recordedInMemory = new Set< string >();
+
+/**
+ * Whether `key` is new to this tab, remembering it. Falls back to memory where sessionStorage
+ * is unavailable, such as a blocked storage setting.
+ */
+function markOnce( key: string ): boolean {
+	try {
+		if ( window.sessionStorage.getItem( key ) ) {
+			return false;
+		}
+		window.sessionStorage.setItem( key, '1' );
+		return true;
+	} catch {
+		if ( recordedInMemory.has( key ) ) {
+			return false;
+		}
+		recordedInMemory.add( key );
+		return true;
 	}
 }
 
@@ -486,9 +511,40 @@ function CandidateCard( {
 	);
 }
 
-export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: Props ) {
+export default function SiteRedesign( {
+	siteId,
+	siteSlug,
+	redesignId,
+	resume,
+	entryRef = null,
+}: Props ) {
 	const queryClient = useQueryClient();
 	const dispatch = useDispatch();
+	// The funnel from the entry point to a live design.
+	const record = useCallback(
+		( name: string, properties: Record< string, string | boolean | null > ) =>
+			recordTracksEvent( name, { ref: entryRef ?? undefined, ...properties } ),
+		[ entryRef ]
+	);
+	// One view per page view and site: following the session's id in the URL is not a new view.
+	const viewed = useRef< number | null >( null );
+	useEffect( () => {
+		if ( viewed.current !== siteId ) {
+			viewed.current = siteId;
+			record( 'calypso_site_redesign_view', { redesign_id: redesignId, resume } );
+		}
+	}, [ siteId, redesignId, resume, record ] );
+	// The other steps are about one redesign and count once for it in this tab. Polling repeats
+	// them, and so does reloading the checkout return while the design installs.
+	const recordOnce = useCallback(
+		( key: string, name: string, properties: Record< string, string | boolean | null > ) => {
+			if ( ! markOnce( `site-redesign-funnel:${ key }` ) ) {
+				return;
+			}
+			record( name, properties );
+		},
+		[ record ]
+	);
 	const [ notice, setNotice ] = useState< string | null >( null );
 	const [ purchaseTimedOut, setPurchaseTimedOut ] = useState( false );
 	const resumed = useRef( false );
@@ -576,7 +632,12 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		await queryClient.cancelQueries( { queryKey, exact: true } );
 		queryClient.setQueryData( queryKey, next );
 		if ( isCurrent( from ) && next.id !== from.redesignId ) {
-			page.replace( addQueryArgs( `/site-redesign/${ from.siteSlug }`, { redesign: next.id } ) );
+			page.replace(
+				addQueryArgs( `/site-redesign/${ from.siteSlug }`, {
+					redesign: next.id,
+					ref: entryRef ?? undefined,
+				} )
+			);
 		}
 	};
 
@@ -641,8 +702,11 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 			if ( ! isCurrent( from ) ) {
 				return;
 			}
-			const checkoutUrl = getCheckoutUrl( error );
+			const checkoutUrl = getCheckoutUrl( error, entryRef );
 			if ( checkoutUrl ) {
+				record( 'calypso_site_redesign_checkout_start', {
+					redesign_id: from?.redesignId ?? null,
+				} );
 				page( checkoutUrl );
 				return;
 			}
@@ -662,6 +726,39 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		...noticeHandlers,
 		onSuccess: store,
 	} );
+
+	// Back from checkout with the plan on the site: the purchase went through.
+	useEffect( () => {
+		if ( resume && redesign?.eligibility.can_apply ) {
+			recordOnce( `purchase:${ redesign.id }`, 'calypso_site_redesign_purchase_complete', {
+				redesign_id: redesign.id,
+			} );
+		}
+	}, [ resume, redesign, recordOnce ] );
+
+	// The first design whose preview is on screen: the moment the owner sees what they'd get.
+	useEffect( () => {
+		const shown =
+			redesign && currentBatch( redesign ).find( ( c ) => previewStates[ c.id ] === 'ready' );
+		if ( redesign && shown ) {
+			recordOnce( `shown:${ redesign.id }`, 'calypso_site_redesign_candidate_shown', {
+				redesign_id: redesign.id,
+				generation_id: shown.id,
+			} );
+		}
+	}, [ redesign, previewStates, recordOnce ] );
+
+	// The chosen design installed, then live. Seen here while the owner waits; a job that finishes
+	// after they leave records neither.
+	useEffect( () => {
+		if ( redesign?.status === 'installed' || redesign?.status === 'applied' ) {
+			recordOnce(
+				`${ redesign.status }:${ redesign.id }`,
+				`calypso_site_redesign_${ redesign.status }`,
+				{ redesign_id: redesign.id, generation_id: redesign.selected }
+			);
+		}
+	}, [ redesign, recordOnce ] );
 
 	// Back from checkout: the server keeps the choice in `pending_apply` and usually starts the
 	// apply on its own after the purchase. Start it here only if it hasn't.
@@ -892,7 +989,17 @@ export default function SiteRedesign( { siteId, siteSlug, redesignId, resume }: 
 		<Step.PrimaryButton
 			disabled={ ! canChooseSelected }
 			isBusy={ choose.isPending }
-			onClick={ () => selected && chooseCandidate( selected.id ) }
+			onClick={ () => {
+				if ( ! selected ) {
+					return;
+				}
+				record( 'calypso_site_redesign_pick', {
+					redesign_id: redesign?.id ?? null,
+					generation_id: selected.id,
+					can_apply: !! redesign?.eligibility.can_apply,
+				} );
+				chooseCandidate( selected.id );
+			} }
 		>
 			{ __( 'Choose this one' ) }
 		</Step.PrimaryButton>

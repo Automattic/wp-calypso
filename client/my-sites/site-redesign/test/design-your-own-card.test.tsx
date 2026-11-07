@@ -51,7 +51,7 @@ test( 'links a Free site to the four-design route without starting an agent', ()
 	for ( const name of [ 'Built with the WordPress Agent', 'Design Your Own' ] ) {
 		expect( screen.getByRole( 'link', { name } ) ).toHaveAttribute(
 			'href',
-			'/site-redesign/example.wordpress.com'
+			'/site-redesign/example.wordpress.com?ref=theme_showcase'
 		);
 	}
 	expect( screen.getByText( 'Available on Personal' ) ).toBeVisible();
