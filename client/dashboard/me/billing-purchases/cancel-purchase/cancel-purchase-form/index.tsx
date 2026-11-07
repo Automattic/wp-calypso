@@ -96,7 +96,6 @@ interface CancelPurchaseFormProps {
 	refundAmount?: number;
 	siteSlug: string;
 	solution?: string;
-	solutionsReason?: string;
 	surveyStep?: string;
 	upsell?: string;
 	willAtomicSiteRevert?: boolean;
@@ -137,7 +136,6 @@ function SurveyContent( {
 	surveyStep,
 	upsell,
 	siteSlug,
-	solutionsReason,
 	cancelBundledDomain,
 	cancellationInProgress,
 	includedDomainPurchase,
@@ -166,14 +164,14 @@ function SurveyContent( {
 	if ( surveyStep === UPSELL_STEP ) {
 		const isLastStep = surveyStep === allSteps?.[ allSteps.length - 1 ];
 
-		const solutions = getSolutionsForReason( solutionsReason ?? '' );
+		const solutions = getSolutionsForReason( questionOneText ?? '' );
 		const useSolutionsCards = showCancelOptionsCards && solutions && solutions.length > 0;
 
 		if ( useSolutionsCards ) {
 			return (
 				<SolutionsCardsUpsellStep
 					cancellationInProgress={ cancellationInProgress }
-					cancellationReason={ solutionsReason }
+					cancellationReason={ questionOneText }
 					closeDialog={ closeDialog }
 					intent={ intent ?? undefined }
 					onDeclineUpsell={ isLastStep ? onSubmit : clickNext }
