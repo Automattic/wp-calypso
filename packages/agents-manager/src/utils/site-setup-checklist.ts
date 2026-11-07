@@ -33,25 +33,21 @@ export function siteSetupTaskPrompt( task: SiteSetupTask ): string {
 }
 
 /**
- * Maps Site Setup tasks to checklist items. A task the user picked from the
- * list stays `in-progress` until the server reports it done or skipped. The
- * item's `action` runs before its prompt is sent and declares where the prompt
- * comes from, which the sent message then carries. A task in progress sends
- * the same prompt again, to resume it with the agent.
+ * Maps Site Setup tasks to checklist items. Status is the server's, so the
+ * chat and the Site Setup page always agree. The item's `action` only declares
+ * where the prompt comes from, which the sent message then carries; the pick is
+ * recorded on the server from that message, once it is in the conversation, so
+ * a send the composer blocks or drops changes nothing. A task in progress
+ * sends the same prompt again, to resume it with the agent.
  */
-export function toChecklistItems(
-	tasks: SiteSetupTask[],
-	startedIds: ReadonlySet< string >
-): ChecklistItem[] {
+export function toChecklistItems( tasks: SiteSetupTask[] ): ChecklistItem[] {
 	return tasks.map( ( task ) => {
 		const prompt = siteSetupTaskPrompt( task );
-		const status =
-			task.status === 'todo' && startedIds.has( task.id ) ? 'in-progress' : task.status;
 
 		return {
 			id: task.id,
 			label: task.title,
-			status,
+			status: task.status,
 			prompt,
 			autoSubmit: true,
 			disabled: task.disabled,
@@ -64,47 +60,49 @@ export function toChecklistItems(
 }
 
 /**
- * The task the user picked last, from the newest user message that came from
- * the checklist with a task id; `null` when none did.
+ * Whether the conversation was started from the checklist: a user message
+ * that came from it, live or restored. Decides where the list renders; a
+ * task's status never derives from it.
  */
-export function getLastPickedSiteSetupTask( messages: UIMessage[] ): string | null {
-	for ( let index = messages.length - 1; index >= 0; index-- ) {
-		const message = messages[ index ];
-		if ( message.role !== 'user' ) {
-			continue;
-		}
-		for ( const content of message.content ) {
-			if (
-				content.type === 'data' &&
-				content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE &&
-				typeof content.data.promptSourceId === 'string' &&
-				content.data.promptSourceId
-			) {
-				return content.data.promptSourceId;
-			}
+export function isChatStartedFromSiteSetup( messages: UIMessage[] ): boolean {
+	return messages.some(
+		( message ) =>
+			message.role === 'user' &&
+			message.content.some(
+				( content ) =>
+					content.type === 'data' && content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE
+			)
+	);
+}
+
+/** The task a user message picked from the checklist, or `null` when it did not come from it with a task id. */
+export function getPickedSiteSetupTask( message: UIMessage ): string | null {
+	if ( message.role !== 'user' ) {
+		return null;
+	}
+	for ( const content of message.content ) {
+		if (
+			content.type === 'data' &&
+			content.data?.promptSource === SITE_SETUP_PROMPT_SOURCE &&
+			typeof content.data.promptSourceId === 'string' &&
+			content.data.promptSourceId
+		) {
+			return content.data.promptSourceId;
 		}
 	}
 	return null;
 }
 
-export function getSiteSetupStartedTasks( messages: UIMessage[] ): ReadonlySet< string > | null {
-	let started = false;
-	const ids = new Set< string >();
-
-	for ( const message of messages ) {
-		if ( message.role !== 'user' ) {
-			continue;
-		}
-		for ( const content of message.content ) {
-			if ( content.type !== 'data' || content.data?.promptSource !== SITE_SETUP_PROMPT_SOURCE ) {
-				continue;
-			}
-			started = true;
-			if ( typeof content.data.promptSourceId === 'string' && content.data.promptSourceId ) {
-				ids.add( content.data.promptSourceId );
-			}
+/**
+ * The task the user picked last, from the newest user message that came from
+ * the checklist with a task id; `null` when none did.
+ */
+export function getLastPickedSiteSetupTask( messages: UIMessage[] ): string | null {
+	for ( let index = messages.length - 1; index >= 0; index-- ) {
+		const taskId = getPickedSiteSetupTask( messages[ index ] );
+		if ( taskId !== null ) {
+			return taskId;
 		}
 	}
-
-	return started ? ids : null;
+	return null;
 }

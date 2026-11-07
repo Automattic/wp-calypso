@@ -341,6 +341,109 @@ describe( 'Checklist', () => {
 		expect( action ).toHaveBeenCalled();
 	} );
 
+	it( 'shows a task that settled while collapsed for a beat, then opens the list', () => {
+		vi.useFakeTimers();
+		try {
+			render( { defaultCollapsed: true, expandOnSettle: true } );
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			const settled = items.map( ( item ) =>
+				item.id === 'images' ? { ...item, status: 'done' as const } : item
+			);
+			render( { defaultCollapsed: true, expandOnSettle: true, items: settled } );
+
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+
+			act( () => {
+				vi.advanceTimersByTime( 1200 );
+			} );
+
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+			expect( rows() ).toHaveLength( items.length );
+		} finally {
+			vi.useRealTimers();
+		}
+	} );
+
+	it( 'shows only the settled task during the beat, even when another one becomes active', () => {
+		vi.useFakeTimers();
+		try {
+			const twoInProgress = items.map( ( item ) =>
+				item.id === 'about' ? { ...item, status: 'in-progress' as const } : item
+			);
+			render( {
+				items: twoInProgress,
+				defaultCollapsed: true,
+				expandOnSettle: true,
+				activeItemId: 'images',
+			} );
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			const settled = twoInProgress.map( ( item ) =>
+				item.id === 'images' ? { ...item, status: 'done' as const } : item
+			);
+			render( {
+				items: settled,
+				defaultCollapsed: true,
+				expandOnSettle: true,
+				activeItemId: 'about',
+			} );
+
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			act( () => {
+				vi.advanceTimersByTime( 1200 );
+			} );
+
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'true' );
+			expect( rows() ).toHaveLength( items.length );
+		} finally {
+			vi.useRealTimers();
+		}
+	} );
+
+	it( 'drops a pending reveal when the list is opened by hand', () => {
+		vi.useFakeTimers();
+		try {
+			render( { defaultCollapsed: true, expandOnSettle: true } );
+			const settled = items.map( ( item ) =>
+				item.id === 'images' ? { ...item, status: 'done' as const } : item
+			);
+			render( { defaultCollapsed: true, expandOnSettle: true, items: settled } );
+			expect( rowLabels() ).toEqual( [ 'Replace placeholder images' ] );
+
+			act( () => {
+				header().click();
+			} );
+			act( () => {
+				header().click();
+			} );
+
+			expect( rowLabels() ).toEqual( [] );
+
+			act( () => {
+				vi.advanceTimersByTime( 1200 );
+			} );
+
+			expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+		} finally {
+			vi.useRealTimers();
+		}
+	} );
+
+	it( 'hides a settled task at once and stays collapsed without expandOnSettle', () => {
+		render( { defaultCollapsed: true } );
+		const settled = items.map( ( item ) =>
+			item.id === 'images' ? { ...item, status: 'done' as const } : item
+		);
+
+		render( { defaultCollapsed: true, items: settled } );
+
+		expect( rowLabels() ).toEqual( [] );
+		expect( header().getAttribute( 'aria-expanded' ) ).toBe( 'false' );
+	} );
+
 	it( 'collapses a two-task list after resuming the other in-progress task', async () => {
 		const pair: ChecklistItem[] = [
 			{ id: 'about', label: 'Publish the About page', prompt: 'About', status: 'in-progress' },

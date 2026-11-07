@@ -48,6 +48,7 @@ export default function SiteSetupChecklist( {
 			title={ __( 'Site Setup', __i18n_text_domain__ ) }
 			items={ items }
 			defaultCollapsed={ pinned }
+			expandOnSettle
 			activeItemId={ activeItemId }
 			resumeInProgress
 			busy={ busy }
