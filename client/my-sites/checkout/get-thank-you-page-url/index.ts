@@ -189,6 +189,15 @@ export default function getThankYouPageUrl( {
 		}
 		if ( ! isExternal( redirectTo ) ) {
 			debug( 'has a redirectTo that is not external, so returning that', redirectTo );
+			if (
+				/^\/checkout\/thank-you\/[^/]+\/:receiptId$/.test( pathname ) &&
+				/^sbh_[a-f0-9]{24}$/.test( searchParams.get( 'agentHandoffId' ) || '' ) &&
+				searchParams.getAll( 'agentHandoffId' ).length === 1 &&
+				receiptId &&
+				/^\d+$/.test( String( receiptId ) )
+			) {
+				return redirectTo.replace( ':receiptId', String( receiptId ) );
+			}
 			return redirectTo;
 		}
 
