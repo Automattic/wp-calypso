@@ -4,30 +4,7 @@ import '@testing-library/jest-dom/vitest';
 import { TextDecoder, TextEncoder } from 'node:util';
 import nock from 'nock';
 import ResizeObserver from 'resize-observer-polyfill';
-import { afterEach, vi } from 'vitest';
-
-// vm pools and jsdom may lack Node's web platform classes, which nock needs. Borrow them, as
-// calypso-jest's setup-globals does.
-{
-	const { runInThisContext } = await import( 'node:vm' );
-	const nodeGlobals = runInThisContext( 'globalThis' );
-	for ( const name of [
-		'Headers',
-		'Request',
-		'Response',
-		'FormData',
-		'TextEncoder',
-		'TextDecoder',
-		'ReadableStream',
-		'WritableStream',
-		'TransformStream',
-		'fetch',
-	] ) {
-		if ( typeof ( globalThis as any )[ name ] === 'undefined' ) {
-			( globalThis as any )[ name ] = nodeGlobals[ name ];
-		}
-	}
-}
+import { afterAll, afterEach, vi } from 'vitest';
 
 // RTL's `waitFor` only advances fake timers when it finds a global `jest`.
 ( globalThis as any ).jest = {
@@ -74,7 +51,17 @@ if ( typeof globalThis.MessageChannel === 'undefined' ) {
 	};
 }
 
+if ( ! nock.isActive() ) {
+	nock.activate();
+}
 nock.disableNetConnect();
+
+// Node's `http` outlives each file's vm context under vmForks, so unpatch it when the file ends.
+afterAll( async () => {
+	await new Promise( ( r ) => setTimeout( r, 0 ) );
+	nock.abortPendingRequests();
+	nock.restore();
+} );
 
 afterEach( () => {
 	nock.cleanAll();
