@@ -7,11 +7,11 @@ import { useSelector } from 'react-redux';
 import { getActions, getReferenceId } from '../../panel/helpers/notes';
 import getIsNoteApproved from '../../panel/state/selectors/get-is-note-approved';
 import getIsNoteLiked from '../../panel/state/selectors/get-is-note-liked';
-import { getInitialReplyValue } from './actions';
 import ActionsMenu from './actions-menu';
 import AnswerPromptButton from './button-answer-prompt';
 import LikeButton from './button-like';
 import ReplyInput from './comment-reply-input';
+import { getInitialReplyValue } from './get-initial-reply-value';
 import type { Note } from '../types';
 
 const MENU_ACTIONS = [ 'approve-comment', 'edit-comment', 'spam-comment', 'trash-comment' ];
