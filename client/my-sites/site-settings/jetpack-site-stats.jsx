@@ -1,4 +1,5 @@
 import { Button, FoldableCard } from '@automattic/components';
+import { localizeUrl } from '@automattic/i18n-utils';
 import { ToggleControl } from '@wordpress/components';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -18,6 +19,7 @@ import getCurrentRouteParameterized from 'calypso/state/selectors/get-current-ro
 import isJetpackModuleActive from 'calypso/state/selectors/is-jetpack-module-active';
 import isJetpackModuleUnavailableInDevelopmentMode from 'calypso/state/selectors/is-jetpack-module-unavailable-in-development-mode';
 import isJetpackSiteInDevelopmentMode from 'calypso/state/selectors/is-jetpack-site-in-development-mode';
+import isSiteWpcom from 'calypso/state/selectors/is-site-wpcom';
 import { getSelectedSiteId, getSelectedSiteSlug } from 'calypso/state/ui/selectors';
 
 class JetpackSiteStats extends Component {
@@ -106,7 +108,7 @@ class JetpackSiteStats extends Component {
 	}
 
 	render() {
-		const { moduleUnavailable, siteId, siteRoles, siteSlug, translate } = this.props;
+		const { moduleUnavailable, siteId, siteIsWpcom, siteRoles, siteSlug, translate } = this.props;
 
 		const header = (
 			<JetpackModuleToggle
@@ -134,7 +136,13 @@ class JetpackSiteStats extends Component {
 								'Displays information on your site activity, ' +
 									'including visitors and popular posts or pages.'
 							) }
-							link="https://jetpack.com/support/wordpress-com-stats/"
+							{ ...( siteIsWpcom
+								? {
+										link: localizeUrl( 'https://wordpress.com/support/stats/' ),
+										supportPostId: 4454,
+										privacyLink: false,
+									}
+								: { link: 'https://jetpack.com/support/wordpress-com-stats/' } ) }
 						/>
 						{ this.renderToggle(
 							'admin_bar',
@@ -195,6 +203,7 @@ export default connect(
 			siteId,
 			siteSlug: getSelectedSiteSlug( state, siteId ),
 			statsModuleActive: isJetpackModuleActive( state, siteId, 'stats' ),
+			siteIsWpcom: isSiteWpcom( state, siteId ),
 			moduleUnavailable: siteInDevMode && moduleUnavailableInDevMode,
 			path,
 		};
