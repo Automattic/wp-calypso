@@ -924,8 +924,7 @@ This mixin generates alias variables for a color palette. For example, the
 
 		// Scoped to unselected indicators so the accent fill on selected
 		// ones still wins.
-		.dataviews-filters__search-widget-listitem-single-selection:not( .is-selected, :checked ),
-		.dataviews-filters__search-widget-listitem-multi-selection:not( .is-selected, :checked ) {
+		.dataviews-filters__selection-indicator[data-unchecked] {
 			border-color: var( --dashboard-field__border-color );
 			background: var( --dashboard-surface__background-color );
 		}
