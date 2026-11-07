@@ -42,9 +42,9 @@
 		"@automattic/global-styles": "workspace:^",
 		"@automattic/i18n-utils": "workspace:^",
 		"@automattic/onboarding": "workspace:^",
-		"@wordpress/components": "^37.0.0",
+		"@wordpress/components": "^44.0.0",
 		"@wordpress/html-entities": "^5.1.0",
-		"@wordpress/icons": "^15.5.0",
+		"@wordpress/icons": "^20.0.0",
 		"@wordpress/react-i18n": "^5.1.0",
 		"clsx": "^2.1.1",
 		"tslib": "^2.8.1"
