@@ -1,9 +1,8 @@
 import { useNavigate } from '@tanstack/react-router';
-import { __ } from '@wordpress/i18n';
 import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import { AgencyNotices } from '../components/agency-notices';
-import { getFeatureName } from './constants';
+import { getFeatureDescription, getFeatureName } from './constants';
 import AmplifyContent from './content';
 import AmplifyHeaderActions from './header-actions';
 import { AmplifyApprovalNotice } from './usage-meter';
@@ -35,9 +34,7 @@ export default function AgencyAmplify() {
 			header={
 				<PageHeader
 					title={ getFeatureName() }
-					description={ __(
-						'Win more business by auditing a prospect’s homepage, spotting the problems, and pitching the fix.'
-					) }
+					description={ getFeatureDescription() }
 					actions={ <AmplifyHeaderActions page={ page } tiersLink={ tiersLink } /> }
 				/>
 			}
