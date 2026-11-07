@@ -69,11 +69,12 @@
 	display: none;
 }
 
-// The dashboard's lists have no bullets by default.
-.wordpress-migration__fallbacks {
+// The dashboard's lists have no markers by default. Bullets for the help, numbers for the steps, so a long domain wraps
+// under the item's text rather than under its marker.
+.wordpress-migration__list {
 	margin: 0;
 	padding-inline-start: 20px;
-	list-style: disc;
+	list-style: revert;
 }
 
 // Centered on the first line of text: the icon is 18px, its line 20px.
@@ -96,6 +97,11 @@
 	.dashboard-section-header__decoration {
 		width: auto;
 		height: 20px;
+	}
+
+	// A title can name the source, and a long domain has nowhere to break on its own.
+	.dashboard-section-header__heading {
+		overflow-wrap: anywhere;
 	}
 }
 
@@ -180,4 +186,9 @@
 			inset -1px 0 0 var( --dashboard-surface__border-color ),
 			inset 0 -1px 0 var( --dashboard-surface__border-color );
 	}
+}
+
+// A domain is one long word, so let it break anywhere rather than run past the card.
+.wordpress-migration__domain {
+	overflow-wrap: anywhere;
 }
