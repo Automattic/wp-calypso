@@ -382,7 +382,7 @@
 		"@wordpress/blocks": "15.23.0",
 		"@wordpress/browserslist-config": "7.1.0",
 		"@wordpress/commands": "2.1.0",
-		"@wordpress/components": "44.0.0",
+		"@wordpress/components": "patch:@wordpress/components@npm%3A44.0.0#~/.yarn/patches/@wordpress-components-npm-44.0.0-c0c10d0a43.patch",
 		"@wordpress/compose": "9.1.0",
 		"@wordpress/core-data": "7.48.0",
 		"@wordpress/data-controls": "5.1.0",

@@ -12820,6 +12820,64 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@wordpress/components@patch:@wordpress/components@npm%3A44.0.0#~/.yarn/patches/@wordpress-components-npm-44.0.0-c0c10d0a43.patch":
+  version: 44.0.0
+  resolution: "@wordpress/components@patch:@wordpress/components@npm%3A44.0.0#~/.yarn/patches/@wordpress-components-npm-44.0.0-c0c10d0a43.patch::version=44.0.0&hash=5f6dc7"
+  dependencies:
+    "@ariakit/react": "npm:^0.4.42"
+    "@date-fns/utc": "npm:^2.1.1"
+    "@floating-ui/react-dom": "npm:^2.1.9"
+    "@types/highlight-words-core": "npm:^1.2.1"
+    "@use-gesture/react": "npm:^10.3.1"
+    "@wordpress/a11y": "npm:^5.1.0"
+    "@wordpress/base-styles": "npm:^15.0.0"
+    "@wordpress/compose": "npm:^9.1.0"
+    "@wordpress/date": "npm:^6.1.0"
+    "@wordpress/deprecated": "npm:^5.1.0"
+    "@wordpress/dom": "npm:^5.1.0"
+    "@wordpress/element": "npm:^10.1.0"
+    "@wordpress/escape-html": "npm:^4.1.0"
+    "@wordpress/hooks": "npm:^5.1.0"
+    "@wordpress/html-entities": "npm:^5.1.0"
+    "@wordpress/i18n": "npm:^7.1.0"
+    "@wordpress/icons": "npm:^20.0.0"
+    "@wordpress/is-shallow-equal": "npm:^6.1.0"
+    "@wordpress/keycodes": "npm:^5.1.0"
+    "@wordpress/primitives": "npm:^5.1.0"
+    "@wordpress/private-apis": "npm:^3.1.0"
+    "@wordpress/react-inert-value": "npm:^2.1.0"
+    "@wordpress/rich-text": "npm:^8.1.0"
+    "@wordpress/style-runtime": "npm:^0.15.0"
+    "@wordpress/ui": "npm:^0.26.0"
+    "@wordpress/warning": "npm:^4.1.0"
+    change-case: "npm:^4.1.2"
+    clsx: "npm:^2.1.1"
+    colord: "npm:^2.9.4"
+    csstype: "npm:^3.2.3"
+    date-fns: "npm:^4.4.0"
+    deepmerge: "npm:^4.3.1"
+    fast-deep-equal: "npm:^3.1.3"
+    framer-motion: "npm:^11.15.0"
+    gradient-parser: "npm:^1.2.0"
+    highlight-words-core: "npm:^1.2.2"
+    is-plain-object: "npm:^5.1.0"
+    memize: "npm:^2.1.1"
+    path-to-regexp: "npm:^6.2.1"
+    re-resizable: "npm:^6.11.2"
+    react-colorful: "npm:^5.6.1"
+    remove-accents: "npm:^0.5.0"
+    uuid: "npm:^14.0.0"
+  peerDependencies:
+    "@types/react": ^18 || ^19
+    react: ^18 || ^19
+    react-dom: ^18 || ^19
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 1b086e266df8fe825e56b0fe6a9218cd3d90aad499b93cd356cff6882b4acdf7f687cd91d21020c2373348c52370c4ebff9b18b4666609b6b67d75daaf9a5cde
+  languageName: node
+  linkType: hard
+
 "@wordpress/compose@npm:9.1.0":
   version: 9.1.0
   resolution: "@wordpress/compose@npm:9.1.0"
