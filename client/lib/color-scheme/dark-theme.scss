@@ -763,6 +763,15 @@ This mixin generates alias variables for a color palette. For example, the
 }
 
 @mixin color-scheme-dark-theme-popover {
+	// `@wordpress/ui` menus and selects, like the DataViews row actions and page picker, render
+	// into a portal on <body> and paint their surface with WPDS tokens left at their light
+	// defaults, which put the light text on white.
+	[data-wp-compat-overlay-slot],
+	[data-base-ui-portal] {
+		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
+		--wpds-color-stroke-surface-neutral: var( --dashboard-surface__border-color );
+	}
+
 	.components-popover__content {
 		background: var( --dashboard-surface__background-color );
 		color: var( --dashboard__text-color );

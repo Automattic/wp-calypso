@@ -522,21 +522,8 @@
 }
 
 // :root variables overridden for dark theme
-/* `@wordpress/ui` popovers */
-@mixin dashboard-dark-theme-ui-popovers {
-	// `@wordpress/ui` menus and selects, like the DataViews row actions and page picker, render
-	// into a portal on <body> and paint their surface with WPDS tokens left at their light
-	// defaults, which put the light text on white.
-	[data-wp-compat-overlay-slot],
-	[data-base-ui-portal] {
-		--wpds-color-background-surface-neutral-strong: var( --dashboard-surface__background-color );
-		--wpds-color-stroke-surface-neutral: var( --dashboard-surface__border-color );
-	}
-}
-
 @mixin dashboard-dark-theme {
 	@include color-scheme-dark-theme-tokens;
-	@include dashboard-dark-theme-ui-popovers;
 	@include color-scheme-dark-theme-calypso-properties;
 	@include color-scheme-dark-theme-color-scheme;
 	@include color-scheme-dark-theme-action-list;
