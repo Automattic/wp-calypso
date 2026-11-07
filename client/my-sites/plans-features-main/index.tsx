@@ -784,8 +784,11 @@ const PlansFeaturesMain = ( {
 		usePlansGridRedesignNewDescription,
 	} = usePlansGridRedesignExperiment( { isInSignup, intent } );
 
-	const { isLoading: isPlanDifferentiatorsExperimentLoading, useReversedPlanOrder } =
-		usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup, siteId } );
+	const {
+		isLoading: isPlanDifferentiatorsExperimentLoading,
+		useReversedPlanOrder,
+		useMcpFeature,
+	} = usePlanDifferentiatorsExperiment( { flowName, intent, isInSignup, siteId } );
 
 	const eligibleForFreeHostingTrial = useSelector( isUserEligibleForFreeHostingTrial );
 
@@ -1104,6 +1107,7 @@ const PlansFeaturesMain = ( {
 		reflectStorageSelectionInPlanPrices: true,
 		usePlansGridRedesignFeatures,
 		usePlansGridRedesignNewDescription,
+		useMcpFeature,
 		showBillingDescriptionForIncreasedRenewalPrice: renewalPricingVariation,
 	} );
 
@@ -1453,6 +1457,7 @@ const PlansFeaturesMain = ( {
 			// curated intent keeps for itself. Leaving this un-gated pairs experiment rows and group
 			// titles with a control list.
 			isExperimentVariant: ! hasTailoredFeatureList( intent ),
+			useMcpFeature,
 		} );
 	}
 
