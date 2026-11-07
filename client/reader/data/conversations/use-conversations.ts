@@ -85,6 +85,9 @@ function adaptPage< Row extends object, Item extends Conversation | OwnComment >
 	return items;
 }
 
+const hasMorePages = ( { state }: { state: { data?: { pages: unknown[] } } } ) =>
+	( state.data?.pages.length ?? 0 ) > 1;
+
 export function useConversations( {
 	sort,
 	search,
@@ -103,8 +106,9 @@ export function useConversations( {
 		placeholderData: keepPreviousData,
 		enabled,
 		// Refetching an infinite query refetches every page, so live updates stop once more are loaded.
-		refetchInterval: ( { state } ) =>
-			( state.data?.pages.length ?? 0 ) > 1 ? false : ( refetchInterval ?? false ),
+		refetchInterval: ( query ) => ! hasMorePages( query ) && ( refetchInterval ?? false ),
+		refetchOnWindowFocus: ( query ) => ! hasMorePages( query ),
+		refetchOnReconnect: ( query ) => ! hasMorePages( query ),
 	} );
 	const { data } = query;
 	const conversations = useMemo(
