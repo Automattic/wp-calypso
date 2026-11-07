@@ -94,6 +94,7 @@ export const isCiabOAuth2Client = ( oauth2Client ) => {
 };
 
 const JETPACK_APP_URI_SCHEME = 'jetpack://';
+const WORDPRESS_APP_URI_SCHEME = 'wordpress://';
 
 // The redirect_uri reaches the login page nested inside redirect_to, where it is
 // often multiply percent-encoded (e.g. `jetpack%253A%252F%252F...`). Decode until
@@ -135,5 +136,19 @@ export const isJetpackAppRedirectUri = ( redirectUri ) => {
 	return (
 		typeof redirectUri === 'string' &&
 		fullyDecode( redirectUri ).toLowerCase().startsWith( JETPACK_APP_URI_SCHEME )
+	);
+};
+
+// True when the redirect_uri targets either WordPress.com mobile app (WordPress or Jetpack).
+// Both drive login/signup through a system auth session whose user agent lacks the
+// `wp-iphone`/`wp-android` token, so the redirect_uri scheme is the only reliable app signal
+// on that surface.
+export const isMobileAppRedirectUri = ( redirectUri ) => {
+	if ( typeof redirectUri !== 'string' ) {
+		return false;
+	}
+	const decoded = fullyDecode( redirectUri ).toLowerCase();
+	return (
+		decoded.startsWith( JETPACK_APP_URI_SCHEME ) || decoded.startsWith( WORDPRESS_APP_URI_SCHEME )
 	);
 };
