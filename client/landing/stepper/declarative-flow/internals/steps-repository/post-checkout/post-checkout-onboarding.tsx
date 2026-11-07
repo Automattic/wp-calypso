@@ -1,4 +1,5 @@
 import { siteBySlugQuery } from '@automattic/api-queries';
+import config from '@automattic/calypso-config';
 import {
 	FEATURE_BIG_SKY,
 	isBusiness,
@@ -18,10 +19,11 @@ import { useQuery as useUrlParams } from 'calypso/landing/stepper/hooks/use-quer
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { waitForPluginsActive } from 'calypso/landing/stepper/utils/wait-for-plugins-active';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
+import { logToLogstash } from 'calypso/lib/logstash';
 import { useMarketplaceThemeProducts } from '../../../../hooks/use-marketplace-theme-products';
 import { useSiteSlugParam } from '../../../../hooks/use-site-slug-param';
 import { useSiteTransferStatusQuery } from '../../../../hooks/use-site-transfer-status-query';
-import { useWaitForAtomic } from '../../../../hooks/use-wait-for-atomic';
+import { useWaitForAtomic, FailureInfo } from '../../../../hooks/use-wait-for-atomic';
 import { shouldUseStepContainerV2 } from '../../../helpers/should-use-step-container-v2';
 import type { Step as StepType } from '../../types';
 import type { OnboardSelect } from '@automattic/data-stores';
@@ -48,7 +50,7 @@ const PostCheckoutOnboarding: StepType< {
 } > = ( { flow, navigation } ) => {
 	const { __ } = useI18n();
 	const { submit } = navigation;
-	const { setPendingAction } = useDispatch( ONBOARD_STORE );
+	const { setPendingAction, setTransferTimedOut } = useDispatch( ONBOARD_STORE );
 
 	const siteSlug = useSiteSlugParam() ?? '';
 	const {
@@ -103,13 +105,53 @@ const PostCheckoutOnboarding: StepType< {
 		isError: isErrorSiteTransferStatus,
 	} = useSiteTransferStatusQuery( site?.ID );
 
+	const handleTransferFailure = ( failureInfo: FailureInfo ) => {
+		logToLogstash( {
+			feature: 'calypso_client',
+			message: failureInfo.error,
+			severity:
+				config( 'env_id' ) === 'production' && ! failureInfo.recoverable ? 'error' : 'debug',
+			blog_id: site?.ID,
+			properties: {
+				env: config( 'env_id' ),
+				type: 'calypso_post_checkout_atomic_wait',
+				action: failureInfo.type,
+				code: failureInfo.code,
+				recoverable: !! failureInfo.recoverable,
+			},
+		} );
+	};
+
 	const { waitForInitiateTransfer, waitForTransfer, waitForFeature, waitForLatestSiteData } =
-		useWaitForAtomic( { siteId: site?.ID } );
+		useWaitForAtomic( { handleTransferFailure, siteId: site?.ID } );
 
 	const { setIntentOnSite, setGoalsOnSite } = useDispatch( SITE_STORE );
 
+	// Prefer the cart item (what the user just bought — freshest signal during
+	// post-checkout) over site.plan (which can be stale before the site's plan
+	// assignment syncs).
+	const effectivePlan = planCartItem ?? site?.plan;
+	const isCommercePlan = !! effectivePlan && isEcommerce( effectivePlan );
+
+	// A paid Commerce checkout headed for the setup chooser must not end on the error step because
+	// the transfer or the site data is slow: the transfer keeps running server-side.
+	const toleratesSlowAtomicWait = isCommercePlan && !! showBigSkyChoice && flow === ONBOARDING_FLOW;
+
 	const waitForAtomic = async () => {
-		await waitForTransfer();
+		await waitForTransfer(
+			toleratesSlowAtomicWait
+				? {
+						onDeadlineExceeded: () => {
+							setTransferTimedOut( true );
+							recordTracksEvent( 'calypso_onboarding_post_checkout_setup_error', {
+								flow,
+								error_transfer_deadline: true,
+								recoverable: true,
+							} );
+						},
+					}
+				: {}
+		);
 		// An existing site handed over from another flow arrives with an empty store; don't let
 		// that overwrite the intent and goals the site already has.
 		if ( intent ) {
@@ -119,7 +161,18 @@ const PostCheckoutOnboarding: StepType< {
 			await setGoalsOnSite( siteSlug, goals );
 		}
 		await waitForFeature();
-		await waitForLatestSiteData();
+		try {
+			await waitForLatestSiteData();
+		} catch ( error ) {
+			if ( ! toleratesSlowAtomicWait ) {
+				throw error;
+			}
+			recordTracksEvent( 'calypso_onboarding_post_checkout_setup_error', {
+				flow,
+				error_site_data_timeout: true,
+				recoverable: true,
+			} );
+		}
 	};
 
 	const goalPlugin = usePluginByGoal();
@@ -127,12 +180,6 @@ const PostCheckoutOnboarding: StepType< {
 
 	const refParameter = useUrlParams().get( 'ref' );
 	const isWooHostingSolutions = refParameter === WOO_HOSTING_SOLUTIONS_REF;
-
-	// Prefer the cart item (what the user just bought — freshest signal during
-	// post-checkout) over site.plan (which can be stale before the site's plan
-	// assignment syncs).
-	const effectivePlan = planCartItem ?? site?.plan;
-	const isCommercePlan = !! effectivePlan && isEcommerce( effectivePlan );
 
 	// Woo-hosting-solutions ref:
 	// - Commerce plans: the backend auto-provisions the Atomic transfer and
@@ -212,7 +259,7 @@ const PostCheckoutOnboarding: StepType< {
 			// via the transfer initiated above).
 			if ( isWooHostingSolutions ) {
 				await waitForPluginsActive( site.ID, [ 'woocommerce' ] );
-			} else if ( isCommercePlan && showBigSkyChoice && flow === ONBOARDING_FLOW ) {
+			} else if ( toleratesSlowAtomicWait ) {
 				// A Commerce site headed for the onboarding setup chooser waits too, so neither
 				// builder opens on a half-made store. A store still not ready after the wait skips
 				// the chooser instead of failing a paid checkout.
