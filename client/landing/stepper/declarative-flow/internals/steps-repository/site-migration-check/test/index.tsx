@@ -110,7 +110,7 @@ describe( 'SiteMigrationCheck', () => {
 		expect(
 			screen.queryByRole( 'img', { name: 'Source site to be copied' } )
 		).not.toBeInTheDocument();
-		expect( screen.getByRole( 'heading', { name: 'Migrate example.com' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { name: 'Migrate your site' } ) ).toBeVisible();
 		await userEvent.click( screen.getByRole( 'button', { name: 'Try again' } ) );
 		expect( retry ).toHaveBeenCalledTimes( 1 );
 		await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
@@ -164,6 +164,38 @@ describe( 'SiteMigrationCheck', () => {
 			screen.queryByRole( 'button', { name: 'Upgrade and continue' } )
 		).not.toBeInTheDocument();
 	} );
+
+	it.each( [ false, true ] )(
+		'blocks a source that resolves to the destination (needs upgrade: %s)',
+		async ( needsUpgrade ) => {
+			const submit = jest.fn();
+			renderStep(
+				<SiteMigrationCheck
+					{ ...mockStepProps( { navigation: { submit } } ) }
+					destinationSiteSlug="destination.wordpress.com"
+					destinationSiteUrls={ [ 'destination.wordpress.com', 'https://www.example.com' ] }
+					needsUpgrade={ needsUpgrade }
+				/>,
+				{ initialEntry: '/site-migration-check?from=https://example.com/&platform=wordpress' }
+			);
+			expect( screen.getByRole( 'alert' ) ).toHaveTextContent(
+				'example.com is the destination site, so it can’t also be the source.'
+			);
+			for ( const name of [ 'Continue', 'Upgrade and continue', 'Replace and continue' ] ) {
+				expect( screen.queryByRole( 'button', { name } ) ).not.toBeInTheDocument();
+			}
+			expect( screen.queryByText( /will be (copied|replaced)/ ) ).not.toBeInTheDocument();
+			await userEvent.click( screen.getByRole( 'button', { name: 'Use a different site' } ) );
+			expect( submit ).toHaveBeenLastCalledWith( {
+				action: 'select-existing-site',
+				from: 'https://example.com/',
+				platform: 'wordpress',
+				host: undefined,
+			} );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Enter a different source' } ) );
+			expect( submit ).toHaveBeenLastCalledWith( { action: 'back' } );
+		}
+	);
 
 	it( 'shows the supplied site and waits for Continue, with the expert link disabled', async () => {
 		const submit = jest.fn();
@@ -236,7 +268,7 @@ describe( 'SiteMigrationCheck', () => {
 				screen.queryByText( /We couldn’t load the destination site/ )
 			).not.toBeInTheDocument();
 			expect(
-				screen.getByRole( 'heading', { name: 'Your site is already on WordPress.com' } )
+				screen.getByRole( 'heading', { name: 'This site is already on WordPress.com' } )
 			).toBeVisible();
 			expect( screen.getByText( 'cotrim.dev' ) ).toBeVisible();
 			expect( screen.getByRole( 'link', { name: 'WordPress site ↗' } ) ).toHaveAttribute(

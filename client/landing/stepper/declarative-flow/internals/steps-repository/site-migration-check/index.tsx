@@ -8,6 +8,7 @@ import { useTranslate, type TranslateResult } from 'i18n-calypso';
 import { useEffect, useState } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { SitePreview } from '../site-migration-instructions/site-preview';
 import { mShotConfigs } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
 import successIcon from './success.svg';
@@ -24,6 +25,7 @@ const SiteMigrationCheck: StepType< {
 	accepts: {
 		destinationSiteSlug?: string;
 		destinationSiteUrl?: string;
+		destinationSiteUrls?: string[];
 		destinationPlanName?: string;
 		needsUpgrade?: boolean;
 		isLoadingDestination?: boolean;
@@ -50,6 +52,7 @@ const SiteMigrationCheck: StepType< {
 	navigation,
 	destinationSiteSlug,
 	destinationSiteUrl,
+	destinationSiteUrls = [],
 	destinationPlanName,
 	needsUpgrade,
 	isLoadingDestination,
@@ -70,8 +73,9 @@ const SiteMigrationCheck: StepType< {
 	const hasSource =
 		!! hostname && ( protocol === 'http:' || protocol === 'https:' ) && platform === 'wordpress';
 	const hasDestination = ! showChoices && ( !! destinationSiteSlug || !! destinationFailed );
-	const showUpgrade = hasDestination && needsUpgrade;
-	const showComparison = hasDestination && ! needsUpgrade;
+	const isSameSite = hasDestination && isSiteAddress( from, destinationSiteUrls );
+	const showUpgrade = hasDestination && needsUpgrade && ! isSameSite;
+	const showComparison = hasDestination && ! needsUpgrade && ! isSameSite;
 	let continueLabel = translate( 'Continue' );
 	if ( showUpgrade ) {
 		continueLabel = translate( 'Upgrade and continue' );
@@ -81,9 +85,9 @@ const SiteMigrationCheck: StepType< {
 	let title: TranslateResult = translate( 'We can copy your whole site' );
 	let subTitle: TranslateResult | undefined;
 	if ( hasDestination ) {
-		title = translate( 'Migrate %(site)s', { args: { site: hostname } } );
+		title = translate( 'Migrate your site' );
 	} else if ( isWpcom ) {
-		title = translate( 'Your site is already on WordPress.com' );
+		title = translate( 'This site is already on WordPress.com' );
 		subTitle = translate( 'Let’s figure out your next step together.' );
 	}
 	const choices: {
@@ -110,7 +114,7 @@ const SiteMigrationCheck: StepType< {
 		choices.unshift( {
 			action: 'use-as-destination',
 			title: __( 'Move your external site here' ),
-			description: __( 'Choose the site you want to bring to this WordPress.com site.' ),
+			description: __( 'Choose the site you want to migrate into this WordPress.com site.' ),
 		} );
 	}
 
@@ -274,11 +278,13 @@ const SiteMigrationCheck: StepType< {
 											label={ translate( 'Source site to be copied' ) }
 											mshotsOptions={ PREVIEW_OPTIONS }
 										/>
-										<p className="site-migration-check__preview-description">
-											{ translate(
-												'The content on this site will be copied. No changes will be made to the site itself.'
-											) }
-										</p>
+										{ ! isSameSite && (
+											<p className="site-migration-check__preview-description">
+												{ translate(
+													'The content on this site will be copied. No changes will be made to the site itself.'
+												) }
+											</p>
+										) }
 									</div>
 									<span className="site-migration-check__comparison-arrow" aria-hidden="true">
 										→
@@ -306,9 +312,11 @@ const SiteMigrationCheck: StepType< {
 											label={ translate( 'Current destination site' ) }
 											mshotsOptions={ PREVIEW_OPTIONS }
 										/>
-										<p className="site-migration-check__preview-description">
-											{ translate( 'All of the content on this site will be replaced.' ) }
-										</p>
+										{ ! isSameSite && (
+											<p className="site-migration-check__preview-description">
+												{ translate( 'All of the content on this site will be replaced.' ) }
+											</p>
+										) }
 									</div>
 								</div>
 							) : (
@@ -335,6 +343,16 @@ const SiteMigrationCheck: StepType< {
 										) }
 									</p>
 								) }
+								{ isSameSite && (
+									<Notice status="error" isDismissible={ false }>
+										<span role="alert">
+											{ translate(
+												'%(site)s is the destination site, so it can’t also be the source. Choose a different destination or enter a different source.',
+												{ args: { site: hostname } }
+											) }
+										</span>
+									</Notice>
+								) }
 								{ ! hasDestination && (
 									<Notice status="success" isDismissible={ false }>
 										<img src={ successIcon } alt="" width={ 24 } height={ 24 } />
@@ -347,21 +365,42 @@ const SiteMigrationCheck: StepType< {
 									</Notice>
 								) }
 								<div className="site-migration-check__actions">
-									<Step.PrimaryButton
-										onClick={ () => {
-											if ( showComparison ) {
-												setIsSubmitting( true );
-											}
-											navigation.submit?.( {
-												action: 'continue',
-												from,
-												platform: 'wordpress',
-												host,
-											} );
-										} }
-									>
-										{ continueLabel }
-									</Step.PrimaryButton>
+									{ isSameSite && (
+										<>
+											<Step.PrimaryButton
+												onClick={ () =>
+													navigation.submit?.( {
+														action: 'select-existing-site',
+														from,
+														platform: 'wordpress',
+														host,
+													} )
+												}
+											>
+												{ translate( 'Use a different site' ) }
+											</Step.PrimaryButton>
+											<Step.LinkButton onClick={ returnToAddress }>
+												{ translate( 'Enter a different source' ) }
+											</Step.LinkButton>
+										</>
+									) }
+									{ ! isSameSite && (
+										<Step.PrimaryButton
+											onClick={ () => {
+												if ( showComparison ) {
+													setIsSubmitting( true );
+												}
+												navigation.submit?.( {
+													action: 'continue',
+													from,
+													platform: 'wordpress',
+													host,
+												} );
+											} }
+										>
+											{ continueLabel }
+										</Step.PrimaryButton>
+									) }
 									{ showComparison && (
 										<Step.LinkButton
 											onClick={ () =>

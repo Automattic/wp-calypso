@@ -14,6 +14,7 @@ import DocumentHead from 'calypso/components/data/document-head';
 import { useAnalyzeUrlQuery } from 'calypso/data/site-profiler/use-analyze-url-query';
 import { useHostingProviderQuery } from 'calypso/data/site-profiler/use-hosting-provider-query';
 import { useQuery } from 'calypso/landing/stepper/hooks/use-query';
+import { isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { urlToDomain } from 'calypso/lib/url';
 import { useSitePreviewMShotImageHandler } from '../site-migration-instructions/site-preview/hooks/use-site-preview-mshot-image-handler';
@@ -28,11 +29,6 @@ type ConnectionIssue = 'unreachable';
 
 // How long checking a site stays on screen at least, so a quick answer doesn't flash past.
 const MINIMUM_CHECK_DURATION_MS = 1500;
-
-const getSiteHostname = ( url: string ) =>
-	getUrlParts( /^https?:\/\//i.test( url ) ? url : `https://${ url }` )
-		.hostname.replace( /^www\./, '' )
-		.replace( /\.$/, '' );
 
 interface Props {
 	hasError?: boolean;
@@ -62,9 +58,7 @@ export const Analyzer: FC< Props > = ( {
 	const translate = useTranslate();
 	const enteredURL = /^https?:\/\//i.test( siteURL ) ? siteURL : `https://${ siteURL }`;
 	const isDestinationUrl = ( sourceUrl: string ) =>
-		isReprintFlow &&
-		!! getSiteHostname( sourceUrl ) &&
-		destinationSiteUrls.some( ( url ) => getSiteHostname( url ) === getSiteHostname( sourceUrl ) );
+		isReprintFlow && isSiteAddress( sourceUrl, destinationSiteUrls );
 	const isDestinationSite = isDestinationUrl( siteURL );
 	const onCompleteRef = useRef( onComplete );
 	onCompleteRef.current = onComplete;

@@ -1860,6 +1860,7 @@ describe( 'Site Migration Flow', () => {
 						copySiteEligibility: 'ineligible',
 						canUseAsDestination: false,
 						destinationSiteSlug: 'example.wordpress.com',
+						destinationSiteUrls: [ 'example.wordpress.com' ],
 						destinationPlanName: plan?.product_name_short,
 						needsUpgrade: !! plan,
 						isLoadingDestination: ! plan,
@@ -1959,6 +1960,7 @@ describe( 'Site Migration Flow', () => {
 					copySiteEligibility: 'ineligible',
 					canUseAsDestination: false,
 					destinationSiteSlug: destination.siteSlug,
+					destinationSiteUrls: [ destination.siteSlug ],
 					destinationPlanName: 'Personal',
 					needsUpgrade: false,
 					isLoadingDestination: false,
@@ -1985,6 +1987,47 @@ describe( 'Site Migration Flow', () => {
 					},
 				} );
 				expect( goToCheckout ).not.toHaveBeenCalled();
+			} );
+
+			it( 'does not configure a destination that is also the source', () => {
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					...destination,
+					site: {
+						URL: 'https://www.source.example.com',
+						plan: { product_name_short: 'Personal', features: { active: [ 'install-plugins' ] } },
+					},
+				} );
+				const configure = nock( 'https://public-api.wordpress.com' )
+					.post( '/wpcom/v2/sites/123/wordpress-migration/configure' )
+					.reply( 200, {} );
+				runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					query: { ...context, ...destination },
+					dependencies: { ...context, action: 'continue' },
+				} );
+				expect( configure.isDone() ).toBe( false );
+				expect( window.location.assign ).not.toHaveBeenCalled();
+				expect( goToCheckout ).not.toHaveBeenCalled();
+				nock.cleanAll();
+			} );
+
+			it.each( [
+				[ 'clears the source', 'https://www.source.example.com', true ],
+				[ 'keeps the existing return', 'https://destination.example.com', false ],
+			] )( '%s when returning to the address form', ( _name, destinationUrl, clearsSource ) => {
+				const destination = { siteId: 123, siteSlug: 'example.wordpress.com' };
+				jest.spyOn( siteData, 'useSiteData' ).mockReturnValue( {
+					...destination,
+					site: { URL: destinationUrl },
+				} );
+				const result = runNavigation( {
+					from: STEPS.SITE_MIGRATION_CHECK,
+					query: { ...context, ...destination },
+					dependencies: { action: 'back' },
+				} );
+				expect( result.step ).toBe( STEPS.SITE_MIGRATION_IDENTIFY.slug );
+				expect( result.query.get( 'from' ) ).toBe( clearsSource ? '' : null );
 			} );
 
 			it.each( [ STEPS.UNIFIED_PLANS, STEPS.PROCESSING ] )(

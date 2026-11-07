@@ -35,6 +35,7 @@ import { useSiteCopy } from 'calypso/landing/stepper/hooks/use-site-copy';
 import { useSiteData } from 'calypso/landing/stepper/hooks/use-site-data';
 import { ONBOARD_STORE, SITE_STORE } from 'calypso/landing/stepper/stores';
 import { goToCheckout } from 'calypso/landing/stepper/utils/checkout';
+import { getSiteAddresses, isSiteAddress } from 'calypso/landing/stepper/utils/site-address';
 import { stepsWithRequiredLogin } from 'calypso/landing/stepper/utils/steps-with-required-login';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { triggerGuidesForStep } from 'calypso/lib/guides/trigger-guides-for-step';
@@ -243,16 +244,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 			config.isEnabled( 'migration/reprint-flow' ) &&
 			query.get( 'how' ) !== HOW_TO_MIGRATE_OPTIONS.DO_IT_FOR_ME &&
 			!! ( siteId || siteSlug );
+		const destinationSiteUrls = getSiteAddresses( siteSlug, site );
 		return {
 			importList: {
 				allowAutomaticDetection: config.isEnabled( 'migration/reprint-flow' ),
 			},
 			'site-migration-identify': {
-				destinationSiteUrls: [
-					siteSlug,
-					site?.URL ?? '',
-					site?.options?.unmapped_url ?? '',
-				].filter( Boolean ),
+				destinationSiteUrls,
 				// A landing page hands over an address the user already submitted, so check it once on arrival.
 				checkOnArrival:
 					config.isEnabled( 'migration/reprint-flow' ) &&
@@ -284,6 +282,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 				canUseAsDestination: ! isLoadingSource && canUseAsMigrationDestination( sourceSite ),
 				destinationSiteSlug: hasDestination ? siteSlug : undefined,
 				destinationSiteUrl: hasDestination ? site?.URL : undefined,
+				destinationSiteUrls,
 				destinationPlanName: site?.plan?.product_name_short || site?.plan?.product_name,
 				needsUpgrade: hasDestination && !! site?.plan && ! canInstallPlugins( site ),
 				isLoadingDestination: hasDestination && ! site?.plan && ! hasSiteError,
@@ -456,7 +455,7 @@ const siteMigration: FlowV2< typeof initialize > = {
 					} )
 				);
 			}
-			if ( ! site?.plan ) {
+			if ( ! site?.plan || isSiteAddress( from, getSiteAddresses( destinationSlug, site ) ) ) {
 				return;
 			}
 			if ( ! siteCanInstallPlugins ) {
@@ -574,6 +573,13 @@ const siteMigration: FlowV2< typeof initialize > = {
 								localizeUrl( 'https://wordpress.com/support/account-recovery/' )
 							);
 						}
+					}
+					if (
+						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
+						action === 'back' &&
+						isSiteAddress( fromQueryParam || '', getSiteAddresses( siteSlug, site ) )
+					) {
+						return replace( paths.identifyPath( { from: '', host: '' } ) );
 					}
 					if (
 						slug === STEPS.SITE_MIGRATION_CHECK.slug &&
