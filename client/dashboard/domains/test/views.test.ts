@@ -45,26 +45,34 @@ describe( 'sanitizeDomainsListPageSize', () => {
 } );
 
 describe( 'sanitizeDomainsListLayout', () => {
-	test( 'returns the same view when its layout is available', () => {
-		const tableView: View = { type: 'table', layout: { density: 'compact' } };
+	test( 'returns the same view when it is already a grid', () => {
 		const gridView: View = { type: 'grid', layout: { previewSize: 290 } };
 
-		expect( sanitizeDomainsListLayout( tableView ) ).toBe( tableView );
 		expect( sanitizeDomainsListLayout( gridView ) ).toBe( gridView );
 	} );
 
-	test( 'shows a view as a table when its layout is not available, keeping its settings', () => {
+	test( 'shows any other layout as a grid, keeping its settings', () => {
 		const sort = { field: 'expiry', direction: 'desc' as const };
 		const filters = [ { field: 'owner', operator: 'isAny' as const, value: [ 'owned-by-me' ] } ];
 
 		expect(
 			sanitizeDomainsListLayout( {
-				type: 'list',
+				type: 'table',
+				layout: { density: 'compact' },
 				sort,
 				filters,
 				perPage: 24,
 			} )
-		).toEqual( { type: 'table', layout: { density: 'balanced' }, sort, filters, perPage: 24 } );
+		).toEqual( {
+			type: 'grid',
+			layout: { density: 'balanced' },
+			showLevels: false,
+			showMedia: false,
+			titleField: 'domain',
+			sort,
+			filters,
+			perPage: 24,
+		} );
 	} );
 } );
 

@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { screen, within } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import nock from 'nock';
 import { render } from '../../test-utils';
 import Domains from '../index';
@@ -73,28 +73,30 @@ const SAVED_VIEW: Partial< View > = {
 };
 
 describe( '<Domains> saved layouts', () => {
-	test( 'shows a saved view with an unavailable layout as a table and records it once', async () => {
-		mockApis( { ...SAVED_VIEW, type: 'list' } as Partial< View > );
+	test.each( [ 'list', 'table' ] )(
+		'shows a saved %s view as cards and records it once',
+		async ( savedLayout ) => {
+			mockApis( { ...SAVED_VIEW, type: savedLayout } as Partial< View > );
 
-		const { recordTracksEvent } = render( <Domains /> );
+			const { recordTracksEvent } = render( <Domains /> );
 
-		const table = await screen.findByRole( 'table' );
-		expect(
-			within( table )
-				.getAllByText( /-domain\.com$/ )
-				.map( ( name ) => name.textContent )
-		).toEqual( [ 'b-domain.com', 'a-domain.com' ] );
-		expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
+			await screen.findByRole( 'group', { name: 'a-domain.com' } );
+			expect(
+				screen.getAllByRole( 'heading', { level: 3 } ).map( ( heading ) => heading.textContent )
+			).toEqual( [ 'b-domain.com', 'a-domain.com' ] );
+			expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
+			expect( screen.getByRole( 'searchbox' ) ).toBeVisible();
 
-		expect( recordTracksEvent ).toHaveBeenCalledWith(
-			'calypso_dashboard_domains_saved_layout_fallback',
-			{ saved_layout: 'list', fallback_layout: 'table' }
-		);
-		const fallbackEventCount = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
-			( [ eventName ] ) => eventName === 'calypso_dashboard_domains_saved_layout_fallback'
-		).length;
-		expect( fallbackEventCount ).toBe( 1 );
-	} );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_domains_saved_layout_fallback',
+				{ saved_layout: savedLayout, fallback_layout: 'grid' }
+			);
+			const fallbackEventCount = ( recordTracksEvent as jest.Mock ).mock.calls.filter(
+				( [ eventName ] ) => eventName === 'calypso_dashboard_domains_saved_layout_fallback'
+			).length;
+			expect( fallbackEventCount ).toBe( 1 );
+		}
+	);
 
 	test( 'keeps a saved grid view on the cards', async () => {
 		mockApis( { ...SAVED_VIEW, type: 'grid' } as Partial< View > );
@@ -103,18 +105,6 @@ describe( '<Domains> saved layouts', () => {
 
 		await screen.findByRole( 'group', { name: 'a-domain.com' } );
 		expect( screen.queryByRole( 'table' ) ).not.toBeInTheDocument();
-		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
-			'calypso_dashboard_domains_saved_layout_fallback',
-			expect.anything()
-		);
-	} );
-
-	test( 'records nothing when the saved layout is available', async () => {
-		mockApis( { ...SAVED_VIEW, type: 'table' } as Partial< View > );
-
-		const { recordTracksEvent } = render( <Domains /> );
-
-		await screen.findByRole( 'table' );
 		expect( recordTracksEvent ).not.toHaveBeenCalledWith(
 			'calypso_dashboard_domains_saved_layout_fallback',
 			expect.anything()
