@@ -9,40 +9,6 @@ const loadStream = () =>
 		/* webpackChunkName: "async-load-calypso-reader-conversations-stream" */ 'calypso/reader/conversations/stream'
 	);
 
-export function conversations( context, next ) {
-	const basePath = sectionify( context.path );
-	const mcKey = 'conversations';
-	const title = 'Reader > Conversations';
-	const state = context.store.getState();
-
-	trackPageLoad( basePath, 'Reader > Conversations', mcKey );
-	recordTrack(
-		'calypso_reader_conversations_viewed',
-		{},
-		{ pathnameOverride: getCurrentRoute( state ) }
-	);
-
-	const streamKey = 'conversations';
-	const scrollTracker = trackScrollPage.bind(
-		null,
-		'/reader/conversations',
-		title,
-		'Reader',
-		mcKey
-	);
-
-	context.primary = (
-		<AsyncLoad
-			require={ loadStream }
-			key="conversations"
-			streamKey={ streamKey }
-			trackScrollPage={ scrollTracker }
-			placeholder={ null }
-		/>
-	);
-	next();
-}
-
 const loadInbox = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-reader-conversations-inbox" */ 'calypso/reader/conversations/inbox'
