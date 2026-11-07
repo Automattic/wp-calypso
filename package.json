@@ -442,8 +442,7 @@
 		"@wordpress/worker-threads": "2.1.0",
 		"@emotion/native": "patch:@emotion/native@npm%3A11.11.0#~/.yarn/patches/@emotion-native-npm-11.11.0-8a3c683556.patch",
 		"nwsapi": "2.2.28",
-		"marked@npm:^18.0.3": "18.1.1",
-		"@wordpress/block-library@npm:^9.48.0": "patch:@wordpress/block-library@npm%3A9.48.0#~/.yarn/patches/@wordpress-block-library-npm-9.48.0-c0dd0f7825.patch"
+		"marked@npm:^18.0.3": "18.1.1"
 	},
 	"packageManager": "yarn@4.0.2",
 	"dependenciesMeta": {
