@@ -32,7 +32,7 @@
 		"@automattic/calypso-build": "workspace:^",
 		"@wordpress/dependency-extraction-webpack-plugin": "^7.1.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "^4.1.0",
-		"webpack": "^5.111.1"
+		"webpack": "^5.112.2"
 	},
 	"peerDependencies": {
 		"postcss": "*",
