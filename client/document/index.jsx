@@ -5,6 +5,7 @@ import { isLocaleRtl } from '@automattic/i18n-utils';
 import { Step } from '@automattic/onboarding';
 import clsx from 'clsx';
 import { useMemo, Component } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
 import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
 import EnvironmentBadge, {
 	Branch,
@@ -29,6 +30,7 @@ import isDashboardEnv from 'calypso/dashboard/utils/is-dashboard-env';
 import { WooTopBarLogo } from 'calypso/landing/stepper/declarative-flow/internals/components/woo-top-bar-logo';
 import isA8CForAgencies from 'calypso/lib/a8c-for-agencies/is-a8c-for-agencies';
 import { isGravPoweredOAuth2Client, isWooOAuth2Client } from 'calypso/lib/oauth2-clients';
+import { getCachedRuntimeStyles } from 'calypso/server/render/runtime-styles';
 import { jsonStringifyForHtml } from 'calypso/server/sanitize';
 import { initialClientsData, gravatarClientData } from 'calypso/state/oauth2-clients/reducer';
 import { isBilmurEnabled, getBilmurUrl } from './utils/bilmur';
@@ -160,6 +162,25 @@ class Document extends Component {
 			}
 		}
 
+		const loadingPlaceholderProps = {
+			app,
+			dashboard,
+			sectionName,
+			isWCCOM,
+			isOneTapAuth: !! query?.oneTapAuth,
+			isWooCommerceQrLoginAuthCheck:
+				path === '/me/security/qr-login' && query?.origin === 'woocommerce',
+			showStepContainerV2Loader,
+			isPlaygroundWoo,
+		};
+		// Without a server-rendered layout, the loading placeholder is the only markup, and it
+		// renders the same for the same props.
+		const headRuntimeStyles = renderedLayout
+			? runtimeStyles
+			: getCachedRuntimeStyles( `placeholder:${ JSON.stringify( loadingPlaceholderProps ) }`, () =>
+					renderToStaticMarkup( <LoadingPlaceholder { ...loadingPlaceholderProps } /> )
+				);
+
 		return (
 			<html lang={ lang } dir={ isRTL ? 'rtl' : 'ltr' }>
 				<Head
@@ -184,7 +205,7 @@ class Document extends Component {
 						<link key={ chunk } rel="preload" as="script" href={ chunk } />
 					) ) }
 					{ /* Last, where the client would inject them; it skips hashes already present. */ }
-					{ runtimeStyles?.map( ( [ hash, css ] ) => (
+					{ headRuntimeStyles?.map( ( [ hash, css ] ) => (
 						<style
 							key={ hash }
 							data-wp-hash={ hash }
@@ -230,18 +251,7 @@ class Document extends Component {
 								} ) }
 							>
 								<div className="layout__content">
-									<LoadingPlaceholder
-										app={ app }
-										dashboard={ dashboard }
-										sectionName={ sectionName }
-										isWCCOM={ isWCCOM }
-										isOneTapAuth={ !! query?.oneTapAuth }
-										isWooCommerceQrLoginAuthCheck={
-											path === '/me/security/qr-login' && query?.origin === 'woocommerce'
-										}
-										showStepContainerV2Loader={ showStepContainerV2Loader }
-										isPlaygroundWoo={ isPlaygroundWoo }
-									/>
+									<LoadingPlaceholder { ...loadingPlaceholderProps } />
 								</div>
 							</div>
 						</div>
