@@ -1,4 +1,3 @@
-import { isEnabled } from '@automattic/calypso-config';
 import wpcom from 'calypso/lib/wp';
 
 export type RedesignError = { code: string; message: string; retryable?: boolean };
@@ -74,13 +73,7 @@ export type ApiRequest = {
 	body?: Record< string, unknown >;
 };
 
-// Until the wpcom routes are deployed, the `themes/site-redesign-fixtures` flag answers from
-// fixture.ts, which follows the shape in the shared API contract.
 async function request< T >( siteId: number, req: ApiRequest ): Promise< T > {
-	if ( isEnabled( 'themes/site-redesign-fixtures' ) ) {
-		const { fixtureRequest } = await import( './fixture' );
-		return fixtureRequest< T >( siteId, req );
-	}
 	const { method, path, query, body } = req;
 	const fullPath = `/sites/${ siteId }/site-redesign${ path }`;
 	if ( method === 'GET' ) {
