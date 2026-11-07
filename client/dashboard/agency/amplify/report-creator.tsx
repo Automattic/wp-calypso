@@ -3,6 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import {
 	BaseControl,
 	Button,
+	Icon,
 	__experimentalSpacer as Spacer,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
@@ -10,6 +11,7 @@ import {
 } from '@wordpress/components';
 import { useViewportMatch } from '@wordpress/compose';
 import { __, isRTL, sprintf } from '@wordpress/i18n';
+import { error as errorIcon } from '@wordpress/icons';
 import { useId, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
@@ -88,7 +90,7 @@ function ReportTypeCards( {
 	onSelect: ( mode: AmplifyMode ) => void;
 } ) {
 	const labelId = useId();
-	const isWide = useViewportMatch( 'large' );
+	const isWide = useViewportMatch( 'wide' );
 	const reportModes = getReportModes();
 	const cardRefs = useRef< ( HTMLElement | null )[] >( [] );
 	// Like native radios: the arrow keys move and select, wrapping at the ends.
@@ -344,8 +346,18 @@ export default function AmplifyReportCreator( {
 						</HStack>
 						{ urlError && (
 							<Spacer marginTop={ 2 } marginBottom={ 0 }>
-								<Text as="p" id={ urlErrorId } intent="error" size={ 12 } role="alert">
-									{ urlError }
+								<Text
+									as="p"
+									id={ urlErrorId }
+									intent="error"
+									size={ 12 }
+									lineHeight="16px"
+									role="alert"
+								>
+									<HStack as="span" spacing={ 1 } alignment="topLeft">
+										<Icon icon={ errorIcon } size={ 16 } fill="currentColor" />
+										<span>{ urlError }</span>
+									</HStack>
 								</Text>
 							</Spacer>
 						) }
