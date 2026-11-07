@@ -94,6 +94,7 @@ $blueberry-color: #3858e9;
 		p {
 			color: var(--color-text, $gray-900);
 			padding: 0;
+			white-space: pre-line;
 			span {
 				background-color: transparent;
 			}
