@@ -1,79 +1,65 @@
 @import './variables';
 
 .omnibar__popover {
-	// All colors used by the Menu's internal styles read from these CSS custom
-	// properties (see node_modules/@wordpress/components/src/menu/style.module.scss).
-	// Setting them here re-skins the entire popover without specificity wars.
-	--wp-components-color-background: var( --omnibar-submenu-background );
-	--wp-components-color-foreground: var( --omnibar-submenu-text-color );
+	// The Menu's internal styles read their colors and spacing from these custom
+	// properties, so setting them here re-skins the whole popup.
+	--wpds-color-background-surface-neutral-strong: var( --omnibar-submenu-background );
 	--wpds-color-foreground-interactive-neutral: var( --omnibar-submenu-text-color ); // item text
-	--wpds-color-background-interactive-brand-strong-active: transparent; // hover/active item bg
+	--wpds-color-background-interactive-brand-strong-active: transparent; // highlighted item bg
 	--wpds-color-foreground-interactive-brand-strong-active: var(
 		--omnibar-submenu-highlight-color
-	); // hover/active item text
-	--wpds-color-background-interactive-neutral-weak-active: transparent; // submenu-trigger-open bg
-	--wpds-color-foreground-content-neutral-weak: var( --omnibar-submenu-text-color ); // prefix / suffix text
+	); // highlighted item text
+	--wpds-color-background-interactive-neutral-weak-active: transparent; // open submenu trigger bg
+	--wpds-color-foreground-content-neutral-weak: var( --omnibar-submenu-text-color ); // group labels
+	--wp-ui-menu-popup-padding: 4px 0;
+	--wp-ui-menu-item-padding-inline: 16px;
+	--wpds-typography-font-size-md: 16px;
+	--wpds-typography-line-height-sm: 1.6;
 
-	// Padding, border-radius, and the elevation portion of the popover's
-	// box-shadow are hardcoded (not tokens). Class is doubled to outrank
-	// Emotion's auto-generated selector at the popover level.
-	&.omnibar__popover {
-		border-radius: 0;
-		box-shadow: none;
-		padding-inline: 0;
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+
+	@media ( min-width: 782px ) {
+		--wp-ui-menu-item-padding-inline: 10px;
+		--wpds-typography-font-size-md: #{$omnibar-font-size};
+		--wpds-typography-line-height-sm: 20px;
 	}
 
-	&:not( [data-submenu] ) {
-		min-width: max( 160px, var( --popover-anchor-width, 0px ) );
+	&.is-root {
+		--wp-ui-menu-min-width: max( 160px, var( --anchor-width, 0px ) );
 
 		@media ( max-width: 600px ) {
-			width: var( --popover-available-width, 100vw );
+			width: var( --available-width, 100vw );
 			max-width: none;
 		}
 	}
 
+	// Items declare their own height and padding, so these go on the items.
 	[role='menuitem'],
 	[role='menuitemradio'],
 	[role='menuitemcheckbox'],
 	.omnibar__menu-static-item {
-		min-height: 42px;
-		padding-block: 4px;
-		padding-inline: 16px;
-		font-size: 16px;
-		line-height: 1.6;
+		--wp-ui-menu-item-padding-block: 4px;
+		--wp-ui-menu-item-height: 42px;
+
+		border-radius: 0;
 
 		@media ( min-width: 782px ) {
-			min-height: 26px;
-			padding-block: 0;
-			padding-inline: 10px;
-			font-size: $omnibar-font-size;
-			line-height: 20px;
-		}
-	}
-
-	[role='menuitem'],
-	[role='menuitemradio'],
-	[role='menuitemcheckbox'] {
-		border-radius: 0;
-		grid-template-columns: minmax( 0, max-content ) 1fr;
-
-		&[data-focus-visible] {
-			box-shadow: none;
-			color: var( --omnibar-submenu-highlight-color );
+			--wp-ui-menu-item-padding-block: 0;
+			--wp-ui-menu-item-height: 26px;
 		}
 	}
 
 	.omnibar__menu-static-item {
 		box-sizing: border-box;
 		grid-column: 1 / -1;
-		display: grid;
-		grid-template-columns: minmax( 0, max-content ) 1fr;
+		display: flex;
 		align-items: center;
+		min-height: var( --wp-ui-menu-item-height );
+		padding-block: var( --wp-ui-menu-item-padding-block );
+		padding-inline: var( --wp-ui-menu-item-padding-inline );
 		color: var( --omnibar-submenu-text-color );
-
-		> * {
-			grid-column: 2;
-		}
 	}
 
 	.omnibar__menu-group.is-secondary {
@@ -88,11 +74,6 @@
 
 		&:last-child {
 			margin-block-end: -4px;
-		}
-
-		@supports ( grid-template-columns: subgrid ) {
-			display: grid;
-			grid-template-columns: subgrid;
 		}
 	}
 }

@@ -28,7 +28,7 @@
 	}
 
 	[role='menuitem']:hover,
-	[role='menuitem'][data-active-item] {
+	[role='menuitem'][data-highlighted] {
 		.omnibar__wpcom-account {
 			background-color: #4664eb;
 		}

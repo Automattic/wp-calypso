@@ -2086,11 +2086,9 @@ __metadata:
   resolution: "@automattic/omnibar@workspace:packages/omnibar"
   dependencies:
     "@automattic/calypso-typescript-config": "workspace:^"
-    "@wordpress/components": "npm:^44.0.0"
     "@wordpress/compose": "npm:^9.1.0"
     "@wordpress/i18n": "npm:^7.1.0"
     "@wordpress/icons": "npm:^15.5.0"
-    "@wordpress/private-apis": "npm:^3.1.0"
     "@wordpress/ui": "npm:^0.26.0"
     typescript: "npm:^6.0.3"
   peerDependencies:

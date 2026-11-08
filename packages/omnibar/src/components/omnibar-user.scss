@@ -85,8 +85,9 @@
 			}
 		}
 
-		[role='group']:has( .omnibar__user ) [role='menuitem'] {
-			padding-inline-start: 96px;
+		// Menu items lay out on their group's grid, so inset their content rather than the item.
+		[role='group']:has( .omnibar__user ) [role='menuitem'] > * {
+			margin-inline-start: calc( 96px - var( --wp-ui-menu-item-padding-inline ) );
 		}
 
 		.omnibar__user .omnibar__user-avatar {

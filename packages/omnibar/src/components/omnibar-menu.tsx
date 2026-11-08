@@ -1,17 +1,9 @@
-import { privateApis } from '@wordpress/components';
-import { __dangerousOptInToUnstableAPIsOnlyForCoreModules } from '@wordpress/private-apis';
-import { Button } from '@wordpress/ui';
+import { Button, Menu } from '@wordpress/ui';
 import { useEffect, useRef, useState } from 'react';
 import { OmnibarNodeContent } from './omnibar-node';
 import type { OmnibarNode } from '../types';
 
 import './omnibar-menu.scss';
-
-const { unlock } = __dangerousOptInToUnstableAPIsOnlyForCoreModules(
-	'I acknowledge private features are not for use in themes or plugins and doing so will break in the next version of WordPress.',
-	'@wordpress/components'
-);
-const { Menu } = unlock( privateApis );
 
 function useOnView( onView?: () => void ) {
 	const hasViewed = useRef( false );
@@ -28,16 +20,20 @@ function useOnView( onView?: () => void ) {
 function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 	useOnView( node.onView );
 
+	const label = (
+		<Menu.ItemLabel>
+			<OmnibarNodeContent node={ node } />
+		</Menu.ItemLabel>
+	);
+
 	if ( node.children?.length ) {
 		return (
-			<Menu>
-				<Menu.SubmenuTriggerItem tabbable>
-					<OmnibarNodeContent node={ node } />
-				</Menu.SubmenuTriggerItem>
-				<Menu.Popover className="omnibar__popover">
+			<Menu.SubmenuRoot>
+				<Menu.SubmenuTrigger>{ label }</Menu.SubmenuTrigger>
+				<Menu.Popup className="omnibar__popover" width="content">
 					<OmnibarMenuContent nodes={ node.children } />
-				</Menu.Popover>
-			</Menu>
+				</Menu.Popup>
+			</Menu.SubmenuRoot>
 		);
 	}
 
@@ -49,19 +45,21 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 		);
 	}
 
-	return (
-		<Menu.Item
-			tabbable
-			render={
-				node.href ? (
-					<a href={ node.href } target={ node.target } rel={ node.rel } title={ node.tooltip } />
-				) : undefined
-			}
-			onClick={ node.onClick }
-		>
-			<OmnibarNodeContent node={ node } />
-		</Menu.Item>
-	);
+	if ( node.href ) {
+		return (
+			<Menu.LinkItem
+				href={ node.href }
+				target={ node.target }
+				rel={ node.rel }
+				title={ node.tooltip }
+				onClick={ node.onClick }
+			>
+				{ label }
+			</Menu.LinkItem>
+		);
+	}
+
+	return <Menu.Item onClick={ node.onClick }>{ label }</Menu.Item>;
 }
 
 function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
@@ -112,13 +110,11 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		.filter( Boolean )
 		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const triggerRef = useRef< HTMLElement >( null );
-	const popoverRef = useRef< HTMLElement >( null );
+	const triggerRef = useRef< HTMLButtonElement >( null );
 	const closedByPointerRef = useRef( false );
 	const openedByKeyboardRef = useRef( false );
 
 	const setPopoverRef = ( element: HTMLElement | null ) => {
-		popoverRef.current = element;
 		if ( element && openedByKeyboardRef.current ) {
 			openedByKeyboardRef.current = false;
 			element.querySelector< HTMLElement >( '[role="menuitem"]' )?.focus();
@@ -145,21 +141,11 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		);
 	}
 
-	const handleMouseLeave = ( event: React.MouseEvent ) => {
-		const movingTo = event.relatedTarget instanceof Node ? event.relatedTarget : null;
-		if (
-			! triggerRef.current?.contains( movingTo ) &&
-			! popoverRef.current?.contains( movingTo )
-		) {
-			closedByPointerRef.current = true;
-			setIsOpen( false );
-		}
-	};
-
-	const handleOpenChange = ( open: boolean ) => {
-		if ( open ) {
-			closedByPointerRef.current = false;
-		}
+	const handleOpenChange: React.ComponentProps< typeof Menu.Root >[ 'onOpenChange' ] = (
+		open,
+		{ reason }
+	) => {
+		closedByPointerRef.current = ! open && reason === 'trigger-hover';
 		setIsOpen( open );
 	};
 
@@ -181,15 +167,15 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 	};
 
 	return (
-		<Menu open={ isOpen } onOpenChange={ handleOpenChange }>
-			<Menu.TriggerButton
+		<Menu.Root open={ isOpen } onOpenChange={ handleOpenChange } modal={ false }>
+			<Menu.Trigger
 				ref={ triggerRef }
 				onClick={ node.onClick }
-				onMouseEnter={ () => setIsOpen( true ) }
-				onMouseLeave={ handleMouseLeave }
+				openOnHover
+				delay={ 0 }
 				onTouchEnd={ handleTouchEnd }
 				onKeyDown={ handleKeyDown }
-				aria-expanded={ isOpen }
+				nativeButton={ ! node.href }
 				render={
 					<Button
 						variant="unstyled"
@@ -207,17 +193,15 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 					</Button>
 				}
 			/>
-			<Menu.Popover
+			<Menu.Popup
 				ref={ setPopoverRef }
-				className="omnibar__popover"
-				gutter={ 0 }
-				overflowPadding={ 0 }
-				modal={ false }
-				autoFocusOnHide={ () => ! closedByPointerRef.current }
-				onMouseLeave={ handleMouseLeave }
+				className="omnibar__popover is-root"
+				width="content"
+				positioner={ <Menu.Positioner align="start" sideOffset={ 0 } collisionPadding={ 0 } /> }
+				finalFocus={ () => ! closedByPointerRef.current }
 			>
 				<OmnibarMenuContent nodes={ node.children } />
-			</Menu.Popover>
-		</Menu>
+			</Menu.Popup>
+		</Menu.Root>
 	);
 }
