@@ -1,6 +1,8 @@
 import { useHasEnTranslation } from '@automattic/i18n-utils';
+import { invokeSurvicateEvent } from '@automattic/survicate';
 import { globe, group, scheduled } from '@wordpress/icons';
 import { useTranslate } from 'i18n-calypso';
+import { useEffect } from 'react';
 import { ChecklistCard } from 'calypso/landing/stepper/declarative-flow/internals/components/checklist-card';
 import CancelDifmMigrationForm from './cancel-difm-migration';
 import { Container, Header } from './layout';
@@ -9,6 +11,8 @@ import type { SiteDetails } from '@automattic/data-stores';
 export const MigrationStartedDIFM = ( { site }: { site: SiteDetails } ) => {
 	const translate = useTranslate();
 	const hasEnTranslation = useHasEnTranslation();
+
+	useEffect( () => invokeSurvicateEvent( 'migrationStarted' ), [] );
 
 	const title = translate( "We've received your migration request" );
 	const subTitle = hasEnTranslation(
