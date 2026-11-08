@@ -56,7 +56,7 @@
 		"@wordpress/block-editor": "^15.21.0",
 		"@wordpress/block-library": "^9.48.0",
 		"@wordpress/blocks": "^15.23.0",
-		"@wordpress/components": "^37.0.0",
+		"@wordpress/components": "^44.0.0",
 		"@wordpress/compose": "^9.1.0",
 		"@wordpress/global-styles-engine": "^1.14.1",
 		"@wordpress/global-styles-ui": "^1.14.1",

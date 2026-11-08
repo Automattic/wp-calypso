@@ -18,5 +18,9 @@
 
 	&__progress-bar {
 		--wp-components-color-foreground: var( --color-accent, #3858e9 );
+		// ProgressBar paints its indicator and track with these tokens; mix them from the
+		// foreground color, as it did before.
+		--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
+		--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 	}
 }

@@ -21,10 +21,6 @@
 
 /* Command Palette */
 @mixin dashboard-dark-theme-command-palette {
-	.commands-command-menu__header-search-icon {
-		fill: var( --dashboard__text-color );
-	}
-
 	.commands-command-menu__header .components-button {
 		border-color: var( --dashboard-field__border-color );
 	}
@@ -181,13 +177,10 @@
 		border-color: var( --dashboard-danger__color );
 	}
 
-	.components-validated-control__indicator.is-invalid {
-		color: var( --dashboard-danger__color-hover );
-	}
-
-	.components-validated-control__indicator.is-invalid
-		.components-validated-control__indicator-icon {
-		fill: var( --dashboard-danger__color-hover );
+	// Validated controls show their message with `@wordpress/ui`'s validity indicator, which
+	// colors errors with this token; outside DataForm fields it stays the light-mode red.
+	.components-validated-control {
+		--wpds-color-foreground-content-error-weak: var( --dashboard-danger__color-hover );
 	}
 
 	// Since DataViews 19.1, DataForm text fields are `@wordpress/ui` inputs. Their class names
@@ -567,7 +560,6 @@
 	@include dashboard-dark-theme-section-header;
 	@include color-scheme-dark-theme-site-icon;
 	@include dashboard-dark-theme-site-launch-modal;
-	@include color-scheme-dark-theme-spinner;
 	@include color-scheme-dark-theme-summary-button;
 	@include color-scheme-dark-theme-dataviews-filters-search-widget;
 }

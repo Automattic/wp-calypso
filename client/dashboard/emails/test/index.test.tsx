@@ -156,7 +156,7 @@ describe( '<Emails>', () => {
 		render( <Emails /> );
 
 		await userEvent.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
-		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'View DNS records' } ) );
+		await userEvent.click( await screen.findByRole( 'menuitem', { name: 'View DNS records…' } ) );
 
 		expect(
 			await screen.findByRole( 'dialog', { name: `DNS records for ${ DOMAIN }` } )
@@ -215,7 +215,7 @@ describe( '<Emails>', () => {
 			render( <Emails /> );
 
 			await userEvent.click( await screen.findByRole( 'button', { name: 'Actions' } ) );
-			expect( await screen.findByRole( 'menuitem', { name: 'View DNS records' } ) ).toBeVisible();
+			expect( await screen.findByRole( 'menuitem', { name: 'View DNS records…' } ) ).toBeVisible();
 			expect(
 				screen.queryByRole( 'menuitem', { name: 'Upgrade mailbox' } )
 			).not.toBeInTheDocument();
