@@ -14,6 +14,7 @@ import userEvent from '@testing-library/user-event';
 import { validateDateRangeSearch } from '../../../utils/date-range-search';
 import { formatSiteYmd } from '../../../utils/datetime';
 import { useDateRange } from '../use-date-range';
+import type { AnyRouter } from '@tanstack/react-router';
 
 type Options = Parameters< typeof useDateRange >[ 0 ];
 
@@ -35,7 +36,11 @@ function DateRangePage( { options }: { options: Options } ) {
 	);
 }
 
-async function restoreRange( search: string, options: Options = {} ) {
+async function restoreRange(
+	search: string,
+	options: Options = {},
+	beforeMount?: ( router: AnyRouter ) => void
+) {
 	// The shared render helper has no validator or multiple routes.
 	const root = createRootRoute();
 	const start = createRoute( {
@@ -60,6 +65,7 @@ async function restoreRange( search: string, options: Options = {} ) {
 	} );
 	render( <RouterProvider router={ router } /> );
 	await screen.findByRole( 'heading', { name: 'Start' } );
+	beforeMount?.( router );
 	await act( async () => router.history.back() );
 	await screen.findByRole( 'button', { name: 'Select January dates' } );
 	return router;
@@ -103,6 +109,25 @@ describe( 'useDateRange', () => {
 		expect( screen.getByText( '2025-01-01 to 2025-01-02' ) ).toBeVisible();
 		expect( router.history.length ).toBe( 2 );
 		expect( router.state.location.state.__TSR_index ).toBe( 0 );
+	} );
+
+	test( 'writes the refreshed range without a view transition, and a pick with one', async () => {
+		let navigate: jest.SpyInstance | undefined;
+		await restoreRange( '?from=1735689600&to=1735775999', { autoRefresh: true }, ( router ) => {
+			navigate = jest.spyOn( router, 'navigate' );
+		} );
+		await waitFor( () =>
+			expect( navigate ).toHaveBeenCalledWith(
+				expect.objectContaining( { replace: true, viewTransition: false } )
+			)
+		);
+
+		await userEvent.click( screen.getByRole( 'button', { name: 'Select January dates' } ) );
+		await waitFor( () =>
+			expect( navigate ).toHaveBeenLastCalledWith(
+				expect.not.objectContaining( { viewTransition: false } )
+			)
+		);
 	} );
 
 	test( 'derives site calendar dates from URL instants when going back', async () => {

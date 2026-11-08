@@ -77,6 +77,9 @@ export function useDateRange( {
 				} ),
 				replace: true,
 				resetScroll: false,
+				// Only a pick is the user's own navigation. Initialization and the 10-second
+				// refresh would otherwise play the dashboard's default view transition.
+				...( selection ? {} : { viewTransition: false } ),
 			} );
 		},
 		[ router, resetPageOnChange, selectionPath ]
