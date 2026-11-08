@@ -33,12 +33,11 @@ export function useCheckoutReturn() {
 			receipt_id: receiptId,
 		} );
 		navigate( {
-			// The app shell shows the flash toast once and strips its parameter
-			// from the URL, so this navigation must not write it back.
+			// Keep `flash`: the app shell's checkout success message reads it once
+			// the router is idle, then removes it.
 			search: ( {
 				receipt_id: _receiptId,
 				cart: _cart,
-				flash: _flash,
 				purchased_plan: _purchasedPlan,
 				...rest
 			}: PurchasesSearch ) => rest,
