@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { Progress } from '@wordpress/ui';
 import { ReactNode, useEffect, useState } from 'react';
 import { Heading } from '../../components/Heading/Heading';
@@ -15,6 +15,7 @@ interface LoadingProps {
 }
 
 export const Loading = ( { title, progress, delay = 0, compactLogo }: LoadingProps ) => {
+	const { __ } = useI18n();
 	const [ shouldDisplayTitle, setShouldDisplayTitle ] = useState( delay === 0 );
 
 	const [ prevDelay, setPrevDelay ] = useState( delay );

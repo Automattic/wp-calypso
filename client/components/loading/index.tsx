@@ -1,4 +1,4 @@
-import { __ } from '@wordpress/i18n';
+import { useI18n } from '@wordpress/react-i18n';
 import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import './style.scss';
@@ -11,6 +11,7 @@ interface LoadingProps {
 }
 
 const Loading: React.FC< LoadingProps > = ( { title, subtitle, progress, className } ) => {
+	const { __ } = useI18n();
 	return (
 		<div className={ clsx( 'wpcom__loading', className ) }>
 			<h1 className="wpcom__loading-title">{ title }</h1>
