@@ -119,6 +119,9 @@
 .wpnc-simplified__card {
 	display: block;
 	overflow-wrap: anywhere;
+	transition:
+		background-color var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease),
+		box-shadow var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 
 	&,
 	&:visited {
@@ -135,6 +138,10 @@
 		background-color: color-mix(in srgb, var(--wp-admin-theme-color) 2%, transparent);
 		box-shadow: 0 0 0 1px color-mix(in srgb, var(--wp-admin-theme-color) 12%, transparent);
 	}
+
+	&:hover .wpnc-simplified__card-arrow {
+		fill: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+	}
 }
 
 .wpnc-simplified__card-author {
@@ -144,6 +151,7 @@
 .wpnc-simplified__card-arrow {
 	flex-shrink: 0;
 	fill: var(--wp-components-color-gray-600, #{$gray-600});
+	transition: fill var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 }
 
 .wpnc-simplified__site-icon {
