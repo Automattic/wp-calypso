@@ -1,9 +1,6 @@
-import {
-	ProgressBar,
-	__experimentalText as Text,
-	__experimentalVStack as VStack,
-} from '@wordpress/components';
+import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 
 export default function AnalysisProgress( { url }: { url: string } ) {
 	return (
@@ -27,7 +24,11 @@ export default function AnalysisProgress( { url }: { url: string } ) {
 					) }
 				</Text>
 			</VStack>
-			<ProgressBar />
+			<Progress.Root aria-label={ __( 'Loading…' ) } value={ null }>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
 		</VStack>
 	);
 }

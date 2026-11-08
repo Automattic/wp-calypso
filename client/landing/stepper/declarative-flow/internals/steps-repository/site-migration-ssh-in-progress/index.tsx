@@ -1,5 +1,6 @@
 import { Step } from '@automattic/onboarding';
-import { ProgressBar } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
 import DocumentHead from 'calypso/components/data/document-head';
@@ -63,7 +64,15 @@ const SiteMigrationSshInProgress: StepType< {
 	const stepContent = (
 		<div className="site-migration-ssh-in-progress">
 			<div className="site-migration-ssh-in-progress__progress">
-				<ProgressBar className="site-migration-ssh-in-progress__progress-container" />
+				<Progress.Root
+					className="site-migration-ssh-in-progress__progress-container"
+					aria-label={ __( 'Loading…' ) }
+					value={ null }
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 			</div>
 
 			<ExpectationChecklist

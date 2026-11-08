@@ -1,6 +1,7 @@
-import { __experimentalVStack as VStack, Button, ProgressBar } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
@@ -70,12 +71,16 @@ export function Running( {
 					const settledValue = index < currentStep ? 100 : 0;
 					return (
 						<VStack key={ label } spacing={ 2 }>
-							<ProgressBar
+							<Progress.Root
 								className="wordpress-migration__progress-bar"
 								aria-label={ label }
 								// No value animates the bar, which marks the step in progress.
-								value={ index === currentStep ? undefined : settledValue }
-							/>
+								value={ index === currentStep ? null : ( settledValue ?? null ) }
+							>
+								<Progress.Track>
+									<Progress.Indicator />
+								</Progress.Track>
+							</Progress.Root>
 							<Text variant="muted">{ label }</Text>
 						</VStack>
 					);

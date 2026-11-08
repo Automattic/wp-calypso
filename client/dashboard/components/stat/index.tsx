@@ -1,4 +1,5 @@
-import { __experimentalHStack as HStack, ProgressBar } from '@wordpress/components';
+import { __experimentalHStack as HStack } from '@wordpress/components';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { TextBlur } from '../text-blur';
 import './style.scss';
@@ -80,12 +81,16 @@ export function Stat( {
 				) }
 			</HStack>
 			{ progressValue !== undefined && (
-				<ProgressBar
+				<Progress.Root
 					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
 					value={ progressValue }
 					aria-label={ progressLabel }
 					aria-hidden={ isLoading }
-				/>
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 			) }
 		</div>
 	);

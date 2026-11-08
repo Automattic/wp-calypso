@@ -1,6 +1,7 @@
 import { truncate } from '@automattic/js-utils';
-import { ProgressBar } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { Icon, cloudUpload } from '@wordpress/icons';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -92,7 +93,15 @@ export class UploadingPane extends PureComponent {
 				return (
 					<div className="content-upload-form__in-progress">
 						<p>{ uploaderPrompt }</p>
-						<ProgressBar className="content-upload-form__in-progress-bar is-larger-progress-bar" />
+						<Progress.Root
+							className="content-upload-form__in-progress-bar is-larger-progress-bar"
+							aria-label={ __( 'Loading…' ) }
+							value={ null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
 					</div>
 				);
 			}

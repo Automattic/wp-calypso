@@ -3,9 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 import {
 	__experimentalVStack as VStack,
 	__experimentalSpacer as Spacer,
-	ProgressBar,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import { useEffect } from 'react';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
@@ -78,10 +78,15 @@ function SiteBackupDownloadProgress( {
 						downloadProgress?.progress ?? 0
 					) }
 				</Text>
-				<ProgressBar
+				<Progress.Root
 					className="dashboard-backups__progress-bar"
+					aria-label={ __( 'Loading…' ) }
 					value={ downloadProgress?.progress ?? 0 }
-				/>
+				>
+					<Progress.Track>
+						<Progress.Indicator />
+					</Progress.Track>
+				</Progress.Root>
 			</VStack>
 			<Spacer marginTop={ 12 }>
 				<Notice variant="info" title={ __( 'Check your email' ) }>

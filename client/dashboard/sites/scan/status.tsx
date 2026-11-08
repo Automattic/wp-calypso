@@ -1,9 +1,9 @@
 import {
 	__experimentalSpacer as Spacer,
 	__experimentalVStack as VStack,
-	ProgressBar,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import { Text } from '../../components/text';
 import { ThemedIllustration } from '../../components/themed-illustration';
 import scanScanningIllustrationDark from './scan-scanning-illustration-dark.svg';
@@ -52,10 +52,15 @@ export function ScanStatus( { scanState }: ScanStatusProps ) {
 				</Text>
 				<Text variant="muted">{ description }</Text>
 				{ status === 'running' && (
-					<ProgressBar
+					<Progress.Root
+						aria-label={ __( 'Loading…' ) }
 						value={ scan?.current?.progress ?? 0 }
 						className="dashboard-scan__progress-bar"
-					/>
+					>
+						<Progress.Track>
+							<Progress.Indicator />
+						</Progress.Track>
+					</Progress.Root>
 				) }
 			</VStack>
 		</Spacer>

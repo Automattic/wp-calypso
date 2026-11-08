@@ -11,13 +11,13 @@ import {
 	Button,
 	ExternalLink,
 	Modal,
-	ProgressBar,
 } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
+import { Progress } from '@wordpress/ui';
 import { useEffect, useState, useCallback } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
@@ -49,7 +49,15 @@ function InProgressContent( { progress }: { progress: number | undefined } ) {
 	const progressValue = progress ? progress * 100 : 10;
 	return (
 		<VStack spacing={ 4 }>
-			<ProgressBar className="reset-site-modal-progress-bar" value={ progressValue } />
+			<Progress.Root
+				className="reset-site-modal-progress-bar"
+				aria-label={ __( 'Loading…' ) }
+				value={ progressValue }
+			>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
 			<Text>{ __( 'We’re resetting your site. We’ll email you once it’s ready.' ) }</Text>
 		</VStack>
 	);

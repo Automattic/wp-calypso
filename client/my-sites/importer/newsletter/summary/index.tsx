@@ -1,9 +1,10 @@
 import { Card, ConfettiAnimation } from '@automattic/components';
 import { SiteDetails } from '@automattic/data-stores';
-import { ProgressBar, ExternalLink, Notice } from '@wordpress/components';
+import { ExternalLink, Notice } from '@wordpress/components';
 import { useReducedMotion } from '@wordpress/compose';
 import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
+import { Progress } from '@wordpress/ui';
 import { fixMe, translate } from 'i18n-calypso';
 import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.webp';
@@ -132,7 +133,15 @@ export default function Summary( {
 					) }
 				</p>
 				<p>
-					<ProgressBar className="is-larger-progress-bar" />
+					<Progress.Root
+						className="is-larger-progress-bar"
+						aria-label={ __( 'Loading…' ) }
+						value={ null }
+					>
+						<Progress.Track>
+							<Progress.Indicator />
+						</Progress.Track>
+					</Progress.Root>
 				</p>
 			</Card>
 		);

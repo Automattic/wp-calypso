@@ -2125,6 +2125,7 @@ __metadata:
     "@wordpress/data": "npm:^10.48.0"
     "@wordpress/icons": "npm:^15.5.0"
     "@wordpress/react-i18n": "npm:^4.48.0"
+    "@wordpress/ui": "npm:^0.26.0"
     "@wordpress/url": "npm:^4.48.0"
     clsx: "npm:^2.1.1"
     copyfiles: "npm:^2.4.1"

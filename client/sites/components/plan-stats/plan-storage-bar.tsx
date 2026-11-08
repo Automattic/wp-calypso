@@ -1,5 +1,6 @@
 import { SiteMediaStorage } from '@automattic/data-stores';
-import { ProgressBar } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
 import { FC, PropsWithChildren } from 'react';
@@ -46,7 +47,11 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 				</span>
 			</div>
 
-			<ProgressBar className={ classes } value={ usagePercent } />
+			<Progress.Root className={ classes } aria-label={ __( 'Loading…' ) } value={ usagePercent }>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
 
 			{ children }
 		</>

@@ -116,10 +116,13 @@
 
 .playground-intro .playground-intro__progress-bar {
 	--wp-components-color-foreground: var( --studio-woocommerce-purple-40 );
-	// ProgressBar paints its indicator and track with these tokens; mix them from the
-	// foreground color, as it did before.
+	// Progress paints its indicator and track with these tokens; mix them from the
+	// foreground color, as ProgressBar did before.
 	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
 	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 	width: 100%;
-	height: 6px;
+
+	> * {
+		height: 6px;
+	}
 }

@@ -1,6 +1,8 @@
 import { omit } from '@automattic/js-utils';
 import { formatNumber } from '@automattic/number-formatters';
-import { ProgressBar, Notice } from '@wordpress/components';
+import { Notice } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -304,7 +306,15 @@ export class ImportingPane extends PureComponent {
 						<h2>{ this.props.translate( 'Import your content to WordPress.com' ) }</h2>
 						<p>{ this.props.translate( 'Please, wait while we import your content…' ) }</p>
 						<div className="importer__import-progress">
-							<ProgressBar className="importer__import-progress-bar" value={ percentComplete } />
+							<Progress.Root
+								className="importer__import-progress-bar"
+								aria-label={ __( 'Loading…' ) }
+								value={ percentComplete }
+							>
+								<Progress.Track>
+									<Progress.Indicator />
+								</Progress.Track>
+							</Progress.Root>
 							{ blockingMessage && <p>{ blockingMessage }</p> }
 						</div>
 					</>

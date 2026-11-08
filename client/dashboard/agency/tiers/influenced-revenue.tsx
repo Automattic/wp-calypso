@@ -2,12 +2,12 @@ import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
 	Popover,
-	ProgressBar,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
+import { Progress } from '@wordpress/ui';
 import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
@@ -164,11 +164,15 @@ export default function InfluencedRevenue( {
 			<Text size={ 15 } weight={ 500 } lineHeight="20px" style={ { textWrap: 'balance' } }>
 				{ headline }
 			</Text>
-			<ProgressBar
+			<Progress.Root
 				className="agency-tiers-influenced-revenue-bar"
 				value={ value }
 				aria-label={ label }
-			/>
+			>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
 			<Text variant="muted" size={ 12 } lineHeight="20px" style={ { textWrap: 'balance' } }>
 				{ caption }
 			</Text>
