@@ -725,7 +725,7 @@ __metadata:
     "@wordpress/dependency-extraction-webpack-plugin": "npm:^6.57.0"
     autoprefixer: "npm:^10.4.21"
     babel-loader: "npm:^10.1.1"
-    browserslist: "npm:^4.29.4"
+    browserslist: "npm:^4.29.5"
     css-loader: "npm:^7.1.5"
     css-minimizer-webpack-plugin: "npm:^8.0.0"
     duplicate-package-checker-webpack-plugin: "npm:^3.0.0"
@@ -15660,7 +15660,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"browserslist@npm:^4.0.0, browserslist@npm:^4.24.0, browserslist@npm:^4.28.1, browserslist@npm:^4.28.2, browserslist@npm:^4.28.6, browserslist@npm:^4.29.3, browserslist@npm:^4.29.4":
+"browserslist@npm:^4.0.0, browserslist@npm:^4.24.0, browserslist@npm:^4.28.1, browserslist@npm:^4.28.2, browserslist@npm:^4.28.6, browserslist@npm:^4.29.3, browserslist@npm:^4.29.5":
   version: 4.29.5
   resolution: "browserslist@npm:4.29.5"
   dependencies:
