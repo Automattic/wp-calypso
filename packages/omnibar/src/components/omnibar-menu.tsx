@@ -117,18 +117,9 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		.filter( Boolean )
 		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const popupRef = useRef< HTMLElement | null >( null );
+	const popupRef = useRef< HTMLDivElement >( null );
 	const closedByPointerRef = useRef( false );
 	const focusBeforeHoverRef = useRef< Element | null >( null );
-	const openedByKeyboardRef = useRef( false );
-
-	const setPopoverRef = ( element: HTMLElement | null ) => {
-		popupRef.current = element;
-		if ( element && openedByKeyboardRef.current ) {
-			openedByKeyboardRef.current = false;
-			element.querySelector< HTMLElement >( '[role="menuitem"]' )?.focus();
-		}
-	};
 
 	if ( ! node.children?.length ) {
 		const isLink = !! node.href && ! node.disabled;
@@ -190,7 +181,6 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 			return;
 		}
 		event.preventDefault();
-		openedByKeyboardRef.current = ! isOpen;
 		setIsOpen( ( open ) => ! open );
 	};
 
@@ -221,7 +211,7 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 				}
 			/>
 			<Menu.Popup
-				ref={ setPopoverRef }
+				ref={ popupRef }
 				className="omnibar__popover is-root"
 				width="content"
 				positioner={ <Menu.Positioner align="start" sideOffset={ 0 } collisionPadding={ 0 } /> }
