@@ -2306,7 +2306,7 @@ __metadata:
     "@wordpress/commands": "npm:^1.48.0"
     "@wordpress/components": "npm:^37.0.0"
     "@wordpress/compose": "npm:^8.2.0"
-    "@wordpress/core-data": "npm:^7.48.0 || ^9.1.0"
+    "@wordpress/core-data": "npm:^7.48.0"
     "@wordpress/dom": "npm:^4.48.0"
     "@wordpress/element": "npm:^8.0.0"
     "@wordpress/html-entities": "npm:^4.48.0"
