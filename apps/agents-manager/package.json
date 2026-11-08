@@ -39,7 +39,7 @@
 		"@wordpress/compose": "^9.1.0",
 		"@wordpress/data": "^11.1.0",
 		"@wordpress/i18n": "^7.1.0",
-		"@wordpress/plugins": "^7.48.0"
+		"@wordpress/plugins": "^8.1.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-apps-builder": "workspace:^",
