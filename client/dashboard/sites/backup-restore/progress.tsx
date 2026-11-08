@@ -63,7 +63,7 @@ function SiteBackupRestoreProgress( {
 					height={ 280 }
 				/>
 				<Text id={ labelId } size={ 20 }>
-					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
+					{ ( isRunning && restoreProgress?.message ) || __( 'Initializing the restore process' ) }
 				</Text>
 				<Text size={ 13 } variant="muted">
 					{ sprintf(
