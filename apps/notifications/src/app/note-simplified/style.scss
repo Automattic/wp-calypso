@@ -145,6 +145,7 @@
 .wpnc-simplified__site-icon {
 	flex-shrink: 0;
 	border-radius: $radius-medium;
+	object-fit: cover;
 
 	&.is-placeholder {
 		padding: $grid-unit-05;
