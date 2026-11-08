@@ -215,7 +215,7 @@
 		"jsdom": "^20.0.3",
 		"lodash": "^4.18.1",
 		"lottie-web": "^5.9.6",
-		"moment": "^2.30.1",
+		"moment": "^2.31.0",
 		"photon": "workspace:^",
 		"react": "19.2.7",
 		"react-dom": "19.2.7",
