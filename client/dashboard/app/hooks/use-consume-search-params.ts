@@ -1,7 +1,7 @@
 import { useRouter, useRouterState } from '@tanstack/react-router';
 import { useEvent } from '@wordpress/compose';
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react';
-import type { AnyRouter, NavigateOptions } from '@tanstack/react-router';
+import { useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import type { AnyRouter } from '@tanstack/react-router';
 
 /**
  * Each requested key that is present, with its value as written in the URL, unquoted if the router
@@ -18,87 +18,38 @@ export interface ConsumeSearchParamsOptions< K extends string > {
 	when?: ( params: ConsumedSearchParams< K > ) => boolean;
 	/**
 	 * Runs once per arrival of the params, after commit, for snackbars and Tracks events. The
-	 * latest callback is used, so it doesn't need to be stable. To navigate from it, pass
-	 * `replace: true`: the params leave the URL only after it returns, and an entry that a push
-	 * leaves keeps them for Back.
+	 * latest callback is used, so it doesn't need to be stable. The params have already left the
+	 * URL, so a navigation it starts begins from the clean URL.
 	 */
 	onConsume?: ( params: ConsumedSearchParams< K > ) => void;
 }
 
-// Each key to remove, with the value it must still have, or `undefined` for any value.
-type Removals = Map< string, string | undefined >;
-
-const pendingRemovals = new WeakMap< AnyRouter, Removals >();
-
-function flushRemovals( router: AnyRouter, removals: Removals ) {
-	// Until a navigation resolves, a navigation without `to` takes its path params from the page
-	// still on screen, and would send the user back there.
-	if ( router.state.status === 'pending' ) {
-		const unsubscribe = router.subscribe( 'onResolved', () => {
-			unsubscribe();
-			// The router is idle only once its `onResolved` listeners have returned.
-			queueMicrotask( () => flushRemovals( router, removals ) );
-		} );
-		return;
-	}
-
-	pendingRemovals.delete( router );
-	const current = new URLSearchParams( router.history.location.search );
-	const keys = [ ...removals ]
-		.filter( ( [ key, value ] ) =>
-			value === undefined ? current.has( key ) : current.get( key ) === value
-		)
-		.map( ( [ key ] ) => key );
+function removeFromUrl( router: AnyRouter, keys: readonly string[] ) {
+	// The URL as it is now, path included: a navigation without `to` takes its path params from
+	// the page on screen, which a navigation in progress may be replacing.
+	const { pathname, search, hash } = router.history.location;
+	const params = new URLSearchParams( search );
+	const present = keys.filter( ( key ) => params.has( key ) );
+	present.forEach( ( key ) => params.delete( key ) );
 	// A navigation that leaves the URL unchanged still re-runs every `beforeLoad`.
-	if ( ! keys.length ) {
+	if ( ! present.length ) {
 		return;
 	}
 
-	const options: NavigateOptions = {
-		search: ( prev: Record< string, unknown > ) =>
-			Object.fromEntries( Object.entries( prev ).filter( ( [ key ] ) => ! keys.includes( key ) ) ),
+	// The router writes back the params that stay, rewriting values that parse as JSON (`1e3`
+	// becomes `1000`), as every navigation that keeps the search does.
+	const query = params.toString();
+	router.navigate( {
+		href: pathname + ( query ? `?${ query }` : '' ) + hash,
 		state: true,
 		replace: true,
-		hash: true,
 		resetScroll: false,
 		hashScrollIntoView: false,
 		viewTransition: false,
-		// The app always registers a blocker, which defers the write. Another write in the same
-		// tick would then start from the stale search and put these keys back.
+		// The app always registers a blocker. Asking it would defer the write, and a navigation
+		// in the meantime would start from the search as it is now and put these keys back.
 		ignoreBlocker: true,
-	};
-	router.navigate( options );
-}
-
-function scheduleRemovals( router: AnyRouter, removals: Removals ) {
-	const pending = pendingRemovals.get( router );
-	if ( pending ) {
-		removals.forEach( ( value, key ) => {
-			if ( ! pending.has( key ) || pending.get( key ) !== undefined ) {
-				pending.set( key, value );
-			}
-		} );
-		return;
-	}
-
-	pendingRemovals.set( router, removals );
-	// A navigation started in this task waits for the blocker before it writes a location built
-	// from the search as it is now, which would put these keys back. Waiting a task lets it write
-	// first, so the removal starts from its result.
-	setTimeout( () => flushRemovals( router, removals ) );
-}
-
-/**
- * Removes search params from the current URL with the router, without adding a history entry,
- * scrolling, running a view transition or asking the navigation blocker. Removals requested in
- * the same task share one navigation, which runs in the next task, once a navigation in progress
- * has resolved. The params that stay are written back by the router, which rewrites values that
- * parse as JSON (`1e3` becomes `1000`), as every navigation that keeps the search does.
- * @param router The app's router.
- * @param keys   The params to remove.
- */
-export function removeSearchParams( router: AnyRouter, keys: readonly string[] ) {
-	scheduleRemovals( router, new Map( keys.map( ( key ) => [ key, undefined ] ) ) );
+	} );
 }
 
 // The router quotes a string that would otherwise parse as JSON, so `{ id: '123' }` is
@@ -181,21 +132,13 @@ export function useConsumeSearchParams< K extends string >(
 		}
 		handled.current = id;
 		setConsumed( params );
+		removeFromUrl( router, keys );
 		onConsume?.( params );
-		// Only while they keep these values: values that arrive before the removal runs are left
-		// for whoever consumes them next.
-		const current = new URLSearchParams( search );
-		const removals: Removals = new Map();
-		for ( const key of keys ) {
-			const value = current.get( key );
-			if ( value !== null ) {
-				removals.set( key, value );
-			}
-		}
-		scheduleRemovals( router, removals );
 	} );
 
-	useEffect( () => {
+	// A layout effect, so the URL is clean before any passive effect of the same commit, like a
+	// page syncing its filters to the URL, starts a navigation from it.
+	useLayoutEffect( () => {
 		sync();
 	}, [ search, shouldConsume, isRouterIdle, sync ] );
 

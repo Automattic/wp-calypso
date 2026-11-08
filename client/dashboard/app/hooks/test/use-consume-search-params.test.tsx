@@ -11,13 +11,18 @@ import {
 	useRouter,
 } from '@tanstack/react-router';
 import { act, render, screen, waitFor } from '@testing-library/react';
-import { StrictMode } from 'react';
+import { StrictMode, useEffect, useState } from 'react';
 import { dashboardRedirect } from '../../router/redirect';
-import { removeSearchParams, useConsumeSearchParams } from '../use-consume-search-params';
+import { useConsumeSearchParams } from '../use-consume-search-params';
 import type { AnyRoute } from '@tanstack/react-router';
 
 const onConsume = jest.fn();
-const shouldBlock = jest.fn( () => false );
+let blockerAnswersLater = false;
+const shouldBlock = jest.fn( (): boolean | Promise< boolean > =>
+	blockerAnswersLater
+		? new Promise( ( resolve ) => setTimeout( () => resolve( false ), 30 ) )
+		: false
+);
 
 function Flash( { id }: { id: string } ) {
 	useConsumeSearchParams( [ 'flash' ], {
@@ -33,7 +38,8 @@ function Callback() {
 }
 
 function Root() {
-	// Like the dashboard root, always register a blocker: it defers history writes.
+	// Like the dashboard root, always register a blocker: it defers history writes, by a task
+	// or more when it asks in a modal.
 	useBlocker( { shouldBlockFn: shouldBlock } );
 	return <Outlet />;
 }
@@ -75,7 +81,17 @@ beforeEach( () => {
 	shouldBlock.mockClear();
 } );
 
-describe( 'useConsumeSearchParams', () => {
+describe.each( [
+	[ 'answers at once', false ],
+	[ 'answers later, like a modal', true ],
+] )( 'useConsumeSearchParams, with a blocker that %s', ( _name, answersLater ) => {
+	beforeAll( () => {
+		blockerAnswersLater = answersLater;
+	} );
+	afterAll( () => {
+		blockerAnswersLater = false;
+	} );
+
 	test( 'returns the params on load, then removes them from the URL in one replacement', async () => {
 		const router = renderPage(
 			'/page?flash=saved&code=12345678901234567890&state=%22x%22&keep=1#tab'
@@ -219,52 +235,23 @@ describe( 'useConsumeSearchParams', () => {
 		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 		expect( onConsume ).toHaveBeenCalledTimes( 1 );
 	} );
-} );
 
-describe( 'removeSearchParams', () => {
-	test( 'joins removals from the same task into one navigation, and skips absent params', async () => {
-		const router = renderPage( '/page?a=1&b=2&keep=1' );
-		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
-		const navigate = jest.spyOn( router, 'navigate' );
-
-		act( () => {
-			removeSearchParams( router, [ 'a' ] );
-			removeSearchParams( router, [ 'b' ] );
-		} );
-		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
-		expect( navigate ).toHaveBeenCalledTimes( 1 );
-
-		act( () => removeSearchParams( router, [ 'a' ] ) );
-		await act( () => wait( 0 ) );
-		expect( navigate ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	test.each( [ 'before', 'after' ] )(
-		'starts from a navigation requested in the same task, %s it',
-		async ( order ) => {
-			const router = renderPage( '/page?a=1' );
-			await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
-
-			const nextPage = () =>
-				router.navigate( {
-					to: '/page',
-					search: ( prev: Record< string, unknown > ) => ( { ...prev, page: 2 } ),
-				} );
-			act( () => {
-				if ( order === 'after' ) {
-					nextPage();
-				}
-				removeSearchParams( router, [ 'a' ] );
-				if ( order === 'before' ) {
-					nextPage();
-				}
-			} );
-
-			await waitFor( () => expect( window.location.search ).toBe( '?page=2' ) );
-			await act( () => wait( 20 ) );
-			expect( window.location.search ).toBe( '?page=2' );
+	test( 'removes the params of two consumers in one commit without adding a history entry', async () => {
+		function TwoFlashes() {
+			return (
+				<>
+					<Flash id="saved" />
+					<Callback />
+				</>
+			);
 		}
-	);
+		renderPage( '/page?flash=saved&code=1&keep=1', { component: TwoFlashes } );
+		const { length } = window.history;
+
+		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
+		expect( window.history.length ).toBe( length );
+		expect( onConsume ).toHaveBeenCalledTimes( 2 );
+	} );
 
 	test( 'keeps the history entry and its state', async () => {
 		const router = renderPage( '/page' );
@@ -272,44 +259,100 @@ describe( 'removeSearchParams', () => {
 		await act( () =>
 			router.navigate( {
 				to: '/page',
-				search: { a: 1 },
+				search: { flash: 'saved' },
 				state: ( prev ) => Object.assign( {}, prev, { saved: 'valuable' } ),
 			} )
 		);
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
 		const { length } = window.history;
 		const index = window.history.state.__TSR_index;
 
-		act( () => removeSearchParams( router, [ 'a' ] ) );
-
-		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		await act( () => wait( 40 ) );
 		expect( window.history.length ).toBe( length );
 		expect( window.history.state ).toMatchObject( { saved: 'valuable', __TSR_index: index } );
 	} );
 
-	test( 'waits for a navigation in progress to resolve', async () => {
-		const root = createRootRoute( { component: Root } );
-		const item = createRoute( {
-			getParentRoute: () => root,
-			path: '/items/$id',
-			loader: () => wait( 20 ),
-			component: function Item() {
-				return <p>{ `item=${ item.useParams().id }` }</p>;
-			},
-		} );
-		const router = renderRouter( '/items/1', root.addChildren( [ item ] ) );
-		expect( await screen.findByText( 'item=1' ) ).toBeVisible();
+	test.each( [ true, false ] )(
+		'lets a navigation from `onConsume` start from the clean URL (replace: %s)',
+		async ( replace ) => {
+			function Relay() {
+				const router = useRouter();
+				useConsumeSearchParams( [ 'flash' ], {
+					onConsume: () => {
+						onConsume();
+						router.navigate( {
+							to: '/page',
+							search: ( prev: Record< string, unknown > ) => ( { ...prev, tab: 'x' } ),
+							replace,
+						} );
+					},
+				} );
+				return null;
+			}
+			const router = renderPage( '/page?flash=saved', { component: Relay } );
+
+			await waitFor( () => expect( window.location.search ).toBe( '?tab=x' ) );
+			await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+			await act( () => wait( 60 ) );
+			expect( window.location.search ).toBe( '?tab=x' );
+			expect( onConsume ).toHaveBeenCalledTimes( 1 );
+		}
+	);
+
+	test( 'leaves a clean entry behind when `onConsume` pushes another', async () => {
+		function Relay() {
+			const router = useRouter();
+			useConsumeSearchParams( [ 'flash' ], {
+				onConsume: () => {
+					onConsume();
+					router.navigate( { to: '/page', search: { tab: 'x' } } );
+				},
+			} );
+			return null;
+		}
+		const router = renderPage( '/page?flash=saved', { component: Relay } );
+		await waitFor( () => expect( window.location.search ).toBe( '?tab=x' ) );
 		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
 
-		const unsubscribe = router.subscribe( 'onBeforeLoad', () => {
-			unsubscribe();
-			removeSearchParams( router, [ 'a' ] );
-		} );
-		await act( () =>
-			router.navigate( { to: '/items/$id', params: { id: '2' }, search: { a: 1, keep: 1 } } )
-		);
+		await act( () => router.history.back() );
+		await waitFor( () => expect( window.location.search ).toBe( '' ) );
+		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+		await act( () => wait( 60 ) );
+		expect( onConsume ).toHaveBeenCalledTimes( 1 );
+	} );
 
-		expect( await screen.findByText( 'item=2' ) ).toBeVisible();
-		await waitFor( () => expect( window.location.search ).toBe( '?keep=1' ) );
-		expect( window.location.pathname ).toBe( '/items/2' );
+	test( 'leaves the URL clean for a sibling that writes it when it mounts, in the same commit', async () => {
+		let show: ( value: boolean ) => void = () => {};
+		function UrlSync() {
+			const router = useRouter();
+			useEffect( () => {
+				router.navigate( {
+					to: '/page',
+					search: ( prev: Record< string, unknown > ) => ( { ...prev, view: 'list' } ),
+					replace: true,
+				} );
+			}, [ router ] );
+			return null;
+		}
+		function Page() {
+			const [ isShown, setIsShown ] = useState( false );
+			show = setIsShown;
+			// Like content behind a suspense boundary, both mount once the router is idle.
+			return isShown ? (
+				<>
+					<UrlSync />
+					<Flash id="saved" />
+				</>
+			) : null;
+		}
+		const router = renderPage( '/page?flash=saved', { component: Page } );
+		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+
+		act( () => show( true ) );
+		await waitFor( () => expect( window.location.search ).toBe( '?view=list' ) );
+		await waitFor( () => expect( router.state.status ).toBe( 'idle' ) );
+		await act( () => wait( 60 ) );
+		expect( window.location.search ).toBe( '?view=list' );
+		expect( onConsume ).toHaveBeenCalledTimes( 1 );
 	} );
 } );

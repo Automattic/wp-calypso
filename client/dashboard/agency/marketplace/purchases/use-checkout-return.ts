@@ -33,14 +33,9 @@ export function useCheckoutReturn() {
 			receipt_id: receiptId,
 		} );
 		navigate( {
-			// Keep `flash`: the app shell's checkout success message reads it once
-			// the router is idle, then removes it.
-			search: ( {
-				receipt_id: _receiptId,
-				cart: _cart,
-				purchased_plan: _purchasedPlan,
-				...rest
-			}: PurchasesSearch ) => rest,
+			// Keep `flash` and `purchased_plan`: the app shell's checkout success
+			// message reads them once the router is idle, then removes them.
+			search: ( { receipt_id: _receiptId, cart: _cart, ...rest }: PurchasesSearch ) => rest,
 			replace: true,
 		} );
 	}, [ receiptId, cart, navigate, updateMarketplaceType, recordTracksEvent ] );

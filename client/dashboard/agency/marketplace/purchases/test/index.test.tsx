@@ -151,7 +151,8 @@ describe( '<MarketplacePurchases>', () => {
 			'/purchases?status=unassigned&receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
 		);
 
-		// The app shell renders the checkout success message, which removes `flash`.
+		// The app shell renders the checkout success message, which removes `flash` and
+		// `purchased_plan`.
 		render(
 			<>
 				<CheckoutSuccessFlashMessage />
@@ -169,16 +170,24 @@ describe( '<MarketplacePurchases>', () => {
 		dispatch( noticesStore ).removeAllNotices( 'snackbar' );
 	} );
 
-	test( 'leaves `flash` to the checkout success message', async () => {
+	test( 'leaves `flash` and `purchased_plan` to the checkout success message', async () => {
 		mockAgency();
 		mockPreferences();
 		mockLicenses();
 		mockPendingSites( 'pending' );
-		window.history.replaceState( {}, '', '/purchases?receipt_id=123&flash=checkout-success' );
+		window.history.replaceState(
+			{},
+			'',
+			'/purchases?receipt_id=123&flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+		);
 
 		render( <MarketplacePurchases /> );
 
-		await waitFor( () => expect( window.location.search ).toBe( '?flash=checkout-success' ) );
+		await waitFor( () =>
+			expect( window.location.search ).toBe(
+				'?flash=checkout-success&purchased_plan=a4a_jetpack_backup_t1_monthly'
+			)
+		);
 	} );
 
 	test( 'empties the referral cart and leaves referral mode when a free referral cart was bought', async () => {
