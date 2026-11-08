@@ -38,7 +38,9 @@
 
 /* Text fields, input controls (search, select, number…), checkboxes, radios, token and
  * combobox inputs and toggles draw their focus ring with this token, pinned the same way,
- * where components 37 used the accent. */
+ * where components 37 used the accent. DataViews' row checkboxes, selects and bulk-action
+ * buttons are `@wordpress/ui` controls now, which read it too. */
+.dataviews-wrapper,
 .components-text-control__input,
 .components-input-control__container,
 .components-checkbox-control__input,
