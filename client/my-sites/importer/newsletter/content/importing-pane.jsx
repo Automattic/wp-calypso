@@ -1,7 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import { formatNumber } from '@automattic/number-formatters';
 import { Notice } from '@wordpress/components';
-import { __ } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -303,12 +302,15 @@ export class ImportingPane extends PureComponent {
 				) }
 				{ ( this.isImporting() || this.isProcessing() ) && (
 					<>
-						<h2>{ this.props.translate( 'Import your content to WordPress.com' ) }</h2>
+						{ /* Only one import pane renders per page, so a fixed id stays unique. */ }
+						<h2 id="importer-import-progress-title">
+							{ this.props.translate( 'Import your content to WordPress.com' ) }
+						</h2>
 						<p>{ this.props.translate( 'Please, wait while we import your content…' ) }</p>
 						<div className="importer__import-progress">
 							<Progress.Root
 								className="importer__import-progress-bar"
-								aria-label={ __( 'Loading…' ) }
+								aria-labelledby="importer-import-progress-title"
 								value={ percentComplete }
 							>
 								<Progress.Track>

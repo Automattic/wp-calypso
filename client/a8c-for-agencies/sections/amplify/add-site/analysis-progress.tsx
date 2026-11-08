@@ -1,12 +1,14 @@
 import { __experimentalText as Text, __experimentalVStack as VStack } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
+import { useId } from 'react';
 
 export default function AnalysisProgress( { url }: { url: string } ) {
+	const titleId = useId();
 	return (
 		<VStack spacing={ 8 } alignment="center">
 			<VStack spacing={ 4 } alignment="center">
-				<Text align="center" weight={ 500 }>
+				<Text id={ titleId } align="center" weight={ 500 }>
 					{ sprintf(
 						/* translators: %s is the site URL being analyzed. */
 						__( 'We’re analyzing %s.' ),
@@ -24,7 +26,7 @@ export default function AnalysisProgress( { url }: { url: string } ) {
 					) }
 				</Text>
 			</VStack>
-			<Progress.Root aria-label={ __( 'Loading…' ) } value={ null }>
+			<Progress.Root aria-labelledby={ titleId } value={ null }>
 				<Progress.Track>
 					<Progress.Indicator />
 				</Progress.Track>

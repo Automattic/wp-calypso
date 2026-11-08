@@ -6,7 +6,7 @@ import { __, sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import { Progress } from '@wordpress/ui';
 import { fixMe, translate } from 'i18n-calypso';
-import { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useCallback, useEffect, useId, useState } from 'react';
 import pauseSubstackBillingImg from 'calypso/assets/images/importer/pause-substack-billing.webp';
 import { Steps, StepStatus } from 'calypso/data/paid-newsletter/use-paid-newsletter-query';
 import {
@@ -61,6 +61,7 @@ export default function Summary( {
 }: SummaryProps ) {
 	const { __ } = useI18n();
 	const prefersReducedMotion = useReducedMotion();
+	const descriptionId = useId();
 	// The Newsletter page reads its route from `p`. Overview is the default once that tab
 	// exists, so both Settings and Subscribers have to be asked for explicitly.
 	const newsletterSettingsUrl = useSelector( ( state ) =>
@@ -121,7 +122,7 @@ export default function Summary( {
 				<h2>{ __( 'Almost there…' ) }</h2>
 				<div className="summary__content">
 					<p>
-						<strong>
+						<strong id={ descriptionId }>
 							{ getSummaryDescription( steps?.content?.status, steps.subscribers.status ) }
 						</strong>
 						<br />
@@ -135,7 +136,7 @@ export default function Summary( {
 				<p>
 					<Progress.Root
 						className="is-larger-progress-bar"
-						aria-label={ __( 'Loading…' ) }
+						aria-labelledby={ descriptionId }
 						value={ null }
 					>
 						<Progress.Track>

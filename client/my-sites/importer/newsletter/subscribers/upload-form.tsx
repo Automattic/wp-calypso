@@ -8,7 +8,7 @@ import { sprintf } from '@wordpress/i18n';
 import { Icon, cloudUpload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
 import { Progress } from '@wordpress/ui';
-import { useCallback, useState, FormEvent, useEffect } from 'react';
+import { useCallback, useState, FormEvent, useEffect, useId } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -29,6 +29,7 @@ type Props = {
 export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextStep }: Props ) {
 	const { __ } = useI18n();
 	const [ selectedFile, setSelectedFile ] = useState< File >();
+	const uploadingId = useId();
 
 	const [ hasImportError, setHasImportError ] = useState( false );
 
@@ -84,10 +85,10 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 			<div className="subscriber-upload-form__dropzone">
 				<div className="subscriber-upload-form__in-progress">
 					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
-					<p>{ __( 'Uploading…' ) }</p>
+					<p id={ uploadingId }>{ __( 'Uploading…' ) }</p>
 					<Progress.Root
 						className="is-larger-progress-bar"
-						aria-label={ __( 'Loading…' ) }
+						aria-labelledby={ uploadingId }
 						value={ null }
 					>
 						<Progress.Track>

@@ -272,32 +272,19 @@ export class ImportingPane extends PureComponent {
 						site={ site }
 					/>
 				) }
-				{ ( this.isImporting() || this.isProcessing() ) &&
-					( percentComplete >= 0 ? (
-						<div className="importer__importing-pane-progress-container">
-							<Progress.Root
-								className="importer__importing-pane-progress"
-								aria-label={ __( 'Loading…' ) }
-								value={ percentComplete }
-							>
-								<Progress.Track>
-									<Progress.Indicator />
-								</Progress.Track>
-							</Progress.Root>
-						</div>
-					) : (
-						<div className="importer__importing-pane-progress-container">
-							<Progress.Root
-								className="importer__importing-pane-progress"
-								aria-label={ __( 'Loading…' ) }
-								value={ null }
-							>
-								<Progress.Track>
-									<Progress.Indicator />
-								</Progress.Track>
-							</Progress.Root>
-						</div>
-					) ) }
+				{ ( this.isImporting() || this.isProcessing() ) && (
+					<div className="importer__importing-pane-progress-container">
+						<Progress.Root
+							className="importer__importing-pane-progress"
+							aria-label={ __( 'Loading…' ) }
+							value={ percentComplete >= 0 ? percentComplete : null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
+					</div>
+				) }
 				{ blockingMessage && (
 					<div className="importer__import-progress-message">{ blockingMessage }</div>
 				) }

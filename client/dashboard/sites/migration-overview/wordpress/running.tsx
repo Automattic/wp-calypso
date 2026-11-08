@@ -75,7 +75,7 @@ export function Running( {
 								className="wordpress-migration__progress-bar"
 								aria-label={ label }
 								// No value animates the bar, which marks the step in progress.
-								value={ index === currentStep ? null : ( settledValue ?? null ) }
+								value={ index === currentStep ? null : settledValue }
 							>
 								<Progress.Track>
 									<Progress.Indicator />

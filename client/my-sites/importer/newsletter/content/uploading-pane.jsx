@@ -1,5 +1,4 @@
 import { truncate } from '@automattic/js-utils';
-import { __ } from '@wordpress/i18n';
 import { Icon, cloudUpload } from '@wordpress/icons';
 import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
@@ -92,10 +91,11 @@ export class UploadingPane extends PureComponent {
 
 				return (
 					<div className="content-upload-form__in-progress">
-						<p>{ uploaderPrompt }</p>
+						{ /* Only one upload pane renders per page, so a fixed id stays unique. */ }
+						<p id="content-upload-form-prompt">{ uploaderPrompt }</p>
 						<Progress.Root
 							className="content-upload-form__in-progress-bar is-larger-progress-bar"
-							aria-label={ __( 'Loading…' ) }
+							aria-labelledby="content-upload-form-prompt"
 							value={ null }
 						>
 							<Progress.Track>

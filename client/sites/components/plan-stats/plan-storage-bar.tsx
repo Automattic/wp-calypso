@@ -1,9 +1,8 @@
 import { SiteMediaStorage } from '@automattic/data-stores';
-import { __ } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { getLocaleSlug, useTranslate } from 'i18n-calypso';
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useId } from 'react';
 import { getIntlLocale } from 'calypso/dashboard/utils/locale';
 import { formatStorage } from 'calypso/dashboard/utils/site-storage';
 
@@ -15,6 +14,7 @@ const ALERT_PERCENT = 80;
 
 const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStorage } ) => {
 	const translate = useTranslate();
+	const titleId = useId();
 	const { storageUsedBytes, maxStorageBytes } = mediaStorage;
 
 	let usagePercent = ( storageUsedBytes / maxStorageBytes ) * 100;
@@ -34,7 +34,9 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 	return (
 		<>
 			<div className="plan-storage-title-wrapper">
-				<div className="plan-storage-title">{ translate( 'Storage' ) }</div>
+				<div id={ titleId } className="plan-storage-title">
+					{ translate( 'Storage' ) }
+				</div>
 				<span className="plan-storage-value">
 					{ translate( 'Using %(usedStorage)s of %(maxStorage)s', {
 						args: {
@@ -47,7 +49,7 @@ const PlanStorageBar: FC< PropsWithChildren< Props > > = ( { children, mediaStor
 				</span>
 			</div>
 
-			<Progress.Root className={ classes } aria-label={ __( 'Loading…' ) } value={ usagePercent }>
+			<Progress.Root className={ classes } aria-labelledby={ titleId } value={ usagePercent }>
 				<Progress.Track>
 					<Progress.Indicator />
 				</Progress.Track>

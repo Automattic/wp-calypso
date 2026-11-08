@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { ThemedIllustration } from '../../components/themed-illustration';
@@ -60,6 +60,8 @@ function SiteBackupDownloadProgress( {
 		downloadQueryError,
 	] );
 
+	const labelId = useId();
+
 	return (
 		<>
 			<VStack spacing={ 4 } alignment="center">
@@ -70,7 +72,9 @@ function SiteBackupDownloadProgress( {
 					width={ 408 }
 					height={ 280 }
 				/>
-				<Text size={ 20 }> { __( 'Initializing the download process' ) } </Text>
+				<Text id={ labelId } size={ 20 }>
+					{ __( 'Initializing the download process' ) }
+				</Text>
 				<Text size={ 13 } variant="muted">
 					{ sprintf(
 						/* translators: %d is the download completion percentage. */
@@ -80,7 +84,7 @@ function SiteBackupDownloadProgress( {
 				</Text>
 				<Progress.Root
 					className="dashboard-backups__progress-bar"
-					aria-label={ __( 'Loading…' ) }
+					aria-labelledby={ labelId }
 					value={ downloadProgress?.progress ?? 0 }
 				>
 					<Progress.Track>

@@ -42,8 +42,8 @@
 	--wp-components-color-foreground: var(--dashboard__background-color-success);
 }
 
-.dashboard-stat--is-loading .dashboard-stat__progress-bar {
-	--wpds-color-background-thumb-neutral: transparent;
+.dashboard-stat--is-loading .dashboard-stat__progress-bar > * > * {
+	display: none;
 }
 
 .dashboard-stat--density-low {

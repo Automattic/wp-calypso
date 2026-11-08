@@ -6,7 +6,7 @@ import {
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
-import { useEffect } from 'react';
+import { useEffect, useId } from 'react';
 import Notice from '../../components/notice';
 import { Text } from '../../components/text';
 import { ThemedIllustration } from '../../components/themed-illustration';
@@ -50,6 +50,7 @@ function SiteBackupRestoreProgress( {
 	}, [ restoreProgress?.status, onRestoreComplete, onRestoreError ] );
 
 	const isRunning = restoreProgress?.status === 'running';
+	const labelId = useId();
 
 	return (
 		<>
@@ -61,7 +62,7 @@ function SiteBackupRestoreProgress( {
 					width={ 408 }
 					height={ 280 }
 				/>
-				<Text size={ 20 }>
+				<Text id={ labelId } size={ 20 }>
 					{ isRunning ? restoreProgress?.message : __( 'Initializing the restore process' ) }
 				</Text>
 				<Text size={ 13 } variant="muted">
@@ -73,7 +74,7 @@ function SiteBackupRestoreProgress( {
 				</Text>
 				<Progress.Root
 					className="dashboard-backups__progress-bar"
-					aria-label={ __( 'Loading…' ) }
+					aria-labelledby={ labelId }
 					value={ restoreProgress?.percent ?? 0 }
 				>
 					<Progress.Track>

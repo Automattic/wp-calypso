@@ -18,7 +18,7 @@ import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { Progress } from '@wordpress/ui';
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useId } from 'react';
 import { ButtonStack } from '../../components/button-stack';
 import Notice from '../../components/notice';
 import { wpcomLink } from '../../utils/link';
@@ -47,18 +47,21 @@ function ErrorContent( { message, onClose }: { message: string; onClose: () => v
 
 function InProgressContent( { progress }: { progress: number | undefined } ) {
 	const progressValue = progress ? progress * 100 : 10;
+	const messageId = useId();
 	return (
 		<VStack spacing={ 4 }>
 			<Progress.Root
 				className="reset-site-modal-progress-bar"
-				aria-label={ __( 'Loading…' ) }
+				aria-labelledby={ messageId }
 				value={ progressValue }
 			>
 				<Progress.Track>
 					<Progress.Indicator />
 				</Progress.Track>
 			</Progress.Root>
-			<Text>{ __( 'We’re resetting your site. We’ll email you once it’s ready.' ) }</Text>
+			<Text id={ messageId }>
+				{ __( 'We’re resetting your site. We’ll email you once it’s ready.' ) }
+			</Text>
 		</VStack>
 	);
 }
