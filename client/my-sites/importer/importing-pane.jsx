@@ -1,6 +1,5 @@
 import { omit } from '@automattic/js-utils';
 import { formatNumber } from '@automattic/number-formatters';
-import { __ } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -276,7 +275,7 @@ export class ImportingPane extends PureComponent {
 					<div className="importer__importing-pane-progress-container">
 						<Progress.Root
 							className="importer__importing-pane-progress"
-							aria-label={ __( 'Loading…' ) }
+							aria-label={ this.props.translate( 'Loading…' ) }
 							value={ percentComplete >= 0 ? percentComplete : null }
 						>
 							<Progress.Track>

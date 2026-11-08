@@ -1,5 +1,4 @@
 import { FormInputValidation, FormLabel, Gridicon } from '@automattic/components';
-import { __ } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
@@ -116,7 +115,7 @@ export class UploadingPane extends PureComponent {
 					<div className="importer__upload-progress-container">
 						<Progress.Root
 							className={ progressClasses }
-							aria-label={ __( 'Loading…' ) }
+							aria-label={ this.props.translate( 'Loading…' ) }
 							value={ null }
 						>
 							<Progress.Track>

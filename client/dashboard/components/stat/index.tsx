@@ -1,6 +1,7 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
+import { useId } from 'react';
 import { TextBlur } from '../text-blur';
 import './style.scss';
 
@@ -33,7 +34,8 @@ interface StatProps {
 	progressColor?: 'alert-yellow' | 'alert-red' | 'alert-green';
 
 	/**
-	 * Accessible label for the progress bar.
+	 * The value screen readers announce for the progress bar, after the
+	 * strapline that names it. Also its name when there is no strapline.
 	 */
 	progressLabel?: string;
 
@@ -59,13 +61,18 @@ export function Stat( {
 	progressLabel = `${ progressValue }%`,
 	strapline,
 }: StatProps ) {
+	const straplineId = useId();
 	return (
 		<div
 			className={ clsx( `dashboard-stat--density-${ density }`, {
 				'dashboard-stat--is-loading': isLoading,
 			} ) }
 		>
-			{ strapline && <div className="dashboard-stat__strapline">{ strapline }</div> }
+			{ strapline && (
+				<div id={ straplineId } className="dashboard-stat__strapline">
+					{ strapline }
+				</div>
+			) }
 			<HStack
 				alignment="baseline"
 				spacing={ 2 }
@@ -84,7 +91,9 @@ export function Stat( {
 				<Progress.Root
 					className={ `dashboard-stat__progress-bar dashboard-stat__progress-bar--${ progressColor }` }
 					value={ progressValue }
-					aria-label={ progressLabel }
+					aria-labelledby={ strapline ? straplineId : undefined }
+					aria-label={ strapline ? undefined : progressLabel }
+					aria-valuetext={ progressLabel }
 					aria-hidden={ isLoading }
 				>
 					<Progress.Track>

@@ -1,5 +1,4 @@
 import { Step } from '@automattic/onboarding';
-import { __ } from '@wordpress/i18n';
 import { Progress } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
 import { useEffect } from 'react';
@@ -66,7 +65,7 @@ const SiteMigrationSshInProgress: StepType< {
 			<div className="site-migration-ssh-in-progress__progress">
 				<Progress.Root
 					className="site-migration-ssh-in-progress__progress-container"
-					aria-label={ __( 'Loading…' ) }
+					aria-label={ translate( 'Loading…' ) }
 					value={ null }
 				>
 					<Progress.Track>
