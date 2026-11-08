@@ -26,10 +26,11 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 		</Menu.ItemLabel>
 	);
 
+	// Items are tabbable so Tab moves through an open menu, as in the wp-admin bar.
 	if ( node.children?.length ) {
 		return (
 			<Menu.SubmenuRoot>
-				<Menu.SubmenuTrigger>{ label }</Menu.SubmenuTrigger>
+				<Menu.SubmenuTrigger tabIndex={ 0 }>{ label }</Menu.SubmenuTrigger>
 				<Menu.Popup className="omnibar__popover" width="content">
 					<OmnibarMenuContent nodes={ node.children } />
 				</Menu.Popup>
@@ -53,13 +54,19 @@ function OmnibarMenuItem( { node }: { node: OmnibarNode } ) {
 				rel={ node.rel }
 				title={ node.tooltip }
 				onClick={ node.onClick }
+				closeOnClick
+				tabIndex={ 0 }
 			>
 				{ label }
 			</Menu.LinkItem>
 		);
 	}
 
-	return <Menu.Item onClick={ node.onClick }>{ label }</Menu.Item>;
+	return (
+		<Menu.Item onClick={ node.onClick } tabIndex={ 0 }>
+			{ label }
+		</Menu.Item>
+	);
 }
 
 function OmnibarMenuContent( { nodes }: { nodes: OmnibarNode[] } ) {
@@ -110,11 +117,13 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		.filter( Boolean )
 		.join( ' ' );
 	const [ isOpen, setIsOpen ] = useState( false );
-	const triggerRef = useRef< HTMLButtonElement >( null );
+	const popupRef = useRef< HTMLElement | null >( null );
 	const closedByPointerRef = useRef( false );
+	const focusBeforeHoverRef = useRef< Element | null >( null );
 	const openedByKeyboardRef = useRef( false );
 
 	const setPopoverRef = ( element: HTMLElement | null ) => {
+		popupRef.current = element;
 		if ( element && openedByKeyboardRef.current ) {
 			openedByKeyboardRef.current = false;
 			element.querySelector< HTMLElement >( '[role="menuitem"]' )?.focus();
@@ -146,6 +155,25 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 		{ reason }
 	) => {
 		closedByPointerRef.current = ! open && reason === 'trigger-hover';
+		// A hover open moves focus into the menu. On a hover close, hand it back to where it was,
+		// such as a field the user was typing in, unless they've since moved focus elsewhere.
+		if ( open && reason === 'trigger-hover' ) {
+			focusBeforeHoverRef.current = document.activeElement;
+		} else if ( closedByPointerRef.current ) {
+			const previous = focusBeforeHoverRef.current;
+			const active = document.activeElement;
+			if (
+				previous instanceof HTMLElement &&
+				previous !== document.body &&
+				previous.isConnected &&
+				( active === document.body || popupRef.current?.contains( active ) )
+			) {
+				previous.focus( { preventScroll: true } );
+			}
+		}
+		if ( ! open ) {
+			focusBeforeHoverRef.current = null;
+		}
 		setIsOpen( open );
 	};
 
@@ -169,7 +197,6 @@ export function OmnibarMenu( { node, className }: { node: OmnibarNode; className
 	return (
 		<Menu.Root open={ isOpen } onOpenChange={ handleOpenChange } modal={ false }>
 			<Menu.Trigger
-				ref={ triggerRef }
 				onClick={ node.onClick }
 				openOnHover
 				delay={ 0 }
