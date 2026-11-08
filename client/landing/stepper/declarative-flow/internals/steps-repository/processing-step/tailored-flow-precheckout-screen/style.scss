@@ -49,9 +49,6 @@
 
 		.wpcom__loading-progress-bar {
 			--wpds-color-background-track-neutral: var(--studio-gray-5);
-			&::before {
-				background: var(--studio-black);
-			}
 		}
 	}
 }
