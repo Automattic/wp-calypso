@@ -417,7 +417,6 @@
 		"@wordpress/react-i18n": "5.1.0",
 		"@wordpress/readable-js-assets-webpack-plugin": "4.1.0",
 		"@wordpress/redux-routine": "6.1.0",
-		"@wordpress/reusable-blocks": "7.1.0",
 		"@wordpress/rich-text": "8.1.0",
 		"@wordpress/router": "2.1.0",
 		"@wordpress/server-side-render": "7.1.0",
