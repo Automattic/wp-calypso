@@ -1,11 +1,10 @@
 @use 'calypso/assets/stylesheets/shared/mixins/dark-theme' as ui-mixins;
 
 .wordpress-migration__progress-bar {
-	// !important because the component's own styles can load after ours.
-	width: 100% !important;
+	width: 100%;
 	--wp-components-color-foreground: var( --wp-admin-theme-color );
-	// ProgressBar paints its indicator and track with these tokens; mix them from the
-	// foreground color, as it did before.
+	// Progress paints its indicator and track with these tokens; mix them from the
+	// foreground color, as ProgressBar did before.
 	--wpds-color-background-thumb-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 90%, transparent);
 	--wpds-color-background-track-neutral: color-mix(in srgb, var(--wp-components-color-foreground) 10%, transparent);
 }

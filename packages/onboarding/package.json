@@ -64,6 +64,7 @@
 		"@wordpress/data": "^10.48.0",
 		"@wordpress/icons": "^15.5.0",
 		"@wordpress/react-i18n": "^4.48.0",
+		"@wordpress/ui": "^0.26.0",
 		"@wordpress/url": "^4.48.0",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.3",
