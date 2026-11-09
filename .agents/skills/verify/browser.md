@@ -38,16 +38,17 @@ node .agents/skills/verify/scripts/browse.cjs <url> [options]
 
 `<url>` is a Dashboard path (`/sites`) or an absolute URL such as `http://calypso.localhost:3000/home` or `/read` for classic Calypso and the Reader. The script reads `PORT` from `.env` itself; don't open `.env`. Don't pipe its output (e.g. through `tail`): you'd lose its exit code.
 
-| Option                                 | Purpose                                                                                  |
-| -------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `--as <account>`                       | E2E account name, or `me`. Default `defaultUser`.                                        |
-| `--wait-for <selector>`                | Wait for a Playwright selector, e.g. `'text=Latest activity'`.                           |
-| `--eval <code>` / `--eval-file <path>` | Async Playwright code with `page` and `context` in scope; its `return` value is printed. |
-| `--screenshot <path>`                  | Save a screenshot outside the repo; add `--full-page` for the whole page.                |
-| `--no-snapshot`                        | Skip the ARIA snapshot of `<main>`, printed by default.                                  |
-| `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                          |
-| `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                             |
-| `--log-requests <regex>`               | List matching responses with their status and envelope code.                             |
+| Option                                 | Purpose                                                                                                  |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `--as <account>`                       | E2E account name, or `me`. Default `defaultUser`.                                                        |
+| `--wait-for <selector>`                | Wait for a Playwright selector, e.g. `'text=Latest activity'`.                                           |
+| `--eval <code>` / `--eval-file <path>` | Async Playwright code with `page`, `context` and `screenshot()` in scope; its `return` value is printed. |
+| `--screenshot <path>`                  | Save a screenshot outside the repo; add `--full-page` for the whole page.                                |
+| `--clip <selector>`                    | Crop the screenshot to the first element matching the selector.                                          |
+| `--no-snapshot`                        | Skip the ARIA snapshot of `<main>`, printed by default.                                                  |
+| `--viewport <WxH>`                     | Default `1440x1000`; e.g. `390x844` for mobile.                                                          |
+| `--settle <ms>`                        | Extra wait before reporting. Default `2000`.                                                             |
+| `--log-requests <regex>`               | List matching responses with their status and envelope code.                                             |
 
 The report lists **problems**: console and page errors, failed requests, and API errors inside `http_envelope` responses. Compare with `trunk` before blaming your change.
 
