@@ -7,7 +7,6 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { getQueryArg } from '@wordpress/url';
 import { lazy, Suspense, useCallback, useMemo, useState } from 'react';
 import { useAnalytics } from '../../../app/analytics';
 import { useLocale } from '../../../app/locale';
@@ -60,11 +59,6 @@ export default function EarnWooPayments() {
 	const router = useRouter();
 	const isApprovalGated = useIsApprovalGated();
 	const [ isLearnMoreOpen, setIsLearnMoreOpen ] = useState( false );
-	// Lets reviewers see the first-time landing page on an agency that already has sites.
-	const isLandingPreview =
-		process.env.NODE_ENV === 'development' &&
-		getQueryArg( window.location.href, 'preview' ) === 'landing';
-	const showLanding = showEmptyState || isLandingPreview;
 
 	const navigateToSiteSetup = useCallback(
 		( siteId: number ) =>
@@ -96,7 +90,7 @@ export default function EarnWooPayments() {
 			title={ __( 'WooPayments commissions' ) }
 			description={ __( 'Earn revenue share from WooPayments on your clients’ stores.' ) }
 			actions={
-				hasSites && ! showLanding ? (
+				hasSites ? (
 					<HStack spacing={ 2 } alignment="center" expanded={ false }>
 						<Button
 							__next40pxDefaultSize
@@ -140,7 +134,7 @@ export default function EarnWooPayments() {
 				/>
 			}
 		>
-			{ showLanding ? (
+			{ showEmptyState ? (
 				<div className="dashboard-woopayments-landing-view">
 					<EmptyState.Wrapper>
 						<Suspense fallback={ null }>
