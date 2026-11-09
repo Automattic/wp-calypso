@@ -214,13 +214,11 @@ export function Connect( {
 				} }
 			>
 				{ withDomain(
-					sprintf(
-						/* translators: %s: the domain of the site being migrated, e.g. example.com, kept inside <domain>. */
-						__(
-							'We haven’t been able to confirm that <domain>%s</domain> is connected to WordPress.com. Only continue if you have connected the plugin or copied over the migration key manually.'
-						),
-						sourceHost
-					)
+					/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
+					__(
+						'We haven’t been able to confirm that <domain /> is connected to WordPress.com. Only continue if you have connected the plugin or copied over the migration key manually.'
+					),
+					sourceHost
 				) }
 			</ConfirmModal>
 		</MigrationCard>
@@ -296,24 +294,20 @@ function getConnectStep( {
 			isKeyInline: true,
 			steps: [
 				withDomain(
-					sprintf(
-						/* translators: %s: the domain of the site being migrated, e.g. example.com, kept inside <domain>. */
-						__( 'On <domain>%s</domain>, copy the migration key into the plugin’s settings page.' ),
-						sourceHost
-					)
+					/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
+					__( 'On <domain />, copy the migration key into the plugin’s settings page.' ),
+					sourceHost
 				),
 				__( 'Come back here and start the migration.' ),
 			],
 			fallbacks: [
 				// The key page link goes to the usual wp-admin address, which some sites move or hide.
 				withDomain(
-					sprintf(
-						/* translators: %s: the domain of the site being migrated, e.g. example.com, kept inside <domain>. */
-						__(
-							'Log in to the WordPress admin dashboard on <domain>%s</domain>, select “Migrate to WordPress.com” in the menu, then select Add Migration Key.'
-						),
-						sourceHost
-					)
+					/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
+					__(
+						'Log in to the WordPress admin dashboard on <domain />, select “Migrate to WordPress.com” in the menu, then select Add Migration Key.'
+					),
+					sourceHost
 				),
 				createInterpolateElement(
 					__(
@@ -336,11 +330,9 @@ function getConnectStep( {
 		isKeyInline: false,
 		steps: [
 			withDomain(
-				sprintf(
-					/* translators: %s: the domain of the site being migrated, e.g. example.com, kept inside <domain>. */
-					__( 'On <domain>%s</domain>, install and activate the Migrate to WordPress.com plugin.' ),
-					sourceHost
-				)
+				/* translators: <domain /> is the domain of the site being migrated, e.g. example.com. */
+				__( 'On <domain />, install and activate the Migrate to WordPress.com plugin.' ),
+				sourceHost
 			),
 			__( 'Open the plugin’s settings page and connect to WordPress.com.' ),
 			__( 'Come back here and start the migration.' ),
@@ -382,9 +374,9 @@ function getConnectStep( {
 }
 
 // The source's domain, set apart from the words around it so it reads as the address it is.
-function withDomain( text: string ) {
+function withDomain( text: string, sourceHost: string ) {
 	return createInterpolateElement( text, {
-		domain: <code className="wordpress-migration__domain" />,
+		domain: <code className="wordpress-migration__domain">{ sourceHost }</code>,
 	} );
 }
 
