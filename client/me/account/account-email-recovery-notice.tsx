@@ -124,6 +124,7 @@ export default function AccountEmailRecoveryNotice( {
 						variant="link"
 						onClick={ dismiss }
 						disabled={ isSaving }
+						accessibleWhenDisabled
 						isBusy={ isSaving }
 					>
 						{ translate( 'Remind me in six months' ) }

@@ -7,6 +7,7 @@ import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useSelector } from 'calypso/state';
 import accountRecoveryReducer from 'calypso/state/account-recovery/reducer';
+import { accountRecoverySettingsFetch } from 'calypso/state/account-recovery/settings/actions';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
 import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
@@ -15,7 +16,7 @@ import AccountEmailField from '../account-email-field';
 
 jest.mock( 'calypso/state/account-recovery/settings/actions', () => ( {
 	...jest.requireActual( 'calypso/state/account-recovery/settings/actions' ),
-	accountRecoverySettingsFetch: () => ( { type: 'TEST_RECOVERY_FETCH' } ),
+	accountRecoverySettingsFetch: jest.fn( () => ( { type: 'TEST_RECOVERY_FETCH' } ) ),
 } ) );
 
 type RecoveryState = {
@@ -126,8 +127,14 @@ describe( 'Account email recovery warning', () => {
 		);
 	}
 
-	it( 'waits for the saved reminder preference and dismisses only after confirmation', async () => {
+	it( 'keeps focus for a keyboard retry when dismissal fails', async () => {
+		const user = userEvent.setup();
 		mockPreferences();
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/me/preferences' )
+			.query( true )
+			.delay( 100 )
+			.reply( 500 );
 		const save = nock( 'https://public-api.wordpress.com' )
 			.post(
 				'/rest/v1.1/me/preferences',
@@ -139,9 +146,47 @@ describe( 'Account email recovery warning', () => {
 		renderSavedField();
 
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
-		await userEvent.click( await screen.findByRole( 'button', { name: REMINDER } ) );
+		const remind = await screen.findByRole( 'button', { name: REMINDER } );
+		await user.click( remind );
+		expect( remind ).toHaveAttribute( 'aria-disabled', 'true' );
+		expect( await screen.findByText( /could not dismiss/i ) ).toBeVisible();
+		expect( remind ).toHaveFocus();
+		await user.keyboard( '{Enter}' );
 		await waitFor( () => expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull() );
 		expect( save.isDone() ).toBe( true );
+	} );
+
+	it( 'clears the saved warning after recovery is verified in another window', async () => {
+		const { accountRecoverySettingsFetch: realFetch } = jest.requireActual(
+			'calypso/state/account-recovery/settings/actions'
+		);
+		jest.mocked( accountRecoverySettingsFetch ).mockImplementationOnce( realFetch );
+		mockPreferences();
+		const recoveryResponse = ( emailValidated: boolean ) => ( {
+			email: 'backup@gmail.com',
+			email_validated: emailValidated,
+			phone: null,
+			phone_validated: false,
+		} );
+		const initialRecovery = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/account-recovery' )
+			.query( true )
+			.reply( 200, recoveryResponse( false ) );
+		renderSavedField( { hasUnsavedChanges: true } );
+
+		expect( await screen.findByRole( 'link', { name: /opens in a new tab/i } ) ).toHaveAttribute(
+			'target',
+			'_blank'
+		);
+		await waitFor( () => expect( initialRecovery.isDone() ).toBe( true ) );
+		jest.mocked( accountRecoverySettingsFetch ).mockImplementationOnce( realFetch );
+		const verifiedRecovery = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/account-recovery' )
+			.query( true )
+			.reply( 200, recoveryResponse( true ) );
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await waitFor( () => expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull() );
+		expect( verifiedRecovery.isDone() ).toBe( true );
 	} );
 
 	it( 'refreshes the active email when a pending change was confirmed in another tab', async () => {

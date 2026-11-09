@@ -4,7 +4,7 @@
 
 import { ACCOUNT_EMAIL_RECOVERY_SNOOZE } from '@automattic/api-core';
 import { QueryClient } from '@tanstack/react-query';
-import { screen, waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useState } from 'react';
@@ -233,6 +233,28 @@ describe( '<EmailSection> TLD validation', () => {
 } );
 
 describe( 'Account email recovery reminder', () => {
+	test( 'clears the warning when recovery is verified in another window', async () => {
+		mockPreferences();
+		mockAccountRecovery( { email: 'backup@gmail.com' } );
+		render(
+			<EmailSection
+				value={ ACCOUNT_EMAIL }
+				onChange={ noop }
+				userSettings={ userSettings }
+				isEmailVerified
+				hasUnsavedChanges
+			/>
+		);
+
+		expect( await screen.findByRole( 'link', { name: /opens in a new tab/i } ) ).toHaveAttribute(
+			'target',
+			'_blank'
+		);
+		mockAccountRecovery( { email: 'backup@gmail.com', email_validated: true } );
+		fireEvent.focus( window );
+		await waitFor( () => expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull() );
+	} );
+
 	test( 'can retry a failed dismissal without submitting or hiding the warning', async () => {
 		const user = userEvent.setup();
 		mockPreferences();
@@ -266,7 +288,8 @@ describe( 'Account email recovery reminder', () => {
 		expect( await screen.findByText( /could not dismiss/i ) ).toBeVisible();
 		expect( screen.getByText( RECOVERY_WARNING ) ).toBeVisible();
 		expect( onSubmit ).not.toHaveBeenCalled();
-		await user.click( remind );
+		expect( remind ).toHaveFocus();
+		await user.keyboard( '{Enter}' );
 		await waitFor( () => expect( screen.queryByText( RECOVERY_WARNING ) ).toBeNull() );
 		expect( save.isDone() ).toBe( true );
 	} );

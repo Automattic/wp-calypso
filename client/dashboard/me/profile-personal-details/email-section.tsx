@@ -156,7 +156,15 @@ export default function EmailSection( {
 	}, [ isEmailValid, onValidationChange ] );
 
 	const { user } = useAuth();
-	const { data: recovery } = useQuery( accountRecoveryQuery() );
+	const { data: recovery, refetch: refetchRecovery } = useQuery( accountRecoveryQuery() );
+	useEffect( () => {
+		const refreshRecovery = () => {
+			// A window can regain focus without a visibility change.
+			void refetchRecovery( { cancelRefetch: false } );
+		};
+		window.addEventListener( 'focus', refreshRecovery );
+		return () => window.removeEventListener( 'focus', refreshRecovery );
+	}, [ refetchRecovery ] );
 	const verifiedRecovery = recovery && {
 		verifiedEmail: recovery.email_validated === true ? recovery.email : undefined,
 		hasVerifiedPhone: !! recovery.phone?.number && recovery.phone_validated === true,
