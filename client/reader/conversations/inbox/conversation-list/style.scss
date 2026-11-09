@@ -180,6 +180,20 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 	border-block-start-color: color-mix( in srgb, var( --conversations-ink ) 6%, transparent );
 }
 
+// The last row closes the list with a line of its own, in its top line's color.
+.conversations-inbox__list
+	> section:last-of-type
+	> ul
+	> li:last-child
+	> .conversations-inbox__item {
+	margin-block-end: 0;
+	border-block-end-color: color-mix( in srgb, var( --conversations-ink ) 8%, transparent );
+
+	&.is-unread {
+		border-block-end-color: color-mix( in srgb, var( --conversations-ink ) 6%, transparent );
+	}
+}
+
 // A section without a day label starts right under the list's top border.
 .conversations-inbox__list
 	> section:first-child
