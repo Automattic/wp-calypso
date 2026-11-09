@@ -1,10 +1,12 @@
 body.is-reader-page .main.conversations-inbox-main {
 	max-width: none;
+	height: 100%;
 	margin: 0;
 }
 
 .conversations-inbox {
-	height: calc( 100vh - var( --masterbar-height, 46px ) - 34px );
+	// Fills the Reader's content card, which sizes itself to the viewport.
+	height: 100%;
 	background: var( --color-surface );
 	color: var( --color-text );
 	overflow: hidden;
