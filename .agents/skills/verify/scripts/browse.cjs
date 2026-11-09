@@ -338,7 +338,7 @@ async function check( browser, account, target ) {
 	try {
 		if ( isCalypsoLiveTarget( url ) && ! isLoginUrl( page.url() ) ) {
 			const commit = await page.evaluate( () => window.COMMIT_SHA );
-			if ( ! commit ) {
+			if ( ! isCalypsoLiveTarget( page.url() ) || ! commit ) {
 				throw new Error( `Calypso Live did not load a build at ${ page.url() }.` );
 			}
 			console.log( 'preview commit:', commit );
