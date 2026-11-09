@@ -46,26 +46,8 @@ export const CRDT_RECORD_MAP_KEY = 'CRDT_RECORD_MAP_KEY';
 export const LOCAL_EDITOR_ORIGIN = 'LOCAL_EDITOR_ORIGIN';
 export const LOCAL_UNDO_IGNORED_ORIGIN = 'LOCAL_UNDO_IGNORED_ORIGIN';
 
-// @wordpress/date exports. dataviews reads getSettings().formats when it loads.
-export const getSettings = () => ( { formats: {}, timezone: {}, l10n: {} } );
-export const getDate = createNoop( 'getDate' );
-export const dateI18n = createNoop( 'dateI18n' );
-
-// date-fns and date-fns/locale exports, used by dataviews' date fields and ui's calendar
-export const areIntervalsOverlapping = createNoop( 'areIntervalsOverlapping' );
+// date-fns and date-fns/locale exports, used by ui's calendar
 export const differenceInCalendarDays = createNoop( 'differenceInCalendarDays' );
-export const endOfMonth = createNoop( 'endOfMonth' );
-export const format = createNoop( 'format' );
-export const isSameMonth = createNoop( 'isSameMonth' );
-export const isValid = createNoop( 'isValid' );
-export const parse = createNoop( 'parse' );
-export const parseISO = createNoop( 'parseISO' );
-export const startOfMonth = createNoop( 'startOfMonth' );
-export const startOfYear = createNoop( 'startOfYear' );
-export const subDays = createNoop( 'subDays' );
-export const subMonths = createNoop( 'subMonths' );
-export const subWeeks = createNoop( 'subWeeks' );
-export const subYears = createNoop( 'subYears' );
 export const enUS = {};
 
 // react-day-picker exports, used by ui's calendar

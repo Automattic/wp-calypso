@@ -20,6 +20,11 @@
 @import "@wordpress/block-library/build-style/embed/editor.css";
 @import "@wordpress/block-library/build-style/embed/theme.css";
 
+/* From block-library's combined editor.css: embed previews' iframes have no frameborder. */
+:where(.editor-styles-wrapper) iframe:not([frameborder]) {
+	border: 0;
+}
+
 body {
 	overflow-y: hidden;
 	background-color: transparent;
