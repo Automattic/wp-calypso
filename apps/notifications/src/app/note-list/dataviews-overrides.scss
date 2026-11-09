@@ -80,6 +80,10 @@
 		line-height: var(--wpds-typography-line-height-sm, 20px);
 	}
 
+	.dataviews-view-list__title-field {
+		font-size: 14px;
+	}
+
 	// Tighten the title-to-excerpt gap and center short text in the column's
 	// two-line min-height. DataViews sets the gap inline, hence `!important`.
 	.dataviews-view-list__field-wrapper {

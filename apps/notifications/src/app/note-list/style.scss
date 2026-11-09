@@ -55,6 +55,15 @@
 		}
 	}
 
+	// The theme has no text gray between neutral-weak and neutral, so mix the two.
+	.wpnc__excerpt {
+		color: color-mix(
+			in srgb,
+			var(--wpds-color-foreground-content-neutral-weak, #707070) 70%,
+			var(--wpds-color-foreground-content-neutral, #1e1e1e)
+		);
+	}
+
 	// Follow the row's text into the brand color on hover and keyboard focus.
 	div[role="article"]:where(:hover, .is-hovered, :has(.dataviews-view-list__item:focus-visible))
 		.wpnc__subject
