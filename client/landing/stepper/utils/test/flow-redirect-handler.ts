@@ -1,8 +1,18 @@
 /**
  * @jest-environment jsdom
  */
+import { isEnabled } from '@automattic/calypso-config';
+import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
+import { SESSION_KEY_FROM_PLAYGROUND_PUBLISH } from 'calypso/landing/stepper/declarative-flow/internals/steps-repository/playground/lib/constants';
 import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import redirectPathIfNecessary, { isRemovedFlow } from '../flow-redirect-handler';
+
+// `@automattic/calypso-products` calls `isEnabled` while it loads, before a top-level
+// `mockIsEnabled` would exist, so the mock is created inside the factory.
+jest.mock( '@automattic/calypso-config', () =>
+	Object.assign( jest.fn(), { isEnabled: jest.fn( () => false ) } )
+);
+const mockIsEnabled = isEnabled as jest.Mock;
 
 jest.mock( 'calypso/lib/analytics/tracks', () => ( {
 	recordTracksEvent: jest.fn(),
@@ -13,6 +23,8 @@ describe( 'flow redirect handler', () => {
 
 	beforeEach( () => {
 		jest.clearAllMocks();
+		mockIsEnabled.mockReturnValue( false );
+		window.sessionStorage.clear();
 		Object.defineProperty( window, 'location', {
 			value: { href: '', replace },
 			writable: true,
@@ -128,5 +140,101 @@ describe( 'flow redirect handler', () => {
 
 	it( 'does not classify existing AI Site Builder sites as removed', () => {
 		expect( isRemovedFlow( 'ai-site-builder' ) ).toBe( false );
+	} );
+
+	describe( 'entrepreneur flow', () => {
+		beforeEach( () => {
+			mockIsEnabled.mockImplementation(
+				( flag: string ) => flag === 'entrepreneur/redirect-to-commerce-purchase'
+			);
+		} );
+
+		it( 'sends a survey visit to the Commerce purchase path, keeping the query and replacing plan', () => {
+			const didRedirect = redirectPathIfNecessary(
+				'/setup/entrepreneur/start',
+				'?ref=partner&utm_source=ads&plan=personal-bundle'
+			);
+
+			expect( didRedirect ).toBe( true );
+			expect( replace ).toHaveBeenCalledWith(
+				'/setup/new-hosted-site?ref=partner&utm_source=ads&plan=ecommerce-bundle'
+			);
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_tailored_flows_redirect',
+				expect.objectContaining( {
+					redirect_to_url:
+						'/setup/new-hosted-site?ref=partner&utm_source=ads&plan=ecommerce-bundle',
+				} )
+			);
+		} );
+
+		it.each( [
+			'/setup/entrepreneur',
+			'/setup/entrepreneur/user',
+			`/setup/entrepreneur/${ STEPS.TRIAL_ACKNOWLEDGE.slug }`,
+			`/setup/entrepreneur/${ STEPS.SITE_CREATION_STEP.slug }`,
+		] )( 'redirects %s before site creation', ( pathname ) => {
+			redirectPathIfNecessary( pathname, '' );
+
+			expect( replace ).toHaveBeenCalledWith( '/setup/new-hosted-site?plan=ecommerce-bundle' );
+		} );
+
+		it.each( [
+			[ '/setup/entrepreneur/start/es', '/setup/new-hosted-site/es?plan=ecommerce-bundle' ],
+			[ '/setup/entrepreneur/es', '/setup/new-hosted-site/es?plan=ecommerce-bundle' ],
+			[
+				'/setup/entrepreneur/start/sr_latin',
+				'/setup/new-hosted-site/sr_latin?plan=ecommerce-bundle',
+			],
+		] )( 'keeps the locale when redirecting %s', ( pathname, expected ) => {
+			redirectPathIfNecessary( pathname, '' );
+
+			expect( replace ).toHaveBeenCalledWith( expected );
+		} );
+
+		it.each( [
+			STEPS.PROCESSING.slug,
+			STEPS.WAIT_FOR_ATOMIC.slug,
+			STEPS.WAIT_FOR_PLUGIN_INSTALL.slug,
+			STEPS.IMPORTER_PLAYGROUND.slug,
+			STEPS.ERROR.slug,
+		] )( 'lets a trial already being set up finish on the %s step', ( step ) => {
+			const didRedirect = redirectPathIfNecessary( `/setup/entrepreneur/${ step }`, '?siteId=123' );
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves the Woo Playground test path on the trial', () => {
+			const didRedirect = redirectPathIfNecessary(
+				'/setup/entrepreneur',
+				'?from=playground-publish'
+			);
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'leaves the Playground path on the trial after the login round trip drops the query', () => {
+			window.sessionStorage.setItem( SESSION_KEY_FROM_PLAYGROUND_PUBLISH, '1' );
+
+			const didRedirect = redirectPathIfNecessary( '/setup/entrepreneur/create-site', '' );
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not redirect while the feature flag is off', () => {
+			mockIsEnabled.mockReturnValue( false );
+
+			const didRedirect = redirectPathIfNecessary( '/setup/entrepreneur/start', '' );
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
+		it( 'does not classify the entrepreneur flow as removed', () => {
+			expect( isRemovedFlow( 'entrepreneur' ) ).toBe( false );
+		} );
 	} );
 } );
