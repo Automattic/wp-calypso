@@ -109,7 +109,7 @@ export function ConversationListItem( {
 		<li ref={ itemRef }>
 			<VStack
 				as="button"
-				spacing={ 2.5 }
+				spacing={ 2 }
 				type="button"
 				className={ clsx( 'conversations-inbox__item', {
 					'is-selected': isSelected,
@@ -174,7 +174,7 @@ export function ConversationListItem( {
 								<img key={ index } src={ avatar } alt="" width={ 20 } height={ 20 } />
 							) ) }
 						</HStack>
-						<Text size={ 12 } lineHeight="16px" color="inherit">
+						<Text size={ 13 } lineHeight="20px" color="inherit">
 							{ getContextLine( translate, item ) }
 						</Text>
 					</HStack>
@@ -182,8 +182,8 @@ export function ConversationListItem( {
 				{ density === 'comfortable' && (
 					<HStack as="span">
 						<Text
-							size={ 12 }
-							lineHeight="16px"
+							size={ 13 }
+							lineHeight="20px"
 							color="var(--color-text-subtle)"
 							className="conversations-inbox__item-excerpt"
 						>

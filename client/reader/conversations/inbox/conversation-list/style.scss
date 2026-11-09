@@ -22,22 +22,26 @@
 	}
 }
 
+.conversations-inbox__tabs-root,
+.conversations-inbox__tab-panel {
+	display: flex;
+	flex-direction: column;
+	flex: 1;
+	min-height: 0;
+}
+
+.conversations-inbox__tab-panel[hidden] {
+	display: none;
+}
+
 .conversations-inbox__tabs {
 	padding: 0 16px;
 	border-block-end: 1px solid var( --color-border-subtle );
 }
 
-.conversations-inbox__tab {
-	padding: 12px;
-	background: none;
-	border: 0;
-	border-block-end: 2px solid transparent;
-	color: var( --color-text );
-	cursor: pointer;
-
-	&.is-active {
-		border-block-end-color: var( --color-text );
-	}
+// Lets the active tab's underline sit on the divider.
+.conversations-inbox__tab-list {
+	margin-block-end: -1px;
 }
 
 .conversations-inbox__badge {
@@ -63,8 +67,9 @@
 
 .conversations-inbox__mark-read.components-button.is-link {
 	align-self: flex-start;
-	margin: 0 16px 12px;
-	font-size: 0.875rem;
+	margin: 4px 16px 12px;
+	font-size: 13px;
+	line-height: 20px;
 	color: var( --color-text );
 }
 
@@ -156,9 +161,12 @@
 	flex-shrink: 0;
 
 	img {
-		box-sizing: border-box;
 		border-radius: 50%;
-		border: 1px solid var( --conversations-item-bg, var( --color-surface ) );
+
+		// Cut a 1px ring out where the next avatar overlaps, so the row background shows through.
+		&:not( :last-child ) {
+			mask-image: radial-gradient( circle at 22px 50%, transparent 11px, #000 11.5px );
+		}
 
 		& + img {
 			margin-inline-start: -8px;

@@ -1,7 +1,8 @@
 import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
-import clsx from 'clsx';
+import { Tabs } from '@wordpress/ui';
 import { useTranslate } from 'i18n-calypso';
+import type { ReactNode } from 'react';
 
 export type InboxTab = 'all' | 'unread' | 'yours';
 
@@ -11,9 +12,10 @@ interface Props {
 	tab: InboxTab;
 	unreadCount: number;
 	onChange: ( tab: InboxTab ) => void;
+	children: ReactNode;
 }
 
-export function ConversationListTabs( { tab, unreadCount, onChange }: Props ) {
+export function ConversationListTabs( { tab, unreadCount, onChange, children }: Props ) {
 	const translate = useTranslate();
 
 	const tabs: { name: InboxTab; label: string; count?: number }[] = [
@@ -23,31 +25,30 @@ export function ConversationListTabs( { tab, unreadCount, onChange }: Props ) {
 	];
 
 	return (
-		<HStack
-			justify="flex-start"
-			expanded={ false }
-			className="conversations-inbox__tabs"
-			role="tablist"
+		<Tabs.Root
+			value={ tab }
+			onValueChange={ ( value ) => onChange( value as InboxTab ) }
+			className="conversations-inbox__tabs-root"
 		>
-			{ tabs.map( ( { name, label, count } ) => (
-				<HStack
-					as="button"
-					key={ name }
-					spacing={ 1.5 }
-					justify="flex-start"
-					expanded={ false }
-					type="button"
-					role="tab"
-					aria-selected={ tab === name }
-					className={ clsx( 'conversations-inbox__tab', { 'is-active': tab === name } ) }
-					onClick={ () => onChange( name ) }
-				>
-					<span>{ label }</span>
-					{ !! count && (
-						<span className="conversations-inbox__badge">{ formatNumber( count ) }</span>
-					) }
-				</HStack>
+			<div className="conversations-inbox__tabs">
+				<Tabs.List variant="minimal" className="conversations-inbox__tab-list">
+					{ tabs.map( ( { name, label, count } ) => (
+						<Tabs.Tab key={ name } value={ name }>
+							<HStack as="span" spacing={ 1.5 } expanded={ false }>
+								<span>{ label }</span>
+								{ !! count && (
+									<span className="conversations-inbox__badge">{ formatNumber( count ) }</span>
+								) }
+							</HStack>
+						</Tabs.Tab>
+					) ) }
+				</Tabs.List>
+			</div>
+			{ INBOX_TABS.map( ( name ) => (
+				<Tabs.Panel key={ name } value={ name } className="conversations-inbox__tab-panel">
+					{ tab === name && children }
+				</Tabs.Panel>
 			) ) }
-		</HStack>
+		</Tabs.Root>
 	);
 }
