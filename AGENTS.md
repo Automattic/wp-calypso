@@ -103,4 +103,4 @@ Test with an account made for testing. Use your own WordPress.com account only w
 
 ## Creating Pull Requests
 
-To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md).
+To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md). After each push to an open PR, re-read its description and fix what no longer matches the code, re-running the How to Test steps the push affects and updating the commit they ran on.

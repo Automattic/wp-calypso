@@ -91,7 +91,3 @@ The Sites list and site overview showed `-` for the PHP version of Simple sites,
 3. Commit, push, and open the PR as a draft.
 
 Omit tool attribution such as a "Generated with Claude Code" footer or a `Co-Authored-By` trailer.
-
-## 5. Keep the description current
-
-After each push to an open PR (review fixes, rebases, new behaviour), re-read the whole description and fix what no longer matches the code, including What, Details, the steps and their URLs. Re-run the steps the push affects and update the commit line.
