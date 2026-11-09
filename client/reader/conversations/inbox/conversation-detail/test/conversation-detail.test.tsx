@@ -92,6 +92,20 @@ describe( 'ConversationDetail', () => {
 		);
 	} );
 
+	it( 'links the post author to their Reader profile', () => {
+		mockedUsePost.mockReturnValue( {
+			data: { ...post, author: { name: 'Ana', wpcom_login: 'ana' } },
+			isLoading: false,
+		} as never );
+
+		renderDetail();
+
+		expect( screen.getByRole( 'link', { name: 'Ana' } ) ).toHaveAttribute(
+			'href',
+			'/reader/users/ana'
+		);
+	} );
+
 	it( 'renders the comment thread with the starting comment and count from the post', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 

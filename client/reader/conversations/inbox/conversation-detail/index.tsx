@@ -24,6 +24,7 @@ import { useRtl, useTranslate } from 'i18n-calypso';
 import { useEffect, useRef, useState } from 'react';
 import Comments from 'calypso/blocks/comments';
 import { COMMENTS_FILTER_ALL } from 'calypso/blocks/comments/comments-filters';
+import ReaderAuthorLink, { type ReaderLinkAuthor } from 'calypso/blocks/reader-author-link';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import {
 	getConversationKey,
@@ -115,7 +116,7 @@ export function ConversationDetail( {
 	const commentCount = Number(
 		( post?.discussion as { comment_count?: number } )?.comment_count ?? 0
 	);
-	const author = post?.author as { ID?: number; name?: string } | undefined;
+	const author = post?.author as ReaderLinkAuthor | undefined;
 	const image = ( post?.canonical_image as { uri?: string } | undefined )?.uri;
 	const date = post?.date ? moment( String( post.date ) ) : null;
 	const postUrl = post ? getPostUrl( post ) : '';
@@ -243,7 +244,7 @@ export function ConversationDetail( {
 					) }
 					{ post && ! post.is_error && (
 						<>
-							<VStack spacing={ 4 } className="conversations-inbox__post-card">
+							<VStack spacing={ 3 } className="conversations-inbox__post-card">
 								<HStack justify="flex-start" wrap className="conversations-inbox__post-meta">
 									{ !! post.site_icon && (
 										<img
@@ -255,7 +256,12 @@ export function ConversationDetail( {
 									) }
 									<strong>{ String( post.site_name ?? '' ) }</strong>
 									{ author?.name && (
-										<span className="conversations-inbox__post-author">{ author.name }</span>
+										<ReaderAuthorLink
+											author={ author }
+											className="conversations-inbox__post-author"
+										>
+											{ author.name }
+										</ReaderAuthorLink>
 									) }
 									{ date && (
 										<span>

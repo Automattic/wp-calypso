@@ -48,6 +48,7 @@
 	color: var( --color-text );
 	text-decoration: none;
 
+	&:visited,
 	&:hover,
 	&:focus {
 		color: var( --color-text );
@@ -81,8 +82,22 @@
 		border-radius: 4px;
 	}
 
+	// Sits above the card's stretched post link.
 	.conversations-inbox__post-author {
+		position: relative;
+		z-index: 1;
 		color: var( --color-text );
+		text-decoration: none;
+
+		&:visited,
+		&:focus {
+			color: var( --color-text );
+		}
+
+		&:hover {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
 	}
 
 	strong {
