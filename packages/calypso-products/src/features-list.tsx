@@ -2137,11 +2137,7 @@ const FEATURES_LIST: FeatureList = {
 	},
 	[ FEATURE_SITE_STAGING_SITES ]: {
 		getSlug: () => FEATURE_SITE_STAGING_SITES,
-		getTitle: () =>
-			isEnabled( 'hosting/dev-tools-all-paid-plans' )
-				? i18n.translate( 'Staging site' )
-				: i18n.translate( 'Free staging site' ),
-		getAlternativeTitle: () => i18n.translate( 'Free staging site' ),
+		getTitle: () => i18n.translate( 'Free staging site' ),
 		getDescription: ( params ) =>
 			params?.isExperimentVariant
 				? i18n.translate(
