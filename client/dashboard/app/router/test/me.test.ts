@@ -11,6 +11,8 @@ import {
 	appsRedirectRoute,
 	createMeRoutes,
 	getAppsRedirectRoute,
+	mcpLegacyRedirectRoute,
+	mcpLegacySubpageRedirectRoute,
 	meRoute,
 	purchaseSettingsIndexRoute,
 } from '../me';
@@ -244,3 +246,32 @@ test.each( [ appsRedirectRoute, getAppsRedirectRoute ] )(
 		);
 	}
 );
+
+function getRedirectTarget( beforeLoad: unknown, args: unknown ) {
+	try {
+		( beforeLoad as ( args: unknown ) => void )( args );
+	} catch ( error ) {
+		return ( error as { to?: string } ).to;
+	}
+}
+
+test( 'redirects the legacy /me/mcp path to the AI and MCP screen', () => {
+	expect( getRedirectTarget( mcpLegacyRedirectRoute.options.beforeLoad, {} ) ).toBe(
+		'/me/preferences/mcp'
+	);
+} );
+
+test.each( [
+	[ 'read', '/me/preferences/mcp/read' ],
+	[ 'write', '/me/preferences/mcp/write' ],
+	[ 'mcp-sites', '/me/preferences/mcp/mcp-sites' ],
+	[ 'add-site', '/me/preferences/mcp/mcp-sites' ],
+	[ 'setup', '/me/preferences/mcp/setup' ],
+	[ 'unknown', '/me/preferences/mcp' ],
+] )( 'redirects the legacy /me/mcp/%s path to %s', ( splat, to ) => {
+	expect(
+		getRedirectTarget( mcpLegacySubpageRedirectRoute.options.beforeLoad, {
+			params: { _splat: splat },
+		} )
+	).toBe( to );
+} );

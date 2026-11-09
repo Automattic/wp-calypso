@@ -48,14 +48,14 @@ export default function () {
 
 	page( '/me/get-apps', controller.appsRedirect );
 
+	// Old setup URLs; manual setup now lives in the dashboard.
 	page(
 		'/me/mcp/setup',
-		setupPreferences,
-		maybeRedirectToMultiSiteDashboard( '/me/mcp/setup' ),
-		controller.sidebar,
-		controller.mcpSetup,
-		makeLayout,
-		clientRender
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/setup', () => true )
+	);
+	page(
+		'/me/mcp-setup',
+		maybeRedirectToMultiSiteDashboard( '/me/preferences/mcp/setup', () => true )
 	);
 	page(
 		'/me/mcp/read',
@@ -102,5 +102,4 @@ export default function () {
 		makeLayout,
 		clientRender
 	);
-	page( '/me/mcp-setup', controller.mcpSetupLegacyRedirect, makeLayout, clientRender );
 }
