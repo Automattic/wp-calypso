@@ -1,3 +1,4 @@
+@import '@wordpress/base-styles/colors';
 @import '@wordpress/base-styles/variables';
 
 .conversations-inbox__detail-pane {
@@ -66,10 +67,25 @@
 	}
 }
 
+.conversations-inbox__post-actions {
+	margin-inline-start: auto;
+}
+
+// The same arrow as the notifications panel's post card, shown while the card is hovered or focused.
+.conversations-inbox__post-arrow {
+	flex-shrink: 0;
+	fill: var( --wp-components-color-gray-600, #{$gray-600} );
+	opacity: 0;
+	transition: opacity var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+
+	.conversations-inbox__post-card:is( :hover, :focus-within ) & {
+		opacity: 1;
+	}
+}
+
 .conversations-inbox__post-menu {
 	position: relative;
 	z-index: 1;
-	margin-inline-start: auto;
 
 	.components-button {
 		color: var( --color-text );
@@ -91,7 +107,10 @@
 		position: relative;
 		z-index: 1;
 		color: var( --color-text );
-		text-decoration: none;
+		text-decoration: underline;
+		text-decoration-color: transparent;
+		transition: text-decoration-color var( --wpds-motion-duration-sm )
+			var( --wpds-motion-easing-balanced );
 
 		&:visited,
 		&:focus {
@@ -100,7 +119,7 @@
 
 		&:hover {
 			color: var( --color-text );
-			text-decoration: underline;
+			text-decoration-color: currentcolor;
 		}
 	}
 

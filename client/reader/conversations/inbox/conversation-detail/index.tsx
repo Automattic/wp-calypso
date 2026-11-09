@@ -4,6 +4,7 @@ import {
 	Button,
 	DropdownMenu,
 	ExternalLink,
+	Icon,
 	MenuGroup,
 	MenuItem,
 	Notice,
@@ -14,6 +15,7 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import {
+	arrowUpRight,
 	chevronDown,
 	chevronLeft,
 	chevronRight,
@@ -271,30 +273,41 @@ export function ConversationDetail( {
 												: date.format( 'll' ) }
 										</span>
 									) }
-									<DropdownMenu
-										icon={ moreHorizontal }
-										label={ translate( 'Post actions' ) }
-										className="conversations-inbox__post-menu"
-										toggleProps={ { __next40pxDefaultSize: true, size: 'small' } }
-										disableOpenOnArrowDown
-										popoverProps={ { placement: 'bottom-end' } }
+									<HStack
+										spacing={ 4 }
+										expanded={ false }
+										className="conversations-inbox__post-actions"
 									>
-										{ ( { onClose } ) => (
-											<MenuGroup>
-												{ controls.map( ( { title, onClick } ) => (
-													<MenuItem
-														key={ title }
-														onClick={ () => {
-															onClick();
-															onClose();
-														} }
-													>
-														{ title }
-													</MenuItem>
-												) ) }
-											</MenuGroup>
-										) }
-									</DropdownMenu>
+										<Icon
+											className="conversations-inbox__post-arrow"
+											icon={ arrowUpRight }
+											size={ 20 }
+										/>
+										<DropdownMenu
+											icon={ moreHorizontal }
+											label={ translate( 'Post actions' ) }
+											className="conversations-inbox__post-menu"
+											toggleProps={ { __next40pxDefaultSize: true, size: 'small' } }
+											disableOpenOnArrowDown
+											popoverProps={ { placement: 'bottom-end' } }
+										>
+											{ ( { onClose } ) => (
+												<MenuGroup>
+													{ controls.map( ( { title, onClick } ) => (
+														<MenuItem
+															key={ title }
+															onClick={ () => {
+																onClick();
+																onClose();
+															} }
+														>
+															{ title }
+														</MenuItem>
+													) ) }
+												</MenuGroup>
+											) }
+										</DropdownMenu>
+									</HStack>
 								</HStack>
 								<HStack spacing={ 6 } alignment="top">
 									<VStack
