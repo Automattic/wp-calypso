@@ -299,7 +299,7 @@ Three consumers, all funnelled through `shouldLoadSurvicate()`:
 Any PR that changes `packages/survicate/` or `apps/survicate/` ships to wp-admin
 through a separate widgets.wp.com deploy, not just the Calypso deploy. Reviewers
 and whoever merges need those steps, so **always add the two sections below to the
-PR description** (after "Testing Instructions" in `.github/PULL_REQUEST_TEMPLATE.md`).
+PR description** (after "How to Test" in `.github/PULL_REQUEST_TEMPLATE.md`).
 Adapt the feature-specific checks; keep the deploy steps as they are.
 
 ```markdown

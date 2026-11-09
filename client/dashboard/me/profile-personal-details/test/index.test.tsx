@@ -348,7 +348,11 @@ describe( '<PersonalDetailsSection>', () => {
 			const dialog = await screen.findByRole( 'dialog', { name: 'Change your username?' } );
 
 			// Fake timers are only needed for the validation debounce; the mutation callbacks
-			// must run on real timers to finish within the test.
+			// must run on real timers to finish within the test. Flush first: React's scheduler
+			// queues its work on a timer, and work left on a fake one never runs.
+			await act( async () => {
+				jest.runOnlyPendingTimers();
+			} );
 			jest.useRealTimers();
 
 			return { user: userEvent.setup(), recordTracksEvent, dialog };

@@ -2,7 +2,7 @@ import { useReducedMotion } from '@wordpress/compose';
 import clsx from 'clsx';
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { isBlockMarkup, loadCommentEditor } from './load-comment-editor';
+import { fetchEmbed, isBlockMarkup, loadCommentEditor } from './load-comment-editor';
 import type { CommentsEditorSettings } from '@automattic/api-core';
 
 import './comment-block-editor.scss';
@@ -123,6 +123,7 @@ export default function CommentBlockEditor( {
 						embedUrl: 'https://public-api.wordpress.com/wpcom/v2/read/embed',
 					},
 					placeholder,
+					fetchEmbed,
 					focus: focus
 						? () => ( clicked.current ? ( textarea.current?.selectionStart ?? -1 ) : -1 )
 						: undefined,

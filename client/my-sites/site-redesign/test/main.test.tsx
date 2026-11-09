@@ -1099,7 +1099,7 @@ describe( 'SiteRedesign', () => {
 		expect( screen.getByRole( 'status' ) ).toHaveTextContent(
 			'Preparing your site. This can take a few minutes.'
 		);
-		expect( screen.getByRole( 'progressbar' ) ).not.toHaveAttribute( 'value' );
+		expect( screen.getByRole( 'progressbar' ) ).not.toHaveAttribute( 'aria-valuenow' );
 		expect( screen.queryByText( 'Redesign your site' ) ).toBeNull();
 		expect(
 			screen.queryByText( 'Pick a new design made from the content already on your site.' )

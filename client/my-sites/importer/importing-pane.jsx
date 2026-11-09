@@ -1,6 +1,6 @@
 import { omit } from '@automattic/js-utils';
 import { formatNumber } from '@automattic/number-formatters';
-import { ProgressBar } from '@wordpress/components';
+import { Progress } from '@wordpress/ui';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { PureComponent } from 'react';
@@ -271,19 +271,19 @@ export class ImportingPane extends PureComponent {
 						site={ site }
 					/>
 				) }
-				{ ( this.isImporting() || this.isProcessing() ) &&
-					( percentComplete >= 0 ? (
-						<div className="importer__importing-pane-progress-container">
-							<ProgressBar
-								className="importer__importing-pane-progress"
-								value={ percentComplete }
-							/>
-						</div>
-					) : (
-						<div className="importer__importing-pane-progress-container">
-							<ProgressBar className="importer__importing-pane-progress" isPulsing />
-						</div>
-					) ) }
+				{ ( this.isImporting() || this.isProcessing() ) && (
+					<div className="importer__importing-pane-progress-container">
+						<Progress.Root
+							className="importer__importing-pane-progress"
+							aria-label={ this.props.translate( 'Loading…' ) }
+							value={ percentComplete >= 0 ? percentComplete : null }
+						>
+							<Progress.Track>
+								<Progress.Indicator />
+							</Progress.Track>
+						</Progress.Root>
+					</div>
+				) }
 				{ blockingMessage && (
 					<div className="importer__import-progress-message">{ blockingMessage }</div>
 				) }
