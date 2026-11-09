@@ -86,15 +86,21 @@ export const usePollForDelayedReplies = () => {
 					if ( prev.status !== 'loaded' || prev.provider !== 'odie' || prev.odieId !== chatId ) {
 						return prev;
 					}
-					// A reply that asks for a human is the send handler's: it swaps it for a prompt of its
-					// own, without the server's id, or moves the chat to Zendesk. Shown as is, it would
-					// promise a hand-off that nothing carries out.
-					const knownIds = new Set( prev.messages.map( ( m ) => m.message_id ) );
+					// The server ids of the messages already on screen.
+					const idsOnScreen = new Set( prev.messages.map( ( m ) => m.message_id ) );
+					// `fresh` holds the fetched messages the poll adds to the screen. A message is added when
+					// all of these hold:
+					// - role is bot;
+					// - it has an id and that id is not on screen yet;
+					// - it does not ask for a human: the send handler already handled the bot's answer that
+					//   asked for one, by showing its own prompt without a server id, so the id check cannot
+					//   catch it. A hand-off the server job writes on its own shows on the next focus
+					//   refresh or reload.
 					const fresh = fetched.messages.filter(
 						( m ) =>
 							m.role === 'bot' &&
 							!! m.message_id &&
-							! knownIds.has( m.message_id ) &&
+							! idsOnScreen.has( m.message_id ) &&
 							! getIsRequestingHumanSupport( m )
 					);
 					if ( ! fresh.length ) {

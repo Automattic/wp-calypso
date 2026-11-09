@@ -194,6 +194,21 @@ describe( 'usePollForDelayedReplies', () => {
 		expect( applyLastUpdater( prev ) ).toBe( prev );
 	} );
 
+	it( 'leaves out a reply that asks for a human even when the server job wrote it', async () => {
+		const handOff = {
+			...delayedReply,
+			content: 'This conversation has been forwarded to non-AI support.',
+			context: { flags: { forward_to_human_support: true } },
+		} as Message;
+		mockFetchOdieChat.mockResolvedValue( serverChat( [ userMessage, botMessage, handOff ] ) );
+		renderHook( () => usePollForDelayedReplies() );
+
+		await tick();
+
+		const prev = makeChat();
+		expect( applyLastUpdater( prev ) ).toBe( prev );
+	} );
+
 	it( 'drops the result if a send is running when it arrives', async () => {
 		mockFetchOdieChat.mockResolvedValue( serverChat( [ userMessage, botMessage, delayedReply ] ) );
 		renderHook( () => usePollForDelayedReplies() );
