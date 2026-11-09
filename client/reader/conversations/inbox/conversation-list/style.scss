@@ -106,7 +106,13 @@
 }
 
 .conversations-inbox__item {
+	// Same tints as the notifications panel: the open row shares the hover color.
 	--conversations-item-bg: var( --color-surface );
+	--conversations-item-active-bg: color-mix(
+		in srgb,
+		var( --wpds-color-foreground-content-neutral ) 2%,
+		var( --color-surface )
+	);
 
 	width: 100%;
 	padding: 16px;
@@ -119,35 +125,31 @@
 	cursor: pointer;
 	transition: background-color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
 
-	// Matches the notifications panel: a neutral hover, and a deeper blue on unread rows.
-	&:not( .is-selected ):hover {
-		background: color-mix(
-			in srgb,
-			var( --wpds-color-foreground-content-neutral ) 2%,
-			var( --conversations-item-bg )
-		);
-	}
-
 	&.is-unread {
 		--conversations-item-bg: color-mix(
 			in oklch,
 			var( --color-primary ) 5%,
 			var( --color-surface )
 		);
+		--conversations-item-active-bg: color-mix(
+			in oklch,
+			var( --color-primary ) 6.5%,
+			var( --color-surface )
+		);
+	}
 
-		&:not( .is-selected ):hover {
-			background: color-mix( in oklch, var( --color-primary ) 6.5%, var( --color-surface ) );
-		}
+	&:hover,
+	&.is-selected {
+		background: var( --conversations-item-active-bg );
+	}
+
+	&.is-selected {
+		border-inline-start-color: var( --color-primary );
 	}
 
 	&:focus-visible {
 		outline: 2px solid var( --color-primary );
 		outline-offset: -2px;
-	}
-
-	&.is-selected {
-		--conversations-item-bg: var( --color-neutral-0 );
-		border-inline-start-color: var( --color-primary );
 	}
 }
 
