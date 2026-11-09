@@ -13,7 +13,11 @@
 		padding: 20px 16px 12px 16px;
 
 		.components-button {
-			color: var( --color-text );
+			transition: color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+
+			&:not( :hover, :active ) {
+				color: var( --color-text );
+			}
 		}
 	}
 
