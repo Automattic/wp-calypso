@@ -28,6 +28,7 @@ import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { formatCurrency } from '@automattic/number-formatters';
 import { useShoppingCart } from '@automattic/shopping-cart';
 import {
+	CurrencyAmount,
 	isBillingInfoEmpty,
 	getTaxBreakdownLineItemsFromCart,
 	getTotalLineItemFromCart,
@@ -248,7 +249,9 @@ function CheckoutSummaryPriceList() {
 							{ isCartUpdating ? (
 								<PriceLoadingIndicator width="50px" />
 							) : (
-								<span>{ creditsLineItem.formattedAmount }</span>
+								<span>
+									<CurrencyAmount>{ creditsLineItem.formattedAmount }</CurrencyAmount>
+								</span>
 							) }
 						</CheckoutSummaryLineItem>
 					) }
