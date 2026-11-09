@@ -35,10 +35,14 @@
 	position: relative;
 	box-shadow: $elevation-x-small;
 	color: var( --color-text );
-	transition: border-color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+	transition-duration: var( --wpds-motion-duration-sm );
+	transition-property: background-color, border-color;
+	transition-timing-function: var( --wpds-motion-easing-balanced );
 
+	// Same hover as the notifications panel's post card.
 	&:hover {
-		border-color: var( --color-border );
+		border-color: color-mix( in srgb, var( --wp-admin-theme-color ) 12%, transparent );
+		background-color: color-mix( in srgb, var( --wp-admin-theme-color ) 2%, transparent );
 	}
 }
 
