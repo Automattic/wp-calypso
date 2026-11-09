@@ -72,7 +72,11 @@
 	margin: -4px 16px 16px;
 	font-size: 13px;
 	line-height: 20px;
-	color: var( --color-text );
+	transition: color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+
+	&:not( :hover, :active ) {
+		color: var( --color-text );
+	}
 }
 
 .conversations-inbox__list {
