@@ -6,8 +6,8 @@ import { omnibarSiteIdQuery, siteByIdQuery } from '@automattic/api-queries';
 import { QueryClient } from '@tanstack/react-query';
 import { act, screen } from '@testing-library/react';
 import { dispatch } from '@wordpress/data';
-import { render } from '../../../test-utils';
 import { HELP_CENTER_STORE, type HelpCenterDispatch } from '..';
+import { render } from '../../../test-utils';
 import HelpCenter from '../help-center';
 import type { Site } from '@automattic/api-core';
 
