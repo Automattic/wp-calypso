@@ -7,9 +7,11 @@ import type { SummaryButtonBadgeProps } from '@automattic/components/src/summary
 export default function DomainContactDetailsSettingsSummary( {
 	domain,
 	isDisabled,
+	onClick,
 }: {
 	domain: Domain;
 	isDisabled?: boolean;
+	onClick?: () => void;
 } ) {
 	const badges: SummaryButtonBadgeProps[] = [];
 	if ( domain.private_domain ) {
@@ -29,6 +31,7 @@ export default function DomainContactDetailsSettingsSummary( {
 			badges={ badges }
 			density={ 'medium' as const }
 			disabled={ isDisabled }
+			onClick={ onClick }
 		/>
 	);
 }

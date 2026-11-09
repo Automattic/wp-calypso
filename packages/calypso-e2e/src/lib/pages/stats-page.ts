@@ -17,6 +17,10 @@ const selectors = {
 	statsTabs: '.stats-tabs',
 };
 
+// The wp-admin page of Stats v2 (Premium Analytics), which replaces the classic Stats page
+// once it is retired for a site.
+const STATS_V2_PAGE = 'page=jetpack-premium-analytics-wp-admin';
+
 /**
  * Represents the Stats page, powered by Jetpack.
  */
@@ -49,6 +53,13 @@ export class StatsPage {
 	}
 
 	/**
+	 * Whether the current page is Stats v2 rather than the classic Stats page.
+	 */
+	private isStatsV2(): boolean {
+		return this.page.url().includes( STATS_V2_PAGE );
+	}
+
+	/**
 	 * Dismisses the tooltip which appears in the Traffic tab.
 	 */
 	private async dismissTooltip() {
@@ -68,6 +79,13 @@ export class StatsPage {
 	 * @returns {Promise<void>} No return value.
 	 */
 	async clickTab( name: StatsTabs ): Promise< void > {
+		if ( this.isStatsV2() ) {
+			await this.anchor.getByRole( 'tab', { name, exact: true } ).click();
+			await this.anchor.getByRole( 'tab', { name, exact: true, selected: true } ).waitFor();
+			await this.anchor.getByRole( 'tabpanel', { name } ).waitFor();
+			return;
+		}
+
 		await this.dismissTooltip();
 		await clickNavTab( this.page, name, { isCoreTabs: true } );
 
@@ -130,6 +148,13 @@ export class StatsPage {
 	 * @param {ActivityTypes} activityType Type of activity to show.
 	 */
 	async showStatsOfType( activityType: ActivityTypes ): Promise< void > {
+		if ( this.isStatsV2() ) {
+			const metrics = this.anchor.getByRole( 'tablist', { name: `${ activityType.tab } metric` } );
+			await metrics.getByRole( 'tab', { name: activityType.type } ).click();
+			await metrics.getByRole( 'tab', { name: activityType.type, selected: true } ).waitFor();
+			return;
+		}
+
 		// Wait for the charts to load first, even if no activity is present.
 		// CSS selector has to be used here because there is no a11y selector
 		// for this element.
@@ -179,6 +204,16 @@ export class StatsPage {
 	 * This link is only available in site specific view.
 	 */
 	async clickViewAllAnnualInsights() {
+		if ( this.isStatsV2() ) {
+			await this.anchor
+				.getByRole( 'region', { name: 'Year in review' } )
+				.getByRole( 'link', { name: 'View all' } )
+				.click();
+
+			await this.page.waitForURL( /annual-insights/ );
+			return;
+		}
+
 		await this.anchor.getByRole( 'link', { name: 'View all annual insights' } ).click();
 
 		await this.page.waitForURL( /annualstats/ );

@@ -1470,17 +1470,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isMonthlyProduct( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1489,17 +1491,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isYearly( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1508,17 +1512,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						discount: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							discount: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1977,7 +1983,11 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 
-			<span className="checkout-line-item__price">
+			{ /* Keyed so a cart update replaces this container rather than removing its bare text nodes, which browser page-translation detaches. */ }
+			<span
+				key={ isCartUpdating ? 'price-loading' : 'price' }
+				className="checkout-line-item__price"
+			>
 				<LineItemPriceContent
 					isCartUpdating={ isCartUpdating }
 					shouldShowComparison={ shouldShowComparison }
@@ -2001,7 +2011,10 @@ function CheckoutLineItem( {
 						<UpgradeCreditInformationLineItem>
 							<UpgradeCreditInformation product={ product } />
 						</UpgradeCreditInformationLineItem>
-						<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+						<LineItemMeta
+							key={ isCartUpdating ? 'sublabel-loading' : 'sublabel' }
+							isRenewalPricingExperiment={ isRenewalPricingExperiment }
+						>
 							<LineItemSublabelAndPrice
 								product={ product }
 								shouldShowComparison={ shouldShowComparison }
@@ -2023,7 +2036,10 @@ function CheckoutLineItem( {
 			) }
 
 			{ containsPartnerCoupon && (
-				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+				<LineItemMeta
+					key={ isCartUpdating ? 'sublabel-loading' : 'sublabel' }
+					isRenewalPricingExperiment={ isRenewalPricingExperiment }
+				>
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }
