@@ -280,7 +280,11 @@ export function leaveSite( siteId, userId ) {
 
 		return wpcom.req
 			.post( `/sites/${ siteId }/users/${ userId }/delete` )
-			.then( () => {
+			.then( ( result ) => {
+				if ( result?.success !== true ) {
+					throw new Error( translate( 'Could not leave the site. Please try again.' ) );
+				}
+
 				dispatch( receiveLeaveSite( siteId ) );
 				dispatch(
 					successNotice(

@@ -158,7 +158,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 	const handleSubmit = ( e: React.FormEvent ) => {
 		e.preventDefault();
-		if ( ! me || ! isConfirmed ) {
+		if ( ! me || ! isConfirmed || mutation.isPending ) {
 			return;
 		}
 
@@ -205,6 +205,13 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 						'Leaving will remove your access to the site, including all content, users, domains, upgrades, and anything else you have access to.'
 					) }
 				</Text>
+				{ site.is_wpcom_atomic && (
+					<Text as="p">
+						{ __(
+							'Any content you authored will stay on the site and be reassigned to the site owner.'
+						) }
+					</Text>
+				) }
 				<Text as="p">
 					{ __(
 						'To regain access, a current administrator must re-invite you. Please confirm this is your intent before proceeding.'
@@ -232,7 +239,7 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 						__next40pxDefaultSize
 						variant="primary"
 						type="submit"
-						disabled={ ! isConfirmed }
+						disabled={ ! me || ! isConfirmed || mutation.isPending }
 						isBusy={ mutation.isPending }
 					>
 						{ __( 'Leave site' ) }

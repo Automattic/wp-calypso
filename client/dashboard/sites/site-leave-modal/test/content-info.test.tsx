@@ -114,6 +114,14 @@ describe( '<ContentInfo> purchase blockers', () => {
 		renderContent();
 
 		expect( await screen.findByRole( 'button', { name: 'Leave site' } ) ).toBeVisible();
+		expect( screen.queryByText( /reassigned to the site owner/ ) ).not.toBeInTheDocument();
+	} );
+
+	test( 'explains who will receive authored content on an Atomic site', async () => {
+		mockPurchases( [] );
+		render( <ContentInfo site={ { ...site, is_wpcom_atomic: true } } onClose={ jest.fn() } /> );
+
+		expect( await screen.findByText( /reassigned to the site owner/ ) ).toBeVisible();
 	} );
 
 	describe( 'on the dashboard', () => {
