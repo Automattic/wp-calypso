@@ -140,12 +140,12 @@
 	}
 
 	&:hover .wpnc-simplified__card-arrow {
-		fill: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+		fill: var(--wp-components-color-foreground, #{$gray-900});
 	}
 }
 
 .wpnc-simplified__card-author {
-	color: var(--wpds-color-foreground-content-neutral, #1e1e1e);
+	color: var(--wp-components-color-foreground, #{$gray-900});
 }
 
 .wpnc-simplified__card-arrow {
