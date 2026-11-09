@@ -24,12 +24,17 @@ The Verbum Block Editor stubs out heavy dependencies that are pulled in transiti
 | `@wordpress/commands`                                                                | Command palette                              | ~33KB        |
 | `@wordpress/vips/worker`                                                             | Client-side image processing (WebAssembly)   | ~17MB        |
 | `@wordpress/components` (navigation, focal-point-picker, color-picker, palette-edit) | Unused UI components                         | ~250KB       |
+| `@wordpress/block-editor` inserter media tab, auto-generated inspector controls      | Media library and block sidebar (dataviews)  | ~620KB       |
+| `@wordpress/block-editor` inserter menu, list view, block bindings, state badges     | Full inserter and block sidebar UI           | ~650KB       |
+| `@wordpress/components` private `Menu`                                               | Deprecated; nothing bundled reads it         | ~200KB       |
 | `marked`                                                                             | Markdown parser                              | ~46KB        |
 | `react-easy-crop`                                                                    | Image cropping                               | ~46KB        |
 
 ### How It Works
 
-The webpack config uses `NormalModuleReplacementPlugin` to replace these modules with a consolidated stub file (`src/stubs/index.js`) that exports no-op functions and null components.
+The webpack config uses `NormalModuleReplacementPlugin` to replace these modules with a consolidated stub file (`src/stubs/index.js`) that exports no-op functions and null components. Modules whose default export must be a component or a block-editor hook use their own stub files in `src/stubs`. Only stub modules that export nothing but components rendered in UI Verbum doesn't show; a stubbed hook or helper breaks every block that calls it.
+
+The editor canvas loads only the stylesheets of the blocks registered in `load-blocks.ts` (`src/editor/inline-iframe-style.scss`); add a block's CSS there when registering a new block.
 
 ### Adding New Stubs
 

@@ -106,6 +106,9 @@ export const NavigationMenu = createNullComponent( 'NavigationMenu' );
 export const FocalPointPicker = createNullComponent( 'FocalPointPicker' );
 export const PaletteEdit = createNullComponent( 'PaletteEdit' );
 
+// @wordpress/block-editor inserter media tab
+export const MediaTab = createNullComponent( 'MediaTab' );
+
 // @wordpress/block-editor date picker exports
 export const DateFormatPicker = createNullComponent( 'DateFormatPicker' );
 export const PublishDateTimePicker = createNullComponent( 'PublishDateTimePicker' );
