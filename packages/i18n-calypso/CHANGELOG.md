@@ -1,7 +1,3 @@
-## Unreleased
-
-- Breaking: Requires newer WordPress package majors: `@wordpress/compose` 9.
-
 ## 8.0.0
 
 - Breaking: Emitter object replaced with subscriber
