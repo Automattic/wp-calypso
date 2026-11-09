@@ -124,6 +124,7 @@ const NoteBadge = ( { note }: { note: Note } ) => {
 
 const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	const isActive = useContext( SelectedNoteIdContext ) === note.id.toString();
+	const isRead = useSelector( ( state ) => getIsNoteRead( state, note ) );
 	const isUnapproved = useIsUnapproved( note );
 
 	return (
@@ -132,6 +133,8 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 				className={ clsx( 'wpnc__subject', {
 					// Marks the open note's row for the active highlight (see CSS).
 					'is-active': isActive,
+					// Marks unread rows for their tint, as filtered tabs render no badge.
+					'is-unread': ! isRead,
 				} ) }
 				/* eslint-disable-next-line react/no-danger */
 				dangerouslySetInnerHTML={ { __html: subject } }
@@ -145,13 +148,20 @@ const NoteSubject = ( { note, subject }: { note: Note; subject: string } ) => {
 	);
 };
 
-export function getFields( layoutStyle: LayoutStyle = 'detailed' ): Field< Note >[] {
+export function getFields(
+	layoutStyle: LayoutStyle = 'detailed',
+	showBadge = true
+): Field< Note >[] {
 	return [
 		{
 			id: 'icon',
 			label: __( 'Icon' ),
 			render: ( { item } ) => (
-				<NoteIcon icon={ item.icon } size={ 36 } badge={ <NoteBadge note={ item } /> } />
+				<NoteIcon
+					icon={ item.icon }
+					size={ 36 }
+					badge={ showBadge ? <NoteBadge note={ item } /> : null }
+				/>
 			),
 		},
 		{
