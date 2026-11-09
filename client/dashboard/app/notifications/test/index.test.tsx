@@ -33,6 +33,9 @@ let mockAlertCallbacks: {
 	onError: ( error: unknown, stage: string ) => void;
 };
 const mockRecordTracksEvent = jest.fn();
+const mockCreateNotice = jest.fn();
+const mockRemoveNotice = jest.fn();
+const mockSavePreference = jest.fn();
 
 jest.mock( '@automattic/calypso-config', () => ( {
 	__esModule: true,
@@ -50,14 +53,19 @@ jest.mock( '../../analytics', () => ( {
 	useAnalytics: () => ( { recordTracksEvent: mockRecordTracksEvent } ),
 } ) );
 jest.mock( '@tanstack/react-query', () => ( {
-	useMutation: jest.fn( () => ( { mutateAsync: jest.fn() } ) ),
+	useMutation: jest.fn( () => ( { mutate: mockSavePreference, mutateAsync: jest.fn() } ) ),
 	useQuery: jest.fn(),
 } ) );
 jest.mock( '@automattic/api-queries', () => ( {
 	userPreferenceQuery: jest.fn( ( key ) => ( { queryKey: [ key ] } ) ),
+	userPreferenceMutation: jest.fn( () => ( {} ) ),
 	userPreferencesMutation: jest.fn( () => ( {} ) ),
 	sitesQuery: ( ...args: unknown[] ) => mockSitesQuery( ...args ),
 } ) );
+jest.mock( '@wordpress/data', () => ( {
+	useDispatch: () => ( { createNotice: mockCreateNotice, removeNotice: mockRemoveNotice } ),
+} ) );
+jest.mock( '@wordpress/notices', () => ( { store: 'core/notices' } ) );
 jest.mock( '../../auth', () => ( { useAuth: jest.fn() } ) );
 jest.mock( '../../help-center', () => ( {
 	useHelpCenter: jest.fn( () => ( { isShown: false, setShowHelpCenter: jest.fn() } ) ),
@@ -193,6 +201,58 @@ describe( 'Notifications subscriber alerts', () => {
 			'calypso_dashboard_notifications_subscriber_alert',
 			{ sound_result: 'played' }
 		);
+	} );
+
+	it( 'offers to turn alerts off in a snackbar when the sound plays', async () => {
+		configure( true, true );
+		render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		act( () => mockAlertCallbacks.onSound( 'played', candidate() ) );
+
+		expect( mockCreateNotice ).toHaveBeenCalledTimes( 1 );
+		const [ status, message, options ] = mockCreateNotice.mock.calls[ 0 ];
+		expect( status ).toBe( 'info' );
+		expect( message ).toBe( 'You have a new subscriber.' );
+		expect( options ).toMatchObject( {
+			id: 'dashboard-subscriber-alert-sound',
+			type: 'snackbar',
+			actions: [ { label: 'Turn off alerts' } ],
+		} );
+
+		act( () => options.actions[ 0 ].onClick() );
+
+		expect( mockRemoveNotice ).toHaveBeenCalledWith( 'dashboard-subscriber-alert-sound' );
+		expect( mockSavePreference ).toHaveBeenCalledWith( false, expect.any( Object ) );
+		expect( mockRecordTracksEvent ).not.toHaveBeenCalledWith(
+			'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
+			expect.anything()
+		);
+
+		act( () => mockSavePreference.mock.calls[ 0 ][ 1 ].onSuccess() );
+
+		expect( mockRecordTracksEvent ).toHaveBeenCalledWith(
+			'calypso_dashboard_notifications_subscriber_alerts_settings_updated',
+			{ setting_value: false, source: 'alert_snackbar' }
+		);
+	} );
+
+	it( 'shows no snackbar when the sound did not play', async () => {
+		configure( true, true );
+		render( <Notifications /> );
+		await waitFor( () =>
+			expect( mockSubscribeSubscriberNotifications ).toHaveBeenCalledTimes( 1 )
+		);
+
+		act( () => {
+			mockAlertCallbacks.onSound( 'not_activated', candidate() );
+			mockAlertCallbacks.onSound( 'hidden', candidate() );
+			mockAlertCallbacks.onSound( 'cooldown', candidate() );
+		} );
+
+		expect( mockCreateNotice ).not.toHaveBeenCalled();
 	} );
 
 	it( 'logs sound errors to logstash', async () => {
