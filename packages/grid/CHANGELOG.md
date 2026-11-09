@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## Unreleased
+
+- Breaking: Requires newer WordPress package majors: `@wordpress/compose` 9.
+
 ## 0.2.2
 
 - Use an npm-installable `@wordpress/compose` dependency range for package consumers.

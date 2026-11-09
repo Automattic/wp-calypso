@@ -1,3 +1,7 @@
+## Unreleased
+
+- Breaking: Requires newer WordPress package majors: `@wordpress/is-shallow-equal` 6, `@wordpress/warning` 4.
+
 ## 1.0.0-alpha.4
 
 Extracted `extendAction` into `state-utils`.

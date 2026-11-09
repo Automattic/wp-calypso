@@ -2,6 +2,7 @@
 
 ### Breaking Changes
 
+- Requires newer WordPress package majors: `@wordpress/base-styles` 15, `@wordpress/element` 10, `@wordpress/i18n` 7, `@wordpress/primitives` 5.
 - `Badge`: Remove component. Use `Badge` from `@wordpress/ui` instead.
 
 ## 2.0.0
