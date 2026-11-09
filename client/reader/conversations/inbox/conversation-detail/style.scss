@@ -59,6 +59,29 @@
 	margin-inline: auto;
 }
 
+// The post card and comments fade in when a conversation opens, instead of popping in.
+.conversations-inbox__post-card,
+.conversations-inbox__detail-content .comments__comment-list {
+	animation: conversations-inbox-appear var( --wpds-motion-duration-sm )
+		var( --wpds-motion-easing-balanced );
+
+	@media ( prefers-reduced-motion: reduce ) {
+		animation: none;
+	}
+}
+
+@keyframes conversations-inbox-appear {
+	from {
+		opacity: 0;
+		transform: translateY( 4px );
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY( 0 );
+	}
+}
+
 .conversations-inbox__post-card {
 	box-sizing: border-box;
 	padding: 24px;

@@ -228,7 +228,12 @@ export function ConversationDetail( {
 						<Spinner />
 					</div>
 				) }
-				<VStack spacing={ 8 } className="conversations-inbox__detail-content">
+				{ /* Keyed so the card and comments mount, and fade in, for each conversation. */ }
+				<VStack
+					key={ getConversationKey( siteId, postId ) }
+					spacing={ 8 }
+					className="conversations-inbox__detail-content"
+				>
 					{ showWelcome && (
 						<Notice
 							status="info"
