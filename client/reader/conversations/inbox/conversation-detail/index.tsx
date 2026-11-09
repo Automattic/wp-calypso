@@ -178,19 +178,21 @@ export function ConversationDetail( {
 						<Button
 							ref={ backRef }
 							__next40pxDefaultSize
+							size="compact"
 							icon={ isRtl ? chevronRight : chevronLeft }
 							onClick={ onBack }
 						>
 							{ translate( 'Conversations' ) }
 						</Button>
 					) }
-					<Heading level={ 2 } size={ 20 } weight={ 500 } color="inherit">
+					<Heading level={ 2 } size={ 15 } lineHeight="20px" weight={ 600 } color="inherit">
 						{ title }
 					</Heading>
 				</HStack>
-				<HStack spacing={ 0 } expanded={ false }>
+				<HStack spacing={ 1 } expanded={ false }>
 					<Button
 						__next40pxDefaultSize
+						size="compact"
 						icon={ chevronUp }
 						label={ translate( 'Previous conversation' ) }
 						disabled={ ! onPrevious }
@@ -198,6 +200,7 @@ export function ConversationDetail( {
 					/>
 					<Button
 						__next40pxDefaultSize
+						size="compact"
 						icon={ chevronDown }
 						label={ translate( 'Next conversation' ) }
 						disabled={ ! onNext }
@@ -206,7 +209,7 @@ export function ConversationDetail( {
 				</HStack>
 			</HStack>
 			<div className="conversations-inbox__detail-body">
-				<VStack spacing={ 10 } className="conversations-inbox__detail-content">
+				<VStack spacing={ 8 } className="conversations-inbox__detail-content">
 					{ showWelcome && (
 						<Notice
 							status="info"
@@ -239,7 +242,7 @@ export function ConversationDetail( {
 					{ post && ! post.is_error && (
 						<>
 							<HStack spacing={ 6 } alignment="top" className="conversations-inbox__post-card">
-								<VStack spacing={ 3 } className="conversations-inbox__post-text">
+								<VStack spacing={ 4 } className="conversations-inbox__post-text">
 									<HStack justify="flex-start" wrap className="conversations-inbox__post-meta">
 										{ !! post.site_icon && (
 											<img
@@ -263,7 +266,7 @@ export function ConversationDetail( {
 											icon={ moreHorizontal }
 											label={ translate( 'Post actions' ) }
 											className="conversations-inbox__post-menu"
-											toggleProps={ { __next40pxDefaultSize: true } }
+											toggleProps={ { __next40pxDefaultSize: true, size: 'small' } }
 											disableOpenOnArrowDown
 											popoverProps={ { placement: 'bottom-end' } }
 											controls={ controls }
@@ -271,14 +274,15 @@ export function ConversationDetail( {
 									</HStack>
 									<VStack
 										as="a"
-										spacing={ 3 }
+										spacing={ 2 }
 										className="conversations-inbox__post-link"
 										href={ postUrl }
 									>
 										<Heading
 											level={ 3 }
-											size={ 20 }
-											weight={ 500 }
+											size={ 18 }
+											lineHeight="24px"
+											weight={ 600 }
 											color="inherit"
 											isBlock={ false }
 											truncate
@@ -286,7 +290,13 @@ export function ConversationDetail( {
 										>
 											{ String( post.title ?? conversation?.title ?? '' ) }
 										</Heading>
-										<Text truncate numberOfLines={ 2 } color="var(--color-text-subtle)">
+										<Text
+											size={ 13 }
+											lineHeight="20px"
+											truncate
+											numberOfLines={ 2 }
+											color="var(--color-text-subtle)"
+										>
 											{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
 										</Text>
 									</VStack>
@@ -296,8 +306,8 @@ export function ConversationDetail( {
 										className="conversations-inbox__post-image"
 										src={ image }
 										alt=""
-										width={ 120 }
-										height={ 120 }
+										width={ 108 }
+										height={ 72 }
 									/>
 								) }
 							</HStack>

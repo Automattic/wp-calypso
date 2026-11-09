@@ -1,10 +1,14 @@
+@import '@wordpress/base-styles/variables';
+
 .conversations-inbox__detail-pane {
 	flex: 1;
 	min-width: 0;
 }
 
 .conversations-inbox__detail-header {
-	padding: 16px 24px;
+	box-sizing: border-box;
+	min-height: 64px;
+	padding: 0 24px;
 	border-block-end: 1px solid var( --color-border-subtle );
 
 	.components-button {
@@ -19,7 +23,7 @@
 }
 
 .conversations-inbox__detail-content {
-	max-width: 860px;
+	max-width: 750px;
 	margin-inline: auto;
 }
 
@@ -27,7 +31,8 @@
 	box-sizing: border-box;
 	padding: 24px;
 	border: 1px solid var( --color-border-subtle );
-	border-radius: 4px;
+	border-radius: 8px;
+	box-shadow: $elevation-x-small;
 	color: var( --color-text );
 
 	&:hover {
@@ -55,7 +60,8 @@
 
 .conversations-inbox__post-meta {
 	white-space: nowrap;
-	font-size: 0.875rem;
+	font-size: 12px;
+	line-height: 16px;
 	color: var( --color-text-subtle );
 
 	strong {
@@ -63,17 +69,83 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		color: var( --color-text );
-		font-weight: 500;
+		font-weight: 600;
 	}
 }
 
 .conversations-inbox__detail-content .comments__comment-list {
 	margin-block-start: 0;
+	padding-block-start: 0;
+	border-block-start: 0;
+
+	.comments__info-bar {
+		padding-block-end: 12px;
+		border-block-end: 1px solid var( --color-border-subtle );
+	}
 
 	.comments__comment-count {
+		margin-block-end: 0;
 		color: var( --color-text );
-		font-size: 1rem;
-		font-weight: 500;
+		font-size: 18px;
+		font-weight: 600;
+		line-height: 24px;
+	}
+
+	// Padding, not margin, so the first comment's margin can't collapse into it.
+	.comments__list.is-root {
+		padding-block-start: 4px;
+	}
+
+	// Comments sit 24px apart, with the name centered on the 32px avatar.
+	.comments__comment {
+		margin-block-start: 24px;
+
+		&.depth-0,
+		&.depth-1,
+		&.depth-2 {
+			padding-inline-start: 44px;
+		}
+	}
+
+	.comments__comment-author {
+		align-items: center;
+		min-height: 32px;
+		font-size: 15px;
+		line-height: 20px;
+
+		.user-avatar {
+			top: 0;
+		}
+	}
+
+	.comments__comment-username {
+		margin-inline-end: 8px;
+	}
+
+	.comments__comment-timestamp a,
+	.comments__comment-new-label {
+		font-size: 13px;
+		line-height: 20px;
+	}
+
+	.comments__comment-content {
+		font-size: 15px;
+		line-height: 24px;
+	}
+
+	.comments__comment-actions {
+		gap: 16px;
+		margin-block-start: 8px;
+
+		.components-button {
+			font-size: 13px;
+			line-height: 20px;
+		}
+
+		svg {
+			width: 20px;
+			height: 20px;
+		}
 	}
 
 	.comments__comment-count-phrase {
@@ -126,8 +198,8 @@
 
 .conversations-inbox__post-image {
 	flex-shrink: 0;
-	width: 120px;
-	height: 120px;
+	width: 108px;
+	height: 72px;
 	border-radius: 4px;
 	object-fit: cover;
 }
