@@ -43,7 +43,7 @@ export function ConversationListToolbar( {
 	];
 
 	return (
-		<HStack spacing={ 1 } expanded={ false } className="conversations-inbox__toolbar">
+		<HStack spacing={ 2 } expanded={ false } className="conversations-inbox__toolbar">
 			<SearchControl
 				__next40pxDefaultSize
 				__nextHasNoMarginBottom

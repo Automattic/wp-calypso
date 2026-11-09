@@ -145,7 +145,7 @@ export function ConversationList( {
 	return (
 		<VStack spacing={ 0 } className="conversations-inbox__list-pane">
 			<HStack expanded={ false } className="conversations-inbox__pane-title">
-				<Heading level={ 1 } size={ 20 } weight={ 500 } color="inherit">
+				<Heading level={ 1 } size={ 15 } lineHeight="20px" weight={ 600 } color="inherit">
 					{ translate( 'Conversations' ) }
 				</Heading>
 				<KeyboardShortcuts isOpen={ isShortcutsOpen } onToggle={ onShortcutsToggle } />

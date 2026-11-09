@@ -152,20 +152,13 @@
 	text-overflow: ellipsis;
 }
 
-.conversations-inbox__item-title {
-	font-weight: 600;
-}
-
-.conversations-inbox__item-excerpt {
-	color: var( --color-text-subtle );
-}
-
 .conversations-inbox__avatars {
 	flex-shrink: 0;
 
 	img {
+		box-sizing: border-box;
 		border-radius: 50%;
-		border: 2px solid var( --conversations-item-bg, var( --color-surface ) );
+		border: 1px solid var( --conversations-item-bg, var( --color-surface ) );
 
 		& + img {
 			margin-inline-start: -8px;

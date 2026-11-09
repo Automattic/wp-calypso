@@ -70,7 +70,13 @@ export function ConversationListItem( {
 	const title = item.title || String( post?.title ?? '' );
 	const unreadCount = isOwnComment ? item.newCommentCount : item.unreadCount;
 	const newCount = unreadCount > 0 && (
-		<Text color="var(--color-primary)" className="conversations-inbox__item-new">
+		<Text
+			size={ 12 }
+			lineHeight="16px"
+			weight={ 500 }
+			color="var(--color-primary)"
+			className="conversations-inbox__item-new"
+		>
 			{ translate( '%(count)s new', '%(count)s new', {
 				count: unreadCount,
 				args: { count: formatNumber( unreadCount ) },
@@ -140,7 +146,15 @@ export function ConversationListItem( {
 				} }
 			>
 				<HStack as="span">
-					<span className="conversations-inbox__item-title">{ title }</span>
+					<Text
+						size={ 13 }
+						lineHeight="20px"
+						weight={ 600 }
+						color="inherit"
+						className="conversations-inbox__item-title"
+					>
+						{ title }
+					</Text>
 					<Text size={ 14 } color="var(--color-text-subtle)">
 						<span aria-hidden="true">{ formatCompactTime( timestamp, locale ) }</span>
 						<VisuallyHidden>{ formatCompactTime( timestamp, locale, 'long' ) }</VisuallyHidden>
@@ -157,15 +171,24 @@ export function ConversationListItem( {
 						>
 							{ /* Two commenters can share a name, and the list never reorders. */ }
 							{ item.commenters.slice( 0, MAX_AVATARS ).map( ( { avatar }, index ) => (
-								<img key={ index } src={ avatar } alt="" width={ 24 } height={ 24 } />
+								<img key={ index } src={ avatar } alt="" width={ 20 } height={ 20 } />
 							) ) }
 						</HStack>
-						<span>{ getContextLine( translate, item ) }</span>
+						<Text size={ 12 } lineHeight="16px" color="inherit">
+							{ getContextLine( translate, item ) }
+						</Text>
 					</HStack>
 				) }
 				{ density === 'comfortable' && (
 					<HStack as="span">
-						<span className="conversations-inbox__item-excerpt">{ excerpt }</span>
+						<Text
+							size={ 12 }
+							lineHeight="16px"
+							color="var(--color-text-subtle)"
+							className="conversations-inbox__item-excerpt"
+						>
+							{ excerpt }
+						</Text>
 						{ newCount }
 					</HStack>
 				) }
