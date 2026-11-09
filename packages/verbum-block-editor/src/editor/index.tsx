@@ -4,7 +4,6 @@ import {
 	BlockTools,
 	BlockList,
 	BlockCanvas,
-	// @ts-expect-error - Typings missing
 } from '@wordpress/block-editor';
 import { getCompatibilityStyles } from '@wordpress/block-editor/build-module/components/iframe/get-compatibility-styles';
 import { createBlock, serialize, type Block } from '@wordpress/blocks';
@@ -108,11 +107,6 @@ export const Editor: FC< EditorProps > = ( {
 					useSubRegistry
 					onInput={ handleContentUpdate }
 					onChange={ handleContentUpdate }
-					styles={ [
-						{
-							css: isDarkMode ? iframedCSS + darkModeCss + customStyles : iframedCSS + customStyles,
-						},
-					] }
 				>
 					<InitialBlockSelector
 						editorClass={ EDITOR_MAIN_CLASS }
@@ -138,7 +132,9 @@ export const Editor: FC< EditorProps > = ( {
 											: iframedCSS + customStyles,
 									},
 								] }
-								height={ contentHeight }
+								// `null` before the first measurement; `auto` leaves the height unset as before
+								// instead of falling back to the canvas's 300px default.
+								height={ contentHeight ?? 'auto' }
 							>
 								{ /* eslint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events */ }
 								<div
