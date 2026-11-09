@@ -226,10 +226,6 @@ export class Login extends Component {
 	}
 
 	/**
-	 * The same link on the form: on the email field's label row for the stacked login, at every
-	 * width, otherwise on the password field's for desktop, with the footer's hidden there.
-	 */
-	/**
 	 * Logged-out login views put the route to signup below the buttons and the lost-password link
 	 * on the form. CSS keeps the top-bar and footer links instead below 960px. Gravatar-powered
 	 * logins have their own layout.
@@ -240,6 +236,10 @@ export class Login extends Component {
 		);
 	}
 
+	/**
+	 * The same link on the form: on the email field's label row for the stacked login, at every
+	 * width, otherwise on the password field's for desktop, with the footer's hidden there.
+	 */
 	getLostPasswordFormLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;

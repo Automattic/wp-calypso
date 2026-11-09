@@ -88,14 +88,10 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isBrandedLayout;
 	const isEmailAtBottom = isThemeGridLayout || isBrandedLayout;
 	const isLargeViewport = useViewportMatch( 'large' );
-	// In practice, partner-branded onboarding on desktop: the email-first layouts already have
-	// the in-form link and no email button.
+	// Email-first layouts have their own in-form link and no email button. In onboarding, that
+	// leaves partner-branded signups.
 	const isLoginLinkBelowButtons =
-		isLargeViewport &&
-		flow === ONBOARDING_FLOW &&
-		! isWooReferrer &&
-		! isThemeGridLayout &&
-		! isBrandedLayout;
+		isLargeViewport && flow === ONBOARDING_FLOW && ! isEmailFirstVariant;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -155,8 +151,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig;
 
-	const showsInFormLoginLink = isLoginLinkBelowButtons && ! hideLoginLink;
-
 	let emailLabelText;
 	if ( isStepContainerV2 ) {
 		emailLabelText = isBrandedLayout
@@ -199,7 +193,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailFirstVariant={ isEmailFirstVariant }
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
-				showLoginLink={ showsInFormLoginLink }
+				showLoginLink={ isLoginLinkBelowButtons && ! hideLoginLink }
 				showEnvelopeIcon={ isLoginLinkBelowButtons }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
@@ -257,7 +251,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 					// Email-first forms carry their own login link, except the compact one.
 					hideLoginLink ||
 					( isEmailFirstVariant && ! isMobileCompactLayout ) ||
-					showsInFormLoginLink ? null : (
+					isLoginLinkBelowButtons ? null : (
 						<nav className="account-template__top-bar-links">
 							<Step.LinkButton
 								href={ loginLink }
