@@ -241,37 +241,37 @@ export function ConversationDetail( {
 					) }
 					{ post && ! post.is_error && (
 						<>
-							<HStack spacing={ 6 } alignment="top" className="conversations-inbox__post-card">
-								<VStack spacing={ 4 } className="conversations-inbox__post-text">
-									<HStack justify="flex-start" wrap className="conversations-inbox__post-meta">
-										{ !! post.site_icon && (
-											<img
-												src={ ( post.site_icon as { img?: string } )?.img }
-												alt=""
-												width={ 24 }
-												height={ 24 }
-											/>
-										) }
-										<strong>{ String( post.site_name ?? '' ) }</strong>
-										{ author?.name && <span>{ author.name }</span> }
-										{ date && (
-											<span>
-												·{ ' ' }
-												{ date.isSame( moment(), 'day' )
-													? translate( 'Today' )
-													: date.format( 'll' ) }
-											</span>
-										) }
-										<DropdownMenu
-											icon={ moreHorizontal }
-											label={ translate( 'Post actions' ) }
-											className="conversations-inbox__post-menu"
-											toggleProps={ { __next40pxDefaultSize: true, size: 'small' } }
-											disableOpenOnArrowDown
-											popoverProps={ { placement: 'bottom-end' } }
-											controls={ controls }
+							<VStack spacing={ 4 } className="conversations-inbox__post-card">
+								<HStack justify="flex-start" wrap className="conversations-inbox__post-meta">
+									{ !! post.site_icon && (
+										<img
+											src={ ( post.site_icon as { img?: string } )?.img }
+											alt=""
+											width={ 24 }
+											height={ 24 }
 										/>
-									</HStack>
+									) }
+									<strong>{ String( post.site_name ?? '' ) }</strong>
+									{ author?.name && <span>{ author.name }</span> }
+									{ date && (
+										<span>
+											·{ ' ' }
+											{ date.isSame( moment(), 'day' )
+												? translate( 'Today' )
+												: date.format( 'll' ) }
+										</span>
+									) }
+									<DropdownMenu
+										icon={ moreHorizontal }
+										label={ translate( 'Post actions' ) }
+										className="conversations-inbox__post-menu"
+										toggleProps={ { __next40pxDefaultSize: true, size: 'small' } }
+										disableOpenOnArrowDown
+										popoverProps={ { placement: 'bottom-end' } }
+										controls={ controls }
+									/>
+								</HStack>
+								<HStack spacing={ 6 } alignment="top">
 									<VStack
 										as="a"
 										spacing={ 2 }
@@ -300,17 +300,17 @@ export function ConversationDetail( {
 											{ String( post.better_excerpt_no_html ?? post.excerpt_no_html ?? '' ) }
 										</Text>
 									</VStack>
-								</VStack>
-								{ image && (
-									<img
-										className="conversations-inbox__post-image"
-										src={ image }
-										alt=""
-										width={ 108 }
-										height={ 72 }
-									/>
-								) }
-							</HStack>
+									{ image && (
+										<img
+											className="conversations-inbox__post-image"
+											src={ image }
+											alt=""
+											width={ 108 }
+											height={ 72 }
+										/>
+									) }
+								</HStack>
+							</VStack>
 
 							<Comments
 								key={ startingComment.key }
