@@ -1,7 +1,6 @@
 import {
 	accountEmailRecoverySnoozeMutation,
 	accountEmailRecoverySnoozeQuery,
-	accountRecoveryQuery,
 } from '@automattic/api-queries';
 import { isSupportSession } from '@automattic/calypso-support-session';
 import {
@@ -18,25 +17,27 @@ import Notice, {
 	NoticeActionLinkButton,
 	RouterNoticeActionLinkButton,
 } from '../../components/notice';
+import type { VerifiedAccountRecovery } from '@automattic/onboarding/src/utils/account-email-recovery';
 
 interface Props {
 	savedEmail: string;
-	draftEmail?: string;
+	isDraft: boolean;
+	showDraftRecoveryWarning: boolean;
 	isPending: boolean;
 	hasUnsavedChanges: boolean;
-	hasSaveError: boolean;
+	verifiedRecovery: VerifiedAccountRecovery | undefined;
 }
 
 export default function AccountEmailRecoveryNotice( {
 	savedEmail,
-	draftEmail,
+	isDraft,
+	showDraftRecoveryWarning,
 	isPending,
 	hasUnsavedChanges,
-	hasSaveError,
+	verifiedRecovery,
 }: Props ) {
 	const { user } = useAuth();
 	const queryClient = useQueryClient();
-	const { data: recovery } = useQuery( accountRecoveryQuery() );
 	const snoozeQuery = accountEmailRecoverySnoozeQuery( user.ID );
 	const { data: snoozeUntil, isFetchedAfterMount } = useQuery( {
 		...snoozeQuery,
@@ -50,20 +51,13 @@ export default function AccountEmailRecoveryNotice( {
 		},
 	} );
 
-	const isDraft = draftEmail !== undefined;
-	const email = draftEmail ?? savedEmail;
-	const verifiedRecovery = recovery && {
-		verifiedEmail: recovery.email_validated === true ? recovery.email : undefined,
-		hasVerifiedPhone: !! recovery.phone?.number && recovery.phone_validated === true,
-	};
-
-	if (
-		! isAccountEmailAtRisk( email ) ||
-		hasVerifiedAccountRecovery( email, verifiedRecovery ) ||
-		( isDraft && hasSaveError ) ||
-		( ! isDraft &&
-			( ! recovery || ! isFetchedAfterMount || isAccountEmailRecoverySnoozed( snoozeUntil ) ) )
-	) {
+	const showSavedRecoveryWarning =
+		isAccountEmailAtRisk( savedEmail ) &&
+		!! verifiedRecovery &&
+		isFetchedAfterMount &&
+		! isAccountEmailRecoverySnoozed( snoozeUntil ) &&
+		! hasVerifiedAccountRecovery( savedEmail, verifiedRecovery );
+	if ( isDraft ? ! showDraftRecoveryWarning : ! showSavedRecoveryWarning ) {
 		return null;
 	}
 
@@ -78,7 +72,7 @@ export default function AccountEmailRecoveryNotice( {
 			),
 			savedEmail
 		);
-	} else if ( recovery ) {
+	} else if ( verifiedRecovery ) {
 		message = __(
 			'If you lose access to this email address, it may be harder to get back into your account. Add or verify a recovery email or phone number.'
 		);

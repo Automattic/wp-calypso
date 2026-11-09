@@ -104,9 +104,11 @@ export function isAccountEmailAtRisk( email: string ): boolean {
 	);
 }
 
+export type VerifiedAccountRecovery = { verifiedEmail?: string; hasVerifiedPhone: boolean };
+
 export function hasVerifiedAccountRecovery(
 	email: string,
-	recovery: { verifiedEmail?: string; hasVerifiedPhone: boolean } | undefined
+	recovery: VerifiedAccountRecovery | undefined
 ): boolean {
 	const backup = recovery?.verifiedEmail?.trim().toLowerCase();
 	return !! recovery?.hasVerifiedPhone || ( !! backup && backup !== email.trim().toLowerCase() );

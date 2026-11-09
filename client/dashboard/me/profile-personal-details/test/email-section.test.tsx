@@ -297,6 +297,8 @@ describe( 'Account email recovery reminder', () => {
 			'_blank'
 		);
 		expect( input ).toHaveValue( 'student@college.edu' );
+		await user.tab();
+		expect( screen.queryByText( 'Email address looks good!' ) ).toBeNull();
 		expect( screen.queryByRole( 'button', { name: /remind me/i } ) ).toBeNull();
 	} );
 } );

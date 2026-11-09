@@ -1,9 +1,13 @@
-import { cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import { accountRecoveryQuery, cancelPendingEmailChangeMutation } from '@automattic/api-queries';
+import {
+	hasVerifiedAccountRecovery,
+	isAccountEmailAtRisk,
+} from '@automattic/onboarding/src/utils/account-email-recovery';
 import {
 	getEmailAddressError,
 	getEmailDomain,
 } from '@automattic/onboarding/src/utils/email-validation';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { __experimentalVStack as VStack, Button, privateApis } from '@wordpress/components';
 import { DataForm } from '@wordpress/dataviews';
 import { createInterpolateElement } from '@wordpress/element';
@@ -152,6 +156,18 @@ export default function EmailSection( {
 	}, [ isEmailValid, onValidationChange ] );
 
 	const { user } = useAuth();
+	const { data: recovery } = useQuery( accountRecoveryQuery() );
+	const verifiedRecovery = recovery && {
+		verifiedEmail: recovery.email_validated === true ? recovery.email : undefined,
+		hasVerifiedPhone: !! recovery.phone?.number && recovery.phone_validated === true,
+	};
+	const draftEmail = ! isEmailPending && value !== userSettings.user_email ? value : undefined;
+	const showDraftRecoveryWarning =
+		draftEmail !== undefined &&
+		! serverError &&
+		isAccountEmailAtRisk( draftEmail ) &&
+		! hasVerifiedAccountRecovery( draftEmail, verifiedRecovery );
+
 	const showBouncingEmailError =
 		! isEmailPending && !! user.email_bouncing && value === userSettings.user_email;
 
@@ -181,7 +197,8 @@ export default function EmailSection( {
 			return undefined;
 		}
 
-		if ( emailValidationState === 'valid' ) {
+		// The success message appears on blur and would move the warning's link during a click.
+		if ( emailValidationState === 'valid' && ! showDraftRecoveryWarning ) {
 			return {
 				user_email: {
 					custom: { type: 'valid', message: __( 'Email address looks good!' ) },
@@ -217,6 +234,7 @@ export default function EmailSection( {
 		isEmailPending,
 		serverError,
 		showBouncingEmailError,
+		showDraftRecoveryWarning,
 		value,
 		currentEmail,
 		emailValidationState,
@@ -298,10 +316,11 @@ export default function EmailSection( {
 			</HasEmailSaveErrorContext.Provider>
 			<AccountEmailRecoveryNotice
 				savedEmail={ userSettings.user_email ?? '' }
-				draftEmail={ ! isEmailPending && value !== userSettings.user_email ? value : undefined }
+				isDraft={ draftEmail !== undefined }
+				showDraftRecoveryWarning={ showDraftRecoveryWarning }
 				isPending={ !! isEmailPending }
 				hasUnsavedChanges={ hasUnsavedChanges }
-				hasSaveError={ !! serverError }
+				verifiedRecovery={ verifiedRecovery }
 			/>
 		</VStack>
 	);
