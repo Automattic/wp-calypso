@@ -68,9 +68,9 @@ const A4ASidebar = ( {
 	const translate = useTranslate();
 	const dispatch = useDispatch();
 	// Until the agency loads, a client can't be told apart from an agency user.
-	const showPromo = useSelector(
-		( state ) => hasFetchedAgency( state ) && ! isAgencyClientUser( state )
-	);
+	const hasFetched = useSelector( hasFetchedAgency );
+	const isClientUser = useSelector( isAgencyClientUser );
+	const showPromo = hasFetched && ! isClientUser;
 
 	const isNarrowView = useBreakpoint( '<660px' );
 

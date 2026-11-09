@@ -1,3 +1,4 @@
+import { isSpacefastPromoEnabled } from '../spacefast/constants';
 import SpacefastSidebarPromo from './spacefast';
 import type { SidebarPromoTone } from './sidebar-promo-card';
 import type { RecordTracksEvent } from '../../tiers/types';
@@ -15,5 +16,8 @@ export default function SidebarPromo( {
 	/** Injected so the dashboard and a8c-for-agencies can each pass their own analytics client. */
 	recordTracksEvent: RecordTracksEvent;
 } ) {
+	if ( ! isSpacefastPromoEnabled() ) {
+		return null;
+	}
 	return <SpacefastSidebarPromo tone={ tone } recordTracksEvent={ recordTracksEvent } />;
 }

@@ -11,7 +11,7 @@ import { check } from '@wordpress/icons';
 import { Badge } from '@wordpress/ui';
 import { useCallback } from 'react';
 import { Card, CardBody } from '../../../components/card';
-import { getSpacefastUrl } from '../../components/spacefast/constants';
+import { getSpacefastUrl, isSpacefastPromoEnabled } from '../../components/spacefast/constants';
 import SpacefastLogo from '../../components/spacefast/spacefast-logo';
 import { useRecordViewOnce } from '../../lib/use-record-view-once';
 import type { RecordTracksEvent } from '../../tiers/types';
@@ -27,6 +27,13 @@ export default function SpacefastDevToolsSection( {
 }: {
 	recordTracksEvent: RecordTracksEvent;
 } ) {
+	if ( ! isSpacefastPromoEnabled() ) {
+		return null;
+	}
+	return <SpacefastDevToolsCard recordTracksEvent={ recordTracksEvent } />;
+}
+
+function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: RecordTracksEvent } ) {
 	useRecordViewOnce(
 		'spacefast-dev-tools',
 		useCallback(
