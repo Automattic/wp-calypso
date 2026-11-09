@@ -184,7 +184,7 @@ export function ConversationListItem( {
 						<Text
 							size={ 13 }
 							lineHeight="20px"
-							color="var(--color-text-subtle)"
+							color="inherit"
 							className="conversations-inbox__item-excerpt"
 						>
 							{ excerpt }

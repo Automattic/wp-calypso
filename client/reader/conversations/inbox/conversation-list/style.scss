@@ -209,6 +209,22 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 	text-overflow: ellipsis;
 }
 
+// Same grays as the notifications panel's excerpt. The theme has no text gray
+// between neutral-weak and neutral, so mix the two; unread rows lean blue.
+.conversations-inbox__item-excerpt {
+	--conversations-excerpt-color: color-mix(
+		in srgb,
+		var( --wpds-color-foreground-content-neutral-weak ) 75%,
+		var( --wpds-color-foreground-content-neutral )
+	);
+
+	color: var( --conversations-excerpt-color );
+
+	.conversations-inbox__item.is-unread & {
+		color: color-mix( in oklch, var( --conversations-excerpt-color ) 88%, var( --color-primary ) );
+	}
+}
+
 .conversations-inbox__avatars {
 	flex-shrink: 0;
 
