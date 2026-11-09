@@ -955,8 +955,8 @@ export const agencyDashboardOptInRoute = createRoute( {
 	)
 );
 
-// `/signup` – signup on the new dashboard isn't ready yet, so agencies sign up on the
-// classic dashboard. Sits outside the agency routes: the user has no agency yet.
+// `/signup` – redirects to the classic signup. Sits outside the agency routes:
+// the user has no agency yet.
 export const agencySignupRoute = createRoute( {
 	getParentRoute: () => rootRoute,
 	path: 'signup',
