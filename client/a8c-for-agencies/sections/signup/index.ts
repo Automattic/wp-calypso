@@ -6,6 +6,16 @@ import * as controller from './controller';
 
 export default function () {
 	const isAllowed = isAllowedA4ADashboardHostname( window.location.hostname );
+
+	// Signup on the new dashboard isn't ready yet, so send agencies to the classic one.
+	if ( isAllowed ) {
+		page( '/signup', () => {
+			window.location.replace(
+				`https://agencies.automattic.com/signup${ window.location.search }`
+			);
+		} );
+	}
+
 	page(
 		'/signup',
 		isEnabled( 'a4a-signup-v2' ) || isAllowed
