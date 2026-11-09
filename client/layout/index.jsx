@@ -99,10 +99,6 @@ const loadJetpackCloudStyle = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-jetpack-cloud-style" */ 'calypso/jetpack-cloud/style'
 	);
-const loadJetpackCloudProgramSunsetBanner = () =>
-	import(
-		/* webpackChunkName: "async-load-calypso-jetpack-cloud-program-sunset-banner" */ 'calypso/jetpack-cloud/components/program-sunset-banner'
-	);
 const loadA8cForAgenciesStyle = () =>
 	import(
 		/* webpackChunkName: "async-load-calypso-a8c-for-agencies-style" */ 'calypso/a8c-for-agencies/style'
@@ -504,9 +500,6 @@ class Layout extends Component {
 						loadFailureFallback={ null }
 						id="notices"
 					/>
-					{ isJetpackCloud() && (
-						<AsyncLoad require={ loadJetpackCloudProgramSunsetBanner } placeholder={ null } />
-					) }
 					{ ! ( this.props.needsColorScheme && this.props.isFetchingColorScheme ) && (
 						<>
 							<div id="secondary" className="layout__secondary" role="navigation">
