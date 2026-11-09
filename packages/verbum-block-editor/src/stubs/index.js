@@ -111,15 +111,6 @@ export const DateFormatPicker = createNullComponent( 'DateFormatPicker' );
 export const PublishDateTimePicker = createNullComponent( 'PublishDateTimePicker' );
 export const PrivatePublishDateTimePicker = createNullComponent( 'PrivatePublishDateTimePicker' );
 
-// @wordpress/vips/worker exports
-export const vipsCompressImage = createNoop( 'vipsCompressImage' );
-export const vipsConvertImageFormat = createNoop( 'vipsConvertImageFormat' );
-export const vipsHasTransparency = createNoop( 'vipsHasTransparency' );
-export const vipsResizeImage = createNoop( 'vipsResizeImage' );
-export const vipsRotateImage = createNoop( 'vipsRotateImage' );
-export const vipsCancelOperations = createNoop( 'vipsCancelOperations' );
-export const terminateVipsWorker = createNoop( 'terminateVipsWorker' );
-
 // marked Markdown converter stub
 export class Marked {
 	parse( text ) {
