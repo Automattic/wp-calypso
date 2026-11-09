@@ -22,6 +22,7 @@ The Verbum Block Editor stubs out heavy dependencies that are pulled in transiti
 | `@wordpress/sync`                                                                    | Collaborative editing (yjs/lib0/simple-peer) | ~500KB       |
 | `@wordpress/date`, `date-fns`, `react-day-picker`                                    | Date/time pickers                            | ~2.5MB       |
 | `@wordpress/commands`                                                                | Command palette                              | ~33KB        |
+| `@wordpress/vips/worker`                                                             | Client-side image processing (WebAssembly)   | ~17MB        |
 | `@wordpress/components` (navigation, focal-point-picker, color-picker, palette-edit) | Unused UI components                         | ~250KB       |
 | `marked`                                                                             | Markdown parser                              | ~46KB        |
 | `react-easy-crop`                                                                    | Image cropping                               | ~46KB        |

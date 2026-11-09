@@ -34,6 +34,9 @@ const modulesToStub = [
 	/@wordpress\/components\/build-module\/color-picker(?:$|\/)/,
 	/@wordpress\/components\/build-module\/palette-edit(?:$|\/)/,
 
+	// Client-side image processing (~17MB of inlined WebAssembly); comments can't upload media
+	/^@wordpress\/vips\/worker$/,
+
 	// Other unused libraries
 	/^marked$/, // Markdown parser (~46KB)
 	/^react-easy-crop$/, // Image cropping (~46KB)

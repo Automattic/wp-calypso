@@ -33,11 +33,45 @@ const createNoop = ( name ) => () => {
 	warnStubUsed( name );
 };
 
-// @wordpress/sync exports
-export const createSyncProvider = createNoop( 'createSyncProvider' );
-export const connectIndexDb = createNoop( 'connectIndexDb' );
-export const getSyncProvider = createNoop( 'getSyncProvider' );
-export const createWebRTCConnection = createNoop( 'createWebRTCConnection' );
+// @wordpress/sync exports. core-data only creates a sync manager when real-time collaboration is
+// enabled, and subclasses Awareness when it loads.
+export const createSyncManager = createNoop( 'createSyncManager' );
+export const retrySyncConnection = createNoop( 'retrySyncConnection' );
+export class Awareness {}
+export class Delta {}
+export const Y = {};
+export const ConnectionErrorCode = {};
+export const CRDT_DOC_META_PERSISTENCE_KEY = 'CRDT_DOC_META_PERSISTENCE_KEY';
+export const CRDT_RECORD_MAP_KEY = 'CRDT_RECORD_MAP_KEY';
+export const LOCAL_EDITOR_ORIGIN = 'LOCAL_EDITOR_ORIGIN';
+export const LOCAL_UNDO_IGNORED_ORIGIN = 'LOCAL_UNDO_IGNORED_ORIGIN';
+
+// @wordpress/date exports. dataviews reads getSettings().formats when it loads.
+export const getSettings = () => ( { formats: {}, timezone: {}, l10n: {} } );
+export const getDate = createNoop( 'getDate' );
+export const dateI18n = createNoop( 'dateI18n' );
+
+// date-fns and date-fns/locale exports, used by dataviews' date fields and ui's calendar
+export const areIntervalsOverlapping = createNoop( 'areIntervalsOverlapping' );
+export const differenceInCalendarDays = createNoop( 'differenceInCalendarDays' );
+export const endOfMonth = createNoop( 'endOfMonth' );
+export const format = createNoop( 'format' );
+export const isSameMonth = createNoop( 'isSameMonth' );
+export const isValid = createNoop( 'isValid' );
+export const parse = createNoop( 'parse' );
+export const parseISO = createNoop( 'parseISO' );
+export const startOfMonth = createNoop( 'startOfMonth' );
+export const startOfYear = createNoop( 'startOfYear' );
+export const subDays = createNoop( 'subDays' );
+export const subMonths = createNoop( 'subMonths' );
+export const subWeeks = createNoop( 'subWeeks' );
+export const subYears = createNoop( 'subYears' );
+export const enUS = {};
+
+// react-day-picker exports, used by ui's calendar
+export const DayPicker = createNullComponent( 'DayPicker' );
+export const useDayPicker = createNoop( 'useDayPicker' );
+export const rangeContainsModifiers = createNoop( 'rangeContainsModifiers' );
 
 // @wordpress/commands exports
 export const store = { name: 'core/commands' };
@@ -76,6 +110,15 @@ export const PaletteEdit = createNullComponent( 'PaletteEdit' );
 export const DateFormatPicker = createNullComponent( 'DateFormatPicker' );
 export const PublishDateTimePicker = createNullComponent( 'PublishDateTimePicker' );
 export const PrivatePublishDateTimePicker = createNullComponent( 'PrivatePublishDateTimePicker' );
+
+// @wordpress/vips/worker exports
+export const vipsCompressImage = createNoop( 'vipsCompressImage' );
+export const vipsConvertImageFormat = createNoop( 'vipsConvertImageFormat' );
+export const vipsHasTransparency = createNoop( 'vipsHasTransparency' );
+export const vipsResizeImage = createNoop( 'vipsResizeImage' );
+export const vipsRotateImage = createNoop( 'vipsRotateImage' );
+export const vipsCancelOperations = createNoop( 'vipsCancelOperations' );
+export const terminateVipsWorker = createNoop( 'terminateVipsWorker' );
 
 // marked Markdown converter stub
 export class Marked {
