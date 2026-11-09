@@ -1,8 +1,8 @@
-import { useAgentChat } from '@automattic/agenttic-client';
 import { useCallback, useEffect, useMemo, useRef, useState } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
 import CreditsMeter from '../components/credits-meter';
 import { API_BASE_URL } from '../constants';
+import { useAgentsManagerContext } from '../contexts';
 import { NO_SITE } from '../utils/agent-session';
 import { isContextOnlyMessage } from '../utils/context-only-message';
 import {
@@ -52,7 +52,6 @@ import type { AgentConfig } from '../utils/create-agent-config';
 import type { CreditSnapshot, CreditsPurchaseKind } from '../utils/live-credits';
 import type { AuthProvider, TaskUpdate, UseAgentChatReturn } from '@automattic/agenttic-client';
 import type { NoticeConfig, TrailingActions } from '@automattic/agenttic-ui';
-import type { AgentsManagerSite } from '@automattic/data-stores';
 
 export interface CreditsAnswerAction extends CreditsPurchaseAction {
 	kind: CreditsPurchaseKind;
@@ -129,13 +128,34 @@ function isKnownUnmetered(): boolean {
 	return getAgentsManagerInlineData()?.isMetered === false;
 }
 
-interface UseCreditsOptions {
-	/** Surfaces without metering (Reader chat) pass false and get nothing. */
+/** A site visit, which every balance read and turn update belongs to. */
+export interface CreditsScope {
+	/** The site, user, agent and whether credits apply. */
+	identity: string;
+	/** Surfaces without metering (Reader chat) have no credits, so nothing shows. */
 	enabled: boolean;
-	agentConfig: AgentConfig;
-	siteKey: string;
-	site?: AgentsManagerSite | null;
-	userId?: number;
+	/** The site whose balance is read, only while the agent is authorized for it. */
+	siteId?: number;
+	authProvider?: AuthProvider;
+}
+
+type CreditsTaskUpdateHandler = ( update: TaskUpdate, requestScope: CreditsScope ) => void;
+
+/** The current visit, and where the chat sends its task updates. */
+export interface CreditsVisit {
+	scope: CreditsScope;
+	/** Bound to this visit, so a late reply never touches a later visit's notice or balance. */
+	onTaskUpdate: ( update: TaskUpdate ) => void;
+	/** Set by `useCredits`, which runs after the chat. */
+	taskUpdateHandler: { current: CreditsTaskUpdateHandler };
+}
+
+interface UseCreditsOptions {
+	creditsVisit: CreditsVisit;
+	/** Whether the chat is running a turn; no balance is read meanwhile. */
+	isProcessing: boolean;
+	/** The chat's messages, for the refusal notice and the question it retries. */
+	messages: UseAgentChatReturn[ 'messages' ];
 	isOpen: boolean;
 	/** Whether the chat draws the notice; the compact composer never does. */
 	isNoticeVisible: boolean;
@@ -146,7 +166,6 @@ interface UseCreditsOptions {
 }
 
 export interface UseCreditsResult {
-	chat: UseAgentChatReturn;
 	/** Meter + popover; hidden until this site returns valid allowance metadata. */
 	trailingActions?: TrailingActions;
 	/** Dismissible low-credit notice, or a persistent exhausted notice. */
@@ -183,8 +202,8 @@ export type CreditsCommandReply =
 
 /**
  * Loads balances independently of prompts and keeps reads and terminal updates
- * scoped to the current site visit. The chat is composed here so refreshes can
- * avoid reading usage while a task is still running. Live balances also record
+ * scoped to the current site visit. The chat passes in whether a task runs, so refreshes
+ * can avoid reading usage while a task is still running. Live balances also record
  * the credits Tracks events, and failed replies keep their refusal code, since
  * the chat's error only carries the reply's text. The code labels one Tracks
  * error; the refusal notice keeps it until the next turn. A zero last shown while
@@ -196,37 +215,31 @@ export type CreditsCommandReply =
  * reports still shows.
  */
 export function useCredits( {
-	enabled,
-	agentConfig,
-	siteKey,
-	site,
-	userId,
+	creditsVisit,
+	isProcessing,
+	messages,
 	isOpen,
 	isNoticeVisible,
 	onTryAgain,
 	onShowCredits,
 }: UseCreditsOptions ): UseCreditsResult {
+	const { agentConfig: contextAgentConfig, siteKey, site } = useAgentsManagerContext();
+	// The chat renders only once its agent is configured.
+	const agentConfig = contextAgentConfig!;
+
+	const { scope } = creditsVisit;
+	const { identity: scopeIdentity, enabled, siteId } = scope;
 	const isMockEnabled = enabled && siteKey === NO_SITE;
-	const requestedSiteId = enabled ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
-	const { authProvider, authenticationScope } = agentConfig;
-	const siteId =
-		authenticationScope?.siteId === requestedSiteId && authenticationScope?.userId === userId
-			? requestedSiteId
-			: undefined;
-	const scopeIdentity = JSON.stringify( [ siteKey, userId, agentConfig.agentId, enabled ] );
-	const scope = useMemo(
-		() => ( {
-			identity: scopeIdentity,
-			siteId,
-			authProvider,
-			active: true,
-			validTerminalRevision: 0,
-		} ),
-		[ scopeIdentity, siteId, authProvider ]
-	);
+
 	const currentScope = useRef( scope );
 	currentScope.current = scope;
+	// Late reads and updates change nothing once the chat unmounts.
+	const isMounted = useRef( true );
+	// Counts the turns that reported a balance, so a read started before one is dropped. It spans
+	// visits, so it's only compared within one.
+	const validTerminalRevision = useRef( 0 );
 	const balanceRequest = useRef< AbortController | undefined >( undefined );
+
 	const [ balance, setBalance ] = useState< {
 		scope: typeof scope;
 		snapshot: CreditSnapshot;
@@ -237,23 +250,28 @@ export function useCredits( {
 		 */
 		isUnconfirmed?: boolean;
 	} >();
+
 	// How the last balance read ended when it left no balance: no credits on the site, or a failure.
 	const [ readOutcome, setReadOutcome ] = useState< {
 		scope: typeof scope;
 		outcome: 'unmetered' | 'failed';
 	} >();
+
 	// The last valid balance, kept past a failed read for `/credits` to show as the last known.
 	const lastKnownSnapshot = useRef< { scope: typeof scope; snapshot: CreditSnapshot } | undefined >(
 		undefined
 	);
+
 	// Who may buy, from the balance read. Terminal updates don't carry it.
 	const [ upgradeAccess, setUpgradeAccess ] = useState< { scope: typeof scope } & CreditsAccess >();
 	const upgradeAccessRef = useRef( upgradeAccess );
 	upgradeAccessRef.current = upgradeAccess;
 	const [ seed ] = useState( readMockSeed );
 	const [ percent, setPercent ] = useState( seed?.percent ?? 0 );
+
 	// The live balance the credits events describe, set once it is known below.
 	const liveCredits = useRef< LiveCredits | undefined >( undefined );
+
 	// `shown` stands in while the balance is unknown, for a notice that still shows an earlier one.
 	const recordCreditsEvent = useCallback(
 		(
@@ -262,9 +280,11 @@ export function useCredits( {
 			shown?: LiveCredits
 		) => {
 			const credits = liveCredits.current ?? shown;
-			if ( currentScope.current !== scope || ! scope.active || ! credits ) {
+
+			if ( currentScope.current !== scope || ! isMounted.current || ! credits ) {
 				return;
 			}
+
 			const { status, siteId, agentConfig: config } = credits;
 			recordCreditsTracksEvent(
 				eventName,
@@ -274,39 +294,47 @@ export function useCredits( {
 		},
 		[ scope ]
 	);
+
 	const [ dismissedNoticeScope, setDismissedNoticeScope ] = useState< typeof scope >();
 	const isLowNoticeDismissed = dismissedNoticeScope === scope;
+
 	const dismissLowNotice = useCallback( () => {
-		if ( currentScope.current === scope && scope.active ) {
+		if ( currentScope.current === scope && isMounted.current ) {
 			recordCreditsEvent( 'calypso_agents_manager_credits_notice_dismissed' );
 			setDismissedNoticeScope( scope );
 		}
 	}, [ scope, recordCreditsEvent ] );
+
 	// The top-ups notice has its own dismissal, which records nothing.
 	const [ dismissedTopUpsNoticeScope, setDismissedTopUpsNoticeScope ] = useState< typeof scope >();
 	const isTopUpsNoticeDismissed = dismissedTopUpsNoticeScope === scope;
+
 	const dismissTopUpsNotice = useCallback( () => {
-		if ( currentScope.current === scope && scope.active ) {
+		if ( currentScope.current === scope && isMounted.current ) {
 			setDismissedTopUpsNoticeScope( scope );
 		}
 	}, [ scope ] );
+
 	// A new object per opening, so an opening by itself records once and a close drops it unrecorded.
 	const [ popover, setPopover ] = useState< { scope: typeof scope; byItself: boolean } >();
 	const isPopoverOpen = popover?.scope === scope;
+
 	const setIsPopoverOpen = useCallback(
 		( open: boolean, { byItself = false } = {} ) => {
-			if ( currentScope.current === scope && scope.active ) {
-				// Read through the updater, so this callback, and the chat config built on it, stays stable.
+			if ( currentScope.current === scope && isMounted.current ) {
+				// Read through the updater, so this callback stays stable.
 				setPopover( ( current ) => {
 					if ( ! open ) {
 						return undefined;
 					}
+
 					return current?.scope === scope ? current : { scope, byItself };
 				} );
 			}
 		},
 		[ scope ]
 	);
+
 	const confirmBalance = useCallback( () => {
 		setBalance( ( current ) =>
 			current?.scope === scope && current.isUnconfirmed
@@ -314,27 +342,31 @@ export function useCredits( {
 				: current
 		);
 	}, [ scope ] );
+
 	const invalidateBalance = useCallback( () => {
-		if ( currentScope.current === scope && scope.active ) {
+		if ( currentScope.current === scope && isMounted.current ) {
 			setBalance( undefined );
 			setIsPopoverOpen( false );
 		}
 	}, [ scope, setIsPopoverOpen ] );
+
 	const observeTaskUpdate = useCallback(
 		( update: TaskUpdate ) => {
 			if (
-				! scope.active ||
+				! isMounted.current ||
 				currentScope.current !== scope ||
 				! scope.siteId ||
 				! isTerminalUpdate( update )
 			) {
 				return;
 			}
+
 			balanceRequest.current?.abort();
 			balanceRequest.current = undefined;
 			const snapshot = parseCreditSnapshot( update.aiCredits, scope.siteId );
+
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
-				scope.validTerminalRevision++;
+				validTerminalRevision.current++;
 				lastKnownSnapshot.current = { scope, snapshot };
 				setReadOutcome( undefined );
 				setBalance( { scope, snapshot, isFromTurn: true } );
@@ -344,77 +376,91 @@ export function useCredits( {
 		},
 		[ scope, invalidateBalance ]
 	);
+
 	// Kept for whichever chat shows the failure, so not scoped to the visit.
 	const refusalCode = useRef< string | undefined >( undefined );
+
 	const takeRefusalCode = useCallback( () => {
 		const code = refusalCode.current;
 		refusalCode.current = undefined;
 		return code;
 	}, [] );
+
 	// The same code for the refusal notice, which stays however often the code is read.
 	const [ refusal, setRefusal ] = useState< { scope: typeof scope; code: string } >();
-	const chatConfig = useMemo(
-		() => ( {
-			...agentConfig,
-			onTaskUpdate: async ( update: TaskUpdate ) => {
-				if ( isTerminalUpdate( update ) ) {
-					const code = getTaskRefusalCode( update );
-					refusalCode.current = code;
-					// A late reply from an earlier visit must not clear this visit's notice.
-					if ( currentScope.current === scope ) {
-						setRefusal( code ? { scope, code } : undefined );
-					}
-				}
-				observeTaskUpdate( update );
-				await agentConfig.onTaskUpdate?.( update );
-			},
-		} ),
-		[ agentConfig, scope, observeTaskUpdate ]
-	);
-	const chat = useAgentChat( chatConfig );
-	const { isProcessing } = chat;
+
+	creditsVisit.taskUpdateHandler.current = ( update, requestScope ) => {
+		// A late reply from an earlier visit must not change this visit's notice or balance.
+		const isCurrentVisit = requestScope === currentScope.current;
+
+		if ( isTerminalUpdate( update ) ) {
+			const code = getTaskRefusalCode( update );
+			refusalCode.current = code;
+
+			if ( isCurrentVisit ) {
+				setRefusal( code ? { scope: requestScope, code } : undefined );
+			}
+		}
+
+		if ( isCurrentVisit ) {
+			observeTaskUpdate( update );
+		}
+	};
+
 	const processingRef = useRef( isProcessing );
 	processingRef.current = isProcessing;
+
 	const refreshBalance = useCallback( async () => {
-		if ( ! isOpen || ! scope.active || currentScope.current !== scope ) {
+		if ( ! isOpen || ! isMounted.current || currentScope.current !== scope ) {
 			return;
 		}
+
 		if ( ! canReadBalance( scope ) ) {
 			// Nothing can confirm the zero, so draw it.
 			confirmBalance();
 			return;
 		}
+
 		if ( processingRef.current || balanceRequest.current ) {
 			return;
 		}
+
 		const { authProvider } = scope;
 		const controller = new AbortController();
 		balanceRequest.current = controller;
-		const revision = scope.validTerminalRevision;
+		const revision = validTerminalRevision.current;
 		const isCurrent = () =>
 			! controller.signal.aborted &&
-			scope.active &&
+			isMounted.current &&
 			currentScope.current === scope &&
-			scope.validTerminalRevision === revision &&
+			validTerminalRevision.current === revision &&
 			! processingRef.current;
+
 		try {
 			const headers = await authProvider();
+
 			if ( ! isCurrent() ) {
 				return;
 			}
+
 			const response = await fetch(
 				`${ API_BASE_URL }/wpcom/v2/sites/${ scope.siteId }/ai/credits`,
 				{ method: 'GET', headers, signal: controller.signal, cache: 'no-store' }
 			);
+
 			const data = response.ok ? await response.json() : undefined;
+
 			if ( ! isCurrent() ) {
 				return;
 			}
+
 			// A failed read keeps the last answer; checkout still enforces it.
 			if ( data ) {
 				setUpgradeAccess( { scope, ...parseCreditsAccess( data ) } );
 			}
+
 			const snapshot = parseCreditSnapshot( data?.ai_credits, scope.siteId );
+
 			if ( snapshot && Date.parse( snapshot.resets_at ) > Date.now() ) {
 				lastKnownSnapshot.current = { scope, snapshot };
 				setReadOutcome( undefined );
@@ -436,22 +482,26 @@ export function useCredits( {
 			}
 		}
 	}, [ scope, isOpen, confirmBalance, invalidateBalance ] );
+
 	useEffect( () => {
-		scope.active = true;
+		isMounted.current = true;
 		return () => {
-			scope.active = false;
+			isMounted.current = false;
 		};
-	}, [ scope ] );
+	}, [] );
+
 	useEffect( () => {
 		if ( ! isOpen || ! scope.siteId ) {
 			return;
 		}
+
 		void refreshBalance();
 		const onFocus = () => {
 			if ( document.visibilityState !== 'hidden' ) {
 				void refreshBalance();
 			}
 		};
+
 		window.addEventListener( 'focus', onFocus );
 		window.addEventListener( 'online', onFocus );
 		document.addEventListener( 'visibilitychange', onFocus );
@@ -463,6 +513,7 @@ export function useCredits( {
 			document.removeEventListener( 'visibilitychange', onFocus );
 		};
 	}, [ scope, isOpen, refreshBalance ] );
+
 	useEffect( () => {
 		if ( isProcessing ) {
 			balanceRequest.current?.abort();
@@ -472,16 +523,21 @@ export function useCredits( {
 			setRefusal( undefined );
 		}
 	}, [ isProcessing ] );
+
 	const isAwaitingConfirmation = isOpen && balance?.scope === scope && !! balance.isUnconfirmed;
+
 	const snapshot =
 		balance?.scope === scope && ! isAwaitingConfirmation ? balance.snapshot : undefined;
+
 	useEffect( () => {
 		if ( ! snapshot ) {
 			return;
 		}
+
 		let timer: ReturnType< typeof setTimeout >;
 		const expire = () => {
 			const delay = Date.parse( snapshot.resets_at ) - Date.now();
+
 			if ( delay <= 0 ) {
 				invalidateBalance();
 				void refreshBalance();
@@ -489,6 +545,7 @@ export function useCredits( {
 				timer = setTimeout( expire, Math.min( delay, 2147483647 ) );
 			}
 		};
+
 		expire();
 		return () => clearTimeout( timer );
 	}, [ snapshot, invalidateBalance, refreshBalance ] );
@@ -496,17 +553,20 @@ export function useCredits( {
 	const wasProcessingRef = useRef( {
 		scope,
 		isProcessing,
-		validTerminalRevision: scope.validTerminalRevision,
+		validTerminalRevision: validTerminalRevision.current,
 	} );
+
 	useEffect( () => {
 		const previous = wasProcessingRef.current;
+
 		if ( previous.scope === scope && previous.isProcessing && ! isProcessing && enabled ) {
 			if ( scope.siteId ) {
 				// A turn that ends while the chat shows is the latest word on the balance.
 				if ( isOpen ) {
 					confirmBalance();
 				}
-				if ( previous.validTerminalRevision === scope.validTerminalRevision ) {
+
+				if ( previous.validTerminalRevision === validTerminalRevision.current ) {
 					invalidateBalance();
 					void refreshBalance();
 				} else if ( upgradeAccessRef.current?.scope !== scope ) {
@@ -517,13 +577,14 @@ export function useCredits( {
 				setPercent( ( current ) => Math.max( 0, current - MOCK_COST_PER_MESSAGE ) );
 			}
 		}
+
 		wasProcessingRef.current = {
 			scope,
 			isProcessing,
 			validTerminalRevision:
 				previous.scope === scope && previous.isProcessing && isProcessing
 					? previous.validTerminalRevision
-					: scope.validTerminalRevision,
+					: validTerminalRevision.current,
 		};
 	}, [
 		isProcessing,
@@ -541,38 +602,45 @@ export function useCredits( {
 		if ( ! enabled ) {
 			return undefined;
 		}
+
 		if ( siteId ) {
 			return snapshot ? buildLiveCreditsStatus( snapshot ) : undefined;
 		}
+
 		return isMockEnabled && seed ? buildMockCreditsStatus( seed.plan, percent ) : undefined;
 	}, [ enabled, siteId, snapshot, isMockEnabled, seed, percent ] );
 
 	const isExhausted = status ? isCreditsExhausted( status ) : false;
 	const isLow = status ? isCreditsLow( status ) : false;
+
 	// Only an earlier render knows a zero was shown while hidden, so it's state, marked while rendering.
 	if ( ! isOpen && isExhausted && balance?.scope === scope && ! balance.isUnconfirmed ) {
 		setBalance( { ...balance, isUnconfirmed: true } );
 	}
+
 	// Big Sky's clearMessages empties the thread but keeps the chat's error, which then draws nowhere.
 	const isRefusedForCredits =
-		refusal?.scope === scope &&
-		refusal.code === CREDITS_EXHAUSTED_REFUSAL &&
-		chat.messages.length > 0;
+		refusal?.scope === scope && refusal.code === CREDITS_EXHAUSTED_REFUSAL && messages.length > 0;
 	const planPurchaseLink = status ? getLiveCreditsPurchaseLink( status, siteId, site ) : undefined;
 	const access = upgradeAccess?.scope === scope ? upgradeAccess : undefined;
+
 	const { purchaseUrl, purchaseKind, askToUpgrade, purchaseHint } = getCreditsPurchaseOptions(
 		planPurchaseLink,
 		access
 	);
+
 	const ctaType = getCreditsCtaType( purchaseKind, askToUpgrade );
+
 	// Mock and free balances send no events.
 	liveCredits.current = siteId && status ? { status, siteId, agentConfig } : undefined;
 
 	// A known balance draining to zero opens once; initial reads and new visits stay
 	// quiet, as does a refused reply, whose notice offers the purchase instead.
 	const wasExhaustedRef = useRef( { scope, hasBalance: !! status, isExhausted } );
+
 	useEffect( () => {
 		const previous = wasExhaustedRef.current;
+
 		if (
 			previous.scope === scope &&
 			previous.hasBalance &&
@@ -582,22 +650,26 @@ export function useCredits( {
 		) {
 			setIsPopoverOpen( true, { byItself: true } );
 		}
+
 		// A popover the zero opened would announce, and record, a balance that's gone.
 		if ( status && ! isExhausted ) {
 			setPopover( ( current ) =>
 				current?.scope === scope && current.byItself ? undefined : current
 			);
 		}
+
 		wasExhaustedRef.current = { scope, hasBalance: !! status, isExhausted };
 	}, [ scope, status, isExhausted, isRefusedForCredits, setIsPopoverOpen ] );
 
 	// That opening records once, when the chat first draws it, since a reply can
 	// drain the balance while the chat is collapsed or minimised.
 	const recordedOpeningRef = useRef< typeof popover >( undefined );
+
 	useEffect( () => {
 		if ( ! isOpen || ! isPopoverOpen || ! popover?.byItself || ! isExhausted ) {
 			return;
 		}
+
 		if ( recordedOpeningRef.current !== popover ) {
 			recordedOpeningRef.current = popover;
 			recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', { trigger: 'exhausted' } );
@@ -610,6 +682,7 @@ export function useCredits( {
 
 	// Only where `/credits` is answered in the browser, as anywhere else it would reach the model.
 	const canShowCredits = !! onShowCredits && !! siteId && canReadBalance( scope );
+
 	const showCredits = useCallback( () => {
 		recordCreditsEvent( 'calypso_agents_manager_credits_show_clicked' );
 		setIsPopoverOpen( false );
@@ -622,6 +695,7 @@ export function useCredits( {
 			if ( open && ! isPopoverOpen ) {
 				recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', { trigger: 'click' } );
 			}
+
 			setIsPopoverOpen( open );
 		},
 		[ isPopoverOpen, recordCreditsEvent, setIsPopoverOpen ]
@@ -648,6 +722,7 @@ export function useCredits( {
 		if ( ! status ) {
 			return undefined;
 		}
+
 		return (
 			<CreditsMeter
 				status={ status }
@@ -674,28 +749,32 @@ export function useCredits( {
 	// Continue resends text only, as the conversation's Retry does, so a question with
 	// images is asked again by hand.
 	const refusedQuestion = useMemo( () => {
-		const question = chat.messages[ getLatestUserMessageIndex( chat.messages ) ];
+		const question = messages[ getLatestUserMessageIndex( messages ) ];
+
 		if ( ! question || question.content.some( ( part ) => part.type !== 'text' ) ) {
 			return undefined;
 		}
+
 		const text = question.content
 			.map( ( part ) => part.text ?? '' )
 			.join( ' ' )
 			.trim();
 		return text || undefined;
-	}, [ chat.messages ] );
+	}, [ messages ] );
+
 	// The refusal brings only its code, so the thread tells whether the server took the question.
 	// Any agent message after it that isn't context-only says it did, even one the transcript
 	// hides, such as a failed block edit's: it follows a model call.
 	const hasTurnOutput = useMemo( () => {
-		const questionIndex = getLatestUserMessageIndex( chat.messages );
+		const questionIndex = getLatestUserMessageIndex( messages );
 		return (
 			questionIndex >= 0 &&
-			chat.messages
+			messages
 				.slice( questionIndex + 1 )
 				.some( ( message ) => message.role === 'agent' && ! isContextOnlyMessage( message ) )
 		);
-	}, [ chat.messages ] );
+	}, [ messages ] );
+
 	const tryAgainAction = useMemo< NoticeConfig[ 'action' ] >(
 		() =>
 			onTryAgain && refusedQuestion
@@ -713,9 +792,11 @@ export function useCredits( {
 			if ( isExhausted ) {
 				return getCreditsOutNotice( status.remaining, askToUpgrade, purchaseAction );
 			}
+
 			if ( isRefusedForCredits ) {
 				return getCreditsBackNotice( tryAgainAction );
 			}
+
 			if ( isLow && ! isLowNoticeDismissed ) {
 				return {
 					icon: false,
@@ -726,6 +807,7 @@ export function useCredits( {
 				};
 			}
 		}
+
 		if ( ! status || status.plan !== 'free' ) {
 			return undefined;
 		}
@@ -780,6 +862,7 @@ export function useCredits( {
 		) {
 			return undefined;
 		}
+
 		return getCreditsTopUpsNotice(
 			status.remaining,
 			askToUpgrade,
@@ -802,6 +885,7 @@ export function useCredits( {
 		if ( ! isRefusedForCredits || ! siteId || status?.plan !== 'paid' ) {
 			return undefined;
 		}
+
 		const shown = { status, siteId, agentConfig };
 		return getCreditsRefusalNotice(
 			purchaseKind,
@@ -821,20 +905,24 @@ export function useCredits( {
 		recordPurchaseClick,
 		hasTurnOutput,
 	] );
+
 	// An unknown balance keeps this refusal's last notice, as a failed read keeps the last answer.
 	// Only an earlier render knows that notice, so it's state, updated while rendering.
 	const [ shownRefusal, setShownRefusal ] = useState< {
 		refusal: typeof refusal;
 		notice: NoticeConfig;
 	} >();
+
 	if (
 		liveRefusalNotice &&
 		( shownRefusal?.refusal !== refusal || shownRefusal?.notice !== liveRefusalNotice )
 	) {
 		setShownRefusal( { refusal, notice: liveRefusalNotice } );
 	}
+
 	const heldRefusalNotice =
 		refusal && shownRefusal?.refusal === refusal ? shownRefusal.notice : undefined;
+
 	const refusalNotice = isRefusedForCredits
 		? ( liveRefusalNotice ?? heldRefusalNotice )
 		: undefined;
@@ -846,6 +934,7 @@ export function useCredits( {
 
 	// A low notice behind the credits-back one waits until it shows.
 	const isLowNoticeBehindCreditsBack = !! refusalNotice && ! isExhausted;
+
 	// Once per state for this site, user and agent, and only while the notice is drawn. After a
 	// turn's balance it waits for the read of who may buy, so it names the button the notice shows.
 	const shownNoticeState: CreditsState | undefined =
@@ -853,14 +942,18 @@ export function useCredits( {
 			? getCreditsState( status )
 			: undefined;
 	const userRole = getCreditsUserRole( access?.canBuyCredits );
+
 	useEffect( () => {
 		if ( ! shownNoticeState || isAwaitingAccess ) {
 			return;
 		}
+
 		const key = JSON.stringify( [ scopeIdentity, shownNoticeState ] );
+
 		if ( recordedNoticeStates.has( key ) ) {
 			return;
 		}
+
 		recordedNoticeStates.add( key );
 		recordCreditsEvent( 'calypso_agents_manager_credits_notice_shown', {
 			user_role: userRole,
@@ -884,6 +977,7 @@ export function useCredits( {
 			void refreshBalance();
 			return true;
 		}
+
 		if ( ! status ) {
 			// An unconfirmed zero still blocks; the opening read settles it in a moment.
 			return ! isAwaitingConfirmation;
@@ -894,6 +988,7 @@ export function useCredits( {
 			recordCreditsEvent( 'calypso_agents_manager_credits_meter_opened', {
 				trigger: 'submit_blocked',
 			} );
+
 			setIsPopoverOpen( true );
 			return false;
 		}
@@ -930,6 +1025,7 @@ export function useCredits( {
 		) {
 			return undefined;
 		}
+
 		const link = getLiveCreditsTopUpLink( siteId, site );
 		const action =
 			link && getCreditsPurchaseAction( { purchaseUrl: link.url, purchaseKind: 'top_up' } );
@@ -947,9 +1043,11 @@ export function useCredits( {
 		if ( ! siteId || ! status || ! snapshot ) {
 			return undefined;
 		}
+
 		// The card stays in the thread after a later read fails, so its clicks count against its own balance.
 		const shown: LiveCredits = { status, siteId, agentConfig };
 		const actions: CreditsAnswerAction[] = [];
+
 		if ( purchaseAction && purchaseKind ) {
 			actions.push( {
 				...purchaseAction,
@@ -957,9 +1055,11 @@ export function useCredits( {
 				onClick: () => recordPurchaseClick( 'none', shown ),
 			} );
 		}
+
 		if ( addCreditsAction ) {
 			actions.push( { ...addCreditsAction, onClick: () => recordTopUpClick( shown ) } );
 		}
+
 		return {
 			status,
 			resetDate: formatCreditsResetDate( snapshot.resets_at ),
@@ -985,20 +1085,25 @@ export function useCredits( {
 			? lastKnownSnapshot.current.snapshot
 			: undefined;
 	const failedOutcome = readOutcome?.scope === scope ? readOutcome.outcome : undefined;
+
 	// Live balances only: a mock balance, or a read that can't run, has nothing true to say.
 	const creditsCommand = useMemo< CreditsCommandReply | undefined >( () => {
 		if ( ! enabled || ! siteId || ! canReadBalance( scope ) ) {
 			return undefined;
 		}
+
 		if ( isKnownUnmetered() ) {
 			return { state: 'unmetered' };
 		}
+
 		if ( creditsAnswer ) {
 			return { state: 'balance', answer: creditsAnswer };
 		}
+
 		if ( failedOutcome === 'unmetered' ) {
 			return { state: 'unmetered' };
 		}
+
 		if ( failedOutcome === 'failed' ) {
 			return lastKnown
 				? {
@@ -1011,12 +1116,12 @@ export function useCredits( {
 					}
 				: { state: 'failed' };
 		}
+
 		return { state: 'loading' };
 	}, [ enabled, siteId, scope, creditsAnswer, failedOutcome, lastKnown ] );
 
 	return useMemo(
 		() => ( {
-			chat,
 			trailingActions,
 			notice,
 			beforeSubmit,
@@ -1026,7 +1131,6 @@ export function useCredits( {
 			topUpsNotice,
 		} ),
 		[
-			chat,
 			trailingActions,
 			notice,
 			beforeSubmit,
@@ -1036,4 +1140,35 @@ export function useCredits( {
 			topUpsNotice,
 		]
 	);
+}
+
+/**
+ * The credits' visit, new for each site, user and agent. Agenttic keeps each request's
+ * `onTaskUpdate`, so its updates stay with its visit.
+ */
+export function useCreditsVisit( enabled: boolean ): CreditsVisit {
+	const { agentConfig, siteKey, currentUser } = useAgentsManagerContext();
+	const userId = currentUser?.ID;
+	const authProvider = agentConfig?.authProvider;
+	const identity = JSON.stringify( [ siteKey, userId, agentConfig?.agentId, enabled ] );
+
+	// The balance is read only for the site and user the agent is authorized for.
+	const requestedSiteId =
+		enabled && agentConfig ? getLiveCreditSiteId( siteKey, agentConfig ) : undefined;
+	const authenticationScope = agentConfig?.authenticationScope;
+	const isAuthorized =
+		authenticationScope?.siteId === requestedSiteId && authenticationScope?.userId === userId;
+	const siteId = isAuthorized ? requestedSiteId : undefined;
+
+	const taskUpdateHandler = useRef< CreditsTaskUpdateHandler >( () => {} );
+
+	return useMemo( () => {
+		const scope = { identity, enabled, siteId, authProvider };
+
+		return {
+			scope,
+			onTaskUpdate: ( update: TaskUpdate ) => taskUpdateHandler.current( update, scope ),
+			taskUpdateHandler,
+		};
+	}, [ identity, enabled, siteId, authProvider ] );
 }
