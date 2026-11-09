@@ -147,6 +147,7 @@ async function logInOwnAccount( { timeoutMs = 10 * 60 * 1000 } = {} ) {
 
 module.exports = {
 	AUTH_COMMAND,
+	REPO_ROOT,
 	OWN_ACCOUNT,
 	PORT,
 	UserActionRequired,

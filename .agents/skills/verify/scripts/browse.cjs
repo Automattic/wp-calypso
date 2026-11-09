@@ -8,11 +8,13 @@
  * The options are documented in ../SKILL.md.
  */
 const fs = require( 'node:fs' );
+const path = require( 'node:path' );
 const { parseArgs } = require( 'node:util' );
 const {
 	AUTH_COMMAND,
 	OWN_ACCOUNT,
 	PORT,
+	REPO_ROOT,
 	UserActionRequired,
 	isLoginUrl,
 	launchBrowser,
@@ -28,6 +30,7 @@ const { values: options, positionals } = parseArgs( {
 		eval: { type: 'string' },
 		'eval-file': { type: 'string' },
 		screenshot: { type: 'string' },
+		clip: { type: 'string' },
 		'full-page': { type: 'boolean', default: false },
 		'no-snapshot': { type: 'boolean', default: false },
 		viewport: { type: 'string', default: '1440x1000' },
@@ -37,6 +40,9 @@ const { values: options, positionals } = parseArgs( {
 } );
 
 const AsyncFunction = async function () {}.constructor;
+
+// A mistake in the options, reported without a stack trace.
+class UsageError extends Error {}
 
 // Spinners, the dashboard's loading bar and blurred placeholder text, busy regions, and
 // Calypso's W logo shown until its JavaScript loads.
@@ -178,6 +184,7 @@ async function open( browser, account, url ) {
 	const context = await browser.newContext( {
 		storageState: statePath( account ),
 		viewport: { width, height },
+		reducedMotion: 'reduce',
 	} );
 	const page = await context.newPage();
 	const { problems, requests } = watch( page );
@@ -190,6 +197,58 @@ async function open( browser, account, url ) {
 	return { context, page, problems, requests };
 }
 
+/**
+ * Resolves a screenshot path, refusing one inside the repository so images never get committed.
+ */
+function screenshotTarget( file ) {
+	const target = path.resolve( file );
+	if ( ! path.relative( REPO_ROOT, target ).startsWith( '..' ) ) {
+		throw new Error(
+			`Save screenshots outside the repository, not in ${ target }: images must never be committed.`
+		);
+	}
+	return target;
+}
+
+/**
+ * Saves a screenshot of the page, or with `selector`, of the first element matching it.
+ * Also available to --eval code as `screenshot( path, options )`.
+ */
+async function takeScreenshot( page, file, { selector, fullPage = false } = {} ) {
+	const target = screenshotTarget( file );
+	fs.mkdirSync( path.dirname( target ), { recursive: true } );
+	const settings = {
+		path: target,
+		animations: 'disabled',
+		caret: 'hide',
+		// The dev server's environment badge isn't on production.
+		style: '.environment-badge { display: none !important; }',
+	};
+	if ( selector ) {
+		const element = page.locator( selector ).first();
+		const found = await element
+			.waitFor( { state: 'attached', timeout: 5000 } )
+			.then( () => true )
+			.catch( () => false );
+		if ( ! found ) {
+			throw new UsageError(
+				`No element on ${ page.url() } matches ${ JSON.stringify( selector ) }. ` +
+					`Check with --eval 'return page.locator( ${ JSON.stringify( selector ) } ).count();'`
+			);
+		}
+		// Crop a full-page capture rather than scrolling to the element, so fixed
+		// headers stay at the top of the page instead of covering it.
+		const box = await element.evaluate( ( node ) => {
+			const { x, y, width, height } = node.getBoundingClientRect();
+			return { x: x + window.scrollX, y: y + window.scrollY, width, height };
+		} );
+		await page.screenshot( { ...settings, fullPage: true, clip: box } );
+	} else {
+		await page.screenshot( { ...settings, fullPage } );
+	}
+	console.log( 'screenshot:', target );
+}
+
 async function main() {
 	const [ target ] = positionals;
 	if ( ! target ) {
@@ -197,6 +256,10 @@ async function main() {
 	}
 	const url = new URL( target, `http://my.localhost:${ PORT }` ).toString();
 	const account = options.as;
+
+	if ( options.screenshot ) {
+		screenshotTarget( options.screenshot );
+	}
 
 	await waitForDevServer();
 	console.log( `dev server: up on port ${ PORT }` );
@@ -233,7 +296,12 @@ async function main() {
 			( options[ 'eval-file' ] && fs.readFileSync( options[ 'eval-file' ], 'utf8' ) );
 		if ( code ) {
 			await waitUntilLoaded( page );
-			const result = await new AsyncFunction( 'page', 'context', code )( page, context );
+			const screenshot = ( file, settings ) => takeScreenshot( page, file, settings );
+			const result = await new AsyncFunction( 'page', 'context', 'screenshot', code )(
+				page,
+				context,
+				screenshot
+			);
 			if ( result !== undefined ) {
 				console.log(
 					'eval result:',
@@ -262,8 +330,10 @@ async function main() {
 		}
 
 		if ( options.screenshot ) {
-			await page.screenshot( { path: options.screenshot, fullPage: options[ 'full-page' ] } );
-			console.log( 'screenshot:', options.screenshot );
+			await takeScreenshot( page, options.screenshot, {
+				selector: options.clip,
+				fullPage: options[ 'full-page' ],
+			} );
 		}
 
 		if ( ! options[ 'no-snapshot' ] ) {
@@ -276,6 +346,8 @@ async function main() {
 }
 
 main().catch( ( error ) => {
-	console.error( error instanceof UserActionRequired ? error.message : error );
+	console.error(
+		error instanceof UserActionRequired || error instanceof UsageError ? error.message : error
+	);
 	process.exit( error instanceof UserActionRequired ? 2 : 1 );
 } );
