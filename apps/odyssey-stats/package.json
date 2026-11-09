@@ -45,7 +45,7 @@
 		"calypso": "workspace:^",
 		"clsx": "^2.1.1",
 		"debug": "^4.4.3",
-		"moment": "^2.30.1",
+		"moment": "^2.31.0",
 		"moment-timezone": "^0.5.48",
 		"prop-types": "^15.8.1",
 		"react": "^18.3.1",
