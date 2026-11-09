@@ -41,7 +41,7 @@ CRITICAL: This is a **public repository**. Never put an internal link or hostnam
 
 ## Development
 
-> **Note**: The Calypso dev server uses the `PORT` environment variable (check repo-root `.env`) and falls back to port `3000`. Do not create or modify `.env` unless explicitly asked.
+> **Note**: The Calypso dev server listens on the `PORT` set in the repo-root `.env`, or `3000`. The dev server and the verify skill's scripts read `.env` themselves, so you don't need to open it. Do not create or modify `.env` unless explicitly asked.
 
 > **Note**: Keep the `@automattic/` scope whenever a command sends a workspace package name to the npm registry (`npm view`, `npx`, `yarn add`, `yarn npm info`). For a `"private": true` package, read its `package.json` instead of the registry.
 
@@ -58,26 +58,18 @@ yarn start-dashboard
 
 If `yarn start` fails with `Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory`, increase the Node heap size by running `NODE_OPTIONS=--max-old-space-size=8192 yarn start`. For other errors, run `yarn calypso-doctor` to diagnose and fix common environment issues.
 
-### Checking a change in a browser
-
-- Use the Node version in `.nvmrc`. The first webpack build takes several minutes after "wp-calypso booted"; until it finishes the page shows only the W logo.
-- Sign in on `wordpress.com/log-in` first, then open `calypso.localhost:3000/read?flags=oauth` once. Signing in on the calypso.localhost form doesn't stick, because the login cookie is refused as a cross-site cookie.
-- With `?flags=oauth`, loading or reloading a signed-in URL directly (for example `/tags`) redirects to `/discover`, because the server can't see the sign-in. Load `/read?flags=oauth`, wait for the Reader, then navigate inside the app.
-- A headless or automated Chrome profile blocks third-party cookies by default; allow them (see `docs/install.md`) or the app never sees the sign-in.
-- Test with an account made for testing, never a personal one, and don't save network requests from the login: they hold the password and session cookies.
-
 ## Testing instructions
 
 > **Note**: E2E tests require a local Calypso development instance to be running.
 
 ```bash
 # JavaScript tests
-yarn test                                       # Run unit tests for client, packages, server, and build-tools
+yarn test                                       # Run unit tests for client, packages, server, and build-tools (CI also runs apps and Vitest packages)
 yarn test-build-tools                           # Run unit tests for build-tools
 yarn test-client                                # Run unit tests for client
-yarn test-integration                           # Run integration tests
 yarn test-apps                                  # Run apps unit tests
-yarn test-packages                              # Run packages unit tests
+yarn test-packages                              # Run Jest unit tests for packages
+yarn workspace @automattic/<package> test       # Run a package's own tests, e.g. for packages with a vitest.config
 yarn test-server                                # Run server unit tests
 yarn test-server:coverage                       # Run server unit tests with coverage info
 
@@ -88,30 +80,27 @@ yarn test-client --testNamePattern="<TestName>" # Run a specific client unit tes
 # E2E tests - refer to: test/e2e/AGENTS.md
 
 # Code Quality
-yarn lint             # Lint everything
-yarn lint:css         # Lint CSS
-yarn lint:js          # Lint JavaScript
-yarn reformat-files   # Fix formatting with Prettier
-yarn typecheck-client # Type-check client
+yarn lint                     # Lint everything
+yarn lint:css                 # Lint CSS
+yarn lint:js                  # Lint JavaScript
+yarn prettier --write <files> # Fix formatting of the files you changed
+yarn reformat-files           # Fix formatting of the whole repo with Prettier
+yarn typecheck-client         # Type-check client
+yarn typecheck-packages       # Type-check packages
+yarn typecheck-apps           # Type-check apps
 ```
+
+## Verifying a change
+
+Before calling a change done, verify it with [.agents/skills/verify/SKILL.md](.agents/skills/verify/SKILL.md). It also covers signing in when you drive a browser yourself, e.g. Claude in Chrome.
+
+Test with an account made for testing. Use your own WordPress.com account only when the user asks for it, and never save network requests from a login: they hold the password and session cookies.
 
 ## Conventions
 
 - Do NOT add any verbose code comments that narrate what the change does or why it was made (e.g. `// Added this to fix X`, `// Changed from Y to Z`, restating the code in prose). Such explanation belongs in the PR description, not the source. Only keep comments that a future reader genuinely needs — non-obvious rationale, gotchas, links to context — and match the comment density and style of the surrounding code.
-
-## Pre-PR checks
-
-Before pushing a branch or running `gh pr create`, run the type-check that CI will run. PRs touching `client/` may fail the `type_check_client` CI check after opening, so verify locally first:
-
-```bash
-yarn               # Install dependencies first if you haven't already
-yarn typecheck-client
-```
-
-If it runs out of memory, give it a bigger heap: `NODE_OPTIONS=--max-old-space-size=12288 yarn typecheck-client`. If it fails on a workspace package that has no `dist/` yet, build that package first (`cd packages/<name> && yarn build`).
-
-If it fails, fix the type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description. Other CI type-checks worth running when relevant: `yarn typecheck-packages`, `yarn typecheck-apps`.
+- Fix type errors at the source — do not silence them with `// @ts-expect-error`, `// @ts-ignore`, or `as any` unless you can justify it in the PR description.
 
 ## Creating Pull Requests
 
-To commit, push a branch or open a pull request, follow `.agents/skills/create-pr/SKILL.md`.
+To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md).
