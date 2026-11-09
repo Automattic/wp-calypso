@@ -2,7 +2,6 @@ import page from '@automattic/calypso-router';
 import { Gridicon } from '@automattic/components';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { ExternalLink } from '@wordpress/components';
-import { useViewportMatch } from '@wordpress/compose';
 import clsx from 'clsx';
 import { localize } from 'i18n-calypso';
 import PropTypes from 'prop-types';
@@ -77,7 +76,6 @@ export class Login extends Component {
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isWoo: PropTypes.bool,
-		isSignupLinkBelowButtons: PropTypes.bool,
 	};
 
 	static defaultProps = { isJetpack: false, isLoginView: true };
@@ -231,6 +229,17 @@ export class Login extends Component {
 	 * The same link on the form: on the email field's label row for the stacked login, at every
 	 * width, otherwise on the password field's for desktop, with the footer's hidden there.
 	 */
+	/**
+	 * Logged-out login views put the route to signup below the buttons and the lost-password link
+	 * on the form. CSS keeps the top-bar and footer links instead below 960px. Gravatar-powered
+	 * logins have their own layout.
+	 */
+	hasSignupLinkBelowButtons() {
+		return (
+			this.props.isLoginView && ! this.props.isUserLoggedIn && ! this.props.isGravPoweredClient
+		);
+	}
+
 	getLostPasswordFormLink() {
 		if ( this.props.twoFactorAuthType ) {
 			return null;
@@ -311,7 +320,6 @@ export class Login extends Component {
 			action,
 			currentRoute,
 			isLoginView,
-			isSignupLinkBelowButtons,
 		} = this.props;
 
 		// It's used to toggle UIs for the login page of Gravatar powered clients only (excluding 2FA relevant pages).
@@ -326,12 +334,11 @@ export class Login extends Component {
 
 		const isStackedLogin = this.isStackedLogin();
 
-		// Gravatar-powered clients and Woo render their own lost-password link. The stacked login
-		// carries it on the email field's row, and the footer's stays for everyone else.
+		const hasSignupLinkBelowButtons = this.hasSignupLinkBelowButtons();
+
+		// Gravatar-powered clients and Woo render their own lost-password link.
 		const lostPasswordFormLink =
-			( isSignupLinkBelowButtons || isStackedLogin ) && ! isGravPoweredClient && ! this.props.isWoo
-				? this.getLostPasswordFormLink()
-				: undefined;
+			hasSignupLinkBelowButtons && ! this.props.isWoo ? this.getLostPasswordFormLink() : undefined;
 
 		return (
 			<LoginBlock
@@ -356,7 +363,7 @@ export class Login extends Component {
 						<OneLoginFooter
 							isLoginView={ isLoginView }
 							signupUrl={ signupUrl }
-							showSignupPrompt={ isSignupLinkBelowButtons || isStackedLogin }
+							showSignupPrompt={ hasSignupLinkBelowButtons }
 							isNewHereSignupPrompt={ isStackedLogin }
 							lostPasswordLink={ isStackedLogin ? undefined : this.getLostPasswordLink() }
 							lostPasswordLinkMobileOnly={ !! lostPasswordFormLink }
@@ -403,7 +410,6 @@ export class Login extends Component {
 			isGenericOauth,
 			isGravPoweredClient,
 			isJetpack,
-			isSignupLinkBelowButtons,
 			action,
 			partnerConfig,
 		} = this.props;
@@ -475,7 +481,7 @@ export class Login extends Component {
 						columnWidth={ isLoginFormView && ! isStackedLogin ? 6 : undefined }
 						isCentered={ ( isLoginFormView && ! isStackedLogin ) || undefined }
 						// The footer carries the route to signup on desktop instead.
-						signupLinkMobileOnly={ isSignupLinkBelowButtons || isStackedLogin }
+						signupLinkMobileOnly={ this.hasSignupLinkBelowButtons() }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						notice={ notices }
 						linkLogoToHome
@@ -566,11 +572,6 @@ const LoginWithContext = ( props ) => {
 		props,
 		translate
 	);
-	// False during server rendering and hydration, so the first render matches the server markup.
-	const isLargeViewport = useViewportMatch( 'large' );
-	// Gravatar-powered logins have their own layout.
-	const isSignupLinkBelowButtons =
-		isLargeViewport && props.isLoginView && ! props.isUserLoggedIn && ! props.isGravPoweredClient;
 
 	return (
 		<LoginContextProvider
@@ -578,11 +579,7 @@ const LoginWithContext = ( props ) => {
 			initialSubHeading={ subHeadingPrimary }
 			initialSubHeadingSecondary={ subHeadingSecondary }
 		>
-			<Login
-				{ ...props }
-				translate={ translate }
-				isSignupLinkBelowButtons={ isSignupLinkBelowButtons }
-			/>
+			<Login { ...props } translate={ translate } />
 		</LoginContextProvider>
 	);
 };
