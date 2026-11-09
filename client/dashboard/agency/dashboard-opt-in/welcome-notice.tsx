@@ -255,9 +255,13 @@ export default function WelcomeNotice() {
 						onTimeUpdate={ handleTimeUpdate }
 					>
 						{ /* Off until the viewer turns them on from the video's controls. */ }
-						{ captionsUrl && (
-							<track kind="captions" src={ captionsUrl } srcLang="en" label={ __( 'English' ) } />
-						) }
+						<track
+							key={ captionsUrl }
+							kind="captions"
+							src={ captionsUrl }
+							srcLang="en"
+							label={ __( 'English' ) }
+						/>
 					</video>
 				</div>
 			</section>
