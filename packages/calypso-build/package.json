@@ -46,7 +46,7 @@
 		"@wordpress/dependency-extraction-webpack-plugin": "^6.57.0",
 		"autoprefixer": "^10.4.21",
 		"babel-loader": "^10.1.1",
-		"browserslist": "^4.29.4",
+		"browserslist": "^4.29.5",
 		"css-loader": "^7.1.5",
 		"css-minimizer-webpack-plugin": "^8.0.0",
 		"duplicate-package-checker-webpack-plugin": "^3.0.0",
@@ -69,7 +69,7 @@
 		"gettext-parser": "^6.0.0"
 	},
 	"peerDependencies": {
-		"postcss": "^8.5.31",
+		"postcss": "^8.5.32",
 		"webpack": "^5.101.0"
 	}
 }

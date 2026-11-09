@@ -288,6 +288,25 @@ describe( 'unsaveReadPostMutation', () => {
 
 		expect( getSavedQueriesInvalidated( client ) ).toEqual( { keys: true, stream: true } );
 	} );
+
+	it( 'invalidates the saved stream in every sort order, and no other stream', async () => {
+		const client = newClient();
+		setKeys( client, [ entry( POST_KEY ) ] );
+		const streamQueryKey = ( streamKey: string ) =>
+			getStreamInfiniteQueryKey( { streamKey, feedId: null, localeSlug: null, startDate: null } );
+		for ( const streamKey of [ 'saved:oldest', 'following' ] ) {
+			client.setQueryData( streamQueryKey( streamKey ), { pages: [], pageParams: [] } );
+		}
+		nock( BASE )
+			.post( '/wpcom/v2/read/saved/delete' )
+			.reply( 200, { saved: false, key: POST_KEY, total: 0 } );
+		const result = renderMutation( client, unsaveReadPostMutation );
+
+		await act( () => result.current.mutateAsync( params() ) );
+
+		expect( client.getQueryState( streamQueryKey( 'saved:oldest' ) )?.isInvalidated ).toBe( true );
+		expect( client.getQueryState( streamQueryKey( 'following' ) )?.isInvalidated ).toBe( false );
+	} );
 } );
 
 describe( 'overlapping saves and unsaves', () => {

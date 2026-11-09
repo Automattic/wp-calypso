@@ -117,7 +117,6 @@ let requests: string[];
 let replyConversations: ( uri: string ) => object;
 let markReadStatus: number;
 let markReadBodies: { counts: Record< string, number > }[];
-let notesReady: Promise< void >;
 
 const renderInbox = ( props: { siteId?: string; postId?: string } = {} ) =>
 	renderWithProvider( <ConversationsInbox { ...props } />, {
@@ -136,7 +135,6 @@ beforeEach( () => {
 	replyConversations = () => conversationsPage();
 	markReadStatus = 200;
 	markReadBodies = [];
-	notesReady = Promise.resolve();
 	nock( BASE )
 		.persist()
 		.get( '/wpcom/v2/read/conversations' )
@@ -160,9 +158,7 @@ beforeEach( () => {
 		} )
 		.get( '/rest/v1.1/notifications/' )
 		.query( true )
-		.reply( ( _uri, _body, callback ) => {
-			notesReady.then( () => callback( null, [ 200, { notes } ] ) );
-		} )
+		.reply( 200, { notes } )
 		.post( /\/notifications\/read/ )
 		.reply( ( _uri, body ) => {
 			markReadBodies.push( body as ( typeof markReadBodies )[ number ] );
@@ -193,9 +189,15 @@ describe( 'ConversationsInbox', () => {
 		expect( page.replace ).not.toHaveBeenCalled();
 	} );
 
+	it( 'marks the conversation from the URL as read once the list loads', async () => {
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1 ] ] ) );
+	} );
+
 	it( 'marks a conversation as read and navigates to it when opened from the list', async () => {
 		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		renderInbox( { siteId: '10', postId: '300' } );
 
 		await user.click( await findRow( '10-p-200' ) );
 
@@ -205,7 +207,7 @@ describe( 'ConversationsInbox', () => {
 
 	it( 'does not mark an already-read conversation as read when opened', async () => {
 		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		renderInbox();
 
 		await user.click( await findRow( '10-p-300' ) );
 
@@ -226,6 +228,28 @@ describe( 'ConversationsInbox', () => {
 				expect.anything()
 			)
 		);
+	} );
+
+	it( 'does not refetch the list after marking a conversation read', async () => {
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1 ] ] ) );
+		await new Promise( ( resolve ) => setTimeout( resolve, 50 ) );
+
+		expect( requests ).toHaveLength( 1 );
+	} );
+
+	it( 'refetches the list when a conversation has more unread notes than it lists', async () => {
+		replyConversations = () =>
+			conversationsPage( [
+				{
+					...makeConversation( { postId: 100, commentId: 1001, unreadNoteIds: [ 1 ] } ),
+					unread_count: 60,
+				},
+			] );
+		renderInbox( { siteId: '10', postId: '100' } );
+
+		await waitFor( () => expect( requests ).toHaveLength( 2 ) );
 	} );
 
 	it( 'disables the previous button at the start of the list', async () => {
@@ -251,7 +275,7 @@ describe( 'ConversationsInbox', () => {
 		await findRow( '10-p-200' );
 		await user.click( screen.getByRole( 'button', { name: 'previous' } ) );
 
-		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1 ] ] ) );
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 2 ], [ 1 ] ] ) );
 		expect( page.show ).toHaveBeenCalledWith( '/reader/conversations/inbox/10/100' );
 	} );
 
@@ -261,7 +285,13 @@ describe( 'ConversationsInbox', () => {
 
 		await screen.findByText( 'New: 1001' );
 		replyConversations = () =>
-			conversationsPage( conversations.map( ( item ) => ( { ...item, unread_note_ids: [] } ) ) );
+			conversationsPage(
+				conversations.map( ( item ) => ( {
+					...item,
+					unread_note_ids: [],
+					unread_comment_ids: [],
+				} ) )
+			);
 		await user.click( screen.getByRole( 'button', { name: '10-p-200' } ) );
 		rerender( <ConversationsInbox siteId="10" postId="200" /> );
 
@@ -273,32 +303,23 @@ describe( 'ConversationsInbox', () => {
 		expect( screen.getByText( 'New: none' ) ).toBeVisible();
 	} );
 
-	it( 'highlights the new comments of a conversation opened before the notes loaded', async () => {
+	it( 'shows the unread conversations the route returns on the Unread tab', async () => {
 		const user = userEvent.setup();
-		let releaseNotes = () => {};
-		notesReady = new Promise( ( resolve ) => {
-			releaseNotes = resolve;
-		} );
-		const { rerender } = renderInbox( { siteId: '10', postId: '100' } );
-
-		await user.click( await findRow( '10-p-200' ) );
-		rerender( <ConversationsInbox siteId="10" postId="200" /> );
-		expect( screen.getByText( 'New: none' ) ).toBeVisible();
-
-		releaseNotes();
-
-		expect( await screen.findByText( 'New: 2001' ) ).toBeVisible();
-	} );
-
-	it( 'shows only unread conversations on the Unread tab', async () => {
-		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		replyConversations = ( uri ) =>
+			conversationsPage( uri.includes( 'scope=unread' ) ? [ unread[ 1 ] ] : conversations );
+		renderInbox( { siteId: '10', postId: '300' } );
 
 		await findRow( '10-p-300' );
 		await user.click( screen.getByRole( 'button', { name: 'Unread' } ) );
 
-		expect( screen.getByRole( 'button', { name: '10-p-200' } ) ).toBeVisible();
+		expect( await findRow( '10-p-200' ) ).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: '10-p-100' } ) ).not.toBeInTheDocument();
 		expect( screen.queryByRole( 'button', { name: '10-p-300' } ) ).not.toBeInTheDocument();
+		expect( requests.filter( ( uri ) => uri.includes( 'scope=unread' ) ) ).toHaveLength( 1 );
+
+		await user.click( screen.getByRole( 'button', { name: 'Mark 1 as read' } ) );
+
+		await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 2 ] ] ) );
 	} );
 
 	it( 'sends the sort and search to the route', async () => {
@@ -328,9 +349,9 @@ describe( 'ConversationsInbox', () => {
 
 	it( 'marks a comment read on a post the list has not loaded', async () => {
 		const user = userEvent.setup();
-		renderInbox( { siteId: '10', postId: '100' } );
+		renderInbox( { siteId: '10', postId: '300' } );
 
-		await findRow( '10-p-100' );
+		await findRow( '10-p-300' );
 		await user.click( screen.getByRole( 'button', { name: 'Your comments' } ) );
 		await user.click( await findRow( '10-p-400-c-41' ) );
 
@@ -443,9 +464,9 @@ describe( 'ConversationsInbox', () => {
 
 		it( 'marks every loaded unread note as read in one call and records the count', async () => {
 			const user = userEvent.setup();
-			renderInbox( { siteId: '10', postId: '100' } );
+			renderInbox( { siteId: '10', postId: '300' } );
 
-			await findRow( '10-p-100' );
+			await findRow( '10-p-300' );
 			await user.click( screen.getByRole( 'button', { name: 'Mark 2 as read' } ) );
 
 			await waitFor( () => expect( markedNoteIds() ).toEqual( [ [ 1, 2 ] ] ) );

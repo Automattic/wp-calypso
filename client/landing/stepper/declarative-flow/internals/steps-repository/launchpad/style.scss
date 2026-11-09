@@ -290,7 +290,7 @@
 // Launchpad - Processing Screens
 .processing {
 	.wpcom__loading-progress-bar {
-		background-color: #fff;
+		--wpds-color-background-track-neutral: #fff;
 	}
 
 	.step-container {

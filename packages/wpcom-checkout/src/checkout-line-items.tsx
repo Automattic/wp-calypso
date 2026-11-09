@@ -260,6 +260,13 @@ const BundleTermPrice = styled.span`
 	gap: 8px;
 `;
 
+const BundleRenewalNote = styled.div< { theme?: Theme } >`
+	width: 100%;
+	margin: 8px 0;
+	color: ${ ( props ) => props.theme.colors.textColorDark };
+	font-size: 14px;
+`;
+
 const DeleteButton = styled( Button )< { theme?: Theme } >`
 	width: auto;
 	font-size: 0.75rem;
@@ -586,6 +593,14 @@ export function BundleLineItem( {
 					<Gridicon icon="chevron-down" size={ 16 } aria-hidden="true" />
 				</BundleTermPrice>
 			</BundleTermRow>
+
+			{ /* Bundle members renew at full price, so the renewal amount is the
+			     pre-discount group total. */ }
+			<BundleRenewalNote>
+				{ translate( 'Auto-renews at %(price)s/year.', {
+					args: { price: bundleOriginalDisplay },
+				} ) }
+			</BundleRenewalNote>
 
 			{ hasDeleteButton && removeProductFromCart && (
 				<>
@@ -1455,17 +1470,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isMonthlyProduct( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first month only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1474,17 +1491,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isYearly( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(upgradeCredit)s applied in first year only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							upgradeCredit: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1493,17 +1512,19 @@ function UpgradeCreditInformation( { product }: { product: ResponseCartProduct }
 	if ( isBiennially( product ) || isTriennially( product ) ) {
 		return (
 			<>
-				{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
-					comment:
-						'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
-						'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
-					args: {
-						discount: formatCurrency( upgradeCredit, product.currency, {
-							isSmallestUnit: true,
-							stripZeros: true,
-						} ),
-					},
-				} ) }
+				<span>
+					{ translate( 'Upgrade Credit: %(discount)s applied in first term only', {
+						comment:
+							'The upgrade credit is a pro rated balance of the previous plan which is to be applied' +
+							'as a deduction to the first year of next purchased plan. It will be applied once only in the first term',
+						args: {
+							discount: formatCurrency( upgradeCredit, product.currency, {
+								isSmallestUnit: true,
+								stripZeros: true,
+							} ),
+						},
+					} ) }
+				</span>
 				<UpgradeCreditHelpIconLink />
 			</>
 		);
@@ -1962,7 +1983,11 @@ function CheckoutLineItem( {
 				) }
 			</LineItemTitle>
 
-			<span className="checkout-line-item__price">
+			{ /* Keyed so a cart update replaces this container rather than removing its bare text nodes, which browser page-translation detaches. */ }
+			<span
+				key={ isCartUpdating ? 'price-loading' : 'price' }
+				className="checkout-line-item__price"
+			>
 				<LineItemPriceContent
 					isCartUpdating={ isCartUpdating }
 					shouldShowComparison={ shouldShowComparison }
@@ -1986,7 +2011,10 @@ function CheckoutLineItem( {
 						<UpgradeCreditInformationLineItem>
 							<UpgradeCreditInformation product={ product } />
 						</UpgradeCreditInformationLineItem>
-						<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+						<LineItemMeta
+							key={ isCartUpdating ? 'sublabel-loading' : 'sublabel' }
+							isRenewalPricingExperiment={ isRenewalPricingExperiment }
+						>
 							<LineItemSublabelAndPrice
 								product={ product }
 								shouldShowComparison={ shouldShowComparison }
@@ -2008,7 +2036,10 @@ function CheckoutLineItem( {
 			) }
 
 			{ containsPartnerCoupon && (
-				<LineItemMeta isRenewalPricingExperiment={ isRenewalPricingExperiment }>
+				<LineItemMeta
+					key={ isCartUpdating ? 'sublabel-loading' : 'sublabel' }
+					isRenewalPricingExperiment={ isRenewalPricingExperiment }
+				>
 					<LineItemSublabelAndPrice
 						product={ product }
 						isRenewalPricingExperiment={ isRenewalPricingExperiment }

@@ -1,5 +1,6 @@
 import { userSettingsQuery } from '@automattic/api-queries';
 import { useSuspenseQuery } from '@tanstack/react-query';
+import { speak } from '@wordpress/a11y';
 import {
 	Button,
 	ExternalLink,
@@ -22,6 +23,12 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
+import {
+	CLAUDE_CODE_COMMAND,
+	CURSOR_PLUGIN_URL,
+	MCP_SERVER_NAME,
+	MCP_SERVER_URL,
+} from '../connect-agents';
 
 import './style.scss';
 
@@ -63,11 +70,11 @@ function McpSetupComponent() {
 		default: __( 'MCP documentation' ),
 	};
 
-	const serverName = 'wpcom-mcp';
+	const serverName = MCP_SERVER_NAME;
 
 	const generateMcpConfig = ( client: McpClient ) => {
 		const baseConfig = {
-			url: 'https://public-api.wordpress.com/wpcom/v2/mcp/v1',
+			url: MCP_SERVER_URL,
 		};
 
 		switch ( client ) {
@@ -79,8 +86,6 @@ function McpSetupComponent() {
 				return { servers: { [ serverName ]: baseConfig } };
 			case 'cursor':
 				return { mcpServers: { [ serverName ]: baseConfig } };
-			case 'continue':
-				return { mcpServers: [ { name: serverName, ...baseConfig } ] };
 			default:
 				return { mcpServers: { [ serverName ]: baseConfig } };
 		}
@@ -91,6 +96,7 @@ function McpSetupComponent() {
 		try {
 			await navigator.clipboard.writeText( configText );
 			setCopyStatus( 'success' );
+			speak( __( 'Copied' ) );
 			setTimeout( () => setCopyStatus( 'idle' ), 2000 );
 		} catch {
 			// Silently fail — clipboard access may be blocked
@@ -226,16 +232,12 @@ function McpSetupComponent() {
 											<li>
 												<Text as="p" variant="muted">
 													{ createInterpolateElement(
-														/* translators: %s is the CLI command to add the MCP server */
-														__( 'Run this command in your terminal: <code>%s</code>' ).replace(
-															'%s',
-															'claude mcp add --transport http wpcom-mcp https://public-api.wordpress.com/wpcom/v2/mcp/v1'
-														),
+														/* translators: <code/> is replaced with the CLI command to add the MCP server */
+														__( 'Run this command in your terminal: <code/>' ),
 														{
 															code: (
 																<code className="mcp-setup__code" key="claude-code-cmd">
-																	claude mcp add --transport http wpcom-mcp
-																	https://public-api.wordpress.com/wpcom/v2/mcp/v1
+																	{ CLAUDE_CODE_COMMAND }
 																</code>
 															),
 														}
@@ -319,16 +321,17 @@ function McpSetupComponent() {
 									<VStack spacing={ 4 }>
 										<Text as="p" variant="muted">
 											{ __(
-												'For Cursor users, use the one-click install to add the WordPress.com MCP app.'
+												'Add the WordPress.com plugin from the Cursor Marketplace, then follow the prompts in Cursor.'
 											) }
 										</Text>
 										<Button
+											__next40pxDefaultSize
 											variant="primary"
-											href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
+											href={ CURSOR_PLUGIN_URL }
 											target="_blank"
 											className="mcp-setup__action-button"
 										>
-											{ __( 'Install in Cursor' ) }
+											{ __( 'Open the WordPress.com plugin' ) }
 										</Button>
 									</VStack>
 								) }
@@ -357,6 +360,8 @@ function McpSetupComponent() {
 								<TextareaControl
 									className="mcp-setup__config-textarea"
 									__nextHasNoMarginBottom
+									label={ __( 'MCP configuration' ) }
+									hideLabelFromVision
 									value={ JSON.stringify( generateMcpConfig( selectedMcpClient ), null, 2 ) }
 									onChange={ () => {} }
 									readOnly

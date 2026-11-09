@@ -1,6 +1,5 @@
 import config from '@automattic/calypso-config';
 import { Step } from '@automattic/onboarding';
-import { getSessionId as getPostHogSessionId } from '@automattic/posthog';
 import { useDispatch } from '@wordpress/data';
 import { addQueryArgs } from '@wordpress/url';
 import { useTranslate } from 'i18n-calypso';
@@ -279,11 +278,6 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 			url += `&early_created_site=${ encodeURIComponent( blogId ) }`;
 		}
 
-		const phSessionId = getPostHogSessionId();
-		if ( phSessionId ) {
-			url += `&_ph=${ encodeURIComponent( phSessionId ) }`;
-		}
-
 		window.location.href = url;
 	}, [] );
 
@@ -303,11 +297,9 @@ const SiteSpec: StepType = function SiteSpec( { navigation } ) {
 				return;
 			}
 
-			const phSessionId = getPostHogSessionId();
 			const source = queryParams.get( 'source' );
 			const destination = buildEarlyProvisionDestination( {
 				specId,
-				phSessionId,
 				source,
 			} );
 

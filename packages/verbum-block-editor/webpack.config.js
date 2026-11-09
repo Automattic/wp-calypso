@@ -34,6 +34,9 @@ const modulesToStub = [
 	/@wordpress\/components\/build-module\/color-picker(?:$|\/)/,
 	/@wordpress\/components\/build-module\/palette-edit(?:$|\/)/,
 
+	// Client-side image processing (~17MB of inlined WebAssembly); comments can't upload media
+	/^@wordpress\/vips\/worker$/,
+
 	// Other unused libraries
 	/^marked$/, // Markdown parser (~46KB)
 	/^react-easy-crop$/, // Image cropping (~46KB)
@@ -69,6 +72,15 @@ function getWebpackConfig( env = { source: '' }, argv = {} ) {
 				resourceRegExp: /^\.\/locale$/,
 				contextRegExp: /moment$/,
 			} ),
+
+			new webpack.NormalModuleReplacementPlugin(
+				/@wordpress\/block-editor\/build-module\/hooks\/auto-inspector-controls\.mjs$/,
+				path.join( __dirname, 'src', 'stubs', 'auto-inspector-controls.js' )
+			),
+			new webpack.NormalModuleReplacementPlugin(
+				/@wordpress\/block-editor\/build-module\/components\/(inserter\/menu|list-view\/index|block-bindings\/(source-fields-list|attribute-control)|global-styles\/state-control-badges)\.mjs$|@wordpress\/components\/build-module\/menu\/index\.mjs$/,
+				path.join( __dirname, 'src', 'stubs', 'components.js' )
+			),
 
 			// Replace all stubbed modules with consolidated stub
 			...modulesToStub.map(

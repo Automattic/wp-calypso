@@ -68,7 +68,7 @@ export function PendingTierCard( {
 		>
 			<Text variant="muted" lineHeight="20px">
 				{ __(
-					'While we review, you can’t make purchases yet, but feel free to explore the tools and set up your agency profile. Most are activated within one business day.'
+					'While we review, you can’t make purchases yet, but feel free to explore the tools and set up your agency profile. Most are approved within one business day.'
 				) }
 			</Text>
 			<ButtonStack justify="flex-start" style={ { paddingTop: '8px' } }>

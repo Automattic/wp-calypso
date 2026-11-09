@@ -1,4 +1,5 @@
 import { pick } from '@automattic/js-utils';
+import { formatNumber } from '@automattic/number-formatters';
 import { translate } from 'i18n-calypso';
 import PropTypes from 'prop-types';
 import { Component } from 'react';
@@ -11,8 +12,31 @@ import { recordAction, recordGaEvent } from 'calypso/reader/stats';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { recordReaderTracksEvent } from 'calypso/state/reader/analytics/actions';
 import { registerLastActionRequiresLogin } from 'calypso/state/reader-ui/actions';
+import { CommentLabelsContext } from './comment-labels-context';
+
+function getLikedByLabel( likeCount = 0, iLike = false ) {
+	if ( likeCount <= 0 ) {
+		return undefined;
+	}
+	if ( ! iLike ) {
+		return translate( 'Liked by %(count)s person', 'Liked by %(count)s people', {
+			count: likeCount,
+			args: { count: formatNumber( likeCount ) },
+		} );
+	}
+	const others = likeCount - 1;
+	if ( others <= 0 ) {
+		return translate( 'Liked by you' );
+	}
+	return translate( 'Liked by you and %(count)s other', 'Liked by you and %(count)s others', {
+		count: others,
+		args: { count: formatNumber( others ) },
+	} );
+}
 
 class CommentLikeButtonContainer extends Component {
+	static contextType = CommentLabelsContext;
+
 	constructor() {
 		super();
 		this.boundHandleLikeToggle = this.handleLikeToggle.bind( this );
@@ -74,6 +98,7 @@ class CommentLikeButtonContainer extends Component {
 		const likeCount = this.props.comment?.like_count;
 		const iLike = this.props.comment?.i_like;
 		const likedLabel = translate( 'Liked' );
+		const likedByLabel = this.context ? getLikedByLabel( likeCount, iLike ) : undefined;
 
 		const likeIcon = ReaderLikeIcon( {
 			liked: iLike,
@@ -90,6 +115,7 @@ class CommentLikeButtonContainer extends Component {
 				iconSize={ 18 }
 				icon={ likeIcon }
 				defaultLabel={ translate( 'Like' ) }
+				label={ likedByLabel }
 			/>
 		);
 	}

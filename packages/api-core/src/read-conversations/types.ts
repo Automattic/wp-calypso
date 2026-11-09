@@ -1,4 +1,5 @@
-export type ReadConversationsScope = 'following' | 'commented';
+/** `unread` keeps the conversations with unread comment notes. */
+export type ReadConversationsScope = 'following' | 'commented' | 'unread';
 
 export type ReadConversationsSort = 'newest' | 'most_active';
 
@@ -54,6 +55,8 @@ export interface ReadConversation {
 	unread_count: number | null;
 	/** At most 50; `unread_count` counts the rest. */
 	unread_note_ids: number[];
+	/** The comments of `unread_note_ids`, in the same order. */
+	unread_comment_ids: number[];
 	/** Whether the user explicitly follows the conversation. */
 	is_following: boolean;
 }
