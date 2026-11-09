@@ -34,9 +34,6 @@ const modulesToStub = [
 	/@wordpress\/components\/build-module\/color-picker(?:$|\/)/,
 	/@wordpress\/components\/build-module\/palette-edit(?:$|\/)/,
 
-	// Inserter media tab; comments have no media library (~470KB with dataviews)
-	/@wordpress\/block-editor\/build-module\/components\/inserter\/media-tab\/index\.mjs$/,
-
 	// Client-side image processing (~17MB of inlined WebAssembly); comments can't upload media
 	/^@wordpress\/vips\/worker$/,
 

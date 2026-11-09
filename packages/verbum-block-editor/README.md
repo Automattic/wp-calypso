@@ -24,8 +24,7 @@ The Verbum Block Editor stubs out heavy dependencies that are pulled in transiti
 | `@wordpress/commands`                                                                | Command palette                              | ~33KB        |
 | `@wordpress/vips/worker`                                                             | Client-side image processing (WebAssembly)   | ~17MB        |
 | `@wordpress/components` (navigation, focal-point-picker, color-picker, palette-edit) | Unused UI components                         | ~250KB       |
-| `@wordpress/block-editor` inserter media tab, auto-generated inspector controls      | Media library and block sidebar (dataviews)  | ~620KB       |
-| `@wordpress/block-editor` inserter menu, list view, block bindings, state badges     | Full inserter and block sidebar UI           | ~650KB       |
+| `@wordpress/block-editor` inserter menu, inspector controls, list view, bindings     | Full inserter and block sidebar (dataviews)  | ~1.2MB       |
 | `@wordpress/components` private `Menu`                                               | Deprecated; nothing bundled reads it         | ~200KB       |
 | `marked`                                                                             | Markdown parser                              | ~46KB        |
 | `react-easy-crop`                                                                    | Image cropping                               | ~46KB        |
