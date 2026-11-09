@@ -32,8 +32,10 @@
 	padding: 24px;
 	border: 1px solid var( --color-border-subtle );
 	border-radius: 8px;
+	position: relative;
 	box-shadow: $elevation-x-small;
 	color: var( --color-text );
+	transition: border-color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
 
 	&:hover {
 		border-color: var( --color-border );
@@ -50,9 +52,18 @@
 	&:focus {
 		color: var( --color-text );
 	}
+
+	// Stretches the link over the whole card, so its padding opens the post too.
+	&::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+	}
 }
 
 .conversations-inbox__post-menu {
+	position: relative;
+	z-index: 1;
 	margin-inline-start: auto;
 
 	.components-button {
