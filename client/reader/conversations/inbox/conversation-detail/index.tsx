@@ -9,6 +9,7 @@ import {
 	MenuItem,
 	Notice,
 	Spinner,
+	VisuallyHidden,
 	__experimentalHeading as Heading,
 	__experimentalHStack as HStack,
 	__experimentalText as Text,
@@ -190,9 +191,14 @@ export function ConversationDetail( {
 							{ translate( 'Conversations' ) }
 						</Button>
 					) }
-					<Heading level={ 2 } size={ 15 } lineHeight="20px" weight={ 600 } color="inherit">
-						{ title }
-					</Heading>
+					{ /* Next to the back button the title reads as a second label, so only screen readers get it. */ }
+					{ onBack ? (
+						<VisuallyHidden as="h2">{ title }</VisuallyHidden>
+					) : (
+						<Heading level={ 2 } size={ 15 } lineHeight="20px" weight={ 600 } color="inherit">
+							{ title }
+						</Heading>
+					) }
 				</HStack>
 				<HStack spacing={ 1 } expanded={ false }>
 					<Button

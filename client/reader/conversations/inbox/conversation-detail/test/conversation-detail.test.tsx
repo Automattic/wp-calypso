@@ -106,6 +106,17 @@ describe( 'ConversationDetail', () => {
 		);
 	} );
 
+	it( 'keeps the title for screen readers only next to the back button', () => {
+		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
+
+		renderDetail( { onBack: jest.fn() } );
+
+		expect( screen.getByRole( 'button', { name: 'Conversations' } ) ).toBeVisible();
+		expect( screen.getByRole( 'heading', { level: 2 } ) ).toHaveClass(
+			'components-visually-hidden'
+		);
+	} );
+
 	it( 'renders the comment thread with the starting comment and count from the post', () => {
 		mockedUsePost.mockReturnValue( { data: post, isLoading: false } as never );
 
