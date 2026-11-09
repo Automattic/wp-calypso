@@ -39,9 +39,16 @@ function readScoped< T extends keyof Preferences[ 'calypso_preferences' ] >(
 
 export function deleteValuesSafely(): void {
 	try {
-		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_open' ) );
-		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_minimized' ) );
-		window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( 'help_center_router_history' ) );
+		// An app reads the shared values when it has none of its own, so they go too. Otherwise one
+		// saved before the user was known would keep reopening the Help Center.
+		for ( const key of [
+			'help_center_open',
+			'help_center_minimized',
+			'help_center_router_history',
+		] ) {
+			window.localStorage.removeItem( PREFERENCES_KEY + scopedKey( key ) );
+			window.localStorage.removeItem( PREFERENCES_KEY + key );
+		}
 	} catch ( error ) {
 		memoryStore.help_center_open = undefined;
 		memoryStore.help_center_minimized = false;

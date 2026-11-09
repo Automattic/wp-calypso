@@ -281,6 +281,7 @@ export const useDomainSearchContextValue = ( {
 			setQuery,
 			slots,
 			currentSiteUrl,
+			currentSiteId,
 			filter,
 			setFilter: ( filter ) => {
 				setFilter( filter );

@@ -22,6 +22,7 @@ import { PageHeader } from '../../../components/page-header';
 import PageLayout from '../../../components/page-layout';
 import RouterLinkButton from '../../../components/router-link-button';
 import { SectionHeader } from '../../../components/section-header';
+import { CURSOR_PLUGIN_URL } from '../../../me/mcp/connect-agents';
 
 import '../../../me/mcp/setup/style.scss';
 
@@ -78,8 +79,6 @@ function SiteAIToolsSetup() {
 				return { servers: { [ serverName ]: baseConfig } };
 			case 'cursor':
 				return { mcpServers: { [ serverName ]: baseConfig } };
-			case 'continue':
-				return { mcpServers: [ { name: serverName, ...baseConfig } ] };
 			default:
 				return { mcpServers: { [ serverName ]: baseConfig } };
 		}
@@ -273,16 +272,17 @@ function SiteAIToolsSetup() {
 										<VStack spacing={ 4 }>
 											<Text as="p" variant="muted">
 												{ __(
-													'For Cursor users, use the one-click install to add the WordPress.com MCP app.'
+													'Add the WordPress.com plugin from the Cursor Marketplace, then follow the prompts in Cursor.'
 												) }
 											</Text>
 											<Button
+												__next40pxDefaultSize
 												variant="primary"
-												href="cursor://anysphere.cursor-deeplink/mcp/install?name=WordPress.com&config=eyJjb21tYW5kIjoibnB4IC15IG1jcC1yZW1vdGUgaHR0cHM6Ly9wdWJsaWMtYXBpLndvcmRwcmVzcy5jb20vd3Bjb20vdjIvbWNwL3YxIn0%3D"
+												href={ CURSOR_PLUGIN_URL }
 												target="_blank"
 												className="mcp-setup__action-button"
 											>
-												{ __( 'Install in Cursor' ) }
+												{ __( 'Open the WordPress.com plugin' ) }
 											</Button>
 										</VStack>
 									) }

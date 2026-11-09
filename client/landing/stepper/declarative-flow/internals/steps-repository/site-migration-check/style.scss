@@ -77,7 +77,7 @@
 		grid-template-columns: minmax( 0, 1fr ) 24px minmax( 0, 1fr );
 		gap: 16px;
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: $break-medium ) {
 			grid-template-columns: minmax( 0, 1fr );
 		}
 	}
@@ -94,7 +94,7 @@
 			grid-column: 3;
 		}
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: $break-medium ) {
 			grid-template-rows: auto;
 			grid-row: auto;
 
@@ -154,7 +154,7 @@
 		color: var( --color-neutral-50 );
 		font-size: $font-size-large;
 
-		@media ( max-width: $break-small ) {
+		@media ( max-width: $break-medium ) {
 			grid-column: 1;
 			grid-row: auto;
 			transform: rotate( 90deg );

@@ -3,9 +3,11 @@ import { Spinner } from '@wordpress/components';
 import { useTranslate } from 'i18n-calypso';
 import { FC, useCallback, useEffect, useState } from 'react';
 // import A4ALogo from 'calypso/a8c-for-agencies/components/a4a-logo';
+import { getDefaultTwoFactorAuthType } from 'calypso/blocks/login/two-factor-authentication/get-default-two-factor-auth-type';
 import EmptyContent from 'calypso/components/empty-content';
 import Main from 'calypso/components/main';
 import { login } from 'calypso/lib/paths';
+import { isWebAuthnSupported } from 'calypso/lib/webauthn';
 import { useDispatch, useSelector } from 'calypso/state';
 import { recordTracksEventWithClientId as recordTracksEvent } from 'calypso/state/analytics/actions';
 import { rebootAfterLogin } from 'calypso/state/login/actions';
@@ -18,6 +20,7 @@ import {
 	getRedirectToOriginal,
 	getRedirectToSanitized,
 	getTwoFactorNotificationSent,
+	getTwoFactorSupportedAuthTypes,
 	isTwoFactorEnabled,
 } from 'calypso/state/login/selectors';
 import getMagicLoginCurrentView from 'calypso/state/selectors/get-magic-login-current-view';
@@ -52,6 +55,7 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 	const isFetching = useSelector( isFetchingMagicLoginAuth );
 	const twoFactorEnabled = useSelector( isTwoFactorEnabled );
 	const twoFactorNotificationSent = useSelector( getTwoFactorNotificationSent );
+	const twoFactorSupportedAuthTypes = useSelector( getTwoFactorSupportedAuthTypes );
 	const isFromAutomatticForAgenciesPlugin =
 		new URLSearchParams( redirectToOriginal.split( '?' )[ 1 ] ).get( 'from' ) ===
 		'automattic-for-agencies-client';
@@ -79,8 +83,6 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 		} );
 	}, [] );
 
-	// Lifted from `blocks/login`
-	// @TODO move to `state/login/actions` & use both places
 	const handleValidToken = useCallback( () => {
 		if ( ! twoFactorEnabled ) {
 			dispatch( rebootAfterLogin( { magic_login: 1 } ) );
@@ -88,13 +90,22 @@ const HandleEmailedLinkFormJetpackConnect: FC< Props > = ( { emailAddress, token
 			page(
 				login( {
 					isJetpack: true,
-					// If no notification is sent, the user is using the authenticator for 2FA by default
-					twoFactorAuthType: twoFactorNotificationSent?.replace( 'none', 'authenticator' ),
+					twoFactorAuthType: getDefaultTwoFactorAuthType( {
+						supportedAuthTypes: twoFactorSupportedAuthTypes,
+						notificationSent: twoFactorNotificationSent,
+						isWebAuthnSupportedByBrowser: isWebAuthnSupported(),
+					} ),
 					redirectTo: redirectToSanitized ?? undefined,
 				} )
 			);
 		}
-	}, [ dispatch, redirectToSanitized, twoFactorEnabled, twoFactorNotificationSent ] );
+	}, [
+		dispatch,
+		redirectToSanitized,
+		twoFactorEnabled,
+		twoFactorNotificationSent,
+		twoFactorSupportedAuthTypes,
+	] );
 
 	useEffect( () => {
 		if ( ! hasSubmitted || isFetching ) {
