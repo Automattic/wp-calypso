@@ -37,12 +37,9 @@
 	}
 }
 
-.a4a-dashboard-welcome-notice-media {
-	align-self: center;
-}
-
 .a4a-dashboard-welcome-notice-video {
 	display: block;
+	align-self: center;
 	inline-size: 100%;
 	aspect-ratio: 16 / 9;
 	border-radius: $radius-medium;
@@ -73,25 +70,17 @@
 	gap: 8px;
 	margin: 0;
 	padding-inline-start: 20px;
-	color: var( --dashboard__text-muted-color );
+	color: var( --dashboard__text-muted-color, #{$gray-700} );
 	font-size: 13px;
 	line-height: 20px;
-
-	li::marker {
-		font-variant-numeric: tabular-nums;
-	}
 }
 
-.a4a-dashboard-welcome-notice-chapter.components-button.is-link {
-	font-size: inherit;
-	line-height: inherit;
-	text-align: start;
+.a4a-dashboard-welcome-notice-chapter-item::marker {
+	font-variant-numeric: tabular-nums;
+}
 
-	// The chapter that's playing.
-	&[aria-current='true'] {
-		font-weight: 600;
-		text-decoration: none;
-	}
+.a4a-dashboard-welcome-notice-chapter-label {
+	text-align: start;
 }
 
 .a4a-dashboard-welcome-notice-chapter-time {

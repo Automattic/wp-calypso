@@ -83,7 +83,7 @@ settings sit in the top bar,
 one click away on every page.
 
 00:01:13.740 --> 00:01:17.680
-Your sites list shows any site you've
+Your sites list shows any site you’ve
 added to the dashboard, at a glance.
 
 00:01:20.730 --> 00:01:24.930
@@ -107,8 +107,8 @@ Turn on referral mode and simply add
 whatever products your clients need.
 
 00:01:47.480 --> 00:01:50.750
-During checkout, you'll add your
-client's email and a short note,
+During checkout, you’ll add your
+client’s email and a short note,
 
 00:01:50.800 --> 00:01:53.550
 review the summary along with
@@ -157,12 +157,12 @@ client and their payment status.
 
 00:02:34.720 --> 00:02:37.530
 WooPayments shows the revenue you
-earn from your clients' stores,
+earn from your clients’ stores,
 
 00:02:37.580 --> 00:02:39.800
 with a breakdown for each store.
 
 00:02:40.400 --> 00:02:44.660
 Everything your agency needs to grow
-is right here, so let's get started.
+is right here, so let’s get started.
 `;

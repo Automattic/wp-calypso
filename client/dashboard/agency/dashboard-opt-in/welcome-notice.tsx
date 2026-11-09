@@ -144,11 +144,16 @@ export default function WelcomeNotice() {
 		<Card className="a4a-dashboard-welcome-notice">
 			<section
 				className="a4a-dashboard-welcome-notice-layout"
-				aria-label={ __( 'Welcome to the new dashboard' ) }
+				aria-labelledby="a4a-dashboard-welcome-notice-heading"
 			>
-				<div className="a4a-dashboard-welcome-notice-close">
-					<Button icon={ close } size="small" label={ __( 'Close' ) } onClick={ handleDismiss } />
-				</div>
+				<Button
+					className="a4a-dashboard-welcome-notice-close"
+					icon={ close }
+					size="small"
+					label={ __( 'Close' ) }
+					onClick={ handleDismiss }
+					__next40pxDefaultSize
+				/>
 				<div className="a4a-dashboard-welcome-notice-grid">
 					<VStack
 						className="a4a-dashboard-welcome-notice-content"
@@ -157,7 +162,13 @@ export default function WelcomeNotice() {
 						justify="flex-start"
 					>
 						<VStack spacing={ 2 }>
-							<Heading level={ 2 } size={ 20 } weight={ 500 } lineHeight="28px">
+							<Heading
+								id="a4a-dashboard-welcome-notice-heading"
+								level={ 2 }
+								size={ 20 }
+								weight={ 500 }
+								lineHeight="28px"
+							>
 								{ __( 'Welcome to the new Automattic for Agencies experience' ) }
 							</Heading>
 							<Text
@@ -190,9 +201,8 @@ export default function WelcomeNotice() {
 								aria-labelledby="a4a-dashboard-welcome-notice-chapters-label"
 							>
 								{ chapters.map( ( chapter ) => (
-									<li key={ chapter.id }>
+									<li key={ chapter.id } className="a4a-dashboard-welcome-notice-chapter-item">
 										<Button
-											className="a4a-dashboard-welcome-notice-chapter"
 											variant="link"
 											aria-current={ currentChapterId === chapter.id ? 'true' : undefined }
 											aria-label={ sprintf(
@@ -202,12 +212,24 @@ export default function WelcomeNotice() {
 												formatTime( chapter.start )
 											) }
 											onClick={ () => handleChapterClick( chapter ) }
+											__next40pxDefaultSize
 										>
-											{ chapter.label }
+											<Text
+												className="a4a-dashboard-welcome-notice-chapter-label"
+												color="inherit"
+												lineHeight="20px"
+												weight={ currentChapterId === chapter.id ? 600 : undefined }
+											>
+												{ chapter.label }
+											</Text>
 										</Button>
-										<span className="a4a-dashboard-welcome-notice-chapter-time" aria-hidden="true">
+										<Text
+											className="a4a-dashboard-welcome-notice-chapter-time"
+											variant="muted"
+											aria-hidden="true"
+										>
 											{ formatTime( chapter.start ) }
-										</span>
+										</Text>
 									</li>
 								) ) }
 							</ol>
@@ -221,28 +243,22 @@ export default function WelcomeNotice() {
 							{ __( 'Take the tour' ) }
 						</Button>
 					</VStack>
-					<div className="a4a-dashboard-welcome-notice-media">
-						<video
-							ref={ videoRef }
-							className="a4a-dashboard-welcome-notice-video"
-							src={ INTRO_VIDEO_URL }
-							aria-label={ __( 'A short introduction to the new dashboard' ) }
-							controls
-							playsInline
-							preload="metadata"
-							onPlay={ handleVideoPlay }
-							onTimeUpdate={ handleTimeUpdate }
-						>
-							{ /* Off until the viewer turns them on from the video's controls. */ }
-							<track
-								key={ captionsUrl }
-								kind="captions"
-								src={ captionsUrl }
-								srcLang="en"
-								label={ __( 'English' ) }
-							/>
-						</video>
-					</div>
+					<video
+						ref={ videoRef }
+						className="a4a-dashboard-welcome-notice-video"
+						src={ INTRO_VIDEO_URL }
+						aria-label={ __( 'A short introduction to the new dashboard' ) }
+						controls
+						playsInline
+						preload="metadata"
+						onPlay={ handleVideoPlay }
+						onTimeUpdate={ handleTimeUpdate }
+					>
+						{ /* Off until the viewer turns them on from the video's controls. */ }
+						{ captionsUrl && (
+							<track kind="captions" src={ captionsUrl } srcLang="en" label={ __( 'English' ) } />
+						) }
+					</video>
 				</div>
 			</section>
 		</Card>
