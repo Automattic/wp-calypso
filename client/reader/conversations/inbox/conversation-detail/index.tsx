@@ -198,6 +198,7 @@ export function ConversationDetail( {
 					<Button
 						__next40pxDefaultSize
 						size="compact"
+						className="conversations-inbox__previous"
 						icon={ chevronUp }
 						label={ translate( 'Previous conversation' ) }
 						disabled={ ! onPrevious }
@@ -206,6 +207,7 @@ export function ConversationDetail( {
 					<Button
 						__next40pxDefaultSize
 						size="compact"
+						className="conversations-inbox__next"
 						icon={ chevronDown }
 						label={ translate( 'Next conversation' ) }
 						disabled={ ! onNext }

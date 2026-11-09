@@ -17,6 +17,16 @@
 	}
 }
 
+// The chevron glyphs sit 1.2px off center in their 24px icons, up for the up
+// chevron and down for the down one, so nudge them onto the button's center.
+.conversations-inbox__previous svg {
+	transform: translateY( 1.2px );
+}
+
+.conversations-inbox__next svg {
+	transform: translateY( -1.2px );
+}
+
 .conversations-inbox__detail-body {
 	flex: 1;
 	overflow-y: auto;
