@@ -104,7 +104,7 @@ const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryL
 const vitestReport = 'test-results-test_packages_vitest.xml';
 const testPackagesVitest = {
 	name: 'yarn',
-	args: `test-packages:vitest --reporter=default --reporter=junit --outputFile.junit=${ vitestReport }`,
+	args: `test-packages:vitest --maxWorkers=4 --reporter=default --reporter=junit --outputFile.junit=${ vitestReport }`,
 	testId: 'test_packages_vitest',
 };
 
