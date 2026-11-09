@@ -205,6 +205,16 @@ describe( 'flow redirect handler', () => {
 			expect( replace ).not.toHaveBeenCalled();
 		} );
 
+		it( 'lets a trial already being set up finish on a localized step', () => {
+			const didRedirect = redirectPathIfNecessary(
+				`/setup/entrepreneur/${ STEPS.WAIT_FOR_ATOMIC.slug }/es`,
+				'?siteId=123'
+			);
+
+			expect( didRedirect ).toBe( false );
+			expect( replace ).not.toHaveBeenCalled();
+		} );
+
 		it( 'leaves the Woo Playground test path on the trial', () => {
 			const didRedirect = redirectPathIfNecessary(
 				'/setup/entrepreneur',
