@@ -40,7 +40,11 @@ The description then reuses the commit body's two paragraphs in reverse order, e
 
 Then add a `## Details` heading listing what What and Why leave out: which components, hooks, selectors, endpoints or feature flags change and how, trade-offs and alternatives rejected, and work left for a follow-up. Put the list in a collapsed `<details>` block whose `<summary>` is `Click to view details`, with a blank line after `<summary>` and before `</details>` so that GitHub renders the Markdown inside. Prefer a list when there are several parts, so a reviewer can scan it. Leave out Details only when What already names everything the diff does.
 
-Last, add a `## How to Test` heading with numbered steps a reviewer can follow on Calypso Live or a local dev server: the URL path to open, what to do, and what to expect. For a change users can see (UI, or new or changed translatable strings), add before/after screenshots: reviewers check the expected state against them, and the a8ci18n bot asks for a screenshot of new strings for translators. Take them with a test account, with internal hostnames and personal data kept out. If you can't upload images, say so instead. Never commit images to the repository to host them.
+Last, add a `## How to Test` heading with numbered steps a reviewer can follow on Calypso Live or a local dev server: the URL path to open, what to do, and what to expect. Keep each step to one action and its result, starting with any setup it needs (site, account, flag); for a fix, also say what happens without it. If the change runs in more than one app (for example Dashboard and A4A, or Calypso and Jetpack Cloud), include steps for each. Don't list tests or CI runs; the checks already show them.
+
+Run every step before asking for review, then add one short line after the steps naming the commit and where you ran them, e.g. "Ran on Calypso Live at `4c0c0bb`." Skip a step only when you can't run it, e.g. it needs access you don't have or changes something you can't undo. Keep it in the list, marked `**Not run:**` with the reason, so the reviewer can run it.
+
+For a change users can see (UI, or new or changed translatable strings), add before/after screenshots: reviewers check the expected state against them, and the a8ci18n bot asks for a screenshot of new strings for translators. Take them with a test account, with internal hostnames and personal data kept out. If you can't upload images, say so instead. Never commit images to the repository to host them.
 
 Drop the template's HTML comments.
 
@@ -87,3 +91,7 @@ The Sites list and site overview showed `-` for the PHP version of Simple sites,
 3. Commit, push, and open the PR as a draft.
 
 Omit tool attribution such as a "Generated with Claude Code" footer or a `Co-Authored-By` trailer.
+
+## 5. Keep the description current
+
+After each push to an open PR (review fixes, rebases, new behaviour), re-read the whole description and fix what no longer matches the code, including What, Details, the steps and their URLs. Re-run the steps the push affects and update the commit line.
