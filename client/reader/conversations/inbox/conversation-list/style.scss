@@ -1,4 +1,9 @@
 .conversations-inbox__list-pane {
+	// Text colors the row lines, hover and excerpt mix from. The WPDS tokens
+	// don't follow the Reader's dark mode, so dark mode swaps in Calypso's.
+	--conversations-ink: var( --wpds-color-foreground-content-neutral );
+	--conversations-ink-weak: var( --wpds-color-foreground-content-neutral-weak );
+
 	flex: 0 0 372px;
 	min-width: 0;
 	min-height: 0;
@@ -95,8 +100,7 @@
 
 .conversations-inbox__day {
 	padding: 12px 16px;
-	border-block-start: 1px solid
-		color-mix( in srgb, var( --wpds-color-foreground-content-neutral ) 8%, transparent );
+	border-block-start: 1px solid color-mix( in srgb, var( --conversations-ink ) 8%, transparent );
 }
 
 // The list's own top border already separates the first section.
@@ -120,7 +124,7 @@
 	--conversations-item-bg: var( --color-surface );
 	--conversations-item-active-bg: color-mix(
 		in srgb,
-		var( --wpds-color-foreground-content-neutral ) 2%,
+		var( --conversations-ink ) 2%,
 		var( --color-surface )
 	);
 
@@ -135,11 +139,7 @@
 	padding-inline-start: 19px;
 	border: 0;
 	border-block: 1px solid transparent;
-	border-block-start-color: color-mix(
-		in srgb,
-		var( --wpds-color-foreground-content-neutral ) 8%,
-		transparent
-	);
+	border-block-start-color: color-mix( in srgb, var( --conversations-ink ) 8%, transparent );
 	text-align: start;
 	cursor: pointer;
 	transition: background-color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
@@ -175,11 +175,7 @@
 // Lines read darker on the tint, so soften the ones an unread row touches.
 .conversations-inbox__item.is-unread,
 li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__item {
-	border-block-start-color: color-mix(
-		in srgb,
-		var( --wpds-color-foreground-content-neutral ) 6%,
-		transparent
-	);
+	border-block-start-color: color-mix( in srgb, var( --conversations-ink ) 6%, transparent );
 }
 
 // A section without a day label starts right under the list's top border.
@@ -214,8 +210,8 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 .conversations-inbox__item-excerpt {
 	--conversations-excerpt-color: color-mix(
 		in srgb,
-		var( --wpds-color-foreground-content-neutral-weak ) 75%,
-		var( --wpds-color-foreground-content-neutral )
+		var( --conversations-ink-weak ) 75%,
+		var( --conversations-ink )
 	);
 
 	color: var( --conversations-excerpt-color );
@@ -256,4 +252,21 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 	justify-content: center;
 	min-height: 1px;
 	padding-block: 8px;
+}
+
+@mixin conversations-inbox-list-dark {
+	.conversations-inbox__list-pane {
+		--conversations-ink: var( --color-text );
+		--conversations-ink-weak: var( --color-text-subtle );
+	}
+}
+
+:root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
+	@include conversations-inbox-list-dark;
+}
+
+@media ( prefers-color-scheme: dark ) {
+	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
+		@include conversations-inbox-list-dark;
+	}
 }
