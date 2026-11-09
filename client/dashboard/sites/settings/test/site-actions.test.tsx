@@ -76,6 +76,7 @@ describe( '<SiteActions>', () => {
 		await waitFor( () => expect( requests.count ).toBe( 1 ) );
 
 		expect( dialog.getByRole( 'button', { name: 'Restore' } ) ).toBeDisabled();
+		expect( dialog.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
 
 		requests.respond();
 		await waitFor( expectDialogClosed );

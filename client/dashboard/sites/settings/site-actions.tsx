@@ -70,6 +70,7 @@ const RestorePlanSoftware = ( { site }: { site: Site } ) => {
 							<Button
 								__next40pxDefaultSize
 								variant="tertiary"
+								disabled={ mutation.isPending }
 								onClick={ () => setIsRestoreModalOpen( false ) }
 							>
 								{ __( 'Cancel' ) }
