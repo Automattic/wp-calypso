@@ -28,7 +28,7 @@ describe( 'toFinite', () => {
 		[ 'single-element array', [ 5 ], 5 ],
 		[ 'multi-element array', [ 5, 6 ], 0 ],
 		[ 'plain object', {}, 0 ],
-	] )( 'coerces %s to %p', ( _label, input, expected ) => {
+	] )( 'coerces %s to %o', ( _label, input, expected ) => {
 		expect( toFinite( input ) ).toBe( expected );
 	} );
 
