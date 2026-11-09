@@ -955,6 +955,20 @@ export const agencyDashboardOptInRoute = createRoute( {
 	)
 );
 
+// `/signup` – signup on the new dashboard isn't ready yet, so agencies sign up on the
+// classic dashboard. Sits outside the agency routes: the user has no agency yet.
+export const agencySignupRoute = createRoute( {
+	getParentRoute: () => rootRoute,
+	path: 'signup',
+	beforeLoad: ( { location } ) => {
+		throw dashboardRedirect( {
+			href: a4aLink( `/signup${ location.searchStr }` ),
+			reloadDocument: true,
+			replace: true,
+		} );
+	},
+} );
+
 // `/team/invite/accept` – accept an invitation to join an agency team. Sits
 // outside the agency routes: the invited user has no agency until it succeeds.
 export const agencyTeamAcceptInviteRoute = createRoute( {
@@ -2346,6 +2360,7 @@ const agencySiteSettingsTransferSiteRoute = createRoute( {
 );
 
 export const createAgencyRoutes = () => [
+	agencySignupRoute,
 	agencyTeamAcceptInviteRoute,
 	agencyRoute.addChildren( [
 		agencyOverviewRoute,
