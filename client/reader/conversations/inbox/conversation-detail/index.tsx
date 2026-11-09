@@ -329,7 +329,7 @@ export function ConversationDetail( {
 								<HStack spacing={ 6 } alignment="top">
 									<VStack
 										as="a"
-										spacing={ 1 }
+										spacing={ 2 }
 										className="conversations-inbox__post-link"
 										href={ postUrl }
 									>
