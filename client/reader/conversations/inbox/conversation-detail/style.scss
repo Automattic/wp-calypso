@@ -80,7 +80,28 @@
 
 	.comments__info-bar {
 		padding-block-end: 12px;
-		border-block-end: 1px solid var( --color-border-subtle );
+		border-block-end: 1px solid var( --wpds-color-stroke-surface-neutral-weak );
+	}
+
+	.comments__info-bar-title-links {
+		align-items: baseline;
+	}
+
+	.button.comments__manage-comments-button {
+		color: var( --color-text );
+		font-size: 13px;
+		line-height: 20px;
+		text-decoration: underline;
+		transition: color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
+
+		&:hover,
+		&:active {
+			color: var( --color-primary );
+		}
+
+		.gridicon {
+			display: none;
+		}
 	}
 
 	.comments__comment-count {
@@ -165,7 +186,7 @@
 	}
 }
 
-@mixin conversations-inbox-welcome-dark {
+@mixin conversations-inbox-detail-dark {
 	.conversations-inbox__welcome {
 		--wp-components-notice-background-color: color-mix(
 			in srgb,
@@ -179,15 +200,20 @@
 		);
 		--wp-components-notice-text-color: var( --color-text );
 	}
+
+	// The WPDS stroke token stays light in the Reader's dark mode.
+	.conversations-inbox__detail-content .comments__info-bar {
+		border-block-end-color: var( --color-border-subtle );
+	}
 }
 
 :root[data-theme='dark'] body.color-scheme.is-reader-dark-mode {
-	@include conversations-inbox-welcome-dark;
+	@include conversations-inbox-detail-dark;
 }
 
 @media ( prefers-color-scheme: dark ) {
 	:root[data-theme='system'] body.color-scheme.is-reader-dark-mode {
-		@include conversations-inbox-welcome-dark;
+		@include conversations-inbox-detail-dark;
 	}
 }
 
