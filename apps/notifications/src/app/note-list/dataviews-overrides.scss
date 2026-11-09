@@ -84,10 +84,8 @@
 		font-size: 14px;
 	}
 
-	// Tighten the title-to-excerpt gap and center short text in the column's
-	// two-line min-height. DataViews sets the gap inline, hence `!important`.
+	// Center short text in the column's two-line min-height.
 	.dataviews-view-list__field-wrapper {
-		gap: calc(var(--wpds-dimension-base, 4px) / 2) !important;
 		justify-content: center;
 	}
 
