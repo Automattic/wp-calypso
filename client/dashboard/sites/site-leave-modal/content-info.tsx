@@ -148,7 +148,26 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 	// It gets external user ID (ID of user entity from site connected via Jetpack) from provided WPCOM user ID.
 	const { data: me } = useQuery( siteCurrentUserQuery( site.ID ) );
-	const mutation = useMutation( siteUserDeleteMutation( site.ID ) );
+	const deleteUserOptions = siteUserDeleteMutation( site.ID );
+	const mutation = useMutation( {
+		...deleteUserOptions,
+		onSuccess: ( ...args ) => {
+			deleteUserOptions.onSuccess?.( ...args );
+			recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_success' );
+			createSuccessNotice(
+				/* translators: %s: site domain */
+				sprintf( __( 'You have left %s successfully.' ), site.slug ),
+				{ type: 'snackbar' }
+			);
+		},
+		onError: ( error ) => {
+			recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_error', {
+				site_id: site.ID,
+				error: error.name,
+			} );
+			createErrorNotice( error.message, { type: 'snackbar' } );
+		},
+	} );
 
 	const [ formData, setFormData ] = useState< SiteLeaveFormData >( {
 		confirmed: false,
@@ -166,25 +185,10 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 
 		mutation.mutate( me.id, {
 			onSuccess: () => {
-				recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_success' );
-				createSuccessNotice(
-					/* translators: %s: site domain */
-					sprintf( __( 'You have left %s successfully.' ), site.slug ),
-					{ type: 'snackbar' }
-				);
-
 				router.navigate( { to: '/sites' } );
 				onClose();
 			},
-			onError: ( error: Error ) => {
-				recordTracksEvent( 'calypso_sites_dashboard_site_leave_modal_leave_site_error', {
-					site_id: site.ID,
-					error: error.name,
-				} );
-
-				createErrorNotice( error.message, { type: 'snackbar' } );
-				onClose();
-			},
+			onError: onClose,
 		} );
 	};
 
@@ -232,7 +236,12 @@ function ContentLeaveSite( { site, onClose }: ContentInfoProps ) {
 					} }
 				/>
 				<ButtonStack justify="flex-end" expanded={ false }>
-					<Button __next40pxDefaultSize variant="tertiary" onClick={ onClose }>
+					<Button
+						__next40pxDefaultSize
+						variant="tertiary"
+						disabled={ mutation.isPending }
+						onClick={ onClose }
+					>
 						{ __( 'Cancel' ) }
 					</Button>
 					<Button

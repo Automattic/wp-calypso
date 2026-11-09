@@ -49,16 +49,17 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 	const { data: user } = useQueryUsersMeBySiteId( siteId );
 
 	const isSiteOwner = wpcomUserId === siteOwnerId;
+	const canLeave = user?.id && isChecked && ! isSiteOwner && ! hasActiveCancelableSubscriptions;
 
 	const handleLeaveSite = async () => {
-		if ( ! user?.id || ! isChecked ) {
+		if ( ! canLeave || isSubmitting ) {
 			return;
 		}
 
 		recordTracksEvent( 'calypso_leave_site_modal_form_leave_site_click' );
 		setIsSubmitting( true );
 		try {
-			const result = await dispatch( leaveSite( siteId, user?.id ) );
+			const result = await dispatch( leaveSite( siteId, user.id ) );
 			if ( result ) {
 				page.redirect( '/sites' );
 				onSuccess?.();
@@ -164,7 +165,7 @@ const LeaveSiteModalForm = ( { siteId, onSuccess, onClose }: LeaveSiteModalFormP
 			<Button
 				__next40pxDefaultSize
 				variant="primary"
-				disabled={ ! user?.id || ! isChecked || isSiteOwner || hasActiveCancelableSubscriptions }
+				disabled={ ! canLeave || isSubmitting }
 				isBusy={ isSubmitting }
 				onClick={ handleLeaveSite }
 			>

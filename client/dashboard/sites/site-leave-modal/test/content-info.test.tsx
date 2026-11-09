@@ -2,7 +2,8 @@
  * @jest-environment jsdom
  */
 
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { render } from '../../../test-utils';
 import ContentInfo from '../content-info';
@@ -122,6 +123,43 @@ describe( '<ContentInfo> purchase blockers', () => {
 		render( <ContentInfo site={ { ...site, is_wpcom_atomic: true } } onClose={ jest.fn() } /> );
 
 		expect( await screen.findByText( /reassigned to the site owner/ ) ).toBeVisible();
+	} );
+
+	test( 'reports a failed leave if the dialog unmounts during the request', async () => {
+		mockPurchases( [] );
+		nock( 'https://public-api.wordpress.com' )
+			.get( '/wp/v2/sites/123/users/me' )
+			.query( true )
+			.reply( 200, { id: CURRENT_USER_ID } );
+		let finishRequest: ( () => void ) | undefined;
+		nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/123/users/1/delete' )
+			.query( true )
+			.reply( ( _uri, _body, callback ) => {
+				finishRequest = () => callback( null, [ 200, { success: false } ] );
+			} );
+		const user = userEvent.setup();
+		const onClose = jest.fn();
+		const { unmount, recordTracksEvent } = render(
+			<ContentInfo site={ site } onClose={ onClose } />
+		);
+
+		await user.click( await screen.findByRole( 'checkbox' ) );
+		const submit = screen.getByRole( 'button', { name: 'Leave site' } );
+		await waitFor( () => expect( submit ).toBeEnabled() );
+		await user.click( submit );
+		await waitFor( () => expect( finishRequest ).toBeDefined() );
+		expect( screen.getByRole( 'button', { name: 'Cancel' } ) ).toBeDisabled();
+
+		unmount();
+		finishRequest?.();
+		await waitFor( () =>
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_sites_dashboard_site_leave_modal_leave_site_error',
+				{ site_id: site.ID, error: 'Error' }
+			)
+		);
+		expect( onClose ).not.toHaveBeenCalled();
 	} );
 
 	describe( 'on the dashboard', () => {
