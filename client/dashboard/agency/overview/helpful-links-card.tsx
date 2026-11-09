@@ -1,6 +1,7 @@
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { Badge } from '@wordpress/ui';
+import RouterLinkSummaryButton from '../../components/router-link-summary-button';
 import SummaryButton from '../../components/summary-button';
 import { SummaryButtonList } from '../../components/summary-button-list';
 import { Text } from '../../components/text';
@@ -43,22 +44,31 @@ interface HelpfulLinksCardProps {
 export default function HelpfulLinksCard( { links, recordTracksEvent }: HelpfulLinksCardProps ) {
 	return (
 		<SummaryButtonList title={ __( 'Helpful links' ) }>
-			{ links.map( ( link ) => (
-				<SummaryButton
-					key={ link.id }
-					title={ <HelpfulLinkTitle link={ link } /> }
-					href={ link.href }
-					target={ link.isExternal ? '_blank' : undefined }
-					rel={ link.isExternal ? 'noreferrer' : undefined }
-					showArrow={ false }
-					onClick={ () => {
+			{ links.map( ( link ) => {
+				const props = {
+					title: <HelpfulLinkTitle link={ link } />,
+					showArrow: false,
+					onClick: () => {
 						recordTracksEvent?.( 'calypso_a4a_overview_helpful_link_click', {
 							link_id: link.id,
 						} );
 						link.onClick?.();
-					} }
-				/>
-			) ) }
+					},
+				};
+				// In-app links go through the router, so they don't reload the dashboard.
+				if ( link.href && ! link.isExternal ) {
+					return <RouterLinkSummaryButton key={ link.id } to={ link.href } { ...props } />;
+				}
+				return (
+					<SummaryButton
+						key={ link.id }
+						href={ link.href }
+						target={ link.isExternal ? '_blank' : undefined }
+						rel={ link.isExternal ? 'noreferrer' : undefined }
+						{ ...props }
+					/>
+				);
+			} ) }
 		</SummaryButtonList>
 	);
 }
