@@ -69,7 +69,6 @@ function mockRequests( purchases: Partial< Purchase >[] = [], purchasesDelay = 0
 
 describe( 'removed purchase notice', () => {
 	afterEach( () => {
-		nock.cleanAll();
 		window.history.replaceState( null, '', '/' );
 	} );
 
