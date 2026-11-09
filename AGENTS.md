@@ -103,4 +103,4 @@ Test with an account made for testing. Use your own WordPress.com account only w
 
 ## Creating Pull Requests
 
-To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md).
+To commit, push a branch or open a pull request, follow [.agents/skills/create-pr/SKILL.md](.agents/skills/create-pr/SKILL.md). Before marking a PR ready for review, and after each later push, run the How to Test steps the change affects, on a local dev server or on the Calypso Live build of the pushed commit, then fix whatever in the description no longer matches the code.
