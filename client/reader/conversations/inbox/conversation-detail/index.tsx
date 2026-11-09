@@ -346,8 +346,8 @@ export function ConversationDetail( {
 											{ String( post.title ?? conversation?.title ?? '' ) }
 										</Heading>
 										<Text
-											size={ 13 }
-											lineHeight="20px"
+											size={ 14 }
+											lineHeight="24px"
 											truncate
 											numberOfLines={ 2 }
 											color="color-mix(in srgb, var(--color-text-subtle) 80%, var(--color-text))"
