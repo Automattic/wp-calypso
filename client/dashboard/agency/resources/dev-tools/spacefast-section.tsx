@@ -80,19 +80,10 @@ function SpacefastDevToolsCard( { recordTracksEvent }: { recordTracksEvent: Reco
 								'Your team already uses AI to make websites, apps, prototypes, proposals, and more. Spacefast gives your team one shared place to ship them in seconds, right from your agent and ready for clients to see.'
 							) }
 						</Text>
-						<VStack
-							as="ul"
-							role="list"
-							spacing={ 1 }
-							style={ { margin: 0, padding: 0, listStyle: 'none' } }
-						>
+						<VStack as="ul" role="list" spacing={ 1 } className="a4a-spacefast-dev-tools__features">
 							{ features.map( ( feature ) => (
 								<HStack as="li" key={ feature } alignment="topLeft" spacing={ 1 }>
-									<Icon
-										icon={ check }
-										size={ 24 }
-										style={ { flexShrink: 0, fill: 'var(--wp-admin-theme-color)' } }
-									/>
+									<Icon icon={ check } size={ 24 } className="a4a-spacefast-dev-tools__check" />
 									<Text size={ 15 } lineHeight="24px">
 										{ feature }
 									</Text>
