@@ -42,7 +42,7 @@ Then add a `## Details` heading listing what What and Why leave out: which compo
 
 Last, add a `## How to Test` heading with numbered steps a reviewer can follow on Calypso Live or a local dev server: the URL path to open, what to do, and what to expect. Keep each step to one action and its result, starting with any setup it needs (site, account, flag); for a fix, also say what happens without it. If the change runs in more than one app (for example Dashboard and A4A, or Calypso and Jetpack Cloud), include steps for each. Don't list tests or CI runs; the checks already show them.
 
-Run every step before asking for review, then add one short line after the steps naming the commit and where you ran them, e.g. "Ran on Calypso Live at `4c0c0bb`." Skip a step only when you can't run it, e.g. it needs access you don't have or changes something you can't undo. Keep it in the list, marked `**Not run:**` with the reason, so the reviewer can run it.
+After the steps, add one short line naming the commit they ran on and where, e.g. "Ran on Calypso Live at `4c0c0bb`." Mark a step you couldn't run `**Not run:**` with the reason, e.g. it needs access you don't have or changes something you can't undo, and keep it in the list so the reviewer can run it.
 
 For a change users can see (UI, or new or changed translatable strings), add before/after screenshots: reviewers check the expected state against them, and the a8ci18n bot asks for a screenshot of new strings for translators. Take them with a test account, with internal hostnames and personal data kept out. If you can't upload images, say so instead. Never commit images to the repository to host them.
 
