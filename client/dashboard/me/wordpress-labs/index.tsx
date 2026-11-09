@@ -1,4 +1,4 @@
-import { userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
+import { sitesQuery, userPreferenceQuery, userPreferenceMutation } from '@automattic/api-queries';
 import { useMutation, useQuery, useSuspenseQuery } from '@tanstack/react-query';
 import { Button, ToggleControl, __experimentalVStack as VStack } from '@wordpress/components';
 import { useDispatch } from '@wordpress/data';
@@ -7,7 +7,6 @@ import { store as noticesStore } from '@wordpress/notices';
 import { useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import Breadcrumbs from '../../app/breadcrumbs';
-import { useAppContext } from '../../app/context';
 import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import { ActionList } from '../../components/action-list';
 import { Card, CardBody } from '../../components/card';
@@ -25,7 +24,6 @@ import type { Site } from '@automattic/api-core';
 export default function WordPressLabs() {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const { recordTracksEvent } = useAnalytics();
-	const { queries } = useAppContext();
 
 	const { data: optIn } = useSuspenseQuery( userPreferenceQuery( 'wordpress-labs-opt-in' ) );
 	const { data: excludedSiteIds } = useSuspenseQuery(
@@ -42,7 +40,7 @@ export default function WordPressLabs() {
 	);
 
 	const sitesQueryResult = useQuery(
-		queries.sitesQuery( { site_visibility: 'visible', include_a8c_owned: false } )
+		sitesQuery( 'all', { site_visibility: 'visible', include_a8c_owned: false } )
 	);
 	const adminSites = ( ( sitesQueryResult.data as Site[] | undefined ) ?? [] ).filter(
 		( site ) => site.capabilities?.manage_options

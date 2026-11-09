@@ -9,6 +9,14 @@ import { render as dashboardRender } from '../../../test-utils';
 import NotificationsExtras from '../index';
 import type { UserNotificationSettings, WpcomNotificationSettings } from '@automattic/api-core';
 
+jest.mock( '@automattic/calypso-config', () => {
+	const actual = jest.requireActual( '@automattic/calypso-config' );
+	return {
+		...actual,
+		isEnabled: ( flag: string ) => flag === 'me/email-tracking-consent' || actual.isEnabled( flag ),
+	};
+} );
+
 const defaultWpcomSettings: WpcomNotificationSettings = {
 	marketing: false,
 	research: false,
@@ -450,6 +458,102 @@ describe( 'NotificationsExtras', () => {
 			const snackbar = notificationSnackBar();
 			expect( snackbar ).toBeVisible();
 			expect( snackbar ).toHaveTextContent( 'Failed to save subscription settings.' );
+		} );
+	} );
+
+	describe( 'Email tracking', () => {
+		const settingsWithEmailTracking: UserNotificationSettings = {
+			...defaultUserSettings,
+			wpcom: { ...defaultWpcomSettings, email_tracking: true },
+		};
+
+		it( 'hides the toggle when the API does not return the setting', async () => {
+			mockGetNotificationSettingsApi();
+			mockGetPreferencesApi();
+
+			dashboardRender( <NotificationsExtras /> );
+
+			await screen.findByText( 'Email from WordPress.com' );
+			expect( screen.queryByLabelText( 'Track email opens and clicks' ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'saves the setting when turned off', async () => {
+			mockGetNotificationSettingsApi( settingsWithEmailTracking );
+			mockGetPreferencesApi();
+			mockSaveNotificationSettingsApi( { email_tracking: false } );
+
+			const { recordTracksEvent } = dashboardRender(
+				<>
+					<Snackbars />
+					<NotificationsExtras />
+				</>
+			);
+
+			const toggle = await screen.findByLabelText( 'Track email opens and clicks' );
+			expect( toggle ).toBeChecked();
+
+			await userEvent.click( toggle );
+
+			await waitFor( () => {
+				expect( notificationSnackBar() ).toHaveTextContent( 'Email tracking turned off.' );
+			} );
+			expect( recordTracksEvent ).toHaveBeenCalledWith(
+				'calypso_dashboard_notifications_email_tracking_updated',
+				{ setting_value: false, source: 'extras' }
+			);
+		} );
+
+		it( 'does not record the change when saving fails', async () => {
+			mockGetNotificationSettingsApi( settingsWithEmailTracking );
+			mockGetPreferencesApi();
+			nock( 'https://public-api.wordpress.com:443' )
+				.post( '/rest/v1.1/me/notifications/settings' )
+				.reply( 500, { error: 'Internal server error' } );
+
+			const { recordTracksEvent } = dashboardRender(
+				<>
+					<Snackbars />
+					<NotificationsExtras />
+				</>
+			);
+
+			await userEvent.click( await screen.findByLabelText( 'Track email opens and clicks' ) );
+
+			await waitFor( () => {
+				expect( notificationSnackBar() ).toHaveTextContent(
+					'Failed to save email tracking settings.'
+				);
+			} );
+			expect( recordTracksEvent ).not.toHaveBeenCalledWith(
+				'calypso_dashboard_notifications_email_tracking_updated',
+				expect.anything()
+			);
+		} );
+
+		it( 'is not changed by "Unsubscribe from all"', async () => {
+			mockGetNotificationSettingsApi( {
+				...settingsWithEmailTracking,
+				wpcom: { ...settingsWithEmailTracking.wpcom, marketing: true },
+			} );
+			mockGetPreferencesApi();
+			// nock matches the body exactly, so an email_tracking key would fail the request.
+			mockSaveNotificationSettingsApi( { marketing: false } );
+
+			dashboardRender(
+				<>
+					<Snackbars />
+					<NotificationsExtras />
+				</>
+			);
+
+			const [ unsubscribeAll ] = await screen.findAllByRole( 'checkbox', {
+				name: 'Unsubscribe from all',
+			} );
+			await userEvent.click( unsubscribeAll );
+
+			await waitFor( () => {
+				expect( notificationSnackBar() ).toHaveTextContent( 'Subscriptions settings saved.' );
+			} );
 		} );
 	} );
 } );

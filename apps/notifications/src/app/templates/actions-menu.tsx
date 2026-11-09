@@ -108,6 +108,7 @@ export default function ActionsMenu( {
 					showTooltip: false,
 					isBusy,
 					disabled: isBusy,
+					accessibleWhenDisabled: true,
 				} }
 				popoverProps={ { placement: 'bottom-end', className: 'wpnc__actions-menu' } }
 			>

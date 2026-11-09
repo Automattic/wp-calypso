@@ -1,6 +1,13 @@
+import {
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
+	PLAN_PERSONAL_MONTHLY,
+} from '@automattic/calypso-products';
 import { Onboard } from '@automattic/data-stores';
 import { SITE_MIGRATION_FLOW, STATIC_SITE_IMPORT_FLOW } from '@automattic/onboarding';
 import { useDispatch } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import { useEffect } from 'react';
 import { dashboardLink } from 'calypso/dashboard/utils/link';
 import { STEPS } from 'calypso/landing/stepper/declarative-flow/internals/steps';
@@ -30,6 +37,15 @@ import type {
 	SubmitHandler,
 } from 'calypso/landing/stepper/declarative-flow/internals/types';
 import type { ImporterPlatform } from 'calypso/lib/importer/types';
+
+import './style.scss';
+
+const PERSONAL_PLAN_SLUGS = [
+	PLAN_PERSONAL_MONTHLY,
+	PLAN_PERSONAL,
+	PLAN_PERSONAL_2_YEARS,
+	PLAN_PERSONAL_3_YEARS,
+];
 
 const BASE_STEPS = [ STEPS.UNIFIED_PLANS, STEPS.STATIC_SITE_IMPORT_READING, STEPS.ERROR ];
 
@@ -79,6 +95,12 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 		return {
 			[ STEPS.UNIFIED_PLANS.slug ]: {
 				isInSignup: ! hasDestinationSite( useQuery() ),
+				intent: 'plans-default-wpcom',
+				hideFreePlan: true,
+				hideEnterprisePlan: true,
+				highlightLabelOverrides: Object.fromEntries(
+					PERSONAL_PLAN_SLUGS.map( ( planSlug ) => [ planSlug, __( 'Recommended' ) ] )
+				),
 			},
 		};
 	},
@@ -144,6 +166,24 @@ const staticSiteImport: FlowV2< typeof initialize > = {
 
 			switch ( slug ) {
 				case STEPS.STATIC_SITE_IMPORT_READING.slug: {
+					// Past identification, which read this source as static, so the check step
+					// takes the WordPress source on to the migration of this destination.
+					if ( providedDependencies.action === 'migrate' ) {
+						return exitFlow(
+							addQueryArgs(
+								{
+									from,
+									platform: 'wordpress',
+									siteId: hasSite ? String( siteId ) : undefined,
+									siteSlug: hasSite ? siteSlug : undefined,
+								},
+								withLocale(
+									`/setup/${ SITE_MIGRATION_FLOW }/${ STEPS.SITE_MIGRATION_CHECK.slug }`,
+									locale
+								)
+							)
+						);
+					}
 					if ( providedDependencies.action === 'unavailable' ) {
 						if ( ! hasSite ) {
 							return navigate( STEPS.UNIFIED_PLANS.slug );

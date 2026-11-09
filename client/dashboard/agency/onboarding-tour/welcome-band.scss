@@ -38,7 +38,7 @@
 	grid-template-columns: minmax( 0, 1fr );
 
 	@container a4a-welcome-band ( min-width: 1080px ) {
-		grid-template-columns: minmax( 240px, 300px ) minmax( 0, 1fr );
+		grid-template-columns: minmax( 220px, 260px ) minmax( 0, 1fr );
 	}
 }
 
@@ -47,7 +47,8 @@
 	grid-template-columns: repeat( 3, minmax( 0, 1fr ) );
 	column-gap: 24px;
 	margin: 0;
-	padding: 32px;
+	padding-block: 32px;
+	padding-inline: 24px;
 	list-style: none;
 	background-color: var( --dashboard-marketplace-referral__tint-color );
 
@@ -77,7 +78,7 @@
 	position: relative;
 	justify-self: center;
 	inline-size: 100%;
-	max-inline-size: 280px;
+	max-inline-size: 300px;
 	min-inline-size: 0;
 
 	@container a4a-welcome-band ( max-width: 719px ) {
@@ -103,6 +104,11 @@
 .a4a-welcome-band-text {
 	grid-area: text;
 	padding-block-start: 4px;
+}
+
+// A wrapped title splits evenly instead of leaving one word on its own line.
+.a4a-welcome-band-text .a4a-welcome-band-title {
+	text-wrap: balance;
 }
 
 .a4a-welcome-band-action {

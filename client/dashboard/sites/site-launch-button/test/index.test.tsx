@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { screen, waitFor, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { SiteLaunchButton } from '..';
@@ -138,7 +138,7 @@ describe( '<SiteLaunchButton>', () => {
 		} );
 		await user.click( screen.getByRole( 'button', { name: 'Close' } ) );
 
-		await waitForElementToBeRemoved( dialog );
+		await waitFor( () => expect( dialog ).not.toBeInTheDocument() );
 		expect( launchScope.isDone() ).toBe( false );
 	} );
 

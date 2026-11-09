@@ -1,6 +1,7 @@
-import { __experimentalVStack as VStack, Button, ProgressBar } from '@wordpress/components';
+import { __experimentalVStack as VStack, Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { Progress } from '@wordpress/ui';
 import clsx from 'clsx';
 import { useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
@@ -11,6 +12,13 @@ import type { WordPressMigrationStatus } from '@automattic/api-core';
 import './style.scss';
 
 type Phase = WordPressMigrationStatus[ 'phase' ];
+
+// The steps a customer sees, each covering one or more of the run's phases.
+export const MIGRATION_STEPS: { label: string; phases: Phase[] }[] = [
+	{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
+	{ label: __( 'Copying' ), phases: [ 'migration' ] },
+	{ label: __( 'Finishing' ), phases: [ 'cleanup' ] },
+];
 
 export function Running( {
 	phase,
@@ -28,12 +36,7 @@ export function Running( {
 	// Only the viewer's own address is listed when they're one of the recipients.
 	const [ email ] = notificationEmails;
 
-	const steps: { label: string; phases: Phase[] }[] = [
-		{ label: __( 'Verifying' ), phases: [ 'prepare-source', 'prepare-destination', 'preflight' ] },
-		{ label: __( 'Copying' ), phases: [ 'migration' ] },
-		{ label: __( 'Finishing' ), phases: [ 'cleanup' ] },
-	];
-	const currentStep = steps.findIndex( ( { phases } ) => phases.includes( phase ) );
+	const currentStep = MIGRATION_STEPS.findIndex( ( { phases } ) => phases.includes( phase ) );
 
 	return (
 		<MigrationCard
@@ -63,17 +66,21 @@ export function Running( {
 				</Text>
 			}
 		>
-			<Grid columns={ steps.length } gap="sm">
-				{ steps.map( ( { label }, index ) => {
+			<Grid columns={ MIGRATION_STEPS.length } gap="sm">
+				{ MIGRATION_STEPS.map( ( { label }, index ) => {
 					const settledValue = index < currentStep ? 100 : 0;
 					return (
 						<VStack key={ label } spacing={ 2 }>
-							<ProgressBar
+							<Progress.Root
 								className="wordpress-migration__progress-bar"
 								aria-label={ label }
 								// No value animates the bar, which marks the step in progress.
-								value={ index === currentStep ? undefined : settledValue }
-							/>
+								value={ index === currentStep ? null : settledValue }
+							>
+								<Progress.Track>
+									<Progress.Indicator />
+								</Progress.Track>
+							</Progress.Root>
 							<Text variant="muted">{ label }</Text>
 						</VStack>
 					);

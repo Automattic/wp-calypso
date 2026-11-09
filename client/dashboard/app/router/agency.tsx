@@ -12,6 +12,7 @@ import {
 	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
+	domainsQuery,
 	githubInstallationsQuery,
 	mcpSettingsQuery,
 	agencyPendingSitesQuery,
@@ -56,6 +57,10 @@ import { createRoute, createLazyRoute, notFound, Outlet } from '@tanstack/react-
 import { __ } from '@wordpress/i18n';
 import { isReferralCheckoutUrl } from '../../agency/earn/referrals/lib/referral-checkout-url';
 import {
+	canSwitchAgencyDashboard,
+	needsPreviousAgencyDashboard,
+} from '../../agency/lib/dashboard-opt-in';
+import {
 	getPressableOwnershipType,
 	pressableLicensesQuery,
 } from '../../agency/marketplace/hosting/lib/pressable-products';
@@ -86,7 +91,13 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
+import { a4aLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteTypeFeatureSupports } from '../../utils/site-type-feature-support';
@@ -167,6 +178,10 @@ const agencyRoute = createRoute( {
 		] );
 		if ( agency.isClientUser ) {
 			throw redirectAsNotAllowed( { to: '/client/subscriptions' } );
+		}
+
+		if ( needsPreviousAgencyDashboard( activeAgency ) ) {
+			throw dashboardRedirect( { href: a4aLink( '/overview' ), reloadDocument: true } );
 		}
 
 		const capabilities = activeAgency?.user?.capabilities ?? [];
@@ -915,6 +930,31 @@ export const agencyTeamRoute = createRoute( {
 	)
 );
 
+// `/agency/dashboard` – which dashboard the agency uses; only the owner can change it
+export const agencyDashboardOptInRoute = createRoute( {
+	head: () => ( {
+		meta: [ { title: __( 'Classic dashboard' ) } ],
+	} ),
+	getParentRoute: () => agencyRoute,
+	path: 'agency/dashboard',
+	beforeLoad: async ( { cause } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		const agency = await queryClient.ensureQueryData( activeAgencyQuery() );
+		if ( ! canSwitchAgencyDashboard( agency ) ) {
+			throw redirectAsNotAllowed( { to: '/overview' } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../agency/dashboard-opt-in' ).then( ( d ) =>
+		createLazyRoute( 'agency-dashboard-opt-in' )( {
+			component: d.default,
+		} )
+	)
+);
+
 // `/team/invite/accept` – accept an invitation to join an agency team. Sits
 // outside the agency routes: the invited user has no agency until it succeeds.
 export const agencyTeamAcceptInviteRoute = createRoute( {
@@ -1435,6 +1475,7 @@ const agencySitePerformanceRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Performance' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'performance',
+	loader: () => prefetchApmAccess(),
 } ).lazy( () =>
 	import( '../../agency/sites/site/performance' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance' )( {
@@ -1465,10 +1506,25 @@ export const agencySitePerformanceFrontendRoute = createRoute( {
 export const agencySitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => agencySitePerformanceRoute,
 	path: 'backend',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: agencySitePerformanceFrontendRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } );
 
 async function prefetchAgencyApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	// The page shows an upsell instead of APM data on these plans.
+	if ( ! hasBackendAccess( site.plan?.product_slug ) ) {
+		return;
+	}
 	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
 		await import( '../../sites/performance/backend/timeframe' );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
@@ -1652,6 +1708,7 @@ export const agencySiteSettingsRoute = createRoute( {
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
 				queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) ),
+			prefetchApmAccess(),
 		] );
 	},
 } );
@@ -1672,12 +1729,12 @@ export const agencySiteSettingsSiteVisibilityRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Site visibility' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -2181,6 +2238,17 @@ const agencySiteSettingsApmRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Application Performance Monitoring' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'apm',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: agencySiteSettingsRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-apm' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-apm' )( {
@@ -2318,6 +2386,7 @@ export const createAgencyRoutes = () => [
 		] ),
 		agencySitesRoute,
 		agencyTeamRoute,
+		agencyDashboardOptInRoute,
 		earnReferralsRoute,
 		earnWooPaymentsRoute,
 		earnWooPaymentsSetupRoute,

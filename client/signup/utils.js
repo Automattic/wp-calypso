@@ -196,7 +196,7 @@ export const shouldForceLogin = ( flowName, userLoggedIn ) => {
 
 /**
  * Derive if the "plans" step actually will be visible to the customer in a given flow after the domain step
- * i.e. Check "launch-site" flow while having a purchased paid plan
+ * i.e. the plans step can be skipped when the site already has a paid plan
  * @param  {Object} flowSteps steps in the current flow
  * @returns {boolean} true indicates that "plans" step will be one of the next steps in the flow
  */

@@ -16,6 +16,7 @@ import isJetpackSiteMultiSite from 'calypso/state/sites/selectors/is-jetpack-sit
 import getSelectedSiteId from 'calypso/state/ui/selectors/get-selected-site-id';
 import ScanHistoryPage from './history';
 import ScanPage from './main';
+import ProtectMoved from './protect-moved';
 import ScanUpsellPage from './scan-upsell';
 import WPCOMScanUpsellPage from './wpcom-scan-upsell';
 import WpcomScanUpsellPlaceholder from './wpcom-scan-upsell-placeholder';
@@ -103,6 +104,13 @@ export function showUpsellIfNoScanSelfServeFeature( context, next ) {
 		/>
 	);
 
+	next();
+}
+
+export function showProtectMovedNotice( context, next ) {
+	if ( ! isJetpackCloud() && ! isA8CForAgencies() ) {
+		context.primary = <ProtectMoved fallback={ context.primary } />;
+	}
 	next();
 }
 

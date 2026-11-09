@@ -41,11 +41,7 @@ export const StoragePricing: React.FC< Props > = ( {
 	const filterBar = React.useMemo(
 		() =>
 			showAnnualPlansOnly ? null : (
-				<PlansFilterBar
-					showDiscountMessage
-					duration={ duration }
-					onDurationChange={ setDuration }
-				/>
+				<PlansFilterBar duration={ duration } onDurationChange={ setDuration } />
 			),
 		[ duration, showAnnualPlansOnly ]
 	);

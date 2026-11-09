@@ -2,6 +2,7 @@ import { HostingFeatures, DotcomFeatures, LogType } from '@automattic/api-core';
 import {
 	bigSkyPluginQuery,
 	bulkDomainUpdateStatusQuery,
+	domainsQuery,
 	userSettingsQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
@@ -58,6 +59,11 @@ import {
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
 import { VALUES_SEVERITY } from '../../sites/logs/dataviews/constants';
+import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import {
 	getActivityLogHiddenGroups,
@@ -614,11 +620,11 @@ export const siteDomainsRoute = createRoute( {
 	validateSearch: ( search ): { action?: 'change-site-address' } => ( {
 		action: search.action === 'change-site-address' ? 'change-site-address' : undefined,
 	} ),
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			queryClient.ensureQueryData( siteRedirectQuery( site.ID ) ),
 			queryClient.ensureQueryData( bulkDomainUpdateStatusQuery() ),
 		] );
@@ -642,6 +648,7 @@ export const sitePerformanceRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteRoute,
 	path: 'performance',
+	loader: () => prefetchApmAccess(),
 } ).lazy( () =>
 	import( '../../sites/performance' ).then( ( d ) =>
 		createLazyRoute( 'site-performance' )( {
@@ -672,10 +679,25 @@ export const sitePerformanceFrontendRoute = createRoute( {
 export const sitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => sitePerformanceRoute,
 	path: 'backend',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: sitePerformanceFrontendRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } );
 
 async function prefetchApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	// The page shows an upsell instead of APM data on these plans.
+	if ( ! hasBackendAccess( site.plan?.product_slug ) ) {
+		return;
+	}
 	const [ { siteApmAggregateRollingQuery }, { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } ] =
 		await Promise.all( [
 			import( '@automattic/api-queries' ),
@@ -843,6 +865,7 @@ export const siteSettingsRoute = createRoute( {
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
 				queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) ),
+			prefetchApmAccess(),
 		] );
 	},
 } );
@@ -869,12 +892,12 @@ export const siteSettingsSiteVisibilityRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -1332,6 +1355,14 @@ export const siteSettingsApmRoute = createRoute( {
 	} ),
 	getParentRoute: () => siteSettingsRoute,
 	path: 'apm',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( { to: siteSettingsRoute.fullPath, params: { siteSlug } } );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-apm' ).then( ( d ) =>
 		createLazyRoute( 'site-settings-apm' )( {
@@ -1790,6 +1821,36 @@ export const siteMigrationOverviewRoute = createRoute( {
 	)
 );
 
+export const siteMigrationAssistedIntroRoute = createRoute( {
+	head: () => ( {
+		meta: [
+			{
+				title: __( 'Let our team migrate your site' ),
+			},
+		],
+	} ),
+	getParentRoute: () => siteRoute,
+	// Under the migration's own path, so the migration lock lets it through.
+	path: 'migration-overview/assisted',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+
+		// Only a WordPress migration the customer is still running themselves can be handed to our team.
+		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+		if ( ! isWordPressMigration( site ) || site.site_migration.status_v2 === 'completed' ) {
+			throw dashboardRedirect( { to: siteMigrationOverviewRoute.fullPath, params: { siteSlug } } );
+		}
+	},
+} ).lazy( () =>
+	import( '../../sites/migration-overview/assisted-intro' ).then( ( d ) =>
+		createLazyRoute( 'migration-overview-assisted' )( {
+			component: () => <d.default siteSlug={ siteRoute.useParams().siteSlug } />,
+		} )
+	)
+);
+
 export const siteSSHMigrationFailedRoute = createRoute( {
 	head: () => ( {
 		meta: [
@@ -1857,8 +1918,7 @@ export const sitePlansRoute = createRoute( {
 );
 
 export const createSitesRoutes = ( config: AppConfig ) => {
-	const sitesComponent = config.components.sites;
-	if ( ! config.supports.sites || ! sitesComponent ) {
+	if ( ! config.supports.sites ) {
 		return [];
 	}
 
@@ -1868,6 +1928,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 		siteTrialEndedRoute,
 		siteDifmLiteInProgressRoute,
 		siteMigrationOverviewRoute,
+		siteMigrationAssistedIntroRoute,
 		siteSSHMigrationCompleteRoute,
 		siteSSHMigrationFailedRoute,
 		siteDeploymentsRoute.addChildren( [ siteDeploymentsListRoute ] ),
@@ -1958,7 +2019,7 @@ export const createSitesRoutes = ( config: AppConfig ) => {
 
 	return [
 		sitesRoute.lazy( () =>
-			sitesComponent().then( ( d ) =>
+			import( '../../sites' ).then( ( d ) =>
 				createLazyRoute( 'sites' )( {
 					component: d.default,
 				} )

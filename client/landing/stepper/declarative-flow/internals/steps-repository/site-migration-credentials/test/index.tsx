@@ -46,7 +46,7 @@ const backupFileInput = () => getByLabelText( 'Backup file location' );
 //TODO: it requires a testid because there is no accessible name, it is an issue with the component
 const specialInstructionsInput = () => getByTestId( 'special-instructions-textarea' );
 const specialInstructionsButton = () => getByRole( 'button', { name: 'Special instructions' } );
-const skipButton = () => getByRole( 'button', { name: /Let us guide you/ } );
+const skipButton = () => getByRole( 'button', { name: /Have our team email you/ } );
 
 const fillAddressField = async () => {
 	await userEvent.click( credentialsOption() );
@@ -152,7 +152,12 @@ describe( 'SiteMigrationCredentials', () => {
 
 		await userEvent.click( skipButton() );
 
-		expect( submit ).toHaveBeenCalledWith( { action: 'skip' } );
+		expect( wp.req.post ).toHaveBeenCalledWith(
+			{ path: '/help/migration-ticket/new', apiNamespace: 'wpcom/v2' },
+			{},
+			expect.objectContaining( { blog_url: 'site-url.wordpress.com', context: 'help_requested' } )
+		);
+		await waitFor( () => expect( submit ).toHaveBeenCalledWith( { action: 'skip' } ) );
 	} );
 
 	it( 'shows errors on the required fields when the user does not fill the fields when user select credentials option', async () => {
@@ -225,6 +230,17 @@ describe( 'SiteMigrationCredentials', () => {
 		} );
 	} );
 
+	it( 'links the logo to the homepage as its way out, without a Back button', () => {
+		render( { navigation: { goBack: jest.fn(), submit: jest.fn() } } );
+
+		expect( screen.getByRole( 'link', { name: 'WordPress.com home' } ) ).toHaveAttribute(
+			'href',
+			'https://wordpress.com/'
+		);
+		expect( screen.queryByRole( 'button', { name: /Back/ } ) ).not.toBeInTheDocument();
+		expect( skipButton() ).toBeVisible();
+	} );
+
 	it( 'shows "Scanning site" on the Continue button during submission with application password', async () => {
 		const submit = jest.fn();
 		const pendingPromise = new Promise( () => {} );
@@ -237,6 +253,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await waitFor( () => {
 			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
+		expect( continueButton( /Scanning site/ ) ).toBeDisabled();
 	} );
 
 	it( 'shows "Scanning site" on the Continue button during submission when fetching site info with application password', async () => {
@@ -258,6 +275,7 @@ describe( 'SiteMigrationCredentials', () => {
 		await waitFor( () => {
 			expect( continueButton( /Scanning site/ ) ).toBeVisible();
 		} );
+		expect( continueButton( /Scanning site/ ) ).toBeDisabled();
 	} );
 
 	it( 'submits credentials-required action when there is an error on to get the authorization path', async () => {

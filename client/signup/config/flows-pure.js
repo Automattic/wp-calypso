@@ -1,7 +1,6 @@
 import { isEnabled } from '@automattic/calypso-config';
 import { englishLocales } from '@automattic/i18n-utils';
 import {
-	HOSTING_LP_FLOW,
 	ONBOARDING_FLOW,
 	DIFM_FLOW,
 	DIFM_FLOW_STORE,
@@ -18,7 +17,6 @@ export function generateFlows( {
 	getRedirectDestination = noop,
 	getSignupDestination = noop,
 	getSiteSelectedDestination = noop,
-	getLaunchDestination = noop,
 	getDomainSignupFlowDestination = noop,
 	getEmailSignupFlowDestination = noop,
 	getWithThemeDestination = noop,
@@ -31,25 +29,15 @@ export function generateFlows( {
 
 	const flows = [
 		{
-			name: 'hosting', // This flow is to be removed once the Landpack changes are completed.
+			name: 'hosting',
 			steps: [ userSocialStep, 'hosting-decider' ],
 			destination: getHostingFlowDestination,
-			description: 'To be deleted.',
-			lastModified: '2024-03-22',
+			description: 'Create an account and redirect the user to the hosted site flow forking step.',
+			lastModified: '2026-10-30',
 			showRecaptcha: true,
 			providesDependenciesInQuery: [ 'toStepper' ],
 			optionalDependenciesInQuery: [ 'toStepper' ],
 			hideProgressIndicator: true,
-		},
-		{
-			name: HOSTING_LP_FLOW,
-			steps: [ userSocialStep, 'hosting-decider' ],
-			destination: getHostingFlowDestination,
-			description: 'Create an account and redirect the user to the hosted site flow forking step.',
-			lastModified: '2024-03-22',
-			showRecaptcha: true,
-			providesDependenciesInQuery: [ 'toStepper' ],
-			optionalDependenciesInQuery: [ 'toStepper' ],
 		},
 		{
 			name: 'account',
@@ -205,20 +193,6 @@ export function generateFlows( {
 			providesDependenciesInQuery: [ 'siteSlug', 'siteId' ],
 			description: 'A flow to test updating an existing site with `Signup`',
 			lastModified: '2017-01-19',
-		},
-		{
-			name: 'launch-site',
-			steps: [ 'domains-launch', 'plans-launch', 'launch' ],
-			destination: getLaunchDestination,
-			description: 'A flow to launch a private site.',
-			providesDependenciesInQuery: [ 'siteSlug', 'back_to', 'redirect_to' ],
-			optionalDependenciesInQuery: [ 'back_to', 'redirect_to' ],
-			hideProgressIndicator: true,
-			lastModified: '2019-11-22',
-			excludeFromManageSiteFlows: true,
-			get pageTitle() {
-				return translate( 'Launch your site' );
-			},
 		},
 		{
 			name: 'reader',

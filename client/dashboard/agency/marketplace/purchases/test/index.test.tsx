@@ -122,7 +122,7 @@ function mockAssign() {
 
 async function assignLicense() {
 	const user = await openRowActions();
-	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site' } ) );
+	await user.click( await screen.findByRole( 'menuitem', { name: 'Assign to site…' } ) );
 	await user.click( await screen.findByRole( 'radio', { name: 'https://client.example.com' } ) );
 	await user.click( screen.getByRole( 'button', { name: 'Assign to selected site' } ) );
 	return user;
@@ -211,7 +211,7 @@ describe( '<MarketplacePurchases>', () => {
 
 		// The action stays in the menu so the agency can see it exists; the Site
 		// column is what says why it is out of reach.
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);
@@ -227,7 +227,7 @@ describe( '<MarketplacePurchases>', () => {
 		await screen.findByText( 'Not assigned' );
 		await openRowActions();
 
-		expect( await screen.findByRole( 'menuitem', { name: 'Create site' } ) ).not.toHaveAttribute(
+		expect( await screen.findByRole( 'menuitem', { name: 'Create site…' } ) ).not.toHaveAttribute(
 			'aria-disabled',
 			'true'
 		);

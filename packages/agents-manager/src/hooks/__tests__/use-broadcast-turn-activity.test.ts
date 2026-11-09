@@ -96,9 +96,7 @@ describe( 'useBroadcastTurnActivity', () => {
 	} );
 
 	it( 'treats mounting onto a turn the manager is still running as a start', () => {
-		// The remount case: `useAgentChat` starts a fresh instance at
-		// `isProcessing: false` and never re-attaches to the running stream, so
-		// the manager is the only thing that knows a turn is in flight.
+		// The manager has the last word, even when the mounting chat reports no turn.
 		mockIsTurnInFlight.mockReturnValue( true );
 
 		const { started, cleanup } = render( false );

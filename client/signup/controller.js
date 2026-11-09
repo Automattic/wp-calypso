@@ -350,7 +350,7 @@ export default {
 			context.store.dispatch( updateDependencies( additionalDependencies ) );
 		}
 
-		if ( [ 'launch-site', 'site-selected' ].includes( flowName ) ) {
+		if ( 'site-selected' === flowName ) {
 			// The dependency store persists between visits, and `back_to`, `redirect_to` and `ref` are
 			// optional, so an abandoned flow would otherwise decide where the next one leaves the user.
 			// Re-read them from the query the flow was entered with.

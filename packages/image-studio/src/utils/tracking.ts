@@ -254,6 +254,7 @@ type ImageStudioErrorType =
 	| 'draft_cleanup_permission_denied'
 	| 'delete_permanently_failed'
 	| 'save_metadata_failed'
+	| 'attach_to_post_failed'
 	| 'other';
 
 interface TrackImageStudioErrorOptions {

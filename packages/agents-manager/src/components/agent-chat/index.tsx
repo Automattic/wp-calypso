@@ -29,6 +29,7 @@ import lazyComponent from '../../utils/lazy-component';
 import { isSiteEditorContext } from '../../utils/site-editor-context';
 import { recordBigSkyTracksEvent } from '../../utils/tracks';
 import ChatHeader, { type Options as ChatHeaderOptions } from '../chat-header';
+import { ChatImage } from '../chat-image';
 import ChatMessageSkeleton from '../chat-message-skeleton';
 import ContextCards from '../context-cards';
 import CustomALink from '../custom-a-link';
@@ -216,7 +217,7 @@ export default function AgentChat( {
 	const floatingPanelProps = useFloatingPanelProps();
 
 	const mergedComponents = useMemo(
-		() => ( { a: CustomALink, ...markdownComponents } ),
+		() => ( { a: CustomALink, img: ChatImage, ...markdownComponents } ),
 		[ markdownComponents ]
 	);
 
