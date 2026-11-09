@@ -347,7 +347,7 @@ export const useActions = ( {
 									error_message: error.message,
 								} );
 
-								createErrorNotice( getPrimaryDomainErrorMessage( error.message ), {
+								createErrorNotice( getPrimaryDomainErrorMessage( error ), {
 									type: 'snackbar',
 								} );
 							},

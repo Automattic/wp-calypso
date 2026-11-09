@@ -1,11 +1,11 @@
 import nock from 'nock';
-import request from 'wpcom-xhr-request';
-import { setPrimaryDomain } from '../mutators';
+import { isAtomicPrimaryDomainChangeFailed, setPrimaryDomain } from '../mutators';
 
 const BASE = 'https://public-api.wordpress.com';
 const SITE_ID = 12345;
+const ATOMIC_ERROR_CODE = 'atomic_primary_domain_change_failed';
 const ATOMIC_ERROR_MESSAGE =
-	'Domain name already used [example.com]. TXT record verification is required to bypass this check.';
+	"We couldn't make this domain your primary domain. Please try again in a few minutes, or contact support if it keeps happening.";
 
 describe( 'setPrimaryDomain mutator', () => {
 	afterEach( () => nock.cleanAll() );
@@ -19,48 +19,29 @@ describe( 'setPrimaryDomain mutator', () => {
 		expect( scope.isDone() ).toBe( true );
 	} );
 
-	it.each( [ ATOMIC_ERROR_MESSAGE, 'Unable to reach the hosting service.' ] )(
-		'rejects with the server message: %s',
-		async ( message ) => {
-			const scope = nock( BASE )
-				.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'example.com' } )
-				.reply( 400, { error: 'wpcom_atomic_ping_failed', message } );
+	it.each( [
+		[ ATOMIC_ERROR_CODE, ATOMIC_ERROR_MESSAGE ],
+		[ 'domain_not_active', 'This domain is not active.' ],
+	] )( 'rejects with the server error code and message: %s', async ( error, message ) => {
+		const scope = nock( BASE )
+			.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'example.com' } )
+			.reply( 400, { error, message } );
 
-			await expect( setPrimaryDomain( SITE_ID, 'example.com' ) ).rejects.toMatchObject( {
-				error: 'wpcom_atomic_ping_failed',
-				message,
-			} );
-			expect( scope.isDone() ).toBe( true );
-		}
-	);
+		await expect( setPrimaryDomain( SITE_ID, 'example.com' ) ).rejects.toMatchObject( {
+			error,
+			message,
+		} );
+		expect( scope.isDone() ).toBe( true );
+	} );
 } );
 
-it( 'rejects an HTTP 200 envelope whose inner status is 400', async () => {
-	const scope = nock( BASE )
-		.post( `/rest/v1.1/sites/${ SITE_ID }/domains/primary`, { domain: 'example.com' } )
-		.query( { http_envelope: 1 } )
-		.reply( 200, {
-			code: 400,
-			headers: {},
-			body: { error: 'wpcom_atomic_ping_failed', message: ATOMIC_ERROR_MESSAGE },
-		} );
-	const response = new Promise( ( resolve, reject ) => {
-		request(
-			{
-				path: `/sites/${ SITE_ID }/domains/primary`,
-				apiVersion: '1.1',
-				method: 'POST',
-				query: { http_envelope: 1 },
-				body: { domain: 'example.com' },
-			},
-			( error: Error | null, data: unknown ) => ( error ? reject( error ) : resolve( data ) )
-		);
+describe( 'isAtomicPrimaryDomainChangeFailed', () => {
+	it.each( [
+		[ { error: ATOMIC_ERROR_CODE, message: 'Anything' }, true ],
+		[ { error: 'domain_not_active', message: ATOMIC_ERROR_MESSAGE }, false ],
+		[ new Error( ATOMIC_ERROR_MESSAGE ), false ],
+		[ null, false ],
+	] )( 'checks the error code of %p', ( error, expected ) => {
+		expect( isAtomicPrimaryDomainChangeFailed( error ) ).toBe( expected );
 	} );
-
-	await expect( response ).rejects.toMatchObject( {
-		status: 400,
-		error: 'wpcom_atomic_ping_failed',
-		message: ATOMIC_ERROR_MESSAGE,
-	} );
-	expect( scope.isDone() ).toBe( true );
 } );

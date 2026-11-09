@@ -39,18 +39,15 @@ export default function ChangePrimaryDomainModal( {
 	const { createErrorNotice } = useDispatch( noticesStore );
 	const titleId = useId();
 	const [ selectedDomain, setSelectedDomain ] = useState( currentPrimaryDomain ?? '' );
-	const setPrimaryDomainMutation = useMutation( {
-		...withSnackbar( siteSetPrimaryDomainMutation(), {
+	const setPrimaryDomainMutation = useMutation(
+		withSnackbar( siteSetPrimaryDomainMutation(), {
 			success: sprintf(
 				/* translators: %s is domain */
 				__( 'Primary site address changed: all domains will redirect to %s.' ),
 				selectedDomain
 			),
-		} ),
-		onError: ( error: Error ) => {
-			createErrorNotice( getPrimaryDomainErrorMessage( error.message ), { type: 'snackbar' } );
-		},
-	} );
+		} )
+	);
 
 	const options = [
 		...( currentPrimaryDomain
@@ -78,7 +75,12 @@ export default function ChangePrimaryDomainModal( {
 
 		setPrimaryDomainMutation.mutate(
 			{ siteId: site.ID, domain: selectedDomain },
-			{ onSuccess: onClose }
+			{
+				onSuccess: onClose,
+				onError: ( error ) => {
+					createErrorNotice( getPrimaryDomainErrorMessage( error ), { type: 'snackbar' } );
+				},
+			}
 		);
 	};
 

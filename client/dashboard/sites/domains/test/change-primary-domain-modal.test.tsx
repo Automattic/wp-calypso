@@ -11,8 +11,6 @@ import { render } from '../../../test-utils';
 import ChangePrimaryDomainModal from '../change-primary-domain-modal';
 import type { DomainSummary, Site } from '@automattic/api-core';
 
-const conflictCopy =
-	'This domain is already in use on another WordPress.com or WP Cloud site. Remove it from the originating site, or contact support to set up TXT record verification.';
 const site = { ID: 123, slug: 'primary-domain-test.wordpress.com' } as Site;
 const domains = [ { domain: 'example.com' } ] as DomainSummary[];
 
@@ -48,14 +46,16 @@ async function submitChange( onClose = jest.fn() ) {
 describe( 'ChangePrimaryDomainModal', () => {
 	it.each( [
 		[
-			'Domain name already used [example.com]. TXT record verification is required to bypass this check.',
-			conflictCopy,
+			'atomic_primary_domain_change_failed',
+			"We couldn't make this domain your primary domain. Please try again in a few minutes, or contact support if it keeps happening.",
+			"We couldn't make this domain your primary domain. Please try again in a few minutes, or contact support if it keeps happening.",
 		],
-		[ 'Unable to reach the hosting service.', 'Unable to reach the hosting service.' ],
-	] )( 'shows the correct error for %s', async ( message, expected ) => {
+		[ 'domain_not_active', 'This domain is not active.', 'This domain is not active.' ],
+		[ 'unknown_error', '', "Something went wrong and we couldn't change your primary domain." ],
+	] )( 'keeps the modal open and shows an error for %s', async ( error, message, expected ) => {
 		const scope = nock( 'https://public-api.wordpress.com' )
 			.post( '/rest/v1.1/sites/123/domains/primary', { domain: 'example.com' } )
-			.reply( 400, { error: 'wpcom_atomic_ping_failed', message } );
+			.reply( 400, { error, message } );
 		const onClose = await submitChange();
 
 		await waitFor( () =>
