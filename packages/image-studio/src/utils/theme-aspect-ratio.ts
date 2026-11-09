@@ -1,12 +1,10 @@
-import { parse } from '@wordpress/block-serialization-default-parser';
+import { parse } from '@wordpress/blocks';
 
 type SelectFn = ( storeName: string ) => unknown;
 
 interface TemplateBlock {
 	name?: string;
-	blockName?: string | null;
 	attributes?: Record< string, unknown > | null;
-	attrs?: Record< string, unknown > | null;
 	innerBlocks?: TemplateBlock[];
 }
 
@@ -47,13 +45,12 @@ export function normalizeThemeAspectRatio( value: unknown ): string | null {
 
 function findFeaturedImageRatio( blocks: TemplateBlock[] ): unknown {
 	for ( const block of blocks ) {
-		const name = block.name ?? block.blockName;
-		if ( name === QUERY_BLOCK ) {
+		if ( block.name === QUERY_BLOCK ) {
 			continue;
 		}
 		const ratio =
-			name === FEATURED_IMAGE_BLOCK
-				? ( block.attributes ?? block.attrs )?.aspectRatio
+			block.name === FEATURED_IMAGE_BLOCK
+				? block.attributes?.aspectRatio
 				: findFeaturedImageRatio( block.innerBlocks ?? [] );
 		if ( ratio !== undefined ) {
 			return ratio;
