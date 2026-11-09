@@ -146,11 +146,11 @@
 }
 
 .dashboard-woopayments-landing__graphic[data-graphic='about'] {
-	background: #eaf4ed;
+	background: color-mix( in srgb, var( --studio-green-50, #008a20 ) 8%, var( --color-surface ) );
 }
 
 .dashboard-woopayments-landing__graphic[data-graphic='demo'] {
-	background: #fbf1dc;
+	background: color-mix( in srgb, var( --studio-yellow-30, #deb100 ) 14%, var( --color-surface ) );
 }
 
 .dashboard-woopayments-landing__graphic img {
