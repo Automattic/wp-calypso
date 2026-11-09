@@ -222,6 +222,14 @@ describe( 'ConversationList', () => {
 		expect( screen.getByRole( 'searchbox' ) ).toHaveFocus();
 	} );
 
+	it( 'does not take the focus when the first conversation is selected', () => {
+		const { rerender } = renderList();
+
+		rerender( { selectedKey: conversations[ 1 ].key } );
+
+		expect( screen.getByRole( 'button', { name: /^Read post/ } ) ).not.toHaveFocus();
+	} );
+
 	it( 'does not take the focus on the first render', () => {
 		renderList( { selectedKey: conversations[ 1 ].key } );
 

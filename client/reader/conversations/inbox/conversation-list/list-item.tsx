@@ -23,6 +23,7 @@ interface Props {
 	item: InboxItem;
 	isSelected: boolean;
 	openOnFocus: boolean;
+	followFocus: boolean;
 	density: Density;
 	onSelect: ( item: InboxItem, source: OpenSource ) => void;
 }
@@ -59,6 +60,7 @@ export function ConversationListItem( {
 	item,
 	isSelected,
 	openOnFocus,
+	followFocus,
 	density,
 	onSelect,
 }: Props ) {
@@ -100,10 +102,14 @@ export function ConversationListItem( {
 		// alone on first render and when it sits elsewhere, like the previous/next buttons.
 		const { activeElement, body } = item.ownerDocument;
 		const list = item.closest( '.conversations-inbox__list' );
-		if ( ! isFirstRun && ( activeElement === body || list?.contains( activeElement ) ) ) {
+		if (
+			! isFirstRun &&
+			followFocus &&
+			( activeElement === body || list?.contains( activeElement ) )
+		) {
 			item.querySelector( 'button' )?.focus( { preventScroll: true } );
 		}
-	}, [ isSelected ] );
+	}, [ isSelected, followFocus ] );
 
 	return (
 		<li ref={ itemRef }>

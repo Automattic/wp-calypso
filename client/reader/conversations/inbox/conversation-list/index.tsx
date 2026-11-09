@@ -9,7 +9,7 @@ import {
 } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
-import { useEffect, useMemo, useRef, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useLocalizedMoment } from 'calypso/components/localized-moment';
 import { KeyboardShortcuts } from '../keyboard-shortcuts';
@@ -76,6 +76,13 @@ export function ConversationList( {
 	const translate = useTranslate();
 	const moment = useLocalizedMoment();
 	const { ref: endRef, inView: isEndInView } = useInView();
+
+	// Focus follows a move from one conversation to another, like j/k, but not the
+	// first selection, which the inbox makes on its own when the page loads.
+	const [ selection, setSelection ] = useState( { key: selectedKey, isMove: false } );
+	if ( selection.key !== selectedKey ) {
+		setSelection( { key: selectedKey, isMove: selection.key !== undefined } );
+	}
 
 	// Runs again after each page, in case the end of the list is still in view.
 	useEffect( () => {
@@ -223,6 +230,7 @@ export function ConversationList( {
 										item={ item }
 										isSelected={ item.key === selectedKey }
 										openOnFocus={ openOnFocus }
+										followFocus={ selection.isMove }
 										density={ density }
 										onSelect={ onSelect }
 									/>

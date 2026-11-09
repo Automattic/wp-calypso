@@ -259,8 +259,7 @@ li:has( > .conversations-inbox__item.is-unread ) + li > .conversations-inbox__it
 }
 
 .conversations-inbox__settings {
-	min-width: 280px;
-	padding: 16px;
+	width: 320px;
 }
 
 .conversations-inbox__list-end {
