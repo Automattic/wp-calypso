@@ -1,5 +1,6 @@
 export interface BasicMetricsData {
 	token?: string;
+	final_url?: string;
 }
 
 export type Metrics = 'cls' | 'lcp' | 'fcp' | 'ttfb' | 'inp' | 'tbt' | 'overall_score';

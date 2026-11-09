@@ -48,6 +48,7 @@ export function useSitePerformanceData(
 	} );
 
 	const token = basicMetricsData?.token || hash;
+	const insightsUrl = ( basicMetricsData?.token && basicMetricsData.final_url ) || url;
 
 	const {
 		data: performanceData,
@@ -55,10 +56,10 @@ export function useSitePerformanceData(
 		isFetching: isFetchingPerformanceInsights,
 		isError: isInsightsError,
 	} = useQuery( {
-		...sitePerformanceInsightsQuery( url as string, token || '' ),
+		...sitePerformanceInsightsQuery( insightsUrl as string, token || '' ),
 		refetchOnWindowFocus: false,
 		retry: false,
-		enabled: !! url && !! token,
+		enabled: !! insightsUrl && !! token,
 	} );
 
 	const getReport = ( type: ReportType ): SitePerformanceReport | undefined => {
