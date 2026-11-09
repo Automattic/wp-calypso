@@ -52,7 +52,8 @@ interface AuthBounceRecord {
 // successful auth, because how do we know when it is safe to clear the count?
 // It could be that immediately after successful auth, the very next API returns
 // 401 and causes a bounce, yet we would have already cleared the count.
-function trackAuthBounceLoop() {
+// Returns the number of bounces in the current window, this one included.
+function trackAuthBounceLoop(): number {
 	try {
 		const now = Date.now();
 		const storedRecord: unknown = JSON.parse(
@@ -71,8 +72,11 @@ function trackAuthBounceLoop() {
 			const value = count >= AUTH_LOOP_MAX_COUNT ? `${ AUTH_LOOP_MAX_COUNT }+` : String( count );
 			bumpStat( 'dashboard-auth-loop', value );
 		}
+
+		return count;
 	} catch {
 		// sessionStorage can be unavailable in private contexts or JSON.parse may fail.
+		return 1;
 	}
 }
 
@@ -181,8 +185,12 @@ export function requestOAuthTokenIfMissing(): boolean {
 		return false;
 	}
 
+	// A repeat means the last trip through OAuth came back without a token, so another one would loop.
+	if ( trackAuthBounceLoop() > 1 ) {
+		return false;
+	}
+
 	bumpStat( 'dashboard-auth', 'bounce:no-token' );
-	trackAuthBounceLoop();
 	redirectToOAuth();
 
 	return true;
