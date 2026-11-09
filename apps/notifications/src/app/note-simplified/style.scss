@@ -150,7 +150,7 @@
 
 .wpnc-simplified__card-arrow {
 	flex-shrink: 0;
-	fill: var(--wp-components-color-gray-600, #{$gray-600});
+	fill: var(--wp-components-color-gray-400, #{$gray-400});
 	transition: fill var(--wpds-motion-duration-md, 200ms) var(--wpds-motion-easing-balanced, ease);
 }
 
