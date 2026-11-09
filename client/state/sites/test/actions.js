@@ -1,4 +1,5 @@
 import {
+	NOTICE_CREATE,
 	SITE_RECEIVE,
 	SITE_REQUEST,
 	SITE_REQUEST_FAILURE,
@@ -9,7 +10,14 @@ import {
 	SITES_REQUEST_SUCCESS,
 } from 'calypso/state/action-types';
 import useNock from 'calypso/test-helpers/use-nock';
-import { deleteSite, receiveSite, receiveSites, requestSites, requestSite } from '../actions';
+import {
+	deleteSite,
+	leaveSite,
+	receiveSite,
+	receiveSites,
+	requestSites,
+	requestSite,
+} from '../actions';
 
 describe( 'actions', () => {
 	const mySitesPath =
@@ -18,6 +26,30 @@ describe( 'actions', () => {
 
 	beforeEach( () => {
 		spy = jest.fn();
+	} );
+
+	describe( '#leaveSite()', () => {
+		useNock( ( nock ) => {
+			nock( 'https://public-api.wordpress.com' )
+				.post( '/rest/v1.1/sites/123/users/5/delete' )
+				.query( true )
+				.reply( 200, { success: false } );
+		} );
+
+		test( 'shows an error when the site did not remove the user', async () => {
+			const getState = () => ( { sites: { items: {} }, currentUser: { capabilities: {} } } );
+
+			await expect( leaveSite( 123, 5 )( spy, getState ) ).resolves.toBe( false );
+			expect( spy ).toHaveBeenCalledWith(
+				expect.objectContaining( {
+					type: NOTICE_CREATE,
+					notice: expect.objectContaining( {
+						status: 'is-error',
+						text: 'Could not leave the site. Please try again.',
+					} ),
+				} )
+			);
+		} );
 	} );
 
 	describe( '#receiveSite()', () => {
