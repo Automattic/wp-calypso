@@ -1,4 +1,3 @@
-import { getAgentManager } from '@automattic/agenttic-client';
 import {
 	type MarkdownComponents,
 	type MarkdownExtensions,
@@ -74,8 +73,8 @@ interface Props {
 	useSuggestions?: UseSuggestionsHook;
 	/** Get a chat component by type for rendering in agent messages. */
 	getChatComponent?: GetChatComponent;
-	/** The providers' interactive UI components and functions. */
-	interactiveUi?: LoadedProviders[ 'interactiveUi' ];
+	/** The providers' interactive UI catalogs. */
+	interactiveUiCatalogs?: LoadedProviders[ 'interactiveUiCatalogs' ];
 	/** Utilities for site building flow (e.g., progress tracking, site preview). */
 	siteBuildUtils?: SiteBuildUtils;
 	transformMessages?: TransformMessages;
@@ -91,7 +90,7 @@ export default function AgentDock( {
 	markdownExtensions = {},
 	useProviderAbilitiesSetup,
 	getChatComponent,
-	interactiveUi,
+	interactiveUiCatalogs,
 	useSuggestions,
 	siteBuildUtils,
 	transformMessages,
@@ -232,14 +231,6 @@ export default function AgentDock( {
 	// Persist the reader-chat open state across page loads (no-op for other agents).
 	useReaderChatPersistence();
 
-	const handleAbort = useCallback( () => {
-		const agentManager = getAgentManager();
-
-		if ( agentManager.hasAgent( agentId ) ) {
-			agentManager.abortCurrentRequest( agentId );
-		}
-	}, [ agentId ] );
-
 	const handleChatHasMessagesChange = useCallback(
 		( hasMessages: boolean ) => setIsOrchestratorChatEmpty( ! hasMessages ),
 		[]
@@ -277,7 +268,7 @@ export default function AgentDock( {
 				is_zendesk: false,
 			} );
 
-			handleAbort();
+			// `AgentSetup` stops the previous reply if the session changed.
 			navigate( '/chat' );
 		}
 	};
@@ -428,7 +419,7 @@ export default function AgentDock( {
 			useProviderAbilitiesSetup={ useProviderAbilitiesSetup }
 			useSuggestions={ useSuggestions }
 			getChatComponent={ getChatComponent }
-			interactiveUi={ interactiveUi }
+			interactiveUiCatalogs={ interactiveUiCatalogs }
 			siteBuildUtils={ siteBuildUtils }
 			transformMessages={ transformMessages }
 			useCheckpoint={ useCheckpoint }
@@ -455,7 +446,6 @@ export default function AgentDock( {
 			chatHeaderOptions={ chatHeaderOptions }
 			isDocked={ isDocked }
 			isOpen={ chatIsOpen }
-			onAbort={ handleAbort }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			onSelectConversation={ handleSelectConversation }
@@ -464,7 +454,6 @@ export default function AgentDock( {
 
 	const SupportGuideRoute = (
 		<SupportGuide
-			onAbort={ handleAbort }
 			onClose={ handleClose }
 			onExpand={ handleExpand }
 			isDocked={ isDocked }

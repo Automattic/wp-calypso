@@ -52,6 +52,8 @@ const siteSettingsPHPRoute = createRoute( {
 
 TanStack's `queryClient.ensureQueryData` checks if data is already cached before fetching, improving performance by avoiding unnecessary requests.
 
+`ensureQueryData` returns the cached data without applying `select`, which only runs in `useQuery` and `useSuspenseQuery`. A truthiness check on it still compiles: `ensureQueryData( isAutomatticianQuery() )` resolves to the teams response, which is always truthy. To decide outside React, apply the selector yourself, as `fetchIsAutomattician()` does.
+
 ### Component-level queries
 
 At the component level, we use the `useQuery` and `useSuspenseQuery` hooks to fetch data. This includes the data that we preloaded in the route loader:
@@ -66,7 +68,5 @@ const { data: currentVersion } = useSuspenseQuery( {
 as well as data that are specific to a component that you want to load dynamically:
 
 ```typescript
-const { data: siteContentSummary, isLoading } = useQuery(
-	siteResetContentSummaryQuery( site.ID )
-);
+const { data: siteContentSummary, isLoading } = useQuery( siteResetContentSummaryQuery( site.ID ) );
 ```

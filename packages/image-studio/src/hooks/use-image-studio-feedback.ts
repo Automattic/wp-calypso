@@ -10,10 +10,11 @@ interface UseImageStudioFeedbackConfig {
 	sessionId?: string;
 	displayImageUrl?: string | null;
 	mode?: ImageStudioMode;
+	getTraceIdForMessage?: ( messageId: string ) => string | undefined;
 }
 
 export const useImageStudioFeedback = ( config: UseImageStudioFeedbackConfig = {} ) => {
-	const { authProvider, sessionId, displayImageUrl, mode } = config;
+	const { authProvider, sessionId, displayImageUrl, mode, getTraceIdForMessage } = config;
 
 	const lastAgentMessageId = useSelect(
 		( select ) => select( imageStudioStore ).getLastAgentMessageId(),
@@ -34,10 +35,18 @@ export const useImageStudioFeedback = ( config: UseImageStudioFeedbackConfig = {
 	const handleFeedback = useCallback(
 		( feedback: 'up' | 'down' ) => {
 			if ( authProvider && sessionId && lastAgentMessageId ) {
-				rateMessage( authProvider, sessionId, lastAgentMessageId, feedback, undefined, metadata );
+				rateMessage(
+					authProvider,
+					sessionId,
+					lastAgentMessageId,
+					feedback,
+					undefined,
+					metadata,
+					getTraceIdForMessage?.( lastAgentMessageId )
+				);
 			}
 		},
-		[ authProvider, sessionId, lastAgentMessageId, metadata ]
+		[ authProvider, sessionId, lastAgentMessageId, metadata, getTraceIdForMessage ]
 	);
 
 	const handleSubmitFeedbackText = useCallback(
@@ -46,9 +55,16 @@ export const useImageStudioFeedback = ( config: UseImageStudioFeedbackConfig = {
 				return;
 			}
 
-			await submitFeedback( authProvider, sessionId, lastAgentMessageId, feedbackText.trim() );
+			await submitFeedback(
+				authProvider,
+				sessionId,
+				lastAgentMessageId,
+				feedbackText.trim(),
+				undefined,
+				getTraceIdForMessage?.( lastAgentMessageId )
+			);
 		},
-		[ sessionId, authProvider, lastAgentMessageId ]
+		[ sessionId, authProvider, lastAgentMessageId, getTraceIdForMessage ]
 	);
 
 	return {

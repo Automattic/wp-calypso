@@ -342,8 +342,7 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 		}
 	}
 
-	// Dotcom-prominent description treatment, matching the login page's
-	// `is-prominent` subtitle slot: slightly darker than the default
+	// Dotcom-prominent description treatment: slightly darker than the default
 	// `--color-text-subtle` and a step up on the typography scale.
 	.connect-screen-brand-header__description {
 		color: var( --color-text, var( --studio-gray-80 ) );
@@ -478,7 +477,7 @@ body:not( .is-jetpack-sso-partner-branded--woo ) {
 
 // "Already have a WordPress.com account? Log in" link rendered between the
 // brand header and the signup form on the unified connection signup surface
-// (jetpack-connector and jetpack-onboarding). Centered and visually
+// (every `isUnifiedFlow()` value). Centered and visually
 // distinct so returning users can pivot before scanning past the social
 // signup section. The signup form keeps primary visual weight; this link
 // is a clearly available secondary action.

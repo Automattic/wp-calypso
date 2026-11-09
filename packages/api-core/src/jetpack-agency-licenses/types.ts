@@ -7,6 +7,8 @@ export interface JetpackLicenseMeta {
 	a4a_dev_site_period_start?: string;
 	a4a_transferred_subscription_id?: string;
 	a4a_transferred_subscription_expiration?: string;
+	/** The domain a Pressable Titan inbox license is for. */
+	pressable_titan_domain?: string;
 }
 
 export interface JetpackLicenseSubscription {
@@ -17,6 +19,9 @@ export interface JetpackLicenseSubscription {
 	billing_interval_unit: string;
 	status: string;
 	expiry: string | null;
+	/** When the product's introductory offer (trial) ends, whether or not it is still running. */
+	trial_end?: string | null;
+	is_active_trial?: boolean;
 	is_auto_renew_enabled: boolean;
 	is_refundable: boolean;
 }

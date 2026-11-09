@@ -1,6 +1,8 @@
 import { __experimentalHStack as HStack, Icon } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import {
+	atSymbol,
+	cart,
 	chartBar,
 	caution,
 	check,
@@ -8,7 +10,6 @@ import {
 	info,
 	lockOutline,
 	plus,
-	store,
 	thumbsUp,
 	update,
 } from '@wordpress/icons';
@@ -28,7 +29,7 @@ import type { JSX } from 'react';
 import './dataviews-overrides.scss';
 
 const iconMap: { [ key in string ]: JSX.Element } = {
-	'\uf814': comment, // mention
+	'\uf814': atSymbol,
 	'\uf300': comment,
 	'\uf801': plus,
 	'\uf455': info,
@@ -40,7 +41,7 @@ const iconMap: { [ key in string ]: JSX.Element } = {
 	'\uf467': comment, // reply
 	'\uf414': caution, // warning
 	'\uf418': check,
-	'\uf447': store, // cart
+	'\uf447': cart,
 };
 
 const REPLY_NOTICON = '\uf467';

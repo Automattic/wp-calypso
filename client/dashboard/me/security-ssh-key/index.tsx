@@ -1,5 +1,6 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
 import { sshKeysQuery, userSettingsQuery } from '@automattic/api-queries';
+import { isEnabled } from '@automattic/calypso-config';
 import { localizeUrl } from '@automattic/i18n-utils';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { createInterpolateElement } from '@wordpress/element';
@@ -12,8 +13,13 @@ import { PageHeader } from '../../components/page-header';
 import PageLayout from '../../components/page-layout';
 import SshKey from './ssh-key';
 import SshKeyForm from './ssh-key-form';
+import SshKeys from './ssh-keys';
 
 export default function SecuritySshKey() {
+	return isEnabled( 'ssh-multiple-keys' ) ? <SshKeys /> : <SingleSshKey />;
+}
+
+function SingleSshKey() {
 	const { data: sshKeys } = useSuspenseQuery( sshKeysQuery() );
 	const sshKey = sshKeys[ 0 ] ?? null;
 
@@ -24,16 +30,20 @@ export default function SecuritySshKey() {
 
 	let description: ReactNode = sshKey
 		? createInterpolateElement(
-				sprintf(
-					/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
-					__(
-						'Attach the SSH key to a site with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink />'
-					),
-					{
-						businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],
-						commercePlan: getPlanNames()[ DotcomPlans.ECOMMERCE ],
-					}
-				),
+				isEnabled( 'hosting/dev-tools-all-paid-plans' )
+					? __(
+							'Attach the SSH key to a site with a paid plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink />'
+						)
+					: sprintf(
+							/* translators: %(businessPlan)s is the name of the Business plan, %(commercePlan)s is the name of the Commerce plan */
+							__(
+								'Attach the SSH key to a site with a %(businessPlan)s or %(commercePlan)s plan to enable SSH key authentication for that site. If the SSH key is removed, it will also be removed from all attached sites. <learnMoreLink />'
+							),
+							{
+								businessPlan: getPlanNames()[ DotcomPlans.BUSINESS ],
+								commercePlan: getPlanNames()[ DotcomPlans.ECOMMERCE ],
+							}
+						),
 				{
 					learnMoreLink: (
 						<InlineSupportLink

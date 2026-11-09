@@ -26,7 +26,7 @@ function getInitialDismissState() {
 	return window.sessionStorage.getItem( SESSION_STORAGE_KEY ) === 'true';
 }
 
-interface Props {
+interface ResurrectedWelcomeModalGateProps {
 	isSuppressed?: boolean;
 	onEligibilityResolved?: ( willDisplay: boolean ) => void;
 	onVisibilityChange?: ( isVisible: boolean ) => void;
@@ -36,7 +36,7 @@ export function ResurrectedWelcomeModalGate( {
 	isSuppressed = false,
 	onEligibilityResolved,
 	onVisibilityChange,
-}: Props ) {
+}: ResurrectedWelcomeModalGateProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const { user } = useAuth();
 	const eligibility = useResurrectedFreeUserEligibility();

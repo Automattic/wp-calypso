@@ -35,6 +35,9 @@ jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-e
 		isExperimentEligible: false,
 	} ) )
 );
+jest.mock( 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment', () =>
+	jest.fn()
+);
 jest.mock( 'calypso/state/selectors/is-eligible-for-wpcom-monthly-plan', () => jest.fn() );
 jest.mock( 'calypso/state/selectors/can-upgrade-to-plan', () => jest.fn() );
 jest.mock( 'calypso/state/ui/selectors', () => ( {
@@ -76,6 +79,7 @@ import {
 } from '@automattic/calypso-products';
 import { Plans } from '@automattic/data-stores';
 import { screen } from '@testing-library/react';
+import usePlanDifferentiatorsExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plan-differentiators-experiment';
 import usePlansGridRedesignExperiment from 'calypso/my-sites/plans-features-main/hooks/use-plans-grid-redesign-experiment';
 import { getSelectedSiteId } from 'calypso/state/ui/selectors';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
@@ -120,6 +124,12 @@ describe( 'PlansFeaturesMain', () => {
 			showWooCommerceBottomCard: false,
 			isExperimentEligible: false,
 		} ) );
+		usePlanDifferentiatorsExperiment.mockImplementation( () => ( {
+			isLoading: false,
+			variant: 'control',
+			useReversedPlanOrder: false,
+			isExperimentEligible: false,
+		} ) );
 	} );
 
 	describe( 'PlansFeaturesMain.getPlansForPlanFeatures()', () => {
@@ -132,6 +142,27 @@ describe( 'PlansFeaturesMain', () => {
 					PLAN_PREMIUM,
 					PLAN_BUSINESS,
 					PLAN_ECOMMERCE,
+					PLAN_ENTERPRISE_GRID_WPCOM,
+				] )
+			);
+		} );
+
+		test( 'Should render <PlanFeatures /> with default WPCOM plans most expensive first in the reversed order variant', () => {
+			usePlanDifferentiatorsExperiment.mockImplementation( () => ( {
+				isLoading: false,
+				variant: 'reversed_order',
+				useReversedPlanOrder: true,
+				isExperimentEligible: true,
+			} ) );
+
+			renderWithProvider( <PlansFeaturesMain { ...props } intent="plans-default-wpcom" /> );
+			expect( screen.getByTestId( 'visible-plans' ) ).toHaveTextContent(
+				JSON.stringify( [
+					PLAN_ECOMMERCE,
+					PLAN_BUSINESS,
+					PLAN_PREMIUM,
+					PLAN_PERSONAL,
+					PLAN_FREE,
 					PLAN_ENTERPRISE_GRID_WPCOM,
 				] )
 			);
@@ -375,32 +406,71 @@ describe( 'PlansFeaturesMain', () => {
 			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
 		} );
 
-		test( 'Should hide the plan type selector for redesign variants in signup', () => {
-			usePlansGridRedesignExperiment.mockImplementation( () => ( {
-				isLoading: false,
-				variant: 'six_plan_new_design',
-				usePlansGridRedesign: true,
-				showDifferentiatorHeader: false,
-				showEnterpriseBottomCard: false,
-				showWooCommerceBottomCard: false,
-				isExperimentEligible: true,
-			} ) );
+		const redesignResult = {
+			isLoading: false,
+			usePlansGridRedesign: true,
+			usePlansGridRedesignNewDescription: true,
+			usePlansGridRedesignFeatures: true,
+			showDifferentiatorHeader: false,
+			showEnterpriseBottomCard: false,
+			showWooCommerceBottomCard: false,
+		};
+
+		test( 'Should hide the plan type selector with the redesigned feature list in signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
 
 			renderWithProvider( <PlansFeaturesMain { ...myProps } flowName="onboarding" isInSignup /> );
 
 			expect( screen.queryByText( 'PlanTypeSelector' ) ).not.toBeInTheDocument();
 		} );
 
-		test( 'Should keep the plan type selector visible for redesign variants outside signup', () => {
-			usePlansGridRedesignExperiment.mockImplementation( () => ( {
-				isLoading: false,
-				variant: 'six_plan_new_design',
-				usePlansGridRedesign: true,
-				showDifferentiatorHeader: false,
-				showEnterpriseBottomCard: false,
-				showWooCommerceBottomCard: false,
-				isExperimentEligible: true,
-			} ) );
+		test( 'Should hide the plan type selector in signup for intents without a tailored feature list', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...myProps }
+					flowName="site-migration"
+					intent="plans-migration"
+					isInSignup
+				/>
+			);
+
+			expect( screen.queryByText( 'PlanTypeSelector' ) ).not.toBeInTheDocument();
+		} );
+
+		test( 'Should keep the plan type selector visible in signup for intents with a tailored feature list', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...myProps }
+					flowName="newsletter"
+					intent="plans-newsletter"
+					isInSignup
+				/>
+			);
+
+			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
+		} );
+
+		test( 'Should keep the plan type selector visible in signup for the Woo hosting solutions intent', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...myProps }
+					flowName="onboarding"
+					intent="plans-woo-hosting-solutions"
+					isInSignup
+				/>
+			);
+
+			expect( screen.getByText( 'PlanTypeSelector' ) ).toBeVisible();
+		} );
+
+		test( 'Should keep the plan type selector visible with the redesigned feature list outside signup', () => {
+			usePlansGridRedesignExperiment.mockImplementation( () => redesignResult );
 
 			renderWithProvider( <PlansFeaturesMain { ...myProps } /> );
 
@@ -435,6 +505,61 @@ describe( 'PlansFeaturesMain', () => {
 					PLAN_ENTERPRISE_GRID_WPCOM,
 				] )
 			);
+		} );
+	} );
+
+	describe( 'PlansFeaturesMain. onIntentResolved', () => {
+		test( 'reports the intent prop', () => {
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain
+					{ ...props }
+					intent="plans-newsletter"
+					onIntentResolved={ onIntentResolved }
+				/>
+			);
+
+			expect( onIntentResolved ).toHaveBeenCalledWith( 'plans-newsletter' );
+		} );
+
+		test( 'reports the default intent when no intent is provided', () => {
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
+			);
+
+			expect( onIntentResolved ).toHaveBeenCalledWith( 'plans-default-wpcom' );
+		} );
+
+		test( 'reports the site-meta intent when no intent prop is provided', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: false,
+				intent: 'plans-newsletter',
+			} ) );
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
+			);
+
+			expect( onIntentResolved ).toHaveBeenCalledWith( 'plans-newsletter' );
+			expect( onIntentResolved ).not.toHaveBeenCalledWith( 'plans-default-wpcom' );
+		} );
+
+		test( 'does not report while the site metadata is still loading', () => {
+			useIntentFromSiteMeta.mockImplementation( () => ( {
+				processing: true,
+				intent: undefined,
+			} ) );
+			const onIntentResolved = jest.fn();
+
+			renderWithProvider(
+				<PlansFeaturesMain { ...props } onIntentResolved={ onIntentResolved } />
+			);
+
+			expect( onIntentResolved ).not.toHaveBeenCalled();
 		} );
 	} );
 } );

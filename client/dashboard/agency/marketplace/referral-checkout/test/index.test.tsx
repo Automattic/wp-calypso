@@ -35,6 +35,23 @@ const products = [
 	},
 ];
 
+const storageProducts = [
+	{
+		name: 'Jetpack VaultPress Backup Add-on Storage',
+		slug: 'jetpack-backup-storage',
+		products: [
+			{
+				name: 'Jetpack VaultPress Backup Add-on Storage (10GB)',
+				slug: 'jetpack-backup-addon-storage-10gb-monthly',
+				product_id: 2117,
+				currency: 'USD',
+				monthly_price: 1,
+				yearly_price: 12,
+			},
+		],
+	},
+];
+
 const freeProducts = [
 	{
 		name: 'Jetpack Stats (Free)',
@@ -71,7 +88,10 @@ const freeProducts = [
 function mockApi( {
 	agency = {},
 	catalog = products,
-}: { agency?: Record< string, unknown >; catalog?: typeof products | typeof freeProducts } = {} ) {
+}: {
+	agency?: Record< string, unknown >;
+	catalog?: typeof products | typeof storageProducts | typeof freeProducts;
+} = {} ) {
 	nock( API )
 		.get( '/wpcom/v2/agency' )
 		.query( true )
@@ -122,6 +142,14 @@ describe( '<ReferralCheckout>', () => {
 		expect( screen.getByText( 'Total your client will pay' ) ).toBeVisible();
 		expect( screen.getByText( 'Your estimated commission' ) ).toBeVisible();
 		expect( screen.getByRole( 'button', { name: 'Send to client' } ) ).toBeDisabled();
+	} );
+
+	test( 'names a backup storage add-on, not just its size', async () => {
+		fillCart( 'jetpack-backup-addon-storage-10gb-monthly' );
+		mockApi( { catalog: storageProducts } );
+		render( <ReferralCheckout /> );
+
+		expect( await screen.findByText( 'VaultPress Backup Add-on Storage 10GB' ) ).toBeVisible();
 	} );
 
 	test( 'rejects an invalid email without sending', async () => {

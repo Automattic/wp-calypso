@@ -21,6 +21,8 @@ class LikeButton extends PureComponent {
 		slug: PropTypes.string,
 		icon: PropTypes.object,
 		defaultLabel: PropTypes.string,
+		/** Replaces the count, or the default label when there is no count. */
+		label: PropTypes.string,
 		showTooltip: PropTypes.bool,
 	};
 
@@ -64,6 +66,7 @@ class LikeButton extends PureComponent {
 			onMouseLeave,
 			icon,
 			defaultLabel,
+			label,
 			showTooltip,
 		} = this.props;
 		const showLikeCount = likeCount > 0 || showZeroCount;
@@ -85,7 +88,7 @@ class LikeButton extends PureComponent {
 		const labelElement = (
 			<span className="like-button__label">
 				<span className="like-button__label-count">
-					{ showLikeCount ? likeCount : defaultLabel }
+					{ label ?? ( showLikeCount ? likeCount : defaultLabel ) }
 				</span>
 			</span>
 		);

@@ -3,66 +3,21 @@ import { Link } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { createInterpolateElement } from '@wordpress/element';
 import { __, sprintf } from '@wordpress/i18n';
+import { useLocale } from '../../../app/locale';
 import { purchaseSettingsRoute } from '../../../app/router/me';
 import Notice from '../../../components/notice';
-import { isEligibleForPlanExpiryNotice } from '../../../components/plan-expiry-notice';
-import { getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
+import { formatDate, getCalendarDaysUntil, getRelativeDayString } from '../../../utils/datetime';
 import {
 	isIncludedWithPlan,
-	isExpiring,
 	isCloseToExpiration,
 	isRecentMonthlyPurchase,
-	isAkismetFreeProduct,
 	getRenewalUrlFromPurchase,
+	isFreeTrialEndingOnExpiryDate,
 } from '../../../utils/purchase';
 import { RenewNoticeAction, shouldShowRenewNoticeAction } from './renew-notice-action';
 import type { Purchase } from '@automattic/api-core';
 
-export function shouldShowExpiringNotice(
-	purchase: Purchase,
-	purchaseAttachedTo: Purchase | undefined
-) {
-	// For purchases included with a plan (for example, a domain mapping
-	// bundled with the plan), the plan purchase is used on this page when
-	// there are other upcoming renewals to display, so for consistency it
-	// should also be used here (where there are no upcoming renewals to
-	// display).
-	const usePlanInsteadOfIncludedPurchase = Boolean(
-		isIncludedWithPlan( purchase ) && purchaseAttachedTo?.is_plan
-	);
-	const currentPurchase: Purchase =
-		usePlanInsteadOfIncludedPurchase && purchaseAttachedTo ? purchaseAttachedTo : purchase;
-	if (
-		! isExpiring( currentPurchase ) ||
-		currentPurchase?.is_trial_plan ||
-		isAkismetFreeProduct( currentPurchase )
-	) {
-		return false;
-	}
-
-	if ( purchase.is_hundred_year_domain ) {
-		return false;
-	}
-
-	// PlanExpiryNotice owns this scenario for the plans it covers. When it
-	// stays quiet for one of them that is a decision, not a gap, so we must
-	// not fall back on this weaker message.
-	if ( isEligibleForPlanExpiryNotice( currentPurchase ) ) {
-		return false;
-	}
-
-	if (
-		purchase.bill_period_days === SubscriptionBillPeriod.PLAN_CENTENNIAL_PERIOD &&
-		! isCloseToExpiration( purchase )
-	) {
-		return false;
-	}
-
-	if ( usePlanInsteadOfIncludedPurchase && ! purchase.site_slug ) {
-		return false;
-	}
-	return true;
-}
+export { shouldShowExpiringNotice } from './should-show-expiring-notice';
 
 export function PurchaseExpiringNotice( {
 	purchase,
@@ -227,6 +182,7 @@ export function ExpiringLaterText( {
 	autoRenewingUpgradesAction?: () => void;
 	isDomainWithoutSite?: boolean;
 } ) {
+	const locale = useLocale();
 	const purchaseName = purchase.is_domain ? ( purchase.meta ?? '' ) : purchase.product_name;
 	const expiry = getRelativeDayString( new Date( purchase.expiry_date ), 'upcoming' );
 
@@ -322,6 +278,19 @@ export function ExpiringLaterText( {
 			),
 			{
 				link: <Button variant="link" onClick={ autoRenewingUpgradesAction } />,
+			}
+		);
+	}
+
+	if ( isFreeTrialEndingOnExpiryDate( purchase ) ) {
+		return sprintf(
+			// translators: %(purchaseName)s: the name of the product, %(date)s: a formatted date, like "January 22, 2027"
+			__(
+				"Your %(purchaseName)s free trial ends on %(date)s. Update your payment information so you don't lose out on your paid features!"
+			),
+			{
+				purchaseName,
+				date: formatDate( new Date( purchase.expiry_date ), locale, { dateStyle: 'long' } ),
 			}
 		);
 	}

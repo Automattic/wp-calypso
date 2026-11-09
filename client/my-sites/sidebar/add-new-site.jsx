@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import TranslatableString from 'calypso/components/translatable/proptype';
 import { useAddNewSiteUrl } from 'calypso/lib/paths/use-add-new-site-url';
 import { recordTracksEvent } from 'calypso/state/analytics/actions';
-import { getCurrentUser } from 'calypso/state/current-user/selectors';
+import { getCurrentUserVisibleSiteCount } from 'calypso/state/current-user/selectors';
 import { setLayoutFocus } from 'calypso/state/ui/layout-focus/actions';
 
 export const AddNewSite = ( { title } ) => {
@@ -14,7 +14,7 @@ export const AddNewSite = ( { title } ) => {
 		source: 'calypso-static',
 	} );
 
-	const visibleSiteCount = useSelector( getCurrentUser ).visible_site_count;
+	const visibleSiteCount = useSelector( getCurrentUserVisibleSiteCount );
 	if ( visibleSiteCount > 1 ) {
 		return null;
 	}

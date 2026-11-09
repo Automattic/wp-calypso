@@ -25,6 +25,5 @@ export function triggerGuidesForStep( flowName: string, stepName?: string, siteI
 				siteId: siteId,
 			}
 		)
-		.then()
-		.catch();
+		.catch( () => {} );
 }

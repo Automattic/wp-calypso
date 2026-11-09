@@ -7,12 +7,21 @@ interface Props {
 	variation: StyleVariation;
 	type: 'color' | 'font' | 'button';
 	isActive?: boolean;
+	isDisabled?: boolean;
 	onSelect?: ( variation: StyleVariation ) => void;
 }
 
-export default function Variation( { variation, type, isActive = false, onSelect }: Props ) {
+export default function Variation( {
+	variation,
+	type,
+	isActive = false,
+	isDisabled = false,
+	onSelect,
+}: Props ) {
 	const handleSelectVariation = () => {
-		onSelect?.( variation );
+		if ( ! isDisabled ) {
+			onSelect?.( variation );
+		}
 	};
 
 	const selectOnKeyDown = ( event: React.KeyboardEvent ) => {
@@ -40,9 +49,10 @@ export default function Variation( { variation, type, isActive = false, onSelect
 			role="button"
 			onClick={ handleSelectVariation }
 			onKeyDown={ selectOnKeyDown }
-			tabIndex={ 0 }
+			tabIndex={ isDisabled ? -1 : 0 }
 			aria-label={ label }
 			aria-current={ isActive }
+			aria-disabled={ isDisabled || undefined }
 		>
 			<div className="agents-manager-variation-picker__preview">
 				<StylesPreview type={ type } variation={ variation } />

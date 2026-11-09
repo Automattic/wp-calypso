@@ -2,6 +2,7 @@ import { DomainSubtype, DomainStatus } from '@automattic/api-core';
 import {
 	userPurchasesQuery,
 	siteSetPrimaryDomainMutation,
+	setWwwPrimaryDomainMutation,
 	sslDetailsQuery,
 } from '@automattic/api-queries';
 import config from '@automattic/calypso-config';
@@ -11,7 +12,7 @@ import { useDispatch } from '@wordpress/data';
 import { sprintf, __ } from '@wordpress/i18n';
 import { store as noticesStore } from '@wordpress/notices';
 import { addQueryArgs } from '@wordpress/url';
-import { useMemo, Suspense, lazy } from 'react';
+import { useCallback, useMemo, Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import {
 	domainOverviewRoute,
@@ -22,15 +23,18 @@ import {
 	domainTransferToOtherSiteRoute,
 	domainsContactInfoRoute,
 } from '../../app/router/domains';
+import { chooseEmailSolutionRoute } from '../../app/router/emails';
 import { getCurrentDashboard } from '../../app/routing';
+import { withSnackbar } from '../../app/snackbars/with-snackbar';
 import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
+import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
 import type { DomainSummary, Site, User } from '@automattic/api-core';
-import type { Action } from '@wordpress/dataviews';
+import type { Action, View } from '@wordpress/dataviews';
 
 const SiteChangeAddressContent = lazy(
 	() =>
@@ -45,20 +49,33 @@ const ATOMIC_DOMAIN_IN_USE_PATTERN = /Domain.*already used|TXT record verificati
 
 export const useActions = ( {
 	user,
+	site,
 	sites,
 	domains,
+	layout,
+	onChangePrimaryDomain,
 }: {
 	user: User;
+	site?: Site;
 	sites?: Site[];
 	domains?: DomainSummary[];
+	layout: View[ 'type' ];
+	onChangePrimaryDomain?: () => void;
 } ) => {
 	const router = useRouter();
 	const { recordTracksEvent } = useAnalytics();
-	const { createSuccessNotice, createErrorNotice } = useDispatch( noticesStore );
+	const { createSuccessNotice, createErrorNotice, createInfoNotice, removeNotice } =
+		useDispatch( noticesStore );
 	const { data: purchases } = useQuery( userPurchasesQuery() );
 
 	const { mutate: setPrimaryDomain, isPending: isSettingPrimaryDomain } = useMutation(
 		siteSetPrimaryDomainMutation()
+	);
+
+	const { mutate: setWwwPrimaryDomain, isPending: isSettingWwwPrimaryDomain } = useMutation(
+		withSnackbar( setWwwPrimaryDomainMutation(), {
+			error: { source: 'server' },
+		} )
 	);
 
 	const sitesByBlogId: Record< number, Site > = useMemo( () => {
@@ -74,9 +91,9 @@ export const useActions = ( {
 		);
 	}, [ sites ] );
 	// A domain can only be made primary once its SSL certificate is provisioned.
-	// DomainSummary has no SSL field, so resolve it from the same query the SSL
-	// column uses, but only for domains that are otherwise eligible to avoid
-	// firing SSL requests for the whole list.
+	// DomainSummary has no SSL field, so resolve it from the SSL details query,
+	// but only for domains that are otherwise eligible to avoid firing SSL
+	// requests for the whole list.
 	const primaryCandidateDomainNames = useMemo( () => {
 		return ( domains ?? [] )
 			.filter( ( item ) => {
@@ -112,6 +129,15 @@ export const useActions = ( {
 		return map;
 	}, [ primaryCandidateDomainNames, sslActiveKey ] );
 
+	const canToggleWwwPrimary = useCallback(
+		( item: DomainSummary ) =>
+			!! site?.is_wpcom_atomic &&
+			item.blog_id === site.ID &&
+			item.primary_domain &&
+			item.subtype.id !== DomainSubtype.DEFAULT_ADDRESS,
+		[ site ]
+	);
+
 	const actions: Action< DomainSummary >[] = useMemo(
 		() => [
 			{
@@ -123,6 +149,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'renew',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -147,6 +174,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'setup',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -160,6 +188,21 @@ export const useActions = ( {
 				isEligible: ( item: DomainSummary ) =>
 					item.subtype.id === DomainSubtype.DOMAIN_CONNECTION &&
 					item.domain_status.id === DomainStatus.CONNECTION_ERROR,
+			},
+			{
+				id: 'change-primary-domain',
+				isPrimary: true,
+				/* translators: Row action on the primary site address that opens the dialog to pick another one. */
+				label: __( 'Change primary' ),
+				callback: ( items: DomainSummary[] ) => {
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'change-primary-domain',
+						layout,
+						domain: items[ 0 ].domain,
+					} );
+					onChangePrimaryDomain?.();
+				},
+				isEligible: ( item: DomainSummary ) => !! onChangePrimaryDomain && item.primary_domain,
 			},
 			{
 				id: 'manage-domain',
@@ -176,6 +219,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-domain',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -190,6 +234,7 @@ export const useActions = ( {
 						params: {
 							domainName: domain.domain,
 						},
+						search: site ? { back_to: 'site-domains' } : undefined,
 					} );
 				},
 				isEligible: ( item: DomainSummary ) => {
@@ -205,6 +250,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-dns-settings',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -212,6 +258,33 @@ export const useActions = ( {
 						to: domainDnsRoute.fullPath,
 						params: {
 							domainName: domain.domain,
+						},
+					} );
+				},
+				isEligible: ( item: DomainSummary ) => {
+					return (
+						item.subtype.id === DomainSubtype.DOMAIN_CONNECTION ||
+						item.subtype.id === DomainSubtype.DOMAIN_REGISTRATION
+					);
+				},
+			},
+			{
+				id: 'add-mailbox',
+				label: __( 'Add mailbox' ),
+				supportsBulk: false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'add-mailbox',
+						layout,
+						domain: domain.domain,
+					} );
+
+					router.navigate( {
+						to: chooseEmailSolutionRoute.fullPath,
+						params: {
+							domain: domain.domain,
 						},
 					} );
 				},
@@ -232,6 +305,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'set-primary-site-address',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -299,6 +373,71 @@ export const useActions = ( {
 				disabled: isSettingPrimaryDomain,
 			},
 			{
+				id: 'set-www-primary-site-address',
+				label: __( 'Set www as primary' ),
+				modalHeader: __( 'Use the “www” address as primary?' ),
+				supportsBulk: false,
+				callback: noop,
+				RenderModal: ( { items, closeModal = noop } ) => (
+					<>
+						<ComponentViewTracker
+							eventName="calypso_dashboard_domains_action_click"
+							properties={ {
+								action: 'set-www-primary-site-address',
+								layout,
+								domain: items[ 0 ].domain,
+							} }
+						/>
+						<WwwPrimaryDomainModal domain={ items[ 0 ] } onClose={ closeModal } />
+					</>
+				),
+				isEligible: ( item: DomainSummary ) => canToggleWwwPrimary( item ) && ! item.primary_is_www,
+			},
+			{
+				id: 'unset-www-primary-site-address',
+				label: __( 'Unset www as primary' ),
+				supportsBulk: false,
+				callback: ( items: DomainSummary[] ) => {
+					const domain = items[ 0 ];
+
+					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
+						action: 'unset-www-primary-site-address',
+						layout,
+						domain: domain.domain,
+					} );
+
+					const processingNoticeId = `unset-www-primary-${ domain.domain }`;
+
+					createInfoNotice( __( 'Updating primary site address…' ), {
+						id: processingNoticeId,
+						type: 'snackbar',
+						isDismissible: false,
+					} );
+
+					setWwwPrimaryDomain(
+						{ siteId: domain.blog_id, domain: domain.domain, enabled: false },
+						{
+							onSettled: () => {
+								removeNotice( processingNoticeId );
+							},
+							onSuccess: () => {
+								createSuccessNotice(
+									sprintf(
+										/* translators: %s is the domain name */
+										__( '%s is now the primary site address.' ),
+										domain.domain
+									),
+									{ type: 'snackbar' }
+								);
+							},
+						}
+					);
+				},
+				isEligible: ( item: DomainSummary ) =>
+					canToggleWwwPrimary( item ) && !! item.primary_is_www,
+				disabled: isSettingWwwPrimaryDomain,
+			},
+			{
 				id: 'transfer-domain',
 				label: __( 'Transfer to WordPress.com' ),
 				supportsBulk: false,
@@ -307,6 +446,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'transfer-domain',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -340,6 +480,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'connect-to-site',
+						layout,
 						domain: domain.domain,
 					} );
 
@@ -372,7 +513,7 @@ export const useActions = ( {
 						<Suspense fallback={ null }>
 							<ComponentViewTracker
 								eventName="calypso_dashboard_domains_action_click"
-								properties={ { action: 'change-site-address', domain: items[ 0 ].domain } }
+								properties={ { action: 'change-site-address', layout, domain: items[ 0 ].domain } }
 							/>
 							<SiteChangeAddressContent
 								site={ site }
@@ -394,6 +535,7 @@ export const useActions = ( {
 
 					recordTracksEvent( 'calypso_dashboard_domains_action_click', {
 						action: 'manage-contact-info',
+						layout,
 						domain: domains[ 0 ].domain,
 					} );
 
@@ -429,7 +571,7 @@ export const useActions = ( {
 					<>
 						<ComponentViewTracker
 							eventName="calypso_dashboard_domains_action_click"
-							properties={ { action: 'manage-auto-renew', domain: items[ 0 ].domain } }
+							properties={ { action: 'manage-auto-renew', layout, domain: items[ 0 ].domain } }
 						/>
 						<AutoRenewModal
 							items={ items }
@@ -449,11 +591,19 @@ export const useActions = ( {
 			purchases,
 			setPrimaryDomain,
 			isSettingPrimaryDomain,
+			setWwwPrimaryDomain,
+			isSettingWwwPrimaryDomain,
 			createSuccessNotice,
 			createErrorNotice,
+			createInfoNotice,
+			removeNotice,
 			sitesByBlogId,
 			sslActiveByDomain,
+			canToggleWwwPrimary,
 			recordTracksEvent,
+			layout,
+			site,
+			onChangePrimaryDomain,
 		]
 	);
 

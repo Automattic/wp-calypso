@@ -3,6 +3,11 @@ import { ImageStudioMode } from '../types';
 import { trackImageStudioError } from '../utils/tracking';
 import { useImageStudioErrorTracking } from './use-image-studio-error-tracking';
 
+// The package root loads the whole chat; the real tracking module only needs its credits helpers.
+jest.mock( '@automattic/agents-manager', () =>
+	jest.requireActual( '@automattic/agents-manager/src/utils/credits' )
+);
+
 jest.mock( '../utils/tracking', () => ( {
 	...jest.requireActual( '../utils/tracking' ),
 	trackImageStudioError: jest.fn(),

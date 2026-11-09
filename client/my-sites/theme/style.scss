@@ -371,8 +371,11 @@ $button-border: 4px;
 	$iframe-viewport-height: 1040px;
 	$iframe-viewport-height-scaled: calc( $iframe-viewport-height / 2 );
 	min-height: $iframe-viewport-height-scaled;
-	padding: 0 24px;
 	box-sizing: border-box;
+
+	@include breakpoint-deprecated( '<960px' ) {
+		padding-inline: 24px;
+	}
 
 	.theme-preview__frame-wrapper {
 		max-height: 100vw;
@@ -383,8 +386,6 @@ $button-border: 4px;
 		}
 
 		@include breakpoint-deprecated( '>960px' ) {
-			padding: auto;
-
 			max-height: calc( 100vh - var( --masterbar-height ) );
 
 			.theme-preview__frame {

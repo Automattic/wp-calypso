@@ -642,4 +642,149 @@ describe( 'homepage section presentation', () => {
 		expect( flights() ).toHaveLength( 0 );
 		expect( roots[ 0 ].querySelector< HTMLElement >( '#welcome' )!.style.visibility ).toBe( '' );
 	} );
+
+	it( 'keeps rendering after the user takes the camera during a section follow', async () => {
+		// Stacked at 480 px the story page lands at y = 64; a 100 px viewport keeps
+		// it past the follow threshold (55 % of the height), so the camera glides.
+		const viewport = document.querySelector< HTMLElement >( '.preview-viewport' )!;
+		Object.defineProperty( viewport, 'clientWidth', { configurable: true, value: 480 } );
+		Object.defineProperty( viewport, 'clientHeight', { configurable: true, value: 100 } );
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		Object.defineProperty( scene, 'offsetHeight', { configurable: true, value: 4000 } );
+		const hours =
+			'<section id="hours"><h2>Opening hours</h2><p>Tuesday to Sunday, seven to three.</p></section>';
+		const cakes =
+			'<section id="cakes"><h2>Cakes to order</h2><p>Three days ahead, please.</p></section>';
+		const story = ( revision: number, extra: string ) =>
+			send( {
+				type: 'render',
+				route: '/story/',
+				revision,
+				title: 'Story',
+				epoch: '1:1',
+				html: preparePreviewDocument( first.replace( '</main>', `${ extra }</main>` ) )!.html,
+			} );
+		send( {
+			type: 'render',
+			route: '/',
+			revision: 1,
+			ready: true,
+			title: 'Home',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		story( 1, '' );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		expect( scene.dataset.presentation ).toBe( 'showcase' );
+		story( 2, hours );
+		await jest.advanceTimersByTimeAsync( 100 );
+		viewport.dispatchEvent( new Event( 'wheel' ) );
+		await jest.advanceTimersByTimeAsync( 2000 );
+		story( 3, hours + cakes );
+		await jest.advanceTimersByTimeAsync( 2000 );
+		expect( roots[ 1 ].textContent ).toContain( 'Cakes to order' );
+	} );
+
+	async function showcaseWithStory() {
+		send( {
+			type: 'render',
+			route: '/',
+			revision: 1,
+			ready: true,
+			title: 'Home',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		send( {
+			type: 'render',
+			route: '/story/',
+			revision: 1,
+			title: 'Story',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		await jest.advanceTimersByTimeAsync( 5000 );
+		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
+			'showcase'
+		);
+	}
+
+	function tourMessages() {
+		return port.postMessage.mock.calls
+			.map( ( [ message ] ) => message )
+			.filter( ( message ) => message.type === 'tour' );
+	}
+
+	it( 'drops the chip highlight when the user scrolls away', async () => {
+		await showcaseWithStory();
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		send( { type: 'focus', route: '/story/' } );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
+		expect( tourMessages().pop() ).toMatchObject( { title: 'Story' } );
+		document.querySelector( '.preview-viewport' )!.dispatchEvent( new Event( 'wheel' ) );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( false );
+		expect( tourMessages().pop() ).toMatchObject( { title: null } );
+	} );
+
+	it( 'lets a walk that starts after a chip tap keep its highlight past the chip timer', async () => {
+		await showcaseWithStory();
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		send( { type: 'focus', route: '/story/' } );
+		send( { type: 'config', active: true, generating: true, complete: false, finishing: true } );
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
+		await jest.advanceTimersByTimeAsync( 12000 );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
+		expect( tourMessages().pop().title ).not.toBeNull();
+	} );
+
+	it( 'releases buffered companion pages for the walk when the host is finishing without a ready homepage', async () => {
+		send( {
+			type: 'render',
+			route: '/',
+			revision: 1,
+			title: 'Home',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		send( { type: 'config', active: true, generating: true, complete: false } );
+		send( {
+			type: 'render',
+			route: '/story/',
+			revision: 1,
+			title: 'Story',
+			epoch: '1:1',
+			html: preparePreviewDocument( first )!.html,
+		} );
+		await jest.advanceTimersByTimeAsync( 3000 );
+		const story = document.querySelectorAll< HTMLElement >( '.preview-page' )[ 1 ];
+		expect( story.hidden ).toBe( true );
+		send( { type: 'config', active: true, generating: true, complete: false, finishing: true } );
+		await jest.advanceTimersByTimeAsync( 6000 );
+		expect( story.hidden ).toBe( false );
+		expect( document.querySelector< HTMLElement >( '.preview-scene' )!.dataset.presentation ).toBe(
+			'showcase'
+		);
+	} );
+
+	it( 'starts the idle walk even while re-renders that change nothing keep arriving', async () => {
+		await showcaseWithStory();
+		const scene = document.querySelector< HTMLElement >( '.preview-scene' )!;
+		for ( let revision = 2; revision <= 5; revision++ ) {
+			await jest.advanceTimersByTimeAsync( 2000 );
+			send( {
+				type: 'render',
+				route: '/story/',
+				revision,
+				title: 'Story',
+				epoch: '1:1',
+				html: preparePreviewDocument( first )!.html,
+			} );
+		}
+		await jest.advanceTimersByTimeAsync( 1000 );
+		expect( scene.classList.contains( 'is-touring' ) ).toBe( true );
+		expect( tourMessages().pop().title ).not.toBeNull();
+	} );
 } );

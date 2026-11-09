@@ -106,7 +106,7 @@ export default function MailboxesReady() {
 					) }
 				</Text>
 			) }
-			{ emails.length && (
+			{ emails.length > 0 && (
 				<ItemGroup className="mailboxes-ready__item-group" isBordered isSeparated>
 					{ emails.map( ( email: EmailBox ) => (
 						<Item key={ email.mailbox }>

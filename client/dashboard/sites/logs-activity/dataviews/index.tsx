@@ -24,7 +24,7 @@ import type { Activity } from '../../../components/logs-activity/types';
 import type { SiteLogsDataViewsProps } from '../../logs/dataviews';
 import './style.scss';
 
-type SiteLogsDataViewsPropsActivity = SiteLogsDataViewsProps & {
+type SiteActivityLogsDataViewsProps = SiteLogsDataViewsProps & {
 	logType: typeof LogType.ACTIVITY;
 	hasActivityLogsAccess: boolean;
 	// View state deep-linked via the URL, read from the active route's search.
@@ -41,7 +41,7 @@ function SiteActivityLogsDataViews( {
 	dateRangeVersion,
 	hasActivityLogsAccess,
 	searchParams,
-}: SiteLogsDataViewsPropsActivity ) {
+}: SiteActivityLogsDataViewsProps ) {
 	const { recordTracksEvent } = useAnalytics();
 	const locale = useLocale();
 

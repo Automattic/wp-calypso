@@ -33,7 +33,7 @@
 }
 
 .image-editor__toolbar-button {
-	background: color-mix(in srgb, var(--color-surface) 0%, transparent);
+	background: none;
 	border: none;
 	color: var(--color-text-inverted);
 	margin: 0 10px;

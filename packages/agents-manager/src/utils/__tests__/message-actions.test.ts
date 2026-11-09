@@ -1,4 +1,4 @@
-import { withComputedActions } from '../message-actions';
+import { withComputedActions, withDisabledActions } from '../message-actions';
 import type { UIMessageAction } from '@automattic/agenttic-client';
 
 function action( id: string, order?: number ) {
@@ -32,5 +32,22 @@ describe( 'withComputedActions', () => {
 		const message = { actions: [ action( 'share' ) ] };
 
 		expect( withComputedActions( message, [] ) ).toBe( message );
+	} );
+} );
+
+describe( 'withDisabledActions', () => {
+	it( 'disables button and component actions', () => {
+		const component = {
+			type: 'component',
+			id: 'checkpoint',
+			component: jest.fn(),
+		} as UIMessageAction;
+
+		const { actions } = withDisabledActions( { actions: [ action( 'feedback-up' ), component ] } );
+
+		expect( actions ).toEqual( [
+			expect.objectContaining( { id: 'feedback-up', disabled: true } ),
+			expect.objectContaining( { id: 'checkpoint', componentProps: { disabled: true } } ),
+		] );
 	} );
 } );

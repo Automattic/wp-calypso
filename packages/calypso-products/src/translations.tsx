@@ -2033,6 +2033,9 @@ export const getJetpackProductsBenefits = (): Record< string, Array< TranslateRe
 		),
 		translate( 'Supports automatic rebilling on failed subscription payments' ),
 		translate( 'Give subscribers the ability to manage their own plan' ),
+		translate(
+			'Allow shoppers to gift subscriptions to each other, helping you reach new shoppers and grow recurring revenue with less effort'
+		),
 		translate( 'Built-in renewal notifications and automatic emails' ),
 		translate(
 			'Detailed reports allow you to keep track of recurring revenue, the number of active subscribers, and more'

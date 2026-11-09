@@ -31,7 +31,6 @@ const baseProps: DocumentProps = {
 	},
 	env: 'development',
 	featuresHelper: false,
-	feedbackURL: '',
 	head: { title: 'Test', metas: [], links: [] },
 	i18nLocaleScript: '',
 	initialQueryState: null,
@@ -73,6 +72,20 @@ describe( 'Document LoadingPlaceholder', () => {
 		expect( html ).not.toContain( 'wpcom-site__logo' );
 		expect( html ).toContain( 'wpcom-loading__boot' );
 	} );
+
+	it( 'shows the Woo logo in the stepper loader on the Playground step with the WooCommerce intent', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } isPlaygroundWoo /> );
+
+		expect( html ).toContain( 'woo-top-bar-logo' );
+		expect( html ).not.toContain( 'step-container-v2__top-bar-wordpress-logo' );
+	} );
+
+	it( 'shows the WordPress.com logo in the stepper loader on the Playground step without the WooCommerce intent', () => {
+		const html = renderToStaticMarkup( <Document { ...baseProps } isPlaygroundWoo={ false } /> );
+
+		expect( html ).not.toContain( 'woo-top-bar-logo' );
+		expect( html ).toContain( 'step-container-v2__top-bar-wordpress-logo' );
+	} );
 } );
 
 describe( 'Document RTL CSS handling', () => {
@@ -94,7 +107,6 @@ describe( 'Document RTL CSS handling', () => {
 			<Document
 				{ ...baseProps }
 				badge="dev"
-				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
 				lang="ar"
 				entrypoint={ {
 					...baseProps.entrypoint,
@@ -117,7 +129,6 @@ describe( 'Document RTL CSS handling', () => {
 			<Document
 				{ ...baseProps }
 				badge="dev"
-				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
 				lang="ar"
 				entrypoint={ {
 					...baseProps.entrypoint,
@@ -136,13 +147,7 @@ describe( 'Document RTL CSS handling', () => {
 	it( 'renders the helper in LTR dev mode so it can appear after a runtime RTL switch', () => {
 		delete process.env.BUILD_RTL_CSS;
 
-		const html = renderToStaticMarkup(
-			<Document
-				{ ...baseProps }
-				badge="dev"
-				feedbackURL="https://github.com/Automattic/wp-calypso/issues/"
-			/>
-		);
+		const html = renderToStaticMarkup( <Document { ...baseProps } badge="dev" /> );
 
 		expect( html ).toContain( 'var RTL_CSS_ENABLED = false' );
 		expect( html ).toContain( 'RTLCSS off: set BUILD_RTL_CSS=true' );

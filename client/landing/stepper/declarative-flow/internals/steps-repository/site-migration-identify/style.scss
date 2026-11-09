@@ -1,3 +1,4 @@
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/variables';
 @import '@automattic/onboarding/styles/mixins';
@@ -84,58 +85,60 @@
 	}
 }
 
-.import__site-identify-hosting-details {
-	background-color: #f6f7f7;
-	box-sizing: border-box;
-	display: flex;
-	flex-direction: column;
-	gap: 1.25rem;
-	margin: 40px auto 0 auto;
-	max-width: 368px;
-	padding: 1.5rem;
-
-	&--title {
-		color: var( --studio-gray-100 );
-		font-size: 1.25rem;
-		font-weight: 500;
-	}
-
-	&--list {
-		display: flex;
-		flex-direction: column;
-		gap: 1.25rem;
-
-		&-item {
-			display: flex;
-			flex-direction: column;
-			gap: 0.25rem;
-
-			&-description {
-				color: var( --studio-gray-60 );
-				font-size: 0.875rem;
-				font-weight: 400;
-				letter-spacing: -0.16px;
-			}
-
-			&-title {
-				color: var( --studio-gray-70 );
-				font-size: 1rem;
-				font-weight: 500;
-				letter-spacing: -0.32px;
-			}
-		}
-	}
-}
-
 .step-container-v2:has( .step-container-v2--site-migration-identify ) {
 	.import__capture-container {
 		max-width: 100%;
 		margin: unset;
 	}
 
-	.checklist-card {
-		margin: 40px auto 0;
-		max-width: 100%;
+	// The account template's form: Calypso's default label and input, then 16px to the CTA.
+	.import__capture {
+		.form-label {
+			margin-block-end: 5px;
+			font-size: $font-body-small;
+			font-weight: 600;
+			line-height: 1.5;
+			color: var( --studio-gray-80 );
+		}
+
+		.form-fieldset {
+			margin-block-end: 1rem;
+		}
+
+		input[type='text'].form-text-input {
+			box-sizing: border-box;
+			height: 40px;
+			padding: 0 14px;
+			border-radius: 2px;
+			font-size: $font-body;
+			border-color: var( --studio-gray-10 );
+
+			&.is-error {
+				border-color: var( --color-error );
+			}
+		}
+
+		button[type='submit'] {
+			height: 40px;
+			border-radius: 2px;
+			font-size: $font-size-medium;
+		}
+
+		// Mirrors .account-template__secondary-actions: capture-input is shared with the importer.
+		.action-buttons__importer-list {
+			margin-block-start: 8px;
+			padding-block: 10px;
+			text-align: center;
+			font-size: $font-body-small;
+			line-height: 20px;
+
+			button {
+				font-size: inherit;
+				font-weight: 500;
+				line-height: inherit;
+				color: var( --studio-gray-90 );
+			}
+		}
 	}
 }
 
@@ -148,85 +151,12 @@
 		}
 	}
 
-	.step-container-v2__heading {
-		h1 {
-			letter-spacing: 0.2px;
-			line-height: 1.18;
-		}
-
-		p {
-			margin-top: 24px;
-			font-size: 0.875rem;
-			line-height: 1.43;
-		}
-	}
-
-	.site-migration-identify--reprint {
-		max-width: 464px;
-
-		&.site-migration-identify--checking,
-		&.site-migration-identify--connection-issue {
-			max-width: 660px;
-		}
-	}
-
 	.step-container-v2__top-bar-wordpress-logo--wordmark {
 		height: 18px;
 	}
 
-	.step-container-v2__back-button {
-		text-decoration: none;
-		font-weight: 400;
-	}
-
-	.import__capture {
-		.form-label {
-			margin-bottom: 12px;
-			font-size: $font-size-medium;
-			line-height: 1.54;
-			color: var( --color-neutral-100 );
-		}
-
-		.form-fieldset {
-			margin-bottom: 12px;
-		}
-
-		input[type='text'].form-text-input {
-			box-sizing: border-box;
-			height: 40px;
-			padding: 0 12px;
-			border-radius: 2px;
-			font-size: $font-size-medium;
-			border-color: var( --color-neutral-40 );
-
-			&.is-error {
-				border-color: var( --color-error );
-			}
-		}
-
-		.form-setting-explanation:not( :has( .is-error ) ) {
-			display: none;
-		}
-
-		button[type='submit'] {
-			height: 40px;
-			border-radius: 2px;
-			font-size: $font-size-medium;
-		}
-
-		.action-buttons__importer-list {
-			margin-top: 12px;
-			text-align: start;
-			font-size: $font-size-medium;
-			line-height: 1.54;
-			color: var( --color-neutral-100 );
-
-			button {
-				font-size: inherit;
-				line-height: inherit;
-				color: var( --color-link );
-			}
-		}
+	.import__capture .form-setting-explanation:not( :has( .is-error ) ) {
+		display: none;
 	}
 
 	.site-migration-identify__analysis-error {
@@ -335,27 +265,5 @@
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10px;
-	}
-
-	.site-migration-identify__progress-bar {
-		width: 100%;
-		height: 4px;
-		background: var( --color-neutral-5 );
-
-		> div {
-			background: var( --color-link );
-		}
-	}
-}
-
-.step-container-v2:has( .site-migration-identify--connection-issue ) .step-container-v2__heading {
-	width: 100%;
-	max-width: 660px;
-
-	p {
-		max-width: 432px;
-		margin-inline: auto;
-		color: var( --color-neutral-60 );
-		letter-spacing: -0.32px;
 	}
 }

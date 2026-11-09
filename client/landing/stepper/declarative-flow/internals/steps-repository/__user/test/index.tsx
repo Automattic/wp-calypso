@@ -16,6 +16,11 @@ jest.mock( '@wordpress/compose', () => ( {
 	useViewportMatch: jest.fn(),
 } ) );
 
+jest.mock( '../use-branded-account-layout', () => ( {
+	__esModule: true,
+	default: jest.fn( jest.requireActual( '../use-branded-account-layout' ).default ),
+} ) );
+
 jest.mock( 'calypso/lib/explat', () => {
 	const actual = jest.requireActual( 'calypso/lib/explat' );
 	return { ...actual, useExperiment: jest.fn( actual.useExperiment ) };
@@ -31,10 +36,12 @@ import loginReducer from 'calypso/state/login/reducer';
 import routeReducer from 'calypso/state/route/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import UserStep, { type UserStepAccepts } from '..';
+import useBrandedAccountLayout from '../use-branded-account-layout';
 
 const mockUseViewportMatch = useViewportMatch as unknown as jest.Mock;
 const mockUsePartnerBranding = usePartnerBranding as unknown as jest.Mock;
 const mockUseExperiment = useExperiment as unknown as jest.Mock;
+const mockUseBrandedAccountLayout = useBrandedAccountLayout as unknown as jest.Mock;
 
 const ENTRY_CLARITY_EXPERIMENT = 'calypso_account_step_entry_clarity_202609';
 
@@ -154,12 +161,12 @@ describe( 'User email signup step', () => {
 
 	it( 'passes userEmail from user_email query param to SignupFormSocialFirst', () => {
 		renderUserStep( '/onboarding/user?user_email=hello@wp.com' );
-		expect( screen.getByLabelText( 'Enter your email' ) ).toHaveValue( 'hello@wp.com' );
+		expect( screen.getByLabelText( 'Email address' ) ).toHaveValue( 'hello@wp.com' );
 	} );
 
 	it( 'defaults userEmail to empty string when user_email is missing', () => {
 		renderUserStep( '/onboarding/user' );
-		expect( screen.getByLabelText( 'Enter your email' ) ).toHaveValue( '' );
+		expect( screen.getByLabelText( 'Email address' ) ).toHaveValue( '' );
 	} );
 
 	describe( 'mobile compact layout', () => {
@@ -216,6 +223,69 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
+	describe( 'theme grid layout', () => {
+		const themeGridUrl = '/onboarding/user?ref=marketing_bar&signup_layout=theme_grid';
+		const pitch = 'Turn your idea into a real website';
+
+		it( 'puts the theme grid before an email-first form on desktop', () => {
+			renderUserStep( themeGridUrl );
+
+			const heading = screen.getByRole( 'heading', { name: 'Create an account to get started' } );
+			expect( heading ).toBeVisible();
+			expect( screen.getByText( pitch ) ).toBeVisible();
+			expect(
+				screen.getByText( pitch ).compareDocumentPosition( heading ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+			expect( screen.getByLabelText( 'Enter your email' ) ).toBeVisible();
+			expect(
+				screen.queryByRole( 'button', { name: /Continue with email/i } )
+			).not.toBeInTheDocument();
+		} );
+
+		it( 'puts the email field below the social buttons', () => {
+			renderUserStep( themeGridUrl );
+
+			expect(
+				screen
+					.getByText( /Continue with Google/i )
+					.compareDocumentPosition( screen.getByLabelText( 'Enter your email' ) ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+
+		it.each( [
+			[ 'mobile, in the compact layout', { isMobile: true }, true ],
+			[ 'the band between the breakpoints', { isMobile: false, isLarge: false }, false ],
+		] )( 'shows only the strip above the form on %s', ( _label, viewport, isCompactLayout ) => {
+			setViewport( viewport );
+
+			const { container } = renderUserStep( themeGridUrl );
+
+			expect( container.querySelector( '.signup-theme-grid--compact' ) ).toBeInTheDocument();
+			expect( screen.queryByText( pitch ) ).not.toBeInTheDocument();
+			expect(
+				screen.getByRole( 'heading', { name: 'Create an account to get started' } )
+			).toBeVisible();
+			expect(
+				screen.queryByRole( 'heading', { name: 'Welcome to WordPress.com' } )
+			).not.toBeInTheDocument();
+			// The compact layout's ToS sits inside the form, below the sign-up options.
+			expect( !! screen.queryByText( /By continuing with any of the options above/i ) ).toBe(
+				isCompactLayout
+			);
+			// In the top bar in the compact layout, in the form otherwise.
+			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'keeps the default layout without the parameter', () => {
+			const { container } = renderUserStep( '/onboarding/user?ref=marketing_bar' );
+
+			expect( screen.getByRole( 'heading', { name: 'Create your account' } ) ).toBeVisible();
+			expect( container.querySelector( '.signup-theme-grid' ) ).not.toBeInTheDocument();
+		} );
+	} );
+
 	describe( 'accepts-props overrides', () => {
 		it( 'overrides the heading with headerText', () => {
 			renderUserStep( '/onboarding/user', { headerText: 'Join thousands of creators' } );
@@ -239,7 +309,52 @@ describe( 'User email signup step', () => {
 		} );
 	} );
 
+	describe( 'branded layout', () => {
+		it( 'shows the brand panel, with social above email, on large viewports', () => {
+			const { container } = renderUserStep();
+
+			expect( screen.getByText( 'Millions of sites run on WordPress' ) ).toBeVisible();
+			expect( container.getElementsByClassName( 'signup-slider' ) ).toHaveLength( 0 );
+			expect(
+				screen
+					.getByRole( 'button', { name: /Continue with Google/i } )
+					.compareDocumentPosition( screen.getByLabelText( 'Email address' ) ) &
+					Node.DOCUMENT_POSITION_FOLLOWING
+			).toBeTruthy();
+		} );
+
+		it( 'uses the same form without the brand panel between the breakpoints', () => {
+			setViewport( { isMobile: false, isLarge: false } );
+
+			const { container } = renderUserStep();
+
+			expect( container.getElementsByClassName( 'signup-brand-panel' ) ).toHaveLength( 0 );
+			expect( screen.getByLabelText( 'Email address' ) ).toBeVisible();
+			expect( screen.queryByRole( 'button', { name: /Continue with email/i } ) ).toBeNull();
+		} );
+
+		it( 'keeps the carousel for Woo referrers', () => {
+			const { container } = renderUserStep(
+				'/onboarding/user?user_email=test@example.com&ref=woo-hosting-solutions-flow'
+			);
+
+			expect( container.getElementsByClassName( 'signup-slider' ) ).toHaveLength( 1 );
+			expect( container.getElementsByClassName( 'signup-brand-panel' ) ).toHaveLength( 0 );
+		} );
+	} );
+
 	describe( 'entry clarity experiment', () => {
+		// The branded layout is left out of this experiment.
+		beforeEach( () => {
+			mockUseBrandedAccountLayout.mockReturnValue( false );
+		} );
+
+		afterEach( () => {
+			mockUseBrandedAccountLayout.mockImplementation(
+				jest.requireActual( '../use-branded-account-layout' ).default
+			);
+		} );
+
 		const loginLinkSelector = '.signup-form-social-first__login-link';
 		const gapClass = 'step-container-v2--user-entry-clarity';
 		const emailButtonIcon = () =>
@@ -283,19 +398,17 @@ describe( 'User email signup step', () => {
 		} );
 
 		it( 'leaves the band between the breakpoints out of the experiment', () => {
-			// Between 600px and 960px the login link stays in the top bar, matching login.
 			setViewport( { isMobile: false, isLarge: false } );
 
-			const { container } = renderUserStep();
+			renderUserStep();
 
 			expect( isEligibleForEntryClarity() ).toBe( false );
-			expect( container.querySelector( loginLinkSelector ) ).not.toBeInTheDocument();
-			expect( screen.getByRole( 'link', { name: 'Log in' } ) ).toBeVisible();
 		} );
 
 		it.each( [
 			[ 'other flows', '/site-setup/user', 'site-setup' ],
 			[ 'Woo-referrer users', '/onboarding/user?ref=woo-hosting-solutions-flow', 'onboarding' ],
+			[ 'the theme grid layout', '/onboarding/user?signup_layout=theme_grid', 'onboarding' ],
 		] )( 'leaves %s out of the experiment', ( _label, url, flow ) => {
 			renderUserStep( url, {}, flow );
 

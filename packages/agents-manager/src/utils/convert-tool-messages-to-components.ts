@@ -4,9 +4,10 @@ import ChatResponseRenderedTracker, {
 } from '../components/chat-response-tracking';
 import { EscalationButton } from '../components/escalation-button';
 import OpenHelpCenterButton from '../components/open-help-center-button';
+import { ButtonPicker, ColorPicker, FontPicker } from '../components/style-pickers';
 import { isContextOnlyMessage } from './context-only-message';
 import { getLatestUserMessageIndex } from './latest-message';
-import lazyComponent from './lazy-component';
+import { withLazyBoundary } from './lazy-component';
 import { isShowComponentTool } from './show-component-tools';
 import { isChatUiStale } from './stale-chat-ui';
 import {
@@ -37,20 +38,13 @@ type AmComponentType = ShowComponentType | typeof OPEN_HELP_CENTER_BUTTON_TYPE;
 
 // AM-owned components by type. These take precedence over provider
 // components — AM is the single source of truth for each of these types.
-//
-// The pickers carry the block-editor preview stack, so they load on demand:
-// a picker row fetches its chunk when it first renders, and other chats never
-// download it. The Help Center button is a plain button and ships inline.
+// The pickers load on demand, and `withLazyBoundary()` gives them the
+// `Suspense` and error boundary a surface would; the Help Center button
+// ships inline.
 const AM_COMPONENTS: Record< AmComponentType, React.ComponentType > = {
-	'button-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-button-picker" */ '../components/button-picker' )
-	),
-	'color-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-color-picker" */ '../components/color-picker' )
-	),
-	'font-picker': lazyComponent(
-		() => import( /* webpackChunkName: "am-font-picker" */ '../components/font-picker' )
-	),
+	'button-picker': withLazyBoundary( ButtonPicker ),
+	'color-picker': withLazyBoundary( ColorPicker ),
+	'font-picker': withLazyBoundary( FontPicker ),
 	'open-help-center-button': OpenHelpCenterButton,
 };
 
@@ -230,6 +224,16 @@ function followsTerminalApplyBlockEditsOutcome(
 }
 
 /**
+ * Drops a message's narration after a terminal block-edit outcome, but keeps a component beside it,
+ * such as an interactive UI surface.
+ */
+function withoutNarration( message: UIMessage ): UIMessage[] {
+	const content = message.content.filter( ( part ) => part.type === 'component' );
+
+	return content.length > 0 ? [ { ...message, content } ] : [];
+}
+
+/**
  * Converts tool-related messages to component messages.
  */
 export default function convertToolMessagesToComponents( {
@@ -298,7 +302,9 @@ export default function convertToolMessagesToComponents( {
 		try {
 			textData = JSON.parse( firstContentText );
 		} catch ( _error ) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		if (
@@ -306,7 +312,9 @@ export default function convertToolMessagesToComponents( {
 			textData === null ||
 			typeof textData.tool_id !== 'string'
 		) {
-			return followsTerminalApplyBlockEditsOutcome( array, index ) ? [] : [ message ];
+			return followsTerminalApplyBlockEditsOutcome( array, index )
+				? withoutNarration( message )
+				: [ message ];
 		}
 
 		// Handle `show-component` tool message

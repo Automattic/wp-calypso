@@ -1,4 +1,4 @@
-@import "@automattic/typography/styles/variables";
+@import '@automattic/typography/styles/variables';
 @import '@wordpress/base-styles/breakpoints';
 @import '@wordpress/base-styles/mixins';
 
@@ -105,7 +105,8 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			padding-inline: 20px;
 		}
 
-		.reader-subscription-list-item {
+		.reader-subscription-list-item,
+		.subscribe-modal__site-card {
 			position: relative;
 			padding: 12px;
 			border: 1px solid var( --color-neutral-5 );
@@ -141,16 +142,10 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 							var( --color-accent ) 8%,
 							var( --color-surface )
 						);
-						border-top: 1px solid color-mix(
-							in srgb,
-							var( --color-accent ) 25%,
-							var( --color-surface )
-						);
-						border-right: 1px solid color-mix(
-							in srgb,
-							var( --color-accent ) 25%,
-							var( --color-surface )
-						);
+						border-top: 1px solid
+							color-mix( in srgb, var( --color-accent ) 25%, var( --color-surface ) );
+						border-right: 1px solid
+							color-mix( in srgb, var( --color-accent ) 25%, var( --color-surface ) );
 						border-radius: 2px;
 						transform: translate( 50%, -50% ) rotate( 45deg );
 					}
@@ -213,6 +208,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		// The modal is fixed at 980px wide (clamped to 100vw below that).
 		// Show the preview column whenever the viewport is wide enough to
 		// fit the modal at a reasonable size — roughly 700px+.
+		// `FOUR_FOR_FOUR_PREVIEW_QUERY` in the 4 for 4 modal matches this in JS.
 		@media ( min-width: 700px ) {
 			display: flex;
 		}
@@ -245,45 +241,46 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 		padding: 10px 14px;
 		background-color: var( --color-surface );
 		border-bottom: 1px solid var( --color-border-subtle );
+	}
 
-		.follow-button.has-button-style {
-			box-sizing: border-box;
-			flex-shrink: 0;
-			min-width: 106px;
-			min-height: 36px;
-			padding: 8px 14px;
-			border-radius: 4px;
-			border: 1px solid var( --color-accent );
-			line-height: 18px;
-			transition: none;
-		}
+	// The preview header's Subscribe button, and the 4 for 4 list's on narrow screens.
+	.follow-button.has-button-style {
+		box-sizing: border-box;
+		flex-shrink: 0;
+		min-width: 106px;
+		min-height: 36px;
+		padding: 8px 14px;
+		border-radius: 4px;
+		border: 1px solid var( --color-accent );
+		line-height: 18px;
+		transition: none;
+	}
 
-		// Omit `:focus` here — `box-shadow: none` removed the keyboard focus ring;
-		// global onboarding focus styles in `onboarding-rsm/style.scss` supply it.
-		.follow-button.has-button-style:hover,
-		.follow-button.has-button-style:active {
-			padding: 8px 14px;
-			border-width: 1px;
-			border-radius: 4px;
-			box-shadow: none;
-		}
+	// Omit `:focus` here — `box-shadow: none` removed the keyboard focus ring;
+	// global onboarding focus styles in `onboarding-rsm/style.scss` supply it.
+	.follow-button.has-button-style:hover,
+	.follow-button.has-button-style:active {
+		padding: 8px 14px;
+		border-width: 1px;
+		border-radius: 4px;
+		box-shadow: none;
+	}
 
-		.button.follow-button.has-button-style.is-following,
-		.button.follow-button.has-button-style.is-following:hover {
-			background-color: var( --studio-gray-90, #1e1e1e );
-			border-color: var( --studio-gray-90, #1e1e1e );
+	.button.follow-button.has-button-style.is-following,
+	.button.follow-button.has-button-style.is-following:hover {
+		background-color: var( --studio-gray-90, #1e1e1e );
+		border-color: var( --studio-gray-90, #1e1e1e );
 
-			svg.reader-following-feed {
+		svg.reader-following-feed {
+			fill: var( --studio-white, #fff );
+
+			* {
 				fill: var( --studio-white, #fff );
-
-				* {
-					fill: var( --studio-white, #fff );
-				}
 			}
+		}
 
-			.follow-button__label {
-				color: var( --studio-white, #fff );
-			}
+		.follow-button__label {
+			color: var( --studio-white, #fff );
 		}
 	}
 
@@ -343,7 +340,7 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 			.reader-post-card__post-content {
 				margin-bottom: 0;
 
-				&:not(.reader-post-card__no-excerpt) {
+				&:not( .reader-post-card__no-excerpt ) {
 					align-items: center;
 				}
 			}
@@ -379,7 +376,10 @@ body.is-reader-page .subscribe-modal__preview-column .reader__card.card.is-place
 	// Per-card follow + ellipsis live in `.reader-post-card__post-options`. On `/discover`,
 	// compact cards use `display: flex` there with competing specificity; chaining the modal
 	// frame (both classes exist on the WP modal frame) keeps this scoped and wins in cascade.
-	&.components-modal__frame &__preview-column .reader-post-card.card .reader-post-card__post-options {
+	&.components-modal__frame
+		&__preview-column
+		.reader-post-card.card
+		.reader-post-card__post-options {
 		display: none;
 	}
 

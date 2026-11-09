@@ -327,6 +327,7 @@ describe( '<AIToolsSettings>', () => {
 						blog_id: jetpackSite.ID,
 						site_level_enabled: true,
 						abilities: { 'wpcom-mcp/posts-list': true },
+						remote_groups: { 'read:jetpack-forms': false },
 					},
 				],
 			},
@@ -585,17 +586,15 @@ describe( '<AIToolsSettings>', () => {
 
 		renderAIToolsSettings( '', false, site );
 
-		await waitFor( () => {
-			expect( settingsScope.isDone() ).toBe( true );
-		} );
+		expect( await screen.findByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
+			'agent+atomic-secret@post.wordpress.com'
+		);
 		expect(
 			screen.getByRole( 'checkbox', {
 				name: 'Enable WordPress Agent email address',
 			} )
 		).toBeChecked();
-		expect( screen.getByLabelText( 'WordPress Agent email address' ) ).toHaveValue(
-			'agent+atomic-secret@post.wordpress.com'
-		);
+		expect( settingsScope.isDone() ).toBe( true );
 	} );
 
 	test( 'does not fail the page when Jetpack settings are unavailable', async () => {

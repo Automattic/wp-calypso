@@ -16,7 +16,7 @@ import { Notice } from '../../components/notice';
 import PageDots from '../../components/page-dots';
 import RouterLinkButton from '../../components/router-link-button';
 import { Text } from '../../components/text';
-import NewTabLabel from '../overview/new-tab-label';
+import NewTabLabel from '../components/new-tab-label';
 import glow from './images/tour/glow.jpg';
 import { getOnboardingTourSections } from './sections';
 import type { OnboardingTourLinks, OnboardingTourSectionId } from './sections';
@@ -249,11 +249,7 @@ export default function OnboardingTourModal( {
 														</Text>
 													) ) }
 												</VStack>
-												{ section.hint && (
-													<Notice variant="info" density="high">
-														{ section.hint }
-													</Notice>
-												) }
+												{ section.hint && <Notice variant="info">{ section.hint }</Notice> }
 											</VStack>
 										</div>
 									) ) }

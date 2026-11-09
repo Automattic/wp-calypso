@@ -9,7 +9,7 @@ import { Text } from '../../../components/text';
 import ReferralLogoField from './logo-field';
 import type { ReferralLogo } from './lib/logo';
 
-interface Props {
+interface RequestClientPaymentFormProps {
 	email: string;
 	emailError: string | null;
 	message: string;
@@ -31,7 +31,7 @@ export default function RequestClientPaymentForm( {
 	onEmailChange,
 	onMessageChange,
 	onLogoChange,
-}: Props ) {
+}: RequestClientPaymentFormProps ) {
 	const { recordTracksEvent } = useAnalytics();
 
 	return (

@@ -119,16 +119,17 @@ export const TestDomainSearchWithCart = ( {
 	);
 };
 
-export const TestDomainSearchWithSuggestions: typeof TestDomainSearchWithCart = ( props ) => {
-	const Content = () => {
-		const { isLoading } = useSuggestionsList();
+export const WaitForSuggestions = ( { children }: { children: React.ReactNode } ) => {
+	const { isLoading } = useSuggestionsList();
 
-		return isLoading ? 'LOADING_TEST_CONTENT' : props.children;
-	};
-
-	return (
-		<TestDomainSearchWithCart { ...props }>
-			<Content />
-		</TestDomainSearchWithCart>
-	);
+	return isLoading ? 'LOADING_TEST_CONTENT' : children;
 };
+
+export const TestDomainSearchWithSuggestions: typeof TestDomainSearchWithCart = ( {
+	children,
+	...props
+} ) => (
+	<TestDomainSearchWithCart { ...props }>
+		<WaitForSuggestions>{ children }</WaitForSuggestions>
+	</TestDomainSearchWithCart>
+);

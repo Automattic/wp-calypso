@@ -15,12 +15,14 @@ jest.mock( '../turn-id', () => ( {
 } ) );
 
 import { DOLLY_AGENT_ID } from '../../constants';
+import { getInteractiveUiSession, showInteractiveUiSession } from '../../interactive-ui/session';
 import { createAgentConfig } from '../create-agent-config';
 import { canConnectToZendesk } from '../can-connect-to-zendesk';
 import { clearSiteEditorActions, setSiteEditorAction } from '../site-editor-context';
 import { createCalypsoAuthProvider } from '../../auth/calypso-auth-provider';
 import { getSessionId } from '../agent-session';
 import { getTurnId } from '../turn-id';
+import type { InteractiveUiRuntime } from '@automattic/ai-ui-renderer';
 
 const mockCanConnectToZendesk = canConnectToZendesk as jest.Mock;
 const mockCreateCalypsoAuthProvider = createCalypsoAuthProvider as jest.Mock;
@@ -228,6 +230,44 @@ describe( 'createAgentConfig', () => {
 				loadedProviderIds: [ 'jetpack-ai-sidebar', 'woocommerce-ai' ],
 			} )
 		);
+	} );
+
+	it( 'lists the providers’ interactive UI catalogs in each message’s metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+			interactiveUiCatalogs: [ { catalog: { catalogId: 'urn:woo-ai:v1' } } ],
+		} );
+
+		expect( config.contextProvider?.getMessageMetadata?.() ).toHaveProperty(
+			[ 'a2uiRendererCapabilities', 'v1.0', 'supportedCatalogIds' ],
+			expect.arrayContaining( [ 'urn:woo-ai:v1' ] )
+		);
+		expect( config.contextProvider?.getClientContext() ).not.toHaveProperty(
+			'a2uiRendererCapabilities'
+		);
+	} );
+
+	it( 'sends the shown conversation’s interactive UI data in each message’s metadata', async () => {
+		const config = await createAgentConfig( {
+			sessionId: 'session-1',
+			sessionSiteKey: 'no-site',
+			agentId: DOLLY_AGENT_ID,
+		} );
+
+		const dataModel = { version: 'v1.0', surfaces: { form: { name: 'Ada' } } };
+		const session = getInteractiveUiSession( undefined, 'scope', 'session-1' );
+		session.runtime = { getDataModel: () => dataModel } as unknown as InteractiveUiRuntime;
+
+		const hide = showInteractiveUiSession( session );
+
+		expect( config.contextProvider?.getMessageMetadata?.() ).toEqual( {
+			a2uiRendererCapabilities: expect.any( Object ),
+			a2uiRendererDataModel: dataModel,
+		} );
+
+		hide();
 	} );
 
 	it( 'merges site editor actions into default client context', async () => {

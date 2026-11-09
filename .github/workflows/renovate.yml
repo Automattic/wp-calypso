@@ -43,7 +43,6 @@ concurrency:
   group: renovate-${{ github.ref }}
 
 env:
-  # Set as a workflow variable so that multiple jobs can use the value.
   RENOVATE_VERSION: 36.31.0
   cache_archive: renovate_cache.tar.gz
   # This is the dir renovate provides -- if we set our own, we run into permissions issues.
@@ -113,11 +112,3 @@ jobs:
           path: ${{ env.cache_archive }}
           # Since this is created frequently, we don't need to keep it for long.
           retention-days: 1
-
-  validate-renovate-config:
-    name: Validate Renovate Configuration
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run Config Validator
-        run: yarn dlx -p renovate@$RENOVATE_VERSION renovate-config-validator

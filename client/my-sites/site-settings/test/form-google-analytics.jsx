@@ -24,7 +24,6 @@ import {
 	PLAN_JETPACK_FREE,
 	PLAN_JETPACK_PERSONAL,
 	PLAN_JETPACK_PERSONAL_MONTHLY,
-	PLAN_JETPACK_SECURITY_DAILY,
 } from '@automattic/calypso-products';
 import { render, screen } from '@testing-library/react';
 import { Provider } from 'react-redux';
@@ -147,7 +146,7 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 	);
 
 	test.each( [ PLAN_JETPACK_FREE, PLAN_JETPACK_PERSONAL, PLAN_JETPACK_PERSONAL_MONTHLY ] )(
-		`Jetpack Security for (%s)`,
+		`Jetpack plans page for (%s)`,
 		( product_slug ) => {
 			renderWithStore(
 				<Provider store={ store }>
@@ -157,8 +156,10 @@ describe( 'UpsellNudge should get appropriate plan constant for both forms', () 
 			expect( screen.queryByTestId( 'UpsellNudge' ) ).toBeVisible();
 			expect( UpsellNudge ).toHaveBeenCalled();
 			expect( UpsellNudge.mock.lastCall[ 0 ] ).toEqual(
-				expect.objectContaining( { plan: PLAN_JETPACK_SECURITY_DAILY } )
+				expect.objectContaining( { href: expect.stringMatching( /^\/plans\// ) } )
 			);
+			// A `plan` would open one-click checkout for it instead of following the link.
+			expect( UpsellNudge.mock.lastCall[ 0 ].plan ).toBeUndefined();
 		}
 	);
 } );

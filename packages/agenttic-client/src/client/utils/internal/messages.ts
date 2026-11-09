@@ -64,7 +64,9 @@ export function enhanceMessageWithContext(
 	const contextOnly = message.parts.some(
 		( part ) => part.type === 'text' && part.metadata?.contentType === 'context'
 	);
-	if ( ! contextProvider && ! contextOnly ) {
+	const promptSource = message.metadata?.promptSource;
+	const hasPromptSource = typeof promptSource === 'string' && promptSource !== '';
+	if ( ! contextProvider && ! contextOnly && ! hasPromptSource ) {
 		return message;
 	}
 
@@ -82,6 +84,21 @@ export function enhanceMessageWithContext(
 					? clientContext.flags
 					: {} ),
 				context_only: true,
+			},
+		};
+	}
+	// The prompt source lives in the message's client metadata (see
+	// `SubmitOptions.promptSource`); the server reads it from the context.
+	if ( hasPromptSource ) {
+		const promptSourceId = message.metadata?.promptSourceId;
+		clientContext = {
+			...clientContext,
+			metadata: {
+				...( typeof clientContext.metadata === 'object' && clientContext.metadata !== null
+					? clientContext.metadata
+					: {} ),
+				promptSource,
+				...( typeof promptSourceId === 'string' && promptSourceId !== '' && { promptSourceId } ),
 			},
 		};
 	}
@@ -112,8 +129,17 @@ export async function enhanceMessage(
 	// Then enhance with context (sync)
 	enhancedMessage = enhanceMessageWithContext( enhancedMessage, contextProvider );
 
-	// Remove metadata before sending to agent (metadata is currently only client-side only to manage message timestammps)
+	// The message's own metadata stays on the client, which uses it for timestamps; the agent gets
+	// only what the context provider gives it.
 	const { metadata, ...messageForAgent } = enhancedMessage;
+	let agentMetadata: Record< string, unknown > | undefined;
+	try {
+		agentMetadata = contextProvider?.getMessageMetadata?.();
+	} catch ( error ) {
+		logger( 'Warning: Failed to get message metadata: %s', error );
+	}
 
-	return messageForAgent;
+	return agentMetadata && Object.keys( agentMetadata ).length > 0
+		? { ...messageForAgent, metadata: agentMetadata }
+		: messageForAgent;
 }

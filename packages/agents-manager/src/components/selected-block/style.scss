@@ -1,4 +1,4 @@
-@import '@wordpress/base-styles/variables';
+@use '@wordpress/base-styles/variables' as *;
 
 .agents-manager-selected-block {
 	max-width: 150px;

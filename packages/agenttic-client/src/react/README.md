@@ -115,7 +115,7 @@ await clearAllConversations();
 
 1. **In-Memory Cache**: Active conversations are kept in memory for fast access
 2. **SessionStorage Persistence**: Conversations are serialized and stored in browser sessionStorage
-3. **Efficient Serialization**: Only essential message content is stored — text content, tool call summaries, tool result summaries, and timestamps and metadata
+3. **Efficient Serialization**: Only essential message content is stored — message IDs, text content, tool call summaries, tool result summaries, and timestamps and metadata
 
 ### Automatic Persistence
 

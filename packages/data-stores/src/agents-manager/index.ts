@@ -11,7 +11,6 @@ import { getAgentsManagerState } from './resolvers';
 import * as selectors from './selectors';
 
 export type { State };
-export { persistAgentsManagerState } from './persist-state';
 
 let isRegistered = false;
 

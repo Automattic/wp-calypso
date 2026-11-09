@@ -1,7 +1,7 @@
 /**
  * @jest-environment jsdom
  */
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import wpcom from 'calypso/lib/wp';
 import useModuleDataQuery from '../../hooks/use-module-data-query';
@@ -95,6 +95,27 @@ describe( 'Modules', () => {
 		expect( screen.getByText( 'Blocked spam comments' ) ).toBeInTheDocument();
 	} );
 
+	it( 'stands a placeholder in for a figure that is still loading', () => {
+		moduleStates( { protect: pending(), akismet: ok( 9520 ) } );
+		const { container } = renderModules();
+
+		expect( container.querySelectorAll( '.stats-widget-metric__value-skeleton' ) ).toHaveLength(
+			1
+		);
+		expect( screen.queryByText( '0' ) ).not.toBeInTheDocument();
+		expect( screen.getByText( '9.5K' ) ).toBeInTheDocument();
+	} );
+
+	it( 'tells a screen reader the counts are loading, once, until both have landed', () => {
+		moduleStates( { protect: pending(), akismet: pending() } );
+		const { rerender } = renderModules();
+		expect( screen.getByText( 'Loading…' ) ).toHaveClass( 'screen-reader-text' );
+
+		moduleStates( { protect: ok( 12345 ), akismet: ok( 9520 ) } );
+		rerender( <Modules siteId={ SITE_ID } adminBaseUrl="https://example.com/wp-admin/" /> );
+		expect( screen.queryByText( 'Loading…' ) ).not.toBeInTheDocument();
+	} );
+
 	describe( 'for a user who cannot manage modules', () => {
 		beforeEach( () => canCurrentUser.mockReturnValue( false ) );
 
@@ -124,6 +145,37 @@ describe( 'Modules', () => {
 			expect(
 				screen.queryByRole( 'link', { name: 'Anti-spam insights' } )
 			).not.toBeInTheDocument();
+		} );
+	} );
+
+	describe( 'for an administrator who cannot activate plugins', () => {
+		beforeEach( () =>
+			canCurrentUser.mockImplementation(
+				( _siteId, capability ) => capability !== 'activate_plugins'
+			)
+		);
+
+		it( 'hides the Akismet card rather than an Install button My Jetpack would refuse', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
+			renderModules();
+
+			expect( screen.getByText( 'Blocked login attempts' ) ).toBeInTheDocument();
+			expect( screen.queryByText( 'Blocked spam comments' ) ).not.toBeInTheDocument();
+			expect( screen.queryByRole( 'button', { name: 'Install' } ) ).not.toBeInTheDocument();
+		} );
+
+		it( 'still offers to activate Protect, a module that needs only manage_options', () => {
+			moduleStates( { protect: failed( 'not_active' ), akismet: ok( 9520 ) } );
+			renderModules();
+
+			expect( screen.getByRole( 'button', { name: 'Activate' } ) ).toBeInTheDocument();
+		} );
+
+		it( 'still points an invalid key at the page that fixes it', () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'invalid_key' ) } );
+			renderModules();
+
+			expect( screen.getByRole( 'link', { name: 'Manage Akismet key' } ) ).toBeInTheDocument();
 		} );
 	} );
 
@@ -162,17 +214,70 @@ describe( 'Modules', () => {
 			);
 		} );
 
-		it( 'leaves any other failure to the button, which re-enables itself', async () => {
+		it( 'says what went wrong when the route refuses, and lets them try again', async () => {
 			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_installed' ) } );
-			wpcom.req.post.mockRejectedValueOnce( { code: 'rest_forbidden', status: 403 } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'rest_forbidden',
+				status: 403,
+				message: 'Sorry, you are not allowed to do that.',
+			} );
 			renderModules();
 
 			await userEvent.click( screen.getByRole( 'button', { name: 'Install' } ) );
 
-			await waitFor( () =>
-				expect( screen.getByRole( 'button', { name: 'Install' } ) ).not.toHaveClass( 'is-busy' )
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Sorry, you are not allowed to do that.'
 			);
+			expect( screen.getByRole( 'button', { name: 'Install' } ) ).not.toHaveClass( 'is-busy' );
 			expect( wpcom.req.post ).toHaveBeenCalledTimes( 1 );
+		} );
+
+		it( 'falls back to a generic message when the failure is not a REST error', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_active' ) } );
+			wpcom.req.post.mockRejectedValueOnce(
+				Object.assign( new Error( '500 status code for "POST /site/products/anti-spam"' ), {
+					status: 500,
+				} )
+			);
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Something went wrong. Please try again.'
+			);
+		} );
+
+		it( 'falls back to a generic message for a code whose text is not written for the viewer', async () => {
+			moduleStates( { protect: failed( 'not_active' ), akismet: ok( 12345 ) } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'some_updated',
+				status: 400,
+				message: ' protect: The requested Jetpack module is not supported by your plan.',
+			} );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+
+			expect( await screen.findByRole( 'alert' ) ).toHaveTextContent(
+				'Something went wrong. Please try again.'
+			);
+		} );
+
+		it( 'clears the message when they try again', async () => {
+			moduleStates( { protect: ok( 12345 ), akismet: failed( 'not_active' ) } );
+			wpcom.req.post.mockRejectedValueOnce( {
+				code: 'rest_forbidden',
+				message: 'Sorry, you are not allowed to do that.',
+			} );
+			renderModules();
+
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+			await screen.findByRole( 'alert' );
+			await userEvent.click( screen.getByRole( 'button', { name: 'Activate' } ) );
+
+			expect( screen.queryByRole( 'alert' ) ).not.toBeInTheDocument();
+			expect( wpcom.req.post ).toHaveBeenCalledTimes( 2 );
 		} );
 
 		it.each( [ 'not_installed', 'not_active' ] )(

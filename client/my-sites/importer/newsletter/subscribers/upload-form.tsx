@@ -1,13 +1,14 @@
 import { FormInputValidation } from '@automattic/components';
 import { Subscriber } from '@automattic/data-stores';
 import { localizeUrl } from '@automattic/i18n-utils';
-import { ProgressBar, ExternalLink } from '@wordpress/components';
+import { ExternalLink } from '@wordpress/components';
 import { useSelect, useDispatch } from '@wordpress/data';
 import { createInterpolateElement } from '@wordpress/element';
 import { sprintf } from '@wordpress/i18n';
 import { Icon, cloudUpload } from '@wordpress/icons';
 import { useI18n } from '@wordpress/react-i18n';
-import { useCallback, useState, FormEvent, useEffect } from 'react';
+import { Progress } from '@wordpress/ui';
+import { useCallback, useState, FormEvent, useEffect, useId } from 'react';
 import DropZone from 'calypso/components/drop-zone';
 import FilePicker from 'calypso/components/file-picker';
 import InlineSupportLink from 'calypso/components/inline-support-link';
@@ -28,6 +29,7 @@ type Props = {
 export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextStep }: Props ) {
 	const { __ } = useI18n();
 	const [ selectedFile, setSelectedFile ] = useState< File >();
+	const uploadingId = useId();
 
 	const [ hasImportError, setHasImportError ] = useState( false );
 
@@ -47,7 +49,9 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 	const onSubmit = useCallback(
 		async ( event: FormEvent< HTMLFormElement > ) => {
 			event.preventDefault();
-			selectedFile && importCsvSubscribers( siteId, selectedFile, [], [], true );
+			if ( selectedFile ) {
+				importCsvSubscribers( siteId, selectedFile, [], [], true );
+			}
 		},
 		[ selectedFile, importCsvSubscribers, siteId ]
 	);
@@ -58,7 +62,9 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 		const isValid = isValidExtension( file.name );
 		setHasImportError( false );
 		setIsSelectedFileValid( isValid );
-		isValid && setSelectedFile( file );
+		if ( isValid ) {
+			setSelectedFile( file );
+		}
 	}, [] );
 
 	function isValidExtension( fileName: string ) {
@@ -79,8 +85,16 @@ export default function SubscriberUploadForm( { nextStepUrl, siteId, skipNextSte
 			<div className="subscriber-upload-form__dropzone">
 				<div className="subscriber-upload-form__in-progress">
 					<Icon icon={ cloudUpload } viewBox="4 4 16 16" size={ 16 } />
-					<p>{ __( 'Uploading…' ) }</p>
-					<ProgressBar className="is-larger-progress-bar" />
+					<p id={ uploadingId }>{ __( 'Uploading…' ) }</p>
+					<Progress.Root
+						className="is-larger-progress-bar"
+						aria-labelledby={ uploadingId }
+						value={ null }
+					>
+						<Progress.Track>
+							<Progress.Indicator />
+						</Progress.Track>
+					</Progress.Root>
 				</div>
 			</div>
 		);
