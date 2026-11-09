@@ -2,15 +2,15 @@ import page from '@automattic/calypso-router';
 import { sprintf } from '@wordpress/i18n';
 import { useI18n } from '@wordpress/react-i18n';
 import * as React from 'react';
+import EmptyContent from 'calypso/components/empty-content';
 import Loading from 'calypso/components/loading';
 import { useWaitHeartbeat } from 'calypso/lib/analytics/wait-heartbeat';
 import { useInterval } from 'calypso/lib/interval';
 import { useDispatch, useSelector } from 'calypso/state';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
-import { errorNotice } from 'calypso/state/notices/actions';
 import getAtomicTransfer from 'calypso/state/selectors/get-atomic-transfer';
-import { getSiteSlug } from 'calypso/state/sites/selectors';
+import { getSiteAdminUrl, getSiteSlug } from 'calypso/state/sites/selectors';
 import { hideMasterbar, showMasterbar } from 'calypso/state/ui/masterbar-visibility/actions';
 
 // Total time to perform "loading"
@@ -28,6 +28,7 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 	const { siteId, orderId } = props;
 	const dispatch = useDispatch();
 	const siteSlug = useSelector( ( state ) => getSiteSlug( state, siteId ) );
+	const siteAdminUrl = useSelector( ( state ) => getSiteAdminUrl( state, siteId ) );
 	const transfer = useSelector( ( state ) => getAtomicTransfer( state, siteId ) );
 
 	// A completed transfer is not the end of the wait: the parent keeps this screen up until it has
@@ -82,6 +83,10 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 		};
 	}, [ dispatch ] );
 
+	// The failure is shown here rather than as a notice on another page: the pages this used to
+	// send users to can leave Calypso for wp-admin, and a notice doesn't survive that.
+	const [ errorMessage, setErrorMessage ] = React.useState< string | null >( null );
+
 	const latestTransfer = React.useRef( transfer );
 	latestTransfer.current = transfer;
 
@@ -97,28 +102,7 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 		dispatch( fetchAtomicTransfer( siteId ) );
 	}, [ siteId, dispatch ] );
 
-	// Redirect based on transfer status
-	const didRedirect = React.useRef( false );
 	React.useEffect( () => {
-		const redirectWithNotice = ( message: string ) => {
-			if ( didRedirect.current ) {
-				return;
-			}
-
-			dispatch(
-				errorNotice( message, {
-					id: 'atomic-transfer-error',
-					isPersistent: true,
-					displayOnNextPage: true,
-				} )
-			);
-
-			setHasStarted( false );
-
-			didRedirect.current = true;
-			page( `/stats/${ siteSlug }` );
-		};
-
 		if ( transfer ) {
 			if ( transferStates.COMPLETED === transfer.status ) {
 				page( `/checkout/thank-you/${ siteSlug }/${ orderId }` );
@@ -128,8 +112,7 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 
 			// If the processing status indicates that there was something wrong.
 			if ( [ transferStates.ERROR, transferStates.REVERTED ].includes( transfer.status ) ) {
-				// Redirect users back to the stats page so they can try again.
-				redirectWithNotice(
+				setErrorMessage(
 					__( "Sorry, we couldn't process your transfer. Please try again later." )
 				);
 
@@ -138,7 +121,7 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 
 			if ( transferStates.CLIENT_TIMEOUT === transfer.status ) {
 				if ( transfer !== preRequestTransfer.current ) {
-					redirectWithNotice(
+					setErrorMessage(
 						__(
 							'Your transfer is taking longer than expected. It may still finish — reload the page to check.'
 						)
@@ -148,7 +131,17 @@ const TransferPending: React.FunctionComponent< Props > = ( props ) => {
 				return;
 			}
 		}
-	}, [ transfer, dispatch, siteSlug, __, orderId ] );
+	}, [ transfer, siteSlug, __, orderId ] );
+
+	if ( errorMessage ) {
+		return (
+			<EmptyContent
+				title={ errorMessage }
+				action={ __( 'Go to your dashboard' ) }
+				actionURL={ siteAdminUrl ?? `/home/${ siteSlug }` }
+			/>
+		);
+	}
 
 	const progressValue = ! hasStarted ? /* initial 10% progress */ 10 : progress;
 

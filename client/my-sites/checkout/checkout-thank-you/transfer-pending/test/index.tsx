@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { render } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { fetchAtomicTransfer } from 'calypso/state/atomic-transfer/actions';
 import { transferStates } from 'calypso/state/atomic-transfer/constants';
 import TransferPending from '..';
@@ -10,6 +10,7 @@ import TransferPending from '..';
 const mockDispatch = jest.fn();
 const mockPage = jest.fn();
 let mockTransfer: { status?: string } = {};
+let mockAdminUrl: string | null = 'https://example.wordpress.com/wp-admin/';
 
 jest.mock( '@automattic/calypso-router', () => ( {
 	__esModule: true,
@@ -28,6 +29,7 @@ jest.mock( 'calypso/state/selectors/get-atomic-transfer', () => ( {
 
 jest.mock( 'calypso/state/sites/selectors', () => ( {
 	getSiteSlug: () => 'example.wordpress.com',
+	getSiteAdminUrl: () => mockAdminUrl,
 } ) );
 
 jest.mock( '@wordpress/react-i18n', () => ( {
@@ -51,25 +53,41 @@ describe( 'TransferPending', () => {
 	beforeEach( () => {
 		jest.clearAllMocks();
 		mockTransfer = {};
+		mockAdminUrl = 'https://example.wordpress.com/wp-admin/';
 	} );
 
 	test.each( [ transferStates.ERROR, transferStates.REVERTED ] )(
-		'redirects status %s to stats with a failure notice',
+		'shows the failure for status %s on this screen, with a way to the dashboard',
 		( status ) => {
 			mockTransfer = { status };
 
 			render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
 
-			expect( mockDispatch ).toHaveBeenCalledWith(
-				expect.objectContaining( {
-					notice: expect.objectContaining( {
-						text: "Sorry, we couldn't process your transfer. Please try again later.",
-					} ),
-				} )
+			expect(
+				screen.getByText( "Sorry, we couldn't process your transfer. Please try again later." )
+			).toBeVisible();
+			expect( screen.getByRole( 'link', { name: 'Go to your dashboard' } ) ).toHaveAttribute(
+				'href',
+				'https://example.wordpress.com/wp-admin/'
 			);
-			expect( mockPage ).toHaveBeenCalledWith( '/stats/example.wordpress.com' );
+			expect( mockPage ).not.toHaveBeenCalled();
+			expect( mockDispatch ).not.toHaveBeenCalledWith(
+				expect.objectContaining( { notice: expect.anything() } )
+			);
 		}
 	);
+
+	test( 'links to Home when the site has no known wp-admin address', () => {
+		mockTransfer = { status: transferStates.ERROR };
+		mockAdminUrl = null;
+
+		render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
+
+		expect( screen.getByRole( 'link', { name: 'Go to your dashboard' } ) ).toHaveAttribute(
+			'href',
+			'/home/example.wordpress.com'
+		);
+	} );
 
 	test( 'requests the latest transfer for its site', () => {
 		render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
@@ -93,35 +111,29 @@ describe( 'TransferPending', () => {
 		expect( mockDispatch ).toHaveBeenCalledWith( fetchAtomicTransfer( 123 ) );
 	} );
 
-	test( 'does not redirect when a client_timeout is already in the store at mount', () => {
+	test( 'keeps waiting when a client_timeout is already in the store at mount', () => {
 		mockTransfer = { status: transferStates.CLIENT_TIMEOUT };
 
 		render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
 
 		expect( mockPage ).not.toHaveBeenCalled();
-		expect( mockDispatch ).not.toHaveBeenCalledWith(
-			expect.objectContaining( { notice: expect.anything() } )
-		);
+		expect( screen.queryByRole( 'link', { name: 'Go to your dashboard' } ) ).toBeNull();
 	} );
 
-	test( 'redirects to stats with a timeout notice when the store transitions to client_timeout after mount', () => {
+	test( 'shows a timeout message on this screen when the store transitions to client_timeout after mount', () => {
 		mockTransfer = { status: transferStates.ACTIVE };
 
 		const { rerender } = render( <TransferPending siteId={ 123 } orderId={ 456 } /> );
 
-		expect( mockPage ).not.toHaveBeenCalled();
-
 		mockTransfer = { status: transferStates.CLIENT_TIMEOUT };
 		rerender( <TransferPending siteId={ 123 } orderId={ 456 } /> );
 
-		expect( mockDispatch ).toHaveBeenCalledWith(
-			expect.objectContaining( {
-				notice: expect.objectContaining( {
-					text: 'Your transfer is taking longer than expected. It may still finish — reload the page to check.',
-				} ),
-			} )
-		);
-		expect( mockPage ).toHaveBeenCalledWith( '/stats/example.wordpress.com' );
+		expect(
+			screen.getByText(
+				'Your transfer is taking longer than expected. It may still finish — reload the page to check.'
+			)
+		).toBeVisible();
+		expect( mockPage ).not.toHaveBeenCalled();
 	} );
 
 	test( 'redirects completed transfers to thank you', () => {
