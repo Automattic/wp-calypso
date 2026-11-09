@@ -117,17 +117,27 @@
 	border-block-end: 1px solid var( --color-border-subtle );
 	text-align: start;
 	cursor: pointer;
+	transition: background-color var( --wpds-motion-duration-sm ) var( --wpds-motion-easing-balanced );
 
-	&.is-unread {
-		--conversations-item-bg: color-mix(
+	// Matches the notifications panel: a neutral hover, and a deeper blue on unread rows.
+	&:not( .is-selected ):hover {
+		background: color-mix(
 			in srgb,
-			var( --color-primary ) 6%,
-			var( --color-surface )
+			var( --wpds-color-foreground-content-neutral ) 2%,
+			var( --conversations-item-bg )
 		);
 	}
 
-	&:not( .is-selected ):hover {
-		background: color-mix( in srgb, var( --color-text ) 3%, var( --conversations-item-bg ) );
+	&.is-unread {
+		--conversations-item-bg: color-mix(
+			in oklch,
+			var( --color-primary ) 5%,
+			var( --color-surface )
+		);
+
+		&:not( .is-selected ):hover {
+			background: color-mix( in oklch, var( --color-primary ) 6.5%, var( --color-surface ) );
+		}
 	}
 
 	&:focus-visible {
