@@ -74,21 +74,21 @@ function PrimaryMenuSidebar() {
 			{ supports.agencyClient && <AgencyClientSidebar /> }
 			{ supports.sites && (
 				<SidebarMenuItem icon={ layout } to="/sites">
-					{ __( 'Sites' ) }
+					{ __( 'Site List' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.domains && (
 				<SidebarMenuItem icon={ globe } to="/domains">
-					{ __( 'Domains' ) }
+					{ __( 'Domain List' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.emails && (
 				<SidebarMenuItem icon={ envelope } to="/emails">
-					{ __( 'Emails' ) }
+					{ __( 'Email List' ) }
 				</SidebarMenuItem>
 			) }
 			{ supports.plugins && (
-				<SidebarExpandableMenuItem label={ __( 'Plugins' ) } icon={ plugins } to="/plugins">
+				<SidebarExpandableMenuItem label={ __( 'Plugin List' ) } icon={ plugins } to="/plugins">
 					<SidebarMenuItem to="/plugins/manage">{ __( 'Manage plugins' ) }</SidebarMenuItem>
 					<SidebarMenuItem to="/plugins/scheduled-updates">
 						{ __( 'Scheduled updates' ) }
