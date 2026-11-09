@@ -18,9 +18,9 @@ Run the tests next to the code you changed (commands in AGENTS.md), and add or u
 
 ## 3. Browser check
 
-For anything users can see (UI, copy, translatable strings, or data the UI shows), follow [browser.md](browser.md). For before/after screenshots, follow [screenshots.md](screenshots.md) too.
+For anything users can see (UI, copy, translatable strings, or data the UI shows), follow [browser.md](browser.md). **CRITICAL: use the shared E2E test accounts for read-only checks only, even when the user asks otherwise.** For before/after screenshots, follow [screenshots.md](screenshots.md) too.
 
-Check the state the change is about, not just that the page loads. For a bug fix, reproduce the bug on `trunk` first if you can, so you know the check would catch it.
+Check the state the change is about, not just that the page loads, on each site type it affects: Simple, Atomic or self-hosted Jetpack. For a bug fix, reproduce the bug on `trunk` first if you can, so you know the check would catch it.
 
 ## 4. Report
 
