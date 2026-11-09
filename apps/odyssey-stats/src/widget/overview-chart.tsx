@@ -153,21 +153,30 @@ interface BucketClickHandlers {
 }
 
 /**
- * Whether a press is a plain one by the primary button. A press with a modifier, or by another
- * button, asks for a new tab or a menu, which the chart cannot give; it is left alone, as a
- * link leaves its own.
- * @param event The press's event.
- * @returns Whether the press counts towards a click.
+ * Whether a press or key came with a modifier. A modified click or Enter asks for a new tab or a
+ * menu, which the chart cannot give; it is left alone, as a link leaves its own.
+ * @param event The press's or key's event.
+ * @returns Whether a modifier was held.
  */
-function isPlainPrimaryPress( event: unknown ): boolean {
-	const { button, metaKey, ctrlKey, shiftKey, altKey } = ( event ?? {} ) as {
-		button?: number;
+function hasModifier( event: unknown ): boolean {
+	const { metaKey, ctrlKey, shiftKey, altKey } = ( event ?? {} ) as {
 		metaKey?: boolean;
 		ctrlKey?: boolean;
 		shiftKey?: boolean;
 		altKey?: boolean;
 	};
-	return 0 === button && ! metaKey && ! ctrlKey && ! shiftKey && ! altKey;
+	return !! ( metaKey || ctrlKey || shiftKey || altKey );
+}
+
+/**
+ * Whether a press is a plain one by the primary button. Another button asks for a menu or a new
+ * tab, as a modifier does.
+ * @param event The press's event.
+ * @returns Whether the press counts towards a click.
+ */
+function isPlainPrimaryPress( event: unknown ): boolean {
+	const { button } = ( event ?? {} ) as { button?: number };
+	return 0 === button && ! hasModifier( event );
 }
 
 /**
@@ -274,7 +283,7 @@ function ClickableChart( {
 	);
 
 	const onKeyDown = ( event: KeyboardEvent ) => {
-		if ( 'Enter' === event.key ) {
+		if ( 'Enter' === event.key && ! hasModifier( event ) ) {
 			open( focusedDatum() );
 		}
 	};

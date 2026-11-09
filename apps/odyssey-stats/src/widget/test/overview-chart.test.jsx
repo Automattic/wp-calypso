@@ -282,6 +282,29 @@ describe( 'OverviewChart click', () => {
 		}
 	);
 
+	it.each( [
+		[ 'Cmd-Enter', { metaKey: true } ],
+		[ 'Ctrl-Enter', { ctrlKey: true } ],
+		[ 'Shift-Enter', { shiftKey: true } ],
+		[ 'Alt-Enter', { altKey: true } ],
+	] )( 'leaves %s on a focused point alone', ( _, modifier ) => {
+		const onBucketClick = jest.fn();
+		const { container } = render(
+			<OverviewChart
+				series={ series }
+				height={ 160 }
+				range={ { unit: 'day', startDate: '2026-06-01', endDate: '2026-07-31' } }
+				chartType="bar"
+				onBucketClick={ onBucketClick }
+			/>
+		);
+
+		hoverBar();
+		fireEvent.keyDown( container.firstChild, { key: 'Enter', ...modifier } );
+
+		expect( onBucketClick ).not.toHaveBeenCalled();
+	} );
+
 	it( 'reports the bar its tooltip names when a bar chart is clicked', () => {
 		const onBucketClick = jest.fn();
 		renderChart( 'day', 'bar', series, '2026-07-31', onBucketClick );

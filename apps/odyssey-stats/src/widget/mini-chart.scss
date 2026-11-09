@@ -67,9 +67,13 @@
 		inline-size: 100%;
 		overflow: hidden;
 
-		// The plot answers a click, so the cursor says so.
-		&.is-clickable {
+		// The plot answers a click, so the cursor says so; the axes, which answer nothing, keep theirs.
+		&.is-clickable svg {
 			cursor: pointer;
+		}
+
+		&.is-clickable .visx-axis {
+			cursor: default;
 		}
 	}
 
