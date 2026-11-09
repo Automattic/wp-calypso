@@ -23,7 +23,6 @@ import { recordTracksEvent } from 'calypso/lib/analytics/tracks';
 import { usePartnerBranding } from 'calypso/lib/partner-branding';
 import { login } from 'calypso/lib/paths';
 import { AccountCreateReturn } from 'calypso/lib/signup/api/type';
-import useEntryClarityExperiment from 'calypso/lib/signup/use-entry-clarity-experiment';
 import wpcom from 'calypso/lib/wp';
 import { setSignupIsNewUser } from 'calypso/signup/storageUtils';
 import WpcomLoginForm from 'calypso/signup/wpcom-login-form';
@@ -88,12 +87,15 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isBrandedLayout = useBrandedAccountLayout( flow ) && ! hasCustomBranding;
 	const isEmailFirstVariant = isWooReferrer || isThemeGridLayout || isBrandedLayout;
 	const isEmailAtBottom = isThemeGridLayout || isBrandedLayout;
-	// The experiment runs on onboarding only. Woo referrers, the theme grid and the branded layout
-	// are left out: their email-first layout already has the in-form link and no email button, so
-	// the treatment would not change it.
-	const isEntryClarityTreatment = useEntryClarityExperiment(
-		flow === ONBOARDING_FLOW && ! isWooReferrer && ! isThemeGridLayout && ! isBrandedLayout
-	);
+	const isLargeViewport = useViewportMatch( 'large' );
+	// In practice, partner-branded onboarding on desktop: the email-first layouts already have
+	// the in-form link and no email button.
+	const isLoginLinkBelowButtons =
+		isLargeViewport &&
+		flow === ONBOARDING_FLOW &&
+		! isWooReferrer &&
+		! isThemeGridLayout &&
+		! isBrandedLayout;
 
 	useEffect( () => {
 		if ( wpAccountCreateResponse && 'bearer_token' in wpAccountCreateResponse ) {
@@ -144,7 +146,6 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	);
 
 	const isStepContainerV2 = shouldUseStepContainerV2( flow );
-	const isLargeViewport = useViewportMatch( 'large' );
 	const isMobileViewport = useViewportMatch( 'small', '<' );
 
 	// Thumb-friendly compact layout for mobile signup. Woo referrers keep their
@@ -154,7 +155,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 	const isMobileCompactLayout =
 		isStepContainerV2 && isMobileViewport && ! isWooReferrer && ! partnerConfig;
 
-	const showsInFormLoginLink = isEntryClarityTreatment && ! hideLoginLink;
+	const showsInFormLoginLink = isLoginLinkBelowButtons && ! hideLoginLink;
 
 	let emailLabelText;
 	if ( isStepContainerV2 ) {
@@ -199,7 +200,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				isEmailAtBottom={ isEmailAtBottom }
 				isMobileCompactVariant={ isMobileCompactLayout }
 				showLoginLink={ showsInFormLoginLink }
-				showEnvelopeIcon={ isEntryClarityTreatment }
+				showEnvelopeIcon={ isLoginLinkBelowButtons }
 				allowedSocialServices={ allowedSocialServices }
 				customTosElement={ signupTosElement }
 			/>
@@ -323,7 +324,7 @@ const UserStepComponent: StepType< { accepts: UserStepAccepts } > = function Use
 				className={ clsx( 'step-container-v2--user', {
 					'step-container-v2--user-branded': isBrandedLayout,
 					'step-container-v2--user-mobile': isMobileCompactLayout,
-					'step-container-v2--user-entry-clarity': isEntryClarityTreatment,
+					'step-container-v2--user-login-below-buttons': isLoginLinkBelowButtons,
 				} ) }
 				verticalAlign="center"
 				columnWidth={ 4 }

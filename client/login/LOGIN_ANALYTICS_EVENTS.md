@@ -99,7 +99,7 @@ This document outlines all the analytics events tracked during the login process
 **Properties**:
 
 - `origin` (string): Which link was clicked
-  - `login-footer`: "Don't have an account? Sign up" below the buttons on the main login view, 960px and up, in the `calypso_account_step_entry_clarity_202609` treatment
+  - `login-footer`: the signup line below the buttons: "New here? Create an account" on the main login view, and "Don't have an account? Sign up" on the other login views at 960px and up
   - `login-layout`: "Create an account" in the top bar, everywhere else
   - `login-notice`: the notice shown when signup finds an existing account
 
