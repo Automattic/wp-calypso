@@ -28,9 +28,25 @@
 }
 
 .conversations-inbox__detail-body {
+	position: relative;
 	flex: 1;
 	overflow-y: auto;
 	padding: 32px 24px;
+}
+
+.conversations-inbox__detail-loading {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	// Calypso draws spinners in the brand color; this one stays a light gray. Its
+	// default top margin would also push it below center.
+	.components-spinner {
+		margin: 0;
+		color: var( --color-neutral-20 );
+	}
 }
 
 .conversations-inbox__detail-content {

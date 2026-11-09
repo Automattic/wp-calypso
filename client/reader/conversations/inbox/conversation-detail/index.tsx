@@ -216,6 +216,11 @@ export function ConversationDetail( {
 				</HStack>
 			</HStack>
 			<div className="conversations-inbox__detail-body">
+				{ isLoading && ! post && (
+					<div className="conversations-inbox__detail-loading">
+						<Spinner />
+					</div>
+				) }
 				<VStack spacing={ 8 } className="conversations-inbox__detail-content">
 					{ showWelcome && (
 						<Notice
@@ -235,7 +240,6 @@ export function ConversationDetail( {
 							</VStack>
 						</Notice>
 					) }
-					{ isLoading && ! post && <Spinner /> }
 					{ !! post?.is_error && (
 						<Text as="p" color="var(--color-text-subtle)">
 							{ translate( 'This post can’t be loaded.' ) }{ ' ' }
