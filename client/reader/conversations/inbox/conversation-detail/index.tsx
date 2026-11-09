@@ -4,6 +4,8 @@ import {
 	Button,
 	DropdownMenu,
 	ExternalLink,
+	MenuGroup,
+	MenuItem,
 	Notice,
 	Spinner,
 	__experimentalHeading as Heading,
@@ -247,12 +249,14 @@ export function ConversationDetail( {
 										<img
 											src={ ( post.site_icon as { img?: string } )?.img }
 											alt=""
-											width={ 24 }
-											height={ 24 }
+											width={ 28 }
+											height={ 28 }
 										/>
 									) }
 									<strong>{ String( post.site_name ?? '' ) }</strong>
-									{ author?.name && <span>{ author.name }</span> }
+									{ author?.name && (
+										<span className="conversations-inbox__post-author">{ author.name }</span>
+									) }
 									{ date && (
 										<span>
 											·{ ' ' }
@@ -268,8 +272,23 @@ export function ConversationDetail( {
 										toggleProps={ { __next40pxDefaultSize: true, size: 'small' } }
 										disableOpenOnArrowDown
 										popoverProps={ { placement: 'bottom-end' } }
-										controls={ controls }
-									/>
+									>
+										{ ( { onClose } ) => (
+											<MenuGroup>
+												{ controls.map( ( { title, onClick } ) => (
+													<MenuItem
+														key={ title }
+														onClick={ () => {
+															onClick();
+															onClose();
+														} }
+													>
+														{ title }
+													</MenuItem>
+												) ) }
+											</MenuGroup>
+										) }
+									</DropdownMenu>
 								</HStack>
 								<HStack spacing={ 6 } alignment="top">
 									<VStack
