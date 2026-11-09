@@ -1,6 +1,6 @@
 ## Unreleased
 
-- Breaking: Requires newer WordPress package majors: `@wordpress/is-shallow-equal` 6, `@wordpress/warning` 4.
+- Breaking: Requires newer WordPress package majors: `@wordpress/is-shallow-equal` 6, `@wordpress/warning` 4 (Node.js 22.13 or later).
 
 ## 1.0.0-alpha.4
 

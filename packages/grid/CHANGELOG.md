@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## Unreleased
 
-- Breaking: Requires newer WordPress package majors: `@wordpress/compose` 9.
+- Breaking: Requires newer WordPress package majors: `@wordpress/compose` 9 (Node.js 22.13 or later).
 
 ## 0.2.2
 
