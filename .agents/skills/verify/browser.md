@@ -1,6 +1,6 @@
 # Browser check
 
-`scripts/browse.cjs` drives a headless Chromium against the local dev server, logged in as a WordPress.com user, and reports what the page shows. Use it by default. Drive a browser yourself (see [Other browsers](#other-browsers)) only when the user asks for one, when the check needs a long interactive session, or when `browse.cjs` can't log in.
+`scripts/browse.cjs` drives headless Chromium against a local dev server or a hosted build, logged in as a WordPress.com user, and reports what the page shows. Use it by default. Drive a browser yourself (see [Other browsers](#other-browsers)) only when the user asks for one, when the check needs a long interactive session, or when `browse.cjs` can't log in.
 
 ## Accounts
 
@@ -22,8 +22,8 @@
 
 ## Setup
 
-- The dev server must be running (`yarn start` or `yarn start-dashboard`). Don't start it yourself unless asked or [running unattended](#running-unattended). The script waits up to 90s for its first build.
-- If a script exits with code 2, it needs something from the user. Ask directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps. For anything the user has to run, give the exact command. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`: that one goes in the user's own terminal, to keep the key out of the conversation. For a failed login, offer, in plain words without setup details:
+- Local targets require a running dev server (`yarn start` or `yarn start-dashboard`). Don't start it yourself unless asked or [running unattended](#running-unattended). The script waits up to 90s for its first build. Hosted URLs skip this check.
+- If the script exits with code 2 because the local server is unavailable, try [Calypso Live](#calypso-live) first. If you still need something from the user, ask directly, with your question tool if you have one (`AskUserQuestion` in Claude Code), without narrating the skill's steps. For anything the user has to run, give the exact command. In Claude Code, prefix it with `!` so it runs in the session, except `setup-test-accounts.sh`: that one goes in the user's own terminal, to keep the key out of the conversation. For a failed login, offer, in plain words without setup details:
   1. **Playwright with the E2E test accounts:** the user runs `.agents/skills/verify/scripts/setup-test-accounts.sh` in their own terminal.
   2. **Playwright with their own account:** the user runs `! node .agents/skills/verify/scripts/auth.cjs me`.
   3. **Claude in Chrome with their own account:** usually already signed in; the user connects it with `/chrome` in Claude Code.
@@ -31,6 +31,14 @@
   Describe each option by what it does (e.g. "a headless Playwright browser, logged in as a shared test account"), not by its command. When the user picks one, show its command and wait until they say it's done before running the script again. Don't set up the test accounts yourself unless running unattended.
 
 - Sessions are saved in `~/.local/state/wp-calypso-verify/`. They are live logins: never print, copy or commit them, and never save network recordings (HAR files, traces) of a login.
+
+## Calypso Live
+
+If local verification stalls and a PR preview is available, try Calypso Live before asking someone to run the check manually.
+
+1. Use the preview link from the PR bot for each affected client. Set the path you want to check and keep the image and environment query parameters. Pass the full URL to `browse.cjs` with the usual test account.
+2. Check the final host and path, and read `window.COMMIT_SHA` with `--eval 'return page.evaluate( () => window.COMMIT_SHA )'`. Confirm the page is in the intended client and is running the commit you want to verify. A signed-in account can redirect from Classic to Dashboard.
+3. Run the same interactions and capture the same states you would check locally. When using response fixtures with a shared test account, keep the live account read-only. Report which UI checks used fixtures and which real backend behavior remains unverified.
 
 ## Running unattended
 
@@ -48,7 +56,7 @@ If you're a subagent that can't ask the user, report back to the agent that star
 node .agents/skills/verify/scripts/browse.cjs <url> [options]
 ```
 
-`<url>` is a Dashboard path (`/sites`) or an absolute URL such as `http://calypso.localhost:3000/home` or `/read` for classic Calypso and the Reader. `{site}` in it becomes the test account's site, e.g. `/sites/{site}`: open it directly, since the first site in the Sites list may be another one. The script reads `PORT` from `.env` itself; don't open `.env`. Don't pipe its output (e.g. through `tail`): you'd lose its exit code.
+`<url>` is a path on the local Dashboard (such as `/sites`) or an absolute URL. Use an absolute URL for Calypso Live, production, or Classic on the local dev server (such as `http://calypso.localhost:3000/read`). `{site}` in it becomes the test account's site, e.g. `/sites/{site}`: open it directly, since the first site in the Sites list may be another one. The script reads `PORT` from `.env` itself; don't open `.env`. Don't pipe its output (e.g. through `tail`): you'd lose its exit code.
 
 | Option                                 | Purpose                                                                                                              |
 | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |

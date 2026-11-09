@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 /**
- * Opens a page of the local dev server as a logged-in user and reports what it shows.
+ * Opens a local or hosted Calypso page as a logged-in user and reports what it shows.
  *
  *   node browse.cjs <url> [options]
  *
- * <url> is absolute, or a path on the dashboard (http://my.localhost:$PORT).
- * The options are documented in ../SKILL.md.
+ * <url> is absolute, or a path on the local dashboard (http://my.localhost:$PORT).
+ * The options are documented in ../browser.md.
  */
 const fs = require( 'node:fs' );
 const path = require( 'node:path' );
@@ -60,6 +60,17 @@ const LOADING_TIMEOUT = 60000;
 const LOADING_QUIET_PERIOD = 2000;
 
 const BUILD_TIMEOUT = 90000;
+const LOCAL_DASHBOARD_ORIGIN = `http://my.localhost:${ PORT }`;
+
+function isLocalTarget( url ) {
+	const { hostname } = new URL( url, LOCAL_DASHBOARD_ORIGIN );
+	return (
+		hostname === 'localhost' ||
+		hostname.endsWith( '.localhost' ) ||
+		hostname === '127.0.0.1' ||
+		hostname === '[::1]'
+	);
+}
 
 /**
  * Until the first webpack build finishes, the dev server answers `/` with a "please wait"
@@ -127,7 +138,7 @@ function watch( page ) {
 	page.on( 'response', async ( response ) => {
 		const url = response.url();
 		const logged = logPattern?.test( url );
-		if ( ! logged && ! /localhost|wordpress\.com/.test( url ) ) {
+		if ( ! logged && ! /localhost|wordpress\.com|calypso\.live/.test( url ) ) {
 			return;
 		}
 		let status = String( response.status() );
@@ -191,7 +202,9 @@ async function open( browser, account, url ) {
 	} );
 	const page = await context.newPage();
 	const { problems, requests } = watch( page );
-	await page.goto( url, { waitUntil: 'load', timeout: 60000 } );
+	// Hosted pages can render while third-party resources are still loading.
+	const waitUntil = isLocalTarget( url ) ? 'load' : 'domcontentloaded';
+	await page.goto( url, { waitUntil, timeout: 60000 } );
 	// The dashboard checks the session client-side, so a rejected one redirects after load.
 	await Promise.race( [
 		page.waitForURL( ( current ) => isLoginUrl( current.toString() ), { timeout: 30000 } ),
@@ -267,7 +280,7 @@ async function check( browser, account, target ) {
 	const resolved = target.includes( '{site}' )
 		? target.replaceAll( '{site}', testAccountSite( account ) )
 		: target;
-	const url = new URL( resolved, `http://my.localhost:${ PORT }` ).toString();
+	const url = new URL( resolved, LOCAL_DASHBOARD_ORIGIN ).toString();
 	await ensureState( account );
 
 	let { context, page, problems, requests } = await open( browser, account, url );
@@ -366,8 +379,10 @@ async function main() {
 		screenshotTarget( options.screenshot );
 	}
 
-	await waitForDevServer();
-	console.log( `dev server: up on port ${ PORT }` );
+	if ( isLocalTarget( target ) ) {
+		await waitForDevServer();
+		console.log( `dev server: up on port ${ PORT }` );
+	}
 
 	const browser = await launchBrowser();
 	try {
