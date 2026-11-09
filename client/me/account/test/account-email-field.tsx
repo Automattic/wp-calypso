@@ -1,28 +1,37 @@
 /**
  * @jest-environment jsdom
  */
-import { screen } from '@testing-library/react';
+import { ACCOUNT_EMAIL_RECOVERY_SNOOZE } from '@automattic/api-core';
+import { act, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import nock from 'nock';
 import { useSelector } from 'calypso/state';
 import accountRecoveryReducer from 'calypso/state/account-recovery/reducer';
 import getUnsavedUserSettings from 'calypso/state/selectors/get-unsaved-user-settings';
+import getUserSettings from 'calypso/state/selectors/get-user-settings';
 import userSettingsReducer from 'calypso/state/user-settings/reducer';
 import { renderWithProvider } from 'calypso/test-helpers/testing-library';
 import AccountEmailField from '../account-email-field';
 
-jest.mock( 'calypso/components/data/query-account-recovery-settings', () => () => null );
+jest.mock( 'calypso/state/account-recovery/settings/actions', () => ( {
+	...jest.requireActual( 'calypso/state/account-recovery/settings/actions' ),
+	accountRecoverySettingsFetch: () => ( { type: 'TEST_RECOVERY_FETCH' } ),
+} ) );
 
 type RecoveryState = {
 	isReady?: boolean;
 	recoveryEmail?: string;
+	recoveryEmailVerified?: boolean;
 	recoveryPhone?: object | null;
+	recoveryPhoneVerified?: boolean;
 };
 
 const buildInitialState = ( {
 	isReady = true,
 	recoveryEmail = '',
+	recoveryEmailVerified = false,
 	recoveryPhone = null,
+	recoveryPhoneVerified = false,
 }: RecoveryState = {} ) => ( {
 	currentUser: {
 		id: 1,
@@ -31,17 +40,17 @@ const buildInitialState = ( {
 	userSettings: {
 		settings: { user_email: 'user@gmail.com', new_user_email: '' },
 		unsavedSettings: {},
-		updating: {},
-		failed: {},
+		updating: false,
+		failed: false,
 	},
 	accountRecovery: {
 		isFetchingSettings: false,
 		settings: {
 			data: {
 				email: recoveryEmail,
-				emailValidated: false,
+				emailValidated: recoveryEmailVerified,
 				phone: recoveryPhone,
-				phoneValidated: false,
+				phoneValidated: recoveryPhoneVerified,
 			},
 			isReady,
 			isUpdating: {},
@@ -64,80 +73,130 @@ const renderFieldWithEmail = ( email: string, recoveryState: RecoveryState = {} 
 		}
 	);
 
-const WARNING_MATCHER = /custom domain/i;
+const WARNING_MATCHER = /may be harder to get back into your account/i;
+const DRAFT_FALLBACK = /if you don’t have a verified recovery/i;
+const REMINDER = /remind me in six months/i;
 
-describe( 'AccountEmailField — custom domain warning', () => {
-	beforeAll( () => {
-		nock.disableNetConnect();
-	} );
+function mockPreferences( until = 0 ) {
+	return nock( 'https://public-api.wordpress.com' )
+		.get( '/rest/v1.1/me/preferences' )
+		.query( true )
+		.reply( 200, { calypso_preferences: { [ ACCOUNT_EMAIL_RECOVERY_SNOOZE ]: until } } );
+}
 
-	afterAll( () => {
-		nock.cleanAll();
-		nock.enableNetConnect();
-	} );
+describe( 'Account email recovery warning', () => {
+	it.each( [ 'user@gmail.com', 'user@OUTLOOK.FR', 'user@icloud.com', '', 'user@' ] )(
+		'does not warn for %s',
+		( email ) => {
+			renderFieldWithEmail( email );
+			expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+		}
+	);
 
-	it( 'does not show the warning for a well-known free provider (gmail)', () => {
-		renderFieldWithEmail( 'user@gmail.com' );
-		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
-	} );
-
-	it( 'does not show the warning for a well-known free provider (outlook)', () => {
-		renderFieldWithEmail( 'user@outlook.com' );
-		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
-	} );
-
-	it( 'does not show the warning for a well-known free provider (icloud)', () => {
-		renderFieldWithEmail( 'user@icloud.com' );
-		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
-	} );
-
-	it( 'shows the warning for a custom domain when no recovery method is set', () => {
-		renderFieldWithEmail( 'me@my-custom-domain.com' );
+	it( 'warns about a risky draft with an unverified backup and keeps the draft open', () => {
+		renderFieldWithEmail( 'student@college.edu', { recoveryEmail: 'backup@gmail.com' } );
 		expect( screen.getByText( WARNING_MATCHER ) ).toBeVisible();
+		expect( screen.getByRole( 'link', { name: /set up account recovery/i } ) ).toHaveAttribute(
+			'target',
+			'_blank'
+		);
+		expect( screen.queryByRole( 'button', { name: REMINDER } ) ).toBeNull();
 	} );
 
-	it( 'shows the warning for a custom domain case-insensitively', () => {
-		renderFieldWithEmail( 'me@MY-CUSTOM-DOMAIN.COM' );
-		expect( screen.getByText( WARNING_MATCHER ) ).toBeVisible();
-	} );
-
-	it( 'links to the account recovery settings page', () => {
-		renderFieldWithEmail( 'me@my-custom-domain.com' );
-		expect(
-			screen.getByRole( 'link', { name: /set up a recovery email or phone number/i } )
-		).toHaveAttribute( 'href', '/me/security/account-recovery' );
-	} );
-
-	it( 'does not show the warning when a recovery email is already set', () => {
-		renderFieldWithEmail( 'me@my-custom-domain.com', { recoveryEmail: 'backup@gmail.com' } );
-		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
-	} );
-
-	it( 'does not show the warning when a recovery phone is already set', () => {
-		renderFieldWithEmail( 'me@my-custom-domain.com', {
-			recoveryPhone: { countryCode: 'US', number: '5551234' },
+	it( 'suppresses the warning for a verified phone', () => {
+		renderFieldWithEmail( 'student@college.edu', {
+			recoveryPhone: { number: '5551234' },
+			recoveryPhoneVerified: true,
 		} );
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
 	} );
 
-	it( 'does not show the warning before account recovery settings are ready', () => {
-		renderFieldWithEmail( 'me@my-custom-domain.com', { isReady: false } );
-		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	it( 'warns conditionally when a risky draft is entered before recovery settings load', () => {
+		renderFieldWithEmail( 'student@college.edu', { isReady: false } );
+		expect( screen.getByText( DRAFT_FALLBACK ) ).toBeVisible();
 	} );
 
-	it( 'does not show the warning for an empty email', () => {
-		renderFieldWithEmail( '' );
+	function renderSavedField( props = {} ) {
+		return renderWithProvider(
+			<AccountEmailField userSettings={ { user_email: 'student@college.edu' } } { ...props } />,
+			{
+				initialState: buildInitialState(),
+				reducers: { userSettings: userSettingsReducer, accountRecovery: accountRecoveryReducer },
+			}
+		);
+	}
+
+	it( 'waits for the saved reminder preference and dismisses only after confirmation', async () => {
+		mockPreferences();
+		const save = nock( 'https://public-api.wordpress.com' )
+			.post(
+				'/rest/v1.1/me/preferences',
+				( body ) => body.calypso_preferences?.[ ACCOUNT_EMAIL_RECOVERY_SNOOZE ] > Date.now() / 1000
+			)
+			.query( true )
+			.reply( 200, ( _uri, body ) => body );
+
+		renderSavedField();
+
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+		await userEvent.click( await screen.findByRole( 'button', { name: REMINDER } ) );
+		await waitFor( () => expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull() );
+		expect( save.isDone() ).toBe( true );
 	} );
 
-	it( 'does not show the warning for an email without an @ symbol', () => {
-		renderFieldWithEmail( 'invalidemail' );
-		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+	it( 'refreshes the active email when a pending change was confirmed in another tab', async () => {
+		const savedEmail = 'student@college.edu';
+		const pendingEmail = 'student@gmail.com';
+		const initialState = buildInitialState();
+		initialState.userSettings = {
+			...initialState.userSettings,
+			settings: { user_email: savedEmail, new_user_email: pendingEmail },
+			updating: false,
+		};
+		mockPreferences();
+		const settings = nock( 'https://public-api.wordpress.com' )
+			.get( '/rest/v1.1/me/settings' )
+			.query( { fields: 'user_email,new_user_email,user_email_change_pending' } )
+			.reply( 200, {
+				user_email: pendingEmail,
+				new_user_email: '',
+				user_email_change_pending: false,
+			} );
+		function ConnectedEmailField() {
+			return <AccountEmailField userSettings={ useSelector( getUserSettings ) ?? undefined } />;
+		}
+
+		renderWithProvider( <ConnectedEmailField />, {
+			initialState,
+			reducers: { userSettings: userSettingsReducer, accountRecovery: accountRecoveryReducer },
+		} );
+
+		expect(
+			await screen.findByText( /student@college.edu is still your sign-in email/ )
+		).toBeVisible();
+		expect( screen.queryByRole( 'button', { name: REMINDER } ) ).toBeNull();
+		act( () => window.dispatchEvent( new Event( 'focus' ) ) );
+		await waitFor( () =>
+			expect( screen.getByRole( 'textbox', { name: /email address/i } ) ).toBeEnabled()
+		);
+		expect( settings.isDone() ).toBe( true );
+		expect( screen.queryByRole( 'link', { name: /set up account recovery/i } ) ).toBeNull();
 	} );
 
-	it( 'does not show the warning for an email ending with @', () => {
-		renderFieldWithEmail( 'user@' );
+	it( 'honors a stored dismissal for the saved address while still warning on a new draft', async () => {
+		const prefs = mockPreferences( Math.floor( Date.now() / 1000 ) + 3600 );
+		const { rerender } = renderSavedField();
+
+		await waitFor( () => expect( prefs.isDone() ).toBe( true ) );
 		expect( screen.queryByText( WARNING_MATCHER ) ).toBeNull();
+
+		rerender(
+			<AccountEmailField
+				userSettings={ { user_email: 'student@college.edu' } }
+				unsavedUserSettings={ { user_email: 'staff@employer.com' } }
+			/>
+		);
+		expect( screen.getByText( WARNING_MATCHER ) ).toBeVisible();
 	} );
 } );
 

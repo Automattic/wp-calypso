@@ -1,4 +1,5 @@
 import wpcom from 'calypso/lib/wp';
+import { isFetchingAccountRecoverySettings } from 'calypso/state/account-recovery/selectors';
 import {
 	onAccountRecoveryPhoneValidationFailed,
 	onAccountRecoveryPhoneValidationSuccess,
@@ -47,24 +48,33 @@ export const accountRecoverySettingsFetchFailed = ( error ) => {
 	};
 };
 
-export const accountRecoverySettingsFetch = () => ( dispatch ) => {
-	dispatch( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } );
+export const accountRecoverySettingsFetch =
+	( { quiet = false } = {} ) =>
+	( dispatch, getState ) => {
+		if ( quiet && isFetchingAccountRecoverySettings( getState() ) ) {
+			return;
+		}
 
-	return wpcom.req
-		.get( '/me/account-recovery' )
-		.then( ( accountRecoverySettings ) =>
-			dispatch( accountRecoverySettingsFetchSuccess( accountRecoverySettings ) )
-		)
-		.catch( ( error ) => {
-			dispatch( accountRecoverySettingsFetchFailed( error ) );
+		dispatch( { type: ACCOUNT_RECOVERY_SETTINGS_FETCH } );
 
-			// Only trigger the default handling for errors other than reauthorization.
-			// We don't want to show a generic error if we need to reauthorize.
-			if ( error.statusCode !== 401 || error.error !== 'reauthorization_required' ) {
-				dispatch( onAccountRecoverySettingsFetchFailed() );
-			}
-		} );
-};
+		return wpcom.req
+			.get( '/me/account-recovery' )
+			.then( ( accountRecoverySettings ) =>
+				dispatch( accountRecoverySettingsFetchSuccess( accountRecoverySettings ) )
+			)
+			.catch( ( error ) => {
+				dispatch( accountRecoverySettingsFetchFailed( error ) );
+
+				// Only trigger the default handling for errors other than reauthorization.
+				// We don't want to show a generic error if we need to reauthorize.
+				if (
+					! quiet &&
+					( error.statusCode !== 401 || error.error !== 'reauthorization_required' )
+				) {
+					dispatch( onAccountRecoverySettingsFetchFailed() );
+				}
+			} );
+	};
 
 const updateSuccessAction = ( target, value ) => ( {
 	type: ACCOUNT_RECOVERY_SETTINGS_UPDATE_SUCCESS,

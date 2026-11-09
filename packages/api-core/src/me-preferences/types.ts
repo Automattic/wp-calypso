@@ -37,7 +37,10 @@ export interface A4AFeedbackEntry {
 	lastSkippedAt?: number;
 }
 
+export const ACCOUNT_EMAIL_RECOVERY_SNOOZE = 'account-email-recovery-snoozed-until';
+
 export interface UserPreferences {
+	[ ACCOUNT_EMAIL_RECOVERY_SNOOZE ]?: number;
 	recentSites?: number[];
 	'hosting-dashboard-color-scheme'?: 'light' | 'dark' | 'system';
 	'hosting-dashboard-opt-in'?: HostingDashboardOptIn;

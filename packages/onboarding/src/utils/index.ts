@@ -5,3 +5,9 @@ export { doesStringResembleDomain } from './is-domain';
 export { suggestEmailCorrection, extractDomainWithExtension } from './domain-suggester';
 export { getEmailAddressError, getEmailDomain, isValidEmailAddress } from './email-validation';
 export type { EmailAddressError } from './email-validation';
+export {
+	getAccountEmailRecoverySnoozeUntil,
+	hasVerifiedAccountRecovery,
+	isAccountEmailAtRisk,
+	isAccountEmailRecoverySnoozed,
+} from './account-email-recovery';
