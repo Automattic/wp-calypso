@@ -62,20 +62,20 @@
 		"@wordpress/icons": "^15.5.0",
 		"@wordpress/primitives": "^4.56.0",
 		"@wordpress/react-i18n": "^4.48.0",
-		"@wordpress/ui": "^0.20.0",
+		"@wordpress/ui": "^0.26.0",
 		"clsx": "^2.1.1",
-		"moment": "^2.30.1",
-		"qs": "^6.15.2"
+		"moment": "^2.31.0",
+		"qs": "^6.17.1"
 	},
 	"peerDependencies": {
-		"@wordpress/i18n": "^6.21.0",
+		"@wordpress/i18n": "^6.21.0 || ^7.0.0",
 		"react": "^18.3.1 || ^19.0.0"
 	},
 	"devDependencies": {
 		"@automattic/calypso-eslint-config": "workspace:^",
 		"@automattic/calypso-storybook": "workspace:^",
 		"@automattic/calypso-typescript-config": "workspace:^",
-		"@storybook/addon-a11y": "^10.6.3",
+		"@storybook/addon-a11y": "^10.6.5",
 		"@testing-library/dom": "^10.4.2",
 		"@testing-library/react": "^16.3.3",
 		"@types/jest": "^30.0.0",
@@ -83,7 +83,7 @@
 		"nock": "^14.0.17",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"storybook": "^10.6.3",
+		"storybook": "^10.6.5",
 		"typescript": "^6.0.3"
 	}
 }

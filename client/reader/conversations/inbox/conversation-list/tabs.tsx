@@ -1,3 +1,4 @@
+import { formatNumber } from '@automattic/number-formatters';
 import { __experimentalHStack as HStack } from '@wordpress/components';
 import clsx from 'clsx';
 import { useTranslate } from 'i18n-calypso';
@@ -42,7 +43,9 @@ export function ConversationListTabs( { tab, unreadCount, onChange }: Props ) {
 					onClick={ () => onChange( name ) }
 				>
 					<span>{ label }</span>
-					{ !! count && <span className="conversations-inbox__badge">{ count }</span> }
+					{ !! count && (
+						<span className="conversations-inbox__badge">{ formatNumber( count ) }</span>
+					) }
 				</HStack>
 			) ) }
 		</HStack>

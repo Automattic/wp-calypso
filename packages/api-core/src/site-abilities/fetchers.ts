@@ -1,5 +1,5 @@
 import { wpcom } from '../wpcom-fetcher';
-import type { SiteAbility } from './types';
+import type { SiteAbility, SiteEnvironmentInfo } from './types';
 
 // Core's collection cap. A full page is the only "maybe more" signal: the proxy
 // relays the site's body but not its X-WP-TotalPages header.
@@ -39,4 +39,11 @@ export async function fetchSiteAbilities(
 	}
 
 	return abilities;
+}
+
+export async function fetchSiteEnvironmentInfo( siteId: number ): Promise< SiteEnvironmentInfo > {
+	return wpcom.req.get( {
+		path: `/sites/${ siteId }/wp-abilities/v1/abilities/core/get-environment-info/run`,
+		apiNamespace: 'wp/v2',
+	} );
 }

@@ -37,7 +37,7 @@
 	:is(h1, h2, h3, h4, h5, h6, .wpnc__h1, .wpnc__h2, .wpnc__h3) {
 		margin: $grid-unit-10 0 $grid-unit-05;
 		font-size: $font-size-large;
-		font-weight: $font-weight-medium;
+		font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 		line-height: 24px;
 		text-wrap: balance;
 
@@ -49,6 +49,10 @@
 	:is(h3, h4, h5, h6, .wpnc__h3) {
 		font-size: $font-size-large;
 		line-height: 20px;
+	}
+
+	[style*="font-size"]:not(h1, h2, h3, h4, h5, h6, [style*="-font-size"]) {
+		font-size: inherit !important;
 	}
 
 	// Matches the dashboard's emphasis, which is lighter than the browser's bold.
@@ -405,7 +409,7 @@
 	gap: 2px;
 	padding-inline-start: 0;
 	font-size: $font-size-medium;
-	font-weight: $font-weight-medium;
+	font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	color: var(--wpnc-action__color, #{$gray-700});
 
 	&:hover:not(:disabled) {

@@ -4,7 +4,7 @@
 // Lines the panel up with the medium card padding used on desktop.
 .domain-forwarding-form-options {
 	.components-panel__body-toggle.components-button {
-		font-weight: $font-weight-regular;
+		font-weight: var(--wpds-typography-font-weight-default, 400);
 	}
 
 	@include break-medium {

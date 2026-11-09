@@ -7,18 +7,11 @@ import type { GlobalStyles } from '../components/styles-preview';
  * Returns `null` values if the global styles ID is not yet available.
  */
 export default function useGlobalStyles(): {
-	globalStylesId: string | null;
+	globalStylesId: number | null;
 	globalStyles: GlobalStyles | null;
 } {
 	return useSelect( ( select ) => {
-		const core = select( coreStore ) as {
-			__experimentalGetCurrentGlobalStylesId: () => string;
-			getEditedEntityRecord: (
-				kind: string,
-				name: string,
-				key: string
-			) => Record< string, unknown >;
-		};
+		const core = select( coreStore );
 		const id = core.__experimentalGetCurrentGlobalStylesId() ?? null;
 		if ( ! id ) {
 			return { globalStylesId: null, globalStyles: null };

@@ -62,12 +62,6 @@ export default {
 		},
 	},
 
-	'domains-launch': {
-		stepName: 'domains-launch',
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'domainItem' ],
-	},
-
 	plans: {
 		stepName: 'plans',
 		dependencies: [ 'siteSlug' ],

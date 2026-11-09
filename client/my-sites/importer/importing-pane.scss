@@ -25,11 +25,8 @@
 .importer__importing-pane-progress-container{
 	padding: 3em 0;
 	.importer__importing-pane-progress{
-		width: 100% !important;
-		background: var(--color-neutral-5);
-
-		> div {
-			background: var(--color-accent);
-		}
+		width: 100%;
+		--wpds-color-background-track-neutral: var(--color-neutral-5);
+		--wpds-color-background-thumb-neutral: var(--color-accent);
 	}
 }

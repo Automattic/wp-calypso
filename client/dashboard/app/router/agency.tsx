@@ -12,6 +12,7 @@ import {
 	bigSkyPluginQuery,
 	codeDeploymentQuery,
 	codeDeploymentsQuery,
+	domainsQuery,
 	githubInstallationsQuery,
 	mcpSettingsQuery,
 	agencyPendingSitesQuery,
@@ -90,6 +91,11 @@ import {
 	canTransferSite,
 	canViewHundredYearPlanSettings,
 } from '../../sites/features';
+import {
+	canViewApm,
+	hasBackendAccess,
+	prefetchApmAccess,
+} from '../../sites/performance/backend-access';
 import { validateDateRangeSearch } from '../../utils/date-range-search';
 import { a4aLink } from '../../utils/link';
 import { hasHostingFeature, hasPlanFeature } from '../../utils/site-features';
@@ -927,7 +933,7 @@ export const agencyTeamRoute = createRoute( {
 // `/agency/dashboard` – which dashboard the agency uses; only the owner can change it
 export const agencyDashboardOptInRoute = createRoute( {
 	head: () => ( {
-		meta: [ { title: __( 'Dashboard' ) } ],
+		meta: [ { title: __( 'Classic dashboard' ) } ],
 	} ),
 	getParentRoute: () => agencyRoute,
 	path: 'agency/dashboard',
@@ -1469,6 +1475,7 @@ const agencySitePerformanceRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Performance' ) } ] } ),
 	getParentRoute: () => agencySiteRoute,
 	path: 'performance',
+	loader: () => prefetchApmAccess(),
 } ).lazy( () =>
 	import( '../../agency/sites/site/performance' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-performance' )( {
@@ -1499,10 +1506,25 @@ export const agencySitePerformanceFrontendRoute = createRoute( {
 export const agencySitePerformanceBackendRoute = createRoute( {
 	getParentRoute: () => agencySitePerformanceRoute,
 	path: 'backend',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: agencySitePerformanceFrontendRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } );
 
 async function prefetchAgencyApmAggregate( siteSlug: string ) {
 	const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
+	// The page shows an upsell instead of APM data on these plans.
+	if ( ! hasBackendAccess( site.plan?.product_slug ) ) {
+		return;
+	}
 	const { getStoredOrDefaultTimeframe, TIMEFRAME_SECONDS } =
 		await import( '../../sites/performance/backend/timeframe' );
 	const windowSec = TIMEFRAME_SECONDS[ getStoredOrDefaultTimeframe() ];
@@ -1686,6 +1708,7 @@ export const agencySiteSettingsRoute = createRoute( {
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
 			hasHostingFeature( site, HostingFeatures.PRIMARY_DATA_CENTER ) &&
 				queryClient.ensureQueryData( sitePrimaryDataCenterQuery( site.ID ) ),
+			prefetchApmAccess(),
 		] );
 	},
 } );
@@ -1706,12 +1729,12 @@ export const agencySiteSettingsSiteVisibilityRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Site visibility' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'site-visibility',
-	loader: async ( { context, params: { siteSlug } } ) => {
+	loader: async ( { params: { siteSlug } } ) => {
 		const site = await queryClient.ensureQueryData( siteBySlugQuery( siteSlug ) );
 
 		await Promise.all( [
 			queryClient.ensureQueryData( siteSettingsQuery( site.ID ) ),
-			queryClient.ensureQueryData( context.config.queries.domainsQuery() ),
+			queryClient.ensureQueryData( domainsQuery() ),
 			site.is_coming_soon &&
 				hasPlanFeature( site, DotcomFeatures.SITE_PREVIEW_LINKS ) &&
 				queryClient.ensureQueryData( sitePreviewLinksQuery( site.ID ) ),
@@ -2215,6 +2238,17 @@ const agencySiteSettingsApmRoute = createRoute( {
 	head: () => ( { meta: [ { title: __( 'Application Performance Monitoring' ) } ] } ),
 	getParentRoute: () => agencySiteSettingsRoute,
 	path: 'apm',
+	beforeLoad: async ( { cause, params: { siteSlug } } ) => {
+		if ( cause === 'preload' ) {
+			return;
+		}
+		if ( ! ( await canViewApm() ) ) {
+			throw redirectAsNotAllowed( {
+				to: agencySiteSettingsRoute.fullPath,
+				params: { siteSlug },
+			} );
+		}
+	},
 } ).lazy( () =>
 	import( '../../sites/settings-apm' ).then( ( d ) =>
 		createLazyRoute( 'agency-site-settings-apm' )( {

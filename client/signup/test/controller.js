@@ -148,16 +148,13 @@ describe( 'start', () => {
 		return dispatch;
 	};
 
-	it.each( [ 'launch-site', 'site-selected' ] )(
-		'clears %s landing dependencies left over from an earlier visit',
-		async ( flowName ) => {
-			const dispatch = await run( flowName, { siteSlug: 'example.wordpress.com' } );
+	it( 'clears site-selected landing dependencies left over from an earlier visit', async () => {
+		const dispatch = await run( 'site-selected', { siteSlug: 'example.wordpress.com' } );
 
-			expect( dispatch ).toHaveBeenCalledWith(
-				updateDependencies( { back_to: null, redirect_to: null, refParameter: null } )
-			);
-		}
-	);
+		expect( dispatch ).toHaveBeenCalledWith(
+			updateDependencies( { back_to: null, redirect_to: null, refParameter: null } )
+		);
+	} );
 
 	it( 'takes the site-selected landing dependencies from the query it was entered with', async () => {
 		const dispatch = await run( 'site-selected', {

@@ -35,7 +35,7 @@ import {
 } from 'calypso/state/analytics/actions';
 import { isUserLoggedIn } from 'calypso/state/current-user/selectors';
 import { wasManualRenewalImmediateLoginAttempted } from 'calypso/state/immediate-login/selectors';
-import { getRedirectToOriginal } from 'calypso/state/login/selectors';
+import { getRedirectToOriginal, getTwoFactorAuthNonce } from 'calypso/state/login/selectors';
 import { getCurrentOAuth2Client } from 'calypso/state/oauth2-clients/ui/selectors';
 import getCurrentLocaleSlug from 'calypso/state/selectors/get-current-locale-slug';
 import getCurrentQueryArguments from 'calypso/state/selectors/get-current-query-arguments';
@@ -73,6 +73,7 @@ export class Login extends Component {
 		socialServiceResponse: PropTypes.object,
 		translate: PropTypes.func.isRequired,
 		twoFactorAuthType: PropTypes.string,
+		hasTwoFactorEmailNonce: PropTypes.bool,
 		action: PropTypes.string,
 		isGravPoweredClient: PropTypes.bool,
 		isWoo: PropTypes.bool,
@@ -109,6 +110,7 @@ export class Login extends Component {
 		// List all props that affect the heading text
 		const headingProps = [
 			'twoFactorAuthType',
+			'hasTwoFactorEmailNonce',
 			'isManualRenewalImmediateLoginAttempt',
 			'socialConnect',
 			'linkingSocialService',
@@ -226,8 +228,8 @@ export class Login extends Component {
 	}
 
 	/**
-	 * The same link for desktop, where it sits on the password field's label row, beside the
-	 * field it resets. Only one of the two is ever visible: see login-form.scss.
+	 * The same link on the form: on the email field's label row for the stacked login, at every
+	 * width, otherwise on the password field's for desktop, with the footer's hidden there.
 	 */
 	getLostPasswordFormLink() {
 		if ( this.props.twoFactorAuthType ) {
@@ -238,6 +240,22 @@ export class Login extends Component {
 			<a className="login__form-lost-password" { ...this.getLostPasswordLinkProps() }>
 				{ this.props.translate( 'Lost your password?' ) }
 			</a>
+		);
+	}
+
+	/**
+	 * The main WordPress.com login, for logged-out visitors, stacks the social buttons above the
+	 * form. Partner, OAuth2 and connection logins keep the side-by-side layout.
+	 */
+	isStackedLogin() {
+		return (
+			this.props.isLoginView &&
+			! this.props.isUserLoggedIn &&
+			! this.props.isGravPoweredClient &&
+			! this.props.isJetpack &&
+			! this.props.isUnifiedConnectionFlow &&
+			! this.props.oauth2Client &&
+			! this.props.isWoo
 		);
 	}
 
@@ -306,9 +324,12 @@ export class Login extends Component {
 			! currentRoute.startsWith( '/log-in/webauthn' ) &&
 			! currentRoute.startsWith( '/log-in/backup' );
 
-		// Gravatar-powered clients and Woo render their own lost-password link.
+		const isStackedLogin = this.isStackedLogin();
+
+		// Gravatar-powered clients and Woo render their own lost-password link. The stacked login
+		// carries it on the email field's row, and the footer's stays for everyone else.
 		const lostPasswordFormLink =
-			isEntryClarityTreatment && ! isGravPoweredClient && ! this.props.isWoo
+			( isEntryClarityTreatment || isStackedLogin ) && ! isGravPoweredClient && ! this.props.isWoo
 				? this.getLostPasswordFormLink()
 				: undefined;
 
@@ -327,6 +348,7 @@ export class Login extends Component {
 				domain={ domain }
 				fromSite={ fromSite }
 				lostPasswordLink={ lostPasswordFormLink }
+				isSocialAboveForm={ isStackedLogin }
 				footer={
 					isGravPoweredLoginPage ? (
 						<GravPoweredLoginBlockFooter />
@@ -334,8 +356,9 @@ export class Login extends Component {
 						<OneLoginFooter
 							isLoginView={ isLoginView }
 							signupUrl={ signupUrl }
-							showSignupPrompt={ isEntryClarityTreatment }
-							lostPasswordLink={ this.getLostPasswordLink() }
+							showSignupPrompt={ isEntryClarityTreatment || isStackedLogin }
+							isNewHereSignupPrompt={ isStackedLogin }
+							lostPasswordLink={ isStackedLogin ? undefined : this.getLostPasswordLink() }
 							lostPasswordLinkMobileOnly={ !! lostPasswordFormLink }
 							loginLink={ this.getLoginLink() }
 							supportLink={ this.getSupportLink() }
@@ -390,6 +413,8 @@ export class Login extends Component {
 		// TODO: remove isGravPoweredClient when login pages are unified.
 		const isSocialFirst = ! isGravPoweredClient;
 
+		const isStackedLogin = this.isStackedLogin();
+
 		// Each returns null when it has nothing to say.
 		const notices = (
 			<>
@@ -402,6 +427,7 @@ export class Login extends Component {
 			<Main
 				className={ clsx( 'wp-login__main', {
 					'is-social-first': isSocialFirst,
+					'is-stacked-login': isStackedLogin,
 					'is-generic-oauth': isGenericOauth,
 					'is-jetpack': isJetpack,
 				} ) }
@@ -446,10 +472,10 @@ export class Login extends Component {
 						connectorPlugins={ this.props.connectorPlugins }
 						signupUrl={ this.props.signupUrl }
 						isLostPasswordView={ isLostPasswordView }
-						columnWidth={ isLoginFormView ? 6 : undefined }
-						isCentered={ isLoginFormView || undefined }
+						columnWidth={ isLoginFormView && ! isStackedLogin ? 6 : undefined }
+						isCentered={ ( isLoginFormView && ! isStackedLogin ) || undefined }
 						// The footer carries the route to signup on desktop instead.
-						signupLinkMobileOnly={ isEntryClarityTreatment }
+						signupLinkMobileOnly={ isEntryClarityTreatment || isStackedLogin }
 						noThanksRedirectUrl={ this.getNoThanksRedirectUrl() }
 						notice={ notices }
 						linkLogoToHome
@@ -466,6 +492,7 @@ export class Login extends Component {
 function getInitialHeadingState( props, translate ) {
 	const {
 		twoFactorAuthType,
+		hasTwoFactorEmailNonce,
 		isManualRenewalImmediateLoginAttempt,
 		socialConnect,
 		linkingSocialService,
@@ -517,6 +544,7 @@ function getInitialHeadingState( props, translate ) {
 	const headingSubText = getHeadingSubText( {
 		isSocialFirst,
 		twoFactorAuthType,
+		hasTwoFactorEmailNonce,
 		action,
 		translate,
 		isWooJPC,
@@ -614,6 +642,7 @@ export default connect(
 			partnerConfig: detectPartnerConfig( oauth2Client ),
 			isManualRenewalImmediateLoginAttempt: wasManualRenewalImmediateLoginAttempted( state ),
 			isUserLoggedIn: isUserLoggedIn( state ),
+			hasTwoFactorEmailNonce: !! getTwoFactorAuthNonce( state, 'email' ),
 			isWooPaymentsFlow: isWooCommercePaymentsOnboardingFlow( state ),
 		};
 	},

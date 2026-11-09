@@ -9,7 +9,7 @@ const POPOVER_PROPS = {
 	offset: 10,
 	noArrow: false,
 	inline: true,
-};
+} as const;
 
 export const Filter = () => {
 	const { filter, setFilter, query, queries, resetFilter } = useDomainSearch();
@@ -29,7 +29,6 @@ export const Filter = () => {
 
 	return (
 		<Dropdown
-			showArrow={ false }
 			className="domain-search__search-bar-filters"
 			popoverProps={ POPOVER_PROPS }
 			renderToggle={ ( { onToggle } ) => {

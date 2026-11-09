@@ -4,13 +4,14 @@ import {
 	siteWordPressMigrationConfigurationQuery,
 	siteWordPressMigrationStatusQuery,
 } from '@automattic/api-queries';
+import { invokeSurvicateEventOnce } from '@automattic/survicate';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { useEffect, useState } from 'react';
 import { useHelpCenter } from '../../../app/help-center';
-import Notice from '../../../components/notice';
+import Notice, { NoticeActionButton } from '../../../components/notice';
 import { isSiteMigrationInProgress } from '../../../utils/site-status';
 import { Connect } from './connect';
 import { Findings } from './findings';
@@ -82,6 +83,16 @@ export function WordPressMigration( { site }: { site: Site } ) {
 		refetchOnWindowFocus: isConnecting ? 'always' : false,
 	} );
 
+	// Each migration asks once, whether it started from this page or was already going when the page opened. A run
+	// resumed after a pause is the same migration, so the key is the source rather than when the run started.
+	const isRunning = migration?.status === 'running';
+	const sourceUrl = migration?.source_url;
+	useEffect( () => {
+		if ( isRunning && sourceUrl ) {
+			return invokeSurvicateEventOnce( 'migrationStarted', `${ site.ID }:${ sourceUrl }` );
+		}
+	}, [ isRunning, sourceUrl, site.ID ] );
+
 	// The site is unlocked once the migration completes, so hand over to the overview. The router sends a site that
 	// still reads as migrating straight back here, so only leave once the site itself says it's done: reload it now,
 	// and keep checking in case it lags behind the migration's own status.
@@ -151,9 +162,9 @@ export function WordPressMigration( { site }: { site: Site } ) {
 					variant="error"
 					actions={
 						<>
-							<Button __next40pxDefaultSize variant="primary" onClick={ () => refetch() }>
+							<NoticeActionButton variant="solid" onClick={ () => refetch() }>
 								{ __( 'Try again' ) }
-							</Button>
+							</NoticeActionButton>
 							{ contactUs }
 						</>
 					}

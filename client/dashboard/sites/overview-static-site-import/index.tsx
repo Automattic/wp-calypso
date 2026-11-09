@@ -11,14 +11,14 @@ import {
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
-import { Icon, border, caution, external, published } from '@wordpress/icons';
+import { Icon, border, caution, published } from '@wordpress/icons';
 import { addQueryArgs } from '@wordpress/url';
 import { useEffect, useRef, useState } from 'react';
 import { useAnalytics } from '../../app/analytics';
 import { useHelpCenter } from '../../app/help-center';
 import { getCurrentDashboard } from '../../app/routing';
 import { Card, CardBody } from '../../components/card';
-import Notice from '../../components/notice';
+import Notice, { NoticeActionButton, NoticeActionLinkButton } from '../../components/notice';
 import { getAddSiteDomainUrl } from '../../utils/domain-url';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
 import { withJetpackSso } from '../../utils/site-sso';
@@ -100,16 +100,21 @@ function MovingChecklist( { session }: { session?: StaticSiteImportSession } ) {
 	);
 }
 
-/** Opens a chat with our team (not the AI assistant), with a message naming where the site came from. */
-function useAskForMoveHelp( site: Site ) {
-	const { setNewMessagingChat } = useHelpCenter();
-	return ( initialMessage: string ) =>
-		setNewMessagingChat( {
-			initialMessage,
-			section: 'static-site-import',
-			siteUrl: site.URL,
-			siteId: String( site.ID ),
+/**
+ * Hands the move to our migrations team: files a ticket for the Non-WP Migrations queue, which
+ * emails the customer to finish the move.
+ */
+function useMoveHandoff( site: Site, search: StaticSiteImportSearch ) {
+	const locale = useLocale();
+	const handoff = useMutation( staticSiteImportHandoffMutation() );
+	const requestHandoff = () =>
+		handoff.mutate( {
+			blogUrl: site.slug,
+			fromUrl: search.from ?? '',
+			locale,
+			importSessionId: search.importSessionId,
 		} );
+	return { handoff, requestHandoff };
 }
 
 /** Takes the place of the progress card when a move fails. */
@@ -120,8 +125,7 @@ export function StaticSiteImportFailed( {
 	site: Site;
 	search: StaticSiteImportSearch;
 } ) {
-	const locale = useLocale();
-	const handoff = useMutation( staticSiteImportHandoffMutation() );
+	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( search.from );
 	const { data: planPurchase } = useQuery( {
 		...sitePurchasesQuery( site.ID ),
@@ -172,13 +176,7 @@ export function StaticSiteImportFailed( {
 								variant="primary"
 								isBusy={ handoff.isPending }
 								disabled={ handoff.isPending }
-								onClick={ () =>
-									handoff.mutate( {
-										blogUrl: site.slug,
-										fromUrl: search.from ?? '',
-										locale,
-									} )
-								}
+								onClick={ requestHandoff }
 							>
 								{ __( 'Let our team move it' ) }
 							</Button>
@@ -247,8 +245,10 @@ export function StaticSiteImportNotice( {
 	const { setShowHelpCenter } = useHelpCenter();
 	const [ isDismissed, setIsDismissed ] = useState( false );
 	const { from, platform } = search;
-	const askForMoveHelp = useAskForMoveHelp( site );
+	const { handoff, requestHandoff } = useMoveHandoff( site, search );
 	const sourceHost = getSourceHost( from );
+	// What the move found that may need our team, already in the reader's language.
+	const reviewNote = siteImport.session?.review_note;
 	const isReady = siteImport.status === 'finished';
 	const trackingProps = {
 		site_id: site.ID,
@@ -268,7 +268,9 @@ export function StaticSiteImportNotice( {
 		} );
 	}, [ isReady, recordTracksEvent, site.ID, platform ] );
 
-	const recordClick = ( action: 'connect_domain' | 'get_domain' | 'preview_site' | 'get_help' ) =>
+	const recordClick = (
+		action: 'connect_domain' | 'get_domain' | 'preview_site' | 'request_handoff'
+	) =>
 		recordTracksEvent( 'calypso_dashboard_static_site_import_ready_notice_click', {
 			...trackingProps,
 			action,
@@ -279,17 +281,15 @@ export function StaticSiteImportNotice( {
 	const previewUrl =
 		site.is_coming_soon && site.is_wpcom_atomic ? withJetpackSso( site.URL ) : site.URL;
 
-	const sourceName = sourceHost || __( 'my old platform' );
-
 	if ( siteImport.isRefused ) {
 		return (
 			<Notice
 				variant="error"
 				title={ __( 'We can’t import this site' ) }
 				actions={
-					<Button __next40pxDefaultSize variant="link" onClick={ () => setShowHelpCenter( true ) }>
+					<NoticeActionButton variant="minimal" onClick={ () => setShowHelpCenter( true ) }>
 						{ __( 'Get help' ) }
-					</Button>
+					</NoticeActionButton>
 				}
 			>
 				{ __( 'Its content isn’t allowed on WordPress.com.' ) }
@@ -308,9 +308,14 @@ export function StaticSiteImportNotice( {
 				variant="warning"
 				title={ __( 'Your move hasn’t started yet' ) }
 				actions={
-					<Button __next40pxDefaultSize variant="secondary" onClick={ siteImport.retry }>
-						{ __( 'Try again' ) }
-					</Button>
+					<>
+						<NoticeActionButton variant="solid" onClick={ siteImport.retry }>
+							{ __( 'Try again' ) }
+						</NoticeActionButton>
+						<NoticeActionButton variant="outline" onClick={ () => setShowHelpCenter( true ) }>
+							{ __( 'Contact us' ) }
+						</NoticeActionButton>
+					</>
 				}
 			>
 				{ __( 'Something stopped it from starting. Nothing has changed on your current site.' ) }
@@ -361,58 +366,62 @@ export function StaticSiteImportNotice( {
 					} }
 					actions={
 						<>
-							<Button
-								__next40pxDefaultSize
-								variant="primary"
+							<NoticeActionLinkButton
+								variant="solid"
 								href={ domainUrl }
 								onClick={ () => recordClick( ownedDomain ? 'connect_domain' : 'get_domain' ) }
 							>
 								{ domainLabel }
-							</Button>
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
+							</NoticeActionLinkButton>
+							<NoticeActionLinkButton
+								variant="outline"
 								href={ previewUrl }
-								target="_blank"
+								openInNewTab
 								rel="noopener noreferrer"
-								icon={ external }
-								iconPosition="right"
 								onClick={ () => recordClick( 'preview_site' ) }
 							>
 								{ __( 'Preview site' ) }
-							</Button>
-							<Button
-								__next40pxDefaultSize
-								variant="link"
-								onClick={ () => {
-									recordClick( 'get_help' );
-									askForMoveHelp(
-										sprintf(
-											/* translators: %s: the address of the site that was moved, e.g. example.com. */
-											__(
-												'My site moved from %s, but some things didn’t come across right. Can you help me with my move?'
-											),
-											sourceName
-										)
-									);
-								} }
-							>
-								{ __( 'Something not right? Get help with your move' ) }
-							</Button>
+							</NoticeActionLinkButton>
+							{ ! handoff.isSuccess && (
+								<NoticeActionButton
+									variant="minimal"
+									loading={ handoff.isPending }
+									disabled={ handoff.isPending }
+									onClick={ () => {
+										recordClick( 'request_handoff' );
+										requestHandoff();
+									} }
+								>
+									{ __( 'Something not right? Let our team fix it' ) }
+								</NoticeActionButton>
+							) }
 						</>
 					}
 				>
-					{ sourceHost
-						? sprintf(
-								/* translators: %s: the domain of the site that was moved, e.g. example.com. */
-								__(
-									'%s is copied and running on WordPress.com. It stays private until you launch it.'
-								),
-								sourceHost
-							)
-						: __(
-								'Your site is copied and running on WordPress.com. It stays private until you launch it.'
-							) }
+					<VStack spacing={ 2 }>
+						<span>
+							{ sourceHost
+								? sprintf(
+										/* translators: %s: the domain of the site that was moved, e.g. example.com. */
+										__(
+											'%s is copied and running on WordPress.com. It stays private until you launch it.'
+										),
+										sourceHost
+									)
+								: __(
+										'Your site is copied and running on WordPress.com. It stays private until you launch it.'
+									) }
+						</span>
+						{ reviewNote && <span>{ reviewNote }</span> }
+						{ handoff.isError && (
+							<span>{ __( 'We couldn’t reach our team. Please try again.' ) }</span>
+						) }
+						{ handoff.isSuccess && (
+							<span>
+								{ __( 'Our team has your move. We’ll email you to finish moving your site.' ) }
+							</span>
+						) }
+					</VStack>
 				</Notice>
 			) }
 		</>

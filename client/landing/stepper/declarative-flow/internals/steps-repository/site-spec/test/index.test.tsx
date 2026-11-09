@@ -58,10 +58,6 @@ jest.mock( '@automattic/onboarding', () => ( {
 	Step: { Loading: () => null },
 } ) );
 
-jest.mock( '@automattic/posthog', () => ( {
-	getSessionId: jest.fn( () => 'ph-session' ),
-} ) );
-
 jest.mock( 'i18n-calypso', () => ( {
 	useTranslate: () => ( text: string ) => text,
 } ) );
@@ -205,7 +201,6 @@ describe( 'SiteSpec early provisioning step', () => {
 			EARLY_PROVISION_TARGET_WPCOM_ATOMIC
 		);
 		expect( redirect.searchParams.has( 'early_created_site' ) ).toBe( false );
-		expect( redirect.searchParams.get( '_ph' ) ).toBe( 'ph-session' );
 		expect( redirect.searchParams.get( 'source' ) ).toBe( 'vega' );
 		expect( redirect.searchParams.has( 'create_garden_site' ) ).toBe( false );
 	} );

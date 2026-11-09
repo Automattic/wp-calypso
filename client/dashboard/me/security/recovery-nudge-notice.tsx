@@ -1,8 +1,7 @@
-import { Link } from '@tanstack/react-router';
 import { __ } from '@wordpress/i18n';
 import { useState, useEffect, useRef } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import Notice from '../../components/notice';
+import Notice, { RouterNoticeActionLink } from '../../components/notice';
 
 function isVerifiedRedirect() {
 	if ( typeof window === 'undefined' ) {
@@ -45,12 +44,12 @@ export default function RecoveryNudgeNotice() {
 				setIsVisible( false );
 			} }
 			actions={
-				<Link
+				<RouterNoticeActionLink
 					to="/me/security/account-recovery"
 					onClick={ () => recordTracksEvent( 'calypso_dashboard_security_recovery_notice_click' ) }
 				>
 					{ __( 'Set up account recovery' ) }
-				</Link>
+				</RouterNoticeActionLink>
 			}
 		>
 			{ __(

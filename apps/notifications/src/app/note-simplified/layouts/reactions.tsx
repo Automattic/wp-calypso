@@ -9,14 +9,18 @@ import Context from '../parts/context';
 import type { Note } from '../../types';
 
 export default function ReactionsNote( { note }: { note: Note } ) {
-	const heading = note.meta?.heading;
+	const heading = note.meta?.heading ?? note.title;
 
 	return (
 		<>
 			<Context note={ note } />
 			{ heading && heading !== getTemporaryNoteTitle( note ) && (
 				<VStack className="wpnc-simplified__heading" spacing={ 3 }>
-					<Heading level={ 3 } size={ 15 } weight="var(--wpds-typography-font-weight-emphasis)">
+					<Heading
+						level={ 3 }
+						size={ 15 }
+						weight="var(--wpds-typography-font-weight-emphasis, 600)"
+					>
 						{ heading }
 					</Heading>
 					<CardDivider />

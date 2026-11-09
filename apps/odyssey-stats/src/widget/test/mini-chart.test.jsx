@@ -8,9 +8,10 @@ import {
 	getDateRange,
 	DATE_RANGE_LAST_7_DAYS,
 	DATE_RANGE_LAST_90_DAYS,
+	DATE_RANGE_LAST_12_MONTHS,
 } from '../../lib/date-ranges';
 import MiniChart from '../mini-chart';
-import { recordWidgetEventThenFollow } from '../record-widget-event';
+import { recordWidgetEventThenFollow, recordWidgetEventThenOpen } from '../record-widget-event';
 
 let mockChartFails = false;
 let mockChartLoading = false;
@@ -24,6 +25,7 @@ jest.mock( '../record-widget-event', () => ( {
 	__esModule: true,
 	default: jest.fn(),
 	recordWidgetEventThenFollow: jest.fn( () => jest.fn() ),
+	recordWidgetEventThenOpen: jest.fn(),
 } ) );
 jest.mock( '../overview-chart', () => ( {
 	__esModule: true,
@@ -50,9 +52,9 @@ const success = ( data ) => ( { status: 'success', data } );
 const failed = () => ( { status: 'error' } );
 const pending = () => ( { status: 'pending' } );
 
-function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS ) {
+function renderMiniChart( state, rangeId = DATE_RANGE_LAST_7_DAYS, startDate = '2026-10-01' ) {
 	useVisitsQuery.mockReturnValue( state );
-	const range = { ...getDateRange( rangeId ), startDate: '2026-10-01', endDate: '2026-10-07' };
+	const range = { ...getDateRange( rangeId ), startDate, endDate: '2026-10-07' };
 	return (
 		<MiniChart
 			siteId={ 1 }
@@ -91,9 +93,9 @@ describe( 'MiniChart', () => {
 
 	it.each( [
 		[ 'bars, as the Stats page does', null, false, 'bar' ],
-		[ 'lines on a phone, as the Stats page does', null, true, 'line' ],
+		[ 'bars on a phone too, as Stats v2 does', null, true, 'bar' ],
 		[ 'lines when the viewer chose them on the Stats page', 'line', false, 'line' ],
-		[ 'bars when the viewer chose them on the Stats page', 'bar', true, 'bar' ],
+		[ 'lines on a phone when the viewer chose them', 'line', true, 'line' ],
 		[ 'bars over a value the Stats page never writes', 'pie', false, 'bar' ],
 	] )( 'draws %s', async ( _, stored, mobile, expected ) => {
 		if ( stored ) {
@@ -109,6 +111,31 @@ describe( 'MiniChart', () => {
 		expect( swatches ).toHaveLength( 2 );
 		swatches.forEach( ( swatch ) =>
 			expect( swatch.classList.contains( 'is-bar' ) ).toBe( 'bar' === expected )
+		);
+	} );
+
+	it( 'asks for the range from its first day, so a week at either end can be partial', () => {
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ), DATE_RANGE_LAST_90_DAYS ) );
+
+		expect( useVisitsQuery ).toHaveBeenCalledWith(
+			1,
+			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } )
+		);
+	} );
+
+	it( 'hands the chart the weeks as keyed, with the range they are cut to', async () => {
+		// Monday September 28 starts the week the range's first day, a Thursday, falls in.
+		const weeks = [
+			{ period: '2026-09-28', views: 20, visitors: 8 },
+			{ period: '2026-10-05', views: 10, visitors: 4 },
+		];
+		render( renderMiniChart( success( weeks ), DATE_RANGE_LAST_90_DAYS ) );
+		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
+
+		const dates = mockChartProps.series[ 0 ].data.map( ( point ) => point.date );
+		expect( dates ).toEqual( [ new Date( 2026, 8, 28 ), new Date( 2026, 9, 5 ) ] );
+		expect( mockChartProps.range ).toEqual(
+			expect.objectContaining( { unit: 'week', startDate: '2026-10-01', endDate: '2026-10-07' } )
 		);
 	} );
 
@@ -138,6 +165,63 @@ describe( 'MiniChart', () => {
 		// The handler from the latest render: the chart's arrival rendered the link again.
 		await userEvent.setup().click( link );
 		expect( recordWidgetEventThenFollow.mock.results.at( -1 ).value ).toHaveBeenCalled();
+	} );
+
+	it.each( [
+		[
+			'a day by the hour',
+			DATE_RANGE_LAST_7_DAYS,
+			'2026-10-01',
+			new Date( 2026, 9, 3 ),
+			'hour',
+			'2026-10-03',
+			'2026-10-03',
+		],
+		[
+			'a week by the day',
+			DATE_RANGE_LAST_90_DAYS,
+			'2026-07-10',
+			new Date( 2026, 8, 14 ),
+			'day',
+			'2026-09-14',
+			'2026-09-20',
+		],
+		[
+			'the last week up to the day the range ends on',
+			DATE_RANGE_LAST_90_DAYS,
+			'2026-07-10',
+			new Date( 2026, 9, 5 ),
+			'day',
+			'2026-10-05',
+			'2026-10-07',
+		],
+		[
+			'a month by the day',
+			DATE_RANGE_LAST_12_MONTHS,
+			'2025-11-01',
+			new Date( 2026, 8, 1 ),
+			'day',
+			'2026-09-01',
+			'2026-09-30',
+		],
+	] )( 'opens a clicked point as %s', async ( _, rangeId, startDate, date, period, from, to ) => {
+		render( renderMiniChart( success( days( [ 20, 8 ] ) ), rangeId, startDate ) );
+		expect( await screen.findByText( 'Chart' ) ).toBeInTheDocument();
+		expect( mockChartProps.onBucketClick ).toEqual( expect.any( Function ) );
+
+		mockChartProps.onBucketClick( date );
+
+		const { unit } = getDateRange( rangeId );
+		expect( mockStatsLink ).toHaveBeenLastCalledWith(
+			`https://example.com/wp-admin/admin.php?page=stats/stats/${ period }/1?chartStart=${ from }&chartEnd=${ to }`,
+			'/?section=traffic',
+			{ from, to, gmtOffset: 0 }
+		);
+		expect( recordWidgetEventThenOpen ).toHaveBeenCalledWith(
+			`https://example.com/wp-admin/admin.php?page=stats/stats/${ period }/1?chartStart=${ from }&chartEnd=${ to }`,
+			'chart_bucket_clicked',
+			{ range: rangeId, unit }
+		);
 	} );
 
 	it( 'shows skeletons for the totals and the chart while the range loads', () => {

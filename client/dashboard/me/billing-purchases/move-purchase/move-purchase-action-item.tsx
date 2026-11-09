@@ -1,10 +1,10 @@
+import { sitesQuery } from '@automattic/api-queries';
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@wordpress/components';
 import { __, _x } from '@wordpress/i18n';
 import { useAnalytics } from '../../../app/analytics';
 import { useAuth } from '../../../app/auth';
-import { useAppContext } from '../../../app/context';
 import { movePurchaseRoute } from '../../../app/router/me';
 import { ActionList } from '../../../components/action-list';
 import { canManageSite } from '../../../sites/features';
@@ -23,7 +23,6 @@ import type { Purchase } from '@automattic/api-core';
 export function MovePurchaseActionItem( { purchase }: { purchase: Purchase } ) {
 	const isEnabled = useIsPurchaseSiteTransferEnabled();
 	const { user } = useAuth();
-	const { queries } = useAppContext();
 	const navigate = useNavigate();
 	const { recordTracksEvent } = useAnalytics();
 
@@ -32,7 +31,7 @@ export function MovePurchaseActionItem( { purchase }: { purchase: Purchase } ) {
 		String( user.ID ) === String( purchase.user_id ) &&
 		isPurchaseMovableToAnotherSite( purchase );
 
-	const { data: sites = [] } = useQuery( { ...queries.sitesQuery(), enabled: isEligible } );
+	const { data: sites = [] } = useQuery( { ...sitesQuery(), enabled: isEligible } );
 	const hasTargetSite = sites.some(
 		( site ) => canManageSite( site ) && canSiteReceivePurchase( purchase, site )
 	);

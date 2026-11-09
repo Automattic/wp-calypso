@@ -10,14 +10,15 @@ export function isTargetSitePlanCompatible( targetSite: SiteDetails | undefined 
 	return Boolean( targetSite?.plan?.features?.active?.includes( WPCOM_FEATURES_ATOMIC ) );
 }
 
+export function isSiteRestoreImport( job: ImportJob | undefined ) {
+	return job?.importerFileType === 'playground' || job?.importerFileType === 'jetpack_backup';
+}
+
 export function isPlanUpgradeRequiredForImport(
 	targetSite: SiteDetails | undefined,
 	job: ImportJob | undefined
 ) {
-	return (
-		! isTargetSitePlanCompatible( targetSite ) &&
-		( job?.importerFileType === 'playground' || job?.importerFileType === 'jetpack_backup' )
-	);
+	return ! isTargetSitePlanCompatible( targetSite ) && isSiteRestoreImport( job );
 }
 
 export function formatSlugToURL( inputUrl: string ) {

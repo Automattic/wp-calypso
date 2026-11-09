@@ -11,7 +11,7 @@ const NEW_SITE_FETCH_TIMEOUT = 60 * 1000;
  * The plans page URL regex.
  */
 export const plansPageUrl =
-	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-plugin\/plans-with-plugin|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|start\/launch-site\/plans-launch|setup\/launch-site\/plans.*/;
+	/.*setup\/onboarding\/plans|setup\/domain\/plans|start\/plans|start\/with-plugin\/plans-with-plugin|start\/with-theme\/plans-theme-preselected|start\/domain\/plans-site-selected|setup\/launch-site\/plans.*/;
 
 /**
  * Represents the Signup > Pick a Plan page.

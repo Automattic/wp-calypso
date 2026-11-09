@@ -21,7 +21,8 @@ There is no preview or address/domain selection step. Unified checkout creates t
 site and returns its ID to the authenticated reading step. That step starts the import session
 and immediately opens the site’s Overview in the dashboard
 (`client/dashboard/sites/overview-static-site-import`). Overview records delivery intent and
-tracks capture and import in the background, then asks whether the finished site looks right.
+tracks capture and import in the background, then offers the finished site with a way to hand the
+move to our migrations team.
 
 An existing destination requires authentication. Paid destinations skip plans and checkout;
 free destinations use site checkout to buy a plan before starting the import session.
@@ -29,8 +30,11 @@ The reading step asks for confirmation before importing into an existing destina
 this tab just came back from checkout in this flow. When unified checkout created the site
 (`newSite=1`), the step also records the signup and applies the flow’s site settings.
 
-If the session API refuses the source, the reading step says so and stops there. Other failures
-to start fall back to the content importer for the destination site.
+If the session API refuses the source, the reading step says so and stops there. If it finds
+WordPress behind the source (`static_site_import_source_is_wordpress`), for example a site the
+analyzer saw only as a hosting notice, the user continues to `site-migration`'s check step with
+`platform=wordpress` and the destination, skipping identification. Other failures to start fall
+back to the content importer for the destination site.
 
 The source, platform, and entry parameters survive checkout in the return URL. The receipt
 resolves the new destination’s `siteId`. Cancelling checkout returns to plans with the source
@@ -51,7 +55,10 @@ its previous behavior.
    has run. Cancel checkout and confirm the source is retained on plans.
 4. In a test account, complete checkout. Confirm the reading step starts a session, then opens
    the destination’s Overview with **We’re moving your site**. Reload and confirm it resumes.
-5. Once it’s ready, try the thumbs up and thumbs down buttons; thumbs down opens the Help Center.
+5. Once it’s ready, click **Something not right? Let our team fix it** and confirm it files a migration
+   ticket. Above it, the notice shows the session's `review_note`, the sentence wpcom also puts in
+   the ready email: it names a store, events, bookings, memberships, or forms found on the old site,
+   or gives a general note for a site inspection rated moderate or complex.
 6. Repeat with an existing destination: a free site requires checkout and a paid site skips it.
    Confirm that a direct reading link shows the destination and requires clicking **Import into
    this site**, even with `newSite=1` or an existing `importSessionId` in the URL.

@@ -6,33 +6,19 @@ import {
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 import { chevronUpDown } from '@wordpress/icons';
-import { Suspense, lazy, useMemo } from 'react';
+import { Suspense, lazy } from 'react';
 import { useAnalytics } from '../../app/analytics';
-import { useAppContext } from '../../app/context';
 import { SidebarMenuSwitcherItem } from '../../components/sidebar';
 import SiteIcon from '../../components/site-icon';
 import { Text } from '../../components/text';
 import { getSiteDisplayName } from '../../utils/site-name';
 import { getSiteDisplayUrl } from '../../utils/site-url';
-import type { SiteSwitcherProps } from '../../sites/site-switcher/types';
 import type { Site } from '@automattic/api-core';
 
-export default function SiteSwitcherItem( { site }: { site: Site } ) {
-	const { components } = useAppContext();
-	const { recordTracksEvent } = useAnalytics();
-	const SiteSwitcher = useMemo(
-		() =>
-			components.siteSwitcher
-				? ( lazy( components.siteSwitcher ) as React.LazyExoticComponent<
-						React.FC< SiteSwitcherProps >
-					> )
-				: null,
-		[ components ]
-	);
+const SiteSwitcher = lazy( () => import( '../site-switcher' ) );
 
-	if ( ! SiteSwitcher ) {
-		return null;
-	}
+export default function SiteSwitcherItem( { site }: { site: Site } ) {
+	const { recordTracksEvent } = useAnalytics();
 
 	return (
 		<SidebarMenuSwitcherItem

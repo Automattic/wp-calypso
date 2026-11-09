@@ -1,8 +1,10 @@
 import { DomainSubtype, FreeSiteAddressType, isWpError } from '@automattic/api-core';
 import {
+	domainsQuery,
 	validateSiteAddressChangeMutation,
 	changeSiteAddressChangeMutation,
 } from '@automattic/api-queries';
+import { useHasEnTranslation } from '@automattic/i18n-utils';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from '@tanstack/react-router';
 import { __experimentalVStack as VStack, Button, Icon } from '@wordpress/components';
@@ -14,7 +16,6 @@ import { check, closeSmall } from '@wordpress/icons';
 import { store as noticesStore } from '@wordpress/notices';
 import { useRef, useState } from 'react';
 import { flushSync } from 'react-dom';
-import { useAppContext } from '../../app/context';
 import { ButtonStack } from '../../components/button-stack';
 import SuffixInputControl from '../../components/input-control/suffix-input-control';
 import Notice from '../../components/notice';
@@ -69,10 +70,10 @@ const NewSiteAddressForm = ( {
 	onSubmit: ( data: NewSiteAddressFormData ) => void;
 	onCancel: () => void;
 } ) => {
-	const { queries } = useAppContext();
 	const { createErrorNotice } = useDispatch( noticesStore );
+	const hasEnTranslation = useHasEnTranslation();
 	const { data: siteDomains } = useQuery( {
-		...queries.domainsQuery(),
+		...domainsQuery(),
 		select: ( data ) => {
 			return data.filter( ( domain ) => domain.blog_id === site.ID );
 		},
@@ -167,12 +168,18 @@ const NewSiteAddressForm = ( {
 	return (
 		<VStack spacing={ 4 }>
 			{ !! siteDomains && ! hasCustomDomain && (
-				<Notice variant="warning">
+				<Notice variant="info">
 					<Text>
 						{ createInterpolateElement(
-							__(
-								'Before changing site address, consider <link>adding a custom domain</link> instead?'
-							),
+							hasEnTranslation(
+								'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+							)
+								? __(
+										'A custom domain is easier to share and remember than a wordpress.com address. <link>Add a custom domain</link>'
+									)
+								: __(
+										'Before changing site address, consider <link>adding a custom domain</link> instead?'
+									),
 							{
 								link: <a href={ getAddSiteDomainUrl( site.slug ) } />,
 							}
@@ -181,10 +188,13 @@ const NewSiteAddressForm = ( {
 				</Notice>
 			) }
 			<Text as="p">
-				{ sprintf(
-					/* translators: %s: site domain */
-					__( 'Once you change your site address, %s will no longer be available.' ),
-					wpcomDomain?.domain ?? ''
+				{ createInterpolateElement(
+					sprintf(
+						/* translators: %s: site domain */
+						__( 'Once you change your site address, %s will no longer be available.' ),
+						`<strong>${ wpcomDomain?.domain ?? '' }</strong>`
+					),
+					{ strong: <strong /> }
 				) }
 			</Text>
 			<form ref={ formRef } onSubmit={ handleSubmit }>

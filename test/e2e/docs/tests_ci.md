@@ -9,6 +9,7 @@
   - [Feature branch](#feature-branch)
   - [Trunk](#trunk)
   - [Scheduled build configurations](#scheduled-build-configurations)
+  - [Jetpack build configurations](#jetpack-build-configurations)
 
 <!-- /TOC -->
 
@@ -73,3 +74,22 @@ In addition to build configurations that are automatically triggered based on br
 | WPCOM/Gutenberg E2E Tests (mobile)  | once a day         |
 | WPCOM/Gutenberg E2E Tests (desktop) | once a day         |
 | Authentication E2E                  | once every 6 hours |
+
+## Jetpack build configurations
+
+The Jetpack builds have no trigger in this repository: systems outside it queue them by
+TeamCity build ID. Renaming or removing one breaks its caller, so update the caller first.
+
+- **Jetpack Simple E2E Tests** (`calypso_WPComTests_JetpackSimpleE2ETests`): `bin/jetpack-sun-moon`
+  in the WPCOM repository, on each continuous Jetpack deploy to Simple sites, and the
+  `DotCom_GithubA8cCom_Wpcom_JetpackRecentPassingSimpleDeployE2eTests` TeamCity check,
+  which Gherald starts on sun-moon PRs. Both still use the legacy
+  `calypso_WPComTests_jetpack_simple_deployment_e2e_desktop` and `_mobile` builds.
+- **Jetpack Atomic E2E Tests** (`calypso_WPComTests_JetpackAtomicE2ETests`): the Jetpack
+  scenario of the ReleasesV2 release tool in the WPCOM repository, and manual runs during
+  the Jetpack release. Both still use the legacy
+  `calypso_WPComTests_jetpack_atomic_deployment_e2e_desktop` build.
+- **Jetpack Atomic E2E Tests - Mixed Variations** (`calypso_WPComTests_JetpackAtomicSmokeE2ETests`):
+  a Mission Control webhook, called after each Jetpack build by the workflow that updates
+  the Jetpack staging sites. It still uses the legacy
+  `calypso_WPComTests_jetpack_atomic_build_smoke_e2e_desktop` build.

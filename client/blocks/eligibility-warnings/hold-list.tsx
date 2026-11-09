@@ -13,7 +13,7 @@ import { IntervalLength } from 'calypso/my-sites/marketplace/components/billing-
 import { useSelector } from 'calypso/state';
 import { eligibilityHolds, type EligibilityHold } from 'calypso/state/automated-transfer/constants';
 import { getBillingInterval } from 'calypso/state/marketplace/billing-interval/selectors';
-import { isAtomicSiteWithoutBusinessPlan } from './utils';
+import { isAtomicSiteWithoutBusinessPlan, shouldUpsellPersonalPlan } from './utils';
 import type { EligibilityContext } from './index';
 
 const displayableHolds = [
@@ -52,10 +52,8 @@ function getHoldMessages( {
 	isMarketplace?: boolean;
 	hasEnTranslation: ( arg: string ) => boolean;
 } ): HoldMessages {
-	// Plugin upload is available on the Personal plan and up, so upsell the
-	// lowest eligible plan for that context instead of Business.
 	const upsellPersonalPlan =
-		context === 'plugins-upload' ||
+		shouldUpsellPersonalPlan( context ) ||
 		( isMarketplace && isEnabled( 'marketplace-personal-premium' ) );
 
 	return {
