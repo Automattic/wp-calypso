@@ -244,6 +244,7 @@ a[href^='https://smooch.io/live-web-chat'] {
 			&:hover,
 			&:focus {
 				svg {
+					color: var( --color-text-inverted );
 					fill: var( --color-text-inverted );
 				}
 			}
