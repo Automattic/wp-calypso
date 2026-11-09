@@ -374,6 +374,26 @@ describe( 'useErrorNotice', () => {
 			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledTimes( 2 );
 		} );
 
+		it( 'tracks the source the upgrade link passes on to checkout', () => {
+			renderHook( () =>
+				useErrorNotice(
+					'Limit reached https://jetpack.com/redirect/?source=jetpack-ai-yearly-tier-upgrade-nudge&query=source%3Dimage-studio',
+					mockAddNotice,
+					ImageStudioMode.Generate
+				)
+			);
+
+			const expected = {
+				mode: ImageStudioMode.Generate,
+				trigger: 'error',
+				...jetpackAiQuotaCredits,
+				ref: 'image-studio',
+			};
+			expect( trackImageStudioUpgradeNoticeShown ).toHaveBeenCalledWith( expected );
+			mockAddNotice.mock.calls[ 0 ][ 2 ][ 0 ].onClick();
+			expect( trackImageStudioUpgradeNoticeClick ).toHaveBeenCalledWith( expected );
+		} );
+
 		it( 'does not track impressions for non-upgrade URL errors', () => {
 			renderHook( () =>
 				useErrorNotice(
