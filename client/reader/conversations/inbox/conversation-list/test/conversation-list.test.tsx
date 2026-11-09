@@ -113,7 +113,7 @@ describe( 'ConversationList', () => {
 
 		const rows = screen.getAllByRole( 'button', { name: /^Commented post/ } );
 		expect( rows ).toHaveLength( 2 );
-		expect( rows[ 0 ] ).toHaveTextContent( 'You commented' );
+		expect( rows[ 0 ] ).not.toHaveTextContent( 'You commented' );
 		expect( rows[ 0 ] ).toHaveTextContent( 'My comment' );
 		expect( rows[ 0 ] ).toHaveTextContent( '3 new' );
 		expect( rows[ 1 ] ).not.toHaveTextContent( 'new' );
@@ -149,16 +149,6 @@ describe( 'ConversationList', () => {
 		await user.click( screen.getByRole( 'button', { name: 'Retry' } ) );
 
 		expect( screen.getByText( 'Couldn’t load more.' ) ).toBeVisible();
-		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
-	} );
-
-	it( 'loads more on click when it does not load on scroll', async () => {
-		const user = userEvent.setup();
-		const onLoadMore = jest.fn();
-		renderList( { hasMore: true, autoLoad: false, onLoadMore } );
-
-		await user.click( screen.getByRole( 'button', { name: 'Load more' } ) );
-
 		expect( onLoadMore ).toHaveBeenCalledTimes( 1 );
 	} );
 

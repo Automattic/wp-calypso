@@ -170,18 +170,21 @@ const MiniChart: FunctionComponent< MiniChartProps > = ( {
 			) }
 
 			{ isPending && chartPlaceholder }
-			{ isEmpty && (
-				<Notice.Root intent="info" className="stats-widget-empty-notice">
-					<Notice.Description>
-						{ translate( 'We are collecting traffic data for your site' ) }
-					</Notice.Description>
-					<Notice.Actions>
-						<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
-							{ translate( 'Learn more about stats' ) }
-						</Notice.ActionLink>
-					</Notice.Actions>
-				</Notice.Root>
-			) }
+			{ /* Mounted while loading, so it announces the notice when it replaces the loading state. */ }
+			<Notice.List>
+				{ isEmpty && (
+					<Notice.Root intent="info" className="stats-widget-empty-notice">
+						<Notice.Description>
+							{ translate( 'We are collecting traffic data for your site' ) }
+						</Notice.Description>
+						<Notice.Actions>
+							<Notice.ActionLink href="https://jetpack.com/stats/" openInNewTab>
+								{ translate( 'Learn more about stats' ) }
+							</Notice.ActionLink>
+						</Notice.Actions>
+					</Notice.Root>
+				) }
+			</Notice.List>
 			{ status === 'error' && noData }
 			{ hasChart && (
 				// Around the chart alone, so a failed chart takes only its own box with it.

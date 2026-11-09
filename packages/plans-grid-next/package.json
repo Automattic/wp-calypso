@@ -53,6 +53,7 @@
 	},
 	"dependencies": {
 		"@automattic/calypso-analytics": "workspace:^",
+		"@automattic/calypso-config": "workspace:^",
 		"@automattic/calypso-products": "workspace:^",
 		"@automattic/components": "workspace:^",
 		"@automattic/data-stores": "workspace:^",
@@ -93,7 +94,7 @@
 		"msw": "^2.2.14",
 		"msw-storybook-addon": "^2.0.7",
 		"resize-observer-polyfill": "^1.5.1",
-		"storybook": "^10.6.3",
+		"storybook": "^10.6.5",
 		"typescript": "^6.0.3",
 		"webpack": "^5.111.1"
 	},

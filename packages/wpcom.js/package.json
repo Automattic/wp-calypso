@@ -53,7 +53,7 @@
 	"dependencies": {
 		"@babel/runtime": "^8.0.7",
 		"debug": "^4.4.3",
-		"qs": "^6.15.2"
+		"qs": "^6.17.1"
 	},
 	"devDependencies": {
 		"@automattic/calypso-build": "workspace:^",

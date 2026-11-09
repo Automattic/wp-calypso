@@ -26,8 +26,6 @@ interface Props {
 	isError?: boolean;
 	onRetry?: () => void;
 	hasMore?: boolean;
-	/** False shows a Load more button in place of loading on scroll. */
-	autoLoad?: boolean;
 	isLoadingMore?: boolean;
 	isLoadMoreError?: boolean;
 	onLoadMore?: () => void;
@@ -56,7 +54,6 @@ export function ConversationList( {
 	isError,
 	onRetry,
 	hasMore,
-	autoLoad = true,
 	isLoadingMore,
 	isLoadMoreError,
 	onLoadMore,
@@ -80,15 +77,14 @@ export function ConversationList( {
 	const moment = useLocalizedMoment();
 	const { ref: endRef, inView: isEndInView } = useInView();
 
-	// Runs again after each page, so a page the filters empty out still loads the next one.
+	// Runs again after each page, in case the end of the list is still in view.
 	useEffect( () => {
-		if ( isEndInView && autoLoad && hasMore && ! isLoadingMore && ! isLoadMoreError ) {
+		if ( isEndInView && hasMore && ! isLoadingMore && ! isLoadMoreError ) {
 			onLoadMore?.();
 		}
-	}, [ isEndInView, autoLoad, hasMore, isLoadingMore, isLoadMoreError, onLoadMore ] );
+	}, [ isEndInView, hasMore, isLoadingMore, isLoadMoreError, onLoadMore ] );
 
 	const listRef = useRef< HTMLDivElement >( null );
-	const showLoadMoreButton = ! autoLoad || isLoadMoreError;
 	const refocusRef = useRef( false );
 	// The button goes away once a retry works or the last page loads, which would drop its focus.
 	useEffect( () => {
@@ -97,10 +93,10 @@ export function ConversationList( {
 		}
 		refocusRef.current = false;
 		const { activeElement, body } = document;
-		if ( ( ! hasMore || ! showLoadMoreButton ) && ( ! activeElement || activeElement === body ) ) {
+		if ( ( ! hasMore || ! isLoadMoreError ) && ( ! activeElement || activeElement === body ) ) {
 			listRef.current?.focus( { preventScroll: true } );
 		}
-	}, [ isLoadingMore, hasMore, showLoadMoreButton ] );
+	}, [ isLoadingMore, hasMore, isLoadMoreError ] );
 
 	const emptyStates = {
 		all: {
@@ -235,29 +231,24 @@ export function ConversationList( {
 				) ) }
 				{ ! isLoading && hasMore && (
 					<div ref={ endRef } className="conversations-inbox__list-end">
-						{ isLoadMoreError && (
-							<ListMessage description={ translate( 'Couldn’t load more.' ) } />
-						) }
-						{ ! isLoadMoreError && ! autoLoad && items.length === 0 && (
-							<ListMessage
-								description={ translate( 'None of the conversations loaded so far match.' ) }
-							/>
-						) }
-						{ showLoadMoreButton ? (
-							// Stays mounted while loading so the focus isn't lost.
-							<Button
-								__next40pxDefaultSize
-								variant="secondary"
-								isBusy={ isLoadingMore }
-								disabled={ isLoadingMore }
-								accessibleWhenDisabled
-								onClick={ () => {
-									refocusRef.current = true;
-									onLoadMore?.();
-								} }
-							>
-								{ isLoadMoreError ? translate( 'Retry' ) : translate( 'Load more' ) }
-							</Button>
+						{ isLoadMoreError ? (
+							<>
+								<ListMessage description={ translate( 'Couldn’t load more.' ) } />
+								{ /* Stays mounted while loading so the focus isn't lost. */ }
+								<Button
+									__next40pxDefaultSize
+									variant="secondary"
+									isBusy={ isLoadingMore }
+									disabled={ isLoadingMore }
+									accessibleWhenDisabled
+									onClick={ () => {
+										refocusRef.current = true;
+										onLoadMore?.();
+									} }
+								>
+									{ translate( 'Retry' ) }
+								</Button>
+							</>
 						) : (
 							isLoadingMore && <Spinner />
 						) }

@@ -71,7 +71,7 @@
 		"@wordpress/url": "^4.48.0",
 		"debug": "^4.4.3",
 		"i18n-calypso": "workspace:^",
-		"qs": "^6.15.2",
+		"qs": "^6.17.1",
 		"redux": "^5.0.1",
 		"tslib": "^2.8.1",
 		"utility-types": "^3.10.0",

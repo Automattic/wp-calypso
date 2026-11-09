@@ -69,6 +69,28 @@
 
 .conversations-inbox__detail-content .comments__comment-list {
 	margin-block-start: 0;
+
+	.comments__comment-count {
+		color: var( --color-text );
+		font-size: 1rem;
+		font-weight: 500;
+	}
+
+	.comments__comment-count-phrase {
+		text-transform: none;
+	}
+
+	.comments__comment-username,
+	.comments__comment-respondee-link {
+		color: var( --color-text );
+		text-decoration: none;
+
+		&:hover,
+		&:focus {
+			color: var( --color-text );
+			text-decoration: underline;
+		}
+	}
 }
 
 @mixin conversations-inbox-welcome-dark {
