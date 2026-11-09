@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { readFileSync } from 'node:fs';
 import { basename, dirname } from 'node:path';
 import util from 'node:util';
 import glob from 'glob';
@@ -96,12 +97,16 @@ const testBuildTools = withUnitTestInfo(
 // Includes ETK and Odyssey Stats, migrated here from their individual builds.
 const testApps = withUnitTestInfo( 'test-apps --maxWorkers=1 --workerIdleMemoryLimit=1GB' );
 
-// wp-oxc-makepot's tests run on Vitest, outside the shared Jest projects.
-const testWpOxcMakepot = {
+// Workspaces on Vitest run outside the shared Jest projects, through their own `test` script.
+const testVitestWorkspaces = (
+	await globPromise( '{packages,apps}/*/vitest.config.{js,mjs,cjs,ts,mts}' )
+).map( ( config ) => ( {
 	name: 'yarn',
-	args: 'workspace @automattic/wp-oxc-makepot test',
-	testId: 'test_wp_oxc_makepot',
-};
+	args: `workspace ${
+		JSON.parse( readFileSync( `${ dirname( config ) }/package.json`, 'utf8' ) ).name
+	} test`,
+	testId: `test_${ basename( dirname( config ) ).replaceAll( '-', '_' ) }`,
+} ) );
 
 const testWorkspaces = {
 	name: 'yarn',
@@ -136,7 +141,9 @@ try {
 		await runTask( testPackages );
 		await runTask( testServer );
 		await runTask( testBuildTools );
-		await runTask( testWpOxcMakepot );
+		for ( const task of testVitestWorkspaces ) {
+			await runTask( task );
+		}
 		await runTask( testWorkspaces );
 		await runTask( testApps );
 	} )();

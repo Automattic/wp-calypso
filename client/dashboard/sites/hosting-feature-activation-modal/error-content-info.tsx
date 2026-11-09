@@ -1,4 +1,5 @@
 import { DotcomPlans, getPlanNames } from '@automattic/api-core';
+import config from '@automattic/calypso-config';
 import { __experimentalVStack as VStack, ExternalLink } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { Fragment } from 'react';
@@ -86,13 +87,20 @@ type HoldingMessage = {
 const HoldingMessages: Partial< Record< EligibilityErrors, HoldingMessage > > = {
 	[ EligibilityErrors.NO_BUSINESS_PLAN ]: {
 		code: EligibilityErrors.NO_BUSINESS_PLAN,
-		title: sprintf(
-			// translators: %(planName)s is the name of the plan
-			__( '%(planName)s plan required' ),
-			{
-				planName: getPlanNames()[ DotcomPlans.BUSINESS ],
-			}
-		),
+		get title() {
+			return sprintf(
+				// translators: %(planName)s is the name of the plan
+				__( '%(planName)s plan required' ),
+				{
+					planName:
+						getPlanNames()[
+							config.isEnabled( 'hosting/dev-tools-all-paid-plans' )
+								? DotcomPlans.PERSONAL
+								: DotcomPlans.BUSINESS
+						],
+				}
+			);
+		},
 		description: __( 'You’ll also get to install custom themes, plugins, and have more storage.' ),
 	},
 	[ EligibilityErrors.NON_ADMIN_USER ]: {

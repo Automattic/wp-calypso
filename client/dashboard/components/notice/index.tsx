@@ -19,14 +19,14 @@ import './style.scss';
  * collapses to its padding.
  *
  * ```jsx
- * import { Notice } from '@automattic/components';
+ * import { Notice, NoticeActionButton } from 'calypso/dashboard/components/notice';
  * import { ExternalLink } from '@wordpress/components';
  *
  * function MyComponent() {
  * 	return (
  * 		<Notice
  * 			title="Title"
- * 			actions={ <Button variant="primary">Label</Button> }
+ * 			actions={ <NoticeActionButton variant="solid">Label</NoticeActionButton> }
  * 		>
  * 			<>Hello, I’m a notice with an inline <ExternalLink href="#">link</ExternalLink></>
  * 		</Notice>
@@ -44,17 +44,17 @@ function UnforwardedNotice(
 			className="dashboard-notice"
 			intent={ variant }
 			icon={ icon === undefined && variant === 'warning' ? caution : icon }
-			// Dashboard notices are static page content; dynamic messages use snackbars.
-			spokenMessage={ null }
 		>
 			{ title && <UINotice.Title>{ title }</UINotice.Title> }
 			{ children && <UINotice.Description render={ <div /> }>{ children }</UINotice.Description> }
 			{ actions && <UINotice.Actions>{ actions }</UINotice.Actions> }
-			{ !! onClose && <UINotice.CloseIcon onClick={ onClose } /> }
+			{ !! onClose && <UINotice.CloseIconButton onClick={ onClose } /> }
 		</UINotice.Root>
 	);
 }
 
 export const Notice = forwardRef( UnforwardedNotice );
+
+export * from './actions';
 
 export default Notice;

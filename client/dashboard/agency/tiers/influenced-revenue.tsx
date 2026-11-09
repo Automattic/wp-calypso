@@ -2,12 +2,12 @@ import { formatCurrency } from '@automattic/number-formatters';
 import {
 	Button,
 	Popover,
-	ProgressBar,
 	__experimentalHStack as HStack,
 	__experimentalVStack as VStack,
 } from '@wordpress/components';
 import { __, sprintf } from '@wordpress/i18n';
 import { info } from '@wordpress/icons';
+import { Progress } from '@wordpress/ui';
 import { useState } from 'react';
 import InlineSupportLink from '../../components/inline-support-link';
 import { Text } from '../../components/text';
@@ -82,18 +82,8 @@ function InfluencedRevenueStrapline( {
 
 const formatAmount = ( value: number ) => formatCurrency( value, 'USD', { stripZeros: true } );
 
-const TOP_TIER_LEVEL = Math.max( ...ALL_TIERS.map( ( tier ) => tier.level ) );
-const PRO_TIER_LEVEL = 2;
-
-/**
- * Pro and VIP Pro both grow toward Premier, as the Overview growth card says.
- */
 function getNextTier( currentTier: TierItem ) {
-	if ( currentTier.level >= TOP_TIER_LEVEL ) {
-		return undefined;
-	}
-	const nextLevel = currentTier.level >= PRO_TIER_LEVEL ? TOP_TIER_LEVEL : currentTier.level + 1;
-	return ALL_TIERS.find( ( tier ) => tier.level === nextLevel );
+	return ALL_TIERS.find( ( tier ) => tier.level === currentTier.level + 1 );
 }
 
 function getProgress( currentTier: TierItem, total: number ) {
@@ -174,11 +164,15 @@ export default function InfluencedRevenue( {
 			<Text size={ 15 } weight={ 500 } lineHeight="20px" style={ { textWrap: 'balance' } }>
 				{ headline }
 			</Text>
-			<ProgressBar
+			<Progress.Root
 				className="agency-tiers-influenced-revenue-bar"
 				value={ value }
 				aria-label={ label }
-			/>
+			>
+				<Progress.Track>
+					<Progress.Indicator />
+				</Progress.Track>
+			</Progress.Root>
 			<Text variant="muted" size={ 12 } lineHeight="20px" style={ { textWrap: 'balance' } }>
 				{ caption }
 			</Text>

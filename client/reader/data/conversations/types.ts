@@ -20,6 +20,8 @@ export interface Conversation {
 	commenterCount: number;
 	unreadCount: number;
 	unreadNoteIds: number[];
+	/** The comments of `unreadNoteIds`, in the same order. */
+	unreadCommentIds: number[];
 	isFollowing: boolean;
 }
 

@@ -83,31 +83,6 @@
 	}
 }
 
-.plans-filter-bar__discount-message {
-	padding-top: 2px;
-	color: var(--color-primary);
-	white-space: nowrap;
-	text-align: center;
-	font-weight: 700;
-	font-size: 16px;
-	padding-left: 10px;
-
-	@include break-medium {
-		padding-top: 0;
-		position: absolute;
-		left: calc(100% + 12px);
-		top: 0;
-	}
-
-	.plans-filter-bar__discount-message-text {
-		padding-right: 6px;
-	}
-}
-
-.plans-filter-bar__discount-message.treatment .plans-filter-bar__discount-message-text {
-	text-decoration: underline;
-}
-
 .plans-filter-bar.sticky {
 	position: fixed;
 	width: 100%;

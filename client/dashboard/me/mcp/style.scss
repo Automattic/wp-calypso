@@ -1,5 +1,143 @@
+@import '@wordpress/base-styles/breakpoints';
+@import '@wordpress/base-styles/colors';
+@import '@wordpress/base-styles/variables';
+
 // The card already has its own border-block-end, so drop the last row's divider.
 // The Bypass row keeps it while open, since its select follows the button.
 .mcp-preferences__access-card .summary-button.components-button:last-child {
 	border-block-end: none;
+}
+
+.mcp-connect__grid {
+	display: grid;
+	grid-template-columns: repeat( 4, minmax( 0, 1fr ) );
+	gap: 10px;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	@media ( max-width: $break-small ) {
+		grid-template-columns: repeat( 2, minmax( 0, 1fr ) );
+	}
+}
+
+.mcp-connect__tile.components-card {
+	position: relative;
+	height: 100%;
+	min-height: 124px;
+
+	// The Card draws its border with box-shadow.
+	&:hover {
+		box-shadow: 0 0 0 1px
+			color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 12%, transparent );
+		background: color-mix( in srgb, var( --wp-admin-theme-color, #3858e9 ) 2%, transparent );
+		color: var( --wp-admin-theme-color, #3858e9 );
+	}
+}
+
+// Holds only the agent name. Its ::after layer covers the Card, so the whole tile is clickable.
+.mcp-connect__tile-target {
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	font: inherit;
+	font-weight: 600;
+	text-align: start;
+	text-decoration: none;
+	cursor: pointer;
+
+	&::after {
+		content: '';
+		position: absolute;
+		z-index: 1;
+		inset: 0;
+		border-radius: 8px;
+	}
+
+	&:focus {
+		outline: none;
+	}
+
+	&:focus-visible::after {
+		outline: var( --wp-admin-border-width-focus, 2px ) solid var( --wp-admin-theme-color, #3858e9 );
+		outline-offset: 1px;
+	}
+}
+
+.mcp-connect__tile-body.components-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	height: 100%;
+}
+
+// Logos are drawn for a light tile, so the badge stays white in dark mode too.
+.mcp-connect__logo {
+	display: grid;
+	flex: none;
+	place-items: center;
+	width: 32px;
+	height: 32px;
+	border: 1px solid var( --dashboard-surface__border-color );
+	border-radius: 8px;
+	background: $white;
+	color: $gray-900;
+	font-weight: 600;
+
+	img {
+		display: block;
+		width: 20px;
+		height: 20px;
+		object-fit: contain;
+	}
+}
+
+.mcp-connect__text {
+	display: flex;
+	flex-direction: column;
+}
+
+.mcp-connect__description {
+	color: var( --dashboard__text-muted-color );
+	font-size: 12px;
+	line-height: 16px;
+}
+
+.mcp-connect__action {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-block-start: auto;
+	color: var( --wp-admin-theme-color, #3858e9 );
+	font-size: 12px;
+	font-weight: 600;
+
+	svg {
+		fill: currentColor;
+	}
+}
+
+.mcp-connect__footer.components-card__footer {
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 16px;
+	background: color-mix( in srgb, var( --dashboard__text-color ) 3%, transparent );
+}
+
+.mcp-connect__footer-actions {
+	display: flex;
+	flex: none;
+	gap: 8px;
+}
+
+.mcp-connect__helper-button.components-button {
+	flex: none;
+	font-size: 12px;
+	font-weight: 600;
+}
+
+.mcp-connect__copy-fallback textarea {
+	font-family: $editor-html-font;
+	font-size: 12px;
 }

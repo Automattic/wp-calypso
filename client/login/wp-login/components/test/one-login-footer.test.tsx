@@ -24,6 +24,12 @@ describe( 'OneLoginFooter', () => {
 		expect( screen.getByRole( 'link', { name: 'Sign up' } ) ).toBeVisible();
 	} );
 
+	test( 'words the route to signup as "Create an account" when isNewHereSignupPrompt is set', () => {
+		renderFooter( { showSignupPrompt: true, isNewHereSignupPrompt: true } );
+		expect( screen.getByRole( 'link', { name: 'Create an account' } ) ).toBeVisible();
+		expect( screen.queryByRole( 'link', { name: 'Sign up' } ) ).not.toBeInTheDocument();
+	} );
+
 	test( 'omits the route to signup when showSignupPrompt is unset', () => {
 		renderFooter();
 		expect( screen.queryByRole( 'link', { name: 'Sign up' } ) ).not.toBeInTheDocument();

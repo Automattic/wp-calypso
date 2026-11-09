@@ -19,13 +19,17 @@ export default function PostCard( {
 	const { locale } = useAppContext();
 	const byline = (
 		<MetaList>
-			{ post.author_name && <Author avatar={ post.author_avatar }>{ post.author_name }</Author> }
+			{ post.author_name && (
+				<Author avatar={ post.author_avatar }>
+					<span className="wpnc-simplified__card-author">{ post.author_name }</span>
+				</Author>
+			) }
 			{ post.date && formatDate( post.date, locale ) }
 		</MetaList>
 	);
 
 	const title = (
-		<Text size={ 15 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
+		<Text size={ 14 } weight={ 600 } lineHeight="24px" truncate numberOfLines={ 1 }>
 			{ post.title }
 		</Text>
 	);

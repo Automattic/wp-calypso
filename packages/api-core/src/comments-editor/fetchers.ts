@@ -12,3 +12,9 @@ export const fetchCommentsEditorSettings = (): Promise< CommentsEditorSettings >
 		},
 		{ _locale: 'user' }
 	);
+
+/**
+ * The preview of an embed in the comment editor, asked for as the signed-in reader.
+ */
+export const fetchCommentEmbedPreview = ( url: string ): Promise< unknown > =>
+	wpcom.req.get( { path: '/read/embed', apiNamespace: 'wpcom/v2' }, { url } );

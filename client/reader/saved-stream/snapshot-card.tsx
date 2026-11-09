@@ -83,6 +83,7 @@ export function SavedSnapshotCard( {
 	const savedDate = useSavedDate( post.date_saved );
 	const url = post.URL ? safeLink( post.URL ) : undefined;
 	const siteUrl = typeof post.site_URL === 'string' ? safeLink( post.site_URL ) : undefined;
+	const siteIcon = typeof post.site_icon_url === 'string' ? post.site_icon_url : undefined;
 	const youTubeVideoId = getYouTubeVideoId( url );
 	const featuredImage =
 		! youTubeVideoId && typeof post.featured_image === 'string' && post.featured_image
@@ -111,7 +112,7 @@ export function SavedSnapshotCard( {
 			onClick={ openPage }
 		>
 			<div className="reader-post-card__byline">
-				<SiteIcon size={ 40 } />
+				<SiteIcon iconUrl={ siteIcon } size={ 40 } />
 				<div className="reader-post-card__byline-details">
 					{ post.site_name && (
 						<div className="reader-post-card__byline-site">

@@ -1,4 +1,4 @@
-import { getAgentManager, type TaskUpdate } from '@automattic/agenttic-client';
+import { getAgentManager, useAgentChat, type TaskUpdate } from '@automattic/agenttic-client';
 import {
 	type Suggestion,
 	type MarkdownComponents,
@@ -22,7 +22,7 @@ import { useCheckpointAvailability } from '../../hooks/use-checkpoint-availabili
 import { useContextCardActions } from '../../hooks/use-context-card-actions';
 import { useConversationHydration } from '../../hooks/use-conversation-hydration';
 import useCopyAction from '../../hooks/use-copy-action';
-import { useCredits } from '../../hooks/use-credits';
+import { useCredits, useCreditsVisit } from '../../hooks/use-credits';
 import { useCreditsCommand } from '../../hooks/use-credits-command';
 import { useDynamicSuggestions } from '../../hooks/use-dynamic-suggestions';
 import { usePageOrSiteEditorSurface } from '../../hooks/use-empty-view-suggestions';
@@ -134,7 +134,7 @@ export default function OrchestratorChat( {
 	isChatInputDisabled,
 	onHasMessagesChange,
 }: Props ) {
-	const { agentConfig, getTabSessionId, siteKey, site, currentUser } = useAgentsManagerContext();
+	const { agentConfig, getTabSessionId } = useAgentsManagerContext();
 	const isReaderChat = isReaderChatAgent( agentConfig?.agentId );
 
 	// Set by the providers' abilities, e.g. while Big Sky builds a site.
@@ -157,6 +157,9 @@ export default function OrchestratorChat( {
 	const { retriedToolCallIds, recordRetriedToolCall } = useRetriedToolCalls( streamGeneration );
 	const trackResponseOutcome = useResponseOutcomeTracking();
 
+	// Credits runs after the chat, so task updates reach it through its visit.
+	const creditsVisit = useCreditsVisit( ! isReaderChat );
+
 	const agentChatConfig = useMemo( () => {
 		if ( ! agentConfig ) {
 			return null;
@@ -166,7 +169,11 @@ export default function OrchestratorChat( {
 		return {
 			...agentConfig,
 			trackReplying: true,
+			// History and closing the panel unmount the chat mid-reply.
+			resumeOnRemount: true,
 			onTaskUpdate: async ( update: TaskUpdate ) => {
+				creditsVisit.onTaskUpdate( update );
+
 				// A previous session's stream must not write into this one.
 				if ( isCurrentStreamGeneration( streamGeneration ) ) {
 					recordRetriedToolCall( update );
@@ -179,6 +186,7 @@ export default function OrchestratorChat( {
 		};
 	}, [
 		agentConfig,
+		creditsVisit,
 		isCurrentStreamGeneration,
 		recordRetriedToolCall,
 		recordTaskUpdate,
@@ -186,25 +194,7 @@ export default function OrchestratorChat( {
 		trackResponseOutcome,
 	] );
 
-	// The chat runtime, behind the credits gate.
-	// The composer's retry send is created after credits, so the notice reaches it through a ref.
-	const retrySendRef = useRef< ( message: string ) => void >( () => {} );
-	const tryAgain = useCallback( ( message: string ) => retrySendRef.current( message ), [] );
-	// The same for the popover's button, which sends `/credits` through the composer.
-	const showCreditsRef = useRef< () => void >( () => {} );
-	const showCredits = useCallback( () => showCreditsRef.current(), [] );
-	const credits = useCredits( {
-		onTryAgain: tryAgain,
-		onShowCredits: isReaderChat ? undefined : showCredits,
-		enabled: ! isReaderChat,
-		agentConfig: agentChatConfig!,
-		siteKey,
-		userId: currentUser?.ID,
-		site,
-		// The compact composer can send too, so it keeps the balance fresh.
-		isOpen: isOpen || ( ! isDocked && isCompactMode ),
-		isNoticeVisible: isOpen,
-	} );
+	// The chat runtime, then the credits that gate it.
 	const {
 		addMessage,
 		clearError,
@@ -221,7 +211,25 @@ export default function OrchestratorChat( {
 		getRegenerateHandler,
 		progressMessage,
 		isReplying,
-	} = credits.chat;
+	} = useAgentChat( agentChatConfig! );
+
+	// The composer's retry send is created after credits, so the notice reaches it through a ref.
+	const retrySendRef = useRef< ( message: string ) => void >( () => {} );
+	const tryAgain = useCallback( ( message: string ) => retrySendRef.current( message ), [] );
+	// The same for the popover's button, which sends `/credits` through the composer.
+	const showCreditsRef = useRef< () => void >( () => {} );
+	const showCredits = useCallback( () => showCreditsRef.current(), [] );
+	const credits = useCredits( {
+		onTryAgain: tryAgain,
+		onShowCredits: isReaderChat ? undefined : showCredits,
+		creditsVisit,
+		isProcessing,
+		messages,
+		// The compact composer can send too, so it keeps the balance fresh.
+		isOpen: isOpen || ( ! isDocked && isCompactMode ),
+		isNoticeVisible: isOpen,
+	} );
+
 	const creditsCommand = useCreditsCommand( {
 		reply: credits.creditsCommand,
 		beforeSubmit: credits.beforeSubmit,
@@ -611,7 +619,7 @@ export default function OrchestratorChat( {
 			isCompactMode={ isCompactMode }
 			groupWritingSuggestions={ isPageOrSiteEditorSurface }
 			imageUpload={ imageUpload }
-			notice={ credits.notice ?? replyNotice }
+			notice={ credits.notice ?? replyNotice ?? credits.topUpsNotice }
 			trailingActions={ credits.trailingActions }
 			beforeSubmit={ isReaderChat ? credits.beforeSubmit : creditsCommand.beforeSubmit }
 			isChatInputDisabled={ isChatInputDisabled }

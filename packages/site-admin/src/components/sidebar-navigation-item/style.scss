@@ -22,7 +22,7 @@
 	&[aria-current='true'] {
 		background: $gray-800;
 		color: $white;
-		font-weight: $font-weight-medium;
+		font-weight: var(--wpds-typography-font-weight-emphasis, 600);
 	}
 
 	// Make sure the focus style is drawn on top of the current item background.

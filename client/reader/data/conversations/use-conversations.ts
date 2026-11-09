@@ -1,7 +1,9 @@
 import {
+	hasLoadedMorePages,
 	markReadConversationNotesMutation,
 	readConversationsCommentsQuery,
 	readConversationsQuery,
+	unfollowReadConversationMutation,
 } from '@automattic/api-queries';
 import {
 	keepPreviousData,
@@ -12,12 +14,15 @@ import {
 import { useTranslate } from 'i18n-calypso';
 import { useMemo } from 'react';
 import { useDispatch } from 'calypso/state';
-import { errorNotice } from 'calypso/state/notices/actions';
+import { errorNotice, successNotice } from 'calypso/state/notices/actions';
+import { updateConversationFollowStatus } from 'calypso/state/reader/conversations/actions';
+import { CONVERSATION_FOLLOW_STATUS } from 'calypso/state/reader/conversations/follow-status';
 import type { Commenter, Conversation, OwnComment } from './types';
 import type {
 	ReadConversation,
 	ReadConversationOwnComment,
 	ReadConversationPerson,
+	ReadConversationsScope,
 	ReadConversationsSort,
 } from '@automattic/api-core';
 
@@ -48,6 +53,7 @@ export const adaptReadConversation = ( conversation: ReadConversation ): Convers
 	commenterCount: conversation.commenter_count,
 	unreadCount: conversation.unread_count ?? 0,
 	unreadNoteIds: conversation.unread_note_ids,
+	unreadCommentIds: conversation.unread_comment_ids,
 	isFollowing: conversation.is_following,
 } );
 
@@ -83,18 +89,21 @@ function adaptPage< Row extends object, Item extends Conversation | OwnComment >
 export function useConversations( {
 	sort,
 	search,
+	scope,
 	refetchInterval,
+	enabled = true,
 }: {
 	sort: ReadConversationsSort;
 	search?: string;
+	scope?: ReadConversationsScope;
 	refetchInterval?: number;
+	enabled?: boolean;
 } ) {
 	const query = useInfiniteQuery( {
-		...readConversationsQuery( { sort, search } ),
+		...readConversationsQuery( { sort, search, scope } ),
 		placeholderData: keepPreviousData,
-		// Refetching an infinite query refetches every page, so live updates stop once more are loaded.
-		refetchInterval: ( { state } ) =>
-			( state.data?.pages.length ?? 0 ) > 1 ? false : ( refetchInterval ?? false ),
+		enabled,
+		refetchInterval: ( query ) => ! hasLoadedMorePages( query ) && ( refetchInterval ?? false ),
 	} );
 	const { data } = query;
 	const conversations = useMemo(
@@ -150,5 +159,42 @@ export function useMarkConversationsRead() {
 					id: 'reader-conversations-mark-read-error',
 				} )
 			),
+	} );
+}
+
+export function useUnfollowConversation() {
+	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
+	const translate = useTranslate();
+
+	return useMutation( {
+		...unfollowReadConversationMutation( queryClient ),
+		// onSettled, so the factory keeps its onSuccess. Notices live here rather than in mutate(),
+		// which drops its callbacks on unmount or once another unfollow starts.
+		onSettled: ( _response, error, { blogId, postId } ) => {
+			if ( error ) {
+				dispatch(
+					errorNotice(
+						translate( 'Sorry, we had a problem unfollowing that conversation. Please try again.' )
+					)
+				);
+				return;
+			}
+			// Following in this session, or loading a followed post, sets a Redux status the post menu
+			// reads first. Not following removes it, so the menu goes back to the list, which the
+			// factory already updated.
+			dispatch(
+				updateConversationFollowStatus( {
+					siteId: blogId,
+					postId,
+					followStatus: CONVERSATION_FOLLOW_STATUS.not_following,
+				} )
+			);
+			dispatch(
+				successNotice( translate( 'The conversation has been successfully unfollowed.' ), {
+					duration: 5000,
+				} )
+			);
+		},
 	} );
 }

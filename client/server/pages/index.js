@@ -335,7 +335,6 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	performanceMark( request.context, 'setup environments', true );
 	if ( calypsoEnv === 'wpcalypso' ) {
 		context.badge = calypsoEnv;
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	// calypso.live passes the branch along, so that it can be shown in the environment badge.
@@ -344,59 +343,59 @@ function getDefaultContext( request, response, entrypoint = 'entry-main' ) {
 	}
 
 	if ( calypsoEnv === 'horizon' ) {
-		context.badge = 'feedback';
-		context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		if ( isCalypsoLive ) {
+			context.badge = 'horizon';
+		} else {
+			context.badge = 'feedback';
+			context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		}
 	}
 
 	if ( calypsoEnv === 'stage' ) {
 		context.badge = 'staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'development' ) {
 		context.badge = 'dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'jetpack-cloud-stage' ) {
 		context.badge = 'jetpack-cloud-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'jetpack-cloud-development' ) {
 		context.badge = 'jetpack-cloud-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'a8c-for-agencies-stage' ) {
 		context.badge = 'a8c-for-agencies-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'a8c-for-agencies-development' ) {
 		context.badge = 'a8c-for-agencies-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
 
 	if ( calypsoEnv === 'dashboard-horizon' ) {
-		context.badge = 'dashboard-horizon';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
+		if ( isCalypsoLive ) {
+			context.badge = 'dashboard-horizon';
+		} else {
+			context.badge = 'feedback';
+			context.feedbackURL = 'https://horizonfeedback.wordpress.com/';
+		}
 	}
 
 	if ( calypsoEnv === 'dashboard-stage' ) {
 		context.badge = 'dashboard-staging';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 	}
 
 	if ( calypsoEnv === 'dashboard-development' ) {
 		context.badge = 'dashboard-dev';
-		context.feedbackURL = 'https://github.com/Automattic/wp-calypso/issues/';
 		context.branchName = getCurrentBranchName();
 		context.commitChecksum = getCurrentCommitShortChecksum();
 	}
