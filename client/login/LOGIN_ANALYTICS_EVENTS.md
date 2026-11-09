@@ -99,7 +99,7 @@ This document outlines all the analytics events tracked during the login process
 **Properties**:
 
 - `origin` (string): Which link was clicked
-  - `login-footer`: the signup line below the buttons: "New here? Create an account" on the main login view, and "Don't have an account? Sign up" on the other login views at 960px and up
+  - `login-footer`: the signup line below the buttons at 960px and up: "New here? Create an account" on the main login view, and "Don't have an account? Sign up" on the other login views
   - `login-layout`: "Create an account" in the top bar, everywhere else
   - `login-notice`: the notice shown when signup finds an existing account
 
