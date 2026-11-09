@@ -262,6 +262,7 @@ export default function McpSetupInstructions() {
 							<HStack justify="space-between" alignment="center">
 								<SectionHeader level={ 3 } title={ __( 'Manual setup' ) } />
 								<Button
+									__next40pxDefaultSize
 									icon={ copyStatus === 'success' ? check : copy }
 									variant="tertiary"
 									iconSize={ 20 }

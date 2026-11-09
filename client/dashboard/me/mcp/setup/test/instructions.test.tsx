@@ -17,7 +17,7 @@ describe( '<McpSetupInstructions />', () => {
 			'href',
 			'https://wp.me/claude'
 		);
-		expect( screen.getByText( 'Click “Connect” and follow the prompts.' ) ).toBeInTheDocument();
+		expect( screen.getByText( 'Click “Connect” and follow the prompts.' ) ).toBeVisible();
 	} );
 
 	test( 'links ChatGPT straight to the WordPress plugin, with no config to copy', async () => {
@@ -43,7 +43,7 @@ describe( '<McpSetupInstructions />', () => {
 			'href',
 			'https://cursor.com/marketplace/wordpress'
 		);
-		expect( screen.getByText( '/add-plugin wordpress-com' ) ).toBeInTheDocument();
+		expect( screen.getByText( '/add-plugin wordpress-com' ) ).toBeVisible();
 	} );
 
 	test( 'shows the VS Code config under its own key', async () => {
