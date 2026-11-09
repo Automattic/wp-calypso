@@ -126,12 +126,9 @@
 
 .conversations-inbox__item {
 	// Same tints as the notifications panel: the open row shares the hover color.
-	--conversations-item-bg: var( --color-surface );
-	--conversations-item-active-bg: color-mix(
-		in srgb,
-		var( --conversations-ink ) 2%,
-		var( --color-surface )
-	);
+	// Read rows stay see-through, so an unread row's tint shows under their top line.
+	--conversations-item-bg: transparent;
+	--conversations-item-active-bg: color-mix( in srgb, var( --conversations-ink ) 2%, transparent );
 
 	width: 100%;
 	padding: 16px;
