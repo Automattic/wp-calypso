@@ -5,9 +5,13 @@
 ## Accounts
 
 - **E2E test accounts (default).** Shared accounts from the E2E secrets, e.g. `defaultUser`, `simpleSiteFreePlanUser`, `atomicUser`. Pick one with `--as <name>`.
-- **The user's own account** (`--as me`, or their Chrome). Only when the user asks for it. Never take PR screenshots with it.
+- **The user's own account** (`--as me`, or their Chrome). Only when the user asks for it, or to change site setup (below). Never take PR screenshots with it.
 
 **Stay read-only** in any browser: don't save settings, create or delete anything, or start a purchase unless the user explicitly asks. The test accounts are shared with CI and other developers.
+
+**Never change site setup on an E2E test account**, even when asked: PHP or WordPress version, plugins, themes, plan, visibility, domains, hosting settings. E2E tests depend on it. Ask the user to sign in with their own account instead (options 2 and 3 in [Setup](#setup)), and ask which of their sites to use: only one whose URL contains `test`.
+
+**Never save anything with variation accounts**, even when asked: those with an `atomicVariation` or `gutenberg: 'edge'` in `packages/calypso-e2e/src/lib/utils/criteria-for-test-accounts.ts`, e.g. `jetpackAtomicPhpOldUser`.
 
 ## Setup
 
@@ -29,6 +33,7 @@ If you're a subagent that can't ask the user, report back to the agent that star
 - If the E2E test accounts aren't set up but `E2E_SECRETS_KEY` is set, run `.agents/skills/verify/scripts/setup-test-accounts.sh`.
 - If Chromium is missing, run `(cd test/e2e && npx playwright install --with-deps chromium)`.
 - If you still can't log in, skip the browser check and report it as not done, with the reason.
+- Skip any site setup change and report it as not done.
 
 ## Browsing
 
