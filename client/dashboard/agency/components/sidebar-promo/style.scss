@@ -12,8 +12,10 @@
 	align-items: flex-start;
 	gap: $grid-unit-15;
 	// Pinned to the bottom of the sidebar, with a divider above it.
-	margin: auto 0 $grid-unit-20;
-	padding: $grid-unit-20 $grid-unit-20 0;
+	margin-block: auto $grid-unit-20;
+	margin-inline: 0;
+	padding-block: $grid-unit-20 0;
+	padding-inline: $grid-unit-20;
 	border: 0;
 	border-block-start: $border-width solid var( --dashboard-header__border-color );
 	border-radius: 0;
@@ -72,7 +74,7 @@
 }
 
 .a4a-sidebar-promo-card__badge {
-	padding: 0 6px;
+	padding-inline: 6px;
 	border-radius: 2px;
 	font-size: 11px;
 	line-height: 16px;
