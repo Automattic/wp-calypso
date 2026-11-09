@@ -30,6 +30,7 @@ import ComponentViewTracker from '../../components/component-view-tracker';
 import { isDomainRenewable, canSetAsPrimaryIgnoringSsl } from '../../utils/domain';
 import { isTransferrableToWpcom } from '../../utils/domain-types';
 import { redirectToDashboardLink, wpcomLink } from '../../utils/link';
+import { getPrimaryDomainErrorMessage } from '../../utils/primary-domain-error';
 import { getRenewalUrlFromPurchase } from '../../utils/purchase';
 import { AutoRenewModal } from './auto-renew-modal';
 import { WwwPrimaryDomainModal } from './www-primary-domain-modal';
@@ -44,8 +45,6 @@ const SiteChangeAddressContent = lazy(
 );
 
 const noop = () => {};
-
-const ATOMIC_DOMAIN_IN_USE_PATTERN = /Domain.*already used|TXT record verification is required/i;
 
 export const useActions = ( {
 	user,
@@ -348,15 +347,9 @@ export const useActions = ( {
 									error_message: error.message,
 								} );
 
-								const isAtomicDomainInUse = ATOMIC_DOMAIN_IN_USE_PATTERN.test( error.message );
-								const message = isAtomicDomainInUse
-									? __(
-											'This domain is already in use on another WordPress.com or WP Cloud site. Remove it from the originating site, or contact support to set up TXT record verification.'
-										)
-									: error.message ||
-										__( "Something went wrong and we couldn't change your primary domain." );
-
-								createErrorNotice( message, { type: 'snackbar' } );
+								createErrorNotice( getPrimaryDomainErrorMessage( error.message ), {
+									type: 'snackbar',
+								} );
 							},
 						}
 					);

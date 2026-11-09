@@ -1,0 +1,89 @@
+/**
+ * @jest-environment jsdom
+ */
+import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { dispatch, select } from '@wordpress/data';
+import { store as noticesStore } from '@wordpress/notices';
+import nock from 'nock';
+import Snackbars from '../../../app/snackbars';
+import { render } from '../../../test-utils';
+import ChangePrimaryDomainModal from '../change-primary-domain-modal';
+import type { DomainSummary, Site } from '@automattic/api-core';
+
+const conflictCopy =
+	'This domain is already in use on another WordPress.com or WP Cloud site. Remove it from the originating site, or contact support to set up TXT record verification.';
+const site = { ID: 123, slug: 'primary-domain-test.wordpress.com' } as Site;
+const domains = [ { domain: 'example.com' } ] as DomainSummary[];
+
+beforeEach( () => {
+	jest.spyOn( window, 'scrollTo' ).mockImplementation( () => {} );
+} );
+
+afterEach( () => {
+	jest.restoreAllMocks();
+	for ( const notice of select( noticesStore ).getNotices() ) {
+		dispatch( noticesStore ).removeNotice( notice.id );
+	}
+} );
+
+async function submitChange( onClose = jest.fn() ) {
+	const user = userEvent.setup();
+	render(
+		<>
+			<ChangePrimaryDomainModal
+				site={ site }
+				currentPrimaryDomain="primary-domain-test.wordpress.com"
+				eligibleDomains={ domains }
+				onClose={ onClose }
+			/>
+			<Snackbars />
+		</>
+	);
+	await user.selectOptions( await screen.findByRole( 'combobox' ), 'example.com' );
+	await user.click( screen.getByRole( 'button', { name: 'Change address' } ) );
+	return onClose;
+}
+
+describe( 'ChangePrimaryDomainModal', () => {
+	it.each( [
+		[
+			'Domain name already used [example.com]. TXT record verification is required to bypass this check.',
+			conflictCopy,
+		],
+		[ 'Unable to reach the hosting service.', 'Unable to reach the hosting service.' ],
+	] )( 'shows the correct error for %s', async ( message, expected ) => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/123/domains/primary', { domain: 'example.com' } )
+			.reply( 400, { error: 'wpcom_atomic_ping_failed', message } );
+		const onClose = await submitChange();
+
+		await waitFor( () =>
+			expect(
+				screen.getByText( expected, { selector: '.components-snackbar__content' } )
+			).toBeVisible()
+		);
+		expect( onClose ).not.toHaveBeenCalled();
+		expect( screen.queryByText( /Primary site address changed:/ ) ).not.toBeInTheDocument();
+		expect( screen.getByRole( 'button', { name: 'Change address' } ) ).toBeEnabled();
+		expect( scope.isDone() ).toBe( true );
+	} );
+
+	it( 'closes and shows success after a successful change', async () => {
+		const scope = nock( 'https://public-api.wordpress.com' )
+			.post( '/rest/v1.1/sites/123/domains/primary', { domain: 'example.com' } )
+			.reply( 200, { success: true } );
+		const onClose = await submitChange();
+
+		await waitFor( () => expect( onClose ).toHaveBeenCalledTimes( 1 ) );
+		await waitFor( () =>
+			expect(
+				screen.getByText(
+					'Primary site address changed: all domains will redirect to example.com.',
+					{ selector: '.components-snackbar__content' }
+				)
+			).toBeVisible()
+		);
+		expect( scope.isDone() ).toBe( true );
+	} );
+} );

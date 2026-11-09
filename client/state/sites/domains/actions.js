@@ -177,10 +177,7 @@ export function updatePrimaryDomainCompleteAction( siteId, domain ) {
 export const setPrimaryDomain = ( siteId, domain ) => async ( dispatch ) => {
 	dispatch( updatePrimaryDomainAction( siteId, domain ) );
 	debug( 'setPrimaryDomain', siteId, domain );
-	const data = await wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
-	if ( data?.error ) {
-		throw new Error( data.message );
-	}
+	await wpcom.req.post( `/sites/${ siteId }/domains/primary`, { domain } );
 	await Promise.all( [
 		dispatch( requestSite( siteId ) ),
 		dispatch( fetchSiteDomains( siteId ) ),

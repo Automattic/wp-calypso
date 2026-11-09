@@ -96,23 +96,24 @@ describe( 'actions', () => {
 
 	describe( '#setPrimaryDomain()', () => {
 		const ATOMIC_ERROR_MESSAGE =
-			'Setting domain-as-primary failed: Domain name already used [example.com]. TXT record verification is required to bypass this check.';
+			'Domain name already used [example.com]. TXT record verification is required to bypass this check.';
 
-		describe( 'body-level error response', () => {
+		describe( 'HTTP error response', () => {
 			useNock( ( nock ) => {
 				nock( 'https://public-api.wordpress.com:443' )
 					.persist()
 					.post( `/rest/v1.1/sites/${ siteId }/domains/primary` )
-					.reply( 200, {
-						error: true,
+					.reply( 400, {
+						error: 'wpcom_atomic_ping_failed',
 						message: ATOMIC_ERROR_MESSAGE,
 					} );
 			} );
 
-			test( 'throws an Error with the API message when the response body has error: true', () => {
-				return expect( setPrimaryDomain( siteId, 'example.com' )( spy ) ).rejects.toThrow(
+			test( 'rejects with the API message without dispatching success or refresh actions', async () => {
+				await expect( setPrimaryDomain( siteId, 'example.com' )( spy ) ).rejects.toThrow(
 					ATOMIC_ERROR_MESSAGE
 				);
+				expect( spy ).toHaveBeenCalledTimes( 1 );
 			} );
 		} );
 	} );
